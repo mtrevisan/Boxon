@@ -1,0 +1,203 @@
+package unit731.boxon.codecs;
+
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import unit731.boxon.annotations.Assign;
+import unit731.boxon.annotations.BindArray;
+import unit731.boxon.annotations.BindArrayPrimitive;
+import unit731.boxon.annotations.BindBit;
+import unit731.boxon.annotations.BindByte;
+import unit731.boxon.annotations.BindChecksum;
+import unit731.boxon.annotations.BindDouble;
+import unit731.boxon.annotations.BindFloat;
+import unit731.boxon.annotations.BindIf;
+import unit731.boxon.annotations.BindInteger;
+import unit731.boxon.annotations.BindLong;
+import unit731.boxon.annotations.BindNumber;
+import unit731.boxon.annotations.BindShort;
+import unit731.boxon.annotations.BindString;
+import unit731.boxon.annotations.BindStringTerminated;
+import unit731.boxon.annotations.MessageHeader;
+import unit731.boxon.annotations.checksummers.CRC16;
+import unit731.boxon.annotations.checksummers.Checksummer;
+import unit731.boxon.annotations.transformers.Transformer;
+import unit731.boxon.codecs.queclink.ZonedDateTimeDeserializer;
+import unit731.boxon.utils.ByteHelper;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import java.lang.annotation.Annotation;
+import java.math.BigDecimal;
+import java.time.ZonedDateTime;
+import java.util.BitSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+
+class CodecTest{
+
+
+	private class Mask{
+
+		public class MaskTransformer implements Transformer<Byte, Mask>{
+			@Override
+			public Mask decode(final Byte value){
+				return new Mask(value);
+			}
+
+			@Override
+			public Byte encode(final Mask value){
+				return value.mask;
+			}
+		}
+
+
+		private final byte mask;
+
+
+		public Mask(byte mask){
+			this.mask = mask;
+		}
+
+		public boolean hasProtocolVersion(){
+			return ByteHelper.hasBit(mask, 2);
+		}
+
+	}
+
+	private class Version{
+		@BindByte
+		public byte major;
+		@BindByte
+		public byte minor;
+		public byte build;
+	}
+
+	@MessageHeader(start = "+", end = "-")
+	@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+	private class Message{
+
+		private final Map<Byte, String> MESSAGE_TYPE_MAP = new HashMap<>();
+
+		public class MessageTypeTransformer implements Transformer<Byte, String>{
+			@Override
+			public String decode(final Byte value){
+				return MESSAGE_TYPE_MAP.get(value);
+			}
+
+			@Override
+			public Byte encode(final String value){
+				for(final Map.Entry<Byte, String> elem : MESSAGE_TYPE_MAP.entrySet()){
+					if(elem.getValue().equals(value))
+						return elem.getKey();
+				}
+				return 0x00;
+			}
+		}
+
+		Message(){
+			MESSAGE_TYPE_MAP.put((byte)0, "AT+GTBSI");
+			MESSAGE_TYPE_MAP.put((byte)1, "AT+GTSRI");
+		}
+
+		@BindByte(transformer = Mask.MaskTransformer.class)
+		public Mask mask;
+		@BindArray(size = "2", type = Version.class)
+		private Version[] versions;
+		@BindIf("mask.hasProtocolVersion()")
+		@BindArrayPrimitive(size = "2", type = byte[].class)
+		private byte[] protocolVersion;
+		@BindBit(size = "2")
+		private BitSet bits;
+		@BindDouble()
+		private double numberDouble;
+		@BindFloat()
+		private float numberFloat;
+		@BindInteger()
+		private int numberInt;
+		@BindLong()
+		private long numberLong;
+		@BindNumber(type = Double.class)
+		private BigDecimal number;
+		@BindShort()
+		private short numberShort;
+		@BindString(size = "4")
+		public String text;
+		@BindStringTerminated(terminator = ',')
+		private String textWithTerminator;
+
+		@BindChecksum(type = short.class, skipStart = 4, skipEnd = 4, algorithm = CRC16.class)
+		private short checksum;
+
+		@Assign("T(java.time.ZonedDateTime).now()")
+		@JsonDeserialize(using = ZonedDateTimeDeserializer.class)
+		private ZonedDateTime receptionTime;
+
+	}
+
+
+	@Test
+	void creation(){
+		Codec<Message> codec = Codec.createFrom(Message.class);
+
+		Assertions.assertNotNull(codec);
+		Assertions.assertEquals(Message.class, codec.getType());
+		MessageHeader header = codec.getHeader();
+		Assertions.assertNotNull(header);
+		Assertions.assertArrayEquals(new String[]{"+"}, header.start());
+		Assertions.assertEquals("-", header.end());
+		Assertions.assertTrue(codec.canBeDecoded());
+		List<Codec.BoundedField> boundedFields = codec.getBoundedFields();
+		Assertions.assertNotNull(boundedFields);
+		Assertions.assertEquals(13, boundedFields.size());
+		//TODO assert bounded fields
+		List<Codec.AssignedField> assignedFields = codec.getAssignedFields();
+		Assertions.assertNotNull(assignedFields);
+		Assertions.assertEquals(1, assignedFields.size());
+		Codec.AssignedField assignedField = assignedFields.get(0);
+		Assertions.assertEquals("receptionTime", assignedField.getName());
+		Assertions.assertEquals(ZonedDateTime.class, assignedField.getType());
+		Assign assign = assignedField.getBinding();
+		Assertions.assertEquals("T(java.time.ZonedDateTime).now()", assign.value());
+		Codec.BoundedField checksumField = codec.getChecksum();
+		Assertions.assertNotNull(checksumField);
+		Assertions.assertEquals("checksum", checksumField.getName());
+		Assertions.assertEquals(null, checksumField.getCondition());
+		Annotation checksum = checksumField.getBinding();
+		Assertions.assertEquals(BindChecksum.class, checksum.annotationType());
+		BindChecksum cs = new BindChecksum(){
+			@Override
+			public Class<? extends Annotation> annotationType(){
+				return BindChecksum.class;
+			}
+
+			@Override
+			public Class<?> type(){
+				return short.class;
+			}
+
+			@Override
+			public int skipStart(){
+				return 4;
+			}
+
+			@Override
+			public int skipEnd(){
+				return 4;
+			}
+
+			@Override
+			public Class<? extends Checksummer> algorithm(){
+				return CRC16.class;
+			}
+
+			@Override
+			public ByteOrder byteOrder(){
+				return ByteOrder.BIG_ENDIAN;
+			}
+		};
+		Assertions.assertTrue(checksum.equals(cs));
+	}
+
+}

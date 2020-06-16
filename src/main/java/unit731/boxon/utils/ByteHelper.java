@@ -1,0 +1,376 @@
+package unit731.boxon.utils;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
+import java.util.BitSet;
+
+
+public class ByteHelper{
+
+	private ByteHelper(){}
+
+	public static boolean hasBit(final byte mask, final int index){
+		if(index < 0 || index >= Byte.SIZE)
+			throw new IllegalArgumentException("Index value must be between 0 and " + (Byte.SIZE - 1) + " inclusive, was " + index);
+
+		return ((mask & (1 << (index % Byte.SIZE))) != 0);
+	}
+
+	public static boolean hasBit(final short mask, final int index){
+		if(index < 0 || index >= Short.SIZE)
+			throw new IllegalArgumentException("Index value must be between 0 and " + (Short.SIZE - 1) + " inclusive, was " + index);
+
+		return ((mask & (1 << (index % Short.SIZE))) != 0);
+	}
+
+	public static boolean hasBit(final int mask, final int index){
+		if(index < 0 || index >= Integer.SIZE)
+			throw new IllegalArgumentException("Index value must be between 0 and " + (Integer.SIZE - 1) + " inclusive, was " + index);
+
+		return ((mask & (1 << (index % Integer.SIZE))) != 0);
+	}
+
+	public static boolean hasBit(final long mask, final int index){
+		if(index < 0 || index >= Long.SIZE)
+			throw new IllegalArgumentException("Index value must be between 0 and " + (Long.SIZE - 1) + " inclusive, was " + index);
+
+		return ((mask & (1l << (index % Long.SIZE))) != 0l);
+	}
+
+	public static boolean hasBit(final byte[] mask, final int index){
+		if(index < 0 || mask != null && index >= mask.length << 3)
+			throw new IllegalArgumentException("Index value must be between 0 and " + ((mask.length << 3) - 1) + " inclusive, was " + index);
+
+		return (mask != null && (mask[mask.length - 1 - index / Byte.SIZE] & (1 << (index % Byte.SIZE))) != 0x00);
+	}
+
+	public static long clearBit(final long value, final int index){
+		return (value & ~(1 << index));
+	}
+
+	/**
+	 * Returns the starting position of the first occurrence of the specified pattern array within the specified source array,
+	 * or {@code -1} if there is no such occurrence.
+	 * More formally, returns the lowest index `i` such that {@code source.subArray(i, i + pattern.size()).equals(pattern)},
+	 * or {@code -1} if there is no such index.<br>
+	 * (Returns {@code -1} if {@code pattern.size() > source.size()})
+	 * <p>
+	 * This implementation uses the "brute force" technique of scanning over the source list, looking for a match with the pattern
+	 * at each location in turn
+	 *
+	 * @param source	The list in which to search for the first occurrence of {@code pattern}.
+	 * @param pattern	The list to search for as a subList of {@code source}.
+	 * @param offset	Offset to start the search from.
+	 * @return	The starting position of the first occurrence of the specified pattern list within the specified source list,
+	 * 	or {@code -1} if there is no such occurrence.
+	 */
+	public static int indexOf(final byte[] source, final byte[] pattern, final int offset){
+		final int[] lps = indexOfComputeLPS(pattern);
+		return indexOf(source, pattern, offset, lps);
+	}
+
+	/**
+	 * Returns the starting position of the first occurrence of the specified pattern array within the specified source array,
+	 * or {@code -1} if there is no such occurrence.
+	 * More formally, returns the lowest index `i` such that {@code source.subArray(i, i + pattern.size()).equals(pattern)},
+	 * or {@code -1} if there is no such index.<br>
+	 * (Returns {@code -1} if {@code pattern.size() > source.size()})
+	 * <p>
+	 * This implementation uses the "brute force" technique of scanning over the source list, looking for a match with the pattern
+	 * at each location in turn
+	 *
+	 * @param source	The list in which to search for the first occurrence of {@code pattern}.
+	 * @param pattern	The list to search for as a subList of {@code source}.
+	 * @param offset	Offset to start the search from.
+	 * @param lps	LPS array precomputed by {@link #indexOfComputeLPS(byte[])}
+	 * @return	The starting position of the first occurrence of the specified pattern list within the specified source list,
+	 * 	or {@code -1} if there is no such occurrence.
+	 */
+	public static int indexOf(final byte[] source, final byte[] pattern, final int offset, final int[] lps){
+		//no candidate matched the pattern
+		int index = -1;
+
+		//current char in target string
+		int targetPointer = 0;
+		//current char in search string
+		int searchPointer = offset;
+		//while there is more to search with, keep searching
+		while(searchPointer < source.length){
+			if(source[searchPointer] == pattern[targetPointer]){
+				//found current char in targetPointer in search string
+				targetPointer ++;
+				if(targetPointer == pattern.length){
+					//return starting index of found target inside searched string
+					index = searchPointer - targetPointer + 1;
+					break;
+				}
+
+				//move forward if not found target string
+				searchPointer ++;
+			}
+			else if(targetPointer > 0)
+				//use failureTable to use pointer pointed at nearest location of usable string prefix
+				targetPointer = lps[targetPointer - 1];
+			else
+				//targetPointer is pointing at state 0, so restart search with current searchPointer index
+				searchPointer ++;
+		}
+		return index;
+	}
+
+	/**
+	 * Returns an array that points to last valid string prefix
+	 *
+	 * @param pattern	The list to search for as a subList of {@code source}.
+	 * @return	The array of LPS
+	 */
+	public static int[] indexOfComputeLPS(final byte[] pattern){
+		final int[] lps = new int[pattern.length];
+		lps[0] = 0;
+
+		int i = 1;
+		//length of the previous longest prefix suffix
+		int lengthPreviousLPS = 0;
+		//the loop calculates lps[i] for i = 1 to m-1
+		while(i < pattern.length){
+			if(pattern[i] == pattern[lengthPreviousLPS])
+				lps[i ++] = ++ lengthPreviousLPS;
+			//if lengthPreviousLPS isn't at the very beginning, then send lengthPreviousLPS backward by following the already set pointer to where it is pointing to
+			else if(lengthPreviousLPS > 0)
+				lengthPreviousLPS = lps[lengthPreviousLPS - 1];
+			//lengthPreviousLPS has fallen all the way back to the beginning
+			else
+				lps[i ++] = lengthPreviousLPS;
+		}
+		return lps;
+	}
+
+	/**
+	 * Concatenated two arrays
+	 *
+	 * @param array1	The first array
+	 * @param array2	The second array
+	 * @return	The concatenated array of first followed by the second array
+	 */
+	public static byte[] concatenate(final byte[] array1, final byte[] array2){
+		final int array1Length = (array1 != null? array1.length: 0);
+		final int array2Length = (array2 != null? array2.length: 0);
+		final byte[] array3 = new byte[array1Length + array2Length];
+		if(array1 != null)
+			System.arraycopy(array1, 0, array3, 0, array1Length);
+		if(array2 != null)
+			System.arraycopy(array2, 0, array3, array1Length, array2Length);
+		return array3;
+	}
+
+	/**
+	 * Converts an array of bytes into a string with a given charset
+	 *
+	 * @param chars	Array to be converted
+	 * @param charset	The charset
+	 * @return	The characters
+	 */
+	public static String byteArrayToString(final char[] chars, final Charset charset){
+		try(
+			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			final OutputStreamWriter osw = new OutputStreamWriter(baos, charset);
+		){
+			osw.write(chars);
+			osw.flush();
+			return baos.toString(charset);
+		}
+		catch(final IOException ignored){
+			return null;
+		}
+	}
+
+	/**
+	 * Converts an array of bytes into a string representing the hexadecimal values of each byte in order
+	 *
+	 * @param byteArray	Array to be converted to hexadecimal characters
+	 * @return	The hexadecimal characters
+	 */
+	public static String byteArrayToHexString(final byte[] byteArray){
+		final StringBuilder sb = new StringBuilder(byteArray.length << 1);
+		for(final byte b : byteArray){
+			sb.append(Character.forDigit((b >> 4) & 0x0F, 16));
+			sb.append(Character.forDigit((b & 0x0F), 16));
+		}
+		return sb.toString().toUpperCase();
+	}
+
+	/**
+	 * Converts a string representing the hexadecimal values of each byte to an array of bytes in order
+	 *
+	 * @param hexString	The hexadecimal string
+	 * @return	Array of converted hexadecimal characters
+	 */
+	public static byte[] hexStringToByteArray(final String hexString){
+		final int len = (hexString != null? hexString.length(): 0);
+		if(len % 2 != 0)
+			throw new IllegalArgumentException("Malformed input");
+
+		final byte[] data = new byte[len / 2];
+		for(int i = 0; i < len; i += 2)
+			data[i / 2] = (byte)((Character.digit(hexString.charAt(i), 16) << 4) + Character.digit(hexString.charAt(i + 1), 16));
+		return data;
+	}
+
+	/**
+	 * Extracts a sub-array from <code>set</code> starting at <code>startIndex</code> and with length <code>length</code>
+	 * and express it as a long
+	 *
+	 * @param set	The original bit set
+	 * @param startIndex	The index from which to start
+	 * @param length	The length of the sub-array
+	 * @return	A long representing the sub-array
+	 */
+	public static long arrayValue(final BitSet set, final int startIndex, final int length){
+		final byte[] subset = set.get(startIndex, startIndex + length)
+			.toByteArray();
+		long result = 0l;
+		int index = 0;
+		for(byte b : subset){
+			result |= b << index;
+			index += Byte.SIZE;
+		}
+		return result;
+	}
+
+	/**
+	 * Apply mask and shift right (<code>maskByte(27, 0x18) = 3</code>)
+	 *
+	 * @param value	The value to which to apply the mask and the right shift
+	 * @param mask	The mask
+	 * @return	The masked and shifter value
+	 */
+	public static byte applyMaskAndShift(byte value, byte mask){
+		final byte ctz = countTrailingZeros(mask);
+		value = (byte)((value & mask) >> ctz);
+		mask = (byte)(0xFF >>> ctz);
+		return (byte)(value & mask);
+	}
+
+	/**
+	 * Apply mask and shift right (<code>maskByte(27, 0x18) = 3</code>)
+	 *
+	 * @param value	The value to which to apply the mask and the right shift
+	 * @param mask	The mask
+	 * @return	The masked and shifter value
+	 */
+	public static short applyMaskAndShift(short value, short mask){
+		final short ctz = countTrailingZeros(mask);
+		value = (short)((value & mask) >> ctz);
+		mask = (short)(0xFFFF >>> ctz);
+		return (short)(value & mask);
+	}
+
+	/**
+	 * Apply mask and shift right (<code>maskByte(27, 0x18) = 3</code>)
+	 *
+	 * @param value	The value to which to apply the mask and the right shift
+	 * @param mask	The mask
+	 * @return	The masked and shifter value
+	 */
+	public static int applyMaskAndShift(int value, int mask){
+		final int ctz = countTrailingZeros(mask);
+		value = ((value & mask) >> ctz);
+		mask = (0xFFFF_FFFF >>> ctz);
+		return (value & mask);
+	}
+
+	/**
+	 * Compute <code>((highValue &amp; highMask) &lt;&lt; count-leading-ones(lowMask) | (lowValue &amp; lowMask) &gt;&gt;&gt; count-trailing-zeros(lowMask))</code>
+	 *
+	 * @param highValue	The high value
+	 * @param highMask	The mask to apply to the high value
+	 * @param lowValue	The low value
+	 * @param lowMask	The mask to apply to the low value
+	 * @return	The composed value of high value, masked with its mask, and shifted by the low mask length, with the masked low value
+	 */
+	public static int compose(final byte highValue, final byte highMask, final byte lowValue, final byte lowMask){
+		final byte clo = countTrailingZeros((byte)~applyMaskAndShift((byte)0xFF, lowMask));
+		return ((highValue & highMask) << clo) | applyMaskAndShift((int)lowValue & 0xFF, lowMask);
+	}
+
+	private static byte countTrailingZeros(byte x){
+		byte n = Byte.SIZE;
+		if(x != 0){
+			n = 0;
+			if((x & 0x0F) == 0){
+				n += 4;
+				x >>= 4;
+			}
+			if((x & 0x03) == 0){
+				n += 2;
+				x >>= 2;
+			}
+			if((x & 0x01) == 0)
+				n ++;
+		}
+		return n;
+	}
+
+	private static short countTrailingZeros(short x){
+		byte n = Short.SIZE;
+		if(x != 0){
+			n = 0;
+			if((x & 0x00FF) == 0){
+				n += Byte.SIZE;
+				x >>= 8;
+			}
+			if((x & 0x000F) == 0){
+				n += 4;
+				x >>= 4;
+			}
+			if((x & 0x0003) == 0){
+				n += 2;
+				x >>= 2;
+			}
+			if((x & 0x0001) == 0)
+				n ++;
+		}
+		return n;
+	}
+
+	private static int countTrailingZeros(int x){
+		byte n = Integer.SIZE;
+		if(x != 0){
+			n = 0;
+			if((x & 0x0000_FFFF) == 0){
+				n += 8;
+				x >>= 8;
+			}
+			if((x & 0x0000_00FF) == 0){
+				n += 8;
+				x >>= 8;
+			}
+			if((x & 0x0000_000F) == 0){
+				n += 4;
+				x >>= 4;
+			}
+			if((x & 0x0000_0003) == 0){
+				n += 2;
+				x >>= 2;
+			}
+			if((x & 0x0000_0001) == 0)
+				n ++;
+		}
+		return n;
+	}
+
+	/**
+	 * Convert the value to signed primitive
+	 *
+	 * @param value	Field value
+	 * @param length	Length in bits of the field
+	 * @return	The 2-complement expressed as int
+	 */
+	public static int convert2Complement(final int value, final int length){
+		final int shift = Integer.SIZE - length;
+		return (value << shift) >> shift;
+	}
+
+}
