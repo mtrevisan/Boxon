@@ -1,8 +1,7 @@
-package unit731.boxon.other.dtos;
+package unit731.boxon.other;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import unit731.boxon.other.utils.ShortPrefixNotNullToStringStyle;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;

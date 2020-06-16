@@ -1,4 +1,4 @@
-package unit731.boxon.other.utils;
+package unit731.boxon.other;
 
 import java.util.Iterator;
 import java.util.List;

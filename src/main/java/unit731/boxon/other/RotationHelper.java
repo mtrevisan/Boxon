@@ -1,4 +1,4 @@
-package unit731.boxon.other.utils;
+package unit731.boxon.other;
 
 import org.apache.commons.math3.geometry.euclidean.threed.CardanEulerSingularityException;
 import org.apache.commons.math3.geometry.euclidean.threed.NotARotationMatrixException;

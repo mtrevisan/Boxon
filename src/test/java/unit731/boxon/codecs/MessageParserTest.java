@@ -26,7 +26,7 @@ package unit731.boxon.codecs;
 
 import unit731.boxon.codecs.queclink.ACKMessage;
 import unit731.boxon.codecs.queclink.ASCII_ACKMessage;
-import unit731.boxon.dto.DeviceTypes;
+import unit731.boxon.codecs.queclink.DeviceTypes;
 import unit731.boxon.utils.ByteHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

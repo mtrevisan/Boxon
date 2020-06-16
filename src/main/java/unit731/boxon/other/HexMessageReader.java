@@ -1,4 +1,4 @@
-package unit731.boxon.other.utils;
+package unit731.boxon.other;
 
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -27,10 +27,6 @@ public class HexMessageReader{
 
 	public void skipUntilTerminator(final byte... terminators){
 		while(!ArrayUtils.contains(terminators, buffer.get())){}
-	}
-
-	public long getByteAt(final int offset){
-		return ((long)buffer.get(offset)) & 0x0000_00FF;
 	}
 
 }

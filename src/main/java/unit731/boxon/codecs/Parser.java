@@ -24,8 +24,6 @@
  */
 package unit731.boxon.codecs;
 
-import unit731.boxon.dto.ParseResponse;
-
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;

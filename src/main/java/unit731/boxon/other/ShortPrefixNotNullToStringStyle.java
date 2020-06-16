@@ -1,4 +1,4 @@
-package unit731.boxon.other.utils;
+package unit731.boxon.other;
 
 import org.apache.commons.lang3.builder.ToStringStyle;
 

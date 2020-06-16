@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package unit731.boxon.dto;
+package unit731.boxon.codecs.queclink;
 
 import unit731.boxon.utils.ByteHelper;
 import org.apache.commons.lang3.StringUtils;
