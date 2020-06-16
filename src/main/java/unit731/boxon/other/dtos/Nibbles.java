@@ -1,4 +1,4 @@
-package unit731.boxon.dto;
+package unit731.boxon.other.dtos;
 
 import unit731.boxon.utils.ByteHelper;
 
