@@ -24,8 +24,10 @@
  */
 package unit731.boxon.codecs;
 
+import org.apache.commons.lang3.StringUtils;
 import unit731.boxon.annotations.BindChecksum;
 import unit731.boxon.annotations.MessageHeader;
+import unit731.boxon.annotations.Skip;
 import unit731.boxon.annotations.checksummers.Checksummer;
 import unit731.boxon.utils.ByteHelper;
 import unit731.boxon.utils.ReflectionHelper;
@@ -62,6 +64,10 @@ class MessageParser{
 		//parse message's fields:
 		final List<Codec.BoundedField> fields = codec.getBoundedFields();
 		for(final Codec.BoundedField field : fields){
+			final Skip skip = field.getSkip();
+			if(skip != null)
+				skip(skip, data, reader);
+
 			final String condition = field.getCondition();
 			if(condition != null && !Evaluator.evaluate(condition, boolean.class, data))
 				//skip field
@@ -93,6 +99,16 @@ class MessageParser{
 		verifyChecksum(codec, data, startPosition, reader);
 
 		return data;
+	}
+
+	private static <T> void skip(final Skip skip, final T data, final BitBuffer reader){
+		final int size = (StringUtils.isNotBlank(skip.size())? Evaluator.evaluate(skip.size(), Integer.class, data): 0);
+		if(size > 0)
+			//skip `size` bytes
+			reader.skip(size);
+		else
+			//skip until terminator
+			reader.skipUntilTerminator(skip.terminator(), skip.consumeTerminator());
 	}
 
 	private static <T> void readMessageTerminator(final Codec<T> codec, final BitBuffer reader){

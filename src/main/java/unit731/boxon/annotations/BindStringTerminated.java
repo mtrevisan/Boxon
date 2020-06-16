@@ -49,7 +49,7 @@ public @interface BindStringTerminated{
 	/**
 	 * The byte that terminates the {@link String}
 	 *
-	 * @return	The number of bytes.
+	 * @return	The terminator byte.
 	 */
 	byte terminator() default '\0';
 

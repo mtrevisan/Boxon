@@ -28,6 +28,7 @@ import unit731.boxon.annotations.Assign;
 import unit731.boxon.annotations.BindChecksum;
 import unit731.boxon.annotations.BindIf;
 import unit731.boxon.annotations.MessageHeader;
+import unit731.boxon.annotations.Skip;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -61,21 +62,27 @@ class Codec<T>{
 	static class BoundedField{
 
 		private final Field field;
+		private final Skip skip;
 		private final String condition;
 		private final Annotation binding;
 
 
-		private BoundedField(final Field field, final String condition, final Annotation binding){
+		private BoundedField(final Field field, final Skip skip, final String condition, final Annotation binding){
 			Objects.requireNonNull(field);
 			Objects.requireNonNull(binding);
 
 			this.field = field;
+			this.skip = skip;
 			this.condition = condition;
 			this.binding = binding;
 		}
 
 		String getName(){
 			return field.getName();
+		}
+
+		Skip getSkip(){
+			return skip;
 		}
 
 		String getCondition(){
@@ -169,12 +176,13 @@ class Codec<T>{
 	private void loadAnnotatedFields(final Field[] fields){
 		for(final Field field : fields){
 			final BindIf condition = field.getDeclaredAnnotation(BindIf.class);
+			final Skip skip = field.getDeclaredAnnotation(Skip.class);
 			final BindChecksum checksum = field.getDeclaredAnnotation(BindChecksum.class);
 			final List<Annotation> annotations = Arrays.stream(field.getDeclaredAnnotations())
 				//filter annotations that belong to parsing procedure
 				.filter(annotation -> annotation.toString().startsWith(ANNOTATIONS_PACKAGE))
 				//filter conditions
-				.filter(annotation -> annotation.annotationType() != BindIf.class)
+				.filter(annotation -> annotation.annotationType() != BindIf.class && annotation.annotationType() != Skip.class)
 				.collect(Collectors.toList());
 			final List<Annotation> boundedAnnotations = new ArrayList<>();
 			for(final Annotation annotation : annotations){
@@ -187,9 +195,9 @@ class Codec<T>{
 			validateAnnotation(checksum, boundedAnnotations);
 
 			if(boundedAnnotations.size() == 1)
-				boundedFields.add(new BoundedField(field, (condition != null? condition.value(): null), boundedAnnotations.get(0)));
+				boundedFields.add(new BoundedField(field, skip, (condition != null? condition.value(): null), boundedAnnotations.get(0)));
 			if(checksum != null)
-				this.checksum = new BoundedField(field, null, checksum);
+				this.checksum = new BoundedField(field, null, null, checksum);
 		}
 	}
 

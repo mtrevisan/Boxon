@@ -157,6 +157,15 @@ class BitBuffer{
 		}
 	}
 
+
+	public void skip(final int length){
+		getBytes(length);
+	}
+
+	public void skipUntilTerminator(final byte terminator, final boolean consumeTerminator){
+		getTextUntilTerminator(terminator, consumeTerminator, Charset.defaultCharset());
+	}
+
 	public Object get(final Class<?> cls, final ByteOrder byteOrder){
 		if(cls == Byte.class)
 			return getByte();

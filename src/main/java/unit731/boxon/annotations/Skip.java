@@ -24,11 +24,6 @@
  */
 package unit731.boxon.annotations;
 
-import unit731.boxon.annotations.transformers.NullTransformer;
-import unit731.boxon.annotations.transformers.Transformer;
-import unit731.boxon.annotations.validators.NullValidator;
-import unit731.boxon.annotations.validators.Validator;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -37,32 +32,27 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface BindBit{
+public @interface Skip{
 
 	/**
 	 * The number of bits used to represent the numeric value.
 	 *
 	 * @return	The number of bits used to represent the numeric value (can be an expression).
 	 */
-	String size() default "1";
-
-	/** The value to match (can be a regex expression or a SpEL expression). */
-	String match() default "";
+	String size() default "0";
 
 	/**
-	 * The validator to be applied before applying the transformer, if any. Usually the fully qualified
-	 * name of an implementation class of a {@link Validator}
+	 * The byte that terminates the skip
 	 *
-	 * @return	The class of a {@link Validator}
+	 * @return	The terminator byte.
 	 */
-	Class<? extends Validator> validator() default NullValidator.class;
+	byte terminator() default '\0';
 
 	/**
-	 * The transformer to be applied before writing the parameter value. Usually the fully qualified
-	 * name of an implementation class of a {@link Transformer}
+	 * Whether to consume the terminator.
 	 *
-	 * @return	The class of a {@link Transformer}
+	 * @return	Whether to consume the terminator.
 	 */
-	Class<? extends Transformer> transformer() default NullTransformer.class;
+	boolean consumeTerminator() default true;
 
 }
