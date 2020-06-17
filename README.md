@@ -1,5 +1,5 @@
 # Boxon _[boˈzoŋ]_
-Like [Preon](https://github.com/preon/preon), but the code is understandable...
+Like [Preon](https://github.com/preon/preon), but the code is understandable, shorter, uses [SpEL expressions](https://docs.spring.io/spring/docs/4.3.10.RELEASE/spring-framework-reference/html/expressions.html), and the documentation is __really__ free...
 
 This is a declarative, bit-level, message parser. All you have to do is write a [POJO](https://en.wikipedia.org/wiki/Plain_old_Java_object) that represents your message and annotate it. That's all. Boxon will taks care of the rest for you.
 
