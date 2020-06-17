@@ -3,6 +3,9 @@ Like [Preon](https://github.com/preon/preon), but the code is understandable, sh
 
 This is a declarative, bit-level, message parser. All you have to do is write a [POJO](https://en.wikipedia.org/wiki/Plain_old_Java_object) that represents your message and annotate it. That's all. Boxon will taks care of the rest for you.
 
+If you want to use the parser straight away, just go [there](#example-simple).
+
+
 <br/>
 
 ## Table of Contents
@@ -545,7 +548,8 @@ public class IMEITransformer implements Transformer<byte[], String>{
 private short rssi;
 
 /**
- * input:   output:
+ * input:	output:
+ * -----------------------
  * 0:		< -133 dBm
  * 1:		-111 dBm
  * 2-30:	-109 - -53 dBm
