@@ -29,8 +29,8 @@ import unit731.boxon.utils.ByteHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Collections;
+import java.util.List;
 
 
 class LoaderTest{
@@ -40,7 +40,7 @@ class LoaderTest{
 		Loader loader = new Loader();
 
 		Assertions.assertFalse(loader.isInitialized());
-		Map<String, Codec<?>> codecs = new HashMap<>();
+		List<Codec<?>> codecs = Collections.emptyList();
 		loader.init(codecs);
 		Assertions.assertTrue(loader.isInitialized());
 	}

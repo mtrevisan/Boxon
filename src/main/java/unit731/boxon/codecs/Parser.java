@@ -25,6 +25,7 @@
 package unit731.boxon.codecs;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -44,9 +45,9 @@ public class Parser{
 		copyContext(context);
 	}
 
-	public Parser(final Map<String, Object> context, final Map<String, Codec<?>> codecs){
+	public Parser(final Map<String, Object> context, final List<Codec<?>> codecs){
 		Objects.requireNonNull(codecs, "Codecs cannot be null");
-		if(codecs.isEmpty())
+		if(codecs != null && codecs.isEmpty())
 			throw new IllegalArgumentException("Codecs cannot be empty");
 
 		loader.init(codecs);

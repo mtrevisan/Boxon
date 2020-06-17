@@ -3,17 +3,18 @@ Like [Preon](https://github.com/preon/preon), but the code is understandable, sh
 
 This is a declarative, bit-level, message parser. All you have to do is write a [POJO](https://en.wikipedia.org/wiki/Plain_old_Java_object) that represents your message and annotate it. That's all. Boxon will taks care of the rest for you.
 
-If you want to use the parser straight away, just go [there](#example-simple).
+If you want to use the parser straight away, just go [there](#examples).
 
 <br/>
 
 #### Notable features
-Boxon...
- - is extensible through the use of [tranformers](#how-to).
+[Boxon](https://en.wikipedia.org/wiki/Boson)...
+ - is easily extensible through the use of [tranformers](#how-to).
  - contains a minimal set of [annotations](#annotation-base) capable of handling all the primitive data.
  - contains a set of [special annotations](#annotation-special) that handles the various messages peculiarities (conditional bindings, skip bits/bytes, checksum, 'constant' assignments)
  - is capable of handle concatenation of messages, using the correct codec under the hood.
  - can handle [SpEL expressions](https://docs.spring.io/spring/docs/4.3.10.RELEASE/spring-framework-reference/html/expressions.html) on certain fields.
+ - can do decode and encode data on the fly with a single annotated class (thus avoiding separate decoder and encoder going out-of-sync).
 
 
 <br/>
@@ -40,7 +41,8 @@ Boxon...
     4. [Assign](#annotation-assign)
 3. [How to extend the functionalities](#how-to)
 4. [Digging into the code](#digging)
-5. [Simple example](#example-simple)
+5. [Examples](#examples)
+    1. [Multi-message parser](#example-multi)
 6. [Changelog](#changelog)
     1. [version 1.0.0](#changelog-1.0.0)
 
@@ -68,7 +70,7 @@ Reads an array of Objects.
 This annotation is bounded to a variable.
 
 #### example
-```
+```java
 private class Version{
     @BindByte
     public byte major;
@@ -99,7 +101,7 @@ Reads an array of primitives.
 This annotation is bounded to a variable.
 
 #### example
-```
+```java
 @BindArrayPrimitive(size = "2", type = byte[].class)
 private byte[] array;
 ```
@@ -121,7 +123,7 @@ Reads a `BitSet`.
 This annotation is bounded to a variable.
 
 #### example
-```
+```java
 @BindBit(size = "2")
 private BitSet bits;
 ```
@@ -143,7 +145,7 @@ Reads a byte (or Byte).
 This annotation is bounded to a variable.
 
 #### example
-```
+```java
 @BindByte
 public Byte mask;
 ```
@@ -166,7 +168,7 @@ Reads a short (or Short).
 This annotation is bounded to a variable.
 
 #### example
-```
+```java
 @BindShort
 private short numberShort;
 ```
@@ -189,7 +191,7 @@ Reads an int (or Integer).
 This annotation is bounded to a variable.
 
 #### example
-```
+```java
 @BindInteger
 private int numberInt;
 ```
@@ -211,7 +213,7 @@ Reads a long (or Long).
 This annotation is bounded to a variable.
 
 #### example
-```
+```java
 @BindLong
 private long numberLong;
 ```
@@ -233,7 +235,7 @@ Reads a float (or Float).
 This annotation is bounded to a variable.
 
 #### example
-```
+```java
 @BindFloat
 private float numberFloat;
 ```
@@ -255,7 +257,7 @@ Reads a double (or Double).
 This annotation is bounded to a variable.
 
 #### example
-```
+```java
 @BindDouble
 private double numberDouble;
 ```
@@ -278,7 +280,7 @@ Reads a float or decimal (or Float or Double), depending on `type`, as a BigDeci
 This annotation is bounded to a variable.
 
 #### example
-```
+```java
 @BindNumber(type = Double.class)
 private BigDecimal number;
 ```
@@ -301,7 +303,7 @@ Reads a String.
 This annotation is bounded to a variable.
 
 #### example
-```
+```java
 @BindString(size = "4")
 public String text;
 ```
@@ -325,7 +327,7 @@ Reads a String.
 This annotation is bounded to a variable.
 
 #### example
-```
+```java
 @BindStringTerminated(terminator = ',')
 public String text;
 ```
@@ -351,7 +353,7 @@ Marks a POJO as an annotated message.
 This annotation is bounded to a class.
 
 #### example
-```
+```java
 @MessageHeader(start = "+", end = "-")
 private class Message{
     ...
@@ -372,7 +374,7 @@ Compute if a variable is to be read or skipped.
 This annotation is bounded to a variable.
 
 #### example
-```
+```java
 @BindByte(transformer = Mask.MaskTransformer.class)
 public Mask mask;
 
@@ -403,7 +405,7 @@ If this should be placed at the end of the message, then a placeholder variable 
 This annotation is bounded to a variable.
 
 #### example
-```
+```java
 @Skip(size = "3")
 @BindString(size = "4")
 public String text1;
@@ -437,7 +439,7 @@ Compute the message checksum and compare it to the read variable once a message 
 This annotation is bounded to a variable.
 
 #### example
-```
+```java
 @BindChecksum(type = short.class, skipStart = 4, skipEnd = 4, algorithm = CRC16.class)
 private short checksum;
 ```
@@ -456,7 +458,7 @@ Assign a constant value to a field (not present in the message).
 This annotation is bounded to a variable.
 
 #### example
-```
+```java
 @BindString(size = "4")
 private String messageHeader;
 
@@ -481,7 +483,7 @@ Boxon can handle on its own array of primitives, bit, byte, short, int, long, fl
 You can extend the basic functionalities through the application of transformers as shown below in some examples.
 
 ### DateTime transformer (from Unix timestamp to ZonedDateTime)
-```
+```java
 @BindLong(transformer = DateTimeUnixTransformer.class)
 private ZonedDateTime eventTime;
 
@@ -499,7 +501,7 @@ public class DateTimeUnixTransformer implements Transformer<Long, ZonedDateTime>
 ```
 
 ### DateTime transformer (from YYYYMMDDHHMMSS as bytes to ZonedDateTime)
-```
+```java
 @BindArrayPrimitive(size = "7", type = byte[].class, transformer = DateTimeYYYYMMDDHHMMSSTransformer.class)
 private ZonedDateTime eventTime;
 
@@ -531,7 +533,7 @@ public class DateTimeYYYYMMDDHHMMSSTransformer implements Transformer<byte[], Zo
 ```
 
 ### IMEI transformer (from 'nibble' array to String)
-```
+```java
 @BindArrayPrimitive(size = "8", type = byte[].class, transformer = IMEITransformer.class, validator = IMEIValidator.class)
 private String imei;
 
@@ -557,7 +559,7 @@ public class IMEITransformer implements Transformer<byte[], String>{
 ```
 
 ### RSSI transformer (from encoded byte to short value)
-```
+```java
 @BindByte(transformer = RSSITransformer.class)
 private short rssi;
 
@@ -633,12 +635,15 @@ The `MessageParser` is also used to encode a message (_NOTE: this feature will b
 
 <br/>
 
-<a name="example-simple"></a>
-## Simple example
+<a name="examples"></a>
+## Examples
 
-All you have to care about, for a simple example, is the `Parser`.
-```
-//optionally create a context
+<a name="example-multi"></a>
+### Multi-message parser
+
+All you have to care about, for a simple example on multi-message automatically-loaded codecs, is the `Parser`.
+```java
+//optionally create a context ('null' otherwise)
 Map<String, Object> context = ...
 //read all the annotated classes from where the parser resides and all of its children packages
 Parser parser = new Parser(context);
@@ -660,6 +665,20 @@ else{
     ...
 }
 ```
+
+or, if you want to pass your codecs by hand:
+```java
+//optionally create a context ('null' otherwise)
+Map<String, Object> context = ...
+Codec<ACKMessage> codec = Codec.createFrom(Message.class);
+List<Codec<?>> codecs = Collections.singletonList(codec);
+Parser parser = new Parser(context, codecs);
+
+//parse the message
+byte[] payload = ...
+ParseResponse result = parser.parse(payload);
+```
+
 
 <br/>
 

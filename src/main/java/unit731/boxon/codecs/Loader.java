@@ -35,9 +35,11 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.NoSuchFileException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -84,7 +86,8 @@ public class Loader{
 				Arrays.toString(Arrays.stream(basePackageClasses).map(Class::getName)
 					.map(name -> name.substring(0, name.lastIndexOf('.'))).toArray(String[]::new)));
 
-			loadCodecs(basePackageClasses);
+			final Collection<Codec<?>> codecs = extractCodecs(basePackageClasses);
+			loadCodecs(codecs);
 
 			LOGGER.trace("Codecs loaded are {}", codecs.size());
 
@@ -95,11 +98,11 @@ public class Loader{
 	/**
 	 * This method should be called before instantiating a {@link Parser}
 	 */
-	public synchronized void init(final Map<String, Codec<?>> codecs){
+	public synchronized void init(final Collection<Codec<?>> codecs){
 		if(!initialized.get()){
 			LOGGER.info("Load parsing classes from method");
 
-			this.codecs.putAll(codecs);
+			loadCodecs(codecs);
 
 			LOGGER.trace("Codecs loaded are {}", codecs.size());
 
@@ -117,7 +120,7 @@ public class Loader{
 	 * @param basePackageClasses	A list of classes that resides in a base package(s)
 	 * @return	The classes
 	 */
-	private Set<Codec<?>> extractCodecs(final Class<?>... basePackageClasses){
+	private Collection<Codec<?>> extractCodecs(final Class<?>... basePackageClasses){
 		final Set<Codec<?>> codecs = new HashSet<>();
 
 		final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
@@ -227,20 +230,19 @@ public class Loader{
 		return codecs;
 	}
 
-	private void loadCodecs(final Class<?>... basePackageClasses){
-		final Set<Codec<?>> cods = extractCodecs(basePackageClasses);
-		for(final Codec<?> codec : cods){
+	private void loadCodecs(final Collection<Codec<?>> codecs){
+		for(final Codec<?> codec : codecs){
 			try{
 				final MessageHeader header = codec.getHeader();
 				final Charset charset = Charset.forName(header.charset());
 				for(final String headerStart : header.start()){
 					//calculate key
 					final String key = ByteHelper.byteArrayToHexString(headerStart.getBytes(charset));
-					if(codecs.containsKey(key))
+					if(this.codecs.containsKey(key))
 						throw new IllegalArgumentException("Duplicate key `" + headerStart + "` found for class "
 							+ codec.getType().getSimpleName());
 
-					codecs.put(key, codec);
+					this.codecs.put(key, codec);
 				}
 			}
 			catch(final Exception e){
