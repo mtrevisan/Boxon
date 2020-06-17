@@ -70,11 +70,10 @@ class BitWriter{
 	 * @param value	The value to write.
 	 * @return	The {@link BitWriter} to allow for the convenience of method-chaining.
 	 */
-	public BitWriter putBits(final BitSet value){
+	public BitWriter putBits(final BitSet value, final int length){
 		//if the value that we're writing is too large to be placed entirely in the cache, then we need to place as
 		//much as we can in the cache (the least significant bits), flush the cache to the backing ByteBuffer, and
 		//place the rest in the cache
-		final int length = value.length();
 		if(Long.SIZE - remainingBits < length){
 			//write an integer number of longs
 			final int size = length / Long.SIZE;
@@ -97,7 +96,7 @@ class BitWriter{
 			//write remainder bits
 			final int sizeAsBits = size * Long.SIZE;
 			if(sizeAsBits < length)
-				putBits(value.get(sizeAsBits, length));
+				putBits(value.get(sizeAsBits, length), length);
 		}
 		else{
 			cache |= ((value.toLongArray()[0] & BitBuffer.MASKS[length]) << remainingBits);

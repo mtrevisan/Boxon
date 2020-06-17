@@ -47,6 +47,15 @@ public @interface BindNumber{
 	 */
 	String size() default "1";
 
+	boolean unsigned() default false;
+
+	/**
+	 * The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
+	 *
+	 * @return	The type of endianness. Defaults to {@link ByteOrder#BIG_ENDIAN}.
+	 */
+	ByteOrder byteOrder() default ByteOrder.BIG_ENDIAN;
+
 	/**
 	 * The value to match (can be a regex expression or a SpEL expression).
 	 *

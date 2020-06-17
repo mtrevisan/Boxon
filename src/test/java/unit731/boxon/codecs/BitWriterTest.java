@@ -46,11 +46,11 @@ class BitWriterTest{
 	@Test
 	void bits(){
 		BitSet value = BitSet.valueOf(new long[]{0x1234_5678_1234_5678l, 0x6666_7777_8888_9999l});
-		writer.putBits(value);
+		writer.putBits(value, Long.SIZE << 1);
 		BitBuffer reader = BitBuffer.wrap(writer);
 
 		Assertions.assertEquals("78563412785634129999888877776666", reader.toString());
-		Assertions.assertEquals(value, reader.getBits(value.length()));
+		Assertions.assertEquals(value, reader.getBits(Long.SIZE << 1));
 	}
 
 	@Test

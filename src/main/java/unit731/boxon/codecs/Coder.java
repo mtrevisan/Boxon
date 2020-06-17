@@ -257,8 +257,11 @@ enum Coder{
 			final BindBit binding = (BindBit)annotation;
 
 			final int size = Evaluator.evaluate(binding.size(), Integer.class, data);
+			final ByteOrder byteOrder = binding.byteOrder();
 
 			final BitSet bits = reader.getBits(size);
+			if(byteOrder == ByteOrder.BIG_ENDIAN)
+				reverseBits(bits, size);
 
 			final Object value = transformerDecode(binding.transformer(), bits);
 
@@ -273,13 +276,16 @@ enum Coder{
 			final BindBit binding = (BindBit)annotation;
 
 			final int size = Evaluator.evaluate(binding.size(), Integer.class, data);
+			final ByteOrder byteOrder = binding.byteOrder();
 
 			matchData(binding.match(), value);
 			validateData(binding.validator(), value);
 
 			final BitSet bits = transformerEncode(binding.transformer(), value);
+			if(byteOrder == ByteOrder.BIG_ENDIAN)
+				reverseBits(bits, size);
 
-			writer.putBits(bits.get(0, size));
+			writer.putBits(bits, size);
 		}
 
 		@Override
@@ -462,10 +468,18 @@ enum Coder{
 			final BindNumber binding = (BindNumber)annotation;
 
 			final int size = Evaluator.evaluate(binding.size(), Integer.class, data);
+			final ByteOrder byteOrder = binding.byteOrder();
 
 			final BitSet bits = reader.getBits(size);
-			if(size <= Long.SIZE){
-				final long v = bits.toLongArray()[0];
+			if(byteOrder == ByteOrder.BIG_ENDIAN)
+				reverseBits(bits, size);
+			if(size < Long.SIZE){
+				long v = bits.toLongArray()[0];
+				if(!binding.unsigned()){
+					//sign extension
+					final long mask = 1l << (size - 1);
+					v = (v ^ mask) - mask;
+				}
 
 				final Object value = transformerDecode(binding.transformer(), v);
 
@@ -491,22 +505,26 @@ enum Coder{
 			final BindNumber binding = (BindNumber)annotation;
 
 			final int size = Evaluator.evaluate(binding.size(), Integer.class, data);
+			final ByteOrder byteOrder = binding.byteOrder();
 
 			matchData(binding.match(), value);
 			validateData(binding.validator(), value);
 
 			final BitSet bits;
-			if(size <= Long.SIZE){
+			if(size < Long.SIZE){
 				final long v = transformerEncode(binding.transformer(), value);
 
-				bits = BitSet.valueOf(new long[]{v});
+				final long mask = ((1l << size) - 1);
+				bits = BitSet.valueOf(new long[]{v & mask});
 			}
 			else{
 				final BigInteger v = transformerEncode(binding.transformer(), value);
 
 				bits = BitSet.valueOf(v.toByteArray());
 			}
-			writer.putBits(bits.get(0, size));
+			if(byteOrder == ByteOrder.BIG_ENDIAN)
+				reverseBits(bits, size);
+			writer.putBits(bits, size);
 		}
 
 		@Override
@@ -716,6 +734,14 @@ enum Coder{
 			}
 		}
 		return p;
+	}
+
+	private static void reverseBits(final BitSet input, final int size){
+		for(int i = 0; i < size / 2; i ++){
+			final boolean t = input.get(i);
+			input.set(i, input.get(size - i - 1));
+			input.set(size - i - 1, t);
+		}
 	}
 
 	private static boolean isNotBlank(final String text){

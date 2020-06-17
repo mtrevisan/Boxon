@@ -28,6 +28,7 @@ import unit731.boxon.annotations.transformers.NullTransformer;
 import unit731.boxon.annotations.transformers.Transformer;
 import unit731.boxon.annotations.validators.NullValidator;
 import unit731.boxon.annotations.validators.Validator;
+import unit731.boxon.codecs.ByteOrder;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -45,6 +46,13 @@ public @interface BindBit{
 	 * @return	The number of bits used to represent the numeric value (can be an expression).
 	 */
 	String size() default "1";
+
+	/**
+	 * The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
+	 *
+	 * @return	The type of endianness. Defaults to {@link ByteOrder#BIG_ENDIAN}.
+	 */
+	ByteOrder byteOrder() default ByteOrder.BIG_ENDIAN;
 
 	/**
 	 * The value to match (can be a regex expression or a SpEL expression).

@@ -34,4 +34,9 @@ public class Version{
 	public byte minor;
 	public byte build;
 
+	public Version(byte major, byte minor, byte build){
+		this.major = major;
+		this.minor = minor;
+		this.build = build;
+	}
 }
