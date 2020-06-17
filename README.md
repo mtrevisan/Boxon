@@ -81,7 +81,7 @@ This annotation is bounded to a variable.
 
 #### example
 ```java
-private class Version{
+class Version{
     @BindByte
     public byte major;
     @BindByte
