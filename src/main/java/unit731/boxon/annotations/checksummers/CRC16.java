@@ -42,9 +42,8 @@ public class CRC16 implements Checksummer<Short>{
 				final boolean bit = (((data[i] >> (7 - j)) & 1) != 0);
 				final boolean c15 = ((value & 0x8000) != 0);
 				value <<= 1;
-				if(c15 ^ bit){
+				if(c15 ^ bit)
 					value ^= POLYNOMIAL_CCITT;
-				}
 			}
 		return value;
 	}

@@ -62,17 +62,17 @@ class Codec<T>{
 	static class BoundedField{
 
 		private final Field field;
-		private final Skip skip;
+		private final Skip[] skips;
 		private final String condition;
 		private final Annotation binding;
 
 
-		private BoundedField(final Field field, final Skip skip, final String condition, final Annotation binding){
+		private BoundedField(final Field field, final Skip[] skips, final String condition, final Annotation binding){
 			Objects.requireNonNull(field);
 			Objects.requireNonNull(binding);
 
 			this.field = field;
-			this.skip = skip;
+			this.skips = skips;
 			this.condition = condition;
 			this.binding = binding;
 		}
@@ -81,8 +81,8 @@ class Codec<T>{
 			return field.getName();
 		}
 
-		Skip getSkip(){
-			return skip;
+		Skip[] getSkips(){
+			return skips;
 		}
 
 		String getCondition(){
@@ -176,7 +176,7 @@ class Codec<T>{
 	private void loadAnnotatedFields(final Field[] fields){
 		for(final Field field : fields){
 			final BindIf condition = field.getDeclaredAnnotation(BindIf.class);
-			final Skip skip = field.getDeclaredAnnotation(Skip.class);
+			final Skip[] skips = field.getDeclaredAnnotationsByType(Skip.class);
 			final BindChecksum checksum = field.getDeclaredAnnotation(BindChecksum.class);
 			final List<Annotation> annotations = Arrays.stream(field.getDeclaredAnnotations())
 				//filter annotations that belong to parsing procedure
@@ -195,7 +195,7 @@ class Codec<T>{
 			validateAnnotation(checksum, boundedAnnotations);
 
 			if(boundedAnnotations.size() == 1)
-				boundedFields.add(new BoundedField(field, skip, (condition != null? condition.value(): null), boundedAnnotations.get(0)));
+				boundedFields.add(new BoundedField(field, skips, (condition != null? condition.value(): null), boundedAnnotations.get(0)));
 			if(checksum != null)
 				this.checksum = new BoundedField(field, null, null, checksum);
 		}

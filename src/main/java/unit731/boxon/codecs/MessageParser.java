@@ -64,9 +64,7 @@ class MessageParser{
 		//parse message's fields:
 		final List<Codec.BoundedField> fields = codec.getBoundedFields();
 		for(final Codec.BoundedField field : fields){
-			final Skip skip = field.getSkip();
-			if(skip != null)
-				skip(skip, data, reader);
+			skipFields(field.getSkips(), reader, data);
 
 			final String condition = field.getCondition();
 			if(condition != null && !Evaluator.evaluate(condition, boolean.class, data))
@@ -101,7 +99,13 @@ class MessageParser{
 		return data;
 	}
 
-	private static <T> void skip(final Skip skip, final T data, final BitBuffer reader){
+	private static <T> void skipFields(final Skip[] skips, final BitBuffer reader, final T data){
+		if(skips != null)
+			for(final Skip skip : skips)
+				skip(skip, reader, data);
+	}
+
+	private static <T> void skip(final Skip skip, final BitBuffer reader, final T data){
 		final int size = (StringUtils.isNotBlank(skip.size())? Evaluator.evaluate(skip.size(), Integer.class, data): 0);
 		if(size > 0)
 			//skip `size` bytes
@@ -156,6 +160,8 @@ class MessageParser{
 		//encode message's fields:
 		final List<Codec.BoundedField> fields = codec.getBoundedFields();
 		for(final Codec.BoundedField field : fields){
+			addSkippedFields(field.getSkips(), writer, data);
+
 			final String condition = field.getCondition();
 			if(condition != null && !Evaluator.evaluate(condition, boolean.class, data))
 				//skip field
@@ -184,6 +190,22 @@ class MessageParser{
 			writer.putBytes(messageTerminator);
 		}
 		writer.flush();
+	}
+
+	private static <T> void addSkippedFields(final Skip[] skips, final BitWriter writer, final T data){
+		if(skips != null)
+			for(final Skip skip : skips)
+				addSkip(skip, writer, data);
+	}
+
+	private static <T> void addSkip(final Skip skip, final BitWriter writer, final T data){
+		final int size = (StringUtils.isNotBlank(skip.size())? Evaluator.evaluate(skip.size(), Integer.class, data): 0);
+		if(size > 0)
+			//skip `size` bytes
+			writer.putBytes(new byte[size]);
+		else if(skip.consumeTerminator())
+			//skip until terminator
+			writer.putByte(skip.terminator());
 	}
 
 }
