@@ -47,6 +47,7 @@ import org.springframework.expression.spel.SpelParseException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.nio.charset.Charset;
 import java.util.BitSet;
 import java.util.HashMap;
@@ -462,15 +463,27 @@ enum Coder{
 
 			final int size = Evaluator.evaluate(binding.size(), Integer.class, data);
 
-			//TODO
-			final long v = reader.getLong(byteOrder);
+			final BitSet bits = reader.getBits(size);
+			if(size <= Long.SIZE){
+				final long v = bits.toLongArray()[0];
 
-			final Object value = transformerDecode(binding.transformer(), v);
+				final Object value = transformerDecode(binding.transformer(), v);
 
-			matchData(binding.match(), value);
-			validateData(binding.validator(), value);
+				matchData(binding.match(), value);
+				validateData(binding.validator(), value);
 
-			return value;
+				return value;
+			}
+			else{
+				final BigInteger v = new BigInteger(bits.toByteArray());
+
+				final Object value = transformerDecode(binding.transformer(), v);
+
+				matchData(binding.match(), value);
+				validateData(binding.validator(), value);
+
+				return value;
+			}
 		}
 
 		@Override
@@ -482,10 +495,18 @@ enum Coder{
 			matchData(binding.match(), value);
 			validateData(binding.validator(), value);
 
-			//TODO
-			final long v = transformerEncode(binding.transformer(), value);
+			final BitSet bits;
+			if(size <= Long.SIZE){
+				final long v = transformerEncode(binding.transformer(), value);
 
-			writer.putLong(v, byteOrder);
+				bits = BitSet.valueOf(new long[]{v});
+			}
+			else{
+				final BigInteger v = transformerEncode(binding.transformer(), value);
+
+				bits = BitSet.valueOf(v.toByteArray());
+			}
+			writer.putBits(bits.get(0, size));
 		}
 
 		@Override

@@ -247,7 +247,7 @@ private long numberLong;
  - `transformer`: the transformer used to convert the read value into the value that is assigned to the annotated variable. 
 
 #### description
-Reads an integer number (primitive or not) given the amount of bits.
+Reads a long number (primitive or not) or a BigInteger given the amount of bits.
 
 #### annotation type
 This annotation is bounded to a variable.
@@ -256,6 +256,9 @@ This annotation is bounded to a variable.
 ```java
 @BindNumber(size = "3")
 private int number;
+
+@BindNumber(size = "Long.SIZE+10")
+private BigInteger number;
 ```
 
 

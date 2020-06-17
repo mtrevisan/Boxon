@@ -36,6 +36,7 @@ import unit731.boxon.annotations.BindIf;
 import unit731.boxon.annotations.BindInteger;
 import unit731.boxon.annotations.BindLong;
 import unit731.boxon.annotations.BindDecimal;
+import unit731.boxon.annotations.BindNumber;
 import unit731.boxon.annotations.BindShort;
 import unit731.boxon.annotations.BindString;
 import unit731.boxon.annotations.BindStringTerminated;
@@ -49,6 +50,7 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.Annotation;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.ZonedDateTime;
 import java.util.BitSet;
 import java.util.HashMap;
@@ -57,7 +59,6 @@ import java.util.Map;
 
 
 class CodecTest{
-
 
 	private class Mask{
 
@@ -138,6 +139,10 @@ class CodecTest{
 		private int numberInt;
 		@BindLong
 		private long numberLong;
+		@BindNumber(size = "5")
+		private long numberLong2;
+		@BindNumber(size = "70")
+		private BigInteger numberLong3;
 		@BindDecimal(type = Double.class)
 		private BigDecimal number;
 		@BindShort
@@ -169,7 +174,7 @@ class CodecTest{
 		Assertions.assertTrue(codec.canBeDecoded());
 		List<Codec.BoundedField> boundedFields = codec.getBoundedFields();
 		Assertions.assertNotNull(boundedFields);
-		Assertions.assertEquals(13, boundedFields.size());
+		Assertions.assertEquals(15, boundedFields.size());
 		//TODO assert bounded fields
 		List<Codec.AssignedField> assignedFields = codec.getAssignedFields();
 		Assertions.assertNotNull(assignedFields);
