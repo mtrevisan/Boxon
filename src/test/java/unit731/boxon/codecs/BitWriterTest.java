@@ -54,28 +54,6 @@ class BitWriterTest{
 	}
 
 	@Test
-	void booleanPrimitiveFromBit(){
-		writer.putBooleanFromBit(true);
-		writer.putBooleanFromBit(false);
-		BitBuffer reader = BitBuffer.wrap(writer);
-
-		Assertions.assertEquals("01", reader.toString());
-		Assertions.assertTrue(reader.getBooleanFromBit());
-		Assertions.assertFalse(reader.getBooleanFromBit());
-	}
-
-	@Test
-	void booleanPrimitiveFromByte(){
-		writer.putBooleanFromByte(true);
-		writer.putBooleanFromByte(false);
-		BitBuffer reader = BitBuffer.wrap(writer);
-
-		Assertions.assertEquals("0100", reader.toString());
-		Assertions.assertTrue(reader.getBooleanFromByte());
-		Assertions.assertFalse(reader.getBooleanFromByte());
-	}
-
-	@Test
 	void bytePrimitive(){
 		byte value = (byte)0x16;
 		writer.putByte(value);

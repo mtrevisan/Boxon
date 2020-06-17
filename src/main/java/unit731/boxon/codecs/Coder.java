@@ -33,6 +33,7 @@ import unit731.boxon.annotations.BindDouble;
 import unit731.boxon.annotations.BindFloat;
 import unit731.boxon.annotations.BindInteger;
 import unit731.boxon.annotations.BindLong;
+import unit731.boxon.annotations.BindDecimal;
 import unit731.boxon.annotations.BindNumber;
 import unit731.boxon.annotations.BindShort;
 import unit731.boxon.annotations.BindString;
@@ -454,6 +455,45 @@ enum Coder{
 		}
 	},
 
+	NUMBER {
+		@Override
+		Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
+			final BindNumber binding = (BindNumber)annotation;
+
+			final int size = Evaluator.evaluate(binding.size(), Integer.class, data);
+
+			//TODO
+			final long v = reader.getLong(byteOrder);
+
+			final Object value = transformerDecode(binding.transformer(), v);
+
+			matchData(binding.match(), value);
+			validateData(binding.validator(), value);
+
+			return value;
+		}
+
+		@Override
+		void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
+			final BindNumber binding = (BindNumber)annotation;
+
+			final int size = Evaluator.evaluate(binding.size(), Integer.class, data);
+
+			matchData(binding.match(), value);
+			validateData(binding.validator(), value);
+
+			//TODO
+			final long v = transformerEncode(binding.transformer(), value);
+
+			writer.putLong(v, byteOrder);
+		}
+
+		@Override
+		Class<?> coderType(){
+			return BindNumber.class;
+		}
+	},
+
 	FLOAT {
 		@Override
 		Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
@@ -528,10 +568,10 @@ enum Coder{
 		}
 	},
 
-	NUMBER {
+	DECIMAL{
 		@Override
 		Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
-			final BindNumber binding = (BindNumber)annotation;
+			final BindDecimal binding = (BindDecimal)annotation;
 
 			final Class<?> type = binding.type();
 			if(type != Float.class && type != Double.class)
@@ -551,7 +591,7 @@ enum Coder{
 
 		@Override
 		void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
-			final BindNumber binding = (BindNumber)annotation;
+			final BindDecimal binding = (BindDecimal)annotation;
 
 			final Class<?> type = binding.type();
 			if(type != Float.class && type != Double.class)
@@ -569,7 +609,7 @@ enum Coder{
 
 		@Override
 		Class<?> coderType(){
-			return BindDouble.class;
+			return BindDecimal.class;
 		}
 	},
 

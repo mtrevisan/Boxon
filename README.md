@@ -19,6 +19,13 @@ Boxon...
  - supports [SLF4J](http://www.slf4j.org/).
  - hides the complexities of encoding and decoding, thus simplifying the changes to be made to the code due to frequent protocol changes.
 
+### Differences from...
+#### Preon
+Boxon differs from Preon in...
+ - does not have a generic `Bound` annotation, as it does not have the need to read the native byte order of a particular machine in which the code is running: this is because the bytes of the message have little chance to be generated from the very same machine that will parse its messages, what if a message consider 24 bit as an Integer? If the code should be portable and installed and run everywhere it should not rely on the native properties of any machine.
+   Moreover, `@Bound boolean visible;` is 1 bit- or 1 byte-length?
+ - does not have `BoundList`: since the message is a finite sequence of bytes, then any array is of finite length, and thus the standard java array (`[]`) is sufficient. If someone wants a `List` (s)he could use a Transformer.
+
 <br/>
 ---
 
@@ -38,9 +45,10 @@ Boxon...
     5. [BindShort](#annotation-bindshort)
     6. [BindInteger](#annotation-bindinteger)
     7. [BindLong](#annotation-bindlong)
+    7. [BindNumber](#annotation-bindnumber)
     8. [BindFloat](#annotation-bindfloat)
     9. [BindDouble](#annotation-binddouble)
-    10. [BindNumber](#annotation-bindnumber)
+    10. [BindDecimal](#annotation-binddecimal)
     11. [BindString](#annotation-bindstring)
     12. [BindStringTerminated](#annotation-bindstringterminated)
 2. [Special annotations](#annotation-special)
@@ -229,6 +237,28 @@ private long numberLong;
 ```
 
 
+<a name="annotation-bindnumber"></a>
+### BindNumber
+
+#### parameters
+ - `size`: the number of bits to read (can be a SpEL expression).
+ - `match`: a string/regex/SpEl expression that is used as an expected value.
+ - `validator`: the Class of a validator (applied BEFORE the transformer).
+ - `transformer`: the transformer used to convert the read value into the value that is assigned to the annotated variable. 
+
+#### description
+Reads an integer number (primitive or not) given the amount of bits.
+
+#### annotation type
+This annotation is bounded to a variable.
+
+#### example
+```java
+@BindNumber(size = "3")
+private int number;
+```
+
+
 <a name="annotation-bindfloat"></a>
 ### BindFloat
 
@@ -247,7 +277,7 @@ This annotation is bounded to a variable.
 #### example
 ```java
 @BindFloat
-private float numberFloat;
+private float number;
 ```
 
 
@@ -269,12 +299,12 @@ This annotation is bounded to a variable.
 #### example
 ```java
 @BindDouble
-private double numberDouble;
+private double number;
 ```
 
 
-<a name="annotation-bindnumber"></a>
-### BindNumber
+<a name="annotation-binddecimal"></a>
+### BindDecimal
 
 #### parameters
  - `type`: the Class of variable the be read (SHOULD BE `Float.class`, or `Double.class`).
@@ -291,7 +321,7 @@ This annotation is bounded to a variable.
 
 #### example
 ```java
-@BindNumber(type = Double.class)
+@BindDecimal(type = Double.class)
 private BigDecimal number;
 ```
 

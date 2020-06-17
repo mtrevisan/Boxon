@@ -138,28 +138,6 @@ class BitWriter{
 	}
 
 	/**
-	 * Writes either {@link Byte#BYTES} or {@link Byte#SIZE} bits to this {@link BitWriter}, depending on the value of
-	 * {@code compressed}.
-	 *
-	 * @param value	The {@code boolean} to write.
-	 * @return	The {@link BitWriter} to allow for the convenience of method-chaining.
-	 */
-	public BitWriter putBooleanFromBit(final boolean value){
-		return putValue((value? 1: 0), 1);
-	}
-
-	/**
-	 * Writes either {@link Byte#BYTES} or {@link Byte#SIZE} bits to this {@link BitWriter}, depending on the value of
-	 * {@code compressed}.
-	 *
-	 * @param value	The {@code boolean} to write.
-	 * @return	The {@link BitWriter} to allow for the convenience of method-chaining.
-	 */
-	public BitWriter putBooleanFromByte(final boolean value){
-		return putByte((byte)(value? 1: 0));
-	}
-
-	/**
 	 * Writes a value to this {@link BitWriter} using {@link Byte#SIZE} bits.
 	 *
 	 * @param value	The {@code byte} to write.

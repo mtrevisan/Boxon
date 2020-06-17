@@ -35,7 +35,7 @@ import unit731.boxon.annotations.BindFloat;
 import unit731.boxon.annotations.BindIf;
 import unit731.boxon.annotations.BindInteger;
 import unit731.boxon.annotations.BindLong;
-import unit731.boxon.annotations.BindNumber;
+import unit731.boxon.annotations.BindDecimal;
 import unit731.boxon.annotations.BindShort;
 import unit731.boxon.annotations.BindString;
 import unit731.boxon.annotations.BindStringTerminated;
@@ -138,7 +138,7 @@ class CodecTest{
 		private int numberInt;
 		@BindLong
 		private long numberLong;
-		@BindNumber(type = Double.class)
+		@BindDecimal(type = Double.class)
 		private BigDecimal number;
 		@BindShort
 		private short numberShort;

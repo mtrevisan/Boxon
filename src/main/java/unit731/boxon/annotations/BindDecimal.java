@@ -38,14 +38,22 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface BindNumber{
+public @interface BindDecimal{
 
 	/**
-	 * The number of bytes used to represent the numeric value.
+	 * The type of object to be inserted into a {@link java.math.BigDecimal}.
+	 * Note that this can be either a {@link Float} or a {@link Double} class.
 	 *
-	 * @return	The number of bytes used to represent the numeric value (can be an expression).
+	 * @return	The type of object to be inserted in the array.
 	 */
-	String size() default "1";
+	Class<?> type();
+
+	/**
+	 * The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
+	 *
+	 * @return	The type of endianness. Defaults to {@link ByteOrder#BIG_ENDIAN}.
+	 */
+	ByteOrder byteOrder() default ByteOrder.BIG_ENDIAN;
 
 	/**
 	 * The value to match (can be a regex expression or a SpEL expression).

@@ -276,24 +276,6 @@ class BitBuffer{
 	}
 
 	/**
-	 * Reads {@link Byte#BYTES} bits from this {@link BitBuffer} and composes a {@code boolean}.
-	 *
-	 * @return	Whether the value read is equal to {@code 1}.
-	 */
-	public boolean getBooleanFromBit(){
-		return (getValue(1) != 0l);
-	}
-
-	/**
-	 * Reads {@link Byte#SIZE} bits from this {@link BitBuffer} and composes a {@code boolean}.
-	 *
-	 * @return	Whether the value read is equal to {@code 1}.
-	 */
-	public boolean getBooleanFromByte(){
-		return (getByte() != 0);
-	}
-
-	/**
 	 * Reads {@link Byte#SIZE} bits from this {@link BitBuffer} and composes a {@code byte}.
 	 *
 	 * @return	A {@code byte}.
