@@ -172,45 +172,6 @@ public class ByteHelper{
 	}
 
 	/**
-	 * Concatenated two arrays
-	 *
-	 * @param array1	The first array
-	 * @param array2	The second array
-	 * @return	The concatenated array of first followed by the second array
-	 */
-	public static byte[] concatenate(final byte[] array1, final byte[] array2){
-		final int array1Length = (array1 != null? array1.length: 0);
-		final int array2Length = (array2 != null? array2.length: 0);
-		final byte[] array3 = new byte[array1Length + array2Length];
-		if(array1 != null)
-			System.arraycopy(array1, 0, array3, 0, array1Length);
-		if(array2 != null)
-			System.arraycopy(array2, 0, array3, array1Length, array2Length);
-		return array3;
-	}
-
-	/**
-	 * Converts an array of bytes into a string with a given charset
-	 *
-	 * @param chars	Array to be converted
-	 * @param charset	The charset
-	 * @return	The characters
-	 */
-	public static String byteArrayToString(final char[] chars, final Charset charset){
-		try(
-			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			final OutputStreamWriter osw = new OutputStreamWriter(baos, charset);
-		){
-			osw.write(chars);
-			osw.flush();
-			return baos.toString(charset);
-		}
-		catch(final IOException ignored){
-			return null;
-		}
-	}
-
-	/**
 	 * Converts an array of bytes into a string representing the hexadecimal values of each byte in order
 	 *
 	 * @param byteArray	Array to be converted to hexadecimal characters

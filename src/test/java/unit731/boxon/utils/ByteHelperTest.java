@@ -113,16 +113,6 @@ class ByteHelperTest{
 	}
 
 	@Test
-	void concatenate(){
-		byte[] array1 = new byte[]{0x01, 0x02};
-		byte[] array2 = new byte[]{0x03, 0x04};
-
-		byte[] array3 = ByteHelper.concatenate(array1, array2);
-
-		Assertions.assertArrayEquals(new byte[]{0x01, 0x02, 0x03, 0x04}, array3);
-	}
-
-	@Test
 	void byteArrayToHexString(){
 		byte[] array = new byte[]{0x23, 0x5e, 0x40, 0x03, 0x51, 0x10, 0x42, 0x06};
 
