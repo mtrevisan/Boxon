@@ -463,7 +463,7 @@ Boxon can handle on its own array of primitives, bit, byte, short, int, long, fl
 
 You can extend the basic functionalities through the application of transformers as shown below in some examples.
 
-## DateTime transformer (from Unix timestamp to ZonedDateTime)
+### DateTime transformer (from Unix timestamp to ZonedDateTime)
 ```
 @BindLong(transformer = DateTimeUnixTransformer.class)
 private ZonedDateTime eventTime;
@@ -481,7 +481,7 @@ public class DateTimeUnixTransformer implements Transformer<Long, ZonedDateTime>
 }
 ```
 
-## DateTime transformer (from YYYYMMDDHHMMSS as bytes to ZonedDateTime)
+### DateTime transformer (from YYYYMMDDHHMMSS as bytes to ZonedDateTime)
 ```
 @BindArrayPrimitive(size = "7", type = byte[].class, transformer = DateTimeYYYYMMDDHHMMSSTransformer.class)
 private ZonedDateTime eventTime;
@@ -513,7 +513,7 @@ public class DateTimeYYYYMMDDHHMMSSTransformer implements Transformer<byte[], Zo
 }
 ```
 
-## IMEI transformer (from 'nibble' array to String)
+### IMEI transformer (from 'nibble' array to String)
 ```
 @BindArrayPrimitive(size = "8", type = byte[].class, transformer = IMEITransformer.class, validator = IMEIValidator.class)
 private String imei;
@@ -539,7 +539,7 @@ public class IMEITransformer implements Transformer<byte[], String>{
 }
 ```
 
-## RSSI transformer (from encoded byte to short value)
+### RSSI transformer (from encoded byte to short value)
 ```
 @BindByte(transformer = RSSITransformer.class)
 private short rssi;
