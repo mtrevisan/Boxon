@@ -4,6 +4,33 @@ Like [Preon](https://github.com/preon/preon), but the code is understandable...
 This is a declarative, bit-level, message parser. All you have to do is write a [POJO](https://en.wikipedia.org/wiki/Plain_old_Java_object) that represents your message and annotate it. That's all. Boxon will taks care of the rest for you.
 
 
+## Table of Contents
+1. [Base annotations](#annotation-base)
+    1. [BindArray](#annotation-bindarray)
+    2. [BindArrayPrimitive](#annotation-bindarrayprimitive)
+    3. [BindBit](#annotation-bindbit)
+    4. [BindByte](#annotation-bindbyte)
+    5. [BindShort](#annotation-bindshort)
+    6. [BindInteger](#annotation-bindinteger)
+    7. [BindLong](#annotation-bindlong)
+    8. [BindFloat](#annotation-bindfloat)
+    9. [BindDouble](#annotation-binddouble)
+    10. [BindNumber](#annotation-bindnumber)
+    11. [BindString](#annotation-bindstring)
+    12. [BindStringTerminated](#annotation-bindstringterminated)
+2. [Special annotations](#annotation-special)
+    1. [MessageHeader](#annotation-messageheader)
+    2. [BindIf](#annotation-bindif)
+    3. [Skip](#annotation-skip)
+    4. [Checksum](#annotation-checksum)
+    4. [Assign](#annotation-assign)
+3. [How to extend the functionalities](#how-to)
+7. [Changelog](#changelog)
+    6. [version 1.0.0](#changelog-1.0.0)
+
+<br/>
+
+<a name="annotation-base"></a>
 ## Base annotations
 Here are described the build-in base annotations.
 
@@ -287,7 +314,9 @@ This annotation is bounded to a variable.
 public String text;
 ```
 
+<br/>
 
+<a name="annotation-special"></a>
 ## Special annotations
 Here are described the build-in special annotations.
 
@@ -422,8 +451,19 @@ private boolean buffered;
 private String deviceTypeName;
 ```
 
+<br/>
 
+<a name="how-to"></a>
 ## How to extend the functionalities
 Boxon can handle on its own array of primitives, bit, byte, short, int, long, float, double, and their object counterpart, as long as BigDecimal, string (with a given size, or a terminator), and the special "[checksum](#annotation-checksum)".
 
 You can extend the basic functionalities through the application of transformers.
+
+<br/>
+
+<a name="changelog"></a>
+## Changelog
+
+<a name="changelog-1.0.0"></a>
+### version 1.0.0 - 20200617
+- first release
