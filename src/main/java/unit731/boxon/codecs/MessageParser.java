@@ -157,7 +157,7 @@ class MessageParser{
 		catch(final NoSuchFieldException ignored){}
 	}
 
-	static <T> void encode(final Codec<?> codec, final T data, final BitWriter writer){
+	public static <T> void encode(final Codec<?> codec, final T data, final BitWriter writer){
 		//encode message's fields:
 		final List<Codec.BoundedField> fields = codec.getBoundedFields();
 		for(final Codec.BoundedField field : fields){

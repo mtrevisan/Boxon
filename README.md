@@ -26,7 +26,9 @@ This is a declarative, bit-level, message parser. All you have to do is write a 
     4. [Checksum](#annotation-checksum)
     4. [Assign](#annotation-assign)
 3. [How to extend the functionalities](#how-to)
-4. [Changelog](#changelog)
+4. [Digging into the code](#digging)
+5. [Simple example](#example-simple)
+6. [Changelog](#changelog)
     1. [version 1.0.0](#changelog-1.0.0)
 
 <br/>
@@ -452,13 +454,194 @@ private boolean buffered;
 private String deviceTypeName;
 ```
 
+
 <br/>
 
 <a name="how-to"></a>
 ## How to extend the functionalities
 Boxon can handle on its own array of primitives, bit, byte, short, int, long, float, double, and their object counterpart, as long as BigDecimal, string (with a given size, or a terminator), and the special "[checksum](#annotation-checksum)".
 
-You can extend the basic functionalities through the application of transformers.
+You can extend the basic functionalities through the application of transformers as shown below in some examples.
+
+## DateTime transformer (from Unix timestamp to ZonedDateTime)
+```
+@BindLong(transformer = DateTimeUnixTransformer.class)
+private ZonedDateTime eventTime;
+
+public class DateTimeUnixTransformer implements Transformer<Long, ZonedDateTime>{
+    @Override
+    public ZonedDateTime decode(final Long unixTimestamp){
+        return DateTimeUtils.createFrom(unixTimestamp);
+    }
+
+    @Override
+    public Long encode(final ZonedDateTime value){
+        return value.toEpochSecond();
+    }
+}
+```
+
+## DateTime transformer (from YYYYMMDDHHMMSS as bytes to ZonedDateTime)
+```
+@BindArrayPrimitive(size = "7", type = byte[].class, transformer = DateTimeYYYYMMDDHHMMSSTransformer.class)
+private ZonedDateTime eventTime;
+
+public class DateTimeYYYYMMDDHHMMSSTransformer implements Transformer<byte[], ZonedDateTime>{
+    @Override
+    public ZonedDateTime decode(final byte[] value){
+        final ByteBuffer bb = ByteBuffer.wrap(value);
+        final int year = bb.getShort();
+        final int month = bb.get();
+        final int dayOfMonth = bb.get();
+        final int hour = bb.get();
+        final int minute = bb.get();
+        final int second = bb.get();
+        return DateTimeUtils.createFrom(year, month, dayOfMonth, hour, minute, second);
+    }
+
+    @Override
+    public byte[] encode(final ZonedDateTime value){
+        return ByteBuffer.allocate(7)
+            .putShort((short)value.getYear())
+            .put((byte)value.getMonthValue())
+            .put((byte)value.getDayOfMonth())
+            .put((byte)value.getHour())
+            .put((byte)value.getMinute())
+            .put((byte)value.getSecond())
+            .array();
+    }
+}
+```
+
+## IMEI transformer (from 'nibble' array to String)
+```
+@BindArrayPrimitive(size = "8", type = byte[].class, transformer = IMEITransformer.class, validator = IMEIValidator.class)
+private String imei;
+
+public class IMEITransformer implements Transformer<byte[], String>{
+    @Override
+    public String decode(final byte[] value){
+        final StringBuffer sb = new StringBuffer();
+        for(int i = 0; i < 7; i ++)
+            sb.append(String.format("%02d", value[i] & 255));
+        sb.append(ByteHelper.applyMaskAndShift(value[7], (byte)0x0F));
+        return sb.toString();
+    }
+
+    @Override
+    public byte[] encode(final String value){
+        final byte[] imei = new byte[8];
+        final String[] components = value.split("(?<=\\G\\d{2})", 8);
+        for(int i = 0; i < 8; i ++)
+            imei[i] = Integer.valueOf(components[i]).byteValue();
+        return imei;
+    }
+}
+```
+
+## RSSI transformer (from encoded byte to short value)
+```
+@BindByte(transformer = RSSITransformer.class)
+private short rssi;
+
+/**
+ * input:   output:
+ * 0:		< -133 dBm
+ * 1:		-111 dBm
+ * 2-30:	-109 - -53 dBm
+ * 31:		> -51 dBm
+ * 99:		unknown
+ */
+public class RSSITransformer implements Transformer<Byte, Short>{
+
+    public static final int RSSI_UNKNOWN = 0;
+
+    @Override
+    public Short decode(final Byte value){
+        if(value == 0)
+            //< -133 dBm
+            return (byte)-133;
+        if(value == 99)
+            return RSSI_UNKNOWN;
+        //31 is > -51 dBm
+        return (short)(value * 2 - 113);
+    }
+
+    @Override
+    public Byte encode(final Short value){
+        if(value == -133)
+            return 0;
+        if(value == RSSI_UNKNOWN)
+            return 99;
+        return (byte)((value + 133) / 2);
+    }
+}
+```
+
+<br/>
+
+<a name="digging"></a>
+## Digging into the code
+Almost for each base annotation there is a corresponding class defined into `Coder.java` that manages the encoding and decoding of the underlying data.
+
+The other annotations are managed directly into `MessageParser.java`, that is the main class that orchestrates the parsing of a single message with all of its annotations.
+If an error occurs a `ParseException` is thrown.
+
+Messages can be concatenated, and the `Parser.java` class manages them, returning a [DTO](https://en.wikipedia.org/wiki/Data_transfer_object), `ParseResponse.java`, with a list of all successfully read messages and a list of all errors from problematic messages.
+
+<br/>
+
+Each annotated class is processed by `Codec.class`, that is later retrieved by `Parser.java` depending on the starting header.
+For that reason each starting header defined into `MessageHeader` annotation SHOULD BE unique.
+
+All the SpEL expressions are evaluated by `Evaluator.java`.
+
+This class can also accept a context.
+
+<br/>
+
+All the annotated classes are conveniently loaded using the `Loader.java` as is done automatically in the `Parser.java`.
+
+If you want to provide your own classes you can use the appropriate constructor of `Parser`.
+
+<br/>
+
+The `MessageParser` is also used to encode a message (_NOTE: this feature will be moved in the future!_).
+
+<br/>
+
+`BitBuffer.java` has the task to read the bits, whereas `BitWriter.java` has the task to write the bits.
+
+
+<br/>
+
+<a name="example-simple"></a>
+## Simple example
+
+All you have to care about, for a simple example, is the `Parser`.
+```
+//optionally create a context
+Map<String, Object> context = ...
+//read all the annotated classes from where the parser resides and all of its children packages
+Parser parser = new Parser(context);
+//... or pass the parent package (see all the constructors of Parser for more)
+//Parser parser = new Parser(context, "base.package.messages");
+
+//parse the message
+byte[] payload = ...
+ParseResponse result = parser.parse(payload);
+
+//process the read messages
+if(!result.hasErrors()){
+    List<Object> messages = result.getParsedMessages();
+    ...
+}
+//process the errors
+else{
+    List<ParseException> errors = result.getErrors();
+    ...
+}
+```
 
 <br/>
 

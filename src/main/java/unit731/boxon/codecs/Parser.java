@@ -34,18 +34,30 @@ public class Parser{
 	private final Loader loader = new Loader();
 
 
-	protected Parser(final Map<String, Object> context){
+	public Parser(){
+		this(null);
+	}
+
+	public Parser(final Map<String, Object> context){
 		loader.init();
 
 		copyContext(context);
 	}
 
-	protected Parser(final Map<String, Codec<?>> codecs, final Map<String, Object> context){
+	public Parser(final Map<String, Object> context, final Map<String, Codec<?>> codecs){
 		Objects.requireNonNull(codecs, "Codecs cannot be null");
 		if(codecs.isEmpty())
 			throw new IllegalArgumentException("Codecs cannot be empty");
 
 		loader.init(codecs);
+
+		copyContext(context);
+	}
+
+	public Parser(final Map<String, Object> context, final Class<?>... basePackageClasses){
+		Objects.requireNonNull(basePackageClasses, "Base package(s) not found");
+
+		loader.init(basePackageClasses);
 
 		copyContext(context);
 	}
