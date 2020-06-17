@@ -35,9 +35,9 @@ import java.lang.annotation.Target;
 public @interface Skip{
 
 	/**
-	 * The number of bits used to represent the numeric value.
+	 * The number of bits to be skipped.
 	 *
-	 * @return	The number of bits used to represent the numeric value (can be an expression).
+	 * @return	The number of bits to be skipped (can be an expression).
 	 */
 	String size() default "0";
 

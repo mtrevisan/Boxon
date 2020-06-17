@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.BitSet;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -108,7 +109,7 @@ class MessageParser{
 	private static <T> void skip(final Skip skip, final BitBuffer reader, final T data){
 		final int size = (StringUtils.isNotBlank(skip.size())? Evaluator.evaluate(skip.size(), Integer.class, data): 0);
 		if(size > 0)
-			//skip `size` bytes
+			//skip `size` bits
 			reader.skip(size);
 		else
 			//skip until terminator
@@ -201,8 +202,8 @@ class MessageParser{
 	private static <T> void addSkip(final Skip skip, final BitWriter writer, final T data){
 		final int size = (StringUtils.isNotBlank(skip.size())? Evaluator.evaluate(skip.size(), Integer.class, data): 0);
 		if(size > 0)
-			//skip `size` bytes
-			writer.putBytes(new byte[size]);
+			//skip `size` bits
+			writer.putBits(new BitSet(size));
 		else if(skip.consumeTerminator())
 			//skip until terminator
 			writer.putByte(skip.terminator());

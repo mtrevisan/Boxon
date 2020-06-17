@@ -51,7 +51,7 @@ public @interface BindIf{
 	/**
 	 * The expression to be evaluated.
 	 *
-	 * @return	The expression to be evaluated.
+	 * @return	The condition to be evaluated (can be an expression).
 	 */
 	String value();
 

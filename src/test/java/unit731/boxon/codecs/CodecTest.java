@@ -134,17 +134,17 @@ class CodecTest{
 		private byte[] protocolVersion;
 		@BindBit(size = "2")
 		private BitSet bits;
-		@BindDouble()
+		@BindDouble
 		private double numberDouble;
-		@BindFloat()
+		@BindFloat
 		private float numberFloat;
-		@BindInteger()
+		@BindInteger
 		private int numberInt;
-		@BindLong()
+		@BindLong
 		private long numberLong;
 		@BindNumber(type = Double.class)
 		private BigDecimal number;
-		@BindShort()
+		@BindShort
 		private short numberShort;
 		@BindString(size = "4")
 		public String text;

@@ -159,7 +159,7 @@ class BitBuffer{
 
 
 	public void skip(final int length){
-		getBytes(length);
+		getBits(length);
 	}
 
 	public void skipUntilTerminator(final byte terminator, final boolean consumeTerminator){

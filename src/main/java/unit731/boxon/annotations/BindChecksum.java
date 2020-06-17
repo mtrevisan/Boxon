@@ -52,6 +52,13 @@ public @interface BindChecksum{
 	Class<?> type();
 
 	/**
+	 * The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
+	 *
+	 * @return	The type of endianness. Defaults to {@link ByteOrder#BIG_ENDIAN}.
+	 */
+	ByteOrder byteOrder() default ByteOrder.BIG_ENDIAN;
+
+	/**
 	 * The byte(s) to skip from the start of the message.
 	 *
 	 * @return	The byte(s) to skip from the start of the message.
@@ -73,12 +80,5 @@ public @interface BindChecksum{
 	 */
 	@SuppressWarnings("rawtypes")
 	Class<? extends Checksummer> algorithm();
-
-	/**
-	 * The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
-	 *
-	 * @return	The type of endianness. Defaults to {@link ByteOrder#BIG_ENDIAN}.
-	 */
-	ByteOrder byteOrder() default ByteOrder.BIG_ENDIAN;
 
 }
