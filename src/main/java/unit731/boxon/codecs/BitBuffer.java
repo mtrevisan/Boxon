@@ -192,6 +192,7 @@ class BitBuffer{
 	 * @return	A {@link BitSet} value at the {@link BitBuffer}'s current position.
 	 */
 	public BitSet getBits(final int length){
+		//TODO refactor
 		if(remainingBits < length){
 			//read an integer number of longs
 			final int size = length / Long.SIZE;
@@ -204,8 +205,8 @@ class BitBuffer{
 					cache |= ((long)buffer.get() & 0x0000_0000_0000_00FFl) << (i * Byte.SIZE);
 				final int difference = Math.min(length, Long.SIZE) - remainingBits;
 				v |= (cache & MASKS[difference]) << remainingBits;
-				cache = 0l;
 				remainingBits = Byte.SIZE * remaining - difference;
+				cache = 0l;
 
 				vv[k] = v;
 			}
@@ -221,8 +222,8 @@ class BitBuffer{
 					cache |= ((long)buffer.get() & 0x0000_0000_0000_00FFl) << (i * Byte.SIZE);
 				final int difference = Math.min(length - sizeAsBits, Long.SIZE) - remainingBits;
 				v |= (cache & MASKS[difference]) << remainingBits;
-				cache >>= difference;
 				remainingBits = Byte.SIZE * remaining - difference;
+				cache >>= difference;
 
 				for(int k = sizeAsBits; k < length; k ++)
 					if(ByteHelper.hasBit(v, k - sizeAsBits))
@@ -250,6 +251,7 @@ class BitBuffer{
 	 * @return	A {@link BitSet} value at the {@link BitBuffer}'s current position.
 	 */
 	private long getValue(final int length){
+		//TODO refactor
 		long value;
 		if(remainingBits < length){
 			value = cache & MASKS[remainingBits];
@@ -262,13 +264,13 @@ class BitBuffer{
 				cache |= ((long)buffer.get() & 0x0000_0000_0000_00FFl) << (i * Byte.SIZE);
 			final int difference = length - remainingBits;
 			value |= (cache & MASKS[difference]) << remainingBits;
-			cache >>= difference;
 			remainingBits = Byte.SIZE * remaining - difference;
+			cache >>= difference;
 		}
 		else{
 			value = cache & MASKS[length];
-			cache >>= length;
 			remainingBits -= length;
+			cache >>= length;
 		}
 		return value;
 	}
