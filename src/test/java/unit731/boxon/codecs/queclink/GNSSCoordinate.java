@@ -1,7 +1,5 @@
 package unit731.boxon.codecs.queclink;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -11,7 +9,6 @@ import java.math.MathContext;
 import java.util.Objects;
 
 
-@JsonPropertyOrder({"latitude", "longitude", "altitude", "hdop", "vdop"})
 public class GNSSCoordinate{
 
 	private static final BigDecimal TO_RADIANS_FACTOR = new BigDecimal(Math.PI).divide(new BigDecimal(180), MathContext.DECIMAL128);
@@ -113,12 +110,10 @@ public class GNSSCoordinate{
 	 *
 	 * @return	The PDOP
 	 */
-	@JsonIgnore
 	public Float getPdop(){
 		return (hdop != null && !Float.isNaN(hdop) && vdop != null && !Float.isNaN(vdop)? (float)Math.sqrt(hdop * hdop + vdop * vdop): null);
 	}
 
-	@JsonIgnore
 	public boolean isValid(){
 		return (Math.abs(latitude.doubleValue()) <= 90. && Math.abs(longitude.doubleValue()) <= 180.
 			&& (hdop == null || Float.isNaN(hdop) || hdop > 0.) && (vdop == null || Float.isNaN(vdop) || vdop > 0.));

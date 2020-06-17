@@ -24,8 +24,6 @@
  */
 package unit731.boxon.codecs.queclink;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import unit731.boxon.annotations.Assign;
 import unit731.boxon.annotations.BindArrayPrimitive;
 import unit731.boxon.annotations.BindByte;
@@ -44,7 +42,6 @@ import java.util.Map;
 
 
 @MessageHeader(start = "+ACK", end = "\r\n")
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class ACKMessage{
 
 	private static final Map<Byte, String> MESSAGE_TYPE_MAP = new HashMap<>();
@@ -146,7 +143,6 @@ public class ACKMessage{
 	private short correlationId;
 	@BindIf("mask.hasEventTime()")
 	@BindArrayPrimitive(size = "7", type = byte[].class, transformer = QueclinkHelper.DateTimeYYYYMMDDHHMMSSTransformer.class)
-	@JsonDeserialize(using = ZonedDateTimeDeserializer.class)
 	private ZonedDateTime eventTime;
 	@BindIf("mask.hasMessageId()")
 	@BindShort
@@ -157,7 +153,6 @@ public class ACKMessage{
 	@Assign("#deviceTypes.getDeviceTypeName(deviceTypeCode)")
 	private String deviceTypeName;
 	@Assign("T(java.time.ZonedDateTime).now()")
-	@JsonDeserialize(using = ZonedDateTimeDeserializer.class)
 	private ZonedDateTime receptionTime;
 	@Assign("messageHeader.startsWith('+B')")
 	private boolean buffered;

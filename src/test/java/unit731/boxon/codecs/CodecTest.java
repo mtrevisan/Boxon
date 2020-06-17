@@ -24,8 +24,6 @@
  */
 package unit731.boxon.codecs;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import unit731.boxon.annotations.Assign;
 import unit731.boxon.annotations.BindArray;
 import unit731.boxon.annotations.BindArrayPrimitive;
@@ -45,7 +43,6 @@ import unit731.boxon.annotations.MessageHeader;
 import unit731.boxon.annotations.checksummers.CRC16;
 import unit731.boxon.annotations.checksummers.Checksummer;
 import unit731.boxon.annotations.transformers.Transformer;
-import unit731.boxon.codecs.queclink.ZonedDateTimeDeserializer;
 import unit731.boxon.utils.ByteHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -99,7 +96,6 @@ class CodecTest{
 	}
 
 	@MessageHeader(start = "+", end = "-")
-	@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 	private class Message{
 
 		private final Map<Byte, String> MESSAGE_TYPE_MAP = new HashMap<>();
@@ -155,7 +151,6 @@ class CodecTest{
 		private short checksum;
 
 		@Assign("T(java.time.ZonedDateTime).now()")
-		@JsonDeserialize(using = ZonedDateTimeDeserializer.class)
 		private ZonedDateTime receptionTime;
 
 	}

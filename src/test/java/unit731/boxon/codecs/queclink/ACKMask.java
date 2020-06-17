@@ -24,7 +24,6 @@
  */
 package unit731.boxon.codecs.queclink;
 
-import com.fasterxml.jackson.annotation.JsonValue;
 import unit731.boxon.annotations.transformers.Transformer;
 import unit731.boxon.utils.ByteHelper;
 
@@ -44,7 +43,6 @@ public class ACKMask{
 	}
 
 
-	@JsonValue
 	private final byte mask;
 
 

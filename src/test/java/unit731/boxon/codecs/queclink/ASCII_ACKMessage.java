@@ -24,8 +24,6 @@
  */
 package unit731.boxon.codecs.queclink;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import unit731.boxon.annotations.Assign;
 import unit731.boxon.annotations.BindStringTerminated;
 import unit731.boxon.annotations.MessageHeader;
@@ -38,7 +36,6 @@ import java.util.Map;
 
 
 @MessageHeader(start = "+ACK:", end = "$")
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class ASCII_ACKMessage{
 
 	private static final Map<Byte, String> MESSAGE_TYPE_MAP = new HashMap<>();
@@ -131,7 +128,6 @@ public class ASCII_ACKMessage{
 	@Assign("#deviceTypes.getDeviceTypeName(deviceTypeCode)")
 	private String deviceTypeName;
 	@Assign("T(java.time.ZonedDateTime).now()")
-	@JsonDeserialize(using = ZonedDateTimeDeserializer.class)
 	private ZonedDateTime receptionTime;
 	@Assign("messageHeader.startsWith('+B')")
 	private boolean buffered;

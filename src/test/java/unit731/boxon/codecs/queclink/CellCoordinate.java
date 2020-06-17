@@ -1,15 +1,10 @@
 package unit731.boxon.codecs.queclink;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 
-@JsonPropertyOrder({"mcc", "mnc", "lac", "cid", "rssi", "umtsCell"})
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class CellCoordinate{
 
 	public static final int RSSI_LEVEL_NO_COVERAGE = 0;
@@ -86,7 +81,6 @@ public class CellCoordinate{
 		return ((cid >>> Short.SIZE) != 0x0000);
 	}
 
-	@JsonIgnore
 	public boolean isValid(){
 		return (mcc >= 0 && mnc >= 0 && lac >= 0 && cid >= 0
 			&& (rssi == null || rssi == RSSI_LEVEL_NO_COVERAGE || rssi < 0));

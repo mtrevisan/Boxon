@@ -24,10 +24,6 @@
  */
 package unit731.boxon.codecs;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import unit731.boxon.codecs.queclink.DeviceTypes;
 import unit731.boxon.utils.ByteHelper;
 import org.apache.commons.lang3.ArrayUtils;
@@ -41,15 +37,8 @@ import java.util.Map;
 
 class ParserTest{
 
-	private static final ObjectMapper OM = new ObjectMapper();
-	static{
-		OM.registerModule(new JavaTimeModule());
-		OM.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-	}
-
-
 	@Test
-	void parseMultipleMessagesHex() throws JsonProcessingException{
+	void parseMultipleMessagesHex(){
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
@@ -58,13 +47,12 @@ class ParserTest{
 		byte[] payload = ByteHelper.hexStringToByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		ParseResponse result = parser.parse(payload);
 
-System.out.println(OM.writeValueAsString(result));
 		Assertions.assertFalse(result.hasErrors());
 		Assertions.assertEquals(2, result.getParsedMessages().size());
 	}
 
 	@Test
-	void parseMultipleMessagesASCII() throws JsonProcessingException{
+	void parseMultipleMessagesASCII(){
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GV350M", (byte)0xCF);
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
@@ -73,13 +61,12 @@ System.out.println(OM.writeValueAsString(result));
 		byte[] payload = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
 		ParseResponse result = parser.parse(payload);
 
-System.out.println(OM.writeValueAsString(result));
 		Assertions.assertFalse(result.hasErrors());
 		Assertions.assertEquals(2, result.getParsedMessages().size());
 	}
 
 	@Test
-	void parseMultipleMessagesHexASCII() throws JsonProcessingException{
+	void parseMultipleMessagesHexASCII(){
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
 		deviceTypes.add("QUECLINK_GV350M", (byte)0xCF);
@@ -91,13 +78,12 @@ System.out.println(OM.writeValueAsString(result));
 		byte[] payload = ArrayUtils.addAll(payload1, payload2);
 		ParseResponse result = parser.parse(payload);
 
-System.out.println(OM.writeValueAsString(result));
 		Assertions.assertFalse(result.hasErrors());
 		Assertions.assertEquals(2, result.getParsedMessages().size());
 	}
 
 	@Test
-	void parseMultipleMessagesASCIIHex() throws JsonProcessingException{
+	void parseMultipleMessagesASCIIHex(){
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
 		deviceTypes.add("QUECLINK_GV350M", (byte)0xCF);
@@ -109,7 +95,6 @@ System.out.println(OM.writeValueAsString(result));
 		byte[] payload = ArrayUtils.addAll(payload2, payload1);
 		ParseResponse result = parser.parse(payload);
 
-System.out.println(OM.writeValueAsString(result));
 		Assertions.assertFalse(result.hasErrors());
 		Assertions.assertEquals(2, result.getParsedMessages().size());
 	}
