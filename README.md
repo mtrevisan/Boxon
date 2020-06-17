@@ -1,5 +1,5 @@
 # Boxon _[boˈzoŋ]_
-Like [Preon](https://github.com/preon/preon), but the code is understandable, shorter, uses [SpEL expressions](https://docs.spring.io/spring/docs/4.3.10.RELEASE/spring-framework-reference/html/expressions.html), and the documentation is __really__ free...
+Like [Preon](https://github.com/preon/preon) (currently not maintained anymore), but the code is understandable, shorter, easier to extend, uses the more powerful (and mainained) [SpEL expressions](https://docs.spring.io/spring/docs/4.3.10.RELEASE/spring-framework-reference/html/expressions.html), and the documentation is __really__ free...
 
 This is a declarative, bit-level, message parser. All you have to do is write a [POJO](https://en.wikipedia.org/wiki/Plain_old_Java_object) that represents your message and annotate it. That's all. Boxon will taks care of the rest for you.
 
@@ -13,8 +13,11 @@ If you want to use the parser straight away, just go [there](#examples).
  - contains a minimal set of [annotations](#annotation-base) capable of handling all the primitive data.
  - contains a set of [special annotations](#annotation-special) that handles the various messages peculiarities (conditional bindings, skip bits/bytes, checksum, 'constant' assignments)
  - is capable of handle concatenation of messages, using the correct codec under the hood.
- - can handle [SpEL expressions](https://docs.spring.io/spring/docs/4.3.10.RELEASE/spring-framework-reference/html/expressions.html) on certain fields.
+ - can handle [SpEL expressions](https://docs.spring.io/spring/docs/4.3.10.RELEASE/spring-framework-reference/html/expressions.html) on certain fields, thus more powerful and simpler than Limbo (but less than [janino](https://github.com/janino-compiler/janino), that has other problems).
  - can do decode and encode data on the fly with a single annotated class (thus avoiding separate decoder and encoder going out-of-sync).
+ - has codecs that are not complex: they do not call each other uselessly complicating the structure (apart, necessarily, for `@BindArray`), no complicated chains of factories: it's just a parser that works.
+ - supports [SLF4J](http://www.slf4j.org/).
+ - hides the complexities of encoding and decoding, thus simplifying the changes to be made to the code due to frequent protocol changes.
 
 
 <br/>
