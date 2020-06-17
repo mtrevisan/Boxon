@@ -39,7 +39,6 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -97,6 +96,8 @@ public class Loader{
 
 	/**
 	 * This method should be called before instantiating a {@link Parser}
+	 *
+	 * @param codecs	The list of codecs to be loaded
 	 */
 	public synchronized void init(final Collection<Codec<?>> codecs){
 		if(!initialized.get()){

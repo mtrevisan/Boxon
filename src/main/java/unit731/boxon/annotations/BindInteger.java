@@ -49,7 +49,11 @@ public @interface BindInteger{
 	 */
 	ByteOrder byteOrder() default ByteOrder.BIG_ENDIAN;
 
-	/** The value to match (can be a regex expression or a SpEL expression). */
+	/**
+	 * The value to match (can be a regex expression or a SpEL expression).
+	 *
+	 * @return	The value, or regext, or SpEL expression to be checked for equality
+	 */
 	String match() default "";
 
 	/**
