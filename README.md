@@ -7,6 +7,8 @@ This is a declarative, bit-level, message parser. All you have to do is write a 
 ## Base annotations
 Here are described the build-in base annotations.
 
+You can use them as a starting point to build your own customized readers.
+
 <a name="annotation-bindarray"></a>
 ### BindArray
 
