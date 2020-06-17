@@ -24,8 +24,6 @@
  */
 package unit731.boxon.utils;
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.util.Optional;
 
 
@@ -59,7 +57,7 @@ public class ExceptionHelper{
 			sb.append(extractExceptionName(t))
 				.append(" at ")
 				.append(extractExceptionPosition(t))
-				.append(StringUtils.SPACE);
+				.append(' ');
 		final String msg = t.getMessage();
 		if(msg != null)
 			sb.append(msg);

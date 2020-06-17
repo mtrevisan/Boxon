@@ -24,7 +24,6 @@
  */
 package unit731.boxon.codecs;
 
-import org.apache.commons.lang3.StringUtils;
 import unit731.boxon.annotations.BindChecksum;
 import unit731.boxon.annotations.MessageHeader;
 import unit731.boxon.annotations.Skip;
@@ -107,7 +106,7 @@ class MessageParser{
 	}
 
 	private static <T> void skip(final Skip skip, final BitBuffer reader, final T data){
-		final int size = (StringUtils.isNotBlank(skip.size())? Evaluator.evaluate(skip.size(), Integer.class, data): 0);
+		final int size = (isNotBlank(skip.size())? Evaluator.evaluate(skip.size(), Integer.class, data): 0);
 		if(size > 0)
 			//skip `size` bits
 			reader.skip(size);
@@ -200,13 +199,17 @@ class MessageParser{
 	}
 
 	private static <T> void addSkip(final Skip skip, final BitWriter writer, final T data){
-		final int size = (StringUtils.isNotBlank(skip.size())? Evaluator.evaluate(skip.size(), Integer.class, data): 0);
+		final int size = (isNotBlank(skip.size())? Evaluator.evaluate(skip.size(), Integer.class, data): 0);
 		if(size > 0)
 			//skip `size` bits
 			writer.putBits(new BitSet(size));
 		else if(skip.consumeTerminator())
 			//skip until terminator
 			writer.putByte(skip.terminator());
+	}
+
+	private static boolean isNotBlank(final String text){
+		return (text != null && !text.trim().isBlank());
 	}
 
 }

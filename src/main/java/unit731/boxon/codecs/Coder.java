@@ -40,7 +40,6 @@ import unit731.boxon.annotations.BindStringTerminated;
 import unit731.boxon.annotations.transformers.Transformer;
 import unit731.boxon.annotations.validators.Validator;
 import unit731.boxon.utils.ReflectionHelper;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.expression.spel.SpelEvaluationException;
 import org.springframework.expression.spel.SpelParseException;
 
@@ -634,7 +633,7 @@ enum Coder{
 	/** Extract pattern from a SpEL expression, or a string, or a real pattern */
 	private static <T> Pattern extractPattern(String match, final T data){
 		Pattern p = null;
-		if(StringUtils.isNotBlank(match)){
+		if(isNotBlank(match)){
 			//try SpEL expression
 			try{
 				match = Evaluator.evaluate(match, String.class, data);
@@ -656,6 +655,10 @@ enum Coder{
 			}
 		}
 		return p;
+	}
+
+	private static boolean isNotBlank(final String text){
+		return (text != null && !text.trim().isBlank());
 	}
 
 	private static <T> void validateData(@SuppressWarnings("rawtypes") final Class<? extends Validator> validatorType, final T data){
