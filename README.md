@@ -3,6 +3,7 @@ Like [Preon](https://github.com/preon/preon), but the code is understandable...
 
 This is a declarative, bit-level, message parser. All you have to do is write a [POJO](https://en.wikipedia.org/wiki/Plain_old_Java_object) that represents your message and annotate it. That's all. Boxon will taks care of the rest for you.
 
+<br/>
 
 ## Table of Contents
 1. [Base annotations](#annotation-base)
@@ -25,8 +26,8 @@ This is a declarative, bit-level, message parser. All you have to do is write a 
     4. [Checksum](#annotation-checksum)
     4. [Assign](#annotation-assign)
 3. [How to extend the functionalities](#how-to)
-7. [Changelog](#changelog)
-    6. [version 1.0.0](#changelog-1.0.0)
+4. [Changelog](#changelog)
+    1. [version 1.0.0](#changelog-1.0.0)
 
 <br/>
 
