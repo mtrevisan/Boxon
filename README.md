@@ -5,6 +5,16 @@ This is a declarative, bit-level, message parser. All you have to do is write a 
 
 If you want to use the parser straight away, just go [there](#example-simple).
 
+<br/>
+
+#### Notable features
+Boxon...
+ - is extensible through the use of [tranformers](#how-to).
+ - contains a minimal set of [annotations](#annotation-base) capable of handling all the primitive data.
+ - contains a set of [special annotations](#annotation-special) that handles the various messages peculiarities (conditional bindings, skip bits/bytes, checksum, 'constant' assignments)
+ - is capable of handle concatenation of messages, using the correct codec under the hood.
+ - can handle [SpEL expressions](https://docs.spring.io/spring/docs/4.3.10.RELEASE/spring-framework-reference/html/expressions.html) on certain fields.
+
 
 <br/>
 
@@ -369,6 +379,10 @@ public Mask mask;
 @BindIf("mask.hasProtocolVersion()")
 @BindArrayPrimitive(size = "2", type = byte[].class)
 private byte[] protocolVersion;
+
+@BindIf("protocolVersion[0] > 1")
+@BindShort
+private short conditionedValue;
 ```
 
 

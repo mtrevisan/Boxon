@@ -1,4 +1,4 @@
-package unit731.boxon.other;
+package unit731.boxon.codecs.queclink;
 
 import org.apache.commons.math3.geometry.euclidean.threed.CardanEulerSingularityException;
 import org.apache.commons.math3.geometry.euclidean.threed.NotARotationMatrixException;

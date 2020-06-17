@@ -1,4 +1,4 @@
-package unit731.boxon.other;
+package unit731.boxon.codecs.queclink;
 
 import java.util.Iterator;
 import java.util.List;
