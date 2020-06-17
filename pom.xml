@@ -183,6 +183,7 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-math3</artifactId>
 			<version>${apache.commons-math3.version}</version>
+			<scope>test</scope>
 		</dependency>
 
 		<!-- SpEL -->
