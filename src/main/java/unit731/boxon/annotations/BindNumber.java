@@ -36,6 +36,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 
+/**
+ * Manages a <code>long</code>/{@link Long} if <code>size < 64</code>, {@link java.math.BigInteger} otherwise (... before the application of a transformer)
+ */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface BindNumber{
@@ -51,6 +54,7 @@ public @interface BindNumber{
 
 	/**
 	 * The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
+	 * NOTE: This works at bit level! (from lowest to highest if little-endian, from highest to lowest for big-endian)
 	 *
 	 * @return	The type of endianness. Defaults to {@link ByteOrder#BIG_ENDIAN}.
 	 */

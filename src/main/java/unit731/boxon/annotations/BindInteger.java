@@ -36,6 +36,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 
+/**
+ * Manages an <code>int</code>/{@link Integer} (... before the application of a transformer)
+ */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface BindInteger{

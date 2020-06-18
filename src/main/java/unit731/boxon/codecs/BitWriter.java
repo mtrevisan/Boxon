@@ -24,6 +24,8 @@
  */
 package unit731.boxon.codecs;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import unit731.boxon.utils.ByteHelper;
 
 import java.io.ByteArrayOutputStream;
@@ -36,12 +38,15 @@ import java.util.BitSet;
 @SuppressWarnings("unused")
 class BitWriter{
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(BitWriter.class.getName());
+
+
 	/** The backing {@link ByteArrayOutputStream} */
 	private final ByteArrayOutputStream os = new ByteArrayOutputStream(0);
-	/** The number of bits available within {@code cache} */
+	/** The number of bits available (to write) within {@code cache} */
 	private int remainingBits;
 	/** The <i>cache</i> used when writing and reading bits */
-	private long cache;
+	private byte cache;
 
 
 	public void put(final Object value, final ByteOrder byteOrder){
@@ -70,37 +75,25 @@ class BitWriter{
 	 * @param value	The value to write.
 	 * @return	The {@link BitWriter} to allow for the convenience of method-chaining.
 	 */
-	public BitWriter putBits(final BitSet value, final int length){
+	public BitWriter putBits(final BitSet value, int length){
 		//if the value that we're writing is too large to be placed entirely in the cache, then we need to place as
 		//much as we can in the cache (the least significant bits), flush the cache to the backing ByteBuffer, and
 		//place the rest in the cache
-		if(Long.SIZE - remainingBits < length){
-			//write an integer number of longs
-			final int size = length / Long.SIZE;
-			final long[] vv = value.toLongArray();
-			for(int k = 0; k < size; k ++){
-				final long v = vv[k];
-				final int upperHalfBits = Math.min(length, Long.SIZE) - Long.SIZE + remainingBits;
-				cache |= ((v & BitBuffer.MASKS[Long.SIZE - remainingBits]) << remainingBits);
-				remainingBits = Long.SIZE;
-				while(remainingBits > 0){
-					os.write((byte)cache);
+		int offset = 0;
+		while(offset < length){
+			//fill the cache one bit at a time
+			final int size = Math.min(length - offset, Byte.SIZE - remainingBits);
+			for(int i = value.nextSetBit(offset); 0 <= i && i < offset + size; i = value.nextSetBit(i + 1))
+				cache |= 1 << (remainingBits + i - offset);
+			remainingBits += size;
+			offset += size;
 
-					cache >>>= Byte.SIZE;
-					remainingBits -= Byte.SIZE;
-				}
-				cache = v & (BitBuffer.MASKS[upperHalfBits] << (Long.SIZE - remainingBits));
-				remainingBits = upperHalfBits;
+			//if cache is full, write it
+			if(remainingBits == Byte.SIZE){
+				os.write(cache);
+
+				resetInnerVariables();
 			}
-
-			//write remainder bits
-			final int sizeAsBits = size * Long.SIZE;
-			if(sizeAsBits < length)
-				putBits(value.get(sizeAsBits, length), length);
-		}
-		else{
-			cache |= ((value.toLongArray()[0] & BitBuffer.MASKS[length]) << remainingBits);
-			remainingBits += length;
 		}
 		return this;
 	}
@@ -113,26 +106,9 @@ class BitWriter{
 	 * @return	The {@link BitWriter} to allow for the convenience of method-chaining.
 	 */
 	@SuppressWarnings("ShiftOutOfRange")
-	private BitWriter putValue(final long value, final int length){
-		//if the value that we're writing is too large to be placed entirely in the cache, then we need to place as
-		//much as we can in the cache (the least significant bits), flush the cache to the backing ByteBuffer, and
-		//place the rest in the cache
-		if(Long.SIZE - remainingBits < length){
-			final int upperHalfBits = length - Long.SIZE + remainingBits;
-			cache |= ((value & BitBuffer.MASKS[Long.SIZE - remainingBits]) << remainingBits);
-			while(remainingBits > 0){
-				os.write((byte)cache);
-
-				cache >>>= Byte.SIZE;
-				remainingBits -= Byte.SIZE;
-			}
-			cache = value & (BitBuffer.MASKS[upperHalfBits] << (Long.SIZE - remainingBits));
-			remainingBits = upperHalfBits;
-		}
-		else{
-			cache |= ((value & BitBuffer.MASKS[length]) << remainingBits);
-			remainingBits += length;
-		}
+	private BitWriter putValue(long value, final int length){
+		final BitSet bits = BitSet.valueOf(new long[]{value});
+		putBits(bits, length);
 		return this;
 	}
 
@@ -341,14 +317,20 @@ class BitWriter{
 	}
 
 
+	/** Flush an integral number of bytes to the output stream, discarding any non-completed byte */
 	public void flush(){
 		//put the cache into the buffer, if needed
-		while(remainingBits > 0){
-			os.write((byte)cache);
+		if(remainingBits == Byte.SIZE)
+			os.write(cache);
+		else if(remainingBits > 0)
+			LOGGER.error("Some bits went missing while flushing: 0x{}", Integer.toBinaryString(cache));
 
-			cache >>>= Byte.SIZE;
-			remainingBits -= Byte.SIZE;
-		}
+		resetInnerVariables();
+	}
+
+	private void resetInnerVariables(){
+		remainingBits = 0;
+		cache = 0;
 	}
 
 	/**

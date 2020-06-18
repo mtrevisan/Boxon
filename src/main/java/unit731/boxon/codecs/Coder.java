@@ -40,6 +40,7 @@ import unit731.boxon.annotations.BindString;
 import unit731.boxon.annotations.BindStringTerminated;
 import unit731.boxon.annotations.transformers.Transformer;
 import unit731.boxon.annotations.validators.Validator;
+import unit731.boxon.utils.ByteHelper;
 import unit731.boxon.utils.ReflectionHelper;
 import org.springframework.expression.spel.SpelEvaluationException;
 import org.springframework.expression.spel.SpelParseException;
@@ -261,7 +262,7 @@ enum Coder{
 
 			final BitSet bits = reader.getBits(size);
 			if(byteOrder == ByteOrder.BIG_ENDIAN)
-				reverseBits(bits, size);
+				BitBuffer.reverseBits(bits, size);
 
 			final Object value = transformerDecode(binding.transformer(), bits);
 
@@ -283,7 +284,7 @@ enum Coder{
 
 			final BitSet bits = transformerEncode(binding.transformer(), value);
 			if(byteOrder == ByteOrder.BIG_ENDIAN)
-				reverseBits(bits, size);
+				BitBuffer.reverseBits(bits, size);
 
 			writer.putBits(bits, size);
 		}
@@ -472,32 +473,32 @@ enum Coder{
 
 			final BitSet bits = reader.getBits(size);
 			if(byteOrder == ByteOrder.BIG_ENDIAN)
-				reverseBits(bits, size);
+				BitBuffer.reverseBits(bits, size);
+			final Object value;
 			if(size < Long.SIZE){
 				long v = bits.toLongArray()[0];
-				if(!binding.unsigned()){
-					//sign extension
-					final long mask = 1l << (size - 1);
-					v = (v ^ mask) - mask;
-				}
+				if(!binding.unsigned())
+					v = ByteHelper.extendSign(v, size);
 
-				final Object value = transformerDecode(binding.transformer(), v);
-
-				matchData(binding.match(), value);
-				validateData(binding.validator(), value);
-
-				return value;
+				value = transformerDecode(binding.transformer(), v);
 			}
 			else{
-				final BigInteger v = new BigInteger(bits.toByteArray());
+				BigInteger v;
+				//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
+				final byte[] bigArray = BitBuffer.reverseBytes(bits.toByteArray());
+				if(bigArray[0] != 0x00 && !binding.unsigned())
+					v = new BigInteger(-1, BitBuffer.invertBytes(bigArray))
+						.subtract(BigInteger.ONE);
+				else
+					v = new BigInteger(1, bigArray);
 
-				final Object value = transformerDecode(binding.transformer(), v);
-
-				matchData(binding.match(), value);
-				validateData(binding.validator(), value);
-
-				return value;
+				value = transformerDecode(binding.transformer(), v);
 			}
+
+			matchData(binding.match(), value);
+			validateData(binding.validator(), value);
+
+			return value;
 		}
 
 		@Override
@@ -510,20 +511,19 @@ enum Coder{
 			matchData(binding.match(), value);
 			validateData(binding.validator(), value);
 
-			final BitSet bits;
+			final BigInteger v;
 			if(size < Long.SIZE){
-				final long v = transformerEncode(binding.transformer(), value);
-
-				final long mask = ((1l << size) - 1);
-				bits = BitSet.valueOf(new long[]{v & mask});
+				final long vv = transformerEncode(binding.transformer(), value);
+				final long mask = ByteHelper.mask(size);
+				v = BigInteger.valueOf(vv & mask);
 			}
-			else{
-				final BigInteger v = transformerEncode(binding.transformer(), value);
+			else
+				v = transformerEncode(binding.transformer(), value);
 
-				bits = BitSet.valueOf(v.toByteArray());
-			}
+			//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
+			final BitSet bits = BitSet.valueOf(BitBuffer.reverseBytes(ByteHelper.bigIntegerToBytes(v)));
 			if(byteOrder == ByteOrder.BIG_ENDIAN)
-				reverseBits(bits, size);
+				BitBuffer.reverseBits(bits, size);
 			writer.putBits(bits, size);
 		}
 
@@ -734,14 +734,6 @@ enum Coder{
 			}
 		}
 		return p;
-	}
-
-	private static void reverseBits(final BitSet input, final int size){
-		for(int i = 0; i < size / 2; i ++){
-			final boolean t = input.get(i);
-			input.set(i, input.get(size - i - 1));
-			input.set(size - i - 1, t);
-		}
 	}
 
 	private static boolean isNotBlank(final String text){

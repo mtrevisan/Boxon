@@ -24,10 +24,8 @@
  */
 package unit731.boxon.utils;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.nio.charset.Charset;
+import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.BitSet;
 
 
@@ -204,6 +202,17 @@ public class ByteHelper{
 	}
 
 	/**
+	 * Converts a BigInteger into a byte array ignoring the sign of the BigInteger, according to SRP specification
+	 *
+	 * @param value	the value, must not be <code>null</code>
+	 * @return	The byte array (leading byte is always different from <code>0</code>), empty array if the value is zero.
+	 */
+	public static byte[] bigIntegerToBytes(final BigInteger value){
+		final byte[] array = value.toByteArray();
+		return (array[0] == 0? Arrays.copyOfRange(array, 1, array.length): array);
+	}
+
+	/**
 	 * Extracts a sub-array from <code>set</code> starting at <code>startIndex</code> and with length <code>length</code>
 	 * and express it as a long
 	 *
@@ -350,12 +359,21 @@ public class ByteHelper{
 	 * Convert the value to signed primitive
 	 *
 	 * @param value	Field value
-	 * @param length	Length in bits of the field
+	 * @param size	Length in bits of the field
 	 * @return	The 2-complement expressed as int
 	 */
-	public static int convert2Complement(final int value, final int length){
-		final int shift = Integer.SIZE - length;
+	public static int convert2Complement(final int value, final int size){
+		final int shift = Integer.SIZE - size;
 		return (value << shift) >> shift;
+	}
+
+	public static long mask(final int size){
+		return ((1l << size) - 1);
+	}
+
+	public static long extendSign(final long value, final int size){
+		final long mask = 1l << (size - 1);
+		return (value ^ mask) - mask;
 	}
 
 }
