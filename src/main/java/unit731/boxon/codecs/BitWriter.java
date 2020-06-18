@@ -78,8 +78,9 @@ class BitWriter{
 		while(offset < length){
 			//fill the cache one bit at a time
 			final int size = Math.min(length - offset, Byte.SIZE - remainingBits);
-			for(int i = offset; i < offset + size; i ++, remainingBits ++)
-				cache |= (value.get(i)? 1: 0) << remainingBits;
+			for(int i = value.nextSetBit(offset); 0 <= i && i < offset + size; i = value.nextSetBit(i + 1))
+				cache |= 1 << (remainingBits + i - offset);
+			remainingBits += size;
 			offset += size;
 
 			//if cache is full, write it
@@ -101,14 +102,7 @@ class BitWriter{
 	 */
 	@SuppressWarnings("ShiftOutOfRange")
 	private BitWriter putValue(long value, final int length){
-		final BitSet bits = new BitSet(length);
-		int i = 0;
-		while(value != 0){
-			bits.set(i, ((value & 0x01) != 0));
-
-			value >>>= 1;
-			i ++;
-		}
+		final BitSet bits = BitSet.valueOf(new long[]{value});
 		putBits(bits, length);
 		return this;
 	}
