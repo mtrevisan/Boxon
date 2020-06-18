@@ -808,8 +808,8 @@ class CoderTest{
 int k = 0;
 while(k ++ < 10_000){
 		Coder coder = Coder.NUMBER;
-//		BigInteger encodedValue = new BigInteger(128, RANDOM);
-BigInteger encodedValue = new BigInteger("15732996955967035795785030852454290467");
+		BigInteger encodedValue = new BigInteger(128, RANDOM);
+//BigInteger encodedValue = new BigInteger("15732996955967035795785030852454290467");
 		BindNumber annotation = new BindNumber(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
@@ -860,7 +860,7 @@ BigInteger encodedValue = new BigInteger("15732996955967035795785030852454290467
 
 		BitBuffer reader = BitBuffer.wrap(writer);
 
-		long decoded = (long)coder.decode(reader, annotation, null);
+		BigInteger decoded = (BigInteger)coder.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);}
 	}
