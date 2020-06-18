@@ -24,6 +24,8 @@
  */
 package unit731.boxon.codecs;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import unit731.boxon.utils.ByteHelper;
 
 import java.io.ByteArrayOutputStream;
@@ -35,6 +37,9 @@ import java.util.BitSet;
 
 @SuppressWarnings("unused")
 class BitWriter{
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(BitWriter.class.getName());
+
 
 	/** The backing {@link ByteArrayOutputStream} */
 	private final ByteArrayOutputStream os = new ByteArrayOutputStream(0);
@@ -315,11 +320,12 @@ class BitWriter{
 	/** Flush an integral number of bytes to the output stream, discarding any non-completed byte */
 	public void flush(){
 		//put the cache into the buffer, if needed
-		if(remainingBits == Byte.SIZE){
+		if(remainingBits == Byte.SIZE)
 			os.write(cache);
+		else if(remainingBits > 0)
+			LOGGER.error("Some bits went missing while flushing: 0x{}", Integer.toBinaryString(cache));
 
-			resetInnerVariables();
-		}
+		resetInnerVariables();
 	}
 
 	private void resetInnerVariables(){
