@@ -40,6 +40,7 @@ import unit731.boxon.annotations.BindString;
 import unit731.boxon.annotations.BindStringTerminated;
 import unit731.boxon.annotations.transformers.Transformer;
 import unit731.boxon.annotations.validators.Validator;
+import unit731.boxon.utils.ByteHelper;
 import unit731.boxon.utils.ReflectionHelper;
 import org.springframework.expression.spel.SpelEvaluationException;
 import org.springframework.expression.spel.SpelParseException;
@@ -475,11 +476,8 @@ enum Coder{
 				BitBuffer.reverseBits(bits, size);
 			if(size < Long.SIZE){
 				long v = bits.toLongArray()[0];
-				if(!binding.unsigned()){
-					//sign extension
-					final long mask = 1l << (size - 1);
-					v = (v ^ mask) - mask;
-				}
+				if(!binding.unsigned())
+					v = ByteHelper.extendSign(v, size);
 
 				final Object value = transformerDecode(binding.transformer(), v);
 
@@ -511,19 +509,17 @@ enum Coder{
 			matchData(binding.match(), value);
 			validateData(binding.validator(), value);
 
-			final BitSet bits;
+			final BigInteger v;
 			if(size < Long.SIZE){
-				final long v = transformerEncode(binding.transformer(), value);
-
-				final long mask = ((1l << size) - 1);
-				bits = BitSet.valueOf(new long[]{v & mask});
+				final long vv = transformerEncode(binding.transformer(), value);
+				final long mask = ByteHelper.mask(size);
+				v = BigInteger.valueOf(vv & mask);
 			}
-			else{
-				final BigInteger v = transformerEncode(binding.transformer(), value);
+			else
+				v = transformerEncode(binding.transformer(), value);
 
-				//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
-				bits = BitSet.valueOf(BitBuffer.reverseBytes(v.toByteArray()));
-			}
+			//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
+			final BitSet bits = BitSet.valueOf(BitBuffer.reverseBytes(v.toByteArray()));
 			if(byteOrder == ByteOrder.BIG_ENDIAN)
 				BitBuffer.reverseBits(bits, size);
 			writer.putBits(bits, size);

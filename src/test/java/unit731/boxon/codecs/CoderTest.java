@@ -42,6 +42,7 @@ import unit731.boxon.annotations.transformers.Transformer;
 import unit731.boxon.annotations.validators.NullValidator;
 import unit731.boxon.annotations.validators.Validator;
 import unit731.boxon.codecs.queclink.Version;
+import unit731.boxon.utils.ByteHelper;
 
 import java.lang.annotation.Annotation;
 import java.math.BigInteger;
@@ -752,6 +753,7 @@ int k = 0;
 while(k ++ < 10000){
 		Coder coder = Coder.NUMBER;
 		long encodedValue = (RANDOM.nextLong() & 0x007F_FFFF);
+//long encodedValue = (16353 & 0x007F_FFFF);
 		BindNumber annotation = new BindNumber(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
@@ -793,14 +795,14 @@ while(k ++ < 10000){
 		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		if(!StringUtils.leftPad(Long.toHexString(Long.reverseBytes(encodedValue) >>> 40).toUpperCase(Locale.ROOT), 6, '0').equals(writer.toString())){
-			BitWriter writer2 = new BitWriter();
-			coder.encode(writer2, annotation, null, encodedValue);
-			writer2.flush();
-		}
-		BitSet bits = BitSet.valueOf(new long[]{encodedValue});
-		BitBuffer.reverseBits(bits, 24);
-		Assertions.assertEquals(StringUtils.leftPad(Long.toHexString(Long.reverseBytes(encodedValue) >>> 40).toUpperCase(Locale.ROOT), 6, '0'), writer.toString());
+//		BitSet bits = BitSet.valueOf(new long[]{encodedValue});
+//		BitBuffer.reverseBits(bits, 24);
+//		BigInteger v = new BigInteger(BitBuffer.reverseBytes(bits.toByteArray()));
+//		Assertions.assertEquals(StringUtils.leftPad(ByteHelper.byteArrayToHexString(BitBuffer.reverseBytes(v.toByteArray())).toUpperCase(Locale.ROOT), 6, '0'), writer.toString());
+
+//		BitBuffer.reverseBits(bits, 24);
+//		BigInteger v = new BigInteger(BitBuffer.reverseBytes(bits.toByteArray()));
+//		Assertions.assertEquals(StringUtils.leftPad(ByteHelper.byteArrayToHexString(BitBuffer.reverseBytes(v.toByteArray())).toUpperCase(Locale.ROOT), 6, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
 
@@ -813,11 +815,9 @@ while(k ++ < 10000){
 //	@Test
 //	void bigPositiveNumberLittleEndian(){
 //		Coder coder = Coder.NUMBER;
+////		BigInteger encodedValue = new BigInteger(124, RANDOM);
 //		//the high bit is set to zero to make it positive
-//		BigInteger encodedValue = RANDOM.nextLong() & 0x007F_FFFF;
-//encodedValue=8258995l;
-////{0, 1, 4, 5, 7, 8, 10, 17, 18, 19, 20, 21, 22}/24
-////{1, 2, 3, 4, 5, 6, 13, 15, 16, 18, 19, 22, 23}
+//BigInteger encodedValue=BigInteger.valueOf(8258995l);
 //		BindNumber annotation = new BindNumber(){
 //			@Override
 //			public Class<? extends Annotation> annotationType(){
@@ -858,8 +858,7 @@ while(k ++ < 10000){
 //		BitWriter writer = new BitWriter();
 //		coder.encode(writer, annotation, null, encodedValue);
 //		writer.flush();
-//
-//		Assertions.assertEquals(Long.toHexString(encodedValue).toUpperCase(Locale.ROOT), writer.toString());
+//		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(BitBuffer.reverseBytes(encodedValue.toByteArray())), 30, '0'), writer.toString());
 //
 //		BitBuffer reader = BitBuffer.wrap(writer);
 //
@@ -867,7 +866,7 @@ while(k ++ < 10000){
 //
 //		Assertions.assertEquals(encodedValue, decoded);
 //	}
-//
+
 //	@Test
 //	void bigPositiveNumberBigEndian(){
 //		Coder coder = Coder.NUMBER;

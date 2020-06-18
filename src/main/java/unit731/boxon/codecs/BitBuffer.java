@@ -30,7 +30,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -199,7 +198,7 @@ class BitBuffer{
 			final int size = Math.min(length, remainingBits);
 			int i = offset;
 			while(cache != 0 && i < offset + size){
-				value.set(i, ((cache & 0x01) != 0));
+				value.set(i, ((cache & MASKS[1]) != 0));
 
 				cache >>>= 1;
 				i ++;

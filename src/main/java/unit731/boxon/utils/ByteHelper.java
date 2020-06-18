@@ -350,12 +350,21 @@ public class ByteHelper{
 	 * Convert the value to signed primitive
 	 *
 	 * @param value	Field value
-	 * @param length	Length in bits of the field
+	 * @param size	Length in bits of the field
 	 * @return	The 2-complement expressed as int
 	 */
-	public static int convert2Complement(final int value, final int length){
-		final int shift = Integer.SIZE - length;
+	public static int convert2Complement(final int value, final int size){
+		final int shift = Integer.SIZE - size;
 		return (value << shift) >> shift;
+	}
+
+	public static long mask(final int size){
+		return ((1l << size) - 1);
+	}
+
+	public static long extendSign(final long value, final int size){
+		final long mask = 1l << (size - 1);
+		return (value ^ mask) - mask;
 	}
 
 }
