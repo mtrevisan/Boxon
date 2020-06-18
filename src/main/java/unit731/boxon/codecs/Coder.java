@@ -50,7 +50,6 @@ import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
-import java.util.Arrays;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Map;
@@ -484,10 +483,14 @@ enum Coder{
 				value = transformerDecode(binding.transformer(), v);
 			}
 			else{
+				BigInteger v;
 				//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
-				BigInteger v = new BigInteger(1, BitBuffer.reverseBytes(bits.toByteArray()));
-				if(v.testBit(size - 1) && !binding.unsigned())
-					v = v.negate();
+				final byte[] bigArray = BitBuffer.reverseBytes(bits.toByteArray());
+				if(bigArray[0] != 0x00 && !binding.unsigned())
+					v = new BigInteger(-1, BitBuffer.invertBytes(bigArray))
+						.subtract(BigInteger.ONE);
+				else
+					v = new BigInteger(1, bigArray);
 
 				value = transformerDecode(binding.transformer(), v);
 			}

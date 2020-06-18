@@ -637,4 +637,10 @@ class BitBuffer{
 		return bytes;
 	}
 
+	public static byte[] invertBytes(final byte[] bytes){
+		for(int i = 0; i < bytes.length; i ++)
+			bytes[i] ^= 0xFF;
+		return bytes;
+	}
+
 }
