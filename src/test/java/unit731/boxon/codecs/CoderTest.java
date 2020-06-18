@@ -749,11 +749,8 @@ class CoderTest{
 
 	@Test
 	void smallPositiveNumberBigEndian(){
-int k = 0;
-while(k ++ < 10000){
 		Coder coder = Coder.NUMBER;
 		long encodedValue = (RANDOM.nextLong() & 0x007F_FFFF);
-//long encodedValue = (16353 & 0x007F_FFFF);
 		BindNumber annotation = new BindNumber(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
@@ -795,21 +792,15 @@ while(k ++ < 10000){
 		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-//		BitSet bits = BitSet.valueOf(new long[]{encodedValue});
-//		BitBuffer.reverseBits(bits, 24);
-//		BigInteger v = new BigInteger(BitBuffer.reverseBytes(bits.toByteArray()));
-//		Assertions.assertEquals(StringUtils.leftPad(ByteHelper.byteArrayToHexString(BitBuffer.reverseBytes(v.toByteArray())).toUpperCase(Locale.ROOT), 6, '0'), writer.toString());
-
-//		BitBuffer.reverseBits(bits, 24);
-//		BigInteger v = new BigInteger(BitBuffer.reverseBytes(bits.toByteArray()));
-//		Assertions.assertEquals(StringUtils.leftPad(ByteHelper.byteArrayToHexString(BitBuffer.reverseBytes(v.toByteArray())).toUpperCase(Locale.ROOT), 6, '0'), writer.toString());
+		BitSet bits = BitSet.valueOf(BitBuffer.reverseBytes(BigInteger.valueOf(encodedValue).toByteArray()));
+		BitBuffer.reverseBits(bits, 24);
+		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bits.toByteArray()).toUpperCase(Locale.ROOT), 6, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
 
 		long decoded = (long)coder.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
-}
 	}
 
 //	@Test

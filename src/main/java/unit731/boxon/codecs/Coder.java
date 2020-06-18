@@ -474,29 +474,28 @@ enum Coder{
 			final BitSet bits = reader.getBits(size);
 			if(byteOrder == ByteOrder.BIG_ENDIAN)
 				BitBuffer.reverseBits(bits, size);
+			final Object value;
 			if(size < Long.SIZE){
 				long v = bits.toLongArray()[0];
 				if(!binding.unsigned())
 					v = ByteHelper.extendSign(v, size);
 
-				final Object value = transformerDecode(binding.transformer(), v);
-
-				matchData(binding.match(), value);
-				validateData(binding.validator(), value);
-
-				return value;
+				value = transformerDecode(binding.transformer(), v);
 			}
 			else{
 				//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
 				final BigInteger v = new BigInteger(BitBuffer.reverseBytes(bits.toByteArray()));
+				//TODO
+//				if(!binding.unsigned())
+//					v = ByteHelper.extendSign(v, size);
 
-				final Object value = transformerDecode(binding.transformer(), v);
-
-				matchData(binding.match(), value);
-				validateData(binding.validator(), value);
-
-				return value;
+				value = transformerDecode(binding.transformer(), v);
 			}
+
+			matchData(binding.match(), value);
+			validateData(binding.validator(), value);
+
+			return value;
 		}
 
 		@Override
