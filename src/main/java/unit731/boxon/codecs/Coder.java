@@ -489,7 +489,8 @@ enum Coder{
 				return value;
 			}
 			else{
-				final BigInteger v = new BigInteger(bits.toByteArray());
+				//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
+				final BigInteger v = new BigInteger(BitBuffer.reverseBytes(bits.toByteArray()));
 
 				final Object value = transformerDecode(binding.transformer(), v);
 
@@ -520,7 +521,8 @@ enum Coder{
 			else{
 				final BigInteger v = transformerEncode(binding.transformer(), value);
 
-				bits = BitSet.valueOf(v.toByteArray());
+				//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
+				bits = BitSet.valueOf(BitBuffer.reverseBytes(v.toByteArray()));
 			}
 			if(byteOrder == ByteOrder.BIG_ENDIAN)
 				BitBuffer.reverseBits(bits, size);
