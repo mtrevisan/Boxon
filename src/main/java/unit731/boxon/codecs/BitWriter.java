@@ -106,7 +106,7 @@ class BitWriter{
 	 * @return	The {@link BitWriter} to allow for the convenience of method-chaining.
 	 */
 	@SuppressWarnings("ShiftOutOfRange")
-	private BitWriter putValue(long value, final int length){
+	private BitWriter putValue(final long value, final int length){
 		final BitSet bits = BitSet.valueOf(new long[]{value});
 		putBits(bits, length);
 		return this;
