@@ -620,4 +620,13 @@ class BitBuffer{
 		return ByteHelper.byteArrayToHexString(buffer.array());
 	}
 
+
+	public static void reverseBits(final BitSet input, final int size){
+		for(int i = 0; i < size / 2; i ++){
+			final boolean t = input.get(i);
+			input.set(i, input.get(size - i - 1));
+			input.set(size - i - 1, t);
+		}
+	}
+
 }

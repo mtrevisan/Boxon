@@ -261,7 +261,7 @@ enum Coder{
 
 			final BitSet bits = reader.getBits(size);
 			if(byteOrder == ByteOrder.BIG_ENDIAN)
-				reverseBits(bits, size);
+				BitBuffer.reverseBits(bits, size);
 
 			final Object value = transformerDecode(binding.transformer(), bits);
 
@@ -283,7 +283,7 @@ enum Coder{
 
 			final BitSet bits = transformerEncode(binding.transformer(), value);
 			if(byteOrder == ByteOrder.BIG_ENDIAN)
-				reverseBits(bits, size);
+				BitBuffer.reverseBits(bits, size);
 
 			writer.putBits(bits, size);
 		}
@@ -472,7 +472,7 @@ enum Coder{
 
 			final BitSet bits = reader.getBits(size);
 			if(byteOrder == ByteOrder.BIG_ENDIAN)
-				reverseBits(bits, size);
+				BitBuffer.reverseBits(bits, size);
 			if(size < Long.SIZE){
 				long v = bits.toLongArray()[0];
 				if(!binding.unsigned()){
@@ -523,7 +523,7 @@ enum Coder{
 				bits = BitSet.valueOf(v.toByteArray());
 			}
 			if(byteOrder == ByteOrder.BIG_ENDIAN)
-				reverseBits(bits, size);
+				BitBuffer.reverseBits(bits, size);
 			writer.putBits(bits, size);
 		}
 
@@ -734,14 +734,6 @@ enum Coder{
 			}
 		}
 		return p;
-	}
-
-	private static void reverseBits(final BitSet input, final int size){
-		for(int i = 0; i < size / 2; i ++){
-			final boolean t = input.get(i);
-			input.set(i, input.get(size - i - 1));
-			input.set(size - i - 1, t);
-		}
 	}
 
 	private static boolean isNotBlank(final String text){

@@ -261,6 +261,8 @@ class CoderTest{
 		Coder coder = Coder.BIT;
 		byte[] randomBytes = new byte[123];
 		RANDOM.nextBytes(randomBytes);
+		//ensure last value is not zero!
+		randomBytes[122] |= 0x01;
 		BitSet encodedValue = BitSet.valueOf(randomBytes);
 		BindBit annotation = new BindBit(){
 			@Override
@@ -298,6 +300,11 @@ class CoderTest{
 		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
+		if(encodedValue.toByteArray().length != writer.array().length){
+			BitWriter writer2 = new BitWriter();
+			coder.encode(writer2, annotation, null, encodedValue);
+			writer2.flush();
+		}
 		Assertions.assertArrayEquals(encodedValue.toByteArray(), writer.array());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
@@ -312,6 +319,8 @@ class CoderTest{
 		Coder coder = Coder.BIT;
 		byte[] randomBytes = new byte[123];
 		RANDOM.nextBytes(randomBytes);
+		//ensure last value is not zero!
+		randomBytes[122] |= 0x01;
 		BitSet encodedValue = BitSet.valueOf(randomBytes);
 		BindBit annotation = new BindBit(){
 			@Override
@@ -355,16 +364,8 @@ class CoderTest{
 
 		BitSet decoded = (BitSet)coder.decode(reader, annotation, null);
 
-		reverseBits(encodedValue, randomBytes.length * Byte.SIZE);
+		BitBuffer.reverseBits(encodedValue, randomBytes.length * Byte.SIZE);
 		Assertions.assertEquals(encodedValue, decoded);
-	}
-
-	private static void reverseBits(final BitSet input, final int size){
-		for(int i = 0; i < size / 2; i ++){
-			final boolean t = input.get(i);
-			input.set(i, input.get(size - i - 1));
-			input.set(size - i - 1, t);
-		}
 	}
 
 	@Test
