@@ -808,8 +808,11 @@ class CoderTest{
 int k = 0;
 while(k ++ < 10_000){
 		Coder coder = Coder.NUMBER;
-		BigInteger encodedValue = new BigInteger(128, RANDOM);
-//BigInteger encodedValue = new BigInteger("15732996955967035795785030852454290467");
+		BigInteger encodedValue;
+		do{
+			encodedValue = new BigInteger(128, RANDOM);
+		}while(encodedValue.toByteArray().length > 16);
+//encodedValue = new BigInteger("157329969559670357957850308524542904671");
 		BindNumber annotation = new BindNumber(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
@@ -851,18 +854,18 @@ while(k ++ < 10_000){
 		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		if(!StringUtils.rightPad(ByteHelper.byteArrayToHexString(BitBuffer.reverseBytes(encodedValue.toByteArray())), 30, '0').equals(writer.toString())){
-			BitWriter writer2 = new BitWriter();
-			coder.encode(writer2, annotation, null, encodedValue);
-			writer2.flush();
-		}
-		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(BitBuffer.reverseBytes(encodedValue.toByteArray())), 30, '0'), writer.toString());
+		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(BitBuffer.reverseBytes(encodedValue.toByteArray())), 32, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
 
 		BigInteger decoded = (BigInteger)coder.decode(reader, annotation, null);
 
-		Assertions.assertEquals(encodedValue, decoded);}
+		if(!encodedValue.equals(decoded)){
+			reader = BitBuffer.wrap(writer);
+			coder.decode(reader, annotation, null);
+		}
+		Assertions.assertEquals(encodedValue, decoded);
+}
 	}
 
 //	@Test
