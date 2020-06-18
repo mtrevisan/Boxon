@@ -300,11 +300,6 @@ class CoderTest{
 		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		if(encodedValue.toByteArray().length != writer.array().length){
-			BitWriter writer2 = new BitWriter();
-			coder.encode(writer2, annotation, null, encodedValue);
-			writer2.flush();
-		}
 		Assertions.assertArrayEquals(encodedValue.toByteArray(), writer.array());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
@@ -700,7 +695,6 @@ class CoderTest{
 	@Test
 	void smallPositiveNumberLittleEndian(){
 		Coder coder = Coder.NUMBER;
-		//the high bit is set to zero to make it positive
 		long encodedValue = RANDOM.nextLong() & 0x007F_FFFF;
 		BindNumber annotation = new BindNumber(){
 			@Override
@@ -743,7 +737,7 @@ class CoderTest{
 		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		Assertions.assertEquals(Long.toHexString(Long.reverseBytes(encodedValue)).toUpperCase(Locale.ROOT).substring(0, 24 * 2 / Byte.SIZE), writer.toString());
+		Assertions.assertEquals(StringUtils.leftPad(Long.toHexString(Long.reverseBytes(encodedValue) >>> 40).toUpperCase(Locale.ROOT), 6, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
 
@@ -754,12 +748,10 @@ class CoderTest{
 
 	@Test
 	void smallPositiveNumberBigEndian(){
+int k = 0;
+while(k ++ < 10000){
 		Coder coder = Coder.NUMBER;
-		//the high bit is set to zero to make it positive
-		long encodedValue = RANDOM.nextLong() & 0x007F_FFFF;
-encodedValue=8258995l;
-//{0, 1, 4, 5, 7, 8, 10, 17, 18, 19, 20, 21, 22}/24
-//{1, 2, 3, 4, 5, 6, 13, 15, 16, 18, 19, 22, 23}
+		long encodedValue = (RANDOM.nextLong() & 0x007F_FFFF);
 		BindNumber annotation = new BindNumber(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
@@ -801,13 +793,21 @@ encodedValue=8258995l;
 		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		Assertions.assertEquals(Long.toHexString(encodedValue).toUpperCase(Locale.ROOT).substring(0, 24 * 2 / Byte.SIZE), writer.toString());
+		if(!StringUtils.leftPad(Long.toHexString(Long.reverseBytes(encodedValue) >>> 40).toUpperCase(Locale.ROOT), 6, '0').equals(writer.toString())){
+			BitWriter writer2 = new BitWriter();
+			coder.encode(writer2, annotation, null, encodedValue);
+			writer2.flush();
+		}
+		BitSet bits = BitSet.valueOf(new long[]{encodedValue});
+		BitBuffer.reverseBits(bits, 24);
+		Assertions.assertEquals(StringUtils.leftPad(Long.toHexString(Long.reverseBytes(encodedValue) >>> 40).toUpperCase(Locale.ROOT), 6, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
 
 		long decoded = (long)coder.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
+}
 	}
 
 //	@Test
