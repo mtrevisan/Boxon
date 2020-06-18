@@ -50,6 +50,7 @@ import java.util.Locale;
 import java.util.Random;
 
 
+//https://graphics.stanford.edu/~seander/bithacks.html#ConditionalSetOrClearBitsWithoutBranching
 class CoderTest{
 
 	private static final Random RANDOM = new Random();
