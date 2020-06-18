@@ -38,10 +38,10 @@ class BitWriter{
 
 	/** The backing {@link ByteArrayOutputStream} */
 	private final ByteArrayOutputStream os = new ByteArrayOutputStream(0);
-	/** The number of bits available within {@code cache} */
+	/** The number of bits available (to write) within {@code cache} */
 	private int remainingBits;
 	/** The <i>cache</i> used when writing and reading bits */
-	private long cache;
+	private byte cache;
 
 
 	public void put(final Object value, final ByteOrder byteOrder){
@@ -70,37 +70,24 @@ class BitWriter{
 	 * @param value	The value to write.
 	 * @return	The {@link BitWriter} to allow for the convenience of method-chaining.
 	 */
-	public BitWriter putBits(final BitSet value, final int length){
+	public BitWriter putBits(final BitSet value, int length){
 		//if the value that we're writing is too large to be placed entirely in the cache, then we need to place as
 		//much as we can in the cache (the least significant bits), flush the cache to the backing ByteBuffer, and
 		//place the rest in the cache
-		if(Long.SIZE - remainingBits < length){
-			//write an integer number of longs
-			final int size = length / Long.SIZE;
-			final long[] vv = value.toLongArray();
-			for(int k = 0; k < size; k ++){
-				final long v = vv[k];
-				final int upperHalfBits = Math.min(length, Long.SIZE) - Long.SIZE + remainingBits;
-				cache |= ((v & BitBuffer.MASKS[Long.SIZE - remainingBits]) << remainingBits);
-				remainingBits = Long.SIZE;
-				while(remainingBits > 0){
-					os.write((byte)cache);
+		int offset = 0;
+		while(offset < length){
+			//fill the cache one bit at a time
+			final int size = Math.min(length - offset, Byte.SIZE - remainingBits);
+			for(int i = offset; i < offset + size; i ++, remainingBits ++)
+				cache |= (value.get(i)? 1: 0) << remainingBits;
+			offset += size;
 
-					cache >>>= Byte.SIZE;
-					remainingBits -= Byte.SIZE;
-				}
-				cache = v & (BitBuffer.MASKS[upperHalfBits] << (Long.SIZE - remainingBits));
-				remainingBits = upperHalfBits;
+			//if cache is full, write it
+			if(remainingBits == Byte.SIZE){
+				os.write(cache);
+
+				resetInnerVariables();
 			}
-
-			//write remainder bits
-			final int sizeAsBits = size * Long.SIZE;
-			if(sizeAsBits < length)
-				putBits(value.get(sizeAsBits, length), length);
-		}
-		else{
-			cache |= ((value.toLongArray()[0] & BitBuffer.MASKS[length]) << remainingBits);
-			remainingBits += length;
 		}
 		return this;
 	}
@@ -113,26 +100,16 @@ class BitWriter{
 	 * @return	The {@link BitWriter} to allow for the convenience of method-chaining.
 	 */
 	@SuppressWarnings("ShiftOutOfRange")
-	private BitWriter putValue(final long value, final int length){
-		//if the value that we're writing is too large to be placed entirely in the cache, then we need to place as
-		//much as we can in the cache (the least significant bits), flush the cache to the backing ByteBuffer, and
-		//place the rest in the cache
-		if(Long.SIZE - remainingBits < length){
-			final int upperHalfBits = length - Long.SIZE + remainingBits;
-			cache |= ((value & BitBuffer.MASKS[Long.SIZE - remainingBits]) << remainingBits);
-			while(remainingBits > 0){
-				os.write((byte)cache);
+	private BitWriter putValue(long value, final int length){
+		final BitSet bits = new BitSet(length);
+		int i = 0;
+		while(value != 0){
+			bits.set(i, ((value & 0x01) != 0));
 
-				cache >>>= Byte.SIZE;
-				remainingBits -= Byte.SIZE;
-			}
-			cache = value & (BitBuffer.MASKS[upperHalfBits] << (Long.SIZE - remainingBits));
-			remainingBits = upperHalfBits;
+			value >>>= 1;
+			i ++;
 		}
-		else{
-			cache |= ((value & BitBuffer.MASKS[length]) << remainingBits);
-			remainingBits += length;
-		}
+		putBits(bits, length);
 		return this;
 	}
 
@@ -341,14 +318,19 @@ class BitWriter{
 	}
 
 
+	/** Flush an integral number of bytes to the output stream, discarding any non-completed byte */
 	public void flush(){
 		//put the cache into the buffer, if needed
-		while(remainingBits > 0){
-			os.write((byte)cache);
+		if(remainingBits == Byte.SIZE){
+			os.write(cache);
 
-			cache >>>= Byte.SIZE;
-			remainingBits -= Byte.SIZE;
+			resetInnerVariables();
 		}
+	}
+
+	private void resetInnerVariables(){
+		remainingBits = 0;
+		cache = 0;
 	}
 
 	/**

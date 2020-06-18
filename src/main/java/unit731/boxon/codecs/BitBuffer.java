@@ -44,21 +44,21 @@ import java.util.BitSet;
 class BitBuffer{
 
 	/** The mask used when writing/reading bits */
-	static final long[] MASKS = new long[Long.SIZE + 1];
+	static final byte[] MASKS = new byte[Byte.SIZE + 1];
 	static{
-		BigInteger tmp = BigInteger.ONE;
+		byte tmp = 1;
 		for(int i = 0; i < MASKS.length; i ++){
-			MASKS[i] = tmp.subtract(BigInteger.ONE).longValue();
-			tmp = tmp.shiftLeft(1);
+			MASKS[i] = (byte)(tmp - 1);
+			tmp <<= 1;
 		}
 	}
 
 	private static final class State{
 		final int position;
 		final int remainingBits;
-		final long cache;
+		final byte cache;
 
-		State(final int position, final int remainingBits, final long cache){
+		State(final int position, final int remainingBits, final byte cache){
 			this.position = position;
 			this.remainingBits = remainingBits;
 			this.cache = cache;
@@ -68,10 +68,10 @@ class BitBuffer{
 
 	/** The backing {@link ByteBuffer} */
 	private final ByteBuffer buffer;
-	/** The number of bits available within {@code cache} */
+	/** The number of bits available (to read) within {@code cache} */
 	private int remainingBits;
 	/** The <i>cache</i> used when writing and reading bits */
-	private long cache;
+	private byte cache;
 
 	private State fallbackPoint;
 
@@ -192,56 +192,28 @@ class BitBuffer{
 	 * @return	A {@link BitSet} value at the {@link BitBuffer}'s current position.
 	 */
 	public BitSet getBits(final int length){
-		//TODO refactor
-		if(remainingBits < length){
-			//read an integer number of longs
-			final int size = length / Long.SIZE;
-			final long[] vv = new long[size];
-			for(int k = 0; k < size; k ++){
-				long v = cache & MASKS[remainingBits];
-				final int remaining = Math.min(buffer.remaining(), Long.BYTES);
-				for(int i = 0; i < remaining; i ++)
-					//read next byte from the byte buffer
-					cache |= ((long)buffer.get() & 0x0000_0000_0000_00FFl) << (i * Byte.SIZE);
-				final int difference = Math.min(length, Long.SIZE) - remainingBits;
-				v |= (cache & MASKS[difference]) << remainingBits;
-				remainingBits = Byte.SIZE * remaining - difference;
-				cache = 0l;
+		final BitSet value = new BitSet(length);
+		int offset = 0;
+		while(offset < length){
+			//transfer the cache values
+			final int size = Math.min(length, remainingBits);
+			int i = offset;
+			while(cache != 0 && i < offset + size){
+				value.set(i, ((cache & 0x01) != 0));
 
-				vv[k] = v;
+				cache >>>= 1;
+				i ++;
 			}
-			final BitSet value = BitSet.valueOf(vv);
+			remainingBits -= size;
+			offset += size;
 
-			//read remainder bits
-			final int sizeAsBits = size * Long.SIZE;
-			if(sizeAsBits < length){
-				long v = cache & MASKS[remainingBits];
-				final int remaining = Math.min(buffer.remaining(), Long.BYTES);
-				for(int i = 0; i < remaining; i ++)
-					//read next byte from the byte buffer
-					cache |= ((long)buffer.get() & 0x0000_0000_0000_00FFl) << (i * Byte.SIZE);
-				final int difference = Math.min(length - sizeAsBits, Long.SIZE) - remainingBits;
-				v |= (cache & MASKS[difference]) << remainingBits;
-				remainingBits = Byte.SIZE * remaining - difference;
-				cache >>= difference;
-
-				for(int k = sizeAsBits; k < length; k ++)
-					if(ByteHelper.hasBit(v, k - sizeAsBits))
-						value.set(k);
+			//if cache is empty and there are more bits to be read, fill it
+			if(length > offset){
+				cache = buffer.get();
+				remainingBits = Byte.SIZE;
 			}
-			return value;
 		}
-		else{
-			long v = cache & MASKS[length];
-			cache >>= length;
-			remainingBits -= length;
-
-			final BitSet value = new BitSet(length);
-			for(int k = 0; k < length; k ++)
-				if(ByteHelper.hasBit(v, k))
-					value.set(k);
-			return value;
-		}
+		return value;
 	}
 
 	/**
@@ -251,27 +223,11 @@ class BitBuffer{
 	 * @return	A {@link BitSet} value at the {@link BitBuffer}'s current position.
 	 */
 	private long getValue(final int length){
-		//TODO refactor
-		long value;
-		if(remainingBits < length){
-			value = cache & MASKS[remainingBits];
-			final int remaining = Math.min(buffer.remaining(), Byte.SIZE);
-			if(remaining == 0)
-				throw new BufferUnderflowException();
-
-			for(int i = 0; i < remaining; i ++)
-				//read next byte from the byte buffer
-				cache |= ((long)buffer.get() & 0x0000_0000_0000_00FFl) << (i * Byte.SIZE);
-			final int difference = length - remainingBits;
-			value |= (cache & MASKS[difference]) << remainingBits;
-			remainingBits = Byte.SIZE * remaining - difference;
-			cache >>= difference;
-		}
-		else{
-			value = cache & MASKS[length];
-			remainingBits -= length;
-			cache >>= length;
-		}
+		final BitSet bits = getBits(length);
+		long value = 0L;
+		for(int i = 0; i < bits.length(); i ++)
+			if(bits.get(i))
+				value |= 1l << i;
 		return value;
 	}
 
@@ -353,7 +309,7 @@ class BitBuffer{
 	 * @return	A {@code char}.
 	 */
 	public char getCharacter(final ByteOrder byteOrder){
-		final char value = (char)getValue(Integer.SIZE);
+		final char value = (char)getValue(Short.SIZE);
 		return (byteOrder == ByteOrder.BIG_ENDIAN? Character.reverseBytes(value): value);
 	}
 
@@ -613,7 +569,7 @@ class BitBuffer{
 
 	private void resetInnerVariables(){
 		remainingBits = 0;
-		cache = 0l;
+		cache = 0;
 	}
 
 	/**
