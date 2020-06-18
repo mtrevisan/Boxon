@@ -31,6 +31,9 @@ import unit731.boxon.annotations.BindArray;
 import unit731.boxon.annotations.BindArrayPrimitive;
 import unit731.boxon.annotations.BindBit;
 import unit731.boxon.annotations.BindByte;
+import unit731.boxon.annotations.BindChecksum;
+import unit731.boxon.annotations.BindDecimal;
+import unit731.boxon.annotations.BindDouble;
 import unit731.boxon.annotations.BindFloat;
 import unit731.boxon.annotations.BindInteger;
 import unit731.boxon.annotations.BindLong;
@@ -38,6 +41,8 @@ import unit731.boxon.annotations.BindNumber;
 import unit731.boxon.annotations.BindShort;
 import unit731.boxon.annotations.BindString;
 import unit731.boxon.annotations.BindStringTerminated;
+import unit731.boxon.annotations.checksummers.CRC16;
+import unit731.boxon.annotations.checksummers.Checksummer;
 import unit731.boxon.annotations.transformers.NullTransformer;
 import unit731.boxon.annotations.transformers.Transformer;
 import unit731.boxon.annotations.validators.NullValidator;
@@ -46,6 +51,7 @@ import unit731.boxon.codecs.queclink.Version;
 import unit731.boxon.utils.ByteHelper;
 
 import java.lang.annotation.Annotation;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.BitSet;
@@ -60,7 +66,7 @@ class CoderTest{
 
 
 	@Test
-	void string(){
+	void stringUS_ASCII(){
 		Coder coder = Coder.STRING;
 		String encodedValue = "123ABC";
 		BindString annotation = new BindString(){
@@ -76,12 +82,12 @@ class CoderTest{
 
 			@Override
 			public String size(){
-				return Integer.toString(encodedValue.length());
+				return Integer.toString(encodedValue.getBytes(StandardCharsets.US_ASCII).length);
 			}
 
 			@Override
 			public String match(){
-				return "";
+				return ".*";
 			}
 
 			@Override
@@ -106,6 +112,96 @@ class CoderTest{
 		String decoded = (String)coder.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
+	}
+
+	@Test
+	void stringUTF_8(){
+		Coder coder = Coder.STRING;
+		String encodedValue = "123ABCíïóúüđɉƚñŧ";
+		BindString annotation = new BindString(){
+			@Override
+			public Class<? extends Annotation> annotationType(){
+				return BindString.class;
+			}
+
+			@Override
+			public String charset(){
+				return StandardCharsets.UTF_8.name();
+			}
+
+			@Override
+			public String size(){
+				return Integer.toString(encodedValue.getBytes(StandardCharsets.UTF_8).length);
+			}
+
+			@Override
+			public String match(){
+				return encodedValue;
+			}
+
+			@Override
+			public Class<? extends Validator> validator(){
+				return NullValidator.class;
+			}
+
+			@Override
+			public Class<? extends Transformer> transformer(){
+				return NullTransformer.class;
+			}
+		};
+
+		BitWriter writer = new BitWriter();
+		coder.encode(writer, annotation, null, encodedValue);
+		writer.flush();
+
+		Assertions.assertEquals(encodedValue, new String(writer.array(), StandardCharsets.UTF_8));
+
+		BitBuffer reader = BitBuffer.wrap(writer);
+
+		String decoded = (String)coder.decode(reader, annotation, null);
+
+		Assertions.assertEquals(encodedValue, decoded);
+	}
+
+	@Test
+	void stringUS_ASCIINotMatch(){
+		Coder coder = Coder.STRING;
+		String encodedValue = "123ABC";
+		BindString annotation = new BindString(){
+			@Override
+			public Class<? extends Annotation> annotationType(){
+				return BindString.class;
+			}
+
+			@Override
+			public String charset(){
+				return StandardCharsets.US_ASCII.name();
+			}
+
+			@Override
+			public String size(){
+				return Integer.toString(encodedValue.getBytes(StandardCharsets.US_ASCII).length);
+			}
+
+			@Override
+			public String match(){
+				return encodedValue + "-not-match";
+			}
+
+			@Override
+			public Class<? extends Validator> validator(){
+				return NullValidator.class;
+			}
+
+			@Override
+			public Class<? extends Transformer> transformer(){
+				return NullTransformer.class;
+			}
+		};
+
+		BitWriter writer = new BitWriter();
+		Assertions.assertThrows(IllegalArgumentException.class,
+			() -> coder.encode(writer, annotation, null, encodedValue));
 	}
 
 	@Test
@@ -417,7 +513,7 @@ class CoderTest{
 	@Test
 	void shortLittleEndian(){
 		Coder coder = Coder.SHORT;
-		short encodedValue = (short)(RANDOM.nextInt() & 0x0000_FFFF);
+		short encodedValue = (short)RANDOM.nextInt(0x0000_FFFF);
 		BindShort annotation = new BindShort(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
@@ -466,7 +562,7 @@ class CoderTest{
 	@Test
 	void shortBigEndian(){
 		Coder coder = Coder.SHORT;
-		short encodedValue = (short)(RANDOM.nextInt() & 0x0000_FFFF);
+		short encodedValue = (short)RANDOM.nextInt(0x0000_FFFF);
 		BindShort annotation = new BindShort(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
@@ -1328,6 +1424,428 @@ class CoderTest{
 		BitBuffer reader = BitBuffer.wrap(writer);
 
 		float decoded = (float)coder.decode(reader, annotation, null);
+
+		Assertions.assertEquals(encodedValue, decoded);
+	}
+
+	@Test
+	void doublePositiveLittleEndian(){
+		Coder coder = Coder.DOUBLE;
+		double encodedValue = RANDOM.nextDouble();
+		BindDouble annotation = new BindDouble(){
+			@Override
+			public Class<? extends Annotation> annotationType(){
+				return BindFloat.class;
+			}
+
+			@Override
+			public ByteOrder byteOrder(){
+				return ByteOrder.LITTLE_ENDIAN;
+			}
+
+			@Override
+			public String match(){
+				return null;
+			}
+
+			@Override
+			public Class<? extends Validator> validator(){
+				return NullValidator.class;
+			}
+
+			@Override
+			public Class<? extends Transformer> transformer(){
+				return NullTransformer.class;
+			}
+		};
+
+		BitWriter writer = new BitWriter();
+		coder.encode(writer, annotation, null, encodedValue);
+		writer.flush();
+
+		Assertions.assertEquals(StringUtils.leftPad(Long.toHexString(Long.reverseBytes(Double.doubleToRawLongBits(encodedValue))).toUpperCase(Locale.ROOT), 8, '0'), writer.toString());
+
+		BitBuffer reader = BitBuffer.wrap(writer);
+
+		double decoded = (double)coder.decode(reader, annotation, null);
+
+		Assertions.assertEquals(encodedValue, decoded);
+	}
+
+	@Test
+	void doubleNegativeLittleEndian(){
+		Coder coder = Coder.DOUBLE;
+		double encodedValue = -RANDOM.nextDouble();
+		BindDouble annotation = new BindDouble(){
+			@Override
+			public Class<? extends Annotation> annotationType(){
+				return BindFloat.class;
+			}
+
+			@Override
+			public ByteOrder byteOrder(){
+				return ByteOrder.LITTLE_ENDIAN;
+			}
+
+			@Override
+			public String match(){
+				return null;
+			}
+
+			@Override
+			public Class<? extends Validator> validator(){
+				return NullValidator.class;
+			}
+
+			@Override
+			public Class<? extends Transformer> transformer(){
+				return NullTransformer.class;
+			}
+		};
+
+		BitWriter writer = new BitWriter();
+		coder.encode(writer, annotation, null, encodedValue);
+		writer.flush();
+
+		Assertions.assertEquals(StringUtils.leftPad(Long.toHexString(Long.reverseBytes(Double.doubleToRawLongBits(encodedValue))).toUpperCase(Locale.ROOT), 8, '0'), writer.toString());
+
+		BitBuffer reader = BitBuffer.wrap(writer);
+
+		double decoded = (double)coder.decode(reader, annotation, null);
+
+		Assertions.assertEquals(encodedValue, decoded);
+	}
+
+	@Test
+	void doublePositiveBigEndian(){
+		Coder coder = Coder.DOUBLE;
+		double encodedValue = RANDOM.nextDouble();
+		BindDouble annotation = new BindDouble(){
+			@Override
+			public Class<? extends Annotation> annotationType(){
+				return BindFloat.class;
+			}
+
+			@Override
+			public ByteOrder byteOrder(){
+				return ByteOrder.BIG_ENDIAN;
+			}
+
+			@Override
+			public String match(){
+				return null;
+			}
+
+			@Override
+			public Class<? extends Validator> validator(){
+				return NullValidator.class;
+			}
+
+			@Override
+			public Class<? extends Transformer> transformer(){
+				return NullTransformer.class;
+			}
+		};
+
+		BitWriter writer = new BitWriter();
+		coder.encode(writer, annotation, null, encodedValue);
+		writer.flush();
+
+		Assertions.assertEquals(StringUtils.leftPad(Long.toHexString(Double.doubleToRawLongBits(encodedValue)).toUpperCase(Locale.ROOT), 8, '0'), writer.toString());
+
+		BitBuffer reader = BitBuffer.wrap(writer);
+
+		double decoded = (double)coder.decode(reader, annotation, null);
+
+		Assertions.assertEquals(encodedValue, decoded);
+	}
+
+	@Test
+	void doubleNegativeBigEndian(){
+		Coder coder = Coder.DOUBLE;
+		double encodedValue = -RANDOM.nextDouble();
+		BindDouble annotation = new BindDouble(){
+			@Override
+			public Class<? extends Annotation> annotationType(){
+				return BindFloat.class;
+			}
+
+			@Override
+			public ByteOrder byteOrder(){
+				return ByteOrder.BIG_ENDIAN;
+			}
+
+			@Override
+			public String match(){
+				return null;
+			}
+
+			@Override
+			public Class<? extends Validator> validator(){
+				return NullValidator.class;
+			}
+
+			@Override
+			public Class<? extends Transformer> transformer(){
+				return NullTransformer.class;
+			}
+		};
+
+		BitWriter writer = new BitWriter();
+		coder.encode(writer, annotation, null, encodedValue);
+		writer.flush();
+
+		Assertions.assertEquals(StringUtils.leftPad(Long.toHexString(Double.doubleToRawLongBits(encodedValue)).toUpperCase(Locale.ROOT), 8, '0'), writer.toString());
+
+		BitBuffer reader = BitBuffer.wrap(writer);
+
+		double decoded = (double)coder.decode(reader, annotation, null);
+
+		Assertions.assertEquals(encodedValue, decoded);
+	}
+
+	@Test
+	void decimalPositiveLittleEndian(){
+		Coder coder = Coder.DECIMAL;
+		BigDecimal encodedValue = BigDecimal.valueOf(RANDOM.nextDouble());
+		BindDecimal annotation = new BindDecimal(){
+			@Override
+			public Class<? extends Annotation> annotationType(){
+				return BindFloat.class;
+			}
+
+			@Override
+			public Class<?> type(){
+				return Double.class;
+			}
+
+			@Override
+			public ByteOrder byteOrder(){
+				return ByteOrder.LITTLE_ENDIAN;
+			}
+
+			@Override
+			public String match(){
+				return null;
+			}
+
+			@Override
+			public Class<? extends Validator> validator(){
+				return NullValidator.class;
+			}
+
+			@Override
+			public Class<? extends Transformer> transformer(){
+				return NullTransformer.class;
+			}
+		};
+
+		BitWriter writer = new BitWriter();
+		coder.encode(writer, annotation, null, encodedValue);
+		writer.flush();
+
+		Assertions.assertEquals(StringUtils.leftPad(Long.toHexString(Long.reverseBytes(Double.doubleToRawLongBits(encodedValue.doubleValue()))).toUpperCase(Locale.ROOT), 8, '0'), writer.toString());
+
+		BitBuffer reader = BitBuffer.wrap(writer);
+
+		BigDecimal decoded = (BigDecimal)coder.decode(reader, annotation, null);
+
+		Assertions.assertEquals(encodedValue, decoded);
+	}
+
+	@Test
+	void decimalNegativeLittleEndian(){
+		Coder coder = Coder.DECIMAL;
+		BigDecimal encodedValue = BigDecimal.valueOf(-RANDOM.nextDouble());
+		BindDecimal annotation = new BindDecimal(){
+			@Override
+			public Class<? extends Annotation> annotationType(){
+				return BindDecimal.class;
+			}
+
+			@Override
+			public Class<?> type(){
+				return Double.class;
+			}
+
+			@Override
+			public ByteOrder byteOrder(){
+				return ByteOrder.LITTLE_ENDIAN;
+			}
+
+			@Override
+			public String match(){
+				return null;
+			}
+
+			@Override
+			public Class<? extends Validator> validator(){
+				return NullValidator.class;
+			}
+
+			@Override
+			public Class<? extends Transformer> transformer(){
+				return NullTransformer.class;
+			}
+		};
+
+		BitWriter writer = new BitWriter();
+		coder.encode(writer, annotation, null, encodedValue);
+		writer.flush();
+
+		//FIXME
+		Assertions.assertEquals(StringUtils.leftPad(Long.toHexString(Long.reverseBytes(Double.doubleToRawLongBits(encodedValue.doubleValue()))).toUpperCase(Locale.ROOT), 8, '0'), writer.toString());
+
+		BitBuffer reader = BitBuffer.wrap(writer);
+
+		BigDecimal decoded = (BigDecimal)coder.decode(reader, annotation, null);
+
+		Assertions.assertEquals(encodedValue, decoded);
+	}
+
+	@Test
+	void decimalPositiveBigEndian(){
+		Coder coder = Coder.DECIMAL;
+		BigDecimal encodedValue = BigDecimal.valueOf(RANDOM.nextDouble());
+		BindDecimal annotation = new BindDecimal(){
+			@Override
+			public Class<? extends Annotation> annotationType(){
+				return BindDecimal.class;
+			}
+
+			@Override
+			public Class<?> type(){
+				return Double.class;
+			}
+
+			@Override
+			public ByteOrder byteOrder(){
+				return ByteOrder.BIG_ENDIAN;
+			}
+
+			@Override
+			public String match(){
+				return null;
+			}
+
+			@Override
+			public Class<? extends Validator> validator(){
+				return NullValidator.class;
+			}
+
+			@Override
+			public Class<? extends Transformer> transformer(){
+				return NullTransformer.class;
+			}
+		};
+
+		BitWriter writer = new BitWriter();
+		coder.encode(writer, annotation, null, encodedValue);
+		writer.flush();
+
+		Assertions.assertEquals(StringUtils.leftPad(Long.toHexString(Double.doubleToRawLongBits(encodedValue.doubleValue())).toUpperCase(Locale.ROOT), 8, '0'), writer.toString());
+
+		BitBuffer reader = BitBuffer.wrap(writer);
+
+		BigDecimal decoded = (BigDecimal)coder.decode(reader, annotation, null);
+
+		Assertions.assertEquals(encodedValue, decoded);
+	}
+
+	@Test
+	void decimalNegativeBigEndian(){
+		Coder coder = Coder.DECIMAL;
+		BigDecimal encodedValue = BigDecimal.valueOf(-RANDOM.nextDouble());
+		BindDecimal annotation = new BindDecimal(){
+			@Override
+			public Class<? extends Annotation> annotationType(){
+				return BindDecimal.class;
+			}
+
+			@Override
+			public Class<?> type(){
+				return Double.class;
+			}
+
+			@Override
+			public ByteOrder byteOrder(){
+				return ByteOrder.BIG_ENDIAN;
+			}
+
+			@Override
+			public String match(){
+				return null;
+			}
+
+			@Override
+			public Class<? extends Validator> validator(){
+				return NullValidator.class;
+			}
+
+			@Override
+			public Class<? extends Transformer> transformer(){
+				return NullTransformer.class;
+			}
+		};
+
+		BitWriter writer = new BitWriter();
+		coder.encode(writer, annotation, null, encodedValue);
+		writer.flush();
+
+		Assertions.assertEquals(StringUtils.leftPad(Long.toHexString(Double.doubleToRawLongBits(encodedValue.doubleValue())).toUpperCase(Locale.ROOT), 8, '0'), writer.toString());
+
+		BitBuffer reader = BitBuffer.wrap(writer);
+
+		BigDecimal decoded = (BigDecimal)coder.decode(reader, annotation, null);
+
+		Assertions.assertEquals(encodedValue, decoded);
+	}
+
+	@Test
+	void checksumShort(){
+		Coder coder = Coder.CHECKSUM;
+		short encodedValue = (short)RANDOM.nextInt(0x0000_FFFF);
+		BindChecksum annotation = new BindChecksum(){
+			@Override
+			public Class<? extends Annotation> annotationType(){
+				return BindChecksum.class;
+			}
+
+			@Override
+			public Class<?> type(){
+				return short.class;
+			}
+
+			@Override
+			public ByteOrder byteOrder(){
+				return ByteOrder.BIG_ENDIAN;
+			}
+
+			@Override
+			public int skipStart(){
+				return 2;
+			}
+
+			@Override
+			public int skipEnd(){
+				return 0;
+			}
+
+			@Override
+			public Class<? extends Checksummer> algorithm(){
+				return CRC16.class;
+			}
+		};
+
+		BitWriter writer = new BitWriter();
+		coder.encode(writer, annotation, null, encodedValue);
+		writer.flush();
+
+		Assertions.assertEquals(StringUtils.leftPad(Integer.toHexString(encodedValue & 0x0000_FFFF).toUpperCase(Locale.ROOT), 4, '0'), writer.toString());
+
+		BitBuffer reader = BitBuffer.wrap(writer);
+
+		short decoded = (short)coder.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
