@@ -24,10 +24,8 @@
  */
 package unit731.boxon.utils;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.nio.charset.Charset;
+import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.BitSet;
 
 
@@ -201,6 +199,17 @@ public class ByteHelper{
 		for(int i = 0; i < len; i += 2)
 			data[i / 2] = (byte)((Character.digit(hexString.charAt(i), 16) << 4) + Character.digit(hexString.charAt(i + 1), 16));
 		return data;
+	}
+
+	/**
+	 * Converts a BigInteger into a byte array ignoring the sign of the BigInteger, according to SRP specification
+	 *
+	 * @param value	the value, must not be <code>null</code>
+	 * @return	The byte array (leading byte is always different from <code>0</code>), empty array if the value is zero.
+	 */
+	public static byte[] bigIntegerToBytes(final BigInteger value){
+		final byte[] array = value.toByteArray();
+		return (array[0] == 0? Arrays.copyOfRange(array, 1, array.length): array);
 	}
 
 	/**
