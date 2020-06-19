@@ -485,7 +485,7 @@ enum Coder{
 				BigInteger v;
 				//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
 				final byte[] bigArray = ByteHelper.reverseBytes(bits.toByteArray());
-				if(bigArray[0] != 0x00 && !binding.unsigned())
+				if(!binding.unsigned() && (bigArray[0] & 0x80) != 0x00)
 					v = new BigInteger(-1, ByteHelper.invertBytes(bigArray))
 						.subtract(BigInteger.ONE);
 				else
@@ -511,14 +511,13 @@ enum Coder{
 			matchData(binding.match(), value);
 			validateData(binding.validator(), value);
 
-			final BigInteger v;
+			BigInteger v;
 			if(allowPrimitive && size < Long.SIZE){
 				final long vv = transformerEncode(binding.transformer(), value);
-				if(binding.unsigned() || vv >= 0)
-					v = BigInteger.valueOf(vv);
-				else
-					v = BigInteger.valueOf(Math.abs(vv))
-						.negate();
+
+				v = BigInteger.valueOf(Math.abs(vv));
+				if(!binding.unsigned() && vv < 0)
+					v = v.negate();
 			}
 			else
 				v = transformerEncode(binding.transformer(), value);
