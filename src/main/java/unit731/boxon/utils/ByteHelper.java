@@ -207,9 +207,19 @@ public class ByteHelper{
 	 * @param value	the value, must not be <code>null</code>
 	 * @return	The byte array (leading byte is always different from <code>0</code>), empty array if the value is zero.
 	 */
-	public static byte[] bigIntegerToBytes(final BigInteger value){
-		final byte[] array = value.toByteArray();
-		return (array[0] == 0? Arrays.copyOfRange(array, 1, array.length): array);
+	public static byte[] bigIntegerToBytes(final BigInteger value, final int size){
+		byte[] array = value.toByteArray();
+		if(array[0] == 0)
+			array = Arrays.copyOfRange(array, 1, array.length);
+		//extend sign
+		if((array[0] & 0x80) != 0x0){
+			final byte[] a = new byte[size / Byte.SIZE];
+			for(int i = 0; i < a.length - array.length; i ++)
+				a[i] = (byte)0xFF;
+			System.arraycopy(array, 0, a, a.length - array.length, array.length);
+			array = a;
+		}
+		return array;
 	}
 
 	/**
@@ -374,6 +384,29 @@ public class ByteHelper{
 	public static long extendSign(final long value, final int size){
 		final long mask = 1l << (size - 1);
 		return (value ^ mask) - mask;
+	}
+
+	public static void reverseBits(final BitSet input, final int size){
+		for(int i = 0; i < size / 2; i ++){
+			final boolean t = input.get(i);
+			input.set(i, input.get(size - i - 1));
+			input.set(size - i - 1, t);
+		}
+	}
+
+	public static byte[] reverseBytes(final byte[] bytes){
+		for(int i = 0; i < bytes.length / 2; i ++){
+			final byte temp = bytes[i];
+			bytes[i] = bytes[bytes.length - i - 1];
+			bytes[bytes.length - i - 1] = temp;
+		}
+		return bytes;
+	}
+
+	public static byte[] invertBytes(final byte[] bytes){
+		for(int i = 0; i < bytes.length; i ++)
+			bytes[i] ^= 0xFF;
+		return bytes;
 	}
 
 }

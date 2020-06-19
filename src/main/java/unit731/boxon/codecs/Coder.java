@@ -262,7 +262,7 @@ enum Coder{
 
 			final BitSet bits = reader.getBits(size);
 			if(byteOrder == ByteOrder.BIG_ENDIAN)
-				BitBuffer.reverseBits(bits, size);
+				ByteHelper.reverseBits(bits, size);
 
 			final Object value = transformerDecode(binding.transformer(), bits);
 
@@ -284,7 +284,7 @@ enum Coder{
 
 			final BitSet bits = transformerEncode(binding.transformer(), value);
 			if(byteOrder == ByteOrder.BIG_ENDIAN)
-				BitBuffer.reverseBits(bits, size);
+				ByteHelper.reverseBits(bits, size);
 
 			writer.putBits(bits, size);
 		}
@@ -473,7 +473,7 @@ enum Coder{
 
 			final BitSet bits = reader.getBits(size);
 			if(byteOrder == ByteOrder.BIG_ENDIAN)
-				BitBuffer.reverseBits(bits, size);
+				ByteHelper.reverseBits(bits, size);
 			final Object value;
 			if(size < Long.SIZE){
 				long v = bits.toLongArray()[0];
@@ -485,9 +485,9 @@ enum Coder{
 			else{
 				BigInteger v;
 				//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
-				final byte[] bigArray = BitBuffer.reverseBytes(bits.toByteArray());
+				final byte[] bigArray = ByteHelper.reverseBytes(bits.toByteArray());
 				if(bigArray[0] != 0x00 && !binding.unsigned())
-					v = new BigInteger(-1, BitBuffer.invertBytes(bigArray))
+					v = new BigInteger(-1, ByteHelper.invertBytes(bigArray))
 						.subtract(BigInteger.ONE);
 				else
 					v = new BigInteger(1, bigArray);
@@ -515,15 +515,19 @@ enum Coder{
 			if(size < Long.SIZE){
 				final long vv = transformerEncode(binding.transformer(), value);
 				final long mask = ByteHelper.mask(size);
-				v = BigInteger.valueOf(vv & mask);
+				if(binding.unsigned() || vv >= 0)
+					v = BigInteger.valueOf(vv & mask);
+				else
+					v = BigInteger.valueOf(Math.abs(vv) & mask)
+						.negate();
 			}
 			else
 				v = transformerEncode(binding.transformer(), value);
 
 			//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
-			final BitSet bits = BitSet.valueOf(BitBuffer.reverseBytes(ByteHelper.bigIntegerToBytes(v)));
+			final BitSet bits = BitSet.valueOf(ByteHelper.reverseBytes(ByteHelper.bigIntegerToBytes(v, size)));
 			if(byteOrder == ByteOrder.BIG_ENDIAN)
-				BitBuffer.reverseBits(bits, size);
+				ByteHelper.reverseBits(bits, size);
 			writer.putBits(bits, size);
 		}
 
