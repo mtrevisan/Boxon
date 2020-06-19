@@ -24,8 +24,6 @@
  */
 package unit731.boxon.codecs;
 
-import unit731.boxon.codecs.ParseException;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,6 +50,7 @@ public class ParseResponse{
 		return !errors.isEmpty();
 	}
 
+	@SuppressWarnings("unused")
 	public List<ParseException> getErrors(){
 		return errors;
 	}

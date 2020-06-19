@@ -27,6 +27,7 @@ package unit731.boxon.annotations.validators;
 
 public class IMEIValidator implements Validator<String>{
 
+	@SuppressWarnings("unused")
 	@Override
 	public boolean validate(final String value){
 		return (value != null && luhnValidate(value));

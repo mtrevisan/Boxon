@@ -108,7 +108,6 @@ class BitWriter{
 	 * @param length	The amount of bits to use when writing {@code value}.
 	 * @return	The {@link BitWriter} to allow for the convenience of method-chaining.
 	 */
-	@SuppressWarnings("ShiftOutOfRange")
 	private BitWriter putValue(final long value, final int length){
 		if(length > Long.SIZE)
 			throw new IllegalArgumentException("Cannot write that much bits from a long: " + length);

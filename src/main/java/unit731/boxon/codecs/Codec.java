@@ -157,7 +157,7 @@ class Codec<T>{
 	 * Retrieving fields list of specified class
 	 * If `recursively` is {@code true}, retrieving fields from all class hierarchy
 	 */
-	private Field[] getDeclaredFields(final Class<T> cls, final boolean recursively){
+	private Field[] getDeclaredFields(final Class<T> cls, @SuppressWarnings("SameParameterValue") final boolean recursively){
 		if(recursively){
 			final List<Field> fields = new ArrayList<>();
 			Class<? super T> currentType = cls;

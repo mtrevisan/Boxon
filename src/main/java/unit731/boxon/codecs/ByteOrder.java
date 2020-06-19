@@ -28,6 +28,6 @@ package unit731.boxon.codecs;
 public enum ByteOrder{
 
 	LITTLE_ENDIAN,
-	BIG_ENDIAN;
+	BIG_ENDIAN
 
 }

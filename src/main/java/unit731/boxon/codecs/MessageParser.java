@@ -66,9 +66,7 @@ class MessageParser{
 		for(final Codec.BoundedField field : fields){
 			skipFields(field.getSkips(), reader, data);
 
-			final String condition = field.getCondition();
-			if(condition != null && !Evaluator.evaluate(condition, boolean.class, data))
-				//skip field
+			if(skipFieldByCondition(field.getCondition(), data))
 				continue;
 
 			final Annotation binding = field.getBinding();
@@ -115,6 +113,10 @@ class MessageParser{
 			reader.skipUntilTerminator(skip.terminator(), skip.consumeTerminator());
 	}
 
+	private static <T> boolean skipFieldByCondition(final String condition, final T data){
+		return (condition != null && !Evaluator.evaluate(condition, boolean.class, data));
+	}
+
 	private static <T> void readMessageTerminator(final Codec<T> codec, final BitBuffer reader){
 		final MessageHeader header = codec.getHeader();
 		if(header != null && header.end().length() > 0){
@@ -138,6 +140,7 @@ class MessageParser{
 			try{
 				final Checksummer<?> checksummer = ReflectionHelper.createInstance(checksum.algorithm());
 				final long calculatedCRC = ((Number)checksummer.calculateCRC(reader.array(), startPosition, endPosition)).longValue();
+				@SuppressWarnings("ConstantConditions")
 				final long givenCRC = ((Number)ReflectionHelper.getFieldValue(data, checksumData.getName())).longValue();
 				if(calculatedCRC != givenCRC)
 					throw new IllegalArgumentException("Calculated CRC (0x" + Long.toHexString(calculatedCRC).toUpperCase()
@@ -162,9 +165,7 @@ class MessageParser{
 		for(final Codec.BoundedField field : fields){
 			addSkippedFields(field.getSkips(), writer, data);
 
-			final String condition = field.getCondition();
-			if(condition != null && !Evaluator.evaluate(condition, boolean.class, data))
-				//skip field
+			if(skipFieldByCondition(field.getCondition(), data))
 				continue;
 
 			final Annotation binding = field.getBinding();

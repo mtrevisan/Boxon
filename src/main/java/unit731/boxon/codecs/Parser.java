@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Objects;
 
 
+@SuppressWarnings("unused")
 public class Parser{
 
 	private final Loader loader = new Loader();
@@ -47,7 +48,7 @@ public class Parser{
 
 	public Parser(final Map<String, Object> context, final List<Codec<?>> codecs){
 		Objects.requireNonNull(codecs, "Codecs cannot be null");
-		if(codecs != null && codecs.isEmpty())
+		if(codecs.isEmpty())
 			throw new IllegalArgumentException("Codecs cannot be empty");
 
 		loader.init(codecs);

@@ -9,7 +9,7 @@ If you want to use the parser straight away, just go [there](#examples).
 
 ### Notable features
 Boxon...
- - is easily extensible through the use of [tranformers](#how-to).
+ - is easily extensible through the use of [transformers](#how-to).
  - contains a minimal set of [annotations](#annotation-base) capable of handling all the primitive data.
  - contains a set of [special annotations](#annotation-special) that handles the various messages peculiarities (conditional bindings, skip bits/bytes, checksum, 'constant' assignments)
  - is capable of handle concatenation of messages, using the correct codec under the hood.
@@ -473,8 +473,8 @@ public Void lastUnreadPlaceholder;
 #### parameters
  - `type`: the Class of variable the be read.
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN` (used for primitives other than `byte`).
- - `skipStart`: how many byte are to be skipped from the start of the message for the calculation of the checsum (defaults to 0).
- - `skipEnd`: how many byte are to be skipped from the end of the message for the calculation of the checsum (default to 0).
+ - `skipStart`: how many byte are to be skipped from the start of the message for the calculation of the checksum (defaults to 0).
+ - `skipEnd`: how many byte are to be skipped from the end of the message for the calculation of the checksum (default to 0).
  - `algorithm`: the algorithm to be applied to calculate the checksum.
 
 #### description
