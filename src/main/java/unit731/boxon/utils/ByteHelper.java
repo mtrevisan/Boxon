@@ -212,11 +212,12 @@ public class ByteHelper{
 		if(array[0] == 0)
 			array = Arrays.copyOfRange(array, 1, array.length);
 		//extend sign
-		if((array[0] & 0x80) != 0x0){
+		if(value.signum() < 0 && (array[0] & 0x80) != 0x0){
 			final byte[] a = new byte[size / Byte.SIZE];
 			for(int i = 0; i < a.length - array.length; i ++)
 				a[i] = (byte)0xFF;
-			System.arraycopy(array, 0, a, a.length - array.length, array.length);
+			if(a.length >= array.length)
+				System.arraycopy(array, 0, a, a.length - array.length, array.length);
 			array = a;
 		}
 		return array;
