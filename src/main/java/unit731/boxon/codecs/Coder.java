@@ -39,6 +39,7 @@ import unit731.boxon.annotations.BindObject;
 import unit731.boxon.annotations.BindShort;
 import unit731.boxon.annotations.BindString;
 import unit731.boxon.annotations.BindStringTerminated;
+import unit731.boxon.annotations.Choices;
 import unit731.boxon.annotations.converters.Converter;
 import unit731.boxon.annotations.validators.Validator;
 import unit731.boxon.utils.ByteHelper;
@@ -66,6 +67,9 @@ enum Coder{
 			final BindObject binding = (BindObject)annotation;
 
 			final Class<?> type = binding.type();
+			final Choices selectFrom = binding.selectFrom();
+			if(type == Void.class && selectFrom.alternatives().length == 0)
+				throw new IllegalArgumentException("`type` argument missing");
 			final Codec<?> codec = Codec.createFrom(type);
 
 			final Object instance = MessageParser.decode(codec, reader);
@@ -82,6 +86,9 @@ enum Coder{
 			final BindObject binding = (BindObject)annotation;
 
 			final Class<?> type = binding.type();
+			final Choices selectFrom = binding.selectFrom();
+			if(type == Void.class && selectFrom.alternatives().length == 0)
+				throw new IllegalArgumentException("`type` argument missing");
 			final Codec<?> codec = Codec.createFrom(type);
 
 			validateData(binding.validator(), value);

@@ -26,14 +26,22 @@ package unit731.boxon.codecs;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import unit731.boxon.annotations.BindArrayPrimitive;
+import unit731.boxon.annotations.BindInteger;
 import unit731.boxon.annotations.BindObject;
+import unit731.boxon.annotations.BindShort;
+import unit731.boxon.annotations.BindString;
+import unit731.boxon.annotations.Choices;
 import unit731.boxon.annotations.converters.NullConverter;
 import unit731.boxon.annotations.converters.Converter;
 import unit731.boxon.annotations.validators.NullValidator;
 import unit731.boxon.annotations.validators.Validator;
 import unit731.boxon.codecs.queclink.Version;
+import unit731.boxon.utils.ByteHelper;
 
 import java.lang.annotation.Annotation;
+import java.util.Collections;
+import java.util.List;
 
 
 class CoderObjectTest{
@@ -51,6 +59,11 @@ class CoderObjectTest{
 			@Override
 			public Class<?> type(){
 				return Version.class;
+			}
+
+			@Override
+			public Choices selectFrom(){
+				return null;
 			}
 
 			@Override
@@ -77,6 +90,96 @@ class CoderObjectTest{
 		Assertions.assertNotNull(decoded);
 		Assertions.assertEquals(encodedValue.major, decoded.major);
 		Assertions.assertEquals(encodedValue.minor, decoded.minor);
+	}
+
+
+	static class TestType1{
+		@BindShort
+		public short value;
+	}
+
+	static class TestType2{
+		@BindInteger
+		public int value;
+	}
+
+	static class TestChoice1{
+		@BindObject(selectFrom = @Choices(prefixSize = 8, alternatives = {
+			@Choices.Choice(condition = "__prefix==1", type = TestType1.class),
+			@Choices.Choice(condition = "__prefix==2", type = TestType2.class)
+		}))
+		public Object value;
+	}
+
+	static class TestChoice2{
+		@BindArrayPrimitive(size = "2", type = byte[].class)
+		public byte[] index;
+		@BindObject(selectFrom = @Choices(prefixSize = 8, alternatives = {
+			@Choices.Choice(condition = "index[__prefix]==5", type = TestType1.class),
+			@Choices.Choice(condition = "index[__prefix]==6", type = TestType2.class)
+		}))
+		public Object value;
+	}
+
+	static class TestChoice3{
+		@BindString(size = "2")
+		public String key;
+		@BindObject(selectFrom = @Choices(prefixSize = 0, alternatives = {
+			@Choices.Choice(condition = "key=='aa'", type = TestType1.class),
+			@Choices.Choice(condition = "key=='bb'", type = TestType2.class)
+		}))
+		public Object value;
+	}
+
+	@Test
+	void choice1(){
+		Codec<TestChoice1> codec = Codec.createFrom(TestChoice1.class);
+		Parser parser = new Parser(null, Collections.singletonList(codec));
+
+		byte[] payload = ByteHelper.hexStringToByteArray("011234020011223344");
+		ParseResponse result = parser.parse(payload);
+
+		Assertions.assertNotNull(result);
+		Assertions.assertFalse(result.hasErrors());
+		final List<Object> parsedMessages = result.getParsedMessages();
+		Assertions.assertEquals(1, parsedMessages);
+		Assertions.assertEquals(TestChoice1.class, parsedMessages.get(0));
+		TestChoice1 parsedMessage = (TestChoice1)parsedMessages.get(0);
+		//TODO
+	}
+
+	@Test
+	void choice2(){
+		Codec<TestChoice2> codec = Codec.createFrom(TestChoice2.class);
+		Parser parser = new Parser(null, Collections.singletonList(codec));
+
+		byte[] payload = ByteHelper.hexStringToByteArray("0506011234020011223344");
+		ParseResponse result = parser.parse(payload);
+
+		Assertions.assertNotNull(result);
+		Assertions.assertFalse(result.hasErrors());
+		final List<Object> parsedMessages = result.getParsedMessages();
+		Assertions.assertEquals(1, parsedMessages);
+		Assertions.assertEquals(TestChoice2.class, parsedMessages.get(0));
+		TestChoice2 parsedMessage = (TestChoice2)parsedMessages.get(0);
+		//TODO
+	}
+
+	@Test
+	void choice3(){
+		Codec<TestChoice3> codec = Codec.createFrom(TestChoice3.class);
+		Parser parser = new Parser(null, Collections.singletonList(codec));
+
+		byte[] payload = ByteHelper.hexStringToByteArray("9797123498980011223344");
+		ParseResponse result = parser.parse(payload);
+
+		Assertions.assertNotNull(result);
+		Assertions.assertFalse(result.hasErrors());
+		final List<Object> parsedMessages = result.getParsedMessages();
+		Assertions.assertEquals(1, parsedMessages);
+		Assertions.assertEquals(TestChoice3.class, parsedMessages.get(0));
+		TestChoice3 parsedMessage = (TestChoice3)parsedMessages.get(0);
+		//TODO
 	}
 
 }
