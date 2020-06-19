@@ -32,6 +32,7 @@ import unit731.boxon.annotations.BindObject;
 import unit731.boxon.annotations.BindShort;
 import unit731.boxon.annotations.BindString;
 import unit731.boxon.annotations.Choices;
+import unit731.boxon.annotations.MessageHeader;
 import unit731.boxon.annotations.converters.NullConverter;
 import unit731.boxon.annotations.converters.Converter;
 import unit731.boxon.annotations.validators.NullValidator;
@@ -103,25 +104,34 @@ class CoderObjectTest{
 		public int value;
 	}
 
+	@MessageHeader(start = "tc1")
 	static class TestChoice1{
+		@BindString(size = "3")
+		public String header;
 		@BindObject(selectFrom = @Choices(prefixSize = 8, alternatives = {
-			@Choices.Choice(condition = "__prefix==1", type = TestType1.class),
-			@Choices.Choice(condition = "__prefix==2", type = TestType2.class)
+			@Choices.Choice(condition = "#prefix==1", type = TestType1.class),
+			@Choices.Choice(condition = "#prefix==2", type = TestType2.class)
 		}))
 		public Object value;
 	}
 
+	@MessageHeader(start = "tc2")
 	static class TestChoice2{
+		@BindString(size = "3")
+		public String header;
 		@BindArrayPrimitive(size = "2", type = byte[].class)
 		public byte[] index;
 		@BindObject(selectFrom = @Choices(prefixSize = 8, alternatives = {
-			@Choices.Choice(condition = "index[__prefix]==5", type = TestType1.class),
-			@Choices.Choice(condition = "index[__prefix]==6", type = TestType2.class)
+			@Choices.Choice(condition = "index[#prefix]==5", type = TestType1.class),
+			@Choices.Choice(condition = "index[#prefix]==6", type = TestType2.class)
 		}))
 		public Object value;
 	}
 
+	@MessageHeader(start = "tc3")
 	static class TestChoice3{
+		@BindString(size = "3")
+		public String header;
 		@BindString(size = "2")
 		public String key;
 		@BindObject(selectFrom = @Choices(prefixSize = 0, alternatives = {
@@ -136,16 +146,30 @@ class CoderObjectTest{
 		Codec<TestChoice1> codec = Codec.createFrom(TestChoice1.class);
 		Parser parser = new Parser(null, Collections.singletonList(codec));
 
-		byte[] payload = ByteHelper.hexStringToByteArray("011234020011223344");
+		byte[] payload = ByteHelper.hexStringToByteArray("746331011234");
 		ParseResponse result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
 		Assertions.assertFalse(result.hasErrors());
-		final List<Object> parsedMessages = result.getParsedMessages();
-		Assertions.assertEquals(1, parsedMessages);
-		Assertions.assertEquals(TestChoice1.class, parsedMessages.get(0));
+		List<Object> parsedMessages = result.getParsedMessages();
+		Assertions.assertEquals(1, parsedMessages.size());
+		Assertions.assertEquals(TestChoice1.class, parsedMessages.get(0).getClass());
 		TestChoice1 parsedMessage = (TestChoice1)parsedMessages.get(0);
-		//TODO
+		TestType1 value1 = (TestType1)parsedMessage.value;
+		Assertions.assertEquals(0x1234, value1.value);
+
+
+		payload = ByteHelper.hexStringToByteArray("7463310211223344");
+		result = parser.parse(payload);
+
+		Assertions.assertNotNull(result);
+		Assertions.assertFalse(result.hasErrors());
+		parsedMessages = result.getParsedMessages();
+		Assertions.assertEquals(1, parsedMessages.size());
+		Assertions.assertEquals(TestChoice1.class, parsedMessages.get(0).getClass());
+		parsedMessage = (TestChoice1)parsedMessages.get(0);
+		TestType2 value2 = (TestType2)parsedMessage.value;
+		Assertions.assertEquals(0x1122_3344, value2.value);
 	}
 
 	@Test
@@ -153,7 +177,7 @@ class CoderObjectTest{
 		Codec<TestChoice2> codec = Codec.createFrom(TestChoice2.class);
 		Parser parser = new Parser(null, Collections.singletonList(codec));
 
-		byte[] payload = ByteHelper.hexStringToByteArray("0506011234020011223344");
+		byte[] payload = ByteHelper.hexStringToByteArray("7463320506011234020011223344");
 		ParseResponse result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
@@ -170,7 +194,7 @@ class CoderObjectTest{
 		Codec<TestChoice3> codec = Codec.createFrom(TestChoice3.class);
 		Parser parser = new Parser(null, Collections.singletonList(codec));
 
-		byte[] payload = ByteHelper.hexStringToByteArray("9797123498980011223344");
+		byte[] payload = ByteHelper.hexStringToByteArray("7463339797123498980011223344");
 		ParseResponse result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);

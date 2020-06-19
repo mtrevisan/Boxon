@@ -62,6 +62,8 @@ import java.util.regex.PatternSyntaxException;
 enum Coder{
 
 	OBJECT {
+		private static final String CONTEXT_CHOICE_PREFIX = "prefix";
+
 		@Override
 		Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
 			final BindObject binding = (BindObject)annotation;
@@ -75,8 +77,25 @@ enum Coder{
 				throw new IllegalArgumentException("Cannot define both `type` and `selectFrom`");
 
 			if(alternatives.length > 0){
-				//TODO
-				return null;
+				//read prefix
+				final int prefixSize = selectFrom.prefixSize();
+				if(prefixSize > Integer.SIZE)
+					throw new IllegalArgumentException("`prefixSize` cannot be greater than " + Integer.SIZE + " bits");
+				final ByteOrder prefixByteOrder = selectFrom.byteOrder();
+
+				final BitSet bits = reader.getBits(prefixSize);
+				if(prefixByteOrder == ByteOrder.LITTLE_ENDIAN)
+					ByteHelper.reverseBits(bits, prefixSize);
+				//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
+				final BigInteger prefix = new BigInteger(1, ByteHelper.reverseBytes(bits.toByteArray()));
+
+				//choose class
+				final Choices.Choice chosenAlternative = chooseAlternative(alternatives, prefix.intValue(), data);
+
+				//read object
+				final Codec<?> subCodec = Codec.createFrom(chosenAlternative.type());
+
+				return MessageParser.decode(subCodec, reader);
 			}
 			else{
 				final Codec<?> codec = Codec.createFrom(type);
@@ -89,6 +108,20 @@ enum Coder{
 
 				return value;
 			}
+		}
+
+		private Choices.Choice chooseAlternative(final Choices.Choice[] alternatives, final int prefix, final Object data){
+			Evaluator.addToContext(CONTEXT_CHOICE_PREFIX, prefix);
+
+			Choices.Choice chosenAlternative = null;
+			for(final Choices.Choice alternative : alternatives)
+				if(Evaluator.evaluate(alternative.condition(), boolean.class, data)){
+					chosenAlternative = alternative;
+					break;
+				}
+			Evaluator.addToContext(CONTEXT_CHOICE_PREFIX, null);
+
+			return chosenAlternative;
 		}
 
 		@Override
@@ -104,7 +137,8 @@ enum Coder{
 				throw new IllegalArgumentException("Cannot define both `type` and `selectFrom`");
 
 			if(alternatives.length > 0){
-				//TODO
+				//TODO write prefix
+				//TODO write object
 			}
 			else{
 				final Codec<?> codec = Codec.createFrom(type);
@@ -129,7 +163,7 @@ enum Coder{
 			final BindString binding = (BindString)annotation;
 
 			final Charset charset = Charset.forName(binding.charset());
-			final int size = Evaluator.evaluate(binding.size(), Integer.class, data);
+			final int size = Evaluator.evaluate(binding.size(), int.class, data);
 
 			final String text = reader.getText(size, charset);
 
@@ -145,7 +179,7 @@ enum Coder{
 			final BindString binding = (BindString)annotation;
 
 			final Charset charset = Charset.forName(binding.charset());
-			final int size = Evaluator.evaluate(binding.size(), Integer.class, data);
+			final int size = Evaluator.evaluate(binding.size(), int.class, data);
 
 			validateData(binding.match(), binding.validator(), value);
 
@@ -211,7 +245,7 @@ enum Coder{
 				throw new IllegalArgumentException("Bad annotation used, @" + BindArray.class.getSimpleName()
 					+ " should have been used with type `" + type.getSimpleName() + ".class`");
 			final Codec<?> codec = Codec.createFrom(type.getComponentType());
-			final int size = Evaluator.evaluate(binding.size(), Integer.class, data);
+			final int size = Evaluator.evaluate(binding.size(), int.class, data);
 
 			final Object array = ReflectionHelper.createArrayPrimitive(type, size);
 			final Class<?> objectiveType = ReflectionHelper.objectiveType(type.getComponentType());
@@ -241,7 +275,7 @@ enum Coder{
 				throw new IllegalArgumentException("Bad annotation used, @" + BindArray.class.getSimpleName()
 					+ " should have been used with type `" + type.getSimpleName() + ".class`");
 			final Codec<?> codec = Codec.createFrom(type.getComponentType());
-			final int size = Evaluator.evaluate(binding.size(), Integer.class, data);
+			final int size = Evaluator.evaluate(binding.size(), int.class, data);
 
 			final Class<?> objectiveType = ReflectionHelper.objectiveType(type.getComponentType());
 			if(objectiveType == null)
@@ -273,7 +307,7 @@ enum Coder{
 				throw new IllegalArgumentException("Bad annotation used, @" + BindArrayPrimitive.class.getSimpleName()
 					+ " should have been used with type `" + type.getSimpleName() + ".class`");
 			final Codec<?> codec = Codec.createFrom(type);
-			final int size = Evaluator.evaluate(binding.size(), Integer.class, data);
+			final int size = Evaluator.evaluate(binding.size(), int.class, data);
 
 			final Object[] array = ReflectionHelper.createArray(type, size);
 			for(int i = 0; i < size; i ++)
@@ -296,7 +330,7 @@ enum Coder{
 				throw new IllegalArgumentException("Bad annotation used, @" + BindArrayPrimitive.class.getSimpleName()
 					+ " should have been used with type `" + type.getSimpleName() + "[].class`");
 			final Codec<?> codec = Codec.createFrom(type);
-			final int size = Evaluator.evaluate(binding.size(), Integer.class, data);
+			final int size = Evaluator.evaluate(binding.size(), int.class, data);
 
 			validateData(binding.validator(), value);
 
@@ -317,11 +351,11 @@ enum Coder{
 		Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
 			final BindBit binding = (BindBit)annotation;
 
-			final int size = Evaluator.evaluate(binding.size(), Integer.class, data);
+			final int size = Evaluator.evaluate(binding.size(), int.class, data);
 			final ByteOrder byteOrder = binding.byteOrder();
 
 			final BitSet bits = reader.getBits(size);
-			if(byteOrder == ByteOrder.BIG_ENDIAN)
+			if(byteOrder == ByteOrder.LITTLE_ENDIAN)
 				ByteHelper.reverseBits(bits, size);
 
 			final Object value = converterDecode(binding.converter(), bits);
@@ -335,13 +369,13 @@ enum Coder{
 		void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
 			final BindBit binding = (BindBit)annotation;
 
-			final int size = Evaluator.evaluate(binding.size(), Integer.class, data);
+			final int size = Evaluator.evaluate(binding.size(), int.class, data);
 			final ByteOrder byteOrder = binding.byteOrder();
 
 			validateData(binding.match(), binding.validator(), value);
 
 			final BitSet bits = converterEncode(binding.converter(), value);
-			if(byteOrder == ByteOrder.BIG_ENDIAN)
+			if(byteOrder == ByteOrder.LITTLE_ENDIAN)
 				ByteHelper.reverseBits(bits, size);
 
 			writer.putBits(bits, size);
@@ -518,12 +552,12 @@ enum Coder{
 		Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
 			final BindNumber binding = (BindNumber)annotation;
 
-			final int size = Evaluator.evaluate(binding.size(), Integer.class, data);
+			final int size = Evaluator.evaluate(binding.size(), int.class, data);
 			final ByteOrder byteOrder = binding.byteOrder();
 			final boolean allowPrimitive = binding.allowPrimitive();
 
 			final BitSet bits = reader.getBits(size);
-			if(byteOrder == ByteOrder.BIG_ENDIAN)
+			if(byteOrder == ByteOrder.LITTLE_ENDIAN)
 				ByteHelper.reverseBits(bits, size);
 			final Object value;
 			if(allowPrimitive && size < Long.SIZE){
@@ -555,7 +589,7 @@ enum Coder{
 		void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
 			final BindNumber binding = (BindNumber)annotation;
 
-			final int size = Evaluator.evaluate(binding.size(), Integer.class, data);
+			final int size = Evaluator.evaluate(binding.size(), int.class, data);
 			final ByteOrder byteOrder = binding.byteOrder();
 			final boolean allowPrimitive = binding.allowPrimitive();
 
@@ -576,7 +610,7 @@ enum Coder{
 			final BigInteger mask = BigInteger.ONE.shiftLeft(size).subtract(BigInteger.ONE);
 			//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
 			final BitSet bits = BitSet.valueOf(ByteHelper.reverseBytes(ByteHelper.bigIntegerToBytes(v.and(mask), size)));
-			if(byteOrder == ByteOrder.BIG_ENDIAN)
+			if(byteOrder == ByteOrder.LITTLE_ENDIAN)
 				ByteHelper.reverseBits(bits, size);
 			writer.putBits(bits, size);
 		}
