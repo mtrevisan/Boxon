@@ -24,56 +24,43 @@
  */
 package unit731.boxon.codecs;
 
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import unit731.boxon.annotations.BindChecksum;
-import unit731.boxon.annotations.checksummers.CRC16;
-import unit731.boxon.annotations.checksummers.Checksummer;
+import unit731.boxon.annotations.BindObject;
+import unit731.boxon.annotations.transformers.NullTransformer;
+import unit731.boxon.annotations.transformers.Transformer;
+import unit731.boxon.annotations.validators.NullValidator;
+import unit731.boxon.annotations.validators.Validator;
+import unit731.boxon.codecs.queclink.Version;
 
 import java.lang.annotation.Annotation;
-import java.util.Locale;
-import java.util.Random;
 
 
-class CoderChecksumTest{
-
-	private static final Random RANDOM = new Random();
-
+class CoderObjectTest{
 
 	@Test
-	void checksumShort(){
-		Coder coder = Coder.CHECKSUM;
-		short encodedValue = (short)RANDOM.nextInt(0x0000_FFFF);
-		BindChecksum annotation = new BindChecksum(){
+	void object(){
+		Coder coder = Coder.OBJECT;
+		Version encodedValue = new Version((byte)1, (byte)2, (byte)0);
+		BindObject annotation = new BindObject(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindChecksum.class;
+				return BindObject.class;
 			}
 
 			@Override
 			public Class<?> type(){
-				return short.class;
+				return Version.class;
 			}
 
 			@Override
-			public ByteOrder byteOrder(){
-				return ByteOrder.BIG_ENDIAN;
+			public Class<? extends Validator> validator(){
+				return NullValidator.class;
 			}
 
 			@Override
-			public int skipStart(){
-				return 2;
-			}
-
-			@Override
-			public int skipEnd(){
-				return 0;
-			}
-
-			@Override
-			public Class<? extends Checksummer> algorithm(){
-				return CRC16.class;
+			public Class<? extends Transformer> transformer(){
+				return NullTransformer.class;
 			}
 		};
 
@@ -81,13 +68,15 @@ class CoderChecksumTest{
 		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		Assertions.assertEquals(StringUtils.leftPad(Integer.toHexString(encodedValue & 0x0000_FFFF).toUpperCase(Locale.ROOT), 4, '0'), writer.toString());
+		Assertions.assertArrayEquals(new byte[]{0x01, 0x02}, writer.array());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
 
-		short decoded = (short)coder.decode(reader, annotation, null);
+		Version decoded = (Version)coder.decode(reader, annotation, null);
 
-		Assertions.assertEquals(encodedValue, decoded);
+		Assertions.assertNotNull(decoded);
+		Assertions.assertEquals(encodedValue.major, decoded.major);
+		Assertions.assertEquals(encodedValue.minor, decoded.minor);
 	}
 
 }

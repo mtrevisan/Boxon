@@ -35,13 +35,9 @@ import unit731.boxon.annotations.validators.Validator;
 
 import java.lang.annotation.Annotation;
 import java.nio.charset.StandardCharsets;
-import java.util.Random;
 
 
 class CoderStringTest{
-
-	private static final Random RANDOM = new Random();
-
 
 	@Test
 	void stringUS_ASCII(){

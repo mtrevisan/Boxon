@@ -35,6 +35,7 @@ import unit731.boxon.annotations.BindInteger;
 import unit731.boxon.annotations.BindLong;
 import unit731.boxon.annotations.BindDecimal;
 import unit731.boxon.annotations.BindNumber;
+import unit731.boxon.annotations.BindObject;
 import unit731.boxon.annotations.BindShort;
 import unit731.boxon.annotations.BindString;
 import unit731.boxon.annotations.BindStringTerminated;
@@ -58,6 +59,43 @@ import java.util.regex.PatternSyntaxException;
 
 @SuppressWarnings("unused")
 enum Coder{
+
+	OBJECT {
+		@Override
+		Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
+			final BindObject binding = (BindObject)annotation;
+
+			final Class<?> type = binding.type();
+			final Codec<?> codec = Codec.createFrom(type);
+
+			final Object instance = MessageParser.decode(codec, reader);
+
+			final Object value = transformerDecode(binding.transformer(), instance);
+
+			validateData(binding.validator(), value);
+
+			return value;
+		}
+
+		@Override
+		void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
+			final BindObject binding = (BindObject)annotation;
+
+			final Class<?> type = binding.type();
+			final Codec<?> codec = Codec.createFrom(type);
+
+			validateData(binding.validator(), value);
+
+			final Object array = transformerEncode(binding.transformer(), value);
+
+			MessageParser.encode(codec, value, writer);
+		}
+
+		@Override
+		Class<?> coderType(){
+			return BindObject.class;
+		}
+	},
 
 	STRING {
 		@Override
@@ -187,6 +225,7 @@ enum Coder{
 			validateData(binding.validator(), value);
 
 			final Object array = transformerEncode(binding.transformer(), value);
+
 			for(int i = 0; i < size; i ++)
 				writer.put(Array.get(array, i), byteOrder);
 		}
@@ -236,6 +275,7 @@ enum Coder{
 			validateData(binding.validator(), value);
 
 			final Object[] array = transformerEncode(binding.transformer(), value);
+
 			for(int i = 0; i < size; i ++)
 				MessageParser.encode(codec, array[i], writer);
 		}

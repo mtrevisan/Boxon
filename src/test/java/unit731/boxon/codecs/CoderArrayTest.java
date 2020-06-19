@@ -35,13 +35,9 @@ import unit731.boxon.annotations.validators.Validator;
 import unit731.boxon.codecs.queclink.Version;
 
 import java.lang.annotation.Annotation;
-import java.util.Random;
 
 
 class CoderArrayTest{
-
-	private static final Random RANDOM = new Random();
-
 
 	@Test
 	void arrayPrimitive(){
