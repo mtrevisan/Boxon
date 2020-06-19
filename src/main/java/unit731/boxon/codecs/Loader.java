@@ -58,7 +58,7 @@ public class Loader{
 	private static final String EXTENSION_CLASS = ".class";
 	private static final String BOOT_INF_CLASSES = "BOOT-INF.classes.";
 
-	private final Map<String, Codec<?>> codecs = new TreeMap<>(Comparator.comparingInt(String::length).reversed());
+	private final Map<String, Codec<?>> codecs = new TreeMap<>(Comparator.comparingInt(String::length).reversed().thenComparing(String::compareTo));
 
 	private final AtomicBoolean initialized = new AtomicBoolean(false);
 
