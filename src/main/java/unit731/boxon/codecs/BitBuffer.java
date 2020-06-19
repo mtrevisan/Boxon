@@ -38,6 +38,7 @@ import java.util.BitSet;
 
 /**
  * @see <a href="https://github.com/jhg023/BitBuffer/blob/master/src/main/java/bitbuffer/BitBuffer.java">BitBuffer</a>
+ * @see <a href="https://graphics.stanford.edu/~seander/bithacks.html#ConditionalSetOrClearBitsWithoutBranching">Bit Twiddling Hacks</a>
  */
 @SuppressWarnings("unused")
 class BitBuffer{

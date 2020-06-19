@@ -35,6 +35,9 @@ import java.nio.charset.Charset;
 import java.util.BitSet;
 
 
+/**
+ * @see <a href="https://graphics.stanford.edu/~seander/bithacks.html#ConditionalSetOrClearBitsWithoutBranching">Bit Twiddling Hacks</a>
+ */
 @SuppressWarnings("unused")
 class BitWriter{
 
