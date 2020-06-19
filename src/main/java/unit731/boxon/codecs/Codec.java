@@ -34,7 +34,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
@@ -162,8 +161,9 @@ class Codec<T>{
 			final List<Field> fields = new ArrayList<>();
 			Class<? super T> currentType = cls;
 			while(currentType != null){
-				final Field[] declaredFieldsOfSuper = currentType.getDeclaredFields();
-				Collections.addAll(fields, declaredFieldsOfSuper);
+				final List<Field> subfields = Arrays.asList(currentType.getDeclaredFields());
+				//place parent's fields before all the child's fields
+				fields.addAll(0, subfields);
 
 				currentType = currentType.getSuperclass();
 			}
