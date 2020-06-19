@@ -68,17 +68,27 @@ enum Coder{
 
 			final Class<?> type = binding.type();
 			final Choices selectFrom = binding.selectFrom();
-			if(type == Void.class && selectFrom.alternatives().length == 0)
+			final Choices.Choice[] alternatives = selectFrom.alternatives();
+			if(type == Void.class && alternatives.length == 0)
 				throw new IllegalArgumentException("`type` argument missing");
-			final Codec<?> codec = Codec.createFrom(type);
+			if(type != Void.class && alternatives.length > 0)
+				throw new IllegalArgumentException("Cannot define both `type` and `selectFrom`");
 
-			final Object instance = MessageParser.decode(codec, reader);
+			if(alternatives.length > 0){
+				//TODO
+				return null;
+			}
+			else{
+				final Codec<?> codec = Codec.createFrom(type);
 
-			final Object value = converterDecode(binding.converter(), instance);
+				final Object instance = MessageParser.decode(codec, reader);
 
-			validateData(binding.validator(), value);
+				final Object value = converterDecode(binding.converter(), instance);
 
-			return value;
+				validateData(binding.validator(), value);
+
+				return value;
+			}
 		}
 
 		@Override
@@ -87,15 +97,24 @@ enum Coder{
 
 			final Class<?> type = binding.type();
 			final Choices selectFrom = binding.selectFrom();
-			if(type == Void.class && selectFrom.alternatives().length == 0)
+			final Choices.Choice[] alternatives = selectFrom.alternatives();
+			if(type == Void.class && alternatives.length == 0)
 				throw new IllegalArgumentException("`type` argument missing");
-			final Codec<?> codec = Codec.createFrom(type);
+			if(type != Void.class && alternatives.length > 0)
+				throw new IllegalArgumentException("Cannot define both `type` and `selectFrom`");
 
-			validateData(binding.validator(), value);
+			if(alternatives.length > 0){
+				//TODO
+			}
+			else{
+				final Codec<?> codec = Codec.createFrom(type);
 
-			final Object array = converterEncode(binding.converter(), value);
+				validateData(binding.validator(), value);
 
-			MessageParser.encode(codec, value, writer);
+				final Object array = converterEncode(binding.converter(), value);
+
+				MessageParser.encode(codec, value, writer);
+			}
 		}
 
 		@Override
