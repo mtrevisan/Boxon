@@ -160,6 +160,11 @@ class CodecTest{
 
 	}
 
+	@MessageHeader(start = "++", end = "--")
+	private class MessageChild extends Message{
+		@BindInteger
+		private int anotherNumberInt;
+	}
 
 	@Test
 	void creation(){
@@ -222,6 +227,25 @@ class CodecTest{
 			}
 		};
 		Assertions.assertTrue(checksum.equals(cs));
+	}
+
+	@Test
+	void inheritance(){
+		Codec<MessageChild> codec = Codec.createFrom(MessageChild.class);
+
+		Assertions.assertNotNull(codec);
+		Assertions.assertEquals(MessageChild.class, codec.getType());
+		MessageHeader header = codec.getHeader();
+		Assertions.assertNotNull(header);
+		Assertions.assertArrayEquals(new String[]{"++"}, header.start());
+		Assertions.assertEquals("--", header.end());
+		Assertions.assertTrue(codec.canBeDecoded());
+		List<Codec.BoundedField> boundedFields = codec.getBoundedFields();
+		Assertions.assertNotNull(boundedFields);
+		Assertions.assertEquals(16, boundedFields.size());
+		Codec.BoundedField childField = boundedFields.get(boundedFields.size() - 1);
+		Assertions.assertNotNull(childField);
+		Assertions.assertEquals("anotherNumberInt", childField.getName());
 	}
 
 }

@@ -149,7 +149,7 @@ class Codec<T>{
 
 		header = cls.getAnnotation(MessageHeader.class);
 		//retrieve all declared fields in the current class, therefore NOT in the parent classes
-		loadAnnotatedFields(getDeclaredFields(cls, false));
+		loadAnnotatedFields(getDeclaredFields(cls, true));
 	}
 
 	/**
