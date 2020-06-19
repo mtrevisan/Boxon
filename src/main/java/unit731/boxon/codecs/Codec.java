@@ -195,7 +195,7 @@ class Codec<T>{
 			validateAnnotation(checksum, boundedAnnotations);
 
 			if(boundedAnnotations.size() == 1)
-				boundedFields.add(new BoundedField(field, skips, (condition != null? condition.value(): null), boundedAnnotations.get(0)));
+				boundedFields.add(new BoundedField(field, (skips.length > 0? skips: null), (condition != null? condition.value(): null), boundedAnnotations.get(0)));
 			if(checksum != null)
 				this.checksum = new BoundedField(field, null, null, checksum);
 		}

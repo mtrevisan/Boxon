@@ -47,8 +47,6 @@ class CoderDecimalTest{
 
 	@Test
 	void decimalPositiveLittleEndian(){
-		int k = 0;
-		while(k ++ < 10_000){
 		Coder coder = Coder.DECIMAL;
 		BigDecimal encodedValue = BigDecimal.valueOf(RANDOM.nextDouble());
 		BindDecimal annotation = new BindDecimal(){
@@ -93,13 +91,11 @@ class CoderDecimalTest{
 
 		BigDecimal decoded = (BigDecimal)coder.decode(reader, annotation, null);
 
-		Assertions.assertEquals(encodedValue, decoded);}
+		Assertions.assertEquals(encodedValue, decoded);
 	}
 
 	@Test
 	void decimalNegativeLittleEndian(){
-		int k = 0;
-		while(k ++ < 10_000){
 		Coder coder = Coder.DECIMAL;
 		BigDecimal encodedValue = BigDecimal.valueOf(-RANDOM.nextDouble());
 		BindDecimal annotation = new BindDecimal(){
@@ -144,13 +140,11 @@ class CoderDecimalTest{
 
 		BigDecimal decoded = (BigDecimal)coder.decode(reader, annotation, null);
 
-		Assertions.assertEquals(encodedValue, decoded);}
+		Assertions.assertEquals(encodedValue, decoded);
 	}
 
 	@Test
 	void decimalPositiveBigEndian(){
-		int k = 0;
-		while(k ++ < 10_000){
 		Coder coder = Coder.DECIMAL;
 		BigDecimal encodedValue = BigDecimal.valueOf(RANDOM.nextDouble());
 		BindDecimal annotation = new BindDecimal(){
@@ -195,13 +189,11 @@ class CoderDecimalTest{
 
 		BigDecimal decoded = (BigDecimal)coder.decode(reader, annotation, null);
 
-		Assertions.assertEquals(encodedValue, decoded);}
+		Assertions.assertEquals(encodedValue, decoded);
 	}
 
 	@Test
 	void decimalNegativeBigEndian(){
-		int k = 0;
-		while(k ++ < 10_000){
 		Coder coder = Coder.DECIMAL;
 		BigDecimal encodedValue = BigDecimal.valueOf(-RANDOM.nextDouble());
 		BindDecimal annotation = new BindDecimal(){
@@ -246,7 +238,7 @@ class CoderDecimalTest{
 
 		BigDecimal decoded = (BigDecimal)coder.decode(reader, annotation, null);
 
-		Assertions.assertEquals(encodedValue, decoded);}
+		Assertions.assertEquals(encodedValue, decoded);
 	}
 
 }

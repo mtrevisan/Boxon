@@ -196,41 +196,41 @@ class BitWriterTest{
 	@Test
 	void bigDecimalAsFloat(){
 		BigDecimal value = new BigDecimal("1.23");
-		writer.putNumber(value, Float.class);
+		writer.putDecimal(value, Float.class);
 		BitBuffer reader = BitBuffer.wrap(writer);
 
 		Assertions.assertEquals("A4709D3F", reader.toString());
-		Assertions.assertEquals(value, reader.getNumber(Float.class));
+		Assertions.assertEquals(value, reader.getDecimal(Float.class));
 	}
 
 	@Test
 	void bigDecimalAsFloatBigEndian(){
 		BigDecimal value = new BigDecimal("1.23");
-		writer.putNumber(value, Float.class, ByteOrder.BIG_ENDIAN);
+		writer.putDecimal(value, Float.class, ByteOrder.BIG_ENDIAN);
 		BitBuffer reader = BitBuffer.wrap(writer);
 
 		Assertions.assertEquals("3F9D70A4", reader.toString());
-		Assertions.assertEquals(value, reader.getNumber(Float.class, ByteOrder.BIG_ENDIAN));
+		Assertions.assertEquals(value, reader.getDecimal(Float.class, ByteOrder.BIG_ENDIAN));
 	}
 
 	@Test
 	void bigDecimalAsFDouble(){
 		BigDecimal value = new BigDecimal("1.23");
-		writer.putNumber(value, Double.class);
+		writer.putDecimal(value, Double.class);
 		BitBuffer reader = BitBuffer.wrap(writer);
 
 		Assertions.assertEquals("AE47E17A14AEF33F", reader.toString());
-		Assertions.assertEquals(value, reader.getNumber(Double.class));
+		Assertions.assertEquals(value, reader.getDecimal(Double.class));
 	}
 
 	@Test
 	void bigDecimalAsFDoubleBigEndian(){
 		BigDecimal value = new BigDecimal("1.23");
-		writer.putNumber(value, Double.class, ByteOrder.BIG_ENDIAN);
+		writer.putDecimal(value, Double.class, ByteOrder.BIG_ENDIAN);
 		BitBuffer reader = BitBuffer.wrap(writer);
 
 		Assertions.assertEquals("3FF3AE147AE147AE", reader.toString());
-		Assertions.assertEquals(value, reader.getNumber(Double.class, ByteOrder.BIG_ENDIAN));
+		Assertions.assertEquals(value, reader.getDecimal(Double.class, ByteOrder.BIG_ENDIAN));
 	}
 
 	@Test

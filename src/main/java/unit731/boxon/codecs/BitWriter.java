@@ -110,6 +110,9 @@ class BitWriter{
 	 */
 	@SuppressWarnings("ShiftOutOfRange")
 	private BitWriter putValue(final long value, final int length){
+		if(length > Long.SIZE)
+			throw new IllegalArgumentException("Cannot write that much bits from a long: " + length);
+
 		final BitSet bits = BitSet.valueOf(new long[]{value});
 		putBits(bits, length);
 		return this;
@@ -271,8 +274,8 @@ class BitWriter{
 	 * @return	The {@link BitWriter} to allow for the convenience of method-chaining.
 	 * @see	#putDouble(double, ByteOrder)
 	 */
-	public BitWriter putNumber(final BigDecimal value, final Class<?> cls){
-		return putNumber(value, cls, ByteOrder.LITTLE_ENDIAN);
+	public BitWriter putDecimal(final BigDecimal value, final Class<?> cls){
+		return putDecimal(value, cls, ByteOrder.LITTLE_ENDIAN);
 	}
 
 	/**
@@ -282,7 +285,7 @@ class BitWriter{
 	 * @param cls	Either a {@code Float} or a {@link Double} class.
 	 * @return	The {@link BitWriter} to allow for the convenience of method-chaining.
 	 */
-	public BitWriter putNumber(final BigDecimal value, final Class<?> cls, final ByteOrder byteOrder){
+	public BitWriter putDecimal(final BigDecimal value, final Class<?> cls, final ByteOrder byteOrder){
 		if(cls == Float.class)
 			return putFloat(value.floatValue(), byteOrder);
 		else if(cls == Double.class)

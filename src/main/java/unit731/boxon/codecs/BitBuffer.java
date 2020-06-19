@@ -223,12 +223,12 @@ class BitBuffer{
 	 * @return	A {@link BitSet} value at the {@link BitBuffer}'s current position.
 	 */
 	private long getValue(final int length){
+		if(length > Long.SIZE)
+			throw new IllegalArgumentException("Cannot read that much bits to a long: " + length);
+
 		final BitSet bits = getBits(length);
-		long value = 0l;
-		for(int i = 0; i < bits.length(); i ++)
-			if(bits.get(i))
-				value |= 1l << i;
-		return value;
+		final long[] array = bits.toLongArray();
+		return (array.length > 0? array[0]: 0l);
 	}
 
 	/**
@@ -275,7 +275,7 @@ class BitBuffer{
 	 * @return	A {@code short}.
 	 */
 	public short getByteUnsigned(){
-		return (short)((short)getValue(Byte.SIZE) & 0x0000_FFFF);
+		return (short)(getValue(Byte.SIZE) & 0x0000_FFFF);
 	}
 
 	/**
@@ -475,8 +475,8 @@ class BitBuffer{
 	 * @return	A {@code double}.
 	 * @see	#getDouble(ByteOrder)
 	 */
-	public BigDecimal getNumber(final Class<?> cls){
-		return getNumber(cls, ByteOrder.LITTLE_ENDIAN);
+	public BigDecimal getDecimal(final Class<?> cls){
+		return getDecimal(cls, ByteOrder.LITTLE_ENDIAN);
 	}
 
 	/**
@@ -487,7 +487,7 @@ class BitBuffer{
 	 * @return	A {@code double}.
 	 * @see	#getLong(ByteOrder)
 	 */
-	public BigDecimal getNumber(final Class<?> cls, final ByteOrder byteOrder){
+	public BigDecimal getDecimal(final Class<?> cls, final ByteOrder byteOrder){
 		if(cls == Float.class)
 			return new BigDecimal(Float.toString(getFloat(byteOrder)));
 		else if(cls == Double.class)
@@ -608,9 +608,7 @@ class BitBuffer{
 		return buffer.limit();
 	}
 
-	/**
-	 * Compacts the backing {@link ByteBuffer}.
-	 */
+	/** Compacts the backing {@link ByteBuffer} */
 	public void compact(){
 		buffer.compact();
 	}

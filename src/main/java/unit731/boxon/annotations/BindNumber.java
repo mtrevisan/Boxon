@@ -37,7 +37,8 @@ import java.lang.annotation.Target;
 
 
 /**
- * Manages a <code>long</code>/{@link Long} if <code>size < 64</code>, {@link java.math.BigInteger} otherwise (... before the application of a transformer)
+ * Manages a <code>long</code>/{@link Long} if <code>size &lt; 64</code>, {@link java.math.BigInteger} otherwise (... before the application of a transformer)
+ * If <code>allowPrimitive</code> is <code>false</code>, then the data type is only {@link java.math.BigInteger}
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
@@ -59,6 +60,13 @@ public @interface BindNumber{
 	 * @return	The type of endianness. Defaults to {@link ByteOrder#BIG_ENDIAN}.
 	 */
 	ByteOrder byteOrder() default ByteOrder.BIG_ENDIAN;
+
+	/**
+	 * Allow returning a <code>long</code>/{@link Long} if <code>size &lt; 64</code>, defaults to <code>true</code>.
+	 *
+	 * @return	Whether to allow returning a <code>long</code>/{@link Long} if <code>size &lt; 64</code>
+	 */
+	boolean allowPrimitive() default true;
 
 	/**
 	 * The value to match (can be a regex expression or a SpEL expression).

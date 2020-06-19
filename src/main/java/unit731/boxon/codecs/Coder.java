@@ -42,8 +42,6 @@ import unit731.boxon.annotations.transformers.Transformer;
 import unit731.boxon.annotations.validators.Validator;
 import unit731.boxon.utils.ByteHelper;
 import unit731.boxon.utils.ReflectionHelper;
-import org.springframework.expression.spel.SpelEvaluationException;
-import org.springframework.expression.spel.SpelParseException;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
@@ -470,12 +468,13 @@ enum Coder{
 
 			final int size = Evaluator.evaluate(binding.size(), Integer.class, data);
 			final ByteOrder byteOrder = binding.byteOrder();
+			final boolean allowPrimitive = binding.allowPrimitive();
 
 			final BitSet bits = reader.getBits(size);
 			if(byteOrder == ByteOrder.BIG_ENDIAN)
 				ByteHelper.reverseBits(bits, size);
 			final Object value;
-			if(size < Long.SIZE){
+			if(allowPrimitive && size < Long.SIZE){
 				long v = bits.toLongArray()[0];
 				if(!binding.unsigned())
 					v = ByteHelper.extendSign(v, size);
@@ -507,12 +506,13 @@ enum Coder{
 
 			final int size = Evaluator.evaluate(binding.size(), Integer.class, data);
 			final ByteOrder byteOrder = binding.byteOrder();
+			final boolean allowPrimitive = binding.allowPrimitive();
 
 			matchData(binding.match(), value);
 			validateData(binding.validator(), value);
 
 			final BigInteger v;
-			if(size < Long.SIZE){
+			if(allowPrimitive && size < Long.SIZE){
 				final long vv = transformerEncode(binding.transformer(), value);
 				final long mask = ByteHelper.mask(size);
 				if(binding.unsigned() || vv >= 0)
@@ -521,8 +521,11 @@ enum Coder{
 					v = BigInteger.valueOf(Math.abs(vv) & mask)
 						.negate();
 			}
-			else
+			else{
+				//TODO mask value with `2^size-1`
+//				final BigInteger mask = new BigInteger();
 				v = transformerEncode(binding.transformer(), value);
+			}
 
 			//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
 			final BitSet bits = BitSet.valueOf(ByteHelper.reverseBytes(ByteHelper.bigIntegerToBytes(v, size)));
@@ -622,7 +625,7 @@ enum Coder{
 					+ ".class` or `" + Double.class.getSimpleName() + ".class`");
 			final ByteOrder byteOrder = binding.byteOrder();
 
-			final BigDecimal v = reader.getNumber(type, byteOrder);
+			final BigDecimal v = reader.getDecimal(type, byteOrder);
 
 			final Object value = transformerDecode(binding.transformer(), v);
 
@@ -647,7 +650,7 @@ enum Coder{
 
 			final BigDecimal v = transformerEncode(binding.transformer(), value);
 
-			writer.putNumber(v, type, byteOrder);
+			writer.putDecimal(v, type, byteOrder);
 		}
 
 		@Override
