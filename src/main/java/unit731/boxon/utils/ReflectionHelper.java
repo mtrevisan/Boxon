@@ -101,6 +101,7 @@ public class ReflectionHelper{
 		}
 		return field;
 	}
+
 	/**
 	 * Get the class that extends {@link Object} that represent the given class.
 	 *

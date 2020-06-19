@@ -40,34 +40,6 @@ public class ByteHelper{
 		return ((mask & (1 << (index % Byte.SIZE))) != 0);
 	}
 
-	public static boolean hasBit(final short mask, final int index){
-		if(index < 0 || index >= Short.SIZE)
-			throw new IllegalArgumentException("Index value must be between 0 and " + (Short.SIZE - 1) + " inclusive, was " + index);
-
-		return ((mask & (1 << (index % Short.SIZE))) != 0);
-	}
-
-	public static boolean hasBit(final int mask, final int index){
-		if(index < 0 || index >= Integer.SIZE)
-			throw new IllegalArgumentException("Index value must be between 0 and " + (Integer.SIZE - 1) + " inclusive, was " + index);
-
-		return ((mask & (1 << (index % Integer.SIZE))) != 0);
-	}
-
-	public static boolean hasBit(final long mask, final int index){
-		if(index < 0 || index >= Long.SIZE)
-			throw new IllegalArgumentException("Index value must be between 0 and " + (Long.SIZE - 1) + " inclusive, was " + index);
-
-		return ((mask & (1l << (index % Long.SIZE))) != 0l);
-	}
-
-	public static boolean hasBit(final byte[] mask, final int index){
-		if(index < 0 || mask != null && index >= mask.length << 3)
-			throw new IllegalArgumentException("Index value must be between 0 and " + ((mask.length << 3) - 1) + " inclusive, was " + index);
-
-		return (mask != null && (mask[mask.length - 1 - index / Byte.SIZE] & (1 << (index % Byte.SIZE))) != 0x00);
-	}
-
 	public static long clearBit(final long value, final int index){
 		return (value & ~(1 << index));
 	}
@@ -225,27 +197,6 @@ public class ByteHelper{
 	}
 
 	/**
-	 * Extracts a sub-array from <code>set</code> starting at <code>startIndex</code> and with length <code>length</code>
-	 * and express it as a long
-	 *
-	 * @param set	The original bit set
-	 * @param startIndex	The index from which to start
-	 * @param length	The length of the sub-array
-	 * @return	A long representing the sub-array
-	 */
-	public static long arrayValue(final BitSet set, final int startIndex, final int length){
-		final byte[] subset = set.get(startIndex, startIndex + length)
-			.toByteArray();
-		long result = 0l;
-		int index = 0;
-		for(byte b : subset){
-			result |= b << index;
-			index += Byte.SIZE;
-		}
-		return result;
-	}
-
-	/**
 	 * Apply mask and shift right (<code>maskByte(27, 0x18) = 3</code>)
 	 *
 	 * @param value	The value to which to apply the mask and the right shift
@@ -257,20 +208,6 @@ public class ByteHelper{
 		value = (byte)((value & mask) >> ctz);
 		mask = (byte)(0xFF >>> ctz);
 		return (byte)(value & mask);
-	}
-
-	/**
-	 * Apply mask and shift right (<code>maskByte(27, 0x18) = 3</code>)
-	 *
-	 * @param value	The value to which to apply the mask and the right shift
-	 * @param mask	The mask
-	 * @return	The masked and shifter value
-	 */
-	public static short applyMaskAndShift(short value, short mask){
-		final short ctz = countTrailingZeros(mask);
-		value = (short)((value & mask) >> ctz);
-		mask = (short)(0xFFFF >>> ctz);
-		return (short)(value & mask);
 	}
 
 	/**
@@ -319,28 +256,6 @@ public class ByteHelper{
 		return n;
 	}
 
-	private static short countTrailingZeros(short x){
-		byte n = Short.SIZE;
-		if(x != 0){
-			n = 0;
-			if((x & 0x00FF) == 0){
-				n += Byte.SIZE;
-				x >>= 8;
-			}
-			if((x & 0x000F) == 0){
-				n += 4;
-				x >>= 4;
-			}
-			if((x & 0x0003) == 0){
-				n += 2;
-				x >>= 2;
-			}
-			if((x & 0x0001) == 0)
-				n ++;
-		}
-		return n;
-	}
-
 	private static int countTrailingZeros(int x){
 		byte n = Integer.SIZE;
 		if(x != 0){
@@ -377,10 +292,6 @@ public class ByteHelper{
 	public static int convert2Complement(final int value, final int size){
 		final int shift = Integer.SIZE - size;
 		return (value << shift) >> shift;
-	}
-
-	public static long mask(final int size){
-		return ((1l << size) - 1);
 	}
 
 	public static long extendSign(final long value, final int size){

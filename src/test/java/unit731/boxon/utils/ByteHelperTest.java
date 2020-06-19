@@ -48,21 +48,6 @@ class ByteHelperTest{
 	}
 
 	@Test
-	void hasBitWithByteArray(){
-		byte[] mask = new byte[]{0x01, 0x02, 0x27};
-
-		int output = 0x0000_0000;
-		for(int i = 0; i < mask.length << 3; i ++){
-			boolean bitSet = ByteHelper.hasBit(mask, i);
-			if(bitSet){
-				output |= (1 << i);
-			}
-		}
-
-		Assertions.assertEquals(0x0001_0227, output);
-	}
-
-	@Test
 	void indexOf1a(){
 		byte[] source = new byte[]{0x01, 0x02, 0x03, 0x03, 0x03, 0x07, 0x03};
 		byte[] pattern = new byte[]{0x03, 0x07};
@@ -128,15 +113,6 @@ class ByteHelperTest{
 		Throwable exception = Assertions.assertThrows(IllegalArgumentException.class,
 			() -> Assertions.assertArrayEquals(new byte[]{0x23, 0x5e, 0x40, 0x03, 0x51, 0x10, 0x42, 0x06}, ByteHelper.hexStringToByteArray("235e40035110420")));
 		Assertions.assertEquals("Malformed input", exception.getMessage());
-	}
-
-	@Test
-	void arrayValue(){
-		BitSet set = BitSet.valueOf(new byte[]{0x1B});
-
-		long subarray = ByteHelper.arrayValue(set, 1, 3);
-
-		Assertions.assertEquals(0b101, subarray);
 	}
 
 	@Test
