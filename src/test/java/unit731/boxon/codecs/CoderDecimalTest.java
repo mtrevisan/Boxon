@@ -29,8 +29,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import unit731.boxon.annotations.BindDecimal;
 import unit731.boxon.annotations.BindFloat;
-import unit731.boxon.annotations.transformers.NullTransformer;
-import unit731.boxon.annotations.transformers.Transformer;
+import unit731.boxon.annotations.converters.Converter;
+import unit731.boxon.annotations.converters.NullConverter;
 import unit731.boxon.annotations.validators.NullValidator;
 import unit731.boxon.annotations.validators.Validator;
 
@@ -76,8 +76,8 @@ class CoderDecimalTest{
 			}
 
 			@Override
-			public Class<? extends Transformer> transformer(){
-				return NullTransformer.class;
+			public Class<? extends Converter> converter(){
+				return NullConverter.class;
 			}
 		};
 
@@ -125,8 +125,8 @@ class CoderDecimalTest{
 			}
 
 			@Override
-			public Class<? extends Transformer> transformer(){
-				return NullTransformer.class;
+			public Class<? extends Converter> converter(){
+				return NullConverter.class;
 			}
 		};
 
@@ -174,8 +174,8 @@ class CoderDecimalTest{
 			}
 
 			@Override
-			public Class<? extends Transformer> transformer(){
-				return NullTransformer.class;
+			public Class<? extends Converter> converter(){
+				return NullConverter.class;
 			}
 		};
 
@@ -223,8 +223,8 @@ class CoderDecimalTest{
 			}
 
 			@Override
-			public Class<? extends Transformer> transformer(){
-				return NullTransformer.class;
+			public Class<? extends Converter> converter(){
+				return NullConverter.class;
 			}
 		};
 

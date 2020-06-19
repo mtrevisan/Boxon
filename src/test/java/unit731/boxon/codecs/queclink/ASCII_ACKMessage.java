@@ -27,7 +27,7 @@ package unit731.boxon.codecs.queclink;
 import unit731.boxon.annotations.Assign;
 import unit731.boxon.annotations.BindStringTerminated;
 import unit731.boxon.annotations.MessageHeader;
-import unit731.boxon.annotations.transformers.Transformer;
+import unit731.boxon.annotations.converters.Converter;
 import unit731.boxon.annotations.validators.IMEIValidator;
 
 import java.time.ZonedDateTime;
@@ -86,7 +86,7 @@ public class ASCII_ACKMessage{
 		MESSAGE_TYPE_MAP.put((byte)64, "AT+GTTRF");
 	}
 
-	public static class MessageTypeTransformer implements Transformer<Byte, String>{
+	public static class MessageTypeConverter implements Converter<Byte, String>{
 		@Override
 		public String decode(final Byte value){
 			return MESSAGE_TYPE_MAP.get(value);
@@ -116,9 +116,9 @@ public class ASCII_ACKMessage{
 	private String id;
 	@BindStringTerminated(terminator = ',')
 	private String ackSerialNumber;
-	@BindStringTerminated(terminator = ',', transformer = QueclinkHelper.StringDateTimeYYYYMMDDHHMMSSTransformer.class)
+	@BindStringTerminated(terminator = ',', converter = QueclinkHelper.StringDateTimeYYYYMMDDHHMMSSConverter.class)
 	private ZonedDateTime eventTime;
-	@BindStringTerminated(terminator = '$', consumeTerminator = false, transformer = QueclinkHelper.HexStringToIntTransformer.class)
+	@BindStringTerminated(terminator = '$', consumeTerminator = false, converter = QueclinkHelper.HexStringToIntConverter.class)
 	private int messageId;
 
 	@Assign("T(Integer).valueOf(deviceTypeAndVersion.substring(0, 2), 16).byteValue()")

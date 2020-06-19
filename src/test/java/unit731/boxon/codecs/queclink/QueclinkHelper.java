@@ -24,7 +24,7 @@
  */
 package unit731.boxon.codecs.queclink;
 
-import unit731.boxon.annotations.transformers.Transformer;
+import unit731.boxon.annotations.converters.Converter;
 import unit731.boxon.utils.ByteHelper;
 import org.apache.commons.lang3.StringUtils;
 
@@ -37,7 +37,7 @@ import java.util.Locale;
 
 public class QueclinkHelper{
 
-	public static class VersionTransformer implements Transformer<byte[], String>{
+	public static class VersionConverter implements Converter<byte[], String>{
 		@Override
 		public String decode(final byte[] value){
 			return value[0] + "." + value[1];
@@ -49,7 +49,7 @@ public class QueclinkHelper{
 			return new byte[]{Byte.parseByte(components[0]), Byte.parseByte(components[1])};
 		}
 	}
-	public static class IMEITransformer implements Transformer<byte[], String>{
+	public static class IMEIConverter implements Converter<byte[], String>{
 		@Override
 		public String decode(final byte[] value){
 			final StringBuffer sb = new StringBuffer();
@@ -68,7 +68,7 @@ public class QueclinkHelper{
 			return imei;
 		}
 	}
-	public static class ShortFromDecTransformer implements Transformer<Short, Integer>{
+	public static class ShortFromDecConverter implements Converter<Short, Integer>{
 		@Override
 		public Integer decode(final Short value){
 			return Integer.parseInt(Integer.toHexString(value));
@@ -79,7 +79,7 @@ public class QueclinkHelper{
 			return Short.valueOf(Integer.toString(value), 16);
 		}
 	}
-	public static class Int3BTransformer implements Transformer<byte[], Integer>{
+	public static class Int3BConverter implements Converter<byte[], Integer>{
 		@Override
 		public Integer decode(final byte[] value){
 			return ((value[0] << 16) | (value[1] << 8) | value[2]);
@@ -93,7 +93,7 @@ public class QueclinkHelper{
 				(byte)ByteHelper.applyMaskAndShift(value, 0x0000_00FF)};
 		}
 	}
-	public static class Double1BTransformer implements Transformer<byte[], BigDecimal>{
+	public static class Double1BConverter implements Converter<byte[], BigDecimal>{
 		@Override
 		public BigDecimal decode(final byte[] value){
 			final BigDecimal integerPart = new BigDecimal(value[0]);
@@ -114,7 +114,7 @@ public class QueclinkHelper{
 				.byteValue();
 		}
 	}
-	public static class Double2BTransformer implements Transformer<byte[], BigDecimal>{
+	public static class Double2BConverter implements Converter<byte[], BigDecimal>{
 		@Override
 		public BigDecimal decode(final byte[] value){
 			final BigDecimal integerPart = new BigDecimal((value[0] << Byte.SIZE) | value[1]);
@@ -135,7 +135,7 @@ public class QueclinkHelper{
 				.byteValue();
 		}
 	}
-	public static class Double4BTransformer implements Transformer<byte[], BigDecimal>{
+	public static class Double4BConverter implements Converter<byte[], BigDecimal>{
 		@Override
 		public BigDecimal decode(final byte[] value){
 			final BigDecimal integerPart = new BigDecimal((value[0] << (Short.SIZE + Byte.SIZE)) | (value[1] << Short.SIZE) | (value[2] << Byte.SIZE) | value[3]);
@@ -157,7 +157,7 @@ public class QueclinkHelper{
 		}
 	}
 	/** Ritorna un double contenente la coordinata (interpreta 4 byte considerando una parte decimale di 6 cifre) */
-	public static class CoordinateTransformer implements Transformer<Integer, BigDecimal>{
+	public static class CoordinateConverter implements Converter<Integer, BigDecimal>{
 
 		private final BigDecimal COORDINATE_FACTOR = new BigDecimal(1_000_000);
 
@@ -173,7 +173,7 @@ public class QueclinkHelper{
 		}
 	}
 	/** Ritorna un delta per una coordinata (interpreta 2 byte considerando una parte decimale di 6 cifre) */
-	public static class DeltaCoordinateTransformer implements Transformer<Short, BigDecimal>{
+	public static class DeltaCoordinateConverter implements Converter<Short, BigDecimal>{
 
 		private final BigDecimal COORDINATE_FACTOR = new BigDecimal(1_000_000);
 
@@ -195,7 +195,7 @@ public class QueclinkHelper{
 	 * 31:		> -51 dBm
 	 * 99:		unknown
 	 */
-	public static class RSSITransformer implements Transformer<Byte, Short>{
+	public static class RSSIConverter implements Converter<Byte, Short>{
 
 		public static final int RSSI_UNKNOWN = 0;
 
@@ -219,7 +219,7 @@ public class QueclinkHelper{
 			return (byte)((value + 133) / 2);
 		}
 	}
-	public static class DateTimeUnixTransformer implements Transformer<Integer, ZonedDateTime>{
+	public static class DateTimeUnixConverter implements Converter<Integer, ZonedDateTime>{
 		@Override
 		public ZonedDateTime decode(final Integer value){
 			return DateTimeUtils.createFrom(value);
@@ -230,7 +230,7 @@ public class QueclinkHelper{
 			return (int)value.toEpochSecond();
 		}
 	}
-	public static class DateTimeYYYYMMDDHHMMSSTransformer implements Transformer<byte[], ZonedDateTime>{
+	public static class DateTimeYYYYMMDDHHMMSSConverter implements Converter<byte[], ZonedDateTime>{
 		@Override
 		public ZonedDateTime decode(final byte[] value){
 			final ByteBuffer bb = ByteBuffer.wrap(value);
@@ -256,7 +256,7 @@ public class QueclinkHelper{
 		}
 	}
 	/** Ritorna un intervallo temporale in minuti (interpretando 2 byte come HH MM) */
-	public static class TimeHHMMTransformer implements Transformer<byte[], Integer>{
+	public static class TimeHHMMConverter implements Converter<byte[], Integer>{
 		@Override
 		public Integer decode(final byte[] value){
 			final ByteBuffer bb = ByteBuffer.wrap(value);
@@ -276,7 +276,7 @@ public class QueclinkHelper{
 		}
 	}
 	/** Ritorna un intervallo temporale in secondi (interpretando 3 byte come HH MM SS) */
-	public static class TimeHHMMSSTransformer implements Transformer<byte[], Integer>{
+	public static class TimeHHMMSSConverter implements Converter<byte[], Integer>{
 		@Override
 		public Integer decode(final byte[] value){
 			final ByteBuffer bb = ByteBuffer.wrap(value);
@@ -300,7 +300,7 @@ public class QueclinkHelper{
 		}
 	}
 	/** Ritorna un intervallo temporale in secondi (interpretando 6 byte come HH HH HH HH MM SS) */
-	public static class TimeHHHHHHHHMMSSTransformer implements Transformer<byte[], Integer>{
+	public static class TimeHHHHHHHHMMSSConverter implements Converter<byte[], Integer>{
 		@Override
 		public Integer decode(final byte[] value){
 			final ByteBuffer bb = ByteBuffer.wrap(value);
@@ -324,7 +324,7 @@ public class QueclinkHelper{
 		}
 	}
 	/** Reads a string considering each nibble as a decimal number (thus in the range 0x0-0x9) */
-	public static class TextOfDecDigitsFromNibblesTransformer implements Transformer<byte[], String>{
+	public static class TextOfDecDigitsFromNibblesConverter implements Converter<byte[], String>{
 		@Override
 		public String decode(final byte[] value){
 			final byte[] result = new byte[value.length];
@@ -352,7 +352,7 @@ public class QueclinkHelper{
 		}
 	}
 	/** Reads a string considering each nibble as an hexadecimal number (thus in the range 0x0-0xF) */
-	public static class TextOfHexDigitsFromNibblesTransformer implements Transformer<byte[], String>{
+	public static class TextOfHexDigitsFromNibblesConverter implements Converter<byte[], String>{
 		@Override
 		public String decode(final byte[] value){
 			final byte[] result = new byte[value.length];
@@ -383,7 +383,7 @@ public class QueclinkHelper{
 	 * Put a phone number as a string, using the high nibble of the first byte as the length of the number (plus the length itself)
 	 * and the low nibble as a indicator of the presence of the '+' character, each nibble of the following byte are the number
 	 */
-	public static class PhoneNumberTransformer implements Transformer<byte[], String>{
+	public static class PhoneNumberConverter implements Converter<byte[], String>{
 		@Override
 		public String decode(final byte[] value){
 			final StringBuilder phoneNumber = new StringBuilder();
@@ -424,7 +424,7 @@ public class QueclinkHelper{
 		}
 	}
 
-	public static class StringDateTimeYYYYMMDDHHMMSSTransformer implements Transformer<String, ZonedDateTime>{
+	public static class StringDateTimeYYYYMMDDHHMMSSConverter implements Converter<String, ZonedDateTime>{
 		@Override
 		public ZonedDateTime decode(final String value){
 			final int year = Integer.parseInt(value.substring(0, 4));
@@ -448,7 +448,7 @@ public class QueclinkHelper{
 			return sb.toString();
 		}
 	}
-	public static class HexStringToIntTransformer implements Transformer<String, Integer>{
+	public static class HexStringToIntConverter implements Converter<String, Integer>{
 		@Override
 		public Integer decode(final String value){
 			return Integer.parseInt(value, 16);

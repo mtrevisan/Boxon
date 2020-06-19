@@ -24,13 +24,13 @@
  */
 package unit731.boxon.codecs.queclink;
 
-import unit731.boxon.annotations.transformers.Transformer;
+import unit731.boxon.annotations.converters.Converter;
 import unit731.boxon.utils.ByteHelper;
 
 
 public class ACKMask{
 
-	public static class ACKMaskTransformer implements Transformer<Byte, ACKMask>{
+	public static class ACKMaskConverter implements Converter<Byte, ACKMask>{
 		@Override
 		public ACKMask decode(final Byte value){
 			return new ACKMask(value);

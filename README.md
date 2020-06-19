@@ -9,7 +9,7 @@ If you want to use the parser straight away, just go [there](#examples).
 
 ### Notable features
 Boxon...
- - is easily extensible through the use of [transformers](#how-to).
+ - is easily extensible through the use of [converters](#how-to).
  - contains a minimal set of [annotations](#annotation-base) capable of handling all the primitive data.
  - contains a set of [special annotations](#annotation-special) that handles the various messages peculiarities (conditional bindings, skip bits/bytes, checksum, 'constant' assignments)
  - is capable of handle concatenation of messages, using the correct codec under the hood.
@@ -24,7 +24,8 @@ Boxon...
 Boxon differs from Preon in...
  - does not have a generic `Bound` annotation, as it does not have the need to read the native byte order of a particular machine in which the code is running: this is because the bytes of the message have little chance to be generated from the very same machine that will parse its messages, what if a message consider 24 bit as an Integer? If the code should be portable and installed and run everywhere it should not rely on the native properties of any machine.
    Moreover, `@Bound boolean visible;` is 1 bit- or 1 byte-length?
- - does not have `BoundList`: since the message is a finite sequence of bytes, then any array is of finite length, and thus the standard java array (`[]`) is sufficient. If someone wants a `List` (s)he could use a Transformer.
+ - does not have `BoundList`: since the message is a finite sequence of bytes, then any array is of finite length, and thus the standard java array (`[]`) is sufficient. If someone wants a `List` (s)he could use a Converter.
+ - does not rely on the type of the annotated variable (because of the converters); in fact, the annotation, eventually, serves the purpose to pass a predefined type of data to a converter.
 
 <br/>
 ---
@@ -78,8 +79,8 @@ You can use them as a starting point to build your own customized readers.
 #### parameters
  - `type`: the Class of the Object of the single element of the array.
  - `size`: the size of the array (can be a SpEL expression).
- - `validator`: the Class of a validator (applied BEFORE the transformer).
- - `transformer`: the transformer used to convert the read value into the value that is assigned to the annotated variable. 
+ - `validator`: the Class of a validator (applied BEFORE the converter).
+ - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
 
 #### description
 Reads an array of Objects.
@@ -109,8 +110,8 @@ private Version[] versions;
  - `type`: the Class of primitive of the single element of the array (SHOULD BE WRITTEN in array style, as `byte[].class`, or `int[].class`).
  - `size`: the size of the array (can be a SpEL expression).
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN` (used for primitives other than `byte`).
- - `validator`: the Class of a validator (applied BEFORE the transformer).
- - `transformer`: the transformer used to convert the read value into the value that is assigned to the annotated variable. 
+ - `validator`: the Class of a validator (applied BEFORE the converter).
+ - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
 
 #### description
 Reads an array of primitives.
@@ -132,8 +133,8 @@ private byte[] array;
  - `size`: the number of bits to read (can be a SpEL expression).
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
  - `match`: a string/regex/SpEl expression that is used as an expected value.
- - `validator`: the Class of a validator (applied BEFORE the transformer).
- - `transformer`: the transformer used to convert the read value into the value that is assigned to the annotated variable. 
+ - `validator`: the Class of a validator (applied BEFORE the converter).
+ - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
 
 #### description
 Reads a `BitSet`.
@@ -154,8 +155,8 @@ private BitSet bits;
 #### parameters
  - `unsigned`: whether the read value is treated as signed or unsigned (defaults to `false`).
  - `match`: a string/regex/SpEl expression that is used as an expected value.
- - `validator`: the Class of a validator (applied BEFORE the transformer).
- - `transformer`: the transformer used to convert the read value into the value that is assigned to the annotated variable. 
+ - `validator`: the Class of a validator (applied BEFORE the converter).
+ - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
 
 #### description
 Reads a byte (or Byte).
@@ -177,8 +178,8 @@ public Byte mask;
  - `unsigned`: whether the read value is treated as signed or unsigned (defaults to `false`).
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
  - `match`: a string/regex/SpEl expression that is used as an expected value.
- - `validator`: the Class of a validator (applied BEFORE the transformer).
- - `transformer`: the transformer used to convert the read value into the value that is assigned to the annotated variable. 
+ - `validator`: the Class of a validator (applied BEFORE the converter).
+ - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
 
 #### description
 Reads a short (or Short).
@@ -200,8 +201,8 @@ private short numberShort;
  - `unsigned`: whether the read value is treated as signed or unsigned (defaults to `false`).
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
  - `match`: a string/regex/SpEl expression that is used as an expected value.
- - `validator`: the Class of a validator (applied BEFORE the transformer).
- - `transformer`: the transformer used to convert the read value into the value that is assigned to the annotated variable. 
+ - `validator`: the Class of a validator (applied BEFORE the converter).
+ - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
 
 #### description
 Reads an int (or Integer).
@@ -222,8 +223,8 @@ private int numberInt;
 #### parameters
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
  - `match`: a string/regex/SpEl expression that is used as an expected value.
- - `validator`: the Class of a validator (applied BEFORE the transformer).
- - `transformer`: the transformer used to convert the read value into the value that is assigned to the annotated variable. 
+ - `validator`: the Class of a validator (applied BEFORE the converter).
+ - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
 
 #### description
 Reads a long (or Long).
@@ -247,8 +248,8 @@ private long numberLong;
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
  - `allowPrimitive`: whether to generate a `long`/`Long` if `size < 64` (defaults to `true`).
  - `match`: a string/regex/SpEl expression that is used as an expected value.
- - `validator`: the Class of a validator (applied BEFORE the transformer).
- - `transformer`: the transformer used to convert the read value into the value that is assigned to the annotated variable. 
+ - `validator`: the Class of a validator (applied BEFORE the converter).
+ - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
 
 #### description
 Reads a long number (primitive or not) or a BigInteger given the amount of bits.
@@ -272,8 +273,8 @@ private BigInteger number;
 #### parameters
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
  - `match`: a string/regex/SpEl expression that is used as an expected value.
- - `validator`: the Class of a validator (applied BEFORE the transformer).
- - `transformer`: the transformer used to convert the read value into the value that is assigned to the annotated variable. 
+ - `validator`: the Class of a validator (applied BEFORE the converter).
+ - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
 
 #### description
 Reads a float (or Float).
@@ -294,8 +295,8 @@ private float number;
 #### parameters
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
  - `match`: a string/regex/SpEl expression that is used as an expected value.
- - `validator`: the Class of a validator (applied BEFORE the transformer).
- - `transformer`: the transformer used to convert the read value into the value that is assigned to the annotated variable. 
+ - `validator`: the Class of a validator (applied BEFORE the converter).
+ - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
 
 #### description
 Reads a double (or Double).
@@ -317,8 +318,8 @@ private double number;
  - `type`: the Class of variable the be read (SHOULD BE `Float.class`, or `Double.class`).
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
  - `match`: a string/regex/SpEl expression that is used as an expected value.
- - `validator`: the Class of a validator (applied BEFORE the transformer).
- - `transformer`: the transformer used to convert the read value into the value that is assigned to the annotated variable. 
+ - `validator`: the Class of a validator (applied BEFORE the converter).
+ - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
 
 #### description
 Reads a float or decimal (or Float or Double), depending on `type`, as a BigDecimal.
@@ -340,8 +341,8 @@ private BigDecimal number;
  - `charset`: the charset to interpreted the string into (SHOULD BE the charset name, eg. `UTF-8` (the default), `ISO-8859-1`, etc).
  - `size`: the size of the string (can be a SpEL expression).
  - `match`: a string/regex/SpEl expression that is used as an expected value.
- - `validator`: the Class of a validator (applied BEFORE the transformer).
- - `transformer`: the transformer used to convert the read value into the value that is assigned to the annotated variable. 
+ - `validator`: the Class of a validator (applied BEFORE the converter).
+ - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
 
 #### description
 Reads a String.
@@ -364,8 +365,8 @@ public String text;
  - `terminator`: the byte that terminates the string (defaults to `\0`).
  - `consumeTerminator`: whether to consume the terminator (defaults to `true`).
  - `match`: a string/regex/SpEl expression that is used as an expected value.
- - `validator`: the Class of a validator (applied BEFORE the transformer).
- - `transformer`: the transformer used to convert the read value into the value that is assigned to the annotated variable. 
+ - `validator`: the Class of a validator (applied BEFORE the converter).
+ - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
 
 #### description
 Reads a String.
@@ -422,7 +423,7 @@ This annotation is bounded to a variable.
 
 #### example
 ```java
-@BindByte(transformer = Mask.MaskTransformer.class)
+@BindByte(converter = Mask.MaskConverter.class)
 public Mask mask;
 
 @BindIf("mask.hasProtocolVersion()")
@@ -527,14 +528,14 @@ private String deviceTypeName;
 ## How to extend the functionalities
 Boxon can handle on its own array of primitives, bit, byte, short, int, long, float, double, and their object counterpart, as long as BigDecimal, string (with a given size, or a terminator), and the special "[checksum](#annotation-checksum)".
 
-You can extend the basic functionalities through the application of transformers as shown below in some examples.
+You can extend the basic functionalities through the application of converters as shown below in some examples.
 
-### DateTime transformer (from Unix timestamp to ZonedDateTime)
+### DateTime converter (from Unix timestamp to ZonedDateTime)
 ```java
-@BindLong(transformer = DateTimeUnixTransformer.class)
+@BindLong(converter = DateTimeUnixConverter.class)
 private ZonedDateTime eventTime;
 
-public class DateTimeUnixTransformer implements Transformer<Long, ZonedDateTime>{
+public class DateTimeUnixConverter implements Converter<Long, ZonedDateTime>{
     @Override
     public ZonedDateTime decode(final Long unixTimestamp){
         return DateTimeUtils.createFrom(unixTimestamp);
@@ -547,12 +548,12 @@ public class DateTimeUnixTransformer implements Transformer<Long, ZonedDateTime>
 }
 ```
 
-### DateTime transformer (from YYYYMMDDHHMMSS as bytes to ZonedDateTime)
+### DateTime converter (from YYYYMMDDHHMMSS as bytes to ZonedDateTime)
 ```java
-@BindArrayPrimitive(size = "7", type = byte[].class, transformer = DateTimeYYYYMMDDHHMMSSTransformer.class)
+@BindArrayPrimitive(size = "7", type = byte[].class, converter = DateTimeYYYYMMDDHHMMSSConverter.class)
 private ZonedDateTime eventTime;
 
-public class DateTimeYYYYMMDDHHMMSSTransformer implements Transformer<byte[], ZonedDateTime>{
+public class DateTimeYYYYMMDDHHMMSSConverter implements Converter<byte[], ZonedDateTime>{
     @Override
     public ZonedDateTime decode(final byte[] value){
         final ByteBuffer bb = ByteBuffer.wrap(value);
@@ -579,12 +580,12 @@ public class DateTimeYYYYMMDDHHMMSSTransformer implements Transformer<byte[], Zo
 }
 ```
 
-### IMEI transformer (from 'nibble' array to String)
+### IMEI converter (from 'nibble' array to String)
 ```java
-@BindArrayPrimitive(size = "8", type = byte[].class, transformer = IMEITransformer.class, validator = IMEIValidator.class)
+@BindArrayPrimitive(size = "8", type = byte[].class, converter = IMEIConverter.class, validator = IMEIValidator.class)
 private String imei;
 
-public class IMEITransformer implements Transformer<byte[], String>{
+public class IMEIConverter implements Converter<byte[], String>{
     @Override
     public String decode(final byte[] value){
         final StringBuffer sb = new StringBuffer();
@@ -605,9 +606,9 @@ public class IMEITransformer implements Transformer<byte[], String>{
 }
 ```
 
-### RSSI transformer (from encoded byte to short value)
+### RSSI converter (from encoded byte to short value)
 ```java
-@BindByte(transformer = RSSITransformer.class)
+@BindByte(converter = RSSIConverter.class)
 private short rssi;
 
 /**
@@ -619,7 +620,7 @@ private short rssi;
  * 31:		> -51 dBm
  * 99:		unknown
  */
-public class RSSITransformer implements Transformer<Byte, Short>{
+public class RSSIConverter implements Converter<Byte, Short>{
 
     public static final int RSSI_UNKNOWN = 0;
 

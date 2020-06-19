@@ -22,10 +22,10 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package unit731.boxon.annotations.transformers;
+package unit731.boxon.annotations.converters;
 
 
-public interface Transformer<IN, OUT>{
+public interface Converter<IN, OUT>{
 
 	OUT decode(final IN value);
 

@@ -43,7 +43,7 @@ import unit731.boxon.annotations.BindStringTerminated;
 import unit731.boxon.annotations.MessageHeader;
 import unit731.boxon.annotations.checksummers.CRC16;
 import unit731.boxon.annotations.checksummers.Checksummer;
-import unit731.boxon.annotations.transformers.Transformer;
+import unit731.boxon.annotations.converters.Converter;
 import unit731.boxon.utils.ByteHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -62,7 +62,7 @@ class CodecTest{
 
 	private class Mask{
 
-		public class MaskTransformer implements Transformer<Byte, Mask>{
+		public class MaskConverter implements Converter<Byte, Mask>{
 			@Override
 			public Mask decode(final Byte value){
 				return new Mask(value);
@@ -101,7 +101,7 @@ class CodecTest{
 
 		private final Map<Byte, String> MESSAGE_TYPE_MAP = new HashMap<>();
 
-		public class MessageTypeTransformer implements Transformer<Byte, String>{
+		public class MessageTypeConverter implements Converter<Byte, String>{
 			@Override
 			public String decode(final Byte value){
 				return MESSAGE_TYPE_MAP.get(value);
@@ -122,7 +122,7 @@ class CodecTest{
 			MESSAGE_TYPE_MAP.put((byte)1, "AT+GTSRI");
 		}
 
-		@BindByte(transformer = Mask.MaskTransformer.class)
+		@BindByte(converter = Mask.MaskConverter.class)
 		public Mask mask;
 		@BindArray(size = "2", type = Version.class)
 		private Version[] versions;

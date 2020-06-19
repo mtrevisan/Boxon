@@ -39,7 +39,7 @@ import unit731.boxon.annotations.BindObject;
 import unit731.boxon.annotations.BindShort;
 import unit731.boxon.annotations.BindString;
 import unit731.boxon.annotations.BindStringTerminated;
-import unit731.boxon.annotations.transformers.Transformer;
+import unit731.boxon.annotations.converters.Converter;
 import unit731.boxon.annotations.validators.Validator;
 import unit731.boxon.utils.ByteHelper;
 import unit731.boxon.utils.ReflectionHelper;
@@ -70,7 +70,7 @@ enum Coder{
 
 			final Object instance = MessageParser.decode(codec, reader);
 
-			final Object value = transformerDecode(binding.transformer(), instance);
+			final Object value = converterDecode(binding.converter(), instance);
 
 			validateData(binding.validator(), value);
 
@@ -86,7 +86,7 @@ enum Coder{
 
 			validateData(binding.validator(), value);
 
-			final Object array = transformerEncode(binding.transformer(), value);
+			final Object array = converterEncode(binding.converter(), value);
 
 			MessageParser.encode(codec, value, writer);
 		}
@@ -107,7 +107,7 @@ enum Coder{
 
 			final String text = reader.getText(size, charset);
 
-			final Object value = transformerDecode(binding.transformer(), text);
+			final Object value = converterDecode(binding.converter(), text);
 
 			validateData(binding.match(), binding.validator(), value);
 
@@ -123,7 +123,7 @@ enum Coder{
 
 			validateData(binding.match(), binding.validator(), value);
 
-			final String text = transformerEncode(binding.transformer(), value);
+			final String text = converterEncode(binding.converter(), value);
 
 			writer.putText(text.substring(0, Math.min(text.length(), size)), charset);
 		}
@@ -145,7 +145,7 @@ enum Coder{
 
 			final String text = reader.getTextUntilTerminator(terminator, consumeTerminator, charset);
 
-			final Object value = transformerDecode(binding.transformer(), text);
+			final Object value = converterDecode(binding.converter(), text);
 
 			validateData(binding.match(), binding.validator(), value);
 
@@ -162,7 +162,7 @@ enum Coder{
 
 			validateData(binding.match(), binding.validator(), value);
 
-			final String text = transformerEncode(binding.transformer(), value);
+			final String text = converterEncode(binding.converter(), value);
 
 			writer.putText(text, terminator, consumeTerminator, charset);
 		}
@@ -197,7 +197,7 @@ enum Coder{
 				Array.set(array, i, value);
 			}
 
-			final Object value = transformerDecode(binding.transformer(), array);
+			final Object value = converterDecode(binding.converter(), array);
 
 			validateData(binding.validator(), value);
 
@@ -224,7 +224,7 @@ enum Coder{
 
 			validateData(binding.validator(), value);
 
-			final Object array = transformerEncode(binding.transformer(), value);
+			final Object array = converterEncode(binding.converter(), value);
 
 			for(int i = 0; i < size; i ++)
 				writer.put(Array.get(array, i), byteOrder);
@@ -253,7 +253,7 @@ enum Coder{
 			for(int i = 0; i < size; i ++)
 				array[i] = MessageParser.decode(codec, reader);
 
-			final Object value = transformerDecode(binding.transformer(), array);
+			final Object value = converterDecode(binding.converter(), array);
 
 			validateData(binding.validator(), value);
 
@@ -274,7 +274,7 @@ enum Coder{
 
 			validateData(binding.validator(), value);
 
-			final Object[] array = transformerEncode(binding.transformer(), value);
+			final Object[] array = converterEncode(binding.converter(), value);
 
 			for(int i = 0; i < size; i ++)
 				MessageParser.encode(codec, array[i], writer);
@@ -298,7 +298,7 @@ enum Coder{
 			if(byteOrder == ByteOrder.BIG_ENDIAN)
 				ByteHelper.reverseBits(bits, size);
 
-			final Object value = transformerDecode(binding.transformer(), bits);
+			final Object value = converterDecode(binding.converter(), bits);
 
 			validateData(binding.match(), binding.validator(), value);
 
@@ -314,7 +314,7 @@ enum Coder{
 
 			validateData(binding.match(), binding.validator(), value);
 
-			final BitSet bits = transformerEncode(binding.transformer(), value);
+			final BitSet bits = converterEncode(binding.converter(), value);
 			if(byteOrder == ByteOrder.BIG_ENDIAN)
 				ByteHelper.reverseBits(bits, size);
 
@@ -336,12 +336,12 @@ enum Coder{
 			if(binding.unsigned()){
 				final short v = reader.getByteUnsigned();
 
-				value = transformerDecode(binding.transformer(), v);
+				value = converterDecode(binding.converter(), v);
 			}
 			else{
 				final byte v = reader.getByte();
 
-				value = transformerDecode(binding.transformer(), v);
+				value = converterDecode(binding.converter(), v);
 			}
 
 			validateData(binding.match(), binding.validator(), value);
@@ -355,7 +355,7 @@ enum Coder{
 
 			validateData(binding.match(), binding.validator(), value);
 
-			final byte v = transformerEncode(binding.transformer(), value);
+			final byte v = converterEncode(binding.converter(), value);
 
 			writer.putByte(v);
 		}
@@ -377,12 +377,12 @@ enum Coder{
 			if(binding.unsigned()){
 				final int v = reader.getShortUnsigned(byteOrder);
 
-				value = transformerDecode(binding.transformer(), v);
+				value = converterDecode(binding.converter(), v);
 			}
 			else{
 				final short v = reader.getShort(byteOrder);
 
-				value = transformerDecode(binding.transformer(), v);
+				value = converterDecode(binding.converter(), v);
 			}
 
 			validateData(binding.match(), binding.validator(), value);
@@ -398,7 +398,7 @@ enum Coder{
 
 			validateData(binding.match(), binding.validator(), value);
 
-			final short v = transformerEncode(binding.transformer(), value);
+			final short v = converterEncode(binding.converter(), value);
 
 			writer.putShort(v, byteOrder);
 		}
@@ -420,12 +420,12 @@ enum Coder{
 			if(binding.unsigned()){
 				final long v = reader.getIntegerUnsigned(byteOrder);
 
-				value = transformerDecode(binding.transformer(), v);
+				value = converterDecode(binding.converter(), v);
 			}
 			else{
 				final int v = reader.getInteger(byteOrder);
 
-				value = transformerDecode(binding.transformer(), v);
+				value = converterDecode(binding.converter(), v);
 			}
 
 			validateData(binding.match(), binding.validator(), value);
@@ -441,7 +441,7 @@ enum Coder{
 
 			validateData(binding.match(), binding.validator(), value);
 
-			final int v = transformerEncode(binding.transformer(), value);
+			final int v = converterEncode(binding.converter(), value);
 
 			writer.putInteger(v, byteOrder);
 		}
@@ -461,7 +461,7 @@ enum Coder{
 
 			final long v = reader.getLong(byteOrder);
 
-			final Object value = transformerDecode(binding.transformer(), v);
+			final Object value = converterDecode(binding.converter(), v);
 
 			validateData(binding.match(), binding.validator(), value);
 
@@ -476,7 +476,7 @@ enum Coder{
 
 			validateData(binding.match(), binding.validator(), value);
 
-			final long v = transformerEncode(binding.transformer(), value);
+			final long v = converterEncode(binding.converter(), value);
 
 			writer.putLong(v, byteOrder);
 		}
@@ -505,7 +505,7 @@ enum Coder{
 				if(!binding.unsigned())
 					v = ByteHelper.extendSign(v, size);
 
-				value = transformerDecode(binding.transformer(), v);
+				value = converterDecode(binding.converter(), v);
 			}
 			else{
 				BigInteger v;
@@ -517,7 +517,7 @@ enum Coder{
 				else
 					v = new BigInteger(1, bigArray);
 
-				value = transformerDecode(binding.transformer(), v);
+				value = converterDecode(binding.converter(), v);
 			}
 
 			validateData(binding.match(), binding.validator(), value);
@@ -537,14 +537,14 @@ enum Coder{
 
 			BigInteger v;
 			if(allowPrimitive && size < Long.SIZE){
-				final long vv = transformerEncode(binding.transformer(), value);
+				final long vv = converterEncode(binding.converter(), value);
 
 				v = BigInteger.valueOf(Math.abs(vv));
 				if(!binding.unsigned() && vv < 0)
 					v = v.negate();
 			}
 			else
-				v = transformerEncode(binding.transformer(), value);
+				v = converterEncode(binding.converter(), value);
 
 			//mask value with `2^size-1`
 			final BigInteger mask = BigInteger.ONE.shiftLeft(size).subtract(BigInteger.ONE);
@@ -570,7 +570,7 @@ enum Coder{
 
 			final float v = reader.getFloat(byteOrder);
 
-			final Object value = transformerDecode(binding.transformer(), v);
+			final Object value = converterDecode(binding.converter(), v);
 
 			validateData(binding.match(), binding.validator(), value);
 
@@ -585,7 +585,7 @@ enum Coder{
 
 			validateData(binding.match(), binding.validator(), value);
 
-			final float v = transformerEncode(binding.transformer(), value);
+			final float v = converterEncode(binding.converter(), value);
 
 			writer.putFloat(v, byteOrder);
 		}
@@ -605,7 +605,7 @@ enum Coder{
 
 			final double v = reader.getDouble(byteOrder);
 
-			final Object value = transformerDecode(binding.transformer(), v);
+			final Object value = converterDecode(binding.converter(), v);
 
 			validateData(binding.match(), binding.validator(), value);
 
@@ -620,7 +620,7 @@ enum Coder{
 
 			validateData(binding.match(), binding.validator(), value);
 
-			final double v = transformerEncode(binding.transformer(), value);
+			final double v = converterEncode(binding.converter(), value);
 
 			writer.putDouble(v, byteOrder);
 		}
@@ -644,7 +644,7 @@ enum Coder{
 
 			final BigDecimal v = reader.getDecimal(type, byteOrder);
 
-			final Object value = transformerDecode(binding.transformer(), v);
+			final Object value = converterDecode(binding.converter(), v);
 
 			validateData(binding.match(), binding.validator(), value);
 
@@ -663,7 +663,7 @@ enum Coder{
 
 			validateData(binding.match(), binding.validator(), value);
 
-			final BigDecimal v = transformerEncode(binding.transformer(), value);
+			final BigDecimal v = converterEncode(binding.converter(), value);
 
 			writer.putDecimal(v, type, byteOrder);
 		}
@@ -756,7 +756,8 @@ enum Coder{
 		return (text != null && !text.trim().isBlank());
 	}
 
-	private static <T> void validateData(final String match, @SuppressWarnings("rawtypes") final Class<? extends Validator> validatorType, final T data){
+	private static <T> void validateData(final String match, @SuppressWarnings("rawtypes") final Class<? extends Validator> validatorType,
+			final T data){
 		matchData(match, data);
 		validateData(validatorType, data);
 	}
@@ -774,18 +775,18 @@ enum Coder{
 			throw new IllegalArgumentException("Validation not passed (" + data + ")");
 	}
 
-	private static <OUT, IN> OUT transformerDecode(@SuppressWarnings("rawtypes") final Class<? extends Transformer> transformerType,
+	private static <OUT, IN> OUT converterDecode(@SuppressWarnings("rawtypes") final Class<? extends Converter> converterType,
 			final IN data){
 		@SuppressWarnings("unchecked")
-		final Transformer<IN, OUT> transformer = ReflectionHelper.createInstance(transformerType);
-		return transformer.decode(data);
+		final Converter<IN, OUT> converter = ReflectionHelper.createInstance(converterType);
+		return converter.decode(data);
 	}
 
-	private static <OUT, IN> IN transformerEncode(@SuppressWarnings("rawtypes") final Class<? extends Transformer> transformerType,
+	private static <OUT, IN> IN converterEncode(@SuppressWarnings("rawtypes") final Class<? extends Converter> converterType,
 			final OUT data){
 		@SuppressWarnings("unchecked")
-		final Transformer<IN, OUT> transformer = ReflectionHelper.createInstance(transformerType);
-		return transformer.encode(data);
+		final Converter<IN, OUT> converter = ReflectionHelper.createInstance(converterType);
+		return converter.encode(data);
 	}
 
 }

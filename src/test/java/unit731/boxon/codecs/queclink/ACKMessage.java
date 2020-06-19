@@ -33,7 +33,7 @@ import unit731.boxon.annotations.BindShort;
 import unit731.boxon.annotations.BindString;
 import unit731.boxon.annotations.MessageHeader;
 import unit731.boxon.annotations.checksummers.CRC16;
-import unit731.boxon.annotations.transformers.Transformer;
+import unit731.boxon.annotations.converters.Converter;
 import unit731.boxon.annotations.validators.IMEIValidator;
 
 import java.time.ZonedDateTime;
@@ -92,7 +92,7 @@ public class ACKMessage{
 		MESSAGE_TYPE_MAP.put((byte)64, "AT+GTTRF");
 	}
 
-	public static class MessageTypeTransformer implements Transformer<Byte, String>{
+	public static class MessageTypeConverter implements Converter<Byte, String>{
 		@Override
 		public String decode(final Byte value){
 			return MESSAGE_TYPE_MAP.get(value);
@@ -111,9 +111,9 @@ public class ACKMessage{
 
 	@BindString(size = "4")
 	private String messageHeader;
-	@BindByte(transformer = MessageTypeTransformer.class)
+	@BindByte(converter = MessageTypeConverter.class)
 	private String messageType;
-	@BindByte(transformer = ACKMask.ACKMaskTransformer.class)
+	@BindByte(converter = ACKMask.ACKMaskConverter.class)
 	private ACKMask mask;
 //	@BindArrayPrimitive(size = "2", type = byte[].class)
 //	private byte[] things;
@@ -126,13 +126,13 @@ public class ACKMessage{
 //	@BindArray(size = "2", type = Version.class)
 //	private Version[] versions;
 	@BindIf("mask.hasProtocolVersion()")
-	@BindArrayPrimitive(size = "2", type = byte[].class, transformer = QueclinkHelper.VersionTransformer.class)
+	@BindArrayPrimitive(size = "2", type = byte[].class, converter = QueclinkHelper.VersionConverter.class)
 	private String protocolVersion;
 	@BindIf("mask.hasFirmwareVersion()")
-	@BindArrayPrimitive(size = "2", type = byte[].class, transformer = QueclinkHelper.VersionTransformer.class)
+	@BindArrayPrimitive(size = "2", type = byte[].class, converter = QueclinkHelper.VersionConverter.class)
 	private String firmwareVersion;
 	@BindIf("mask.hasIMEI()")
-	@BindArrayPrimitive(size = "8", type = byte[].class, transformer = QueclinkHelper.IMEITransformer.class, validator = IMEIValidator.class)
+	@BindArrayPrimitive(size = "8", type = byte[].class, converter = QueclinkHelper.IMEIConverter.class, validator = IMEIValidator.class)
 	private String imei;
 	@BindIf("!mask.hasIMEI()")
 	@BindString(size = "8")
@@ -142,7 +142,7 @@ public class ACKMessage{
 	@BindShort
 	private short correlationId;
 	@BindIf("mask.hasEventTime()")
-	@BindArrayPrimitive(size = "7", type = byte[].class, transformer = QueclinkHelper.DateTimeYYYYMMDDHHMMSSTransformer.class)
+	@BindArrayPrimitive(size = "7", type = byte[].class, converter = QueclinkHelper.DateTimeYYYYMMDDHHMMSSConverter.class)
 	private ZonedDateTime eventTime;
 	@BindIf("mask.hasMessageId()")
 	@BindShort

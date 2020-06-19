@@ -22,10 +22,10 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package unit731.boxon.annotations.transformers;
+package unit731.boxon.annotations.converters;
 
 
-public class NullTransformer<T> implements Transformer<T, T>{
+public class NullConverter<T> implements Converter<T, T>{
 
 	@Override
 	public T decode(final T value){

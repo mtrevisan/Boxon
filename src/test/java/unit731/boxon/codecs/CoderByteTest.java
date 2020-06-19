@@ -27,8 +27,8 @@ package unit731.boxon.codecs;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import unit731.boxon.annotations.BindByte;
-import unit731.boxon.annotations.transformers.NullTransformer;
-import unit731.boxon.annotations.transformers.Transformer;
+import unit731.boxon.annotations.converters.NullConverter;
+import unit731.boxon.annotations.converters.Converter;
 import unit731.boxon.annotations.validators.NullValidator;
 import unit731.boxon.annotations.validators.Validator;
 
@@ -67,8 +67,8 @@ class CoderByteTest{
 			}
 
 			@Override
-			public Class<? extends Transformer> transformer(){
-				return NullTransformer.class;
+			public Class<? extends Converter> converter(){
+				return NullConverter.class;
 			}
 		};
 

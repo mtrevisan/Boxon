@@ -24,8 +24,8 @@
  */
 package unit731.boxon.annotations;
 
-import unit731.boxon.annotations.transformers.NullTransformer;
-import unit731.boxon.annotations.transformers.Transformer;
+import unit731.boxon.annotations.converters.Converter;
+import unit731.boxon.annotations.converters.NullConverter;
 import unit731.boxon.annotations.validators.NullValidator;
 import unit731.boxon.annotations.validators.Validator;
 import unit731.boxon.codecs.ByteOrder;
@@ -37,7 +37,7 @@ import java.lang.annotation.Target;
 
 
 /**
- * Manages a <code>float</code>/{@link Float} (... before the application of a transformer)
+ * Manages a <code>float</code>/{@link Float} (... before the application of a converter)
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
@@ -58,7 +58,7 @@ public @interface BindFloat{
 	String match() default "";
 
 	/**
-	 * The validator to be applied before applying the transformer, if any. Usually the fully qualified
+	 * The validator to be applied before applying the converter, if any. Usually the fully qualified
 	 * name of an implementation class of a {@link Validator}
 	 *
 	 * @return	The class of a {@link Validator}
@@ -66,11 +66,11 @@ public @interface BindFloat{
 	Class<? extends Validator> validator() default NullValidator.class;
 
 	/**
-	 * The transformer to be applied before writing the parameter value. Usually the fully qualified
-	 * name of an implementation class of a {@link Transformer}
+	 * The converter to be applied before writing the parameter value. Usually the fully qualified
+	 * name of an implementation class of a {@link Converter}
 	 *
-	 * @return	The class of a {@link Transformer}
+	 * @return	The class of a {@link Converter}
 	 */
-	Class<? extends Transformer> transformer() default NullTransformer.class;
+	Class<? extends Converter> converter() default NullConverter.class;
 
 }

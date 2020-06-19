@@ -73,7 +73,7 @@ public @interface BindChecksum{
 	int skipEnd() default 0;
 
 	/**
-	 * The validator to be applied before applying the transformer, if any. Usually the fully qualified
+	 * The validator to be applied before applying the converter, if any. Usually the fully qualified
 	 * name of an implementation class of a {@link Validator}
 	 *
 	 * @return	The class of a {@link Checksummer}
