@@ -717,7 +717,7 @@ enum Coder{
 			try{
 				match = Evaluator.evaluate(match, String.class, data);
 			}
-			catch(final SpelParseException | SpelEvaluationException | IllegalStateException ignored){}
+			catch(final Exception ignored){}
 
 			//try regex expression
 			try{

@@ -223,7 +223,7 @@ class BitBuffer{
 	 */
 	private long getValue(final int length){
 		final BitSet bits = getBits(length);
-		long value = 0L;
+		long value = 0l;
 		for(int i = 0; i < bits.length(); i ++)
 			if(bits.get(i))
 				value |= 1l << i;
