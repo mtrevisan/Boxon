@@ -245,6 +245,7 @@ private long numberLong;
  - `size`: the number of bits to read (can be a SpEL expression).
  - `unsigned`: whether the read value is treated as signed or unsigned (defaults to `false`).
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
+ - `allowPrimitive`: whether to generate a `long`/`Long` if `size < 64` (defaults to `true`).
  - `match`: a string/regex/SpEl expression that is used as an expected value.
  - `validator`: the Class of a validator (applied BEFORE the transformer).
  - `transformer`: the transformer used to convert the read value into the value that is assigned to the annotated variable. 

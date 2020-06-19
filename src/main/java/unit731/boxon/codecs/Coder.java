@@ -514,21 +514,19 @@ enum Coder{
 			final BigInteger v;
 			if(allowPrimitive && size < Long.SIZE){
 				final long vv = transformerEncode(binding.transformer(), value);
-				final long mask = ByteHelper.mask(size);
 				if(binding.unsigned() || vv >= 0)
-					v = BigInteger.valueOf(vv & mask);
+					v = BigInteger.valueOf(vv);
 				else
-					v = BigInteger.valueOf(Math.abs(vv) & mask)
+					v = BigInteger.valueOf(Math.abs(vv))
 						.negate();
 			}
-			else{
-				//TODO mask value with `2^size-1`
-//				final BigInteger mask = new BigInteger();
+			else
 				v = transformerEncode(binding.transformer(), value);
-			}
 
+			//mask value with `2^size-1`
+			final BigInteger mask = BigInteger.ONE.shiftLeft(size).subtract(BigInteger.ONE);
 			//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
-			final BitSet bits = BitSet.valueOf(ByteHelper.reverseBytes(ByteHelper.bigIntegerToBytes(v, size)));
+			final BitSet bits = BitSet.valueOf(ByteHelper.reverseBytes(ByteHelper.bigIntegerToBytes(v.and(mask), size)));
 			if(byteOrder == ByteOrder.BIG_ENDIAN)
 				ByteHelper.reverseBits(bits, size);
 			writer.putBits(bits, size);

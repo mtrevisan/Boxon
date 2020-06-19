@@ -205,6 +205,7 @@ public class ByteHelper{
 	 * Converts a BigInteger into a byte array ignoring the sign of the BigInteger, according to SRP specification
 	 *
 	 * @param value	the value, must not be <code>null</code>
+	 * @param size	The size in bits of the `value`
 	 * @return	The byte array (leading byte is always different from <code>0</code>), empty array if the value is zero.
 	 */
 	public static byte[] bigIntegerToBytes(final BigInteger value, final int size){
