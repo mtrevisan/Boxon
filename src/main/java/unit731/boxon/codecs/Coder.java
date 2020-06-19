@@ -71,8 +71,7 @@ enum Coder{
 
 			final Object value = transformerDecode(binding.transformer(), text);
 
-			matchData(binding.match(), value);
-			validateData(binding.validator(), value);
+			validateData(binding.match(), binding.validator(), value);
 
 			return value;
 		}
@@ -84,8 +83,7 @@ enum Coder{
 			final Charset charset = Charset.forName(binding.charset());
 			final int size = Evaluator.evaluate(binding.size(), Integer.class, data);
 
-			matchData(binding.match(), value);
-			validateData(binding.validator(), value);
+			validateData(binding.match(), binding.validator(), value);
 
 			final String text = transformerEncode(binding.transformer(), value);
 
@@ -111,8 +109,7 @@ enum Coder{
 
 			final Object value = transformerDecode(binding.transformer(), text);
 
-			matchData(binding.match(), value);
-			validateData(binding.validator(), value);
+			validateData(binding.match(), binding.validator(), value);
 
 			return value;
 		}
@@ -125,8 +122,7 @@ enum Coder{
 			final byte terminator = binding.terminator();
 			final boolean consumeTerminator = binding.consumeTerminator();
 
-			matchData(binding.match(), value);
-			validateData(binding.validator(), value);
+			validateData(binding.match(), binding.validator(), value);
 
 			final String text = transformerEncode(binding.transformer(), value);
 
@@ -218,11 +214,11 @@ enum Coder{
 			for(int i = 0; i < size; i ++)
 				array[i] = MessageParser.decode(codec, reader);
 
-			final Object output = transformerDecode(binding.transformer(), array);
+			final Object value = transformerDecode(binding.transformer(), array);
 
-			validateData(binding.validator(), output);
+			validateData(binding.validator(), value);
 
-			return output;
+			return value;
 		}
 
 		@Override
@@ -264,8 +260,7 @@ enum Coder{
 
 			final Object value = transformerDecode(binding.transformer(), bits);
 
-			matchData(binding.match(), value);
-			validateData(binding.validator(), value);
+			validateData(binding.match(), binding.validator(), value);
 
 			return value;
 		}
@@ -277,8 +272,7 @@ enum Coder{
 			final int size = Evaluator.evaluate(binding.size(), Integer.class, data);
 			final ByteOrder byteOrder = binding.byteOrder();
 
-			matchData(binding.match(), value);
-			validateData(binding.validator(), value);
+			validateData(binding.match(), binding.validator(), value);
 
 			final BitSet bits = transformerEncode(binding.transformer(), value);
 			if(byteOrder == ByteOrder.BIG_ENDIAN)
@@ -310,8 +304,7 @@ enum Coder{
 				value = transformerDecode(binding.transformer(), v);
 			}
 
-			matchData(binding.match(), value);
-			validateData(binding.validator(), value);
+			validateData(binding.match(), binding.validator(), value);
 
 			return value;
 		}
@@ -320,8 +313,7 @@ enum Coder{
 		void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
 			final BindByte binding = (BindByte)annotation;
 
-			matchData(binding.match(), value);
-			validateData(binding.validator(), value);
+			validateData(binding.match(), binding.validator(), value);
 
 			final byte v = transformerEncode(binding.transformer(), value);
 
@@ -353,8 +345,7 @@ enum Coder{
 				value = transformerDecode(binding.transformer(), v);
 			}
 
-			matchData(binding.match(), value);
-			validateData(binding.validator(), value);
+			validateData(binding.match(), binding.validator(), value);
 
 			return value;
 		}
@@ -365,8 +356,7 @@ enum Coder{
 
 			final ByteOrder byteOrder = binding.byteOrder();
 
-			matchData(binding.match(), value);
-			validateData(binding.validator(), value);
+			validateData(binding.match(), binding.validator(), value);
 
 			final short v = transformerEncode(binding.transformer(), value);
 
@@ -398,8 +388,7 @@ enum Coder{
 				value = transformerDecode(binding.transformer(), v);
 			}
 
-			matchData(binding.match(), value);
-			validateData(binding.validator(), value);
+			validateData(binding.match(), binding.validator(), value);
 
 			return value;
 		}
@@ -410,8 +399,7 @@ enum Coder{
 
 			final ByteOrder byteOrder = binding.byteOrder();
 
-			matchData(binding.match(), value);
-			validateData(binding.validator(), value);
+			validateData(binding.match(), binding.validator(), value);
 
 			final int v = transformerEncode(binding.transformer(), value);
 
@@ -435,8 +423,7 @@ enum Coder{
 
 			final Object value = transformerDecode(binding.transformer(), v);
 
-			matchData(binding.match(), value);
-			validateData(binding.validator(), value);
+			validateData(binding.match(), binding.validator(), value);
 
 			return value;
 		}
@@ -447,8 +434,7 @@ enum Coder{
 
 			final ByteOrder byteOrder = binding.byteOrder();
 
-			matchData(binding.match(), value);
-			validateData(binding.validator(), value);
+			validateData(binding.match(), binding.validator(), value);
 
 			final long v = transformerEncode(binding.transformer(), value);
 
@@ -494,8 +480,7 @@ enum Coder{
 				value = transformerDecode(binding.transformer(), v);
 			}
 
-			matchData(binding.match(), value);
-			validateData(binding.validator(), value);
+			validateData(binding.match(), binding.validator(), value);
 
 			return value;
 		}
@@ -508,8 +493,7 @@ enum Coder{
 			final ByteOrder byteOrder = binding.byteOrder();
 			final boolean allowPrimitive = binding.allowPrimitive();
 
-			matchData(binding.match(), value);
-			validateData(binding.validator(), value);
+			validateData(binding.match(), binding.validator(), value);
 
 			BigInteger v;
 			if(allowPrimitive && size < Long.SIZE){
@@ -548,8 +532,7 @@ enum Coder{
 
 			final Object value = transformerDecode(binding.transformer(), v);
 
-			matchData(binding.match(), value);
-			validateData(binding.validator(), value);
+			validateData(binding.match(), binding.validator(), value);
 
 			return value;
 		}
@@ -560,8 +543,7 @@ enum Coder{
 
 			final ByteOrder byteOrder = binding.byteOrder();
 
-			matchData(binding.match(), value);
-			validateData(binding.validator(), value);
+			validateData(binding.match(), binding.validator(), value);
 
 			final float v = transformerEncode(binding.transformer(), value);
 
@@ -585,8 +567,7 @@ enum Coder{
 
 			final Object value = transformerDecode(binding.transformer(), v);
 
-			matchData(binding.match(), v);
-			validateData(binding.validator(), value);
+			validateData(binding.match(), binding.validator(), value);
 
 			return value;
 		}
@@ -597,8 +578,7 @@ enum Coder{
 
 			final ByteOrder byteOrder = binding.byteOrder();
 
-			matchData(binding.match(), value);
-			validateData(binding.validator(), value);
+			validateData(binding.match(), binding.validator(), value);
 
 			final double v = transformerEncode(binding.transformer(), value);
 
@@ -626,8 +606,7 @@ enum Coder{
 
 			final Object value = transformerDecode(binding.transformer(), v);
 
-			matchData(binding.match(), value);
-			validateData(binding.validator(), value);
+			validateData(binding.match(), binding.validator(), value);
 
 			return value;
 		}
@@ -642,8 +621,7 @@ enum Coder{
 					+ ".class` or `" + Double.class.getSimpleName() + ".class`");
 			final ByteOrder byteOrder = binding.byteOrder();
 
-			matchData(binding.match(), value);
-			validateData(binding.validator(), value);
+			validateData(binding.match(), binding.validator(), value);
 
 			final BigDecimal v = transformerEncode(binding.transformer(), value);
 
@@ -707,12 +685,6 @@ enum Coder{
 	abstract Class<?> coderType();
 
 
-	private static <T> void matchData(final String match, final T data){
-		final Pattern pattern = extractPattern(match, data);
-		if(pattern != null && !pattern.matcher(Objects.toString(data)).matches())
-			throw new IllegalArgumentException("Parameter does not match constraint `" + match + "`");
-	}
-
 	/** Extract pattern from a SpEL expression, or a string, or a real pattern */
 	private static <T> Pattern extractPattern(String match, final T data){
 		Pattern p = null;
@@ -742,6 +714,17 @@ enum Coder{
 
 	private static boolean isNotBlank(final String text){
 		return (text != null && !text.trim().isBlank());
+	}
+
+	private static <T> void validateData(final String match, @SuppressWarnings("rawtypes") final Class<? extends Validator> validatorType, final T data){
+		matchData(match, data);
+		validateData(validatorType, data);
+	}
+
+	private static <T> void matchData(final String match, final T data){
+		final Pattern pattern = extractPattern(match, data);
+		if(pattern != null && !pattern.matcher(Objects.toString(data)).matches())
+			throw new IllegalArgumentException("Parameter does not match constraint `" + match + "`");
 	}
 
 	private static <T> void validateData(@SuppressWarnings("rawtypes") final Class<? extends Validator> validatorType, final T data){
