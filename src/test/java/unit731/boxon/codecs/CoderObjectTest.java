@@ -158,6 +158,11 @@ class CoderObjectTest{
 		TestType1 value1 = (TestType1)parsedMessage.value;
 		Assertions.assertEquals(0x1234, value1.value);
 
+		ComposeResponse response = parser.compose(value1);
+		Assertions.assertNotNull(response);
+		Assertions.assertFalse(response.hasErrors());
+		Assertions.assertArrayEquals(payload, response.getComposedMessage());
+
 
 		payload = ByteHelper.hexStringToByteArray("7463310211223344");
 		result = parser.parse(payload);

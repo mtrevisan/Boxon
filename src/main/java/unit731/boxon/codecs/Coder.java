@@ -111,9 +111,9 @@ enum Coder{
 		}
 
 		private Choices.Choice chooseAlternative(final Choices.Choice[] alternatives, final int prefix, final Object data){
-			Evaluator.addToContext(CONTEXT_CHOICE_PREFIX, prefix);
-
 			Choices.Choice chosenAlternative = null;
+
+			Evaluator.addToContext(CONTEXT_CHOICE_PREFIX, prefix);
 			for(final Choices.Choice alternative : alternatives)
 				if(Evaluator.evaluate(alternative.condition(), boolean.class, data)){
 					chosenAlternative = alternative;

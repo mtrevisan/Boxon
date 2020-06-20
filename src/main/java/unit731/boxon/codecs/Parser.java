@@ -139,6 +139,36 @@ public class Parser{
 		return response;
 	}
 
+	/**
+	 * Parse a message
+	 *
+	 * @param data	The messages to be composed
+	 * @return	The composed response
+	 */
+	public final ComposeResponse compose(final Object... data){
+		//TODO
+		final ComposeResponse response = new ComposeResponse();
+		final BitWriter writer = new BitWriter();
+		for(final Object elem : data){
+			try{
+				final Codec<?> codec = Codec.createFrom(elem.getClass());
+				if(codec == null)
+					throw new IllegalArgumentException("Cannot find any codec for message");
+
+				MessageParser.encode(codec, elem, writer);
+			}
+			catch(final Throwable t){
+				final ComposeException ce = new ComposeException(elem, t);
+				response.addError(ce);
+			}
+		}
+		writer.flush();
+
+		response.setComposedMessage(writer.array());
+
+		return response;
+	}
+
 	private ParseException createParseException(final BitBuffer reader, final Throwable t){
 		final byte[] payload = reader.array();
 		final byte[] subPayload = Arrays.copyOfRange(payload, reader.position(), payload.length);
