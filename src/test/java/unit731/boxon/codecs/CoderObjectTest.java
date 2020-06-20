@@ -208,16 +208,30 @@ class CoderObjectTest{
 		Codec<TestChoice3> codec = Codec.createFrom(TestChoice3.class);
 		Parser parser = new Parser(null, Collections.singletonList(codec));
 
-		byte[] payload = ByteHelper.hexStringToByteArray("7463339797123498980011223344");
+		byte[] payload = ByteHelper.hexStringToByteArray("74633361611234");
 		ParseResponse result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
 		Assertions.assertFalse(result.hasErrors());
-		final List<Object> parsedMessages = result.getParsedMessages();
-		Assertions.assertEquals(1, parsedMessages);
-		Assertions.assertEquals(TestChoice3.class, parsedMessages.get(0));
+		List<Object> parsedMessages = result.getParsedMessages();
+		Assertions.assertEquals(1, parsedMessages.size());
+		Assertions.assertEquals(TestChoice3.class, parsedMessages.get(0).getClass());
 		TestChoice3 parsedMessage = (TestChoice3)parsedMessages.get(0);
-		//TODO
+		TestType1 value1 = (TestType1)parsedMessage.value;
+		Assertions.assertEquals(0x1234, value1.value);
+
+
+		payload = ByteHelper.hexStringToByteArray("746333626211223344");
+		result = parser.parse(payload);
+
+		Assertions.assertNotNull(result);
+		Assertions.assertFalse(result.hasErrors());
+		parsedMessages = result.getParsedMessages();
+		Assertions.assertEquals(1, parsedMessages.size());
+		Assertions.assertEquals(TestChoice3.class, parsedMessages.get(0).getClass());
+		parsedMessage = (TestChoice3)parsedMessages.get(0);
+		TestType2 value2 = (TestType2)parsedMessage.value;
+		Assertions.assertEquals(0x1122_3344, value2.value);
 	}
 
 }
