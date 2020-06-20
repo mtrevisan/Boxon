@@ -70,7 +70,7 @@ enum Coder{
 
 			final Class<?> type = binding.type();
 			final Choices selectFrom = binding.selectFrom();
-			final Choices.Choice[] alternatives = selectFrom.alternatives();
+			final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): new Choices.Choice[0]);
 			if(type == Void.class && alternatives.length == 0)
 				throw new IllegalArgumentException("`type` argument missing");
 			if(type != Void.class && alternatives.length > 0)
@@ -355,7 +355,7 @@ enum Coder{
 			final ByteOrder byteOrder = binding.byteOrder();
 
 			final BitSet bits = reader.getBits(size);
-			if(byteOrder == ByteOrder.LITTLE_ENDIAN)
+			if(byteOrder == ByteOrder.BIG_ENDIAN)
 				ByteHelper.reverseBits(bits, size);
 
 			final Object value = converterDecode(binding.converter(), bits);
@@ -375,7 +375,7 @@ enum Coder{
 			validateData(binding.match(), binding.validator(), value);
 
 			final BitSet bits = converterEncode(binding.converter(), value);
-			if(byteOrder == ByteOrder.LITTLE_ENDIAN)
+			if(byteOrder == ByteOrder.BIG_ENDIAN)
 				ByteHelper.reverseBits(bits, size);
 
 			writer.putBits(bits, size);
@@ -557,7 +557,7 @@ enum Coder{
 			final boolean allowPrimitive = binding.allowPrimitive();
 
 			final BitSet bits = reader.getBits(size);
-			if(byteOrder == ByteOrder.LITTLE_ENDIAN)
+			if(byteOrder == ByteOrder.BIG_ENDIAN)
 				ByteHelper.reverseBits(bits, size);
 			final Object value;
 			if(allowPrimitive && size < Long.SIZE){
@@ -610,7 +610,7 @@ enum Coder{
 			final BigInteger mask = BigInteger.ONE.shiftLeft(size).subtract(BigInteger.ONE);
 			//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
 			final BitSet bits = BitSet.valueOf(ByteHelper.reverseBytes(ByteHelper.bigIntegerToBytes(v.and(mask), size)));
-			if(byteOrder == ByteOrder.LITTLE_ENDIAN)
+			if(byteOrder == ByteOrder.BIG_ENDIAN)
 				ByteHelper.reverseBits(bits, size);
 			writer.putBits(bits, size);
 		}
