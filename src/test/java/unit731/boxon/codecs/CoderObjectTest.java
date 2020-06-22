@@ -111,8 +111,8 @@ class CoderObjectTest{
 		@BindString(size = "3")
 		public String header;
 		@BindObject(selectFrom = @Choices(prefixSize = 8, alternatives = {
-			@Choices.Choice(condition = "#prefix == 1", prefix = "1", type = TestType1.class),
-			@Choices.Choice(condition = "#prefix == 2", prefix = "2", type = TestType2.class)
+			@Choices.Choice(condition = "#prefix == 1", prefix = 1, type = TestType1.class),
+			@Choices.Choice(condition = "#prefix == 2", prefix = 2, type = TestType2.class)
 		}))
 		public TestType0 value;
 	}
@@ -124,8 +124,8 @@ class CoderObjectTest{
 		@BindArrayPrimitive(size = "2", type = byte[].class)
 		public byte[] index;
 		@BindObject(selectFrom = @Choices(prefixSize = 8, alternatives = {
-			@Choices.Choice(condition = "index[#prefix - 1] == 5", prefix = "(index[0] == 5? 1: 2)", type = TestType1.class),
-			@Choices.Choice(condition = "index[#prefix - 1] == 6", prefix = "(index[0] == 6? 1: 2)", type = TestType2.class)
+			@Choices.Choice(condition = "index[#prefix] == 5", prefix = 0, type = TestType1.class),
+			@Choices.Choice(condition = "index[#prefix] == 6", prefix = 1, type = TestType2.class)
 		}))
 		public TestType0 value;
 	}
@@ -189,7 +189,7 @@ class CoderObjectTest{
 		Codec<TestChoice2> codec = Codec.createFrom(TestChoice2.class);
 		Parser parser = new Parser(null, Collections.singletonList(codec));
 
-		byte[] payload = ByteHelper.hexStringToByteArray("7463320506011234");
+		byte[] payload = ByteHelper.hexStringToByteArray("7463320506001234");
 		ParseResponse result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
@@ -207,7 +207,7 @@ class CoderObjectTest{
 		Assertions.assertArrayEquals(payload, response.getComposedMessage());
 
 
-		payload = ByteHelper.hexStringToByteArray("74633205060211223344");
+		payload = ByteHelper.hexStringToByteArray("74633205060111223344");
 		result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);

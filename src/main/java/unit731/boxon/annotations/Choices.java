@@ -75,7 +75,7 @@ public @interface Choices{
 		 *
 		 * @return	A SpEL expression which returns the prefix value, that is, the inverse of {@link #condition() condition}.
 		 */
-		String prefix() default "";
+		long prefix() default 0l;
 
 		/**
 		 * The type to decode in case the {@link #condition()} holds.

@@ -126,10 +126,7 @@ enum Coder{
 				final Choices.Choice chosenAlternative = chooseAlternative(alternatives, value.getClass());
 				//if chosenAlternative.condition() contains '#prefix', then write @Choice.Prefix.value()
 				if(chosenAlternative.condition().contains("#" + CONTEXT_CHOICE_PREFIX)){
-					if(!Coder.isNotBlank(chosenAlternative.prefix()))
-						throw new IllegalArgumentException("Missing declaration of `prefix` on @Choices.Choice");
-
-					final int prefixValue = Evaluator.evaluate(chosenAlternative.prefix(), int.class, data);
+					long prefixValue = chosenAlternative.prefix();
 					final BitSet bits = BitSet.valueOf(new long[]{prefixValue});
 
 					writer.putBits(bits, prefixSize);
@@ -372,10 +369,7 @@ enum Coder{
 					final Choices.Choice chosenAlternative = chooseAlternative(alternatives, array[i].getClass());
 					//if chosenAlternative.condition() contains '#prefix', then write @Choice.Prefix.value()
 					if(chosenAlternative.condition().contains("#" + CONTEXT_CHOICE_PREFIX)){
-						if(!Coder.isNotBlank(chosenAlternative.prefix()))
-							throw new IllegalArgumentException("Missing declaration of `prefix` on @Choices.Choice");
-
-						final int prefixValue = Evaluator.evaluate(chosenAlternative.prefix(), int.class, data);
+						long prefixValue = chosenAlternative.prefix();
 						final BitSet bits = BitSet.valueOf(new long[]{prefixValue});
 
 						writer.putBits(bits, prefixSize);
