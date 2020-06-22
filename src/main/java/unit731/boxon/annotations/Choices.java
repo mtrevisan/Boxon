@@ -26,11 +26,6 @@ package unit731.boxon.annotations;
 
 import unit731.boxon.codecs.ByteOrder;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
 
 /**
  * The annotation allowing you to define a number of choices, based a prefix of a certain {@link #prefixSize() size}.
@@ -68,11 +63,19 @@ public @interface Choices{
 
 		/**
 		 * The condition that needs to hold, if an instance of {@link #type() type} is to be decoded.
-		 * A SpEL expression with the prefix value in the context under the name `__prefix`.
+		 * <p>A SpEL expression with the prefix value in the context under the name `prefix`.</p>
 		 *
 		 * @return	The condition that needs to hold, if an instance of {@link #type() type} is to be decoded.
 		 */
 		String condition();
+
+		/**
+		 * The prefix to be written when serializing the object.
+		 * <p>NOTE: this SpEL expression returns the prefix value, that is, the inverse of {@link #condition() condition}.</p>
+		 *
+		 * @return	A SpEL expression which returns the prefix value, that is, the inverse of {@link #condition() condition}.
+		 */
+		String prefix() default "";
 
 		/**
 		 * The type to decode in case the {@link #condition()} holds.
@@ -80,21 +83,6 @@ public @interface Choices{
 		 * @return	The type to decode in case the {@link #condition()} holds.
 		 */
 		Class<?> type();
-
-	}
-
-
-	/** The annotation used to indicate the discriminator used to recognize an instance of this class. */
-	@Target(ElementType.TYPE)
-	@Retention(RetentionPolicy.RUNTIME)
-	@interface Prefix{
-
-		/**
-		 * The value that will be used to match this particular record.
-		 *
-		 * @return The value.
-		 */
-		long value();
 
 	}
 

@@ -96,13 +96,11 @@ class CoderObjectTest{
 
 	static class TestType0{}
 
-	@Choices.Prefix(value = 1)
 	static class TestType1 extends TestType0{
 		@BindShort
 		public short value;
 	}
 
-	@Choices.Prefix(value = 2)
 	static class TestType2 extends TestType0{
 		@BindInteger
 		public int value;
@@ -113,10 +111,10 @@ class CoderObjectTest{
 		@BindString(size = "3")
 		public String header;
 		@BindObject(selectFrom = @Choices(prefixSize = 8, alternatives = {
-			@Choices.Choice(condition = "#prefix == 1", type = TestType1.class),
-			@Choices.Choice(condition = "#prefix == 2", type = TestType2.class)
+			@Choices.Choice(condition = "#prefix == 1", prefix = "1", type = TestType1.class),
+			@Choices.Choice(condition = "#prefix == 2", prefix = "2", type = TestType2.class)
 		}))
-		public Object value;
+		public TestType0 value;
 	}
 
 	@MessageHeader(start = "tc2")
@@ -126,10 +124,10 @@ class CoderObjectTest{
 		@BindArrayPrimitive(size = "2", type = byte[].class)
 		public byte[] index;
 		@BindObject(selectFrom = @Choices(prefixSize = 8, alternatives = {
-			@Choices.Choice(condition = "index[#prefix - 1] == 5", type = TestType1.class),
-			@Choices.Choice(condition = "index[#prefix - 1] == 6", type = TestType2.class)
+			@Choices.Choice(condition = "index[#prefix - 1] == 5", prefix = "(index[0] == 5? 1: 2)", type = TestType1.class),
+			@Choices.Choice(condition = "index[#prefix - 1] == 6", prefix = "(index[0] == 6? 1: 2)", type = TestType2.class)
 		}))
-		public Object value;
+		public TestType0 value;
 	}
 
 	@MessageHeader(start = "tc3")
@@ -142,7 +140,7 @@ class CoderObjectTest{
 			@Choices.Choice(condition = "key == 'aa'", type = TestType1.class),
 			@Choices.Choice(condition = "key == 'bb'", type = TestType2.class)
 		}))
-		public Object value;
+		public TestType0 value;
 	}
 
 	@Test

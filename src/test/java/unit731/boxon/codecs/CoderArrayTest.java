@@ -50,8 +50,8 @@ class CoderArrayTest{
 		@BindString(size = "3")
 		public String header;
 		@BindArray(size = "3", type = CoderObjectTest.TestType0.class, selectFrom = @Choices(prefixSize = 8, alternatives = {
-			@Choices.Choice(condition = "#prefix == 1", type = CoderObjectTest.TestType1.class),
-			@Choices.Choice(condition = "#prefix == 2", type = CoderObjectTest.TestType2.class)
+			@Choices.Choice(condition = "#prefix == 1", prefix = "1", type = CoderObjectTest.TestType1.class),
+			@Choices.Choice(condition = "#prefix == 2", prefix = "2", type = CoderObjectTest.TestType2.class)
 		}))
 		public CoderObjectTest.TestType0[] value;
 	}

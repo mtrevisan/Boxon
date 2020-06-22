@@ -126,12 +126,10 @@ enum Coder{
 				final Choices.Choice chosenAlternative = chooseAlternative(alternatives, value.getClass());
 				//if chosenAlternative.condition() contains '#prefix', then write @Choice.Prefix.value()
 				if(chosenAlternative.condition().contains("#" + CONTEXT_CHOICE_PREFIX)){
-					final Choices.Prefix prefix = value.getClass().getAnnotation(Choices.Prefix.class);
-					if(prefix == null)
-						throw new IllegalArgumentException("`@" + Choices.Prefix.class.getSimpleName() + "` missing from class " + value.getClass().getSimpleName());
-					final long prefixValue = prefix.value();
-					if(prefixValue <= 0)
-						throw new IllegalArgumentException("Prefix value for class " + value.getClass().getSimpleName() + " cannot be negative: " + prefixValue);
+					if(!Coder.isNotBlank(chosenAlternative.prefix()))
+						throw new IllegalArgumentException("Missing declaration of `prefix` on @Choices.Choice");
+
+					final int prefixValue = Evaluator.evaluate(chosenAlternative.prefix(), int.class, data);
 					final BitSet bits = BitSet.valueOf(new long[]{prefixValue});
 
 					writer.putBits(bits, prefixSize);
@@ -374,12 +372,10 @@ enum Coder{
 					final Choices.Choice chosenAlternative = chooseAlternative(alternatives, array[i].getClass());
 					//if chosenAlternative.condition() contains '#prefix', then write @Choice.Prefix.value()
 					if(chosenAlternative.condition().contains("#" + CONTEXT_CHOICE_PREFIX)){
-						final Choices.Prefix prefix = array[i].getClass().getAnnotation(Choices.Prefix.class);
-						if(prefix == null)
-							throw new IllegalArgumentException("`@" + Choices.Prefix.class.getSimpleName() + "` missing from class " + array[i].getClass().getSimpleName());
-						final long prefixValue = prefix.value();
-						if(prefixValue <= 0)
-							throw new IllegalArgumentException("Prefix value for class " + array[i].getClass().getSimpleName() + " cannot be negative: " + prefixValue);
+						if(!Coder.isNotBlank(chosenAlternative.prefix()))
+							throw new IllegalArgumentException("Missing declaration of `prefix` on @Choices.Choice");
+
+						final int prefixValue = Evaluator.evaluate(chosenAlternative.prefix(), int.class, data);
 						final BitSet bits = BitSet.valueOf(new long[]{prefixValue});
 
 						writer.putBits(bits, prefixSize);
