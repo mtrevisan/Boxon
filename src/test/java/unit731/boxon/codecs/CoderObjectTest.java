@@ -94,14 +94,16 @@ class CoderObjectTest{
 	}
 
 
+	static class TestType0{}
+
 	@Choices.Prefix(value = 1)
-	static class TestType1{
+	static class TestType1 extends TestType0{
 		@BindShort
 		public short value;
 	}
 
 	@Choices.Prefix(value = 2)
-	static class TestType2{
+	static class TestType2 extends TestType0{
 		@BindInteger
 		public int value;
 	}

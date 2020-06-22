@@ -28,17 +28,34 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import unit731.boxon.annotations.BindArray;
 import unit731.boxon.annotations.BindArrayPrimitive;
+import unit731.boxon.annotations.BindString;
 import unit731.boxon.annotations.Choices;
+import unit731.boxon.annotations.MessageHeader;
 import unit731.boxon.annotations.converters.NullConverter;
 import unit731.boxon.annotations.converters.Converter;
 import unit731.boxon.annotations.validators.NullValidator;
 import unit731.boxon.annotations.validators.Validator;
 import unit731.boxon.codecs.queclink.Version;
+import unit731.boxon.utils.ByteHelper;
 
 import java.lang.annotation.Annotation;
+import java.util.Collections;
+import java.util.List;
 
 
 class CoderArrayTest{
+
+	@MessageHeader(start = "tc4")
+	static class TestChoice4{
+		@BindString(size = "3")
+		public String header;
+		@BindArray(size = "3", type = CoderObjectTest.TestType0.class, selectFrom = @Choices(prefixSize = 8, alternatives = {
+			@Choices.Choice(condition = "#prefix == 1", type = CoderObjectTest.TestType1.class),
+			@Choices.Choice(condition = "#prefix == 2", type = CoderObjectTest.TestType2.class)
+		}))
+		public CoderObjectTest.TestType0[] value;
+	}
+
 
 	@Test
 	void arrayPrimitive(){
@@ -90,7 +107,7 @@ class CoderArrayTest{
 	}
 
 	@Test
-	void array(){
+	void arrayOfSameObject(){
 		Coder coder = Coder.ARRAY;
 		Version[] encodedValue = new Version[]{new Version((byte)0, (byte)1, (byte)12), new Version((byte)1, (byte)2, (byte)0)};
 		BindArray annotation = new BindArray(){
@@ -160,6 +177,34 @@ class CoderArrayTest{
 		Assertions.assertEquals(encodedValue[0].minor, decoded[0].minor);
 		Assertions.assertEquals(encodedValue[1].major, decoded[1].major);
 		Assertions.assertEquals(encodedValue[1].minor, decoded[1].minor);
+	}
+
+	@Test
+	void arrayOfDifferentObjects(){
+		Codec<TestChoice4> codec = Codec.createFrom(TestChoice4.class);
+		Parser parser = new Parser(null, Collections.singletonList(codec));
+
+		byte[] payload = ByteHelper.hexStringToByteArray("7463340112340211223344010666");
+		ParseResponse result = parser.parse(payload);
+
+		Assertions.assertNotNull(result);
+		Assertions.assertFalse(result.hasErrors());
+		List<Object> parsedMessages = result.getParsedMessages();
+		Assertions.assertEquals(1, parsedMessages.size());
+		Assertions.assertEquals(TestChoice4.class, parsedMessages.get(0).getClass());
+		TestChoice4 parsedMessage = (TestChoice4)parsedMessages.get(0);
+		CoderObjectTest.TestType0[] values = parsedMessage.value;
+		Assertions.assertEquals(CoderObjectTest.TestType1.class, values[0].getClass());
+		Assertions.assertEquals(0x1234, ((CoderObjectTest.TestType1)values[0]).value);
+		Assertions.assertEquals(CoderObjectTest.TestType2.class, values[1].getClass());
+		Assertions.assertEquals(0x1122_3344, ((CoderObjectTest.TestType2)values[1]).value);
+		Assertions.assertEquals(CoderObjectTest.TestType1.class, values[2].getClass());
+		Assertions.assertEquals(0x0666, ((CoderObjectTest.TestType1)values[2]).value);
+
+		ComposeResponse response = parser.compose(parsedMessage);
+		Assertions.assertNotNull(response);
+		Assertions.assertFalse(response.hasErrors());
+		Assertions.assertArrayEquals(payload, response.getComposedMessage());
 	}
 
 }

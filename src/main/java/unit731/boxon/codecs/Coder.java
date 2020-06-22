@@ -318,16 +318,31 @@ enum Coder{
 			final int size = Evaluator.evaluate(binding.size(), int.class, data);
 			final Choices selectFrom = binding.selectFrom();
 			final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): new Choices.Choice[0]);
-			if(type == Void.class && alternatives.length == 0)
-				throw new IllegalArgumentException("`type` argument missing");
-			if(type != Void.class && alternatives.length > 0)
-				throw new IllegalArgumentException("Cannot define both `type` and `selectFrom`");
 
 			if(alternatives.length > 0){
-				//TODO read prefix
-				//TODO read object
+				//read prefix
+				final int prefixSize = selectFrom.prefixSize();
+				if(prefixSize > Integer.SIZE)
+					throw new IllegalArgumentException("`prefixSize` cannot be greater than " + Integer.SIZE + " bits");
+				final ByteOrder prefixByteOrder = selectFrom.byteOrder();
 
-				return null;
+				final Object[] array = ReflectionHelper.createArray(type, size);
+				for(int i = 0; i < size; i ++){
+					final BitSet bits = reader.getBits(prefixSize);
+					if(prefixByteOrder == ByteOrder.LITTLE_ENDIAN)
+						ByteHelper.reverseBits(bits, prefixSize);
+					//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
+					final BigInteger prefix = new BigInteger(1, ByteHelper.reverseBytes(bits.toByteArray()));
+
+					//choose class
+					final Choices.Choice chosenAlternative = chooseAlternative(alternatives, prefix.intValue(), data);
+
+					//read object
+					final Codec<?> subCodec = Codec.createFrom(chosenAlternative.type());
+
+					array[i] = MessageParser.decode(subCodec, reader);
+				}
+				return array;
 			}
 			else{
 				final Codec<?> codec = Codec.createFrom(type);
@@ -356,10 +371,6 @@ enum Coder{
 			final int size = Evaluator.evaluate(binding.size(), int.class, data);
 			final Choices selectFrom = binding.selectFrom();
 			final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): new Choices.Choice[0]);
-			if(type == Void.class && alternatives.length == 0)
-				throw new IllegalArgumentException("`type` argument missing");
-			if(type != Void.class && alternatives.length > 0)
-				throw new IllegalArgumentException("Cannot define both `type` and `selectFrom`");
 
 			if(alternatives.length > 0){
 				//TODO write prefix
