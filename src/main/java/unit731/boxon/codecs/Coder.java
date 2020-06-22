@@ -94,6 +94,7 @@ enum Coder{
 			}
 
 			final Codec<?> codec = Codec.createFrom(type);
+
 			final Object instance = MessageParser.decode(codec, reader);
 
 			final Object value = converterDecode(binding.converter(), instance);
@@ -875,7 +876,6 @@ enum Coder{
 	private static boolean isNotBlank(final String text){
 		return (text != null && !text.trim().isBlank());
 	}
-
 
 	private static Choices.Choice chooseAlternative(final Choices.Choice[] alternatives, final int prefix, final Object data){
 		Evaluator.addToContext(CONTEXT_CHOICE_PREFIX, prefix);
