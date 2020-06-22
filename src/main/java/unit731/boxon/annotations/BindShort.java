@@ -45,7 +45,7 @@ public @interface BindShort{
 
 	/**
 	 * The type of value: either signed or unsigned.
-	 * NOTE: in case of unsigned value, the read data is an integer.
+	 * <p>NOTE: in case of unsigned value, the read data is an integer.</p>
 	 *
 	 * @return	The type of value. Defaults to <code>false</code>.
 	 */

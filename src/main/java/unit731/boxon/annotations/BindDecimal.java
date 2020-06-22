@@ -45,7 +45,7 @@ public @interface BindDecimal{
 
 	/**
 	 * The type of object to be inserted into a {@link java.math.BigDecimal}.
-	 * Note that this can be either a {@link Float} or a {@link Double} class.
+	 * <p>Note that this can be either a {@link Float} or a {@link Double} class.</p>
 	 *
 	 * @return	The type of object to be inserted in the array.
 	 */

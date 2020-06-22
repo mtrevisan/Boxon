@@ -52,7 +52,7 @@ public @interface BindBit{
 
 	/**
 	 * The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
-	 * NOTE: This works at bit level! (from lowest to highest if little-endian, from highest to lowest for big-endian)
+	 * <p>NOTE: This works at bit level! (from lowest to highest if little-endian, from highest to lowest for big-endian)</p>
 	 *
 	 * @return	The type of endianness. Defaults to {@link ByteOrder#BIG_ENDIAN}.
 	 */

@@ -53,7 +53,7 @@ public @interface BindNumber{
 
 	/**
 	 * The type of value: either signed or unsigned.
-	 * NOTE: in case of unsigned value with size &lt; 64, the read data is "one order of magnitude higher" (that is short for byte, int for short, and long for int).
+	 * <p>NOTE: in case of unsigned value with size &lt; 64, the read data is "one order of magnitude higher" (that is short for byte, int for short, and long for int).</p>
 	 *
 	 * @return	The type of value. Defaults to <code>false</code>.
 	 */
@@ -61,7 +61,7 @@ public @interface BindNumber{
 
 	/**
 	 * The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
-	 * NOTE: This works at bit level! (from lowest to highest if little-endian, from highest to lowest for big-endian)
+	 * <p>NOTE: This works at bit level! (from lowest to highest if little-endian, from highest to lowest for big-endian)</p>
 	 *
 	 * @return	The type of endianness. Defaults to {@link ByteOrder#BIG_ENDIAN}.
 	 */

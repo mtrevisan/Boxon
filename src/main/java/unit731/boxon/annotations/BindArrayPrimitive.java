@@ -45,8 +45,8 @@ public @interface BindArrayPrimitive{
 
 	/**
 	 * The type of object to be inserted into the array.
-	 * Note that this allows you to have a field of a super type of the actual type that
-	 * you expect to inject. So you might have something like this:
+	 * <p>Note that this allows you to have a field of a super type of the actual type that
+	 * you expect to inject. So you might have something like this:</p>
 	 * <pre><code>
 	 * &#064;BoundArray(type = int[].class)
 	 * private int[] c; // Array of integers

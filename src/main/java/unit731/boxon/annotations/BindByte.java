@@ -44,7 +44,7 @@ public @interface BindByte{
 
 	/**
 	 * The type of value: either signed or unsigned.
-	 * NOTE: in case of unsigned value, the read data is a short.
+	 * <p>NOTE: in case of unsigned value, the read data is a short.</p>
 	 *
 	 * @return	The type of value. Defaults to <code>false</code>.
 	 */

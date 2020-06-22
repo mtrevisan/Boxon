@@ -32,7 +32,7 @@ import java.lang.annotation.Target;
 
 /**
  * A simple annotation for marking particular fields to be optional, depending on the condition.
- * The condition is based on the Limbo notation. Variables are expected to be resolved relatively to the object holding the annotated field.
+ * <p>The condition is based on the Limbo notation. Variables are expected to be resolved relatively to the object holding the annotated field.</p>
  * <p>Example snippet:</p>
  * <pre><code>
  * private int databaseVersion;
@@ -41,8 +41,8 @@ import java.lang.annotation.Target;
  * &#64;BoundInteger
  * private int foobar;
  * </code></pre>
- * In the above case, <code>foobar</code> is only expected to be read only if the condition holds,
- * so if <code>databaseVersion</code> is 300, it will be skipped.
+ * <p>In the above case, <code>foobar</code> is only expected to be read only if the condition holds,
+ * so if <code>databaseVersion</code> is 300, it will be skipped.</p>
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)

@@ -45,7 +45,7 @@ public @interface BindInteger{
 
 	/**
 	 * The type of value: either signed or unsigned.
-	 * NOTE: in case of unsigned value, the read data is a long.
+	 * <p>NOTE: in case of unsigned value, the read data is a long.</p>
 	 *
 	 * @return	The type of value. Defaults to <code>false</code>.
 	 */
