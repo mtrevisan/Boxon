@@ -121,8 +121,26 @@ enum Coder{
 				throw new IllegalArgumentException("Cannot define both `type` and `selectFrom`");
 
 			if(alternatives.length > 0){
-				//TODO write prefix
-				//TODO write object
+				//write prefix
+				final int prefixSize = selectFrom.prefixSize();
+				if(prefixSize > Integer.SIZE)
+					throw new IllegalArgumentException("`prefixSize` cannot be greater than " + Integer.SIZE + " bits");
+				final ByteOrder prefixByteOrder = selectFrom.byteOrder();
+
+				//TODO
+//				if(prefixByteOrder == ByteOrder.LITTLE_ENDIAN)
+//					ByteHelper.reverseBits(bits, prefixSize);
+//				writer.putBits(bits, prefixSize);
+//				//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
+//				final BigInteger prefix = new BigInteger(1, ByteHelper.reverseBytes(bits.toByteArray()));
+
+				//choose class
+//				final Choices.Choice chosenAlternative = chooseAlternative(alternatives, prefix.intValue(), data);
+
+				//write object
+//				final Codec<?> subCodec = Codec.createFrom(chosenAlternative.type());
+
+//				MessageParser.encode(subCodec, data, writer);
 			}
 			else{
 				final Codec<?> codec = Codec.createFrom(type);
