@@ -94,13 +94,13 @@ class CoderObjectTest{
 	}
 
 
-	@Choices.Prefix("1")
+	@Choices.Prefix(value = 1)
 	static class TestType1{
 		@BindShort
 		public short value;
 	}
 
-	@Choices.Prefix("2")
+	@Choices.Prefix(value = 2)
 	static class TestType2{
 		@BindInteger
 		public int value;
@@ -177,6 +177,11 @@ class CoderObjectTest{
 		parsedMessage = (TestChoice1)parsedMessages.get(0);
 		TestType2 value2 = (TestType2)parsedMessage.value;
 		Assertions.assertEquals(0x1122_3344, value2.value);
+
+		response = parser.compose(parsedMessage);
+		Assertions.assertNotNull(response);
+		Assertions.assertFalse(response.hasErrors());
+		Assertions.assertArrayEquals(payload, response.getComposedMessage());
 	}
 
 	@Test
@@ -184,7 +189,7 @@ class CoderObjectTest{
 		Codec<TestChoice2> codec = Codec.createFrom(TestChoice2.class);
 		Parser parser = new Parser(null, Collections.singletonList(codec));
 
-		byte[] payload = ByteHelper.hexStringToByteArray("7463320506001234");
+		byte[] payload = ByteHelper.hexStringToByteArray("7463320506011234");
 		ParseResponse result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
@@ -196,8 +201,13 @@ class CoderObjectTest{
 		TestType1 value1 = (TestType1)parsedMessage.value;
 		Assertions.assertEquals(0x1234, value1.value);
 
+		ComposeResponse response = parser.compose(parsedMessage);
+		Assertions.assertNotNull(response);
+		Assertions.assertFalse(response.hasErrors());
+		Assertions.assertArrayEquals(payload, response.getComposedMessage());
 
-		payload = ByteHelper.hexStringToByteArray("74633205060111223344");
+
+		payload = ByteHelper.hexStringToByteArray("74633205060211223344");
 		result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
@@ -208,6 +218,11 @@ class CoderObjectTest{
 		parsedMessage = (TestChoice2)parsedMessages.get(0);
 		TestType2 value2 = (TestType2)parsedMessage.value;
 		Assertions.assertEquals(0x1122_3344, value2.value);
+
+		response = parser.compose(parsedMessage);
+		Assertions.assertNotNull(response);
+		Assertions.assertFalse(response.hasErrors());
+		Assertions.assertArrayEquals(payload, response.getComposedMessage());
 	}
 
 	@Test
@@ -227,6 +242,11 @@ class CoderObjectTest{
 		TestType1 value1 = (TestType1)parsedMessage.value;
 		Assertions.assertEquals(0x1234, value1.value);
 
+		ComposeResponse response = parser.compose(parsedMessage);
+		Assertions.assertNotNull(response);
+		Assertions.assertFalse(response.hasErrors());
+		Assertions.assertArrayEquals(payload, response.getComposedMessage());
+
 
 		payload = ByteHelper.hexStringToByteArray("746333626211223344");
 		result = parser.parse(payload);
@@ -239,6 +259,11 @@ class CoderObjectTest{
 		parsedMessage = (TestChoice3)parsedMessages.get(0);
 		TestType2 value2 = (TestType2)parsedMessage.value;
 		Assertions.assertEquals(0x1122_3344, value2.value);
+
+		response = parser.compose(parsedMessage);
+		Assertions.assertNotNull(response);
+		Assertions.assertFalse(response.hasErrors());
+		Assertions.assertArrayEquals(payload, response.getComposedMessage());
 	}
 
 }

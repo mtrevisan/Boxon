@@ -127,25 +127,27 @@ enum Coder{
 					throw new IllegalArgumentException("`prefixSize` cannot be greater than " + Integer.SIZE + " bits");
 				final ByteOrder prefixByteOrder = selectFrom.byteOrder();
 
-				//TODO if .condition() contains '#prefix', then add @Choice.Prefix.value()
-//				if(alternatives[0].condition().contains("#" + CONTEXT_CHOICE_PREFIX)){
-//					//TODO write @Choice.Prefix.value()
-//				}
+				final Choices.Choice chosenAlternative = chooseAlternative(alternatives, value.getClass());
+				//if chosenAlternative.condition() contains '#prefix', then write @Choice.Prefix.value()
+				if(chosenAlternative.condition().contains("#" + CONTEXT_CHOICE_PREFIX)){
+					final Choices.Prefix prefix = value.getClass().getAnnotation(Choices.Prefix.class);
+					if(prefix == null)
+						throw new IllegalArgumentException("`@" + Choices.Prefix.class.getSimpleName() + "` missing from class " + value.getClass().getSimpleName());
+					final long prefixValue = prefix.value();
+					if(prefixValue <= 0)
+						throw new IllegalArgumentException("Prefix value for class " + value.getClass().getSimpleName() + " cannot be negative: " + prefixValue);
+					final BitSet bits = BitSet.valueOf(new long[]{prefixValue});
 
-				//TODO
-				//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
-//				final BigInteger prefix = new BigInteger(1, ByteHelper.reverseBytes(bits.toByteArray()));
-//				if(prefixByteOrder == ByteOrder.LITTLE_ENDIAN)
-//					ByteHelper.reverseBits(bits, prefixSize);
-//				writer.putBits(bits, prefixSize);
+					writer.putBits(bits, prefixSize);
+				}
 
-				//choose class
-//				final Choices.Choice chosenAlternative = chooseAlternative(alternatives, prefix.intValue(), data);
+				final Codec<?> codec = Codec.createFrom(value.getClass());
 
-				//write object
-//				final Codec<?> subCodec = Codec.createFrom(chosenAlternative.type());
+				validateData(binding.validator(), value);
 
-//				MessageParser.encode(subCodec, data, writer);
+				final Object array = converterEncode(binding.converter(), value);
+
+				MessageParser.encode(codec, value, writer);
 			}
 			else{
 				final Codec<?> codec = Codec.createFrom(type);
@@ -869,14 +871,14 @@ enum Coder{
 		return chosenAlternative;
 	}
 
-	private static int getPrefixFromAlternative(final Choices.Choice[] alternatives, final Object data){
-		int prefix = 0;
+	private static Choices.Choice chooseAlternative(final Choices.Choice[] alternatives, final Class<?> type){
+		Choices.Choice chosenAlternative = null;
 		for(final Choices.Choice alternative : alternatives)
-			if(Evaluator.evaluate(alternative.condition(), boolean.class, data)){
+			if(alternative.type() == type){
 				chosenAlternative = alternative;
 				break;
 			}
-		return prefix;
+		return chosenAlternative;
 	}
 
 	private static <T> void validateData(final String match, @SuppressWarnings("rawtypes") final Class<? extends Validator> validatorType,

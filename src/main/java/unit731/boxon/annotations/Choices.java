@@ -69,9 +69,9 @@ public @interface Choices{
 		/**
 		 * The value that will be used to match this particular record.
 		 *
-		 * @return The value, as a SpEL expression.
+		 * @return The value.
 		 */
-		String value();
+		long value();
 
 	}
 
