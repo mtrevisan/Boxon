@@ -24,41 +24,35 @@
  */
 package unit731.boxon.codecs;
 
-import unit731.boxon.utils.ByteHelper;
-import unit731.boxon.utils.ExceptionHelper;
-
-import java.util.StringJoiner;
+import java.util.ArrayList;
+import java.util.List;
 
 
-public class ParseException extends Exception{
+public class ComposeResponse{
 
-	private static final long serialVersionUID = -7230533024483622086L;
-
-
-	private final byte[] wholeMessage;
-	private final int errorIndex;
+	private byte[] composedMessage;
+	private final List<ComposeException> errors = new ArrayList<>();
 
 
-	public ParseException(final BitBuffer reader, final Throwable cause){
-		this(reader.array(), reader.position(), cause);
+	public void setComposedMessage(final byte[] composedMessages){
+		this.composedMessage = composedMessages;
 	}
 
-	public ParseException(final byte[] wholeMessage, final int errorIndex, final Throwable cause){
-		super(cause);
-
-		this.wholeMessage = wholeMessage;
-		this.errorIndex = errorIndex;
+	public byte[] getComposedMessage(){
+		return composedMessage;
 	}
 
-	@Override
-	public String getMessage(){
-		final StringJoiner sj = new StringJoiner(System.lineSeparator());
-		sj.add("Error decoding message: " + ByteHelper.byteArrayToHexString(wholeMessage));
-		if(getCause() != null)
-			sj.add(ExceptionHelper.getMessageNoLineNumber(getCause()));
-		if(errorIndex >= 0)
-			sj.add("   at index " + errorIndex);
-		return sj.toString();
+	public void addError(final ComposeException exception){
+		errors.add(exception);
+	}
+
+	public boolean hasErrors(){
+		return !errors.isEmpty();
+	}
+
+	@SuppressWarnings("unused")
+	public List<ComposeException> getErrors(){
+		return errors;
 	}
 
 }

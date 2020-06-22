@@ -44,7 +44,7 @@ public class Parser{
 	/**
 	 * Create a parser with (optionally) a context, and loading all the codecs from this package down.
 	 *
-	 * @param context    The context for the evaluator.
+	 * @param context	The context for the evaluator.
 	 */
 	public Parser(final Map<String, Object> context){
 		loader.init();
@@ -55,8 +55,8 @@ public class Parser{
 	/**
 	 * Create a parser with (optionally) a context, and loading all the given codecs.
 	 *
-	 * @param context    The context for the evaluator.
-	 * @param codecs    The list of codecs.
+	 * @param context	The context for the evaluator.
+	 * @param codecs	The list of codecs.
 	 */
 	public Parser(final Map<String, Object> context, final List<Codec<?>> codecs){
 		Objects.requireNonNull(codecs, "Codecs cannot be null");
@@ -71,8 +71,8 @@ public class Parser{
 	/**
 	 * Create a parser with (optionally) a context, and loading all the given codecs found as a child of some base packages.
 	 *
-	 * @param context    The context for the evaluator.
-	 * @param basePackageClasses    The list of base packages from which to descent and load all the found codecs.
+	 * @param context	The context for the evaluator.
+	 * @param basePackageClasses	The list of base packages from which to descent and load all the found codecs.
 	 */
 	public Parser(final Map<String, Object> context, final Class<?>... basePackageClasses){
 		Objects.requireNonNull(basePackageClasses, "Base package(s) not found");
@@ -135,6 +135,35 @@ public class Parser{
 			final ParseException pe = new ParseException(reader, error);
 			response.addError(pe);
 		}
+
+		return response;
+	}
+
+	/**
+	 * Parse a message
+	 *
+	 * @param data	The messages to be composed
+	 * @return	The composed response
+	 */
+	public final ComposeResponse compose(final Object... data){
+		final ComposeResponse response = new ComposeResponse();
+		final BitWriter writer = new BitWriter();
+		for(final Object elem : data){
+			try{
+				final Codec<?> codec = Codec.createFrom(elem.getClass());
+				if(codec == null)
+					throw new IllegalArgumentException("Cannot find any codec for message");
+
+				MessageParser.encode(codec, elem, writer);
+			}
+			catch(final Throwable t){
+				final ComposeException ce = new ComposeException(elem, t);
+				response.addError(ce);
+			}
+		}
+		writer.flush();
+
+		response.setComposedMessage(writer.array());
 
 		return response;
 	}

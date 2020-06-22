@@ -34,8 +34,18 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface MessageHeader{
 
-	String[] start() default {};
+	/**
+	 * The initial bytes that determines the type of message.
+	 *
+	 * @return	The header bytes of this message
+	 */
+	String[] start();
 
+	/**
+	 * The final bytes that determines the type of message. Defaults to empty.
+	 *
+	 * @return	The tail bytes of this message
+	 */
 	String end() default "";
 
 	/**

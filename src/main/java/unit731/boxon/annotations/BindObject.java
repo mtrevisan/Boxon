@@ -61,9 +61,16 @@ public @interface BindObject{
 	 * private A a; // Array will contain instances of B.
 	 * </code></pre>
 	 *
-	 * @return	The type of object to be inserted in the array.
+	 * @return	The (super) type of object to be inserted in the array.
 	 */
-	Class<?> type();
+	Class<?> type() default Object.class;
+
+	/**
+	 * The choices to select from, based on a prefix of a certain size.
+	 *
+	 * @return The choices to select from, based on a prefix of a certain size.
+	 */
+	Choices selectFrom() default @Choices(alternatives = {});
 
 	/**
 	 * The validator to be applied before applying the converter, if any. Usually the fully qualified

@@ -252,6 +252,16 @@ public class Loader{
 		}
 	}
 
+	Codec<?> getCodec(final byte[] header){
+		//calculate key
+		final String key = ByteHelper.byteArrayToHexString(header);
+		final Codec<?> codec = codecs.get(key);
+		if(codec == null)
+			throw new IllegalArgumentException("Cannot find any codec for message");
+
+		return codec;
+	}
+
 	Codec<?> getCodec(final BitBuffer reader){
 		final int index = reader.positionAsBits() / Byte.SIZE;
 

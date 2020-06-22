@@ -63,7 +63,7 @@ public @interface BindArray{
 	 *
 	 * @return	The type of object to be inserted in the array.
 	 */
-	Class<?> type();
+	Class<?> type() default Object.class;
 
 	/**
 	 * The size of the array
@@ -71,6 +71,13 @@ public @interface BindArray{
 	 * @return	The size of the array (can be an expression).
 	 */
 	String size();
+
+	/**
+	 * The choices to select from, based on a prefix of a certain size.
+	 *
+	 * @return The choices to select from, based on a prefix of a certain size.
+	 */
+	Choices selectFrom() default @Choices(alternatives = {});
 
 	/**
 	 * The validator to be applied before applying the converter, if any. Usually the fully qualified

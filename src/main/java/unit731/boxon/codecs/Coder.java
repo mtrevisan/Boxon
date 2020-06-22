@@ -39,6 +39,7 @@ import unit731.boxon.annotations.BindObject;
 import unit731.boxon.annotations.BindShort;
 import unit731.boxon.annotations.BindString;
 import unit731.boxon.annotations.BindStringTerminated;
+import unit731.boxon.annotations.Choices;
 import unit731.boxon.annotations.converters.Converter;
 import unit731.boxon.annotations.validators.Validator;
 import unit731.boxon.utils.ByteHelper;
@@ -65,9 +66,34 @@ enum Coder{
 		Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
 			final BindObject binding = (BindObject)annotation;
 
-			final Class<?> type = binding.type();
-			final Codec<?> codec = Codec.createFrom(type);
+			Class<?> type = binding.type();
+			final Choices selectFrom = binding.selectFrom();
+			final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): new Choices.Choice[0]);
+			if(type == Object.class && alternatives.length == 0)
+				throw new IllegalArgumentException("`type` argument missing");
+			if(type != Object.class && alternatives.length > 0)
+				throw new IllegalArgumentException("Cannot define both `type` and `selectFrom`");
 
+			if(alternatives.length > 0){
+				//read prefix
+				final int prefixSize = selectFrom.prefixSize();
+				if(prefixSize > Integer.SIZE)
+					throw new IllegalArgumentException("`prefixSize` cannot be greater than " + Integer.SIZE + " bits");
+				final ByteOrder prefixByteOrder = selectFrom.byteOrder();
+
+				final BitSet bits = reader.getBits(prefixSize);
+				if(prefixByteOrder == ByteOrder.LITTLE_ENDIAN)
+					ByteHelper.reverseBits(bits, prefixSize);
+				//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
+				final BigInteger prefix = new BigInteger(1, ByteHelper.reverseBytes(bits.toByteArray()));
+
+				//choose class
+				final Choices.Choice chosenAlternative = chooseAlternative(alternatives, prefix.intValue(), data);
+
+				type = chosenAlternative.type();
+			}
+
+			final Codec<?> codec = Codec.createFrom(type);
 			final Object instance = MessageParser.decode(codec, reader);
 
 			final Object value = converterDecode(binding.converter(), instance);
@@ -81,14 +107,45 @@ enum Coder{
 		void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
 			final BindObject binding = (BindObject)annotation;
 
-			final Class<?> type = binding.type();
+			Class<?> type = binding.type();
+			final Choices selectFrom = binding.selectFrom();
+			final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): new Choices.Choice[0]);
+			if(type == Object.class && alternatives.length == 0)
+				throw new IllegalArgumentException("`type` argument missing");
+			if(type != Object.class && alternatives.length > 0)
+				throw new IllegalArgumentException("Cannot define both `type` and `selectFrom`");
+
+			if(alternatives.length > 0){
+				//write prefix
+				final int prefixSize = selectFrom.prefixSize();
+				if(prefixSize > Integer.SIZE)
+					throw new IllegalArgumentException("`prefixSize` cannot be greater than " + Integer.SIZE + " bits");
+				final ByteOrder prefixByteOrder = selectFrom.byteOrder();
+
+				final Choices.Choice chosenAlternative = chooseAlternative(alternatives, value.getClass());
+				//if chosenAlternative.condition() contains '#prefix', then write @Choice.Prefix.value()
+				if(chosenAlternative.condition().contains("#" + CONTEXT_CHOICE_PREFIX)){
+					final Choices.Prefix prefix = value.getClass().getAnnotation(Choices.Prefix.class);
+					if(prefix == null)
+						throw new IllegalArgumentException("`@" + Choices.Prefix.class.getSimpleName() + "` missing from class " + value.getClass().getSimpleName());
+					final long prefixValue = prefix.value();
+					if(prefixValue <= 0)
+						throw new IllegalArgumentException("Prefix value for class " + value.getClass().getSimpleName() + " cannot be negative: " + prefixValue);
+					final BitSet bits = BitSet.valueOf(new long[]{prefixValue});
+
+					writer.putBits(bits, prefixSize);
+				}
+
+				type = value.getClass();
+			}
+
 			final Codec<?> codec = Codec.createFrom(type);
 
 			validateData(binding.validator(), value);
 
 			final Object array = converterEncode(binding.converter(), value);
 
-			MessageParser.encode(codec, value, writer);
+			MessageParser.encode(codec, array, writer);
 		}
 
 		@Override
@@ -103,7 +160,7 @@ enum Coder{
 			final BindString binding = (BindString)annotation;
 
 			final Charset charset = Charset.forName(binding.charset());
-			final int size = Evaluator.evaluate(binding.size(), Integer.class, data);
+			final int size = Evaluator.evaluate(binding.size(), int.class, data);
 
 			final String text = reader.getText(size, charset);
 
@@ -119,7 +176,7 @@ enum Coder{
 			final BindString binding = (BindString)annotation;
 
 			final Charset charset = Charset.forName(binding.charset());
-			final int size = Evaluator.evaluate(binding.size(), Integer.class, data);
+			final int size = Evaluator.evaluate(binding.size(), int.class, data);
 
 			validateData(binding.match(), binding.validator(), value);
 
@@ -185,7 +242,7 @@ enum Coder{
 				throw new IllegalArgumentException("Bad annotation used, @" + BindArray.class.getSimpleName()
 					+ " should have been used with type `" + type.getSimpleName() + ".class`");
 			final Codec<?> codec = Codec.createFrom(type.getComponentType());
-			final int size = Evaluator.evaluate(binding.size(), Integer.class, data);
+			final int size = Evaluator.evaluate(binding.size(), int.class, data);
 
 			final Object array = ReflectionHelper.createArrayPrimitive(type, size);
 			final Class<?> objectiveType = ReflectionHelper.objectiveType(type.getComponentType());
@@ -215,7 +272,7 @@ enum Coder{
 				throw new IllegalArgumentException("Bad annotation used, @" + BindArray.class.getSimpleName()
 					+ " should have been used with type `" + type.getSimpleName() + ".class`");
 			final Codec<?> codec = Codec.createFrom(type.getComponentType());
-			final int size = Evaluator.evaluate(binding.size(), Integer.class, data);
+			final int size = Evaluator.evaluate(binding.size(), int.class, data);
 
 			final Class<?> objectiveType = ReflectionHelper.objectiveType(type.getComponentType());
 			if(objectiveType == null)
@@ -246,12 +303,40 @@ enum Coder{
 			if(isPrimitive)
 				throw new IllegalArgumentException("Bad annotation used, @" + BindArrayPrimitive.class.getSimpleName()
 					+ " should have been used with type `" + type.getSimpleName() + ".class`");
-			final Codec<?> codec = Codec.createFrom(type);
-			final int size = Evaluator.evaluate(binding.size(), Integer.class, data);
+			final int size = Evaluator.evaluate(binding.size(), int.class, data);
+			final Choices selectFrom = binding.selectFrom();
+			final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): new Choices.Choice[0]);
 
 			final Object[] array = ReflectionHelper.createArray(type, size);
-			for(int i = 0; i < size; i ++)
-				array[i] = MessageParser.decode(codec, reader);
+			if(alternatives.length > 0){
+				//read prefix
+				final int prefixSize = selectFrom.prefixSize();
+				if(prefixSize > Integer.SIZE)
+					throw new IllegalArgumentException("`prefixSize` cannot be greater than " + Integer.SIZE + " bits");
+				final ByteOrder prefixByteOrder = selectFrom.byteOrder();
+
+				for(int i = 0; i < size; i ++){
+					final BitSet bits = reader.getBits(prefixSize);
+					if(prefixByteOrder == ByteOrder.LITTLE_ENDIAN)
+						ByteHelper.reverseBits(bits, prefixSize);
+					//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
+					final BigInteger prefix = new BigInteger(1, ByteHelper.reverseBytes(bits.toByteArray()));
+
+					//choose class
+					final Choices.Choice chosenAlternative = chooseAlternative(alternatives, prefix.intValue(), data);
+
+					//read object
+					final Codec<?> subCodec = Codec.createFrom(chosenAlternative.type());
+
+					array[i] = MessageParser.decode(subCodec, reader);
+				}
+			}
+			else{
+				final Codec<?> codec = Codec.createFrom(type);
+
+				for(int i = 0; i < size; i ++)
+					array[i] = MessageParser.decode(codec, reader);
+			}
 
 			final Object value = converterDecode(binding.converter(), array);
 
@@ -269,15 +354,47 @@ enum Coder{
 			if(isPrimitive)
 				throw new IllegalArgumentException("Bad annotation used, @" + BindArrayPrimitive.class.getSimpleName()
 					+ " should have been used with type `" + type.getSimpleName() + "[].class`");
-			final Codec<?> codec = Codec.createFrom(type);
-			final int size = Evaluator.evaluate(binding.size(), Integer.class, data);
+			final int size = Evaluator.evaluate(binding.size(), int.class, data);
+			final Choices selectFrom = binding.selectFrom();
+			final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): new Choices.Choice[0]);
 
 			validateData(binding.validator(), value);
 
 			final Object[] array = converterEncode(binding.converter(), value);
 
-			for(int i = 0; i < size; i ++)
-				MessageParser.encode(codec, array[i], writer);
+			if(alternatives.length > 0){
+				//write prefix
+				final int prefixSize = selectFrom.prefixSize();
+				if(prefixSize > Integer.SIZE)
+					throw new IllegalArgumentException("`prefixSize` cannot be greater than " + Integer.SIZE + " bits");
+				final ByteOrder prefixByteOrder = selectFrom.byteOrder();
+
+				for(int i = 0; i < size; i ++){
+					final Choices.Choice chosenAlternative = chooseAlternative(alternatives, array[i].getClass());
+					//if chosenAlternative.condition() contains '#prefix', then write @Choice.Prefix.value()
+					if(chosenAlternative.condition().contains("#" + CONTEXT_CHOICE_PREFIX)){
+						final Choices.Prefix prefix = array[i].getClass().getAnnotation(Choices.Prefix.class);
+						if(prefix == null)
+							throw new IllegalArgumentException("`@" + Choices.Prefix.class.getSimpleName() + "` missing from class " + array[i].getClass().getSimpleName());
+						final long prefixValue = prefix.value();
+						if(prefixValue <= 0)
+							throw new IllegalArgumentException("Prefix value for class " + array[i].getClass().getSimpleName() + " cannot be negative: " + prefixValue);
+						final BitSet bits = BitSet.valueOf(new long[]{prefixValue});
+
+						writer.putBits(bits, prefixSize);
+					}
+
+					final Codec<?> codec = Codec.createFrom(array[i].getClass());
+
+					MessageParser.encode(codec, array[i], writer);
+				}
+			}
+			else{
+				final Codec<?> codec = Codec.createFrom(type);
+
+				for(int i = 0; i < size; i ++)
+					MessageParser.encode(codec, array[i], writer);
+			}
 		}
 
 		@Override
@@ -291,7 +408,7 @@ enum Coder{
 		Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
 			final BindBit binding = (BindBit)annotation;
 
-			final int size = Evaluator.evaluate(binding.size(), Integer.class, data);
+			final int size = Evaluator.evaluate(binding.size(), int.class, data);
 			final ByteOrder byteOrder = binding.byteOrder();
 
 			final BitSet bits = reader.getBits(size);
@@ -309,7 +426,7 @@ enum Coder{
 		void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
 			final BindBit binding = (BindBit)annotation;
 
-			final int size = Evaluator.evaluate(binding.size(), Integer.class, data);
+			final int size = Evaluator.evaluate(binding.size(), int.class, data);
 			final ByteOrder byteOrder = binding.byteOrder();
 
 			validateData(binding.match(), binding.validator(), value);
@@ -492,7 +609,7 @@ enum Coder{
 		Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
 			final BindNumber binding = (BindNumber)annotation;
 
-			final int size = Evaluator.evaluate(binding.size(), Integer.class, data);
+			final int size = Evaluator.evaluate(binding.size(), int.class, data);
 			final ByteOrder byteOrder = binding.byteOrder();
 			final boolean allowPrimitive = binding.allowPrimitive();
 
@@ -529,7 +646,7 @@ enum Coder{
 		void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
 			final BindNumber binding = (BindNumber)annotation;
 
-			final int size = Evaluator.evaluate(binding.size(), Integer.class, data);
+			final int size = Evaluator.evaluate(binding.size(), int.class, data);
 			final ByteOrder byteOrder = binding.byteOrder();
 			final boolean allowPrimitive = binding.allowPrimitive();
 
@@ -712,7 +829,10 @@ enum Coder{
 	};
 
 
+	private static final String CONTEXT_CHOICE_PREFIX = "prefix";
+
 	static final Map<Class<?>, Coder> CODERS_FROM_ANNOTATION = new HashMap<>();
+
 	static{
 		for(final Coder coder : Coder.values())
 			CODERS_FROM_ANNOTATION.put(coder.coderType(), coder);
@@ -754,6 +874,31 @@ enum Coder{
 
 	private static boolean isNotBlank(final String text){
 		return (text != null && !text.trim().isBlank());
+	}
+
+
+	private static Choices.Choice chooseAlternative(final Choices.Choice[] alternatives, final int prefix, final Object data){
+		Evaluator.addToContext(CONTEXT_CHOICE_PREFIX, prefix);
+
+		Choices.Choice chosenAlternative = null;
+		for(final Choices.Choice alternative : alternatives)
+			if(Evaluator.evaluate(alternative.condition(), boolean.class, data)){
+				chosenAlternative = alternative;
+				break;
+			}
+		Evaluator.addToContext(CONTEXT_CHOICE_PREFIX, null);
+
+		return chosenAlternative;
+	}
+
+	private static Choices.Choice chooseAlternative(final Choices.Choice[] alternatives, final Class<?> type){
+		Choices.Choice chosenAlternative = null;
+		for(final Choices.Choice alternative : alternatives)
+			if(alternative.type() == type){
+				chosenAlternative = alternative;
+				break;
+			}
+		return chosenAlternative;
 	}
 
 	private static <T> void validateData(final String match, @SuppressWarnings("rawtypes") final Class<? extends Validator> validatorType,

@@ -43,6 +43,12 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface BindShort{
 
+	/**
+	 * The type of value: either signed or unsigned.
+	 * NOTE: in case of unsigned value, the read data is an integer.
+	 *
+	 * @return	The type of value. Defaults to <code>false</code>.
+	 */
 	boolean unsigned() default false;
 
 	/**
