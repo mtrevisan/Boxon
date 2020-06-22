@@ -61,9 +61,9 @@ public @interface BindObject{
 	 * private A a; // Array will contain instances of B.
 	 * </code></pre>
 	 *
-	 * @return	The type of object to be inserted in the array.
+	 * @return	The (super) type of object to be inserted in the array.
 	 */
-	Class<?> type() default Void.class;
+	Class<?> type() default Object.class;
 
 	/**
 	 * The choices to select from, based on a prefix of a certain size.

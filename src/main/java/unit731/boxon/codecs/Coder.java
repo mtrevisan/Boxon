@@ -69,9 +69,9 @@ enum Coder{
 			Class<?> type = binding.type();
 			final Choices selectFrom = binding.selectFrom();
 			final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): new Choices.Choice[0]);
-			if(type == Void.class && alternatives.length == 0)
+			if(type == Object.class && alternatives.length == 0)
 				throw new IllegalArgumentException("`type` argument missing");
-			if(type != Void.class && alternatives.length > 0)
+			if(type != Object.class && alternatives.length > 0)
 				throw new IllegalArgumentException("Cannot define both `type` and `selectFrom`");
 
 			if(alternatives.length > 0){
@@ -110,9 +110,9 @@ enum Coder{
 			Class<?> type = binding.type();
 			final Choices selectFrom = binding.selectFrom();
 			final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): new Choices.Choice[0]);
-			if(type == Void.class && alternatives.length == 0)
+			if(type == Object.class && alternatives.length == 0)
 				throw new IllegalArgumentException("`type` argument missing");
-			if(type != Void.class && alternatives.length > 0)
+			if(type != Object.class && alternatives.length > 0)
 				throw new IllegalArgumentException("Cannot define both `type` and `selectFrom`");
 
 			if(alternatives.length > 0){

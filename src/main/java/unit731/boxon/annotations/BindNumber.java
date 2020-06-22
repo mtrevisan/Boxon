@@ -51,6 +51,12 @@ public @interface BindNumber{
 	 */
 	String size() default "1";
 
+	/**
+	 * The type of value: either signed or unsigned.
+	 * NOTE: in case of unsigned value with size < 64, the read data is "one order of magnitude higher" (that is short for byte, int for short, and long for int).
+	 *
+	 * @return	The type of value. Defaults to <code>false</code>.
+	 */
 	boolean unsigned() default false;
 
 	/**

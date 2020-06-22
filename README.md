@@ -39,25 +39,26 @@ Boxon differs from Preon in...
 
 ## Table of Contents
 1. [Base annotations](#annotation-base)
-    1. [BindArray](#annotation-bindarray)
-    2. [BindArrayPrimitive](#annotation-bindarrayprimitive)
-    3. [BindBit](#annotation-bindbit)
-    4. [BindByte](#annotation-bindbyte)
-    5. [BindShort](#annotation-bindshort)
-    6. [BindInteger](#annotation-bindinteger)
-    7. [BindLong](#annotation-bindlong)
-    7. [BindNumber](#annotation-bindnumber)
-    8. [BindFloat](#annotation-bindfloat)
-    9. [BindDouble](#annotation-binddouble)
-    10. [BindDecimal](#annotation-binddecimal)
-    11. [BindString](#annotation-bindstring)
-    12. [BindStringTerminated](#annotation-bindstringterminated)
+    1. [BindObject](#annotation-bindobject)
+    2. [BindArray](#annotation-bindarray)
+    3. [BindArrayPrimitive](#annotation-bindarrayprimitive)
+    4. [BindBit](#annotation-bindbit)
+    5. [BindByte](#annotation-bindbyte)
+    6. [BindShort](#annotation-bindshort)
+    7. [BindInteger](#annotation-bindinteger)
+    8. [BindLong](#annotation-bindlong)
+    9. [BindNumber](#annotation-bindnumber)
+    10. [BindFloat](#annotation-bindfloat)
+    11. [BindDouble](#annotation-binddouble)
+    12. [BindDecimal](#annotation-binddecimal)
+    13. [BindString](#annotation-bindstring)
+    14. [BindStringTerminated](#annotation-bindstringterminated)
 2. [Special annotations](#annotation-special)
     1. [MessageHeader](#annotation-messageheader)
     2. [BindIf](#annotation-bindif)
     3. [Skip](#annotation-skip)
     4. [Checksum](#annotation-checksum)
-    4. [Assign](#annotation-assign)
+    5. [Assign](#annotation-assign)
 3. [How to extend the functionalities](#how-to)
 4. [Digging into the code](#digging)
 5. [Examples](#examples)
@@ -73,12 +74,43 @@ Here are described the build-in base annotations.
 
 You can use them as a starting point to build your own customized readers.
 
+<a name="annotation-bindobject"></a>
+### BindObject
+
+#### parameters
+ - `type`: the Class of the Object of the single element of the array (defaults to `Object`).
+ - `selectFrom`: the selection from which to choose the instance type.
+ - `validator`: the Class of a validator (applied BEFORE the converter).
+ - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
+
+#### description
+Reads a single Object.
+
+#### annotation type
+This annotation is bounded to a variable.
+
+#### example
+```java
+class Version{
+    @BindByte
+    public byte major;
+    @BindByte
+    public byte minor;
+    public byte build;
+}
+
+@BindObject(type = Version.class)
+private Version version;
+```
+
+
 <a name="annotation-bindarray"></a>
 ### BindArray
 
 #### parameters
- - `type`: the Class of the Object of the single element of the array.
+ - `type`: the Class of the Object of the single element of the array (defaults to `Object`).
  - `size`: the size of the array (can be a SpEL expression).
+ - `selectFrom`: the selection from which to choose the instance type.
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
 

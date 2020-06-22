@@ -63,7 +63,7 @@ public @interface BindArray{
 	 *
 	 * @return	The type of object to be inserted in the array.
 	 */
-	Class<?> type();
+	Class<?> type() default Object.class;
 
 	/**
 	 * The size of the array
