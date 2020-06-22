@@ -62,8 +62,6 @@ import java.util.regex.PatternSyntaxException;
 enum Coder{
 
 	OBJECT {
-		private static final String CONTEXT_CHOICE_PREFIX = "prefix";
-
 		@Override
 		Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
 			final BindObject binding = (BindObject)annotation;
@@ -108,20 +106,6 @@ enum Coder{
 
 				return value;
 			}
-		}
-
-		private Choices.Choice chooseAlternative(final Choices.Choice[] alternatives, final int prefix, final Object data){
-			Evaluator.addToContext(CONTEXT_CHOICE_PREFIX, prefix);
-
-			Choices.Choice chosenAlternative = null;
-			for(final Choices.Choice alternative : alternatives)
-				if(Evaluator.evaluate(alternative.condition(), boolean.class, data)){
-					chosenAlternative = alternative;
-					break;
-				}
-			Evaluator.addToContext(CONTEXT_CHOICE_PREFIX, null);
-
-			return chosenAlternative;
 		}
 
 		@Override
@@ -306,18 +290,33 @@ enum Coder{
 			if(isPrimitive)
 				throw new IllegalArgumentException("Bad annotation used, @" + BindArrayPrimitive.class.getSimpleName()
 					+ " should have been used with type `" + type.getSimpleName() + ".class`");
-			final Codec<?> codec = Codec.createFrom(type);
 			final int size = Evaluator.evaluate(binding.size(), int.class, data);
+			final Choices selectFrom = binding.selectFrom();
+			final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): new Choices.Choice[0]);
+			if(type == Void.class && alternatives.length == 0)
+				throw new IllegalArgumentException("`type` argument missing");
+			if(type != Void.class && alternatives.length > 0)
+				throw new IllegalArgumentException("Cannot define both `type` and `selectFrom`");
 
-			final Object[] array = ReflectionHelper.createArray(type, size);
-			for(int i = 0; i < size; i ++)
-				array[i] = MessageParser.decode(codec, reader);
+			if(alternatives.length > 0){
+				//TODO read prefix
+				//TODO read object
 
-			final Object value = converterDecode(binding.converter(), array);
+				return null;
+			}
+			else{
+				final Codec<?> codec = Codec.createFrom(type);
 
-			validateData(binding.validator(), value);
+				final Object[] array = ReflectionHelper.createArray(type, size);
+				for(int i = 0; i < size; i ++)
+					array[i] = MessageParser.decode(codec, reader);
 
-			return value;
+				final Object value = converterDecode(binding.converter(), array);
+
+				validateData(binding.validator(), value);
+
+				return value;
+			}
 		}
 
 		@Override
@@ -329,15 +328,28 @@ enum Coder{
 			if(isPrimitive)
 				throw new IllegalArgumentException("Bad annotation used, @" + BindArrayPrimitive.class.getSimpleName()
 					+ " should have been used with type `" + type.getSimpleName() + "[].class`");
-			final Codec<?> codec = Codec.createFrom(type);
 			final int size = Evaluator.evaluate(binding.size(), int.class, data);
+			final Choices selectFrom = binding.selectFrom();
+			final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): new Choices.Choice[0]);
+			if(type == Void.class && alternatives.length == 0)
+				throw new IllegalArgumentException("`type` argument missing");
+			if(type != Void.class && alternatives.length > 0)
+				throw new IllegalArgumentException("Cannot define both `type` and `selectFrom`");
 
-			validateData(binding.validator(), value);
+			if(alternatives.length > 0){
+				//TODO write prefix
+				//TODO write object
+			}
+			else{
+				final Codec<?> codec = Codec.createFrom(type);
 
-			final Object[] array = converterEncode(binding.converter(), value);
+				validateData(binding.validator(), value);
 
-			for(int i = 0; i < size; i ++)
-				MessageParser.encode(codec, array[i], writer);
+				final Object[] array = converterEncode(binding.converter(), value);
+
+				for(int i = 0; i < size; i ++)
+					MessageParser.encode(codec, array[i], writer);
+			}
 		}
 
 		@Override
@@ -772,7 +784,10 @@ enum Coder{
 	};
 
 
+	private static final String CONTEXT_CHOICE_PREFIX = "prefix";
+
 	static final Map<Class<?>, Coder> CODERS_FROM_ANNOTATION = new HashMap<>();
+
 	static{
 		for(final Coder coder : Coder.values())
 			CODERS_FROM_ANNOTATION.put(coder.coderType(), coder);
@@ -814,6 +829,21 @@ enum Coder{
 
 	private static boolean isNotBlank(final String text){
 		return (text != null && !text.trim().isBlank());
+	}
+
+
+	private static Choices.Choice chooseAlternative(final Choices.Choice[] alternatives, final int prefix, final Object data){
+		Evaluator.addToContext(CONTEXT_CHOICE_PREFIX, prefix);
+
+		Choices.Choice chosenAlternative = null;
+		for(final Choices.Choice alternative : alternatives)
+			if(Evaluator.evaluate(alternative.condition(), boolean.class, data)){
+				chosenAlternative = alternative;
+				break;
+			}
+		Evaluator.addToContext(CONTEXT_CHOICE_PREFIX, null);
+
+		return chosenAlternative;
 	}
 
 	private static <T> void validateData(final String match, @SuppressWarnings("rawtypes") final Class<? extends Validator> validatorType,

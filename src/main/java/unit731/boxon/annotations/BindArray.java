@@ -73,6 +73,13 @@ public @interface BindArray{
 	String size();
 
 	/**
+	 * The choices to select from, based on a prefix of a certain size.
+	 *
+	 * @return The choices to select from, based on a prefix of a certain size.
+	 */
+	Choices selectFrom() default @Choices(alternatives = {});
+
+	/**
 	 * The validator to be applied before applying the converter, if any. Usually the fully qualified
 	 * name of an implementation class of a {@link Validator}
 	 *
