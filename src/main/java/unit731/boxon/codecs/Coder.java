@@ -66,7 +66,7 @@ enum Coder{
 		Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
 			final BindObject binding = (BindObject)annotation;
 
-			final Class<?> type = binding.type();
+			Class<?> type = binding.type();
 			final Choices selectFrom = binding.selectFrom();
 			final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): new Choices.Choice[0]);
 			if(type == Void.class && alternatives.length == 0)
@@ -90,29 +90,24 @@ enum Coder{
 				//choose class
 				final Choices.Choice chosenAlternative = chooseAlternative(alternatives, prefix.intValue(), data);
 
-				//read object
-				final Codec<?> subCodec = Codec.createFrom(chosenAlternative.type());
-
-				return MessageParser.decode(subCodec, reader);
+				type = chosenAlternative.type();
 			}
-			else{
-				final Codec<?> codec = Codec.createFrom(type);
 
-				final Object instance = MessageParser.decode(codec, reader);
+			final Codec<?> codec = Codec.createFrom(type);
+			final Object instance = MessageParser.decode(codec, reader);
 
-				final Object value = converterDecode(binding.converter(), instance);
+			final Object value = converterDecode(binding.converter(), instance);
 
-				validateData(binding.validator(), value);
+			validateData(binding.validator(), value);
 
-				return value;
-			}
+			return value;
 		}
 
 		@Override
 		void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
 			final BindObject binding = (BindObject)annotation;
 
-			final Class<?> type = binding.type();
+			Class<?> type = binding.type();
 			final Choices selectFrom = binding.selectFrom();
 			final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): new Choices.Choice[0]);
 			if(type == Void.class && alternatives.length == 0)
@@ -141,23 +136,16 @@ enum Coder{
 					writer.putBits(bits, prefixSize);
 				}
 
-				final Codec<?> codec = Codec.createFrom(value.getClass());
-
-				validateData(binding.validator(), value);
-
-				final Object array = converterEncode(binding.converter(), value);
-
-				MessageParser.encode(codec, value, writer);
+				type = value.getClass();
 			}
-			else{
-				final Codec<?> codec = Codec.createFrom(type);
 
-				validateData(binding.validator(), value);
+			final Codec<?> codec = Codec.createFrom(type);
 
-				final Object array = converterEncode(binding.converter(), value);
+			validateData(binding.validator(), value);
 
-				MessageParser.encode(codec, value, writer);
-			}
+			final Object array = converterEncode(binding.converter(), value);
+
+			MessageParser.encode(codec, array, writer);
 		}
 
 		@Override
@@ -319,6 +307,7 @@ enum Coder{
 			final Choices selectFrom = binding.selectFrom();
 			final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): new Choices.Choice[0]);
 
+			final Object[] array = ReflectionHelper.createArray(type, size);
 			if(alternatives.length > 0){
 				//read prefix
 				final int prefixSize = selectFrom.prefixSize();
@@ -326,7 +315,6 @@ enum Coder{
 					throw new IllegalArgumentException("`prefixSize` cannot be greater than " + Integer.SIZE + " bits");
 				final ByteOrder prefixByteOrder = selectFrom.byteOrder();
 
-				final Object[] array = ReflectionHelper.createArray(type, size);
 				for(int i = 0; i < size; i ++){
 					final BitSet bits = reader.getBits(prefixSize);
 					if(prefixByteOrder == ByteOrder.LITTLE_ENDIAN)
@@ -342,21 +330,19 @@ enum Coder{
 
 					array[i] = MessageParser.decode(subCodec, reader);
 				}
-				return array;
 			}
 			else{
 				final Codec<?> codec = Codec.createFrom(type);
 
-				final Object[] array = ReflectionHelper.createArray(type, size);
 				for(int i = 0; i < size; i ++)
 					array[i] = MessageParser.decode(codec, reader);
-
-				final Object value = converterDecode(binding.converter(), array);
-
-				validateData(binding.validator(), value);
-
-				return value;
 			}
+
+			final Object value = converterDecode(binding.converter(), array);
+
+			validateData(binding.validator(), value);
+
+			return value;
 		}
 
 		@Override
@@ -372,16 +358,39 @@ enum Coder{
 			final Choices selectFrom = binding.selectFrom();
 			final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): new Choices.Choice[0]);
 
+			validateData(binding.validator(), value);
+
+			final Object[] array = converterEncode(binding.converter(), value);
+
 			if(alternatives.length > 0){
-				//TODO write prefix
-				//TODO write object
+				//write prefix
+				final int prefixSize = selectFrom.prefixSize();
+				if(prefixSize > Integer.SIZE)
+					throw new IllegalArgumentException("`prefixSize` cannot be greater than " + Integer.SIZE + " bits");
+				final ByteOrder prefixByteOrder = selectFrom.byteOrder();
+
+				for(int i = 0; i < size; i ++){
+					final Choices.Choice chosenAlternative = chooseAlternative(alternatives, array[i].getClass());
+					//if chosenAlternative.condition() contains '#prefix', then write @Choice.Prefix.value()
+					if(chosenAlternative.condition().contains("#" + CONTEXT_CHOICE_PREFIX)){
+						final Choices.Prefix prefix = array[i].getClass().getAnnotation(Choices.Prefix.class);
+						if(prefix == null)
+							throw new IllegalArgumentException("`@" + Choices.Prefix.class.getSimpleName() + "` missing from class " + array[i].getClass().getSimpleName());
+						final long prefixValue = prefix.value();
+						if(prefixValue <= 0)
+							throw new IllegalArgumentException("Prefix value for class " + array[i].getClass().getSimpleName() + " cannot be negative: " + prefixValue);
+						final BitSet bits = BitSet.valueOf(new long[]{prefixValue});
+
+						writer.putBits(bits, prefixSize);
+					}
+
+					final Codec<?> codec = Codec.createFrom(array[i].getClass());
+
+					MessageParser.encode(codec, array[i], writer);
+				}
 			}
 			else{
 				final Codec<?> codec = Codec.createFrom(type);
-
-				validateData(binding.validator(), value);
-
-				final Object[] array = converterEncode(binding.converter(), value);
 
 				for(int i = 0; i < size; i ++)
 					MessageParser.encode(codec, array[i], writer);
