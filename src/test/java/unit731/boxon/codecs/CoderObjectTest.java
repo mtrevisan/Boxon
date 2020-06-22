@@ -94,11 +94,13 @@ class CoderObjectTest{
 	}
 
 
+	@Choices.Prefix("1")
 	static class TestType1{
 		@BindShort
 		public short value;
 	}
 
+	@Choices.Prefix("2")
 	static class TestType2{
 		@BindInteger
 		public int value;
@@ -122,8 +124,8 @@ class CoderObjectTest{
 		@BindArrayPrimitive(size = "2", type = byte[].class)
 		public byte[] index;
 		@BindObject(selectFrom = @Choices(prefixSize = 8, alternatives = {
-			@Choices.Choice(condition = "index[#prefix] == 5", type = TestType1.class),
-			@Choices.Choice(condition = "index[#prefix] == 6", type = TestType2.class)
+			@Choices.Choice(condition = "index[#prefix - 1] == 5", type = TestType1.class),
+			@Choices.Choice(condition = "index[#prefix - 1] == 6", type = TestType2.class)
 		}))
 		public Object value;
 	}

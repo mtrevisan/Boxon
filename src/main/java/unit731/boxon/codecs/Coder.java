@@ -127,15 +127,20 @@ enum Coder{
 					throw new IllegalArgumentException("`prefixSize` cannot be greater than " + Integer.SIZE + " bits");
 				final ByteOrder prefixByteOrder = selectFrom.byteOrder();
 
+				//TODO if .condition() contains '#prefix', then add @Choice.Prefix.value()
+//				if(alternatives[0].condition().contains("#" + CONTEXT_CHOICE_PREFIX)){
+//					//TODO write @Choice.Prefix.value()
+//				}
+
 				//TODO
 				//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
-				final BigInteger prefix = new BigInteger(1, ByteHelper.reverseBytes(bits.toByteArray()));
-				if(prefixByteOrder == ByteOrder.LITTLE_ENDIAN)
-					ByteHelper.reverseBits(bits, prefixSize);
-				writer.putBits(bits, prefixSize);
+//				final BigInteger prefix = new BigInteger(1, ByteHelper.reverseBytes(bits.toByteArray()));
+//				if(prefixByteOrder == ByteOrder.LITTLE_ENDIAN)
+//					ByteHelper.reverseBits(bits, prefixSize);
+//				writer.putBits(bits, prefixSize);
 
 				//choose class
-				final Choices.Choice chosenAlternative = chooseAlternative(alternatives, prefix.intValue(), data);
+//				final Choices.Choice chosenAlternative = chooseAlternative(alternatives, prefix.intValue(), data);
 
 				//write object
 //				final Codec<?> subCodec = Codec.createFrom(chosenAlternative.type());

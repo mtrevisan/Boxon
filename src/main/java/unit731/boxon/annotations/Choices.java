@@ -3,6 +3,11 @@ package unit731.boxon.annotations;
 
 import unit731.boxon.codecs.ByteOrder;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 
 /**
  * The annotation allowing you to define a number of choices, based a prefix of a certain {@link #prefixSize() size}.
@@ -52,6 +57,21 @@ public @interface Choices{
 		 * @return	The type to decode in case the {@link #condition()} holds.
 		 */
 		Class<?> type();
+
+	}
+
+
+	/** The annotation used to indicate the discriminator used to recognize an instance of this class. */
+	@Target(ElementType.TYPE)
+	@Retention(RetentionPolicy.RUNTIME)
+	@interface Prefix{
+
+		/**
+		 * The value that will be used to match this particular record.
+		 *
+		 * @return The value, as a SpEL expression.
+		 */
+		String value();
 
 	}
 
