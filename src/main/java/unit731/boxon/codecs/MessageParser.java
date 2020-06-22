@@ -153,8 +153,10 @@ class MessageParser{
 	private static <T> void processAssignedFields(final Codec<T> codec, final T data){
 		try{
 			final List<Codec.AssignedField> assignedFields = codec.getAssignedFields();
-			for(final Codec.AssignedField field : assignedFields)
-				ReflectionHelper.setFieldValue(data, field.getName(), Evaluator.evaluate(field.getBinding().value(), field.getType(), data));
+			for(final Codec.AssignedField field : assignedFields){
+				final Object value = Evaluator.evaluate(field.getBinding().value(), field.getType(), data);
+				ReflectionHelper.setFieldValue(data, field.getName(), value);
+			}
 		}
 		catch(final NoSuchFieldException ignored){}
 	}

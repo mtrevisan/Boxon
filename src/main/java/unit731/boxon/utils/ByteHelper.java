@@ -174,29 +174,6 @@ public class ByteHelper{
 	}
 
 	/**
-	 * Converts a BigInteger into a byte array ignoring the sign of the BigInteger, according to SRP specification
-	 *
-	 * @param value	the value, must not be <code>null</code>
-	 * @param size	The size in bits of the `value`
-	 * @return	The byte array (leading byte is always different from <code>0</code>), empty array if the value is zero.
-	 */
-	public static byte[] bigIntegerToBytes(final BigInteger value, final int size){
-		byte[] array = value.toByteArray();
-		if(array[0] == 0)
-			array = Arrays.copyOfRange(array, 1, array.length);
-		//extend sign
-		if(value.signum() < 0 && (array[0] & 0x80) != 0x0){
-			final byte[] a = new byte[size / Byte.SIZE];
-			for(int i = 0; i < a.length - array.length; i ++)
-				a[i] = (byte)0xFF;
-			if(a.length >= array.length)
-				System.arraycopy(array, 0, a, a.length - array.length, array.length);
-			array = a;
-		}
-		return array;
-	}
-
-	/**
 	 * Apply mask and shift right (<code>maskByte(27, 0x18) = 3</code>)
 	 *
 	 * @param value	The value to which to apply the mask and the right shift
@@ -320,6 +297,39 @@ public class ByteHelper{
 		for(int i = 0; i < bytes.length; i ++)
 			bytes[i] ^= 0xFF;
 		return bytes;
+	}
+
+	public static BigInteger createUnsignedBigInteger(final byte[] bytes){
+		//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
+		return new BigInteger(1, reverseBytes(bytes));
+	}
+
+	public static byte[] createUnsignedByteArray(final BigInteger value, final int size){
+		//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
+		return reverseBytes(bigIntegerToBytes(value, size));
+	}
+
+	/**
+	 * Converts a BigInteger into a byte array ignoring the sign of the BigInteger, according to SRP specification
+	 *
+	 * @param value	the value, must not be <code>null</code>
+	 * @param size	The size in bits of the `value`
+	 * @return	The byte array (leading byte is always different from <code>0</code>), empty array if the value is zero.
+	 */
+	private static byte[] bigIntegerToBytes(final BigInteger value, final int size){
+		byte[] array = value.toByteArray();
+		if(array[0] == 0)
+			array = Arrays.copyOfRange(array, 1, array.length);
+		//extend sign
+		if(value.signum() < 0 && (array[0] & 0x80) != 0x0){
+			final byte[] a = new byte[size / Byte.SIZE];
+			for(int i = 0; i < a.length - array.length; i ++)
+				a[i] = (byte)0xFF;
+			if(a.length >= array.length)
+				System.arraycopy(array, 0, a, a.length - array.length, array.length);
+			array = a;
+		}
+		return array;
 	}
 
 }

@@ -84,8 +84,7 @@ enum Coder{
 				final BitSet bits = reader.getBits(prefixSize);
 				if(prefixByteOrder == ByteOrder.LITTLE_ENDIAN)
 					ByteHelper.reverseBits(bits, prefixSize);
-				//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
-				final BigInteger prefix = new BigInteger(1, ByteHelper.reverseBytes(bits.toByteArray()));
+				final BigInteger prefix = ByteHelper.createUnsignedBigInteger(bits.toByteArray());
 
 				//choose class
 				final Choices.Choice chosenAlternative = chooseAlternative(alternatives, prefix.intValue(), data);
@@ -315,8 +314,7 @@ enum Coder{
 					final BitSet bits = reader.getBits(prefixSize);
 					if(prefixByteOrder == ByteOrder.LITTLE_ENDIAN)
 						ByteHelper.reverseBits(bits, prefixSize);
-					//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
-					final BigInteger prefix = new BigInteger(1, ByteHelper.reverseBytes(bits.toByteArray()));
+					final BigInteger prefix = ByteHelper.createUnsignedBigInteger(bits.toByteArray());
 
 					//choose class
 					final Choices.Choice chosenAlternative = chooseAlternative(alternatives, prefix.intValue(), data);
@@ -657,7 +655,7 @@ enum Coder{
 			//mask value with `2^size-1`
 			final BigInteger mask = BigInteger.ONE.shiftLeft(size).subtract(BigInteger.ONE);
 			//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
-			final BitSet bits = BitSet.valueOf(ByteHelper.reverseBytes(ByteHelper.bigIntegerToBytes(v.and(mask), size)));
+			final BitSet bits = BitSet.valueOf(ByteHelper.createUnsignedByteArray(v.and(mask), size));
 			if(byteOrder == ByteOrder.BIG_ENDIAN)
 				ByteHelper.reverseBits(bits, size);
 			writer.putBits(bits, size);
