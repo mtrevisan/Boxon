@@ -49,7 +49,7 @@ import java.lang.annotation.Target;
 public @interface BindIf{
 
 	/**
-	 * The expression to be evaluated.
+	 * The SpEL expression to be evaluated.
 	 *
 	 * @return	The condition to be evaluated (can be an expression).
 	 */

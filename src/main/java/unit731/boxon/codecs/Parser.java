@@ -36,16 +36,28 @@ public class Parser{
 	private final Loader loader = new Loader();
 
 
+	/** Create a parser loading all the codecs from this package down. */
 	public Parser(){
 		this(null);
 	}
 
+	/**
+	 * Create a parser with (optionally) a context, and loading all the codecs from this package down.
+	 *
+	 * @param context    The context for the evaluator.
+	 */
 	public Parser(final Map<String, Object> context){
 		loader.init();
 
 		copyContext(context);
 	}
 
+	/**
+	 * Create a parser with (optionally) a context, and loading all the given codecs.
+	 *
+	 * @param context    The context for the evaluator.
+	 * @param codecs    The list of codecs.
+	 */
 	public Parser(final Map<String, Object> context, final List<Codec<?>> codecs){
 		Objects.requireNonNull(codecs, "Codecs cannot be null");
 		if(codecs.isEmpty())
@@ -56,6 +68,12 @@ public class Parser{
 		copyContext(context);
 	}
 
+	/**
+	 * Create a parser with (optionally) a context, and loading all the given codecs found as a child of some base packages.
+	 *
+	 * @param context    The context for the evaluator.
+	 * @param basePackageClasses    The list of base packages from which to descent and load all the found codecs.
+	 */
 	public Parser(final Map<String, Object> context, final Class<?>... basePackageClasses){
 		Objects.requireNonNull(basePackageClasses, "Base package(s) not found");
 
