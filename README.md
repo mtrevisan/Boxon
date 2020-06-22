@@ -22,7 +22,7 @@ Boxon...
 ### Differences from...
 #### Preon
 Boxon differs from Preon in...
- - does not have a generic `Bound` annotation, as it does not have the need to read the native byte order of a particular machine in which the code is running: this is because the bytes of the message have little chance to be generated from the very same machine that will parse its messages, what if a message consider 24 bit as an Integer? If the code should be portable and installed and run everywhere it should not rely on the native properties of any machine.
+ - does not have a generic `Bound` annotation, as it does not have the need to read the native byte order of a particular machine in which the code is running: this is because the bytes of the message have little chance to be generated from the very same machine that will parse its messages, what if a message consider 24 bits as an Integer? If the code should be portable and installed and run everywhere it should not rely on the native properties of any machine.
    Moreover, `@Bound boolean visible;` is 1 bit- or 1 byte-length?
  - does not have `BoundList`: since the message is a finite sequence of bytes, then any array is of finite length, and thus the standard java array (`[]`) is sufficient. If someone wants a `List` (s)he could use a Converter.
  - does not rely on the type of the annotated variable (because of the converters); in fact, the annotation, eventually, serves the purpose to pass a predefined type of data to a converter.
@@ -70,7 +70,7 @@ Boxon differs from Preon in...
 
 <a name="annotation-base"></a>
 ## Base annotations
-Here are described the build-in base annotations.
+Here the build-in base annotations are described.
 
 You can use them as a starting point to build your own customized readers.
 
@@ -347,7 +347,7 @@ private double number;
 ### BindDecimal
 
 #### parameters
- - `type`: the Class of variable the be read (SHOULD BE `Float.class`, or `Double.class`).
+ - `type`: the Class of variable to be read (SHOULD BE `Float.class`, or `Double.class`).
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
  - `match`: a string/regex/SpEl expression that is used as an expected value.
  - `validator`: the Class of a validator (applied BEFORE the converter).
@@ -370,7 +370,7 @@ private BigDecimal number;
 ### BindString
 
 #### parameters
- - `charset`: the charset to interpreted the string into (SHOULD BE the charset name, eg. `UTF-8` (the default), `ISO-8859-1`, etc).
+ - `charset`: the charset to be interpreted the string into (SHOULD BE the charset name, eg. `UTF-8` (the default), `ISO-8859-1`, etc).
  - `size`: the size of the string (can be a SpEL expression).
  - `match`: a string/regex/SpEl expression that is used as an expected value.
  - `validator`: the Class of a validator (applied BEFORE the converter).
@@ -393,7 +393,7 @@ public String text;
 ### BindStringTerminated
 
 #### parameters
- - `charset`: the charset to interpreted the string into (SHOULD BE the charset name, eg. `UTF-8` (the default), `ISO-8859-1`, etc).
+ - `charset`: the charset to be interpreted the string into (SHOULD BE the charset name, eg. `UTF-8` (the default), `ISO-8859-1`, etc).
  - `terminator`: the byte that terminates the string (defaults to `\0`).
  - `consumeTerminator`: whether to consume the terminator (defaults to `true`).
  - `match`: a string/regex/SpEl expression that is used as an expected value.
@@ -424,7 +424,7 @@ Here are described the build-in special annotations.
 #### parameters
  - `start`: an array of possible start sequences (as string) for this message (defaults to empty).
  - `end`: a possible end sequence (as string) for this message (default to empty).
- - `charset`: the charset to interpreted the `start` and `end` strings into (SHOULD BE the charset name, eg. `UTF-8` (the default), `ISO-8859-1`, etc).
+ - `charset`: the charset to be interpreted the `start` and `end` strings into (SHOULD BE the charset name, eg. `UTF-8` (the default), `ISO-8859-1`, etc).
 
 #### description
 Marks a POJO as an annotated message.
@@ -504,10 +504,10 @@ public Void lastUnreadPlaceholder;
 ### Checksum
 
 #### parameters
- - `type`: the Class of variable the be read.
+ - `type`: the Class of variable to be read.
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN` (used for primitives other than `byte`).
- - `skipStart`: how many byte are to be skipped from the start of the message for the calculation of the checksum (defaults to 0).
- - `skipEnd`: how many byte are to be skipped from the end of the message for the calculation of the checksum (default to 0).
+ - `skipStart`: how many bytes are to be skipped from the start of the message for the calculation of the checksum (defaults to 0).
+ - `skipEnd`: how many bytes are to be skipped from the end of the message for the calculation of the checksum (default to 0).
  - `algorithm`: the algorithm to be applied to calculate the checksum.
 
 #### description

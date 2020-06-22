@@ -24,6 +24,8 @@
  */
 package unit731.boxon.utils;
 
+import unit731.boxon.codecs.ByteOrder;
+
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.BitSet;
@@ -284,24 +286,29 @@ public class ByteHelper{
 		}
 	}
 
-	public static byte[] reverseBytes(final byte[] bytes){
-		for(int i = 0; i < bytes.length / 2; i ++){
-			final byte temp = bytes[i];
-			bytes[i] = bytes[bytes.length - i - 1];
-			bytes[bytes.length - i - 1] = temp;
-		}
-		return bytes;
+	public static BigInteger createBigInteger(final BitSet bits, final boolean unsigned){
+		BigInteger value;
+		//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
+		final byte[] array = reverseBytes(bits.toByteArray());
+		if(!unsigned && (array[0] & 0x80) != 0x00)
+			value = new BigInteger(-1, invertBytes(array))
+				.subtract(BigInteger.ONE);
+		else
+			value = new BigInteger(1, array);
+		return value;
 	}
 
-	public static byte[] invertBytes(final byte[] bytes){
+	private static byte[] invertBytes(final byte[] bytes){
 		for(int i = 0; i < bytes.length; i ++)
 			bytes[i] ^= 0xFF;
 		return bytes;
 	}
 
-	public static BigInteger createUnsignedBigInteger(final byte[] bytes){
+	public static BigInteger createUnsignedBigInteger(final BitSet bits, final ByteOrder byteOrder, final int size){
+		if(byteOrder == ByteOrder.LITTLE_ENDIAN)
+			reverseBits(bits, size);
 		//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
-		return new BigInteger(1, reverseBytes(bytes));
+		return new BigInteger(1, reverseBytes(bits.toByteArray()));
 	}
 
 	public static byte[] createUnsignedByteArray(final BigInteger value, final int size){
@@ -330,6 +337,15 @@ public class ByteHelper{
 			array = a;
 		}
 		return array;
+	}
+
+	private static byte[] reverseBytes(final byte[] bytes){
+		for(int i = 0; i < bytes.length / 2; i ++){
+			final byte temp = bytes[i];
+			bytes[i] = bytes[bytes.length - i - 1];
+			bytes[bytes.length - i - 1] = temp;
+		}
+		return bytes;
 	}
 
 }

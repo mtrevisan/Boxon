@@ -82,9 +82,7 @@ enum Coder{
 				final ByteOrder prefixByteOrder = selectFrom.byteOrder();
 
 				final BitSet bits = reader.getBits(prefixSize);
-				if(prefixByteOrder == ByteOrder.LITTLE_ENDIAN)
-					ByteHelper.reverseBits(bits, prefixSize);
-				final BigInteger prefix = ByteHelper.createUnsignedBigInteger(bits.toByteArray());
+				final BigInteger prefix = ByteHelper.createUnsignedBigInteger(bits, prefixByteOrder, prefixSize);
 
 				//choose class
 				final Choices.Choice chosenAlternative = chooseAlternative(alternatives, prefix.intValue(), data);
@@ -107,6 +105,8 @@ enum Coder{
 		void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
 			final BindObject binding = (BindObject)annotation;
 
+			validateData(binding.validator(), value);
+
 			Class<?> type = binding.type();
 			final Choices selectFrom = binding.selectFrom();
 			final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): new Choices.Choice[0]);
@@ -127,6 +127,8 @@ enum Coder{
 				if(chosenAlternative.condition().contains("#" + CONTEXT_CHOICE_PREFIX)){
 					long prefixValue = chosenAlternative.prefix();
 					final BitSet bits = BitSet.valueOf(new long[]{prefixValue});
+					if(prefixByteOrder == ByteOrder.LITTLE_ENDIAN)
+						ByteHelper.reverseBits(bits, prefixSize);
 
 					writer.putBits(bits, prefixSize);
 				}
@@ -135,8 +137,6 @@ enum Coder{
 			}
 
 			final Codec<?> codec = Codec.createFrom(type);
-
-			validateData(binding.validator(), value);
 
 			final Object array = converterEncode(binding.converter(), value);
 
@@ -170,10 +170,10 @@ enum Coder{
 		void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
 			final BindString binding = (BindString)annotation;
 
+			validateData(binding.match(), binding.validator(), value);
+
 			final Charset charset = Charset.forName(binding.charset());
 			final int size = Evaluator.evaluate(binding.size(), int.class, data);
-
-			validateData(binding.match(), binding.validator(), value);
 
 			final String text = converterEncode(binding.converter(), value);
 
@@ -208,11 +208,11 @@ enum Coder{
 		void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
 			final BindStringTerminated binding = (BindStringTerminated)annotation;
 
+			validateData(binding.match(), binding.validator(), value);
+
 			final Charset charset = Charset.forName(binding.charset());
 			final byte terminator = binding.terminator();
 			final boolean consumeTerminator = binding.consumeTerminator();
-
-			validateData(binding.match(), binding.validator(), value);
 
 			final String text = converterEncode(binding.converter(), value);
 
@@ -260,6 +260,8 @@ enum Coder{
 		void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
 			final BindArrayPrimitive binding = (BindArrayPrimitive)annotation;
 
+			validateData(binding.validator(), value);
+
 			final ByteOrder byteOrder = binding.byteOrder();
 			final Class<?> type = binding.type();
 			final boolean isPrimitive = (type.isArray() && type.getComponentType().isPrimitive());
@@ -273,8 +275,6 @@ enum Coder{
 			if(objectiveType == null)
 				throw new IllegalArgumentException("Unrecognized type for field " + codec.getClass().getSimpleName() + "<"
 					+ codec + ">: " + type.getComponentType().getSimpleName());
-
-			validateData(binding.validator(), value);
 
 			final Object array = converterEncode(binding.converter(), value);
 
@@ -312,9 +312,7 @@ enum Coder{
 
 				for(int i = 0; i < size; i ++){
 					final BitSet bits = reader.getBits(prefixSize);
-					if(prefixByteOrder == ByteOrder.LITTLE_ENDIAN)
-						ByteHelper.reverseBits(bits, prefixSize);
-					final BigInteger prefix = ByteHelper.createUnsignedBigInteger(bits.toByteArray());
+					final BigInteger prefix = ByteHelper.createUnsignedBigInteger(bits, prefixByteOrder, prefixSize);
 
 					//choose class
 					final Choices.Choice chosenAlternative = chooseAlternative(alternatives, prefix.intValue(), data);
@@ -343,6 +341,8 @@ enum Coder{
 		void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
 			final BindArray binding = (BindArray)annotation;
 
+			validateData(binding.validator(), value);
+
 			final Class<?> type = binding.type();
 			final boolean isPrimitive = (type.isArray() && type.getComponentType().isPrimitive());
 			if(isPrimitive)
@@ -351,8 +351,6 @@ enum Coder{
 			final int size = Evaluator.evaluate(binding.size(), int.class, data);
 			final Choices selectFrom = binding.selectFrom();
 			final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): new Choices.Choice[0]);
-
-			validateData(binding.validator(), value);
 
 			final Object[] array = converterEncode(binding.converter(), value);
 
@@ -367,8 +365,10 @@ enum Coder{
 					final Choices.Choice chosenAlternative = chooseAlternative(alternatives, array[i].getClass());
 					//if chosenAlternative.condition() contains '#prefix', then write @Choice.Prefix.value()
 					if(chosenAlternative.condition().contains("#" + CONTEXT_CHOICE_PREFIX)){
-						long prefixValue = chosenAlternative.prefix();
+						final long prefixValue = chosenAlternative.prefix();
 						final BitSet bits = BitSet.valueOf(new long[]{prefixValue});
+						if(prefixByteOrder == ByteOrder.LITTLE_ENDIAN)
+							ByteHelper.reverseBits(bits, prefixSize);
 
 						writer.putBits(bits, prefixSize);
 					}
@@ -398,9 +398,8 @@ enum Coder{
 			final BindBit binding = (BindBit)annotation;
 
 			final int size = Evaluator.evaluate(binding.size(), int.class, data);
-			final ByteOrder byteOrder = binding.byteOrder();
-
 			final BitSet bits = reader.getBits(size);
+			final ByteOrder byteOrder = binding.byteOrder();
 			if(byteOrder == ByteOrder.BIG_ENDIAN)
 				ByteHelper.reverseBits(bits, size);
 
@@ -415,12 +414,11 @@ enum Coder{
 		void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
 			final BindBit binding = (BindBit)annotation;
 
-			final int size = Evaluator.evaluate(binding.size(), int.class, data);
-			final ByteOrder byteOrder = binding.byteOrder();
-
 			validateData(binding.match(), binding.validator(), value);
 
 			final BitSet bits = converterEncode(binding.converter(), value);
+			final int size = Evaluator.evaluate(binding.size(), int.class, data);
+			final ByteOrder byteOrder = binding.byteOrder();
 			if(byteOrder == ByteOrder.BIG_ENDIAN)
 				ByteHelper.reverseBits(bits, size);
 
@@ -477,9 +475,8 @@ enum Coder{
 		Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
 			final BindShort binding = (BindShort)annotation;
 
-			final ByteOrder byteOrder = binding.byteOrder();
-
 			final Object value;
+			final ByteOrder byteOrder = binding.byteOrder();
 			if(binding.unsigned()){
 				final int v = reader.getShortUnsigned(byteOrder);
 
@@ -500,12 +497,11 @@ enum Coder{
 		void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
 			final BindShort binding = (BindShort)annotation;
 
-			final ByteOrder byteOrder = binding.byteOrder();
-
 			validateData(binding.match(), binding.validator(), value);
 
 			final short v = converterEncode(binding.converter(), value);
 
+			final ByteOrder byteOrder = binding.byteOrder();
 			writer.putShort(v, byteOrder);
 		}
 
@@ -520,9 +516,8 @@ enum Coder{
 		Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
 			final BindInteger binding = (BindInteger)annotation;
 
-			final ByteOrder byteOrder = binding.byteOrder();
-
 			final Object value;
+			final ByteOrder byteOrder = binding.byteOrder();
 			if(binding.unsigned()){
 				final long v = reader.getIntegerUnsigned(byteOrder);
 
@@ -543,12 +538,11 @@ enum Coder{
 		void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
 			final BindInteger binding = (BindInteger)annotation;
 
-			final ByteOrder byteOrder = binding.byteOrder();
-
 			validateData(binding.match(), binding.validator(), value);
 
 			final int v = converterEncode(binding.converter(), value);
 
+			final ByteOrder byteOrder = binding.byteOrder();
 			writer.putInteger(v, byteOrder);
 		}
 
@@ -564,7 +558,6 @@ enum Coder{
 			final BindLong binding = (BindLong)annotation;
 
 			final ByteOrder byteOrder = binding.byteOrder();
-
 			final long v = reader.getLong(byteOrder);
 
 			final Object value = converterDecode(binding.converter(), v);
@@ -578,12 +571,11 @@ enum Coder{
 		void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
 			final BindLong binding = (BindLong)annotation;
 
-			final ByteOrder byteOrder = binding.byteOrder();
-
 			validateData(binding.match(), binding.validator(), value);
 
 			final long v = converterEncode(binding.converter(), value);
 
+			final ByteOrder byteOrder = binding.byteOrder();
 			writer.putLong(v, byteOrder);
 		}
 
@@ -599,13 +591,12 @@ enum Coder{
 			final BindNumber binding = (BindNumber)annotation;
 
 			final int size = Evaluator.evaluate(binding.size(), int.class, data);
-			final ByteOrder byteOrder = binding.byteOrder();
-			final boolean allowPrimitive = binding.allowPrimitive();
-
 			final BitSet bits = reader.getBits(size);
+			final ByteOrder byteOrder = binding.byteOrder();
 			if(byteOrder == ByteOrder.BIG_ENDIAN)
 				ByteHelper.reverseBits(bits, size);
 			final Object value;
+			final boolean allowPrimitive = binding.allowPrimitive();
 			if(allowPrimitive && size < Long.SIZE){
 				long v = bits.toLongArray()[0];
 				if(!binding.unsigned())
@@ -614,14 +605,7 @@ enum Coder{
 				value = converterDecode(binding.converter(), v);
 			}
 			else{
-				BigInteger v;
-				//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
-				final byte[] bigArray = ByteHelper.reverseBytes(bits.toByteArray());
-				if(!binding.unsigned() && (bigArray[0] & 0x80) != 0x00)
-					v = new BigInteger(-1, ByteHelper.invertBytes(bigArray))
-						.subtract(BigInteger.ONE);
-				else
-					v = new BigInteger(1, bigArray);
+				final BigInteger v = ByteHelper.createBigInteger(bits, binding.unsigned());
 
 				value = converterDecode(binding.converter(), v);
 			}
@@ -635,16 +619,13 @@ enum Coder{
 		void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
 			final BindNumber binding = (BindNumber)annotation;
 
-			final int size = Evaluator.evaluate(binding.size(), int.class, data);
-			final ByteOrder byteOrder = binding.byteOrder();
-			final boolean allowPrimitive = binding.allowPrimitive();
-
 			validateData(binding.match(), binding.validator(), value);
 
 			BigInteger v;
+			final boolean allowPrimitive = binding.allowPrimitive();
+			final int size = Evaluator.evaluate(binding.size(), int.class, data);
 			if(allowPrimitive && size < Long.SIZE){
 				final long vv = converterEncode(binding.converter(), value);
-
 				v = BigInteger.valueOf(Math.abs(vv));
 				if(!binding.unsigned() && vv < 0)
 					v = v.negate();
@@ -656,8 +637,10 @@ enum Coder{
 			final BigInteger mask = BigInteger.ONE.shiftLeft(size).subtract(BigInteger.ONE);
 			//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
 			final BitSet bits = BitSet.valueOf(ByteHelper.createUnsignedByteArray(v.and(mask), size));
+			final ByteOrder byteOrder = binding.byteOrder();
 			if(byteOrder == ByteOrder.BIG_ENDIAN)
 				ByteHelper.reverseBits(bits, size);
+
 			writer.putBits(bits, size);
 		}
 
@@ -673,7 +656,6 @@ enum Coder{
 			final BindFloat binding = (BindFloat)annotation;
 
 			final ByteOrder byteOrder = binding.byteOrder();
-
 			final float v = reader.getFloat(byteOrder);
 
 			final Object value = converterDecode(binding.converter(), v);
@@ -687,12 +669,11 @@ enum Coder{
 		void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
 			final BindFloat binding = (BindFloat)annotation;
 
-			final ByteOrder byteOrder = binding.byteOrder();
-
 			validateData(binding.match(), binding.validator(), value);
 
 			final float v = converterEncode(binding.converter(), value);
 
+			final ByteOrder byteOrder = binding.byteOrder();
 			writer.putFloat(v, byteOrder);
 		}
 
@@ -708,7 +689,6 @@ enum Coder{
 			final BindDouble binding = (BindDouble)annotation;
 
 			final ByteOrder byteOrder = binding.byteOrder();
-
 			final double v = reader.getDouble(byteOrder);
 
 			final Object value = converterDecode(binding.converter(), v);
@@ -722,12 +702,11 @@ enum Coder{
 		void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
 			final BindDouble binding = (BindDouble)annotation;
 
-			final ByteOrder byteOrder = binding.byteOrder();
-
 			validateData(binding.match(), binding.validator(), value);
 
 			final double v = converterEncode(binding.converter(), value);
 
+			final ByteOrder byteOrder = binding.byteOrder();
 			writer.putDouble(v, byteOrder);
 		}
 
@@ -746,8 +725,8 @@ enum Coder{
 			if(type != Float.class && type != Double.class)
 				throw new IllegalArgumentException("Bad type, should have been one of `" + Float.class.getSimpleName()
 					+ ".class` or `" + Double.class.getSimpleName() + ".class`");
-			final ByteOrder byteOrder = binding.byteOrder();
 
+			final ByteOrder byteOrder = binding.byteOrder();
 			final BigDecimal v = reader.getDecimal(type, byteOrder);
 
 			final Object value = converterDecode(binding.converter(), v);
@@ -765,12 +744,12 @@ enum Coder{
 			if(type != Float.class && type != Double.class)
 				throw new IllegalArgumentException("Bad type, should have been one of `" + Float.class.getSimpleName()
 					+ ".class` or `" + Double.class.getSimpleName() + ".class`");
-			final ByteOrder byteOrder = binding.byteOrder();
 
 			validateData(binding.match(), binding.validator(), value);
 
 			final BigDecimal v = converterEncode(binding.converter(), value);
 
+			final ByteOrder byteOrder = binding.byteOrder();
 			writer.putDecimal(v, type, byteOrder);
 		}
 
@@ -786,13 +765,12 @@ enum Coder{
 			final BindChecksum binding = (BindChecksum)annotation;
 
 			final Class<?> type = binding.type();
-			final ByteOrder byteOrder = binding.byteOrder();
-
 			final Class<?> objectiveType = ReflectionHelper.objectiveType(type);
 			if(objectiveType == null)
 				throw new IllegalArgumentException("Unrecognized type for field " + getClass().getSimpleName()
 					+ "<" + type.getSimpleName() + ">: " + type.getComponentType().getSimpleName());
 
+			final ByteOrder byteOrder = binding.byteOrder();
 			return reader.get(objectiveType, byteOrder);
 		}
 
@@ -801,13 +779,12 @@ enum Coder{
 			final BindChecksum binding = (BindChecksum)annotation;
 
 			final Class<?> type = binding.type();
-			final ByteOrder byteOrder = binding.byteOrder();
-
 			final Class<?> objectiveType = ReflectionHelper.objectiveType(type);
 			if(objectiveType == null)
 				throw new IllegalArgumentException("Unrecognized type for field " + getClass().getSimpleName()
 					+ "<" + type.getSimpleName() + ">: " + type.getComponentType().getSimpleName());
 
+			final ByteOrder byteOrder = binding.byteOrder();
 			writer.put(value, byteOrder);
 		}
 
