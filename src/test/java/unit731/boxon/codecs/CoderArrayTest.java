@@ -28,6 +28,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import unit731.boxon.annotations.BindArray;
 import unit731.boxon.annotations.BindArrayPrimitive;
+import unit731.boxon.annotations.Choices;
 import unit731.boxon.annotations.converters.NullConverter;
 import unit731.boxon.annotations.converters.Converter;
 import unit731.boxon.annotations.validators.NullValidator;
@@ -106,6 +107,31 @@ class CoderArrayTest{
 			@Override
 			public String size(){
 				return Integer.toString(encodedValue.length);
+			}
+
+			@Override
+			public Choices selectFrom(){
+				return new Choices(){
+					@Override
+					public Class<? extends Annotation> annotationType(){
+						return null;
+					}
+
+					@Override
+					public int prefixSize(){
+						return 0;
+					}
+
+					@Override
+					public ByteOrder byteOrder(){
+						return null;
+					}
+
+					@Override
+					public Choice[] alternatives(){
+						return new Choice[0];
+					}
+				};
 			}
 
 			@Override

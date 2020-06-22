@@ -109,8 +109,8 @@ class CoderObjectTest{
 		@BindString(size = "3")
 		public String header;
 		@BindObject(selectFrom = @Choices(prefixSize = 8, alternatives = {
-			@Choices.Choice(condition = "#prefix==1", type = TestType1.class),
-			@Choices.Choice(condition = "#prefix==2", type = TestType2.class)
+			@Choices.Choice(condition = "#prefix == 1", type = TestType1.class),
+			@Choices.Choice(condition = "#prefix == 2", type = TestType2.class)
 		}))
 		public Object value;
 	}
@@ -122,8 +122,8 @@ class CoderObjectTest{
 		@BindArrayPrimitive(size = "2", type = byte[].class)
 		public byte[] index;
 		@BindObject(selectFrom = @Choices(prefixSize = 8, alternatives = {
-			@Choices.Choice(condition = "index[#prefix]==5", type = TestType1.class),
-			@Choices.Choice(condition = "index[#prefix]==6", type = TestType2.class)
+			@Choices.Choice(condition = "index[#prefix] == 5", type = TestType1.class),
+			@Choices.Choice(condition = "index[#prefix] == 6", type = TestType2.class)
 		}))
 		public Object value;
 	}
@@ -135,8 +135,8 @@ class CoderObjectTest{
 		@BindString(size = "2")
 		public String key;
 		@BindObject(selectFrom = @Choices(prefixSize = 0, alternatives = {
-			@Choices.Choice(condition = "key=='aa'", type = TestType1.class),
-			@Choices.Choice(condition = "key=='bb'", type = TestType2.class)
+			@Choices.Choice(condition = "key == 'aa'", type = TestType1.class),
+			@Choices.Choice(condition = "key == 'bb'", type = TestType2.class)
 		}))
 		public Object value;
 	}
@@ -158,7 +158,7 @@ class CoderObjectTest{
 		TestType1 value1 = (TestType1)parsedMessage.value;
 		Assertions.assertEquals(0x1234, value1.value);
 
-		ComposeResponse response = parser.compose(value1);
+		ComposeResponse response = parser.compose(parsedMessage);
 		Assertions.assertNotNull(response);
 		Assertions.assertFalse(response.hasErrors());
 		Assertions.assertArrayEquals(payload, response.getComposedMessage());

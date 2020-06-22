@@ -146,7 +146,6 @@ public class Parser{
 	 * @return	The composed response
 	 */
 	public final ComposeResponse compose(final Object... data){
-		//TODO
 		final ComposeResponse response = new ComposeResponse();
 		final BitWriter writer = new BitWriter();
 		for(final Object elem : data){
