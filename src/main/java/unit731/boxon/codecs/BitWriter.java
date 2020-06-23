@@ -322,24 +322,17 @@ class BitWriter{
 	}
 
 
-	/** Flush an integral number of bytes to the output stream, discarding any non-completed byte */
-	public void flush(){
-		//put the cache into the buffer, if needed
-		if(remainingBits == Byte.SIZE)
-			os.write(cache);
-		else if(remainingBits > 0)
-			LOGGER.error("Some bits went missing while flushing: 0x{}", Integer.toBinaryString(cache));
-
-		resetInnerVariables();
-	}
-
 	/** Flush an integral number of bytes to the output stream, padding any non-completed byte with zeros */
-	public void flushWithPadding(){
+	public void flush(){
 		//put the cache into the buffer
 		if(remainingBits > 0)
 			os.write(cache);
 
 		resetInnerVariables();
+	}
+
+	public int remainingBits(){
+		return remainingBits;
 	}
 
 	private void resetInnerVariables(){
