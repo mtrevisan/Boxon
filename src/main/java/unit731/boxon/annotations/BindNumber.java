@@ -45,9 +45,9 @@ import java.lang.annotation.Target;
 public @interface BindNumber{
 
 	/**
-	 * The number of bytes used to represent the numeric value.
+	 * The number of bits used to represent the numeric value.
 	 *
-	 * @return	The number of bytes used to represent the numeric value (can be an expression).
+	 * @return	The number of bits used to represent the numeric value (can be an expression).
 	 */
 	String size() default "1";
 
