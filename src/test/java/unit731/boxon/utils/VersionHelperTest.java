@@ -26,6 +26,7 @@ package unit731.boxon.utils;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import unit731.boxon.codecs.queclink.VersionHelper;
 
 
 class VersionHelperTest{
