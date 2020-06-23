@@ -25,7 +25,7 @@
 package unit731.boxon.codecs;
 
 import unit731.boxon.annotations.MessageHeader;
-import unit731.boxon.utils.ByteHelper;
+import unit731.boxon.helpers.ByteHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

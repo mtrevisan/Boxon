@@ -1,6 +1,6 @@
 package unit731.boxon.codecs.queclink;
 
-import unit731.boxon.utils.ByteHelper;
+import unit731.boxon.helpers.ByteHelper;
 
 
 public class Nibbles{

@@ -24,8 +24,8 @@
  */
 package unit731.boxon.codecs;
 
-import unit731.boxon.utils.ByteHelper;
-import unit731.boxon.utils.ExceptionHelper;
+import unit731.boxon.helpers.ByteHelper;
+import unit731.boxon.helpers.ExceptionHelper;
 
 import java.util.StringJoiner;
 

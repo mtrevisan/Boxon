@@ -28,8 +28,8 @@ import unit731.boxon.annotations.BindChecksum;
 import unit731.boxon.annotations.MessageHeader;
 import unit731.boxon.annotations.Skip;
 import unit731.boxon.annotations.checksummers.Checksummer;
-import unit731.boxon.utils.ByteHelper;
-import unit731.boxon.utils.ReflectionHelper;
+import unit731.boxon.helpers.ByteHelper;
+import unit731.boxon.helpers.ReflectionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

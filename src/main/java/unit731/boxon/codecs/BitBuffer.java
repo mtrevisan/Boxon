@@ -24,7 +24,7 @@
  */
 package unit731.boxon.codecs;
 
-import unit731.boxon.utils.ByteHelper;
+import unit731.boxon.helpers.ByteHelper;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

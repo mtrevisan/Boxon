@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package unit731.boxon.utils;
+package unit731.boxon.helpers;
 
 import org.springframework.objenesis.instantiator.ObjectInstantiator;
 import org.springframework.objenesis.instantiator.android.Android10Instantiator;

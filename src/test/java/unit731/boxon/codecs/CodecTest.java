@@ -44,7 +44,7 @@ import unit731.boxon.annotations.MessageHeader;
 import unit731.boxon.annotations.checksummers.CRC16;
 import unit731.boxon.annotations.checksummers.Checksummer;
 import unit731.boxon.annotations.converters.Converter;
-import unit731.boxon.utils.ByteHelper;
+import unit731.boxon.helpers.ByteHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

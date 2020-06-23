@@ -1,4 +1,4 @@
-package unit731.boxon.other.utils;
+package unit731.boxon.codecs.queclink;
 
 import static org.junit.jupiter.api.Assertions.*;
 

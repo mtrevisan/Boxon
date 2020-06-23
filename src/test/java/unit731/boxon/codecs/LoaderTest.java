@@ -25,7 +25,7 @@
 package unit731.boxon.codecs;
 
 import unit731.boxon.codecs.queclink.ACKMessage;
-import unit731.boxon.utils.ByteHelper;
+import unit731.boxon.helpers.ByteHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

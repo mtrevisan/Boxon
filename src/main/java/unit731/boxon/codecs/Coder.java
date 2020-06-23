@@ -42,8 +42,8 @@ import unit731.boxon.annotations.BindStringTerminated;
 import unit731.boxon.annotations.Choices;
 import unit731.boxon.annotations.converters.Converter;
 import unit731.boxon.annotations.validators.Validator;
-import unit731.boxon.utils.ByteHelper;
-import unit731.boxon.utils.ReflectionHelper;
+import unit731.boxon.helpers.ByteHelper;
+import unit731.boxon.helpers.ReflectionHelper;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;

@@ -31,7 +31,7 @@ import unit731.boxon.annotations.converters.Converter;
 import unit731.boxon.annotations.converters.NullConverter;
 import unit731.boxon.annotations.validators.NullValidator;
 import unit731.boxon.annotations.validators.Validator;
-import unit731.boxon.utils.ByteHelper;
+import unit731.boxon.helpers.ByteHelper;
 
 import java.lang.annotation.Annotation;
 import java.util.BitSet;
