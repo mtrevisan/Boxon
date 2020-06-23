@@ -28,6 +28,7 @@ Boxon differs from Preon in...
  - does not rely on the type of the annotated variable (because of the converters); in fact, the annotation, eventually, serves the purpose to pass a predefined type of data to a converter.<br/>
    For this reason too, there is no need for the `Init` annotation, thus the annotated file can contain the least amount of data necessary for its decoding (moreover, this annotation has NOT the inverse operation, so it seems to me... so it's pretty useless anyway).
  - (by personal experience) enums can have different representations, or change between a version and the following of a protocol, so having an annotation that tells the value of a particular element of this enum is at least risky. So, for this reason, the `BoundEnumOption` is not present in this library.
+ - does read and write more than 64 bits at a time (`BitBuffer.readBits`)
 
 <br/>
 ---
