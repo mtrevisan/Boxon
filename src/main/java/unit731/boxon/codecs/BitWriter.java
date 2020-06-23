@@ -333,6 +333,15 @@ class BitWriter{
 		resetInnerVariables();
 	}
 
+	/** Flush an integral number of bytes to the output stream, padding any non-completed byte with zeros */
+	public void flushWithPadding(){
+		//put the cache into the buffer
+		if(remainingBits > 0)
+			os.write(cache);
+
+		resetInnerVariables();
+	}
+
 	private void resetInnerVariables(){
 		remainingBits = 0;
 		cache = 0;
