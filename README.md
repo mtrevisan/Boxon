@@ -558,9 +558,9 @@ private String deviceTypeName;
 
 <a name="how-to"></a>
 ## How to extend the functionalities
-Boxon can handle on its own array of primitives, bit, byte, short, int, long, float, double, and their object counterpart, as long as BigDecimal, string (with a given size, or a terminator), and the special "[checksum](#annotation-checksum)".
+Boxon can handle array of primitives, bit, byte, short, int, long, float, double, and their object counterpart, as long as Object, BigInteger, BigDecimal, string (with a given size, or with a terminator), and the special "[checksum](#annotation-checksum)".
 
-You can extend the basic functionalities through the application of converters as shown below in some examples.
+You can extend the basic functionalities through the application of converters as shown below in some examples. Here lies the power of Boxon.
 
 ### DateTime converter (from Unix timestamp to ZonedDateTime)
 ```java
@@ -706,7 +706,7 @@ If you want to provide your own classes you can use the appropriate constructor 
 
 <br/>
 
-The `MessageParser` is also used to encode a message (_NOTE: this feature will be moved in the future!_).
+The `Parser` is also used to encode a message.
 
 <br/>
 
@@ -757,6 +757,27 @@ Parser parser = new Parser(context, codecs);
 //parse the message
 byte[] payload = ...
 ParseResponse result = parser.parse(payload);
+```
+
+<a name="example-multi"></a>
+### Message composer
+
+The inverse of parsing is composing, and it's simply done as follows.
+```java
+//compose the message
+some-annotated-class data = ...;
+ComposeResponse composeResult = parser.compose(data);
+
+//process the read messages
+if(!composeResult.hasErrors()){
+    byte[] message = result.getComposedMessage();
+    ...
+}
+//process the errors
+else{
+    List<ComposeException> errors = result.getErrors();
+    ...
+}
 ```
 
 
