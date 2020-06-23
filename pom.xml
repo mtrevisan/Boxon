@@ -14,10 +14,10 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.version>1.8</java.version>
+		<java.version>1.14</java.version>
 
-		<maven.compiler.source>8</maven.compiler.source>
-		<maven.compiler.target>8</maven.compiler.target>
+		<maven.compiler.source>14</maven.compiler.source>
+		<maven.compiler.target>14</maven.compiler.target>
 
 		<!-- Build -->
 		<maven-source-plugin.version>3.2.1</maven-source-plugin.version>
@@ -81,6 +81,7 @@
 				<configuration>
 					<additionalOptions>-html5</additionalOptions>
 					<javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
+					<detectJavaApiLink>false</detectJavaApiLink>
 				</configuration>
 			</plugin>
 			<!-- Templating -->
