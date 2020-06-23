@@ -63,6 +63,7 @@ Boxon differs from Preon in...
 4. [Digging into the code](#digging)
 5. [Examples](#examples)
     1. [Multi-message parser](#example-multi)
+    2. [Message composer](#example-composer)
 6. [Changelog](#changelog)
     1. [version 1.0.0](#changelog-1.0.0)
 
@@ -759,7 +760,7 @@ byte[] payload = ...
 ParseResponse result = parser.parse(payload);
 ```
 
-<a name="example-multi"></a>
+<a name="example-composer"></a>
 ### Message composer
 
 The inverse of parsing is composing, and it's simply done as follows.
