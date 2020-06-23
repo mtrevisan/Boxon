@@ -43,20 +43,19 @@ class MessageParserTest{
 
 		Codec<ACKMessage> codec = Codec.createFrom(ACKMessage.class);
 
-		if(codec.canBeDecoded()){
-			DeviceTypes deviceTypes = new DeviceTypes();
-			deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
-			Evaluator.addToContext("deviceTypes", deviceTypes);
-			ACKMessage message = MessageParser.decode(codec, reader);
-
-			BitWriter writer = new BitWriter();
-			MessageParser.encode(codec, message, writer);
-			byte[] reconstructedMessage = writer.array();
-
-			Assertions.assertArrayEquals(payload, reconstructedMessage);
-		}
-		else
+		if(!codec.canBeDecoded())
 			Assertions.fail("Cannot decode message");
+
+		DeviceTypes deviceTypes = new DeviceTypes();
+		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
+		Evaluator.addToContext("deviceTypes", deviceTypes);
+		ACKMessage message = MessageParser.decode(codec, reader);
+
+		BitWriter writer = new BitWriter();
+		MessageParser.encode(codec, message, writer);
+		byte[] reconstructedMessage = writer.array();
+
+		Assertions.assertArrayEquals(payload, reconstructedMessage);
 	}
 
 	@Test
@@ -66,20 +65,19 @@ class MessageParserTest{
 
 		Codec<ASCII_ACKMessage> codec = Codec.createFrom(ASCII_ACKMessage.class);
 
-		if(codec.canBeDecoded()){
-			DeviceTypes deviceTypes = new DeviceTypes();
-			deviceTypes.add("QUECLINK_GV350M", (byte)0xCF);
-			Evaluator.addToContext("deviceTypes", deviceTypes);
-			ASCII_ACKMessage message = MessageParser.decode(codec, reader);
-
-			BitWriter writer = new BitWriter();
-			MessageParser.encode(codec, message, writer);
-			byte[] reconstructedMessage = writer.array();
-
-			Assertions.assertArrayEquals(payload, reconstructedMessage);
-		}
-		else
+		if(!codec.canBeDecoded())
 			Assertions.fail("Cannot decode message");
+
+		DeviceTypes deviceTypes = new DeviceTypes();
+		deviceTypes.add("QUECLINK_GV350M", (byte)0xCF);
+		Evaluator.addToContext("deviceTypes", deviceTypes);
+		ASCII_ACKMessage message = MessageParser.decode(codec, reader);
+
+		BitWriter writer = new BitWriter();
+		MessageParser.encode(codec, message, writer);
+		byte[] reconstructedMessage = writer.array();
+
+		Assertions.assertArrayEquals(payload, reconstructedMessage);
 	}
 
 	@Test

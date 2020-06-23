@@ -38,6 +38,27 @@ import java.util.Map;
 class ParserTest{
 
 	@Test
+	void parseAndComposeSingeMessageHex(){
+		DeviceTypes deviceTypes = new DeviceTypes();
+		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
+		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
+		Parser parser = new Parser(context);
+
+		//parse:
+		byte[] payload = ByteHelper.hexStringToByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
+		ParseResponse parseResult = parser.parse(payload);
+
+		Assertions.assertFalse(parseResult.hasErrors());
+		Assertions.assertEquals(1, parseResult.getParsedMessages().size());
+
+		//compose:
+		ComposeResponse composeResult = parser.compose(parseResult.getParsedMessages().get(0));
+
+		Assertions.assertFalse(composeResult.hasErrors());
+		Assertions.assertArrayEquals(payload, composeResult.getComposedMessage());
+	}
+
+	@Test
 	void parseMultipleMessagesHex(){
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
@@ -49,6 +70,27 @@ class ParserTest{
 
 		Assertions.assertFalse(result.hasErrors());
 		Assertions.assertEquals(2, result.getParsedMessages().size());
+	}
+
+	@Test
+	void parseAndComposeSingleMessageASCII(){
+		DeviceTypes deviceTypes = new DeviceTypes();
+		deviceTypes.add("QUECLINK_GV350M", (byte)0xCF);
+		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
+		Parser parser = new Parser(context);
+
+		//parse:
+		byte[] payload = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
+		ParseResponse parseResult = parser.parse(payload);
+
+		Assertions.assertFalse(parseResult.hasErrors());
+		Assertions.assertEquals(1, parseResult.getParsedMessages().size());
+
+		//compose:
+		ComposeResponse composeResult = parser.compose(parseResult.getParsedMessages().get(0));
+
+		Assertions.assertFalse(composeResult.hasErrors());
+		Assertions.assertArrayEquals(payload, composeResult.getComposedMessage());
 	}
 
 	@Test
