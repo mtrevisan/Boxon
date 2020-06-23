@@ -754,7 +754,7 @@ or, if you want to pass your codecs by hand:
 ```java
 //optionally create a context ('null' otherwise)
 Map<String, Object> context = ...
-Codec<ACKMessage> codec = Codec.createFrom(Message.class);
+Codec<Message> codec = Codec.createFrom(Message.class);
 List<Codec<?>> codecs = Collections.singletonList(codec);
 Parser parser = new Parser(context, codecs);
 
@@ -769,7 +769,7 @@ ParseResponse result = parser.parse(payload);
 The inverse of parsing is composing, and it's simply done as follows.
 ```java
 //compose the message
-some-annotated-class data = ...;
+Message data = ...;
 ComposeResponse composeResult = parser.compose(data);
 
 //process the read messages
