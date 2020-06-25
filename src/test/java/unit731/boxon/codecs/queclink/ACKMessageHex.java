@@ -42,7 +42,7 @@ import java.util.Map;
 
 
 @MessageHeader(start = "+ACK", end = "\r\n")
-public class ACKMessage{
+public class ACKMessageHex{
 
 	private static final Map<Byte, String> MESSAGE_TYPE_MAP = new HashMap<>();
 	static{
@@ -113,8 +113,8 @@ public class ACKMessage{
 	private String messageHeader;
 	@BindByte(converter = MessageTypeConverter.class)
 	private String messageType;
-	@BindByte(converter = ACKMask.ACKMaskConverter.class)
-	private ACKMask mask;
+	@BindByte(converter = ACKMaskHex.ACKMaskConverter.class)
+	private ACKMaskHex mask;
 //	@BindArrayPrimitive(size = "2", type = byte[].class)
 //	private byte[] things;
 	@BindIf("mask.hasLength()")

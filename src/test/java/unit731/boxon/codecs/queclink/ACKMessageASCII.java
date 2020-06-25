@@ -36,7 +36,7 @@ import java.util.Map;
 
 
 @MessageHeader(start = "+ACK:", end = "$")
-public class ASCII_ACKMessage{
+public class ACKMessageASCII{
 
 	private static final Map<Byte, String> MESSAGE_TYPE_MAP = new HashMap<>();
 	static{

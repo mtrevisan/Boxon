@@ -28,16 +28,16 @@ import unit731.boxon.annotations.converters.Converter;
 import unit731.boxon.helpers.ByteHelper;
 
 
-public class ACKMask{
+public class ACKMaskHex{
 
-	public static class ACKMaskConverter implements Converter<Byte, ACKMask>{
+	public static class ACKMaskConverter implements Converter<Byte, ACKMaskHex>{
 		@Override
-		public ACKMask decode(final Byte value){
-			return new ACKMask(value);
+		public ACKMaskHex decode(final Byte value){
+			return new ACKMaskHex(value);
 		}
 
 		@Override
-		public Byte encode(final ACKMask value){
+		public Byte encode(final ACKMaskHex value){
 			return value.mask;
 		}
 	}
@@ -46,7 +46,7 @@ public class ACKMask{
 	private final byte mask;
 
 
-	public ACKMask(byte mask){
+	public ACKMaskHex(byte mask){
 		this.mask = mask;
 	}
 

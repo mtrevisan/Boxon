@@ -24,7 +24,7 @@
  */
 package unit731.boxon.codecs;
 
-import unit731.boxon.codecs.queclink.ACKMessage;
+import unit731.boxon.codecs.queclink.ACKMessageHex;
 import unit731.boxon.helpers.ByteHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -73,7 +73,7 @@ class LoaderTest{
 		Codec<?> codec = loader.getCodec(reader);
 
 		Assertions.assertNotNull(codec);
-		Assertions.assertEquals(ACKMessage.class, codec.getType());
+		Assertions.assertEquals(ACKMessageHex.class, codec.getType());
 	}
 
 	@Test
