@@ -349,7 +349,7 @@ class CoderIntegerTest{
 
 		BitSet bits = BitSet.valueOf(ByteHelper.createUnsignedByteArray(encodedValue, 128));
 		ByteHelper.reverseBits(bits, 128);
-		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bits.toByteArray()).toUpperCase(Locale.ROOT), 6, '0'), writer.toString());
+		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bits.toByteArray()).toUpperCase(Locale.ROOT), 32, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
 		BigInteger decoded = (BigInteger)coder.decode(messageParser, reader, annotation, null);
@@ -414,7 +414,7 @@ class CoderIntegerTest{
 
 		BitSet bits = BitSet.valueOf(ByteHelper.createUnsignedByteArray(encodedValue, 128));
 		ByteHelper.reverseBits(bits, 128);
-		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bits.toByteArray()).toUpperCase(Locale.ROOT), 6, '0'), writer.toString());
+		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bits.toByteArray()).toUpperCase(Locale.ROOT), 32, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
 		BigInteger decoded = (BigInteger)coder.decode(messageParser, reader, annotation, null);
@@ -606,7 +606,7 @@ class CoderIntegerTest{
 
 		BitSet bits = BitSet.valueOf(ByteHelper.createUnsignedByteArray(encodedValue, 32));
 		ByteHelper.reverseBits(bits, 32);
-		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bits.toByteArray()).toUpperCase(Locale.ROOT), 6, '0'), writer.toString());
+		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bits.toByteArray()).toUpperCase(Locale.ROOT), 8, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
 		BigInteger decoded = (BigInteger)coder.decode(messageParser, reader, annotation, null);
@@ -671,7 +671,7 @@ class CoderIntegerTest{
 
 		BitSet bits = BitSet.valueOf(ByteHelper.createUnsignedByteArray(encodedValue, 32));
 		ByteHelper.reverseBits(bits, 32);
-		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bits.toByteArray()).toUpperCase(Locale.ROOT), 6, '0'), writer.toString());
+		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bits.toByteArray()).toUpperCase(Locale.ROOT), 8, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
 		BigInteger decoded = (BigInteger)coder.decode(messageParser, reader, annotation, null);
