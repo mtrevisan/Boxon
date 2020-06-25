@@ -46,56 +46,6 @@ class ByteHelperTest{
 	}
 
 	@Test
-	void indexOf1a(){
-		byte[] source = new byte[]{0x01, 0x02, 0x03, 0x03, 0x03, 0x07, 0x03};
-		byte[] pattern = new byte[]{0x03, 0x07};
-
-		int index = ByteHelper.indexOf(source, pattern, 0);
-
-		Assertions.assertEquals(4, index);
-	}
-
-	@Test
-	void indexOf1b(){
-		byte[] source = new byte[]{0x01, 0x02, 0x03, 0x03, 0x03, 0x07, 0x03};
-		byte[] pattern = new byte[]{0x03, 0x07};
-
-		int index = ByteHelper.indexOf(source, pattern, 1);
-
-		Assertions.assertEquals(4, index);
-	}
-
-	@Test
-	void indexOf1c(){
-		byte[] source = new byte[]{0x01, 0x02, 0x03, 0x03, 0x03, 0x07, 0x03};
-		byte[] pattern = new byte[]{0x03, 0x07};
-
-		int index = ByteHelper.indexOf(source, pattern, 5);
-
-		Assertions.assertEquals(-1, index);
-	}
-
-	@Test
-	void indexOf2(){
-		byte[] source = new byte[]{0x01, 0x02, 0x03, 0x03, 0x03, 0x07, 0x03};
-		byte[] pattern = new byte[]{0x03, 0x03, 0x17};
-
-		int index = ByteHelper.indexOf(source, pattern, 0);
-
-		Assertions.assertEquals(-1, index);
-	}
-
-	@Test
-	void indexOf3(){
-		byte[] source = new byte[]{0x01, 0x02, 0x03, 0x03, 0x03, 0x07, 0x03};
-		byte[] pattern = new byte[]{0x03, 0x03, 0x07};
-
-		int index = ByteHelper.indexOf(source, pattern, 0);
-
-		Assertions.assertEquals(3, index);
-	}
-
-	@Test
 	void byteArrayToHexString(){
 		byte[] array = new byte[]{0x23, 0x5e, 0x40, 0x03, 0x51, 0x10, 0x42, 0x06};
 

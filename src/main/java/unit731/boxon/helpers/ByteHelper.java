@@ -59,27 +59,6 @@ public class ByteHelper{
 	 * @param source	The list in which to search for the first occurrence of {@code pattern}.
 	 * @param pattern	The list to search for as a subList of {@code source}.
 	 * @param offset	Offset to start the search from.
-	 * @return	The starting position of the first occurrence of the specified pattern list within the specified source list,
-	 * 	or {@code -1} if there is no such occurrence.
-	 */
-	public static int indexOf(final byte[] source, final byte[] pattern, final int offset){
-		final int[] lps = indexOfComputeLPS(pattern);
-		return indexOf(source, pattern, offset, lps);
-	}
-
-	/**
-	 * Returns the starting position of the first occurrence of the specified pattern array within the specified source array,
-	 * or {@code -1} if there is no such occurrence.
-	 * More formally, returns the lowest index `i` such that {@code source.subArray(i, i + pattern.size()).equals(pattern)},
-	 * or {@code -1} if there is no such index.<br>
-	 * (Returns {@code -1} if {@code pattern.size() > source.size()})
-	 * <p>
-	 * This implementation uses the "brute force" technique of scanning over the source list, looking for a match with the pattern
-	 * at each location in turn
-	 *
-	 * @param source	The list in which to search for the first occurrence of {@code pattern}.
-	 * @param pattern	The list to search for as a subList of {@code source}.
-	 * @param offset	Offset to start the search from.
 	 * @param lps	LPS array precomputed by {@link #indexOfComputeLPS(byte[])}
 	 * @return	The starting position of the first occurrence of the specified pattern list within the specified source list,
 	 * 	or {@code -1} if there is no such occurrence.

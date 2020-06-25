@@ -83,7 +83,7 @@ public class ReflectionHelper{
 		catch(final IllegalAccessException ignored){}
 	}
 
-	public static Field getAccessibleField(Class<?> cls, final String fieldName) throws NoSuchFieldException{
+	private static Field getAccessibleField(Class<?> cls, final String fieldName) throws NoSuchFieldException{
 		Field field = null;
 		boolean notFound = true;
 		while(notFound){
