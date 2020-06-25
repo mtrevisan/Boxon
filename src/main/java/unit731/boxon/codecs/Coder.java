@@ -69,10 +69,7 @@ enum Coder{
 			Class<?> type = binding.type();
 			final Choices selectFrom = binding.selectFrom();
 			final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): new Choices.Choice[0]);
-			if(type == Object.class && alternatives.length == 0)
-				throw new IllegalArgumentException("`type` argument missing");
-			if(type != Object.class && alternatives.length > 0)
-				throw new IllegalArgumentException("Cannot define both `type` and `selectFrom`");
+			validateAnnotation(type, alternatives);
 
 			if(alternatives.length > 0){
 				//read prefix
@@ -110,10 +107,7 @@ enum Coder{
 			Class<?> type = binding.type();
 			final Choices selectFrom = binding.selectFrom();
 			final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): new Choices.Choice[0]);
-			if(type == Object.class && alternatives.length == 0)
-				throw new IllegalArgumentException("`type` argument missing");
-			if(type != Object.class && alternatives.length > 0)
-				throw new IllegalArgumentException("Cannot define both `type` and `selectFrom`");
+			validateAnnotation(type, alternatives);
 
 			if(alternatives.length > 0){
 				//write prefix
@@ -141,6 +135,13 @@ enum Coder{
 			final Object array = converterEncode(binding.converter(), value);
 
 			MessageParser.encode(codec, array, writer);
+		}
+
+		private void validateAnnotation(final Class<?> type, final Choices.Choice[] alternatives){
+			if(type == Object.class && alternatives.length == 0)
+				throw new IllegalArgumentException("`type` argument missing");
+			if(type != Object.class && alternatives.length > 0)
+				throw new IllegalArgumentException("Cannot define both `type` and `selectFrom`");
 		}
 
 		@Override
@@ -232,18 +233,13 @@ enum Coder{
 
 			final ByteOrder byteOrder = binding.byteOrder();
 			final Class<?> type = binding.type();
-			final boolean isPrimitive = (type.isArray() && type.getComponentType().isPrimitive());
-			if(!isPrimitive)
-				throw new IllegalArgumentException("Bad annotation used, @" + BindArray.class.getSimpleName()
-					+ " should have been used with type `" + type.getSimpleName() + ".class`");
+			validatePrimitiveType(type);
 			final Codec<?> codec = Codec.createFrom(type.getComponentType());
 			final int size = Evaluator.evaluate(binding.size(), int.class, data);
+			final Class<?> objectiveType = ReflectionHelper.objectiveType(type.getComponentType());
+			validateObjectiveType(type, objectiveType, codec);
 
 			final Object array = ReflectionHelper.createArrayPrimitive(type, size);
-			final Class<?> objectiveType = ReflectionHelper.objectiveType(type.getComponentType());
-			if(objectiveType == null)
-				throw new IllegalArgumentException("Unrecognized type for field " + codec.getClass().getSimpleName() + "<"
-					+ codec + ">: " + type.getComponentType().getSimpleName());
 			for(int i = 0; i < size; i ++){
 				final Object value = reader.get(objectiveType, byteOrder);
 				Array.set(array, i, value);
@@ -264,22 +260,29 @@ enum Coder{
 
 			final ByteOrder byteOrder = binding.byteOrder();
 			final Class<?> type = binding.type();
-			final boolean isPrimitive = (type.isArray() && type.getComponentType().isPrimitive());
-			if(!isPrimitive)
-				throw new IllegalArgumentException("Bad annotation used, @" + BindArray.class.getSimpleName()
-					+ " should have been used with type `" + type.getSimpleName() + ".class`");
+			validatePrimitiveType(type);
 			final Codec<?> codec = Codec.createFrom(type.getComponentType());
 			final int size = Evaluator.evaluate(binding.size(), int.class, data);
-
 			final Class<?> objectiveType = ReflectionHelper.objectiveType(type.getComponentType());
-			if(objectiveType == null)
-				throw new IllegalArgumentException("Unrecognized type for field " + codec.getClass().getSimpleName() + "<"
-					+ codec + ">: " + type.getComponentType().getSimpleName());
+			validateObjectiveType(type, objectiveType, codec);
 
 			final Object array = converterEncode(binding.converter(), value);
 
 			for(int i = 0; i < size; i ++)
 				writer.put(Array.get(array, i), byteOrder);
+		}
+
+		private void validatePrimitiveType(final Class<?> type){
+			final boolean isPrimitive = (type.isArray() && type.getComponentType().isPrimitive());
+			if(!isPrimitive)
+				throw new IllegalArgumentException("Bad annotation used, @" + BindArray.class.getSimpleName()
+					+ " should have been used with type `" + type.getSimpleName() + ".class`");
+		}
+
+		private void validateObjectiveType(final Class<?> type, final Class<?> objectiveType, final Codec<?> codec){
+			if(objectiveType == null)
+				throw new IllegalArgumentException("Unrecognized type for field " + codec.getClass().getSimpleName() + "<"
+					+ codec + ">: " + type.getComponentType().getSimpleName());
 		}
 
 		@Override
@@ -766,9 +769,7 @@ enum Coder{
 
 			final Class<?> type = binding.type();
 			final Class<?> objectiveType = ReflectionHelper.objectiveType(type);
-			if(objectiveType == null)
-				throw new IllegalArgumentException("Unrecognized type for field " + getClass().getSimpleName()
-					+ "<" + type.getSimpleName() + ">: " + type.getComponentType().getSimpleName());
+			validateObjectiveType(objectiveType, type);
 
 			final ByteOrder byteOrder = binding.byteOrder();
 			return reader.get(objectiveType, byteOrder);
@@ -780,12 +781,16 @@ enum Coder{
 
 			final Class<?> type = binding.type();
 			final Class<?> objectiveType = ReflectionHelper.objectiveType(type);
-			if(objectiveType == null)
-				throw new IllegalArgumentException("Unrecognized type for field " + getClass().getSimpleName()
-					+ "<" + type.getSimpleName() + ">: " + type.getComponentType().getSimpleName());
+			validateObjectiveType(objectiveType, type);
 
 			final ByteOrder byteOrder = binding.byteOrder();
 			writer.put(value, byteOrder);
+		}
+
+		private void validateObjectiveType(final Class<?> objectiveType, final Class<?> type){
+			if(objectiveType == null)
+				throw new IllegalArgumentException("Unrecognized type for field " + getClass().getSimpleName()
+					+ "<" + type.getSimpleName() + ">: " + type.getComponentType().getSimpleName());
 		}
 
 		@Override
