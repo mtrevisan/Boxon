@@ -27,7 +27,7 @@ package unit731.boxon.codecs;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import unit731.boxon.annotations.BindNumber;
+import unit731.boxon.annotations.BindInteger;
 import unit731.boxon.annotations.converters.Converter;
 import unit731.boxon.annotations.converters.NullConverter;
 import unit731.boxon.annotations.validators.NullValidator;
@@ -52,10 +52,10 @@ class CoderIntegerTest{
 		long encodedValue = (RANDOM.nextLong() & 0x007F_FFFF);
 		if(encodedValue > 0l)
 			encodedValue = -encodedValue;
-		BindNumber annotation = new BindNumber(){
+		BindInteger annotation = new BindInteger(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindNumber.class;
+				return BindInteger.class;
 			}
 
 			@Override
@@ -111,10 +111,10 @@ class CoderIntegerTest{
 	void smallNegativeNumberLittleEndian(){
 		Coder coder = Coder.INTEGER;
 		long encodedValue = -(RANDOM.nextLong() & 0x007F_FFFF);
-		BindNumber annotation = new BindNumber(){
+		BindInteger annotation = new BindInteger(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindNumber.class;
+				return BindInteger.class;
 			}
 
 			@Override
@@ -172,10 +172,10 @@ class CoderIntegerTest{
 		long encodedValue = (RANDOM.nextLong() & 0x007F_FFFF);
 		if(encodedValue > 0l)
 			encodedValue = -encodedValue;
-		BindNumber annotation = new BindNumber(){
+		BindInteger annotation = new BindInteger(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindNumber.class;
+				return BindInteger.class;
 			}
 
 			@Override
@@ -233,10 +233,10 @@ class CoderIntegerTest{
 	void smallNegativeNumberBigEndian(){
 		Coder coder = Coder.INTEGER;
 		long encodedValue = -(RANDOM.nextLong() & 0x007F_FFFF);
-		BindNumber annotation = new BindNumber(){
+		BindInteger annotation = new BindInteger(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindNumber.class;
+				return BindInteger.class;
 			}
 
 			@Override
@@ -298,10 +298,10 @@ class CoderIntegerTest{
 		do{
 			encodedValue = new BigInteger(128, RANDOM);
 		}while(encodedValue.signum() <= 0 || encodedValue.toByteArray().length > 16);
-		BindNumber annotation = new BindNumber(){
+		BindInteger annotation = new BindInteger(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindNumber.class;
+				return BindInteger.class;
 			}
 
 			@Override
@@ -361,10 +361,10 @@ class CoderIntegerTest{
 			encodedValue = new BigInteger(128, RANDOM)
 				.negate();
 		}while(encodedValue.toByteArray().length > 16);
-		BindNumber annotation = new BindNumber(){
+		BindInteger annotation = new BindInteger(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindNumber.class;
+				return BindInteger.class;
 			}
 
 			@Override
@@ -423,10 +423,10 @@ class CoderIntegerTest{
 		do{
 			encodedValue = new BigInteger(128, RANDOM);
 		}while(encodedValue.signum() <= 0 || encodedValue.toByteArray().length > 16);
-		BindNumber annotation = new BindNumber(){
+		BindInteger annotation = new BindInteger(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindNumber.class;
+				return BindInteger.class;
 			}
 
 			@Override
@@ -488,10 +488,10 @@ class CoderIntegerTest{
 			encodedValue = new BigInteger(128, RANDOM)
 				.negate();
 		}while(encodedValue.toByteArray().length > 16);
-		BindNumber annotation = new BindNumber(){
+		BindInteger annotation = new BindInteger(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindNumber.class;
+				return BindInteger.class;
 			}
 
 			@Override
@@ -553,10 +553,10 @@ class CoderIntegerTest{
 		do{
 			encodedValue = new BigInteger(32, RANDOM);
 		}while(encodedValue.signum() <= 0 || encodedValue.toByteArray().length > 4);
-		BindNumber annotation = new BindNumber(){
+		BindInteger annotation = new BindInteger(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindNumber.class;
+				return BindInteger.class;
 			}
 
 			@Override
@@ -616,10 +616,10 @@ class CoderIntegerTest{
 			encodedValue = new BigInteger(32, RANDOM)
 				.negate();
 		}while(encodedValue.toByteArray().length > 4);
-		BindNumber annotation = new BindNumber(){
+		BindInteger annotation = new BindInteger(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindNumber.class;
+				return BindInteger.class;
 			}
 
 			@Override
@@ -678,10 +678,10 @@ class CoderIntegerTest{
 		do{
 			encodedValue = new BigInteger(32, RANDOM);
 		}while(encodedValue.signum() <= 0 || encodedValue.toByteArray().length > 4);
-		BindNumber annotation = new BindNumber(){
+		BindInteger annotation = new BindInteger(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindNumber.class;
+				return BindInteger.class;
 			}
 
 			@Override
@@ -743,10 +743,10 @@ class CoderIntegerTest{
 			encodedValue = new BigInteger(32, RANDOM)
 				.negate();
 		}while(encodedValue.toByteArray().length > 4);
-		BindNumber annotation = new BindNumber(){
+		BindInteger annotation = new BindInteger(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindNumber.class;
+				return BindInteger.class;
 			}
 
 			@Override

@@ -27,7 +27,7 @@ package unit731.boxon.codecs;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import unit731.boxon.annotations.BindInteger;
+import unit731.boxon.annotations.BindInt;
 import unit731.boxon.annotations.converters.Converter;
 import unit731.boxon.annotations.converters.NullConverter;
 import unit731.boxon.annotations.validators.NullValidator;
@@ -47,10 +47,10 @@ class CoderIntTest{
 	void integerLittleEndian(){
 		Coder coder = Coder.INT;
 		int encodedValue = RANDOM.nextInt();
-		BindInteger annotation = new BindInteger(){
+		BindInt annotation = new BindInt(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindInteger.class;
+				return BindInt.class;
 			}
 
 			@Override
@@ -98,10 +98,10 @@ class CoderIntTest{
 		int encodedValue = RANDOM.nextInt();
 		if(encodedValue > 0)
 			encodedValue = -encodedValue;
-		BindInteger annotation = new BindInteger(){
+		BindInt annotation = new BindInt(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindInteger.class;
+				return BindInt.class;
 			}
 
 			@Override
@@ -147,10 +147,10 @@ class CoderIntTest{
 	void integerBigEndian(){
 		Coder coder = Coder.INT;
 		int encodedValue = RANDOM.nextInt();
-		BindInteger annotation = new BindInteger(){
+		BindInt annotation = new BindInt(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindInteger.class;
+				return BindInt.class;
 			}
 
 			@Override
@@ -198,10 +198,10 @@ class CoderIntTest{
 		int encodedValue = RANDOM.nextInt();
 		if(encodedValue > 0)
 			encodedValue = -encodedValue;
-		BindInteger annotation = new BindInteger(){
+		BindInt annotation = new BindInt(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindInteger.class;
+				return BindInt.class;
 			}
 
 			@Override

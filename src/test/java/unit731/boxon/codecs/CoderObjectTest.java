@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import unit731.boxon.annotations.BindArrayPrimitive;
 import unit731.boxon.annotations.BindByte;
-import unit731.boxon.annotations.BindInteger;
+import unit731.boxon.annotations.BindInt;
 import unit731.boxon.annotations.BindObject;
 import unit731.boxon.annotations.BindShort;
 import unit731.boxon.annotations.BindString;
@@ -115,7 +115,7 @@ class CoderObjectTest{
 	}
 
 	static class TestType2 extends TestType0{
-		@BindInteger
+		@BindInt
 		public int value;
 	}
 

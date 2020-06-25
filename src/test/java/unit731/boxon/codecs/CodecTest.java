@@ -33,10 +33,10 @@ import unit731.boxon.annotations.BindChecksum;
 import unit731.boxon.annotations.BindDouble;
 import unit731.boxon.annotations.BindFloat;
 import unit731.boxon.annotations.BindIf;
-import unit731.boxon.annotations.BindInteger;
+import unit731.boxon.annotations.BindInt;
 import unit731.boxon.annotations.BindLong;
 import unit731.boxon.annotations.BindDecimal;
-import unit731.boxon.annotations.BindNumber;
+import unit731.boxon.annotations.BindInteger;
 import unit731.boxon.annotations.BindShort;
 import unit731.boxon.annotations.BindString;
 import unit731.boxon.annotations.BindStringTerminated;
@@ -135,13 +135,13 @@ class CodecTest{
 		private double numberDouble;
 		@BindFloat
 		private float numberFloat;
-		@BindInteger
+		@BindInt
 		private int numberInt;
 		@BindLong
 		private long numberLong;
-		@BindNumber(size = "5")
+		@BindInteger(size = "5")
 		private long numberLong2;
-		@BindNumber(size = "70")
+		@BindInteger(size = "70")
 		private BigInteger numberLong3;
 		@BindDecimal(type = Double.class)
 		private BigDecimal number;
@@ -162,7 +162,7 @@ class CodecTest{
 
 	@MessageHeader(start = "++", end = "--")
 	private class MessageChild extends Message{
-		@BindInteger
+		@BindInt
 		private int anotherNumberInt;
 	}
 

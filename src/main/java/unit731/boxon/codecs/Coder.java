@@ -31,10 +31,10 @@ import unit731.boxon.annotations.BindByte;
 import unit731.boxon.annotations.BindChecksum;
 import unit731.boxon.annotations.BindDouble;
 import unit731.boxon.annotations.BindFloat;
-import unit731.boxon.annotations.BindInteger;
+import unit731.boxon.annotations.BindInt;
 import unit731.boxon.annotations.BindLong;
 import unit731.boxon.annotations.BindDecimal;
-import unit731.boxon.annotations.BindNumber;
+import unit731.boxon.annotations.BindInteger;
 import unit731.boxon.annotations.BindObject;
 import unit731.boxon.annotations.BindShort;
 import unit731.boxon.annotations.BindString;
@@ -517,7 +517,7 @@ enum Coder{
 	INT{
 		@Override
 		Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
-			final BindInteger binding = (BindInteger)annotation;
+			final BindInt binding = (BindInt)annotation;
 
 			final Object value;
 			final ByteOrder byteOrder = binding.byteOrder();
@@ -539,7 +539,7 @@ enum Coder{
 
 		@Override
 		void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
-			final BindInteger binding = (BindInteger)annotation;
+			final BindInt binding = (BindInt)annotation;
 
 			validateData(binding.match(), binding.validator(), value);
 
@@ -551,7 +551,7 @@ enum Coder{
 
 		@Override
 		Class<?> coderType(){
-			return BindInteger.class;
+			return BindInt.class;
 		}
 	},
 
@@ -591,7 +591,7 @@ enum Coder{
 	INTEGER{
 		@Override
 		Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
-			final BindNumber binding = (BindNumber)annotation;
+			final BindInteger binding = (BindInteger)annotation;
 
 			final int size = Evaluator.evaluate(binding.size(), int.class, data);
 			final BitSet bits = reader.getBits(size);
@@ -620,7 +620,7 @@ enum Coder{
 
 		@Override
 		void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
-			final BindNumber binding = (BindNumber)annotation;
+			final BindInteger binding = (BindInteger)annotation;
 
 			validateData(binding.match(), binding.validator(), value);
 
@@ -649,7 +649,7 @@ enum Coder{
 
 		@Override
 		Class<?> coderType(){
-			return BindNumber.class;
+			return BindInteger.class;
 		}
 	},
 

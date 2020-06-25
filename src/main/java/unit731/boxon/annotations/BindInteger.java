@@ -37,15 +37,23 @@ import java.lang.annotation.Target;
 
 
 /**
- * Manages an <code>int</code>/{@link Integer} (... before the application of a converter)
+ * Manages a <code>long</code>/{@link Long} if <code>size &lt; 64</code>, {@link java.math.BigInteger} otherwise (... before the application of a converter)
+ * If <code>allowPrimitive</code> is <code>false</code>, then the data type is only {@link java.math.BigInteger}
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface BindInteger{
 
 	/**
+	 * The number of bits used to represent the numeric value.
+	 *
+	 * @return	The number of bits used to represent the numeric value (can be an expression).
+	 */
+	String size() default "1";
+
+	/**
 	 * The type of value: either signed or unsigned.
-	 * <p>NOTE: in case of unsigned value, the read data is a long.</p>
+	 * <p>NOTE: in case of unsigned value with size &lt; 64, the read data is "one order of magnitude higher" (that is short for byte, int for short, and long for int).</p>
 	 *
 	 * @return	The type of value. Defaults to <code>false</code>.
 	 */
@@ -53,10 +61,18 @@ public @interface BindInteger{
 
 	/**
 	 * The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
+	 * <p>NOTE: This works at bit level! (from lowest to highest if little-endian, from highest to lowest for big-endian)</p>
 	 *
 	 * @return	The type of endianness. Defaults to {@link ByteOrder#BIG_ENDIAN}.
 	 */
 	ByteOrder byteOrder() default ByteOrder.BIG_ENDIAN;
+
+	/**
+	 * Allow returning a <code>long</code>/{@link Long} if <code>size &lt; 64</code>, defaults to <code>true</code>.
+	 *
+	 * @return	Whether to allow returning a <code>long</code>/{@link Long} if <code>size &lt; 64</code>
+	 */
+	boolean allowPrimitive() default true;
 
 	/**
 	 * The value to match (can be a regex expression or a SpEL expression).
