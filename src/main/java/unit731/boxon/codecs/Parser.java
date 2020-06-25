@@ -143,7 +143,17 @@ public class Parser{
 	 * Parse a message
 	 *
 	 * @param data	The messages to be composed
-	 * @return	The composed response
+	 * @return	The composition response
+	 */
+	public final ComposeResponse compose(final List<Object> data){
+		return compose(data.toArray(Object[]::new));
+	}
+
+	/**
+	 * Parse a message
+	 *
+	 * @param data	The message(s) to be composed
+	 * @return	The composition response
 	 */
 	public final ComposeResponse compose(final Object... data){
 		final ComposeResponse response = new ComposeResponse();
