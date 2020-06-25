@@ -28,6 +28,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import unit731.boxon.annotations.BindArray;
 import unit731.boxon.annotations.BindArrayPrimitive;
+import unit731.boxon.annotations.BindByte;
 import unit731.boxon.annotations.BindString;
 import unit731.boxon.annotations.Choices;
 import unit731.boxon.annotations.MessageHeader;
@@ -35,7 +36,6 @@ import unit731.boxon.annotations.converters.NullConverter;
 import unit731.boxon.annotations.converters.Converter;
 import unit731.boxon.annotations.validators.NullValidator;
 import unit731.boxon.annotations.validators.Validator;
-import unit731.boxon.codecs.queclink.Version;
 import unit731.boxon.helpers.ByteHelper;
 
 import java.lang.annotation.Annotation;
@@ -44,6 +44,21 @@ import java.util.List;
 
 
 class CoderArrayTest{
+
+	private class Version{
+		@BindByte
+		private byte major;
+		@BindByte
+		private byte minor;
+		@BindByte
+		private byte build;
+
+		private Version(final byte major, final byte minor, final byte build){
+			this.major = major;
+			this.minor = minor;
+			this.build = build;
+		}
+	}
 
 	@MessageHeader(start = "tc4")
 	static class TestChoice4{
@@ -166,7 +181,7 @@ class CoderArrayTest{
 		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		Assertions.assertArrayEquals(new byte[]{0x00, 0x01, 0x01, 0x02}, writer.array());
+		Assertions.assertArrayEquals(new byte[]{0x00, 0x01, 0x0C, 0x01, 0x02, 0x00}, writer.array());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
 

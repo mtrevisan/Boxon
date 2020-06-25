@@ -27,6 +27,7 @@ package unit731.boxon.codecs;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import unit731.boxon.annotations.BindArrayPrimitive;
+import unit731.boxon.annotations.BindByte;
 import unit731.boxon.annotations.BindInteger;
 import unit731.boxon.annotations.BindObject;
 import unit731.boxon.annotations.BindShort;
@@ -37,7 +38,6 @@ import unit731.boxon.annotations.converters.NullConverter;
 import unit731.boxon.annotations.converters.Converter;
 import unit731.boxon.annotations.validators.NullValidator;
 import unit731.boxon.annotations.validators.Validator;
-import unit731.boxon.codecs.queclink.Version;
 import unit731.boxon.helpers.ByteHelper;
 
 import java.lang.annotation.Annotation;
@@ -47,10 +47,23 @@ import java.util.List;
 
 class CoderObjectTest{
 
+	private class Version{
+		@BindByte
+		private byte major;
+		@BindByte
+		private byte minor;
+
+		private Version(final byte major, final byte minor){
+			this.major = major;
+			this.minor = minor;
+		}
+	}
+
+
 	@Test
 	void object(){
 		Coder coder = Coder.OBJECT;
-		Version encodedValue = new Version((byte)1, (byte)2, (byte)0);
+		Version encodedValue = new Version((byte)1, (byte)2);
 		BindObject annotation = new BindObject(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
