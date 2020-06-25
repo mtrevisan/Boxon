@@ -27,7 +27,7 @@ package unit731.boxon.codecs;
 import unit731.boxon.annotations.Assign;
 import unit731.boxon.annotations.BindArray;
 import unit731.boxon.annotations.BindArrayPrimitive;
-import unit731.boxon.annotations.BindBit;
+import unit731.boxon.annotations.BindBits;
 import unit731.boxon.annotations.BindByte;
 import unit731.boxon.annotations.BindChecksum;
 import unit731.boxon.annotations.BindDouble;
@@ -129,7 +129,7 @@ class CodecTest{
 		@BindIf("mask.hasProtocolVersion()")
 		@BindArrayPrimitive(size = "2", type = byte[].class)
 		private byte[] protocolVersion;
-		@BindBit(size = "2")
+		@BindBits(size = "2")
 		private BitSet bits;
 		@BindDouble
 		private double numberDouble;

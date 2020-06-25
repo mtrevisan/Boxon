@@ -26,7 +26,7 @@ package unit731.boxon.codecs;
 
 import unit731.boxon.annotations.BindArray;
 import unit731.boxon.annotations.BindArrayPrimitive;
-import unit731.boxon.annotations.BindBit;
+import unit731.boxon.annotations.BindBits;
 import unit731.boxon.annotations.BindByte;
 import unit731.boxon.annotations.BindChecksum;
 import unit731.boxon.annotations.BindDouble;
@@ -395,10 +395,10 @@ enum Coder{
 		}
 	},
 
-	BIT {
+	BITS{
 		@Override
 		Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
-			final BindBit binding = (BindBit)annotation;
+			final BindBits binding = (BindBits)annotation;
 
 			final int size = Evaluator.evaluate(binding.size(), int.class, data);
 			final BitSet bits = reader.getBits(size);
@@ -415,7 +415,7 @@ enum Coder{
 
 		@Override
 		void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
-			final BindBit binding = (BindBit)annotation;
+			final BindBits binding = (BindBits)annotation;
 
 			validateData(binding.match(), binding.validator(), value);
 
@@ -430,7 +430,7 @@ enum Coder{
 
 		@Override
 		Class<?> coderType(){
-			return BindBit.class;
+			return BindBits.class;
 		}
 	},
 

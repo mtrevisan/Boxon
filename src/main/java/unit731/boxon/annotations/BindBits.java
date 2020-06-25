@@ -41,7 +41,7 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface BindBit{
+public @interface BindBits{
 
 	/**
 	 * The number of bits used to represent the numeric value.

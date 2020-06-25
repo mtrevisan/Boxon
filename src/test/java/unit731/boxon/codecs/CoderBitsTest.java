@@ -26,7 +26,7 @@ package unit731.boxon.codecs;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import unit731.boxon.annotations.BindBit;
+import unit731.boxon.annotations.BindBits;
 import unit731.boxon.annotations.converters.Converter;
 import unit731.boxon.annotations.converters.NullConverter;
 import unit731.boxon.annotations.validators.NullValidator;
@@ -38,21 +38,21 @@ import java.util.BitSet;
 import java.util.Random;
 
 
-class CoderBitTest{
+class CoderBitsTest{
 
 	private static final Random RANDOM = new Random();
 
 
 	@Test
 	void bitLittleEndian(){
-		Coder coder = Coder.BIT;
+		Coder coder = Coder.BITS;
 		byte[] randomBytes = new byte[123];
 		RANDOM.nextBytes(randomBytes);
 		BitSet encodedValue = BitSet.valueOf(randomBytes);
-		BindBit annotation = new BindBit(){
+		BindBits annotation = new BindBits(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindBit.class;
+				return BindBits.class;
 			}
 
 			@Override
@@ -102,14 +102,14 @@ class CoderBitTest{
 
 	@Test
 	void bitBigEndian(){
-		Coder coder = Coder.BIT;
+		Coder coder = Coder.BITS;
 		byte[] randomBytes = new byte[123];
 		RANDOM.nextBytes(randomBytes);
 		BitSet encodedValue = BitSet.valueOf(randomBytes);
-		BindBit annotation = new BindBit(){
+		BindBits annotation = new BindBits(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindBit.class;
+				return BindBits.class;
 			}
 
 			@Override
