@@ -386,7 +386,7 @@ public class QueclinkHelper{
 	public static class PhoneNumberConverter implements Converter<byte[], String>{
 		@Override
 		public String decode(final byte[] value){
-			final StringBuilder phoneNumber = new StringBuilder();
+			final StringBuffer phoneNumber = new StringBuffer();
 			//length of the phone number (plus the byte of the length)
 			final int length = (value[0] >>> 4) - 1;
 			if(length > 0){
@@ -438,7 +438,7 @@ public class QueclinkHelper{
 
 		@Override
 		public String encode(final ZonedDateTime value){
-			StringBuilder sb = new StringBuilder();
+			StringBuffer sb = new StringBuffer();
 			sb.append(StringUtils.leftPad(Integer.toString(value.getYear()), 4, '0'));
 			sb.append(StringUtils.leftPad(Integer.toString(value.getMonthValue()), 2, '0'));
 			sb.append(StringUtils.leftPad(Integer.toString(value.getDayOfMonth()), 2, '0'));

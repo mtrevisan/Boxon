@@ -129,7 +129,7 @@ public class ByteHelper{
 	 * @return	The hexadecimal characters
 	 */
 	public static String byteArrayToHexString(final byte[] byteArray){
-		final StringBuilder sb = new StringBuilder(byteArray.length << 1);
+		final StringBuffer sb = new StringBuffer(byteArray.length << 1);
 		for(final byte b : byteArray){
 			sb.append(Character.forDigit((b >> 4) & 0x0F, 16));
 			sb.append(Character.forDigit((b & 0x0F), 16));

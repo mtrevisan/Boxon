@@ -77,7 +77,7 @@ public @interface BindArray{
 	 *
 	 * @return The choices to select from, based on a prefix of a certain size.
 	 */
-	Choices selectFrom() default @Choices(alternatives = {});
+	Choices selectFrom() default @Choices();
 
 	/**
 	 * The validator to be applied before applying the converter, if any. Usually the fully qualified
