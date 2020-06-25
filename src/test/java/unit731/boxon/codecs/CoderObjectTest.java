@@ -47,7 +47,7 @@ import java.util.List;
 
 class CoderObjectTest{
 
-	private class Version{
+	private static class Version{
 		@BindByte
 		private byte major;
 		@BindByte
