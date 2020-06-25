@@ -70,11 +70,7 @@ class MessageParser{
 				continue;
 
 			final Annotation binding = field.getBinding();
-			final Class<? extends Annotation> annotationType = binding.annotationType();
-			final Coder coder = Coder.CODERS_FROM_ANNOTATION.get(annotationType);
-			if(coder == null)
-				throw new IllegalArgumentException("Unrecognized annotation for field " + codec + "." + field.getName()
-					+ ": @" + annotationType.getSimpleName());
+			final Coder coder = retrieveCoder(codec, field, binding);
 
 			try{
 				final Object value = coder.decode(reader, binding, data);
@@ -171,11 +167,7 @@ class MessageParser{
 				continue;
 
 			final Annotation binding = field.getBinding();
-			final Class<? extends Annotation> annotationType = binding.annotationType();
-			final Coder coder = Coder.CODERS_FROM_ANNOTATION.get(annotationType);
-			if(coder == null)
-				throw new IllegalArgumentException("Unrecognized annotation for field " + codec + "." + field.getName()
-					+ ": @" + annotationType.getSimpleName());
+			final Coder coder = retrieveCoder(codec, field, binding);
 
 			try{
 				final Object value = ReflectionHelper.getFieldValue(data, field.getName());
@@ -193,6 +185,15 @@ class MessageParser{
 			writer.putBytes(messageTerminator);
 		}
 		writer.flush();
+	}
+
+	private static Coder retrieveCoder(final Codec<?> codec, final Codec.BoundedField field, final Annotation binding){
+		final Class<? extends Annotation> annotationType = binding.annotationType();
+		final Coder coder = Coder.CODERS_FROM_ANNOTATION.get(annotationType);
+		if(coder == null)
+			throw new IllegalArgumentException("Unrecognized annotation for field " + codec + "." + field.getName()
+				+ ": @" + annotationType.getSimpleName());
+		return coder;
 	}
 
 	private static <T> void addSkippedFields(final Skip[] skips, final BitWriter writer, final T data){

@@ -151,8 +151,8 @@ public class Parser{
 		for(final Object elem : data){
 			try{
 				final Codec<?> codec = Codec.createFrom(elem.getClass());
-				if(codec == null)
-					throw new IllegalArgumentException("Cannot find any codec for message");
+				if(!codec.canBeDecoded())
+					throw new IllegalArgumentException("Cannot construct any codec for message");
 
 				MessageParser.encode(codec, elem, writer);
 			}
