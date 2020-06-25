@@ -22,9 +22,9 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 
-public class AnnotationProcessor{
+public class AnnotationHelper{
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(AnnotationProcessor.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(AnnotationHelper.class.getName());
 
 
 	private static final String SCHEMA_FILE = "file:";
@@ -32,18 +32,18 @@ public class AnnotationProcessor{
 	private static final String BOOT_INF_CLASSES = "BOOT-INF.classes.";
 	private static final String POINT = ".";
 
-	private static final class ClassElem{
+	private static final class ClassDescriptor{
 		final File file;
 		final String packageName;
 
-		ClassElem(final File file, final String packageName){
+		ClassDescriptor(final File file, final String packageName){
 			this.file = file;
 			this.packageName = packageName;
 		}
 	}
 
 
-	private AnnotationProcessor(){}
+	private AnnotationHelper(){}
 
 	/**
 	 * Retrieving fields list of specified class
@@ -146,20 +146,21 @@ public class AnnotationProcessor{
 	private static Set<Class<?>> extractAnnotatedClasses(final Class<? extends Annotation> annotation, final File directory, final String packageName){
 		final Set<Class<?>> codecs = new HashSet<>();
 
-		final Stack<ClassElem> stack = new Stack<>();
-		stack.push(new ClassElem(directory, packageName));
+		final Stack<ClassDescriptor> stack = new Stack<>();
+		stack.push(new ClassDescriptor(directory, packageName));
 		while(!stack.isEmpty()){
-			final ClassElem elem = stack.pop();
+			final ClassDescriptor elem = stack.pop();
+
 			final File[] files = Optional.ofNullable(elem.file.listFiles())
 				.orElse(new File[0]);
 			for(final File file : files){
+				final String fileName = file.getName();
 				if(file.isDirectory())
-					stack.push(new ClassElem(file, elem.packageName + POINT + file.getName()));
-				else if(file.getName().endsWith(EXTENSION_CLASS)){
+					stack.push(new ClassDescriptor(file, elem.packageName + POINT + fileName));
+				else if(fileName.endsWith(EXTENSION_CLASS)){
 					try{
-						final String className = elem.packageName + POINT
-							+ file.getName().substring(0, file.getName().length() - EXTENSION_CLASS.length());
-						final Class<?> cls = Class.forName(className);
+						final String className = fileName.substring(0, fileName.length() - EXTENSION_CLASS.length());
+						final Class<?> cls = Class.forName(elem.packageName + POINT + className);
 						if(cls.isAnnotationPresent(annotation))
 							codecs.add(cls);
 					}

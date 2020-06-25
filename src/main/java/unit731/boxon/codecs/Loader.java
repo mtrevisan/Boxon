@@ -25,7 +25,7 @@
 package unit731.boxon.codecs;
 
 import unit731.boxon.annotations.MessageHeader;
-import unit731.boxon.helpers.AnnotationProcessor;
+import unit731.boxon.helpers.AnnotationHelper;
 import unit731.boxon.helpers.ByteHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,7 +71,7 @@ class Loader{
 				Arrays.toString(Arrays.stream(basePackageClasses).map(Class::getName)
 					.map(name -> name.substring(0, name.lastIndexOf('.'))).toArray(String[]::new)));
 
-			final Collection<Class<?>> annotatedClasses = AnnotationProcessor.extractAnnotatedClasses(MessageHeader.class, basePackageClasses);
+			final Collection<Class<?>> annotatedClasses = AnnotationHelper.extractAnnotatedClasses(MessageHeader.class, basePackageClasses);
 			final Collection<Codec<?>> codecs = new ArrayList<>();
 			for(final Class<?> cls : annotatedClasses){
 				final Codec<?> codec = Codec.createFrom(cls);

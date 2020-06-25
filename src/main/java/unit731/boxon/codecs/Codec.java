@@ -29,7 +29,7 @@ import unit731.boxon.annotations.BindChecksum;
 import unit731.boxon.annotations.BindIf;
 import unit731.boxon.annotations.MessageHeader;
 import unit731.boxon.annotations.Skip;
-import unit731.boxon.helpers.AnnotationProcessor;
+import unit731.boxon.helpers.AnnotationHelper;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -149,7 +149,7 @@ class Codec<T>{
 
 		header = cls.getAnnotation(MessageHeader.class);
 		//retrieve all declared fields in the current class, therefore NOT in the parent classes
-		loadAnnotatedFields(AnnotationProcessor.getDeclaredFields(cls, true));
+		loadAnnotatedFields(AnnotationHelper.getDeclaredFields(cls, true));
 	}
 
 	private void loadAnnotatedFields(final Field[] fields){
