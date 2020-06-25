@@ -31,11 +31,17 @@ import org.apache.commons.lang3.StringUtils;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.nio.ByteBuffer;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Locale;
 
 
 public class QueclinkHelper{
+
+	private static final ZoneId DATE_TIME_ZONE = ZoneId.of("UTC");
+	private static final String PATTERN_DATETIME_ISO8601 = "u-MM-dd'T'HH:mm:ss[.SSS][.S][XXX][X]";
+
 
 	public static class VersionConverter implements Converter<byte[], String>{
 		@Override
@@ -221,8 +227,8 @@ public class QueclinkHelper{
 	}
 	public static class DateTimeUnixConverter implements Converter<Integer, ZonedDateTime>{
 		@Override
-		public ZonedDateTime decode(final Integer value){
-			return DateTimeUtils.createFrom(value);
+		public ZonedDateTime decode(final Integer unixTime){
+			return ZonedDateTime.ofInstant(Instant.ofEpochSecond(unixTime), DATE_TIME_ZONE);
 		}
 
 		@Override
@@ -240,7 +246,7 @@ public class QueclinkHelper{
 			final int hour = bb.get();
 			final int minute = bb.get();
 			final int second = bb.get();
-			return DateTimeUtils.createFrom(year, month, dayOfMonth, hour, minute, second);
+			return ZonedDateTime.of(year, month, dayOfMonth, hour, minute, second, 0, DATE_TIME_ZONE);
 		}
 
 		@Override
@@ -433,7 +439,7 @@ public class QueclinkHelper{
 			final int hour = Integer.parseInt(value.substring(8, 10));
 			final int minute = Integer.parseInt(value.substring(10, 12));
 			final int second = Integer.parseInt(value.substring(12, 14));
-			return DateTimeUtils.createFrom(year, month, dayOfMonth, hour, minute, second);
+			return ZonedDateTime.of(year, month, dayOfMonth, hour, minute, second, 0, DATE_TIME_ZONE);
 		}
 
 		@Override
