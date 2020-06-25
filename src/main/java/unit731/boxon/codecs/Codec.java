@@ -157,18 +157,18 @@ class Codec<T>{
 			final BindIf condition = field.getDeclaredAnnotation(BindIf.class);
 			final Skip[] skips = field.getDeclaredAnnotationsByType(Skip.class);
 			final BindChecksum checksum = field.getDeclaredAnnotation(BindChecksum.class);
-			final List<Annotation> annotations = Arrays.stream(field.getDeclaredAnnotations())
-				//filter annotations that belong to parsing procedure
-				.filter(annotation -> annotation.toString().startsWith(ANNOTATIONS_PACKAGE))
-				//filter conditions
-				.filter(annotation -> annotation.annotationType() != BindIf.class && annotation.annotationType() != Skip.class)
-				.collect(Collectors.toList());
+
 			final List<Annotation> boundedAnnotations = new ArrayList<>();
-			for(final Annotation annotation : annotations){
-				if(annotation.annotationType() == Evaluate.class)
-					evaluatedFields.add(new EvaluatedField(field, (Evaluate)annotation));
-				else
-					boundedAnnotations.add(annotation);
+			for(final Annotation annotation : field.getDeclaredAnnotations()){
+				final Class<? extends Annotation> annotationType = annotation.annotationType();
+				//filter annotations that belong to parsing procedure
+				if(annotation.toString().startsWith(ANNOTATIONS_PACKAGE)
+						&& annotationType != BindIf.class && annotationType != Skip.class){
+					if(annotationType == Evaluate.class)
+						evaluatedFields.add(new EvaluatedField(field, (Evaluate)annotation));
+					else
+						boundedAnnotations.add(annotation);
+				}
 			}
 
 			validateAnnotation(checksum, boundedAnnotations);
