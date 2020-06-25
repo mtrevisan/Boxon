@@ -36,7 +36,7 @@ import java.lang.annotation.Target;
 
 
 /**
- * Manages a byte/{@link Byte} (... before the application of a converter)
+ * Manages a <code>byte</code>/{@link Byte} (... before the application of a converter)
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)

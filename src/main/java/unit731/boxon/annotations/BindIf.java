@@ -31,18 +31,17 @@ import java.lang.annotation.Target;
 
 
 /**
- * A simple annotation for marking particular fields to be optional, depending on the condition.
- * <p>The condition is based on the Limbo notation. Variables are expected to be resolved relatively to the object holding the annotated field.</p>
+ * Used for marking particular fields to be optional, depending on the condition.
+ * <p>The condition is based on the SpEL notation. Variables are expected to be resolved relatively to the object holding the annotated field.</p>
  * <p>Example snippet:</p>
  * <pre><code>
  * private int databaseVersion;
  *
- * &#64;If(&quot;databaseVersion &gt; 700&quot;)
- * &#64;BoundInteger
+ * &#64;BindIf(&quot;databaseVersion &gt; 700&quot;)
+ * &#64;BindInteger
  * private int foobar;
  * </code></pre>
- * <p>In the above case, <code>foobar</code> is only expected to be read only if the condition holds,
- * so if <code>databaseVersion</code> is 300, it will be skipped.</p>
+ * <p>In the above case, <code>foobar</code> is only expected to be read only if the condition holds.</p>
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
