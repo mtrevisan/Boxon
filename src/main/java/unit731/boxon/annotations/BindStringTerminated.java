@@ -38,8 +38,8 @@ import java.lang.annotation.Target;
 /**
  * Manages a {@link String} with a given terminator <code>byte</code> (... before the application of a converter)
  */
-@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
 public @interface BindStringTerminated{
 
 	/**

@@ -33,8 +33,8 @@ import java.lang.annotation.Target;
 /**
  * Manages the skipping of a certain amount of bits, or until a given terminator is found.
  */
-@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
 public @interface Skip{
 
 	/**

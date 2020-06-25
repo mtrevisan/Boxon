@@ -39,8 +39,8 @@ import java.lang.annotation.Target;
 /**
  * Manages a <code>short</code>/{@link Short} (... before the application of a converter)
  */
-@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
 public @interface BindShort{
 
 	/**

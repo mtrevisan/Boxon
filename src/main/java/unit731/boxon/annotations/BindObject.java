@@ -38,8 +38,8 @@ import java.lang.annotation.Target;
 /**
  * Manages an annotated {@link Class} (... before the application of a converter)
  */
-@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
 public @interface BindObject{
 
 	/**

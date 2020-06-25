@@ -34,8 +34,8 @@ import java.lang.annotation.Target;
  * Defines a message with a given header and footer (optional).
  * <p>This will enable automatic loading through the Loader.</p>
  */
-@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
 public @interface MessageHeader{
 
 	/**

@@ -40,8 +40,8 @@ import java.lang.annotation.Target;
  * Manages a <code>long</code>/{@link Long} if <code>size &lt; 64</code>, {@link java.math.BigInteger} otherwise (... before the application of a converter)
  * If <code>allowPrimitive</code> is <code>false</code>, then the data type is only {@link java.math.BigInteger}
  */
-@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
 public @interface BindInteger{
 
 	/**

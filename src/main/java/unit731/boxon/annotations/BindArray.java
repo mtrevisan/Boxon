@@ -38,8 +38,8 @@ import java.lang.annotation.Target;
 /**
  * Manages an array of {@link Object} (... before the application of a converter)
  */
-@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
 public @interface BindArray{
 
 	/**

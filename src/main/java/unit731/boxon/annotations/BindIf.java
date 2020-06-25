@@ -43,8 +43,8 @@ import java.lang.annotation.Target;
  * </code></pre>
  * <p>In the above case, <code>foobar</code> is only expected to be read only if the condition holds.</p>
  */
-@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
 public @interface BindIf{
 
 	/**

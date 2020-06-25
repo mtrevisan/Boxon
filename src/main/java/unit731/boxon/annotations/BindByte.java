@@ -38,8 +38,8 @@ import java.lang.annotation.Target;
 /**
  * Manages a <code>byte</code>/{@link Byte} (... before the application of a converter)
  */
-@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
 public @interface BindByte{
 
 	/**

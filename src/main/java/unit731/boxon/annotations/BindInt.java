@@ -39,8 +39,8 @@ import java.lang.annotation.Target;
 /**
  * Manages an <code>int</code>/{@link Integer} (... before the application of a converter)
  */
-@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
 public @interface BindInt{
 
 	/**

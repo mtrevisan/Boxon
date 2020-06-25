@@ -39,8 +39,8 @@ import java.lang.annotation.Target;
 /**
  * Manages an array of primitive values (... before the application of a converter)
  */
-@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
 public @interface BindArrayPrimitive{
 
 	/**

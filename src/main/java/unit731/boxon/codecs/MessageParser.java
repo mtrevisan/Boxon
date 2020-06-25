@@ -61,7 +61,7 @@ class MessageParser{
 
 		final T data = ReflectionHelper.createInstance(codec.getType());
 
-		//parse message's fields:
+		//parse message fields:
 		final List<Codec.BoundedField> fields = codec.getBoundedFields();
 		for(final Codec.BoundedField field : fields){
 			skipFields(field.getSkips(), reader, data);
