@@ -292,17 +292,6 @@ class BitBuffer{
 	}
 
 	/**
-	 * Reads {@link Character#SIZE} bits from this {@link BitBuffer} and composes a {@code char} with
-	 * {@link ByteOrder#BIG_ENDIAN} byteOrder.
-	 *
-	 * @return	A {@code char}.
-	 * @see	#getCharacter(ByteOrder)
-	 */
-	public char getCharacter(){
-		return getCharacter(ByteOrder.LITTLE_ENDIAN);
-	}
-
-	/**
 	 * Reads {@link Character#SIZE} bits from this {@link BitBuffer} and composes a {@code char} with the specified
 	 * {@link ByteOrder}.
 	 *
@@ -311,17 +300,6 @@ class BitBuffer{
 	public char getCharacter(final ByteOrder byteOrder){
 		final char value = (char)getValue(Short.SIZE);
 		return (byteOrder == ByteOrder.BIG_ENDIAN? Character.reverseBytes(value): value);
-	}
-
-	/**
-	 * Reads {@link Short#SIZE} bits from this {@link BitBuffer} and composes a {@code short} with
-	 * {@link ByteOrder#BIG_ENDIAN} byteOrder.
-	 *
-	 * @return	A {@code short}.
-	 * @see	#getShort(ByteOrder)
-	 */
-	public short getShort(){
-		return getShort(ByteOrder.LITTLE_ENDIAN);
 	}
 
 	/**
@@ -336,17 +314,6 @@ class BitBuffer{
 	}
 
 	/**
-	 * Reads {@link Short#SIZE} bits from this {@link BitBuffer} and composes a {@code short} with
-	 * {@link ByteOrder#BIG_ENDIAN} byteOrder.
-	 *
-	 * @return	A {@code short}.
-	 * @see	#getShortUnsigned(ByteOrder)
-	 */
-	public int getShortUnsigned(){
-		return getShortUnsigned(ByteOrder.LITTLE_ENDIAN);
-	}
-
-	/**
 	 * Reads {@link Short#SIZE} bits from this {@link BitBuffer} and composes a {@code short} with the specified
 	 * {@link ByteOrder}.
 	 *
@@ -355,17 +322,6 @@ class BitBuffer{
 	public int getShortUnsigned(final ByteOrder byteOrder){
 		final short value = (short)getValue(Short.SIZE);
 		return ((int)(byteOrder == ByteOrder.BIG_ENDIAN? Short.reverseBytes(value): value) & 0x0000_FFFF);
-	}
-
-	/**
-	 * Reads {@link Integer#SIZE} bits from this {@link BitBuffer} and composes an {@code int} with
-	 * {@link ByteOrder#BIG_ENDIAN} byteOrder.
-	 *
-	 * @return	An {@code int}.
-	 * @see	#getInteger(ByteOrder)
-	 */
-	public int getInteger(){
-		return getInteger(ByteOrder.LITTLE_ENDIAN);
 	}
 
 	/**
@@ -380,17 +336,6 @@ class BitBuffer{
 	}
 
 	/**
-	 * Reads {@link Integer#SIZE} bits from this {@link BitBuffer} and composes an {@code int} with
-	 * {@link ByteOrder#BIG_ENDIAN} byteOrder.
-	 *
-	 * @return	An {@code int}.
-	 * @see	#getIntegerUnsigned(ByteOrder)
-	 */
-	public long getIntegerUnsigned(){
-		return getIntegerUnsigned(ByteOrder.LITTLE_ENDIAN);
-	}
-
-	/**
 	 * Reads {@link Integer#SIZE} bits from this {@link BitBuffer} and composes an {@code int} with the specified
 	 * {@link ByteOrder}.
 	 *
@@ -399,17 +344,6 @@ class BitBuffer{
 	public long getIntegerUnsigned(final ByteOrder byteOrder){
 		final int value = (int)getValue(Integer.SIZE);
 		return ((long)(byteOrder == ByteOrder.BIG_ENDIAN? Integer.reverseBytes(value): value) & 0x0000_0000_FFFF_FFFFl);
-	}
-
-	/**
-	 * Reads {@link Long#SIZE} bits from this {@link BitBuffer} and composes an {@code int} with
-	 * {@link ByteOrder#BIG_ENDIAN} byteOrder.
-	 *
-	 * @return	A {@code long}.
-	 * @see	#getLong(ByteOrder)
-	 */
-	public long getLong(){
-		return getLong(ByteOrder.LITTLE_ENDIAN);
 	}
 
 	/**
@@ -424,17 +358,6 @@ class BitBuffer{
 	}
 
 	/**
-	 * Reads {@link Float#SIZE} bits from this {@link BitBuffer} and composes a {@code float} with
-	 * {@link ByteOrder#BIG_ENDIAN} byteOrder.
-	 *
-	 * @return	A {@code float}.
-	 * @see	#getFloat(ByteOrder)
-	 */
-	public float getFloat(){
-		return getFloat(ByteOrder.LITTLE_ENDIAN);
-	}
-
-	/**
 	 * Reads {@link Float#SIZE} bits from this {@link BitBuffer} and composes a {@code float} with the specified
 	 * {@link ByteOrder}.
 	 *
@@ -446,17 +369,6 @@ class BitBuffer{
 	}
 
 	/**
-	 * Reads {@link Double#SIZE} bits from this {@link BitBuffer} and composes a {@code double} with
-	 * {@link ByteOrder#BIG_ENDIAN} byteOrder.
-	 *
-	 * @return	A {@code double}.
-	 * @see	#getDouble(ByteOrder)
-	 */
-	public double getDouble(){
-		return getDouble(ByteOrder.LITTLE_ENDIAN);
-	}
-
-	/**
 	 * Reads {@link Double#SIZE} bits from this {@link BitBuffer} and composes a {@code double} with the specified
 	 * {@link ByteOrder}.
 	 *
@@ -465,18 +377,6 @@ class BitBuffer{
 	 */
 	public double getDouble(final ByteOrder byteOrder){
 		return Double.longBitsToDouble(getLong(byteOrder));
-	}
-
-	/**
-	 * Reads {@link Double#SIZE} bits from this {@link BitBuffer} and composes a {@code double} with
-	 * {@link ByteOrder#BIG_ENDIAN} byteOrder.
-	 *
-	 * @param cls	Either a {@code Float} or a {@link Double} class.
-	 * @return	A {@code double}.
-	 * @see	#getDouble(ByteOrder)
-	 */
-	public BigDecimal getDecimal(final Class<?> cls){
-		return getDecimal(cls, ByteOrder.LITTLE_ENDIAN);
 	}
 
 	/**
@@ -503,7 +403,7 @@ class BitBuffer{
 	 * @return	A {@link String} of length {@code n} coded with a given {@link Charset} that contains {@code char}s
 	 * 	read from this {@link BitBuffer}.
 	 */
-	public String getText(final int length,final Charset charset){
+	public String getText(final int length, final Charset charset){
 		return new String(getBytes(length), charset);
 	}
 

@@ -140,17 +140,6 @@ class BitWriter{
 	}
 
 	/**
-	 * Writes a value with {@link ByteOrder#LITTLE_ENDIAN} byteOrder to this {@link BitWriter} using {@link Character#SIZE} bits.
-	 *
-	 * @param chr	The {@code char} to write.
-	 * @return	The {@link BitWriter} to allow for the convenience of method-chaining.
-	 * @see	#putCharacter(char, ByteOrder)
-	 */
-	public BitWriter putCharacter(final char chr){
-		return putCharacter(chr, ByteOrder.LITTLE_ENDIAN);
-	}
-
-	/**
 	 * Writes a value with the specified {@link ByteOrder} to this {@link BitWriter} using {@link Character#SIZE} bits.
 	 *
 	 * @param chr	The {@code char} to write.
@@ -158,16 +147,6 @@ class BitWriter{
 	 */
 	public BitWriter putCharacter(final char chr, final ByteOrder byteOrder){
 		return putValue((byteOrder == ByteOrder.BIG_ENDIAN? Character.reverseBytes(chr): chr), Character.SIZE);
-	}
-
-	/**
-	 * Writes a value with {@link ByteOrder#LITTLE_ENDIAN} byteOrder to this {@link BitWriter} using {@link Short#SIZE} bits.
-	 *
-	 * @param value	The {@code short} to write as an {@code int} for ease-of-use, but internally down-casted to a {@code short}.
-	 * @return	The {@link BitWriter} to allow for the convenience of method-chaining.
-	 */
-	public BitWriter putShort(final short value){
-		return putShort(value, ByteOrder.LITTLE_ENDIAN);
 	}
 
 	/**
@@ -181,17 +160,6 @@ class BitWriter{
 	}
 
 	/**
-	 * Writes a value with {@link ByteOrder#LITTLE_ENDIAN} byteOrder to this {@link BitWriter} using {@link Integer#SIZE} bits.
-	 *
-	 * @param value	The {@code int} to write.
-	 * @return	The {@link BitWriter} to allow for the convenience of method-chaining.
-	 * @see	#putInteger(int, ByteOrder)
-	 */
-	public BitWriter putInteger(final int value){
-		return putInteger(value, ByteOrder.LITTLE_ENDIAN);
-	}
-
-	/**
 	 * Writes a value with the specified {@link ByteOrder} to this {@link BitWriter} using {@link Integer#SIZE} bits.
 	 *
 	 * @param value	The {@code int} to write.
@@ -202,17 +170,6 @@ class BitWriter{
 	}
 
 	/**
-	 * Writes a value with {@link ByteOrder#LITTLE_ENDIAN} byteOrder to this {@link BitWriter} using {@link Long#SIZE} bits.
-	 *
-	 * @param value	The {@code int} to write.
-	 * @return	The {@link BitWriter} to allow for the convenience of method-chaining.
-	 * @see	#putLong(long, ByteOrder)
-	 */
-	public BitWriter putLong(final long value){
-		return putLong(value, ByteOrder.LITTLE_ENDIAN);
-	}
-
-	/**
 	 * Writes a value with the specified {@link ByteOrder} to this {@link BitWriter} using {@link Long#SIZE} bits.
 	 *
 	 * @param value	The {@code long} to write.
@@ -220,17 +177,6 @@ class BitWriter{
 	 */
 	public BitWriter putLong(final long value, final ByteOrder byteOrder){
 		return putValue((byteOrder == ByteOrder.BIG_ENDIAN? Long.reverseBytes(value): value), Long.SIZE);
-	}
-
-	/**
-	 * Writes a value with {@link ByteOrder#LITTLE_ENDIAN} byteOrder to this {@link BitWriter} using {@link Float#SIZE} bits.
-	 *
-	 * @param value	The {@code float} to write.
-	 * @return	The {@link BitWriter} to allow for the convenience of method-chaining.
-	 * @see	#putFloat(float, ByteOrder)
-	 */
-	public BitWriter putFloat(final float value){
-		return putFloat(value, ByteOrder.LITTLE_ENDIAN);
 	}
 
 	/**
@@ -245,17 +191,6 @@ class BitWriter{
 	}
 
 	/**
-	 * Writes a value with {@link ByteOrder#LITTLE_ENDIAN} byteOrder to this {@link BitWriter} using {@link Double#SIZE} bits.
-	 *
-	 * @param value	The {@code double} to write.
-	 * @return	The {@link BitWriter} to allow for the convenience of method-chaining.
-	 * @see	#putDouble(double, ByteOrder)
-	 */
-	public BitWriter putDouble(final double value){
-		return putDouble(value, ByteOrder.LITTLE_ENDIAN);
-	}
-
-	/**
 	 * Writes a value with the specified {@link ByteOrder} to this {@link BitWriter} using {@link Double#SIZE} bits.
 	 *
 	 * @param value	The {@code double} to write.
@@ -264,17 +199,6 @@ class BitWriter{
 	 */
 	public BitWriter putDouble(final double value, final ByteOrder byteOrder){
 		return putLong(Double.doubleToRawLongBits(value), byteOrder);
-	}
-
-	/**
-	 * Writes a value with {@link ByteOrder#LITTLE_ENDIAN} byteOrder to this {@link BitWriter} using {@link Double#SIZE} bits.
-	 *
-	 * @param value	The {@code double} to write.
-	 * @return	The {@link BitWriter} to allow for the convenience of method-chaining.
-	 * @see	#putDouble(double, ByteOrder)
-	 */
-	public BitWriter putDecimal(final BigDecimal value, final Class<?> cls){
-		return putDecimal(value, cls, ByteOrder.LITTLE_ENDIAN);
 	}
 
 	/**

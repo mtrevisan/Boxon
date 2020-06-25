@@ -76,11 +76,11 @@ class BitWriterTest{
 	@Test
 	void charPrimitive(){
 		char value = '\u2714';
-		writer.putCharacter(value);
+		writer.putCharacter(value, ByteOrder.LITTLE_ENDIAN);
 		BitBuffer reader = BitBuffer.wrap(writer);
 
 		Assertions.assertEquals("1427", reader.toString());
-		Assertions.assertEquals(value, reader.getCharacter());
+		Assertions.assertEquals(value, reader.getCharacter(ByteOrder.LITTLE_ENDIAN));
 	}
 
 	@Test
@@ -96,11 +96,11 @@ class BitWriterTest{
 	@Test
 	void shortPrimitive(){
 		short value = 2714;
-		writer.putShort(value);
+		writer.putShort(value, ByteOrder.LITTLE_ENDIAN);
 		BitBuffer reader = BitBuffer.wrap(writer);
 
 		Assertions.assertEquals("9A0A", reader.toString());
-		Assertions.assertEquals(value, reader.getShort());
+		Assertions.assertEquals(value, reader.getShort(ByteOrder.LITTLE_ENDIAN));
 	}
 
 	@Test
@@ -116,11 +116,11 @@ class BitWriterTest{
 	@Test
 	void intPrimitive(){
 		int value = 100_123;
-		writer.putInteger(value);
+		writer.putInteger(value, ByteOrder.LITTLE_ENDIAN);
 		BitBuffer reader = BitBuffer.wrap(writer);
 
 		Assertions.assertEquals("1B870100", reader.toString());
-		Assertions.assertEquals(value, reader.getInteger());
+		Assertions.assertEquals(value, reader.getInteger(ByteOrder.LITTLE_ENDIAN));
 	}
 
 	@Test
@@ -136,11 +136,11 @@ class BitWriterTest{
 	@Test
 	void longPrimitive(){
 		long value = 0x1234_5678_1234_4568l;
-		writer.putLong(value);
+		writer.putLong(value, ByteOrder.LITTLE_ENDIAN);
 		BitBuffer reader = BitBuffer.wrap(writer);
 
 		Assertions.assertEquals("6845341278563412", reader.toString());
-		Assertions.assertEquals(value, reader.getLong());
+		Assertions.assertEquals(value, reader.getLong(ByteOrder.LITTLE_ENDIAN));
 	}
 
 	@Test
@@ -156,11 +156,11 @@ class BitWriterTest{
 	@Test
 	void floatPrimitive(){
 		float value = 1.23f;
-		writer.putFloat(value);
+		writer.putFloat(value, ByteOrder.LITTLE_ENDIAN);
 		BitBuffer reader = BitBuffer.wrap(writer);
 
 		Assertions.assertEquals("A4709D3F", reader.toString());
-		Assertions.assertEquals(value, reader.getFloat());
+		Assertions.assertEquals(value, reader.getFloat(ByteOrder.LITTLE_ENDIAN));
 	}
 
 	@Test
@@ -176,11 +176,11 @@ class BitWriterTest{
 	@Test
 	void doublePrimitive(){
 		double value = 1.23;
-		writer.putDouble(value);
+		writer.putDouble(value, ByteOrder.LITTLE_ENDIAN);
 		BitBuffer reader = BitBuffer.wrap(writer);
 
 		Assertions.assertEquals("AE47E17A14AEF33F", reader.toString());
-		Assertions.assertEquals(value, reader.getDouble());
+		Assertions.assertEquals(value, reader.getDouble(ByteOrder.LITTLE_ENDIAN));
 	}
 
 	@Test
@@ -196,11 +196,11 @@ class BitWriterTest{
 	@Test
 	void bigDecimalAsFloat(){
 		BigDecimal value = new BigDecimal("1.23");
-		writer.putDecimal(value, Float.class);
+		writer.putDecimal(value, Float.class, ByteOrder.LITTLE_ENDIAN);
 		BitBuffer reader = BitBuffer.wrap(writer);
 
 		Assertions.assertEquals("A4709D3F", reader.toString());
-		Assertions.assertEquals(value, reader.getDecimal(Float.class));
+		Assertions.assertEquals(value, reader.getDecimal(Float.class, ByteOrder.LITTLE_ENDIAN));
 	}
 
 	@Test
@@ -216,11 +216,11 @@ class BitWriterTest{
 	@Test
 	void bigDecimalAsFDouble(){
 		BigDecimal value = new BigDecimal("1.23");
-		writer.putDecimal(value, Double.class);
+		writer.putDecimal(value, Double.class, ByteOrder.LITTLE_ENDIAN);
 		BitBuffer reader = BitBuffer.wrap(writer);
 
 		Assertions.assertEquals("AE47E17A14AEF33F", reader.toString());
-		Assertions.assertEquals(value, reader.getDecimal(Double.class));
+		Assertions.assertEquals(value, reader.getDecimal(Double.class, ByteOrder.LITTLE_ENDIAN));
 	}
 
 	@Test
