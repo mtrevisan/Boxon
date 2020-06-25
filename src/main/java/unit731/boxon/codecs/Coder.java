@@ -852,7 +852,7 @@ enum Coder{
 			throw new IllegalArgumentException("Parameter does not match constraint `" + match + "`");
 	}
 
-	/** Extract pattern from a SpEL expression, or a string, or a real pattern */
+	/** Extract pattern from a SpEL expression, or a string, or a regex pattern */
 	private static <T> Pattern extractPattern(String match, final T data){
 		Pattern p = null;
 		if(isNotBlank(match)){
