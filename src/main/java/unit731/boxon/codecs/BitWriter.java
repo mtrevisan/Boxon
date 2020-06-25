@@ -47,7 +47,7 @@ class BitWriter{
 	/** The backing {@link ByteArrayOutputStream} */
 	private final ByteArrayOutputStream os = new ByteArrayOutputStream(0);
 	/** The number of bits available (to write) within {@code cache} */
-	private int remainingBits;
+	private int remaining;
 	/** The <i>cache</i> used when writing and reading bits */
 	private byte cache;
 
@@ -56,8 +56,6 @@ class BitWriter{
 		final Class<?> cls = value.getClass();
 		if(cls == Byte.class)
 			putByte((Byte)value);
-		else if(cls == Character.class)
-			putCharacter((Character)value, byteOrder);
 		else if(cls == Short.class)
 			putShort((Short)value, byteOrder);
 		else if(cls == Integer.class)
@@ -85,14 +83,14 @@ class BitWriter{
 		int offset = 0;
 		while(offset < length){
 			//fill the cache one bit at a time
-			final int size = Math.min(length - offset, Byte.SIZE - remainingBits);
+			final int size = Math.min(length - offset, Byte.SIZE - remaining);
 			for(int i = value.nextSetBit(offset); 0 <= i && i < offset + size; i = value.nextSetBit(i + 1))
-				cache |= 1 << (remainingBits + i - offset);
-			remainingBits += size;
+				cache |= 1 << (remaining + i - offset);
+			remaining += size;
 			offset += size;
 
 			//if cache is full, write it
-			if(remainingBits == Byte.SIZE){
+			if(remaining == Byte.SIZE){
 				os.write(cache);
 
 				resetInnerVariables();
@@ -137,16 +135,6 @@ class BitWriter{
 		for(final byte value : array)
 			putByte(value);
 		return this;
-	}
-
-	/**
-	 * Writes a value with the specified {@link ByteOrder} to this {@link BitWriter} using {@link Character#SIZE} bits.
-	 *
-	 * @param chr	The {@code char} to write.
-	 * @return	The {@link BitWriter} to allow for the convenience of method-chaining.
-	 */
-	public BitWriter putCharacter(final char chr, final ByteOrder byteOrder){
-		return putValue((byteOrder == ByteOrder.BIG_ENDIAN? Character.reverseBytes(chr): chr), Character.SIZE);
 	}
 
 	/**
@@ -249,18 +237,14 @@ class BitWriter{
 	/** Flush an integral number of bytes to the output stream, padding any non-completed byte with zeros */
 	public void flush(){
 		//put the cache into the buffer
-		if(remainingBits > 0)
+		if(remaining > 0)
 			os.write(cache);
 
 		resetInnerVariables();
 	}
 
-	public int remainingBits(){
-		return remainingBits;
-	}
-
 	private void resetInnerVariables(){
-		remainingBits = 0;
+		remaining = 0;
 		cache = 0;
 	}
 

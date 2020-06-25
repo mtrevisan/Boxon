@@ -69,7 +69,7 @@ class BitBuffer{
 	/** The backing {@link ByteBuffer} */
 	private final ByteBuffer buffer;
 	/** The number of bits available (to read) within {@code cache} */
-	private int remainingBits;
+	private int remaining;
 	/** The <i>cache</i> used when writing and reading bits */
 	private byte cache;
 
@@ -144,13 +144,13 @@ class BitBuffer{
 	}
 
 	public void createFallbackPoint(){
-		fallbackPoint = new State(buffer.position(), remainingBits, cache);
+		fallbackPoint = new State(buffer.position(), remaining, cache);
 	}
 
 	public void restoreFallbackPoint(){
 		if(fallbackPoint != null){
 			buffer.position(fallbackPoint.position);
-			remainingBits = fallbackPoint.remainingBits;
+			remaining = fallbackPoint.remainingBits;
 			cache = fallbackPoint.cache;
 
 			fallbackPoint = null;
@@ -169,8 +169,6 @@ class BitBuffer{
 	public Object get(final Class<?> cls, final ByteOrder byteOrder){
 		if(cls == Byte.class)
 			return getByte();
-		if(cls == Character.class)
-			return getCharacter(byteOrder);
 		if(cls == Short.class)
 			return getShort(byteOrder);
 		if(cls == Integer.class)
@@ -196,7 +194,7 @@ class BitBuffer{
 		int offset = 0;
 		while(offset < length){
 			//transfer the cache values
-			final int size = Math.min(length, remainingBits);
+			final int size = Math.min(length, remaining);
 			int i = offset;
 			while(cache != 0 && i < offset + size){
 				value.set(i, ((cache & MASKS[1]) != 0));
@@ -204,13 +202,13 @@ class BitBuffer{
 				cache >>>= 1;
 				i ++;
 			}
-			remainingBits -= size;
+			remaining -= size;
 			offset += size;
 
 			//if cache is empty and there are more bits to be read, fill it
 			if(length > offset){
 				cache = buffer.get();
-				remainingBits = Byte.SIZE;
+				remaining = Byte.SIZE;
 			}
 		}
 		return value;
@@ -248,8 +246,8 @@ class BitBuffer{
 	private byte peekByte(){
 		long value;
 		long temporaryCache = cache;
-		if(remainingBits < Byte.SIZE){
-			value = temporaryCache & MASKS[remainingBits];
+		if(remaining < Byte.SIZE){
+			value = temporaryCache & MASKS[remaining];
 			final int remaining = Math.min(buffer.remaining(), Byte.SIZE);
 			if(remaining == 0){
 				throw new BufferUnderflowException();
@@ -260,8 +258,8 @@ class BitBuffer{
 				//read next byte from the byte buffer
 				temporaryCache |= ((long)buffer.array()[position + i] & 0x0000_0000_0000_00FFl) << (i * Byte.SIZE);
 			}
-			final int difference = Byte.SIZE - remainingBits;
-			value |= (temporaryCache & MASKS[difference]) << remainingBits;
+			final int difference = Byte.SIZE - this.remaining;
+			value |= (temporaryCache & MASKS[difference]) << this.remaining;
 		}
 		else{
 			value = temporaryCache & MASKS[Byte.SIZE];
@@ -272,7 +270,7 @@ class BitBuffer{
 	/**
 	 * Reads {@link Byte#SIZE} bits from this {@link BitBuffer} and composes a {@code short}.
 	 *
-	 * @return	A {@code short}.
+	 * @return    A {@code short}.
 	 */
 	public short getByteUnsigned(){
 		return (short)(getValue(Byte.SIZE) & 0x0000_FFFF);
@@ -292,17 +290,6 @@ class BitBuffer{
 	}
 
 	/**
-	 * Reads {@link Character#SIZE} bits from this {@link BitBuffer} and composes a {@code char} with the specified
-	 * {@link ByteOrder}.
-	 *
-	 * @return	A {@code char}.
-	 */
-	public char getCharacter(final ByteOrder byteOrder){
-		final char value = (char)getValue(Short.SIZE);
-		return (byteOrder == ByteOrder.BIG_ENDIAN? Character.reverseBytes(value): value);
-	}
-
-	/**
 	 * Reads {@link Short#SIZE} bits from this {@link BitBuffer} and composes a {@code short} with the specified
 	 * {@link ByteOrder}.
 	 *
@@ -317,7 +304,7 @@ class BitBuffer{
 	 * Reads {@link Short#SIZE} bits from this {@link BitBuffer} and composes a {@code short} with the specified
 	 * {@link ByteOrder}.
 	 *
-	 * @return	A {@code short}.
+	 * @return    A {@code short}.
 	 */
 	public int getShortUnsigned(final ByteOrder byteOrder){
 		final short value = (short)getValue(Short.SIZE);
@@ -339,7 +326,7 @@ class BitBuffer{
 	 * Reads {@link Integer#SIZE} bits from this {@link BitBuffer} and composes an {@code int} with the specified
 	 * {@link ByteOrder}.
 	 *
-	 * @return	An {@code int}.
+	 * @return    An {@code int}.
 	 */
 	public long getIntegerUnsigned(final ByteOrder byteOrder){
 		final int value = (int)getValue(Integer.SIZE);
@@ -413,7 +400,7 @@ class BitBuffer{
 				final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				final OutputStreamWriter osw = new OutputStreamWriter(baos, charset);
 			){
-			while(buffer.position() < buffer.limit() || remainingBits > 0){
+			while(buffer.position() < buffer.limit() || remaining > 0){
 				final byte byteRead = (consumeTerminator? getByte(): peekByte());
 				if(byteRead == terminator)
 					break;
@@ -468,7 +455,7 @@ class BitBuffer{
 	}
 
 	private void resetInnerVariables(){
-		remainingBits = 0;
+		remaining = 0;
 		cache = 0;
 	}
 
@@ -478,7 +465,7 @@ class BitBuffer{
 	 * @return	The position of the backing buffer in {@code bit}s.
 	 */
 	public int positionAsBits(){
-		return buffer.position() * Byte.SIZE - remainingBits;
+		return buffer.position() * Byte.SIZE - remaining;
 	}
 
 	/**

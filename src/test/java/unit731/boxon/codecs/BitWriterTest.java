@@ -74,26 +74,6 @@ class BitWriterTest{
 	}
 
 	@Test
-	void charPrimitive(){
-		char value = '\u2714';
-		writer.putCharacter(value, ByteOrder.LITTLE_ENDIAN);
-		BitBuffer reader = BitBuffer.wrap(writer);
-
-		Assertions.assertEquals("1427", reader.toString());
-		Assertions.assertEquals(value, reader.getCharacter(ByteOrder.LITTLE_ENDIAN));
-	}
-
-	@Test
-	void charPrimitiveBigEndian(){
-		char value = '\u2714';
-		writer.putCharacter(value, ByteOrder.BIG_ENDIAN);
-		BitBuffer reader = BitBuffer.wrap(writer);
-
-		Assertions.assertEquals("2714", reader.toString());
-		Assertions.assertEquals(value, reader.getCharacter(ByteOrder.BIG_ENDIAN));
-	}
-
-	@Test
 	void shortPrimitive(){
 		short value = 2714;
 		writer.putShort(value, ByteOrder.LITTLE_ENDIAN);
