@@ -41,6 +41,7 @@ class MessageParserTest{
 		byte[] payload = ByteHelper.hexStringToByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		BitBuffer reader = BitBuffer.wrap(payload);
 
+		MessageParser messageParser = new MessageParser();
 		Codec<ACKMessageHex> codec = Codec.createFrom(ACKMessageHex.class);
 
 		if(!codec.canBeDecoded())
@@ -49,10 +50,10 @@ class MessageParserTest{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
 		Evaluator.addToContext("deviceTypes", deviceTypes);
-		ACKMessageHex message = MessageParser.decode(codec, reader);
+		ACKMessageHex message = messageParser.decode(codec, reader);
 
 		BitWriter writer = new BitWriter();
-		MessageParser.encode(codec, message, writer);
+		messageParser.encode(codec, message, writer);
 		byte[] reconstructedMessage = writer.array();
 
 		Assertions.assertArrayEquals(payload, reconstructedMessage);
@@ -63,6 +64,7 @@ class MessageParserTest{
 		byte[] payload = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
 		BitBuffer reader = BitBuffer.wrap(payload);
 
+		MessageParser messageParser = new MessageParser();
 		Codec<ACKMessageASCII> codec = Codec.createFrom(ACKMessageASCII.class);
 
 		if(!codec.canBeDecoded())
@@ -71,10 +73,10 @@ class MessageParserTest{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GV350M", (byte)0xCF);
 		Evaluator.addToContext("deviceTypes", deviceTypes);
-		ACKMessageASCII message = MessageParser.decode(codec, reader);
+		ACKMessageASCII message = messageParser.decode(codec, reader);
 
 		BitWriter writer = new BitWriter();
-		MessageParser.encode(codec, message, writer);
+		messageParser.encode(codec, message, writer);
 		byte[] reconstructedMessage = writer.array();
 
 		Assertions.assertArrayEquals(payload, reconstructedMessage);

@@ -75,15 +75,15 @@ class CoderStringTest{
 			}
 		};
 
+		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(writer, annotation, null, encodedValue);
+		coder.encode(messageParser, writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals(encodedValue, new String(writer.array(), StandardCharsets.US_ASCII));
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-
-		String decoded = (String)coder.decode(reader, annotation, null);
+		String decoded = (String)coder.decode(messageParser, reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -124,15 +124,15 @@ class CoderStringTest{
 			}
 		};
 
+		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(writer, annotation, null, encodedValue);
+		coder.encode(messageParser, writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals(encodedValue, new String(writer.array(), StandardCharsets.UTF_8));
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-
-		String decoded = (String)coder.decode(reader, annotation, null);
+		String decoded = (String)coder.decode(messageParser, reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -173,9 +173,10 @@ class CoderStringTest{
 			}
 		};
 
+		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
 		Assertions.assertThrows(IllegalArgumentException.class,
-			() -> coder.encode(writer, annotation, null, encodedValue));
+			() -> coder.encode(messageParser, writer, annotation, null, encodedValue));
 	}
 
 	@Test
@@ -219,14 +220,14 @@ class CoderStringTest{
 			}
 		};
 
+		MessageParser messageParser = new MessageParser();
 		BitBuffer reader = BitBuffer.wrap(encodedValue.getBytes(StandardCharsets.US_ASCII));
-
-		Object decoded = coder.decode(reader, annotation, null);
+		Object decoded = coder.decode(messageParser, reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 
 		BitWriter writer = new BitWriter();
-		coder.encode(writer, annotation, null, decoded);
+		coder.encode(messageParser, writer, annotation, null, decoded);
 		writer.flush();
 
 		Assertions.assertEquals(encodedValue, new String(writer.array(), StandardCharsets.US_ASCII));

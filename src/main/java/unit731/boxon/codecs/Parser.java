@@ -34,6 +34,7 @@ import java.util.Objects;
 public class Parser{
 
 	private final Loader loader = new Loader();
+	private final MessageParser messageParser = new MessageParser();
 
 
 	/** Create a parser loading all the codecs from this package down. */
@@ -88,8 +89,8 @@ public class Parser{
 				Evaluator.addToContext(elem.getKey(), elem.getValue());
 	}
 
-	public static void setVerbose(final boolean verbose) throws SecurityException{
-		MessageParser.setVerbose(verbose);
+	public void setVerbose(final boolean verbose) throws SecurityException{
+		messageParser.setVerbose(verbose);
 	}
 
 	/**
@@ -109,7 +110,7 @@ public class Parser{
 
 				final Codec<?> codec = loader.getCodec(reader);
 
-				final Object partialDecodedMessage = MessageParser.decode(codec, reader);
+				final Object partialDecodedMessage = messageParser.decode(codec, reader);
 
 				response.addParsedMessage(partialDecodedMessage);
 			}
@@ -164,7 +165,7 @@ public class Parser{
 				if(!codec.canBeDecoded())
 					throw new IllegalArgumentException("Cannot construct any codec for message");
 
-				MessageParser.encode(codec, elem, writer);
+				messageParser.encode(codec, elem, writer);
 			}
 			catch(final Throwable t){
 				final ComposeException ce = new ComposeException(elem, t);

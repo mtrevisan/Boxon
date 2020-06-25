@@ -49,14 +49,14 @@ class MessageParser{
 	private static final Logger LOGGER = LoggerFactory.getLogger(MessageParser.class.getName());
 
 
-	private static final AtomicBoolean VERBOSE = new AtomicBoolean(false);
+	private final AtomicBoolean verbose = new AtomicBoolean(false);
 
 
-	static void setVerbose(final boolean verbose) throws SecurityException{
-		VERBOSE.set(verbose);
+	void setVerbose(final boolean verbose) throws SecurityException{
+		this.verbose.set(verbose);
 	}
 
-	static <T> T decode(final Codec<T> codec, final BitBuffer reader){
+	<T> T decode(final Codec<T> codec, final BitBuffer reader){
 		final int startPosition = reader.positionAsBits() / Byte.SIZE;
 
 		final T data = ReflectionHelper.createInstance(codec.getType());
@@ -73,10 +73,10 @@ class MessageParser{
 			final Coder coder = retrieveCoder(codec, field, binding);
 
 			try{
-				final Object value = coder.decode(reader, binding, data);
+				final Object value = coder.decode(this, reader, binding, data);
 				ReflectionHelper.setFieldValue(data, field.getName(), value);
 
-				if(VERBOSE.get())
+				if(verbose.get())
 					LOGGER.info("{}: {}", field.getName(), value);
 			}
 			catch(final Exception e){
@@ -93,13 +93,13 @@ class MessageParser{
 		return data;
 	}
 
-	private static <T> void skipFields(final Skip[] skips, final BitBuffer reader, final T data){
+	private <T> void skipFields(final Skip[] skips, final BitBuffer reader, final T data){
 		if(skips != null)
 			for(final Skip skip : skips)
 				skip(skip, reader, data);
 	}
 
-	private static <T> void skip(final Skip skip, final BitBuffer reader, final T data){
+	private <T> void skip(final Skip skip, final BitBuffer reader, final T data){
 		final int size = (isNotBlank(skip.size())? Evaluator.evaluate(skip.size(), Integer.class, data): 0);
 		if(size > 0)
 			//skip `size` bits
@@ -109,11 +109,11 @@ class MessageParser{
 			reader.skipUntilTerminator(skip.terminator(), skip.consumeTerminator());
 	}
 
-	private static <T> boolean skipFieldByCondition(final String condition, final T data){
+	private <T> boolean skipFieldByCondition(final String condition, final T data){
 		return (condition != null && !Evaluator.evaluate(condition, boolean.class, data));
 	}
 
-	private static <T> void readMessageTerminator(final Codec<T> codec, final BitBuffer reader){
+	private <T> void readMessageTerminator(final Codec<T> codec, final BitBuffer reader){
 		final MessageHeader header = codec.getHeader();
 		if(header != null && header.end().length() > 0){
 			final Charset charset = Charset.forName(header.charset());
@@ -126,7 +126,7 @@ class MessageParser{
 		}
 	}
 
-	private static <T> void verifyChecksum(final Codec<T> codec, final T data, int startPosition, final BitBuffer reader){
+	private <T> void verifyChecksum(final Codec<T> codec, final T data, int startPosition, final BitBuffer reader){
 		final Codec.BoundedField checksumData = codec.getChecksum();
 		if(checksumData != null){
 			final BindChecksum checksum = (BindChecksum)checksumData.getBinding();
@@ -146,7 +146,7 @@ class MessageParser{
 		}
 	}
 
-	private static <T> void processEvaluatedFields(final Codec<T> codec, final T data){
+	private <T> void processEvaluatedFields(final Codec<T> codec, final T data){
 		try{
 			final List<Codec.EvaluatedField> evaluatedFields = codec.getEvaluatedFields();
 			for(final Codec.EvaluatedField field : evaluatedFields){
@@ -157,7 +157,7 @@ class MessageParser{
 		catch(final NoSuchFieldException ignored){}
 	}
 
-	static <T> void encode(final Codec<?> codec, final T data, final BitWriter writer){
+	<T> void encode(final Codec<?> codec, final T data, final BitWriter writer){
 		//encode message's fields:
 		final List<Codec.BoundedField> fields = codec.getBoundedFields();
 		for(final Codec.BoundedField field : fields){
@@ -171,7 +171,7 @@ class MessageParser{
 
 			try{
 				final Object value = ReflectionHelper.getFieldValue(data, field.getName());
-				coder.encode(writer, binding, data, value);
+				coder.encode(this, writer, binding, data, value);
 			}
 			catch(final Exception e){
 				throw new IllegalArgumentException(e.getMessage() + ", field " + codec + "." + field.getName(), e);
@@ -187,7 +187,7 @@ class MessageParser{
 		writer.flush();
 	}
 
-	private static Coder retrieveCoder(final Codec<?> codec, final Codec.BoundedField field, final Annotation binding){
+	private Coder retrieveCoder(final Codec<?> codec, final Codec.BoundedField field, final Annotation binding){
 		final Class<? extends Annotation> annotationType = binding.annotationType();
 		final Coder coder = Coder.CODERS_FROM_ANNOTATION.get(annotationType);
 		if(coder == null)
@@ -196,13 +196,13 @@ class MessageParser{
 		return coder;
 	}
 
-	private static <T> void addSkippedFields(final Skip[] skips, final BitWriter writer, final T data){
+	private <T> void addSkippedFields(final Skip[] skips, final BitWriter writer, final T data){
 		if(skips != null)
 			for(final Skip skip : skips)
 				addSkip(skip, writer, data);
 	}
 
-	private static <T> void addSkip(final Skip skip, final BitWriter writer, final T data){
+	private <T> void addSkip(final Skip skip, final BitWriter writer, final T data){
 		final int size = (isNotBlank(skip.size())? Evaluator.evaluate(skip.size(), Integer.class, data): 0);
 		if(size > 0)
 			//skip `size` bits
@@ -212,7 +212,7 @@ class MessageParser{
 			writer.putByte(skip.terminator());
 	}
 
-	private static boolean isNotBlank(final String text){
+	private boolean isNotBlank(final String text){
 		return (text != null && !text.trim().isBlank());
 	}
 

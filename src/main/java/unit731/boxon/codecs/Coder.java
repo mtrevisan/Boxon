@@ -63,7 +63,7 @@ enum Coder{
 
 	OBJECT {
 		@Override
-		Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
+		Object decode(final MessageParser messageParser, final BitBuffer reader, final Annotation annotation, final Object data){
 			final BindObject binding = (BindObject)annotation;
 
 			Class<?> type = binding.type();
@@ -88,7 +88,7 @@ enum Coder{
 
 			final Codec<?> codec = Codec.createFrom(type);
 
-			final Object instance = MessageParser.decode(codec, reader);
+			final Object instance = messageParser.decode(codec, reader);
 
 			final Object value = converterDecode(binding.converter(), instance);
 
@@ -98,7 +98,7 @@ enum Coder{
 		}
 
 		@Override
-		void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
+		void encode(final MessageParser messageParser, final BitWriter writer, final Annotation annotation, final Object data, final Object value){
 			final BindObject binding = (BindObject)annotation;
 
 			validateData(binding.validator(), value);
@@ -133,7 +133,7 @@ enum Coder{
 
 			final Object array = converterEncode(binding.converter(), value);
 
-			MessageParser.encode(codec, array, writer);
+			messageParser.encode(codec, array, writer);
 		}
 
 		private void validateAnnotation(final Class<?> type, final Choices.Choice[] alternatives){
@@ -151,7 +151,7 @@ enum Coder{
 
 	STRING {
 		@Override
-		Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
+		Object decode(final MessageParser messageParser, final BitBuffer reader, final Annotation annotation, final Object data){
 			final BindString binding = (BindString)annotation;
 
 			final Charset charset = Charset.forName(binding.charset());
@@ -167,7 +167,7 @@ enum Coder{
 		}
 
 		@Override
-		void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
+		void encode(final MessageParser messageParser, final BitWriter writer, final Annotation annotation, final Object data, final Object value){
 			final BindString binding = (BindString)annotation;
 
 			validateData(binding.match(), binding.validator(), value);
@@ -188,7 +188,7 @@ enum Coder{
 
 	STRING_TERMINATED {
 		@Override
-		Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
+		Object decode(final MessageParser messageParser, final BitBuffer reader, final Annotation annotation, final Object data){
 			final BindStringTerminated binding = (BindStringTerminated)annotation;
 
 			final Charset charset = Charset.forName(binding.charset());
@@ -205,7 +205,7 @@ enum Coder{
 		}
 
 		@Override
-		void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
+		void encode(final MessageParser messageParser, final BitWriter writer, final Annotation annotation, final Object data, final Object value){
 			final BindStringTerminated binding = (BindStringTerminated)annotation;
 
 			validateData(binding.match(), binding.validator(), value);
@@ -227,7 +227,7 @@ enum Coder{
 
 	ARRAY_PRIMITIVE {
 		@Override
-		Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
+		Object decode(final MessageParser messageParser, final BitBuffer reader, final Annotation annotation, final Object data){
 			final BindArrayPrimitive binding = (BindArrayPrimitive)annotation;
 
 			final ByteOrder byteOrder = binding.byteOrder();
@@ -252,7 +252,7 @@ enum Coder{
 		}
 
 		@Override
-		void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
+		void encode(final MessageParser messageParser, final BitWriter writer, final Annotation annotation, final Object data, final Object value){
 			final BindArrayPrimitive binding = (BindArrayPrimitive)annotation;
 
 			validateData(binding.validator(), value);
@@ -292,7 +292,7 @@ enum Coder{
 
 	ARRAY {
 		@Override
-		Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
+		Object decode(final MessageParser messageParser, final BitBuffer reader, final Annotation annotation, final Object data){
 			final BindArray binding = (BindArray)annotation;
 
 			final Class<?> type = binding.type();
@@ -322,14 +322,14 @@ enum Coder{
 					//read object
 					final Codec<?> subCodec = Codec.createFrom(chosenAlternative.type());
 
-					array[i] = MessageParser.decode(subCodec, reader);
+					array[i] = messageParser.decode(subCodec, reader);
 				}
 			}
 			else{
 				final Codec<?> codec = Codec.createFrom(type);
 
 				for(int i = 0; i < size; i ++)
-					array[i] = MessageParser.decode(codec, reader);
+					array[i] = messageParser.decode(codec, reader);
 			}
 
 			final Object value = converterDecode(binding.converter(), array);
@@ -340,7 +340,7 @@ enum Coder{
 		}
 
 		@Override
-		void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
+		void encode(final MessageParser messageParser, final BitWriter writer, final Annotation annotation, final Object data, final Object value){
 			final BindArray binding = (BindArray)annotation;
 
 			validateData(binding.validator(), value);
@@ -377,14 +377,14 @@ enum Coder{
 
 					final Codec<?> codec = Codec.createFrom(array[i].getClass());
 
-					MessageParser.encode(codec, array[i], writer);
+					messageParser.encode(codec, array[i], writer);
 				}
 			}
 			else{
 				final Codec<?> codec = Codec.createFrom(type);
 
 				for(int i = 0; i < size; i ++)
-					MessageParser.encode(codec, array[i], writer);
+					messageParser.encode(codec, array[i], writer);
 			}
 		}
 
@@ -396,7 +396,7 @@ enum Coder{
 
 	BITS{
 		@Override
-		Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
+		Object decode(final MessageParser messageParser, final BitBuffer reader, final Annotation annotation, final Object data){
 			final BindBits binding = (BindBits)annotation;
 
 			final int size = Evaluator.evaluate(binding.size(), int.class, data);
@@ -413,7 +413,7 @@ enum Coder{
 		}
 
 		@Override
-		void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
+		void encode(final MessageParser messageParser, final BitWriter writer, final Annotation annotation, final Object data, final Object value){
 			final BindBits binding = (BindBits)annotation;
 
 			validateData(binding.match(), binding.validator(), value);
@@ -435,7 +435,7 @@ enum Coder{
 
 	BYTE {
 		@Override
-		Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
+		Object decode(final MessageParser messageParser, final BitBuffer reader, final Annotation annotation, final Object data){
 			final BindByte binding = (BindByte)annotation;
 
 			final Object value;
@@ -456,7 +456,7 @@ enum Coder{
 		}
 
 		@Override
-		void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
+		void encode(final MessageParser messageParser, final BitWriter writer, final Annotation annotation, final Object data, final Object value){
 			final BindByte binding = (BindByte)annotation;
 
 			validateData(binding.match(), binding.validator(), value);
@@ -474,7 +474,7 @@ enum Coder{
 
 	SHORT {
 		@Override
-		Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
+		Object decode(final MessageParser messageParser, final BitBuffer reader, final Annotation annotation, final Object data){
 			final BindShort binding = (BindShort)annotation;
 
 			final Object value;
@@ -496,7 +496,7 @@ enum Coder{
 		}
 
 		@Override
-		void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
+		void encode(final MessageParser messageParser, final BitWriter writer, final Annotation annotation, final Object data, final Object value){
 			final BindShort binding = (BindShort)annotation;
 
 			validateData(binding.match(), binding.validator(), value);
@@ -515,7 +515,7 @@ enum Coder{
 
 	INT{
 		@Override
-		Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
+		Object decode(final MessageParser messageParser, final BitBuffer reader, final Annotation annotation, final Object data){
 			final BindInt binding = (BindInt)annotation;
 
 			final Object value;
@@ -537,7 +537,7 @@ enum Coder{
 		}
 
 		@Override
-		void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
+		void encode(final MessageParser messageParser, final BitWriter writer, final Annotation annotation, final Object data, final Object value){
 			final BindInt binding = (BindInt)annotation;
 
 			validateData(binding.match(), binding.validator(), value);
@@ -556,7 +556,7 @@ enum Coder{
 
 	LONG {
 		@Override
-		Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
+		Object decode(final MessageParser messageParser, final BitBuffer reader, final Annotation annotation, final Object data){
 			final BindLong binding = (BindLong)annotation;
 
 			final ByteOrder byteOrder = binding.byteOrder();
@@ -570,7 +570,7 @@ enum Coder{
 		}
 
 		@Override
-		void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
+		void encode(final MessageParser messageParser, final BitWriter writer, final Annotation annotation, final Object data, final Object value){
 			final BindLong binding = (BindLong)annotation;
 
 			validateData(binding.match(), binding.validator(), value);
@@ -589,7 +589,7 @@ enum Coder{
 
 	INTEGER{
 		@Override
-		Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
+		Object decode(final MessageParser messageParser, final BitBuffer reader, final Annotation annotation, final Object data){
 			final BindInteger binding = (BindInteger)annotation;
 
 			final int size = Evaluator.evaluate(binding.size(), int.class, data);
@@ -619,7 +619,7 @@ enum Coder{
 		}
 
 		@Override
-		void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
+		void encode(final MessageParser messageParser, final BitWriter writer, final Annotation annotation, final Object data, final Object value){
 			final BindInteger binding = (BindInteger)annotation;
 
 			validateData(binding.match(), binding.validator(), value);
@@ -655,7 +655,7 @@ enum Coder{
 
 	FLOAT {
 		@Override
-		Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
+		Object decode(final MessageParser messageParser, final BitBuffer reader, final Annotation annotation, final Object data){
 			final BindFloat binding = (BindFloat)annotation;
 
 			final ByteOrder byteOrder = binding.byteOrder();
@@ -669,7 +669,7 @@ enum Coder{
 		}
 
 		@Override
-		void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
+		void encode(final MessageParser messageParser, final BitWriter writer, final Annotation annotation, final Object data, final Object value){
 			final BindFloat binding = (BindFloat)annotation;
 
 			validateData(binding.match(), binding.validator(), value);
@@ -688,7 +688,7 @@ enum Coder{
 
 	DOUBLE {
 		@Override
-		Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
+		Object decode(final MessageParser messageParser, final BitBuffer reader, final Annotation annotation, final Object data){
 			final BindDouble binding = (BindDouble)annotation;
 
 			final ByteOrder byteOrder = binding.byteOrder();
@@ -702,7 +702,7 @@ enum Coder{
 		}
 
 		@Override
-		void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
+		void encode(final MessageParser messageParser, final BitWriter writer, final Annotation annotation, final Object data, final Object value){
 			final BindDouble binding = (BindDouble)annotation;
 
 			validateData(binding.match(), binding.validator(), value);
@@ -721,7 +721,7 @@ enum Coder{
 
 	DECIMAL{
 		@Override
-		Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
+		Object decode(final MessageParser messageParser, final BitBuffer reader, final Annotation annotation, final Object data){
 			final BindDecimal binding = (BindDecimal)annotation;
 
 			final Class<?> type = binding.type();
@@ -740,7 +740,7 @@ enum Coder{
 		}
 
 		@Override
-		void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
+		void encode(final MessageParser messageParser, final BitWriter writer, final Annotation annotation, final Object data, final Object value){
 			final BindDecimal binding = (BindDecimal)annotation;
 
 			final Class<?> type = binding.type();
@@ -764,7 +764,7 @@ enum Coder{
 
 	CHECKSUM {
 		@Override
-		Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
+		Object decode(final MessageParser messageParser, final BitBuffer reader, final Annotation annotation, final Object data){
 			final BindChecksum binding = (BindChecksum)annotation;
 
 			final Class<?> type = binding.type();
@@ -776,7 +776,7 @@ enum Coder{
 		}
 
 		@Override
-		void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
+		void encode(final MessageParser messageParser, final BitWriter writer, final Annotation annotation, final Object data, final Object value){
 			final BindChecksum binding = (BindChecksum)annotation;
 
 			final Class<?> type = binding.type();
@@ -809,9 +809,9 @@ enum Coder{
 			CODERS_FROM_ANNOTATION.put(coder.coderType(), coder);
 	}
 
-	abstract Object decode(final BitBuffer reader, final Annotation annotation, final Object data);
+	abstract Object decode(final MessageParser messageParser, final BitBuffer reader, final Annotation annotation, final Object data);
 
-	abstract void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value);
+	abstract void encode(final MessageParser messageParser, final BitWriter writer, final Annotation annotation, final Object data, final Object value);
 
 	abstract Class<?> coderType();
 

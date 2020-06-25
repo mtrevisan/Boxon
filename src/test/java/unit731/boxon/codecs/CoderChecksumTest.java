@@ -77,15 +77,15 @@ class CoderChecksumTest{
 			}
 		};
 
+		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(writer, annotation, null, encodedValue);
+		coder.encode(messageParser, writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals(StringUtils.leftPad(Integer.toHexString(encodedValue & 0x0000_FFFF).toUpperCase(Locale.ROOT), 4, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-
-		short decoded = (short)coder.decode(reader, annotation, null);
+		short decoded = (short)coder.decode(messageParser, reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}

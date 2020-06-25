@@ -108,15 +108,15 @@ class CoderArrayTest{
 			}
 		};
 
+		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(writer, annotation, null, encodedValue);
+		coder.encode(messageParser, writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertArrayEquals(new byte[]{0x00, 0x00, 0x01, 0x23, 0x00, 0x00, 0x04, 0x56}, writer.array());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-
-		Object decoded = coder.decode(reader, annotation, null);
+		Object decoded = coder.decode(messageParser, reader, annotation, null);
 
 		Assertions.assertArrayEquals(encodedValue, (int[])decoded);
 	}
@@ -177,15 +177,15 @@ class CoderArrayTest{
 			}
 		};
 
+		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(writer, annotation, null, encodedValue);
+		coder.encode(messageParser, writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertArrayEquals(new byte[]{0x00, 0x01, 0x0C, 0x01, 0x02, 0x00}, writer.array());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-
-		Version[] decoded = (Version[])coder.decode(reader, annotation, null);
+		Version[] decoded = (Version[])coder.decode(messageParser, reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue.length, decoded.length);
 		Assertions.assertEquals(encodedValue[0].major, decoded[0].major);

@@ -72,16 +72,16 @@ class CoderByteTest{
 			}
 		};
 
+		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(writer, annotation, null, encodedValue);
+		coder.encode(messageParser, writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals(1, writer.array().length);
 		Assertions.assertEquals(encodedValue, writer.array()[0]);
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-
-		byte decoded = (byte)coder.decode(reader, annotation, null);
+		byte decoded = (byte)coder.decode(messageParser, reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -119,16 +119,16 @@ class CoderByteTest{
 			}
 		};
 
+		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(writer, annotation, null, encodedValue);
+		coder.encode(messageParser, writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals(1, writer.array().length);
 		Assertions.assertEquals(encodedValue, writer.array()[0]);
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-
-		short decoded = (short)coder.decode(reader, annotation, null);
+		short decoded = (short)coder.decode(messageParser, reader, annotation, null);
 
 		Assertions.assertEquals((((short)encodedValue << Byte.SIZE) >>> Byte.SIZE) & 0xFF, decoded);
 	}

@@ -94,8 +94,9 @@ class CoderIntegerTest{
 			}
 		};
 
+		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(writer, annotation, null, encodedValue);
+		coder.encode(messageParser, writer, annotation, null, encodedValue);
 		writer.flush();
 
 		BitSet bits = BitSet.valueOf(ByteHelper.createUnsignedByteArray(BigInteger.valueOf(-encodedValue), 24));
@@ -103,8 +104,7 @@ class CoderIntegerTest{
 		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bits.toByteArray()).toUpperCase(Locale.ROOT), 6, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-
-		long decoded = (long)coder.decode(reader, annotation, null);
+		long decoded = (long)coder.decode(messageParser, reader, annotation, null);
 
 		Assertions.assertEquals(-encodedValue, decoded);
 	}
@@ -155,8 +155,9 @@ class CoderIntegerTest{
 			}
 		};
 
+		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(writer, annotation, null, encodedValue);
+		coder.encode(messageParser, writer, annotation, null, encodedValue);
 		writer.flush();
 
 		BitSet bits = BitSet.valueOf(ByteHelper.createUnsignedByteArray(BigInteger.valueOf(encodedValue), 24));
@@ -164,8 +165,7 @@ class CoderIntegerTest{
 		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bits.toByteArray()).toUpperCase(Locale.ROOT), 6, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-
-		long decoded = (long)coder.decode(reader, annotation, null);
+		long decoded = (long)coder.decode(messageParser, reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -218,16 +218,16 @@ class CoderIntegerTest{
 			}
 		};
 
+		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(writer, annotation, null, encodedValue);
+		coder.encode(messageParser, writer, annotation, null, encodedValue);
 		writer.flush();
 
 		BitSet bits = BitSet.valueOf(ByteHelper.createUnsignedByteArray(BigInteger.valueOf(-encodedValue), 24));
 		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bits.toByteArray()).toUpperCase(Locale.ROOT), 6, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-
-		long decoded = (long)coder.decode(reader, annotation, null);
+		long decoded = (long)coder.decode(messageParser, reader, annotation, null);
 
 		Assertions.assertEquals(-encodedValue, decoded);
 	}
@@ -278,16 +278,16 @@ class CoderIntegerTest{
 			}
 		};
 
+		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(writer, annotation, null, encodedValue);
+		coder.encode(messageParser, writer, annotation, null, encodedValue);
 		writer.flush();
 
 		BitSet bits = BitSet.valueOf(ByteHelper.createUnsignedByteArray(BigInteger.valueOf(Math.abs(encodedValue)).negate(), 24));
 		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bits.toByteArray()).toUpperCase(Locale.ROOT), 6, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-
-		long decoded = (long)coder.decode(reader, annotation, null);
+		long decoded = (long)coder.decode(messageParser, reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -342,8 +342,9 @@ class CoderIntegerTest{
 			}
 		};
 
+		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(writer, annotation, null, encodedValue);
+		coder.encode(messageParser, writer, annotation, null, encodedValue);
 		writer.flush();
 
 		BitSet bits = BitSet.valueOf(ByteHelper.createUnsignedByteArray(encodedValue, 128));
@@ -351,8 +352,7 @@ class CoderIntegerTest{
 		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bits.toByteArray()).toUpperCase(Locale.ROOT), 6, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-
-		BigInteger decoded = (BigInteger)coder.decode(reader, annotation, null);
+		BigInteger decoded = (BigInteger)coder.decode(messageParser, reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -407,8 +407,9 @@ class CoderIntegerTest{
 			}
 		};
 
+		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(writer, annotation, null, encodedValue);
+		coder.encode(messageParser, writer, annotation, null, encodedValue);
 		writer.flush();
 
 		BitSet bits = BitSet.valueOf(ByteHelper.createUnsignedByteArray(encodedValue, 128));
@@ -416,8 +417,7 @@ class CoderIntegerTest{
 		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bits.toByteArray()).toUpperCase(Locale.ROOT), 6, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-
-		BigInteger decoded = (BigInteger)coder.decode(reader, annotation, null);
+		BigInteger decoded = (BigInteger)coder.decode(messageParser, reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -471,16 +471,16 @@ class CoderIntegerTest{
 			}
 		};
 
+		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(writer, annotation, null, encodedValue);
+		coder.encode(messageParser, writer, annotation, null, encodedValue);
 		writer.flush();
 
 		BitSet bb = BitSet.valueOf(ByteHelper.createUnsignedByteArray(encodedValue, 128));
 		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bb.toByteArray()), 32, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-
-		BigInteger decoded = (BigInteger)coder.decode(reader, annotation, null);
+		BigInteger decoded = (BigInteger)coder.decode(messageParser, reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -535,16 +535,16 @@ class CoderIntegerTest{
 			}
 		};
 
+		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(writer, annotation, null, encodedValue);
+		coder.encode(messageParser, writer, annotation, null, encodedValue);
 		writer.flush();
 
 		BitSet bb = BitSet.valueOf(ByteHelper.createUnsignedByteArray(encodedValue, 128));
 		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bb.toByteArray()), 32, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-
-		BigInteger decoded = (BigInteger)coder.decode(reader, annotation, null);
+		BigInteger decoded = (BigInteger)coder.decode(messageParser, reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -599,8 +599,9 @@ class CoderIntegerTest{
 			}
 		};
 
+		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(writer, annotation, null, encodedValue);
+		coder.encode(messageParser, writer, annotation, null, encodedValue);
 		writer.flush();
 
 		BitSet bits = BitSet.valueOf(ByteHelper.createUnsignedByteArray(encodedValue, 32));
@@ -608,8 +609,7 @@ class CoderIntegerTest{
 		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bits.toByteArray()).toUpperCase(Locale.ROOT), 6, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-
-		BigInteger decoded = (BigInteger)coder.decode(reader, annotation, null);
+		BigInteger decoded = (BigInteger)coder.decode(messageParser, reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -664,8 +664,9 @@ class CoderIntegerTest{
 			}
 		};
 
+		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(writer, annotation, null, encodedValue);
+		coder.encode(messageParser, writer, annotation, null, encodedValue);
 		writer.flush();
 
 		BitSet bits = BitSet.valueOf(ByteHelper.createUnsignedByteArray(encodedValue, 32));
@@ -673,8 +674,7 @@ class CoderIntegerTest{
 		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bits.toByteArray()).toUpperCase(Locale.ROOT), 6, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-
-		BigInteger decoded = (BigInteger)coder.decode(reader, annotation, null);
+		BigInteger decoded = (BigInteger)coder.decode(messageParser, reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -728,16 +728,16 @@ class CoderIntegerTest{
 			}
 		};
 
+		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(writer, annotation, null, encodedValue);
+		coder.encode(messageParser, writer, annotation, null, encodedValue);
 		writer.flush();
 
 		BitSet bb = BitSet.valueOf(ByteHelper.createUnsignedByteArray(encodedValue, 32));
 		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bb.toByteArray()), 8, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-
-		BigInteger decoded = (BigInteger)coder.decode(reader, annotation, null);
+		BigInteger decoded = (BigInteger)coder.decode(messageParser, reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -792,16 +792,16 @@ class CoderIntegerTest{
 			}
 		};
 
+		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(writer, annotation, null, encodedValue);
+		coder.encode(messageParser, writer, annotation, null, encodedValue);
 		writer.flush();
 
 		BitSet bb = BitSet.valueOf(ByteHelper.createUnsignedByteArray(encodedValue, 32));
 		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bb.toByteArray()), 8, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-
-		BigInteger decoded = (BigInteger)coder.decode(reader, annotation, null);
+		BigInteger decoded = (BigInteger)coder.decode(messageParser, reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
