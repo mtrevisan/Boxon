@@ -47,9 +47,11 @@ class CoderNumberTest{
 
 
 	@Test
-	void smallPositiveNumberLittleEndian(){
+	void smallNumberLittleEndianUnsigned(){
 		Coder coder = Coder.NUMBER;
 		long encodedValue = (RANDOM.nextLong() & 0x007F_FFFF);
+		if(encodedValue > 0l)
+			encodedValue = -encodedValue;
 		BindNumber annotation = new BindNumber(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
@@ -96,13 +98,13 @@ class CoderNumberTest{
 		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		Assertions.assertEquals(StringUtils.leftPad(Long.toHexString(Long.reverseBytes(encodedValue) >>> 40).toUpperCase(Locale.ROOT), 6, '0'), writer.toString());
+		Assertions.assertEquals(StringUtils.leftPad(Long.toHexString(Long.reverseBytes(-encodedValue) >>> 40).toUpperCase(Locale.ROOT), 6, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
 
 		long decoded = (long)coder.decode(reader, annotation, null);
 
-		Assertions.assertEquals(encodedValue, decoded);
+		Assertions.assertEquals(-encodedValue, decoded);
 	}
 
 	@Test
@@ -165,9 +167,11 @@ class CoderNumberTest{
 	}
 
 	@Test
-	void smallPositiveNumberBigEndian(){
+	void smallNumberBigEndianUnsigned(){
 		Coder coder = Coder.NUMBER;
 		long encodedValue = (RANDOM.nextLong() & 0x007F_FFFF);
+		if(encodedValue > 0l)
+			encodedValue = -encodedValue;
 		BindNumber annotation = new BindNumber(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
@@ -214,7 +218,7 @@ class CoderNumberTest{
 		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		BitSet bits = BitSet.valueOf(ByteHelper.createUnsignedByteArray(BigInteger.valueOf(encodedValue), 24));
+		BitSet bits = BitSet.valueOf(ByteHelper.createUnsignedByteArray(BigInteger.valueOf(-encodedValue), 24));
 		ByteHelper.reverseBits(bits, 24);
 		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bits.toByteArray()).toUpperCase(Locale.ROOT), 6, '0'), writer.toString());
 
@@ -222,7 +226,7 @@ class CoderNumberTest{
 
 		long decoded = (long)coder.decode(reader, annotation, null);
 
-		Assertions.assertEquals(encodedValue, decoded);
+		Assertions.assertEquals(-encodedValue, decoded);
 	}
 
 	@Test
@@ -288,12 +292,12 @@ class CoderNumberTest{
 
 
 	@Test
-	void bigPositiveNumberLittleEndian(){
+	void bigNumberLittleEndianUnsigned(){
 		Coder coder = Coder.NUMBER;
 		BigInteger encodedValue;
 		do{
 			encodedValue = new BigInteger(128, RANDOM);
-		}while(encodedValue.toByteArray().length > 16);
+		}while(encodedValue.signum() <= 0 || encodedValue.toByteArray().length > 16);
 		BindNumber annotation = new BindNumber(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
@@ -413,12 +417,12 @@ class CoderNumberTest{
 	}
 
 	@Test
-	void bigPositiveNumberBigEndian(){
+	void bigNumberBigEndianUnsigned(){
 		Coder coder = Coder.NUMBER;
 		BigInteger encodedValue;
 		do{
 			encodedValue = new BigInteger(128, RANDOM);
-		}while(encodedValue.toByteArray().length > 16);
+		}while(encodedValue.signum() <= 0 || encodedValue.toByteArray().length > 16);
 		BindNumber annotation = new BindNumber(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
@@ -543,12 +547,12 @@ class CoderNumberTest{
 
 
 	@Test
-	void bigPositiveNumberLittleEndianDisallowPrimitive(){
+	void bigNumberLittleEndianUnsignedDisallowPrimitive(){
 		Coder coder = Coder.NUMBER;
 		BigInteger encodedValue;
 		do{
 			encodedValue = new BigInteger(32, RANDOM);
-		}while(encodedValue.toByteArray().length > 4);
+		}while(encodedValue.signum() <= 0 || encodedValue.toByteArray().length > 4);
 		BindNumber annotation = new BindNumber(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
@@ -668,12 +672,12 @@ class CoderNumberTest{
 	}
 
 	@Test
-	void bigPositiveNumberBigEndianDisallowPrimitive(){
+	void bigNumberBigEndianUnsignedDisallowPrimitive(){
 		Coder coder = Coder.NUMBER;
 		BigInteger encodedValue;
 		do{
 			encodedValue = new BigInteger(32, RANDOM);
-		}while(encodedValue.toByteArray().length > 4);
+		}while(encodedValue.signum() <= 0 || encodedValue.toByteArray().length > 4);
 		BindNumber annotation = new BindNumber(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
