@@ -98,7 +98,9 @@ class CoderIntegerTest{
 		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		Assertions.assertEquals(StringUtils.leftPad(Long.toHexString(Long.reverseBytes(-encodedValue) >>> 40).toUpperCase(Locale.ROOT), 6, '0'), writer.toString());
+		BitSet bits = BitSet.valueOf(ByteHelper.createUnsignedByteArray(BigInteger.valueOf(-encodedValue), 24));
+		ByteHelper.reverseBits(bits, 24);
+		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bits.toByteArray()).toUpperCase(Locale.ROOT), 6, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
 
@@ -157,7 +159,9 @@ class CoderIntegerTest{
 		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		Assertions.assertEquals(StringUtils.leftPad(Long.toHexString(Long.reverseBytes(encodedValue) >>> 40).toUpperCase(Locale.ROOT), 6, '0'), writer.toString());
+		BitSet bits = BitSet.valueOf(ByteHelper.createUnsignedByteArray(BigInteger.valueOf(encodedValue), 24));
+		ByteHelper.reverseBits(bits, 24);
+		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bits.toByteArray()).toUpperCase(Locale.ROOT), 6, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
 
@@ -219,7 +223,6 @@ class CoderIntegerTest{
 		writer.flush();
 
 		BitSet bits = BitSet.valueOf(ByteHelper.createUnsignedByteArray(BigInteger.valueOf(-encodedValue), 24));
-		ByteHelper.reverseBits(bits, 24);
 		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bits.toByteArray()).toUpperCase(Locale.ROOT), 6, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
@@ -280,7 +283,6 @@ class CoderIntegerTest{
 		writer.flush();
 
 		BitSet bits = BitSet.valueOf(ByteHelper.createUnsignedByteArray(BigInteger.valueOf(Math.abs(encodedValue)).negate(), 24));
-		ByteHelper.reverseBits(bits, 24);
 		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bits.toByteArray()).toUpperCase(Locale.ROOT), 6, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
@@ -344,7 +346,9 @@ class CoderIntegerTest{
 		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(ByteHelper.createUnsignedByteArray(encodedValue, 128)), 32, '0'), writer.toString());
+		BitSet bits = BitSet.valueOf(ByteHelper.createUnsignedByteArray(encodedValue, 128));
+		ByteHelper.reverseBits(bits, 128);
+		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bits.toByteArray()).toUpperCase(Locale.ROOT), 6, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
 
@@ -407,7 +411,9 @@ class CoderIntegerTest{
 		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(ByteHelper.createUnsignedByteArray(encodedValue, 128)), 32, '0'), writer.toString());
+		BitSet bits = BitSet.valueOf(ByteHelper.createUnsignedByteArray(encodedValue, 128));
+		ByteHelper.reverseBits(bits, 128);
+		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bits.toByteArray()).toUpperCase(Locale.ROOT), 6, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
 
@@ -470,7 +476,6 @@ class CoderIntegerTest{
 		writer.flush();
 
 		BitSet bb = BitSet.valueOf(ByteHelper.createUnsignedByteArray(encodedValue, 128));
-		ByteHelper.reverseBits(bb, 128);
 		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bb.toByteArray()), 32, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
@@ -535,7 +540,6 @@ class CoderIntegerTest{
 		writer.flush();
 
 		BitSet bb = BitSet.valueOf(ByteHelper.createUnsignedByteArray(encodedValue, 128));
-		ByteHelper.reverseBits(bb, 128);
 		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bb.toByteArray()), 32, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
@@ -599,7 +603,9 @@ class CoderIntegerTest{
 		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(ByteHelper.createUnsignedByteArray(encodedValue, 32)), 8, '0'), writer.toString());
+		BitSet bits = BitSet.valueOf(ByteHelper.createUnsignedByteArray(encodedValue, 32));
+		ByteHelper.reverseBits(bits, 32);
+		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bits.toByteArray()).toUpperCase(Locale.ROOT), 6, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
 
@@ -662,7 +668,9 @@ class CoderIntegerTest{
 		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(ByteHelper.createUnsignedByteArray(encodedValue, 32)), 8, '0'), writer.toString());
+		BitSet bits = BitSet.valueOf(ByteHelper.createUnsignedByteArray(encodedValue, 32));
+		ByteHelper.reverseBits(bits, 32);
+		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bits.toByteArray()).toUpperCase(Locale.ROOT), 6, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
 
@@ -725,7 +733,6 @@ class CoderIntegerTest{
 		writer.flush();
 
 		BitSet bb = BitSet.valueOf(ByteHelper.createUnsignedByteArray(encodedValue, 32));
-		ByteHelper.reverseBits(bb, 32);
 		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bb.toByteArray()), 8, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
@@ -790,7 +797,6 @@ class CoderIntegerTest{
 		writer.flush();
 
 		BitSet bb = BitSet.valueOf(ByteHelper.createUnsignedByteArray(encodedValue, 32));
-		ByteHelper.reverseBits(bb, 32);
 		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bb.toByteArray()), 8, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);

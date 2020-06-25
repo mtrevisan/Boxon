@@ -265,7 +265,10 @@ public class ByteHelper{
 		}
 	}
 
-	public static BigInteger createBigInteger(final BitSet bits, final boolean unsigned){
+	public static BigInteger createBigInteger(final BitSet bits, final int size, final ByteOrder byteOrder, final boolean unsigned){
+		if(byteOrder == ByteOrder.LITTLE_ENDIAN)
+			reverseBits(bits, size);
+
 		BigInteger value;
 		//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
 		final byte[] array = reverseBytes(bits.toByteArray());
@@ -283,9 +286,10 @@ public class ByteHelper{
 		return bytes;
 	}
 
-	public static BigInteger createUnsignedBigInteger(final BitSet bits, final ByteOrder byteOrder, final int size){
+	public static BigInteger createUnsignedBigInteger(final BitSet bits, final int size, final ByteOrder byteOrder){
 		if(byteOrder == ByteOrder.LITTLE_ENDIAN)
 			reverseBits(bits, size);
+
 		//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
 		return new BigInteger(1, reverseBytes(bits.toByteArray()));
 	}

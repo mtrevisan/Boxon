@@ -44,7 +44,7 @@ class CoderBitsTest{
 
 
 	@Test
-	void bitLittleEndian(){
+	void bitsLittleEndian(){
 		Coder coder = Coder.BITS;
 		byte[] randomBytes = new byte[123];
 		RANDOM.nextBytes(randomBytes);
@@ -97,11 +97,12 @@ class CoderBitsTest{
 
 		BitSet decoded = (BitSet)coder.decode(reader, annotation, null);
 
+		ByteHelper.reverseBits(encodedValue, randomBytes.length * Byte.SIZE);
 		Assertions.assertEquals(encodedValue, decoded);
 	}
 
 	@Test
-	void bitBigEndian(){
+	void bitsBigEndian(){
 		Coder coder = Coder.BITS;
 		byte[] randomBytes = new byte[123];
 		RANDOM.nextBytes(randomBytes);
@@ -154,7 +155,6 @@ class CoderBitsTest{
 
 		BitSet decoded = (BitSet)coder.decode(reader, annotation, null);
 
-		ByteHelper.reverseBits(encodedValue, randomBytes.length * Byte.SIZE);
 		Assertions.assertEquals(encodedValue, decoded);
 	}
 

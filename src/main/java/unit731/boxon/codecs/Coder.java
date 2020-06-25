@@ -79,11 +79,10 @@ enum Coder{
 				final ByteOrder prefixByteOrder = selectFrom.byteOrder();
 
 				final BitSet bits = reader.getBits(prefixSize);
-				final BigInteger prefix = ByteHelper.createUnsignedBigInteger(bits, prefixByteOrder, prefixSize);
+				final BigInteger prefix = ByteHelper.createUnsignedBigInteger(bits, prefixSize, prefixByteOrder);
 
 				//choose class
 				final Choices.Choice chosenAlternative = chooseAlternative(alternatives, prefix.intValue(), data);
-
 				type = chosenAlternative.type();
 			}
 
@@ -315,7 +314,7 @@ enum Coder{
 
 				for(int i = 0; i < size; i ++){
 					final BitSet bits = reader.getBits(prefixSize);
-					final BigInteger prefix = ByteHelper.createUnsignedBigInteger(bits, prefixByteOrder, prefixSize);
+					final BigInteger prefix = ByteHelper.createUnsignedBigInteger(bits, prefixSize, prefixByteOrder);
 
 					//choose class
 					final Choices.Choice chosenAlternative = chooseAlternative(alternatives, prefix.intValue(), data);
@@ -403,7 +402,7 @@ enum Coder{
 			final int size = Evaluator.evaluate(binding.size(), int.class, data);
 			final BitSet bits = reader.getBits(size);
 			final ByteOrder byteOrder = binding.byteOrder();
-			if(byteOrder == ByteOrder.BIG_ENDIAN)
+			if(byteOrder == ByteOrder.LITTLE_ENDIAN)
 				ByteHelper.reverseBits(bits, size);
 
 			final Object value = converterDecode(binding.converter(), bits);
@@ -422,7 +421,7 @@ enum Coder{
 			final BitSet bits = converterEncode(binding.converter(), value);
 			final int size = Evaluator.evaluate(binding.size(), int.class, data);
 			final ByteOrder byteOrder = binding.byteOrder();
-			if(byteOrder == ByteOrder.BIG_ENDIAN)
+			if(byteOrder == ByteOrder.LITTLE_ENDIAN)
 				ByteHelper.reverseBits(bits, size);
 
 			writer.putBits(bits, size);
@@ -596,11 +595,12 @@ enum Coder{
 			final int size = Evaluator.evaluate(binding.size(), int.class, data);
 			final BitSet bits = reader.getBits(size);
 			final ByteOrder byteOrder = binding.byteOrder();
-			if(byteOrder == ByteOrder.BIG_ENDIAN)
-				ByteHelper.reverseBits(bits, size);
+
 			final Object value;
 			final boolean allowPrimitive = binding.allowPrimitive();
 			if(allowPrimitive && size < Long.SIZE){
+				if(byteOrder == ByteOrder.LITTLE_ENDIAN)
+					ByteHelper.reverseBits(bits, size);
 				long v = bits.toLongArray()[0];
 				if(!binding.unsigned())
 					v = ByteHelper.extendSign(v, size);
@@ -608,7 +608,7 @@ enum Coder{
 				value = converterDecode(binding.converter(), v);
 			}
 			else{
-				final BigInteger v = ByteHelper.createBigInteger(bits, binding.unsigned());
+				final BigInteger v = ByteHelper.createBigInteger(bits, size, byteOrder, binding.unsigned());
 
 				value = converterDecode(binding.converter(), v);
 			}
@@ -641,7 +641,7 @@ enum Coder{
 			//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
 			final BitSet bits = BitSet.valueOf(ByteHelper.createUnsignedByteArray(v.and(mask), size));
 			final ByteOrder byteOrder = binding.byteOrder();
-			if(byteOrder == ByteOrder.BIG_ENDIAN)
+			if(byteOrder == ByteOrder.LITTLE_ENDIAN)
 				ByteHelper.reverseBits(bits, size);
 
 			writer.putBits(bits, size);
