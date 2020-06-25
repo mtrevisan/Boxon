@@ -26,10 +26,17 @@ package unit731.boxon.annotations;
 
 import unit731.boxon.codecs.ByteOrder;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 
 /**
  * Allow to define a number of choices, based on a prefix of a certain {@link #prefixSize() size}
  */
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.ANNOTATION_TYPE)
 public @interface Choices{
 
 	/**
@@ -57,6 +64,8 @@ public @interface Choices{
 
 
 	/** The annotation holding a single choice. */
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.ANNOTATION_TYPE)
 	@interface Choice{
 
 		/**

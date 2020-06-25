@@ -491,6 +491,7 @@ This annotation is bounded to a variable.
 #### example
 ```java
 @Skip(size = "3")
+@Skip(size = "1")
 @BindString(size = "4")
 public String text1;
 

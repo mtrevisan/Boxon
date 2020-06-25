@@ -25,39 +25,18 @@
 package unit731.boxon.annotations;
 
 import java.lang.annotation.ElementType;
-import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 
 /**
- * Manages the skipping of a certain amount of bits, or until a given terminator is found.
+ * Manages multiple {@link Skip} annotations.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-@Repeatable(Skips.class)
-public @interface Skip{
+public @interface Skips{
 
-	/**
-	 * The number of bits to be skipped.
-	 *
-	 * @return	The number of bits to be skipped (can be an expression).
-	 */
-	String size() default "0";
-
-	/**
-	 * The byte that terminates the skip
-	 *
-	 * @return	The terminator byte.
-	 */
-	byte terminator() default '\0';
-
-	/**
-	 * Whether to consume the terminator.
-	 *
-	 * @return	Whether to consume the terminator.
-	 */
-	boolean consumeTerminator() default true;
+	Skip[] value();
 
 }
