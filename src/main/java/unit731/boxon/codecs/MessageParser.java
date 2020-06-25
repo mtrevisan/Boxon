@@ -133,9 +133,9 @@ class MessageParser{
 			startPosition += checksum.skipStart();
 			final int endPosition = reader.positionAsBits() / Byte.SIZE - checksum.skipEnd();
 
+			final Checksummer<?> checksummer = ReflectionHelper.createInstance(checksum.algorithm());
+			final long calculatedCRC = ((Number)checksummer.calculateCRC(reader.array(), startPosition, endPosition)).longValue();
 			try{
-				final Checksummer<?> checksummer = ReflectionHelper.createInstance(checksum.algorithm());
-				final long calculatedCRC = ((Number)checksummer.calculateCRC(reader.array(), startPosition, endPosition)).longValue();
 				@SuppressWarnings("ConstantConditions")
 				final long givenCRC = ((Number)ReflectionHelper.getFieldValue(data, checksumData.getName())).longValue();
 				if(calculatedCRC != givenCRC)
@@ -147,14 +147,14 @@ class MessageParser{
 	}
 
 	private <T> void processEvaluatedFields(final Codec<T> codec, final T data){
-		try{
-			final List<Codec.EvaluatedField> evaluatedFields = codec.getEvaluatedFields();
-			for(final Codec.EvaluatedField field : evaluatedFields){
-				final Object value = Evaluator.evaluate(field.getBinding().value(), field.getType(), data);
+		final List<Codec.EvaluatedField> evaluatedFields = codec.getEvaluatedFields();
+		for(final Codec.EvaluatedField field : evaluatedFields){
+			final Object value = Evaluator.evaluate(field.getBinding().value(), field.getType(), data);
+			try{
 				ReflectionHelper.setFieldValue(data, field.getName(), value);
 			}
+			catch(final NoSuchFieldException ignored){}
 		}
-		catch(final NoSuchFieldException ignored){}
 	}
 
 	<T> void encode(final Codec<?> codec, final T data, final BitWriter writer){
