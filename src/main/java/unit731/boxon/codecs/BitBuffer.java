@@ -54,9 +54,9 @@ class BitBuffer{
 	}
 
 	private static final class State{
-		final int position;
-		final int remainingBits;
-		final byte cache;
+		private final int position;
+		private final int remainingBits;
+		private final byte cache;
 
 		State(final int position, final int remainingBits, final byte cache){
 			this.position = position;
