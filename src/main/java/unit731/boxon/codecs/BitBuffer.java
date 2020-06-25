@@ -93,25 +93,6 @@ class BitBuffer{
 	/**
 	 * Wraps a byte array into a buffer.
 	 *
-	 * <p> The new buffer will be backed by the given byte array; that is, modifications to the buffer will cause the array
-	 * to be modified and vice versa. The new buffer's capacity and limit will be {@code array.length}, its position will
-	 * be zero, its mark will be undefined, and its byte byteOrder will be {@link ByteOrder#BIG_ENDIAN BIG_ENDIAN}.
-	 *
-	 * @param array	The array that will back this buffer
-	 * @param offset	The offset of the subarray to be used; must be non-negative and no larger than <tt>array.length</tt>.
-	 *                The new buffer's position will be set to this value.
-	 *
-	 * @param length	The length of the subarray to be used; must be non-negative and no larger than <tt>array.length - offset</tt>.
-	 *                The new buffer's limit will be set to <tt>offset + length</tt>.
-	 * @return	The new bit buffer
-	 */
-	public static BitBuffer wrap(final byte[] array, final int offset, final int length){
-		return new BitBuffer(ByteBuffer.wrap(array, offset, length));
-	}
-
-	/**
-	 * Wraps a byte array into a buffer.
-	 *
 	 * <p> The new buffer will be backed by the given byte array; that is, modifications to the buffer will cause the array to be modified
 	 * and vice versa. The new buffer's capacity and limit will be {@code array.length}, its position will be zero, its mark will be
 	 * undefined, and its byte byteOrder will be {@link ByteOrder#BIG_ENDIAN BIG_ENDIAN}.
@@ -122,16 +103,6 @@ class BitBuffer{
 	public static BitBuffer wrap(final BitWriter bitWriter){
 		bitWriter.flush();
 		return wrap(bitWriter.array());
-	}
-
-	/**
-	 * Allocates a new {@link BitBuffer} backed by a {@link ByteBuffer}.
-	 *
-	 * @param capacity	The capacity of the {@link BitBuffer} in {@code byte}s.
-	 * @return	The {@link BitBuffer} just created, to allow for the convenience of method-chaining.
-	 */
-	public static BitBuffer allocate(final int capacity){
-		return new BitBuffer(ByteBuffer.allocate(capacity));
 	}
 
 	/**
