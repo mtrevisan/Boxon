@@ -25,38 +25,24 @@
 package unit731.boxon.codecs;
 
 import unit731.boxon.annotations.MessageHeader;
+import unit731.boxon.helpers.AnnotationProcessor;
 import unit731.boxon.helpers.ByteHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
 import java.nio.charset.Charset;
-import java.nio.file.NoSuchFileException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.Enumeration;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.Stack;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 
 
 class Loader{
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Loader.class.getName());
-
-	private static final String POINT = ".";
-	private static final String SCHEMA_FILE = "file:";
-	private static final String EXTENSION_CLASS = ".class";
-	private static final String BOOT_INF_CLASSES = "BOOT-INF.classes.";
 
 	private final Map<String, Codec<?>> codecs = new TreeMap<>(Comparator.comparingInt(String::length).reversed().thenComparing(String::compareTo));
 
@@ -85,7 +71,13 @@ class Loader{
 				Arrays.toString(Arrays.stream(basePackageClasses).map(Class::getName)
 					.map(name -> name.substring(0, name.lastIndexOf('.'))).toArray(String[]::new)));
 
-			final Collection<Codec<?>> codecs = extractCodecs(basePackageClasses);
+			final Collection<Class<?>> annotatedClasses = AnnotationProcessor.extractAnnotatedClasses(MessageHeader.class, basePackageClasses);
+			final Collection<Codec<?>> codecs = new ArrayList<>();
+			for(final Class<?> cls : annotatedClasses){
+				final Codec<?> codec = Codec.createFrom(cls);
+				if(codec.canBeDecoded())
+					codecs.add(codec);
+			}
 			loadCodecs(codecs);
 
 			LOGGER.trace("Codecs loaded are {}", codecs.size());
@@ -113,122 +105,6 @@ class Loader{
 
 	synchronized boolean isInitialized(){
 		return initialized.get();
-	}
-
-	/**
-	 * Scans all classes accessible from the context class loader which belong to the given package
-	 *
-	 * @param basePackageClasses	A list of classes that resides in a base package(s)
-	 * @return	The classes
-	 */
-	private Collection<Codec<?>> extractCodecs(final Class<?>... basePackageClasses){
-		final Set<Codec<?>> codecs = new HashSet<>();
-
-		final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-		for(final Class<?> basePackageClass : basePackageClasses){
-			try{
-				final String basePackageName = basePackageClass.getName().substring(0, basePackageClass.getName().lastIndexOf('.'));
-				final String path = basePackageName.replace('.', '/');
-				final Enumeration<URL> resources = classLoader.getResources(path);
-				while(resources.hasMoreElements()){
-					final URL resource = resources.nextElement();
-					final String directory = resource.getFile();
-					final int exclamationMarkIndex = directory.indexOf('!');
-					if(exclamationMarkIndex >= 0){
-						final String libraryName = directory.substring(SCHEMA_FILE.length(), exclamationMarkIndex);
-						codecs.addAll(findCodecsFromLibrary(libraryName));
-					}
-					else
-						codecs.addAll(findCodecs(new File(directory), basePackageName));
-				}
-			}
-			catch(final NoSuchFileException e){
-				LOGGER.error("Are you sure you are not running this library from a OneDrive folder?", e);
-			}
-			catch(final IOException ignored){}
-		}
-
-		return codecs;
-	}
-
-	private static final class ClassElem{
-		final File file;
-		final String packageName;
-
-		ClassElem(final File file, final String packageName){
-			this.file = file;
-			this.packageName = packageName;
-		}
-	}
-
-	/**
-	 * Extract all classes from a given directory
-	 *
-	 * @param directory   The base directory
-	 * @param packageName The package name for classes found inside the base directory
-	 * @return The classes
-	 */
-	private Set<Codec<?>> findCodecs(final File directory, final String packageName){
-		final Set<Codec<?>> codecs = new HashSet<>();
-
-		final Stack<ClassElem> stack = new Stack<>();
-		stack.push(new ClassElem(directory, packageName));
-		while(!stack.isEmpty()){
-			final ClassElem elem = stack.pop();
-			final File[] files = Optional.ofNullable(elem.file.listFiles())
-				.orElse(new File[0]);
-			for(final File file : files){
-				if(file.isDirectory())
-					stack.push(new ClassElem(file, elem.packageName + POINT + file.getName()));
-				else if(file.getName().endsWith(EXTENSION_CLASS)){
-					try{
-						final String className = elem.packageName + POINT
-							+ file.getName().substring(0, file.getName().length() - EXTENSION_CLASS.length());
-						final Class<?> cls = Class.forName(className);
-						final Codec<?> codec = Codec.createFrom(cls);
-						if(codec.canBeDecoded())
-							codecs.add(codec);
-					}
-					catch(final ClassNotFoundException ignored){}
-				}
-			}
-		}
-
-		return codecs;
-	}
-
-	/**
-	 * Scans all classes accessible from a library which belong to the given package
-	 *
-	 * @param libraryName The name of the library to load the classes from
-	 * @return The classes
-	 */
-	private Set<Codec<?>> findCodecsFromLibrary(final String libraryName){
-		final Set<Codec<?>> codecs = new HashSet<>();
-
-		try{
-			final JarFile jarFile = new JarFile(libraryName);
-			final Enumeration<JarEntry> resources = jarFile.entries();
-			while(resources.hasMoreElements()){
-				final JarEntry resource = resources.nextElement();
-				final String resourceName = resource.getName();
-				if(!resource.isDirectory() && resourceName.endsWith(EXTENSION_CLASS)){
-					try{
-						final String className = resourceName.substring(0, resourceName.length() - EXTENSION_CLASS.length())
-							.replace('/', '.');
-						final Class<?> cls = Class.forName(className.startsWith(BOOT_INF_CLASSES)?
-							className.substring(BOOT_INF_CLASSES.length()): className);
-						final Codec<?> codec = Codec.createFrom(cls);
-						if(codec.canBeDecoded())
-							codecs.add(codec);
-					}
-					catch(final ClassNotFoundException ignored){}
-				}
-			}
-		}
-		catch(final IOException ignored){}
-
-		return codecs;
 	}
 
 	private void loadCodecs(final Collection<Codec<?>> codecs){

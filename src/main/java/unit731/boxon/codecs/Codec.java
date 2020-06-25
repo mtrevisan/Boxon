@@ -29,6 +29,7 @@ import unit731.boxon.annotations.BindChecksum;
 import unit731.boxon.annotations.BindIf;
 import unit731.boxon.annotations.MessageHeader;
 import unit731.boxon.annotations.Skip;
+import unit731.boxon.helpers.AnnotationProcessor;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -148,28 +149,7 @@ class Codec<T>{
 
 		header = cls.getAnnotation(MessageHeader.class);
 		//retrieve all declared fields in the current class, therefore NOT in the parent classes
-		loadAnnotatedFields(getDeclaredFields(cls, true));
-	}
-
-	/**
-	 * Retrieving fields list of specified class
-	 * If `recursively` is {@code true}, retrieving fields from all class hierarchy
-	 */
-	private Field[] getDeclaredFields(final Class<T> cls, @SuppressWarnings("SameParameterValue") final boolean recursively){
-		if(recursively){
-			final List<Field> fields = new ArrayList<>();
-			Class<? super T> currentType = cls;
-			while(currentType != null){
-				final List<Field> subfields = Arrays.asList(currentType.getDeclaredFields());
-				//place parent's fields before all the child's fields
-				fields.addAll(0, subfields);
-
-				currentType = currentType.getSuperclass();
-			}
-			return fields.toArray(Field[]::new);
-		}
-		else
-			return cls.getDeclaredFields();
+		loadAnnotatedFields(AnnotationProcessor.getDeclaredFields(cls, true));
 	}
 
 	private void loadAnnotatedFields(final Field[] fields){
