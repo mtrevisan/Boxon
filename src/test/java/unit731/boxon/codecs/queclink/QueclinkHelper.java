@@ -51,6 +51,7 @@ public class QueclinkHelper{
 			return new byte[]{Byte.parseByte(components[0]), Byte.parseByte(components[1])};
 		}
 	}
+
 	public static class IMEIConverter implements Converter<byte[], String>{
 		@Override
 		public String decode(final byte[] value){
@@ -70,6 +71,7 @@ public class QueclinkHelper{
 			return imei;
 		}
 	}
+
 	public static class DateTimeYYYYMMDDHHMMSSConverter implements Converter<byte[], ZonedDateTime>{
 		@Override
 		public ZonedDateTime decode(final byte[] value){
@@ -96,6 +98,7 @@ public class QueclinkHelper{
 		}
 	}
 
+
 	public static class StringDateTimeYYYYMMDDHHMMSSConverter implements Converter<String, ZonedDateTime>{
 		@Override
 		public ZonedDateTime decode(final String value){
@@ -120,6 +123,7 @@ public class QueclinkHelper{
 			return sb.toString();
 		}
 	}
+
 	public static class HexStringToIntConverter implements Converter<String, Integer>{
 		@Override
 		public Integer decode(final String value){
