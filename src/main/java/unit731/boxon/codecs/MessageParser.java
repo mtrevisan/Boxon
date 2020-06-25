@@ -84,7 +84,7 @@ class MessageParser{
 			}
 		}
 
-		processAssignedFields(codec, data);
+		processEvaluatedFields(codec, data);
 
 		readMessageTerminator(codec, reader);
 
@@ -146,10 +146,10 @@ class MessageParser{
 		}
 	}
 
-	private static <T> void processAssignedFields(final Codec<T> codec, final T data){
+	private static <T> void processEvaluatedFields(final Codec<T> codec, final T data){
 		try{
-			final List<Codec.AssignedField> assignedFields = codec.getAssignedFields();
-			for(final Codec.AssignedField field : assignedFields){
+			final List<Codec.EvaluatedField> evaluatedFields = codec.getEvaluatedFields();
+			for(final Codec.EvaluatedField field : evaluatedFields){
 				final Object value = Evaluator.evaluate(field.getBinding().value(), field.getType(), data);
 				ReflectionHelper.setFieldValue(data, field.getName(), value);
 			}

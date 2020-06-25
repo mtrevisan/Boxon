@@ -24,7 +24,7 @@
  */
 package unit731.boxon.codecs;
 
-import unit731.boxon.annotations.Assign;
+import unit731.boxon.annotations.Evaluate;
 import unit731.boxon.annotations.BindArray;
 import unit731.boxon.annotations.BindArrayPrimitive;
 import unit731.boxon.annotations.BindBits;
@@ -155,7 +155,7 @@ class CodecTest{
 		@BindChecksum(type = short.class, skipStart = 4, skipEnd = 4, algorithm = CRC16.class)
 		private short checksum;
 
-		@Assign("T(java.time.ZonedDateTime).now()")
+		@Evaluate("T(java.time.ZonedDateTime).now()")
 		private ZonedDateTime receptionTime;
 
 	}
@@ -181,14 +181,14 @@ class CodecTest{
 		Assertions.assertNotNull(boundedFields);
 		Assertions.assertEquals(15, boundedFields.size());
 		//TODO assert bounded fields
-		List<Codec.AssignedField> assignedFields = codec.getAssignedFields();
-		Assertions.assertNotNull(assignedFields);
-		Assertions.assertEquals(1, assignedFields.size());
-		Codec.AssignedField assignedField = assignedFields.get(0);
-		Assertions.assertEquals("receptionTime", assignedField.getName());
-		Assertions.assertEquals(ZonedDateTime.class, assignedField.getType());
-		Assign assign = assignedField.getBinding();
-		Assertions.assertEquals("T(java.time.ZonedDateTime).now()", assign.value());
+		List<Codec.EvaluatedField> evaluatedFields = codec.getEvaluatedFields();
+		Assertions.assertNotNull(evaluatedFields);
+		Assertions.assertEquals(1, evaluatedFields.size());
+		Codec.EvaluatedField evaluatedField = evaluatedFields.get(0);
+		Assertions.assertEquals("receptionTime", evaluatedField.getName());
+		Assertions.assertEquals(ZonedDateTime.class, evaluatedField.getType());
+		Evaluate evaluate = evaluatedField.getBinding();
+		Assertions.assertEquals("T(java.time.ZonedDateTime).now()", evaluate.value());
 		Codec.BoundedField checksumField = codec.getChecksum();
 		Assertions.assertNotNull(checksumField);
 		Assertions.assertEquals("checksum", checksumField.getName());

@@ -61,7 +61,7 @@ Boxon differs from Preon in...
     2. [BindIf](#annotation-bindif)
     3. [Skip](#annotation-skip)
     4. [Checksum](#annotation-checksum)
-    5. [Assign](#annotation-assign)
+    5. [Evaluate](#annotation-evaluate)
 3. [How to extend the functionalities](#how-to)
 4. [Digging into the code](#digging)
 5. [Examples](#examples)
@@ -529,8 +529,8 @@ private short checksum;
 ```
 
 
-<a name="annotation-assign"></a>
-### Assign
+<a name="annotation-evaluate"></a>
+### Evaluate
 
 #### parameters
  - `value`: the value to be assigned, or calculated (can be a SpEL expression).
@@ -546,14 +546,14 @@ This annotation is bounded to a variable.
 @BindString(size = "4")
 private String messageHeader;
 
-@Assign("T(java.time.ZonedDateTime).now()")
+@Evaluate("T(java.time.ZonedDateTime).now()")
 private ZonedDateTime receptionTime;
 
-@Assign("messageHeader.startsWith('+B')")
+@Evaluate("messageHeader.startsWith('+B')")
 private boolean buffered;
 
 //from the variable `deviceTypes` passed in the context
-@Assign("#deviceTypes.getDeviceTypeName(deviceTypeCode)")
+@Evaluate("#deviceTypes.getDeviceTypeName(deviceTypeCode)")
 private String deviceTypeName;
 ```
 

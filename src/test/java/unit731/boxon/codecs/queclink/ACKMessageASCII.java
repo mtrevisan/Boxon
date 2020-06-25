@@ -24,7 +24,7 @@
  */
 package unit731.boxon.codecs.queclink;
 
-import unit731.boxon.annotations.Assign;
+import unit731.boxon.annotations.Evaluate;
 import unit731.boxon.annotations.BindStringTerminated;
 import unit731.boxon.annotations.MessageHeader;
 import unit731.boxon.annotations.converters.Converter;
@@ -121,15 +121,15 @@ public class ACKMessageASCII{
 	@BindStringTerminated(terminator = '$', consumeTerminator = false, converter = QueclinkHelper.HexStringToIntConverter.class)
 	private int messageId;
 
-	@Assign("T(Integer).valueOf(deviceTypeAndVersion.substring(0, 2), 16).byteValue()")
+	@Evaluate("T(Integer).valueOf(deviceTypeAndVersion.substring(0, 2), 16).byteValue()")
 	private byte deviceTypeCode;
-	@Assign("deviceTypeAndVersion.substring(2, 6)")
+	@Evaluate("deviceTypeAndVersion.substring(2, 6)")
 	private String deviceVersion;
-	@Assign("#deviceTypes.getDeviceTypeName(deviceTypeCode)")
+	@Evaluate("#deviceTypes.getDeviceTypeName(deviceTypeCode)")
 	private String deviceTypeName;
-	@Assign("T(java.time.ZonedDateTime).now()")
+	@Evaluate("T(java.time.ZonedDateTime).now()")
 	private ZonedDateTime receptionTime;
-	@Assign("messageHeader.startsWith('+B')")
+	@Evaluate("messageHeader.startsWith('+B')")
 	private boolean buffered;
 
 }

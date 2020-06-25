@@ -24,7 +24,7 @@
  */
 package unit731.boxon.codecs;
 
-import unit731.boxon.annotations.Assign;
+import unit731.boxon.annotations.Evaluate;
 import unit731.boxon.annotations.BindChecksum;
 import unit731.boxon.annotations.BindIf;
 import unit731.boxon.annotations.MessageHeader;
@@ -93,14 +93,14 @@ class Codec<T>{
 		}
 	}
 
-	/** Data associated to a directly assignable field */
-	static class AssignedField{
+	/** Data associated to a directly evaluable field */
+	static class EvaluatedField{
 
 		private final Field field;
-		private final Assign binding;
+		private final Evaluate binding;
 
 
-		private AssignedField(final Field field, final Assign binding){
+		private EvaluatedField(final Field field, final Evaluate binding){
 			Objects.requireNonNull(field);
 			Objects.requireNonNull(binding);
 
@@ -116,7 +116,7 @@ class Codec<T>{
 			return field.getType();
 		}
 
-		Assign getBinding(){
+		Evaluate getBinding(){
 			return binding;
 		}
 	}
@@ -126,7 +126,7 @@ class Codec<T>{
 
 	private final MessageHeader header;
 	private final List<BoundedField> boundedFields = new ArrayList<>(0);
-	private final List<AssignedField> assignedFields = new ArrayList<>(0);
+	private final List<EvaluatedField> evaluatedFields = new ArrayList<>(0);
 	private BoundedField checksum;
 
 
@@ -185,8 +185,8 @@ class Codec<T>{
 				.collect(Collectors.toList());
 			final List<Annotation> boundedAnnotations = new ArrayList<>();
 			for(final Annotation annotation : annotations){
-				if(annotation.annotationType() == Assign.class)
-					assignedFields.add(new AssignedField(field, (Assign)annotation));
+				if(annotation.annotationType() == Evaluate.class)
+					evaluatedFields.add(new EvaluatedField(field, (Evaluate)annotation));
 				else
 					boundedAnnotations.add(annotation);
 			}
@@ -224,8 +224,8 @@ class Codec<T>{
 		return boundedFields;
 	}
 
-	List<AssignedField> getAssignedFields(){
-		return assignedFields;
+	List<EvaluatedField> getEvaluatedFields(){
+		return evaluatedFields;
 	}
 
 	BoundedField getChecksum(){

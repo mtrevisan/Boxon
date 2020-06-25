@@ -32,7 +32,7 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Assign{
+public @interface Evaluate{
 
 	/**
 	 * The expression to be evaluated.

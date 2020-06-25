@@ -24,7 +24,7 @@
  */
 package unit731.boxon.codecs.queclink;
 
-import unit731.boxon.annotations.Assign;
+import unit731.boxon.annotations.Evaluate;
 import unit731.boxon.annotations.BindArrayPrimitive;
 import unit731.boxon.annotations.BindByte;
 import unit731.boxon.annotations.BindChecksum;
@@ -150,11 +150,11 @@ public class ACKMessageHex{
 	@BindChecksum(type = short.class, skipStart = 4, skipEnd = 4, algorithm = CRC16.class)
 	private short checksum;
 
-	@Assign("#deviceTypes.getDeviceTypeName(deviceTypeCode)")
+	@Evaluate("#deviceTypes.getDeviceTypeName(deviceTypeCode)")
 	private String deviceTypeName;
-	@Assign("T(java.time.ZonedDateTime).now()")
+	@Evaluate("T(java.time.ZonedDateTime).now()")
 	private ZonedDateTime receptionTime;
-	@Assign("messageHeader.startsWith('+B')")
+	@Evaluate("messageHeader.startsWith('+B')")
 	private boolean buffered;
 
 }
