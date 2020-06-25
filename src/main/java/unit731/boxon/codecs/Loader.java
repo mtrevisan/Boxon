@@ -49,7 +49,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 
-public class Loader{
+class Loader{
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Loader.class.getName());
 
@@ -63,10 +63,10 @@ public class Loader{
 	private final AtomicBoolean initialized = new AtomicBoolean(false);
 
 
-	public Loader(){}
+	Loader(){}
 
 	/** This method should be called from a method inside a class that lies on a parent of all the decoders */
-	public synchronized void init(){
+	synchronized void init(){
 		try{
 			final String callerClassName = Thread.currentThread().getStackTrace()[3].getClassName();
 			init(Class.forName(callerClassName));
@@ -79,7 +79,7 @@ public class Loader{
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes
 	 */
-	public synchronized void init(final Class<?>... basePackageClasses){
+	synchronized void init(final Class<?>... basePackageClasses){
 		if(!initialized.get()){
 			LOGGER.info("Load parsing classes from package {}",
 				Arrays.toString(Arrays.stream(basePackageClasses).map(Class::getName)
@@ -99,7 +99,7 @@ public class Loader{
 	 *
 	 * @param codecs	The list of codecs to be loaded
 	 */
-	public synchronized void init(final Collection<Codec<?>> codecs){
+	synchronized void init(final Collection<Codec<?>> codecs){
 		if(!initialized.get()){
 			LOGGER.info("Load parsing classes from method");
 
@@ -111,7 +111,7 @@ public class Loader{
 		}
 	}
 
-	public synchronized boolean isInitialized(){
+	synchronized boolean isInitialized(){
 		return initialized.get();
 	}
 
@@ -250,16 +250,6 @@ public class Loader{
 				LOGGER.error("Cannot load class {}", codec.getType().getSimpleName(), e);
 			}
 		}
-	}
-
-	Codec<?> getCodec(final byte[] header){
-		//calculate key
-		final String key = ByteHelper.byteArrayToHexString(header);
-		final Codec<?> codec = codecs.get(key);
-		if(codec == null)
-			throw new IllegalArgumentException("Cannot find any codec for message");
-
-		return codec;
 	}
 
 	Codec<?> getCodec(final BitBuffer reader){

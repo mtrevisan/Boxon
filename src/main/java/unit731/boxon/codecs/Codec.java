@@ -127,7 +127,6 @@ class Codec<T>{
 	private final MessageHeader header;
 	private final List<BoundedField> boundedFields = new ArrayList<>(0);
 	private final List<AssignedField> assignedFields = new ArrayList<>(0);
-
 	private BoundedField checksum;
 
 
