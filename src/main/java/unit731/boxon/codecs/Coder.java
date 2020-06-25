@@ -816,37 +816,6 @@ enum Coder{
 	abstract Class<?> coderType();
 
 
-	/** Extract pattern from a SpEL expression, or a string, or a real pattern */
-	private static <T> Pattern extractPattern(String match, final T data){
-		Pattern p = null;
-		if(isNotBlank(match)){
-			//try SpEL expression
-			try{
-				match = Evaluator.evaluate(match, String.class, data);
-			}
-			catch(final Exception ignored){}
-
-			//try regex expression
-			try{
-				p = Pattern.compile(match);
-			}
-			catch(final PatternSyntaxException ignored){}
-
-			//match exact
-			if(p == null){
-				try{
-					p = Pattern.compile("^" + Pattern.quote(match) + "$");
-				}
-				catch(final PatternSyntaxException ignored){}
-			}
-		}
-		return p;
-	}
-
-	private static boolean isNotBlank(final String text){
-		return (text != null && !text.trim().isBlank());
-	}
-
 	private static Choices.Choice chooseAlternative(final Choices.Choice[] alternatives, final int prefix, final Object data){
 		Evaluator.addToContext(CONTEXT_CHOICE_PREFIX, prefix);
 
@@ -881,6 +850,37 @@ enum Coder{
 		final Pattern pattern = extractPattern(match, data);
 		if(pattern != null && !pattern.matcher(Objects.toString(data)).matches())
 			throw new IllegalArgumentException("Parameter does not match constraint `" + match + "`");
+	}
+
+	/** Extract pattern from a SpEL expression, or a string, or a real pattern */
+	private static <T> Pattern extractPattern(String match, final T data){
+		Pattern p = null;
+		if(isNotBlank(match)){
+			//try SpEL expression
+			try{
+				match = Evaluator.evaluate(match, String.class, data);
+			}
+			catch(final Exception ignored){}
+
+			//try regex expression
+			try{
+				p = Pattern.compile(match);
+			}
+			catch(final PatternSyntaxException ignored){}
+
+			//match exact
+			if(p == null){
+				try{
+					p = Pattern.compile("^" + Pattern.quote(match) + "$");
+				}
+				catch(final PatternSyntaxException ignored){}
+			}
+		}
+		return p;
+	}
+
+	private static boolean isNotBlank(final String text){
+		return (text != null && !text.trim().isBlank());
 	}
 
 	private static <T> void validateData(@SuppressWarnings("rawtypes") final Class<? extends Validator> validatorType, final T data){
