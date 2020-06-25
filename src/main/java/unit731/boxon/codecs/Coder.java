@@ -514,7 +514,7 @@ enum Coder{
 		}
 	},
 
-	INTEGER {
+	INT{
 		@Override
 		Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
 			final BindInteger binding = (BindInteger)annotation;
@@ -588,7 +588,7 @@ enum Coder{
 		}
 	},
 
-	NUMBER {
+	INTEGER{
 		@Override
 		Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
 			final BindNumber binding = (BindNumber)annotation;

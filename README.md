@@ -45,12 +45,12 @@ Boxon differs from Preon in...
     1. [BindObject](#annotation-bindobject)
     2. [BindArray](#annotation-bindarray)
     3. [BindArrayPrimitive](#annotation-bindarrayprimitive)
-    4. [BindBit](#annotation-bindbit)
+    4. [BindBits](#annotation-bindbits)
     5. [BindByte](#annotation-bindbyte)
     6. [BindShort](#annotation-bindshort)
-    7. [BindInteger](#annotation-bindinteger)
+    7. [BindInt](#annotation-bindint)
     8. [BindLong](#annotation-bindlong)
-    9. [BindNumber](#annotation-bindnumber)
+    9. [BindInteger](#annotation-bindinteger)
     10. [BindFloat](#annotation-bindfloat)
     11. [BindDouble](#annotation-binddouble)
     12. [BindDecimal](#annotation-binddecimal)
@@ -162,8 +162,8 @@ private byte[] array;
 ```
 
 
-<a name="annotation-bindbit"></a>
-### BindBit
+<a name="annotation-bindbits"></a>
+### BindBits
 
 #### parameters
  - `size`: the number of bits to read (can be a SpEL expression).
@@ -180,7 +180,7 @@ This annotation is bounded to a variable.
 
 #### example
 ```java
-@BindBit(size = "2")
+@BindBits(size = "2")
 private BitSet bits;
 ```
 
@@ -230,8 +230,8 @@ private short numberShort;
 ```
 
 
-<a name="annotation-bindinteger"></a>
-### BindInteger
+<a name="annotation-bindint"></a>
+### BindInt
 
 #### parameters
  - `unsigned`: whether the read value is treated as signed or unsigned (defaults to `false`).
@@ -248,7 +248,7 @@ This annotation is bounded to a variable.
 
 #### example
 ```java
-@BindInteger
+@BindInt
 private int numberInt;
 ```
 
@@ -275,8 +275,8 @@ private long numberLong;
 ```
 
 
-<a name="annotation-bindnumber"></a>
-### BindNumber
+<a name="annotation-bindinteger"></a>
+### BindInteger
 
 #### parameters
  - `size`: the number of bits to read (can be a SpEL expression).
@@ -295,10 +295,10 @@ This annotation is bounded to a variable.
 
 #### example
 ```java
-@BindNumber(size = "3")
+@BindInteger(size = "3")
 private int number;
 
-@BindNumber(size = "Long.SIZE+10")
+@BindInteger(size = "Long.SIZE+10")
 private BigInteger number;
 ```
 
