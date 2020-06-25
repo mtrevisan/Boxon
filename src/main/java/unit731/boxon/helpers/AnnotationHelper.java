@@ -144,7 +144,7 @@ public class AnnotationHelper{
 	 * @return The classes
 	 */
 	private static Set<Class<?>> extractAnnotatedClasses(final Class<? extends Annotation> annotation, final File directory, final String packageName){
-		final Set<Class<?>> codecs = new HashSet<>();
+		final Set<Class<?>> classes = new HashSet<>();
 
 		final Stack<ClassDescriptor> stack = new Stack<>();
 		stack.push(new ClassDescriptor(directory, packageName));
@@ -162,14 +162,14 @@ public class AnnotationHelper{
 						final String className = fileName.substring(0, fileName.length() - EXTENSION_CLASS.length());
 						final Class<?> cls = Class.forName(elem.packageName + POINT + className);
 						if(cls.isAnnotationPresent(annotation))
-							codecs.add(cls);
+							classes.add(cls);
 					}
 					catch(final ClassNotFoundException ignored){}
 				}
 			}
 		}
 
-		return codecs;
+		return classes;
 	}
 
 }
