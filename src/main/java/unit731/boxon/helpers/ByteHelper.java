@@ -26,7 +26,6 @@ package unit731.boxon.helpers;
 
 import unit731.boxon.codecs.ByteOrder;
 
-import java.lang.reflect.Array;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.BitSet;
@@ -267,6 +266,7 @@ public class ByteHelper{
 	}
 
 	public static BigInteger bitsToBigInteger(final BitSet bits, final int size, final ByteOrder byteOrder, final boolean unsigned){
+//reverseBits(bits, size);
 		byte[] array = bits.toByteArray();
 		if(byteOrder == ByteOrder.LITTLE_ENDIAN)
 			//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
