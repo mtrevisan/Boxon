@@ -266,16 +266,15 @@ public class ByteHelper{
 	}
 
 	public static BigInteger createBigInteger(final BitSet bits, final int size, final ByteOrder byteOrder, final boolean unsigned){
-		if(byteOrder == ByteOrder.LITTLE_ENDIAN)
-			reverseBits(bits, size);
+//		if(byteOrder == ByteOrder.LITTLE_ENDIAN)
+//			reverseBits(bits, size);
 
 		BigInteger value;
 		//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
 		final byte[] array = reverseBytes(bits.toByteArray());
-		if(!unsigned && (array[0] & 0x80) != 0x00)
-			value = new BigInteger(-1, invertBytes(array))
-				.subtract(BigInteger.ONE);
-		else
+//		if(!unsigned && (array[0] & 0x80) != 0x00)
+//			value = new BigInteger(array);
+//		else
 			value = new BigInteger(1, array);
 		return value;
 	}
@@ -286,17 +285,12 @@ public class ByteHelper{
 		return bytes;
 	}
 
-	public static BigInteger createUnsignedBigInteger(final BitSet bits, final int size, final ByteOrder byteOrder){
+	private static BigInteger createUnsignedBigInteger(final BitSet bits, final int size, final ByteOrder byteOrder){
 		if(byteOrder == ByteOrder.LITTLE_ENDIAN)
 			reverseBits(bits, size);
 
 		//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
 		return new BigInteger(1, reverseBytes(bits.toByteArray()));
-	}
-
-	public static byte[] createUnsignedByteArray(final BigInteger value, final int size){
-		//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
-		return reverseBytes(bigIntegerToBytes(value, size));
 	}
 
 	/**
@@ -306,12 +300,12 @@ public class ByteHelper{
 	 * @param size	The size in bits of the `value`
 	 * @return	The byte array (leading byte is always different from <code>0</code>), empty array if the value is zero.
 	 */
-	private static byte[] bigIntegerToBytes(final BigInteger value, final int size){
+	public static byte[] bigIntegerToBytes(final BigInteger value, final int size, final ByteOrder byteOrder){
 		byte[] array = value.toByteArray();
 		if(array[0] == 0)
 			array = Arrays.copyOfRange(array, 1, array.length);
 		//extend sign
-		if(value.signum() < 0 && (array[0] & 0x80) != 0x0){
+		if(value.signum() < 0 && (array[0] & 0x80) != 0x0 && size > array.length * Byte.SIZE){
 			final byte[] a = new byte[size / Byte.SIZE];
 			for(int i = 0; i < a.length - array.length; i ++)
 				a[i] = (byte)0xFF;
@@ -319,6 +313,9 @@ public class ByteHelper{
 				System.arraycopy(array, 0, a, a.length - array.length, array.length);
 			array = a;
 		}
+		if(byteOrder == ByteOrder.LITTLE_ENDIAN)
+			//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
+			array = reverseBytes(array);
 		return array;
 	}
 

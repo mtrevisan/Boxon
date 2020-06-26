@@ -132,7 +132,7 @@ class CoderLongTest{
 	}
 
 	@Test
-	void longLittleEndian(){
+	void longLittleEndianRandom(){
 		Coder coder = Coder.LONG;
 		long encodedValue = RANDOM.nextLong();
 		BindLong annotation = new BindLong(){
@@ -264,7 +264,7 @@ class CoderLongTest{
 	}
 
 	@Test
-	void longBigEndian(){
+	void longBigEndianRandom(){
 		Coder coder = Coder.LONG;
 		long encodedValue = RANDOM.nextLong();
 		BindLong annotation = new BindLong(){

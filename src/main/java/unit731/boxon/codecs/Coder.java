@@ -80,7 +80,7 @@ enum Coder{
 				final ByteOrder prefixByteOrder = selectFrom.byteOrder();
 
 				final BitSet bits = reader.getBits(prefixSize);
-				final BigInteger prefix = ByteHelper.createUnsignedBigInteger(bits, prefixSize, prefixByteOrder);
+				final BigInteger prefix = ByteHelper.createBigInteger(bits, prefixSize, prefixByteOrder, true);
 
 				//choose class
 				final Choices.Choice chosenAlternative = chooseAlternative(alternatives, prefix.intValue(), data);
@@ -321,7 +321,7 @@ enum Coder{
 
 				for(int i = 0; i < size; i ++){
 					final BitSet bits = reader.getBits(prefixSize);
-					final BigInteger prefix = ByteHelper.createUnsignedBigInteger(bits, prefixSize, prefixByteOrder);
+					final BigInteger prefix = ByteHelper.createBigInteger(bits, prefixSize, prefixByteOrder, true);
 
 					//choose class
 					final Choices.Choice chosenAlternative = chooseAlternative(alternatives, prefix.intValue(), data);
@@ -613,9 +613,9 @@ enum Coder{
 			final Object value;
 			final boolean allowPrimitive = binding.allowPrimitive();
 			if(allowPrimitive && size < Long.SIZE){
-				if(byteOrder == ByteOrder.LITTLE_ENDIAN)
-					ByteHelper.reverseBits(bits, size);
 				long v = bits.toLongArray()[0];
+				if(byteOrder == ByteOrder.BIG_ENDIAN)
+					v = Long.reverseBytes(v) >>> (Long.SIZE - size);
 				if(!binding.unsigned())
 					v = ByteHelper.extendSign(v, size);
 
@@ -644,6 +644,7 @@ enum Coder{
 			final int size = Evaluator.evaluate(binding.size(), int.class, data);
 			if(allowPrimitive && size < Long.SIZE){
 				final long vv = converterEncode(binding.converter(), value);
+
 				v = BigInteger.valueOf(Math.abs(vv));
 				if(!binding.unsigned() && vv < 0)
 					v = v.negate();
@@ -651,13 +652,8 @@ enum Coder{
 			else
 				v = converterEncode(binding.converter(), value);
 
-			//mask value with `2^size-1`
-			final BigInteger mask = BigInteger.ONE.shiftLeft(size).subtract(BigInteger.ONE);
-			//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
-			final BitSet bits = BitSet.valueOf(ByteHelper.createUnsignedByteArray(v.and(mask), size));
 			final ByteOrder byteOrder = binding.byteOrder();
-			if(byteOrder == ByteOrder.LITTLE_ENDIAN)
-				ByteHelper.reverseBits(bits, size);
+			final BitSet bits = BitSet.valueOf(ByteHelper.bigIntegerToBytes(v, size, byteOrder));
 
 			writer.putBits(bits, size);
 		}
