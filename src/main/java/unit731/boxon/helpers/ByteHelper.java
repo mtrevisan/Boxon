@@ -26,6 +26,7 @@ package unit731.boxon.helpers;
 
 import unit731.boxon.codecs.ByteOrder;
 
+import java.lang.reflect.Array;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.BitSet;
@@ -265,32 +266,20 @@ public class ByteHelper{
 		}
 	}
 
-	public static BigInteger createBigInteger(final BitSet bits, final int size, final ByteOrder byteOrder, final boolean unsigned){
-//		if(byteOrder == ByteOrder.LITTLE_ENDIAN)
-//			reverseBits(bits, size);
-
-		BigInteger value;
-		//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
-		final byte[] array = reverseBytes(bits.toByteArray());
-//		if(!unsigned && (array[0] & 0x80) != 0x00)
-//			value = new BigInteger(array);
-//		else
-			value = new BigInteger(1, array);
-		return value;
-	}
-
-	private static byte[] invertBytes(final byte[] bytes){
-		for(int i = 0; i < bytes.length; i ++)
-			bytes[i] ^= 0xFF;
-		return bytes;
-	}
-
-	private static BigInteger createUnsignedBigInteger(final BitSet bits, final int size, final ByteOrder byteOrder){
+	public static BigInteger bitsToBigInteger(final BitSet bits, final int size, final ByteOrder byteOrder, final boolean unsigned){
+		byte[] array = bits.toByteArray();
 		if(byteOrder == ByteOrder.LITTLE_ENDIAN)
-			reverseBits(bits, size);
+			//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
+			array = reverseBytes(array);
 
-		//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
-		return new BigInteger(1, reverseBytes(bits.toByteArray()));
+		if(size >= array.length * Byte.SIZE){
+			final byte[] extendedArray = new byte[array.length + 1];
+//			if((array[0] & 0x80) != 0x00)
+//				extendedArray[0] = (byte)0xFF;
+			System.arraycopy(array, 0, extendedArray, 1, array.length);
+			array = extendedArray;
+		}
+		return new BigInteger(array);
 	}
 
 	/**
@@ -300,19 +289,10 @@ public class ByteHelper{
 	 * @param size	The size in bits of the `value`
 	 * @return	The byte array (leading byte is always different from <code>0</code>), empty array if the value is zero.
 	 */
-	public static byte[] bigIntegerToBytes(final BigInteger value, final int size, final ByteOrder byteOrder){
+	public static byte[] bigIntegerToBytes(final BigInteger value, final int size, final ByteOrder byteOrder/*, final boolean unsigned*/){
 		byte[] array = value.toByteArray();
-		if(array[0] == 0)
+		if(size < array.length * Byte.SIZE)
 			array = Arrays.copyOfRange(array, 1, array.length);
-		//extend sign
-		if(value.signum() < 0 && (array[0] & 0x80) != 0x0 && size > array.length * Byte.SIZE){
-			final byte[] a = new byte[size / Byte.SIZE];
-			for(int i = 0; i < a.length - array.length; i ++)
-				a[i] = (byte)0xFF;
-			if(a.length >= array.length)
-				System.arraycopy(array, 0, a, a.length - array.length, array.length);
-			array = a;
-		}
 		if(byteOrder == ByteOrder.LITTLE_ENDIAN)
 			//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
 			array = reverseBytes(array);

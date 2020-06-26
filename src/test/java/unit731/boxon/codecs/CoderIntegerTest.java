@@ -1060,71 +1060,7 @@ class CoderIntegerTest{
 	}
 
 	@Test
-	void bigNumberLittleEndianNegativeRandom(){
-		Coder coder = Coder.INTEGER;
-		BigInteger encodedValue;
-		do{
-			encodedValue = new BigInteger(128, RANDOM)
-				.negate();
-		}while(encodedValue.toByteArray().length > 16);
-		BindInteger annotation = new BindInteger(){
-			@Override
-			public Class<? extends Annotation> annotationType(){
-				return BindInteger.class;
-			}
-
-			@Override
-			public String size(){
-				return "128";
-			}
-
-			@Override
-			public boolean unsigned(){
-				return false;
-			}
-
-			@Override
-			public ByteOrder byteOrder(){
-				return ByteOrder.LITTLE_ENDIAN;
-			}
-
-			@Override
-			public boolean allowPrimitive(){
-				return true;
-			}
-
-			@Override
-			public String match(){
-				return null;
-			}
-
-			@Override
-			public Class<? extends Validator> validator(){
-				return NullValidator.class;
-			}
-
-			@Override
-			public Class<? extends Converter> converter(){
-				return NullConverter.class;
-			}
-		};
-
-		MessageParser messageParser = new MessageParser();
-		BitWriter writer = new BitWriter();
-		coder.encode(messageParser, writer, annotation, null, encodedValue);
-		writer.flush();
-
-		BitSet bits = BitSet.valueOf(ByteHelper.bigIntegerToBytes(encodedValue, 128, ByteOrder.LITTLE_ENDIAN));
-		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bits.toByteArray()).toUpperCase(Locale.ROOT), 32, '0'), writer.toString());
-
-		BitBuffer reader = BitBuffer.wrap(writer);
-		BigInteger decoded = (BigInteger)coder.decode(messageParser, reader, annotation, null);
-
-		Assertions.assertEquals(encodedValue, decoded);
-	}
-
-	@Test
-	void bigNumberLittleEndianPositiveRandom(){
+	void bigLittleEndianRandom(){
 		Coder coder = Coder.INTEGER;
 		BigInteger encodedValue;
 		do{
@@ -1187,7 +1123,7 @@ class CoderIntegerTest{
 	}
 
 	@Test
-	void bigNumberBigEndianUnsignedNegative(){
+	void bigBigEndianUnsignedNegative(){
 		Coder coder = Coder.INTEGER;
 		BigInteger encodedValue = new BigInteger("80FF0000FFFF00000000000000000000", 16);
 		BindInteger annotation = new BindInteger(){
@@ -1246,7 +1182,7 @@ class CoderIntegerTest{
 	}
 
 	@Test
-	void bigNumberBigEndianUnsignedPositive(){
+	void bigBigEndianUnsignedPositive(){
 		Coder coder = Coder.INTEGER;
 		BigInteger encodedValue = new BigInteger("7FFF0000FFFF00000000000000000000", 16);
 		BindInteger annotation = new BindInteger(){
@@ -1305,7 +1241,7 @@ class CoderIntegerTest{
 	}
 
 	@Test
-	void bigNumberBigEndianUnsignedRandom(){
+	void bigBigEndianUnsignedRandom(){
 		Coder coder = Coder.INTEGER;
 		BigInteger encodedValue;
 		do{
@@ -1368,12 +1304,11 @@ class CoderIntegerTest{
 	}
 
 	@Test
-	void bigNumberBigEndianNegativeRandom(){
+	void bigBigEndianNegativeRandom(){
 		Coder coder = Coder.INTEGER;
 		BigInteger encodedValue;
 		do{
-			encodedValue = new BigInteger(128, RANDOM)
-				.negate();
+			encodedValue = new BigInteger(128, RANDOM);
 		}while(encodedValue.toByteArray().length > 16);
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -1433,7 +1368,7 @@ class CoderIntegerTest{
 
 
 	@Test
-	void bigNumberLittleEndianUnsignedDisallowPrimitive(){
+	void bigLittleEndianUnsignedDisallowPrimitive(){
 		Coder coder = Coder.INTEGER;
 		BigInteger encodedValue;
 		do{
@@ -1487,7 +1422,6 @@ class CoderIntegerTest{
 		writer.flush();
 
 		BitSet bits = BitSet.valueOf(ByteHelper.bigIntegerToBytes(encodedValue, 32, ByteOrder.LITTLE_ENDIAN));
-		ByteHelper.reverseBits(bits, 32);
 		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bits.toByteArray()).toUpperCase(Locale.ROOT), 8, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
@@ -1497,12 +1431,12 @@ class CoderIntegerTest{
 	}
 
 	@Test
-	void bigNegativeNumberLittleEndianDisallowPrimitive(){
+	void bigLittleEndianNegativeDisallowPrimitive(){
 		Coder coder = Coder.INTEGER;
 		BigInteger encodedValue;
 		do{
-			encodedValue = new BigInteger(32, RANDOM)
-				.negate();
+			encodedValue = new BigInteger(32, RANDOM);
+			encodedValue.setBit(31);
 		}while(encodedValue.toByteArray().length > 4);
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -1552,7 +1486,6 @@ class CoderIntegerTest{
 		writer.flush();
 
 		BitSet bits = BitSet.valueOf(ByteHelper.bigIntegerToBytes(encodedValue, 32, ByteOrder.LITTLE_ENDIAN));
-		ByteHelper.reverseBits(bits, 32);
 		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bits.toByteArray()).toUpperCase(Locale.ROOT), 8, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
@@ -1562,7 +1495,7 @@ class CoderIntegerTest{
 	}
 
 	@Test
-	void bigNumberBigEndianUnsignedDisallowPrimitive(){
+	void bigBigEndianUnsignedDisallowPrimitive(){
 		Coder coder = Coder.INTEGER;
 		BigInteger encodedValue;
 		do{
@@ -1615,8 +1548,8 @@ class CoderIntegerTest{
 		coder.encode(messageParser, writer, annotation, null, encodedValue);
 		writer.flush();
 
-		BitSet bb = BitSet.valueOf(ByteHelper.bigIntegerToBytes(encodedValue, 32, ByteOrder.LITTLE_ENDIAN));
-		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bb.toByteArray()), 8, '0'), writer.toString());
+		BitSet bits = BitSet.valueOf(ByteHelper.bigIntegerToBytes(encodedValue, 32, ByteOrder.BIG_ENDIAN));
+		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bits.toByteArray()), 8, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
 		BigInteger decoded = (BigInteger)coder.decode(messageParser, reader, annotation, null);
@@ -1625,12 +1558,11 @@ class CoderIntegerTest{
 	}
 
 	@Test
-	void bigNegativeNumberBigEndianDisallowPrimitive(){
+	void bigBigEndianNegativeDisallowPrimitive(){
 		Coder coder = Coder.INTEGER;
 		BigInteger encodedValue;
 		do{
-			encodedValue = new BigInteger(32, RANDOM)
-				.negate();
+			encodedValue = new BigInteger(32, RANDOM);
 		}while(encodedValue.toByteArray().length > 4);
 		BindInteger annotation = new BindInteger(){
 			@Override
