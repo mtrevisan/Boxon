@@ -80,7 +80,7 @@ enum Coder{
 				final ByteOrder prefixByteOrder = selectFrom.byteOrder();
 
 				final BitSet bits = reader.getBits(prefixSize);
-				final BigInteger prefix = ByteHelper.bitsToBigInteger(bits, prefixSize, prefixByteOrder, true);
+				final BigInteger prefix = ByteHelper.bitsToBigInteger(bits, prefixSize, prefixByteOrder);
 
 				//choose class
 				final Choices.Choice chosenAlternative = chooseAlternative(alternatives, prefix.intValue(), data);
@@ -321,7 +321,7 @@ enum Coder{
 
 				for(int i = 0; i < size; i ++){
 					final BitSet bits = reader.getBits(prefixSize);
-					final BigInteger prefix = ByteHelper.bitsToBigInteger(bits, prefixSize, prefixByteOrder, true);
+					final BigInteger prefix = ByteHelper.bitsToBigInteger(bits, prefixSize, prefixByteOrder);
 
 					//choose class
 					final Choices.Choice chosenAlternative = chooseAlternative(alternatives, prefix.intValue(), data);
@@ -622,7 +622,7 @@ enum Coder{
 				value = converterDecode(binding.converter(), v);
 			}
 			else{
-				final BigInteger v = ByteHelper.bitsToBigInteger(bits, size, byteOrder, binding.unsigned());
+				final BigInteger v = ByteHelper.bitsToBigInteger(bits, size, byteOrder);
 
 				value = converterDecode(binding.converter(), v);
 			}

@@ -265,17 +265,17 @@ public class ByteHelper{
 		}
 	}
 
-	public static BigInteger bitsToBigInteger(final BitSet bits, final int size, final ByteOrder byteOrder, final boolean unsigned){
-//reverseBits(bits, size);
+	public static BigInteger bitsToBigInteger(final BitSet bits, final int size, final ByteOrder byteOrder){
 		byte[] array = bits.toByteArray();
+		final int expectedLength = size / Byte.SIZE;
+		if(array.length < expectedLength)
+			array = Arrays.copyOf(array, expectedLength);
 		if(byteOrder == ByteOrder.LITTLE_ENDIAN)
 			//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
 			array = reverseBytes(array);
 
 		if(size >= array.length * Byte.SIZE){
 			final byte[] extendedArray = new byte[array.length + 1];
-//			if((array[0] & 0x80) != 0x00)
-//				extendedArray[0] = (byte)0xFF;
 			System.arraycopy(array, 0, extendedArray, 1, array.length);
 			array = extendedArray;
 		}
@@ -289,7 +289,7 @@ public class ByteHelper{
 	 * @param size	The size in bits of the `value`
 	 * @return	The byte array (leading byte is always different from <code>0</code>), empty array if the value is zero.
 	 */
-	public static byte[] bigIntegerToBytes(final BigInteger value, final int size, final ByteOrder byteOrder/*, final boolean unsigned*/){
+	public static byte[] bigIntegerToBytes(final BigInteger value, final int size, final ByteOrder byteOrder){
 		byte[] array = value.toByteArray();
 		if(size < array.length * Byte.SIZE)
 			array = Arrays.copyOfRange(array, 1, array.length);
