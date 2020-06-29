@@ -692,14 +692,16 @@ public class RSSIConverter implements Converter<Byte, Short>{
 ### Custom annotations
 You can also define your own annotation by define an annotation and implementing `CoderInterface` as in the following example.
 
-And remember to add it to the `Coder`s!
+<b>... and remember to add it to the `Coder`s!</b>
 
 ```java
+//annotation
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 @interface VarLengthEncoded{}
 ```
 ```java
+//coder
 class VariableLengthByteArray implements CoderInterface{
     public Object decode(MessageParser messageParser, BitBuffer reader, Annotation annotation, Object data){
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
