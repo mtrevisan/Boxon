@@ -40,8 +40,7 @@ public class IMEIValidator implements Validator<String>{
 			int k = Character.getNumericValue(text.charAt(i));
 			if(isEven){
 				k <<= 1;
-				if(k > 9)
-					k -= 9;
+				k %= 9;
 			}
 
 			sum += k;
