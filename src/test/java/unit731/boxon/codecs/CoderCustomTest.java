@@ -68,7 +68,7 @@ class CoderCustomTest{
 
 		@Override
 		public Class<?> coderType(){
-			return VariableLengthByteArray.class;
+			return VarLengthEncoded.class;
 		}
 	}
 
@@ -76,7 +76,7 @@ class CoderCustomTest{
 	@Test
 	void customAnnotation(){
 		Coder.addCoder(new VariableLengthByteArray());
-		CoderInterface coder = Coder.getCoder(VariableLengthByteArray.class);
+		CoderInterface coder = Coder.getCoder(VarLengthEncoded.class);
 		byte[] encodedValue = new byte[]{0x01, 0x02, 0x03};
 		VarLengthEncoded annotation = new VarLengthEncoded(){
 			@Override

@@ -34,6 +34,9 @@ public interface CoderInterface{
 	void encode(final MessageParser messageParser, final BitWriter writer, final Annotation annotation, final Object data,
 		final Object value);
 
+	/**
+	 * @return	The class of the annotation
+	 */
 	Class<?> coderType();
 
 }
