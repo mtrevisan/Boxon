@@ -65,7 +65,7 @@ class Evaluator{
 				}
 
 				//find in interface
-				for(Class<?> implementedInterface : clazz.getInterfaces()){
+				for(final Class<?> implementedInterface : clazz.getInterfaces()){
 					final Field field = findField(name, implementedInterface, mustBeStatic);
 					if(field != null)
 						return field;

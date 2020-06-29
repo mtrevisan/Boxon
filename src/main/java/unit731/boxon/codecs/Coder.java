@@ -738,9 +738,7 @@ enum Coder implements CoderInterface{
 			final BindDecimal binding = (BindDecimal)annotation;
 
 			final Class<?> type = binding.type();
-			if(type != Float.class && type != Double.class)
-				throw new IllegalArgumentException("Bad type, should have been one of `" + Float.class.getSimpleName()
-					+ ".class` or `" + Double.class.getSimpleName() + ".class`");
+			validateAnnotation(type);
 
 			final ByteOrder byteOrder = binding.byteOrder();
 			final BigDecimal v = reader.getDecimal(type, byteOrder);
@@ -758,9 +756,7 @@ enum Coder implements CoderInterface{
 			final BindDecimal binding = (BindDecimal)annotation;
 
 			final Class<?> type = binding.type();
-			if(type != Float.class && type != Double.class)
-				throw new IllegalArgumentException("Bad type, should have been one of `" + Float.class.getSimpleName()
-					+ ".class` or `" + Double.class.getSimpleName() + ".class`");
+			validateAnnotation(type);
 
 			validateData(binding.match(), binding.validator(), value);
 
@@ -768,6 +764,12 @@ enum Coder implements CoderInterface{
 
 			final ByteOrder byteOrder = binding.byteOrder();
 			writer.putDecimal(v, type, byteOrder);
+		}
+
+		private void validateAnnotation(final Class<?> type){
+			if(type != Float.class && type != Double.class)
+				throw new IllegalArgumentException("Bad type, should have been one of `" + Float.class.getSimpleName()
+					+ ".class` or `" + Double.class.getSimpleName() + ".class`");
 		}
 
 		@Override
