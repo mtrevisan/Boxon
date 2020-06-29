@@ -45,7 +45,7 @@ Boxon differs from Preon in...
 ---
 
 <a name="footnote-1"></a>
-<sub><sup>1</sup> Currently Limbo is merged with Preon... thus rendering Preon not only a parser, but also a validator, over-complicating and cluttering the code.</sub>
+<sub><sup>1</sup> Currently Limbo is merged with Preon... thus rendering Preon not only a parser, but also an evaluator, over-complicating and cluttering the code.</sub>
 
 
 <br/>
