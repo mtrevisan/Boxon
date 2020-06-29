@@ -64,6 +64,8 @@ Boxon differs from Preon in...
     5. [Evaluate](#annotation-evaluate)
 3. [How to extend the functionalities](#how-to)
 4. [Digging into the code](#digging)
+    1. [Converters](#how-to-converters)
+    2. [Custom annotations](#how-to-annotations)
 5. [Examples](#examples)
     1. [Multi-message parser](#example-multi)
     2. [Message composer](#example-composer)
@@ -567,6 +569,7 @@ Boxon can handle array of primitives, bit, byte, short, int, long, float, double
 
 You can extend the basic functionalities through the application of converters as shown below in some examples. Here lies the power of Boxon.
 
+<a name="how-to-converters"></a>
 ### Converters
 
 #### DateTime converter (from Unix timestamp to ZonedDateTime)
@@ -685,7 +688,8 @@ public class RSSIConverter implements Converter<Byte, Short>{
 }
 ```
 
-### Custom annotation
+<a name="how-to-annotations"></a>
+### Custom annotations
 You can also define your own annotation by define an annotation and implementing `CoderInterface` as in the following example.
 
 And remember to add it to the `Coder`s!
