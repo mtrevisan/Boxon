@@ -567,7 +567,9 @@ Boxon can handle array of primitives, bit, byte, short, int, long, float, double
 
 You can extend the basic functionalities through the application of converters as shown below in some examples. Here lies the power of Boxon.
 
-### DateTime converter (from Unix timestamp to ZonedDateTime)
+### Converters
+
+#### DateTime converter (from Unix timestamp to ZonedDateTime)
 ```java
 @BindLong(converter = DateTimeUnixConverter.class)
 private ZonedDateTime eventTime;
@@ -585,7 +587,7 @@ public class DateTimeUnixConverter implements Converter<Long, ZonedDateTime>{
 }
 ```
 
-### DateTime converter (from YYYYMMDDHHMMSS as bytes to ZonedDateTime)
+#### DateTime converter (from YYYYMMDDHHMMSS as bytes to ZonedDateTime)
 ```java
 @BindArrayPrimitive(size = "7", type = byte[].class, converter = DateTimeYYYYMMDDHHMMSSConverter.class)
 private ZonedDateTime eventTime;
@@ -617,7 +619,7 @@ public class DateTimeYYYYMMDDHHMMSSConverter implements Converter<byte[], ZonedD
 }
 ```
 
-### IMEI converter (from 'nibble' array to String)
+#### IMEI converter (from 'nibble' array to String)
 ```java
 @BindArrayPrimitive(size = "8", type = byte[].class, converter = IMEIConverter.class, validator = IMEIValidator.class)
 private String imei;
@@ -643,7 +645,7 @@ public class IMEIConverter implements Converter<byte[], String>{
 }
 ```
 
-### RSSI converter (from encoded byte to short value)
+#### RSSI converter (from encoded byte to short value)
 ```java
 @BindByte(converter = RSSIConverter.class)
 private short rssi;
@@ -681,6 +683,48 @@ public class RSSIConverter implements Converter<Byte, Short>{
         return (byte)((value + 133) / 2);
     }
 }
+```
+
+### Custom annotation
+You can also define your own annotation by define an annotation and implementing `CoderInterface` as in the following example.
+
+And remember to add it to the `Coder`s!
+
+```java
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
+@interface VarLengthEncoded{}
+```
+```java
+class VariableLengthByteArray implements CoderInterface{
+    public Object decode(MessageParser messageParser, BitBuffer reader, Annotation annotation, Object data){
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        boolean continuing = true;
+        while(continuing){
+            final byte b = reader.getByte();
+            baos.write(b & 0x7F);
+
+            continuing = ((b & 0x80) != 0x00);
+        }
+        return baos.toByteArray();
+    }
+
+    public void encode(MessageParser messageParser, BitWriter writer, Annotation annotation, Object data, Object value){
+        final int size = Array.getLength(value);
+        for(int i = 0; i < size; i ++)
+            writer.put((byte)((byte)Array.get(value, i) | (i < size - 1? (byte)0x80: 0x00)), ByteOrder.BIG_ENDIAN);
+    }
+
+    public Class<?> coderType(){
+        return VariableLengthByteArray.class;
+    }
+}
+```
+
+```java
+//add the custom coder to the list of available coders
+Coder.addCoder(new VariableLengthByteArray());
+CoderInterface coder = Coder.getCoder(VariableLengthByteArray.class);
 ```
 
 <br/>

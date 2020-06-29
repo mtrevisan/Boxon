@@ -70,7 +70,7 @@ class MessageParser{
 				continue;
 
 			final Annotation binding = field.getBinding();
-			final Coder coder = retrieveCoder(codec, field, binding);
+			final CoderInterface coder = retrieveCoder(codec, field, binding);
 
 			try{
 				final Object value = coder.decode(this, reader, binding, data);
@@ -167,7 +167,7 @@ class MessageParser{
 				continue;
 
 			final Annotation binding = field.getBinding();
-			final Coder coder = retrieveCoder(codec, field, binding);
+			final CoderInterface coder = retrieveCoder(codec, field, binding);
 
 			try{
 				final Object value = ReflectionHelper.getFieldValue(data, field.getName());
@@ -187,9 +187,9 @@ class MessageParser{
 		writer.flush();
 	}
 
-	private Coder retrieveCoder(final Codec<?> codec, final Codec.BoundedField field, final Annotation binding){
+	private CoderInterface retrieveCoder(final Codec<?> codec, final Codec.BoundedField field, final Annotation binding){
 		final Class<? extends Annotation> annotationType = binding.annotationType();
-		final Coder coder = Coder.CODERS_FROM_ANNOTATION.get(annotationType);
+		final CoderInterface coder = Coder.CODERS_FROM_ANNOTATION.get(annotationType);
 		if(coder == null)
 			throw new IllegalArgumentException("Unrecognized annotation for field " + codec + "." + field.getName()
 				+ ": @" + annotationType.getSimpleName());
