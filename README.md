@@ -702,6 +702,8 @@ You can also define your own annotation by define an annotation and implementing
 ```
 ```java
 //coder
+//the number of bytes to read is determined by the leading bit of each individual bytes
+//(if the first bit of a byte is 1, then another byte is expected to follow)
 class VariableLengthByteArray implements CoderInterface{
     public Object decode(MessageParser messageParser, BitBuffer reader, Annotation annotation, Object data){
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();

@@ -43,6 +43,8 @@ class CoderCustomTest{
 	@interface VarLengthEncoded{}
 
 
+	//the number of bytes to read is determined by the leading bit of each individual bytes
+	//(if the first bit of a byte is 1, then another byte is expected to follow)
 	class VariableLengthByteArray implements CoderInterface{
 		@Override
 		public Object decode(final MessageParser messageParser, final BitBuffer reader, final Annotation annotation, final Object data){
