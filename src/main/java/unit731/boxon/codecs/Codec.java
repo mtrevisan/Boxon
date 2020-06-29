@@ -163,7 +163,10 @@ class Codec<T>{
 				//filter annotations that belong to parsing procedure
 				if(annotation.toString().startsWith(ANNOTATIONS_PACKAGE)
 						&& annotationType != BindIf.class && annotationType != Skip.class){
-					//TODO check compatibility between bind annotation, validator input type, valitador output type, converter input type, and converter output type
+					//TODO check compatibility between:
+					// - bind annotation and validator input type
+					// - validator output type and converter input type
+					// - converter output type and variable type
 					if(annotationType == Evaluate.class)
 						evaluatedFields.add(new EvaluatedField(field, (Evaluate)annotation));
 					else
