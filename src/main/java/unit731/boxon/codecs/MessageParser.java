@@ -29,6 +29,7 @@ import unit731.boxon.annotations.MessageHeader;
 import unit731.boxon.annotations.Skip;
 import unit731.boxon.annotations.checksummers.Checksummer;
 import unit731.boxon.helpers.ByteHelper;
+import unit731.boxon.helpers.ExceptionHelper;
 import unit731.boxon.helpers.ReflectionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,7 +81,8 @@ class MessageParser{
 					LOGGER.info("{}: {}", field.getName(), value);
 			}
 			catch(final Exception e){
-				throw new IllegalArgumentException(e.getMessage() + ", field " + codec + "." + field.getName(), e);
+				final String message = ExceptionHelper.getMessageNoLineNumber(e);
+				throw new IllegalArgumentException(message + ", field " + codec + "." + field.getName());
 			}
 		}
 
@@ -174,7 +176,8 @@ class MessageParser{
 				coder.encode(this, writer, binding, data, value);
 			}
 			catch(final Exception e){
-				throw new IllegalArgumentException(e.getMessage() + ", field " + codec + "." + field.getName(), e);
+				final String message = ExceptionHelper.getMessageNoLineNumber(e);
+				throw new IllegalArgumentException(message + ", field " + codec + "." + field.getName());
 			}
 		}
 
