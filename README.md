@@ -1,5 +1,4 @@
 # Boxon _[boˈzoŋ]_
-==========
 
 ![Java-11+](https://img.shields.io/badge/java-11%2B-orange.svg) [![License: GPL v3](https://img.shields.io/badge/License-MIT-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
