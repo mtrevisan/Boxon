@@ -56,14 +56,14 @@ public @interface BindChecksum{
 	ByteOrder byteOrder() default ByteOrder.BIG_ENDIAN;
 
 	/**
-	 * The byte(s) to skip from the start of the message.
+	 * The byte(s) to skip from the start of the message, if any.
 	 *
 	 * @return	The byte(s) to skip from the start of the message.
 	 */
 	int skipStart() default 0;
 
 	/**
-	 * The byte(s) to skip from the end of the message.
+	 * The byte(s) to skip from the end of the message, if any.
 	 *
 	 * @return	The byte(s) to skip from the end of the message.
 	 */

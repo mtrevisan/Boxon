@@ -49,7 +49,7 @@ public @interface BindInteger{
 	 *
 	 * @return	The number of bits used to represent the numeric value (can be an expression).
 	 */
-	String size() default "1";
+	String size();
 
 	/**
 	 * The type of value: either signed or unsigned.
@@ -68,30 +68,30 @@ public @interface BindInteger{
 	ByteOrder byteOrder() default ByteOrder.BIG_ENDIAN;
 
 	/**
-	 * Allow returning a <code>long</code>/{@link Long} if <code>size &lt; 64</code>, defaults to <code>true</code>.
+	 * Allow returning a <code>long</code>/{@link Long} if <code>size &lt; 64</code>.
 	 *
-	 * @return	Whether to allow returning a <code>long</code>/{@link Long} if <code>size &lt; 64</code>
+	 * @return	Whether to allow returning a <code>long</code>/{@link Long} if <code>size &lt; 64</code>. Defaults to <code>true</code>.
 	 */
 	boolean allowPrimitive() default true;
 
 	/**
-	 * The value to match (can be a regex expression or a SpEL expression).
+	 * The value to match (can be a regex expression or a SpEL expression), if any.
 	 *
 	 * @return	The value, or regex, or SpEL expression to be checked for equality
 	 */
 	String match() default "";
 
 	/**
-	 * The validator to be applied before applying the converter, if any. Usually the fully qualified
-	 * name of an implementation class of a {@link Validator}
+	 * The validator to be applied <i>after</i> applying the converter, in the decoding phase (<i>before</i> if in the encoding one), if any.
+	 * <p>Usually the fully qualified name of an implementation class of a {@link Validator}</p>
 	 *
 	 * @return	The class of a {@link Validator}
 	 */
 	Class<? extends Validator> validator() default NullValidator.class;
 
 	/**
-	 * The converter to be applied before writing the parameter value. Usually the fully qualified
-	 * name of an implementation class of a {@link Converter}
+	 * The converter to be applied just <i>before</i> writing the parameter value (<i>after</i> if reading), if any.
+	 * <p>Usually the fully qualified name of an implementation class of a {@link Converter}</p>
 	 *
 	 * @return	The class of a {@link Converter}
 	 */

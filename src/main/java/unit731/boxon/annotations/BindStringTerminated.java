@@ -45,42 +45,42 @@ public @interface BindStringTerminated{
 	/**
 	 * The type of encoding used for the {@link String}
 	 *
-	 * @return	The type of encoding used. Defaults to UTF-8.
+	 * @return	The type of encoding used. Defaults to `UTF-8`.
 	 */
 	String charset() default "UTF-8";
 
 	/**
 	 * The byte that terminates the {@link String}
 	 *
-	 * @return	The terminator byte.
+	 * @return	The terminator byte. Defaults to `\0`.
 	 */
 	byte terminator() default '\0';
 
 	/**
 	 * Whether to consume the terminator.
 	 *
-	 * @return	Whether to consume the terminator.
+	 * @return	Whether to consume the terminator. Defaults to <code>true</code>.
 	 */
 	boolean consumeTerminator() default true;
 
 	/**
-	 * The value to match (can be a regex expression or a SpEL expression).
+	 * The value to match (can be a regex expression or a SpEL expression), if any.
 	 *
 	 * @return	The value, or regex, or SpEL expression to be checked for equality
 	 */
 	String match() default "";
 
 	/**
-	 * The validator to be applied before applying the converter, if any. Usually the fully qualified
-	 * name of an implementation class of a {@link Validator}
+	 * The validator to be applied <i>after</i> applying the converter, in the decoding phase (<i>before</i> if in the encoding one), if any.
+	 * <p>Usually the fully qualified name of an implementation class of a {@link Validator}</p>
 	 *
 	 * @return	The class of a {@link Validator}
 	 */
 	Class<? extends Validator> validator() default NullValidator.class;
 
 	/**
-	 * The converter to be applied before writing the parameter value. Usually the fully qualified
-	 * name of an implementation class of a {@link Converter}
+	 * The converter to be applied just <i>before</i> writing the parameter value (<i>after</i> if reading), if any.
+	 * <p>Usually the fully qualified name of an implementation class of a {@link Converter}</p>
 	 *
 	 * @return	The class of a {@link Converter}
 	 */

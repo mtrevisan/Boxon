@@ -63,7 +63,7 @@ public @interface BindObject{
 	 *
 	 * @return	The (super) type of object to be inserted in the array.
 	 */
-	Class<?> type() default Object.class;
+	Class<?> type();
 
 	/**
 	 * The choices to select from, based on a prefix of a certain size.
@@ -73,16 +73,16 @@ public @interface BindObject{
 	Choices selectFrom() default @Choices();
 
 	/**
-	 * The validator to be applied before applying the converter, if any. Usually the fully qualified
-	 * name of an implementation class of a {@link Validator}
+	 * The validator to be applied <i>after</i> applying the converter, in the decoding phase (<i>before</i> if in the encoding one), if any.
+	 * <p>Usually the fully qualified name of an implementation class of a {@link Validator}</p>
 	 *
 	 * @return	The class of a {@link Validator}
 	 */
 	Class<? extends Validator> validator() default NullValidator.class;
 
 	/**
-	 * The converter to be applied before writing the parameter value. Usually the fully qualified
-	 * name of an implementation class of a {@link Converter}
+	 * The converter to be applied just <i>before</i> writing the parameter value (<i>after</i> if reading), if any.
+	 * <p>Usually the fully qualified name of an implementation class of a {@link Converter}</p>
 	 *
 	 * @return	The class of a {@link Converter}
 	 */
