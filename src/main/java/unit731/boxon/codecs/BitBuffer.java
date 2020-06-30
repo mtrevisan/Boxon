@@ -197,8 +197,7 @@ class BitBuffer{
 			throw new IllegalArgumentException("Cannot read that much bits to a long: " + length);
 
 		final BitSet bits = getBits(length);
-		final long[] array = bits.toLongArray();
-		return (array.length > 0? array[0]: 0l);
+		return (bits.length() > 0? bits.toLongArray()[0]: 0l);
 	}
 
 	/**
@@ -221,21 +220,18 @@ class BitBuffer{
 		if(remaining < Byte.SIZE){
 			value = temporaryCache & MASKS[remaining];
 			final int remaining = Math.min(buffer.remaining(), Byte.SIZE);
-			if(remaining == 0){
+			if(remaining == 0)
 				throw new BufferUnderflowException();
-			}
 
 			final int position = buffer.position();
-			for(int i = 0; i < remaining; i ++){
+			for(int i = 0; i < remaining; i ++)
 				//read next byte from the byte buffer
 				temporaryCache |= ((long)buffer.array()[position + i] & 0x0000_0000_0000_00FFl) << (i * Byte.SIZE);
-			}
 			final int difference = Byte.SIZE - this.remaining;
 			value |= (temporaryCache & MASKS[difference]) << this.remaining;
 		}
-		else{
+		else
 			value = temporaryCache & MASKS[Byte.SIZE];
-		}
 		return (byte)value;
 	}
 
