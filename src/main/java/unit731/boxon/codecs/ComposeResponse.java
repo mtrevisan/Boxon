@@ -31,7 +31,7 @@ import java.util.List;
 public class ComposeResponse{
 
 	private byte[] composedMessage;
-	private final List<ComposeException> errors = new ArrayList<>();
+	private final List<ComposeException> errors = new ArrayList<>(0);
 
 
 	public void setComposedMessage(final byte[] composedMessages){

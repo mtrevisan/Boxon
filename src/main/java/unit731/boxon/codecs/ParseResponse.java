@@ -31,7 +31,7 @@ import java.util.List;
 public class ParseResponse{
 
 	private final List<Object> parsedMessages = new ArrayList<>();
-	private final List<ParseException> errors = new ArrayList<>();
+	private final List<ParseException> errors = new ArrayList<>(0);
 
 
 	public void addParsedMessage(final Object decodedMessage){
