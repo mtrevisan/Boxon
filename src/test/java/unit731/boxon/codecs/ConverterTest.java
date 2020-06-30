@@ -68,6 +68,14 @@ class ConverterTest{
 		public String value;
 	}
 
+	@MessageHeader(start = "wc3")
+	static class TestConverter3{
+		@BindString(size = "3")
+		public String header;
+		@BindByte(converter = WrongConverterOutput.class)
+		public int value;
+	}
+
 	public static class WrongConverterOutput implements Converter<Byte, Byte>{
 		@Override
 		public Byte decode(final Byte value){
@@ -114,6 +122,18 @@ class ConverterTest{
 		Assertions.assertEquals("Error decoding message: \r\n"
 			+ "Can not set java.lang.String field unit731.boxon.codecs.ConverterTest$TestConverter2.value to java.lang.Byte, field TestConverter2.value\r\n"
 			+ "   at index 4", error.getMessage());
+	}
+
+	@Test
+	void allowedOutputFromConverter(){
+		Codec<TestConverter3> codec = Codec.createFrom(TestConverter3.class);
+		Parser parser = new Parser(null, Collections.singletonList(codec));
+
+		byte[] payload = ByteHelper.hexStringToByteArray("77633301");
+		ParseResponse result = parser.parse(payload);
+
+		Assertions.assertNotNull(result);
+		Assertions.assertFalse(result.hasErrors());
 	}
 
 }

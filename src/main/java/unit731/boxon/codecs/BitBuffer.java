@@ -25,6 +25,7 @@
 package unit731.boxon.codecs;
 
 import unit731.boxon.helpers.ByteHelper;
+import unit731.boxon.helpers.ReflectionHelper;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -138,17 +139,18 @@ class BitBuffer{
 	}
 
 	public Object get(final Class<?> cls, final ByteOrder byteOrder){
-		if(cls == Byte.class)
+		final Class<?> inputClass = ReflectionHelper.objectiveType(cls);
+		if(inputClass == Byte.class)
 			return getByte();
-		if(cls == Short.class)
+		if(inputClass == Short.class)
 			return getShort(byteOrder);
-		if(cls == Integer.class)
+		if(inputClass == Integer.class)
 			return getInteger(byteOrder);
-		if(cls == Long.class)
+		if(inputClass == Long.class)
 			return getLong(byteOrder);
-		if(cls == Float.class)
+		if(inputClass == Float.class)
 			return getFloat(byteOrder);
-		if(cls == Double.class)
+		if(inputClass == Double.class)
 			return getDouble(byteOrder);
 
 		throw new IllegalArgumentException("Cannot read type " + cls.getSimpleName());

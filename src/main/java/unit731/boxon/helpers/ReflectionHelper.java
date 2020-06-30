@@ -39,6 +39,7 @@ import org.springframework.objenesis.strategy.PlatformDescription;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -47,10 +48,9 @@ import java.util.Objects;
 public class ReflectionHelper{
 
 	/** Map with primitive type as key and corresponding objective type as value, for example: "int.class" -> "Integer.class" */
-	private static final Map<Class<?>, Class<?>> PRIMITIVE_TYPE= new HashMap<>(8);
+	private static final Map<Class<?>, Class<?>> PRIMITIVE_TYPE = new HashMap<>(6);
 	static{
 		PRIMITIVE_TYPE.put(byte.class, Byte.class);
-		PRIMITIVE_TYPE.put(char.class, Character.class);
 		PRIMITIVE_TYPE.put(short.class, Short.class);
 		PRIMITIVE_TYPE.put(int.class, Integer.class);
 		PRIMITIVE_TYPE.put(long.class, Long.class);
@@ -61,6 +61,15 @@ public class ReflectionHelper{
 
 	private ReflectionHelper(){}
 
+
+	public static Method getMethod(final Class<?> cls, final String methodName, final Class<?>... methodParameterTypes){
+		try{
+			return cls.getMethod(methodName, methodParameterTypes);
+		}
+		catch(final Exception ignored){
+			return null;
+		}
+	}
 
 	public static <T, R> R getFieldValue(final T obj, final String fieldName) throws NoSuchFieldException{
 		try{

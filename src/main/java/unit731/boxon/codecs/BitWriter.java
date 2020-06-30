@@ -27,6 +27,7 @@ package unit731.boxon.codecs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import unit731.boxon.helpers.ByteHelper;
+import unit731.boxon.helpers.ReflectionHelper;
 
 import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
@@ -53,7 +54,7 @@ class BitWriter{
 
 
 	public void put(final Object value, final ByteOrder byteOrder){
-		final Class<?> cls = value.getClass();
+		final Class<?> cls = ReflectionHelper.objectiveType(value.getClass());
 		if(cls == Byte.class)
 			putByte((Byte)value);
 		else if(cls == Short.class)

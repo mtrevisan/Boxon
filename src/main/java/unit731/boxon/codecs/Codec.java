@@ -29,10 +29,15 @@ import unit731.boxon.annotations.BindChecksum;
 import unit731.boxon.annotations.BindIf;
 import unit731.boxon.annotations.MessageHeader;
 import unit731.boxon.annotations.Skip;
+import unit731.boxon.annotations.converters.Converter;
 import unit731.boxon.helpers.AnnotationHelper;
+import unit731.boxon.helpers.ReflectionHelper;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -172,10 +177,42 @@ class Codec<T>{
 	}
 
 	private void validateAnnotation(final Field field, final Annotation annotation){
-		//TODO check compatibility between:
+		//check compatibility between:
 		// - bind annotation and validator input type
+		//TODO
+		final Class<?> annotationOutputType = field.getType();
+		//TODO
+		final Class<?> validatorInputType = field.getType();
+		if(!validatorInputType.isAssignableFrom(annotationOutputType))
+			throw new IllegalArgumentException("Type mismatch between annotation output (" + annotationOutputType.getSimpleName()
+				+ ") and validator input (" + validatorInputType.getSimpleName() + ") on class " + cls.getSimpleName());
+
 		// - validator output type and converter input type
+		//TODO
+		final Class<?> validatorOutputType = field.getType();
+		//TODO
+		final Class<?> converterInputType = field.getType();
+		if(!converterInputType.isAssignableFrom(validatorOutputType))
+			throw new IllegalArgumentException("Type mismatch between validator output (" + validatorOutputType.getSimpleName()
+				+ ") and converter input (" + converterInputType.getSimpleName() + ") on class " + cls.getSimpleName());
+
 		// - converter output type and variable type
+		final Method converterMethod = ReflectionHelper.getMethod(annotation.annotationType(), "converter", null);
+		if(converterMethod != null && Converter.class.isAssignableFrom(converterMethod.getReturnType())){
+			try{
+				//TODO
+				final Class<?> converterType = (Class<?>)converterMethod.invoke(annotation);
+				final Converter<?, ?> converter = (Converter<?, ?>)ReflectionHelper.createInstance(converterType);
+				final Method converterDecodeMethod = ReflectionHelper.getMethod(converter.getClass(), "decode", null);
+				Type generics = converter.getClass().getGenericSuperclass();
+				final Class<?> converterOutputType = field.getType();
+				final Class<?> fieldType = field.getType();
+				if(!fieldType.isAssignableFrom(converterOutputType))
+					throw new IllegalArgumentException("Type mismatch between converter output (" + converterOutputType.getSimpleName()
+						+ ") and field type (" + fieldType.getSimpleName() + ") on class " + cls.getSimpleName());
+			}
+			catch(final Exception ignored){}
+		}
 	}
 
 	private void validateField(final BindChecksum checksum, final List<Annotation> annotations){
