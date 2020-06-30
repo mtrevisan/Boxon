@@ -48,14 +48,6 @@ import java.util.StringJoiner;
  */
 class Codec<T>{
 
-	/** Stores the package in which an annotation resides */
-	private static final String ANNOTATIONS_PACKAGE;
-	static{
-		final String annotationCanonicalName = BindIf.class.getCanonicalName();
-		ANNOTATIONS_PACKAGE = "@" + annotationCanonicalName.substring(0, annotationCanonicalName.lastIndexOf('.') + 1);
-	}
-
-
 	/** Data associated to an annotated field */
 	static class BoundedField{
 
@@ -160,13 +152,12 @@ class Codec<T>{
 			final List<Annotation> boundedAnnotations = new ArrayList<>();
 			for(final Annotation annotation : field.getDeclaredAnnotations()){
 				final Class<? extends Annotation> annotationType = annotation.annotationType();
-				//filter annotations that belong to parsing procedure
-				if(annotation.toString().startsWith(ANNOTATIONS_PACKAGE)
-						&& annotationType != BindIf.class && annotationType != Skip.class){
+				if(annotationType != BindIf.class && annotationType != Skip.class){
 					//TODO check compatibility between:
 					// - bind annotation and validator input type
 					// - validator output type and converter input type
 					// - converter output type and variable type
+
 					if(annotationType == Evaluate.class)
 						evaluatedFields.add(new EvaluatedField(field, (Evaluate)annotation));
 					else

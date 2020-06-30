@@ -72,17 +72,18 @@ class MessageParser{
 
 			final Annotation binding = field.getBinding();
 			final CoderInterface coder = retrieveCoder(codec, field, binding);
+			if(coder != null){
+				try{
+					final Object value = coder.decode(this, reader, binding, data);
+					ReflectionHelper.setFieldValue(data, field.getName(), value);
 
-			try{
-				final Object value = coder.decode(this, reader, binding, data);
-				ReflectionHelper.setFieldValue(data, field.getName(), value);
-
-				if(verbose.get())
-					LOGGER.info("{}: {}", field.getName(), value);
-			}
-			catch(final Exception e){
-				final String message = ExceptionHelper.getMessageNoLineNumber(e);
-				throw new IllegalArgumentException(message + ", field " + codec + "." + field.getName());
+					if(verbose.get())
+						LOGGER.info("{}: {}", field.getName(), value);
+				}
+				catch(final Exception e){
+					final String message = ExceptionHelper.getMessageNoLineNumber(e);
+					throw new IllegalArgumentException(message + ", field " + codec + "." + field.getName());
+				}
 			}
 		}
 
@@ -170,14 +171,15 @@ class MessageParser{
 
 			final Annotation binding = field.getBinding();
 			final CoderInterface coder = retrieveCoder(codec, field, binding);
-
-			try{
-				final Object value = ReflectionHelper.getFieldValue(data, field.getName());
-				coder.encode(this, writer, binding, data, value);
-			}
-			catch(final Exception e){
-				final String message = ExceptionHelper.getMessageNoLineNumber(e);
-				throw new IllegalArgumentException(message + ", field " + codec + "." + field.getName());
+			if(coder != null){
+				try{
+					final Object value = ReflectionHelper.getFieldValue(data, field.getName());
+					coder.encode(this, writer, binding, data, value);
+				}
+				catch(final Exception e){
+					final String message = ExceptionHelper.getMessageNoLineNumber(e);
+					throw new IllegalArgumentException(message + ", field " + codec + "." + field.getName());
+				}
 			}
 		}
 
@@ -192,11 +194,7 @@ class MessageParser{
 
 	private CoderInterface retrieveCoder(final Codec<?> codec, final Codec.BoundedField field, final Annotation binding){
 		final Class<? extends Annotation> annotationType = binding.annotationType();
-		final CoderInterface coder = Coder.CODERS_FROM_ANNOTATION.get(annotationType);
-		if(coder == null)
-			throw new IllegalArgumentException("Unrecognized annotation for field " + codec + "." + field.getName()
-				+ ": @" + annotationType.getSimpleName());
-		return coder;
+		return Coder.CODERS_FROM_ANNOTATION.get(annotationType);
 	}
 
 	private <T> void addSkippedFields(final Skip[] skips, final BitWriter writer, final T data){
