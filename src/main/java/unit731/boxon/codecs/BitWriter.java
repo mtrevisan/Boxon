@@ -84,46 +84,21 @@ class BitWriter{
 		//place the rest in the cache
 //		if(byteOrder == ByteOrder.BIG_ENDIAN){
 			//fill with initial zeros
-			final int firstBitSetIndex = value.previousSetBit(length);
-			final int zeros = (length - firstBitSetIndex) / Byte.SIZE;
-			for(int i = 0; i < zeros; i ++)
-				os.write(0);
-//			length = firstBitSetIndex + 1;
-
-			int offset = length;
-			while(offset > 0){
-				//fill the cache one bit at a time
-				final int size = Math.min(offset, Byte.SIZE - remaining);
-				final int delta = length - offset;
-				for(int i = value.previousSetBit(offset); i >= offset - size; i = value.previousSetBit(i - 1))
-					cache |= 1 << (remaining - i + offset);
-				remaining += size;
-				offset -= size;
-
-				//if cache is full, write it
-				if(remaining == Byte.SIZE){
-					os.write(cache);
-
-					resetInnerVariables();
-				}
-			}
-//		}
-//		else{
-			//fill with initial zeros
 //			final int firstBitSetIndex = value.previousSetBit(length);
 //			final int zeros = (length - firstBitSetIndex) / Byte.SIZE;
 //			for(int i = 0; i < zeros; i ++)
 //				os.write(0);
-//			length = firstBitSetIndex + 1;
+////			length = firstBitSetIndex + 1;
 //
-//			int offset = 0;
-//			while(offset < length){
+//			int offset = length;
+//			while(offset > 0){
 //				//fill the cache one bit at a time
-//				final int size = Math.min(length - offset, Byte.SIZE - remaining);
-//				for(int i = value.nextSetBit(offset); 0 <= i && i < offset + size; i = value.nextSetBit(i + 1))
-//					cache |= 1 << (remaining + i - offset);
+//				final int size = Math.min(offset, Byte.SIZE - remaining);
+//				final int delta = length - offset;
+//				for(int i = value.previousSetBit(offset); i >= offset - size; i = value.previousSetBit(i - 1))
+//					cache |= 1 << (remaining - i + offset);
 //				remaining += size;
-//				offset += size;
+//				offset -= size;
 //
 //				//if cache is full, write it
 //				if(remaining == Byte.SIZE){
@@ -132,6 +107,31 @@ class BitWriter{
 //					resetInnerVariables();
 //				}
 //			}
+//		}
+//		else{
+			//fill with initial zeros
+//			final int firstBitSetIndex = value.previousSetBit(length);
+//			final int zeros = (length - firstBitSetIndex) / Byte.SIZE;
+//			for(int i = 0; i < zeros; i ++)
+//				os.write(0);
+//			length = firstBitSetIndex;
+
+			int offset = 0;
+			while(offset < length){
+				//fill the cache one bit at a time
+				final int size = Math.min(length - offset, Byte.SIZE - remaining);
+				for(int i = value.nextSetBit(offset); 0 <= i && i < offset + size; i = value.nextSetBit(i + 1))
+					cache |= 1 << (remaining + i - offset);
+				remaining += size;
+				offset += size;
+
+				//if cache is full, write it
+				if(remaining == Byte.SIZE){
+					os.write(cache);
+
+					resetInnerVariables();
+				}
+			}
 //		}
 		return this;
 	}
@@ -181,7 +181,7 @@ class BitWriter{
 	 * @return	The {@link BitWriter} to allow for the convenience of method-chaining.
 	 */
 	public BitWriter putShort(final short value, final ByteOrder byteOrder){
-		return putValue(byteOrder == ByteOrder.LITTLE_ENDIAN? Short.reverseBytes(value): value, Short.SIZE);
+		return putValue(byteOrder == ByteOrder.BIG_ENDIAN? Short.reverseBytes(value): value, Short.SIZE);
 	}
 
 	/**
@@ -191,7 +191,7 @@ class BitWriter{
 	 * @return	The {@link BitWriter} to allow for the convenience of method-chaining.
 	 */
 	public BitWriter putInteger(final int value, final ByteOrder byteOrder){
-		return putValue((byteOrder == ByteOrder.LITTLE_ENDIAN? Integer.reverseBytes(value): value), Integer.SIZE);
+		return putValue((byteOrder == ByteOrder.BIG_ENDIAN? Integer.reverseBytes(value): value), Integer.SIZE);
 	}
 
 	/**
@@ -201,7 +201,7 @@ class BitWriter{
 	 * @return	The {@link BitWriter} to allow for the convenience of method-chaining.
 	 */
 	public BitWriter putLong(final long value, final ByteOrder byteOrder){
-		return putValue((byteOrder == ByteOrder.LITTLE_ENDIAN? Long.reverseBytes(value): value), Long.SIZE);
+		return putValue((byteOrder == ByteOrder.BIG_ENDIAN? Long.reverseBytes(value): value), Long.SIZE);
 	}
 
 	/**
