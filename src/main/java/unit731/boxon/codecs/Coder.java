@@ -801,25 +801,31 @@ enum Coder implements CoderInterface{
 		Pattern p = null;
 		if(isNotBlank(match)){
 			//try SpEL expression
-			try{
-				match = Evaluator.evaluate(match, String.class, data);
-			}
-			catch(final Exception ignored){}
+			match = extractSpELExpression(match, data);
 
 			//try regex expression
-			try{
-				p = Pattern.compile(match);
-			}
-			catch(final PatternSyntaxException ignored){}
+			p = extractRegexExpression(match, p);
 
 			//match exact
-			if(p == null){
-				try{
-					p = Pattern.compile("^" + Pattern.quote(match) + "$");
-				}
-				catch(final PatternSyntaxException ignored){}
-			}
+			if(p == null)
+				p = extractRegexExpression("^" + Pattern.quote(match) + "$", p);
 		}
+		return p;
+	}
+
+	private static <T> String extractSpELExpression(String match, final T data){
+		try{
+			match = Evaluator.evaluate(match, String.class, data);
+		}
+		catch(final Exception ignored){}
+		return match;
+	}
+
+	private static Pattern extractRegexExpression(final String match, Pattern p){
+		try{
+			p = Pattern.compile(match);
+		}
+		catch(final PatternSyntaxException ignored){}
 		return p;
 	}
 
