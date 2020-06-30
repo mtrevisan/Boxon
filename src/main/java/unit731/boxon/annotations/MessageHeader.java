@@ -46,16 +46,16 @@ public @interface MessageHeader{
 	String[] start();
 
 	/**
-	 * The final bytes that determines the type of message. Defaults to empty.
+	 * The final bytes that determines the type of message.
 	 *
-	 * @return	The tail bytes of this message
+	 * @return	The tail bytes of this message. Defaults to empty string.
 	 */
 	String end() default "";
 
 	/**
-	 * The type of encoding used for the `start`, `end`, and `separator` fields
+	 * The type of encoding used for the `start`, `end`, and `separator` fields.
 	 *
-	 * @return	The type of encoding used. Defaults to UTF-8.
+	 * @return	The type of encoding used. Defaults to `UTF-8`.
 	 */
 	String charset() default "UTF-8";
 

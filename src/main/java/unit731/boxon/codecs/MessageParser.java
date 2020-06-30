@@ -42,9 +42,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 
-/**
- * @see <a href="https://dzone.com/articles/learn-spring-expression-language-with-examples">Learning the Spring Expression Language (SpEL)</a>
- */
 class MessageParser{
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(MessageParser.class.getName());

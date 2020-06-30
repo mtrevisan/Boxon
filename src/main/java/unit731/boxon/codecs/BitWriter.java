@@ -235,6 +235,13 @@ class BitWriter{
 	}
 
 
+	/**
+	 * @return	Whether the current buffer contains an integral number of bytes.
+	 */
+	public boolean isByteAligned(){
+		return ((remaining % Byte.SIZE) == 0);
+	}
+
 	/** Flush an integral number of bytes to the output stream, padding any non-completed byte with zeros */
 	public void flush(){
 		//put the cache into the buffer

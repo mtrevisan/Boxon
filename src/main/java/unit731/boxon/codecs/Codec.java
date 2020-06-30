@@ -29,14 +29,10 @@ import unit731.boxon.annotations.BindChecksum;
 import unit731.boxon.annotations.BindIf;
 import unit731.boxon.annotations.MessageHeader;
 import unit731.boxon.annotations.Skip;
-import unit731.boxon.annotations.converters.Converter;
 import unit731.boxon.helpers.AnnotationHelper;
-import unit731.boxon.helpers.ReflectionHelper;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -47,8 +43,6 @@ import java.util.StringJoiner;
  * The class containing the information that are used to decode/encode objects.
  *
  * @param <T> The type of object the coder is able to decode/encode.
- *
- * @see <a href="https://docs.spring.io/spring/docs/5.2.7.RELEASE/spring-framework-reference/core.html#expressions">Spring Expression Language (SpEL)</a>
  */
 class Codec<T>{
 
