@@ -153,10 +153,7 @@ class Codec<T>{
 			for(final Annotation annotation : field.getDeclaredAnnotations()){
 				final Class<? extends Annotation> annotationType = annotation.annotationType();
 				if(annotationType != BindIf.class && annotationType != Skip.class){
-					//TODO check compatibility between:
-					// - bind annotation and validator input type
-					// - validator output type and converter input type
-					// - converter output type and variable type
+					validateAnnotation(field, annotation);
 
 					if(annotationType == Evaluate.class)
 						evaluatedFields.add(new EvaluatedField(field, (Evaluate)annotation));
@@ -165,7 +162,7 @@ class Codec<T>{
 				}
 			}
 
-			validateAnnotation(checksum, boundedAnnotations);
+			validateField(checksum, boundedAnnotations);
 
 			if(boundedAnnotations.size() == 1)
 				boundedFields.add(new BoundedField(field, (skips.length > 0? skips: null), (condition != null? condition.value(): null), boundedAnnotations.get(0)));
@@ -174,7 +171,14 @@ class Codec<T>{
 		}
 	}
 
-	private void validateAnnotation(final BindChecksum checksum, final List<Annotation> annotations){
+	private void validateAnnotation(final Field field, final Annotation annotation){
+		//TODO check compatibility between:
+		// - bind annotation and validator input type
+		// - validator output type and converter input type
+		// - converter output type and variable type
+	}
+
+	private void validateField(final BindChecksum checksum, final List<Annotation> annotations){
 		if(annotations.size() > 1){
 			final StringJoiner sj = new StringJoiner(", ", "[", "]");
 			for(final Annotation annotation : annotations)
