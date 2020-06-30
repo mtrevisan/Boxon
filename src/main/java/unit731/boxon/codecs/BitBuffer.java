@@ -41,7 +41,6 @@ import java.util.BitSet;
  * @see <a href="https://github.com/jhg023/BitBuffer/blob/master/src/main/java/bitbuffer/BitBuffer.java">BitBuffer</a>
  * @see <a href="https://graphics.stanford.edu/~seander/bithacks.html#ConditionalSetOrClearBitsWithoutBranching">Bit Twiddling Hacks</a>
  */
-@SuppressWarnings("unused")
 class BitBuffer{
 
 	/** The mask used when writing/reading bits */
@@ -369,25 +368,29 @@ class BitBuffer{
 
 	/** Reads a string until a terminator is found */
 	public String getTextUntilTerminator(final byte terminator, final boolean consumeTerminator, final Charset charset){
+		String text = null;
 		try(
 				final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				final OutputStreamWriter osw = new OutputStreamWriter(baos, charset);
 			){
-			while(buffer.position() < buffer.limit() || remaining > 0){
-				final byte byteRead = (consumeTerminator? getByte(): peekByte());
-				if(byteRead == terminator)
-					break;
-				if(!consumeTerminator)
-					getByte();
+			readToWriter(terminator, consumeTerminator, osw);
+			text = baos.toString(charset);
+		}
+		catch(final IOException ignored){}
+		return text;
+	}
 
-				osw.write(byteRead);
-			}
-			osw.flush();
-			return baos.toString(charset);
+	private void readToWriter(final byte terminator, final boolean consumeTerminator, final OutputStreamWriter os) throws IOException{
+		while(buffer.position() < buffer.limit() || remaining > 0){
+			final byte byteRead = (consumeTerminator? getByte(): peekByte());
+			if(byteRead == terminator)
+				break;
+			if(!consumeTerminator)
+				getByte();
+
+			os.write(byteRead);
 		}
-		catch(final IOException ignored){
-			return null;
-		}
+		os.flush();
 	}
 
 
