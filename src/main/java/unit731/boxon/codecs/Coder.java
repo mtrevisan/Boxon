@@ -70,13 +70,10 @@ enum Coder implements CoderInterface{
 			final Choices selectFrom = binding.selectFrom();
 			@SuppressWarnings("ConstantConditions")
 			final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): new Choices.Choice[0]);
-			validateAnnotation(type, alternatives);
 
 			if(alternatives.length > 0){
 				//read prefix
 				final int prefixSize = selectFrom.prefixSize();
-				if(prefixSize > Integer.SIZE)
-					throw new IllegalArgumentException("`prefixSize` cannot be greater than " + Integer.SIZE + " bits");
 				final ByteOrder prefixByteOrder = selectFrom.byteOrder();
 
 				final BitSet bits = reader.getBits(prefixSize);
@@ -109,25 +106,10 @@ enum Coder implements CoderInterface{
 			final Choices selectFrom = binding.selectFrom();
 			@SuppressWarnings("ConstantConditions")
 			final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): new Choices.Choice[0]);
-			validateAnnotation(type, alternatives);
-
 			if(alternatives.length > 0){
 				//write prefix
-				final int prefixSize = selectFrom.prefixSize();
-				if(prefixSize > Integer.SIZE)
-					throw new IllegalArgumentException("`prefixSize` cannot be greater than " + Integer.SIZE + " bits");
-				final ByteOrder prefixByteOrder = selectFrom.byteOrder();
-
 				final Choices.Choice chosenAlternative = chooseAlternative(alternatives, value.getClass());
-				//if chosenAlternative.condition() contains '#prefix', then write @Choice.Prefix.value()
-				if(chosenAlternative.condition().contains("#" + CONTEXT_CHOICE_PREFIX)){
-					long prefixValue = chosenAlternative.prefix();
-					final BitSet bits = BitSet.valueOf(new long[]{prefixValue});
-					if(prefixByteOrder == ByteOrder.LITTLE_ENDIAN)
-						ByteHelper.reverseBits(bits, prefixSize);
-
-					writer.putBits(bits, prefixSize);
-				}
+				writePrefix(writer, value, chosenAlternative, selectFrom);
 
 				type = value.getClass();
 			}
@@ -137,13 +119,6 @@ enum Coder implements CoderInterface{
 			final Object array = converterEncode(binding.converter(), value);
 
 			messageParser.encode(codec, array, writer);
-		}
-
-		private void validateAnnotation(final Class<?> type, final Choices.Choice[] alternatives){
-			if(type == Object.class && alternatives.length == 0)
-				throw new IllegalArgumentException("`type` argument missing");
-			if(type != Object.class && alternatives.length > 0)
-				throw new IllegalArgumentException("Cannot define both `type` and `selectFrom`");
 		}
 
 		@Override
@@ -237,11 +212,8 @@ enum Coder implements CoderInterface{
 
 			final ByteOrder byteOrder = binding.byteOrder();
 			final Class<?> type = binding.type();
-			validatePrimitiveType(type);
-			final Codec<?> codec = Codec.createFrom(type.getComponentType());
 			final int size = Evaluator.evaluate(binding.size(), int.class, data);
 			final Class<?> objectiveType = ReflectionHelper.objectiveType(type.getComponentType());
-			validateObjectiveType(type, objectiveType, codec);
 
 			final Object array = ReflectionHelper.createArrayPrimitive(type, size);
 			for(int i = 0; i < size; i ++){
@@ -264,30 +236,12 @@ enum Coder implements CoderInterface{
 			validateData(binding.validator(), value);
 
 			final ByteOrder byteOrder = binding.byteOrder();
-			final Class<?> type = binding.type();
-			validatePrimitiveType(type);
-			final Codec<?> codec = Codec.createFrom(type.getComponentType());
 			final int size = Evaluator.evaluate(binding.size(), int.class, data);
-			final Class<?> objectiveType = ReflectionHelper.objectiveType(type.getComponentType());
-			validateObjectiveType(type, objectiveType, codec);
 
 			final Object array = converterEncode(binding.converter(), value);
 
 			for(int i = 0; i < size; i ++)
 				writer.put(Array.get(array, i), byteOrder);
-		}
-
-		private void validatePrimitiveType(final Class<?> type){
-			final boolean isPrimitive = (type.isArray() && type.getComponentType().isPrimitive());
-			if(!isPrimitive)
-				throw new IllegalArgumentException("Bad annotation used, @" + BindArray.class.getSimpleName()
-					+ " should have been used with type `" + type.getSimpleName() + ".class`");
-		}
-
-		private void validateObjectiveType(final Class<?> type, final Class<?> objectiveType, final Codec<?> codec){
-			if(objectiveType == null)
-				throw new IllegalArgumentException("Unrecognized type for field " + codec.getClass().getSimpleName() + "<"
-					+ codec + ">: " + type.getComponentType().getSimpleName());
 		}
 
 		@Override
@@ -302,10 +256,6 @@ enum Coder implements CoderInterface{
 			final BindArray binding = (BindArray)annotation;
 
 			final Class<?> type = binding.type();
-			final boolean isPrimitive = (type.isArray() && type.getComponentType().isPrimitive());
-			if(isPrimitive)
-				throw new IllegalArgumentException("Bad annotation used, @" + BindArrayPrimitive.class.getSimpleName()
-					+ " should have been used with type `" + type.getSimpleName() + ".class`");
 			final int size = Evaluator.evaluate(binding.size(), int.class, data);
 			final Choices selectFrom = binding.selectFrom();
 			@SuppressWarnings("ConstantConditions")
@@ -315,8 +265,6 @@ enum Coder implements CoderInterface{
 			if(alternatives.length > 0){
 				//read prefix
 				final int prefixSize = selectFrom.prefixSize();
-				if(prefixSize > Integer.SIZE)
-					throw new IllegalArgumentException("`prefixSize` cannot be greater than " + Integer.SIZE + " bits");
 				final ByteOrder prefixByteOrder = selectFrom.byteOrder();
 
 				for(int i = 0; i < size; i ++){
@@ -354,10 +302,6 @@ enum Coder implements CoderInterface{
 			validateData(binding.validator(), value);
 
 			final Class<?> type = binding.type();
-			final boolean isPrimitive = (type.isArray() && type.getComponentType().isPrimitive());
-			if(isPrimitive)
-				throw new IllegalArgumentException("Bad annotation used, @" + BindArrayPrimitive.class.getSimpleName()
-					+ " should have been used with type `" + type.getSimpleName() + "[].class`");
 			final int size = Evaluator.evaluate(binding.size(), int.class, data);
 			final Choices selectFrom = binding.selectFrom();
 			@SuppressWarnings("ConstantConditions")
@@ -365,30 +309,14 @@ enum Coder implements CoderInterface{
 
 			final Object[] array = converterEncode(binding.converter(), value);
 
-			if(alternatives.length > 0){
-				//write prefix
-				final int prefixSize = selectFrom.prefixSize();
-				if(prefixSize > Integer.SIZE)
-					throw new IllegalArgumentException("`prefixSize` cannot be greater than " + Integer.SIZE + " bits");
-				final ByteOrder prefixByteOrder = selectFrom.byteOrder();
-
+			if(alternatives.length > 0)
 				for(int i = 0; i < size; i ++){
-					final Choices.Choice chosenAlternative = chooseAlternative(alternatives, array[i].getClass());
-					//if chosenAlternative.condition() contains '#prefix', then write @Choice.Prefix.value()
-					if(chosenAlternative.condition().contains("#" + CONTEXT_CHOICE_PREFIX)){
-						final long prefixValue = chosenAlternative.prefix();
-						final BitSet bits = BitSet.valueOf(new long[]{prefixValue});
-						if(prefixByteOrder == ByteOrder.LITTLE_ENDIAN)
-							ByteHelper.reverseBits(bits, prefixSize);
-
-						writer.putBits(bits, prefixSize);
-					}
+					writePrefix(writer, array[i], chooseAlternative(alternatives, array[i].getClass()), selectFrom);
 
 					final Codec<?> codec = Codec.createFrom(array[i].getClass());
 
 					messageParser.encode(codec, array[i], writer);
 				}
-			}
 			else{
 				final Codec<?> codec = Codec.createFrom(type);
 
@@ -738,7 +666,6 @@ enum Coder implements CoderInterface{
 			final BindDecimal binding = (BindDecimal)annotation;
 
 			final Class<?> type = binding.type();
-			validateAnnotation(type);
 
 			final ByteOrder byteOrder = binding.byteOrder();
 			final BigDecimal v = reader.getDecimal(type, byteOrder);
@@ -756,7 +683,6 @@ enum Coder implements CoderInterface{
 			final BindDecimal binding = (BindDecimal)annotation;
 
 			final Class<?> type = binding.type();
-			validateAnnotation(type);
 
 			validateData(binding.match(), binding.validator(), value);
 
@@ -764,12 +690,6 @@ enum Coder implements CoderInterface{
 
 			final ByteOrder byteOrder = binding.byteOrder();
 			writer.putDecimal(v, type, byteOrder);
-		}
-
-		private void validateAnnotation(final Class<?> type){
-			if(type != Float.class && type != Double.class)
-				throw new IllegalArgumentException("Bad type, should have been one of `" + Float.class.getSimpleName()
-					+ ".class` or `" + Double.class.getSimpleName() + ".class`");
 		}
 
 		@Override
@@ -785,7 +705,6 @@ enum Coder implements CoderInterface{
 
 			final Class<?> type = binding.type();
 			final Class<?> objectiveType = ReflectionHelper.objectiveType(type);
-			validateObjectiveType(objectiveType, type);
 
 			final ByteOrder byteOrder = binding.byteOrder();
 			return reader.get(objectiveType, byteOrder);
@@ -796,18 +715,8 @@ enum Coder implements CoderInterface{
 				final Object value){
 			final BindChecksum binding = (BindChecksum)annotation;
 
-			final Class<?> type = binding.type();
-			final Class<?> objectiveType = ReflectionHelper.objectiveType(type);
-			validateObjectiveType(objectiveType, type);
-
 			final ByteOrder byteOrder = binding.byteOrder();
 			writer.put(value, byteOrder);
-		}
-
-		private void validateObjectiveType(final Class<?> objectiveType, final Class<?> type){
-			if(objectiveType == null)
-				throw new IllegalArgumentException("Unrecognized type for field " + getClass().getSimpleName()
-					+ "<" + type.getSimpleName() + ">: " + type.getComponentType().getSimpleName());
 		}
 
 		@Override
@@ -858,6 +767,21 @@ enum Coder implements CoderInterface{
 				break;
 			}
 		return chosenAlternative;
+	}
+
+	private static void writePrefix(final BitWriter writer, final Object value, final Choices.Choice chosenAlternative, final Choices selectFrom){
+		//if chosenAlternative.condition() contains '#prefix', then write @Choice.Prefix.value()
+		if(chosenAlternative.condition().contains("#" + CONTEXT_CHOICE_PREFIX)){
+			final int prefixSize = selectFrom.prefixSize();
+			final ByteOrder prefixByteOrder = selectFrom.byteOrder();
+
+			final long prefixValue = chosenAlternative.prefix();
+			final BitSet bits = BitSet.valueOf(new long[]{prefixValue});
+			if(prefixByteOrder == ByteOrder.LITTLE_ENDIAN)
+				ByteHelper.reverseBits(bits, prefixSize);
+
+			writer.putBits(bits, prefixSize);
+		}
 	}
 
 	private static <T> void validateData(final String match, @SuppressWarnings("rawtypes") final Class<? extends Validator> validatorType,

@@ -68,7 +68,7 @@ class MessageParser{
 				continue;
 
 			final Annotation binding = field.getBinding();
-			final CoderInterface coder = retrieveCoder(codec, field, binding);
+			final CoderInterface coder = retrieveCoder(binding);
 			if(coder != null){
 				try{
 					final Object value = coder.decode(this, reader, binding, data);
@@ -167,7 +167,7 @@ class MessageParser{
 				continue;
 
 			final Annotation binding = field.getBinding();
-			final CoderInterface coder = retrieveCoder(codec, field, binding);
+			final CoderInterface coder = retrieveCoder(binding);
 			if(coder != null){
 				try{
 					final Object value = ReflectionHelper.getFieldValue(data, field.getName());
@@ -189,7 +189,7 @@ class MessageParser{
 		writer.flush();
 	}
 
-	private CoderInterface retrieveCoder(final Codec<?> codec, final Codec.BoundedField field, final Annotation binding){
+	private CoderInterface retrieveCoder(final Annotation binding){
 		final Class<? extends Annotation> annotationType = binding.annotationType();
 		return Coder.CODERS_FROM_ANNOTATION.get(annotationType);
 	}

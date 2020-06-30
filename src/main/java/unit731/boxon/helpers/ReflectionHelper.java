@@ -39,7 +39,6 @@ import org.springframework.objenesis.strategy.PlatformDescription;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -61,15 +60,6 @@ public class ReflectionHelper{
 
 	private ReflectionHelper(){}
 
-
-	public static Method getMethod(final Class<?> cls, final String methodName, final Class<?>... methodParameterTypes){
-		try{
-			return cls.getMethod(methodName, methodParameterTypes);
-		}
-		catch(final Exception ignored){
-			return null;
-		}
-	}
 
 	public static <T, R> R getFieldValue(final T obj, final String fieldName) throws NoSuchFieldException{
 		try{
