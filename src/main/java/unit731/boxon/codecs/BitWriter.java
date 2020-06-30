@@ -110,6 +110,7 @@ class BitWriter{
 //		}
 //		else{
 			//fill with initial zeros
+//TODO
 //			final int firstBitSetIndex = value.previousSetBit(length);
 //			final int zeros = (length - firstBitSetIndex) / Byte.SIZE;
 //			for(int i = 0; i < zeros; i ++)
