@@ -289,14 +289,19 @@ public class ByteHelper{
 	 * @param size	The size in bits of the `value`
 	 * @return	The byte array (leading byte is always different from <code>0</code>), empty array if the value is zero.
 	 */
-	public static byte[] bigIntegerToBytes(final BigInteger value, final int size, final ByteOrder byteOrder){
+	public static BitSet bigIntegerToBitSet(final BigInteger value, final int size, final ByteOrder byteOrder){
 		byte[] array = value.toByteArray();
 		if(size < array.length * Byte.SIZE)
 			array = Arrays.copyOfRange(array, 1, array.length);
+		else if(size > array.length * Byte.SIZE && byteOrder == ByteOrder.LITTLE_ENDIAN){
+			byte[] newArray = new byte[array.length + 1];
+			System.arraycopy(array, 0, newArray, 1, array.length);
+			array = newArray;
+		}
 		if(byteOrder == ByteOrder.LITTLE_ENDIAN)
 			//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
 			array = reverseBytes(array);
-		return array;
+		return BitSet.valueOf(array);
 	}
 
 	private static byte[] reverseBytes(final byte[] bytes){

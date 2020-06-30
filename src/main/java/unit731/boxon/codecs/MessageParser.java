@@ -204,7 +204,7 @@ class MessageParser{
 		final int size = (isNotBlank(skip.size())? Evaluator.evaluate(skip.size(), Integer.class, data): 0);
 		if(size > 0)
 			//skip `size` bits
-			writer.putBits(new BitSet(size), size);
+			writer.putBits(new BitSet(size), size, ByteOrder.BIG_ENDIAN);
 		else if(skip.consumeTerminator())
 			//skip until terminator
 			writer.putByte(skip.terminator());

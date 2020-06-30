@@ -26,6 +26,7 @@ package unit731.boxon.codecs;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import unit731.boxon.annotations.BindInteger;
 import unit731.boxon.annotations.converters.Converter;
@@ -43,8 +44,64 @@ import java.util.Random;
 
 class CoderIntegerTest{
 
-	private static final Random RANDOM = new Random();
+	@Test
+	void smallLittleEndianSmall(){
+		Coder coder = Coder.INTEGER;
+		long encodedValue = 0x00_1020l;
+		BindInteger annotation = new BindInteger(){
+			@Override
+			public Class<? extends Annotation> annotationType(){
+				return BindInteger.class;
+			}
 
+			@Override
+			public String size(){
+				return "24";
+			}
+
+			@Override
+			public boolean unsigned(){
+				return true;
+			}
+
+			@Override
+			public ByteOrder byteOrder(){
+				return ByteOrder.LITTLE_ENDIAN;
+			}
+
+			@Override
+			public boolean allowPrimitive(){
+				return true;
+			}
+
+			@Override
+			public String match(){
+				return null;
+			}
+
+			@Override
+			public Class<? extends Validator> validator(){
+				return NullValidator.class;
+			}
+
+			@Override
+			public Class<? extends Converter> converter(){
+				return NullConverter.class;
+			}
+		};
+
+		MessageParser messageParser = new MessageParser();
+		BitWriter writer = new BitWriter();
+		coder.encode(messageParser, writer, annotation, null, encodedValue);
+		writer.flush();
+
+		Assertions.assertEquals("201000", writer.toString());
+
+		BitBuffer reader = BitBuffer.wrap(writer);
+		long decoded = (long)coder.decode(messageParser, reader, annotation, null);
+
+		Assertions.assertEquals(encodedValue, decoded);
+	}
 
 	@Test
 	void smallLittleEndianUnsignedPositive(){
@@ -165,66 +222,6 @@ class CoderIntegerTest{
 	}
 
 	@Test
-	void smallLittleEndianUnsignedRandom(){
-		Coder coder = Coder.INTEGER;
-		long encodedValue = -(RANDOM.nextLong() & 0x007F_FFFF);
-		BindInteger annotation = new BindInteger(){
-			@Override
-			public Class<? extends Annotation> annotationType(){
-				return BindInteger.class;
-			}
-
-			@Override
-			public String size(){
-				return "24";
-			}
-
-			@Override
-			public boolean unsigned(){
-				return true;
-			}
-
-			@Override
-			public ByteOrder byteOrder(){
-				return ByteOrder.LITTLE_ENDIAN;
-			}
-
-			@Override
-			public boolean allowPrimitive(){
-				return true;
-			}
-
-			@Override
-			public String match(){
-				return null;
-			}
-
-			@Override
-			public Class<? extends Validator> validator(){
-				return NullValidator.class;
-			}
-
-			@Override
-			public Class<? extends Converter> converter(){
-				return NullConverter.class;
-			}
-		};
-
-		MessageParser messageParser = new MessageParser();
-		BitWriter writer = new BitWriter();
-		coder.encode(messageParser, writer, annotation, null, encodedValue);
-		writer.flush();
-
-		BitSet bits = BitSet.valueOf(ByteHelper.bigIntegerToBytes(BigInteger.valueOf(-encodedValue), 24, ByteOrder.LITTLE_ENDIAN));
-		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bits.toByteArray()).toUpperCase(Locale.ROOT), 6, '0'), writer.toString());
-
-		BitBuffer reader = BitBuffer.wrap(writer);
-		long decoded = (long)coder.decode(messageParser, reader, annotation, null);
-
-		Assertions.assertEquals(-encodedValue, decoded);
-	}
-
-	@Test
 	void smallLittleEndianPositive(){
 		Coder coder = Coder.INTEGER;
 		long encodedValue = 0x7F_00FFl;
@@ -342,10 +339,11 @@ class CoderIntegerTest{
 		Assertions.assertEquals(ByteHelper.extendSign(encodedValue, 24), decoded);
 	}
 
+
 	@Test
-	void smallLittleEndianRandom(){
+	void smallBigEndianSmall(){
 		Coder coder = Coder.INTEGER;
-		long encodedValue = -(RANDOM.nextLong() & 0x007F_FFFF);
+		long encodedValue = 0x00_1020l;
 		BindInteger annotation = new BindInteger(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
@@ -359,12 +357,12 @@ class CoderIntegerTest{
 
 			@Override
 			public boolean unsigned(){
-				return false;
+				return true;
 			}
 
 			@Override
 			public ByteOrder byteOrder(){
-				return ByteOrder.LITTLE_ENDIAN;
+				return ByteOrder.BIG_ENDIAN;
 			}
 
 			@Override
@@ -393,8 +391,7 @@ class CoderIntegerTest{
 		coder.encode(messageParser, writer, annotation, null, encodedValue);
 		writer.flush();
 
-		BitSet bits = BitSet.valueOf(ByteHelper.bigIntegerToBytes(BigInteger.valueOf(encodedValue), 24, ByteOrder.LITTLE_ENDIAN));
-		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bits.toByteArray()).toUpperCase(Locale.ROOT), 6, '0'), writer.toString());
+		Assertions.assertEquals("001020", writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
 		long decoded = (long)coder.decode(messageParser, reader, annotation, null);
@@ -521,66 +518,6 @@ class CoderIntegerTest{
 	}
 
 	@Test
-	void smallBigEndianUnsignedRandom(){
-		Coder coder = Coder.INTEGER;
-		long encodedValue = -(RANDOM.nextLong() & 0x007F_FFFF);
-		BindInteger annotation = new BindInteger(){
-			@Override
-			public Class<? extends Annotation> annotationType(){
-				return BindInteger.class;
-			}
-
-			@Override
-			public String size(){
-				return "24";
-			}
-
-			@Override
-			public boolean unsigned(){
-				return true;
-			}
-
-			@Override
-			public ByteOrder byteOrder(){
-				return ByteOrder.BIG_ENDIAN;
-			}
-
-			@Override
-			public boolean allowPrimitive(){
-				return true;
-			}
-
-			@Override
-			public String match(){
-				return null;
-			}
-
-			@Override
-			public Class<? extends Validator> validator(){
-				return NullValidator.class;
-			}
-
-			@Override
-			public Class<? extends Converter> converter(){
-				return NullConverter.class;
-			}
-		};
-
-		MessageParser messageParser = new MessageParser();
-		BitWriter writer = new BitWriter();
-		coder.encode(messageParser, writer, annotation, null, encodedValue);
-		writer.flush();
-
-		BitSet bits = BitSet.valueOf(ByteHelper.bigIntegerToBytes(BigInteger.valueOf(-encodedValue), 24, ByteOrder.BIG_ENDIAN));
-		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bits.toByteArray()).toUpperCase(Locale.ROOT), 6, '0'), writer.toString());
-
-		BitBuffer reader = BitBuffer.wrap(writer);
-		long decoded = (long)coder.decode(messageParser, reader, annotation, null);
-
-		Assertions.assertEquals(-encodedValue, decoded);
-	}
-
-	@Test
 	void smallBigEndianPositive(){
 		Coder coder = Coder.INTEGER;
 		long encodedValue = 0x7F_00FFl;
@@ -698,10 +635,11 @@ class CoderIntegerTest{
 		Assertions.assertEquals(ByteHelper.extendSign(encodedValue, 24), decoded);
 	}
 
+
 	@Test
-	void smallBigEndianRandom(){
+	void bigLittleEndianSmall(){
 		Coder coder = Coder.INTEGER;
-		long encodedValue = -(RANDOM.nextLong() & 0x007F_FFFF);
+		BigInteger encodedValue = new BigInteger("00FF0000FFFF00000000000000000000", 16);
 		BindInteger annotation = new BindInteger(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
@@ -710,17 +648,17 @@ class CoderIntegerTest{
 
 			@Override
 			public String size(){
-				return "24";
+				return "128";
 			}
 
 			@Override
 			public boolean unsigned(){
-				return false;
+				return true;
 			}
 
 			@Override
 			public ByteOrder byteOrder(){
-				return ByteOrder.BIG_ENDIAN;
+				return ByteOrder.LITTLE_ENDIAN;
 			}
 
 			@Override
@@ -749,15 +687,14 @@ class CoderIntegerTest{
 		coder.encode(messageParser, writer, annotation, null, encodedValue);
 		writer.flush();
 
-		BitSet bits = BitSet.valueOf(ByteHelper.bigIntegerToBytes(BigInteger.valueOf(Math.abs(encodedValue)).negate(), 24, ByteOrder.BIG_ENDIAN));
-		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bits.toByteArray()).toUpperCase(Locale.ROOT), 6, '0'), writer.toString());
+		BitSet bits = ByteHelper.bigIntegerToBitSet(encodedValue, 128, ByteOrder.LITTLE_ENDIAN);
+		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bits.toByteArray()).toUpperCase(Locale.ROOT), 32, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-		long decoded = (long)coder.decode(messageParser, reader, annotation, null);
+		BigInteger decoded = (BigInteger)coder.decode(messageParser, reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
-
 
 	@Test
 	void bigLittleEndianUnsignedPositive(){
@@ -810,7 +747,7 @@ class CoderIntegerTest{
 		coder.encode(messageParser, writer, annotation, null, encodedValue);
 		writer.flush();
 
-		BitSet bits = BitSet.valueOf(ByteHelper.bigIntegerToBytes(encodedValue, 128, ByteOrder.LITTLE_ENDIAN));
+		BitSet bits = ByteHelper.bigIntegerToBitSet(encodedValue, 128, ByteOrder.LITTLE_ENDIAN);
 		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bits.toByteArray()).toUpperCase(Locale.ROOT), 32, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
@@ -871,69 +808,6 @@ class CoderIntegerTest{
 		writer.flush();
 
 		Assertions.assertEquals("00000000000000000000FFFF0000FF80", writer.toString());
-
-		BitBuffer reader = BitBuffer.wrap(writer);
-		BigInteger decoded = (BigInteger)coder.decode(messageParser, reader, annotation, null);
-
-		Assertions.assertEquals(encodedValue, decoded);
-	}
-
-	@Test
-	void bigLittleEndianUnsignedRandom(){
-		Coder coder = Coder.INTEGER;
-		BigInteger encodedValue;
-		do{
-			encodedValue = new BigInteger(128, RANDOM);
-		}while(encodedValue.signum() <= 0 || encodedValue.toByteArray().length > 16);
-		BindInteger annotation = new BindInteger(){
-			@Override
-			public Class<? extends Annotation> annotationType(){
-				return BindInteger.class;
-			}
-
-			@Override
-			public String size(){
-				return "128";
-			}
-
-			@Override
-			public boolean unsigned(){
-				return true;
-			}
-
-			@Override
-			public ByteOrder byteOrder(){
-				return ByteOrder.LITTLE_ENDIAN;
-			}
-
-			@Override
-			public boolean allowPrimitive(){
-				return true;
-			}
-
-			@Override
-			public String match(){
-				return null;
-			}
-
-			@Override
-			public Class<? extends Validator> validator(){
-				return NullValidator.class;
-			}
-
-			@Override
-			public Class<? extends Converter> converter(){
-				return NullConverter.class;
-			}
-		};
-
-		MessageParser messageParser = new MessageParser();
-		BitWriter writer = new BitWriter();
-		coder.encode(messageParser, writer, annotation, null, encodedValue);
-		writer.flush();
-
-		BitSet bits = BitSet.valueOf(ByteHelper.bigIntegerToBytes(encodedValue, 128, ByteOrder.LITTLE_ENDIAN));
-		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bits.toByteArray()).toUpperCase(Locale.ROOT), 32, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
 		BigInteger decoded = (BigInteger)coder.decode(messageParser, reader, annotation, null);
@@ -1059,13 +933,11 @@ class CoderIntegerTest{
 		Assertions.assertEquals(encodedValue, decoded);
 	}
 
+
 	@Test
-	void bigLittleEndianRandom(){
+	void bigBigEndianSmall(){
 		Coder coder = Coder.INTEGER;
-		BigInteger encodedValue;
-		do{
-			encodedValue = new BigInteger(128, RANDOM);
-		}while(encodedValue.toByteArray().length > 16);
+		BigInteger encodedValue = new BigInteger("00FF0000FFFF00000000000000000000", 16);
 		BindInteger annotation = new BindInteger(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
@@ -1079,12 +951,12 @@ class CoderIntegerTest{
 
 			@Override
 			public boolean unsigned(){
-				return false;
+				return true;
 			}
 
 			@Override
 			public ByteOrder byteOrder(){
-				return ByteOrder.LITTLE_ENDIAN;
+				return ByteOrder.BIG_ENDIAN;
 			}
 
 			@Override
@@ -1113,8 +985,7 @@ class CoderIntegerTest{
 		coder.encode(messageParser, writer, annotation, null, encodedValue);
 		writer.flush();
 
-		BitSet bits = BitSet.valueOf(ByteHelper.bigIntegerToBytes(encodedValue, 128, ByteOrder.LITTLE_ENDIAN));
-		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bits.toByteArray()).toUpperCase(Locale.ROOT), 32, '0'), writer.toString());
+		Assertions.assertEquals("00FF0000FFFF00000000000000000000", writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
 		BigInteger decoded = (BigInteger)coder.decode(messageParser, reader, annotation, null);
@@ -1241,69 +1112,6 @@ class CoderIntegerTest{
 	}
 
 	@Test
-	void bigBigEndianUnsignedRandom(){
-		Coder coder = Coder.INTEGER;
-		BigInteger encodedValue;
-		do{
-			encodedValue = new BigInteger(128, RANDOM);
-		}while(encodedValue.signum() <= 0 || encodedValue.toByteArray().length > 16);
-		BindInteger annotation = new BindInteger(){
-			@Override
-			public Class<? extends Annotation> annotationType(){
-				return BindInteger.class;
-			}
-
-			@Override
-			public String size(){
-				return "128";
-			}
-
-			@Override
-			public boolean unsigned(){
-				return true;
-			}
-
-			@Override
-			public ByteOrder byteOrder(){
-				return ByteOrder.BIG_ENDIAN;
-			}
-
-			@Override
-			public boolean allowPrimitive(){
-				return true;
-			}
-
-			@Override
-			public String match(){
-				return null;
-			}
-
-			@Override
-			public Class<? extends Validator> validator(){
-				return NullValidator.class;
-			}
-
-			@Override
-			public Class<? extends Converter> converter(){
-				return NullConverter.class;
-			}
-		};
-
-		MessageParser messageParser = new MessageParser();
-		BitWriter writer = new BitWriter();
-		coder.encode(messageParser, writer, annotation, null, encodedValue);
-		writer.flush();
-
-		BitSet bb = BitSet.valueOf(ByteHelper.bigIntegerToBytes(encodedValue, 128, ByteOrder.BIG_ENDIAN));
-		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bb.toByteArray()), 32, '0'), writer.toString());
-
-		BitBuffer reader = BitBuffer.wrap(writer);
-		BigInteger decoded = (BigInteger)coder.decode(messageParser, reader, annotation, null);
-
-		Assertions.assertEquals(encodedValue, decoded);
-	}
-
-	@Test
 	void bigBigEndianPositive(){
 		Coder coder = Coder.INTEGER;
 		BigInteger encodedValue = new BigInteger("7FFF0000FFFF00000000000000000000", 16);
@@ -1414,323 +1222,6 @@ class CoderIntegerTest{
 		writer.flush();
 
 		Assertions.assertEquals("80FF0000FFFF00000000000000000000", writer.toString());
-
-		BitBuffer reader = BitBuffer.wrap(writer);
-		BigInteger decoded = (BigInteger)coder.decode(messageParser, reader, annotation, null);
-
-		Assertions.assertEquals(encodedValue, decoded);
-	}
-
-	@Test
-	void bigBigEndianRandom(){
-		Coder coder = Coder.INTEGER;
-		BigInteger encodedValue;
-		do{
-			encodedValue = new BigInteger(128, RANDOM);
-		}while(encodedValue.toByteArray().length > 16);
-		BindInteger annotation = new BindInteger(){
-			@Override
-			public Class<? extends Annotation> annotationType(){
-				return BindInteger.class;
-			}
-
-			@Override
-			public String size(){
-				return "128";
-			}
-
-			@Override
-			public boolean unsigned(){
-				return false;
-			}
-
-			@Override
-			public ByteOrder byteOrder(){
-				return ByteOrder.BIG_ENDIAN;
-			}
-
-			@Override
-			public boolean allowPrimitive(){
-				return true;
-			}
-
-			@Override
-			public String match(){
-				return null;
-			}
-
-			@Override
-			public Class<? extends Validator> validator(){
-				return NullValidator.class;
-			}
-
-			@Override
-			public Class<? extends Converter> converter(){
-				return NullConverter.class;
-			}
-		};
-
-		MessageParser messageParser = new MessageParser();
-		BitWriter writer = new BitWriter();
-		coder.encode(messageParser, writer, annotation, null, encodedValue);
-		writer.flush();
-
-		BitSet bb = BitSet.valueOf(ByteHelper.bigIntegerToBytes(encodedValue, 128, ByteOrder.BIG_ENDIAN));
-		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bb.toByteArray()), 32, '0'), writer.toString());
-
-		BitBuffer reader = BitBuffer.wrap(writer);
-		BigInteger decoded = (BigInteger)coder.decode(messageParser, reader, annotation, null);
-
-		Assertions.assertEquals(encodedValue, decoded);
-	}
-
-
-	@Test
-	void bigLittleEndianUnsignedDisallowPrimitive(){
-		Coder coder = Coder.INTEGER;
-		BigInteger encodedValue;
-		do{
-			encodedValue = new BigInteger(32, RANDOM);
-		}while(encodedValue.signum() <= 0 || encodedValue.toByteArray().length > 4);
-		BindInteger annotation = new BindInteger(){
-			@Override
-			public Class<? extends Annotation> annotationType(){
-				return BindInteger.class;
-			}
-
-			@Override
-			public String size(){
-				return "32";
-			}
-
-			@Override
-			public boolean unsigned(){
-				return true;
-			}
-
-			@Override
-			public ByteOrder byteOrder(){
-				return ByteOrder.LITTLE_ENDIAN;
-			}
-
-			@Override
-			public boolean allowPrimitive(){
-				return false;
-			}
-
-			@Override
-			public String match(){
-				return null;
-			}
-
-			@Override
-			public Class<? extends Validator> validator(){
-				return NullValidator.class;
-			}
-
-			@Override
-			public Class<? extends Converter> converter(){
-				return NullConverter.class;
-			}
-		};
-
-		MessageParser messageParser = new MessageParser();
-		BitWriter writer = new BitWriter();
-		coder.encode(messageParser, writer, annotation, null, encodedValue);
-		writer.flush();
-
-		BitSet bits = BitSet.valueOf(ByteHelper.bigIntegerToBytes(encodedValue, 32, ByteOrder.LITTLE_ENDIAN));
-		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bits.toByteArray()).toUpperCase(Locale.ROOT), 8, '0'), writer.toString());
-
-		BitBuffer reader = BitBuffer.wrap(writer);
-		BigInteger decoded = (BigInteger)coder.decode(messageParser, reader, annotation, null);
-
-		Assertions.assertEquals(encodedValue, decoded);
-	}
-
-	@Test
-	void bigLittleEndianNegativeDisallowPrimitive(){
-		Coder coder = Coder.INTEGER;
-		BigInteger encodedValue;
-		do{
-			encodedValue = new BigInteger(32, RANDOM);
-			encodedValue.setBit(31);
-		}while(encodedValue.toByteArray().length > 4);
-		BindInteger annotation = new BindInteger(){
-			@Override
-			public Class<? extends Annotation> annotationType(){
-				return BindInteger.class;
-			}
-
-			@Override
-			public String size(){
-				return "32";
-			}
-
-			@Override
-			public boolean unsigned(){
-				return false;
-			}
-
-			@Override
-			public ByteOrder byteOrder(){
-				return ByteOrder.LITTLE_ENDIAN;
-			}
-
-			@Override
-			public boolean allowPrimitive(){
-				return false;
-			}
-
-			@Override
-			public String match(){
-				return null;
-			}
-
-			@Override
-			public Class<? extends Validator> validator(){
-				return NullValidator.class;
-			}
-
-			@Override
-			public Class<? extends Converter> converter(){
-				return NullConverter.class;
-			}
-		};
-
-		MessageParser messageParser = new MessageParser();
-		BitWriter writer = new BitWriter();
-		coder.encode(messageParser, writer, annotation, null, encodedValue);
-		writer.flush();
-
-		BitSet bits = BitSet.valueOf(ByteHelper.bigIntegerToBytes(encodedValue, 32, ByteOrder.LITTLE_ENDIAN));
-		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bits.toByteArray()).toUpperCase(Locale.ROOT), 8, '0'), writer.toString());
-
-		BitBuffer reader = BitBuffer.wrap(writer);
-		BigInteger decoded = (BigInteger)coder.decode(messageParser, reader, annotation, null);
-
-		Assertions.assertEquals(encodedValue, decoded);
-	}
-
-	@Test
-	void bigBigEndianUnsignedDisallowPrimitive(){
-		Coder coder = Coder.INTEGER;
-		BigInteger encodedValue;
-		do{
-			encodedValue = new BigInteger(32, RANDOM);
-		}while(encodedValue.signum() <= 0 || encodedValue.toByteArray().length > 4);
-		BindInteger annotation = new BindInteger(){
-			@Override
-			public Class<? extends Annotation> annotationType(){
-				return BindInteger.class;
-			}
-
-			@Override
-			public String size(){
-				return "32";
-			}
-
-			@Override
-			public boolean unsigned(){
-				return true;
-			}
-
-			@Override
-			public ByteOrder byteOrder(){
-				return ByteOrder.BIG_ENDIAN;
-			}
-
-			@Override
-			public boolean allowPrimitive(){
-				return false;
-			}
-
-			@Override
-			public String match(){
-				return null;
-			}
-
-			@Override
-			public Class<? extends Validator> validator(){
-				return NullValidator.class;
-			}
-
-			@Override
-			public Class<? extends Converter> converter(){
-				return NullConverter.class;
-			}
-		};
-
-		MessageParser messageParser = new MessageParser();
-		BitWriter writer = new BitWriter();
-		coder.encode(messageParser, writer, annotation, null, encodedValue);
-		writer.flush();
-
-		BitSet bits = BitSet.valueOf(ByteHelper.bigIntegerToBytes(encodedValue, 32, ByteOrder.BIG_ENDIAN));
-		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bits.toByteArray()), 8, '0'), writer.toString());
-
-		BitBuffer reader = BitBuffer.wrap(writer);
-		BigInteger decoded = (BigInteger)coder.decode(messageParser, reader, annotation, null);
-
-		Assertions.assertEquals(encodedValue, decoded);
-	}
-
-	@Test
-	void bigBigEndianNegativeDisallowPrimitive(){
-		Coder coder = Coder.INTEGER;
-		BigInteger encodedValue;
-		do{
-			encodedValue = new BigInteger(32, RANDOM);
-		}while(encodedValue.toByteArray().length > 4);
-		BindInteger annotation = new BindInteger(){
-			@Override
-			public Class<? extends Annotation> annotationType(){
-				return BindInteger.class;
-			}
-
-			@Override
-			public String size(){
-				return "32";
-			}
-
-			@Override
-			public boolean unsigned(){
-				return false;
-			}
-
-			@Override
-			public ByteOrder byteOrder(){
-				return ByteOrder.BIG_ENDIAN;
-			}
-
-			@Override
-			public boolean allowPrimitive(){
-				return false;
-			}
-
-			@Override
-			public String match(){
-				return null;
-			}
-
-			@Override
-			public Class<? extends Validator> validator(){
-				return NullValidator.class;
-			}
-
-			@Override
-			public Class<? extends Converter> converter(){
-				return NullConverter.class;
-			}
-		};
-
-		MessageParser messageParser = new MessageParser();
-		BitWriter writer = new BitWriter();
-		coder.encode(messageParser, writer, annotation, null, encodedValue);
-		writer.flush();
-
-		BitSet bb = BitSet.valueOf(ByteHelper.bigIntegerToBytes(encodedValue, 32, ByteOrder.BIG_ENDIAN));
-		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bb.toByteArray()), 8, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
 		BigInteger decoded = (BigInteger)coder.decode(messageParser, reader, annotation, null);

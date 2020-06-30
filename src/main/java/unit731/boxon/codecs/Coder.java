@@ -362,7 +362,7 @@ enum Coder implements CoderInterface{
 			if(byteOrder == ByteOrder.LITTLE_ENDIAN)
 				ByteHelper.reverseBits(bits, size);
 
-			writer.putBits(bits, size);
+			writer.putBits(bits, size, byteOrder);
 		}
 
 		@Override
@@ -574,16 +574,16 @@ enum Coder implements CoderInterface{
 				final long vv = converterEncode(binding.converter(), value);
 
 				v = BigInteger.valueOf(Math.abs(vv));
-				if(!binding.unsigned() && vv < 0)
-					v = v.negate();
+				if(vv < 0)
+					v.setBit(size);
 			}
 			else
 				v = converterEncode(binding.converter(), value);
 
 			final ByteOrder byteOrder = binding.byteOrder();
-			final BitSet bits = BitSet.valueOf(ByteHelper.bigIntegerToBytes(v, size, byteOrder));
+			final BitSet bits = ByteHelper.bigIntegerToBitSet(v, size, byteOrder);
 
-			writer.putBits(bits, size);
+			writer.putBits(bits, size, byteOrder);
 		}
 
 		@Override
@@ -780,7 +780,7 @@ enum Coder implements CoderInterface{
 			if(prefixByteOrder == ByteOrder.LITTLE_ENDIAN)
 				ByteHelper.reverseBits(bits, prefixSize);
 
-			writer.putBits(bits, prefixSize);
+			writer.putBits(bits, prefixSize, prefixByteOrder);
 		}
 	}
 

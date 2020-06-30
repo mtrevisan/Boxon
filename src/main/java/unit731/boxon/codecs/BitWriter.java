@@ -75,28 +75,59 @@ class BitWriter{
 	 * Writes {@code value} to this {@link BitWriter} using {@code length} bits.
 	 *
 	 * @param value	The value to write.
+	 * @param length	The amount of bits to use when writing {@code value}.
 	 * @return	The {@link BitWriter} to allow for the convenience of method-chaining.
 	 */
-	public BitWriter putBits(final BitSet value, int length){
+	public BitWriter putBits(final BitSet value, int length, final ByteOrder byteOrder){
 		//if the value that we're writing is too large to be placed entirely in the cache, then we need to place as
 		//much as we can in the cache (the least significant bits), flush the cache to the backing ByteBuffer, and
 		//place the rest in the cache
-		int offset = 0;
-		while(offset < length){
-			//fill the cache one bit at a time
-			final int size = Math.min(length - offset, Byte.SIZE - remaining);
-			for(int i = value.nextSetBit(offset); 0 <= i && i < offset + size; i = value.nextSetBit(i + 1))
-				cache |= 1 << (remaining + i - offset);
-			remaining += size;
-			offset += size;
-
-			//if cache is full, write it
-			if(remaining == Byte.SIZE){
-				os.write(cache);
-
-				resetInnerVariables();
+//		if(byteOrder == ByteOrder.BIG_ENDIAN){
+//			int offset = length;
+//			while(offset > 0){
+//				//fill the cache one bit at a time
+//				final int size = Math.min(offset, Byte.SIZE - remaining);
+//				final int delta = length - offset;
+//				for(int i = value.previousSetBit(offset); i >= offset - size; i = value.previousSetBit(i - 1))
+//					cache |= 1 << (remaining + offset - i);
+//				remaining += size;
+//				offset -= size;
+//
+//				//if cache is full, write it
+//				if(remaining == Byte.SIZE){
+//					os.write(cache);
+//
+//					resetInnerVariables();
+//				}
+//			}
+//		}
+//		else{
+			//fill with initial zeros
+			if(byteOrder == ByteOrder.LITTLE_ENDIAN){
+				final int firstBitSetIndex = value.previousSetBit(length);
+				final int zeros = (length - firstBitSetIndex) / Byte.SIZE;
+//				for(int i = 0; i < zeros; i ++)
+//					os.write(0);
+//				length = firstBitSetIndex;
 			}
-		}
+
+			int offset = 0;
+			while(offset < length){
+				//fill the cache one bit at a time
+				final int size = Math.min(length - offset, Byte.SIZE - remaining);
+				for(int i = value.nextSetBit(offset); 0 <= i && i < offset + size; i = value.nextSetBit(i + 1))
+					cache |= 1 << (remaining + i - offset);
+				remaining += size;
+				offset += size;
+
+				//if cache is full, write it
+				if(remaining == Byte.SIZE){
+					os.write(cache);
+
+					resetInnerVariables();
+				}
+			}
+//		}
 		return this;
 	}
 
@@ -112,7 +143,7 @@ class BitWriter{
 			throw new IllegalArgumentException("Cannot write that much bits from a long: " + length);
 
 		final BitSet bits = BitSet.valueOf(new long[]{value});
-		putBits(bits, length);
+		putBits(bits, length, ByteOrder.BIG_ENDIAN);
 		return this;
 	}
 
