@@ -82,58 +82,22 @@ class BitWriter{
 		//if the value that we're writing is too large to be placed entirely in the cache, then we need to place as
 		//much as we can in the cache (the least significant bits), flush the cache to the backing ByteBuffer, and
 		//place the rest in the cache
-//		if(byteOrder == ByteOrder.BIG_ENDIAN){
-			//fill with initial zeros
-//			final int firstBitSetIndex = value.previousSetBit(length);
-//			final int zeros = (length - firstBitSetIndex) / Byte.SIZE;
-//			for(int i = 0; i < zeros; i ++)
-//				os.write(0);
-////			length = firstBitSetIndex + 1;
-//
-//			int offset = length;
-//			while(offset > 0){
-//				//fill the cache one bit at a time
-//				final int size = Math.min(offset, Byte.SIZE - remaining);
-//				final int delta = length - offset;
-//				for(int i = value.previousSetBit(offset); i >= offset - size; i = value.previousSetBit(i - 1))
-//					cache |= 1 << (remaining - i + offset);
-//				remaining += size;
-//				offset -= size;
-//
-//				//if cache is full, write it
-//				if(remaining == Byte.SIZE){
-//					os.write(cache);
-//
-//					resetInnerVariables();
-//				}
-//			}
-//		}
-//		else{
-			//fill with initial zeros
-//TODO
-//			final int firstBitSetIndex = value.previousSetBit(length);
-//			final int zeros = (length - firstBitSetIndex) / Byte.SIZE;
-//			for(int i = 0; i < zeros; i ++)
-//				os.write(0);
-//			length = firstBitSetIndex;
+		int offset = 0;
+		while(offset < length){
+			//fill the cache one bit at a time
+			final int size = Math.min(length - offset, Byte.SIZE - remaining);
+			for(int i = value.nextSetBit(offset); 0 <= i && i < offset + size; i = value.nextSetBit(i + 1))
+				cache |= 1 << (remaining + i - offset);
+			remaining += size;
+			offset += size;
 
-			int offset = 0;
-			while(offset < length){
-				//fill the cache one bit at a time
-				final int size = Math.min(length - offset, Byte.SIZE - remaining);
-				for(int i = value.nextSetBit(offset); 0 <= i && i < offset + size; i = value.nextSetBit(i + 1))
-					cache |= 1 << (remaining + i - offset);
-				remaining += size;
-				offset += size;
+			//if cache is full, write it
+			if(remaining == Byte.SIZE){
+				os.write(cache);
 
-				//if cache is full, write it
-				if(remaining == Byte.SIZE){
-					os.write(cache);
-
-					resetInnerVariables();
-				}
+				resetInnerVariables();
 			}
-//		}
+		}
 		return this;
 	}
 
