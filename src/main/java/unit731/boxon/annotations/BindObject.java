@@ -63,7 +63,7 @@ public @interface BindObject{
 	 *
 	 * @return	The (super) type of object to be inserted in the array.
 	 */
-	Class<?> type();
+	Class<?> type() default Object.class;
 
 	/**
 	 * The choices to select from, based on a prefix of a certain size.
