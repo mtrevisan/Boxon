@@ -75,7 +75,9 @@ class CoderCustomTest{
 
 	@Test
 	void customAnnotation(){
-		CoderInterface coder = new VariableLengthByteArray();
+		Coder.addCoder(new VariableLengthByteArray());
+
+		CoderInterface coder = Coder.getCoder(VarLengthEncoded.class);
 		byte[] encodedValue = new byte[]{0x01, 0x02, 0x03};
 		VarLengthEncoded annotation = new VarLengthEncoded(){
 			@Override
