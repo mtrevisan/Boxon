@@ -84,12 +84,11 @@ public class ReflectionHelper{
 
 	private static Field getAccessibleField(Class<?> cls, final String fieldName) throws NoSuchFieldException{
 		Field field = null;
-		boolean notFound = true;
-		while(notFound){
+		while(true){
 			try{
 				field = cls.getDeclaredField(fieldName);
 				field.setAccessible(true);
-				notFound = false;
+				break;
 			}
 			catch(final NoSuchFieldException e){
 				//go up to parent class
