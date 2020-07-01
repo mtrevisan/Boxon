@@ -31,6 +31,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -187,15 +188,23 @@ class BitBuffer{
 	}
 
 	/**
+	 * Reads the next {@code length} bits and composes a {@link BigInteger}.
+	 *
+	 * @param length	The amount of bits to read.
+	 * @return	A {@link BigInteger} value at the {@link BitBuffer}'s current position.
+	 */
+	public BigInteger getBigInteger(final int length, final ByteOrder byteOrder){
+		final BitSet bits = getBits(length);
+		return ByteHelper.bitsToBigInteger(bits, length, byteOrder);
+	}
+
+	/**
 	 * Reads the next {@code length} bits and composes a {@link BitSet}.
 	 *
 	 * @param length	The amount of bits to read.
 	 * @return	A {@link BitSet} value at the {@link BitBuffer}'s current position.
 	 */
 	private long getValue(final int length){
-		if(length > Long.SIZE)
-			throw new IllegalArgumentException("Cannot read that much bits to a long: " + length);
-
 		final BitSet bits = getBits(length);
 		return (bits.length() > 0? bits.toLongArray()[0]: 0l);
 	}

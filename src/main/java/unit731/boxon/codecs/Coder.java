@@ -76,8 +76,7 @@ enum Coder implements CoderInterface{
 				final int prefixSize = selectFrom.prefixSize();
 				final ByteOrder prefixByteOrder = selectFrom.byteOrder();
 
-				final BitSet bits = reader.getBits(prefixSize);
-				final BigInteger prefix = ByteHelper.bitsToBigInteger(bits, prefixSize, prefixByteOrder);
+				final BigInteger prefix = reader.getBigInteger(prefixSize, prefixByteOrder);
 
 				//choose class
 				final Choices.Choice chosenAlternative = chooseAlternative(alternatives, prefix.intValue(), data);
@@ -268,8 +267,7 @@ enum Coder implements CoderInterface{
 				final ByteOrder prefixByteOrder = selectFrom.byteOrder();
 
 				for(int i = 0; i < size; i ++){
-					final BitSet bits = reader.getBits(prefixSize);
-					final BigInteger prefix = ByteHelper.bitsToBigInteger(bits, prefixSize, prefixByteOrder);
+					final BigInteger prefix = reader.getBigInteger(prefixSize, prefixByteOrder);
 
 					//choose class
 					final Choices.Choice chosenAlternative = chooseAlternative(alternatives, prefix.intValue(), data);
@@ -535,12 +533,12 @@ enum Coder implements CoderInterface{
 			final BindInteger binding = (BindInteger)annotation;
 
 			final int size = Evaluator.evaluate(binding.size(), int.class, data);
-			final BitSet bits = reader.getBits(size);
 			final ByteOrder byteOrder = binding.byteOrder();
 
 			final Object value;
 			final boolean allowPrimitive = binding.allowPrimitive();
 			if(allowPrimitive && size < Long.SIZE){
+				final BitSet bits = reader.getBits(size);
 				long v = bits.toLongArray()[0];
 				if(byteOrder == ByteOrder.BIG_ENDIAN)
 					v = Long.reverseBytes(v) >>> (Long.SIZE - size);
@@ -550,7 +548,7 @@ enum Coder implements CoderInterface{
 				value = converterDecode(binding.converter(), v);
 			}
 			else{
-				final BigInteger v = ByteHelper.bitsToBigInteger(bits, size, byteOrder);
+				final BigInteger v = reader.getBigInteger(size, byteOrder);
 
 				value = converterDecode(binding.converter(), v);
 			}
