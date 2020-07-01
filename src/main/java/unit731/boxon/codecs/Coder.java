@@ -58,7 +58,6 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 
-@SuppressWarnings("unused")
 enum Coder implements CoderInterface{
 
 	OBJECT {
