@@ -22,31 +22,69 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package unit731.boxon.helpers;
+package unit731.boxon.coders.queclink;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import unit731.boxon.coders.queclink.VersionHelper;
+import unit731.boxon.annotations.converters.Converter;
+import unit731.boxon.helpers.ByteHelper;
 
 
-class VersionHelperTest{
+public class ACKMaskHex{
 
-	@Test
-	void compare(){
-		Assertions.assertEquals(1, VersionHelper.compare("1.1", "1.0"));
-		Assertions.assertEquals(0, VersionHelper.compare("1.0", "1.0"));
-		Assertions.assertEquals(-1, VersionHelper.compare("1.0", "1.1"));
+	public static class ACKMaskConverter implements Converter<Byte, ACKMaskHex>{
+		@Override
+		public ACKMaskHex decode(final Byte value){
+			return new ACKMaskHex(value);
+		}
 
-		Assertions.assertEquals(Integer.MAX_VALUE, VersionHelper.compare("1.0a", "1.0"));
-		Assertions.assertEquals(0, VersionHelper.compare("1.0a", "1.0a"));
-		Assertions.assertEquals(-Integer.MAX_VALUE, VersionHelper.compare("1.0", "1.0a"));
+		@Override
+		public Byte encode(final ACKMaskHex value){
+			return value.mask;
+		}
+	}
 
-		Assertions.assertEquals(1, VersionHelper.compare("1.0b", "1.0a"));
-		Assertions.assertEquals(0, VersionHelper.compare("1.0a", "1.0A"));
-		Assertions.assertEquals(-1, VersionHelper.compare("1.0a", "1.0b"));
 
-		Assertions.assertEquals(1, VersionHelper.compare("1.1b", "1.0a"));
-		Assertions.assertEquals(-1, VersionHelper.compare("1.0a", "1.1b"));
+	private final byte mask;
+
+
+	public ACKMaskHex(byte mask){
+		this.mask = mask;
+	}
+
+	public int getMaskLength(){
+		return 1;
+	}
+
+	public int getMessageLengthLength(){
+		return 1;
+	}
+
+	public boolean hasMessageId(){
+		return ByteHelper.hasBit(mask, 6);
+	}
+
+	public boolean hasEventTime(){
+		return ByteHelper.hasBit(mask, 5);
+	}
+
+	public boolean hasIMEI(){
+		//NOTE: negated logic!
+		return !ByteHelper.hasBit(mask, 4);
+	}
+
+	public boolean hasFirmwareVersion(){
+		return ByteHelper.hasBit(mask, 3);
+	}
+
+	public boolean hasProtocolVersion(){
+		return ByteHelper.hasBit(mask, 2);
+	}
+
+	public boolean hasDeviceType(){
+		return ByteHelper.hasBit(mask, 1);
+	}
+
+	public boolean hasLength(){
+		return ByteHelper.hasBit(mask, 0);
 	}
 
 }

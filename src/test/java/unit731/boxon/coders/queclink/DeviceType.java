@@ -22,31 +22,38 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package unit731.boxon.helpers;
+package unit731.boxon.coders.queclink;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import unit731.boxon.coders.queclink.VersionHelper;
+import unit731.boxon.helpers.ByteHelper;
+import org.apache.commons.lang3.StringUtils;
 
 
-class VersionHelperTest{
+public class DeviceType{
 
-	@Test
-	void compare(){
-		Assertions.assertEquals(1, VersionHelper.compare("1.1", "1.0"));
-		Assertions.assertEquals(0, VersionHelper.compare("1.0", "1.0"));
-		Assertions.assertEquals(-1, VersionHelper.compare("1.0", "1.1"));
+	private final String name;
+	private final byte code;
 
-		Assertions.assertEquals(Integer.MAX_VALUE, VersionHelper.compare("1.0a", "1.0"));
-		Assertions.assertEquals(0, VersionHelper.compare("1.0a", "1.0a"));
-		Assertions.assertEquals(-Integer.MAX_VALUE, VersionHelper.compare("1.0", "1.0a"));
 
-		Assertions.assertEquals(1, VersionHelper.compare("1.0b", "1.0a"));
-		Assertions.assertEquals(0, VersionHelper.compare("1.0a", "1.0A"));
-		Assertions.assertEquals(-1, VersionHelper.compare("1.0a", "1.0b"));
+	public DeviceType(final String name, final byte code){
+		if(StringUtils.isBlank(name))
+			throw new IllegalArgumentException("Device type name cannot be null or empty");
 
-		Assertions.assertEquals(1, VersionHelper.compare("1.1b", "1.0a"));
-		Assertions.assertEquals(-1, VersionHelper.compare("1.0a", "1.1b"));
+		this.name = name;
+		this.code = code;
+	}
+
+	String getName(){
+		return name;
+	}
+
+	byte getCode(){
+		return code;
+	}
+
+	void validateDeviceTypeCode(final byte deviceTypeCode){
+		if(deviceTypeCode != code)
+			throw new IllegalArgumentException("Cannot parse message from another device, device type is 0x"
+				+ ByteHelper.byteArrayToHexString(new byte[]{(byte)(deviceTypeCode & 0x0000_00FF)}) + ", should be " + code);
 	}
 
 }

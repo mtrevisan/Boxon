@@ -22,31 +22,44 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package unit731.boxon.helpers;
+package unit731.boxon.coders;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import unit731.boxon.coders.queclink.VersionHelper;
+import unit731.boxon.annotations.BindLong;
+
+import java.lang.annotation.Annotation;
 
 
-class VersionHelperTest{
+class CoderLong implements CoderInterface{
 
-	@Test
-	void compare(){
-		Assertions.assertEquals(1, VersionHelper.compare("1.1", "1.0"));
-		Assertions.assertEquals(0, VersionHelper.compare("1.0", "1.0"));
-		Assertions.assertEquals(-1, VersionHelper.compare("1.0", "1.1"));
+	@Override
+	public Object decode(final MessageParser messageParser, final BitBuffer reader, final Annotation annotation, final Object data){
+		final BindLong binding = (BindLong)annotation;
 
-		Assertions.assertEquals(Integer.MAX_VALUE, VersionHelper.compare("1.0a", "1.0"));
-		Assertions.assertEquals(0, VersionHelper.compare("1.0a", "1.0a"));
-		Assertions.assertEquals(-Integer.MAX_VALUE, VersionHelper.compare("1.0", "1.0a"));
+		final long v = reader.getLong(binding.byteOrder());
 
-		Assertions.assertEquals(1, VersionHelper.compare("1.0b", "1.0a"));
-		Assertions.assertEquals(0, VersionHelper.compare("1.0a", "1.0A"));
-		Assertions.assertEquals(-1, VersionHelper.compare("1.0a", "1.0b"));
+		final Object value = CoderHelper.converterDecode(binding.converter(), v);
 
-		Assertions.assertEquals(1, VersionHelper.compare("1.1b", "1.0a"));
-		Assertions.assertEquals(-1, VersionHelper.compare("1.0a", "1.1b"));
+		CoderHelper.validateData(binding.match(), binding.validator(), value);
+
+		return value;
+	}
+
+	@Override
+	public void encode(final MessageParser messageParser, final BitWriter writer, final Annotation annotation, final Object data,
+			final Object value){
+		final BindLong binding = (BindLong)annotation;
+
+		CoderHelper.validateData(binding.match(), binding.validator(), value);
+
+		final long v = CoderHelper.converterEncode(binding.converter(), value);
+
+		final ByteOrder byteOrder = binding.byteOrder();
+		writer.putLong(v, byteOrder);
+	}
+
+	@Override
+	public Class<? extends Annotation> coderType(){
+		return BindLong.class;
 	}
 
 }

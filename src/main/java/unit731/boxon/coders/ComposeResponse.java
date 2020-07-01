@@ -22,31 +22,37 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package unit731.boxon.helpers;
+package unit731.boxon.coders;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import unit731.boxon.coders.queclink.VersionHelper;
+import java.util.ArrayList;
+import java.util.List;
 
 
-class VersionHelperTest{
+public class ComposeResponse{
 
-	@Test
-	void compare(){
-		Assertions.assertEquals(1, VersionHelper.compare("1.1", "1.0"));
-		Assertions.assertEquals(0, VersionHelper.compare("1.0", "1.0"));
-		Assertions.assertEquals(-1, VersionHelper.compare("1.0", "1.1"));
+	private byte[] composedMessage;
+	private final List<ComposeException> errors = new ArrayList<>(0);
 
-		Assertions.assertEquals(Integer.MAX_VALUE, VersionHelper.compare("1.0a", "1.0"));
-		Assertions.assertEquals(0, VersionHelper.compare("1.0a", "1.0a"));
-		Assertions.assertEquals(-Integer.MAX_VALUE, VersionHelper.compare("1.0", "1.0a"));
 
-		Assertions.assertEquals(1, VersionHelper.compare("1.0b", "1.0a"));
-		Assertions.assertEquals(0, VersionHelper.compare("1.0a", "1.0A"));
-		Assertions.assertEquals(-1, VersionHelper.compare("1.0a", "1.0b"));
+	public void setComposedMessage(final byte[] composedMessages){
+		this.composedMessage = composedMessages;
+	}
 
-		Assertions.assertEquals(1, VersionHelper.compare("1.1b", "1.0a"));
-		Assertions.assertEquals(-1, VersionHelper.compare("1.0a", "1.1b"));
+	public byte[] getComposedMessage(){
+		return composedMessage;
+	}
+
+	public void addError(final ComposeException exception){
+		errors.add(exception);
+	}
+
+	public boolean hasErrors(){
+		return !errors.isEmpty();
+	}
+
+	@SuppressWarnings("unused")
+	public List<ComposeException> getErrors(){
+		return errors;
 	}
 
 }
