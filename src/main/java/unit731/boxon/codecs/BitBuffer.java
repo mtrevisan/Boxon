@@ -389,14 +389,14 @@ class BitBuffer{
 				final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				final OutputStreamWriter osw = new OutputStreamWriter(baos, charset);
 			){
-			readToWriter(terminator, consumeTerminator, osw);
+			getTextUntilTerminator(osw, terminator, consumeTerminator);
 			text = baos.toString(charset);
 		}
 		catch(final IOException ignored){}
 		return text;
 	}
 
-	private void readToWriter(final byte terminator, final boolean consumeTerminator, final OutputStreamWriter os) throws IOException{
+	private void getTextUntilTerminator(final OutputStreamWriter os, final byte terminator, final boolean consumeTerminator) throws IOException{
 		while(buffer.position() < buffer.limit() || remaining > 0){
 			final byte byteRead = (consumeTerminator? getByte(): peekByte());
 			if(byteRead == terminator)
