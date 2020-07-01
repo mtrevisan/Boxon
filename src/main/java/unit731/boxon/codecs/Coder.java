@@ -121,7 +121,7 @@ enum Coder implements CoderInterface{
 		}
 
 		@Override
-		public Class<?> coderType(){
+		public Class<? extends Annotation> coderType(){
 			return BindObject.class;
 		}
 	},
@@ -157,7 +157,7 @@ enum Coder implements CoderInterface{
 		}
 
 		@Override
-		public Class<?> coderType(){
+		public Class<? extends Annotation> coderType(){
 			return BindString.class;
 		}
 	},
@@ -193,7 +193,7 @@ enum Coder implements CoderInterface{
 		}
 
 		@Override
-		public Class<?> coderType(){
+		public Class<? extends Annotation> coderType(){
 			return BindStringTerminated.class;
 		}
 	},
@@ -236,7 +236,7 @@ enum Coder implements CoderInterface{
 		}
 
 		@Override
-		public Class<?> coderType(){
+		public Class<? extends Annotation> coderType(){
 			return BindArrayPrimitive.class;
 		}
 	},
@@ -314,7 +314,7 @@ enum Coder implements CoderInterface{
 		}
 
 		@Override
-		public Class<?> coderType(){
+		public Class<? extends Annotation> coderType(){
 			return BindArray.class;
 		}
 	},
@@ -352,7 +352,7 @@ enum Coder implements CoderInterface{
 		}
 
 		@Override
-		public Class<?> coderType(){
+		public Class<? extends Annotation> coderType(){
 			return BindBits.class;
 		}
 	},
@@ -392,7 +392,7 @@ enum Coder implements CoderInterface{
 		}
 
 		@Override
-		public Class<?> coderType(){
+		public Class<? extends Annotation> coderType(){
 			return BindByte.class;
 		}
 	},
@@ -432,7 +432,7 @@ enum Coder implements CoderInterface{
 		}
 
 		@Override
-		public Class<?> coderType(){
+		public Class<? extends Annotation> coderType(){
 			return BindShort.class;
 		}
 	},
@@ -472,7 +472,7 @@ enum Coder implements CoderInterface{
 		}
 
 		@Override
-		public Class<?> coderType(){
+		public Class<? extends Annotation> coderType(){
 			return BindInt.class;
 		}
 	},
@@ -505,7 +505,7 @@ enum Coder implements CoderInterface{
 		}
 
 		@Override
-		public Class<?> coderType(){
+		public Class<? extends Annotation> coderType(){
 			return BindLong.class;
 		}
 	},
@@ -561,7 +561,7 @@ enum Coder implements CoderInterface{
 		}
 
 		@Override
-		public Class<?> coderType(){
+		public Class<? extends Annotation> coderType(){
 			return BindInteger.class;
 		}
 	},
@@ -593,7 +593,7 @@ enum Coder implements CoderInterface{
 		}
 
 		@Override
-		public Class<?> coderType(){
+		public Class<? extends Annotation> coderType(){
 			return BindFloat.class;
 		}
 	},
@@ -625,7 +625,7 @@ enum Coder implements CoderInterface{
 		}
 
 		@Override
-		public Class<?> coderType(){
+		public Class<? extends Annotation> coderType(){
 			return BindDouble.class;
 		}
 	},
@@ -657,7 +657,7 @@ enum Coder implements CoderInterface{
 		}
 
 		@Override
-		public Class<?> coderType(){
+		public Class<? extends Annotation> coderType(){
 			return BindDecimal.class;
 		}
 	},
@@ -681,7 +681,7 @@ enum Coder implements CoderInterface{
 		}
 
 		@Override
-		public Class<?> coderType(){
+		public Class<? extends Annotation> coderType(){
 			return BindChecksum.class;
 		}
 	};

@@ -37,6 +37,6 @@ public interface CoderInterface{
 	/**
 	 * @return	The class of the annotation
 	 */
-	Class<?> coderType();
+	Class<? extends Annotation> coderType();
 
 }

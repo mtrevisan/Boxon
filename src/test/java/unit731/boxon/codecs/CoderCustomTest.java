@@ -67,7 +67,7 @@ class CoderCustomTest{
 		}
 
 		@Override
-		public Class<?> coderType(){
+		public Class<? extends Annotation> coderType(){
 			return VarLengthEncoded.class;
 		}
 	}

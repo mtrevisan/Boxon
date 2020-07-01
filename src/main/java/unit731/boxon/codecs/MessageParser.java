@@ -69,17 +69,18 @@ class MessageParser{
 
 			final Annotation binding = field.getBinding();
 			final CoderInterface coder = retrieveCoder(binding);
-			if(coder != null){
-				try{
-					final Object value = coder.decode(this, reader, binding, data);
-					ReflectionHelper.setFieldValue(data, field.getName(), value);
+			if(coder == null)
+				throw new IllegalArgumentException("Cannot find coder for binding @" + binding.annotationType().getSimpleName());
 
-					if(verbose.get())
-						LOGGER.info("{}: {}", field.getName(), value);
-				}
-				catch(final Exception e){
-					manageCodecException(codec, field, e);
-				}
+			try{
+				final Object value = coder.decode(this, reader, binding, data);
+				ReflectionHelper.setFieldValue(data, field.getName(), value);
+
+				if(verbose.get())
+					LOGGER.info("{}: {}", field.getName(), value);
+			}
+			catch(final Exception e){
+				manageCodecException(codec, field, e);
 			}
 		}
 
