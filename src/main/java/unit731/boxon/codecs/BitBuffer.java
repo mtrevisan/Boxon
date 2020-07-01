@@ -188,6 +188,17 @@ class BitBuffer{
 	}
 
 	/**
+	 * Reads the next {@code length} bits and composes a <code>long</code>.
+	 *
+	 * @param length	The amount of bits to read.
+	 * @return	A <code>long</code> value at the {@link BitBuffer}'s current position.
+	 */
+	public long getLong(final int length, final ByteOrder byteOrder, final boolean unsigned){
+		final BitSet bits = getBits(length);
+		return ByteHelper.bitsToLong(bits, length, byteOrder, unsigned);
+	}
+
+	/**
 	 * Reads the next {@code length} bits and composes a {@link BigInteger}.
 	 *
 	 * @param length	The amount of bits to read.

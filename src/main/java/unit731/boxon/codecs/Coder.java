@@ -538,12 +538,7 @@ enum Coder implements CoderInterface{
 			final Object value;
 			final boolean allowPrimitive = binding.allowPrimitive();
 			if(allowPrimitive && size < Long.SIZE){
-				final BitSet bits = reader.getBits(size);
-				long v = bits.toLongArray()[0];
-				if(byteOrder == ByteOrder.BIG_ENDIAN)
-					v = Long.reverseBytes(v) >>> (Long.SIZE - size);
-				if(!binding.unsigned())
-					v = ByteHelper.extendSign(v, size);
+				final long v = reader.getLong(size, byteOrder, binding.unsigned());
 
 				value = converterDecode(binding.converter(), v);
 			}

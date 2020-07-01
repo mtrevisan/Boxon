@@ -265,6 +265,15 @@ public class ByteHelper{
 		}
 	}
 
+	public static long bitsToLong(final BitSet bits, final int size, final ByteOrder byteOrder, final boolean unsigned){
+		long value = bits.toLongArray()[0];
+		if(byteOrder == ByteOrder.BIG_ENDIAN)
+			value = Long.reverseBytes(value) >>> (Long.SIZE - size);
+		if(!unsigned)
+			value = ByteHelper.extendSign(value, size);
+		return value;
+	}
+
 	public static BigInteger bitsToBigInteger(final BitSet bits, final int size, final ByteOrder byteOrder){
 		byte[] array = bits.toByteArray();
 		final int expectedLength = size / Byte.SIZE;
