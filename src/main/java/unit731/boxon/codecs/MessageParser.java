@@ -78,8 +78,7 @@ class MessageParser{
 						LOGGER.info("{}: {}", field.getName(), value);
 				}
 				catch(final Exception e){
-					final String message = ExceptionHelper.getMessageNoLineNumber(e);
-					throw new IllegalArgumentException(message + ", field " + codec + "." + field.getName());
+					manageCodecException(codec, field, e);
 				}
 			}
 		}
@@ -175,8 +174,7 @@ class MessageParser{
 					coder.encode(this, writer, binding, data, value);
 				}
 				catch(final Exception e){
-					final String message = ExceptionHelper.getMessageNoLineNumber(e);
-					throw new IllegalArgumentException(message + ", field " + codec + "." + field.getName());
+					manageCodecException(codec, field, e);
 				}
 			}
 		}
@@ -188,6 +186,11 @@ class MessageParser{
 			writer.putBytes(messageTerminator);
 		}
 		writer.flush();
+	}
+
+	private void manageCodecException(final Codec<?> codec, final Codec.BoundedField field, final Exception e){
+		final String message = ExceptionHelper.getMessageNoLineNumber(e);
+		throw new IllegalArgumentException(message + ", field " + codec + "." + field.getName());
 	}
 
 	private CoderInterface retrieveCoder(final Annotation binding){
