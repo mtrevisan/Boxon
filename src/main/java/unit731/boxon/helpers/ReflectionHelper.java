@@ -145,11 +145,10 @@ public class ReflectionHelper{
 	private static <T> ObjectInstantiator<T> instantiatorOf(final Class<T> type){
 		if(PlatformDescription.isThisJVM(PlatformDescription.HOTSPOT) || PlatformDescription.isThisJVM(PlatformDescription.OPENJDK)){
 			//Java 7 GAE was under a security manager so we use a degraded system
-			if(PlatformDescription.isGoogleAppEngine() && PlatformDescription.SPECIFICATION_VERSION.equals("1.7")){
-				if(Serializable.class.isAssignableFrom(type))
-					return new ObjectInputStreamInstantiator<>(type);
-				return new AccessibleInstantiator<>(type);
-			}
+			if(PlatformDescription.isGoogleAppEngine() && PlatformDescription.SPECIFICATION_VERSION.equals("1.7"))
+				return (Serializable.class.isAssignableFrom(type)?
+					new ObjectInputStreamInstantiator<>(type):
+					new AccessibleInstantiator<>(type));
 			//the UnsafeFactoryInstantiator would also work, but according to benchmarks, it is 2.5 times slower
 			return new SunReflectionFactoryInstantiator<>(type);
 		}
