@@ -88,6 +88,50 @@ class CoderLongTest{
 	}
 
 	@Test
+	void longLittleEndianSmall(){
+		Coder coder = Coder.LONG;
+		long encodedValue = 0x0000_0000_7F00_FF00l;
+		BindLong annotation = new BindLong(){
+			@Override
+			public Class<? extends Annotation> annotationType(){
+				return BindLong.class;
+			}
+
+			@Override
+			public ByteOrder byteOrder(){
+				return ByteOrder.LITTLE_ENDIAN;
+			}
+
+			@Override
+			public String match(){
+				return null;
+			}
+
+			@Override
+			public Class<? extends Validator> validator(){
+				return NullValidator.class;
+			}
+
+			@Override
+			public Class<? extends Converter> converter(){
+				return NullConverter.class;
+			}
+		};
+
+		MessageParser messageParser = new MessageParser();
+		BitWriter writer = new BitWriter();
+		coder.encode(messageParser, writer, annotation, null, encodedValue);
+		writer.flush();
+
+		Assertions.assertEquals("00FF007F00000000", writer.toString());
+
+		BitBuffer reader = BitBuffer.wrap(writer);
+		long decoded = (long)coder.decode(messageParser, reader, annotation, null);
+
+		Assertions.assertEquals(encodedValue, decoded);
+	}
+
+	@Test
 	void longLittleEndianPositive(){
 		Coder coder = Coder.LONG;
 		long encodedValue = 0x7F00_FF00_0000_0000l;
@@ -212,6 +256,50 @@ class CoderLongTest{
 		writer.flush();
 
 		Assertions.assertEquals("8FFF000000000011", writer.toString());
+
+		BitBuffer reader = BitBuffer.wrap(writer);
+		long decoded = (long)coder.decode(messageParser, reader, annotation, null);
+
+		Assertions.assertEquals(encodedValue, decoded);
+	}
+
+	@Test
+	void longBigEndianSmall(){
+		Coder coder = Coder.LONG;
+		long encodedValue = 0x0000_0000_7F00_FF00l;
+		BindLong annotation = new BindLong(){
+			@Override
+			public Class<? extends Annotation> annotationType(){
+				return BindLong.class;
+			}
+
+			@Override
+			public ByteOrder byteOrder(){
+				return ByteOrder.BIG_ENDIAN;
+			}
+
+			@Override
+			public String match(){
+				return null;
+			}
+
+			@Override
+			public Class<? extends Validator> validator(){
+				return NullValidator.class;
+			}
+
+			@Override
+			public Class<? extends Converter> converter(){
+				return NullConverter.class;
+			}
+		};
+
+		MessageParser messageParser = new MessageParser();
+		BitWriter writer = new BitWriter();
+		coder.encode(messageParser, writer, annotation, null, encodedValue);
+		writer.flush();
+
+		Assertions.assertEquals("000000007F00FF00", writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
 		long decoded = (long)coder.decode(messageParser, reader, annotation, null);
