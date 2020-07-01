@@ -24,7 +24,7 @@
  */
 package unit731.boxon.helpers;
 
-import unit731.boxon.codecs.ByteOrder;
+import unit731.boxon.coders.ByteOrder;
 
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -40,10 +40,6 @@ public class ByteHelper{
 			throw new IllegalArgumentException("Index value must be between 0 and " + (Byte.SIZE - 1) + " inclusive, was " + index);
 
 		return ((mask & (1 << (index % Byte.SIZE))) != 0);
-	}
-
-	public static long clearBit(final long value, final int index){
-		return (value & ~(1 << index));
 	}
 
 	/**
@@ -265,6 +261,15 @@ public class ByteHelper{
 		}
 	}
 
+	public static long bitsToLong(final BitSet bits, final int size, final ByteOrder byteOrder, final boolean unsigned){
+		long value = bits.toLongArray()[0];
+		if(byteOrder == ByteOrder.BIG_ENDIAN)
+			value = Long.reverseBytes(value) >>> (Long.SIZE - size);
+		if(!unsigned)
+			value = ByteHelper.extendSign(value, size);
+		return value;
+	}
+
 	public static BigInteger bitsToBigInteger(final BitSet bits, final int size, final ByteOrder byteOrder){
 		byte[] array = bits.toByteArray();
 		final int expectedLength = size / Byte.SIZE;
@@ -291,14 +296,12 @@ public class ByteHelper{
 	 */
 	public static BitSet bigIntegerToBitSet(final BigInteger value, final int size, final ByteOrder byteOrder){
 		byte[] array = value.toByteArray();
-		if(size < array.length * Byte.SIZE){
-			final byte[] newArray = new byte[array.length - 1];
-			System.arraycopy(array, 1, newArray, 0, newArray.length);
-			array = newArray;
-		}
-		else if(size > array.length * Byte.SIZE && byteOrder == ByteOrder.BIG_ENDIAN){
-			final byte[] newArray = new byte[size / Byte.SIZE];
-			System.arraycopy(array, 0, newArray, newArray.length - array.length, array.length);
+		final int newSize = (size + Byte.SIZE - 1) / Byte.SIZE;
+		if(newSize != array.length){
+			final int offset = Math.max(array.length - newSize, 0);
+			final byte[] newArray = new byte[newSize];
+			final int newArrayOffset = Math.max(newArray.length - array.length, 0);
+			System.arraycopy(array, offset, newArray, newArrayOffset, array.length - offset);
 			array = newArray;
 		}
 		if(byteOrder == ByteOrder.LITTLE_ENDIAN)

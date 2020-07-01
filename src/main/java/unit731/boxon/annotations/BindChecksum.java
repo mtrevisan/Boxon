@@ -26,7 +26,7 @@ package unit731.boxon.annotations;
 
 import unit731.boxon.annotations.checksummers.Checksummer;
 import unit731.boxon.annotations.validators.Validator;
-import unit731.boxon.codecs.ByteOrder;
+import unit731.boxon.coders.ByteOrder;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -77,5 +77,12 @@ public @interface BindChecksum{
 	 */
 	@SuppressWarnings("rawtypes")
 	Class<? extends Checksummer> algorithm();
+
+	/**
+	 * The starting value of the CRC algorithm.
+	 *
+	 * @return	The starting value of the CRC algorithm.
+	 */
+	long startValue();
 
 }

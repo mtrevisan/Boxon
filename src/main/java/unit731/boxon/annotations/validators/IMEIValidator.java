@@ -35,16 +35,14 @@ public class IMEIValidator implements Validator<String>{
 
 	private static boolean luhnValidate(final String text){
 		int sum = 0;
-		boolean isEven = false;
-		for(int i = text.length() - 1; i >= 0; i --, isEven = !isEven){
+		final int parity = text.length() % 2;
+		for(int i = text.length() - 1; i >= 0; i --){
 			int k = Character.getNumericValue(text.charAt(i));
-			if(isEven){
+			if(i % 2 == parity)
 				k <<= 1;
-				if(k > 9)
-					k -= 9;
-			}
 
-			sum += k;
+			sum += k / 10;
+			sum += k % 10;
 		}
 		return (sum % 10 == 0);
 	}
