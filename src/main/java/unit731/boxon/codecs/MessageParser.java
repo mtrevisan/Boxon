@@ -133,8 +133,9 @@ class MessageParser{
 			startPosition += checksum.skipStart();
 			final int endPosition = reader.positionAsBits() / Byte.SIZE - checksum.skipEnd();
 
-			final Checksummer<?> checksummer = ReflectionHelper.createInstance(checksum.algorithm());
-			final long calculatedCRC = ((Number)checksummer.calculateCRC(reader.array(), startPosition, endPosition)).longValue();
+			final Checksummer checksummer = ReflectionHelper.createInstance(checksum.algorithm());
+			final long startValue = checksum.startValue();
+			final long calculatedCRC = checksummer.calculateCRC(reader.array(), startPosition, endPosition, startValue);
 			try{
 				@SuppressWarnings("ConstantConditions")
 				final long givenCRC = ((Number)ReflectionHelper.getFieldValue(data, checksumData.getName())).longValue();

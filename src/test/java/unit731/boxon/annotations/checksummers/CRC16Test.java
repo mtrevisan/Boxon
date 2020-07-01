@@ -34,9 +34,9 @@ class CRC16Test{
 	@Test
 	void calculateCRC16(){
 		CRC16 crc = new CRC16();
-		short crc16 = crc.calculateCRC(new byte[]{0x01, 0x02, 0x03, 0x04}, 0, 4);
+		Number crc16 = crc.calculateCRC(new byte[]{0x01, 0x02, 0x03, 0x04}, 0, 4, 0x0000_FFFF);
 
-		assertEquals((short)0x89C3, crc16);
+		assertEquals((short)0x89C3, crc16.shortValue());
 	}
 
 }

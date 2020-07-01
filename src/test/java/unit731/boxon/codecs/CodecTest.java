@@ -152,7 +152,7 @@ class CodecTest{
 		@BindStringTerminated(terminator = ',')
 		private String textWithTerminator;
 
-		@BindChecksum(type = short.class, skipStart = 4, skipEnd = 4, algorithm = CRC16.class)
+		@BindChecksum(type = short.class, skipStart = 4, skipEnd = 4, algorithm = CRC16.class, startValue = CRC16.START_VALUE_0xFFFF)
 		private short checksum;
 
 		@Evaluate("T(java.time.ZonedDateTime).now()")
@@ -219,6 +219,11 @@ class CodecTest{
 			@Override
 			public Class<? extends Checksummer> algorithm(){
 				return CRC16.class;
+			}
+
+			@Override
+			public long startValue(){
+				return CRC16.START_VALUE_0xFFFF;
 			}
 
 			@Override

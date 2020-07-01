@@ -538,7 +538,7 @@ This annotation is bounded to a variable.
 
 #### example
 ```java
-@BindChecksum(type = short.class, skipStart = 4, skipEnd = 4, algorithm = CRC16.class)
+@BindChecksum(type = short.class, skipStart = 4, skipEnd = 4, algorithm = CRC16.class, startValue = CRC16.START_VALUE_0xFFFF)
 private short checksum;
 ```
 

@@ -75,6 +75,11 @@ class CoderChecksumTest{
 			public Class<? extends Checksummer> algorithm(){
 				return CRC16.class;
 			}
+
+			@Override
+			public long startValue(){
+				return CRC16.START_VALUE_0xFFFF;
+			}
 		};
 
 		MessageParser messageParser = new MessageParser();

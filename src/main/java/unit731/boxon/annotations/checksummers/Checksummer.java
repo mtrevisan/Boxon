@@ -25,8 +25,8 @@
 package unit731.boxon.annotations.checksummers;
 
 
-public interface Checksummer<T>{
+public interface Checksummer{
 
-	T calculateCRC(final byte[] data, final int start, final int end);
+	long calculateCRC(final byte[] data, final int start, final int end, final long startValue);
 
 }

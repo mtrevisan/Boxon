@@ -78,4 +78,11 @@ public @interface BindChecksum{
 	@SuppressWarnings("rawtypes")
 	Class<? extends Checksummer> algorithm();
 
+	/**
+	 * The starting value of the CRC algorithm.
+	 *
+	 * @return	The starting value of the CRC algorithm.
+	 */
+	long startValue();
+
 }
