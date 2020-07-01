@@ -25,7 +25,11 @@
 package unit731.boxon.annotations.checksummers;
 
 
-/** Calculates a 16 bit Cyclic Redundancy Check of a set of bytes using the CRC-CCITT (0xFFFF) algorithm */
+/**
+ * Calculates a 16 bit Cyclic Redundancy Check of a set of bytes using the CRC-CCITT Normal algorithm (starting with 0xFFFF)
+ *
+ * @see <a href="https://en.wikipedia.org/wiki/Cyclic_redundancy_check">Cyclic redundancy check</a>
+ */
 public class CRC16 implements Checksummer<Short>{
 
 	private static final short START_VALUE_0xFFFF = (short)0xFFFF;

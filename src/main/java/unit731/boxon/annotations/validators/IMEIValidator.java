@@ -38,13 +38,11 @@ public class IMEIValidator implements Validator<String>{
 		boolean isEven = false;
 		for(int i = text.length() - 1; i >= 0; i --, isEven = !isEven){
 			int k = Character.getNumericValue(text.charAt(i));
-			if(isEven){
+			if(isEven)
 				k <<= 1;
-				if(k > 9)
-					k -= 9;
-			}
 
-			sum += k;
+			sum += k / 10;
+			sum += k % 10;
 		}
 		return (sum % 10 == 0);
 	}
