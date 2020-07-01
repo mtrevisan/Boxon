@@ -168,13 +168,8 @@ class BitBuffer{
 		while(offset < length){
 			//transfer the cache values
 			final int size = Math.min(length, remaining);
-			int i = offset;
-			while(cache != 0 && i < offset + size){
+			for(int i = offset; cache != 0 && i < offset + size; i ++, cache >>>= 1)
 				value.set(i, ((cache & MASKS[1]) != 0));
-
-				cache >>>= 1;
-				i ++;
-			}
 			remaining -= size;
 			offset += size;
 
