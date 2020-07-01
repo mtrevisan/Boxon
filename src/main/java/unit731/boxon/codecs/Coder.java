@@ -79,7 +79,7 @@ enum Coder implements CoderInterface{
 				final BigInteger prefix = reader.getBigInteger(prefixSize, prefixByteOrder);
 
 				//choose class
-				final Choices.Choice chosenAlternative = chooseAlternative(alternatives, prefix.intValue(), data);
+				final Choices.Choice chosenAlternative = CoderHelper.chooseAlternative(alternatives, prefix.intValue(), data);
 				type = chosenAlternative.type();
 			}
 
@@ -87,9 +87,9 @@ enum Coder implements CoderInterface{
 
 			final Object instance = messageParser.decode(codec, reader);
 
-			final Object value = converterDecode(binding.converter(), instance);
+			final Object value = CoderHelper.converterDecode(binding.converter(), instance);
 
-			validateData(binding.validator(), value);
+			CoderHelper.validateData(binding.validator(), value);
 
 			return value;
 		}
@@ -99,7 +99,7 @@ enum Coder implements CoderInterface{
 				final Object value){
 			final BindObject binding = (BindObject)annotation;
 
-			validateData(binding.validator(), value);
+			CoderHelper.validateData(binding.validator(), value);
 
 			Class<?> type = binding.type();
 			final Choices selectFrom = binding.selectFrom();
@@ -107,15 +107,15 @@ enum Coder implements CoderInterface{
 			final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): new Choices.Choice[0]);
 			if(alternatives.length > 0){
 				//write prefix
-				final Choices.Choice chosenAlternative = chooseAlternative(alternatives, value.getClass());
-				writePrefix(writer, value, chosenAlternative, selectFrom);
+				final Choices.Choice chosenAlternative = CoderHelper.chooseAlternative(alternatives, value.getClass());
+				CoderHelper.writePrefix(writer, value, chosenAlternative, selectFrom);
 
 				type = value.getClass();
 			}
 
 			final Codec<?> codec = Codec.createFrom(type);
 
-			final Object array = converterEncode(binding.converter(), value);
+			final Object array = CoderHelper.converterEncode(binding.converter(), value);
 
 			messageParser.encode(codec, array, writer);
 		}
@@ -135,9 +135,9 @@ enum Coder implements CoderInterface{
 			final Charset charset = Charset.forName(binding.charset());
 			final String text = reader.getText(size, charset);
 
-			final Object value = converterDecode(binding.converter(), text);
+			final Object value = CoderHelper.converterDecode(binding.converter(), text);
 
-			validateData(binding.match(), binding.validator(), value);
+			CoderHelper.validateData(binding.match(), binding.validator(), value);
 
 			return value;
 		}
@@ -147,9 +147,9 @@ enum Coder implements CoderInterface{
 				final Object value){
 			final BindString binding = (BindString)annotation;
 
-			validateData(binding.match(), binding.validator(), value);
+			CoderHelper.validateData(binding.match(), binding.validator(), value);
 
-			final String text = converterEncode(binding.converter(), value);
+			final String text = CoderHelper.converterEncode(binding.converter(), value);
 
 			final int size = Evaluator.evaluate(binding.size(), int.class, data);
 			final Charset charset = Charset.forName(binding.charset());
@@ -171,9 +171,9 @@ enum Coder implements CoderInterface{
 
 			final String text = reader.getTextUntilTerminator(binding.terminator(), binding.consumeTerminator(), charset);
 
-			final Object value = converterDecode(binding.converter(), text);
+			final Object value = CoderHelper.converterDecode(binding.converter(), text);
 
-			validateData(binding.match(), binding.validator(), value);
+			CoderHelper.validateData(binding.match(), binding.validator(), value);
 
 			return value;
 		}
@@ -183,11 +183,11 @@ enum Coder implements CoderInterface{
 				final Object value){
 			final BindStringTerminated binding = (BindStringTerminated)annotation;
 
-			validateData(binding.match(), binding.validator(), value);
+			CoderHelper.validateData(binding.match(), binding.validator(), value);
 
 			final Charset charset = Charset.forName(binding.charset());
 
-			final String text = converterEncode(binding.converter(), value);
+			final String text = CoderHelper.converterEncode(binding.converter(), value);
 
 			writer.putText(text, binding.terminator(), binding.consumeTerminator(), charset);
 		}
@@ -213,9 +213,9 @@ enum Coder implements CoderInterface{
 				Array.set(array, i, value);
 			}
 
-			final Object value = converterDecode(binding.converter(), array);
+			final Object value = CoderHelper.converterDecode(binding.converter(), array);
 
-			validateData(binding.validator(), value);
+			CoderHelper.validateData(binding.validator(), value);
 
 			return value;
 		}
@@ -225,11 +225,11 @@ enum Coder implements CoderInterface{
 				final Object value){
 			final BindArrayPrimitive binding = (BindArrayPrimitive)annotation;
 
-			validateData(binding.validator(), value);
+			CoderHelper.validateData(binding.validator(), value);
 
 			final int size = Evaluator.evaluate(binding.size(), int.class, data);
 
-			final Object array = converterEncode(binding.converter(), value);
+			final Object array = CoderHelper.converterEncode(binding.converter(), value);
 
 			for(int i = 0; i < size; i ++)
 				writer.put(Array.get(array, i), binding.byteOrder());
@@ -261,7 +261,7 @@ enum Coder implements CoderInterface{
 					final BigInteger prefix = reader.getBigInteger(prefixSize, prefixByteOrder);
 
 					//choose class
-					final Choices.Choice chosenAlternative = chooseAlternative(alternatives, prefix.intValue(), data);
+					final Choices.Choice chosenAlternative = CoderHelper.chooseAlternative(alternatives, prefix.intValue(), data);
 
 					//read object
 					final Codec<?> subCodec = Codec.createFrom(chosenAlternative.type());
@@ -276,9 +276,9 @@ enum Coder implements CoderInterface{
 					array[i] = messageParser.decode(codec, reader);
 			}
 
-			final Object value = converterDecode(binding.converter(), array);
+			final Object value = CoderHelper.converterDecode(binding.converter(), array);
 
-			validateData(binding.validator(), value);
+			CoderHelper.validateData(binding.validator(), value);
 
 			return value;
 		}
@@ -288,18 +288,18 @@ enum Coder implements CoderInterface{
 				final Object value){
 			final BindArray binding = (BindArray)annotation;
 
-			validateData(binding.validator(), value);
+			CoderHelper.validateData(binding.validator(), value);
 
 			final int size = Evaluator.evaluate(binding.size(), int.class, data);
 			final Choices selectFrom = binding.selectFrom();
 			@SuppressWarnings("ConstantConditions")
 			final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): new Choices.Choice[0]);
 
-			final Object[] array = converterEncode(binding.converter(), value);
+			final Object[] array = CoderHelper.converterEncode(binding.converter(), value);
 
 			if(alternatives.length > 0)
 				for(int i = 0; i < size; i ++){
-					writePrefix(writer, array[i], chooseAlternative(alternatives, array[i].getClass()), selectFrom);
+					CoderHelper.writePrefix(writer, array[i], CoderHelper.chooseAlternative(alternatives, array[i].getClass()), selectFrom);
 
 					final Codec<?> codec = Codec.createFrom(array[i].getClass());
 
@@ -329,9 +329,9 @@ enum Coder implements CoderInterface{
 			if(binding.byteOrder() == ByteOrder.LITTLE_ENDIAN)
 				ByteHelper.reverseBits(bits, size);
 
-			final Object value = converterDecode(binding.converter(), bits);
+			final Object value = CoderHelper.converterDecode(binding.converter(), bits);
 
-			validateData(binding.match(), binding.validator(), value);
+			CoderHelper.validateData(binding.match(), binding.validator(), value);
 
 			return value;
 		}
@@ -341,9 +341,9 @@ enum Coder implements CoderInterface{
 				final Object value){
 			final BindBits binding = (BindBits)annotation;
 
-			validateData(binding.match(), binding.validator(), value);
+			CoderHelper.validateData(binding.match(), binding.validator(), value);
 
-			final BitSet bits = converterEncode(binding.converter(), value);
+			final BitSet bits = CoderHelper.converterEncode(binding.converter(), value);
 			final int size = Evaluator.evaluate(binding.size(), int.class, data);
 			if(binding.byteOrder() == ByteOrder.LITTLE_ENDIAN)
 				ByteHelper.reverseBits(bits, size);
@@ -366,15 +366,15 @@ enum Coder implements CoderInterface{
 			if(binding.unsigned()){
 				final short v = reader.getByteUnsigned();
 
-				value = converterDecode(binding.converter(), v);
+				value = CoderHelper.converterDecode(binding.converter(), v);
 			}
 			else{
 				final byte v = reader.getByte();
 
-				value = converterDecode(binding.converter(), v);
+				value = CoderHelper.converterDecode(binding.converter(), v);
 			}
 
-			validateData(binding.match(), binding.validator(), value);
+			CoderHelper.validateData(binding.match(), binding.validator(), value);
 
 			return value;
 		}
@@ -384,9 +384,9 @@ enum Coder implements CoderInterface{
 				final Object value){
 			final BindByte binding = (BindByte)annotation;
 
-			validateData(binding.match(), binding.validator(), value);
+			CoderHelper.validateData(binding.match(), binding.validator(), value);
 
-			final byte v = converterEncode(binding.converter(), value);
+			final byte v = CoderHelper.converterEncode(binding.converter(), value);
 
 			writer.putByte(v);
 		}
@@ -406,15 +406,15 @@ enum Coder implements CoderInterface{
 			if(binding.unsigned()){
 				final int v = reader.getShortUnsigned(binding.byteOrder());
 
-				value = converterDecode(binding.converter(), v);
+				value = CoderHelper.converterDecode(binding.converter(), v);
 			}
 			else{
 				final short v = reader.getShort(binding.byteOrder());
 
-				value = converterDecode(binding.converter(), v);
+				value = CoderHelper.converterDecode(binding.converter(), v);
 			}
 
-			validateData(binding.match(), binding.validator(), value);
+			CoderHelper.validateData(binding.match(), binding.validator(), value);
 
 			return value;
 		}
@@ -424,9 +424,9 @@ enum Coder implements CoderInterface{
 				final Object value){
 			final BindShort binding = (BindShort)annotation;
 
-			validateData(binding.match(), binding.validator(), value);
+			CoderHelper.validateData(binding.match(), binding.validator(), value);
 
-			final short v = converterEncode(binding.converter(), value);
+			final short v = CoderHelper.converterEncode(binding.converter(), value);
 
 			writer.putShort(v, binding.byteOrder());
 		}
@@ -446,15 +446,15 @@ enum Coder implements CoderInterface{
 			if(binding.unsigned()){
 				final long v = reader.getIntegerUnsigned(binding.byteOrder());
 
-				value = converterDecode(binding.converter(), v);
+				value = CoderHelper.converterDecode(binding.converter(), v);
 			}
 			else{
 				final int v = reader.getInteger(binding.byteOrder());
 
-				value = converterDecode(binding.converter(), v);
+				value = CoderHelper.converterDecode(binding.converter(), v);
 			}
 
-			validateData(binding.match(), binding.validator(), value);
+			CoderHelper.validateData(binding.match(), binding.validator(), value);
 
 			return value;
 		}
@@ -464,9 +464,9 @@ enum Coder implements CoderInterface{
 				final Object value){
 			final BindInt binding = (BindInt)annotation;
 
-			validateData(binding.match(), binding.validator(), value);
+			CoderHelper.validateData(binding.match(), binding.validator(), value);
 
-			final int v = converterEncode(binding.converter(), value);
+			final int v = CoderHelper.converterEncode(binding.converter(), value);
 
 			writer.putInteger(v, binding.byteOrder());
 		}
@@ -484,9 +484,9 @@ enum Coder implements CoderInterface{
 
 			final long v = reader.getLong(binding.byteOrder());
 
-			final Object value = converterDecode(binding.converter(), v);
+			final Object value = CoderHelper.converterDecode(binding.converter(), v);
 
-			validateData(binding.match(), binding.validator(), value);
+			CoderHelper.validateData(binding.match(), binding.validator(), value);
 
 			return value;
 		}
@@ -496,9 +496,9 @@ enum Coder implements CoderInterface{
 				final Object value){
 			final BindLong binding = (BindLong)annotation;
 
-			validateData(binding.match(), binding.validator(), value);
+			CoderHelper.validateData(binding.match(), binding.validator(), value);
 
-			final long v = converterEncode(binding.converter(), value);
+			final long v = CoderHelper.converterEncode(binding.converter(), value);
 
 			final ByteOrder byteOrder = binding.byteOrder();
 			writer.putLong(v, byteOrder);
@@ -521,15 +521,15 @@ enum Coder implements CoderInterface{
 			if(binding.allowPrimitive() && size < Long.SIZE){
 				final long v = reader.getLong(size, binding.byteOrder(), binding.unsigned());
 
-				value = converterDecode(binding.converter(), v);
+				value = CoderHelper.converterDecode(binding.converter(), v);
 			}
 			else{
 				final BigInteger v = reader.getBigInteger(size, binding.byteOrder());
 
-				value = converterDecode(binding.converter(), v);
+				value = CoderHelper.converterDecode(binding.converter(), v);
 			}
 
-			validateData(binding.match(), binding.validator(), value);
+			CoderHelper.validateData(binding.match(), binding.validator(), value);
 
 			return value;
 		}
@@ -539,20 +539,20 @@ enum Coder implements CoderInterface{
 				final Object value){
 			final BindInteger binding = (BindInteger)annotation;
 
-			validateData(binding.match(), binding.validator(), value);
+			CoderHelper.validateData(binding.match(), binding.validator(), value);
 
 			final int size = Evaluator.evaluate(binding.size(), int.class, data);
 
 			BigInteger v;
 			if(binding.allowPrimitive() && size < Long.SIZE){
-				final long vv = converterEncode(binding.converter(), value);
+				final long vv = CoderHelper.converterEncode(binding.converter(), value);
 
 				v = BigInteger.valueOf(Math.abs(vv));
 				if(vv < 0)
 					v.setBit(size);
 			}
 			else
-				v = converterEncode(binding.converter(), value);
+				v = CoderHelper.converterEncode(binding.converter(), value);
 
 			final ByteOrder byteOrder = binding.byteOrder();
 			final BitSet bits = ByteHelper.bigIntegerToBitSet(v, size, byteOrder);
@@ -573,9 +573,9 @@ enum Coder implements CoderInterface{
 
 			final float v = reader.getFloat(binding.byteOrder());
 
-			final Object value = converterDecode(binding.converter(), v);
+			final Object value = CoderHelper.converterDecode(binding.converter(), v);
 
-			validateData(binding.match(), binding.validator(), value);
+			CoderHelper.validateData(binding.match(), binding.validator(), value);
 
 			return value;
 		}
@@ -585,9 +585,9 @@ enum Coder implements CoderInterface{
 				final Object value){
 			final BindFloat binding = (BindFloat)annotation;
 
-			validateData(binding.match(), binding.validator(), value);
+			CoderHelper.validateData(binding.match(), binding.validator(), value);
 
-			final float v = converterEncode(binding.converter(), value);
+			final float v = CoderHelper.converterEncode(binding.converter(), value);
 
 			writer.putFloat(v, binding.byteOrder());
 		}
@@ -605,9 +605,9 @@ enum Coder implements CoderInterface{
 
 			final double v = reader.getDouble(binding.byteOrder());
 
-			final Object value = converterDecode(binding.converter(), v);
+			final Object value = CoderHelper.converterDecode(binding.converter(), v);
 
-			validateData(binding.match(), binding.validator(), value);
+			CoderHelper.validateData(binding.match(), binding.validator(), value);
 
 			return value;
 		}
@@ -617,9 +617,9 @@ enum Coder implements CoderInterface{
 				final Object value){
 			final BindDouble binding = (BindDouble)annotation;
 
-			validateData(binding.match(), binding.validator(), value);
+			CoderHelper.validateData(binding.match(), binding.validator(), value);
 
-			final double v = converterEncode(binding.converter(), value);
+			final double v = CoderHelper.converterEncode(binding.converter(), value);
 
 			writer.putDouble(v, binding.byteOrder());
 		}
@@ -637,9 +637,9 @@ enum Coder implements CoderInterface{
 
 			final BigDecimal v = reader.getDecimal(binding.type(), binding.byteOrder());
 
-			final Object value = converterDecode(binding.converter(), v);
+			final Object value = CoderHelper.converterDecode(binding.converter(), v);
 
-			validateData(binding.match(), binding.validator(), value);
+			CoderHelper.validateData(binding.match(), binding.validator(), value);
 
 			return value;
 		}
@@ -649,9 +649,9 @@ enum Coder implements CoderInterface{
 				final Object value){
 			final BindDecimal binding = (BindDecimal)annotation;
 
-			validateData(binding.match(), binding.validator(), value);
+			CoderHelper.validateData(binding.match(), binding.validator(), value);
 
-			final BigDecimal v = converterEncode(binding.converter(), value);
+			final BigDecimal v = CoderHelper.converterEncode(binding.converter(), value);
 
 			writer.putDecimal(v, binding.type(), binding.byteOrder());
 		}
@@ -704,116 +704,6 @@ enum Coder implements CoderInterface{
 
 	public static CoderInterface getCoder(final Class<?> type){
 		return CODERS_FROM_ANNOTATION.get(type);
-	}
-
-	private static Choices.Choice chooseAlternative(final Choices.Choice[] alternatives, final int prefix, final Object data){
-		Choices.Choice chosenAlternative = null;
-
-		Evaluator.addToContext(CONTEXT_CHOICE_PREFIX, prefix);
-		for(final Choices.Choice alternative : alternatives)
-			if(Evaluator.evaluate(alternative.condition(), boolean.class, data)){
-				chosenAlternative = alternative;
-				break;
-			}
-		Evaluator.addToContext(CONTEXT_CHOICE_PREFIX, null);
-
-		return chosenAlternative;
-	}
-
-	private static Choices.Choice chooseAlternative(final Choices.Choice[] alternatives, final Class<?> type){
-		Choices.Choice chosenAlternative = null;
-		for(final Choices.Choice alternative : alternatives)
-			if(alternative.type() == type){
-				chosenAlternative = alternative;
-				break;
-			}
-		return chosenAlternative;
-	}
-
-	private static void writePrefix(final BitWriter writer, final Object value, final Choices.Choice chosenAlternative, final Choices selectFrom){
-		//if chosenAlternative.condition() contains '#prefix', then write @Choice.Prefix.value()
-		if(chosenAlternative.condition().contains("#" + CONTEXT_CHOICE_PREFIX)){
-			final int prefixSize = selectFrom.prefixSize();
-			final ByteOrder prefixByteOrder = selectFrom.byteOrder();
-
-			final long prefixValue = chosenAlternative.prefix();
-			final BitSet bits = BitSet.valueOf(new long[]{prefixValue});
-			if(prefixByteOrder == ByteOrder.LITTLE_ENDIAN)
-				ByteHelper.reverseBits(bits, prefixSize);
-
-			writer.putBits(bits, prefixSize);
-		}
-	}
-
-	private static <T> void validateData(final String match, @SuppressWarnings("rawtypes") final Class<? extends Validator> validatorType,
-			final T data){
-		matchData(match, data);
-		validateData(validatorType, data);
-	}
-
-	private static <T> void matchData(final String match, final T data){
-		final Pattern pattern = extractPattern(match, data);
-		if(pattern != null && !pattern.matcher(Objects.toString(data)).matches())
-			throw new IllegalArgumentException("Parameter does not match constraint `" + match + "`");
-	}
-
-	/** Extract pattern from a SpEL expression, or a string, or a regex pattern */
-	private static <T> Pattern extractPattern(String match, final T data){
-		Pattern p = null;
-		if(isNotBlank(match)){
-			//try SpEL expression
-			match = extractSpELExpression(match, data);
-
-			//try regex expression
-			p = extractRegexExpression(match);
-
-			//match exact
-			if(p == null)
-				p = extractRegexExpression("^" + Pattern.quote(match) + "$");
-		}
-		return p;
-	}
-
-	private static <T> String extractSpELExpression(String match, final T data){
-		try{
-			match = Evaluator.evaluate(match, String.class, data);
-		}
-		catch(final Exception ignored){}
-		return match;
-	}
-
-	private static Pattern extractRegexExpression(final String match){
-		Pattern p = null;
-		try{
-			p = Pattern.compile(match);
-		}
-		catch(final PatternSyntaxException ignored){}
-		return p;
-	}
-
-	private static boolean isNotBlank(final String text){
-		return (text != null && !text.trim().isBlank());
-	}
-
-	private static <T> void validateData(@SuppressWarnings("rawtypes") final Class<? extends Validator> validatorType, final T data){
-		@SuppressWarnings("unchecked")
-		final Validator<T> validator = ReflectionHelper.createInstance(validatorType);
-		if(!validator.validate(data))
-			throw new IllegalArgumentException("Validation not passed (" + data + ")");
-	}
-
-	private static <OUT, IN> OUT converterDecode(@SuppressWarnings("rawtypes") final Class<? extends Converter> converterType,
-			final IN data){
-		@SuppressWarnings("unchecked")
-		final Converter<IN, OUT> converter = ReflectionHelper.createInstance(converterType);
-		return converter.decode(data);
-	}
-
-	private static <OUT, IN> IN converterEncode(@SuppressWarnings("rawtypes") final Class<? extends Converter> converterType,
-			final OUT data){
-		@SuppressWarnings("unchecked")
-		final Converter<IN, OUT> converter = ReflectionHelper.createInstance(converterType);
-		return converter.encode(data);
 	}
 
 }
