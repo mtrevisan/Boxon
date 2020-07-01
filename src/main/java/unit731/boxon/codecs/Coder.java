@@ -765,11 +765,11 @@ enum Coder implements CoderInterface{
 			match = extractSpELExpression(match, data);
 
 			//try regex expression
-			p = extractRegexExpression(match, p);
+			p = extractRegexExpression(match);
 
 			//match exact
 			if(p == null)
-				p = extractRegexExpression("^" + Pattern.quote(match) + "$", p);
+				p = extractRegexExpression("^" + Pattern.quote(match) + "$");
 		}
 		return p;
 	}
@@ -782,7 +782,8 @@ enum Coder implements CoderInterface{
 		return match;
 	}
 
-	private static Pattern extractRegexExpression(final String match, Pattern p){
+	private static Pattern extractRegexExpression(final String match){
+		Pattern p = null;
 		try{
 			p = Pattern.compile(match);
 		}

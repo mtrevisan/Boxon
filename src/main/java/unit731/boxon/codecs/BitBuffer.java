@@ -418,10 +418,6 @@ class BitBuffer{
 		resetInnerVariables();
 	}
 
-	public void reset(){
-		buffer.reset();
-	}
-
 	public byte[] array(){
 		return buffer.array();
 	}
@@ -467,29 +463,6 @@ class BitBuffer{
 	 */
 	public boolean hasRemaining(){
 		return buffer.hasRemaining();
-	}
-
-	/**
-	 * Gets the capacity of the backing {@link ByteBuffer}.
-	 *
-	 * @return	The capacity of the backing buffer in {@code byte}s.
-	 */
-	public int capacity(){
-		return buffer.capacity();
-	}
-
-	/**
-	 * Returns the underlying {@link ByteBuffer}'s limit.
-	 *
-	 * @return  The limit of the underlying {@link ByteBuffer}
-	 */
-	public int limit(){
-		return buffer.limit();
-	}
-
-	/** Compacts the backing {@link ByteBuffer} */
-	public void compact(){
-		buffer.compact();
 	}
 
 	@Override

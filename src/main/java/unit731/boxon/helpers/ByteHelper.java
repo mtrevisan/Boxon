@@ -42,10 +42,6 @@ public class ByteHelper{
 		return ((mask & (1 << (index % Byte.SIZE))) != 0);
 	}
 
-	public static long clearBit(final long value, final int index){
-		return (value & ~(1 << index));
-	}
-
 	/**
 	 * Returns the starting position of the first occurrence of the specified pattern array within the specified source array,
 	 * or {@code -1} if there is no such occurrence.
