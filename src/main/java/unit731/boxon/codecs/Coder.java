@@ -131,9 +131,8 @@ enum Coder implements CoderInterface{
 		public Object decode(final MessageParser messageParser, final BitBuffer reader, final Annotation annotation, final Object data){
 			final BindString binding = (BindString)annotation;
 
-			final Charset charset = Charset.forName(binding.charset());
 			final int size = Evaluator.evaluate(binding.size(), int.class, data);
-
+			final Charset charset = Charset.forName(binding.charset());
 			final String text = reader.getText(size, charset);
 
 			final Object value = converterDecode(binding.converter(), text);
@@ -150,11 +149,10 @@ enum Coder implements CoderInterface{
 
 			validateData(binding.match(), binding.validator(), value);
 
-			final Charset charset = Charset.forName(binding.charset());
-			final int size = Evaluator.evaluate(binding.size(), int.class, data);
-
 			final String text = converterEncode(binding.converter(), value);
 
+			final int size = Evaluator.evaluate(binding.size(), int.class, data);
+			final Charset charset = Charset.forName(binding.charset());
 			writer.putText(text.substring(0, Math.min(text.length(), size)), charset);
 		}
 
@@ -170,10 +168,8 @@ enum Coder implements CoderInterface{
 			final BindStringTerminated binding = (BindStringTerminated)annotation;
 
 			final Charset charset = Charset.forName(binding.charset());
-			final byte terminator = binding.terminator();
-			final boolean consumeTerminator = binding.consumeTerminator();
 
-			final String text = reader.getTextUntilTerminator(terminator, consumeTerminator, charset);
+			final String text = reader.getTextUntilTerminator(binding.terminator(), binding.consumeTerminator(), charset);
 
 			final Object value = converterDecode(binding.converter(), text);
 
@@ -190,12 +186,10 @@ enum Coder implements CoderInterface{
 			validateData(binding.match(), binding.validator(), value);
 
 			final Charset charset = Charset.forName(binding.charset());
-			final byte terminator = binding.terminator();
-			final boolean consumeTerminator = binding.consumeTerminator();
 
 			final String text = converterEncode(binding.converter(), value);
 
-			writer.putText(text, terminator, consumeTerminator, charset);
+			writer.putText(text, binding.terminator(), binding.consumeTerminator(), charset);
 		}
 
 		@Override
@@ -209,14 +203,13 @@ enum Coder implements CoderInterface{
 		public Object decode(final MessageParser messageParser, final BitBuffer reader, final Annotation annotation, final Object data){
 			final BindArrayPrimitive binding = (BindArrayPrimitive)annotation;
 
-			final ByteOrder byteOrder = binding.byteOrder();
 			final Class<?> type = binding.type();
 			final int size = Evaluator.evaluate(binding.size(), int.class, data);
 			final Class<?> objectiveType = ReflectionHelper.objectiveType(type.getComponentType());
 
 			final Object array = ReflectionHelper.createArrayPrimitive(type, size);
 			for(int i = 0; i < size; i ++){
-				final Object value = reader.get(objectiveType, byteOrder);
+				final Object value = reader.get(objectiveType, binding.byteOrder());
 				Array.set(array, i, value);
 			}
 
@@ -234,13 +227,12 @@ enum Coder implements CoderInterface{
 
 			validateData(binding.validator(), value);
 
-			final ByteOrder byteOrder = binding.byteOrder();
 			final int size = Evaluator.evaluate(binding.size(), int.class, data);
 
 			final Object array = converterEncode(binding.converter(), value);
 
 			for(int i = 0; i < size; i ++)
-				writer.put(Array.get(array, i), byteOrder);
+				writer.put(Array.get(array, i), binding.byteOrder());
 		}
 
 		@Override
@@ -254,13 +246,12 @@ enum Coder implements CoderInterface{
 		public Object decode(final MessageParser messageParser, final BitBuffer reader, final Annotation annotation, final Object data){
 			final BindArray binding = (BindArray)annotation;
 
-			final Class<?> type = binding.type();
 			final int size = Evaluator.evaluate(binding.size(), int.class, data);
 			final Choices selectFrom = binding.selectFrom();
 			@SuppressWarnings("ConstantConditions")
 			final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): new Choices.Choice[0]);
 
-			final Object[] array = ReflectionHelper.createArray(type, size);
+			final Object[] array = ReflectionHelper.createArray(binding.type(), size);
 			if(alternatives.length > 0){
 				//read prefix
 				final int prefixSize = selectFrom.prefixSize();
@@ -279,7 +270,7 @@ enum Coder implements CoderInterface{
 				}
 			}
 			else{
-				final Codec<?> codec = Codec.createFrom(type);
+				final Codec<?> codec = Codec.createFrom(binding.type());
 
 				for(int i = 0; i < size; i ++)
 					array[i] = messageParser.decode(codec, reader);
@@ -299,7 +290,6 @@ enum Coder implements CoderInterface{
 
 			validateData(binding.validator(), value);
 
-			final Class<?> type = binding.type();
 			final int size = Evaluator.evaluate(binding.size(), int.class, data);
 			final Choices selectFrom = binding.selectFrom();
 			@SuppressWarnings("ConstantConditions")
@@ -316,7 +306,7 @@ enum Coder implements CoderInterface{
 					messageParser.encode(codec, array[i], writer);
 				}
 			else{
-				final Codec<?> codec = Codec.createFrom(type);
+				final Codec<?> codec = Codec.createFrom(binding.type());
 
 				for(int i = 0; i < size; i ++)
 					messageParser.encode(codec, array[i], writer);
@@ -336,8 +326,7 @@ enum Coder implements CoderInterface{
 
 			final int size = Evaluator.evaluate(binding.size(), int.class, data);
 			final BitSet bits = reader.getBits(size);
-			final ByteOrder byteOrder = binding.byteOrder();
-			if(byteOrder == ByteOrder.LITTLE_ENDIAN)
+			if(binding.byteOrder() == ByteOrder.LITTLE_ENDIAN)
 				ByteHelper.reverseBits(bits, size);
 
 			final Object value = converterDecode(binding.converter(), bits);
@@ -356,8 +345,7 @@ enum Coder implements CoderInterface{
 
 			final BitSet bits = converterEncode(binding.converter(), value);
 			final int size = Evaluator.evaluate(binding.size(), int.class, data);
-			final ByteOrder byteOrder = binding.byteOrder();
-			if(byteOrder == ByteOrder.LITTLE_ENDIAN)
+			if(binding.byteOrder() == ByteOrder.LITTLE_ENDIAN)
 				ByteHelper.reverseBits(bits, size);
 
 			writer.putBits(bits, size);
@@ -415,14 +403,13 @@ enum Coder implements CoderInterface{
 			final BindShort binding = (BindShort)annotation;
 
 			final Object value;
-			final ByteOrder byteOrder = binding.byteOrder();
 			if(binding.unsigned()){
-				final int v = reader.getShortUnsigned(byteOrder);
+				final int v = reader.getShortUnsigned(binding.byteOrder());
 
 				value = converterDecode(binding.converter(), v);
 			}
 			else{
-				final short v = reader.getShort(byteOrder);
+				final short v = reader.getShort(binding.byteOrder());
 
 				value = converterDecode(binding.converter(), v);
 			}
@@ -441,8 +428,7 @@ enum Coder implements CoderInterface{
 
 			final short v = converterEncode(binding.converter(), value);
 
-			final ByteOrder byteOrder = binding.byteOrder();
-			writer.putShort(v, byteOrder);
+			writer.putShort(v, binding.byteOrder());
 		}
 
 		@Override
@@ -457,14 +443,13 @@ enum Coder implements CoderInterface{
 			final BindInt binding = (BindInt)annotation;
 
 			final Object value;
-			final ByteOrder byteOrder = binding.byteOrder();
 			if(binding.unsigned()){
-				final long v = reader.getIntegerUnsigned(byteOrder);
+				final long v = reader.getIntegerUnsigned(binding.byteOrder());
 
 				value = converterDecode(binding.converter(), v);
 			}
 			else{
-				final int v = reader.getInteger(byteOrder);
+				final int v = reader.getInteger(binding.byteOrder());
 
 				value = converterDecode(binding.converter(), v);
 			}
@@ -483,8 +468,7 @@ enum Coder implements CoderInterface{
 
 			final int v = converterEncode(binding.converter(), value);
 
-			final ByteOrder byteOrder = binding.byteOrder();
-			writer.putInteger(v, byteOrder);
+			writer.putInteger(v, binding.byteOrder());
 		}
 
 		@Override
@@ -498,8 +482,7 @@ enum Coder implements CoderInterface{
 		public Object decode(final MessageParser messageParser, final BitBuffer reader, final Annotation annotation, final Object data){
 			final BindLong binding = (BindLong)annotation;
 
-			final ByteOrder byteOrder = binding.byteOrder();
-			final long v = reader.getLong(byteOrder);
+			final long v = reader.getLong(binding.byteOrder());
 
 			final Object value = converterDecode(binding.converter(), v);
 
@@ -533,17 +516,15 @@ enum Coder implements CoderInterface{
 			final BindInteger binding = (BindInteger)annotation;
 
 			final int size = Evaluator.evaluate(binding.size(), int.class, data);
-			final ByteOrder byteOrder = binding.byteOrder();
 
 			final Object value;
-			final boolean allowPrimitive = binding.allowPrimitive();
-			if(allowPrimitive && size < Long.SIZE){
-				final long v = reader.getLong(size, byteOrder, binding.unsigned());
+			if(binding.allowPrimitive() && size < Long.SIZE){
+				final long v = reader.getLong(size, binding.byteOrder(), binding.unsigned());
 
 				value = converterDecode(binding.converter(), v);
 			}
 			else{
-				final BigInteger v = reader.getBigInteger(size, byteOrder);
+				final BigInteger v = reader.getBigInteger(size, binding.byteOrder());
 
 				value = converterDecode(binding.converter(), v);
 			}
@@ -560,10 +541,10 @@ enum Coder implements CoderInterface{
 
 			validateData(binding.match(), binding.validator(), value);
 
-			BigInteger v;
-			final boolean allowPrimitive = binding.allowPrimitive();
 			final int size = Evaluator.evaluate(binding.size(), int.class, data);
-			if(allowPrimitive && size < Long.SIZE){
+
+			BigInteger v;
+			if(binding.allowPrimitive() && size < Long.SIZE){
 				final long vv = converterEncode(binding.converter(), value);
 
 				v = BigInteger.valueOf(Math.abs(vv));
@@ -590,8 +571,7 @@ enum Coder implements CoderInterface{
 		public Object decode(final MessageParser messageParser, final BitBuffer reader, final Annotation annotation, final Object data){
 			final BindFloat binding = (BindFloat)annotation;
 
-			final ByteOrder byteOrder = binding.byteOrder();
-			final float v = reader.getFloat(byteOrder);
+			final float v = reader.getFloat(binding.byteOrder());
 
 			final Object value = converterDecode(binding.converter(), v);
 
@@ -609,8 +589,7 @@ enum Coder implements CoderInterface{
 
 			final float v = converterEncode(binding.converter(), value);
 
-			final ByteOrder byteOrder = binding.byteOrder();
-			writer.putFloat(v, byteOrder);
+			writer.putFloat(v, binding.byteOrder());
 		}
 
 		@Override
@@ -624,8 +603,7 @@ enum Coder implements CoderInterface{
 		public Object decode(final MessageParser messageParser, final BitBuffer reader, final Annotation annotation, final Object data){
 			final BindDouble binding = (BindDouble)annotation;
 
-			final ByteOrder byteOrder = binding.byteOrder();
-			final double v = reader.getDouble(byteOrder);
+			final double v = reader.getDouble(binding.byteOrder());
 
 			final Object value = converterDecode(binding.converter(), v);
 
@@ -643,8 +621,7 @@ enum Coder implements CoderInterface{
 
 			final double v = converterEncode(binding.converter(), value);
 
-			final ByteOrder byteOrder = binding.byteOrder();
-			writer.putDouble(v, byteOrder);
+			writer.putDouble(v, binding.byteOrder());
 		}
 
 		@Override
@@ -658,10 +635,7 @@ enum Coder implements CoderInterface{
 		public Object decode(final MessageParser messageParser, final BitBuffer reader, final Annotation annotation, final Object data){
 			final BindDecimal binding = (BindDecimal)annotation;
 
-			final Class<?> type = binding.type();
-
-			final ByteOrder byteOrder = binding.byteOrder();
-			final BigDecimal v = reader.getDecimal(type, byteOrder);
+			final BigDecimal v = reader.getDecimal(binding.type(), binding.byteOrder());
 
 			final Object value = converterDecode(binding.converter(), v);
 
@@ -675,14 +649,11 @@ enum Coder implements CoderInterface{
 				final Object value){
 			final BindDecimal binding = (BindDecimal)annotation;
 
-			final Class<?> type = binding.type();
-
 			validateData(binding.match(), binding.validator(), value);
 
 			final BigDecimal v = converterEncode(binding.converter(), value);
 
-			final ByteOrder byteOrder = binding.byteOrder();
-			writer.putDecimal(v, type, byteOrder);
+			writer.putDecimal(v, binding.type(), binding.byteOrder());
 		}
 
 		@Override
@@ -696,11 +667,9 @@ enum Coder implements CoderInterface{
 		public Object decode(final MessageParser messageParser, final BitBuffer reader, final Annotation annotation, final Object data){
 			final BindChecksum binding = (BindChecksum)annotation;
 
-			final Class<?> type = binding.type();
-			final Class<?> objectiveType = ReflectionHelper.objectiveType(type);
+			final Class<?> objectiveType = ReflectionHelper.objectiveType(binding.type());
 
-			final ByteOrder byteOrder = binding.byteOrder();
-			return reader.get(objectiveType, byteOrder);
+			return reader.get(objectiveType, binding.byteOrder());
 		}
 
 		@Override
@@ -708,8 +677,7 @@ enum Coder implements CoderInterface{
 				final Object value){
 			final BindChecksum binding = (BindChecksum)annotation;
 
-			final ByteOrder byteOrder = binding.byteOrder();
-			writer.put(value, byteOrder);
+			writer.put(value, binding.byteOrder());
 		}
 
 		@Override
