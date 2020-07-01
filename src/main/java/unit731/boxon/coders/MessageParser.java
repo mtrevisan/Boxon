@@ -62,23 +62,23 @@ class MessageParser{
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(MessageParser.class.getName());
 
-	private static final Map<Class<?>, CoderInterface> CODERS_FROM_ANNOTATION = new HashMap<>();
+	private static final Map<Class<?>, CoderInterface> CODERS = new HashMap<>();
 	static{
-		CODERS_FROM_ANNOTATION.put(BindObject.class, new CoderObject());
-		CODERS_FROM_ANNOTATION.put(BindString.class, new CoderString());
-		CODERS_FROM_ANNOTATION.put(BindStringTerminated.class, new CoderStringTerminated());
-		CODERS_FROM_ANNOTATION.put(BindArrayPrimitive.class, new CoderArrayPrimitive());
-		CODERS_FROM_ANNOTATION.put(BindArray.class, new CoderArray());
-		CODERS_FROM_ANNOTATION.put(BindBits.class, new CoderBits());
-		CODERS_FROM_ANNOTATION.put(BindByte.class, new CoderByte());
-		CODERS_FROM_ANNOTATION.put(BindShort.class, new CoderShort());
-		CODERS_FROM_ANNOTATION.put(BindInt.class, new CoderInt());
-		CODERS_FROM_ANNOTATION.put(BindLong.class, new CoderLong());
-		CODERS_FROM_ANNOTATION.put(BindInteger.class, new CoderInteger());
-		CODERS_FROM_ANNOTATION.put(BindFloat.class, new CoderFloat());
-		CODERS_FROM_ANNOTATION.put(BindDouble.class, new CoderDouble());
-		CODERS_FROM_ANNOTATION.put(BindDecimal.class, new CoderDecimal());
-		CODERS_FROM_ANNOTATION.put(BindChecksum.class, new CoderChecksum());
+		CODERS.put(BindObject.class, new CoderObject());
+		CODERS.put(BindString.class, new CoderString());
+		CODERS.put(BindStringTerminated.class, new CoderStringTerminated());
+		CODERS.put(BindArrayPrimitive.class, new CoderArrayPrimitive());
+		CODERS.put(BindArray.class, new CoderArray());
+		CODERS.put(BindBits.class, new CoderBits());
+		CODERS.put(BindByte.class, new CoderByte());
+		CODERS.put(BindShort.class, new CoderShort());
+		CODERS.put(BindInt.class, new CoderInt());
+		CODERS.put(BindLong.class, new CoderLong());
+		CODERS.put(BindInteger.class, new CoderInteger());
+		CODERS.put(BindFloat.class, new CoderFloat());
+		CODERS.put(BindDouble.class, new CoderDouble());
+		CODERS.put(BindDecimal.class, new CoderDecimal());
+		CODERS.put(BindChecksum.class, new CoderChecksum());
 	}
 
 
@@ -89,13 +89,12 @@ class MessageParser{
 		this.verbose.set(verbose);
 	}
 
-	public static void addCoder(final CoderInterface coder){
-		if(!CODERS_FROM_ANNOTATION.containsKey(coder.coderType()))
-			CODERS_FROM_ANNOTATION.put(coder.coderType(), coder);
+	public static CoderInterface addCoder(final CoderInterface coder){
+		return CODERS.put(coder.coderType(), coder);
 	}
 
 	public static CoderInterface getCoder(final Class<?> type){
-		return CODERS_FROM_ANNOTATION.get(type);
+		return CODERS.get(type);
 	}
 
 	<T> T decode(final Codec<T> codec, final BitBuffer reader){
@@ -112,7 +111,7 @@ class MessageParser{
 				continue;
 
 			final Annotation binding = field.getBinding();
-			final CoderInterface coder = CODERS_FROM_ANNOTATION.get(binding.annotationType());
+			final CoderInterface coder = CODERS.get(binding.annotationType());
 			if(coder == null)
 				throw new IllegalArgumentException("Cannot find coder for binding @" + binding.annotationType().getSimpleName());
 
@@ -212,7 +211,7 @@ class MessageParser{
 				continue;
 
 			final Annotation binding = field.getBinding();
-			final CoderInterface coder = CODERS_FROM_ANNOTATION.get(binding.annotationType());
+			final CoderInterface coder = CODERS.get(binding.annotationType());
 			if(coder == null)
 				throw new IllegalArgumentException("Cannot find coder for binding @" + binding.annotationType().getSimpleName());
 
