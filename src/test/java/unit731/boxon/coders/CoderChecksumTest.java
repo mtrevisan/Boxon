@@ -43,7 +43,7 @@ class CoderChecksumTest{
 
 	@Test
 	void checksumShort(){
-		Coder coder = Coder.CHECKSUM;
+		CoderInterface coder = new CoderChecksum();
 		short encodedValue = (short)RANDOM.nextInt(0x0000_FFFF);
 		BindChecksum annotation = new BindChecksum(){
 			@Override

@@ -120,7 +120,7 @@ class ConverterTest{
 		Assertions.assertEquals(1, errors.size());
 		ParseException error = errors.get(0);
 		Assertions.assertEquals("Error decoding message: \r\n"
-			+ "Can not set java.lang.String field unit731.boxon.codecs.ConverterTest$TestConverter2.value to java.lang.Byte, field TestConverter2.value\r\n"
+			+ "Can not set java.lang.String field unit731.boxon.coders.ConverterTest$TestConverter2.value to java.lang.Byte, field TestConverter2.value\r\n"
 			+ "   at index 4", error.getMessage());
 	}
 

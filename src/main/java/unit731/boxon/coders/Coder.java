@@ -47,102 +47,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-enum Coder implements CoderInterface{
-
-	DOUBLE {
-		@Override
-		public Object decode(final MessageParser messageParser, final BitBuffer reader, final Annotation annotation, final Object data){
-			final BindDouble binding = (BindDouble)annotation;
-
-			final double v = reader.getDouble(binding.byteOrder());
-
-			final Object value = CoderHelper.converterDecode(binding.converter(), v);
-
-			CoderHelper.validateData(binding.match(), binding.validator(), value);
-
-			return value;
-		}
-
-		@Override
-		public void encode(final MessageParser messageParser, final BitWriter writer, final Annotation annotation, final Object data,
-				final Object value){
-			final BindDouble binding = (BindDouble)annotation;
-
-			CoderHelper.validateData(binding.match(), binding.validator(), value);
-
-			final double v = CoderHelper.converterEncode(binding.converter(), value);
-
-			writer.putDouble(v, binding.byteOrder());
-		}
-
-		@Override
-		public Class<? extends Annotation> coderType(){
-			return BindDouble.class;
-		}
-	},
-
-	DECIMAL{
-		@Override
-		public Object decode(final MessageParser messageParser, final BitBuffer reader, final Annotation annotation, final Object data){
-			final BindDecimal binding = (BindDecimal)annotation;
-
-			final BigDecimal v = reader.getDecimal(binding.type(), binding.byteOrder());
-
-			final Object value = CoderHelper.converterDecode(binding.converter(), v);
-
-			CoderHelper.validateData(binding.match(), binding.validator(), value);
-
-			return value;
-		}
-
-		@Override
-		public void encode(final MessageParser messageParser, final BitWriter writer, final Annotation annotation, final Object data,
-				final Object value){
-			final BindDecimal binding = (BindDecimal)annotation;
-
-			CoderHelper.validateData(binding.match(), binding.validator(), value);
-
-			final BigDecimal v = CoderHelper.converterEncode(binding.converter(), value);
-
-			writer.putDecimal(v, binding.type(), binding.byteOrder());
-		}
-
-		@Override
-		public Class<? extends Annotation> coderType(){
-			return BindDecimal.class;
-		}
-	},
-
-	CHECKSUM {
-		@Override
-		public Object decode(final MessageParser messageParser, final BitBuffer reader, final Annotation annotation, final Object data){
-			final BindChecksum binding = (BindChecksum)annotation;
-
-			final Class<?> objectiveType = ReflectionHelper.objectiveType(binding.type());
-
-			return reader.get(objectiveType, binding.byteOrder());
-		}
-
-		@Override
-		public void encode(final MessageParser messageParser, final BitWriter writer, final Annotation annotation, final Object data,
-				final Object value){
-			final BindChecksum binding = (BindChecksum)annotation;
-
-			writer.put(value, binding.byteOrder());
-		}
-
-		@Override
-		public Class<? extends Annotation> coderType(){
-			return BindChecksum.class;
-		}
-	};
-
+enum Coder{
+	AS;
 
 	static final Map<Class<?>, CoderInterface> CODERS_FROM_ANNOTATION = new HashMap<>();
 
 	static{
-		for(final Coder coder : Coder.values())
-			CODERS_FROM_ANNOTATION.put(coder.coderType(), coder);
 		CODERS_FROM_ANNOTATION.put(BindObject.class, new CoderObject());
 		CODERS_FROM_ANNOTATION.put(BindString.class, new CoderString());
 		CODERS_FROM_ANNOTATION.put(BindStringTerminated.class, new CoderStringTerminated());
@@ -155,6 +65,9 @@ enum Coder implements CoderInterface{
 		CODERS_FROM_ANNOTATION.put(BindLong.class, new CoderLong());
 		CODERS_FROM_ANNOTATION.put(BindInteger.class, new CoderInteger());
 		CODERS_FROM_ANNOTATION.put(BindFloat.class, new CoderFloat());
+		CODERS_FROM_ANNOTATION.put(BindDouble.class, new CoderDouble());
+		CODERS_FROM_ANNOTATION.put(BindDecimal.class, new CoderDecimal());
+		CODERS_FROM_ANNOTATION.put(BindChecksum.class, new CoderChecksum());
 	}
 
 

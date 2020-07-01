@@ -47,7 +47,7 @@ class CoderDecimalTest{
 
 	@Test
 	void decimalPositiveLittleEndian(){
-		Coder coder = Coder.DECIMAL;
+		CoderInterface coder = new CoderDecimal();
 		BigDecimal encodedValue = BigDecimal.valueOf(RANDOM.nextDouble());
 		BindDecimal annotation = new BindDecimal(){
 			@Override
@@ -96,7 +96,7 @@ class CoderDecimalTest{
 
 	@Test
 	void decimalNegativeLittleEndian(){
-		Coder coder = Coder.DECIMAL;
+		CoderInterface coder = new CoderDecimal();
 		BigDecimal encodedValue = BigDecimal.valueOf(-RANDOM.nextDouble());
 		BindDecimal annotation = new BindDecimal(){
 			@Override
@@ -145,7 +145,7 @@ class CoderDecimalTest{
 
 	@Test
 	void decimalPositiveBigEndian(){
-		Coder coder = Coder.DECIMAL;
+		CoderInterface coder = new CoderDecimal();
 		BigDecimal encodedValue = BigDecimal.valueOf(RANDOM.nextDouble());
 		BindDecimal annotation = new BindDecimal(){
 			@Override
@@ -194,7 +194,7 @@ class CoderDecimalTest{
 
 	@Test
 	void decimalNegativeBigEndian(){
-		Coder coder = Coder.DECIMAL;
+		CoderInterface coder = new CoderDecimal();
 		BigDecimal encodedValue = BigDecimal.valueOf(-RANDOM.nextDouble());
 		BindDecimal annotation = new BindDecimal(){
 			@Override

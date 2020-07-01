@@ -46,7 +46,7 @@ class CoderDoubleTest{
 
 	@Test
 	void doublePositiveLittleEndian(){
-		Coder coder = Coder.DOUBLE;
+		CoderInterface coder = new CoderDouble();
 		double encodedValue = RANDOM.nextDouble();
 		BindDouble annotation = new BindDouble(){
 			@Override
@@ -90,7 +90,7 @@ class CoderDoubleTest{
 
 	@Test
 	void doubleNegativeLittleEndian(){
-		Coder coder = Coder.DOUBLE;
+		CoderInterface coder = new CoderDouble();
 		double encodedValue = -RANDOM.nextDouble();
 		BindDouble annotation = new BindDouble(){
 			@Override
@@ -134,7 +134,7 @@ class CoderDoubleTest{
 
 	@Test
 	void doublePositiveBigEndian(){
-		Coder coder = Coder.DOUBLE;
+		CoderInterface coder = new CoderDouble();
 		double encodedValue = RANDOM.nextDouble();
 		BindDouble annotation = new BindDouble(){
 			@Override
@@ -178,7 +178,7 @@ class CoderDoubleTest{
 
 	@Test
 	void doubleNegativeBigEndian(){
-		Coder coder = Coder.DOUBLE;
+		CoderInterface coder = new CoderDouble();
 		double encodedValue = -RANDOM.nextDouble();
 		BindDouble annotation = new BindDouble(){
 			@Override
