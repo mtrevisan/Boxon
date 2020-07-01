@@ -93,7 +93,7 @@ public class ReflectionHelper{
 			catch(final NoSuchFieldException e){
 				//go up to parent class
 				cls = cls.getSuperclass();
-				if(Object.class.equals(cls))
+				if(cls == Object.class)
 					throw e;
 			}
 		}
