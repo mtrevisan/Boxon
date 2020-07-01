@@ -153,16 +153,11 @@ class Codec<T>{
 			final Skip[] skips = field.getDeclaredAnnotationsByType(Skip.class);
 			final BindChecksum checksum = field.getDeclaredAnnotation(BindChecksum.class);
 
-			final List<Annotation> boundedAnnotations = new ArrayList<>();
-			for(final Annotation annotation : field.getDeclaredAnnotations()){
-				final Class<? extends Annotation> annotationType = annotation.annotationType();
-				if(annotationType != BindIf.class && annotationType != Skip.class){
-					if(annotationType == Evaluate.class)
-						evaluatedFields.add(new EvaluatedField(field, (Evaluate)annotation));
-					else
-						boundedAnnotations.add(annotation);
-				}
-			}
+			final Annotation[] declaredAnnotations = field.getDeclaredAnnotations();
+			final List<Annotation> boundedAnnotations = extractAnnotations(declaredAnnotations);
+			final List<Evaluate> evaluatedAnnotations = extractEvaluations(declaredAnnotations);
+			for(final Evaluate evaluatedAnnotation : evaluatedAnnotations)
+				evaluatedFields.add(new EvaluatedField(field, evaluatedAnnotation));
 
 			validateField(boundedAnnotations, checksum);
 
@@ -171,6 +166,26 @@ class Codec<T>{
 			if(checksum != null)
 				this.checksum = new BoundedField(field, null, null, checksum);
 		}
+	}
+
+	private List<Annotation> extractAnnotations(final Annotation[] declaredAnnotations){
+		final List<Annotation> annotations = new ArrayList<>();
+		for(final Annotation annotation : declaredAnnotations){
+			final Class<? extends Annotation> annotationType = annotation.annotationType();
+			if(annotationType != BindIf.class && annotationType != Skip.class && annotationType != Evaluate.class)
+				annotations.add(annotation);
+		}
+		return annotations;
+	}
+
+	private List<Evaluate> extractEvaluations(final Annotation[] declaredAnnotations){
+		final List<Evaluate> annotations = new ArrayList<>();
+		for(final Annotation annotation : declaredAnnotations){
+			final Class<? extends Annotation> annotationType = annotation.annotationType();
+			if(annotationType == Evaluate.class)
+				annotations.add((Evaluate)annotation);
+		}
+		return annotations;
 	}
 
 	private void validateField(final List<Annotation> annotations, final BindChecksum checksum){
