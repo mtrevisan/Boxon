@@ -150,7 +150,7 @@ public class AnnotationHelper{
 	/**
 	 * Extract all classes from a given directory
 	 *
-	 * @param directory   The base directory
+	 * @param directory	The base directory
 	 * @param packageName The package name for classes found inside the base directory
 	 * @return The classes
 	 */

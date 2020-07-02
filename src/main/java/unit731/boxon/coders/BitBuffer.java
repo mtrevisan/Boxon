@@ -257,7 +257,7 @@ class BitBuffer{
 	/**
 	 * Reads {@link Byte#SIZE} bits from this {@link BitBuffer} and composes a {@code short}.
 	 *
-	 * @return    A {@code short}.
+	 * @return	A {@code short}.
 	 */
 	public short getByteUnsigned(){
 		return (short)(getValue(Byte.SIZE) & 0x0000_FFFF);
@@ -293,7 +293,7 @@ class BitBuffer{
 	 * {@link ByteOrder}.
 	 *
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
-	 * @return    An unsigned {@code short}.
+	 * @return	An unsigned {@code short}.
 	 */
 	public int getShortUnsigned(final ByteOrder byteOrder){
 		final short value = (short)getValue(Short.SIZE);
@@ -317,7 +317,7 @@ class BitBuffer{
 	 * {@link ByteOrder}.
 	 *
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
-	 * @return    An unsigned {@code int}.
+	 * @return	An unsigned {@code int}.
 	 */
 	public long getIntegerUnsigned(final ByteOrder byteOrder){
 		final int value = (int)getValue(Integer.SIZE);
