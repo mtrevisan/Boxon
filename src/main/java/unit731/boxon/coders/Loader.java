@@ -74,7 +74,7 @@ class Loader{
 				Arrays.toString(Arrays.stream(basePackageClasses).map(Class::getName)
 					.map(name -> name.substring(0, name.lastIndexOf('.'))).toArray(String[]::new)));
 
-			final Collection<Class<?>> annotatedClasses = AnnotationHelper.extractAnnotatedClasses(MessageHeader.class, basePackageClasses);
+			final Collection<Class<?>> annotatedClasses = AnnotationHelper.extractClasses(MessageHeader.class, basePackageClasses);
 			final Collection<Codec<?>> codecs = new ArrayList<>();
 			for(final Class<?> cls : annotatedClasses){
 				final Codec<?> codec = Codec.createFrom(cls);
@@ -154,7 +154,7 @@ class Loader{
 	}
 
 
-	synchronized void loadCoders(){
+	static synchronized void loadCoders(){
 		try{
 			final StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
 			final String callerClassName1 = stackTrace[2].getClassName();
@@ -167,12 +167,12 @@ class Loader{
 	/**
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load coders
 	 */
-	synchronized void loadCoders(final Class<?>... basePackageClasses){
+	static synchronized void loadCoders(final Class<?>... basePackageClasses){
 		LOGGER.info("Load coders from package {}",
 			Arrays.toString(Arrays.stream(basePackageClasses).map(Class::getName)
 				.map(name -> name.substring(0, name.lastIndexOf('.'))).toArray(String[]::new)));
 
-		final Collection<Class<?>> derivedClasses = AnnotationHelper.extractDerivedClasses(CoderInterface.class, basePackageClasses);
+		final Collection<Class<?>> derivedClasses = AnnotationHelper.extractClasses(CoderInterface.class, basePackageClasses);
 		final Collection<CoderInterface> coders = new ArrayList<>();
 		for(final Class<?> cls : derivedClasses)
 			if(!cls.isInterface()){
@@ -188,7 +188,7 @@ class Loader{
 	/**
 	 * @param coders	The list of coders to be loaded
 	 */
-	synchronized void loadCoders(final Collection<CoderInterface> coders){
+	static synchronized void loadCoders(final Collection<CoderInterface> coders){
 		LOGGER.info("Load coders from input");
 
 		for(final CoderInterface coder : coders)
