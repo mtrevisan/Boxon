@@ -24,21 +24,7 @@
  */
 package unit731.boxon.coders;
 
-import unit731.boxon.annotations.BindArray;
-import unit731.boxon.annotations.BindArrayPrimitive;
-import unit731.boxon.annotations.BindBits;
-import unit731.boxon.annotations.BindByte;
 import unit731.boxon.annotations.BindChecksum;
-import unit731.boxon.annotations.BindDecimal;
-import unit731.boxon.annotations.BindDouble;
-import unit731.boxon.annotations.BindFloat;
-import unit731.boxon.annotations.BindInt;
-import unit731.boxon.annotations.BindInteger;
-import unit731.boxon.annotations.BindLong;
-import unit731.boxon.annotations.BindObject;
-import unit731.boxon.annotations.BindShort;
-import unit731.boxon.annotations.BindString;
-import unit731.boxon.annotations.BindStringTerminated;
 import unit731.boxon.annotations.MessageHeader;
 import unit731.boxon.annotations.Skip;
 import unit731.boxon.annotations.checksummers.Checksummer;
@@ -63,23 +49,6 @@ class MessageParser{
 	private static final Logger LOGGER = LoggerFactory.getLogger(MessageParser.class.getName());
 
 	private static final Map<Class<?>, CoderInterface> CODERS = new HashMap<>();
-	static{
-		CODERS.put(BindObject.class, new CoderObject());
-		CODERS.put(BindString.class, new CoderString());
-		CODERS.put(BindStringTerminated.class, new CoderStringTerminated());
-		CODERS.put(BindArrayPrimitive.class, new CoderArrayPrimitive());
-		CODERS.put(BindArray.class, new CoderArray());
-		CODERS.put(BindBits.class, new CoderBits());
-		CODERS.put(BindByte.class, new CoderByte());
-		CODERS.put(BindShort.class, new CoderShort());
-		CODERS.put(BindInt.class, new CoderInt());
-		CODERS.put(BindLong.class, new CoderLong());
-		CODERS.put(BindInteger.class, new CoderInteger());
-		CODERS.put(BindFloat.class, new CoderFloat());
-		CODERS.put(BindDouble.class, new CoderDouble());
-		CODERS.put(BindDecimal.class, new CoderDecimal());
-		CODERS.put(BindChecksum.class, new CoderChecksum());
-	}
 
 
 	private final AtomicBoolean verbose = new AtomicBoolean(false);

@@ -49,6 +49,7 @@ public class Parser{
 	 */
 	public Parser(final Map<String, Object> context){
 		loader.init();
+		Loader.loadCoders();
 
 		copyContext(context);
 	}
@@ -65,6 +66,7 @@ public class Parser{
 			throw new IllegalArgumentException("Codecs cannot be empty");
 
 		loader.init(codecs);
+		Loader.loadCoders();
 
 		copyContext(context);
 	}
@@ -79,6 +81,7 @@ public class Parser{
 		Objects.requireNonNull(basePackageClasses, "Base package(s) not found");
 
 		loader.init(basePackageClasses);
+		Loader.loadCoders();
 
 		copyContext(context);
 	}

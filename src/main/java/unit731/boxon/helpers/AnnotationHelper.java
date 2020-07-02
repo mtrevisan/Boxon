@@ -82,17 +82,7 @@ public class AnnotationHelper{
 				final String basePackageName = basePackageClass.getName().substring(0, basePackageClass.getName().lastIndexOf('.'));
 				final String path = basePackageName.replace('.', '/');
 				final Enumeration<URL> resources = classLoader.getResources(path);
-				while(resources.hasMoreElements()){
-					final URL resource = resources.nextElement();
-					final String directory = resource.getFile();
-					final int exclamationMarkIndex = directory.indexOf('!');
-					if(exclamationMarkIndex >= 0){
-						final String libraryName = directory.substring(SCHEMA_FILE.length(), exclamationMarkIndex);
-						codecs.addAll(extractClassesFromLibrary(type, libraryName));
-					}
-					else
-						codecs.addAll(extractClasses(type, new File(directory), basePackageName));
-				}
+				codecs.addAll(extractClasses(resources, type, basePackageName));
 			}
 			catch(final NoSuchFileException e){
 				LOGGER.error("Are you sure you are not running this library from a OneDrive folder?", e);
@@ -100,6 +90,22 @@ public class AnnotationHelper{
 			catch(final IOException ignored){}
 		}
 
+		return codecs;
+	}
+
+	private static <T> Collection<Class<?>> extractClasses(final Enumeration<URL> resources, final T type, final String basePackageName){
+		final Set<Class<?>> codecs = new HashSet<>();
+		while(resources.hasMoreElements()){
+			final URL resource = resources.nextElement();
+			final String directory = resource.getFile();
+			final int exclamationMarkIndex = directory.indexOf('!');
+			if(exclamationMarkIndex >= 0){
+				final String libraryName = directory.substring(SCHEMA_FILE.length(), exclamationMarkIndex);
+				codecs.addAll(extractClassesFromLibrary(type, libraryName));
+			}
+			else
+				codecs.addAll(extractClasses(type, new File(directory), basePackageName));
+		}
 		return codecs;
 	}
 

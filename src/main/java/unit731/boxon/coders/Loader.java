@@ -53,13 +53,17 @@ class Loader{
 
 	Loader(){}
 
-	/** This method should be called from a method inside a class that lies on a parent of all the decoders */
+	/**
+	 * Loads all the protocol classes annotated with `MessageHeader`.
+	 * <p>This method should be called from a method inside a class that lies on a parent of all the protocol classes.</p>
+	 */
 	synchronized void init(){
 		init(extractCallerClasses());
 	}
 
 	/**
-	 * This method should be called before instantiating a {@link Parser}
+	 * Loads all the protocol classes annotated with `MessageHeader`.
+	 * <p>This method should be called before instantiating a {@link Parser}.</p>
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes
 	 */
@@ -84,7 +88,8 @@ class Loader{
 	}
 
 	/**
-	 * This method should be called before instantiating a {@link Parser}
+	 * Loads all the protocol classes annotated with `MessageHeader`.
+	 * <p>This method should be called before instantiating a {@link Parser}.</p>
 	 *
 	 * @param codecs	The list of codecs to be loaded
 	 */
@@ -148,11 +153,15 @@ class Loader{
 	}
 
 
+	/**
+	 * Loads all the coders that extends {@link CoderInterface}.
+	 * <p>This method should be called from a method inside a class that lies on a parent of all the coders.</p>
+	 */
 	static synchronized void loadCoders(){
 		loadCoders(extractCallerClasses());
 	}
 
-	static Class<?>[] extractCallerClasses(){
+	private static Class<?>[] extractCallerClasses(){
 		Class<?>[] classes = new Class[0];
 		try{
 			final StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
@@ -165,6 +174,8 @@ class Loader{
 	}
 
 	/**
+	 * Loads all the coders that extends {@link CoderInterface}.
+	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load coders
 	 */
 	static synchronized void loadCoders(final Class<?>... basePackageClasses){
@@ -185,6 +196,8 @@ class Loader{
 	}
 
 	/**
+	 * Loads all the coders that extends {@link CoderInterface}.
+	 *
 	 * @param coders	The list of coders to be loaded
 	 */
 	static synchronized void loadCoders(final Collection<CoderInterface> coders){
