@@ -34,7 +34,6 @@ import java.math.BigInteger;
 
 class CoderObject implements CoderInterface<BindObject>{
 
-	/* NOTE: do NOT change this variable name! */
 	private MessageParser messageParser;
 
 

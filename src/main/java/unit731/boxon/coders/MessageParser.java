@@ -73,8 +73,6 @@ class MessageParser{
 			setMessageParser(coder);
 
 			try{
-				Annotation as = Arrays.asList(binding).stream().map(coder.coderType()::cast).findFirst().get();
-				@SuppressWarnings("unchecked")
 				final Object value = coder.decode(reader, binding, data);
 				ReflectionHelper.setFieldValue(data, field.getName(), value);
 
@@ -160,7 +158,6 @@ class MessageParser{
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	<T> void encode(final Codec<?> codec, final T data, final BitWriter writer){
 		//encode message's fields:
 		final List<Codec.BoundedField> fields = codec.getBoundedFields();
@@ -197,7 +194,7 @@ class MessageParser{
 
 	private void setMessageParser(final CoderInterface<?> coder){
 		try{
-			ReflectionHelper.setFieldValue(coder, "messageParser", this);
+			ReflectionHelper.setFieldValue(coder, MessageParser.class, this);
 		}
 		catch(final Exception ignored){}
 	}

@@ -61,12 +61,11 @@ public class ReflectionHelper{
 	private ReflectionHelper(){}
 
 
-	public static <T, R> R getFieldValue(final T obj, final String fieldName) throws NoSuchFieldException{
+	@SuppressWarnings("unchecked")
+	public static <T> T getFieldValue(final Object obj, final String fieldName) throws NoSuchFieldException{
 		try{
 			final Field field = getAccessibleField(obj.getClass(), fieldName);
-			@SuppressWarnings("unchecked")
-			final R value = (R)field.get(obj);
-			return value;
+			return (T)field.get(obj);
 		}
 		catch(final IllegalAccessException ignored){
 			//cannot happen
@@ -74,9 +73,17 @@ public class ReflectionHelper{
 		}
 	}
 
-	public static <T> void setFieldValue(final T obj, final String fieldName, final Object value) throws NoSuchFieldException{
+	public static void setFieldValue(final Object obj, final String fieldName, final Object value) throws NoSuchFieldException{
 		try{
 			final Field field = getAccessibleField(obj.getClass(), fieldName);
+			field.set(obj, value);
+		}
+		catch(final IllegalAccessException ignored){}
+	}
+
+	public static <T> void setFieldValue(final Object obj, final Class<T> fieldType, final T value) throws NoSuchFieldException{
+		try{
+			final Field field = getAccessibleField(obj.getClass(), fieldType);
 			field.set(obj, value);
 		}
 		catch(final IllegalAccessException ignored){}
@@ -96,6 +103,27 @@ public class ReflectionHelper{
 				if(cls == Object.class)
 					throw e;
 			}
+		}
+		return field;
+	}
+
+	private static Field getAccessibleField(Class<?> cls, final Class<?> fieldType) throws NoSuchFieldException{
+		Field field = null;
+		while(true){
+			final Field[] fields = cls.getDeclaredFields();
+			for(final Field f : fields)
+				if(f.getType() == fieldType){
+					field = f;
+					field.setAccessible(true);
+					break;
+				}
+			if(field != null)
+				break;
+
+			//go up to parent class
+			cls = cls.getSuperclass();
+			if(cls == Object.class)
+				throw new NoSuchFieldException("Cannot find a fild with type " + fieldType.getSimpleName());
 		}
 		return field;
 	}
