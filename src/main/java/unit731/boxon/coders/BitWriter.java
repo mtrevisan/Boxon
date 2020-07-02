@@ -54,7 +54,7 @@ class BitWriter{
 	private byte cache;
 
 
-	public void put(final Object value, final ByteOrder byteOrder){
+	void put(final Object value, final ByteOrder byteOrder){
 		final Class<?> cls = ReflectionHelper.objectiveType(value.getClass());
 		if(cls == Byte.class)
 			putByte((Byte)value);
@@ -79,7 +79,7 @@ class BitWriter{
 	 * @param length	The amount of bits to use when writing {@code value}.
 	 * @return	The {@link BitWriter} to allow for the convenience of method-chaining.
 	 */
-	public BitWriter putBits(final BitSet value, int length){
+	BitWriter putBits(final BitSet value, int length){
 		//if the value that we're writing is too large to be placed entirely in the cache, then we need to place as
 		//much as we can in the cache (the least significant bits), flush the cache to the backing ByteBuffer, and
 		//place the rest in the cache
@@ -124,7 +124,7 @@ class BitWriter{
 	 * @param value	The {@code byte} to write.
 	 * @return	The {@link BitWriter} to allow for the convenience of method-chaining.
 	 */
-	public BitWriter putByte(final byte value){
+	BitWriter putByte(final byte value){
 		return putValue(value, Byte.SIZE);
 	}
 
@@ -134,7 +134,7 @@ class BitWriter{
 	 * @param array	The array of {@code byte}s to write.
 	 * @return	The {@link BitWriter} to allow for the convenience of method-chaining.
 	 */
-	public BitWriter putBytes(final byte[] array){
+	BitWriter putBytes(final byte[] array){
 		for(final byte value : array)
 			putByte(value);
 		return this;
@@ -147,7 +147,7 @@ class BitWriter{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	The {@link BitWriter} to allow for the convenience of method-chaining.
 	 */
-	public BitWriter putShort(final short value, final ByteOrder byteOrder){
+	BitWriter putShort(final short value, final ByteOrder byteOrder){
 		return putValue(byteOrder == ByteOrder.BIG_ENDIAN? Short.reverseBytes(value): value, Short.SIZE);
 	}
 
@@ -158,7 +158,7 @@ class BitWriter{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	The {@link BitWriter} to allow for the convenience of method-chaining.
 	 */
-	public BitWriter putInteger(final int value, final ByteOrder byteOrder){
+	BitWriter putInteger(final int value, final ByteOrder byteOrder){
 		return putValue((byteOrder == ByteOrder.BIG_ENDIAN? Integer.reverseBytes(value): value), Integer.SIZE);
 	}
 
@@ -169,7 +169,7 @@ class BitWriter{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	The {@link BitWriter} to allow for the convenience of method-chaining.
 	 */
-	public BitWriter putLong(final long value, final ByteOrder byteOrder){
+	BitWriter putLong(final long value, final ByteOrder byteOrder){
 		return putValue((byteOrder == ByteOrder.BIG_ENDIAN? Long.reverseBytes(value): value), Long.SIZE);
 	}
 
@@ -180,7 +180,7 @@ class BitWriter{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	The {@link BitWriter} to allow for the convenience of method-chaining.
 	 */
-	public BitWriter putFloat(final float value, final ByteOrder byteOrder){
+	BitWriter putFloat(final float value, final ByteOrder byteOrder){
 		return putInteger(Float.floatToRawIntBits(value), byteOrder);
 	}
 
@@ -191,7 +191,7 @@ class BitWriter{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	The {@link BitWriter} to allow for the convenience of method-chaining.
 	 */
-	public BitWriter putDouble(final double value, final ByteOrder byteOrder){
+	BitWriter putDouble(final double value, final ByteOrder byteOrder){
 		return putLong(Double.doubleToRawLongBits(value), byteOrder);
 	}
 
@@ -203,7 +203,7 @@ class BitWriter{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	The {@link BitWriter} to allow for the convenience of method-chaining.
 	 */
-	public BitWriter putDecimal(final BigDecimal value, final Class<?> cls, final ByteOrder byteOrder){
+	BitWriter putDecimal(final BigDecimal value, final Class<?> cls, final ByteOrder byteOrder){
 		if(cls == Float.class)
 			return putFloat(value.floatValue(), byteOrder);
 		else if(cls == Double.class)
@@ -220,7 +220,7 @@ class BitWriter{
 	 * @return	A {@link String} of length {@code n} coded with a given {@link Charset} that contains {@code char}s
 	 * 	read from this {@link BitBuffer}.
 	 */
-	public BitWriter putText(final String text, final Charset charset){
+	BitWriter putText(final String text, final Charset charset){
 		return putBytes(text.getBytes(charset));
 	}
 
@@ -233,7 +233,7 @@ class BitWriter{
 	 * @return	A {@link String} of length {@code n} coded with a given {@link Charset} that contains {@code char}s
 	 * 	read from this {@link BitBuffer}.
 	 */
-	public BitWriter putText(final String text, final byte terminator, final boolean consumeTerminator, final Charset charset){
+	BitWriter putText(final String text, final byte terminator, final boolean consumeTerminator, final Charset charset){
 		putBytes(text.getBytes(charset));
 		if(consumeTerminator)
 			putByte(terminator);
@@ -244,12 +244,12 @@ class BitWriter{
 	/**
 	 * @return	Whether the current buffer contains an integral number of bytes.
 	 */
-	public boolean isByteAligned(){
+	boolean isByteAligned(){
 		return ((remaining % Byte.SIZE) == 0);
 	}
 
 	/** Flush an integral number of bytes to the output stream, padding any non-completed byte with zeros */
-	public void flush(){
+	void flush(){
 		//put the cache into the buffer
 		if(remaining > 0)
 			os.write(cache);
@@ -269,7 +269,7 @@ class BitWriter{
 	 * @throws ReadOnlyBufferException	If this buffer is backed by an array but is read-only
 	 * @throws UnsupportedOperationException	If this buffer is not backed by an accessible array
 	 */
-	public byte[] array(){
+	byte[] array(){
 		return os.toByteArray();
 	}
 

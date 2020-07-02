@@ -88,7 +88,7 @@ class BitBuffer{
 	 * @param array	The array that will back this buffer
 	 * @return	The new bit buffer
 	 */
-	public static BitBuffer wrap(final byte[] array){
+	static BitBuffer wrap(final byte[] array){
 		return new BitBuffer(ByteBuffer.wrap(array));
 	}
 
@@ -102,7 +102,7 @@ class BitBuffer{
 	 * @param bitWriter	The {@link BitWriter}
 	 * @return	The new bit buffer
 	 */
-	public static BitBuffer wrap(final BitWriter bitWriter){
+	static BitBuffer wrap(final BitWriter bitWriter){
 		bitWriter.flush();
 		return wrap(bitWriter.array());
 	}
@@ -116,11 +116,11 @@ class BitBuffer{
 		this.buffer = buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
 	}
 
-	public void createFallbackPoint(){
+	void createFallbackPoint(){
 		fallbackPoint = new State(buffer.position(), remaining, cache);
 	}
 
-	public void restoreFallbackPoint(){
+	void restoreFallbackPoint(){
 		if(fallbackPoint != null){
 			buffer.position(fallbackPoint.position);
 			remaining = fallbackPoint.remainingBits;
@@ -131,15 +131,15 @@ class BitBuffer{
 	}
 
 
-	public void skip(final int length){
+	void skip(final int length){
 		getBits(length);
 	}
 
-	public void skipUntilTerminator(final byte terminator, final boolean consumeTerminator){
+	void skipUntilTerminator(final byte terminator, final boolean consumeTerminator){
 		getTextUntilTerminator(terminator, consumeTerminator, Charset.defaultCharset());
 	}
 
-	public Object get(final Class<?> cls, final ByteOrder byteOrder){
+	Object get(final Class<?> cls, final ByteOrder byteOrder){
 		final Class<?> inputClass = ReflectionHelper.objectiveType(cls);
 		if(inputClass == Byte.class)
 			return getByte();
@@ -163,7 +163,7 @@ class BitBuffer{
 	 * @param length	The amount of bits to read.
 	 * @return	A {@link BitSet} value at the {@link BitBuffer}'s current position.
 	 */
-	public BitSet getBits(final int length){
+	BitSet getBits(final int length){
 		final BitSet value = new BitSet(length);
 		int offset = 0;
 		while(offset < length){
@@ -191,7 +191,7 @@ class BitBuffer{
 	 * @param unsigned	Whether the long will be treated as unsigned.
 	 * @return	A <code>long</code> value at the {@link BitBuffer}'s current position.
 	 */
-	public long getLong(final int length, final ByteOrder byteOrder, final boolean unsigned){
+	long getLong(final int length, final ByteOrder byteOrder, final boolean unsigned){
 		final BitSet bits = getBits(length);
 		return ByteHelper.bitsToLong(bits, length, byteOrder, unsigned);
 	}
@@ -203,7 +203,7 @@ class BitBuffer{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	A {@link BigInteger} value at the {@link BitBuffer}'s current position.
 	 */
-	public BigInteger getBigInteger(final int length, final ByteOrder byteOrder){
+	BigInteger getBigInteger(final int length, final ByteOrder byteOrder){
 		final BitSet bits = getBits(length);
 		return ByteHelper.bitsToBigInteger(bits, length, byteOrder);
 	}
@@ -224,7 +224,7 @@ class BitBuffer{
 	 *
 	 * @return	A {@code byte}.
 	 */
-	public byte getByte(){
+	byte getByte(){
 		return (byte)getValue(Byte.SIZE);
 	}
 
@@ -259,7 +259,7 @@ class BitBuffer{
 	 *
 	 * @return	A {@code short}.
 	 */
-	public short getByteUnsigned(){
+	short getByteUnsigned(){
 		return (short)(getValue(Byte.SIZE) & 0x0000_FFFF);
 	}
 
@@ -269,7 +269,7 @@ class BitBuffer{
 	 * @param length	The number of {@code byte}s to read.
 	 * @return	An array of {@code byte}s of length {@code n} that contains {@code byte}s read from this {@link BitBuffer}.
 	 */
-	public byte[] getBytes(final int length){
+	byte[] getBytes(final int length){
 		final byte[] array = new byte[length];
 		for(int i = 0; i < length; i ++)
 			array[i] = (byte)getValue(Byte.SIZE);
@@ -283,7 +283,7 @@ class BitBuffer{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	A {@code short}.
 	 */
-	public short getShort(final ByteOrder byteOrder){
+	short getShort(final ByteOrder byteOrder){
 		final short value = (short)getValue(Short.SIZE);
 		return (byteOrder == ByteOrder.BIG_ENDIAN? Short.reverseBytes(value): value);
 	}
@@ -295,7 +295,7 @@ class BitBuffer{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	An unsigned {@code short}.
 	 */
-	public int getShortUnsigned(final ByteOrder byteOrder){
+	int getShortUnsigned(final ByteOrder byteOrder){
 		final short value = (short)getValue(Short.SIZE);
 		return ((int)(byteOrder == ByteOrder.BIG_ENDIAN? Short.reverseBytes(value): value) & 0x0000_FFFF);
 	}
@@ -307,7 +307,7 @@ class BitBuffer{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	An {@code int}.
 	 */
-	public int getInteger(final ByteOrder byteOrder){
+	int getInteger(final ByteOrder byteOrder){
 		final int value = (int)getValue(Integer.SIZE);
 		return (byteOrder == ByteOrder.BIG_ENDIAN? Integer.reverseBytes(value): value);
 	}
@@ -319,7 +319,7 @@ class BitBuffer{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	An unsigned {@code int}.
 	 */
-	public long getIntegerUnsigned(final ByteOrder byteOrder){
+	long getIntegerUnsigned(final ByteOrder byteOrder){
 		final int value = (int)getValue(Integer.SIZE);
 		return ((long)(byteOrder == ByteOrder.BIG_ENDIAN? Integer.reverseBytes(value): value) & 0x0000_0000_FFFF_FFFFl);
 	}
@@ -331,7 +331,7 @@ class BitBuffer{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	A {@code long}.
 	 */
-	public long getLong(final ByteOrder byteOrder){
+	long getLong(final ByteOrder byteOrder){
 		final long value = getValue(Long.SIZE);
 		return (byteOrder == ByteOrder.BIG_ENDIAN? Long.reverseBytes(value): value);
 	}
@@ -343,7 +343,7 @@ class BitBuffer{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	A {@code float}.
 	 */
-	public float getFloat(final ByteOrder byteOrder){
+	float getFloat(final ByteOrder byteOrder){
 		return Float.intBitsToFloat(getInteger(byteOrder));
 	}
 
@@ -354,7 +354,7 @@ class BitBuffer{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	A {@code double}.
 	 */
-	public double getDouble(final ByteOrder byteOrder){
+	double getDouble(final ByteOrder byteOrder){
 		return Double.longBitsToDouble(getLong(byteOrder));
 	}
 
@@ -366,7 +366,7 @@ class BitBuffer{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	A {@link BigDecimal}.
 	 */
-	public BigDecimal getDecimal(final Class<?> cls, final ByteOrder byteOrder){
+	BigDecimal getDecimal(final Class<?> cls, final ByteOrder byteOrder){
 		if(cls == Float.class)
 			return new BigDecimal(Float.toString(getFloat(byteOrder)));
 		else if(cls == Double.class)
@@ -382,12 +382,12 @@ class BitBuffer{
 	 * @return	A {@link String} of length {@code n} coded with a given {@link Charset} that contains {@code char}s
 	 * 	read from this {@link BitBuffer}.
 	 */
-	public String getText(final int length, final Charset charset){
+	String getText(final int length, final Charset charset){
 		return new String(getBytes(length), charset);
 	}
 
 	/** Reads a string until a terminator is found */
-	public String getTextUntilTerminator(final byte terminator, final boolean consumeTerminator, final Charset charset){
+	String getTextUntilTerminator(final byte terminator, final boolean consumeTerminator, final Charset charset){
 		String text = null;
 		try(
 				final ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -414,7 +414,7 @@ class BitBuffer{
 	}
 
 
-	public void clear(){
+	void clear(){
 		//reset the buffer's position and limit
 		buffer.clear();
 
@@ -422,7 +422,7 @@ class BitBuffer{
 		resetInnerVariables();
 	}
 
-	public byte[] array(){
+	byte[] array(){
 		return buffer.array();
 	}
 
@@ -431,7 +431,7 @@ class BitBuffer{
 	 *
 	 * @return	The position of the backing buffer in {@code byte}s.
 	 */
-	public int position(){
+	int position(){
 		return buffer.position() - (remaining + 7) / Byte.SIZE;
 	}
 
@@ -440,7 +440,7 @@ class BitBuffer{
 	 *
 	 * @param newPosition	The position of the backing buffer in {@code byte}s.
 	 */
-	public void position(final int newPosition){
+	void position(final int newPosition){
 		buffer.position(newPosition);
 
 		resetInnerVariables();
@@ -456,7 +456,7 @@ class BitBuffer{
 	 *
 	 * @return	The position of the backing buffer in {@code bit}s.
 	 */
-	public int positionAsBits(){
+	int positionAsBits(){
 		return buffer.position() * Byte.SIZE - remaining;
 	}
 
@@ -465,7 +465,7 @@ class BitBuffer{
 	 *
 	 * @return	Whether there is at least one element remaining in the underlying {@link ByteBuffer}
 	 */
-	public boolean hasRemaining(){
+	boolean hasRemaining(){
 		return buffer.hasRemaining();
 	}
 
