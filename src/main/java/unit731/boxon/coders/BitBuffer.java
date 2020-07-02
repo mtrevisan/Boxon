@@ -273,8 +273,7 @@ class BitBuffer{
 	 * @return	A {@code short}.
 	 */
 	short getShort(final ByteOrder byteOrder){
-		final short value = (short)getLong(Short.SIZE, ByteOrder.LITTLE_ENDIAN, true);
-		return (short)ByteHelper.reverseBytes(value, Short.SIZE, byteOrder);
+		return (short)get(Short.SIZE, byteOrder, false);
 	}
 
 	/**
@@ -285,8 +284,7 @@ class BitBuffer{
 	 * @return	An unsigned {@code short}.
 	 */
 	int getShortUnsigned(final ByteOrder byteOrder){
-		final short value = (short)getLong(Short.SIZE, ByteOrder.LITTLE_ENDIAN, true);
-		return (int)ByteHelper.reverseBytes(value, Short.SIZE, byteOrder);
+		return (int)get(Short.SIZE, byteOrder, true);
 	}
 
 	/**
@@ -297,8 +295,7 @@ class BitBuffer{
 	 * @return	An {@code int}.
 	 */
 	int getInt(final ByteOrder byteOrder){
-		final int value = (int)getLong(Integer.SIZE, ByteOrder.LITTLE_ENDIAN, true);
-		return (int)ByteHelper.reverseBytes(value, Integer.SIZE, byteOrder);
+		return (int)get(Integer.SIZE, byteOrder, false);
 	}
 
 	/**
@@ -309,8 +306,7 @@ class BitBuffer{
 	 * @return	An unsigned {@code int}.
 	 */
 	long getIntUnsigned(final ByteOrder byteOrder){
-		final int value = (int)getLong(Integer.SIZE, ByteOrder.LITTLE_ENDIAN, true);
-		return ByteHelper.reverseBytes(value, Integer.SIZE, byteOrder);
+		return get(Integer.SIZE, byteOrder, true);
 	}
 
 	/**
@@ -321,8 +317,12 @@ class BitBuffer{
 	 * @return	A {@code long}.
 	 */
 	long getLong(final ByteOrder byteOrder){
-		final long value = getLong(Long.SIZE, ByteOrder.LITTLE_ENDIAN, true);
-		return ByteHelper.reverseBytes(value, Long.SIZE, byteOrder);
+		return get(Long.SIZE, byteOrder, false);
+	}
+
+	private long get(final int size, final ByteOrder byteOrder, final boolean unsigned){
+		final long value = getLong(size, ByteOrder.LITTLE_ENDIAN, true);
+		return ByteHelper.reverseBytes(value, size, byteOrder, unsigned);
 	}
 
 	/**

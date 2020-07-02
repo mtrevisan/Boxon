@@ -261,9 +261,9 @@ public class ByteHelper{
 		}
 	}
 
-	public static long reverseBytes(final long value, final int size, final ByteOrder byteOrder){
-		final long mask = -1l >>> (Long.SIZE - size);
-		return ((byteOrder == ByteOrder.BIG_ENDIAN? (Long.reverseBytes(value) >> (Long.SIZE - size)): value) & mask);
+	public static long reverseBytes(final long value, final int size, final ByteOrder byteOrder, final boolean unsigned){
+		final long v = (byteOrder == ByteOrder.BIG_ENDIAN? (Long.reverseBytes(value) >> (Long.SIZE - size)): value);
+		return (unsigned? v & (-1l >>> (Long.SIZE - size)): v);
 	}
 
 	public static long bitsToLong(final BitSet bits, final int size, final ByteOrder byteOrder, final boolean unsigned){
