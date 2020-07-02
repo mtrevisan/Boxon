@@ -742,7 +742,7 @@ class VariableLengthByteArray implements CoderInterface{
 
 ```java
 //add the custom coder to the list of available coders
-Coder.addCoder(new VariableLengthByteArray());
+MessageParser.addCoder(new VariableLengthByteArray());
 ```
 
 <br/>
