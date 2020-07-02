@@ -142,35 +142,40 @@ public class ReflectionHelper{
 	 * @return The ObjectInstantiator for the class
 	 */
 	private static <T> ObjectInstantiator<T> instantiatorOf(final Class<T> type){
+		ObjectInstantiator<T> instantiator;
 		if(PlatformDescription.isThisJVM(PlatformDescription.HOTSPOT) || PlatformDescription.isThisJVM(PlatformDescription.OPENJDK)){
 			//Java 7 GAE was under a security manager so we use a degraded system
 			if(PlatformDescription.isGoogleAppEngine() && PlatformDescription.SPECIFICATION_VERSION.equals("1.7"))
-				return (Serializable.class.isAssignableFrom(type)?
+				instantiator = (Serializable.class.isAssignableFrom(type)?
 					new ObjectInputStreamInstantiator<>(type):
 					new AccessibleInstantiator<>(type));
-			//the UnsafeFactoryInstantiator would also work, but according to benchmarks, it is 2.5 times slower
-			return new SunReflectionFactoryInstantiator<>(type);
+			else
+				//the UnsafeFactoryInstantiator would also work, but according to benchmarks, it is 2.5 times slower
+				instantiator = new SunReflectionFactoryInstantiator<>(type);
 		}
 		else if(PlatformDescription.isThisJVM(PlatformDescription.DALVIK)){
 			if(PlatformDescription.isAndroidOpenJDK())
 				//starting at Android N which is based on OpenJDK
-				return new UnsafeFactoryInstantiator<>(type);
-			if(PlatformDescription.ANDROID_VERSION <= 10)
+				instantiator = new UnsafeFactoryInstantiator<>(type);
+			else if(PlatformDescription.ANDROID_VERSION <= 10)
 				//Android 2.3 Gingerbread and lower
-				return new Android10Instantiator<>(type);
-			if(PlatformDescription.ANDROID_VERSION <= 17)
+				instantiator = new Android10Instantiator<>(type);
+			else if(PlatformDescription.ANDROID_VERSION <= 17)
 				//Android 3.0 Honeycomb to 4.2 Jelly Bean
-				return new Android17Instantiator<>(type);
-			//Android 4.3 until Android N
-			return new Android18Instantiator<>(type);
+				instantiator = new Android17Instantiator<>(type);
+			else
+				//Android 4.3 until Android N
+				instantiator = new Android18Instantiator<>(type);
 		}
 		else if(PlatformDescription.isThisJVM(PlatformDescription.GNU))
-			return new GCJInstantiator<>(type);
+			instantiator = new GCJInstantiator<>(type);
 		else if(PlatformDescription.isThisJVM(PlatformDescription.PERC))
-			return new PercInstantiator<>(type);
+			instantiator = new PercInstantiator<>(type);
+		else
+			//fallback instantiator, should work with most modern JVM
+			instantiator = new UnsafeFactoryInstantiator<>(type);
 
-		//fallback instantiator, should work with most modern JVM
-		return new UnsafeFactoryInstantiator<>(type);
+		return instantiator;
 	}
 
 }
