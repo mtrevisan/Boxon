@@ -245,8 +245,9 @@ public class Parser{
 
 	private ParseException createParseException(final BitBuffer reader, final Throwable t){
 		final byte[] payload = reader.array();
-		final byte[] subPayload = Arrays.copyOfRange(payload, reader.position(), payload.length);
-		return new ParseException(subPayload, reader.position(), t);
+		final int position = reader.position();
+		final byte[] subPayload = Arrays.copyOfRange(payload, position, payload.length);
+		return new ParseException(subPayload, position, t);
 	}
 
 }
