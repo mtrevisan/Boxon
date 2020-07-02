@@ -43,7 +43,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 
-public class Loader{
+class Loader{
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Loader.class.getName());
 
@@ -159,7 +159,7 @@ public class Loader{
 	 * Loads all the coders that extends {@link CoderInterface}.
 	 * <p>This method should be called from a method inside a class that lies on a parent of all the coders.</p>
 	 */
-	public void loadCoders(){
+	void loadCoders(){
 		loadCoders(extractCallerClasses());
 	}
 
@@ -168,7 +168,7 @@ public class Loader{
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load coders
 	 */
-	public void loadCoders(final Class<?>... basePackageClasses){
+	void loadCoders(final Class<?>... basePackageClasses){
 		LOGGER.info("Load coders from package(s) {}",
 			Arrays.stream(basePackageClasses).map(Class::getPackageName).distinct().collect(Collectors.joining(", ", "[", "]")));
 
@@ -190,16 +190,25 @@ public class Loader{
 	 *
 	 * @param coders	The list of coders to be loaded
 	 */
-	public void loadCoders(final Collection<CoderInterface> coders){
+	void loadCoders(final Collection<CoderInterface> coders){
+		loadCoders(coders.toArray(CoderInterface[]::new));
+	}
+
+	/**
+	 * Loads all the coders that extends {@link CoderInterface}.
+	 *
+	 * @param coders	The list of coders to be loaded
+	 */
+	void loadCoders(final CoderInterface... coders){
 		LOGGER.info("Load coders from input");
 
 		for(final CoderInterface coder : coders)
 			addCoder(coder);
 
-		LOGGER.trace("Coders loaded are {}", coders.size());
+		LOGGER.trace("Coders loaded are {}", coders.length);
 	}
 
-	public CoderInterface addCoder(final CoderInterface coder){
+	CoderInterface addCoder(final CoderInterface coder){
 		return coders.put(coder.coderType(), coder);
 	}
 

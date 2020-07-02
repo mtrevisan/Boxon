@@ -94,7 +94,7 @@ class CoderObjectTest{
 		};
 
 		MessageParser messageParser = new MessageParser();
-		messageParser.getLoader().loadCoders();
+		messageParser.loader.loadCoders();
 		BitWriter writer = new BitWriter();
 		coder.encode(messageParser, writer, annotation, null, encodedValue);
 		writer.flush();

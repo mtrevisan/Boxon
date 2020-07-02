@@ -39,7 +39,6 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 
@@ -50,12 +49,8 @@ class MessageParser{
 
 	private final AtomicBoolean verbose = new AtomicBoolean(false);
 
-	private final Loader loader = new Loader();
+	final Loader loader = new Loader();
 
-
-	public Loader getLoader(){
-		return loader;
-	}
 
 	void setVerbose(final boolean verbose) throws SecurityException{
 		this.verbose.set(verbose);

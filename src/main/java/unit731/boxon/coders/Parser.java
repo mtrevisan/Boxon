@@ -30,6 +30,7 @@ import unit731.boxon.coders.dtos.ParseException;
 import unit731.boxon.coders.dtos.ParseResponse;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -52,9 +53,8 @@ public class Parser{
 	 * @param context	The context for the evaluator.
 	 */
 	public Parser(final Map<String, Object> context){
-		final Loader loader = getLoader();
-		loader.init();
-		loader.loadCoders();
+		messageParser.loader.init();
+		loadCoders();
 
 		copyContext(context);
 	}
@@ -70,9 +70,8 @@ public class Parser{
 		if(codecs.isEmpty())
 			throw new IllegalArgumentException("Codecs cannot be empty");
 
-		final Loader loader = getLoader();
-		loader.init(codecs);
-		loader.loadCoders();
+		messageParser.loader.init(codecs);
+		loadCoders();
 
 		copyContext(context);
 	}
@@ -86,9 +85,8 @@ public class Parser{
 	public Parser(final Map<String, Object> context, final Class<?>... basePackageClasses){
 		Objects.requireNonNull(basePackageClasses, "Base package(s) not found");
 
-		final Loader loader = getLoader();
-		loader.init(basePackageClasses);
-		loader.loadCoders();
+		messageParser.loader.init(basePackageClasses);
+		loadCoders();
 
 		copyContext(context);
 	}
@@ -99,9 +97,46 @@ public class Parser{
 				Evaluator.addToContext(elem.getKey(), elem.getValue());
 	}
 
-	public Loader getLoader(){
-		return messageParser.getLoader();
+
+	/**
+	 * Loads all the coders that extends {@link CoderInterface}.
+	 * <p>This method should be called from a method inside a class that lies on a parent of all the coders.</p>
+	 */
+	void loadCoders(){
+		messageParser.loader.loadCoders();
 	}
+
+	/**
+	 * Loads all the coders that extends {@link CoderInterface}.
+	 *
+	 * @param basePackageClasses	Classes to be used ase starting point from which to load coders
+	 */
+	void loadCoders(final Class<?>... basePackageClasses){
+		messageParser.loader.loadCoders(basePackageClasses);
+	}
+
+	/**
+	 * Loads all the coders that extends {@link CoderInterface}.
+	 *
+	 * @param coders	The list of coders to be loaded
+	 */
+	void loadCoders(final Collection<CoderInterface> coders){
+		loadCoders(coders.toArray(CoderInterface[]::new));
+	}
+
+	/**
+	 * Loads all the coders that extends {@link CoderInterface}.
+	 *
+	 * @param coders	The list of coders to be loaded
+	 */
+	void loadCoders(final CoderInterface... coders){
+		messageParser.loader.loadCoders(coders);
+	}
+
+	CoderInterface addCoder(final CoderInterface coder){
+		return messageParser.loader.addCoder(coder);
+	}
+
 
 	public void setVerbose(final boolean verbose) throws SecurityException{
 		messageParser.setVerbose(verbose);
@@ -116,14 +151,13 @@ public class Parser{
 	public final ParseResponse parse(final byte[] payload){
 		final ParseResponse response = new ParseResponse();
 
-		final Loader loader = getLoader();
 		final BitBuffer reader = BitBuffer.wrap(payload);
 		while(reader.hasRemaining()){
 			try{
 				//save state of the reader (restored upon a decoding error)
 				reader.createFallbackPoint();
 
-				final Codec<?> codec = loader.getCodec(reader);
+				final Codec<?> codec = messageParser.loader.getCodec(reader);
 
 				final Object partialDecodedMessage = messageParser.decode(codec, reader);
 
@@ -136,7 +170,7 @@ public class Parser{
 				//restore state of the reader
 				reader.restoreFallbackPoint();
 
-				final int position = loader.findNextMessageIndex(reader);
+				final int position = messageParser.loader.findNextMessageIndex(reader);
 				if(position < 0)
 					//cannot find any codec for message
 					break;

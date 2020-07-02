@@ -42,7 +42,7 @@ class MessageParserTest{
 		BitBuffer reader = BitBuffer.wrap(payload);
 
 		MessageParser messageParser = new MessageParser();
-		messageParser.getLoader().loadCoders();
+		messageParser.loader.loadCoders();
 		Codec<ACKMessageHex> codec = Codec.createFrom(ACKMessageHex.class);
 
 		if(!codec.canBeDecoded())
@@ -66,7 +66,7 @@ class MessageParserTest{
 		BitBuffer reader = BitBuffer.wrap(payload);
 
 		MessageParser messageParser = new MessageParser();
-		messageParser.getLoader().loadCoders();
+		messageParser.loader.loadCoders();
 		Codec<ACKMessageASCII> codec = Codec.createFrom(ACKMessageASCII.class);
 
 		if(!codec.canBeDecoded())
