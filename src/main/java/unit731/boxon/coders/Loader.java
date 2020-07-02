@@ -36,17 +36,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 
-class Loader{
+public class Loader{
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Loader.class.getName());
 
 	private final Map<String, Codec<?>> codecs = new TreeMap<>(Comparator.comparingInt(String::length).reversed().thenComparing(String::compareTo));
+	private final Map<Class<?>, CoderInterface> coders = new HashMap<>();
 
 	private final AtomicBoolean initialized = new AtomicBoolean(false);
 
@@ -157,20 +159,8 @@ class Loader{
 	 * Loads all the coders that extends {@link CoderInterface}.
 	 * <p>This method should be called from a method inside a class that lies on a parent of all the coders.</p>
 	 */
-	static synchronized void loadCoders(){
+	public void loadCoders(){
 		loadCoders(extractCallerClasses());
-	}
-
-	private static Class<?>[] extractCallerClasses(){
-		Class<?>[] classes = new Class[0];
-		try{
-			final StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-			final String callerClassName1 = stackTrace[2].getClassName();
-			final String callerClassName2 = stackTrace[3].getClassName();
-			classes = new Class[]{Class.forName(callerClassName1), Class.forName(callerClassName2)};
-		}
-		catch(final ClassNotFoundException ignored){}
-		return classes;
 	}
 
 	/**
@@ -178,7 +168,7 @@ class Loader{
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load coders
 	 */
-	static synchronized void loadCoders(final Class<?>... basePackageClasses){
+	public void loadCoders(final Class<?>... basePackageClasses){
 		LOGGER.info("Load coders from package(s) {}",
 			Arrays.stream(basePackageClasses).map(Class::getPackageName).distinct().collect(Collectors.joining(", ", "[", "]")));
 
@@ -200,13 +190,21 @@ class Loader{
 	 *
 	 * @param coders	The list of coders to be loaded
 	 */
-	static synchronized void loadCoders(final Collection<CoderInterface> coders){
+	public void loadCoders(final Collection<CoderInterface> coders){
 		LOGGER.info("Load coders from input");
 
 		for(final CoderInterface coder : coders)
-			MessageParser.addCoder(coder);
+			addCoder(coder);
 
 		LOGGER.trace("Coders loaded are {}", coders.size());
+	}
+
+	public CoderInterface addCoder(final CoderInterface coder){
+		return coders.put(coder.coderType(), coder);
+	}
+
+	CoderInterface getCoder(final Class<?> type){
+		return coders.get(type);
 	}
 
 	int findNextMessageIndex(final BitBuffer reader){
@@ -232,6 +230,19 @@ class Loader{
 		final int startIndex = reader.positionAsBits() / Byte.SIZE;
 		final int index = ByteHelper.indexOf(message, startMessageSequence, startIndex + 1, boundarySequenceLps);
 		return (index >= startIndex? index: -1);
+	}
+
+
+	private Class<?>[] extractCallerClasses(){
+		Class<?>[] classes = new Class[0];
+		try{
+			final StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+			final String callerClassName1 = stackTrace[2].getClassName();
+			final String callerClassName2 = stackTrace[3].getClassName();
+			classes = new Class[]{Class.forName(callerClassName1), Class.forName(callerClassName2)};
+		}
+		catch(final ClassNotFoundException ignored){}
+		return classes;
 	}
 
 }

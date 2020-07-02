@@ -181,6 +181,7 @@ class CoderArrayTest{
 		};
 
 		MessageParser messageParser = new MessageParser();
+		messageParser.getLoader().loadCoders();
 		BitWriter writer = new BitWriter();
 		coder.encode(messageParser, writer, annotation, null, encodedValue);
 		writer.flush();

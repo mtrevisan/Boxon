@@ -38,9 +38,8 @@ import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.BitSet;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 
@@ -48,22 +47,18 @@ class MessageParser{
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(MessageParser.class.getName());
 
-	private static final Map<Class<?>, CoderInterface> CODERS = new HashMap<>();
-
 
 	private final AtomicBoolean verbose = new AtomicBoolean(false);
 
+	private final Loader loader = new Loader();
+
+
+	public Loader getLoader(){
+		return loader;
+	}
 
 	void setVerbose(final boolean verbose) throws SecurityException{
 		this.verbose.set(verbose);
-	}
-
-	public static CoderInterface addCoder(final CoderInterface coder){
-		return CODERS.put(coder.coderType(), coder);
-	}
-
-	public static CoderInterface getCoder(final Class<?> type){
-		return CODERS.get(type);
 	}
 
 	<T> T decode(final Codec<T> codec, final BitBuffer reader){
@@ -80,7 +75,7 @@ class MessageParser{
 				continue;
 
 			final Annotation binding = field.getBinding();
-			final CoderInterface coder = CODERS.get(binding.annotationType());
+			final CoderInterface coder = loader.getCoder(binding.annotationType());
 			if(coder == null)
 				throw new IllegalArgumentException("Cannot find coder for binding @" + binding.annotationType().getSimpleName());
 
@@ -180,7 +175,7 @@ class MessageParser{
 				continue;
 
 			final Annotation binding = field.getBinding();
-			final CoderInterface coder = CODERS.get(binding.annotationType());
+			final CoderInterface coder = loader.getCoder(binding.annotationType());
 			if(coder == null)
 				throw new IllegalArgumentException("Cannot find coder for binding @" + binding.annotationType().getSimpleName());
 

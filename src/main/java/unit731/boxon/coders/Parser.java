@@ -38,7 +38,6 @@ import java.util.Objects;
 @SuppressWarnings("unused")
 public class Parser{
 
-	private final Loader loader = new Loader();
 	private final MessageParser messageParser = new MessageParser();
 
 
@@ -53,8 +52,9 @@ public class Parser{
 	 * @param context	The context for the evaluator.
 	 */
 	public Parser(final Map<String, Object> context){
+		final Loader loader = getLoader();
 		loader.init();
-		Loader.loadCoders();
+		loader.loadCoders();
 
 		copyContext(context);
 	}
@@ -70,8 +70,9 @@ public class Parser{
 		if(codecs.isEmpty())
 			throw new IllegalArgumentException("Codecs cannot be empty");
 
+		final Loader loader = getLoader();
 		loader.init(codecs);
-		Loader.loadCoders();
+		loader.loadCoders();
 
 		copyContext(context);
 	}
@@ -85,8 +86,9 @@ public class Parser{
 	public Parser(final Map<String, Object> context, final Class<?>... basePackageClasses){
 		Objects.requireNonNull(basePackageClasses, "Base package(s) not found");
 
+		final Loader loader = getLoader();
 		loader.init(basePackageClasses);
-		Loader.loadCoders();
+		loader.loadCoders();
 
 		copyContext(context);
 	}
@@ -95,6 +97,10 @@ public class Parser{
 		if(context != null)
 			for(final Map.Entry<String, Object> elem : context.entrySet())
 				Evaluator.addToContext(elem.getKey(), elem.getValue());
+	}
+
+	public Loader getLoader(){
+		return messageParser.getLoader();
 	}
 
 	public void setVerbose(final boolean verbose) throws SecurityException{
@@ -110,6 +116,7 @@ public class Parser{
 	public final ParseResponse parse(final byte[] payload){
 		final ParseResponse response = new ParseResponse();
 
+		final Loader loader = getLoader();
 		final BitBuffer reader = BitBuffer.wrap(payload);
 		while(reader.hasRemaining()){
 			try{

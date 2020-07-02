@@ -742,11 +742,13 @@ class VariableLengthByteArray implements CoderInterface{
 
 ```java
 //add the custom coder to the list of available coders
+MessageParser messageParser = new MessageParser();
+Loader loader = messageParser.getLoader();
 //(use one of the lines below)
-MessageParser.addCoder(new VariableLengthByteArray());
-Loader.loadCoders();
-Loader.loadCoders(CoderCustomTest.class); //this class is where the custom coder resides
-Loader.loadCoders(Collections.singletonList(new VariableLengthByteArray()));
+loader.loadCoders(); //loads all coders from the package where this call was made
+loader.loadCoders(CoderCustomTest.class); //this class is where the custom coder resides
+loader.loadCoders(Arrays.asList(new VariableLengthByteArray()));
+loader.addCoder(new VariableLengthByteArray()); //adds a single coder
 ```
 
 <br/>
