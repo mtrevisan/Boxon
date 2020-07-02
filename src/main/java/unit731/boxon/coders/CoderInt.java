@@ -35,17 +35,9 @@ class CoderInt implements CoderInterface{
 	public Object decode(final MessageParser messageParser, final BitBuffer reader, final Annotation annotation, final Object data){
 		final BindInt binding = (BindInt)annotation;
 
-		final Object value;
-		if(binding.unsigned()){
-			final long v = reader.getIntUnsigned(binding.byteOrder());
+		final int v = reader.getInt(binding.byteOrder());
 
-			value = CoderHelper.converterDecode(binding.converter(), v);
-		}
-		else{
-			final int v = reader.getInt(binding.byteOrder());
-
-			value = CoderHelper.converterDecode(binding.converter(), v);
-		}
+		final Object value = CoderHelper.converterDecode(binding.converter(), v);
 
 		CoderHelper.validateData(binding.match(), binding.validator(), value);
 

@@ -51,14 +51,6 @@ public @interface BindInteger{
 	String size();
 
 	/**
-	 * The type of value: either signed or unsigned.
-	 * <p>NOTE: in case of unsigned value with size &lt; 64, the read data is "one order of magnitude higher" (that is short for byte, int for short, and long for int).</p>
-	 *
-	 * @return	The type of value. Defaults to <code>false</code>.
-	 */
-	boolean unsigned() default false;
-
-	/**
 	 * The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * <p>NOTE: This works at bit level! (from lowest to highest if little-endian, from highest to lowest for big-endian)</p>
 	 *

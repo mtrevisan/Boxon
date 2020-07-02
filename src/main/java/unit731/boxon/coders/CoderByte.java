@@ -35,17 +35,9 @@ class CoderByte implements CoderInterface{
 	public Object decode(final MessageParser messageParser, final BitBuffer reader, final Annotation annotation, final Object data){
 		final BindByte binding = (BindByte)annotation;
 
-		final Object value;
-		if(binding.unsigned()){
-			final short v = reader.getByteUnsigned();
+		final byte v = reader.getByte();
 
-			value = CoderHelper.converterDecode(binding.converter(), v);
-		}
-		else{
-			final byte v = reader.getByte();
-
-			value = CoderHelper.converterDecode(binding.converter(), v);
-		}
+		final Object value = CoderHelper.converterDecode(binding.converter(), v);
 
 		CoderHelper.validateData(binding.match(), binding.validator(), value);
 

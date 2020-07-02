@@ -43,7 +43,7 @@ class CoderInteger implements CoderInterface{
 
 		final Object value;
 		if(binding.allowPrimitive() && size < Long.SIZE){
-			final long v = reader.getLong(size, binding.byteOrder(), binding.unsigned());
+			final long v = reader.getLong(size, binding.byteOrder());
 
 			value = CoderHelper.converterDecode(binding.converter(), v);
 		}

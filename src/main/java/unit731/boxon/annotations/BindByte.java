@@ -43,14 +43,6 @@ import java.lang.annotation.Target;
 public @interface BindByte{
 
 	/**
-	 * The type of value: either signed or unsigned.
-	 * <p>NOTE: in case of unsigned value, the read data is a short.</p>
-	 *
-	 * @return	The type of value. Defaults to <code>false</code>.
-	 */
-	boolean unsigned() default false;
-
-	/**
 	 * The value to match (can be a regex expression or a SpEL expression), if any.
 	 *
 	 * @return	The value, or regex, or SpEL expression to be checked for equality

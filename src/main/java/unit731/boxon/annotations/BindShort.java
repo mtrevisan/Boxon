@@ -43,14 +43,6 @@ import java.lang.annotation.Target;
 public @interface BindShort{
 
 	/**
-	 * The type of value: either signed or unsigned.
-	 * <p>NOTE: in case of unsigned value, the read data is an integer.</p>
-	 *
-	 * @return	The type of value. Defaults to <code>false</code>.
-	 */
-	boolean unsigned() default false;
-
-	/**
 	 * The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 *
 	 * @return	The type of endianness. Defaults to {@link ByteOrder#BIG_ENDIAN}.

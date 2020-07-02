@@ -188,12 +188,11 @@ class BitBuffer{
 	 *
 	 * @param length	The amount of bits to read (should be less than 64!).
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
-	 * @param unsigned	Whether the long will be treated as unsigned.
 	 * @return	A <code>long</code> value at the {@link BitBuffer}'s current position.
 	 */
-	long getLong(final int length, final ByteOrder byteOrder, final boolean unsigned){
+	long getLong(final int length, final ByteOrder byteOrder){
 		final BitSet bits = getBits(length);
-		return (bits.length() > 0? ByteHelper.bitsToLong(bits, length, byteOrder, unsigned): 0l);
+		return (bits.length() > 0? ByteHelper.bitsToLong(bits, length, byteOrder): 0l);
 	}
 
 	/**
@@ -214,7 +213,7 @@ class BitBuffer{
 	 * @return	A {@code byte}.
 	 */
 	byte getByte(){
-		return (byte)getLong(Byte.SIZE, ByteOrder.LITTLE_ENDIAN, true);
+		return (byte)getLong(Byte.SIZE, ByteOrder.LITTLE_ENDIAN);
 	}
 
 	/**
@@ -244,15 +243,6 @@ class BitBuffer{
 	}
 
 	/**
-	 * Reads {@link Byte#SIZE} bits from this {@link BitBuffer} and composes a {@code short}.
-	 *
-	 * @return	A {@code short}.
-	 */
-	short getByteUnsigned(){
-		return (short)(getLong(Byte.SIZE, ByteOrder.LITTLE_ENDIAN, true) & 0x0000_FFFF);
-	}
-
-	/**
 	 * Reads the specified amount of {@code byte}s from this {@link BitBuffer} into an array of {@code byte}s.
 	 *
 	 * @param length	The number of {@code byte}s to read.
@@ -261,7 +251,7 @@ class BitBuffer{
 	byte[] getBytes(final int length){
 		final byte[] array = new byte[length];
 		for(int i = 0; i < length; i ++)
-			array[i] = (byte)getLong(Byte.SIZE, ByteOrder.LITTLE_ENDIAN, true);
+			array[i] = (byte)getLong(Byte.SIZE, ByteOrder.LITTLE_ENDIAN);
 		return array;
 	}
 
@@ -273,18 +263,7 @@ class BitBuffer{
 	 * @return	A {@code short}.
 	 */
 	short getShort(final ByteOrder byteOrder){
-		return (short)get(Short.SIZE, byteOrder, false);
-	}
-
-	/**
-	 * Reads {@link Short#SIZE} bits from this {@link BitBuffer} and composes a {@code short} with the specified
-	 * {@link ByteOrder}.
-	 *
-	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
-	 * @return	An unsigned {@code short}.
-	 */
-	int getShortUnsigned(final ByteOrder byteOrder){
-		return (int)get(Short.SIZE, byteOrder, true);
+		return (short)get(Short.SIZE, byteOrder);
 	}
 
 	/**
@@ -295,18 +274,7 @@ class BitBuffer{
 	 * @return	An {@code int}.
 	 */
 	int getInt(final ByteOrder byteOrder){
-		return (int)get(Integer.SIZE, byteOrder, false);
-	}
-
-	/**
-	 * Reads {@link Integer#SIZE} bits from this {@link BitBuffer} and composes an {@code int} with the specified
-	 * {@link ByteOrder}.
-	 *
-	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
-	 * @return	An unsigned {@code int}.
-	 */
-	long getIntUnsigned(final ByteOrder byteOrder){
-		return get(Integer.SIZE, byteOrder, true);
+		return (int)get(Integer.SIZE, byteOrder);
 	}
 
 	/**
@@ -317,12 +285,12 @@ class BitBuffer{
 	 * @return	A {@code long}.
 	 */
 	long getLong(final ByteOrder byteOrder){
-		return get(Long.SIZE, byteOrder, false);
+		return get(Long.SIZE, byteOrder);
 	}
 
-	private long get(final int size, final ByteOrder byteOrder, final boolean unsigned){
-		final long value = getLong(size, ByteOrder.LITTLE_ENDIAN, true);
-		return ByteHelper.reverseBytes(value, size, byteOrder, unsigned);
+	private long get(final int size, final ByteOrder byteOrder){
+		final long value = getLong(size, ByteOrder.LITTLE_ENDIAN);
+		return ByteHelper.reverseBytes(value, size, byteOrder);
 	}
 
 	/**

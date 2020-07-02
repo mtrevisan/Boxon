@@ -52,11 +52,6 @@ class CoderByteTest{
 			}
 
 			@Override
-			public boolean unsigned(){
-				return false;
-			}
-
-			@Override
 			public String match(){
 				return null;
 			}
@@ -84,53 +79,6 @@ class CoderByteTest{
 		byte decoded = (byte)coder.decode(messageParser, reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
-	}
-
-	@Test
-	void testByteUnsigned(){
-		CoderInterface coder = new CoderByte();
-		byte encodedValue = (byte)(RANDOM.nextInt() & 0x0000_00FF);
-		if(encodedValue > 0)
-			encodedValue = (byte)-encodedValue;
-		BindByte annotation = new BindByte(){
-			@Override
-			public Class<? extends Annotation> annotationType(){
-				return BindByte.class;
-			}
-
-			@Override
-			public boolean unsigned(){
-				return true;
-			}
-
-			@Override
-			public String match(){
-				return null;
-			}
-
-			@Override
-			public Class<? extends Validator> validator(){
-				return NullValidator.class;
-			}
-
-			@Override
-			public Class<? extends Converter> converter(){
-				return NullConverter.class;
-			}
-		};
-
-		MessageParser messageParser = new MessageParser();
-		BitWriter writer = new BitWriter();
-		coder.encode(messageParser, writer, annotation, null, encodedValue);
-		writer.flush();
-
-		Assertions.assertEquals(1, writer.array().length);
-		Assertions.assertEquals(encodedValue, writer.array()[0]);
-
-		BitBuffer reader = BitBuffer.wrap(writer);
-		short decoded = (short)coder.decode(messageParser, reader, annotation, null);
-
-		Assertions.assertEquals((((short)encodedValue << Byte.SIZE) >>> Byte.SIZE) & 0xFF, decoded);
 	}
 
 }

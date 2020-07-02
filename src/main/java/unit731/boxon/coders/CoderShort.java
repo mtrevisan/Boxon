@@ -35,17 +35,9 @@ class CoderShort implements CoderInterface{
 	public Object decode(final MessageParser messageParser, final BitBuffer reader, final Annotation annotation, final Object data){
 		final BindShort binding = (BindShort)annotation;
 
-		final Object value;
-		if(binding.unsigned()){
-			final int v = reader.getShortUnsigned(binding.byteOrder());
+		final short v = reader.getShort(binding.byteOrder());
 
-			value = CoderHelper.converterDecode(binding.converter(), v);
-		}
-		else{
-			final short v = reader.getShort(binding.byteOrder());
-
-			value = CoderHelper.converterDecode(binding.converter(), v);
-		}
+		final Object value = CoderHelper.converterDecode(binding.converter(), v);
 
 		CoderHelper.validateData(binding.match(), binding.validator(), value);
 

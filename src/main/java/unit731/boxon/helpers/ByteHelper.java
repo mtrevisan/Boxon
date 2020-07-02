@@ -261,18 +261,13 @@ public class ByteHelper{
 		}
 	}
 
-	public static long reverseBytes(final long value, final int size, final ByteOrder byteOrder, final boolean unsigned){
-		final long v = (byteOrder == ByteOrder.BIG_ENDIAN? (Long.reverseBytes(value) >> (Long.SIZE - size)): value);
-		return (unsigned? v & (-1l >>> (Long.SIZE - size)): v);
+	public static long reverseBytes(final long value, final int size, final ByteOrder byteOrder){
+		return (byteOrder == ByteOrder.BIG_ENDIAN? (Long.reverseBytes(value) >> (Long.SIZE - size)): value);
 	}
 
-	public static long bitsToLong(final BitSet bits, final int size, final ByteOrder byteOrder, final boolean unsigned){
+	public static long bitsToLong(final BitSet bits, final int size, final ByteOrder byteOrder){
 		long value = bits.toLongArray()[0];
-		if(byteOrder == ByteOrder.BIG_ENDIAN)
-			value = Long.reverseBytes(value) >>> (Long.SIZE - size);
-		if(!unsigned)
-			value = ByteHelper.extendSign(value, size);
-		return value;
+		return (byteOrder == ByteOrder.BIG_ENDIAN? Long.reverseBytes(value) >>> (Long.SIZE - size): value);
 	}
 
 	public static BigInteger bitsToBigInteger(final BitSet bits, final int size, final ByteOrder byteOrder){
