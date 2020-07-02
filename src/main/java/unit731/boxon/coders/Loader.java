@@ -29,6 +29,7 @@ import unit731.boxon.helpers.AnnotationHelper;
 import unit731.boxon.helpers.ByteHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import unit731.boxon.helpers.ReflectionHelper;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -54,8 +55,10 @@ class Loader{
 	/** This method should be called from a method inside a class that lies on a parent of all the decoders */
 	synchronized void init(){
 		try{
-			final String callerClassName = Thread.currentThread().getStackTrace()[3].getClassName();
-			init(Class.forName(callerClassName));
+			final StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+			final String callerClassName1 = stackTrace[2].getClassName();
+			final String callerClassName2 = stackTrace[3].getClassName();
+			init(Class.forName(callerClassName1), Class.forName(callerClassName2));
 		}
 		catch(final ClassNotFoundException ignored){}
 	}
@@ -93,7 +96,7 @@ class Loader{
 	 */
 	synchronized void init(final Collection<Codec<?>> codecs){
 		if(!initialized.get()){
-			LOGGER.info("Load parsing classes from method");
+			LOGGER.info("Load parsing classes from input");
 
 			loadCodecs(codecs);
 
@@ -148,6 +151,50 @@ class Loader{
 			throw new IllegalArgumentException("Cannot find any codec for message");
 
 		return codec;
+	}
+
+
+	synchronized void loadCoders(){
+		try{
+			final StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+			final String callerClassName1 = stackTrace[2].getClassName();
+			final String callerClassName2 = stackTrace[3].getClassName();
+			loadCoders(Class.forName(callerClassName1), Class.forName(callerClassName2));
+		}
+		catch(final ClassNotFoundException ignored){}
+	}
+
+	/**
+	 * @param basePackageClasses	Classes to be used ase starting point from which to load coders
+	 */
+	synchronized void loadCoders(final Class<?>... basePackageClasses){
+		LOGGER.info("Load coders from package {}",
+			Arrays.toString(Arrays.stream(basePackageClasses).map(Class::getName)
+				.map(name -> name.substring(0, name.lastIndexOf('.'))).toArray(String[]::new)));
+
+		final Collection<Class<?>> derivedClasses = AnnotationHelper.extractDerivedClasses(CoderInterface.class, basePackageClasses);
+		final Collection<CoderInterface> coders = new ArrayList<>();
+		for(final Class<?> cls : derivedClasses)
+			if(!cls.isInterface()){
+				final CoderInterface coder = (CoderInterface)ReflectionHelper.createInstance(cls);
+				if(coder != null)
+					coders.add(coder);
+			}
+		loadCoders(coders);
+
+		LOGGER.trace("Coders loaded are {}", coders.size());
+	}
+
+	/**
+	 * @param coders	The list of coders to be loaded
+	 */
+	synchronized void loadCoders(final Collection<CoderInterface> coders){
+		LOGGER.info("Load coders from input");
+
+		for(final CoderInterface coder : coders)
+			MessageParser.addCoder(coder);
+
+		LOGGER.trace("Coders loaded are {}", coders.size());
 	}
 
 	int findNextMessageIndex(final BitBuffer reader){
