@@ -101,7 +101,7 @@ class BitWriterTest{
 		BitBuffer reader = BitBuffer.wrap(writer);
 
 		Assertions.assertEquals("1B870100", reader.toString());
-		Assertions.assertEquals(value, reader.getInteger(ByteOrder.LITTLE_ENDIAN));
+		Assertions.assertEquals(value, reader.getInt(ByteOrder.LITTLE_ENDIAN));
 	}
 
 	@Test
@@ -111,7 +111,7 @@ class BitWriterTest{
 		BitBuffer reader = BitBuffer.wrap(writer);
 
 		Assertions.assertEquals("0001871B", reader.toString());
-		Assertions.assertEquals(value, reader.getInteger(ByteOrder.BIG_ENDIAN));
+		Assertions.assertEquals(value, reader.getInt(ByteOrder.BIG_ENDIAN));
 	}
 
 	@Test

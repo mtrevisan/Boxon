@@ -37,12 +37,12 @@ class CoderInt implements CoderInterface{
 
 		final Object value;
 		if(binding.unsigned()){
-			final long v = reader.getIntegerUnsigned(binding.byteOrder());
+			final long v = reader.getIntUnsigned(binding.byteOrder());
 
 			value = CoderHelper.converterDecode(binding.converter(), v);
 		}
 		else{
-			final int v = reader.getInteger(binding.byteOrder());
+			final int v = reader.getInt(binding.byteOrder());
 
 			value = CoderHelper.converterDecode(binding.converter(), v);
 		}

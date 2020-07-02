@@ -146,7 +146,7 @@ class BitBuffer{
 		if(inputClass == Short.class)
 			return getShort(byteOrder);
 		if(inputClass == Integer.class)
-			return getInteger(byteOrder);
+			return getInt(byteOrder);
 		if(inputClass == Long.class)
 			return getLong(byteOrder);
 		if(inputClass == Float.class)
@@ -307,7 +307,7 @@ class BitBuffer{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	An {@code int}.
 	 */
-	int getInteger(final ByteOrder byteOrder){
+	int getInt(final ByteOrder byteOrder){
 		final int value = (int)getValue(Integer.SIZE);
 		return (byteOrder == ByteOrder.BIG_ENDIAN? Integer.reverseBytes(value): value);
 	}
@@ -319,7 +319,7 @@ class BitBuffer{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	An unsigned {@code int}.
 	 */
-	long getIntegerUnsigned(final ByteOrder byteOrder){
+	long getIntUnsigned(final ByteOrder byteOrder){
 		final int value = (int)getValue(Integer.SIZE);
 		return ((long)(byteOrder == ByteOrder.BIG_ENDIAN? Integer.reverseBytes(value): value) & 0x0000_0000_FFFF_FFFFl);
 	}
@@ -344,7 +344,7 @@ class BitBuffer{
 	 * @return	A {@code float}.
 	 */
 	float getFloat(final ByteOrder byteOrder){
-		return Float.intBitsToFloat(getInteger(byteOrder));
+		return Float.intBitsToFloat(getInt(byteOrder));
 	}
 
 	/**
