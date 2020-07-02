@@ -274,7 +274,7 @@ class BitBuffer{
 	 */
 	short getShort(final ByteOrder byteOrder){
 		final short value = (short)getLong(Short.SIZE, ByteOrder.LITTLE_ENDIAN, true);
-		return (byteOrder == ByteOrder.BIG_ENDIAN? Short.reverseBytes(value): value);
+		return (short)ByteHelper.reverseBytes(value, Short.SIZE, byteOrder);
 	}
 
 	/**
@@ -286,7 +286,7 @@ class BitBuffer{
 	 */
 	int getShortUnsigned(final ByteOrder byteOrder){
 		final short value = (short)getLong(Short.SIZE, ByteOrder.LITTLE_ENDIAN, true);
-		return ((int)(byteOrder == ByteOrder.BIG_ENDIAN? Short.reverseBytes(value): value) & 0x0000_FFFF);
+		return (int)ByteHelper.reverseBytes(value, Short.SIZE, byteOrder);
 	}
 
 	/**
@@ -298,7 +298,7 @@ class BitBuffer{
 	 */
 	int getInt(final ByteOrder byteOrder){
 		final int value = (int)getLong(Integer.SIZE, ByteOrder.LITTLE_ENDIAN, true);
-		return (byteOrder == ByteOrder.BIG_ENDIAN? Integer.reverseBytes(value): value);
+		return (int)ByteHelper.reverseBytes(value, Integer.SIZE, byteOrder);
 	}
 
 	/**
@@ -310,7 +310,7 @@ class BitBuffer{
 	 */
 	long getIntUnsigned(final ByteOrder byteOrder){
 		final int value = (int)getLong(Integer.SIZE, ByteOrder.LITTLE_ENDIAN, true);
-		return ((long)(byteOrder == ByteOrder.BIG_ENDIAN? Integer.reverseBytes(value): value) & 0x0000_0000_FFFF_FFFFl);
+		return ByteHelper.reverseBytes(value, Integer.SIZE, byteOrder);
 	}
 
 	/**
@@ -322,7 +322,7 @@ class BitBuffer{
 	 */
 	long getLong(final ByteOrder byteOrder){
 		final long value = getLong(Long.SIZE, ByteOrder.LITTLE_ENDIAN, true);
-		return (byteOrder == ByteOrder.BIG_ENDIAN? Long.reverseBytes(value): value);
+		return ByteHelper.reverseBytes(value, Long.SIZE, byteOrder);
 	}
 
 	/**
