@@ -75,7 +75,6 @@ public @interface BindChecksum{
 	 *
 	 * @return	The class of a {@link Checksummer}
 	 */
-	@SuppressWarnings("rawtypes")
 	Class<? extends Checksummer> algorithm();
 
 	/**

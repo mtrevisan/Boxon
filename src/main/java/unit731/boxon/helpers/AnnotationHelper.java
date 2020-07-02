@@ -109,6 +109,7 @@ public class AnnotationHelper{
 	 * @param libraryName The name of the library to load the classes from
 	 * @return The classes
 	 */
+	@SuppressWarnings("unchecked")
 	private static <T> Set<Class<?>> extractClassesFromLibrary(final T type, final String libraryName){
 		final Set<Class<?>> classes = new HashSet<>();
 
@@ -124,7 +125,7 @@ public class AnnotationHelper{
 							.replace('/', '.');
 						final Class<?> cls = Class.forName(className.startsWith(BOOT_INF_CLASSES)?
 							className.substring(BOOT_INF_CLASSES.length()): className);
-						if(((Class)type).isAssignableFrom(cls))
+						if(((Class<?>)type).isAssignableFrom(cls))
 							classes.add(cls);
 					}
 					catch(final ClassNotFoundException ignored){}
@@ -143,6 +144,7 @@ public class AnnotationHelper{
 	 * @param packageName The package name for classes found inside the base directory
 	 * @return The classes
 	 */
+	@SuppressWarnings("unchecked")
 	private static <T> Set<Class<?>> extractClasses(final T type, final File directory, final String packageName){
 		final Set<Class<?>> classes = new HashSet<>();
 
@@ -161,7 +163,7 @@ public class AnnotationHelper{
 					try{
 						final String className = fileName.substring(0, fileName.length() - EXTENSION_CLASS.length());
 						final Class<?> cls = Class.forName(elem.packageName + POINT + className);
-						if(cls.isAnnotationPresent((Class<? extends Annotation>)type) || ((Class)type).isAssignableFrom(cls))
+						if(cls.isAnnotationPresent((Class<? extends Annotation>)type) || ((Class<?>)type).isAssignableFrom(cls))
 							classes.add(cls);
 					}
 					catch(final ClassNotFoundException ignored){}

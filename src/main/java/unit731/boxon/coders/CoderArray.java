@@ -91,9 +91,10 @@ class CoderArray implements CoderInterface{
 
 		if(alternatives.length > 0)
 			for(int i = 0; i < size; i ++){
-				CoderHelper.writePrefix(writer, array[i], CoderHelper.chooseAlternative(alternatives, array[i].getClass()), selectFrom);
+				final Class<?> cls = array[i].getClass();
+				CoderHelper.writePrefix(writer, CoderHelper.chooseAlternative(alternatives, cls), selectFrom);
 
-				final Codec<?> codec = Codec.createFrom(array[i].getClass());
+				final Codec<?> codec = Codec.createFrom(cls);
 
 				messageParser.encode(codec, array[i], writer);
 			}

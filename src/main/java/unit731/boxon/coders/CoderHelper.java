@@ -67,7 +67,7 @@ class CoderHelper{
 		return chosenAlternative;
 	}
 
-	static void writePrefix(final BitWriter writer, final Object value, final Choices.Choice chosenAlternative, final Choices selectFrom){
+	static void writePrefix(final BitWriter writer, final Choices.Choice chosenAlternative, final Choices selectFrom){
 		//if chosenAlternative.condition() contains '#prefix', then write @Choice.Prefix.value()
 		if(chosenAlternative.condition().contains("#" + CONTEXT_CHOICE_PREFIX)){
 			final int prefixSize = selectFrom.prefixSize();

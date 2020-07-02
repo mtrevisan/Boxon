@@ -83,7 +83,7 @@ public class ReflectionHelper{
 	}
 
 	private static Field getAccessibleField(Class<?> cls, final String fieldName) throws NoSuchFieldException{
-		Field field = null;
+		Field field;
 		while(true){
 			try{
 				field = cls.getDeclaredField(fieldName);

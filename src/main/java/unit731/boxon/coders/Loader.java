@@ -152,8 +152,8 @@ class Loader{
 		loadCoders(extractCallerClasses());
 	}
 
-	static Class[] extractCallerClasses(){
-		Class[] classes = new Class[0];
+	static Class<?>[] extractCallerClasses(){
+		Class<?>[] classes = new Class[0];
 		try{
 			final StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
 			final String callerClassName1 = stackTrace[2].getClassName();

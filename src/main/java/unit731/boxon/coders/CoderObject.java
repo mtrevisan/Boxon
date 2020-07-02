@@ -77,11 +77,11 @@ class CoderObject implements CoderInterface{
 		@SuppressWarnings("ConstantConditions")
 		final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): new Choices.Choice[0]);
 		if(alternatives.length > 0){
-			//write prefix
-			final Choices.Choice chosenAlternative = CoderHelper.chooseAlternative(alternatives, value.getClass());
-			CoderHelper.writePrefix(writer, value, chosenAlternative, selectFrom);
-
 			type = value.getClass();
+
+			//write prefix
+			final Choices.Choice chosenAlternative = CoderHelper.chooseAlternative(alternatives, type);
+			CoderHelper.writePrefix(writer, chosenAlternative, selectFrom);
 		}
 
 		final Codec<?> codec = Codec.createFrom(type);
