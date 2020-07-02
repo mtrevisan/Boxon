@@ -102,7 +102,7 @@ public class Parser{
 	 * Loads all the coders that extends {@link CoderInterface}.
 	 * <p>This method should be called from a method inside a class that lies on a parent of all the coders.</p>
 	 */
-	void loadCoders(){
+	public void loadCoders(){
 		messageParser.loader.loadCoders();
 	}
 
@@ -111,7 +111,7 @@ public class Parser{
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load coders
 	 */
-	void loadCoders(final Class<?>... basePackageClasses){
+	public void loadCoders(final Class<?>... basePackageClasses){
 		messageParser.loader.loadCoders(basePackageClasses);
 	}
 
@@ -120,7 +120,7 @@ public class Parser{
 	 *
 	 * @param coders	The list of coders to be loaded
 	 */
-	void loadCoders(final Collection<CoderInterface> coders){
+	public void loadCoders(final Collection<CoderInterface> coders){
 		loadCoders(coders.toArray(CoderInterface[]::new));
 	}
 
@@ -129,16 +129,28 @@ public class Parser{
 	 *
 	 * @param coders	The list of coders to be loaded
 	 */
-	void loadCoders(final CoderInterface... coders){
+	public void loadCoders(final CoderInterface... coders){
 		messageParser.loader.loadCoders(coders);
 	}
 
-	CoderInterface addCoder(final CoderInterface coder){
+	/**
+	 * Load a singe coder that extends {@link CoderInterface}.
+	 * <p>If the parser previously contained a coder for the given key, the old coder is replaced by the specified one.</p>
+	 *
+	 * @param coder	The coder to add
+	 * @return	The previous coder associated with {@link CoderInterface#coderType()}, or {@code null} if there was no previous coder.
+	 */
+	public CoderInterface addCoder(final CoderInterface coder){
 		return messageParser.loader.addCoder(coder);
 	}
 
 
-	public void setVerbose(final boolean verbose) throws SecurityException{
+	/**
+	 * Prints every read value.
+	 *
+	 * @param verbose	Whether to print every read value
+	 */
+	public void setVerbose(final boolean verbose){
 		messageParser.setVerbose(verbose);
 	}
 
@@ -190,7 +202,7 @@ public class Parser{
 	}
 
 	/**
-	 * Parse a message
+	 * Compose a list of messages
 	 *
 	 * @param data	The messages to be composed
 	 * @return	The composition response
@@ -200,7 +212,7 @@ public class Parser{
 	}
 
 	/**
-	 * Parse a message
+	 * Compose a message
 	 *
 	 * @param data	The message(s) to be composed
 	 * @return	The composition response

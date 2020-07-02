@@ -52,7 +52,7 @@ class MessageParser{
 	final Loader loader = new Loader();
 
 
-	void setVerbose(final boolean verbose) throws SecurityException{
+	void setVerbose(final boolean verbose){
 		this.verbose.set(verbose);
 	}
 

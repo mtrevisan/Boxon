@@ -208,6 +208,13 @@ class Loader{
 		LOGGER.trace("Coders loaded are {}", coders.length);
 	}
 
+	/**
+	 * Load a singe coder that extends {@link CoderInterface}.
+	 * <p>If the parser previously contained a coder for the given key, the old coder is replaced by the specified one.</p>
+	 *
+	 * @param coder	The coder to add
+	 * @return	The previous coder associated with {@link CoderInterface#coderType()}, or {@code null} if there was no previous coder.
+	 */
 	CoderInterface addCoder(final CoderInterface coder){
 		return coders.put(coder.coderType(), coder);
 	}
