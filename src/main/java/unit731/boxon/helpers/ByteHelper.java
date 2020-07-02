@@ -24,7 +24,7 @@
  */
 package unit731.boxon.helpers;
 
-import unit731.boxon.coders.ByteOrder;
+import unit731.boxon.annotations.ByteOrder;
 
 import java.math.BigInteger;
 import java.util.Arrays;

@@ -27,6 +27,7 @@ package unit731.boxon.coders;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import unit731.boxon.annotations.BindBits;
+import unit731.boxon.annotations.ByteOrder;
 import unit731.boxon.annotations.converters.Converter;
 import unit731.boxon.annotations.converters.NullConverter;
 import unit731.boxon.annotations.validators.NullValidator;

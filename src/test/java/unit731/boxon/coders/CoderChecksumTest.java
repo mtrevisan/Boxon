@@ -28,6 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import unit731.boxon.annotations.BindChecksum;
+import unit731.boxon.annotations.ByteOrder;
 import unit731.boxon.annotations.checksummers.CRC16;
 import unit731.boxon.annotations.checksummers.Checksummer;
 

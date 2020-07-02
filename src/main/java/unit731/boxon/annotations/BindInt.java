@@ -28,7 +28,6 @@ import unit731.boxon.annotations.converters.NullConverter;
 import unit731.boxon.annotations.converters.Converter;
 import unit731.boxon.annotations.validators.NullValidator;
 import unit731.boxon.annotations.validators.Validator;
-import unit731.boxon.coders.ByteOrder;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

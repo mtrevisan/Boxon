@@ -24,6 +24,7 @@
  */
 package unit731.boxon.coders;
 
+import unit731.boxon.annotations.ByteOrder;
 import unit731.boxon.helpers.ByteHelper;
 import unit731.boxon.helpers.ReflectionHelper;
 

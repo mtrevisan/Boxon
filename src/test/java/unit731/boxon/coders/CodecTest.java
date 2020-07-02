@@ -24,6 +24,7 @@
  */
 package unit731.boxon.coders;
 
+import unit731.boxon.annotations.ByteOrder;
 import unit731.boxon.annotations.Evaluate;
 import unit731.boxon.annotations.BindArray;
 import unit731.boxon.annotations.BindArrayPrimitive;

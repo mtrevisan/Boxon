@@ -25,6 +25,7 @@
 package unit731.boxon.coders;
 
 import unit731.boxon.annotations.BindLong;
+import unit731.boxon.annotations.ByteOrder;
 
 import java.lang.annotation.Annotation;
 

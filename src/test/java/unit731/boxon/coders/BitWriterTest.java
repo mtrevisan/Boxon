@@ -27,6 +27,7 @@ package unit731.boxon.coders;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import unit731.boxon.annotations.ByteOrder;
 
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;

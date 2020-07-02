@@ -30,6 +30,7 @@ import unit731.boxon.annotations.BindArray;
 import unit731.boxon.annotations.BindArrayPrimitive;
 import unit731.boxon.annotations.BindByte;
 import unit731.boxon.annotations.BindString;
+import unit731.boxon.annotations.ByteOrder;
 import unit731.boxon.annotations.Choices;
 import unit731.boxon.annotations.MessageHeader;
 import unit731.boxon.annotations.converters.NullConverter;

@@ -25,6 +25,7 @@
 package unit731.boxon.coders;
 
 import unit731.boxon.annotations.BindObject;
+import unit731.boxon.annotations.ByteOrder;
 import unit731.boxon.annotations.Choices;
 
 import java.lang.annotation.Annotation;

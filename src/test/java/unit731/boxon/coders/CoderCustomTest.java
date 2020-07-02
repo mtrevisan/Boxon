@@ -26,6 +26,7 @@ package unit731.boxon.coders;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import unit731.boxon.annotations.ByteOrder;
 
 import java.io.ByteArrayOutputStream;
 import java.lang.annotation.Annotation;
@@ -34,7 +35,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Array;
-import java.util.Collections;
 
 
 class CoderCustomTest{
