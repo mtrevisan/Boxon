@@ -121,7 +121,7 @@ public class Parser{
 	 * @param coders	The list of coders to be loaded
 	 */
 	public void loadCoders(final Collection<CoderInterface> coders){
-		loadCoders(coders.toArray(CoderInterface[]::new));
+		messageParser.loader.loadCoders(coders);
 	}
 
 	/**
@@ -153,6 +153,7 @@ public class Parser{
 	public void setVerbose(final boolean verbose){
 		messageParser.setVerbose(verbose);
 	}
+
 
 	/**
 	 * Parse a message
@@ -201,6 +202,7 @@ public class Parser{
 		return response;
 	}
 
+
 	/**
 	 * Compose a list of messages
 	 *
@@ -239,6 +241,7 @@ public class Parser{
 
 		return response;
 	}
+
 
 	private ParseException createParseException(final BitBuffer reader, final Throwable t){
 		final byte[] payload = reader.array();
