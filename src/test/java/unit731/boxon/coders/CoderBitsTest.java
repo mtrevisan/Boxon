@@ -82,9 +82,8 @@ class CoderBitsTest{
 			}
 		};
 
-		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(messageParser, writer, annotation, null, encodedValue);
+		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		byte[] bb = encodedValue.toByteArray();
@@ -96,7 +95,7 @@ class CoderBitsTest{
 		Assertions.assertEquals(ByteHelper.byteArrayToHexString(bb), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-		BitSet decoded = (BitSet)coder.decode(messageParser, reader, annotation, null);
+		BitSet decoded = (BitSet)coder.decode(reader, annotation, null);
 
 		ByteHelper.reverseBits(encodedValue, randomBytes.length * Byte.SIZE);
 		Assertions.assertEquals(encodedValue, decoded);
@@ -140,9 +139,8 @@ class CoderBitsTest{
 			}
 		};
 
-		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(messageParser, writer, annotation, null, encodedValue);
+		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		byte[] bb = encodedValue.toByteArray();
@@ -154,7 +152,7 @@ class CoderBitsTest{
 		Assertions.assertEquals(ByteHelper.byteArrayToHexString(bb), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-		BitSet decoded = (BitSet)coder.decode(messageParser, reader, annotation, null);
+		BitSet decoded = (BitSet)coder.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}

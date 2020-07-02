@@ -75,15 +75,14 @@ class CoderFloatTest{
 			}
 		};
 
-		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(messageParser, writer, annotation, null, encodedValue);
+		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals(StringUtils.leftPad(Integer.toHexString(Integer.reverseBytes(Float.floatToRawIntBits(encodedValue))).toUpperCase(Locale.ROOT), 8, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-		float decoded = (float)coder.decode(messageParser, reader, annotation, null);
+		float decoded = (float)coder.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -119,15 +118,14 @@ class CoderFloatTest{
 			}
 		};
 
-		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(messageParser, writer, annotation, null, encodedValue);
+		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals(StringUtils.leftPad(Integer.toHexString(Integer.reverseBytes(Float.floatToRawIntBits(encodedValue))).toUpperCase(Locale.ROOT), 8, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-		float decoded = (float)coder.decode(messageParser, reader, annotation, null);
+		float decoded = (float)coder.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -163,15 +161,14 @@ class CoderFloatTest{
 			}
 		};
 
-		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(messageParser, writer, annotation, null, encodedValue);
+		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals(StringUtils.leftPad(Integer.toHexString(Float.floatToRawIntBits(encodedValue)).toUpperCase(Locale.ROOT), 8, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-		float decoded = (float)coder.decode(messageParser, reader, annotation, null);
+		float decoded = (float)coder.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -207,15 +204,14 @@ class CoderFloatTest{
 			}
 		};
 
-		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(messageParser, writer, annotation, null, encodedValue);
+		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals(StringUtils.leftPad(Integer.toHexString(Float.floatToRawIntBits(encodedValue)).toUpperCase(Locale.ROOT), 8, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-		float decoded = (float)coder.decode(messageParser, reader, annotation, null);
+		float decoded = (float)coder.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}

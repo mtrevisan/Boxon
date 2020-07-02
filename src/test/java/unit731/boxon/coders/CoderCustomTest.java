@@ -48,7 +48,7 @@ class CoderCustomTest{
 	//(if the first bit of a byte is 1, then another byte is expected to follow)
 	class VariableLengthByteArray implements CoderInterface<VarLengthEncoded>{
 		@Override
-		public Object decode(final MessageParser messageParser, final BitBuffer reader, final VarLengthEncoded annotation, final Object data){
+		public Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
 			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			boolean continuing = true;
 			while(continuing){
@@ -61,7 +61,7 @@ class CoderCustomTest{
 		}
 
 		@Override
-		public void encode(final MessageParser messageParser, final BitWriter writer, final VarLengthEncoded annotation, final Object data, final Object value){
+		public void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
 			final int size = Array.getLength(value);
 			for(int i = 0; i < size; i ++)
 				writer.put((byte)((byte)Array.get(value, i) | (i < size - 1? (byte)0x80: 0x00)), ByteOrder.BIG_ENDIAN);
@@ -89,13 +89,13 @@ class CoderCustomTest{
 		};
 
 		BitWriter writer = new BitWriter();
-		coder.encode(messageParser, writer, annotation, null, encodedValue);
+		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertArrayEquals(new byte[]{(byte)0x81, (byte)0x82, 0x03}, writer.array());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-		byte[] decoded = (byte[])coder.decode(messageParser, reader, annotation, null);
+		byte[] decoded = (byte[])coder.decode(reader, annotation, null);
 
 		Assertions.assertArrayEquals(encodedValue, decoded);
 	}

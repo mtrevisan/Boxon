@@ -84,15 +84,14 @@ class CoderIntegerTest{
 			}
 		};
 
-		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(messageParser, writer, annotation, null, encodedValue);
+		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("201000", writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-		long decoded = (long)coder.decode(messageParser, reader, annotation, null);
+		long decoded = (long)coder.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -138,15 +137,14 @@ class CoderIntegerTest{
 			}
 		};
 
-		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(messageParser, writer, annotation, null, encodedValue);
+		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("002010", writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-		long decoded = (long)coder.decode(messageParser, reader, annotation, null);
+		long decoded = (long)coder.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -192,15 +190,14 @@ class CoderIntegerTest{
 			}
 		};
 
-		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(messageParser, writer, annotation, null, encodedValue);
+		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("FF007F", writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-		long decoded = (long)coder.decode(messageParser, reader, annotation, null);
+		long decoded = (long)coder.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -246,15 +243,14 @@ class CoderIntegerTest{
 			}
 		};
 
-		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(messageParser, writer, annotation, null, encodedValue);
+		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("11008F", writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-		long decoded = (long)coder.decode(messageParser, reader, annotation, null);
+		long decoded = (long)coder.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -301,15 +297,14 @@ class CoderIntegerTest{
 			}
 		};
 
-		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(messageParser, writer, annotation, null, encodedValue);
+		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("001020", writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-		long decoded = (long)coder.decode(messageParser, reader, annotation, null);
+		long decoded = (long)coder.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -355,15 +350,14 @@ class CoderIntegerTest{
 			}
 		};
 
-		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(messageParser, writer, annotation, null, encodedValue);
+		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("102000", writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-		long decoded = (long)coder.decode(messageParser, reader, annotation, null);
+		long decoded = (long)coder.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -409,15 +403,14 @@ class CoderIntegerTest{
 			}
 		};
 
-		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(messageParser, writer, annotation, null, encodedValue);
+		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("7F00FF", writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-		long decoded = (long)coder.decode(messageParser, reader, annotation, null);
+		long decoded = (long)coder.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -463,15 +456,14 @@ class CoderIntegerTest{
 			}
 		};
 
-		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(messageParser, writer, annotation, null, encodedValue);
+		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("8F0011", writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-		long decoded = (long)coder.decode(messageParser, reader, annotation, null);
+		long decoded = (long)coder.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -518,16 +510,15 @@ class CoderIntegerTest{
 			}
 		};
 
-		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(messageParser, writer, annotation, null, encodedValue);
+		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		BitSet bits = ByteHelper.bigIntegerToBitSet(encodedValue, 128, ByteOrder.LITTLE_ENDIAN);
 		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bits.toByteArray()).toUpperCase(Locale.ROOT), 32, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-		BigInteger decoded = (BigInteger)coder.decode(messageParser, reader, annotation, null);
+		BigInteger decoded = (BigInteger)coder.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -573,15 +564,14 @@ class CoderIntegerTest{
 			}
 		};
 
-		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(messageParser, writer, annotation, null, encodedValue);
+		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("00000000000000000000FFFF0000FF7F", writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-		BigInteger decoded = (BigInteger)coder.decode(messageParser, reader, annotation, null);
+		BigInteger decoded = (BigInteger)coder.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -627,15 +617,14 @@ class CoderIntegerTest{
 			}
 		};
 
-		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(messageParser, writer, annotation, null, encodedValue);
+		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("00000000000000000000FFFF0000FF80", writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-		BigInteger decoded = (BigInteger)coder.decode(messageParser, reader, annotation, null);
+		BigInteger decoded = (BigInteger)coder.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -682,15 +671,14 @@ class CoderIntegerTest{
 			}
 		};
 
-		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(messageParser, writer, annotation, null, encodedValue);
+		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("00FF0000FFFF00000000000000000000", writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-		BigInteger decoded = (BigInteger)coder.decode(messageParser, reader, annotation, null);
+		BigInteger decoded = (BigInteger)coder.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -736,15 +724,14 @@ class CoderIntegerTest{
 			}
 		};
 
-		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(messageParser, writer, annotation, null, encodedValue);
+		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("7FFF0000FFFF00000000000000000000", writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-		BigInteger decoded = (BigInteger)coder.decode(messageParser, reader, annotation, null);
+		BigInteger decoded = (BigInteger)coder.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -790,15 +777,14 @@ class CoderIntegerTest{
 			}
 		};
 
-		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(messageParser, writer, annotation, null, encodedValue);
+		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("80FF0000FFFF00000000000000000000", writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-		BigInteger decoded = (BigInteger)coder.decode(messageParser, reader, annotation, null);
+		BigInteger decoded = (BigInteger)coder.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}

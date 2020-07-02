@@ -28,33 +28,37 @@ import unit731.boxon.annotations.BindBits;
 import unit731.boxon.annotations.ByteOrder;
 import unit731.boxon.helpers.ByteHelper;
 
+import java.lang.annotation.Annotation;
 import java.util.BitSet;
 
 
 class CoderBits implements CoderInterface<BindBits>{
 
 	@Override
-	public Object decode(final MessageParser messageParser, final BitBuffer reader, final BindBits annotation, final Object data){
-		final int size = Evaluator.evaluate(annotation.size(), int.class, data);
+	public Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
+		final BindBits binding = (BindBits)annotation;
+
+		final int size = Evaluator.evaluate(binding.size(), int.class, data);
 		final BitSet bits = reader.getBits(size);
-		if(annotation.byteOrder() == ByteOrder.LITTLE_ENDIAN)
+		if(binding.byteOrder() == ByteOrder.LITTLE_ENDIAN)
 			ByteHelper.reverseBits(bits, size);
 
-		final Object value = CoderHelper.converterDecode(annotation.converter(), bits);
+		final Object value = CoderHelper.converterDecode(binding.converter(), bits);
 
-		CoderHelper.validateData(annotation.match(), annotation.validator(), value);
+		CoderHelper.validateData(binding.match(), binding.validator(), value);
 
 		return value;
 	}
 
 	@Override
-	public void encode(final MessageParser messageParser, final BitWriter writer, final BindBits annotation, final Object data,
-			final Object value){
-		CoderHelper.validateData(annotation.match(), annotation.validator(), value);
+	public void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
+		final BindBits binding = (BindBits)annotation;
 
-		final BitSet bits = CoderHelper.converterEncode(annotation.converter(), value);
-		final int size = Evaluator.evaluate(annotation.size(), int.class, data);
-		if(annotation.byteOrder() == ByteOrder.LITTLE_ENDIAN)
+		CoderHelper.validateData(binding.match(), binding.validator(), value);
+
+		final BitSet bits = CoderHelper.converterEncode(binding.converter(), value);
+		final int size = Evaluator.evaluate(binding.size(), int.class, data);
+		if(binding.byteOrder() == ByteOrder.LITTLE_ENDIAN)
 			ByteHelper.reverseBits(bits, size);
 
 		writer.putBits(bits, size);

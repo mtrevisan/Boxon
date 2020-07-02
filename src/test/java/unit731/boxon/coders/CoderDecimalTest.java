@@ -82,15 +82,14 @@ class CoderDecimalTest{
 			}
 		};
 
-		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(messageParser, writer, annotation, null, encodedValue);
+		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals(StringUtils.leftPad(Long.toHexString(Long.reverseBytes(Double.doubleToRawLongBits(encodedValue.doubleValue()))).toUpperCase(Locale.ROOT), 16, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-		BigDecimal decoded = (BigDecimal)coder.decode(messageParser, reader, annotation, null);
+		BigDecimal decoded = (BigDecimal)coder.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -131,15 +130,14 @@ class CoderDecimalTest{
 			}
 		};
 
-		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(messageParser, writer, annotation, null, encodedValue);
+		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals(StringUtils.leftPad(Long.toHexString(Long.reverseBytes(Double.doubleToRawLongBits(encodedValue.doubleValue()))).toUpperCase(Locale.ROOT), 16, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-		BigDecimal decoded = (BigDecimal)coder.decode(messageParser, reader, annotation, null);
+		BigDecimal decoded = (BigDecimal)coder.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -180,15 +178,14 @@ class CoderDecimalTest{
 			}
 		};
 
-		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(messageParser, writer, annotation, null, encodedValue);
+		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals(StringUtils.leftPad(Long.toHexString(Double.doubleToRawLongBits(encodedValue.doubleValue())).toUpperCase(Locale.ROOT), 8, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-		BigDecimal decoded = (BigDecimal)coder.decode(messageParser, reader, annotation, null);
+		BigDecimal decoded = (BigDecimal)coder.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -229,15 +226,14 @@ class CoderDecimalTest{
 			}
 		};
 
-		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(messageParser, writer, annotation, null, encodedValue);
+		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals(StringUtils.leftPad(Long.toHexString(Double.doubleToRawLongBits(encodedValue.doubleValue())).toUpperCase(Locale.ROOT), 8, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-		BigDecimal decoded = (BigDecimal)coder.decode(messageParser, reader, annotation, null);
+		BigDecimal decoded = (BigDecimal)coder.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}

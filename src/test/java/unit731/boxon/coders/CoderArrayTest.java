@@ -40,6 +40,7 @@ import unit731.boxon.annotations.validators.Validator;
 import unit731.boxon.coders.dtos.ComposeResponse;
 import unit731.boxon.coders.dtos.ParseResponse;
 import unit731.boxon.helpers.ByteHelper;
+import unit731.boxon.helpers.ReflectionHelper;
 
 import java.lang.annotation.Annotation;
 import java.util.Collections;
@@ -111,22 +112,21 @@ class CoderArrayTest{
 			}
 		};
 
-		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(messageParser, writer, annotation, null, encodedValue);
+		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertArrayEquals(new byte[]{0x00, 0x00, 0x01, 0x23, 0x00, 0x00, 0x04, 0x56}, writer.array());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-		Object decoded = coder.decode(messageParser, reader, annotation, null);
+		Object decoded = coder.decode(reader, annotation, null);
 
 		Assertions.assertArrayEquals(encodedValue, (int[])decoded);
 	}
 
 	@Test
-	void arrayOfSameObject(){
-		CoderInterface coder = new CoderArray();
+	void arrayOfSameObject() throws NoSuchFieldException{
+		CoderArray coder = new CoderArray();
 		Version[] encodedValue = new Version[]{new Version((byte)0, (byte)1, (byte)12), new Version((byte)1, (byte)2, (byte)0)};
 		BindArray annotation = new BindArray(){
 			@Override
@@ -182,14 +182,15 @@ class CoderArrayTest{
 
 		MessageParser messageParser = new MessageParser();
 		messageParser.loader.loadCoders();
+		ReflectionHelper.setFieldValue(coder, "messageParser", messageParser);
 		BitWriter writer = new BitWriter();
-		coder.encode(messageParser, writer, annotation, null, encodedValue);
+		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertArrayEquals(new byte[]{0x00, 0x01, 0x0C, 0x01, 0x02, 0x00}, writer.array());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-		Version[] decoded = (Version[])coder.decode(messageParser, reader, annotation, null);
+		Version[] decoded = (Version[])coder.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue.length, decoded.length);
 		Assertions.assertEquals(encodedValue[0].major, decoded[0].major);

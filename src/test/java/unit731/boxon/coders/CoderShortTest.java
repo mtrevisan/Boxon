@@ -75,15 +75,14 @@ class CoderShortTest{
 			}
 		};
 
-		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(messageParser, writer, annotation, null, encodedValue);
+		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("1000", writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-		short decoded = (short)coder.decode(messageParser, reader, annotation, null);
+		short decoded = (short)coder.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -119,15 +118,14 @@ class CoderShortTest{
 			}
 		};
 
-		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(messageParser, writer, annotation, null, encodedValue);
+		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("0010", writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-		short decoded = (short)coder.decode(messageParser, reader, annotation, null);
+		short decoded = (short)coder.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -163,15 +161,14 @@ class CoderShortTest{
 			}
 		};
 
-		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(messageParser, writer, annotation, null, encodedValue);
+		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("1080", writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-		short decoded = (short)coder.decode(messageParser, reader, annotation, null);
+		short decoded = (short)coder.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -207,15 +204,14 @@ class CoderShortTest{
 			}
 		};
 
-		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(messageParser, writer, annotation, null, encodedValue);
+		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals(StringUtils.leftPad(Integer.toHexString(Short.reverseBytes(encodedValue) & 0x0000_FFFF).toUpperCase(Locale.ROOT), 4, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-		short decoded = (short)coder.decode(messageParser, reader, annotation, null);
+		short decoded = (short)coder.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -251,15 +247,14 @@ class CoderShortTest{
 			}
 		};
 
-		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(messageParser, writer, annotation, null, encodedValue);
+		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("8F00", writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-		short decoded = (short)coder.decode(messageParser, reader, annotation, null);
+		short decoded = (short)coder.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -295,15 +290,14 @@ class CoderShortTest{
 			}
 		};
 
-		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(messageParser, writer, annotation, null, encodedValue);
+		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("007F", writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-		short decoded = (short)coder.decode(messageParser, reader, annotation, null);
+		short decoded = (short)coder.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -339,15 +333,14 @@ class CoderShortTest{
 			}
 		};
 
-		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(messageParser, writer, annotation, null, encodedValue);
+		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("7F00", writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-		short decoded = (short)coder.decode(messageParser, reader, annotation, null);
+		short decoded = (short)coder.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -383,15 +376,14 @@ class CoderShortTest{
 			}
 		};
 
-		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(messageParser, writer, annotation, null, encodedValue);
+		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals(StringUtils.leftPad(Integer.toHexString(encodedValue & 0x0000_FFFF).toUpperCase(Locale.ROOT), 4, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-		short decoded = (short)coder.decode(messageParser, reader, annotation, null);
+		short decoded = (short)coder.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}

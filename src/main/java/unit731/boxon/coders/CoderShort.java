@@ -26,28 +26,33 @@ package unit731.boxon.coders;
 
 import unit731.boxon.annotations.BindShort;
 
+import java.lang.annotation.Annotation;
+
 
 class CoderShort implements CoderInterface<BindShort>{
 
 	@Override
-	public Object decode(final MessageParser messageParser, final BitBuffer reader, final BindShort annotation, final Object data){
-		final short v = reader.getShort(annotation.byteOrder());
+	public Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
+		final BindShort binding = (BindShort)annotation;
 
-		final Object value = CoderHelper.converterDecode(annotation.converter(), v);
+		final short v = reader.getShort(binding.byteOrder());
 
-		CoderHelper.validateData(annotation.match(), annotation.validator(), value);
+		final Object value = CoderHelper.converterDecode(binding.converter(), v);
+
+		CoderHelper.validateData(binding.match(), binding.validator(), value);
 
 		return value;
 	}
 
 	@Override
-	public void encode(final MessageParser messageParser, final BitWriter writer, final BindShort annotation, final Object data,
-			final Object value){
-		CoderHelper.validateData(annotation.match(), annotation.validator(), value);
+	public void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
+		final BindShort binding = (BindShort)annotation;
 
-		final short v = CoderHelper.converterEncode(annotation.converter(), value);
+		CoderHelper.validateData(binding.match(), binding.validator(), value);
 
-		writer.putShort(v, annotation.byteOrder());
+		final short v = CoderHelper.converterEncode(binding.converter(), value);
+
+		writer.putShort(v, binding.byteOrder());
 	}
 
 	@Override

@@ -76,15 +76,14 @@ class CoderDoubleTest{
 			}
 		};
 
-		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(messageParser, writer, annotation, null, encodedValue);
+		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals(StringUtils.leftPad(Long.toHexString(Long.reverseBytes(Double.doubleToRawLongBits(encodedValue))).toUpperCase(Locale.ROOT), 16, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-		double decoded = (double)coder.decode(messageParser, reader, annotation, null);
+		double decoded = (double)coder.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -120,15 +119,14 @@ class CoderDoubleTest{
 			}
 		};
 
-		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(messageParser, writer, annotation, null, encodedValue);
+		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals(StringUtils.leftPad(Long.toHexString(Long.reverseBytes(Double.doubleToRawLongBits(encodedValue))).toUpperCase(Locale.ROOT), 16, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-		double decoded = (double)coder.decode(messageParser, reader, annotation, null);
+		double decoded = (double)coder.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -164,15 +162,14 @@ class CoderDoubleTest{
 			}
 		};
 
-		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(messageParser, writer, annotation, null, encodedValue);
+		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals(StringUtils.leftPad(Long.toHexString(Double.doubleToRawLongBits(encodedValue)).toUpperCase(Locale.ROOT), 8, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-		double decoded = (double)coder.decode(messageParser, reader, annotation, null);
+		double decoded = (double)coder.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -208,15 +205,14 @@ class CoderDoubleTest{
 			}
 		};
 
-		MessageParser messageParser = new MessageParser();
 		BitWriter writer = new BitWriter();
-		coder.encode(messageParser, writer, annotation, null, encodedValue);
+		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals(StringUtils.leftPad(Long.toHexString(Double.doubleToRawLongBits(encodedValue)).toUpperCase(Locale.ROOT), 8, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-		double decoded = (double)coder.decode(messageParser, reader, annotation, null);
+		double decoded = (double)coder.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}

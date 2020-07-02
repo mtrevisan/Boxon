@@ -26,28 +26,33 @@ package unit731.boxon.coders;
 
 import unit731.boxon.annotations.BindDouble;
 
+import java.lang.annotation.Annotation;
+
 
 class CoderDouble implements CoderInterface<BindDouble>{
 
 	@Override
-	public Object decode(final MessageParser messageParser, final BitBuffer reader, final BindDouble annotation, final Object data){
-		final double v = reader.getDouble(annotation.byteOrder());
+	public Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
+		final BindDouble binding = (BindDouble)annotation;
 
-		final Object value = CoderHelper.converterDecode(annotation.converter(), v);
+		final double v = reader.getDouble(binding.byteOrder());
 
-		CoderHelper.validateData(annotation.match(), annotation.validator(), value);
+		final Object value = CoderHelper.converterDecode(binding.converter(), v);
+
+		CoderHelper.validateData(binding.match(), binding.validator(), value);
 
 		return value;
 	}
 
 	@Override
-	public void encode(final MessageParser messageParser, final BitWriter writer, final BindDouble annotation, final Object data,
-			final Object value){
-		CoderHelper.validateData(annotation.match(), annotation.validator(), value);
+	public void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
+		final BindDouble binding = (BindDouble)annotation;
 
-		final double v = CoderHelper.converterEncode(annotation.converter(), value);
+		CoderHelper.validateData(binding.match(), binding.validator(), value);
 
-		writer.putDouble(v, annotation.byteOrder());
+		final double v = CoderHelper.converterEncode(binding.converter(), value);
+
+		writer.putDouble(v, binding.byteOrder());
 	}
 
 	@Override

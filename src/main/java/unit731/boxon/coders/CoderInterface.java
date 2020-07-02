@@ -29,10 +29,9 @@ import java.lang.annotation.Annotation;
 
 public interface CoderInterface<B extends Annotation>{
 
-	Object decode(final MessageParser messageParser, final BitBuffer reader, final B annotation, final Object data);
+	Object decode(final BitBuffer reader, final Annotation annotation, final Object data);
 
-	void encode(final MessageParser messageParser, final BitWriter writer, final B annotation, final Object data,
-		final Object value);
+	void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value);
 
 	/**
 	 * @return	The class of the annotation

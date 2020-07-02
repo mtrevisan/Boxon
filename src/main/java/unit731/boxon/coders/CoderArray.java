@@ -29,19 +29,26 @@ import unit731.boxon.annotations.ByteOrder;
 import unit731.boxon.annotations.Choices;
 import unit731.boxon.helpers.ReflectionHelper;
 
+import java.lang.annotation.Annotation;
 import java.math.BigInteger;
 
 
 class CoderArray implements CoderInterface<BindArray>{
 
+	/* NOTE: do NOT change this variable name! */
+	private MessageParser messageParser;
+
+
 	@Override
-	public Object decode(final MessageParser messageParser, final BitBuffer reader, final BindArray annotation, final Object data){
-		final int size = Evaluator.evaluate(annotation.size(), int.class, data);
-		final Choices selectFrom = annotation.selectFrom();
+	public Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
+		final BindArray binding = (BindArray)annotation;
+
+		final int size = Evaluator.evaluate(binding.size(), int.class, data);
+		final Choices selectFrom = binding.selectFrom();
 		@SuppressWarnings("ConstantConditions")
 		final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): new Choices.Choice[0]);
 
-		final Object[] array = ReflectionHelper.createArray(annotation.type(), size);
+		final Object[] array = ReflectionHelper.createArray(binding.type(), size);
 		if(alternatives.length > 0){
 			//read prefix
 			final int prefixSize = selectFrom.prefixSize();
@@ -60,30 +67,31 @@ class CoderArray implements CoderInterface<BindArray>{
 			}
 		}
 		else{
-			final Codec<?> codec = Codec.createFrom(annotation.type());
+			final Codec<?> codec = Codec.createFrom(binding.type());
 
 			for(int i = 0; i < size; i ++)
 				array[i] = messageParser.decode(codec, reader);
 		}
 
-		final Object value = CoderHelper.converterDecode(annotation.converter(), array);
+		final Object value = CoderHelper.converterDecode(binding.converter(), array);
 
-		CoderHelper.validateData(annotation.validator(), value);
+		CoderHelper.validateData(binding.validator(), value);
 
 		return value;
 	}
 
 	@Override
-	public void encode(final MessageParser messageParser, final BitWriter writer, final BindArray annotation, final Object data,
-			final Object value){
-		CoderHelper.validateData(annotation.validator(), value);
+	public void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
+		final BindArray binding = (BindArray)annotation;
 
-		final int size = Evaluator.evaluate(annotation.size(), int.class, data);
-		final Choices selectFrom = annotation.selectFrom();
+		CoderHelper.validateData(binding.validator(), value);
+
+		final int size = Evaluator.evaluate(binding.size(), int.class, data);
+		final Choices selectFrom = binding.selectFrom();
 		@SuppressWarnings("ConstantConditions")
 		final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): new Choices.Choice[0]);
 
-		final Object[] array = CoderHelper.converterEncode(annotation.converter(), value);
+		final Object[] array = CoderHelper.converterEncode(binding.converter(), value);
 
 		if(alternatives.length > 0)
 			for(int i = 0; i < size; i ++){
@@ -95,7 +103,7 @@ class CoderArray implements CoderInterface<BindArray>{
 				messageParser.encode(codec, array[i], writer);
 			}
 		else{
-			final Codec<?> codec = Codec.createFrom(annotation.type());
+			final Codec<?> codec = Codec.createFrom(binding.type());
 
 			for(int i = 0; i < size; i ++)
 				messageParser.encode(codec, array[i], writer);

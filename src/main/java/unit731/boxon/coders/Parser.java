@@ -120,7 +120,7 @@ public class Parser{
 	 *
 	 * @param coders	The list of coders to be loaded
 	 */
-	public void loadCoders(final Collection<CoderInterface> coders){
+	public void loadCoders(final Collection<CoderInterface<?>> coders){
 		messageParser.loader.loadCoders(coders);
 	}
 
@@ -129,7 +129,7 @@ public class Parser{
 	 *
 	 * @param coders	The list of coders to be loaded
 	 */
-	public void loadCoders(final CoderInterface... coders){
+	public void loadCoders(final CoderInterface<?>... coders){
 		messageParser.loader.loadCoders(coders);
 	}
 
@@ -140,7 +140,7 @@ public class Parser{
 	 * @param coder	The coder to add
 	 * @return	The previous coder associated with {@link CoderInterface#coderType()}, or {@code null} if there was no previous coder.
 	 */
-	public CoderInterface addCoder(final CoderInterface coder){
+	public CoderInterface<?> addCoder(final CoderInterface<?> coder){
 		return messageParser.loader.addCoder(coder);
 	}
 

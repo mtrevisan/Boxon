@@ -26,28 +26,33 @@ package unit731.boxon.coders;
 
 import unit731.boxon.annotations.BindFloat;
 
+import java.lang.annotation.Annotation;
+
 
 class CoderFloat implements CoderInterface<BindFloat>{
 
 	@Override
-	public Object decode(final MessageParser messageParser, final BitBuffer reader, final BindFloat annotation, final Object data){
-		final float v = reader.getFloat(annotation.byteOrder());
+	public Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
+		final BindFloat binding = (BindFloat)annotation;
 
-		final Object value = CoderHelper.converterDecode(annotation.converter(), v);
+		final float v = reader.getFloat(binding.byteOrder());
 
-		CoderHelper.validateData(annotation.match(), annotation.validator(), value);
+		final Object value = CoderHelper.converterDecode(binding.converter(), v);
+
+		CoderHelper.validateData(binding.match(), binding.validator(), value);
 
 		return value;
 	}
 
 	@Override
-	public void encode(final MessageParser messageParser, final BitWriter writer, final BindFloat annotation, final Object data,
-			final Object value){
-		CoderHelper.validateData(annotation.match(), annotation.validator(), value);
+	public void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
+		final BindFloat binding = (BindFloat)annotation;
 
-		final float v = CoderHelper.converterEncode(annotation.converter(), value);
+		CoderHelper.validateData(binding.match(), binding.validator(), value);
 
-		writer.putFloat(v, annotation.byteOrder());
+		final float v = CoderHelper.converterEncode(binding.converter(), value);
+
+		writer.putFloat(v, binding.byteOrder());
 	}
 
 	@Override

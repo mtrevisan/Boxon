@@ -41,6 +41,7 @@ import unit731.boxon.annotations.validators.Validator;
 import unit731.boxon.coders.dtos.ComposeResponse;
 import unit731.boxon.coders.dtos.ParseResponse;
 import unit731.boxon.helpers.ByteHelper;
+import unit731.boxon.helpers.ReflectionHelper;
 
 import java.lang.annotation.Annotation;
 import java.util.Collections;
@@ -63,8 +64,8 @@ class CoderObjectTest{
 
 
 	@Test
-	void object(){
-		CoderInterface coder = new CoderObject();
+	void object() throws NoSuchFieldException{
+		CoderObject coder = new CoderObject();
 		Version encodedValue = new Version((byte)1, (byte)2);
 		BindObject annotation = new BindObject(){
 			@Override
@@ -95,14 +96,15 @@ class CoderObjectTest{
 
 		MessageParser messageParser = new MessageParser();
 		messageParser.loader.loadCoders();
+		ReflectionHelper.setFieldValue(coder, "messageParser", messageParser);
 		BitWriter writer = new BitWriter();
-		coder.encode(messageParser, writer, annotation, null, encodedValue);
+		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertArrayEquals(new byte[]{0x01, 0x02}, writer.array());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-		Version decoded = (Version)coder.decode(messageParser, reader, annotation, null);
+		Version decoded = (Version)coder.decode(reader, annotation, null);
 
 		Assertions.assertNotNull(decoded);
 		Assertions.assertEquals(encodedValue.major, decoded.major);

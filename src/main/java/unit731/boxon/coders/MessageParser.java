@@ -66,12 +66,16 @@ class MessageParser{
 				continue;
 
 			final Annotation binding = field.getBinding();
-			final CoderInterface coder = loader.getCoder(binding.annotationType());
+			final CoderInterface<?> coder = loader.getCoder(binding.annotationType());
 			if(coder == null)
 				throw new IllegalArgumentException("Cannot find coder for binding @" + binding.annotationType().getSimpleName());
 
+			setMessageParser(coder);
+
 			try{
-				final Object value = coder.decode(this, reader, binding, data);
+				Annotation as = Arrays.asList(binding).stream().map(coder.coderType()::cast).findFirst().get();
+				@SuppressWarnings("unchecked")
+				final Object value = coder.decode(reader, binding, data);
 				ReflectionHelper.setFieldValue(data, field.getName(), value);
 
 				if(verbose.get())
@@ -156,6 +160,7 @@ class MessageParser{
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	<T> void encode(final Codec<?> codec, final T data, final BitWriter writer){
 		//encode message's fields:
 		final List<Codec.BoundedField> fields = codec.getBoundedFields();
@@ -166,13 +171,15 @@ class MessageParser{
 				continue;
 
 			final Annotation binding = field.getBinding();
-			final CoderInterface coder = loader.getCoder(binding.annotationType());
+			final CoderInterface<?> coder = loader.getCoder(binding.annotationType());
 			if(coder == null)
 				throw new IllegalArgumentException("Cannot find coder for binding @" + binding.annotationType().getSimpleName());
 
+			setMessageParser(coder);
+
 			try{
 				final Object value = ReflectionHelper.getFieldValue(data, field.getName());
-				coder.encode(this, writer, binding, data, value);
+				coder.encode(writer, binding, data, value);
 			}
 			catch(final Exception e){
 				manageCodecException(codec, field, e);
@@ -186,6 +193,13 @@ class MessageParser{
 			writer.putBytes(messageTerminator);
 		}
 		writer.flush();
+	}
+
+	private void setMessageParser(final CoderInterface<?> coder){
+		try{
+			ReflectionHelper.setFieldValue(coder, "messageParser", this);
+		}
+		catch(final Exception ignored){}
 	}
 
 	private void manageCodecException(final Codec<?> codec, final Codec.BoundedField field, final Exception e){

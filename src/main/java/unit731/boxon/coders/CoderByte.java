@@ -26,26 +26,31 @@ package unit731.boxon.coders;
 
 import unit731.boxon.annotations.BindByte;
 
+import java.lang.annotation.Annotation;
+
 
 class CoderByte implements CoderInterface<BindByte>{
 
 	@Override
-	public Object decode(final MessageParser messageParser, final BitBuffer reader, final BindByte annotation, final Object data){
+	public Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
+		final BindByte binding = (BindByte)annotation;
+
 		final byte v = reader.getByte();
 
-		final Object value = CoderHelper.converterDecode(annotation.converter(), v);
+		final Object value = CoderHelper.converterDecode(binding.converter(), v);
 
-		CoderHelper.validateData(annotation.match(), annotation.validator(), value);
+		CoderHelper.validateData(binding.match(), binding.validator(), value);
 
 		return value;
 	}
 
 	@Override
-	public void encode(final MessageParser messageParser, final BitWriter writer, final BindByte annotation, final Object data,
-			final Object value){
-		CoderHelper.validateData(annotation.match(), annotation.validator(), value);
+	public void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
+		final BindByte binding = (BindByte)annotation;
 
-		final byte v = CoderHelper.converterEncode(annotation.converter(), value);
+		CoderHelper.validateData(binding.match(), binding.validator(), value);
+
+		final byte v = CoderHelper.converterEncode(binding.converter(), value);
 
 		writer.putByte(v);
 	}

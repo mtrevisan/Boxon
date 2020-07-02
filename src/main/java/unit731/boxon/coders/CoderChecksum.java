@@ -27,20 +27,25 @@ package unit731.boxon.coders;
 import unit731.boxon.annotations.BindChecksum;
 import unit731.boxon.helpers.ReflectionHelper;
 
+import java.lang.annotation.Annotation;
+
 
 class CoderChecksum implements CoderInterface<BindChecksum>{
 
 	@Override
-	public Object decode(final MessageParser messageParser, final BitBuffer reader, final BindChecksum annotation, final Object data){
-		final Class<?> objectiveType = ReflectionHelper.objectiveType(annotation.type());
+	public Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
+		final BindChecksum binding = (BindChecksum)annotation;
 
-		return reader.get(objectiveType, annotation.byteOrder());
+		final Class<?> objectiveType = ReflectionHelper.objectiveType(binding.type());
+
+		return reader.get(objectiveType, binding.byteOrder());
 	}
 
 	@Override
-	public void encode(final MessageParser messageParser, final BitWriter writer, final BindChecksum annotation, final Object data,
-			final Object value){
-		writer.put(value, annotation.byteOrder());
+	public void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
+		final BindChecksum binding = (BindChecksum)annotation;
+
+		writer.put(value, binding.byteOrder());
 	}
 
 	@Override

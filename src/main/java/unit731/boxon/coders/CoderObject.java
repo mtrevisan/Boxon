@@ -28,15 +28,22 @@ import unit731.boxon.annotations.BindObject;
 import unit731.boxon.annotations.ByteOrder;
 import unit731.boxon.annotations.Choices;
 
+import java.lang.annotation.Annotation;
 import java.math.BigInteger;
 
 
 class CoderObject implements CoderInterface<BindObject>{
 
+	/* NOTE: do NOT change this variable name! */
+	private MessageParser messageParser;
+
+
 	@Override
-	public Object decode(final MessageParser messageParser, final BitBuffer reader, final BindObject annotation, final Object data){
-		Class<?> type = annotation.type();
-		final Choices selectFrom = annotation.selectFrom();
+	public Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
+		final BindObject binding = (BindObject)annotation;
+
+		Class<?> type = binding.type();
+		final Choices selectFrom = binding.selectFrom();
 		@SuppressWarnings("ConstantConditions")
 		final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): new Choices.Choice[0]);
 
@@ -56,20 +63,21 @@ class CoderObject implements CoderInterface<BindObject>{
 
 		final Object instance = messageParser.decode(codec, reader);
 
-		final Object value = CoderHelper.converterDecode(annotation.converter(), instance);
+		final Object value = CoderHelper.converterDecode(binding.converter(), instance);
 
-		CoderHelper.validateData(annotation.validator(), value);
+		CoderHelper.validateData(binding.validator(), value);
 
 		return value;
 	}
 
 	@Override
-	public void encode(final MessageParser messageParser, final BitWriter writer, final BindObject annotation, final Object data,
-			final Object value){
-		CoderHelper.validateData(annotation.validator(), value);
+	public void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
+		final BindObject binding = (BindObject)annotation;
 
-		Class<?> type = annotation.type();
-		final Choices selectFrom = annotation.selectFrom();
+		CoderHelper.validateData(binding.validator(), value);
+
+		Class<?> type = binding.type();
+		final Choices selectFrom = binding.selectFrom();
 		@SuppressWarnings("ConstantConditions")
 		final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): new Choices.Choice[0]);
 		if(alternatives.length > 0){
@@ -82,7 +90,7 @@ class CoderObject implements CoderInterface<BindObject>{
 
 		final Codec<?> codec = Codec.createFrom(type);
 
-		final Object array = CoderHelper.converterEncode(annotation.converter(), value);
+		final Object array = CoderHelper.converterEncode(binding.converter(), value);
 
 		messageParser.encode(codec, array, writer);
 	}

@@ -48,7 +48,7 @@ class Loader{
 	private static final Logger LOGGER = LoggerFactory.getLogger(Loader.class.getName());
 
 	private final Map<String, Codec<?>> codecs = new TreeMap<>(Comparator.comparingInt(String::length).reversed().thenComparing(String::compareTo));
-	private final Map<Class<?>, CoderInterface> coders = new HashMap<>();
+	private final Map<Class<?>, CoderInterface<?>> coders = new HashMap<>();
 
 	private final AtomicBoolean initialized = new AtomicBoolean(false);
 
@@ -173,10 +173,10 @@ class Loader{
 			Arrays.stream(basePackageClasses).map(Class::getPackageName).distinct().collect(Collectors.joining(", ", "[", "]")));
 
 		final Collection<Class<?>> derivedClasses = AnnotationHelper.extractClasses(CoderInterface.class, basePackageClasses);
-		final Collection<CoderInterface> coders = new ArrayList<>();
+		final Collection<CoderInterface<?>> coders = new ArrayList<>();
 		for(final Class<?> cls : derivedClasses)
 			if(!cls.isInterface()){
-				final CoderInterface coder = (CoderInterface)ReflectionHelper.createInstance(cls);
+				final CoderInterface<?> coder = (CoderInterface<?>)ReflectionHelper.createInstance(cls);
 				if(coder != null)
 					coders.add(coder);
 			}
@@ -190,7 +190,7 @@ class Loader{
 	 *
 	 * @param coders	The list of coders to be loaded
 	 */
-	void loadCoders(final Collection<CoderInterface> coders){
+	void loadCoders(final Collection<CoderInterface<?>> coders){
 		loadCoders(coders.toArray(CoderInterface[]::new));
 	}
 
@@ -199,10 +199,10 @@ class Loader{
 	 *
 	 * @param coders	The list of coders to be loaded
 	 */
-	void loadCoders(final CoderInterface... coders){
+	void loadCoders(final CoderInterface<?>... coders){
 		LOGGER.info("Load coders from input");
 
-		for(final CoderInterface coder : coders)
+		for(final CoderInterface<?> coder : coders)
 			addCoder(coder);
 
 		LOGGER.trace("Coders loaded are {}", coders.length);
@@ -215,11 +215,11 @@ class Loader{
 	 * @param coder	The coder to add
 	 * @return	The previous coder associated with {@link CoderInterface#coderType()}, or {@code null} if there was no previous coder.
 	 */
-	CoderInterface addCoder(final CoderInterface coder){
+	CoderInterface<?> addCoder(final CoderInterface<?> coder){
 		return coders.put(coder.coderType(), coder);
 	}
 
-	CoderInterface getCoder(final Class<?> type){
+	CoderInterface<?> getCoder(final Class<?> type){
 		return coders.get(type);
 	}
 

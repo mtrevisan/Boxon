@@ -26,30 +26,34 @@ package unit731.boxon.coders;
 
 import unit731.boxon.annotations.BindDecimal;
 
+import java.lang.annotation.Annotation;
 import java.math.BigDecimal;
 
 
 class CoderDecimal implements CoderInterface<BindDecimal>{
 
 	@Override
-	public Object decode(final MessageParser messageParser, final BitBuffer reader, final BindDecimal annotation, final Object data){
-		final BigDecimal v = reader.getDecimal(annotation.type(), annotation.byteOrder());
+	public Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
+		final BindDecimal binding = (BindDecimal)annotation;
 
-		final Object value = CoderHelper.converterDecode(annotation.converter(), v);
+		final BigDecimal v = reader.getDecimal(binding.type(), binding.byteOrder());
 
-		CoderHelper.validateData(annotation.match(), annotation.validator(), value);
+		final Object value = CoderHelper.converterDecode(binding.converter(), v);
+
+		CoderHelper.validateData(binding.match(), binding.validator(), value);
 
 		return value;
 	}
 
 	@Override
-	public void encode(final MessageParser messageParser, final BitWriter writer, final BindDecimal annotation, final Object data,
-			final Object value){
-		CoderHelper.validateData(annotation.match(), annotation.validator(), value);
+	public void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
+		final BindDecimal binding = (BindDecimal)annotation;
 
-		final BigDecimal v = CoderHelper.converterEncode(annotation.converter(), value);
+		CoderHelper.validateData(binding.match(), binding.validator(), value);
 
-		writer.putDecimal(v, annotation.type(), annotation.byteOrder());
+		final BigDecimal v = CoderHelper.converterEncode(binding.converter(), value);
+
+		writer.putDecimal(v, binding.type(), binding.byteOrder());
 	}
 
 	@Override
