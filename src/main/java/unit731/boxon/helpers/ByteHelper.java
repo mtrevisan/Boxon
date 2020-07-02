@@ -292,7 +292,8 @@ public class ByteHelper{
 	 *
 	 * @param value	the value, must not be <code>null</code>
 	 * @param size	The size in bits of the `value`
-	 * @return	The byte array (leading byte is always different from <code>0</code>), empty array if the value is zero.
+	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
+	 * @return	The {@link BitSet} representing the given value.
 	 */
 	public static BitSet bigIntegerToBitSet(final BigInteger value, final int size, final ByteOrder byteOrder){
 		byte[] array = value.toByteArray();

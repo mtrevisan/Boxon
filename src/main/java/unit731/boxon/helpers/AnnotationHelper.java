@@ -46,8 +46,11 @@ public class AnnotationHelper{
 	private AnnotationHelper(){}
 
 	/**
-	 * Retrieving fields list of specified class
-	 * If `recursively` is {@code true}, retrieving fields from all class hierarchy
+	 * Retrieving fields list of specified class.
+	 *
+	 * @param cls	The class from which to extract the declared fields
+	 * @param recursively	If {@code true}, it retrieves fields from all class hierarchy
+	 * @return	An array of all the fields of the given class
 	 */
 	public static Field[] getDeclaredFields(final Class<?> cls, @SuppressWarnings("SameParameterValue") final boolean recursively){
 		if(recursively){
@@ -70,7 +73,9 @@ public class AnnotationHelper{
 	/**
 	 * Scans all classes accessible from the context class loader which belong to the given package
 	 *
+	 * @param type	Whether a class or an interface (for example)
 	 * @param basePackageClasses	A list of classes that resides in a base package(s)
+	 * @param <T>	The class type of `type`
 	 * @return	The classes
 	 */
 	public static <T> Collection<Class<?>> extractClasses(final T type, final Class<?>... basePackageClasses){

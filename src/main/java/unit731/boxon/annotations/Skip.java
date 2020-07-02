@@ -43,7 +43,7 @@ import java.lang.annotation.Target;
  *
  * &#x40;Skip(size = "10")
  * private int unused;
- * </pre></code>
+ * </code></pre>
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)

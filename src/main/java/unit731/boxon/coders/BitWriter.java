@@ -144,6 +144,7 @@ class BitWriter{
 	 * Writes a value with the specified {@link ByteOrder} to this {@link BitWriter} using {@link Short#SIZE} bits.
 	 *
 	 * @param value	The {@code short} to write as an {@code int} for ease-of-use, but internally down-casted to a {@code short}.
+	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	The {@link BitWriter} to allow for the convenience of method-chaining.
 	 */
 	public BitWriter putShort(final short value, final ByteOrder byteOrder){
@@ -154,6 +155,7 @@ class BitWriter{
 	 * Writes a value with the specified {@link ByteOrder} to this {@link BitWriter} using {@link Integer#SIZE} bits.
 	 *
 	 * @param value	The {@code int} to write.
+	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	The {@link BitWriter} to allow for the convenience of method-chaining.
 	 */
 	public BitWriter putInteger(final int value, final ByteOrder byteOrder){
@@ -164,6 +166,7 @@ class BitWriter{
 	 * Writes a value with the specified {@link ByteOrder} to this {@link BitWriter} using {@link Long#SIZE} bits.
 	 *
 	 * @param value	The {@code long} to write.
+	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	The {@link BitWriter} to allow for the convenience of method-chaining.
 	 */
 	public BitWriter putLong(final long value, final ByteOrder byteOrder){
@@ -174,8 +177,8 @@ class BitWriter{
 	 * Writes a value with the specified {@link ByteOrder} to this {@link BitWriter} using {@link Float#SIZE} bits.
 	 *
 	 * @param value	The {@code float} to write.
+	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	The {@link BitWriter} to allow for the convenience of method-chaining.
-	 * @see	#putInteger(int, ByteOrder)
 	 */
 	public BitWriter putFloat(final float value, final ByteOrder byteOrder){
 		return putInteger(Float.floatToRawIntBits(value), byteOrder);
@@ -185,8 +188,8 @@ class BitWriter{
 	 * Writes a value with the specified {@link ByteOrder} to this {@link BitWriter} using {@link Double#SIZE} bits.
 	 *
 	 * @param value	The {@code double} to write.
+	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	The {@link BitWriter} to allow for the convenience of method-chaining.
-	 * @see	#putLong(long, ByteOrder)
 	 */
 	public BitWriter putDouble(final double value, final ByteOrder byteOrder){
 		return putLong(Double.doubleToRawLongBits(value), byteOrder);
@@ -197,6 +200,7 @@ class BitWriter{
 	 *
 	 * @param value	The {@code BigDecimal} to write.
 	 * @param cls	Either a {@code Float} or a {@link Double} class.
+	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	The {@link BitWriter} to allow for the convenience of method-chaining.
 	 */
 	public BitWriter putDecimal(final BigDecimal value, final Class<?> cls, final ByteOrder byteOrder){

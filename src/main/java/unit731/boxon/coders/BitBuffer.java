@@ -187,6 +187,8 @@ class BitBuffer{
 	 * Reads the next {@code length} bits and composes a <code>long</code>.
 	 *
 	 * @param length	The amount of bits to read.
+	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
+	 * @param unsigned	Whether the long will be treated as unsigned.
 	 * @return	A <code>long</code> value at the {@link BitBuffer}'s current position.
 	 */
 	public long getLong(final int length, final ByteOrder byteOrder, final boolean unsigned){
@@ -198,6 +200,7 @@ class BitBuffer{
 	 * Reads the next {@code length} bits and composes a {@link BigInteger}.
 	 *
 	 * @param length	The amount of bits to read.
+	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	A {@link BigInteger} value at the {@link BitBuffer}'s current position.
 	 */
 	public BigInteger getBigInteger(final int length, final ByteOrder byteOrder){
@@ -277,6 +280,7 @@ class BitBuffer{
 	 * Reads {@link Short#SIZE} bits from this {@link BitBuffer} and composes a {@code short} with the specified
 	 * {@link ByteOrder}.
 	 *
+	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	A {@code short}.
 	 */
 	public short getShort(final ByteOrder byteOrder){
@@ -288,7 +292,8 @@ class BitBuffer{
 	 * Reads {@link Short#SIZE} bits from this {@link BitBuffer} and composes a {@code short} with the specified
 	 * {@link ByteOrder}.
 	 *
-	 * @return    A {@code short}.
+	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
+	 * @return    An unsigned {@code short}.
 	 */
 	public int getShortUnsigned(final ByteOrder byteOrder){
 		final short value = (short)getValue(Short.SIZE);
@@ -299,6 +304,7 @@ class BitBuffer{
 	 * Reads {@link Integer#SIZE} bits from this {@link BitBuffer} and composes an {@code int} with the specified
 	 * {@link ByteOrder}.
 	 *
+	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	An {@code int}.
 	 */
 	public int getInteger(final ByteOrder byteOrder){
@@ -310,7 +316,8 @@ class BitBuffer{
 	 * Reads {@link Integer#SIZE} bits from this {@link BitBuffer} and composes an {@code int} with the specified
 	 * {@link ByteOrder}.
 	 *
-	 * @return    An {@code int}.
+	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
+	 * @return    An unsigned {@code int}.
 	 */
 	public long getIntegerUnsigned(final ByteOrder byteOrder){
 		final int value = (int)getValue(Integer.SIZE);
@@ -321,6 +328,7 @@ class BitBuffer{
 	 * Reads {@link Long#SIZE} bits from this {@link BitBuffer} and composes a {@code long} with the specified
 	 * {@link ByteOrder}.
 	 *
+	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	A {@code long}.
 	 */
 	public long getLong(final ByteOrder byteOrder){
@@ -332,8 +340,8 @@ class BitBuffer{
 	 * Reads {@link Float#SIZE} bits from this {@link BitBuffer} and composes a {@code float} with the specified
 	 * {@link ByteOrder}.
 	 *
+	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	A {@code float}.
-	 * @see	#getFloat(ByteOrder)
 	 */
 	public float getFloat(final ByteOrder byteOrder){
 		return Float.intBitsToFloat(getInteger(byteOrder));
@@ -343,8 +351,8 @@ class BitBuffer{
 	 * Reads {@link Double#SIZE} bits from this {@link BitBuffer} and composes a {@code double} with the specified
 	 * {@link ByteOrder}.
 	 *
+	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	A {@code double}.
-	 * @see	#getLong(ByteOrder)
 	 */
 	public double getDouble(final ByteOrder byteOrder){
 		return Double.longBitsToDouble(getLong(byteOrder));
@@ -355,8 +363,8 @@ class BitBuffer{
 	 * {@link ByteOrder}.
 	 *
 	 * @param cls	Either a {@code Float} or a {@link Double} class.
-	 * @return	A {@code double}.
-	 * @see	#getLong(ByteOrder)
+	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
+	 * @return	A {@link BigDecimal}.
 	 */
 	public BigDecimal getDecimal(final Class<?> cls, final ByteOrder byteOrder){
 		if(cls == Float.class)
