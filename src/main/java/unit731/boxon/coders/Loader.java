@@ -39,6 +39,7 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 
 class Loader{
@@ -54,13 +55,7 @@ class Loader{
 
 	/** This method should be called from a method inside a class that lies on a parent of all the decoders */
 	synchronized void init(){
-		try{
-			final StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-			final String callerClassName1 = stackTrace[2].getClassName();
-			final String callerClassName2 = stackTrace[3].getClassName();
-			init(Class.forName(callerClassName1), Class.forName(callerClassName2));
-		}
-		catch(final ClassNotFoundException ignored){}
+		init(extractCallerClasses());
 	}
 
 	/**
@@ -70,9 +65,8 @@ class Loader{
 	 */
 	synchronized void init(final Class<?>... basePackageClasses){
 		if(!initialized.get()){
-			LOGGER.info("Load parsing classes from package {}",
-				Arrays.toString(Arrays.stream(basePackageClasses).map(Class::getName)
-					.map(name -> name.substring(0, name.lastIndexOf('.'))).toArray(String[]::new)));
+			LOGGER.info("Load parsing classes from package(s) {}",
+				Arrays.stream(basePackageClasses).map(Class::getPackageName).distinct().collect(Collectors.joining(", ", "[", "]")));
 
 			final Collection<Class<?>> annotatedClasses = AnnotationHelper.extractClasses(MessageHeader.class, basePackageClasses);
 			final Collection<Codec<?>> codecs = new ArrayList<>();
@@ -155,22 +149,27 @@ class Loader{
 
 
 	static synchronized void loadCoders(){
+		loadCoders(extractCallerClasses());
+	}
+
+	static Class[] extractCallerClasses(){
+		Class[] classes = new Class[0];
 		try{
 			final StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
 			final String callerClassName1 = stackTrace[2].getClassName();
 			final String callerClassName2 = stackTrace[3].getClassName();
-			loadCoders(Class.forName(callerClassName1), Class.forName(callerClassName2));
+			classes = new Class[]{Class.forName(callerClassName1), Class.forName(callerClassName2)};
 		}
 		catch(final ClassNotFoundException ignored){}
+		return classes;
 	}
 
 	/**
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load coders
 	 */
 	static synchronized void loadCoders(final Class<?>... basePackageClasses){
-		LOGGER.info("Load coders from package {}",
-			Arrays.toString(Arrays.stream(basePackageClasses).map(Class::getName)
-				.map(name -> name.substring(0, name.lastIndexOf('.'))).toArray(String[]::new)));
+		LOGGER.info("Load coders from package(s) {}",
+			Arrays.stream(basePackageClasses).map(Class::getPackageName).distinct().collect(Collectors.joining(", ", "[", "]")));
 
 		final Collection<Class<?>> derivedClasses = AnnotationHelper.extractClasses(CoderInterface.class, basePackageClasses);
 		final Collection<CoderInterface> coders = new ArrayList<>();
