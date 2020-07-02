@@ -26,43 +26,38 @@ package unit731.boxon.coders;
 
 import unit731.boxon.annotations.BindStringTerminated;
 
-import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
 
 
-class CoderStringTerminated implements CoderInterface{
+class CoderStringTerminated implements CoderInterface<BindStringTerminated>{
 
 	@Override
-	public Object decode(final MessageParser messageParser, final BitBuffer reader, final Annotation annotation, final Object data){
-		final BindStringTerminated binding = (BindStringTerminated)annotation;
+	public Object decode(final MessageParser messageParser, final BitBuffer reader, final BindStringTerminated annotation, final Object data){
+		final Charset charset = Charset.forName(annotation.charset());
 
-		final Charset charset = Charset.forName(binding.charset());
+		final String text = reader.getTextUntilTerminator(annotation.terminator(), annotation.consumeTerminator(), charset);
 
-		final String text = reader.getTextUntilTerminator(binding.terminator(), binding.consumeTerminator(), charset);
+		final Object value = CoderHelper.converterDecode(annotation.converter(), text);
 
-		final Object value = CoderHelper.converterDecode(binding.converter(), text);
-
-		CoderHelper.validateData(binding.match(), binding.validator(), value);
+		CoderHelper.validateData(annotation.match(), annotation.validator(), value);
 
 		return value;
 	}
 
 	@Override
-	public void encode(final MessageParser messageParser, final BitWriter writer, final Annotation annotation, final Object data,
+	public void encode(final MessageParser messageParser, final BitWriter writer, final BindStringTerminated annotation, final Object data,
 			final Object value){
-		final BindStringTerminated binding = (BindStringTerminated)annotation;
+		CoderHelper.validateData(annotation.match(), annotation.validator(), value);
 
-		CoderHelper.validateData(binding.match(), binding.validator(), value);
+		final Charset charset = Charset.forName(annotation.charset());
 
-		final Charset charset = Charset.forName(binding.charset());
+		final String text = CoderHelper.converterEncode(annotation.converter(), value);
 
-		final String text = CoderHelper.converterEncode(binding.converter(), value);
-
-		writer.putText(text, binding.terminator(), binding.consumeTerminator(), charset);
+		writer.putText(text, annotation.terminator(), annotation.consumeTerminator(), charset);
 	}
 
 	@Override
-	public Class<? extends Annotation> coderType(){
+	public Class<BindStringTerminated> coderType(){
 		return BindStringTerminated.class;
 	}
 

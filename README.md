@@ -711,8 +711,8 @@ You can also define your own annotation by define an annotation and implementing
 //coder
 //the number of bytes to read is determined by the leading bit of each individual bytes
 //(if the first bit of a byte is 1, then another byte is expected to follow)
-class VariableLengthByteArray implements CoderInterface{
-    public Object decode(MessageParser messageParser, BitBuffer reader, Annotation annotation, Object data){
+class VariableLengthByteArray implements CoderInterface<VarLengthEncoded>{
+    public Object decode(MessageParser messageParser, BitBuffer reader, VarLengthEncoded annotation, Object data){
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         boolean continuing = true;
         while(continuing){
@@ -724,7 +724,7 @@ class VariableLengthByteArray implements CoderInterface{
         return baos.toByteArray();
     }
 
-    public void encode(MessageParser messageParser, BitWriter writer, Annotation annotation, Object data, Object value){
+    public void encode(MessageParser messageParser, BitWriter writer, VarLengthEncoded annotation, Object data, Object value){
         final int size = Array.getLength(value);
         for(int i = 0; i < size; i ++)
             writer.put((byte)((byte)Array.get(value, i) | (i < size - 1? (byte)0x80: 0x00)), ByteOrder.BIG_ENDIAN);

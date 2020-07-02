@@ -26,38 +26,32 @@ package unit731.boxon.coders;
 
 import unit731.boxon.annotations.BindInt;
 
-import java.lang.annotation.Annotation;
 
-
-class CoderInt implements CoderInterface{
+class CoderInt implements CoderInterface<BindInt>{
 
 	@Override
-	public Object decode(final MessageParser messageParser, final BitBuffer reader, final Annotation annotation, final Object data){
-		final BindInt binding = (BindInt)annotation;
+	public Object decode(final MessageParser messageParser, final BitBuffer reader, final BindInt annotation, final Object data){
+		final int v = reader.getInt(annotation.byteOrder());
 
-		final int v = reader.getInt(binding.byteOrder());
+		final Object value = CoderHelper.converterDecode(annotation.converter(), v);
 
-		final Object value = CoderHelper.converterDecode(binding.converter(), v);
-
-		CoderHelper.validateData(binding.match(), binding.validator(), value);
+		CoderHelper.validateData(annotation.match(), annotation.validator(), value);
 
 		return value;
 	}
 
 	@Override
-	public void encode(final MessageParser messageParser, final BitWriter writer, final Annotation annotation, final Object data,
+	public void encode(final MessageParser messageParser, final BitWriter writer, final BindInt annotation, final Object data,
 			final Object value){
-		final BindInt binding = (BindInt)annotation;
+		CoderHelper.validateData(annotation.match(), annotation.validator(), value);
 
-		CoderHelper.validateData(binding.match(), binding.validator(), value);
+		final int v = CoderHelper.converterEncode(annotation.converter(), value);
 
-		final int v = CoderHelper.converterEncode(binding.converter(), value);
-
-		writer.putInteger(v, binding.byteOrder());
+		writer.putInteger(v, annotation.byteOrder());
 	}
 
 	@Override
-	public Class<? extends Annotation> coderType(){
+	public Class<BindInt> coderType(){
 		return BindInt.class;
 	}
 

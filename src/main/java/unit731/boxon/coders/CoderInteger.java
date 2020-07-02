@@ -28,64 +28,59 @@ import unit731.boxon.annotations.BindInteger;
 import unit731.boxon.annotations.ByteOrder;
 import unit731.boxon.helpers.ByteHelper;
 
-import java.lang.annotation.Annotation;
 import java.math.BigInteger;
 import java.util.BitSet;
 
 
-class CoderInteger implements CoderInterface{
+class CoderInteger implements CoderInterface<BindInteger>{
 
 	@Override
-	public Object decode(final MessageParser messageParser, final BitBuffer reader, final Annotation annotation, final Object data){
-		final BindInteger binding = (BindInteger)annotation;
-
-		final int size = Evaluator.evaluate(binding.size(), int.class, data);
+	public Object decode(final MessageParser messageParser, final BitBuffer reader, final BindInteger annotation, final Object data){
+		final int size = Evaluator.evaluate(annotation.size(), int.class, data);
 
 		final Object value;
-		if(binding.allowPrimitive() && size < Long.SIZE){
-			final long v = reader.getLong(size, binding.byteOrder());
+		if(annotation.allowPrimitive() && size < Long.SIZE){
+			final long v = reader.getLong(size, annotation.byteOrder());
 
-			value = CoderHelper.converterDecode(binding.converter(), v);
+			value = CoderHelper.converterDecode(annotation.converter(), v);
 		}
 		else{
-			final BigInteger v = reader.getBigInteger(size, binding.byteOrder());
+			final BigInteger v = reader.getBigInteger(size, annotation.byteOrder());
 
-			value = CoderHelper.converterDecode(binding.converter(), v);
+			value = CoderHelper.converterDecode(annotation.converter(), v);
 		}
 
-		CoderHelper.validateData(binding.match(), binding.validator(), value);
+		CoderHelper.validateData(annotation.match(), annotation.validator(), value);
 
 		return value;
 	}
 
 	@Override
-	public void encode(final MessageParser messageParser, final BitWriter writer, final Annotation annotation, final Object data,
+	public void encode(final MessageParser messageParser, final BitWriter writer, final BindInteger annotation, final Object data,
 			final Object value){
-		final BindInteger binding = (BindInteger)annotation;
+		CoderHelper.validateData(annotation.match(), annotation.validator(), value);
 
-		CoderHelper.validateData(binding.match(), binding.validator(), value);
-
-		final int size = Evaluator.evaluate(binding.size(), int.class, data);
+		final int size = Evaluator.evaluate(annotation.size(), int.class, data);
 
 		final BigInteger v;
-		if(binding.allowPrimitive() && size < Long.SIZE){
-			final long vv = CoderHelper.converterEncode(binding.converter(), value);
+		if(annotation.allowPrimitive() && size < Long.SIZE){
+			final long vv = CoderHelper.converterEncode(annotation.converter(), value);
 
 			v = BigInteger.valueOf(Math.abs(vv));
 			if(vv < 0)
 				v.setBit(size);
 		}
 		else
-			v = CoderHelper.converterEncode(binding.converter(), value);
+			v = CoderHelper.converterEncode(annotation.converter(), value);
 
-		final ByteOrder byteOrder = binding.byteOrder();
+		final ByteOrder byteOrder = annotation.byteOrder();
 		final BitSet bits = ByteHelper.bigIntegerToBitSet(v, size, byteOrder);
 
 		writer.putBits(bits, size);
 	}
 
 	@Override
-	public Class<? extends Annotation> coderType(){
+	public Class<BindInteger> coderType(){
 		return BindInteger.class;
 	}
 

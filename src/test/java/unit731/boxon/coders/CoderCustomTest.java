@@ -46,9 +46,9 @@ class CoderCustomTest{
 
 	//the number of bytes to read is determined by the leading bit of each individual bytes
 	//(if the first bit of a byte is 1, then another byte is expected to follow)
-	class VariableLengthByteArray implements CoderInterface{
+	class VariableLengthByteArray implements CoderInterface<VarLengthEncoded>{
 		@Override
-		public Object decode(final MessageParser messageParser, final BitBuffer reader, final Annotation annotation, final Object data){
+		public Object decode(final MessageParser messageParser, final BitBuffer reader, final VarLengthEncoded annotation, final Object data){
 			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			boolean continuing = true;
 			while(continuing){
@@ -61,14 +61,14 @@ class CoderCustomTest{
 		}
 
 		@Override
-		public void encode(final MessageParser messageParser, final BitWriter writer, final Annotation annotation, final Object data, final Object value){
+		public void encode(final MessageParser messageParser, final BitWriter writer, final VarLengthEncoded annotation, final Object data, final Object value){
 			final int size = Array.getLength(value);
 			for(int i = 0; i < size; i ++)
 				writer.put((byte)((byte)Array.get(value, i) | (i < size - 1? (byte)0x80: 0x00)), ByteOrder.BIG_ENDIAN);
 		}
 
 		@Override
-		public Class<? extends Annotation> coderType(){
+		public Class<VarLengthEncoded> coderType(){
 			return VarLengthEncoded.class;
 		}
 	}

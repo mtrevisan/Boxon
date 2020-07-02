@@ -27,39 +27,33 @@ package unit731.boxon.coders;
 import unit731.boxon.annotations.BindLong;
 import unit731.boxon.annotations.ByteOrder;
 
-import java.lang.annotation.Annotation;
 
-
-class CoderLong implements CoderInterface{
+class CoderLong implements CoderInterface<BindLong>{
 
 	@Override
-	public Object decode(final MessageParser messageParser, final BitBuffer reader, final Annotation annotation, final Object data){
-		final BindLong binding = (BindLong)annotation;
+	public Object decode(final MessageParser messageParser, final BitBuffer reader, final BindLong annotation, final Object data){
+		final long v = reader.getLong(annotation.byteOrder());
 
-		final long v = reader.getLong(binding.byteOrder());
+		final Object value = CoderHelper.converterDecode(annotation.converter(), v);
 
-		final Object value = CoderHelper.converterDecode(binding.converter(), v);
-
-		CoderHelper.validateData(binding.match(), binding.validator(), value);
+		CoderHelper.validateData(annotation.match(), annotation.validator(), value);
 
 		return value;
 	}
 
 	@Override
-	public void encode(final MessageParser messageParser, final BitWriter writer, final Annotation annotation, final Object data,
+	public void encode(final MessageParser messageParser, final BitWriter writer, final BindLong annotation, final Object data,
 			final Object value){
-		final BindLong binding = (BindLong)annotation;
+		CoderHelper.validateData(annotation.match(), annotation.validator(), value);
 
-		CoderHelper.validateData(binding.match(), binding.validator(), value);
+		final long v = CoderHelper.converterEncode(annotation.converter(), value);
 
-		final long v = CoderHelper.converterEncode(binding.converter(), value);
-
-		final ByteOrder byteOrder = binding.byteOrder();
+		final ByteOrder byteOrder = annotation.byteOrder();
 		writer.putLong(v, byteOrder);
 	}
 
 	@Override
-	public Class<? extends Annotation> coderType(){
+	public Class<BindLong> coderType(){
 		return BindLong.class;
 	}
 

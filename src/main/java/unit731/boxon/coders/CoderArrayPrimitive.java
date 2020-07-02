@@ -27,50 +27,45 @@ package unit731.boxon.coders;
 import unit731.boxon.annotations.BindArrayPrimitive;
 import unit731.boxon.helpers.ReflectionHelper;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 
 
-class CoderArrayPrimitive implements CoderInterface{
+class CoderArrayPrimitive implements CoderInterface<BindArrayPrimitive>{
 
 	@Override
-	public Object decode(final MessageParser messageParser, final BitBuffer reader, final Annotation annotation, final Object data){
-		final BindArrayPrimitive binding = (BindArrayPrimitive)annotation;
-
-		final Class<?> type = binding.type();
-		final int size = Evaluator.evaluate(binding.size(), int.class, data);
+	public Object decode(final MessageParser messageParser, final BitBuffer reader, final BindArrayPrimitive annotation, final Object data){
+		final Class<?> type = annotation.type();
+		final int size = Evaluator.evaluate(annotation.size(), int.class, data);
 		final Class<?> objectiveType = ReflectionHelper.objectiveType(type.getComponentType());
 
 		final Object array = ReflectionHelper.createArrayPrimitive(type, size);
 		for(int i = 0; i < size; i ++){
-			final Object value = reader.get(objectiveType, binding.byteOrder());
+			final Object value = reader.get(objectiveType, annotation.byteOrder());
 			Array.set(array, i, value);
 		}
 
-		final Object value = CoderHelper.converterDecode(binding.converter(), array);
+		final Object value = CoderHelper.converterDecode(annotation.converter(), array);
 
-		CoderHelper.validateData(binding.validator(), value);
+		CoderHelper.validateData(annotation.validator(), value);
 
 		return value;
 	}
 
 	@Override
-	public void encode(final MessageParser messageParser, final BitWriter writer, final Annotation annotation, final Object data,
+	public void encode(final MessageParser messageParser, final BitWriter writer, final BindArrayPrimitive annotation, final Object data,
 			final Object value){
-		final BindArrayPrimitive binding = (BindArrayPrimitive)annotation;
+		CoderHelper.validateData(annotation.validator(), value);
 
-		CoderHelper.validateData(binding.validator(), value);
+		final int size = Evaluator.evaluate(annotation.size(), int.class, data);
 
-		final int size = Evaluator.evaluate(binding.size(), int.class, data);
-
-		final Object array = CoderHelper.converterEncode(binding.converter(), value);
+		final Object array = CoderHelper.converterEncode(annotation.converter(), value);
 
 		for(int i = 0; i < size; i ++)
-			writer.put(Array.get(array, i), binding.byteOrder());
+			writer.put(Array.get(array, i), annotation.byteOrder());
 	}
 
 	@Override
-	public Class<? extends Annotation> coderType(){
+	public Class<BindArrayPrimitive> coderType(){
 		return BindArrayPrimitive.class;
 	}
 

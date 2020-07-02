@@ -26,43 +26,38 @@ package unit731.boxon.coders;
 
 import unit731.boxon.annotations.BindString;
 
-import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
 
 
-class CoderString implements CoderInterface{
+class CoderString implements CoderInterface<BindString>{
 
 	@Override
-	public Object decode(final MessageParser messageParser, final BitBuffer reader, final Annotation annotation, final Object data){
-		final BindString binding = (BindString)annotation;
-
-		final int size = Evaluator.evaluate(binding.size(), int.class, data);
-		final Charset charset = Charset.forName(binding.charset());
+	public Object decode(final MessageParser messageParser, final BitBuffer reader, final BindString annotation, final Object data){
+		final int size = Evaluator.evaluate(annotation.size(), int.class, data);
+		final Charset charset = Charset.forName(annotation.charset());
 		final String text = reader.getText(size, charset);
 
-		final Object value = CoderHelper.converterDecode(binding.converter(), text);
+		final Object value = CoderHelper.converterDecode(annotation.converter(), text);
 
-		CoderHelper.validateData(binding.match(), binding.validator(), value);
+		CoderHelper.validateData(annotation.match(), annotation.validator(), value);
 
 		return value;
 	}
 
 	@Override
-	public void encode(final MessageParser messageParser, final BitWriter writer, final Annotation annotation, final Object data,
+	public void encode(final MessageParser messageParser, final BitWriter writer, final BindString annotation, final Object data,
 			final Object value){
-		final BindString binding = (BindString)annotation;
+		CoderHelper.validateData(annotation.match(), annotation.validator(), value);
 
-		CoderHelper.validateData(binding.match(), binding.validator(), value);
+		final String text = CoderHelper.converterEncode(annotation.converter(), value);
 
-		final String text = CoderHelper.converterEncode(binding.converter(), value);
-
-		final int size = Evaluator.evaluate(binding.size(), int.class, data);
-		final Charset charset = Charset.forName(binding.charset());
+		final int size = Evaluator.evaluate(annotation.size(), int.class, data);
+		final Charset charset = Charset.forName(annotation.charset());
 		writer.putText(text.substring(0, Math.min(text.length(), size)), charset);
 	}
 
 	@Override
-	public Class<? extends Annotation> coderType(){
+	public Class<BindString> coderType(){
 		return BindString.class;
 	}
 
