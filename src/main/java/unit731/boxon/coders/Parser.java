@@ -151,7 +151,7 @@ public class Parser{
 	 * @param verbose	Whether to print every read value
 	 */
 	public void setVerbose(final boolean verbose){
-		messageParser.setVerbose(verbose);
+		messageParser.verbose.set(verbose);
 	}
 
 

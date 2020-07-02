@@ -47,14 +47,10 @@ class MessageParser{
 	private static final Logger LOGGER = LoggerFactory.getLogger(MessageParser.class.getName());
 
 
-	private final AtomicBoolean verbose = new AtomicBoolean(false);
+	final AtomicBoolean verbose = new AtomicBoolean(false);
 
 	final Loader loader = new Loader();
 
-
-	void setVerbose(final boolean verbose){
-		this.verbose.set(verbose);
-	}
 
 	<T> T decode(final Codec<T> codec, final BitBuffer reader){
 		final int startPosition = reader.positionAsBits() / Byte.SIZE;
