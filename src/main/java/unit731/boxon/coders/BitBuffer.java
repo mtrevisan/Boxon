@@ -184,16 +184,16 @@ class BitBuffer{
 	}
 
 	/**
-	 * Reads the next {@code length} bits and composes a <code>long</code>.
+	 * Reads the next {@code length} bits (should be less than 64!) and composes a <code>long</code>.
 	 *
-	 * @param length	The amount of bits to read.
+	 * @param length	The amount of bits to read (should be less than 64!).
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @param unsigned	Whether the long will be treated as unsigned.
 	 * @return	A <code>long</code> value at the {@link BitBuffer}'s current position.
 	 */
 	long getLong(final int length, final ByteOrder byteOrder, final boolean unsigned){
 		final BitSet bits = getBits(length);
-		return ByteHelper.bitsToLong(bits, length, byteOrder, unsigned);
+		return (bits.length() > 0? ByteHelper.bitsToLong(bits, length, byteOrder, unsigned): 0l);
 	}
 
 	/**
@@ -209,23 +209,12 @@ class BitBuffer{
 	}
 
 	/**
-	 * Reads the next {@code length} bits and composes a {@link BitSet}.
-	 *
-	 * @param length	The amount of bits to read.
-	 * @return	A {@link BitSet} value at the {@link BitBuffer}'s current position.
-	 */
-	private long getValue(final int length){
-		final BitSet bits = getBits(length);
-		return (bits.length() > 0? bits.toLongArray()[0]: 0l);
-	}
-
-	/**
 	 * Reads {@link Byte#SIZE} bits from this {@link BitBuffer} and composes a {@code byte}.
 	 *
 	 * @return	A {@code byte}.
 	 */
 	byte getByte(){
-		return (byte)getValue(Byte.SIZE);
+		return (byte)getLong(Byte.SIZE, ByteOrder.LITTLE_ENDIAN, true);
 	}
 
 	/**
@@ -260,7 +249,7 @@ class BitBuffer{
 	 * @return	A {@code short}.
 	 */
 	short getByteUnsigned(){
-		return (short)(getValue(Byte.SIZE) & 0x0000_FFFF);
+		return (short)(getLong(Byte.SIZE, ByteOrder.LITTLE_ENDIAN, true) & 0x0000_FFFF);
 	}
 
 	/**
@@ -272,7 +261,7 @@ class BitBuffer{
 	byte[] getBytes(final int length){
 		final byte[] array = new byte[length];
 		for(int i = 0; i < length; i ++)
-			array[i] = (byte)getValue(Byte.SIZE);
+			array[i] = (byte)getLong(Byte.SIZE, ByteOrder.LITTLE_ENDIAN, true);
 		return array;
 	}
 
@@ -284,7 +273,7 @@ class BitBuffer{
 	 * @return	A {@code short}.
 	 */
 	short getShort(final ByteOrder byteOrder){
-		final short value = (short)getValue(Short.SIZE);
+		final short value = (short)getLong(Short.SIZE, ByteOrder.LITTLE_ENDIAN, true);
 		return (byteOrder == ByteOrder.BIG_ENDIAN? Short.reverseBytes(value): value);
 	}
 
@@ -296,7 +285,7 @@ class BitBuffer{
 	 * @return	An unsigned {@code short}.
 	 */
 	int getShortUnsigned(final ByteOrder byteOrder){
-		final short value = (short)getValue(Short.SIZE);
+		final short value = (short)getLong(Short.SIZE, ByteOrder.LITTLE_ENDIAN, true);
 		return ((int)(byteOrder == ByteOrder.BIG_ENDIAN? Short.reverseBytes(value): value) & 0x0000_FFFF);
 	}
 
@@ -308,7 +297,7 @@ class BitBuffer{
 	 * @return	An {@code int}.
 	 */
 	int getInt(final ByteOrder byteOrder){
-		final int value = (int)getValue(Integer.SIZE);
+		final int value = (int)getLong(Integer.SIZE, ByteOrder.LITTLE_ENDIAN, true);
 		return (byteOrder == ByteOrder.BIG_ENDIAN? Integer.reverseBytes(value): value);
 	}
 
@@ -320,7 +309,7 @@ class BitBuffer{
 	 * @return	An unsigned {@code int}.
 	 */
 	long getIntUnsigned(final ByteOrder byteOrder){
-		final int value = (int)getValue(Integer.SIZE);
+		final int value = (int)getLong(Integer.SIZE, ByteOrder.LITTLE_ENDIAN, true);
 		return ((long)(byteOrder == ByteOrder.BIG_ENDIAN? Integer.reverseBytes(value): value) & 0x0000_0000_FFFF_FFFFl);
 	}
 
@@ -332,7 +321,7 @@ class BitBuffer{
 	 * @return	A {@code long}.
 	 */
 	long getLong(final ByteOrder byteOrder){
-		final long value = getValue(Long.SIZE);
+		final long value = getLong(Long.SIZE, ByteOrder.LITTLE_ENDIAN, true);
 		return (byteOrder == ByteOrder.BIG_ENDIAN? Long.reverseBytes(value): value);
 	}
 
