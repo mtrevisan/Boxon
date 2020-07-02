@@ -133,7 +133,7 @@ class Loader{
 	}
 
 	Codec<?> getCodec(final BitBuffer reader){
-		final int index = reader.positionAsBits() / Byte.SIZE;
+		final int index = reader.position();
 
 		Codec<?> codec = null;
 		for(final Map.Entry<String, Codec<?>> codecElem : codecs.entrySet()){
@@ -243,7 +243,7 @@ class Loader{
 
 		final byte[] message = reader.array();
 		//search inside message:
-		final int startIndex = reader.positionAsBits() / Byte.SIZE;
+		final int startIndex = reader.position();
 		final int index = ByteHelper.indexOf(message, startMessageSequence, startIndex + 1, boundarySequenceLps);
 		return (index >= startIndex? index: -1);
 	}

@@ -53,7 +53,7 @@ class MessageParser{
 
 
 	<T> T decode(final Codec<T> codec, final BitBuffer reader){
-		final int startPosition = reader.positionAsBits() / Byte.SIZE;
+		final int startPosition = reader.position();
 
 		final T data = ReflectionHelper.createInstance(codec.getType());
 
@@ -129,7 +129,7 @@ class MessageParser{
 		if(checksumData != null){
 			final BindChecksum checksum = (BindChecksum)checksumData.getBinding();
 			startPosition += checksum.skipStart();
-			final int endPosition = reader.positionAsBits() / Byte.SIZE - checksum.skipEnd();
+			final int endPosition = reader.position() - checksum.skipEnd();
 
 			final Checksummer checksummer = ReflectionHelper.createInstance(checksum.algorithm());
 			final long startValue = checksum.startValue();

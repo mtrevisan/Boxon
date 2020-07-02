@@ -427,12 +427,12 @@ class BitBuffer{
 	}
 
 	/**
-	 * Gets the position of the backing {@link ByteBuffer} in {@code byte}s.
+	 * Gets the position of the backing {@link ByteBuffer} in integral number of {@code byte}s (lower bound).
 	 *
 	 * @return	The position of the backing buffer in {@code byte}s.
 	 */
 	int position(){
-		return buffer.position() - (remaining + 7) / Byte.SIZE;
+		return buffer.position() - (remaining + Byte.SIZE - 1) / Byte.SIZE;
 	}
 
 	/**
@@ -449,15 +449,6 @@ class BitBuffer{
 	private void resetInnerVariables(){
 		remaining = 0;
 		cache = 0;
-	}
-
-	/**
-	 * Gets the position of the backing {@link ByteBuffer} in {@code bit}s.
-	 *
-	 * @return	The position of the backing buffer in {@code bit}s.
-	 */
-	int positionAsBits(){
-		return buffer.position() * Byte.SIZE - remaining;
 	}
 
 	/**
