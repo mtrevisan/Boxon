@@ -31,6 +31,8 @@ import unit731.boxon.annotations.BindByte;
 import unit731.boxon.annotations.BindString;
 import unit731.boxon.annotations.MessageHeader;
 import unit731.boxon.annotations.converters.Converter;
+import unit731.boxon.coders.dtos.ParseException;
+import unit731.boxon.coders.dtos.ParseResponse;
 import unit731.boxon.helpers.ByteHelper;
 
 import java.util.Collections;

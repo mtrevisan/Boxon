@@ -423,7 +423,7 @@ class BitBuffer{
 	 * @return	The position of the backing buffer in {@code byte}s.
 	 */
 	public int position(){
-		return buffer.position();
+		return buffer.position() - (remaining + 7) / Byte.SIZE;
 	}
 
 	/**

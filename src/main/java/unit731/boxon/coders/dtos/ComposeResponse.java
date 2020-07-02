@@ -22,27 +22,27 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package unit731.boxon.coders;
+package unit731.boxon.coders.dtos;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class ParseResponse{
+public class ComposeResponse{
 
-	private final List<Object> parsedMessages = new ArrayList<>();
-	private final List<ParseException> errors = new ArrayList<>(0);
+	private byte[] composedMessage;
+	private final List<ComposeException> errors = new ArrayList<>(0);
 
 
-	public void addParsedMessage(final Object decodedMessage){
-		parsedMessages.add(decodedMessage);
+	public void setComposedMessage(final byte[] composedMessages){
+		this.composedMessage = composedMessages;
 	}
 
-	public List<Object> getParsedMessages(){
-		return parsedMessages;
+	public byte[] getComposedMessage(){
+		return composedMessage;
 	}
 
-	public void addError(final ParseException exception){
+	public void addError(final ComposeException exception){
 		errors.add(exception);
 	}
 
@@ -51,7 +51,7 @@ public class ParseResponse{
 	}
 
 	@SuppressWarnings("unused")
-	public List<ParseException> getErrors(){
+	public List<ComposeException> getErrors(){
 		return errors;
 	}
 

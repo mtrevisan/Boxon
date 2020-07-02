@@ -36,6 +36,8 @@ import unit731.boxon.annotations.converters.NullConverter;
 import unit731.boxon.annotations.converters.Converter;
 import unit731.boxon.annotations.validators.NullValidator;
 import unit731.boxon.annotations.validators.Validator;
+import unit731.boxon.coders.dtos.ComposeResponse;
+import unit731.boxon.coders.dtos.ParseResponse;
 import unit731.boxon.helpers.ByteHelper;
 
 import java.lang.annotation.Annotation;

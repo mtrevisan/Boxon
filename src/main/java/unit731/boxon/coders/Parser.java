@@ -24,6 +24,11 @@
  */
 package unit731.boxon.coders;
 
+import unit731.boxon.coders.dtos.ComposeException;
+import unit731.boxon.coders.dtos.ComposeResponse;
+import unit731.boxon.coders.dtos.ParseException;
+import unit731.boxon.coders.dtos.ParseResponse;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -136,7 +141,7 @@ public class Parser{
 		//check if there are unread bytes:
 		if(!response.hasErrors() && reader.hasRemaining()){
 			final IllegalArgumentException error = new IllegalArgumentException("There are remaining bytes");
-			final ParseException pe = new ParseException(reader, error);
+			final ParseException pe = new ParseException(reader.array(), reader.position(), error);
 			response.addError(pe);
 		}
 

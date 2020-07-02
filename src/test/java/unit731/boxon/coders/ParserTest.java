@@ -24,6 +24,8 @@
  */
 package unit731.boxon.coders;
 
+import unit731.boxon.coders.dtos.ComposeResponse;
+import unit731.boxon.coders.dtos.ParseResponse;
 import unit731.boxon.coders.queclink.DeviceTypes;
 import unit731.boxon.helpers.ByteHelper;
 import org.apache.commons.lang3.ArrayUtils;

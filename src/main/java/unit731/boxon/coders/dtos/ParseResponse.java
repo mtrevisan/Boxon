@@ -22,43 +22,37 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package unit731.boxon.coders;
+package unit731.boxon.coders.dtos;
 
-import unit731.boxon.helpers.ByteHelper;
-import unit731.boxon.helpers.ExceptionHelper;
-
-import java.util.StringJoiner;
+import java.util.ArrayList;
+import java.util.List;
 
 
-public class ParseException extends Exception{
+public class ParseResponse{
 
-	private static final long serialVersionUID = -7230533024483622086L;
-
-
-	private final byte[] wholeMessage;
-	private final int errorIndex;
+	private final List<Object> parsedMessages = new ArrayList<>();
+	private final List<ParseException> errors = new ArrayList<>(0);
 
 
-	public ParseException(final BitBuffer reader, final Throwable cause){
-		this(reader.array(), reader.position(), cause);
+	public void addParsedMessage(final Object decodedMessage){
+		parsedMessages.add(decodedMessage);
 	}
 
-	public ParseException(final byte[] wholeMessage, final int errorIndex, final Throwable cause){
-		super(cause);
-
-		this.wholeMessage = wholeMessage;
-		this.errorIndex = errorIndex;
+	public List<Object> getParsedMessages(){
+		return parsedMessages;
 	}
 
-	@Override
-	public String getMessage(){
-		final StringJoiner sj = new StringJoiner(System.lineSeparator());
-		sj.add("Error decoding message: " + ByteHelper.byteArrayToHexString(wholeMessage));
-		if(getCause() != null)
-			sj.add(ExceptionHelper.getMessageNoLineNumber(getCause()));
-		if(errorIndex >= 0)
-			sj.add("   at index " + errorIndex);
-		return sj.toString();
+	public void addError(final ParseException exception){
+		errors.add(exception);
+	}
+
+	public boolean hasErrors(){
+		return !errors.isEmpty();
+	}
+
+	@SuppressWarnings("unused")
+	public List<ParseException> getErrors(){
+		return errors;
 	}
 
 }
