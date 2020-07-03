@@ -180,7 +180,7 @@ public class ByteHelper{
 	 * @return	The 2-complement expressed as int
 	 */
 	public static int extendSign(final int value, final int size){
-		final int shift = Integer.SIZE - size;
+		final int shift = -size;
 		return (value << shift) >> shift;
 	}
 
