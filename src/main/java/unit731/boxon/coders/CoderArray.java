@@ -35,6 +35,7 @@ import java.math.BigInteger;
 
 class CoderArray implements CoderInterface<BindArray>{
 
+	@SuppressWarnings("unused")
 	private MessageParser messageParser;
 
 

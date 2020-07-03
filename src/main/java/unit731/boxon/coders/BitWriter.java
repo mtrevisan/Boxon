@@ -24,8 +24,6 @@
  */
 package unit731.boxon.coders;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import unit731.boxon.annotations.ByteOrder;
 import unit731.boxon.helpers.ByteHelper;
 import unit731.boxon.helpers.ReflectionHelper;
@@ -42,9 +40,6 @@ import java.util.BitSet;
  * @see <a href="https://git.irsamc.ups-tlse.fr/scemama/Bit-Twiddling-Hacks/">Bit Twiddling Hacks</a>
  */
 class BitWriter{
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(BitWriter.class.getName());
-
 
 	/** The backing {@link ByteArrayOutputStream} */
 	private final ByteArrayOutputStream os = new ByteArrayOutputStream(0);

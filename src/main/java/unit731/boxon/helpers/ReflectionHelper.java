@@ -123,7 +123,7 @@ public class ReflectionHelper{
 			//go up to parent class
 			cls = cls.getSuperclass();
 			if(cls == Object.class)
-				throw new NoSuchFieldException("Cannot find a fild with type " + fieldType.getSimpleName());
+				throw new NoSuchFieldException("Cannot find a file with type " + fieldType.getSimpleName());
 		}
 		return field;
 	}
