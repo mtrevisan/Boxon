@@ -39,13 +39,6 @@ public class ByteHelper{
 
 	private ByteHelper(){}
 
-	public static boolean hasBit(final byte mask, final int index){
-		if(index < 0 || index >= Byte.SIZE)
-			throw new IllegalArgumentException("Index value must be between 0 and " + (Byte.SIZE - 1) + " inclusive, was " + index);
-
-		return ((mask & (1 << (index % Byte.SIZE))) != 0);
-	}
-
 
 	/**
 	 * Returns the starting position of the first occurrence of the specified pattern array within the specified source array,
@@ -160,10 +153,10 @@ public class ByteHelper{
 	/**
 	 * Apply mask and shift right (<code>maskByte(27, 0x18) = 3</code>)
 	 *
-	 * @param value	The value to which to apply the mask and the right shift
-	 * @param size	Size in bits of the given value
-	 * @param mask	The mask
-	 * @return	The masked and shifter value
+	 * @param value    The value to which to apply the mask and the right shift
+	 * @param size    Size in bits of the given value
+	 * @param mask    The mask
+	 * @return    The masked and shifter value
 	 */
 	public static long applyMaskAndShift(long value, final int size, long mask){
 		final int ctz = Long.numberOfTrailingZeros(mask);
@@ -182,6 +175,13 @@ public class ByteHelper{
 	public static int extendSign(final int value, final int size){
 		final int shift = -size;
 		return (value << shift) >> shift;
+	}
+
+	public static boolean hasBit(final byte mask, final int index){
+		if(index < 0 || index >= Byte.SIZE)
+			throw new IllegalArgumentException("Index value must be between 0 and " + (Byte.SIZE - 1) + " inclusive, was " + index);
+
+		return ((mask & (1 << (index % Byte.SIZE))) != 0);
 	}
 
 	public static void reverseBits(final BitSet input, final int size){
