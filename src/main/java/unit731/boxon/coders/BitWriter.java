@@ -72,9 +72,8 @@ class BitWriter{
 	 *
 	 * @param value	The value to write.
 	 * @param length	The amount of bits to use when writing {@code value}.
-	 * @return	The {@link BitWriter} to allow for the convenience of method-chaining.
 	 */
-	BitWriter putBits(final BitSet value, int length){
+	void putBits(final BitSet value, int length){
 		//if the value that we're writing is too large to be placed entirely in the cache, then we need to place as
 		//much as we can in the cache (the least significant bits), flush the cache to the backing ByteBuffer, and
 		//place the rest in the cache
@@ -94,45 +93,36 @@ class BitWriter{
 				resetInnerVariables();
 			}
 		}
-		return this;
 	}
 
 	/**
 	 * Writes {@code value} to this {@link BitWriter} using {@code length} bits.
 	 *
 	 * @param value	The value to write.
-	 * @param length	The amount of bits to use when writing {@code value}.
-	 * @return	The {@link BitWriter} to allow for the convenience of method-chaining.
+	 * @param length	The amount of bits to use when writing {@code value} (must be less than or equals to {@link Long#SIZE}).
 	 */
-	private BitWriter putValue(final long value, final int length){
-		if(length > Long.SIZE)
-			throw new IllegalArgumentException("Cannot write that much bits from a long: " + length);
-
+	private void putValue(final long value, final int length){
 		final BitSet bits = BitSet.valueOf(new long[]{value});
 		putBits(bits, length);
-		return this;
 	}
 
 	/**
 	 * Writes a value to this {@link BitWriter} using {@link Byte#SIZE} bits.
 	 *
 	 * @param value	The {@code byte} to write.
-	 * @return	The {@link BitWriter} to allow for the convenience of method-chaining.
 	 */
-	BitWriter putByte(final byte value){
-		return putValue(value, Byte.SIZE);
+	void putByte(final byte value){
+		putValue(value, Byte.SIZE);
 	}
 
 	/**
 	 * Writes an array of {@code byte}s to this {@link BitWriter} using {@link Byte#SIZE} bits for each {@code byte}.
 	 *
 	 * @param array	The array of {@code byte}s to write.
-	 * @return	The {@link BitWriter} to allow for the convenience of method-chaining.
 	 */
-	BitWriter putBytes(final byte[] array){
+	void putBytes(final byte[] array){
 		for(final byte value : array)
 			putByte(value);
-		return this;
 	}
 
 	/**
@@ -140,10 +130,9 @@ class BitWriter{
 	 *
 	 * @param value	The {@code short} to write as an {@code int} for ease-of-use, but internally down-casted to a {@code short}.
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
-	 * @return	The {@link BitWriter} to allow for the convenience of method-chaining.
 	 */
-	BitWriter putShort(final short value, final ByteOrder byteOrder){
-		return putValue(byteOrder == ByteOrder.BIG_ENDIAN? Short.reverseBytes(value): value, Short.SIZE);
+	void putShort(final short value, final ByteOrder byteOrder){
+		putValue(byteOrder == ByteOrder.BIG_ENDIAN? Short.reverseBytes(value): value, Short.SIZE);
 	}
 
 	/**
@@ -151,10 +140,9 @@ class BitWriter{
 	 *
 	 * @param value	The {@code int} to write.
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
-	 * @return	The {@link BitWriter} to allow for the convenience of method-chaining.
 	 */
-	BitWriter putInteger(final int value, final ByteOrder byteOrder){
-		return putValue((byteOrder == ByteOrder.BIG_ENDIAN? Integer.reverseBytes(value): value), Integer.SIZE);
+	void putInteger(final int value, final ByteOrder byteOrder){
+		putValue((byteOrder == ByteOrder.BIG_ENDIAN? Integer.reverseBytes(value): value), Integer.SIZE);
 	}
 
 	/**
@@ -162,10 +150,9 @@ class BitWriter{
 	 *
 	 * @param value	The {@code long} to write.
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
-	 * @return	The {@link BitWriter} to allow for the convenience of method-chaining.
 	 */
-	BitWriter putLong(final long value, final ByteOrder byteOrder){
-		return putValue((byteOrder == ByteOrder.BIG_ENDIAN? Long.reverseBytes(value): value), Long.SIZE);
+	void putLong(final long value, final ByteOrder byteOrder){
+		putValue((byteOrder == ByteOrder.BIG_ENDIAN? Long.reverseBytes(value): value), Long.SIZE);
 	}
 
 	/**
@@ -173,10 +160,9 @@ class BitWriter{
 	 *
 	 * @param value	The {@code float} to write.
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
-	 * @return	The {@link BitWriter} to allow for the convenience of method-chaining.
 	 */
-	BitWriter putFloat(final float value, final ByteOrder byteOrder){
-		return putInteger(Float.floatToRawIntBits(value), byteOrder);
+	void putFloat(final float value, final ByteOrder byteOrder){
+		putInteger(Float.floatToRawIntBits(value), byteOrder);
 	}
 
 	/**
@@ -184,10 +170,9 @@ class BitWriter{
 	 *
 	 * @param value	The {@code double} to write.
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
-	 * @return	The {@link BitWriter} to allow for the convenience of method-chaining.
 	 */
-	BitWriter putDouble(final double value, final ByteOrder byteOrder){
-		return putLong(Double.doubleToRawLongBits(value), byteOrder);
+	void putDouble(final double value, final ByteOrder byteOrder){
+		putLong(Double.doubleToRawLongBits(value), byteOrder);
 	}
 
 	/**
@@ -196,13 +181,12 @@ class BitWriter{
 	 * @param value	The {@code BigDecimal} to write.
 	 * @param cls	Either a {@code Float} or a {@link Double} class.
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
-	 * @return	The {@link BitWriter} to allow for the convenience of method-chaining.
 	 */
-	BitWriter putDecimal(final BigDecimal value, final Class<?> cls, final ByteOrder byteOrder){
+	void putDecimal(final BigDecimal value, final Class<?> cls, final ByteOrder byteOrder){
 		if(cls == Float.class)
-			return putFloat(value.floatValue(), byteOrder);
+			putFloat(value.floatValue(), byteOrder);
 		else if(cls == Double.class)
-			return putDouble(value.doubleValue(), byteOrder);
+			putDouble(value.doubleValue(), byteOrder);
 		else
 			throw new IllegalArgumentException("Cannot write " + BigDecimal.class.getSimpleName() + " as a " + cls.getSimpleName());
 	}
@@ -212,11 +196,9 @@ class BitWriter{
 	 *
 	 * @param text	The {@code String}s to be written.
 	 * @param charset	The charset.
-	 * @return	A {@link String} of length {@code n} coded with a given {@link Charset} that contains {@code char}s
-	 * 	read from this {@link BitBuffer}.
 	 */
-	BitWriter putText(final String text, final Charset charset){
-		return putBytes(text.getBytes(charset));
+	void putText(final String text, final Charset charset){
+		putBytes(text.getBytes(charset));
 	}
 
 	/**
@@ -225,14 +207,11 @@ class BitWriter{
 	 * @param text	The {@code String}s to be written.
 	 * @param terminator	The terminator.
 	 * @param charset	The charset.
-	 * @return	A {@link String} of length {@code n} coded with a given {@link Charset} that contains {@code char}s
-	 * 	read from this {@link BitBuffer}.
 	 */
-	BitWriter putText(final String text, final byte terminator, final boolean consumeTerminator, final Charset charset){
+	void putText(final String text, final byte terminator, final boolean consumeTerminator, final Charset charset){
 		putBytes(text.getBytes(charset));
 		if(consumeTerminator)
 			putByte(terminator);
-		return this;
 	}
 
 
