@@ -56,7 +56,7 @@ class Loader{
 	Loader(){}
 
 	/**
-	 * Loads all the protocol classes annotated with `MessageHeader`.
+	 * Loads all the protocol classes annotated with {@link MessageHeader}.
 	 * <p>This method should be called from a method inside a class that lies on a parent of all the protocol classes.</p>
 	 */
 	synchronized void init(){
@@ -64,7 +64,7 @@ class Loader{
 	}
 
 	/**
-	 * Loads all the protocol classes annotated with `MessageHeader`.
+	 * Loads all the protocol classes annotated with {@link MessageHeader}.
 	 * <p>This method should be called before instantiating a {@link Parser}.</p>
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes
@@ -90,7 +90,7 @@ class Loader{
 	}
 
 	/**
-	 * Loads all the protocol classes annotated with `MessageHeader`.
+	 * Loads all the protocol classes annotated with {@link MessageHeader}.
 	 * <p>This method should be called before instantiating a {@link Parser}.</p>
 	 *
 	 * @param codecs	The list of codecs to be loaded

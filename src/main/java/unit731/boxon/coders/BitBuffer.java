@@ -357,6 +357,7 @@ class BitBuffer{
 	}
 
 	private void getTextUntilTerminator(final OutputStreamWriter os, final byte terminator, final boolean consumeTerminator) throws IOException{
+		//FIXME revise this algorithm...
 		while(buffer.position() < buffer.limit() || remaining > 0){
 			final byte byteRead = (consumeTerminator? getByte(): peekByte());
 			if(byteRead == terminator)
@@ -374,7 +375,7 @@ class BitBuffer{
 		//reset the buffer's position and limit
 		buffer.clear();
 
-		//set remainingBits to 0 so that, on the next call to getBits, the cache will be reset
+		/** reset {@link #remaining} so that, on the next call to {@link #getBits(int)}, the cache will be reset */
 		resetInnerVariables();
 	}
 

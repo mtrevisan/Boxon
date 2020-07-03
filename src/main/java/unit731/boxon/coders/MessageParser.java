@@ -102,7 +102,7 @@ class MessageParser{
 	private <T> void skip(final Skip skip, final BitBuffer reader, final T data){
 		final int size = (isNotBlank(skip.size())? Evaluator.evaluate(skip.size(), Integer.class, data): 0);
 		if(size > 0)
-			//skip `size` bits
+			/** skip {@link size} bits */
 			reader.skip(size);
 		else
 			//skip until terminator
@@ -213,7 +213,7 @@ class MessageParser{
 	private <T> void addSkip(final Skip skip, final BitWriter writer, final T data){
 		final int size = (isNotBlank(skip.size())? Evaluator.evaluate(skip.size(), Integer.class, data): 0);
 		if(size > 0)
-			//skip `size` bits
+			/** skip {@link size} bits */
 			writer.putBits(new BitSet(size), size);
 		else if(skip.consumeTerminator())
 			//skip until terminator

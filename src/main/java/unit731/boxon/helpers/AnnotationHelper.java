@@ -73,9 +73,9 @@ public class AnnotationHelper{
 	/**
 	 * Scans all classes accessible from the context class loader which belong to the given package
 	 *
-	 * @param type	Whether a class or an interface (for example)
-	 * @param basePackageClasses	A list of classes that resides in a base package(s)
-	 * @param <T>	The class type of `type`
+	 * @param <T>	The class type of type.
+	 * @param type	Whether a class or an interface (for example).
+	 * @param basePackageClasses	A list of classes that resides in a base package(s).
 	 * @return	The classes
 	 */
 	public static <T> Collection<Class<?>> extractClasses(final T type, final Class<?>... basePackageClasses){

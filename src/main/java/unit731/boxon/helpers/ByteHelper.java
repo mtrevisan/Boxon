@@ -43,7 +43,7 @@ public class ByteHelper{
 	/**
 	 * Returns the starting position of the first occurrence of the specified pattern array within the specified source array,
 	 * or {@code -1} if there is no such occurrence.
-	 * More formally, returns the lowest index `i` such that {@code source.subArray(i, i + pattern.size()).equals(pattern)},
+	 * More formally, returns the lowest index such that {@code source.subArray(i, i + pattern.size()).equals(pattern)},
 	 * or {@code -1} if there is no such index.<br>
 	 * (Returns {@code -1} if {@code pattern.size() > source.size()})
 	 * <p>
@@ -219,8 +219,8 @@ public class ByteHelper{
 	/**
 	 * Converts a BigInteger into a byte array ignoring the sign of the BigInteger, according to SRP specification
 	 *
-	 * @param value	the value, must not be <code>null</code>
-	 * @param size	The size in bits of the `value`
+	 * @param value	the value, must not be <code>null</code>.
+	 * @param size	The size in bits of the value.
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	The {@link BitSet} representing the given value.
 	 */

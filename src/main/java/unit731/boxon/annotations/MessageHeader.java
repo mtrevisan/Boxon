@@ -53,7 +53,7 @@ public @interface MessageHeader{
 	String end() default "";
 
 	/**
-	 * The type of encoding used for the `start`, `end`, and `separator` fields.
+	 * The type of encoding used for the {@link #start()} and {@link #end()} fields.
 	 *
 	 * @return	The type of encoding used. Defaults to `UTF-8`.
 	 */

@@ -122,7 +122,7 @@ class Codec<T>{
 	private final MessageHeader header;
 	private final List<BoundedField> boundedFields = new ArrayList<>(0);
 	private final List<EvaluatedField> evaluatedFields = new ArrayList<>(0);
-	//necessary to speed-up the creation of a Codec (technically not needed because it's already present somewhere inside `boundedFields`)
+	/** necessary to speed-up the creation of a Codec (technically not needed because it's already present somewhere inside {@link #boundedFields}) */
 	private BoundedField checksum;
 
 
