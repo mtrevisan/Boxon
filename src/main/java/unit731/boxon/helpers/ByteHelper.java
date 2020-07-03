@@ -181,12 +181,12 @@ public class ByteHelper{
 		return ((mask & (1 << (index % Byte.SIZE))) != 0);
 	}
 
-	public static void reverseBits(final BitSet input, final int size){
-		for(int i = 0; i < size / 2; i ++){
-			final boolean t = input.get(i);
-			input.set(i, input.get(size - i - 1));
-			input.set(size - i - 1, t);
-		}
+	public static void reverseBits(final BitSet value, final int size){
+		for(int start = 0, end = size - 1; start < end; start ++, end --)
+			if(value.get(start) != value.get(end)){
+				value.flip(start);
+				value.flip(end);
+			}
 	}
 
 	public static long reverseBytes(final long value, final int size, final ByteOrder byteOrder){
@@ -243,7 +243,7 @@ public class ByteHelper{
 	/**
 	 * Reverses the order of the given array.
 	 *
-	 * @param array	The array to reverse, may be {@code null}
+	 * @param array	The array to reverse
 	 */
 	private static void reverse(final byte[] array){
 		int i = 0;
