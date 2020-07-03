@@ -640,7 +640,7 @@ public class IMEIConverter implements Converter<byte[], String>{
         final StringBuffer sb = new StringBuffer();
         for(int i = 0; i < 7; i ++)
             sb.append(String.format("%02d", value[i] & 255));
-        sb.append(ByteHelper.applyMaskAndShift(value[7], (byte)0x0F));
+        sb.append(ByteHelper.applyMaskAndShift(value[7], Byte.SIZE, (byte)0x0F));
         return sb.toString();
     }
 

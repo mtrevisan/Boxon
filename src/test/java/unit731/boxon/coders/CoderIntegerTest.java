@@ -514,7 +514,7 @@ class CoderIntegerTest{
 		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		BitSet bits = ByteHelper.bigIntegerToBitSet(encodedValue, 128, ByteOrder.LITTLE_ENDIAN);
+		BitSet bits = ByteHelper.integerToBits(encodedValue, 128, ByteOrder.LITTLE_ENDIAN);
 		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.byteArrayToHexString(bits.toByteArray()).toUpperCase(Locale.ROOT), 32, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);

@@ -204,7 +204,7 @@ class BitBuffer{
 	 */
 	BigInteger getBigInteger(final int length, final ByteOrder byteOrder){
 		final BitSet bits = getBits(length);
-		return ByteHelper.bitsToBigInteger(bits, length, byteOrder);
+		return ByteHelper.bitsToInteger(bits, length, byteOrder);
 	}
 
 	/**

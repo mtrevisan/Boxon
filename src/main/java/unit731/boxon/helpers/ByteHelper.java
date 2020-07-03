@@ -42,6 +42,7 @@ public class ByteHelper{
 		return ((mask & (1 << (index % Byte.SIZE))) != 0);
 	}
 
+
 	/**
 	 * Returns the starting position of the first occurrence of the specified pattern array within the specified source array,
 	 * or {@code -1} if there is no such occurrence.
@@ -118,6 +119,7 @@ public class ByteHelper{
 		return lps;
 	}
 
+
 	/**
 	 * Converts an array of bytes into a string representing the hexadecimal values of each byte in order
 	 *
@@ -150,90 +152,20 @@ public class ByteHelper{
 		return data;
 	}
 
-	/**
-	 * Apply mask and shift right (<code>maskByte(27, 0x18) = 3</code>)
-	 *
-	 * @param value	The value to which to apply the mask and the right shift
-	 * @param mask	The mask
-	 * @return	The masked and shifter value
-	 */
-	public static byte applyMaskAndShift(byte value, byte mask){
-		final byte ctz = countTrailingZeros(mask);
-		value = (byte)((value & mask) >> ctz);
-		mask = (byte)(0xFF >>> ctz);
-		return (byte)(value & mask);
-	}
 
 	/**
 	 * Apply mask and shift right (<code>maskByte(27, 0x18) = 3</code>)
 	 *
 	 * @param value	The value to which to apply the mask and the right shift
+	 * @param size	Size in bits of the given value
 	 * @param mask	The mask
 	 * @return	The masked and shifter value
 	 */
-	public static int applyMaskAndShift(int value, int mask){
-		final int ctz = countTrailingZeros(mask);
+	public static long applyMaskAndShift(long value, final int size, long mask){
+		final int ctz = Long.numberOfTrailingZeros(mask);
 		value = ((value & mask) >> ctz);
-		mask = (0xFFFF_FFFF >>> ctz);
+		mask = (((1 << size) - 1) >>> ctz);
 		return (value & mask);
-	}
-
-	/**
-	 * Compute <code>((highValue &amp; highMask) &lt;&lt; count-leading-ones(lowMask) | (lowValue &amp; lowMask) &gt;&gt;&gt; count-trailing-zeros(lowMask))</code>
-	 *
-	 * @param highValue	The high value
-	 * @param highMask	The mask to apply to the high value
-	 * @param lowValue	The low value
-	 * @param lowMask	The mask to apply to the low value
-	 * @return	The composed value of high value, masked with its mask, and shifted by the low mask length, with the masked low value
-	 */
-	public static int compose(final byte highValue, final byte highMask, final byte lowValue, final byte lowMask){
-		final byte clo = countTrailingZeros((byte)~applyMaskAndShift((byte)0xFF, lowMask));
-		return ((highValue & highMask) << clo) | applyMaskAndShift((int)lowValue & 0xFF, lowMask);
-	}
-
-	private static byte countTrailingZeros(byte x){
-		byte n = Byte.SIZE;
-		if(x != 0){
-			n = 0;
-			if((x & 0x0F) == 0){
-				n += 4;
-				x >>= 4;
-			}
-			if((x & 0x03) == 0){
-				n += 2;
-				x >>= 2;
-			}
-			if((x & 0x01) == 0)
-				n ++;
-		}
-		return n;
-	}
-
-	private static int countTrailingZeros(int x){
-		byte n = Integer.SIZE;
-		if(x != 0){
-			n = 0;
-			if((x & 0x0000_FFFF) == 0){
-				n += 8;
-				x >>= 8;
-			}
-			if((x & 0x0000_00FF) == 0){
-				n += 8;
-				x >>= 8;
-			}
-			if((x & 0x0000_000F) == 0){
-				n += 4;
-				x >>= 4;
-			}
-			if((x & 0x0000_0003) == 0){
-				n += 2;
-				x >>= 2;
-			}
-			if((x & 0x0000_0001) == 0)
-				n ++;
-		}
-		return n;
 	}
 
 	/**
@@ -243,14 +175,9 @@ public class ByteHelper{
 	 * @param size	Length in bits of the field
 	 * @return	The 2-complement expressed as int
 	 */
-	public static int convert2Complement(final int value, final int size){
+	public static int extendSign(final int value, final int size){
 		final int shift = Integer.SIZE - size;
 		return (value << shift) >> shift;
-	}
-
-	public static long extendSign(final long value, final int size){
-		final long mask = 1l << (size - 1);
-		return (value ^ mask) - mask;
 	}
 
 	public static void reverseBits(final BitSet input, final int size){
@@ -265,12 +192,13 @@ public class ByteHelper{
 		return (byteOrder == ByteOrder.BIG_ENDIAN? (Long.reverseBytes(value) >> (Long.SIZE - size)): value);
 	}
 
+
 	public static long bitsToLong(final BitSet bits, final int size, final ByteOrder byteOrder){
 		long value = bits.toLongArray()[0];
 		return (byteOrder == ByteOrder.BIG_ENDIAN? Long.reverseBytes(value) >>> (Long.SIZE - size): value);
 	}
 
-	public static BigInteger bitsToBigInteger(final BitSet bits, final int size, final ByteOrder byteOrder){
+	public static BigInteger bitsToInteger(final BitSet bits, final int size, final ByteOrder byteOrder){
 		byte[] array = bits.toByteArray();
 		final int expectedLength = size / Byte.SIZE;
 		if(array.length < expectedLength)
@@ -295,7 +223,7 @@ public class ByteHelper{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	The {@link BitSet} representing the given value.
 	 */
-	public static BitSet bigIntegerToBitSet(final BigInteger value, final int size, final ByteOrder byteOrder){
+	public static BitSet integerToBits(final BigInteger value, final int size, final ByteOrder byteOrder){
 		byte[] array = value.toByteArray();
 		final int newSize = (size + Byte.SIZE - 1) / Byte.SIZE;
 		if(newSize != array.length){

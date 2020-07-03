@@ -65,33 +65,21 @@ class ByteHelperTest{
 
 	@Test
 	void applyMaskAndShift(){
-		byte value = ByteHelper.applyMaskAndShift((byte)0x1B, (byte)0x0E);
+		byte value = (byte)ByteHelper.applyMaskAndShift(0x1B, Byte.SIZE, 0x0E);
 
 		Assertions.assertEquals(0b101, value);
 	}
 
 	@Test
-	void compose(){
-		byte highValue = 0x1B;
-		byte highMask = 0x0F;
-		byte lowValue = 0x03;
-		byte lowMask = 0x0E;
-
-		int value = ByteHelper.compose(highValue, highMask, lowValue, lowMask);
-
-		Assertions.assertEquals(((highValue & highMask) << 3 | (lowValue & lowMask) >>> 1), value);
-	}
-
-	@Test
 	void convert2ComplementWithPositiveNumber(){
-		int value = ByteHelper.convert2Complement(0x6B, 8);
+		int value = ByteHelper.extendSign(0x6B, 8);
 
 		Assertions.assertEquals(107, value);
 	}
 
 	@Test
 	void convert2ComplementWithNegativeNumber(){
-		int value = ByteHelper.convert2Complement(0xD7, 8);
+		int value = ByteHelper.extendSign(0xD7, 8);
 
 		Assertions.assertEquals(-41, value);
 	}
