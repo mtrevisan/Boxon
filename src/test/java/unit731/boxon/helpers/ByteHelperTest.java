@@ -65,9 +65,19 @@ class ByteHelperTest{
 
 	@Test
 	void applyMaskAndShift(){
-		byte value = (byte)ByteHelper.applyMaskAndShift(0x1B, Byte.SIZE, 0x0E);
+		byte value = (byte)ByteHelper.applyMaskAndShift(0x1B, 0x0E);
 
-		Assertions.assertEquals(0b101, value);
+		Assertions.assertEquals(0b0101, value);
+
+
+		value = (byte)ByteHelper.applyMaskAndShift(27, 0x18);
+
+		Assertions.assertEquals(0b0011, value);
+
+
+		value = (byte)ByteHelper.applyMaskAndShift(15, 0xFF);
+
+		Assertions.assertEquals(15, value);
 	}
 
 	@Test
