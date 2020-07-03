@@ -32,8 +32,8 @@ import java.util.BitSet;
 
 
 /**
- * @see <a href="https://graphics.stanford.edu/~seander/bithacks.html#ConditionalSetOrClearBitsWithoutBranching">Bit Twiddling Hacks</a>
  * @see <a href="https://git.irsamc.ups-tlse.fr/scemama/Bit-Twiddling-Hacks/">Bit Twiddling Hacks</a>
+ * @see <a href="https://graphics.stanford.edu/~seander/bithacks.html#ConditionalSetOrClearBitsWithoutBranching">Bit Twiddling Hacks</a>
  */
 public class ByteHelper{
 
@@ -248,11 +248,12 @@ public class ByteHelper{
 	private static void reverse(final byte[] array){
 		int i = 0;
 		int j = array.length - 1;
-		byte tmp;
 		while(j > i){
-			tmp = array[j];
-			array[j] = array[i];
-			array[i] = tmp;
+			//swap array[i] with array[j]
+			array[i] ^= array[j];
+			array[j] ^= array[i];
+			array[i] ^= array[j];
+
 			j --;
 			i ++;
 		}
