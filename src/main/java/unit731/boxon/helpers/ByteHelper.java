@@ -31,6 +31,10 @@ import java.util.Arrays;
 import java.util.BitSet;
 
 
+/**
+ * @see <a href="https://graphics.stanford.edu/~seander/bithacks.html#ConditionalSetOrClearBitsWithoutBranching">Bit Twiddling Hacks</a>
+ * @see <a href="https://git.irsamc.ups-tlse.fr/scemama/Bit-Twiddling-Hacks/">Bit Twiddling Hacks</a>
+ */
 public class ByteHelper{
 
 	private ByteHelper(){}
@@ -123,12 +127,12 @@ public class ByteHelper{
 	/**
 	 * Converts an array of bytes into a string representing the hexadecimal values of each byte in order
 	 *
-	 * @param byteArray	Array to be converted to hexadecimal characters
+	 * @param array	Array to be converted to hexadecimal characters
 	 * @return	The hexadecimal characters
 	 */
-	public static String byteArrayToHexString(final byte[] byteArray){
-		final StringBuffer sb = new StringBuffer(byteArray.length << 1);
-		for(final byte b : byteArray){
+	public static String byteArrayToHexString(final byte[] array){
+		final StringBuffer sb = new StringBuffer(array.length << 1);
+		for(final byte b : array){
 			sb.append(Character.forDigit((b >> 4) & 0x0F, 16));
 			sb.append(Character.forDigit((b & 0x0F), 16));
 		}
@@ -205,7 +209,7 @@ public class ByteHelper{
 			array = Arrays.copyOf(array, expectedLength);
 		if(byteOrder == ByteOrder.LITTLE_ENDIAN)
 			//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
-			array = reverseBytes(array);
+			reverse(array);
 
 		if(size >= array.length * Byte.SIZE){
 			final byte[] extendedArray = new byte[array.length + 1];
@@ -235,17 +239,26 @@ public class ByteHelper{
 		}
 		if(byteOrder == ByteOrder.LITTLE_ENDIAN)
 			//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
-			array = reverseBytes(array);
+			reverse(array);
 		return BitSet.valueOf(array);
 	}
 
-	private static byte[] reverseBytes(final byte[] bytes){
-		for(int i = 0; i < bytes.length / 2; i ++){
-			final byte temp = bytes[i];
-			bytes[i] = bytes[bytes.length - i - 1];
-			bytes[bytes.length - i - 1] = temp;
+	/**
+	 * Reverses the order of the given array.
+	 *
+	 * @param array	The array to reverse, may be {@code null}
+	 */
+	private static void reverse(final byte[] array){
+		int i = 0;
+		int j = array.length - 1;
+		byte tmp;
+		while(j > i){
+			tmp = array[j];
+			array[j] = array[i];
+			array[i] = tmp;
+			j --;
+			i ++;
 		}
-		return bytes;
 	}
 
 }

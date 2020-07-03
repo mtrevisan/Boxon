@@ -39,8 +39,8 @@ import java.util.BitSet;
 
 /**
  * @see <a href="https://graphics.stanford.edu/~seander/bithacks.html#ConditionalSetOrClearBitsWithoutBranching">Bit Twiddling Hacks</a>
+ * @see <a href="https://git.irsamc.ups-tlse.fr/scemama/Bit-Twiddling-Hacks/">Bit Twiddling Hacks</a>
  */
-@SuppressWarnings("unused")
 class BitWriter{
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(BitWriter.class.getName());
