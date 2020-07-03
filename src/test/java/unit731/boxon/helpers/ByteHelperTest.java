@@ -49,17 +49,17 @@ class ByteHelperTest{
 	void byteArrayToHexString(){
 		byte[] array = new byte[]{0x23, 0x5e, 0x40, 0x03, 0x51, 0x10, 0x42, 0x06};
 
-		String hex = ByteHelper.byteArrayToHexString(array);
+		String hex = ByteHelper.toHexString(array);
 
 		Assertions.assertEquals("235E400351104206", hex);
 	}
 
 	@Test
 	void hexStringToByteArray(){
-		Assertions.assertArrayEquals(new byte[]{0x23, 0x5e, 0x40, 0x03, 0x51, 0x10, 0x42, 0x06}, ByteHelper.hexStringToByteArray("235e400351104206"));
+		Assertions.assertArrayEquals(new byte[]{0x23, 0x5e, 0x40, 0x03, 0x51, 0x10, 0x42, 0x06}, ByteHelper.toByteArray("235e400351104206"));
 
 		Throwable exception = Assertions.assertThrows(IllegalArgumentException.class,
-			() -> Assertions.assertArrayEquals(new byte[]{0x23, 0x5e, 0x40, 0x03, 0x51, 0x10, 0x42, 0x06}, ByteHelper.hexStringToByteArray("235e40035110420")));
+			() -> Assertions.assertArrayEquals(new byte[]{0x23, 0x5e, 0x40, 0x03, 0x51, 0x10, 0x42, 0x06}, ByteHelper.toByteArray("235e40035110420")));
 		Assertions.assertEquals("Malformed input", exception.getMessage());
 	}
 

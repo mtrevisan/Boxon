@@ -95,7 +95,7 @@ class ConverterTest{
 		Codec<TestConverter1> codec = Codec.createFrom(TestConverter1.class);
 		Parser parser = new Parser(null, Collections.singletonList(codec));
 
-		byte[] payload = ByteHelper.hexStringToByteArray("77633101");
+		byte[] payload = ByteHelper.toByteArray("77633101");
 		ParseResponse result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
@@ -113,7 +113,7 @@ class ConverterTest{
 		Codec<TestConverter2> codec = Codec.createFrom(TestConverter2.class);
 		Parser parser = new Parser(null, Collections.singletonList(codec));
 
-		byte[] payload = ByteHelper.hexStringToByteArray("77633201");
+		byte[] payload = ByteHelper.toByteArray("77633201");
 		ParseResponse result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
@@ -131,7 +131,7 @@ class ConverterTest{
 		Codec<TestConverter3> codec = Codec.createFrom(TestConverter3.class);
 		Parser parser = new Parser(null, Collections.singletonList(codec));
 
-		byte[] payload = ByteHelper.hexStringToByteArray("77633301");
+		byte[] payload = ByteHelper.toByteArray("77633301");
 		ParseResponse result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);

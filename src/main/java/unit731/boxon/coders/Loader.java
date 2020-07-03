@@ -118,7 +118,7 @@ class Loader{
 				final Charset charset = Charset.forName(header.charset());
 				for(final String headerStart : header.start()){
 					//calculate key
-					final String key = ByteHelper.byteArrayToHexString(headerStart.getBytes(charset));
+					final String key = ByteHelper.toHexString(headerStart.getBytes(charset));
 					if(this.codecs.containsKey(key))
 						throw new IllegalArgumentException("Duplicate key `" + headerStart + "` found for class "
 							+ codec.getType().getSimpleName());
@@ -139,7 +139,7 @@ class Loader{
 		for(final Map.Entry<String, Codec<?>> codecElem : codecs.entrySet()){
 			final String header = codecElem.getKey();
 
-			final byte[] codecHeader = ByteHelper.hexStringToByteArray(header);
+			final byte[] codecHeader = ByteHelper.toByteArray(header);
 			final byte[] messageHeader = Arrays.copyOfRange(reader.array(), index, index + codecHeader.length);
 
 			//verify if it's a valid message header

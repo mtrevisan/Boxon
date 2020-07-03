@@ -204,7 +204,7 @@ class CoderArrayTest{
 		Codec<TestChoice4> codec = Codec.createFrom(TestChoice4.class);
 		Parser parser = new Parser(null, Collections.singletonList(codec));
 
-		byte[] payload = ByteHelper.hexStringToByteArray("7463340112340211223344010666");
+		byte[] payload = ByteHelper.toByteArray("7463340112340211223344010666");
 		ParseResponse result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);

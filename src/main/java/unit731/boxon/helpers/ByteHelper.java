@@ -130,7 +130,7 @@ public class ByteHelper{
 	 * @param array	Array to be converted to hexadecimal characters
 	 * @return	The hexadecimal characters
 	 */
-	public static String byteArrayToHexString(final byte[] array){
+	public static String toHexString(final byte[] array){
 		final StringBuffer sb = new StringBuffer(array.length << 1);
 		for(final byte b : array){
 			sb.append(Character.forDigit((b >> 4) & 0x0F, 16));
@@ -145,7 +145,7 @@ public class ByteHelper{
 	 * @param hexString	The hexadecimal string
 	 * @return	Array of converted hexadecimal characters
 	 */
-	public static byte[] hexStringToByteArray(final String hexString){
+	public static byte[] toByteArray(final String hexString){
 		final int len = (hexString != null? hexString.length(): 0);
 		if(len % 2 != 0)
 			throw new IllegalArgumentException("Malformed input");
@@ -202,7 +202,7 @@ public class ByteHelper{
 		return (byteOrder == ByteOrder.BIG_ENDIAN? Long.reverseBytes(value) >>> (Long.SIZE - size): value);
 	}
 
-	public static BigInteger bitsToInteger(final BitSet bits, final int size, final ByteOrder byteOrder){
+	public static BigInteger toInteger(final BitSet bits, final int size, final ByteOrder byteOrder){
 		byte[] array = bits.toByteArray();
 		final int expectedLength = size / Byte.SIZE;
 		if(array.length < expectedLength)
@@ -227,7 +227,7 @@ public class ByteHelper{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	The {@link BitSet} representing the given value.
 	 */
-	public static BitSet integerToBits(final BigInteger value, final int size, final ByteOrder byteOrder){
+	public static BitSet toBits(final BigInteger value, final int size, final ByteOrder byteOrder){
 		byte[] array = value.toByteArray();
 		final int newSize = (size + Byte.SIZE - 1) / Byte.SIZE;
 		if(newSize != array.length){

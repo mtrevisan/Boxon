@@ -78,7 +78,7 @@ class CoderInteger implements CoderInterface<BindInteger>{
 			v = CoderHelper.converterEncode(binding.converter(), value);
 
 		final ByteOrder byteOrder = binding.byteOrder();
-		final BitSet bits = ByteHelper.integerToBits(v, size, byteOrder);
+		final BitSet bits = ByteHelper.toBits(v, size, byteOrder);
 
 		writer.putBits(bits, size);
 	}

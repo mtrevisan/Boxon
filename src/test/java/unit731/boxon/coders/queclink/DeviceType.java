@@ -53,7 +53,7 @@ public class DeviceType{
 	void validateDeviceTypeCode(final byte deviceTypeCode){
 		if(deviceTypeCode != code)
 			throw new IllegalArgumentException("Cannot parse message from another device, device type is 0x"
-				+ ByteHelper.byteArrayToHexString(new byte[]{(byte)(deviceTypeCode & 0x0000_00FF)}) + ", should be " + code);
+				+ ByteHelper.toHexString(new byte[]{(byte)(deviceTypeCode & 0x0000_00FF)}) + ", should be " + code);
 	}
 
 }

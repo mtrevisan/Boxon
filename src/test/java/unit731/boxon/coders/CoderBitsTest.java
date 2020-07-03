@@ -92,7 +92,7 @@ class CoderBitsTest{
 			System.arraycopy(bb, 0, b, 0, bb.length);
 			bb = b;
 		}
-		Assertions.assertEquals(ByteHelper.byteArrayToHexString(bb), writer.toString());
+		Assertions.assertEquals(ByteHelper.toHexString(bb), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
 		BitSet decoded = (BitSet)coder.decode(reader, annotation, null);
@@ -149,7 +149,7 @@ class CoderBitsTest{
 			System.arraycopy(bb, 0, b, 0, bb.length);
 			bb = b;
 		}
-		Assertions.assertEquals(ByteHelper.byteArrayToHexString(bb), writer.toString());
+		Assertions.assertEquals(ByteHelper.toHexString(bb), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
 		BitSet decoded = (BitSet)coder.decode(reader, annotation, null);

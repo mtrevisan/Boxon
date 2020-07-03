@@ -275,7 +275,7 @@ class BitWriter{
 
 	@Override
 	public String toString(){
-		return ByteHelper.byteArrayToHexString(array());
+		return ByteHelper.toHexString(array());
 	}
 
 }

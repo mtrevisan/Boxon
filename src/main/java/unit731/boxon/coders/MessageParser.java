@@ -122,7 +122,7 @@ class MessageParser{
 			//verifying terminators
 			if(!Arrays.equals(messageTerminator, readMessageTerminator))
 				throw new IllegalArgumentException("Message does not terminate with 0x"
-					+ ByteHelper.byteArrayToHexString(messageTerminator));
+					+ ByteHelper.toHexString(messageTerminator));
 		}
 	}
 

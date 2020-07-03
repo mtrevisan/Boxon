@@ -166,7 +166,7 @@ class CoderObjectTest{
 		Codec<TestChoice1> codec = Codec.createFrom(TestChoice1.class);
 		Parser parser = new Parser(null, Collections.singletonList(codec));
 
-		byte[] payload = ByteHelper.hexStringToByteArray("746331011234");
+		byte[] payload = ByteHelper.toByteArray("746331011234");
 		ParseResponse result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
@@ -184,7 +184,7 @@ class CoderObjectTest{
 		Assertions.assertArrayEquals(payload, response.getComposedMessage());
 
 
-		payload = ByteHelper.hexStringToByteArray("7463310211223344");
+		payload = ByteHelper.toByteArray("7463310211223344");
 		result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
@@ -207,7 +207,7 @@ class CoderObjectTest{
 		Codec<TestChoice2> codec = Codec.createFrom(TestChoice2.class);
 		Parser parser = new Parser(null, Collections.singletonList(codec));
 
-		byte[] payload = ByteHelper.hexStringToByteArray("7463320506001234");
+		byte[] payload = ByteHelper.toByteArray("7463320506001234");
 		ParseResponse result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
@@ -225,7 +225,7 @@ class CoderObjectTest{
 		Assertions.assertArrayEquals(payload, response.getComposedMessage());
 
 
-		payload = ByteHelper.hexStringToByteArray("74633205060111223344");
+		payload = ByteHelper.toByteArray("74633205060111223344");
 		result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
@@ -248,7 +248,7 @@ class CoderObjectTest{
 		Codec<TestChoice3> codec = Codec.createFrom(TestChoice3.class);
 		Parser parser = new Parser(null, Collections.singletonList(codec));
 
-		byte[] payload = ByteHelper.hexStringToByteArray("74633361611234");
+		byte[] payload = ByteHelper.toByteArray("74633361611234");
 		ParseResponse result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
@@ -266,7 +266,7 @@ class CoderObjectTest{
 		Assertions.assertArrayEquals(payload, response.getComposedMessage());
 
 
-		payload = ByteHelper.hexStringToByteArray("746333626211223344");
+		payload = ByteHelper.toByteArray("746333626211223344");
 		result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);

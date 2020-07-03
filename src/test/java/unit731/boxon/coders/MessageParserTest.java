@@ -38,7 +38,7 @@ class MessageParserTest{
 
 	@Test
 	void parseSingleMessageHex(){
-		byte[] payload = ByteHelper.hexStringToByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
+		byte[] payload = ByteHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		BitBuffer reader = BitBuffer.wrap(payload);
 
 		MessageParser messageParser = new MessageParser();

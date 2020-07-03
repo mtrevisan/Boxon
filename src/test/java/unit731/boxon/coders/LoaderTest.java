@@ -68,7 +68,7 @@ class LoaderTest{
 		Loader loader = new Loader();
 		loader.init(LoaderTest.class);
 
-		byte[] payload = ByteHelper.hexStringToByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
+		byte[] payload = ByteHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		BitBuffer reader = BitBuffer.wrap(payload);
 		Codec<?> codec = loader.getCodec(reader);
 
@@ -81,7 +81,7 @@ class LoaderTest{
 		Loader loader = new Loader();
 		loader.init(LoaderTest.class);
 
-		byte[] payload = ByteHelper.hexStringToByteArray("3b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
+		byte[] payload = ByteHelper.toByteArray("3b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		BitBuffer reader = BitBuffer.wrap(payload);
 		Assertions.assertThrows(IllegalArgumentException.class, () -> {
 			loader.getCodec(reader);
@@ -93,7 +93,7 @@ class LoaderTest{
 		Loader loader = new Loader();
 		loader.init(LoaderTest.class);
 
-		byte[] payload = ByteHelper.hexStringToByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
+		byte[] payload = ByteHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		BitBuffer reader = BitBuffer.wrap(payload);
 		int position = loader.findNextMessageIndex(reader);
 
@@ -105,7 +105,7 @@ class LoaderTest{
 		Loader loader = new Loader();
 		loader.init(LoaderTest.class);
 
-		byte[] payload = ByteHelper.hexStringToByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
+		byte[] payload = ByteHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		BitBuffer reader = BitBuffer.wrap(payload);
 		int position = loader.findNextMessageIndex(reader);
 

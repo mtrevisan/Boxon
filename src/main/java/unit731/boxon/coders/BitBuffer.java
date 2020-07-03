@@ -203,7 +203,7 @@ class BitBuffer{
 	 */
 	BigInteger getBigInteger(final int length, final ByteOrder byteOrder){
 		final BitSet bits = getBits(length);
-		return ByteHelper.bitsToInteger(bits, length, byteOrder);
+		return ByteHelper.toInteger(bits, length, byteOrder);
 	}
 
 	/**
@@ -418,7 +418,7 @@ class BitBuffer{
 
 	@Override
 	public String toString(){
-		return ByteHelper.byteArrayToHexString(buffer.array());
+		return ByteHelper.toHexString(buffer.array());
 	}
 
 }

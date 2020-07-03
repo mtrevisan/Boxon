@@ -49,7 +49,7 @@ public class ParseException extends Exception{
 	@Override
 	public String getMessage(){
 		final StringJoiner sj = new StringJoiner(System.lineSeparator());
-		sj.add("Error decoding message: " + ByteHelper.byteArrayToHexString(wholeMessage));
+		sj.add("Error decoding message: " + ByteHelper.toHexString(wholeMessage));
 		if(getCause() != null)
 			sj.add(ExceptionHelper.getMessageNoLineNumber(getCause()));
 		if(errorIndex >= 0)
