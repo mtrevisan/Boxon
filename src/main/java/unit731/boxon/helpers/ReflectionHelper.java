@@ -83,8 +83,9 @@ public class ReflectionHelper{
 
 	public static <T> void setFieldValue(final Object obj, final Class<T> fieldType, final T value) throws NoSuchFieldException{
 		try{
-			final Field field = getAccessibleField(obj.getClass(), fieldType);
-			field.set(obj, value);
+			final Field[] fields = getAccessibleFields(obj.getClass(), fieldType);
+			for(final Field field : fields)
+				field.set(obj, value);
 		}
 		catch(final IllegalAccessException ignored){}
 	}
@@ -107,25 +108,30 @@ public class ReflectionHelper{
 		return field;
 	}
 
-	private static Field getAccessibleField(Class<?> cls, final Class<?> fieldType) throws NoSuchFieldException{
-		Field field = null;
-		while(true){
+	private static <T> Field[] getAccessibleFields(Class<?> cls, final Class<?> fieldType){
+		Field[] result = new Field[0];
+		while(cls != Object.class){
 			final Field[] fields = cls.getDeclaredFields();
 			for(final Field f : fields)
 				if(f.getType() == fieldType){
-					field = f;
-					field.setAccessible(true);
+					f.setAccessible(true);
+					result = add(result, f);
 					break;
 				}
-			if(field != null)
-				break;
 
 			//go up to parent class
 			cls = cls.getSuperclass();
-			if(cls == Object.class)
-				throw new NoSuchFieldException("Cannot find a file with type " + fieldType.getSimpleName());
 		}
-		return field;
+		return result;
+	}
+
+	private static <T> T[] add(final T[] array, final T element){
+		//copy & grow
+		final int arrayLength = Array.getLength(array);
+		final Object newArray = Array.newInstance(array.getClass().getComponentType(), arrayLength + 1);
+		System.arraycopy(array, 0, newArray, 0, arrayLength);
+		Array.set(newArray, arrayLength, element);
+		return (T[])newArray;
 	}
 
 	/**
