@@ -78,11 +78,21 @@ class BitBuffer{
 
 
 	/**
-	 * Wraps a byte array into a buffer.
+	 * Wraps a {@link ByteBuffer} into a buffer.
+	 * <p>The new buffer will be backed by the given byte buffer</p>.
 	 *
-	 * <p> The new buffer will be backed by the given byte array; that is, modifications to the buffer will cause the array
+	 * @param buffer	The buffer that will back this buffer
+	 * @return	The new bit buffer
+	 */
+	static BitBuffer wrap(final ByteBuffer buffer){
+		return new BitBuffer(buffer);
+	}
+
+	/**
+	 * Wraps a byte array into a buffer.
+	 * <p>The new buffer will be backed by the given byte array; that is, modifications to the buffer will cause the array
 	 * to be modified and vice versa. The new buffer's capacity and limit will be {@code array.length}, its position will
-	 * be zero, its mark will be undefined, and its byte byteOrder will be {@link ByteOrder#BIG_ENDIAN BIG_ENDIAN}.
+	 * be zero, its mark will be undefined, and its byte `byteOrder` will be {@link ByteOrder#BIG_ENDIAN BIG_ENDIAN}.</p>
 	 *
 	 * @param array	The array that will back this buffer
 	 * @return	The new bit buffer
@@ -93,10 +103,7 @@ class BitBuffer{
 
 	/**
 	 * Wraps a byte array into a buffer.
-	 *
-	 * <p> The new buffer will be backed by the given byte array; that is, modifications to the buffer will cause the array to be modified
-	 * and vice versa. The new buffer's capacity and limit will be {@code array.length}, its position will be zero, its mark will be
-	 * undefined, and its byte byteOrder will be {@link ByteOrder#BIG_ENDIAN BIG_ENDIAN}.
+	 * <p>The new buffer will be backed by the given byte array containted into the {@link BitWriter}.</p>
 	 *
 	 * @param bitWriter	The {@link BitWriter}
 	 * @return	The new bit buffer
