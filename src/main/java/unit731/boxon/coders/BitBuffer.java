@@ -112,7 +112,7 @@ class BitBuffer{
 	 * @param buffer the backing {@link ByteBuffer}.
 	 */
 	private BitBuffer(final ByteBuffer buffer){
-		this.buffer = buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
+		this.buffer = buffer;
 	}
 
 	void createFallbackPoint(){
