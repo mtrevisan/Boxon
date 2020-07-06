@@ -30,6 +30,7 @@ import unit731.boxon.coders.dtos.ParseException;
 import unit731.boxon.coders.dtos.ParseResponse;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -163,9 +164,20 @@ public class Parser{
 	 * @return	The parse response
 	 */
 	public final ParseResponse parse(final byte[] payload){
+		final BitBuffer reader = BitBuffer.wrap(payload);
+		return parse(ByteBuffer.wrap(payload));
+	}
+
+	/**
+	 * Parse a message
+	 *
+	 * @param buffer	The message to be parsed backed by a {@link ByteBuffer}
+	 * @return	The parse response
+	 */
+	public final ParseResponse parse(final ByteBuffer buffer){
 		final ParseResponse response = new ParseResponse();
 
-		final BitBuffer reader = BitBuffer.wrap(payload);
+		final BitBuffer reader = BitBuffer.wrap(buffer);
 		while(reader.hasRemaining()){
 			try{
 				//save state of the reader (restored upon a decoding error)
