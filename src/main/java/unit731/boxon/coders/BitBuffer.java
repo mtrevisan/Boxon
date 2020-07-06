@@ -43,16 +43,6 @@ import java.util.BitSet;
  */
 class BitBuffer{
 
-	/** The mask used when writing/reading bits */
-	static final byte[] MASKS = new byte[Byte.SIZE + 1];
-	static{
-		byte tmp = 1;
-		for(int i = 0; i < MASKS.length; i ++){
-			MASKS[i] = (byte)(tmp - 1);
-			tmp <<= 1;
-		}
-	}
-
 	private static final class State{
 		private int position;
 		private int remaining;
@@ -185,7 +175,7 @@ class BitBuffer{
 			//transfer the cache values
 			final int size = Math.min(length, remaining);
 			for(int i = offset; cache != 0 && i < offset + size; i ++, cache >>>= 1)
-				value.set(i, ((cache & MASKS[1]) != 0));
+				value.set(i, ((cache & 0x01) != 0));
 			remaining -= size;
 			offset += size;
 
