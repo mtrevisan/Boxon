@@ -69,10 +69,11 @@ class BitBuffer{
 
 	/** The backing {@link ByteBuffer} */
 	private final ByteBuffer buffer;
-	/** The number of bits available (to read) within {@code cache} */
-	private int remaining;
+
 	/** The <i>cache</i> used when writing and reading bits */
 	private byte cache;
+	/** The number of bits available (to read) within {@code cache} */
+	private int remaining;
 
 	private State fallbackPoint;
 
@@ -119,14 +120,15 @@ class BitBuffer{
 		fallbackPoint = new State(buffer.position(), remaining, cache);
 	}
 
-	void restoreFallbackPoint(){
-		if(fallbackPoint != null){
-			buffer.position(fallbackPoint.position);
-			remaining = fallbackPoint.remainingBits;
-			cache = fallbackPoint.cache;
+	void restoreFallbackPoint() throws IOException{
+		if(fallbackPoint == null)
+			throw new IOException("No fallback point was marked before");
 
-			fallbackPoint = null;
-		}
+		buffer.position(fallbackPoint.position);
+		remaining = fallbackPoint.remainingBits;
+		cache = fallbackPoint.cache;
+
+		fallbackPoint = null;
 	}
 
 
@@ -346,9 +348,9 @@ class BitBuffer{
 	String getTextUntilTerminator(final byte terminator, final boolean consumeTerminator, final Charset charset){
 		String text = null;
 		try(
-				final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				final OutputStreamWriter osw = new OutputStreamWriter(baos, charset);
-			){
+			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			final OutputStreamWriter osw = new OutputStreamWriter(baos, charset);
+		){
 			getTextUntilTerminator(osw, terminator, consumeTerminator);
 			text = baos.toString(charset);
 		}
@@ -358,7 +360,22 @@ class BitBuffer{
 
 	private void getTextUntilTerminator(final OutputStreamWriter os, final byte terminator, final boolean consumeTerminator) throws IOException{
 		//FIXME revise this algorithm...
-		while(buffer.position() < buffer.limit() || remaining > 0){
+		while(buffer.position() < buffer.limit() || buffer.remaining() > 0){
+			createFallbackPoint();
+
+			final byte byteRead = getByte();
+			if(byteRead == terminator){
+				if(!consumeTerminator)
+					restoreFallbackPoint();
+
+				break;
+			}
+
+			os.write(byteRead);
+		}
+		os.flush();
+
+/*		while(buffer.position() < buffer.limit() || remaining > 0){
 			final byte byteRead = (consumeTerminator? getByte(): peekByte());
 			if(byteRead == terminator)
 				break;
@@ -367,7 +384,7 @@ class BitBuffer{
 
 			os.write(byteRead);
 		}
-		os.flush();
+		os.flush();*/
 	}
 
 
@@ -419,7 +436,7 @@ class BitBuffer{
 
 	@Override
 	public String toString(){
-		return ByteHelper.toHexString(buffer.array());
+		return ByteHelper.toHexString(array());
 	}
 
 }

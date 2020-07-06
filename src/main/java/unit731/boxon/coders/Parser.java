@@ -29,6 +29,7 @@ import unit731.boxon.coders.dtos.ComposeResponse;
 import unit731.boxon.coders.dtos.ParseException;
 import unit731.boxon.coders.dtos.ParseResponse;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -180,15 +181,21 @@ public class Parser{
 				final ParseException pe = createParseException(reader, t);
 				response.addError(pe);
 
-				//restore state of the reader
-				reader.restoreFallbackPoint();
+				try{
+					//restore state of the reader
+					reader.restoreFallbackPoint();
 
-				final int position = messageParser.loader.findNextMessageIndex(reader);
-				if(position < 0)
-					//cannot find any codec for message
+					final int position = messageParser.loader.findNextMessageIndex(reader);
+					if(position < 0)
+						//cannot find any codec for message
+						break;
+
+					reader.position(position);
+				}
+				catch(final IOException e){
+					response.addError(createParseException(reader, e));
 					break;
-
-				reader.position(position);
+				}
 			}
 		}
 
