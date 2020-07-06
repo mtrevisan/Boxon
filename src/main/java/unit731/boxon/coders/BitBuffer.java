@@ -33,7 +33,6 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.BitSet;
@@ -55,13 +54,13 @@ class BitBuffer{
 	}
 
 	private static final class State{
-		private final int position;
-		private final int remainingBits;
-		private final byte cache;
+		private int position;
+		private int remaining;
+		private byte cache;
 
-		State(final int position, final int remainingBits, final byte cache){
+		State(final int position, final int remaining, final byte cache){
 			this.position = position;
-			this.remainingBits = remainingBits;
+			this.remaining = remaining;
 			this.cache = cache;
 		}
 	}
@@ -117,7 +116,15 @@ class BitBuffer{
 	}
 
 	void createFallbackPoint(){
-		fallbackPoint = new State(buffer.position(), remaining, cache);
+		if(fallbackPoint != null){
+			//overwrite current mark:
+			fallbackPoint.position = buffer.position();
+			fallbackPoint.remaining = remaining;
+			fallbackPoint.cache = cache;
+		}
+		else
+			//create new mark
+			fallbackPoint = new State(buffer.position(), remaining, cache);
 	}
 
 	void restoreFallbackPoint() throws IOException{
@@ -125,7 +132,7 @@ class BitBuffer{
 			throw new IOException("No fallback point was marked before");
 
 		buffer.position(fallbackPoint.position);
-		remaining = fallbackPoint.remainingBits;
+		remaining = fallbackPoint.remaining;
 		cache = fallbackPoint.cache;
 
 		fallbackPoint = null;
@@ -215,32 +222,6 @@ class BitBuffer{
 	 */
 	byte getByte(){
 		return (byte)getLong(Byte.SIZE, ByteOrder.LITTLE_ENDIAN);
-	}
-
-	/**
-	 * Reads {@link Byte#SIZE} bits from this {@link BitBuffer} and composes a {@code byte} without advancing the position.
-	 *
-	 * @return	A {@code byte}.
-	 */
-	private byte peekByte(){
-		long value;
-		long temporaryCache = cache;
-		if(remaining < Byte.SIZE){
-			value = temporaryCache & MASKS[remaining];
-			final int remaining = Math.min(buffer.remaining(), Byte.SIZE);
-			if(remaining == 0)
-				throw new BufferUnderflowException();
-
-			final int position = buffer.position();
-			for(int i = 0; i < remaining; i ++)
-				//read next byte from the byte buffer
-				temporaryCache |= ((long)buffer.array()[position + i] & 0x0000_0000_0000_00FFl) << (i * Byte.SIZE);
-			final int difference = Byte.SIZE - this.remaining;
-			value |= (temporaryCache & MASKS[difference]) << this.remaining;
-		}
-		else
-			value = temporaryCache & MASKS[Byte.SIZE];
-		return (byte)value;
 	}
 
 	/**
@@ -351,22 +332,34 @@ class BitBuffer{
 			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			final OutputStreamWriter osw = new OutputStreamWriter(baos, charset);
 		){
-			getTextUntilTerminator(osw, terminator, consumeTerminator);
+			if(consumeTerminator)
+				getTextUntilTerminatorWithConsume(osw, terminator);
+			else
+				getTextUntilTerminatorWithoutConsume(osw, terminator);
 			text = baos.toString(charset);
 		}
 		catch(final IOException ignored){}
 		return text;
 	}
 
-	private void getTextUntilTerminator(final OutputStreamWriter os, final byte terminator, final boolean consumeTerminator) throws IOException{
-		//FIXME revise this algorithm...
+	private void getTextUntilTerminatorWithConsume(final OutputStreamWriter os, final byte terminator) throws IOException{
+		while(buffer.position() < buffer.limit() || buffer.remaining() > 0){
+			final byte byteRead = getByte();
+			if(byteRead == terminator)
+				break;
+
+			os.write(byteRead);
+		}
+		os.flush();
+	}
+
+	private void getTextUntilTerminatorWithoutConsume(final OutputStreamWriter os, final byte terminator) throws IOException{
 		while(buffer.position() < buffer.limit() || buffer.remaining() > 0){
 			createFallbackPoint();
 
 			final byte byteRead = getByte();
 			if(byteRead == terminator){
-				if(!consumeTerminator)
-					restoreFallbackPoint();
+				restoreFallbackPoint();
 
 				break;
 			}
@@ -374,17 +367,6 @@ class BitBuffer{
 			os.write(byteRead);
 		}
 		os.flush();
-
-/*		while(buffer.position() < buffer.limit() || remaining > 0){
-			final byte byteRead = (consumeTerminator? getByte(): peekByte());
-			if(byteRead == terminator)
-				break;
-			if(!consumeTerminator)
-				getByte();
-
-			os.write(byteRead);
-		}
-		os.flush();*/
 	}
 
 
