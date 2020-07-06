@@ -339,41 +339,30 @@ class BitBuffer{
 			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			final OutputStreamWriter osw = new OutputStreamWriter(baos, charset);
 		){
-			if(consumeTerminator)
-				getTextUntilTerminatorWithConsume(osw, terminator);
-			else
-				getTextUntilTerminatorWithoutConsume(osw, terminator);
+			getTextUntilTerminator(osw, terminator, consumeTerminator);
 			text = baos.toString(charset);
 		}
 		catch(final IOException ignored){}
 		return text;
 	}
 
-	private void getTextUntilTerminatorWithConsume(final OutputStreamWriter os, final byte terminator) throws IOException{
-		while(buffer.position() < buffer.limit() || buffer.remaining() > 0){
-			final byte byteRead = getByte();
-			if(byteRead == terminator)
-				break;
-
-			os.write(byteRead);
-		}
-		os.flush();
-	}
-
-	private void getTextUntilTerminatorWithoutConsume(final OutputStreamWriter os, final byte terminator) throws IOException{
-		while(buffer.position() < buffer.limit() || buffer.remaining() > 0){
+	private void getTextUntilTerminator(final OutputStreamWriter os, final byte terminator, final boolean consumeTerminator) throws IOException{
+		if(!consumeTerminator)
 			createFallbackPoint();
 
-			final byte byteRead = getByte();
-			if(byteRead == terminator){
-				restoreFallbackPoint();
-
-				break;
-			}
-
+		byte byteRead;
+		for(byteRead = getByte(); byteRead != terminator && (buffer.position() < buffer.limit() || buffer.remaining() > 0); ){
 			os.write(byteRead);
+
+			if(!consumeTerminator)
+				createFallbackPoint();
+
+			byteRead = getByte();
 		}
 		os.flush();
+
+		if(!consumeTerminator && byteRead == terminator)
+			restoreFallbackPoint();
 	}
 
 

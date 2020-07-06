@@ -221,13 +221,13 @@ class CoderStringTest{
 		BitBuffer reader = BitBuffer.wrap(encodedValue.getBytes(StandardCharsets.US_ASCII));
 		Object decoded = coder.decode(reader, annotation, null);
 
-		Assertions.assertEquals(encodedValue, decoded);
+		Assertions.assertEquals("123AB", decoded);
 
 		BitWriter writer = new BitWriter();
 		coder.encode(writer, annotation, null, decoded);
 		writer.flush();
 
-		Assertions.assertEquals(encodedValue, new String(writer.array(), StandardCharsets.US_ASCII));
+		Assertions.assertEquals("123AB", new String(writer.array(), StandardCharsets.US_ASCII));
 	}
 
 }
