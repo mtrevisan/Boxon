@@ -361,7 +361,7 @@ class BitBuffer{
 		}
 		os.flush();
 
-		if(!consumeTerminator && byteRead == terminator)
+		if(!consumeTerminator)
 			restoreFallbackPoint();
 	}
 
