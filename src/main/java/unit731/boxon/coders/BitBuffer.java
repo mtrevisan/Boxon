@@ -29,11 +29,15 @@ import unit731.boxon.helpers.ByteHelper;
 import unit731.boxon.helpers.ReflectionHelper;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.util.BitSet;
 
@@ -66,6 +70,25 @@ class BitBuffer{
 
 	private State fallbackPoint;
 
+
+	/**
+	 * Wraps a {@link java.io.File} containing a binary stream into a buffer.
+	 *
+	 * @param file	The file containing the binary stream
+	 * @return	The new bit buffer
+	 */
+	static BitBuffer wrap(final File file) throws IOException{
+		final FileInputStream fis = new FileInputStream(file);
+		final FileChannel fc = fis.getChannel();
+
+		//get the file's size and then map it into memory
+		final int fileSize = (int)fc.size();
+		final ByteBuffer inputByteBuffer = fc.map(FileChannel.MapMode.READ_ONLY, 0, fileSize);
+
+		fc.close();
+
+		return wrap(inputByteBuffer);
+	}
 
 	/**
 	 * Wraps a {@link ByteBuffer} into a buffer.

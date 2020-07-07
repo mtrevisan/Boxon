@@ -29,6 +29,7 @@ import unit731.boxon.coders.dtos.ComposeResponse;
 import unit731.boxon.coders.dtos.ParseException;
 import unit731.boxon.coders.dtos.ParseResponse;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
@@ -158,14 +159,14 @@ public class Parser{
 
 
 	/**
-	 * Parse a message
+	 * Parse a message from a file containing a binary stream
 	 *
-	 * @param payload	The message to be parsed
+	 * @param file	The file containing the binary stream
 	 * @return	The parse response
 	 */
-	public final ParseResponse parse(final byte[] payload){
-		final BitBuffer reader = BitBuffer.wrap(payload);
-		return parse(ByteBuffer.wrap(payload));
+	public final ParseResponse parse(final File file) throws IOException{
+		final BitBuffer reader = BitBuffer.wrap(file);
+		return parse(reader);
 	}
 
 	/**
@@ -175,9 +176,30 @@ public class Parser{
 	 * @return	The parse response
 	 */
 	public final ParseResponse parse(final ByteBuffer buffer){
+		final BitBuffer reader = BitBuffer.wrap(buffer);
+		return parse(reader);
+	}
+
+	/**
+	 * Parse a message
+	 *
+	 * @param payload	The message to be parsed
+	 * @return	The parse response
+	 */
+	public final ParseResponse parse(final byte[] payload){
+		final BitBuffer reader = BitBuffer.wrap(payload);
+		return parse(reader);
+	}
+
+	/**
+	 * Parse a message
+	 *
+	 * @param reader	The message to be parsed backed by a {@link BitBuffer}
+	 * @return	The parse response
+	 */
+	public final ParseResponse parse(final BitBuffer reader){
 		final ParseResponse response = new ParseResponse();
 
-		final BitBuffer reader = BitBuffer.wrap(buffer);
 		while(reader.hasRemaining()){
 			try{
 				//save state of the reader (restored upon a decoding error)
