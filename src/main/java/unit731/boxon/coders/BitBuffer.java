@@ -204,6 +204,7 @@ class BitBuffer{
 			//if cache is empty and there are more bits to be read, fill it
 			if(length > offset){
 				cache = buffer.get();
+
 				remaining = Byte.SIZE;
 			}
 		}
