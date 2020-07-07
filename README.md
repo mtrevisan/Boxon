@@ -186,7 +186,7 @@ private byte[] array;
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
 
 #### description
-Reads a `BitSet`.
+Reads a `BitMap`.
 
 #### annotation type
 This annotation is bounded to a variable.
@@ -194,7 +194,7 @@ This annotation is bounded to a variable.
 #### example
 ```java
 @BindBits(size = "2")
-private BitSet bits;
+private BitMap bits;
 ```
 
 

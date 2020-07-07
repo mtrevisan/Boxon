@@ -204,7 +204,7 @@ public class ByteHelper{
 		if(array.length < expectedLength)
 			array = Arrays.copyOf(array, expectedLength);
 		if(byteOrder == ByteOrder.LITTLE_ENDIAN)
-			//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
+			//NOTE: need to reverse the bytes because BigInteger is big-endian and BitMap is little-endian
 			reverse(array);
 
 		if(size >= array.length * Byte.SIZE){
@@ -234,7 +234,7 @@ public class ByteHelper{
 			array = newArray;
 		}
 		if(byteOrder == ByteOrder.LITTLE_ENDIAN)
-			//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
+			//NOTE: need to reverse the bytes because BigInteger is big-endian and BitMap is little-endian
 			reverse(array);
 		return BitMap.valueOf(array);
 	}

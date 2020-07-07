@@ -45,6 +45,7 @@ import unit731.boxon.annotations.MessageHeader;
 import unit731.boxon.annotations.checksummers.CRC16;
 import unit731.boxon.annotations.checksummers.Checksummer;
 import unit731.boxon.annotations.converters.Converter;
+import unit731.boxon.helpers.BitMap;
 import unit731.boxon.helpers.ByteHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -53,7 +54,6 @@ import java.lang.annotation.Annotation;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.ZonedDateTime;
-import java.util.BitSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -131,7 +131,7 @@ class CodecTest{
 		@BindArrayPrimitive(size = "2", type = byte[].class)
 		private byte[] protocolVersion;
 		@BindBits(size = "2")
-		private BitSet bits;
+		private BitMap bits;
 		@BindDouble
 		private double numberDouble;
 		@BindFloat
