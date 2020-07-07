@@ -26,10 +26,10 @@ package unit731.boxon.coders;
 
 import unit731.boxon.annotations.BindBits;
 import unit731.boxon.annotations.ByteOrder;
+import unit731.boxon.helpers.BitMap;
 import unit731.boxon.helpers.ByteHelper;
 
 import java.lang.annotation.Annotation;
-import java.util.BitSet;
 
 
 class CoderBits implements CoderInterface<BindBits>{
@@ -39,7 +39,7 @@ class CoderBits implements CoderInterface<BindBits>{
 		final BindBits binding = (BindBits)annotation;
 
 		final int size = Evaluator.evaluate(binding.size(), int.class, data);
-		final BitSet bits = reader.getBits(size);
+		final BitMap bits = reader.getBits(size);
 		if(binding.byteOrder() == ByteOrder.LITTLE_ENDIAN)
 			ByteHelper.reverseBits(bits, size);
 
@@ -56,7 +56,7 @@ class CoderBits implements CoderInterface<BindBits>{
 
 		CoderHelper.validateData(binding.match(), binding.validator(), value);
 
-		final BitSet bits = CoderHelper.converterEncode(binding.converter(), value);
+		final BitMap bits = CoderHelper.converterEncode(binding.converter(), value);
 		final int size = Evaluator.evaluate(binding.size(), int.class, data);
 		if(binding.byteOrder() == ByteOrder.LITTLE_ENDIAN)
 			ByteHelper.reverseBits(bits, size);

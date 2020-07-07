@@ -28,10 +28,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import unit731.boxon.annotations.ByteOrder;
+import unit731.boxon.helpers.BitMap;
 
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
-import java.util.BitSet;
 
 
 class BitWriterTest{
@@ -46,7 +46,7 @@ class BitWriterTest{
 
 	@Test
 	void bits(){
-		BitSet value = BitSet.valueOf(new long[]{0x1234_5678_1234_5678l, 0x6666_7777_8888_9999l});
+		BitMap value = BitMap.valueOf(new long[]{0x1234_5678_1234_5678l, 0x6666_7777_8888_9999l});
 		writer.putBits(value, Long.SIZE << 1);
 		BitBuffer reader = BitBuffer.wrap(writer);
 

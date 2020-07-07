@@ -26,11 +26,11 @@ package unit731.boxon.coders;
 
 import unit731.boxon.annotations.BindInteger;
 import unit731.boxon.annotations.ByteOrder;
+import unit731.boxon.helpers.BitMap;
 import unit731.boxon.helpers.ByteHelper;
 
 import java.lang.annotation.Annotation;
 import java.math.BigInteger;
-import java.util.BitSet;
 
 
 class CoderInteger implements CoderInterface<BindInteger>{
@@ -78,7 +78,7 @@ class CoderInteger implements CoderInterface<BindInteger>{
 			v = CoderHelper.converterEncode(binding.converter(), value);
 
 		final ByteOrder byteOrder = binding.byteOrder();
-		final BitSet bits = ByteHelper.toBits(v, size, byteOrder);
+		final BitMap bits = ByteHelper.toBits(v, size, byteOrder);
 
 		writer.putBits(bits, size);
 	}

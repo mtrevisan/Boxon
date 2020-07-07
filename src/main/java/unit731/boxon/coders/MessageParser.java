@@ -28,6 +28,7 @@ import unit731.boxon.annotations.BindChecksum;
 import unit731.boxon.annotations.MessageHeader;
 import unit731.boxon.annotations.Skip;
 import unit731.boxon.annotations.checksummers.Checksummer;
+import unit731.boxon.helpers.BitMap;
 import unit731.boxon.helpers.ByteHelper;
 import unit731.boxon.helpers.ExceptionHelper;
 import unit731.boxon.helpers.ReflectionHelper;
@@ -37,7 +38,6 @@ import org.slf4j.LoggerFactory;
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
 import java.util.Arrays;
-import java.util.BitSet;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -214,7 +214,7 @@ class MessageParser{
 		final int size = (isNotBlank(skip.size())? Evaluator.evaluate(skip.size(), Integer.class, data): 0);
 		if(size > 0)
 			/** skip {@link size} bits */
-			writer.putBits(new BitSet(size), size);
+			writer.putBits(new BitMap(size), size);
 		else if(skip.consumeTerminator())
 			//skip until terminator
 			writer.putByte(skip.terminator());

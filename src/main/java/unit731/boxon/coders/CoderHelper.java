@@ -28,10 +28,10 @@ import unit731.boxon.annotations.ByteOrder;
 import unit731.boxon.annotations.Choices;
 import unit731.boxon.annotations.converters.Converter;
 import unit731.boxon.annotations.validators.Validator;
+import unit731.boxon.helpers.BitMap;
 import unit731.boxon.helpers.ByteHelper;
 import unit731.boxon.helpers.ReflectionHelper;
 
-import java.util.BitSet;
 import java.util.Objects;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -75,7 +75,7 @@ class CoderHelper{
 			final ByteOrder prefixByteOrder = selectFrom.byteOrder();
 
 			final long prefixValue = chosenAlternative.prefix();
-			final BitSet bits = BitSet.valueOf(new long[]{prefixValue});
+			final BitMap bits = BitMap.valueOf(new long[]{prefixValue});
 			if(prefixByteOrder == ByteOrder.LITTLE_ENDIAN)
 				ByteHelper.reverseBits(bits, prefixSize);
 

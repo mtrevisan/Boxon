@@ -27,8 +27,6 @@ package unit731.boxon.helpers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.BitSet;
-
 
 class ByteHelperTest{
 
@@ -98,22 +96,22 @@ class ByteHelperTest{
 
 	@Test
 	void reverseBits(){
-		BitSet bits = BitSet.valueOf(new byte[]{0x10});
+		BitMap bits = BitMap.valueOf(new byte[]{0x10});
 		ByteHelper.reverseBits(bits, Byte.SIZE);
 
-		Assertions.assertEquals(BitSet.valueOf(new byte[]{0x08}), bits);
+		Assertions.assertEquals(BitMap.valueOf(new byte[]{0x08}), bits);
 
 
-		bits = BitSet.valueOf(new byte[]{0x16});
+		bits = BitMap.valueOf(new byte[]{0x16});
 		ByteHelper.reverseBits(bits, Byte.SIZE);
 
-		Assertions.assertEquals(BitSet.valueOf(new byte[]{0x68}), bits);
+		Assertions.assertEquals(BitMap.valueOf(new byte[]{0x68}), bits);
 
 
-		bits = BitSet.valueOf(new byte[]{(byte)0xE7});
+		bits = BitMap.valueOf(new byte[]{(byte)0xE7});
 		ByteHelper.reverseBits(bits, Byte.SIZE);
 
-		Assertions.assertEquals(BitSet.valueOf(new byte[]{(byte)0xE7}), bits);
+		Assertions.assertEquals(BitMap.valueOf(new byte[]{(byte)0xE7}), bits);
 	}
 
 }

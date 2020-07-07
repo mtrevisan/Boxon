@@ -25,6 +25,7 @@
 package unit731.boxon.coders;
 
 import unit731.boxon.annotations.ByteOrder;
+import unit731.boxon.helpers.BitMap;
 import unit731.boxon.helpers.ByteHelper;
 import unit731.boxon.helpers.ReflectionHelper;
 
@@ -32,7 +33,6 @@ import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
 import java.nio.ReadOnlyBufferException;
 import java.nio.charset.Charset;
-import java.util.BitSet;
 
 
 /**
@@ -73,7 +73,7 @@ class BitWriter{
 	 * @param value	The value to write.
 	 * @param length	The amount of bits to use when writing {@code value}.
 	 */
-	void putBits(final BitSet value, int length){
+	void putBits(final BitMap value, int length){
 		//if the value that we're writing is too large to be placed entirely in the cache, then we need to place as
 		//much as we can in the cache (the least significant bits), flush the cache to the backing ByteBuffer, and
 		//place the rest in the cache
@@ -102,7 +102,7 @@ class BitWriter{
 	 * @param length	The amount of bits to use when writing {@code value} (must be less than or equals to {@link Long#SIZE}).
 	 */
 	private void putValue(final long value, final int length){
-		final BitSet bits = BitSet.valueOf(new long[]{value});
+		final BitMap bits = BitMap.valueOf(new long[]{value});
 		putBits(bits, length);
 	}
 
