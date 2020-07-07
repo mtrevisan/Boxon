@@ -77,15 +77,15 @@ class BitBuffer{
 	 * @return	The new bit buffer
 	 */
 	static BitBuffer wrap(final File file) throws IOException{
-		final FileInputStream fis = new FileInputStream(file);
-		final FileChannel fc = fis.getChannel();
+		try(
+				final FileInputStream fis = new FileInputStream(file);
+				final FileChannel fc = fis.getChannel();
+			){
+			//map file into memory
+			final ByteBuffer inputByteBuffer = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
 
-		//map file into memory
-		final ByteBuffer inputByteBuffer = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
-
-		fc.close();
-
-		return wrap(inputByteBuffer);
+			return wrap(inputByteBuffer);
+		}
 	}
 
 	/**
