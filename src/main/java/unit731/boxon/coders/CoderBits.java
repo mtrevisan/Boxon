@@ -38,7 +38,7 @@ class CoderBits implements CoderInterface<BindBits>{
 	public Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
 		final BindBits binding = (BindBits)annotation;
 
-		final int size = Evaluator.evaluate(binding.size(), int.class, data);
+		final int size = Evaluator.evaluateSize(binding.size(), data);
 		final BitMap bits = reader.getBits(size);
 		if(binding.byteOrder() == ByteOrder.LITTLE_ENDIAN)
 			ByteHelper.reverseBits(bits, size);
@@ -57,7 +57,7 @@ class CoderBits implements CoderInterface<BindBits>{
 		CoderHelper.validateData(binding.match(), binding.validator(), value);
 
 		final BitMap bits = CoderHelper.converterEncode(binding.converter(), value);
-		final int size = Evaluator.evaluate(binding.size(), int.class, data);
+		final int size = Evaluator.evaluateSize(binding.size(), data);
 		if(binding.byteOrder() == ByteOrder.LITTLE_ENDIAN)
 			ByteHelper.reverseBits(bits, size);
 

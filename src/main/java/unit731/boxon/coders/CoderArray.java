@@ -43,7 +43,7 @@ class CoderArray implements CoderInterface<BindArray>{
 	public Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
 		final BindArray binding = (BindArray)annotation;
 
-		final int size = Evaluator.evaluate(binding.size(), int.class, data);
+		final int size = Evaluator.evaluateSize(binding.size(), data);
 		final Choices selectFrom = binding.selectFrom();
 		@SuppressWarnings("ConstantConditions")
 		final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): new Choices.Choice[0]);
@@ -86,7 +86,7 @@ class CoderArray implements CoderInterface<BindArray>{
 
 		CoderHelper.validateData(binding.validator(), value);
 
-		final int size = Evaluator.evaluate(binding.size(), int.class, data);
+		final int size = Evaluator.evaluateSize(binding.size(), data);
 		final Choices selectFrom = binding.selectFrom();
 		@SuppressWarnings("ConstantConditions")
 		final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): new Choices.Choice[0]);

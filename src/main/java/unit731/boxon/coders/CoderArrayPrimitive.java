@@ -38,7 +38,7 @@ class CoderArrayPrimitive implements CoderInterface<BindArrayPrimitive>{
 		final BindArrayPrimitive binding = (BindArrayPrimitive)annotation;
 
 		final Class<?> type = binding.type();
-		final int size = Evaluator.evaluate(binding.size(), int.class, data);
+		final int size = Evaluator.evaluateSize(binding.size(), data);
 		final Class<?> objectiveType = ReflectionHelper.objectiveType(type.getComponentType());
 
 		final Object array = ReflectionHelper.createArrayPrimitive(type, size);
@@ -60,7 +60,7 @@ class CoderArrayPrimitive implements CoderInterface<BindArrayPrimitive>{
 
 		CoderHelper.validateData(binding.validator(), value);
 
-		final int size = Evaluator.evaluate(binding.size(), int.class, data);
+		final int size = Evaluator.evaluateSize(binding.size(), data);
 
 		final Object array = CoderHelper.converterEncode(binding.converter(), value);
 
