@@ -31,7 +31,6 @@ import unit731.boxon.helpers.ReflectionHelper;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.math.BigDecimal;
@@ -81,9 +80,8 @@ class BitBuffer{
 		final FileInputStream fis = new FileInputStream(file);
 		final FileChannel fc = fis.getChannel();
 
-		//get the file's size and then map it into memory
-		final int fileSize = (int)fc.size();
-		final ByteBuffer inputByteBuffer = fc.map(FileChannel.MapMode.READ_ONLY, 0, fileSize);
+		//map file into memory
+		final ByteBuffer inputByteBuffer = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
 
 		fc.close();
 
