@@ -35,12 +35,10 @@ class ByteHelperTest{
 		byte mask = 0x27;
 
 		byte output = 0x00;
-		for(int i = 0; i < 8; i ++){
-			boolean bitSet = ByteHelper.hasBit(mask, i);
-			if(bitSet){
+		for(int i = 0; i < 8; i ++)
+			if(ByteHelper.hasBit(mask, i)){
 				output |= (1 << i);
 			}
-		}
 
 		Assertions.assertEquals(mask, output);
 	}
