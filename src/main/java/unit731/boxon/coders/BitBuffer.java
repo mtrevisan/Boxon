@@ -220,7 +220,7 @@ class BitBuffer{
 	 */
 	long getLong(final int length, final ByteOrder byteOrder){
 		final BitMap bits = getBits(length);
-		return (bits.length() > 0? ByteHelper.bitsToLong(bits, length, byteOrder): 0l);
+		return ByteHelper.bitsToLong(bits, length, byteOrder);
 	}
 
 	/**
