@@ -163,25 +163,6 @@ public class BitMap{
 		return bset.toByteArray();
 	}
 
-	/**
-	 * Returns a new long array containing all the bits in this bit set up until bit 63.
-	 *
-	 * <p>More precisely, if
-	 * <br>{@code long[] longs = s.toLongArray();}
-	 * <br>then {@code longs.length == (s.length() + 63) / 64} and
-	 * <br>{@code s.get(n) == ((longs[n / 64] & (1l << (n % 64))) != 0)}
-	 * <br>for all {@code n < 64 * longs.length}.
-	 *
-	 * @return	A long array containing a little-endian representation of all the bits in this bit set
-	 */
-	public long extractLong(){
-		long result = 0l;
-		int i = 0;
-		for(i = nextSetBit(i); 0 <= i && i < Long.SIZE; i = nextSetBit(i + 1))
-			result |= 1l << i;
-		return result;
-	}
-
 
 	public boolean equals(final Object obj){
 		if(!(obj instanceof BitMap))
