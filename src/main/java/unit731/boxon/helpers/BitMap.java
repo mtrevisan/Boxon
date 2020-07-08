@@ -80,10 +80,6 @@ public class BitMap{
 		return new BitMap(buffer);
 	}
 
-	public BitMap(final ByteBuffer buffer){
-		bset = BitSet.valueOf(buffer);
-	}
-
 	/**
 	 * Creates a bit set whose initial size is large enough to explicitly
 	 * represent bits with indices in the range {@code 0} through
@@ -94,6 +90,10 @@ public class BitMap{
 	 */
 	public BitMap(final int length){
 		bset = new BitSet(length);
+	}
+
+	private BitMap(final ByteBuffer buffer){
+		bset = BitSet.valueOf(buffer);
 	}
 
 	/**
