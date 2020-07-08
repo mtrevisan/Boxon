@@ -194,8 +194,7 @@ public class ByteHelper{
 
 
 	public static long bitsToLong(final BitMap bits, final int size, final ByteOrder byteOrder){
-		final long[] bitsRepresentation = bits.toLongArray();
-		final long value = (bitsRepresentation.length > 0? bitsRepresentation[0]: 0l);
+		final long value = bits.extractLong();
 		return (byteOrder == ByteOrder.BIG_ENDIAN? Long.reverseBytes(value) >>> (Long.SIZE - size): value);
 	}
 

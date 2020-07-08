@@ -1,13 +1,15 @@
 package unit731.boxon.helpers;
 
+import com.zaxxer.sparsebits.SparseBitSet;
+
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.BitSet;
 
 
 /**
- * @see <a href="https://github.com/RoaringBitmap">Roaring Bitmap</a>
- * https://github.com/lemire/sparsebitmap/blob/master/src/main/java/sparsebitmap/SparseBitmap.java
+ * https://github.com/RoaringBitmap
+ * COMPLICATED https://github.com/lemire/sparsebitmap/blob/master/src/main/java/sparsebitmap/SparseBitmap.java
  * https://github.com/brettwooldridge/SparseBitSet/blob/master/src/main/java/com/zaxxer/sparsebits/SparseBitSet.java
  * SAME, OR SLOWER! https://lucene.apache.org/core/3_0_3/api/core/org/apache/lucene/util/OpenBitSet.html
  * SLOWER! https://github.com/ashouldis/bitset
@@ -174,8 +176,15 @@ public class BitMap{
 	 *
 	 * @return	A long array containing a little-endian representation of all the bits in this bit set
 	 */
-	public long[] toLongArray(){
-		return bset.toLongArray();
+	public long extractLong(){
+//		final long[] array = bset.toLongArray();
+//		return (array.length > 0? array[0]: 0l);
+
+		long result = 0l;
+		int i = 0;
+		for(i = bset.nextSetBit(i); i >= 0; i = bset.nextSetBit(i + 1))
+			result |= 1l << i;
+		return result;
 	}
 
 
