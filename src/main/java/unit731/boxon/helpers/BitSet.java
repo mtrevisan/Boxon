@@ -55,56 +55,6 @@ public class BitSet{
 	private transient int wordsInUse;
 
 
-	/** Given a bit index, return word index containing it. */
-	private static int wordIndex(final int bitIndex){
-		return bitIndex >> ADDRESS_BITS_PER_WORD;
-	}
-
-	/**
-	 * Sets the field wordsInUse to the logical size in words of the bit set.
-	 * <p>WARNING: This method assumes that the number of words actually in use is
-	 * less than or equal to the current value of wordsInUse!</p>
-	 */
-	private void recalculateWordsInUse(){
-		//traverse the bitset until a used word is found
-		int i;
-		for(i = wordsInUse - 1; i >= 0; i --)
-			if(words[i] != 0)
-				break;
-
-		//the new logical size
-		wordsInUse = i + 1;
-	}
-
-	/**
-	 * Creates a bit set whose initial size is large enough to explicitly
-	 * represent bits with indices in the range {@code 0} through
-	 * {@code nbits-1}.
-	 * <p>All bits are initially {@code false}.</p>
-	 *
-	 * @param nbits	The initial size of the bit set
-	 * @throws NegativeArraySizeException	If the specified initial size is negative
-	 */
-	public BitSet(final int nbits){
-		if(nbits < 0)
-			throw new NegativeArraySizeException("nbits < 0: " + nbits);
-
-		initWords(nbits);
-	}
-
-	private void initWords(final int nbits){
-		words = new long[wordIndex(nbits - 1) + 1];
-	}
-
-	/**
-	 * Creates a bit set using words as the internal representation.
-	 * <p>The last word (if there is one) must be non-zero.</p>
-	 */
-	private BitSet(final long[] words){
-		this.words = words;
-		this.wordsInUse = words.length;
-	}
-
 	/**
 	 * Returns a new bit set containing all the bits in the given long array.
 	 * <p></p>
@@ -123,30 +73,6 @@ public class BitSet{
 		while(n > 0 && longs[n - 1] == 0)
 			n --;
 		return new BitSet(Arrays.copyOf(longs, n));
-	}
-
-	/**
-	 * Returns a new bit set containing all the bits in the given long buffer between its position and limit.
-	 * <p></p>
-	 * <p>More precisely,
-	 * <br>{@code BitSet.valueOf(lb).get(n) == ((lb.get(lb.position()+n/64) & (1L<<(n%64))) != 0)}
-	 * <br>for all {@code n < 64 * lb.remaining()}.</p>
-	 *
-	 * <p>The long buffer is not modified by this method, and no
-	 * reference to the buffer is retained by the bit set.</p>
-	 *
-	 * @param lb	A long buffer containing a little-endian representation of a sequence of bits between its position and limit, to be
-	 * 	used as the initial bits of the new bit set
-	 * @return	A {@code BitSet} containing all the bits in the buffer in the specified range
-	 */
-	public static BitSet valueOf(LongBuffer lb){
-		lb = lb.slice();
-		int n = lb.remaining();
-		while(n > 0 && lb.get(n - 1) == 0)
-			n --;
-		final long[] words = new long[n];
-		lb.get(words);
-		return new BitSet(words);
 	}
 
 	/**
@@ -197,6 +123,35 @@ public class BitSet{
 	}
 
 	/**
+	 * Creates a bit set using words as the internal representation.
+	 * <p>The last word (if there is one) must be non-zero.</p>
+	 */
+	private BitSet(final long[] words){
+		this.words = words;
+		this.wordsInUse = words.length;
+	}
+
+	/**
+	 * Creates a bit set whose initial size is large enough to explicitly
+	 * represent bits with indices in the range {@code 0} through
+	 * {@code nbits-1}.
+	 * <p>All bits are initially {@code false}.</p>
+	 *
+	 * @param nbits	The initial size of the bit set
+	 * @throws NegativeArraySizeException	If the specified initial size is negative
+	 */
+	public BitSet(final int nbits){
+		if(nbits < 0)
+			throw new NegativeArraySizeException("nbits < 0: " + nbits);
+
+		initWords(nbits);
+	}
+
+	private void initWords(final int nbits){
+		words = new long[wordIndex(nbits - 1) + 1];
+	}
+
+	/**
 	 * Returns a new byte array containing all the bits in this bit set.
 	 * <p></p>
 	 * <p>More precisely, if
@@ -225,6 +180,56 @@ public class BitSet{
 	}
 
 	/**
+	 * Sets the bit at the specified index to the complement of its current value.
+	 *
+	 * @param bitIndex	The index of the bit to flip
+	 * @throws IndexOutOfBoundsException	If the specified index is negative
+	 */
+	public void flip(final int bitIndex){
+		if(bitIndex < 0)
+			throw new IndexOutOfBoundsException("bitIndex < 0: " + bitIndex);
+
+		final int wordIndex = wordIndex(bitIndex);
+		expandTo(wordIndex);
+
+		words[wordIndex] ^= (1l << bitIndex);
+
+		recalculateWordsInUse();
+	}
+
+	/**
+	 * Sets the field wordsInUse to the logical size in words of the bit set.
+	 * <p>WARNING: This method assumes that the number of words actually in use is
+	 * less than or equal to the current value of wordsInUse!</p>
+	 */
+	private void recalculateWordsInUse(){
+		//traverse the bitset until a used word is found
+		int i;
+		for(i = wordsInUse - 1; i >= 0; i --)
+			if(words[i] != 0)
+				break;
+
+		//the new logical size
+		wordsInUse = i + 1;
+	}
+
+	/**
+	 * Sets the bit at the specified index to {@code true}.
+	 *
+	 * @param bitIndex	A bit index
+	 * @throws IndexOutOfBoundsException	If the specified index is negative
+	 */
+	public void set(final int bitIndex){
+		if(bitIndex < 0)
+			throw new IndexOutOfBoundsException("bitIndex < 0: " + bitIndex);
+
+		final int wordIndex = wordIndex(bitIndex);
+		expandTo(wordIndex);
+
+		words[wordIndex] |= (1l << bitIndex);
+	}
+
+	/**
 	 * Ensures that the {@link BitSet} can accommodate a given {@code wordIndex}, temporarily violating the invariants.
 	 * The caller must restore the invariants before returning to the user, possibly using {@link #recalculateWordsInUse()}.
 	 *
@@ -249,40 +254,6 @@ public class BitSet{
 			final int request = Math.max(2 * words.length, wordsRequired);
 			words = Arrays.copyOf(words, request);
 		}
-	}
-
-	/**
-	 * Sets the bit at the specified index to the complement of its current value.
-	 *
-	 * @param bitIndex	The index of the bit to flip
-	 * @throws IndexOutOfBoundsException	If the specified index is negative
-	 */
-	public void flip(final int bitIndex){
-		if(bitIndex < 0)
-			throw new IndexOutOfBoundsException("bitIndex < 0: " + bitIndex);
-
-		final int wordIndex = wordIndex(bitIndex);
-		expandTo(wordIndex);
-
-		words[wordIndex] ^= (1l << bitIndex);
-
-		recalculateWordsInUse();
-	}
-
-	/**
-	 * Sets the bit at the specified index to {@code true}.
-	 *
-	 * @param bitIndex	A bit index
-	 * @throws IndexOutOfBoundsException	If the specified index is negative
-	 */
-	public void set(final int bitIndex){
-		if(bitIndex < 0)
-			throw new IndexOutOfBoundsException("bitIndex < 0: " + bitIndex);
-
-		final int wordIndex = wordIndex(bitIndex);
-		expandTo(wordIndex);
-
-		words[wordIndex] |= (1l << bitIndex);
 	}
 
 	/**
@@ -331,34 +302,6 @@ public class BitSet{
 	}
 
 	/**
-	 * Returns the index of the first bit that is set to {@code false} that occurs on or after the specified starting index.
-	 *
-	 * @param fromIndex	The index to start checking from (inclusive)
-	 * @return	The index of the next clear bit
-	 * @throws IndexOutOfBoundsException	If the specified index is negative
-	 */
-	public int nextClearBit(final int fromIndex){
-		//neither spec nor implementation handle bitsets of maximal length (see 4816253)
-		if(fromIndex < 0)
-			throw new IndexOutOfBoundsException("fromIndex < 0: " + fromIndex);
-
-		int u = wordIndex(fromIndex);
-		if(u >= wordsInUse)
-			return fromIndex;
-
-		long word = ~words[u] & (WORD_MASK << fromIndex);
-		while(true){
-			if(word != 0)
-				return (u * BITS_PER_WORD) + Long.numberOfTrailingZeros(word);
-
-			if(++ u == wordsInUse)
-				return wordsInUse * BITS_PER_WORD;
-
-			word = ~words[u];
-		}
-	}
-
-	/**
 	 * Returns the "logical size" of this {@code BitSet}: the index of the highest set bit in the {@code BitSet} plus one.
 	 * <p>Returns zero if the {@code BitSet} contains no set bits.</p>
 	 *
@@ -368,18 +311,6 @@ public class BitSet{
 		return (wordsInUse == 0?
 			0:
 			BITS_PER_WORD * (wordsInUse - 1) + (BITS_PER_WORD - Long.numberOfLeadingZeros(words[wordsInUse - 1])));
-	}
-
-	/**
-	 * Returns the number of bits set to {@code true} in this {@code BitSet}.
-	 *
-	 * @return	The number of bits set to {@code true} in this {@code BitSet}
-	 */
-	public int cardinality(){
-		int sum = 0;
-		for(int i = 0; i < wordsInUse; i ++)
-			sum += Long.bitCount(words[i]);
-		return sum;
 	}
 
 
@@ -417,6 +348,51 @@ public class BitSet{
 		}
 		sb.append('}');
 		return sb.toString();
+	}
+
+	/**
+	 * Returns the number of bits set to {@code true} in this {@code BitSet}.
+	 *
+	 * @return	The number of bits set to {@code true} in this {@code BitSet}
+	 */
+	private int cardinality(){
+		int sum = 0;
+		for(int i = 0; i < wordsInUse; i ++)
+			sum += Long.bitCount(words[i]);
+		return sum;
+	}
+
+	/**
+	 * Returns the index of the first bit that is set to {@code false} that occurs on or after the specified starting index.
+	 *
+	 * @param fromIndex	The index to start checking from (inclusive)
+	 * @return	The index of the next clear bit
+	 * @throws IndexOutOfBoundsException	If the specified index is negative
+	 */
+	private int nextClearBit(final int fromIndex){
+		//neither spec nor implementation handle bitsets of maximal length (see 4816253)
+		if(fromIndex < 0)
+			throw new IndexOutOfBoundsException("fromIndex < 0: " + fromIndex);
+
+		int u = wordIndex(fromIndex);
+		if(u >= wordsInUse)
+			return fromIndex;
+
+		long word = ~words[u] & (WORD_MASK << fromIndex);
+		while(true){
+			if(word != 0)
+				return (u * BITS_PER_WORD) + Long.numberOfTrailingZeros(word);
+
+			if(++ u == wordsInUse)
+				return wordsInUse * BITS_PER_WORD;
+
+			word = ~words[u];
+		}
+	}
+
+	/** Given a bit index, return word index containing it. */
+	private static int wordIndex(final int bitIndex){
+		return bitIndex >> ADDRESS_BITS_PER_WORD;
 	}
 
 	@Override
