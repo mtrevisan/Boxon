@@ -34,7 +34,7 @@ public class BitMap{
 	 * @return	A {@code BitMap} containing all the bits in the byte array
 	 */
 	public static BitMap valueOf(final byte[] array){
-		return valueOf(ByteBuffer.wrap(array));
+		return new BitMap(ByteBuffer.wrap(array));
 	}
 
 	/**
@@ -58,26 +58,6 @@ public class BitMap{
 		while(n > 0 && array[n - 1] == 0)
 			n --;
 		return new BitMap(Arrays.copyOf(array, n));
-	}
-
-	/**
-	 * Returns a new bit set containing all the bits in the given byte
-	 * buffer between its position and limit.
-	 *
-	 * <p>More precisely,
-	 * <br>{@code BitSet.valueOf(bb).get(n) == ((bb.get(bb.position()+n/8) & (1<<(n%8))) != 0)}
-	 * <br>for all {@code n < 8 * bb.remaining()}.
-	 *
-	 * <p>The byte buffer is not modified by this method, and no
-	 * reference to the buffer is retained by the bit set.
-	 *
-	 * @param buffer	A byte buffer containing a little-endian representation
-	 * 	of a sequence of bits between its position and limit, to be
-	 * 	used as the initial bits of the new bit set
-	 * @return	A {@code BitMap} containing all the bits in the buffer in the specified range
-	 */
-	public static BitMap valueOf(final ByteBuffer buffer){
-		return new BitMap(buffer);
 	}
 
 	/**
