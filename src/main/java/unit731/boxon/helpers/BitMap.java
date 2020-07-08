@@ -85,7 +85,7 @@ public class BitMap{
 	/**
 	 * Creates a bit set whose initial size is large enough to explicitly
 	 * represent bits with indices in the range {@code 0} through
-	 * {@code nbits-1}. All bits are initially {@code false}.
+	 * {@code length-1}. All bits are initially {@code false}.
 	 *
 	 * @param length	The initial size of the bit set
 	 * @throws NegativeArraySizeException	If the specified initial size is negative
@@ -103,10 +103,7 @@ public class BitMap{
 	}
 
 	/**
-	 * Returns the value of the bit with the specified index. The value
-	 * is {@code true} if the bit with the index {@code bitIndex}
-	 * is currently set in this {@code BitSet}; otherwise, the result
-	 * is {@code false}.
+	 * Returns the value of the bit with the specified index.
 	 *
 	 * @param bitIndex	The bit index
 	 * @return	The value of the bit with the specified index
@@ -141,17 +138,6 @@ public class BitMap{
 	 * that occurs on or after the specified starting index.
 	 * <p>If no such bit exists then {@code -1} is returned.</p>
 	 *
-	 * <p>To iterate over the {@code true} bits in a {@code BitMap},
-	 * use the following loop:
-	 *
-	 * <pre> {@code
-	 * for (int i = bs.nextSetBit(0); i >= 0; i = bs.nextSetBit(i+1)) {
-	 *     // operate on index i here
-	 *     if (i == Integer.MAX_VALUE) {
-	 *         break; // or (i+1) would overflow
-	 *     }
-	 * }}</pre>
-	 *
 	 * @param fromIndex	The index to start checking from (inclusive)
 	 * @return	The index of the next set bit, or {@code -1} if there is no such bit
 	 * @throws IndexOutOfBoundsException	If the specified index is negative
@@ -176,8 +162,8 @@ public class BitMap{
 	 *
 	 * <p>More precisely, if
 	 * <br>{@code byte[] bytes = s.toByteArray();}
-	 * <br>then {@code bytes.length == (s.length()+7)/8} and
-	 * <br>{@code s.get(n) == ((bytes[n/8] & (1<<(n%8))) != 0)}
+	 * <br>then {@code bytes.length == (s.length() + 7) / 8} and
+	 * <br>{@code s.get(n) == ((bytes[n / 8] & (1 << (n % 8))) != 0)}
 	 * <br>for all {@code n < 8 * bytes.length}.
 	 *
 	 * @return	A byte array containing a little-endian representation of all the bits in this bit set
@@ -191,8 +177,8 @@ public class BitMap{
 	 *
 	 * <p>More precisely, if
 	 * <br>{@code long[] longs = s.toLongArray();}
-	 * <br>then {@code longs.length == (s.length()+63)/64} and
-	 * <br>{@code s.get(n) == ((longs[n/64] & (1L<<(n%64))) != 0)}
+	 * <br>then {@code longs.length == (s.length() + 63) / 64} and
+	 * <br>{@code s.get(n) == ((longs[n / 64] & (1l << (n % 64))) != 0)}
 	 * <br>for all {@code n < 64 * longs.length}.
 	 *
 	 * @return	A long array containing a little-endian representation of all the bits in this bit set
