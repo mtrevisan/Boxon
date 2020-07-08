@@ -1,7 +1,5 @@
 package unit731.boxon.helpers;
 
-import com.zaxxer.sparsebits.SparseBitSet;
-
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.BitSet;
@@ -166,7 +164,7 @@ public class BitMap{
 	}
 
 	/**
-	 * Returns a new long array containing all the bits in this bit set.
+	 * Returns a new long array containing all the bits in this bit set up until bit 63.
 	 *
 	 * <p>More precisely, if
 	 * <br>{@code long[] longs = s.toLongArray();}
@@ -177,12 +175,9 @@ public class BitMap{
 	 * @return	A long array containing a little-endian representation of all the bits in this bit set
 	 */
 	public long extractLong(){
-//		final long[] array = bset.toLongArray();
-//		return (array.length > 0? array[0]: 0l);
-
 		long result = 0l;
 		int i = 0;
-		for(i = bset.nextSetBit(i); i >= 0; i = bset.nextSetBit(i + 1))
+		for(i = nextSetBit(i); 0 <= i && i < Long.SIZE; i = nextSetBit(i + 1))
 			result |= 1l << i;
 		return result;
 	}
