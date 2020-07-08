@@ -9,7 +9,7 @@ import java.util.BitSet;
  * @see <a href="https://github.com/RoaringBitmap">Roaring Bitmap</a>
  * https://github.com/lemire/sparsebitmap/blob/master/src/main/java/sparsebitmap/SparseBitmap.java
  * https://github.com/brettwooldridge/SparseBitSet/blob/master/src/main/java/com/zaxxer/sparsebits/SparseBitSet.java
- * https://lucene.apache.org/core/3_0_3/api/core/org/apache/lucene/util/OpenBitSet.html
+ * SAME, OR SLOWER! https://lucene.apache.org/core/3_0_3/api/core/org/apache/lucene/util/OpenBitSet.html
  * SLOWER! https://github.com/ashouldis/bitset
  */
 public class BitMap{
