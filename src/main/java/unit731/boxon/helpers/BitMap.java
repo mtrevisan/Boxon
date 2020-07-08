@@ -34,7 +34,7 @@ public class BitMap{
 	 * @return	A {@code BitMap} containing all the bits in the byte array
 	 */
 	public static BitMap valueOf(final byte[] array){
-		return BitMap.valueOf(ByteBuffer.wrap(array));
+		return valueOf(ByteBuffer.wrap(array));
 	}
 
 	/**
