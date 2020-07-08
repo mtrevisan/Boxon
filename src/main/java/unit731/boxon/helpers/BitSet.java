@@ -137,12 +137,8 @@ public class BitSet{
 	 * <p>All bits are initially {@code false}.</p>
 	 *
 	 * @param nbits	The initial size of the bit set
-	 * @throws NegativeArraySizeException	If the specified initial size is negative
 	 */
 	public BitSet(final int nbits){
-		if(nbits < 0)
-			throw new NegativeArraySizeException("nbits < 0: " + nbits);
-
 		initWords(nbits);
 	}
 
@@ -182,12 +178,8 @@ public class BitSet{
 	 * Sets the bit at the specified index to the complement of its current value.
 	 *
 	 * @param bitIndex	The index of the bit to flip
-	 * @throws IndexOutOfBoundsException	If the specified index is negative
 	 */
 	public void flip(final int bitIndex){
-		if(bitIndex < 0)
-			throw new IndexOutOfBoundsException("bitIndex < 0: " + bitIndex);
-
 		final int wordIndex = wordIndex(bitIndex);
 		expandTo(wordIndex);
 
@@ -216,12 +208,8 @@ public class BitSet{
 	 * Sets the bit at the specified index to {@code true}.
 	 *
 	 * @param bitIndex	A bit index
-	 * @throws IndexOutOfBoundsException	If the specified index is negative
 	 */
 	public void set(final int bitIndex){
-		if(bitIndex < 0)
-			throw new IndexOutOfBoundsException("bitIndex < 0: " + bitIndex);
-
 		final int wordIndex = wordIndex(bitIndex);
 		expandTo(wordIndex);
 
@@ -261,12 +249,8 @@ public class BitSet{
 	 *
 	 * @param bitIndex	The bit index
 	 * @return	The value of the bit with the specified index
-	 * @throws IndexOutOfBoundsException	If the specified index is negative
 	 */
 	public boolean get(final int bitIndex){
-		if(bitIndex < 0)
-			throw new IndexOutOfBoundsException("bitIndex < 0: " + bitIndex);
-
 		final int wordIndex = wordIndex(bitIndex);
 		return (wordIndex < wordsInUse && ((words[wordIndex] & (1l << bitIndex)) != 0));
 	}
@@ -277,12 +261,8 @@ public class BitSet{
 	 *
 	 * @param fromIndex	The index to start checking from (inclusive)
 	 * @return	The index of the next set bit, or {@code -1} if there is no such bit
-	 * @throws IndexOutOfBoundsException	If the specified index is negative
 	 */
 	public int nextSetBit(final int fromIndex){
-		if(fromIndex < 0)
-			throw new IndexOutOfBoundsException("fromIndex < 0: " + fromIndex);
-
 		int u = wordIndex(fromIndex);
 		if(u >= wordsInUse)
 			return -1;
@@ -366,13 +346,8 @@ public class BitSet{
 	 *
 	 * @param fromIndex	The index to start checking from (inclusive)
 	 * @return	The index of the next clear bit
-	 * @throws IndexOutOfBoundsException	If the specified index is negative
 	 */
 	private int nextClearBit(final int fromIndex){
-		//neither spec nor implementation handle bitsets of maximal length (see 4816253)
-		if(fromIndex < 0)
-			throw new IndexOutOfBoundsException("fromIndex < 0: " + fromIndex);
-
 		int u = wordIndex(fromIndex);
 		if(u >= wordsInUse)
 			return fromIndex;
