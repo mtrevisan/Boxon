@@ -36,7 +36,7 @@ import java.lang.annotation.Target;
 
 
 /**
- * Manages a {@link unit731.boxon.helpers.BitMap BitMap} (... before the application of a converter)
+ * Manages a {@link unit731.boxon.helpers.BitSet BitSet} (... before the application of a converter)
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)

@@ -33,7 +33,7 @@ import unit731.boxon.annotations.converters.Converter;
 import unit731.boxon.annotations.converters.NullConverter;
 import unit731.boxon.annotations.validators.NullValidator;
 import unit731.boxon.annotations.validators.Validator;
-import unit731.boxon.helpers.BitMap;
+import unit731.boxon.helpers.BitSet;
 import unit731.boxon.helpers.ByteHelper;
 
 import java.lang.annotation.Annotation;
@@ -514,7 +514,7 @@ class CoderIntegerTest{
 		coder.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		BitMap bits = ByteHelper.toBits(encodedValue, 128, ByteOrder.LITTLE_ENDIAN);
+		BitSet bits = ByteHelper.toBits(encodedValue, 128, ByteOrder.LITTLE_ENDIAN);
 		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.toHexString(bits.toByteArray()).toUpperCase(Locale.ROOT), 32, '0'), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);

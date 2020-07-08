@@ -180,7 +180,7 @@ public class ByteHelper{
 		return ((mask & (1 << (index % Byte.SIZE))) != 0);
 	}
 
-	public static void reverseBits(final BitMap value, final int size){
+	public static void reverseBits(final BitSet value, final int size){
 		for(int start = 0, end = size - 1; start < end; start ++, end --)
 			if(value.get(start) != value.get(end)){
 				value.flip(start);
@@ -193,7 +193,7 @@ public class ByteHelper{
 	}
 
 
-	public static long bitsToLong(final BitMap bits, final int size, final ByteOrder byteOrder){
+	public static long bitsToLong(final BitSet bits, final int size, final ByteOrder byteOrder){
 		long value = 0l;
 		int i = 0;
 		for(i = bits.nextSetBit(i); 0 <= i && i < Long.SIZE; i = bits.nextSetBit(i + 1))
@@ -202,7 +202,7 @@ public class ByteHelper{
 		return (byteOrder == ByteOrder.BIG_ENDIAN? Long.reverseBytes(value) >>> (Long.SIZE - size): value);
 	}
 
-	public static BigInteger toInteger(final BitMap bits, final int size, final ByteOrder byteOrder){
+	public static BigInteger toInteger(final BitSet bits, final int size, final ByteOrder byteOrder){
 		byte[] array = bits.toByteArray();
 		final int expectedLength = size / Byte.SIZE;
 		if(array.length < expectedLength)
@@ -225,9 +225,9 @@ public class ByteHelper{
 	 * @param value	the value, must not be <code>null</code>.
 	 * @param size	The size in bits of the value.
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
-	 * @return	The {@link BitMap} representing the given value.
+	 * @return	The {@link BitSet} representing the given value.
 	 */
-	public static BitMap toBits(final BigInteger value, final int size, final ByteOrder byteOrder){
+	public static BitSet toBits(final BigInteger value, final int size, final ByteOrder byteOrder){
 		byte[] array = value.toByteArray();
 		final int newSize = (size + Byte.SIZE - 1) / Byte.SIZE;
 		if(newSize != array.length){
@@ -240,7 +240,7 @@ public class ByteHelper{
 		if(byteOrder == ByteOrder.LITTLE_ENDIAN)
 			//NOTE: need to reverse the bytes because BigInteger is big-endian and BitMap is little-endian
 			reverse(array);
-		return BitMap.valueOf(array);
+		return BitSet.valueOf(array);
 	}
 
 	/**

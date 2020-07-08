@@ -94,22 +94,22 @@ class ByteHelperTest{
 
 	@Test
 	void reverseBits(){
-		BitMap bits = BitMap.valueOf(new byte[]{0x10});
+		BitSet bits = BitSet.valueOf(new byte[]{0x10});
 		ByteHelper.reverseBits(bits, Byte.SIZE);
 
-		Assertions.assertEquals(BitMap.valueOf(new byte[]{0x08}), bits);
+		Assertions.assertEquals(BitSet.valueOf(new byte[]{0x08}), bits);
 
 
-		bits = BitMap.valueOf(new byte[]{0x16});
+		bits = BitSet.valueOf(new byte[]{0x16});
 		ByteHelper.reverseBits(bits, Byte.SIZE);
 
-		Assertions.assertEquals(BitMap.valueOf(new byte[]{0x68}), bits);
+		Assertions.assertEquals(BitSet.valueOf(new byte[]{0x68}), bits);
 
 
-		bits = BitMap.valueOf(new byte[]{(byte)0xE7});
+		bits = BitSet.valueOf(new byte[]{(byte)0xE7});
 		ByteHelper.reverseBits(bits, Byte.SIZE);
 
-		Assertions.assertEquals(BitMap.valueOf(new byte[]{(byte)0xE7}), bits);
+		Assertions.assertEquals(BitSet.valueOf(new byte[]{(byte)0xE7}), bits);
 	}
 
 }
