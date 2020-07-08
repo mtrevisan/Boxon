@@ -144,6 +144,7 @@ public class BitMap{
 	}
 
 
+	@Override
 	public boolean equals(final Object obj){
 		if(!(obj instanceof BitMap))
 			return false;
@@ -153,6 +154,7 @@ public class BitMap{
 		return bset.equals(((BitMap)obj).bset);
 	}
 
+	@Override
 	public int hashCode(){
 		return bset.hashCode();
 	}
