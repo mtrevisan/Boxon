@@ -48,7 +48,6 @@ public class BitSet{
 	private static final long WORD_MASK = 0xFFFF_FFFF_FFFF_FFFFl;
 
 
-	/** The internal field corresponding to the serialField "bits". */
 	private long[] words;
 
 	/** The number of words in the logical size of this BitSet. */
