@@ -2,7 +2,6 @@ package unit731.boxon.helpers;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.LongBuffer;
 import java.util.Arrays;
 
 
@@ -133,17 +132,13 @@ public class BitSet{
 	/**
 	 * Creates a bit set whose initial size is large enough to explicitly
 	 * represent bits with indices in the range {@code 0} through
-	 * {@code nbits-1}.
+	 * {@code length-1}.
 	 * <p>All bits are initially {@code false}.</p>
 	 *
-	 * @param nbits	The initial size of the bit set
+	 * @param length	The initial size of the bit set
 	 */
-	public BitSet(final int nbits){
-		initWords(nbits);
-	}
-
-	private void initWords(final int nbits){
-		words = new long[wordIndex(nbits - 1) + 1];
+	public BitSet(final int length){
+		words = new long[wordIndex(length - 1) + 1];
 	}
 
 	/**
@@ -280,18 +275,6 @@ public class BitSet{
 		}
 	}
 
-	/**
-	 * Returns the "logical size" of this {@code BitSet}: the index of the highest set bit in the {@code BitSet} plus one.
-	 * <p>Returns zero if the {@code BitSet} contains no set bits.</p>
-	 *
-	 * @return	The logical size of this {@code BitSet}
-	 */
-	public int length(){
-		return (wordsInUse == 0?
-			0:
-			BITS_PER_WORD * (wordsInUse - 1) + (BITS_PER_WORD - Long.numberOfLeadingZeros(words[wordsInUse - 1])));
-	}
-
 
 	/**
 	 * Returns a string representation of this bit set.
@@ -368,6 +351,7 @@ public class BitSet{
 	private static int wordIndex(final int bitIndex){
 		return bitIndex >> ADDRESS_BITS_PER_WORD;
 	}
+
 
 	@Override
 	public int hashCode(){
