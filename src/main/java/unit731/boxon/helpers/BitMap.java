@@ -10,7 +10,7 @@ import java.util.BitSet;
  * https://github.com/lemire/sparsebitmap/blob/master/src/main/java/sparsebitmap/SparseBitmap.java
  * https://github.com/brettwooldridge/SparseBitSet/blob/master/src/main/java/com/zaxxer/sparsebits/SparseBitSet.java
  * https://lucene.apache.org/core/3_0_3/api/core/org/apache/lucene/util/OpenBitSet.html
- * https://github.com/ashouldis/bitset
+ * SLOWER! https://github.com/ashouldis/bitset
  */
 public class BitMap{
 
@@ -146,17 +146,6 @@ public class BitMap{
 	 */
 	public int nextSetBit(final int fromIndex){
 		return bset.nextSetBit(fromIndex);
-	}
-
-	/**
-	 * Returns the "logical size" of this {@code BitMap}: the index of
-	 * the highest set bit in the {@code BitMap} plus one.
-	 * <p>Returns zero if the {@code BitMap} contains no set bits.</p>
-	 *
-	 * @return	The logical size of this {@code BitMap}
-	 */
-	public int length(){
-		return bset.length();
 	}
 
 	/**
