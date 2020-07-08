@@ -28,7 +28,7 @@ import unit731.boxon.annotations.BindChecksum;
 import unit731.boxon.annotations.MessageHeader;
 import unit731.boxon.annotations.Skip;
 import unit731.boxon.annotations.checksummers.Checksummer;
-import unit731.boxon.helpers.BitMap;
+import unit731.boxon.helpers.BitSet;
 import unit731.boxon.helpers.ByteHelper;
 import unit731.boxon.helpers.ExceptionHelper;
 import unit731.boxon.helpers.ReflectionHelper;
@@ -214,7 +214,7 @@ class MessageParser{
 		final int size = Evaluator.evaluateSize(skip.size(), data);
 		if(size > 0)
 			/** skip {@link size} bits */
-			writer.putBits(new BitMap(size), size);
+			writer.putBits(new BitSet(size), size);
 		else if(skip.consumeTerminator())
 			//skip until terminator
 			writer.putByte(skip.terminator());

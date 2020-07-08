@@ -35,12 +35,10 @@ class ByteHelperTest{
 		byte mask = 0x27;
 
 		byte output = 0x00;
-		for(int i = 0; i < 8; i ++){
-			boolean bitSet = ByteHelper.hasBit(mask, i);
-			if(bitSet){
+		for(int i = 0; i < 8; i ++)
+			if(ByteHelper.hasBit(mask, i)){
 				output |= (1 << i);
 			}
-		}
 
 		Assertions.assertEquals(mask, output);
 	}
@@ -96,22 +94,22 @@ class ByteHelperTest{
 
 	@Test
 	void reverseBits(){
-		BitMap bits = BitMap.valueOf(new byte[]{0x10});
+		BitSet bits = BitSet.valueOf(new byte[]{0x10});
 		ByteHelper.reverseBits(bits, Byte.SIZE);
 
-		Assertions.assertEquals(BitMap.valueOf(new byte[]{0x08}), bits);
+		Assertions.assertEquals(BitSet.valueOf(new byte[]{0x08}), bits);
 
 
-		bits = BitMap.valueOf(new byte[]{0x16});
+		bits = BitSet.valueOf(new byte[]{0x16});
 		ByteHelper.reverseBits(bits, Byte.SIZE);
 
-		Assertions.assertEquals(BitMap.valueOf(new byte[]{0x68}), bits);
+		Assertions.assertEquals(BitSet.valueOf(new byte[]{0x68}), bits);
 
 
-		bits = BitMap.valueOf(new byte[]{(byte)0xE7});
+		bits = BitSet.valueOf(new byte[]{(byte)0xE7});
 		ByteHelper.reverseBits(bits, Byte.SIZE);
 
-		Assertions.assertEquals(BitMap.valueOf(new byte[]{(byte)0xE7}), bits);
+		Assertions.assertEquals(BitSet.valueOf(new byte[]{(byte)0xE7}), bits);
 	}
 
 }

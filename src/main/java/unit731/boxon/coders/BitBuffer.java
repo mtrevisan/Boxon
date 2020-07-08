@@ -25,7 +25,7 @@
 package unit731.boxon.coders;
 
 import unit731.boxon.annotations.ByteOrder;
-import unit731.boxon.helpers.BitMap;
+import unit731.boxon.helpers.BitSet;
 import unit731.boxon.helpers.ByteHelper;
 import unit731.boxon.helpers.ReflectionHelper;
 
@@ -184,13 +184,13 @@ class BitBuffer{
 	}
 
 	/**
-	 * Reads the next {@code length} bits and composes a {@link BitMap}.
+	 * Reads the next {@code length} bits and composes a {@link BitSet}.
 	 *
 	 * @param length	The amount of bits to read.
-	 * @return	A {@link BitMap} value at the {@link BitBuffer}'s current position.
+	 * @return	A {@link BitSet} value at the {@link BitBuffer}'s current position.
 	 */
-	BitMap getBits(final int length){
-		final BitMap value = new BitMap(length);
+	BitSet getBits(final int length){
+		final BitSet value = new BitSet(length);
 		int offset = 0;
 		while(offset < length){
 			//transfer the cache values
@@ -219,7 +219,7 @@ class BitBuffer{
 	 * @return	A <code>long</code> value at the {@link BitBuffer}'s current position.
 	 */
 	long getLong(final int length, final ByteOrder byteOrder){
-		final BitMap bits = getBits(length);
+		final BitSet bits = getBits(length);
 		return ByteHelper.bitsToLong(bits, length, byteOrder);
 	}
 
@@ -231,7 +231,7 @@ class BitBuffer{
 	 * @return	A {@link BigInteger} value at the {@link BitBuffer}'s current position.
 	 */
 	BigInteger getBigInteger(final int length, final ByteOrder byteOrder){
-		final BitMap bits = getBits(length);
+		final BitSet bits = getBits(length);
 		return ByteHelper.toInteger(bits, length, byteOrder);
 	}
 

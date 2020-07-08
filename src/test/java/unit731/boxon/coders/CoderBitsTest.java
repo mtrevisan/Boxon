@@ -32,7 +32,7 @@ import unit731.boxon.annotations.converters.Converter;
 import unit731.boxon.annotations.converters.NullConverter;
 import unit731.boxon.annotations.validators.NullValidator;
 import unit731.boxon.annotations.validators.Validator;
-import unit731.boxon.helpers.BitMap;
+import unit731.boxon.helpers.BitSet;
 import unit731.boxon.helpers.ByteHelper;
 
 import java.lang.annotation.Annotation;
@@ -49,7 +49,7 @@ class CoderBitsTest{
 		CoderInterface coder = new CoderBits();
 		byte[] randomBytes = new byte[123];
 		RANDOM.nextBytes(randomBytes);
-		BitMap encodedValue = BitMap.valueOf(randomBytes);
+		BitSet encodedValue = BitSet.valueOf(randomBytes);
 		BindBits annotation = new BindBits(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
@@ -95,7 +95,7 @@ class CoderBitsTest{
 		Assertions.assertEquals(ByteHelper.toHexString(bb), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-		BitMap decoded = (BitMap)coder.decode(reader, annotation, null);
+		BitSet decoded = (BitSet)coder.decode(reader, annotation, null);
 
 		ByteHelper.reverseBits(encodedValue, randomBytes.length * Byte.SIZE);
 		Assertions.assertEquals(encodedValue, decoded);
@@ -106,7 +106,7 @@ class CoderBitsTest{
 		CoderInterface coder = new CoderBits();
 		byte[] randomBytes = new byte[123];
 		RANDOM.nextBytes(randomBytes);
-		BitMap encodedValue = BitMap.valueOf(randomBytes);
+		BitSet encodedValue = BitSet.valueOf(randomBytes);
 		BindBits annotation = new BindBits(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
@@ -152,7 +152,7 @@ class CoderBitsTest{
 		Assertions.assertEquals(ByteHelper.toHexString(bb), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
-		BitMap decoded = (BitMap)coder.decode(reader, annotation, null);
+		BitSet decoded = (BitSet)coder.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
