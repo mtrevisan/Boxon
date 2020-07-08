@@ -54,9 +54,9 @@ public class BitMap{
 	 * @return	A {@code BitMap} containing all the bits in the byte array
 	 */
 	public static BitMap valueOf(final long[] array){
-		int n;
-		for(n = array.length; n > 0 && array[n - 1] == 0; n --)
-			;
+		int n = array.length;
+		while(n > 0 && array[n - 1] == 0)
+			n --;
 		return new BitMap(Arrays.copyOf(array, n));
 	}
 
@@ -77,9 +77,11 @@ public class BitMap{
 	 * @return	A {@code BitMap} containing all the bits in the buffer in the specified range
 	 */
 	public static BitMap valueOf(final ByteBuffer buffer){
-		final BitMap bm = new BitMap(0);
-		bm.bset = BitSet.valueOf(buffer);
-		return bm;
+		return new BitMap(buffer);
+	}
+
+	public BitMap(final ByteBuffer buffer){
+		bset = BitSet.valueOf(buffer);
 	}
 
 	/**
