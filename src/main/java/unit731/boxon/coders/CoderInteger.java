@@ -39,7 +39,7 @@ class CoderInteger implements CoderInterface<BindInteger>{
 	public Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
 		final BindInteger binding = (BindInteger)annotation;
 
-		final int size = Evaluator.evaluate(binding.size(), int.class, data);
+		final int size = Evaluator.evaluateSize(binding.size(), data);
 
 		final Object value;
 		if(binding.allowPrimitive() && size < Long.SIZE){
@@ -64,7 +64,7 @@ class CoderInteger implements CoderInterface<BindInteger>{
 
 		CoderHelper.validateData(binding.match(), binding.validator(), value);
 
-		final int size = Evaluator.evaluate(binding.size(), int.class, data);
+		final int size = Evaluator.evaluateSize(binding.size(), data);
 
 		final BigInteger v;
 		if(binding.allowPrimitive() && size < Long.SIZE){

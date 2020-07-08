@@ -100,7 +100,7 @@ class MessageParser{
 	}
 
 	private <T> void skip(final Skip skip, final BitBuffer reader, final T data){
-		final int size = (isNotBlank(skip.size())? Evaluator.evaluate(skip.size(), Integer.class, data): 0);
+		final int size = Evaluator.evaluateSize(skip.size(), data);
 		if(size > 0)
 			/** skip {@link size} bits */
 			reader.skip(size);
@@ -211,17 +211,13 @@ class MessageParser{
 	}
 
 	private <T> void addSkip(final Skip skip, final BitWriter writer, final T data){
-		final int size = (isNotBlank(skip.size())? Evaluator.evaluate(skip.size(), Integer.class, data): 0);
+		final int size = Evaluator.evaluateSize(skip.size(), data);
 		if(size > 0)
 			/** skip {@link size} bits */
 			writer.putBits(new BitMap(size), size);
 		else if(skip.consumeTerminator())
 			//skip until terminator
 			writer.putByte(skip.terminator());
-	}
-
-	private boolean isNotBlank(final String text){
-		return (text != null && !text.trim().isBlank());
 	}
 
 }

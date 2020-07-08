@@ -36,7 +36,7 @@ class CoderString implements CoderInterface<BindString>{
 	public Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
 		final BindString binding = (BindString)annotation;
 
-		final int size = Evaluator.evaluate(binding.size(), int.class, data);
+		final int size = Evaluator.evaluateSize(binding.size(), data);
 		final Charset charset = Charset.forName(binding.charset());
 		final String text = reader.getText(size, charset);
 
@@ -55,7 +55,7 @@ class CoderString implements CoderInterface<BindString>{
 
 		final String text = CoderHelper.converterEncode(binding.converter(), value);
 
-		final int size = Evaluator.evaluate(binding.size(), int.class, data);
+		final int size = Evaluator.evaluateSize(binding.size(), data);
 		final Charset charset = Charset.forName(binding.charset());
 		writer.putText(text.substring(0, Math.min(text.length(), size)), charset);
 	}

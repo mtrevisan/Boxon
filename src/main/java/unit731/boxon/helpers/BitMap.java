@@ -77,7 +77,6 @@ public class BitMap{
 	 * @return	A {@code BitMap} containing all the bits in the buffer in the specified range
 	 */
 	public static BitMap valueOf(final ByteBuffer buffer){
-		//TODO
 		final BitMap bm = new BitMap(0);
 		bm.bset = BitSet.valueOf(buffer);
 		return bm;
@@ -92,7 +91,6 @@ public class BitMap{
 	 * @throws NegativeArraySizeException	If the specified initial size is negative
 	 */
 	public BitMap(final int length){
-		//TODO
 		bset = new BitSet(length);
 	}
 
@@ -115,7 +113,6 @@ public class BitMap{
 	 * @throws IndexOutOfBoundsException	If the specified index is negative
 	 */
 	public boolean get(final int bitIndex){
-		//TODO
 		return bset.get(bitIndex);
 	}
 
@@ -126,7 +123,6 @@ public class BitMap{
 	 * @throws IndexOutOfBoundsException	If the specified index is negative
 	 */
 	public void set(final int bitIndex){
-		//TODO
 		bset.set(bitIndex);
 	}
 
@@ -137,7 +133,6 @@ public class BitMap{
 	 * @throws IndexOutOfBoundsException	If the specified index is negative
 	 */
 	public void flip(final int bitIndex){
-		//TODO
 		bset.flip(bitIndex);
 	}
 
@@ -162,7 +157,6 @@ public class BitMap{
 	 * @throws IndexOutOfBoundsException	If the specified index is negative
 	 */
 	public int nextSetBit(final int fromIndex){
-		//TODO
 		return bset.nextSetBit(fromIndex);
 	}
 
@@ -174,7 +168,6 @@ public class BitMap{
 	 * @return	The logical size of this {@code BitMap}
 	 */
 	public int length(){
-		//TODO
 		return bset.length();
 	}
 
@@ -190,7 +183,6 @@ public class BitMap{
 	 * @return	A byte array containing a little-endian representation of all the bits in this bit set
 	 */
 	public byte[] toByteArray(){
-		//TODO
 		return bset.toByteArray();
 	}
 
@@ -206,7 +198,6 @@ public class BitMap{
 	 * @return	A long array containing a little-endian representation of all the bits in this bit set
 	 */
 	public long[] toLongArray(){
-		//TODO
 		return bset.toLongArray();
 	}
 
