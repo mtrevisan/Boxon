@@ -38,6 +38,7 @@ import org.springframework.objenesis.strategy.PlatformDescription;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
@@ -165,7 +166,15 @@ public class ReflectionHelper{
 	public static <T> T createInstance(final Class<T> type){
 		Objects.requireNonNull(type);
 
-		return instantiatorOf(type).newInstance();
+		try{
+			final Constructor<T> ctr = type.getDeclaredConstructor();
+			ctr.setAccessible(true);
+			return ctr.newInstance();
+		}
+		catch(final Exception ignored){
+			return instantiatorOf(type)
+				.newInstance();
+		}
 	}
 
 	/**
