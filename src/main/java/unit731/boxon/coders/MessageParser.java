@@ -67,7 +67,7 @@ class MessageParser{
 				continue;
 
 			final Annotation binding = field.getBinding();
-			final CoderInterface<?> coder = retrieveCoder(binding);
+			final CoderInterface<?> coder = retrieveCoder(binding.annotationType());
 
 			try{
 				final Object value = coder.decode(reader, binding, data);
@@ -160,7 +160,7 @@ class MessageParser{
 				continue;
 
 			final Annotation binding = field.getBinding();
-			final CoderInterface<?> coder = retrieveCoder(binding);
+			final CoderInterface<?> coder = retrieveCoder(binding.annotationType());
 
 			try{
 				final Object value = ReflectionHelper.getFieldValue(data, field.getName());
@@ -180,10 +180,10 @@ class MessageParser{
 		writer.flush();
 	}
 
-	private CoderInterface<?> retrieveCoder(final Annotation binding){
-		final CoderInterface<?> coder = loader.getCoder(binding.annotationType());
+	private CoderInterface<?> retrieveCoder(final Class<? extends Annotation> annotationType){
+		final CoderInterface<?> coder = loader.getCoder(annotationType);
 		if(coder == null)
-			throw new IllegalArgumentException("Cannot find coder for binding @" + binding.annotationType().getSimpleName());
+			throw new IllegalArgumentException("Cannot find coder for binding @" + annotationType.getSimpleName());
 
 		setMessageParser(coder);
 		return coder;
