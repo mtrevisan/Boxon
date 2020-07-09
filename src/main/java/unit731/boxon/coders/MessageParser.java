@@ -55,7 +55,7 @@ class MessageParser{
 	<T> T decode(final Codec<T> codec, final BitBuffer reader){
 		final int startPosition = reader.position();
 
-		final T data = ReflectionHelper.createInstance(codec.getType());
+		final T data = codec.newInstance();
 
 		//parse message fields:
 		final List<Codec.BoundedField> fields = codec.getBoundedFields();

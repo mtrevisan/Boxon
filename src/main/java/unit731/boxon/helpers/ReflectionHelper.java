@@ -43,6 +43,7 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 
 public class ReflectionHelper{
@@ -162,7 +163,28 @@ public class ReflectionHelper{
 		return (T[])Array.newInstance(type, length);
 	}
 
-	//https://github.com/easymock/objenesis
+	public static <T> Supplier<T> getCreator(final Class<T> type){
+		Objects.requireNonNull(type);
+
+		try{
+			final Constructor<T> ctr = type.getDeclaredConstructor();
+			ctr.setAccessible(true);
+			ctr.newInstance();
+			return () -> {
+				try{
+					return ctr.newInstance();
+				}
+				catch(final Exception ignored){
+					//cannot happen
+					return null;
+				}
+			};
+		}
+		catch(final Exception ignored){
+			return instantiatorOf(type)::newInstance;
+		}
+	}
+
 	public static <T> T createInstance(final Class<T> type){
 		Objects.requireNonNull(type);
 
@@ -180,6 +202,7 @@ public class ReflectionHelper{
 	/**
 	 * Return an {@link ObjectInstantiator} allowing to create instance without any constructor being
 	 * called.
+	 * @see <a href="https://github.com/easymock/objenesis">objenesis</a>
 	 *
 	 * @param type Class to instantiate
 	 * @return The ObjectInstantiator for the class

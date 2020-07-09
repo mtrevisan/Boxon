@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
+import java.util.function.Supplier;
 
 
 /**
@@ -119,6 +120,7 @@ class Codec<T>{
 
 	private final Class<T> cls;
 
+	private final Supplier<T> creator;
 	private final MessageHeader header;
 	private final List<BoundedField> boundedFields = new ArrayList<>(0);
 	private final List<EvaluatedField> evaluatedFields = new ArrayList<>(0);
@@ -141,6 +143,8 @@ class Codec<T>{
 		Objects.requireNonNull(cls);
 
 		this.cls = cls;
+
+		creator = ReflectionHelper.getCreator(cls);
 
 		header = cls.getAnnotation(MessageHeader.class);
 		//retrieve all declared fields in the current class, therefore NOT in the parent classes
@@ -275,6 +279,10 @@ class Codec<T>{
 
 	Class<T> getType(){
 		return cls;
+	}
+
+	T newInstance(){
+		return creator.get();
 	}
 
 	MessageHeader getHeader(){
