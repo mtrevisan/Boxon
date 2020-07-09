@@ -33,6 +33,7 @@ import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
 import java.nio.ReadOnlyBufferException;
 import java.nio.charset.Charset;
+import java.util.Iterator;
 
 
 /**
@@ -81,7 +82,9 @@ class BitWriter{
 		while(offset < length){
 			//fill the cache one bit at a time
 			final int size = Math.min(length - offset, Byte.SIZE - remaining);
-			for(int i = value.nextSetBit(offset); 0 <= i && i < offset + size; i = value.nextSetBit(i + 1))
+			int i;
+			final Iterator<Integer> itr = value.iterator(offset);
+			while(itr.hasNext() && 0 <= (i = itr.next()) && i < offset + size)
 				cache |= 1 << (remaining + i - offset);
 			remaining += size;
 			offset += size;

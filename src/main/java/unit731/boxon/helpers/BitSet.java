@@ -1,6 +1,7 @@
 package unit731.boxon.helpers;
 
 import java.util.Arrays;
+import java.util.Iterator;
 
 
 /**
@@ -17,7 +18,7 @@ import java.util.Arrays;
  * @see <a href="https://w6113.github.io/files/papers/sidm338-wangA.pdf">An Experimental Study of Bitmap Compression vs. Inverted List Compression</a>
  * @see <a href="https://onlinelibrary.wiley.com/doi/pdf/10.1002/spe.2203">Decoding billions of integers per second through vectorization</a>
  */
-public class BitSet{
+public class BitSet implements Iterable<Integer>{
 
 	private int[] indexes = new int[0];
 
@@ -121,7 +122,7 @@ public class BitSet{
 	public void flip(final int bitIndex){
 		final int idx = Arrays.binarySearch(indexes, bitIndex);
 		if(idx < 0)
-			addSetBit(idx, bitIndex);
+			addSetBit(-idx - 1, bitIndex);
 		else
 			removeSetBit(idx);
 	}
@@ -134,17 +135,15 @@ public class BitSet{
 	public void set(final int bitIndex){
 		final int idx = Arrays.binarySearch(indexes, bitIndex);
 		if(idx < 0)
-			addSetBit(idx, bitIndex);
+			addSetBit(-idx - 1, bitIndex);
 	}
 
-	private void addSetBit(int idx, final int bitIndex){
-		idx = -idx - 1;
-
+	private void addSetBit(final int position, final int bitIndex){
 		//add index
 		final int[] tmp = new int[indexes.length + 1];
-		System.arraycopy(indexes, 0, tmp, 0, idx);
-		tmp[idx] = bitIndex;
-		System.arraycopy(indexes, idx, tmp, idx + 1, indexes.length - idx);
+		System.arraycopy(indexes, 0, tmp, 0, position);
+		tmp[position] = bitIndex;
+		System.arraycopy(indexes, position, tmp, position + 1, indexes.length - position);
 		indexes = tmp;
 	}
 
@@ -167,17 +166,51 @@ public class BitSet{
 	}
 
 	/**
-	 * Returns the index of the first bit that is set to {@code true} that occurs on or after the specified starting index.
-	 * <p>If no such bit exists then {@code -1} is returned.</p>
+	 * Returns the number of bits set to {@code true} in this {@code BitSet}.
 	 *
-	 * @param fromIndex	The index to start checking from (inclusive)
-	 * @return	The index of the next set bit, or {@code -1} if there is no such bit
+	 * @return the number of bits set to {@code true} in this {@code BitSet}
 	 */
-	public int nextSetBit(final int fromIndex){
-		int idx = Arrays.binarySearch(indexes, fromIndex);
-		if(idx < 0)
-			idx = -idx - 1;
-		return (idx < indexes.length? indexes[idx]: -1);
+	private int cardinality(){
+		return indexes.length;
+	}
+
+	/** Iterates over all the set bits, returning their indexes */
+	@Override
+	public Iterator<Integer> iterator(){
+		return new BitIterator(this, 0);
+	}
+
+	/**
+	 * Iterates over all the set bits, returning their indexes
+	 *
+	 * @param offset	Offset to start from.
+	 */
+	public Iterator<Integer> iterator(final int offset){
+		return new BitIterator(this, offset);
+	}
+
+	private class BitIterator implements Iterator<Integer>{
+
+		private final BitSet bset;
+		private int offset;
+
+		public BitIterator(final BitSet bset, final int offset){
+			this.bset = bset;
+			int idx = Arrays.binarySearch(indexes, offset);
+			this.offset = (idx >= 0? idx: -idx - 1);
+		}
+
+		public boolean hasNext(){
+			return (offset < bset.cardinality());
+		}
+
+		public Integer next(){
+			return bset.indexes[offset ++];
+		}
+
+		public void remove(){
+			throw new UnsupportedOperationException();
+		}
 	}
 
 

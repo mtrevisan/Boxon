@@ -28,6 +28,7 @@ import unit731.boxon.annotations.ByteOrder;
 
 import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.Iterator;
 
 
 /**
@@ -195,8 +196,9 @@ public class ByteHelper{
 
 	public static long bitsToLong(final BitSet bits, final int size, final ByteOrder byteOrder){
 		long value = 0l;
-		int i = 0;
-		for(i = bits.nextSetBit(i); 0 <= i && i < Long.SIZE; i = bits.nextSetBit(i + 1))
+		int i;
+		final Iterator<Integer> itr = bits.iterator();
+		while(itr.hasNext() && 0 <= (i = itr.next()) && i < size)
 			value |= 1l << i;
 
 		return (byteOrder == ByteOrder.BIG_ENDIAN? Long.reverseBytes(value) >>> (Long.SIZE - size): value);
