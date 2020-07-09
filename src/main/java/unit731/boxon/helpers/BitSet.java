@@ -32,6 +32,9 @@ import java.util.Arrays;
  * @author Arthur van Hoff
  * @author Michael McCloskey
  * @author Martin Buchholz
+ *
+ * @see <a href="https://w6113.github.io/files/papers/sidm338-wangA.pdf">An Experimental Study of Bitmap Compression vs. Inverted List Compression</a>
+ * @see <a href="https://onlinelibrary.wiley.com/doi/pdf/10.1002/spe.2203">Decoding billions of integers per second through vectorization</a>
  */
 public class BitSet{
 
@@ -149,19 +152,19 @@ public class BitSet{
 	 * @return	A byte array containing a little-endian representation of all the bits in this bit set
 	 */
 	public byte[] toByteArray(){
-		final int n = wordsInUse;
-		if(n == 0)
+		if(wordsInUse == 0)
 			return new byte[0];
 
-		int len = 8 * (n - 1);
-		for(long x = words[n - 1]; x != 0; x >>>= 8)
+		int len = (wordsInUse - 1) * Byte.SIZE;
+		for(long x = words[wordsInUse - 1]; x != 0; x >>>= Byte.SIZE)
 			len ++;
 		final byte[] bytes = new byte[len];
-		final ByteBuffer bb = ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN);
-		for(int i = 0; i < n - 1; i++)
+		final ByteBuffer bb = ByteBuffer.wrap(bytes)
+			.order(ByteOrder.LITTLE_ENDIAN);
+		for(int i = 0; i < wordsInUse - 1; i ++)
 			bb.putLong(words[i]);
-		for(long x = words[n - 1]; x != 0; x >>>= 8)
-			bb.put((byte) (x & 0xff));
+		for(long x = words[wordsInUse - 1]; x != 0; x >>>= Byte.SIZE)
+			bb.put((byte)(x & 0xFF));
 		return bytes;
 	}
 
@@ -259,16 +262,16 @@ public class BitSet{
 			return -1;
 
 		long word = words[u] & (WORD_MASK << fromIndex);
-
 		while(true){
 			if(word != 0)
-				return (u * BITS_PER_WORD) + Long.numberOfTrailingZeros(word);
+				return (u * BITS_PER_WORD + Long.numberOfTrailingZeros(word));
 
 			if(++ u == wordsInUse)
-				return -1;
+				break;
 
 			word = words[u];
 		}
+		return -1;
 	}
 
 
