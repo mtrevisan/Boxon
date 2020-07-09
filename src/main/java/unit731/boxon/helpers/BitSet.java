@@ -55,7 +55,6 @@ public class BitSet{
 
 	/**
 	 * Returns a new bit set containing all the bits in the given long array.
-	 * <p></p>
 	 * <p>More precisely,
 	 * <br>{@code BitSet.valueOf(longs).get(n) == ((longs[n/64] & (1L<<(n%64))) != 0)}
 	 * <br>for all {@code n < 64 * longs.length}.</p>
@@ -75,7 +74,6 @@ public class BitSet{
 
 	/**
 	 * Returns a new bit set containing all the bits in the given byte array.
-	 * <p></p>
 	 * <p>More precisely,
 	 * <br>{@code BitSet.valueOf(bytes).get(n) == ((bytes[n/8] & (1<<(n%8))) != 0)}
 	 * <br>for all {@code n <  8 * bytes.length}.</p>
@@ -93,7 +91,6 @@ public class BitSet{
 
 	/**
 	 * Returns a new bit set containing all the bits in the given byte buffer between its position and limit.
-	 * <p></p>
 	 * <p>More precisely,
 	 * <br>{@code BitSet.valueOf(bb).get(n) == ((bb.get(bb.position()+n/8) & (1<<(n%8))) != 0)}
 	 * <br>for all {@code n < 8 * bb.remaining()}.</p>

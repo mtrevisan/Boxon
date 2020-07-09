@@ -32,6 +32,7 @@ import unit731.boxon.helpers.ReflectionHelper;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.math.BigDecimal;
@@ -75,6 +76,9 @@ class BitBuffer{
 	 *
 	 * @param file	The file containing the binary stream
 	 * @return	The new bit buffer
+	 * @throws FileNotFoundException   If the file does not exist, is a directory rather than a regular file,
+	 * 	or for some other reason cannot be opened for reading.
+	 * @throws SecurityException	If a security manager exists and its {@code checkRead} method denies read access to the file.
 	 */
 	static BitBuffer wrap(final File file) throws IOException{
 		try(

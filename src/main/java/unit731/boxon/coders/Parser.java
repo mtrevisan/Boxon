@@ -30,6 +30,7 @@ import unit731.boxon.coders.dtos.ParseException;
 import unit731.boxon.coders.dtos.ParseResponse;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
@@ -163,6 +164,9 @@ public class Parser{
 	 *
 	 * @param file	The file containing the binary stream
 	 * @return	The parse response
+	 * @throws FileNotFoundException	If the file does not exist, is a directory rather than a regular file,
+	 * 	or for some other reason cannot be opened for reading.
+	 * @throws SecurityException	If a security manager exists and its {@code checkRead} method denies read access to the file.
 	 */
 	public final ParseResponse parse(final File file) throws IOException{
 		final BitBuffer reader = BitBuffer.wrap(file);
