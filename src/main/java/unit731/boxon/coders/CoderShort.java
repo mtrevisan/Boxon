@@ -29,6 +29,7 @@ import unit731.boxon.annotations.BindShort;
 import java.lang.annotation.Annotation;
 
 
+@SuppressWarnings("unused")
 class CoderShort implements CoderInterface<BindShort>{
 
 	@Override

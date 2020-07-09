@@ -29,6 +29,7 @@ import unit731.boxon.annotations.BindByte;
 import java.lang.annotation.Annotation;
 
 
+@SuppressWarnings("unused")
 class CoderByte implements CoderInterface<BindByte>{
 
 	@Override

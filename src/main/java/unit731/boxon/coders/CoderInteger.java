@@ -33,6 +33,7 @@ import java.lang.annotation.Annotation;
 import java.math.BigInteger;
 
 
+@SuppressWarnings("unused")
 class CoderInteger implements CoderInterface<BindInteger>{
 
 	@Override
@@ -72,6 +73,7 @@ class CoderInteger implements CoderInterface<BindInteger>{
 
 			v = BigInteger.valueOf(Math.abs(vv));
 			if(vv < 0)
+				//noinspection ResultOfMethodCallIgnored
 				v.setBit(size);
 		}
 		else

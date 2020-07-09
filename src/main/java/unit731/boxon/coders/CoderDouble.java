@@ -29,6 +29,7 @@ import unit731.boxon.annotations.BindDouble;
 import java.lang.annotation.Annotation;
 
 
+@SuppressWarnings("unused")
 class CoderDouble implements CoderInterface<BindDouble>{
 
 	@Override

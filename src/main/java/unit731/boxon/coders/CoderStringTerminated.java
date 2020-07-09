@@ -30,6 +30,7 @@ import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
 
 
+@SuppressWarnings("unused")
 class CoderStringTerminated implements CoderInterface<BindStringTerminated>{
 
 	@Override

@@ -29,6 +29,7 @@ import unit731.boxon.annotations.BindInt;
 import java.lang.annotation.Annotation;
 
 
+@SuppressWarnings("unused")
 class CoderInt implements CoderInterface<BindInt>{
 
 	@Override

@@ -30,6 +30,7 @@ import unit731.boxon.annotations.ByteOrder;
 import java.lang.annotation.Annotation;
 
 
+@SuppressWarnings("unused")
 class CoderLong implements CoderInterface<BindLong>{
 
 	@Override

@@ -25,6 +25,7 @@
 package unit731.boxon.annotations.converters;
 
 
+@SuppressWarnings("unused")
 public class UnsignedShortConverter implements Converter<Short, Integer>{
 
 	@Override

@@ -30,6 +30,7 @@ import unit731.boxon.helpers.ReflectionHelper;
 import java.lang.annotation.Annotation;
 
 
+@SuppressWarnings("unused")
 class CoderChecksum implements CoderInterface<BindChecksum>{
 
 	@Override

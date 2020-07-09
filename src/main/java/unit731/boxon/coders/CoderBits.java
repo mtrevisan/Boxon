@@ -32,6 +32,7 @@ import unit731.boxon.helpers.ByteHelper;
 import java.lang.annotation.Annotation;
 
 
+@SuppressWarnings("unused")
 class CoderBits implements CoderInterface<BindBits>{
 
 	@Override

@@ -31,6 +31,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 
 
+@SuppressWarnings("unused")
 class CoderArrayPrimitive implements CoderInterface<BindArrayPrimitive>{
 
 	@Override

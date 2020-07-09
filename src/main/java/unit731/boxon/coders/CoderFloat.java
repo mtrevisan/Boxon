@@ -29,6 +29,7 @@ import unit731.boxon.annotations.BindFloat;
 import java.lang.annotation.Annotation;
 
 
+@SuppressWarnings("unused")
 class CoderFloat implements CoderInterface<BindFloat>{
 
 	@Override

@@ -33,6 +33,7 @@ import java.lang.annotation.Annotation;
 import java.math.BigInteger;
 
 
+@SuppressWarnings("unused")
 class CoderArray implements CoderInterface<BindArray>{
 
 	@SuppressWarnings("unused")

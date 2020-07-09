@@ -30,6 +30,7 @@ import java.lang.annotation.Annotation;
 import java.math.BigDecimal;
 
 
+@SuppressWarnings("unused")
 class CoderDecimal implements CoderInterface<BindDecimal>{
 
 	@Override

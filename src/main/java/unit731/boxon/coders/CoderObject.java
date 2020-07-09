@@ -32,6 +32,7 @@ import java.lang.annotation.Annotation;
 import java.math.BigInteger;
 
 
+@SuppressWarnings("unused")
 class CoderObject implements CoderInterface<BindObject>{
 
 	@SuppressWarnings("unused")
