@@ -121,6 +121,7 @@ class Codec<T>{
 	private final Class<T> cls;
 
 	private final Supplier<T> creator;
+
 	private final MessageHeader header;
 	private final List<BoundedField> boundedFields = new ArrayList<>(0);
 	private final List<EvaluatedField> evaluatedFields = new ArrayList<>(0);

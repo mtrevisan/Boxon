@@ -167,21 +167,22 @@ public class ReflectionHelper{
 		Objects.requireNonNull(type);
 
 		try{
-			final Constructor<T> ctr = type.getDeclaredConstructor();
-			ctr.setAccessible(true);
-			ctr.newInstance();
+			final Constructor<T> constructor = type.getDeclaredConstructor();
+			constructor.setAccessible(true);
+			//try create an instance
+			constructor.newInstance();
 
-			return createSupplierIgnoreExceptions(ctr);
+			return createSupplierIgnoreExceptions(constructor);
 		}
 		catch(final Exception ignored){
 			return instantiatorOf(type)::newInstance;
 		}
 	}
 
-	private static <T> Supplier<T> createSupplierIgnoreExceptions(final Constructor<T> ctr){
+	private static <T> Supplier<T> createSupplierIgnoreExceptions(final Constructor<T> constructor){
 		return () -> {
 			try{
-				return ctr.newInstance();
+				return constructor.newInstance();
 			}
 			catch(final Exception ignored){
 				//cannot happen
