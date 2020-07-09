@@ -55,7 +55,8 @@ class MessageParser{
 	<T> T decode(final Codec<T> codec, final BitBuffer reader){
 		final int startPosition = reader.position();
 
-		final T data = codec.newInstance();
+		final T data = ReflectionHelper.getCreator(codec.getType())
+			.get();
 
 		//parse message fields:
 		final List<Codec.BoundedField> fields = codec.getBoundedFields();
@@ -133,7 +134,8 @@ class MessageParser{
 			startPosition += checksum.skipStart();
 			final int endPosition = reader.position() - checksum.skipEnd();
 
-			final Checksummer checksummer = ReflectionHelper.createInstance(checksum.algorithm());
+			final Checksummer checksummer = ReflectionHelper.getCreator(checksum.algorithm())
+				.get();
 			final long startValue = checksum.startValue();
 			final long calculatedCRC = checksummer.calculateCRC(reader.array(), startPosition, endPosition, startValue);
 			try{

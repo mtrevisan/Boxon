@@ -134,20 +134,23 @@ class CoderHelper{
 
 	static <T> void validateData(@SuppressWarnings("rawtypes") final Class<? extends Validator> validatorType, final T data){
 		@SuppressWarnings("unchecked")
-		final Validator<T> validator = ReflectionHelper.createInstance(validatorType);
+		final Validator<T> validator = ReflectionHelper.getCreator(validatorType)
+			.get();
 		if(!validator.validate(data))
 			throw new IllegalArgumentException("Validation not passed (" + data + ")");
 	}
 
 	static <OUT, IN> OUT converterDecode(@SuppressWarnings("rawtypes") final Class<? extends Converter> converterType, final IN data){
 		@SuppressWarnings("unchecked")
-		final Converter<IN, OUT> converter = ReflectionHelper.createInstance(converterType);
+		final Converter<IN, OUT> converter = ReflectionHelper.getCreator(converterType)
+			.get();
 		return converter.decode(data);
 	}
 
 	static <OUT, IN> IN converterEncode(@SuppressWarnings("rawtypes") final Class<? extends Converter> converterType, final OUT data){
 		@SuppressWarnings("unchecked")
-		final Converter<IN, OUT> converter = ReflectionHelper.createInstance(converterType);
+		final Converter<IN, OUT> converter = ReflectionHelper.getCreator(converterType)
+			.get();
 		return converter.encode(data);
 	}
 

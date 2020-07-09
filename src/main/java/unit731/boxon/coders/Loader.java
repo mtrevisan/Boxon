@@ -176,7 +176,8 @@ class Loader{
 		final Collection<CoderInterface<?>> coders = new ArrayList<>();
 		for(final Class<?> cls : derivedClasses)
 			if(!cls.isInterface()){
-				final CoderInterface<?> coder = (CoderInterface<?>)ReflectionHelper.createInstance(cls);
+				final CoderInterface<?> coder = (CoderInterface<?>)ReflectionHelper.getCreator(cls)
+					.get();
 				if(coder != null)
 					coders.add(coder);
 			}

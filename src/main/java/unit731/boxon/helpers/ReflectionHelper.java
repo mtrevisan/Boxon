@@ -43,10 +43,13 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 
 public class ReflectionHelper{
+
+	private static final Function<Class<?>, Supplier<?>> CREATORS = Memoizer.memoizeThreadAndRecursionSafe(ReflectionHelper::getCreatorInner);
 
 	/** Map with primitive type as key and corresponding objective type as value, for example: "int.class" -> "Integer.class" */
 	private static final Map<Class<?>, Class<?>> PRIMITIVE_TYPE = new HashMap<>(6);
@@ -164,6 +167,10 @@ public class ReflectionHelper{
 	}
 
 	public static <T> Supplier<T> getCreator(final Class<T> type){
+		return (Supplier<T>)CREATORS.apply(type);
+	}
+
+	private static <T> Supplier<T> getCreatorInner(final Class<T> type){
 		Objects.requireNonNull(type);
 
 		try{
@@ -189,20 +196,6 @@ public class ReflectionHelper{
 				return null;
 			}
 		};
-	}
-
-	public static <T> T createInstance(final Class<T> type){
-		Objects.requireNonNull(type);
-
-		try{
-			final Constructor<T> ctr = type.getDeclaredConstructor();
-			ctr.setAccessible(true);
-			return ctr.newInstance();
-		}
-		catch(final Exception ignored){
-			return instantiatorOf(type)
-				.newInstance();
-		}
 	}
 
 	/**
