@@ -103,7 +103,7 @@ public class BitSet{
 		while(bb.remaining() >= 8)
 			words[i ++] = bb.getLong();
 		for(int remaining = bb.remaining(), j = 0; j < remaining; j ++)
-			words[i] |= (bb.get() & 0xffL) << (8 * j);
+			words[i] |= (bb.get() & 0xFFl) << (8 * j);
 		return new BitSet(words);
 	}
 
@@ -116,7 +116,7 @@ public class BitSet{
 		int offset = 0;
 		for(final long word : words){
 			for(int i = 0; i < Long.SIZE; i ++)
-				if((word & (1 << i)) != 0)
+				if((word & (1l << i)) != 0)
 					list.add(i + offset);
 			offset += Long.SIZE;
 		}
@@ -151,7 +151,7 @@ public class BitSet{
 		if(indexes.length == 0)
 			return new byte[0];
 
-		final byte[] bytes = new byte[(indexes.length + Byte.SIZE - 1) / Byte.SIZE];
+		final byte[] bytes = new byte[(indexes[indexes.length - 1] + Byte.SIZE - 1) / Byte.SIZE];
 		for(final int index : indexes)
 			bytes[index / Byte.SIZE] |= 1 << (index % Byte.SIZE);
 		return bytes;
