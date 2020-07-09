@@ -119,7 +119,7 @@ public class ReflectionHelper{
 		final List<Field> result = new ArrayList<>();
 		while(cls != Object.class){
 			final Field[] fields = cls.getDeclaredFields();
-			result.addAll(collectFields(fields, fieldType));
+			result.addAll(filterAccessibleFields(fields, fieldType));
 
 			//go up to parent class
 			cls = cls.getSuperclass();
@@ -127,13 +127,12 @@ public class ReflectionHelper{
 		return result.toArray(Field[]::new);
 	}
 
-	private static List<Field> collectFields(final Field[] fields, final Class<?> fieldType){
+	private static List<Field> filterAccessibleFields(final Field[] fields, final Class<?> fieldType){
 		final List<Field> result = new ArrayList<>();
 		for(final Field f : fields)
 			if(f.getType() == fieldType){
 				f.setAccessible(true);
 				result.add(f);
-				break;
 			}
 		return result;
 	}
