@@ -26,8 +26,8 @@ public class BitSet implements Iterable<Integer>{
 	/**
 	 * Returns a new bit set containing all the bits in the given long array.
 	 * <p>More precisely,
-	 * <br>{@code BitSet.valueOf(longs).get(n) == ((longs[n/64] & (1L<<(n%64))) != 0)}
-	 * <br>for all {@code n < 64 * longs.length}.</p>
+	 * {@code BitSet.valueOf(longs).get(n) == ((longs[n/64] & (1L<<(n%64))) != 0)}<br>
+	 * for all {@code n < 64 * longs.length}.</p>
 	 *
 	 * <p>This method is equivalent to {@code BitSet.valueOf(LongBuffer.wrap(longs))}.</p>
 	 *
@@ -42,8 +42,8 @@ public class BitSet implements Iterable<Integer>{
 	/**
 	 * Returns a new bit set containing all the bits in the given byte array.
 	 * <p>More precisely,
-	 * <br>{@code BitSet.valueOf(bytes).get(n) == ((bytes[n/8] & (1<<(n%8))) != 0)}
-	 * <br>for all {@code n <  8 * bytes.length}.</p>
+	 * {@code BitSet.valueOf(bytes).get(n) == ((bytes[n/8] & (1<<(n%8))) != 0)}<br>
+	 * for all {@code n <  8 * bytes.length}.</p>
 	 *
 	 * <p>This method is equivalent to
 	 * {@code BitSet.valueOf(ByteBuffer.wrap(bytes))}.</p>
@@ -97,10 +97,10 @@ public class BitSet implements Iterable<Integer>{
 	/**
 	 * Returns a new byte array containing all the bits in this bit set.
 	 * <p>More precisely, if
-	 * <br>{@code byte[] bytes = s.toByteArray();}
-	 * <br>then {@code bytes.length == (s.length()+7)/8} and
-	 * <br>{@code s.get(n) == ((bytes[n/8] & (1<<(n%8))) != 0)}
-	 * <br>for all {@code n < 8 * bytes.length}.</p>
+	 * {@code byte[] bytes = s.toByteArray();}<br>
+	 * then {@code bytes.length == (s.length()+7)/8} and<br>
+	 * {@code s.get(n) == ((bytes[n/8] & (1<<(n%8))) != 0)}<br>
+	 * for all {@code n < 8 * bytes.length}.</p>
 	 *
 	 * @return	A byte array containing a little-endian representation of all the bits in this bit set
 	 */
@@ -191,21 +191,21 @@ public class BitSet implements Iterable<Integer>{
 
 	private class BitIterator implements Iterator<Integer>{
 
-		private final BitSet bset;
+		private final int[] indexes;
 		private int offset;
 
 		public BitIterator(final BitSet bset, final int offset){
-			this.bset = bset;
-			int idx = Arrays.binarySearch(indexes, offset);
+			indexes = bset.indexes;
+			final int idx = Arrays.binarySearch(indexes, offset);
 			this.offset = (idx >= 0? idx: -idx - 1);
 		}
 
 		public boolean hasNext(){
-			return (offset < bset.cardinality());
+			return (offset < indexes.length);
 		}
 
 		public Integer next(){
-			return bset.indexes[offset ++];
+			return indexes[offset ++];
 		}
 
 		public void remove(){
