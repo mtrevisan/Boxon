@@ -33,7 +33,6 @@ import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
 import java.nio.ReadOnlyBufferException;
 import java.nio.charset.Charset;
-import java.util.Iterator;
 
 
 /**

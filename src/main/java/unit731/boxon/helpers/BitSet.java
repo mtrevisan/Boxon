@@ -125,25 +125,14 @@ public class BitSet{
 	}
 
 	/**
-	 * Sets the bit at the specified index to the complement of its current value.
+	 * Sets the bits of a number to the complement of its current value.
 	 *
-	 * @param bitIndex	The index of the bit to flip
+	 * @param size	The size of the number in bits.
 	 */
-	public void flip(final int bitIndex){
-		final int idx = Arrays.binarySearch(indexes, bitIndex);
-		if(idx < 0)
-			addSetBit(-idx - 1, bitIndex);
-		else
-			removeSetBit(idx);
-	}
-
 	public void reverseBits(final int size){
-		for(int start = 0, end = size - 1; start < end; start ++, end --)
-			if(get(start) != get(end)){
-				//FIXME one instruction, move to BitSet
-				flip(start);
-				flip(end);
-			}
+		for(int i = 0; i < indexes.length; i ++)
+			indexes[i] = size - indexes[i] - 1;
+		Arrays.sort(indexes);
 	}
 
 	/**
@@ -164,24 +153,6 @@ public class BitSet{
 		tmp[position] = bitIndex;
 		System.arraycopy(indexes, position, tmp, position + 1, indexes.length - position);
 		indexes = tmp;
-	}
-
-	private void removeSetBit(final int idx){
-		final int[] tmp = new int[indexes.length - 1];
-		System.arraycopy(indexes, 0, tmp, 0, idx);
-		System.arraycopy(indexes, idx + 1, tmp, idx, indexes.length - idx - 1);
-		indexes = tmp;
-	}
-
-	/**
-	 * Returns the value of the bit with the specified index.
-	 * <p>The value is {@code true} if and only if the bit with the index {@code bitIndex} is currently set in this {@code BitSet}.</p>
-	 *
-	 * @param bitIndex	The bit index
-	 * @return	The value of the bit with the specified index
-	 */
-	public boolean get(final int bitIndex){
-		return (Arrays.binarySearch(indexes, bitIndex) >= 0);
 	}
 
 
