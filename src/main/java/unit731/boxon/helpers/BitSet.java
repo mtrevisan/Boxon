@@ -2,7 +2,9 @@ package unit731.boxon.helpers;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -38,22 +40,7 @@ import java.util.Arrays;
  */
 public class BitSet{
 
-	/*
-	 * BitSets are packed into arrays of "words".
-	 * Currently a word is a long, which consists of 64 bits, requiring 6 address bits.
-	 * The choice of word size is determined purely by performance concerns.
-	 */
-	private static final int ADDRESS_BITS_PER_WORD = 6;
-	private static final int BITS_PER_WORD = 1 << ADDRESS_BITS_PER_WORD;
-
-	/* Used to shift left or right for a partial word mask */
-	private static final long WORD_MASK = 0xFFFF_FFFF_FFFF_FFFFl;
-
-
-	private long[] words;
-
-	/** The number of words in the logical size of this BitSet. */
-	private transient int wordsInUse;
+	private int[] indexes;
 
 
 	/**
@@ -125,8 +112,17 @@ public class BitSet{
 	 * <p>The last word (if there is one) must be non-zero.</p>
 	 */
 	private BitSet(final long[] words){
-		this.words = words;
-		this.wordsInUse = words.length;
+		final List<Integer> list = new ArrayList<>();
+		int offset = 0;
+		for(final long word : words){
+			for(int i = 0; i < Long.SIZE; i ++)
+				if((word & (1 << i)) != 0)
+					list.add(i + offset);
+			offset += Long.SIZE;
+		}
+		indexes = list.stream()
+			.mapToInt(i -> i)
+			.toArray();
 	}
 
 	/**
@@ -138,7 +134,7 @@ public class BitSet{
 	 * @param length	The initial size of the bit set
 	 */
 	public BitSet(final int length){
-		words = new long[wordIndex(length - 1) + 1];
+		indexes = new int[0];
 	}
 
 	/**
@@ -152,19 +148,12 @@ public class BitSet{
 	 * @return	A byte array containing a little-endian representation of all the bits in this bit set
 	 */
 	public byte[] toByteArray(){
-		if(wordsInUse == 0)
+		if(indexes.length == 0)
 			return new byte[0];
 
-		int len = (wordsInUse - 1) * Byte.SIZE;
-		for(long x = words[wordsInUse - 1]; x != 0; x >>>= Byte.SIZE)
-			len ++;
-		final byte[] bytes = new byte[len];
-		final ByteBuffer bb = ByteBuffer.wrap(bytes)
-			.order(ByteOrder.LITTLE_ENDIAN);
-		for(int i = 0; i < wordsInUse - 1; i ++)
-			bb.putLong(words[i]);
-		for(long x = words[wordsInUse - 1]; x != 0; x >>>= Byte.SIZE)
-			bb.put((byte)(x & 0xFF));
+		final byte[] bytes = new byte[(indexes.length + Byte.SIZE - 1) / Byte.SIZE];
+		for(final int index : indexes)
+			bytes[index / Byte.SIZE] |= 1 << (index % Byte.SIZE);
 		return bytes;
 	}
 
@@ -174,28 +163,24 @@ public class BitSet{
 	 * @param bitIndex	The index of the bit to flip
 	 */
 	public void flip(final int bitIndex){
-		final int wordIndex = wordIndex(bitIndex);
-		expandTo(wordIndex);
+		int idx = Arrays.binarySearch(indexes, bitIndex);
+		if(idx >= 0){
+			//remove index
+			final int[] tmp = new int[indexes.length - 1];
+			System.arraycopy(indexes, 0, tmp, 0, idx);
+			System.arraycopy(indexes, idx + 1, tmp, idx, indexes.length - idx - 1);
+			indexes = tmp;
+		}
+		else{
+			idx = -idx - 1;
 
-		words[wordIndex] ^= (1l << bitIndex);
-
-		recalculateWordsInUse();
-	}
-
-	/**
-	 * Sets the field wordsInUse to the logical size in words of the bit set.
-	 * <p>WARNING: This method assumes that the number of words actually in use is
-	 * less than or equal to the current value of wordsInUse!</p>
-	 */
-	private void recalculateWordsInUse(){
-		//traverse the bitset until a used word is found
-		int i;
-		for(i = wordsInUse - 1; i >= 0; i --)
-			if(words[i] != 0)
-				break;
-
-		//the new logical size
-		wordsInUse = i + 1;
+			//add index
+			final int[] tmp = new int[indexes.length + 1];
+			System.arraycopy(indexes, 0, tmp, 0, idx);
+			tmp[idx] = bitIndex;
+			System.arraycopy(indexes, idx, tmp, idx + 1, indexes.length - idx);
+			indexes = tmp;
+		}
 	}
 
 	/**
@@ -204,36 +189,16 @@ public class BitSet{
 	 * @param bitIndex	A bit index
 	 */
 	public void set(final int bitIndex){
-		final int wordIndex = wordIndex(bitIndex);
-		expandTo(wordIndex);
+		int idx = Arrays.binarySearch(indexes, bitIndex);
+		if(idx <= 0){
+			idx = -idx - 1;
 
-		words[wordIndex] |= (1l << bitIndex);
-	}
-
-	/**
-	 * Ensures that the {@link BitSet} can accommodate a given {@code wordIndex}, temporarily violating the invariants.
-	 * The caller must restore the invariants before returning to the user, possibly using {@link #recalculateWordsInUse()}.
-	 *
-	 * @param wordIndex	The index to be accommodated.
-	 */
-	private void expandTo(final int wordIndex){
-		final int wordsRequired = wordIndex + 1;
-		if(wordsInUse < wordsRequired){
-			ensureCapacity(wordsRequired);
-			wordsInUse = wordsRequired;
-		}
-	}
-
-	/**
-	 * Ensures that the BitSet can hold enough words.
-	 *
-	 * @param wordsRequired	The minimum acceptable number of words.
-	 */
-	private void ensureCapacity(final int wordsRequired){
-		if(words.length < wordsRequired){
-			//allocate larger of doubled size or required size
-			final int request = Math.max(2 * words.length, wordsRequired);
-			words = Arrays.copyOf(words, request);
+			//add index
+			final int[] tmp = new int[indexes.length + 1];
+			System.arraycopy(indexes, 0, tmp, 0, idx);
+			tmp[idx] = bitIndex;
+			System.arraycopy(indexes, idx, tmp, idx + 1, indexes.length - idx);
+			indexes = tmp;
 		}
 	}
 
@@ -245,8 +210,7 @@ public class BitSet{
 	 * @return	The value of the bit with the specified index
 	 */
 	public boolean get(final int bitIndex){
-		final int wordIndex = wordIndex(bitIndex);
-		return (wordIndex < wordsInUse && ((words[wordIndex] & (1l << bitIndex)) != 0));
+		return (Arrays.binarySearch(indexes, bitIndex) >= 0);
 	}
 
 	/**
@@ -257,103 +221,18 @@ public class BitSet{
 	 * @return	The index of the next set bit, or {@code -1} if there is no such bit
 	 */
 	public int nextSetBit(final int fromIndex){
-		int u = wordIndex(fromIndex);
-		if(u >= wordsInUse)
-			return -1;
-
-		long word = words[u] & (WORD_MASK << fromIndex);
-		while(true){
-			if(word != 0)
-				return (u * BITS_PER_WORD + Long.numberOfTrailingZeros(word));
-
-			if(++ u == wordsInUse)
-				break;
-
-			word = words[u];
-		}
-		return -1;
-	}
-
-
-	/**
-	 * Returns a string representation of this bit set.
-	 * <p>For every index for which this {@code BitSet} contains a bit in the set
-	 * state, the decimal representation of that index is included in
-	 * the result. Such indices are listed in order from lowest to
-	 * highest, separated by ",&nbsp;" (a comma and a space) and
-	 * surrounded by braces, resulting in the usual mathematical
-	 * notation for a set of integers.</p>
-	 *
-	 * @return a string representation of this bit set
-	 */
-	@Override
-	public String toString(){
-		final int MAX_INITIAL_CAPACITY = Integer.MAX_VALUE - 8;
-		final int numBits = (wordsInUse > 128)? cardinality(): wordsInUse * BITS_PER_WORD;
-		//avoid overflow in the case of a humongous numBits
-		final int initialCapacity = (numBits <= (MAX_INITIAL_CAPACITY - 2) / 6)? 6 * numBits + 2: MAX_INITIAL_CAPACITY;
-		final StringBuilder sb = new StringBuilder(initialCapacity);
-		sb.append('{');
-		int i = nextSetBit(0);
-		if(i != -1){
-			sb.append(i);
-			while(++ i >= 0 && (i = nextSetBit(i)) >= 0){
-				int endOfRun = nextClearBit(i);
-				do{
-					sb.append(", ").append(i);
-				}while(++ i != endOfRun);
-			}
-		}
-		sb.append('}');
-		return sb.toString();
-	}
-
-	/**
-	 * Returns the number of bits set to {@code true} in this {@code BitSet}.
-	 *
-	 * @return	The number of bits set to {@code true} in this {@code BitSet}
-	 */
-	private int cardinality(){
-		int sum = 0;
-		for(int i = 0; i < wordsInUse; i ++)
-			sum += Long.bitCount(words[i]);
-		return sum;
-	}
-
-	/**
-	 * Returns the index of the first bit that is set to {@code false} that occurs on or after the specified starting index.
-	 *
-	 * @param fromIndex	The index to start checking from (inclusive)
-	 * @return	The index of the next clear bit
-	 */
-	private int nextClearBit(final int fromIndex){
-		int u = wordIndex(fromIndex);
-		if(u >= wordsInUse)
-			return fromIndex;
-
-		long word = ~words[u] & (WORD_MASK << fromIndex);
-		while(true){
-			if(word != 0)
-				return (u * BITS_PER_WORD) + Long.numberOfTrailingZeros(word);
-
-			if(++ u == wordsInUse)
-				return wordsInUse * BITS_PER_WORD;
-
-			word = ~words[u];
-		}
-	}
-
-	/** Given a bit index, return word index containing it. */
-	private static int wordIndex(final int bitIndex){
-		return bitIndex >> ADDRESS_BITS_PER_WORD;
+		int idx = Arrays.binarySearch(indexes, fromIndex);
+		if(idx < 0)
+			idx = -idx - 1;
+		return (idx < indexes.length? indexes[idx]: -1);
 	}
 
 
 	@Override
 	public int hashCode(){
 		long h = 1234;
-		for(int i = wordsInUse; --i >= 0; )
-			h ^= words[i] * (i + 1);
+		for(int i = indexes.length; -- i >= 0; )
+			h ^= indexes[i] * (i + 1);
 		return (int)((h >> 32) ^ h);
 	}
 
@@ -365,14 +244,11 @@ public class BitSet{
 			return true;
 
 		final BitSet rhs = (BitSet)obj;
-		if(wordsInUse != rhs.wordsInUse)
+		if(indexes.length != rhs.indexes.length)
 			return false;
 
 		//check words in use by both BitSets
-		for(int i = 0; i < wordsInUse; i++)
-			if(words[i] != rhs.words[i])
-				return false;
-		return true;
+		return Arrays.equals(indexes, rhs.indexes);
 	}
 
 }
