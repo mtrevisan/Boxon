@@ -181,7 +181,6 @@ class CodecTest{
 		List<Codec.BoundedField> boundedFields = codec.getBoundedFields();
 		Assertions.assertNotNull(boundedFields);
 		Assertions.assertEquals(15, boundedFields.size());
-		//TODO assert bounded fields
 		List<Codec.EvaluatedField> evaluatedFields = codec.getEvaluatedFields();
 		Assertions.assertNotNull(evaluatedFields);
 		Assertions.assertEquals(1, evaluatedFields.size());

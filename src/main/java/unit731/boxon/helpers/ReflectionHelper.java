@@ -40,7 +40,9 @@ import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
@@ -86,7 +88,7 @@ public class ReflectionHelper{
 		catch(final IllegalAccessException ignored){}
 	}
 
-	public static <T> void setFieldValue(final Object obj, final Class<T> fieldType, final T value) throws NoSuchFieldException{
+	public static <T> void setFieldValue(final Object obj, final Class<T> fieldType, final T value){
 		try{
 			final Field[] fields = getAccessibleFields(obj.getClass(), fieldType);
 			for(final Field field : fields)
@@ -114,29 +116,26 @@ public class ReflectionHelper{
 	}
 
 	private static <T> Field[] getAccessibleFields(Class<?> cls, final Class<?> fieldType){
-		Field[] result = new Field[0];
+		final List<Field> result = new ArrayList<>();
 		while(cls != Object.class){
 			final Field[] fields = cls.getDeclaredFields();
-			for(final Field f : fields)
-				if(f.getType() == fieldType){
-					f.setAccessible(true);
-					result = add(result, f);
-					break;
-				}
+			result.addAll(collectFields(fields, fieldType));
 
 			//go up to parent class
 			cls = cls.getSuperclass();
 		}
-		return result;
+		return result.toArray(Field[]::new);
 	}
 
-	private static <T> T[] add(final T[] array, final T element){
-		//copy & grow
-		final int arrayLength = Array.getLength(array);
-		final Object newArray = Array.newInstance(array.getClass().getComponentType(), arrayLength + 1);
-		System.arraycopy(array, 0, newArray, 0, arrayLength);
-		Array.set(newArray, arrayLength, element);
-		return (T[])newArray;
+	private static List<Field> collectFields(final Field[] fields, final Class<?> fieldType){
+		final List<Field> result = new ArrayList<>();
+		for(final Field f : fields)
+			if(f.getType() == fieldType){
+				f.setAccessible(true);
+				result.add(f);
+				break;
+			}
+		return result;
 	}
 
 	/**
