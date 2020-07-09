@@ -1,7 +1,6 @@
 package unit731.boxon.helpers;
 
 import java.util.Arrays;
-import java.util.Iterator;
 
 
 /**
@@ -18,7 +17,7 @@ import java.util.Iterator;
  * @see <a href="https://w6113.github.io/files/papers/sidm338-wangA.pdf">An Experimental Study of Bitmap Compression vs. Inverted List Compression</a>
  * @see <a href="https://onlinelibrary.wiley.com/doi/pdf/10.1002/spe.2203">Decoding billions of integers per second through vectorization</a>
  */
-public class BitSet implements Iterable<Integer>{
+public class BitSet{
 
 	private int[] indexes = new int[0];
 
@@ -114,6 +113,20 @@ public class BitSet implements Iterable<Integer>{
 		return bytes;
 	}
 
+	public long toLong(int offset, final int size){
+		//FIXME
+		final int shift = offset;
+		final int idx = (offset > 0? Arrays.binarySearch(indexes, offset): 0);
+		offset = (idx >= 0? idx: -idx - 1);
+		final int length = Math.min(size + offset, indexes.length);
+
+		int index;
+		long value = 0l;
+		while(offset < length && 0 <= (index = indexes[offset ++]) && index < size + shift)
+			value |= 1l << (index - shift);
+		return value;
+	}
+
 	/**
 	 * Sets the bit at the specified index to the complement of its current value.
 	 *
@@ -163,54 +176,6 @@ public class BitSet implements Iterable<Integer>{
 	 */
 	public boolean get(final int bitIndex){
 		return (Arrays.binarySearch(indexes, bitIndex) >= 0);
-	}
-
-	/**
-	 * Returns the number of bits set to {@code true} in this {@code BitSet}.
-	 *
-	 * @return the number of bits set to {@code true} in this {@code BitSet}
-	 */
-	private int cardinality(){
-		return indexes.length;
-	}
-
-	/** Iterates over all the set bits, returning their indexes */
-	@Override
-	public Iterator<Integer> iterator(){
-		return new BitIterator(this, 0);
-	}
-
-	/**
-	 * Iterates over all the set bits, returning their indexes
-	 *
-	 * @param offset	Offset to start from.
-	 */
-	public Iterator<Integer> iterator(final int offset){
-		return new BitIterator(this, offset);
-	}
-
-	private class BitIterator implements Iterator<Integer>{
-
-		private final int[] indexes;
-		private int offset;
-
-		public BitIterator(final BitSet bset, final int offset){
-			indexes = bset.indexes;
-			final int idx = (offset > 0? Arrays.binarySearch(indexes, offset): 0);
-			this.offset = (idx >= 0? idx: -idx - 1);
-		}
-
-		public boolean hasNext(){
-			return (offset < indexes.length);
-		}
-
-		public Integer next(){
-			return indexes[offset ++];
-		}
-
-		public void remove(){
-			throw new UnsupportedOperationException();
-		}
 	}
 
 

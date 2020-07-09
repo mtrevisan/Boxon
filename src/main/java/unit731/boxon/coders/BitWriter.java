@@ -82,10 +82,8 @@ class BitWriter{
 		while(offset < length){
 			//fill the cache one bit at a time
 			final int size = Math.min(length - offset, Byte.SIZE - remaining);
-			int i;
-			final Iterator<Integer> itr = value.iterator(offset);
-			while(itr.hasNext() && 0 <= (i = itr.next()) && i < offset + size)
-				cache |= 1 << (remaining + i - offset);
+			final byte nextCache = (byte)value.toLong(offset, size);
+			cache = (byte)((cache << size) | nextCache);
 			remaining += size;
 			offset += size;
 
