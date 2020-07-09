@@ -113,17 +113,14 @@ public class BitSet{
 		return bytes;
 	}
 
-	public long toLong(int offset, final int size){
-		//FIXME
-		final int shift = offset;
-		final int idx = (offset > 0? Arrays.binarySearch(indexes, offset): 0);
-		offset = (idx >= 0? idx: -idx - 1);
-		final int length = Math.min(size + offset, indexes.length);
-
+	public long toLong(final int offset, final int size){
 		int index;
 		long value = 0l;
-		while(offset < length && 0 <= (index = indexes[offset ++]) && index < size + shift)
-			value |= 1l << (index - shift);
+		final int idx = (offset > 0? Arrays.binarySearch(indexes, offset): 0);
+		int i = (idx >= 0? idx: -idx - 1);
+		final int length = Math.min(size + i, indexes.length);
+		while(i < length && 0 <= (index = indexes[i ++]) && index < size + offset)
+			value |= 1l << (index - offset);
 		return value;
 	}
 
@@ -138,6 +135,15 @@ public class BitSet{
 			addSetBit(-idx - 1, bitIndex);
 		else
 			removeSetBit(idx);
+	}
+
+	public void reverseBits(final int size){
+		for(int start = 0, end = size - 1; start < end; start ++, end --)
+			if(get(start) != get(end)){
+				//FIXME one instruction, move to BitSet
+				flip(start);
+				flip(end);
+			}
 	}
 
 	/**

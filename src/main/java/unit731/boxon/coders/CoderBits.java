@@ -42,7 +42,7 @@ class CoderBits implements CoderInterface<BindBits>{
 		final int size = Evaluator.evaluateSize(binding.size(), data);
 		final BitSet bits = reader.getBits(size);
 		if(binding.byteOrder() == ByteOrder.LITTLE_ENDIAN)
-			ByteHelper.reverseBits(bits, size);
+			bits.reverseBits(size);
 
 		final Object value = CoderHelper.converterDecode(binding.converter(), bits);
 
@@ -60,7 +60,7 @@ class CoderBits implements CoderInterface<BindBits>{
 		final BitSet bits = CoderHelper.converterEncode(binding.converter(), value);
 		final int size = Evaluator.evaluateSize(binding.size(), data);
 		if(binding.byteOrder() == ByteOrder.LITTLE_ENDIAN)
-			ByteHelper.reverseBits(bits, size);
+			bits.reverseBits( size);
 
 		writer.putBits(bits, size);
 	}

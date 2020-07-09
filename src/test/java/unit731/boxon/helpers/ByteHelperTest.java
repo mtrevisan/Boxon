@@ -95,19 +95,19 @@ class ByteHelperTest{
 	@Test
 	void reverseBits(){
 		BitSet bits = BitSet.valueOf(new byte[]{0x10});
-		ByteHelper.reverseBits(bits, Byte.SIZE);
+		bits.reverseBits(Byte.SIZE);
 
 		Assertions.assertEquals(BitSet.valueOf(new byte[]{0x08}), bits);
 
 
 		bits = BitSet.valueOf(new byte[]{0x16});
-		ByteHelper.reverseBits(bits, Byte.SIZE);
+		bits.reverseBits(Byte.SIZE);
 
 		Assertions.assertEquals(BitSet.valueOf(new byte[]{0x68}), bits);
 
 
 		bits = BitSet.valueOf(new byte[]{(byte)0xE7});
-		ByteHelper.reverseBits(bits, Byte.SIZE);
+		bits.reverseBits(Byte.SIZE);
 
 		Assertions.assertEquals(BitSet.valueOf(new byte[]{(byte)0xE7}), bits);
 	}

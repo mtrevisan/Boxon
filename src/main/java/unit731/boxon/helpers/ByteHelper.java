@@ -180,15 +180,6 @@ public class ByteHelper{
 		return ((mask & (1 << (index % Byte.SIZE))) != 0);
 	}
 
-	public static void reverseBits(final BitSet value, final int size){
-		for(int start = 0, end = size - 1; start < end; start ++, end --)
-			if(value.get(start) != value.get(end)){
-				//FIXME one instruction, move to BitSet
-				value.flip(start);
-				value.flip(end);
-			}
-	}
-
 	public static long reverseBytes(final long value, final int size, final ByteOrder byteOrder){
 		return (byteOrder == ByteOrder.BIG_ENDIAN? (Long.reverseBytes(value) >> (Long.SIZE - size)): value);
 	}

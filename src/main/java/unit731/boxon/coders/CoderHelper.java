@@ -29,7 +29,6 @@ import unit731.boxon.annotations.Choices;
 import unit731.boxon.annotations.converters.Converter;
 import unit731.boxon.annotations.validators.Validator;
 import unit731.boxon.helpers.BitSet;
-import unit731.boxon.helpers.ByteHelper;
 import unit731.boxon.helpers.ReflectionHelper;
 
 import java.util.Objects;
@@ -77,7 +76,7 @@ class CoderHelper{
 			final long prefixValue = chosenAlternative.prefix();
 			final BitSet bits = BitSet.valueOf(new long[]{prefixValue});
 			if(prefixByteOrder == ByteOrder.LITTLE_ENDIAN)
-				ByteHelper.reverseBits(bits, prefixSize);
+				bits.reverseBits(prefixSize);
 
 			writer.putBits(bits, prefixSize);
 		}

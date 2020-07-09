@@ -97,7 +97,7 @@ class CoderBitsTest{
 		BitBuffer reader = BitBuffer.wrap(writer);
 		BitSet decoded = (BitSet)coder.decode(reader, annotation, null);
 
-		ByteHelper.reverseBits(encodedValue, randomBytes.length * Byte.SIZE);
+		encodedValue.reverseBits(randomBytes.length * Byte.SIZE);
 		Assertions.assertEquals(encodedValue, decoded);
 	}
 
