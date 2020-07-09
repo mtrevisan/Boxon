@@ -143,7 +143,6 @@ public class BitSet{
 
 	/**
 	 * Returns a new byte array containing all the bits in this bit set.
-	 * <p></p>
 	 * <p>More precisely, if
 	 * <br>{@code byte[] bytes = s.toByteArray();}
 	 * <br>then {@code bytes.length == (s.length()+7)/8} and
