@@ -170,19 +170,24 @@ public class ReflectionHelper{
 			final Constructor<T> ctr = type.getDeclaredConstructor();
 			ctr.setAccessible(true);
 			ctr.newInstance();
-			return () -> {
-				try{
-					return ctr.newInstance();
-				}
-				catch(final Exception ignored){
-					//cannot happen
-					return null;
-				}
-			};
+
+			return createSupplierIgnoreExceptions(ctr);
 		}
 		catch(final Exception ignored){
 			return instantiatorOf(type)::newInstance;
 		}
+	}
+
+	private static <T> Supplier<T> createSupplierIgnoreExceptions(final Constructor<T> ctr){
+		return () -> {
+			try{
+				return ctr.newInstance();
+			}
+			catch(final Exception ignored){
+				//cannot happen
+				return null;
+			}
+		};
 	}
 
 	public static <T> T createInstance(final Class<T> type){
