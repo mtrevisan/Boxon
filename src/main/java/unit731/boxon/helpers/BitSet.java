@@ -151,7 +151,7 @@ public class BitSet{
 		if(indexes.length == 0)
 			return new byte[0];
 
-		final byte[] bytes = new byte[(indexes[indexes.length - 1] + Byte.SIZE - 1) / Byte.SIZE];
+		final byte[] bytes = new byte[indexes[indexes.length - 1] / Byte.SIZE + 1];
 		for(final int index : indexes)
 			bytes[index / Byte.SIZE] |= 1 << (index % Byte.SIZE);
 		return bytes;
