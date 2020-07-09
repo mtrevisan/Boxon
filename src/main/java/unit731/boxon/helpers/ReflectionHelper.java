@@ -114,7 +114,7 @@ public class ReflectionHelper{
 	}
 
 	private static <T> Field[] getAccessibleFields(Class<?> cls, final Class<?> fieldType){
-		final List<Field> result = new ArrayList<>();
+		final List<Field> result = new ArrayList<>(0);
 		while(cls != Object.class){
 			final Field[] fields = cls.getDeclaredFields();
 			result.addAll(filterAccessibleFields(fields, fieldType));
@@ -126,7 +126,7 @@ public class ReflectionHelper{
 	}
 
 	private static List<Field> filterAccessibleFields(final Field[] fields, final Class<?> fieldType){
-		final List<Field> result = new ArrayList<>();
+		final List<Field> result = new ArrayList<>(fields.length);
 		for(final Field f : fields)
 			if(f.getType() == fieldType){
 				f.setAccessible(true);

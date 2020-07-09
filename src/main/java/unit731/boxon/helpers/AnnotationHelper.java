@@ -54,7 +54,7 @@ public class AnnotationHelper{
 	 */
 	public static Field[] getDeclaredFields(final Class<?> cls, @SuppressWarnings("SameParameterValue") final boolean recursively){
 		if(recursively){
-			final List<Field> fields = new ArrayList<>();
+			final List<Field> fields = new ArrayList<>(0);
 			Class<?> currentType = cls;
 			while(currentType != null){
 				final List<Field> subfields = Arrays.asList(currentType.getDeclaredFields());
@@ -79,7 +79,7 @@ public class AnnotationHelper{
 	 * @return	The classes
 	 */
 	public static <T> Collection<Class<?>> extractClasses(final T type, final Class<?>... basePackageClasses){
-		final Set<Class<?>> codecs = new HashSet<>();
+		final Set<Class<?>> codecs = new HashSet<>(0);
 
 		final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		for(final Class<?> basePackageClass : basePackageClasses){
@@ -99,7 +99,7 @@ public class AnnotationHelper{
 	}
 
 	private static <T> Collection<Class<?>> extractClasses(final Enumeration<URL> resources, final T type, final String basePackageName){
-		final Set<Class<?>> codecs = new HashSet<>();
+		final Set<Class<?>> codecs = new HashSet<>(0);
 		while(resources.hasMoreElements()){
 			final URL resource = resources.nextElement();
 			final String directory = resource.getFile();
@@ -121,7 +121,7 @@ public class AnnotationHelper{
 	 * @return The classes
 	 */
 	private static <T> Set<Class<?>> extractClassesFromLibrary(final T type, final String libraryName){
-		final Set<Class<?>> classes = new HashSet<>();
+		final Set<Class<?>> classes = new HashSet<>(0);
 
 		try{
 			final JarFile jarFile = new JarFile(libraryName);
@@ -156,7 +156,7 @@ public class AnnotationHelper{
 	 */
 	@SuppressWarnings("unchecked")
 	private static <T> Set<Class<?>> extractClasses(final T type, final File directory, final String packageName){
-		final Set<Class<?>> classes = new HashSet<>();
+		final Set<Class<?>> classes = new HashSet<>(0);
 
 		final Stack<ClassDescriptor> stack = new Stack<>();
 		stack.push(new ClassDescriptor(directory, packageName));

@@ -48,7 +48,7 @@ class Loader{
 	private static final Logger LOGGER = LoggerFactory.getLogger(Loader.class.getName());
 
 	private final Map<String, Codec<?>> codecs = new TreeMap<>(Comparator.comparingInt(String::length).reversed().thenComparing(String::compareTo));
-	private final Map<Class<?>, CoderInterface<?>> coders = new HashMap<>();
+	private final Map<Class<?>, CoderInterface<?>> coders = new HashMap<>(0);
 
 	private final AtomicBoolean initialized = new AtomicBoolean(false);
 
@@ -75,7 +75,7 @@ class Loader{
 				Arrays.stream(basePackageClasses).map(Class::getPackageName).distinct().collect(Collectors.joining(", ", "[", "]")));
 
 			final Collection<Class<?>> annotatedClasses = AnnotationHelper.extractClasses(MessageHeader.class, basePackageClasses);
-			final Collection<Codec<?>> codecs = new ArrayList<>();
+			final Collection<Codec<?>> codecs = new ArrayList<>(annotatedClasses.size());
 			for(final Class<?> cls : annotatedClasses){
 				final Codec<?> codec = Codec.createFrom(cls);
 				if(codec.canBeDecoded())
@@ -173,7 +173,7 @@ class Loader{
 			Arrays.stream(basePackageClasses).map(Class::getPackageName).distinct().collect(Collectors.joining(", ", "[", "]")));
 
 		final Collection<Class<?>> derivedClasses = AnnotationHelper.extractClasses(CoderInterface.class, basePackageClasses);
-		final Collection<CoderInterface<?>> coders = new ArrayList<>();
+		final Collection<CoderInterface<?>> coders = new ArrayList<>(derivedClasses.size());
 		for(final Class<?> cls : derivedClasses)
 			if(!cls.isInterface()){
 				final CoderInterface<?> coder = (CoderInterface<?>)ReflectionHelper.getCreator(cls)

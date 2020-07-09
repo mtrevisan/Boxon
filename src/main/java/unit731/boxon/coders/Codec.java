@@ -169,7 +169,7 @@ class Codec<T>{
 	}
 
 	private List<Annotation> extractAnnotations(final Annotation[] declaredAnnotations){
-		final List<Annotation> annotations = new ArrayList<>();
+		final List<Annotation> annotations = new ArrayList<>(declaredAnnotations.length);
 		for(final Annotation annotation : declaredAnnotations){
 			final Class<? extends Annotation> annotationType = annotation.annotationType();
 			if(annotationType != BindIf.class && annotationType != Skip.class && annotationType != Evaluate.class)
@@ -179,7 +179,7 @@ class Codec<T>{
 	}
 
 	private List<Evaluate> extractEvaluations(final Annotation[] declaredAnnotations){
-		final List<Evaluate> annotations = new ArrayList<>();
+		final List<Evaluate> annotations = new ArrayList<>(declaredAnnotations.length);
 		for(final Annotation annotation : declaredAnnotations){
 			final Class<? extends Annotation> annotationType = annotation.annotationType();
 			if(annotationType == Evaluate.class)
