@@ -138,14 +138,11 @@ class MessageParser{
 				.get();
 			final long startValue = checksum.startValue();
 			final long calculatedCRC = checksummer.calculateCRC(reader.array(), startPosition, endPosition, startValue);
-			try{
-				@SuppressWarnings("ConstantConditions")
-				final long givenCRC = ((Number)ReflectionHelper.getFieldValue(data, checksumData.getName())).longValue();
-				if(calculatedCRC != givenCRC)
-					throw new IllegalArgumentException("Calculated CRC (0x" + Long.toHexString(calculatedCRC).toUpperCase()
-						+ ") does NOT match given CRC (0x" + Long.toHexString(givenCRC).toUpperCase() + ")");
-			}
-			catch(final NoSuchFieldException ignored){}
+			@SuppressWarnings("ConstantConditions")
+			final long givenCRC = ((Number)ReflectionHelper.getFieldValue(data, checksumData.getName())).longValue();
+			if(calculatedCRC != givenCRC)
+				throw new IllegalArgumentException("Calculated CRC (0x" + Long.toHexString(calculatedCRC).toUpperCase()
+					+ ") does NOT match given CRC (0x" + Long.toHexString(givenCRC).toUpperCase() + ")");
 		}
 	}
 
@@ -153,10 +150,7 @@ class MessageParser{
 		final List<Codec.EvaluatedField> evaluatedFields = codec.getEvaluatedFields();
 		for(final Codec.EvaluatedField field : evaluatedFields){
 			final Object value = Evaluator.evaluate(field.getBinding().value(), field.getType(), data);
-			try{
-				ReflectionHelper.setFieldValue(data, field.getName(), value);
-			}
-			catch(final NoSuchFieldException ignored){}
+			ReflectionHelper.setFieldValue(data, field.getName(), value);
 		}
 	}
 

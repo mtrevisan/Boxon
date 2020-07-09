@@ -69,7 +69,7 @@ public class ReflectionHelper{
 
 
 	@SuppressWarnings("unchecked")
-	public static <T> T getFieldValue(final Object obj, final String fieldName) throws NoSuchFieldException{
+	public static <T> T getFieldValue(final Object obj, final String fieldName){
 		try{
 			final Field field = getAccessibleField(obj.getClass(), fieldName);
 			return (T)field.get(obj);
@@ -80,7 +80,7 @@ public class ReflectionHelper{
 		}
 	}
 
-	public static void setFieldValue(final Object obj, final String fieldName, final Object value) throws NoSuchFieldException{
+	public static void setFieldValue(final Object obj, final String fieldName, final Object value){
 		try{
 			final Field field = getAccessibleField(obj.getClass(), fieldName);
 			field.set(obj, value);
@@ -97,9 +97,9 @@ public class ReflectionHelper{
 		catch(final IllegalAccessException ignored){}
 	}
 
-	private static Field getAccessibleField(Class<?> cls, final String fieldName) throws NoSuchFieldException{
-		Field field;
-		while(true){
+	private static Field getAccessibleField(Class<?> cls, final String fieldName){
+		Field field = null;
+		while(cls != Object.class){
 			try{
 				field = cls.getDeclaredField(fieldName);
 				field.setAccessible(true);
@@ -108,8 +108,6 @@ public class ReflectionHelper{
 			catch(final NoSuchFieldException e){
 				//go up to parent class
 				cls = cls.getSuperclass();
-				if(cls == Object.class)
-					throw e;
 			}
 		}
 		return field;
@@ -164,6 +162,7 @@ public class ReflectionHelper{
 		return (T[])Array.newInstance(type, length);
 	}
 
+	@SuppressWarnings("unchecked")
 	public static <T> Supplier<T> getCreator(final Class<T> type){
 		return (Supplier<T>)CREATORS.apply(type);
 	}

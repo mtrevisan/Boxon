@@ -8,7 +8,7 @@ import java.util.Arrays;
 /**
  * This class implements a vector of bits that grows as needed.
  * <p>Each component of the bit set has a {@code boolean} value. The
- * bits of a {@code BitSet} are indexed by nonnegative integers.
+ * bits of a {@code BitSet} are indexed by non-negative integers.
  * Individual indexed bits can be examined, set, or cleared. One
  * {@code BitSet} may be used to modify the contents of another
  * {@code BitSet} through logical AND, logical inclusive OR, and
@@ -26,7 +26,7 @@ import java.util.Arrays;
  * <p>Unless otherwise noted, passing a null parameter to any of the
  * methods in a {@code BitSet} will result in a {@code NullPointerException}.</p>
  *
- * <p>A {@code BitSet} is not safe for multithreaded use without
+ * <p>A {@code BitSet} is not safe for multi-threaded use without
  * external synchronization.</p>
  *
  * @author Arthur van Hoff
@@ -297,10 +297,7 @@ public class BitSet{
 		int i = nextSetBit(0);
 		if(i != -1){
 			sb.append(i);
-			while(true){
-				if(++ i < 0 || (i = nextSetBit(i)) < 0)
-					break;
-
+			while(++ i >= 0 && (i = nextSetBit(i)) >= 0){
 				int endOfRun = nextClearBit(i);
 				do{
 					sb.append(", ").append(i);

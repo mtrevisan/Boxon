@@ -114,7 +114,7 @@ class BitBuffer{
 
 	/**
 	 * Wraps a byte array into a buffer.
-	 * <p>The new buffer will be backed by the given byte array containted into the {@link BitWriter}.</p>
+	 * <p>The new buffer will be backed by the given byte array contained into the {@link BitWriter}.</p>
 	 *
 	 * @param bitWriter	The {@link BitWriter}
 	 * @return	The new bit buffer
