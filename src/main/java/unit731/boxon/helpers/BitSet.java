@@ -196,7 +196,7 @@ public class BitSet implements Iterable<Integer>{
 
 		public BitIterator(final BitSet bset, final int offset){
 			indexes = bset.indexes;
-			final int idx = Arrays.binarySearch(indexes, offset);
+			final int idx = (offset > 0? Arrays.binarySearch(indexes, offset): 0);
 			this.offset = (idx >= 0? idx: -idx - 1);
 		}
 
