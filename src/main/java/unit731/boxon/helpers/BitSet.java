@@ -2,9 +2,7 @@ package unit731.boxon.helpers;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 
 /**
@@ -112,17 +110,21 @@ public class BitSet{
 	 * <p>The last word (if there is one) must be non-zero.</p>
 	 */
 	private BitSet(final long[] words){
-		final List<Integer> list = new ArrayList<>();
+		int length = 0;
+		for(final long word : words)
+			length += Long.bitCount(word);
+
+		indexes = new int[length];
+		int k = 0;
 		int offset = 0;
-		for(final long word : words){
-			for(int i = 0; i < Long.SIZE; i ++)
-				if((word & (1l << i)) != 0)
-					list.add(i + offset);
+		for(long word : words){
+			while(word != 0){
+				final int skip = Long.numberOfTrailingZeros(word);
+				indexes[k ++] = skip + offset;
+				word ^= 1l << skip;
+			}
 			offset += Long.SIZE;
 		}
-		indexes = list.stream()
-			.mapToInt(i -> i)
-			.toArray();
 	}
 
 	/**
@@ -163,24 +165,11 @@ public class BitSet{
 	 * @param bitIndex	The index of the bit to flip
 	 */
 	public void flip(final int bitIndex){
-		int idx = Arrays.binarySearch(indexes, bitIndex);
-		if(idx >= 0){
-			//remove index
-			final int[] tmp = new int[indexes.length - 1];
-			System.arraycopy(indexes, 0, tmp, 0, idx);
-			System.arraycopy(indexes, idx + 1, tmp, idx, indexes.length - idx - 1);
-			indexes = tmp;
-		}
-		else{
-			idx = -idx - 1;
-
-			//add index
-			final int[] tmp = new int[indexes.length + 1];
-			System.arraycopy(indexes, 0, tmp, 0, idx);
-			tmp[idx] = bitIndex;
-			System.arraycopy(indexes, idx, tmp, idx + 1, indexes.length - idx);
-			indexes = tmp;
-		}
+		final int idx = Arrays.binarySearch(indexes, bitIndex);
+		if(idx < 0)
+			addSetBit(idx, bitIndex);
+		else
+			removeSetBit(idx);
 	}
 
 	/**
@@ -189,17 +178,27 @@ public class BitSet{
 	 * @param bitIndex	A bit index
 	 */
 	public void set(final int bitIndex){
-		int idx = Arrays.binarySearch(indexes, bitIndex);
-		if(idx <= 0){
-			idx = -idx - 1;
+		final int idx = Arrays.binarySearch(indexes, bitIndex);
+		if(idx < 0)
+			addSetBit(idx, bitIndex);
+	}
 
-			//add index
-			final int[] tmp = new int[indexes.length + 1];
-			System.arraycopy(indexes, 0, tmp, 0, idx);
-			tmp[idx] = bitIndex;
-			System.arraycopy(indexes, idx, tmp, idx + 1, indexes.length - idx);
-			indexes = tmp;
-		}
+	private void addSetBit(int idx, final int bitIndex){
+		idx = -idx - 1;
+
+		//add index
+		final int[] tmp = new int[indexes.length + 1];
+		System.arraycopy(indexes, 0, tmp, 0, idx);
+		tmp[idx] = bitIndex;
+		System.arraycopy(indexes, idx, tmp, idx + 1, indexes.length - idx);
+		indexes = tmp;
+	}
+
+	private void removeSetBit(final int idx){
+		final int[] tmp = new int[indexes.length - 1];
+		System.arraycopy(indexes, 0, tmp, 0, idx);
+		System.arraycopy(indexes, idx + 1, tmp, idx, indexes.length - idx - 1);
+		indexes = tmp;
 	}
 
 	/**
