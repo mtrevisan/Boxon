@@ -211,7 +211,7 @@ class MessageParser{
 		final int size = Evaluator.evaluateSize(skip.size(), data);
 		if(size > 0)
 			/** skip {@link size} bits */
-			writer.putBits(new BitSet(size), size);
+			writer.putBits(new BitSet(), size);
 		else if(skip.consumeTerminator())
 			//skip until terminator
 			writer.putByte(skip.terminator());

@@ -194,7 +194,7 @@ class BitBuffer{
 	 * @return	A {@link BitSet} value at the {@link BitBuffer}'s current position.
 	 */
 	BitSet getBits(final int length){
-		final BitSet value = new BitSet(length);
+		final BitSet value = new BitSet();
 		int offset = 0;
 		while(offset < length){
 			//transfer the cache values

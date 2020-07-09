@@ -38,7 +38,7 @@ import java.util.Arrays;
  */
 public class BitSet{
 
-	private int[] indexes;
+	private int[] indexes = new int[0];
 
 
 	/**
@@ -127,17 +127,7 @@ public class BitSet{
 		}
 	}
 
-	/**
-	 * Creates a bit set whose initial size is large enough to explicitly
-	 * represent bits with indices in the range {@code 0} through
-	 * {@code length-1}.
-	 * <p>All bits are initially {@code false}.</p>
-	 *
-	 * @param length	The initial size of the bit set
-	 */
-	public BitSet(final int length){
-		indexes = new int[0];
-	}
+	public BitSet(){}
 
 	/**
 	 * Returns a new byte array containing all the bits in this bit set.
@@ -228,11 +218,13 @@ public class BitSet{
 
 
 	@Override
+	public String toString(){
+		return Arrays.toString(indexes);
+	}
+
+	@Override
 	public int hashCode(){
-		long h = 1234;
-		for(int i = indexes.length; -- i >= 0; )
-			h ^= indexes[i] * (i + 1);
-		return (int)((h >> 32) ^ h);
+		return Arrays.hashCode(indexes);
 	}
 
 	@Override
@@ -243,10 +235,6 @@ public class BitSet{
 			return true;
 
 		final BitSet rhs = (BitSet)obj;
-		if(indexes.length != rhs.indexes.length)
-			return false;
-
-		//check words in use by both BitSets
 		return Arrays.equals(indexes, rhs.indexes);
 	}
 
