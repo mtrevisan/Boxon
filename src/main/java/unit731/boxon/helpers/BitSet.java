@@ -7,31 +7,14 @@ import java.util.Arrays;
 
 /**
  * This class implements a vector of bits that grows as needed.
- * <p>Each component of the bit set has a {@code boolean} value. The
- * bits of a {@code BitSet} are indexed by non-negative integers.
- * Individual indexed bits can be examined, set, or cleared. One
- * {@code BitSet} may be used to modify the contents of another
- * {@code BitSet} through logical AND, logical inclusive OR, and
- * logical exclusive OR operations.</p>
- *
- * <p>By default, all bits in the set initially have the value
- * {@code false}.</p>
- *
- * <p>Every bit set has a current size, which is the number of bits
- * of space currently in use by the bit set. Note that the size is
- * related to the implementation of a bit set, so it may change with
- * implementation. The length of a bit set relates to logical length
- * of a bit set and is defined independently of implementation.</p>
- *
- * <p>Unless otherwise noted, passing a null parameter to any of the
+ * <p>Each set bit of the bit set is stored as an index.</p>
+ * <p>By default, all bits in the set initially are zero.</p>
+ * <p>The maximum value that can be stored is {@link java.lang.Integer#MAX_VALUE}</p>
+ * <p>Unless otherwise noted, passing a {@code null} parameter to any of the
  * methods in a {@code BitSet} will result in a {@code NullPointerException}.</p>
  *
  * <p>A {@code BitSet} is not safe for multi-threaded use without
  * external synchronization.</p>
- *
- * @author Arthur van Hoff
- * @author Michael McCloskey
- * @author Martin Buchholz
  *
  * @see <a href="https://w6113.github.io/files/papers/sidm338-wangA.pdf">An Experimental Study of Bitmap Compression vs. Inverted List Compression</a>
  * @see <a href="https://onlinelibrary.wiley.com/doi/pdf/10.1002/spe.2203">Decoding billions of integers per second through vectorization</a>
@@ -49,15 +32,12 @@ public class BitSet{
 	 *
 	 * <p>This method is equivalent to {@code BitSet.valueOf(LongBuffer.wrap(longs))}.</p>
 	 *
-	 * @param longs	A long array containing a little-endian representation of a sequence of bits to be used as the initial bits of the
+	 * @param array	A long array containing a little-endian representation of a sequence of bits to be used as the initial bits of the
 	 * 	new bit set
 	 * @return	A {@code BitSet} containing all the bits in the long array
 	 */
-	public static BitSet valueOf(final long[] longs){
-		int n = longs.length;
-		while(n > 0 && longs[n - 1] == 0)
-			n --;
-		return new BitSet(Arrays.copyOf(longs, n));
+	public static BitSet valueOf(final long[] array){
+		return new BitSet(array);
 	}
 
 	/**
@@ -69,46 +49,32 @@ public class BitSet{
 	 * <p>This method is equivalent to
 	 * {@code BitSet.valueOf(ByteBuffer.wrap(bytes))}.</p>
 	 *
-	 * @param bytes	A byte array containing a little-endian representation of a sequence of bits to be used as the
+	 * @param array	A byte array containing a little-endian representation of a sequence of bits to be used as the
 	 * 	initial bits of the new bit set
 	 * @return	A {@code BitSet} containing all the bits in the byte array
 	 */
-	public static BitSet valueOf(final byte[] bytes){
-		return BitSet.valueOf(ByteBuffer.wrap(bytes));
+	public static BitSet valueOf(final byte[] array){
+		return new BitSet(array);
 	}
 
-	/**
-	 * Returns a new bit set containing all the bits in the given byte buffer between its position and limit.
-	 * <p>More precisely,
-	 * <br>{@code BitSet.valueOf(bb).get(n) == ((bb.get(bb.position()+n/8) & (1<<(n%8))) != 0)}
-	 * <br>for all {@code n < 8 * bb.remaining()}.</p>
-	 *
-	 * <p>The byte buffer is not modified by this method, and no
-	 * reference to the buffer is retained by the bit set.</p>
-	 *
-	 * @param bb	A byte buffer containing a little-endian representation of a sequence of bits between its position and limit, to be
-	 * 	used as the initial bits of the new bit set
-	 * @return	A {@code BitSet} containing all the bits in the buffer in the specified range
-	 */
-	public static BitSet valueOf(ByteBuffer bb){
-		bb = bb.slice().order(ByteOrder.LITTLE_ENDIAN);
-		int n = bb.remaining();
-		while(n > 0 && bb.get(n - 1) == 0)
-			n --;
-		final long[] words = new long[(n + 7) / 8];
-		bb.limit(n);
-		int i = 0;
-		while(bb.remaining() >= 8)
-			words[i ++] = bb.getLong();
-		for(int remaining = bb.remaining(), j = 0; j < remaining; j ++)
-			words[i] |= (bb.get() & 0xFFl) << (8 * j);
-		return new BitSet(words);
+	private BitSet(final byte[] words){
+		int length = 0;
+		for(final byte word : words)
+			length += Integer.bitCount(word & 0xFF);
+
+		indexes = new int[length];
+		int k = 0;
+		int offset = 0;
+		for(byte word : words){
+			while(word != 0){
+				final int skip = Integer.numberOfTrailingZeros(word);
+				indexes[k ++] = skip + offset;
+				word ^= 1 << skip;
+			}
+			offset += Byte.SIZE;
+		}
 	}
 
-	/**
-	 * Creates a bit set using words as the internal representation.
-	 * <p>The last word (if there is one) must be non-zero.</p>
-	 */
 	private BitSet(final long[] words){
 		int length = 0;
 		for(final long word : words)
