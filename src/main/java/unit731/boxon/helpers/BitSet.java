@@ -55,6 +55,7 @@ public class BitSet{
 		return new BitSet(array);
 	}
 
+
 	private BitSet(final byte[] words){
 		int length = 0;
 		for(final byte word : words)
@@ -93,6 +94,34 @@ public class BitSet{
 
 	public BitSet(){}
 
+
+	/**
+	 * Adds a set bit at the specified index.
+	 *
+	 * @param bitIndex	A bit index (MUST BE greater than the previous index!)
+	 */
+	public void addNextSetBit(final int bitIndex){
+		final int position = indexes.length;
+		indexes = Arrays.copyOf(indexes, position + 1);
+		indexes[position] = bitIndex;
+	}
+
+	/**
+	 * Sets the bits of a number to the complement of its current value.
+	 *
+	 * @param size	The size of the number in bits.
+	 */
+	public void reverseBits(final int size){
+		for(int i = 0; i < indexes.length; i ++)
+			indexes[i] = size - indexes[i] - 1;
+		//re-sort indexes
+		for(int start = 0, end = indexes.length - 1; start < end; start ++, end --){
+			indexes[start] ^= indexes[end];
+			indexes[end] ^= indexes[start];
+			indexes[start] ^= indexes[end];
+		}
+	}
+
 	/**
 	 * Returns a new byte array containing all the bits in this bit set.
 	 * <p>More precisely, if
@@ -129,33 +158,6 @@ public class BitSet{
 		while(i < length && 0 <= (index = indexes[i ++]) && index < size + offset)
 			value |= 1l << (index - offset);
 		return value;
-	}
-
-	/**
-	 * Sets the bits of a number to the complement of its current value.
-	 *
-	 * @param size	The size of the number in bits.
-	 */
-	public void reverseBits(final int size){
-		for(int i = 0; i < indexes.length; i ++)
-			indexes[i] = size - indexes[i] - 1;
-		//re-sort indexes
-		for(int start = 0, end = indexes.length - 1; start < end; start ++, end --){
-			indexes[start] ^= indexes[end];
-			indexes[end] ^= indexes[start];
-			indexes[start] ^= indexes[end];
-		}
-	}
-
-	/**
-	 * Adds a set bit at the specified index.
-	 *
-	 * @param bitIndex	A bit index (MUST BE greater than the previous index!)
-	 */
-	public void addNextSetBit(final int bitIndex){
-		final int position = indexes.length;
-		indexes = Arrays.copyOf(indexes, position + 1);
-		indexes[position] = bitIndex;
 	}
 
 
