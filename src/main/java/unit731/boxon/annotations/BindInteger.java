@@ -36,7 +36,7 @@ import java.lang.annotation.Target;
 
 
 /**
- * Manages a <code>long</code>/{@link Long} if <code>size &lt; 64</code>, {@link java.math.BigInteger} otherwise (... before the application of a converter)
+ * Manages a <code>long</code>/{@link Long} if <code>size &lt; {@link Long#SIZE}</code>, {@link java.math.BigInteger} otherwise (... before the application of a converter)
  * If <code>allowPrimitive</code> is <code>false</code>, then the data type is only {@link java.math.BigInteger}
  */
 @Retention(RetentionPolicy.RUNTIME)
@@ -59,9 +59,9 @@ public @interface BindInteger{
 	ByteOrder byteOrder() default ByteOrder.BIG_ENDIAN;
 
 	/**
-	 * Allow returning a <code>long</code>/{@link Long} if <code>size &lt; 64</code>.
+	 * Allow returning a <code>long</code>/{@link Long} if <code>size &lt; {@link Long#SIZE}</code>.
 	 *
-	 * @return	Whether to allow returning a <code>long</code>/{@link Long} if <code>size &lt; 64</code>. Defaults to <code>true</code>.
+	 * @return	Whether to allow returning a <code>long</code>/{@link Long} if <code>size &lt; {@link Long#SIZE}</code>. Defaults to <code>true</code>.
 	 */
 	boolean allowPrimitive() default true;
 

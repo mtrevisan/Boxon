@@ -241,9 +241,9 @@ final class BitBuffer{
 	}
 
 	/**
-	 * Reads the next {@code length} bits (should be less than 64!) and composes a <code>long</code>.
+	 * Reads the next {@code length} bits (should be less than {@link Long#SIZE}!) and composes a <code>long</code>.
 	 *
-	 * @param length	The amount of bits to read (should be less than 64!).
+	 * @param length	The amount of bits to read (should be less than {@link Long#SIZE}!).
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	A <code>long</code> value at the {@link BitBuffer}'s current position.
 	 */
