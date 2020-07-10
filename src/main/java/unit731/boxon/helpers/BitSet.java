@@ -113,6 +113,13 @@ public class BitSet{
 		return bytes;
 	}
 
+	/**
+	 * Returns a long of given length and starting at a given offset.
+	 *
+	 * @param offset	The bit offset to start the extraction
+	 * @param size	The length in bits of the extraction (MUST BE less than {@link Long#SIZE}!)
+	 * @return	A long starting at a given offset and of a given length
+	 */
 	public long toLong(final int offset, final int size){
 		int index;
 		long value = 0l;
@@ -132,27 +139,23 @@ public class BitSet{
 	public void reverseBits(final int size){
 		for(int i = 0; i < indexes.length; i ++)
 			indexes[i] = size - indexes[i] - 1;
-		Arrays.sort(indexes);
+		//re-sort indexes
+		for(int start = 0, end = indexes.length - 1; start < end; start ++, end --){
+			indexes[start] ^= indexes[end];
+			indexes[end] ^= indexes[start];
+			indexes[start] ^= indexes[end];
+		}
 	}
 
 	/**
-	 * Sets the bit at the specified index to {@code true}.
+	 * Adds a set bit at the specified index.
 	 *
-	 * @param bitIndex	A bit index
+	 * @param bitIndex	A bit index (MUST BE greater than the previous index!)
 	 */
-	public void set(final int bitIndex){
-		final int idx = Arrays.binarySearch(indexes, bitIndex);
-		if(idx < 0)
-			addSetBit(-idx - 1, bitIndex);
-	}
-
-	private void addSetBit(final int position, final int bitIndex){
-		//add index
-		final int[] tmp = new int[indexes.length + 1];
-		System.arraycopy(indexes, 0, tmp, 0, position);
-		tmp[position] = bitIndex;
-		System.arraycopy(indexes, position, tmp, position + 1, indexes.length - position);
-		indexes = tmp;
+	public void addNextSetBit(final int bitIndex){
+		final int position = indexes.length;
+		indexes = Arrays.copyOf(indexes, position + 1);
+		indexes[position] = bitIndex;
 	}
 
 

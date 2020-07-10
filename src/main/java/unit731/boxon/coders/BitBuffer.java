@@ -201,7 +201,7 @@ class BitBuffer{
 			final int size = Math.min(length, remaining);
 			for(int i = offset; cache != 0 && i < offset + size; i ++, cache >>>= 1)
 				if((cache & 0x01) != 0)
-					value.set(i);
+					value.addNextSetBit(i);
 			remaining -= size;
 			offset += size;
 
