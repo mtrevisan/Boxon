@@ -54,15 +54,41 @@ public final class ReflectionHelper{
 
 	private static final Function<Class<?>, Supplier<?>> CREATORS = Memoizer.memoizeThreadAndRecursionSafe(ReflectionHelper::getCreatorInner);
 
-	/** Map with primitive type as key and corresponding objective type as value, for example: "int.class" -> "Integer.class" */
-	private static final Map<Class<?>, Class<?>> PRIMITIVE_TYPE = new HashMap<>(6);
+	/** Maps primitive {@code Class}es to their corresponding wrapper {@code Class} */
+	public static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPER_MAP = new HashMap<>(7);
+	/** Maps wrapper {@code Class}es to their corresponding primitive types */
+	public static final Map<Class<?>, Class<?>> WRAPPER_PRIMITIVE_MAP = new HashMap<>(7);
+	/** Maps {@code Class}es to their corresponding size */
+	public static final Map<Class<?>, Integer> SIZE_MAP = new HashMap<>(14);
 	static{
-		PRIMITIVE_TYPE.put(byte.class, Byte.class);
-		PRIMITIVE_TYPE.put(short.class, Short.class);
-		PRIMITIVE_TYPE.put(int.class, Integer.class);
-		PRIMITIVE_TYPE.put(long.class, Long.class);
-		PRIMITIVE_TYPE.put(float.class, Float.class);
-		PRIMITIVE_TYPE.put(double.class, Double.class);
+		PRIMITIVE_WRAPPER_MAP.put(Byte.TYPE, Byte.class);
+		PRIMITIVE_WRAPPER_MAP.put(Short.TYPE, Short.class);
+		PRIMITIVE_WRAPPER_MAP.put(Character.TYPE, Character.class);
+		PRIMITIVE_WRAPPER_MAP.put(Integer.TYPE, Integer.class);
+		PRIMITIVE_WRAPPER_MAP.put(Long.TYPE, Long.class);
+		PRIMITIVE_WRAPPER_MAP.put(Float.TYPE, Float.class);
+		PRIMITIVE_WRAPPER_MAP.put(Double.TYPE, Double.class);
+
+		for(final Class<?> primitiveClass : PRIMITIVE_WRAPPER_MAP.keySet()){
+			final Class<?> wrapperClass = PRIMITIVE_WRAPPER_MAP.get(primitiveClass);
+			if(!primitiveClass.equals(wrapperClass))
+				WRAPPER_PRIMITIVE_MAP.put(wrapperClass, primitiveClass);
+		}
+
+		SIZE_MAP.put(byte.class, Byte.SIZE);
+		SIZE_MAP.put(Byte.class, Byte.SIZE);
+		SIZE_MAP.put(short.class, Short.SIZE);
+		SIZE_MAP.put(Short.class, Short.SIZE);
+		SIZE_MAP.put(char.class, Character.SIZE);
+		SIZE_MAP.put(Character.class, Character.SIZE);
+		SIZE_MAP.put(int.class, Integer.SIZE);
+		SIZE_MAP.put(Integer.class, Integer.SIZE);
+		SIZE_MAP.put(long.class, Long.SIZE);
+		SIZE_MAP.put(Long.class, Long.SIZE);
+		SIZE_MAP.put(float.class, Float.SIZE);
+		SIZE_MAP.put(Float.class, Float.SIZE);
+		SIZE_MAP.put(double.class, Double.SIZE);
+		SIZE_MAP.put(Double.class, Double.SIZE);
 	}
 
 
@@ -137,18 +163,38 @@ public final class ReflectionHelper{
 	}
 
 	/**
-	 * Get the class that extends {@link Object} that represent the given class.
+	 * Returns whether the given {@code type} is an array of primitives.
 	 *
-	 * @param cls	Class to get the object class of
-	 * @return the class that extends Object class and represent the given class
+	 * @param type	The class to query.
+	 * @return	Whether the given {@code type} is an array of primitives.
 	 */
-	public static Class<?> objectiveType(final Class<?> cls){
-		return PRIMITIVE_TYPE.getOrDefault(cls, cls);
+	public static boolean isArrayOfPrimitives(final Class<?> type){
+		return (type.isArray() && isPrimitive(type.getComponentType()));
+	}
+
+	/**
+	 * Returns whether the given {@code type} is a primitive.
+	 *
+	 * @param type	The class to query.
+	 * @return	Whether the given {@code type} is a primitive.
+	 */
+	public static boolean isPrimitive(final Class<?> type){
+		return (type.isPrimitive() && type != void.class);
+	}
+
+	/**
+	 * Returns whether the given {@code type} is a primitive or primitive wrapper.
+	 *
+	 * @param type	The class to query.
+	 * @return	Whether the given {@code type} is a primitive or primitive wrapper.
+	 */
+	public static boolean isPrimitiveOrPrimitiveWrapper(final Class<?> type){
+		return (isPrimitive(type) || WRAPPER_PRIMITIVE_MAP.containsKey(type));
 	}
 
 	public static Object createArrayPrimitive(final Class<?> type, final int length){
 		Objects.requireNonNull(type);
-		if(!type.getComponentType().isPrimitive())
+		if(!ReflectionHelper.isPrimitive(type.getComponentType()))
 			throw new AnnotationException("Argument cannot be a non-primitive: {}", type);
 
 		return Array.newInstance(type.getComponentType(), length);
@@ -157,7 +203,7 @@ public final class ReflectionHelper{
 	@SuppressWarnings("unchecked")
 	public static <T> T[] createArray(final Class<? extends T> type, final int length){
 		Objects.requireNonNull(type);
-		if(type.isPrimitive())
+		if(ReflectionHelper.isPrimitive(type))
 			throw new AnnotationException("Argument cannot be a primitive: {}", type);
 
 		return (T[])Array.newInstance(type, length);

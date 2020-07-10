@@ -215,15 +215,9 @@ final class Codec<T>{
 
 	private void validateAnnotation(final BindArrayPrimitive binding){
 		final Class<?> type = binding.type();
-		final boolean isPrimitive = (type.isArray() && type.getComponentType().isPrimitive());
-		if(!isPrimitive)
-			throw new AnnotationException("Bad annotation used, @{} should have been used with type `{}.class`", BindArray.class.getSimpleName(), type.getSimpleName());
-
-		final Class<?> objectiveType = ReflectionHelper.objectiveType(type.getComponentType());
-		if(objectiveType == null){
-			final Codec<?> codec = Codec.createFrom(type.getComponentType());
-			throw new AnnotationException("Unrecognized type for field {}<{}>: {}", codec.getClass().getSimpleName(), codec, type.getComponentType().getSimpleName());
-		}
+		if(!ReflectionHelper.isArrayOfPrimitives(type))
+			throw new AnnotationException("Bad annotation used, @{} should have been used with type `{}.class`", BindArray.class.getSimpleName(),
+				ReflectionHelper.PRIMITIVE_WRAPPER_MAP.getOrDefault(type.getComponentType(), type.getComponentType()).getSimpleName());
 	}
 
 	private void validateAnnotation(final BindArray binding){
@@ -231,9 +225,9 @@ final class Codec<T>{
 		final Class<?> type = binding.type();
 		validateChoice(selectFrom, type);
 
-		final boolean isPrimitive = (type.isArray() && type.getComponentType().isPrimitive());
-		if(isPrimitive)
-			throw new AnnotationException("Bad annotation used, @{} should have been used with type `{}.class`", BindArrayPrimitive.class.getSimpleName(), type.getSimpleName());
+		if(ReflectionHelper.isArrayOfPrimitives(type))
+			throw new AnnotationException("Bad annotation used, @{} should have been used with type `{}[].class`", BindArrayPrimitive.class.getSimpleName(),
+				ReflectionHelper.WRAPPER_PRIMITIVE_MAP.getOrDefault(type.getComponentType(), type.getComponentType()).getSimpleName());
 	}
 
 	private void validateAnnotation(final BindObject binding){
@@ -261,8 +255,7 @@ final class Codec<T>{
 
 	private void validateAnnotation(final BindChecksum binding){
 		final Class<?> type = binding.type();
-		final Class<?> objectiveType = ReflectionHelper.objectiveType(type);
-		if(objectiveType == null)
+		if(!ReflectionHelper.isPrimitiveOrPrimitiveWrapper(type))
 			throw new AnnotationException("Unrecognized type for field {}<{}>: {}", getClass().getSimpleName(), type.getSimpleName(), type.getComponentType().getSimpleName());
 	}
 

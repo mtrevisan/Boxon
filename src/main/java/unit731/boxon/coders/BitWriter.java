@@ -28,7 +28,6 @@ import unit731.boxon.annotations.exceptions.AnnotationException;
 import unit731.boxon.annotations.ByteOrder;
 import unit731.boxon.helpers.BitSet;
 import unit731.boxon.helpers.ByteHelper;
-import unit731.boxon.helpers.ReflectionHelper;
 
 import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
@@ -51,21 +50,21 @@ final class BitWriter{
 
 
 	final void put(final Object value, final ByteOrder byteOrder){
-		final Class<?> cls = ReflectionHelper.objectiveType(value.getClass());
-		if(cls == Byte.class)
+		final Class<?> type = value.getClass();
+		if(type == byte.class || type == Byte.class)
 			putByte((Byte)value);
-		else if(cls == Short.class)
+		else if(type == short.class || type == Short.class)
 			putShort((Short)value, byteOrder);
-		else if(cls == Integer.class)
+		else if(type == int.class || type == Integer.class)
 			putInteger((Integer)value, byteOrder);
-		else if(cls == Long.class)
+		else if(type == long.class || type == Long.class)
 			putLong((Long)value, byteOrder);
-		else if(cls == Float.class)
+		else if(type == float.class || type == Float.class)
 			putFloat((Float)value, byteOrder);
-		else if(cls == Double.class)
+		else if(type == double.class || type == Double.class)
 			putDouble((Double)value, byteOrder);
 		else
-			throw new AnnotationException("Cannot write type {}", cls.getSimpleName());
+			throw new AnnotationException("Cannot write type {}", type.getSimpleName());
 	}
 
 	/**

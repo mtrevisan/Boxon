@@ -40,11 +40,11 @@ final class CoderArrayPrimitive implements CoderInterface<BindArrayPrimitive>{
 
 		final Class<?> type = binding.type();
 		final int size = Evaluator.evaluateSize(binding.size(), data);
-		final Class<?> objectiveType = ReflectionHelper.objectiveType(type.getComponentType());
+		final Class<?> componentType = type.getComponentType();
 
 		final Object array = ReflectionHelper.createArrayPrimitive(type, size);
 		for(int i = 0; i < size; i ++){
-			final Object value = reader.get(objectiveType, binding.byteOrder());
+			final Object value = reader.get(componentType, binding.byteOrder());
 			Array.set(array, i, value);
 		}
 

@@ -28,7 +28,6 @@ import unit731.boxon.annotations.exceptions.AnnotationException;
 import unit731.boxon.annotations.ByteOrder;
 import unit731.boxon.helpers.BitSet;
 import unit731.boxon.helpers.ByteHelper;
-import unit731.boxon.helpers.ReflectionHelper;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -172,22 +171,21 @@ final class BitBuffer{
 		getTextUntilTerminator(terminator, consumeTerminator, Charset.defaultCharset());
 	}
 
-	final Object get(final Class<?> cls, final ByteOrder byteOrder){
-		final Class<?> inputClass = ReflectionHelper.objectiveType(cls);
-		if(inputClass == Byte.class)
+	final Object get(final Class<?> type, final ByteOrder byteOrder){
+		if(type == byte.class || type == Byte.class)
 			return getByte();
-		if(inputClass == Short.class)
+		if(type == short.class || type == Short.class)
 			return getShort(byteOrder);
-		if(inputClass == Integer.class)
+		if(type == int.class || type == Integer.class)
 			return getInt(byteOrder);
-		if(inputClass == Long.class)
+		if(type == long.class || type == Long.class)
 			return getLong(byteOrder);
-		if(inputClass == Float.class)
+		if(type == float.class || type == Float.class)
 			return getFloat(byteOrder);
-		if(inputClass == Double.class)
+		if(type == double.class || type == Double.class)
 			return getDouble(byteOrder);
 
-		throw new AnnotationException("Cannot read type {}", cls.getSimpleName());
+		throw new AnnotationException("Cannot read type {}", type.getSimpleName());
 	}
 
 	/**
