@@ -77,7 +77,7 @@ final class BitBuffer{
 	 *
 	 * @param file	The file containing the binary stream
 	 * @return	The new bit buffer
-	 * @throws FileNotFoundException   If the file does not exist, is a directory rather than a regular file,
+	 * @throws FileNotFoundException	If the file does not exist, is a directory rather than a regular file,
 	 * 	or for some other reason cannot be opened for reading.
 	 * @throws SecurityException	If a security manager exists and its {@code checkRead} method denies read access to the file.
 	 */

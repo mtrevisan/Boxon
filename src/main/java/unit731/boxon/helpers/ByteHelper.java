@@ -152,9 +152,9 @@ public final class ByteHelper{
 	/**
 	 * Apply mask and shift right (<code>maskByte(27, 0x18) = 3</code>)
 	 *
-	 * @param value    The value to which to apply the mask and the right shift
-	 * @param mask    The mask
-	 * @return    The masked and shifter value
+	 * @param value	The value to which to apply the mask and the right shift
+	 * @param mask	The mask
+	 * @return	The masked and shifter value
 	 */
 	public static long applyMaskAndShift(final long value, long mask){
 		final int ctz = Long.numberOfTrailingZeros(mask);
