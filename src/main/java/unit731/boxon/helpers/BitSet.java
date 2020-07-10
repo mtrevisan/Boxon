@@ -29,11 +29,6 @@ public class BitSet{
 
 	/**
 	 * Returns a new bit set containing all the bits in the given long array.
-	 * <p>More precisely,
-	 * {@code BitSet.valueOf(longs).get(n) == ((longs[n/64] & (1L<<(n%64))) != 0)}<br>
-	 * for all {@code n < 64 * longs.length}.</p>
-	 *
-	 * <p>This method is equivalent to {@code BitSet.valueOf(LongBuffer.wrap(longs))}.</p>
 	 *
 	 * @param array	A long array containing a little-endian representation of a sequence of bits to be used as the initial bits of the
 	 * 	new bit set
@@ -45,15 +40,9 @@ public class BitSet{
 
 	/**
 	 * Returns a new bit set containing all the bits in the given byte array.
-	 * <p>More precisely,
-	 * {@code BitSet.valueOf(bytes).get(n) == ((bytes[n/8] & (1<<(n%8))) != 0)}<br>
-	 * for all {@code n <  8 * bytes.length}.</p>
 	 *
-	 * <p>This method is equivalent to
-	 * {@code BitSet.valueOf(ByteBuffer.wrap(bytes))}.</p>
-	 *
-	 * @param array	A byte array containing a little-endian representation of a sequence of bits to be used as the
-	 * 	initial bits of the new bit set
+	 * @param array	A byte array containing a little-endian representation of a sequence of bits to be used as the initial bits of the
+	 * 	new bit set
 	 * @return	A {@code BitSet} containing all the bits in the byte array
 	 */
 	public static BitSet valueOf(final byte[] array){
