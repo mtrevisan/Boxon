@@ -74,13 +74,13 @@ class BitWriter{
 	 * @param value	The value to write.
 	 * @param length	The amount of bits to use when writing {@code value}.
 	 */
-	void putBits(final BitSet value, int length){
+	void putBits(final BitSet value, final int length){
 		//if the value that we're writing is too large to be placed entirely in the cache, then we need to place as
 		//much as we can in the cache (the least significant bits), flush the cache to the backing ByteBuffer, and
 		//place the rest in the cache
 		int offset = 0;
 		while(offset < length){
-			//fill the cache one bit at a time
+			//fill the cache one chunk of bits at a time
 			final int size = Math.min(length - offset, Byte.SIZE - remaining);
 			final byte nextCache = (byte)value.toLong(offset, size);
 			cache = (byte)((cache << size) | nextCache);

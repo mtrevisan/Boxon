@@ -148,11 +148,13 @@ public class BitSet{
 	 */
 	public long toLong(final int offset, final int size){
 		long value = 0l;
-		int index;
-		int i = getStartingIndex(offset);
-		final int length = Math.min(size + i, cardinality);
-		while(i < length && 0 <= (index = indexes[i ++]) && index - offset < size)
-			value |= 1l << (index - offset);
+		if(indexes.length > 0){
+			int index;
+			int i = getStartingIndex(offset);
+			final int length = Math.min(size + i, cardinality);
+			while(i < length && 0 <= (index = indexes[i ++]) && index - offset < size)
+				value |= 1l << (index - offset);
+		}
 		return value;
 	}
 
