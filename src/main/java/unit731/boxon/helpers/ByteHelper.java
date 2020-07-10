@@ -238,7 +238,7 @@ public class ByteHelper{
 	 */
 	private static void reverse(final byte[] array){
 		for(int start = 0, end = array.length - 1; start < end; start ++, end --){
-			//swap array[i] with array[j]
+			//swap array[start] with array[end]
 			array[start] ^= array[end];
 			array[end] ^= array[start];
 			array[start] ^= array[end];
@@ -252,7 +252,7 @@ public class ByteHelper{
 	 */
 	public static void reverse(final int[] array){
 		for(int start = 0, end = array.length - 1; start < end; start ++, end --){
-			//swap array[i] with array[j]
+			//swap array[start] with array[end]
 			array[start] ^= array[end];
 			array[end] ^= array[start];
 			array[start] ^= array[end];
