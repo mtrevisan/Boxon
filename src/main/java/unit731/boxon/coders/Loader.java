@@ -181,7 +181,8 @@ class Loader{
 				if(coder != null)
 					coders.add(coder);
 			}
-		loadCoders(coders);
+		for(final CoderInterface<?> coder : coders)
+			addCoder(coder);
 
 		LOGGER.trace("Coders loaded are {}", coders.size());
 	}
