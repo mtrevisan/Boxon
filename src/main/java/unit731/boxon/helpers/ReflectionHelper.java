@@ -55,40 +55,19 @@ public final class ReflectionHelper{
 	private static final Function<Class<?>, Supplier<?>> CREATORS = Memoizer.memoizeThreadAndRecursionSafe(ReflectionHelper::getCreatorInner);
 
 	/** Maps primitive {@code Class}es to their corresponding wrapper {@code Class} */
-	public static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPER_MAP = new HashMap<>(7);
+	public static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPER_MAP = new HashMap<>(6);
 	/** Maps wrapper {@code Class}es to their corresponding primitive types */
-	public static final Map<Class<?>, Class<?>> WRAPPER_PRIMITIVE_MAP = new HashMap<>(7);
-	/** Maps {@code Class}es to their corresponding size */
-	public static final Map<Class<?>, Integer> SIZE_MAP = new HashMap<>(14);
+	public static final Map<Class<?>, Class<?>> WRAPPER_PRIMITIVE_MAP = new HashMap<>(6);
 	static{
 		PRIMITIVE_WRAPPER_MAP.put(Byte.TYPE, Byte.class);
 		PRIMITIVE_WRAPPER_MAP.put(Short.TYPE, Short.class);
-		PRIMITIVE_WRAPPER_MAP.put(Character.TYPE, Character.class);
 		PRIMITIVE_WRAPPER_MAP.put(Integer.TYPE, Integer.class);
 		PRIMITIVE_WRAPPER_MAP.put(Long.TYPE, Long.class);
 		PRIMITIVE_WRAPPER_MAP.put(Float.TYPE, Float.class);
 		PRIMITIVE_WRAPPER_MAP.put(Double.TYPE, Double.class);
 
-		for(final Class<?> primitiveClass : PRIMITIVE_WRAPPER_MAP.keySet()){
-			final Class<?> wrapperClass = PRIMITIVE_WRAPPER_MAP.get(primitiveClass);
-			if(!primitiveClass.equals(wrapperClass))
-				WRAPPER_PRIMITIVE_MAP.put(wrapperClass, primitiveClass);
-		}
-
-		SIZE_MAP.put(byte.class, Byte.SIZE);
-		SIZE_MAP.put(Byte.class, Byte.SIZE);
-		SIZE_MAP.put(short.class, Short.SIZE);
-		SIZE_MAP.put(Short.class, Short.SIZE);
-		SIZE_MAP.put(char.class, Character.SIZE);
-		SIZE_MAP.put(Character.class, Character.SIZE);
-		SIZE_MAP.put(int.class, Integer.SIZE);
-		SIZE_MAP.put(Integer.class, Integer.SIZE);
-		SIZE_MAP.put(long.class, Long.SIZE);
-		SIZE_MAP.put(Long.class, Long.SIZE);
-		SIZE_MAP.put(float.class, Float.SIZE);
-		SIZE_MAP.put(Float.class, Float.SIZE);
-		SIZE_MAP.put(double.class, Double.SIZE);
-		SIZE_MAP.put(Double.class, Double.SIZE);
+		for(final Class<?> primitiveClass : PRIMITIVE_WRAPPER_MAP.keySet())
+			WRAPPER_PRIMITIVE_MAP.put(PRIMITIVE_WRAPPER_MAP.get(primitiveClass), primitiveClass);
 	}
 
 
