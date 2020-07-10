@@ -22,39 +22,34 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package unit731.boxon.coders.dtos;
+package unit731.boxon.coders.exceptions;
 
-import unit731.boxon.coders.exceptions.ComposeException;
+import unit731.boxon.helpers.ExceptionHelper;
 
-import java.util.ArrayList;
-import java.util.List;
-
-
-public class ComposeResponse{
-
-	private byte[] composedMessage;
-	private final List<ComposeException> errors = new ArrayList<>(0);
+import java.util.StringJoiner;
 
 
-	public void setComposedMessage(final byte[] composedMessages){
-		this.composedMessage = composedMessages;
+public class ComposeException extends Exception{
+
+	private static final long serialVersionUID = -7230533024483622086L;
+
+
+	private final Object data;
+
+
+	public ComposeException(final Object data, final Throwable cause){
+		super(cause);
+
+		this.data = data;
 	}
 
-	public byte[] getComposedMessage(){
-		return composedMessage;
-	}
-
-	public void addError(final ComposeException exception){
-		errors.add(exception);
-	}
-
-	public boolean hasErrors(){
-		return !errors.isEmpty();
-	}
-
-	@SuppressWarnings("unused")
-	public List<ComposeException> getErrors(){
-		return errors;
+	@Override
+	public String getMessage(){
+		final StringJoiner sj = new StringJoiner(System.lineSeparator());
+		sj.add("Error encoding data: " + data.toString());
+		if(getCause() != null)
+			sj.add(ExceptionHelper.getMessageNoLineNumber(getCause()));
+		return sj.toString();
 	}
 
 }

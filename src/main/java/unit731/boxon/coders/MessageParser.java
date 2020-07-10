@@ -28,6 +28,7 @@ import unit731.boxon.annotations.BindChecksum;
 import unit731.boxon.annotations.MessageHeader;
 import unit731.boxon.annotations.Skip;
 import unit731.boxon.annotations.checksummers.Checksummer;
+import unit731.boxon.annotations.exceptions.CodecException;
 import unit731.boxon.helpers.BitSet;
 import unit731.boxon.helpers.ByteHelper;
 import unit731.boxon.helpers.ExceptionHelper;
@@ -183,7 +184,7 @@ class MessageParser{
 	private CoderInterface<?> retrieveCoder(final Class<? extends Annotation> annotationType){
 		final CoderInterface<?> coder = loader.getCoder(annotationType);
 		if(coder == null)
-			throw new IllegalArgumentException("Cannot find coder for binding @" + annotationType.getSimpleName());
+			throw new CodecException("Cannot find coder for binding @{}", annotationType.getSimpleName());
 
 		setMessageParser(coder);
 		return coder;

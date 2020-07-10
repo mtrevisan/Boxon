@@ -24,6 +24,7 @@
  */
 package unit731.boxon.coders;
 
+import unit731.boxon.annotations.exceptions.AnnotationException;
 import unit731.boxon.annotations.ByteOrder;
 import unit731.boxon.helpers.BitSet;
 import unit731.boxon.helpers.ByteHelper;
@@ -64,7 +65,7 @@ class BitWriter{
 		else if(cls == Double.class)
 			putDouble((Double)value, byteOrder);
 		else
-			throw new IllegalArgumentException("Cannot read type " + cls.getSimpleName());
+			throw new AnnotationException("Cannot write type {}", cls.getSimpleName());
 	}
 
 	/**
@@ -188,7 +189,7 @@ class BitWriter{
 		else if(cls == Double.class)
 			putDouble(value.doubleValue(), byteOrder);
 		else
-			throw new IllegalArgumentException("Cannot write " + BigDecimal.class.getSimpleName() + " as a " + cls.getSimpleName());
+			throw new AnnotationException("Cannot write {} as a {}", BigDecimal.class.getSimpleName(), cls.getSimpleName());
 	}
 
 	/**

@@ -24,6 +24,7 @@
  */
 package unit731.boxon.coders;
 
+import unit731.boxon.annotations.exceptions.AnnotationException;
 import unit731.boxon.annotations.ByteOrder;
 import unit731.boxon.helpers.BitSet;
 import unit731.boxon.helpers.ByteHelper;
@@ -186,7 +187,7 @@ class BitBuffer{
 		if(inputClass == Double.class)
 			return getDouble(byteOrder);
 
-		throw new IllegalArgumentException("Cannot read type " + cls.getSimpleName());
+		throw new AnnotationException("Cannot read type {}", cls.getSimpleName());
 	}
 
 	/**
@@ -359,7 +360,7 @@ class BitBuffer{
 		else if(cls == Double.class)
 			return new BigDecimal(Double.toString(getDouble(byteOrder)));
 		else
-			throw new IllegalArgumentException("Cannot write " + BigDecimal.class.getSimpleName() + " as a " + cls.getSimpleName());
+			throw new AnnotationException("Cannot read {} as a {}", BigDecimal.class.getSimpleName(), cls.getSimpleName());
 	}
 
 	/**

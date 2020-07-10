@@ -25,6 +25,7 @@
 package unit731.boxon.coders;
 
 import unit731.boxon.annotations.MessageHeader;
+import unit731.boxon.annotations.exceptions.CodecException;
 import unit731.boxon.helpers.AnnotationHelper;
 import unit731.boxon.helpers.ByteHelper;
 import org.slf4j.Logger;
@@ -72,7 +73,7 @@ class Loader{
 	synchronized void init(final Class<?>... basePackageClasses){
 		if(!initialized.get()){
 			LOGGER.info("Load parsing classes from package(s) {}",
-				Arrays.stream(basePackageClasses).map(Class::getPackageName).distinct().collect(Collectors.joining(", ", "[", "]")));
+				Arrays.stream(basePackageClasses).map(Class::getPackageName).collect(Collectors.joining(", ", "[", "]")));
 
 			final Collection<Class<?>> annotatedClasses = AnnotationHelper.extractClasses(MessageHeader.class, basePackageClasses);
 			final Collection<Codec<?>> codecs = new ArrayList<>(annotatedClasses.size());
@@ -120,8 +121,7 @@ class Loader{
 					//calculate key
 					final String key = ByteHelper.toHexString(headerStart.getBytes(charset));
 					if(this.codecs.containsKey(key))
-						throw new IllegalArgumentException("Duplicate key `" + headerStart + "` found for class "
-							+ codec.getType().getSimpleName());
+						throw new CodecException("Duplicate key `{}` found for class {}", headerStart, codec.getType().getSimpleName());
 
 					this.codecs.put(key, codec);
 				}
@@ -149,7 +149,7 @@ class Loader{
 			}
 		}
 		if(codec == null)
-			throw new IllegalArgumentException("Cannot find any codec for message");
+			throw new CodecException("Cannot find any codec for message");
 
 		return codec;
 	}
@@ -170,7 +170,7 @@ class Loader{
 	 */
 	void loadCoders(final Class<?>... basePackageClasses){
 		LOGGER.info("Load coders from package(s) {}",
-			Arrays.stream(basePackageClasses).map(Class::getPackageName).distinct().collect(Collectors.joining(", ", "[", "]")));
+			Arrays.stream(basePackageClasses).map(Class::getPackageName).collect(Collectors.joining(", ", "[", "]")));
 
 		final Collection<Class<?>> derivedClasses = AnnotationHelper.extractClasses(CoderInterface.class, basePackageClasses);
 		final Collection<CoderInterface<?>> coders = new ArrayList<>(derivedClasses.size());

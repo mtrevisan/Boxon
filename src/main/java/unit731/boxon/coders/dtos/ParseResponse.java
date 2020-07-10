@@ -24,6 +24,8 @@
  */
 package unit731.boxon.coders.dtos;
 
+import unit731.boxon.coders.exceptions.ParseException;
+
 import java.util.ArrayList;
 import java.util.List;
 

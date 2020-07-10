@@ -24,6 +24,7 @@
  */
 package unit731.boxon.coders;
 
+import unit731.boxon.annotations.exceptions.AnnotationException;
 import unit731.boxon.annotations.BindArray;
 import unit731.boxon.annotations.BindArrayPrimitive;
 import unit731.boxon.annotations.BindDecimal;
@@ -191,12 +192,11 @@ class Codec<T>{
 			final StringJoiner sj = new StringJoiner(", ", "[", "]");
 			for(final Annotation annotation : annotations)
 				sj.add(annotation.annotationType().getSimpleName());
-			throw new IllegalArgumentException("Cannot bind more that one annotation on " + cls.getSimpleName() + ": " + sj.toString());
+			throw new AnnotationException("Cannot bind more that one annotation on {}: {}", cls.getSimpleName(), sj.toString());
 		}
 
 		if(checksum != null && this.checksum != null)
-			throw new IllegalArgumentException("Cannot have more than one @" + BindChecksum.class.getSimpleName()
-				+ " annotations on class " + cls.getSimpleName());
+			throw new AnnotationException("Cannot have more than one @{} annotations on class {}", BindChecksum.class.getSimpleName(), cls.getSimpleName());
 
 		if(!annotations.isEmpty()){
 			final Annotation annotation = annotations.get(0);
@@ -217,14 +217,12 @@ class Codec<T>{
 		final Class<?> type = binding.type();
 		final boolean isPrimitive = (type.isArray() && type.getComponentType().isPrimitive());
 		if(!isPrimitive)
-			throw new IllegalArgumentException("Bad annotation used, @" + BindArray.class.getSimpleName()
-				+ " should have been used with type `" + type.getSimpleName() + ".class`");
+			throw new AnnotationException("Bad annotation used, @{} should have been used with type `{}.class`", BindArray.class.getSimpleName(), type.getSimpleName());
 
 		final Class<?> objectiveType = ReflectionHelper.objectiveType(type.getComponentType());
 		if(objectiveType == null){
 			final Codec<?> codec = Codec.createFrom(type.getComponentType());
-			throw new IllegalArgumentException("Unrecognized type for field " + codec.getClass().getSimpleName() + "<"
-				+ codec + ">: " + type.getComponentType().getSimpleName());
+			throw new AnnotationException("Unrecognized type for field {}<{}>: {}", codec.getClass().getSimpleName(), codec, type.getComponentType().getSimpleName());
 		}
 	}
 
@@ -235,8 +233,7 @@ class Codec<T>{
 
 		final boolean isPrimitive = (type.isArray() && type.getComponentType().isPrimitive());
 		if(isPrimitive)
-			throw new IllegalArgumentException("Bad annotation used, @" + BindArrayPrimitive.class.getSimpleName()
-				+ " should have been used with type `" + type.getSimpleName() + ".class`");
+			throw new AnnotationException("Bad annotation used, @{} should have been used with type `{}.class`", BindArrayPrimitive.class.getSimpleName(), type.getSimpleName());
 	}
 
 	private void validateAnnotation(final BindObject binding){
@@ -248,27 +245,25 @@ class Codec<T>{
 	private void validateChoice(final Choices selectFrom, final Class<?> type){
 		final int prefixSize = selectFrom.prefixSize();
 		if(prefixSize > Integer.SIZE)
-			throw new IllegalArgumentException("`prefixSize` cannot be greater than " + Integer.SIZE + " bits");
+			throw new AnnotationException("`prefixSize` cannot be greater than {} bits", Integer.SIZE);
 
 		@SuppressWarnings("ConstantConditions")
 		final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): new Choices.Choice[0]);
 		if(type == Object.class && alternatives.length == 0)
-			throw new IllegalArgumentException("`type` argument missing");
+			throw new AnnotationException("`type` argument missing");
 	}
 
 	private void validateAnnotation(final BindDecimal binding){
 		final Class<?> type = binding.type();
 		if(type != Float.class && type != Double.class)
-			throw new IllegalArgumentException("Bad type, should have been one of `" + Float.class.getSimpleName()
-				+ ".class` or `" + Double.class.getSimpleName() + ".class`");
+			throw new AnnotationException("Bad type, should have been one of `{}.class` or `{}.class`", Float.class.getSimpleName(), Double.class.getSimpleName());
 	}
 
 	private void validateAnnotation(final BindChecksum binding){
 		final Class<?> type = binding.type();
 		final Class<?> objectiveType = ReflectionHelper.objectiveType(type);
 		if(objectiveType == null)
-			throw new IllegalArgumentException("Unrecognized type for field " + getClass().getSimpleName()
-				+ "<" + type.getSimpleName() + ">: " + type.getComponentType().getSimpleName());
+			throw new AnnotationException("Unrecognized type for field {}<{}>: {}", getClass().getSimpleName(), type.getSimpleName(), type.getComponentType().getSimpleName());
 	}
 
 	Class<T> getType(){

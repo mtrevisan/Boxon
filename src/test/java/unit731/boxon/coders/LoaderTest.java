@@ -24,6 +24,7 @@
  */
 package unit731.boxon.coders;
 
+import unit731.boxon.annotations.exceptions.CodecException;
 import unit731.boxon.coders.queclink.ACKMessageHex;
 import unit731.boxon.helpers.ByteHelper;
 import org.junit.jupiter.api.Assertions;
@@ -83,7 +84,7 @@ class LoaderTest{
 
 		byte[] payload = ByteHelper.toByteArray("3b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		BitBuffer reader = BitBuffer.wrap(payload);
-		Assertions.assertThrows(IllegalArgumentException.class, () -> {
+		Assertions.assertThrows(CodecException.class, () -> {
 			loader.getCodec(reader);
 		});
 	}

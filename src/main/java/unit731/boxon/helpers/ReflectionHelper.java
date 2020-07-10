@@ -35,6 +35,7 @@ import org.springframework.objenesis.instantiator.perc.PercInstantiator;
 import org.springframework.objenesis.instantiator.sun.SunReflectionFactoryInstantiator;
 import org.springframework.objenesis.instantiator.sun.UnsafeFactoryInstantiator;
 import org.springframework.objenesis.strategy.PlatformDescription;
+import unit731.boxon.annotations.exceptions.AnnotationException;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
@@ -148,7 +149,7 @@ public class ReflectionHelper{
 	public static Object createArrayPrimitive(final Class<?> type, final int length){
 		Objects.requireNonNull(type);
 		if(!type.getComponentType().isPrimitive())
-			throw new IllegalArgumentException("Argument cannot be a non-primitive: " + type);
+			throw new AnnotationException("Argument cannot be a non-primitive: {}", type);
 
 		return Array.newInstance(type.getComponentType(), length);
 	}
@@ -157,7 +158,7 @@ public class ReflectionHelper{
 	public static <T> T[] createArray(final Class<? extends T> type, final int length){
 		Objects.requireNonNull(type);
 		if(type.isPrimitive())
-			throw new IllegalArgumentException("Argument cannot be a primitive: " + type);
+			throw new AnnotationException("Argument cannot be a primitive: {}", type);
 
 		return (T[])Array.newInstance(type, length);
 	}

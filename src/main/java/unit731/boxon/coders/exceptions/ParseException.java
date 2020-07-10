@@ -22,39 +22,39 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package unit731.boxon.coders.dtos;
+package unit731.boxon.coders.exceptions;
 
-import unit731.boxon.coders.exceptions.ComposeException;
+import unit731.boxon.helpers.ByteHelper;
+import unit731.boxon.helpers.ExceptionHelper;
 
-import java.util.ArrayList;
-import java.util.List;
-
-
-public class ComposeResponse{
-
-	private byte[] composedMessage;
-	private final List<ComposeException> errors = new ArrayList<>(0);
+import java.util.StringJoiner;
 
 
-	public void setComposedMessage(final byte[] composedMessages){
-		this.composedMessage = composedMessages;
+public class ParseException extends Exception{
+
+	private static final long serialVersionUID = -7230533024483622086L;
+
+
+	private final byte[] wholeMessage;
+	private final int errorIndex;
+
+
+	public ParseException(final byte[] wholeMessage, final int errorIndex, final Throwable cause){
+		super(cause);
+
+		this.wholeMessage = wholeMessage;
+		this.errorIndex = errorIndex;
 	}
 
-	public byte[] getComposedMessage(){
-		return composedMessage;
-	}
-
-	public void addError(final ComposeException exception){
-		errors.add(exception);
-	}
-
-	public boolean hasErrors(){
-		return !errors.isEmpty();
-	}
-
-	@SuppressWarnings("unused")
-	public List<ComposeException> getErrors(){
-		return errors;
+	@Override
+	public String getMessage(){
+		final StringJoiner sj = new StringJoiner(System.lineSeparator());
+		sj.add("Error decoding message: " + ByteHelper.toHexString(wholeMessage));
+		if(getCause() != null)
+			sj.add(ExceptionHelper.getMessageNoLineNumber(getCause()));
+		if(errorIndex >= 0)
+			sj.add("   at index " + errorIndex);
+		return sj.toString();
 	}
 
 }

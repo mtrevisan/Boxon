@@ -24,9 +24,10 @@
  */
 package unit731.boxon.coders;
 
-import unit731.boxon.coders.dtos.ComposeException;
+import unit731.boxon.annotations.exceptions.CodecException;
+import unit731.boxon.coders.exceptions.ComposeException;
 import unit731.boxon.coders.dtos.ComposeResponse;
-import unit731.boxon.coders.dtos.ParseException;
+import unit731.boxon.coders.exceptions.ParseException;
 import unit731.boxon.coders.dtos.ParseResponse;
 
 import java.io.File;
@@ -72,7 +73,7 @@ public class Parser{
 	public Parser(final Map<String, Object> context, final List<Codec<?>> codecs){
 		Objects.requireNonNull(codecs, "Codecs cannot be null");
 		if(codecs.isEmpty())
-			throw new IllegalArgumentException("Codecs cannot be empty");
+			throw new CodecException("Codecs cannot be empty");
 
 		messageParser.loader.init(codecs);
 		loadCoders();
@@ -265,7 +266,7 @@ public class Parser{
 			try{
 				final Codec<?> codec = Codec.createFrom(elem.getClass());
 				if(!codec.canBeDecoded())
-					throw new IllegalArgumentException("Cannot construct any codec for message");
+					throw new CodecException("Cannot construct any codec for message");
 
 				messageParser.encode(codec, elem, writer);
 			}
