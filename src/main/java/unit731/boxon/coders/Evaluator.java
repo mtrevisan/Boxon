@@ -29,6 +29,8 @@ import org.springframework.expression.EvaluationException;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.PropertyAccessor;
+import org.springframework.expression.spel.SpelCompilerMode;
+import org.springframework.expression.spel.SpelParserConfiguration;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.ReflectivePropertyAccessor;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
@@ -41,7 +43,9 @@ import java.util.List;
 
 final class Evaluator{
 
-	private static final ExpressionParser PARSER = new SpelExpressionParser();
+	//allow for immediate compilation of SpEL expressions
+	private static final SpelParserConfiguration CONFIG = new SpelParserConfiguration(SpelCompilerMode.IMMEDIATE, null);
+	private static final ExpressionParser PARSER = new SpelExpressionParser(CONFIG);
 	private static final EvaluationContext CONTEXT = new PrivateEvaluationContext();
 
 
