@@ -117,7 +117,7 @@ public class BitSet{
 
 		//re-sort indexes
 		ByteHelper.reverse(indexes);
-}
+	}
 
 	/**
 	 * Returns a new byte array containing all the bits in this bit set.
