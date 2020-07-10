@@ -10,6 +10,21 @@
 
 	<name>Boxon</name>
 	<description>Library for declarative parsing of a message</description>
+	<url>https://github.com/mtrevisan/Boxon</url>
+
+	<developers>
+		<developer>
+			<name>Mauro Trevisan</name>
+			<email>851903+mtrevisan@users.noreply.github.com</email>
+			<url>https://github.com/mtrevisan/</url>
+		</developer>
+	</developers>
+
+	<scm>
+		<connection>scm:git:git://github.com/mtrevisan/Boxon.git</connection>
+		<developerConnection>scm:git:ssh://github.com:mtrevisan/Boxon.git</developerConnection>
+		<url>http://github.com/mtrevisan/Boxon/tree/master</url>
+	</scm>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -210,4 +225,11 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+
+	<licenses>
+		<license>
+			<name>MIT License</name>
+			<url>https://opensource.org/licenses/MIT</url>
+		</license>
+	</licenses>
 </project>
