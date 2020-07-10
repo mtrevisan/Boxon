@@ -206,30 +206,10 @@ public class ReflectionHelper{
 	 */
 	private static <T> ObjectInstantiator<T> instantiatorOf(final Class<T> type){
 		ObjectInstantiator<T> instantiator;
-		if(PlatformDescription.isThisJVM(PlatformDescription.HOTSPOT) || PlatformDescription.isThisJVM(PlatformDescription.OPENJDK)){
-			//Java 7 GAE was under a security manager so we use a degraded system
-			if(PlatformDescription.isGoogleAppEngine() && PlatformDescription.SPECIFICATION_VERSION.equals("1.7"))
-				instantiator = (Serializable.class.isAssignableFrom(type)?
-					new ObjectInputStreamInstantiator<>(type):
-					new AccessibleInstantiator<>(type));
-			else
-				//the UnsafeFactoryInstantiator would also work, but according to benchmarks, it is 2.5 times slower
-				instantiator = new SunReflectionFactoryInstantiator<>(type);
-		}
-		else if(PlatformDescription.isThisJVM(PlatformDescription.DALVIK)){
-			if(PlatformDescription.isAndroidOpenJDK())
-				//starting at Android N which is based on OpenJDK
-				instantiator = new UnsafeFactoryInstantiator<>(type);
-			else if(PlatformDescription.ANDROID_VERSION <= 10)
-				//Android 2.3 Gingerbread and lower
-				instantiator = new Android10Instantiator<>(type);
-			else if(PlatformDescription.ANDROID_VERSION <= 17)
-				//Android 3.0 Honeycomb to 4.2 Jelly Bean
-				instantiator = new Android17Instantiator<>(type);
-			else
-				//Android 4.3 until Android N
-				instantiator = new Android18Instantiator<>(type);
-		}
+		if(PlatformDescription.isThisJVM(PlatformDescription.HOTSPOT) || PlatformDescription.isThisJVM(PlatformDescription.OPENJDK))
+			instantiator = instantiatorForOpenJDK(type);
+		else if(PlatformDescription.isThisJVM(PlatformDescription.DALVIK))
+			instantiator = instantiatorForDalvik(type);
 		else if(PlatformDescription.isThisJVM(PlatformDescription.GNU))
 			instantiator = new GCJInstantiator<>(type);
 		else if(PlatformDescription.isThisJVM(PlatformDescription.PERC))
@@ -238,6 +218,36 @@ public class ReflectionHelper{
 			//fallback instantiator, should work with most modern JVM
 			instantiator = new UnsafeFactoryInstantiator<>(type);
 
+		return instantiator;
+	}
+
+	private static <T> ObjectInstantiator<T> instantiatorForOpenJDK(final Class<T> type){
+		final ObjectInstantiator<T> instantiator;
+		//Java 7 GAE was under a security manager so we use a degraded system
+		if(PlatformDescription.isGoogleAppEngine() && PlatformDescription.SPECIFICATION_VERSION.equals("1.7"))
+			instantiator = (Serializable.class.isAssignableFrom(type)?
+				new ObjectInputStreamInstantiator<>(type):
+				new AccessibleInstantiator<>(type));
+		else
+			//the UnsafeFactoryInstantiator would also work, but according to benchmarks, it is 2.5 times slower
+			instantiator = new SunReflectionFactoryInstantiator<>(type);
+		return instantiator;
+	}
+
+	private static <T> ObjectInstantiator<T> instantiatorForDalvik(final Class<T> type){
+		final ObjectInstantiator<T> instantiator;
+		if(PlatformDescription.isAndroidOpenJDK())
+			//starting at Android N which is based on OpenJDK
+			instantiator = new UnsafeFactoryInstantiator<>(type);
+		else if(PlatformDescription.ANDROID_VERSION <= 10)
+			//Android 2.3 Gingerbread and lower
+			instantiator = new Android10Instantiator<>(type);
+		else if(PlatformDescription.ANDROID_VERSION <= 17)
+			//Android 3.0 Honeycomb to 4.2 Jelly Bean
+			instantiator = new Android17Instantiator<>(type);
+		else
+			//Android 4.3 until Android N
+			instantiator = new Android18Instantiator<>(type);
 		return instantiator;
 	}
 
