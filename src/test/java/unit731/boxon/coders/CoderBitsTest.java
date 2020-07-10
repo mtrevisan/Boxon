@@ -36,6 +36,7 @@ import unit731.boxon.helpers.BitSet;
 import unit731.boxon.helpers.ByteHelper;
 
 import java.lang.annotation.Annotation;
+import java.util.Arrays;
 import java.util.Random;
 
 
@@ -87,11 +88,8 @@ class CoderBitsTest{
 		writer.flush();
 
 		byte[] bb = encodedValue.toByteArray();
-		if(bb.length < randomBytes.length){
-			byte[] b = new byte[randomBytes.length];
-			System.arraycopy(bb, 0, b, 0, bb.length);
-			bb = b;
-		}
+		if(bb.length < randomBytes.length)
+			bb = Arrays.copyOf(bb, randomBytes.length);
 		Assertions.assertEquals(ByteHelper.toHexString(bb), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
@@ -144,11 +142,8 @@ class CoderBitsTest{
 		writer.flush();
 
 		byte[] bb = encodedValue.toByteArray();
-		if(bb.length < randomBytes.length){
-			byte[] b = new byte[randomBytes.length];
-			System.arraycopy(bb, 0, b, 0, bb.length);
-			bb = b;
-		}
+		if(bb.length < randomBytes.length)
+			bb = Arrays.copyOf(bb, randomBytes.length);
 		Assertions.assertEquals(ByteHelper.toHexString(bb), writer.toString());
 
 		BitBuffer reader = BitBuffer.wrap(writer);
