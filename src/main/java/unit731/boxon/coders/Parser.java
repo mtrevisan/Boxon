@@ -219,21 +219,15 @@ public class Parser{
 				final ParseException pe = createParseException(reader, t);
 				response.addError(pe);
 
-				try{
-					//restore state of the reader
-					reader.restoreFallbackPoint();
+				//restore state of the reader
+				reader.restoreFallbackPoint();
 
-					final int position = messageParser.loader.findNextMessageIndex(reader);
-					if(position < 0)
-						//cannot find any codec for message
-						break;
-
-					reader.position(position);
-				}
-				catch(final IOException e){
-					response.addError(createParseException(reader, e));
+				final int position = messageParser.loader.findNextMessageIndex(reader);
+				if(position < 0)
+					//cannot find any codec for message
 					break;
-				}
+
+				reader.position(position);
 			}
 		}
 

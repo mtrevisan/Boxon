@@ -149,15 +149,17 @@ class BitBuffer{
 			fallbackPoint = new State(buffer.position(), remaining, cache);
 	}
 
-	void restoreFallbackPoint() throws IOException{
+	boolean restoreFallbackPoint(){
 		if(fallbackPoint == null)
-			throw new IOException("No fallback point was marked before");
+			//no fallback point was marked before
+			return false;
 
 		buffer.position(fallbackPoint.position);
 		remaining = fallbackPoint.remaining;
 		cache = fallbackPoint.cache;
 
 		fallbackPoint = null;
+		return true;
 	}
 
 
