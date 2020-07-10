@@ -68,7 +68,7 @@ public @interface Choices{
 
 		/**
 		 * The condition that needs to hold, if an instance of {@link #type() type} is to be decoded.
-		 * <p>A SpEL expression with the prefix value in the context under the name `{@link unit731.boxon.coders.CoderHelper#CONTEXT_CHOICE_PREFIX prefix}`.</p>
+		 * <p>A SpEL expression with the prefix value in the context under the name `{@code prefix}`.</p>
 		 *
 		 * @return	The condition that needs to hold, if an instance of {@link #type() type} is to be decoded.
 		 */
