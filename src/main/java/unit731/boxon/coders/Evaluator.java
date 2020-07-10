@@ -65,8 +65,8 @@ class Evaluator{
 				}
 
 				//find in interface
-				for(final Class<?> implementedInterface : cls.getInterfaces()){
-					final Field field = findField(name, implementedInterface, mustBeStatic);
+				for(final Class<?> type : cls.getInterfaces()){
+					final Field field = findField(name, type, mustBeStatic);
 					if(field != null)
 						return field;
 				}

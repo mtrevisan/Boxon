@@ -367,8 +367,7 @@ class BitBuffer{
 		if(!consumeTerminator)
 			createFallbackPoint();
 
-		byte byteRead;
-		for(byteRead = getByte(); byteRead != terminator && (buffer.position() < buffer.limit() || buffer.remaining() > 0); ){
+		for(byte byteRead = getByte(); byteRead != terminator && (buffer.position() < buffer.limit() || buffer.remaining() > 0); ){
 			os.write(byteRead);
 
 			if(!consumeTerminator)

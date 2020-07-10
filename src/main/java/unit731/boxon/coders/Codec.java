@@ -156,8 +156,8 @@ class Codec<T>{
 			final Annotation[] declaredAnnotations = field.getDeclaredAnnotations();
 			final List<Annotation> boundedAnnotations = extractAnnotations(declaredAnnotations);
 			final List<Evaluate> evaluatedAnnotations = extractEvaluations(declaredAnnotations);
-			for(final Evaluate evaluatedAnnotation : evaluatedAnnotations)
-				evaluatedFields.add(new EvaluatedField(field, evaluatedAnnotation));
+			for(final Evaluate annotation : evaluatedAnnotations)
+				evaluatedFields.add(new EvaluatedField(field, annotation));
 
 			validateField(boundedAnnotations, checksum);
 
@@ -180,11 +180,9 @@ class Codec<T>{
 
 	private List<Evaluate> extractEvaluations(final Annotation[] declaredAnnotations){
 		final List<Evaluate> annotations = new ArrayList<>(declaredAnnotations.length);
-		for(final Annotation annotation : declaredAnnotations){
-			final Class<? extends Annotation> annotationType = annotation.annotationType();
-			if(annotationType == Evaluate.class)
+		for(final Annotation annotation : declaredAnnotations)
+			if(annotation.annotationType() == Evaluate.class)
 				annotations.add((Evaluate)annotation);
-		}
 		return annotations;
 	}
 

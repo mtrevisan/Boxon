@@ -237,16 +237,25 @@ public class ByteHelper{
 	 * @param array	The array to reverse
 	 */
 	private static void reverse(final byte[] array){
-		int i = 0;
-		int j = array.length - 1;
-		while(j > i){
+		for(int start = 0, end = array.length - 1; start < end; start ++, end --){
 			//swap array[i] with array[j]
-			array[i] ^= array[j];
-			array[j] ^= array[i];
-			array[i] ^= array[j];
+			array[start] ^= array[end];
+			array[end] ^= array[start];
+			array[start] ^= array[end];
+		}
+	}
 
-			j --;
-			i ++;
+	/**
+	 * Reverses the order of the given array.
+	 *
+	 * @param array	The array to reverse
+	 */
+	public static void reverse(final int[] array){
+		for(int start = 0, end = array.length - 1; start < end; start ++, end --){
+			//swap array[i] with array[j]
+			array[start] ^= array[end];
+			array[end] ^= array[start];
+			array[start] ^= array[end];
 		}
 	}
 

@@ -127,10 +127,10 @@ public class ReflectionHelper{
 
 	private static List<Field> filterAccessibleFields(final Field[] fields, final Class<?> fieldType){
 		final List<Field> result = new ArrayList<>(fields.length);
-		for(final Field f : fields)
-			if(f.getType() == fieldType){
-				f.setAccessible(true);
-				result.add(f);
+		for(final Field field : fields)
+			if(field.getType() == fieldType){
+				field.setAccessible(true);
+				result.add(field);
 			}
 		return result;
 	}

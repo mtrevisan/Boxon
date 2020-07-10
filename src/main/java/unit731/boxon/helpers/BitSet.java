@@ -114,13 +114,10 @@ public class BitSet{
 	public void reverseBits(final int size){
 		for(int i = 0; i < indexes.length; i ++)
 			indexes[i] = size - indexes[i] - 1;
+
 		//re-sort indexes
-		for(int start = 0, end = indexes.length - 1; start < end; start ++, end --){
-			indexes[start] ^= indexes[end];
-			indexes[end] ^= indexes[start];
-			indexes[start] ^= indexes[end];
-		}
-	}
+		ByteHelper.reverse(indexes);
+}
 
 	/**
 	 * Returns a new byte array containing all the bits in this bit set.

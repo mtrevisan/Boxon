@@ -76,8 +76,8 @@ class Loader{
 
 			final Collection<Class<?>> annotatedClasses = AnnotationHelper.extractClasses(MessageHeader.class, basePackageClasses);
 			final Collection<Codec<?>> codecs = new ArrayList<>(annotatedClasses.size());
-			for(final Class<?> cls : annotatedClasses){
-				final Codec<?> codec = Codec.createFrom(cls);
+			for(final Class<?> type : annotatedClasses){
+				final Codec<?> codec = Codec.createFrom(type);
 				if(codec.canBeDecoded())
 					codecs.add(codec);
 			}
@@ -136,15 +136,15 @@ class Loader{
 		final int index = reader.position();
 
 		Codec<?> codec = null;
-		for(final Map.Entry<String, Codec<?>> codecElem : codecs.entrySet()){
-			final String header = codecElem.getKey();
+		for(final Map.Entry<String, Codec<?>> elem : codecs.entrySet()){
+			final String header = elem.getKey();
 
 			final byte[] codecHeader = ByteHelper.toByteArray(header);
 			final byte[] messageHeader = Arrays.copyOfRange(reader.array(), index, index + codecHeader.length);
 
 			//verify if it's a valid message header
 			if(Arrays.equals(messageHeader, codecHeader)){
-				codec = codecElem.getValue();
+				codec = elem.getValue();
 				break;
 			}
 		}
@@ -174,9 +174,9 @@ class Loader{
 
 		final Collection<Class<?>> derivedClasses = AnnotationHelper.extractClasses(CoderInterface.class, basePackageClasses);
 		final Collection<CoderInterface<?>> coders = new ArrayList<>(derivedClasses.size());
-		for(final Class<?> cls : derivedClasses)
-			if(!cls.isInterface()){
-				final CoderInterface<?> coder = (CoderInterface<?>)ReflectionHelper.getCreator(cls)
+		for(final Class<?> type : derivedClasses)
+			if(!type.isInterface()){
+				final CoderInterface<?> coder = (CoderInterface<?>)ReflectionHelper.getCreator(type)
 					.get();
 				if(coder != null)
 					coders.add(coder);
