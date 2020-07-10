@@ -406,14 +406,6 @@ class BitBuffer{
 	}
 
 
-	void clear(){
-		//reset the buffer's position and limit
-		buffer.clear();
-
-		/** reset {@link #remaining} so that, on the next call to {@link #getBits(int)}, the cache will be reset */
-		resetInnerVariables();
-	}
-
 	byte[] array(){
 		return buffer.array();
 	}
