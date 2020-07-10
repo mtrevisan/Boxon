@@ -39,7 +39,7 @@ import java.util.Collections;
 import java.util.List;
 
 
-class Evaluator{
+final class Evaluator{
 
 	private static final ExpressionParser PARSER = new SpelExpressionParser();
 	private static final EvaluationContext CONTEXT = new PrivateEvaluationContext();

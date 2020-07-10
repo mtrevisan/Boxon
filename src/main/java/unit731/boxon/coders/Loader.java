@@ -44,7 +44,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 
-class Loader{
+final class Loader{
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Loader.class.getName());
 
@@ -60,7 +60,7 @@ class Loader{
 	 * Loads all the protocol classes annotated with {@link MessageHeader}.
 	 * <p>This method should be called from a method inside a class that lies on a parent of all the protocol classes.</p>
 	 */
-	synchronized void init(){
+	synchronized final void init(){
 		init(extractCallerClasses());
 	}
 
@@ -70,7 +70,7 @@ class Loader{
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes
 	 */
-	synchronized void init(final Class<?>... basePackageClasses){
+	synchronized final void init(final Class<?>... basePackageClasses){
 		if(!initialized.get()){
 			LOGGER.info("Load parsing classes from package(s) {}",
 				Arrays.stream(basePackageClasses).map(Class::getPackageName).collect(Collectors.joining(", ", "[", "]")));
@@ -96,7 +96,7 @@ class Loader{
 	 *
 	 * @param codecs	The list of codecs to be loaded
 	 */
-	synchronized void init(final Collection<Codec<?>> codecs){
+	synchronized final void init(final Collection<Codec<?>> codecs){
 		if(!initialized.get()){
 			LOGGER.info("Load parsing classes from input");
 
@@ -108,7 +108,7 @@ class Loader{
 		}
 	}
 
-	synchronized boolean isInitialized(){
+	synchronized final boolean isInitialized(){
 		return initialized.get();
 	}
 
@@ -132,7 +132,7 @@ class Loader{
 		}
 	}
 
-	Codec<?> getCodec(final BitBuffer reader){
+	final Codec<?> getCodec(final BitBuffer reader){
 		final int index = reader.position();
 
 		Codec<?> codec = null;
@@ -159,7 +159,7 @@ class Loader{
 	 * Loads all the coders that extends {@link CoderInterface}.
 	 * <p>This method should be called from a method inside a class that lies on a parent of all the coders.</p>
 	 */
-	void loadCoders(){
+	final void loadCoders(){
 		loadCoders(extractCallerClasses());
 	}
 
@@ -168,7 +168,7 @@ class Loader{
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load coders
 	 */
-	void loadCoders(final Class<?>... basePackageClasses){
+	final void loadCoders(final Class<?>... basePackageClasses){
 		LOGGER.info("Load coders from package(s) {}",
 			Arrays.stream(basePackageClasses).map(Class::getPackageName).collect(Collectors.joining(", ", "[", "]")));
 
@@ -192,7 +192,7 @@ class Loader{
 	 *
 	 * @param coders	The list of coders to be loaded
 	 */
-	void loadCoders(final Collection<CoderInterface<?>> coders){
+	final void loadCoders(final Collection<CoderInterface<?>> coders){
 		loadCoders(coders.toArray(CoderInterface[]::new));
 	}
 
@@ -201,7 +201,7 @@ class Loader{
 	 *
 	 * @param coders	The list of coders to be loaded
 	 */
-	void loadCoders(final CoderInterface<?>... coders){
+	final void loadCoders(final CoderInterface<?>... coders){
 		LOGGER.info("Load coders from input");
 
 		for(final CoderInterface<?> coder : coders)
@@ -217,15 +217,15 @@ class Loader{
 	 * @param coder	The coder to add
 	 * @return	The previous coder associated with {@link CoderInterface#coderType()}, or {@code null} if there was no previous coder.
 	 */
-	CoderInterface<?> addCoder(final CoderInterface<?> coder){
+	final CoderInterface<?> addCoder(final CoderInterface<?> coder){
 		return coders.put(coder.coderType(), coder);
 	}
 
-	CoderInterface<?> getCoder(final Class<?> type){
+	final CoderInterface<?> getCoder(final Class<?> type){
 		return coders.get(type);
 	}
 
-	int findNextMessageIndex(final BitBuffer reader){
+	final int findNextMessageIndex(final BitBuffer reader){
 		int minOffset = -1;
 		for(final Codec<?> codec : codecs.values()){
 			final MessageHeader header = codec.getHeader();

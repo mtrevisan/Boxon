@@ -43,7 +43,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 
-class MessageParser{
+final class MessageParser{
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(MessageParser.class.getName());
 
@@ -53,7 +53,7 @@ class MessageParser{
 	final Loader loader = new Loader();
 
 
-	<T> T decode(final Codec<T> codec, final BitBuffer reader){
+	final <T> T decode(final Codec<T> codec, final BitBuffer reader){
 		final int startPosition = reader.position();
 
 		final T data = ReflectionHelper.getCreator(codec.getType())
@@ -151,7 +151,7 @@ class MessageParser{
 		}
 	}
 
-	<T> void encode(final Codec<?> codec, final T data, final BitWriter writer){
+	final <T> void encode(final Codec<?> codec, final T data, final BitWriter writer){
 		//encode message's fields:
 		final List<Codec.BoundedField> fields = codec.getBoundedFields();
 		for(final Codec.BoundedField field : fields){

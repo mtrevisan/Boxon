@@ -31,10 +31,10 @@ import java.lang.annotation.Annotation;
 
 
 @SuppressWarnings("unused")
-class CoderChecksum implements CoderInterface<BindChecksum>{
+final class CoderChecksum implements CoderInterface<BindChecksum>{
 
 	@Override
-	public Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
+	public final Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
 		final BindChecksum binding = (BindChecksum)annotation;
 
 		final Class<?> objectiveType = ReflectionHelper.objectiveType(binding.type());
@@ -43,14 +43,14 @@ class CoderChecksum implements CoderInterface<BindChecksum>{
 	}
 
 	@Override
-	public void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
+	public final void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
 		final BindChecksum binding = (BindChecksum)annotation;
 
 		writer.put(value, binding.byteOrder());
 	}
 
 	@Override
-	public Class<BindChecksum> coderType(){
+	public final Class<BindChecksum> coderType(){
 		return BindChecksum.class;
 	}
 

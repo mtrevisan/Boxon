@@ -107,7 +107,7 @@ public class Parser{
 	 * Loads all the coders that extends {@link CoderInterface}.
 	 * <p>This method should be called from a method inside a class that lies on a parent of all the coders.</p>
 	 */
-	public void loadCoders(){
+	public final void loadCoders(){
 		messageParser.loader.loadCoders();
 	}
 
@@ -116,7 +116,7 @@ public class Parser{
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load coders
 	 */
-	public void loadCoders(final Class<?>... basePackageClasses){
+	public final void loadCoders(final Class<?>... basePackageClasses){
 		messageParser.loader.loadCoders(basePackageClasses);
 	}
 
@@ -125,7 +125,7 @@ public class Parser{
 	 *
 	 * @param coders	The list of coders to be loaded
 	 */
-	public void loadCoders(final Collection<CoderInterface<?>> coders){
+	public final void loadCoders(final Collection<CoderInterface<?>> coders){
 		messageParser.loader.loadCoders(coders);
 	}
 
@@ -134,7 +134,7 @@ public class Parser{
 	 *
 	 * @param coders	The list of coders to be loaded
 	 */
-	public void loadCoders(final CoderInterface<?>... coders){
+	public final void loadCoders(final CoderInterface<?>... coders){
 		messageParser.loader.loadCoders(coders);
 	}
 
@@ -145,7 +145,7 @@ public class Parser{
 	 * @param coder	The coder to add
 	 * @return	The previous coder associated with {@link CoderInterface#coderType()}, or {@code null} if there was no previous coder.
 	 */
-	public CoderInterface<?> addCoder(final CoderInterface<?> coder){
+	public final CoderInterface<?> addCoder(final CoderInterface<?> coder){
 		return messageParser.loader.addCoder(coder);
 	}
 
@@ -155,7 +155,7 @@ public class Parser{
 	 *
 	 * @param verbose	Whether to print every read value
 	 */
-	public void setVerbose(final boolean verbose){
+	public final void setVerbose(final boolean verbose){
 		messageParser.verbose.set(verbose);
 	}
 
@@ -169,7 +169,7 @@ public class Parser{
 	 * 	or for some other reason cannot be opened for reading.
 	 * @throws SecurityException	If a security manager exists and its {@code checkRead} method denies read access to the file.
 	 */
-	public final ParseResponse parse(final File file) throws IOException{
+	public ParseResponse parse(final File file) throws IOException{
 		final BitBuffer reader = BitBuffer.wrap(file);
 		return parse(reader);
 	}
@@ -180,7 +180,7 @@ public class Parser{
 	 * @param buffer	The message to be parsed backed by a {@link ByteBuffer}
 	 * @return	The parse response
 	 */
-	public final ParseResponse parse(final ByteBuffer buffer){
+	public ParseResponse parse(final ByteBuffer buffer){
 		final BitBuffer reader = BitBuffer.wrap(buffer);
 		return parse(reader);
 	}
@@ -191,7 +191,7 @@ public class Parser{
 	 * @param payload	The message to be parsed
 	 * @return	The parse response
 	 */
-	public final ParseResponse parse(final byte[] payload){
+	public ParseResponse parse(final byte[] payload){
 		final BitBuffer reader = BitBuffer.wrap(payload);
 		return parse(reader);
 	}
@@ -202,7 +202,7 @@ public class Parser{
 	 * @param reader	The message to be parsed backed by a {@link BitBuffer}
 	 * @return	The parse response
 	 */
-	public final ParseResponse parse(final BitBuffer reader){
+	public ParseResponse parse(final BitBuffer reader){
 		final ParseResponse response = new ParseResponse();
 
 		while(reader.hasRemaining()){
@@ -249,7 +249,7 @@ public class Parser{
 	 * @param data	The messages to be composed
 	 * @return	The composition response
 	 */
-	public final ComposeResponse compose(final List<Object> data){
+	public ComposeResponse compose(final List<Object> data){
 		return compose(data.toArray(Object[]::new));
 	}
 
@@ -259,7 +259,7 @@ public class Parser{
 	 * @param data	The message(s) to be composed
 	 * @return	The composition response
 	 */
-	public final ComposeResponse compose(final Object... data){
+	public ComposeResponse compose(final Object... data){
 		final ComposeResponse response = new ComposeResponse();
 		final BitWriter writer = new BitWriter();
 		for(final Object elem : data){

@@ -30,10 +30,10 @@ import java.lang.annotation.Annotation;
 
 
 @SuppressWarnings("unused")
-class CoderDouble implements CoderInterface<BindDouble>{
+final class CoderDouble implements CoderInterface<BindDouble>{
 
 	@Override
-	public Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
+	public final Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
 		final BindDouble binding = (BindDouble)annotation;
 
 		final double v = reader.getDouble(binding.byteOrder());
@@ -46,7 +46,7 @@ class CoderDouble implements CoderInterface<BindDouble>{
 	}
 
 	@Override
-	public void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
+	public final void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
 		final BindDouble binding = (BindDouble)annotation;
 
 		CoderHelper.validateData(binding.match(), binding.validator(), value);
@@ -57,7 +57,7 @@ class CoderDouble implements CoderInterface<BindDouble>{
 	}
 
 	@Override
-	public Class<BindDouble> coderType(){
+	public final Class<BindDouble> coderType(){
 		return BindDouble.class;
 	}
 

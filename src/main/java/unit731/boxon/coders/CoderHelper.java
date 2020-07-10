@@ -36,7 +36,7 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 
-class CoderHelper{
+final class CoderHelper{
 
 	private static final String CONTEXT_CHOICE_PREFIX = "prefix";
 

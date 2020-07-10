@@ -34,14 +34,14 @@ import java.math.BigInteger;
 
 
 @SuppressWarnings("unused")
-class CoderArray implements CoderInterface<BindArray>{
+final class CoderArray implements CoderInterface<BindArray>{
 
 	@SuppressWarnings("unused")
 	private MessageParser messageParser;
 
 
 	@Override
-	public Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
+	public final Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
 		final BindArray binding = (BindArray)annotation;
 
 		final int size = Evaluator.evaluateSize(binding.size(), data);
@@ -82,7 +82,7 @@ class CoderArray implements CoderInterface<BindArray>{
 	}
 
 	@Override
-	public void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
+	public final void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
 		final BindArray binding = (BindArray)annotation;
 
 		CoderHelper.validateData(binding.validator(), value);
@@ -112,7 +112,7 @@ class CoderArray implements CoderInterface<BindArray>{
 	}
 
 	@Override
-	public Class<BindArray> coderType(){
+	public final Class<BindArray> coderType(){
 		return BindArray.class;
 	}
 

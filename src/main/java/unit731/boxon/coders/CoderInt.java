@@ -30,10 +30,10 @@ import java.lang.annotation.Annotation;
 
 
 @SuppressWarnings("unused")
-class CoderInt implements CoderInterface<BindInt>{
+final class CoderInt implements CoderInterface<BindInt>{
 
 	@Override
-	public Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
+	public final Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
 		final BindInt binding = (BindInt)annotation;
 
 		final int v = reader.getInt(binding.byteOrder());
@@ -46,7 +46,7 @@ class CoderInt implements CoderInterface<BindInt>{
 	}
 
 	@Override
-	public void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
+	public final void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
 		final BindInt binding = (BindInt)annotation;
 
 		CoderHelper.validateData(binding.match(), binding.validator(), value);
@@ -57,7 +57,7 @@ class CoderInt implements CoderInterface<BindInt>{
 	}
 
 	@Override
-	public Class<BindInt> coderType(){
+	public final Class<BindInt> coderType(){
 		return BindInt.class;
 	}
 

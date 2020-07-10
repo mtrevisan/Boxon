@@ -46,7 +46,7 @@ import java.nio.charset.Charset;
 /**
  * @see <a href="https://github.com/jhg023/BitBuffer/blob/master/src/main/java/bitbuffer/BitBuffer.java">BitBuffer</a>
  */
-class BitBuffer{
+final class BitBuffer{
 
 	private static final class State{
 		private int position;
@@ -138,7 +138,7 @@ class BitBuffer{
 		this.buffer = buffer;
 	}
 
-	void createFallbackPoint(){
+	final void createFallbackPoint(){
 		if(fallbackPoint != null){
 			//overwrite current mark:
 			fallbackPoint.position = buffer.position();
@@ -150,7 +150,7 @@ class BitBuffer{
 			fallbackPoint = new State(buffer.position(), remaining, cache);
 	}
 
-	boolean restoreFallbackPoint(){
+	final boolean restoreFallbackPoint(){
 		if(fallbackPoint == null)
 			//no fallback point was marked before
 			return false;
@@ -164,15 +164,15 @@ class BitBuffer{
 	}
 
 
-	void skip(final int length){
+	final void skip(final int length){
 		getBits(length);
 	}
 
-	void skipUntilTerminator(final byte terminator, final boolean consumeTerminator){
+	final void skipUntilTerminator(final byte terminator, final boolean consumeTerminator){
 		getTextUntilTerminator(terminator, consumeTerminator, Charset.defaultCharset());
 	}
 
-	Object get(final Class<?> cls, final ByteOrder byteOrder){
+	final Object get(final Class<?> cls, final ByteOrder byteOrder){
 		final Class<?> inputClass = ReflectionHelper.objectiveType(cls);
 		if(inputClass == Byte.class)
 			return getByte();
@@ -196,7 +196,7 @@ class BitBuffer{
 	 * @param length	The amount of bits to read.
 	 * @return	A {@link BitSet} value at the {@link BitBuffer}'s current position.
 	 */
-	BitSet getBits(final int length){
+	final BitSet getBits(final int length){
 		final BitSet value = new BitSet();
 		int offset = 0;
 		while(offset < length){
@@ -247,7 +247,7 @@ class BitBuffer{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	A <code>long</code> value at the {@link BitBuffer}'s current position.
 	 */
-	long getLong(final int length, final ByteOrder byteOrder){
+	final long getLong(final int length, final ByteOrder byteOrder){
 		final BitSet bits = getBits(length);
 		return ByteHelper.bitsToLong(bits, length, byteOrder);
 	}
@@ -259,7 +259,7 @@ class BitBuffer{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	A {@link BigInteger} value at the {@link BitBuffer}'s current position.
 	 */
-	BigInteger getBigInteger(final int length, final ByteOrder byteOrder){
+	final BigInteger getBigInteger(final int length, final ByteOrder byteOrder){
 		final BitSet bits = getBits(length);
 		return ByteHelper.toInteger(bits, length, byteOrder);
 	}
@@ -269,7 +269,7 @@ class BitBuffer{
 	 *
 	 * @return	A {@code byte}.
 	 */
-	byte getByte(){
+	final byte getByte(){
 		return (byte)getLong(Byte.SIZE, ByteOrder.LITTLE_ENDIAN);
 	}
 
@@ -279,7 +279,7 @@ class BitBuffer{
 	 * @param length	The number of {@code byte}s to read.
 	 * @return	An array of {@code byte}s of length {@code n} that contains {@code byte}s read from this {@link BitBuffer}.
 	 */
-	byte[] getBytes(final int length){
+	final byte[] getBytes(final int length){
 		final byte[] array = new byte[length];
 		for(int i = 0; i < length; i ++)
 			array[i] = (byte)getLong(Byte.SIZE, ByteOrder.LITTLE_ENDIAN);
@@ -293,7 +293,7 @@ class BitBuffer{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	A {@code short}.
 	 */
-	short getShort(final ByteOrder byteOrder){
+	final short getShort(final ByteOrder byteOrder){
 		return (short)get(Short.SIZE, byteOrder);
 	}
 
@@ -304,7 +304,7 @@ class BitBuffer{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	An {@code int}.
 	 */
-	int getInt(final ByteOrder byteOrder){
+	final int getInt(final ByteOrder byteOrder){
 		return (int)get(Integer.SIZE, byteOrder);
 	}
 
@@ -315,7 +315,7 @@ class BitBuffer{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	A {@code long}.
 	 */
-	long getLong(final ByteOrder byteOrder){
+	final long getLong(final ByteOrder byteOrder){
 		return get(Long.SIZE, byteOrder);
 	}
 
@@ -331,7 +331,7 @@ class BitBuffer{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	A {@code float}.
 	 */
-	float getFloat(final ByteOrder byteOrder){
+	final float getFloat(final ByteOrder byteOrder){
 		return Float.intBitsToFloat(getInt(byteOrder));
 	}
 
@@ -342,7 +342,7 @@ class BitBuffer{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	A {@code double}.
 	 */
-	double getDouble(final ByteOrder byteOrder){
+	final double getDouble(final ByteOrder byteOrder){
 		return Double.longBitsToDouble(getLong(byteOrder));
 	}
 
@@ -354,7 +354,7 @@ class BitBuffer{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	A {@link BigDecimal}.
 	 */
-	BigDecimal getDecimal(final Class<?> cls, final ByteOrder byteOrder){
+	final BigDecimal getDecimal(final Class<?> cls, final ByteOrder byteOrder){
 		if(cls == Float.class)
 			return new BigDecimal(Float.toString(getFloat(byteOrder)));
 		else if(cls == Double.class)
@@ -370,12 +370,12 @@ class BitBuffer{
 	 * @return	A {@link String} of length {@code n} coded with a given {@link Charset} that contains {@code char}s
 	 * 	read from this {@link BitBuffer}.
 	 */
-	String getText(final int length, final Charset charset){
+	final String getText(final int length, final Charset charset){
 		return new String(getBytes(length), charset);
 	}
 
 	/** Reads a string until a terminator is found */
-	String getTextUntilTerminator(final byte terminator, final boolean consumeTerminator, final Charset charset){
+	final String getTextUntilTerminator(final byte terminator, final boolean consumeTerminator, final Charset charset){
 		String text = null;
 		try(
 			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -407,7 +407,7 @@ class BitBuffer{
 	}
 
 
-	byte[] array(){
+	final byte[] array(){
 		return buffer.array();
 	}
 
@@ -416,7 +416,7 @@ class BitBuffer{
 	 *
 	 * @return	The position of the backing buffer in {@code byte}s.
 	 */
-	int position(){
+	final int position(){
 		return buffer.position() - (remaining + Byte.SIZE - 1) / Byte.SIZE;
 	}
 
@@ -425,7 +425,7 @@ class BitBuffer{
 	 *
 	 * @param newPosition	The position of the backing buffer in {@code byte}s.
 	 */
-	void position(final int newPosition){
+	final void position(final int newPosition){
 		buffer.position(newPosition);
 
 		resetInnerVariables();
@@ -441,12 +441,12 @@ class BitBuffer{
 	 *
 	 * @return	Whether there is at least one element remaining in the underlying {@link ByteBuffer}
 	 */
-	boolean hasRemaining(){
+	final boolean hasRemaining(){
 		return buffer.hasRemaining();
 	}
 
 	@Override
-	public String toString(){
+	public final String toString(){
 		return ByteHelper.toHexString(array());
 	}
 

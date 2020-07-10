@@ -51,7 +51,7 @@ import java.util.StringJoiner;
  *
  * @param <T> The type of object the coder is able to decode/encode.
  */
-class Codec<T>{
+final class Codec<T>{
 
 	/** Data associated to an annotated field */
 	static class BoundedField{
@@ -266,32 +266,32 @@ class Codec<T>{
 			throw new AnnotationException("Unrecognized type for field {}<{}>: {}", getClass().getSimpleName(), type.getSimpleName(), type.getComponentType().getSimpleName());
 	}
 
-	Class<T> getType(){
+	final Class<T> getType(){
 		return cls;
 	}
 
-	MessageHeader getHeader(){
+	final MessageHeader getHeader(){
 		return header;
 	}
 
-	List<BoundedField> getBoundedFields(){
+	final List<BoundedField> getBoundedFields(){
 		return boundedFields;
 	}
 
-	List<EvaluatedField> getEvaluatedFields(){
+	final List<EvaluatedField> getEvaluatedFields(){
 		return evaluatedFields;
 	}
 
-	BoundedField getChecksum(){
+	final BoundedField getChecksum(){
 		return checksum;
 	}
 
-	boolean canBeDecoded(){
+	final boolean canBeDecoded(){
 		return (header != null && !boundedFields.isEmpty());
 	}
 
 	@Override
-	public String toString(){
+	public final String toString(){
 		return cls.getSimpleName();
 	}
 

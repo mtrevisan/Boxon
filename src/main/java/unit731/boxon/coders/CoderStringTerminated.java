@@ -31,10 +31,10 @@ import java.nio.charset.Charset;
 
 
 @SuppressWarnings("unused")
-class CoderStringTerminated implements CoderInterface<BindStringTerminated>{
+final class CoderStringTerminated implements CoderInterface<BindStringTerminated>{
 
 	@Override
-	public Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
+	public final Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
 		final BindStringTerminated binding = (BindStringTerminated)annotation;
 
 		final Charset charset = Charset.forName(binding.charset());
@@ -49,7 +49,7 @@ class CoderStringTerminated implements CoderInterface<BindStringTerminated>{
 	}
 
 	@Override
-	public void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
+	public final void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
 		final BindStringTerminated binding = (BindStringTerminated)annotation;
 
 		CoderHelper.validateData(binding.match(), binding.validator(), value);
@@ -62,7 +62,7 @@ class CoderStringTerminated implements CoderInterface<BindStringTerminated>{
 	}
 
 	@Override
-	public Class<BindStringTerminated> coderType(){
+	public final Class<BindStringTerminated> coderType(){
 		return BindStringTerminated.class;
 	}
 

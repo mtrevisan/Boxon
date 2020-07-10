@@ -25,7 +25,7 @@
 package unit731.boxon.annotations.validators;
 
 
-public class NullValidator<T> implements Validator<T>{
+public final class NullValidator<T> implements Validator<T>{
 
 	@SuppressWarnings("unused")
 	@Override

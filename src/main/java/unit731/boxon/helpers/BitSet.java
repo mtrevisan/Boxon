@@ -19,7 +19,7 @@ import java.util.Arrays;
  * @see <a href="https://w6113.github.io/files/papers/sidm338-wangA.pdf">An Experimental Study of Bitmap Compression vs. Inverted List Compression</a>
  * @see <a href="https://onlinelibrary.wiley.com/doi/pdf/10.1002/spe.2203">Decoding billions of integers per second through vectorization</a>
  */
-public class BitSet{
+public final class BitSet{
 
 	/** The array containing the indexes */
 	private int[] indexes = new int[0];
@@ -91,7 +91,7 @@ public class BitSet{
 	public BitSet(){}
 
 
-	public void ensureAdditionalSpace(final int size){
+	public final void ensureAdditionalSpace(final int size){
 		indexes = Arrays.copyOf(indexes, cardinality + size);
 	}
 
@@ -100,7 +100,7 @@ public class BitSet{
 	 *
 	 * @param bitIndex	A bit index (MUST BE greater than the previous index!)
 	 */
-	public void addNextSetBit(final int bitIndex){
+	public final void addNextSetBit(final int bitIndex){
 		ensureAdditionalSpace(1);
 
 		indexes[cardinality ++] = bitIndex;
@@ -111,7 +111,7 @@ public class BitSet{
 	 *
 	 * @param size	The size of the number in bits.
 	 */
-	public void reverseBits(final int size){
+	public final void reverseBits(final int size){
 		for(int i = 0; i < cardinality; i ++)
 			indexes[i] = size - indexes[i] - 1;
 
@@ -129,7 +129,7 @@ public class BitSet{
 	 *
 	 * @return	A byte array containing a little-endian representation of all the bits in this bit set
 	 */
-	public byte[] toByteArray(){
+	public final byte[] toByteArray(){
 		if(cardinality == 0)
 			return new byte[0];
 
@@ -146,7 +146,7 @@ public class BitSet{
 	 * @param size	The length in bits of the extraction (MUST BE less than {@link Long#SIZE}!)
 	 * @return	A long starting at a given offset and of a given length
 	 */
-	public long toLong(final int offset, final int size){
+	public final long toLong(final int offset, final int size){
 		long value = 0l;
 		if(indexes.length > 0){
 			int index;
@@ -165,17 +165,17 @@ public class BitSet{
 
 
 	@Override
-	public String toString(){
+	public final String toString(){
 		return Arrays.toString(Arrays.copyOfRange(indexes, 0, cardinality));
 	}
 
 	@Override
-	public int hashCode(){
+	public final int hashCode(){
 		return Arrays.hashCode(Arrays.copyOfRange(indexes, 0, cardinality));
 	}
 
 	@Override
-	public boolean equals(final Object obj){
+	public final boolean equals(final Object obj){
 		if(!(obj instanceof BitSet))
 			return false;
 		if(this == obj)

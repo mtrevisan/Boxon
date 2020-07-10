@@ -28,7 +28,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 
-public class ExceptionHelper{
+public final class ExceptionHelper{
 
 	private ExceptionHelper(){}
 

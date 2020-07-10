@@ -25,7 +25,7 @@
 package unit731.boxon.annotations.converters;
 
 
-public class NullConverter<T> implements Converter<T, T>{
+public final class NullConverter<T> implements Converter<T, T>{
 
 	@Override
 	public T decode(final T value){

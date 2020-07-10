@@ -32,10 +32,10 @@ import java.lang.reflect.Array;
 
 
 @SuppressWarnings("unused")
-class CoderArrayPrimitive implements CoderInterface<BindArrayPrimitive>{
+final class CoderArrayPrimitive implements CoderInterface<BindArrayPrimitive>{
 
 	@Override
-	public Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
+	public final Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
 		final BindArrayPrimitive binding = (BindArrayPrimitive)annotation;
 
 		final Class<?> type = binding.type();
@@ -56,7 +56,7 @@ class CoderArrayPrimitive implements CoderInterface<BindArrayPrimitive>{
 	}
 
 	@Override
-	public void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
+	public final void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
 		final BindArrayPrimitive binding = (BindArrayPrimitive)annotation;
 
 		CoderHelper.validateData(binding.validator(), value);
@@ -70,7 +70,7 @@ class CoderArrayPrimitive implements CoderInterface<BindArrayPrimitive>{
 	}
 
 	@Override
-	public Class<BindArrayPrimitive> coderType(){
+	public final Class<BindArrayPrimitive> coderType(){
 		return BindArrayPrimitive.class;
 	}
 

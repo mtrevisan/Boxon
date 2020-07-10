@@ -31,10 +31,10 @@ import java.math.BigDecimal;
 
 
 @SuppressWarnings("unused")
-class CoderDecimal implements CoderInterface<BindDecimal>{
+final class CoderDecimal implements CoderInterface<BindDecimal>{
 
 	@Override
-	public Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
+	public final Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
 		final BindDecimal binding = (BindDecimal)annotation;
 
 		final BigDecimal v = reader.getDecimal(binding.type(), binding.byteOrder());
@@ -47,7 +47,7 @@ class CoderDecimal implements CoderInterface<BindDecimal>{
 	}
 
 	@Override
-	public void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
+	public final void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
 		final BindDecimal binding = (BindDecimal)annotation;
 
 		CoderHelper.validateData(binding.match(), binding.validator(), value);
@@ -58,7 +58,7 @@ class CoderDecimal implements CoderInterface<BindDecimal>{
 	}
 
 	@Override
-	public Class<BindDecimal> coderType(){
+	public final Class<BindDecimal> coderType(){
 		return BindDecimal.class;
 	}
 

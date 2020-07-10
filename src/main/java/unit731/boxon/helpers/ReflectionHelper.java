@@ -50,7 +50,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 
-public class ReflectionHelper{
+public final class ReflectionHelper{
 
 	private static final Function<Class<?>, Supplier<?>> CREATORS = Memoizer.memoizeThreadAndRecursionSafe(ReflectionHelper::getCreatorInner);
 

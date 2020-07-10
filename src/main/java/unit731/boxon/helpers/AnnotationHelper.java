@@ -22,7 +22,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 
-public class AnnotationHelper{
+public final class AnnotationHelper{
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AnnotationHelper.class.getName());
 
@@ -134,11 +134,10 @@ public class AnnotationHelper{
 				final JarEntry resource = resources.nextElement();
 				final String resourceName = resource.getName();
 				if(!resource.isDirectory() && resourceName.endsWith(EXTENSION_CLASS)){
-					String className = resourceName.substring(0, resourceName.length() - EXTENSION_CLASS.length())
-						.replace('/', '.');
-					if(className.startsWith(BOOT_INF_CLASSES))
-						className = className.substring(BOOT_INF_CLASSES.length());
-					final Class<?> cls = getClassFromName(className);
+					final String className = resourceName.substring(
+						(resourceName.startsWith(BOOT_INF_CLASSES)? BOOT_INF_CLASSES.length(): 0),
+						resourceName.length() - EXTENSION_CLASS.length());
+					final Class<?> cls = getClassFromName(className.replace('/', '.'));
 					if(cls.isAnnotationPresent((Class<? extends Annotation>)type) || ((Class<?>)type).isAssignableFrom(cls))
 						classes.add(cls);
 				}
