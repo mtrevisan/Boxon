@@ -10,6 +10,8 @@ import java.util.Arrays;
  * <p>The maximum value that can be stored is {@link java.lang.Integer#MAX_VALUE}</p>
  * <p>Unless otherwise noted, passing a {@code null} parameter to any of the
  * methods in a {@code BitSet} will result in a {@code NullPointerException}.</p>
+ * <p>As for passing a non-increasing value to {@link #addNextSetBit(int)} will
+ * result in an unpredictable behavior.</p>
  *
  * <p>A {@code BitSet} is not safe for multi-threaded use without
  * external synchronization.</p>
@@ -19,7 +21,10 @@ import java.util.Arrays;
  */
 public class BitSet{
 
+	/** The array containing the indexes */
 	private int[] indexes = new int[0];
+	/** The number of indexes stored */
+	private int cardinality;
 
 
 	/**
@@ -72,6 +77,7 @@ public class BitSet{
 			}
 			offset += Byte.SIZE;
 		}
+		cardinality = length;
 	}
 
 	private BitSet(final long[] words){
@@ -90,10 +96,15 @@ public class BitSet{
 			}
 			offset += Long.SIZE;
 		}
+		cardinality = length;
 	}
 
 	public BitSet(){}
 
+
+	public void ensureAdditionalSpace(final int size){
+		indexes = Arrays.copyOf(indexes, cardinality + size);
+	}
 
 	/**
 	 * Adds a set bit at the specified index.
@@ -101,9 +112,9 @@ public class BitSet{
 	 * @param bitIndex	A bit index (MUST BE greater than the previous index!)
 	 */
 	public void addNextSetBit(final int bitIndex){
-		final int position = indexes.length;
-		indexes = Arrays.copyOf(indexes, position + 1);
-		indexes[position] = bitIndex;
+		ensureAdditionalSpace(1);
+
+		indexes[cardinality ++] = bitIndex;
 	}
 
 	/**
@@ -112,7 +123,7 @@ public class BitSet{
 	 * @param size	The size of the number in bits.
 	 */
 	public void reverseBits(final int size){
-		for(int i = 0; i < indexes.length; i ++)
+		for(int i = 0; i < cardinality; i ++)
 			indexes[i] = size - indexes[i] - 1;
 
 		//re-sort indexes
@@ -130,10 +141,10 @@ public class BitSet{
 	 * @return	A byte array containing a little-endian representation of all the bits in this bit set
 	 */
 	public byte[] toByteArray(){
-		if(indexes.length == 0)
+		if(cardinality == 0)
 			return new byte[0];
 
-		final byte[] bytes = new byte[indexes[indexes.length - 1] / Byte.SIZE + 1];
+		final byte[] bytes = new byte[indexes[cardinality - 1] / Byte.SIZE + 1];
 		for(final int index : indexes)
 			bytes[index / Byte.SIZE] |= 1 << (index % Byte.SIZE);
 		return bytes;
@@ -147,25 +158,29 @@ public class BitSet{
 	 * @return	A long starting at a given offset and of a given length
 	 */
 	public long toLong(final int offset, final int size){
-		int index;
 		long value = 0l;
-		final int idx = (offset > 0? Arrays.binarySearch(indexes, offset): 0);
-		int i = (idx >= 0? idx: -idx - 1);
-		final int length = Math.min(size + i, indexes.length);
-		while(i < length && 0 <= (index = indexes[i ++]) && index < size + offset)
+		int index;
+		int i = getStartingIndex(offset);
+		final int length = Math.min(size + i, cardinality);
+		while(i < length && 0 <= (index = indexes[i ++]) && index - offset < size)
 			value |= 1l << (index - offset);
 		return value;
+	}
+
+	private int getStartingIndex(final int offset){
+		final int idx = (offset > 0? Arrays.binarySearch(indexes, offset): 0);
+		return (idx >= 0? idx: -idx - 1);
 	}
 
 
 	@Override
 	public String toString(){
-		return Arrays.toString(indexes);
+		return Arrays.toString(Arrays.copyOfRange(indexes, 0, cardinality));
 	}
 
 	@Override
 	public int hashCode(){
-		return Arrays.hashCode(indexes);
+		return Arrays.hashCode(Arrays.copyOfRange(indexes, 0, cardinality));
 	}
 
 	@Override
@@ -176,7 +191,8 @@ public class BitSet{
 			return true;
 
 		final BitSet rhs = (BitSet)obj;
-		return Arrays.equals(indexes, rhs.indexes);
+		return (cardinality == rhs.cardinality
+			&& Arrays.equals(Arrays.copyOfRange(indexes, 0, cardinality), Arrays.copyOfRange(rhs.indexes, 0, rhs.cardinality)));
 	}
 
 }

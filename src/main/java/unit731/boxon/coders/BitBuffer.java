@@ -201,11 +201,11 @@ class BitBuffer{
 		while(offset < length){
 			//transfer the cache values
 			final int size = Math.min(length, remaining);
-			for(int i = offset; cache != 0 && i < offset + size; i ++, cache >>>= 1)
-				if((cache & 0x01) != 0)
-					value.addNextSetBit(i);
-			remaining -= size;
-			offset += size;
+			if(size > 0){
+				addCacheToBitSet(value, offset, size);
+
+				offset += size;
+			}
 
 			//if cache is empty and there are more bits to be read, fill it
 			if(length > offset){
@@ -215,6 +215,28 @@ class BitBuffer{
 			}
 		}
 		return value;
+	}
+
+	/**
+	 * Add {@code size} bits from the cache starting from LSB with a given offset.
+	 *
+	 * @param value	The bit set into which to transfer {@code size} bits from the cache
+	 * @param offset	The offset for the indexes
+	 * @param size	The amount of bits to read from the LSB of the cache
+	 */
+	private void addCacheToBitSet(final BitSet value, final int offset, final int size){
+		final byte mask = (byte)((1 << size) - 1);
+		value.ensureAdditionalSpace(Integer.bitCount(cache & mask));
+
+		int skip = 0;
+		while(cache != 0 && skip < size){
+			skip = Integer.numberOfTrailingZeros(cache & 0xFF);
+			value.addNextSetBit(skip + offset);
+			cache ^= 1 << skip;
+		}
+		//remove read bits from the cache
+		cache >>= size;
+		remaining -= size;
 	}
 
 	/**
