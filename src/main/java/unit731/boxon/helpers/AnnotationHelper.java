@@ -134,15 +134,13 @@ public class AnnotationHelper{
 				final JarEntry resource = resources.nextElement();
 				final String resourceName = resource.getName();
 				if(!resource.isDirectory() && resourceName.endsWith(EXTENSION_CLASS)){
-					try{
-						final String className = resourceName.substring(0, resourceName.length() - EXTENSION_CLASS.length())
-							.replace('/', '.');
-						final Class<?> cls = Class.forName(className.startsWith(BOOT_INF_CLASSES)?
-							className.substring(BOOT_INF_CLASSES.length()): className);
-						if(((Class<?>)type).isAssignableFrom(cls))
-							classes.add(cls);
-					}
-					catch(final ClassNotFoundException ignored){}
+					String className = resourceName.substring(0, resourceName.length() - EXTENSION_CLASS.length())
+						.replace('/', '.');
+					if(className.startsWith(BOOT_INF_CLASSES))
+						className = className.substring(BOOT_INF_CLASSES.length());
+					final Class<?> cls = getClassFromName(className);
+					if(cls.isAnnotationPresent((Class<? extends Annotation>)type) || ((Class<?>)type).isAssignableFrom(cls))
+						classes.add(cls);
 				}
 			}
 		}
@@ -174,18 +172,24 @@ public class AnnotationHelper{
 				if(file.isDirectory())
 					stack.push(new ClassDescriptor(file, elem.packageName + POINT + fileName));
 				else if(fileName.endsWith(EXTENSION_CLASS)){
-					try{
-						final String className = fileName.substring(0, fileName.length() - EXTENSION_CLASS.length());
-						final Class<?> cls = Class.forName(elem.packageName + POINT + className);
-						if(cls.isAnnotationPresent((Class<? extends Annotation>)type) || ((Class<?>)type).isAssignableFrom(cls))
-							classes.add(cls);
-					}
-					catch(final ClassNotFoundException ignored){}
+					final String className = fileName.substring(0, fileName.length() - EXTENSION_CLASS.length());
+					final Class<?> cls = getClassFromName(elem.packageName + POINT + className);
+					if(cls.isAnnotationPresent((Class<? extends Annotation>)type) || ((Class<?>)type).isAssignableFrom(cls))
+						classes.add(cls);
 				}
 			}
 		}
 
 		return classes;
+	}
+
+	private static Class<?> getClassFromName(final String className){
+		Class<?> type = null;
+		try{
+			type = Class.forName(className);
+		}
+		catch(final ClassNotFoundException ignored){}
+		return type;
 	}
 
 }
