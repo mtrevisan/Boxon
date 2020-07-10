@@ -53,6 +53,7 @@ public class AnnotationHelper{
 	 * @return	An array of all the fields of the given class
 	 */
 	public static Field[] getDeclaredFields(final Class<?> cls, @SuppressWarnings("SameParameterValue") final boolean recursively){
+		final Field[] result;
 		if(recursively){
 			final List<Field> fields = new ArrayList<>(0);
 			Class<?> currentType = cls;
@@ -63,10 +64,11 @@ public class AnnotationHelper{
 
 				currentType = currentType.getSuperclass();
 			}
-			return fields.toArray(Field[]::new);
+			result = fields.toArray(Field[]::new);
 		}
 		else
-			return cls.getDeclaredFields();
+			result = cls.getDeclaredFields();
+		return result;
 	}
 
 
@@ -104,12 +106,14 @@ public class AnnotationHelper{
 			final URL resource = resources.nextElement();
 			final String directory = resource.getFile();
 			final int exclamationMarkIndex = directory.indexOf('!');
+			final Set<Class<?>> classes;
 			if(exclamationMarkIndex >= 0){
 				final String libraryName = directory.substring(SCHEMA_FILE.length(), exclamationMarkIndex);
-				codecs.addAll(extractClassesFromLibrary(type, libraryName));
+				classes = extractClassesFromLibrary(type, libraryName);
 			}
 			else
-				codecs.addAll(extractClasses(type, new File(directory), basePackageName));
+				classes = extractClasses(type, new File(directory), basePackageName);
+			codecs.addAll(classes);
 		}
 		return codecs;
 	}
