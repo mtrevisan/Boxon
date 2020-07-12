@@ -143,6 +143,7 @@ public final class ReflectionHelper{
 
 	/**
 	 * Returns whether the given {@code type} is an array of primitives.
+	 * <p>NOTE: {@code void} is NOT considered as primitive!</p>
 	 *
 	 * @param type	The class to query.
 	 * @return	Whether the given {@code type} is an array of primitives.
@@ -153,6 +154,7 @@ public final class ReflectionHelper{
 
 	/**
 	 * Returns whether the given {@code type} is a primitive.
+	 * <p>NOTE: {@code void} is NOT considered as primitive!</p>
 	 *
 	 * @param type	The class to query.
 	 * @return	Whether the given {@code type} is a primitive.
@@ -163,6 +165,7 @@ public final class ReflectionHelper{
 
 	/**
 	 * Returns whether the given {@code type} is a primitive or primitive wrapper.
+	 * <p>NOTE: {@code Character} and {@code void}/{@code Void} are NOT considered as primitives!</p>
 	 *
 	 * @param type	The class to query.
 	 * @return	Whether the given {@code type} is a primitive or primitive wrapper.
