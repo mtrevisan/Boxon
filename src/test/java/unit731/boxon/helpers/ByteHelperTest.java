@@ -37,9 +37,8 @@ class ByteHelperTest{
 
 		byte output = 0x00;
 		for(int i = 0; i < 8; i ++)
-			if(ByteHelper.hasBit(mask, i)){
+			if(ByteHelper.hasBit(mask, i))
 				output |= (1 << i);
-			}
 
 		Assertions.assertEquals(mask, output);
 	}
