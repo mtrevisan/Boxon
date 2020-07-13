@@ -131,31 +131,33 @@ final class Codec<T>{
 	 * Constructs a new {@link Codec}.
 	 *
 	 * @param <T>	The type of the objects to be returned by the {@link Codec}.
-	 * @param type	The type of the objects to be returned by the {@link Codec}.
+	 * @param type   The type of the objects to be returned by the {@link Codec}.
+	 * @param loader	The loader used to verify if a coder annotation is valid.
 	 * @return	A new {@link Codec} for the given type.
 	 */
-	static <T> Codec<T> createFrom(final Class<T> type){
-		return new Codec<>(type);
+	static <T> Codec<T> createFrom(final Class<T> type, final Loader loader){
+		return new Codec<>(type, loader);
 	}
 
-	private Codec(final Class<T> cls){
+	private Codec(final Class<T> cls, final Loader loader){
 		Objects.requireNonNull(cls);
+		Objects.requireNonNull(loader);
 
 		this.cls = cls;
 
 		header = cls.getAnnotation(MessageHeader.class);
 		//retrieve all declared fields in the current class, therefore NOT in the parent classes
-		loadAnnotatedFields(AnnotationHelper.getDeclaredFields(cls, true));
+		loadAnnotatedFields(AnnotationHelper.getDeclaredFields(cls, true), loader);
 	}
 
-	private void loadAnnotatedFields(final Field[] fields){
+	private void loadAnnotatedFields(final Field[] fields, final Loader loader){
 		for(final Field field : fields){
 			final BindIf condition = field.getDeclaredAnnotation(BindIf.class);
 			final Skip[] skips = field.getDeclaredAnnotationsByType(Skip.class);
 			final BindChecksum checksum = field.getDeclaredAnnotation(BindChecksum.class);
 
 			final Annotation[] declaredAnnotations = field.getDeclaredAnnotations();
-			final List<Annotation> boundedAnnotations = extractAnnotations(declaredAnnotations);
+			final List<Annotation> boundedAnnotations = extractAnnotations(declaredAnnotations, loader);
 			final List<Evaluate> evaluatedAnnotations = extractEvaluations(declaredAnnotations);
 			for(final Evaluate annotation : evaluatedAnnotations)
 				evaluatedFields.add(new EvaluatedField(field, annotation));
@@ -169,11 +171,12 @@ final class Codec<T>{
 		}
 	}
 
-	private List<Annotation> extractAnnotations(final Annotation[] declaredAnnotations){
+	private List<Annotation> extractAnnotations(final Annotation[] declaredAnnotations, final Loader loader){
 		final List<Annotation> annotations = new ArrayList<>(declaredAnnotations.length);
 		for(final Annotation annotation : declaredAnnotations){
 			final Class<? extends Annotation> annotationType = annotation.annotationType();
-			if(annotationType != BindIf.class && annotationType != Skip.class && annotationType != Evaluate.class)
+			if(annotationType != BindIf.class && annotationType != Skip.class && annotationType != Evaluate.class
+					&& loader.getCoder(annotationType) != null)
 				annotations.add(annotation);
 		}
 		return annotations;

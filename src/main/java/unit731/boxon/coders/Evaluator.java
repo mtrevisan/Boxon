@@ -100,14 +100,14 @@ final class Evaluator{
 
 	static int evaluateSize(final String expression, final Object data){
 		int size = 0;
-		if(expression != null && !expression.trim().isBlank())
-			size = (isInteger(expression)? Integer.parseInt(expression): evaluate(expression, int.class, data));
+		if(!expression.trim().isBlank())
+			size = (isPositiveInteger(expression)? Integer.parseInt(expression): evaluate(expression, int.class, data));
 		return size;
 	}
 
-	private static boolean isInteger(final String str){
-		for(int i = (str.charAt(0) == '-'? 1: 0); i < str.length(); i ++)
-			if(str.charAt(i) == '.' || !Character.isDigit(str.charAt(i)))
+	private static boolean isPositiveInteger(final String text){
+		for(int i = 0; i < text.length(); i ++)
+			if(!Character.isDigit(text.charAt(i)))
 				return false;
 		return true;
 	}

@@ -49,6 +49,7 @@ final class BitWriter{
 	private byte cache;
 
 
+	@SuppressWarnings("ConstantConditions")
 	final void put(final Object value, final ByteOrder byteOrder){
 		final Class<?> type = value.getClass();
 		if(type == byte.class || type == Byte.class)

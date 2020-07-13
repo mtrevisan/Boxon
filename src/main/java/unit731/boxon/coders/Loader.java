@@ -39,8 +39,12 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 
@@ -51,68 +55,173 @@ final class Loader{
 	private final Map<String, Codec<?>> codecs = new TreeMap<>(Comparator.comparingInt(String::length).reversed().thenComparing(String::compareTo));
 	private final Map<Class<?>, CoderInterface<?>> coders = new HashMap<>(0);
 
-	private final AtomicBoolean initialized = new AtomicBoolean(false);
+	private final AtomicBoolean initializedCoders = new AtomicBoolean(false);
+	private final AtomicBoolean initializedCodecs = new AtomicBoolean(false);
 
 
 	Loader(){}
+
+
+	/**
+	 * Loads all the coders that extends {@link CoderInterface}.
+	 * <p>This method should be called from a method inside a class that lies on a parent of all the coders.</p>
+	 */
+	final void loadCoders(){
+		loadCoders(extractCallerClasses());
+	}
+
+	/**
+	 * Loads all the coders that extends {@link CoderInterface}.
+	 *
+	 * @param basePackageClasses	Classes to be used ase starting point from which to load coders
+	 */
+	final void loadCoders(Class<?>... basePackageClasses){
+		if(!initializedCoders.get()){
+			//remove duplicates
+			basePackageClasses = Arrays.stream(basePackageClasses)
+				.filter(distinctByKey(Class::getPackageName))
+				.toArray(Class[]::new);
+
+			LOGGER.info("Load coders from package(s) {}",
+				Arrays.stream(basePackageClasses).map(Class::getPackageName).collect(Collectors.joining(", ", "[", "]")));
+
+			final Collection<Class<?>> derivedClasses = AnnotationHelper.extractClasses(CoderInterface.class, basePackageClasses);
+			final Collection<CoderInterface<?>> coders = new ArrayList<>(derivedClasses.size());
+			for(final Class<?> type : derivedClasses)
+				if(!type.isInterface()){
+					final CoderInterface<?> coder = (CoderInterface<?>)ReflectionHelper.getCreator(type)
+						.get();
+					if(coder != null)
+						coders.add(coder);
+				}
+			for(final CoderInterface<?> coder : coders)
+				addCoder(coder);
+
+			LOGGER.trace("Coders loaded are {}", coders.size());
+
+			initializedCoders.set(true);
+		}
+	}
+
+	private static <T> Predicate<T> distinctByKey(final Function<? super T, ?> keyExtractor){
+		final Set<Object> seen = ConcurrentHashMap.newKeySet();
+		return t -> seen.add(keyExtractor.apply(t));
+	}
+
+	/**
+	 * Loads all the coders that extends {@link CoderInterface}.
+	 *
+	 * @param coders	The list of coders to be loaded
+	 */
+	final void loadCoders(final Collection<CoderInterface<?>> coders){
+		loadCoders(coders.toArray(CoderInterface[]::new));
+	}
+
+	/**
+	 * Loads all the coders that extends {@link CoderInterface}.
+	 *
+	 * @param coders	The list of coders to be loaded
+	 */
+	final void loadCoders(final CoderInterface<?>... coders){
+		if(!initializedCoders.get()){
+			LOGGER.info("Load coders from input");
+
+			for(final CoderInterface<?> coder : coders)
+				addCoder(coder);
+
+			LOGGER.trace("Coders loaded are {}", coders.length);
+
+			initializedCoders.set(true);
+		}
+	}
+
+	/**
+	 * Load a singe coder that extends {@link CoderInterface}.
+	 * <p>If the parser previously contained a coder for the given key, the old coder is replaced by the specified one.</p>
+	 *
+	 * @param coder	The coder to add
+	 * @return	The previous coder associated with {@link CoderInterface#coderType()}, or {@code null} if there was no previous coder.
+	 */
+	private final CoderInterface<?> addCoder(final CoderInterface<?> coder){
+		return coders.put(coder.coderType(), coder);
+	}
+
+	final CoderInterface<?> getCoder(final Class<?> type){
+		return coders.get(type);
+	}
+
 
 	/**
 	 * Loads all the protocol classes annotated with {@link MessageHeader}.
 	 * <p>This method should be called from a method inside a class that lies on a parent of all the protocol classes.</p>
 	 */
-	synchronized final void init(){
-		init(extractCallerClasses());
+	synchronized final void loadCodecs(){
+		loadCodecs(extractCallerClasses());
 	}
 
 	/**
 	 * Loads all the protocol classes annotated with {@link MessageHeader}.
-	 * <p>This method should be called before instantiating a {@link Parser}.</p>
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes
 	 */
-	synchronized final void init(final Class<?>... basePackageClasses){
-		if(!initialized.get()){
+	synchronized final void loadCodecs(Class<?>... basePackageClasses){
+		if(!initializedCoders.get())
+			throw new IllegalArgumentException("Coders must be initialized before Codecs!");
+
+		if(!initializedCodecs.get()){
+			//remove duplicates
+			basePackageClasses = Arrays.stream(basePackageClasses)
+				.filter(distinctByKey(Class::getPackageName))
+				.toArray(Class[]::new);
+
 			LOGGER.info("Load parsing classes from package(s) {}",
 				Arrays.stream(basePackageClasses).map(Class::getPackageName).collect(Collectors.joining(", ", "[", "]")));
 
 			final Collection<Class<?>> annotatedClasses = AnnotationHelper.extractClasses(MessageHeader.class, basePackageClasses);
 			final Collection<Codec<?>> codecs = new ArrayList<>(annotatedClasses.size());
 			for(final Class<?> type : annotatedClasses){
-				final Codec<?> codec = Codec.createFrom(type);
+				final Codec<?> codec = Codec.createFrom(type, this);
 				if(codec.canBeDecoded())
 					codecs.add(codec);
 			}
-			loadCodecs(codecs);
+			loadCodecsInner(codecs);
 
 			LOGGER.trace("Codecs loaded are {}", codecs.size());
 
-			initialized.set(true);
+			initializedCodecs.set(true);
 		}
 	}
 
 	/**
 	 * Loads all the protocol classes annotated with {@link MessageHeader}.
-	 * <p>This method should be called before instantiating a {@link Parser}.</p>
 	 *
 	 * @param codecs	The list of codecs to be loaded
 	 */
-	synchronized final void init(final Collection<Codec<?>> codecs){
-		if(!initialized.get()){
+	synchronized final void loadCodecs(Collection<Codec<?>> codecs){
+		if(!initializedCoders.get())
+			throw new IllegalArgumentException("Coders must be initialized before Codecs!");
+
+		if(!initializedCodecs.get()){
+			//remove duplicates
+			codecs = codecs.stream()
+				.distinct()
+				.collect(Collectors.toList());
+
 			LOGGER.info("Load parsing classes from input");
 
-			loadCodecs(codecs);
+			loadCodecsInner(codecs);
 
 			LOGGER.trace("Codecs loaded are {}", codecs.size());
 
-			initialized.set(true);
+			initializedCodecs.set(true);
 		}
 	}
 
-	synchronized final boolean isInitialized(){
-		return initialized.get();
+	synchronized final boolean getInitialized(){
+		return (initializedCoders.get() && initializedCodecs.get());
 	}
 
-	private void loadCodecs(final Collection<Codec<?>> codecs){
+	private void loadCodecsInner(final Collection<Codec<?>> codecs){
 		for(final Codec<?> codec : codecs){
 			try{
 				final MessageHeader header = codec.getHeader();
@@ -155,76 +264,6 @@ final class Loader{
 	}
 
 
-	/**
-	 * Loads all the coders that extends {@link CoderInterface}.
-	 * <p>This method should be called from a method inside a class that lies on a parent of all the coders.</p>
-	 */
-	final void loadCoders(){
-		loadCoders(extractCallerClasses());
-	}
-
-	/**
-	 * Loads all the coders that extends {@link CoderInterface}.
-	 *
-	 * @param basePackageClasses	Classes to be used ase starting point from which to load coders
-	 */
-	final void loadCoders(final Class<?>... basePackageClasses){
-		LOGGER.info("Load coders from package(s) {}",
-			Arrays.stream(basePackageClasses).map(Class::getPackageName).collect(Collectors.joining(", ", "[", "]")));
-
-		final Collection<Class<?>> derivedClasses = AnnotationHelper.extractClasses(CoderInterface.class, basePackageClasses);
-		final Collection<CoderInterface<?>> coders = new ArrayList<>(derivedClasses.size());
-		for(final Class<?> type : derivedClasses)
-			if(!type.isInterface()){
-				final CoderInterface<?> coder = (CoderInterface<?>)ReflectionHelper.getCreator(type)
-					.get();
-				if(coder != null)
-					coders.add(coder);
-			}
-		for(final CoderInterface<?> coder : coders)
-			addCoder(coder);
-
-		LOGGER.trace("Coders loaded are {}", coders.size());
-	}
-
-	/**
-	 * Loads all the coders that extends {@link CoderInterface}.
-	 *
-	 * @param coders	The list of coders to be loaded
-	 */
-	final void loadCoders(final Collection<CoderInterface<?>> coders){
-		loadCoders(coders.toArray(CoderInterface[]::new));
-	}
-
-	/**
-	 * Loads all the coders that extends {@link CoderInterface}.
-	 *
-	 * @param coders	The list of coders to be loaded
-	 */
-	final void loadCoders(final CoderInterface<?>... coders){
-		LOGGER.info("Load coders from input");
-
-		for(final CoderInterface<?> coder : coders)
-			addCoder(coder);
-
-		LOGGER.trace("Coders loaded are {}", coders.length);
-	}
-
-	/**
-	 * Load a singe coder that extends {@link CoderInterface}.
-	 * <p>If the parser previously contained a coder for the given key, the old coder is replaced by the specified one.</p>
-	 *
-	 * @param coder	The coder to add
-	 * @return	The previous coder associated with {@link CoderInterface#coderType()}, or {@code null} if there was no previous coder.
-	 */
-	final CoderInterface<?> addCoder(final CoderInterface<?> coder){
-		return coders.put(coder.coderType(), coder);
-	}
-
-	final CoderInterface<?> getCoder(final Class<?> type){
-		return coders.get(type);
-	}
-
 	final int findNextMessageIndex(final BitBuffer reader){
 		int minOffset = -1;
 		for(final Codec<?> codec : codecs.values()){
@@ -241,7 +280,7 @@ final class Loader{
 	}
 
 	private int searchNextSequence(final BitBuffer reader, final byte[] startMessageSequence){
-		final int[] boundarySequenceLps = ByteHelper.indexOfComputeLPS(startMessageSequence);
+		final int[] boundarySequenceLps = ByteHelper.indexOfComputeFailureTable(startMessageSequence);
 
 		final byte[] message = reader.array();
 		//search inside message:
@@ -255,9 +294,9 @@ final class Loader{
 		Class<?>[] classes = new Class[0];
 		try{
 			final StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-			final String callerClassName1 = stackTrace[2].getClassName();
-			final String callerClassName2 = stackTrace[3].getClassName();
-			classes = new Class[]{Class.forName(callerClassName1), Class.forName(callerClassName2)};
+			final Class<?> callerClass1 = Class.forName(stackTrace[2].getClassName());
+			final Class<?> callerClass2 = Class.forName(stackTrace[3].getClassName());
+			classes = new Class[]{callerClass1, callerClass2};
 		}
 		catch(final ClassNotFoundException ignored){}
 		return classes;

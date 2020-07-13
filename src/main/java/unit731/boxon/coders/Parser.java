@@ -24,6 +24,7 @@
  */
 package unit731.boxon.coders;
 
+import unit731.boxon.annotations.MessageHeader;
 import unit731.boxon.annotations.exceptions.CodecException;
 import unit731.boxon.coders.exceptions.ComposeException;
 import unit731.boxon.coders.dtos.ComposeResponse;
@@ -38,7 +39,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 
 @SuppressWarnings("unused")
@@ -47,9 +47,28 @@ public class Parser{
 	private final MessageParser messageParser = new MessageParser();
 
 
-	/** Create a parser loading all the codecs from this package down. */
-	public Parser(){
-		this(null);
+	/** Create an empty parser (coders and codecs MUST BE manually loaded!). */
+	public static Parser createEmpty(){
+		return new Parser();
+	}
+
+	/**
+	 * Create a parser with (optionally) a context (coders and codecs MUST BE manually loaded!).
+	 *
+	 * @param context	The context for the evaluator.
+	 */
+	public static Parser createEmptyWithContext(final Map<String, Object> context){
+		final Parser p = new Parser();
+		p.copyContext(context);
+		return p;
+	}
+
+	/** Create a parser loading all the coders and codecs from this package down. */
+	public static Parser createDefault(){
+		final Parser p = new Parser();
+		p.loadCoders();
+		p.loadCodecs();
+		return p;
 	}
 
 	/**
@@ -57,44 +76,16 @@ public class Parser{
 	 *
 	 * @param context	The context for the evaluator.
 	 */
-	public Parser(final Map<String, Object> context){
-		messageParser.loader.init();
-		loadCoders();
-
-		copyContext(context);
+	public static Parser createDefaultWithContext(final Map<String, Object> context){
+		final Parser p = new Parser();
+		p.copyContext(context);
+		p.loadCoders();
+		p.loadCodecs();
+		return p;
 	}
 
-	/**
-	 * Create a parser with (optionally) a context, and loading all the given codecs.
-	 *
-	 * @param context	The context for the evaluator.
-	 * @param codecs	The list of codecs.
-	 */
-	public Parser(final Map<String, Object> context, final List<Codec<?>> codecs){
-		Objects.requireNonNull(codecs, "Codecs cannot be null");
-		if(codecs.isEmpty())
-			throw new CodecException("Codecs cannot be empty");
 
-		messageParser.loader.init(codecs);
-		loadCoders();
-
-		copyContext(context);
-	}
-
-	/**
-	 * Create a parser with (optionally) a context, and loading all the given codecs found as a child of some base packages.
-	 *
-	 * @param context	The context for the evaluator.
-	 * @param basePackageClasses	The list of base packages from which to descent and load all the found codecs.
-	 */
-	public Parser(final Map<String, Object> context, final Class<?>... basePackageClasses){
-		Objects.requireNonNull(basePackageClasses, "Base package(s) not found");
-
-		messageParser.loader.init(basePackageClasses);
-		loadCoders();
-
-		copyContext(context);
-	}
+	private Parser(){}
 
 	private void copyContext(final Map<String, Object> context){
 		if(context != null)
@@ -143,10 +134,44 @@ public class Parser{
 	 * <p>If the parser previously contained a coder for the given key, the old coder is replaced by the specified one.</p>
 	 *
 	 * @param coder	The coder to add
-	 * @return	The previous coder associated with {@link CoderInterface#coderType()}, or {@code null} if there was no previous coder.
 	 */
-	public final CoderInterface<?> addCoder(final CoderInterface<?> coder){
-		return messageParser.loader.addCoder(coder);
+	public final void addCoder(final CoderInterface<?> coder){
+		messageParser.loader.loadCoders(coder);
+	}
+
+
+	/**
+	 * Loads all the protocol classes annotated with {@link MessageHeader}.
+	 */
+	public final void loadCodecs(){
+		messageParser.loader.loadCodecs();
+	}
+
+	/**
+	 * Loads all the protocol classes annotated with {@link MessageHeader}.
+	 *
+	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes
+	 */
+	public final void loadCodecs(final Class<?>... basePackageClasses){
+		messageParser.loader.loadCodecs(basePackageClasses);
+	}
+
+	/**
+	 * Loads all the protocol classes annotated with {@link MessageHeader}.
+	 *
+	 * @param codecs	The list of codecs to be loaded
+	 */
+	public final void loadCodecs(final Collection<Codec<?>> codecs){
+		messageParser.loader.loadCodecs(codecs);
+	}
+
+	/**
+	 * Loads all the protocol classes annotated with {@link MessageHeader}.
+	 *
+	 * @param codecs	The list of codecs to be loaded
+	 */
+	public final void loadCodecs(final Codec<?>... codecs){
+		messageParser.loader.loadCodecs(Arrays.asList(codecs));
 	}
 
 
@@ -264,7 +289,7 @@ public class Parser{
 		final BitWriter writer = new BitWriter();
 		for(final Object elem : data){
 			try{
-				final Codec<?> codec = Codec.createFrom(elem.getClass());
+				final Codec<?> codec = Codec.createFrom(elem.getClass(), messageParser.loader);
 				if(!codec.canBeDecoded())
 					throw new CodecException("Cannot construct any codec for message");
 

@@ -58,7 +58,7 @@ public class QueclinkHelper{
 			final StringBuffer sb = new StringBuffer();
 			for(int i = 0; i < 7; i ++)
 				sb.append(String.format("%02d", value[i] & 255));
-			sb.append(ByteHelper.applyMaskAndShift(value[7], (byte)0x0F));
+			sb.append(applyMaskAndShift(value[7], (byte)0x0F));
 			return sb.toString();
 		}
 
@@ -135,6 +135,19 @@ public class QueclinkHelper{
 			return Integer.toString(value, 16)
 				.toUpperCase(Locale.ROOT);
 		}
+	}
+
+
+	/**
+	 * Apply mask and shift right (<code>maskByte(27, 0x18) = 3</code>)
+	 *
+	 * @param value	The value to which to apply the mask and the right shift
+	 * @param mask	The mask
+	 * @return	The masked and shifter value
+	 */
+	public static long applyMaskAndShift(final long value, long mask){
+		final int ctz = Long.numberOfTrailingZeros(mask);
+		return ((value & mask) >>> ctz);
 	}
 
 }
