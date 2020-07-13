@@ -75,22 +75,6 @@ class ParserTest{
 		Assertions.assertEquals(2, result.getParsedMessages().size());
 	}
 
-	public static void main(String[] args){
-		DeviceTypes deviceTypes = new DeviceTypes();
-		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
-		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
-		Parser parser = new Parser(context);
-
-		//357, 364, 365, 395, 398 bitset
-		//357, 368, 377, 388, 395 inverse-list + iterator
-		byte[] payload = ByteHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
-		TimeWatch watch = TimeWatch.start();
-		for(int i = 0; i < 20_000; i ++)
-			parser.parse(payload);
-		watch.stop();
-		System.out.println(watch.toStringMicros(20_000));
-	}
-
 	@Test
 	void parseAndComposeSingleMessageASCII(){
 		DeviceTypes deviceTypes = new DeviceTypes();
