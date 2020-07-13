@@ -59,7 +59,7 @@ public class Parser{
 	 */
 	public Parser(final Map<String, Object> context){
 		loadCoders();
-		messageParser.loader.init();
+		messageParser.loader.loadCodecs();
 
 		copyContext(context);
 	}
@@ -76,7 +76,7 @@ public class Parser{
 			throw new CodecException("Codecs cannot be empty");
 
 		loadCoders();
-		messageParser.loader.init(codecs);
+		messageParser.loader.loadCodecs(codecs);
 
 		copyContext(context);
 	}
@@ -91,7 +91,7 @@ public class Parser{
 		Objects.requireNonNull(basePackageClasses, "Base package(s) not found");
 
 		loadCoders();
-		messageParser.loader.init(basePackageClasses);
+		messageParser.loader.loadCodecs(basePackageClasses);
 
 		copyContext(context);
 	}

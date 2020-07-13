@@ -65,8 +65,8 @@ final class Loader{
 	 * Loads all the protocol classes annotated with {@link MessageHeader}.
 	 * <p>This method should be called from a method inside a class that lies on a parent of all the protocol classes.</p>
 	 */
-	synchronized final void init(){
-		init(extractCallerClasses());
+	synchronized final void loadCodecs(){
+		loadCodecs(extractCallerClasses());
 	}
 
 	/**
@@ -75,7 +75,7 @@ final class Loader{
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes
 	 */
-	synchronized final void init(Class<?>... basePackageClasses){
+	synchronized final void loadCodecs(Class<?>... basePackageClasses){
 		if(!initializedCoders.get())
 			throw new IllegalArgumentException("Coders must be initialized before Codecs!");
 
@@ -95,7 +95,7 @@ final class Loader{
 				if(codec.canBeDecoded())
 					codecs.add(codec);
 			}
-			loadCodecs(codecs);
+			loadCodecsInner(codecs);
 
 			LOGGER.trace("Codecs loaded are {}", codecs.size());
 
@@ -109,7 +109,7 @@ final class Loader{
 	 *
 	 * @param codecs	The list of codecs to be loaded
 	 */
-	synchronized final void init(Collection<Codec<?>> codecs){
+	synchronized final void loadCodecs(Collection<Codec<?>> codecs){
 		if(!initializedCoders.get())
 			throw new IllegalArgumentException("Coders must be initialized before Codecs!");
 
@@ -121,7 +121,7 @@ final class Loader{
 
 			LOGGER.info("Load parsing classes from input");
 
-			loadCodecs(codecs);
+			loadCodecsInner(codecs);
 
 			LOGGER.trace("Codecs loaded are {}", codecs.size());
 
@@ -133,7 +133,7 @@ final class Loader{
 		return (initializedCoders.get() && initializedCodecs.get());
 	}
 
-	private void loadCodecs(final Collection<Codec<?>> codecs){
+	private void loadCodecsInner(final Collection<Codec<?>> codecs){
 		for(final Codec<?> codec : codecs){
 			try{
 				final MessageHeader header = codec.getHeader();
@@ -263,6 +263,7 @@ final class Loader{
 	final CoderInterface<?> getCoder(final Class<?> type){
 		return coders.get(type);
 	}
+
 
 	final int findNextMessageIndex(final BitBuffer reader){
 		int minOffset = -1;

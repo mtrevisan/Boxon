@@ -43,7 +43,7 @@ class LoaderTest{
 
 		Assertions.assertFalse(loader.getInitialized());
 		List<Codec<?>> codecs = Collections.emptyList();
-		loader.init(codecs);
+		loader.loadCodecs(codecs);
 		Assertions.assertTrue(loader.getInitialized());
 	}
 
@@ -53,7 +53,7 @@ class LoaderTest{
 		loader.loadCoders();
 
 		Assertions.assertFalse(loader.getInitialized());
-		loader.init();
+		loader.loadCodecs();
 		Assertions.assertTrue(loader.getInitialized());
 	}
 
@@ -63,7 +63,7 @@ class LoaderTest{
 		loader.loadCoders();
 
 		Assertions.assertFalse(loader.getInitialized());
-		loader.init(LoaderTest.class);
+		loader.loadCodecs(LoaderTest.class);
 		Assertions.assertTrue(loader.getInitialized());
 	}
 
@@ -71,7 +71,7 @@ class LoaderTest{
 	void loadCodec(){
 		Loader loader = new Loader();
 		loader.loadCoders();
-		loader.init(LoaderTest.class);
+		loader.loadCodecs(LoaderTest.class);
 
 		byte[] payload = ByteHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		BitBuffer reader = BitBuffer.wrap(payload);
@@ -85,7 +85,7 @@ class LoaderTest{
 	void cannotLoadCodec(){
 		Loader loader = new Loader();
 		loader.loadCoders();
-		loader.init(LoaderTest.class);
+		loader.loadCodecs(LoaderTest.class);
 
 		byte[] payload = ByteHelper.toByteArray("3b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		BitBuffer reader = BitBuffer.wrap(payload);
@@ -98,7 +98,7 @@ class LoaderTest{
 	void findNextCodec(){
 		Loader loader = new Loader();
 		loader.loadCoders();
-		loader.init(LoaderTest.class);
+		loader.loadCodecs(LoaderTest.class);
 
 		byte[] payload = ByteHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		BitBuffer reader = BitBuffer.wrap(payload);
@@ -111,7 +111,7 @@ class LoaderTest{
 	void cannotFindNextCodec(){
 		Loader loader = new Loader();
 		loader.loadCoders();
-		loader.init(LoaderTest.class);
+		loader.loadCodecs(LoaderTest.class);
 
 		byte[] payload = ByteHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		BitBuffer reader = BitBuffer.wrap(payload);
