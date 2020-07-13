@@ -26,6 +26,7 @@ package unit731.boxon.helpers;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import unit731.boxon.coders.queclink.QueclinkHelper;
 
 
 class ByteHelperTest{
@@ -59,23 +60,6 @@ class ByteHelperTest{
 		Throwable exception = Assertions.assertThrows(IllegalArgumentException.class,
 			() -> Assertions.assertArrayEquals(new byte[]{0x23, 0x5e, 0x40, 0x03, 0x51, 0x10, 0x42, 0x06}, ByteHelper.toByteArray("235e40035110420")));
 		Assertions.assertEquals("Malformed input", exception.getMessage());
-	}
-
-	@Test
-	void applyMaskAndShift(){
-		byte value = (byte)ByteHelper.applyMaskAndShift(0x1B, 0x0E);
-
-		Assertions.assertEquals(0b0101, value);
-
-
-		value = (byte)ByteHelper.applyMaskAndShift(27, 0x18);
-
-		Assertions.assertEquals(0b0011, value);
-
-
-		value = (byte)ByteHelper.applyMaskAndShift(15, 0xFF);
-
-		Assertions.assertEquals(15, value);
 	}
 
 	@Test

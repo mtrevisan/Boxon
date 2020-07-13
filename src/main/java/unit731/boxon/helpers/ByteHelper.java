@@ -52,11 +52,11 @@ public final class ByteHelper{
 	 * @param source	The list in which to search for the first occurrence of {@code pattern}.
 	 * @param pattern	The list to search for as a subList of {@code source}.
 	 * @param offset	Offset to start the search from.
-	 * @param lps	LPS array precomputed by {@link #indexOfComputeLPS(byte[])}
+	 * @param failureTable	LPS array precomputed by {@link #indexOfComputeFailureTable(byte[])}
 	 * @return	The starting position of the first occurrence of the specified pattern list within the specified source list,
 	 * 	or {@code -1} if there is no such occurrence.
 	 */
-	public static int indexOf(final byte[] source, final byte[] pattern, final int offset, final int[] lps){
+	public static int indexOf(final byte[] source, final byte[] pattern, final int offset, final int[] failureTable){
 		//no candidate matched the pattern
 		int index = -1;
 
@@ -67,7 +67,7 @@ public final class ByteHelper{
 		//while there is more to search with, keep searching
 		while(searchPointer < source.length){
 			if(source[searchPointer] == pattern[targetPointer]){
-				//found current char in targetPointer in search string
+				//found current char in `targetPointer` in search string
 				targetPointer ++;
 				if(targetPointer == pattern.length){
 					//return starting index of found target inside searched string
@@ -79,10 +79,10 @@ public final class ByteHelper{
 				searchPointer ++;
 			}
 			else if(targetPointer > 0)
-				//use failureTable to use pointer pointed at nearest location of usable string prefix
-				targetPointer = lps[targetPointer - 1];
+				//use `failureTable` to use pointer pointed at nearest location of usable string prefix
+				targetPointer = failureTable[targetPointer - 1];
 			else
-				//targetPointer is pointing at state 0, so restart search with current searchPointer index
+				//`targetPointer` is pointing at state 0, so restart search with current searchPointer index
 				searchPointer ++;
 		}
 		return index;
@@ -94,27 +94,25 @@ public final class ByteHelper{
 	 * @param pattern	The list to search for as a subList of {@code source}.
 	 * @return	The array of LPS
 	 */
-	public static int[] indexOfComputeLPS(final byte[] pattern){
+	public static int[] indexOfComputeFailureTable(final byte[] pattern){
 		final int[] lps = new int[pattern.length];
-		lps[0] = 0;
 
 		int i = 1;
-		//length of the previous longest prefix suffix
+		//length of the previous Longest Prefix Suffix
 		int lengthPreviousLPS = 0;
-		//the loop calculates lps[i] for i = 1 to m-1
 		while(i < pattern.length){
 			if(pattern[i] == pattern[lengthPreviousLPS])
 				lps[i ++] = ++ lengthPreviousLPS;
-			//if lengthPreviousLPS isn't at the very beginning, then send lengthPreviousLPS backward by following the already set pointer to where it is pointing to
+			//if `lengthPreviousLPS` isn't at the very beginning, then send lengthPreviousLPS backward by following the already set pointer to where it is pointing to
 			else if(lengthPreviousLPS > 0)
 				lengthPreviousLPS = lps[lengthPreviousLPS - 1];
-			//lengthPreviousLPS has fallen all the way back to the beginning
+			//`lengthPreviousLPS` has fallen all the way back to the beginning
 			else
 				lps[i ++] = lengthPreviousLPS;
 		}
+
 		return lps;
 	}
-
 
 	/**
 	 * Converts an array of bytes into a string representing the hexadecimal values of each byte in order
@@ -125,7 +123,7 @@ public final class ByteHelper{
 	public static String toHexString(final byte[] array){
 		final StringBuffer sb = new StringBuffer(array.length << 1);
 		for(final byte b : array){
-			sb.append(Character.forDigit((b >> 4) & 0x0F, 16));
+			sb.append(Character.forDigit((b >>> 4) & 0x0F, 16));
 			sb.append(Character.forDigit((b & 0x0F), 16));
 		}
 		return sb.toString().toUpperCase();
@@ -148,42 +146,9 @@ public final class ByteHelper{
 		return data;
 	}
 
-
-	/**
-	 * Apply mask and shift right (<code>maskByte(27, 0x18) = 3</code>)
-	 *
-	 * @param value	The value to which to apply the mask and the right shift
-	 * @param mask	The mask
-	 * @return	The masked and shifter value
-	 */
-	public static long applyMaskAndShift(final long value, long mask){
-		final int ctz = Long.numberOfTrailingZeros(mask);
-		return ((value & mask) >>> ctz);
-	}
-
-	/**
-	 * Convert the value to signed primitive
-	 *
-	 * @param value	Field value
-	 * @param size	Length in bits of the field
-	 * @return	The 2-complement expressed as int
-	 */
-	public static int extendSign(final int value, final int size){
-		final int shift = -size;
-		return (value << shift) >> shift;
-	}
-
-	public static boolean hasBit(final byte mask, final int index){
-		if(index < 0 || index >= Byte.SIZE)
-			throw new IllegalArgumentException("Index value must be between 0 and " + (Byte.SIZE - 1) + " inclusive, was " + index);
-
-		return ((mask & (1 << (index % Byte.SIZE))) != 0);
-	}
-
 	public static long reverseBytes(final long value, final int size, final ByteOrder byteOrder){
 		return (byteOrder == ByteOrder.BIG_ENDIAN? (Long.reverseBytes(value) >> (Long.SIZE - size)): value);
 	}
-
 
 	public static long bitsToLong(final BitSet bits, final int size, final ByteOrder byteOrder){
 		final long value = bits.toLong(0, size);
@@ -257,6 +222,26 @@ public final class ByteHelper{
 			array[end] ^= array[start];
 			array[start] ^= array[end];
 		}
+	}
+
+
+	/**
+	 * Convert the value to signed primitive
+	 *
+	 * @param value	Field value
+	 * @param size	Length in bits of the field
+	 * @return	The 2-complement expressed as int
+	 */
+	public static int extendSign(final int value, final int size){
+		final int shift = -size;
+		return (value << shift) >> shift;
+	}
+
+	public static boolean hasBit(final byte mask, final int index){
+		if(index < 0 || index >= Byte.SIZE)
+			throw new IllegalArgumentException("Index value must be between 0 and " + (Byte.SIZE - 1) + " inclusive, was " + index);
+
+		return ((mask & (1 << (index % Byte.SIZE))) != 0);
 	}
 
 }

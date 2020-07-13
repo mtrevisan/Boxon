@@ -265,7 +265,7 @@ final class Loader{
 	}
 
 	private int searchNextSequence(final BitBuffer reader, final byte[] startMessageSequence){
-		final int[] boundarySequenceLps = ByteHelper.indexOfComputeLPS(startMessageSequence);
+		final int[] boundarySequenceLps = ByteHelper.indexOfComputeFailureTable(startMessageSequence);
 
 		final byte[] message = reader.array();
 		//search inside message:
