@@ -100,7 +100,7 @@ final class Evaluator{
 
 	static int evaluateSize(final String expression, final Object data){
 		int size = 0;
-		if(expression != null && !expression.trim().isBlank())
+		if(!expression.trim().isBlank())
 			size = (isPositiveInteger(expression)? Integer.parseInt(expression): evaluate(expression, int.class, data));
 		return size;
 	}
