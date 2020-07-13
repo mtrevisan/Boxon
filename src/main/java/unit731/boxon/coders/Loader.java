@@ -70,8 +70,13 @@ final class Loader{
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes
 	 */
-	synchronized final void init(final Class<?>... basePackageClasses){
+	synchronized final void init(Class<?>... basePackageClasses){
 		if(!initialized.get()){
+			//remove duplicates
+			basePackageClasses = Arrays.stream(basePackageClasses)
+				.distinct()
+				.toArray(Class[]::new);
+
 			LOGGER.info("Load parsing classes from package(s) {}",
 				Arrays.stream(basePackageClasses).map(Class::getPackageName).collect(Collectors.joining(", ", "[", "]")));
 
@@ -96,8 +101,13 @@ final class Loader{
 	 *
 	 * @param codecs	The list of codecs to be loaded
 	 */
-	synchronized final void init(final Collection<Codec<?>> codecs){
+	synchronized final void init(Collection<Codec<?>> codecs){
 		if(!initialized.get()){
+			//remove duplicates
+			codecs = codecs.stream()
+				.distinct()
+				.collect(Collectors.toList());
+
 			LOGGER.info("Load parsing classes from input");
 
 			loadCodecs(codecs);
@@ -255,9 +265,9 @@ final class Loader{
 		Class<?>[] classes = new Class[0];
 		try{
 			final StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-			final String callerClassName1 = stackTrace[2].getClassName();
-			final String callerClassName2 = stackTrace[3].getClassName();
-			classes = new Class[]{Class.forName(callerClassName1), Class.forName(callerClassName2)};
+			final Class<?> callerClass1 = Class.forName(stackTrace[2].getClassName());
+			final Class<?> callerClass2 = Class.forName(stackTrace[3].getClassName());
+			classes = new Class[]{callerClass1, callerClass2};
 		}
 		catch(final ClassNotFoundException ignored){}
 		return classes;
