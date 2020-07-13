@@ -61,120 +61,6 @@ final class Loader{
 
 	Loader(){}
 
-	/**
-	 * Loads all the protocol classes annotated with {@link MessageHeader}.
-	 * <p>This method should be called from a method inside a class that lies on a parent of all the protocol classes.</p>
-	 */
-	synchronized final void loadCodecs(){
-		loadCodecs(extractCallerClasses());
-	}
-
-	/**
-	 * Loads all the protocol classes annotated with {@link MessageHeader}.
-	 * <p>This method should be called before instantiating a {@link Parser}.</p>
-	 *
-	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes
-	 */
-	synchronized final void loadCodecs(Class<?>... basePackageClasses){
-		if(!initializedCoders.get())
-			throw new IllegalArgumentException("Coders must be initialized before Codecs!");
-
-		if(!initializedCodecs.get()){
-			//remove duplicates
-			basePackageClasses = Arrays.stream(basePackageClasses)
-				.filter(distinctByKey(Class::getPackageName))
-				.toArray(Class[]::new);
-
-			LOGGER.info("Load parsing classes from package(s) {}",
-				Arrays.stream(basePackageClasses).map(Class::getPackageName).collect(Collectors.joining(", ", "[", "]")));
-
-			final Collection<Class<?>> annotatedClasses = AnnotationHelper.extractClasses(MessageHeader.class, basePackageClasses);
-			final Collection<Codec<?>> codecs = new ArrayList<>(annotatedClasses.size());
-			for(final Class<?> type : annotatedClasses){
-				final Codec<?> codec = Codec.createFrom(type, this);
-				if(codec.canBeDecoded())
-					codecs.add(codec);
-			}
-			loadCodecsInner(codecs);
-
-			LOGGER.trace("Codecs loaded are {}", codecs.size());
-
-			initializedCodecs.set(true);
-		}
-	}
-
-	/**
-	 * Loads all the protocol classes annotated with {@link MessageHeader}.
-	 * <p>This method should be called before instantiating a {@link Parser}.</p>
-	 *
-	 * @param codecs	The list of codecs to be loaded
-	 */
-	synchronized final void loadCodecs(Collection<Codec<?>> codecs){
-		if(!initializedCoders.get())
-			throw new IllegalArgumentException("Coders must be initialized before Codecs!");
-
-		if(!initializedCodecs.get()){
-			//remove duplicates
-			codecs = codecs.stream()
-				.distinct()
-				.collect(Collectors.toList());
-
-			LOGGER.info("Load parsing classes from input");
-
-			loadCodecsInner(codecs);
-
-			LOGGER.trace("Codecs loaded are {}", codecs.size());
-
-			initializedCodecs.set(true);
-		}
-	}
-
-	synchronized final boolean getInitialized(){
-		return (initializedCoders.get() && initializedCodecs.get());
-	}
-
-	private void loadCodecsInner(final Collection<Codec<?>> codecs){
-		for(final Codec<?> codec : codecs){
-			try{
-				final MessageHeader header = codec.getHeader();
-				final Charset charset = Charset.forName(header.charset());
-				for(final String headerStart : header.start()){
-					//calculate key
-					final String key = ByteHelper.toHexString(headerStart.getBytes(charset));
-					if(this.codecs.containsKey(key))
-						throw new CodecException("Duplicate key `{}` found for class {}", headerStart, codec.getType().getSimpleName());
-
-					this.codecs.put(key, codec);
-				}
-			}
-			catch(final Exception e){
-				LOGGER.error("Cannot load class {}", codec.getType().getSimpleName(), e);
-			}
-		}
-	}
-
-	final Codec<?> getCodec(final BitBuffer reader){
-		final int index = reader.position();
-
-		Codec<?> codec = null;
-		for(final Map.Entry<String, Codec<?>> elem : codecs.entrySet()){
-			final String header = elem.getKey();
-
-			final byte[] codecHeader = ByteHelper.toByteArray(header);
-			final byte[] messageHeader = Arrays.copyOfRange(reader.array(), index, index + codecHeader.length);
-
-			//verify if it's a valid message header
-			if(Arrays.equals(messageHeader, codecHeader)){
-				codec = elem.getValue();
-				break;
-			}
-		}
-		if(codec == null)
-			throw new CodecException("Cannot find any codec for message");
-
-		return codec;
-	}
-
 
 	/**
 	 * Loads all the coders that extends {@link CoderInterface}.
@@ -262,6 +148,119 @@ final class Loader{
 
 	final CoderInterface<?> getCoder(final Class<?> type){
 		return coders.get(type);
+	}
+
+
+	/**
+	 * Loads all the protocol classes annotated with {@link MessageHeader}.
+	 * <p>This method should be called from a method inside a class that lies on a parent of all the protocol classes.</p>
+	 */
+	synchronized final void loadCodecs(){
+		loadCodecs(extractCallerClasses());
+	}
+
+	/**
+	 * Loads all the protocol classes annotated with {@link MessageHeader}.
+	 *
+	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes
+	 */
+	synchronized final void loadCodecs(Class<?>... basePackageClasses){
+		if(!initializedCoders.get())
+			throw new IllegalArgumentException("Coders must be initialized before Codecs!");
+
+		if(!initializedCodecs.get()){
+			//remove duplicates
+			basePackageClasses = Arrays.stream(basePackageClasses)
+				.filter(distinctByKey(Class::getPackageName))
+				.toArray(Class[]::new);
+
+			LOGGER.info("Load parsing classes from package(s) {}",
+				Arrays.stream(basePackageClasses).map(Class::getPackageName).collect(Collectors.joining(", ", "[", "]")));
+
+			final Collection<Class<?>> annotatedClasses = AnnotationHelper.extractClasses(MessageHeader.class, basePackageClasses);
+			final Collection<Codec<?>> codecs = new ArrayList<>(annotatedClasses.size());
+			for(final Class<?> type : annotatedClasses){
+				final Codec<?> codec = Codec.createFrom(type, this);
+				if(codec.canBeDecoded())
+					codecs.add(codec);
+			}
+			loadCodecsInner(codecs);
+
+			LOGGER.trace("Codecs loaded are {}", codecs.size());
+
+			initializedCodecs.set(true);
+		}
+	}
+
+	/**
+	 * Loads all the protocol classes annotated with {@link MessageHeader}.
+	 *
+	 * @param codecs	The list of codecs to be loaded
+	 */
+	synchronized final void loadCodecs(Collection<Codec<?>> codecs){
+		if(!initializedCoders.get())
+			throw new IllegalArgumentException("Coders must be initialized before Codecs!");
+
+		if(!initializedCodecs.get()){
+			//remove duplicates
+			codecs = codecs.stream()
+				.distinct()
+				.collect(Collectors.toList());
+
+			LOGGER.info("Load parsing classes from input");
+
+			loadCodecsInner(codecs);
+
+			LOGGER.trace("Codecs loaded are {}", codecs.size());
+
+			initializedCodecs.set(true);
+		}
+	}
+
+	synchronized final boolean getInitialized(){
+		return (initializedCoders.get() && initializedCodecs.get());
+	}
+
+	private void loadCodecsInner(final Collection<Codec<?>> codecs){
+		for(final Codec<?> codec : codecs){
+			try{
+				final MessageHeader header = codec.getHeader();
+				final Charset charset = Charset.forName(header.charset());
+				for(final String headerStart : header.start()){
+					//calculate key
+					final String key = ByteHelper.toHexString(headerStart.getBytes(charset));
+					if(this.codecs.containsKey(key))
+						throw new CodecException("Duplicate key `{}` found for class {}", headerStart, codec.getType().getSimpleName());
+
+					this.codecs.put(key, codec);
+				}
+			}
+			catch(final Exception e){
+				LOGGER.error("Cannot load class {}", codec.getType().getSimpleName(), e);
+			}
+		}
+	}
+
+	final Codec<?> getCodec(final BitBuffer reader){
+		final int index = reader.position();
+
+		Codec<?> codec = null;
+		for(final Map.Entry<String, Codec<?>> elem : codecs.entrySet()){
+			final String header = elem.getKey();
+
+			final byte[] codecHeader = ByteHelper.toByteArray(header);
+			final byte[] messageHeader = Arrays.copyOfRange(reader.array(), index, index + codecHeader.length);
+
+			//verify if it's a valid message header
+			if(Arrays.equals(messageHeader, codecHeader)){
+				codec = elem.getValue();
+				break;
+			}
+		}
+		if(codec == null)
+			throw new CodecException("Cannot find any codec for message");
+
+		return codec;
 	}
 
 

@@ -95,7 +95,9 @@ class ConverterTest{
 		Loader loader = new Loader();
 		loader.loadCoders();
 		Codec<TestConverter1> codec = Codec.createFrom(TestConverter1.class, loader);
-		Parser parser = new Parser(null, Collections.singletonList(codec));
+		Parser parser = Parser.createEmpty();
+		parser.loadCoders();
+		parser.loadCodecs(codec);
 
 		byte[] payload = ByteHelper.toByteArray("77633101");
 		ParseResponse result = parser.parse(payload);
@@ -115,7 +117,9 @@ class ConverterTest{
 		Loader loader = new Loader();
 		loader.loadCoders();
 		Codec<TestConverter2> codec = Codec.createFrom(TestConverter2.class, loader);
-		Parser parser = new Parser(null, Collections.singletonList(codec));
+		Parser parser = Parser.createEmpty();
+		parser.loadCoders();
+		parser.loadCodecs(codec);
 
 		byte[] payload = ByteHelper.toByteArray("77633201");
 		ParseResponse result = parser.parse(payload);
@@ -135,7 +139,9 @@ class ConverterTest{
 		Loader loader = new Loader();
 		loader.loadCoders();
 		Codec<TestConverter3> codec = Codec.createFrom(TestConverter3.class, loader);
-		Parser parser = new Parser(null, Collections.singletonList(codec));
+		Parser parser = Parser.createEmpty();
+		parser.loadCoders();
+		parser.loadCodecs(codec);
 
 		byte[] payload = ByteHelper.toByteArray("77633301");
 		ParseResponse result = parser.parse(payload);

@@ -799,10 +799,12 @@ All you have to care about, for a simple example on multi-message automatically-
 ```java
 //optionally create a context ('null' otherwise)
 Map<String, Object> context = ...
-//read all the annotated classes from where the parser resides and all of its children packages
-Parser parser = new Parser(context);
+//read all the coders and annotated classes from where the parser resides and all of its children packages
+Parser parser = Parser.createDefaultWithContext(context);
 //... or pass the parent package (see all the constructors of Parser for more)
-//Parser parser = new Parser(context, "base.package.messages");
+Parser parser = Parser.createEmptyWithContext(context);
+parser.loadCoders();
+parser.loadCodecs("base.package.messages");
 
 //parse the message
 byte[] payload = ...
@@ -825,8 +827,8 @@ or, if you want to pass your codecs by hand:
 //optionally create a context ('null' otherwise)
 Map<String, Object> context = ...
 Codec<Message> codec = Codec.createFrom(Message.class);
-List<Codec<?>> codecs = Collections.singletonList(codec);
-Parser parser = new Parser(context, codecs);
+Parser parser = Parser.createEmpty();
+parser.loadCodecs(codec);
 
 //parse the message
 byte[] payload = ...
