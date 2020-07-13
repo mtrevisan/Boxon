@@ -55,7 +55,8 @@ final class Loader{
 	private final Map<String, Codec<?>> codecs = new TreeMap<>(Comparator.comparingInt(String::length).reversed().thenComparing(String::compareTo));
 	private final Map<Class<?>, CoderInterface<?>> coders = new HashMap<>(0);
 
-	private final AtomicBoolean initialized = new AtomicBoolean(false);
+	private final AtomicBoolean initializedCoders = new AtomicBoolean(false);
+	private final AtomicBoolean initializedCodecs = new AtomicBoolean(false);
 
 
 	Loader(){}
@@ -75,7 +76,10 @@ final class Loader{
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes
 	 */
 	synchronized final void init(Class<?>... basePackageClasses){
-		if(!initialized.get()){
+		if(!initializedCoders.get())
+			throw new IllegalArgumentException("Coders must be initialized before Codecs!");
+
+		if(!initializedCodecs.get()){
 			//remove duplicates
 			basePackageClasses = Arrays.stream(basePackageClasses)
 				.filter(distinctByKey(Class::getPackageName))
@@ -87,7 +91,7 @@ final class Loader{
 			final Collection<Class<?>> annotatedClasses = AnnotationHelper.extractClasses(MessageHeader.class, basePackageClasses);
 			final Collection<Codec<?>> codecs = new ArrayList<>(annotatedClasses.size());
 			for(final Class<?> type : annotatedClasses){
-				final Codec<?> codec = Codec.createFrom(type);
+				final Codec<?> codec = Codec.createFrom(type, this);
 				if(codec.canBeDecoded())
 					codecs.add(codec);
 			}
@@ -95,7 +99,7 @@ final class Loader{
 
 			LOGGER.trace("Codecs loaded are {}", codecs.size());
 
-			initialized.set(true);
+			initializedCodecs.set(true);
 		}
 	}
 
@@ -106,7 +110,10 @@ final class Loader{
 	 * @param codecs	The list of codecs to be loaded
 	 */
 	synchronized final void init(Collection<Codec<?>> codecs){
-		if(!initialized.get()){
+		if(!initializedCoders.get())
+			throw new IllegalArgumentException("Coders must be initialized before Codecs!");
+
+		if(!initializedCodecs.get()){
 			//remove duplicates
 			codecs = codecs.stream()
 				.distinct()
@@ -118,12 +125,12 @@ final class Loader{
 
 			LOGGER.trace("Codecs loaded are {}", codecs.size());
 
-			initialized.set(true);
+			initializedCodecs.set(true);
 		}
 	}
 
-	synchronized final boolean isInitialized(){
-		return initialized.get();
+	synchronized final boolean getInitialized(){
+		return (initializedCoders.get() && initializedCodecs.get());
 	}
 
 	private void loadCodecs(final Collection<Codec<?>> codecs){
@@ -183,27 +190,31 @@ final class Loader{
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load coders
 	 */
 	final void loadCoders(Class<?>... basePackageClasses){
-		//remove duplicates
-		basePackageClasses = Arrays.stream(basePackageClasses)
-			.filter(distinctByKey(Class::getPackageName))
-			.toArray(Class[]::new);
+		if(!initializedCoders.get()){
+			//remove duplicates
+			basePackageClasses = Arrays.stream(basePackageClasses)
+				.filter(distinctByKey(Class::getPackageName))
+				.toArray(Class[]::new);
 
-		LOGGER.info("Load coders from package(s) {}",
-			Arrays.stream(basePackageClasses).map(Class::getPackageName).collect(Collectors.joining(", ", "[", "]")));
+			LOGGER.info("Load coders from package(s) {}",
+				Arrays.stream(basePackageClasses).map(Class::getPackageName).collect(Collectors.joining(", ", "[", "]")));
 
-		final Collection<Class<?>> derivedClasses = AnnotationHelper.extractClasses(CoderInterface.class, basePackageClasses);
-		final Collection<CoderInterface<?>> coders = new ArrayList<>(derivedClasses.size());
-		for(final Class<?> type : derivedClasses)
-			if(!type.isInterface()){
-				final CoderInterface<?> coder = (CoderInterface<?>)ReflectionHelper.getCreator(type)
-					.get();
-				if(coder != null)
-					coders.add(coder);
-			}
-		for(final CoderInterface<?> coder : coders)
-			addCoder(coder);
+			final Collection<Class<?>> derivedClasses = AnnotationHelper.extractClasses(CoderInterface.class, basePackageClasses);
+			final Collection<CoderInterface<?>> coders = new ArrayList<>(derivedClasses.size());
+			for(final Class<?> type : derivedClasses)
+				if(!type.isInterface()){
+					final CoderInterface<?> coder = (CoderInterface<?>)ReflectionHelper.getCreator(type)
+						.get();
+					if(coder != null)
+						coders.add(coder);
+				}
+			for(final CoderInterface<?> coder : coders)
+				addCoder(coder);
 
-		LOGGER.trace("Coders loaded are {}", coders.size());
+			LOGGER.trace("Coders loaded are {}", coders.size());
+
+			initializedCoders.set(true);
+		}
 	}
 
 	private static <T> Predicate<T> distinctByKey(final Function<? super T, ?> keyExtractor){
@@ -226,12 +237,16 @@ final class Loader{
 	 * @param coders	The list of coders to be loaded
 	 */
 	final void loadCoders(final CoderInterface<?>... coders){
-		LOGGER.info("Load coders from input");
+		if(!initializedCoders.get()){
+			LOGGER.info("Load coders from input");
 
-		for(final CoderInterface<?> coder : coders)
-			addCoder(coder);
+			for(final CoderInterface<?> coder : coders)
+				addCoder(coder);
 
-		LOGGER.trace("Coders loaded are {}", coders.length);
+			LOGGER.trace("Coders loaded are {}", coders.length);
+
+			initializedCoders.set(true);
+		}
 	}
 
 	/**
@@ -241,7 +256,7 @@ final class Loader{
 	 * @param coder	The coder to add
 	 * @return	The previous coder associated with {@link CoderInterface#coderType()}, or {@code null} if there was no previous coder.
 	 */
-	final CoderInterface<?> addCoder(final CoderInterface<?> coder){
+	private final CoderInterface<?> addCoder(final CoderInterface<?> coder){
 		return coders.put(coder.coderType(), coder);
 	}
 

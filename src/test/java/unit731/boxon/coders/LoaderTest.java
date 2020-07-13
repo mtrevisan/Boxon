@@ -39,34 +39,38 @@ class LoaderTest{
 	@Test
 	void loadFromMap(){
 		Loader loader = new Loader();
+		loader.loadCoders();
 
-		Assertions.assertFalse(loader.isInitialized());
+		Assertions.assertFalse(loader.getInitialized());
 		List<Codec<?>> codecs = Collections.emptyList();
 		loader.init(codecs);
-		Assertions.assertTrue(loader.isInitialized());
+		Assertions.assertTrue(loader.getInitialized());
 	}
 
 	@Test
 	void loadFromScan(){
 		Loader loader = new Loader();
+		loader.loadCoders();
 
-		Assertions.assertFalse(loader.isInitialized());
+		Assertions.assertFalse(loader.getInitialized());
 		loader.init();
-		Assertions.assertTrue(loader.isInitialized());
+		Assertions.assertTrue(loader.getInitialized());
 	}
 
 	@Test
 	void loadFromScanWithBasePackage(){
 		Loader loader = new Loader();
+		loader.loadCoders();
 
-		Assertions.assertFalse(loader.isInitialized());
+		Assertions.assertFalse(loader.getInitialized());
 		loader.init(LoaderTest.class);
-		Assertions.assertTrue(loader.isInitialized());
+		Assertions.assertTrue(loader.getInitialized());
 	}
 
 	@Test
 	void loadCodec(){
 		Loader loader = new Loader();
+		loader.loadCoders();
 		loader.init(LoaderTest.class);
 
 		byte[] payload = ByteHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
@@ -80,6 +84,7 @@ class LoaderTest{
 	@Test
 	void cannotLoadCodec(){
 		Loader loader = new Loader();
+		loader.loadCoders();
 		loader.init(LoaderTest.class);
 
 		byte[] payload = ByteHelper.toByteArray("3b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
@@ -92,6 +97,7 @@ class LoaderTest{
 	@Test
 	void findNextCodec(){
 		Loader loader = new Loader();
+		loader.loadCoders();
 		loader.init(LoaderTest.class);
 
 		byte[] payload = ByteHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
@@ -104,6 +110,7 @@ class LoaderTest{
 	@Test
 	void cannotFindNextCodec(){
 		Loader loader = new Loader();
+		loader.loadCoders();
 		loader.init(LoaderTest.class);
 
 		byte[] payload = ByteHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");

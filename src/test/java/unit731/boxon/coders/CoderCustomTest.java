@@ -77,7 +77,7 @@ class CoderCustomTest{
 	@Test
 	void customAnnotation(){
 		MessageParser messageParser = new MessageParser();
-		messageParser.loader.addCoder(new VariableLengthByteArray());
+		messageParser.loader.loadCoders(new VariableLengthByteArray());
 
 		CoderInterface coder = messageParser.loader.getCoder(VarLengthEncoded.class);
 		byte[] encodedValue = new byte[]{0x01, 0x02, 0x03};

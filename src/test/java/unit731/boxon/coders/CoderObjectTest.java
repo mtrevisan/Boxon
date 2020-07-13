@@ -163,7 +163,9 @@ class CoderObjectTest{
 
 	@Test
 	void choice1(){
-		Codec<TestChoice1> codec = Codec.createFrom(TestChoice1.class);
+		Loader loader = new Loader();
+		loader.loadCoders();
+		Codec<TestChoice1> codec = Codec.createFrom(TestChoice1.class, loader);
 		Parser parser = new Parser(null, Collections.singletonList(codec));
 
 		byte[] payload = ByteHelper.toByteArray("746331011234");
@@ -204,7 +206,9 @@ class CoderObjectTest{
 
 	@Test
 	void choice2(){
-		Codec<TestChoice2> codec = Codec.createFrom(TestChoice2.class);
+		Loader loader = new Loader();
+		loader.loadCoders();
+		Codec<TestChoice2> codec = Codec.createFrom(TestChoice2.class, loader);
 		Parser parser = new Parser(null, Collections.singletonList(codec));
 
 		byte[] payload = ByteHelper.toByteArray("7463320506001234");
@@ -245,7 +249,9 @@ class CoderObjectTest{
 
 	@Test
 	void choice3(){
-		Codec<TestChoice3> codec = Codec.createFrom(TestChoice3.class);
+		Loader loader = new Loader();
+		loader.loadCoders();
+		Codec<TestChoice3> codec = Codec.createFrom(TestChoice3.class, loader);
 		Parser parser = new Parser(null, Collections.singletonList(codec));
 
 		byte[] payload = ByteHelper.toByteArray("74633361611234");

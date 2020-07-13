@@ -774,6 +774,8 @@ This class can also accept a context.
 
 All the annotated classes are conveniently loaded using the `Loader.java` as is done automatically in the `Parser.java`.
 
+Note that all coders MUST BE loaded before the codecs that use them, as they are used to verifying the annotations. 
+
 If you want to provide your own classes you can use the appropriate constructor of `Parser`.
 
 <br/>

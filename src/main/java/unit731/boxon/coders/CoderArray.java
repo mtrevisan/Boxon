@@ -62,13 +62,13 @@ final class CoderArray implements CoderInterface<BindArray>{
 				final Choices.Choice chosenAlternative = CoderHelper.chooseAlternative(alternatives, prefix.intValue(), data);
 
 				//read object
-				final Codec<?> subCodec = Codec.createFrom(chosenAlternative.type());
+				final Codec<?> subCodec = Codec.createFrom(chosenAlternative.type(), messageParser.loader);
 
 				array[i] = messageParser.decode(subCodec, reader);
 			}
 		}
 		else{
-			final Codec<?> codec = Codec.createFrom(binding.type());
+			final Codec<?> codec = Codec.createFrom(binding.type(), messageParser.loader);
 
 			for(int i = 0; i < size; i ++)
 				array[i] = messageParser.decode(codec, reader);
@@ -99,12 +99,12 @@ final class CoderArray implements CoderInterface<BindArray>{
 				final Class<?> cls = array[i].getClass();
 				CoderHelper.writePrefix(writer, CoderHelper.chooseAlternative(alternatives, cls), selectFrom);
 
-				final Codec<?> codec = Codec.createFrom(cls);
+				final Codec<?> codec = Codec.createFrom(cls, messageParser.loader);
 
 				messageParser.encode(codec, array[i], writer);
 			}
 		else{
-			final Codec<?> codec = Codec.createFrom(binding.type());
+			final Codec<?> codec = Codec.createFrom(binding.type(), messageParser.loader);
 
 			for(int i = 0; i < size; i ++)
 				messageParser.encode(codec, array[i], writer);

@@ -43,7 +43,7 @@ class MessageParserTest{
 
 		MessageParser messageParser = new MessageParser();
 		messageParser.loader.loadCoders();
-		Codec<ACKMessageHex> codec = Codec.createFrom(ACKMessageHex.class);
+		Codec<ACKMessageHex> codec = Codec.createFrom(ACKMessageHex.class, messageParser.loader);
 
 		if(!codec.canBeDecoded())
 			Assertions.fail("Cannot decode message");
@@ -67,7 +67,7 @@ class MessageParserTest{
 
 		MessageParser messageParser = new MessageParser();
 		messageParser.loader.loadCoders();
-		Codec<ACKMessageASCII> codec = Codec.createFrom(ACKMessageASCII.class);
+		Codec<ACKMessageASCII> codec = Codec.createFrom(ACKMessageASCII.class, messageParser.loader);
 
 		if(!codec.canBeDecoded())
 			Assertions.fail("Cannot decode message");

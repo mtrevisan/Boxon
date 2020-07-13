@@ -58,8 +58,8 @@ public class Parser{
 	 * @param context	The context for the evaluator.
 	 */
 	public Parser(final Map<String, Object> context){
-		messageParser.loader.init();
 		loadCoders();
+		messageParser.loader.init();
 
 		copyContext(context);
 	}
@@ -75,8 +75,8 @@ public class Parser{
 		if(codecs.isEmpty())
 			throw new CodecException("Codecs cannot be empty");
 
-		messageParser.loader.init(codecs);
 		loadCoders();
+		messageParser.loader.init(codecs);
 
 		copyContext(context);
 	}
@@ -90,8 +90,8 @@ public class Parser{
 	public Parser(final Map<String, Object> context, final Class<?>... basePackageClasses){
 		Objects.requireNonNull(basePackageClasses, "Base package(s) not found");
 
-		messageParser.loader.init(basePackageClasses);
 		loadCoders();
+		messageParser.loader.init(basePackageClasses);
 
 		copyContext(context);
 	}
@@ -143,10 +143,9 @@ public class Parser{
 	 * <p>If the parser previously contained a coder for the given key, the old coder is replaced by the specified one.</p>
 	 *
 	 * @param coder	The coder to add
-	 * @return	The previous coder associated with {@link CoderInterface#coderType()}, or {@code null} if there was no previous coder.
 	 */
-	public final CoderInterface<?> addCoder(final CoderInterface<?> coder){
-		return messageParser.loader.addCoder(coder);
+	public final void addCoder(final CoderInterface<?> coder){
+		messageParser.loader.loadCoders(coder);
 	}
 
 
@@ -264,7 +263,7 @@ public class Parser{
 		final BitWriter writer = new BitWriter();
 		for(final Object elem : data){
 			try{
-				final Codec<?> codec = Codec.createFrom(elem.getClass());
+				final Codec<?> codec = Codec.createFrom(elem.getClass(), messageParser.loader);
 				if(!codec.canBeDecoded())
 					throw new CodecException("Cannot construct any codec for message");
 

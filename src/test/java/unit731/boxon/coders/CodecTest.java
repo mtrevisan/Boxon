@@ -169,7 +169,9 @@ class CodecTest{
 
 	@Test
 	void creation(){
-		Codec<Message> codec = Codec.createFrom(Message.class);
+		Loader loader = new Loader();
+		loader.loadCoders();
+		Codec<Message> codec = Codec.createFrom(Message.class, loader);
 
 		Assertions.assertNotNull(codec);
 		Assertions.assertEquals(Message.class, codec.getType());
@@ -236,7 +238,9 @@ class CodecTest{
 
 	@Test
 	void inheritance(){
-		Codec<MessageChild> codec = Codec.createFrom(MessageChild.class);
+		Loader loader = new Loader();
+		loader.loadCoders();
+		Codec<MessageChild> codec = Codec.createFrom(MessageChild.class, loader);
 
 		Assertions.assertNotNull(codec);
 		Assertions.assertEquals(MessageChild.class, codec.getType());

@@ -201,7 +201,9 @@ class CoderArrayTest{
 
 	@Test
 	void arrayOfDifferentObjects(){
-		Codec<TestChoice4> codec = Codec.createFrom(TestChoice4.class);
+		Loader loader = new Loader();
+		loader.loadCoders();
+		Codec<TestChoice4> codec = Codec.createFrom(TestChoice4.class, loader);
 		Parser parser = new Parser(null, Collections.singletonList(codec));
 
 		byte[] payload = ByteHelper.toByteArray("7463340112340211223344010666");

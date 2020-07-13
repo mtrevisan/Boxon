@@ -60,7 +60,7 @@ final class CoderObject implements CoderInterface<BindObject>{
 			type = chosenAlternative.type();
 		}
 
-		final Codec<?> codec = Codec.createFrom(type);
+		final Codec<?> codec = Codec.createFrom(type, messageParser.loader);
 
 		final Object instance = messageParser.decode(codec, reader);
 
@@ -89,7 +89,7 @@ final class CoderObject implements CoderInterface<BindObject>{
 			CoderHelper.writePrefix(writer, chosenAlternative, selectFrom);
 		}
 
-		final Codec<?> codec = Codec.createFrom(type);
+		final Codec<?> codec = Codec.createFrom(type, messageParser.loader);
 
 		final Object array = CoderHelper.converterEncode(binding.converter(), value);
 

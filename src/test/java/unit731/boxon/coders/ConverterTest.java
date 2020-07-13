@@ -92,7 +92,9 @@ class ConverterTest{
 
 	@Test
 	void wrongInputOnConverter(){
-		Codec<TestConverter1> codec = Codec.createFrom(TestConverter1.class);
+		Loader loader = new Loader();
+		loader.loadCoders();
+		Codec<TestConverter1> codec = Codec.createFrom(TestConverter1.class, loader);
 		Parser parser = new Parser(null, Collections.singletonList(codec));
 
 		byte[] payload = ByteHelper.toByteArray("77633101");
@@ -110,7 +112,9 @@ class ConverterTest{
 
 	@Test
 	void wrongOutputFromConverter(){
-		Codec<TestConverter2> codec = Codec.createFrom(TestConverter2.class);
+		Loader loader = new Loader();
+		loader.loadCoders();
+		Codec<TestConverter2> codec = Codec.createFrom(TestConverter2.class, loader);
 		Parser parser = new Parser(null, Collections.singletonList(codec));
 
 		byte[] payload = ByteHelper.toByteArray("77633201");
@@ -128,7 +132,9 @@ class ConverterTest{
 
 	@Test
 	void allowedOutputFromConverter(){
-		Codec<TestConverter3> codec = Codec.createFrom(TestConverter3.class);
+		Loader loader = new Loader();
+		loader.loadCoders();
+		Codec<TestConverter3> codec = Codec.createFrom(TestConverter3.class, loader);
 		Parser parser = new Parser(null, Collections.singletonList(codec));
 
 		byte[] payload = ByteHelper.toByteArray("77633301");
