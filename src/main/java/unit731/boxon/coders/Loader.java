@@ -39,8 +39,12 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 
@@ -74,7 +78,7 @@ final class Loader{
 		if(!initialized.get()){
 			//remove duplicates
 			basePackageClasses = Arrays.stream(basePackageClasses)
-				.distinct()
+				.filter(distinctByKey(Class::getPackageName))
 				.toArray(Class[]::new);
 
 			LOGGER.info("Load parsing classes from package(s) {}",
@@ -178,7 +182,12 @@ final class Loader{
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load coders
 	 */
-	final void loadCoders(final Class<?>... basePackageClasses){
+	final void loadCoders(Class<?>... basePackageClasses){
+		//remove duplicates
+		basePackageClasses = Arrays.stream(basePackageClasses)
+			.filter(distinctByKey(Class::getPackageName))
+			.toArray(Class[]::new);
+
 		LOGGER.info("Load coders from package(s) {}",
 			Arrays.stream(basePackageClasses).map(Class::getPackageName).collect(Collectors.joining(", ", "[", "]")));
 
@@ -195,6 +204,11 @@ final class Loader{
 			addCoder(coder);
 
 		LOGGER.trace("Coders loaded are {}", coders.size());
+	}
+
+	private static <T> Predicate<T> distinctByKey(final Function<? super T, ?> keyExtractor){
+		final Set<Object> seen = ConcurrentHashMap.newKeySet();
+		return t -> seen.add(keyExtractor.apply(t));
 	}
 
 	/**
