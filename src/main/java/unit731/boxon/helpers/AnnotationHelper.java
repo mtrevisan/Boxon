@@ -124,6 +124,7 @@ public final class AnnotationHelper{
 	 * @param libraryName The name of the library to load the classes from
 	 * @return The classes
 	 */
+	@SuppressWarnings("unchecked")
 	private static <T> Set<Class<?>> extractClassesFromLibrary(final T type, final String libraryName){
 		final Set<Class<?>> classes = new HashSet<>(0);
 
