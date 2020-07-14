@@ -47,50 +47,19 @@ public class Parser{
 	private final MessageParser messageParser = new MessageParser();
 
 
-	/** Create an empty parser (coders and codecs MUST BE manually loaded!). */
-	public static Parser createEmpty(){
+	/** Create an empty parser (context, coders and codecs MUST BE manually loaded!). */
+	public static Parser create(){
 		return new Parser();
-	}
-
-	/**
-	 * Create a parser with (optionally) a context (coders and codecs MUST BE manually loaded!).
-	 *
-	 * @param context	The context for the evaluator.
-	 */
-	public static Parser createEmptyWithContext(final Map<String, Object> context){
-		final Parser p = new Parser();
-		p.copyContext(context);
-		return p;
-	}
-
-	/** Create a parser loading all the coders and codecs from this package down. */
-	public static Parser createDefault(){
-		final Parser p = new Parser();
-		p.loadCoders();
-		p.loadCodecs();
-		return p;
-	}
-
-	/**
-	 * Create a parser with (optionally) a context, and loading all the codecs from this package down.
-	 *
-	 * @param context	The context for the evaluator.
-	 */
-	public static Parser createDefaultWithContext(final Map<String, Object> context){
-		final Parser p = new Parser();
-		p.copyContext(context);
-		p.loadCoders();
-		p.loadCodecs();
-		return p;
 	}
 
 
 	private Parser(){}
 
-	private void copyContext(final Map<String, Object> context){
+	public Parser withContext(final Map<String, Object> context){
 		if(context != null)
 			for(final Map.Entry<String, Object> elem : context.entrySet())
 				Evaluator.addToContext(elem.getKey(), elem.getValue());
+		return this;
 	}
 
 
@@ -98,8 +67,9 @@ public class Parser{
 	 * Loads all the coders that extends {@link CoderInterface}.
 	 * <p>This method should be called from a method inside a class that lies on a parent of all the coders.</p>
 	 */
-	public final void loadCoders(){
+	public final Parser withDefaultCoders(){
 		messageParser.loader.loadCoders();
+		return this;
 	}
 
 	/**
@@ -107,8 +77,9 @@ public class Parser{
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load coders
 	 */
-	public final void loadCoders(final Class<?>... basePackageClasses){
+	public final Parser withCoders(final Class<?>... basePackageClasses){
 		messageParser.loader.loadCoders(basePackageClasses);
+		return this;
 	}
 
 	/**
@@ -116,8 +87,9 @@ public class Parser{
 	 *
 	 * @param coders	The list of coders to be loaded
 	 */
-	public final void loadCoders(final Collection<CoderInterface<?>> coders){
+	public final Parser withCoders(final Collection<CoderInterface<?>> coders){
 		messageParser.loader.loadCoders(coders);
+		return this;
 	}
 
 	/**
@@ -125,8 +97,9 @@ public class Parser{
 	 *
 	 * @param coders	The list of coders to be loaded
 	 */
-	public final void loadCoders(final CoderInterface<?>... coders){
+	public final Parser withCoders(final CoderInterface<?>... coders){
 		messageParser.loader.loadCoders(coders);
+		return this;
 	}
 
 	/**
@@ -143,8 +116,9 @@ public class Parser{
 	/**
 	 * Loads all the protocol classes annotated with {@link MessageHeader}.
 	 */
-	public final void loadCodecs(){
+	public final Parser withDefaultCodecs(){
 		messageParser.loader.loadCodecs();
+		return this;
 	}
 
 	/**
@@ -152,8 +126,9 @@ public class Parser{
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes
 	 */
-	public final void loadCodecs(final Class<?>... basePackageClasses){
+	public final Parser withCodecs(final Class<?>... basePackageClasses){
 		messageParser.loader.loadCodecs(basePackageClasses);
+		return this;
 	}
 
 	/**
@@ -161,8 +136,9 @@ public class Parser{
 	 *
 	 * @param codecs	The list of codecs to be loaded
 	 */
-	public final void loadCodecs(final Collection<Codec<?>> codecs){
+	public final Parser withCodecs(final Collection<Codec<?>> codecs){
 		messageParser.loader.loadCodecs(codecs);
+		return this;
 	}
 
 	/**
@@ -170,8 +146,9 @@ public class Parser{
 	 *
 	 * @param codecs	The list of codecs to be loaded
 	 */
-	public final void loadCodecs(final Codec<?>... codecs){
+	public final Parser withCodecs(final Codec<?>... codecs){
 		messageParser.loader.loadCodecs(Arrays.asList(codecs));
+		return this;
 	}
 
 

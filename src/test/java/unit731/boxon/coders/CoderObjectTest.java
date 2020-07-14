@@ -44,7 +44,6 @@ import unit731.boxon.helpers.ByteHelper;
 import unit731.boxon.helpers.ReflectionHelper;
 
 import java.lang.annotation.Annotation;
-import java.util.Collections;
 import java.util.List;
 
 
@@ -166,9 +165,9 @@ class CoderObjectTest{
 		Loader loader = new Loader();
 		loader.loadCoders();
 		Codec<TestChoice1> codec = Codec.createFrom(TestChoice1.class, loader);
-		Parser parser = Parser.createEmpty();
-		parser.loadCoders();
-		parser.loadCodecs(codec);
+		Parser parser = Parser.create();
+		parser.withDefaultCoders();
+		parser.withCodecs(codec);
 
 		byte[] payload = ByteHelper.toByteArray("746331011234");
 		ParseResponse result = parser.parse(payload);
@@ -211,9 +210,9 @@ class CoderObjectTest{
 		Loader loader = new Loader();
 		loader.loadCoders();
 		Codec<TestChoice2> codec = Codec.createFrom(TestChoice2.class, loader);
-		Parser parser = Parser.createEmpty();
-		parser.loadCoders();
-		parser.loadCodecs(codec);
+		Parser parser = Parser.create();
+		parser.withDefaultCoders();
+		parser.withCodecs(codec);
 
 		byte[] payload = ByteHelper.toByteArray("7463320506001234");
 		ParseResponse result = parser.parse(payload);
@@ -256,9 +255,9 @@ class CoderObjectTest{
 		Loader loader = new Loader();
 		loader.loadCoders();
 		Codec<TestChoice3> codec = Codec.createFrom(TestChoice3.class, loader);
-		Parser parser = Parser.createEmpty();
-		parser.loadCoders();
-		parser.loadCodecs(codec);
+		Parser parser = Parser.create();
+		parser.withDefaultCoders();
+		parser.withCodecs(codec);
 
 		byte[] payload = ByteHelper.toByteArray("74633361611234");
 		ParseResponse result = parser.parse(payload);

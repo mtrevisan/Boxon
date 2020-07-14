@@ -35,7 +35,6 @@ import unit731.boxon.coders.exceptions.ParseException;
 import unit731.boxon.coders.dtos.ParseResponse;
 import unit731.boxon.helpers.ByteHelper;
 
-import java.util.Collections;
 import java.util.List;
 
 
@@ -95,9 +94,9 @@ class ConverterTest{
 		Loader loader = new Loader();
 		loader.loadCoders();
 		Codec<TestConverter1> codec = Codec.createFrom(TestConverter1.class, loader);
-		Parser parser = Parser.createEmpty();
-		parser.loadCoders();
-		parser.loadCodecs(codec);
+		Parser parser = Parser.create();
+		parser.withDefaultCoders();
+		parser.withCodecs(codec);
 
 		byte[] payload = ByteHelper.toByteArray("77633101");
 		ParseResponse result = parser.parse(payload);
@@ -117,9 +116,9 @@ class ConverterTest{
 		Loader loader = new Loader();
 		loader.loadCoders();
 		Codec<TestConverter2> codec = Codec.createFrom(TestConverter2.class, loader);
-		Parser parser = Parser.createEmpty();
-		parser.loadCoders();
-		parser.loadCodecs(codec);
+		Parser parser = Parser.create();
+		parser.withDefaultCoders();
+		parser.withCodecs(codec);
 
 		byte[] payload = ByteHelper.toByteArray("77633201");
 		ParseResponse result = parser.parse(payload);
@@ -139,9 +138,9 @@ class ConverterTest{
 		Loader loader = new Loader();
 		loader.loadCoders();
 		Codec<TestConverter3> codec = Codec.createFrom(TestConverter3.class, loader);
-		Parser parser = Parser.createEmpty();
-		parser.loadCoders();
-		parser.loadCodecs(codec);
+		Parser parser = Parser.create();
+		parser.withDefaultCoders();
+		parser.withCodecs(codec);
 
 		byte[] payload = ByteHelper.toByteArray("77633301");
 		ParseResponse result = parser.parse(payload);

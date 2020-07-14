@@ -744,9 +744,9 @@ class VariableLengthByteArray implements CoderInterface<VarLengthEncoded>{
 ```java
 //add the custom coder to the list of available coders
 //(use one of the lines below)
-parser.loadCoders(); //loads all coders from the package where this call was made
-parser.loadCoders(CoderCustomTest.class); //this class is where the custom coder resides
-parser.loadCoders(Arrays.asList(new VariableLengthByteArray()));
+parser.withDefaultCoders(); //loads all coders from the package where this call was made
+parser.withCoders(CoderCustomTest.class); //this class is where the custom coder resides
+parser.withCoders(Arrays.asList(new VariableLengthByteArray()));
 parser.addCoder(new VariableLengthByteArray()); //adds a single coder
 ```
 
@@ -802,9 +802,9 @@ Map<String, Object> context = ...
 //read all the coders and annotated classes from where the parser resides and all of its children packages
 Parser parser = Parser.createDefaultWithContext(context);
 //... or pass the parent package (see all the constructors of Parser for more)
-Parser parser = Parser.createEmptyWithContext(context);
-parser.loadCoders();
-parser.loadCodecs("base.package.messages");
+Parser parser = Parser.createWithContext(context)
+   .withDefaultCoders()
+   .withCodecs("base.package.messages");
 
 //parse the message
 byte[] payload = ...
@@ -827,8 +827,8 @@ or, if you want to pass your codecs by hand:
 //optionally create a context ('null' otherwise)
 Map<String, Object> context = ...
 Codec<Message> codec = Codec.createFrom(Message.class);
-Parser parser = Parser.createEmpty();
-parser.loadCodecs(codec);
+Parser parser = Parser.create()
+   .withCodecs(codec);
 
 //parse the message
 byte[] payload = ...

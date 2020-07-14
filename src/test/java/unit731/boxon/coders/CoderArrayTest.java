@@ -43,7 +43,6 @@ import unit731.boxon.helpers.ByteHelper;
 import unit731.boxon.helpers.ReflectionHelper;
 
 import java.lang.annotation.Annotation;
-import java.util.Collections;
 import java.util.List;
 
 
@@ -204,9 +203,9 @@ class CoderArrayTest{
 		Loader loader = new Loader();
 		loader.loadCoders();
 		Codec<TestChoice4> codec = Codec.createFrom(TestChoice4.class, loader);
-		Parser parser = Parser.createEmpty();
-		parser.loadCoders();
-		parser.loadCodecs(codec);
+		Parser parser = Parser.create();
+		parser.withDefaultCoders();
+		parser.withCodecs(codec);
 
 		byte[] payload = ByteHelper.toByteArray("7463340112340211223344010666");
 		ParseResponse result = parser.parse(payload);
