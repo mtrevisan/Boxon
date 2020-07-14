@@ -178,12 +178,10 @@ final class Loader{
 				Arrays.stream(basePackageClasses).map(Class::getPackageName).collect(Collectors.joining(", ", "[", "]")));
 
 			final Collection<Class<?>> annotatedClasses = AnnotationHelper.extractClasses(MessageHeader.class, basePackageClasses);
-			final Collection<ProtocolMessage<?>> protocolMessages = new ArrayList<>(annotatedClasses.size());
-			for(final Class<?> type : annotatedClasses){
-				final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(type, this);
-				if(protocolMessage.canBeDecoded())
-					protocolMessages.add(protocolMessage);
-			}
+			final Collection<ProtocolMessage<?>> protocolMessages = annotatedClasses.stream()
+				.map(type -> ProtocolMessage.createFrom(type, this))
+				.filter(ProtocolMessage::canBeDecoded)
+				.collect(Collectors.toList());
 			loadProtocolMessagesInner(protocolMessages);
 
 			LOGGER.trace("Protocol messages loaded are {}", protocolMessages.size());
