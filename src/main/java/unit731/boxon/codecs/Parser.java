@@ -55,6 +55,12 @@ public class Parser{
 
 	private Parser(){}
 
+	/**
+	 * Loads the context for the {@link Evaluator}.
+	 *
+	 * @param context	The context map.
+	 * @return	The {@link Parser}, used for chaining.
+	 */
 	public Parser withContext(final Map<String, Object> context){
 		if(context != null)
 			for(final Map.Entry<String, Object> elem : context.entrySet())
@@ -66,6 +72,8 @@ public class Parser{
 	/**
 	 * Loads all the codecs that extends {@link CodecInterface}.
 	 * <p>This method should be called from a method inside a class that lies on a parent of all the codecs.</p>
+	 *
+	 * @return	The {@link Parser}, used for chaining.
 	 */
 	public final Parser withDefaultCodecs(){
 		messageParser.loader.loadCodecs();
@@ -76,6 +84,7 @@ public class Parser{
 	 * Loads all the codecs that extends {@link CodecInterface}.
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load codecs
+	 * @return	The {@link Parser}, used for chaining.
 	 */
 	public final Parser withCodecs(final Class<?>... basePackageClasses){
 		messageParser.loader.loadCodecs(basePackageClasses);
@@ -86,6 +95,7 @@ public class Parser{
 	 * Loads all the codecs that extends {@link CodecInterface}.
 	 *
 	 * @param codecs	The list of codecs to be loaded
+	 * @return	The {@link Parser}, used for chaining.
 	 */
 	public final Parser withCodecs(final Collection<CodecInterface<?>> codecs){
 		messageParser.loader.loadCodecs(codecs);
@@ -96,6 +106,7 @@ public class Parser{
 	 * Loads all the codecs that extends {@link CodecInterface}.
 	 *
 	 * @param codecs	The list of codecs to be loaded
+	 * @return	The {@link Parser}, used for chaining.
 	 */
 	public final Parser withCodecs(final CodecInterface<?>... codecs){
 		messageParser.loader.loadCodecs(codecs);
@@ -107,14 +118,18 @@ public class Parser{
 	 * <p>If the parser previously contained a codec for the given key, the old codec is replaced by the specified one.</p>
 	 *
 	 * @param codec	The codec to add
+	 * @return	The {@link Parser}, used for chaining.
 	 */
-	public final void addCodec(final CodecInterface<?> codec){
+	public final Parser addCodec(final CodecInterface<?> codec){
 		messageParser.loader.loadCodecs(codec);
+		return this;
 	}
 
 
 	/**
 	 * Loads all the protocol classes annotated with {@link MessageHeader}.
+	 *
+	 * @return	The {@link Parser}, used for chaining.
 	 */
 	public final Parser withDefaultProtocolMessages(){
 		messageParser.loader.loadProtocolMessages();
@@ -125,6 +140,7 @@ public class Parser{
 	 * Loads all the protocol classes annotated with {@link MessageHeader}.
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes
+	 * @return	The {@link Parser}, used for chaining.
 	 */
 	public final Parser withProtocolMessages(final Class<?>... basePackageClasses){
 		messageParser.loader.loadProtocolMessages(basePackageClasses);
@@ -135,6 +151,7 @@ public class Parser{
 	 * Loads all the protocol classes annotated with {@link MessageHeader}.
 	 *
 	 * @param protocolMessages	The list of protocol messages to be loaded
+	 * @return	The {@link Parser}, used for chaining.
 	 */
 	public final Parser withProtocolMessages(final Collection<ProtocolMessage<?>> protocolMessages){
 		messageParser.loader.loadProtocolMessages(protocolMessages);
@@ -145,6 +162,7 @@ public class Parser{
 	 * Loads all the protocol classes annotated with {@link MessageHeader}.
 	 *
 	 * @param protocolMessages	The list of protocol messages to be loaded
+	 * @return	The {@link Parser}, used for chaining.
 	 */
 	public final Parser withProtocolMessages(final ProtocolMessage<?>... protocolMessages){
 		messageParser.loader.loadProtocolMessages(Arrays.asList(protocolMessages));
@@ -156,9 +174,11 @@ public class Parser{
 	 * Prints every read value.
 	 *
 	 * @param verbose	Whether to print every read value
+	 * @return	The {@link Parser}, used for chaining.
 	 */
-	public final void setVerbose(final boolean verbose){
+	public final Parser setVerbose(final boolean verbose){
 		messageParser.verbose.set(verbose);
+		return this;
 	}
 
 
