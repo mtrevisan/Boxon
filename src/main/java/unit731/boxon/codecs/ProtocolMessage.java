@@ -203,19 +203,21 @@ final class ProtocolMessage<T>{
 		if(checksum != null && this.checksum != null)
 			throw new AnnotationException("Cannot have more than one @{} annotations on class {}", BindChecksum.class.getSimpleName(), cls.getSimpleName());
 
-		if(!annotations.isEmpty()){
-			final Annotation annotation = annotations.get(0);
-			if(annotation instanceof BindArrayPrimitive)
-				validateAnnotation((BindArrayPrimitive)annotation);
-			else if(annotation instanceof BindArray)
-				validateAnnotation((BindArray)annotation);
-			else if(annotation instanceof BindObject)
-				validateAnnotation((BindObject)annotation);
-			else if(annotation instanceof BindDecimal)
-				validateAnnotation((BindDecimal)annotation);
-			else if(annotation instanceof BindChecksum)
-				validateAnnotation((BindChecksum)annotation);
-		}
+		if(!annotations.isEmpty())
+			validateAnnotation(annotations.get(0));
+	}
+
+	private void validateAnnotation(final Annotation annotation){
+		if(annotation instanceof BindArrayPrimitive)
+			validateAnnotation((BindArrayPrimitive)annotation);
+		else if(annotation instanceof BindArray)
+			validateAnnotation((BindArray)annotation);
+		else if(annotation instanceof BindObject)
+			validateAnnotation((BindObject)annotation);
+		else if(annotation instanceof BindDecimal)
+			validateAnnotation((BindDecimal)annotation);
+		else if(annotation instanceof BindChecksum)
+			validateAnnotation((BindChecksum)annotation);
 	}
 
 	private void validateAnnotation(final BindArrayPrimitive binding){
