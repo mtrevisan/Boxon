@@ -63,7 +63,7 @@ final class BitBuffer{
 	/** The backing {@link ByteBuffer} */
 	private final ByteBuffer buffer;
 
-	/** The <i>cache</i> used when writing and reading bits */
+	/** The <i>cache</i> used when reading bits */
 	private byte cache;
 	/** The number of bits available (to read) within {@code cache} */
 	private int remaining;
@@ -127,6 +127,7 @@ final class BitBuffer{
 		bitWriter.flush();
 		return wrap(bitWriter.array());
 	}
+
 
 	/**
 	 * A private constructor.

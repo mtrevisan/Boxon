@@ -43,10 +43,11 @@ final class BitWriter{
 
 	/** The backing {@link ByteArrayOutputStream} */
 	private final ByteArrayOutputStream os = new ByteArrayOutputStream(0);
+
+	/** The <i>cache</i> used when writing bits */
+	private byte cache;
 	/** The number of bits available (to write) within {@code cache} */
 	private int remaining;
-	/** The <i>cache</i> used when writing and reading bits */
-	private byte cache;
 
 
 	@SuppressWarnings("ConstantConditions")
