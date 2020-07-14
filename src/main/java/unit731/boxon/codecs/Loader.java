@@ -142,7 +142,7 @@ final class Loader{
 	 * @param codec	The codec to add
 	 * @return	The previous codec associated with {@link CodecInterface#codecType()}, or {@code null} if there was no previous codec.
 	 */
-	private final CodecInterface<?> addCodec(final CodecInterface<?> codec){
+	final CodecInterface<?> addCodec(final CodecInterface<?> codec){
 		return codecs.put(codec.codecType(), codec);
 	}
 
