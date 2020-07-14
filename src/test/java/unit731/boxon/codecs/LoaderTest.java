@@ -41,10 +41,9 @@ class LoaderTest{
 		Loader loader = new Loader();
 		loader.loadCodecs();
 
-		Assertions.assertFalse(loader.getInitialized());
+		Assertions.assertTrue(loader.getInitialized());
 		List<ProtocolMessage<?>> protocolMessages = Collections.emptyList();
 		loader.loadProtocolMessages(protocolMessages);
-		Assertions.assertTrue(loader.getInitialized());
 	}
 
 	@Test
@@ -52,9 +51,8 @@ class LoaderTest{
 		Loader loader = new Loader();
 		loader.loadCodecs();
 
-		Assertions.assertFalse(loader.getInitialized());
-		loader.loadProtocolMessages();
 		Assertions.assertTrue(loader.getInitialized());
+		loader.loadProtocolMessages();
 	}
 
 	@Test
@@ -62,9 +60,8 @@ class LoaderTest{
 		Loader loader = new Loader();
 		loader.loadCodecs();
 
-		Assertions.assertFalse(loader.getInitialized());
-		loader.loadProtocolMessages(LoaderTest.class);
 		Assertions.assertTrue(loader.getInitialized());
+		loader.loadProtocolMessages(LoaderTest.class);
 	}
 
 	@Test
