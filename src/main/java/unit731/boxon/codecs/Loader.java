@@ -89,13 +89,12 @@ final class Loader{
 
 			final Collection<Class<?>> derivedClasses = AnnotationHelper.extractClasses(CodecInterface.class, basePackageClasses);
 			final Collection<CodecInterface<?>> codecs = new ArrayList<>(derivedClasses.size());
-			for(final Class<?> type : derivedClasses)
-				if(!type.isInterface()){
-					final CodecInterface<?> codec = (CodecInterface<?>)ReflectionHelper.getCreator(type)
-						.get();
-					if(codec != null)
-						codecs.add(codec);
-				}
+			for(final Class<?> type : derivedClasses){
+				final CodecInterface<?> codec = (CodecInterface<?>)ReflectionHelper.getCreator(type)
+					.get();
+				if(codec != null)
+					codecs.add(codec);
+			}
 			for(final CodecInterface<?> codec : codecs)
 				addCodec(codec);
 

@@ -203,7 +203,7 @@ public final class AnnotationHelper{
 	}
 
 	private static <T> void addIf(final Collection<Class<?>> classes, final Class<?> cls, final Object type){
-		if(cls != null && (cls.isAnnotationPresent((Class<? extends Annotation>)type) || ((Class<?>)type).isAssignableFrom(cls)))
+		if(cls != null && !cls.isInterface() && (cls.isAnnotationPresent((Class<? extends Annotation>)type) || ((Class<?>)type).isAssignableFrom(cls)))
 			classes.add(cls);
 	}
 
