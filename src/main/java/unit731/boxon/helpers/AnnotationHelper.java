@@ -133,18 +133,24 @@ public final class AnnotationHelper{
 		final Enumeration<JarEntry> resources = jarFile.entries();
 		while(resources.hasMoreElements()){
 			final JarEntry resource = resources.nextElement();
-			final String resourceName = resource.getName();
-			if(!resource.isDirectory() && resourceName.endsWith(EXTENSION_CLASS)){
-				final String className = resourceName.substring(
-					(resourceName.startsWith(BOOT_INF_CLASSES)? BOOT_INF_CLASSES.length(): 0),
-					resourceName.length() - EXTENSION_CLASS.length());
-				final Class<?> cls = getClassFromName(uriToPackage(className));
-				if(cls.isAnnotationPresent((Class<? extends Annotation>)type) || ((Class<?>)type).isAssignableFrom(cls))
-					classes.add(cls);
-			}
+			final Class<?> cls = getClassFromResource(resource);
+			if(cls != null && (cls.isAnnotationPresent((Class<? extends Annotation>)type) || ((Class<?>)type).isAssignableFrom(cls)))
+				classes.add(cls);
 		}
 
 		return classes;
+	}
+
+	private static Class<?> getClassFromResource(final JarEntry resource){
+		Class<?> cls = null;
+		final String resourceName = resource.getName();
+		if(!resource.isDirectory() && resourceName.endsWith(EXTENSION_CLASS)){
+			final String className = resourceName.substring(
+				(resourceName.startsWith(BOOT_INF_CLASSES)? BOOT_INF_CLASSES.length(): 0),
+				resourceName.length() - EXTENSION_CLASS.length());
+			cls = getClassFromName(uriToPackage(className));
+		}
+		return cls;
 	}
 
 	private static String packageToUri(String packageName){
