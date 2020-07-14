@@ -55,26 +55,36 @@ final class Evaluator{
 		private static class SecurePropertyAccessor extends ReflectivePropertyAccessor{
 			@Override
 			protected Field findField(final String name, final Class<?> cls, final boolean mustBeStatic){
+				Field field = findInCurrentClass(name, cls, mustBeStatic);
+				if(field == null)
+					field = findInParentClass(name, cls, mustBeStatic);
+				if(field == null)
+					field = findInInterface(name, cls, mustBeStatic);
+				return field;
+			}
+
+			private Field findInCurrentClass(final String name, final Class<?> cls, final boolean mustBeStatic){
 				final Field[] fields = cls.getDeclaredFields();
-				//find in current class
 				for(final Field field : fields)
 					if(field.getName().equals(name) && (!mustBeStatic || Modifier.isStatic(field.getModifiers())))
 						return field;
+				return null;
+			}
 
-				//find in parent class
-				if(cls.getSuperclass() != null){
-					final Field field = findField(name, cls.getSuperclass(), mustBeStatic);
-					if(field != null)
-						return field;
-				}
+			private Field findInParentClass(final String name, Class<?> cls, final boolean mustBeStatic){
+				Field field = null;
+				cls = cls.getSuperclass();
+				if(cls != null)
+					field = findField(name, cls, mustBeStatic);
+				return field;
+			}
 
-				//find in interface
+			private Field findInInterface(final String name, final Class<?> cls, final boolean mustBeStatic){
 				for(final Class<?> type : cls.getInterfaces()){
 					final Field field = findField(name, type, mustBeStatic);
 					if(field != null)
 						return field;
 				}
-
 				return null;
 			}
 		}
