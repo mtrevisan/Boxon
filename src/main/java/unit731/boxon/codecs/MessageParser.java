@@ -62,7 +62,7 @@ final class MessageParser{
 		//parse message fields:
 		final List<ProtocolMessage.BoundedField> fields = protocolMessage.getBoundedFields();
 		for(final ProtocolMessage.BoundedField field : fields){
-			skipFields(field.getSkips(), reader, data);
+			readSkippedFields(field.getSkips(), reader, data);
 
 			if(skipFieldByCondition(field.getCondition(), data))
 				continue;
@@ -91,13 +91,13 @@ final class MessageParser{
 		return data;
 	}
 
-	private <T> void skipFields(final Skip[] skips, final BitBuffer reader, final T data){
+	private <T> void readSkippedFields(final Skip[] skips, final BitBuffer reader, final T data){
 		if(skips != null)
 			for(final Skip skip : skips)
-				skip(skip, reader, data);
+				readSkip(skip, reader, data);
 	}
 
-	private <T> void skip(final Skip skip, final BitBuffer reader, final T data){
+	private <T> void readSkip(final Skip skip, final BitBuffer reader, final T data){
 		final int size = Evaluator.evaluateSize(skip.size(), data);
 		if(size > 0)
 			/** skip {@link size} bits */
@@ -155,7 +155,7 @@ final class MessageParser{
 		//encode message's fields:
 		final List<ProtocolMessage.BoundedField> fields = protocolMessage.getBoundedFields();
 		for(final ProtocolMessage.BoundedField field : fields){
-			addSkippedFields(field.getSkips(), writer, data);
+			writeSkippedFields(field.getSkips(), writer, data);
 
 			if(skipFieldByCondition(field.getCondition(), data))
 				continue;
@@ -202,13 +202,13 @@ final class MessageParser{
 		throw new IllegalArgumentException(message + ", field " + protocolMessage + "." + field.getName());
 	}
 
-	private <T> void addSkippedFields(final Skip[] skips, final BitWriter writer, final T data){
+	private <T> void writeSkippedFields(final Skip[] skips, final BitWriter writer, final T data){
 		if(skips != null)
 			for(final Skip skip : skips)
-				addSkip(skip, writer, data);
+				writeSkip(skip, writer, data);
 	}
 
-	private <T> void addSkip(final Skip skip, final BitWriter writer, final T data){
+	private <T> void writeSkip(final Skip skip, final BitWriter writer, final T data){
 		final int size = Evaluator.evaluateSize(skip.size(), data);
 		if(size > 0)
 			/** skip {@link size} bits */
