@@ -51,7 +51,7 @@ import java.util.StringJoiner;
  *
  * @param <T> The type of object the coder is able to decode/encode.
  */
-final class Codec<T>{
+final class ProtocolMessage<T>{
 
 	/** Data associated to an annotated field */
 	static class BoundedField{
@@ -123,23 +123,23 @@ final class Codec<T>{
 	private final MessageHeader header;
 	private final List<BoundedField> boundedFields = new ArrayList<>(0);
 	private final List<EvaluatedField> evaluatedFields = new ArrayList<>(0);
-	/** necessary to speed-up the creation of a Codec (technically not needed because it's already present somewhere inside {@link #boundedFields}) */
+	/** necessary to speed-up the creation of a ProtocolMessage (technically not needed because it's already present somewhere inside {@link #boundedFields}) */
 	private BoundedField checksum;
 
 
 	/**
-	 * Constructs a new {@link Codec}.
+	 * Constructs a new {@link ProtocolMessage}.
 	 *
-	 * @param <T>	The type of the objects to be returned by the {@link Codec}.
-	 * @param type   The type of the objects to be returned by the {@link Codec}.
+	 * @param <T>	The type of the objects to be returned by the {@link ProtocolMessage}.
+	 * @param type   The type of the objects to be returned by the {@link ProtocolMessage}.
 	 * @param loader	The loader used to verify if a coder annotation is valid.
-	 * @return	A new {@link Codec} for the given type.
+	 * @return	A new {@link ProtocolMessage} for the given type.
 	 */
-	static <T> Codec<T> createFrom(final Class<T> type, final Loader loader){
-		return new Codec<>(type, loader);
+	static <T> ProtocolMessage<T> createFrom(final Class<T> type, final Loader loader){
+		return new ProtocolMessage<>(type, loader);
 	}
 
-	private Codec(final Class<T> cls, final Loader loader){
+	private ProtocolMessage(final Class<T> cls, final Loader loader){
 		Objects.requireNonNull(cls);
 		Objects.requireNonNull(loader);
 

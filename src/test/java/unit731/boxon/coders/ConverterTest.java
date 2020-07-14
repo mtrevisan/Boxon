@@ -93,10 +93,10 @@ class ConverterTest{
 	void wrongInputOnConverter(){
 		Loader loader = new Loader();
 		loader.loadCoders();
-		Codec<TestConverter1> codec = Codec.createFrom(TestConverter1.class, loader);
+		ProtocolMessage<TestConverter1> protocolMessage = ProtocolMessage.createFrom(TestConverter1.class, loader);
 		Parser parser = Parser.create();
 		parser.withDefaultCoders();
-		parser.withCodecs(codec);
+		parser.withProtocolMessages(protocolMessage);
 
 		byte[] payload = ByteHelper.toByteArray("77633101");
 		ParseResponse result = parser.parse(payload);
@@ -115,10 +115,10 @@ class ConverterTest{
 	void wrongOutputFromConverter(){
 		Loader loader = new Loader();
 		loader.loadCoders();
-		Codec<TestConverter2> codec = Codec.createFrom(TestConverter2.class, loader);
+		ProtocolMessage<TestConverter2> protocolMessage = ProtocolMessage.createFrom(TestConverter2.class, loader);
 		Parser parser = Parser.create();
 		parser.withDefaultCoders();
-		parser.withCodecs(codec);
+		parser.withProtocolMessages(protocolMessage);
 
 		byte[] payload = ByteHelper.toByteArray("77633201");
 		ParseResponse result = parser.parse(payload);
@@ -137,10 +137,10 @@ class ConverterTest{
 	void allowedOutputFromConverter(){
 		Loader loader = new Loader();
 		loader.loadCoders();
-		Codec<TestConverter3> codec = Codec.createFrom(TestConverter3.class, loader);
+		ProtocolMessage<TestConverter3> protocolMessage = ProtocolMessage.createFrom(TestConverter3.class, loader);
 		Parser parser = Parser.create();
 		parser.withDefaultCoders();
-		parser.withCodecs(codec);
+		parser.withProtocolMessages(protocolMessage);
 
 		byte[] payload = ByteHelper.toByteArray("77633301");
 		ParseResponse result = parser.parse(payload);

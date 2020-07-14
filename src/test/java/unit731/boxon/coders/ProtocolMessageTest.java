@@ -59,7 +59,7 @@ import java.util.List;
 import java.util.Map;
 
 
-class CodecTest{
+class ProtocolMessageTest{
 
 	private class Mask{
 
@@ -171,27 +171,27 @@ class CodecTest{
 	void creation(){
 		Loader loader = new Loader();
 		loader.loadCoders();
-		Codec<Message> codec = Codec.createFrom(Message.class, loader);
+		ProtocolMessage<Message> protocolMessage = ProtocolMessage.createFrom(Message.class, loader);
 
-		Assertions.assertNotNull(codec);
-		Assertions.assertEquals(Message.class, codec.getType());
-		MessageHeader header = codec.getHeader();
+		Assertions.assertNotNull(protocolMessage);
+		Assertions.assertEquals(Message.class, protocolMessage.getType());
+		MessageHeader header = protocolMessage.getHeader();
 		Assertions.assertNotNull(header);
 		Assertions.assertArrayEquals(new String[]{"+"}, header.start());
 		Assertions.assertEquals("-", header.end());
-		Assertions.assertTrue(codec.canBeDecoded());
-		List<Codec.BoundedField> boundedFields = codec.getBoundedFields();
+		Assertions.assertTrue(protocolMessage.canBeDecoded());
+		List<ProtocolMessage.BoundedField> boundedFields = protocolMessage.getBoundedFields();
 		Assertions.assertNotNull(boundedFields);
 		Assertions.assertEquals(15, boundedFields.size());
-		List<Codec.EvaluatedField> evaluatedFields = codec.getEvaluatedFields();
+		List<ProtocolMessage.EvaluatedField> evaluatedFields = protocolMessage.getEvaluatedFields();
 		Assertions.assertNotNull(evaluatedFields);
 		Assertions.assertEquals(1, evaluatedFields.size());
-		Codec.EvaluatedField evaluatedField = evaluatedFields.get(0);
+		ProtocolMessage.EvaluatedField evaluatedField = evaluatedFields.get(0);
 		Assertions.assertEquals("receptionTime", evaluatedField.getName());
 		Assertions.assertEquals(ZonedDateTime.class, evaluatedField.getType());
 		Evaluate evaluate = evaluatedField.getBinding();
 		Assertions.assertEquals("T(java.time.ZonedDateTime).now()", evaluate.value());
-		Codec.BoundedField checksumField = codec.getChecksum();
+		ProtocolMessage.BoundedField checksumField = protocolMessage.getChecksum();
 		Assertions.assertNotNull(checksumField);
 		Assertions.assertEquals("checksum", checksumField.getName());
 		Assertions.assertEquals(null, checksumField.getCondition());
@@ -240,19 +240,19 @@ class CodecTest{
 	void inheritance(){
 		Loader loader = new Loader();
 		loader.loadCoders();
-		Codec<MessageChild> codec = Codec.createFrom(MessageChild.class, loader);
+		ProtocolMessage<MessageChild> protocolMessage = ProtocolMessage.createFrom(MessageChild.class, loader);
 
-		Assertions.assertNotNull(codec);
-		Assertions.assertEquals(MessageChild.class, codec.getType());
-		MessageHeader header = codec.getHeader();
+		Assertions.assertNotNull(protocolMessage);
+		Assertions.assertEquals(MessageChild.class, protocolMessage.getType());
+		MessageHeader header = protocolMessage.getHeader();
 		Assertions.assertNotNull(header);
 		Assertions.assertArrayEquals(new String[]{"++"}, header.start());
 		Assertions.assertEquals("--", header.end());
-		Assertions.assertTrue(codec.canBeDecoded());
-		List<Codec.BoundedField> boundedFields = codec.getBoundedFields();
+		Assertions.assertTrue(protocolMessage.canBeDecoded());
+		List<ProtocolMessage.BoundedField> boundedFields = protocolMessage.getBoundedFields();
 		Assertions.assertNotNull(boundedFields);
 		Assertions.assertEquals(16, boundedFields.size());
-		Codec.BoundedField childField = boundedFields.get(boundedFields.size() - 1);
+		ProtocolMessage.BoundedField childField = boundedFields.get(boundedFields.size() - 1);
 		Assertions.assertNotNull(childField);
 		Assertions.assertEquals("anotherNumberInt", childField.getName());
 	}

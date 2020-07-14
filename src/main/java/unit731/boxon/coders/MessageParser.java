@@ -28,7 +28,7 @@ import unit731.boxon.annotations.BindChecksum;
 import unit731.boxon.annotations.MessageHeader;
 import unit731.boxon.annotations.Skip;
 import unit731.boxon.annotations.checksummers.Checksummer;
-import unit731.boxon.annotations.exceptions.CodecException;
+import unit731.boxon.annotations.exceptions.ProtocolMessageException;
 import unit731.boxon.helpers.BitSet;
 import unit731.boxon.helpers.ByteHelper;
 import unit731.boxon.helpers.ExceptionHelper;
@@ -53,15 +53,15 @@ final class MessageParser{
 	final Loader loader = new Loader();
 
 
-	final <T> T decode(final Codec<T> codec, final BitBuffer reader){
+	final <T> T decode(final ProtocolMessage<T> protocolMessage, final BitBuffer reader){
 		final int startPosition = reader.position();
 
-		final T data = ReflectionHelper.getCreator(codec.getType())
+		final T data = ReflectionHelper.getCreator(protocolMessage.getType())
 			.get();
 
 		//parse message fields:
-		final List<Codec.BoundedField> fields = codec.getBoundedFields();
-		for(final Codec.BoundedField field : fields){
+		final List<ProtocolMessage.BoundedField> fields = protocolMessage.getBoundedFields();
+		for(final ProtocolMessage.BoundedField field : fields){
 			skipFields(field.getSkips(), reader, data);
 
 			if(skipFieldByCondition(field.getCondition(), data))
@@ -78,15 +78,15 @@ final class MessageParser{
 					LOGGER.info("{}: {}", field.getName(), value);
 			}
 			catch(final Exception e){
-				manageCodecException(codec, field, e);
+				manageProtocolMessageException(protocolMessage, field, e);
 			}
 		}
 
-		processEvaluatedFields(codec, data);
+		processEvaluatedFields(protocolMessage, data);
 
-		readMessageTerminator(codec, reader);
+		readMessageTerminator(protocolMessage, reader);
 
-		verifyChecksum(codec, data, startPosition, reader);
+		verifyChecksum(protocolMessage, data, startPosition, reader);
 
 		return data;
 	}
@@ -111,8 +111,8 @@ final class MessageParser{
 		return (condition != null && !Evaluator.evaluate(condition, boolean.class, data));
 	}
 
-	private <T> void readMessageTerminator(final Codec<T> codec, final BitBuffer reader){
-		final MessageHeader header = codec.getHeader();
+	private <T> void readMessageTerminator(final ProtocolMessage<T> protocolMessage, final BitBuffer reader){
+		final MessageHeader header = protocolMessage.getHeader();
 		if(header != null && header.end().length() > 0){
 			final Charset charset = Charset.forName(header.charset());
 			final byte[] messageTerminator = header.end().getBytes(charset);
@@ -124,8 +124,8 @@ final class MessageParser{
 		}
 	}
 
-	private <T> void verifyChecksum(final Codec<T> codec, final T data, int startPosition, final BitBuffer reader){
-		final Codec.BoundedField checksumData = codec.getChecksum();
+	private <T> void verifyChecksum(final ProtocolMessage<T> protocolMessage, final T data, int startPosition, final BitBuffer reader){
+		final ProtocolMessage.BoundedField checksumData = protocolMessage.getChecksum();
 		if(checksumData != null){
 			final BindChecksum checksum = (BindChecksum)checksumData.getBinding();
 			startPosition += checksum.skipStart();
@@ -143,18 +143,18 @@ final class MessageParser{
 		}
 	}
 
-	private <T> void processEvaluatedFields(final Codec<T> codec, final T data){
-		final List<Codec.EvaluatedField> evaluatedFields = codec.getEvaluatedFields();
-		for(final Codec.EvaluatedField field : evaluatedFields){
+	private <T> void processEvaluatedFields(final ProtocolMessage<T> protocolMessage, final T data){
+		final List<ProtocolMessage.EvaluatedField> evaluatedFields = protocolMessage.getEvaluatedFields();
+		for(final ProtocolMessage.EvaluatedField field : evaluatedFields){
 			final Object value = Evaluator.evaluate(field.getBinding().value(), field.getType(), data);
 			ReflectionHelper.setFieldValue(data, field.getName(), value);
 		}
 	}
 
-	final <T> void encode(final Codec<?> codec, final T data, final BitWriter writer){
+	final <T> void encode(final ProtocolMessage<?> protocolMessage, final T data, final BitWriter writer){
 		//encode message's fields:
-		final List<Codec.BoundedField> fields = codec.getBoundedFields();
-		for(final Codec.BoundedField field : fields){
+		final List<ProtocolMessage.BoundedField> fields = protocolMessage.getBoundedFields();
+		for(final ProtocolMessage.BoundedField field : fields){
 			addSkippedFields(field.getSkips(), writer, data);
 
 			if(skipFieldByCondition(field.getCondition(), data))
@@ -168,11 +168,11 @@ final class MessageParser{
 				coder.encode(writer, binding, data, value);
 			}
 			catch(final Exception e){
-				manageCodecException(codec, field, e);
+				manageProtocolMessageException(protocolMessage, field, e);
 			}
 		}
 
-		final MessageHeader header = codec.getHeader();
+		final MessageHeader header = protocolMessage.getHeader();
 		if(header != null && header.end().length() > 0){
 			final Charset charset = Charset.forName(header.charset());
 			final byte[] messageTerminator = header.end().getBytes(charset);
@@ -184,7 +184,7 @@ final class MessageParser{
 	private CoderInterface<?> retrieveCoder(final Class<? extends Annotation> annotationType){
 		final CoderInterface<?> coder = loader.getCoder(annotationType);
 		if(coder == null)
-			throw new CodecException("Cannot find coder for binding @{}", annotationType.getSimpleName());
+			throw new ProtocolMessageException("Cannot find coder for binding @{}", annotationType.getSimpleName());
 
 		setMessageParser(coder);
 		return coder;
@@ -197,9 +197,9 @@ final class MessageParser{
 		catch(final Exception ignored){}
 	}
 
-	private void manageCodecException(final Codec<?> codec, final Codec.BoundedField field, final Exception e){
+	private void manageProtocolMessageException(final ProtocolMessage<?> protocolMessage, final ProtocolMessage.BoundedField field, final Exception e){
 		final String message = ExceptionHelper.getMessageNoLineNumber(e);
-		throw new IllegalArgumentException(message + ", field " + codec + "." + field.getName());
+		throw new IllegalArgumentException(message + ", field " + protocolMessage + "." + field.getName());
 	}
 
 	private <T> void addSkippedFields(final Skip[] skips, final BitWriter writer, final T data){

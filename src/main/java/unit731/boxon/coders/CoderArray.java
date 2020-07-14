@@ -62,16 +62,16 @@ final class CoderArray implements CoderInterface<BindArray>{
 				final Choices.Choice chosenAlternative = CoderHelper.chooseAlternative(alternatives, prefix.intValue(), data);
 
 				//read object
-				final Codec<?> subCodec = Codec.createFrom(chosenAlternative.type(), messageParser.loader);
+				final ProtocolMessage<?> subProtocolMessage = ProtocolMessage.createFrom(chosenAlternative.type(), messageParser.loader);
 
-				array[i] = messageParser.decode(subCodec, reader);
+				array[i] = messageParser.decode(subProtocolMessage, reader);
 			}
 		}
 		else{
-			final Codec<?> codec = Codec.createFrom(binding.type(), messageParser.loader);
+			final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(binding.type(), messageParser.loader);
 
 			for(int i = 0; i < size; i ++)
-				array[i] = messageParser.decode(codec, reader);
+				array[i] = messageParser.decode(protocolMessage, reader);
 		}
 
 		final Object value = CoderHelper.converterDecode(binding.converter(), array);
@@ -99,15 +99,15 @@ final class CoderArray implements CoderInterface<BindArray>{
 				final Class<?> cls = array[i].getClass();
 				CoderHelper.writePrefix(writer, CoderHelper.chooseAlternative(alternatives, cls), selectFrom);
 
-				final Codec<?> codec = Codec.createFrom(cls, messageParser.loader);
+				final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(cls, messageParser.loader);
 
-				messageParser.encode(codec, array[i], writer);
+				messageParser.encode(protocolMessage, array[i], writer);
 			}
 		else{
-			final Codec<?> codec = Codec.createFrom(binding.type(), messageParser.loader);
+			final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(binding.type(), messageParser.loader);
 
 			for(int i = 0; i < size; i ++)
-				messageParser.encode(codec, array[i], writer);
+				messageParser.encode(protocolMessage, array[i], writer);
 		}
 	}
 

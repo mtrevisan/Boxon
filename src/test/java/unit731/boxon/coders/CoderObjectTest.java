@@ -164,10 +164,10 @@ class CoderObjectTest{
 	void choice1(){
 		Loader loader = new Loader();
 		loader.loadCoders();
-		Codec<TestChoice1> codec = Codec.createFrom(TestChoice1.class, loader);
+		ProtocolMessage<TestChoice1> protocolMessage = ProtocolMessage.createFrom(TestChoice1.class, loader);
 		Parser parser = Parser.create();
 		parser.withDefaultCoders();
-		parser.withCodecs(codec);
+		parser.withProtocolMessages(protocolMessage);
 
 		byte[] payload = ByteHelper.toByteArray("746331011234");
 		ParseResponse result = parser.parse(payload);
@@ -209,10 +209,10 @@ class CoderObjectTest{
 	void choice2(){
 		Loader loader = new Loader();
 		loader.loadCoders();
-		Codec<TestChoice2> codec = Codec.createFrom(TestChoice2.class, loader);
+		ProtocolMessage<TestChoice2> protocolMessage = ProtocolMessage.createFrom(TestChoice2.class, loader);
 		Parser parser = Parser.create();
 		parser.withDefaultCoders();
-		parser.withCodecs(codec);
+		parser.withProtocolMessages(protocolMessage);
 
 		byte[] payload = ByteHelper.toByteArray("7463320506001234");
 		ParseResponse result = parser.parse(payload);
@@ -254,10 +254,10 @@ class CoderObjectTest{
 	void choice3(){
 		Loader loader = new Loader();
 		loader.loadCoders();
-		Codec<TestChoice3> codec = Codec.createFrom(TestChoice3.class, loader);
+		ProtocolMessage<TestChoice3> protocolMessage = ProtocolMessage.createFrom(TestChoice3.class, loader);
 		Parser parser = Parser.create();
 		parser.withDefaultCoders();
-		parser.withCodecs(codec);
+		parser.withProtocolMessages(protocolMessage);
 
 		byte[] payload = ByteHelper.toByteArray("74633361611234");
 		ParseResponse result = parser.parse(payload);

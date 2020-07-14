@@ -23,10 +23,10 @@ Boxon...
  - is easily extensible through the use of [converters](#how-to).
  - contains a minimal set of [annotations](#annotation-base) capable of handling all the primitive data.
  - contains a set of [special annotations](#annotation-special) that handles the various messages peculiarities (conditional bindings, skip bits/bytes, checksum, 'constant' assignments)
- - is capable of handle concatenation of messages, using the correct codec under the hood.
+ - is capable of handle concatenation of messages, using the correct protocolMessage under the hood.
  - can handle [SpEL expressions](https://docs.spring.io/spring/docs/4.3.10.RELEASE/spring-framework-reference/html/expressions.html) on certain fields, thus more powerful and simpler than [Limbo](http://limbo.sourceforge.net/apidocs/)<sup>[1](#footnote-1)</sup> (but less than [janino](https://github.com/janino-compiler/janino), that has other problems).
  - can do decode and encode data on the fly with a single annotated class (thus avoiding separate decoder and encoder going out-of-sync).
- - has codecs that are not complex: they do not call each other uselessly complicating the structure (apart, necessarily, for `@BindArray`), no complicated chains of factories: it's just a parser that works.
+ - has protocolMessages that are not complex: they do not call each other uselessly complicating the structure (apart, necessarily, for `@BindArray`), no complicated chains of factories: it's just a parser that works.
  - supports [SLF4J](http://www.slf4j.org/).
  - hides the complexities of encoding and decoding, thus simplifying the changes to be made to the code due to frequent protocol changes.
 
@@ -763,7 +763,7 @@ Messages can be concatenated, and the `Parser.java` class manages them, returnin
 
 <br/>
 
-Each annotated class is processed by `Codec.class`, that is later retrieved by `Parser.java` depending on the starting header.
+Each annotated class is processed by `ProtocolMessage.class`, that is later retrieved by `Parser.java` depending on the starting header.
 For that reason each starting header defined into `MessageHeader` annotation SHOULD BE unique.
 
 All the SpEL expressions are evaluated by `Evaluator.java`.
@@ -774,7 +774,7 @@ This class can also accept a context.
 
 All the annotated classes are conveniently loaded using the `Loader.java` as is done automatically in the `Parser.java`.
 
-Note that all coders MUST BE loaded before the codecs that use them, as they are used to verifying the annotations. 
+Note that all coders MUST BE loaded before the protocolMessages that use them, as they are used to verifying the annotations. 
 
 If you want to provide your own classes you can use the appropriate constructor of `Parser`.
 
@@ -795,7 +795,7 @@ The `Parser` is also used to encode a message.
 <a name="example-multi"></a>
 ### Multi-message parser
 
-All you have to care about, for a simple example on multi-message automatically-loaded codecs, is the `Parser`.
+All you have to care about, for a simple example on multi-message automatically-loaded protocolMessages, is the `Parser`.
 ```java
 //optionally create a context ('null' otherwise)
 Map<String, Object> context = ...
@@ -804,7 +804,7 @@ Parser parser = Parser.createDefaultWithContext(context);
 //... or pass the parent package (see all the constructors of Parser for more)
 Parser parser = Parser.createWithContext(context)
    .withDefaultCoders()
-   .withCodecs("base.package.messages");
+   .withProtocolMessages("base.package.messages");
 
 //parse the message
 byte[] payload = ...
@@ -822,13 +822,13 @@ else{
 }
 ```
 
-or, if you want to pass your codecs by hand:
+or, if you want to pass your protocolMessages by hand:
 ```java
 //optionally create a context ('null' otherwise)
 Map<String, Object> context = ...
-Codec<Message> codec = Codec.createFrom(Message.class);
+ProtocolMessage<Message> protocolMessage = ProtocolMessage.createFrom(Message.class);
 Parser parser = Parser.create()
-   .withCodecs(codec);
+   .withProtocolMessages(protocolMessage);
 
 //parse the message
 byte[] payload = ...

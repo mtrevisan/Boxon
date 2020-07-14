@@ -81,7 +81,7 @@ public final class AnnotationHelper{
 	 * @return	The classes
 	 */
 	public static <T> Collection<Class<?>> extractClasses(final T type, final Class<?>... basePackageClasses){
-		final Set<Class<?>> codecs = new HashSet<>(0);
+		final Set<Class<?>> classes = new HashSet<>(0);
 
 		final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		for(final Class<?> basePackageClass : basePackageClasses){
@@ -89,7 +89,7 @@ public final class AnnotationHelper{
 				final String basePackageName = basePackageClass.getName().substring(0, basePackageClass.getName().lastIndexOf('.'));
 				final String path = basePackageName.replace('.', '/');
 				final Enumeration<URL> resources = classLoader.getResources(path);
-				codecs.addAll(extractClasses(resources, type, basePackageName));
+				classes.addAll(extractClasses(resources, type, basePackageName));
 			}
 			catch(final NoSuchFileException e){
 				LOGGER.error("Are you sure you are not running this library from a OneDrive folder?", e);
@@ -97,25 +97,25 @@ public final class AnnotationHelper{
 			catch(final IOException ignored){}
 		}
 
-		return codecs;
+		return classes;
 	}
 
 	private static <T> Collection<Class<?>> extractClasses(final Enumeration<URL> resources, final T type, final String basePackageName){
-		final Set<Class<?>> codecs = new HashSet<>(0);
+		final Set<Class<?>> classes = new HashSet<>(0);
 		while(resources.hasMoreElements()){
 			final URL resource = resources.nextElement();
 			final String directory = resource.getFile();
 			final int exclamationMarkIndex = directory.indexOf('!');
-			final Set<Class<?>> classes;
+			final Set<Class<?>> subClasses;
 			if(exclamationMarkIndex >= 0){
 				final String libraryName = directory.substring(SCHEMA_FILE.length(), exclamationMarkIndex);
-				classes = extractClassesFromLibrary(type, libraryName);
+				subClasses = extractClassesFromLibrary(type, libraryName);
 			}
 			else
-				classes = extractClasses(type, new File(directory), basePackageName);
-			codecs.addAll(classes);
+				subClasses = extractClasses(type, new File(directory), basePackageName);
+			classes.addAll(subClasses);
 		}
-		return codecs;
+		return classes;
 	}
 
 	/**

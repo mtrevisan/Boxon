@@ -24,7 +24,7 @@
  */
 package unit731.boxon.coders;
 
-import unit731.boxon.annotations.exceptions.CodecException;
+import unit731.boxon.annotations.exceptions.ProtocolMessageException;
 import unit731.boxon.coders.queclink.ACKMessageHex;
 import unit731.boxon.helpers.ByteHelper;
 import org.junit.jupiter.api.Assertions;
@@ -42,8 +42,8 @@ class LoaderTest{
 		loader.loadCoders();
 
 		Assertions.assertFalse(loader.getInitialized());
-		List<Codec<?>> codecs = Collections.emptyList();
-		loader.loadCodecs(codecs);
+		List<ProtocolMessage<?>> protocolMessages = Collections.emptyList();
+		loader.loadProtocolMessages(protocolMessages);
 		Assertions.assertTrue(loader.getInitialized());
 	}
 
@@ -53,7 +53,7 @@ class LoaderTest{
 		loader.loadCoders();
 
 		Assertions.assertFalse(loader.getInitialized());
-		loader.loadCodecs();
+		loader.loadProtocolMessages();
 		Assertions.assertTrue(loader.getInitialized());
 	}
 
@@ -63,42 +63,42 @@ class LoaderTest{
 		loader.loadCoders();
 
 		Assertions.assertFalse(loader.getInitialized());
-		loader.loadCodecs(LoaderTest.class);
+		loader.loadProtocolMessages(LoaderTest.class);
 		Assertions.assertTrue(loader.getInitialized());
 	}
 
 	@Test
-	void loadCodec(){
+	void loadProtocolMessage(){
 		Loader loader = new Loader();
 		loader.loadCoders();
-		loader.loadCodecs(LoaderTest.class);
+		loader.loadProtocolMessages(LoaderTest.class);
 
 		byte[] payload = ByteHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		BitBuffer reader = BitBuffer.wrap(payload);
-		Codec<?> codec = loader.getCodec(reader);
+		ProtocolMessage<?> protocolMessage = loader.getProtocolMessage(reader);
 
-		Assertions.assertNotNull(codec);
-		Assertions.assertEquals(ACKMessageHex.class, codec.getType());
+		Assertions.assertNotNull(protocolMessage);
+		Assertions.assertEquals(ACKMessageHex.class, protocolMessage.getType());
 	}
 
 	@Test
-	void cannotLoadCodec(){
+	void cannotLoadProtocolMessage(){
 		Loader loader = new Loader();
 		loader.loadCoders();
-		loader.loadCodecs(LoaderTest.class);
+		loader.loadProtocolMessages(LoaderTest.class);
 
 		byte[] payload = ByteHelper.toByteArray("3b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		BitBuffer reader = BitBuffer.wrap(payload);
-		Assertions.assertThrows(CodecException.class, () -> {
-			loader.getCodec(reader);
+		Assertions.assertThrows(ProtocolMessageException.class, () -> {
+			loader.getProtocolMessage(reader);
 		});
 	}
 
 	@Test
-	void findNextCodec(){
+	void findNextProtocolMessage(){
 		Loader loader = new Loader();
 		loader.loadCoders();
-		loader.loadCodecs(LoaderTest.class);
+		loader.loadProtocolMessages(LoaderTest.class);
 
 		byte[] payload = ByteHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		BitBuffer reader = BitBuffer.wrap(payload);
@@ -108,10 +108,10 @@ class LoaderTest{
 	}
 
 	@Test
-	void cannotFindNextCodec(){
+	void cannotFindNextProtocolMessage(){
 		Loader loader = new Loader();
 		loader.loadCoders();
-		loader.loadCodecs(LoaderTest.class);
+		loader.loadProtocolMessages(LoaderTest.class);
 
 		byte[] payload = ByteHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		BitBuffer reader = BitBuffer.wrap(payload);

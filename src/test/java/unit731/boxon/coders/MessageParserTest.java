@@ -43,18 +43,18 @@ class MessageParserTest{
 
 		MessageParser messageParser = new MessageParser();
 		messageParser.loader.loadCoders();
-		Codec<ACKMessageHex> codec = Codec.createFrom(ACKMessageHex.class, messageParser.loader);
+		ProtocolMessage<ACKMessageHex> protocolMessage = ProtocolMessage.createFrom(ACKMessageHex.class, messageParser.loader);
 
-		if(!codec.canBeDecoded())
+		if(!protocolMessage.canBeDecoded())
 			Assertions.fail("Cannot decode message");
 
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
 		Evaluator.addToContext("deviceTypes", deviceTypes);
-		ACKMessageHex message = messageParser.decode(codec, reader);
+		ACKMessageHex message = messageParser.decode(protocolMessage, reader);
 
 		BitWriter writer = new BitWriter();
-		messageParser.encode(codec, message, writer);
+		messageParser.encode(protocolMessage, message, writer);
 		byte[] reconstructedMessage = writer.array();
 
 		Assertions.assertArrayEquals(payload, reconstructedMessage);
@@ -67,18 +67,18 @@ class MessageParserTest{
 
 		MessageParser messageParser = new MessageParser();
 		messageParser.loader.loadCoders();
-		Codec<ACKMessageASCII> codec = Codec.createFrom(ACKMessageASCII.class, messageParser.loader);
+		ProtocolMessage<ACKMessageASCII> protocolMessage = ProtocolMessage.createFrom(ACKMessageASCII.class, messageParser.loader);
 
-		if(!codec.canBeDecoded())
+		if(!protocolMessage.canBeDecoded())
 			Assertions.fail("Cannot decode message");
 
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GV350M", (byte)0xCF);
 		Evaluator.addToContext("deviceTypes", deviceTypes);
-		ACKMessageASCII message = messageParser.decode(codec, reader);
+		ACKMessageASCII message = messageParser.decode(protocolMessage, reader);
 
 		BitWriter writer = new BitWriter();
-		messageParser.encode(codec, message, writer);
+		messageParser.encode(protocolMessage, message, writer);
 		byte[] reconstructedMessage = writer.array();
 
 		Assertions.assertArrayEquals(payload, reconstructedMessage);

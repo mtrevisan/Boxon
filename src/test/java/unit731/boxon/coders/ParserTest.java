@@ -48,7 +48,7 @@ class ParserTest{
 		Parser parser = Parser.create()
 			.withContext(context)
 			.withDefaultCoders()
-			.withDefaultCodecs();
+			.withDefaultProtocolMessages();
 
 		//parse:
 		byte[] payload = ByteHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
@@ -72,7 +72,7 @@ class ParserTest{
 		Parser parser = Parser.create()
 			.withContext(context)
 			.withDefaultCoders()
-			.withDefaultCodecs();
+			.withDefaultProtocolMessages();
 
 		byte[] payload = ByteHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		ParseResponse result = parser.parse(payload);
@@ -89,7 +89,7 @@ class ParserTest{
 		Parser parser = Parser.create()
 			.withContext(context)
 			.withDefaultCoders()
-			.withDefaultCodecs();
+			.withDefaultProtocolMessages();
 
 		//parse:
 		byte[] payload = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
@@ -113,7 +113,7 @@ class ParserTest{
 		Parser parser = Parser.create()
 			.withContext(context)
 			.withDefaultCoders()
-			.withDefaultCodecs();
+			.withDefaultProtocolMessages();
 
 		byte[] payload = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
 		ParseResponse result = parser.parse(payload);
@@ -131,7 +131,7 @@ class ParserTest{
 		Parser parser = Parser.create()
 			.withContext(context)
 			.withDefaultCoders()
-			.withDefaultCodecs();
+			.withDefaultProtocolMessages();
 
 		byte[] payload1 = ByteHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		byte[] payload2 = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
@@ -151,7 +151,7 @@ class ParserTest{
 		Parser parser = Parser.create()
 			.withContext(context)
 			.withDefaultCoders()
-			.withDefaultCodecs();
+			.withDefaultProtocolMessages();
 
 		byte[] payload1 = ByteHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		byte[] payload2 = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);

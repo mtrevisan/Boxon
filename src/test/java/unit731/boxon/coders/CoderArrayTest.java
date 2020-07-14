@@ -202,10 +202,10 @@ class CoderArrayTest{
 	void arrayOfDifferentObjects(){
 		Loader loader = new Loader();
 		loader.loadCoders();
-		Codec<TestChoice4> codec = Codec.createFrom(TestChoice4.class, loader);
+		ProtocolMessage<TestChoice4> protocolMessage = ProtocolMessage.createFrom(TestChoice4.class, loader);
 		Parser parser = Parser.create();
 		parser.withDefaultCoders();
-		parser.withCodecs(codec);
+		parser.withProtocolMessages(protocolMessage);
 
 		byte[] payload = ByteHelper.toByteArray("7463340112340211223344010666");
 		ParseResponse result = parser.parse(payload);

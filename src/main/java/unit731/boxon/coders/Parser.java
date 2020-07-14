@@ -25,7 +25,7 @@
 package unit731.boxon.coders;
 
 import unit731.boxon.annotations.MessageHeader;
-import unit731.boxon.annotations.exceptions.CodecException;
+import unit731.boxon.annotations.exceptions.ProtocolMessageException;
 import unit731.boxon.coders.exceptions.ComposeException;
 import unit731.boxon.coders.dtos.ComposeResponse;
 import unit731.boxon.coders.exceptions.ParseException;
@@ -47,7 +47,7 @@ public class Parser{
 	private final MessageParser messageParser = new MessageParser();
 
 
-	/** Create an empty parser (context, coders and codecs MUST BE manually loaded!). */
+	/** Create an empty parser (context, coders and protocol messages MUST BE manually loaded!). */
 	public static Parser create(){
 		return new Parser();
 	}
@@ -116,8 +116,8 @@ public class Parser{
 	/**
 	 * Loads all the protocol classes annotated with {@link MessageHeader}.
 	 */
-	public final Parser withDefaultCodecs(){
-		messageParser.loader.loadCodecs();
+	public final Parser withDefaultProtocolMessages(){
+		messageParser.loader.loadProtocolMessages();
 		return this;
 	}
 
@@ -126,28 +126,28 @@ public class Parser{
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes
 	 */
-	public final Parser withCodecs(final Class<?>... basePackageClasses){
-		messageParser.loader.loadCodecs(basePackageClasses);
+	public final Parser withProtocolMessages(final Class<?>... basePackageClasses){
+		messageParser.loader.loadProtocolMessages(basePackageClasses);
 		return this;
 	}
 
 	/**
 	 * Loads all the protocol classes annotated with {@link MessageHeader}.
 	 *
-	 * @param codecs	The list of codecs to be loaded
+	 * @param protocolMessages	The list of protocol messages to be loaded
 	 */
-	public final Parser withCodecs(final Collection<Codec<?>> codecs){
-		messageParser.loader.loadCodecs(codecs);
+	public final Parser withProtocolMessages(final Collection<ProtocolMessage<?>> protocolMessages){
+		messageParser.loader.loadProtocolMessages(protocolMessages);
 		return this;
 	}
 
 	/**
 	 * Loads all the protocol classes annotated with {@link MessageHeader}.
 	 *
-	 * @param codecs	The list of codecs to be loaded
+	 * @param protocolMessages	The list of protocol messages to be loaded
 	 */
-	public final Parser withCodecs(final Codec<?>... codecs){
-		messageParser.loader.loadCodecs(Arrays.asList(codecs));
+	public final Parser withProtocolMessages(final ProtocolMessage<?>... protocolMessages){
+		messageParser.loader.loadProtocolMessages(Arrays.asList(protocolMessages));
 		return this;
 	}
 
@@ -212,9 +212,9 @@ public class Parser{
 				//save state of the reader (restored upon a decoding error)
 				reader.createFallbackPoint();
 
-				final Codec<?> codec = messageParser.loader.getCodec(reader);
+				final ProtocolMessage<?> protocolMessage = messageParser.loader.getProtocolMessage(reader);
 
-				final Object partialDecodedMessage = messageParser.decode(codec, reader);
+				final Object partialDecodedMessage = messageParser.decode(protocolMessage, reader);
 
 				response.addParsedMessage(partialDecodedMessage);
 			}
@@ -227,7 +227,7 @@ public class Parser{
 
 				final int position = messageParser.loader.findNextMessageIndex(reader);
 				if(position < 0)
-					//cannot find any codec for message
+					//cannot find any protocol message for message
 					break;
 
 				reader.position(position);
@@ -266,11 +266,11 @@ public class Parser{
 		final BitWriter writer = new BitWriter();
 		for(final Object elem : data){
 			try{
-				final Codec<?> codec = Codec.createFrom(elem.getClass(), messageParser.loader);
-				if(!codec.canBeDecoded())
-					throw new CodecException("Cannot construct any codec for message");
+				final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(elem.getClass(), messageParser.loader);
+				if(!protocolMessage.canBeDecoded())
+					throw new ProtocolMessageException("Cannot construct any protocol message for message");
 
-				messageParser.encode(codec, elem, writer);
+				messageParser.encode(protocolMessage, elem, writer);
 			}
 			catch(final Throwable t){
 				final ComposeException ce = new ComposeException(elem, t);

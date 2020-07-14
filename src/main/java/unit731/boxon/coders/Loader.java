@@ -25,7 +25,7 @@
 package unit731.boxon.coders;
 
 import unit731.boxon.annotations.MessageHeader;
-import unit731.boxon.annotations.exceptions.CodecException;
+import unit731.boxon.annotations.exceptions.ProtocolMessageException;
 import unit731.boxon.helpers.AnnotationHelper;
 import unit731.boxon.helpers.ByteHelper;
 import org.slf4j.Logger;
@@ -52,11 +52,11 @@ final class Loader{
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Loader.class.getName());
 
-	private final Map<String, Codec<?>> codecs = new TreeMap<>(Comparator.comparingInt(String::length).reversed().thenComparing(String::compareTo));
+	private final Map<String, ProtocolMessage<?>> protocolMessages = new TreeMap<>(Comparator.comparingInt(String::length).reversed().thenComparing(String::compareTo));
 	private final Map<Class<?>, CoderInterface<?>> coders = new HashMap<>(0);
 
 	private final AtomicBoolean initializedCoders = new AtomicBoolean(false);
-	private final AtomicBoolean initializedCodecs = new AtomicBoolean(false);
+	private final AtomicBoolean initializedProtocolMessages = new AtomicBoolean(false);
 
 
 	Loader(){}
@@ -155,8 +155,8 @@ final class Loader{
 	 * Loads all the protocol classes annotated with {@link MessageHeader}.
 	 * <p>This method should be called from a method inside a class that lies on a parent of all the protocol classes.</p>
 	 */
-	synchronized final void loadCodecs(){
-		loadCodecs(extractCallerClasses());
+	synchronized final void loadProtocolMessages(){
+		loadProtocolMessages(extractCallerClasses());
 	}
 
 	/**
@@ -164,11 +164,11 @@ final class Loader{
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes
 	 */
-	synchronized final void loadCodecs(Class<?>... basePackageClasses){
+	synchronized final void loadProtocolMessages(Class<?>... basePackageClasses){
 		if(!initializedCoders.get())
-			throw new IllegalArgumentException("Coders must be initialized before Codecs!");
+			throw new IllegalArgumentException("Coders must be initialized before loading protocol messages!");
 
-		if(!initializedCodecs.get()){
+		if(!initializedProtocolMessages.get()){
 			//remove duplicates
 			basePackageClasses = Arrays.stream(basePackageClasses)
 				.filter(distinctByKey(Class::getPackageName))
@@ -178,96 +178,96 @@ final class Loader{
 				Arrays.stream(basePackageClasses).map(Class::getPackageName).collect(Collectors.joining(", ", "[", "]")));
 
 			final Collection<Class<?>> annotatedClasses = AnnotationHelper.extractClasses(MessageHeader.class, basePackageClasses);
-			final Collection<Codec<?>> codecs = new ArrayList<>(annotatedClasses.size());
+			final Collection<ProtocolMessage<?>> protocolMessages = new ArrayList<>(annotatedClasses.size());
 			for(final Class<?> type : annotatedClasses){
-				final Codec<?> codec = Codec.createFrom(type, this);
-				if(codec.canBeDecoded())
-					codecs.add(codec);
+				final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(type, this);
+				if(protocolMessage.canBeDecoded())
+					protocolMessages.add(protocolMessage);
 			}
-			loadCodecsInner(codecs);
+			loadProtocolMessagesInner(protocolMessages);
 
-			LOGGER.trace("Codecs loaded are {}", codecs.size());
+			LOGGER.trace("Protocol messages loaded are {}", protocolMessages.size());
 
-			initializedCodecs.set(true);
+			initializedProtocolMessages.set(true);
 		}
 	}
 
 	/**
 	 * Loads all the protocol classes annotated with {@link MessageHeader}.
 	 *
-	 * @param codecs	The list of codecs to be loaded
+	 * @param protocolMessages	The list of protocol messages to be loaded
 	 */
-	synchronized final void loadCodecs(Collection<Codec<?>> codecs){
+	synchronized final void loadProtocolMessages(Collection<ProtocolMessage<?>> protocolMessages){
 		if(!initializedCoders.get())
-			throw new IllegalArgumentException("Coders must be initialized before Codecs!");
+			throw new IllegalArgumentException("Coders must be initialized before protocol messages!");
 
-		if(!initializedCodecs.get()){
+		if(!initializedProtocolMessages.get()){
 			//remove duplicates
-			codecs = codecs.stream()
+			protocolMessages = protocolMessages.stream()
 				.distinct()
 				.collect(Collectors.toList());
 
 			LOGGER.info("Load parsing classes from input");
 
-			loadCodecsInner(codecs);
+			loadProtocolMessagesInner(protocolMessages);
 
-			LOGGER.trace("Codecs loaded are {}", codecs.size());
+			LOGGER.trace("Protocol messages loaded are {}", protocolMessages.size());
 
-			initializedCodecs.set(true);
+			initializedProtocolMessages.set(true);
 		}
 	}
 
 	synchronized final boolean getInitialized(){
-		return (initializedCoders.get() && initializedCodecs.get());
+		return (initializedCoders.get() && initializedProtocolMessages.get());
 	}
 
-	private void loadCodecsInner(final Collection<Codec<?>> codecs){
-		for(final Codec<?> codec : codecs){
+	private void loadProtocolMessagesInner(final Collection<ProtocolMessage<?>> protocolMessages){
+		for(final ProtocolMessage<?> protocolMessage : protocolMessages){
 			try{
-				final MessageHeader header = codec.getHeader();
+				final MessageHeader header = protocolMessage.getHeader();
 				final Charset charset = Charset.forName(header.charset());
 				for(final String headerStart : header.start()){
 					//calculate key
 					final String key = ByteHelper.toHexString(headerStart.getBytes(charset));
-					if(this.codecs.containsKey(key))
-						throw new CodecException("Duplicate key `{}` found for class {}", headerStart, codec.getType().getSimpleName());
+					if(this.protocolMessages.containsKey(key))
+						throw new ProtocolMessageException("Duplicate key `{}` found for class {}", headerStart, protocolMessage.getType().getSimpleName());
 
-					this.codecs.put(key, codec);
+					this.protocolMessages.put(key, protocolMessage);
 				}
 			}
 			catch(final Exception e){
-				LOGGER.error("Cannot load class {}", codec.getType().getSimpleName(), e);
+				LOGGER.error("Cannot load class {}", protocolMessage.getType().getSimpleName(), e);
 			}
 		}
 	}
 
-	final Codec<?> getCodec(final BitBuffer reader){
+	final ProtocolMessage<?> getProtocolMessage(final BitBuffer reader){
 		final int index = reader.position();
 
-		Codec<?> codec = null;
-		for(final Map.Entry<String, Codec<?>> elem : codecs.entrySet()){
+		ProtocolMessage<?> protocolMessage = null;
+		for(final Map.Entry<String, ProtocolMessage<?>> elem : protocolMessages.entrySet()){
 			final String header = elem.getKey();
 
-			final byte[] codecHeader = ByteHelper.toByteArray(header);
-			final byte[] messageHeader = Arrays.copyOfRange(reader.array(), index, index + codecHeader.length);
+			final byte[] protocolMessageHeader = ByteHelper.toByteArray(header);
+			final byte[] messageHeader = Arrays.copyOfRange(reader.array(), index, index + protocolMessageHeader.length);
 
 			//verify if it's a valid message header
-			if(Arrays.equals(messageHeader, codecHeader)){
-				codec = elem.getValue();
+			if(Arrays.equals(messageHeader, protocolMessageHeader)){
+				protocolMessage = elem.getValue();
 				break;
 			}
 		}
-		if(codec == null)
-			throw new CodecException("Cannot find any codec for message");
+		if(protocolMessage == null)
+			throw new ProtocolMessageException("Cannot find any protocol message for message");
 
-		return codec;
+		return protocolMessage;
 	}
 
 
 	final int findNextMessageIndex(final BitBuffer reader){
 		int minOffset = -1;
-		for(final Codec<?> codec : codecs.values()){
-			final MessageHeader header = codec.getHeader();
+		for(final ProtocolMessage<?> protocolMessage : protocolMessages.values()){
+			final MessageHeader header = protocolMessage.getHeader();
 			final Charset charset = Charset.forName(header.charset());
 			final String[] messageStarts = header.start();
 			for(final String messageStart : messageStarts){

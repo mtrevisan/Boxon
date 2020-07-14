@@ -27,9 +27,9 @@ package unit731.boxon.annotations.exceptions;
 import org.slf4j.helpers.MessageFormatter;
 
 
-public class CodecException extends RuntimeException{
+public class ProtocolMessageException extends RuntimeException{
 
-	public CodecException(final String message, Object... parameters){
+	public ProtocolMessageException(final String message, Object... parameters){
 		super(MessageFormatter.format(message, parameters).getMessage());
 	}
 
