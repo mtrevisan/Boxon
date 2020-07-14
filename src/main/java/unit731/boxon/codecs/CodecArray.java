@@ -47,10 +47,10 @@ final class CodecArray implements CodecInterface<BindArray>{
 		final int size = Evaluator.evaluateSize(binding.size(), data);
 		final Choices selectFrom = binding.selectFrom();
 		@SuppressWarnings("ConstantConditions")
-		final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): new Choices.Choice[0]);
+		final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): null);
 
 		final Object[] array = ReflectionHelper.createArray(binding.type(), size);
-		if(alternatives.length > 0){
+		if(alternatives != null && alternatives.length > 0){
 			//read prefix
 			final int prefixSize = selectFrom.prefixSize();
 			final ByteOrder prefixByteOrder = selectFrom.byteOrder();
@@ -90,11 +90,11 @@ final class CodecArray implements CodecInterface<BindArray>{
 		final int size = Evaluator.evaluateSize(binding.size(), data);
 		final Choices selectFrom = binding.selectFrom();
 		@SuppressWarnings("ConstantConditions")
-		final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): new Choices.Choice[0]);
+		final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): null);
 
 		final Object[] array = CodecHelper.converterEncode(binding.converter(), value);
 
-		if(alternatives.length > 0)
+		if(alternatives != null && alternatives.length > 0)
 			for(int i = 0; i < size; i ++){
 				final Class<?> cls = array[i].getClass();
 				CodecHelper.writePrefix(writer, CodecHelper.chooseAlternative(alternatives, cls), selectFrom);

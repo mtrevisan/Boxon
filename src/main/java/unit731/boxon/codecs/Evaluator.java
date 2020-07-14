@@ -105,14 +105,15 @@ final class Evaluator{
 	}
 
 	/**
-	 * Convenience method to fast evaluate an integer.
+	 * Convenience method to fast evaluate a positive integer.
 	 *
 	 * @param expression	The SpEL expression to evaluate.
 	 * @param data	The context with which to evaluate the given expression.
-	 * @return	The size.
+	 * @return	The size, or a negative number if the expression is not a valid positive integer.
+	 * @throws EvaluationException	If an error occurrs during the evaluation of an expression.
 	 */
-	static int evaluateSize(final String expression, final Object data){
-		int size = 0;
+	static int evaluateSize(final String expression, final Object data) throws EvaluationException{
+		int size = -1;
 		if(!expression.trim().isBlank())
 			size = (isPositiveInteger(expression)? Integer.parseInt(expression): evaluate(expression, int.class, data));
 		return size;

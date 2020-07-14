@@ -46,9 +46,9 @@ final class CodecObject implements CodecInterface<BindObject>{
 		Class<?> type = binding.type();
 		final Choices selectFrom = binding.selectFrom();
 		@SuppressWarnings("ConstantConditions")
-		final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): new Choices.Choice[0]);
+		final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): null);
 
-		if(alternatives.length > 0){
+		if(alternatives != null && alternatives.length > 0){
 			//read prefix
 			final int prefixSize = selectFrom.prefixSize();
 			final ByteOrder prefixByteOrder = selectFrom.byteOrder();
@@ -80,8 +80,8 @@ final class CodecObject implements CodecInterface<BindObject>{
 		Class<?> type = binding.type();
 		final Choices selectFrom = binding.selectFrom();
 		@SuppressWarnings("ConstantConditions")
-		final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): new Choices.Choice[0]);
-		if(alternatives.length > 0){
+		final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): null);
+		if(alternatives != null && alternatives.length > 0){
 			type = value.getClass();
 
 			//write prefix
