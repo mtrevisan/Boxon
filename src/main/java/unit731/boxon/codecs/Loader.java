@@ -77,29 +77,31 @@ final class Loader{
 	 * @return	Whether the codecs was loaded.
 	 */
 	final boolean loadCodecs(Class<?>... basePackageClasses){
-		if(!initialized.get()){
-			//remove duplicates
-			basePackageClasses = Arrays.stream(basePackageClasses)
-				.filter(distinctByKey(Class::getPackageName))
-				.toArray(Class[]::new);
+		if(initialized.get())
+			return false;
 
-			LOGGER.info("Load codecs from package(s) {}",
-				Arrays.stream(basePackageClasses).map(Class::getPackageName).collect(Collectors.joining(", ", "[", "]")));
+		//remove duplicates
+		basePackageClasses = Arrays.stream(basePackageClasses)
+			.filter(distinctByKey(Class::getPackageName))
+			.toArray(Class[]::new);
 
-			final Collection<Class<?>> derivedClasses = AnnotationHelper.extractClasses(CodecInterface.class, basePackageClasses);
-			for(final Class<?> type : derivedClasses){
-				final CodecInterface<?> codec = (CodecInterface<?>)ReflectionHelper.getCreator(type)
-					.get();
-				if(codec != null)
-					addCodec(codec);
-			}
+		LOGGER.info("Load codecs from package(s) {}",
+			Arrays.stream(basePackageClasses).map(Class::getPackageName).collect(Collectors.joining(", ", "[", "]")));
 
-			LOGGER.trace("Codecs loaded are {}", codecs.size());
-
-			initialized.set(true);
-			return true;
+		final Collection<Class<?>> derivedClasses = AnnotationHelper.extractClasses(CodecInterface.class, basePackageClasses);
+		for(final Class<?> type : derivedClasses){
+			final CodecInterface<?> codec = (CodecInterface<?>)ReflectionHelper.getCreator(type)
+				.get();
+			if(codec == null)
+				LOGGER.warn("Cannot create an instance of codec {}", codec.codecType().getSimpleName());
+			else
+				addCodec(codec);
 		}
-		return false;
+
+		LOGGER.trace("Codecs loaded are {}", codecs.size());
+
+		initialized.set(true);
+		return true;
 	}
 
 	private static <T> Predicate<T> distinctByKey(final Function<? super T, ?> keyExtractor){
@@ -124,18 +126,18 @@ final class Loader{
 	 * @return	Whether the codecs was loaded.
 	 */
 	final boolean loadCodecs(final CodecInterface<?>... codecs){
-		if(!initialized.get()){
-			LOGGER.info("Load codecs from input");
+		if(initialized.get())
+			return false;
 
-			for(final CodecInterface<?> codec : codecs)
-				addCodec(codec);
+		LOGGER.info("Load codecs from input");
 
-			LOGGER.trace("Codecs loaded are {}", codecs.length);
+		for(final CodecInterface<?> codec : codecs)
+			addCodec(codec);
 
-			initialized.set(true);
-			return true;
-		}
-		return false;
+		LOGGER.trace("Codecs loaded are {}", codecs.length);
+
+		initialized.set(true);
+		return true;
 	}
 
 	/**
