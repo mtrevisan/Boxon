@@ -165,9 +165,9 @@ class CodecObjectTest{
 		Loader loader = new Loader();
 		loader.loadCodecs();
 		ProtocolMessage<TestChoice1> protocolMessage = ProtocolMessage.createFrom(TestChoice1.class, loader);
-		Parser parser = Parser.create();
-		parser.withDefaultCodecs();
-		parser.withProtocolMessages(protocolMessage);
+		Parser parser = Parser.create()
+			.withDefaultCodecs()
+			.withProtocolMessages(protocolMessage);
 
 		byte[] payload = ByteHelper.toByteArray("746331011234");
 		ParseResponse result = parser.parse(payload);
@@ -210,9 +210,9 @@ class CodecObjectTest{
 		Loader loader = new Loader();
 		loader.loadCodecs();
 		ProtocolMessage<TestChoice2> protocolMessage = ProtocolMessage.createFrom(TestChoice2.class, loader);
-		Parser parser = Parser.create();
-		parser.withDefaultCodecs();
-		parser.withProtocolMessages(protocolMessage);
+		Parser parser = Parser.create()
+			.withDefaultCodecs()
+			.withProtocolMessages(protocolMessage);
 
 		byte[] payload = ByteHelper.toByteArray("7463320506001234");
 		ParseResponse result = parser.parse(payload);
@@ -255,9 +255,9 @@ class CodecObjectTest{
 		Loader loader = new Loader();
 		loader.loadCodecs();
 		ProtocolMessage<TestChoice3> protocolMessage = ProtocolMessage.createFrom(TestChoice3.class, loader);
-		Parser parser = Parser.create();
-		parser.withDefaultCodecs();
-		parser.withProtocolMessages(protocolMessage);
+		Parser parser = Parser.create()
+			.withDefaultCodecs()
+			.withProtocolMessages(protocolMessage);
 
 		byte[] payload = ByteHelper.toByteArray("74633361611234");
 		ParseResponse result = parser.parse(payload);

@@ -203,9 +203,9 @@ class CodecArrayTest{
 		Loader loader = new Loader();
 		loader.loadCodecs();
 		ProtocolMessage<TestChoice4> protocolMessage = ProtocolMessage.createFrom(TestChoice4.class, loader);
-		Parser parser = Parser.create();
-		parser.withDefaultCodecs();
-		parser.withProtocolMessages(protocolMessage);
+		Parser parser = Parser.create()
+			.withDefaultCodecs()
+			.withProtocolMessages(protocolMessage);
 
 		byte[] payload = ByteHelper.toByteArray("7463340112340211223344010666");
 		ParseResponse result = parser.parse(payload);

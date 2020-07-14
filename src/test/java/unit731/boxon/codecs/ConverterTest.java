@@ -94,9 +94,9 @@ class ConverterTest{
 		Loader loader = new Loader();
 		loader.loadCodecs();
 		ProtocolMessage<TestConverter1> protocolMessage = ProtocolMessage.createFrom(TestConverter1.class, loader);
-		Parser parser = Parser.create();
-		parser.withDefaultCodecs();
-		parser.withProtocolMessages(protocolMessage);
+		Parser parser = Parser.create()
+			.withDefaultCodecs()
+			.withProtocolMessages(protocolMessage);
 
 		byte[] payload = ByteHelper.toByteArray("77633101");
 		ParseResponse result = parser.parse(payload);
@@ -116,9 +116,9 @@ class ConverterTest{
 		Loader loader = new Loader();
 		loader.loadCodecs();
 		ProtocolMessage<TestConverter2> protocolMessage = ProtocolMessage.createFrom(TestConverter2.class, loader);
-		Parser parser = Parser.create();
-		parser.withDefaultCodecs();
-		parser.withProtocolMessages(protocolMessage);
+		Parser parser = Parser.create()
+			.withDefaultCodecs()
+			.withProtocolMessages(protocolMessage);
 
 		byte[] payload = ByteHelper.toByteArray("77633201");
 		ParseResponse result = parser.parse(payload);
@@ -138,9 +138,9 @@ class ConverterTest{
 		Loader loader = new Loader();
 		loader.loadCodecs();
 		ProtocolMessage<TestConverter3> protocolMessage = ProtocolMessage.createFrom(TestConverter3.class, loader);
-		Parser parser = Parser.create();
-		parser.withDefaultCodecs();
-		parser.withProtocolMessages(protocolMessage);
+		Parser parser = Parser.create()
+			.withDefaultCodecs()
+			.withProtocolMessages(protocolMessage);
 
 		byte[] payload = ByteHelper.toByteArray("77633301");
 		ParseResponse result = parser.parse(payload);
