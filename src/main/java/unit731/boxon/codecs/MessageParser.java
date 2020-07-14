@@ -75,7 +75,7 @@ final class MessageParser{
 				ReflectionHelper.setFieldValue(data, field.getName(), value);
 
 				if(verbose.get())
-					LOGGER.info("{}: {}", field.getName(), value);
+					LOGGER.info("read {} = {}", field.getName(), value);
 			}
 			catch(final Exception e){
 				manageProtocolMessageException(protocolMessage, field, e);
