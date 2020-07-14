@@ -281,7 +281,7 @@ final class BitBuffer{
 	final byte[] getBytes(final int length){
 		final byte[] array = new byte[length];
 		for(int i = 0; i < length; i ++)
-			array[i] = (byte)getLong(Byte.SIZE, ByteOrder.LITTLE_ENDIAN);
+			array[i] = getByte();
 		return array;
 	}
 
@@ -293,7 +293,7 @@ final class BitBuffer{
 	 * @return	A {@code short}.
 	 */
 	final short getShort(final ByteOrder byteOrder){
-		return (short)get(Short.SIZE, byteOrder);
+		return (short)getInteger(Short.SIZE, byteOrder);
 	}
 
 	/**
@@ -304,7 +304,7 @@ final class BitBuffer{
 	 * @return	An {@code int}.
 	 */
 	final int getInt(final ByteOrder byteOrder){
-		return (int)get(Integer.SIZE, byteOrder);
+		return (int)getInteger(Integer.SIZE, byteOrder);
 	}
 
 	/**
@@ -315,10 +315,10 @@ final class BitBuffer{
 	 * @return	A {@code long}.
 	 */
 	final long getLong(final ByteOrder byteOrder){
-		return get(Long.SIZE, byteOrder);
+		return getInteger(Long.SIZE, byteOrder);
 	}
 
-	private long get(final int size, final ByteOrder byteOrder){
+	private long getInteger(final int size, final ByteOrder byteOrder){
 		final long value = getLong(size, ByteOrder.LITTLE_ENDIAN);
 		return ByteHelper.reverseBytes(value, size, byteOrder);
 	}
