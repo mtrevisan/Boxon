@@ -49,7 +49,7 @@ final class Evaluator{
 	private static final EvaluationContext CONTEXT = new PrivateEvaluationContext();
 
 
-	//NOTE: trick to allow accessing private fields
+	//trick to allow accessing private fields
 	private static class PrivateEvaluationContext extends StandardEvaluationContext{
 
 		private static class SecurePropertyAccessor extends ReflectivePropertyAccessor{
@@ -89,6 +89,12 @@ final class Evaluator{
 
 	private Evaluator(){}
 
+	/**
+	 * Adds a key-value pair to the context of this evaluator.
+	 *
+	 * @param key	The key used to reference the value.
+	 * @param value	The value.
+	 */
 	static void addToContext(final String key, final Object value){
 		CONTEXT.setVariable(key, value);
 	}
@@ -98,6 +104,13 @@ final class Evaluator{
 		return exp.getValue(CONTEXT, data, returnType);
 	}
 
+	/**
+	 * Convenience method to fast evaluate an integer.
+	 *
+	 * @param expression	The SpEL expression to evaluate.
+	 * @param data	The context with which to evaluate the given expression.
+	 * @return	The size.
+	 */
 	static int evaluateSize(final String expression, final Object data){
 		int size = 0;
 		if(!expression.trim().isBlank())
