@@ -222,20 +222,24 @@ final class Loader{
 	private void loadProtocolMessagesInner(final Collection<ProtocolMessage<?>> protocolMessages){
 		for(final ProtocolMessage<?> protocolMessage : protocolMessages){
 			try{
-				final MessageHeader header = protocolMessage.getHeader();
-				final Charset charset = Charset.forName(header.charset());
-				for(final String headerStart : header.start()){
-					//calculate key
-					final String key = ByteHelper.toHexString(headerStart.getBytes(charset));
-					if(this.protocolMessages.containsKey(key))
-						throw new ProtocolMessageException("Duplicate key `{}` found for class {}", headerStart, protocolMessage.getType().getSimpleName());
-
-					this.protocolMessages.put(key, protocolMessage);
-				}
+				loadProtocolMessageInner(protocolMessage);
 			}
 			catch(final Exception e){
 				LOGGER.error("Cannot load class {}", protocolMessage.getType().getSimpleName(), e);
 			}
+		}
+	}
+
+	private void loadProtocolMessageInner(final ProtocolMessage<?> protocolMessage){
+		final MessageHeader header = protocolMessage.getHeader();
+		final Charset charset = Charset.forName(header.charset());
+		for(final String headerStart : header.start()){
+			//calculate key
+			final String key = ByteHelper.toHexString(headerStart.getBytes(charset));
+			if(this.protocolMessages.containsKey(key))
+				throw new ProtocolMessageException("Duplicate key `{}` found for class {}", headerStart, protocolMessage.getType().getSimpleName());
+
+			this.protocolMessages.put(key, protocolMessage);
 		}
 	}
 
