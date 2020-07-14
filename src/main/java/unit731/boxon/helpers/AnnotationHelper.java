@@ -16,7 +16,6 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.Stack;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -81,32 +80,34 @@ public final class AnnotationHelper{
 	 * @return	The classes
 	 */
 	public static <T> Collection<Class<?>> extractClasses(final T type, final Class<?>... basePackageClasses){
-		final Set<Class<?>> classes = new HashSet<>(0);
+		final Collection<Class<?>> classes = new HashSet<>(0);
 
 		final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		for(final Class<?> basePackageClass : basePackageClasses){
+			final String basePackageName = basePackageClass.getName().substring(0, basePackageClass.getName().lastIndexOf('.'));
+			final String path = packageToUri(basePackageName);
 			try{
-				final String basePackageName = basePackageClass.getName().substring(0, basePackageClass.getName().lastIndexOf('.'));
-				final String path = basePackageName.replace('.', '/');
 				final Enumeration<URL> resources = classLoader.getResources(path);
 				classes.addAll(extractClasses(resources, type, basePackageName));
 			}
 			catch(final NoSuchFileException e){
 				LOGGER.error("Are you sure you are not running this library from a OneDrive folder?", e);
 			}
-			catch(final IOException ignored){}
+			catch(final IOException e){
+				LOGGER.error("Cannot load classes from {}", path, e);
+			}
 		}
 
 		return classes;
 	}
 
-	private static <T> Collection<Class<?>> extractClasses(final Enumeration<URL> resources, final T type, final String basePackageName){
-		final Set<Class<?>> classes = new HashSet<>(0);
+	private static <T> Collection<Class<?>> extractClasses(final Enumeration<URL> resources, final T type, final String basePackageName) throws IOException{
+		final Collection<Class<?>> classes = new HashSet<>(0);
 		while(resources.hasMoreElements()){
 			final URL resource = resources.nextElement();
 			final String directory = resource.getFile();
 			final int exclamationMarkIndex = directory.indexOf('!');
-			final Set<Class<?>> subClasses;
+			final Collection<Class<?>> subClasses;
 			if(exclamationMarkIndex >= 0){
 				final String libraryName = directory.substring(SCHEMA_FILE.length(), exclamationMarkIndex);
 				subClasses = extractClassesFromLibrary(type, libraryName);
@@ -125,28 +126,33 @@ public final class AnnotationHelper{
 	 * @return The classes
 	 */
 	@SuppressWarnings("unchecked")
-	private static <T> Set<Class<?>> extractClassesFromLibrary(final T type, final String libraryName){
-		final Set<Class<?>> classes = new HashSet<>(0);
+	private static <T> Collection<Class<?>> extractClassesFromLibrary(final T type, final String libraryName) throws IOException{
+		final Collection<Class<?>> classes = new HashSet<>(0);
 
-		try{
-			final JarFile jarFile = new JarFile(libraryName);
-			final Enumeration<JarEntry> resources = jarFile.entries();
-			while(resources.hasMoreElements()){
-				final JarEntry resource = resources.nextElement();
-				final String resourceName = resource.getName();
-				if(!resource.isDirectory() && resourceName.endsWith(EXTENSION_CLASS)){
-					final String className = resourceName.substring(
-						(resourceName.startsWith(BOOT_INF_CLASSES)? BOOT_INF_CLASSES.length(): 0),
-						resourceName.length() - EXTENSION_CLASS.length());
-					final Class<?> cls = getClassFromName(className.replace('/', '.'));
-					if(cls.isAnnotationPresent((Class<? extends Annotation>)type) || ((Class<?>)type).isAssignableFrom(cls))
-						classes.add(cls);
-				}
+		final JarFile jarFile = new JarFile(libraryName);
+		final Enumeration<JarEntry> resources = jarFile.entries();
+		while(resources.hasMoreElements()){
+			final JarEntry resource = resources.nextElement();
+			final String resourceName = resource.getName();
+			if(!resource.isDirectory() && resourceName.endsWith(EXTENSION_CLASS)){
+				final String className = resourceName.substring(
+					(resourceName.startsWith(BOOT_INF_CLASSES)? BOOT_INF_CLASSES.length(): 0),
+					resourceName.length() - EXTENSION_CLASS.length());
+				final Class<?> cls = getClassFromName(uriToPackage(className));
+				if(cls.isAnnotationPresent((Class<? extends Annotation>)type) || ((Class<?>)type).isAssignableFrom(cls))
+					classes.add(cls);
 			}
 		}
-		catch(final IOException ignored){}
 
 		return classes;
+	}
+
+	private static String packageToUri(String packageName){
+		return packageName.replace('.', '/');
+	}
+
+	private static String uriToPackage(final String uri){
+		return uri.replace('/', '.');
 	}
 
 	/**
@@ -157,8 +163,8 @@ public final class AnnotationHelper{
 	 * @return The classes
 	 */
 	@SuppressWarnings("unchecked")
-	private static <T> Set<Class<?>> extractClasses(final T type, final File directory, final String packageName){
-		final Set<Class<?>> classes = new HashSet<>(0);
+	private static <T> Collection<Class<?>> extractClasses(final T type, final File directory, final String packageName){
+		final Collection<Class<?>> classes = new HashSet<>(0);
 
 		final Stack<ClassDescriptor> stack = new Stack<>();
 		stack.push(new ClassDescriptor(directory, packageName));
