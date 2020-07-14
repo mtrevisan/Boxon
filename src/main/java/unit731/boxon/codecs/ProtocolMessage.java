@@ -159,9 +159,7 @@ final class ProtocolMessage<T>{
 
 			final Annotation[] declaredAnnotations = field.getDeclaredAnnotations();
 			final List<Annotation> boundedAnnotations = extractAnnotations(declaredAnnotations, loader);
-			final Collection<Evaluate> evaluatedAnnotations = extractEvaluations(declaredAnnotations);
-			for(final Evaluate annotation : evaluatedAnnotations)
-				evaluatedFields.add(new EvaluatedField(field, annotation));
+			evaluatedFields.addAll(extractEvaluations(declaredAnnotations, field));
 
 			validateField(boundedAnnotations, checksum);
 
@@ -183,11 +181,11 @@ final class ProtocolMessage<T>{
 		return annotations;
 	}
 
-	private Collection<Evaluate> extractEvaluations(final Annotation[] declaredAnnotations){
-		final Collection<Evaluate> annotations = new ArrayList<>(declaredAnnotations.length);
+	private Collection<EvaluatedField> extractEvaluations(final Annotation[] declaredAnnotations, final Field field){
+		final Collection<EvaluatedField> annotations = new ArrayList<>(declaredAnnotations.length);
 		for(final Annotation annotation : declaredAnnotations)
 			if(annotation.annotationType() == Evaluate.class)
-				annotations.add((Evaluate)annotation);
+				annotations.add(new EvaluatedField(field, (Evaluate)annotation));
 		return annotations;
 	}
 
