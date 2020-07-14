@@ -44,7 +44,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 
 /**
@@ -164,7 +164,8 @@ final class ProtocolMessage<T>{
 			validateField(boundedAnnotations, checksum);
 
 			if(boundedAnnotations.size() == 1)
-				boundedFields.add(new BoundedField(field, (skips.length > 0? skips: null), (condition != null? condition.value(): null), boundedAnnotations.get(0)));
+				boundedFields.add(new BoundedField(field, (skips.length > 0? skips: null),
+					(condition != null? condition.value(): null), boundedAnnotations.get(0)));
 			if(checksum != null)
 				this.checksum = new BoundedField(field, null, null, checksum);
 		}
@@ -182,19 +183,21 @@ final class ProtocolMessage<T>{
 	}
 
 	private Collection<EvaluatedField> extractEvaluations(final Annotation[] declaredAnnotations, final Field field){
-		final Collection<EvaluatedField> annotations = new ArrayList<>(declaredAnnotations.length);
+		final Collection<EvaluatedField> evaluations = new ArrayList<>(declaredAnnotations.length);
 		for(final Annotation annotation : declaredAnnotations)
 			if(annotation.annotationType() == Evaluate.class)
-				annotations.add(new EvaluatedField(field, (Evaluate)annotation));
-		return annotations;
+				evaluations.add(new EvaluatedField(field, (Evaluate)annotation));
+		return evaluations;
 	}
 
 	private void validateField(final List<Annotation> annotations, final BindChecksum checksum){
 		if(annotations.size() > 1){
-			final StringJoiner sj = new StringJoiner(", ", "[", "]");
-			for(final Annotation annotation : annotations)
-				sj.add(annotation.annotationType().getSimpleName());
-			throw new AnnotationException("Cannot bind more that one annotation on {}: {}", cls.getSimpleName(), sj.toString());
+			final String aa = annotations.stream()
+				.map(Annotation::annotationType)
+				.distinct()
+				.map(Class::getSimpleName)
+				.collect(Collectors.joining(", ", "[", "]"));
+			throw new AnnotationException("Cannot bind more that one annotation on {}: {}", cls.getSimpleName(), aa);
 		}
 
 		if(checksum != null && this.checksum != null)
