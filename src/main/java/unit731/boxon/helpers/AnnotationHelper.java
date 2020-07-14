@@ -134,31 +134,10 @@ public final class AnnotationHelper{
 		while(resources.hasMoreElements()){
 			final JarEntry resource = resources.nextElement();
 			final Class<?> cls = getClassFromResource(resource);
-			if(cls != null && (cls.isAnnotationPresent((Class<? extends Annotation>)type) || ((Class<?>)type).isAssignableFrom(cls)))
-				classes.add(cls);
+			addIf(classes, cls, type);
 		}
 
 		return classes;
-	}
-
-	private static Class<?> getClassFromResource(final JarEntry resource){
-		Class<?> cls = null;
-		final String resourceName = resource.getName();
-		if(!resource.isDirectory() && resourceName.endsWith(EXTENSION_CLASS)){
-			final String className = resourceName.substring(
-				(resourceName.startsWith(BOOT_INF_CLASSES)? BOOT_INF_CLASSES.length(): 0),
-				resourceName.length() - EXTENSION_CLASS.length());
-			cls = getClassFromName(uriToPackage(className));
-		}
-		return cls;
-	}
-
-	private static String packageToUri(String packageName){
-		return packageName.replace('.', '/');
-	}
-
-	private static String uriToPackage(final String uri){
-		return uri.replace('/', '.');
 	}
 
 	/**
@@ -183,16 +162,35 @@ public final class AnnotationHelper{
 				final String fileName = file.getName();
 				if(file.isDirectory())
 					stack.push(new ClassDescriptor(file, elem.packageName + POINT + fileName));
-				else if(fileName.endsWith(EXTENSION_CLASS)){
-					final String className = fileName.substring(0, fileName.length() - EXTENSION_CLASS.length());
-					final Class<?> cls = getClassFromName(elem.packageName + POINT + className);
-					if(cls.isAnnotationPresent((Class<? extends Annotation>)type) || ((Class<?>)type).isAssignableFrom(cls))
-						classes.add(cls);
+				else{
+					final Class<?> cls = getClassFromFilename(elem.packageName, fileName);
+					addIf(classes, cls, type);
 				}
 			}
 		}
 
 		return classes;
+	}
+
+	private static Class<?> getClassFromResource(final JarEntry resource){
+		Class<?> cls = null;
+		final String resourceName = resource.getName();
+		if(!resource.isDirectory() && resourceName.endsWith(EXTENSION_CLASS)){
+			final String className = resourceName.substring(
+				(resourceName.startsWith(BOOT_INF_CLASSES)? BOOT_INF_CLASSES.length(): 0),
+				resourceName.length() - EXTENSION_CLASS.length());
+			cls = getClassFromName(uriToPackage(className));
+		}
+		return cls;
+	}
+
+	private static Class<?> getClassFromFilename(final String packageName, final String filename){
+		Class<?> cls = null;
+		if(filename.endsWith(EXTENSION_CLASS)){
+			final String className = filename.substring(0, filename.length() - EXTENSION_CLASS.length());
+			cls = getClassFromName(packageName + POINT + className);
+		}
+		return cls;
 	}
 
 	private static Class<?> getClassFromName(final String className){
@@ -202,6 +200,19 @@ public final class AnnotationHelper{
 		}
 		catch(final ClassNotFoundException ignored){}
 		return type;
+	}
+
+	private static <T> void addIf(final Collection<Class<?>> classes, final Class<?> cls, final Object type){
+		if(cls != null && (cls.isAnnotationPresent((Class<? extends Annotation>)type) || ((Class<?>)type).isAssignableFrom(cls)))
+			classes.add(cls);
+	}
+
+	private static String packageToUri(String packageName){
+		return packageName.replace('.', '/');
+	}
+
+	private static String uriToPackage(final String uri){
+		return uri.replace('/', '.');
 	}
 
 }
