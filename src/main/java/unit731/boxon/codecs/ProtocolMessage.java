@@ -41,6 +41,7 @@ import unit731.boxon.helpers.ReflectionHelper;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
@@ -158,7 +159,7 @@ final class ProtocolMessage<T>{
 
 			final Annotation[] declaredAnnotations = field.getDeclaredAnnotations();
 			final List<Annotation> boundedAnnotations = extractAnnotations(declaredAnnotations, loader);
-			final List<Evaluate> evaluatedAnnotations = extractEvaluations(declaredAnnotations);
+			final Collection<Evaluate> evaluatedAnnotations = extractEvaluations(declaredAnnotations);
 			for(final Evaluate annotation : evaluatedAnnotations)
 				evaluatedFields.add(new EvaluatedField(field, annotation));
 
@@ -182,8 +183,8 @@ final class ProtocolMessage<T>{
 		return annotations;
 	}
 
-	private List<Evaluate> extractEvaluations(final Annotation[] declaredAnnotations){
-		final List<Evaluate> annotations = new ArrayList<>(declaredAnnotations.length);
+	private Collection<Evaluate> extractEvaluations(final Annotation[] declaredAnnotations){
+		final Collection<Evaluate> annotations = new ArrayList<>(declaredAnnotations.length);
 		for(final Annotation annotation : declaredAnnotations)
 			if(annotation.annotationType() == Evaluate.class)
 				annotations.add((Evaluate)annotation);

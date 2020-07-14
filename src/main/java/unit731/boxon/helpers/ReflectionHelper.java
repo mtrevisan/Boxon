@@ -42,8 +42,8 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
@@ -120,7 +120,7 @@ public final class ReflectionHelper{
 	}
 
 	private static <T> Field[] getAccessibleFields(Class<?> cls, final Class<?> fieldType){
-		final List<Field> result = new ArrayList<>(0);
+		final Collection<Field> result = new ArrayList<>(0);
 		while(cls != Object.class){
 			final Field[] fields = cls.getDeclaredFields();
 			result.addAll(filterAccessibleFields(fields, fieldType));
@@ -131,8 +131,8 @@ public final class ReflectionHelper{
 		return result.toArray(Field[]::new);
 	}
 
-	private static List<Field> filterAccessibleFields(final Field[] fields, final Class<?> fieldType){
-		final List<Field> result = new ArrayList<>(fields.length);
+	private static Collection<Field> filterAccessibleFields(final Field[] fields, final Class<?> fieldType){
+		final Collection<Field> result = new ArrayList<>(fields.length);
 		for(final Field field : fields)
 			if(field.getType() == fieldType){
 				field.setAccessible(true);

@@ -25,13 +25,13 @@
 package unit731.boxon.codecs.queclink;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 import java.util.stream.Collectors;
 
 
 public class DeviceTypes{
 
-	private final List<DeviceType> deviceTypes = new ArrayList<>();
+	private final Collection<DeviceType> deviceTypes = new ArrayList<>();
 
 
 	public void add(final String deviceTypeName, final byte deviceTypeCode){

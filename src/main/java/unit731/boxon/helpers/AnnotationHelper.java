@@ -58,7 +58,7 @@ public final class AnnotationHelper{
 			final List<Field> fields = new ArrayList<>(0);
 			Class<?> currentType = cls;
 			while(currentType != null){
-				final List<Field> subfields = Arrays.asList(currentType.getDeclaredFields());
+				final Collection<Field> subfields = Arrays.asList(currentType.getDeclaredFields());
 				//place parent's fields before all the child's fields
 				fields.addAll(0, subfields);
 

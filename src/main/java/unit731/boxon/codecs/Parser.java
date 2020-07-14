@@ -264,6 +264,13 @@ public class Parser{
 		return response;
 	}
 
+	private ParseException createParseException(final BitBuffer reader, final Throwable t){
+		final byte[] payload = reader.array();
+		final int position = reader.position();
+		final byte[] subPayload = Arrays.copyOfRange(payload, position, payload.length);
+		return new ParseException(subPayload, position, t);
+	}
+
 
 	/**
 	 * Compose a list of messages
@@ -271,7 +278,7 @@ public class Parser{
 	 * @param data	The messages to be composed
 	 * @return	The composition response
 	 */
-	public ComposeResponse compose(final List<Object> data){
+	public ComposeResponse compose(final Collection<Object> data){
 		return compose(data.toArray(Object[]::new));
 	}
 
@@ -302,14 +309,6 @@ public class Parser{
 		response.setComposedMessage(writer.array());
 
 		return response;
-	}
-
-
-	private ParseException createParseException(final BitBuffer reader, final Throwable t){
-		final byte[] payload = reader.array();
-		final int position = reader.position();
-		final byte[] subPayload = Arrays.copyOfRange(payload, position, payload.length);
-		return new ParseException(subPayload, position, t);
 	}
 
 }
