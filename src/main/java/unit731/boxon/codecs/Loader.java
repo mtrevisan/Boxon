@@ -33,7 +33,6 @@ import org.slf4j.LoggerFactory;
 import unit731.boxon.helpers.ReflectionHelper;
 
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
@@ -88,15 +87,12 @@ final class Loader{
 				Arrays.stream(basePackageClasses).map(Class::getPackageName).collect(Collectors.joining(", ", "[", "]")));
 
 			final Collection<Class<?>> derivedClasses = AnnotationHelper.extractClasses(CodecInterface.class, basePackageClasses);
-			final Collection<CodecInterface<?>> codecs = new ArrayList<>(derivedClasses.size());
 			for(final Class<?> type : derivedClasses){
 				final CodecInterface<?> codec = (CodecInterface<?>)ReflectionHelper.getCreator(type)
 					.get();
 				if(codec != null)
-					codecs.add(codec);
+					addCodec(codec);
 			}
-			for(final CodecInterface<?> codec : codecs)
-				addCodec(codec);
 
 			LOGGER.trace("Codecs loaded are {}", codecs.size());
 
