@@ -22,31 +22,34 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package unit731.boxon.helpers;
+package unit731.boxon.codecs.exceptions;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import unit731.boxon.codecs.queclink.VersionHelper;
+import unit731.boxon.helpers.ExceptionHelper;
+
+import java.util.StringJoiner;
 
 
-class VersionHelperTest{
+public class ComposeException extends Exception{
 
-	@Test
-	void compare(){
-		Assertions.assertEquals(1, VersionHelper.compare("1.1", "1.0"));
-		Assertions.assertEquals(0, VersionHelper.compare("1.0", "1.0"));
-		Assertions.assertEquals(-1, VersionHelper.compare("1.0", "1.1"));
+	private static final long serialVersionUID = -7230533024483622086L;
 
-		Assertions.assertEquals(Integer.MAX_VALUE, VersionHelper.compare("1.0a", "1.0"));
-		Assertions.assertEquals(0, VersionHelper.compare("1.0a", "1.0a"));
-		Assertions.assertEquals(-Integer.MAX_VALUE, VersionHelper.compare("1.0", "1.0a"));
 
-		Assertions.assertEquals(1, VersionHelper.compare("1.0b", "1.0a"));
-		Assertions.assertEquals(0, VersionHelper.compare("1.0a", "1.0A"));
-		Assertions.assertEquals(-1, VersionHelper.compare("1.0a", "1.0b"));
+	private final Object data;
 
-		Assertions.assertEquals(1, VersionHelper.compare("1.1b", "1.0a"));
-		Assertions.assertEquals(-1, VersionHelper.compare("1.0a", "1.1b"));
+
+	public ComposeException(final Object data, final Throwable cause){
+		super(cause);
+
+		this.data = data;
+	}
+
+	@Override
+	public String getMessage(){
+		final StringJoiner sj = new StringJoiner(System.lineSeparator());
+		sj.add("Error encoding data: " + data.toString());
+		if(getCause() != null)
+			sj.add(ExceptionHelper.getMessageNoLineNumber(getCause()));
+		return sj.toString();
 	}
 
 }

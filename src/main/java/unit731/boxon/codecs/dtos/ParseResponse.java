@@ -22,31 +22,39 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package unit731.boxon.helpers;
+package unit731.boxon.codecs.dtos;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import unit731.boxon.codecs.queclink.VersionHelper;
+import unit731.boxon.codecs.exceptions.ParseException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
-class VersionHelperTest{
+public class ParseResponse{
 
-	@Test
-	void compare(){
-		Assertions.assertEquals(1, VersionHelper.compare("1.1", "1.0"));
-		Assertions.assertEquals(0, VersionHelper.compare("1.0", "1.0"));
-		Assertions.assertEquals(-1, VersionHelper.compare("1.0", "1.1"));
+	private final List<Object> parsedMessages = new ArrayList<>(0);
+	private final List<ParseException> errors = new ArrayList<>(0);
 
-		Assertions.assertEquals(Integer.MAX_VALUE, VersionHelper.compare("1.0a", "1.0"));
-		Assertions.assertEquals(0, VersionHelper.compare("1.0a", "1.0a"));
-		Assertions.assertEquals(-Integer.MAX_VALUE, VersionHelper.compare("1.0", "1.0a"));
 
-		Assertions.assertEquals(1, VersionHelper.compare("1.0b", "1.0a"));
-		Assertions.assertEquals(0, VersionHelper.compare("1.0a", "1.0A"));
-		Assertions.assertEquals(-1, VersionHelper.compare("1.0a", "1.0b"));
+	public void addParsedMessage(final Object decodedMessage){
+		parsedMessages.add(decodedMessage);
+	}
 
-		Assertions.assertEquals(1, VersionHelper.compare("1.1b", "1.0a"));
-		Assertions.assertEquals(-1, VersionHelper.compare("1.0a", "1.1b"));
+	public List<Object> getParsedMessages(){
+		return parsedMessages;
+	}
+
+	public void addError(final ParseException exception){
+		errors.add(exception);
+	}
+
+	public boolean hasErrors(){
+		return !errors.isEmpty();
+	}
+
+	@SuppressWarnings("unused")
+	public List<ParseException> getErrors(){
+		return errors;
 	}
 
 }

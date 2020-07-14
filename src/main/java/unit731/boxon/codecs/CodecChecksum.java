@@ -22,31 +22,33 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package unit731.boxon.helpers;
+package unit731.boxon.codecs;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import unit731.boxon.codecs.queclink.VersionHelper;
+import unit731.boxon.annotations.BindChecksum;
+
+import java.lang.annotation.Annotation;
 
 
-class VersionHelperTest{
+@SuppressWarnings("unused")
+final class CodecChecksum implements CodecInterface<BindChecksum>{
 
-	@Test
-	void compare(){
-		Assertions.assertEquals(1, VersionHelper.compare("1.1", "1.0"));
-		Assertions.assertEquals(0, VersionHelper.compare("1.0", "1.0"));
-		Assertions.assertEquals(-1, VersionHelper.compare("1.0", "1.1"));
+	@Override
+	public final Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
+		final BindChecksum binding = (BindChecksum)annotation;
 
-		Assertions.assertEquals(Integer.MAX_VALUE, VersionHelper.compare("1.0a", "1.0"));
-		Assertions.assertEquals(0, VersionHelper.compare("1.0a", "1.0a"));
-		Assertions.assertEquals(-Integer.MAX_VALUE, VersionHelper.compare("1.0", "1.0a"));
+		return reader.get(binding.type(), binding.byteOrder());
+	}
 
-		Assertions.assertEquals(1, VersionHelper.compare("1.0b", "1.0a"));
-		Assertions.assertEquals(0, VersionHelper.compare("1.0a", "1.0A"));
-		Assertions.assertEquals(-1, VersionHelper.compare("1.0a", "1.0b"));
+	@Override
+	public final void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
+		final BindChecksum binding = (BindChecksum)annotation;
 
-		Assertions.assertEquals(1, VersionHelper.compare("1.1b", "1.0a"));
-		Assertions.assertEquals(-1, VersionHelper.compare("1.0a", "1.1b"));
+		writer.put(value, binding.byteOrder());
+	}
+
+	@Override
+	public final Class<BindChecksum> codecType(){
+		return BindChecksum.class;
 	}
 
 }

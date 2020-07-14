@@ -26,7 +26,6 @@ package unit731.boxon.helpers;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import unit731.boxon.coders.queclink.QueclinkHelper;
 
 
 class ByteHelperTest{
