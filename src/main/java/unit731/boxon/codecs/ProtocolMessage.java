@@ -123,6 +123,7 @@ final class ProtocolMessage<T>{
 						ReflectionHelper.PRIMITIVE_WRAPPER_MAP.getOrDefault(type.getComponentType(), type.getComponentType()).getSimpleName());
 			}
 		},
+
 		ARRAY(BindArray.class){
 			@Override
 			void validate(final Annotation annotation){
@@ -136,6 +137,7 @@ final class ProtocolMessage<T>{
 						ReflectionHelper.WRAPPER_PRIMITIVE_MAP.getOrDefault(type.getComponentType(), type.getComponentType()).getSimpleName());
 			}
 		},
+
 		OBJECT(BindObject.class){
 			@Override
 			void validate(final Annotation annotation){
@@ -145,6 +147,7 @@ final class ProtocolMessage<T>{
 				validateChoice(selectFrom, type);
 			}
 		},
+
 		DECIMAL(BindDecimal.class){
 			@Override
 			void validate(final Annotation annotation){
@@ -153,6 +156,7 @@ final class ProtocolMessage<T>{
 					throw new AnnotationException("Bad type, should have been one of `{}.class` or `{}.class`", Float.class.getSimpleName(), Double.class.getSimpleName());
 			}
 		},
+
 		CHECKSUM(BindChecksum.class){
 			@Override
 			void validate(final Annotation annotation){
