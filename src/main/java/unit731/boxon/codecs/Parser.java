@@ -241,14 +241,18 @@ public class Parser{
 			}
 		}
 
-		//check if there are unread bytes:
+		//check if there are unread bytes
+		assertNoLeftBytes(reader, response);
+
+		return response;
+	}
+
+	private void assertNoLeftBytes(final BitReader reader, final ParseResponse response){
 		if(!response.hasErrors() && reader.hasRemaining()){
 			final IllegalArgumentException error = new IllegalArgumentException("There are remaining bytes");
 			final ParseException pe = new ParseException(reader.array(), reader.position(), error);
 			response.addError(pe);
 		}
-
-		return response;
 	}
 
 	private ParseException createParseException(final BitReader reader, final Throwable t){
@@ -282,7 +286,7 @@ public class Parser{
 			try{
 				final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(elem.getClass(), protocolMessageParser.loader);
 				if(!protocolMessage.canBeDecoded())
-					throw new ProtocolMessageException("Cannot construct any protocol message for message");
+					throw new ProtocolMessageException("Cannot create a protocol message from data");
 
 				protocolMessageParser.encode(protocolMessage, elem, writer);
 			}
