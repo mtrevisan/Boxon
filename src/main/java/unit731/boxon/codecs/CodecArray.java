@@ -37,7 +37,7 @@ import java.math.BigInteger;
 final class CodecArray implements CodecInterface<BindArray>{
 
 	@SuppressWarnings("unused")
-	private MessageParser messageParser;
+	private ProtocolMessageParser protocolMessageParser;
 
 
 	@Override
@@ -76,18 +76,18 @@ final class CodecArray implements CodecInterface<BindArray>{
 			final Choices.Choice chosenAlternative = CodecHelper.chooseAlternative(alternatives, prefix.intValue(), data);
 
 			//read object
-			final ProtocolMessage<?> subProtocolMessage = ProtocolMessage.createFrom(chosenAlternative.type(), messageParser.loader);
+			final ProtocolMessage<?> subProtocolMessage = ProtocolMessage.createFrom(chosenAlternative.type(), protocolMessageParser.loader);
 
-			array[i] = messageParser.decode(subProtocolMessage, reader);
+			array[i] = protocolMessageParser.decode(subProtocolMessage, reader);
 		}
 	}
 
 	private void decodeWithoutAlternatives(final BitBuffer reader, final Object[] array, final Class<?> type){
-		final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(type, messageParser.loader);
+		final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(type, protocolMessageParser.loader);
 
 		final int size = array.length;
 		for(int i = 0; i < size; i ++)
-			array[i] = messageParser.decode(protocolMessage, reader);
+			array[i] = protocolMessageParser.decode(protocolMessage, reader);
 	}
 
 	@Override
@@ -118,18 +118,18 @@ final class CodecArray implements CodecInterface<BindArray>{
 
 			CodecHelper.writePrefix(writer, chosenAlternative, selectFrom);
 
-			final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(cls, messageParser.loader);
+			final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(cls, protocolMessageParser.loader);
 
-			messageParser.encode(protocolMessage, array[i], writer);
+			protocolMessageParser.encode(protocolMessage, array[i], writer);
 		}
 	}
 
 	private void encodeWithoutAlternatives(final BitWriter writer, final Object[] array, final Class<?> type){
-		final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(type, messageParser.loader);
+		final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(type, protocolMessageParser.loader);
 
 		final int size = array.length;
 		for(int i = 0; i < size; i ++)
-			messageParser.encode(protocolMessage, array[i], writer);
+			protocolMessageParser.encode(protocolMessage, array[i], writer);
 	}
 
 	@Override

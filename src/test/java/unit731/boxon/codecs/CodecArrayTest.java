@@ -179,9 +179,9 @@ class CodecArrayTest{
 			}
 		};
 
-		MessageParser messageParser = new MessageParser();
-		messageParser.loader.loadCodecs();
-		ReflectionHelper.setFieldValue(codec, "messageParser", messageParser);
+		ProtocolMessageParser protocolMessageParser = new ProtocolMessageParser();
+		protocolMessageParser.loader.loadCodecs();
+		ReflectionHelper.setFieldValue(codec, "protocolMessageParser", protocolMessageParser);
 		BitWriter writer = new BitWriter();
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();

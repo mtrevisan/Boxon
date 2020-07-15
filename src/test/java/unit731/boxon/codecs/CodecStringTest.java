@@ -75,7 +75,7 @@ class CodecStringTest{
 			}
 		};
 
-		MessageParser messageParser = new MessageParser();
+		ProtocolMessageParser protocolMessageParser = new ProtocolMessageParser();
 		BitWriter writer = new BitWriter();
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
