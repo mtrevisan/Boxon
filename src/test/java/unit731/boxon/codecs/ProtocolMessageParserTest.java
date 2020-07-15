@@ -39,7 +39,7 @@ class ProtocolMessageParserTest{
 	@Test
 	void parseSingleMessageHex(){
 		byte[] payload = ByteHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
-		BitBuffer reader = BitBuffer.wrap(payload);
+		BitReader reader = BitReader.wrap(payload);
 
 		ProtocolMessageParser protocolMessageParser = new ProtocolMessageParser();
 		protocolMessageParser.loader.loadCodecs();
@@ -63,7 +63,7 @@ class ProtocolMessageParserTest{
 	@Test
 	void parseSingleMessageASCII(){
 		byte[] payload = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
-		BitBuffer reader = BitBuffer.wrap(payload);
+		BitReader reader = BitReader.wrap(payload);
 
 		ProtocolMessageParser protocolMessageParser = new ProtocolMessageParser();
 		protocolMessageParser.loader.loadCodecs();

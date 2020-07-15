@@ -191,7 +191,7 @@ public class Parser{
 	 * @throws SecurityException	If a security manager exists and its {@code checkRead} method denies read access to the file.
 	 */
 	public ParseResponse parse(final File file) throws IOException{
-		final BitBuffer reader = BitBuffer.wrap(file);
+		final BitReader reader = BitReader.wrap(file);
 		return parse(reader);
 	}
 
@@ -202,7 +202,7 @@ public class Parser{
 	 * @return	The parse response
 	 */
 	public ParseResponse parse(final ByteBuffer buffer){
-		final BitBuffer reader = BitBuffer.wrap(buffer);
+		final BitReader reader = BitReader.wrap(buffer);
 		return parse(reader);
 	}
 
@@ -213,17 +213,17 @@ public class Parser{
 	 * @return	The parse response
 	 */
 	public ParseResponse parse(final byte[] payload){
-		final BitBuffer reader = BitBuffer.wrap(payload);
+		final BitReader reader = BitReader.wrap(payload);
 		return parse(reader);
 	}
 
 	/**
 	 * Parse a message
 	 *
-	 * @param reader	The message to be parsed backed by a {@link BitBuffer}
+	 * @param reader	The message to be parsed backed by a {@link BitReader}
 	 * @return	The parse response
 	 */
-	public ParseResponse parse(final BitBuffer reader){
+	public ParseResponse parse(final BitReader reader){
 		final ParseResponse response = new ParseResponse();
 
 		while(reader.hasRemaining()){
@@ -263,7 +263,7 @@ public class Parser{
 		return response;
 	}
 
-	private ParseException createParseException(final BitBuffer reader, final Throwable t){
+	private ParseException createParseException(final BitReader reader, final Throwable t){
 		final byte[] payload = reader.array();
 		final int position = reader.position();
 		final byte[] subPayload = Arrays.copyOfRange(payload, position, payload.length);

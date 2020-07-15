@@ -90,7 +90,7 @@ class CodecIntegerTest{
 
 		Assertions.assertEquals("201000", writer.toString());
 
-		BitBuffer reader = BitBuffer.wrap(writer);
+		BitReader reader = BitReader.wrap(writer);
 		long decoded = (long)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -143,7 +143,7 @@ class CodecIntegerTest{
 
 		Assertions.assertEquals("002010", writer.toString());
 
-		BitBuffer reader = BitBuffer.wrap(writer);
+		BitReader reader = BitReader.wrap(writer);
 		long decoded = (long)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -196,7 +196,7 @@ class CodecIntegerTest{
 
 		Assertions.assertEquals("FF007F", writer.toString());
 
-		BitBuffer reader = BitBuffer.wrap(writer);
+		BitReader reader = BitReader.wrap(writer);
 		long decoded = (long)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -249,7 +249,7 @@ class CodecIntegerTest{
 
 		Assertions.assertEquals("11008F", writer.toString());
 
-		BitBuffer reader = BitBuffer.wrap(writer);
+		BitReader reader = BitReader.wrap(writer);
 		long decoded = (long)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -303,7 +303,7 @@ class CodecIntegerTest{
 
 		Assertions.assertEquals("001020", writer.toString());
 
-		BitBuffer reader = BitBuffer.wrap(writer);
+		BitReader reader = BitReader.wrap(writer);
 		long decoded = (long)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -356,7 +356,7 @@ class CodecIntegerTest{
 
 		Assertions.assertEquals("102000", writer.toString());
 
-		BitBuffer reader = BitBuffer.wrap(writer);
+		BitReader reader = BitReader.wrap(writer);
 		long decoded = (long)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -409,7 +409,7 @@ class CodecIntegerTest{
 
 		Assertions.assertEquals("7F00FF", writer.toString());
 
-		BitBuffer reader = BitBuffer.wrap(writer);
+		BitReader reader = BitReader.wrap(writer);
 		long decoded = (long)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -462,7 +462,7 @@ class CodecIntegerTest{
 
 		Assertions.assertEquals("8F0011", writer.toString());
 
-		BitBuffer reader = BitBuffer.wrap(writer);
+		BitReader reader = BitReader.wrap(writer);
 		long decoded = (long)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -517,7 +517,7 @@ class CodecIntegerTest{
 		BitSet bits = ByteHelper.toBits(encodedValue, 128, ByteOrder.LITTLE_ENDIAN);
 		Assertions.assertEquals(StringUtils.rightPad(ByteHelper.toHexString(bits.toByteArray()).toUpperCase(Locale.ROOT), 32, '0'), writer.toString());
 
-		BitBuffer reader = BitBuffer.wrap(writer);
+		BitReader reader = BitReader.wrap(writer);
 		BigInteger decoded = (BigInteger)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -570,7 +570,7 @@ class CodecIntegerTest{
 
 		Assertions.assertEquals("00000000000000000000FFFF0000FF7F", writer.toString());
 
-		BitBuffer reader = BitBuffer.wrap(writer);
+		BitReader reader = BitReader.wrap(writer);
 		BigInteger decoded = (BigInteger)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -623,7 +623,7 @@ class CodecIntegerTest{
 
 		Assertions.assertEquals("00000000000000000000FFFF0000FF80", writer.toString());
 
-		BitBuffer reader = BitBuffer.wrap(writer);
+		BitReader reader = BitReader.wrap(writer);
 		BigInteger decoded = (BigInteger)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -677,7 +677,7 @@ class CodecIntegerTest{
 
 		Assertions.assertEquals("00FF0000FFFF00000000000000000000", writer.toString());
 
-		BitBuffer reader = BitBuffer.wrap(writer);
+		BitReader reader = BitReader.wrap(writer);
 		BigInteger decoded = (BigInteger)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -730,7 +730,7 @@ class CodecIntegerTest{
 
 		Assertions.assertEquals("7FFF0000FFFF00000000000000000000", writer.toString());
 
-		BitBuffer reader = BitBuffer.wrap(writer);
+		BitReader reader = BitReader.wrap(writer);
 		BigInteger decoded = (BigInteger)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -783,7 +783,7 @@ class CodecIntegerTest{
 
 		Assertions.assertEquals("80FF0000FFFF00000000000000000000", writer.toString());
 
-		BitBuffer reader = BitBuffer.wrap(writer);
+		BitReader reader = BitReader.wrap(writer);
 		BigInteger decoded = (BigInteger)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);

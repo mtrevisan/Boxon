@@ -82,7 +82,7 @@ class CodecStringTest{
 
 		Assertions.assertEquals(encodedValue, new String(writer.array(), StandardCharsets.US_ASCII));
 
-		BitBuffer reader = BitBuffer.wrap(writer);
+		BitReader reader = BitReader.wrap(writer);
 		String decoded = (String)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -130,7 +130,7 @@ class CodecStringTest{
 
 		Assertions.assertEquals(encodedValue, new String(writer.array(), StandardCharsets.UTF_8));
 
-		BitBuffer reader = BitBuffer.wrap(writer);
+		BitReader reader = BitReader.wrap(writer);
 		String decoded = (String)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -218,7 +218,7 @@ class CodecStringTest{
 			}
 		};
 
-		BitBuffer reader = BitBuffer.wrap(encodedValue.getBytes(StandardCharsets.US_ASCII));
+		BitReader reader = BitReader.wrap(encodedValue.getBytes(StandardCharsets.US_ASCII));
 		Object decoded = codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals("123AB", decoded);

@@ -33,7 +33,7 @@ import java.lang.annotation.Annotation;
 final class CodecByte implements CodecInterface<BindByte>{
 
 	@Override
-	public final Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
+	public final Object decode(final BitReader reader, final Annotation annotation, final Object data){
 		final BindByte binding = (BindByte)annotation;
 
 		final byte v = reader.getByte();

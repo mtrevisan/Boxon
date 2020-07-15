@@ -81,7 +81,7 @@ class CodecLongTest{
 
 		Assertions.assertEquals("0000FFFF0000FF8F", writer.toString());
 
-		BitBuffer reader = BitBuffer.wrap(writer);
+		BitReader reader = BitReader.wrap(writer);
 		long decoded = (long)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -124,7 +124,7 @@ class CodecLongTest{
 
 		Assertions.assertEquals("00FF007F00000000", writer.toString());
 
-		BitBuffer reader = BitBuffer.wrap(writer);
+		BitReader reader = BitReader.wrap(writer);
 		long decoded = (long)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -167,7 +167,7 @@ class CodecLongTest{
 
 		Assertions.assertEquals("0000000000FF007F", writer.toString());
 
-		BitBuffer reader = BitBuffer.wrap(writer);
+		BitReader reader = BitReader.wrap(writer);
 		long decoded = (long)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -210,7 +210,7 @@ class CodecLongTest{
 
 		Assertions.assertEquals(StringUtils.leftPad(Long.toHexString(Long.reverseBytes(encodedValue)).toUpperCase(Locale.ROOT), 16, '0'), writer.toString());
 
-		BitBuffer reader = BitBuffer.wrap(writer);
+		BitReader reader = BitReader.wrap(writer);
 		long decoded = (long)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -253,7 +253,7 @@ class CodecLongTest{
 
 		Assertions.assertEquals("8FFF000000000011", writer.toString());
 
-		BitBuffer reader = BitBuffer.wrap(writer);
+		BitReader reader = BitReader.wrap(writer);
 		long decoded = (long)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -296,7 +296,7 @@ class CodecLongTest{
 
 		Assertions.assertEquals("000000007F00FF00", writer.toString());
 
-		BitBuffer reader = BitBuffer.wrap(writer);
+		BitReader reader = BitReader.wrap(writer);
 		long decoded = (long)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -339,7 +339,7 @@ class CodecLongTest{
 
 		Assertions.assertEquals("7F00FF0000000000", writer.toString());
 
-		BitBuffer reader = BitBuffer.wrap(writer);
+		BitReader reader = BitReader.wrap(writer);
 		long decoded = (long)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -382,7 +382,7 @@ class CodecLongTest{
 
 		Assertions.assertEquals(StringUtils.leftPad(Long.toHexString(encodedValue).toUpperCase(Locale.ROOT), 16, '0'), writer.toString());
 
-		BitBuffer reader = BitBuffer.wrap(writer);
+		BitReader reader = BitReader.wrap(writer);
 		long decoded = (long)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);

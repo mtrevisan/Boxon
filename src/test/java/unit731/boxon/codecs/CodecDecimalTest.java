@@ -88,7 +88,7 @@ class CodecDecimalTest{
 
 		Assertions.assertEquals(StringUtils.leftPad(Long.toHexString(Long.reverseBytes(Double.doubleToRawLongBits(encodedValue.doubleValue()))).toUpperCase(Locale.ROOT), 16, '0'), writer.toString());
 
-		BitBuffer reader = BitBuffer.wrap(writer);
+		BitReader reader = BitReader.wrap(writer);
 		BigDecimal decoded = (BigDecimal)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -136,7 +136,7 @@ class CodecDecimalTest{
 
 		Assertions.assertEquals(StringUtils.leftPad(Long.toHexString(Long.reverseBytes(Double.doubleToRawLongBits(encodedValue.doubleValue()))).toUpperCase(Locale.ROOT), 16, '0'), writer.toString());
 
-		BitBuffer reader = BitBuffer.wrap(writer);
+		BitReader reader = BitReader.wrap(writer);
 		BigDecimal decoded = (BigDecimal)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -184,7 +184,7 @@ class CodecDecimalTest{
 
 		Assertions.assertEquals(StringUtils.leftPad(Long.toHexString(Double.doubleToRawLongBits(encodedValue.doubleValue())).toUpperCase(Locale.ROOT), 8, '0'), writer.toString());
 
-		BitBuffer reader = BitBuffer.wrap(writer);
+		BitReader reader = BitReader.wrap(writer);
 		BigDecimal decoded = (BigDecimal)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -232,7 +232,7 @@ class CodecDecimalTest{
 
 		Assertions.assertEquals(StringUtils.leftPad(Long.toHexString(Double.doubleToRawLongBits(encodedValue.doubleValue())).toUpperCase(Locale.ROOT), 8, '0'), writer.toString());
 
-		BitBuffer reader = BitBuffer.wrap(writer);
+		BitReader reader = BitReader.wrap(writer);
 		BigDecimal decoded = (BigDecimal)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);

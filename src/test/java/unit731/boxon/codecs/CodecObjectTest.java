@@ -102,7 +102,7 @@ class CodecObjectTest{
 
 		Assertions.assertArrayEquals(new byte[]{0x01, 0x02}, writer.array());
 
-		BitBuffer reader = BitBuffer.wrap(writer);
+		BitReader reader = BitReader.wrap(writer);
 		Version decoded = (Version)codec.decode(reader, annotation, null);
 
 		Assertions.assertNotNull(decoded);

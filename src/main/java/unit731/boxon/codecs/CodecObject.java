@@ -40,7 +40,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 
 
 	@Override
-	public final Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
+	public final Object decode(final BitReader reader, final Annotation annotation, final Object data){
 		final BindObject binding = (BindObject)annotation;
 
 		Class<?> type = binding.type();

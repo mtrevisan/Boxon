@@ -244,7 +244,7 @@ final class Loader{
 		}
 	}
 
-	final ProtocolMessage<?> getProtocolMessage(final BitBuffer reader){
+	final ProtocolMessage<?> getProtocolMessage(final BitReader reader){
 		final int index = reader.position();
 
 		ProtocolMessage<?> protocolMessage = null;
@@ -267,7 +267,7 @@ final class Loader{
 	}
 
 
-	final int findNextMessageIndex(final BitBuffer reader){
+	final int findNextMessageIndex(final BitReader reader){
 		int minOffset = -1;
 		for(final ProtocolMessage<?> protocolMessage : protocolMessages.values()){
 			final MessageHeader header = protocolMessage.getHeader();
@@ -282,7 +282,7 @@ final class Loader{
 		return minOffset;
 	}
 
-	private int searchNextSequence(final BitBuffer reader, final byte[] startMessageSequence){
+	private int searchNextSequence(final BitReader reader, final byte[] startMessageSequence){
 		final int[] boundarySequenceLps = ByteHelper.indexOfComputeFailureTable(startMessageSequence);
 
 		final byte[] message = reader.array();

@@ -41,7 +41,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 
 
 	@Override
-	public final Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
+	public final Object decode(final BitReader reader, final Annotation annotation, final Object data){
 		final BindArray binding = (BindArray)annotation;
 
 		final int size = Evaluator.evaluateSize(binding.size(), data);
@@ -60,7 +60,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 		return value;
 	}
 
-	private void decodeWithAlternatives(final BitBuffer reader, final Object[] array, final Choices selectFrom, final Object data){
+	private void decodeWithAlternatives(final BitReader reader, final Object[] array, final Choices selectFrom, final Object data){
 		//read prefix
 		final int prefixSize = selectFrom.prefixSize();
 		final ByteOrder prefixByteOrder = selectFrom.byteOrder();
@@ -82,7 +82,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 		}
 	}
 
-	private void decodeWithoutAlternatives(final BitBuffer reader, final Object[] array, final Class<?> type){
+	private void decodeWithoutAlternatives(final BitReader reader, final Object[] array, final Class<?> type){
 		final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(type, protocolMessageParser.loader);
 
 		final int size = array.length;

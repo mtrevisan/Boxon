@@ -34,7 +34,7 @@ import java.nio.charset.Charset;
 final class CodecStringTerminated implements CodecInterface<BindStringTerminated>{
 
 	@Override
-	public final Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
+	public final Object decode(final BitReader reader, final Annotation annotation, final Object data){
 		final BindStringTerminated binding = (BindStringTerminated)annotation;
 
 		final Charset charset = Charset.forName(binding.charset());

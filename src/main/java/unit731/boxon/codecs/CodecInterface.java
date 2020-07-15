@@ -29,7 +29,7 @@ import java.lang.annotation.Annotation;
 
 public interface CodecInterface<B extends Annotation>{
 
-	Object decode(final BitBuffer reader, final Annotation annotation, final Object data);
+	Object decode(final BitReader reader, final Annotation annotation, final Object data);
 
 	void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value);
 

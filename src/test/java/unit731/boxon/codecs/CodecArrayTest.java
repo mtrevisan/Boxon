@@ -117,7 +117,7 @@ class CodecArrayTest{
 
 		Assertions.assertArrayEquals(new byte[]{0x00, 0x00, 0x01, 0x23, 0x00, 0x00, 0x04, 0x56}, writer.array());
 
-		BitBuffer reader = BitBuffer.wrap(writer);
+		BitReader reader = BitReader.wrap(writer);
 		Object decoded = codec.decode(reader, annotation, null);
 
 		Assertions.assertArrayEquals(encodedValue, (int[])decoded);
@@ -188,7 +188,7 @@ class CodecArrayTest{
 
 		Assertions.assertArrayEquals(new byte[]{0x00, 0x01, 0x0C, 0x01, 0x02, 0x00}, writer.array());
 
-		BitBuffer reader = BitBuffer.wrap(writer);
+		BitReader reader = BitReader.wrap(writer);
 		Version[] decoded = (Version[])codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue.length, decoded.length);

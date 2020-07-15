@@ -34,7 +34,7 @@ import java.nio.charset.Charset;
 final class CodecString implements CodecInterface<BindString>{
 
 	@Override
-	public final Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
+	public final Object decode(final BitReader reader, final Annotation annotation, final Object data){
 		final BindString binding = (BindString)annotation;
 
 		final int size = Evaluator.evaluateSize(binding.size(), data);

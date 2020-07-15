@@ -33,7 +33,7 @@ import java.lang.annotation.Annotation;
 final class CodecDouble implements CodecInterface<BindDouble>{
 
 	@Override
-	public final Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
+	public final Object decode(final BitReader reader, final Annotation annotation, final Object data){
 		final BindDouble binding = (BindDouble)annotation;
 
 		final double v = reader.getDouble(binding.byteOrder());

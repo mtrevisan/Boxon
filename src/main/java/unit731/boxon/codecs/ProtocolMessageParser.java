@@ -53,7 +53,7 @@ final class ProtocolMessageParser{
 	final Loader loader = new Loader();
 
 
-	final <T> T decode(final ProtocolMessage<T> protocolMessage, final BitBuffer reader){
+	final <T> T decode(final ProtocolMessage<T> protocolMessage, final BitReader reader){
 		final int startPosition = reader.position();
 
 		final T data = ReflectionHelper.getCreator(protocolMessage.getType())
@@ -78,6 +78,7 @@ final class ProtocolMessageParser{
 					LOGGER.info("read {} = {}", field.getName(), value);
 			}
 			catch(final Exception e){
+				//this assumes the reading was done correctly
 				manageProtocolMessageException(protocolMessage, field, e);
 			}
 		}
@@ -91,13 +92,13 @@ final class ProtocolMessageParser{
 		return data;
 	}
 
-	private <T> void readSkippedFields(final Skip[] skips, final BitBuffer reader, final T data){
+	private <T> void readSkippedFields(final Skip[] skips, final BitReader reader, final T data){
 		if(skips != null)
 			for(final Skip skip : skips)
 				readSkip(skip, reader, data);
 	}
 
-	private <T> void readSkip(final Skip skip, final BitBuffer reader, final T data){
+	private <T> void readSkip(final Skip skip, final BitReader reader, final T data){
 		final int size = Evaluator.evaluateSize(skip.size(), data);
 		if(size > 0)
 			/** skip {@link size} bits */
@@ -111,7 +112,7 @@ final class ProtocolMessageParser{
 		return (condition != null && !Evaluator.evaluate(condition, boolean.class, data));
 	}
 
-	private <T> void readMessageTerminator(final ProtocolMessage<T> protocolMessage, final BitBuffer reader){
+	private <T> void readMessageTerminator(final ProtocolMessage<T> protocolMessage, final BitReader reader){
 		final MessageHeader header = protocolMessage.getHeader();
 		if(header != null && header.end().length() > 0){
 			final Charset charset = Charset.forName(header.charset());
@@ -124,7 +125,7 @@ final class ProtocolMessageParser{
 		}
 	}
 
-	private <T> void verifyChecksum(final ProtocolMessage<T> protocolMessage, final T data, int startPosition, final BitBuffer reader){
+	private <T> void verifyChecksum(final ProtocolMessage<T> protocolMessage, final T data, int startPosition, final BitReader reader){
 		final ProtocolMessage.BoundedField checksumData = protocolMessage.getChecksum();
 		if(checksumData != null){
 			final BindChecksum checksum = (BindChecksum)checksumData.getBinding();
@@ -168,6 +169,7 @@ final class ProtocolMessageParser{
 				codec.encode(writer, binding, data, value);
 			}
 			catch(final Exception e){
+				//this assumes the writing was done correctly
 				manageProtocolMessageException(protocolMessage, field, e);
 			}
 		}
