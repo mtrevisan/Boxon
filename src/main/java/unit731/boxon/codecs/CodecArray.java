@@ -49,9 +49,9 @@ final class CodecArray implements CodecInterface<BindArray>{
 
 		final Object[] array = ReflectionHelper.createArray(binding.type(), size);
 		if(selectFrom != null && selectFrom.alternatives().length > 0)
-			decodeWithAlternatives(reader, size, array, selectFrom, data);
+			decodeWithAlternatives(reader, array, selectFrom, data);
 		else
-			decodeWithoutAlternatives(reader, size, array, binding.type());
+			decodeWithoutAlternatives(reader, array, binding.type());
 
 		final Object value = CodecHelper.converterDecode(binding.converter(), array);
 
@@ -60,7 +60,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 		return value;
 	}
 
-	private void decodeWithAlternatives(final BitBuffer reader, final int size, final Object[] array, final Choices selectFrom, final Object data){
+	private void decodeWithAlternatives(final BitBuffer reader, final Object[] array, final Choices selectFrom, final Object data){
 		//read prefix
 		final int prefixSize = selectFrom.prefixSize();
 		final ByteOrder prefixByteOrder = selectFrom.byteOrder();
@@ -68,6 +68,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 		@SuppressWarnings("ConstantConditions")
 		final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): null);
 
+		final int size = array.length;
 		for(int i = 0; i < size; i ++){
 			final BigInteger prefix = reader.getBigInteger(prefixSize, prefixByteOrder);
 
@@ -81,9 +82,10 @@ final class CodecArray implements CodecInterface<BindArray>{
 		}
 	}
 
-	private void decodeWithoutAlternatives(final BitBuffer reader, final int size, final Object[] array, final Class<?> type){
+	private void decodeWithoutAlternatives(final BitBuffer reader, final Object[] array, final Class<?> type){
 		final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(type, messageParser.loader);
 
+		final int size = array.length;
 		for(int i = 0; i < size; i ++)
 			array[i] = messageParser.decode(protocolMessage, reader);
 	}
@@ -100,13 +102,14 @@ final class CodecArray implements CodecInterface<BindArray>{
 		final Object[] array = CodecHelper.converterEncode(binding.converter(), value);
 
 		if(selectFrom != null && selectFrom.alternatives().length > 0)
-			encodeWithAlternatives(writer, size, array, selectFrom);
+			encodeWithAlternatives(writer, array, selectFrom);
 		else
-			encodeWithoutAlternatives(writer, size, array, binding.type());
+			encodeWithoutAlternatives(writer, array, binding.type());
 	}
 
-	private void encodeWithAlternatives(final BitWriter writer, final int size, final Object[] array, final Choices selectFrom){
+	private void encodeWithAlternatives(final BitWriter writer, final Object[] array, final Choices selectFrom){
 		final Choices.Choice[] alternatives = selectFrom.alternatives();
+		final int size = array.length;
 		for(int i = 0; i < size; i ++){
 			final Class<?> cls = array[i].getClass();
 
@@ -121,9 +124,10 @@ final class CodecArray implements CodecInterface<BindArray>{
 		}
 	}
 
-	private void encodeWithoutAlternatives(final BitWriter writer, final int size, final Object[] array, final Class<?> type){
+	private void encodeWithoutAlternatives(final BitWriter writer, final Object[] array, final Class<?> type){
 		final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(type, messageParser.loader);
 
+		final int size = array.length;
 		for(int i = 0; i < size; i ++)
 			messageParser.encode(protocolMessage, array[i], writer);
 	}
