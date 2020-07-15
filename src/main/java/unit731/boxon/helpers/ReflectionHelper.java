@@ -53,6 +53,7 @@ public final class ReflectionHelper{
 
 	private static final Function<Class<?>, Supplier<?>> CREATORS = Memoizer.memoizeThreadAndRecursionSafe(ReflectionHelper::getCreatorInner);
 
+	//FIXME aggregate into a unique structure?
 	/** Maps primitive {@code Class}es to their corresponding wrapper {@code Class} */
 	public static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPER_MAP = new HashMap<>(6);
 	/** Maps wrapper {@code Class}es to their corresponding primitive types */

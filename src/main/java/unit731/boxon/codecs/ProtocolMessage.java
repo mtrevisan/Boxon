@@ -42,7 +42,9 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -197,63 +199,89 @@ final class ProtocolMessage<T>{
 			validateAnnotation(annotations.get(0));
 	}
 
+	private enum AnnotationValidator{
+		ARRAY_PRIMITIVE(BindArrayPrimitive.class){
+			@Override
+			void validate(final Annotation annotation){
+				final Class<?> type = ((BindArrayPrimitive)annotation).type();
+				if(!ReflectionHelper.isArrayOfPrimitives(type))
+					throw new AnnotationException("Bad annotation used, @{} should have been used with type `{}.class`", BindArray.class.getSimpleName(),
+						ReflectionHelper.PRIMITIVE_WRAPPER_MAP.getOrDefault(type.getComponentType(), type.getComponentType()).getSimpleName());
+			}
+		},
+		ARRAY(BindArray.class){
+			@Override
+			void validate(final Annotation annotation){
+				final BindArray binding = (BindArray)annotation;
+				final Choices selectFrom = binding.selectFrom();
+				final Class<?> type = binding.type();
+				validateChoice(selectFrom, type);
+
+				if(ReflectionHelper.isArrayOfPrimitives(type))
+					throw new AnnotationException("Bad annotation used, @{} should have been used with type `{}[].class`", BindArrayPrimitive.class.getSimpleName(),
+						ReflectionHelper.WRAPPER_PRIMITIVE_MAP.getOrDefault(type.getComponentType(), type.getComponentType()).getSimpleName());
+			}
+		},
+		OBJECT(BindObject.class){
+			@Override
+			void validate(final Annotation annotation){
+				final BindObject binding = (BindObject)annotation;
+				final Choices selectFrom = binding.selectFrom();
+				final Class<?> type = binding.type();
+				validateChoice(selectFrom, type);
+			}
+		},
+		DECIMAL(BindDecimal.class){
+			@Override
+			void validate(final Annotation annotation){
+				final Class<?> type = ((BindDecimal)annotation).type();
+				if(type != Float.class && type != Double.class)
+					throw new AnnotationException("Bad type, should have been one of `{}.class` or `{}.class`", Float.class.getSimpleName(), Double.class.getSimpleName());
+			}
+		},
+		CHECKSUM(BindChecksum.class){
+			@Override
+			void validate(final Annotation annotation){
+				final Class<?> type = ((BindChecksum)annotation).type();
+				if(!ReflectionHelper.isPrimitiveOrPrimitiveWrapper(type))
+					throw new AnnotationException("Unrecognized type for field {}<{}>: {}", getClass().getSimpleName(), type.getSimpleName(), type.getComponentType().getSimpleName());
+			}
+		};
+
+		private static final Map<Class<? extends Annotation>, AnnotationValidator> ANNOTATION_VALIDATORS = new HashMap<>(5);
+		static{
+			for(final AnnotationValidator b : values())
+				ANNOTATION_VALIDATORS.put(b.annotationType, b);
+		}
+
+		private final Class<? extends Annotation> annotationType;
+
+		private AnnotationValidator(final Class<? extends Annotation> type){
+			this.annotationType = type;
+		}
+
+		private static AnnotationValidator fromAnnotation(final Annotation annotation){
+			return ANNOTATION_VALIDATORS.get(annotation.annotationType());
+		}
+
+		abstract void validate(final Annotation annotation);
+
+		private static void validateChoice(final Choices selectFrom, final Class<?> type){
+			final int prefixSize = selectFrom.prefixSize();
+			if(prefixSize > Integer.SIZE)
+				throw new AnnotationException("`prefixSize` cannot be greater than {} bits", Integer.SIZE);
+
+			@SuppressWarnings("ConstantConditions")
+			final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): null);
+			if(type == Object.class && alternatives != null && alternatives.length == 0)
+				throw new AnnotationException("`type` argument missing");
+		}
+	}
+
 	private void validateAnnotation(final Annotation annotation){
-		if(annotation instanceof BindArrayPrimitive)
-			validateAnnotation((BindArrayPrimitive)annotation);
-		else if(annotation instanceof BindArray)
-			validateAnnotation((BindArray)annotation);
-		else if(annotation instanceof BindObject)
-			validateAnnotation((BindObject)annotation);
-		else if(annotation instanceof BindDecimal)
-			validateAnnotation((BindDecimal)annotation);
-		else if(annotation instanceof BindChecksum)
-			validateAnnotation((BindChecksum)annotation);
-	}
-
-	private void validateAnnotation(final BindArrayPrimitive binding){
-		final Class<?> type = binding.type();
-		if(!ReflectionHelper.isArrayOfPrimitives(type))
-			throw new AnnotationException("Bad annotation used, @{} should have been used with type `{}.class`", BindArray.class.getSimpleName(),
-				ReflectionHelper.PRIMITIVE_WRAPPER_MAP.getOrDefault(type.getComponentType(), type.getComponentType()).getSimpleName());
-	}
-
-	private void validateAnnotation(final BindArray binding){
-		final Choices selectFrom = binding.selectFrom();
-		final Class<?> type = binding.type();
-		validateChoice(selectFrom, type);
-
-		if(ReflectionHelper.isArrayOfPrimitives(type))
-			throw new AnnotationException("Bad annotation used, @{} should have been used with type `{}[].class`", BindArrayPrimitive.class.getSimpleName(),
-				ReflectionHelper.WRAPPER_PRIMITIVE_MAP.getOrDefault(type.getComponentType(), type.getComponentType()).getSimpleName());
-	}
-
-	private void validateAnnotation(final BindObject binding){
-		final Choices selectFrom = binding.selectFrom();
-		final Class<?> type = binding.type();
-		validateChoice(selectFrom, type);
-	}
-
-	private void validateChoice(final Choices selectFrom, final Class<?> type){
-		final int prefixSize = selectFrom.prefixSize();
-		if(prefixSize > Integer.SIZE)
-			throw new AnnotationException("`prefixSize` cannot be greater than {} bits", Integer.SIZE);
-
-		@SuppressWarnings("ConstantConditions")
-		final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): null);
-		if(type == Object.class && alternatives != null && alternatives.length == 0)
-			throw new AnnotationException("`type` argument missing");
-	}
-
-	private void validateAnnotation(final BindDecimal binding){
-		final Class<?> type = binding.type();
-		if(type != Float.class && type != Double.class)
-			throw new AnnotationException("Bad type, should have been one of `{}.class` or `{}.class`", Float.class.getSimpleName(), Double.class.getSimpleName());
-	}
-
-	private void validateAnnotation(final BindChecksum binding){
-		final Class<?> type = binding.type();
-		if(!ReflectionHelper.isPrimitiveOrPrimitiveWrapper(type))
-			throw new AnnotationException("Unrecognized type for field {}<{}>: {}", getClass().getSimpleName(), type.getSimpleName(), type.getComponentType().getSimpleName());
+		final AnnotationValidator validator = AnnotationValidator.fromAnnotation(annotation);
+		if(validator != null)
+			validator.validate(annotation);
 	}
 
 	final Class<T> getType(){
