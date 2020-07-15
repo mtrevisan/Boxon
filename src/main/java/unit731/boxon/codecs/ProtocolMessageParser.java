@@ -171,12 +171,17 @@ final class ProtocolMessageParser{
 		}
 
 		final MessageHeader header = protocolMessage.getHeader();
+		closeMessage(header, writer);
+
+		writer.flush();
+	}
+
+	private void closeMessage(final MessageHeader header, final BitWriter writer){
 		if(header != null && header.end().length() > 0){
 			final Charset charset = Charset.forName(header.charset());
 			final byte[] messageTerminator = header.end().getBytes(charset);
 			writer.putBytes(messageTerminator);
 		}
-		writer.flush();
 	}
 
 	private CodecInterface<?> retrieveCodec(final Class<? extends Annotation> annotationType){
