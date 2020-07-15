@@ -12,9 +12,11 @@ import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.EnumMap;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Stack;
 import java.util.jar.JarEntry;
@@ -24,6 +26,8 @@ import java.util.jar.JarFile;
 public final class AnnotationHelper{
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AnnotationHelper.class.getName());
+
+	private enum BucketType{DIRECTORY, FILE}
 
 
 	private static final String SCHEMA_FILE = "file:";
@@ -158,18 +162,26 @@ public final class AnnotationHelper{
 
 			final File[] files = Optional.ofNullable(elem.file.listFiles())
 				.orElse(new File[0]);
-			for(final File file : files){
-				final String fileName = file.getName();
-				if(file.isDirectory())
-					stack.push(new ClassDescriptor(file, elem.packageName + POINT + fileName));
-				else{
-					final Class<?> cls = getClassFromFilename(elem.packageName, fileName);
-					addIf(classes, cls, type);
-				}
-			}
+			final Map<BucketType, Collection<File>> bucket = bucketByFileType(files);
+			bucket.get(BucketType.DIRECTORY).stream()
+				.map(file -> new ClassDescriptor(file, elem.packageName + POINT + file.getName()))
+				.forEach(stack::add);
+			bucket.get(BucketType.FILE).stream()
+				.map(file -> getClassFromFilename(elem.packageName, file.getName()))
+				.forEach(cls -> addIf(classes, cls, type));
 		}
 
 		return classes;
+	}
+
+	private static Map<BucketType, Collection<File>> bucketByFileType(final File[] files){
+		final Map<BucketType, Collection<File>> bucket = new EnumMap<>(BucketType.class);
+		bucket.put(BucketType.DIRECTORY, new ArrayList<>());
+		bucket.put(BucketType.FILE, new ArrayList<>());
+		for(final File file : files)
+			bucket.get(file.isDirectory()? BucketType.DIRECTORY: BucketType.FILE)
+				.add(file);
+		return bucket;
 	}
 
 	private static Class<?> getClassFromResource(final JarEntry resource){
