@@ -97,7 +97,7 @@ class BitWriterTest{
 	@Test
 	void intPrimitive(){
 		int value = 100_123;
-		writer.putInteger(value, ByteOrder.LITTLE_ENDIAN);
+		writer.putInt(value, ByteOrder.LITTLE_ENDIAN);
 		BitReader reader = BitReader.wrap(writer);
 
 		Assertions.assertEquals("1B870100", reader.toString());
@@ -107,7 +107,7 @@ class BitWriterTest{
 	@Test
 	void intPrimitiveBigEndian(){
 		int value = 100_123;
-		writer.putInteger(value, ByteOrder.BIG_ENDIAN);
+		writer.putInt(value, ByteOrder.BIG_ENDIAN);
 		BitReader reader = BitReader.wrap(writer);
 
 		Assertions.assertEquals("0001871B", reader.toString());

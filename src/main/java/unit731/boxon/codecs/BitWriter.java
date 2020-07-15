@@ -28,6 +28,7 @@ import unit731.boxon.annotations.exceptions.AnnotationException;
 import unit731.boxon.annotations.ByteOrder;
 import unit731.boxon.helpers.BitSet;
 import unit731.boxon.helpers.ByteHelper;
+import unit731.boxon.helpers.ReflectionHelper;
 
 import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
@@ -52,21 +53,34 @@ final class BitWriter{
 
 	@SuppressWarnings("ConstantConditions")
 	final void put(final Object value, final ByteOrder byteOrder){
-		final Class<?> type = value.getClass();
-		if(type == byte.class || type == Byte.class)
-			putByte((Byte)value);
-		else if(type == short.class || type == Short.class)
-			putShort((Short)value, byteOrder);
-		else if(type == int.class || type == Integer.class)
-			putInteger((Integer)value, byteOrder);
-		else if(type == long.class || type == Long.class)
-			putLong((Long)value, byteOrder);
-		else if(type == float.class || type == Float.class)
-			putFloat((Float)value, byteOrder);
-		else if(type == double.class || type == Double.class)
-			putDouble((Double)value, byteOrder);
-		else
-			throw new AnnotationException("Cannot write type {}", type.getSimpleName());
+		final ReflectionHelper.TypeEnum t = ReflectionHelper.TYPE_MAP.get(value.getClass());
+		if(t == null)
+			throw new AnnotationException("Cannot write type {}", value.getClass().getSimpleName());
+
+		switch(t){
+			case BYTE:
+				putByte((Byte)value);
+				break;
+
+			case SHORT:
+				putShort((Short)value, byteOrder);
+				break;
+
+			case INTEGER:
+				putInt((Integer)value, byteOrder);
+				break;
+
+			case LONG:
+				putLong((Long)value, byteOrder);
+				break;
+
+			case FLOAT:
+				putFloat((Float)value, byteOrder);
+				break;
+
+			case DOUBLE:
+				putDouble((Double)value, byteOrder);
+		}
 	}
 
 	/**
@@ -143,7 +157,7 @@ final class BitWriter{
 	 * @param value	The {@code int} to write.
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 */
-	final void putInteger(final int value, final ByteOrder byteOrder){
+	final void putInt(final int value, final ByteOrder byteOrder){
 		putValue((byteOrder == ByteOrder.BIG_ENDIAN? Integer.reverseBytes(value): value), Integer.SIZE);
 	}
 
@@ -164,7 +178,7 @@ final class BitWriter{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 */
 	final void putFloat(final float value, final ByteOrder byteOrder){
-		putInteger(Float.floatToRawIntBits(value), byteOrder);
+		putInt(Float.floatToRawIntBits(value), byteOrder);
 	}
 
 	/**

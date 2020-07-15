@@ -53,7 +53,7 @@ final class CodecInt implements CodecInterface<BindInt>{
 
 		final int v = CodecHelper.converterEncode(binding.converter(), value);
 
-		writer.putInteger(v, binding.byteOrder());
+		writer.putInt(v, binding.byteOrder());
 	}
 
 	@Override

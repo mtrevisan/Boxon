@@ -28,6 +28,7 @@ import unit731.boxon.annotations.exceptions.AnnotationException;
 import unit731.boxon.annotations.ByteOrder;
 import unit731.boxon.helpers.BitSet;
 import unit731.boxon.helpers.ByteHelper;
+import unit731.boxon.helpers.ReflectionHelper;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -177,23 +178,31 @@ final class BitReader{
 	}
 
 	final Object get(final Class<?> type, final ByteOrder byteOrder){
-		final Object value;
-		if(type == byte.class || type == Byte.class)
-			value = getByte();
-		else if(type == short.class || type == Short.class)
-			value = getShort(byteOrder);
-		else if(type == int.class || type == Integer.class)
-			value = getInt(byteOrder);
-		else if(type == long.class || type == Long.class)
-			value = getLong(byteOrder);
-		else if(type == float.class || type == Float.class)
-			value = getFloat(byteOrder);
-		else if(type == double.class || type == Double.class)
-			value = getDouble(byteOrder);
-		else
+		final ReflectionHelper.TypeEnum t = ReflectionHelper.TYPE_MAP.get(type);
+		if(t == null)
 			throw new AnnotationException("Cannot read type {}", type.getSimpleName());
 
-		return value;
+		switch(t){
+			case BYTE:
+				return getByte();
+
+			case SHORT:
+				return getShort(byteOrder);
+
+			case INTEGER:
+				return getInt(byteOrder);
+
+			case LONG:
+				return getLong(byteOrder);
+
+			case FLOAT:
+				return getFloat(byteOrder);
+
+			case DOUBLE:
+				return getDouble(byteOrder);
+		}
+		//cannot happen
+		return null;
 	}
 
 	/**
