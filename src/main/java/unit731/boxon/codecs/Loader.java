@@ -289,12 +289,12 @@ final class Loader{
 	}
 
 	private int searchNextSequence(final BitReader reader, final byte[] startMessageSequence){
-		final int[] boundarySequenceLps = ByteHelper.indexOfComputeFailureTable(startMessageSequence);
+		final int[] boundarySequenceFailureTable = ByteHelper.indexOfComputeFailureTable(startMessageSequence);
 
 		final byte[] message = reader.array();
 		//search inside message:
 		final int startIndex = reader.position();
-		final int index = ByteHelper.indexOf(message, startMessageSequence, startIndex + 1, boundarySequenceLps);
+		final int index = ByteHelper.indexOf(message, startMessageSequence, startIndex + 1, boundarySequenceFailureTable);
 		return (index >= startIndex? index: -1);
 	}
 
