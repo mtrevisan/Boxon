@@ -172,7 +172,6 @@ public final class ReflectionHelper{
 	}
 
 	public static Object createArrayPrimitive(final Class<?> type, final int length){
-		Objects.requireNonNull(type);
 		if(!ReflectionHelper.isPrimitive(type.getComponentType()))
 			throw new AnnotationException("Argument cannot be a non-primitive: {}", type);
 
@@ -181,7 +180,6 @@ public final class ReflectionHelper{
 
 	@SuppressWarnings("unchecked")
 	public static <T> T[] createArray(final Class<? extends T> type, final int length){
-		Objects.requireNonNull(type);
 		if(ReflectionHelper.isPrimitive(type))
 			throw new AnnotationException("Argument cannot be a primitive: {}", type);
 
@@ -194,8 +192,6 @@ public final class ReflectionHelper{
 	}
 
 	private static <T> Supplier<T> getCreatorInner(final Class<T> type){
-		Objects.requireNonNull(type);
-
 		try{
 			final Constructor<T> constructor = type.getDeclaredConstructor();
 			constructor.setAccessible(true);

@@ -64,9 +64,6 @@ final class ProtocolMessage<T>{
 
 
 		private BoundedField(final Field field, final Skip[] skips, final String condition, final Annotation binding){
-			Objects.requireNonNull(field);
-			Objects.requireNonNull(binding);
-
 			this.field = field;
 			this.skips = skips;
 			this.condition = condition;
@@ -98,9 +95,6 @@ final class ProtocolMessage<T>{
 
 
 		private EvaluatedField(final Field field, final Evaluate binding){
-			Objects.requireNonNull(field);
-			Objects.requireNonNull(binding);
-
 			this.field = field;
 			this.binding = binding;
 		}
@@ -141,9 +135,6 @@ final class ProtocolMessage<T>{
 	}
 
 	private ProtocolMessage(final Class<T> cls, final Loader loader){
-		Objects.requireNonNull(cls);
-		Objects.requireNonNull(loader);
-
 		this.cls = cls;
 
 		header = cls.getAnnotation(MessageHeader.class);
