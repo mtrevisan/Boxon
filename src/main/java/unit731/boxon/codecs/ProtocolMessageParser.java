@@ -40,15 +40,12 @@ import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 
 final class ProtocolMessageParser{
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProtocolMessageParser.class.getName());
 
-
-	final AtomicBoolean verbose = new AtomicBoolean(false);
 
 	final Loader loader = new Loader();
 
@@ -74,8 +71,7 @@ final class ProtocolMessageParser{
 				final Object value = codec.decode(reader, binding, data);
 				ReflectionHelper.setFieldValue(data, field.getName(), value);
 
-				if(verbose.get())
-					LOGGER.info("read {} = {}", field.getName(), value);
+				LOGGER.trace("read {} = {}", field.getName(), value);
 			}
 			catch(final Exception e){
 				//this assumes the reading was done correctly

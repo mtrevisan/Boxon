@@ -170,18 +170,6 @@ public class Parser{
 
 
 	/**
-	 * Prints every read value.
-	 *
-	 * @param verbose	Whether to print every read value
-	 * @return	The {@link Parser}, used for chaining.
-	 */
-	public final Parser setVerbose(final boolean verbose){
-		protocolMessageParser.verbose.set(verbose);
-		return this;
-	}
-
-
-	/**
 	 * Parse a message from a file containing a binary stream
 	 *
 	 * @param file	The file containing the binary stream
