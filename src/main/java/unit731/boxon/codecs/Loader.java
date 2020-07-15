@@ -93,7 +93,7 @@ final class Loader{
 			final CodecInterface<?> codec = (CodecInterface<?>)ReflectionHelper.getCreator(type)
 				.get();
 			if(codec == null)
-				LOGGER.warn("Cannot create an instance of codec {}", codec.codecType().getSimpleName());
+				LOGGER.warn("Cannot create an instance of codec {}", type.getSimpleName());
 			else
 				addCodec(codec);
 		}

@@ -129,7 +129,6 @@ public final class AnnotationHelper{
 	 * @param libraryName The name of the library to load the classes from
 	 * @return The classes
 	 */
-	@SuppressWarnings("unchecked")
 	private static <T> Collection<Class<?>> extractClassesFromLibrary(final T type, final String libraryName) throws IOException{
 		final Collection<Class<?>> classes = new HashSet<>(0);
 
@@ -151,7 +150,6 @@ public final class AnnotationHelper{
 	 * @param packageName The package name for classes found inside the base directory
 	 * @return The classes
 	 */
-	@SuppressWarnings("unchecked")
 	private static <T> Collection<Class<?>> extractClasses(final T type, final File directory, final String packageName){
 		final Collection<Class<?>> classes = new HashSet<>(0);
 
@@ -214,6 +212,7 @@ public final class AnnotationHelper{
 		return type;
 	}
 
+	@SuppressWarnings("unchecked")
 	private static <T> void addIf(final Collection<Class<?>> classes, final Class<?> cls, final Object type){
 		if(cls != null && !cls.isInterface() && (cls.isAnnotationPresent((Class<? extends Annotation>)type) || ((Class<?>)type).isAssignableFrom(cls)))
 			classes.add(cls);
