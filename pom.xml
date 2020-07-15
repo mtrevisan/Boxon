@@ -22,13 +22,16 @@
 			<name>Mauro Trevisan</name>
 			<email>851903+mtrevisan@users.noreply.github.com</email>
 			<url>https://github.com/mtrevisan/</url>
+			<roles>
+				<role>Java Developer</role>
+			</roles>
 		</developer>
 	</developers>
 
 	<scm>
-		<connection>scm:git:git://github.com/mtrevisan/Boxon.git</connection>
-		<developerConnection>scm:git:ssh://github.com:mtrevisan/Boxon.git</developerConnection>
-		<url>http://github.com/mtrevisan/Boxon/tree/master</url>
+		<url>https://github.com/mtrevisan/Boxon</url>
+		<connection>scm:git:git@github.com:mtrevisan/Boxon.git</connection>
+		<developerConnection>scm:git:git@github.com:mtrevisan/Boxon.git</developerConnection>
 	</scm>
 
 	<properties>
@@ -211,11 +214,23 @@
 				<version>${nexus-staging-maven-plugin.version}</version>
 				<extensions>true</extensions>
 				<configuration>
-					<serverId>ossrh</serverId>
+					<!-- The Base URL of Nexus instance where we want to stage -->
+					<serverId>sonatype-nexus-staging</serverId>
 					<nexusUrl>https://oss.sonatype.org/</nexusUrl>
 					<autoReleaseAfterClose>true</autoReleaseAfterClose>
 				</configuration>
 			</plugin>
+			<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-scm-publish-plugin -->
+<!--			<plugin>-->
+<!--				<groupId>org.apache.maven.plugins</groupId>-->
+<!--				<artifactId>maven-scm-publish-plugin</artifactId>-->
+<!--				<version>3.0.0</version>-->
+<!--				<configuration>-->
+<!--					<ignorePathsToDelete>-->
+<!--						<ignorePathToDelete>javadocs</ignorePathToDelete>-->
+<!--					</ignorePathsToDelete>-->
+<!--				</configuration>-->
+<!--			</plugin>-->
 		</plugins>
 	</build>
 
@@ -263,14 +278,30 @@
 
 	<distributionManagement>
 		<snapshotRepository>
-			<id>ossrh</id>
-			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+			<id>sonatype-nexus-snapshots</id>
+			<name>Sonatype Nexus Snapshots</name>
+			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
 		</snapshotRepository>
 		<repository>
-			<id>ossrh</id>
+			<id>sonatype-nexus-staging</id>
+			<name>Nexus Release Repository</name>
 			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
 		</repository>
 	</distributionManagement>
+
+<!--	<repositories>-->
+<!--		<repository>-->
+<!--			<id>sonatype-nexus-snapshots</id>-->
+<!--			<name>Sonatype Nexus Snapshots</name>-->
+<!--			<url>https://oss.sonatype.org/content/repositories/snapshots</url>-->
+<!--			<releases>-->
+<!--				<enabled>false</enabled>-->
+<!--			</releases>-->
+<!--			<snapshots>-->
+<!--				<enabled>true</enabled>-->
+<!--			</snapshots>-->
+<!--		</repository>-->
+<!--	</repositories>-->
 
 	<licenses>
 		<license>
