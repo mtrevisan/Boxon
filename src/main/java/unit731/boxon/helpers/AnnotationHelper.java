@@ -158,8 +158,7 @@ public final class AnnotationHelper{
 		while(!stack.isEmpty()){
 			final ClassDescriptor elem = stack.pop();
 
-			final File[] files = Optional.ofNullable(elem.file.listFiles())
-				.orElse(new File[0]);
+			final File[] files = elem.file.listFiles();
 			final Map<BucketType, Collection<File>> bucket = bucketByFileType(files);
 			bucket.get(BucketType.DIRECTORY).stream()
 				.map(file -> new ClassDescriptor(file, elem.packageName + POINT + file.getName()))
@@ -176,9 +175,10 @@ public final class AnnotationHelper{
 		final Map<BucketType, Collection<File>> bucket = new EnumMap<>(BucketType.class);
 		bucket.put(BucketType.DIRECTORY, new ArrayList<>());
 		bucket.put(BucketType.FILE, new ArrayList<>());
-		for(final File file : files)
-			bucket.get(file.isDirectory()? BucketType.DIRECTORY: BucketType.FILE)
-				.add(file);
+		if(files != null)
+			for(final File file : files)
+				bucket.get(file.isDirectory()? BucketType.DIRECTORY: BucketType.FILE)
+					.add(file);
 		return bucket;
 	}
 

@@ -50,8 +50,9 @@ public class ParseException extends Exception{
 	public String getMessage(){
 		final StringJoiner sj = new StringJoiner(System.lineSeparator());
 		sj.add("Error decoding message: " + ByteHelper.toHexString(wholeMessage));
-		if(getCause() != null)
-			sj.add(ExceptionHelper.getMessageNoLineNumber(getCause()));
+		final Throwable cause = getCause();
+		if(cause != null)
+			sj.add(ExceptionHelper.getMessageNoLineNumber(cause));
 		if(errorIndex >= 0)
 			sj.add("   at index " + errorIndex);
 		return sj.toString();
