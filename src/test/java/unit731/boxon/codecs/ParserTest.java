@@ -31,7 +31,6 @@ import unit731.boxon.helpers.ByteHelper;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import unit731.boxon.helpers.TimeWatch;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
