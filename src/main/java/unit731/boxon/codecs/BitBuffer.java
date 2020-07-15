@@ -140,7 +140,7 @@ final class BitBuffer{
 
 	final void createFallbackPoint(){
 		if(fallbackPoint != null){
-			//overwrite current mark:
+			//update current mark:
 			fallbackPoint.position = buffer.position();
 			fallbackPoint.remaining = remaining;
 			fallbackPoint.cache = cache;
@@ -159,8 +159,12 @@ final class BitBuffer{
 		remaining = fallbackPoint.remaining;
 		cache = fallbackPoint.cache;
 
-		fallbackPoint = null;
+		clearFallbackPoint();
 		return true;
+	}
+
+	final void clearFallbackPoint(){
+		fallbackPoint = null;
 	}
 
 
@@ -270,6 +274,12 @@ final class BitBuffer{
 	 */
 	final byte getByte(){
 		return (byte)getLong(Byte.SIZE, ByteOrder.LITTLE_ENDIAN);
+	}
+
+	private byte getByteWithFallback(){
+		createFallbackPoint();
+
+		return getByte();
 	}
 
 	/**
@@ -388,20 +398,16 @@ final class BitBuffer{
 	}
 
 	private void getTextUntilTerminator(final OutputStreamWriter os, final byte terminator, final boolean consumeTerminator) throws IOException{
-		if(!consumeTerminator)
-			createFallbackPoint();
-
-		for(byte byteRead = getByte(); byteRead != terminator && (buffer.position() < buffer.limit() || buffer.remaining() > 0); ){
+		for(byte byteRead = getByteWithFallback(); byteRead != terminator && (buffer.position() < buffer.limit() || buffer.remaining() > 0); ){
 			os.write(byteRead);
 
-			if(!consumeTerminator)
-				createFallbackPoint();
-
-			byteRead = getByte();
+			byteRead = getByteWithFallback();
 		}
 		os.flush();
 
-		if(!consumeTerminator)
+		if(consumeTerminator)
+			clearFallbackPoint();
+		else
 			restoreFallbackPoint();
 	}
 
