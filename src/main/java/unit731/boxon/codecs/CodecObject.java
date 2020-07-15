@@ -47,7 +47,6 @@ final class CodecObject implements CodecInterface<BindObject>{
 		final Choices selectFrom = binding.selectFrom();
 		@SuppressWarnings("ConstantConditions")
 		final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): null);
-
 		if(alternatives != null && alternatives.length > 0){
 			//read prefix
 			final int prefixSize = selectFrom.prefixSize();

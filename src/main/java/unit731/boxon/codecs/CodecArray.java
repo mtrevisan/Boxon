@@ -48,7 +48,9 @@ final class CodecArray implements CodecInterface<BindArray>{
 		final Choices selectFrom = binding.selectFrom();
 
 		final Object[] array = ReflectionHelper.createArray(binding.type(), size);
-		if(selectFrom != null && selectFrom.alternatives().length > 0)
+		@SuppressWarnings("ConstantConditions")
+		final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): null);
+		if(alternatives != null && alternatives.length > 0)
 			decodeWithAlternatives(reader, array, selectFrom, data);
 		else
 			decodeWithoutAlternatives(reader, array, binding.type());
@@ -101,7 +103,9 @@ final class CodecArray implements CodecInterface<BindArray>{
 
 		final Object[] array = CodecHelper.converterEncode(binding.converter(), value);
 
-		if(selectFrom != null && selectFrom.alternatives().length > 0)
+		@SuppressWarnings("ConstantConditions")
+		final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): null);
+		if(alternatives != null && alternatives.length > 0)
 			encodeWithAlternatives(writer, array, selectFrom);
 		else
 			encodeWithoutAlternatives(writer, array, binding.type());
