@@ -271,13 +271,19 @@ final class Loader{
 		int minOffset = -1;
 		for(final ProtocolMessage<?> protocolMessage : protocolMessages.values()){
 			final MessageHeader header = protocolMessage.getHeader();
-			final Charset charset = Charset.forName(header.charset());
-			final String[] messageStarts = header.start();
-			for(final String messageStart : messageStarts){
-				final int offset = searchNextSequence(reader, messageStart.getBytes(charset));
-				if(offset >= 0 && (minOffset < 0 || offset < minOffset))
-					minOffset = offset;
-			}
+
+			minOffset = findNextMessageIndex(reader, header, minOffset);
+		}
+		return minOffset;
+	}
+
+	private int findNextMessageIndex(final BitReader reader, final MessageHeader header, int minOffset){
+		final Charset charset = Charset.forName(header.charset());
+		final String[] messageStarts = header.start();
+		for(final String messageStart : messageStarts){
+			final int offset = searchNextSequence(reader, messageStart.getBytes(charset));
+			if(offset >= 0 && (minOffset < 0 || offset < minOffset))
+				minOffset = offset;
 		}
 		return minOffset;
 	}
