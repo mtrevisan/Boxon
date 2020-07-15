@@ -177,20 +177,23 @@ final class BitReader{
 	}
 
 	final Object get(final Class<?> type, final ByteOrder byteOrder){
+		final Object value;
 		if(type == byte.class || type == Byte.class)
-			return getByte();
-		if(type == short.class || type == Short.class)
-			return getShort(byteOrder);
-		if(type == int.class || type == Integer.class)
-			return getInt(byteOrder);
-		if(type == long.class || type == Long.class)
-			return getLong(byteOrder);
-		if(type == float.class || type == Float.class)
-			return getFloat(byteOrder);
-		if(type == double.class || type == Double.class)
-			return getDouble(byteOrder);
+			value = getByte();
+		else if(type == short.class || type == Short.class)
+			value = getShort(byteOrder);
+		else if(type == int.class || type == Integer.class)
+			value = getInt(byteOrder);
+		else if(type == long.class || type == Long.class)
+			value = getLong(byteOrder);
+		else if(type == float.class || type == Float.class)
+			value = getFloat(byteOrder);
+		else if(type == double.class || type == Double.class)
+			value = getDouble(byteOrder);
+		else
+			throw new AnnotationException("Cannot read type {}", type.getSimpleName());
 
-		throw new AnnotationException("Cannot read type {}", type.getSimpleName());
+		return value;
 	}
 
 	/**
