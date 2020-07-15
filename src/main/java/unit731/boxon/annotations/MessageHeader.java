@@ -40,6 +40,7 @@ public @interface MessageHeader{
 
 	/**
 	 * The initial bytes that determines the type of message.
+	 * <p>This SHOULD be read by the protocol of a single message.</p>
 	 *
 	 * @return	The header bytes of this message
 	 */
@@ -47,15 +48,16 @@ public @interface MessageHeader{
 
 	/**
 	 * The final bytes that determines the type of message.
+	 * <p>This SHOULD NOT be read by the protocol of a single message.</p>
 	 *
-	 * @return	The tail bytes of this message. Defaults to empty string.
+	 * @return	The tail bytes of this message (defaults to empty string).
 	 */
 	String end() default "";
 
 	/**
 	 * The type of encoding used for the {@link #start()} and {@link #end()} fields.
 	 *
-	 * @return	The type of encoding used. Defaults to `UTF-8`.
+	 * @return	The type of encoding used (defaults to `UTF-8`).
 	 */
 	String charset() default "UTF-8";
 

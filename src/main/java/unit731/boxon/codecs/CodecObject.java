@@ -36,18 +36,17 @@ import java.math.BigInteger;
 final class CodecObject implements CodecInterface<BindObject>{
 
 	@SuppressWarnings("unused")
-	private MessageParser messageParser;
+	private ProtocolMessageParser protocolMessageParser;
 
 
 	@Override
-	public final Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
+	public final Object decode(final BitReader reader, final Annotation annotation, final Object data){
 		final BindObject binding = (BindObject)annotation;
 
 		Class<?> type = binding.type();
 		final Choices selectFrom = binding.selectFrom();
 		@SuppressWarnings("ConstantConditions")
 		final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): null);
-
 		if(alternatives != null && alternatives.length > 0){
 			//read prefix
 			final int prefixSize = selectFrom.prefixSize();
@@ -60,9 +59,9 @@ final class CodecObject implements CodecInterface<BindObject>{
 			type = chosenAlternative.type();
 		}
 
-		final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(type, messageParser.loader);
+		final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(type, protocolMessageParser.loader);
 
-		final Object instance = messageParser.decode(protocolMessage, reader);
+		final Object instance = protocolMessageParser.decode(protocolMessage, reader);
 
 		final Object value = CodecHelper.converterDecode(binding.converter(), instance);
 
@@ -89,11 +88,11 @@ final class CodecObject implements CodecInterface<BindObject>{
 			CodecHelper.writePrefix(writer, chosenAlternative, selectFrom);
 		}
 
-		final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(type, messageParser.loader);
+		final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(type, protocolMessageParser.loader);
 
 		final Object array = CodecHelper.converterEncode(binding.converter(), value);
 
-		messageParser.encode(protocolMessage, array, writer);
+		protocolMessageParser.encode(protocolMessage, array, writer);
 	}
 
 	@Override

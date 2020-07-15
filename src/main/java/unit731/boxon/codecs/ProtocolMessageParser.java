@@ -40,20 +40,17 @@ import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 
-final class MessageParser{
+final class ProtocolMessageParser{
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(MessageParser.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(ProtocolMessageParser.class.getName());
 
-
-	final AtomicBoolean verbose = new AtomicBoolean(false);
 
 	final Loader loader = new Loader();
 
 
-	final <T> T decode(final ProtocolMessage<T> protocolMessage, final BitBuffer reader){
+	final <T> T decode(final ProtocolMessage<T> protocolMessage, final BitReader reader){
 		final int startPosition = reader.position();
 
 		final T data = ReflectionHelper.getCreator(protocolMessage.getType())
@@ -74,10 +71,10 @@ final class MessageParser{
 				final Object value = codec.decode(reader, binding, data);
 				ReflectionHelper.setFieldValue(data, field.getName(), value);
 
-				if(verbose.get())
-					LOGGER.info("read {} = {}", field.getName(), value);
+				LOGGER.trace("read {} = {}", field.getName(), value);
 			}
 			catch(final Exception e){
+				//this assumes the reading was done correctly
 				manageProtocolMessageException(protocolMessage, field, e);
 			}
 		}
@@ -91,13 +88,13 @@ final class MessageParser{
 		return data;
 	}
 
-	private <T> void readSkippedFields(final Skip[] skips, final BitBuffer reader, final T data){
+	private <T> void readSkippedFields(final Skip[] skips, final BitReader reader, final T data){
 		if(skips != null)
 			for(final Skip skip : skips)
 				readSkip(skip, reader, data);
 	}
 
-	private <T> void readSkip(final Skip skip, final BitBuffer reader, final T data){
+	private <T> void readSkip(final Skip skip, final BitReader reader, final T data){
 		final int size = Evaluator.evaluateSize(skip.size(), data);
 		if(size > 0)
 			/** skip {@link size} bits */
@@ -111,7 +108,7 @@ final class MessageParser{
 		return (condition != null && !Evaluator.evaluate(condition, boolean.class, data));
 	}
 
-	private <T> void readMessageTerminator(final ProtocolMessage<T> protocolMessage, final BitBuffer reader){
+	private <T> void readMessageTerminator(final ProtocolMessage<T> protocolMessage, final BitReader reader){
 		final MessageHeader header = protocolMessage.getHeader();
 		if(header != null && header.end().length() > 0){
 			final Charset charset = Charset.forName(header.charset());
@@ -124,7 +121,7 @@ final class MessageParser{
 		}
 	}
 
-	private <T> void verifyChecksum(final ProtocolMessage<T> protocolMessage, final T data, int startPosition, final BitBuffer reader){
+	private <T> void verifyChecksum(final ProtocolMessage<T> protocolMessage, final T data, int startPosition, final BitReader reader){
 		final ProtocolMessage.BoundedField checksumData = protocolMessage.getChecksum();
 		if(checksumData != null){
 			final BindChecksum checksum = (BindChecksum)checksumData.getBinding();
@@ -168,17 +165,23 @@ final class MessageParser{
 				codec.encode(writer, binding, data, value);
 			}
 			catch(final Exception e){
+				//this assumes the writing was done correctly
 				manageProtocolMessageException(protocolMessage, field, e);
 			}
 		}
 
 		final MessageHeader header = protocolMessage.getHeader();
+		closeMessage(header, writer);
+
+		writer.flush();
+	}
+
+	private void closeMessage(final MessageHeader header, final BitWriter writer){
 		if(header != null && header.end().length() > 0){
 			final Charset charset = Charset.forName(header.charset());
 			final byte[] messageTerminator = header.end().getBytes(charset);
 			writer.putBytes(messageTerminator);
 		}
-		writer.flush();
 	}
 
 	private CodecInterface<?> retrieveCodec(final Class<? extends Annotation> annotationType){
@@ -192,7 +195,7 @@ final class MessageParser{
 
 	private void setMessageParser(final CodecInterface<?> codec){
 		try{
-			ReflectionHelper.setFieldValue(codec, MessageParser.class, this);
+			ReflectionHelper.setFieldValue(codec, ProtocolMessageParser.class, this);
 		}
 		catch(final Exception ignored){}
 	}

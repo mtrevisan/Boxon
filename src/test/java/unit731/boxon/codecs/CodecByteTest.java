@@ -74,7 +74,7 @@ class CodecByteTest{
 		Assertions.assertEquals(1, writer.array().length);
 		Assertions.assertEquals(encodedValue, writer.array()[0]);
 
-		BitBuffer reader = BitBuffer.wrap(writer);
+		BitReader reader = BitReader.wrap(writer);
 		byte decoded = (byte)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);

@@ -37,48 +37,59 @@ import java.math.BigInteger;
 final class CodecArray implements CodecInterface<BindArray>{
 
 	@SuppressWarnings("unused")
-	private MessageParser messageParser;
+	private ProtocolMessageParser protocolMessageParser;
 
 
 	@Override
-	public final Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
+	public final Object decode(final BitReader reader, final Annotation annotation, final Object data){
 		final BindArray binding = (BindArray)annotation;
 
 		final int size = Evaluator.evaluateSize(binding.size(), data);
 		final Choices selectFrom = binding.selectFrom();
-		@SuppressWarnings("ConstantConditions")
-		final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): null);
 
 		final Object[] array = ReflectionHelper.createArray(binding.type(), size);
-		if(alternatives != null && alternatives.length > 0){
-			//read prefix
-			final int prefixSize = selectFrom.prefixSize();
-			final ByteOrder prefixByteOrder = selectFrom.byteOrder();
-
-			for(int i = 0; i < size; i ++){
-				final BigInteger prefix = reader.getBigInteger(prefixSize, prefixByteOrder);
-
-				//choose class
-				final Choices.Choice chosenAlternative = CodecHelper.chooseAlternative(alternatives, prefix.intValue(), data);
-
-				//read object
-				final ProtocolMessage<?> subProtocolMessage = ProtocolMessage.createFrom(chosenAlternative.type(), messageParser.loader);
-
-				array[i] = messageParser.decode(subProtocolMessage, reader);
-			}
-		}
-		else{
-			final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(binding.type(), messageParser.loader);
-
-			for(int i = 0; i < size; i ++)
-				array[i] = messageParser.decode(protocolMessage, reader);
-		}
+		@SuppressWarnings("ConstantConditions")
+		final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): null);
+		if(alternatives != null && alternatives.length > 0)
+			decodeWithAlternatives(reader, array, selectFrom, data);
+		else
+			decodeWithoutAlternatives(reader, array, binding.type());
 
 		final Object value = CodecHelper.converterDecode(binding.converter(), array);
 
 		CodecHelper.validateData(binding.validator(), value);
 
 		return value;
+	}
+
+	private void decodeWithAlternatives(final BitReader reader, final Object[] array, final Choices selectFrom, final Object data){
+		//read prefix
+		final int prefixSize = selectFrom.prefixSize();
+		final ByteOrder prefixByteOrder = selectFrom.byteOrder();
+
+		@SuppressWarnings("ConstantConditions")
+		final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): null);
+
+		final int size = array.length;
+		for(int i = 0; i < size; i ++){
+			final BigInteger prefix = reader.getBigInteger(prefixSize, prefixByteOrder);
+
+			//choose class
+			final Choices.Choice chosenAlternative = CodecHelper.chooseAlternative(alternatives, prefix.intValue(), data);
+
+			//read object
+			final ProtocolMessage<?> subProtocolMessage = ProtocolMessage.createFrom(chosenAlternative.type(), protocolMessageParser.loader);
+
+			array[i] = protocolMessageParser.decode(subProtocolMessage, reader);
+		}
+	}
+
+	private void decodeWithoutAlternatives(final BitReader reader, final Object[] array, final Class<?> type){
+		final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(type, protocolMessageParser.loader);
+
+		final int size = array.length;
+		for(int i = 0; i < size; i ++)
+			array[i] = protocolMessageParser.decode(protocolMessage, reader);
 	}
 
 	@Override
@@ -89,26 +100,40 @@ final class CodecArray implements CodecInterface<BindArray>{
 
 		final int size = Evaluator.evaluateSize(binding.size(), data);
 		final Choices selectFrom = binding.selectFrom();
-		@SuppressWarnings("ConstantConditions")
-		final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): null);
 
 		final Object[] array = CodecHelper.converterEncode(binding.converter(), value);
 
+		@SuppressWarnings("ConstantConditions")
+		final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): null);
 		if(alternatives != null && alternatives.length > 0)
-			for(int i = 0; i < size; i ++){
-				final Class<?> cls = array[i].getClass();
-				CodecHelper.writePrefix(writer, CodecHelper.chooseAlternative(alternatives, cls), selectFrom);
+			encodeWithAlternatives(writer, array, selectFrom);
+		else
+			encodeWithoutAlternatives(writer, array, binding.type());
+	}
 
-				final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(cls, messageParser.loader);
+	private void encodeWithAlternatives(final BitWriter writer, final Object[] array, final Choices selectFrom){
+		final Choices.Choice[] alternatives = selectFrom.alternatives();
+		final int size = array.length;
+		for(final Object elem : array){
+			final Class<?> cls = elem.getClass();
 
-				messageParser.encode(protocolMessage, array[i], writer);
-			}
-		else{
-			final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(binding.type(), messageParser.loader);
+			//choose class
+			final Choices.Choice chosenAlternative = CodecHelper.chooseAlternative(alternatives, cls);
 
-			for(int i = 0; i < size; i ++)
-				messageParser.encode(protocolMessage, array[i], writer);
+			CodecHelper.writePrefix(writer, chosenAlternative, selectFrom);
+
+			final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(cls, protocolMessageParser.loader);
+
+			protocolMessageParser.encode(protocolMessage, elem, writer);
 		}
+	}
+
+	private void encodeWithoutAlternatives(final BitWriter writer, final Object[] array, final Class<?> type){
+		final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(type, protocolMessageParser.loader);
+
+		final int size = array.length;
+		for(final Object elem : array)
+			protocolMessageParser.encode(protocolMessage, elem, writer);
 	}
 
 	@Override

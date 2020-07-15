@@ -93,7 +93,7 @@ final class Loader{
 			final CodecInterface<?> codec = (CodecInterface<?>)ReflectionHelper.getCreator(type)
 				.get();
 			if(codec == null)
-				LOGGER.warn("Cannot create an instance of codec {}", codec.codecType().getSimpleName());
+				LOGGER.warn("Cannot create an instance of codec {}", type.getSimpleName());
 			else
 				addCodec(codec);
 		}
@@ -244,7 +244,7 @@ final class Loader{
 		}
 	}
 
-	final ProtocolMessage<?> getProtocolMessage(final BitBuffer reader){
+	final ProtocolMessage<?> getProtocolMessage(final BitReader reader){
 		final int index = reader.position();
 
 		ProtocolMessage<?> protocolMessage = null;
@@ -267,28 +267,34 @@ final class Loader{
 	}
 
 
-	final int findNextMessageIndex(final BitBuffer reader){
+	final int findNextMessageIndex(final BitReader reader){
 		int minOffset = -1;
 		for(final ProtocolMessage<?> protocolMessage : protocolMessages.values()){
 			final MessageHeader header = protocolMessage.getHeader();
-			final Charset charset = Charset.forName(header.charset());
-			final String[] messageStarts = header.start();
-			for(final String messageStart : messageStarts){
-				final int offset = searchNextSequence(reader, messageStart.getBytes(charset));
-				if(offset >= 0 && (minOffset < 0 || offset < minOffset))
-					minOffset = offset;
-			}
+
+			minOffset = findNextMessageIndex(reader, header, minOffset);
 		}
 		return minOffset;
 	}
 
-	private int searchNextSequence(final BitBuffer reader, final byte[] startMessageSequence){
-		final int[] boundarySequenceLps = ByteHelper.indexOfComputeFailureTable(startMessageSequence);
+	private int findNextMessageIndex(final BitReader reader, final MessageHeader header, int minOffset){
+		final Charset charset = Charset.forName(header.charset());
+		final String[] messageStarts = header.start();
+		for(final String messageStart : messageStarts){
+			final int offset = searchNextSequence(reader, messageStart.getBytes(charset));
+			if(offset >= 0 && (minOffset < 0 || offset < minOffset))
+				minOffset = offset;
+		}
+		return minOffset;
+	}
+
+	private int searchNextSequence(final BitReader reader, final byte[] startMessageSequence){
+		final int[] boundarySequenceFailureTable = ByteHelper.indexOfComputeFailureTable(startMessageSequence);
 
 		final byte[] message = reader.array();
 		//search inside message:
 		final int startIndex = reader.position();
-		final int index = ByteHelper.indexOf(message, startMessageSequence, startIndex + 1, boundarySequenceLps);
+		final int index = ByteHelper.indexOf(message, startMessageSequence, startIndex + 1, boundarySequenceFailureTable);
 		return (index >= startIndex? index: -1);
 	}
 

@@ -33,7 +33,7 @@ import java.lang.annotation.Annotation;
 final class CodecFloat implements CodecInterface<BindFloat>{
 
 	@Override
-	public final Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
+	public final Object decode(final BitReader reader, final Annotation annotation, final Object data){
 		final BindFloat binding = (BindFloat)annotation;
 
 		final float v = reader.getFloat(binding.byteOrder());

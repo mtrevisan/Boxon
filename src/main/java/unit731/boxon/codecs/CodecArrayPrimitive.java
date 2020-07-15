@@ -35,7 +35,7 @@ import java.lang.reflect.Array;
 final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 
 	@Override
-	public final Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
+	public final Object decode(final BitReader reader, final Annotation annotation, final Object data){
 		final BindArrayPrimitive binding = (BindArrayPrimitive)annotation;
 
 		final Class<?> type = binding.type();

@@ -37,14 +37,13 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 
 @SuppressWarnings("unused")
 public class Parser{
 
-	private final MessageParser messageParser = new MessageParser();
+	private final ProtocolMessageParser protocolMessageParser = new ProtocolMessageParser();
 
 
 	/** Create an empty parser (context, codecs and protocol messages MUST BE manually loaded!). */
@@ -76,7 +75,7 @@ public class Parser{
 	 * @return	The {@link Parser}, used for chaining.
 	 */
 	public final Parser withDefaultCodecs(){
-		messageParser.loader.loadCodecs();
+		protocolMessageParser.loader.loadCodecs();
 		return this;
 	}
 
@@ -87,7 +86,7 @@ public class Parser{
 	 * @return	The {@link Parser}, used for chaining.
 	 */
 	public final Parser withCodecs(final Class<?>... basePackageClasses){
-		messageParser.loader.loadCodecs(basePackageClasses);
+		protocolMessageParser.loader.loadCodecs(basePackageClasses);
 		return this;
 	}
 
@@ -98,7 +97,7 @@ public class Parser{
 	 * @return	The {@link Parser}, used for chaining.
 	 */
 	public final Parser withCodecs(final Collection<CodecInterface<?>> codecs){
-		messageParser.loader.loadCodecs(codecs);
+		protocolMessageParser.loader.loadCodecs(codecs);
 		return this;
 	}
 
@@ -109,7 +108,7 @@ public class Parser{
 	 * @return	The {@link Parser}, used for chaining.
 	 */
 	public final Parser withCodecs(final CodecInterface<?>... codecs){
-		messageParser.loader.loadCodecs(codecs);
+		protocolMessageParser.loader.loadCodecs(codecs);
 		return this;
 	}
 
@@ -121,7 +120,7 @@ public class Parser{
 	 * @return	The {@link Parser}, used for chaining.
 	 */
 	public final Parser addCodec(final CodecInterface<?> codec){
-		messageParser.loader.loadCodecs(codec);
+		protocolMessageParser.loader.loadCodecs(codec);
 		return this;
 	}
 
@@ -132,7 +131,7 @@ public class Parser{
 	 * @return	The {@link Parser}, used for chaining.
 	 */
 	public final Parser withDefaultProtocolMessages(){
-		messageParser.loader.loadProtocolMessages();
+		protocolMessageParser.loader.loadProtocolMessages();
 		return this;
 	}
 
@@ -143,7 +142,7 @@ public class Parser{
 	 * @return	The {@link Parser}, used for chaining.
 	 */
 	public final Parser withProtocolMessages(final Class<?>... basePackageClasses){
-		messageParser.loader.loadProtocolMessages(basePackageClasses);
+		protocolMessageParser.loader.loadProtocolMessages(basePackageClasses);
 		return this;
 	}
 
@@ -154,7 +153,7 @@ public class Parser{
 	 * @return	The {@link Parser}, used for chaining.
 	 */
 	public final Parser withProtocolMessages(final Collection<ProtocolMessage<?>> protocolMessages){
-		messageParser.loader.loadProtocolMessages(protocolMessages);
+		protocolMessageParser.loader.loadProtocolMessages(protocolMessages);
 		return this;
 	}
 
@@ -165,19 +164,7 @@ public class Parser{
 	 * @return	The {@link Parser}, used for chaining.
 	 */
 	public final Parser withProtocolMessages(final ProtocolMessage<?>... protocolMessages){
-		messageParser.loader.loadProtocolMessages(Arrays.asList(protocolMessages));
-		return this;
-	}
-
-
-	/**
-	 * Prints every read value.
-	 *
-	 * @param verbose	Whether to print every read value
-	 * @return	The {@link Parser}, used for chaining.
-	 */
-	public final Parser setVerbose(final boolean verbose){
-		messageParser.verbose.set(verbose);
+		protocolMessageParser.loader.loadProtocolMessages(Arrays.asList(protocolMessages));
 		return this;
 	}
 
@@ -192,7 +179,7 @@ public class Parser{
 	 * @throws SecurityException	If a security manager exists and its {@code checkRead} method denies read access to the file.
 	 */
 	public ParseResponse parse(final File file) throws IOException{
-		final BitBuffer reader = BitBuffer.wrap(file);
+		final BitReader reader = BitReader.wrap(file);
 		return parse(reader);
 	}
 
@@ -203,7 +190,7 @@ public class Parser{
 	 * @return	The parse response
 	 */
 	public ParseResponse parse(final ByteBuffer buffer){
-		final BitBuffer reader = BitBuffer.wrap(buffer);
+		final BitReader reader = BitReader.wrap(buffer);
 		return parse(reader);
 	}
 
@@ -214,17 +201,17 @@ public class Parser{
 	 * @return	The parse response
 	 */
 	public ParseResponse parse(final byte[] payload){
-		final BitBuffer reader = BitBuffer.wrap(payload);
+		final BitReader reader = BitReader.wrap(payload);
 		return parse(reader);
 	}
 
 	/**
 	 * Parse a message
 	 *
-	 * @param reader	The message to be parsed backed by a {@link BitBuffer}
+	 * @param reader	The message to be parsed backed by a {@link BitReader}
 	 * @return	The parse response
 	 */
-	public ParseResponse parse(final BitBuffer reader){
+	public ParseResponse parse(final BitReader reader){
 		final ParseResponse response = new ParseResponse();
 
 		while(reader.hasRemaining()){
@@ -232,9 +219,9 @@ public class Parser{
 				//save state of the reader (restored upon a decoding error)
 				reader.createFallbackPoint();
 
-				final ProtocolMessage<?> protocolMessage = messageParser.loader.getProtocolMessage(reader);
+				final ProtocolMessage<?> protocolMessage = protocolMessageParser.loader.getProtocolMessage(reader);
 
-				final Object partialDecodedMessage = messageParser.decode(protocolMessage, reader);
+				final Object partialDecodedMessage = protocolMessageParser.decode(protocolMessage, reader);
 
 				response.addParsedMessage(partialDecodedMessage);
 			}
@@ -245,7 +232,7 @@ public class Parser{
 				//restore state of the reader
 				reader.restoreFallbackPoint();
 
-				final int position = messageParser.loader.findNextMessageIndex(reader);
+				final int position = protocolMessageParser.loader.findNextMessageIndex(reader);
 				if(position < 0)
 					//cannot find any protocol message for message
 					break;
@@ -254,17 +241,21 @@ public class Parser{
 			}
 		}
 
-		//check if there are unread bytes:
+		//check if there are unread bytes
+		assertNoLeftBytes(reader, response);
+
+		return response;
+	}
+
+	private void assertNoLeftBytes(final BitReader reader, final ParseResponse response){
 		if(!response.hasErrors() && reader.hasRemaining()){
 			final IllegalArgumentException error = new IllegalArgumentException("There are remaining bytes");
 			final ParseException pe = new ParseException(reader.array(), reader.position(), error);
 			response.addError(pe);
 		}
-
-		return response;
 	}
 
-	private ParseException createParseException(final BitBuffer reader, final Throwable t){
+	private ParseException createParseException(final BitReader reader, final Throwable t){
 		final byte[] payload = reader.array();
 		final int position = reader.position();
 		final byte[] subPayload = Arrays.copyOfRange(payload, position, payload.length);
@@ -293,11 +284,11 @@ public class Parser{
 		final BitWriter writer = new BitWriter();
 		for(final Object elem : data){
 			try{
-				final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(elem.getClass(), messageParser.loader);
+				final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(elem.getClass(), protocolMessageParser.loader);
 				if(!protocolMessage.canBeDecoded())
-					throw new ProtocolMessageException("Cannot construct any protocol message for message");
+					throw new ProtocolMessageException("Cannot create a protocol message from data");
 
-				messageParser.encode(protocolMessage, elem, writer);
+				protocolMessageParser.encode(protocolMessage, elem, writer);
 			}
 			catch(final Throwable t){
 				final ComposeException ce = new ComposeException(elem, t);

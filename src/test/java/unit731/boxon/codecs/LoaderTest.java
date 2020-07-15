@@ -71,7 +71,7 @@ class LoaderTest{
 		loader.loadProtocolMessages(LoaderTest.class);
 
 		byte[] payload = ByteHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
-		BitBuffer reader = BitBuffer.wrap(payload);
+		BitReader reader = BitReader.wrap(payload);
 		ProtocolMessage<?> protocolMessage = loader.getProtocolMessage(reader);
 
 		Assertions.assertNotNull(protocolMessage);
@@ -85,7 +85,7 @@ class LoaderTest{
 		loader.loadProtocolMessages(LoaderTest.class);
 
 		byte[] payload = ByteHelper.toByteArray("3b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
-		BitBuffer reader = BitBuffer.wrap(payload);
+		BitReader reader = BitReader.wrap(payload);
 		Assertions.assertThrows(ProtocolMessageException.class, () -> {
 			loader.getProtocolMessage(reader);
 		});
@@ -98,7 +98,7 @@ class LoaderTest{
 		loader.loadProtocolMessages(LoaderTest.class);
 
 		byte[] payload = ByteHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
-		BitBuffer reader = BitBuffer.wrap(payload);
+		BitReader reader = BitReader.wrap(payload);
 		int position = loader.findNextMessageIndex(reader);
 
 		Assertions.assertEquals(36, position);
@@ -111,7 +111,7 @@ class LoaderTest{
 		loader.loadProtocolMessages(LoaderTest.class);
 
 		byte[] payload = ByteHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
-		BitBuffer reader = BitBuffer.wrap(payload);
+		BitReader reader = BitReader.wrap(payload);
 		int position = loader.findNextMessageIndex(reader);
 
 		Assertions.assertEquals(-1, position);

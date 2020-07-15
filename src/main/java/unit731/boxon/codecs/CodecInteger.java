@@ -37,7 +37,7 @@ import java.math.BigInteger;
 final class CodecInteger implements CodecInterface<BindInteger>{
 
 	@Override
-	public final Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
+	public final Object decode(final BitReader reader, final Annotation annotation, final Object data){
 		final BindInteger binding = (BindInteger)annotation;
 
 		final int size = Evaluator.evaluateSize(binding.size(), data);

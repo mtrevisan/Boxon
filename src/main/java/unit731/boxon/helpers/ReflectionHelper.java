@@ -45,7 +45,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -54,10 +53,13 @@ public final class ReflectionHelper{
 
 	private static final Function<Class<?>, Supplier<?>> CREATORS = Memoizer.memoizeThreadAndRecursionSafe(ReflectionHelper::getCreatorInner);
 
+	//FIXME aggregate into a unique structure?
 	/** Maps primitive {@code Class}es to their corresponding wrapper {@code Class} */
 	public static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPER_MAP = new HashMap<>(6);
 	/** Maps wrapper {@code Class}es to their corresponding primitive types */
 	public static final Map<Class<?>, Class<?>> WRAPPER_PRIMITIVE_MAP = new HashMap<>(6);
+	public static final Map<Class<?>, TypeEnum> TYPE_MAP = new HashMap<>(12);
+	public enum TypeEnum{BYTE, SHORT, INTEGER, LONG, FLOAT, DOUBLE}
 	static{
 		PRIMITIVE_WRAPPER_MAP.put(Byte.TYPE, Byte.class);
 		PRIMITIVE_WRAPPER_MAP.put(Short.TYPE, Short.class);
@@ -68,6 +70,19 @@ public final class ReflectionHelper{
 
 		for(final Class<?> primitiveClass : PRIMITIVE_WRAPPER_MAP.keySet())
 			WRAPPER_PRIMITIVE_MAP.put(PRIMITIVE_WRAPPER_MAP.get(primitiveClass), primitiveClass);
+
+		TYPE_MAP.put(Byte.TYPE, TypeEnum.BYTE);
+		TYPE_MAP.put(Byte.class, TypeEnum.BYTE);
+		TYPE_MAP.put(Short.TYPE, TypeEnum.SHORT);
+		TYPE_MAP.put(Short.class, TypeEnum.SHORT);
+		TYPE_MAP.put(Integer.TYPE, TypeEnum.INTEGER);
+		TYPE_MAP.put(Integer.class, TypeEnum.INTEGER);
+		TYPE_MAP.put(Long.TYPE, TypeEnum.LONG);
+		TYPE_MAP.put(Long.class, TypeEnum.LONG);
+		TYPE_MAP.put(Float.TYPE, TypeEnum.FLOAT);
+		TYPE_MAP.put(Float.class, TypeEnum.FLOAT);
+		TYPE_MAP.put(Double.TYPE, TypeEnum.DOUBLE);
+		TYPE_MAP.put(Double.class, TypeEnum.DOUBLE);
 	}
 
 
@@ -175,7 +190,6 @@ public final class ReflectionHelper{
 	}
 
 	public static Object createArrayPrimitive(final Class<?> type, final int length){
-		Objects.requireNonNull(type);
 		if(!ReflectionHelper.isPrimitive(type.getComponentType()))
 			throw new AnnotationException("Argument cannot be a non-primitive: {}", type);
 
@@ -184,7 +198,6 @@ public final class ReflectionHelper{
 
 	@SuppressWarnings("unchecked")
 	public static <T> T[] createArray(final Class<? extends T> type, final int length){
-		Objects.requireNonNull(type);
 		if(ReflectionHelper.isPrimitive(type))
 			throw new AnnotationException("Argument cannot be a primitive: {}", type);
 
@@ -197,8 +210,6 @@ public final class ReflectionHelper{
 	}
 
 	private static <T> Supplier<T> getCreatorInner(final Class<T> type){
-		Objects.requireNonNull(type);
-
 		try{
 			final Constructor<T> constructor = type.getDeclaredConstructor();
 			constructor.setAccessible(true);

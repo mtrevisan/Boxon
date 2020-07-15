@@ -34,16 +34,16 @@ import org.junit.jupiter.api.Test;
 import java.nio.charset.StandardCharsets;
 
 
-class MessageParserTest{
+class ProtocolMessageParserTest{
 
 	@Test
 	void parseSingleMessageHex(){
 		byte[] payload = ByteHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
-		BitBuffer reader = BitBuffer.wrap(payload);
+		BitReader reader = BitReader.wrap(payload);
 
-		MessageParser messageParser = new MessageParser();
-		messageParser.loader.loadCodecs();
-		ProtocolMessage<ACKMessageHex> protocolMessage = ProtocolMessage.createFrom(ACKMessageHex.class, messageParser.loader);
+		ProtocolMessageParser protocolMessageParser = new ProtocolMessageParser();
+		protocolMessageParser.loader.loadCodecs();
+		ProtocolMessage<ACKMessageHex> protocolMessage = ProtocolMessage.createFrom(ACKMessageHex.class, protocolMessageParser.loader);
 
 		if(!protocolMessage.canBeDecoded())
 			Assertions.fail("Cannot decode message");
@@ -51,10 +51,10 @@ class MessageParserTest{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
 		Evaluator.addToContext("deviceTypes", deviceTypes);
-		ACKMessageHex message = messageParser.decode(protocolMessage, reader);
+		ACKMessageHex message = protocolMessageParser.decode(protocolMessage, reader);
 
 		BitWriter writer = new BitWriter();
-		messageParser.encode(protocolMessage, message, writer);
+		protocolMessageParser.encode(protocolMessage, message, writer);
 		byte[] reconstructedMessage = writer.array();
 
 		Assertions.assertArrayEquals(payload, reconstructedMessage);
@@ -63,11 +63,11 @@ class MessageParserTest{
 	@Test
 	void parseSingleMessageASCII(){
 		byte[] payload = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
-		BitBuffer reader = BitBuffer.wrap(payload);
+		BitReader reader = BitReader.wrap(payload);
 
-		MessageParser messageParser = new MessageParser();
-		messageParser.loader.loadCodecs();
-		ProtocolMessage<ACKMessageASCII> protocolMessage = ProtocolMessage.createFrom(ACKMessageASCII.class, messageParser.loader);
+		ProtocolMessageParser protocolMessageParser = new ProtocolMessageParser();
+		protocolMessageParser.loader.loadCodecs();
+		ProtocolMessage<ACKMessageASCII> protocolMessage = ProtocolMessage.createFrom(ACKMessageASCII.class, protocolMessageParser.loader);
 
 		if(!protocolMessage.canBeDecoded())
 			Assertions.fail("Cannot decode message");
@@ -75,10 +75,10 @@ class MessageParserTest{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GV350M", (byte)0xCF);
 		Evaluator.addToContext("deviceTypes", deviceTypes);
-		ACKMessageASCII message = messageParser.decode(protocolMessage, reader);
+		ACKMessageASCII message = protocolMessageParser.decode(protocolMessage, reader);
 
 		BitWriter writer = new BitWriter();
-		messageParser.encode(protocolMessage, message, writer);
+		protocolMessageParser.encode(protocolMessage, message, writer);
 		byte[] reconstructedMessage = writer.array();
 
 		Assertions.assertArrayEquals(payload, reconstructedMessage);

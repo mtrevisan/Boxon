@@ -45,21 +45,21 @@ public @interface BindStringTerminated{
 	/**
 	 * The type of encoding used for the {@link String}
 	 *
-	 * @return	The type of encoding used. Defaults to `UTF-8`.
+	 * @return	The type of encoding used (defaults to `UTF-8`).
 	 */
 	String charset() default "UTF-8";
 
 	/**
 	 * The byte that terminates the {@link String}
 	 *
-	 * @return	The terminator byte. Defaults to `\0`.
+	 * @return	The terminator byte (defaults to `\0`).
 	 */
 	byte terminator() default '\0';
 
 	/**
 	 * Whether to consume the terminator.
 	 *
-	 * @return	Whether to consume the terminator. Defaults to <code>true</code>.
+	 * @return	Whether to consume the terminator (defaults to <code>true</code>).
 	 */
 	boolean consumeTerminator() default true;
 

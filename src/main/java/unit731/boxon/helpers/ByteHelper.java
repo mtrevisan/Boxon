@@ -52,7 +52,7 @@ public final class ByteHelper{
 	 * @param source	The list in which to search for the first occurrence of {@code pattern}.
 	 * @param pattern	The list to search for as a subList of {@code source}.
 	 * @param offset	Offset to start the search from.
-	 * @param failureTable	LPS array precomputed by {@link #indexOfComputeFailureTable(byte[])}
+	 * @param failureTable	Longest Prefix Suffix array precomputed by {@link #indexOfComputeFailureTable(byte[])}
 	 * @return	The starting position of the first occurrence of the specified pattern list within the specified source list,
 	 * 	or {@code -1} if there is no such occurrence.
 	 */
@@ -60,29 +60,29 @@ public final class ByteHelper{
 		//no candidate matched the pattern
 		int index = -1;
 
-		//current char in target string
+		//current byte index in target array
 		int targetPointer = 0;
-		//current char in search string
+		//current byte index in search array
 		int searchPointer = offset;
 		//while there is more to search with, keep searching
 		while(searchPointer < source.length){
 			if(source[searchPointer] == pattern[targetPointer]){
-				//found current char in `targetPointer` in search string
+				//found current byte in `targetPointer` in search array
 				targetPointer ++;
 				if(targetPointer == pattern.length){
-					//return starting index of found target inside searched string
+					//return starting index of found target inside searched array
 					index = searchPointer - targetPointer + 1;
 					break;
 				}
 
-				//move forward if not found target string
+				//move forward if not found target array
 				searchPointer ++;
 			}
 			else if(targetPointer > 0)
-				//use `failureTable` to use pointer pointed at nearest location of usable string prefix
+				//use `failureTable` to use pointer pointed at nearest location of usable array prefix
 				targetPointer = failureTable[targetPointer - 1];
 			else
-				//`targetPointer` is pointing at state 0, so restart search with current searchPointer index
+				//`targetPointer` is pointing at state 0, so restart search with current `searchPointer` index
 				searchPointer ++;
 		}
 		return index;
@@ -92,21 +92,21 @@ public final class ByteHelper{
 	 * Returns an array that points to last valid string prefix
 	 *
 	 * @param pattern	The list to search for as a subList of {@code source}.
-	 * @return	The array of LPS
+	 * @return	The array of Longest Prefix Suffix
 	 */
 	public static int[] indexOfComputeFailureTable(final byte[] pattern){
 		final int[] lps = new int[pattern.length];
 
 		int i = 1;
-		//length of the previous Longest Prefix Suffix
 		int lengthPreviousLPS = 0;
 		while(i < pattern.length){
 			if(pattern[i] == pattern[lengthPreviousLPS])
 				lps[i ++] = ++ lengthPreviousLPS;
-			//if `lengthPreviousLPS` isn't at the very beginning, then send lengthPreviousLPS backward by following the already set pointer to where it is pointing to
+				//if `lengthPreviousLPS` isn't at the very beginning, then send `lengthPreviousLPS` backward by following
+				//the already set pointer to where it is pointing to
 			else if(lengthPreviousLPS > 0)
 				lengthPreviousLPS = lps[lengthPreviousLPS - 1];
-			//`lengthPreviousLPS` has fallen all the way back to the beginning
+				//`lengthPreviousLPS` has fallen all the way back to the beginning
 			else
 				lps[i ++] = lengthPreviousLPS;
 		}

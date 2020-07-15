@@ -34,7 +34,7 @@ import java.math.BigDecimal;
 final class CodecDecimal implements CodecInterface<BindDecimal>{
 
 	@Override
-	public final Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
+	public final Object decode(final BitReader reader, final Annotation annotation, final Object data){
 		final BindDecimal binding = (BindDecimal)annotation;
 
 		final BigDecimal v = reader.getDecimal(binding.type(), binding.byteOrder());

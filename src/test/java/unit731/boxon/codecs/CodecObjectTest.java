@@ -93,16 +93,16 @@ class CodecObjectTest{
 			}
 		};
 
-		MessageParser messageParser = new MessageParser();
-		messageParser.loader.loadCodecs();
-		ReflectionHelper.setFieldValue(codec, "messageParser", messageParser);
+		ProtocolMessageParser protocolMessageParser = new ProtocolMessageParser();
+		protocolMessageParser.loader.loadCodecs();
+		ReflectionHelper.setFieldValue(codec, "protocolMessageParser", protocolMessageParser);
 		BitWriter writer = new BitWriter();
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertArrayEquals(new byte[]{0x01, 0x02}, writer.array());
 
-		BitBuffer reader = BitBuffer.wrap(writer);
+		BitReader reader = BitReader.wrap(writer);
 		Version decoded = (Version)codec.decode(reader, annotation, null);
 
 		Assertions.assertNotNull(decoded);

@@ -28,6 +28,7 @@ import unit731.boxon.annotations.exceptions.AnnotationException;
 import unit731.boxon.annotations.ByteOrder;
 import unit731.boxon.helpers.BitSet;
 import unit731.boxon.helpers.ByteHelper;
+import unit731.boxon.helpers.ReflectionHelper;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -45,7 +46,7 @@ import java.nio.charset.Charset;
 /**
  * @see <a href="https://github.com/jhg023/BitBuffer/blob/master/src/main/java/bitbuffer/BitBuffer.java">BitBuffer</a>
  */
-final class BitBuffer{
+final class BitReader{
 
 	private static final class State{
 		private int position;
@@ -80,7 +81,7 @@ final class BitBuffer{
 	 * 	or for some other reason cannot be opened for reading.
 	 * @throws SecurityException	If a security manager exists and its {@code checkRead} method denies read access to the file.
 	 */
-	static BitBuffer wrap(final File file) throws IOException{
+	static BitReader wrap(final File file) throws IOException{
 		try(
 				final FileInputStream fis = new FileInputStream(file);
 				final FileChannel fc = fis.getChannel();
@@ -99,8 +100,8 @@ final class BitBuffer{
 	 * @param buffer	The buffer that will back this buffer
 	 * @return	The new bit buffer
 	 */
-	static BitBuffer wrap(final ByteBuffer buffer){
-		return new BitBuffer(buffer);
+	static BitReader wrap(final ByteBuffer buffer){
+		return new BitReader(buffer);
 	}
 
 	/**
@@ -112,8 +113,8 @@ final class BitBuffer{
 	 * @param array	The array that will back this buffer
 	 * @return	The new bit buffer
 	 */
-	static BitBuffer wrap(final byte[] array){
-		return new BitBuffer(ByteBuffer.wrap(array));
+	static BitReader wrap(final byte[] array){
+		return new BitReader(ByteBuffer.wrap(array));
 	}
 
 	/**
@@ -123,7 +124,7 @@ final class BitBuffer{
 	 * @param bitWriter	The {@link BitWriter}
 	 * @return	The new bit buffer
 	 */
-	static BitBuffer wrap(final BitWriter bitWriter){
+	static BitReader wrap(final BitWriter bitWriter){
 		bitWriter.flush();
 		return wrap(bitWriter.array());
 	}
@@ -134,13 +135,13 @@ final class BitBuffer{
 	 *
 	 * @param buffer the backing {@link ByteBuffer}.
 	 */
-	private BitBuffer(final ByteBuffer buffer){
+	private BitReader(final ByteBuffer buffer){
 		this.buffer = buffer;
 	}
 
 	final void createFallbackPoint(){
 		if(fallbackPoint != null){
-			//overwrite current mark:
+			//update current mark:
 			fallbackPoint.position = buffer.position();
 			fallbackPoint.remaining = remaining;
 			fallbackPoint.cache = cache;
@@ -159,8 +160,12 @@ final class BitBuffer{
 		remaining = fallbackPoint.remaining;
 		cache = fallbackPoint.cache;
 
-		fallbackPoint = null;
+		clearFallbackPoint();
 		return true;
+	}
+
+	final void clearFallbackPoint(){
+		fallbackPoint = null;
 	}
 
 
@@ -173,27 +178,38 @@ final class BitBuffer{
 	}
 
 	final Object get(final Class<?> type, final ByteOrder byteOrder){
-		if(type == byte.class || type == Byte.class)
-			return getByte();
-		if(type == short.class || type == Short.class)
-			return getShort(byteOrder);
-		if(type == int.class || type == Integer.class)
-			return getInt(byteOrder);
-		if(type == long.class || type == Long.class)
-			return getLong(byteOrder);
-		if(type == float.class || type == Float.class)
-			return getFloat(byteOrder);
-		if(type == double.class || type == Double.class)
-			return getDouble(byteOrder);
+		final ReflectionHelper.TypeEnum t = ReflectionHelper.TYPE_MAP.get(type);
+		if(t == null)
+			throw new AnnotationException("Cannot read type {}", type.getSimpleName());
 
-		throw new AnnotationException("Cannot read type {}", type.getSimpleName());
+		switch(t){
+			case BYTE:
+				return getByte();
+
+			case SHORT:
+				return getShort(byteOrder);
+
+			case INTEGER:
+				return getInt(byteOrder);
+
+			case LONG:
+				return getLong(byteOrder);
+
+			case FLOAT:
+				return getFloat(byteOrder);
+
+			case DOUBLE:
+				return getDouble(byteOrder);
+		}
+		//cannot happen
+		return null;
 	}
 
 	/**
 	 * Reads the next {@code length} bits and composes a {@link BitSet}.
 	 *
 	 * @param length	The amount of bits to read.
-	 * @return	A {@link BitSet} value at the {@link BitBuffer}'s current position.
+	 * @return	A {@link BitSet} value at the {@link BitReader}'s current position.
 	 */
 	final BitSet getBits(final int length){
 		final BitSet value = new BitSet();
@@ -244,7 +260,7 @@ final class BitBuffer{
 	 *
 	 * @param length	The amount of bits to read (should be less than {@link Long#SIZE}!).
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
-	 * @return	A <code>long</code> value at the {@link BitBuffer}'s current position.
+	 * @return	A <code>long</code> value at the {@link BitReader}'s current position.
 	 */
 	final long getLong(final int length, final ByteOrder byteOrder){
 		final BitSet bits = getBits(length);
@@ -256,7 +272,7 @@ final class BitBuffer{
 	 *
 	 * @param length	The amount of bits to read.
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
-	 * @return	A {@link BigInteger} value at the {@link BitBuffer}'s current position.
+	 * @return	A {@link BigInteger} value at the {@link BitReader}'s current position.
 	 */
 	final BigInteger getBigInteger(final int length, final ByteOrder byteOrder){
 		final BitSet bits = getBits(length);
@@ -264,7 +280,7 @@ final class BitBuffer{
 	}
 
 	/**
-	 * Reads {@link Byte#SIZE} bits from this {@link BitBuffer} and composes a {@code byte}.
+	 * Reads {@link Byte#SIZE} bits from this {@link BitReader} and composes a {@code byte}.
 	 *
 	 * @return	A {@code byte}.
 	 */
@@ -272,11 +288,17 @@ final class BitBuffer{
 		return (byte)getLong(Byte.SIZE, ByteOrder.LITTLE_ENDIAN);
 	}
 
+	private byte getByteWithFallback(){
+		createFallbackPoint();
+
+		return getByte();
+	}
+
 	/**
-	 * Reads the specified amount of {@code byte}s from this {@link BitBuffer} into an array of {@code byte}s.
+	 * Reads the specified amount of {@code byte}s from this {@link BitReader} into an array of {@code byte}s.
 	 *
 	 * @param length	The number of {@code byte}s to read.
-	 * @return	An array of {@code byte}s of length {@code n} that contains {@code byte}s read from this {@link BitBuffer}.
+	 * @return	An array of {@code byte}s of length {@code n} that contains {@code byte}s read from this {@link BitReader}.
 	 */
 	final byte[] getBytes(final int length){
 		final byte[] array = new byte[length];
@@ -286,7 +308,7 @@ final class BitBuffer{
 	}
 
 	/**
-	 * Reads {@link Short#SIZE} bits from this {@link BitBuffer} and composes a {@code short} with the specified
+	 * Reads {@link Short#SIZE} bits from this {@link BitReader} and composes a {@code short} with the specified
 	 * {@link ByteOrder}.
 	 *
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
@@ -297,7 +319,7 @@ final class BitBuffer{
 	}
 
 	/**
-	 * Reads {@link Integer#SIZE} bits from this {@link BitBuffer} and composes an {@code int} with the specified
+	 * Reads {@link Integer#SIZE} bits from this {@link BitReader} and composes an {@code int} with the specified
 	 * {@link ByteOrder}.
 	 *
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
@@ -308,7 +330,7 @@ final class BitBuffer{
 	}
 
 	/**
-	 * Reads {@link Long#SIZE} bits from this {@link BitBuffer} and composes a {@code long} with the specified
+	 * Reads {@link Long#SIZE} bits from this {@link BitReader} and composes a {@code long} with the specified
 	 * {@link ByteOrder}.
 	 *
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
@@ -324,7 +346,7 @@ final class BitBuffer{
 	}
 
 	/**
-	 * Reads {@link Float#SIZE} bits from this {@link BitBuffer} and composes a {@code float} with the specified
+	 * Reads {@link Float#SIZE} bits from this {@link BitReader} and composes a {@code float} with the specified
 	 * {@link ByteOrder}.
 	 *
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
@@ -335,7 +357,7 @@ final class BitBuffer{
 	}
 
 	/**
-	 * Reads {@link Double#SIZE} bits from this {@link BitBuffer} and composes a {@code double} with the specified
+	 * Reads {@link Double#SIZE} bits from this {@link BitReader} and composes a {@code double} with the specified
 	 * {@link ByteOrder}.
 	 *
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
@@ -346,7 +368,7 @@ final class BitBuffer{
 	}
 
 	/**
-	 * Reads {@link Double#SIZE} bits from this {@link BitBuffer} and composes a {@code double} with the specified
+	 * Reads {@link Double#SIZE} bits from this {@link BitReader} and composes a {@code double} with the specified
 	 * {@link ByteOrder}.
 	 *
 	 * @param cls	Either a {@code Float} or a {@link Double} class.
@@ -363,11 +385,11 @@ final class BitBuffer{
 	}
 
 	/**
-	 * Reads the specified amount of {@code char}s from this {@link BitBuffer} into a {@link String} with a given {@link Charset}.
+	 * Reads the specified amount of {@code char}s from this {@link BitReader} into a {@link String} with a given {@link Charset}.
 	 *
 	 * @param length	The number of {@code char}s to read.
 	 * @return	A {@link String} of length {@code n} coded with a given {@link Charset} that contains {@code char}s
-	 * 	read from this {@link BitBuffer}.
+	 * 	read from this {@link BitReader}.
 	 */
 	final String getText(final int length, final Charset charset){
 		return new String(getBytes(length), charset);
@@ -388,20 +410,16 @@ final class BitBuffer{
 	}
 
 	private void getTextUntilTerminator(final OutputStreamWriter os, final byte terminator, final boolean consumeTerminator) throws IOException{
-		if(!consumeTerminator)
-			createFallbackPoint();
-
-		for(byte byteRead = getByte(); byteRead != terminator && (buffer.position() < buffer.limit() || buffer.remaining() > 0); ){
+		for(byte byteRead = getByteWithFallback(); byteRead != terminator && (buffer.position() < buffer.limit() || buffer.remaining() > 0); ){
 			os.write(byteRead);
 
-			if(!consumeTerminator)
-				createFallbackPoint();
-
-			byteRead = getByte();
+			byteRead = getByteWithFallback();
 		}
 		os.flush();
 
-		if(!consumeTerminator)
+		if(consumeTerminator)
+			clearFallbackPoint();
+		else
 			restoreFallbackPoint();
 	}
 

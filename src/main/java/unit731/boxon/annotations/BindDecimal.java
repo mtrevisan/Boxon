@@ -53,7 +53,7 @@ public @interface BindDecimal{
 	/**
 	 * The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 *
-	 * @return	The type of endianness. Defaults to {@link ByteOrder#BIG_ENDIAN}.
+	 * @return	The type of endianness (defaults to {@link ByteOrder#BIG_ENDIAN}).
 	 */
 	ByteOrder byteOrder() default ByteOrder.BIG_ENDIAN;
 

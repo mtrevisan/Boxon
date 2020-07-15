@@ -12,10 +12,11 @@ import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.EnumMap;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 import java.util.Stack;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -24,6 +25,8 @@ import java.util.jar.JarFile;
 public final class AnnotationHelper{
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AnnotationHelper.class.getName());
+
+	private enum BucketType{DIRECTORY, FILE}
 
 
 	private static final String SCHEMA_FILE = "file:";
@@ -125,7 +128,6 @@ public final class AnnotationHelper{
 	 * @param libraryName The name of the library to load the classes from
 	 * @return The classes
 	 */
-	@SuppressWarnings("unchecked")
 	private static <T> Collection<Class<?>> extractClassesFromLibrary(final T type, final String libraryName) throws IOException{
 		final Collection<Class<?>> classes = new HashSet<>(0);
 
@@ -147,7 +149,6 @@ public final class AnnotationHelper{
 	 * @param packageName The package name for classes found inside the base directory
 	 * @return The classes
 	 */
-	@SuppressWarnings("unchecked")
 	private static <T> Collection<Class<?>> extractClasses(final T type, final File directory, final String packageName){
 		final Collection<Class<?>> classes = new HashSet<>(0);
 
@@ -156,20 +157,28 @@ public final class AnnotationHelper{
 		while(!stack.isEmpty()){
 			final ClassDescriptor elem = stack.pop();
 
-			final File[] files = Optional.ofNullable(elem.file.listFiles())
-				.orElse(new File[0]);
-			for(final File file : files){
-				final String fileName = file.getName();
-				if(file.isDirectory())
-					stack.push(new ClassDescriptor(file, elem.packageName + POINT + fileName));
-				else{
-					final Class<?> cls = getClassFromFilename(elem.packageName, fileName);
-					addIf(classes, cls, type);
-				}
-			}
+			final File[] files = elem.file.listFiles();
+			final Map<BucketType, Collection<File>> bucket = bucketByFileType(files);
+			bucket.get(BucketType.DIRECTORY).stream()
+				.map(file -> new ClassDescriptor(file, elem.packageName + POINT + file.getName()))
+				.forEach(stack::add);
+			bucket.get(BucketType.FILE).stream()
+				.map(file -> getClassFromFilename(elem.packageName, file.getName()))
+				.forEach(cls -> addIf(classes, cls, type));
 		}
 
 		return classes;
+	}
+
+	private static Map<BucketType, Collection<File>> bucketByFileType(final File[] files){
+		final Map<BucketType, Collection<File>> bucket = new EnumMap<>(BucketType.class);
+		bucket.put(BucketType.DIRECTORY, new ArrayList<>());
+		bucket.put(BucketType.FILE, new ArrayList<>());
+		if(files != null)
+			for(final File file : files)
+				bucket.get(file.isDirectory()? BucketType.DIRECTORY: BucketType.FILE)
+					.add(file);
+		return bucket;
 	}
 
 	private static Class<?> getClassFromResource(final JarEntry resource){
@@ -202,6 +211,7 @@ public final class AnnotationHelper{
 		return type;
 	}
 
+	@SuppressWarnings("unchecked")
 	private static <T> void addIf(final Collection<Class<?>> classes, final Class<?> cls, final Object type){
 		if(cls != null && !cls.isInterface() && (cls.isAnnotationPresent((Class<? extends Annotation>)type) || ((Class<?>)type).isAssignableFrom(cls)))
 			classes.add(cls);

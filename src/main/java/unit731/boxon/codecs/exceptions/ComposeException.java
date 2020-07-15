@@ -47,8 +47,9 @@ public class ComposeException extends Exception{
 	public String getMessage(){
 		final StringJoiner sj = new StringJoiner(System.lineSeparator());
 		sj.add("Error encoding data: " + data.toString());
-		if(getCause() != null)
-			sj.add(ExceptionHelper.getMessageNoLineNumber(getCause()));
+		final Throwable cause = getCause();
+		if(cause != null)
+			sj.add(ExceptionHelper.getMessageNoLineNumber(cause));
 		return sj.toString();
 	}
 

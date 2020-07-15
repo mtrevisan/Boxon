@@ -54,14 +54,14 @@ public @interface BindInteger{
 	 * The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * <p>NOTE: This works at bit level! (from lowest to highest if little-endian, from highest to lowest for big-endian)</p>
 	 *
-	 * @return	The type of endianness. Defaults to {@link ByteOrder#BIG_ENDIAN}.
+	 * @return	The type of endianness (defaults to {@link ByteOrder#BIG_ENDIAN}).
 	 */
 	ByteOrder byteOrder() default ByteOrder.BIG_ENDIAN;
 
 	/**
 	 * Allow returning a <code>long</code>/{@link Long} if <code>size &lt; {@link Long#SIZE}</code>.
 	 *
-	 * @return	Whether to allow returning a <code>long</code>/{@link Long} if <code>size &lt; {@link Long#SIZE}</code>. Defaults to <code>true</code>.
+	 * @return	Whether to allow returning a <code>long</code>/{@link Long} if <code>size &lt; {@link Long#SIZE}</code> (defaults to <code>true</code>).
 	 */
 	boolean allowPrimitive() default true;
 

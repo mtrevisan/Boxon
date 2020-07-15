@@ -89,7 +89,7 @@ class CodecChecksumTest{
 
 		Assertions.assertEquals(StringUtils.leftPad(Integer.toHexString(encodedValue & 0x0000_FFFF).toUpperCase(Locale.ROOT), 4, '0'), writer.toString());
 
-		BitBuffer reader = BitBuffer.wrap(writer);
+		BitReader reader = BitReader.wrap(writer);
 		short decoded = (short)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);

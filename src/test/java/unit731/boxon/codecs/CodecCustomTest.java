@@ -48,7 +48,7 @@ class CodecCustomTest{
 	//(if the first bit of a byte is 1, then another byte is expected to follow)
 	class VariableLengthByteArray implements CodecInterface<VarLengthEncoded>{
 		@Override
-		public Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
+		public Object decode(final BitReader reader, final Annotation annotation, final Object data){
 			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			boolean continuing = true;
 			while(continuing){
@@ -76,10 +76,10 @@ class CodecCustomTest{
 
 	@Test
 	void customAnnotation(){
-		MessageParser messageParser = new MessageParser();
-		messageParser.loader.loadCodecs(new VariableLengthByteArray());
+		ProtocolMessageParser protocolMessageParser = new ProtocolMessageParser();
+		protocolMessageParser.loader.loadCodecs(new VariableLengthByteArray());
 
-		CodecInterface codec = messageParser.loader.getCodec(VarLengthEncoded.class);
+		CodecInterface codec = protocolMessageParser.loader.getCodec(VarLengthEncoded.class);
 		byte[] encodedValue = new byte[]{0x01, 0x02, 0x03};
 		VarLengthEncoded annotation = new VarLengthEncoded(){
 			@Override
@@ -94,7 +94,7 @@ class CodecCustomTest{
 
 		Assertions.assertArrayEquals(new byte[]{(byte)0x81, (byte)0x82, 0x03}, writer.array());
 
-		BitBuffer reader = BitBuffer.wrap(writer);
+		BitReader reader = BitReader.wrap(writer);
 		byte[] decoded = (byte[])codec.decode(reader, annotation, null);
 
 		Assertions.assertArrayEquals(encodedValue, decoded);

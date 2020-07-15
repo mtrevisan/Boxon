@@ -72,11 +72,8 @@ final class Evaluator{
 			}
 
 			private Field findInParentClass(final String name, Class<?> cls, final boolean mustBeStatic){
-				Field field = null;
 				cls = cls.getSuperclass();
-				if(cls != null)
-					field = findField(name, cls, mustBeStatic);
-				return field;
+				return (cls != null? findField(name, cls, mustBeStatic): null);
 			}
 
 			private Field findInInterface(final String name, final Class<?> cls, final boolean mustBeStatic){

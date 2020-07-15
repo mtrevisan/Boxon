@@ -34,7 +34,7 @@ import java.lang.annotation.Annotation;
 final class CodecLong implements CodecInterface<BindLong>{
 
 	@Override
-	public final Object decode(final BitBuffer reader, final Annotation annotation, final Object data){
+	public final Object decode(final BitReader reader, final Annotation annotation, final Object data){
 		final BindLong binding = (BindLong)annotation;
 
 		final long v = reader.getLong(binding.byteOrder());

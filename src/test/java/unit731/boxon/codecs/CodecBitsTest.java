@@ -92,7 +92,7 @@ class CodecBitsTest{
 			bb = Arrays.copyOf(bb, randomBytes.length);
 		Assertions.assertEquals(ByteHelper.toHexString(bb), writer.toString());
 
-		BitBuffer reader = BitBuffer.wrap(writer);
+		BitReader reader = BitReader.wrap(writer);
 		BitSet decoded = (BitSet)codec.decode(reader, annotation, null);
 
 		encodedValue.reverseBits(randomBytes.length * Byte.SIZE);
@@ -146,7 +146,7 @@ class CodecBitsTest{
 			bb = Arrays.copyOf(bb, randomBytes.length);
 		Assertions.assertEquals(ByteHelper.toHexString(bb), writer.toString());
 
-		BitBuffer reader = BitBuffer.wrap(writer);
+		BitReader reader = BitReader.wrap(writer);
 		BitSet decoded = (BitSet)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
