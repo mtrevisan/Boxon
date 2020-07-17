@@ -45,7 +45,7 @@ class ByteHelperTest{
 		indexOf(pm);
 	}
 
-	void indexOf(PatternMatcher pm){
+	private void indexOf(PatternMatcher pm){
 		byte[] source = "".getBytes();
 		byte[] pattern = "".getBytes();
 		int index = pm.indexOf(source, 0, pattern, pm.preProcessPattern(pattern));
