@@ -53,36 +53,47 @@ public final class ReflectionHelper{
 
 	private static final Function<Class<?>, Supplier<?>> CREATORS = Memoizer.memoizeThreadAndRecursionSafe(ReflectionHelper::getCreatorInner);
 
-	//FIXME aggregate into a unique structure?
-	/** Maps primitive {@code Class}es to their corresponding wrapper {@code Class} */
-	public static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPER_MAP = new HashMap<>(6);
-	/** Maps wrapper {@code Class}es to their corresponding primitive types */
-	public static final Map<Class<?>, Class<?>> WRAPPER_PRIMITIVE_MAP = new HashMap<>(6);
-	public static final Map<Class<?>, TypeEnum> TYPE_MAP = new HashMap<>(12);
-	public enum TypeEnum{BYTE, SHORT, INTEGER, LONG, FLOAT, DOUBLE}
-	static{
-		PRIMITIVE_WRAPPER_MAP.put(Byte.TYPE, Byte.class);
-		PRIMITIVE_WRAPPER_MAP.put(Short.TYPE, Short.class);
-		PRIMITIVE_WRAPPER_MAP.put(Integer.TYPE, Integer.class);
-		PRIMITIVE_WRAPPER_MAP.put(Long.TYPE, Long.class);
-		PRIMITIVE_WRAPPER_MAP.put(Float.TYPE, Float.class);
-		PRIMITIVE_WRAPPER_MAP.put(Double.TYPE, Double.class);
+	public enum TypeEnum{
+		BYTE(Byte.TYPE, Byte.class),
+		SHORT(Short.TYPE, Short.class),
+		INTEGER(Integer.TYPE, Integer.class),
+		LONG(Long.TYPE, Long.class),
+		FLOAT(Float.TYPE, Float.class),
+		DOUBLE(Double.TYPE, Double.class);
 
-		for(final Class<?> primitiveClass : PRIMITIVE_WRAPPER_MAP.keySet())
-			WRAPPER_PRIMITIVE_MAP.put(PRIMITIVE_WRAPPER_MAP.get(primitiveClass), primitiveClass);
+		/** Maps primitive {@code Class}es to their corresponding wrapper {@code Class} */
+		private static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPER_MAP = new HashMap<>(6);
+		/** Maps wrapper {@code Class}es to their corresponding primitive types */
+		private static final Map<Class<?>, Class<?>> WRAPPER_PRIMITIVE_MAP = new HashMap<>(6);
+		private static final Map<Class<?>, TypeEnum> TYPE_MAP = new HashMap<>(12);
+		static{
+			for(final TypeEnum te : values()){
+				PRIMITIVE_WRAPPER_MAP.put(te.primitiveType, te.objectiveType);
+				WRAPPER_PRIMITIVE_MAP.put(te.objectiveType, te.primitiveType);
+				TYPE_MAP.put(te.primitiveType, te);
+				TYPE_MAP.put(te.objectiveType, te);
+			}
+		}
 
-		TYPE_MAP.put(Byte.TYPE, TypeEnum.BYTE);
-		TYPE_MAP.put(Byte.class, TypeEnum.BYTE);
-		TYPE_MAP.put(Short.TYPE, TypeEnum.SHORT);
-		TYPE_MAP.put(Short.class, TypeEnum.SHORT);
-		TYPE_MAP.put(Integer.TYPE, TypeEnum.INTEGER);
-		TYPE_MAP.put(Integer.class, TypeEnum.INTEGER);
-		TYPE_MAP.put(Long.TYPE, TypeEnum.LONG);
-		TYPE_MAP.put(Long.class, TypeEnum.LONG);
-		TYPE_MAP.put(Float.TYPE, TypeEnum.FLOAT);
-		TYPE_MAP.put(Float.class, TypeEnum.FLOAT);
-		TYPE_MAP.put(Double.TYPE, TypeEnum.DOUBLE);
-		TYPE_MAP.put(Double.class, TypeEnum.DOUBLE);
+		final Class<?> primitiveType;
+		final Class<?> objectiveType;
+
+		TypeEnum(final Class<?> primitiveType, final Class<?> objectiveType){
+			this.primitiveType = primitiveType;
+			this.objectiveType = objectiveType;
+		}
+
+		public static Class<?> toObjectiveTypeOrDefault(final Class<?> primitiveType){
+			return PRIMITIVE_WRAPPER_MAP.getOrDefault(primitiveType, primitiveType);
+		}
+
+		public static Class<?> toPrimitiveTypeOrDefault(final Class<?> objectiveType){
+			return WRAPPER_PRIMITIVE_MAP.getOrDefault(objectiveType, objectiveType);
+		}
+
+		public static TypeEnum fromType(final Class<?> type){
+			return TYPE_MAP.get(type);
+		}
 	}
 
 
@@ -183,7 +194,7 @@ public final class ReflectionHelper{
 	 * @return	Whether the given {@code type} is a primitive or primitive wrapper.
 	 */
 	public static boolean isPrimitiveOrPrimitiveWrapper(final Class<?> type){
-		return (isPrimitive(type) || WRAPPER_PRIMITIVE_MAP.containsKey(type));
+		return (isPrimitive(type) || TypeEnum.WRAPPER_PRIMITIVE_MAP.containsKey(type));
 	}
 
 	public static Object createArrayPrimitive(final Class<?> type, final int length){

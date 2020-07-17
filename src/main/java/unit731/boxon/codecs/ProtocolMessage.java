@@ -119,8 +119,8 @@ final class ProtocolMessage<T>{
 			void validate(final Annotation annotation){
 				final Class<?> type = ((BindArrayPrimitive)annotation).type();
 				if(!ReflectionHelper.isArrayOfPrimitives(type))
-					throw new AnnotationException("Bad annotation used, @{} should have been used with type `{}.class`", BindArray.class.getSimpleName(),
-						ReflectionHelper.PRIMITIVE_WRAPPER_MAP.getOrDefault(type.getComponentType(), type.getComponentType()).getSimpleName());
+					throw new AnnotationException("Bad annotation used for @{}, should have been used the type `{}.class`", BindArray.class.getSimpleName(),
+						ReflectionHelper.TypeEnum.toObjectiveTypeOrDefault(type.getComponentType()).getSimpleName());
 			}
 		},
 
@@ -133,8 +133,8 @@ final class ProtocolMessage<T>{
 				validateChoice(selectFrom, type);
 
 				if(ReflectionHelper.isArrayOfPrimitives(type))
-					throw new AnnotationException("Bad annotation used, @{} should have been used with type `{}[].class`", BindArrayPrimitive.class.getSimpleName(),
-						ReflectionHelper.WRAPPER_PRIMITIVE_MAP.getOrDefault(type.getComponentType(), type.getComponentType()).getSimpleName());
+					throw new AnnotationException("Bad annotation used for @{}, should have been used the type `{}[].class`", BindArrayPrimitive.class.getSimpleName(),
+						ReflectionHelper.TypeEnum.toPrimitiveTypeOrDefault(type).getSimpleName());
 			}
 		},
 

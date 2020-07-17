@@ -53,7 +53,7 @@ final class BitWriter{
 
 	@SuppressWarnings("ConstantConditions")
 	final void put(final Object value, final ByteOrder byteOrder){
-		final ReflectionHelper.TypeEnum t = ReflectionHelper.TYPE_MAP.get(value.getClass());
+		final ReflectionHelper.TypeEnum t = ReflectionHelper.TypeEnum.fromType(value.getClass());
 		if(t == null)
 			throw new AnnotationException("Cannot write type {}", value.getClass().getSimpleName());
 
