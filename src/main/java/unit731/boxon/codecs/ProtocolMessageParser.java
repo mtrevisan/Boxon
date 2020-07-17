@@ -154,26 +154,28 @@ final class ProtocolMessageParser{
 		for(final ProtocolMessage.BoundedField field : fields){
 			writeSkippedFields(field.getSkips(), writer, data);
 
-			if(skipFieldByCondition(field.getCondition(), data))
-				continue;
-
-			final Annotation binding = field.getBinding();
-			final CodecInterface<?> codec = retrieveCodec(binding.annotationType());
-
-			try{
-				final Object value = ReflectionHelper.getFieldValue(data, field.getName());
-				codec.encode(writer, binding, data, value);
-			}
-			catch(final Exception e){
-				//this assumes the writing was done correctly
-				manageProtocolMessageException(protocolMessage, field, e);
-			}
+			if(!skipFieldByCondition(field.getCondition(), data))
+				encodeField(protocolMessage, data, writer, field);
 		}
 
 		final MessageHeader header = protocolMessage.getHeader();
 		closeMessage(header, writer);
 
 		writer.flush();
+	}
+
+	private <T> void encodeField(final ProtocolMessage<?> protocolMessage, final T data, final BitWriter writer, final ProtocolMessage.BoundedField field){
+		final Annotation binding = field.getBinding();
+		final CodecInterface<?> codec = retrieveCodec(binding.annotationType());
+
+		try{
+			final Object value = ReflectionHelper.getFieldValue(data, field.getName());
+			codec.encode(writer, binding, data, value);
+		}
+		catch(final Exception e){
+			//this assumes the writing was done correctly
+			manageProtocolMessageException(protocolMessage, field, e);
+		}
 	}
 
 	private void closeMessage(final MessageHeader header, final BitWriter writer){
