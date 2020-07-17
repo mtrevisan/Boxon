@@ -124,7 +124,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 
 			final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(cls, protocolMessageParser.loader);
 
-			protocolMessageParser.encode(protocolMessage, elem, writer);
+			protocolMessageParser.encode(protocolMessage, writer, elem);
 		}
 	}
 
@@ -133,7 +133,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 
 		final int size = array.length;
 		for(final Object elem : array)
-			protocolMessageParser.encode(protocolMessage, elem, writer);
+			protocolMessageParser.encode(protocolMessage, writer, elem);
 	}
 
 	@Override

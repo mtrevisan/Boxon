@@ -92,7 +92,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 
 		final Object array = CodecHelper.converterEncode(binding.converter(), value);
 
-		protocolMessageParser.encode(protocolMessage, array, writer);
+		protocolMessageParser.encode(protocolMessage, writer, array);
 	}
 
 	@Override

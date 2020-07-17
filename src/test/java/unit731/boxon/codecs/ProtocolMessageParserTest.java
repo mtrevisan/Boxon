@@ -54,7 +54,7 @@ class ProtocolMessageParserTest{
 		ACKMessageHex message = protocolMessageParser.decode(protocolMessage, reader);
 
 		BitWriter writer = new BitWriter();
-		protocolMessageParser.encode(protocolMessage, message, writer);
+		protocolMessageParser.encode(protocolMessage, writer, message);
 		byte[] reconstructedMessage = writer.array();
 
 		Assertions.assertArrayEquals(payload, reconstructedMessage);
@@ -78,7 +78,7 @@ class ProtocolMessageParserTest{
 		ACKMessageASCII message = protocolMessageParser.decode(protocolMessage, reader);
 
 		BitWriter writer = new BitWriter();
-		protocolMessageParser.encode(protocolMessage, message, writer);
+		protocolMessageParser.encode(protocolMessage, writer, message);
 		byte[] reconstructedMessage = writer.array();
 
 		Assertions.assertArrayEquals(payload, reconstructedMessage);

@@ -56,7 +56,7 @@ final class ProtocolMessageParser{
 		final T data = ReflectionHelper.getCreator(protocolMessage.getType())
 			.get();
 
-		//parse message fields:
+		//decode message fields:
 		final List<ProtocolMessage.BoundedField> fields = protocolMessage.getBoundedFields();
 		for(final ProtocolMessage.BoundedField field : fields){
 			readSkippedFields(field.getSkips(), reader, data);
@@ -150,14 +150,14 @@ final class ProtocolMessageParser{
 		}
 	}
 
-	final <T> void encode(final ProtocolMessage<?> protocolMessage, final T data, final BitWriter writer){
-		//encode message's fields:
+	final <T> void encode(final ProtocolMessage<?> protocolMessage, final BitWriter writer, final T data){
+		//encode message fields:
 		final List<ProtocolMessage.BoundedField> fields = protocolMessage.getBoundedFields();
 		for(final ProtocolMessage.BoundedField field : fields){
 			writeSkippedFields(field.getSkips(), writer, data);
 
 			if(!skipFieldByCondition(field.getCondition(), data))
-				encodeField(protocolMessage, data, writer, field);
+				encodeField(protocolMessage, writer, data, field);
 		}
 
 		final MessageHeader header = protocolMessage.getHeader();
@@ -166,7 +166,7 @@ final class ProtocolMessageParser{
 		writer.flush();
 	}
 
-	private <T> void encodeField(final ProtocolMessage<?> protocolMessage, final T data, final BitWriter writer, final ProtocolMessage.BoundedField field){
+	private <T> void encodeField(final ProtocolMessage<?> protocolMessage, final BitWriter writer, final T data, final ProtocolMessage.BoundedField field){
 		final Annotation binding = field.getBinding();
 		final CodecInterface<?> codec = retrieveCodec(binding.annotationType());
 
