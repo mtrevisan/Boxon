@@ -31,6 +31,62 @@ import org.junit.jupiter.api.Test;
 class ByteHelperTest{
 
 	@Test
+	void indexOf(){
+		byte[] source = "".getBytes();
+		byte[] pattern = "".getBytes();
+		int index = ByteHelper.indexOf(source, pattern, 0, ByteHelper.indexOfComputeFailureTable(pattern));
+		Assertions.assertEquals(0, index);
+
+		source = "ab".getBytes();
+		pattern = "".getBytes();
+		index = ByteHelper.indexOf(source, pattern, 0, ByteHelper.indexOfComputeFailureTable(pattern));
+		Assertions.assertEquals(0, index);
+
+
+		source = "a".getBytes();
+		pattern = "a".getBytes();
+		index = ByteHelper.indexOf(source, pattern, 0, ByteHelper.indexOfComputeFailureTable(pattern));
+		Assertions.assertEquals(0, index);
+
+		source = "b".getBytes();
+		pattern = "a".getBytes();
+		index = ByteHelper.indexOf(source, pattern, 0, ByteHelper.indexOfComputeFailureTable(pattern));
+		Assertions.assertEquals(-1, index);
+
+
+		source = "aaaaa".getBytes();
+		pattern = "aaa".getBytes();
+		index = ByteHelper.indexOf(source, pattern, 0, ByteHelper.indexOfComputeFailureTable(pattern));
+		Assertions.assertEquals(0, index);
+
+		source = "abaaba".getBytes();
+		pattern = "aaa".getBytes();
+		index = ByteHelper.indexOf(source, pattern, 0, ByteHelper.indexOfComputeFailureTable(pattern));
+		Assertions.assertEquals(-1, index);
+
+		source = "abacababc".getBytes();
+		pattern = "abab".getBytes();
+		index = ByteHelper.indexOf(source, pattern, 0, ByteHelper.indexOfComputeFailureTable(pattern));
+		Assertions.assertEquals(4, index);
+
+		source = "babacaba".getBytes();
+		pattern = "abab".getBytes();
+		index = ByteHelper.indexOf(source, pattern, 0, ByteHelper.indexOfComputeFailureTable(pattern));
+		Assertions.assertEquals(-1, index);
+
+
+		source = "aaacacaacaaacaaaacaaaaac".getBytes();
+		pattern = "aaacaaaaac".getBytes();
+		index = ByteHelper.indexOf(source, pattern, 0, ByteHelper.indexOfComputeFailureTable(pattern));
+		Assertions.assertEquals(14, index);
+
+		source = "ababcababdabababcababdaba".getBytes();
+		pattern = "ababcababdabababcababdaba".getBytes();
+		index = ByteHelper.indexOf(source, pattern, 0, ByteHelper.indexOfComputeFailureTable(pattern));
+		Assertions.assertEquals(0, index);
+	}
+
+	@Test
 	void hasBitWithByte(){
 		byte mask = 0x27;
 

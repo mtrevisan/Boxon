@@ -46,8 +46,7 @@ public final class ByteHelper{
 	 * or {@code -1} if there is no such index.<br>
 	 * (Returns {@code -1} if {@code pattern.size() > source.size()})
 	 * <p>
-	 * This implementation uses the "brute force" technique of scanning over the source list, looking for a match with the pattern
-	 * at each location in turn
+	 * This implementation uses the "Knuth-Morris-Pratt" technique of scanning over the source list.
 	 *
 	 * @param source	The list in which to search for the first occurrence of {@code pattern}.
 	 * @param pattern	The list to search for as a subList of {@code source}.
@@ -57,6 +56,9 @@ public final class ByteHelper{
 	 * 	or {@code -1} if there is no such occurrence.
 	 */
 	public static int indexOf(final byte[] source, final byte[] pattern, final int offset, final int[] failureTable){
+		if(pattern.length == 0)
+			return 0;
+
 		//no candidate matched the pattern
 		int index = -1;
 
@@ -99,14 +101,15 @@ public final class ByteHelper{
 
 		int i = 1;
 		int lengthPreviousLPS = 0;
-		while(i < pattern.length){
+		while(i < lps.length){
+			//when both chars before `lengthPreviousLPS` and `i` are equal, link both and move both forward
 			if(pattern[i] == pattern[lengthPreviousLPS])
 				lps[i ++] = ++ lengthPreviousLPS;
-				//if `lengthPreviousLPS` isn't at the very beginning, then send `lengthPreviousLPS` backward by following
-				//the already set pointer to where it is pointing to
+			//if `lengthPreviousLPS` isn't at the very beginning, then send `lengthPreviousLPS` backward by following
+			//the already set pointer to where it is pointing to
 			else if(lengthPreviousLPS > 0)
 				lengthPreviousLPS = lps[lengthPreviousLPS - 1];
-				//`lengthPreviousLPS` has fallen all the way back to the beginning
+			//`lengthPreviousLPS` has fallen all the way back to the beginning
 			else
 				lps[i ++] = lengthPreviousLPS;
 		}
