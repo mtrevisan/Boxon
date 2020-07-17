@@ -102,7 +102,7 @@ public final class BitSet{
 		int k = 0;
 		int offset = 0;
 		for(long word : words){
-			while(word != 0){
+			while(word != 0l){
 				final int skip = Long.numberOfTrailingZeros(word);
 				indexes[k ++] = skip + offset;
 				word ^= 1l << skip;
