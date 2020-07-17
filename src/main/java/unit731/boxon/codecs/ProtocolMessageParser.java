@@ -61,22 +61,8 @@ final class ProtocolMessageParser{
 		for(final ProtocolMessage.BoundedField field : fields){
 			readSkippedFields(field.getSkips(), reader, data);
 
-			if(skipFieldByCondition(field.getCondition(), data))
-				continue;
-
-			final Annotation binding = field.getBinding();
-			final CodecInterface<?> codec = retrieveCodec(binding.annotationType());
-
-			try{
-				final Object value = codec.decode(reader, binding, data);
-				ReflectionHelper.setFieldValue(data, field.getName(), value);
-
-				LOGGER.trace("read {} = {}", field.getName(), value);
-			}
-			catch(final Exception e){
-				//this assumes the reading was done correctly
-				manageProtocolMessageException(protocolMessage, field, e);
-			}
+			if(!skipFieldByCondition(field.getCondition(), data))
+				decodeField(protocolMessage, reader, data, field);
 		}
 
 		processEvaluatedFields(protocolMessage, data);
@@ -86,6 +72,22 @@ final class ProtocolMessageParser{
 		verifyChecksum(protocolMessage, data, startPosition, reader);
 
 		return data;
+	}
+
+	private <T> void decodeField(final ProtocolMessage<T> protocolMessage, final BitReader reader, final T data, final ProtocolMessage.BoundedField field){
+		final Annotation binding = field.getBinding();
+		final CodecInterface<?> codec = retrieveCodec(binding.annotationType());
+
+		try{
+			final Object value = codec.decode(reader, binding, data);
+			ReflectionHelper.setFieldValue(data, field.getName(), value);
+
+			LOGGER.trace("read {} = {}", field.getName(), value);
+		}
+		catch(final Exception e){
+			//this assumes the reading was done correctly
+			manageProtocolMessageException(protocolMessage, field, e);
+		}
 	}
 
 	private <T> void readSkippedFields(final Skip[] skips, final BitReader reader, final T data){
