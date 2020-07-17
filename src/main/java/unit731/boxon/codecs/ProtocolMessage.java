@@ -36,6 +36,7 @@ import unit731.boxon.annotations.BindIf;
 import unit731.boxon.annotations.MessageHeader;
 import unit731.boxon.annotations.Skip;
 import unit731.boxon.helpers.AnnotationHelper;
+import unit731.boxon.helpers.DataType;
 import unit731.boxon.helpers.ReflectionHelper;
 
 import java.lang.annotation.Annotation;
@@ -120,7 +121,7 @@ final class ProtocolMessage<T>{
 				final Class<?> type = ((BindArrayPrimitive)annotation).type();
 				if(!ReflectionHelper.isArrayOfPrimitives(type))
 					throw new AnnotationException("Bad annotation used for @{}, should have been used the type `{}.class`", BindArray.class.getSimpleName(),
-						ReflectionHelper.TypeEnum.toObjectiveTypeOrDefault(type.getComponentType()).getSimpleName());
+						DataType.toObjectiveTypeOrDefault(type.getComponentType()).getSimpleName());
 			}
 		},
 
@@ -134,7 +135,7 @@ final class ProtocolMessage<T>{
 
 				if(ReflectionHelper.isArrayOfPrimitives(type))
 					throw new AnnotationException("Bad annotation used for @{}, should have been used the type `{}[].class`", BindArrayPrimitive.class.getSimpleName(),
-						ReflectionHelper.TypeEnum.toPrimitiveTypeOrDefault(type).getSimpleName());
+						DataType.toPrimitiveTypeOrDefault(type).getSimpleName());
 			}
 		},
 
