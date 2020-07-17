@@ -54,7 +54,7 @@ final class Loader{
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Loader.class.getName());
 
-	private static final Function<byte[], int[]> FAILURE_TABLES = Memoizer.memoizeThreadAndRecursionSafe(Loader::getFailureTable);
+	private static final Function<byte[], int[]> PRE_PROCESSED_PATTERNS = Memoizer.memoizeThreadAndRecursionSafe(Loader::getPreProcessedPattern);
 	private static final PatternMatcher PATTERN_MATCHER = new BNDMPatternMatcher();
 
 	private final Map<String, ProtocolMessage<?>> protocolMessages = new TreeMap<>(Comparator.comparingInt(String::length).reversed().thenComparing(String::compareTo));
@@ -294,17 +294,17 @@ final class Loader{
 		return minOffset;
 	}
 
-	private static final int[] getFailureTable(final byte[] pattern){
+	private static final int[] getPreProcessedPattern(final byte[] pattern){
 		return PATTERN_MATCHER.preProcessPattern(pattern);
 	}
 
 	private int searchNextSequence(final BitReader reader, final byte[] startMessageSequence){
-		final int[] failureTable = FAILURE_TABLES.apply(startMessageSequence);
+		final int[] preProcessedPattern = PRE_PROCESSED_PATTERNS.apply(startMessageSequence);
 
 		final byte[] message = reader.array();
 		//search inside message:
 		final int startIndex = reader.position();
-		final int index = PATTERN_MATCHER.indexOf(message, startIndex + 1, startMessageSequence, failureTable);
+		final int index = PATTERN_MATCHER.indexOf(message, startIndex + 1, startMessageSequence, preProcessedPattern);
 		return (index >= startIndex? index: -1);
 	}
 
