@@ -30,7 +30,10 @@ import unit731.boxon.helpers.AnnotationHelper;
 import unit731.boxon.helpers.ByteHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import unit731.boxon.helpers.Memoizer;
 import unit731.boxon.helpers.ReflectionHelper;
+import unit731.boxon.helpers.matchers.KMPPatternMatcher;
+import unit731.boxon.helpers.matchers.PatternMatcher;
 
 import java.nio.charset.Charset;
 import java.util.Arrays;
@@ -50,6 +53,9 @@ import java.util.stream.Collectors;
 final class Loader{
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Loader.class.getName());
+
+	private static final Function<byte[], int[]> FAILURE_TABLES = Memoizer.memoizeThreadAndRecursionSafe(Loader::getFailureTable);
+	private static final PatternMatcher PATTERN_MATCHER = new KMPPatternMatcher();
 
 	private final Map<String, ProtocolMessage<?>> protocolMessages = new TreeMap<>(Comparator.comparingInt(String::length).reversed().thenComparing(String::compareTo));
 	private final Map<Class<?>, CodecInterface<?>> codecs = new HashMap<>(0);
@@ -288,13 +294,17 @@ final class Loader{
 		return minOffset;
 	}
 
+	private static final int[] getFailureTable(final byte[] pattern){
+		return PATTERN_MATCHER.preProcessPattern(pattern);
+	}
+
 	private int searchNextSequence(final BitReader reader, final byte[] startMessageSequence){
-		final int[] boundarySequenceFailureTable = ByteHelper.indexOfComputeFailureTable(startMessageSequence);
+		final int[] failureTable = FAILURE_TABLES.apply(startMessageSequence);
 
 		final byte[] message = reader.array();
 		//search inside message:
 		final int startIndex = reader.position();
-		final int index = ByteHelper.indexOf(message, startMessageSequence, startIndex + 1, boundarySequenceFailureTable);
+		final int index = PATTERN_MATCHER.indexOf(message, startIndex + 1, startMessageSequence, failureTable);
 		return (index >= startIndex? index: -1);
 	}
 

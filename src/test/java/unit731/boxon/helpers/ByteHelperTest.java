@@ -26,63 +26,77 @@ package unit731.boxon.helpers;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import unit731.boxon.helpers.matchers.BNDMPatternMatcher;
+import unit731.boxon.helpers.matchers.KMPPatternMatcher;
+import unit731.boxon.helpers.matchers.PatternMatcher;
 
 
 class ByteHelperTest{
 
 	@Test
-	void indexOf(){
+	void indexOfBNDM(){
+		PatternMatcher pm = new BNDMPatternMatcher();
+		indexOf(pm);
+	}
+
+	@Test
+	void indexOfKMP(){
+		PatternMatcher pm = new KMPPatternMatcher();
+		indexOf(pm);
+	}
+
+	void indexOf(PatternMatcher pm){
 		byte[] source = "".getBytes();
 		byte[] pattern = "".getBytes();
-		int index = ByteHelper.indexOf(source, pattern, 0, ByteHelper.indexOfComputeFailureTable(pattern));
+		int index = pm.indexOf(source, 0, pattern, pm.preProcessPattern(pattern));
 		Assertions.assertEquals(0, index);
 
 		source = "ab".getBytes();
 		pattern = "".getBytes();
-		index = ByteHelper.indexOf(source, pattern, 0, ByteHelper.indexOfComputeFailureTable(pattern));
+		index = pm.indexOf(source, 0, pattern, pm.preProcessPattern(pattern));
 		Assertions.assertEquals(0, index);
 
 
 		source = "a".getBytes();
 		pattern = "a".getBytes();
-		index = ByteHelper.indexOf(source, pattern, 0, ByteHelper.indexOfComputeFailureTable(pattern));
+		index = pm.indexOf(source, 0, pattern, pm.preProcessPattern(pattern));
 		Assertions.assertEquals(0, index);
 
 		source = "b".getBytes();
 		pattern = "a".getBytes();
-		index = ByteHelper.indexOf(source, pattern, 0, ByteHelper.indexOfComputeFailureTable(pattern));
+		index = pm.indexOf(source, 0, pattern, pm.preProcessPattern(pattern));
 		Assertions.assertEquals(-1, index);
 
 
 		source = "aaaaa".getBytes();
 		pattern = "aaa".getBytes();
-		index = ByteHelper.indexOf(source, pattern, 0, ByteHelper.indexOfComputeFailureTable(pattern));
+		index = pm.indexOf(source, 0, pattern, pm.preProcessPattern(pattern));
 		Assertions.assertEquals(0, index);
 
 		source = "abaaba".getBytes();
 		pattern = "aaa".getBytes();
-		index = ByteHelper.indexOf(source, pattern, 0, ByteHelper.indexOfComputeFailureTable(pattern));
+		index = pm.indexOf(source, 0, pattern, pm.preProcessPattern(pattern));
 		Assertions.assertEquals(-1, index);
 
 		source = "abacababc".getBytes();
 		pattern = "abab".getBytes();
-		index = ByteHelper.indexOf(source, pattern, 0, ByteHelper.indexOfComputeFailureTable(pattern));
+		index = pm.indexOf(source, 0, pattern, pm.preProcessPattern(pattern));
 		Assertions.assertEquals(4, index);
 
 		source = "babacaba".getBytes();
 		pattern = "abab".getBytes();
-		index = ByteHelper.indexOf(source, pattern, 0, ByteHelper.indexOfComputeFailureTable(pattern));
+		index = pm.indexOf(source, 0, pattern, pm.preProcessPattern(pattern));
 		Assertions.assertEquals(-1, index);
 
 
 		source = "aaacacaacaaacaaaacaaaaac".getBytes();
 		pattern = "aaacaaaaac".getBytes();
-		index = ByteHelper.indexOf(source, pattern, 0, ByteHelper.indexOfComputeFailureTable(pattern));
+		index = pm.indexOf(source, 0, pattern, pm.preProcessPattern(pattern));
 		Assertions.assertEquals(14, index);
 
 		source = "ababcababdabababcababdaba".getBytes();
 		pattern = "ababcababdabababcababdaba".getBytes();
-		index = ByteHelper.indexOf(source, pattern, 0, ByteHelper.indexOfComputeFailureTable(pattern));
+		index = pm.indexOf(source, 0, pattern, pm.preProcessPattern(pattern));
 		Assertions.assertEquals(0, index);
 	}
 
