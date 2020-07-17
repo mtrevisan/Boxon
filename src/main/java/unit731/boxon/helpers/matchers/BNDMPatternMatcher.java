@@ -59,17 +59,14 @@ public class BNDMPatternMatcher implements PatternMatcher{
 		int j = 0;
 		for(int i = 0; i < pattern.length; i ++)
 			if(pattern[i] == wildcard)
-				j |= (1 << pattern.length - i - 1);
+				j |= 1 << (pattern.length - i - 1);
 
 		final int[] b = new int[Integer.SIZE * Byte.SIZE];
 		if(j != 0)
 			for(int i = 0; i < b.length; i ++)
 				b[i] = j;
 
-		j = 1;
-		for(int i = pattern.length - 1; i >= 0; i --, j <<= 1)
-			b[pattern[i] & 0xFF] |= j;
-		return b;
+		return fill(pattern, b);
 	}
 
 	/**
@@ -85,6 +82,10 @@ public class BNDMPatternMatcher implements PatternMatcher{
 			throw new IllegalArgumentException("Cannot process a pattern whose length exceeds 31 bytes");
 
 		final int[] b = new int[Integer.SIZE * Byte.SIZE];
+		return fill(pattern, b);
+	}
+
+	private int[] fill(final byte[] pattern, final int[] b){
 		int j = 1;
 		for(int i = pattern.length - 1; i >= 0; i --, j <<= 1)
 			b[pattern[i] & 0xFF] |= j;
