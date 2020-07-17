@@ -32,7 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import unit731.boxon.helpers.Memoizer;
 import unit731.boxon.helpers.ReflectionHelper;
-import unit731.boxon.helpers.matchers.KMPPatternMatcher;
+import unit731.boxon.helpers.matchers.BNDMPatternMatcher;
 import unit731.boxon.helpers.matchers.PatternMatcher;
 
 import java.nio.charset.Charset;
@@ -55,7 +55,7 @@ final class Loader{
 	private static final Logger LOGGER = LoggerFactory.getLogger(Loader.class.getName());
 
 	private static final Function<byte[], int[]> FAILURE_TABLES = Memoizer.memoizeThreadAndRecursionSafe(Loader::getFailureTable);
-	private static final PatternMatcher PATTERN_MATCHER = new KMPPatternMatcher();
+	private static final PatternMatcher PATTERN_MATCHER = new BNDMPatternMatcher();
 
 	private final Map<String, ProtocolMessage<?>> protocolMessages = new TreeMap<>(Comparator.comparingInt(String::length).reversed().thenComparing(String::compareTo));
 	private final Map<Class<?>, CodecInterface<?>> codecs = new HashMap<>(0);
