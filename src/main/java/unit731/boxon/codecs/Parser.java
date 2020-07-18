@@ -46,7 +46,11 @@ public class Parser{
 	private final ProtocolMessageParser protocolMessageParser = new ProtocolMessageParser();
 
 
-	/** Create an empty parser (context, codecs and protocol messages MUST BE manually loaded!). */
+	/**
+	 * Create an empty parser (context, codecs and protocol messages MUST BE manually loaded!).
+	 *
+	 * @return	A basic empty parser
+	 */
 	public static Parser create(){
 		return new Parser();
 	}

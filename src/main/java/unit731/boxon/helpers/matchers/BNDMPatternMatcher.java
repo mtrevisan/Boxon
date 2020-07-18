@@ -34,7 +34,7 @@ package unit731.boxon.helpers.matchers;
  * <pre><code>
  *  Preprocessing: O(m)
  *  Searching    : O(n/m)	(best case)
- *                 O(n * log<sub>&sum</sub>(m) / m)	(average)
+ *                 O(n * log<sub>&sum;</sub>(m) / m)	(average)
  *                 O(mn)	(worst case)
  * </code></pre>
  *
