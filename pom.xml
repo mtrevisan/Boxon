@@ -60,7 +60,7 @@
 		<!-- JUnit -->
 		<junit.junit-jupiter-engine.version>5.6.2</junit.junit-jupiter-engine.version>
 		<!-- Apache -->
-		<apache.commons-lang3.version>3.10</apache.commons-lang3.version>
+		<apache.commons-lang3.version>3.11</apache.commons-lang3.version>
 		<apache.commons-math3.version>3.6.1</apache.commons-math3.version>
 	</properties>
 
@@ -192,6 +192,7 @@
 				</configuration>
 			</plugin>
 			<!-- Signing JAR Files -->
+			<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-gpg-plugin -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-gpg-plugin</artifactId>
