@@ -28,7 +28,7 @@ import unit731.boxon.annotations.exceptions.AnnotationException;
 import unit731.boxon.annotations.ByteOrder;
 import unit731.boxon.helpers.BitSet;
 import unit731.boxon.helpers.ByteHelper;
-import unit731.boxon.helpers.ReflectionHelper;
+import unit731.boxon.helpers.DataType;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -178,7 +178,7 @@ final class BitReader{
 	}
 
 	final Object get(final Class<?> type, final ByteOrder byteOrder){
-		final ReflectionHelper.TypeEnum t = ReflectionHelper.TYPE_MAP.get(type);
+		final DataType t = DataType.fromType(type);
 		if(t == null)
 			throw new AnnotationException("Cannot read type {}", type.getSimpleName());
 

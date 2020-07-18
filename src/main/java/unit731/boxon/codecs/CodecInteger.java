@@ -72,7 +72,7 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 			final long vv = CodecHelper.converterEncode(binding.converter(), value);
 
 			v = BigInteger.valueOf(Math.abs(vv));
-			if(vv < 0)
+			if(vv < 0l)
 				//noinspection ResultOfMethodCallIgnored
 				v.setBit(size);
 		}

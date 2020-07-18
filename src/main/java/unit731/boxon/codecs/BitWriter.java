@@ -28,7 +28,7 @@ import unit731.boxon.annotations.exceptions.AnnotationException;
 import unit731.boxon.annotations.ByteOrder;
 import unit731.boxon.helpers.BitSet;
 import unit731.boxon.helpers.ByteHelper;
-import unit731.boxon.helpers.ReflectionHelper;
+import unit731.boxon.helpers.DataType;
 
 import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
@@ -53,7 +53,7 @@ final class BitWriter{
 
 	@SuppressWarnings("ConstantConditions")
 	final void put(final Object value, final ByteOrder byteOrder){
-		final ReflectionHelper.TypeEnum t = ReflectionHelper.TYPE_MAP.get(value.getClass());
+		final DataType t = DataType.fromType(value.getClass());
 		if(t == null)
 			throw new AnnotationException("Cannot write type {}", value.getClass().getSimpleName());
 

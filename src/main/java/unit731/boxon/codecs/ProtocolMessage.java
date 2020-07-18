@@ -36,6 +36,7 @@ import unit731.boxon.annotations.BindIf;
 import unit731.boxon.annotations.MessageHeader;
 import unit731.boxon.annotations.Skip;
 import unit731.boxon.helpers.AnnotationHelper;
+import unit731.boxon.helpers.DataType;
 import unit731.boxon.helpers.ReflectionHelper;
 
 import java.lang.annotation.Annotation;
@@ -119,8 +120,8 @@ final class ProtocolMessage<T>{
 			void validate(final Annotation annotation){
 				final Class<?> type = ((BindArrayPrimitive)annotation).type();
 				if(!ReflectionHelper.isArrayOfPrimitives(type))
-					throw new AnnotationException("Bad annotation used, @{} should have been used with type `{}.class`", BindArray.class.getSimpleName(),
-						ReflectionHelper.PRIMITIVE_WRAPPER_MAP.getOrDefault(type.getComponentType(), type.getComponentType()).getSimpleName());
+					throw new AnnotationException("Bad annotation used for @{}, should have been used the type `{}.class`", BindArray.class.getSimpleName(),
+						DataType.toObjectiveTypeOrDefault(type.getComponentType()).getSimpleName());
 			}
 		},
 
@@ -133,8 +134,8 @@ final class ProtocolMessage<T>{
 				validateChoice(selectFrom, type);
 
 				if(ReflectionHelper.isArrayOfPrimitives(type))
-					throw new AnnotationException("Bad annotation used, @{} should have been used with type `{}[].class`", BindArrayPrimitive.class.getSimpleName(),
-						ReflectionHelper.WRAPPER_PRIMITIVE_MAP.getOrDefault(type.getComponentType(), type.getComponentType()).getSimpleName());
+					throw new AnnotationException("Bad annotation used for @{}, should have been used the type `{}[].class`", BindArrayPrimitive.class.getSimpleName(),
+						DataType.toPrimitiveTypeOrDefault(type).getSimpleName());
 			}
 		},
 
