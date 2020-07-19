@@ -7,7 +7,10 @@
 	<!-- https://github.com/chhh/sonatype-ossrh-parent/blob/master/publishing-to-maven-central.md -->
 	<!-- https://central.sonatype.org/pages/ossrh-guide.html -->
 	<!-- https://oss.sonatype.org/#nexus-search;classname~Boxon -->
-	<groupId>unit731</groupId>
+	<!-- https://www.freecodecamp.org/news/how-to-upload-an-open-source-java-library-to-maven-central-cac7ce2f57c/ -->
+	<!-- https://ruleoftech.com/2014/distribute-projects-artifacts-in-maven-central-with-ossrh -->
+	<!-- https://dzone.com/articles/comprehensive-step-by-step-guide-on-how-to-upload -->
+	<groupId>io.github.mtrevisan</groupId>
 	<artifactId>boxon</artifactId>
 	<version>1.0.1-SNAPSHOT</version>
 
