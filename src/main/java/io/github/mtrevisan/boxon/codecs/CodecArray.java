@@ -72,7 +72,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 
 		final int size = array.length;
 		for(int i = 0; i < size; i ++){
-			final BigInteger prefix = reader.getBigInteger(prefixSize, prefixByteOrder);
+			final BigInteger prefix = reader.getBigInteger(prefixSize, prefixByteOrder, true);
 
 			//choose class
 			final Choices.Choice chosenAlternative = CodecHelper.chooseAlternative(alternatives, prefix.intValue(), data);

@@ -52,7 +52,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 			final int prefixSize = selectFrom.prefixSize();
 			final ByteOrder prefixByteOrder = selectFrom.byteOrder();
 
-			final BigInteger prefix = reader.getBigInteger(prefixSize, prefixByteOrder);
+			final BigInteger prefix = reader.getBigInteger(prefixSize, prefixByteOrder, true);
 
 			//choose class
 			final Choices.Choice chosenAlternative = CodecHelper.chooseAlternative(alternatives, prefix.intValue(), data);

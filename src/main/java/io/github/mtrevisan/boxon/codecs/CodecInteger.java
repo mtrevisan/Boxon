@@ -42,17 +42,9 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 
 		final int size = Evaluator.evaluateSize(binding.size(), data);
 
-		final Object value;
-		if(binding.allowPrimitive() && size < Long.SIZE){
-			final long v = reader.getLong(size, binding.byteOrder());
+		final BigInteger v = reader.getBigInteger(size, binding.byteOrder(), binding.unsigned());
 
-			value = CodecHelper.converterDecode(binding.converter(), v);
-		}
-		else{
-			final BigInteger v = reader.getBigInteger(size, binding.byteOrder());
-
-			value = CodecHelper.converterDecode(binding.converter(), v);
-		}
+		final Object value = CodecHelper.converterDecode(binding.converter(), v);
 
 		CodecHelper.validateData(binding.match(), binding.validator(), value);
 
@@ -67,17 +59,7 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 
 		final int size = Evaluator.evaluateSize(binding.size(), data);
 
-		final BigInteger v;
-		if(binding.allowPrimitive() && size < Long.SIZE){
-			final long vv = CodecHelper.converterEncode(binding.converter(), value);
-
-			v = BigInteger.valueOf(Math.abs(vv));
-			if(vv < 0l)
-				//noinspection ResultOfMethodCallIgnored
-				v.setBit(size);
-		}
-		else
-			v = CodecHelper.converterEncode(binding.converter(), value);
+		final BigInteger v = CodecHelper.converterEncode(binding.converter(), value);
 
 		final ByteOrder byteOrder = binding.byteOrder();
 		final BitSet bits = ByteHelper.toBits(v, size, byteOrder);

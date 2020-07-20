@@ -162,6 +162,30 @@ public final class ByteHelper{
 		return (value << shift) >> shift;
 	}
 
+	/**
+	 * Convert the value to signed primitive
+	 *
+	 * @param value	Field value
+	 * @param size	Length in bits of the field
+	 * @return	The 2-complement expressed as int
+	 */
+	public static BigInteger extendSign(final BigInteger value, final int size){
+		if(!value.testBit(size - 1))
+			return value;
+
+		//for negative BigInteger, top byte is negative
+		final byte[] content = value.toByteArray();
+
+		//prepend byte of opposite sign
+		final byte[] result = new byte[content.length + 1];
+		System.arraycopy(content, 0, result, 1, content.length);
+		for(int i = 0; result[i] == 0; i ++)
+			result[i] = (byte)-1;
+
+		//this will be two's complement
+		return new BigInteger(result);
+	}
+
 	public static boolean hasBit(final byte mask, final int index){
 		if(index < 0 || index >= Byte.SIZE)
 			throw new IllegalArgumentException("Index value must be between 0 and " + (Byte.SIZE - 1) + " inclusive, was " + index);

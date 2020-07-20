@@ -59,11 +59,11 @@ public @interface BindInteger{
 	ByteOrder byteOrder() default ByteOrder.BIG_ENDIAN;
 
 	/**
-	 * Allow returning a <code>long</code>/{@link Long} if <code>size &lt; {@link Long#SIZE}</code>.
+	 * Whether the resulting number is to be treated as unsigned.
 	 *
-	 * @return	Whether to allow returning a <code>long</code>/{@link Long} if <code>size &lt; {@link Long#SIZE}</code> (defaults to <code>true</code>).
+	 * @return	Whether the resulting number is to be treated as unsigned (defaults to {@code true}).
 	 */
-	boolean allowPrimitive() default true;
+	boolean unsigned() default true;
 
 	/**
 	 * The value to match (can be a regex expression or a SpEL expression), if any.

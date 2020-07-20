@@ -272,11 +272,13 @@ final class BitReader{
 	 *
 	 * @param length	The amount of bits to read.
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
+	 * @param unsigned	Whether to consider the read number as unsigned.
 	 * @return	A {@link BigInteger} value at the {@link BitReader}'s current position.
 	 */
-	final BigInteger getBigInteger(final int length, final ByteOrder byteOrder){
+	final BigInteger getBigInteger(final int length, final ByteOrder byteOrder, final boolean unsigned){
 		final BitSet bits = getBits(length);
-		return ByteHelper.toInteger(bits, length, byteOrder);
+		final BigInteger value = ByteHelper.toInteger(bits, length, byteOrder);
+		return (!unsigned && value.testBit(length - 1)? ByteHelper.extendSign(value, length): value);
 	}
 
 	/**

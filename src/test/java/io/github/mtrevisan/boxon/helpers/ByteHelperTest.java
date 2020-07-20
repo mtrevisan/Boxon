@@ -62,16 +62,16 @@ class ByteHelperTest{
 
 	@Test
 	void convert2ComplementWithPositiveNumber(){
-		int value = ByteHelper.extendSign(0x6B, 8);
+		long value = ByteHelper.extendSign(0x6B, 8);
 
-		Assertions.assertEquals(107, value);
+		Assertions.assertEquals(107l, value);
 	}
 
 	@Test
 	void convert2ComplementWithNegativeNumber(){
-		int value = ByteHelper.extendSign(0xD7, 8);
+		long value = ByteHelper.extendSign(0xD7, 8);
 
-		Assertions.assertEquals(-41, value);
+		Assertions.assertEquals(-41l, value);
 	}
 
 	@Test
