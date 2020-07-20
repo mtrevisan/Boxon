@@ -80,7 +80,7 @@ public final class ByteHelper{
 		return (byteOrder == ByteOrder.BIG_ENDIAN? Long.reverseBytes(value) >>> (Long.SIZE - size): value);
 	}
 
-	public static BigInteger toInteger(final BitSet bits, final int size, final ByteOrder byteOrder){
+	public static BigInteger toInteger(final BitSet bits, final int size, final ByteOrder byteOrder, final boolean unsigned){
 		byte[] array = bits.toByteArray();
 		final int expectedLength = size / Byte.SIZE;
 		if(array.length < expectedLength)
@@ -88,13 +88,7 @@ public final class ByteHelper{
 		if(byteOrder == ByteOrder.LITTLE_ENDIAN)
 			//NOTE: need to reverse the bytes because BigInteger is big-endian and BitMap is little-endian
 			reverse(array);
-
-		if(size >= array.length * Byte.SIZE){
-			final byte[] extendedArray = new byte[array.length + 1];
-			System.arraycopy(array, 0, extendedArray, 1, array.length);
-			array = extendedArray;
-		}
-		return new BigInteger(array);
+		return extendSign(array, size, unsigned);
 	}
 
 	/**
@@ -165,26 +159,24 @@ public final class ByteHelper{
 	/**
 	 * Convert the value to signed primitive
 	 *
-	 * @param value	Field value
-	 * @param size	Length in bits of the field
+	 * @param array	Field value
+	 * @param unsigned	Whether to consider this number an unsigned one
 	 * @return	The 2-complement expressed as int
 	 */
-	public static BigInteger extendSign(final BigInteger value, final int size){
-		if(!value.testBit(size - 1))
-			return value;
-
-		//for negative BigInteger, top byte is negative
-		byte[] content = value.toByteArray();
-		if(content[0] != 0){
-			//prepend byte(s) of opposite sign
-			final byte[] result = new byte[content.length + 1];
-			System.arraycopy(content, 0, result, 1, content.length);
-			content = result;
+	private static BigInteger extendSign(byte[] array, final int size, final boolean unsigned){
+		if(!unsigned && (array[0] & 0x80) != 0x00){
+			array = extendArray(array);
+			array[0] = (byte)-1;
 		}
-		for(int i = 0; content[i] == 0; i ++)
-			content[i] = (byte)-1;
-		//this will be two's complement
-		return new BigInteger(content);
+		else if(unsigned && size >= array.length * Byte.SIZE)
+			array = extendArray(array);
+		return new BigInteger(array);
+	}
+
+	private static byte[] extendArray(final byte[] array){
+		final byte[] extendedArray = new byte[array.length + 1];
+		System.arraycopy(array, 0, extendedArray, 1, array.length);
+		return extendedArray;
 	}
 
 	public static boolean hasBit(final byte mask, final int index){

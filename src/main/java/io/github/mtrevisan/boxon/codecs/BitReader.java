@@ -277,8 +277,7 @@ final class BitReader{
 	 */
 	final BigInteger getBigInteger(final int length, final ByteOrder byteOrder, final boolean unsigned){
 		final BitSet bits = getBits(length);
-		final BigInteger value = ByteHelper.toInteger(bits, length, byteOrder);
-		return (!unsigned && value.testBit(length - 1)? ByteHelper.extendSign(value, length): value);
+		return ByteHelper.toInteger(bits, length, byteOrder, unsigned);
 	}
 
 	/**
