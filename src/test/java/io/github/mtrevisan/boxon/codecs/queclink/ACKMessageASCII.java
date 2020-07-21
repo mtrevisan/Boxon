@@ -121,7 +121,7 @@ public class ACKMessageASCII{
 	@BindStringTerminated(terminator = '$', consumeTerminator = false, converter = QueclinkHelper.HexStringToIntConverter.class)
 	private int messageId;
 
-	@Evaluate("T(Integer).valueOf(deviceTypeAndVersion.substring(0, 2), 16).byteValue()")
+	@Evaluate("T(java.lang.Integer).valueOf(deviceTypeAndVersion.substring(0, 2), 16).byteValue()")
 	private byte deviceTypeCode;
 	@Evaluate("deviceTypeAndVersion.substring(2, 6)")
 	private String deviceVersion;
