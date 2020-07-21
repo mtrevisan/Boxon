@@ -131,6 +131,16 @@ public final class BitSet{
 	}
 
 	/**
+	 * Return the state of the bit at a specified index.
+	 *
+	 * @param bitIndex	A bit index (MUST BE greater than the previous index!)
+	 * @return	The state of the bit at a specified index
+	 */
+	public final boolean testBit(final int bitIndex){
+		return (Arrays.binarySearch(indexes, bitIndex) >= 0);
+	}
+
+	/**
 	 * Sets the bits of a number to the complement of its current value.
 	 *
 	 * @param size	The size of the number in bits.
