@@ -55,6 +55,11 @@ class CodecFloatTest{
 			}
 
 			@Override
+			public String condition(){
+				return null;
+			}
+
+			@Override
 			public ByteOrder byteOrder(){
 				return ByteOrder.LITTLE_ENDIAN;
 			}
@@ -95,6 +100,11 @@ class CodecFloatTest{
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindFloat.class;
+			}
+
+			@Override
+			public String condition(){
+				return null;
 			}
 
 			@Override
@@ -141,6 +151,11 @@ class CodecFloatTest{
 			}
 
 			@Override
+			public String condition(){
+				return null;
+			}
+
+			@Override
 			public ByteOrder byteOrder(){
 				return ByteOrder.BIG_ENDIAN;
 			}
@@ -181,6 +196,11 @@ class CodecFloatTest{
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindFloat.class;
+			}
+
+			@Override
+			public String condition(){
+				return null;
 			}
 
 			@Override

@@ -51,9 +51,9 @@ import java.lang.annotation.Target;
 public @interface Skip{
 
 	/**
-	 * The SpEL expression to be evaluated that determines if a skip has to be made.
+	 * The SpEL expression that determines if an evaluation has to be made.
 	 *
-	 * @return	The condition to be evaluated that determines if a skip has to be made (can be an expression).
+	 * @return	The condition that determines if an evaluation has to be made (can be an expression).
 	 */
 	String condition() default "";
 

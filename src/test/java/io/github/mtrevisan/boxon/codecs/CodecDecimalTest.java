@@ -57,6 +57,11 @@ class CodecDecimalTest{
 			}
 
 			@Override
+			public String condition(){
+				return null;
+			}
+
+			@Override
 			public Class<?> type(){
 				return Double.class;
 			}
@@ -102,6 +107,11 @@ class CodecDecimalTest{
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindDecimal.class;
+			}
+
+			@Override
+			public String condition(){
+				return null;
 			}
 
 			@Override
@@ -153,6 +163,11 @@ class CodecDecimalTest{
 			}
 
 			@Override
+			public String condition(){
+				return null;
+			}
+
+			@Override
 			public Class<?> type(){
 				return Double.class;
 			}
@@ -198,6 +213,11 @@ class CodecDecimalTest{
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindDecimal.class;
+			}
+
+			@Override
+			public String condition(){
+				return null;
 			}
 
 			@Override

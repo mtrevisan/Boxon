@@ -41,6 +41,8 @@ import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.Function;
@@ -122,6 +124,35 @@ public final class ReflectionHelper{
 		return result;
 	}
 
+
+	@SuppressWarnings("unchecked")
+	public static <T> T getMethod(final Object obj, final String methodName){
+		try{
+			final Method method = getAccessibleMethod(obj.getClass(), methodName);
+			return (method != null? (T)method.invoke(obj): null);
+		}
+		catch(final IllegalAccessException | InvocationTargetException ignored){
+			return null;
+		}
+	}
+
+	private static Method getAccessibleMethod(Class<?> cls, final String fieldName){
+		Method method = null;
+		while(cls != Object.class){
+			try{
+				method = cls.getDeclaredMethod(fieldName);
+				method.setAccessible(true);
+				break;
+			}
+			catch(final NoSuchMethodException e){
+				//go up to parent class
+				cls = cls.getSuperclass();
+			}
+		}
+		return method;
+	}
+
+
 	/**
 	 * Returns whether the given {@code type} is an array of primitives.
 	 * <p>NOTE: {@code void} is NOT considered as primitive!</p>
@@ -154,6 +185,7 @@ public final class ReflectionHelper{
 	public static boolean isPrimitiveOrPrimitiveWrapper(final Class<?> type){
 		return (isPrimitive(type) || DataType.isObjectivePrimitive(type));
 	}
+
 
 	public static Object createArrayPrimitive(final Class<?> type, final int length){
 		if(!ReflectionHelper.isPrimitive(type.getComponentType()))

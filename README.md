@@ -74,10 +74,9 @@ Get them [here](https://github.com/mtrevisan/Boxon/releases/).
     14. [BindStringTerminated](#annotation-bindstringterminated)
 2. [Special annotations](#annotation-special)
     1. [MessageHeader](#annotation-messageheader)
-    2. [BindIf](#annotation-bindif)
-    3. [Skip](#annotation-skip)
-    4. [Checksum](#annotation-checksum)
-    5. [Evaluate](#annotation-evaluate)
+    2. [Skip](#annotation-skip)
+    3. [Checksum](#annotation-checksum)
+    4. [Evaluate](#annotation-evaluate)
 3. [How to extend the functionalities](#how-to)
 4. [Digging into the code](#digging)
     1. [Converters](#how-to-converters)
@@ -100,6 +99,7 @@ You can use them as a starting point to build your own customized readers.
 ### BindObject
 
 #### parameters
+ - `condition`: The SpEL expression that determines if this field has to be read.
  - `type`: the Class of the Object of the single element of the array (defaults to `Object`).
  - `selectFrom`: the selection from which to choose the instance type.
  - `validator`: the Class of a validator (applied BEFORE the converter).
@@ -130,6 +130,7 @@ private Version version;
 ### BindArray
 
 #### parameters
+ - `condition`: The SpEL expression that determines if this field has to be read.
  - `type`: the Class of the Object of the single element of the array (defaults to `Object`).
  - `size`: the size of the array (can be a SpEL expression).
  - `selectFrom`: the selection from which to choose the instance type.
@@ -161,6 +162,7 @@ private Version[] versions;
 ### BindArrayPrimitive
 
 #### parameters
+ - `condition`: The SpEL expression that determines if this field has to be read.
  - `type`: the Class of primitive of the single element of the array (SHOULD BE WRITTEN in array style, as `byte[].class`, or `int[].class`).
  - `size`: the size of the array (can be a SpEL expression).
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN` (used for primitives other than `byte`).
@@ -184,6 +186,7 @@ private byte[] array;
 ### BindBits
 
 #### parameters
+ - `condition`: The SpEL expression that determines if this field has to be read.
  - `size`: the number of bits to read (can be a SpEL expression).
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
  - `match`: a string/regex/SpEl expression that is used as an expected value.
@@ -207,6 +210,7 @@ private BitMap bits;
 ### BindByte
 
 #### parameters
+ - `condition`: The SpEL expression that determines if this field has to be read.
  - `match`: a string/regex/SpEl expression that is used as an expected value.
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
@@ -228,6 +232,7 @@ public Byte mask;
 ### BindShort
 
 #### parameters
+ - `condition`: The SpEL expression that determines if this field has to be read.
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
  - `match`: a string/regex/SpEl expression that is used as an expected value.
  - `validator`: the Class of a validator (applied BEFORE the converter).
@@ -250,6 +255,7 @@ private short numberShort;
 ### BindInt
 
 #### parameters
+ - `condition`: The SpEL expression that determines if this field has to be read.
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
  - `match`: a string/regex/SpEl expression that is used as an expected value.
  - `validator`: the Class of a validator (applied BEFORE the converter).
@@ -272,6 +278,7 @@ private int numberInt;
 ### BindLong
 
 #### parameters
+ - `condition`: The SpEL expression that determines if this field has to be read.
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
  - `match`: a string/regex/SpEl expression that is used as an expected value.
  - `validator`: the Class of a validator (applied BEFORE the converter).
@@ -294,6 +301,7 @@ private long numberLong;
 ### BindInteger
 
 #### parameters
+ - `condition`: The SpEL expression that determines if this field has to be read.
  - `size`: the number of bits to read (can be a SpEL expression).
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
  - `unsigned`: whether the resulting number is to be treated as unsigned, defaults to `true`.
@@ -321,6 +329,7 @@ private BigInteger number;
 ### BindFloat
 
 #### parameters
+ - `condition`: The SpEL expression that determines if this field has to be read.
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
  - `match`: a string/regex/SpEl expression that is used as an expected value.
  - `validator`: the Class of a validator (applied BEFORE the converter).
@@ -343,6 +352,7 @@ private float number;
 ### BindDouble
 
 #### parameters
+ - `condition`: The SpEL expression that determines if this field has to be read.
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
  - `match`: a string/regex/SpEl expression that is used as an expected value.
  - `validator`: the Class of a validator (applied BEFORE the converter).
@@ -365,6 +375,7 @@ private double number;
 ### BindDecimal
 
 #### parameters
+ - `condition`: The SpEL expression that determines if this field has to be read.
  - `type`: the Class of variable to be read (SHOULD BE `Float.class`, or `Double.class`).
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
  - `match`: a string/regex/SpEl expression that is used as an expected value.
@@ -388,6 +399,7 @@ private BigDecimal number;
 ### BindString
 
 #### parameters
+ - `condition`: The SpEL expression that determines if this field has to be read.
  - `charset`: the charset to be interpreted the string into (SHOULD BE the charset name, eg. `UTF-8` (the default), `ISO-8859-1`, etc).
  - `size`: the size of the string (can be a SpEL expression).
  - `match`: a string/regex/SpEl expression that is used as an expected value.
@@ -411,6 +423,7 @@ public String text;
 ### BindStringTerminated
 
 #### parameters
+ - `condition`: The SpEL expression that determines if this field has to be read.
  - `charset`: the charset to be interpreted the string into (SHOULD BE the charset name, eg. `UTF-8` (the default), `ISO-8859-1`, etc).
  - `terminator`: the byte that terminates the string (defaults to `\0`).
  - `consumeTerminator`: whether to consume the terminator (defaults to `true`).
@@ -456,33 +469,6 @@ This annotation is bounded to a class.
 private class Message{
     ...
 }
-```
-
-
-<a name="annotation-bindif"></a>
-### BindIf
-
-#### parameters
- - `value`: the condition used to know if a variable has to be read (can be a SpEL expression).
-
-#### description
-Compute if a variable is to be read or skipped.
-
-#### annotation type
-This annotation is bounded to a variable.
-
-#### example
-```java
-@BindByte(converter = Mask.MaskConverter.class)
-public Mask mask;
-
-@BindIf("mask.hasProtocolVersion()")
-@BindArrayPrimitive(size = "2", type = byte[].class)
-private byte[] protocolVersion;
-
-@BindIf("protocolVersion[0] > 1")
-@BindShort
-private short conditionedValue;
 ```
 
 
@@ -549,7 +535,7 @@ private short checksum;
 ### Evaluate
 
 #### parameters
- - `condition`: The SpEL expression to be evaluated that determines if an evaluation has to be made.
+ - `condition`: The SpEL expression that determines if an evaluation has to be made.
  - `value`: the value to be assigned, or calculated (can be a SpEL expression).
 
 #### description

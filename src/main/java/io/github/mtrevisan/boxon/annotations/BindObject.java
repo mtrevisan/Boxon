@@ -43,6 +43,13 @@ import java.lang.annotation.Target;
 public @interface BindObject{
 
 	/**
+	 * The SpEL expression that determines if an evaluation has to be made.
+	 *
+	 * @return	The condition that determines if an evaluation has to be made (can be an expression).
+	 */
+	String condition() default "";
+
+	/**
 	 * The type of object.
 	 * <p>Note that this allows you to have a field of a super type of the actual type that
 	 * you expect to inject. So you might have something like this:</p>

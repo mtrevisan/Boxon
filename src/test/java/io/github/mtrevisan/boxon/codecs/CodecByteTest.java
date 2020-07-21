@@ -52,6 +52,11 @@ class CodecByteTest{
 			}
 
 			@Override
+			public String condition(){
+				return null;
+			}
+
+			@Override
 			public String match(){
 				return null;
 			}

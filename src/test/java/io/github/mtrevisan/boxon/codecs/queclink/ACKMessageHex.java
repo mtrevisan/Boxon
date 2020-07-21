@@ -25,7 +25,6 @@
 package io.github.mtrevisan.boxon.codecs.queclink;
 
 import io.github.mtrevisan.boxon.annotations.BindChecksum;
-import io.github.mtrevisan.boxon.annotations.BindIf;
 import io.github.mtrevisan.boxon.annotations.BindString;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.Evaluate;
@@ -117,35 +116,27 @@ public class ACKMessageHex{
 	private ACKMaskHex mask;
 //	@BindArrayPrimitive(size = "2", type = byte[].class)
 //	private byte[] things;
-	@BindIf("mask.hasLength()")
-	@BindByte
+	@BindByte(condition = "mask.hasLength()")
 	private byte messageLength;
-	@BindIf("mask.hasDeviceType()")
-	@BindByte
+	@BindByte(condition = "mask.hasDeviceType()")
 	private byte deviceTypeCode;
 //	@BindArray(size = "2", type = Version.class)
 //	private Version[] versions;
-	@BindIf("mask.hasProtocolVersion()")
-	@BindArrayPrimitive(size = "2", type = byte[].class, converter = QueclinkHelper.VersionConverter.class)
+	@BindArrayPrimitive(condition = "mask.hasProtocolVersion()", size = "2", type = byte[].class, converter = QueclinkHelper.VersionConverter.class)
 	private String protocolVersion;
-	@BindIf("mask.hasFirmwareVersion()")
-	@BindArrayPrimitive(size = "2", type = byte[].class, converter = QueclinkHelper.VersionConverter.class)
+	@BindArrayPrimitive(condition = "mask.hasFirmwareVersion()", size = "2", type = byte[].class, converter = QueclinkHelper.VersionConverter.class)
 	private String firmwareVersion;
-	@BindIf("mask.hasIMEI()")
-	@BindArrayPrimitive(size = "8", type = byte[].class, converter = QueclinkHelper.IMEIConverter.class, validator = IMEIValidator.class)
+	@BindArrayPrimitive(condition = "mask.hasIMEI()", size = "8", type = byte[].class, converter = QueclinkHelper.IMEIConverter.class, validator = IMEIValidator.class)
 	private String imei;
-	@BindIf("!mask.hasIMEI()")
-	@BindString(size = "8")
+	@BindString(condition = "!mask.hasIMEI()", size = "8")
 	private String deviceName;
 	@BindByte
 	private byte id;
 	@BindShort
 	private short correlationId;
-	@BindIf("mask.hasEventTime()")
-	@BindArrayPrimitive(size = "7", type = byte[].class, converter = QueclinkHelper.DateTimeYYYYMMDDHHMMSSConverter.class)
+	@BindArrayPrimitive(condition = "mask.hasEventTime()", size = "7", type = byte[].class, converter = QueclinkHelper.DateTimeYYYYMMDDHHMMSSConverter.class)
 	private ZonedDateTime eventTime;
-	@BindIf("mask.hasMessageId()")
-	@BindShort
+	@BindShort(condition = "mask.hasMessageId()")
 	private short messageId;
 	@BindChecksum(type = short.class, skipStart = 4, skipEnd = 4, algorithm = CRC16.class, startValue = CRC16.START_VALUE_0xFFFF)
 	private short checksum;

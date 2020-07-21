@@ -43,6 +43,13 @@ import java.lang.annotation.Target;
 public @interface BindDecimal{
 
 	/**
+	 * The SpEL expression that determines if an evaluation has to be made.
+	 *
+	 * @return	The condition that determines if an evaluation has to be made (can be an expression).
+	 */
+	String condition() default "";
+
+	/**
 	 * The type of object to be inserted into a {@link java.math.BigDecimal}.
 	 * <p>Note that this can be either a {@link Float} or a {@link Double} class.</p>
 	 *

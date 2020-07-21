@@ -73,6 +73,11 @@ class CodecObjectTest{
 			}
 
 			@Override
+			public String condition(){
+				return null;
+			}
+
+			@Override
 			public Class<?> type(){
 				return Version.class;
 			}

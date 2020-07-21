@@ -54,6 +54,11 @@ class CodecIntegerTest{
 			}
 
 			@Override
+			public String condition(){
+				return null;
+			}
+
+			@Override
 			public String size(){
 				return "24";
 			}
@@ -104,6 +109,11 @@ class CodecIntegerTest{
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindInteger.class;
+			}
+
+			@Override
+			public String condition(){
+				return null;
 			}
 
 			@Override
@@ -160,6 +170,11 @@ class CodecIntegerTest{
 			}
 
 			@Override
+			public String condition(){
+				return null;
+			}
+
+			@Override
 			public String size(){
 				return "24";
 			}
@@ -210,6 +225,11 @@ class CodecIntegerTest{
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindInteger.class;
+			}
+
+			@Override
+			public String condition(){
+				return null;
 			}
 
 			@Override
@@ -267,6 +287,11 @@ class CodecIntegerTest{
 			}
 
 			@Override
+			public String condition(){
+				return null;
+			}
+
+			@Override
 			public String size(){
 				return "24";
 			}
@@ -317,6 +342,11 @@ class CodecIntegerTest{
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindInteger.class;
+			}
+
+			@Override
+			public String condition(){
+				return null;
 			}
 
 			@Override
@@ -373,6 +403,11 @@ class CodecIntegerTest{
 			}
 
 			@Override
+			public String condition(){
+				return null;
+			}
+
+			@Override
 			public String size(){
 				return "24";
 			}
@@ -423,6 +458,11 @@ class CodecIntegerTest{
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindInteger.class;
+			}
+
+			@Override
+			public String condition(){
+				return null;
 			}
 
 			@Override
@@ -480,6 +520,11 @@ class CodecIntegerTest{
 			}
 
 			@Override
+			public String condition(){
+				return null;
+			}
+
+			@Override
 			public String size(){
 				return "24";
 			}
@@ -534,6 +579,11 @@ class CodecIntegerTest{
 			}
 
 			@Override
+			public String condition(){
+				return null;
+			}
+
+			@Override
 			public String size(){
 				return "24";
 			}
@@ -584,6 +634,11 @@ class CodecIntegerTest{
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindInteger.class;
+			}
+
+			@Override
+			public String condition(){
+				return null;
 			}
 
 			@Override
@@ -641,6 +696,11 @@ class CodecIntegerTest{
 			}
 
 			@Override
+			public String condition(){
+				return null;
+			}
+
+			@Override
 			public String size(){
 				return "128";
 			}
@@ -695,6 +755,11 @@ class CodecIntegerTest{
 			}
 
 			@Override
+			public String condition(){
+				return null;
+			}
+
+			@Override
 			public String size(){
 				return "128";
 			}
@@ -745,6 +810,11 @@ class CodecIntegerTest{
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindInteger.class;
+			}
+
+			@Override
+			public String condition(){
+				return null;
 			}
 
 			@Override
@@ -802,6 +872,11 @@ class CodecIntegerTest{
 			}
 
 			@Override
+			public String condition(){
+				return null;
+			}
+
+			@Override
 			public String size(){
 				return "128";
 			}
@@ -855,6 +930,11 @@ class CodecIntegerTest{
 			}
 
 			@Override
+			public String condition(){
+				return null;
+			}
+
+			@Override
 			public String size(){
 				return "128";
 			}
@@ -905,6 +985,11 @@ class CodecIntegerTest{
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindInteger.class;
+			}
+
+			@Override
+			public String condition(){
+				return null;
 			}
 
 			@Override

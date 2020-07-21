@@ -44,6 +44,13 @@ import java.lang.annotation.Target;
 public @interface BindInteger{
 
 	/**
+	 * The SpEL expression that determines if an evaluation has to be made.
+	 *
+	 * @return	The condition that determines if an evaluation has to be made (can be an expression).
+	 */
+	String condition() default "";
+
+	/**
 	 * The number of bits used to represent the numeric value.
 	 *
 	 * @return	The number of bits used to represent the numeric value (can be an expression).

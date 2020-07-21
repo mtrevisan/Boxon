@@ -43,6 +43,13 @@ import java.lang.annotation.Target;
 public @interface BindStringTerminated{
 
 	/**
+	 * The SpEL expression that determines if an evaluation has to be made.
+	 *
+	 * @return	The condition that determines if an evaluation has to be made (can be an expression).
+	 */
+	String condition() default "";
+
+	/**
 	 * The type of encoding used for the {@link String}
 	 *
 	 * @return	The type of encoding used (defaults to `UTF-8`).

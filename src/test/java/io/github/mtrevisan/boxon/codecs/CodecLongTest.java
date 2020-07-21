@@ -55,6 +55,11 @@ class CodecLongTest{
 			}
 
 			@Override
+			public String condition(){
+				return null;
+			}
+
+			@Override
 			public ByteOrder byteOrder(){
 				return ByteOrder.LITTLE_ENDIAN;
 			}
@@ -95,6 +100,11 @@ class CodecLongTest{
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindLong.class;
+			}
+
+			@Override
+			public String condition(){
+				return null;
 			}
 
 			@Override
@@ -141,6 +151,11 @@ class CodecLongTest{
 			}
 
 			@Override
+			public String condition(){
+				return null;
+			}
+
+			@Override
 			public ByteOrder byteOrder(){
 				return ByteOrder.LITTLE_ENDIAN;
 			}
@@ -181,6 +196,11 @@ class CodecLongTest{
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindLong.class;
+			}
+
+			@Override
+			public String condition(){
+				return null;
 			}
 
 			@Override
@@ -227,6 +247,11 @@ class CodecLongTest{
 			}
 
 			@Override
+			public String condition(){
+				return null;
+			}
+
+			@Override
 			public ByteOrder byteOrder(){
 				return ByteOrder.BIG_ENDIAN;
 			}
@@ -267,6 +292,11 @@ class CodecLongTest{
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindLong.class;
+			}
+
+			@Override
+			public String condition(){
+				return null;
 			}
 
 			@Override
@@ -313,6 +343,11 @@ class CodecLongTest{
 			}
 
 			@Override
+			public String condition(){
+				return null;
+			}
+
+			@Override
 			public ByteOrder byteOrder(){
 				return ByteOrder.BIG_ENDIAN;
 			}
@@ -353,6 +388,11 @@ class CodecLongTest{
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindLong.class;
+			}
+
+			@Override
+			public String condition(){
+				return null;
 			}
 
 			@Override

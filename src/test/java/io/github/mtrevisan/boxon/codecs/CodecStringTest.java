@@ -50,6 +50,11 @@ class CodecStringTest{
 			}
 
 			@Override
+			public String condition(){
+				return null;
+			}
+
+			@Override
 			public String charset(){
 				return StandardCharsets.US_ASCII.name();
 			}
@@ -96,6 +101,11 @@ class CodecStringTest{
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindString.class;
+			}
+
+			@Override
+			public String condition(){
+				return null;
 			}
 
 			@Override
@@ -147,6 +157,11 @@ class CodecStringTest{
 			}
 
 			@Override
+			public String condition(){
+				return null;
+			}
+
+			@Override
 			public String charset(){
 				return StandardCharsets.US_ASCII.name();
 			}
@@ -185,6 +200,11 @@ class CodecStringTest{
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindStringTerminated.class;
+			}
+
+			@Override
+			public String condition(){
+				return null;
 			}
 
 			@Override

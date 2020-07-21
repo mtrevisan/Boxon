@@ -43,6 +43,13 @@ import java.lang.annotation.Target;
 public @interface BindInt{
 
 	/**
+	 * The SpEL expression that determines if an evaluation has to be made.
+	 *
+	 * @return	The condition that determines if an evaluation has to be made (can be an expression).
+	 */
+	String condition() default "";
+
+	/**
 	 * The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 *
 	 * @return	The type of endianness (defaults to {@link ByteOrder#BIG_ENDIAN}).

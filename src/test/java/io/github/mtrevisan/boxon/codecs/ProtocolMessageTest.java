@@ -28,7 +28,6 @@ import io.github.mtrevisan.boxon.annotations.BindArray;
 import io.github.mtrevisan.boxon.annotations.BindChecksum;
 import io.github.mtrevisan.boxon.annotations.BindDecimal;
 import io.github.mtrevisan.boxon.annotations.BindDouble;
-import io.github.mtrevisan.boxon.annotations.BindIf;
 import io.github.mtrevisan.boxon.annotations.BindString;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.ByteOrder;
@@ -127,8 +126,7 @@ class ProtocolMessageTest{
 		public Mask mask;
 		@BindArray(size = "2", type = Version.class)
 		private Version[] versions;
-		@BindIf("mask.hasProtocolVersion()")
-		@BindArrayPrimitive(size = "2", type = byte[].class)
+		@BindArrayPrimitive(condition = "mask.hasProtocolVersion()", size = "2", type = byte[].class)
 		private byte[] protocolVersion;
 		@BindBits(size = "2")
 		private BitSet bits;
@@ -194,7 +192,6 @@ class ProtocolMessageTest{
 		ProtocolMessage.BoundedField checksumField = protocolMessage.getChecksum();
 		Assertions.assertNotNull(checksumField);
 		Assertions.assertEquals("checksum", checksumField.getName());
-		Assertions.assertEquals(null, checksumField.getCondition());
 		Annotation checksum = checksumField.getBinding();
 		Assertions.assertEquals(BindChecksum.class, checksum.annotationType());
 		BindChecksum cs = new BindChecksum(){

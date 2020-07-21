@@ -98,7 +98,7 @@ final class ProtocolMessageParser{
 
 	private <T> void readSkip(final Skip skip, final BitReader reader, final T data){
 		final String condition = skip.condition();
-		final boolean process = (condition != null && condition.length() > 0 && Evaluator.evaluate(condition, boolean.class, data));
+		final boolean process = (condition != null && condition.trim().length() > 0 && Evaluator.evaluate(condition, boolean.class, data));
 		if(process){
 			final int size = Evaluator.evaluateSize(skip.size(), data);
 			if(size > 0)
@@ -146,7 +146,7 @@ final class ProtocolMessageParser{
 		final List<ProtocolMessage.EvaluatedField> evaluatedFields = protocolMessage.getEvaluatedFields();
 		for(final ProtocolMessage.EvaluatedField field : evaluatedFields){
 			final String condition = field.getBinding().condition();
-			final boolean process = (condition != null && condition.length() > 0 && Evaluator.evaluate(condition, boolean.class, data));
+			final boolean process = (condition != null && condition.trim().length() > 0 && Evaluator.evaluate(condition, boolean.class, data));
 			if(process){
 				final Object value = Evaluator.evaluate(field.getBinding().value(), field.getType(), data);
 				ReflectionHelper.setFieldValue(data, field.getName(), value);
@@ -185,7 +185,7 @@ final class ProtocolMessageParser{
 	}
 
 	private <T> boolean skipFieldByCondition(final String condition, final T data){
-		return (condition != null && !Evaluator.evaluate(condition, boolean.class, data));
+		return (condition != null && condition.trim().length() > 0 && !Evaluator.evaluate(condition, boolean.class, data));
 	}
 
 	private void closeMessage(final MessageHeader header, final BitWriter writer){
@@ -225,7 +225,7 @@ final class ProtocolMessageParser{
 
 	private <T> void writeSkip(final Skip skip, final BitWriter writer, final T data){
 		final String condition = skip.condition();
-		final boolean process = (condition != null && condition.length() > 0 && Evaluator.evaluate(condition, boolean.class, data));
+		final boolean process = (condition != null && condition.trim().length() > 0 && Evaluator.evaluate(condition, boolean.class, data));
 		if(process){
 			final int size = Evaluator.evaluateSize(skip.size(), data);
 			if(size > 0)

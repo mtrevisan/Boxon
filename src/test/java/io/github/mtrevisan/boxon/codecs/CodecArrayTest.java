@@ -86,6 +86,11 @@ class CodecArrayTest{
 			}
 
 			@Override
+			public String condition(){
+				return null;
+			}
+
+			@Override
 			public Class<?> type(){
 				return int[].class;
 			}
@@ -131,6 +136,11 @@ class CodecArrayTest{
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindArray.class;
+			}
+
+			@Override
+			public String condition(){
+				return null;
 			}
 
 			@Override

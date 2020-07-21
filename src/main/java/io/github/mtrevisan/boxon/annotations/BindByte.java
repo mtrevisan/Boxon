@@ -43,6 +43,13 @@ import java.lang.annotation.Target;
 public @interface BindByte{
 
 	/**
+	 * The SpEL expression that determines if an evaluation has to be made.
+	 *
+	 * @return	The condition that determines if an evaluation has to be made (can be an expression).
+	 */
+	String condition() default "";
+
+	/**
 	 * The value to match (can be a regex expression or a SpEL expression), if any.
 	 *
 	 * @return	The value, or regex, or SpEL expression to be checked for equality

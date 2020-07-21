@@ -27,7 +27,6 @@ package io.github.mtrevisan.boxon.codecs;
 import io.github.mtrevisan.boxon.annotations.BindArray;
 import io.github.mtrevisan.boxon.annotations.BindChecksum;
 import io.github.mtrevisan.boxon.annotations.BindDecimal;
-import io.github.mtrevisan.boxon.annotations.BindIf;
 import io.github.mtrevisan.boxon.annotations.BindObject;
 import io.github.mtrevisan.boxon.annotations.Evaluate;
 import io.github.mtrevisan.boxon.annotations.exceptions.AnnotationException;
@@ -61,14 +60,12 @@ final class ProtocolMessage<T>{
 
 		private final Field field;
 		private final Skip[] skips;
-		private final String condition;
 		private final Annotation binding;
 
 
-		private BoundedField(final Field field, final Skip[] skips, final String condition, final Annotation binding){
+		private BoundedField(final Field field, final Skip[] skips, final Annotation binding){
 			this.field = field;
 			this.skips = skips;
-			this.condition = condition;
 			this.binding = binding;
 		}
 
@@ -80,12 +77,12 @@ final class ProtocolMessage<T>{
 			return skips;
 		}
 
-		String getCondition(){
-			return condition;
-		}
-
 		Annotation getBinding(){
 			return binding;
+		}
+
+		String getCondition(){
+			return ReflectionHelper.getMethod(binding, "condition");
 		}
 	}
 
@@ -229,7 +226,6 @@ final class ProtocolMessage<T>{
 
 	private void loadAnnotatedFields(final Field[] fields, final Loader loader){
 		for(final Field field : fields){
-			final BindIf condition = field.getDeclaredAnnotation(BindIf.class);
 			final Skip[] skips = field.getDeclaredAnnotationsByType(Skip.class);
 			final BindChecksum checksum = field.getDeclaredAnnotation(BindChecksum.class);
 
@@ -240,10 +236,9 @@ final class ProtocolMessage<T>{
 			validateField(boundedAnnotations, checksum);
 
 			if(boundedAnnotations.size() == 1)
-				boundedFields.add(new BoundedField(field, (skips.length > 0? skips: null),
-					(condition != null? condition.value(): null), boundedAnnotations.get(0)));
+				boundedFields.add(new BoundedField(field, (skips.length > 0? skips: null), boundedAnnotations.get(0)));
 			if(checksum != null)
-				this.checksum = new BoundedField(field, null, null, checksum);
+				this.checksum = new BoundedField(field, null, checksum);
 		}
 	}
 
@@ -251,7 +246,7 @@ final class ProtocolMessage<T>{
 		final List<Annotation> annotations = new ArrayList<>(declaredAnnotations.length);
 		for(final Annotation annotation : declaredAnnotations){
 			final Class<? extends Annotation> annotationType = annotation.annotationType();
-			if(annotationType != BindIf.class && annotationType != Skip.class && annotationType != Evaluate.class
+			if(annotationType != Skip.class && annotationType != Evaluate.class
 					&& loader.getCodec(annotationType) != null)
 				annotations.add(annotation);
 		}

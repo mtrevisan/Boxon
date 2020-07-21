@@ -58,6 +58,11 @@ class CodecBitsTest{
 			}
 
 			@Override
+			public String condition(){
+				return null;
+			}
+
+			@Override
 			public String size(){
 				return Integer.toString(randomBytes.length * Byte.SIZE);
 			}
@@ -109,6 +114,11 @@ class CodecBitsTest{
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindBits.class;
+			}
+
+			@Override
+			public String condition(){
+				return null;
 			}
 
 			@Override
