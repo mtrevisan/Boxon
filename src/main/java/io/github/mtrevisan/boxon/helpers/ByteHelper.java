@@ -181,9 +181,19 @@ public final class ByteHelper{
 
 	public static boolean hasBit(final byte mask, final int index){
 		if(index < 0 || index >= Byte.SIZE)
-			throw new IllegalArgumentException("Index value must be between 0 and " + (Byte.SIZE - 1) + " inclusive, was " + index);
+			throw new IllegalArgumentException("Index value must be between 0 and " + Byte.SIZE + " exclusive, was " + index);
 
-		return ((mask & (1 << (index % Byte.SIZE))) != 0);
+		final int bitMask = 1 << (index % Byte.SIZE);
+		return ((mask & bitMask) != 0);
+	}
+
+	public static boolean hasBit(final byte[] mask, final int index){
+		if(index < 0 || index >= mask.length * Byte.SIZE)
+			throw new IllegalArgumentException("Index value must be between 0 and " + (mask.length * Byte.SIZE) + " exclusive, was " + index);
+
+		final int bitGroup = mask.length - 1 - index / Byte.SIZE;
+		final int bitMask = 1 << (index % Byte.SIZE);
+		return ((mask[bitGroup] & bitMask) != 0);
 	}
 
 }
