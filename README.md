@@ -549,6 +549,7 @@ private short checksum;
 ### Evaluate
 
 #### parameters
+ - `condition`: The SpEL expression to be evaluated that determines if an evaluation has to be made.
  - `value`: the value to be assigned, or calculated (can be a SpEL expression).
 
 #### description

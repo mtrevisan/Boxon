@@ -35,6 +35,13 @@ import java.lang.annotation.Target;
 public @interface Evaluate{
 
 	/**
+	 * The SpEL expression to be evaluated that determines if an evaluation has to be made.
+	 *
+	 * @return	The condition to be evaluated that determines if an evaluation has to be made (can be an expression).
+	 */
+	String condition() default "";
+
+	/**
 	 * The expression to be evaluated.
 	 * @see <a href="https://docs.spring.io/spring/docs/5.2.7.RELEASE/spring-framework-reference/core.html#expressions">Spring Expression Language (SpEL)</a>
 	 *

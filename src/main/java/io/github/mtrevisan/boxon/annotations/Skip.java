@@ -55,7 +55,7 @@ public @interface Skip{
 	 *
 	 * @return	The condition to be evaluated that determines if a skip has to be made (can be an expression).
 	 */
-	String condition();
+	String condition() default "";
 
 	/**
 	 * The number of bits to be skipped.

@@ -98,8 +98,8 @@ final class ProtocolMessageParser{
 
 	private <T> void readSkip(final Skip skip, final BitReader reader, final T data){
 		final String condition = skip.condition();
-		final boolean present = (condition != null && condition.length() > 0 && Evaluator.evaluate(condition, boolean.class, data));
-		if(present){
+		final boolean process = (condition != null && condition.length() > 0 && Evaluator.evaluate(condition, boolean.class, data));
+		if(process){
 			final int size = Evaluator.evaluateSize(skip.size(), data);
 			if(size > 0)
 				/** skip {@link size} bits */
@@ -145,8 +145,12 @@ final class ProtocolMessageParser{
 	private <T> void processEvaluatedFields(final ProtocolMessage<T> protocolMessage, final T data){
 		final List<ProtocolMessage.EvaluatedField> evaluatedFields = protocolMessage.getEvaluatedFields();
 		for(final ProtocolMessage.EvaluatedField field : evaluatedFields){
-			final Object value = Evaluator.evaluate(field.getBinding().value(), field.getType(), data);
-			ReflectionHelper.setFieldValue(data, field.getName(), value);
+			final String condition = field.getBinding().condition();
+			final boolean process = (condition != null && condition.length() > 0 && Evaluator.evaluate(condition, boolean.class, data));
+			if(process){
+				final Object value = Evaluator.evaluate(field.getBinding().value(), field.getType(), data);
+				ReflectionHelper.setFieldValue(data, field.getName(), value);
+			}
 		}
 	}
 
@@ -221,8 +225,8 @@ final class ProtocolMessageParser{
 
 	private <T> void writeSkip(final Skip skip, final BitWriter writer, final T data){
 		final String condition = skip.condition();
-		final boolean present = (condition != null && condition.length() > 0 && Evaluator.evaluate(condition, boolean.class, data));
-		if(present){
+		final boolean process = (condition != null && condition.length() > 0 && Evaluator.evaluate(condition, boolean.class, data));
+		if(process){
 			final int size = Evaluator.evaluateSize(skip.size(), data);
 			if(size > 0)
 				/** skip {@link size} bits */
