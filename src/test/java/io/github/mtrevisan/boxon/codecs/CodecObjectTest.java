@@ -143,7 +143,7 @@ class CodecObjectTest{
 	static class TestChoice2{
 		@BindString(size = "3")
 		public String header;
-		@BindArrayPrimitive(size = "2", type = byte[].class)
+		@BindArrayPrimitive(size = "2", type = byte.class)
 		public byte[] index;
 		@BindObject(selectFrom = @Choices(prefixSize = 8, alternatives = {
 			@Choices.Choice(condition = "index[#prefix] == 5", prefix = 0, type = TestType1.class),

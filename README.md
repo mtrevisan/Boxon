@@ -163,7 +163,7 @@ private Version[] versions;
 
 #### parameters
  - `condition`: The SpEL expression that determines if this field has to be read.
- - `type`: the Class of primitive of the single element of the array (SHOULD BE WRITTEN in array style, as `byte[].class`, or `int[].class`).
+ - `type`: the Class of primitive of the single element of the array.
  - `size`: the size of the array (can be a SpEL expression).
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN` (used for primitives other than `byte`).
  - `validator`: the Class of a validator (applied BEFORE the converter).
@@ -177,7 +177,7 @@ This annotation is bounded to a variable.
 
 #### example
 ```java
-@BindArrayPrimitive(size = "2", type = byte[].class)
+@BindArrayPrimitive(size = "2", type = byte.class)
 private byte[] array;
 ```
 
@@ -592,7 +592,7 @@ public class DateTimeUnixConverter implements Converter<Long, ZonedDateTime>{
 
 #### DateTime converter (from YYYYMMDDHHMMSS as bytes to ZonedDateTime)
 ```java
-@BindArrayPrimitive(size = "7", type = byte[].class, converter = DateTimeYYYYMMDDHHMMSSConverter.class)
+@BindArrayPrimitive(size = "7", type = byte.class, converter = DateTimeYYYYMMDDHHMMSSConverter.class)
 private ZonedDateTime eventTime;
 
 public class DateTimeYYYYMMDDHHMMSSConverter implements Converter<byte[], ZonedDateTime>{
@@ -624,7 +624,7 @@ public class DateTimeYYYYMMDDHHMMSSConverter implements Converter<byte[], ZonedD
 
 #### IMEI converter (from 'nibble' array to String)
 ```java
-@BindArrayPrimitive(size = "8", type = byte[].class, converter = IMEIConverter.class, validator = IMEIValidator.class)
+@BindArrayPrimitive(size = "8", type = byte.class, converter = IMEIConverter.class, validator = IMEIValidator.class)
 private String imei;
 
 public class IMEIConverter implements Converter<byte[], String>{

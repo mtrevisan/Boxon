@@ -92,7 +92,7 @@ class CodecArrayTest{
 
 			@Override
 			public Class<?> type(){
-				return int[].class;
+				return int.class;
 			}
 
 			@Override

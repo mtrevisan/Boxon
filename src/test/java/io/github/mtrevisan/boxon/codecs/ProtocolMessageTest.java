@@ -126,7 +126,7 @@ class ProtocolMessageTest{
 		public Mask mask;
 		@BindArray(size = "2", type = Version.class)
 		private Version[] versions;
-		@BindArrayPrimitive(condition = "mask.hasProtocolVersion()", size = "2", type = byte[].class)
+		@BindArrayPrimitive(condition = "mask.hasProtocolVersion()", size = "2", type = byte.class)
 		private byte[] protocolVersion;
 		@BindBits(size = "2")
 		private BitSet bits;

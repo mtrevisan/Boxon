@@ -40,11 +40,10 @@ final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 
 		final Class<?> type = binding.type();
 		final int size = Evaluator.evaluateSize(binding.size(), data);
-		final Class<?> componentType = type.getComponentType();
 
 		final Object array = ReflectionHelper.createArrayPrimitive(type, size);
 		for(int i = 0; i < size; i ++){
-			final Object value = reader.get(componentType, binding.byteOrder());
+			final Object value = reader.get(type, binding.byteOrder());
 			Array.set(array, i, value);
 		}
 

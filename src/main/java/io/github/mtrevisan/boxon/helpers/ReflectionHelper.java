@@ -154,17 +154,6 @@ public final class ReflectionHelper{
 
 
 	/**
-	 * Returns whether the given {@code type} is an array of primitives.
-	 * <p>NOTE: {@code void} is NOT considered as primitive!</p>
-	 *
-	 * @param type	The class to query.
-	 * @return	Whether the given {@code type} is an array of primitives.
-	 */
-	public static boolean isArrayOfPrimitives(final Class<?> type){
-		return (type.isArray() && isPrimitive(type.getComponentType()));
-	}
-
-	/**
 	 * Returns whether the given {@code type} is a primitive.
 	 * <p>NOTE: {@code void} is NOT considered as primitive!</p>
 	 *
@@ -188,10 +177,10 @@ public final class ReflectionHelper{
 
 
 	public static Object createArrayPrimitive(final Class<?> type, final int length){
-		if(!ReflectionHelper.isPrimitive(type.getComponentType()))
+		if(!ReflectionHelper.isPrimitive(type))
 			throw new AnnotationException("Argument cannot be a non-primitive: {}", type);
 
-		return Array.newInstance(type.getComponentType(), length);
+		return Array.newInstance(type, length);
 	}
 
 	@SuppressWarnings("unchecked")

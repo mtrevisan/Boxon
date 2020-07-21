@@ -116,9 +116,9 @@ final class ProtocolMessage<T>{
 			@Override
 			void validate(final Annotation annotation){
 				final Class<?> type = ((BindArrayPrimitive)annotation).type();
-				if(!ReflectionHelper.isArrayOfPrimitives(type))
+				if(!ReflectionHelper.isPrimitive(type))
 					throw new AnnotationException("Bad annotation used for @{}, should have been used the type `{}.class`", BindArray.class.getSimpleName(),
-						DataType.toObjectiveTypeOrDefault(type.getComponentType()).getSimpleName());
+						DataType.toObjectiveTypeOrDefault(type).getSimpleName());
 			}
 		},
 
@@ -130,8 +130,8 @@ final class ProtocolMessage<T>{
 				final Class<?> type = binding.type();
 				validateChoice(selectFrom, type);
 
-				if(ReflectionHelper.isArrayOfPrimitives(type))
-					throw new AnnotationException("Bad annotation used for @{}, should have been used the type `{}[].class`", BindArrayPrimitive.class.getSimpleName(),
+				if(ReflectionHelper.isPrimitive(type))
+					throw new AnnotationException("Bad annotation used for @{}, should have been used the type `{}.class`", BindArrayPrimitive.class.getSimpleName(),
 						DataType.toPrimitiveTypeOrDefault(type).getSimpleName());
 			}
 		},

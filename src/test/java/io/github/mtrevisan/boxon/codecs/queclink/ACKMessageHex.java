@@ -114,7 +114,7 @@ public class ACKMessageHex{
 	private String messageType;
 	@BindByte(converter = ACKMaskHex.ACKMaskConverter.class)
 	private ACKMaskHex mask;
-//	@BindArrayPrimitive(size = "2", type = byte[].class)
+//	@BindArrayPrimitive(size = "2", type = byte.class)
 //	private byte[] things;
 	@BindByte(condition = "mask.hasLength()")
 	private byte messageLength;
@@ -122,11 +122,11 @@ public class ACKMessageHex{
 	private byte deviceTypeCode;
 //	@BindArray(size = "2", type = Version.class)
 //	private Version[] versions;
-	@BindArrayPrimitive(condition = "mask.hasProtocolVersion()", size = "2", type = byte[].class, converter = QueclinkHelper.VersionConverter.class)
+	@BindArrayPrimitive(condition = "mask.hasProtocolVersion()", size = "2", type = byte.class, converter = QueclinkHelper.VersionConverter.class)
 	private String protocolVersion;
-	@BindArrayPrimitive(condition = "mask.hasFirmwareVersion()", size = "2", type = byte[].class, converter = QueclinkHelper.VersionConverter.class)
+	@BindArrayPrimitive(condition = "mask.hasFirmwareVersion()", size = "2", type = byte.class, converter = QueclinkHelper.VersionConverter.class)
 	private String firmwareVersion;
-	@BindArrayPrimitive(condition = "mask.hasIMEI()", size = "8", type = byte[].class, converter = QueclinkHelper.IMEIConverter.class, validator = IMEIValidator.class)
+	@BindArrayPrimitive(condition = "mask.hasIMEI()", size = "8", type = byte.class, converter = QueclinkHelper.IMEIConverter.class, validator = IMEIValidator.class)
 	private String imei;
 	@BindString(condition = "!mask.hasIMEI()", size = "8")
 	private String deviceName;
@@ -134,7 +134,7 @@ public class ACKMessageHex{
 	private byte id;
 	@BindShort
 	private short correlationId;
-	@BindArrayPrimitive(condition = "mask.hasEventTime()", size = "7", type = byte[].class, converter = QueclinkHelper.DateTimeYYYYMMDDHHMMSSConverter.class)
+	@BindArrayPrimitive(condition = "mask.hasEventTime()", size = "7", type = byte.class, converter = QueclinkHelper.DateTimeYYYYMMDDHHMMSSConverter.class)
 	private ZonedDateTime eventTime;
 	@BindShort(condition = "mask.hasMessageId()")
 	private short messageId;
