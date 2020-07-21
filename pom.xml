@@ -87,7 +87,7 @@
 			</build>
 		</profile>
 		<profile>
-			<id>prod</id>
+			<id>release</id>
 			<build>
 				<plugins>
 					<!-- Signing JAR Files -->
