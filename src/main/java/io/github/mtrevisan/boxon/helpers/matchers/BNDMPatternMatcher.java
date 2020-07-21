@@ -24,6 +24,8 @@
  */
 package io.github.mtrevisan.boxon.helpers.matchers;
 
+import java.util.Arrays;
+
 
 /**
  * An implementation of the Backwards Non-deterministic DAWG (Directed acyclic word graph) Matching algorithm by Gonzalo Navarro
@@ -64,8 +66,7 @@ public class BNDMPatternMatcher implements PatternMatcher{
 
 		final int[] b = new int[Integer.SIZE * Byte.SIZE];
 		if(j != 0)
-			for(int i = 0; i < b.length; i ++)
-				b[i] = j;
+			Arrays.fill(b, j);
 
 		return fill(pattern, b);
 	}

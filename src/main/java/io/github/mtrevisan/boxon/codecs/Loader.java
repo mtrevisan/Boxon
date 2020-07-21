@@ -128,7 +128,7 @@ final class Loader{
 	/**
 	 * Loads all the codecs that extends {@link CodecInterface}.
 	 *
-	 * @param codecs	The list of codecrs to be loaded
+	 * @param codecs	The list of codecs to be loaded
 	 * @return	Whether the codecs was loaded.
 	 */
 	final boolean loadCodecs(final CodecInterface<?>... codecs){
@@ -294,7 +294,7 @@ final class Loader{
 		return minOffset;
 	}
 
-	private static final int[] getPreProcessedPattern(final byte[] pattern){
+	private static int[] getPreProcessedPattern(final byte[] pattern){
 		return PATTERN_MATCHER.preProcessPattern(pattern);
 	}
 

@@ -51,7 +51,6 @@ final class BitWriter{
 	private int remaining;
 
 
-	@SuppressWarnings("ConstantConditions")
 	final void put(final Object value, final ByteOrder byteOrder){
 		final DataType t = DataType.fromType(value.getClass());
 		if(t == null)

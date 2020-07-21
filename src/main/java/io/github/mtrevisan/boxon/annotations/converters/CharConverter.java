@@ -35,7 +35,7 @@ public class CharConverter implements Converter<Short, Character>{
 
 	@Override
 	public Short encode(final Character value){
-		return (short)Character.codePointAt(new char[]{value.charValue()}, 0);
+		return (short)Character.codePointAt(new char[]{value}, 0);
 	}
 
 }

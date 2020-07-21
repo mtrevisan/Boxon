@@ -117,7 +117,7 @@ final class Evaluator{
 	 * @param expression	The SpEL expression to evaluate.
 	 * @param data	The context with which to evaluate the given expression.
 	 * @return	The size, or a negative number if the expression is not a valid positive integer.
-	 * @throws EvaluationException	If an error occurrs during the evaluation of an expression.
+	 * @throws EvaluationException	If an error occurs during the evaluation of an expression.
 	 */
 	static int evaluateSize(final String expression, final Object data) throws EvaluationException{
 		int size = -1;
