@@ -490,6 +490,7 @@ private short conditionedValue;
 ### Skip
 
 #### parameters
+ - `condition`: The SpEL expression to be evaluated that determines if a skip has to be made.
  - `size`: the number of bits to be skipped (can be a SpEL expression).
  - `terminator`: the byte that terminates the skip (defaults to `\0`).
  - `consumeTerminator`: whether to consume the terminator (defaults to `true`).

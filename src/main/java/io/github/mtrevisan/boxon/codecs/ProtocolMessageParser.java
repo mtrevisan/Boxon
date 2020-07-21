@@ -97,17 +97,17 @@ final class ProtocolMessageParser{
 	}
 
 	private <T> void readSkip(final Skip skip, final BitReader reader, final T data){
-		final int size = Evaluator.evaluateSize(skip.size(), data);
-		if(size > 0)
-			/** skip {@link size} bits */
-			reader.skip(size);
-		else
-			//skip until terminator
-			reader.skipUntilTerminator(skip.terminator(), skip.consumeTerminator());
-	}
-
-	private <T> boolean skipFieldByCondition(final String condition, final T data){
-		return (condition != null && !Evaluator.evaluate(condition, boolean.class, data));
+		final String condition = skip.condition();
+		final boolean present = (condition != null && condition.length() > 0 && Evaluator.evaluate(condition, boolean.class, data));
+		if(present){
+			final int size = Evaluator.evaluateSize(skip.size(), data);
+			if(size > 0)
+				/** skip {@link size} bits */
+				reader.skip(size);
+			else
+				//skip until terminator
+				reader.skipUntilTerminator(skip.terminator(), skip.consumeTerminator());
+		}
 	}
 
 	private <T> void readMessageTerminator(final ProtocolMessage<T> protocolMessage, final BitReader reader){
@@ -180,6 +180,10 @@ final class ProtocolMessageParser{
 		}
 	}
 
+	private <T> boolean skipFieldByCondition(final String condition, final T data){
+		return (condition != null && !Evaluator.evaluate(condition, boolean.class, data));
+	}
+
 	private void closeMessage(final MessageHeader header, final BitWriter writer){
 		if(header != null && header.end().length() > 0){
 			final Charset charset = Charset.forName(header.charset());
@@ -216,13 +220,17 @@ final class ProtocolMessageParser{
 	}
 
 	private <T> void writeSkip(final Skip skip, final BitWriter writer, final T data){
-		final int size = Evaluator.evaluateSize(skip.size(), data);
-		if(size > 0)
-			/** skip {@link size} bits */
-			writer.putBits(new BitSet(), size);
-		else if(skip.consumeTerminator())
-			//skip until terminator
-			writer.putByte(skip.terminator());
+		final String condition = skip.condition();
+		final boolean present = (condition != null && condition.length() > 0 && Evaluator.evaluate(condition, boolean.class, data));
+		if(present){
+			final int size = Evaluator.evaluateSize(skip.size(), data);
+			if(size > 0)
+				/** skip {@link size} bits */
+				writer.putBits(new BitSet(), size);
+			else if(skip.consumeTerminator())
+				//skip until terminator
+				writer.putByte(skip.terminator());
+		}
 	}
 
 }

@@ -51,6 +51,13 @@ import java.lang.annotation.Target;
 public @interface Skip{
 
 	/**
+	 * The SpEL expression to be evaluated that determines if a skip has to be made.
+	 *
+	 * @return	The condition to be evaluated that determines if a skip has to be made (can be an expression).
+	 */
+	String condition();
+
+	/**
 	 * The number of bits to be skipped.
 	 *
 	 * @return	The number of bits to be skipped (can be an expression).
