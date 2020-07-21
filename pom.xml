@@ -51,6 +51,7 @@
 		<maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
 		<maven-shade-plugin.version>3.2.4</maven-shade-plugin.version>
 		<maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+		<maven-help-plugin.version>3.2.0</maven-help-plugin.version>
 		<maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
 		<nexus-staging-maven-plugin.version>1.6.8</nexus-staging-maven-plugin.version>
 
@@ -66,6 +67,101 @@
 		<apache.commons-lang3.version>3.11</apache.commons-lang3.version>
 		<apache.commons-math3.version>3.6.1</apache.commons-math3.version>
 	</properties>
+
+	<profiles>
+		<profile>
+			<id>dev</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<!-- Deploy -->
+					<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-deploy-plugin -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-deploy-plugin</artifactId>
+						<version>${maven-deploy-plugin.version}</version>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>prod</id>
+			<build>
+				<plugins>
+					<!-- Signing JAR Files -->
+					<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-gpg-plugin -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>${maven-gpg-plugin.version}</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<!-- Nexus Staging Plugin -->
+					<!-- https://mvnrepository.com/artifact/org.sonatype.plugins/nexus-staging-maven-plugin -->
+					<plugin>
+						<groupId>org.sonatype.plugins</groupId>
+						<artifactId>nexus-staging-maven-plugin</artifactId>
+						<version>${nexus-staging-maven-plugin.version}</version>
+						<extensions>true</extensions>
+						<configuration>
+							<!-- The Base URL of Nexus instance where we want to stage -->
+							<serverId>sonatype-nexus-staging</serverId>
+							<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+							<autoReleaseAfterClose>true</autoReleaseAfterClose>
+						</configuration>
+					</plugin>
+					<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-scm-publish-plugin -->
+<!--					<plugin>-->
+<!--						<groupId>org.apache.maven.plugins</groupId>-->
+<!--						<artifactId>maven-scm-publish-plugin</artifactId>-->
+<!--						<version>3.0.0</version>-->
+<!--						<configuration>-->
+<!--							<ignorePathsToDelete>-->
+<!--								<ignorePathToDelete>javadocs</ignorePathToDelete>-->
+<!--							</ignorePathsToDelete>-->
+<!--						</configuration>-->
+<!--					</plugin>-->
+				</plugins>
+			</build>
+
+			<distributionManagement>
+				<snapshotRepository>
+					<id>sonatype-nexus-snapshots</id>
+					<name>Sonatype Nexus Snapshots</name>
+					<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+				</snapshotRepository>
+				<repository>
+					<id>sonatype-nexus-staging</id>
+					<name>Nexus Release Repository</name>
+					<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+				</repository>
+			</distributionManagement>
+
+<!--			<repositories>-->
+<!--				<repository>-->
+<!--					<id>sonatype-nexus-snapshots</id>-->
+<!--					<name>Sonatype Nexus Snapshots</name>-->
+<!--					<url>https://oss.sonatype.org/content/repositories/snapshots</url>-->
+<!--					<releases>-->
+<!--						<enabled>false</enabled>-->
+<!--					</releases>-->
+<!--					<snapshots>-->
+<!--						<enabled>true</enabled>-->
+<!--					</snapshots>-->
+<!--				</repository>-->
+<!--			</repositories>-->
+		</profile>
+	</profiles>
 
 	<build>
 		<plugins>
@@ -83,13 +179,6 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>
-			<!-- Deploy -->
-			<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-deploy-plugin -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-deploy-plugin</artifactId>
-				<version>${maven-deploy-plugin.version}</version>
 			</plugin>
 			<!-- JavaDoc -->
 			<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-javadoc-plugin -->
@@ -110,6 +199,34 @@
 					<javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
 					<detectJavaApiLink>false</detectJavaApiLink>
 				</configuration>
+			</plugin>
+			<!-- Compiler -->
+			<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven-compiler-plugin.version}</version>
+				<configuration>
+					<showDeprecation>true</showDeprecation>
+					<source>11</source>
+					<target>11</target>
+				</configuration>
+			</plugin>
+			<!-- display active profile in compile phase -->
+			<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-help-plugin -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-help-plugin</artifactId>
+				<version>${maven-help-plugin.version}</version>
+				<executions>
+					<execution>
+						<id>show-profiles</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>active-profiles</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<!-- Templating -->
 			<!-- https://mvnrepository.com/artifact/org.codehaus.mojo/templating-maven-plugin -->
@@ -168,7 +285,7 @@
 							</filters>
 							<transformers>
 								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-<!--									<mainClass>${main.class}</mainClass>-->
+									<!--									<mainClass>${main.class}</mainClass>-->
 									<manifestEntries>
 										<X-Compile-Source-JDK>${maven.compiler.source}</X-Compile-Source-JDK>
 										<X-Compile-Target-JDK>${maven.compiler.target}</X-Compile-Target-JDK>
@@ -182,59 +299,6 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!-- Compiler -->
-			<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>${maven-compiler-plugin.version}</version>
-				<configuration>
-					<showDeprecation>true</showDeprecation>
-					<source>11</source>
-					<target>11</target>
-				</configuration>
-			</plugin>
-			<!-- Signing JAR Files -->
-			<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-gpg-plugin -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-gpg-plugin</artifactId>
-				<version>${maven-gpg-plugin.version}</version>
-				<executions>
-					<execution>
-						<id>sign-artifacts</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>sign</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<!-- Nexus Staging Plugin -->
-			<!-- https://mvnrepository.com/artifact/org.sonatype.plugins/nexus-staging-maven-plugin -->
-			<plugin>
-				<groupId>org.sonatype.plugins</groupId>
-				<artifactId>nexus-staging-maven-plugin</artifactId>
-				<version>${nexus-staging-maven-plugin.version}</version>
-				<extensions>true</extensions>
-				<configuration>
-					<!-- The Base URL of Nexus instance where we want to stage -->
-					<serverId>sonatype-nexus-staging</serverId>
-					<nexusUrl>https://oss.sonatype.org/</nexusUrl>
-					<autoReleaseAfterClose>true</autoReleaseAfterClose>
-				</configuration>
-			</plugin>
-			<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-scm-publish-plugin -->
-<!--			<plugin>-->
-<!--				<groupId>org.apache.maven.plugins</groupId>-->
-<!--				<artifactId>maven-scm-publish-plugin</artifactId>-->
-<!--				<version>3.0.0</version>-->
-<!--				<configuration>-->
-<!--					<ignorePathsToDelete>-->
-<!--						<ignorePathToDelete>javadocs</ignorePathToDelete>-->
-<!--					</ignorePathsToDelete>-->
-<!--				</configuration>-->
-<!--			</plugin>-->
 		</plugins>
 	</build>
 
@@ -279,33 +343,6 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
-	<distributionManagement>
-		<snapshotRepository>
-			<id>sonatype-nexus-snapshots</id>
-			<name>Sonatype Nexus Snapshots</name>
-			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-		</snapshotRepository>
-		<repository>
-			<id>sonatype-nexus-staging</id>
-			<name>Nexus Release Repository</name>
-			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-		</repository>
-	</distributionManagement>
-
-<!--	<repositories>-->
-<!--		<repository>-->
-<!--			<id>sonatype-nexus-snapshots</id>-->
-<!--			<name>Sonatype Nexus Snapshots</name>-->
-<!--			<url>https://oss.sonatype.org/content/repositories/snapshots</url>-->
-<!--			<releases>-->
-<!--				<enabled>false</enabled>-->
-<!--			</releases>-->
-<!--			<snapshots>-->
-<!--				<enabled>true</enabled>-->
-<!--			</snapshots>-->
-<!--		</repository>-->
-<!--	</repositories>-->
 
 	<licenses>
 		<license>
