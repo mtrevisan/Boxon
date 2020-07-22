@@ -76,6 +76,8 @@ final class CodecArray implements CodecInterface<BindArray>{
 
 			//choose class
 			final Choices.Choice chosenAlternative = CodecHelper.chooseAlternative(alternatives, prefix.intValue(), data);
+			if(chosenAlternative == null)
+				throw new IllegalArgumentException("Cannot find a valid codec for prefix " + prefix.intValue());
 
 			//read object
 			final ProtocolMessage<?> subProtocolMessage = ProtocolMessage.createFrom(chosenAlternative.type(), protocolMessageParser.loader);
