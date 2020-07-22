@@ -46,11 +46,12 @@ public final class ByteHelper{
 	 * @return	The hexadecimal characters
 	 */
 	public static String toHexString(final byte[] array){
-		final StringBuffer sb = new StringBuffer(array.length << 1);
-		for(final byte b : array){
-			sb.append(Character.forDigit((b >>> 4) & 0x0F, 16));
-			sb.append(Character.forDigit((b & 0x0F), 16));
-		}
+		final StringBuffer sb = new StringBuffer((array != null? array.length << 1: 0));
+		if(array != null)
+			for(final byte b : array){
+				sb.append(Character.forDigit((b >>> 4) & 0x0F, 16));
+				sb.append(Character.forDigit((b & 0x0F), 16));
+			}
 		return sb.toString().toUpperCase();
 	}
 
@@ -152,6 +153,9 @@ public final class ByteHelper{
 	 * @return	The 2-complement expressed as int
 	 */
 	public static long extendSign(final long value, final int size){
+		if(size <= 0)
+			throw new IllegalArgumentException("Size must be a positive value, was " + size);
+
 		final int shift = -size;
 		return (value << shift) >> shift;
 	}
