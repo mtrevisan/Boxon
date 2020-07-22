@@ -79,4 +79,11 @@ public @interface BindLong{
 	 */
 	Class<? extends Converter> converter() default NullConverter.class;
 
+	/**
+	 * The choices to select from to apply a given converter.
+	 *
+	 * @return The choices to select from to apply a given converter.
+	 */
+	ConverterChoices selectConverterFrom() default @ConverterChoices();
+
 }
