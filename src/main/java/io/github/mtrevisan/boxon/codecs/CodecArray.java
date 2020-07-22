@@ -26,7 +26,7 @@ package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.BindArray;
 import io.github.mtrevisan.boxon.annotations.ByteOrder;
-import io.github.mtrevisan.boxon.annotations.Choices;
+import io.github.mtrevisan.boxon.annotations.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
 
@@ -46,7 +46,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 		final BindArray binding = (BindArray)annotation;
 
 		final int size = Evaluator.evaluateSize(binding.size(), data);
-		final Choices selectFrom = binding.selectFrom();
+		final ObjectChoices selectFrom = binding.selectFrom();
 
 		final Object[] array = ReflectionHelper.createArray(binding.type(), size);
 		if(selectFrom.alternatives().length > 0)
@@ -63,19 +63,19 @@ final class CodecArray implements CodecInterface<BindArray>{
 		return value;
 	}
 
-	private void decodeWithAlternatives(final BitReader reader, final Object[] array, final Choices selectFrom, final Object data){
+	private void decodeWithAlternatives(final BitReader reader, final Object[] array, final ObjectChoices selectFrom, final Object data){
 		//read prefix
 		final int prefixSize = selectFrom.prefixSize();
 		final ByteOrder prefixByteOrder = selectFrom.byteOrder();
 
-		final Choices.Choice[] alternatives = selectFrom.alternatives();
+		final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
 
 		final int size = array.length;
 		for(int i = 0; i < size; i ++){
 			final BigInteger prefix = reader.getBigInteger(prefixSize, prefixByteOrder, true);
 
 			//choose class
-			final Choices.Choice chosenAlternative = CodecHelper.chooseAlternative(alternatives, prefix.intValue(), data);
+			final ObjectChoices.ObjectChoice chosenAlternative = CodecHelper.chooseAlternative(alternatives, prefix.intValue(), data);
 			if(chosenAlternative == null)
 				throw new IllegalArgumentException("Cannot find a valid codec for prefix " + prefix.intValue());
 
@@ -101,7 +101,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 		CodecHelper.validateData(binding.validator(), value);
 
 		final int size = Evaluator.evaluateSize(binding.size(), data);
-		final Choices selectFrom = binding.selectFrom();
+		final ObjectChoices selectFrom = binding.selectFrom();
 
 		@SuppressWarnings("rawtypes")
 		final Class<? extends Converter> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
@@ -113,13 +113,13 @@ final class CodecArray implements CodecInterface<BindArray>{
 			encodeWithoutAlternatives(writer, array, binding.type());
 	}
 
-	private void encodeWithAlternatives(final BitWriter writer, final Object[] array, final Choices selectFrom){
-		final Choices.Choice[] alternatives = selectFrom.alternatives();
+	private void encodeWithAlternatives(final BitWriter writer, final Object[] array, final ObjectChoices selectFrom){
+		final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
 		final int size = array.length;
 		for(final Object elem : array){
 			final Class<?> type = elem.getClass();
 
-			final Choices.Choice chosenAlternative = CodecHelper.chooseAlternative(alternatives, type);
+			final ObjectChoices.ObjectChoice chosenAlternative = CodecHelper.chooseAlternative(alternatives, type);
 			if(chosenAlternative == null)
 				throw new IllegalArgumentException("Cannot find a valid codec for type " + type.getSimpleName());
 

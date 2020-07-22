@@ -34,7 +34,7 @@ import io.github.mtrevisan.boxon.annotations.BindArrayPrimitive;
 import io.github.mtrevisan.boxon.annotations.BindByte;
 import io.github.mtrevisan.boxon.annotations.BindString;
 import io.github.mtrevisan.boxon.annotations.ByteOrder;
-import io.github.mtrevisan.boxon.annotations.Choices;
+import io.github.mtrevisan.boxon.annotations.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
@@ -68,10 +68,10 @@ class CodecArrayTest{
 	static class TestChoice4{
 		@BindString(size = "3")
 		public String header;
-		@BindArray(size = "3", type = CodecObjectTest.TestType0.class, selectFrom = @Choices(prefixSize = 8,
+		@BindArray(size = "3", type = CodecObjectTest.TestType0.class, selectFrom = @ObjectChoices(prefixSize = 8,
 			alternatives = {
-				@Choices.Choice(condition = "#prefix == 1", prefix = 1, type = CodecObjectTest.TestType1.class),
-				@Choices.Choice(condition = "#prefix == 2", prefix = 2, type = CodecObjectTest.TestType2.class)
+				@ObjectChoices.ObjectChoice(condition = "#prefix == 1", prefix = 1, type = CodecObjectTest.TestType1.class),
+				@ObjectChoices.ObjectChoice(condition = "#prefix == 2", prefix = 2, type = CodecObjectTest.TestType2.class)
 			}))
 		public CodecObjectTest.TestType0[] value;
 	}
@@ -161,8 +161,8 @@ class CodecArrayTest{
 			}
 
 			@Override
-			public Choices selectFrom(){
-				return new Choices(){
+			public ObjectChoices selectFrom(){
+				return new ObjectChoices(){
 					@Override
 					public Class<? extends Annotation> annotationType(){
 						return null;
@@ -179,8 +179,8 @@ class CodecArrayTest{
 					}
 
 					@Override
-					public Choice[] alternatives(){
-						return new Choice[0];
+					public ObjectChoice[] alternatives(){
+						return new ObjectChoice[0];
 					}
 				};
 			}

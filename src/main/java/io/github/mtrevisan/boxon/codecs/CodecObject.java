@@ -26,7 +26,7 @@ package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.BindObject;
 import io.github.mtrevisan.boxon.annotations.ByteOrder;
-import io.github.mtrevisan.boxon.annotations.Choices;
+import io.github.mtrevisan.boxon.annotations.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 
 import java.lang.annotation.Annotation;
@@ -45,8 +45,8 @@ final class CodecObject implements CodecInterface<BindObject>{
 		final BindObject binding = (BindObject)annotation;
 
 		Class<?> type = binding.type();
-		final Choices selectFrom = binding.selectFrom();
-		final Choices.Choice[] alternatives = selectFrom.alternatives();
+		final ObjectChoices selectFrom = binding.selectFrom();
+		final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
 		if(alternatives.length > 0){
 			//read prefix
 			final int prefixSize = selectFrom.prefixSize();
@@ -55,7 +55,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 			final BigInteger prefix = reader.getBigInteger(prefixSize, prefixByteOrder, true);
 
 			//choose class
-			final Choices.Choice chosenAlternative = CodecHelper.chooseAlternative(alternatives, prefix.intValue(), data);
+			final ObjectChoices.ObjectChoice chosenAlternative = CodecHelper.chooseAlternative(alternatives, prefix.intValue(), data);
 			if(chosenAlternative == null)
 				throw new IllegalArgumentException("Cannot find a valid codec for prefix " + prefix.intValue());
 
@@ -82,12 +82,12 @@ final class CodecObject implements CodecInterface<BindObject>{
 		CodecHelper.validateData(binding.validator(), value);
 
 		Class<?> type = binding.type();
-		final Choices selectFrom = binding.selectFrom();
-		final Choices.Choice[] alternatives = selectFrom.alternatives();
+		final ObjectChoices selectFrom = binding.selectFrom();
+		final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
 		if(alternatives.length > 0){
 			type = value.getClass();
 
-			final Choices.Choice chosenAlternative = CodecHelper.chooseAlternative(alternatives, type);
+			final ObjectChoices.ObjectChoice chosenAlternative = CodecHelper.chooseAlternative(alternatives, type);
 			if(chosenAlternative == null)
 				throw new IllegalArgumentException("Cannot find a valid codec for type " + type.getSimpleName());
 

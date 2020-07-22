@@ -122,7 +122,9 @@ class Version{
     public byte build;
 }
 
-@BindObject(type = Version.class)
+@BindBits(size = "1", converter = BitToBooleanConverter.class)
+private boolean versionPresent;
+@BindObject(condition = "versionPresent", type = Version.class)
 private Version version;
 ```
 
@@ -159,6 +161,20 @@ class Version{
 private Version[] versions;
 ```
 
+```java
+@BindByte
+private byte positionsCount;
+@BindArray(size = "positionsCount", type = Position.class,
+   selectFrom = @ObjectChoices(prefixSize = 8, alternatives = {
+      @ObjectChoices.ObjectChoice(condition = "#prefix == 0", prefix = 0, type = PositionInvalid.class),
+      @ObjectChoices.ObjectChoice(condition = "#prefix == 1", prefix = 1, type = PositionAbsolute.class),
+      @ObjectChoices.ObjectChoice(condition = "#prefix == 2", prefix = 2, type = PositionRelative.class),
+      @ObjectChoices.ObjectChoice(condition = "#prefix == 3", prefix = 3, type = PositionSameAsPrevious.class)
+   }),
+   converter = PositionsConverter.class)
+private Position[] positions;
+```
+
 
 <a name="annotation-bindarrayprimitive"></a>
 ### BindArrayPrimitive
@@ -182,6 +198,19 @@ This annotation is bounded to a variable.
 ```java
 @BindArrayPrimitive(size = "2", type = byte.class)
 private byte[] array;
+```
+
+```java
+@BindBits(size = "1", converter = BitToBooleanConverter.class)
+private boolean angularDataPresent;
+@BindArrayPrimitive(condition = "angularDataPresent", size = "dataLength", type = byte.class,
+    selectConverterFrom = @ConverterChoices(
+        alternatives = {
+            @ConverterChoices.ConverterChoice(condition = "angularDataPresent", converter = CrashDataWithAngularDataConverter.class),
+            @ConverterChoices.ConverterChoice(condition = "!angularDataPresent", converter = CrashDataWithoutAngularDataConverter.class)
+        })
+    )
+private BigDecimal[][] crashData;
 ```
 
 

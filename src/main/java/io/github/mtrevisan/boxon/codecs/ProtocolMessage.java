@@ -32,7 +32,7 @@ import io.github.mtrevisan.boxon.annotations.Evaluate;
 import io.github.mtrevisan.boxon.annotations.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.helpers.AnnotationHelper;
 import io.github.mtrevisan.boxon.annotations.BindArrayPrimitive;
-import io.github.mtrevisan.boxon.annotations.Choices;
+import io.github.mtrevisan.boxon.annotations.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.Skip;
 import io.github.mtrevisan.boxon.helpers.DataType;
@@ -126,7 +126,7 @@ final class ProtocolMessage<T>{
 			@Override
 			void validate(final Annotation annotation){
 				final BindArray binding = (BindArray)annotation;
-				final Choices selectFrom = binding.selectFrom();
+				final ObjectChoices selectFrom = binding.selectFrom();
 				final Class<?> type = binding.type();
 				validateChoice(selectFrom, type);
 
@@ -140,7 +140,7 @@ final class ProtocolMessage<T>{
 			@Override
 			void validate(final Annotation annotation){
 				final BindObject binding = (BindObject)annotation;
-				final Choices selectFrom = binding.selectFrom();
+				final ObjectChoices selectFrom = binding.selectFrom();
 				final Class<?> type = binding.type();
 				validateChoice(selectFrom, type);
 			}
@@ -182,7 +182,7 @@ final class ProtocolMessage<T>{
 
 		abstract void validate(final Annotation annotation);
 
-		private static void validateChoice(final Choices selectFrom, final Class<?> type){
+		private static void validateChoice(final ObjectChoices selectFrom, final Class<?> type){
 			final int prefixSize = selectFrom.prefixSize();
 			if(prefixSize > Integer.SIZE)
 				throw new AnnotationException("`prefixSize` cannot be greater than {} bits", Integer.SIZE);

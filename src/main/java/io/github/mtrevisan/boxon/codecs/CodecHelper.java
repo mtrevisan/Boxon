@@ -27,7 +27,7 @@ package io.github.mtrevisan.boxon.codecs;
 import io.github.mtrevisan.boxon.annotations.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.ByteOrder;
-import io.github.mtrevisan.boxon.annotations.Choices;
+import io.github.mtrevisan.boxon.annotations.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.helpers.BitSet;
 import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
@@ -44,11 +44,11 @@ final class CodecHelper{
 
 	private CodecHelper(){}
 
-	static Choices.Choice chooseAlternative(final Choices.Choice[] alternatives, final int prefix, final Object data){
-		Choices.Choice chosenAlternative = null;
+	static ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives, final int prefix, final Object data){
+		ObjectChoices.ObjectChoice chosenAlternative = null;
 
 		Evaluator.addToContext(CONTEXT_CHOICE_PREFIX, prefix);
-		for(final Choices.Choice alternative : alternatives)
+		for(final ObjectChoices.ObjectChoice alternative : alternatives)
 			if(Evaluator.evaluate(alternative.condition(), boolean.class, data)){
 				chosenAlternative = alternative;
 				break;
@@ -58,8 +58,8 @@ final class CodecHelper{
 		return chosenAlternative;
 	}
 
-	static Choices.Choice chooseAlternative(final Choices.Choice[] alternatives, final Class<?> type){
-		for(final Choices.Choice alternative : alternatives)
+	static ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> type){
+		for(final ObjectChoices.ObjectChoice alternative : alternatives)
 			if(alternative.type() == type)
 				return alternative;
 		return null;
@@ -76,7 +76,7 @@ final class CodecHelper{
 		return baseConverter;
 	}
 
-	static void writePrefix(final BitWriter writer, final Choices.Choice chosenAlternative, final Choices selectFrom){
+	static void writePrefix(final BitWriter writer, final ObjectChoices.ObjectChoice chosenAlternative, final ObjectChoices selectFrom){
 		//if chosenAlternative.condition() contains '#prefix', then write @Choice.Prefix.value()
 		if(chosenAlternative.condition().contains("#" + CONTEXT_CHOICE_PREFIX)){
 			final int prefixSize = selectFrom.prefixSize();

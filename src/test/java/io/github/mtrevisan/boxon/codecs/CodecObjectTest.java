@@ -36,7 +36,7 @@ import io.github.mtrevisan.boxon.annotations.BindByte;
 import io.github.mtrevisan.boxon.annotations.BindInt;
 import io.github.mtrevisan.boxon.annotations.BindShort;
 import io.github.mtrevisan.boxon.annotations.BindString;
-import io.github.mtrevisan.boxon.annotations.Choices;
+import io.github.mtrevisan.boxon.annotations.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
@@ -85,8 +85,8 @@ class CodecObjectTest{
 			}
 
 			@Override
-			public Choices selectFrom(){
-				return new Choices(){
+			public ObjectChoices selectFrom(){
+				return new ObjectChoices(){
 					@Override
 					public Class<? extends Annotation> annotationType(){
 						return null;
@@ -103,8 +103,8 @@ class CodecObjectTest{
 					}
 
 					@Override
-					public Choice[] alternatives(){
-						return new Choice[0];
+					public ObjectChoice[] alternatives(){
+						return new ObjectChoice[0];
 					}
 				};
 			}
@@ -159,10 +159,10 @@ class CodecObjectTest{
 	static class TestChoice1{
 		@BindString(size = "3")
 		public String header;
-		@BindObject(selectFrom = @Choices(prefixSize = 8,
+		@BindObject(selectFrom = @ObjectChoices(prefixSize = 8,
 			alternatives = {
-				@Choices.Choice(condition = "#prefix == 1", prefix = 1, type = TestType1.class),
-				@Choices.Choice(condition = "#prefix == 2", prefix = 2, type = TestType2.class)
+				@ObjectChoices.ObjectChoice(condition = "#prefix == 1", prefix = 1, type = TestType1.class),
+				@ObjectChoices.ObjectChoice(condition = "#prefix == 2", prefix = 2, type = TestType2.class)
 			}))
 		public TestType0 value;
 	}
@@ -173,10 +173,10 @@ class CodecObjectTest{
 		public String header;
 		@BindArrayPrimitive(size = "2", type = byte.class)
 		public byte[] index;
-		@BindObject(selectFrom = @Choices(prefixSize = 8,
+		@BindObject(selectFrom = @ObjectChoices(prefixSize = 8,
 			alternatives = {
-				@Choices.Choice(condition = "index[#prefix] == 5", prefix = 0, type = TestType1.class),
-				@Choices.Choice(condition = "index[#prefix] == 6", prefix = 1, type = TestType2.class)
+				@ObjectChoices.ObjectChoice(condition = "index[#prefix] == 5", prefix = 0, type = TestType1.class),
+				@ObjectChoices.ObjectChoice(condition = "index[#prefix] == 6", prefix = 1, type = TestType2.class)
 			}))
 		public TestType0 value;
 	}
@@ -187,9 +187,9 @@ class CodecObjectTest{
 		public String header;
 		@BindString(size = "2")
 		public String key;
-		@BindObject(selectFrom = @Choices(alternatives = {
-			@Choices.Choice(condition = "key == 'aa'", type = TestType1.class),
-			@Choices.Choice(condition = "key == 'bb'", type = TestType2.class)
+		@BindObject(selectFrom = @ObjectChoices(alternatives = {
+			@ObjectChoices.ObjectChoice(condition = "key == 'aa'", type = TestType1.class),
+			@ObjectChoices.ObjectChoice(condition = "key == 'bb'", type = TestType2.class)
 		}))
 		public TestType0 value;
 	}
