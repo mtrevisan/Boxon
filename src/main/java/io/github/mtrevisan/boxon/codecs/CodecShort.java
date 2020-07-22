@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.BindShort;
+import io.github.mtrevisan.boxon.annotations.converters.Converter;
 
 import java.lang.annotation.Annotation;
 
@@ -38,7 +39,8 @@ final class CodecShort implements CodecInterface<BindShort>{
 
 		final short v = reader.getShort(binding.byteOrder());
 
-		final Object value = CodecHelper.converterDecode(binding.converter(), v);
+		final Class<? extends Converter> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
+		final Object value = CodecHelper.converterDecode(chosenConverter, v);
 
 		CodecHelper.validateData(binding.match(), binding.validator(), value);
 
@@ -51,7 +53,8 @@ final class CodecShort implements CodecInterface<BindShort>{
 
 		CodecHelper.validateData(binding.match(), binding.validator(), value);
 
-		final short v = CodecHelper.converterEncode(binding.converter(), value);
+		final Class<? extends Converter> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
+		final short v = CodecHelper.converterEncode(chosenConverter, value);
 
 		writer.putShort(v, binding.byteOrder());
 	}

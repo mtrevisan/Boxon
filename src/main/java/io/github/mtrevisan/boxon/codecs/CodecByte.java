@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.BindByte;
+import io.github.mtrevisan.boxon.annotations.converters.Converter;
 
 import java.lang.annotation.Annotation;
 
@@ -38,7 +39,8 @@ final class CodecByte implements CodecInterface<BindByte>{
 
 		final byte v = reader.getByte();
 
-		final Object value = CodecHelper.converterDecode(binding.converter(), v);
+		final Class<? extends Converter> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
+		final Object value = CodecHelper.converterDecode(chosenConverter, v);
 
 		CodecHelper.validateData(binding.match(), binding.validator(), value);
 
@@ -51,7 +53,8 @@ final class CodecByte implements CodecInterface<BindByte>{
 
 		CodecHelper.validateData(binding.match(), binding.validator(), value);
 
-		final byte v = CodecHelper.converterEncode(binding.converter(), value);
+		final Class<? extends Converter> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
+		final byte v = CodecHelper.converterEncode(chosenConverter, value);
 
 		writer.putByte(v);
 	}

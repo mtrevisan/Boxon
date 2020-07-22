@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.BindString;
+import io.github.mtrevisan.boxon.annotations.converters.Converter;
 
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
@@ -41,7 +42,8 @@ final class CodecString implements CodecInterface<BindString>{
 		final Charset charset = Charset.forName(binding.charset());
 		final String text = reader.getText(size, charset);
 
-		final Object value = CodecHelper.converterDecode(binding.converter(), text);
+		final Class<? extends Converter> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
+		final Object value = CodecHelper.converterDecode(chosenConverter, text);
 
 		CodecHelper.validateData(binding.match(), binding.validator(), value);
 
@@ -54,7 +56,8 @@ final class CodecString implements CodecInterface<BindString>{
 
 		CodecHelper.validateData(binding.match(), binding.validator(), value);
 
-		final String text = CodecHelper.converterEncode(binding.converter(), value);
+		final Class<? extends Converter> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
+		final String text = CodecHelper.converterEncode(chosenConverter, value);
 
 		final int size = Evaluator.evaluateSize(binding.size(), data);
 		final Charset charset = Charset.forName(binding.charset());

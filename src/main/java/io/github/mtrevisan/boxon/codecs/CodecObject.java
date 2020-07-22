@@ -27,6 +27,7 @@ package io.github.mtrevisan.boxon.codecs;
 import io.github.mtrevisan.boxon.annotations.BindObject;
 import io.github.mtrevisan.boxon.annotations.ByteOrder;
 import io.github.mtrevisan.boxon.annotations.Choices;
+import io.github.mtrevisan.boxon.annotations.converters.Converter;
 
 import java.lang.annotation.Annotation;
 import java.math.BigInteger;
@@ -63,7 +64,8 @@ final class CodecObject implements CodecInterface<BindObject>{
 
 		final Object instance = protocolMessageParser.decode(protocolMessage, reader);
 
-		final Object value = CodecHelper.converterDecode(binding.converter(), instance);
+		final Class<? extends Converter> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
+		final Object value = CodecHelper.converterDecode(chosenConverter, instance);
 
 		CodecHelper.validateData(binding.validator(), value);
 
@@ -90,7 +92,8 @@ final class CodecObject implements CodecInterface<BindObject>{
 
 		final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(type, protocolMessageParser.loader);
 
-		final Object array = CodecHelper.converterEncode(binding.converter(), value);
+		final Class<? extends Converter> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
+		final Object array = CodecHelper.converterEncode(chosenConverter, value);
 
 		protocolMessageParser.encode(protocolMessage, writer, array);
 	}

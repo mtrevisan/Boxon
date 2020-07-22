@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.codecs;
 
+import io.github.mtrevisan.boxon.annotations.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.ByteOrder;
 import io.github.mtrevisan.boxon.annotations.Choices;
@@ -65,6 +66,16 @@ final class CodecHelper{
 				break;
 			}
 		return chosenAlternative;
+	}
+
+	static Class<? extends Converter> chooseConverter(final ConverterChoices selectConverterFrom, final Class<? extends Converter> baseConverter,
+			final Object data){
+		final ConverterChoices.ConverterChoice[] alternatives = (selectConverterFrom != null? selectConverterFrom.alternatives(): null);
+		if(alternatives != null)
+			for(final ConverterChoices.ConverterChoice alternative : alternatives)
+				if(Evaluator.evaluate(alternative.condition(), boolean.class, data))
+					return alternative.converter();
+		return baseConverter;
 	}
 
 	static void writePrefix(final BitWriter writer, final Choices.Choice chosenAlternative, final Choices selectFrom){

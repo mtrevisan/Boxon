@@ -26,6 +26,7 @@ package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.BindLong;
 import io.github.mtrevisan.boxon.annotations.ByteOrder;
+import io.github.mtrevisan.boxon.annotations.converters.Converter;
 
 import java.lang.annotation.Annotation;
 
@@ -39,7 +40,8 @@ final class CodecLong implements CodecInterface<BindLong>{
 
 		final long v = reader.getLong(binding.byteOrder());
 
-		final Object value = CodecHelper.converterDecode(binding.converter(), v);
+		final Class<? extends Converter> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
+		final Object value = CodecHelper.converterDecode(chosenConverter, v);
 
 		CodecHelper.validateData(binding.match(), binding.validator(), value);
 
@@ -52,7 +54,8 @@ final class CodecLong implements CodecInterface<BindLong>{
 
 		CodecHelper.validateData(binding.match(), binding.validator(), value);
 
-		final long v = CodecHelper.converterEncode(binding.converter(), value);
+		final Class<? extends Converter> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
+		final long v = CodecHelper.converterEncode(chosenConverter, value);
 
 		final ByteOrder byteOrder = binding.byteOrder();
 		writer.putLong(v, byteOrder);

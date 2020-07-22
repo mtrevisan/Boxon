@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.BindDecimal;
+import io.github.mtrevisan.boxon.annotations.converters.Converter;
 
 import java.lang.annotation.Annotation;
 import java.math.BigDecimal;
@@ -39,7 +40,8 @@ final class CodecDecimal implements CodecInterface<BindDecimal>{
 
 		final BigDecimal v = reader.getDecimal(binding.type(), binding.byteOrder());
 
-		final Object value = CodecHelper.converterDecode(binding.converter(), v);
+		final Class<? extends Converter> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
+		final Object value = CodecHelper.converterDecode(chosenConverter, v);
 
 		CodecHelper.validateData(binding.match(), binding.validator(), value);
 
@@ -52,7 +54,8 @@ final class CodecDecimal implements CodecInterface<BindDecimal>{
 
 		CodecHelper.validateData(binding.match(), binding.validator(), value);
 
-		final BigDecimal v = CodecHelper.converterEncode(binding.converter(), value);
+		final Class<? extends Converter> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
+		final BigDecimal v = CodecHelper.converterEncode(chosenConverter, value);
 
 		writer.putDecimal(v, binding.type(), binding.byteOrder());
 	}

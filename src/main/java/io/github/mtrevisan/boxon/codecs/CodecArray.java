@@ -27,6 +27,7 @@ package io.github.mtrevisan.boxon.codecs;
 import io.github.mtrevisan.boxon.annotations.BindArray;
 import io.github.mtrevisan.boxon.annotations.ByteOrder;
 import io.github.mtrevisan.boxon.annotations.Choices;
+import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
 
 import java.lang.annotation.Annotation;
@@ -55,7 +56,8 @@ final class CodecArray implements CodecInterface<BindArray>{
 		else
 			decodeWithoutAlternatives(reader, array, binding.type());
 
-		final Object value = CodecHelper.converterDecode(binding.converter(), array);
+		final Class<? extends Converter> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
+		final Object value = CodecHelper.converterDecode(chosenConverter, array);
 
 		CodecHelper.validateData(binding.validator(), value);
 
@@ -101,7 +103,8 @@ final class CodecArray implements CodecInterface<BindArray>{
 		final int size = Evaluator.evaluateSize(binding.size(), data);
 		final Choices selectFrom = binding.selectFrom();
 
-		final Object[] array = CodecHelper.converterEncode(binding.converter(), value);
+		final Class<? extends Converter> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
+		final Object[] array = CodecHelper.converterEncode(chosenConverter, value);
 
 		@SuppressWarnings("ConstantConditions")
 		final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): null);

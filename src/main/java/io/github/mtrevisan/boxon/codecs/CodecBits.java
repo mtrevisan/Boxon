@@ -26,6 +26,7 @@ package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.BindBits;
 import io.github.mtrevisan.boxon.annotations.ByteOrder;
+import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.helpers.BitSet;
 
 import java.lang.annotation.Annotation;
@@ -43,7 +44,8 @@ final class CodecBits implements CodecInterface<BindBits>{
 		if(binding.byteOrder() == ByteOrder.LITTLE_ENDIAN)
 			bits.reverseBits(size);
 
-		final Object value = CodecHelper.converterDecode(binding.converter(), bits);
+		final Class<? extends Converter> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
+		final Object value = CodecHelper.converterDecode(chosenConverter, bits);
 
 		CodecHelper.validateData(binding.match(), binding.validator(), value);
 
@@ -56,7 +58,8 @@ final class CodecBits implements CodecInterface<BindBits>{
 
 		CodecHelper.validateData(binding.match(), binding.validator(), value);
 
-		final BitSet bits = CodecHelper.converterEncode(binding.converter(), value);
+		final Class<? extends Converter> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
+		final BitSet bits = CodecHelper.converterEncode(chosenConverter, value);
 		final int size = Evaluator.evaluateSize(binding.size(), data);
 		if(binding.byteOrder() == ByteOrder.LITTLE_ENDIAN)
 			bits.reverseBits( size);
