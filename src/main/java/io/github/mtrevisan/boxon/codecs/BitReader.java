@@ -256,18 +256,6 @@ final class BitReader{
 	}
 
 	/**
-	 * Reads the next {@code length} bits (should be less than {@link Long#SIZE}!) and composes a <code>long</code>.
-	 *
-	 * @param length	The amount of bits to read (should be less than {@link Long#SIZE}!).
-	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
-	 * @return	A <code>long</code> value at the {@link BitReader}'s current position.
-	 */
-	final long getLong(final int length, final ByteOrder byteOrder){
-		final BitSet bits = getBits(length);
-		return ByteHelper.bitsToLong(bits, length, byteOrder);
-	}
-
-	/**
 	 * Reads the next {@code length} bits and composes a {@link BigInteger}.
 	 *
 	 * @param length	The amount of bits to read.
@@ -286,7 +274,7 @@ final class BitReader{
 	 * @return	A {@code byte}.
 	 */
 	final byte getByte(){
-		return (byte)getLong(Byte.SIZE, ByteOrder.LITTLE_ENDIAN);
+		return (byte)getInteger(Byte.SIZE);
 	}
 
 	private byte getByteWithFallback(){
@@ -342,8 +330,13 @@ final class BitReader{
 	}
 
 	private long getInteger(final int size, final ByteOrder byteOrder){
-		final long value = getLong(size, ByteOrder.LITTLE_ENDIAN);
+		final long value = getInteger(size);
 		return ByteHelper.reverseBytes(value, size, byteOrder);
+	}
+
+	private long getInteger(final int size){
+		final BitSet bits = getBits(size);
+		return ByteHelper.bitsToLong(bits, size, ByteOrder.LITTLE_ENDIAN);
 	}
 
 	/**
