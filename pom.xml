@@ -69,7 +69,7 @@
 
 	<profiles>
 		<profile>
-			<id>dev</id>
+			<id>stage</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
