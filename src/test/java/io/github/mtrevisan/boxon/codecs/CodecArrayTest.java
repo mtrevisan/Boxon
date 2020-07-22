@@ -68,10 +68,11 @@ class CodecArrayTest{
 	static class TestChoice4{
 		@BindString(size = "3")
 		public String header;
-		@BindArray(size = "3", type = CodecObjectTest.TestType0.class, selectFrom = @Choices(prefixSize = 8, alternatives = {
-			@Choices.Choice(condition = "#prefix == 1", prefix = 1, type = CodecObjectTest.TestType1.class),
-			@Choices.Choice(condition = "#prefix == 2", prefix = 2, type = CodecObjectTest.TestType2.class)
-		}))
+		@BindArray(size = "3", type = CodecObjectTest.TestType0.class, selectFrom = @Choices(prefixSize = 8,
+			alternatives = {
+				@Choices.Choice(condition = "#prefix == 1", prefix = 1, type = CodecObjectTest.TestType1.class),
+				@Choices.Choice(condition = "#prefix == 2", prefix = 2, type = CodecObjectTest.TestType2.class)
+			}))
 		public CodecObjectTest.TestType0[] value;
 	}
 

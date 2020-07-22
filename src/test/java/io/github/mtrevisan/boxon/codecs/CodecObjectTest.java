@@ -138,10 +138,11 @@ class CodecObjectTest{
 	static class TestChoice1{
 		@BindString(size = "3")
 		public String header;
-		@BindObject(selectFrom = @Choices(prefixSize = 8, alternatives = {
-			@Choices.Choice(condition = "#prefix == 1", prefix = 1, type = TestType1.class),
-			@Choices.Choice(condition = "#prefix == 2", prefix = 2, type = TestType2.class)
-		}))
+		@BindObject(selectFrom = @Choices(prefixSize = 8,
+			alternatives = {
+				@Choices.Choice(condition = "#prefix == 1", prefix = 1, type = TestType1.class),
+				@Choices.Choice(condition = "#prefix == 2", prefix = 2, type = TestType2.class)
+			}))
 		public TestType0 value;
 	}
 
@@ -151,10 +152,11 @@ class CodecObjectTest{
 		public String header;
 		@BindArrayPrimitive(size = "2", type = byte.class)
 		public byte[] index;
-		@BindObject(selectFrom = @Choices(prefixSize = 8, alternatives = {
-			@Choices.Choice(condition = "index[#prefix] == 5", prefix = 0, type = TestType1.class),
-			@Choices.Choice(condition = "index[#prefix] == 6", prefix = 1, type = TestType2.class)
-		}))
+		@BindObject(selectFrom = @Choices(prefixSize = 8,
+			alternatives = {
+				@Choices.Choice(condition = "index[#prefix] == 5", prefix = 0, type = TestType1.class),
+				@Choices.Choice(condition = "index[#prefix] == 6", prefix = 1, type = TestType2.class)
+			}))
 		public TestType0 value;
 	}
 
@@ -164,7 +166,7 @@ class CodecObjectTest{
 		public String header;
 		@BindString(size = "2")
 		public String key;
-		@BindObject(selectFrom = @Choices(prefixSize = 0, alternatives = {
+		@BindObject(selectFrom = @Choices(alternatives = {
 			@Choices.Choice(condition = "key == 'aa'", type = TestType1.class),
 			@Choices.Choice(condition = "key == 'bb'", type = TestType2.class)
 		}))
