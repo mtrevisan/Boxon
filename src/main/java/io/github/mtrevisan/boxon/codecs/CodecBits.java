@@ -44,6 +44,7 @@ final class CodecBits implements CodecInterface<BindBits>{
 		if(binding.byteOrder() == ByteOrder.LITTLE_ENDIAN)
 			bits.reverseBits(size);
 
+		@SuppressWarnings("rawtypes")
 		final Class<? extends Converter> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
 		final Object value = CodecHelper.converterDecode(chosenConverter, bits);
 
@@ -58,6 +59,7 @@ final class CodecBits implements CodecInterface<BindBits>{
 
 		CodecHelper.validateData(binding.match(), binding.validator(), value);
 
+		@SuppressWarnings("rawtypes")
 		final Class<? extends Converter> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
 		final BitSet bits = CodecHelper.converterEncode(chosenConverter, value);
 		final int size = Evaluator.evaluateSize(binding.size(), data);

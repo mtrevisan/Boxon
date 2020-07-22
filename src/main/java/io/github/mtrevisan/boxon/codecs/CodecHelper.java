@@ -59,15 +59,13 @@ final class CodecHelper{
 	}
 
 	static Choices.Choice chooseAlternative(final Choices.Choice[] alternatives, final Class<?> type){
-		Choices.Choice chosenAlternative = null;
 		for(final Choices.Choice alternative : alternatives)
-			if(alternative.type() == type){
-				chosenAlternative = alternative;
-				break;
-			}
-		return chosenAlternative;
+			if(alternative.type() == type)
+				return alternative;
+		return null;
 	}
 
+	@SuppressWarnings("rawtypes")
 	static Class<? extends Converter> chooseConverter(final ConverterChoices selectConverterFrom, final Class<? extends Converter> baseConverter,
 			final Object data){
 		final ConverterChoices.ConverterChoice[] alternatives = (selectConverterFrom != null? selectConverterFrom.alternatives(): null);

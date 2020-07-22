@@ -45,6 +45,7 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 
 		final BigInteger v = reader.getBigInteger(size, binding.byteOrder(), binding.unsigned());
 
+		@SuppressWarnings("rawtypes")
 		final Class<? extends Converter> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
 		final Object value = CodecHelper.converterDecode(chosenConverter, v);
 
@@ -61,6 +62,7 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 
 		final int size = Evaluator.evaluateSize(binding.size(), data);
 
+		@SuppressWarnings("rawtypes")
 		final Class<? extends Converter> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
 		final BigInteger v = CodecHelper.converterEncode(chosenConverter, value);
 

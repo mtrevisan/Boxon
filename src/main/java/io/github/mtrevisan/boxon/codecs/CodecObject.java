@@ -46,9 +46,8 @@ final class CodecObject implements CodecInterface<BindObject>{
 
 		Class<?> type = binding.type();
 		final Choices selectFrom = binding.selectFrom();
-		@SuppressWarnings("ConstantConditions")
-		final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): null);
-		if(alternatives != null && alternatives.length > 0){
+		final Choices.Choice[] alternatives = selectFrom.alternatives();
+		if(alternatives.length > 0){
 			//read prefix
 			final int prefixSize = selectFrom.prefixSize();
 			final ByteOrder prefixByteOrder = selectFrom.byteOrder();
@@ -64,6 +63,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 
 		final Object instance = protocolMessageParser.decode(protocolMessage, reader);
 
+		@SuppressWarnings("rawtypes")
 		final Class<? extends Converter> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
 		final Object value = CodecHelper.converterDecode(chosenConverter, instance);
 
@@ -80,18 +80,21 @@ final class CodecObject implements CodecInterface<BindObject>{
 
 		Class<?> type = binding.type();
 		final Choices selectFrom = binding.selectFrom();
-		@SuppressWarnings("ConstantConditions")
-		final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): null);
-		if(alternatives != null && alternatives.length > 0){
+		final Choices.Choice[] alternatives = selectFrom.alternatives();
+		if(alternatives.length > 0){
 			type = value.getClass();
 
-			//write prefix
 			final Choices.Choice chosenAlternative = CodecHelper.chooseAlternative(alternatives, type);
+			if(chosenAlternative == null)
+				throw new IllegalArgumentException("Cannot find a valid codec for type " + type.getSimpleName());
+
+			//write prefix
 			CodecHelper.writePrefix(writer, chosenAlternative, selectFrom);
 		}
 
 		final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(type, protocolMessageParser.loader);
 
+		@SuppressWarnings("rawtypes")
 		final Class<? extends Converter> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
 		final Object array = CodecHelper.converterEncode(chosenConverter, value);
 

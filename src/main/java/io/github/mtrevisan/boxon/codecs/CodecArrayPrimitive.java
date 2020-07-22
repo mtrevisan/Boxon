@@ -48,6 +48,7 @@ final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 			Array.set(array, i, value);
 		}
 
+		@SuppressWarnings("rawtypes")
 		final Class<? extends Converter> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
 		final Object value = CodecHelper.converterDecode(chosenConverter, array);
 
@@ -64,6 +65,7 @@ final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 
 		final int size = Evaluator.evaluateSize(binding.size(), data);
 
+		@SuppressWarnings("rawtypes")
 		final Class<? extends Converter> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
 		final Object array = CodecHelper.converterEncode(chosenConverter, value);
 

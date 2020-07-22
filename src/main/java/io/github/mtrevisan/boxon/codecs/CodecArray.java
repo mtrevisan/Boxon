@@ -49,13 +49,12 @@ final class CodecArray implements CodecInterface<BindArray>{
 		final Choices selectFrom = binding.selectFrom();
 
 		final Object[] array = ReflectionHelper.createArray(binding.type(), size);
-		@SuppressWarnings("ConstantConditions")
-		final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): null);
-		if(alternatives != null && alternatives.length > 0)
+		if(selectFrom.alternatives().length > 0)
 			decodeWithAlternatives(reader, array, selectFrom, data);
 		else
 			decodeWithoutAlternatives(reader, array, binding.type());
 
+		@SuppressWarnings("rawtypes")
 		final Class<? extends Converter> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
 		final Object value = CodecHelper.converterDecode(chosenConverter, array);
 
@@ -69,8 +68,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 		final int prefixSize = selectFrom.prefixSize();
 		final ByteOrder prefixByteOrder = selectFrom.byteOrder();
 
-		@SuppressWarnings("ConstantConditions")
-		final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): null);
+		final Choices.Choice[] alternatives = selectFrom.alternatives();
 
 		final int size = array.length;
 		for(int i = 0; i < size; i ++){
@@ -103,12 +101,11 @@ final class CodecArray implements CodecInterface<BindArray>{
 		final int size = Evaluator.evaluateSize(binding.size(), data);
 		final Choices selectFrom = binding.selectFrom();
 
+		@SuppressWarnings("rawtypes")
 		final Class<? extends Converter> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
 		final Object[] array = CodecHelper.converterEncode(chosenConverter, value);
 
-		@SuppressWarnings("ConstantConditions")
-		final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): null);
-		if(alternatives != null && alternatives.length > 0)
+		if(selectFrom.alternatives().length > 0)
 			encodeWithAlternatives(writer, array, selectFrom);
 		else
 			encodeWithoutAlternatives(writer, array, binding.type());
@@ -118,14 +115,15 @@ final class CodecArray implements CodecInterface<BindArray>{
 		final Choices.Choice[] alternatives = selectFrom.alternatives();
 		final int size = array.length;
 		for(final Object elem : array){
-			final Class<?> cls = elem.getClass();
+			final Class<?> type = elem.getClass();
 
-			//choose class
-			final Choices.Choice chosenAlternative = CodecHelper.chooseAlternative(alternatives, cls);
+			final Choices.Choice chosenAlternative = CodecHelper.chooseAlternative(alternatives, type);
+			if(chosenAlternative == null)
+				throw new IllegalArgumentException("Cannot find a valid codec for type " + type.getSimpleName());
 
 			CodecHelper.writePrefix(writer, chosenAlternative, selectFrom);
 
-			final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(cls, protocolMessageParser.loader);
+			final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(type, protocolMessageParser.loader);
 
 			protocolMessageParser.encode(protocolMessage, writer, elem);
 		}

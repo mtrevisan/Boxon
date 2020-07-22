@@ -40,6 +40,7 @@ final class CodecDecimal implements CodecInterface<BindDecimal>{
 
 		final BigDecimal v = reader.getDecimal(binding.type(), binding.byteOrder());
 
+		@SuppressWarnings("rawtypes")
 		final Class<? extends Converter> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
 		final Object value = CodecHelper.converterDecode(chosenConverter, v);
 
@@ -54,6 +55,7 @@ final class CodecDecimal implements CodecInterface<BindDecimal>{
 
 		CodecHelper.validateData(binding.match(), binding.validator(), value);
 
+		@SuppressWarnings("rawtypes")
 		final Class<? extends Converter> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
 		final BigDecimal v = CodecHelper.converterEncode(chosenConverter, value);
 

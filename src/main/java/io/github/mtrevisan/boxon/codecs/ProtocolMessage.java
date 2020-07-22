@@ -187,9 +187,7 @@ final class ProtocolMessage<T>{
 			if(prefixSize > Integer.SIZE)
 				throw new AnnotationException("`prefixSize` cannot be greater than {} bits", Integer.SIZE);
 
-			@SuppressWarnings("ConstantConditions")
-			final Choices.Choice[] alternatives = (selectFrom != null? selectFrom.alternatives(): null);
-			if(type == Object.class && alternatives != null && alternatives.length == 0)
+			if(type == Object.class && selectFrom.alternatives().length == 0)
 				throw new AnnotationException("`type` argument missing");
 		}
 	}

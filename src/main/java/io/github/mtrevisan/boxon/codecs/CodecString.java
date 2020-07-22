@@ -42,6 +42,7 @@ final class CodecString implements CodecInterface<BindString>{
 		final Charset charset = Charset.forName(binding.charset());
 		final String text = reader.getText(size, charset);
 
+		@SuppressWarnings("rawtypes")
 		final Class<? extends Converter> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
 		final Object value = CodecHelper.converterDecode(chosenConverter, text);
 
@@ -56,6 +57,7 @@ final class CodecString implements CodecInterface<BindString>{
 
 		CodecHelper.validateData(binding.match(), binding.validator(), value);
 
+		@SuppressWarnings("rawtypes")
 		final Class<? extends Converter> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
 		final String text = CodecHelper.converterEncode(chosenConverter, value);
 

@@ -39,6 +39,7 @@ final class CodecInt implements CodecInterface<BindInt>{
 
 		final int v = reader.getInt(binding.byteOrder());
 
+		@SuppressWarnings("rawtypes")
 		final Class<? extends Converter> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
 		final Object value = CodecHelper.converterDecode(chosenConverter, v);
 
@@ -53,6 +54,7 @@ final class CodecInt implements CodecInterface<BindInt>{
 
 		CodecHelper.validateData(binding.match(), binding.validator(), value);
 
+		@SuppressWarnings("rawtypes")
 		final Class<? extends Converter> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
 		final int v = CodecHelper.converterEncode(chosenConverter, value);
 

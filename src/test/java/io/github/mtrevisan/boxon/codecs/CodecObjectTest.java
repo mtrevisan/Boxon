@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.BindObject;
+import io.github.mtrevisan.boxon.annotations.ByteOrder;
 import io.github.mtrevisan.boxon.annotations.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
@@ -85,7 +86,27 @@ class CodecObjectTest{
 
 			@Override
 			public Choices selectFrom(){
-				return null;
+				return new Choices(){
+					@Override
+					public Class<? extends Annotation> annotationType(){
+						return null;
+					}
+
+					@Override
+					public int prefixSize(){
+						return 0;
+					}
+
+					@Override
+					public ByteOrder byteOrder(){
+						return null;
+					}
+
+					@Override
+					public Choice[] alternatives(){
+						return new Choice[0];
+					}
+				};
 			}
 
 			@Override

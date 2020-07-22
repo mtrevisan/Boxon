@@ -40,6 +40,7 @@ final class CodecLong implements CodecInterface<BindLong>{
 
 		final long v = reader.getLong(binding.byteOrder());
 
+		@SuppressWarnings("rawtypes")
 		final Class<? extends Converter> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
 		final Object value = CodecHelper.converterDecode(chosenConverter, v);
 
@@ -54,6 +55,7 @@ final class CodecLong implements CodecInterface<BindLong>{
 
 		CodecHelper.validateData(binding.match(), binding.validator(), value);
 
+		@SuppressWarnings("rawtypes")
 		final Class<? extends Converter> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
 		final long v = CodecHelper.converterEncode(chosenConverter, value);
 
