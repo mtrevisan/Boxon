@@ -103,7 +103,8 @@ You can use them as a starting point to build your own customized readers.
  - `type`: the Class of the Object of the single element of the array (defaults to `Object`).
  - `selectFrom`: the selection from which to choose the instance type.
  - `validator`: the Class of a validator (applied BEFORE the converter).
- - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
+ - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable.
+ - `selectConverterFrom`: the selection from which to choose the converter to apply.
 
 #### description
 Reads a single Object.
@@ -136,6 +137,7 @@ private Version version;
  - `selectFrom`: the selection from which to choose the instance type.
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
+ - `selectConverterFrom`: the selection from which to choose the converter to apply.
 
 #### description
 Reads an array of Objects.
@@ -168,6 +170,7 @@ private Version[] versions;
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN` (used for primitives other than `byte`).
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
+ - `selectConverterFrom`: the selection from which to choose the converter to apply.
 
 #### description
 Reads an array of primitives.
@@ -192,6 +195,7 @@ private byte[] array;
  - `match`: a string/regex/SpEl expression that is used as an expected value.
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
+ - `selectConverterFrom`: the selection from which to choose the converter to apply.
 
 #### description
 Reads a `BitMap`.
@@ -214,6 +218,7 @@ private BitMap bits;
  - `match`: a string/regex/SpEl expression that is used as an expected value.
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
+ - `selectConverterFrom`: the selection from which to choose the converter to apply.
 
 #### description
 Reads a byte (or Byte).
@@ -237,6 +242,7 @@ public Byte mask;
  - `match`: a string/regex/SpEl expression that is used as an expected value.
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
+ - `selectConverterFrom`: the selection from which to choose the converter to apply.
 
 #### description
 Reads a short (or Short).
@@ -260,6 +266,7 @@ private short numberShort;
  - `match`: a string/regex/SpEl expression that is used as an expected value.
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
+ - `selectConverterFrom`: the selection from which to choose the converter to apply.
 
 #### description
 Reads an int (or Integer).
@@ -283,6 +290,7 @@ private int numberInt;
  - `match`: a string/regex/SpEl expression that is used as an expected value.
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
+ - `selectConverterFrom`: the selection from which to choose the converter to apply.
 
 #### description
 Reads a long (or Long).
@@ -308,6 +316,7 @@ private long numberLong;
  - `match`: a string/regex/SpEl expression that is used as an expected value.
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
+ - `selectConverterFrom`: the selection from which to choose the converter to apply.
 
 #### description
 Reads a long number (primitive or not) or a BigInteger given the amount of bits.
@@ -334,6 +343,7 @@ private BigInteger number;
  - `match`: a string/regex/SpEl expression that is used as an expected value.
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
+ - `selectConverterFrom`: the selection from which to choose the converter to apply.
 
 #### description
 Reads a float (or Float).
@@ -357,6 +367,7 @@ private float number;
  - `match`: a string/regex/SpEl expression that is used as an expected value.
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
+ - `selectConverterFrom`: the selection from which to choose the converter to apply.
 
 #### description
 Reads a double (or Double).
@@ -381,6 +392,7 @@ private double number;
  - `match`: a string/regex/SpEl expression that is used as an expected value.
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
+ - `selectConverterFrom`: the selection from which to choose the converter to apply.
 
 #### description
 Reads a float or decimal (or Float or Double), depending on `type`, as a BigDecimal.
@@ -405,6 +417,7 @@ private BigDecimal number;
  - `match`: a string/regex/SpEl expression that is used as an expected value.
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
+ - `selectConverterFrom`: the selection from which to choose the converter to apply.
 
 #### description
 Reads a String.
@@ -430,6 +443,7 @@ public String text;
  - `match`: a string/regex/SpEl expression that is used as an expected value.
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
+ - `selectConverterFrom`: the selection from which to choose the converter to apply.
 
 #### description
 Reads a String.

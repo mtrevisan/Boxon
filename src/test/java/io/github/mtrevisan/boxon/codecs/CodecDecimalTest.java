@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.BindDecimal;
+import io.github.mtrevisan.boxon.annotations.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import org.apache.commons.lang3.StringUtils;
@@ -85,6 +86,11 @@ class CodecDecimalTest{
 			public Class<? extends Converter> converter(){
 				return NullConverter.class;
 			}
+
+			@Override
+			public ConverterChoices selectConverterFrom(){
+				return null;
+			}
 		};
 
 		BitWriter writer = new BitWriter();
@@ -137,6 +143,11 @@ class CodecDecimalTest{
 			@Override
 			public Class<? extends Converter> converter(){
 				return NullConverter.class;
+			}
+
+			@Override
+			public ConverterChoices selectConverterFrom(){
+				return null;
 			}
 		};
 
@@ -191,6 +202,11 @@ class CodecDecimalTest{
 			public Class<? extends Converter> converter(){
 				return NullConverter.class;
 			}
+
+			@Override
+			public ConverterChoices selectConverterFrom(){
+				return null;
+			}
 		};
 
 		BitWriter writer = new BitWriter();
@@ -243,6 +259,11 @@ class CodecDecimalTest{
 			@Override
 			public Class<? extends Converter> converter(){
 				return NullConverter.class;
+			}
+
+			@Override
+			public ConverterChoices selectConverterFrom(){
+				return null;
 			}
 		};
 
