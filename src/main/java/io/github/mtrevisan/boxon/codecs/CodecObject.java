@@ -31,7 +31,6 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.exceptions.ProtocolMessageException;
 
 import java.lang.annotation.Annotation;
-import java.math.BigInteger;
 
 
 @SuppressWarnings("unused")

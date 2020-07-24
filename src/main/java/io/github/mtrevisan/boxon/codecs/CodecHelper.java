@@ -39,7 +39,7 @@ import java.util.regex.PatternSyntaxException;
 
 final class CodecHelper{
 
-	private static final String CONTEXT_CHOICE_PREFIX = "prefix";
+	public static final String CONTEXT_CHOICE_PREFIX = "prefix";
 
 
 	private CodecHelper(){}

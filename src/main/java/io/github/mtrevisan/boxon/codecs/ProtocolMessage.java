@@ -41,11 +41,15 @@ import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 /**
@@ -184,11 +188,22 @@ final class ProtocolMessage<T>{
 
 		private static void validateChoice(final ObjectChoices selectFrom, final Class<?> type){
 			final int prefixSize = selectFrom.prefixSize();
+			if(prefixSize < 0)
+				throw new AnnotationException("`prefixSize` must be a non-negative number");
 			if(prefixSize > Integer.SIZE)
 				throw new AnnotationException("`prefixSize` cannot be greater than {} bits", Integer.SIZE);
 
-			if(type == Object.class && selectFrom.alternatives().length == 0)
-				throw new AnnotationException("`type` argument missing");
+			final String prefixName = "#" + CodecHelper.CONTEXT_CHOICE_PREFIX;
+			final Stream<ObjectChoices.ObjectChoice> stream = Arrays.stream(selectFrom.alternatives());
+			final Predicate<ObjectChoices.ObjectChoice> test = a -> a.condition().contains(prefixName);
+			if(prefixSize == 0 && stream.anyMatch(test))
+				throw new AnnotationException("Any condition cannot contain a reference to the prefix");
+			else if(prefixSize > 0){
+				if(selectFrom.alternatives().length == 0)
+					throw new AnnotationException("Alternatives missing");
+				else if(stream.noneMatch(test))
+					throw new AnnotationException("Any condition must contain a reference to the prefix");
+			}
 		}
 	}
 
