@@ -44,7 +44,7 @@ final class CodecHelper{
 
 	private CodecHelper(){}
 
-	static ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives, final int prefix, final Object data){
+	static ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Integer prefix, final Object data){
 		ObjectChoices.ObjectChoice chosenAlternative = null;
 
 		Evaluator.addToContext(CONTEXT_CHOICE_PREFIX, prefix);

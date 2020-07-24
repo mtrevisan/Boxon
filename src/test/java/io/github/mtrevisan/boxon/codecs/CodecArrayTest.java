@@ -76,6 +76,20 @@ class CodecArrayTest{
 		public CodecObjectTest.TestType0[] value;
 	}
 
+	@MessageHeader(start = "tc5")
+	static class TestChoice5{
+		@BindString(size = "3")
+		public String header;
+		@BindByte
+		public byte type;
+		@BindArray(size = "1", type = CodecObjectTest.TestType0.class, selectFrom = @ObjectChoices(
+			alternatives = {
+				@ObjectChoices.ObjectChoice(condition = "type == 1", type = CodecObjectTest.TestType1.class),
+				@ObjectChoices.ObjectChoice(condition = "type == 2", type = CodecObjectTest.TestType2.class)
+			}))
+		public CodecObjectTest.TestType0[] value;
+	}
+
 
 	@Test
 	void arrayPrimitive(){
@@ -245,6 +259,34 @@ class CodecArrayTest{
 		Assertions.assertEquals(0x1122_3344, ((CodecObjectTest.TestType2)values[1]).value);
 		Assertions.assertEquals(CodecObjectTest.TestType1.class, values[2].getClass());
 		Assertions.assertEquals(0x0666, ((CodecObjectTest.TestType1)values[2]).value);
+
+		ComposeResponse response = parser.compose(parsedMessage);
+		Assertions.assertNotNull(response);
+		Assertions.assertFalse(response.hasErrors());
+		Assertions.assertArrayEquals(payload, response.getComposedMessage());
+	}
+
+	@Test
+	void arrayOfDifferentObjectsWithNoPrefix(){
+		Loader loader = new Loader();
+		loader.loadCodecs();
+		ProtocolMessage<TestChoice5> protocolMessage = ProtocolMessage.createFrom(TestChoice5.class, loader);
+		Parser parser = Parser.create()
+			.withDefaultCodecs()
+			.withProtocolMessages(protocolMessage);
+
+		byte[] payload = ByteHelper.toByteArray("746335011234");
+		ParseResponse result = parser.parse(payload);
+
+		Assertions.assertNotNull(result);
+		Assertions.assertFalse(result.hasErrors());
+		List<Object> parsedMessages = result.getParsedMessages();
+		Assertions.assertEquals(1, parsedMessages.size());
+		Assertions.assertEquals(TestChoice5.class, parsedMessages.get(0).getClass());
+		TestChoice5 parsedMessage = (TestChoice5)parsedMessages.get(0);
+		CodecObjectTest.TestType0[] values = parsedMessage.value;
+		Assertions.assertEquals(CodecObjectTest.TestType1.class, values[0].getClass());
+		Assertions.assertEquals(0x1234, ((CodecObjectTest.TestType1)values[0]).value);
 
 		ComposeResponse response = parser.compose(parsedMessage);
 		Assertions.assertNotNull(response);
