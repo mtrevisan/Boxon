@@ -221,6 +221,7 @@ public final class BitWriter{
 	 *
 	 * @param text	The {@code String}s to be written.
 	 * @param terminator	The terminator.
+	 * @param consumeTerminator	Whether to consume the terminator.
 	 * @param charset	The charset.
 	 */
 	public final void putText(final String text, final byte terminator, final boolean consumeTerminator, final Charset charset){

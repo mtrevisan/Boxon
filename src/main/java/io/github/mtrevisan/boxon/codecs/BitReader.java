@@ -382,6 +382,7 @@ public final class BitReader{
 	 * Reads the specified amount of {@code char}s from this {@link BitReader} into a {@link String} with a given {@link Charset}.
 	 *
 	 * @param length	The number of {@code char}s to read.
+	 * @param charset	The charset.
 	 * @return	A {@link String} of length {@code n} coded with a given {@link Charset} that contains {@code char}s
 	 * 	read from this {@link BitReader}.
 	 */
@@ -389,7 +390,15 @@ public final class BitReader{
 		return new String(getBytes(length), charset);
 	}
 
-	/** Reads a string until a terminator is found */
+	/**
+	 * Reads a string until a terminator is found
+	 *
+	 * @param terminator	The terminator of the string to be read.
+	 * @param consumeTerminator	Whether to consume the terminator.
+	 * @param charset	The charset.
+	 * @return	A {@link String} of length {@code n} coded with a given {@link Charset} that contains {@code char}s
+	 * 	read from this {@link BitReader}.
+	 */
 	public final String getTextUntilTerminator(final byte terminator, final boolean consumeTerminator, final Charset charset){
 		String text = null;
 		try(
