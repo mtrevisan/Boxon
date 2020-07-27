@@ -53,6 +53,7 @@ public class ParseResponse{
 
 	public void addParsedMessage(final byte[] payload, final Object decodedMessage){
 		parsedMessageIndexes.add(payloads.size());
+
 		payloads.add(payload);
 		parsedMessages.add(decodedMessage);
 	}
@@ -67,6 +68,7 @@ public class ParseResponse{
 
 	public void addError(final byte[] payload, final ParseException exception){
 		errorIndexes.add(payloads.size());
+
 		payloads.add(payload);
 		errors.add(exception);
 	}
