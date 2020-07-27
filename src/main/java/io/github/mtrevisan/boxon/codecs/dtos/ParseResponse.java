@@ -28,7 +28,6 @@ import io.github.mtrevisan.boxon.codecs.exceptions.ParseException;
 import io.github.mtrevisan.boxon.helpers.ByteHelper;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -56,7 +55,9 @@ public class ParseResponse{
 	}
 
 	private byte[] getPayloadBetween(final int start, final int end){
-		return Arrays.copyOfRange(payload, start, end);
+		final byte[] copy = new byte[end - start];
+		System.arraycopy(payload, start, copy, 0, end - start);
+		return copy;
 	}
 
 
@@ -70,7 +71,7 @@ public class ParseResponse{
 
 	public byte[] getParsedMessagePayloadAt(final int index){
 		final int start = parsedMessageStartIndexes.get(index);
-		final int end = index + 1 < parsedMessageStartIndexes.size()? parsedMessageStartIndexes.get(index + 1): payload.length;
+		final int end = (index + 1 < parsedMessageStartIndexes.size()? parsedMessageStartIndexes.get(index + 1): payload.length);
 		return getPayloadBetween(start, end);
 	}
 
@@ -97,7 +98,7 @@ public class ParseResponse{
 
 	public byte[] getErrorPayloadAt(final int index){
 		final int start = errorStartIndexes.get(index);
-		final int end = index + 1 < errorStartIndexes.size()? errorStartIndexes.get(index + 1): payload.length;
+		final int end = (index + 1 < errorStartIndexes.size()? errorStartIndexes.get(index + 1): payload.length);
 		return getPayloadBetween(start, end);
 	}
 
