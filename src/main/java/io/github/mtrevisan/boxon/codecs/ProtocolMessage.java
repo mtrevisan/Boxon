@@ -131,7 +131,7 @@ final class ProtocolMessage<T>{
 				final BindArray binding = (BindArray)annotation;
 				final ObjectChoices selectFrom = binding.selectFrom();
 				final Class<?> type = binding.type();
-				validateChoice(selectFrom, type);
+				validateChoice(selectFrom);
 
 				if(ReflectionHelper.isPrimitive(type))
 					throw new AnnotationException("Bad annotation used for @{}, should have been used the type `{}.class`", BindArrayPrimitive.class.getSimpleName(),
@@ -145,7 +145,10 @@ final class ProtocolMessage<T>{
 				final BindObject binding = (BindObject)annotation;
 				final ObjectChoices selectFrom = binding.selectFrom();
 				final Class<?> type = binding.type();
-				validateChoice(selectFrom, type);
+				validateChoice(selectFrom);
+
+				if(ReflectionHelper.isPrimitive(type))
+					throw new AnnotationException("Bad annotation used for @{}, should have been used one of the primitive type's annotations", BindObject.class.getSimpleName());
 			}
 		},
 
@@ -185,7 +188,7 @@ final class ProtocolMessage<T>{
 
 		abstract void validate(final Annotation annotation);
 
-		private static void validateChoice(final ObjectChoices selectFrom, final Class<?> type){
+		private static void validateChoice(final ObjectChoices selectFrom){
 			final int prefixSize = selectFrom.prefixSize();
 			if(prefixSize < 0)
 				throw new AnnotationException("`prefixSize` must be a non-negative number");
