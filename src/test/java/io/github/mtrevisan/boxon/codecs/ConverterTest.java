@@ -110,8 +110,7 @@ class ConverterTest{
 		List<ParseException> errors = result.getErrors();
 		Assertions.assertEquals(1, errors.size());
 		ParseException error = errors.get(0);
-		Assertions.assertEquals("Error decoding message: \r\n"
-			+ "class java.lang.Byte cannot be cast to class [B (java.lang.Byte and [B are in module java.base of loader 'bootstrap'), field TestConverter1.value\r\n"
+		Assertions.assertEquals("class java.lang.Byte cannot be cast to class [B (java.lang.Byte and [B are in module java.base of loader 'bootstrap'), field TestConverter1.value\r\n"
 			+ "   at index 4", error.getMessage());
 	}
 
@@ -136,8 +135,7 @@ class ConverterTest{
 		List<ParseException> errors = result.getErrors();
 		Assertions.assertEquals(1, errors.size());
 		ParseException error = errors.get(0);
-		Assertions.assertEquals("Error decoding message: \r\n"
-			+ "Can not set java.lang.String field io.github.mtrevisan.boxon.codecs.ConverterTest$TestConverter2.value to java.lang.Byte, field TestConverter2.value\r\n"
+		Assertions.assertEquals("Can not set java.lang.String field io.github.mtrevisan.boxon.codecs.ConverterTest$TestConverter2.value to java.lang.Byte, field TestConverter2.value\r\n"
 			+ "   at index 4", error.getMessage());
 	}
 

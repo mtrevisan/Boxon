@@ -24,7 +24,6 @@
  */
 package io.github.mtrevisan.boxon.codecs.exceptions;
 
-import io.github.mtrevisan.boxon.helpers.ByteHelper;
 import io.github.mtrevisan.boxon.helpers.ExceptionHelper;
 
 import java.util.StringJoiner;
@@ -35,21 +34,22 @@ public class ParseException extends Exception{
 	private static final long serialVersionUID = -7230533024483622086L;
 
 
-	private final byte[] wholeMessage;
 	private final int errorIndex;
 
 
-	public ParseException(final byte[] wholeMessage, final int errorIndex, final Throwable cause){
+	public ParseException(final int errorIndex, final Throwable cause){
 		super(cause);
 
-		this.wholeMessage = wholeMessage;
 		this.errorIndex = errorIndex;
+	}
+
+	public int getErrorIndex(){
+		return errorIndex;
 	}
 
 	@Override
 	public String getMessage(){
 		final StringJoiner sj = new StringJoiner(System.lineSeparator());
-		sj.add("Error decoding message: " + ByteHelper.toHexString(wholeMessage));
 		final Throwable cause = getCause();
 		if(cause != null)
 			sj.add(ExceptionHelper.getMessageNoLineNumber(cause));

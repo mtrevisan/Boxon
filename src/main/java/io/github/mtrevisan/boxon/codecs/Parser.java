@@ -233,7 +233,7 @@ public class Parser{
 				response.addParsedMessage(Arrays.copyOfRange(array, start, end), partialDecodedMessage);
 			}
 			catch(final Throwable t){
-				final ParseException pe = createParseException(reader, t);
+				final ParseException pe = new ParseException(reader.position(), t);
 
 				//restore state of the reader
 				reader.restoreFallbackPoint();
@@ -258,17 +258,10 @@ public class Parser{
 		if(!response.hasErrors() && reader.hasRemaining()){
 			final byte[] array = reader.array();
 			final int position = reader.position();
-			final IllegalArgumentException error = new IllegalArgumentException("There are remaining bytes");
-			final ParseException pe = new ParseException(array, position, error);
+			final IllegalArgumentException error = new IllegalArgumentException("There are remaining unread bytes");
+			final ParseException pe = new ParseException(position, error);
 			response.addError(Arrays.copyOfRange(array, position, array.length), pe);
 		}
-	}
-
-	private ParseException createParseException(final BitReader reader, final Throwable t){
-		final byte[] payload = reader.array();
-		final int position = reader.position();
-		final byte[] subPayload = Arrays.copyOfRange(payload, position, payload.length);
-		return new ParseException(subPayload, position, t);
 	}
 
 

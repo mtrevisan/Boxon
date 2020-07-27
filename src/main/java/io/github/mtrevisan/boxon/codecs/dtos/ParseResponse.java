@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.codecs.dtos;
 
 import io.github.mtrevisan.boxon.codecs.exceptions.ParseException;
+import io.github.mtrevisan.boxon.helpers.ByteHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,6 +82,12 @@ public class ParseResponse{
 	@SuppressWarnings("unused")
 	public List<ParseException> getErrors(){
 		return errors;
+	}
+
+	public String getMessageForError(final int index){
+		return "Error decoding message: " + ByteHelper.toHexString(payloads.get(errorIndexes.get(index)))
+			+ System.lineSeparator()
+			+ errors.get(index).getMessage();
 	}
 
 }
