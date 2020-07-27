@@ -70,8 +70,8 @@ public class ParseResponse{
 		return parsedMessages.get(index);
 	}
 
-	public int getParsedMessageIndexAt(final int index){
-		return parsedMessageIndexes.get(index);
+	public byte[] getParsedMessagePayloadAt(final int index){
+		return payloads.get(parsedMessageIndexes.get(index));
 	}
 
 
@@ -100,8 +100,8 @@ public class ParseResponse{
 			+ errors.get(index).getMessage();
 	}
 
-	public int getErrorIndexAt(final int index){
-		return errorIndexes.get(index);
+	public byte[] getErrorPayloadAt(final int index){
+		return payloads.get(errorIndexes.get(index));
 	}
 
 }
