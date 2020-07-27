@@ -32,12 +32,14 @@ import java.util.List;
 
 public class ParseResponse{
 
-	/** List of all payloads */
+	/** List of all payloads ({@link #parsedMessageIndexes} and {@link #errorIndexes} point here) */
 	private final List<byte[]> payloads = new ArrayList<>(0);
+
 	/** List of successfully parsed messages */
 	private final List<Object> parsedMessages = new ArrayList<>(0);
 	/** List of indexes of successfully parsed messages on the {@link #payloads} variable */
 	private final List<Integer> parsedMessageIndexes = new ArrayList<>(0);
+
 	/** List of error messages */
 	private final List<ParseException> errors = new ArrayList<>(0);
 	/** List of indexes of error messages on the {@link #payloads} variable */
