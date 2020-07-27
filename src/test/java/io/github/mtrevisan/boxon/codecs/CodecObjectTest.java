@@ -46,7 +46,6 @@ import io.github.mtrevisan.boxon.helpers.ByteHelper;
 import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
 
 import java.lang.annotation.Annotation;
-import java.util.List;
 
 
 class CodecObjectTest{
@@ -208,10 +207,9 @@ class CodecObjectTest{
 
 		Assertions.assertNotNull(result);
 		Assertions.assertFalse(result.hasErrors());
-		List<Object> parsedMessages = result.getParsedMessages();
-		Assertions.assertEquals(1, parsedMessages.size());
-		Assertions.assertEquals(TestChoice1.class, parsedMessages.get(0).getClass());
-		TestChoice1 parsedMessage = (TestChoice1)parsedMessages.get(0);
+		Assertions.assertEquals(1, result.getParsedMessageCount());
+		Assertions.assertEquals(TestChoice1.class, result.getParsedMessageAt(0).getClass());
+		TestChoice1 parsedMessage = (TestChoice1)result.getParsedMessageAt(0);
 		TestType1 value1 = (TestType1)parsedMessage.value;
 		Assertions.assertEquals(0x1234, value1.value);
 
@@ -226,10 +224,9 @@ class CodecObjectTest{
 
 		Assertions.assertNotNull(result);
 		Assertions.assertFalse(result.hasErrors());
-		parsedMessages = result.getParsedMessages();
-		Assertions.assertEquals(1, parsedMessages.size());
-		Assertions.assertEquals(TestChoice1.class, parsedMessages.get(0).getClass());
-		parsedMessage = (TestChoice1)parsedMessages.get(0);
+		Assertions.assertEquals(1, result.getParsedMessageCount());
+		Assertions.assertEquals(TestChoice1.class, result.getParsedMessageAt(0).getClass());
+		parsedMessage = (TestChoice1)result.getParsedMessageAt(0);
 		TestType2 value2 = (TestType2)parsedMessage.value;
 		Assertions.assertEquals(0x1122_3344, value2.value);
 
@@ -253,10 +250,9 @@ class CodecObjectTest{
 
 		Assertions.assertNotNull(result);
 		Assertions.assertFalse(result.hasErrors());
-		List<Object> parsedMessages = result.getParsedMessages();
-		Assertions.assertEquals(1, parsedMessages.size());
-		Assertions.assertEquals(TestChoice2.class, parsedMessages.get(0).getClass());
-		TestChoice2 parsedMessage = (TestChoice2)parsedMessages.get(0);
+		Assertions.assertEquals(1, result.getParsedMessageCount());
+		Assertions.assertEquals(TestChoice2.class, result.getParsedMessageAt(0).getClass());
+		TestChoice2 parsedMessage = (TestChoice2)result.getParsedMessageAt(0);
 		TestType1 value1 = (TestType1)parsedMessage.value;
 		Assertions.assertEquals(0x1234, value1.value);
 
@@ -271,10 +267,9 @@ class CodecObjectTest{
 
 		Assertions.assertNotNull(result);
 		Assertions.assertFalse(result.hasErrors());
-		parsedMessages = result.getParsedMessages();
-		Assertions.assertEquals(1, parsedMessages.size());
-		Assertions.assertEquals(TestChoice2.class, parsedMessages.get(0).getClass());
-		parsedMessage = (TestChoice2)parsedMessages.get(0);
+		Assertions.assertEquals(1, result.getParsedMessageCount());
+		Assertions.assertEquals(TestChoice2.class, result.getParsedMessageAt(0).getClass());
+		parsedMessage = (TestChoice2)result.getParsedMessageAt(0);
 		TestType2 value2 = (TestType2)parsedMessage.value;
 		Assertions.assertEquals(0x1122_3344, value2.value);
 
@@ -298,10 +293,9 @@ class CodecObjectTest{
 
 		Assertions.assertNotNull(result);
 		Assertions.assertFalse(result.hasErrors());
-		List<Object> parsedMessages = result.getParsedMessages();
-		Assertions.assertEquals(1, parsedMessages.size());
-		Assertions.assertEquals(TestChoice3.class, parsedMessages.get(0).getClass());
-		TestChoice3 parsedMessage = (TestChoice3)parsedMessages.get(0);
+		Assertions.assertEquals(1, result.getParsedMessageCount());
+		Assertions.assertEquals(TestChoice3.class, result.getParsedMessageAt(0).getClass());
+		TestChoice3 parsedMessage = (TestChoice3)result.getParsedMessageAt(0);
 		TestType1 value1 = (TestType1)parsedMessage.value;
 		Assertions.assertEquals(0x1234, value1.value);
 
@@ -316,10 +310,9 @@ class CodecObjectTest{
 
 		Assertions.assertNotNull(result);
 		Assertions.assertFalse(result.hasErrors());
-		parsedMessages = result.getParsedMessages();
-		Assertions.assertEquals(1, parsedMessages.size());
-		Assertions.assertEquals(TestChoice3.class, parsedMessages.get(0).getClass());
-		parsedMessage = (TestChoice3)parsedMessages.get(0);
+		Assertions.assertEquals(1, result.getParsedMessageCount());
+		Assertions.assertEquals(TestChoice3.class, result.getParsedMessageAt(0).getClass());
+		parsedMessage = (TestChoice3)result.getParsedMessageAt(0);
 		TestType2 value2 = (TestType2)parsedMessage.value;
 		Assertions.assertEquals(0x1122_3344, value2.value);
 

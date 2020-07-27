@@ -35,8 +35,6 @@ import io.github.mtrevisan.boxon.codecs.exceptions.ParseException;
 import io.github.mtrevisan.boxon.codecs.dtos.ParseResponse;
 import io.github.mtrevisan.boxon.helpers.ByteHelper;
 
-import java.util.List;
-
 
 class ConverterTest{
 
@@ -103,13 +101,12 @@ class ConverterTest{
 
 		Assertions.assertNotNull(result);
 		Assertions.assertTrue(result.hasErrors());
-		Assertions.assertEquals(1, result.getPayloads().size());
+		Assertions.assertEquals(1, result.getPayloadCount());
 		Assertions.assertEquals(1, result.getErrorIndexes().size());
 		Assertions.assertEquals(0, result.getErrorIndexes().get(0));
-		Assertions.assertArrayEquals(payload, result.getPayloads().get(0));
-		List<ParseException> errors = result.getErrors();
-		Assertions.assertEquals(1, errors.size());
-		ParseException error = errors.get(0);
+		Assertions.assertArrayEquals(payload, result.getPayloadAt(0));
+		Assertions.assertEquals(1, result.getErrorCount());
+		ParseException error = result.getErrorAt(0);
 		Assertions.assertEquals("class java.lang.Byte cannot be cast to class [B (java.lang.Byte and [B are in module java.base of loader 'bootstrap'), field TestConverter1.value\r\n"
 			+ "   at index 4", error.getMessage());
 	}
@@ -128,13 +125,12 @@ class ConverterTest{
 
 		Assertions.assertNotNull(result);
 		Assertions.assertTrue(result.hasErrors());
-		Assertions.assertEquals(1, result.getPayloads().size());
+		Assertions.assertEquals(1, result.getPayloadCount());
 		Assertions.assertEquals(1, result.getErrorIndexes().size());
 		Assertions.assertEquals(0, result.getErrorIndexes().get(0));
-		Assertions.assertArrayEquals(payload, result.getPayloads().get(0));
-		List<ParseException> errors = result.getErrors();
-		Assertions.assertEquals(1, errors.size());
-		ParseException error = errors.get(0);
+		Assertions.assertArrayEquals(payload, result.getPayloadAt(0));
+		Assertions.assertEquals(1, result.getErrorCount());
+		ParseException error = result.getErrorAt(0);
 		Assertions.assertEquals("Can not set java.lang.String field io.github.mtrevisan.boxon.codecs.ConverterTest$TestConverter2.value to java.lang.Byte, field TestConverter2.value\r\n"
 			+ "   at index 4", error.getMessage());
 	}

@@ -44,7 +44,6 @@ import io.github.mtrevisan.boxon.helpers.ByteHelper;
 import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
 
 import java.lang.annotation.Annotation;
-import java.util.List;
 
 
 class CodecArrayTest{
@@ -248,10 +247,9 @@ class CodecArrayTest{
 
 		Assertions.assertNotNull(result);
 		Assertions.assertFalse(result.hasErrors());
-		List<Object> parsedMessages = result.getParsedMessages();
-		Assertions.assertEquals(1, parsedMessages.size());
-		Assertions.assertEquals(TestChoice4.class, parsedMessages.get(0).getClass());
-		TestChoice4 parsedMessage = (TestChoice4)parsedMessages.get(0);
+		Assertions.assertEquals(1, result.getParsedMessageCount());
+		Assertions.assertEquals(TestChoice4.class, result.getParsedMessageAt(0).getClass());
+		TestChoice4 parsedMessage = (TestChoice4)result.getParsedMessageAt(0);
 		CodecObjectTest.TestType0[] values = parsedMessage.value;
 		Assertions.assertEquals(CodecObjectTest.TestType1.class, values[0].getClass());
 		Assertions.assertEquals(0x1234, ((CodecObjectTest.TestType1)values[0]).value);
@@ -280,10 +278,9 @@ class CodecArrayTest{
 
 		Assertions.assertNotNull(result);
 		Assertions.assertFalse(result.hasErrors());
-		List<Object> parsedMessages = result.getParsedMessages();
-		Assertions.assertEquals(1, parsedMessages.size());
-		Assertions.assertEquals(TestChoice5.class, parsedMessages.get(0).getClass());
-		TestChoice5 parsedMessage = (TestChoice5)parsedMessages.get(0);
+		Assertions.assertEquals(1, result.getParsedMessageCount());
+		Assertions.assertEquals(TestChoice5.class, result.getParsedMessageAt(0).getClass());
+		TestChoice5 parsedMessage = (TestChoice5)result.getParsedMessageAt(0);
 		CodecObjectTest.TestType0[] values = parsedMessage.value;
 		Assertions.assertEquals(CodecObjectTest.TestType1.class, values[0].getClass());
 		Assertions.assertEquals(0x1234, ((CodecObjectTest.TestType1)values[0]).value);

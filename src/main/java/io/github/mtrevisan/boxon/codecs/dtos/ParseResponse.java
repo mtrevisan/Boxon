@@ -47,8 +47,12 @@ public class ParseResponse{
 	private final List<Integer> errorIndexes = new ArrayList<>(0);
 
 
-	public List<byte[]> getPayloads(){
-		return payloads;
+	public int getPayloadCount(){
+		return payloads.size();
+	}
+
+	public byte[] getPayloadAt(final int index){
+		return payloads.get(index);
 	}
 
 	public void addParsedMessage(final byte[] payload, final Object decodedMessage){
@@ -58,12 +62,29 @@ public class ParseResponse{
 		parsedMessages.add(decodedMessage);
 	}
 
-	public List<Object> getParsedMessages(){
-		return parsedMessages;
+	public int getParsedMessageCount(){
+		return parsedMessages.size();
+	}
+
+	public Object getParsedMessageAt(final int index){
+		return parsedMessages.get(index);
 	}
 
 	public List<Integer> getParsedMessageIndexes(){
 		return parsedMessageIndexes;
+	}
+
+
+	public int getErrorCount(){
+		return errors.size();
+	}
+
+	public ParseException getErrorAt(final int index){
+		return errors.get(index);
+	}
+
+	public boolean hasErrors(){
+		return !errors.isEmpty();
 	}
 
 	public void addError(final byte[] payload, final ParseException exception){
@@ -73,23 +94,14 @@ public class ParseResponse{
 		errors.add(exception);
 	}
 
-	public List<Integer> getErrorIndexes(){
-		return errorIndexes;
-	}
-
-	public boolean hasErrors(){
-		return !errors.isEmpty();
-	}
-
-	@SuppressWarnings("unused")
-	public List<ParseException> getErrors(){
-		return errors;
-	}
-
 	public String getMessageForError(final int index){
 		return "Error decoding message: " + ByteHelper.toHexString(payloads.get(errorIndexes.get(index)))
 			+ System.lineSeparator()
 			+ errors.get(index).getMessage();
+	}
+
+	public List<Integer> getErrorIndexes(){
+		return errorIndexes;
 	}
 
 }

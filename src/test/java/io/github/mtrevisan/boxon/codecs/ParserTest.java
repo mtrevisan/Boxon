@@ -54,10 +54,10 @@ class ParserTest{
 		ParseResponse parseResult = parser.parse(payload);
 
 		Assertions.assertFalse(parseResult.hasErrors());
-		Assertions.assertEquals(1, parseResult.getParsedMessages().size());
+		Assertions.assertEquals(1, parseResult.getParsedMessageCount());
 
 		//compose:
-		ComposeResponse composeResult = parser.compose(parseResult.getParsedMessages().get(0));
+		ComposeResponse composeResult = parser.compose(parseResult.getParsedMessageAt(0));
 
 		Assertions.assertFalse(composeResult.hasErrors());
 		Assertions.assertArrayEquals(payload, composeResult.getComposedMessage());
@@ -77,7 +77,7 @@ class ParserTest{
 		ParseResponse result = parser.parse(payload);
 
 		Assertions.assertFalse(result.hasErrors());
-		Assertions.assertEquals(2, result.getParsedMessages().size());
+		Assertions.assertEquals(2, result.getParsedMessageCount());
 	}
 
 	@Test
@@ -95,10 +95,10 @@ class ParserTest{
 		ParseResponse parseResult = parser.parse(payload);
 
 		Assertions.assertFalse(parseResult.hasErrors());
-		Assertions.assertEquals(1, parseResult.getParsedMessages().size());
+		Assertions.assertEquals(1, parseResult.getParsedMessageCount());
 
 		//compose:
-		ComposeResponse composeResult = parser.compose(parseResult.getParsedMessages().get(0));
+		ComposeResponse composeResult = parser.compose(parseResult.getParsedMessageAt(0));
 
 		Assertions.assertFalse(composeResult.hasErrors());
 		Assertions.assertArrayEquals(payload, composeResult.getComposedMessage());
@@ -118,7 +118,7 @@ class ParserTest{
 		ParseResponse result = parser.parse(payload);
 
 		Assertions.assertFalse(result.hasErrors());
-		Assertions.assertEquals(2, result.getParsedMessages().size());
+		Assertions.assertEquals(2, result.getParsedMessageCount());
 	}
 
 	@Test
@@ -138,7 +138,7 @@ class ParserTest{
 		ParseResponse result = parser.parse(payload);
 
 		Assertions.assertFalse(result.hasErrors());
-		Assertions.assertEquals(2, result.getParsedMessages().size());
+		Assertions.assertEquals(2, result.getParsedMessageCount());
 	}
 
 	@Test
@@ -158,7 +158,7 @@ class ParserTest{
 		ParseResponse result = parser.parse(payload);
 
 		Assertions.assertFalse(result.hasErrors());
-		Assertions.assertEquals(2, result.getParsedMessages().size());
+		Assertions.assertEquals(2, result.getParsedMessageCount());
 	}
 
 }
