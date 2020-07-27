@@ -833,9 +833,11 @@ All you have to care about, for a simple example on multi-message automatically-
 //optionally create a context ('null' otherwise)
 Map<String, Object> context = ...
 //read all the codecs and annotated classes from where the parser resides and all of its children packages
-Parser parser = Parser.createDefaultWithContext(context);
+Parser parser = Parser.create()
+   .withContext(context);
 //... or pass the parent package (see all the constructors of Parser for more)
-Parser parser = Parser.createWithContext(context)
+Parser parser = Parser.create()
+   .withContext(context)
    .withDefaultCodecs()
    .withProtocolMessages("base.package.messages");
 
