@@ -28,39 +28,37 @@ import io.github.mtrevisan.boxon.codecs.exceptions.ParseException;
 import io.github.mtrevisan.boxon.helpers.ByteHelper;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
 public class ParseResponse{
 
-	/** List of all payloads ({@link #parsedMessageIndexes} and {@link #errorIndexes} point here) */
-	private final List<byte[]> payloads = new ArrayList<>(0);
+	/** Whole payload ({@link #parsedMessageStartIndexes} and {@link #errorStartIndexes} point here) */
+	private final byte[] payload;
 
 	/** List of successfully parsed messages */
 	private final List<Object> parsedMessages = new ArrayList<>(0);
-	/** List of indexes of successfully parsed messages on the {@link #payloads} variable */
-	private final List<Integer> parsedMessageIndexes = new ArrayList<>(0);
+	/** List of starting index for each message */
+	private final List<Integer> parsedMessageStartIndexes = new ArrayList<>(0);
 
 	/** List of error messages */
 	private final List<ParseException> errors = new ArrayList<>(0);
-	/** List of indexes of error messages on the {@link #payloads} variable */
-	private final List<Integer> errorIndexes = new ArrayList<>(0);
+	private final List<Integer> errorStartIndexes = new ArrayList<>(0);
 
 
-	public int getPayloadCount(){
-		return payloads.size();
+	public ParseResponse(final byte[] payload){
+		this.payload = payload;
 	}
 
-	public byte[] getPayloadAt(final int index){
-		return payloads.get(index);
+	public int getTotalMessageCount(){
+		return parsedMessages.size() + errors.size();
 	}
 
-	public void addParsedMessage(final byte[] payload, final Object decodedMessage){
-		parsedMessageIndexes.add(payloads.size());
-
-		payloads.add(payload);
-		parsedMessages.add(decodedMessage);
+	private byte[] getPayloadBetween(final int start, final int end){
+		return Arrays.copyOfRange(payload, start, end);
 	}
+
 
 	public int getParsedMessageCount(){
 		return parsedMessages.size();
@@ -71,7 +69,15 @@ public class ParseResponse{
 	}
 
 	public byte[] getParsedMessagePayloadAt(final int index){
-		return payloads.get(parsedMessageIndexes.get(index));
+		final int start = parsedMessageStartIndexes.get(index);
+		final int end = index + 1 < parsedMessageStartIndexes.size()? parsedMessageStartIndexes.get(index + 1): payload.length;
+		return getPayloadBetween(start, end);
+	}
+
+	public void addParsedMessage(final int start, final Object decodedMessage){
+		parsedMessageStartIndexes.add(start);
+
+		parsedMessages.add(decodedMessage);
 	}
 
 
@@ -83,25 +89,26 @@ public class ParseResponse{
 		return errors.get(index);
 	}
 
-	public boolean hasErrors(){
-		return !errors.isEmpty();
-	}
-
-	public void addError(final byte[] payload, final ParseException exception){
-		errorIndexes.add(payloads.size());
-
-		payloads.add(payload);
-		errors.add(exception);
-	}
-
 	public String getMessageForError(final int index){
-		return "Error decoding message: " + ByteHelper.toHexString(payloads.get(errorIndexes.get(index)))
+		return "Error decoding message: " + ByteHelper.toHexString(getErrorPayloadAt(index))
 			+ System.lineSeparator()
 			+ errors.get(index).getMessage();
 	}
 
 	public byte[] getErrorPayloadAt(final int index){
-		return payloads.get(errorIndexes.get(index));
+		final int start = errorStartIndexes.get(index);
+		final int end = index + 1 < errorStartIndexes.size()? errorStartIndexes.get(index + 1): payload.length;
+		return getPayloadBetween(start, end);
+	}
+
+	public boolean hasErrors(){
+		return !errors.isEmpty();
+	}
+
+	public void addError(final int start, final ParseException exception){
+		errorStartIndexes.add(start);
+
+		errors.add(exception);
 	}
 
 }

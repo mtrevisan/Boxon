@@ -216,9 +216,9 @@ public class Parser{
 	 * @return	The parse response
 	 */
 	public ParseResponse parse(final BitReader reader){
-		final ParseResponse response = new ParseResponse();
-
 		final byte[] array = reader.array();
+		final ParseResponse response = new ParseResponse(array);
+
 		int start = 0;
 		while(reader.hasRemaining()){
 			start = reader.position();
@@ -231,7 +231,7 @@ public class Parser{
 				final Object partialDecodedMessage = protocolMessageParser.decode(protocolMessage, reader);
 
 				final int end = reader.position();
-				response.addParsedMessage(Arrays.copyOfRange(array, start, end), partialDecodedMessage);
+				response.addParsedMessage(start, partialDecodedMessage);
 			}
 			catch(final Throwable t){
 				final ParseException pe = new ParseException(reader.position(), t);
@@ -240,7 +240,7 @@ public class Parser{
 				reader.restoreFallbackPoint();
 
 				final int position = protocolMessageParser.loader.findNextMessageIndex(reader);
-				response.addError(Arrays.copyOfRange(array, start, (position >= 0? position: array.length)), pe);
+				response.addError(start, pe);
 				if(position < 0)
 					//cannot find any protocol message for message
 					break;
@@ -261,7 +261,7 @@ public class Parser{
 			final int position = reader.position();
 			final IllegalArgumentException error = new IllegalArgumentException("There are remaining unread bytes");
 			final ParseException pe = new ParseException(position, error);
-			response.addError(Arrays.copyOfRange(array, start, array.length), pe);
+			response.addError(start, pe);
 		}
 	}
 

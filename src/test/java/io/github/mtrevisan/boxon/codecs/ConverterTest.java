@@ -101,8 +101,8 @@ class ConverterTest{
 
 		Assertions.assertNotNull(result);
 		Assertions.assertTrue(result.hasErrors());
-		Assertions.assertEquals(1, result.getPayloadCount());
-		Assertions.assertArrayEquals(payload, result.getPayloadAt(0));
+		Assertions.assertEquals(1, result.getTotalMessageCount());
+		Assertions.assertArrayEquals(payload, result.getErrorPayloadAt(0));
 		Assertions.assertEquals(1, result.getErrorCount());
 		ParseException error = result.getErrorAt(0);
 		Assertions.assertEquals("class java.lang.Byte cannot be cast to class [B (java.lang.Byte and [B are in module java.base of loader 'bootstrap'), field TestConverter1.value\r\n"
@@ -123,8 +123,8 @@ class ConverterTest{
 
 		Assertions.assertNotNull(result);
 		Assertions.assertTrue(result.hasErrors());
-		Assertions.assertEquals(1, result.getPayloadCount());
-		Assertions.assertArrayEquals(payload, result.getPayloadAt(0));
+		Assertions.assertEquals(1, result.getTotalMessageCount());
+		Assertions.assertArrayEquals(payload, result.getErrorPayloadAt(0));
 		Assertions.assertEquals(1, result.getErrorCount());
 		ParseException error = result.getErrorAt(0);
 		Assertions.assertEquals("Can not set java.lang.String field io.github.mtrevisan.boxon.codecs.ConverterTest$TestConverter2.value to java.lang.Byte, field TestConverter2.value\r\n"
