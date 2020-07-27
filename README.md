@@ -845,14 +845,13 @@ Parser parser = Parser.create()
 byte[] payload = ...
 ParseResponse result = parser.parse(payload);
 
-//process the read messages
-if(!result.hasErrors()){
-    List<Object> messages = result.getParsedMessages();
-    ...
-}
 //process the errors
-else{
-    List<ParseException> errors = result.getErrors();
+for(int index = 0; index < result.getErrorCount(); index ++)
+   LOGGER.error("An error occurred while parsing:\r\n   {}", result.getMessageForError(index));
+
+//process the successfully parsed messages
+for(int index = 0; index < result.getParsedMessageCount(); index ++){
+    Object parsedMessage = result.getParsedMessageAt(index);
     ...
 }
 ```
