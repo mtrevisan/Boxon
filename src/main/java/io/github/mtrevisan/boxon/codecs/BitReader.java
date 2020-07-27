@@ -46,7 +46,7 @@ import java.nio.charset.Charset;
 /**
  * @see <a href="https://github.com/jhg023/BitBuffer/blob/master/src/main/java/bitbuffer/BitBuffer.java">BitBuffer</a>
  */
-final class BitReader{
+public final class BitReader{
 
 	private static final class State{
 		private int position;

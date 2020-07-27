@@ -40,7 +40,7 @@ import java.nio.charset.Charset;
  * @see <a href="https://graphics.stanford.edu/~seander/bithacks.html#ConditionalSetOrClearBitsWithoutBranching">Bit Twiddling Hacks</a>
  * @see <a href="https://git.irsamc.ups-tlse.fr/scemama/Bit-Twiddling-Hacks/">Bit Twiddling Hacks</a>
  */
-final class BitWriter{
+public final class BitWriter{
 
 	/** The backing {@link ByteArrayOutputStream} */
 	private final ByteArrayOutputStream os = new ByteArrayOutputStream(0);
