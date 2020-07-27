@@ -32,11 +32,25 @@ import java.util.List;
 
 public class ParseResponse{
 
+	/** List of all payloads */
+	private final List<byte[]> payloads = new ArrayList<>(0);
+	/** List of successfully parsed messages */
 	private final List<Object> parsedMessages = new ArrayList<>(0);
+	/** List of indexes of successfully parsed messages on the {@link #payloads} variable */
+	private final List<Integer> parsedMessageIndexes = new ArrayList<>(0);
+	/** List of error messages */
 	private final List<ParseException> errors = new ArrayList<>(0);
+	/** List of indexes of error messages on the {@link #payloads} variable */
+	private final List<Integer> errorIndexes = new ArrayList<>(0);
 
 
-	public void addParsedMessage(final Object decodedMessage){
+	public List<byte[]> getPayloads(){
+		return payloads;
+	}
+
+	public void addParsedMessage(final byte[] payload, final Object decodedMessage){
+		parsedMessageIndexes.add(payloads.size());
+		payloads.add(payload);
 		parsedMessages.add(decodedMessage);
 	}
 
@@ -44,8 +58,18 @@ public class ParseResponse{
 		return parsedMessages;
 	}
 
-	public void addError(final ParseException exception){
+	public List<Integer> getParsedMessageIndexes(){
+		return parsedMessageIndexes;
+	}
+
+	public void addError(final byte[] payload, final ParseException exception){
+		errorIndexes.add(payloads.size());
+		payloads.add(payload);
 		errors.add(exception);
+	}
+
+	public List<Integer> getErrorIndexes(){
+		return errorIndexes;
 	}
 
 	public boolean hasErrors(){

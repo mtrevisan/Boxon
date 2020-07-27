@@ -218,7 +218,9 @@ public class Parser{
 	public ParseResponse parse(final BitReader reader){
 		final ParseResponse response = new ParseResponse();
 
+		final byte[] array = reader.array();
 		while(reader.hasRemaining()){
+			final int start = reader.position();
 			try{
 				//save state of the reader (restored upon a decoding error)
 				reader.createFallbackPoint();
@@ -227,16 +229,17 @@ public class Parser{
 
 				final Object partialDecodedMessage = protocolMessageParser.decode(protocolMessage, reader);
 
-				response.addParsedMessage(partialDecodedMessage);
+				final int end = reader.position();
+				response.addParsedMessage(Arrays.copyOfRange(array, start, end), partialDecodedMessage);
 			}
 			catch(final Throwable t){
 				final ParseException pe = createParseException(reader, t);
-				response.addError(pe);
 
 				//restore state of the reader
 				reader.restoreFallbackPoint();
 
 				final int position = protocolMessageParser.loader.findNextMessageIndex(reader);
+				response.addError(Arrays.copyOfRange(array, start, (position >= 0? position: array.length)), pe);
 				if(position < 0)
 					//cannot find any protocol message for message
 					break;
@@ -253,9 +256,11 @@ public class Parser{
 
 	private void assertNoLeftBytes(final BitReader reader, final ParseResponse response){
 		if(!response.hasErrors() && reader.hasRemaining()){
+			final byte[] array = reader.array();
+			final int position = reader.position();
 			final IllegalArgumentException error = new IllegalArgumentException("There are remaining bytes");
-			final ParseException pe = new ParseException(reader.array(), reader.position(), error);
-			response.addError(pe);
+			final ParseException pe = new ParseException(array, position, error);
+			response.addError(Arrays.copyOfRange(array, position, array.length), pe);
 		}
 	}
 
