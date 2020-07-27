@@ -102,8 +102,6 @@ class ConverterTest{
 		Assertions.assertNotNull(result);
 		Assertions.assertTrue(result.hasErrors());
 		Assertions.assertEquals(1, result.getPayloadCount());
-		Assertions.assertEquals(1, result.getErrorIndexes().size());
-		Assertions.assertEquals(0, result.getErrorIndexes().get(0));
 		Assertions.assertArrayEquals(payload, result.getPayloadAt(0));
 		Assertions.assertEquals(1, result.getErrorCount());
 		ParseException error = result.getErrorAt(0);
@@ -126,8 +124,6 @@ class ConverterTest{
 		Assertions.assertNotNull(result);
 		Assertions.assertTrue(result.hasErrors());
 		Assertions.assertEquals(1, result.getPayloadCount());
-		Assertions.assertEquals(1, result.getErrorIndexes().size());
-		Assertions.assertEquals(0, result.getErrorIndexes().get(0));
 		Assertions.assertArrayEquals(payload, result.getPayloadAt(0));
 		Assertions.assertEquals(1, result.getErrorCount());
 		ParseException error = result.getErrorAt(0);

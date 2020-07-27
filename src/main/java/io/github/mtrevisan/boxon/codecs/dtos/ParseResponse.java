@@ -70,8 +70,8 @@ public class ParseResponse{
 		return parsedMessages.get(index);
 	}
 
-	public List<Integer> getParsedMessageIndexes(){
-		return parsedMessageIndexes;
+	public int getParsedMessageIndexAt(final int index){
+		return parsedMessageIndexes.get(index);
 	}
 
 
@@ -100,8 +100,8 @@ public class ParseResponse{
 			+ errors.get(index).getMessage();
 	}
 
-	public List<Integer> getErrorIndexes(){
-		return errorIndexes;
+	public int getErrorIndexAt(final int index){
+		return errorIndexes.get(index);
 	}
 
 }
