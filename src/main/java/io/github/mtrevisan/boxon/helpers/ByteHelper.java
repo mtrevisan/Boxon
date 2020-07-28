@@ -152,6 +152,7 @@ public final class ByteHelper{
 	 * @param size	Length in bits of the field
 	 * @return	The 2-complement expressed as int
 	 */
+	@SuppressWarnings("ShiftOutOfRange")
 	public static long extendSign(final long value, final int size){
 		if(size <= 0)
 			throw new IllegalArgumentException("Size must be a positive value, was " + size);

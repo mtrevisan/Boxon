@@ -44,7 +44,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -60,8 +59,6 @@ final class Loader{
 	private final Map<String, ProtocolMessage<?>> protocolMessages = new TreeMap<>(Comparator.comparingInt(String::length).reversed().thenComparing(String::compareTo));
 	private final Map<Class<?>, CodecInterface<?>> codecs = new HashMap<>(0);
 
-	private final AtomicBoolean initialized = new AtomicBoolean(false);
-
 
 	Loader(){}
 
@@ -69,23 +66,17 @@ final class Loader{
 	/**
 	 * Loads all the codecs that extends {@link CodecInterface}.
 	 * <p>This method should be called from a method inside a class that lies on a parent of all the codecs.</p>
-	 *
-	 * @return	Whether the codecs was loaded.
 	 */
-	final boolean loadCodecs(){
-		return loadCodecs(extractCallerClasses());
+	final void loadCodecs(){
+		loadCodecs(extractCallerClasses());
 	}
 
 	/**
 	 * Loads all the codecs that extends {@link CodecInterface}.
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load codecs
-	 * @return	Whether the codecs was loaded.
 	 */
-	final boolean loadCodecs(Class<?>... basePackageClasses){
-		if(initialized.get())
-			return false;
-
+	final void loadCodecs(Class<?>... basePackageClasses){
 		//remove duplicates
 		basePackageClasses = Arrays.stream(basePackageClasses)
 			.filter(distinctByKey(Class::getPackageName))
@@ -105,9 +96,6 @@ final class Loader{
 		}
 
 		LOGGER.trace("Codecs loaded are {}", codecs.size());
-
-		initialized.set(true);
-		return true;
 	}
 
 	private static <T> Predicate<T> distinctByKey(final Function<? super T, ?> keyExtractor){
@@ -119,31 +107,23 @@ final class Loader{
 	 * Loads all the codecs that extends {@link CodecInterface}.
 	 *
 	 * @param codecs	The list of codecs to be loaded
-	 * @return	Whether the codecs was loaded.
 	 */
-	final boolean loadCodecs(final Collection<CodecInterface<?>> codecs){
-		return loadCodecs(codecs.toArray(CodecInterface[]::new));
+	final void loadCodecs(final Collection<CodecInterface<?>> codecs){
+		loadCodecs(codecs.toArray(CodecInterface[]::new));
 	}
 
 	/**
-	 * Loads all the codecs that extends {@link CodecInterface}.
+	 * Loads all the given codecs that extends {@link CodecInterface}.
 	 *
 	 * @param codecs	The list of codecs to be loaded
-	 * @return	Whether the codecs was loaded.
 	 */
-	final boolean loadCodecs(final CodecInterface<?>... codecs){
-		if(initialized.get())
-			return false;
-
+	final void loadCodecs(final CodecInterface<?>... codecs){
 		LOGGER.info("Load codecs from input");
 
 		for(final CodecInterface<?> codec : codecs)
 			addCodec(codec);
 
 		LOGGER.trace("Codecs loaded are {}", codecs.length);
-
-		initialized.set(true);
-		return true;
 	}
 
 	/**
@@ -176,12 +156,8 @@ final class Loader{
 	 * Loads all the protocol classes annotated with {@link MessageHeader}.
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes
-	 * @throws IllegalArgumentException	If the codecs was not loaded yet,
 	 */
 	synchronized final void loadProtocolMessages(Class<?>... basePackageClasses){
-		if(!initialized.get())
-			throw new IllegalArgumentException("Codecs must be initialized before loading protocol messages!");
-
 		//remove duplicates
 		basePackageClasses = Arrays.stream(basePackageClasses)
 			.filter(distinctByKey(Class::getPackageName))
@@ -204,12 +180,8 @@ final class Loader{
 	 * Loads all the protocol classes annotated with {@link MessageHeader}.
 	 *
 	 * @param protocolMessages	The list of protocol messages to be loaded
-	 * @throws IllegalArgumentException	If the codecs was not loaded yet,
 	 */
 	synchronized final void loadProtocolMessages(Collection<ProtocolMessage<?>> protocolMessages){
-		if(!initialized.get())
-			throw new IllegalArgumentException("Codecs must be initialized before protocol messages!");
-
 		//remove duplicates
 		protocolMessages = protocolMessages.stream()
 			.distinct()
@@ -220,10 +192,6 @@ final class Loader{
 		loadProtocolMessagesInner(protocolMessages);
 
 		LOGGER.trace("Protocol messages loaded are {}", protocolMessages.size());
-	}
-
-	synchronized final boolean getInitialized(){
-		return initialized.get();
 	}
 
 	private void loadProtocolMessagesInner(final Collection<ProtocolMessage<?>> protocolMessages){

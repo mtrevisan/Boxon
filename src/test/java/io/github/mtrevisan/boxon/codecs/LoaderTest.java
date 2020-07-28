@@ -41,7 +41,6 @@ class LoaderTest{
 		Loader loader = new Loader();
 		loader.loadCodecs();
 
-		Assertions.assertTrue(loader.getInitialized());
 		List<ProtocolMessage<?>> protocolMessages = Collections.emptyList();
 		loader.loadProtocolMessages(protocolMessages);
 	}
@@ -51,7 +50,6 @@ class LoaderTest{
 		Loader loader = new Loader();
 		loader.loadCodecs();
 
-		Assertions.assertTrue(loader.getInitialized());
 		loader.loadProtocolMessages();
 	}
 
@@ -60,8 +58,18 @@ class LoaderTest{
 		Loader loader = new Loader();
 		loader.loadCodecs();
 
-		Assertions.assertTrue(loader.getInitialized());
 		loader.loadProtocolMessages(LoaderTest.class);
+	}
+
+	@Test
+	void loadCodecsAfterProtocolMessages(){
+		Loader loader = new Loader();
+		loader.loadProtocolMessages(LoaderTest.class);
+		loader.loadCodecs();
+
+		byte[] payload = ByteHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
+		BitReader reader = BitReader.wrap(payload);
+		Assertions.assertThrows(ProtocolMessageException.class, () -> loader.getProtocolMessage(reader));
 	}
 
 	@Test
