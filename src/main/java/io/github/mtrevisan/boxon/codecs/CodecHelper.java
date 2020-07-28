@@ -35,7 +35,6 @@ import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
 
 import java.util.Objects;
 import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 
 final class CodecHelper{
@@ -151,7 +150,7 @@ final class CodecHelper{
 		try{
 			p = Pattern.compile(match);
 		}
-		catch(final PatternSyntaxException ignored){}
+		catch(final Exception ignored){}
 		return p;
 	}
 
