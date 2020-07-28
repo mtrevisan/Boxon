@@ -120,8 +120,8 @@ final class Loader{
 	final void loadCodecs(final CodecInterface<?>... codecs){
 		LOGGER.info("Load codecs from input");
 
-		for(final CodecInterface<?> codec : codecs)
-			addCodec(codec);
+		for(int i = 0; i < codecs.length; i ++)
+			addCodec(codecs[i]);
 
 		LOGGER.trace("Codecs loaded are {}", codecs.length);
 	}
@@ -208,7 +208,9 @@ final class Loader{
 	private void loadProtocolMessageInner(final ProtocolMessage<?> protocolMessage){
 		final MessageHeader header = protocolMessage.getHeader();
 		final Charset charset = Charset.forName(header.charset());
-		for(final String headerStart : header.start()){
+		final String[] starts = header.start();
+		for(int i = 0; i < starts.length; i ++){
+			final String headerStart = starts[i];
 			//calculate key
 			final String key = ByteHelper.toHexString(headerStart.getBytes(charset));
 			if(this.protocolMessages.containsKey(key))
@@ -254,8 +256,8 @@ final class Loader{
 	private int findNextMessageIndex(final BitReader reader, final MessageHeader header, int minOffset){
 		final Charset charset = Charset.forName(header.charset());
 		final String[] messageStarts = header.start();
-		for(final String messageStart : messageStarts){
-			final int offset = searchNextSequence(reader, messageStart.getBytes(charset));
+		for(int i = 0; i < messageStarts.length; i ++){
+			final int offset = searchNextSequence(reader, messageStarts[i].getBytes(charset));
 			if(offset >= 0 && (minOffset < 0 || offset < minOffset))
 				minOffset = offset;
 		}

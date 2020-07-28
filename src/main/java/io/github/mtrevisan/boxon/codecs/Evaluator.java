@@ -65,9 +65,11 @@ final class Evaluator{
 
 			private Field findInCurrentClass(final String name, final Class<?> cls, final boolean mustBeStatic){
 				final Field[] fields = cls.getDeclaredFields();
-				for(final Field field : fields)
+				for(int i = 0; i < fields.length; i ++){
+					final Field field = fields[i];
 					if(field.getName().equals(name) && (!mustBeStatic || Modifier.isStatic(field.getModifiers())))
 						return field;
+				}
 				return null;
 			}
 
@@ -77,8 +79,9 @@ final class Evaluator{
 			}
 
 			private Field findInInterface(final String name, final Class<?> cls, final boolean mustBeStatic){
-				for(final Class<?> type : cls.getInterfaces()){
-					final Field field = findField(name, type, mustBeStatic);
+				final Class<?>[] interfaces = cls.getInterfaces();
+				for(int i = 0; i < interfaces.length; i ++){
+					final Field field = findField(name, interfaces[i], mustBeStatic);
 					if(field != null)
 						return field;
 				}

@@ -136,8 +136,8 @@ public final class BitWriter{
 	 * @param array	The array of {@code byte}s to write.
 	 */
 	public final void putBytes(final byte[] array){
-		for(final byte value : array)
-			putByte(value);
+		for(int i = 0; i < array.length; i ++)
+			putByte(array[i]);
 	}
 
 	/**

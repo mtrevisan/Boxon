@@ -240,7 +240,8 @@ final class ProtocolMessage<T>{
 	}
 
 	private void loadAnnotatedFields(final Field[] fields, final Loader loader){
-		for(final Field field : fields){
+		for(int i = 0; i < fields.length; i ++){
+			final Field field = fields[i];
 			final Skip[] skips = field.getDeclaredAnnotationsByType(Skip.class);
 			final BindChecksum checksum = field.getDeclaredAnnotation(BindChecksum.class);
 
@@ -259,7 +260,8 @@ final class ProtocolMessage<T>{
 
 	private List<Annotation> extractAnnotations(final Annotation[] declaredAnnotations, final Loader loader){
 		final List<Annotation> annotations = new ArrayList<>(declaredAnnotations.length);
-		for(final Annotation annotation : declaredAnnotations){
+		for(int i = 0; i < declaredAnnotations.length; i ++){
+			final Annotation annotation = declaredAnnotations[i];
 			final Class<? extends Annotation> annotationType = annotation.annotationType();
 			if(annotationType != Skip.class && annotationType != Evaluate.class
 					&& loader.getCodec(annotationType) != null)
@@ -270,9 +272,11 @@ final class ProtocolMessage<T>{
 
 	private Collection<EvaluatedField> extractEvaluations(final Annotation[] declaredAnnotations, final Field field){
 		final Collection<EvaluatedField> evaluations = new ArrayList<>(declaredAnnotations.length);
-		for(final Annotation annotation : declaredAnnotations)
+		for(int i = 0; i < declaredAnnotations.length; i ++){
+			final Annotation annotation = declaredAnnotations[i];
 			if(annotation.annotationType() == Evaluate.class)
 				evaluations.add(new EvaluatedField(field, (Evaluate)annotation));
+		}
 		return evaluations;
 	}
 

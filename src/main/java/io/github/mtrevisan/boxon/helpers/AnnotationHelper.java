@@ -110,8 +110,9 @@ public final class AnnotationHelper{
 		final Collection<Class<?>> classes = new HashSet<>(0);
 
 		final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-		for(final Class<?> basePackageClass : basePackageClasses){
-			final String basePackageName = basePackageClass.getName().substring(0, basePackageClass.getName().lastIndexOf('.'));
+		for(int i = 0; i < basePackageClasses.length; i ++){
+			final String basePackageClassName = basePackageClasses[i].getName();
+			final String basePackageName = basePackageClassName.substring(0, basePackageClassName.lastIndexOf('.'));
 			final String path = packageToUri(basePackageName);
 			try{
 				final Enumeration<URL> resources = classLoader.getResources(path);
@@ -199,9 +200,11 @@ public final class AnnotationHelper{
 		bucket.put(BucketType.DIRECTORY, new ArrayList<>(0));
 		bucket.put(BucketType.FILE, new ArrayList<>(0));
 		if(files != null)
-			for(final File file : files)
+			for(int i = 0; i < files.length; i ++){
+				final File file = files[i];
 				bucket.get(file.isDirectory()? BucketType.DIRECTORY: BucketType.FILE)
 					.add(file);
+			}
 		return bucket;
 	}
 

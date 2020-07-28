@@ -80,8 +80,8 @@ public final class ReflectionHelper{
 	public static <T> void setFieldValue(final Object obj, final Class<T> fieldType, final T value){
 		try{
 			final Field[] fields = getAccessibleFields(obj.getClass(), fieldType);
-			for(final Field field : fields)
-				field.set(obj, value);
+			for(int i = 0; i < fields.length; i ++)
+				fields[i].set(obj, value);
 		}
 		catch(final IllegalAccessException ignored){}
 	}
@@ -116,11 +116,13 @@ public final class ReflectionHelper{
 
 	private static Collection<Field> filterAccessibleFields(final Field[] fields, final Class<?> fieldType){
 		final Collection<Field> result = new ArrayList<>(fields.length);
-		for(final Field field : fields)
+		for(int i = 0; i < fields.length; i ++){
+			final Field field = fields[i];
 			if(field.getType() == fieldType){
 				field.setAccessible(true);
 				result.add(field);
 			}
+		}
 		return result;
 	}
 

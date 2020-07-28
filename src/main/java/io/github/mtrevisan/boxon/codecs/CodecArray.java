@@ -114,8 +114,8 @@ final class CodecArray implements CodecInterface<BindArray>{
 
 	private void encodeWithAlternatives(final BitWriter writer, final Object[] array, final ObjectChoices selectFrom){
 		final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
-		final int size = array.length;
-		for(final Object elem : array){
+		for(int i = 0; i < array.length; i ++){
+			final Object elem = array[i];
 			final Class<?> type = elem.getClass();
 
 			final ObjectChoices.ObjectChoice chosenAlternative = CodecHelper.chooseAlternative(alternatives, type);
@@ -133,9 +133,8 @@ final class CodecArray implements CodecInterface<BindArray>{
 	private void encodeWithoutAlternatives(final BitWriter writer, final Object[] array, final Class<?> type){
 		final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(type, protocolMessageParser.loader);
 
-		final int size = array.length;
-		for(final Object elem : array)
-			protocolMessageParser.encode(protocolMessage, writer, elem);
+		for(int i = 0; i < array.length; i ++)
+			protocolMessageParser.encode(protocolMessage, writer, array[i]);
 	}
 
 	@Override

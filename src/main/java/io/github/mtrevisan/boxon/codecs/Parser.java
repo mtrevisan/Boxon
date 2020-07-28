@@ -65,8 +65,8 @@ public class Parser{
 	 */
 	public Parser withContext(final Map<String, Object> context){
 		if(context != null)
-			for(final Map.Entry<String, Object> elem : context.entrySet())
-				Evaluator.addToContext(elem.getKey(), elem.getValue());
+			for(final Map.Entry<String, Object> entry : context.entrySet())
+				Evaluator.addToContext(entry.getKey(), entry.getValue());
 		return this;
 	}
 
@@ -284,7 +284,8 @@ public class Parser{
 	public ComposeResponse compose(final Object... data){
 		final ComposeResponse response = new ComposeResponse();
 		final BitWriter writer = new BitWriter();
-		for(final Object elem : data){
+		for(int i = 0; i < data.length; i ++){
+			final Object elem = data[i];
 			try{
 				final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(elem.getClass(), protocolMessageParser.loader);
 				if(!protocolMessage.canBeDecoded())

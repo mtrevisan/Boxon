@@ -58,7 +58,8 @@ final class ProtocolMessageParser{
 
 		//decode message fields:
 		final List<ProtocolMessage.BoundedField> fields = protocolMessage.getBoundedFields();
-		for(final ProtocolMessage.BoundedField field : fields){
+		for(int i = 0; i < fields.size(); i ++){
+			final ProtocolMessage.BoundedField field = fields.get(i);
 			readSkippedFields(field.getSkips(), reader, data);
 
 			if(!skipFieldByCondition(field.getCondition(), data))
@@ -92,8 +93,8 @@ final class ProtocolMessageParser{
 
 	private <T> void readSkippedFields(final Skip[] skips, final BitReader reader, final T data){
 		if(skips != null)
-			for(final Skip skip : skips)
-				readSkip(skip, reader, data);
+			for(int i = 0; i < skips.length; i ++)
+				readSkip(skips[i], reader, data);
 	}
 
 	private <T> void readSkip(final Skip skip, final BitReader reader, final T data){
@@ -144,7 +145,8 @@ final class ProtocolMessageParser{
 
 	private <T> void processEvaluatedFields(final ProtocolMessage<T> protocolMessage, final T data){
 		final List<ProtocolMessage.EvaluatedField> evaluatedFields = protocolMessage.getEvaluatedFields();
-		for(final ProtocolMessage.EvaluatedField field : evaluatedFields){
+		for(int i = 0; i < evaluatedFields.size(); i ++){
+			final ProtocolMessage.EvaluatedField field = evaluatedFields.get(i);
 			final String condition = field.getBinding().condition().trim();
 			final boolean process = (condition.length() > 0 && Evaluator.evaluate(condition, boolean.class, data));
 			if(process){
@@ -157,7 +159,8 @@ final class ProtocolMessageParser{
 	final <T> void encode(final ProtocolMessage<?> protocolMessage, final BitWriter writer, final T data){
 		//encode message fields:
 		final List<ProtocolMessage.BoundedField> fields = protocolMessage.getBoundedFields();
-		for(final ProtocolMessage.BoundedField field : fields){
+		for(int i = 0; i < fields.size(); i ++){
+			final ProtocolMessage.BoundedField field = fields.get(i);
 			writeSkippedFields(field.getSkips(), writer, data);
 
 			if(!skipFieldByCondition(field.getCondition(), data))
@@ -219,8 +222,8 @@ final class ProtocolMessageParser{
 
 	private <T> void writeSkippedFields(final Skip[] skips, final BitWriter writer, final T data){
 		if(skips != null)
-			for(final Skip skip : skips)
-				writeSkip(skip, writer, data);
+			for(int i = 0; i < skips.length; i ++)
+				writeSkip(skips[i], writer, data);
 	}
 
 	private <T> void writeSkip(final Skip skip, final BitWriter writer, final T data){

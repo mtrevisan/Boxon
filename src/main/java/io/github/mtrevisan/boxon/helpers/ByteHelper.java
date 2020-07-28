@@ -48,9 +48,10 @@ public final class ByteHelper{
 	public static String toHexString(final byte[] array){
 		final StringBuffer sb = new StringBuffer((array != null? array.length << 1: 0));
 		if(array != null)
-			for(final byte b : array){
-				sb.append(Character.forDigit((b >>> 4) & 0x0F, 16));
-				sb.append(Character.forDigit((b & 0x0F), 16));
+			for(int i = 0; i < array.length; i ++){
+				final byte elem = array[i];
+				sb.append(Character.forDigit((elem >>> 4) & 0x0F, 16));
+				sb.append(Character.forDigit((elem & 0x0F), 16));
 			}
 		return sb.toString().toUpperCase();
 	}
