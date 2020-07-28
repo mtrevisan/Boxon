@@ -117,7 +117,7 @@ final class CodecHelper{
 	private static <T> void matchData(final String match, final T data){
 		final Pattern pattern = extractPattern(match, data);
 		if(pattern != null && !pattern.matcher(Objects.toString(data)).matches())
-			throw new IllegalArgumentException("Value `" + Objects.toString(data) + "` does not match constraint `" + match + "`");
+			throw new IllegalArgumentException("Value `" + data + "` does not match constraint `" + match + "`");
 	}
 
 	/** Extract pattern from a SpEL expression, or a string, or a regex pattern */
