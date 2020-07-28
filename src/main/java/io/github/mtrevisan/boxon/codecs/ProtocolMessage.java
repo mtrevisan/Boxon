@@ -195,9 +195,8 @@ final class ProtocolMessage<T>{
 			if(prefixSize > Integer.SIZE)
 				throw new AnnotationException("`prefixSize` cannot be greater than {} bits", Integer.SIZE);
 
-			final String prefixName = "#" + CodecHelper.CONTEXT_CHOICE_PREFIX;
 			final Stream<ObjectChoices.ObjectChoice> stream = Arrays.stream(selectFrom.alternatives());
-			final Predicate<ObjectChoices.ObjectChoice> test = a -> a.condition().contains(prefixName);
+			final Predicate<ObjectChoices.ObjectChoice> test = a -> a.condition().contains(CodecHelper.CONTEXT_PREFIXED_CHOICE_PREFIX);
 			if(prefixSize > 0){
 				if(selectFrom.alternatives().length == 0)
 					throw new AnnotationException("Alternatives missing");

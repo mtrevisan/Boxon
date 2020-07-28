@@ -41,6 +41,7 @@ import java.util.regex.PatternSyntaxException;
 final class CodecHelper{
 
 	public static final String CONTEXT_CHOICE_PREFIX = "prefix";
+	public static final String CONTEXT_PREFIXED_CHOICE_PREFIX = "#" + CONTEXT_CHOICE_PREFIX;
 
 
 	private CodecHelper(){}
@@ -103,7 +104,7 @@ final class CodecHelper{
 
 	static void writePrefix(final BitWriter writer, final ObjectChoices.ObjectChoice chosenAlternative, final ObjectChoices selectFrom){
 		//if chosenAlternative.condition() contains '#prefix', then write @Choice.Prefix.value()
-		if(chosenAlternative.condition().contains("#" + CONTEXT_CHOICE_PREFIX)){
+		if(chosenAlternative.condition().contains(CONTEXT_PREFIXED_CHOICE_PREFIX)){
 			final int prefixSize = selectFrom.prefixSize();
 			final ByteOrder prefixByteOrder = selectFrom.byteOrder();
 
