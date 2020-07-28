@@ -69,24 +69,20 @@ final class CodecHelper{
 		ObjectChoices.ObjectChoice chosenAlternative = null;
 
 		Evaluator.addToContext(CONTEXT_CHOICE_PREFIX, prefix);
-		for(int i = 0; i < alternatives.length; i ++){
-			final ObjectChoices.ObjectChoice alternative = alternatives[i];
-			if(Evaluator.evaluate(alternative.condition(), boolean.class, data)){
-				chosenAlternative = alternative;
+		for(int i = 0; i < alternatives.length; i ++)
+			if(Evaluator.evaluate(alternatives[i].condition(), boolean.class, data)){
+				chosenAlternative = alternatives[i];
 				break;
 			}
-		}
 		Evaluator.addToContext(CONTEXT_CHOICE_PREFIX, null);
 
 		return chosenAlternative;
 	}
 
 	static ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> type){
-		for(int i = 0; i < alternatives.length; i ++){
-			final ObjectChoices.ObjectChoice alternative = alternatives[i];
-			if(alternative.type() == type)
-				return alternative;
-		}
+		for(int i = 0; i < alternatives.length; i ++)
+			if(alternatives[i].type() == type)
+				return alternatives[i];
 		return null;
 	}
 
@@ -94,11 +90,9 @@ final class CodecHelper{
 	static Class<? extends Converter> chooseConverter(final ConverterChoices selectConverterFrom, final Class<? extends Converter> baseConverter,
 			final Object data){
 		final ConverterChoices.ConverterChoice[] alternatives = selectConverterFrom.alternatives();
-		for(int i = 0; i < alternatives.length; i ++){
-			final ConverterChoices.ConverterChoice alternative = alternatives[i];
-			if(Evaluator.evaluate(alternative.condition(), boolean.class, data))
-				return alternative.converter();
-		}
+		for(int i = 0; i < alternatives.length; i ++)
+			if(Evaluator.evaluate(alternatives[i].condition(), boolean.class, data))
+				return alternatives[i].converter();
 		return baseConverter;
 	}
 
