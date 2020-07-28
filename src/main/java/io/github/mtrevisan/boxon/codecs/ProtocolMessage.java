@@ -198,14 +198,14 @@ final class ProtocolMessage<T>{
 			final String prefixName = "#" + CodecHelper.CONTEXT_CHOICE_PREFIX;
 			final Stream<ObjectChoices.ObjectChoice> stream = Arrays.stream(selectFrom.alternatives());
 			final Predicate<ObjectChoices.ObjectChoice> test = a -> a.condition().contains(prefixName);
-			if(prefixSize == 0 && stream.anyMatch(test))
-				throw new AnnotationException("Any condition cannot contain a reference to the prefix");
 			if(prefixSize > 0){
 				if(selectFrom.alternatives().length == 0)
 					throw new AnnotationException("Alternatives missing");
 				if(stream.noneMatch(test))
 					throw new AnnotationException("Any condition must contain a reference to the prefix");
 			}
+			else if(stream.anyMatch(test))
+				throw new AnnotationException("Any condition cannot contain a reference to the prefix");
 		}
 	}
 
