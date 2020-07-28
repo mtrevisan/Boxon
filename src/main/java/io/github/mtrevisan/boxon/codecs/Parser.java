@@ -34,6 +34,7 @@ import io.github.mtrevisan.boxon.annotations.exceptions.ProtocolMessageException
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Collection;
@@ -67,6 +68,18 @@ public class Parser{
 		if(context != null)
 			for(final Map.Entry<String, Object> entry : context.entrySet())
 				Evaluator.addToContext(entry.getKey(), entry.getValue());
+		return this;
+	}
+
+	/**
+	 * Add a method to the context for the {@link Evaluator}.
+	 *
+	 * @param method	The method.
+	 * @return	The {@link Parser}, used for chaining.
+	 */
+	public Parser withContextFunction(final Method method){
+		if(method != null)
+			Evaluator.addToContext(method);
 		return this;
 	}
 

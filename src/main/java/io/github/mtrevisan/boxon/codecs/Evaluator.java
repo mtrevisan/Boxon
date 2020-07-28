@@ -24,7 +24,6 @@
  */
 package io.github.mtrevisan.boxon.codecs;
 
-import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.EvaluationException;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
@@ -36,6 +35,7 @@ import org.springframework.expression.spel.support.ReflectivePropertyAccessor;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.List;
@@ -46,7 +46,7 @@ final class Evaluator{
 	//allow for immediate compilation of SpEL expressions
 	private static final SpelParserConfiguration CONFIG = new SpelParserConfiguration(SpelCompilerMode.IMMEDIATE, null);
 	private static final ExpressionParser PARSER = new SpelExpressionParser(CONFIG);
-	private static final EvaluationContext CONTEXT = new PrivateEvaluationContext();
+	private static final StandardEvaluationContext CONTEXT = new PrivateEvaluationContext();
 
 
 	//trick to allow accessing private fields
@@ -107,6 +107,15 @@ final class Evaluator{
 	 */
 	static void addToContext(final String key, final Object value){
 		CONTEXT.setVariable(key, value);
+	}
+
+	/**
+	 * Adds a method to the context of this evaluator.
+	 *
+	 * @param method	The method.
+	 */
+	static void addToContext(final Method method){
+		CONTEXT.registerFunction(method.getName(), method);
 	}
 
 	static <T> T evaluate(final String expression, final Class<T> returnType, final Object data) throws EvaluationException{
