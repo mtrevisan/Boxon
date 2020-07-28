@@ -86,8 +86,7 @@ final class CodecHelper{
 		return chosenAlternative;
 	}
 
-	@SuppressWarnings("rawtypes")
-	static Class<? extends Converter> chooseConverter(final ConverterChoices selectConverterFrom, final Class<? extends Converter> baseConverter,
+	static Class<? extends Converter<?, ?>> chooseConverter(final ConverterChoices selectConverterFrom, final Class<? extends Converter<?, ?>> baseConverter,
 			final Object data){
 		final ConverterChoices.ConverterChoice[] alternatives = selectConverterFrom.alternatives();
 		for(int i = 0; i < alternatives.length; i ++)
@@ -111,7 +110,7 @@ final class CodecHelper{
 		}
 	}
 
-	static <T> void validateData(final String match, @SuppressWarnings("rawtypes") final Class<? extends Validator> validatorType, final T data){
+	static void validateData(final String match, final Class<? extends Validator<?>> validatorType, final Object data){
 		matchData(match, data);
 		validateData(validatorType, data);
 	}
@@ -160,24 +159,24 @@ final class CodecHelper{
 		return (text != null && !text.trim().isBlank());
 	}
 
-	static <T> void validateData(@SuppressWarnings("rawtypes") final Class<? extends Validator> validatorType, final T data){
+	static <T> void validateData(final Class<? extends Validator<?>> validatorType, final T data){
 		@SuppressWarnings("unchecked")
-		final Validator<T> validator = ReflectionHelper.getCreator(validatorType)
+		final Validator<T> validator = (Validator<T>)ReflectionHelper.getCreator(validatorType)
 			.get();
 		if(!validator.validate(data))
 			throw new IllegalArgumentException("Validation not passed (" + data + ")");
 	}
 
-	static <OUT, IN> OUT converterDecode(@SuppressWarnings("rawtypes") final Class<? extends Converter> converterType, final IN data){
+	static <OUT, IN> OUT converterDecode(final Class<? extends Converter<?, ?>> converterType, final IN data){
 		@SuppressWarnings("unchecked")
-		final Converter<IN, OUT> converter = ReflectionHelper.getCreator(converterType)
+		final Converter<IN, OUT> converter = (Converter<IN, OUT>)ReflectionHelper.getCreator(converterType)
 			.get();
 		return converter.decode(data);
 	}
 
-	static <OUT, IN> IN converterEncode(@SuppressWarnings("rawtypes") final Class<? extends Converter> converterType, final OUT data){
+	static <OUT, IN> IN converterEncode(final Class<? extends Converter<?, ?>> converterType, final OUT data){
 		@SuppressWarnings("unchecked")
-		final Converter<IN, OUT> converter = ReflectionHelper.getCreator(converterType)
+		final Converter<IN, OUT> converter = (Converter<IN, OUT>)ReflectionHelper.getCreator(converterType)
 			.get();
 		return converter.encode(data);
 	}

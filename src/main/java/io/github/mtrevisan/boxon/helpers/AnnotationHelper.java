@@ -78,7 +78,7 @@ public final class AnnotationHelper{
 	 * @param recursively	If {@code true}, it retrieves fields from all class hierarchy
 	 * @return	An array of all the fields of the given class
 	 */
-	public static Field[] getDeclaredFields(final Class<?> cls, @SuppressWarnings("SameParameterValue") final boolean recursively){
+	public static Field[] getDeclaredFields(final Class<?> cls, final boolean recursively){
 		final Field[] result;
 		if(recursively){
 			final List<Field> fields = new ArrayList<>(0);

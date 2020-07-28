@@ -38,8 +38,7 @@ final class CodecFloat implements CodecInterface<BindFloat>{
 
 		final float v = reader.getFloat(binding.byteOrder());
 
-		@SuppressWarnings("rawtypes")
-		final Class<? extends Converter> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
+		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
 		final Object value = CodecHelper.converterDecode(chosenConverter, v);
 
 		CodecHelper.validateData(binding.match(), binding.validator(), value);
@@ -53,8 +52,7 @@ final class CodecFloat implements CodecInterface<BindFloat>{
 
 		CodecHelper.validateData(binding.match(), binding.validator(), value);
 
-		@SuppressWarnings("rawtypes")
-		final Class<? extends Converter> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
+		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
 		final float v = CodecHelper.converterEncode(chosenConverter, value);
 
 		writer.putFloat(v, binding.byteOrder());

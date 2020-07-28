@@ -135,11 +135,10 @@ final class ProtocolMessageParser{
 				.get();
 			final long startValue = checksum.startValue();
 			final long calculatedCRC = checksummer.calculateCRC(reader.array(), startPosition, endPosition, startValue);
-			@SuppressWarnings("ConstantConditions")
-			final long givenCRC = ((Number)ReflectionHelper.getFieldValue(data, checksumData.getName())).longValue();
-			if(calculatedCRC != givenCRC)
+			final Number givenCRC = ReflectionHelper.getFieldValue(data, checksumData.getName());
+			if(givenCRC == null || calculatedCRC != givenCRC.longValue())
 				throw new IllegalArgumentException("Calculated CRC (0x" + Long.toHexString(calculatedCRC).toUpperCase()
-					+ ") does NOT match given CRC (0x" + Long.toHexString(givenCRC).toUpperCase() + ")");
+					+ ") does NOT match given CRC (0x" + (givenCRC != null? Long.toHexString(givenCRC.longValue()).toUpperCase(): "--") + ")");
 		}
 	}
 

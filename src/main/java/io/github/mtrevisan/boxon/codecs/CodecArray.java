@@ -53,8 +53,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 		else
 			decodeWithoutAlternatives(reader, array, binding.type());
 
-		@SuppressWarnings("rawtypes")
-		final Class<? extends Converter> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
+		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
 		final Object value = CodecHelper.converterDecode(chosenConverter, array);
 
 		CodecHelper.validateData(binding.validator(), value);
@@ -98,8 +97,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 
 		final ObjectChoices selectFrom = binding.selectFrom();
 
-		@SuppressWarnings("rawtypes")
-		final Class<? extends Converter> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
+		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
 		final Object[] array = CodecHelper.converterEncode(chosenConverter, value);
 
 		final int size = Evaluator.evaluateSize(binding.size(), data);

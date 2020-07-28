@@ -38,8 +38,7 @@ final class CodecShort implements CodecInterface<BindShort>{
 
 		final short v = reader.getShort(binding.byteOrder());
 
-		@SuppressWarnings("rawtypes")
-		final Class<? extends Converter> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
+		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
 		final Object value = CodecHelper.converterDecode(chosenConverter, v);
 
 		CodecHelper.validateData(binding.match(), binding.validator(), value);
@@ -53,8 +52,7 @@ final class CodecShort implements CodecInterface<BindShort>{
 
 		CodecHelper.validateData(binding.match(), binding.validator(), value);
 
-		@SuppressWarnings("rawtypes")
-		final Class<? extends Converter> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
+		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
 		final short v = CodecHelper.converterEncode(chosenConverter, value);
 
 		writer.putShort(v, binding.byteOrder());

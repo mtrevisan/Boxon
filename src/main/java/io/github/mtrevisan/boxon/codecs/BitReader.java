@@ -151,17 +151,16 @@ public final class BitReader{
 			fallbackPoint = new State(buffer.position(), remaining, cache);
 	}
 
-	public final boolean restoreFallbackPoint(){
+	public final void restoreFallbackPoint(){
 		if(fallbackPoint == null)
 			//no fallback point was marked before
-			return false;
+			return;
 
 		buffer.position(fallbackPoint.position);
 		remaining = fallbackPoint.remaining;
 		cache = fallbackPoint.cache;
 
 		clearFallbackPoint();
-		return true;
 	}
 
 	public final void clearFallbackPoint(){

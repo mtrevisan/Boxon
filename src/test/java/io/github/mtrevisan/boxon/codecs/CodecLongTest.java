@@ -71,12 +71,12 @@ class CodecLongTest{
 			}
 
 			@Override
-			public Class<? extends Validator> validator(){
+			public Class<? extends Validator<?>> validator(){
 				return NullValidator.class;
 			}
 
 			@Override
-			public Class<? extends Converter> converter(){
+			public Class<? extends Converter<?, ?>> converter(){
 				return NullConverter.class;
 			}
 
@@ -134,12 +134,12 @@ class CodecLongTest{
 			}
 
 			@Override
-			public Class<? extends Validator> validator(){
+			public Class<? extends Validator<?>> validator(){
 				return NullValidator.class;
 			}
 
 			@Override
-			public Class<? extends Converter> converter(){
+			public Class<? extends Converter<?, ?>> converter(){
 				return NullConverter.class;
 			}
 
@@ -197,12 +197,12 @@ class CodecLongTest{
 			}
 
 			@Override
-			public Class<? extends Validator> validator(){
+			public Class<? extends Validator<?>> validator(){
 				return NullValidator.class;
 			}
 
 			@Override
-			public Class<? extends Converter> converter(){
+			public Class<? extends Converter<?, ?>> converter(){
 				return NullConverter.class;
 			}
 
@@ -260,12 +260,12 @@ class CodecLongTest{
 			}
 
 			@Override
-			public Class<? extends Validator> validator(){
+			public Class<? extends Validator<?>> validator(){
 				return NullValidator.class;
 			}
 
 			@Override
-			public Class<? extends Converter> converter(){
+			public Class<? extends Converter<?, ?>> converter(){
 				return NullConverter.class;
 			}
 
@@ -323,12 +323,12 @@ class CodecLongTest{
 			}
 
 			@Override
-			public Class<? extends Validator> validator(){
+			public Class<? extends Validator<?>> validator(){
 				return NullValidator.class;
 			}
 
 			@Override
-			public Class<? extends Converter> converter(){
+			public Class<? extends Converter<?, ?>> converter(){
 				return NullConverter.class;
 			}
 
@@ -386,12 +386,12 @@ class CodecLongTest{
 			}
 
 			@Override
-			public Class<? extends Validator> validator(){
+			public Class<? extends Validator<?>> validator(){
 				return NullValidator.class;
 			}
 
 			@Override
-			public Class<? extends Converter> converter(){
+			public Class<? extends Converter<?, ?>> converter(){
 				return NullConverter.class;
 			}
 
@@ -449,12 +449,12 @@ class CodecLongTest{
 			}
 
 			@Override
-			public Class<? extends Validator> validator(){
+			public Class<? extends Validator<?>> validator(){
 				return NullValidator.class;
 			}
 
 			@Override
-			public Class<? extends Converter> converter(){
+			public Class<? extends Converter<?, ?>> converter(){
 				return NullConverter.class;
 			}
 
@@ -512,12 +512,12 @@ class CodecLongTest{
 			}
 
 			@Override
-			public Class<? extends Validator> validator(){
+			public Class<? extends Validator<?>> validator(){
 				return NullValidator.class;
 			}
 
 			@Override
-			public Class<? extends Converter> converter(){
+			public Class<? extends Converter<?, ?>> converter(){
 				return NullConverter.class;
 			}
 

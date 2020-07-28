@@ -25,15 +25,15 @@
 package io.github.mtrevisan.boxon.annotations.converters;
 
 
-public final class NullConverter<T> implements Converter<T, T>{
+public final class NullConverter implements Converter<Object, Object>{
 
 	@Override
-	public T decode(final T value){
+	public Object decode(final Object value){
 		return value;
 	}
 
 	@Override
-	public T encode(final T value){
+	public Object encode(final Object value){
 		return value;
 	}
 

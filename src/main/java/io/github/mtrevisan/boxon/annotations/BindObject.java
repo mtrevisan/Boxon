@@ -85,7 +85,7 @@ public @interface BindObject{
 	 *
 	 * @return	The class of a {@link Validator}
 	 */
-	Class<? extends Validator> validator() default NullValidator.class;
+	Class<? extends Validator<?>> validator() default NullValidator.class;
 
 	/**
 	 * The converter to be applied just <i>before</i> writing the parameter value (<i>after</i> if reading), if any.
@@ -93,7 +93,7 @@ public @interface BindObject{
 	 *
 	 * @return	The class of a {@link Converter}
 	 */
-	Class<? extends Converter> converter() default NullConverter.class;
+	Class<? extends Converter<?, ?>> converter() default NullConverter.class;
 
 	/**
 	 * The choices to select from to apply a given converter.

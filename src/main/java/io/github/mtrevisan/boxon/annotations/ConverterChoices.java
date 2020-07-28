@@ -67,7 +67,7 @@ public @interface ConverterChoices{
 		 *
 		 * @return	The class of a {@link Converter}
 		 */
-		Class<? extends Converter> converter() default NullConverter.class;
+		Class<? extends Converter<?, ?>> converter() default NullConverter.class;
 
 	}
 

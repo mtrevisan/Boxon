@@ -38,8 +38,7 @@ final class CodecDouble implements CodecInterface<BindDouble>{
 
 		final double v = reader.getDouble(binding.byteOrder());
 
-		@SuppressWarnings("rawtypes")
-		final Class<? extends Converter> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
+		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
 		final Object value = CodecHelper.converterDecode(chosenConverter, v);
 
 		CodecHelper.validateData(binding.match(), binding.validator(), value);
@@ -53,8 +52,7 @@ final class CodecDouble implements CodecInterface<BindDouble>{
 
 		CodecHelper.validateData(binding.match(), binding.validator(), value);
 
-		@SuppressWarnings("rawtypes")
-		final Class<? extends Converter> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
+		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
 		final double v = CodecHelper.converterEncode(chosenConverter, value);
 
 		writer.putDouble(v, binding.byteOrder());
