@@ -92,13 +92,12 @@ final class CodecHelper{
 	@SuppressWarnings("rawtypes")
 	static Class<? extends Converter> chooseConverter(final ConverterChoices selectConverterFrom, final Class<? extends Converter> baseConverter,
 			final Object data){
-		final ConverterChoices.ConverterChoice[] alternatives = (selectConverterFrom != null? selectConverterFrom.alternatives(): null);
-		if(alternatives != null)
-			for(int i = 0; i < alternatives.length; i ++){
-				final ConverterChoices.ConverterChoice alternative = alternatives[i];
-				if(Evaluator.evaluate(alternative.condition(), boolean.class, data))
-					return alternative.converter();
-			}
+		final ConverterChoices.ConverterChoice[] alternatives = selectConverterFrom.alternatives();
+		for(int i = 0; i < alternatives.length; i ++){
+			final ConverterChoices.ConverterChoice alternative = alternatives[i];
+			if(Evaluator.evaluate(alternative.condition(), boolean.class, data))
+				return alternative.converter();
+		}
 		return baseConverter;
 	}
 
