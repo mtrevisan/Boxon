@@ -46,6 +46,13 @@ final class CodecHelper{
 
 	private CodecHelper(){}
 
+	static ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> type){
+		for(int i = 0; i < alternatives.length; i ++)
+			if(alternatives[i].type() == type)
+				return alternatives[i];
+		return null;
+	}
+
 	static ObjectChoices.ObjectChoice chooseAlternative(final BitReader reader, final int prefixSize, final ByteOrder prefixByteOrder,
 			final ObjectChoices.ObjectChoice[] alternatives, final Object data){
 		final Integer prefix = reader.getBigInteger(prefixSize, prefixByteOrder, true).intValue();
@@ -77,13 +84,6 @@ final class CodecHelper{
 		Evaluator.addToContext(CONTEXT_CHOICE_PREFIX, null);
 
 		return chosenAlternative;
-	}
-
-	static ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> type){
-		for(int i = 0; i < alternatives.length; i ++)
-			if(alternatives[i].type() == type)
-				return alternatives[i];
-		return null;
 	}
 
 	@SuppressWarnings("rawtypes")
