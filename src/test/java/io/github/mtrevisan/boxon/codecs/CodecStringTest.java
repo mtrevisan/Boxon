@@ -298,7 +298,7 @@ class CodecStringTest{
 		codec.encode(writer, annotation, null, decoded);
 		writer.flush();
 
-		Assertions.assertArrayEquals(new byte[]{49, 50, 51, 65, 66, 00}, writer.array());
+		Assertions.assertArrayEquals(new byte[]{49, 50, 51, 65, 66}, writer.array());
 	}
 
 }

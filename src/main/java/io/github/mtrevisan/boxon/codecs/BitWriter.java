@@ -226,7 +226,7 @@ public final class BitWriter{
 	 */
 	public final void putText(final String text, final byte terminator, final boolean consumeTerminator, final Charset charset){
 		putBytes(text.getBytes(charset));
-		if(!consumeTerminator)
+		if(consumeTerminator)
 			putByte(terminator);
 	}
 

@@ -62,7 +62,7 @@ class ProtocolMessageParserTest{
 		protocolMessageParser.encode(protocolMessage, writer, message);
 		byte[] reconstructedMessage = writer.array();
 
-		Assertions.assertArrayEquals(payload, reconstructedMessage);
+		Assertions.assertEquals(new String(payload), new String(reconstructedMessage));
 	}
 
 	@Test
@@ -86,7 +86,7 @@ class ProtocolMessageParserTest{
 		protocolMessageParser.encode(protocolMessage, writer, message);
 		byte[] reconstructedMessage = writer.array();
 
-		Assertions.assertArrayEquals(payload, reconstructedMessage);
+		Assertions.assertEquals(new String(payload), new String(reconstructedMessage));
 	}
 
 	@Test

@@ -228,6 +228,7 @@ class BitWriterTest{
 	void textWithTerminator(){
 		String value = "test";
 		writer.putText(value, (byte)'w', false, StandardCharsets.UTF_8);
+		writer.putByte((byte)'w');
 		BitReader reader = BitReader.wrap(writer);
 
 		Assertions.assertEquals("7465737477", reader.toString());
@@ -242,8 +243,9 @@ class BitWriterTest{
 		writer.putByte((byte)'w');
 		BitReader reader = BitReader.wrap(writer);
 
-		Assertions.assertEquals("7465737477", reader.toString());
+		Assertions.assertEquals("746573747777", reader.toString());
 		Assertions.assertEquals(value, reader.getTextUntilTerminator((byte)'w', true, StandardCharsets.UTF_8));
+		writer.putByte((byte)'w');
 	}
 
 }
