@@ -25,7 +25,6 @@
 package io.github.mtrevisan.boxon.annotations.converters;
 
 
-@SuppressWarnings("unused")
 public class CharConverter implements Converter<Short, Character>{
 
 	@Override

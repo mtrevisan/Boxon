@@ -29,7 +29,6 @@ import io.github.mtrevisan.boxon.annotations.BindChecksum;
 import java.lang.annotation.Annotation;
 
 
-@SuppressWarnings("unused")
 final class CodecChecksum implements CodecInterface<BindChecksum>{
 
 	@Override

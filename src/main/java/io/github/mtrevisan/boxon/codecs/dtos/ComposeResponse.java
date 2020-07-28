@@ -52,7 +52,6 @@ public class ComposeResponse{
 		return !errors.isEmpty();
 	}
 
-	@SuppressWarnings("unused")
 	public List<ComposeException> getErrors(){
 		return errors;
 	}

@@ -25,7 +25,6 @@
 package io.github.mtrevisan.boxon.annotations.converters;
 
 
-@SuppressWarnings("unused")
 public class UnsignedIntConverter implements Converter<Integer, Long>{
 
 	@Override

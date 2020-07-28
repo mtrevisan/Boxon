@@ -25,7 +25,6 @@
 package io.github.mtrevisan.boxon.annotations.converters;
 
 
-@SuppressWarnings("unused")
 public class UnsignedByteConverter implements Converter<Byte, Short>{
 
 	@Override

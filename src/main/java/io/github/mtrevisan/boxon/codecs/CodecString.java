@@ -31,7 +31,6 @@ import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
 
 
-@SuppressWarnings("unused")
 final class CodecString implements CodecInterface<BindString>{
 
 	@Override

@@ -40,7 +40,6 @@ import java.util.Collection;
 import java.util.Map;
 
 
-@SuppressWarnings("unused")
 public class Parser{
 
 	private final ProtocolMessageParser protocolMessageParser = new ProtocolMessageParser();

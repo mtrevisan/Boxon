@@ -31,7 +31,6 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import java.lang.annotation.Annotation;
 
 
-@SuppressWarnings("unused")
 final class CodecLong implements CodecInterface<BindLong>{
 
 	@Override

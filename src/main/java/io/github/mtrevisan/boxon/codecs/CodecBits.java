@@ -32,7 +32,6 @@ import io.github.mtrevisan.boxon.helpers.BitSet;
 import java.lang.annotation.Annotation;
 
 
-@SuppressWarnings("unused")
 final class CodecBits implements CodecInterface<BindBits>{
 
 	@Override

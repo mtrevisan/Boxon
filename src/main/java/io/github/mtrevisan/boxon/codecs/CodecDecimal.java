@@ -31,7 +31,6 @@ import java.lang.annotation.Annotation;
 import java.math.BigDecimal;
 
 
-@SuppressWarnings("unused")
 final class CodecDecimal implements CodecInterface<BindDecimal>{
 
 	@Override

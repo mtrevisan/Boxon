@@ -34,7 +34,6 @@ import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
 import java.lang.annotation.Annotation;
 
 
-@SuppressWarnings("unused")
 final class CodecArray implements CodecInterface<BindArray>{
 
 	@SuppressWarnings("unused")

@@ -39,7 +39,6 @@ public class CRC16 implements Checksummer{
 	private static final int POLYNOMIAL_CCITT = 0x1021;
 
 
-	@SuppressWarnings("unused")
 	@Override
 	public long calculateCRC(final byte[] data, final int start, final int end, final long startValue){
 		short value = (short)startValue;

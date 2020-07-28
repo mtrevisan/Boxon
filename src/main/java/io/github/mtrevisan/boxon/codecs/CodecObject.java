@@ -33,7 +33,6 @@ import io.github.mtrevisan.boxon.annotations.exceptions.ProtocolMessageException
 import java.lang.annotation.Annotation;
 
 
-@SuppressWarnings("unused")
 final class CodecObject implements CodecInterface<BindObject>{
 
 	@SuppressWarnings("unused")

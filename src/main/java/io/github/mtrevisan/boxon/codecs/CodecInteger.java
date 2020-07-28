@@ -34,7 +34,6 @@ import java.lang.annotation.Annotation;
 import java.math.BigInteger;
 
 
-@SuppressWarnings("unused")
 final class CodecInteger implements CodecInterface<BindInteger>{
 
 	@Override

@@ -32,7 +32,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 
 
-@SuppressWarnings("unused")
 final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 
 	@Override

@@ -30,7 +30,6 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import java.lang.annotation.Annotation;
 
 
-@SuppressWarnings("unused")
 final class CodecDouble implements CodecInterface<BindDouble>{
 
 	@Override
