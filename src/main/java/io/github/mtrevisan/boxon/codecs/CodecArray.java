@@ -32,6 +32,7 @@ import io.github.mtrevisan.boxon.annotations.exceptions.ProtocolMessageException
 import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Array;
 
 
 final class CodecArray implements CodecInterface<BindArray>{
@@ -99,12 +100,15 @@ final class CodecArray implements CodecInterface<BindArray>{
 
 		CodecHelper.validateData(binding.validator(), value);
 
-		final int size = Evaluator.evaluateSize(binding.size(), data);
 		final ObjectChoices selectFrom = binding.selectFrom();
 
 		@SuppressWarnings("rawtypes")
 		final Class<? extends Converter> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
 		final Object[] array = CodecHelper.converterEncode(chosenConverter, value);
+
+		final int size = Evaluator.evaluateSize(binding.size(), data);
+		if(size != Array.getLength(array))
+			throw new IllegalArgumentException("Size mismatch, expected " + size + ", got " + Array.getLength(value));
 
 		if(selectFrom.alternatives().length > 0)
 			encodeWithAlternatives(writer, array, selectFrom);

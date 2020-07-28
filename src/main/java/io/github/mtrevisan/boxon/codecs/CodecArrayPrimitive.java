@@ -62,11 +62,13 @@ final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 
 		CodecHelper.validateData(binding.validator(), value);
 
-		final int size = Evaluator.evaluateSize(binding.size(), data);
-
 		@SuppressWarnings("rawtypes")
 		final Class<? extends Converter> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
 		final Object array = CodecHelper.converterEncode(chosenConverter, value);
+
+		final int size = Evaluator.evaluateSize(binding.size(), data);
+		if(size != Array.getLength(array))
+			throw new IllegalArgumentException("Size mismatch, expected " + size + ", got " + Array.getLength(value));
 
 		for(int i = 0; i < size; i ++)
 			writer.put(Array.get(array, i), binding.byteOrder());

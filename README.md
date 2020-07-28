@@ -675,7 +675,7 @@ private String imei;
 public class IMEIConverter implements Converter<byte[], String>{
     @Override
     public String decode(final byte[] value){
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         for(int i = 0; i < 7; i ++)
             sb.append(String.format("%02d", value[i] & 255));
         sb.append(ByteHelper.applyMaskAndShift(value[7], Byte.SIZE, (byte)0x0F));

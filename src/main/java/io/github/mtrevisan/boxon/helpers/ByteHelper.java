@@ -46,7 +46,7 @@ public final class ByteHelper{
 	 * @return	The hexadecimal characters
 	 */
 	public static String toHexString(final byte[] array){
-		final StringBuffer sb = new StringBuffer((array != null? array.length << 1: 0));
+		final StringBuilder sb = new StringBuilder((array != null? array.length << 1: 0));
 		if(array != null)
 			for(int i = 0; i < array.length; i ++){
 				final byte elem = array[i];

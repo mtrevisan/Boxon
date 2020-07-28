@@ -40,7 +40,7 @@ public final class ExceptionHelper{
 	}
 
 	private static String getMessage(final Throwable t, final boolean includeLineNumber){
-		final StringBuffer sb = new StringBuffer(composeExceptionMessage(t, includeLineNumber));
+		final StringBuilder sb = new StringBuilder(composeExceptionMessage(t, includeLineNumber));
 		Throwable cause = t.getCause();
 		while(cause != null){
 			sb.append(System.lineSeparator())
@@ -52,7 +52,7 @@ public final class ExceptionHelper{
 	}
 
 	private static String composeExceptionMessage(final Throwable t, final boolean includeLineNumber){
-		final StringBuffer sb = new StringBuffer();
+		final StringBuilder sb = new StringBuilder();
 		if(includeLineNumber)
 			sb.append(extractExceptionName(t))
 				.append(" at ")

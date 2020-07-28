@@ -102,7 +102,7 @@ public final class ReflectionHelper{
 		return field;
 	}
 
-	private static <T> Field[] getAccessibleFields(Class<?> cls, final Class<?> fieldType){
+	private static Field[] getAccessibleFields(Class<?> cls, final Class<?> fieldType){
 		final Collection<Field> result = new ArrayList<>(0);
 		while(cls != Object.class){
 			final Field[] fields = cls.getDeclaredFields();

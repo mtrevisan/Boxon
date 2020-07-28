@@ -229,7 +229,6 @@ public class Parser{
 
 				final Object partialDecodedMessage = protocolMessageParser.decode(protocolMessage, reader);
 
-				final int end = reader.position();
 				response.addParsedMessage(start, partialDecodedMessage);
 			}
 			catch(final Throwable t){
@@ -256,7 +255,6 @@ public class Parser{
 
 	private void assertNoLeftBytes(final BitReader reader, final int start, final ParseResponse response){
 		if(!response.hasErrors() && reader.hasRemaining()){
-			final byte[] array = reader.array();
 			final int position = reader.position();
 			final IllegalArgumentException error = new IllegalArgumentException("There are remaining unread bytes");
 			final ParseException pe = new ParseException(position, error);

@@ -54,7 +54,7 @@ public class QueclinkHelper{
 	public static class IMEIConverter implements Converter<byte[], String>{
 		@Override
 		public String decode(final byte[] value){
-			final StringBuffer sb = new StringBuffer();
+			final StringBuilder sb = new StringBuilder();
 			for(int i = 0; i < 7; i ++)
 				sb.append(String.format("%02d", value[i] & 255));
 			sb.append(applyMaskAndShift(value[7], (byte)0x0F));
@@ -112,7 +112,7 @@ public class QueclinkHelper{
 
 		@Override
 		public String encode(final ZonedDateTime value){
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			sb.append(StringUtils.leftPad(Integer.toString(value.getYear()), 4, '0'));
 			sb.append(StringUtils.leftPad(Integer.toString(value.getMonthValue()), 2, '0'));
 			sb.append(StringUtils.leftPad(Integer.toString(value.getDayOfMonth()), 2, '0'));

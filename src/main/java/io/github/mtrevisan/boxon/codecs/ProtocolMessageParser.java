@@ -62,7 +62,7 @@ final class ProtocolMessageParser{
 			final ProtocolMessage.BoundedField field = fields.get(i);
 			readSkippedFields(field.getSkips(), reader, data);
 
-			if(!skipFieldByCondition(field.getCondition(), data))
+			if(processField(field.getCondition(), data))
 				decodeField(protocolMessage, reader, data, field);
 		}
 
@@ -163,7 +163,7 @@ final class ProtocolMessageParser{
 			final ProtocolMessage.BoundedField field = fields.get(i);
 			writeSkippedFields(field.getSkips(), writer, data);
 
-			if(!skipFieldByCondition(field.getCondition(), data))
+			if(processField(field.getCondition(), data))
 				encodeField(protocolMessage, writer, data, field);
 		}
 
@@ -187,8 +187,8 @@ final class ProtocolMessageParser{
 		}
 	}
 
-	private <T> boolean skipFieldByCondition(final String condition, final T data){
-		return (condition != null && condition.trim().length() > 0 && !Evaluator.evaluate(condition, boolean.class, data));
+	private <T> boolean processField(final String condition, final T data){
+		return (condition == null || condition.trim().length() <= 0 || Evaluator.evaluate(condition, boolean.class, data));
 	}
 
 	private void closeMessage(final MessageHeader header, final BitWriter writer){
