@@ -167,14 +167,14 @@ final class CodecHelper{
 			throw new IllegalArgumentException("Validation not passed (" + data + ")");
 	}
 
-	static <OUT, IN> OUT converterDecode(final Class<? extends Converter<?, ?>> converterType, final IN data){
+	static <IN, OUT> OUT converterDecode(final Class<? extends Converter<?, ?>> converterType, final IN data){
 		@SuppressWarnings("unchecked")
 		final Converter<IN, OUT> converter = (Converter<IN, OUT>)ReflectionHelper.getCreator(converterType)
 			.get();
 		return converter.decode(data);
 	}
 
-	static <OUT, IN> IN converterEncode(final Class<? extends Converter<?, ?>> converterType, final OUT data){
+	static <IN, OUT> IN converterEncode(final Class<? extends Converter<?, ?>> converterType, final OUT data){
 		@SuppressWarnings("unchecked")
 		final Converter<IN, OUT> converter = (Converter<IN, OUT>)ReflectionHelper.getCreator(converterType)
 			.get();
