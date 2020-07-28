@@ -195,15 +195,17 @@ final class ProtocolMessage<T>{
 			if(prefixSize > Integer.SIZE)
 				throw new AnnotationException("`prefixSize` cannot be greater than {} bits", Integer.SIZE);
 
-			final Stream<ObjectChoices.ObjectChoice> stream = Arrays.stream(selectFrom.alternatives());
-			final Predicate<ObjectChoices.ObjectChoice> test = a -> a.condition().contains(CodecHelper.CONTEXT_PREFIXED_CHOICE_PREFIX);
+			final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
 			if(prefixSize > 0){
-				if(selectFrom.alternatives().length == 0)
+				if(alternatives.length == 0)
 					throw new AnnotationException("Alternatives missing");
-				if(stream.noneMatch(test))
+				if(Arrays.stream(alternatives).noneMatch(a -> a.condition().contains(CodecHelper.CONTEXT_PREFIXED_CHOICE_PREFIX)))
 					throw new AnnotationException("Any condition must contain a reference to the prefix");
+				for(int i = 0; i < alternatives.length; i ++)
+					if(alternatives[i].condition().trim().isEmpty())
+						throw new AnnotationException("Any condition must be non-empty");
 			}
-			else if(stream.anyMatch(test))
+			else if(Arrays.stream(alternatives).anyMatch(a -> a.condition().contains(CodecHelper.CONTEXT_PREFIXED_CHOICE_PREFIX)))
 				throw new AnnotationException("Any condition cannot contain a reference to the prefix");
 		}
 	}
