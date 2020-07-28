@@ -82,7 +82,17 @@ class CodecStringTest{
 
 			@Override
 			public ConverterChoices selectConverterFrom(){
-				return null;
+				return new ConverterChoices(){
+					@Override
+					public Class<? extends Annotation> annotationType(){
+						return ConverterChoices.class;
+					}
+
+					@Override
+					public ConverterChoice[] alternatives(){
+						return new ConverterChoice[0];
+					}
+				};
 			}
 		};
 
@@ -141,7 +151,17 @@ class CodecStringTest{
 
 			@Override
 			public ConverterChoices selectConverterFrom(){
-				return null;
+				return new ConverterChoices(){
+					@Override
+					public Class<? extends Annotation> annotationType(){
+						return ConverterChoices.class;
+					}
+
+					@Override
+					public ConverterChoice[] alternatives(){
+						return new ConverterChoice[0];
+					}
+				};
 			}
 		};
 
@@ -255,7 +275,17 @@ class CodecStringTest{
 
 			@Override
 			public ConverterChoices selectConverterFrom(){
-				return null;
+				return new ConverterChoices(){
+					@Override
+					public Class<? extends Annotation> annotationType(){
+						return ConverterChoices.class;
+					}
+
+					@Override
+					public ConverterChoice[] alternatives(){
+						return new ConverterChoice[0];
+					}
+				};
 			}
 		};
 
