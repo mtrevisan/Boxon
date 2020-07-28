@@ -27,12 +27,9 @@ package io.github.mtrevisan.boxon.codecs.dtos;
 import io.github.mtrevisan.boxon.codecs.exceptions.ParseException;
 import io.github.mtrevisan.boxon.helpers.ByteHelper;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 
 public class ParseResponse{
@@ -41,10 +38,10 @@ public class ParseResponse{
 	private final byte[] payload;
 
 	/** List of successfully parsed messages along with their starting index */
-	private final Map<Integer, Object> parsedMessages = new HashMap<>(0);
+	private final Map<Integer, Object> parsedMessages = new TreeMap<>(Integer::compareTo);
 
 	/** List of error messages along with their starting index */
-	private final Map<Integer, ParseException> errors = new HashMap<>(0);
+	private final Map<Integer, ParseException> errors = new TreeMap<>(Integer::compareTo);
 
 
 	public ParseResponse(final byte[] payload){
@@ -55,11 +52,24 @@ public class ParseResponse{
 		return parsedMessages.size() + errors.size();
 	}
 
-	private byte[] getPayloadAt(final int index, final Set<Integer> keySet){
-		final List<Integer> keys = new ArrayList<>(keySet);
-		Collections.sort(keys);
-		final int start = keys.get(index);
-		final int end = (index + 1 < keys.size()? keys.get(index + 1): payload.length);
+	private byte[] getPayloadAt(final int index, final Set<Integer> keys){
+		//extract limits of payload starting at a given index on a given map:
+		int start = -1;
+		int end = payload.length;
+		int keysToSkip = index - 1;
+		for(final int key : keys){
+			if(keysToSkip > 0){
+				keysToSkip --;
+				continue;
+			}
+
+			if(start >= 0){
+				end = key;
+				break;
+			}
+			start = key;
+		}
+
 		final byte[] copy = new byte[end - start];
 		System.arraycopy(payload, start, copy, 0, end - start);
 		return copy;
@@ -87,6 +97,10 @@ public class ParseResponse{
 		return errors.size();
 	}
 
+	public boolean hasErrors(){
+		return !errors.isEmpty();
+	}
+
 	public ParseException getErrorAt(final int index){
 		return errors.get(index);
 	}
@@ -99,10 +113,6 @@ public class ParseResponse{
 
 	public byte[] getErrorPayloadAt(final int index){
 		return getPayloadAt(index, errors.keySet());
-	}
-
-	public boolean hasErrors(){
-		return !errors.isEmpty();
 	}
 
 	public void addError(final int start, final ParseException exception){
