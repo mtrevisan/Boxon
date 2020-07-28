@@ -200,10 +200,10 @@ final class ProtocolMessage<T>{
 			final Predicate<ObjectChoices.ObjectChoice> test = a -> a.condition().contains(prefixName);
 			if(prefixSize == 0 && stream.anyMatch(test))
 				throw new AnnotationException("Any condition cannot contain a reference to the prefix");
-			else if(prefixSize > 0){
+			if(prefixSize > 0){
 				if(selectFrom.alternatives().length == 0)
 					throw new AnnotationException("Alternatives missing");
-				else if(stream.noneMatch(test))
+				if(stream.noneMatch(test))
 					throw new AnnotationException("Any condition must contain a reference to the prefix");
 			}
 		}

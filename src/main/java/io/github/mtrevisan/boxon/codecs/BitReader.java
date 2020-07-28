@@ -372,10 +372,10 @@ public final class BitReader{
 	public final BigDecimal getDecimal(final Class<?> cls, final ByteOrder byteOrder){
 		if(cls == Float.class)
 			return new BigDecimal(Float.toString(getFloat(byteOrder)));
-		else if(cls == Double.class)
+		if(cls == Double.class)
 			return new BigDecimal(Double.toString(getDouble(byteOrder)));
-		else
-			throw new AnnotationException("Cannot read {} as a {}", BigDecimal.class.getSimpleName(), cls.getSimpleName());
+
+		throw new AnnotationException("Cannot read {} as a {}", BigDecimal.class.getSimpleName(), cls.getSimpleName());
 	}
 
 	/**
