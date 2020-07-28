@@ -231,8 +231,8 @@ public class Parser{
 
 				response.addParsedMessage(start, partialDecodedMessage);
 			}
-			catch(final Throwable t){
-				final ParseException pe = new ParseException(reader.position(), t);
+			catch(final Exception e){
+				final ParseException pe = new ParseException(reader.position(), e);
 
 				//restore state of the reader
 				reader.restoreFallbackPoint();
@@ -291,8 +291,8 @@ public class Parser{
 
 				protocolMessageParser.encode(protocolMessage, writer, elem);
 			}
-			catch(final Throwable t){
-				final ComposeException ce = new ComposeException(elem, t);
+			catch(final Exception e){
+				final ComposeException ce = new ComposeException(elem, e);
 				response.addError(ce);
 			}
 		}
