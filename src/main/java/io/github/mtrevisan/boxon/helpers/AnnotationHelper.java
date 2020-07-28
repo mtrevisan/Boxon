@@ -196,8 +196,8 @@ public final class AnnotationHelper{
 
 	private static Map<BucketType, Collection<File>> bucketByFileType(final File[] files){
 		final Map<BucketType, Collection<File>> bucket = new EnumMap<>(BucketType.class);
-		bucket.put(BucketType.DIRECTORY, new ArrayList<>());
-		bucket.put(BucketType.FILE, new ArrayList<>());
+		bucket.put(BucketType.DIRECTORY, new ArrayList<>(0));
+		bucket.put(BucketType.FILE, new ArrayList<>(0));
 		if(files != null)
 			for(final File file : files)
 				bucket.get(file.isDirectory()? BucketType.DIRECTORY: BucketType.FILE)
