@@ -225,19 +225,9 @@ class BitWriterTest{
 	}
 
 	@Test
-	void textWithTerminatorConsumeTerminator(){
+	void textWithTerminator(){
 		String value = "test";
-		writer.putText(value, (byte)'w', true, StandardCharsets.UTF_8);
-		BitReader reader = BitReader.wrap(writer);
-
-		Assertions.assertEquals("7465737477", reader.toString());
-		Assertions.assertEquals(value, reader.getTextUntilTerminator((byte)'w', true, StandardCharsets.UTF_8));
-	}
-
-	@Test
-	void textWithTerminator1(){
-		String value = "test";
-		writer.putText(value, (byte)'w', true, StandardCharsets.UTF_8);
+		writer.putText(value, (byte)'w', false, StandardCharsets.UTF_8);
 		BitReader reader = BitReader.wrap(writer);
 
 		Assertions.assertEquals("7465737477", reader.toString());
@@ -246,15 +236,14 @@ class BitWriterTest{
 	}
 
 	@Test
-	void textWithTerminator2(){
+	void textWithTerminatorConsumed(){
 		String value = "test";
-		writer.putText(value, (byte)'w', false, StandardCharsets.UTF_8);
+		writer.putText(value, (byte)'w', true, StandardCharsets.UTF_8);
 		writer.putByte((byte)'w');
 		BitReader reader = BitReader.wrap(writer);
 
 		Assertions.assertEquals("7465737477", reader.toString());
-		Assertions.assertEquals(value, reader.getTextUntilTerminator((byte)'w', false, StandardCharsets.UTF_8));
-		Assertions.assertEquals((byte)'w', reader.getByte());
+		Assertions.assertEquals(value, reader.getTextUntilTerminator((byte)'w', true, StandardCharsets.UTF_8));
 	}
 
 }

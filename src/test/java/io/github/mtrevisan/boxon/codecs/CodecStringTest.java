@@ -298,7 +298,7 @@ class CodecStringTest{
 		codec.encode(writer, annotation, null, decoded);
 		writer.flush();
 
-		Assertions.assertEquals("123AB", new String(writer.array(), StandardCharsets.US_ASCII));
+		Assertions.assertArrayEquals(new byte[]{49, 50, 51, 65, 66, 00}, writer.array());
 	}
 
 }
