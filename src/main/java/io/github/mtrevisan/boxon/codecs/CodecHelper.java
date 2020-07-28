@@ -28,6 +28,7 @@ import io.github.mtrevisan.boxon.annotations.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.ByteOrder;
 import io.github.mtrevisan.boxon.annotations.ObjectChoices;
+import io.github.mtrevisan.boxon.annotations.exceptions.ProtocolMessageException;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.helpers.BitSet;
 import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
@@ -44,7 +45,26 @@ final class CodecHelper{
 
 	private CodecHelper(){}
 
-	static ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Integer prefix, final Object data){
+	static ObjectChoices.ObjectChoice chooseAlternative(final BitReader reader, final int prefixSize, final ByteOrder prefixByteOrder,
+			final ObjectChoices.ObjectChoice[] alternatives, final Object data){
+		final Integer prefix = reader.getBigInteger(prefixSize, prefixByteOrder, true).intValue();
+
+		final ObjectChoices.ObjectChoice chosenAlternative = chooseAlternative(alternatives, prefix, data);
+		if(chosenAlternative == null)
+			throw new ProtocolMessageException("Cannot find a valid codec for prefix {}", prefix);
+
+		return chosenAlternative;
+	}
+
+	static ObjectChoices.ObjectChoice chooseAlternativeNoPrefix(final ObjectChoices.ObjectChoice[] alternatives, final Object data){
+		final ObjectChoices.ObjectChoice chosenAlternative = chooseAlternative(alternatives, null, data);
+		if(chosenAlternative == null)
+			throw new ProtocolMessageException("Cannot find a valid codec");
+
+		return chosenAlternative;
+	}
+
+	private static ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Integer prefix, final Object data){
 		ObjectChoices.ObjectChoice chosenAlternative = null;
 
 		Evaluator.addToContext(CONTEXT_CHOICE_PREFIX, prefix);

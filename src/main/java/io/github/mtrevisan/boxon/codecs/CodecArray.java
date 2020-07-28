@@ -28,7 +28,6 @@ import io.github.mtrevisan.boxon.annotations.BindArray;
 import io.github.mtrevisan.boxon.annotations.ByteOrder;
 import io.github.mtrevisan.boxon.annotations.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
-import io.github.mtrevisan.boxon.annotations.exceptions.ProtocolMessageException;
 import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
 
 import java.lang.annotation.Annotation;
@@ -73,33 +72,14 @@ final class CodecArray implements CodecInterface<BindArray>{
 		final int size = array.length;
 		for(int i = 0; i < size; i ++){
 			final ObjectChoices.ObjectChoice chosenAlternative = (prefixSize > 0?
-				chooseAlternative(reader, prefixSize, prefixByteOrder, alternatives, data):
-				chooseAlternativeNoPrefix(alternatives, data));
+				CodecHelper.chooseAlternative(reader, prefixSize, prefixByteOrder, alternatives, data):
+				CodecHelper.chooseAlternativeNoPrefix(alternatives, data));
 
 			//read object
 			final ProtocolMessage<?> subProtocolMessage = ProtocolMessage.createFrom(chosenAlternative.type(), protocolMessageParser.loader);
 
 			array[i] = protocolMessageParser.decode(subProtocolMessage, reader);
 		}
-	}
-
-	private ObjectChoices.ObjectChoice chooseAlternative(final BitReader reader, final int prefixSize, final ByteOrder prefixByteOrder,
-			final ObjectChoices.ObjectChoice[] alternatives, final Object data){
-		final Integer prefix = reader.getBigInteger(prefixSize, prefixByteOrder, true).intValue();
-
-		final ObjectChoices.ObjectChoice chosenAlternative = CodecHelper.chooseAlternative(alternatives, prefix, data);
-		if(chosenAlternative == null)
-			throw new ProtocolMessageException("Cannot find a valid codec for prefix {}", prefix);
-
-		return chosenAlternative;
-	}
-
-	private ObjectChoices.ObjectChoice chooseAlternativeNoPrefix(final ObjectChoices.ObjectChoice[] alternatives, final Object data){
-		final ObjectChoices.ObjectChoice chosenAlternative = CodecHelper.chooseAlternative(alternatives, null, data);
-		if(chosenAlternative == null)
-			throw new ProtocolMessageException("Cannot find a valid codec");
-
-		return chosenAlternative;
 	}
 
 	private void decodeWithoutAlternatives(final BitReader reader, final Object[] array, final Class<?> type){

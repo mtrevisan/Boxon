@@ -28,7 +28,6 @@ import io.github.mtrevisan.boxon.annotations.BindObject;
 import io.github.mtrevisan.boxon.annotations.ByteOrder;
 import io.github.mtrevisan.boxon.annotations.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
-import io.github.mtrevisan.boxon.annotations.exceptions.ProtocolMessageException;
 
 import java.lang.annotation.Annotation;
 
@@ -51,12 +50,9 @@ final class CodecObject implements CodecInterface<BindObject>{
 			final int prefixSize = selectFrom.prefixSize();
 			final ByteOrder prefixByteOrder = selectFrom.byteOrder();
 
-			final Integer prefix = (prefixSize > 0? reader.getBigInteger(prefixSize, prefixByteOrder, true).intValue(): null);
-
-			//choose class
-			final ObjectChoices.ObjectChoice chosenAlternative = CodecHelper.chooseAlternative(alternatives, prefix, data);
-			if(chosenAlternative == null)
-				throw new ProtocolMessageException((prefixSize > 0? "Cannot find a valid codec for prefix {}": "Cannot find a valid codec"), prefix);
+			final ObjectChoices.ObjectChoice chosenAlternative = (prefixSize > 0?
+				CodecHelper.chooseAlternative(reader, prefixSize, prefixByteOrder, alternatives, data):
+				CodecHelper.chooseAlternativeNoPrefix(alternatives, data));
 
 			type = chosenAlternative.type();
 		}
