@@ -202,7 +202,7 @@ final class ProtocolMessage<T>{
 				if(Arrays.stream(alternatives).noneMatch(a -> a.condition().contains(CodecHelper.CONTEXT_PREFIXED_CHOICE_PREFIX)))
 					throw new AnnotationException("Any condition must contain a reference to the prefix");
 				for(int i = 0; i < alternatives.length; i ++)
-					if(alternatives[i].condition().trim().isEmpty())
+					if(alternatives[i].condition().isEmpty())
 						throw new AnnotationException("Any condition must be non-empty");
 			}
 			else if(Arrays.stream(alternatives).anyMatch(a -> a.condition().contains(CodecHelper.CONTEXT_PREFIXED_CHOICE_PREFIX)))

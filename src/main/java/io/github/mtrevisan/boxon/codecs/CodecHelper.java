@@ -155,7 +155,7 @@ final class CodecHelper{
 	}
 
 	private static boolean isNotBlank(final String text){
-		return (text != null && !text.trim().isBlank());
+		return (text != null && !text.isBlank());
 	}
 
 	static <T> void validateData(final Class<? extends Validator<?>> validatorType, final T data){

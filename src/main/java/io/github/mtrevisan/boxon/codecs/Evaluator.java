@@ -133,7 +133,7 @@ final class Evaluator{
 	 */
 	static int evaluateSize(final String expression, final Object data) throws EvaluationException{
 		int size = -1;
-		if(!expression.trim().isBlank())
+		if(!expression.isBlank())
 			size = (isPositiveInteger(expression)? Integer.parseInt(expression): evaluate(expression, int.class, data));
 		return size;
 	}

@@ -98,8 +98,8 @@ final class ProtocolMessageParser{
 	}
 
 	private <T> void readSkip(final Skip skip, final BitReader reader, final T data){
-		final String condition = skip.condition().trim();
-		final boolean process = (condition.trim().isEmpty() || Evaluator.evaluate(condition, boolean.class, data));
+		final String condition = skip.condition();
+		final boolean process = (condition.isEmpty() || Evaluator.evaluate(condition, boolean.class, data));
 		if(process){
 			final int size = Evaluator.evaluateSize(skip.size(), data);
 			if(size > 0)
@@ -146,8 +146,8 @@ final class ProtocolMessageParser{
 		final List<ProtocolMessage.EvaluatedField> evaluatedFields = protocolMessage.getEvaluatedFields();
 		for(int i = 0; i < evaluatedFields.size(); i ++){
 			final ProtocolMessage.EvaluatedField field = evaluatedFields.get(i);
-			final String condition = field.getBinding().condition().trim();
-			final boolean process = (condition.trim().isEmpty() || Evaluator.evaluate(condition, boolean.class, data));
+			final String condition = field.getBinding().condition();
+			final boolean process = (condition.isEmpty() || Evaluator.evaluate(condition, boolean.class, data));
 			if(process){
 				final Object value = Evaluator.evaluate(field.getBinding().value(), field.getType(), data);
 				ReflectionHelper.setFieldValue(data, field.getName(), value);
@@ -187,11 +187,11 @@ final class ProtocolMessageParser{
 	}
 
 	private <T> boolean processField(final String condition, final T data){
-		return (condition == null || condition.trim().isEmpty() || Evaluator.evaluate(condition, boolean.class, data));
+		return (condition == null || condition.isEmpty() || Evaluator.evaluate(condition, boolean.class, data));
 	}
 
 	private void closeMessage(final MessageHeader header, final BitWriter writer){
-		if(header != null && header.end().length() > 0){
+		if(header != null && !header.end().isEmpty()){
 			final Charset charset = Charset.forName(header.charset());
 			final byte[] messageTerminator = header.end().getBytes(charset);
 			writer.putBytes(messageTerminator);
@@ -226,8 +226,8 @@ final class ProtocolMessageParser{
 	}
 
 	private <T> void writeSkip(final Skip skip, final BitWriter writer, final T data){
-		final String condition = skip.condition().trim();
-		final boolean process = (condition.trim().isEmpty() || Evaluator.evaluate(condition, boolean.class, data));
+		final String condition = skip.condition();
+		final boolean process = (condition.isEmpty() || Evaluator.evaluate(condition, boolean.class, data));
 		if(process){
 			final int size = Evaluator.evaluateSize(skip.size(), data);
 			if(size > 0)
