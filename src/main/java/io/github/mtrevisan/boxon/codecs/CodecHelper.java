@@ -54,7 +54,8 @@ final class CodecHelper{
 
 	static ObjectChoices.ObjectChoice chooseAlternative(final BitReader reader, final int prefixSize, final ByteOrder prefixByteOrder,
 			final ObjectChoices.ObjectChoice[] alternatives, final Object data){
-		final Integer prefix = reader.getBigInteger(prefixSize, prefixByteOrder, true).intValue();
+		final int prefix = reader.getBigInteger(prefixSize, prefixByteOrder, true)
+			.intValue();
 
 		final ObjectChoices.ObjectChoice chosenAlternative = chooseAlternative(alternatives, prefix, data);
 		if(chosenAlternative == null)
