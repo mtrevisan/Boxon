@@ -57,7 +57,9 @@ final class CodecHelper{
 		final int prefix = reader.getBigInteger(prefixSize, prefixByteOrder, true)
 			.intValue();
 
-		final ObjectChoices.ObjectChoice chosenAlternative = chooseAlternative(alternatives, prefix, data);
+		Evaluator.addToContext(CONTEXT_CHOICE_PREFIX, prefix);
+		final ObjectChoices.ObjectChoice chosenAlternative = chooseAlternative(alternatives, data);
+		Evaluator.addToContext(CONTEXT_CHOICE_PREFIX, null);
 		if(chosenAlternative == null)
 			throw new ProtocolMessageException("Cannot find a valid codec for prefix {}", prefix);
 
@@ -65,25 +67,18 @@ final class CodecHelper{
 	}
 
 	static ObjectChoices.ObjectChoice chooseAlternativeNoPrefix(final ObjectChoices.ObjectChoice[] alternatives, final Object data){
-		final ObjectChoices.ObjectChoice chosenAlternative = chooseAlternative(alternatives, null, data);
+		final ObjectChoices.ObjectChoice chosenAlternative = chooseAlternative(alternatives, data);
 		if(chosenAlternative == null)
 			throw new ProtocolMessageException("Cannot find a valid codec");
 
 		return chosenAlternative;
 	}
 
-	private static ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Integer prefix, final Object data){
-		ObjectChoices.ObjectChoice chosenAlternative = null;
-
-		Evaluator.addToContext(CONTEXT_CHOICE_PREFIX, prefix);
+	private static ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Object data){
 		for(int i = 0; i < alternatives.length; i ++)
-			if(Evaluator.evaluate(alternatives[i].condition(), boolean.class, data)){
-				chosenAlternative = alternatives[i];
-				break;
-			}
-		Evaluator.addToContext(CONTEXT_CHOICE_PREFIX, null);
-
-		return chosenAlternative;
+			if(Evaluator.evaluate(alternatives[i].condition(), boolean.class, data))
+				return alternatives[i];
+		return null;
 	}
 
 	static Class<? extends Converter<?, ?>> chooseConverter(final ConverterChoices selectConverterFrom, final Class<? extends Converter<?, ?>> baseConverter,
