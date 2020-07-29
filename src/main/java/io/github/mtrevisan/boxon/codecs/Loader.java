@@ -130,7 +130,7 @@ final class Loader{
 	 * Load a singe codec that extends {@link CodecInterface}.
 	 * <p>If the parser previously contained a codec for the given key, the old codec is replaced by the specified one.</p>
 	 *
-	 * @param codec   The codec to add
+	 * @param codec	The codec to add
 	 */
 	private void addCodec(final CodecInterface<?> codec){
 		codecs.put(codec.codecType(), codec);

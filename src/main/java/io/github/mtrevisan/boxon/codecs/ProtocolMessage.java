@@ -222,7 +222,7 @@ final class ProtocolMessage<T>{
 	 * Constructs a new {@link ProtocolMessage}.
 	 *
 	 * @param <T>	The type of the objects to be returned by the {@link ProtocolMessage}.
-	 * @param type   The type of the objects to be returned by the {@link ProtocolMessage}.
+	 * @param type	The type of the objects to be returned by the {@link ProtocolMessage}.
 	 * @param loader	The loader used to verify if a codec annotation is valid.
 	 * @return	A new {@link ProtocolMessage} for the given type.
 	 */
