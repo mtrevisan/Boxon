@@ -61,7 +61,7 @@ final class ProtocolMessageParser{
 			.get();
 
 		if(parentData != null){
-			//TODO add parentData to data...
+			//TODO add parentData to data... add parentData as root to Evaluator?
 		}
 
 		//decode message fields:
