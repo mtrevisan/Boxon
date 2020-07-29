@@ -198,9 +198,9 @@ public final class BitWriter{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 */
 	public final void putDecimal(final BigDecimal value, final Class<?> cls, final ByteOrder byteOrder){
-		if(cls == Float.class)
+		if(cls == float.class || cls == Float.class)
 			putFloat(value.floatValue(), byteOrder);
-		else if(cls == Double.class)
+		else if(cls == double.class || cls == Double.class)
 			putDouble(value.doubleValue(), byteOrder);
 		else
 			throw new AnnotationException("Cannot write {} as a {}", BigDecimal.class.getSimpleName(), cls.getSimpleName());

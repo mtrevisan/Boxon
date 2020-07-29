@@ -368,9 +368,9 @@ public final class BitReader{
 	 * @return	A {@link BigDecimal}.
 	 */
 	public final BigDecimal getDecimal(final Class<?> cls, final ByteOrder byteOrder){
-		if(cls == Float.class)
+		if(cls == float.class || cls == Float.class)
 			return new BigDecimal(Float.toString(getFloat(byteOrder)));
-		if(cls == Double.class)
+		if(cls == double.class || cls == Double.class)
 			return new BigDecimal(Double.toString(getDouble(byteOrder)));
 
 		throw new AnnotationException("Cannot read {} as a {}", BigDecimal.class.getSimpleName(), cls.getSimpleName());
