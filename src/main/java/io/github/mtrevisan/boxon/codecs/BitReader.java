@@ -244,8 +244,7 @@ public final class BitReader{
 		value.ensureAdditionalSpace(Integer.bitCount(cache & mask));
 
 		int skip = 0;
-		while(cache != 0 && skip < size){
-			skip = Integer.numberOfTrailingZeros(cache & 0xFF);
+		while(cache != 0 && (skip = Integer.numberOfTrailingZeros(cache & 0xFF)) < size){
 			value.addNextSetBit(skip + offset);
 			cache ^= 1 << skip;
 		}
