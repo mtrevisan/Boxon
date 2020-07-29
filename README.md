@@ -223,7 +223,7 @@ private BigDecimal[][] crashData;
  - `condition`: The SpEL expression that determines if this field has to be read.
  - `size`: the number of bits to read (can be a SpEL expression).
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
- - `match`: a string/regex/SpEl expression that is used as an expected value.
+ - `match`: a string/regex/SpEl expression that is used as an expected value (the value to match must be something like `[1, 12]`, where the numbers are the position of the set bits in ascending order).
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
  - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).

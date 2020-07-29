@@ -66,7 +66,7 @@ public @interface BindBits{
 	ByteOrder byteOrder() default ByteOrder.BIG_ENDIAN;
 
 	/**
-	 * The value to match (can be a regex expression or a SpEL expression), if any.
+	 * The value to match (MUST BE something like `[1, 12]`, where the numbers are the position of the set bits in ascending order), if any.
 	 *
 	 * @return	The value, or regex, or SpEL expression to be checked for equality
 	 */

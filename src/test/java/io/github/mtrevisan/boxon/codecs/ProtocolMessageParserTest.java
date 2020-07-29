@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.codecs;
 
+import io.github.mtrevisan.boxon.annotations.BindBits;
 import io.github.mtrevisan.boxon.annotations.BindByte;
 import io.github.mtrevisan.boxon.annotations.BindString;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
@@ -31,6 +32,7 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.codecs.queclink.ACKMessageASCII;
 import io.github.mtrevisan.boxon.codecs.queclink.ACKMessageHex;
 import io.github.mtrevisan.boxon.codecs.queclink.DeviceTypes;
+import io.github.mtrevisan.boxon.helpers.BitSet;
 import io.github.mtrevisan.boxon.helpers.ByteHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -128,7 +130,7 @@ class ProtocolMessageParserTest{
 	}
 
 	@Test
-	void parseWithMatchError(){
+	void parseWithMatchError1(){
 		byte[] payload = ByteHelper.toByteArray("74633501");
 		BitReader reader = BitReader.wrap(payload);
 
@@ -208,6 +210,28 @@ class ProtocolMessageParserTest{
 
 		Exception exc = Assertions.assertThrows(IllegalArgumentException.class, () -> protocolMessageParser.decode(protocolMessage, reader));
 		Assertions.assertEquals("class java.lang.Byte cannot be cast to class java.lang.String (java.lang.Byte and java.lang.String are in module java.base of loader 'bootstrap'), field TestError4.type", exc.getMessage());
+	}
+
+
+	@MessageHeader(start = "te5")
+	static class TestError5{
+		@BindString(size = "3")
+		public String header;
+		@BindBits(size = "8", match = "[1]")
+		public BitSet type;
+	}
+
+	@Test
+	void parseWithMatchError2(){
+		byte[] payload = ByteHelper.toByteArray("74633501");
+		BitReader reader = BitReader.wrap(payload);
+
+		ProtocolMessageParser protocolMessageParser = new ProtocolMessageParser();
+		protocolMessageParser.loader.loadCodecs();
+		ProtocolMessage<TestError5> protocolMessage = ProtocolMessage.createFrom(TestError5.class, protocolMessageParser.loader);
+
+		Exception exc = Assertions.assertThrows(IllegalArgumentException.class, () -> protocolMessageParser.decode(protocolMessage, reader));
+		Assertions.assertEquals("Value `[0]` does not match constraint `[1]`, field TestError5.type", exc.getMessage());
 	}
 
 }
