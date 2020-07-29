@@ -24,9 +24,9 @@
  */
 package io.github.mtrevisan.boxon.codecs;
 
+import io.github.mtrevisan.boxon.annotations.ByteOrder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import io.github.mtrevisan.boxon.annotations.ByteOrder;
 
 import java.io.ByteArrayOutputStream;
 import java.lang.annotation.Annotation;

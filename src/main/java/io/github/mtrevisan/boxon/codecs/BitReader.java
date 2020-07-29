@@ -24,11 +24,11 @@
  */
 package io.github.mtrevisan.boxon.codecs;
 
-import io.github.mtrevisan.boxon.annotations.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.helpers.DataType;
 import io.github.mtrevisan.boxon.annotations.ByteOrder;
+import io.github.mtrevisan.boxon.annotations.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.helpers.BitSet;
 import io.github.mtrevisan.boxon.helpers.ByteHelper;
+import io.github.mtrevisan.boxon.helpers.DataType;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;

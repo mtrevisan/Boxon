@@ -24,11 +24,11 @@
  */
 package io.github.mtrevisan.boxon.codecs;
 
+import io.github.mtrevisan.boxon.annotations.ByteOrder;
+import io.github.mtrevisan.boxon.helpers.BitSet;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import io.github.mtrevisan.boxon.annotations.ByteOrder;
-import io.github.mtrevisan.boxon.helpers.BitSet;
 
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;

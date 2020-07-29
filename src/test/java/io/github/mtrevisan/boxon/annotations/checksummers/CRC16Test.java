@@ -24,8 +24,7 @@
  */
 package io.github.mtrevisan.boxon.annotations.checksummers;
 
-import static org.junit.jupiter.api.Assertions.*;
-
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 
@@ -36,7 +35,7 @@ class CRC16Test{
 		CRC16 crc = new CRC16();
 		Number crc16 = crc.calculateCRC(new byte[]{0x01, 0x02, 0x03, 0x04}, 0, 4, 0x0000_FFFF);
 
-		assertEquals((short)0x89C3, crc16.shortValue());
+		Assertions.assertEquals((short)0x89C3, crc16.shortValue());
 	}
 
 }
