@@ -68,8 +68,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 
 		final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
 
-		final int size = array.length;
-		for(int i = 0; i < size; i ++){
+		for(int i = 0; i < array.length; i ++){
 			final ObjectChoices.ObjectChoice chosenAlternative = (prefixSize > 0?
 				CodecHelper.chooseAlternative(reader, prefixSize, prefixByteOrder, alternatives, data):
 				CodecHelper.chooseAlternativeNoPrefix(alternatives, data));
@@ -84,8 +83,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 	private void decodeWithoutAlternatives(final BitReader reader, final Object[] array, final Class<?> type){
 		final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(type, protocolMessageParser.loader);
 
-		final int size = array.length;
-		for(int i = 0; i < size; i ++)
+		for(int i = 0; i < array.length; i ++)
 			array[i] = protocolMessageParser.decode(protocolMessage, reader);
 	}
 
