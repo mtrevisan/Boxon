@@ -154,7 +154,7 @@ final class ProtocolMessage<T>{
 			@Override
 			void validate(final Annotation annotation){
 				final Class<?> type = ((BindDecimal)annotation).type();
-				if(type != Float.class && type != Double.class)
+				if(type != float.class && type != Float.class && type != double.class && type != Double.class)
 					throw new AnnotationException("Bad type, should have been one of `{}.class` or `{}.class`", Float.class.getSimpleName(), Double.class.getSimpleName());
 			}
 		},
