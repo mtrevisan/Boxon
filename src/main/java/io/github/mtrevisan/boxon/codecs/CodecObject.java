@@ -59,7 +59,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 
 		final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(type, protocolMessageParser.loader);
 
-		final Object instance = protocolMessageParser.decode(protocolMessage, reader);
+		final Object instance = protocolMessageParser.decode(protocolMessage, reader, data);
 
 		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
 		final Object value = CodecHelper.converterDecode(chosenConverter, instance);

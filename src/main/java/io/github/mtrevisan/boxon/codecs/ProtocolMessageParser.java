@@ -51,10 +51,18 @@ final class ProtocolMessageParser{
 
 
 	final <T> T decode(final ProtocolMessage<T> protocolMessage, final BitReader reader){
+		return decode(protocolMessage, reader, null);
+	}
+
+	final <T> T decode(final ProtocolMessage<T> protocolMessage, final BitReader reader, final Object parentData){
 		final int startPosition = reader.position();
 
 		final T data = ReflectionHelper.getCreator(protocolMessage.getType())
 			.get();
+
+		if(parentData != null){
+			//TODO add parentData to data...
+		}
 
 		//decode message fields:
 		final List<ProtocolMessage.BoundedField> fields = protocolMessage.getBoundedFields();
