@@ -51,7 +51,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 		if(selectFrom.alternatives().length > 0)
 			decodeWithAlternatives(reader, array, selectFrom, data);
 		else
-			decodeWithoutAlternatives(reader, array, binding.type(), data);
+			decodeWithoutAlternatives(reader, array, binding.type());
 
 		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
 		final Object value = CodecHelper.converterDecode(chosenConverter, array);
@@ -76,15 +76,15 @@ final class CodecArray implements CodecInterface<BindArray>{
 			//read object
 			final ProtocolMessage<?> subProtocolMessage = ProtocolMessage.createFrom(chosenAlternative.type(), protocolMessageParser.loader);
 
-			array[i] = protocolMessageParser.decode(subProtocolMessage, reader, data);
+			array[i] = protocolMessageParser.decode(subProtocolMessage, reader);
 		}
 	}
 
-	private void decodeWithoutAlternatives(final BitReader reader, final Object[] array, final Class<?> type, final Object data){
+	private void decodeWithoutAlternatives(final BitReader reader, final Object[] array, final Class<?> type){
 		final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(type, protocolMessageParser.loader);
 
 		for(int i = 0; i < array.length; i ++)
-			array[i] = protocolMessageParser.decode(protocolMessage, reader, data);
+			array[i] = protocolMessageParser.decode(protocolMessage, reader);
 	}
 
 	@Override

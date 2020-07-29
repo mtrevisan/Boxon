@@ -110,6 +110,15 @@ final class Evaluator{
 	}
 
 	/**
+	 * Adds an object as the root for this context.
+	 *
+	 * @param value	The root value.
+	 */
+	static void addToContextAsRoot(final Object value){
+		CONTEXT.setRootObject(value);
+	}
+
+	/**
 	 * Adds a method to the context of this evaluator.
 	 *
 	 * @param method	The method.

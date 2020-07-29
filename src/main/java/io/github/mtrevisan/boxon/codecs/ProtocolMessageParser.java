@@ -60,9 +60,9 @@ final class ProtocolMessageParser{
 		final T data = ReflectionHelper.getCreator(protocolMessage.getType())
 			.get();
 
-		if(parentData != null){
-			//TODO add parentData to data... add parentData as root to Evaluator?
-		}
+		if(parentData != null)
+			//add root object
+			Evaluator.addToContextAsRoot(parentData);
 
 		//decode message fields:
 		final List<ProtocolMessage.BoundedField> fields = protocolMessage.getBoundedFields();
@@ -75,6 +75,10 @@ final class ProtocolMessageParser{
 		}
 
 		processEvaluatedFields(protocolMessage, data);
+
+		if(parentData != null)
+			//remove root object
+			Evaluator.addToContextAsRoot(null);
 
 		readMessageTerminator(protocolMessage, reader);
 
