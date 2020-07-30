@@ -184,12 +184,12 @@ public final class AnnotationHelper{
 
 			final File[] files = elem.file.listFiles();
 			final Map<BucketType, Collection<File>> bucket = bucketByFileType(files);
-			bucket.get(BucketType.DIRECTORY).stream()
-				.map(file -> new ClassDescriptor(file, elem.packageName + POINT + file.getName()))
-				.forEach(stack::add);
-			bucket.get(BucketType.FILE).stream()
-				.map(file -> getClassFromFilename(elem.packageName, file.getName()))
-				.forEach(cls -> addIf(classes, cls, type));
+			for(final File file : bucket.get(BucketType.DIRECTORY))
+				stack.add(new ClassDescriptor(file, elem.packageName + POINT + file.getName()));
+			for(final File file : bucket.get(BucketType.FILE)){
+				final Class<?> cls = getClassFromFilename(elem.packageName, file.getName());
+				addIf(classes, cls, type);
+			}
 		}
 
 		return classes;

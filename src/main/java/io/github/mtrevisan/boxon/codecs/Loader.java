@@ -36,10 +36,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -77,13 +80,11 @@ final class Loader{
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load codecs
 	 */
 	final void loadCodecs(Class<?>... basePackageClasses){
-		//remove duplicates
-		basePackageClasses = Arrays.stream(basePackageClasses)
-			.filter(distinctByKey(Class::getPackageName))
-			.toArray(Class[]::new);
+		basePackageClasses = removeDuplicates(basePackageClasses);
 
-		LOGGER.info("Load codecs from package(s) {}",
-			Arrays.stream(basePackageClasses).map(Class::getPackageName).collect(Collectors.joining(", ", "[", "]")));
+		if(LOGGER.isInfoEnabled())
+			LOGGER.info("Load codecs from package(s) {}",
+				Arrays.stream(basePackageClasses).map(Class::getPackageName).collect(Collectors.joining(", ", "[", "]")));
 
 		final Collection<Class<?>> derivedClasses = AnnotationHelper.extractClasses(CodecInterface.class, basePackageClasses);
 		for(final Class<?> type : derivedClasses){
@@ -157,22 +158,36 @@ final class Loader{
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes
 	 */
 	synchronized final void loadProtocolMessages(Class<?>... basePackageClasses){
-		//remove duplicates
-		basePackageClasses = Arrays.stream(basePackageClasses)
-			.filter(distinctByKey(Class::getPackageName))
-			.toArray(Class[]::new);
+		basePackageClasses = removeDuplicates(basePackageClasses);
 
-		LOGGER.info("Load parsing classes from package(s) {}",
-			Arrays.stream(basePackageClasses).map(Class::getPackageName).collect(Collectors.joining(", ", "[", "]")));
+		if(LOGGER.isInfoEnabled())
+			LOGGER.info("Load parsing classes from package(s) {}",
+				Arrays.stream(basePackageClasses).map(Class::getPackageName).collect(Collectors.joining(", ", "[", "]")));
 
 		final Collection<Class<?>> annotatedClasses = AnnotationHelper.extractClasses(MessageHeader.class, basePackageClasses);
-		final Collection<ProtocolMessage<?>> protocolMessages = annotatedClasses.stream()
-			.map(type -> ProtocolMessage.createFrom(type, this))
-			.filter(ProtocolMessage::canBeDecoded)
-			.collect(Collectors.toList());
+		final Collection<ProtocolMessage<?>> protocolMessages = extractProtocolMessages(annotatedClasses);
 		loadProtocolMessagesInner(protocolMessages);
 
 		LOGGER.trace("Protocol messages loaded are {}", protocolMessages.size());
+	}
+
+	private Class<?>[] removeDuplicates(final Class<?>[] basePackageClasses){
+		final List<Class<?>> list = new ArrayList<>();
+		final Predicate<Class<?>> predicate = distinctByKey(Class::getPackageName);
+		for(final Class<?> basePackageClass : basePackageClasses)
+			if(predicate.test(basePackageClass))
+				list.add(basePackageClass);
+		return list.toArray(Class[]::new);
+	}
+
+	private Collection<ProtocolMessage<?>> extractProtocolMessages(final Collection<Class<?>> annotatedClasses){
+		final Collection<ProtocolMessage<?>> protocolMessages = new ArrayList<>();
+		for(final Class<?> type : annotatedClasses){
+			final ProtocolMessage<?> from = ProtocolMessage.createFrom(type, this);
+			if(from.canBeDecoded())
+				protocolMessages.add(from);
+		}
+		return protocolMessages;
 	}
 
 	/**
@@ -182,9 +197,7 @@ final class Loader{
 	 */
 	synchronized final void loadProtocolMessages(Collection<ProtocolMessage<?>> protocolMessages){
 		//remove duplicates
-		protocolMessages = protocolMessages.stream()
-			.distinct()
-			.collect(Collectors.toList());
+		protocolMessages = new HashSet<>(protocolMessages);
 
 		LOGGER.info("Load parsing classes from input");
 

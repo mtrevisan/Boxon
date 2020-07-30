@@ -26,7 +26,7 @@ package io.github.mtrevisan.boxon.codecs.queclink;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.stream.Collectors;
+import java.util.StringJoiner;
 
 
 public class DeviceTypes{
@@ -54,12 +54,11 @@ public class DeviceTypes{
 				return dt.getName();
 
 		final String actualCode = Integer.toHexString(deviceTypeCode & 0x0000_00FF);
-		final String availableCodes = deviceTypes.stream()
-			.map(DeviceType::getCode)
-			.map(code -> Integer.toHexString(code & 0x0000_00FF))
-			.collect(Collectors.joining(", 0x", "[0x", "]"));
+		final StringJoiner sj = new StringJoiner(", 0x", "[0x", "]");
+		for(final DeviceType deviceType : deviceTypes)
+			sj.add(Integer.toHexString(deviceType.getCode() & 0x0000_00FF));
 		throw new IllegalArgumentException("Cannot parse message from another device, device type is 0x" + actualCode
-			+ ", should be one of " + availableCodes);
+			+ ", should be one of " + sj.toString());
 	}
 
 }

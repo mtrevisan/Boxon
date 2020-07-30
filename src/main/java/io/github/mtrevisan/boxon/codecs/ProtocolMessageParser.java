@@ -56,6 +56,7 @@ final class ProtocolMessageParser{
 		final T data = ReflectionHelper.getCreator(protocolMessage.getType())
 			.get();
 
+		//select parent object, discard children
 		final Object rootObject = (parentData != null? parentData: data);
 
 		//decode message fields:
