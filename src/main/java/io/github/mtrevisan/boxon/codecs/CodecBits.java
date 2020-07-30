@@ -35,15 +35,15 @@ import java.lang.annotation.Annotation;
 final class CodecBits implements CodecInterface<BindBits>{
 
 	@Override
-	public final Object decode(final BitReader reader, final Annotation annotation, final Object data){
+	public final Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
 		final BindBits binding = (BindBits)annotation;
 
-		final int size = Evaluator.evaluateSize(binding.size(), data);
+		final int size = Evaluator.evaluateSize(binding.size(), rootObject);
 		final BitSet bits = reader.getBits(size);
 		if(binding.byteOrder() == ByteOrder.LITTLE_ENDIAN)
 			bits.reverseBits(size);
 
-		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
+		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), rootObject);
 		final Object value = CodecHelper.converterDecode(chosenConverter, bits);
 
 		CodecHelper.validateData(binding.match(), binding.validator(), value);
@@ -52,14 +52,14 @@ final class CodecBits implements CodecInterface<BindBits>{
 	}
 
 	@Override
-	public final void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
+	public final void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value){
 		final BindBits binding = (BindBits)annotation;
 
 		CodecHelper.validateData(binding.match(), binding.validator(), value);
 
-		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
+		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), rootObject);
 		final BitSet bits = CodecHelper.converterEncode(chosenConverter, value);
-		final int size = Evaluator.evaluateSize(binding.size(), data);
+		final int size = Evaluator.evaluateSize(binding.size(), rootObject);
 		if(binding.byteOrder() == ByteOrder.LITTLE_ENDIAN)
 			bits.reverseBits( size);
 

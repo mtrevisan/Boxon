@@ -32,14 +32,14 @@ import java.lang.annotation.Annotation;
 final class CodecChecksum implements CodecInterface<BindChecksum>{
 
 	@Override
-	public final Object decode(final BitReader reader, final Annotation annotation, final Object data){
+	public final Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
 		final BindChecksum binding = (BindChecksum)annotation;
 
 		return reader.get(binding.type(), binding.byteOrder());
 	}
 
 	@Override
-	public final void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
+	public final void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value){
 		final BindChecksum binding = (BindChecksum)annotation;
 
 		writer.put(value, binding.byteOrder());

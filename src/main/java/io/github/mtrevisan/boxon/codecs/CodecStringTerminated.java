@@ -34,14 +34,14 @@ import java.nio.charset.Charset;
 final class CodecStringTerminated implements CodecInterface<BindStringTerminated>{
 
 	@Override
-	public final Object decode(final BitReader reader, final Annotation annotation, final Object data){
+	public final Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
 		final BindStringTerminated binding = (BindStringTerminated)annotation;
 
 		final Charset charset = Charset.forName(binding.charset());
 
 		final String text = reader.getTextUntilTerminator(binding.terminator(), binding.consumeTerminator(), charset);
 
-		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
+		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), rootObject);
 		final Object value = CodecHelper.converterDecode(chosenConverter, text);
 
 		CodecHelper.validateData(binding.match(), binding.validator(), value);
@@ -50,14 +50,14 @@ final class CodecStringTerminated implements CodecInterface<BindStringTerminated
 	}
 
 	@Override
-	public final void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
+	public final void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value){
 		final BindStringTerminated binding = (BindStringTerminated)annotation;
 
 		CodecHelper.validateData(binding.match(), binding.validator(), value);
 
 		final Charset charset = Charset.forName(binding.charset());
 
-		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
+		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), rootObject);
 		final String text = CodecHelper.converterEncode(chosenConverter, value);
 
 		writer.putText(text, binding.terminator(), binding.consumeTerminator(), charset);

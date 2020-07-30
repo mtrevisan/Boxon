@@ -33,12 +33,12 @@ import java.lang.annotation.Annotation;
 final class CodecDouble implements CodecInterface<BindDouble>{
 
 	@Override
-	public final Object decode(final BitReader reader, final Annotation annotation, final Object data){
+	public final Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
 		final BindDouble binding = (BindDouble)annotation;
 
 		final double v = reader.getDouble(binding.byteOrder());
 
-		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
+		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), rootObject);
 		final Object value = CodecHelper.converterDecode(chosenConverter, v);
 
 		CodecHelper.validateData(binding.match(), binding.validator(), value);
@@ -47,12 +47,12 @@ final class CodecDouble implements CodecInterface<BindDouble>{
 	}
 
 	@Override
-	public final void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
+	public final void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value){
 		final BindDouble binding = (BindDouble)annotation;
 
 		CodecHelper.validateData(binding.match(), binding.validator(), value);
 
-		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
+		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), rootObject);
 		final double v = CodecHelper.converterEncode(chosenConverter, value);
 
 		writer.putDouble(v, binding.byteOrder());

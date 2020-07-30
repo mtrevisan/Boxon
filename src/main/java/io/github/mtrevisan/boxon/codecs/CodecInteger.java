@@ -37,14 +37,14 @@ import java.math.BigInteger;
 final class CodecInteger implements CodecInterface<BindInteger>{
 
 	@Override
-	public final Object decode(final BitReader reader, final Annotation annotation, final Object data){
+	public final Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
 		final BindInteger binding = (BindInteger)annotation;
 
-		final int size = Evaluator.evaluateSize(binding.size(), data);
+		final int size = Evaluator.evaluateSize(binding.size(), rootObject);
 
 		final BigInteger v = reader.getBigInteger(size, binding.byteOrder(), binding.unsigned());
 
-		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
+		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), rootObject);
 		final Object value = CodecHelper.converterDecode(chosenConverter, v);
 
 		CodecHelper.validateData(binding.match(), binding.validator(), value);
@@ -53,14 +53,14 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 	}
 
 	@Override
-	public final void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
+	public final void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value){
 		final BindInteger binding = (BindInteger)annotation;
 
 		CodecHelper.validateData(binding.match(), binding.validator(), value);
 
-		final int size = Evaluator.evaluateSize(binding.size(), data);
+		final int size = Evaluator.evaluateSize(binding.size(), rootObject);
 
-		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
+		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), rootObject);
 		final BigInteger v = CodecHelper.converterEncode(chosenConverter, value);
 
 		final ByteOrder byteOrder = binding.byteOrder();

@@ -34,14 +34,14 @@ import java.nio.charset.Charset;
 final class CodecString implements CodecInterface<BindString>{
 
 	@Override
-	public final Object decode(final BitReader reader, final Annotation annotation, final Object data){
+	public final Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
 		final BindString binding = (BindString)annotation;
 
-		final int size = Evaluator.evaluateSize(binding.size(), data);
+		final int size = Evaluator.evaluateSize(binding.size(), rootObject);
 		final Charset charset = Charset.forName(binding.charset());
 		final String text = reader.getText(size, charset);
 
-		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
+		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), rootObject);
 		final Object value = CodecHelper.converterDecode(chosenConverter, text);
 
 		CodecHelper.validateData(binding.match(), binding.validator(), value);
@@ -50,15 +50,15 @@ final class CodecString implements CodecInterface<BindString>{
 	}
 
 	@Override
-	public final void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
+	public final void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value){
 		final BindString binding = (BindString)annotation;
 
 		CodecHelper.validateData(binding.match(), binding.validator(), value);
 
-		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
+		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), rootObject);
 		final String text = CodecHelper.converterEncode(chosenConverter, value);
 
-		final int size = Evaluator.evaluateSize(binding.size(), data);
+		final int size = Evaluator.evaluateSize(binding.size(), rootObject);
 		final Charset charset = Charset.forName(binding.charset());
 		writer.putText(text.substring(0, Math.min(text.length(), size)), charset);
 	}

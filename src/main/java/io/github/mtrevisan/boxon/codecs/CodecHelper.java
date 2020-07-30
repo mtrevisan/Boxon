@@ -53,12 +53,12 @@ final class CodecHelper{
 	}
 
 	static ObjectChoices.ObjectChoice chooseAlternative(final BitReader reader, final int prefixSize, final ByteOrder prefixByteOrder,
-			final ObjectChoices.ObjectChoice[] alternatives, final Object data){
+			final ObjectChoices.ObjectChoice[] alternatives, final Object rootObject){
 		final int prefix = reader.getBigInteger(prefixSize, prefixByteOrder, true)
 			.intValue();
 
 		Evaluator.addToContext(CONTEXT_CHOICE_PREFIX, prefix);
-		final ObjectChoices.ObjectChoice chosenAlternative = chooseAlternative(alternatives, data);
+		final ObjectChoices.ObjectChoice chosenAlternative = chooseAlternative(alternatives, rootObject);
 		Evaluator.addToContext(CONTEXT_CHOICE_PREFIX, null);
 		if(chosenAlternative == null)
 			throw new ProtocolMessageException("Cannot find a valid codec for prefix {}", prefix);
@@ -66,26 +66,26 @@ final class CodecHelper{
 		return chosenAlternative;
 	}
 
-	static ObjectChoices.ObjectChoice chooseAlternativeNoPrefix(final ObjectChoices.ObjectChoice[] alternatives, final Object data){
-		final ObjectChoices.ObjectChoice chosenAlternative = chooseAlternative(alternatives, data);
+	static ObjectChoices.ObjectChoice chooseAlternativeNoPrefix(final ObjectChoices.ObjectChoice[] alternatives, final Object rootObject){
+		final ObjectChoices.ObjectChoice chosenAlternative = chooseAlternative(alternatives, rootObject);
 		if(chosenAlternative == null)
 			throw new ProtocolMessageException("Cannot find a valid codec");
 
 		return chosenAlternative;
 	}
 
-	private static ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Object data){
+	private static ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Object rootObject){
 		for(int i = 0; i < alternatives.length; i ++)
-			if(Evaluator.evaluate(alternatives[i].condition(), boolean.class, data))
+			if(Evaluator.evaluate(alternatives[i].condition(), rootObject, boolean.class))
 				return alternatives[i];
 		return null;
 	}
 
 	static Class<? extends Converter<?, ?>> chooseConverter(final ConverterChoices selectConverterFrom, final Class<? extends Converter<?, ?>> baseConverter,
-			final Object data){
+			final Object rootObject){
 		final ConverterChoices.ConverterChoice[] alternatives = selectConverterFrom.alternatives();
 		for(int i = 0; i < alternatives.length; i ++)
-			if(Evaluator.evaluate(alternatives[i].condition(), boolean.class, data))
+			if(Evaluator.evaluate(alternatives[i].condition(), rootObject, boolean.class))
 				return alternatives[i].converter();
 		return baseConverter;
 	}
@@ -133,9 +133,9 @@ final class CodecHelper{
 		return p;
 	}
 
-	private static <T> String extractSpELExpression(String match, final T data){
+	private static <T> String extractSpELExpression(String match, final T rootObject){
 		try{
-			match = Evaluator.evaluate(match, String.class, data);
+			match = Evaluator.evaluate(match, rootObject, String.class);
 		}
 		catch(final Exception ignored){}
 		return match;

@@ -35,11 +35,11 @@ import java.lang.reflect.Array;
 final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 
 	@Override
-	public final Object decode(final BitReader reader, final Annotation annotation, final Object data){
+	public final Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
 		final BindArrayPrimitive binding = (BindArrayPrimitive)annotation;
 
 		final Class<?> type = binding.type();
-		final int size = Evaluator.evaluateSize(binding.size(), data);
+		final int size = Evaluator.evaluateSize(binding.size(), rootObject);
 
 		final Object array = ReflectionHelper.createArrayPrimitive(type, size);
 		for(int i = 0; i < size; i ++){
@@ -47,7 +47,7 @@ final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 			Array.set(array, i, value);
 		}
 
-		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
+		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), rootObject);
 		final Object value = CodecHelper.converterDecode(chosenConverter, array);
 
 		CodecHelper.validateData(binding.validator(), value);
@@ -56,15 +56,15 @@ final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 	}
 
 	@Override
-	public final void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
+	public final void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value){
 		final BindArrayPrimitive binding = (BindArrayPrimitive)annotation;
 
 		CodecHelper.validateData(binding.validator(), value);
 
-		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
+		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), rootObject);
 		final Object array = CodecHelper.converterEncode(chosenConverter, value);
 
-		final int size = Evaluator.evaluateSize(binding.size(), data);
+		final int size = Evaluator.evaluateSize(binding.size(), rootObject);
 		if(size != Array.getLength(array))
 			throw new IllegalArgumentException("Size mismatch, expected " + size + ", got " + Array.getLength(value));
 

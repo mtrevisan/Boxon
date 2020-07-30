@@ -41,19 +41,19 @@ final class CodecArray implements CodecInterface<BindArray>{
 
 
 	@Override
-	public final Object decode(final BitReader reader, final Annotation annotation, final Object data){
+	public final Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
 		final BindArray binding = (BindArray)annotation;
 
-		final int size = Evaluator.evaluateSize(binding.size(), data);
+		final int size = Evaluator.evaluateSize(binding.size(), rootObject);
 		final ObjectChoices selectFrom = binding.selectFrom();
 
 		final Object[] array = ReflectionHelper.createArray(binding.type(), size);
 		if(selectFrom.alternatives().length > 0)
-			decodeWithAlternatives(reader, array, selectFrom, data);
+			decodeWithAlternatives(reader, array, selectFrom, rootObject);
 		else
 			decodeWithoutAlternatives(reader, array, binding.type());
 
-		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
+		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), rootObject);
 		final Object value = CodecHelper.converterDecode(chosenConverter, array);
 
 		CodecHelper.validateData(binding.validator(), value);
@@ -61,7 +61,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 		return value;
 	}
 
-	private void decodeWithAlternatives(final BitReader reader, final Object[] array, final ObjectChoices selectFrom, final Object data){
+	private void decodeWithAlternatives(final BitReader reader, final Object[] array, final ObjectChoices selectFrom, final Object rootObject){
 		//read prefix
 		final int prefixSize = selectFrom.prefixSize();
 		final ByteOrder prefixByteOrder = selectFrom.byteOrder();
@@ -70,13 +70,13 @@ final class CodecArray implements CodecInterface<BindArray>{
 
 		for(int i = 0; i < array.length; i ++){
 			final ObjectChoices.ObjectChoice chosenAlternative = (prefixSize > 0?
-				CodecHelper.chooseAlternative(reader, prefixSize, prefixByteOrder, alternatives, data):
-				CodecHelper.chooseAlternativeNoPrefix(alternatives, data));
+				CodecHelper.chooseAlternative(reader, prefixSize, prefixByteOrder, alternatives, rootObject):
+				CodecHelper.chooseAlternativeNoPrefix(alternatives, rootObject));
 
 			//read object
 			final ProtocolMessage<?> subProtocolMessage = ProtocolMessage.createFrom(chosenAlternative.type(), protocolMessageParser.loader);
 
-			array[i] = protocolMessageParser.decode(subProtocolMessage, reader);
+			array[i] = protocolMessageParser.decode(subProtocolMessage, reader, rootObject);
 		}
 	}
 
@@ -84,21 +84,21 @@ final class CodecArray implements CodecInterface<BindArray>{
 		final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(type, protocolMessageParser.loader);
 
 		for(int i = 0; i < array.length; i ++)
-			array[i] = protocolMessageParser.decode(protocolMessage, reader);
+			array[i] = protocolMessageParser.decode(protocolMessage, reader, null);
 	}
 
 	@Override
-	public final void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
+	public final void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value){
 		final BindArray binding = (BindArray)annotation;
 
 		CodecHelper.validateData(binding.validator(), value);
 
 		final ObjectChoices selectFrom = binding.selectFrom();
 
-		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
+		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), rootObject);
 		final Object[] array = CodecHelper.converterEncode(chosenConverter, value);
 
-		final int size = Evaluator.evaluateSize(binding.size(), data);
+		final int size = Evaluator.evaluateSize(binding.size(), rootObject);
 		if(size != Array.getLength(array))
 			throw new IllegalArgumentException("Size mismatch, expected " + size + ", got " + Array.getLength(value));
 

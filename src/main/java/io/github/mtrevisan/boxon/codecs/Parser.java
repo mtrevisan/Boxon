@@ -240,7 +240,7 @@ public class Parser{
 
 				final ProtocolMessage<?> protocolMessage = protocolMessageParser.loader.getProtocolMessage(reader);
 
-				final Object partialDecodedMessage = protocolMessageParser.decode(protocolMessage, reader);
+				final Object partialDecodedMessage = protocolMessageParser.decode(protocolMessage, reader, null);
 
 				response.addParsedMessage(start, partialDecodedMessage);
 			}

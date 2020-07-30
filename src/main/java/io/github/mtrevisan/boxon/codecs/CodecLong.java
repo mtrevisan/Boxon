@@ -34,12 +34,12 @@ import java.lang.annotation.Annotation;
 final class CodecLong implements CodecInterface<BindLong>{
 
 	@Override
-	public final Object decode(final BitReader reader, final Annotation annotation, final Object data){
+	public final Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
 		final BindLong binding = (BindLong)annotation;
 
 		final long v = reader.getLong(binding.byteOrder());
 
-		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
+		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), rootObject);
 		final Object value = CodecHelper.converterDecode(chosenConverter, v);
 
 		CodecHelper.validateData(binding.match(), binding.validator(), value);
@@ -48,12 +48,12 @@ final class CodecLong implements CodecInterface<BindLong>{
 	}
 
 	@Override
-	public final void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
+	public final void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value){
 		final BindLong binding = (BindLong)annotation;
 
 		CodecHelper.validateData(binding.match(), binding.validator(), value);
 
-		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
+		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), rootObject);
 		final long v = CodecHelper.converterEncode(chosenConverter, value);
 
 		final ByteOrder byteOrder = binding.byteOrder();

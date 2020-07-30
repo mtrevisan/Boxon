@@ -99,7 +99,7 @@ You can use them as a starting point to build your own customized readers.
 ### BindObject
 
 #### parameters
- - `condition`: The SpEL expression that determines if this field has to be read (NOTE that the variables that can be used MUST BE local to the current object to be coded/encoded).
+ - `condition`: The SpEL expression that determines if this field has to be read (NOTE that the root object is the outmost object, in order to evaluate a variable of a parent object the complete path should be used, as in `#root.object1.object2.variable`).
  - `type`: the Class of the Object of the single element of the array (defaults to `Object`).
  - `selectFrom`: the selection from which to choose the instance type.
  - `validator`: the Class of a validator (applied BEFORE the converter).
@@ -133,7 +133,7 @@ private Version version;
 ### BindArray
 
 #### parameters
- - `condition`: The SpEL expression that determines if this field has to be read (NOTE that the variables that can be used MUST BE local to the current object to be coded/encoded).
+ - `condition`: The SpEL expression that determines if this field has to be read (NOTE that the root object is the outmost object, in order to evaluate a variable of a parent object the complete path should be used, as in `#root.object1.object2.variable`).
  - `type`: the Class of the Object of the single element of the array (defaults to `Object`).
  - `size`: the size of the array (can be a SpEL expression).
  - `selectFrom`: the selection from which to choose the instance type.
@@ -182,7 +182,7 @@ private Position[] positions;
 ### BindArrayPrimitive
 
 #### parameters
- - `condition`: The SpEL expression that determines if this field has to be read (NOTE that the variables that can be used MUST BE local to the current object to be coded/encoded).
+ - `condition`: The SpEL expression that determines if this field has to be read (NOTE that the root object is the outmost object, in order to evaluate a variable of a parent object the complete path should be used, as in `#root.object1.object2.variable`).
  - `type`: the Class of primitive of the single element of the array.
  - `size`: the size of the array (can be a SpEL expression).
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN` (used for primitives other than `byte`).
@@ -220,7 +220,7 @@ private BigDecimal[][] crashData;
 ### BindBits
 
 #### parameters
- - `condition`: The SpEL expression that determines if this field has to be read (NOTE that the variables that can be used MUST BE local to the current object to be coded/encoded).
+ - `condition`: The SpEL expression that determines if this field has to be read (NOTE that the root object is the outmost object, in order to evaluate a variable of a parent object the complete path should be used, as in `#root.object1.object2.variable`).
  - `size`: the number of bits to read (can be a SpEL expression).
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
  - `match`: a string/regex/SpEl expression that is used as an expected value (the value to match must be something like `[1, 12]`, where the numbers are the position of the set bits in ascending order).
@@ -245,7 +245,7 @@ private BitMap bits;
 ### BindByte
 
 #### parameters
- - `condition`: The SpEL expression that determines if this field has to be read (NOTE that the variables that can be used MUST BE local to the current object to be coded/encoded).
+ - `condition`: The SpEL expression that determines if this field has to be read (NOTE that the root object is the outmost object, in order to evaluate a variable of a parent object the complete path should be used, as in `#root.object1.object2.variable`).
  - `match`: a string/regex/SpEl expression that is used as an expected value.
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
@@ -268,7 +268,7 @@ public Byte mask;
 ### BindShort
 
 #### parameters
- - `condition`: The SpEL expression that determines if this field has to be read (NOTE that the variables that can be used MUST BE local to the current object to be coded/encoded).
+ - `condition`: The SpEL expression that determines if this field has to be read (NOTE that the root object is the outmost object, in order to evaluate a variable of a parent object the complete path should be used, as in `#root.object1.object2.variable`).
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
  - `match`: a string/regex/SpEl expression that is used as an expected value.
  - `validator`: the Class of a validator (applied BEFORE the converter).
@@ -292,7 +292,7 @@ private short numberShort;
 ### BindInt
 
 #### parameters
- - `condition`: The SpEL expression that determines if this field has to be read (NOTE that the variables that can be used MUST BE local to the current object to be coded/encoded).
+ - `condition`: The SpEL expression that determines if this field has to be read (NOTE that the root object is the outmost object, in order to evaluate a variable of a parent object the complete path should be used, as in `#root.object1.object2.variable`).
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
  - `match`: a string/regex/SpEl expression that is used as an expected value.
  - `validator`: the Class of a validator (applied BEFORE the converter).
@@ -316,7 +316,7 @@ private int numberInt;
 ### BindLong
 
 #### parameters
- - `condition`: The SpEL expression that determines if this field has to be read (NOTE that the variables that can be used MUST BE local to the current object to be coded/encoded).
+ - `condition`: The SpEL expression that determines if this field has to be read (NOTE that the root object is the outmost object, in order to evaluate a variable of a parent object the complete path should be used, as in `#root.object1.object2.variable`).
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
  - `match`: a string/regex/SpEl expression that is used as an expected value.
  - `validator`: the Class of a validator (applied BEFORE the converter).
@@ -340,7 +340,7 @@ private long numberLong;
 ### BindInteger
 
 #### parameters
- - `condition`: The SpEL expression that determines if this field has to be read (NOTE that the variables that can be used MUST BE local to the current object to be coded/encoded).
+ - `condition`: The SpEL expression that determines if this field has to be read (NOTE that the root object is the outmost object, in order to evaluate a variable of a parent object the complete path should be used, as in `#root.object1.object2.variable`).
  - `size`: the number of bits to read (can be a SpEL expression).
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
  - `unsigned`: whether the resulting number is to be treated as unsigned, defaults to `true`.
@@ -369,7 +369,7 @@ private BigInteger number;
 ### BindFloat
 
 #### parameters
- - `condition`: The SpEL expression that determines if this field has to be read (NOTE that the variables that can be used MUST BE local to the current object to be coded/encoded).
+ - `condition`: The SpEL expression that determines if this field has to be read (NOTE that the root object is the outmost object, in order to evaluate a variable of a parent object the complete path should be used, as in `#root.object1.object2.variable`).
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
  - `match`: a string/regex/SpEl expression that is used as an expected value.
  - `validator`: the Class of a validator (applied BEFORE the converter).
@@ -393,7 +393,7 @@ private float number;
 ### BindDouble
 
 #### parameters
- - `condition`: The SpEL expression that determines if this field has to be read (NOTE that the variables that can be used MUST BE local to the current object to be coded/encoded).
+ - `condition`: The SpEL expression that determines if this field has to be read (NOTE that the root object is the outmost object, in order to evaluate a variable of a parent object the complete path should be used, as in `#root.object1.object2.variable`).
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
  - `match`: a string/regex/SpEl expression that is used as an expected value.
  - `validator`: the Class of a validator (applied BEFORE the converter).
@@ -417,7 +417,7 @@ private double number;
 ### BindDecimal
 
 #### parameters
- - `condition`: The SpEL expression that determines if this field has to be read (NOTE that the variables that can be used MUST BE local to the current object to be coded/encoded).
+ - `condition`: The SpEL expression that determines if this field has to be read (NOTE that the root object is the outmost object, in order to evaluate a variable of a parent object the complete path should be used, as in `#root.object1.object2.variable`).
  - `type`: the Class of variable to be read (SHOULD BE `Float.class`, or `Double.class`).
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
  - `match`: a string/regex/SpEl expression that is used as an expected value.
@@ -442,7 +442,7 @@ private BigDecimal number;
 ### BindString
 
 #### parameters
- - `condition`: The SpEL expression that determines if this field has to be read (NOTE that the variables that can be used MUST BE local to the current object to be coded/encoded).
+ - `condition`: The SpEL expression that determines if this field has to be read (NOTE that the root object is the outmost object, in order to evaluate a variable of a parent object the complete path should be used, as in `#root.object1.object2.variable`).
  - `charset`: the charset to be interpreted the string into (SHOULD BE the charset name, eg. `UTF-8` (the default), `ISO-8859-1`, etc).
  - `size`: the size of the string (can be a SpEL expression).
  - `match`: a string/regex/SpEl expression that is used as an expected value.
@@ -467,7 +467,7 @@ public String text;
 ### BindStringTerminated
 
 #### parameters
- - `condition`: The SpEL expression that determines if this field has to be read (NOTE that the variables that can be used MUST BE local to the current object to be coded/encoded).
+ - `condition`: The SpEL expression that determines if this field has to be read (NOTE that the root object is the outmost object, in order to evaluate a variable of a parent object the complete path should be used, as in `#root.object1.object2.variable`).
  - `charset`: the charset to be interpreted the string into (SHOULD BE the charset name, eg. `UTF-8` (the default), `ISO-8859-1`, etc).
  - `terminator`: the byte that terminates the string (defaults to `\0`).
  - `consumeTerminator`: whether to consume the terminator (defaults to `true`).
@@ -521,7 +521,7 @@ private class Message{
 ### Skip
 
 #### parameters
- - `condition`: The SpEL expression to be evaluated that determines if a skip has to be made (NOTE that the variables that can be used MUST BE local to the current object to be coded/encoded).
+ - `condition`: The SpEL expression that determines if this field has to be read (NOTE that the root object is the outmost object, in order to evaluate a variable of a parent object the complete path should be used, as in `#root.object1.object2.variable`).
  - `size`: the number of bits to be skipped (can be a SpEL expression).
  - `terminator`: the byte that terminates the skip (defaults to `\0`).
  - `consumeTerminator`: whether to consume the terminator (defaults to `true`).
@@ -580,7 +580,7 @@ private short checksum;
 ### Evaluate
 
 #### parameters
- - `condition`: The SpEL expression that determines if an evaluation has to be made (NOTE that the variables that can be used MUST BE local to the current object to be coded/encoded).
+ - `condition`: The SpEL expression that determines if this field has to be read (NOTE that the root object is the outmost object, in order to evaluate a variable of a parent object the complete path should be used, as in `#root.object1.object2.variable`).
  - `value`: the value to be assigned, or calculated (can be a SpEL expression).
 
 #### description

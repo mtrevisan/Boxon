@@ -39,7 +39,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 
 
 	@Override
-	public final Object decode(final BitReader reader, final Annotation annotation, final Object data){
+	public final Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
 		final BindObject binding = (BindObject)annotation;
 
 		Class<?> type = binding.type();
@@ -51,17 +51,17 @@ final class CodecObject implements CodecInterface<BindObject>{
 			final ByteOrder prefixByteOrder = selectFrom.byteOrder();
 
 			final ObjectChoices.ObjectChoice chosenAlternative = (prefixSize > 0?
-				CodecHelper.chooseAlternative(reader, prefixSize, prefixByteOrder, alternatives, data):
-				CodecHelper.chooseAlternativeNoPrefix(alternatives, data));
+				CodecHelper.chooseAlternative(reader, prefixSize, prefixByteOrder, alternatives, rootObject):
+				CodecHelper.chooseAlternativeNoPrefix(alternatives, rootObject));
 
 			type = chosenAlternative.type();
 		}
 
 		final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(type, protocolMessageParser.loader);
 
-		final Object instance = protocolMessageParser.decode(protocolMessage, reader);
+		final Object instance = protocolMessageParser.decode(protocolMessage, reader, rootObject);
 
-		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
+		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), rootObject);
 		final Object value = CodecHelper.converterDecode(chosenConverter, instance);
 
 		CodecHelper.validateData(binding.validator(), value);
@@ -70,7 +70,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 	}
 
 	@Override
-	public final void encode(final BitWriter writer, final Annotation annotation, final Object data, final Object value){
+	public final void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value){
 		final BindObject binding = (BindObject)annotation;
 
 		CodecHelper.validateData(binding.validator(), value);
@@ -91,7 +91,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 
 		final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(type, protocolMessageParser.loader);
 
-		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), data);
+		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), rootObject);
 		final Object array = CodecHelper.converterEncode(chosenConverter, value);
 
 		protocolMessageParser.encode(protocolMessage, writer, array);

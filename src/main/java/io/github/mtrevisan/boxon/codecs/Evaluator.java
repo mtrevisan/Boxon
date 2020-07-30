@@ -110,15 +110,6 @@ final class Evaluator{
 	}
 
 	/**
-	 * Adds an object as the root for this context.
-	 *
-	 * @param value	The root value.
-	 */
-	static void addToContextAsRoot(final Object value){
-		CONTEXT.setRootObject(value);
-	}
-
-	/**
 	 * Adds a method to the context of this evaluator.
 	 *
 	 * @param method	The method.
@@ -127,23 +118,23 @@ final class Evaluator{
 		CONTEXT.registerFunction(method.getName(), method);
 	}
 
-	static <T> T evaluate(final String expression, final Class<T> returnType, final Object data) throws EvaluationException{
+	static <T> T evaluate(final String expression, final Object rootObject, final Class<T> returnType) throws EvaluationException{
 		final Expression exp = PARSER.parseExpression(expression);
-		return exp.getValue(CONTEXT, data, returnType);
+		return exp.getValue(CONTEXT, rootObject, returnType);
 	}
 
 	/**
 	 * Convenience method to fast evaluate a positive integer.
 	 *
 	 * @param expression	The SpEL expression to evaluate.
-	 * @param data	The context with which to evaluate the given expression.
+	 * @param rootObject	The context with which to evaluate the given expression.
 	 * @return	The size, or a negative number if the expression is not a valid positive integer.
 	 * @throws EvaluationException	If an error occurs during the evaluation of an expression.
 	 */
-	static int evaluateSize(final String expression, final Object data) throws EvaluationException{
+	static int evaluateSize(final String expression, final Object rootObject) throws EvaluationException{
 		int size = -1;
 		if(!expression.isBlank())
-			size = (isPositiveInteger(expression)? Integer.parseInt(expression): evaluate(expression, int.class, data));
+			size = (isPositiveInteger(expression)? Integer.parseInt(expression): evaluate(expression, rootObject, int.class));
 		return size;
 	}
 
