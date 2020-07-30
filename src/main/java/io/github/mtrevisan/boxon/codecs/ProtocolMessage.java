@@ -46,7 +46,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 
 /**
@@ -281,10 +281,10 @@ final class ProtocolMessage<T>{
 
 	private void validateField(final List<Annotation> annotations, final BindChecksum checksum){
 		if(annotations.size() > 1){
-			final StringJoiner sj = new StringJoiner(", ", "[", "]");
-			for(final Annotation annotation : annotations)
-				sj.add(annotation.annotationType().getSimpleName());
-			throw new AnnotationException("Cannot bind more that one annotation on {}: {}", cls.getSimpleName(), sj.toString());
+			final String aa = annotations.stream()
+				.map(annotation -> annotation.annotationType().getSimpleName())
+				.collect(Collectors.joining(", ", "[", "]"));
+			throw new AnnotationException("Cannot bind more that one annotation on {}: {}", cls.getSimpleName(), aa);
 		}
 
 		if(checksum != null && this.checksum != null)
