@@ -51,8 +51,8 @@ final class CodecObject implements CodecInterface<BindObject>{
 			final ByteOrder prefixByteOrder = selectFrom.byteOrder();
 
 			final ObjectChoices.ObjectChoice chosenAlternative = (prefixSize > 0?
-				CodecHelper.chooseAlternative(reader, prefixSize, prefixByteOrder, alternatives, rootObject):
-				CodecHelper.chooseAlternativeNoPrefix(alternatives, rootObject));
+				CodecHelper.chooseAlternativeWithPrefix(reader, prefixSize, prefixByteOrder, alternatives, rootObject):
+				CodecHelper.chooseAlternativeWithoutPrefix(alternatives, rootObject));
 
 			type = chosenAlternative.type();
 		}

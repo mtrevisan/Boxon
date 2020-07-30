@@ -54,7 +54,7 @@ import java.util.stream.Collectors;
 
 final class Loader{
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(Loader.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(Loader.class);
 
 	private static final Function<byte[], int[]> PRE_PROCESSED_PATTERNS = Memoizer.memoizeThreadAndRecursionSafe(Loader::getPreProcessedPattern);
 	private static final PatternMatcher PATTERN_MATCHER = new BNDMPatternMatcher();

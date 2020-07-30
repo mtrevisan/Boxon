@@ -44,7 +44,7 @@ import java.util.List;
 
 final class ProtocolMessageParser{
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(ProtocolMessageParser.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(ProtocolMessageParser.class);
 
 
 	final Loader loader = new Loader();

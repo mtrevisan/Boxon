@@ -28,13 +28,19 @@ import io.github.mtrevisan.boxon.annotations.BindArray;
 import io.github.mtrevisan.boxon.annotations.ByteOrder;
 import io.github.mtrevisan.boxon.annotations.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
+import io.github.mtrevisan.boxon.annotations.exceptions.NoCodecException;
 import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 
 
 final class CodecArray implements CodecInterface<BindArray>{
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(CodecArray.class);
+
 
 	@SuppressWarnings("unused")
 	private ProtocolMessageParser protocolMessageParser;
@@ -69,14 +75,19 @@ final class CodecArray implements CodecInterface<BindArray>{
 		final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
 
 		for(int i = 0; i < array.length; i ++){
-			final ObjectChoices.ObjectChoice chosenAlternative = (prefixSize > 0?
-				CodecHelper.chooseAlternative(reader, prefixSize, prefixByteOrder, alternatives, rootObject):
-				CodecHelper.chooseAlternativeNoPrefix(alternatives, rootObject));
+			try{
+				final ObjectChoices.ObjectChoice chosenAlternative = (prefixSize > 0?
+					CodecHelper.chooseAlternativeWithPrefix(reader, prefixSize, prefixByteOrder, alternatives, rootObject):
+					CodecHelper.chooseAlternativeWithoutPrefix(alternatives, rootObject));
 
-			//read object
-			final ProtocolMessage<?> subProtocolMessage = ProtocolMessage.createFrom(chosenAlternative.type(), protocolMessageParser.loader);
+				//read object
+				final ProtocolMessage<?> subProtocolMessage = ProtocolMessage.createFrom(chosenAlternative.type(), protocolMessageParser.loader);
 
-			array[i] = protocolMessageParser.decode(subProtocolMessage, reader, rootObject);
+				array[i] = protocolMessageParser.decode(subProtocolMessage, reader, rootObject);
+			}
+			catch(final NoCodecException e){
+				LOGGER.warn("No codec found", e);
+			}
 		}
 	}
 

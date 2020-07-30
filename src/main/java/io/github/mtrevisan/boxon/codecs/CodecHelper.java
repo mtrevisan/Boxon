@@ -28,6 +28,7 @@ import io.github.mtrevisan.boxon.annotations.ByteOrder;
 import io.github.mtrevisan.boxon.annotations.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
+import io.github.mtrevisan.boxon.annotations.exceptions.NoCodecException;
 import io.github.mtrevisan.boxon.annotations.exceptions.ProtocolMessageException;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.helpers.BitSet;
@@ -52,7 +53,7 @@ final class CodecHelper{
 		return null;
 	}
 
-	static ObjectChoices.ObjectChoice chooseAlternative(final BitReader reader, final int prefixSize, final ByteOrder prefixByteOrder,
+	static ObjectChoices.ObjectChoice chooseAlternativeWithPrefix(final BitReader reader, final int prefixSize, final ByteOrder prefixByteOrder,
 			final ObjectChoices.ObjectChoice[] alternatives, final Object rootObject){
 		final int prefix = reader.getBigInteger(prefixSize, prefixByteOrder, true)
 			.intValue();
@@ -61,15 +62,15 @@ final class CodecHelper{
 		final ObjectChoices.ObjectChoice chosenAlternative = chooseAlternative(alternatives, rootObject);
 		Evaluator.removeFromContext(CONTEXT_CHOICE_PREFIX);
 		if(chosenAlternative == null)
-			throw new ProtocolMessageException("Cannot find a valid codec for prefix {}", prefix);
+			throw new NoCodecException("Cannot find a valid codec for prefix {}", prefix);
 
 		return chosenAlternative;
 	}
 
-	static ObjectChoices.ObjectChoice chooseAlternativeNoPrefix(final ObjectChoices.ObjectChoice[] alternatives, final Object rootObject){
+	static ObjectChoices.ObjectChoice chooseAlternativeWithoutPrefix(final ObjectChoices.ObjectChoice[] alternatives, final Object rootObject){
 		final ObjectChoices.ObjectChoice chosenAlternative = chooseAlternative(alternatives, rootObject);
 		if(chosenAlternative == null)
-			throw new ProtocolMessageException("Cannot find a valid codec");
+			throw new NoCodecException("Cannot find a valid codec");
 
 		return chosenAlternative;
 	}

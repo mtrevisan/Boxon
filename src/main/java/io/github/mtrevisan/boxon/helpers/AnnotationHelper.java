@@ -48,7 +48,7 @@ import java.util.jar.JarFile;
 
 public final class AnnotationHelper{
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(AnnotationHelper.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(AnnotationHelper.class);
 
 	private enum BucketType{DIRECTORY, FILE}
 
