@@ -51,18 +51,10 @@ final class ProtocolMessageParser{
 
 
 	final <T> T decode(final ProtocolMessage<T> protocolMessage, final BitReader reader){
-		return decode(protocolMessage, reader, null);
-	}
-
-	final <T> T decode(final ProtocolMessage<T> protocolMessage, final BitReader reader, final Object parentData){
 		final int startPosition = reader.position();
 
 		final T data = ReflectionHelper.getCreator(protocolMessage.getType())
 			.get();
-
-		if(parentData != null)
-			//TODO add root object
-			Evaluator.addToContextAsRoot(parentData);
 
 		//decode message fields:
 		final List<ProtocolMessage.BoundedField> fields = protocolMessage.getBoundedFields();
@@ -75,10 +67,6 @@ final class ProtocolMessageParser{
 		}
 
 		processEvaluatedFields(protocolMessage, data);
-
-		if(parentData != null)
-			//remove root object
-			Evaluator.addToContextAsRoot(null);
 
 		readMessageTerminator(protocolMessage, reader);
 
