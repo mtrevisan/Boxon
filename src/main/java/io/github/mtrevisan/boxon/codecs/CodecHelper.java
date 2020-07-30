@@ -59,7 +59,7 @@ final class CodecHelper{
 
 		Evaluator.addToContext(CONTEXT_CHOICE_PREFIX, prefix);
 		final ObjectChoices.ObjectChoice chosenAlternative = chooseAlternative(alternatives, rootObject);
-		Evaluator.addToContext(CONTEXT_CHOICE_PREFIX, null);
+		Evaluator.removeFromContext(CONTEXT_CHOICE_PREFIX);
 		if(chosenAlternative == null)
 			throw new ProtocolMessageException("Cannot find a valid codec for prefix {}", prefix);
 

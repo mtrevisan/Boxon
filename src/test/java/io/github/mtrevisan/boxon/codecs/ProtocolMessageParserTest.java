@@ -59,6 +59,7 @@ class ProtocolMessageParserTest{
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
 		Evaluator.addToContext("deviceTypes", deviceTypes);
 		ACKMessageHex message = protocolMessageParser.decode(protocolMessage, reader, null);
+		Evaluator.removeFromContext("deviceTypes");
 
 		BitWriter writer = new BitWriter();
 		protocolMessageParser.encode(protocolMessage, writer, message);
@@ -83,6 +84,7 @@ class ProtocolMessageParserTest{
 		deviceTypes.add("QUECLINK_GV350M", (byte)0xCF);
 		Evaluator.addToContext("deviceTypes", deviceTypes);
 		ACKMessageASCII message = protocolMessageParser.decode(protocolMessage, reader, null);
+		Evaluator.removeFromContext("deviceTypes");
 
 		BitWriter writer = new BitWriter();
 		protocolMessageParser.encode(protocolMessage, writer, message);

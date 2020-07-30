@@ -110,6 +110,15 @@ final class Evaluator{
 	}
 
 	/**
+	 * Remove a key-value pair from the context of this evaluator.
+	 *
+	 * @param key	The key used to reference the value to be removed.
+	 */
+	static void removeFromContext(final String key){
+		CONTEXT.setVariable(key, null);
+	}
+
+	/**
 	 * Adds a method to the context of this evaluator.
 	 *
 	 * @param method	The method.
