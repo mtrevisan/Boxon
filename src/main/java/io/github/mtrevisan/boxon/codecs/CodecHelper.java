@@ -29,7 +29,6 @@ import io.github.mtrevisan.boxon.annotations.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.exceptions.NoCodecException;
-import io.github.mtrevisan.boxon.annotations.exceptions.ProtocolMessageException;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.helpers.BitSet;
 import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
@@ -42,6 +41,7 @@ final class CodecHelper{
 
 	public static final String CONTEXT_CHOICE_PREFIX = "prefix";
 	public static final String CONTEXT_PREFIXED_CHOICE_PREFIX = "#" + CONTEXT_CHOICE_PREFIX;
+	public static final String CONTEXT_SELF = "self";
 
 
 	private CodecHelper(){}
@@ -60,7 +60,6 @@ final class CodecHelper{
 
 		Evaluator.addToContext(CONTEXT_CHOICE_PREFIX, prefix);
 		final ObjectChoices.ObjectChoice chosenAlternative = chooseAlternative(alternatives, rootObject);
-		Evaluator.removeFromContext(CONTEXT_CHOICE_PREFIX);
 		if(chosenAlternative == null)
 			throw new NoCodecException("Cannot find a valid codec for prefix {}", prefix);
 
@@ -76,6 +75,7 @@ final class CodecHelper{
 	}
 
 	private static ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Object rootObject){
+		Evaluator.addToContext(CodecHelper.CONTEXT_SELF, null);
 		for(int i = 0; i < alternatives.length; i ++)
 			if(Evaluator.evaluate(alternatives[i].condition(), rootObject, boolean.class))
 				return alternatives[i];
@@ -84,6 +84,12 @@ final class CodecHelper{
 
 	static Class<? extends Converter<?, ?>> chooseConverter(final ConverterChoices selectConverterFrom, final Class<? extends Converter<?, ?>> baseConverter,
 			final Object rootObject){
+		return chooseConverter(selectConverterFrom, baseConverter, rootObject, null);
+	}
+
+	static Class<? extends Converter<?, ?>> chooseConverter(final ConverterChoices selectConverterFrom, final Class<? extends Converter<?, ?>> baseConverter,
+			final Object rootObject, final Object currentObject){
+		Evaluator.addToContext(CodecHelper.CONTEXT_SELF, currentObject);
 		final ConverterChoices.ConverterChoice[] alternatives = selectConverterFrom.alternatives();
 		for(int i = 0; i < alternatives.length; i ++)
 			if(Evaluator.evaluate(alternatives[i].condition(), rootObject, boolean.class))
@@ -106,23 +112,23 @@ final class CodecHelper{
 		}
 	}
 
-	static void validateData(final String match, final Class<? extends Validator<?>> validatorType, final Object data){
-		matchData(match, data);
-		validateData(validatorType, data);
+	static void validateData(final String match, final Class<? extends Validator<?>> validatorType, final Object currentObject){
+		matchData(match, currentObject);
+		validateData(validatorType, currentObject);
 	}
 
-	private static <T> void matchData(final String match, final T data){
-		final Pattern pattern = extractPattern(match, data);
-		if(pattern != null && !pattern.matcher(Objects.toString(data)).matches())
-			throw new IllegalArgumentException("Value `" + data + "` does not match constraint `" + match + "`");
+	private static void matchData(final String match, final Object currentObject){
+		final Pattern pattern = extractPattern(match, currentObject);
+		if(pattern != null && !pattern.matcher(Objects.toString(currentObject)).matches())
+			throw new IllegalArgumentException("Value `" + currentObject + "` does not match constraint `" + match + "`");
 	}
 
 	/** Extract pattern from a SpEL expression, or a string, or a regex pattern */
-	private static <T> Pattern extractPattern(String match, final T data){
+	private static Pattern extractPattern(String match, final Object currentObject){
 		Pattern p = null;
 		if(isNotBlank(match)){
 			//try SpEL expression
-			match = extractSpELExpression(match, data);
+			match = extractSpELExpression(match, currentObject);
 
 			//try regex expression
 			p = extractRegexExpression(match);
@@ -134,9 +140,10 @@ final class CodecHelper{
 		return p;
 	}
 
-	private static <T> String extractSpELExpression(String match, final T rootObject){
+	private static String extractSpELExpression(String match, final Object currentObject){
+		Evaluator.addToContext(CodecHelper.CONTEXT_SELF, currentObject);
 		try{
-			match = Evaluator.evaluate(match, rootObject, String.class);
+			match = Evaluator.evaluate(match, null, String.class);
 		}
 		catch(final Exception ignored){}
 		return match;

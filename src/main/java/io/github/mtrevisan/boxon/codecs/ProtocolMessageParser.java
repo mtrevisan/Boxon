@@ -58,7 +58,6 @@ final class ProtocolMessageParser{
 
 		//select parent object, discard children
 		final Object rootObject = (parentData != null? parentData: data);
-		//FIXME add the children too...
 
 		//decode message fields:
 		final List<ProtocolMessage.BoundedField> fields = protocolMessage.getBoundedFields();
@@ -66,7 +65,7 @@ final class ProtocolMessageParser{
 			final ProtocolMessage.BoundedField field = fields.get(i);
 			readSkippedFields(field.getSkips(), reader, rootObject);
 
-			if(processField(field.getCondition(), rootObject))
+			if(processField(field.getCondition(), rootObject, (data != rootObject? data: null)))
 				decodeField(protocolMessage, reader, rootObject, data, field);
 		}
 
@@ -171,7 +170,7 @@ final class ProtocolMessageParser{
 			final ProtocolMessage.BoundedField field = fields.get(i);
 			writeSkippedFields(field.getSkips(), writer, data);
 
-			if(processField(field.getCondition(), data))
+			if(processField(field.getCondition(), data, null))
 				encodeField(protocolMessage, writer, data, field);
 		}
 
@@ -195,8 +194,12 @@ final class ProtocolMessageParser{
 		}
 	}
 
-	private <T> boolean processField(final String condition, final T rootObject){
-		return (condition == null || condition.isEmpty() || Evaluator.evaluate(condition, rootObject, boolean.class));
+	private boolean processField(final String condition, final Object rootObject, final Object currentObject){
+		if(condition.isEmpty())
+			return true;
+
+		Evaluator.addToContext(CodecHelper.CONTEXT_SELF, currentObject);
+		return Evaluator.evaluate(condition, rootObject, boolean.class);
 	}
 
 	private void closeMessage(final MessageHeader header, final BitWriter writer){

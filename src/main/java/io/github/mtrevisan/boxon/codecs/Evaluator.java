@@ -27,7 +27,6 @@ package io.github.mtrevisan.boxon.codecs;
 import org.springframework.expression.EvaluationException;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
-import org.springframework.expression.PropertyAccessor;
 import org.springframework.expression.spel.SpelCompilerMode;
 import org.springframework.expression.spel.SpelParserConfiguration;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
@@ -37,8 +36,6 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Collections;
-import java.util.List;
 
 
 final class Evaluator{
@@ -46,13 +43,10 @@ final class Evaluator{
 	//allow for immediate compilation of SpEL expressions
 	private static final SpelParserConfiguration CONFIG = new SpelParserConfiguration(SpelCompilerMode.IMMEDIATE, null);
 	private static final ExpressionParser PARSER = new SpelExpressionParser(CONFIG);
-	private static final StandardEvaluationContext CONTEXT = new PrivateEvaluationContext();
-
-
-	//trick to allow accessing private fields
-	private static class PrivateEvaluationContext extends StandardEvaluationContext{
-
-		private static class SecurePropertyAccessor extends ReflectivePropertyAccessor{
+	private static final StandardEvaluationContext CONTEXT = new StandardEvaluationContext();
+	static{
+		//trick to allow accessing private fields
+		CONTEXT.addPropertyAccessor(new ReflectivePropertyAccessor(){
 			@Override
 			protected Field findField(final String name, final Class<?> cls, final boolean mustBeStatic){
 				Field field = findInCurrentClass(name, cls, mustBeStatic);
@@ -87,13 +81,7 @@ final class Evaluator{
 				}
 				return null;
 			}
-		}
-
-
-		@Override
-		public List<PropertyAccessor> getPropertyAccessors(){
-			return Collections.singletonList(new SecurePropertyAccessor());
-		}
+		});
 	}
 
 
