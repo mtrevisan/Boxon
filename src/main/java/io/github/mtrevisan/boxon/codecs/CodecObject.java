@@ -28,11 +28,17 @@ import io.github.mtrevisan.boxon.annotations.BindObject;
 import io.github.mtrevisan.boxon.annotations.ByteOrder;
 import io.github.mtrevisan.boxon.annotations.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
+import io.github.mtrevisan.boxon.annotations.exceptions.NoCodecException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 
 
 final class CodecObject implements CodecInterface<BindObject>{
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(CodecObject.class);
+
 
 	@SuppressWarnings("unused")
 	private ProtocolMessageParser protocolMessageParser;
@@ -42,31 +48,38 @@ final class CodecObject implements CodecInterface<BindObject>{
 	public final Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
 		final BindObject binding = (BindObject)annotation;
 
-		Class<?> type = binding.type();
-		final ObjectChoices selectFrom = binding.selectFrom();
-		final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
-		if(alternatives.length > 0){
-			//read prefix
-			final int prefixSize = selectFrom.prefixSize();
-			final ByteOrder prefixByteOrder = selectFrom.byteOrder();
+		try{
+			Class<?> type = binding.type();
+			final ObjectChoices selectFrom = binding.selectFrom();
+			final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
+			if(alternatives.length > 0){
+				//read prefix
+				final int prefixSize = selectFrom.prefixSize();
+				final ByteOrder prefixByteOrder = selectFrom.byteOrder();
 
-			final ObjectChoices.ObjectChoice chosenAlternative = (prefixSize > 0?
-				CodecHelper.chooseAlternativeWithPrefix(reader, prefixSize, prefixByteOrder, alternatives, rootObject):
-				CodecHelper.chooseAlternativeWithoutPrefix(alternatives, rootObject));
+				final ObjectChoices.ObjectChoice chosenAlternative = (prefixSize > 0?
+					CodecHelper.chooseAlternativeWithPrefix(reader, prefixSize, prefixByteOrder, alternatives, rootObject):
+					CodecHelper.chooseAlternativeWithoutPrefix(alternatives, rootObject));
 
-			type = chosenAlternative.type();
+				type = chosenAlternative.type();
+			}
+
+			final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(type, protocolMessageParser.loader);
+
+			final Object instance = protocolMessageParser.decode(protocolMessage, reader, rootObject);
+
+			final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), rootObject);
+			final Object value = CodecHelper.converterDecode(chosenConverter, instance);
+
+			CodecHelper.validateData(binding.validator(), value);
+
+			return value;
 		}
+		catch(final NoCodecException e){
+			LOGGER.warn(e.getMessage());
 
-		final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(type, protocolMessageParser.loader);
-
-		final Object instance = protocolMessageParser.decode(protocolMessage, reader, rootObject);
-
-		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), rootObject);
-		final Object value = CodecHelper.converterDecode(chosenConverter, instance);
-
-		CodecHelper.validateData(binding.validator(), value);
-
-		return value;
+			return null;
+		}
 	}
 
 	@Override

@@ -140,8 +140,8 @@ class ProtocolMessageParserTest{
 		protocolMessageParser.loader.loadCodecs();
 		ProtocolMessage<TestError2> protocolMessage = ProtocolMessage.createFrom(TestError2.class, protocolMessageParser.loader);
 
-		Exception exc = Assertions.assertThrows(IllegalArgumentException.class, () -> protocolMessageParser.decode(protocolMessage, reader, null));
-		Assertions.assertEquals("Value `1` does not match constraint `as` in field TestError2.type", exc.getMessage());
+		Exception exc = Assertions.assertThrows(RuntimeException.class, () -> protocolMessageParser.decode(protocolMessage, reader, null));
+		Assertions.assertEquals("IllegalArgumentException: Value `1` does not match constraint `as` in field TestError2.type", exc.getMessage());
 	}
 
 
@@ -175,8 +175,8 @@ class ProtocolMessageParserTest{
 		protocolMessageParser.loader.loadCodecs();
 		ProtocolMessage<TestError3> protocolMessage = ProtocolMessage.createFrom(TestError3.class, protocolMessageParser.loader);
 
-		Exception exc = Assertions.assertThrows(IllegalArgumentException.class, () -> protocolMessageParser.decode(protocolMessage, reader, null));
-		Assertions.assertEquals("Can not set byte field io.github.mtrevisan.boxon.codecs.ProtocolMessageParserTest$TestError3.type to java.lang.String in field TestError3.type", exc.getMessage());
+		Exception exc = Assertions.assertThrows(RuntimeException.class, () -> protocolMessageParser.decode(protocolMessage, reader, null));
+		Assertions.assertEquals("IllegalArgumentException: Can not set byte field io.github.mtrevisan.boxon.codecs.ProtocolMessageParserTest$TestError3.type to java.lang.String in field TestError3.type", exc.getMessage());
 	}
 
 
@@ -210,8 +210,8 @@ class ProtocolMessageParserTest{
 		protocolMessageParser.loader.loadCodecs();
 		ProtocolMessage<TestError4> protocolMessage = ProtocolMessage.createFrom(TestError4.class, protocolMessageParser.loader);
 
-		Exception exc = Assertions.assertThrows(IllegalArgumentException.class, () -> protocolMessageParser.decode(protocolMessage, reader, null));
-		Assertions.assertEquals("class java.lang.Byte cannot be cast to class java.lang.String (java.lang.Byte and java.lang.String are in module java.base of loader 'bootstrap') in field TestError4.type", exc.getMessage());
+		Exception exc = Assertions.assertThrows(RuntimeException.class, () -> protocolMessageParser.decode(protocolMessage, reader, null));
+		Assertions.assertEquals("ClassCastException: class java.lang.Byte cannot be cast to class java.lang.String (java.lang.Byte and java.lang.String are in module java.base of loader 'bootstrap') in field TestError4.type", exc.getMessage());
 	}
 
 
@@ -232,8 +232,8 @@ class ProtocolMessageParserTest{
 		protocolMessageParser.loader.loadCodecs();
 		ProtocolMessage<TestError5> protocolMessage = ProtocolMessage.createFrom(TestError5.class, protocolMessageParser.loader);
 
-		Exception exc = Assertions.assertThrows(IllegalArgumentException.class, () -> protocolMessageParser.decode(protocolMessage, reader, null));
-		Assertions.assertEquals("Value `[0]` does not match constraint `[1]` in field TestError5.type", exc.getMessage());
+		Exception exc = Assertions.assertThrows(RuntimeException.class, () -> protocolMessageParser.decode(protocolMessage, reader, null));
+		Assertions.assertEquals("IllegalArgumentException: Value `[0]` does not match constraint `[1]` in field TestError5.type", exc.getMessage());
 	}
 
 }

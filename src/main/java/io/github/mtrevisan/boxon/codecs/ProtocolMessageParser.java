@@ -95,7 +95,7 @@ final class ProtocolMessageParser{
 		}
 		catch(final Exception e){
 			//this assumes the reading was done correctly
-			manageProtocolMessageException(protocolMessage, field, e);
+			rethrowException(protocolMessage, field, e);
 		}
 	}
 
@@ -190,7 +190,7 @@ final class ProtocolMessageParser{
 		}
 		catch(final Exception e){
 			//this assumes the writing was done correctly
-			manageProtocolMessageException(protocolMessage, field, e);
+			rethrowException(protocolMessage, field, e);
 		}
 	}
 
@@ -222,9 +222,9 @@ final class ProtocolMessageParser{
 		catch(final Exception ignored){}
 	}
 
-	private void manageProtocolMessageException(final ProtocolMessage<?> protocolMessage, final ProtocolMessage.BoundedField field, final Exception e){
+	private void rethrowException(final ProtocolMessage<?> protocolMessage, final ProtocolMessage.BoundedField field, final Exception e){
 		final String message = ExceptionHelper.getMessageNoLineNumber(e);
-		throw new IllegalArgumentException(message + " in field " + protocolMessage + "." + field.getName());
+		throw new RuntimeException(message + " in field " + protocolMessage + "." + field.getName());
 	}
 
 	private <T> void writeSkippedFields(final Skip[] skips, final BitWriter writer, final T data){

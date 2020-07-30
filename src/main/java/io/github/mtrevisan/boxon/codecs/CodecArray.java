@@ -86,7 +86,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 				array[i] = protocolMessageParser.decode(subProtocolMessage, reader, rootObject);
 			}
 			catch(final NoCodecException e){
-				LOGGER.warn("No codec found", e);
+				LOGGER.warn(e.getMessage());
 			}
 		}
 	}

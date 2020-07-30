@@ -58,6 +58,10 @@ public final class ExceptionHelper{
 				.append(" at ")
 				.append(extractExceptionPosition(t))
 				.append(' ');
+		if(t.getClass() != RuntimeException.class)
+			sb.append(t.getClass().getSimpleName())
+				.append(':')
+				.append(' ');
 		final String msg = t.getMessage();
 		if(msg != null)
 			sb.append(msg);
