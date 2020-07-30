@@ -167,7 +167,7 @@ public final class BitSet{
 	 */
 	public final byte[] toByteArray(){
 		if(cardinality == 0)
-			return new byte[0];
+			return new byte[]{0};
 
 		final byte[] bytes = new byte[indexes[cardinality - 1] / Byte.SIZE + 1];
 		for(int i = 0; i < indexes.length; i ++){
