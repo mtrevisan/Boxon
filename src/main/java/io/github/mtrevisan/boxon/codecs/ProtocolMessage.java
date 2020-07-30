@@ -56,6 +56,9 @@ import java.util.stream.Collectors;
  */
 final class ProtocolMessage<T>{
 
+	private static final String EMPTY_STRING = "";
+
+
 	/** Data associated to an annotated field */
 	static class BoundedField{
 
@@ -83,7 +86,8 @@ final class ProtocolMessage<T>{
 		}
 
 		String getCondition(){
-			return ReflectionHelper.getMethod(binding, "condition");
+			final String condition = ReflectionHelper.getMethod(binding, "condition");
+			return (condition != null? condition: EMPTY_STRING);
 		}
 	}
 
