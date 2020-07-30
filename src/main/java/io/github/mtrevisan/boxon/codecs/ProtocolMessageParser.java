@@ -58,6 +58,7 @@ final class ProtocolMessageParser{
 
 		//select parent object, discard children
 		final Object rootObject = (parentData != null? parentData: data);
+		//FIXME add the children too...
 
 		//decode message fields:
 		final List<ProtocolMessage.BoundedField> fields = protocolMessage.getBoundedFields();
