@@ -302,7 +302,7 @@ public class Parser{
 				if(!protocolMessage.canBeDecoded())
 					throw new ProtocolMessageException("Cannot create a protocol message from data");
 
-				protocolMessageParser.encode(protocolMessage, writer, elem);
+				protocolMessageParser.encode(protocolMessage, writer, null, elem);
 			}
 			catch(final Exception e){
 				final ComposeException ce = new ComposeException(elem, e);

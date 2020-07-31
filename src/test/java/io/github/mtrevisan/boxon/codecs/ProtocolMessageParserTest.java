@@ -63,7 +63,7 @@ class ProtocolMessageParserTest{
 		Evaluator.removeFromContext("deviceTypes");
 
 		BitWriter writer = new BitWriter();
-		protocolMessageParser.encode(protocolMessage, writer, message);
+		protocolMessageParser.encode(protocolMessage, writer, null, message);
 		byte[] reconstructedMessage = writer.array();
 
 		Assertions.assertEquals(new String(payload), new String(reconstructedMessage));
@@ -88,7 +88,7 @@ class ProtocolMessageParserTest{
 		Evaluator.removeFromContext("deviceTypes");
 
 		BitWriter writer = new BitWriter();
-		protocolMessageParser.encode(protocolMessage, writer, message);
+		protocolMessageParser.encode(protocolMessage, writer, null, message);
 		byte[] reconstructedMessage = writer.array();
 
 		Assertions.assertEquals(new String(payload), new String(reconstructedMessage));
@@ -276,6 +276,12 @@ class ProtocolMessageParserTest{
 		Assertions.assertEquals(1, parsed.sub.subtype);
 		Assertions.assertEquals("a", parsed.sub.field1);
 		Assertions.assertEquals("b", parsed.sub.field2);
+
+		BitWriter writer = new BitWriter();
+		protocolMessageParser.encode(protocolMessage, writer, null, parsed);
+		byte[] reconstructedMessage = writer.array();
+
+		Assertions.assertArrayEquals(payload, reconstructedMessage);
 	}
 
 }

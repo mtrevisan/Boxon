@@ -107,7 +107,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), rootObject, value);
 		final Object obj = CodecHelper.converterEncode(chosenConverter, value);
 
-		protocolMessageParser.encode(protocolMessage, writer, obj);
+		protocolMessageParser.encode(protocolMessage, writer, rootObject, obj);
 	}
 
 	@Override

@@ -101,12 +101,11 @@ public final class AnnotationHelper{
 	/**
 	 * Scans all classes accessible from the context class loader which belong to the given package
 	 *
-	 * @param <T>	The class type of type.
 	 * @param type	Whether a class or an interface (for example).
 	 * @param basePackageClasses	A list of classes that resides in a base package(s).
 	 * @return	The classes
 	 */
-	public static <T> Collection<Class<?>> extractClasses(final T type, final Class<?>... basePackageClasses){
+	public static Collection<Class<?>> extractClasses(final Object type, final Class<?>... basePackageClasses){
 		final Collection<Class<?>> classes = new HashSet<>(0);
 
 		final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
@@ -129,7 +128,7 @@ public final class AnnotationHelper{
 		return classes;
 	}
 
-	private static <T> Collection<Class<?>> extractClasses(final Enumeration<URL> resources, final T type, final String basePackageName) throws IOException{
+	private static Collection<Class<?>> extractClasses(final Enumeration<URL> resources, final Object type, final String basePackageName) throws IOException{
 		final Collection<Class<?>> classes = new HashSet<>(0);
 		while(resources.hasMoreElements()){
 			final URL resource = resources.nextElement();
@@ -153,7 +152,7 @@ public final class AnnotationHelper{
 	 * @param libraryName The name of the library to load the classes from
 	 * @return The classes
 	 */
-	private static <T> Collection<Class<?>> extractClassesFromLibrary(final T type, final String libraryName) throws IOException{
+	private static Collection<Class<?>> extractClassesFromLibrary(final Object type, final String libraryName) throws IOException{
 		final Collection<Class<?>> classes = new HashSet<>(0);
 
 		final JarFile jarFile = new JarFile(libraryName);
@@ -174,7 +173,7 @@ public final class AnnotationHelper{
 	 * @param packageName The package name for classes found inside the base directory
 	 * @return The classes
 	 */
-	private static <T> Collection<Class<?>> extractClasses(final T type, final File directory, final String packageName){
+	private static Collection<Class<?>> extractClasses(final Object type, final File directory, final String packageName){
 		final Collection<Class<?>> classes = new HashSet<>(0);
 
 		final Stack<ClassDescriptor> stack = new Stack<>();

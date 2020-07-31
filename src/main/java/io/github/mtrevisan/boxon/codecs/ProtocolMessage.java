@@ -86,7 +86,7 @@ final class ProtocolMessage<T>{
 		}
 
 		String getCondition(){
-			final String condition = ReflectionHelper.getMethod(binding, "condition");
+			final String condition = ReflectionHelper.getMethodResponse(binding, "condition");
 			return (condition != null? condition: EMPTY_STRING);
 		}
 	}

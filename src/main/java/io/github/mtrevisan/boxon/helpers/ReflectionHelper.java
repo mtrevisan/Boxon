@@ -128,7 +128,7 @@ public final class ReflectionHelper{
 
 
 	@SuppressWarnings("unchecked")
-	public static <T> T getMethod(final Object obj, final String methodName){
+	public static <T> T getMethodResponse(final Object obj, final String methodName){
 		try{
 			final Method method = getAccessibleMethod(obj.getClass(), methodName);
 			return (method != null? (T)method.invoke(obj): null);
