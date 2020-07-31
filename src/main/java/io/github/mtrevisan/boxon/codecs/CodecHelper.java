@@ -75,7 +75,6 @@ final class CodecHelper{
 	}
 
 	private static ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Object rootObject){
-		Evaluator.addToContext(CodecHelper.CONTEXT_SELF, null);
 		for(int i = 0; i < alternatives.length; i ++)
 			if(Evaluator.evaluate(alternatives[i].condition(), rootObject, boolean.class))
 				return alternatives[i];

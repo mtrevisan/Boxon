@@ -81,13 +81,13 @@ final class ProtocolMessageParser{
 		final List<ProtocolMessage.BoundedField> fields = protocolMessage.getBoundedFields();
 		for(int i = 0; i < fields.size(); i ++){
 			final ProtocolMessage.BoundedField field = fields.get(i);
-			readSkippedFields(field.getSkips(), reader, rootObject);
+			readSkippedFields(field.getSkips(), reader, parserContext);
 
 			if(processField(field.getCondition(), parserContext))
 				decodeField(protocolMessage, reader, parserContext, field);
 		}
 
-		processEvaluatedFields(protocolMessage, currentObject);
+		processEvaluatedFields(protocolMessage, parserContext);
 
 		readMessageTerminator(protocolMessage, reader);
 
@@ -117,17 +117,19 @@ final class ProtocolMessageParser{
 		}
 	}
 
-	private void readSkippedFields(final Skip[] skips, final BitReader reader, final Object rootObject){
+	private <T> void readSkippedFields(final Skip[] skips, final BitReader reader, final ParserContext<T> parserContext){
 		if(skips != null)
 			for(int i = 0; i < skips.length; i ++)
-				readSkip(skips[i], reader, rootObject);
+				readSkip(skips[i], reader, parserContext);
 	}
 
-	private void readSkip(final Skip skip, final BitReader reader, final Object rootObject){
+	private <T> void readSkip(final Skip skip, final BitReader reader, final ParserContext<T> parserContext){
+		Evaluator.addToContext(CodecHelper.CONTEXT_SELF, parserContext.getCurrentObjectIfDifferentFromRoot());
+
 		final String condition = skip.condition();
-		final boolean process = (condition.isEmpty() || Evaluator.evaluate(condition, rootObject, boolean.class));
+		final boolean process = (condition.isEmpty() || Evaluator.evaluate(condition, parserContext.rootObject, boolean.class));
 		if(process){
-			final int size = Evaluator.evaluateSize(skip.size(), rootObject);
+			final int size = Evaluator.evaluateSize(skip.size(), parserContext.rootObject);
 			if(size > 0)
 				/** skip {@link size} bits */
 				reader.skip(size);
@@ -168,15 +170,17 @@ final class ProtocolMessageParser{
 		}
 	}
 
-	private <T> void processEvaluatedFields(final ProtocolMessage<T> protocolMessage, final T rootObject){
+	private <T> void processEvaluatedFields(final ProtocolMessage<T> protocolMessage, final ParserContext<T> parserContext){
+		Evaluator.addToContext(CodecHelper.CONTEXT_SELF, parserContext.getCurrentObjectIfDifferentFromRoot());
+
 		final List<ProtocolMessage.EvaluatedField> evaluatedFields = protocolMessage.getEvaluatedFields();
 		for(int i = 0; i < evaluatedFields.size(); i ++){
 			final ProtocolMessage.EvaluatedField field = evaluatedFields.get(i);
 			final String condition = field.getBinding().condition();
-			final boolean process = (condition.isEmpty() || Evaluator.evaluate(condition, rootObject, boolean.class));
+			final boolean process = (condition.isEmpty() || Evaluator.evaluate(condition, parserContext.rootObject, boolean.class));
 			if(process){
-				final Object value = Evaluator.evaluate(field.getBinding().value(), rootObject, field.getType());
-				ReflectionHelper.setFieldValue(rootObject, field.getName(), value);
+				final Object value = Evaluator.evaluate(field.getBinding().value(), parserContext.rootObject, field.getType());
+				ReflectionHelper.setFieldValue(parserContext.rootObject, field.getName(), value);
 			}
 		}
 	}
@@ -184,16 +188,16 @@ final class ProtocolMessageParser{
 	final <T> void encode(final ProtocolMessage<?> protocolMessage, final BitWriter writer, final Object parentObject, final T currentObject){
 		//select parent object, discard children
 		final Object rootObject = (parentObject != null? parentObject: currentObject);
-		final ParserContext<T> context = new ParserContext<>(rootObject, currentObject);
+		final ParserContext<T> parserContext = new ParserContext<>(rootObject, currentObject);
 
 		//encode message fields:
 		final List<ProtocolMessage.BoundedField> fields = protocolMessage.getBoundedFields();
 		for(int i = 0; i < fields.size(); i ++){
 			final ProtocolMessage.BoundedField field = fields.get(i);
-			writeSkippedFields(field.getSkips(), writer, parentObject);
+			writeSkippedFields(field.getSkips(), writer, parserContext);
 
-			if(processField(field.getCondition(), context))
-				encodeField(protocolMessage, writer, context, field);
+			if(processField(field.getCondition(), parserContext))
+				encodeField(protocolMessage, writer, parserContext, field);
 		}
 
 		final MessageHeader header = protocolMessage.getHeader();
@@ -253,17 +257,19 @@ final class ProtocolMessageParser{
 		throw new RuntimeException(message + " in field " + protocolMessage + "." + field.getName());
 	}
 
-	private void writeSkippedFields(final Skip[] skips, final BitWriter writer, final Object rootObject){
+	private <T> void writeSkippedFields(final Skip[] skips, final BitWriter writer, final ParserContext<T> parserContext){
 		if(skips != null)
 			for(int i = 0; i < skips.length; i ++)
-				writeSkip(skips[i], writer, rootObject);
+				writeSkip(skips[i], writer, parserContext);
 	}
 
-	private void writeSkip(final Skip skip, final BitWriter writer, final Object rootObject){
+	private <T> void writeSkip(final Skip skip, final BitWriter writer, final ParserContext<T> parserContext){
+		Evaluator.addToContext(CodecHelper.CONTEXT_SELF, parserContext.getCurrentObjectIfDifferentFromRoot());
+
 		final String condition = skip.condition();
-		final boolean process = (condition.isEmpty() || Evaluator.evaluate(condition, rootObject, boolean.class));
+		final boolean process = (condition.isEmpty() || Evaluator.evaluate(condition, parserContext.rootObject, boolean.class));
 		if(process){
-			final int size = Evaluator.evaluateSize(skip.size(), rootObject);
+			final int size = Evaluator.evaluateSize(skip.size(), parserContext.rootObject);
 			if(size > 0)
 				/** skip {@link size} bits */
 				writer.putBits(new BitSet(), size);
