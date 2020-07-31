@@ -39,9 +39,9 @@ import java.util.regex.Pattern;
 
 final class CodecHelper{
 
+	public static final String CONTEXT_SELF = "self";
 	public static final String CONTEXT_CHOICE_PREFIX = "prefix";
 	public static final String CONTEXT_PREFIXED_CHOICE_PREFIX = "#" + CONTEXT_CHOICE_PREFIX;
-	public static final String CONTEXT_SELF = "self";
 
 
 	private CodecHelper(){}

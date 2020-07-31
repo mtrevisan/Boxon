@@ -620,8 +620,12 @@ Example:
 class A{
     @BindByte
     private byte value;
+
     @BindObject
     private OtherClass other;
+
+    @BindString(condition = "value == 2", size = "1")
+    private String var3;
 }
 
 class OtherClass{
