@@ -86,7 +86,9 @@ Get them [here](https://github.com/mtrevisan/Boxon/releases/).
     1. [Multi-message parser](#example-multi)
     2. [Message composer](#example-composer)
 7. [Changelog](#changelog)
-    1. [version 1.0.0](#changelog-1.0.0)
+    1. [version 1.0.2](#changelog-1.0.2)
+    2. [version 1.0.1](#changelog-1.0.1)
+    3. [version 1.0.0](#changelog-1.0.0)
 
 <br/>
 
@@ -926,6 +928,15 @@ else{
 
 <a name="changelog"></a>
 ## Changelog
+
+<a name="changelog-1.0.2"></a>
+### version 1.0.2 - 20200731
+- final revision, first deploy
+
+<a name="changelog-1.0.1"></a>
+### version 1.0.1 - 20200721
+- first revision
+- some more thoughts on how it should work
 
 <a name="changelog-1.0.0"></a>
 ### version 1.0.0 - 20200629
