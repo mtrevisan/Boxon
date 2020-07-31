@@ -92,7 +92,7 @@ final class CodecHelper{
 	}
 
 	static void writePrefix(final BitWriter writer, final ObjectChoices.ObjectChoice chosenAlternative, final ObjectChoices selectFrom){
-		//if chosenAlternative.condition() contains '#prefix', then write @Choice.Prefix.value()
+		//if chosenAlternative.condition() contains '#prefix', then write @ObjectChoice.prefix()
 		if(CONTEXT_PREFIXED_CHOICE_PREFIX.matcher(chosenAlternative.condition()).find()){
 			final int prefixSize = selectFrom.prefixSize();
 			final ByteOrder prefixByteOrder = selectFrom.byteOrder();
@@ -167,7 +167,13 @@ final class CodecHelper{
 	static <IN, OUT> OUT converterDecode(final Class<? extends Converter<?, ?>> converterType, final Object data){
 		final Converter<IN, OUT> converter = (Converter<IN, OUT>)ReflectionHelper.getCreator(converterType)
 			.get();
-		return converter.decode((IN)data);
+
+		try{
+			return converter.decode((IN)data);
+		}
+		catch(final ClassCastException ignored){
+			throw new IllegalArgumentException("Can not input " + data.getClass().getSimpleName() + " to decode method of converter " + converter.getClass().getSimpleName());
+		}
 	}
 
 	@SuppressWarnings("unchecked")

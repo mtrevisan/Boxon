@@ -70,9 +70,12 @@ public final class ReflectionHelper{
 	}
 
 	public static void setFieldValue(final Object obj, final String fieldName, final Object value){
+		final Field field = getAccessibleField(obj.getClass(), fieldName);
 		try{
-			final Field field = getAccessibleField(obj.getClass(), fieldName);
 			field.set(obj, value);
+		}
+		catch(final IllegalArgumentException ignored){
+			throw new IllegalArgumentException("Can not set " + field.getType().getSimpleName() + " field to " + value.getClass().getSimpleName());
 		}
 		catch(final IllegalAccessException ignored){}
 	}
@@ -138,11 +141,11 @@ public final class ReflectionHelper{
 		}
 	}
 
-	private static Method getAccessibleMethod(Class<?> cls, final String fieldName){
+	private static Method getAccessibleMethod(Class<?> cls, final String methodName){
 		Method method = null;
 		while(cls != Object.class){
 			try{
-				method = cls.getDeclaredMethod(fieldName);
+				method = cls.getDeclaredMethod(methodName);
 				method.setAccessible(true);
 				break;
 			}

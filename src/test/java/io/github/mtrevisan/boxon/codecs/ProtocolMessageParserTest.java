@@ -148,7 +148,7 @@ class ProtocolMessageParserTest{
 
 	@MessageHeader(start = "te3")
 	static class TestError3{
-		static class WrongConverter implements Converter<Byte, String>{
+		static class WrongOutputConverter implements Converter<Byte, String>{
 
 			@Override
 			public String decode(final Byte value){
@@ -163,7 +163,7 @@ class ProtocolMessageParserTest{
 		}
 		@BindString(size = "3")
 		public String header;
-		@BindByte(converter = WrongConverter.class)
+		@BindByte(converter = WrongOutputConverter.class)
 		public byte type;
 	}
 
@@ -177,13 +177,13 @@ class ProtocolMessageParserTest{
 		ProtocolMessage<TestError3> protocolMessage = ProtocolMessage.createFrom(TestError3.class, protocolMessageParser.loader);
 
 		Exception exc = Assertions.assertThrows(RuntimeException.class, () -> protocolMessageParser.decode(protocolMessage, reader, null));
-		Assertions.assertEquals("IllegalArgumentException: Can not set byte field io.github.mtrevisan.boxon.codecs.ProtocolMessageParserTest$TestError3.type to java.lang.String in field TestError3.type", exc.getMessage());
+		Assertions.assertEquals("IllegalArgumentException: Can not set byte field to String in field TestError3.type", exc.getMessage());
 	}
 
 
 	@MessageHeader(start = "te4")
 	static class TestError4{
-		static class WrongConverter implements Converter<String, Byte>{
+		static class WrongInputConverter implements Converter<String, Byte>{
 
 			@Override
 			public Byte decode(final String value){
@@ -198,7 +198,7 @@ class ProtocolMessageParserTest{
 		}
 		@BindString(size = "3")
 		public String header;
-		@BindByte(converter = WrongConverter.class)
+		@BindByte(converter = WrongInputConverter.class)
 		public byte type;
 	}
 
@@ -212,7 +212,7 @@ class ProtocolMessageParserTest{
 		ProtocolMessage<TestError4> protocolMessage = ProtocolMessage.createFrom(TestError4.class, protocolMessageParser.loader);
 
 		Exception exc = Assertions.assertThrows(RuntimeException.class, () -> protocolMessageParser.decode(protocolMessage, reader, null));
-		Assertions.assertEquals("ClassCastException: class java.lang.Byte cannot be cast to class java.lang.String (java.lang.Byte and java.lang.String are in module java.base of loader 'bootstrap') in field TestError4.type", exc.getMessage());
+		Assertions.assertEquals("IllegalArgumentException: Can not input Byte to decode method of converter WrongInputConverter in field TestError4.type", exc.getMessage());
 	}
 
 
