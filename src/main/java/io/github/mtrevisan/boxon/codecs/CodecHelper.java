@@ -50,7 +50,8 @@ final class CodecHelper{
 		for(int i = 0; i < alternatives.length; i ++)
 			if(alternatives[i].type() == type)
 				return alternatives[i];
-		return null;
+
+		throw new IllegalArgumentException("Cannot find a valid codec for type " + type.getSimpleName());
 	}
 
 	static ObjectChoices.ObjectChoice chooseAlternativeWithPrefix(final BitReader reader, final int prefixSize, final ByteOrder prefixByteOrder,
@@ -61,7 +62,7 @@ final class CodecHelper{
 		Evaluator.addToContext(CONTEXT_CHOICE_PREFIX, prefix);
 		final ObjectChoices.ObjectChoice chosenAlternative = chooseAlternative(alternatives, rootObject);
 		if(chosenAlternative == null)
-			throw new NoCodecException("Cannot find a valid codec for prefix {}", prefix);
+			throw new NoCodecException("Cannot find a valid codec for prefix {} in object {}", prefix, rootObject.getClass().getSimpleName());
 
 		return chosenAlternative;
 	}
@@ -69,7 +70,7 @@ final class CodecHelper{
 	static ObjectChoices.ObjectChoice chooseAlternativeWithoutPrefix(final ObjectChoices.ObjectChoice[] alternatives, final Object rootObject){
 		final ObjectChoices.ObjectChoice chosenAlternative = chooseAlternative(alternatives, rootObject);
 		if(chosenAlternative == null)
-			throw new NoCodecException("Cannot find a valid codec");
+			throw new NoCodecException("Cannot find a valid codec in object {}", rootObject.getClass().getSimpleName());
 
 		return chosenAlternative;
 	}
@@ -159,7 +160,7 @@ final class CodecHelper{
 		final Validator<T> validator = (Validator<T>)ReflectionHelper.getCreator(validatorType)
 			.get();
 		if(!validator.validate((T)data))
-			throw new IllegalArgumentException("Validation not passed (" + data + ")");
+			throw new IllegalArgumentException("Validation with " + validatorType.getSimpleName() + " not passed (" + data + ")");
 	}
 
 	@SuppressWarnings("unchecked")

@@ -126,8 +126,6 @@ final class CodecArray implements CodecInterface<BindArray>{
 			final Class<?> type = elem.getClass();
 
 			final ObjectChoices.ObjectChoice chosenAlternative = CodecHelper.chooseAlternative(alternatives, type);
-			if(chosenAlternative == null)
-				throw new IllegalArgumentException("Cannot find a valid codec for type " + type.getSimpleName());
 
 			CodecHelper.writePrefix(writer, chosenAlternative, selectFrom);
 

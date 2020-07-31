@@ -96,10 +96,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 			type = value.getClass();
 
 			final ObjectChoices.ObjectChoice chosenAlternative = CodecHelper.chooseAlternative(alternatives, type);
-			if(chosenAlternative == null)
-				throw new IllegalArgumentException("Cannot find a valid codec for type " + type.getSimpleName());
 
-			//write prefix
 			CodecHelper.writePrefix(writer, chosenAlternative, selectFrom);
 		}
 
