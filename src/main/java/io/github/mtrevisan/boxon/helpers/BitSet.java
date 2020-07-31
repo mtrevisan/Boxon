@@ -221,7 +221,7 @@ public final class BitSet{
 
 		final BitSet rhs = (BitSet)obj;
 		return (cardinality == rhs.cardinality
-			&& Arrays.equals(Arrays.copyOfRange(indexes, 0, cardinality), Arrays.copyOfRange(rhs.indexes, 0, rhs.cardinality)));
+			&& Arrays.equals(indexes, 0, cardinality, rhs.indexes, 0, rhs.cardinality));
 	}
 
 }
