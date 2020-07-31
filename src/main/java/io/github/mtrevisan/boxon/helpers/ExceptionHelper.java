@@ -90,9 +90,11 @@ public final class ExceptionHelper{
 	}
 
 	private static <T> T match(final T[] array, final Predicate<T> condition){
-		for(int i = 0; i < array.length; i ++)
-			if(condition.test(array[i]))
-				return array[i];
+		for(int i = 0; i < array.length; i ++){
+			final T elem = array[i];
+			if(condition.test(elem))
+				return elem;
+		}
 		return null;
 	}
 

@@ -47,9 +47,11 @@ final class CodecHelper{
 	private CodecHelper(){}
 
 	static ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> type){
-		for(int i = 0; i < alternatives.length; i ++)
-			if(alternatives[i].type() == type)
-				return alternatives[i];
+		for(int i = 0; i < alternatives.length; i ++){
+			final ObjectChoices.ObjectChoice alternative = alternatives[i];
+			if(alternative.type() == type)
+				return alternative;
+		}
 
 		throw new IllegalArgumentException("Cannot find a valid codec for type " + type.getSimpleName());
 	}
@@ -76,18 +78,22 @@ final class CodecHelper{
 	}
 
 	private static ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Object rootObject){
-		for(int i = 0; i < alternatives.length; i ++)
-			if(Evaluator.evaluate(alternatives[i].condition(), rootObject, boolean.class))
-				return alternatives[i];
+		for(int i = 0; i < alternatives.length; i ++){
+			final ObjectChoices.ObjectChoice alternative = alternatives[i];
+			if(Evaluator.evaluate(alternative.condition(), rootObject, boolean.class))
+				return alternative;
+		}
 		return null;
 	}
 
 	static Class<? extends Converter<?, ?>> chooseConverter(final ConverterChoices selectConverterFrom, final Class<? extends Converter<?, ?>> baseConverter,
 			final Object rootObject){
 		final ConverterChoices.ConverterChoice[] alternatives = selectConverterFrom.alternatives();
-		for(int i = 0; i < alternatives.length; i ++)
-			if(Evaluator.evaluate(alternatives[i].condition(), rootObject, boolean.class))
-				return alternatives[i].converter();
+		for(int i = 0; i < alternatives.length; i ++){
+			final ConverterChoices.ConverterChoice alternative = alternatives[i];
+			if(Evaluator.evaluate(alternative.condition(), rootObject, boolean.class))
+				return alternative.converter();
+		}
 		return baseConverter;
 	}
 
