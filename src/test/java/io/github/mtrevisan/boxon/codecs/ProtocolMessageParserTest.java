@@ -26,6 +26,7 @@ package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.BindBits;
 import io.github.mtrevisan.boxon.annotations.BindByte;
+import io.github.mtrevisan.boxon.annotations.BindObject;
 import io.github.mtrevisan.boxon.annotations.BindString;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
@@ -234,6 +235,47 @@ class ProtocolMessageParserTest{
 
 		Exception exc = Assertions.assertThrows(RuntimeException.class, () -> protocolMessageParser.decode(protocolMessage, reader, null));
 		Assertions.assertEquals("IllegalArgumentException: Value `[0]` does not match constraint `[1]` in field TestError5.type", exc.getMessage());
+	}
+
+
+
+	@MessageHeader(start = "tc")
+	static class TestComposition{
+		static class TestSubComposition{
+			@BindByte
+			public byte subtype;
+			@BindString(condition = "type == 1", size = "1")
+			public String field1;
+			@BindString(condition = "#self.subtype == 1", size = "1")
+			public String field2;
+		}
+		@BindString(size = "2")
+		public String header;
+		@BindByte
+		public byte type;
+		@BindByte(condition = "type == 1")
+		public Byte subtype;
+		@BindObject(type = TestSubComposition.class)
+		public TestSubComposition sub;
+	}
+
+	@Test
+	void parseCompositeMessage(){
+		byte[] payload = ByteHelper.toByteArray("74630102016162");
+		BitReader reader = BitReader.wrap(payload);
+
+		ProtocolMessageParser protocolMessageParser = new ProtocolMessageParser();
+		protocolMessageParser.loader.loadCodecs();
+		ProtocolMessage<TestComposition> protocolMessage = ProtocolMessage.createFrom(TestComposition.class, protocolMessageParser.loader);
+
+		TestComposition parsed = protocolMessageParser.decode(protocolMessage, reader, null);
+		Assertions.assertNotNull(parsed);
+		Assertions.assertEquals("tc", parsed.header);
+		Assertions.assertEquals(1, parsed.type);
+		Assertions.assertEquals(2, parsed.subtype.intValue());
+		Assertions.assertEquals(1, parsed.sub.subtype);
+		Assertions.assertEquals("a", parsed.sub.field1);
+		Assertions.assertEquals("b", parsed.sub.field2);
 	}
 
 }

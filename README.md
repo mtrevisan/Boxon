@@ -613,7 +613,7 @@ private String deviceTypeName;
 ## How to write SpEL expressions
 Care should be taken in writing [SpEL expressions](https://docs.spring.io/spring/docs/4.3.10.RELEASE/spring-framework-reference/html/expressions.html) for the fields `condition`, `size`, and `match`.
 
-The root object is the outermost object. In order to evaluate a variable of a parent object the complete path should be used, as in `#root.object1.variable1`. In order to evaluate a variable of a children object, that is the object currently scanned, the relative path should be used, as in `#self.variable2`).
+The root object is the outermost object. In order to evaluate a variable of a parent object the complete path should be used, as in `object1.variable1`. In order to evaluate a variable of a children object, that is the object currently scanned, the relative path should be used, as in `#self.variable2`).
 
 Example:
 ```java
@@ -621,7 +621,7 @@ class A{
     @BindByte
     private byte value;
 
-    @BindObject
+    @BindObject(type = OtherClass.class)
     private OtherClass other;
 
     @BindString(condition = "value == 2", size = "1")
@@ -629,7 +629,7 @@ class A{
 }
 
 class OtherClass{
-    @BindString(condition = "#root.value == 1", size = "1")
+    @BindString(condition = "value == 1", size = "1")
     private String var1;
     @BindString(condition = "#self.var1.equals('2')", size = "1")
     private String var2;
