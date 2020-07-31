@@ -46,10 +46,10 @@ final class ProtocolMessageParser{
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProtocolMessageParser.class);
 
-	static class ParserContext<T>{
+	private static class ParserContext<T>{
 
-		final Object rootObject;
-		final T currentObject;
+		private final Object rootObject;
+		private final T currentObject;
 
 
 		ParserContext(final Object rootObject, final T currentObject){
