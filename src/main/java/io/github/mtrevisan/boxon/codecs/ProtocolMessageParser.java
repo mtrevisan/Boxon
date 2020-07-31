@@ -46,6 +46,23 @@ final class ProtocolMessageParser{
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProtocolMessageParser.class);
 
+	static class Context<T>{
+
+		final Object rootObject;
+		final T currentObject;
+
+
+		Context(final Object rootObject, final T currentObject){
+			this.rootObject = rootObject;
+			this.currentObject = currentObject;
+		}
+
+		T getCurrentObjectIfDifferentFromRoot(){
+			return (currentObject != rootObject? currentObject: null);
+		}
+
+	}
+
 
 	final Loader loader = new Loader();
 
@@ -58,6 +75,7 @@ final class ProtocolMessageParser{
 
 		//select parent object, discard children
 		final Object rootObject = (parentObject != null? parentObject: currentObject);
+		final Context<T> context = new Context<>(rootObject, currentObject);
 
 		//decode message fields:
 		final List<ProtocolMessage.BoundedField> fields = protocolMessage.getBoundedFields();
@@ -65,8 +83,8 @@ final class ProtocolMessageParser{
 			final ProtocolMessage.BoundedField field = fields.get(i);
 			readSkippedFields(field.getSkips(), reader, rootObject);
 
-			if(processField(field.getCondition(), rootObject, (currentObject != rootObject? currentObject: null)))
-				decodeField(protocolMessage, reader, rootObject, currentObject, field);
+			if(processField(field.getCondition(), context))
+				decodeField(protocolMessage, reader, context, field);
 		}
 
 		processEvaluatedFields(protocolMessage, currentObject);
@@ -78,7 +96,7 @@ final class ProtocolMessageParser{
 		return currentObject;
 	}
 
-	private <T> void decodeField(final ProtocolMessage<T> protocolMessage, final BitReader reader, final Object rootObject, final T currentObject,
+	private <T> void decodeField(final ProtocolMessage<T> protocolMessage, final BitReader reader, final Context<T> context,
 			final ProtocolMessage.BoundedField field){
 		final Annotation binding = field.getBinding();
 		final CodecInterface<?> codec = retrieveCodec(binding.annotationType());
@@ -87,8 +105,8 @@ final class ProtocolMessageParser{
 			if(LOGGER.isTraceEnabled())
 				LOGGER.trace("reading {}.{} with bind {}", protocolMessage.getType().getSimpleName(), field.getName(), binding.annotationType().getSimpleName());
 
-			final Object value = codec.decode(reader, binding, rootObject);
-			ReflectionHelper.setFieldValue(currentObject, field.getName(), value);
+			final Object value = codec.decode(reader, binding, context.rootObject);
+			ReflectionHelper.setFieldValue(context.currentObject, field.getName(), value);
 
 			if(LOGGER.isTraceEnabled())
 				LOGGER.trace("read {}.{} = {}", protocolMessage.getType().getSimpleName(), field.getName(), value);
@@ -163,9 +181,10 @@ final class ProtocolMessageParser{
 		}
 	}
 
-	final void encode(final ProtocolMessage<?> protocolMessage, final BitWriter writer, final Object parentObject, final Object currentObject){
+	final <T> void encode(final ProtocolMessage<?> protocolMessage, final BitWriter writer, final Object parentObject, final T currentObject){
 		//select parent object, discard children
 		final Object rootObject = (parentObject != null? parentObject: currentObject);
+		final Context<T> context = new Context<>(rootObject, currentObject);
 
 		//encode message fields:
 		final List<ProtocolMessage.BoundedField> fields = protocolMessage.getBoundedFields();
@@ -173,8 +192,8 @@ final class ProtocolMessageParser{
 			final ProtocolMessage.BoundedField field = fields.get(i);
 			writeSkippedFields(field.getSkips(), writer, parentObject);
 
-			if(processField(field.getCondition(), rootObject, (currentObject != rootObject? currentObject: null)))
-				encodeField(protocolMessage, writer, rootObject, currentObject, field);
+			if(processField(field.getCondition(), context))
+				encodeField(protocolMessage, writer, context, field);
 		}
 
 		final MessageHeader header = protocolMessage.getHeader();
@@ -183,13 +202,13 @@ final class ProtocolMessageParser{
 		writer.flush();
 	}
 
-	private void encodeField(final ProtocolMessage<?> protocolMessage, final BitWriter writer, final Object rootObject, final Object currentObject, final ProtocolMessage.BoundedField field){
+	private <T> void encodeField(final ProtocolMessage<?> protocolMessage, final BitWriter writer, final Context<T> context, final ProtocolMessage.BoundedField field){
 		final Annotation binding = field.getBinding();
 		final CodecInterface<?> codec = retrieveCodec(binding.annotationType());
 
 		try{
-			final Object value = ReflectionHelper.getFieldValue(currentObject, field.getName());
-			codec.encode(writer, binding, rootObject, value);
+			final Object value = ReflectionHelper.getFieldValue(context.currentObject, field.getName());
+			codec.encode(writer, binding, context.rootObject, value);
 		}
 		catch(final Exception e){
 			//this assumes the writing was done correctly
@@ -197,12 +216,12 @@ final class ProtocolMessageParser{
 		}
 	}
 
-	private boolean processField(final String condition, final Object rootObject, final Object currentObject){
+	private <T> boolean processField(final String condition, final Context<T> context){
 		if(condition.isEmpty())
 			return true;
 
-		Evaluator.addToContext(CodecHelper.CONTEXT_SELF, currentObject);
-		return Evaluator.evaluate(condition, rootObject, boolean.class);
+		Evaluator.addToContext(CodecHelper.CONTEXT_SELF, context.getCurrentObjectIfDifferentFromRoot());
+		return Evaluator.evaluate(condition, context.rootObject, boolean.class);
 	}
 
 	private void closeMessage(final MessageHeader header, final BitWriter writer){
