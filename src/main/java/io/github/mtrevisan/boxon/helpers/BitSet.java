@@ -204,12 +204,12 @@ public final class BitSet{
 
 	@Override
 	public final String toString(){
-		return Arrays.toString(Arrays.copyOfRange(indexes, 0, cardinality));
+		return Arrays.toString(indexes);
 	}
 
 	@Override
 	public final int hashCode(){
-		return Arrays.hashCode(Arrays.copyOfRange(indexes, 0, cardinality));
+		return Arrays.hashCode(indexes);
 	}
 
 	@Override
