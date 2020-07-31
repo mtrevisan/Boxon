@@ -154,26 +154,26 @@ final class CodecHelper{
 		return (text != null && !text.isBlank());
 	}
 
-	static <T> void validateData(final Class<? extends Validator<?>> validatorType, final T data){
-		@SuppressWarnings("unchecked")
+	@SuppressWarnings("unchecked")
+	static <T> void validateData(final Class<? extends Validator<?>> validatorType, final Object data){
 		final Validator<T> validator = (Validator<T>)ReflectionHelper.getCreator(validatorType)
 			.get();
-		if(!validator.validate(data))
+		if(!validator.validate((T)data))
 			throw new IllegalArgumentException("Validation not passed (" + data + ")");
 	}
 
-	static <IN, OUT> OUT converterDecode(final Class<? extends Converter<?, ?>> converterType, final IN data){
-		@SuppressWarnings("unchecked")
+	@SuppressWarnings("unchecked")
+	static <IN, OUT> OUT converterDecode(final Class<? extends Converter<?, ?>> converterType, final Object data){
 		final Converter<IN, OUT> converter = (Converter<IN, OUT>)ReflectionHelper.getCreator(converterType)
 			.get();
-		return converter.decode(data);
+		return converter.decode((IN)data);
 	}
 
-	static <IN, OUT> IN converterEncode(final Class<? extends Converter<?, ?>> converterType, final OUT data){
-		@SuppressWarnings("unchecked")
+	@SuppressWarnings("unchecked")
+	static <IN, OUT> IN converterEncode(final Class<? extends Converter<?, ?>> converterType, final Object data){
 		final Converter<IN, OUT> converter = (Converter<IN, OUT>)ReflectionHelper.getCreator(converterType)
 			.get();
-		return converter.encode(data);
+		return converter.encode((OUT)data);
 	}
 
 }
