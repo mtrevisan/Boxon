@@ -63,7 +63,7 @@ public final class ReflectionHelper{
 			final Field field = getAccessibleField(obj.getClass(), fieldName);
 			return (T)field.get(obj);
 		}
-		catch(final IllegalAccessException ignored){
+		catch(final IllegalArgumentException | IllegalAccessException ignored){
 			//cannot happen
 			return null;
 		}
@@ -86,7 +86,7 @@ public final class ReflectionHelper{
 			for(int i = 0; i < fields.length; i ++)
 				fields[i].set(obj, value);
 		}
-		catch(final IllegalAccessException ignored){}
+		catch(final IllegalArgumentException | IllegalAccessException ignored){}
 	}
 
 	private static Field getAccessibleField(Class<?> cls, final String fieldName){
@@ -97,7 +97,7 @@ public final class ReflectionHelper{
 				field.setAccessible(true);
 				break;
 			}
-			catch(final NoSuchFieldException e){
+			catch(final NoSuchFieldException | SecurityException e){
 				//go up to parent class
 				cls = cls.getSuperclass();
 			}

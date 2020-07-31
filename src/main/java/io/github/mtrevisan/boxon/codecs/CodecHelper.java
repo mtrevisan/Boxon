@@ -165,14 +165,14 @@ final class CodecHelper{
 
 	@SuppressWarnings("unchecked")
 	static <IN, OUT> OUT converterDecode(final Class<? extends Converter<?, ?>> converterType, final Object data){
-		final Converter<IN, OUT> converter = (Converter<IN, OUT>)ReflectionHelper.getCreator(converterType)
-			.get();
-
 		try{
+			final Converter<IN, OUT> converter = (Converter<IN, OUT>)ReflectionHelper.getCreator(converterType)
+				.get();
+
 			return converter.decode((IN)data);
 		}
 		catch(final ClassCastException ignored){
-			throw new IllegalArgumentException("Can not input " + data.getClass().getSimpleName() + " to decode method of converter " + converter.getClass().getSimpleName());
+			throw new IllegalArgumentException("Can not input " + data.getClass().getSimpleName() + " to decode method of converter " + converterType.getSimpleName());
 		}
 	}
 
