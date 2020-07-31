@@ -83,12 +83,6 @@ final class CodecHelper{
 
 	static Class<? extends Converter<?, ?>> chooseConverter(final ConverterChoices selectConverterFrom, final Class<? extends Converter<?, ?>> baseConverter,
 			final Object rootObject){
-		return chooseConverter(selectConverterFrom, baseConverter, rootObject, null);
-	}
-
-	static Class<? extends Converter<?, ?>> chooseConverter(final ConverterChoices selectConverterFrom, final Class<? extends Converter<?, ?>> baseConverter,
-			final Object rootObject, final Object currentObject){
-		Evaluator.addToContext(CodecHelper.CONTEXT_SELF, currentObject);
 		final ConverterChoices.ConverterChoice[] alternatives = selectConverterFrom.alternatives();
 		for(int i = 0; i < alternatives.length; i ++)
 			if(Evaluator.evaluate(alternatives[i].condition(), rootObject, boolean.class))
@@ -117,17 +111,17 @@ final class CodecHelper{
 	}
 
 	private static void matchData(final String match, final Object currentObject){
-		final Pattern pattern = extractPattern(match, currentObject);
+		final Pattern pattern = extractPattern(match);
 		if(pattern != null && !pattern.matcher(Objects.toString(currentObject)).matches())
 			throw new IllegalArgumentException("Value `" + currentObject + "` does not match constraint `" + match + "`");
 	}
 
 	/** Extract pattern from a SpEL expression, or a string, or a regex pattern */
-	private static Pattern extractPattern(String match, final Object currentObject){
+	private static Pattern extractPattern(String match){
 		Pattern p = null;
 		if(isNotBlank(match)){
 			//try SpEL expression
-			match = extractSpELExpression(match, currentObject);
+			match = extractSpELExpression(match);
 
 			//try regex expression
 			p = extractRegexExpression(match);
@@ -139,8 +133,7 @@ final class CodecHelper{
 		return p;
 	}
 
-	private static String extractSpELExpression(String match, final Object currentObject){
-		Evaluator.addToContext(CodecHelper.CONTEXT_SELF, currentObject);
+	private static String extractSpELExpression(String match){
 		try{
 			match = Evaluator.evaluate(match, null, String.class);
 		}
