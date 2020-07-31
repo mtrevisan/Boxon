@@ -45,7 +45,7 @@ import java.nio.charset.StandardCharsets;
 class ProtocolMessageParserTest{
 
 	@Test
-	void parseSingleMessageHex(){
+	void parseSingleMessageHex() throws NoSuchMethodException{
 		byte[] payload = ByteHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		BitReader reader = BitReader.wrap(payload);
 
@@ -59,6 +59,7 @@ class ProtocolMessageParserTest{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
 		Evaluator.addToContext("deviceTypes", deviceTypes);
+		Evaluator.addToContext(ParserTest.class.getDeclaredMethod("headerSize"));
 		ACKMessageHex message = protocolMessageParser.decode(protocolMessage, reader, null);
 		Evaluator.removeFromContext("deviceTypes");
 

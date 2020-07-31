@@ -40,14 +40,16 @@ import java.util.Map;
 class ParserTest{
 
 	@Test
-	void parseAndComposeSingeMessageHex(){
+	void parseAndComposeSingeMessageHex() throws NoSuchMethodException{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 		Parser parser = Parser.create()
 			.withContext(context)
 			.withDefaultCodecs()
-			.withDefaultProtocolMessages();
+			.withDefaultProtocolMessages()
+			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"));
+		Runnable as = ParserTest::headerSize;
 
 		//parse:
 		byte[] payload = ByteHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
@@ -63,15 +65,20 @@ class ParserTest{
 		Assertions.assertArrayEquals(payload, composeResult.getComposedMessage());
 	}
 
+	private static int headerSize(){
+		return 4;
+	}
+
 	@Test
-	void parseMultipleMessagesHex(){
+	void parseMultipleMessagesHex() throws NoSuchMethodException{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 		Parser parser = Parser.create()
 			.withContext(context)
 			.withDefaultCodecs()
-			.withDefaultProtocolMessages();
+			.withDefaultProtocolMessages()
+			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"));
 
 		byte[] payload = ByteHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		ParseResponse result = parser.parse(payload);
@@ -122,7 +129,7 @@ class ParserTest{
 	}
 
 	@Test
-	void parseMultipleMessagesHexASCII(){
+	void parseMultipleMessagesHexASCII() throws NoSuchMethodException{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
 		deviceTypes.add("QUECLINK_GV350M", (byte)0xCF);
@@ -130,7 +137,8 @@ class ParserTest{
 		Parser parser = Parser.create()
 			.withContext(context)
 			.withDefaultCodecs()
-			.withDefaultProtocolMessages();
+			.withDefaultProtocolMessages()
+			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"));
 
 		byte[] payload1 = ByteHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		byte[] payload2 = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
