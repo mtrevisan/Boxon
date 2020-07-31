@@ -99,13 +99,13 @@ final class ProtocolMessageParser{
 		}
 	}
 
-	private <T> void readSkippedFields(final Skip[] skips, final BitReader reader, final T rootObject){
+	private void readSkippedFields(final Skip[] skips, final BitReader reader, final Object rootObject){
 		if(skips != null)
 			for(int i = 0; i < skips.length; i ++)
 				readSkip(skips[i], reader, rootObject);
 	}
 
-	private <T> void readSkip(final Skip skip, final BitReader reader, final T rootObject){
+	private void readSkip(final Skip skip, final BitReader reader, final Object rootObject){
 		final String condition = skip.condition();
 		final boolean process = (condition.isEmpty() || Evaluator.evaluate(condition, rootObject, boolean.class));
 		if(process){
@@ -119,7 +119,7 @@ final class ProtocolMessageParser{
 		}
 	}
 
-	private <T> void readMessageTerminator(final ProtocolMessage<T> protocolMessage, final BitReader reader){
+	private void readMessageTerminator(final ProtocolMessage<?> protocolMessage, final BitReader reader){
 		final MessageHeader header = protocolMessage.getHeader();
 		if(header != null && header.end().length() > 0){
 			final Charset charset = Charset.forName(header.charset());
@@ -163,7 +163,7 @@ final class ProtocolMessageParser{
 		}
 	}
 
-	final <T> void encode(final ProtocolMessage<?> protocolMessage, final BitWriter writer, final Object parentObject, final T currentObject){
+	final void encode(final ProtocolMessage<?> protocolMessage, final BitWriter writer, final Object parentObject, final Object currentObject){
 		//select parent object, discard children
 		final Object rootObject = (parentObject != null? parentObject: currentObject);
 
@@ -183,7 +183,7 @@ final class ProtocolMessageParser{
 		writer.flush();
 	}
 
-	private <T> void encodeField(final ProtocolMessage<?> protocolMessage, final BitWriter writer, final T rootObject, final T currentObject, final ProtocolMessage.BoundedField field){
+	private void encodeField(final ProtocolMessage<?> protocolMessage, final BitWriter writer, final Object rootObject, final Object currentObject, final ProtocolMessage.BoundedField field){
 		final Annotation binding = field.getBinding();
 		final CodecInterface<?> codec = retrieveCodec(binding.annotationType());
 
@@ -234,13 +234,13 @@ final class ProtocolMessageParser{
 		throw new RuntimeException(message + " in field " + protocolMessage + "." + field.getName());
 	}
 
-	private <T> void writeSkippedFields(final Skip[] skips, final BitWriter writer, final T rootObject){
+	private void writeSkippedFields(final Skip[] skips, final BitWriter writer, final Object rootObject){
 		if(skips != null)
 			for(int i = 0; i < skips.length; i ++)
 				writeSkip(skips[i], writer, rootObject);
 	}
 
-	private <T> void writeSkip(final Skip skip, final BitWriter writer, final T rootObject){
+	private void writeSkip(final Skip skip, final BitWriter writer, final Object rootObject){
 		final String condition = skip.condition();
 		final boolean process = (condition.isEmpty() || Evaluator.evaluate(condition, rootObject, boolean.class));
 		if(process){
