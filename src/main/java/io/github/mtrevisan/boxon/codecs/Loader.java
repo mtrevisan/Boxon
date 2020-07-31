@@ -235,21 +235,16 @@ final class Loader{
 	final ProtocolMessage<?> getProtocolMessage(final BitReader reader){
 		final int index = reader.position();
 
-		ProtocolMessage<?> protocolMessage = null;
 		for(final Map.Entry<String, ProtocolMessage<?>> entry : protocolMessages.entrySet()){
 			final String header = entry.getKey();
 			final byte[] protocolMessageHeader = ByteHelper.toByteArray(header);
 
 			//verify if it's a valid message header
-			if(Arrays.equals(reader.array(), index, index + protocolMessageHeader.length, protocolMessageHeader, 0, protocolMessageHeader.length)){
-				protocolMessage = entry.getValue();
-				break;
-			}
+			if(Arrays.equals(reader.array(), index, index + protocolMessageHeader.length, protocolMessageHeader, 0, protocolMessageHeader.length))
+				return entry.getValue();
 		}
-		if(protocolMessage == null)
-			throw new ProtocolMessageException("Cannot find any protocol message for message");
 
-		return protocolMessage;
+		throw new ProtocolMessageException("Cannot find any protocol message for message");
 	}
 
 
