@@ -201,13 +201,13 @@ final class ProtocolMessage<T>{
 			if(prefixSize > 0){
 				if(alternatives.length == 0)
 					throw new AnnotationException("Alternatives missing");
-				if(Arrays.stream(alternatives).noneMatch(a -> a.condition().contains(CodecHelper.CONTEXT_PREFIXED_CHOICE_PREFIX)))
+				if(Arrays.stream(alternatives).noneMatch(a -> CodecHelper.CONTEXT_PREFIXED_CHOICE_PREFIX.matcher(a.condition()).find()))
 					throw new AnnotationException("Any condition must contain a reference to the prefix");
 				for(int i = 0; i < alternatives.length; i ++)
 					if(alternatives[i].condition().isEmpty())
 						throw new AnnotationException("Any condition must be non-empty");
 			}
-			else if(Arrays.stream(alternatives).anyMatch(a -> a.condition().contains(CodecHelper.CONTEXT_PREFIXED_CHOICE_PREFIX)))
+			else if(Arrays.stream(alternatives).anyMatch(a -> CodecHelper.CONTEXT_PREFIXED_CHOICE_PREFIX.matcher(a.condition()).find()))
 				throw new AnnotationException("Any condition cannot contain a reference to the prefix");
 		}
 	}

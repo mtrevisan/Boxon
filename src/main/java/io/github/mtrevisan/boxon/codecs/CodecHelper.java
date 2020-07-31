@@ -41,7 +41,7 @@ final class CodecHelper{
 
 	public static final String CONTEXT_SELF = "self";
 	public static final String CONTEXT_CHOICE_PREFIX = "prefix";
-	public static final String CONTEXT_PREFIXED_CHOICE_PREFIX = "#" + CONTEXT_CHOICE_PREFIX;
+	public static final Pattern CONTEXT_PREFIXED_CHOICE_PREFIX = Pattern.compile("#" + CONTEXT_CHOICE_PREFIX + "[^a-zA-Z]");
 
 
 	private CodecHelper(){}
@@ -99,7 +99,7 @@ final class CodecHelper{
 
 	static void writePrefix(final BitWriter writer, final ObjectChoices.ObjectChoice chosenAlternative, final ObjectChoices selectFrom){
 		//if chosenAlternative.condition() contains '#prefix', then write @Choice.Prefix.value()
-		if(chosenAlternative.condition().contains(CONTEXT_PREFIXED_CHOICE_PREFIX)){
+		if(CONTEXT_PREFIXED_CHOICE_PREFIX.matcher(chosenAlternative.condition()).find()){
 			final int prefixSize = selectFrom.prefixSize();
 			final ByteOrder prefixByteOrder = selectFrom.byteOrder();
 
