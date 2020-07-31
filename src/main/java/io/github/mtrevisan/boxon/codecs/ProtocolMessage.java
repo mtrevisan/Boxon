@@ -205,7 +205,7 @@ final class ProtocolMessage<T>{
 					throw new AnnotationException("Any condition must contain a reference to the prefix");
 				for(int i = 0; i < alternatives.length; i ++)
 					if(alternatives[i].condition().isEmpty())
-						throw new AnnotationException("Any condition must be non-empty");
+						throw new AnnotationException("Any condition must be non-empty, condition at index " + i + " is empty");
 			}
 			else if(Arrays.stream(alternatives).anyMatch(a -> CodecHelper.CONTEXT_PREFIXED_CHOICE_PREFIX.matcher(a.condition()).find()))
 				throw new AnnotationException("Any condition cannot contain a reference to the prefix");

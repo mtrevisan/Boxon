@@ -43,11 +43,11 @@ public enum DataType{
 	private static final Map<Class<?>, Class<?>> WRAPPER_PRIMITIVE_MAP = new HashMap<>(6);
 	private static final Map<Class<?>, DataType> TYPE_MAP = new HashMap<>(12);
 	static{
-		for(final DataType te : values()){
-			PRIMITIVE_WRAPPER_MAP.put(te.primitiveType, te.objectiveType);
-			WRAPPER_PRIMITIVE_MAP.put(te.objectiveType, te.primitiveType);
-			TYPE_MAP.put(te.primitiveType, te);
-			TYPE_MAP.put(te.objectiveType, te);
+		for(final DataType dt : values()){
+			PRIMITIVE_WRAPPER_MAP.put(dt.primitiveType, dt.objectiveType);
+			WRAPPER_PRIMITIVE_MAP.put(dt.objectiveType, dt.primitiveType);
+			TYPE_MAP.put(dt.primitiveType, dt);
+			TYPE_MAP.put(dt.objectiveType, dt);
 		}
 	}
 

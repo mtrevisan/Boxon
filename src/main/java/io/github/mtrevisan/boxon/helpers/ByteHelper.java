@@ -67,9 +67,9 @@ public final class ByteHelper{
 		if(len % 2 != 0)
 			throw new IllegalArgumentException("Malformed input");
 
-		final byte[] data = new byte[len / 2];
+		final byte[] data = new byte[len >>> 1];
 		for(int i = 0; i < len; i += 2)
-			data[i / 2] = (byte)((Character.digit(hexString.charAt(i), 16) << 4) + Character.digit(hexString.charAt(i + 1), 16));
+			data[i >>> 1] = (byte)((Character.digit(hexString.charAt(i), 16) << 4) + Character.digit(hexString.charAt(i + 1), 16));
 		return data;
 	}
 

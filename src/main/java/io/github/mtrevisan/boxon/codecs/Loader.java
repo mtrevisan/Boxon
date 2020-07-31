@@ -236,15 +236,15 @@ final class Loader{
 		final int index = reader.position();
 
 		ProtocolMessage<?> protocolMessage = null;
-		for(final Map.Entry<String, ProtocolMessage<?>> elem : protocolMessages.entrySet()){
-			final String header = elem.getKey();
+		for(final Map.Entry<String, ProtocolMessage<?>> entry : protocolMessages.entrySet()){
+			final String header = entry.getKey();
 
 			final byte[] protocolMessageHeader = ByteHelper.toByteArray(header);
 			final byte[] messageHeader = Arrays.copyOfRange(reader.array(), index, index + protocolMessageHeader.length);
 
 			//verify if it's a valid message header
 			if(Arrays.equals(messageHeader, protocolMessageHeader)){
-				protocolMessage = elem.getValue();
+				protocolMessage = entry.getValue();
 				break;
 			}
 		}
