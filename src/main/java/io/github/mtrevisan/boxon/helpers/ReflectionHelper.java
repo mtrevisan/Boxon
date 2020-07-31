@@ -131,13 +131,13 @@ public final class ReflectionHelper{
 
 
 	@SuppressWarnings("unchecked")
-	public static <T> T getMethodResponse(final Object obj, final String methodName){
+	public static <T> T getMethodResponse(final Object obj, final String methodName, final T defaultValue){
 		try{
 			final Method method = getAccessibleMethod(obj.getClass(), methodName);
-			return (method != null? (T)method.invoke(obj): null);
+			return (method != null? (T)method.invoke(obj): defaultValue);
 		}
 		catch(final IllegalAccessException | InvocationTargetException ignored){
-			return null;
+			return defaultValue;
 		}
 	}
 

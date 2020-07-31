@@ -62,6 +62,8 @@ final class ProtocolMessage<T>{
 	/** Data associated to an annotated field */
 	static class BoundedField{
 
+		private static final String CONDITION = "condition";
+
 		private final Field field;
 		private final Skip[] skips;
 		private final Annotation binding;
@@ -86,8 +88,7 @@ final class ProtocolMessage<T>{
 		}
 
 		String getCondition(){
-			final String condition = ReflectionHelper.getMethodResponse(binding, "condition");
-			return (condition != null? condition: EMPTY_STRING);
+			return ReflectionHelper.getMethodResponse(binding, CONDITION, EMPTY_STRING);
 		}
 	}
 
