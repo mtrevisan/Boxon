@@ -148,7 +148,7 @@ class ProtocolMessageParserTest{
 
 	@MessageHeader(start = "te3")
 	static class TestError3{
-		class WrongConverter implements Converter<Byte, String>{
+		static class WrongConverter implements Converter<Byte, String>{
 
 			@Override
 			public String decode(final Byte value){
@@ -183,7 +183,7 @@ class ProtocolMessageParserTest{
 
 	@MessageHeader(start = "te4")
 	static class TestError4{
-		class WrongConverter implements Converter<String, Byte>{
+		static class WrongConverter implements Converter<String, Byte>{
 
 			@Override
 			public Byte decode(final String value){
