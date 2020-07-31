@@ -90,10 +90,10 @@ final class Loader{
 		for(final Class<?> type : derivedClasses){
 			final CodecInterface<?> codec = (CodecInterface<?>)ReflectionHelper.getCreator(type)
 				.get();
-			if(codec == null)
-				LOGGER.warn("Cannot create an instance of codec {}", type.getSimpleName());
-			else
+			if(codec != null)
 				addCodec(codec);
+			else
+				LOGGER.warn("Cannot create an instance of codec {}", type.getSimpleName());
 		}
 
 		LOGGER.trace("Codecs loaded are {}", codecs.size());
