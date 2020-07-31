@@ -122,7 +122,7 @@ final class ProtocolMessage<T>{
 			void validate(final Annotation annotation){
 				final Class<?> type = ((BindArrayPrimitive)annotation).type();
 				if(!ReflectionHelper.isPrimitive(type))
-					throw new AnnotationException("Bad annotation used for @{}, should have been used the type `{}.class`", BindArray.class.getSimpleName(),
+					throw new AnnotationException("Bad annotation used for {}, should have been used the type `{}.class`", BindArray.class.getSimpleName(),
 						DataType.toObjectiveTypeOrDefault(type).getSimpleName());
 			}
 		},
@@ -136,7 +136,7 @@ final class ProtocolMessage<T>{
 				validateChoice(selectFrom);
 
 				if(ReflectionHelper.isPrimitive(type))
-					throw new AnnotationException("Bad annotation used for @{}, should have been used the type `{}.class`", BindArrayPrimitive.class.getSimpleName(),
+					throw new AnnotationException("Bad annotation used for {}, should have been used the type `{}.class`", BindArrayPrimitive.class.getSimpleName(),
 						DataType.toPrimitiveTypeOrDefault(type).getSimpleName());
 			}
 		},
@@ -150,7 +150,7 @@ final class ProtocolMessage<T>{
 				validateChoice(selectFrom);
 
 				if(ReflectionHelper.isPrimitive(type))
-					throw new AnnotationException("Bad annotation used for @{}, should have been used one of the primitive type's annotations", BindObject.class.getSimpleName());
+					throw new AnnotationException("Bad annotation used for {}, should have been used one of the primitive type's annotations", BindObject.class.getSimpleName());
 			}
 		},
 
@@ -292,7 +292,7 @@ final class ProtocolMessage<T>{
 		}
 
 		if(checksum != null && this.checksum != null)
-			throw new AnnotationException("Cannot have more than one @{} annotations on class {}", BindChecksum.class.getSimpleName(), cls.getSimpleName());
+			throw new AnnotationException("Cannot have more than one {} annotations on class {}", BindChecksum.class.getSimpleName(), cls.getSimpleName());
 
 		if(!annotations.isEmpty())
 			validateAnnotation(annotations.get(0));

@@ -235,7 +235,7 @@ final class ProtocolMessageParser{
 	private CodecInterface<?> retrieveCodec(final Class<? extends Annotation> annotationType){
 		final CodecInterface<?> codec = loader.getCodec(annotationType);
 		if(codec == null)
-			throw new ProtocolMessageException("Cannot find codec for binding @{}", annotationType.getSimpleName());
+			throw new ProtocolMessageException("Cannot find codec for binding {}", annotationType.getSimpleName());
 
 		setMessageParser(codec);
 		return codec;
