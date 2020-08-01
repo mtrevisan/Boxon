@@ -10,9 +10,10 @@
 	<!-- https://www.freecodecamp.org/news/how-to-upload-an-open-source-java-library-to-maven-central-cac7ce2f57c/ -->
 	<!-- https://ruleoftech.com/2014/distribute-projects-artifacts-in-maven-central-with-ossrh -->
 	<!-- https://dzone.com/articles/comprehensive-step-by-step-guide-on-how-to-upload -->
+<!--	https://knowm.org/a-practical-guide-to-uploading-artifacts-to-maven-central/-->
 	<groupId>io.github.mtrevisan</groupId>
 	<artifactId>boxon</artifactId>
-	<version>0.0.2</version>
+	<version>0.0.2-SNAPSHOT</version>
 
 	<packaging>jar</packaging>
 
@@ -86,7 +87,11 @@
 			</build>
 		</profile>
 		<profile>
+			<!-- mvn clean deploy -U -Dmaven.test.skip=true-->
 			<id>release</id>
+			<properties>
+				<gpg.executable>gpg</gpg.executable>
+			</properties>
 			<build>
 				<plugins>
 					<!-- Signing JAR Files -->
@@ -112,6 +117,15 @@
 						<artifactId>nexus-staging-maven-plugin</artifactId>
 						<version>${nexus-staging-maven-plugin.version}</version>
 						<extensions>true</extensions>
+						<executions>
+							<execution>
+								<id>default-deploy</id>
+								<phase>deploy</phase>
+								<goals>
+									<goal>deploy</goal>
+								</goals>
+							</execution>
+						</executions>
 						<configuration>
 							<!-- The Base URL of Nexus instance where we want to stage -->
 							<serverId>sonatype-nexus-staging</serverId>
@@ -138,11 +152,13 @@
 					<id>sonatype-nexus-snapshots</id>
 					<name>Sonatype Nexus Snapshots</name>
 					<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+					<uniqueVersion>true</uniqueVersion>
 				</snapshotRepository>
 				<repository>
 					<id>sonatype-nexus-staging</id>
 					<name>Nexus Release Repository</name>
 					<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+					<uniqueVersion>false</uniqueVersion>
 				</repository>
 			</distributionManagement>
 
