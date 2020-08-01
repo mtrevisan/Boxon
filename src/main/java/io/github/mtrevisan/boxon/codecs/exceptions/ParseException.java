@@ -31,7 +31,7 @@ import java.util.StringJoiner;
 
 public class ParseException extends Exception{
 
-	private static final long serialVersionUID = -7230533024483622086L;
+	private static final long serialVersionUID = 5375434179637246605L;
 
 
 	private final int errorIndex;

@@ -31,7 +31,7 @@ import java.util.StringJoiner;
 
 public class ComposeException extends Exception{
 
-	private static final long serialVersionUID = -7230533024483622086L;
+	private static final long serialVersionUID = 4385865753761318892L;
 
 
 	private final Object data;

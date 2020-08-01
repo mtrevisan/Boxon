@@ -29,6 +29,9 @@ import org.slf4j.helpers.MessageFormatter;
 
 public class AnnotationException extends RuntimeException{
 
+	private static final long serialVersionUID = 6429044852678473069L;
+
+
 	public AnnotationException(final String message, Object... parameters){
 		super(MessageFormatter.format(message, parameters).getMessage());
 	}

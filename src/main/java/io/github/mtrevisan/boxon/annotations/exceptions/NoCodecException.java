@@ -29,6 +29,9 @@ import org.slf4j.helpers.MessageFormatter;
 
 public class NoCodecException extends ProtocolMessageException{
 
+	private static final long serialVersionUID = 2879230296103139872L;
+
+
 	public NoCodecException(final String message, Object... parameters){
 		super(MessageFormatter.format(message, parameters).getMessage());
 	}

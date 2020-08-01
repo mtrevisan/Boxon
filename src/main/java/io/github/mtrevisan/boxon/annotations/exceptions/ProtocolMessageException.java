@@ -29,6 +29,9 @@ import org.slf4j.helpers.MessageFormatter;
 
 public class ProtocolMessageException extends RuntimeException{
 
+	private static final long serialVersionUID = 7585594459004613305L;
+
+
 	public ProtocolMessageException(final String message, Object... parameters){
 		super(MessageFormatter.format(message, parameters).getMessage());
 	}
