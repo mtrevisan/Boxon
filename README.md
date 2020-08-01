@@ -628,7 +628,9 @@ Care should be taken in writing [SpEL expressions](https://docs.spring.io/spring
 
 The root object is the outermost object. In order to evaluate a variable of a parent object the complete path should be used, as in `object1.variable1`. In order to evaluate a variable of a children object, that is the object currently scanned, the relative path should be used, as in `#self.variable2`).
 
-Example:
+See also [Spring Expression Language (SpEL) Primer](https://dhruba.wordpress.com/2009/12/30/spring-expression-language-spel-primer/).
+
+### Example:
 ```java
 class A{
     @BindByte
