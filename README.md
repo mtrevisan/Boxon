@@ -52,6 +52,16 @@ Boxon differs from Preon in...
 ### Pre-compiled executables
 Get them [here](https://github.com/mtrevisan/Boxon/releases/).
 
+### Boxon as Java dependency
+In order to include Boxon in a Maven project, first add the following dependency to your pom.xml (Java 8 required):
+
+```xml
+<dependency>
+    <groupId>io.github.mtrevisan</groupId>
+    <artifactId>boxon</artifactId>
+    <version>x.x.x</version>
+</dependency>
+```
 
 <br/>
 <br/>
