@@ -53,7 +53,7 @@ Boxon differs from Preon in...
 Get them [here](https://github.com/mtrevisan/Boxon/releases/).
 
 ### Boxon as Java dependency
-In order to include Boxon in a Maven project, first add the following dependency to your pom.xml (Java 8 required):
+In order to include Boxon in a Maven project, first add the following dependency to your pom.xml (Java 11 required):
 
 ```xml
 <dependency>
@@ -99,6 +99,7 @@ In order to include Boxon in a Maven project, first add the following dependency
     1. [version 0.0.2](#changelog-0.0.2)
     2. [version 0.0.1](#changelog-0.0.1)
     3. [version 0.0.0](#changelog-0.0.0)
+8. [License](#license)
 
 <br/>
 
@@ -951,3 +952,11 @@ else{
 <a name="changelog-0.0.0"></a>
 ### version 0.0.0 - 20200629
 - first release
+
+
+<br/>
+
+<a name="license"></a>
+## License
+This project is licensed under [MIT license](!http://opensource.org/licenses/MIT).
+For the full text of the license, see the [LICENSE](!link:LICENSE) file.
