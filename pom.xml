@@ -10,7 +10,8 @@
 	<!-- https://www.freecodecamp.org/news/how-to-upload-an-open-source-java-library-to-maven-central-cac7ce2f57c/ -->
 	<!-- https://ruleoftech.com/2014/distribute-projects-artifacts-in-maven-central-with-ossrh -->
 	<!-- https://dzone.com/articles/comprehensive-step-by-step-guide-on-how-to-upload -->
-<!--	https://knowm.org/a-practical-guide-to-uploading-artifacts-to-maven-central/-->
+	<!-- https://knowm.org/a-practical-guide-to-uploading-artifacts-to-maven-central/-->
+	<!-- https://central.sonatype.org/pages/releasing-the-deployment.html-->
 	<groupId>io.github.mtrevisan</groupId>
 	<artifactId>boxon</artifactId>
 	<version>0.0.2-SNAPSHOT</version>
