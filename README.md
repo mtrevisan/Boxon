@@ -959,4 +959,4 @@ else{
 <a name="license"></a>
 ## License
 This project is licensed under [MIT license](http://opensource.org/licenses/MIT).
-For the full text of the license, see the [LICENSE](link:LICENSE) file.
+For the full text of the license, see the [LICENSE](LICENSE) file.
