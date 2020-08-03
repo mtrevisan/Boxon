@@ -50,7 +50,6 @@ final class ProtocolMessageParser{
 
 		private final Object rootObject;
 		private final T currentObject;
-		private ProtocolMessage.BoundedField field;
 
 
 		ParserContext(final Object rootObject, final T currentObject){
@@ -85,12 +84,11 @@ final class ProtocolMessageParser{
 			parserContext.addSelfToEvaluatorContext();
 
 			final ProtocolMessage.BoundedField field = fields.get(i);
-			parserContext.field = field;
 
 			readSkippedFields(field.getSkips(), reader, rootObject);
 
 			if(processField(field.getCondition(), rootObject))
-				decodeField(protocolMessage, reader, parserContext);
+				decodeField(protocolMessage, reader, parserContext, field);
 		}
 
 		processEvaluatedFields(protocolMessage, rootObject);
@@ -102,23 +100,24 @@ final class ProtocolMessageParser{
 		return currentObject;
 	}
 
-	private <T> void decodeField(final ProtocolMessage<T> protocolMessage, final BitReader reader, final ParserContext<T> parserContext){
-		final Annotation binding = parserContext.field.getBinding();
+	private <T> void decodeField(final ProtocolMessage<T> protocolMessage, final BitReader reader, final ParserContext<T> parserContext,
+			final ProtocolMessage.BoundedField field){
+		final Annotation binding = field.getBinding();
 		final CodecInterface<?> codec = retrieveCodec(binding.annotationType());
 
 		try{
 			if(LOGGER.isTraceEnabled())
-				LOGGER.trace("reading {}.{} with bind {}", protocolMessage.getType().getSimpleName(), parserContext.field.getName(), binding.annotationType().getSimpleName());
+				LOGGER.trace("reading {}.{} with bind {}", protocolMessage.getType().getSimpleName(), field.getName(), binding.annotationType().getSimpleName());
 
 			final Object value = codec.decode(reader, binding, parserContext.rootObject);
-			ReflectionHelper.setFieldValue(parserContext.currentObject, parserContext.field.getName(), value);
+			ReflectionHelper.setFieldValue(parserContext.currentObject, field.getName(), value);
 
 			if(LOGGER.isTraceEnabled())
-				LOGGER.trace("read {}.{} = {}", protocolMessage.getType().getSimpleName(), parserContext.field.getName(), value);
+				LOGGER.trace("read {}.{} = {}", protocolMessage.getType().getSimpleName(), field.getName(), value);
 		}
 		catch(final Exception e){
 			//this assumes the reading was done correctly
-			rethrowException(protocolMessage, parserContext.field, e);
+			rethrowException(protocolMessage, field, e);
 		}
 	}
 
@@ -197,12 +196,11 @@ final class ProtocolMessageParser{
 			parserContext.addSelfToEvaluatorContext();
 
 			final ProtocolMessage.BoundedField field = fields.get(i);
-			parserContext.field = field;
 
 			writeSkippedFields(field.getSkips(), writer, rootObject);
 
 			if(processField(field.getCondition(), rootObject))
-				encodeField(protocolMessage, writer, parserContext);
+				encodeField(protocolMessage, writer, parserContext, field);
 		}
 
 		final MessageHeader header = protocolMessage.getHeader();
@@ -211,23 +209,24 @@ final class ProtocolMessageParser{
 		writer.flush();
 	}
 
-	private <T> void encodeField(final ProtocolMessage<?> protocolMessage, final BitWriter writer, final ParserContext<T> parserContext){
-		final Annotation binding = parserContext.field.getBinding();
+	private <T> void encodeField(final ProtocolMessage<?> protocolMessage, final BitWriter writer, final ParserContext<T> parserContext,
+			final ProtocolMessage.BoundedField field){
+		final Annotation binding = field.getBinding();
 		final CodecInterface<?> codec = retrieveCodec(binding.annotationType());
 
 		try{
 			if(LOGGER.isTraceEnabled())
-				LOGGER.trace("writing {}.{} with bind {}", protocolMessage.getType().getSimpleName(), parserContext.field.getName(), binding.annotationType().getSimpleName());
+				LOGGER.trace("writing {}.{} with bind {}", protocolMessage.getType().getSimpleName(), field.getName(), binding.annotationType().getSimpleName());
 
-			final Object value = ReflectionHelper.getFieldValue(parserContext.currentObject, parserContext.field.getName());
+			final Object value = ReflectionHelper.getFieldValue(parserContext.currentObject, field.getName());
 			codec.encode(writer, binding, parserContext.rootObject, value);
 
 			if(LOGGER.isTraceEnabled())
-				LOGGER.trace("wrote {}.{} = {}", protocolMessage.getType().getSimpleName(), parserContext.field.getName(), value);
+				LOGGER.trace("wrote {}.{} = {}", protocolMessage.getType().getSimpleName(), field.getName(), value);
 		}
 		catch(final Exception e){
 			//this assumes the writing was done correctly
-			rethrowException(protocolMessage, parserContext.field, e);
+			rethrowException(protocolMessage, field, e);
 		}
 	}
 
