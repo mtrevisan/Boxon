@@ -40,7 +40,7 @@ public final class ExceptionHelper{
 	}
 
 	private static String getMessage(final Throwable t, final boolean includeLineNumber){
-		final StringBuilder sb = new StringBuilder(composeExceptionMessage(t, includeLineNumber));
+		final StringBuilder sb = composeExceptionMessage(t, includeLineNumber);
 		Throwable cause = t.getCause();
 		while(cause != null){
 			sb.append(System.lineSeparator())
@@ -51,7 +51,7 @@ public final class ExceptionHelper{
 		return sb.toString();
 	}
 
-	private static String composeExceptionMessage(final Throwable t, final boolean includeLineNumber){
+	private static StringBuilder composeExceptionMessage(final Throwable t, final boolean includeLineNumber){
 		final StringBuilder sb = new StringBuilder();
 		if(includeLineNumber)
 			sb.append(extractExceptionName(t))
@@ -65,7 +65,7 @@ public final class ExceptionHelper{
 		final String msg = t.getMessage();
 		if(msg != null)
 			sb.append(msg);
-		return sb.toString();
+		return sb;
 	}
 
 	private static String extractExceptionPosition(final Throwable t){

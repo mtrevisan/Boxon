@@ -34,12 +34,14 @@ public class ParseException extends Exception{
 	private static final long serialVersionUID = 5375434179637246605L;
 
 
+	private final String protocolMessageName;
 	private final int errorIndex;
 
 
-	public ParseException(final int errorIndex, final Throwable cause){
+	public ParseException(final String protocolMessageName, final int errorIndex, final Throwable cause){
 		super(cause);
 
+		this.protocolMessageName = protocolMessageName;
 		this.errorIndex = errorIndex;
 	}
 
@@ -49,12 +51,19 @@ public class ParseException extends Exception{
 
 	@Override
 	public String getMessage(){
-		final StringJoiner sj = new StringJoiner(System.lineSeparator());
+		final StringBuilder sj = new StringBuilder();
+		if(protocolMessageName != null)
+			sj.append(protocolMessageName);
 		final Throwable cause = getCause();
-		if(cause != null)
-			sj.add(ExceptionHelper.getMessageNoLineNumber(cause));
+		if(cause != null){
+			if(sj.length() > 0)
+				sj.append(" - ");
+			sj.append(ExceptionHelper.getMessageNoLineNumber(cause));
+		}
 		if(errorIndex >= 0)
-			sj.add("   at index " + errorIndex);
+			sj.append(System.lineSeparator())
+				.append("   at index ")
+				.append(errorIndex);
 		return sj.toString();
 	}
 
