@@ -44,7 +44,7 @@ class CodecByteTest{
 
 	@Test
 	void testByte(){
-		CodecInterface codec = new CodecByte();
+		CodecInterface<BindByte> codec = new CodecByte();
 		byte encodedValue = (byte)(RANDOM.nextInt() & 0x0000_00FF);
 		BindByte annotation = new BindByte(){
 			@Override

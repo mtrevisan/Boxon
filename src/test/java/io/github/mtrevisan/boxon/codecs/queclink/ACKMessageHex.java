@@ -114,14 +114,10 @@ public class ACKMessageHex{
 	private String messageType;
 	@BindByte(converter = ACKMaskHex.ACKMaskConverter.class)
 	private ACKMaskHex mask;
-//	@BindArrayPrimitive(size = "2", type = byte.class)
-//	private byte[] things;
 	@BindByte(condition = "mask.hasLength()")
 	private byte messageLength;
 	@BindByte(condition = "mask.hasDeviceType()")
 	private byte deviceTypeCode;
-//	@BindArray(size = "2", type = Version.class)
-//	private Version[] versions;
 	@BindArrayPrimitive(condition = "mask.hasProtocolVersion()", size = "2", type = byte.class, converter = QueclinkHelper.VersionConverter.class)
 	private String protocolVersion;
 	@BindArrayPrimitive(condition = "mask.hasFirmwareVersion()", size = "2", type = byte.class, converter = QueclinkHelper.VersionConverter.class)

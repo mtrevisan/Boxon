@@ -47,7 +47,7 @@ class CodecIntTest{
 
 	@Test
 	void intLittleEndianNegative(){
-		CodecInterface codec = new CodecInt();
+		CodecInterface<BindInt> codec = new CodecInt();
 		int encodedValue = 0x80FF_0000;
 		BindInt annotation = new BindInt(){
 			@Override
@@ -110,7 +110,7 @@ class CodecIntTest{
 
 	@Test
 	void intLittleEndianSmall(){
-		CodecInterface codec = new CodecInt();
+		CodecInterface<BindInt> codec = new CodecInt();
 		int encodedValue = 0x0000_7FFF;
 		BindInt annotation = new BindInt(){
 			@Override
@@ -173,7 +173,7 @@ class CodecIntTest{
 
 	@Test
 	void intLittleEndianPositive(){
-		CodecInterface codec = new CodecInt();
+		CodecInterface<BindInt> codec = new CodecInt();
 		int encodedValue = 0x7FFF_0000;
 		BindInt annotation = new BindInt(){
 			@Override
@@ -236,7 +236,7 @@ class CodecIntTest{
 
 	@Test
 	void intLittleEndianRandom(){
-		CodecInterface codec = new CodecInt();
+		CodecInterface<BindInt> codec = new CodecInt();
 		int encodedValue = RANDOM.nextInt();
 		BindInt annotation = new BindInt(){
 			@Override
@@ -299,8 +299,8 @@ class CodecIntTest{
 
 	@Test
 	void intBigEndianNegative(){
-		CodecInterface codec = new CodecInt();
-		int encodedValue = (int)0x80FF_0000;
+		CodecInterface<BindInt> codec = new CodecInt();
+		int encodedValue = 0x80FF_0000;
 		BindInt annotation = new BindInt(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
@@ -362,7 +362,7 @@ class CodecIntTest{
 
 	@Test
 	void intBigEndianSmall(){
-		CodecInterface codec = new CodecInt();
+		CodecInterface<BindInt> codec = new CodecInt();
 		int encodedValue = 0x0000_7FFF;
 		BindInt annotation = new BindInt(){
 			@Override
@@ -425,7 +425,7 @@ class CodecIntTest{
 
 	@Test
 	void intBigEndianPositive(){
-		CodecInterface codec = new CodecInt();
+		CodecInterface<BindInt> codec = new CodecInt();
 		int encodedValue = 0x7FFF_0000;
 		BindInt annotation = new BindInt(){
 			@Override
@@ -488,7 +488,7 @@ class CodecIntTest{
 
 	@Test
 	void intBigEndianRandom(){
-		CodecInterface codec = new CodecInt();
+		CodecInterface<BindInt> codec = new CodecInt();
 		int encodedValue = RANDOM.nextInt();
 		BindInt annotation = new BindInt(){
 			@Override

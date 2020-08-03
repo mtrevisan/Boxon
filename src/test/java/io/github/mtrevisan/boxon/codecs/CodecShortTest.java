@@ -47,7 +47,7 @@ class CodecShortTest{
 
 	@Test
 	void shortLittleEndianPositive1(){
-		CodecInterface codec = new CodecShort();
+		CodecInterface<BindShort> codec = new CodecShort();
 		short encodedValue = 0x0010;
 		BindShort annotation = new BindShort(){
 			@Override
@@ -110,7 +110,7 @@ class CodecShortTest{
 
 	@Test
 	void shortLittleEndianPositive2(){
-		CodecInterface codec = new CodecShort();
+		CodecInterface<BindShort> codec = new CodecShort();
 		short encodedValue = 0x1000;
 		BindShort annotation = new BindShort(){
 			@Override
@@ -173,7 +173,7 @@ class CodecShortTest{
 
 	@Test
 	void shortLittleEndianNegative(){
-		CodecInterface codec = new CodecShort();
+		CodecInterface<BindShort> codec = new CodecShort();
 		short encodedValue = (short)0x8010;
 		BindShort annotation = new BindShort(){
 			@Override
@@ -236,7 +236,7 @@ class CodecShortTest{
 
 	@Test
 	void shortLittleEndianRandom(){
-		CodecInterface codec = new CodecShort();
+		CodecInterface<BindShort> codec = new CodecShort();
 		short encodedValue = (short)RANDOM.nextInt(0x0000_FFFF);
 		BindShort annotation = new BindShort(){
 			@Override
@@ -299,7 +299,7 @@ class CodecShortTest{
 
 	@Test
 	void shortBigEndianNegative(){
-		CodecInterface codec = new CodecShort();
+		CodecInterface<BindShort> codec = new CodecShort();
 		short encodedValue = (short)0x8F00;
 		BindShort annotation = new BindShort(){
 			@Override
@@ -362,7 +362,7 @@ class CodecShortTest{
 
 	@Test
 	void shortBigEndianSmall(){
-		CodecInterface codec = new CodecShort();
+		CodecInterface<BindShort> codec = new CodecShort();
 		short encodedValue = 0x007F;
 		BindShort annotation = new BindShort(){
 			@Override
@@ -425,7 +425,7 @@ class CodecShortTest{
 
 	@Test
 	void shortBigEndianPositive(){
-		CodecInterface codec = new CodecShort();
+		CodecInterface<BindShort> codec = new CodecShort();
 		short encodedValue = 0x7F00;
 		BindShort annotation = new BindShort(){
 			@Override
@@ -488,7 +488,7 @@ class CodecShortTest{
 
 	@Test
 	void shortBigEndianRandom(){
-		CodecInterface codec = new CodecShort();
+		CodecInterface<BindShort> codec = new CodecShort();
 		short encodedValue = (short)RANDOM.nextInt(0x0000_FFFF);
 		BindShort annotation = new BindShort(){
 			@Override

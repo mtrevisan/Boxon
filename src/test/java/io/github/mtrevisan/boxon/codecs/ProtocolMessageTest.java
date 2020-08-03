@@ -60,9 +60,9 @@ import java.util.Map;
 
 class ProtocolMessageTest{
 
-	private class Mask{
+	private static class Mask{
 
-		public class MaskConverter implements Converter<Byte, Mask>{
+		public static class MaskConverter implements Converter<Byte, Mask>{
 			@Override
 			public Mask decode(final Byte value){
 				return new Mask(value);
@@ -88,7 +88,7 @@ class ProtocolMessageTest{
 
 	}
 
-	private class Version{
+	private static class Version{
 		@BindByte
 		public byte major;
 		@BindByte
@@ -97,7 +97,7 @@ class ProtocolMessageTest{
 	}
 
 	@MessageHeader(start = "+", end = "-")
-	private class Message{
+	private static class Message{
 
 		private final Map<Byte, String> MESSAGE_TYPE_MAP = new HashMap<>();
 
@@ -160,12 +160,13 @@ class ProtocolMessageTest{
 	}
 
 	@MessageHeader(start = "++", end = "--")
-	private class MessageChild extends Message{
+	private static class MessageChild extends Message{
 		@BindInt
 		private int anotherNumberInt;
 	}
 
 	@Test
+	@SuppressWarnings("SimplifiableAssertion")
 	void creation(){
 		Loader loader = new Loader();
 		loader.loadCodecs();

@@ -94,9 +94,7 @@ class LoaderTest{
 
 		byte[] payload = ByteHelper.toByteArray("3b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		BitReader reader = BitReader.wrap(payload);
-		Assertions.assertThrows(ProtocolMessageException.class, () -> {
-			loader.getProtocolMessage(reader);
-		});
+		Assertions.assertThrows(ProtocolMessageException.class, () -> loader.getProtocolMessage(reader));
 	}
 
 	@Test

@@ -49,7 +49,7 @@ class CodecDecimalTest{
 
 	@Test
 	void decimalPositiveLittleEndian(){
-		CodecInterface codec = new CodecDecimal();
+		CodecInterface<BindDecimal> codec = new CodecDecimal();
 		BigDecimal encodedValue = BigDecimal.valueOf(RANDOM.nextDouble());
 		BindDecimal annotation = new BindDecimal(){
 			@Override
@@ -117,7 +117,7 @@ class CodecDecimalTest{
 
 	@Test
 	void decimalNegativeLittleEndian(){
-		CodecInterface codec = new CodecDecimal();
+		CodecInterface<BindDecimal> codec = new CodecDecimal();
 		BigDecimal encodedValue = BigDecimal.valueOf(-RANDOM.nextDouble());
 		BindDecimal annotation = new BindDecimal(){
 			@Override
@@ -185,7 +185,7 @@ class CodecDecimalTest{
 
 	@Test
 	void decimalPositiveBigEndian(){
-		CodecInterface codec = new CodecDecimal();
+		CodecInterface<BindDecimal> codec = new CodecDecimal();
 		BigDecimal encodedValue = BigDecimal.valueOf(RANDOM.nextDouble());
 		BindDecimal annotation = new BindDecimal(){
 			@Override
@@ -253,7 +253,7 @@ class CodecDecimalTest{
 
 	@Test
 	void decimalNegativeBigEndian(){
-		CodecInterface codec = new CodecDecimal();
+		CodecInterface<BindDecimal> codec = new CodecDecimal();
 		BigDecimal encodedValue = BigDecimal.valueOf(-RANDOM.nextDouble());
 		BindDecimal annotation = new BindDecimal(){
 			@Override

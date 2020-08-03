@@ -42,7 +42,7 @@ class CodecStringTest{
 
 	@Test
 	void stringUS_ASCII(){
-		CodecInterface codec = new CodecString();
+		CodecInterface<BindString> codec = new CodecString();
 		String encodedValue = "123ABC";
 		BindString annotation = new BindString(){
 			@Override
@@ -96,7 +96,6 @@ class CodecStringTest{
 			}
 		};
 
-		ProtocolMessageParser protocolMessageParser = new ProtocolMessageParser();
 		BitWriter writer = new BitWriter();
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
@@ -111,7 +110,7 @@ class CodecStringTest{
 
 	@Test
 	void stringUTF_8(){
-		CodecInterface codec = new CodecString();
+		CodecInterface<BindString> codec = new CodecString();
 		String encodedValue = "123ABCíïóúüđɉƚñŧ";
 		BindString annotation = new BindString(){
 			@Override
@@ -179,7 +178,7 @@ class CodecStringTest{
 
 	@Test
 	void stringUS_ASCIINotMatch(){
-		CodecInterface codec = new CodecString();
+		CodecInterface<BindString> codec = new CodecString();
 		String encodedValue = "123ABC";
 		BindString annotation = new BindString(){
 			@Override
@@ -230,7 +229,7 @@ class CodecStringTest{
 
 	@Test
 	void stringTerminated(){
-		CodecInterface codec = new CodecStringTerminated();
+		CodecInterface<BindStringTerminated> codec = new CodecStringTerminated();
 		String encodedValue = "123ABC";
 		BindStringTerminated annotation = new BindStringTerminated(){
 			@Override

@@ -47,7 +47,7 @@ class CodecFloatTest{
 
 	@Test
 	void floatPositiveLittleEndian(){
-		CodecInterface codec = new CodecFloat();
+		CodecInterface<BindFloat> codec = new CodecFloat();
 		float encodedValue = RANDOM.nextFloat();
 		BindFloat annotation = new BindFloat(){
 			@Override
@@ -110,7 +110,7 @@ class CodecFloatTest{
 
 	@Test
 	void floatNegativeLittleEndian(){
-		CodecInterface codec = new CodecFloat();
+		CodecInterface<BindFloat> codec = new CodecFloat();
 		float encodedValue = -RANDOM.nextFloat();
 		BindFloat annotation = new BindFloat(){
 			@Override
@@ -173,7 +173,7 @@ class CodecFloatTest{
 
 	@Test
 	void floatPositiveBigEndian(){
-		CodecInterface codec = new CodecFloat();
+		CodecInterface<BindFloat> codec = new CodecFloat();
 		float encodedValue = RANDOM.nextFloat();
 		BindFloat annotation = new BindFloat(){
 			@Override
@@ -236,7 +236,7 @@ class CodecFloatTest{
 
 	@Test
 	void floatNegativeBigEndian(){
-		CodecInterface codec = new CodecFloat();
+		CodecInterface<BindFloat> codec = new CodecFloat();
 		float encodedValue = -RANDOM.nextFloat();
 		BindFloat annotation = new BindFloat(){
 			@Override

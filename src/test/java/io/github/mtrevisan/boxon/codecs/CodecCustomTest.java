@@ -46,7 +46,7 @@ class CodecCustomTest{
 
 	//the number of bytes to read is determined by the leading bit of each individual bytes
 	//(if the first bit of a byte is 1, then another byte is expected to follow)
-	class VariableLengthByteArray implements CodecInterface<VarLengthEncoded>{
+	static class VariableLengthByteArray implements CodecInterface<VarLengthEncoded>{
 		@Override
 		public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
 			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -79,7 +79,7 @@ class CodecCustomTest{
 		ProtocolMessageParser protocolMessageParser = new ProtocolMessageParser();
 		protocolMessageParser.loader.loadCodecs(new VariableLengthByteArray());
 
-		CodecInterface codec = protocolMessageParser.loader.getCodec(VarLengthEncoded.class);
+		CodecInterface<?> codec = protocolMessageParser.loader.getCodec(VarLengthEncoded.class);
 		byte[] encodedValue = new byte[]{0x01, 0x02, 0x03};
 		VarLengthEncoded annotation = new VarLengthEncoded(){
 			@Override

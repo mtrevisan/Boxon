@@ -48,7 +48,7 @@ class CodecDoubleTest{
 
 	@Test
 	void doublePositiveLittleEndian(){
-		CodecInterface codec = new CodecDouble();
+		CodecInterface<BindDouble> codec = new CodecDouble();
 		double encodedValue = RANDOM.nextDouble();
 		BindDouble annotation = new BindDouble(){
 			@Override
@@ -111,7 +111,7 @@ class CodecDoubleTest{
 
 	@Test
 	void doubleNegativeLittleEndian(){
-		CodecInterface codec = new CodecDouble();
+		CodecInterface<BindDouble> codec = new CodecDouble();
 		double encodedValue = -RANDOM.nextDouble();
 		BindDouble annotation = new BindDouble(){
 			@Override
@@ -174,7 +174,7 @@ class CodecDoubleTest{
 
 	@Test
 	void doublePositiveBigEndian(){
-		CodecInterface codec = new CodecDouble();
+		CodecInterface<BindDouble> codec = new CodecDouble();
 		double encodedValue = RANDOM.nextDouble();
 		BindDouble annotation = new BindDouble(){
 			@Override
@@ -237,7 +237,7 @@ class CodecDoubleTest{
 
 	@Test
 	void doubleNegativeBigEndian(){
-		CodecInterface codec = new CodecDouble();
+		CodecInterface<BindDouble> codec = new CodecDouble();
 		double encodedValue = -RANDOM.nextDouble();
 		BindDouble annotation = new BindDouble(){
 			@Override

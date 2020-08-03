@@ -47,7 +47,7 @@ class CodecLongTest{
 
 	@Test
 	void longLittleEndianNegative(){
-		CodecInterface codec = new CodecLong();
+		CodecInterface<BindLong> codec = new CodecLong();
 		long encodedValue = 0x8FFF_0000_FFFF_0000l;
 		BindLong annotation = new BindLong(){
 			@Override
@@ -110,7 +110,7 @@ class CodecLongTest{
 
 	@Test
 	void longLittleEndianSmall(){
-		CodecInterface codec = new CodecLong();
+		CodecInterface<BindLong> codec = new CodecLong();
 		long encodedValue = 0x0000_0000_7F00_FF00l;
 		BindLong annotation = new BindLong(){
 			@Override
@@ -173,7 +173,7 @@ class CodecLongTest{
 
 	@Test
 	void longLittleEndianPositive(){
-		CodecInterface codec = new CodecLong();
+		CodecInterface<BindLong> codec = new CodecLong();
 		long encodedValue = 0x7F00_FF00_0000_0000l;
 		BindLong annotation = new BindLong(){
 			@Override
@@ -236,7 +236,7 @@ class CodecLongTest{
 
 	@Test
 	void longLittleEndianRandom(){
-		CodecInterface codec = new CodecLong();
+		CodecInterface<BindLong> codec = new CodecLong();
 		long encodedValue = RANDOM.nextLong();
 		BindLong annotation = new BindLong(){
 			@Override
@@ -299,7 +299,7 @@ class CodecLongTest{
 
 	@Test
 	void longBigEndianNegative(){
-		CodecInterface codec = new CodecLong();
+		CodecInterface<BindLong> codec = new CodecLong();
 		long encodedValue = 0x8FFF_0000_0000_0011l;
 		BindLong annotation = new BindLong(){
 			@Override
@@ -362,7 +362,7 @@ class CodecLongTest{
 
 	@Test
 	void longBigEndianSmall(){
-		CodecInterface codec = new CodecLong();
+		CodecInterface<BindLong> codec = new CodecLong();
 		long encodedValue = 0x0000_0000_7F00_FF00l;
 		BindLong annotation = new BindLong(){
 			@Override
@@ -425,7 +425,7 @@ class CodecLongTest{
 
 	@Test
 	void longBigEndianPositive(){
-		CodecInterface codec = new CodecLong();
+		CodecInterface<BindLong> codec = new CodecLong();
 		long encodedValue = 0x7F00_FF00_0000_0000l;
 		BindLong annotation = new BindLong(){
 			@Override
@@ -488,7 +488,7 @@ class CodecLongTest{
 
 	@Test
 	void longBigEndianRandom(){
-		CodecInterface codec = new CodecLong();
+		CodecInterface<BindLong> codec = new CodecLong();
 		long encodedValue = RANDOM.nextLong();
 		BindLong annotation = new BindLong(){
 			@Override

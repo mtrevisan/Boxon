@@ -52,9 +52,9 @@ class CodecObjectTest{
 
 	private static class Version{
 		@BindByte
-		private byte major;
+		private final byte major;
 		@BindByte
-		private byte minor;
+		private final byte minor;
 
 		private Version(final byte major, final byte minor){
 			this.major = major;
@@ -64,7 +64,7 @@ class CodecObjectTest{
 
 
 	@Test
-	void object() throws NoSuchFieldException{
+	void object(){
 		CodecObject codec = new CodecObject();
 		Version encodedValue = new Version((byte)1, (byte)2);
 		BindObject annotation = new BindObject(){

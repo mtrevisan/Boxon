@@ -112,14 +112,12 @@ public class QueclinkHelper{
 
 		@Override
 		public String encode(final ZonedDateTime value){
-			StringBuilder sb = new StringBuilder();
-			sb.append(StringUtils.leftPad(Integer.toString(value.getYear()), 4, '0'));
-			sb.append(StringUtils.leftPad(Integer.toString(value.getMonthValue()), 2, '0'));
-			sb.append(StringUtils.leftPad(Integer.toString(value.getDayOfMonth()), 2, '0'));
-			sb.append(StringUtils.leftPad(Integer.toString(value.getHour()), 2, '0'));
-			sb.append(StringUtils.leftPad(Integer.toString(value.getMinute()), 2, '0'));
-			sb.append(StringUtils.leftPad(Integer.toString(value.getSecond()), 2, '0'));
-			return sb.toString();
+			return StringUtils.leftPad(Integer.toString(value.getYear()), 4, '0')
+				+ StringUtils.leftPad(Integer.toString(value.getMonthValue()), 2, '0')
+				+ StringUtils.leftPad(Integer.toString(value.getDayOfMonth()), 2, '0')
+				+ StringUtils.leftPad(Integer.toString(value.getHour()), 2, '0')
+				+ StringUtils.leftPad(Integer.toString(value.getMinute()), 2, '0')
+				+ StringUtils.leftPad(Integer.toString(value.getSecond()), 2, '0');
 		}
 	}
 

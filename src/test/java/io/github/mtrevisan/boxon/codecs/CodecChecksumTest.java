@@ -44,7 +44,7 @@ class CodecChecksumTest{
 
 	@Test
 	void checksumShort(){
-		CodecInterface codec = new CodecChecksum();
+		CodecInterface<BindChecksum> codec = new CodecChecksum();
 		short encodedValue = (short)RANDOM.nextInt(0x0000_FFFF);
 		BindChecksum annotation = new BindChecksum(){
 			@Override

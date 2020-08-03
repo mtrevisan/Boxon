@@ -48,7 +48,7 @@ class CodecBitsTest{
 
 	@Test
 	void bitsLittleEndian(){
-		CodecInterface codec = new CodecBits();
+		CodecInterface<BindBits> codec = new CodecBits();
 		byte[] randomBytes = new byte[123];
 		RANDOM.nextBytes(randomBytes);
 		BitSet encodedValue = BitSet.valueOf(randomBytes);
@@ -122,7 +122,7 @@ class CodecBitsTest{
 
 	@Test
 	void bitsBigEndian(){
-		CodecInterface codec = new CodecBits();
+		CodecInterface<BindBits> codec = new CodecBits();
 		byte[] randomBytes = new byte[123];
 		RANDOM.nextBytes(randomBytes);
 		BitSet encodedValue = BitSet.valueOf(randomBytes);

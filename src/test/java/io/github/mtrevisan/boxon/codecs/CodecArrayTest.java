@@ -48,13 +48,13 @@ import java.lang.annotation.Annotation;
 
 class CodecArrayTest{
 
-	private class Version{
+	private static class Version{
 		@BindByte
-		private byte major;
+		private final byte major;
 		@BindByte
-		private byte minor;
+		private final byte minor;
 		@BindByte
-		private byte build;
+		private final byte build;
 
 		private Version(final byte major, final byte minor, final byte build){
 			this.major = major;
@@ -92,7 +92,7 @@ class CodecArrayTest{
 
 	@Test
 	void arrayPrimitive(){
-		CodecInterface codec = new CodecArrayPrimitive();
+		CodecInterface<BindArrayPrimitive> codec = new CodecArrayPrimitive();
 		int[] encodedValue = new int[]{0x0000_0123, 0x0000_0456};
 		BindArrayPrimitive annotation = new BindArrayPrimitive(){
 			@Override
@@ -159,9 +159,9 @@ class CodecArrayTest{
 	}
 
 	@Test
-	void arrayOfSameObject() throws NoSuchFieldException{
+	void arrayOfSameObject(){
 		CodecArray codec = new CodecArray();
-		Version[] encodedValue = new Version[]{new Version((byte)0, (byte)1, (byte)12), new Version((byte)1, (byte)2, (byte)0)};
+		Version[] encodedValue = new Version[]{new Version((byte) 0, (byte) 1, (byte) 12), new Version((byte) 1, (byte) 2, (byte) 0)};
 		BindArray annotation = new BindArray(){
 			@Override
 			public Class<? extends Annotation> annotationType(){

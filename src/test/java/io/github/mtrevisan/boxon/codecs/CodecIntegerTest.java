@@ -46,7 +46,7 @@ class CodecIntegerTest{
 
 	@Test
 	void smallLittleEndianSmall1(){
-		CodecInterface codec = new CodecInteger();
+		CodecInterface<BindInteger> codec = new CodecInteger();
 		BigInteger encodedValue = BigInteger.valueOf(0x00_1020l);
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -119,7 +119,7 @@ class CodecIntegerTest{
 
 	@Test
 	void smallLittleEndianSmall2(){
-		CodecInterface codec = new CodecInteger();
+		CodecInterface<BindInteger> codec = new CodecInteger();
 		BigInteger encodedValue = BigInteger.valueOf(0x10_2000l);
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -192,7 +192,7 @@ class CodecIntegerTest{
 
 	@Test
 	void smallLittleEndianPositive(){
-		CodecInterface codec = new CodecInteger();
+		CodecInterface<BindInteger> codec = new CodecInteger();
 		BigInteger encodedValue = BigInteger.valueOf(0x7F_00FFl);
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -265,7 +265,7 @@ class CodecIntegerTest{
 
 	@Test
 	void smallLittleEndianNegative(){
-		CodecInterface codec = new CodecInteger();
+		CodecInterface<BindInteger> codec = new CodecInteger();
 		BigInteger encodedValue = BigInteger.valueOf(0x8F_0011l);
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -339,7 +339,7 @@ class CodecIntegerTest{
 
 	@Test
 	void smallBigEndianSmall1(){
-		CodecInterface codec = new CodecInteger();
+		CodecInterface<BindInteger> codec = new CodecInteger();
 		BigInteger encodedValue = BigInteger.valueOf(0x00_1020l);
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -412,7 +412,7 @@ class CodecIntegerTest{
 
 	@Test
 	void smallBigEndianSmall2(){
-		CodecInterface codec = new CodecInteger();
+		CodecInterface<BindInteger> codec = new CodecInteger();
 		BigInteger encodedValue = BigInteger.valueOf(0x10_2000l);
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -485,7 +485,7 @@ class CodecIntegerTest{
 
 	@Test
 	void smallBigEndianPositive(){
-		CodecInterface codec = new CodecInteger();
+		CodecInterface<BindInteger> codec = new CodecInteger();
 		BigInteger encodedValue = BigInteger.valueOf(0x7F_00FFl);
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -558,7 +558,7 @@ class CodecIntegerTest{
 
 	@Test
 	void smallBigEndianNegative(){
-		CodecInterface codec = new CodecInteger();
+		CodecInterface<BindInteger> codec = new CodecInteger();
 		BigInteger encodedValue = BigInteger.valueOf(0x8F_0011l);
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -632,7 +632,7 @@ class CodecIntegerTest{
 
 	@Test
 	void smallLittleEndianNegativeUnsigned(){
-		CodecInterface codec = new CodecInteger();
+		CodecInterface<BindInteger> codec = new CodecInteger();
 		BigInteger encodedValue = BigInteger.valueOf(0xFF8F_0011l);
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -706,7 +706,7 @@ class CodecIntegerTest{
 
 	@Test
 	void smallBigEndianNegativeSigned(){
-		CodecInterface codec = new CodecInteger();
+		CodecInterface<BindInteger> codec = new CodecInteger();
 		BigInteger encodedValue = BigInteger.valueOf(0xFFFF_FFFF_FF8F_0011l);
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -779,7 +779,7 @@ class CodecIntegerTest{
 
 	@Test
 	void smallBigEndianNegativeUnsigned(){
-		CodecInterface codec = new CodecInteger();
+		CodecInterface<BindInteger> codec = new CodecInteger();
 		BigInteger encodedValue = new BigInteger("FFFFFFFFFF8F0011", 16);
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -853,7 +853,7 @@ class CodecIntegerTest{
 
 	@Test
 	void bigLittleEndianSmall(){
-		CodecInterface codec = new CodecInteger();
+		CodecInterface<BindInteger> codec = new CodecInteger();
 		BigInteger encodedValue = new BigInteger("00FF0000FFFF00000000000000000000", 16);
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -927,7 +927,7 @@ class CodecIntegerTest{
 
 	@Test
 	void bigLittleEndianPositive(){
-		CodecInterface codec = new CodecInteger();
+		CodecInterface<BindInteger> codec = new CodecInteger();
 		BigInteger encodedValue = new BigInteger("7FFF0000FFFF00000000000000000000", 16);
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -1000,7 +1000,7 @@ class CodecIntegerTest{
 
 	@Test
 	void bigLittleEndianNegative(){
-		CodecInterface codec = new CodecInteger();
+		CodecInterface<BindInteger> codec = new CodecInteger();
 		BigInteger encodedValue = new BigInteger("80FF0000FFFF00000000000000000000", 16);
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -1074,7 +1074,7 @@ class CodecIntegerTest{
 
 	@Test
 	void bigBigEndianSmall(){
-		CodecInterface codec = new CodecInteger();
+		CodecInterface<BindInteger> codec = new CodecInteger();
 		BigInteger encodedValue = new BigInteger("00FF0000FFFF00000000000000000000", 16);
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -1147,7 +1147,7 @@ class CodecIntegerTest{
 
 	@Test
 	void bigBigEndianPositive(){
-		CodecInterface codec = new CodecInteger();
+		CodecInterface<BindInteger> codec = new CodecInteger();
 		BigInteger encodedValue = new BigInteger("7FFF0000FFFF00000000000000000000", 16);
 		BindInteger annotation = new BindInteger(){
 			@Override
@@ -1220,7 +1220,7 @@ class CodecIntegerTest{
 
 	@Test
 	void bigBigEndianNegative(){
-		CodecInterface codec = new CodecInteger();
+		CodecInterface<BindInteger> codec = new CodecInteger();
 		BigInteger encodedValue = new BigInteger("80FF0000FFFF00000000000000000000", 16);
 		BindInteger annotation = new BindInteger(){
 			@Override
