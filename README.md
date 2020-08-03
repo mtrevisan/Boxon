@@ -599,7 +599,9 @@ private short checksum;
  - `value`: the value to be assigned, or calculated (can be a SpEL expression).
 
 #### description
-Assign a constant value to a field (not present in the message).
+Assign a constant, calculated value to a field.
+
+Note that the evaluations are done AFTER parsing the entire message.
 
 #### annotation type
 This annotation is bounded to a variable.
