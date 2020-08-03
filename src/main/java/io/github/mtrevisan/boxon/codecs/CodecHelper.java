@@ -166,7 +166,7 @@ final class CodecHelper{
 		final Validator<T> validator = (Validator<T>)ReflectionHelper.getCreator(validatorType)
 			.get();
 		if(!validator.validate((T)data))
-			throw new IllegalArgumentException("Validation with " + validatorType.getSimpleName() + " not passed (" + data + ")");
+			throw new IllegalArgumentException("Validation with " + validatorType.getSimpleName() + " not passed (value is " + data + ")");
 	}
 
 	@SuppressWarnings("unchecked")

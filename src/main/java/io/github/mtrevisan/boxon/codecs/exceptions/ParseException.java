@@ -26,22 +26,18 @@ package io.github.mtrevisan.boxon.codecs.exceptions;
 
 import io.github.mtrevisan.boxon.helpers.ExceptionHelper;
 
-import java.util.StringJoiner;
-
 
 public class ParseException extends Exception{
 
 	private static final long serialVersionUID = 5375434179637246605L;
 
 
-	private final String protocolMessageName;
 	private final int errorIndex;
 
 
-	public ParseException(final String protocolMessageName, final int errorIndex, final Throwable cause){
+	public ParseException(final int errorIndex, final Throwable cause){
 		super(cause);
 
-		this.protocolMessageName = protocolMessageName;
 		this.errorIndex = errorIndex;
 	}
 
@@ -52,14 +48,9 @@ public class ParseException extends Exception{
 	@Override
 	public String getMessage(){
 		final StringBuilder sj = new StringBuilder();
-		if(protocolMessageName != null)
-			sj.append(protocolMessageName);
 		final Throwable cause = getCause();
-		if(cause != null){
-			if(sj.length() > 0)
-				sj.append(" - ");
+		if(cause != null)
 			sj.append(ExceptionHelper.getMessageNoLineNumber(cause));
-		}
 		if(errorIndex >= 0)
 			sj.append(System.lineSeparator())
 				.append("   at index ")

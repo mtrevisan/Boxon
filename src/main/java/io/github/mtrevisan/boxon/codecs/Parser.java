@@ -233,21 +233,19 @@ public class Parser{
 
 		int start = 0;
 		while(reader.hasRemaining()){
-			ProtocolMessage<?> protocolMessage = null;
 			start = reader.position();
 			try{
 				//save state of the reader (restored upon a decoding error)
 				reader.createFallbackPoint();
 
-				protocolMessage = protocolMessageParser.loader.getProtocolMessage(reader);
+				final ProtocolMessage<?> protocolMessage = protocolMessageParser.loader.getProtocolMessage(reader);
 
 				final Object partialDecodedMessage = protocolMessageParser.decode(protocolMessage, reader, null);
 
 				response.addParsedMessage(start, partialDecodedMessage);
 			}
 			catch(final Exception e){
-				final String protocolMessageName = (protocolMessage != null? protocolMessage.getType().getSimpleName(): null);
-				final ParseException pe = new ParseException(protocolMessageName, reader.position(), e);
+				final ParseException pe = new ParseException(reader.position(), e);
 
 				//restore state of the reader
 				reader.restoreFallbackPoint();
@@ -272,7 +270,7 @@ public class Parser{
 		if(!response.hasErrors() && reader.hasRemaining()){
 			final int position = reader.position();
 			final IllegalArgumentException error = new IllegalArgumentException("There are remaining unread bytes");
-			final ParseException pe = new ParseException(null, position, error);
+			final ParseException pe = new ParseException(position, error);
 			response.addError(start, pe);
 		}
 	}
