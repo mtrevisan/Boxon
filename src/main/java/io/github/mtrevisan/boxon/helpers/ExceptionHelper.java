@@ -70,10 +70,9 @@ public final class ExceptionHelper{
 
 	private static String extractExceptionPosition(final Throwable t){
 		final StackTraceElement stackTrace = extractOwnCodeStackTrace(t);
-		String filename = stackTrace.getFileName();
-		assert filename != null;
-		filename = filename.substring(0, filename.lastIndexOf('.'));
-		return filename + "." + stackTrace.getMethodName() + ":" + stackTrace.getLineNumber();
+		final String filename = stackTrace.getFileName();
+		return (filename != null? filename.substring(0, filename.lastIndexOf('.')) + ".": "")
+			+ stackTrace.getMethodName() + ":" + stackTrace.getLineNumber();
 	}
 
 	private static StackTraceElement extractOwnCodeStackTrace(final Throwable t){

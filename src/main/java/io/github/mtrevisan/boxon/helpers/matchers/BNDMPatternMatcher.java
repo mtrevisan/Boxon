@@ -57,7 +57,7 @@ public class BNDMPatternMatcher implements PatternMatcher{
 	 */
 	public int[] preProcessPatternWithWildcard(final byte[] pattern, final byte wildcard){
 		if(pattern.length >= Integer.SIZE)
-			throw new IllegalArgumentException("Cannot process a pattern whose length exceeds 31 bytes");
+			throw new IllegalArgumentException("Cannot process a pattern whose length exceeds " + (Integer.SIZE - 1) + " bytes");
 
 		int j = 0;
 		for(int i = 0; i < pattern.length; i ++)
@@ -81,7 +81,7 @@ public class BNDMPatternMatcher implements PatternMatcher{
 	@Override
 	public int[] preProcessPattern(final byte[] pattern){
 		if(pattern.length >= Integer.SIZE)
-			throw new IllegalArgumentException("Cannot process a pattern whose length exceeds 31 bytes");
+			throw new IllegalArgumentException("Cannot process a pattern whose length exceeds " + (Integer.SIZE - 1) + " bytes");
 
 		final int[] b = new int[Integer.SIZE * Byte.SIZE];
 		return fill(pattern, b);
@@ -99,7 +99,7 @@ public class BNDMPatternMatcher implements PatternMatcher{
 		if(pattern.length == 0)
 			return 0;
 		if(pattern.length >= Integer.SIZE)
-			throw new IllegalArgumentException("Cannot process a pattern whose length exceeds 31");
+			throw new IllegalArgumentException("Cannot process a pattern whose length exceeds " + (Integer.SIZE - 1) + " bytes");
 
 		final int length = pattern.length;
 		while(offset <= source.length - length){

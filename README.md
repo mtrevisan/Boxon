@@ -664,6 +664,7 @@ You can extend the basic functionalities through the application of converters a
 
 <a name="how-to-converters"></a>
 ### Converters
+NOTE that `decode` and `encode` MUST be one the inverse of the other, that is `encode(decode(...)) = identity` and `decode(encode) == identity`.
 
 #### DateTime converter (from Unix timestamp to ZonedDateTime)
 ```java
