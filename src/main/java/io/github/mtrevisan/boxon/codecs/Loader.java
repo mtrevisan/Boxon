@@ -37,13 +37,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -159,12 +157,13 @@ final class Loader{
 	}
 
 	private Class<?>[] removeDuplicates(final Class<?>[] basePackageClasses){
-		final List<Class<?>> list = new ArrayList<>(basePackageClasses.length);
+		@SuppressWarnings("rawtypes")
+		final DynamicArray<Class> list = DynamicArray.create(Class.class, basePackageClasses.length);
 		final Predicate<Class<?>> predicate = distinctByKey(Class::getPackageName);
 		for(final Class<?> basePackageClass : basePackageClasses)
 			if(predicate.test(basePackageClass))
 				list.add(basePackageClass);
-		return list.toArray(Class[]::new);
+		return list.extractCopy();
 	}
 
 	private static <T> Predicate<T> distinctByKey(final Function<? super T, ?> keyExtractor){
