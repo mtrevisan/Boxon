@@ -33,7 +33,7 @@ import io.github.mtrevisan.boxon.helpers.BitSet;
 import io.github.mtrevisan.boxon.helpers.ByteHelper;
 import io.github.mtrevisan.boxon.helpers.ExceptionHelper;
 import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
-import io.github.mtrevisan.boxon.helpers.SimpleDynamicArray;
+import io.github.mtrevisan.boxon.helpers.DynamicArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,7 +79,7 @@ final class ProtocolMessageParser{
 		final ParserContext<T> parserContext = new ParserContext<>(rootObject, currentObject);
 
 		//decode message fields:
-		final SimpleDynamicArray<ProtocolMessage.BoundedField> fields = protocolMessage.getBoundedFields();
+		final DynamicArray<ProtocolMessage.BoundedField> fields = protocolMessage.getBoundedFields();
 		for(int i = 0; i < fields.limit; i ++){
 			parserContext.addSelfToEvaluatorContext();
 
@@ -173,7 +173,7 @@ final class ProtocolMessageParser{
 	}
 
 	private void processEvaluatedFields(final ProtocolMessage<?> protocolMessage, final Object rootObject){
-		final SimpleDynamicArray<ProtocolMessage.EvaluatedField> evaluatedFields = protocolMessage.getEvaluatedFields();
+		final DynamicArray<ProtocolMessage.EvaluatedField> evaluatedFields = protocolMessage.getEvaluatedFields();
 		for(int i = 0; i < evaluatedFields.limit; i ++){
 			final ProtocolMessage.EvaluatedField field = evaluatedFields.data[i];
 			final String condition = field.getBinding().condition();
@@ -191,7 +191,7 @@ final class ProtocolMessageParser{
 		final ParserContext<T> parserContext = new ParserContext<>(rootObject, currentObject);
 
 		//encode message fields:
-		final SimpleDynamicArray<ProtocolMessage.BoundedField> fields = protocolMessage.getBoundedFields();
+		final DynamicArray<ProtocolMessage.BoundedField> fields = protocolMessage.getBoundedFields();
 		for(int i = 0; i < fields.limit; i ++){
 			parserContext.addSelfToEvaluatorContext();
 

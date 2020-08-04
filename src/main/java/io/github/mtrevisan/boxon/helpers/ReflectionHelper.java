@@ -80,7 +80,7 @@ public final class ReflectionHelper{
 
 	public static <T> void setFieldValue(final Object obj, final Class<T> fieldType, final T value){
 		try{
-			final SimpleDynamicArray<Field> fields = getAccessibleFields(obj.getClass(), fieldType);
+			final DynamicArray<Field> fields = getAccessibleFields(obj.getClass(), fieldType);
 			for(int i = 0; i < fields.limit; i ++)
 				fields.data[i].set(obj, value);
 		}
@@ -103,8 +103,8 @@ public final class ReflectionHelper{
 		return field;
 	}
 
-	private static SimpleDynamicArray<Field> getAccessibleFields(Class<?> cls, final Class<?> fieldType){
-		final SimpleDynamicArray<Field> result =SimpleDynamicArray.create(Field.class, 0);
+	private static DynamicArray<Field> getAccessibleFields(Class<?> cls, final Class<?> fieldType){
+		final DynamicArray<Field> result = DynamicArray.create(Field.class, 0);
 		while(cls != Object.class){
 			final Field[] fields = cls.getDeclaredFields();
 			result.addAll(filterAccessibleFields(fields, fieldType));
@@ -115,8 +115,8 @@ public final class ReflectionHelper{
 		return result;
 	}
 
-	private static SimpleDynamicArray<Field> filterAccessibleFields(final Field[] fields, final Class<?> fieldType){
-		final SimpleDynamicArray<Field> result = SimpleDynamicArray.create(Field.class, fields.length);
+	private static DynamicArray<Field> filterAccessibleFields(final Field[] fields, final Class<?> fieldType){
+		final DynamicArray<Field> result = DynamicArray.create(Field.class, fields.length);
 		for(int i = 0; i < fields.length; i ++){
 			final Field field = fields[i];
 			if(field.getType() == fieldType){

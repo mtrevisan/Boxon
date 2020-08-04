@@ -37,7 +37,7 @@ import io.github.mtrevisan.boxon.annotations.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.helpers.AnnotationHelper;
 import io.github.mtrevisan.boxon.helpers.DataType;
 import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
-import io.github.mtrevisan.boxon.helpers.SimpleDynamicArray;
+import io.github.mtrevisan.boxon.helpers.DynamicArray;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -215,8 +215,8 @@ final class ProtocolMessage<T>{
 	private final Class<T> cls;
 
 	private final MessageHeader header;
-	private final SimpleDynamicArray<BoundedField> boundedFields = SimpleDynamicArray.create(BoundedField.class);
-	private final SimpleDynamicArray<EvaluatedField> evaluatedFields = SimpleDynamicArray.create(EvaluatedField.class);
+	private final DynamicArray<BoundedField> boundedFields = DynamicArray.create(BoundedField.class);
+	private final DynamicArray<EvaluatedField> evaluatedFields = DynamicArray.create(EvaluatedField.class);
 	/** necessary to speed-up the creation of a ProtocolMessage (technically not needed because it's already present somewhere inside {@link #boundedFields}) */
 	private BoundedField checksum;
 
@@ -249,7 +249,7 @@ final class ProtocolMessage<T>{
 			final BindChecksum checksum = field.getDeclaredAnnotation(BindChecksum.class);
 
 			final Annotation[] declaredAnnotations = field.getDeclaredAnnotations();
-			final SimpleDynamicArray<Annotation> boundedAnnotations = extractAnnotations(declaredAnnotations, loader);
+			final DynamicArray<Annotation> boundedAnnotations = extractAnnotations(declaredAnnotations, loader);
 			evaluatedFields.addAll(extractEvaluations(declaredAnnotations, field));
 
 			validateField(boundedAnnotations, checksum);
@@ -261,8 +261,8 @@ final class ProtocolMessage<T>{
 		}
 	}
 
-	private SimpleDynamicArray<Annotation> extractAnnotations(final Annotation[] declaredAnnotations, final Loader loader){
-		final SimpleDynamicArray<Annotation> annotations = SimpleDynamicArray.create(Annotation.class, declaredAnnotations.length);
+	private DynamicArray<Annotation> extractAnnotations(final Annotation[] declaredAnnotations, final Loader loader){
+		final DynamicArray<Annotation> annotations = DynamicArray.create(Annotation.class, declaredAnnotations.length);
 		for(int i = 0; i < declaredAnnotations.length; i ++){
 			final Annotation annotation = declaredAnnotations[i];
 			final Class<? extends Annotation> annotationType = annotation.annotationType();
@@ -273,8 +273,8 @@ final class ProtocolMessage<T>{
 		return annotations;
 	}
 
-	private SimpleDynamicArray<EvaluatedField> extractEvaluations(final Annotation[] declaredAnnotations, final Field field){
-		final SimpleDynamicArray<EvaluatedField> evaluations = SimpleDynamicArray.create(EvaluatedField.class, declaredAnnotations.length);
+	private DynamicArray<EvaluatedField> extractEvaluations(final Annotation[] declaredAnnotations, final Field field){
+		final DynamicArray<EvaluatedField> evaluations = DynamicArray.create(EvaluatedField.class, declaredAnnotations.length);
 		for(int i = 0; i < declaredAnnotations.length; i ++){
 			final Annotation annotation = declaredAnnotations[i];
 			if(annotation.annotationType() == Evaluate.class)
@@ -283,7 +283,7 @@ final class ProtocolMessage<T>{
 		return evaluations;
 	}
 
-	private void validateField(final SimpleDynamicArray<Annotation> annotations, final BindChecksum checksum){
+	private void validateField(final DynamicArray<Annotation> annotations, final BindChecksum checksum){
 		if(annotations.limit > 1){
 			final StringJoiner sj = new StringJoiner(", ", "[", "]");
 			annotations.join(annotation -> annotation.annotationType().getSimpleName(), sj)
@@ -312,11 +312,11 @@ final class ProtocolMessage<T>{
 		return header;
 	}
 
-	final SimpleDynamicArray<BoundedField> getBoundedFields(){
+	final DynamicArray<BoundedField> getBoundedFields(){
 		return boundedFields;
 	}
 
-	final SimpleDynamicArray<EvaluatedField> getEvaluatedFields(){
+	final DynamicArray<EvaluatedField> getEvaluatedFields(){
 		return evaluatedFields;
 	}
 

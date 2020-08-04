@@ -46,7 +46,7 @@ import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.helpers.BitSet;
 import io.github.mtrevisan.boxon.helpers.ByteHelper;
-import io.github.mtrevisan.boxon.helpers.SimpleDynamicArray;
+import io.github.mtrevisan.boxon.helpers.DynamicArray;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -55,7 +55,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
@@ -180,10 +179,10 @@ class ProtocolMessageTest{
 		Assertions.assertArrayEquals(new String[]{"+"}, header.start());
 		Assertions.assertEquals("-", header.end());
 		Assertions.assertTrue(protocolMessage.canBeDecoded());
-		SimpleDynamicArray<ProtocolMessage.BoundedField> boundedFields = protocolMessage.getBoundedFields();
+		DynamicArray<ProtocolMessage.BoundedField> boundedFields = protocolMessage.getBoundedFields();
 		Assertions.assertNotNull(boundedFields);
 		Assertions.assertEquals(15, boundedFields.limit);
-		SimpleDynamicArray<ProtocolMessage.EvaluatedField> evaluatedFields = protocolMessage.getEvaluatedFields();
+		DynamicArray<ProtocolMessage.EvaluatedField> evaluatedFields = protocolMessage.getEvaluatedFields();
 		Assertions.assertNotNull(evaluatedFields);
 		Assertions.assertEquals(1, evaluatedFields.limit);
 		ProtocolMessage.EvaluatedField evaluatedField = evaluatedFields.data[0];
@@ -248,7 +247,7 @@ class ProtocolMessageTest{
 		Assertions.assertArrayEquals(new String[]{"++"}, header.start());
 		Assertions.assertEquals("--", header.end());
 		Assertions.assertTrue(protocolMessage.canBeDecoded());
-		SimpleDynamicArray<ProtocolMessage.BoundedField> boundedFields = protocolMessage.getBoundedFields();
+		DynamicArray<ProtocolMessage.BoundedField> boundedFields = protocolMessage.getBoundedFields();
 		Assertions.assertNotNull(boundedFields);
 		Assertions.assertEquals(16, boundedFields.limit);
 		ProtocolMessage.BoundedField childField = boundedFields.data[boundedFields.limit - 1];

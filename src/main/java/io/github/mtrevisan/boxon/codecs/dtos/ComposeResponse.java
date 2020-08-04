@@ -25,13 +25,13 @@
 package io.github.mtrevisan.boxon.codecs.dtos;
 
 import io.github.mtrevisan.boxon.codecs.exceptions.ComposeException;
-import io.github.mtrevisan.boxon.helpers.SimpleDynamicArray;
+import io.github.mtrevisan.boxon.helpers.DynamicArray;
 
 
 public class ComposeResponse{
 
 	private byte[] composedMessage;
-	private final SimpleDynamicArray<ComposeException> errors = SimpleDynamicArray.create(ComposeException.class);
+	private final DynamicArray<ComposeException> errors = DynamicArray.create(ComposeException.class);
 
 
 	public void setComposedMessage(final byte[] composedMessages){

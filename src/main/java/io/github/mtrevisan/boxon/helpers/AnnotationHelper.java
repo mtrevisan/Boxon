@@ -78,7 +78,7 @@ public final class AnnotationHelper{
 	public static Field[] getDeclaredFields(final Class<?> cls, final boolean recursively){
 		final Field[] result;
 		if(recursively){
-			final SimpleDynamicArray<Field> fields = SimpleDynamicArray.create(Field.class);
+			final DynamicArray<Field> fields = DynamicArray.create(Field.class);
 			Class<?> currentType = cls;
 			while(currentType != Object.class){
 				final Field[] subfields = currentType.getDeclaredFields();
@@ -179,13 +179,13 @@ public final class AnnotationHelper{
 			final ClassDescriptor elem = stack.pop();
 
 			final File[] files = elem.file.listFiles();
-			final Map<BucketType, SimpleDynamicArray<File>> bucket = bucketByFileType(files);
-			final SimpleDynamicArray<File> bucketDirectory = bucket.get(BucketType.DIRECTORY);
+			final Map<BucketType, DynamicArray<File>> bucket = bucketByFileType(files);
+			final DynamicArray<File> bucketDirectory = bucket.get(BucketType.DIRECTORY);
 			for(int i = 0; i < bucketDirectory.limit; i ++){
 				final File dir = bucketDirectory.data[i];
 				stack.add(new ClassDescriptor(dir, elem.packageName + POINT + dir.getName()));
 			}
-			final SimpleDynamicArray<File> bucketFile = bucket.get(BucketType.FILE);
+			final DynamicArray<File> bucketFile = bucket.get(BucketType.FILE);
 			for(int i = 0; i < bucketFile.limit; i ++){
 				final File file = bucketFile.data[i];
 				final Class<?> cls = getClassFromFilename(elem.packageName, file.getName());
@@ -196,10 +196,10 @@ public final class AnnotationHelper{
 		return classes;
 	}
 
-	private static Map<BucketType, SimpleDynamicArray<File>> bucketByFileType(final File[] files){
-		final Map<BucketType, SimpleDynamicArray<File>> bucket = new EnumMap<>(BucketType.class);
-		bucket.put(BucketType.DIRECTORY, SimpleDynamicArray.create(File.class));
-		bucket.put(BucketType.FILE, SimpleDynamicArray.create(File.class, files.length));
+	private static Map<BucketType, DynamicArray<File>> bucketByFileType(final File[] files){
+		final Map<BucketType, DynamicArray<File>> bucket = new EnumMap<>(BucketType.class);
+		bucket.put(BucketType.DIRECTORY, DynamicArray.create(File.class));
+		bucket.put(BucketType.FILE, DynamicArray.create(File.class, files.length));
 		if(files != null)
 			for(int i = 0; i < files.length; i ++){
 				final File file = files[i];
