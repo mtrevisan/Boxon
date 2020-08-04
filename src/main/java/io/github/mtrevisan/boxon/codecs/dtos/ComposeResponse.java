@@ -45,7 +45,8 @@ public class ComposeResponse{
 	}
 
 	public void addError(final ComposeException exception){
-		errors.add(exception);
+		if(exception != null)
+			errors.add(exception);
 	}
 
 	public boolean hasErrors(){

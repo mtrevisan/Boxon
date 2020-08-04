@@ -296,24 +296,29 @@ public class Parser{
 		final ComposeResponse response = new ComposeResponse();
 		final BitWriter writer = new BitWriter();
 		for(int i = 0; i < data.length; i ++){
-			final Object elem = data[i];
-			try{
-				final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(elem.getClass(), protocolMessageParser.loader);
-				if(!protocolMessage.canBeDecoded())
-					throw new ProtocolMessageException("Cannot create a protocol message from data");
-
-				protocolMessageParser.encode(protocolMessage, writer, null, elem);
-			}
-			catch(final Exception e){
-				final ComposeException ce = new ComposeException(elem, e);
-				response.addError(ce);
-			}
+			final ComposeException error = compose(writer, data[i]);
+			response.addError(error);
 		}
 		writer.flush();
 
 		response.setComposedMessage(writer.array());
 
 		return response;
+	}
+
+	private ComposeException compose(final BitWriter writer, final Object data){
+		ComposeException exception = null;
+		try{
+			final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(data.getClass(), protocolMessageParser.loader);
+			if(!protocolMessage.canBeDecoded())
+				throw new ProtocolMessageException("Cannot create a protocol message from data");
+
+			protocolMessageParser.encode(protocolMessage, writer, null, data);
+		}
+		catch(final Exception e){
+			exception = new ComposeException(data, e);
+		}
+		return exception;
 	}
 
 }

@@ -99,11 +99,6 @@ final class Loader{
 		LOGGER.trace("Codecs loaded are {}", codecs.size());
 	}
 
-	private static <T> Predicate<T> distinctByKey(final Function<? super T, ?> keyExtractor){
-		final Set<Object> seen = ConcurrentHashMap.newKeySet();
-		return t -> seen.add(keyExtractor.apply(t));
-	}
-
 	/**
 	 * Loads all the codecs that extends {@link CodecInterface}.
 	 *
@@ -180,6 +175,11 @@ final class Loader{
 		return list.toArray(Class[]::new);
 	}
 
+	private static <T> Predicate<T> distinctByKey(final Function<? super T, ?> keyExtractor){
+		final Set<Object> seen = ConcurrentHashMap.newKeySet();
+		return t -> seen.add(keyExtractor.apply(t));
+	}
+
 	private Collection<ProtocolMessage<?>> extractProtocolMessages(final Collection<Class<?>> annotatedClasses){
 		final Collection<ProtocolMessage<?>> protocolMessages = new ArrayList<>();
 		for(final Class<?> type : annotatedClasses){
@@ -195,10 +195,7 @@ final class Loader{
 	 *
 	 * @param protocolMessages	The list of protocol messages to be loaded
 	 */
-	synchronized final void loadProtocolMessages(Collection<ProtocolMessage<?>> protocolMessages){
-		//remove duplicates
-		protocolMessages = new HashSet<>(protocolMessages);
-
+	synchronized final void loadProtocolMessages(final Collection<ProtocolMessage<?>> protocolMessages){
 		LOGGER.info("Load parsing classes from input");
 
 		loadProtocolMessagesInner(protocolMessages);
@@ -206,7 +203,9 @@ final class Loader{
 		LOGGER.trace("Protocol messages loaded are {}", protocolMessages.size());
 	}
 
-	private void loadProtocolMessagesInner(final Collection<ProtocolMessage<?>> protocolMessages){
+	private void loadProtocolMessagesInner(Collection<ProtocolMessage<?>> protocolMessages){
+		//remove duplicates
+		protocolMessages = new HashSet<>(protocolMessages);
 		for(final ProtocolMessage<?> protocolMessage : protocolMessages){
 			try{
 				loadProtocolMessageInner(protocolMessage);

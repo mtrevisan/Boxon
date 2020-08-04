@@ -250,20 +250,20 @@ final class ProtocolMessage<T>{
 			final BindChecksum checksum = field.getDeclaredAnnotation(BindChecksum.class);
 
 			final Annotation[] declaredAnnotations = field.getDeclaredAnnotations();
-			final List<Annotation> boundedAnnotations = extractAnnotations(declaredAnnotations, loader);
+			final Annotation[] boundedAnnotations = extractAnnotations(declaredAnnotations, loader);
 			evaluatedFields.addAll(extractEvaluations(declaredAnnotations, field));
 
 			validateField(boundedAnnotations, checksum);
 
-			if(boundedAnnotations.size() == 1)
-				boundedFields.add(new BoundedField(field, (skips.length > 0? skips: null), boundedAnnotations.get(0)));
+			if(boundedAnnotations.length == 1)
+				boundedFields.add(new BoundedField(field, (skips.length > 0? skips: null), boundedAnnotations[0]));
 			if(checksum != null)
 				this.checksum = new BoundedField(field, null, checksum);
 		}
 	}
 
-	private List<Annotation> extractAnnotations(final Annotation[] declaredAnnotations, final Loader loader){
-		final List<Annotation> annotations = new ArrayList<>(declaredAnnotations.length);
+	private Annotation[] extractAnnotations(final Annotation[] declaredAnnotations, final Loader loader){
+		final Collection<Annotation> annotations = new ArrayList<>(declaredAnnotations.length);
 		for(int i = 0; i < declaredAnnotations.length; i ++){
 			final Annotation annotation = declaredAnnotations[i];
 			final Class<? extends Annotation> annotationType = annotation.annotationType();
@@ -271,7 +271,7 @@ final class ProtocolMessage<T>{
 					&& loader.getCodec(annotationType) != null)
 				annotations.add(annotation);
 		}
-		return annotations;
+		return annotations.toArray(Annotation[]::new);
 	}
 
 	private Collection<EvaluatedField> extractEvaluations(final Annotation[] declaredAnnotations, final Field field){
@@ -284,9 +284,9 @@ final class ProtocolMessage<T>{
 		return evaluations;
 	}
 
-	private void validateField(final List<Annotation> annotations, final BindChecksum checksum){
-		if(annotations.size() > 1){
-			final String aa = annotations.stream()
+	private void validateField(final Annotation[] annotations, final BindChecksum checksum){
+		if(annotations.length > 1){
+			final String aa = Arrays.stream(annotations)
 				.map(annotation -> annotation.annotationType().getSimpleName())
 				.collect(Collectors.joining(", ", "[", "]"));
 			throw new AnnotationException("Cannot bind more that one annotation on {}: {}", cls.getSimpleName(), aa);
@@ -295,8 +295,8 @@ final class ProtocolMessage<T>{
 		if(checksum != null && this.checksum != null)
 			throw new AnnotationException("Cannot have more than one {} annotations on class {}", BindChecksum.class.getSimpleName(), cls.getSimpleName());
 
-		if(!annotations.isEmpty())
-			validateAnnotation(annotations.get(0));
+		if(annotations.length > 0)
+			validateAnnotation(annotations[0]);
 	}
 
 	private void validateAnnotation(final Annotation annotation){
