@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.codecs.dtos;
 
 import io.github.mtrevisan.boxon.codecs.exceptions.ComposeException;
+import io.github.mtrevisan.boxon.codecs.exceptions.ParseException;
 import io.github.mtrevisan.boxon.helpers.DynamicArray;
 
 
@@ -42,13 +43,21 @@ public class ComposeResponse{
 		return composedMessage;
 	}
 
-	public void addError(final ComposeException exception){
-		if(exception != null)
-			errors.add(exception);
+	public int getErrorCount(){
+		return errors.limit;
 	}
 
 	public boolean hasErrors(){
 		return !errors.isEmpty();
+	}
+
+	public ComposeException getErrorAt(final int index){
+		return errors.data[index];
+	}
+
+	public void addError(final ComposeException exception){
+		if(exception != null)
+			errors.add(exception);
 	}
 
 	public ComposeException[] getErrors(){
