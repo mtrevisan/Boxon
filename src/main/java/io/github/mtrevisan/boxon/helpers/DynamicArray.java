@@ -37,6 +37,7 @@ public class DynamicArray<T>{
 
 	public T[] data;
 	public int limit;
+
 	private final float growthRate;
 
 
@@ -48,6 +49,10 @@ public class DynamicArray<T>{
 		return new DynamicArray<>(type, capacity, DEFAULT_GROWTH_RATE);
 	}
 
+	public static <T> DynamicArray<T> create(final Class<T> type, final int capacity, final float growthRate){
+		return new DynamicArray<>(type, capacity, growthRate);
+	}
+
 	@SuppressWarnings("unchecked")
 	private DynamicArray(final Class<T> type, final int capacity, final float growthRate){
 		data = (T[])Array.newInstance(type, capacity);
@@ -56,7 +61,7 @@ public class DynamicArray<T>{
 	}
 
 	/**
-	 * Appends the specified element to the end of this list.
+	 * Appends the specified element to the end of this array.
 	 *
 	 * @param elem	Element to be appended to the internal array
 	 */
@@ -67,29 +72,23 @@ public class DynamicArray<T>{
 	}
 
 	/**
-	 * Appends all of the elements in the specified collection to the end of this list.
+	 * Appends all of the elements in the specified collection to the end of this array.
 	 *
-	 * @param array	Collection containing elements to be added to this list
-	 */
-	public synchronized void addAll(final T[] array){
-		addAll(array, array.length);
-	}
-
-	/**
-	 * Appends all of the elements in the specified collection to the end of this list.
-	 *
-	 * @param array	Collection containing elements to be added to this list
+	 * @param array	Collection containing elements to be added to this array
 	 */
 	public synchronized void addAll(final DynamicArray<T> array){
-		addAll(array.data, array.limit);
+		grow(array.limit);
+
+		System.arraycopy(array.data, 0, data, limit, array.limit);
+		limit += array.limit;
 	}
 
 	/**
-	 * Inserts all of the elements in the specified collection into this list at the specified position.
+	 * Inserts all of the elements in the specified collection into this array at the specified position.
 	 * <p>Shifts the element currently at that position (if any) and any subsequent elements to the right (increases their indices).</p>
 	 *
 	 * @param index	Index at which to insert the first element from the specified collection
-	 * @param collection	Collection containing elements to be added to this list
+	 * @param collection	Collection containing elements to be added to this array
 	 */
 	public synchronized void addAll(final int index, final T[] collection){
 		final int addLength = collection.length;
@@ -101,13 +100,6 @@ public class DynamicArray<T>{
 			System.arraycopy(collection, 0, data, index, addLength);
 			limit += addLength;
 		}
-	}
-
-	private void addAll(final T[] array, final int size){
-		grow(size);
-
-		System.arraycopy(array, 0, data, limit, size);
-		limit += size;
 	}
 
 	/**
@@ -122,8 +114,12 @@ public class DynamicArray<T>{
 
 	private void grow(final int size){
 		final int delta = limit - data.length + size;
-		if(delta > 0)
-			data = Arrays.copyOf(data, data.length + (int)Math.ceil(delta * growthRate));
+		if(delta > 0){
+			final int newLength = data.length + (int)Math.ceil(delta * growthRate);
+			final T[] copy = newInstance(newLength);
+			System.arraycopy(data, 0, copy, 0, Math.min(data.length, newLength));
+			data = copy;
+		}
 	}
 
 	private Class<?> getDataType(){
@@ -139,13 +135,13 @@ public class DynamicArray<T>{
 		return (limit == 0);
 	}
 
-	/** Removes all of the elements from this list. */
+	/** Removes all of the elements from this array. */
 	public synchronized void reset(){
 		limit = 0;
 	}
 
 	/**
-	 * Removes all of the elements from this list.
+	 * Removes all of the elements from this array.
 	 * <p>The array will be emptied after this call returns.</p>
 	 */
 	public synchronized void clear(){
@@ -165,11 +161,15 @@ public class DynamicArray<T>{
 	 * @return	A copy of the array
 	 */
 	public synchronized T[] extractCopy(){
-		final Class<?> type = getDataType();
-		@SuppressWarnings("unchecked")
-		final T[] copy = (T[])Array.newInstance(type, limit);
+		final T[] copy = newInstance(limit);
 		System.arraycopy(data, 0, copy, 0, limit);
 		return copy;
+	}
+
+	@SuppressWarnings("unchecked")
+	private T[] newInstance(final int size){
+		final Class<?> type = getDataType();
+		return (T[])Array.newInstance(type, size);
 	}
 
 	@Override
