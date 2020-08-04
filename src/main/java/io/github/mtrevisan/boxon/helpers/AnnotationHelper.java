@@ -81,16 +81,16 @@ public final class AnnotationHelper{
 	public static Field[] getDeclaredFields(final Class<?> cls, final boolean recursively){
 		final Field[] result;
 		if(recursively){
-			final List<Field> fields = new ArrayList<>(0);
+			final SimpleDynamicArray<Field> fields = SimpleDynamicArray.create(Field.class);
 			Class<?> currentType = cls;
-			while(currentType != null){
-				final Collection<Field> subfields = Arrays.asList(currentType.getDeclaredFields());
+			while(currentType != Object.class){
+				final Field[] subfields = currentType.getDeclaredFields();
 				//place parent's fields before all the child's fields
 				fields.addAll(0, subfields);
 
 				currentType = currentType.getSuperclass();
 			}
-			result = fields.toArray(Field[]::new);
+			result = fields.extractCopy();
 		}
 		else
 			result = cls.getDeclaredFields();

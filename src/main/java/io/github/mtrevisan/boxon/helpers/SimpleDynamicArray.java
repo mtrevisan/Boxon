@@ -55,18 +55,52 @@ public class SimpleDynamicArray<T>{
 		this.growthRate = growthRate;
 	}
 
-	public synchronized void add(final T elem){
+	/**
+	 * Appends the specified element to the end of this list.
+	 *
+	 * @param elem	Element to be appended to the internal array
+	 */
+	public void add(final T elem){
 		grow(1);
 
 		data[limit ++] = elem;
 	}
 
+	/**
+	 * Appends all of the elements in the specified collection to the end of this list.
+	 *
+	 * @param array	Collection containing elements to be added to this list
+	 */
 	public synchronized void addAll(final T[] array){
 		addAll(array, array.length);
 	}
 
+	/**
+	 * Appends all of the elements in the specified collection to the end of this list.
+	 *
+	 * @param array	Collection containing elements to be added to this list
+	 */
 	public synchronized void addAll(final SimpleDynamicArray<T> array){
 		addAll(array.data, array.limit);
+	}
+
+	/**
+	 * Inserts all of the elements in the specified collection into this list at the specified position.
+	 * <p>Shifts the element currently at that position (if any) and any subsequent elements to the right (increases their indices).</p>
+	 *
+	 * @param index	Index at which to insert the first element from the specified collection
+	 * @param collection	Collection containing elements to be added to this list
+	 */
+	public synchronized void addAll(final int index, final T[] collection){
+		final int addLength = collection.length;
+		if(addLength != 0){
+			grow(addLength);
+
+			if(index < limit)
+				System.arraycopy(data, index, data, index + addLength, limit - index);
+			System.arraycopy(collection, 0, data, index, addLength);
+			limit += addLength;
+		}
 	}
 
 	private void addAll(final T[] array, final int size){
@@ -76,6 +110,12 @@ public class SimpleDynamicArray<T>{
 		limit += size;
 	}
 
+	/**
+	 * Increases the capacity of the internal array, if necessary, to ensure that it can hold at least the number of elements
+	 * specified by the minimum capacity argument.
+	 *
+	 * @param newCapacity	The desired minimum capacity
+	 */
 	public void ensureCapacity(final int newCapacity){
 		grow(newCapacity - limit);
 	}
@@ -90,14 +130,24 @@ public class SimpleDynamicArray<T>{
 		return data.getClass().getComponentType();
 	}
 
+	/**
+	 * Returns whether this array contains no elements.
+	 *
+	 * @return	Whether this array contains no elements.
+	 */
 	public synchronized boolean isEmpty(){
 		return (limit == 0);
 	}
 
+	/** Removes all of the elements from this list. */
 	public synchronized void reset(){
 		limit = 0;
 	}
 
+	/**
+	 * Removes all of the elements from this list.
+	 * <p>The array will be emptied after this call returns.</p>
+	 */
 	public synchronized void clear(){
 		data = null;
 		limit = -1;
@@ -107,6 +157,19 @@ public class SimpleDynamicArray<T>{
 		for(int i = 0; i < limit; i ++)
 			joiner.add(reducer.apply(data[i]));
 		return joiner;
+	}
+
+	/**
+	 * NOTE: this method should NOT be called at all because it is inefficient
+	 *
+	 * @return	A copy of the array
+	 */
+	public synchronized T[] extractCopy(){
+		final Class<?> type = getDataType();
+		@SuppressWarnings("unchecked")
+		final T[] copy = (T[])Array.newInstance(type, limit);
+		System.arraycopy(data, 0, copy, 0, limit);
+		return copy;
 	}
 
 	@Override

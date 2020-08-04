@@ -25,15 +25,13 @@
 package io.github.mtrevisan.boxon.codecs.dtos;
 
 import io.github.mtrevisan.boxon.codecs.exceptions.ComposeException;
-
-import java.util.ArrayList;
-import java.util.List;
+import io.github.mtrevisan.boxon.helpers.SimpleDynamicArray;
 
 
 public class ComposeResponse{
 
 	private byte[] composedMessage;
-	private final List<ComposeException> errors = new ArrayList<>(0);
+	private final SimpleDynamicArray<ComposeException> errors = SimpleDynamicArray.create(ComposeException.class);
 
 
 	public void setComposedMessage(final byte[] composedMessages){
@@ -53,8 +51,8 @@ public class ComposeResponse{
 		return !errors.isEmpty();
 	}
 
-	public List<ComposeException> getErrors(){
-		return errors;
+	public ComposeException[] getErrors(){
+		return errors.extractCopy();
 	}
 
 }
