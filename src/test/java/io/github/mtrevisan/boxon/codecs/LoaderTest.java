@@ -30,9 +30,6 @@ import io.github.mtrevisan.boxon.helpers.ByteHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
-import java.util.List;
-
 
 class LoaderTest{
 
@@ -41,8 +38,7 @@ class LoaderTest{
 		Loader loader = new Loader();
 		loader.loadCodecs();
 
-		List<ProtocolMessage<?>> protocolMessages = Collections.emptyList();
-		loader.loadProtocolMessages(protocolMessages);
+		loader.loadProtocolMessages(new ProtocolMessage<?>[0]);
 	}
 
 	@Test

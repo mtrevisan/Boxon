@@ -111,17 +111,6 @@ public class Parser{
 	 * @param codecs	The list of codecs to be loaded
 	 * @return	The {@link Parser}, used for chaining.
 	 */
-	public final Parser withCodecs(final Collection<CodecInterface<?>> codecs){
-		protocolMessageParser.loader.loadCodecs(codecs);
-		return this;
-	}
-
-	/**
-	 * Loads all the codecs that extends {@link CodecInterface}.
-	 *
-	 * @param codecs	The list of codecs to be loaded
-	 * @return	The {@link Parser}, used for chaining.
-	 */
 	public final Parser withCodecs(final CodecInterface<?>... codecs){
 		protocolMessageParser.loader.loadCodecs(codecs);
 		return this;
@@ -169,6 +158,18 @@ public class Parser{
 	 */
 	public final Parser withProtocolMessages(final ProtocolMessage<?>... protocolMessages){
 		protocolMessageParser.loader.loadProtocolMessages(protocolMessages);
+		return this;
+	}
+
+	/**
+	 * Load a singe codec that extends {@link CodecInterface}.
+	 * <p>If the parser previously contained a codec for the given key, the old codec is replaced by the specified one.</p>
+	 *
+	 * @param protocolMessage	The protocol message to be loaded
+	 * @return	The {@link Parser}, used for chaining.
+	 */
+	public final Parser addProtocolMessages(final ProtocolMessage<?> protocolMessage){
+		protocolMessageParser.loader.loadProtocolMessages(protocolMessage);
 		return this;
 	}
 

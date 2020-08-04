@@ -286,8 +286,7 @@ final class ProtocolMessage<T>{
 	private void validateField(final DynamicArray<Annotation> annotations, final BindChecksum checksum){
 		if(annotations.limit > 1){
 			final StringJoiner sj = new StringJoiner(", ", "[", "]");
-			annotations.join(annotation -> annotation.annotationType().getSimpleName(), sj)
-				.toString();
+			annotations.join(annotation -> annotation.annotationType().getSimpleName(), sj);
 			throw new AnnotationException("Cannot bind more that one annotation on {}: {}", cls.getSimpleName(), sj.toString());
 		}
 

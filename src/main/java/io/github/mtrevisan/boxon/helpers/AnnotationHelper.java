@@ -179,7 +179,7 @@ public final class AnnotationHelper{
 			final ClassDescriptor elem = stack.pop();
 
 			final File[] files = elem.file.listFiles();
-			final Map<BucketType, DynamicArray<File>> bucket = bucketByFileType(files);
+			final Map<BucketType, DynamicArray<File>> bucket = bucketByFileType(files != null? files: new File[0]);
 			final DynamicArray<File> bucketDirectory = bucket.get(BucketType.DIRECTORY);
 			for(int i = 0; i < bucketDirectory.limit; i ++){
 				final File dir = bucketDirectory.data[i];
@@ -200,12 +200,11 @@ public final class AnnotationHelper{
 		final Map<BucketType, DynamicArray<File>> bucket = new EnumMap<>(BucketType.class);
 		bucket.put(BucketType.DIRECTORY, DynamicArray.create(File.class));
 		bucket.put(BucketType.FILE, DynamicArray.create(File.class, files.length));
-		if(files != null)
-			for(int i = 0; i < files.length; i ++){
-				final File file = files[i];
-				bucket.get(file.isDirectory()? BucketType.DIRECTORY: BucketType.FILE)
-					.add(file);
-			}
+		for(int i = 0; i < files.length; i ++){
+			final File file = files[i];
+			bucket.get(file.isDirectory()? BucketType.DIRECTORY: BucketType.FILE)
+				.add(file);
+		}
 		return bucket;
 	}
 

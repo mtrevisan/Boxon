@@ -28,6 +28,7 @@ import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.exceptions.ProtocolMessageException;
 import io.github.mtrevisan.boxon.helpers.AnnotationHelper;
 import io.github.mtrevisan.boxon.helpers.ByteHelper;
+import io.github.mtrevisan.boxon.helpers.DynamicArray;
 import io.github.mtrevisan.boxon.helpers.Memoizer;
 import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
 import io.github.mtrevisan.boxon.helpers.matchers.BNDMPatternMatcher;
@@ -100,15 +101,6 @@ final class Loader{
 	}
 
 	/**
-	 * Loads all the codecs that extends {@link CodecInterface}.
-	 *
-	 * @param codecs	The list of codecs to be loaded
-	 */
-	final void loadCodecs(final Collection<CodecInterface<?>> codecs){
-		loadCodecs(codecs.toArray(CodecInterface[]::new));
-	}
-
-	/**
 	 * Loads all the given codecs that extends {@link CodecInterface}.
 	 *
 	 * @param codecs	The list of codecs to be loaded
@@ -160,10 +152,10 @@ final class Loader{
 				Arrays.stream(basePackageClasses).map(Class::getPackageName).collect(Collectors.joining(", ", "[", "]")));
 
 		final Collection<Class<?>> annotatedClasses = AnnotationHelper.extractClasses(MessageHeader.class, basePackageClasses);
-		final Collection<ProtocolMessage<?>> protocolMessages = extractProtocolMessages(annotatedClasses);
+		final ProtocolMessage<?>[] protocolMessages = extractProtocolMessages(annotatedClasses);
 		loadProtocolMessagesInner(protocolMessages);
 
-		LOGGER.trace("Protocol messages loaded are {}", protocolMessages.size());
+		LOGGER.trace("Protocol messages loaded are {}", protocolMessages.length);
 	}
 
 	private Class<?>[] removeDuplicates(final Class<?>[] basePackageClasses){
@@ -180,14 +172,16 @@ final class Loader{
 		return t -> seen.add(keyExtractor.apply(t));
 	}
 
-	private Collection<ProtocolMessage<?>> extractProtocolMessages(final Collection<Class<?>> annotatedClasses){
-		final Collection<ProtocolMessage<?>> protocolMessages = new ArrayList<>(annotatedClasses.size());
+	private ProtocolMessage<?>[] extractProtocolMessages(final Collection<Class<?>> annotatedClasses){
+		@SuppressWarnings("rawtypes")
+		final DynamicArray<ProtocolMessage> protocolMessages = DynamicArray.create(ProtocolMessage.class, annotatedClasses.size());
 		for(final Class<?> type : annotatedClasses){
 			final ProtocolMessage<?> from = ProtocolMessage.createFrom(type, this);
 			if(from.canBeDecoded())
 				protocolMessages.add(from);
 		}
-		return protocolMessages;
+		return protocolMessages
+			.extractCopy();
 	}
 
 	/**
@@ -195,18 +189,31 @@ final class Loader{
 	 *
 	 * @param protocolMessages	The list of protocol messages to be loaded
 	 */
-	synchronized final void loadProtocolMessages(final Collection<ProtocolMessage<?>> protocolMessages){
+	synchronized final void loadProtocolMessages(final ProtocolMessage<?>... protocolMessages){
 		LOGGER.info("Load parsing classes from input");
 
 		loadProtocolMessagesInner(protocolMessages);
 
-		LOGGER.trace("Protocol messages loaded are {}", protocolMessages.size());
+		LOGGER.trace("Protocol messages loaded are {}", protocolMessages.length);
 	}
 
-	private void loadProtocolMessagesInner(Collection<ProtocolMessage<?>> protocolMessages){
+	/**
+	 * Loads a protocol class annotated with {@link MessageHeader}.
+	 *
+	 * @param protocolMessage	The protocol message to be loaded
+	 */
+	synchronized final void addProtocolMessages(final ProtocolMessage<?> protocolMessage){
+		LOGGER.info("Load parsing classes from input");
+
+		loadProtocolMessageInner(protocolMessage);
+
+		LOGGER.trace("Protocol message loaded");
+	}
+
+	private void loadProtocolMessagesInner(final ProtocolMessage<?>... protocolMessages){
 		//remove duplicates
-		protocolMessages = new HashSet<>(protocolMessages);
-		for(final ProtocolMessage<?> protocolMessage : protocolMessages){
+		final Set<ProtocolMessage<?>> messages = new HashSet<>(Arrays.asList(protocolMessages));
+		for(final ProtocolMessage<?> protocolMessage : messages){
 			try{
 				loadProtocolMessageInner(protocolMessage);
 			}

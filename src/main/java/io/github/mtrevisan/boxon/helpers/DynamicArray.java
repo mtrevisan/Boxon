@@ -127,6 +127,7 @@ public class DynamicArray<T>{
 	 *
 	 * @return	Whether this array contains no elements.
 	 */
+	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
 	public synchronized boolean isEmpty(){
 		return (limit == 0);
 	}
@@ -145,10 +146,9 @@ public class DynamicArray<T>{
 		limit = -1;
 	}
 
-	public synchronized StringJoiner join(final Function<T, String> reducer, final StringJoiner joiner){
+	public synchronized void join(final Function<T, String> reducer, final StringJoiner joiner){
 		for(int i = 0; i < limit; i ++)
 			joiner.add(reducer.apply(data[i]));
-		return joiner;
 	}
 
 	/**
