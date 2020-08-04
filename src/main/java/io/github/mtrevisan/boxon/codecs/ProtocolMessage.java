@@ -37,6 +37,7 @@ import io.github.mtrevisan.boxon.annotations.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.helpers.AnnotationHelper;
 import io.github.mtrevisan.boxon.helpers.DataType;
 import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
+import io.github.mtrevisan.boxon.helpers.SimpleDynamicArray;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -218,7 +219,7 @@ final class ProtocolMessage<T>{
 
 	private final MessageHeader header;
 	private final List<BoundedField> boundedFields = new ArrayList<>(0);
-	private final List<EvaluatedField> evaluatedFields = new ArrayList<>(0);
+	private final SimpleDynamicArray<EvaluatedField> evaluatedFields = SimpleDynamicArray.create(EvaluatedField.class);
 	/** necessary to speed-up the creation of a ProtocolMessage (technically not needed because it's already present somewhere inside {@link #boundedFields}) */
 	private BoundedField checksum;
 
@@ -274,8 +275,8 @@ final class ProtocolMessage<T>{
 		return annotations.toArray(Annotation[]::new);
 	}
 
-	private Collection<EvaluatedField> extractEvaluations(final Annotation[] declaredAnnotations, final Field field){
-		final Collection<EvaluatedField> evaluations = new ArrayList<>(declaredAnnotations.length);
+	private SimpleDynamicArray<EvaluatedField> extractEvaluations(final Annotation[] declaredAnnotations, final Field field){
+		final SimpleDynamicArray<EvaluatedField> evaluations = SimpleDynamicArray.create(EvaluatedField.class, declaredAnnotations.length);
 		for(int i = 0; i < declaredAnnotations.length; i ++){
 			final Annotation annotation = declaredAnnotations[i];
 			if(annotation.annotationType() == Evaluate.class)
@@ -317,7 +318,7 @@ final class ProtocolMessage<T>{
 		return boundedFields;
 	}
 
-	final List<EvaluatedField> getEvaluatedFields(){
+	final SimpleDynamicArray<EvaluatedField> getEvaluatedFields(){
 		return evaluatedFields;
 	}
 

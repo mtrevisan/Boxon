@@ -46,6 +46,7 @@ import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.helpers.BitSet;
 import io.github.mtrevisan.boxon.helpers.ByteHelper;
+import io.github.mtrevisan.boxon.helpers.SimpleDynamicArray;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -182,9 +183,9 @@ class ProtocolMessageTest{
 		List<ProtocolMessage.BoundedField> boundedFields = protocolMessage.getBoundedFields();
 		Assertions.assertNotNull(boundedFields);
 		Assertions.assertEquals(15, boundedFields.size());
-		List<ProtocolMessage.EvaluatedField> evaluatedFields = protocolMessage.getEvaluatedFields();
+		SimpleDynamicArray<ProtocolMessage.EvaluatedField> evaluatedFields = protocolMessage.getEvaluatedFields();
 		Assertions.assertNotNull(evaluatedFields);
-		Assertions.assertEquals(1, evaluatedFields.size());
+		Assertions.assertEquals(1, evaluatedFields.length());
 		ProtocolMessage.EvaluatedField evaluatedField = evaluatedFields.get(0);
 		Assertions.assertEquals("receptionTime", evaluatedField.getName());
 		Assertions.assertEquals(ZonedDateTime.class, evaluatedField.getType());

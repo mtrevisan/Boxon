@@ -167,7 +167,7 @@ final class Loader{
 	}
 
 	private Class<?>[] removeDuplicates(final Class<?>[] basePackageClasses){
-		final List<Class<?>> list = new ArrayList<>();
+		final List<Class<?>> list = new ArrayList<>(basePackageClasses.length);
 		final Predicate<Class<?>> predicate = distinctByKey(Class::getPackageName);
 		for(final Class<?> basePackageClass : basePackageClasses)
 			if(predicate.test(basePackageClass))
@@ -181,7 +181,7 @@ final class Loader{
 	}
 
 	private Collection<ProtocolMessage<?>> extractProtocolMessages(final Collection<Class<?>> annotatedClasses){
-		final Collection<ProtocolMessage<?>> protocolMessages = new ArrayList<>();
+		final Collection<ProtocolMessage<?>> protocolMessages = new ArrayList<>(annotatedClasses.size());
 		for(final Class<?> type : annotatedClasses){
 			final ProtocolMessage<?> from = ProtocolMessage.createFrom(type, this);
 			if(from.canBeDecoded())
