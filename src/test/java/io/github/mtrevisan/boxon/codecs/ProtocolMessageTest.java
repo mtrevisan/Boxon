@@ -180,12 +180,12 @@ class ProtocolMessageTest{
 		Assertions.assertArrayEquals(new String[]{"+"}, header.start());
 		Assertions.assertEquals("-", header.end());
 		Assertions.assertTrue(protocolMessage.canBeDecoded());
-		List<ProtocolMessage.BoundedField> boundedFields = protocolMessage.getBoundedFields();
+		SimpleDynamicArray<ProtocolMessage.BoundedField> boundedFields = protocolMessage.getBoundedFields();
 		Assertions.assertNotNull(boundedFields);
 		Assertions.assertEquals(15, boundedFields.size());
 		SimpleDynamicArray<ProtocolMessage.EvaluatedField> evaluatedFields = protocolMessage.getEvaluatedFields();
 		Assertions.assertNotNull(evaluatedFields);
-		Assertions.assertEquals(1, evaluatedFields.length());
+		Assertions.assertEquals(1, evaluatedFields.size());
 		ProtocolMessage.EvaluatedField evaluatedField = evaluatedFields.get(0);
 		Assertions.assertEquals("receptionTime", evaluatedField.getName());
 		Assertions.assertEquals(ZonedDateTime.class, evaluatedField.getType());
@@ -248,7 +248,7 @@ class ProtocolMessageTest{
 		Assertions.assertArrayEquals(new String[]{"++"}, header.start());
 		Assertions.assertEquals("--", header.end());
 		Assertions.assertTrue(protocolMessage.canBeDecoded());
-		List<ProtocolMessage.BoundedField> boundedFields = protocolMessage.getBoundedFields();
+		SimpleDynamicArray<ProtocolMessage.BoundedField> boundedFields = protocolMessage.getBoundedFields();
 		Assertions.assertNotNull(boundedFields);
 		Assertions.assertEquals(16, boundedFields.size());
 		ProtocolMessage.BoundedField childField = boundedFields.get(boundedFields.size() - 1);

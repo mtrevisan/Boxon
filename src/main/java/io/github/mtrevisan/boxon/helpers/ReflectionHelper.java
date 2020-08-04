@@ -81,7 +81,7 @@ public final class ReflectionHelper{
 	public static <T> void setFieldValue(final Object obj, final Class<T> fieldType, final T value){
 		try{
 			final SimpleDynamicArray<Field> fields = getAccessibleFields(obj.getClass(), fieldType);
-			for(int i = 0; i < fields.length(); i ++)
+			for(int i = 0; i < fields.size(); i ++)
 				fields.get(i).set(obj, value);
 		}
 		catch(final IllegalArgumentException | IllegalAccessException ignored){}

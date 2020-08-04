@@ -94,7 +94,7 @@ public class SimpleDynamicArray<T>{
 		return data[index];
 	}
 
-	public synchronized int length(){
+	public synchronized int size(){
 		return limit;
 	}
 

@@ -45,7 +45,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -218,7 +217,7 @@ final class ProtocolMessage<T>{
 	private final Class<T> cls;
 
 	private final MessageHeader header;
-	private final List<BoundedField> boundedFields = new ArrayList<>(0);
+	private final SimpleDynamicArray<BoundedField> boundedFields = SimpleDynamicArray.create(BoundedField.class);
 	private final SimpleDynamicArray<EvaluatedField> evaluatedFields = SimpleDynamicArray.create(EvaluatedField.class);
 	/** necessary to speed-up the creation of a ProtocolMessage (technically not needed because it's already present somewhere inside {@link #boundedFields}) */
 	private BoundedField checksum;
@@ -245,6 +244,7 @@ final class ProtocolMessage<T>{
 	}
 
 	private void loadAnnotatedFields(final Field[] fields, final Loader loader){
+		boundedFields.ensureCapacity(fields.length);
 		for(int i = 0; i < fields.length; i ++){
 			final Field field = fields[i];
 			final Skip[] skips = field.getDeclaredAnnotationsByType(Skip.class);
@@ -314,7 +314,7 @@ final class ProtocolMessage<T>{
 		return header;
 	}
 
-	final List<BoundedField> getBoundedFields(){
+	final SimpleDynamicArray<BoundedField> getBoundedFields(){
 		return boundedFields;
 	}
 

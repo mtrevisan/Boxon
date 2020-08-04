@@ -40,7 +40,6 @@ import org.slf4j.LoggerFactory;
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
 import java.util.Arrays;
-import java.util.List;
 
 
 final class ProtocolMessageParser{
@@ -80,7 +79,7 @@ final class ProtocolMessageParser{
 		final ParserContext<T> parserContext = new ParserContext<>(rootObject, currentObject);
 
 		//decode message fields:
-		final List<ProtocolMessage.BoundedField> fields = protocolMessage.getBoundedFields();
+		final SimpleDynamicArray<ProtocolMessage.BoundedField> fields = protocolMessage.getBoundedFields();
 		for(int i = 0; i < fields.size(); i ++){
 			parserContext.addSelfToEvaluatorContext();
 
@@ -175,7 +174,7 @@ final class ProtocolMessageParser{
 
 	private void processEvaluatedFields(final ProtocolMessage<?> protocolMessage, final Object rootObject){
 		final SimpleDynamicArray<ProtocolMessage.EvaluatedField> evaluatedFields = protocolMessage.getEvaluatedFields();
-		for(int i = 0; i < evaluatedFields.length(); i ++){
+		for(int i = 0; i < evaluatedFields.size(); i ++){
 			final ProtocolMessage.EvaluatedField field = evaluatedFields.get(i);
 			final String condition = field.getBinding().condition();
 			final boolean process = (condition.isEmpty() || Evaluator.evaluate(condition, rootObject, boolean.class));
@@ -192,7 +191,7 @@ final class ProtocolMessageParser{
 		final ParserContext<T> parserContext = new ParserContext<>(rootObject, currentObject);
 
 		//encode message fields:
-		final List<ProtocolMessage.BoundedField> fields = protocolMessage.getBoundedFields();
+		final SimpleDynamicArray<ProtocolMessage.BoundedField> fields = protocolMessage.getBoundedFields();
 		for(int i = 0; i < fields.size(); i ++){
 			parserContext.addSelfToEvaluatorContext();
 
