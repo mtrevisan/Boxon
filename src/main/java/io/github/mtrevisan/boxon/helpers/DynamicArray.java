@@ -173,6 +173,11 @@ public class DynamicArray<T>{
 	}
 
 	@Override
+	public String toString(){
+		return Arrays.toString(data);
+	}
+
+	@Override
 	public synchronized boolean equals(final Object obj){
 		if(obj == this)
 			return true;
