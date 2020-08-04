@@ -950,7 +950,7 @@ Remember that the header that will be written is the first in `@MessageHeader`.
 
 <a name="changelog-0.0.3"></a>
 ### version 0.0.3 - 202008??
-- ??
+- speed-up execution
 
 <a name="changelog-0.0.2"></a>
 ### version 0.0.2 - 20200731
