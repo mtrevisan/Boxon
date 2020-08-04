@@ -41,8 +41,8 @@ import java.util.Arrays;
  * </code></pre>
  *
  * @see <a href="https://github.com/johannburkard/StringSearch">StringSearch</a>
- * @see <a href="http://johannburkard.de/software/stringsearch/" target="_top">StringSearch &#8211; high-performance pattern matching algorithms in Java</a>
- * @see <a href="https://users.dcc.uchile.cl/~gnavarro/ps/cpm98.pdf" target="_top">A bit-parallel approach to suffix automata: fast extended string matching</a>
+ * @see <a href="http://johannburkard.de/software/stringsearch/">StringSearch &#8211; high-performance pattern matching algorithms in Java</a>
+ * @see <a href="https://users.dcc.uchile.cl/~gnavarro/ps/cpm98.pdf">A bit-parallel approach to suffix automata: fast extended string matching</a>
  * @see <a href="http://eprints.fri.uni-lj.si/4287/1/63150349-LINA_LUMBUROVSKA-%C4%8Casovno_u%C4%8Dinkoviti_algoritmi_ujemanja_nizov_in_metoda_grobe_sile.pdf">Time-efficient string matching algorithms and the brute-force method</a>
  */
 public class BNDMPatternMatcher implements PatternMatcher{
