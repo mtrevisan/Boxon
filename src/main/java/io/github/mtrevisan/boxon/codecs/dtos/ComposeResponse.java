@@ -25,7 +25,6 @@
 package io.github.mtrevisan.boxon.codecs.dtos;
 
 import io.github.mtrevisan.boxon.codecs.exceptions.ComposeException;
-import io.github.mtrevisan.boxon.codecs.exceptions.ParseException;
 import io.github.mtrevisan.boxon.helpers.DynamicArray;
 
 
