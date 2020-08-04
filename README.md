@@ -828,7 +828,7 @@ class VariableLengthByteArray implements CodecInterface<VarLengthEncoded>{
 //(use one of the lines below)
 parser.withDefaultCodecs(); //loads all codecs from the package where this call was made
 parser.withCodecs(CodecCustomTest.class); //this class is where the custom codec resides
-parser.withCodecs(Arrays.asList(new VariableLengthByteArray()));
+parser.withCodecs(new VariableLengthByteArray());
 parser.addCodec(new VariableLengthByteArray()); //adds a single codec
 ```
 

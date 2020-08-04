@@ -168,7 +168,7 @@ public class Parser{
 	 * @param protocolMessage	The protocol message to be loaded
 	 * @return	The {@link Parser}, used for chaining.
 	 */
-	public final Parser addProtocolMessages(final ProtocolMessage<?> protocolMessage){
+	public final Parser addProtocolMessage(final ProtocolMessage<?> protocolMessage){
 		protocolMessageParser.loader.loadProtocolMessages(protocolMessage);
 		return this;
 	}
