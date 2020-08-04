@@ -36,7 +36,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 
@@ -168,19 +167,8 @@ public class Parser{
 	 * @param protocolMessages	The list of protocol messages to be loaded
 	 * @return	The {@link Parser}, used for chaining.
 	 */
-	public final Parser withProtocolMessages(final Collection<ProtocolMessage<?>> protocolMessages){
-		protocolMessageParser.loader.loadProtocolMessages(protocolMessages);
-		return this;
-	}
-
-	/**
-	 * Loads all the protocol classes annotated with {@link MessageHeader}.
-	 *
-	 * @param protocolMessages	The list of protocol messages to be loaded
-	 * @return	The {@link Parser}, used for chaining.
-	 */
 	public final Parser withProtocolMessages(final ProtocolMessage<?>... protocolMessages){
-		protocolMessageParser.loader.loadProtocolMessages(Arrays.asList(protocolMessages));
+		protocolMessageParser.loader.loadProtocolMessages(protocolMessages);
 		return this;
 	}
 
