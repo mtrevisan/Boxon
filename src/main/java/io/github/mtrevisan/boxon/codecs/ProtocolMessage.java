@@ -46,6 +46,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 
@@ -251,20 +252,20 @@ final class ProtocolMessage<T>{
 			final BindChecksum checksum = field.getDeclaredAnnotation(BindChecksum.class);
 
 			final Annotation[] declaredAnnotations = field.getDeclaredAnnotations();
-			final Annotation[] boundedAnnotations = extractAnnotations(declaredAnnotations, loader);
+			final SimpleDynamicArray<Annotation> boundedAnnotations = extractAnnotations(declaredAnnotations, loader);
 			evaluatedFields.addAll(extractEvaluations(declaredAnnotations, field));
 
 			validateField(boundedAnnotations, checksum);
 
-			if(boundedAnnotations.length == 1)
-				boundedFields.add(new BoundedField(field, (skips.length > 0? skips: null), boundedAnnotations[0]));
+			if(boundedAnnotations.limit == 1)
+				boundedFields.add(new BoundedField(field, (skips.length > 0? skips: null), boundedAnnotations.data[0]));
 			if(checksum != null)
 				this.checksum = new BoundedField(field, null, checksum);
 		}
 	}
 
-	private Annotation[] extractAnnotations(final Annotation[] declaredAnnotations, final Loader loader){
-		final Collection<Annotation> annotations = new ArrayList<>(declaredAnnotations.length);
+	private SimpleDynamicArray<Annotation> extractAnnotations(final Annotation[] declaredAnnotations, final Loader loader){
+		final SimpleDynamicArray<Annotation> annotations = SimpleDynamicArray.create(Annotation.class, declaredAnnotations.length);
 		for(int i = 0; i < declaredAnnotations.length; i ++){
 			final Annotation annotation = declaredAnnotations[i];
 			final Class<? extends Annotation> annotationType = annotation.annotationType();
@@ -272,7 +273,7 @@ final class ProtocolMessage<T>{
 					&& loader.getCodec(annotationType) != null)
 				annotations.add(annotation);
 		}
-		return annotations.toArray(Annotation[]::new);
+		return annotations;
 	}
 
 	private SimpleDynamicArray<EvaluatedField> extractEvaluations(final Annotation[] declaredAnnotations, final Field field){
@@ -285,19 +286,19 @@ final class ProtocolMessage<T>{
 		return evaluations;
 	}
 
-	private void validateField(final Annotation[] annotations, final BindChecksum checksum){
-		if(annotations.length > 1){
-			final String aa = Arrays.stream(annotations)
-				.map(annotation -> annotation.annotationType().getSimpleName())
-				.collect(Collectors.joining(", ", "[", "]"));
-			throw new AnnotationException("Cannot bind more that one annotation on {}: {}", cls.getSimpleName(), aa);
+	private void validateField(final SimpleDynamicArray<Annotation> annotations, final BindChecksum checksum){
+		if(annotations.limit > 1){
+			final StringJoiner sj = new StringJoiner(", ", "[", "]");
+			annotations.join(annotation -> annotation.annotationType().getSimpleName(), sj)
+				.toString();
+			throw new AnnotationException("Cannot bind more that one annotation on {}: {}", cls.getSimpleName(), sj.toString());
 		}
 
 		if(checksum != null && this.checksum != null)
 			throw new AnnotationException("Cannot have more than one {} annotations on class {}", BindChecksum.class.getSimpleName(), cls.getSimpleName());
 
-		if(annotations.length > 0)
-			validateAnnotation(annotations[0]);
+		if(annotations.limit > 0)
+			validateAnnotation(annotations.data[0]);
 	}
 
 	private void validateAnnotation(final Annotation annotation){

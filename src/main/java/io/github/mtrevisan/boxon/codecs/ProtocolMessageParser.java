@@ -80,10 +80,10 @@ final class ProtocolMessageParser{
 
 		//decode message fields:
 		final SimpleDynamicArray<ProtocolMessage.BoundedField> fields = protocolMessage.getBoundedFields();
-		for(int i = 0; i < fields.size(); i ++){
+		for(int i = 0; i < fields.limit; i ++){
 			parserContext.addSelfToEvaluatorContext();
 
-			final ProtocolMessage.BoundedField field = fields.get(i);
+			final ProtocolMessage.BoundedField field = fields.data[i];
 
 			readSkippedFields(field.getSkips(), reader, rootObject);
 
@@ -174,8 +174,8 @@ final class ProtocolMessageParser{
 
 	private void processEvaluatedFields(final ProtocolMessage<?> protocolMessage, final Object rootObject){
 		final SimpleDynamicArray<ProtocolMessage.EvaluatedField> evaluatedFields = protocolMessage.getEvaluatedFields();
-		for(int i = 0; i < evaluatedFields.size(); i ++){
-			final ProtocolMessage.EvaluatedField field = evaluatedFields.get(i);
+		for(int i = 0; i < evaluatedFields.limit; i ++){
+			final ProtocolMessage.EvaluatedField field = evaluatedFields.data[i];
 			final String condition = field.getBinding().condition();
 			final boolean process = (condition.isEmpty() || Evaluator.evaluate(condition, rootObject, boolean.class));
 			if(process){
@@ -192,10 +192,10 @@ final class ProtocolMessageParser{
 
 		//encode message fields:
 		final SimpleDynamicArray<ProtocolMessage.BoundedField> fields = protocolMessage.getBoundedFields();
-		for(int i = 0; i < fields.size(); i ++){
+		for(int i = 0; i < fields.limit; i ++){
 			parserContext.addSelfToEvaluatorContext();
 
-			final ProtocolMessage.BoundedField field = fields.get(i);
+			final ProtocolMessage.BoundedField field = fields.data[i];
 
 			writeSkippedFields(field.getSkips(), writer, rootObject);
 

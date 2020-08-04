@@ -184,13 +184,13 @@ public final class AnnotationHelper{
 			final File[] files = elem.file.listFiles();
 			final Map<BucketType, SimpleDynamicArray<File>> bucket = bucketByFileType(files);
 			final SimpleDynamicArray<File> bucketDirectory = bucket.get(BucketType.DIRECTORY);
-			for(int i = 0; i < bucketDirectory.size(); i ++){
-				final File dir = bucketDirectory.get(i);
+			for(int i = 0; i < bucketDirectory.limit; i ++){
+				final File dir = bucketDirectory.data[i];
 				stack.add(new ClassDescriptor(dir, elem.packageName + POINT + dir.getName()));
 			}
 			final SimpleDynamicArray<File> bucketFile = bucket.get(BucketType.FILE);
-			for(int i = 0; i < bucketFile.size(); i ++){
-				final File file = bucketFile.get(i);
+			for(int i = 0; i < bucketFile.limit; i ++){
+				final File file = bucketFile.data[i];
 				final Class<?> cls = getClassFromFilename(elem.packageName, file.getName());
 				addIf(classes, cls, type);
 			}

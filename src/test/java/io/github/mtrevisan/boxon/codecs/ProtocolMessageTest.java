@@ -182,11 +182,11 @@ class ProtocolMessageTest{
 		Assertions.assertTrue(protocolMessage.canBeDecoded());
 		SimpleDynamicArray<ProtocolMessage.BoundedField> boundedFields = protocolMessage.getBoundedFields();
 		Assertions.assertNotNull(boundedFields);
-		Assertions.assertEquals(15, boundedFields.size());
+		Assertions.assertEquals(15, boundedFields.limit);
 		SimpleDynamicArray<ProtocolMessage.EvaluatedField> evaluatedFields = protocolMessage.getEvaluatedFields();
 		Assertions.assertNotNull(evaluatedFields);
-		Assertions.assertEquals(1, evaluatedFields.size());
-		ProtocolMessage.EvaluatedField evaluatedField = evaluatedFields.get(0);
+		Assertions.assertEquals(1, evaluatedFields.limit);
+		ProtocolMessage.EvaluatedField evaluatedField = evaluatedFields.data[0];
 		Assertions.assertEquals("receptionTime", evaluatedField.getName());
 		Assertions.assertEquals(ZonedDateTime.class, evaluatedField.getType());
 		Evaluate evaluate = evaluatedField.getBinding();
@@ -250,8 +250,8 @@ class ProtocolMessageTest{
 		Assertions.assertTrue(protocolMessage.canBeDecoded());
 		SimpleDynamicArray<ProtocolMessage.BoundedField> boundedFields = protocolMessage.getBoundedFields();
 		Assertions.assertNotNull(boundedFields);
-		Assertions.assertEquals(16, boundedFields.size());
-		ProtocolMessage.BoundedField childField = boundedFields.get(boundedFields.size() - 1);
+		Assertions.assertEquals(16, boundedFields.limit);
+		ProtocolMessage.BoundedField childField = boundedFields.data[boundedFields.limit - 1];
 		Assertions.assertNotNull(childField);
 		Assertions.assertEquals("anotherNumberInt", childField.getName());
 	}

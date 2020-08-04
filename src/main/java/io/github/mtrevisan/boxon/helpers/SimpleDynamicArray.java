@@ -90,14 +90,6 @@ public class SimpleDynamicArray<T>{
 		return data.getClass().getComponentType();
 	}
 
-	public synchronized T get(final int index){
-		return data[index];
-	}
-
-	public synchronized int size(){
-		return limit;
-	}
-
 	public synchronized boolean isEmpty(){
 		return (limit == 0);
 	}
