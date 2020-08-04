@@ -122,10 +122,6 @@ public class DynamicArray<T>{
 		}
 	}
 
-	private Class<?> getDataType(){
-		return data.getClass().getComponentType();
-	}
-
 	/**
 	 * Returns whether this array contains no elements.
 	 *
@@ -170,6 +166,10 @@ public class DynamicArray<T>{
 	private T[] newInstance(final int size){
 		final Class<?> type = getDataType();
 		return (T[])Array.newInstance(type, size);
+	}
+
+	private Class<?> getDataType(){
+		return data.getClass().getComponentType();
 	}
 
 	@Override
