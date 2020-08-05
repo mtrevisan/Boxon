@@ -54,10 +54,7 @@ public final class ExceptionHelper{
 	private static StringBuilder composeExceptionMessage(final Throwable t, final boolean includeLineNumber){
 		final StringBuilder sb = new StringBuilder();
 		if(includeLineNumber)
-			sb.append(extractExceptionName(t))
-				.append(" at ")
-				.append(extractExceptionPosition(t))
-				.append(' ');
+			includeLineNumber(t, sb);
 		if(t.getClass() != RuntimeException.class)
 			sb.append(t.getClass().getSimpleName())
 				.append(':')
@@ -68,11 +65,22 @@ public final class ExceptionHelper{
 		return sb;
 	}
 
-	private static String extractExceptionPosition(final Throwable t){
+	private static void includeLineNumber(final Throwable t, final StringBuilder sb){
+		sb.append(extractExceptionName(t))
+			.append(" at ");
 		final StackTraceElement stackTrace = extractOwnCodeStackTrace(t);
 		final String filename = stackTrace.getFileName();
-		return (filename != null? filename.substring(0, filename.lastIndexOf('.')) + ".": "")
-			+ stackTrace.getMethodName() + ":" + stackTrace.getLineNumber();
+		if(filename != null)
+			//append class name
+			sb.append(filename, 0, filename.lastIndexOf('.'))
+				.append('.');
+		sb
+			//append method name
+			.append(stackTrace.getMethodName())
+			.append(':')
+			//append line number
+			.append(stackTrace.getLineNumber())
+			.append(' ');
 	}
 
 	private static StackTraceElement extractOwnCodeStackTrace(final Throwable t){
