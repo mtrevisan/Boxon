@@ -85,7 +85,9 @@ final class ProtocolMessageParser{
 
 			final ProtocolMessage.BoundedField field = fields.data[i];
 
-			readSkippedFields(field.getSkips(), reader, rootObject);
+			final Skip[] skips = field.getSkips();
+			if(skips != null)
+				readSkippedFields(skips, reader, rootObject);
 
 			if(processField(field.getCondition(), rootObject))
 				decodeField(protocolMessage, reader, parserContext, field);
@@ -122,9 +124,8 @@ final class ProtocolMessageParser{
 	}
 
 	private void readSkippedFields(final Skip[] skips, final BitReader reader, final Object rootObject){
-		if(skips != null)
-			for(int i = 0; i < skips.length; i ++)
-				readSkip(skips[i], reader, rootObject);
+		for(int i = 0; i < skips.length; i ++)
+			readSkip(skips[i], reader, rootObject);
 	}
 
 	private void readSkip(final Skip skip, final BitReader reader, final Object rootObject){
@@ -197,7 +198,9 @@ final class ProtocolMessageParser{
 
 			final ProtocolMessage.BoundedField field = fields.data[i];
 
-			writeSkippedFields(field.getSkips(), writer, rootObject);
+			final Skip[] skips = field.getSkips();
+			if(skips != null)
+				writeSkippedFields(skips, writer, rootObject);
 
 			if(processField(field.getCondition(), rootObject))
 				encodeField(protocolMessage, writer, parserContext, field);
@@ -264,9 +267,8 @@ final class ProtocolMessageParser{
 	}
 
 	private void writeSkippedFields(final Skip[] skips, final BitWriter writer, final Object rootObject){
-		if(skips != null)
-			for(int i = 0; i < skips.length; i ++)
-				writeSkip(skips[i], writer, rootObject);
+		for(int i = 0; i < skips.length; i ++)
+			writeSkip(skips[i], writer, rootObject);
 	}
 
 	private void writeSkip(final Skip skip, final BitWriter writer, final Object rootObject){
