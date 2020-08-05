@@ -178,7 +178,7 @@ class ProtocolMessageTest{
 		Assertions.assertNotNull(header);
 		Assertions.assertArrayEquals(new String[]{"+"}, header.start());
 		Assertions.assertEquals("-", header.end());
-		Assertions.assertTrue(protocolMessage.canBeDecoded());
+		Assertions.assertTrue(protocolMessage.canBeCoded());
 		DynamicArray<ProtocolMessage.BoundedField> boundedFields = protocolMessage.getBoundedFields();
 		Assertions.assertNotNull(boundedFields);
 		Assertions.assertEquals(15, boundedFields.limit);
@@ -246,7 +246,7 @@ class ProtocolMessageTest{
 		Assertions.assertNotNull(header);
 		Assertions.assertArrayEquals(new String[]{"++"}, header.start());
 		Assertions.assertEquals("--", header.end());
-		Assertions.assertTrue(protocolMessage.canBeDecoded());
+		Assertions.assertTrue(protocolMessage.canBeCoded());
 		DynamicArray<ProtocolMessage.BoundedField> boundedFields = protocolMessage.getBoundedFields();
 		Assertions.assertNotNull(boundedFields);
 		Assertions.assertEquals(16, boundedFields.limit);

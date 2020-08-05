@@ -53,7 +53,7 @@ class ProtocolMessageParserTest{
 		protocolMessageParser.loader.loadCodecs();
 		ProtocolMessage<ACKMessageHex> protocolMessage = ProtocolMessage.createFrom(ACKMessageHex.class, protocolMessageParser.loader);
 
-		if(!protocolMessage.canBeDecoded())
+		if(!protocolMessage.canBeCoded())
 			Assertions.fail("Cannot decode message");
 
 		DeviceTypes deviceTypes = new DeviceTypes();
@@ -79,7 +79,7 @@ class ProtocolMessageParserTest{
 		protocolMessageParser.loader.loadCodecs();
 		ProtocolMessage<ACKMessageASCII> protocolMessage = ProtocolMessage.createFrom(ACKMessageASCII.class, protocolMessageParser.loader);
 
-		if(!protocolMessage.canBeDecoded())
+		if(!protocolMessage.canBeCoded())
 			Assertions.fail("Cannot decode message");
 
 		DeviceTypes deviceTypes = new DeviceTypes();

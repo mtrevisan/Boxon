@@ -327,7 +327,7 @@ final class ProtocolMessage<T>{
 		return checksum;
 	}
 
-	final boolean canBeDecoded(){
+	final boolean canBeCoded(){
 		return (header != null && !boundedFields.isEmpty());
 	}
 

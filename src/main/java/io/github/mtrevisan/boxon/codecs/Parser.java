@@ -219,6 +219,8 @@ public class Parser{
 				reader.createFallbackPoint();
 
 				final ProtocolMessage<?> protocolMessage = protocolMessageParser.loader.getProtocolMessage(reader);
+				if(!protocolMessage.canBeCoded())
+					throw new ProtocolMessageException("Cannot create data from a raw message");
 
 				final Object partialDecodedMessage = protocolMessageParser.decode(protocolMessage, reader, null);
 
@@ -291,8 +293,8 @@ public class Parser{
 		ComposeException exception = null;
 		try{
 			final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(data.getClass(), protocolMessageParser.loader);
-			if(!protocolMessage.canBeDecoded())
-				throw new ProtocolMessageException("Cannot create a protocol message from data");
+			if(!protocolMessage.canBeCoded())
+				throw new ProtocolMessageException("Cannot create a raw message from data");
 
 			protocolMessageParser.encode(protocolMessage, writer, null, data);
 		}

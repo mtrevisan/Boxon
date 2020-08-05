@@ -178,7 +178,7 @@ final class Loader{
 		final DynamicArray<ProtocolMessage> protocolMessages = DynamicArray.create(ProtocolMessage.class, annotatedClasses.size());
 		for(final Class<?> type : annotatedClasses){
 			final ProtocolMessage<?> from = ProtocolMessage.createFrom(type, this);
-			if(from.canBeDecoded())
+			if(from.canBeCoded())
 				protocolMessages.add(from);
 		}
 		return protocolMessages
