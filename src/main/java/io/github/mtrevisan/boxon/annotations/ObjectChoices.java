@@ -24,6 +24,8 @@
  */
 package io.github.mtrevisan.boxon.annotations;
 
+import io.github.mtrevisan.boxon.enums.ByteOrder;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

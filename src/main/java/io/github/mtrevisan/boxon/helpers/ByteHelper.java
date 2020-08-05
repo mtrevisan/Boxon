@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.helpers;
 
-import io.github.mtrevisan.boxon.annotations.ByteOrder;
+import io.github.mtrevisan.boxon.enums.ByteOrder;
 
 import java.math.BigInteger;
 import java.util.Arrays;

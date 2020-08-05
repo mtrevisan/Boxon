@@ -25,9 +25,9 @@
 package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.BindChecksum;
-import io.github.mtrevisan.boxon.annotations.ByteOrder;
 import io.github.mtrevisan.boxon.annotations.checksummers.CRC16;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
+import io.github.mtrevisan.boxon.enums.ByteOrder;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

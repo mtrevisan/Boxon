@@ -26,6 +26,7 @@ package io.github.mtrevisan.boxon.annotations;
 
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
+import io.github.mtrevisan.boxon.enums.ByteOrder;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
