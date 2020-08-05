@@ -62,6 +62,7 @@
 
 		<!-- Logging -->
 		<org.slf4j-api.version>1.7.30</org.slf4j-api.version>
+		<org.slf4j-log4j12.version>1.7.30</org.slf4j-log4j12.version>
 
 		<!-- JUnit -->
 		<junit.junit-jupiter-engine.version>5.6.2</junit.junit-jupiter-engine.version>
@@ -309,7 +310,7 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
-			<version>${org.slf4j-api.version}</version>
+			<version>${org.slf4j-log4j12.version}</version>
 		</dependency>
 
 		<!-- JUnit -->
