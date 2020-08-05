@@ -333,7 +333,7 @@ final class ProtocolMessage<T>{
 	}
 
 	@Override
-	public synchronized boolean equals(final Object obj){
+	public boolean equals(final Object obj){
 		if(obj == this)
 			return true;
 		if(obj == null || obj.getClass() != getClass())
@@ -344,7 +344,7 @@ final class ProtocolMessage<T>{
 	}
 
 	@Override
-	public synchronized int hashCode(){
+	public int hashCode(){
 		return cls.getName().hashCode();
 	}
 

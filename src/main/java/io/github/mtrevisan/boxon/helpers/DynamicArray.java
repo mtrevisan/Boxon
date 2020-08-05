@@ -76,7 +76,7 @@ public class DynamicArray<T>{
 	 *
 	 * @param array	Collection containing elements to be added to this array
 	 */
-	public synchronized void addAll(final DynamicArray<T> array){
+	public void addAll(final DynamicArray<T> array){
 		grow(array.limit);
 
 		System.arraycopy(array.data, 0, data, limit, array.limit);
@@ -90,7 +90,7 @@ public class DynamicArray<T>{
 	 * @param index	Index at which to insert the first element from the specified collection
 	 * @param collection	Collection containing elements to be added to this array
 	 */
-	public synchronized void addAll(final int index, final T[] collection){
+	public void addAll(final int index, final T[] collection){
 		final int addLength = collection.length;
 		if(addLength != 0){
 			grow(addLength);
@@ -128,12 +128,12 @@ public class DynamicArray<T>{
 	 * @return	Whether this array contains no elements.
 	 */
 	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
-	public synchronized boolean isEmpty(){
+	public boolean isEmpty(){
 		return (limit == 0);
 	}
 
 	/** Removes all of the elements from this array. */
-	public synchronized void reset(){
+	public void reset(){
 		limit = 0;
 	}
 
@@ -141,12 +141,12 @@ public class DynamicArray<T>{
 	 * Removes all of the elements from this array.
 	 * <p>The array will be emptied after this call returns.</p>
 	 */
-	public synchronized void clear(){
+	public void clear(){
 		data = null;
 		limit = -1;
 	}
 
-	public synchronized void join(final Function<T, String> reducer, final StringJoiner joiner){
+	public void join(final Function<T, String> reducer, final StringJoiner joiner){
 		for(int i = 0; i < limit; i ++)
 			joiner.add(reducer.apply(data[i]));
 	}
@@ -156,7 +156,7 @@ public class DynamicArray<T>{
 	 *
 	 * @return	A copy of the array
 	 */
-	public synchronized T[] extractCopy(){
+	public T[] extractCopy(){
 		final T[] copy = newInstance(limit);
 		System.arraycopy(data, 0, copy, 0, limit);
 		return copy;
@@ -178,7 +178,7 @@ public class DynamicArray<T>{
 	}
 
 	@Override
-	public synchronized boolean equals(final Object obj){
+	public boolean equals(final Object obj){
 		if(obj == this)
 			return true;
 		if(obj == null || obj.getClass() != getClass())
@@ -189,7 +189,7 @@ public class DynamicArray<T>{
 	}
 
 	@Override
-	public synchronized int hashCode(){
+	public int hashCode(){
 		return Integer.hashCode(limit) ^ Arrays.hashCode(data);
 	}
 
