@@ -31,6 +31,7 @@ import io.github.mtrevisan.boxon.annotations.exceptions.NoCodecException;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.enums.ByteOrder;
 import io.github.mtrevisan.boxon.helpers.BitSet;
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
 
 import java.util.Objects;
@@ -126,7 +127,7 @@ final class CodecHelper{
 	/** Extract pattern from a SpEL expression, or a string, or a regex pattern */
 	private static Pattern extractPattern(String match){
 		Pattern p = null;
-		if(isNotBlank(match)){
+		if(JavaHelper.isNotBlank(match)){
 			//try SpEL expression
 			match = extractSpELExpression(match);
 
@@ -155,10 +156,6 @@ final class CodecHelper{
 		}
 		catch(final Exception ignored){}
 		return p;
-	}
-
-	private static boolean isNotBlank(final String text){
-		return (text != null && !text.isBlank());
 	}
 
 	@SuppressWarnings("unchecked")

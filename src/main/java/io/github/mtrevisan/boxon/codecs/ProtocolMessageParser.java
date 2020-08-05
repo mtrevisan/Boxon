@@ -33,6 +33,7 @@ import io.github.mtrevisan.boxon.helpers.BitSet;
 import io.github.mtrevisan.boxon.helpers.ByteHelper;
 import io.github.mtrevisan.boxon.helpers.DynamicArray;
 import io.github.mtrevisan.boxon.helpers.ExceptionHelper;
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +54,7 @@ final class ProtocolMessageParser{
 
 
 		ParserContext(final Object parentObject, final T currentObject){
-			rootObject = (parentObject != null? parentObject: currentObject);
+			rootObject = JavaHelper.nonNullOrDefault(parentObject, currentObject);
 			this.currentObject = currentObject;
 		}
 
@@ -85,7 +86,7 @@ final class ProtocolMessageParser{
 
 			//process skip annotations:
 			final Skip[] skips = field.getSkips();
-			for(int k = 0; k < (skips != null? skips.length: 0); k ++)
+			for(int k = 0; k < JavaHelper.lengthOrZero(skips); k ++)
 				readSkip(skips[i], reader, parserContext.rootObject);
 
 			//check if field has to be processed...
@@ -140,7 +141,7 @@ final class ProtocolMessageParser{
 
 	private void readMessageTerminator(final ProtocolMessage<?> protocolMessage, final BitReader reader){
 		final MessageHeader header = protocolMessage.getHeader();
-		if(header != null && header.end().length() > 0){
+		if(header != null && !header.end().isEmpty()){
 			final Charset charset = Charset.forName(header.charset());
 			final byte[] messageTerminator = header.end().getBytes(charset);
 			final byte[] readMessageTerminator = reader.getBytes(messageTerminator.length);
@@ -162,9 +163,11 @@ final class ProtocolMessageParser{
 			final long startValue = checksum.startValue();
 			final long calculatedCRC = checksummer.calculateCRC(reader.array(), startPosition, endPosition, startValue);
 			final Number givenCRC = ReflectionHelper.getFieldValue(data, checksumData.getName());
-			if(givenCRC == null || calculatedCRC != givenCRC.longValue())
+			if(givenCRC == null)
+				throw new IllegalArgumentException("Something bad happened, cannot read message CRC");
+			if(calculatedCRC != givenCRC.longValue())
 				throw new IllegalArgumentException("Calculated CRC (0x" + Long.toHexString(calculatedCRC).toUpperCase()
-					+ ") does NOT match given CRC (0x" + (givenCRC != null? Long.toHexString(givenCRC.longValue()).toUpperCase(): "--") + ")");
+					+ ") does NOT match given CRC (0x" + Long.toHexString(givenCRC.longValue()).toUpperCase() + ")");
 		}
 	}
 
@@ -194,7 +197,7 @@ final class ProtocolMessageParser{
 
 			//process skip annotations:
 			final Skip[] skips = field.getSkips();
-			for(int k = 0; k < (skips != null? skips.length: 0); k ++)
+			for(int k = 0; k < JavaHelper.lengthOrZero(skips); k ++)
 				writeSkip(skips[k], writer, parserContext.rootObject);
 
 			//check if field has to be processed...

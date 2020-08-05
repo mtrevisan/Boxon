@@ -46,13 +46,13 @@ public final class ByteHelper{
 	 * @return	The hexadecimal characters
 	 */
 	public static String toHexString(final byte[] array){
-		final StringBuilder sb = new StringBuilder((array != null? array.length << 1: 0));
-		if(array != null)
-			for(int i = 0; i < array.length; i ++){
-				final byte elem = array[i];
-				sb.append(Character.forDigit((elem >>> 4) & 0x0F, 16));
-				sb.append(Character.forDigit((elem & 0x0F), 16));
-			}
+		final int length = JavaHelper.lengthOrZero(array);
+		final StringBuilder sb = new StringBuilder(length << 1);
+		for(int i = 0; i < length; i ++){
+			final byte elem = array[i];
+			sb.append(Character.forDigit((elem >>> 4) & 0x0F, 16));
+			sb.append(Character.forDigit((elem & 0x0F), 16));
+		}
 		return sb.toString().toUpperCase();
 	}
 
@@ -63,7 +63,7 @@ public final class ByteHelper{
 	 * @return	Array of converted hexadecimal characters
 	 */
 	public static byte[] toByteArray(final String hexString){
-		final int len = (hexString != null? hexString.length(): 0);
+		final int len = JavaHelper.lengthOrZero(hexString);
 		if(len % 2 != 0)
 			throw new IllegalArgumentException("Malformed input");
 

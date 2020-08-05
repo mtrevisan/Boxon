@@ -22,48 +22,31 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.codecs.dtos;
-
-import io.github.mtrevisan.boxon.codecs.exceptions.ComposeException;
-import io.github.mtrevisan.boxon.helpers.DynamicArray;
-
-import java.util.Objects;
+package io.github.mtrevisan.boxon.helpers;
 
 
-public class ComposeResponse{
+public final class JavaHelper{
 
-	private byte[] composedMessage;
-	private final DynamicArray<ComposeException> errors = DynamicArray.create(ComposeException.class);
+	private JavaHelper(){}
 
-
-	public void setComposedMessage(final byte[] composedMessages){
-		this.composedMessage = composedMessages;
+	public static <T> T nonNullOrDefault(final T obj, final T defaultObject){
+		return (obj != null? obj: defaultObject);
 	}
 
-	public byte[] getComposedMessage(){
-		return composedMessage;
+	public static int lengthOrZero(final String text){
+		return (text != null? text.length(): 0);
 	}
 
-	public int getErrorCount(){
-		return errors.limit;
+	public static int lengthOrZero(final byte[] array){
+		return (array != null? array.length: 0);
 	}
 
-	public boolean hasErrors(){
-		return !errors.isEmpty();
+	public static <T> int lengthOrZero(final T[] array){
+		return (array != null? array.length: 0);
 	}
 
-	public ComposeException getErrorAt(final int index){
-		return errors.data[index];
-	}
-
-	public void addError(final ComposeException exception){
-		Objects.requireNonNull(exception);
-
-		errors.add(exception);
-	}
-
-	public ComposeException[] getErrors(){
-		return errors.extractCopy();
+	public static boolean isNotBlank(final String text){
+		return (text != null && !text.isBlank());
 	}
 
 }

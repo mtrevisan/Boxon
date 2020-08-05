@@ -267,7 +267,7 @@ final class ProtocolMessage<T>{
 			final Annotation annotation = declaredAnnotations[i];
 			final Class<? extends Annotation> annotationType = annotation.annotationType();
 			if(annotationType != Skip.class && annotationType != Evaluate.class
-					&& loader.getCodec(annotationType) != null)
+					&& loader.hasCodec(annotationType))
 				annotations.add(annotation);
 		}
 		return annotations;

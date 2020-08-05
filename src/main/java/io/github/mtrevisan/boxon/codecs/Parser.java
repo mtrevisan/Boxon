@@ -38,6 +38,7 @@ import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 
 
 public class Parser{
@@ -65,8 +66,7 @@ public class Parser{
 	 */
 	public Parser withContext(final Map<String, Object> context){
 		if(context != null)
-			for(final Map.Entry<String, Object> entry : context.entrySet())
-				Evaluator.addToContext(entry.getKey(), entry.getValue());
+			context.forEach(Evaluator::addToContext);
 		return this;
 	}
 
@@ -77,8 +77,10 @@ public class Parser{
 	 * @return	The {@link Parser}, used for chaining.
 	 */
 	public Parser withContextFunction(final Method method){
-		if(method != null)
-			Evaluator.addToContext(method);
+		Objects.requireNonNull(method);
+
+		Evaluator.addToContext(method);
+
 		return this;
 	}
 
@@ -287,7 +289,8 @@ public class Parser{
 		final BitWriter writer = new BitWriter();
 		for(int i = 0; i < data.length; i ++){
 			final ComposeException error = compose(writer, data[i]);
-			response.addError(error);
+			if(error != null)
+				response.addError(error);
 		}
 		writer.flush();
 

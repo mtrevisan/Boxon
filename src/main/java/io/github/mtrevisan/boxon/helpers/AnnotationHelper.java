@@ -179,7 +179,7 @@ public final class AnnotationHelper{
 			final ClassDescriptor elem = stack.pop();
 
 			final File[] files = elem.file.listFiles();
-			final Map<BucketType, DynamicArray<File>> bucket = bucketByFileType(files != null? files: new File[0]);
+			final Map<BucketType, DynamicArray<File>> bucket = bucketByFileType(JavaHelper.nonNullOrDefault(files, new File[0]));
 			final DynamicArray<File> bucketDirectory = bucket.get(BucketType.DIRECTORY);
 			for(int i = 0; i < bucketDirectory.limit; i ++){
 				final File dir = bucketDirectory.data[i];

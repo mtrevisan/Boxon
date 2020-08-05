@@ -122,6 +122,10 @@ final class Loader{
 		codecs.put(codec.codecType(), codec);
 	}
 
+	final boolean hasCodec(final Class<?> type){
+		return (getCodec(type) != null);
+	}
+
 	final CodecInterface<?> getCodec(final Class<?> type){
 		return codecs.get(type);
 	}

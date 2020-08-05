@@ -180,7 +180,7 @@ public final class ReflectionHelper{
 
 
 	public static Object createArrayPrimitive(final Class<?> type, final int length){
-		if(!ReflectionHelper.isPrimitive(type))
+		if(!isPrimitive(type))
 			throw new AnnotationException("Argument cannot be a non-primitive: {}", type);
 
 		return Array.newInstance(type, length);
@@ -188,7 +188,7 @@ public final class ReflectionHelper{
 
 	@SuppressWarnings("unchecked")
 	public static <T> T[] createArray(final Class<? extends T> type, final int length){
-		if(ReflectionHelper.isPrimitive(type))
+		if(isPrimitive(type))
 			throw new AnnotationException("Argument cannot be a primitive: {}", type);
 
 		return (T[])Array.newInstance(type, length);
