@@ -36,6 +36,7 @@ import io.github.mtrevisan.boxon.helpers.matchers.PatternMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collection;
@@ -43,11 +44,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.TreeMap;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 
@@ -78,9 +76,7 @@ final class Loader{
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load codecs
 	 */
-	final void loadCodecs(Class<?>... basePackageClasses){
-		basePackageClasses = removeDuplicates(basePackageClasses);
-
+	final void loadCodecs(final Class<?>... basePackageClasses){
 		if(LOGGER.isInfoEnabled())
 			LOGGER.info("Load codecs from package(s) {}",
 				Arrays.stream(basePackageClasses).map(Class::getPackageName).collect(Collectors.joining(", ", "[", "]")));
@@ -95,7 +91,7 @@ final class Loader{
 			else
 				LOGGER.warn("Cannot create an instance of codec {}", type.getSimpleName());
 		}
-		addCodecs(codecs.data);
+		addCodecsInner(codecs.data);
 
 		LOGGER.trace("Codecs loaded are {}", codecs.limit);
 	}
@@ -111,13 +107,17 @@ final class Loader{
 
 		LOGGER.info("Load codecs from input");
 
+		addCodecsInner(codecs);
+
+		LOGGER.trace("Codecs loaded are {}", codecs.length);
+	}
+
+	private void addCodecsInner(final CodecInterface<?>[] codecs){
 		for(int i = 0; i < codecs.length; i ++){
 			final CodecInterface<?> codec = codecs[i];
 			if(codec != null)
 				this.codecs.put(codec.codecType(), codec);
 		}
-
-		LOGGER.trace("Codecs loaded are {}", codecs.length);
 	}
 
 	final boolean hasCodec(final Class<?> type){
@@ -135,7 +135,7 @@ final class Loader{
 	 *
 	 * @throws IllegalArgumentException	If the codecs was not loaded yet,
 	 */
-	synchronized final void loadProtocolMessages(){
+	final void loadProtocolMessages(){
 		loadProtocolMessages(ReflectionHelper.extractCallerClasses());
 	}
 
@@ -144,33 +144,16 @@ final class Loader{
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes
 	 */
-	synchronized final void loadProtocolMessages(Class<?>... basePackageClasses){
-		basePackageClasses = removeDuplicates(basePackageClasses);
-
+	final void loadProtocolMessages(final Class<?>... basePackageClasses){
 		if(LOGGER.isInfoEnabled())
 			LOGGER.info("Load parsing classes from package(s) {}",
 				Arrays.stream(basePackageClasses).map(Class::getPackageName).collect(Collectors.joining(", ", "[", "]")));
 
 		final Collection<Class<?>> annotatedClasses = AnnotationHelper.extractClasses(MessageHeader.class, basePackageClasses);
 		final ProtocolMessage<?>[] protocolMessages = extractProtocolMessages(annotatedClasses);
-		loadProtocolMessages(protocolMessages);
+		addProtocolMessagesInner(protocolMessages);
 
 		LOGGER.trace("Protocol messages loaded are {}", protocolMessages.length);
-	}
-
-	private Class<?>[] removeDuplicates(final Class<?>[] basePackageClasses){
-		@SuppressWarnings("rawtypes")
-		final DynamicArray<Class> list = DynamicArray.create(Class.class, basePackageClasses.length);
-		final Predicate<Class<?>> predicate = distinctByKey(Class::getPackageName);
-		for(final Class<?> basePackageClass : basePackageClasses)
-			if(predicate.test(basePackageClass))
-				list.add(basePackageClass);
-		return list.extractCopy();
-	}
-
-	private static <T> Predicate<T> distinctByKey(final Function<? super T, ?> keyExtractor){
-		final Set<Object> seen = ConcurrentHashMap.newKeySet();
-		return t -> seen.add(keyExtractor.apply(t));
 	}
 
 	private ProtocolMessage<?>[] extractProtocolMessages(final Collection<Class<?>> annotatedClasses){
@@ -180,6 +163,8 @@ final class Loader{
 			final ProtocolMessage<?> from = ProtocolMessage.createFrom(type, this);
 			if(from.canBeCoded())
 				protocolMessages.add(from);
+			else
+				throw new ProtocolMessageException("Cannot create a raw message from data: cannot scan protocol message");
 		}
 		return protocolMessages
 			.extractCopy();
@@ -191,9 +176,15 @@ final class Loader{
 	 *
 	 * @param protocolMessages	The list of protocol messages to be loaded
 	 */
-	synchronized final void loadProtocolMessages(final ProtocolMessage<?>... protocolMessages){
+	final void addProtocolMessages(final ProtocolMessage<?>... protocolMessages){
 		LOGGER.info("Load parsing classes from input");
 
+		addProtocolMessagesInner(protocolMessages);
+
+		LOGGER.trace("Protocol messages loaded are {}", protocolMessages.length);
+	}
+
+	private void addProtocolMessagesInner(final ProtocolMessage<?>[] protocolMessages){
 		for(final ProtocolMessage<?> protocolMessage : protocolMessages){
 			try{
 				loadProtocolMessageInner(protocolMessage);
@@ -202,8 +193,6 @@ final class Loader{
 				LOGGER.error("Cannot load class {}", protocolMessage.getType().getSimpleName(), e);
 			}
 		}
-
-		LOGGER.trace("Protocol messages loaded are {}", protocolMessages.length);
 	}
 
 	private void loadProtocolMessageInner(final ProtocolMessage<?> protocolMessage){
@@ -233,7 +222,22 @@ final class Loader{
 				return entry.getValue();
 		}
 
-		throw new ProtocolMessageException("Cannot find any protocol message for message");
+		throw new ProtocolMessageException("Cannot find any protocol message for given raw message");
+	}
+
+	final ProtocolMessage<?> getProtocolMessage(final Class<?> type) throws UnsupportedEncodingException{
+		final MessageHeader header = type.getAnnotation(MessageHeader.class);
+		if(header == null)
+			throw new ProtocolMessageException("The given class type is not a valid protocol message");
+
+		//calculate key
+		final String key = ByteHelper.toHexString(header.start()[0].getBytes(header.charset()));
+
+		final ProtocolMessage<?> protocolMessage = protocolMessages.get(key);
+		if(protocolMessage == null)
+			throw new ProtocolMessageException("Cannot find any protocol message for given class type");
+
+		return protocolMessage;
 	}
 
 

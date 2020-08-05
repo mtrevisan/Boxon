@@ -25,7 +25,6 @@
 package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
-import io.github.mtrevisan.boxon.annotations.exceptions.ProtocolMessageException;
 import io.github.mtrevisan.boxon.codecs.dtos.ComposeResponse;
 import io.github.mtrevisan.boxon.codecs.dtos.ParseResponse;
 import io.github.mtrevisan.boxon.codecs.exceptions.ComposeException;
@@ -147,7 +146,7 @@ public class Parser{
 	 * @return	The {@link Parser}, used for chaining.
 	 */
 	public final Parser withProtocolMessages(final ProtocolMessage<?>... protocolMessages){
-		protocolMessageParser.loader.loadProtocolMessages(protocolMessages);
+		protocolMessageParser.loader.addProtocolMessages(protocolMessages);
 		return this;
 	}
 
@@ -159,7 +158,7 @@ public class Parser{
 	 * @return	The {@link Parser}, used for chaining.
 	 */
 	public final Parser addProtocolMessage(final ProtocolMessage<?> protocolMessage){
-		protocolMessageParser.loader.loadProtocolMessages(protocolMessage);
+		protocolMessageParser.loader.addProtocolMessages(protocolMessage);
 		return this;
 	}
 
@@ -219,8 +218,6 @@ public class Parser{
 				reader.createFallbackPoint();
 
 				final ProtocolMessage<?> protocolMessage = protocolMessageParser.loader.getProtocolMessage(reader);
-				if(!protocolMessage.canBeCoded())
-					throw new ProtocolMessageException("Cannot create data from a raw message");
 
 				final Object partialDecodedMessage = protocolMessageParser.decode(protocolMessage, reader, null);
 
@@ -292,9 +289,7 @@ public class Parser{
 	private ComposeException compose(final BitWriter writer, final Object data){
 		ComposeException exception = null;
 		try{
-			final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(data.getClass(), protocolMessageParser.loader);
-			if(!protocolMessage.canBeCoded())
-				throw new ProtocolMessageException("Cannot create a raw message from data");
+			final ProtocolMessage<?> protocolMessage = protocolMessageParser.loader.getProtocolMessage(data.getClass());
 
 			protocolMessageParser.encode(protocolMessage, writer, null, data);
 		}

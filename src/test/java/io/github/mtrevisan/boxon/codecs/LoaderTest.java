@@ -38,7 +38,7 @@ class LoaderTest{
 		Loader loader = new Loader();
 		loader.loadCodecs();
 
-		loader.loadProtocolMessages(new ProtocolMessage<?>[0]);
+		loader.addProtocolMessages(new ProtocolMessage<?>[0]);
 	}
 
 	@Test
@@ -60,12 +60,9 @@ class LoaderTest{
 	@Test
 	void loadCodecsAfterProtocolMessages(){
 		Loader loader = new Loader();
-		loader.loadProtocolMessages(LoaderTest.class);
-		loader.loadCodecs();
-
-		byte[] payload = ByteHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
-		BitReader reader = BitReader.wrap(payload);
-		Assertions.assertThrows(ProtocolMessageException.class, () -> loader.getProtocolMessage(reader));
+		Exception e = Assertions.assertThrows(ProtocolMessageException.class,
+			() -> loader.loadProtocolMessages(LoaderTest.class));
+		Assertions.assertEquals("Cannot create a raw message from data: cannot scan protocol message", e.getMessage());
 	}
 
 	@Test
