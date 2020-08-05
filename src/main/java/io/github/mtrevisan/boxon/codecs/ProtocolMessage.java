@@ -332,4 +332,20 @@ final class ProtocolMessage<T>{
 		return cls.getSimpleName();
 	}
 
+	@Override
+	public synchronized boolean equals(final Object obj){
+		if(obj == this)
+			return true;
+		if(obj == null || obj.getClass() != getClass())
+			return false;
+
+		final ProtocolMessage<?> rhs = (ProtocolMessage<?>)obj;
+		return (cls == rhs.cls);
+	}
+
+	@Override
+	public synchronized int hashCode(){
+		return cls.getName().hashCode();
+	}
+
 }
