@@ -52,14 +52,13 @@ final class ProtocolMessageParser{
 		private final T currentObject;
 
 
-		ParserContext(final Object rootObject, final T currentObject){
-			this.rootObject = rootObject;
+		ParserContext(final Object parentObject, final T currentObject){
+			rootObject = (parentObject != null? parentObject: currentObject);
 			this.currentObject = currentObject;
 		}
 
 		void addSelfToEvaluatorContext(){
-			if(currentObject != rootObject)
-				Evaluator.addToContext(CodecHelper.CONTEXT_SELF, currentObject);
+			Evaluator.addToContext(CodecHelper.CONTEXT_SELF, currentObject);
 		}
 
 	}
@@ -74,26 +73,28 @@ final class ProtocolMessageParser{
 		final T currentObject = ReflectionHelper.getCreator(protocolMessage.getType())
 			.get();
 
-		//select parent object, discard children
-		final Object rootObject = (parentObject != null? parentObject: currentObject);
-		final ParserContext<T> parserContext = new ParserContext<>(rootObject, currentObject);
+		final ParserContext<T> parserContext = new ParserContext<>(parentObject, currentObject);
 
 		//decode message fields:
 		final DynamicArray<ProtocolMessage.BoundedField> fields = protocolMessage.getBoundedFields();
 		for(int i = 0; i < fields.limit; i ++){
+			//add current object in the context
 			parserContext.addSelfToEvaluatorContext();
 
 			final ProtocolMessage.BoundedField field = fields.data[i];
 
+			//process skip annotations:
 			final Skip[] skips = field.getSkips();
 			for(int k = 0; k < (skips != null? skips.length: 0); k ++)
-				readSkip(skips[i], reader, rootObject);
+				readSkip(skips[i], reader, parserContext.rootObject);
 
-			if(processField(field.getCondition(), rootObject))
+			//check if field has to be processed...
+			if(processField(field.getCondition(), parserContext.rootObject))
+				//... and if so, process it
 				decodeField(protocolMessage, reader, parserContext, field);
 		}
 
-		processEvaluatedFields(protocolMessage, rootObject);
+		processEvaluatedFields(protocolMessage, parserContext.rootObject);
 
 		readMessageTerminator(protocolMessage, reader);
 
@@ -145,14 +146,13 @@ final class ProtocolMessageParser{
 			final byte[] readMessageTerminator = reader.getBytes(messageTerminator.length);
 			//verifying terminators
 			if(!Arrays.equals(messageTerminator, readMessageTerminator))
-				throw new IllegalArgumentException("Message does not terminate with 0x"
-					+ ByteHelper.toHexString(messageTerminator));
+				throw new ProtocolMessageException("Message does not terminate with 0x{}", ByteHelper.toHexString(messageTerminator));
 		}
 	}
 
 	private <T> void verifyChecksum(final ProtocolMessage<T> protocolMessage, final T data, int startPosition, final BitReader reader){
-		final ProtocolMessage.BoundedField checksumData = protocolMessage.getChecksum();
-		if(checksumData != null){
+		if(protocolMessage.isChecksumPresent()){
+			final ProtocolMessage.BoundedField checksumData = protocolMessage.getChecksum();
 			final BindChecksum checksum = (BindChecksum)checksumData.getBinding();
 			startPosition += checksum.skipStart();
 			final int endPosition = reader.position() - checksum.skipEnd();
@@ -182,27 +182,28 @@ final class ProtocolMessageParser{
 	}
 
 	final <T> void encode(final ProtocolMessage<?> protocolMessage, final BitWriter writer, final Object parentObject, final T currentObject){
-		//select parent object, discard children
-		final Object rootObject = (parentObject != null? parentObject: currentObject);
-		final ParserContext<T> parserContext = new ParserContext<>(rootObject, currentObject);
+		final ParserContext<T> parserContext = new ParserContext<>(parentObject, currentObject);
 
 		//encode message fields:
 		final DynamicArray<ProtocolMessage.BoundedField> fields = protocolMessage.getBoundedFields();
 		for(int i = 0; i < fields.limit; i ++){
+			//add current object in the context
 			parserContext.addSelfToEvaluatorContext();
 
 			final ProtocolMessage.BoundedField field = fields.data[i];
 
+			//process skip annotations:
 			final Skip[] skips = field.getSkips();
 			for(int k = 0; k < (skips != null? skips.length: 0); k ++)
-				writeSkip(skips[k], writer, rootObject);
+				writeSkip(skips[k], writer, parserContext.rootObject);
 
-			if(processField(field.getCondition(), rootObject))
+			//check if field has to be processed...
+			if(processField(field.getCondition(), parserContext.rootObject))
+				//... and if so, process it
 				encodeField(protocolMessage, writer, parserContext, field);
 		}
 
-		final MessageHeader header = protocolMessage.getHeader();
-		closeMessage(header, writer);
+		closeMessage(protocolMessage, writer);
 
 		writer.flush();
 	}
@@ -232,7 +233,8 @@ final class ProtocolMessageParser{
 		return (condition.isEmpty() || Evaluator.evaluate(condition, rootObject, boolean.class));
 	}
 
-	private void closeMessage(final MessageHeader header, final BitWriter writer){
+	private void closeMessage(final ProtocolMessage<?> protocolMessage, final BitWriter writer){
+		final MessageHeader header = protocolMessage.getHeader();
 		if(header != null && !header.end().isEmpty()){
 			final Charset charset = Charset.forName(header.charset());
 			final byte[] messageTerminator = header.end().getBytes(charset);

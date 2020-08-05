@@ -319,6 +319,10 @@ final class ProtocolMessage<T>{
 		return evaluatedFields;
 	}
 
+	final boolean isChecksumPresent(){
+		return (checksum != null);
+	}
+
 	final BoundedField getChecksum(){
 		return checksum;
 	}
