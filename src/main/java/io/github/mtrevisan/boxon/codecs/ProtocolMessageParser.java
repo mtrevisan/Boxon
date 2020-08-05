@@ -31,9 +31,9 @@ import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
 import io.github.mtrevisan.boxon.annotations.exceptions.ProtocolMessageException;
 import io.github.mtrevisan.boxon.helpers.BitSet;
 import io.github.mtrevisan.boxon.helpers.ByteHelper;
+import io.github.mtrevisan.boxon.helpers.DynamicArray;
 import io.github.mtrevisan.boxon.helpers.ExceptionHelper;
 import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
-import io.github.mtrevisan.boxon.helpers.DynamicArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
