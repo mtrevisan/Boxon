@@ -131,20 +131,6 @@ public final class ByteHelper{
 		}
 	}
 
-	/**
-	 * Reverses the order of the given array.
-	 *
-	 * @param array	The array to reverse
-	 */
-	public static void reverse(final int[] array){
-		for(int start = 0, end = array.length - 1; start < end; start ++, end --){
-			//swap array[start] with array[end]
-			array[start] ^= array[end];
-			array[end] ^= array[start];
-			array[start] ^= array[end];
-		}
-	}
-
 
 	/**
 	 * Convert the value to signed primitive

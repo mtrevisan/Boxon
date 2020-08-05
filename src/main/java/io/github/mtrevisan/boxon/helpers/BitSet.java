@@ -152,7 +152,21 @@ public final class BitSet{
 			indexes[i] = size - indexes[i] - 1;
 
 		//re-sort indexes
-		ByteHelper.reverse(indexes);
+		reverse(indexes);
+	}
+
+	/**
+	 * Reverses the order of the given array.
+	 *
+	 * @param array	The array to reverse
+	 */
+	private static void reverse(final int[] array){
+		for(int start = 0, end = array.length - 1; start < end; start ++, end --){
+			//swap array[start] with array[end]
+			array[start] ^= array[end];
+			array[end] ^= array[start];
+			array[start] ^= array[end];
+		}
 	}
 
 	/**
