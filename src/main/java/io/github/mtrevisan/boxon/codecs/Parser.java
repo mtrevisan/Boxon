@@ -223,6 +223,7 @@ public class Parser{
 		int start = 0;
 		while(reader.hasRemaining()){
 			start = reader.position();
+
 			try{
 				//save state of the reader (restored upon a decoding error)
 				reader.createFallbackPoint();
