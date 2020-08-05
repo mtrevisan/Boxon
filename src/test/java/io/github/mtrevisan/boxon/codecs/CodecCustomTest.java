@@ -77,7 +77,7 @@ class CodecCustomTest{
 	@Test
 	void customAnnotation(){
 		ProtocolMessageParser protocolMessageParser = new ProtocolMessageParser();
-		protocolMessageParser.loader.loadCodecs(new VariableLengthByteArray());
+		protocolMessageParser.loader.addCodecs(new VariableLengthByteArray());
 
 		CodecInterface<?> codec = protocolMessageParser.loader.getCodec(VarLengthEncoded.class);
 		byte[] encodedValue = new byte[]{0x01, 0x02, 0x03};

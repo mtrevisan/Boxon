@@ -41,8 +41,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
@@ -70,7 +70,7 @@ final class Loader{
 	 * <p>This method should be called from a method inside a class that lies on a parent of all the codecs.</p>
 	 */
 	final void loadCodecs(){
-		loadCodecs(extractCallerClasses());
+		loadCodecs(ReflectionHelper.extractCallerClasses());
 	}
 
 	/**
@@ -86,40 +86,38 @@ final class Loader{
 				Arrays.stream(basePackageClasses).map(Class::getPackageName).collect(Collectors.joining(", ", "[", "]")));
 
 		final Collection<Class<?>> derivedClasses = AnnotationHelper.extractClasses(CodecInterface.class, basePackageClasses);
+		final DynamicArray<CodecInterface> codecs = DynamicArray.create(CodecInterface.class, derivedClasses.size());
 		for(final Class<?> type : derivedClasses){
 			final CodecInterface<?> codec = (CodecInterface<?>)ReflectionHelper.getCreator(type)
 				.get();
 			if(codec != null)
-				addCodec(codec);
+				codecs.add(codec);
 			else
 				LOGGER.warn("Cannot create an instance of codec {}", type.getSimpleName());
 		}
+		addCodecs(codecs.data);
 
-		LOGGER.trace("Codecs loaded are {}", codecs.size());
+		LOGGER.trace("Codecs loaded are {}", codecs.limit);
 	}
 
 	/**
 	 * Loads all the given codecs that extends {@link CodecInterface}.
+	 * <p>NOTE: If the loader previously contains a codec for a given key, the old codec is replaced by the new one.</p>
 	 *
 	 * @param codecs	The list of codecs to be loaded
 	 */
-	final void loadCodecs(final CodecInterface<?>... codecs){
+	final void addCodecs(final CodecInterface<?>... codecs){
+		Objects.requireNonNull(codecs);
+
 		LOGGER.info("Load codecs from input");
 
-		for(int i = 0; i < codecs.length; i ++)
-			addCodec(codecs[i]);
+		for(int i = 0; i < codecs.length; i ++){
+			final CodecInterface<?> codec = codecs[i];
+			if(codec != null)
+				this.codecs.put(codec.codecType(), codec);
+		}
 
 		LOGGER.trace("Codecs loaded are {}", codecs.length);
-	}
-
-	/**
-	 * Load a singe codec that extends {@link CodecInterface}.
-	 * <p>If the parser previously contained a codec for the given key, the old codec is replaced by the specified one.</p>
-	 *
-	 * @param codec	The codec to add
-	 */
-	private void addCodec(final CodecInterface<?> codec){
-		codecs.put(codec.codecType(), codec);
 	}
 
 	final boolean hasCodec(final Class<?> type){
@@ -138,7 +136,7 @@ final class Loader{
 	 * @throws IllegalArgumentException	If the codecs was not loaded yet,
 	 */
 	synchronized final void loadProtocolMessages(){
-		loadProtocolMessages(extractCallerClasses());
+		loadProtocolMessages(ReflectionHelper.extractCallerClasses());
 	}
 
 	/**
@@ -155,7 +153,7 @@ final class Loader{
 
 		final Collection<Class<?>> annotatedClasses = AnnotationHelper.extractClasses(MessageHeader.class, basePackageClasses);
 		final ProtocolMessage<?>[] protocolMessages = extractProtocolMessages(annotatedClasses);
-		loadProtocolMessagesInner(protocolMessages);
+		loadProtocolMessages(protocolMessages);
 
 		LOGGER.trace("Protocol messages loaded are {}", protocolMessages.length);
 	}
@@ -188,35 +186,15 @@ final class Loader{
 	}
 
 	/**
-	 * Loads all the protocol classes annotated with {@link MessageHeader}.
+	 * Adds all the protocol classes annotated with {@link MessageHeader}.
+	 * <p>NOTE: If the loader previously contains a protocol message for a given key, the old protocol message is replaced by the new one.</p>
 	 *
 	 * @param protocolMessages	The list of protocol messages to be loaded
 	 */
 	synchronized final void loadProtocolMessages(final ProtocolMessage<?>... protocolMessages){
 		LOGGER.info("Load parsing classes from input");
 
-		loadProtocolMessagesInner(protocolMessages);
-
-		LOGGER.trace("Protocol messages loaded are {}", protocolMessages.length);
-	}
-
-	/**
-	 * Loads a protocol class annotated with {@link MessageHeader}.
-	 *
-	 * @param protocolMessage	The protocol message to be loaded
-	 */
-	synchronized final void addProtocolMessages(final ProtocolMessage<?> protocolMessage){
-		LOGGER.info("Load parsing classes from input");
-
-		loadProtocolMessageInner(protocolMessage);
-
-		LOGGER.trace("Protocol message loaded");
-	}
-
-	private void loadProtocolMessagesInner(final ProtocolMessage<?>... protocolMessages){
-		//remove duplicates
-		final Set<ProtocolMessage<?>> messages = new HashSet<>(Arrays.asList(protocolMessages));
-		for(final ProtocolMessage<?> protocolMessage : messages){
+		for(final ProtocolMessage<?> protocolMessage : protocolMessages){
 			try{
 				loadProtocolMessageInner(protocolMessage);
 			}
@@ -224,6 +202,8 @@ final class Loader{
 				LOGGER.error("Cannot load class {}", protocolMessage.getType().getSimpleName(), e);
 			}
 		}
+
+		LOGGER.trace("Protocol messages loaded are {}", protocolMessages.length);
 	}
 
 	private void loadProtocolMessageInner(final ProtocolMessage<?> protocolMessage){
@@ -290,19 +270,6 @@ final class Loader{
 		final int startIndex = reader.position();
 		final int index = PATTERN_MATCHER.indexOf(message, startIndex + 1, startMessageSequence, preProcessedPattern);
 		return (index >= startIndex? index: -1);
-	}
-
-
-	private Class<?>[] extractCallerClasses(){
-		Class<?>[] classes = new Class[0];
-		try{
-			final StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-			final Class<?> callerClass1 = Class.forName(stackTrace[2].getClassName());
-			final Class<?> callerClass2 = Class.forName(stackTrace[3].getClassName());
-			classes = new Class[]{callerClass1, callerClass2};
-		}
-		catch(final ClassNotFoundException ignored){}
-		return classes;
 	}
 
 }

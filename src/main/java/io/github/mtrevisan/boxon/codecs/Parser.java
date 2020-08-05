@@ -114,19 +114,7 @@ public class Parser{
 	 * @return	The {@link Parser}, used for chaining.
 	 */
 	public final Parser withCodecs(final CodecInterface<?>... codecs){
-		protocolMessageParser.loader.loadCodecs(codecs);
-		return this;
-	}
-
-	/**
-	 * Load a singe codec that extends {@link CodecInterface}.
-	 * <p>If the parser previously contained a codec for the given key, the old codec is replaced by the specified one.</p>
-	 *
-	 * @param codec	The codec to add
-	 * @return	The {@link Parser}, used for chaining.
-	 */
-	public final Parser addCodec(final CodecInterface<?> codec){
-		protocolMessageParser.loader.loadCodecs(codec);
+		protocolMessageParser.loader.addCodecs(codecs);
 		return this;
 	}
 

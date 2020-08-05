@@ -829,7 +829,6 @@ class VariableLengthByteArray implements CodecInterface<VarLengthEncoded>{
 parser.withDefaultCodecs(); //loads all codecs from the package where this call was made
 parser.withCodecs(CodecCustomTest.class); //this class is where the custom codec resides
 parser.withCodecs(new VariableLengthByteArray());
-parser.addCodec(new VariableLengthByteArray()); //adds a single codec
 ```
 
 <br/>
@@ -889,7 +888,7 @@ Parser parser = Parser.create()
    .withContext(context)
    .withContextFunction(VersionHelper.class.getDeclaredMethod("compareVersion", new Class[]{String.class, String.class}))
    .withDefaultCodecs()
-   .withProtocolMessages("base.package.messages");
+   .withDefaultProtocolMessages();
 
 //parse the message
 byte[] payload = ...

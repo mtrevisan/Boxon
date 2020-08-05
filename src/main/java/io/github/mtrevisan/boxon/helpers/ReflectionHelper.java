@@ -55,6 +55,19 @@ public final class ReflectionHelper{
 	private ReflectionHelper(){}
 
 
+	public static Class<?>[] extractCallerClasses(){
+		Class<?>[] classes = new Class[0];
+		try{
+			final StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+			final Class<?> callerClass1 = Class.forName(stackTrace[2].getClassName());
+			final Class<?> callerClass2 = Class.forName(stackTrace[3].getClassName());
+			classes = new Class[]{callerClass1, callerClass2};
+		}
+		catch(final ClassNotFoundException ignored){}
+		return classes;
+	}
+
+
 	@SuppressWarnings("unchecked")
 	public static <T> T getFieldValue(final Object obj, final String fieldName){
 		try{
