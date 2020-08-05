@@ -86,8 +86,8 @@ final class ProtocolMessageParser{
 			final ProtocolMessage.BoundedField field = fields.data[i];
 
 			final Skip[] skips = field.getSkips();
-			if(skips != null)
-				readSkippedFields(skips, reader, rootObject);
+			for(int k = 0; k < (skips != null? skips.length: 0); k ++)
+				readSkip(skips[i], reader, rootObject);
 
 			if(processField(field.getCondition(), rootObject))
 				decodeField(protocolMessage, reader, parserContext, field);
@@ -121,11 +121,6 @@ final class ProtocolMessageParser{
 			//this assumes the reading was done correctly
 			rethrowException(protocolMessage, field, e);
 		}
-	}
-
-	private void readSkippedFields(final Skip[] skips, final BitReader reader, final Object rootObject){
-		for(int i = 0; i < skips.length; i ++)
-			readSkip(skips[i], reader, rootObject);
 	}
 
 	private void readSkip(final Skip skip, final BitReader reader, final Object rootObject){
@@ -199,8 +194,8 @@ final class ProtocolMessageParser{
 			final ProtocolMessage.BoundedField field = fields.data[i];
 
 			final Skip[] skips = field.getSkips();
-			if(skips != null)
-				writeSkippedFields(skips, writer, rootObject);
+			for(int k = 0; k < (skips != null? skips.length: 0); k ++)
+				writeSkip(skips[k], writer, rootObject);
 
 			if(processField(field.getCondition(), rootObject))
 				encodeField(protocolMessage, writer, parserContext, field);
@@ -264,11 +259,6 @@ final class ProtocolMessageParser{
 	private void rethrowException(final ProtocolMessage<?> protocolMessage, final ProtocolMessage.BoundedField field, final Exception e){
 		final String message = ExceptionHelper.getMessageNoLineNumber(e);
 		throw new RuntimeException(message + " in field " + protocolMessage + "." + field.getName());
-	}
-
-	private void writeSkippedFields(final Skip[] skips, final BitWriter writer, final Object rootObject){
-		for(int i = 0; i < skips.length; i ++)
-			writeSkip(skips[i], writer, rootObject);
 	}
 
 	private void writeSkip(final Skip skip, final BitWriter writer, final Object rootObject){
