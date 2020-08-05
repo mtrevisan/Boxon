@@ -107,13 +107,13 @@ final class ProtocolMessageParser{
 
 		try{
 			if(LOGGER.isTraceEnabled())
-				LOGGER.trace("reading {}.{} with bind {}", protocolMessage.getType().getSimpleName(), field.getName(), binding.annotationType().getSimpleName());
+				LOGGER.trace("reading {}.{} with bind {}", protocolMessage, field.getName(), binding.annotationType().getSimpleName());
 
 			final Object value = codec.decode(reader, binding, parserContext.rootObject);
 			ReflectionHelper.setFieldValue(parserContext.currentObject, field.getName(), value);
 
 			if(LOGGER.isTraceEnabled())
-				LOGGER.trace("read {}.{} = {}", protocolMessage.getType().getSimpleName(), field.getName(), value);
+				LOGGER.trace("read {}.{} = {}", protocolMessage, field.getName(), value);
 		}
 		catch(final Exception e){
 			//this assumes the reading was done correctly
