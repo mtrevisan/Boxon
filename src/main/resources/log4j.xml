@@ -9,7 +9,7 @@
 		</layout>
 	</appender>
 
-	<appender name="fileAppender" class="org.apache.log4j.RollingFileAppender">
+	<appender name="fileAppender" class="org.apache.log4j.DailyRollingFileAppender">
 		<param name="File" value="boxon.log" />
 		<param name="DatePattern" value="'.'yyyy-MM-dd'.log'" />
 		<param name="Append" value="true" />
