@@ -237,14 +237,14 @@ final class ProtocolMessage<T>{
 		this.cls = cls;
 
 		header = cls.getAnnotation(MessageHeader.class);
-		//retrieve all declared fields in the current class, therefore NOT in the parent classes
+		//retrieve all declared fields in the current class AND in the parent classes
 		loadAnnotatedFields(AnnotationHelper.getDeclaredFields(cls, true), loader);
 	}
 
-	private void loadAnnotatedFields(final Field[] fields, final Loader loader){
-		boundedFields.ensureCapacity(fields.length);
-		for(int i = 0; i < fields.length; i ++){
-			final Field field = fields[i];
+	private void loadAnnotatedFields(final DynamicArray<Field> fields, final Loader loader){
+		boundedFields.ensureCapacity(fields.limit);
+		for(int i = 0; i < fields.limit; i ++){
+			final Field field = fields.data[i];
 			final Skip[] skips = field.getDeclaredAnnotationsByType(Skip.class);
 			final BindChecksum checksum = field.getDeclaredAnnotation(BindChecksum.class);
 

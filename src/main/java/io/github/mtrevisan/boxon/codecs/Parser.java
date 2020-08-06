@@ -62,6 +62,7 @@ public class Parser{
 	 *
 	 * @param key	The key used to reference the value.
 	 * @param value	The value.
+	 * @return	The {@link Parser}, used for chaining.
 	 */
 	public Parser addToContext(final String key, final Object value){
 		Evaluator.addToContext(key, value);
@@ -123,7 +124,7 @@ public class Parser{
 	 * @return	The {@link Parser}, used for chaining.
 	 */
 	public final Parser withDefaultCodecs(){
-		protocolMessageParser.loader.loadCodecs();
+		protocolMessageParser.loader.loadDefaultCodecs();
 		return this;
 	}
 
@@ -156,7 +157,7 @@ public class Parser{
 	 * @return	The {@link Parser}, used for chaining.
 	 */
 	public final Parser withDefaultProtocolMessages(){
-		protocolMessageParser.loader.loadProtocolMessages();
+		protocolMessageParser.loader.loadDefaultProtocolMessages();
 		return this;
 	}
 

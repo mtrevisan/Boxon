@@ -41,6 +41,13 @@ public class DynamicArray<T>{
 	private final float growthRate;
 
 
+	public static <T> DynamicArray<T> createFrom(final T[] array){
+		final DynamicArray<T> da = new DynamicArray<>((Class<T>) array.getClass().getComponentType(), array.length, DEFAULT_GROWTH_RATE);
+		for(int i = 0; i < array.length; i ++)
+			da.add(array[i]);
+		return da;
+	}
+
 	public static <T> DynamicArray<T> create(final Class<T> type){
 		return new DynamicArray<>(type, 0, DEFAULT_GROWTH_RATE);
 	}

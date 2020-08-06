@@ -75,10 +75,10 @@ public final class AnnotationHelper{
 	 * @param recursively	If {@code true}, it retrieves fields from all class hierarchy
 	 * @return	An array of all the fields of the given class
 	 */
-	public static Field[] getDeclaredFields(final Class<?> cls, final boolean recursively){
-		final Field[] result;
+	public static DynamicArray<Field> getDeclaredFields(final Class<?> cls, final boolean recursively){
+		final DynamicArray<Field> fields;
 		if(recursively){
-			final DynamicArray<Field> fields = DynamicArray.create(Field.class);
+			fields = DynamicArray.create(Field.class);
 			Class<?> currentType = cls;
 			while(currentType != Object.class){
 				final Field[] subfields = currentType.getDeclaredFields();
@@ -87,11 +87,10 @@ public final class AnnotationHelper{
 
 				currentType = currentType.getSuperclass();
 			}
-			result = fields.extractCopy();
 		}
 		else
-			result = cls.getDeclaredFields();
-		return result;
+			fields = DynamicArray.createFrom(cls.getDeclaredFields());
+		return fields;
 	}
 
 

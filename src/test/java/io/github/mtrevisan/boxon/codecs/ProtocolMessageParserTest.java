@@ -50,7 +50,7 @@ class ProtocolMessageParserTest{
 		BitReader reader = BitReader.wrap(payload);
 
 		ProtocolMessageParser protocolMessageParser = new ProtocolMessageParser();
-		protocolMessageParser.loader.loadCodecs();
+		protocolMessageParser.loader.loadDefaultCodecs();
 		ProtocolMessage<ACKMessageHex> protocolMessage = ProtocolMessage.createFrom(ACKMessageHex.class, protocolMessageParser.loader);
 
 		if(!protocolMessage.canBeCoded())
@@ -76,7 +76,7 @@ class ProtocolMessageParserTest{
 		BitReader reader = BitReader.wrap(payload);
 
 		ProtocolMessageParser protocolMessageParser = new ProtocolMessageParser();
-		protocolMessageParser.loader.loadCodecs();
+		protocolMessageParser.loader.loadDefaultCodecs();
 		ProtocolMessage<ACKMessageASCII> protocolMessage = ProtocolMessage.createFrom(ACKMessageASCII.class, protocolMessageParser.loader);
 
 		if(!protocolMessage.canBeCoded())
@@ -117,7 +117,7 @@ class ProtocolMessageParserTest{
 		BitReader reader = BitReader.wrap(payload);
 
 		ProtocolMessageParser protocolMessageParser = new ProtocolMessageParser();
-		protocolMessageParser.loader.loadCodecs();
+		protocolMessageParser.loader.loadDefaultCodecs();
 		ProtocolMessage<TestError1> protocolMessage = ProtocolMessage.createFrom(TestError1.class, protocolMessageParser.loader);
 
 		SpelEvaluationException exc = Assertions.assertThrows(SpelEvaluationException.class, () -> protocolMessageParser.decode(protocolMessage, reader, null));
@@ -139,7 +139,7 @@ class ProtocolMessageParserTest{
 		BitReader reader = BitReader.wrap(payload);
 
 		ProtocolMessageParser protocolMessageParser = new ProtocolMessageParser();
-		protocolMessageParser.loader.loadCodecs();
+		protocolMessageParser.loader.loadDefaultCodecs();
 		ProtocolMessage<TestError2> protocolMessage = ProtocolMessage.createFrom(TestError2.class, protocolMessageParser.loader);
 
 		Exception exc = Assertions.assertThrows(RuntimeException.class, () -> protocolMessageParser.decode(protocolMessage, reader, null));
@@ -174,7 +174,7 @@ class ProtocolMessageParserTest{
 		BitReader reader = BitReader.wrap(payload);
 
 		ProtocolMessageParser protocolMessageParser = new ProtocolMessageParser();
-		protocolMessageParser.loader.loadCodecs();
+		protocolMessageParser.loader.loadDefaultCodecs();
 		ProtocolMessage<TestError3> protocolMessage = ProtocolMessage.createFrom(TestError3.class, protocolMessageParser.loader);
 
 		Exception exc = Assertions.assertThrows(RuntimeException.class, () -> protocolMessageParser.decode(protocolMessage, reader, null));
@@ -209,7 +209,7 @@ class ProtocolMessageParserTest{
 		BitReader reader = BitReader.wrap(payload);
 
 		ProtocolMessageParser protocolMessageParser = new ProtocolMessageParser();
-		protocolMessageParser.loader.loadCodecs();
+		protocolMessageParser.loader.loadDefaultCodecs();
 		ProtocolMessage<TestError4> protocolMessage = ProtocolMessage.createFrom(TestError4.class, protocolMessageParser.loader);
 
 		Exception exc = Assertions.assertThrows(RuntimeException.class, () -> protocolMessageParser.decode(protocolMessage, reader, null));
@@ -231,7 +231,7 @@ class ProtocolMessageParserTest{
 		BitReader reader = BitReader.wrap(payload);
 
 		ProtocolMessageParser protocolMessageParser = new ProtocolMessageParser();
-		protocolMessageParser.loader.loadCodecs();
+		protocolMessageParser.loader.loadDefaultCodecs();
 		ProtocolMessage<TestError5> protocolMessage = ProtocolMessage.createFrom(TestError5.class, protocolMessageParser.loader);
 
 		Exception exc = Assertions.assertThrows(RuntimeException.class, () -> protocolMessageParser.decode(protocolMessage, reader, null));
@@ -266,7 +266,7 @@ class ProtocolMessageParserTest{
 		BitReader reader = BitReader.wrap(payload);
 
 		ProtocolMessageParser protocolMessageParser = new ProtocolMessageParser();
-		protocolMessageParser.loader.loadCodecs();
+		protocolMessageParser.loader.loadDefaultCodecs();
 		ProtocolMessage<TestComposition> protocolMessage = ProtocolMessage.createFrom(TestComposition.class, protocolMessageParser.loader);
 
 		TestComposition parsed = protocolMessageParser.decode(protocolMessage, reader, null);

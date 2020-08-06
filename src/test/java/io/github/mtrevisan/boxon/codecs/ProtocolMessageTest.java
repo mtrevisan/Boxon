@@ -169,7 +169,7 @@ class ProtocolMessageTest{
 	@SuppressWarnings("SimplifiableAssertion")
 	void creation(){
 		Loader loader = new Loader();
-		loader.loadCodecs();
+		loader.loadDefaultCodecs();
 		ProtocolMessage<Message> protocolMessage = ProtocolMessage.createFrom(Message.class, loader);
 
 		Assertions.assertNotNull(protocolMessage);
@@ -237,7 +237,7 @@ class ProtocolMessageTest{
 	@Test
 	void inheritance(){
 		Loader loader = new Loader();
-		loader.loadCodecs();
+		loader.loadDefaultCodecs();
 		ProtocolMessage<MessageChild> protocolMessage = ProtocolMessage.createFrom(MessageChild.class, loader);
 
 		Assertions.assertNotNull(protocolMessage);

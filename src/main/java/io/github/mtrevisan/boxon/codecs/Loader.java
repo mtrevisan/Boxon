@@ -67,7 +67,7 @@ final class Loader{
 	 * Loads all the codecs that extends {@link CodecInterface}.
 	 * <p>This method should be called from a method inside a class that lies on a parent of all the codecs.</p>
 	 */
-	final void loadCodecs(){
+	final void loadDefaultCodecs(){
 		loadCodecs(ReflectionHelper.extractCallerClasses());
 	}
 
@@ -135,7 +135,7 @@ final class Loader{
 	 *
 	 * @throws IllegalArgumentException	If the codecs was not loaded yet,
 	 */
-	final void loadProtocolMessages(){
+	final void loadDefaultProtocolMessages(){
 		loadProtocolMessages(ReflectionHelper.extractCallerClasses());
 	}
 
@@ -150,13 +150,13 @@ final class Loader{
 				Arrays.stream(basePackageClasses).map(Class::getPackageName).collect(Collectors.joining(", ", "[", "]")));
 
 		final Collection<Class<?>> annotatedClasses = AnnotationHelper.extractClasses(MessageHeader.class, basePackageClasses);
-		final ProtocolMessage<?>[] protocolMessages = extractProtocolMessages(annotatedClasses);
-		addProtocolMessagesInner(protocolMessages);
+		final DynamicArray<ProtocolMessage> protocolMessages = extractProtocolMessages(annotatedClasses);
+		addProtocolMessagesInner(protocolMessages.data);
 
-		LOGGER.trace("Protocol messages loaded are {}", protocolMessages.length);
+		LOGGER.trace("Protocol messages loaded are {}", protocolMessages.limit);
 	}
 
-	private ProtocolMessage<?>[] extractProtocolMessages(final Collection<Class<?>> annotatedClasses){
+	private DynamicArray<ProtocolMessage> extractProtocolMessages(final Collection<Class<?>> annotatedClasses){
 		@SuppressWarnings("rawtypes")
 		final DynamicArray<ProtocolMessage> protocolMessages = DynamicArray.create(ProtocolMessage.class, annotatedClasses.size());
 		for(final Class<?> type : annotatedClasses){
@@ -166,8 +166,7 @@ final class Loader{
 			else
 				throw new ProtocolMessageException("Cannot create a raw message from data: cannot scan protocol message");
 		}
-		return protocolMessages
-			.extractCopy();
+		return protocolMessages;
 	}
 
 	/**
@@ -185,14 +184,15 @@ final class Loader{
 	}
 
 	private void addProtocolMessagesInner(final ProtocolMessage<?>[] protocolMessages){
-		for(final ProtocolMessage<?> protocolMessage : protocolMessages){
-			try{
-				loadProtocolMessageInner(protocolMessage);
+		for(final ProtocolMessage<?> protocolMessage : protocolMessages)
+			if(protocolMessage != null){
+				try{
+					loadProtocolMessageInner(protocolMessage);
+				}
+				catch(final Exception e){
+					LOGGER.error("Cannot load class {}", protocolMessage.getType().getSimpleName(), e);
+				}
 			}
-			catch(final Exception e){
-				LOGGER.error("Cannot load class {}", protocolMessage.getType().getSimpleName(), e);
-			}
-		}
 	}
 
 	private void loadProtocolMessageInner(final ProtocolMessage<?> protocolMessage){

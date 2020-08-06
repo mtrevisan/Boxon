@@ -36,7 +36,7 @@ class LoaderTest{
 	@Test
 	void loadFromMap(){
 		Loader loader = new Loader();
-		loader.loadCodecs();
+		loader.loadDefaultCodecs();
 
 		loader.addProtocolMessages(new ProtocolMessage<?>[0]);
 	}
@@ -44,15 +44,15 @@ class LoaderTest{
 	@Test
 	void loadFromScan(){
 		Loader loader = new Loader();
-		loader.loadCodecs();
+		loader.loadDefaultCodecs();
 
-		loader.loadProtocolMessages();
+		loader.loadDefaultProtocolMessages();
 	}
 
 	@Test
 	void loadFromScanWithBasePackage(){
 		Loader loader = new Loader();
-		loader.loadCodecs();
+		loader.loadDefaultCodecs();
 
 		loader.loadProtocolMessages(LoaderTest.class);
 	}
@@ -68,7 +68,7 @@ class LoaderTest{
 	@Test
 	void loadProtocolMessage(){
 		Loader loader = new Loader();
-		loader.loadCodecs();
+		loader.loadDefaultCodecs();
 		loader.loadProtocolMessages(LoaderTest.class);
 
 		byte[] payload = ByteHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
@@ -82,7 +82,7 @@ class LoaderTest{
 	@Test
 	void cannotLoadProtocolMessage(){
 		Loader loader = new Loader();
-		loader.loadCodecs();
+		loader.loadDefaultCodecs();
 		loader.loadProtocolMessages(LoaderTest.class);
 
 		byte[] payload = ByteHelper.toByteArray("3b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
@@ -93,7 +93,7 @@ class LoaderTest{
 	@Test
 	void findNextProtocolMessage(){
 		Loader loader = new Loader();
-		loader.loadCodecs();
+		loader.loadDefaultCodecs();
 		loader.loadProtocolMessages(LoaderTest.class);
 
 		byte[] payload = ByteHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
@@ -106,7 +106,7 @@ class LoaderTest{
 	@Test
 	void cannotFindNextProtocolMessage(){
 		Loader loader = new Loader();
-		loader.loadCodecs();
+		loader.loadDefaultCodecs();
 		loader.loadProtocolMessages(LoaderTest.class);
 
 		byte[] payload = ByteHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");

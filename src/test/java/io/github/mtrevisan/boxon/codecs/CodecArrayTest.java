@@ -235,7 +235,7 @@ class CodecArrayTest{
 		};
 
 		ProtocolMessageParser protocolMessageParser = new ProtocolMessageParser();
-		protocolMessageParser.loader.loadCodecs();
+		protocolMessageParser.loader.loadDefaultCodecs();
 		ReflectionHelper.setFieldValue(codec, "protocolMessageParser", protocolMessageParser);
 		BitWriter writer = new BitWriter();
 		codec.encode(writer, annotation, null, encodedValue);
@@ -256,7 +256,7 @@ class CodecArrayTest{
 	@Test
 	void arrayOfDifferentObjects(){
 		Loader loader = new Loader();
-		loader.loadCodecs();
+		loader.loadDefaultCodecs();
 		ProtocolMessage<TestChoice4> protocolMessage = ProtocolMessage.createFrom(TestChoice4.class, loader);
 		Parser parser = Parser.create()
 			.withDefaultCodecs()
@@ -287,7 +287,7 @@ class CodecArrayTest{
 	@Test
 	void arrayOfDifferentObjectsWithNoPrefix(){
 		Loader loader = new Loader();
-		loader.loadCodecs();
+		loader.loadDefaultCodecs();
 		ProtocolMessage<TestChoice5> protocolMessage = ProtocolMessage.createFrom(TestChoice5.class, loader);
 		Parser parser = Parser.create()
 			.withDefaultCodecs()

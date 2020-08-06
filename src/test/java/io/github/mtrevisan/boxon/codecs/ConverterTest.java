@@ -90,7 +90,7 @@ class ConverterTest{
 	@Test
 	void wrongInputOnConverter(){
 		Loader loader = new Loader();
-		loader.loadCodecs();
+		loader.loadDefaultCodecs();
 		ProtocolMessage<TestConverter1> protocolMessage = ProtocolMessage.createFrom(TestConverter1.class, loader);
 		Parser parser = Parser.create()
 			.withDefaultCodecs()
@@ -112,7 +112,7 @@ class ConverterTest{
 	@Test
 	void wrongOutputFromConverter(){
 		Loader loader = new Loader();
-		loader.loadCodecs();
+		loader.loadDefaultCodecs();
 		ProtocolMessage<TestConverter2> protocolMessage = ProtocolMessage.createFrom(TestConverter2.class, loader);
 		Parser parser = Parser.create()
 			.withDefaultCodecs()
@@ -134,7 +134,7 @@ class ConverterTest{
 	@Test
 	void allowedOutputFromConverter(){
 		Loader loader = new Loader();
-		loader.loadCodecs();
+		loader.loadDefaultCodecs();
 		ProtocolMessage<TestConverter3> protocolMessage = ProtocolMessage.createFrom(TestConverter3.class, loader);
 		Parser parser = Parser.create()
 			.withDefaultCodecs()
