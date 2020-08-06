@@ -28,7 +28,6 @@ import io.github.mtrevisan.boxon.annotations.BindObject;
 import io.github.mtrevisan.boxon.annotations.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.exceptions.NoCodecException;
-import io.github.mtrevisan.boxon.enums.ByteOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,18 +47,13 @@ final class CodecObject implements CodecInterface<BindObject>{
 	public final Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
 		final BindObject binding = (BindObject)annotation;
 
+		Class<?> type = binding.type();
+		final ObjectChoices selectFrom = binding.selectFrom();
 		try{
-			Class<?> type = binding.type();
-			final ObjectChoices selectFrom = binding.selectFrom();
-			final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
-			if(alternatives.length > 0){
-				//read prefix
-				final int prefixSize = selectFrom.prefixSize();
-				final ByteOrder prefixByteOrder = selectFrom.byteOrder();
-
-				final ObjectChoices.ObjectChoice chosenAlternative = (prefixSize > 0?
-					CodecHelper.chooseAlternativeWithPrefix(reader, prefixSize, prefixByteOrder, alternatives, rootObject):
-					CodecHelper.chooseAlternativeWithoutPrefix(alternatives, rootObject));
+			if(selectFrom.alternatives().length > 0){
+				final ObjectChoices.ObjectChoice chosenAlternative = (selectFrom.prefixSize() > 0?
+					CodecHelper.chooseAlternativeWithPrefix(reader, selectFrom, rootObject):
+					CodecHelper.chooseAlternativeWithoutPrefix(selectFrom, rootObject));
 
 				type = chosenAlternative.type();
 			}

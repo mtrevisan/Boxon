@@ -28,7 +28,6 @@ import io.github.mtrevisan.boxon.annotations.BindArray;
 import io.github.mtrevisan.boxon.annotations.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.exceptions.NoCodecException;
-import io.github.mtrevisan.boxon.enums.ByteOrder;
 import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,17 +67,13 @@ final class CodecArray implements CodecInterface<BindArray>{
 	}
 
 	private void decodeWithAlternatives(final BitReader reader, final Object[] array, final ObjectChoices selectFrom, final Object rootObject){
-		//read prefix
-		final int prefixSize = selectFrom.prefixSize();
-		final ByteOrder prefixByteOrder = selectFrom.byteOrder();
-
-		final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
+		final boolean hasPrefix = (selectFrom.prefixSize() > 0);
 
 		for(int i = 0; i < array.length; i ++){
 			try{
-				final ObjectChoices.ObjectChoice chosenAlternative = (prefixSize > 0?
-					CodecHelper.chooseAlternativeWithPrefix(reader, prefixSize, prefixByteOrder, alternatives, rootObject):
-					CodecHelper.chooseAlternativeWithoutPrefix(alternatives, rootObject));
+				final ObjectChoices.ObjectChoice chosenAlternative = (hasPrefix?
+					CodecHelper.chooseAlternativeWithPrefix(reader, selectFrom, rootObject):
+					CodecHelper.chooseAlternativeWithoutPrefix(selectFrom, rootObject));
 
 				//read object
 				final ProtocolMessage<?> subProtocolMessage = ProtocolMessage.createFrom(chosenAlternative.type(), protocolMessageParser.loader);
