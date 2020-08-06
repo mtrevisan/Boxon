@@ -36,6 +36,7 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Objects;
 
 
 final class Evaluator{
@@ -94,6 +95,8 @@ final class Evaluator{
 	 * @param value	The value.
 	 */
 	static void addToContext(final String key, final Object value){
+		Objects.requireNonNull(key);
+
 		CONTEXT.setVariable(key, value);
 	}
 
@@ -112,6 +115,8 @@ final class Evaluator{
 	 * @param key	The key used to reference the value to be removed.
 	 */
 	static void removeFromContext(final String key){
+		Objects.requireNonNull(key);
+
 		CONTEXT.setVariable(key, null);
 	}
 
