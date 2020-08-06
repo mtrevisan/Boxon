@@ -187,29 +187,30 @@ final class Loader{
 
 	private void addProtocolMessagesInner(final ProtocolMessage<?>[] protocolMessages){
 		for(int i = 0; i < protocolMessages.length; i ++)
-			if(protocolMessages[i] != null){
-				try{
-					loadProtocolMessageInner(protocolMessages[i]);
-				}
-				catch(final Exception e){
-					LOGGER.error("Cannot load class {}", protocolMessages[i].getType().getSimpleName(), e);
-				}
-			}
+			if(protocolMessages[i] != null)
+				loadProtocolMessageInner(protocolMessages[i]);
 	}
 
 	private void loadProtocolMessageInner(final ProtocolMessage<?> protocolMessage){
-		final MessageHeader header = protocolMessage.getHeader();
-		final Charset charset = Charset.forName(header.charset());
-		final String[] starts = header.start();
-		for(int i = 0; i < starts.length; i ++){
-			final String headerStart = starts[i];
-			//calculate key
-			final String key = ByteHelper.toHexString(headerStart.getBytes(charset));
-			if(this.protocolMessages.containsKey(key))
-				throw new ProtocolMessageException("Duplicate key `{}` found for class {}", headerStart, protocolMessage.getType().getSimpleName());
-
-			this.protocolMessages.put(key, protocolMessage);
+		try{
+			final MessageHeader header = protocolMessage.getHeader();
+			final Charset charset = Charset.forName(header.charset());
+			final String[] starts = header.start();
+			for(int i = 0; i < starts.length; i ++)
+				loadProtocolMessageInner(protocolMessage, starts[i], charset);
 		}
+		catch(final Exception e){
+			LOGGER.error("Cannot load class {}", protocolMessage.getType().getSimpleName(), e);
+		}
+	}
+
+	private void loadProtocolMessageInner(final ProtocolMessage<?> protocolMessage, final String headerStart, final Charset charset){
+		//calculate key
+		final String key = ByteHelper.toHexString(headerStart.getBytes(charset));
+		if(this.protocolMessages.containsKey(key))
+			throw new ProtocolMessageException("Duplicate key `{}` found for class {}", headerStart, protocolMessage.getType().getSimpleName());
+
+		this.protocolMessages.put(key, protocolMessage);
 	}
 
 	final ProtocolMessage<?> getProtocolMessage(final BitReader reader){
