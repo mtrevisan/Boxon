@@ -82,6 +82,7 @@ final class Loader{
 				Arrays.stream(basePackageClasses).map(Class::getPackageName).collect(Collectors.joining(", ", "[", "]")));
 
 		final Collection<Class<?>> derivedClasses = AnnotationHelper.extractClasses(CodecInterface.class, basePackageClasses);
+		@SuppressWarnings("rawtypes")
 		final DynamicArray<CodecInterface> codecs = DynamicArray.create(CodecInterface.class, derivedClasses.size());
 		for(final Class<?> type : derivedClasses){
 			final CodecInterface<?> codec = (CodecInterface<?>)ReflectionHelper.getCreator(type)
@@ -150,14 +151,15 @@ final class Loader{
 				Arrays.stream(basePackageClasses).map(Class::getPackageName).collect(Collectors.joining(", ", "[", "]")));
 
 		final Collection<Class<?>> annotatedClasses = AnnotationHelper.extractClasses(MessageHeader.class, basePackageClasses);
+		@SuppressWarnings("rawtypes")
 		final DynamicArray<ProtocolMessage> protocolMessages = extractProtocolMessages(annotatedClasses);
 		addProtocolMessagesInner(protocolMessages.data);
 
 		LOGGER.trace("Protocol messages loaded are {}", protocolMessages.limit);
 	}
 
+	@SuppressWarnings("rawtypes")
 	private DynamicArray<ProtocolMessage> extractProtocolMessages(final Collection<Class<?>> annotatedClasses){
-		@SuppressWarnings("rawtypes")
 		final DynamicArray<ProtocolMessage> protocolMessages = DynamicArray.create(ProtocolMessage.class, annotatedClasses.size());
 		for(final Class<?> type : annotatedClasses){
 			final ProtocolMessage<?> from = ProtocolMessage.createFrom(type, this);

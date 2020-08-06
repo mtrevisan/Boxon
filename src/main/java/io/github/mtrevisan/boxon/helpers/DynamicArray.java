@@ -42,9 +42,10 @@ public class DynamicArray<T>{
 
 
 	public static <T> DynamicArray<T> createFrom(final T[] array){
-		final DynamicArray<T> da = new DynamicArray<>((Class<T>) array.getClass().getComponentType(), array.length, DEFAULT_GROWTH_RATE);
-		for(int i = 0; i < array.length; i ++)
-			da.add(array[i]);
+		@SuppressWarnings("unchecked")
+		final DynamicArray<T> da = new DynamicArray<>((Class<T>)array.getClass().getComponentType(), array.length, DEFAULT_GROWTH_RATE);
+		System.arraycopy(array, 0, da.data, 0, array.length);
+		da.limit = array.length;
 		return da;
 	}
 
