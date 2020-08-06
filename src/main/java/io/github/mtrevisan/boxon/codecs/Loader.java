@@ -186,13 +186,13 @@ final class Loader{
 	}
 
 	private void addProtocolMessagesInner(final ProtocolMessage<?>[] protocolMessages){
-		for(final ProtocolMessage<?> protocolMessage : protocolMessages)
-			if(protocolMessage != null){
+		for(int i = 0; i < protocolMessages.length; i ++)
+			if(protocolMessages[i] != null){
 				try{
-					loadProtocolMessageInner(protocolMessage);
+					loadProtocolMessageInner(protocolMessages[i]);
 				}
 				catch(final Exception e){
-					LOGGER.error("Cannot load class {}", protocolMessage.getType().getSimpleName(), e);
+					LOGGER.error("Cannot load class {}", protocolMessages[i].getType().getSimpleName(), e);
 				}
 			}
 	}
