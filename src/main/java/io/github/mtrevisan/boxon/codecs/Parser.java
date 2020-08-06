@@ -83,6 +83,29 @@ public class Parser{
 		return this;
 	}
 
+	/**
+	 * Add a method to the context for the {@link Evaluator}.
+	 *
+	 * @param cls	The class in which the method resides.
+	 * @param methodName	The name of the method
+	 * @param parameterTypes	The parameter array
+	 * @return	The {@link Parser}, used for chaining.
+	 * @throws NoSuchMethodException	If a matching method is not found.
+	 * @throws SecurityException	If a security manager, <i>s</i>, is present and any of the following conditions is met:
+	 * 	<ul>
+	 * 		<li>the caller's class loader is not the same as the class loader of this class and invocation of
+	 * 		{@link SecurityManager#checkPermission s.checkPermission} method with {@code RuntimePermission("accessDeclaredMembers")}
+	 * 		denies access to the declared method</li>
+	 *			<li>the caller's class loader is not the same as or an ancestor of the class loader for the current class and
+	 *  		invocation of {@link SecurityManager#checkPackageAccess s.checkPackageAccess()} denies access to the package
+	 * 		of this class</li>
+	 * 	</ul>
+	 */
+	public Parser withContextFunction(final Class<?> cls, final String methodName, final Class<?>... parameterTypes) throws NoSuchMethodException,
+			SecurityException{
+		return withContextFunction(cls.getDeclaredMethod(methodName, parameterTypes));
+	}
+
 
 	/**
 	 * Loads all the codecs that extends {@link CodecInterface}.

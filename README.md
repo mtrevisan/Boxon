@@ -886,6 +886,7 @@ Parser parser = Parser.create()
 //... or pass the parent package (see all the constructors of Parser for more)
 Parser parser = Parser.create()
    .withContext(context)
+   .withContextFunction(VersionHelper.class, "compareVersion", String.class, String.class)
    .withContextFunction(VersionHelper.class.getDeclaredMethod("compareVersion", new Class[]{String.class, String.class}))
    .withDefaultCodecs()
    .withDefaultProtocolMessages();
