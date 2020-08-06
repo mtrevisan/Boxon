@@ -52,7 +52,7 @@ import java.util.StringJoiner;
  *
  * @param <T> The type of object the codec is able to decode/encode.
  */
-final class ProtocolMessage<T>{
+final class Template<T>{
 
 	private static final String EMPTY_STRING = "";
 
@@ -217,23 +217,23 @@ final class ProtocolMessage<T>{
 	private final MessageHeader header;
 	private final DynamicArray<BoundedField> boundedFields = DynamicArray.create(BoundedField.class);
 	private final DynamicArray<EvaluatedField> evaluatedFields = DynamicArray.create(EvaluatedField.class);
-	/** necessary to speed-up the creation of a ProtocolMessage (technically not needed because it's already present somewhere inside {@link #boundedFields}) */
+	/** necessary to speed-up the creation of a {@link Template} (technically not needed because it's already present somewhere inside {@link #boundedFields}) */
 	private BoundedField checksum;
 
 
 	/**
-	 * Constructs a new {@link ProtocolMessage}.
+	 * Constructs a new {@link Template}.
 	 *
-	 * @param <T>	The type of the objects to be returned by the {@link ProtocolMessage}.
-	 * @param type	The type of the objects to be returned by the {@link ProtocolMessage}.
+	 * @param <T>	The type of the objects to be returned by the {@link Template}.
+	 * @param type	The type of the objects to be returned by the {@link Template}.
 	 * @param loader	The loader used to verify if a codec annotation is valid.
-	 * @return	A new {@link ProtocolMessage} for the given type.
+	 * @return	A new {@link Template} for the given type.
 	 */
-	static <T> ProtocolMessage<T> createFrom(final Class<T> type, final Loader loader){
-		return new ProtocolMessage<>(type, loader);
+	static <T> Template<T> createFrom(final Class<T> type, final Loader loader){
+		return new Template<>(type, loader);
 	}
 
-	private ProtocolMessage(final Class<T> cls, final Loader loader){
+	private Template(final Class<T> cls, final Loader loader){
 		this.cls = cls;
 
 		header = cls.getAnnotation(MessageHeader.class);
@@ -343,7 +343,7 @@ final class ProtocolMessage<T>{
 		if(obj == null || obj.getClass() != getClass())
 			return false;
 
-		final ProtocolMessage<?> rhs = (ProtocolMessage<?>)obj;
+		final Template<?> rhs = (Template<?>)obj;
 		return (cls == rhs.cls);
 	}
 

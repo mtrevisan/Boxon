@@ -28,7 +28,7 @@ import io.github.mtrevisan.boxon.annotations.BindChecksum;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.Skip;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
-import io.github.mtrevisan.boxon.annotations.exceptions.ProtocolMessageException;
+import io.github.mtrevisan.boxon.annotations.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.helpers.BitSet;
 import io.github.mtrevisan.boxon.helpers.ByteHelper;
 import io.github.mtrevisan.boxon.helpers.DynamicArray;
@@ -43,9 +43,9 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 
 
-final class ProtocolMessageParser{
+final class TemplateParser{
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(ProtocolMessageParser.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(TemplateParser.class);
 
 	private static class ParserContext<T>{
 
@@ -68,21 +68,21 @@ final class ProtocolMessageParser{
 	final Loader loader = new Loader();
 
 
-	final <T> T decode(final ProtocolMessage<T> protocolMessage, final BitReader reader, final Object parentObject){
+	final <T> T decode(final Template<T> template, final BitReader reader, final Object parentObject){
 		final int startPosition = reader.position();
 
-		final T currentObject = ReflectionHelper.getCreator(protocolMessage.getType())
+		final T currentObject = ReflectionHelper.getCreator(template.getType())
 			.get();
 
 		final ParserContext<T> parserContext = new ParserContext<>(parentObject, currentObject);
 
 		//decode message fields:
-		final DynamicArray<ProtocolMessage.BoundedField> fields = protocolMessage.getBoundedFields();
+		final DynamicArray<Template.BoundedField> fields = template.getBoundedFields();
 		for(int i = 0; i < fields.limit; i ++){
 			//add current object in the context
 			parserContext.addSelfToEvaluatorContext();
 
-			final ProtocolMessage.BoundedField field = fields.data[i];
+			final Template.BoundedField field = fields.data[i];
 
 			//process skip annotations:
 			final Skip[] skips = field.getSkips();
@@ -92,36 +92,36 @@ final class ProtocolMessageParser{
 			//check if field has to be processed...
 			if(processField(field.getCondition(), parserContext.rootObject))
 				//... and if so, process it
-				decodeField(protocolMessage, reader, parserContext, field);
+				decodeField(template, reader, parserContext, field);
 		}
 
-		processEvaluatedFields(protocolMessage, parserContext.rootObject);
+		processEvaluatedFields(template, parserContext.rootObject);
 
-		readMessageTerminator(protocolMessage, reader);
+		readMessageTerminator(template, reader);
 
-		verifyChecksum(protocolMessage, currentObject, startPosition, reader);
+		verifyChecksum(template, currentObject, startPosition, reader);
 
 		return currentObject;
 	}
 
-	private <T> void decodeField(final ProtocolMessage<T> protocolMessage, final BitReader reader, final ParserContext<T> parserContext,
-			final ProtocolMessage.BoundedField field){
+	private <T> void decodeField(final Template<T> template, final BitReader reader, final ParserContext<T> parserContext,
+										  final Template.BoundedField field){
 		final Annotation binding = field.getBinding();
 		final CodecInterface<?> codec = retrieveCodec(binding.annotationType());
 
 		try{
 			if(LOGGER.isTraceEnabled())
-				LOGGER.trace("reading {}.{} with bind {}", protocolMessage, field.getName(), binding.annotationType().getSimpleName());
+				LOGGER.trace("reading {}.{} with bind {}", template, field.getName(), binding.annotationType().getSimpleName());
 
 			final Object value = codec.decode(reader, binding, parserContext.rootObject);
 			ReflectionHelper.setFieldValue(parserContext.currentObject, field.getName(), value);
 
 			if(LOGGER.isTraceEnabled())
-				LOGGER.trace("read {}.{} = {}", protocolMessage, field.getName(), value);
+				LOGGER.trace("read {}.{} = {}", template, field.getName(), value);
 		}
 		catch(final Exception e){
 			//this assumes the reading was done correctly
-			rethrowException(protocolMessage, field, e);
+			rethrowException(template, field, e);
 		}
 	}
 
@@ -139,21 +139,21 @@ final class ProtocolMessageParser{
 		}
 	}
 
-	private void readMessageTerminator(final ProtocolMessage<?> protocolMessage, final BitReader reader){
-		final MessageHeader header = protocolMessage.getHeader();
+	private void readMessageTerminator(final Template<?> template, final BitReader reader){
+		final MessageHeader header = template.getHeader();
 		if(header != null && !header.end().isEmpty()){
 			final Charset charset = Charset.forName(header.charset());
 			final byte[] messageTerminator = header.end().getBytes(charset);
 			final byte[] readMessageTerminator = reader.getBytes(messageTerminator.length);
 			//verifying terminators
 			if(!Arrays.equals(messageTerminator, readMessageTerminator))
-				throw new ProtocolMessageException("Message does not terminate with 0x{}", ByteHelper.toHexString(messageTerminator));
+				throw new TemplateException("Message does not terminate with 0x{}", ByteHelper.toHexString(messageTerminator));
 		}
 	}
 
-	private <T> void verifyChecksum(final ProtocolMessage<T> protocolMessage, final T data, int startPosition, final BitReader reader){
-		if(protocolMessage.isChecksumPresent()){
-			final ProtocolMessage.BoundedField checksumData = protocolMessage.getChecksum();
+	private <T> void verifyChecksum(final Template<T> template, final T data, int startPosition, final BitReader reader){
+		if(template.isChecksumPresent()){
+			final Template.BoundedField checksumData = template.getChecksum();
 			final BindChecksum checksum = (BindChecksum)checksumData.getBinding();
 			startPosition += checksum.skipStart();
 			final int endPosition = reader.position() - checksum.skipEnd();
@@ -171,10 +171,10 @@ final class ProtocolMessageParser{
 		}
 	}
 
-	private void processEvaluatedFields(final ProtocolMessage<?> protocolMessage, final Object rootObject){
-		final DynamicArray<ProtocolMessage.EvaluatedField> evaluatedFields = protocolMessage.getEvaluatedFields();
+	private void processEvaluatedFields(final Template<?> template, final Object rootObject){
+		final DynamicArray<Template.EvaluatedField> evaluatedFields = template.getEvaluatedFields();
 		for(int i = 0; i < evaluatedFields.limit; i ++){
-			final ProtocolMessage.EvaluatedField field = evaluatedFields.data[i];
+			final Template.EvaluatedField field = evaluatedFields.data[i];
 			final String condition = field.getBinding().condition();
 			final boolean process = (condition.isEmpty() || Evaluator.evaluate(condition, rootObject, boolean.class));
 			if(process){
@@ -184,16 +184,16 @@ final class ProtocolMessageParser{
 		}
 	}
 
-	final <T> void encode(final ProtocolMessage<?> protocolMessage, final BitWriter writer, final Object parentObject, final T currentObject){
+	final <T> void encode(final Template<?> template, final BitWriter writer, final Object parentObject, final T currentObject){
 		final ParserContext<T> parserContext = new ParserContext<>(parentObject, currentObject);
 
 		//encode message fields:
-		final DynamicArray<ProtocolMessage.BoundedField> fields = protocolMessage.getBoundedFields();
+		final DynamicArray<Template.BoundedField> fields = template.getBoundedFields();
 		for(int i = 0; i < fields.limit; i ++){
 			//add current object in the context
 			parserContext.addSelfToEvaluatorContext();
 
-			final ProtocolMessage.BoundedField field = fields.data[i];
+			final Template.BoundedField field = fields.data[i];
 
 			//process skip annotations:
 			final Skip[] skips = field.getSkips();
@@ -203,32 +203,32 @@ final class ProtocolMessageParser{
 			//check if field has to be processed...
 			if(processField(field.getCondition(), parserContext.rootObject))
 				//... and if so, process it
-				encodeField(protocolMessage, writer, parserContext, field);
+				encodeField(template, writer, parserContext, field);
 		}
 
-		closeMessage(protocolMessage, writer);
+		closeMessage(template, writer);
 
 		writer.flush();
 	}
 
-	private <T> void encodeField(final ProtocolMessage<?> protocolMessage, final BitWriter writer, final ParserContext<T> parserContext,
-			final ProtocolMessage.BoundedField field){
+	private <T> void encodeField(final Template<?> template, final BitWriter writer, final ParserContext<T> parserContext,
+										  final Template.BoundedField field){
 		final Annotation binding = field.getBinding();
 		final CodecInterface<?> codec = retrieveCodec(binding.annotationType());
 
 		try{
 			if(LOGGER.isTraceEnabled())
-				LOGGER.trace("writing {}.{} with bind {}", protocolMessage.getType().getSimpleName(), field.getName(), binding.annotationType().getSimpleName());
+				LOGGER.trace("writing {}.{} with bind {}", template.getType().getSimpleName(), field.getName(), binding.annotationType().getSimpleName());
 
 			final Object value = ReflectionHelper.getFieldValue(parserContext.currentObject, field.getName());
 			codec.encode(writer, binding, parserContext.rootObject, value);
 
 			if(LOGGER.isTraceEnabled())
-				LOGGER.trace("wrote {}.{} = {}", protocolMessage.getType().getSimpleName(), field.getName(), value);
+				LOGGER.trace("wrote {}.{} = {}", template.getType().getSimpleName(), field.getName(), value);
 		}
 		catch(final Exception e){
 			//this assumes the writing was done correctly
-			rethrowException(protocolMessage, field, e);
+			rethrowException(template, field, e);
 		}
 	}
 
@@ -236,8 +236,8 @@ final class ProtocolMessageParser{
 		return (condition.isEmpty() || Evaluator.evaluate(condition, rootObject, boolean.class));
 	}
 
-	private void closeMessage(final ProtocolMessage<?> protocolMessage, final BitWriter writer){
-		final MessageHeader header = protocolMessage.getHeader();
+	private void closeMessage(final Template<?> template, final BitWriter writer){
+		final MessageHeader header = template.getHeader();
 		if(header != null && !header.end().isEmpty()){
 			final Charset charset = Charset.forName(header.charset());
 			final byte[] messageTerminator = header.end().getBytes(charset);
@@ -248,7 +248,7 @@ final class ProtocolMessageParser{
 	private CodecInterface<?> retrieveCodec(final Class<? extends Annotation> annotationType){
 		final CodecInterface<?> codec = loader.getCodec(annotationType);
 		if(codec == null)
-			throw new ProtocolMessageException("Cannot find codec for binding {}", annotationType.getSimpleName());
+			throw new TemplateException("Cannot find codec for binding {}", annotationType.getSimpleName());
 
 		setMessageParser(codec);
 		return codec;
@@ -256,14 +256,14 @@ final class ProtocolMessageParser{
 
 	private void setMessageParser(final CodecInterface<?> codec){
 		try{
-			ReflectionHelper.setFieldValue(codec, ProtocolMessageParser.class, this);
+			ReflectionHelper.setFieldValue(codec, TemplateParser.class, this);
 		}
 		catch(final Exception ignored){}
 	}
 
-	private void rethrowException(final ProtocolMessage<?> protocolMessage, final ProtocolMessage.BoundedField field, final Exception e){
+	private void rethrowException(final Template<?> template, final Template.BoundedField field, final Exception e){
 		final String message = ExceptionHelper.getMessageNoLineNumber(e);
-		throw new RuntimeException(message + " in field " + protocolMessage + "." + field.getName());
+		throw new RuntimeException(message + " in field " + template + "." + field.getName());
 	}
 
 	private void writeSkip(final Skip skip, final BitWriter writer, final Object rootObject){

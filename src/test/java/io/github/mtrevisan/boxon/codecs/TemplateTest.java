@@ -58,7 +58,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-class ProtocolMessageTest{
+class TemplateTest{
 
 	private static class Mask{
 
@@ -170,27 +170,27 @@ class ProtocolMessageTest{
 	void creation(){
 		Loader loader = new Loader();
 		loader.loadDefaultCodecs();
-		ProtocolMessage<Message> protocolMessage = ProtocolMessage.createFrom(Message.class, loader);
+		Template<Message> template = Template.createFrom(Message.class, loader);
 
-		Assertions.assertNotNull(protocolMessage);
-		Assertions.assertEquals(Message.class, protocolMessage.getType());
-		MessageHeader header = protocolMessage.getHeader();
+		Assertions.assertNotNull(template);
+		Assertions.assertEquals(Message.class, template.getType());
+		MessageHeader header = template.getHeader();
 		Assertions.assertNotNull(header);
 		Assertions.assertArrayEquals(new String[]{"+"}, header.start());
 		Assertions.assertEquals("-", header.end());
-		Assertions.assertTrue(protocolMessage.canBeCoded());
-		DynamicArray<ProtocolMessage.BoundedField> boundedFields = protocolMessage.getBoundedFields();
+		Assertions.assertTrue(template.canBeCoded());
+		DynamicArray<Template.BoundedField> boundedFields = template.getBoundedFields();
 		Assertions.assertNotNull(boundedFields);
 		Assertions.assertEquals(15, boundedFields.limit);
-		DynamicArray<ProtocolMessage.EvaluatedField> evaluatedFields = protocolMessage.getEvaluatedFields();
+		DynamicArray<Template.EvaluatedField> evaluatedFields = template.getEvaluatedFields();
 		Assertions.assertNotNull(evaluatedFields);
 		Assertions.assertEquals(1, evaluatedFields.limit);
-		ProtocolMessage.EvaluatedField evaluatedField = evaluatedFields.data[0];
+		Template.EvaluatedField evaluatedField = evaluatedFields.data[0];
 		Assertions.assertEquals("receptionTime", evaluatedField.getName());
 		Assertions.assertEquals(ZonedDateTime.class, evaluatedField.getType());
 		Evaluate evaluate = evaluatedField.getBinding();
 		Assertions.assertEquals("T(java.time.ZonedDateTime).now()", evaluate.value());
-		ProtocolMessage.BoundedField checksumField = protocolMessage.getChecksum();
+		Template.BoundedField checksumField = template.getChecksum();
 		Assertions.assertNotNull(checksumField);
 		Assertions.assertEquals("checksum", checksumField.getName());
 		Annotation checksum = checksumField.getBinding();
@@ -238,19 +238,19 @@ class ProtocolMessageTest{
 	void inheritance(){
 		Loader loader = new Loader();
 		loader.loadDefaultCodecs();
-		ProtocolMessage<MessageChild> protocolMessage = ProtocolMessage.createFrom(MessageChild.class, loader);
+		Template<MessageChild> template = Template.createFrom(MessageChild.class, loader);
 
-		Assertions.assertNotNull(protocolMessage);
-		Assertions.assertEquals(MessageChild.class, protocolMessage.getType());
-		MessageHeader header = protocolMessage.getHeader();
+		Assertions.assertNotNull(template);
+		Assertions.assertEquals(MessageChild.class, template.getType());
+		MessageHeader header = template.getHeader();
 		Assertions.assertNotNull(header);
 		Assertions.assertArrayEquals(new String[]{"++"}, header.start());
 		Assertions.assertEquals("--", header.end());
-		Assertions.assertTrue(protocolMessage.canBeCoded());
-		DynamicArray<ProtocolMessage.BoundedField> boundedFields = protocolMessage.getBoundedFields();
+		Assertions.assertTrue(template.canBeCoded());
+		DynamicArray<Template.BoundedField> boundedFields = template.getBoundedFields();
 		Assertions.assertNotNull(boundedFields);
 		Assertions.assertEquals(16, boundedFields.limit);
-		ProtocolMessage.BoundedField childField = boundedFields.data[boundedFields.limit - 1];
+		Template.BoundedField childField = boundedFields.data[boundedFields.limit - 1];
 		Assertions.assertNotNull(childField);
 		Assertions.assertEquals("anotherNumberInt", childField.getName());
 	}

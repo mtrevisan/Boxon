@@ -40,7 +40,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 
 
 	@SuppressWarnings("unused")
-	private ProtocolMessageParser protocolMessageParser;
+	private TemplateParser templateParser;
 
 
 	@Override
@@ -58,9 +58,9 @@ final class CodecObject implements CodecInterface<BindObject>{
 				type = chosenAlternative.type();
 			}
 
-			final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(type, protocolMessageParser.loader);
+			final Template<?> template = Template.createFrom(type, templateParser.loader);
 
-			final Object instance = protocolMessageParser.decode(protocolMessage, reader, rootObject);
+			final Object instance = templateParser.decode(template, reader, rootObject);
 			Evaluator.addToContext(CodecHelper.CONTEXT_SELF, instance);
 
 			final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), rootObject);
@@ -96,12 +96,12 @@ final class CodecObject implements CodecInterface<BindObject>{
 
 		Evaluator.addToContext(CodecHelper.CONTEXT_SELF, value);
 
-		final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(type, protocolMessageParser.loader);
+		final Template<?> template = Template.createFrom(type, templateParser.loader);
 
 		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), rootObject);
 		final Object obj = CodecHelper.converterEncode(chosenConverter, value);
 
-		protocolMessageParser.encode(protocolMessage, writer, rootObject, obj);
+		templateParser.encode(template, writer, rootObject, obj);
 	}
 
 	@Override

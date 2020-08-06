@@ -76,10 +76,10 @@ class CodecCustomTest{
 
 	@Test
 	void customAnnotation(){
-		ProtocolMessageParser protocolMessageParser = new ProtocolMessageParser();
-		protocolMessageParser.loader.addCodecs(new VariableLengthByteArray());
+		TemplateParser templateParser = new TemplateParser();
+		templateParser.loader.addCodecs(new VariableLengthByteArray());
 
-		CodecInterface<?> codec = protocolMessageParser.loader.getCodec(VarLengthEncoded.class);
+		CodecInterface<?> codec = templateParser.loader.getCodec(VarLengthEncoded.class);
 		byte[] encodedValue = new byte[]{0x01, 0x02, 0x03};
 		VarLengthEncoded annotation = new VarLengthEncoded(){
 			@Override

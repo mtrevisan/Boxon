@@ -42,11 +42,11 @@ import java.util.Objects;
 
 public class Parser{
 
-	private final ProtocolMessageParser protocolMessageParser = new ProtocolMessageParser();
+	private final TemplateParser templateParser = new TemplateParser();
 
 
 	/**
-	 * Create an empty parser (context, codecs and protocol messages MUST BE manually loaded!).
+	 * Create an empty parser (context, codecs and templates MUST BE manually loaded!).
 	 *
 	 * @return	A basic empty parser
 	 */
@@ -124,7 +124,7 @@ public class Parser{
 	 * @return	The {@link Parser}, used for chaining.
 	 */
 	public final Parser withDefaultCodecs(){
-		protocolMessageParser.loader.loadDefaultCodecs();
+		templateParser.loader.loadDefaultCodecs();
 		return this;
 	}
 
@@ -135,7 +135,7 @@ public class Parser{
 	 * @return	The {@link Parser}, used for chaining.
 	 */
 	public final Parser withCodecs(final Class<?>... basePackageClasses){
-		protocolMessageParser.loader.loadCodecs(basePackageClasses);
+		templateParser.loader.loadCodecs(basePackageClasses);
 		return this;
 	}
 
@@ -146,7 +146,7 @@ public class Parser{
 	 * @return	The {@link Parser}, used for chaining.
 	 */
 	public final Parser withCodecs(final CodecInterface<?>... codecs){
-		protocolMessageParser.loader.addCodecs(codecs);
+		templateParser.loader.addCodecs(codecs);
 		return this;
 	}
 
@@ -156,8 +156,8 @@ public class Parser{
 	 *
 	 * @return	The {@link Parser}, used for chaining.
 	 */
-	public final Parser withDefaultProtocolMessages(){
-		protocolMessageParser.loader.loadDefaultProtocolMessages();
+	public final Parser withDefaultTemplates(){
+		templateParser.loader.loadDefaultTemplates();
 		return this;
 	}
 
@@ -167,19 +167,19 @@ public class Parser{
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes
 	 * @return	The {@link Parser}, used for chaining.
 	 */
-	public final Parser withProtocolMessages(final Class<?>... basePackageClasses){
-		protocolMessageParser.loader.loadProtocolMessages(basePackageClasses);
+	public final Parser withTemplates(final Class<?>... basePackageClasses){
+		templateParser.loader.loadTemplates(basePackageClasses);
 		return this;
 	}
 
 	/**
 	 * Loads all the protocol classes annotated with {@link MessageHeader}.
 	 *
-	 * @param protocolMessages	The list of protocol messages to be loaded
+	 * @param templates	The list of templates to be loaded
 	 * @return	The {@link Parser}, used for chaining.
 	 */
-	public final Parser withProtocolMessages(final ProtocolMessage<?>... protocolMessages){
-		protocolMessageParser.loader.addProtocolMessages(protocolMessages);
+	public final Parser withTemplates(final Template<?>... templates){
+		templateParser.loader.addTemplates(templates);
 		return this;
 	}
 
@@ -187,11 +187,11 @@ public class Parser{
 	 * Load a singe codec that extends {@link CodecInterface}.
 	 * <p>If the parser previously contained a codec for the given key, the old codec is replaced by the specified one.</p>
 	 *
-	 * @param protocolMessage	The protocol message to be loaded
+	 * @param template	The template to be loaded
 	 * @return	The {@link Parser}, used for chaining.
 	 */
-	public final Parser addProtocolMessage(final ProtocolMessage<?> protocolMessage){
-		protocolMessageParser.loader.addProtocolMessages(protocolMessage);
+	public final Parser addTemplate(final Template<?> template){
+		templateParser.loader.addTemplates(template);
 		return this;
 	}
 
@@ -250,9 +250,9 @@ public class Parser{
 				//save state of the reader (restored upon a decoding error)
 				reader.createFallbackPoint();
 
-				final ProtocolMessage<?> protocolMessage = protocolMessageParser.loader.getProtocolMessage(reader);
+				final Template<?> template = templateParser.loader.getTemplate(reader);
 
-				final Object partialDecodedMessage = protocolMessageParser.decode(protocolMessage, reader, null);
+				final Object partialDecodedMessage = templateParser.decode(template, reader, null);
 
 				response.addParsedMessage(start, partialDecodedMessage);
 			}
@@ -262,10 +262,10 @@ public class Parser{
 				//restore state of the reader
 				reader.restoreFallbackPoint();
 
-				final int position = protocolMessageParser.loader.findNextMessageIndex(reader);
+				final int position = templateParser.loader.findNextMessageIndex(reader);
 				response.addError(start, pe);
 				if(position < 0)
-					//cannot find any protocol message for message
+					//cannot find any template for message
 					break;
 
 				reader.position(position);
@@ -322,9 +322,9 @@ public class Parser{
 	private ComposeException compose(final BitWriter writer, final Object data){
 		ComposeException exception = null;
 		try{
-			final ProtocolMessage<?> protocolMessage = protocolMessageParser.loader.getProtocolMessage(data.getClass());
+			final Template<?> template = templateParser.loader.getTemplate(data.getClass());
 
-			protocolMessageParser.encode(protocolMessage, writer, null, data);
+			templateParser.encode(template, writer, null, data);
 		}
 		catch(final Exception e){
 			exception = new ComposeException(data, e);

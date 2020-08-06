@@ -234,9 +234,9 @@ class CodecArrayTest{
 			}
 		};
 
-		ProtocolMessageParser protocolMessageParser = new ProtocolMessageParser();
-		protocolMessageParser.loader.loadDefaultCodecs();
-		ReflectionHelper.setFieldValue(codec, "protocolMessageParser", protocolMessageParser);
+		TemplateParser templateParser = new TemplateParser();
+		templateParser.loader.loadDefaultCodecs();
+		ReflectionHelper.setFieldValue(codec, "templateParser", templateParser);
 		BitWriter writer = new BitWriter();
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
@@ -257,10 +257,10 @@ class CodecArrayTest{
 	void arrayOfDifferentObjects(){
 		Loader loader = new Loader();
 		loader.loadDefaultCodecs();
-		ProtocolMessage<TestChoice4> protocolMessage = ProtocolMessage.createFrom(TestChoice4.class, loader);
+		Template<TestChoice4> template = Template.createFrom(TestChoice4.class, loader);
 		Parser parser = Parser.create()
 			.withDefaultCodecs()
-			.withProtocolMessages(protocolMessage);
+			.withTemplates(template);
 
 		byte[] payload = ByteHelper.toByteArray("7463340112340211223344010666");
 		ParseResponse result = parser.parse(payload);
@@ -288,10 +288,10 @@ class CodecArrayTest{
 	void arrayOfDifferentObjectsWithNoPrefix(){
 		Loader loader = new Loader();
 		loader.loadDefaultCodecs();
-		ProtocolMessage<TestChoice5> protocolMessage = ProtocolMessage.createFrom(TestChoice5.class, loader);
+		Template<TestChoice5> template = Template.createFrom(TestChoice5.class, loader);
 		Parser parser = Parser.create()
 			.withDefaultCodecs()
-			.withProtocolMessages(protocolMessage);
+			.withTemplates(template);
 
 		byte[] payload = ByteHelper.toByteArray("746335011234");
 		ParseResponse result = parser.parse(payload);

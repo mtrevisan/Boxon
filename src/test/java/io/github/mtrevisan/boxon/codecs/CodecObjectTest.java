@@ -134,9 +134,9 @@ class CodecObjectTest{
 			}
 		};
 
-		ProtocolMessageParser protocolMessageParser = new ProtocolMessageParser();
-		protocolMessageParser.loader.loadDefaultCodecs();
-		ReflectionHelper.setFieldValue(codec, "protocolMessageParser", protocolMessageParser);
+		TemplateParser templateParser = new TemplateParser();
+		templateParser.loader.loadDefaultCodecs();
+		ReflectionHelper.setFieldValue(codec, "templateParser", templateParser);
 		BitWriter writer = new BitWriter();
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
@@ -207,10 +207,10 @@ class CodecObjectTest{
 	void choice1(){
 		Loader loader = new Loader();
 		loader.loadDefaultCodecs();
-		ProtocolMessage<TestChoice1> protocolMessage = ProtocolMessage.createFrom(TestChoice1.class, loader);
+		Template<TestChoice1> template = Template.createFrom(TestChoice1.class, loader);
 		Parser parser = Parser.create()
 			.withDefaultCodecs()
-			.withProtocolMessages(protocolMessage);
+			.withTemplates(template);
 
 		byte[] payload = ByteHelper.toByteArray("746331011234");
 		ParseResponse result = parser.parse(payload);
@@ -250,10 +250,10 @@ class CodecObjectTest{
 	void choice2(){
 		Loader loader = new Loader();
 		loader.loadDefaultCodecs();
-		ProtocolMessage<TestChoice2> protocolMessage = ProtocolMessage.createFrom(TestChoice2.class, loader);
+		Template<TestChoice2> template = Template.createFrom(TestChoice2.class, loader);
 		Parser parser = Parser.create()
 			.withDefaultCodecs()
-			.withProtocolMessages(protocolMessage);
+			.withTemplates(template);
 
 		byte[] payload = ByteHelper.toByteArray("7463320506001234");
 		ParseResponse result = parser.parse(payload);
@@ -293,10 +293,10 @@ class CodecObjectTest{
 	void choice3(){
 		Loader loader = new Loader();
 		loader.loadDefaultCodecs();
-		ProtocolMessage<TestChoice3> protocolMessage = ProtocolMessage.createFrom(TestChoice3.class, loader);
+		Template<TestChoice3> template = Template.createFrom(TestChoice3.class, loader);
 		Parser parser = Parser.create()
 			.withDefaultCodecs()
-			.withProtocolMessages(protocolMessage);
+			.withTemplates(template);
 
 		byte[] payload = ByteHelper.toByteArray("74633361611234");
 		ParseResponse result = parser.parse(payload);

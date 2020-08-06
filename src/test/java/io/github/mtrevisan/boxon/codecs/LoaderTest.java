@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.codecs;
 
-import io.github.mtrevisan.boxon.annotations.exceptions.ProtocolMessageException;
+import io.github.mtrevisan.boxon.annotations.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.codecs.queclink.ACKMessageHex;
 import io.github.mtrevisan.boxon.helpers.ByteHelper;
 import org.junit.jupiter.api.Assertions;
@@ -38,7 +38,7 @@ class LoaderTest{
 		Loader loader = new Loader();
 		loader.loadDefaultCodecs();
 
-		loader.addProtocolMessages();
+		loader.addTemplates();
 	}
 
 	@Test
@@ -46,7 +46,7 @@ class LoaderTest{
 		Loader loader = new Loader();
 		loader.loadDefaultCodecs();
 
-		loader.loadDefaultProtocolMessages();
+		loader.loadDefaultTemplates();
 	}
 
 	@Test
@@ -54,47 +54,47 @@ class LoaderTest{
 		Loader loader = new Loader();
 		loader.loadDefaultCodecs();
 
-		loader.loadProtocolMessages(LoaderTest.class);
+		loader.loadTemplates(LoaderTest.class);
 	}
 
 	@Test
-	void loadCodecsAfterProtocolMessages(){
+	void loadCodecsAfterTemplates(){
 		Loader loader = new Loader();
-		Exception e = Assertions.assertThrows(ProtocolMessageException.class,
-			() -> loader.loadProtocolMessages(LoaderTest.class));
-		Assertions.assertEquals("Cannot create a raw message from data: cannot scan protocol message", e.getMessage());
+		Exception e = Assertions.assertThrows(TemplateException.class,
+			() -> loader.loadTemplates(LoaderTest.class));
+		Assertions.assertEquals("Cannot create a raw message from data: cannot scan template", e.getMessage());
 	}
 
 	@Test
-	void loadProtocolMessage(){
+	void loadTemplate(){
 		Loader loader = new Loader();
 		loader.loadDefaultCodecs();
-		loader.loadProtocolMessages(LoaderTest.class);
+		loader.loadTemplates(LoaderTest.class);
 
 		byte[] payload = ByteHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		BitReader reader = BitReader.wrap(payload);
-		ProtocolMessage<?> protocolMessage = loader.getProtocolMessage(reader);
+		Template<?> template = loader.getTemplate(reader);
 
-		Assertions.assertNotNull(protocolMessage);
-		Assertions.assertEquals(ACKMessageHex.class, protocolMessage.getType());
+		Assertions.assertNotNull(template);
+		Assertions.assertEquals(ACKMessageHex.class, template.getType());
 	}
 
 	@Test
-	void cannotLoadProtocolMessage(){
+	void cannotLoadTemplate(){
 		Loader loader = new Loader();
 		loader.loadDefaultCodecs();
-		loader.loadProtocolMessages(LoaderTest.class);
+		loader.loadTemplates(LoaderTest.class);
 
 		byte[] payload = ByteHelper.toByteArray("3b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		BitReader reader = BitReader.wrap(payload);
-		Assertions.assertThrows(ProtocolMessageException.class, () -> loader.getProtocolMessage(reader));
+		Assertions.assertThrows(TemplateException.class, () -> loader.getTemplate(reader));
 	}
 
 	@Test
-	void findNextProtocolMessage(){
+	void findNextTemplate(){
 		Loader loader = new Loader();
 		loader.loadDefaultCodecs();
-		loader.loadProtocolMessages(LoaderTest.class);
+		loader.loadTemplates(LoaderTest.class);
 
 		byte[] payload = ByteHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		BitReader reader = BitReader.wrap(payload);
@@ -104,10 +104,10 @@ class LoaderTest{
 	}
 
 	@Test
-	void cannotFindNextProtocolMessage(){
+	void cannotFindNextTemplate(){
 		Loader loader = new Loader();
 		loader.loadDefaultCodecs();
-		loader.loadProtocolMessages(LoaderTest.class);
+		loader.loadTemplates(LoaderTest.class);
 
 		byte[] payload = ByteHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		BitReader reader = BitReader.wrap(payload);

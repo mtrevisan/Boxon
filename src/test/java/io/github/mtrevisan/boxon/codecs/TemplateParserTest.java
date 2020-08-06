@@ -42,29 +42,29 @@ import org.springframework.expression.spel.SpelEvaluationException;
 import java.nio.charset.StandardCharsets;
 
 
-class ProtocolMessageParserTest{
+class TemplateParserTest{
 
 	@Test
 	void parseSingleMessageHex() throws NoSuchMethodException{
 		byte[] payload = ByteHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		BitReader reader = BitReader.wrap(payload);
 
-		ProtocolMessageParser protocolMessageParser = new ProtocolMessageParser();
-		protocolMessageParser.loader.loadDefaultCodecs();
-		ProtocolMessage<ACKMessageHex> protocolMessage = ProtocolMessage.createFrom(ACKMessageHex.class, protocolMessageParser.loader);
+		TemplateParser templateParser = new TemplateParser();
+		templateParser.loader.loadDefaultCodecs();
+		Template<ACKMessageHex> template = Template.createFrom(ACKMessageHex.class, templateParser.loader);
 
-		if(!protocolMessage.canBeCoded())
+		if(!template.canBeCoded())
 			Assertions.fail("Cannot decode message");
 
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
 		Evaluator.addToContext("deviceTypes", deviceTypes);
 		Evaluator.addToContext(ParserTest.class.getDeclaredMethod("headerSize"));
-		ACKMessageHex message = protocolMessageParser.decode(protocolMessage, reader, null);
+		ACKMessageHex message = templateParser.decode(template, reader, null);
 		Evaluator.removeFromContext("deviceTypes");
 
 		BitWriter writer = new BitWriter();
-		protocolMessageParser.encode(protocolMessage, writer, null, message);
+		templateParser.encode(template, writer, null, message);
 		byte[] reconstructedMessage = writer.array();
 
 		Assertions.assertEquals(new String(payload), new String(reconstructedMessage));
@@ -75,21 +75,21 @@ class ProtocolMessageParserTest{
 		byte[] payload = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
 		BitReader reader = BitReader.wrap(payload);
 
-		ProtocolMessageParser protocolMessageParser = new ProtocolMessageParser();
-		protocolMessageParser.loader.loadDefaultCodecs();
-		ProtocolMessage<ACKMessageASCII> protocolMessage = ProtocolMessage.createFrom(ACKMessageASCII.class, protocolMessageParser.loader);
+		TemplateParser templateParser = new TemplateParser();
+		templateParser.loader.loadDefaultCodecs();
+		Template<ACKMessageASCII> template = Template.createFrom(ACKMessageASCII.class, templateParser.loader);
 
-		if(!protocolMessage.canBeCoded())
+		if(!template.canBeCoded())
 			Assertions.fail("Cannot decode message");
 
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GV350M", (byte)0xCF);
 		Evaluator.addToContext("deviceTypes", deviceTypes);
-		ACKMessageASCII message = protocolMessageParser.decode(protocolMessage, reader, null);
+		ACKMessageASCII message = templateParser.decode(template, reader, null);
 		Evaluator.removeFromContext("deviceTypes");
 
 		BitWriter writer = new BitWriter();
-		protocolMessageParser.encode(protocolMessage, writer, null, message);
+		templateParser.encode(template, writer, null, message);
 		byte[] reconstructedMessage = writer.array();
 
 		Assertions.assertEquals(new String(payload), new String(reconstructedMessage));
@@ -116,12 +116,12 @@ class ProtocolMessageParserTest{
 		byte[] payload = ByteHelper.toByteArray("746335011234");
 		BitReader reader = BitReader.wrap(payload);
 
-		ProtocolMessageParser protocolMessageParser = new ProtocolMessageParser();
-		protocolMessageParser.loader.loadDefaultCodecs();
-		ProtocolMessage<TestError1> protocolMessage = ProtocolMessage.createFrom(TestError1.class, protocolMessageParser.loader);
+		TemplateParser templateParser = new TemplateParser();
+		templateParser.loader.loadDefaultCodecs();
+		Template<TestError1> template = Template.createFrom(TestError1.class, templateParser.loader);
 
-		SpelEvaluationException exc = Assertions.assertThrows(SpelEvaluationException.class, () -> protocolMessageParser.decode(protocolMessage, reader, null));
-		Assertions.assertEquals("EL1008E: Property or field 'e' cannot be found on object of type 'io.github.mtrevisan.boxon.codecs.ProtocolMessageParserTest$TestError1' - maybe not public or not valid?", exc.getMessage());
+		SpelEvaluationException exc = Assertions.assertThrows(SpelEvaluationException.class, () -> templateParser.decode(template, reader, null));
+		Assertions.assertEquals("EL1008E: Property or field 'e' cannot be found on object of type 'io.github.mtrevisan.boxon.codecs.TemplateParserTest$TestError1' - maybe not public or not valid?", exc.getMessage());
 	}
 
 
@@ -138,11 +138,11 @@ class ProtocolMessageParserTest{
 		byte[] payload = ByteHelper.toByteArray("74633501");
 		BitReader reader = BitReader.wrap(payload);
 
-		ProtocolMessageParser protocolMessageParser = new ProtocolMessageParser();
-		protocolMessageParser.loader.loadDefaultCodecs();
-		ProtocolMessage<TestError2> protocolMessage = ProtocolMessage.createFrom(TestError2.class, protocolMessageParser.loader);
+		TemplateParser templateParser = new TemplateParser();
+		templateParser.loader.loadDefaultCodecs();
+		Template<TestError2> template = Template.createFrom(TestError2.class, templateParser.loader);
 
-		Exception exc = Assertions.assertThrows(RuntimeException.class, () -> protocolMessageParser.decode(protocolMessage, reader, null));
+		Exception exc = Assertions.assertThrows(RuntimeException.class, () -> templateParser.decode(template, reader, null));
 		Assertions.assertEquals("IllegalArgumentException: Value `1` does not match constraint `as` in field TestError2.type", exc.getMessage());
 	}
 
@@ -173,11 +173,11 @@ class ProtocolMessageParserTest{
 		byte[] payload = ByteHelper.toByteArray("74633501");
 		BitReader reader = BitReader.wrap(payload);
 
-		ProtocolMessageParser protocolMessageParser = new ProtocolMessageParser();
-		protocolMessageParser.loader.loadDefaultCodecs();
-		ProtocolMessage<TestError3> protocolMessage = ProtocolMessage.createFrom(TestError3.class, protocolMessageParser.loader);
+		TemplateParser templateParser = new TemplateParser();
+		templateParser.loader.loadDefaultCodecs();
+		Template<TestError3> template = Template.createFrom(TestError3.class, templateParser.loader);
 
-		Exception exc = Assertions.assertThrows(RuntimeException.class, () -> protocolMessageParser.decode(protocolMessage, reader, null));
+		Exception exc = Assertions.assertThrows(RuntimeException.class, () -> templateParser.decode(template, reader, null));
 		Assertions.assertEquals("IllegalArgumentException: Can not set byte field to String in field TestError3.type", exc.getMessage());
 	}
 
@@ -208,11 +208,11 @@ class ProtocolMessageParserTest{
 		byte[] payload = ByteHelper.toByteArray("74633501");
 		BitReader reader = BitReader.wrap(payload);
 
-		ProtocolMessageParser protocolMessageParser = new ProtocolMessageParser();
-		protocolMessageParser.loader.loadDefaultCodecs();
-		ProtocolMessage<TestError4> protocolMessage = ProtocolMessage.createFrom(TestError4.class, protocolMessageParser.loader);
+		TemplateParser templateParser = new TemplateParser();
+		templateParser.loader.loadDefaultCodecs();
+		Template<TestError4> template = Template.createFrom(TestError4.class, templateParser.loader);
 
-		Exception exc = Assertions.assertThrows(RuntimeException.class, () -> protocolMessageParser.decode(protocolMessage, reader, null));
+		Exception exc = Assertions.assertThrows(RuntimeException.class, () -> templateParser.decode(template, reader, null));
 		Assertions.assertEquals("IllegalArgumentException: Can not input Byte to decode method of converter WrongInputConverter in field TestError4.type", exc.getMessage());
 	}
 
@@ -230,11 +230,11 @@ class ProtocolMessageParserTest{
 		byte[] payload = ByteHelper.toByteArray("74633501");
 		BitReader reader = BitReader.wrap(payload);
 
-		ProtocolMessageParser protocolMessageParser = new ProtocolMessageParser();
-		protocolMessageParser.loader.loadDefaultCodecs();
-		ProtocolMessage<TestError5> protocolMessage = ProtocolMessage.createFrom(TestError5.class, protocolMessageParser.loader);
+		TemplateParser templateParser = new TemplateParser();
+		templateParser.loader.loadDefaultCodecs();
+		Template<TestError5> template = Template.createFrom(TestError5.class, templateParser.loader);
 
-		Exception exc = Assertions.assertThrows(RuntimeException.class, () -> protocolMessageParser.decode(protocolMessage, reader, null));
+		Exception exc = Assertions.assertThrows(RuntimeException.class, () -> templateParser.decode(template, reader, null));
 		Assertions.assertEquals("IllegalArgumentException: Value `[0]` does not match constraint `[1]` in field TestError5.type", exc.getMessage());
 	}
 
@@ -265,11 +265,11 @@ class ProtocolMessageParserTest{
 		byte[] payload = ByteHelper.toByteArray("74630102016162");
 		BitReader reader = BitReader.wrap(payload);
 
-		ProtocolMessageParser protocolMessageParser = new ProtocolMessageParser();
-		protocolMessageParser.loader.loadDefaultCodecs();
-		ProtocolMessage<TestComposition> protocolMessage = ProtocolMessage.createFrom(TestComposition.class, protocolMessageParser.loader);
+		TemplateParser templateParser = new TemplateParser();
+		templateParser.loader.loadDefaultCodecs();
+		Template<TestComposition> template = Template.createFrom(TestComposition.class, templateParser.loader);
 
-		TestComposition parsed = protocolMessageParser.decode(protocolMessage, reader, null);
+		TestComposition parsed = templateParser.decode(template, reader, null);
 		Assertions.assertNotNull(parsed);
 		Assertions.assertEquals("tc", parsed.header);
 		Assertions.assertEquals(1, parsed.type);
@@ -279,7 +279,7 @@ class ProtocolMessageParserTest{
 		Assertions.assertEquals("b", parsed.sub.field2);
 
 		BitWriter writer = new BitWriter();
-		protocolMessageParser.encode(protocolMessage, writer, null, parsed);
+		templateParser.encode(template, writer, null, parsed);
 		byte[] reconstructedMessage = writer.array();
 
 		Assertions.assertArrayEquals(payload, reconstructedMessage);

@@ -27,7 +27,7 @@ package io.github.mtrevisan.boxon.annotations.exceptions;
 import org.slf4j.helpers.MessageFormatter;
 
 
-public class NoCodecException extends ProtocolMessageException{
+public class NoCodecException extends TemplateException{
 
 	private static final long serialVersionUID = 2879230296103139872L;
 

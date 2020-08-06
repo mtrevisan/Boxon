@@ -42,7 +42,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 
 
 	@SuppressWarnings("unused")
-	private ProtocolMessageParser protocolMessageParser;
+	private TemplateParser templateParser;
 
 
 	@Override
@@ -76,9 +76,9 @@ final class CodecArray implements CodecInterface<BindArray>{
 					CodecHelper.chooseAlternativeWithoutPrefix(selectFrom, rootObject));
 
 				//read object
-				final ProtocolMessage<?> subProtocolMessage = ProtocolMessage.createFrom(chosenAlternative.type(), protocolMessageParser.loader);
+				final Template<?> subTemplate = Template.createFrom(chosenAlternative.type(), templateParser.loader);
 
-				array[i] = protocolMessageParser.decode(subProtocolMessage, reader, rootObject);
+				array[i] = templateParser.decode(subTemplate, reader, rootObject);
 			}
 			catch(final NoCodecException e){
 				LOGGER.warn(e.getMessage());
@@ -87,10 +87,10 @@ final class CodecArray implements CodecInterface<BindArray>{
 	}
 
 	private void decodeWithoutAlternatives(final BitReader reader, final Object[] array, final Class<?> type){
-		final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(type, protocolMessageParser.loader);
+		final Template<?> template = Template.createFrom(type, templateParser.loader);
 
 		for(int i = 0; i < array.length; i ++)
-			array[i] = protocolMessageParser.decode(protocolMessage, reader, null);
+			array[i] = templateParser.decode(template, reader, null);
 	}
 
 	@Override
@@ -124,17 +124,17 @@ final class CodecArray implements CodecInterface<BindArray>{
 
 			CodecHelper.writePrefix(writer, chosenAlternative, selectFrom);
 
-			final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(type, protocolMessageParser.loader);
+			final Template<?> template = Template.createFrom(type, templateParser.loader);
 
-			protocolMessageParser.encode(protocolMessage, writer, null, elem);
+			templateParser.encode(template, writer, null, elem);
 		}
 	}
 
 	private void encodeWithoutAlternatives(final BitWriter writer, final Object[] array, final Class<?> type){
-		final ProtocolMessage<?> protocolMessage = ProtocolMessage.createFrom(type, protocolMessageParser.loader);
+		final Template<?> template = Template.createFrom(type, templateParser.loader);
 
 		for(int i = 0; i < array.length; i ++)
-			protocolMessageParser.encode(protocolMessage, writer, null, array[i]);
+			templateParser.encode(template, writer, null, array[i]);
 	}
 
 	@Override

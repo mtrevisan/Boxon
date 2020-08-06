@@ -23,10 +23,10 @@ Boxon...
  - is easily extensible through the use of [converters](#how-to).
  - contains a minimal set of [annotations](#annotation-base) capable of handling all the primitive data.
  - contains a set of [special annotations](#annotation-special) that handles the various messages peculiarities (conditional bindings, skip bits/bytes, checksum, 'constant' assignments)
- - is capable of handle concatenation of messages, using the correct protocolMessage under the hood.
+ - is capable of handle concatenation of messages, using the correct template under the hood.
  - can handle [SpEL expressions](https://docs.spring.io/spring/docs/4.3.10.RELEASE/spring-framework-reference/html/expressions.html) on certain fields, thus more powerful and simpler than [Limbo](http://limbo.sourceforge.net/apidocs/)<sup>[1](#footnote-1)</sup> (but less than [janino](https://github.com/janino-compiler/janino), that has other problems).
  - can do decode and encode data on the fly with a single annotated class (thus avoiding separate decoder and encoder going out-of-sync).
- - has protocolMessages that are not complex: they do not call each other uselessly complicating the structure (apart, necessarily, for `@BindArray`), no complicated chains of factories: it's just a parser that works.
+ - has templates that are not complex: they do not call each other uselessly complicating the structure (apart, necessarily, for `@BindArray`), no complicated chains of factories: it's just a parser that works.
  - supports [SLF4J](http://www.slf4j.org/).
  - hides the complexities of encoding and decoding, thus simplifying the changes to be made to the code due to frequent protocol changes.
 
@@ -799,7 +799,7 @@ You can also define your own annotation by define an annotation and implementing
 //the number of bytes to read is determined by the leading bit of each individual bytes
 //(if the first bit of a byte is 1, then another byte is expected to follow)
 class VariableLengthByteArray implements CodecInterface<VarLengthEncoded>{
-    public Object decode(ProtoclMessageParser protocolMessageParser, BitBuffer reader, VarLengthEncoded annotation, Object data){
+    public Object decode(ProtoclMessageParser templateParser, BitBuffer reader, VarLengthEncoded annotation, Object data){
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         boolean continuing = true;
         while(continuing){
@@ -811,7 +811,7 @@ class VariableLengthByteArray implements CodecInterface<VarLengthEncoded>{
         return baos.toByteArray();
     }
 
-    public void encode(ProtoclMessageParser protocolMessageParser, BitWriter writer, VarLengthEncoded annotation, Object data, Object value){
+    public void encode(ProtoclMessageParser templateParser, BitWriter writer, VarLengthEncoded annotation, Object data, Object value){
         final int size = Array.getLength(value);
         for(int i = 0; i < size; i ++)
             writer.put((byte)((byte)Array.get(value, i) | (i < size - 1? (byte)0x80: 0x00)), ByteOrder.BIG_ENDIAN);
@@ -844,7 +844,7 @@ Messages can be concatenated, and the `Parser.java` class manages them, returnin
 
 <br/>
 
-Each annotated class is processed by `ProtocolMessage.class`, that is later retrieved by `Parser.java` depending on the starting header.
+Each annotated class is processed by `Template.class`, that is later retrieved by `Parser.java` depending on the starting header.
 For that reason each starting header defined into `MessageHeader` annotation SHOULD BE unique.
 
 All the SpEL expressions are evaluated by `Evaluator.java`.
@@ -855,7 +855,7 @@ This class can also accept a context.
 
 All the annotated classes are conveniently loaded using the `Loader.java` as is done automatically in the `Parser.java`.
 
-Note that all codecs MUST BE loaded before the protocolMessages that use them, as they are used to verifying the annotations. 
+Note that all codecs MUST BE loaded before the templates that use them, as they are used to verifying the annotations. 
 
 If you want to provide your own classes you can use the appropriate constructor of `Parser`.
 
@@ -876,7 +876,7 @@ The `Parser` is also used to encode a message.
 <a name="example-multi"></a>
 ### Multi-message parser
 
-All you have to care about, for a simple example on multi-message automatically-loaded protocolMessages, is the `Parser`.
+All you have to care about, for a simple example on multi-message automatically-loaded templates, is the `Parser`.
 ```java
 //optionally create a context ('null' otherwise)
 Map<String, Object> context = ...
@@ -889,7 +889,7 @@ Parser parser = Parser.create()
    .withContextFunction(VersionHelper.class, "compareVersion", String.class, String.class)
    .withContextFunction(VersionHelper.class.getDeclaredMethod("compareVersion", new Class[]{String.class, String.class}))
    .withDefaultCodecs()
-   .withDefaultProtocolMessages();
+   .withDefaultTemplates();
 
 //parse the message
 byte[] payload = ...
@@ -906,13 +906,13 @@ for(int index = 0; index < result.getParsedMessageCount(); index ++){
 }
 ```
 
-or, if you want to pass your protocolMessages by hand:
+or, if you want to pass your templates by hand:
 ```java
 //optionally create a context ('null' otherwise)
 Map<String, Object> context = ...
-ProtocolMessage<Message> protocolMessage = ProtocolMessage.createFrom(Message.class);
+Template<Message> template = Template.createFrom(Message.class);
 Parser parser = Parser.create()
-   .withProtocolMessages(protocolMessage);
+   .withTemplates(template);
 
 //parse the message
 byte[] payload = ...
