@@ -246,12 +246,12 @@ public class Parser{
 		while(reader.hasRemaining()){
 			start = reader.position();
 
+			//save state of the reader (restored upon a decoding error)
+			reader.createFallbackPoint();
+
+			final Template<?> template = templateParser.loader.getTemplate(reader);
+
 			try{
-				//save state of the reader (restored upon a decoding error)
-				reader.createFallbackPoint();
-
-				final Template<?> template = templateParser.loader.getTemplate(reader);
-
 				final Object partialDecodedMessage = templateParser.decode(template, reader, null);
 
 				response.addParsedMessage(start, partialDecodedMessage);
