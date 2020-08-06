@@ -113,7 +113,9 @@ final class TemplateParser{
 			if(LOGGER.isTraceEnabled())
 				LOGGER.trace("reading {}.{} with bind {}", template, field.getName(), binding.annotationType().getSimpleName());
 
+			//decode value from raw message
 			final Object value = codec.decode(reader, binding, parserContext.rootObject);
+			//store value in the current object
 			ReflectionHelper.setFieldValue(parserContext.currentObject, field.getName(), value);
 
 			if(LOGGER.isTraceEnabled())
@@ -220,7 +222,9 @@ final class TemplateParser{
 			if(LOGGER.isTraceEnabled())
 				LOGGER.trace("writing {}.{} with bind {}", template.getType().getSimpleName(), field.getName(), binding.annotationType().getSimpleName());
 
+			//encode value from current object
 			final Object value = ReflectionHelper.getFieldValue(parserContext.currentObject, field.getName());
+			//write value to raw message
 			codec.encode(writer, binding, parserContext.rootObject, value);
 
 			if(LOGGER.isTraceEnabled())
