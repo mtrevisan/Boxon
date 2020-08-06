@@ -75,8 +75,9 @@ public class Parser{
 	 * @return	The {@link Parser}, used for chaining.
 	 */
 	public Parser withContext(final Map<String, Object> context){
-		if(context != null)
-			context.forEach(Evaluator::addToContext);
+		Objects.requireNonNull(context);
+
+		context.forEach(Evaluator::addToContext);
 		return this;
 	}
 
@@ -87,10 +88,7 @@ public class Parser{
 	 * @return	The {@link Parser}, used for chaining.
 	 */
 	public Parser withContextFunction(final Method method){
-		Objects.requireNonNull(method);
-
 		Evaluator.addToContext(method);
-
 		return this;
 	}
 
@@ -214,22 +212,22 @@ public class Parser{
 	/**
 	 * Parse a message
 	 *
-	 * @param buffer	The message to be parsed backed by a {@link ByteBuffer}
+	 * @param payload	The message to be parsed
 	 * @return	The parse response
 	 */
-	public ParseResponse parse(final ByteBuffer buffer){
-		final BitReader reader = BitReader.wrap(buffer);
+	public ParseResponse parse(final byte[] payload){
+		final BitReader reader = BitReader.wrap(payload);
 		return parse(reader);
 	}
 
 	/**
 	 * Parse a message
 	 *
-	 * @param payload	The message to be parsed
+	 * @param buffer	The message to be parsed backed by a {@link ByteBuffer}
 	 * @return	The parse response
 	 */
-	public ParseResponse parse(final byte[] payload){
-		final BitReader reader = BitReader.wrap(payload);
+	public ParseResponse parse(final ByteBuffer buffer){
+		final BitReader reader = BitReader.wrap(buffer);
 		return parse(reader);
 	}
 
