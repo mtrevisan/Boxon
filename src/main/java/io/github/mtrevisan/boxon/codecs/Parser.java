@@ -58,6 +58,17 @@ public class Parser{
 	private Parser(){}
 
 	/**
+	 * Adds a key-value pair to the context of this evaluator.
+	 *
+	 * @param key	The key used to reference the value.
+	 * @param value	The value.
+	 */
+	public Parser addToContext(final String key, final Object value){
+		Evaluator.addToContext(key, value);
+		return this;
+	}
+
+	/**
 	 * Loads the context for the {@link Evaluator}.
 	 *
 	 * @param context	The context map.
