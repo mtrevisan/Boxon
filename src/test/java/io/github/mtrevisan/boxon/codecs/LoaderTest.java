@@ -38,7 +38,7 @@ class LoaderTest{
 		Loader loader = new Loader();
 		loader.loadDefaultCodecs();
 
-		loader.addProtocolMessages(new ProtocolMessage<?>[0]);
+		loader.addProtocolMessages();
 	}
 
 	@Test
