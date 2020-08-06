@@ -289,7 +289,7 @@ public class Parser{
 	}
 
 	/**
-	 * Compose a message
+	 * Compose a list of messages
 	 *
 	 * @param data	The message(s) to be composed
 	 * @return	The composition response
