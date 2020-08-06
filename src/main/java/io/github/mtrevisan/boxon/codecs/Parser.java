@@ -258,12 +258,12 @@ public class Parser{
 			}
 			catch(final Exception e){
 				final ParseException pe = new ParseException(reader.position(), e);
+				response.addError(start, pe);
 
 				//restore state of the reader
 				reader.restoreFallbackPoint();
 
 				final int position = templateParser.loader.findNextMessageIndex(reader);
-				response.addError(start, pe);
 				if(position < 0)
 					//cannot find any template for message
 					break;
@@ -306,12 +306,10 @@ public class Parser{
 	 */
 	public ComposeResponse compose(final Object... data){
 		final ComposeResponse response = new ComposeResponse();
+
 		final BitWriter writer = new BitWriter();
-		for(int i = 0; i < data.length; i ++){
-			final ComposeException error = compose(writer, data[i]);
-			if(error != null)
-				response.addError(error);
-		}
+		for(int i = 0; i < data.length; i ++)
+			compose(writer, data[i], response);
 		writer.flush();
 
 		response.setComposedMessage(writer.array());
@@ -319,17 +317,21 @@ public class Parser{
 		return response;
 	}
 
-	private ComposeException compose(final BitWriter writer, final Object data){
-		ComposeException exception = null;
+	/**
+	 * Compose a single message
+	 *
+	 * @param data	The message to be composed
+	 * @return	The composition response
+	 */
+	private void compose(final BitWriter writer, final Object data, final ComposeResponse response){
 		try{
 			final Template<?> template = templateParser.loader.getTemplate(data.getClass());
 
 			templateParser.encode(template, writer, null, data);
 		}
 		catch(final Exception e){
-			exception = new ComposeException(data, e);
+			response.addError(new ComposeException(data, e));
 		}
-		return exception;
 	}
 
 }
