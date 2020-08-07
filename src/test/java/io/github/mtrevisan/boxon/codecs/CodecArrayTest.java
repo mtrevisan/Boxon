@@ -27,6 +27,7 @@ package io.github.mtrevisan.boxon.codecs;
 import io.github.mtrevisan.boxon.annotations.BindArray;
 import io.github.mtrevisan.boxon.annotations.BindArrayPrimitive;
 import io.github.mtrevisan.boxon.annotations.BindByte;
+import io.github.mtrevisan.boxon.annotations.BindChecksum;
 import io.github.mtrevisan.boxon.annotations.BindString;
 import io.github.mtrevisan.boxon.annotations.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
@@ -259,7 +260,7 @@ class CodecArrayTest{
 		loader.loadDefaultCodecs();
 		Template<TestChoice4> template = Template.createFrom(TestChoice4.class, loader);
 		Parser parser = Parser.create()
-			.withDefaultCodecs()
+			.withCodecs(CodecChecksum.class)
 			.withTemplates(template);
 
 		byte[] payload = ByteHelper.toByteArray("7463340112340211223344010666");
