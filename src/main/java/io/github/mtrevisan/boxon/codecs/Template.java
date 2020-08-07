@@ -267,12 +267,8 @@ final class Template<T>{
 		for(int i = 0; i < declaredAnnotations.length; i ++){
 			final Annotation annotation = declaredAnnotations[i];
 			final Class<? extends Annotation> annotationType = annotation.annotationType();
-			if(annotationType != Skip.class && annotationType != Evaluate.class){
-				if(loader.hasCodec(annotationType))
-					annotations.add(annotation);
-				else
-					throw new CodecException("Cannot find the codec for {}", annotationType.getSimpleName());
-			}
+			if(annotationType != Skip.class && annotationType != Evaluate.class && loader.hasCodec(annotationType))
+				annotations.add(annotation);
 		}
 		return annotations;
 	}

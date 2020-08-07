@@ -60,7 +60,7 @@ class LoaderTest{
 		Loader loader = new Loader();
 		Exception e = Assertions.assertThrows(TemplateException.class,
 			() -> loader.loadTemplates(LoaderTest.class));
-		Assertions.assertEquals("Cannot find the codec for BindString", e.getMessage());
+		Assertions.assertTrue(e.getMessage().startsWith("Cannot create a raw message from data: cannot scan template for "));
 	}
 
 	@Test

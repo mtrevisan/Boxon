@@ -182,7 +182,7 @@ final class Loader{
 				templates.add(from);
 			else
 				//... otherwise throw exception
-				throw new TemplateException("Cannot create a raw message from data: cannot scan template");
+				throw new TemplateException("Cannot create a raw message from data: cannot scan template for {}", type.getSimpleName());
 		}
 		return templates;
 	}
