@@ -27,7 +27,7 @@ package io.github.mtrevisan.boxon.codecs;
 import io.github.mtrevisan.boxon.annotations.BindArray;
 import io.github.mtrevisan.boxon.annotations.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
-import io.github.mtrevisan.boxon.annotations.exceptions.NoCodecException;
+import io.github.mtrevisan.boxon.annotations.exceptions.CodecException;
 import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,7 +80,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 
 				array[i] = templateParser.decode(subTemplate, reader, rootObject);
 			}
-			catch(final NoCodecException e){
+			catch(final CodecException e){
 				LOGGER.warn(e.getMessage());
 			}
 		}

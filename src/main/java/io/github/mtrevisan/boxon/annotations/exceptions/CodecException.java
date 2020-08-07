@@ -22,14 +22,21 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.annotations.checksummers;
+package io.github.mtrevisan.boxon.annotations.exceptions;
+
+import org.slf4j.helpers.MessageFormatter;
 
 
 /**
- * The checksum algorithm to be applied to {@link io.github.mtrevisan.boxon.annotations.BindChecksum}.
+ * Thrown if no codec is found.
  */
-public interface Checksummer{
+public class CodecException extends TemplateException{
 
-	long calculateChecksum(final byte[] data, final int start, final int end, final long startValue);
+	private static final long serialVersionUID = 2879230296103139872L;
+
+
+	public CodecException(final String message, Object... parameters){
+		super(MessageFormatter.format(message, parameters).getMessage());
+	}
 
 }

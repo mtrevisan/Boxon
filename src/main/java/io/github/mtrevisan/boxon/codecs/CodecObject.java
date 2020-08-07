@@ -27,7 +27,7 @@ package io.github.mtrevisan.boxon.codecs;
 import io.github.mtrevisan.boxon.annotations.BindObject;
 import io.github.mtrevisan.boxon.annotations.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
-import io.github.mtrevisan.boxon.annotations.exceptions.NoCodecException;
+import io.github.mtrevisan.boxon.annotations.exceptions.CodecException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,7 +70,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 
 			return value;
 		}
-		catch(final NoCodecException e){
+		catch(final CodecException e){
 			LOGGER.warn(e.getMessage());
 
 			return null;

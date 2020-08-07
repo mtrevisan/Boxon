@@ -27,7 +27,7 @@ package io.github.mtrevisan.boxon.codecs;
 import io.github.mtrevisan.boxon.annotations.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
-import io.github.mtrevisan.boxon.annotations.exceptions.NoCodecException;
+import io.github.mtrevisan.boxon.annotations.exceptions.CodecException;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.enums.ByteOrder;
 import io.github.mtrevisan.boxon.valueobjects.BitSet;
@@ -68,7 +68,7 @@ final class CodecHelper{
 		Evaluator.addToContext(CONTEXT_CHOICE_PREFIX, prefix);
 		final ObjectChoices.ObjectChoice chosenAlternative = chooseAlternative(alternatives, rootObject);
 		if(chosenAlternative == null)
-			throw new NoCodecException("Cannot find a valid codec for prefix {} in object {}", prefix, rootObject.getClass().getSimpleName());
+			throw new CodecException("Cannot find a valid codec for prefix {} in object {}", prefix, rootObject.getClass().getSimpleName());
 
 		return chosenAlternative;
 	}
@@ -78,7 +78,7 @@ final class CodecHelper{
 
 		final ObjectChoices.ObjectChoice chosenAlternative = chooseAlternative(alternatives, rootObject);
 		if(chosenAlternative == null)
-			throw new NoCodecException("Cannot find a valid codec in object {}", rootObject.getClass().getSimpleName());
+			throw new CodecException("Cannot find a valid codec in object {}", rootObject.getClass().getSimpleName());
 
 		return chosenAlternative;
 	}

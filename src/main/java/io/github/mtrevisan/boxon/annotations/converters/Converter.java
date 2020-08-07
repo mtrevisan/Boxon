@@ -27,8 +27,22 @@ package io.github.mtrevisan.boxon.annotations.converters;
 
 public interface Converter<IN, OUT>{
 
+	/**
+	 * Decoding function.
+	 * <p>MUST BE the inverse of {@link #encode(Object)}.</p>
+	 *
+	 * @param value	The value from and annotation that has to be decoded.
+	 * @return	The decoded (transformed) value.
+	 */
 	OUT decode(final IN value);
 
+	/**
+	 * Decoding function.
+	 * <p>MUST BE the inverse of {@link #decode(Object)}.</p>
+	 *
+	 * @param value	The value from and annotation that has to be encoded.
+	 * @return	The encoded (transformed) value.
+	 */
 	IN encode(final OUT value);
 
 }

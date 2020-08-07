@@ -27,6 +27,9 @@ package io.github.mtrevisan.boxon.annotations.exceptions;
 import org.slf4j.helpers.MessageFormatter;
 
 
+/**
+ * Thrown if an annotation is not well formatted.
+ */
 public class AnnotationException extends RuntimeException{
 
 	private static final long serialVersionUID = 6429044852678473069L;
