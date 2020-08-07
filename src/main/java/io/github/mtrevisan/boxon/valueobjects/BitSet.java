@@ -55,8 +55,8 @@ public final class BitSet{
 	 * Returns a new bit set containing all the bits in the given long array.
 	 *
 	 * @param array	A long array containing a little-endian representation of a sequence of bits to be used as the initial bits of the
-	 * 	new bit set
-	 * @return	A {@code BitSet} containing all the bits in the long array
+	 * 	new bit set.
+	 * @return	A {@code BitSet} containing all the bits in the long array.
 	 */
 	public static BitSet valueOf(final long[] array){
 		return new BitSet(array);
@@ -66,8 +66,8 @@ public final class BitSet{
 	 * Returns a new bit set containing all the bits in the given byte array.
 	 *
 	 * @param array	A byte array containing a little-endian representation of a sequence of bits to be used as the initial bits of the
-	 * 	new bit set
-	 * @return	A {@code BitSet} containing all the bits in the byte array
+	 * 	new bit set.
+	 * @return	A {@code BitSet} containing all the bits in the byte array.
 	 */
 	public static BitSet valueOf(final byte[] array){
 		return new BitSet(array);
@@ -124,7 +124,7 @@ public final class BitSet{
 	/**
 	 * Adds a set bit at the specified index.
 	 *
-	 * @param bitIndex	A bit index (MUST BE greater than the previous index!)
+	 * @param bitIndex	A bit index (MUST BE greater than the previous index!).
 	 */
 	public void addNextSetBit(final int bitIndex){
 		ensureAdditionalSpace(1);
@@ -135,8 +135,8 @@ public final class BitSet{
 	/**
 	 * Return the state of the bit at a specified index.
 	 *
-	 * @param bitIndex	A bit index (MUST BE greater than the previous index!)
-	 * @return	The state of the bit at a specified index
+	 * @param bitIndex	A bit index (MUST BE greater than the previous index!).
+	 * @return	The state of the bit at a specified index.
 	 */
 	public boolean testBit(final int bitIndex){
 		return (Arrays.binarySearch(indexes, bitIndex) >= 0);
@@ -172,7 +172,7 @@ public final class BitSet{
 	 * {@code s.get(n) == ((bytes[n/8] & (1<<(n%8))) != 0)}<br>
 	 * for all {@code n < 8 * bytes.length}.</p>
 	 *
-	 * @return	A byte array containing a little-endian representation of all the bits in this bit set
+	 * @return	A byte array containing a little-endian representation of all the bits in this bit set.
 	 */
 	public byte[] toByteArray(){
 		if(cardinality == 0)
@@ -189,9 +189,9 @@ public final class BitSet{
 	/**
 	 * Returns a long of given length and starting at a given offset.
 	 *
-	 * @param offset	The bit offset to start the extraction
-	 * @param size	The length in bits of the extraction (MUST BE less than {@link Long#SIZE}!)
-	 * @return	A long starting at a given offset and of a given length
+	 * @param offset	The bit offset to start the extraction.
+	 * @param size	The length in bits of the extraction (MUST BE less than {@link Long#SIZE}!).
+	 * @return	A long starting at a given offset and of a given length.
 	 */
 	public long toLong(final int offset, final int size){
 		long value = 0l;

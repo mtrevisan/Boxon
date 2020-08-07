@@ -48,7 +48,7 @@ public class Parser{
 	/**
 	 * Create an empty parser (context, codecs and templates MUST BE manually loaded!).
 	 *
-	 * @return	A basic empty parser
+	 * @return	A basic empty parser.
 	 */
 	public static Parser create(){
 		return new Parser();
@@ -97,18 +97,18 @@ public class Parser{
 	 * Add a method to the context for the {@link Evaluator}.
 	 *
 	 * @param cls	The class in which the method resides.
-	 * @param methodName	The name of the method
-	 * @param parameterTypes	The parameter array
+	 * @param methodName	The name of the method.
+	 * @param parameterTypes	The parameter array.
 	 * @return	The {@link Parser}, used for chaining.
 	 * @throws NoSuchMethodException	If a matching method is not found.
 	 * @throws SecurityException	If a security manager, <i>s</i>, is present and any of the following conditions is met:
 	 * 	<ul>
 	 * 		<li>the caller's class loader is not the same as the class loader of this class and invocation of
 	 * 		{@link SecurityManager#checkPermission s.checkPermission} method with {@code RuntimePermission("accessDeclaredMembers")}
-	 * 		denies access to the declared method</li>
+	 * 		denies access to the declared method.</li>
 	 *			<li>the caller's class loader is not the same as or an ancestor of the class loader for the current class and
 	 *  		invocation of {@link SecurityManager#checkPackageAccess s.checkPackageAccess()} denies access to the package
-	 * 		of this class</li>
+	 * 		of this class.</li>
 	 * 	</ul>
 	 */
 	public Parser withContextFunction(final Class<?> cls, final String methodName, final Class<?>... parameterTypes) throws NoSuchMethodException,
@@ -131,7 +131,7 @@ public class Parser{
 	/**
 	 * Loads all the codecs that extends {@link CodecInterface}.
 	 *
-	 * @param basePackageClasses	Classes to be used ase starting point from which to load codecs
+	 * @param basePackageClasses	Classes to be used ase starting point from which to load codecs.
 	 * @return	The {@link Parser}, used for chaining.
 	 */
 	public final Parser withCodecs(final Class<?>... basePackageClasses){
@@ -142,7 +142,7 @@ public class Parser{
 	/**
 	 * Loads all the codecs that extends {@link CodecInterface}.
 	 *
-	 * @param codecs	The list of codecs to be loaded
+	 * @param codecs	The list of codecs to be loaded.
 	 * @return	The {@link Parser}, used for chaining.
 	 */
 	public final Parser withCodecs(final CodecInterface<?>... codecs){
@@ -164,7 +164,7 @@ public class Parser{
 	/**
 	 * Loads all the protocol classes annotated with {@link MessageHeader}.
 	 *
-	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes
+	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
 	 * @return	The {@link Parser}, used for chaining.
 	 */
 	public final Parser withTemplates(final Class<?>... basePackageClasses){
@@ -174,10 +174,10 @@ public class Parser{
 
 
 	/**
-	 * Parse a message from a file containing a binary stream
+	 * Parse a message from a file containing a binary stream.
 	 *
-	 * @param file	The file containing the binary stream
-	 * @return	The parse response
+	 * @param file	The file containing the binary stream.
+	 * @return	The parse response.
 	 * @throws FileNotFoundException	If the file does not exist, is a directory rather than a regular file,
 	 * 	or for some other reason cannot be opened for reading.
 	 * @throws SecurityException	If a security manager exists and its {@code checkRead} method denies read access to the file.
@@ -188,10 +188,10 @@ public class Parser{
 	}
 
 	/**
-	 * Parse a message
+	 * Parse a message.
 	 *
-	 * @param payload	The message to be parsed
-	 * @return	The parse response
+	 * @param payload	The message to be parsed.
+	 * @return	The parse response.
 	 */
 	public ParseResponse parse(final byte[] payload){
 		final BitReader reader = BitReader.wrap(payload);
@@ -199,10 +199,10 @@ public class Parser{
 	}
 
 	/**
-	 * Parse a message
+	 * Parse a message.
 	 *
-	 * @param buffer	The message to be parsed backed by a {@link ByteBuffer}
-	 * @return	The parse response
+	 * @param buffer	The message to be parsed backed by a {@link ByteBuffer}.
+	 * @return	The parse response.
 	 */
 	public ParseResponse parse(final ByteBuffer buffer){
 		final BitReader reader = BitReader.wrap(buffer);
@@ -210,10 +210,10 @@ public class Parser{
 	}
 
 	/**
-	 * Parse a message
+	 * Parse a message.
 	 *
-	 * @param reader	The message to be parsed backed by a {@link BitReader}
-	 * @return	The parse response
+	 * @param reader	The message to be parsed backed by a {@link BitReader}.
+	 * @return	The parse response.
 	 */
 	public ParseResponse parse(final BitReader reader){
 		final byte[] array = reader.array();
@@ -266,20 +266,20 @@ public class Parser{
 
 
 	/**
-	 * Compose a list of messages
+	 * Compose a list of messages.
 	 *
-	 * @param data	The messages to be composed
-	 * @return	The composition response
+	 * @param data	The messages to be composed.
+	 * @return	The composition response.
 	 */
 	public ComposeResponse compose(final Collection<Object> data){
 		return compose(data.toArray(Object[]::new));
 	}
 
 	/**
-	 * Compose a list of messages
+	 * Compose a list of messages.
 	 *
-	 * @param data	The message(s) to be composed
-	 * @return	The composition response
+	 * @param data	The message(s) to be composed.
+	 * @return	The composition response.
 	 */
 	public ComposeResponse compose(final Object... data){
 		final ComposeResponse response = new ComposeResponse();
@@ -295,9 +295,9 @@ public class Parser{
 	}
 
 	/**
-	 * Compose a single message
+	 * Compose a single message.
 	 *
-	 * @param data	The message to be composed
+	 * @param data	The message to be composed.
 	 */
 	private void compose(final BitWriter writer, final Object data, final ComposeResponse response){
 		try{

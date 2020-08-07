@@ -65,7 +65,7 @@ public @interface Skip{
 	String size() default "0";
 
 	/**
-	 * The byte that terminates the skip
+	 * The byte that terminates the skip.
 	 *
 	 * @return	The terminator byte (defaults to {@code \0}).
 	 */

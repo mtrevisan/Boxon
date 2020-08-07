@@ -36,7 +36,7 @@ import java.lang.annotation.Target;
 
 
 /**
- * Manages a {@link String} with a given terminator <code>byte</code> (... before the application of a converter).
+ * Manages a {@link String} with a given terminator {@code byte} (... before the application of a converter).
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
@@ -66,7 +66,7 @@ public @interface BindStringTerminated{
 	/**
 	 * Whether to consume the terminator.
 	 *
-	 * @return	Whether to consume the terminator (defaults to <code>true</code>).
+	 * @return	Whether to consume the terminator (defaults to {@code true}).
 	 */
 	boolean consumeTerminator() default true;
 

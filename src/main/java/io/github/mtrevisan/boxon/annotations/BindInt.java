@@ -37,7 +37,7 @@ import java.lang.annotation.Target;
 
 
 /**
- * Manages an <code>int</code>/{@link Integer} (... before the application of a converter).
+ * Manages an {@code int}/{@link Integer} (... before the application of a converter).
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)

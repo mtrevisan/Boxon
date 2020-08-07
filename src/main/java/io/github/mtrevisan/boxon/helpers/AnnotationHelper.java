@@ -72,9 +72,9 @@ public final class AnnotationHelper{
 	/**
 	 * Retrieving fields list of specified class.
 	 *
-	 * @param cls	The class from which to extract the declared fields
-	 * @param recursively	If {@code true}, it retrieves fields from all class hierarchy
-	 * @return	An array of all the fields of the given class
+	 * @param cls	The class from which to extract the declared fields.
+	 * @param recursively	If {@code true}, it retrieves fields from all class hierarchy.
+	 * @return	An array of all the fields of the given class.
 	 */
 	public static DynamicArray<Field> getDeclaredFields(final Class<?> cls, final boolean recursively){
 		final DynamicArray<Field> fields;
@@ -96,11 +96,11 @@ public final class AnnotationHelper{
 
 
 	/**
-	 * Scans all classes accessible from the context class loader which belong to the given package
+	 * Scans all classes accessible from the context class loader which belong to the given package.
 	 *
 	 * @param type	Whether a class or an interface (for example).
 	 * @param basePackageClasses	A list of classes that resides in a base package(s).
-	 * @return	The classes
+	 * @return	The classes.
 	 */
 	public static Collection<Class<?>> extractClasses(final Object type, final Class<?>... basePackageClasses){
 		final Collection<Class<?>> classes = new HashSet<>(0);
@@ -143,10 +143,10 @@ public final class AnnotationHelper{
 	}
 
 	/**
-	 * Scans all classes accessible from a library which belong to the given package
+	 * Scans all classes accessible from a library which belong to the given package.
 	 *
-	 * @param libraryName The name of the library to load the classes from
-	 * @return The classes
+	 * @param libraryName The name of the library to load the classes from.
+	 * @return The classes.
 	 */
 	private static Collection<Class<?>> extractClassesFromLibrary(final Object type, final String libraryName) throws IOException{
 		final Collection<Class<?>> classes = new HashSet<>(0);
@@ -163,11 +163,11 @@ public final class AnnotationHelper{
 	}
 
 	/**
-	 * Extract all classes from a given directory
+	 * Extract all classes from a given directory.
 	 *
-	 * @param directory	The base directory
-	 * @param packageName The package name for classes found inside the base directory
-	 * @return The classes
+	 * @param directory	The base directory.
+	 * @param packageName The package name for classes found inside the base directory.
+	 * @return The classes.
 	 */
 	private static Collection<Class<?>> extractClasses(final Object type, final File directory, final String packageName){
 		final Collection<Class<?>> classes = new HashSet<>(0);

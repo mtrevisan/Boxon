@@ -71,7 +71,7 @@ public final class DynamicArray<T>{
 	/**
 	 * Appends the specified element to the end of this array.
 	 *
-	 * @param elem	Element to be appended to the internal array
+	 * @param elem	Element to be appended to the internal array.
 	 */
 	public void add(final T elem){
 		grow(1);
@@ -82,7 +82,7 @@ public final class DynamicArray<T>{
 	/**
 	 * Appends all of the elements in the specified collection to the end of this array.
 	 *
-	 * @param array	Collection containing elements to be added to this array
+	 * @param array	Collection containing elements to be added to this array.
 	 */
 	public void addAll(final DynamicArray<T> array){
 		grow(array.limit);
@@ -95,8 +95,8 @@ public final class DynamicArray<T>{
 	 * Inserts all of the elements in the specified collection into this array at the specified position.
 	 * <p>Shifts the element currently at that position (if any) and any subsequent elements to the right (increases their indices).</p>
 	 *
-	 * @param index	Index at which to insert the first element from the specified collection
-	 * @param collection	Collection containing elements to be added to this array
+	 * @param index	Index at which to insert the first element from the specified collection.
+	 * @param collection	Collection containing elements to be added to this array.
 	 */
 	public void addAll(final int index, final T[] collection){
 		final int addLength = collection.length;
@@ -114,7 +114,7 @@ public final class DynamicArray<T>{
 	 * Increases the capacity of the internal array, if necessary, to ensure that it can hold at least the number of elements
 	 * specified by the minimum capacity argument.
 	 *
-	 * @param newCapacity	The desired minimum capacity
+	 * @param newCapacity	The desired minimum capacity.
 	 */
 	public void ensureCapacity(final int newCapacity){
 		grow(newCapacity - limit);
@@ -160,9 +160,9 @@ public final class DynamicArray<T>{
 	}
 
 	/**
-	 * NOTE: this method should NOT be called at all because it is inefficient
+	 * NOTE: this method should NOT be called at all because it is inefficient.
 	 *
-	 * @return	A copy of the array
+	 * @return	A copy of the array.
 	 */
 	public T[] extractCopy(){
 		final T[] copy = newInstance(limit);

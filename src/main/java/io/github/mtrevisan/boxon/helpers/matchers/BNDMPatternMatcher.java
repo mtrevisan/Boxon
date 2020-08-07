@@ -51,9 +51,9 @@ public class BNDMPatternMatcher implements PatternMatcher{
 	 * Pre-processing of the pattern.
 	 * <p>The pattern SHOULD NOT exceed 32 bytes in length.</p>
 	 *
-	 * @param pattern	The {@code byte} array containing the pattern, may not be {@code null}
-	 * @param wildcard the wildcard <code>byte</code> character
-	 * @return	an array of pre-processed pattern
+	 * @param pattern	The {@code byte} array containing the pattern, may not be {@code null}.
+	 * @param wildcard the wildcard {@code byte} character.
+	 * @return	an array of pre-processed pattern.
 	 */
 	public int[] preProcessPatternWithWildcard(final byte[] pattern, final byte wildcard){
 		if(pattern.length >= Integer.SIZE)
@@ -75,8 +75,8 @@ public class BNDMPatternMatcher implements PatternMatcher{
 	 * Pre-processing of the pattern.
 	 * <p>The pattern SHOULD NOT exceed 32 bytes in length.</p>
 	 *
-	 * @param pattern	The {@code byte} array containing the pattern, may not be {@code null}
-	 * @return	an array of pre-processed pattern
+	 * @param pattern	The {@code byte} array containing the pattern, may not be {@code null}.
+	 * @return	an array of pre-processed pattern.
 	 */
 	@Override
 	public int[] preProcessPattern(final byte[] pattern){

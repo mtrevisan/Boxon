@@ -50,11 +50,12 @@ public final class Memoizer{
 	}
 
 	/**
-	 * Thread-safe and recursion-safe implementation using a re-entrant lock
+	 * Thread-safe and recursion-safe implementation using a re-entrant lock.
 	 *
-	 * @param <OUT>			Type of input to the function
-	 * @param supplier	The function to be memoized
-	 * @return				The new memoized function
+	 * @param <OUT>			Type of input to the function.
+	 * @param supplier	The function to be memoized.
+	 * @return				The new memoized function.
+	 *
 	 * @see <a href="https://opencredo.com/lambda-memoization-in-java-8/">Lambda memoization in Java 8</a>
 	 */
 	public static <OUT> Supplier<OUT> memoizeThreadAndRecursionSafe(final Supplier<OUT> supplier){
@@ -72,12 +73,13 @@ public final class Memoizer{
 	}
 
 	/**
-	 * Thread-safe and recursion-safe implementation using a re-entrant lock
+	 * Thread-safe and recursion-safe implementation using a re-entrant lock.
 	 *
-	 * @param <IN>			Type of input to the function
-	 * @param <OUT>			Type of output from the function
-	 * @param function	The function to be memoized
-	 * @return				The new memoized function
+	 * @param <IN>			Type of input to the function.
+	 * @param <OUT>			Type of output from the function.
+	 * @param function	The function to be memoized.
+	 * @return				The new memoized function.
+	 *
 	 * @see <a href="https://opencredo.com/lambda-memoization-in-java-8/">Lambda memoization in Java 8</a>
 	 */
 	public static <IN, OUT> Function<IN, OUT> memoizeThreadAndRecursionSafe(final Function<IN, OUT> function){

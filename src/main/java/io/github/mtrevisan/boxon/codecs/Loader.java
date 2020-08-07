@@ -73,7 +73,7 @@ final class Loader{
 	/**
 	 * Loads all the codecs that extends {@link CodecInterface}.
 	 *
-	 * @param basePackageClasses	Classes to be used ase starting point from which to load codecs
+	 * @param basePackageClasses	Classes to be used ase starting point from which to load codecs.
 	 */
 	void loadCodecs(final Class<?>... basePackageClasses){
 		if(LOGGER.isInfoEnabled())
@@ -110,7 +110,7 @@ final class Loader{
 	 * Loads all the given codecs that extends {@link CodecInterface}.
 	 * <p>NOTE: If the loader previously contains a codec for a given key, the old codec is replaced by the new one.</p>
 	 *
-	 * @param codecs	The list of codecs to be loaded
+	 * @param codecs	The list of codecs to be loaded.
 	 */
 	void addCodecs(final CodecInterface<?>... codecs){
 		Objects.requireNonNull(codecs);
@@ -147,7 +147,7 @@ final class Loader{
 	 * Loads all the protocol classes annotated with {@link MessageHeader}.
 	 * <p>This method should be called from a method inside a class that lies on a parent of all the protocol classes.</p>
 	 *
-	 * @throws IllegalArgumentException	If the codecs was not loaded yet,
+	 * @throws IllegalArgumentException	If the codecs was not loaded yet.
 	 */
 	void loadDefaultTemplates(){
 		loadTemplates(ReflectionHelper.extractCallerClasses());
@@ -156,7 +156,7 @@ final class Loader{
 	/**
 	 * Loads all the protocol classes annotated with {@link MessageHeader}.
 	 *
-	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes
+	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
 	 */
 	void loadTemplates(final Class<?>... basePackageClasses){
 		if(LOGGER.isInfoEnabled())

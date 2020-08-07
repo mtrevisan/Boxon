@@ -333,10 +333,11 @@ public final class ReflectionHelper{
 	/**
 	 * Return an {@link ObjectInstantiator} allowing to create instance without any constructor being
 	 * called.
+	 *
 	 * @see <a href="https://github.com/easymock/objenesis">objenesis</a>
 	 *
-	 * @param type Class to instantiate
-	 * @return The ObjectInstantiator for the class
+	 * @param type Class to instantiate.
+	 * @return The ObjectInstantiator for the class.
 	 */
 	private static <T> ObjectInstantiator<T> instantiatorOf(final Class<T> type){
 		final ObjectInstantiator<T> instantiator;

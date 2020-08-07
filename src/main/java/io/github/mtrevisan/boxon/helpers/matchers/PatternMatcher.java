@@ -31,8 +31,8 @@ public interface PatternMatcher{
 	/**
 	 * Pre-processes the pattern.
 	 *
-	 * @param pattern	The {@code byte} array containing the pattern, may not be {@code null}
-	 * @return	an array of pre-processed pattern
+	 * @param pattern	The {@code byte} array containing the pattern, may not be {@code null}.
+	 * @return	an array of pre-processed pattern.
 	 */
 	int[] preProcessPattern(final byte[] pattern);
 
@@ -40,11 +40,11 @@ public interface PatternMatcher{
 	 * Returns the position in the text at which the pattern was found.
 	 * <p>Returns {@code -1} if the pattern was not found.</p>
 	 *
-	 * @param source	The <code>byte</code> array containing the text, may not be {@code null}
-	 * @param offset	At which position in the text the comparing should start
-	 * @param pattern	The pattern to search for, may not be {@code null}
-	 * @param processedPattern	Processed pattern, see {@link #preProcessPattern(byte[])}
-	 * @return the position in the text or {@code -1} if the pattern was not found
+	 * @param source	The {@code byte} array containing the text, may not be {@code null}.
+	 * @param offset	At which position in the text the comparing should start.
+	 * @param pattern	The pattern to search for, may not be {@code null}.
+	 * @param processedPattern	Processed pattern, see {@link #preProcessPattern(byte[])}.
+	 * @return the position in the text or {@code -1} if the pattern was not found.
 	 */
 	int indexOf(final byte[] source, final int offset, final byte[] pattern, final int[] processedPattern);
 

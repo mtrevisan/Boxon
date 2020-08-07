@@ -37,7 +37,7 @@ import java.lang.annotation.Target;
 
 
 /**
- * Manages a <code>long</code>/{@link Long} (... before the application of a converter).
+ * Manages a {@code long}/{@link Long} (... before the application of a converter).
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)

@@ -75,8 +75,8 @@ final class BitReader{
 	/**
 	 * Wraps a {@link java.io.File} containing a binary stream into a buffer.
 	 *
-	 * @param file	The file containing the binary stream
-	 * @return	The new bit buffer
+	 * @param file	The file containing the binary stream.
+	 * @return	The new bit buffer.
 	 * @throws FileNotFoundException	If the file does not exist, is a directory rather than a regular file,
 	 * 	or for some other reason cannot be opened for reading.
 	 * @throws SecurityException	If a security manager exists and its {@code checkRead} method denies read access to the file.
@@ -97,8 +97,8 @@ final class BitReader{
 	 * Wraps a {@link ByteBuffer} into a buffer.
 	 * <p>The new buffer will be backed by the given byte buffer</p>.
 	 *
-	 * @param buffer	The buffer that will back this buffer
-	 * @return	The new bit buffer
+	 * @param buffer	The buffer that will back this buffer.
+	 * @return	The new bit buffer.
 	 */
 	static BitReader wrap(final ByteBuffer buffer){
 		return new BitReader(buffer);
@@ -110,8 +110,8 @@ final class BitReader{
 	 * to be modified and vice versa. The new buffer's capacity and limit will be {@code array.length}, its position will
 	 * be zero, its mark will be undefined, and its byte `byteOrder` will be {@link ByteOrder#BIG_ENDIAN BIG_ENDIAN}.</p>
 	 *
-	 * @param array	The array that will back this buffer
-	 * @return	The new bit buffer
+	 * @param array	The array that will back this buffer.
+	 * @return	The new bit buffer.
 	 */
 	static BitReader wrap(final byte[] array){
 		return new BitReader(ByteBuffer.wrap(array));
@@ -121,8 +121,8 @@ final class BitReader{
 	 * Wraps a byte array into a buffer.
 	 * <p>The new buffer will be backed by the given byte array contained into the {@link BitWriter}.</p>
 	 *
-	 * @param bitWriter	The {@link BitWriter}
-	 * @return	The new bit buffer
+	 * @param bitWriter	The {@link BitWriter}.
+	 * @return	The new bit buffer.
 	 */
 	static BitReader wrap(final BitWriter bitWriter){
 		bitWriter.flush();
@@ -235,9 +235,9 @@ final class BitReader{
 	/**
 	 * Add {@code size} bits from the cache starting from LSB with a given offset.
 	 *
-	 * @param value	The bit set into which to transfer {@code size} bits from the cache
-	 * @param offset	The offset for the indexes
-	 * @param size	The amount of bits to read from the LSB of the cache
+	 * @param value	The bit set into which to transfer {@code size} bits from the cache.
+	 * @param offset	The offset for the indexes.
+	 * @param size	The amount of bits to read from the LSB of the cache.
 	 */
 	private void addCacheToBitSet(final BitSet value, final int offset, final int size){
 		final byte mask = (byte)((1 << size) - 1);
@@ -389,7 +389,7 @@ final class BitReader{
 	}
 
 	/**
-	 * Reads a string until a terminator is found
+	 * Reads a string until a terminator is found.
 	 *
 	 * @param terminator	The terminator of the string to be read.
 	 * @param consumeTerminator	Whether to consume the terminator.
@@ -457,7 +457,7 @@ final class BitReader{
 	/**
 	 * Tells whether there are any elements between the current position and the limit of the underlying {@link ByteBuffer}.
 	 *
-	 * @return	Whether there is at least one element remaining in the underlying {@link ByteBuffer}
+	 * @return	Whether there is at least one element remaining in the underlying {@link ByteBuffer}.
 	 */
 	boolean hasRemaining(){
 		return buffer.hasRemaining();

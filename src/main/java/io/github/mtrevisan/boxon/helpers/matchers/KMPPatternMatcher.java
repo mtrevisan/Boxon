@@ -38,10 +38,10 @@ package io.github.mtrevisan.boxon.helpers.matchers;
 public class KMPPatternMatcher implements PatternMatcher{
 
 	/**
-	 * Returns an array that points to last valid string prefix
+	 * Returns an array that points to last valid string prefix.
 	 *
 	 * @param pattern	The list to search for as a subList of {@code source}.
-	 * @return	The array of Longest Prefix Suffix
+	 * @return	The array of Longest Prefix Suffix.
 	 */
 	@Override
 	public int[] preProcessPattern(final byte[] pattern){
@@ -68,16 +68,15 @@ public class KMPPatternMatcher implements PatternMatcher{
 	/**
 	 * Returns the starting position of the first occurrence of the specified pattern array within the specified source array,
 	 * or {@code -1} if there is no such occurrence.
-	 * More formally, returns the lowest index such that {@code source.subArray(i, i + pattern.size()).equals(pattern)},
-	 * or {@code -1} if there is no such index.<br>
+	 * <p>More formally, returns the lowest index such that {@code source.subArray(i, i + pattern.size()).equals(pattern)},
+	 * or {@code -1} if there is no such index.</p>
 	 * (Returns {@code -1} if {@code pattern.size() > source.size()})
-	 * <p>
-	 * This implementation uses the "Knuth-Morris-Pratt" technique of scanning over the source list.
+	 * <p>This implementation uses the "Knuth-Morris-Pratt" technique of scanning over the source list.</p>
 	 *
 	 * @param source	The list in which to search for the first occurrence of {@code pattern}.
 	 * @param offset	Offset to start the search from.
 	 * @param pattern	The list to search for as a subList of {@code source}.
-	 * @param failureTable	Longest Prefix Suffix array precomputed by {@link #preProcessPattern(byte[])}
+	 * @param failureTable	Longest Prefix Suffix array precomputed by {@link #preProcessPattern(byte[])}.
 	 * @return	The starting position of the first occurrence of the specified pattern list within the specified source list,
 	 * 	or {@code -1} if there is no such occurrence.
 	 */

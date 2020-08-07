@@ -42,7 +42,7 @@ public @interface MessageHeader{
 	 * The initial bytes that determines the type of message.
 	 * <p>This SHOULD be read by the protocol of a single message.</p>
 	 *
-	 * @return	The header bytes of this message
+	 * @return	The header bytes of this message.
 	 */
 	String[] start();
 

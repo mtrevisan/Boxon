@@ -41,10 +41,10 @@ public final class ByteHelper{
 
 
 	/**
-	 * Converts an array of bytes into a string representing the hexadecimal values of each byte in order
+	 * Converts an array of bytes into a string representing the hexadecimal values of each byte in order.
 	 *
-	 * @param array	Array to be converted to hexadecimal characters
-	 * @return	The hexadecimal characters
+	 * @param array	Array to be converted to hexadecimal characters.
+	 * @return	The hexadecimal characters.
 	 */
 	public static String toHexString(final byte[] array){
 		final int length = JavaHelper.lengthOrZero(array);
@@ -58,10 +58,10 @@ public final class ByteHelper{
 	}
 
 	/**
-	 * Converts a string representing the hexadecimal values of each byte to an array of bytes in order
+	 * Converts a string representing the hexadecimal values of each byte to an array of bytes in order.
 	 *
-	 * @param hexString	The hexadecimal string
-	 * @return	Array of converted hexadecimal characters
+	 * @param hexString	The hexadecimal string.
+	 * @return	Array of converted hexadecimal characters.
 	 */
 	public static byte[] toByteArray(final String hexString){
 		final int len = JavaHelper.lengthOrZero(hexString);
@@ -95,9 +95,9 @@ public final class ByteHelper{
 	}
 
 	/**
-	 * Converts a BigInteger into a byte array ignoring the sign of the BigInteger, according to SRP specification
+	 * Converts a BigInteger into a byte array ignoring the sign of the BigInteger, according to SRP specification.
 	 *
-	 * @param value	the value, must not be <code>null</code>.
+	 * @param value	the value, must not be {@code null}.
 	 * @param size	The size in bits of the value.
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	The {@link BitSet} representing the given value.
@@ -121,7 +121,7 @@ public final class ByteHelper{
 	/**
 	 * Reverses the order of the given array.
 	 *
-	 * @param array	The array to reverse
+	 * @param array	The array to reverse.
 	 */
 	private static void reverse(final byte[] array){
 		for(int start = 0, end = array.length - 1; start < end; start ++, end --){
@@ -134,11 +134,11 @@ public final class ByteHelper{
 
 
 	/**
-	 * Convert the value to signed primitive
+	 * Convert the value to signed primitive.
 	 *
-	 * @param value	Field value
-	 * @param size	Length in bits of the field
-	 * @return	The 2-complement expressed as int
+	 * @param value	Field value.
+	 * @param size	Length in bits of the field.
+	 * @return	The 2-complement expressed as int.
 	 */
 	@SuppressWarnings("ShiftOutOfRange")
 	public static long extendSign(final long value, final int size){
@@ -150,11 +150,11 @@ public final class ByteHelper{
 	}
 
 	/**
-	 * Convert the value to signed primitive
+	 * Convert the value to signed primitive.
 	 *
-	 * @param array	Field value
-	 * @param unsigned	Whether to consider this number an unsigned one
-	 * @return	The 2-complement expressed as int
+	 * @param array	Field value.
+	 * @param unsigned	Whether to consider this number an unsigned one.
+	 * @return	The 2-complement expressed as int.
 	 */
 	private static BigInteger extendSign(byte[] array, final int size, final boolean unsigned){
 		if(!unsigned && (array[0] & 0x80) != 0x00){
