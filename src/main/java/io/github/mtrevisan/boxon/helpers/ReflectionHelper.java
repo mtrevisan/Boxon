@@ -99,20 +99,20 @@ public final class ReflectionHelper{
 		final Queue<Type> ancestorsQueue = extractAncestors(offspring);
 
 		//iterate over ancestors
-		while(!ancestorsQueue.isEmpty()){
+		Class<?> type = null;
+		while(type == null && !ancestorsQueue.isEmpty()){
 			final Type ancestorType = ancestorsQueue.poll();
 
-			if(ancestorType instanceof ParameterizedType){
+			if(ancestorType instanceof ParameterizedType)
 				//ancestor is parameterized: process only if the raw type matches the base class
-				final Class<?> type = manageParameterizedAncestor((ParameterizedType)ancestorType, base, typeVariables);
-				if(type != null)
-					return type;
-			}
+				type = manageParameterizedAncestor((ParameterizedType)ancestorType, base, typeVariables);
 			else if(ancestorType instanceof Class<?>
 				//ancestor is non-parameterized: process only if it matches the base class
 					&& base.isAssignableFrom((Class<?>)ancestorType))
 				ancestorsQueue.add(ancestorType);
 		}
+		if(type != null)
+			return type;
 
 		//there is a result if the base class is reached
 		return (offspring.equals(base)? getClassFromName(actualArgs[0]): null);
