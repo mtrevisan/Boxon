@@ -36,6 +36,7 @@ public class BSD16 implements Checksummer{
 	public long calculateChecksum(final byte[] data, final int start, final int end, final long startValue){
 		int value = 0;
 		for(int i = Math.max(start, 0); i < Math.min(end, data.length); i ++)
+			//apply circular right shift and add new value
 			value = ((value >>> 1) + ((value & 0x01) << 15) + data[i]) & 0xFFFF;
 		return value;
 	}
