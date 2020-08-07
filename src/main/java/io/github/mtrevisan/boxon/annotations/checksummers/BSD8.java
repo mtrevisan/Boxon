@@ -26,7 +26,7 @@ package io.github.mtrevisan.boxon.annotations.checksummers;
 
 
 /**
- * Calculates an 8 bit BSD chgecksum from a set of bytes
+ * Calculates an 8 bit BSD checksum from a set of bytes
  *
  * @see <a href="https://en.wikipedia.org/wiki/BSD_checksum">BSD checksum</a>
  */
