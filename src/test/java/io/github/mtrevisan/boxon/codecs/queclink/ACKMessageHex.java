@@ -31,7 +31,7 @@ import io.github.mtrevisan.boxon.annotations.BindShort;
 import io.github.mtrevisan.boxon.annotations.BindString;
 import io.github.mtrevisan.boxon.annotations.Evaluate;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
-import io.github.mtrevisan.boxon.annotations.checksummers.CRC16;
+import io.github.mtrevisan.boxon.annotations.checksummers.CRC16CCITT;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.IMEIValidator;
 
@@ -134,7 +134,7 @@ public class ACKMessageHex{
 	private ZonedDateTime eventTime;
 	@BindShort(condition = "mask.hasMessageId()")
 	private short messageId;
-	@BindChecksum(type = short.class, skipStart = 4, skipEnd = 4, algorithm = CRC16.class, startValue = CRC16.START_VALUE_0xFFFF)
+	@BindChecksum(type = short.class, skipStart = 4, skipEnd = 4, algorithm = CRC16CCITT.class, startValue = CRC16CCITT.START_VALUE_0xFFFF)
 	private short checksum;
 
 	@Evaluate("#deviceTypes.getDeviceTypeName(deviceTypeCode)")

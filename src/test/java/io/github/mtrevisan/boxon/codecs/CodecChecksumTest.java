@@ -25,7 +25,7 @@
 package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.BindChecksum;
-import io.github.mtrevisan.boxon.annotations.checksummers.CRC16;
+import io.github.mtrevisan.boxon.annotations.checksummers.CRC16CCITT;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
 import io.github.mtrevisan.boxon.enums.ByteOrder;
 import org.apache.commons.lang3.StringUtils;
@@ -74,12 +74,12 @@ class CodecChecksumTest{
 
 			@Override
 			public Class<? extends Checksummer> algorithm(){
-				return CRC16.class;
+				return CRC16CCITT.class;
 			}
 
 			@Override
 			public long startValue(){
-				return CRC16.START_VALUE_0xFFFF;
+				return CRC16CCITT.START_VALUE_0xFFFF;
 			}
 		};
 
