@@ -102,26 +102,20 @@ public final class ReflectionHelper{
 		while(!ancestorsQueue.isEmpty()){
 			final Type ancestorType = ancestorsQueue.poll();
 
-			if(ancestorType instanceof Class<?>){
-				//ancestor is non-parameterized: process only if it matches the base class
-				if(manageNonParameterizedAncestor((Class<?>)ancestorType, base, ancestorsQueue))
-					continue;
-			}
-
 			if(ancestorType instanceof ParameterizedType){
 				//ancestor is parameterized: process only if the raw type matches the base class
 				final Class<?> type = manageParameterizedAncestor((ParameterizedType)ancestorType, base, typeVariables);
 				if(type != null)
 					return type;
 			}
+			else if(ancestorType instanceof Class<?>
+				//ancestor is non-parameterized: process only if it matches the base class
+					&& base.isAssignableFrom((Class<?>)ancestorType))
+				ancestorsQueue.add(ancestorType);
 		}
 
 		//there is a result if the base class is reached
 		return (offspring.equals(base)? getClassFromName(actualArgs[0]): null);
-	}
-
-	private static <T> boolean manageNonParameterizedAncestor(final Class<?> ancestorType, final Class<T> base, final Queue<Type> ancestorsQueue){
-		return (base.isAssignableFrom(ancestorType) && ancestorsQueue.add(ancestorType));
 	}
 
 	private static <T> Class<?> manageParameterizedAncestor(final ParameterizedType ancestorType, final Class<T> base, final Map<String, Type> typeVariables){
