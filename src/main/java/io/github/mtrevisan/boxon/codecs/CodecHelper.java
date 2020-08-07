@@ -40,9 +40,9 @@ import java.util.regex.Pattern;
 
 final class CodecHelper{
 
-	/** The name of the current object being scanner (used for referencing variables from SpEL) */
+	/** The name of the current object being scanner (used for referencing variables from SpEL). */
 	public static final String CONTEXT_SELF = "self";
-	/** The name of the prefix for the alternative (used for referencing variables from SpEL) */
+	/** The name of the prefix for the alternative (used for referencing variables from SpEL). */
 	public static final String CONTEXT_CHOICE_PREFIX = "prefix";
 
 	static final Pattern CONTEXT_PREFIXED_CHOICE_PREFIX = Pattern.compile("#" + CONTEXT_CHOICE_PREFIX + "[^a-zA-Z]");
@@ -132,7 +132,7 @@ final class CodecHelper{
 			throw new IllegalArgumentException("Value `" + currentObject + "` does not match constraint `" + match + "`");
 	}
 
-	/** Extract pattern from a SpEL expression, or a string, or a regex pattern */
+	/** Extract pattern from a SpEL expression, or a string, or a regex pattern. */
 	private static Pattern extractPattern(String match){
 		Pattern p = null;
 		if(JavaHelper.isNotBlank(match)){

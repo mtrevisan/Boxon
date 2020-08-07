@@ -42,12 +42,12 @@ import java.nio.charset.Charset;
  */
 final class BitWriter{
 
-	/** The backing {@link ByteArrayOutputStream} */
+	/** The backing {@link ByteArrayOutputStream}. */
 	private final ByteArrayOutputStream os = new ByteArrayOutputStream(0);
 
-	/** The <i>cache</i> used when writing bits */
+	/** The <i>cache</i> used when writing bits. */
 	private byte cache;
-	/** The number of bits available (to write) within {@code cache} */
+	/** The number of bits available (to write) within {@code cache}. */
 	private int remaining;
 
 
@@ -231,7 +231,7 @@ final class BitWriter{
 	}
 
 
-	/** Flush an integral number of bytes to the output stream, padding any non-completed byte with zeros */
+	/** Flush an integral number of bytes to the output stream, padding any non-completed byte with zeros. */
 	void flush(){
 		//put the cache into the buffer
 		if(remaining > 0)

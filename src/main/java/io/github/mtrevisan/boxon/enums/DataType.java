@@ -37,9 +37,9 @@ public enum DataType{
 	FLOAT(Float.TYPE, Float.class),
 	DOUBLE(Double.TYPE, Double.class);
 
-	/** Maps primitive {@code Class}es to their corresponding wrapper {@code Class} */
+	/** Maps primitive {@code Class}es to their corresponding wrapper {@code Class}. */
 	private static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPER_MAP = new HashMap<>(6);
-	/** Maps wrapper {@code Class}es to their corresponding primitive types */
+	/** Maps wrapper {@code Class}es to their corresponding primitive types. */
 	private static final Map<Class<?>, Class<?>> WRAPPER_PRIMITIVE_MAP = new HashMap<>(6);
 	private static final Map<Class<?>, DataType> TYPE_MAP = new HashMap<>(12);
 	static{

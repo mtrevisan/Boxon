@@ -45,9 +45,9 @@ import java.util.Arrays;
  */
 public final class BitSet{
 
-	/** The array containing the indexes */
+	/** The array containing the indexes. */
 	private int[] indexes = new int[0];
-	/** The number of indexes stored */
+	/** The number of indexes stored. */
 	private int cardinality;
 
 

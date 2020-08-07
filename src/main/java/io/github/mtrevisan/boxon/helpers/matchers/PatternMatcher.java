@@ -25,7 +25,7 @@
 package io.github.mtrevisan.boxon.helpers.matchers;
 
 
-/** The base class for pattern matching algorithm implementations */
+/** The base class for pattern matching algorithm implementations. */
 public interface PatternMatcher{
 
 	/**

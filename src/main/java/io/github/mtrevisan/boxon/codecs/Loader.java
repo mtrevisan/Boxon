@@ -80,7 +80,7 @@ final class Loader{
 			LOGGER.info("Load codecs from package(s) {}",
 				Arrays.stream(basePackageClasses).map(Class::getPackageName).collect(Collectors.joining(", ", "[", "]")));
 
-		/** extract all classes that implements {@link CodecInterface} */
+		/** extract all classes that implements {@link CodecInterface}. */
 		final Collection<Class<?>> derivedClasses = AnnotationHelper.extractClasses(CodecInterface.class, basePackageClasses);
 		@SuppressWarnings("rawtypes")
 		final DynamicArray<CodecInterface> codecs = extractCodecs(derivedClasses);
@@ -163,7 +163,7 @@ final class Loader{
 			LOGGER.info("Load parsing classes from package(s) {}",
 				Arrays.stream(basePackageClasses).map(Class::getPackageName).collect(Collectors.joining(", ", "[", "]")));
 
-		/** extract all classes annotated with {@link MessageHeader} */
+		/** extract all classes annotated with {@link MessageHeader}. */
 		final Collection<Class<?>> annotatedClasses = AnnotationHelper.extractClasses(MessageHeader.class, basePackageClasses);
 		@SuppressWarnings("rawtypes")
 		final DynamicArray<Template> templates = extractTemplates(annotatedClasses);

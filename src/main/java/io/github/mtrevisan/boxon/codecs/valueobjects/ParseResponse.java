@@ -34,13 +34,13 @@ import java.util.TreeMap;
 
 public class ParseResponse{
 
-	/** Whole payload (the index on {@link #parsedMessages} and {@link #errors} point here) */
+	/** Whole payload (the index on {@link #parsedMessages} and {@link #errors} point here). */
 	private final byte[] payload;
 
-	/** List of successfully parsed messages along with their starting index */
+	/** List of successfully parsed messages along with their starting index. */
 	private final Map<Integer, Object> parsedMessages = new TreeMap<>(Integer::compareTo);
 
-	/** List of error messages along with their starting index */
+	/** List of error messages along with their starting index. */
 	private final Map<Integer, ParseException> errors = new TreeMap<>(Integer::compareTo);
 
 

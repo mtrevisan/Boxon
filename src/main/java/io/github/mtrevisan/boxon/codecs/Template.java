@@ -57,7 +57,7 @@ final class Template<T>{
 	private static final String EMPTY_STRING = "";
 
 
-	/** Data associated to an annotated field */
+	/** Data associated to an annotated field. */
 	static final class BoundedField{
 
 		private static final String CONDITION = "condition";
@@ -90,7 +90,7 @@ final class Template<T>{
 		}
 	}
 
-	/** Data associated to a directly evaluable field */
+	/** Data associated to a directly evaluable field. */
 	static final class EvaluatedField{
 
 		private final Field field;
@@ -217,7 +217,7 @@ final class Template<T>{
 	private final MessageHeader header;
 	private final DynamicArray<BoundedField> boundedFields = DynamicArray.create(BoundedField.class);
 	private final DynamicArray<EvaluatedField> evaluatedFields = DynamicArray.create(EvaluatedField.class);
-	/** necessary to speed-up the creation of a {@link Template} (technically not needed because it's already present somewhere inside {@link #boundedFields}) */
+	/** necessary to speed-up the creation of a {@link Template} (technically not needed because it's already present somewhere inside {@link #boundedFields}). */
 	private BoundedField checksum;
 
 

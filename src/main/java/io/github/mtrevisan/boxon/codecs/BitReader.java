@@ -61,12 +61,12 @@ final class BitReader{
 	}
 
 
-	/** The backing {@link ByteBuffer} */
+	/** The backing {@link ByteBuffer}. */
 	private final ByteBuffer buffer;
 
-	/** The <i>cache</i> used when reading bits */
+	/** The <i>cache</i> used when reading bits. */
 	private byte cache;
-	/** The number of bits available (to read) within {@code cache} */
+	/** The number of bits available (to read) within {@code cache}. */
 	private int remaining;
 
 	private State fallbackPoint;
