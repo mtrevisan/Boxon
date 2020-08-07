@@ -26,7 +26,6 @@ package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.BindLong;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
-import io.github.mtrevisan.boxon.enums.ByteOrder;
 
 import java.lang.annotation.Annotation;
 
