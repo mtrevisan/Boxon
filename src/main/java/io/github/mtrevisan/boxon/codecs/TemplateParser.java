@@ -133,10 +133,8 @@ final class TemplateParser{
 		if(process){
 			final int size = Evaluator.evaluateSize(skip.size(), rootObject);
 			if(size > 0)
-				/** skip {@link size} bits */
 				reader.skip(size);
 			else
-				//skip until terminator
 				reader.skipUntilTerminator(skip.terminator(), skip.consumeTerminator());
 		}
 	}
