@@ -27,8 +27,8 @@ package io.github.mtrevisan.boxon.codecs;
 import io.github.mtrevisan.boxon.annotations.BindInteger;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.enums.ByteOrder;
-import io.github.mtrevisan.boxon.valueobjects.BitSet;
 import io.github.mtrevisan.boxon.helpers.ByteHelper;
+import io.github.mtrevisan.boxon.valueobjects.BitSet;
 
 import java.lang.annotation.Annotation;
 import java.math.BigInteger;

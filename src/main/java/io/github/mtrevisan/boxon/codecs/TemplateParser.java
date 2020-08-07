@@ -29,12 +29,12 @@ import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.Skip;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
 import io.github.mtrevisan.boxon.annotations.exceptions.TemplateException;
-import io.github.mtrevisan.boxon.valueobjects.BitSet;
 import io.github.mtrevisan.boxon.helpers.ByteHelper;
-import io.github.mtrevisan.boxon.valueobjects.DynamicArray;
 import io.github.mtrevisan.boxon.helpers.ExceptionHelper;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
+import io.github.mtrevisan.boxon.valueobjects.BitSet;
+import io.github.mtrevisan.boxon.valueobjects.DynamicArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

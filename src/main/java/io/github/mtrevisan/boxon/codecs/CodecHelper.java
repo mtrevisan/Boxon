@@ -30,9 +30,9 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.exceptions.CodecException;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.enums.ByteOrder;
-import io.github.mtrevisan.boxon.valueobjects.BitSet;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
+import io.github.mtrevisan.boxon.valueobjects.BitSet;
 
 import java.util.Objects;
 import java.util.regex.Pattern;
