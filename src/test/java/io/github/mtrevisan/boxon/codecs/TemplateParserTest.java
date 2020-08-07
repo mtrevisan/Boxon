@@ -59,7 +59,7 @@ class TemplateParserTest{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
 		Evaluator.addToContext("deviceTypes", deviceTypes);
-		Evaluator.addToContext(ParserTest.class.getDeclaredMethod("headerSize"));
+		Evaluator.addToContext(TemplateParserTest.class.getDeclaredMethod("headerSize"));
 		ACKMessageHex message = templateParser.decode(template, reader, null);
 		Evaluator.removeFromContext("deviceTypes");
 
@@ -68,6 +68,10 @@ class TemplateParserTest{
 		byte[] reconstructedMessage = writer.array();
 
 		Assertions.assertEquals(new String(payload), new String(reconstructedMessage));
+	}
+
+	private static int headerSize(){
+		return 4;
 	}
 
 	@Test

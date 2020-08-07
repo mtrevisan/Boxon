@@ -799,7 +799,7 @@ You can also define your own annotation by define an annotation and implementing
 //the number of bytes to read is determined by the leading bit of each individual bytes
 //(if the first bit of a byte is 1, then another byte is expected to follow)
 class VariableLengthByteArray implements CodecInterface<VarLengthEncoded>{
-    public Object decode(ProtoclMessageParser templateParser, BitBuffer reader, VarLengthEncoded annotation, Object data){
+    public Object decode(TemplateParser templateParser, BitBuffer reader, VarLengthEncoded annotation, Object data){
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         boolean continuing = true;
         while(continuing){
@@ -811,7 +811,7 @@ class VariableLengthByteArray implements CodecInterface<VarLengthEncoded>{
         return baos.toByteArray();
     }
 
-    public void encode(ProtoclMessageParser templateParser, BitWriter writer, VarLengthEncoded annotation, Object data, Object value){
+    public void encode(TemplateParser templateParser, BitWriter writer, VarLengthEncoded annotation, Object data, Object value){
         final int size = Array.getLength(value);
         for(int i = 0; i < size; i ++)
             writer.put((byte)((byte)Array.get(value, i) | (i < size - 1? (byte)0x80: 0x00)), ByteOrder.BIG_ENDIAN);
@@ -837,7 +837,7 @@ parser.withCodecs(new VariableLengthByteArray());
 ## Digging into the code
 Almost for each base annotation there is a corresponding class defined into `Codec.java` that manages the encoding and decoding of the underlying data.
 
-The other annotations are managed directly into `ProtoclMessageParser.java`, that is the main class that orchestrates the parsing of a single message with all of its annotations.
+The other annotations are managed directly into `TemplateParser.java`, that is the main class that orchestrates the parsing of a single message with all of its annotations.
 If an error occurs a `ParseException` is thrown.
 
 Messages can be concatenated, and the `Parser.java` class manages them, returning a [DTO](https://en.wikipedia.org/wiki/Data_transfer_object), `ParseResponse.java`, with a list of all successfully read messages and a list of all errors from problematic messages.

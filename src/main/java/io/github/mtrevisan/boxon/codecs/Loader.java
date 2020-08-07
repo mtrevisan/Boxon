@@ -204,7 +204,7 @@ final class Loader{
 	private void addTemplatesInner(final Template<?>[] templates){
 		//load each template into the available templates list
 		for(int i = 0; i < templates.length; i ++)
-			if(templates[i] != null)
+			if(templates[i] != null && templates[i].canBeCoded())
 				addTemplateInner(templates[i]);
 	}
 

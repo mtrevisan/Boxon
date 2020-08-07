@@ -87,8 +87,8 @@ public final class ExceptionHelper{
 		final StackTraceElement[] stackTrace = t.getStackTrace();
 		StackTraceElement stackTrace0 = null;
 		if(stackTrace.length > 0){
-			final String className = ExceptionHelper.class.getName();
-			final String classPackage = className.substring(0, className.indexOf('.') + 1);
+			final String className = ExceptionHelper.class.getPackageName();
+			final String classPackage = className.substring(0, className.lastIndexOf('.') + 1);
 			stackTrace0 = match(stackTrace, trace -> trace.getClassName().startsWith(classPackage));
 			if(stackTrace0 == null)
 				stackTrace0 = stackTrace[0];

@@ -107,8 +107,7 @@ public final class AnnotationHelper{
 
 		final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		for(int i = 0; i < basePackageClasses.length; i ++){
-			final String basePackageClassName = basePackageClasses[i].getName();
-			final String basePackageName = basePackageClassName.substring(0, basePackageClassName.lastIndexOf('.'));
+			final String basePackageName = basePackageClasses[i].getPackageName();
 			final String path = packageToUri(basePackageName);
 			try{
 				final Enumeration<URL> resources = classLoader.getResources(path);
