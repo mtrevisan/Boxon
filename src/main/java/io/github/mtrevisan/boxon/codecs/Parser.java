@@ -321,7 +321,6 @@ public class Parser{
 	 * Compose a single message
 	 *
 	 * @param data	The message to be composed
-	 * @return	The composition response
 	 */
 	private void compose(final BitWriter writer, final Object data, final ComposeResponse response){
 		try{

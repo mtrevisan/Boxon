@@ -36,7 +36,6 @@ import io.github.mtrevisan.boxon.helpers.matchers.PatternMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collection;
@@ -83,6 +82,7 @@ final class Loader{
 
 		/** extract all classes that implements {@link CodecInterface} */
 		final Collection<Class<?>> derivedClasses = AnnotationHelper.extractClasses(CodecInterface.class, basePackageClasses);
+		@SuppressWarnings("rawtypes")
 		final DynamicArray<CodecInterface> codecs = extractCodecs(derivedClasses);
 		addCodecsInner(codecs.data);
 
@@ -264,7 +264,7 @@ final class Loader{
 	 * @param type	The class to retrieve the template.
 	 * @return	The template that is able to decode/encode the given class.
 	 */
-	final Template<?> getTemplate(final Class<?> type) throws UnsupportedEncodingException{
+	final Template<?> getTemplate(final Class<?> type){
 		final MessageHeader header = type.getAnnotation(MessageHeader.class);
 		if(header == null)
 			throw new TemplateException("The given class type is not a valid template");
