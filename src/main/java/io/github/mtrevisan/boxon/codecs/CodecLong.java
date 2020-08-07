@@ -56,8 +56,7 @@ final class CodecLong implements CodecInterface<BindLong>{
 		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), rootObject);
 		final long v = CodecHelper.converterEncode(chosenConverter, value);
 
-		final ByteOrder byteOrder = binding.byteOrder();
-		writer.putLong(v, byteOrder);
+		writer.putLong(v, binding.byteOrder());
 	}
 
 }
