@@ -104,9 +104,12 @@ public final class ReflectionHelper{
 
 			if(ancestorType instanceof ParameterizedType){
 				//ancestor is parameterized: process only if the raw type matches the base class
-				final Class<?> type = manageParameterizedAncestor((ParameterizedType)ancestorType, base, typeVariables);
-				if(type != null)
-					return type;
+				final ParameterizedType ancestorParameterizedType = (ParameterizedType)ancestorType;
+				final Type rawType = ancestorParameterizedType.getRawType();
+				if(rawType instanceof Class<?> && base.isAssignableFrom((Class<?>)rawType)){
+					final Type resolvedType = resolveArgumentType(ancestorParameterizedType.getActualTypeArguments()[0], typeVariables);
+					return getClassFromName(resolvedType);
+				}
 			}
 			else if(ancestorType instanceof Class<?>
 				//ancestor is non-parameterized: process only if it matches the base class
@@ -116,15 +119,6 @@ public final class ReflectionHelper{
 
 		//there is a result if the base class is reached
 		return (offspring.equals(base)? getClassFromName(actualArgs[0]): null);
-	}
-
-	private static <T> Class<?> manageParameterizedAncestor(final ParameterizedType ancestorType, final Class<T> base, final Map<String, Type> typeVariables){
-		final Type rawType = ancestorType.getRawType();
-		if(rawType instanceof Class<?> && base.isAssignableFrom((Class<?>)rawType)){
-			final Type resolvedType = resolveArgumentType(ancestorType.getActualTypeArguments()[0], typeVariables);
-			return getClassFromName(resolvedType);
-		}
-		return null;
 	}
 
 	private static <T> Map<String, Type> mapParameterTypes(final Class<? extends T> offspring, final Type[] actualArgs){
