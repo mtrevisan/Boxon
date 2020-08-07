@@ -88,6 +88,7 @@ public final class ExceptionHelper{
 		StackTraceElement stackTrace0 = null;
 		if(stackTrace.length > 0){
 			final String className = ExceptionHelper.class.getPackageName();
+			//backtrack one package to get the base
 			final String classPackage = className.substring(0, className.lastIndexOf('.') + 1);
 			stackTrace0 = match(stackTrace, trace -> trace.getClassName().startsWith(classPackage));
 			if(stackTrace0 == null)
