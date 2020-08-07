@@ -80,7 +80,6 @@ public final class ReflectionHelper{
 	 * Resolves the actual generic type arguments for a base class, as viewed from a subclass or implementation.
 	 *
 	 * @param <T>	The base type.
-	 * @param <G>	The generic type.
 	 * @param offspring	The class or interface subclassing or extending the base type.
 	 * @param base	The base class.
 	 * @param actualArgs	The actual type arguments passed to the offspring class.
@@ -88,7 +87,7 @@ public final class ReflectionHelper{
 	 * @return	The actual generic type arguments, must match the type parameters of the offspring class.
 	 * 	If omitted, the type parameters will be used instead.
 	 */
-	public static <T, G> Class<G> resolveGenericType(final Class<? extends T> offspring, final Class<T> base, Type... actualArgs){
+	public static <T> Class<?> resolveGenericType(final Class<? extends T> offspring, final Class<T> base, Type... actualArgs){
 		//if actual types are omitted, the type parameters will be used instead
 		if(actualArgs.length == 0)
 			actualArgs = offspring.getTypeParameters();
@@ -120,13 +119,13 @@ public final class ReflectionHelper{
 					final Type resolvedType = resolveArgumentType(parameterizedType.getActualTypeArguments()[0], typeVariables);
 					final Class<?> type = getClassFromName(resolvedType);
 					if(type != null)
-						return (Class<G>)type;
+						return type;
 				}
 			}
 		}
 
 		//there is a result if the base class is reached
-		return (offspring.equals(base)? (Class<G>)getClassFromName(actualArgs[0]): null);
+		return (offspring.equals(base)? getClassFromName(actualArgs[0]): null);
 	}
 
 	private static <T> Map<String, Type> mapParameterTypes(final Class<? extends T> offspring, final Type[] actualArgs){

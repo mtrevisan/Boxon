@@ -36,6 +36,7 @@ public interface CodecInterface<B extends Annotation>{
 	void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value);
 
 
+	@SuppressWarnings("unchecked")
 	default B extractBinding(final Annotation annotation){
 		return (B)annotation;
 	}
@@ -43,8 +44,9 @@ public interface CodecInterface<B extends Annotation>{
 	/**
 	 * @return	The class of the annotation
 	 */
+	@SuppressWarnings("unchecked")
 	default Class<B> codecType(){
-		return ReflectionHelper.resolveGenericType(getClass(), CodecInterface.class);
+		return (Class<B>)ReflectionHelper.resolveGenericType(getClass(), CodecInterface.class);
 	}
 
 }
