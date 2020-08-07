@@ -205,12 +205,9 @@ class CodecObjectTest{
 
 	@Test
 	void choice1(){
-		Loader loader = new Loader();
-		loader.loadDefaultCodecs();
-		Template<TestChoice1> template = Template.createFrom(TestChoice1.class, loader);
 		Parser parser = Parser.create()
 			.withDefaultCodecs()
-			.withTemplates(template);
+			.withTemplates(TestChoice1.class);
 
 		byte[] payload = ByteHelper.toByteArray("746331011234");
 		ParseResponse result = parser.parse(payload);
@@ -248,12 +245,9 @@ class CodecObjectTest{
 
 	@Test
 	void choice2(){
-		Loader loader = new Loader();
-		loader.loadDefaultCodecs();
-		Template<TestChoice2> template = Template.createFrom(TestChoice2.class, loader);
 		Parser parser = Parser.create()
 			.withDefaultCodecs()
-			.withTemplates(template);
+			.withTemplates(TestChoice2.class);
 
 		byte[] payload = ByteHelper.toByteArray("7463320506001234");
 		ParseResponse result = parser.parse(payload);
@@ -291,12 +285,9 @@ class CodecObjectTest{
 
 	@Test
 	void choice3(){
-		Loader loader = new Loader();
-		loader.loadDefaultCodecs();
-		Template<TestChoice3> template = Template.createFrom(TestChoice3.class, loader);
 		Parser parser = Parser.create()
 			.withDefaultCodecs()
-			.withTemplates(template);
+			.withTemplates(TestChoice3.class);
 
 		byte[] payload = ByteHelper.toByteArray("74633361611234");
 		ParseResponse result = parser.parse(payload);

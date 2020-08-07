@@ -89,12 +89,9 @@ class ConverterTest{
 
 	@Test
 	void wrongInputOnConverter(){
-		Loader loader = new Loader();
-		loader.loadDefaultCodecs();
-		Template<TestConverter1> template = Template.createFrom(TestConverter1.class, loader);
 		Parser parser = Parser.create()
 			.withDefaultCodecs()
-			.withTemplates(template);
+			.withTemplates(TestConverter1.class);
 
 		byte[] payload = ByteHelper.toByteArray("77633101");
 		ParseResponse result = parser.parse(payload);
@@ -111,12 +108,9 @@ class ConverterTest{
 
 	@Test
 	void wrongOutputFromConverter(){
-		Loader loader = new Loader();
-		loader.loadDefaultCodecs();
-		Template<TestConverter2> template = Template.createFrom(TestConverter2.class, loader);
 		Parser parser = Parser.create()
 			.withDefaultCodecs()
-			.withTemplates(template);
+			.withTemplates(TestConverter2.class);
 
 		byte[] payload = ByteHelper.toByteArray("77633201");
 		ParseResponse result = parser.parse(payload);
@@ -133,12 +127,9 @@ class ConverterTest{
 
 	@Test
 	void allowedOutputFromConverter(){
-		Loader loader = new Loader();
-		loader.loadDefaultCodecs();
-		Template<TestConverter3> template = Template.createFrom(TestConverter3.class, loader);
 		Parser parser = Parser.create()
 			.withDefaultCodecs()
-			.withTemplates(template);
+			.withTemplates(TestConverter3.class);
 
 		byte[] payload = ByteHelper.toByteArray("77633301");
 		ParseResponse result = parser.parse(payload);

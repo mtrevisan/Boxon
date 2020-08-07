@@ -37,8 +37,6 @@ class LoaderTest{
 	void loadFromMap(){
 		Loader loader = new Loader();
 		loader.loadDefaultCodecs();
-
-		loader.addTemplates();
 	}
 
 	@Test
@@ -62,7 +60,7 @@ class LoaderTest{
 		Loader loader = new Loader();
 		Exception e = Assertions.assertThrows(TemplateException.class,
 			() -> loader.loadTemplates(LoaderTest.class));
-		Assertions.assertEquals("Cannot create a raw message from data: cannot scan template", e.getMessage());
+		Assertions.assertEquals("Cannot find the codec for BindString", e.getMessage());
 	}
 
 	@Test

@@ -36,7 +36,7 @@ public class TemplateException extends RuntimeException{
 
 
 	public TemplateException(final String message, Object... parameters){
-		super(MessageFormatter.format(message, parameters).getMessage());
+		super(MessageFormatter.format(message, (parameters.length != 1? parameters: parameters[0])).getMessage());
 	}
 
 }

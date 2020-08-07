@@ -34,6 +34,7 @@ import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.Skip;
 import io.github.mtrevisan.boxon.annotations.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.annotations.exceptions.CodecException;
 import io.github.mtrevisan.boxon.enums.DataType;
 import io.github.mtrevisan.boxon.helpers.AnnotationHelper;
 import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
@@ -266,9 +267,12 @@ final class Template<T>{
 		for(int i = 0; i < declaredAnnotations.length; i ++){
 			final Annotation annotation = declaredAnnotations[i];
 			final Class<? extends Annotation> annotationType = annotation.annotationType();
-			if(annotationType != Skip.class && annotationType != Evaluate.class
-					&& loader.hasCodec(annotationType))
-				annotations.add(annotation);
+			if(annotationType != Skip.class && annotationType != Evaluate.class){
+				if(loader.hasCodec(annotationType))
+					annotations.add(annotation);
+				else
+					throw new CodecException("Cannot find the codec for {}", annotationType.getSimpleName());
+			}
 		}
 		return annotations;
 	}

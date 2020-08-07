@@ -172,29 +172,6 @@ public class Parser{
 		return this;
 	}
 
-	/**
-	 * Loads all the protocol classes annotated with {@link MessageHeader}.
-	 *
-	 * @param templates	The list of templates to be loaded
-	 * @return	The {@link Parser}, used for chaining.
-	 */
-	public final Parser withTemplates(final Template<?>... templates){
-		templateParser.loader.addTemplates(templates);
-		return this;
-	}
-
-	/**
-	 * Load a singe codec that extends {@link CodecInterface}.
-	 * <p>If the parser previously contained a codec for the given key, the old codec is replaced by the specified one.</p>
-	 *
-	 * @param template	The template to be loaded
-	 * @return	The {@link Parser}, used for chaining.
-	 */
-	public final Parser addTemplate(final Template<?> template){
-		templateParser.loader.addTemplates(template);
-		return this;
-	}
-
 
 	/**
 	 * Parse a message from a file containing a binary stream

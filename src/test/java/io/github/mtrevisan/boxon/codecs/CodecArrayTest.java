@@ -27,7 +27,6 @@ package io.github.mtrevisan.boxon.codecs;
 import io.github.mtrevisan.boxon.annotations.BindArray;
 import io.github.mtrevisan.boxon.annotations.BindArrayPrimitive;
 import io.github.mtrevisan.boxon.annotations.BindByte;
-import io.github.mtrevisan.boxon.annotations.BindChecksum;
 import io.github.mtrevisan.boxon.annotations.BindString;
 import io.github.mtrevisan.boxon.annotations.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
@@ -256,12 +255,9 @@ class CodecArrayTest{
 
 	@Test
 	void arrayOfDifferentObjects(){
-		Loader loader = new Loader();
-		loader.loadDefaultCodecs();
-		Template<TestChoice4> template = Template.createFrom(TestChoice4.class, loader);
 		Parser parser = Parser.create()
 			.withCodecs(CodecChecksum.class)
-			.withTemplates(template);
+			.withTemplates(TestChoice4.class);
 
 		byte[] payload = ByteHelper.toByteArray("7463340112340211223344010666");
 		ParseResponse result = parser.parse(payload);
@@ -287,12 +283,9 @@ class CodecArrayTest{
 
 	@Test
 	void arrayOfDifferentObjectsWithNoPrefix(){
-		Loader loader = new Loader();
-		loader.loadDefaultCodecs();
-		Template<TestChoice5> template = Template.createFrom(TestChoice5.class, loader);
 		Parser parser = Parser.create()
 			.withDefaultCodecs()
-			.withTemplates(template);
+			.withTemplates(TestChoice5.class);
 
 		byte[] payload = ByteHelper.toByteArray("746335011234");
 		ParseResponse result = parser.parse(payload);

@@ -187,20 +187,6 @@ final class Loader{
 		return templates;
 	}
 
-	/**
-	 * Adds all the protocol classes annotated with {@link MessageHeader}.
-	 * <p>NOTE: If the loader previously contains a template for a given key, the old template is replaced by the new one.</p>
-	 *
-	 * @param templates	The list of templates to be loaded
-	 */
-	final void addTemplates(final Template<?>... templates){
-		LOGGER.info("Load given templates");
-
-		addTemplatesInner(templates);
-
-		LOGGER.trace("Templates loaded are {}", templates.length);
-	}
-
 	private void addTemplatesInner(final Template<?>[] templates){
 		//load each template into the available templates list
 		for(int i = 0; i < templates.length; i ++)
@@ -251,7 +237,9 @@ final class Loader{
 			final byte[] templateHeader = ByteHelper.toByteArray(header);
 
 			//verify if it's a valid message header
-			if(Arrays.equals(reader.array(), index, index + templateHeader.length, templateHeader, 0, templateHeader.length))
+			final int lastIndex = index + templateHeader.length;
+			final byte[] array = reader.array();
+			if(lastIndex <= array.length && Arrays.equals(array, index, lastIndex, templateHeader, 0, templateHeader.length))
 				return entry.getValue();
 		}
 
