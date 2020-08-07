@@ -64,7 +64,7 @@ final class Loader{
 
 	/**
 	 * Loads all the codecs that extends {@link CodecInterface}.
-	 * <p>This method should be called from a method inside a class that lies on a parent of all the codecs.</p>
+	 * <p>This method SHOULD BE called from a method inside a class that lies on a parent of all the codecs.</p>
 	 */
 	void loadDefaultCodecs(){
 		loadCodecs(ReflectionHelper.extractCallerClasses());
@@ -145,7 +145,7 @@ final class Loader{
 
 	/**
 	 * Loads all the protocol classes annotated with {@link MessageHeader}.
-	 * <p>This method should be called from a method inside a class that lies on a parent of all the protocol classes.</p>
+	 * <p>This method SHOULD BE called from a method inside a class that lies on a parent of all the protocol classes.</p>
 	 *
 	 * @throws IllegalArgumentException	If the codecs was not loaded yet.
 	 */

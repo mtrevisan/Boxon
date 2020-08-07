@@ -114,7 +114,7 @@ final class BitWriter{
 	 * Writes {@code value} to this {@link BitWriter} using {@code length} bits.
 	 *
 	 * @param value	The value to write.
-	 * @param length	The amount of bits to use when writing {@code value} (must be less than or equals to {@link Long#SIZE}).
+	 * @param length	The amount of bits to use when writing {@code value} (MUST BE less than or equals to {@link Long#SIZE}).
 	 */
 	private void putValue(final long value, final int length){
 		final BitSet bits = BitSet.valueOf(new long[]{value});

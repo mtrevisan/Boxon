@@ -46,7 +46,7 @@ public class Parser{
 
 
 	/**
-	 * Create an empty parser (context, codecs and templates MUST BE manually loaded!).
+	 * Create an empty parser (context, codecs and templates MUST BE manually loaded! -- templates MUST BE loaded AFTER the codecs).
 	 *
 	 * @return	A basic empty parser.
 	 */
@@ -119,7 +119,7 @@ public class Parser{
 
 	/**
 	 * Loads all the codecs that extends {@link CodecInterface}.
-	 * <p>This method should be called from a method inside a class that lies on a parent of all the codecs.</p>
+	 * <p>This method SHOULD BE called from a method inside a class that lies on a parent of all the codecs.</p>
 	 *
 	 * @return	The {@link Parser}, used for chaining.
 	 */
