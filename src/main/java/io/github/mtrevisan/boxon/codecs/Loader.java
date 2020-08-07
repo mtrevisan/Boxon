@@ -130,7 +130,8 @@ final class Loader{
 	}
 
 	private void addCodecInner(final CodecInterface<?> codec){
-		codecs.put(codec.codecType(), codec);
+		final Class<?> codecType = ReflectionHelper.resolveGenericType(codec.getClass(), CodecInterface.class);
+		codecs.put(codecType, codec);
 	}
 
 	final boolean hasCodec(final Class<?> type){
