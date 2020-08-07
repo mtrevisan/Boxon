@@ -28,7 +28,6 @@ import io.github.mtrevisan.boxon.codecs.queclink.DeviceTypes;
 import io.github.mtrevisan.boxon.codecs.valueobjects.ComposeResponse;
 import io.github.mtrevisan.boxon.codecs.valueobjects.ParseResponse;
 import io.github.mtrevisan.boxon.helpers.ByteHelper;
-import io.github.mtrevisan.boxon.helpers.TimeWatch;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -39,28 +38,6 @@ import java.util.Map;
 
 
 class ParserTest{
-
-	public static void main(String[] args) throws NoSuchMethodException{
-		DeviceTypes deviceTypes = new DeviceTypes();
-		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
-		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
-		Parser parser = Parser.create()
-			.withContext(context)
-			.withDefaultCodecs()
-			.withDefaultTemplates()
-			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"));
-
-		//~70 µs/msg = 14-15 kHz
-		byte[] payload = ByteHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
-		//warm-up
-		for(int i = 0; i < 2_000; i ++)
-			parser.parse(payload);
-		TimeWatch watch = TimeWatch.start();
-		for(int i = 0; i < 20_000; i ++)
-			parser.parse(payload);
-		watch.stop();
-		System.out.println(watch.toStringMicros(20_000));
-	}
 
 	@Test
 	void parseAndComposeSingeMessageHex() throws NoSuchMethodException{
