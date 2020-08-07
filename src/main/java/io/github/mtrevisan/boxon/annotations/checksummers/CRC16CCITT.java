@@ -32,7 +32,9 @@ package io.github.mtrevisan.boxon.annotations.checksummers;
  */
 public class CRC16CCITT implements Checksummer{
 
+	/** Starting value 0x0000 */
 	public static final long START_VALUE_0x0000 = 0x0000_0000l;
+	/** Starting value 0xFFFF */
 	public static final long START_VALUE_0xFFFF = 0x0000_FFFFl;
 
 	/** CCITT polynomial: x^16 + x^12 + x^5 + 1 -> 1000000100001 = 0x1021 */
