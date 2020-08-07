@@ -24,18 +24,20 @@
  */
 package io.github.mtrevisan.boxon.annotations.checksummers;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
+/**
+ * Calculates a 16 bit BSD chgecksum from a set of bytes
+ *
+ * @see <a href="https://en.wikipedia.org/wiki/BSD_checksum">BSD checksum</a>
+ */
+public class BSD16 implements Checksummer{
 
-class CRC16Test{
-
-	@Test
-	void calculateCRC16(){
-		CRC16 crc = new CRC16();
-		Number crc16 = crc.calculateChecksum(new byte[]{0x01, 0x02, 0x03, 0x04}, 0, 4, 0x0000_FFFF);
-
-		Assertions.assertEquals((short)0x89C3, crc16.shortValue());
+	@Override
+	public long calculateChecksum(final byte[] data, final int start, final int end, final long startValue){
+		int value = 0;
+		for(int i = Math.max(start, 0); i < Math.min(end, data.length); i ++)
+			value = ((value >>> 1) + ((value & 0x01) << 15) + data[i]) & 0xFFFF;
+		return value;
 	}
 
 }

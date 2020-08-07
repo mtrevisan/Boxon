@@ -28,7 +28,7 @@ package io.github.mtrevisan.boxon.annotations.checksummers;
 /**
  * Calculates a 16 bit Cyclic Redundancy Check of a set of bytes using the CRC-CCITT Normal algorithm
  *
- * @see <a href="https://en.wikipedia.org/wiki/Cyclic_redundancy_check">Cyclic redundancy check</a>
+ * @see <a href="https://en.wikipedia.org/wiki/Cyclic_redundancy_check">Cyclic Redundancy Check</a>
  */
 public class CRC16 implements Checksummer{
 
@@ -40,7 +40,7 @@ public class CRC16 implements Checksummer{
 
 
 	@Override
-	public long calculateCRC(final byte[] data, final int start, final int end, final long startValue){
+	public long calculateChecksum(final byte[] data, final int start, final int end, final long startValue){
 		short value = (short)startValue;
 		for(int i = Math.max(start, 0); i < Math.min(end, data.length); i ++)
 			for(int j = 0; j < Byte.SIZE; j ++){

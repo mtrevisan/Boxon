@@ -163,13 +163,13 @@ final class TemplateParser{
 			final Checksummer checksummer = ReflectionHelper.getCreator(checksum.algorithm())
 				.get();
 			final long startValue = checksum.startValue();
-			final long calculatedCRC = checksummer.calculateCRC(reader.array(), startPosition, endPosition, startValue);
-			final Number givenCRC = ReflectionHelper.getFieldValue(data, checksumData.getName());
-			if(givenCRC == null)
-				throw new IllegalArgumentException("Something bad happened, cannot read message CRC");
-			if(calculatedCRC != givenCRC.longValue())
-				throw new IllegalArgumentException("Calculated CRC (0x" + Long.toHexString(calculatedCRC).toUpperCase()
-					+ ") does NOT match given CRC (0x" + Long.toHexString(givenCRC.longValue()).toUpperCase() + ")");
+			final long calculatedChecksum = checksummer.calculateChecksum(reader.array(), startPosition, endPosition, startValue);
+			final Number givenChecksum = ReflectionHelper.getFieldValue(data, checksumData.getName());
+			if(givenChecksum == null)
+				throw new IllegalArgumentException("Something bad happened, cannot read message checksum");
+			if(calculatedChecksum != givenChecksum.longValue())
+				throw new IllegalArgumentException("Calculated checksum (0x" + Long.toHexString(calculatedChecksum).toUpperCase()
+					+ ") does NOT match given checksum (0x" + Long.toHexString(givenChecksum.longValue()).toUpperCase() + ")");
 		}
 	}
 
