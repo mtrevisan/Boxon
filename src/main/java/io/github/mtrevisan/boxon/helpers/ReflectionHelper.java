@@ -104,28 +104,33 @@ public final class ReflectionHelper{
 
 			if(ancestorType instanceof Class<?>){
 				//ancestor is non-parameterized: process only if it matches the base class
-				final Class<?> ancestorClass = (Class<?>)ancestorType;
-				if(base.isAssignableFrom(ancestorClass)){
-					ancestorsQueue.add(ancestorClass);
+				if(manageNonParameterizedAncestor((Class<?>)ancestorType, base, ancestorsQueue))
 					continue;
-				}
 			}
 
 			if(ancestorType instanceof ParameterizedType){
 				//ancestor is parameterized: process only if the raw type matches the base class
-				final ParameterizedType parameterizedType = (ParameterizedType)ancestorType;
-				final Type rawType = parameterizedType.getRawType();
-				if(rawType instanceof Class<?> && base.isAssignableFrom((Class<?>)rawType)){
-					final Type resolvedType = resolveArgumentType(parameterizedType.getActualTypeArguments()[0], typeVariables);
-					final Class<?> type = getClassFromName(resolvedType);
-					if(type != null)
-						return type;
-				}
+				final Class<?> type = manageParameterizedAncestor((ParameterizedType)ancestorType, base, typeVariables);
+				if(type != null)
+					return type;
 			}
 		}
 
 		//there is a result if the base class is reached
 		return (offspring.equals(base)? getClassFromName(actualArgs[0]): null);
+	}
+
+	private static <T> boolean manageNonParameterizedAncestor(final Class<?> ancestorType, final Class<T> base, final Queue<Type> ancestorsQueue){
+		return (base.isAssignableFrom(ancestorType) && ancestorsQueue.add(ancestorType));
+	}
+
+	private static <T> Class<?> manageParameterizedAncestor(final ParameterizedType ancestorType, final Class<T> base, final Map<String, Type> typeVariables){
+		final Type rawType = ancestorType.getRawType();
+		if(rawType instanceof Class<?> && base.isAssignableFrom((Class<?>)rawType)){
+			final Type resolvedType = resolveArgumentType(ancestorType.getActualTypeArguments()[0], typeVariables);
+			return getClassFromName(resolvedType);
+		}
+		return null;
 	}
 
 	private static <T> Map<String, Type> mapParameterTypes(final Class<? extends T> offspring, final Type[] actualArgs){
@@ -138,8 +143,8 @@ public final class ReflectionHelper{
 	private static <T> Queue<Type> extractAncestors(final Class<? extends T> offspring){
 		final Type[] genericInterfaces = offspring.getGenericInterfaces();
 		final Queue<Type> ancestorsQueue = new ArrayDeque<>(genericInterfaces.length + 1);
-		for(final Type type : genericInterfaces)
-			ancestorsQueue.add(type);
+		for(int i = 0; i < genericInterfaces.length; i ++)
+			ancestorsQueue.add(genericInterfaces[i]);
 		if(offspring.getGenericSuperclass() != null)
 			ancestorsQueue.add(offspring.getGenericSuperclass());
 		return ancestorsQueue;
