@@ -45,6 +45,13 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
+import java.util.ArrayDeque;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Queue;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -67,6 +74,91 @@ public final class ReflectionHelper{
 		}
 		catch(final ClassNotFoundException ignored){}
 		return classes;
+	}
+
+	/**
+	 * Resolves the actual generic type arguments for a base class, as viewed from a subclass or implementation.
+	 *
+	 * @param <T>	The base type.
+	 * @param <G>	The generic type.
+	 * @param offspring	The class or interface subclassing or extending the base type.
+	 * @param base	The base class.
+	 * @param actualArgs	The actual type arguments passed to the offspring class.
+	 * 	If no arguments are given, then the type parameters of the offspring will be used.
+	 * @return	The actual generic type arguments, must match the type parameters of the offspring class.
+	 * 	If omitted, the type parameters will be used instead.
+	 */
+	public static <T, G> Class<G> resolveGenericType(final Class<? extends T> offspring, final Class<T> base, Type... actualArgs){
+		//if actual types are omitted, the type parameters will be used instead
+		if(actualArgs.length == 0)
+			actualArgs = offspring.getTypeParameters();
+
+		//map type parameters into the actual types
+		final Map<String, Type> typeVariables = mapParameterTypes(offspring, actualArgs);
+
+		//find direct ancestors (superclass and interfaces)
+		final Queue<Type> ancestorsQueue = extractAncestors(offspring);
+
+		//iterate over ancestors
+		while(!ancestorsQueue.isEmpty()){
+			final Type ancestorType = ancestorsQueue.poll();
+
+			if(ancestorType instanceof Class<?>){
+				//ancestor is non-parameterized: process only if it matches the base class
+				final Class<?> ancestorClass = (Class<?>)ancestorType;
+				if(base.isAssignableFrom(ancestorClass)){
+					ancestorsQueue.add(ancestorClass);
+					continue;
+				}
+			}
+
+			if(ancestorType instanceof ParameterizedType){
+				//ancestor is parameterized: process only if the raw type matches the base class
+				final ParameterizedType parameterizedType = (ParameterizedType)ancestorType;
+				final Type rawType = parameterizedType.getRawType();
+				if(rawType instanceof Class<?> && base.isAssignableFrom((Class<?>)rawType)){
+					final Type resolvedType = resolveArgumentType(parameterizedType.getActualTypeArguments()[0], typeVariables);
+					final Class<?> type = getClassFromName(resolvedType);
+					if(type != null)
+						return (Class<G>)type;
+				}
+			}
+		}
+
+		//there is a result if the base class is reached
+		return (offspring.equals(base)? (Class<G>)getClassFromName(actualArgs[0]): null);
+	}
+
+	private static <T> Map<String, Type> mapParameterTypes(final Class<? extends T> offspring, final Type[] actualArgs){
+		final Map<String, Type> typeVariables = new HashMap<>(actualArgs.length);
+		for(int i = 0; i < actualArgs.length; i ++)
+			typeVariables.put(offspring.getTypeParameters()[i].getName(), actualArgs[i]);
+		return typeVariables;
+	}
+
+	private static <T> Queue<Type> extractAncestors(final Class<? extends T> offspring){
+		final Type[] genericInterfaces = offspring.getGenericInterfaces();
+		final Queue<Type> ancestorsQueue = new ArrayDeque<>(genericInterfaces.length + 1);
+		for(final Type type : genericInterfaces)
+			ancestorsQueue.add(type);
+		if(offspring.getGenericSuperclass() != null)
+			ancestorsQueue.add(offspring.getGenericSuperclass());
+		return ancestorsQueue;
+	}
+
+	private static Type resolveArgumentType(Type actualTypeArgument, final Map<String, Type> typeVariables){
+		if(actualTypeArgument instanceof TypeVariable<?>)
+			actualTypeArgument = typeVariables.getOrDefault(((TypeVariable<?>)actualTypeArgument).getName(), actualTypeArgument);
+		return actualTypeArgument;
+	}
+
+	private static Class<?> getClassFromName(final Type type){
+		try{
+			return Class.forName(type.getTypeName());
+		}
+		catch(final ClassNotFoundException ignored){
+			return null;
+		}
 	}
 
 

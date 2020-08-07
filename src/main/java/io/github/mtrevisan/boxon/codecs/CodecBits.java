@@ -36,7 +36,7 @@ final class CodecBits implements CodecInterface<BindBits>{
 
 	@Override
 	public final Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
-		final BindBits binding = (BindBits)annotation;
+		final BindBits binding = extractBinding(annotation);
 
 		final int size = Evaluator.evaluateSize(binding.size(), rootObject);
 		final BitSet bits = reader.getBits(size);
@@ -53,7 +53,7 @@ final class CodecBits implements CodecInterface<BindBits>{
 
 	@Override
 	public final void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value){
-		final BindBits binding = (BindBits)annotation;
+		final BindBits binding = extractBinding(annotation);
 
 		CodecHelper.validateData(binding.match(), binding.validator(), value);
 
@@ -64,11 +64,6 @@ final class CodecBits implements CodecInterface<BindBits>{
 			bits.reverseBits( size);
 
 		writer.putBits(bits, size);
-	}
-
-	@Override
-	public final Class<BindBits> codecType(){
-		return BindBits.class;
 	}
 
 }

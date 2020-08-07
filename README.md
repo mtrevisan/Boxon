@@ -816,10 +816,6 @@ class VariableLengthByteArray implements CodecInterface<VarLengthEncoded>{
         for(int i = 0; i < size; i ++)
             writer.put((byte)((byte)Array.get(value, i) | (i < size - 1? (byte)0x80: 0x00)), ByteOrder.BIG_ENDIAN);
     }
-
-    public Class<?> codecType(){
-        return VariableLengthByteArray.class;
-    }
 }
 ```
 

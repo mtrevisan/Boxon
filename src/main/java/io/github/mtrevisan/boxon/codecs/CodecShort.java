@@ -34,7 +34,7 @@ final class CodecShort implements CodecInterface<BindShort>{
 
 	@Override
 	public final Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
-		final BindShort binding = (BindShort)annotation;
+		final BindShort binding = extractBinding(annotation);
 
 		final short v = reader.getShort(binding.byteOrder());
 
@@ -48,7 +48,7 @@ final class CodecShort implements CodecInterface<BindShort>{
 
 	@Override
 	public final void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value){
-		final BindShort binding = (BindShort)annotation;
+		final BindShort binding = extractBinding(annotation);
 
 		CodecHelper.validateData(binding.match(), binding.validator(), value);
 
@@ -56,11 +56,6 @@ final class CodecShort implements CodecInterface<BindShort>{
 		final short v = CodecHelper.converterEncode(chosenConverter, value);
 
 		writer.putShort(v, binding.byteOrder());
-	}
-
-	@Override
-	public final Class<BindShort> codecType(){
-		return BindShort.class;
 	}
 
 }

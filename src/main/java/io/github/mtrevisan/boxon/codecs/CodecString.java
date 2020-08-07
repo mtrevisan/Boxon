@@ -35,7 +35,7 @@ final class CodecString implements CodecInterface<BindString>{
 
 	@Override
 	public final Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
-		final BindString binding = (BindString)annotation;
+		final BindString binding = extractBinding(annotation);
 
 		final int size = Evaluator.evaluateSize(binding.size(), rootObject);
 		final Charset charset = Charset.forName(binding.charset());
@@ -51,7 +51,7 @@ final class CodecString implements CodecInterface<BindString>{
 
 	@Override
 	public final void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value){
-		final BindString binding = (BindString)annotation;
+		final BindString binding = extractBinding(annotation);
 
 		CodecHelper.validateData(binding.match(), binding.validator(), value);
 
@@ -61,11 +61,6 @@ final class CodecString implements CodecInterface<BindString>{
 		final int size = Evaluator.evaluateSize(binding.size(), rootObject);
 		final Charset charset = Charset.forName(binding.charset());
 		writer.putText(text.substring(0, Math.min(text.length(), size)), charset);
-	}
-
-	@Override
-	public final Class<BindString> codecType(){
-		return BindString.class;
 	}
 
 }

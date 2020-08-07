@@ -36,7 +36,7 @@ final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 
 	@Override
 	public final Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
-		final BindArrayPrimitive binding = (BindArrayPrimitive)annotation;
+		final BindArrayPrimitive binding = extractBinding(annotation);
 
 		final Class<?> type = binding.type();
 		final int size = Evaluator.evaluateSize(binding.size(), rootObject);
@@ -57,7 +57,7 @@ final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 
 	@Override
 	public final void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value){
-		final BindArrayPrimitive binding = (BindArrayPrimitive)annotation;
+		final BindArrayPrimitive binding = extractBinding(annotation);
 
 		CodecHelper.validateData(binding.validator(), value);
 
@@ -70,11 +70,6 @@ final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 
 		for(int i = 0; i < size; i ++)
 			writer.put(Array.get(array, i), binding.byteOrder());
-	}
-
-	@Override
-	public final Class<BindArrayPrimitive> codecType(){
-		return BindArrayPrimitive.class;
 	}
 
 }

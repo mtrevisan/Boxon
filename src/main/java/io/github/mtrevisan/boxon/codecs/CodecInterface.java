@@ -24,6 +24,8 @@
  */
 package io.github.mtrevisan.boxon.codecs;
 
+import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
+
 import java.lang.annotation.Annotation;
 
 
@@ -33,9 +35,16 @@ public interface CodecInterface<B extends Annotation>{
 
 	void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value);
 
+
+	default B extractBinding(final Annotation annotation){
+		return (B)annotation;
+	}
+
 	/**
 	 * @return	The class of the annotation
 	 */
-	Class<B> codecType();
+	default Class<B> codecType(){
+		return ReflectionHelper.resolveGenericType(getClass(), CodecInterface.class);
+	}
 
 }

@@ -66,11 +66,6 @@ class CodecCustomTest{
 			for(int i = 0; i < size; i ++)
 				writer.put((byte)((byte)Array.get(value, i) | (i < size - 1? (byte)0x80: 0x00)), ByteOrder.BIG_ENDIAN);
 		}
-
-		@Override
-		public Class<VarLengthEncoded> codecType(){
-			return VarLengthEncoded.class;
-		}
 	}
 
 

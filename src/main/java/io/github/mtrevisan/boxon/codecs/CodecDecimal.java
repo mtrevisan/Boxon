@@ -35,7 +35,7 @@ final class CodecDecimal implements CodecInterface<BindDecimal>{
 
 	@Override
 	public final Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
-		final BindDecimal binding = (BindDecimal)annotation;
+		final BindDecimal binding = extractBinding(annotation);
 
 		final BigDecimal v = reader.getDecimal(binding.type(), binding.byteOrder());
 
@@ -49,7 +49,7 @@ final class CodecDecimal implements CodecInterface<BindDecimal>{
 
 	@Override
 	public final void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value){
-		final BindDecimal binding = (BindDecimal)annotation;
+		final BindDecimal binding = extractBinding(annotation);
 
 		CodecHelper.validateData(binding.match(), binding.validator(), value);
 
@@ -57,11 +57,6 @@ final class CodecDecimal implements CodecInterface<BindDecimal>{
 		final BigDecimal v = CodecHelper.converterEncode(chosenConverter, value);
 
 		writer.putDecimal(v, binding.type(), binding.byteOrder());
-	}
-
-	@Override
-	public final Class<BindDecimal> codecType(){
-		return BindDecimal.class;
 	}
 
 }

@@ -45,7 +45,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 
 	@Override
 	public final Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
-		final BindObject binding = (BindObject)annotation;
+		final BindObject binding = extractBinding(annotation);
 
 		Class<?> type = binding.type();
 		final ObjectChoices selectFrom = binding.selectFrom();
@@ -79,7 +79,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 
 	@Override
 	public final void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value){
-		final BindObject binding = (BindObject)annotation;
+		final BindObject binding = extractBinding(annotation);
 
 		CodecHelper.validateData(binding.validator(), value);
 
@@ -102,11 +102,6 @@ final class CodecObject implements CodecInterface<BindObject>{
 		final Object obj = CodecHelper.converterEncode(chosenConverter, value);
 
 		templateParser.encode(template, writer, rootObject, obj);
-	}
-
-	@Override
-	public final Class<BindObject> codecType(){
-		return BindObject.class;
 	}
 
 }

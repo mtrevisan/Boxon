@@ -47,7 +47,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 
 	@Override
 	public final Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
-		final BindArray binding = (BindArray)annotation;
+		final BindArray binding = extractBinding(annotation);
 
 		final int size = Evaluator.evaluateSize(binding.size(), rootObject);
 		final ObjectChoices selectFrom = binding.selectFrom();
@@ -95,7 +95,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 
 	@Override
 	public final void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value){
-		final BindArray binding = (BindArray)annotation;
+		final BindArray binding = extractBinding(annotation);
 
 		CodecHelper.validateData(binding.validator(), value);
 
@@ -135,11 +135,6 @@ final class CodecArray implements CodecInterface<BindArray>{
 
 		for(int i = 0; i < array.length; i ++)
 			templateParser.encode(template, writer, null, array[i]);
-	}
-
-	@Override
-	public final Class<BindArray> codecType(){
-		return BindArray.class;
 	}
 
 }

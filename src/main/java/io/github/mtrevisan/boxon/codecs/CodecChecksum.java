@@ -33,21 +33,16 @@ final class CodecChecksum implements CodecInterface<BindChecksum>{
 
 	@Override
 	public final Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
-		final BindChecksum binding = (BindChecksum)annotation;
+		final BindChecksum binding = extractBinding(annotation);
 
 		return reader.get(binding.type(), binding.byteOrder());
 	}
 
 	@Override
 	public final void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value){
-		final BindChecksum binding = (BindChecksum)annotation;
+		final BindChecksum binding = extractBinding(annotation);
 
 		writer.put(value, binding.byteOrder());
-	}
-
-	@Override
-	public final Class<BindChecksum> codecType(){
-		return BindChecksum.class;
 	}
 
 }

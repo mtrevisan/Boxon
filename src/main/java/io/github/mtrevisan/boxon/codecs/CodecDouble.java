@@ -34,7 +34,7 @@ final class CodecDouble implements CodecInterface<BindDouble>{
 
 	@Override
 	public final Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
-		final BindDouble binding = (BindDouble)annotation;
+		final BindDouble binding = extractBinding(annotation);
 
 		final double v = reader.getDouble(binding.byteOrder());
 
@@ -48,7 +48,7 @@ final class CodecDouble implements CodecInterface<BindDouble>{
 
 	@Override
 	public final void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value){
-		final BindDouble binding = (BindDouble)annotation;
+		final BindDouble binding = extractBinding(annotation);
 
 		CodecHelper.validateData(binding.match(), binding.validator(), value);
 
@@ -56,11 +56,6 @@ final class CodecDouble implements CodecInterface<BindDouble>{
 		final double v = CodecHelper.converterEncode(chosenConverter, value);
 
 		writer.putDouble(v, binding.byteOrder());
-	}
-
-	@Override
-	public final Class<BindDouble> codecType(){
-		return BindDouble.class;
 	}
 
 }

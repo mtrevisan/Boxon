@@ -35,7 +35,7 @@ final class CodecLong implements CodecInterface<BindLong>{
 
 	@Override
 	public final Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
-		final BindLong binding = (BindLong)annotation;
+		final BindLong binding = extractBinding(annotation);
 
 		final long v = reader.getLong(binding.byteOrder());
 
@@ -49,7 +49,7 @@ final class CodecLong implements CodecInterface<BindLong>{
 
 	@Override
 	public final void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value){
-		final BindLong binding = (BindLong)annotation;
+		final BindLong binding = extractBinding(annotation);
 
 		CodecHelper.validateData(binding.match(), binding.validator(), value);
 
@@ -58,11 +58,6 @@ final class CodecLong implements CodecInterface<BindLong>{
 
 		final ByteOrder byteOrder = binding.byteOrder();
 		writer.putLong(v, byteOrder);
-	}
-
-	@Override
-	public final Class<BindLong> codecType(){
-		return BindLong.class;
 	}
 
 }
