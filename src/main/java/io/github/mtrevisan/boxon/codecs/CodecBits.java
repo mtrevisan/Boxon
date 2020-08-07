@@ -35,7 +35,7 @@ import java.lang.annotation.Annotation;
 final class CodecBits implements CodecInterface<BindBits>{
 
 	@Override
-	public final Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
+	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
 		final BindBits binding = extractBinding(annotation);
 
 		final int size = Evaluator.evaluateSize(binding.size(), rootObject);
@@ -52,7 +52,7 @@ final class CodecBits implements CodecInterface<BindBits>{
 	}
 
 	@Override
-	public final void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value){
+	public void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value){
 		final BindBits binding = extractBinding(annotation);
 
 		CodecHelper.validateData(binding.match(), binding.validator(), value);

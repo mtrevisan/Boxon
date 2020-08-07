@@ -117,7 +117,7 @@ public final class BitSet{
 	public BitSet(){}
 
 
-	public final void ensureAdditionalSpace(final int size){
+	public void ensureAdditionalSpace(final int size){
 		indexes = Arrays.copyOf(indexes, cardinality + size);
 	}
 
@@ -126,7 +126,7 @@ public final class BitSet{
 	 *
 	 * @param bitIndex	A bit index (MUST BE greater than the previous index!)
 	 */
-	public final void addNextSetBit(final int bitIndex){
+	public void addNextSetBit(final int bitIndex){
 		ensureAdditionalSpace(1);
 
 		indexes[cardinality ++] = bitIndex;
@@ -138,7 +138,7 @@ public final class BitSet{
 	 * @param bitIndex	A bit index (MUST BE greater than the previous index!)
 	 * @return	The state of the bit at a specified index
 	 */
-	public final boolean testBit(final int bitIndex){
+	public boolean testBit(final int bitIndex){
 		return (Arrays.binarySearch(indexes, bitIndex) >= 0);
 	}
 
@@ -147,7 +147,7 @@ public final class BitSet{
 	 *
 	 * @param size	The size of the number in bits.
 	 */
-	public final void reverseBits(final int size){
+	public void reverseBits(final int size){
 		for(int i = 0; i < cardinality; i ++)
 			indexes[i] = size - indexes[i] - 1;
 
@@ -174,7 +174,7 @@ public final class BitSet{
 	 *
 	 * @return	A byte array containing a little-endian representation of all the bits in this bit set
 	 */
-	public final byte[] toByteArray(){
+	public byte[] toByteArray(){
 		if(cardinality == 0)
 			return new byte[]{0};
 
@@ -193,7 +193,7 @@ public final class BitSet{
 	 * @param size	The length in bits of the extraction (MUST BE less than {@link Long#SIZE}!)
 	 * @return	A long starting at a given offset and of a given length
 	 */
-	public final long toLong(final int offset, final int size){
+	public long toLong(final int offset, final int size){
 		long value = 0l;
 		if(indexes.length > 0){
 			int index;
@@ -212,17 +212,17 @@ public final class BitSet{
 
 
 	@Override
-	public final String toString(){
+	public String toString(){
 		return Arrays.toString(indexes);
 	}
 
 	@Override
-	public final int hashCode(){
+	public int hashCode(){
 		return Arrays.hashCode(indexes);
 	}
 
 	@Override
-	public final boolean equals(final Object obj){
+	public boolean equals(final Object obj){
 		if(!(obj instanceof BitSet))
 			return false;
 		if(this == obj)

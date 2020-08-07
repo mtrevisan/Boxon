@@ -82,7 +82,7 @@ public class KMPPatternMatcher implements PatternMatcher{
 	 * 	or {@code -1} if there is no such occurrence.
 	 */
 	@Override
-	public int indexOf(final byte[] source, int offset, final byte[] pattern, final int[] failureTable){
+	public int indexOf(final byte[] source, final int offset, final byte[] pattern, final int[] failureTable){
 		if(pattern.length == 0)
 			return 0;
 

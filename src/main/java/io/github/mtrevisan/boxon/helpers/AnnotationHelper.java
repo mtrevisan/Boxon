@@ -243,7 +243,7 @@ public final class AnnotationHelper{
 			classes.add(cls);
 	}
 
-	private static String packageToUri(String packageName){
+	private static String packageToUri(final String packageName){
 		return packageName.replace('.', '/');
 	}
 

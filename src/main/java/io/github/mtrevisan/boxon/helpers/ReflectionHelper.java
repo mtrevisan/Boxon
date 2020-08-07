@@ -339,7 +339,7 @@ public final class ReflectionHelper{
 	 * @return The ObjectInstantiator for the class
 	 */
 	private static <T> ObjectInstantiator<T> instantiatorOf(final Class<T> type){
-		ObjectInstantiator<T> instantiator;
+		final ObjectInstantiator<T> instantiator;
 		if(PlatformDescription.isThisJVM(PlatformDescription.HOTSPOT) || PlatformDescription.isThisJVM(PlatformDescription.OPENJDK))
 			instantiator = instantiatorForOpenJDK(type);
 		else if(PlatformDescription.isThisJVM(PlatformDescription.DALVIK))

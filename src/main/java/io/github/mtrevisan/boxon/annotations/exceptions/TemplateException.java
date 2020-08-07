@@ -35,7 +35,7 @@ public class TemplateException extends RuntimeException{
 	private static final long serialVersionUID = 7585594459004613305L;
 
 
-	public TemplateException(final String message, Object... parameters){
+	public TemplateException(final String message, final Object... parameters){
 		super(MessageFormatter.format(message, (parameters.length != 1? parameters: parameters[0])).getMessage());
 	}
 

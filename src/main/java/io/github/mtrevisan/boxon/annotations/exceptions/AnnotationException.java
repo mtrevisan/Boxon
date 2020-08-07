@@ -35,7 +35,7 @@ public class AnnotationException extends RuntimeException{
 	private static final long serialVersionUID = 6429044852678473069L;
 
 
-	public AnnotationException(final String message, Object... parameters){
+	public AnnotationException(final String message, final Object... parameters){
 		super(MessageFormatter.format(message, (parameters.length != 1? parameters: parameters[0])).getMessage());
 	}
 

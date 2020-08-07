@@ -66,7 +66,7 @@ final class Loader{
 	 * Loads all the codecs that extends {@link CodecInterface}.
 	 * <p>This method should be called from a method inside a class that lies on a parent of all the codecs.</p>
 	 */
-	final void loadDefaultCodecs(){
+	void loadDefaultCodecs(){
 		loadCodecs(ReflectionHelper.extractCallerClasses());
 	}
 
@@ -75,7 +75,7 @@ final class Loader{
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load codecs
 	 */
-	final void loadCodecs(final Class<?>... basePackageClasses){
+	void loadCodecs(final Class<?>... basePackageClasses){
 		if(LOGGER.isInfoEnabled())
 			LOGGER.info("Load codecs from package(s) {}",
 				Arrays.stream(basePackageClasses).map(Class::getPackageName).collect(Collectors.joining(", ", "[", "]")));
@@ -112,7 +112,7 @@ final class Loader{
 	 *
 	 * @param codecs	The list of codecs to be loaded
 	 */
-	final void addCodecs(final CodecInterface<?>... codecs){
+	void addCodecs(final CodecInterface<?>... codecs){
 		Objects.requireNonNull(codecs);
 
 		LOGGER.info("Load given codecs");
@@ -134,11 +134,11 @@ final class Loader{
 		codecs.put(codecType, codec);
 	}
 
-	final boolean hasCodec(final Class<?> type){
+	boolean hasCodec(final Class<?> type){
 		return (getCodec(type) != null);
 	}
 
-	final CodecInterface<?> getCodec(final Class<?> type){
+	CodecInterface<?> getCodec(final Class<?> type){
 		return codecs.get(type);
 	}
 
@@ -149,7 +149,7 @@ final class Loader{
 	 *
 	 * @throws IllegalArgumentException	If the codecs was not loaded yet,
 	 */
-	final void loadDefaultTemplates(){
+	void loadDefaultTemplates(){
 		loadTemplates(ReflectionHelper.extractCallerClasses());
 	}
 
@@ -158,7 +158,7 @@ final class Loader{
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes
 	 */
-	final void loadTemplates(final Class<?>... basePackageClasses){
+	void loadTemplates(final Class<?>... basePackageClasses){
 		if(LOGGER.isInfoEnabled())
 			LOGGER.info("Load parsing classes from package(s) {}",
 				Arrays.stream(basePackageClasses).map(Class::getPackageName).collect(Collectors.joining(", ", "[", "]")));
@@ -227,7 +227,7 @@ final class Loader{
 	 * @param reader	The reader to read the header from.
 	 * @return	The template that is able to decode/encode the next message in the given reader.
 	 */
-	final Template<?> getTemplate(final BitReader reader){
+	Template<?> getTemplate(final BitReader reader){
 		final int index = reader.position();
 
 		//for each available template, select the first that matches the starting bytes
@@ -253,7 +253,7 @@ final class Loader{
 	 * @param type	The class to retrieve the template.
 	 * @return	The template that is able to decode/encode the given class.
 	 */
-	final Template<?> getTemplate(final Class<?> type){
+	Template<?> getTemplate(final Class<?> type){
 		final MessageHeader header = type.getAnnotation(MessageHeader.class);
 		if(header == null)
 			throw new TemplateException("The given class type is not a valid template");
@@ -277,7 +277,7 @@ final class Loader{
 	 * @param reader	The reader.
 	 * @return	The index of the next message.
 	 */
-	final int findNextMessageIndex(final BitReader reader){
+	int findNextMessageIndex(final BitReader reader){
 		int minOffset = -1;
 		for(final Template<?> template : templates.values()){
 			final MessageHeader header = template.getHeader();

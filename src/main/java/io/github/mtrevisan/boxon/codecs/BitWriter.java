@@ -51,7 +51,7 @@ final class BitWriter{
 	private int remaining;
 
 
-	final void put(final Object value, final ByteOrder byteOrder){
+	void put(final Object value, final ByteOrder byteOrder){
 		final DataType t = DataType.fromType(value.getClass());
 		if(t == null)
 			throw new AnnotationException("Cannot write type {}", value.getClass().getSimpleName());
@@ -88,7 +88,7 @@ final class BitWriter{
 	 * @param value	The value to write.
 	 * @param length	The amount of bits to use when writing {@code value}.
 	 */
-	final void putBits(final BitSet value, final int length){
+	void putBits(final BitSet value, final int length){
 		//if the value that we're writing is too large to be placed entirely in the cache, then we need to place as
 		//much as we can in the cache (the least significant bits), flush the cache to the backing ByteBuffer, and
 		//place the rest in the cache
@@ -126,7 +126,7 @@ final class BitWriter{
 	 *
 	 * @param value	The {@code byte} to write.
 	 */
-	final void putByte(final byte value){
+	void putByte(final byte value){
 		putValue(value, Byte.SIZE);
 	}
 
@@ -135,7 +135,7 @@ final class BitWriter{
 	 *
 	 * @param array	The array of {@code byte}s to write.
 	 */
-	final void putBytes(final byte[] array){
+	void putBytes(final byte[] array){
 		for(int i = 0; i < array.length; i ++)
 			putByte(array[i]);
 	}
@@ -146,7 +146,7 @@ final class BitWriter{
 	 * @param value	The {@code short} to write as an {@code int} for ease-of-use, but internally down-casted to a {@code short}.
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 */
-	final void putShort(final short value, final ByteOrder byteOrder){
+	void putShort(final short value, final ByteOrder byteOrder){
 		putValue(byteOrder == ByteOrder.BIG_ENDIAN? Short.reverseBytes(value): value, Short.SIZE);
 	}
 
@@ -156,7 +156,7 @@ final class BitWriter{
 	 * @param value	The {@code int} to write.
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 */
-	final void putInt(final int value, final ByteOrder byteOrder){
+	void putInt(final int value, final ByteOrder byteOrder){
 		putValue((byteOrder == ByteOrder.BIG_ENDIAN? Integer.reverseBytes(value): value), Integer.SIZE);
 	}
 
@@ -166,7 +166,7 @@ final class BitWriter{
 	 * @param value	The {@code long} to write.
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 */
-	final void putLong(final long value, final ByteOrder byteOrder){
+	void putLong(final long value, final ByteOrder byteOrder){
 		putValue((byteOrder == ByteOrder.BIG_ENDIAN? Long.reverseBytes(value): value), Long.SIZE);
 	}
 
@@ -176,7 +176,7 @@ final class BitWriter{
 	 * @param value	The {@code float} to write.
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 */
-	final void putFloat(final float value, final ByteOrder byteOrder){
+	void putFloat(final float value, final ByteOrder byteOrder){
 		putInt(Float.floatToRawIntBits(value), byteOrder);
 	}
 
@@ -186,7 +186,7 @@ final class BitWriter{
 	 * @param value	The {@code double} to write.
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 */
-	final void putDouble(final double value, final ByteOrder byteOrder){
+	void putDouble(final double value, final ByteOrder byteOrder){
 		putLong(Double.doubleToRawLongBits(value), byteOrder);
 	}
 
@@ -197,7 +197,7 @@ final class BitWriter{
 	 * @param cls	Either a {@code Float} or a {@link Double} class.
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 */
-	final void putDecimal(final BigDecimal value, final Class<?> cls, final ByteOrder byteOrder){
+	void putDecimal(final BigDecimal value, final Class<?> cls, final ByteOrder byteOrder){
 		if(cls == float.class || cls == Float.class)
 			putFloat(value.floatValue(), byteOrder);
 		else if(cls == double.class || cls == Double.class)
@@ -212,7 +212,7 @@ final class BitWriter{
 	 * @param text	The {@code String}s to be written.
 	 * @param charset	The charset.
 	 */
-	final void putText(final String text, final Charset charset){
+	void putText(final String text, final Charset charset){
 		putBytes(text.getBytes(charset));
 	}
 
@@ -224,7 +224,7 @@ final class BitWriter{
 	 * @param consumeTerminator	Whether to consume the terminator.
 	 * @param charset	The charset.
 	 */
-	final void putText(final String text, final byte terminator, final boolean consumeTerminator, final Charset charset){
+	void putText(final String text, final byte terminator, final boolean consumeTerminator, final Charset charset){
 		putBytes(text.getBytes(charset));
 		if(consumeTerminator)
 			putByte(terminator);
@@ -232,7 +232,7 @@ final class BitWriter{
 
 
 	/** Flush an integral number of bytes to the output stream, padding any non-completed byte with zeros */
-	final void flush(){
+	void flush(){
 		//put the cache into the buffer
 		if(remaining > 0)
 			os.write(cache);
@@ -252,12 +252,12 @@ final class BitWriter{
 	 * @throws ReadOnlyBufferException	If this buffer is backed by an array but is read-only
 	 * @throws UnsupportedOperationException	If this buffer is not backed by an accessible array
 	 */
-	final byte[] array(){
+	byte[] array(){
 		return os.toByteArray();
 	}
 
 	@Override
-	public final String toString(){
+	public String toString(){
 		return ByteHelper.toHexString(array());
 	}
 

@@ -58,7 +58,7 @@ final class Template<T>{
 
 
 	/** Data associated to an annotated field */
-	static class BoundedField{
+	static final class BoundedField{
 
 		private static final String CONDITION = "condition";
 
@@ -91,7 +91,7 @@ final class Template<T>{
 	}
 
 	/** Data associated to a directly evaluable field */
-	static class EvaluatedField{
+	static final class EvaluatedField{
 
 		private final Field field;
 		private final Evaluate binding;
@@ -304,36 +304,36 @@ final class Template<T>{
 			validator.validate(annotation);
 	}
 
-	final Class<T> getType(){
+	Class<T> getType(){
 		return cls;
 	}
 
-	final MessageHeader getHeader(){
+	MessageHeader getHeader(){
 		return header;
 	}
 
-	final DynamicArray<BoundedField> getBoundedFields(){
+	DynamicArray<BoundedField> getBoundedFields(){
 		return boundedFields;
 	}
 
-	final DynamicArray<EvaluatedField> getEvaluatedFields(){
+	DynamicArray<EvaluatedField> getEvaluatedFields(){
 		return evaluatedFields;
 	}
 
-	final boolean isChecksumPresent(){
+	boolean isChecksumPresent(){
 		return (checksum != null);
 	}
 
-	final BoundedField getChecksum(){
+	BoundedField getChecksum(){
 		return checksum;
 	}
 
-	final boolean canBeCoded(){
+	boolean canBeCoded(){
 		return (header != null && !boundedFields.isEmpty());
 	}
 
 	@Override
-	public final String toString(){
+	public String toString(){
 		return cls.getSimpleName();
 	}
 

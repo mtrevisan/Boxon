@@ -68,7 +68,7 @@ final class TemplateParser{
 	final Loader loader = new Loader();
 
 
-	final <T> T decode(final Template<T> template, final BitReader reader, final Object parentObject){
+	<T> T decode(final Template<T> template, final BitReader reader, final Object parentObject){
 		final int startPosition = reader.position();
 
 		final T currentObject = ReflectionHelper.getCreator(template.getType())
@@ -186,7 +186,7 @@ final class TemplateParser{
 		}
 	}
 
-	final <T> void encode(final Template<?> template, final BitWriter writer, final Object parentObject, final T currentObject){
+	<T> void encode(final Template<?> template, final BitWriter writer, final Object parentObject, final T currentObject){
 		final ParserContext<T> parserContext = new ParserContext<>(parentObject, currentObject);
 
 		//encode message fields:

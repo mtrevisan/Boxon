@@ -30,7 +30,7 @@ import java.util.StringJoiner;
 import java.util.function.Function;
 
 
-public class DynamicArray<T>{
+public final class DynamicArray<T>{
 
 	private static final float DEFAULT_GROWTH_RATE = 1.2f;
 

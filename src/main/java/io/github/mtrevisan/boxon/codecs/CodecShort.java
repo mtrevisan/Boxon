@@ -33,7 +33,7 @@ import java.lang.annotation.Annotation;
 final class CodecShort implements CodecInterface<BindShort>{
 
 	@Override
-	public final Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
+	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
 		final BindShort binding = extractBinding(annotation);
 
 		final short v = reader.getShort(binding.byteOrder());
@@ -47,7 +47,7 @@ final class CodecShort implements CodecInterface<BindShort>{
 	}
 
 	@Override
-	public final void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value){
+	public void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value){
 		final BindShort binding = extractBinding(annotation);
 
 		CodecHelper.validateData(binding.match(), binding.validator(), value);
