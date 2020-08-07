@@ -36,7 +36,7 @@ import java.lang.annotation.Target;
 
 
 /**
- * Manages an annotated {@link Class} (... before the application of a converter)
+ * Manages an annotated {@link Class} (... before the application of a converter).
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
@@ -45,60 +45,57 @@ public @interface BindObject{
 	/**
 	 * The SpEL expression that determines if an evaluation has to be made.
 	 *
-	 * @return	The condition that determines if an evaluation has to be made (can be an expression).
+	 * @return	The condition that determines if an evaluation has to be made (defaults to empty, that means &quot;accept&quot;).
 	 */
 	String condition() default "";
 
 	/**
 	 * The type of object.
 	 * <p>Note that this allows you to have a field of a super type of the actual type that
-	 * you expect to inject. So you might have something like this:</p>
+	 * you expect to inject.</p>
+	 * <p>So you might have something like this:</p>
 	 * <pre><code>
-	 * class A {
-	 * }
+	 * class A { ... }
 	 *
-	 * class B extends A {
-	 * 	&#064;BoundLong
-	 * 	...
-	 * }
+	 * class B extends A { ... }
 	 *
 	 * ...
 	 *
 	 * &#064;BoundObject(type = B.class)
-	 * private A a; // Array will contain instances of B.
+	 * private A array;	//object will contain instances of B
 	 * </code></pre>
 	 *
-	 * @return	The (super) type of object to be inserted in the array.
+	 * @return	The (super) type of object to be inserted in the array (defaults to {@link Object}).
 	 */
 	Class<?> type() default Object.class;
 
 	/**
 	 * The choices to select from, based on a prefix of a certain size.
 	 *
-	 * @return The choices to select from, based on a prefix of a certain size.
+	 * @return The choices to select from, based on a prefix of a certain size (defaults to empty {@link ObjectChoices}).
 	 */
 	ObjectChoices selectFrom() default @ObjectChoices();
 
 	/**
 	 * The validator to be applied <i>after</i> applying the converter, in the decoding phase (<i>before</i> if in the encoding one), if any.
-	 * <p>Usually the fully qualified name of an implementation class of a {@link Validator}</p>
+	 * <p>Usually the fully qualified name of an implementation class of a {@link Validator}.</p>
 	 *
-	 * @return	The class of a {@link Validator}
+	 * @return	The class of a {@link Validator} (defaults to {@link NullValidator null validator}).
 	 */
 	Class<? extends Validator<?>> validator() default NullValidator.class;
 
 	/**
 	 * The converter to be applied just <i>before</i> writing the parameter value (<i>after</i> if reading), if any.
-	 * <p>Usually the fully qualified name of an implementation class of a {@link Converter}</p>
+	 * <p>Usually the fully qualified name of an implementation class of a {@link Converter}.</p>
 	 *
-	 * @return	The class of a {@link Converter}
+	 * @return	The class of a {@link Converter} (defaults to {@link NullConverter null converter}).
 	 */
 	Class<? extends Converter<?, ?>> converter() default NullConverter.class;
 
 	/**
 	 * The choices to select from to apply a given converter.
 	 *
-	 * @return The choices to select from to apply a given converter.
+	 * @return The choices to select from to apply a given converter (defaults to empty {@link ConverterChoices}).
 	 */
 	ConverterChoices selectConverterFrom() default @ConverterChoices();
 

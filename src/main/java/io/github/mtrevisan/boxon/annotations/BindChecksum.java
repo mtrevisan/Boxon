@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.annotations;
 
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
+import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.enums.ByteOrder;
 
@@ -58,22 +59,22 @@ public @interface BindChecksum{
 	/**
 	 * The byte(s) to skip from the start of the message, if any.
 	 *
-	 * @return	The byte(s) to skip from the start of the message.
+	 * @return	The byte(s) to skip from the start of the message (defaults to {@code 0}).
 	 */
 	int skipStart() default 0;
 
 	/**
 	 * The byte(s) to skip from the end of the message, if any.
 	 *
-	 * @return	The byte(s) to skip from the end of the message.
+	 * @return	The byte(s) to skip from the end of the message (defaults to {@code 0}).
 	 */
 	int skipEnd() default 0;
 
 	/**
 	 * The validator to be applied before applying the converter, if any. Usually the fully qualified
-	 * name of an implementation class of a {@link Validator}
+	 * name of an implementation class of a {@link Validator}.
 	 *
-	 * @return	The class of a {@link Checksummer}
+	 * @return	The class of a {@link Checksummer}.
 	 */
 	Class<? extends Checksummer> algorithm();
 

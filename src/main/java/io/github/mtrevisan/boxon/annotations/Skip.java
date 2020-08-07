@@ -53,28 +53,28 @@ public @interface Skip{
 	/**
 	 * The SpEL expression that determines if an evaluation has to be made.
 	 *
-	 * @return	The condition that determines if an evaluation has to be made (can be an expression).
+	 * @return	The condition that determines if an evaluation has to be made (defaults to empty, that means &quot;accept&quot;).
 	 */
 	String condition() default "";
 
 	/**
-	 * The number of bits to be skipped.
+	 * The SpEL expression evaluating to the number of bits to be skipped.
 	 *
-	 * @return	The number of bits to be skipped (can be an expression).
+	 * @return	The number of bits to be skipped (defaults to {@code 0}).
 	 */
 	String size() default "0";
 
 	/**
 	 * The byte that terminates the skip
 	 *
-	 * @return	The terminator byte.
+	 * @return	The terminator byte (defaults to {@code \0}).
 	 */
 	byte terminator() default '\0';
 
 	/**
 	 * Whether to consume the terminator.
 	 *
-	 * @return	Whether to consume the terminator.
+	 * @return	Whether to consume the terminator (defaults to {@code true}).
 	 */
 	boolean consumeTerminator() default true;
 

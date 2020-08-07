@@ -34,7 +34,7 @@ import java.lang.annotation.Target;
 
 
 /**
- * Allow to define a number of choices on the type of converter to use, based on a condition
+ * Allow to define a number of choices on the type of converter to use, based on a condition.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.ANNOTATION_TYPE)
@@ -43,7 +43,7 @@ public @interface ConverterChoices{
 	/**
 	 * The choices to select from.
 	 *
-	 * @return	The choices to select from.
+	 * @return	The choices to select from (defaults to no alternatives).
 	 */
 	ConverterChoice[] alternatives() default {};
 
@@ -63,9 +63,9 @@ public @interface ConverterChoices{
 
 		/**
 		 * The converter to be applied just <i>before</i> writing the parameter value (<i>after</i> if reading), if any.
-		 * <p>Usually the fully qualified name of an implementation class of a {@link Converter}</p>
+		 * <p>Usually the fully qualified name of an implementation class of a {@link Converter}.</p>
 		 *
-		 * @return	The class of a {@link Converter}
+		 * @return	The class of a {@link Converter} (defaults to {@link NullConverter null converter}).
 		 */
 		Class<? extends Converter<?, ?>> converter() default NullConverter.class;
 

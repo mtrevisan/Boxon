@@ -33,7 +33,7 @@ import java.lang.annotation.Target;
 
 
 /**
- * Allow to define a number of choices, based on a prefix of a certain {@link #prefixSize() size}
+ * Allow to define a number of choices, based on a prefix of a certain {@link #prefixSize() size}.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.ANNOTATION_TYPE)
@@ -42,7 +42,7 @@ public @interface ObjectChoices{
 	/**
 	 * The number of bits to be read for determining the prefix.
 	 *
-	 * @return	The number of bits to be read for determining the prefix.
+	 * @return	The number of bits to be read for determining the prefix (defaults to {@code 0}).
 	 */
 	int prefixSize() default 0;
 
@@ -51,14 +51,14 @@ public @interface ObjectChoices{
 	 * read as a prefix.
 	 *
 	 * @return	The byte order to take into account when returning a representation of the first {@link #prefixSize()
-	 * 			size} bits read as a prefix.
+	 * 			size} bits read as a prefix (defaults to {@link ByteOrder#BIG_ENDIAN}).
 	 */
 	ByteOrder byteOrder() default ByteOrder.BIG_ENDIAN;
 
 	/**
 	 * The choices to select from.
 	 *
-	 * @return	The choices to select from.
+	 * @return	The choices to select from (defaults to no alternatives).
 	 */
 	ObjectChoice[] alternatives() default {};
 
@@ -80,7 +80,7 @@ public @interface ObjectChoices{
 		 * The prefix to be written when serializing the object.
 		 * <p>NOTE: this SpEL expression returns the prefix value, that is, the inverse of {@link #condition() condition}.</p>
 		 *
-		 * @return	A SpEL expression which returns the prefix value, that is, the inverse of {@link #condition() condition}.
+		 * @return	A SpEL expression which returns the prefix value, that is, the inverse of {@link #condition() condition} (defaults to {@code 0}).
 		 */
 		long prefix() default 0l;
 

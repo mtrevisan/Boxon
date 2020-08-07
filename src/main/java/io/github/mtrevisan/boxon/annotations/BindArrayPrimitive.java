@@ -37,7 +37,7 @@ import java.lang.annotation.Target;
 
 
 /**
- * Manages an array of primitive values (... before the application of a converter)
+ * Manages an array of primitive values (... before the application of a converter).
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
@@ -46,17 +46,18 @@ public @interface BindArrayPrimitive{
 	/**
 	 * The SpEL expression that determines if an evaluation has to be made.
 	 *
-	 * @return	The condition that determines if an evaluation has to be made (can be an expression).
+	 * @return	The condition that determines if an evaluation has to be made (defaults to empty, that means &quot;accept&quot;).
 	 */
 	String condition() default "";
 
 	/**
 	 * The type of object to be inserted into the array.
 	 * <p>Note that this allows you to have a field of a super type of the actual type that
-	 * you expect to inject. So you might have something like this:</p>
+	 * you expect to inject.</p>
+	 * <p>So you might have something like this:</p>
 	 * <pre><code>
-	 * &#064;BoundArray(type = int.class)
-	 * private int[] c; // Array of integers
+	 * &#064;BoundArray(size = &quot;5&quot;, type = int.class)
+	 * private int[] array;
 	 * </code></pre>
 	 *
 	 * @return	The type of object to be inserted in the array.
@@ -64,9 +65,9 @@ public @interface BindArrayPrimitive{
 	Class<?> type();
 
 	/**
-	 * The size of the array
+	 * The SpEL expression evaluating to the size of the array.
 	 *
-	 * @return	The size of the array (can be an expression).
+	 * @return	The size of the array.
 	 */
 	String size();
 
@@ -79,24 +80,24 @@ public @interface BindArrayPrimitive{
 
 	/**
 	 * The validator to be applied <i>after</i> applying the converter, in the decoding phase (<i>before</i> if in the encoding one), if any.
-	 * <p>Usually the fully qualified name of an implementation class of a {@link Validator}</p>
+	 * <p>Usually the fully qualified name of an implementation class of a {@link Validator}.</p>
 	 *
-	 * @return	The class of a {@link Validator}
+	 * @return	The class of a {@link Validator} (defaults to {@link NullValidator null validator}).
 	 */
 	Class<? extends Validator<?>> validator() default NullValidator.class;
 
 	/**
 	 * The converter to be applied just <i>before</i> writing the parameter value (<i>after</i> if reading), if any.
-	 * <p>Usually the fully qualified name of an implementation class of a {@link Converter}</p>
+	 * <p>Usually the fully qualified name of an implementation class of a {@link Converter}.</p>
 	 *
-	 * @return	The class of a {@link Converter}
+	 * @return	The class of a {@link Converter} (defaults to {@link NullConverter null converter}).
 	 */
 	Class<? extends Converter<?, ?>> converter() default NullConverter.class;
 
 	/**
 	 * The choices to select from to apply a given converter.
 	 *
-	 * @return The choices to select from to apply a given converter.
+	 * @return The choices to select from to apply a given converter (defaults to empty {@link ConverterChoices}).
 	 */
 	ConverterChoices selectConverterFrom() default @ConverterChoices();
 

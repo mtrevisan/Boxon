@@ -37,7 +37,7 @@ import java.lang.annotation.Target;
 
 
 /**
- * Manages a <code>short</code>/{@link Short} (... before the application of a converter)
+ * Manages a <code>short</code>/{@link Short} (... before the application of a converter).
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
@@ -46,7 +46,7 @@ public @interface BindShort{
 	/**
 	 * The SpEL expression that determines if an evaluation has to be made.
 	 *
-	 * @return	The condition that determines if an evaluation has to be made (can be an expression).
+	 * @return	The condition that determines if an evaluation has to be made (defaults to empty, that means &quot;accept&quot;).
 	 */
 	String condition() default "";
 
@@ -58,32 +58,32 @@ public @interface BindShort{
 	ByteOrder byteOrder() default ByteOrder.BIG_ENDIAN;
 
 	/**
-	 * The value to match (can be a regex expression or a SpEL expression), if any.
+	 * The value, regex, or SpEL expression evaluating to the value to match, if any.
 	 *
-	 * @return	The value, or regex, or SpEL expression to be checked for equality
+	 * @return	The value, or regex, or SpEL expression to be checked for equality (defaults to empty, that means &quot;accept anything&quot;).
 	 */
 	String match() default "";
 
 	/**
 	 * The validator to be applied <i>after</i> applying the converter, in the decoding phase (<i>before</i> if in the encoding one), if any.
-	 * <p>Usually the fully qualified name of an implementation class of a {@link Validator}</p>
+	 * <p>Usually the fully qualified name of an implementation class of a {@link Validator}.</p>
 	 *
-	 * @return	The class of a {@link Validator}
+	 * @return	The class of a {@link Validator} (defaults to {@link NullValidator null validator}).
 	 */
 	Class<? extends Validator<?>> validator() default NullValidator.class;
 
 	/**
 	 * The converter to be applied just <i>before</i> writing the parameter value (<i>after</i> if reading), if any.
-	 * <p>Usually the fully qualified name of an implementation class of a {@link Converter}</p>
+	 * <p>Usually the fully qualified name of an implementation class of a {@link Converter}.</p>
 	 *
-	 * @return	The class of a {@link Converter}
+	 * @return	The class of a {@link Converter} (defaults to {@link NullConverter null converter}).
 	 */
 	Class<? extends Converter<?, ?>> converter() default NullConverter.class;
 
 	/**
 	 * The choices to select from to apply a given converter.
 	 *
-	 * @return The choices to select from to apply a given converter.
+	 * @return The choices to select from to apply a given converter (defaults to empty {@link ConverterChoices}).
 	 */
 	ConverterChoices selectConverterFrom() default @ConverterChoices();
 

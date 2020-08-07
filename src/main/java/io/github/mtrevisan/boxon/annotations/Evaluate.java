@@ -37,12 +37,13 @@ public @interface Evaluate{
 	/**
 	 * The SpEL expression that determines if an evaluation has to be made.
 	 *
-	 * @return	The condition that determines if an evaluation has to be made (can be an expression).
+	 * @return	The condition that determines if an evaluation has to be made (defaults to empty, that means &quot;accept&quot;).
 	 */
 	String condition() default "";
 
 	/**
 	 * The expression to be evaluated.
+	 *
 	 * @see <a href="https://docs.spring.io/spring/docs/5.2.7.RELEASE/spring-framework-reference/core.html#expressions">Spring Expression Language (SpEL)</a>
 	 *
 	 * @return	The expression to be evaluated.
