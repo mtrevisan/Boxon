@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.helpers;
 
+import io.github.mtrevisan.boxon.valueobjects.BitSet;
 import io.github.mtrevisan.boxon.enums.ByteOrder;
 
 import java.math.BigInteger;

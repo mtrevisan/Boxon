@@ -25,7 +25,7 @@
 package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.enums.ByteOrder;
-import io.github.mtrevisan.boxon.helpers.BitSet;
+import io.github.mtrevisan.boxon.valueobjects.BitSet;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

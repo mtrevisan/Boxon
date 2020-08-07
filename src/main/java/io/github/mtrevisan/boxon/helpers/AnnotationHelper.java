@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.helpers;
 
+import io.github.mtrevisan.boxon.valueobjects.DynamicArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

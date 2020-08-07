@@ -28,6 +28,7 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
+import io.github.mtrevisan.boxon.valueobjects.BitSet;
 import io.github.mtrevisan.boxon.enums.ByteOrder;
 
 import java.lang.annotation.ElementType;
@@ -37,7 +38,7 @@ import java.lang.annotation.Target;
 
 
 /**
- * Manages a {@link io.github.mtrevisan.boxon.helpers.BitSet BitSet} (... before the application of a converter)
+ * Manages a {@link BitSet BitSet} (... before the application of a converter)
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)

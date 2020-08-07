@@ -25,8 +25,8 @@
 package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
-import io.github.mtrevisan.boxon.codecs.dtos.ComposeResponse;
-import io.github.mtrevisan.boxon.codecs.dtos.ParseResponse;
+import io.github.mtrevisan.boxon.codecs.valueobjects.ComposeResponse;
+import io.github.mtrevisan.boxon.codecs.valueobjects.ParseResponse;
 import io.github.mtrevisan.boxon.codecs.exceptions.ComposeException;
 import io.github.mtrevisan.boxon.codecs.exceptions.ParseException;
 

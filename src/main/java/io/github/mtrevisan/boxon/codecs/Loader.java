@@ -28,7 +28,7 @@ import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.helpers.AnnotationHelper;
 import io.github.mtrevisan.boxon.helpers.ByteHelper;
-import io.github.mtrevisan.boxon.helpers.DynamicArray;
+import io.github.mtrevisan.boxon.valueobjects.DynamicArray;
 import io.github.mtrevisan.boxon.helpers.Memoizer;
 import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
 import io.github.mtrevisan.boxon.helpers.matchers.BNDMPatternMatcher;

@@ -25,6 +25,8 @@
 package io.github.mtrevisan.boxon.helpers;
 
 import io.github.mtrevisan.boxon.annotations.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.enums.DataType;
+import io.github.mtrevisan.boxon.valueobjects.DynamicArray;
 import org.springframework.objenesis.instantiator.ObjectInstantiator;
 import org.springframework.objenesis.instantiator.android.Android10Instantiator;
 import org.springframework.objenesis.instantiator.android.Android17Instantiator;

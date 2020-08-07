@@ -35,8 +35,8 @@ import io.github.mtrevisan.boxon.annotations.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.Skip;
 import io.github.mtrevisan.boxon.annotations.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.helpers.AnnotationHelper;
-import io.github.mtrevisan.boxon.helpers.DataType;
-import io.github.mtrevisan.boxon.helpers.DynamicArray;
+import io.github.mtrevisan.boxon.enums.DataType;
+import io.github.mtrevisan.boxon.valueobjects.DynamicArray;
 import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
 
 import java.lang.annotation.Annotation;
