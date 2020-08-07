@@ -111,11 +111,10 @@ public final class ReflectionHelper{
 					&& base.isAssignableFrom((Class<?>)ancestorType))
 				ancestorsQueue.add(ancestorType);
 		}
-		if(type != null)
-			return type;
-
-		//there is a result if the base class is reached
-		return (offspring.equals(base)? getClassFromName(actualArgs[0]): null);
+		if(type == null && offspring.equals(base))
+			//there is a result if the base class is reached
+			type = getClassFromName(actualArgs[0]);
+		return type;
 	}
 
 	private static <T> Class<?> manageParameterizedAncestor(final ParameterizedType ancestorType, final Class<T> base, final Map<String, Type> typeVariables){
