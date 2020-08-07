@@ -26,7 +26,7 @@ package io.github.mtrevisan.boxon.annotations.checksummers;
 
 
 /**
- * Calculates a 16 bit Cyclic Redundancy Check of a set of bytes using the CRC-CCITT Normal algorithm.
+ * Calculates a 16 bit Cyclic Redundancy Check of a sequence of bytes using the CRC-CCITT Normal algorithm.
  *
  * @see <a href="https://en.wikipedia.org/wiki/Cyclic_redundancy_check">Cyclic Redundancy Check</a>
  */

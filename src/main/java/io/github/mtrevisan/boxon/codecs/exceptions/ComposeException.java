@@ -29,6 +29,9 @@ import io.github.mtrevisan.boxon.helpers.ExceptionHelper;
 import java.util.StringJoiner;
 
 
+/**
+ * Thrown if a composition went bad.
+ */
 public class ComposeException extends Exception{
 
 	private static final long serialVersionUID = 4385865753761318892L;

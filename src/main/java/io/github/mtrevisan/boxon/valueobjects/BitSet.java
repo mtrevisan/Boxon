@@ -34,7 +34,7 @@ import java.util.Arrays;
  * <p>The maximum value that can be stored is {@link java.lang.Integer#MAX_VALUE}</p>
  * <p>Unless otherwise noted, passing a {@code null} parameter to any of the
  * methods in a {@code BitSet} will result in a {@code NullPointerException}.</p>
- * <p>As for passing a non-increasing value to {@link #addNextSetBit(int)} will
+ * <p>Moreover, passing a non-increasing value to {@link #addNextSetBit(int)} will
  * result in an unpredictable behavior.</p>
  *
  * <p>A {@code BitSet} is not safe for multi-threaded use without

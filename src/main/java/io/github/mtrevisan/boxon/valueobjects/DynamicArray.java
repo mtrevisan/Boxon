@@ -160,7 +160,7 @@ public final class DynamicArray<T>{
 	}
 
 	/**
-	 * NOTE: this method should NOT be called at all because it is inefficient.
+	 * NOTE: this method should be called the least possible because it is inefficient.
 	 *
 	 * @return	A copy of the array.
 	 */

@@ -27,6 +27,9 @@ package io.github.mtrevisan.boxon.codecs.exceptions;
 import io.github.mtrevisan.boxon.helpers.ExceptionHelper;
 
 
+/**
+ * Thrown if a parsing went bad.
+ */
 public class ParseException extends Exception{
 
 	private static final long serialVersionUID = 5375434179637246605L;

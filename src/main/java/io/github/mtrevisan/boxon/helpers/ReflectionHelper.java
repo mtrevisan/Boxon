@@ -263,7 +263,7 @@ public final class ReflectionHelper{
 
 	/**
 	 * Returns whether the given {@code type} is a primitive.
-	 * <p>NOTE: {@code void} is NOT considered as primitive!</p>
+	 * <p>NOTE: {@code void} is NOT considered a primitive!</p>
 	 *
 	 * @param type	The class to query.
 	 * @return	Whether the given {@code type} is a primitive.

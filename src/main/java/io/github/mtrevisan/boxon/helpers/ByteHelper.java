@@ -33,7 +33,6 @@ import java.util.Arrays;
 
 /**
  * @see <a href="https://git.irsamc.ups-tlse.fr/scemama/Bit-Twiddling-Hacks/">Bit Twiddling Hacks</a>
- * @see <a href="https://graphics.stanford.edu/~seander/bithacks.html">Bit Twiddling Hacks</a>
  */
 public final class ByteHelper{
 
