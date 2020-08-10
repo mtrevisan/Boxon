@@ -32,9 +32,9 @@ import io.github.mtrevisan.boxon.enums.ByteOrder;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.helpers.BitReader;
 import io.github.mtrevisan.boxon.helpers.BitWriter;
+import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.ReflectionHelper;
 import io.github.mtrevisan.boxon.valueobjects.BitSet;
-import io.github.mtrevisan.boxon.valueobjects.JavaHelper;
 
 import java.util.Objects;
 import java.util.regex.Pattern;

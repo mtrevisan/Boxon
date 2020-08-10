@@ -95,7 +95,7 @@ public enum DataType{
 	 * @return	Whether the given {@code type} is a primitive or primitive wrapper.
 	 */
 	public static boolean isPrimitiveOrWrapper(final Class<?> type){
-		return (DataType.isPrimitive(type) || DataType.isPrimitiveWrapper(type));
+		return (isPrimitive(type) || isPrimitiveWrapper(type));
 	}
 
 }

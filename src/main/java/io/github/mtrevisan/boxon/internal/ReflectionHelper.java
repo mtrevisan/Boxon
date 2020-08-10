@@ -24,7 +24,6 @@
  */
 package io.github.mtrevisan.boxon.internal;
 
-import io.github.mtrevisan.boxon.valueobjects.DynamicArray;
 import org.springframework.objenesis.instantiator.ObjectInstantiator;
 import org.springframework.objenesis.instantiator.android.Android10Instantiator;
 import org.springframework.objenesis.instantiator.android.Android17Instantiator;

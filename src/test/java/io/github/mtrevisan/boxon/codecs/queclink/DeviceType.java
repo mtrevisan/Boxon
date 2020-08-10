@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.codecs.queclink;
 
-import io.github.mtrevisan.boxon.valueobjects.JavaHelper;
+import io.github.mtrevisan.boxon.internal.JavaHelper;
 import org.apache.commons.lang3.StringUtils;
 
 

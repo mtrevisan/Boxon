@@ -29,7 +29,7 @@ import io.github.mtrevisan.boxon.annotations.BindString;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.exceptions.ParseException;
-import io.github.mtrevisan.boxon.valueobjects.JavaHelper;
+import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.valueobjects.ParseResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;

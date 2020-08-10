@@ -32,10 +32,10 @@ import io.github.mtrevisan.boxon.exceptions.ExceptionHelper;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.helpers.BitReader;
 import io.github.mtrevisan.boxon.helpers.BitWriter;
+import io.github.mtrevisan.boxon.internal.DynamicArray;
+import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.ReflectionHelper;
 import io.github.mtrevisan.boxon.valueobjects.BitSet;
-import io.github.mtrevisan.boxon.valueobjects.DynamicArray;
-import io.github.mtrevisan.boxon.valueobjects.JavaHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

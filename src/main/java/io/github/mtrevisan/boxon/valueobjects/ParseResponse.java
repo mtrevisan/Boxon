@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.valueobjects;
 
 import io.github.mtrevisan.boxon.exceptions.ParseException;
+import io.github.mtrevisan.boxon.internal.JavaHelper;
 
 import java.util.Map;
 import java.util.Set;
