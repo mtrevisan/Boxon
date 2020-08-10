@@ -271,6 +271,7 @@ final class Template<T>{
 			//NOTE: cannot throw an exception if the loader does not have the codec, due to the possible presence of other
 			//annotations that have nothing to do with this library
 			if(annotationType != Skip.class && annotationType != Evaluate.class && hasCodec.apply(annotationType))
+				//stores only the preloaded codecs, ignore other annotations
 				annotations.add(annotation);
 		}
 		return annotations;
