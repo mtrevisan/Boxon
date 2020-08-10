@@ -53,7 +53,7 @@ class TemplateParserTest{
 
 		TemplateParser templateParser = new TemplateParser();
 		templateParser.loader.loadDefaultCodecs();
-		Template<ACKMessageHex> template = Template.createFrom(ACKMessageHex.class, templateParser.loader);
+		Template<ACKMessageHex> template = Template.createFrom(ACKMessageHex.class, templateParser.loader::hasCodec);
 
 		if(!template.canBeCoded())
 			Assertions.fail("Cannot decode message");
@@ -83,7 +83,7 @@ class TemplateParserTest{
 
 		TemplateParser templateParser = new TemplateParser();
 		templateParser.loader.loadDefaultCodecs();
-		Template<ACKMessageASCII> template = Template.createFrom(ACKMessageASCII.class, templateParser.loader);
+		Template<ACKMessageASCII> template = Template.createFrom(ACKMessageASCII.class, templateParser.loader::hasCodec);
 
 		if(!template.canBeCoded())
 			Assertions.fail("Cannot decode message");
@@ -124,7 +124,7 @@ class TemplateParserTest{
 
 		TemplateParser templateParser = new TemplateParser();
 		templateParser.loader.loadDefaultCodecs();
-		Template<TestError1> template = Template.createFrom(TestError1.class, templateParser.loader);
+		Template<TestError1> template = Template.createFrom(TestError1.class, templateParser.loader::hasCodec);
 
 		SpelEvaluationException exc = Assertions.assertThrows(SpelEvaluationException.class, () -> templateParser.decode(template, reader, null));
 		Assertions.assertEquals("EL1008E: Property or field 'e' cannot be found on object of type 'io.github.mtrevisan.boxon.codecs.TemplateParserTest$TestError1' - maybe not public or not valid?", exc.getMessage());
@@ -146,7 +146,7 @@ class TemplateParserTest{
 
 		TemplateParser templateParser = new TemplateParser();
 		templateParser.loader.loadDefaultCodecs();
-		Template<TestError2> template = Template.createFrom(TestError2.class, templateParser.loader);
+		Template<TestError2> template = Template.createFrom(TestError2.class, templateParser.loader::hasCodec);
 
 		Exception exc = Assertions.assertThrows(RuntimeException.class, () -> templateParser.decode(template, reader, null));
 		Assertions.assertEquals("IllegalArgumentException: Value `1` does not match constraint `as` in field TestError2.type", exc.getMessage());
@@ -181,7 +181,7 @@ class TemplateParserTest{
 
 		TemplateParser templateParser = new TemplateParser();
 		templateParser.loader.loadDefaultCodecs();
-		Template<TestError3> template = Template.createFrom(TestError3.class, templateParser.loader);
+		Template<TestError3> template = Template.createFrom(TestError3.class, templateParser.loader::hasCodec);
 
 		Exception exc = Assertions.assertThrows(RuntimeException.class, () -> templateParser.decode(template, reader, null));
 		Assertions.assertEquals("IllegalArgumentException: Can not set byte field to String in field TestError3.type", exc.getMessage());
@@ -216,7 +216,7 @@ class TemplateParserTest{
 
 		TemplateParser templateParser = new TemplateParser();
 		templateParser.loader.loadDefaultCodecs();
-		Template<TestError4> template = Template.createFrom(TestError4.class, templateParser.loader);
+		Template<TestError4> template = Template.createFrom(TestError4.class, templateParser.loader::hasCodec);
 
 		Exception exc = Assertions.assertThrows(RuntimeException.class, () -> templateParser.decode(template, reader, null));
 		Assertions.assertEquals("IllegalArgumentException: Can not input Byte to decode method of converter WrongInputConverter in field TestError4.type", exc.getMessage());
@@ -238,7 +238,7 @@ class TemplateParserTest{
 
 		TemplateParser templateParser = new TemplateParser();
 		templateParser.loader.loadDefaultCodecs();
-		Template<TestError5> template = Template.createFrom(TestError5.class, templateParser.loader);
+		Template<TestError5> template = Template.createFrom(TestError5.class, templateParser.loader::hasCodec);
 
 		Exception exc = Assertions.assertThrows(RuntimeException.class, () -> templateParser.decode(template, reader, null));
 		Assertions.assertEquals("IllegalArgumentException: Value `[0]` does not match constraint `[1]` in field TestError5.type", exc.getMessage());
@@ -273,7 +273,7 @@ class TemplateParserTest{
 
 		TemplateParser templateParser = new TemplateParser();
 		templateParser.loader.loadDefaultCodecs();
-		Template<TestComposition> template = Template.createFrom(TestComposition.class, templateParser.loader);
+		Template<TestComposition> template = Template.createFrom(TestComposition.class, templateParser.loader::hasCodec);
 
 		TestComposition parsed = templateParser.decode(template, reader, null);
 		Assertions.assertNotNull(parsed);

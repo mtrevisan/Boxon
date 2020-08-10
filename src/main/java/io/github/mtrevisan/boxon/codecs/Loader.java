@@ -178,7 +178,7 @@ final class Loader{
 		final DynamicArray<Template> templates = DynamicArray.create(Template.class, annotatedClasses.size());
 		for(final Class<?> type : annotatedClasses){
 			//for each extracted class, try to parse it, extracting all the information needed for the codec of a message
-			final Template<?> from = Template.createFrom(type, this);
+			final Template<?> from = Template.createFrom(type, this::hasCodec);
 			if(from.canBeCoded())
 				//if the template is valid, add it to the list of templates...
 				templates.add(from);

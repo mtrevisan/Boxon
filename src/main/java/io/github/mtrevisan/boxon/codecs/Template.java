@@ -45,6 +45,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringJoiner;
+import java.util.function.Function;
 
 
 /**
@@ -227,22 +228,22 @@ final class Template<T>{
 	 *
 	 * @param <T>	The type of the objects to be returned by the {@link Template}.
 	 * @param type	The type of the objects to be returned by the {@link Template}.
-	 * @param loader	The loader used to verify if a codec annotation is valid.
+	 * @param hasCodec	The function to verify the presence of the codec.
 	 * @return	A new {@link Template} for the given type.
 	 */
-	static <T> Template<T> createFrom(final Class<T> type, final Loader loader){
-		return new Template<>(type, loader);
+	static <T> Template<T> createFrom(final Class<T> type, final Function<Class<? extends Annotation>, Boolean> hasCodec){
+		return new Template<>(type, hasCodec);
 	}
 
-	private Template(final Class<T> cls, final Loader loader){
+	private Template(final Class<T> cls, final Function<Class<? extends Annotation>, Boolean> hasCodec){
 		this.cls = cls;
 
 		header = cls.getAnnotation(MessageHeader.class);
 		//retrieve all declared fields in the current class AND in the parent classes
-		loadAnnotatedFields(AnnotationHelper.getDeclaredFields(cls, true), loader);
+		loadAnnotatedFields(AnnotationHelper.getDeclaredFields(cls, true), hasCodec);
 	}
 
-	private void loadAnnotatedFields(final DynamicArray<Field> fields, final Loader loader){
+	private void loadAnnotatedFields(final DynamicArray<Field> fields, final Function<Class<? extends Annotation>, Boolean> hasCodec){
 		boundedFields.ensureCapacity(fields.limit);
 		for(int i = 0; i < fields.limit; i ++){
 			final Field field = fields.data[i];
@@ -250,7 +251,7 @@ final class Template<T>{
 			final BindChecksum checksum = field.getDeclaredAnnotation(BindChecksum.class);
 
 			final Annotation[] declaredAnnotations = field.getDeclaredAnnotations();
-			final DynamicArray<Annotation> boundedAnnotations = extractAnnotations(declaredAnnotations, loader);
+			final DynamicArray<Annotation> boundedAnnotations = extractAnnotations(declaredAnnotations, hasCodec);
 			evaluatedFields.addAll(extractEvaluations(declaredAnnotations, field));
 
 			validateField(boundedAnnotations, checksum);
@@ -262,14 +263,14 @@ final class Template<T>{
 		}
 	}
 
-	private DynamicArray<Annotation> extractAnnotations(final Annotation[] declaredAnnotations, final Loader loader){
+	private DynamicArray<Annotation> extractAnnotations(final Annotation[] declaredAnnotations, final Function<Class<? extends Annotation>, Boolean> hasCodec){
 		final DynamicArray<Annotation> annotations = DynamicArray.create(Annotation.class, declaredAnnotations.length);
 		for(int i = 0; i < declaredAnnotations.length; i ++){
 			final Annotation annotation = declaredAnnotations[i];
 			final Class<? extends Annotation> annotationType = annotation.annotationType();
 			//NOTE: cannot throw an exception if loader has not the codec, because of the possible presence of other
 			//annotations that has nothing to do with this library
-			if(annotationType != Skip.class && annotationType != Evaluate.class && loader.hasCodec(annotationType))
+			if(annotationType != Skip.class && annotationType != Evaluate.class && hasCodec.apply(annotationType))
 				annotations.add(annotation);
 		}
 		return annotations;

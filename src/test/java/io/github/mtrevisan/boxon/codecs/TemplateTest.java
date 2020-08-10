@@ -170,7 +170,7 @@ class TemplateTest{
 	void creation(){
 		Loader loader = new Loader();
 		loader.loadDefaultCodecs();
-		Template<Message> template = Template.createFrom(Message.class, loader);
+		Template<Message> template = Template.createFrom(Message.class, loader::hasCodec);
 
 		Assertions.assertNotNull(template);
 		Assertions.assertEquals(Message.class, template.getType());
@@ -238,7 +238,7 @@ class TemplateTest{
 	void inheritance(){
 		Loader loader = new Loader();
 		loader.loadDefaultCodecs();
-		Template<MessageChild> template = Template.createFrom(MessageChild.class, loader);
+		Template<MessageChild> template = Template.createFrom(MessageChild.class, loader::hasCodec);
 
 		Assertions.assertNotNull(template);
 		Assertions.assertEquals(MessageChild.class, template.getType());

@@ -47,8 +47,20 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-@Repeatable(Skips.class)
+@Repeatable(Skip.Skips.class)
 public @interface Skip{
+
+	/**
+	 * Manages multiple {@link Skip} annotations.
+	 */
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.FIELD)
+	@interface Skips{
+
+		Skip[] value();
+
+	}
+
 
 	/**
 	 * The SpEL expression that determines if an evaluation has to be made.

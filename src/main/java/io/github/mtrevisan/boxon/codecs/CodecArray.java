@@ -87,7 +87,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 					CodecHelper.chooseAlternativeWithoutPrefix(selectFrom, rootObject));
 
 				//read object
-				final Template<?> subTemplate = Template.createFrom(chosenAlternative.type(), templateParser.loader);
+				final Template<?> subTemplate = Template.createFrom(chosenAlternative.type(), templateParser.loader::hasCodec);
 
 				array[i] = templateParser.decode(subTemplate, reader, rootObject);
 			}
@@ -98,7 +98,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 	}
 
 	private void decodeWithoutAlternatives(final BitReader reader, final Object[] array, final Class<?> type){
-		final Template<?> template = Template.createFrom(type, templateParser.loader);
+		final Template<?> template = Template.createFrom(type, templateParser.loader::hasCodec);
 
 		for(int i = 0; i < array.length; i ++)
 			array[i] = templateParser.decode(template, reader, null);
@@ -135,14 +135,14 @@ final class CodecArray implements CodecInterface<BindArray>{
 
 			CodecHelper.writePrefix(writer, chosenAlternative, selectFrom);
 
-			final Template<?> template = Template.createFrom(type, templateParser.loader);
+			final Template<?> template = Template.createFrom(type, templateParser.loader::hasCodec);
 
 			templateParser.encode(template, writer, null, elem);
 		}
 	}
 
 	private void encodeWithoutAlternatives(final BitWriter writer, final Object[] array, final Class<?> type){
-		final Template<?> template = Template.createFrom(type, templateParser.loader);
+		final Template<?> template = Template.createFrom(type, templateParser.loader::hasCodec);
 
 		for(int i = 0; i < array.length; i ++)
 			templateParser.encode(template, writer, null, array[i]);
