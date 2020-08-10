@@ -30,7 +30,7 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
-import io.github.mtrevisan.boxon.enums.ByteOrder;
+import io.github.mtrevisan.boxon.external.ByteOrder;
 import io.github.mtrevisan.boxon.helpers.BitReader;
 import io.github.mtrevisan.boxon.helpers.BitWriter;
 import org.apache.commons.lang3.StringUtils;

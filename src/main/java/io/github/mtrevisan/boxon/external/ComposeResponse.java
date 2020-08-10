@@ -22,12 +22,48 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.enums;
+package io.github.mtrevisan.boxon.external;
+
+import io.github.mtrevisan.boxon.exceptions.ComposeException;
+import io.github.mtrevisan.boxon.internal.DynamicArray;
+
+import java.util.Objects;
 
 
-public enum ByteOrder{
+public class ComposeResponse{
 
-	LITTLE_ENDIAN,
-	BIG_ENDIAN
+	private byte[] composedMessage;
+	private final DynamicArray<ComposeException> errors = DynamicArray.create(ComposeException.class);
+
+
+	public void setComposedMessage(final byte[] composedMessages){
+		this.composedMessage = composedMessages;
+	}
+
+	public byte[] getComposedMessage(){
+		return composedMessage;
+	}
+
+	public int getErrorCount(){
+		return errors.limit;
+	}
+
+	public boolean hasErrors(){
+		return !errors.isEmpty();
+	}
+
+	public ComposeException getErrorAt(final int index){
+		return errors.data[index];
+	}
+
+	public void addError(final ComposeException exception){
+		Objects.requireNonNull(exception);
+
+		errors.add(exception);
+	}
+
+	public ComposeException[] getErrors(){
+		return errors.extractCopy();
+	}
 
 }

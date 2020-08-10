@@ -37,13 +37,13 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
-import io.github.mtrevisan.boxon.enums.ByteOrder;
+import io.github.mtrevisan.boxon.external.ByteOrder;
+import io.github.mtrevisan.boxon.external.ComposeResponse;
+import io.github.mtrevisan.boxon.external.ParseResponse;
 import io.github.mtrevisan.boxon.helpers.BitReader;
 import io.github.mtrevisan.boxon.helpers.BitWriter;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.ReflectionHelper;
-import io.github.mtrevisan.boxon.valueobjects.ComposeResponse;
-import io.github.mtrevisan.boxon.valueobjects.ParseResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

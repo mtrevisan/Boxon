@@ -25,9 +25,9 @@
 package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.codecs.queclink.DeviceTypes;
+import io.github.mtrevisan.boxon.external.ComposeResponse;
+import io.github.mtrevisan.boxon.external.ParseResponse;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
-import io.github.mtrevisan.boxon.valueobjects.ComposeResponse;
-import io.github.mtrevisan.boxon.valueobjects.ParseResponse;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

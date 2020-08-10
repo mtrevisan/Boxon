@@ -43,10 +43,10 @@ import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.checksummers.CRC16CCITT;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
-import io.github.mtrevisan.boxon.enums.ByteOrder;
+import io.github.mtrevisan.boxon.external.BitSet;
+import io.github.mtrevisan.boxon.external.ByteOrder;
 import io.github.mtrevisan.boxon.internal.ByteHelper;
 import io.github.mtrevisan.boxon.internal.DynamicArray;
-import io.github.mtrevisan.boxon.valueobjects.BitSet;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

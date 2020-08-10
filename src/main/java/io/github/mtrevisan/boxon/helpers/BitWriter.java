@@ -24,11 +24,11 @@
  */
 package io.github.mtrevisan.boxon.helpers;
 
-import io.github.mtrevisan.boxon.enums.ByteOrder;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.external.BitSet;
+import io.github.mtrevisan.boxon.external.ByteOrder;
 import io.github.mtrevisan.boxon.internal.DataType;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
-import io.github.mtrevisan.boxon.valueobjects.BitSet;
 
 import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
