@@ -24,6 +24,8 @@
  */
 package io.github.mtrevisan.boxon.exceptions;
 
+import io.github.mtrevisan.boxon.internal.ExceptionHelper;
+
 import java.util.StringJoiner;
 
 

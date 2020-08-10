@@ -25,6 +25,9 @@
 package io.github.mtrevisan.boxon.exceptions;
 
 
+import io.github.mtrevisan.boxon.internal.ExceptionHelper;
+
+
 /**
  * Thrown if a parsing went bad.
  */
