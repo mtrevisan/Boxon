@@ -25,7 +25,7 @@
 package io.github.mtrevisan.boxon.helpers;
 
 import io.github.mtrevisan.boxon.external.BitSet;
-import io.github.mtrevisan.boxon.internal.ByteHelper;
+import io.github.mtrevisan.boxon.external.ByteHelper;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
