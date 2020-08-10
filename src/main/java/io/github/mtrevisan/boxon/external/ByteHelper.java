@@ -67,7 +67,7 @@ public final class ByteHelper{
 		return new BigInteger(array);
 	}
 
-	private static byte[] extendArray(final byte[] array){
+	static byte[] extendArray(final byte[] array){
 		final byte[] extendedArray = new byte[array.length + 1];
 		System.arraycopy(array, 0, extendedArray, 1, array.length);
 		return extendedArray;

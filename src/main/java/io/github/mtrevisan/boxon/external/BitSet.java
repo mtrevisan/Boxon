@@ -270,18 +270,12 @@ public final class BitSet{
 	 */
 	private static BigInteger extendSign(byte[] array, final int size, final boolean unsigned){
 		if(!unsigned && (array[0] & 0x80) != 0x00){
-			array = extendArray(array);
+			array = ByteHelper.extendArray(array);
 			array[0] = (byte)-1;
 		}
 		else if(unsigned && size >= array.length * Byte.SIZE)
-			array = extendArray(array);
+			array = ByteHelper.extendArray(array);
 		return new BigInteger(array);
-	}
-
-	private static byte[] extendArray(final byte[] array){
-		final byte[] extendedArray = new byte[array.length + 1];
-		System.arraycopy(array, 0, extendedArray, 1, array.length);
-		return extendedArray;
 	}
 
 
