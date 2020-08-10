@@ -26,7 +26,8 @@ package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.codecs.queclink.ACKMessageHex;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
-import io.github.mtrevisan.boxon.helpers.ByteHelper;
+import io.github.mtrevisan.boxon.helpers.BitReader;
+import io.github.mtrevisan.boxon.valueobjects.JavaHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -69,7 +70,7 @@ class LoaderTest{
 		loader.loadDefaultCodecs();
 		loader.loadTemplates(LoaderTest.class);
 
-		byte[] payload = ByteHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
+		byte[] payload = JavaHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		BitReader reader = BitReader.wrap(payload);
 		Template<?> template = loader.getTemplate(reader);
 
@@ -83,7 +84,7 @@ class LoaderTest{
 		loader.loadDefaultCodecs();
 		loader.loadTemplates(LoaderTest.class);
 
-		byte[] payload = ByteHelper.toByteArray("3b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
+		byte[] payload = JavaHelper.toByteArray("3b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		BitReader reader = BitReader.wrap(payload);
 		Assertions.assertThrows(TemplateException.class, () -> loader.getTemplate(reader));
 	}
@@ -94,7 +95,7 @@ class LoaderTest{
 		loader.loadDefaultCodecs();
 		loader.loadTemplates(LoaderTest.class);
 
-		byte[] payload = ByteHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
+		byte[] payload = JavaHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		BitReader reader = BitReader.wrap(payload);
 		int position = loader.findNextMessageIndex(reader);
 
@@ -107,7 +108,7 @@ class LoaderTest{
 		loader.loadDefaultCodecs();
 		loader.loadTemplates(LoaderTest.class);
 
-		byte[] payload = ByteHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
+		byte[] payload = JavaHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		BitReader reader = BitReader.wrap(payload);
 		int position = loader.findNextMessageIndex(reader);
 

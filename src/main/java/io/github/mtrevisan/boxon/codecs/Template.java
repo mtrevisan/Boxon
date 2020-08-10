@@ -33,10 +33,10 @@ import io.github.mtrevisan.boxon.annotations.Evaluate;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.Skip;
-import io.github.mtrevisan.boxon.enums.DataType;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.helpers.AnnotationHelper;
-import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
+import io.github.mtrevisan.boxon.internal.AnnotationHelper;
+import io.github.mtrevisan.boxon.internal.DataType;
+import io.github.mtrevisan.boxon.internal.ReflectionHelper;
 import io.github.mtrevisan.boxon.valueobjects.DynamicArray;
 
 import java.lang.annotation.Annotation;
@@ -60,6 +60,7 @@ final class Template<T>{
 	/** Data associated to an annotated field. */
 	static final class BoundedField{
 
+		/** NOTE: MUST match the name of the method in all the annotations that defines a condition */
 		private static final String CONDITION = "condition";
 
 		private final Field field;

@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.codecs.queclink;
 
-import io.github.mtrevisan.boxon.helpers.ByteHelper;
+import io.github.mtrevisan.boxon.valueobjects.JavaHelper;
 import org.apache.commons.lang3.StringUtils;
 
 
@@ -53,7 +53,7 @@ public class DeviceType{
 	void validateDeviceTypeCode(final byte deviceTypeCode){
 		if(deviceTypeCode != code)
 			throw new IllegalArgumentException("Cannot parse message from another device, device type is 0x"
-				+ ByteHelper.toHexString(new byte[]{(byte)(deviceTypeCode & 0x0000_00FF)}) + ", should be " + code);
+				+ JavaHelper.toHexString(new byte[]{(byte)(deviceTypeCode & 0x0000_00FF)}) + ", should be " + code);
 	}
 
 }

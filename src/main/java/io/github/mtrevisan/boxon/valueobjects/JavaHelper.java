@@ -22,12 +22,46 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.helpers;
+package io.github.mtrevisan.boxon.valueobjects;
 
 
 public final class JavaHelper{
 
 	private JavaHelper(){}
+
+	/**
+	 * Converts an array of bytes into a string representing the hexadecimal values of each byte in order.
+	 *
+	 * @param array	Array to be converted to hexadecimal characters.
+	 * @return	The hexadecimal characters.
+	 */
+	public static String toHexString(final byte[] array){
+		final int length = JavaHelper.lengthOrZero(array);
+		final StringBuilder sb = new StringBuilder(length << 1);
+		for(int i = 0; i < length; i ++){
+			final byte elem = array[i];
+			sb.append(Character.forDigit((elem >>> 4) & 0x0F, 16));
+			sb.append(Character.forDigit((elem & 0x0F), 16));
+		}
+		return sb.toString().toUpperCase();
+	}
+
+	/**
+	 * Converts a string representing the hexadecimal values of each byte to an array of bytes in order.
+	 *
+	 * @param hexString	The hexadecimal string.
+	 * @return	Array of converted hexadecimal characters.
+	 */
+	public static byte[] toByteArray(final String hexString){
+		final int len = JavaHelper.lengthOrZero(hexString);
+		if(len % 2 != 0)
+			throw new IllegalArgumentException("Malformed input");
+
+		final byte[] data = new byte[len >>> 1];
+		for(int i = 0; i < len; i += 2)
+			data[i >>> 1] = (byte)((Character.digit(hexString.charAt(i), 16) << 4) + Character.digit(hexString.charAt(i + 1), 16));
+		return data;
+	}
 
 	public static <T> T nonNullOrDefault(final T obj, final T defaultObject){
 		return (obj != null? obj: defaultObject);

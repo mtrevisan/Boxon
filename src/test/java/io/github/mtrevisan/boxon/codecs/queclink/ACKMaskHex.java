@@ -25,7 +25,7 @@
 package io.github.mtrevisan.boxon.codecs.queclink;
 
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
-import io.github.mtrevisan.boxon.helpers.ByteHelper;
+import io.github.mtrevisan.boxon.internal.ByteHelper;
 
 
 public class ACKMaskHex{

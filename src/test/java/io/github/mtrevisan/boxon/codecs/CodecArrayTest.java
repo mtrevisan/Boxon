@@ -35,11 +35,13 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
-import io.github.mtrevisan.boxon.codecs.valueobjects.ComposeResponse;
-import io.github.mtrevisan.boxon.codecs.valueobjects.ParseResponse;
 import io.github.mtrevisan.boxon.enums.ByteOrder;
-import io.github.mtrevisan.boxon.helpers.ByteHelper;
-import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
+import io.github.mtrevisan.boxon.helpers.BitReader;
+import io.github.mtrevisan.boxon.helpers.BitWriter;
+import io.github.mtrevisan.boxon.internal.ReflectionHelper;
+import io.github.mtrevisan.boxon.valueobjects.ComposeResponse;
+import io.github.mtrevisan.boxon.valueobjects.JavaHelper;
+import io.github.mtrevisan.boxon.valueobjects.ParseResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -259,7 +261,7 @@ class CodecArrayTest{
 			.withCodecs(CodecChecksum.class)
 			.withTemplates(TestChoice4.class);
 
-		byte[] payload = ByteHelper.toByteArray("7463340112340211223344010666");
+		byte[] payload = JavaHelper.toByteArray("7463340112340211223344010666");
 		ParseResponse result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
@@ -287,7 +289,7 @@ class CodecArrayTest{
 			.withDefaultCodecs()
 			.withTemplates(TestChoice5.class);
 
-		byte[] payload = ByteHelper.toByteArray("746335011234");
+		byte[] payload = JavaHelper.toByteArray("746335011234");
 		ParseResponse result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);

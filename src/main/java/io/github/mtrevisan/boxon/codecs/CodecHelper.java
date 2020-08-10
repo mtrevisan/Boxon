@@ -30,9 +30,11 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.enums.ByteOrder;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
-import io.github.mtrevisan.boxon.helpers.JavaHelper;
-import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
+import io.github.mtrevisan.boxon.helpers.BitReader;
+import io.github.mtrevisan.boxon.helpers.BitWriter;
+import io.github.mtrevisan.boxon.internal.ReflectionHelper;
 import io.github.mtrevisan.boxon.valueobjects.BitSet;
+import io.github.mtrevisan.boxon.valueobjects.JavaHelper;
 
 import java.util.Objects;
 import java.util.regex.Pattern;
@@ -65,7 +67,7 @@ final class CodecHelper{
 		final ByteOrder prefixByteOrder = selectFrom.byteOrder();
 		final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
 
-		final int prefix = reader.getBigInteger(prefixSize, prefixByteOrder, true)
+		final int prefix = reader.getInteger(prefixSize, prefixByteOrder, true)
 			.intValue();
 
 		Evaluator.addToContext(CONTEXT_CHOICE_PREFIX, prefix);

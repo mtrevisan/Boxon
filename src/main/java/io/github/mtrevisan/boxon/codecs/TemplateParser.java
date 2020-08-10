@@ -28,13 +28,14 @@ import io.github.mtrevisan.boxon.annotations.BindChecksum;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.Skip;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
+import io.github.mtrevisan.boxon.exceptions.ExceptionHelper;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
-import io.github.mtrevisan.boxon.helpers.ByteHelper;
-import io.github.mtrevisan.boxon.helpers.ExceptionHelper;
-import io.github.mtrevisan.boxon.helpers.JavaHelper;
-import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
+import io.github.mtrevisan.boxon.helpers.BitReader;
+import io.github.mtrevisan.boxon.helpers.BitWriter;
+import io.github.mtrevisan.boxon.internal.ReflectionHelper;
 import io.github.mtrevisan.boxon.valueobjects.BitSet;
 import io.github.mtrevisan.boxon.valueobjects.DynamicArray;
+import io.github.mtrevisan.boxon.valueobjects.JavaHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -147,7 +148,7 @@ final class TemplateParser{
 			final byte[] readMessageTerminator = reader.getBytes(messageTerminator.length);
 			//verifying terminators
 			if(!Arrays.equals(messageTerminator, readMessageTerminator))
-				throw new TemplateException("Message does not terminate with 0x{}", ByteHelper.toHexString(messageTerminator));
+				throw new TemplateException("Message does not terminate with 0x{}", JavaHelper.toHexString(messageTerminator));
 		}
 	}
 

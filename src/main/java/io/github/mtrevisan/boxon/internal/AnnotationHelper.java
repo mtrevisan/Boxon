@@ -22,13 +22,14 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.helpers;
+package io.github.mtrevisan.boxon.internal;
 
 import io.github.mtrevisan.boxon.valueobjects.DynamicArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -49,6 +50,8 @@ public final class AnnotationHelper{
 	private static final Logger LOGGER = LoggerFactory.getLogger(AnnotationHelper.class);
 
 	private enum BucketType{DIRECTORY, FILE}
+
+	private static final FileFilter FILE_FILTER = file -> (file.isDirectory() || file.isFile() && file.getName().endsWith(".class"));
 
 
 	private static final String SCHEMA_FILE = "file:";
@@ -177,8 +180,8 @@ public final class AnnotationHelper{
 		while(!stack.isEmpty()){
 			final ClassDescriptor elem = stack.pop();
 
-			final File[] files = elem.file.listFiles();
-			final Map<BucketType, DynamicArray<File>> bucket = bucketByFileType(JavaHelper.nonNullOrDefault(files, new File[0]));
+			final File[] files = elem.file.listFiles(FILE_FILTER);
+			final Map<BucketType, DynamicArray<File>> bucket = bucketByFileType(files != null? files: new File[0]);
 			final DynamicArray<File> bucketDirectory = bucket.get(BucketType.DIRECTORY);
 			for(int i = 0; i < bucketDirectory.limit; i ++){
 				final File dir = bucketDirectory.data[i];

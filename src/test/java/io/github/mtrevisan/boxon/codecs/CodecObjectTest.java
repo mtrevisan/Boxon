@@ -37,11 +37,13 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
-import io.github.mtrevisan.boxon.codecs.valueobjects.ComposeResponse;
-import io.github.mtrevisan.boxon.codecs.valueobjects.ParseResponse;
 import io.github.mtrevisan.boxon.enums.ByteOrder;
-import io.github.mtrevisan.boxon.helpers.ByteHelper;
-import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
+import io.github.mtrevisan.boxon.helpers.BitReader;
+import io.github.mtrevisan.boxon.helpers.BitWriter;
+import io.github.mtrevisan.boxon.internal.ReflectionHelper;
+import io.github.mtrevisan.boxon.valueobjects.ComposeResponse;
+import io.github.mtrevisan.boxon.valueobjects.JavaHelper;
+import io.github.mtrevisan.boxon.valueobjects.ParseResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -209,7 +211,7 @@ class CodecObjectTest{
 			.withDefaultCodecs()
 			.withTemplates(TestChoice1.class);
 
-		byte[] payload = ByteHelper.toByteArray("746331011234");
+		byte[] payload = JavaHelper.toByteArray("746331011234");
 		ParseResponse result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
@@ -226,7 +228,7 @@ class CodecObjectTest{
 		Assertions.assertArrayEquals(payload, response.getComposedMessage());
 
 
-		payload = ByteHelper.toByteArray("7463310211223344");
+		payload = JavaHelper.toByteArray("7463310211223344");
 		result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
@@ -249,7 +251,7 @@ class CodecObjectTest{
 			.withDefaultCodecs()
 			.withTemplates(TestChoice2.class);
 
-		byte[] payload = ByteHelper.toByteArray("7463320506001234");
+		byte[] payload = JavaHelper.toByteArray("7463320506001234");
 		ParseResponse result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
@@ -266,7 +268,7 @@ class CodecObjectTest{
 		Assertions.assertArrayEquals(payload, response.getComposedMessage());
 
 
-		payload = ByteHelper.toByteArray("74633205060111223344");
+		payload = JavaHelper.toByteArray("74633205060111223344");
 		result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
@@ -289,7 +291,7 @@ class CodecObjectTest{
 			.withDefaultCodecs()
 			.withTemplates(TestChoice3.class);
 
-		byte[] payload = ByteHelper.toByteArray("74633361611234");
+		byte[] payload = JavaHelper.toByteArray("74633361611234");
 		ParseResponse result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
@@ -306,7 +308,7 @@ class CodecObjectTest{
 		Assertions.assertArrayEquals(payload, response.getComposedMessage());
 
 
-		payload = ByteHelper.toByteArray("746333626211223344");
+		payload = JavaHelper.toByteArray("746333626211223344");
 		result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);

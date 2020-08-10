@@ -33,8 +33,10 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.codecs.queclink.ACKMessageASCII;
 import io.github.mtrevisan.boxon.codecs.queclink.ACKMessageHex;
 import io.github.mtrevisan.boxon.codecs.queclink.DeviceTypes;
-import io.github.mtrevisan.boxon.helpers.ByteHelper;
+import io.github.mtrevisan.boxon.helpers.BitReader;
+import io.github.mtrevisan.boxon.helpers.BitWriter;
 import io.github.mtrevisan.boxon.valueobjects.BitSet;
+import io.github.mtrevisan.boxon.valueobjects.JavaHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.expression.spel.SpelEvaluationException;
@@ -46,7 +48,7 @@ class TemplateParserTest{
 
 	@Test
 	void parseSingleMessageHex() throws NoSuchMethodException{
-		byte[] payload = ByteHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
+		byte[] payload = JavaHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		BitReader reader = BitReader.wrap(payload);
 
 		TemplateParser templateParser = new TemplateParser();
@@ -117,7 +119,7 @@ class TemplateParserTest{
 
 	@Test
 	void parseWithConditionError(){
-		byte[] payload = ByteHelper.toByteArray("746335011234");
+		byte[] payload = JavaHelper.toByteArray("746335011234");
 		BitReader reader = BitReader.wrap(payload);
 
 		TemplateParser templateParser = new TemplateParser();
@@ -139,7 +141,7 @@ class TemplateParserTest{
 
 	@Test
 	void parseWithMatchError1(){
-		byte[] payload = ByteHelper.toByteArray("74633501");
+		byte[] payload = JavaHelper.toByteArray("74633501");
 		BitReader reader = BitReader.wrap(payload);
 
 		TemplateParser templateParser = new TemplateParser();
@@ -174,7 +176,7 @@ class TemplateParserTest{
 
 	@Test
 	void parseWithConverterOutputError(){
-		byte[] payload = ByteHelper.toByteArray("74633501");
+		byte[] payload = JavaHelper.toByteArray("74633501");
 		BitReader reader = BitReader.wrap(payload);
 
 		TemplateParser templateParser = new TemplateParser();
@@ -209,7 +211,7 @@ class TemplateParserTest{
 
 	@Test
 	void parseWithConverterInputError(){
-		byte[] payload = ByteHelper.toByteArray("74633501");
+		byte[] payload = JavaHelper.toByteArray("74633501");
 		BitReader reader = BitReader.wrap(payload);
 
 		TemplateParser templateParser = new TemplateParser();
@@ -231,7 +233,7 @@ class TemplateParserTest{
 
 	@Test
 	void parseWithMatchError2(){
-		byte[] payload = ByteHelper.toByteArray("74633501");
+		byte[] payload = JavaHelper.toByteArray("74633501");
 		BitReader reader = BitReader.wrap(payload);
 
 		TemplateParser templateParser = new TemplateParser();
@@ -266,7 +268,7 @@ class TemplateParserTest{
 
 	@Test
 	void parseCompositeMessage(){
-		byte[] payload = ByteHelper.toByteArray("74630102016162");
+		byte[] payload = JavaHelper.toByteArray("74630102016162");
 		BitReader reader = BitReader.wrap(payload);
 
 		TemplateParser templateParser = new TemplateParser();

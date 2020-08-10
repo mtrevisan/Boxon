@@ -26,13 +26,14 @@ package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
-import io.github.mtrevisan.boxon.helpers.AnnotationHelper;
-import io.github.mtrevisan.boxon.helpers.ByteHelper;
-import io.github.mtrevisan.boxon.helpers.Memoizer;
-import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
-import io.github.mtrevisan.boxon.helpers.matchers.BNDMPatternMatcher;
-import io.github.mtrevisan.boxon.helpers.matchers.PatternMatcher;
+import io.github.mtrevisan.boxon.helpers.BitReader;
+import io.github.mtrevisan.boxon.internal.AnnotationHelper;
+import io.github.mtrevisan.boxon.internal.Memoizer;
+import io.github.mtrevisan.boxon.internal.ReflectionHelper;
+import io.github.mtrevisan.boxon.internal.matchers.BNDMPatternMatcher;
+import io.github.mtrevisan.boxon.internal.matchers.PatternMatcher;
 import io.github.mtrevisan.boxon.valueobjects.DynamicArray;
+import io.github.mtrevisan.boxon.valueobjects.JavaHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -235,7 +236,7 @@ final class Loader{
 		//with the longest match
 		for(final Map.Entry<String, Template<?>> entry : templates.entrySet()){
 			final String header = entry.getKey();
-			final byte[] templateHeader = ByteHelper.toByteArray(header);
+			final byte[] templateHeader = JavaHelper.toByteArray(header);
 
 			//verify if it's a valid message header
 			final int lastIndex = index + templateHeader.length;
@@ -267,7 +268,7 @@ final class Loader{
 	}
 
 	private String calculateTemplateKey(final String headerStart, final Charset charset){
-		return ByteHelper.toHexString(headerStart.getBytes(charset));
+		return JavaHelper.toHexString(headerStart.getBytes(charset));
 	}
 
 

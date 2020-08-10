@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.helpers.matchers;
+package io.github.mtrevisan.boxon.internal.matchers;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

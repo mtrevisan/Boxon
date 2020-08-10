@@ -22,10 +22,9 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.codecs.valueobjects;
+package io.github.mtrevisan.boxon.valueobjects;
 
 import io.github.mtrevisan.boxon.exceptions.ParseException;
-import io.github.mtrevisan.boxon.helpers.ByteHelper;
 
 import java.util.Map;
 import java.util.Set;
@@ -106,7 +105,7 @@ public class ParseResponse{
 	}
 
 	public String getMessageForError(final int index){
-		return "Error decoding message: " + ByteHelper.toHexString(getErrorPayloadAt(index))
+		return "Error decoding message: " + JavaHelper.toHexString(getErrorPayloadAt(index))
 			+ System.lineSeparator()
 			+ errors.get(index).getMessage();
 	}

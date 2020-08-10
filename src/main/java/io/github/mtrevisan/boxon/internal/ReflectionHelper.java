@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.helpers;
+package io.github.mtrevisan.boxon.internal;
 
 import io.github.mtrevisan.boxon.valueobjects.DynamicArray;
 import org.springframework.objenesis.instantiator.ObjectInstantiator;

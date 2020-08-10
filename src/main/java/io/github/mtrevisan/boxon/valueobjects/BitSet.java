@@ -24,6 +24,9 @@
  */
 package io.github.mtrevisan.boxon.valueobjects;
 
+import io.github.mtrevisan.boxon.enums.ByteOrder;
+
+import java.math.BigInteger;
 import java.util.Arrays;
 
 
@@ -71,6 +74,30 @@ public final class BitSet{
 	 */
 	public static BitSet valueOf(final byte[] array){
 		return new BitSet(array);
+	}
+
+	/**
+	 * Converts a BigInteger into a byte array ignoring the sign of the BigInteger, according to SRP specification.
+	 *
+	 * @param value	the value, must not be {@code null}.
+	 * @param size	The size in bits of the value.
+	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
+	 * @return	The {@link BitSet} representing the given value.
+	 */
+	public static BitSet valueOf(final BigInteger value, final int size, final ByteOrder byteOrder){
+		byte[] array = value.toByteArray();
+		final int newSize = (size + Byte.SIZE - 1) / Byte.SIZE;
+		if(newSize != array.length){
+			final int offset = Math.max(array.length - newSize, 0);
+			final byte[] newArray = new byte[newSize];
+			final int newArrayOffset = Math.max(newArray.length - array.length, 0);
+			System.arraycopy(array, offset, newArray, newArrayOffset, array.length - offset);
+			array = newArray;
+		}
+		if(byteOrder == ByteOrder.LITTLE_ENDIAN)
+			//NOTE: need to reverse the bytes because BigInteger is big-endian and BitMap is little-endian
+			reverse(array);
+		return BitSet.valueOf(array);
 	}
 
 
@@ -208,6 +235,55 @@ public final class BitSet{
 	private int getStartingIndex(final int offset){
 		final int idx = (offset > 0? Arrays.binarySearch(indexes, offset): 0);
 		return (idx >= 0? idx: -idx - 1);
+	}
+
+	public BigInteger toInteger(final int size, final ByteOrder byteOrder, final boolean unsigned){
+		byte[] array = toByteArray();
+		final int expectedLength = size / Byte.SIZE;
+		if(array.length < expectedLength)
+			array = Arrays.copyOf(array, expectedLength);
+		if(byteOrder == ByteOrder.LITTLE_ENDIAN)
+			//NOTE: need to reverse the bytes because BigInteger is big-endian and BitMap is little-endian
+			reverse(array);
+		return extendSign(array, size, unsigned);
+	}
+
+	/**
+	 * Reverses the order of the given array.
+	 *
+	 * @param array	The array to reverse.
+	 */
+	private static void reverse(final byte[] array){
+		for(int start = 0, end = array.length - 1; start < end; start ++, end --){
+			//swap array[start] with array[end]
+			array[start] ^= array[end];
+			array[end] ^= array[start];
+			array[start] ^= array[end];
+		}
+	}
+
+	/**
+	 * Convert the value to signed primitive.
+	 *
+	 * @param array	Field value.
+	 * @param size	The size of the array.
+	 * @param unsigned	Whether to consider this number an unsigned one.
+	 * @return	The 2-complement expressed as int.
+	 */
+	private static BigInteger extendSign(byte[] array, final int size, final boolean unsigned){
+		if(!unsigned && (array[0] & 0x80) != 0x00){
+			array = extendArray(array);
+			array[0] = (byte)-1;
+		}
+		else if(unsigned && size >= array.length * Byte.SIZE)
+			array = extendArray(array);
+		return new BigInteger(array);
+	}
+
+	private static byte[] extendArray(final byte[] array){
+		final byte[] extendedArray = new byte[array.length + 1];
+		System.arraycopy(array, 0, extendedArray, 1, array.length);
+		return extendedArray;
 	}
 
 

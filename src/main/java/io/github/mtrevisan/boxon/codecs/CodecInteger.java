@@ -27,7 +27,8 @@ package io.github.mtrevisan.boxon.codecs;
 import io.github.mtrevisan.boxon.annotations.BindInteger;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.enums.ByteOrder;
-import io.github.mtrevisan.boxon.helpers.ByteHelper;
+import io.github.mtrevisan.boxon.helpers.BitReader;
+import io.github.mtrevisan.boxon.helpers.BitWriter;
 import io.github.mtrevisan.boxon.valueobjects.BitSet;
 
 import java.lang.annotation.Annotation;
@@ -42,7 +43,7 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 
 		final int size = Evaluator.evaluateSize(binding.size(), rootObject);
 
-		final BigInteger v = reader.getBigInteger(size, binding.byteOrder(), binding.unsigned());
+		final BigInteger v = reader.getInteger(size, binding.byteOrder(), binding.unsigned());
 
 		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), rootObject);
 		final Object value = CodecHelper.converterDecode(chosenConverter, v);
@@ -64,7 +65,7 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 		final BigInteger v = CodecHelper.converterEncode(chosenConverter, value);
 
 		final ByteOrder byteOrder = binding.byteOrder();
-		final BitSet bits = ByteHelper.toBits(v, size, byteOrder);
+		final BitSet bits = BitSet.valueOf(v, size, byteOrder);
 
 		writer.putBits(bits, size);
 	}

@@ -31,8 +31,10 @@ import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.enums.ByteOrder;
-import io.github.mtrevisan.boxon.helpers.ByteHelper;
+import io.github.mtrevisan.boxon.helpers.BitReader;
+import io.github.mtrevisan.boxon.helpers.BitWriter;
 import io.github.mtrevisan.boxon.valueobjects.BitSet;
+import io.github.mtrevisan.boxon.valueobjects.JavaHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -111,7 +113,7 @@ class CodecBitsTest{
 		byte[] bb = encodedValue.toByteArray();
 		if(bb.length < randomBytes.length)
 			bb = Arrays.copyOf(bb, randomBytes.length);
-		Assertions.assertEquals(ByteHelper.toHexString(bb), writer.toString());
+		Assertions.assertEquals(JavaHelper.toHexString(bb), writer.toString());
 
 		BitReader reader = BitReader.wrap(writer);
 		BitSet decoded = (BitSet)codec.decode(reader, annotation, null);
@@ -185,7 +187,7 @@ class CodecBitsTest{
 		byte[] bb = encodedValue.toByteArray();
 		if(bb.length < randomBytes.length)
 			bb = Arrays.copyOf(bb, randomBytes.length);
-		Assertions.assertEquals(ByteHelper.toHexString(bb), writer.toString());
+		Assertions.assertEquals(JavaHelper.toHexString(bb), writer.toString());
 
 		BitReader reader = BitReader.wrap(writer);
 		BitSet decoded = (BitSet)codec.decode(reader, annotation, null);

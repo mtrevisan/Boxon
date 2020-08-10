@@ -28,9 +28,9 @@ import io.github.mtrevisan.boxon.annotations.BindByte;
 import io.github.mtrevisan.boxon.annotations.BindString;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
-import io.github.mtrevisan.boxon.codecs.valueobjects.ParseResponse;
 import io.github.mtrevisan.boxon.exceptions.ParseException;
-import io.github.mtrevisan.boxon.helpers.ByteHelper;
+import io.github.mtrevisan.boxon.valueobjects.JavaHelper;
+import io.github.mtrevisan.boxon.valueobjects.ParseResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -93,7 +93,7 @@ class ConverterTest{
 			.withDefaultCodecs()
 			.withTemplates(TestConverter1.class);
 
-		byte[] payload = ByteHelper.toByteArray("77633101");
+		byte[] payload = JavaHelper.toByteArray("77633101");
 		ParseResponse result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
@@ -112,7 +112,7 @@ class ConverterTest{
 			.withDefaultCodecs()
 			.withTemplates(TestConverter2.class);
 
-		byte[] payload = ByteHelper.toByteArray("77633201");
+		byte[] payload = JavaHelper.toByteArray("77633201");
 		ParseResponse result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
@@ -131,7 +131,7 @@ class ConverterTest{
 			.withDefaultCodecs()
 			.withTemplates(TestConverter3.class);
 
-		byte[] payload = ByteHelper.toByteArray("77633301");
+		byte[] payload = JavaHelper.toByteArray("77633301");
 		ParseResponse result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);

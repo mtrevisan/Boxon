@@ -25,9 +25,9 @@
 package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.codecs.queclink.DeviceTypes;
-import io.github.mtrevisan.boxon.codecs.valueobjects.ComposeResponse;
-import io.github.mtrevisan.boxon.codecs.valueobjects.ParseResponse;
-import io.github.mtrevisan.boxon.helpers.ByteHelper;
+import io.github.mtrevisan.boxon.valueobjects.ComposeResponse;
+import io.github.mtrevisan.boxon.valueobjects.JavaHelper;
+import io.github.mtrevisan.boxon.valueobjects.ParseResponse;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -51,7 +51,7 @@ class ParserTest{
 			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"));
 
 		//parse:
-		byte[] payload = ByteHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
+		byte[] payload = JavaHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		ParseResponse parseResult = parser.parse(payload);
 
 		Assertions.assertFalse(parseResult.hasErrors());
@@ -79,7 +79,7 @@ class ParserTest{
 			.withDefaultTemplates()
 			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"));
 
-		byte[] payload = ByteHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
+		byte[] payload = JavaHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		ParseResponse result = parser.parse(payload);
 
 		Assertions.assertFalse(result.hasErrors());
@@ -139,7 +139,7 @@ class ParserTest{
 			.withDefaultTemplates()
 			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"));
 
-		byte[] payload1 = ByteHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
+		byte[] payload1 = JavaHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		byte[] payload2 = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
 		byte[] payload = ArrayUtils.addAll(payload1, payload2);
 		ParseResponse result = parser.parse(payload);
@@ -159,7 +159,7 @@ class ParserTest{
 			.withDefaultCodecs()
 			.withDefaultTemplates();
 
-		byte[] payload1 = ByteHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
+		byte[] payload1 = JavaHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		byte[] payload2 = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
 		byte[] payload = ArrayUtils.addAll(payload2, payload1);
 		ParseResponse result = parser.parse(payload);

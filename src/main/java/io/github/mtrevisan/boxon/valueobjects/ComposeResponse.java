@@ -22,30 +22,47 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.helpers.matchers;
+package io.github.mtrevisan.boxon.valueobjects;
+
+import io.github.mtrevisan.boxon.exceptions.ComposeException;
+
+import java.util.Objects;
 
 
-/** The base class for pattern matching algorithm implementations. */
-public interface PatternMatcher{
+public class ComposeResponse{
 
-	/**
-	 * Pre-processes the pattern.
-	 *
-	 * @param pattern	The {@code byte} array containing the pattern, may not be {@code null}.
-	 * @return	an array of pre-processed pattern.
-	 */
-	int[] preProcessPattern(final byte[] pattern);
+	private byte[] composedMessage;
+	private final DynamicArray<ComposeException> errors = DynamicArray.create(ComposeException.class);
 
-	/**
-	 * Returns the position in the text at which the pattern was found.
-	 * <p>Returns {@code -1} if the pattern was not found.</p>
-	 *
-	 * @param source	The {@code byte} array containing the text, may not be {@code null}.
-	 * @param offset	At which position in the text the comparing should start.
-	 * @param pattern	The pattern to search for, may not be {@code null}.
-	 * @param processedPattern	Processed pattern, see {@link #preProcessPattern(byte[])}.
-	 * @return the position in the text or {@code -1} if the pattern was not found.
-	 */
-	int indexOf(final byte[] source, final int offset, final byte[] pattern, final int[] processedPattern);
+
+	public void setComposedMessage(final byte[] composedMessages){
+		this.composedMessage = composedMessages;
+	}
+
+	public byte[] getComposedMessage(){
+		return composedMessage;
+	}
+
+	public int getErrorCount(){
+		return errors.limit;
+	}
+
+	public boolean hasErrors(){
+		return !errors.isEmpty();
+	}
+
+	public ComposeException getErrorAt(final int index){
+		return errors.data[index];
+	}
+
+	public void addError(final ComposeException exception){
+		Objects.requireNonNull(exception);
+
+		errors.add(exception);
+	}
+
+	public ComposeException[] getErrors(){
+		return errors.extractCopy();
+	}
 
 }
