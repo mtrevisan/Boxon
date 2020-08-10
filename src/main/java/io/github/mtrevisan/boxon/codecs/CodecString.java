@@ -26,8 +26,8 @@ package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.BindString;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
-import io.github.mtrevisan.boxon.helpers.BitReader;
-import io.github.mtrevisan.boxon.helpers.BitWriter;
+import io.github.mtrevisan.boxon.external.BitReader;
+import io.github.mtrevisan.boxon.external.BitWriter;
 
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;

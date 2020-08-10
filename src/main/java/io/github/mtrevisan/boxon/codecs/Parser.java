@@ -27,10 +27,10 @@ package io.github.mtrevisan.boxon.codecs;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.exceptions.ComposeException;
 import io.github.mtrevisan.boxon.exceptions.ParseException;
+import io.github.mtrevisan.boxon.external.BitReader;
+import io.github.mtrevisan.boxon.external.BitWriter;
 import io.github.mtrevisan.boxon.external.ComposeResponse;
 import io.github.mtrevisan.boxon.external.ParseResponse;
-import io.github.mtrevisan.boxon.helpers.BitReader;
-import io.github.mtrevisan.boxon.helpers.BitWriter;
 
 import java.io.File;
 import java.io.FileNotFoundException;
