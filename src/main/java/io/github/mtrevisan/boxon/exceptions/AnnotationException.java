@@ -22,43 +22,21 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.codecs.exceptions;
+package io.github.mtrevisan.boxon.exceptions;
 
-import io.github.mtrevisan.boxon.helpers.ExceptionHelper;
+import org.slf4j.helpers.MessageFormatter;
 
 
 /**
- * Thrown if a parsing went bad.
+ * Thrown if an annotation is not well formatted.
  */
-public class ParseException extends Exception{
+public class AnnotationException extends RuntimeException{
 
-	private static final long serialVersionUID = 5375434179637246605L;
-
-
-	private final int errorIndex;
+	private static final long serialVersionUID = 6429044852678473069L;
 
 
-	public ParseException(final int errorIndex, final Throwable cause){
-		super(cause);
-
-		this.errorIndex = errorIndex;
-	}
-
-	public int getErrorIndex(){
-		return errorIndex;
-	}
-
-	@Override
-	public String getMessage(){
-		final StringBuilder sj = new StringBuilder();
-		final Throwable cause = getCause();
-		if(cause != null)
-			sj.append(ExceptionHelper.getMessageNoLineNumber(cause));
-		if(errorIndex >= 0)
-			sj.append(System.lineSeparator())
-				.append("   at index ")
-				.append(errorIndex);
-		return sj.toString();
+	public AnnotationException(final String message, final Object... parameters){
+		super(MessageFormatter.format(message, (parameters.length != 1? parameters: parameters[0])).getMessage());
 	}
 
 }

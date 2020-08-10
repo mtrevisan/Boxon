@@ -25,10 +25,10 @@
 package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
-import io.github.mtrevisan.boxon.codecs.exceptions.ComposeException;
-import io.github.mtrevisan.boxon.codecs.exceptions.ParseException;
 import io.github.mtrevisan.boxon.codecs.valueobjects.ComposeResponse;
 import io.github.mtrevisan.boxon.codecs.valueobjects.ParseResponse;
+import io.github.mtrevisan.boxon.exceptions.ComposeException;
+import io.github.mtrevisan.boxon.exceptions.ParseException;
 
 import java.io.File;
 import java.io.FileNotFoundException;

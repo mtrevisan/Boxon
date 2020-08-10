@@ -26,7 +26,8 @@ package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.BindArrayPrimitive;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
-import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
+import io.github.mtrevisan.boxon.enums.DataType;
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
@@ -41,7 +42,7 @@ final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 		final Class<?> type = binding.type();
 		final int size = Evaluator.evaluateSize(binding.size(), rootObject);
 
-		final Object array = ReflectionHelper.createArrayPrimitive(type, size);
+		final Object array = createArrayPrimitive(type, size);
 		for(int i = 0; i < size; i ++){
 			final Object value = reader.get(type, binding.byteOrder());
 			Array.set(array, i, value);
@@ -53,6 +54,13 @@ final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 		CodecHelper.validateData(binding.validator(), value);
 
 		return value;
+	}
+
+	private static Object createArrayPrimitive(final Class<?> type, final int length){
+		if(!DataType.isPrimitive(type))
+			throw new AnnotationException("Argument cannot be a non-primitive: {}", type);
+
+		return Array.newInstance(type, length);
 	}
 
 	@Override

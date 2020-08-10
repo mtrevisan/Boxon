@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.codecs.valueobjects;
 
-import io.github.mtrevisan.boxon.codecs.exceptions.ComposeException;
+import io.github.mtrevisan.boxon.exceptions.ComposeException;
 import io.github.mtrevisan.boxon.valueobjects.DynamicArray;
 
 import java.util.Objects;

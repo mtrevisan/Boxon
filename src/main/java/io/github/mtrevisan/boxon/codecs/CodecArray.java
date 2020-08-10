@@ -27,8 +27,9 @@ package io.github.mtrevisan.boxon.codecs;
 import io.github.mtrevisan.boxon.annotations.BindArray;
 import io.github.mtrevisan.boxon.annotations.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
-import io.github.mtrevisan.boxon.annotations.exceptions.CodecException;
-import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
+import io.github.mtrevisan.boxon.enums.DataType;
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.exceptions.CodecException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +53,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 		final int size = Evaluator.evaluateSize(binding.size(), rootObject);
 		final ObjectChoices selectFrom = binding.selectFrom();
 
-		final Object[] array = ReflectionHelper.createArray(binding.type(), size);
+		final Object[] array = createArray(binding.type(), size);
 		if(selectFrom.alternatives().length > 0)
 			decodeWithAlternatives(reader, array, selectFrom, rootObject);
 		else
@@ -64,6 +65,14 @@ final class CodecArray implements CodecInterface<BindArray>{
 		CodecHelper.validateData(binding.validator(), value);
 
 		return value;
+	}
+
+	@SuppressWarnings("unchecked")
+	private static <T> T[] createArray(final Class<? extends T> type, final int length){
+		if(DataType.isPrimitive(type))
+			throw new AnnotationException("Argument cannot be a primitive: {}", type);
+
+		return (T[])Array.newInstance(type, length);
 	}
 
 	private void decodeWithAlternatives(final BitReader reader, final Object[] array, final ObjectChoices selectFrom, final Object rootObject){

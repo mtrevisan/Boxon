@@ -24,8 +24,6 @@
  */
 package io.github.mtrevisan.boxon.helpers;
 
-import io.github.mtrevisan.boxon.annotations.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.enums.DataType;
 import io.github.mtrevisan.boxon.valueobjects.DynamicArray;
 import org.springframework.objenesis.instantiator.ObjectInstantiator;
 import org.springframework.objenesis.instantiator.android.Android10Instantiator;
@@ -40,7 +38,6 @@ import org.springframework.objenesis.instantiator.sun.UnsafeFactoryInstantiator;
 import org.springframework.objenesis.strategy.PlatformDescription;
 
 import java.io.Serializable;
-import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -260,44 +257,6 @@ public final class ReflectionHelper{
 		return method;
 	}
 
-
-	/**
-	 * Returns whether the given {@code type} is a primitive.
-	 * <p>NOTE: {@code void} is NOT considered a primitive!</p>
-	 *
-	 * @param type	The class to query.
-	 * @return	Whether the given {@code type} is a primitive.
-	 */
-	public static boolean isPrimitive(final Class<?> type){
-		return (type.isPrimitive() && type != void.class);
-	}
-
-	/**
-	 * Returns whether the given {@code type} is a primitive or primitive wrapper.
-	 * <p>NOTE: {@code Character} and {@code void}/{@code Void} are NOT considered as primitives!</p>
-	 *
-	 * @param type	The class to query.
-	 * @return	Whether the given {@code type} is a primitive or primitive wrapper.
-	 */
-	public static boolean isPrimitiveOrPrimitiveWrapper(final Class<?> type){
-		return (isPrimitive(type) || DataType.isObjectivePrimitive(type));
-	}
-
-
-	public static Object createArrayPrimitive(final Class<?> type, final int length){
-		if(!isPrimitive(type))
-			throw new AnnotationException("Argument cannot be a non-primitive: {}", type);
-
-		return Array.newInstance(type, length);
-	}
-
-	@SuppressWarnings("unchecked")
-	public static <T> T[] createArray(final Class<? extends T> type, final int length){
-		if(isPrimitive(type))
-			throw new AnnotationException("Argument cannot be a primitive: {}", type);
-
-		return (T[])Array.newInstance(type, length);
-	}
 
 	@SuppressWarnings("unchecked")
 	public static <T> Supplier<T> getCreator(final Class<T> type){

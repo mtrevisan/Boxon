@@ -28,7 +28,7 @@ import io.github.mtrevisan.boxon.annotations.BindChecksum;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.Skip;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
-import io.github.mtrevisan.boxon.annotations.exceptions.TemplateException;
+import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.helpers.ByteHelper;
 import io.github.mtrevisan.boxon.helpers.ExceptionHelper;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;

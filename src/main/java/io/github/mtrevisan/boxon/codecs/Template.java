@@ -33,8 +33,8 @@ import io.github.mtrevisan.boxon.annotations.Evaluate;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.Skip;
-import io.github.mtrevisan.boxon.annotations.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.enums.DataType;
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.helpers.AnnotationHelper;
 import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
 import io.github.mtrevisan.boxon.valueobjects.DynamicArray;
@@ -120,7 +120,7 @@ final class Template<T>{
 			@Override
 			void validate(final Annotation annotation){
 				final Class<?> type = ((BindArrayPrimitive)annotation).type();
-				if(!ReflectionHelper.isPrimitive(type))
+				if(!DataType.isPrimitive(type))
 					throw new AnnotationException("Bad annotation used for {}, should have been used the type `{}.class`", BindArray.class.getSimpleName(),
 						DataType.toObjectiveTypeOrDefault(type).getSimpleName());
 			}
@@ -134,7 +134,7 @@ final class Template<T>{
 				final Class<?> type = binding.type();
 				validateChoice(selectFrom);
 
-				if(ReflectionHelper.isPrimitive(type))
+				if(DataType.isPrimitive(type))
 					throw new AnnotationException("Bad annotation used for {}, should have been used the type `{}.class`", BindArrayPrimitive.class.getSimpleName(),
 						DataType.toPrimitiveTypeOrDefault(type).getSimpleName());
 			}
@@ -148,7 +148,7 @@ final class Template<T>{
 				final Class<?> type = binding.type();
 				validateChoice(selectFrom);
 
-				if(ReflectionHelper.isPrimitive(type))
+				if(DataType.isPrimitive(type))
 					throw new AnnotationException("Bad annotation used for {}, should have been used one of the primitive type's annotations", BindObject.class.getSimpleName());
 			}
 		},
@@ -166,7 +166,7 @@ final class Template<T>{
 			@Override
 			void validate(final Annotation annotation){
 				final Class<?> type = ((BindChecksum)annotation).type();
-				if(!ReflectionHelper.isPrimitiveOrPrimitiveWrapper(type))
+				if(!DataType.isPrimitiveOrWrapper(type))
 					throw new AnnotationException("Unrecognized type for field {}<{}>: {}", getClass().getSimpleName(), type.getSimpleName(), type.getComponentType().getSimpleName());
 			}
 		};

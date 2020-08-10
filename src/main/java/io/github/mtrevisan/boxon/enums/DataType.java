@@ -72,8 +72,30 @@ public enum DataType{
 		return TYPE_MAP.get(type);
 	}
 
-	public static boolean isObjectivePrimitive(final Class<?> type){
+	/**
+	 * Returns whether the given {@code type} is a primitive.
+	 * <p>NOTE: {@code void} is NOT considered a primitive!</p>
+	 *
+	 * @param type	The class to query.
+	 * @return	Whether the given {@code type} is a primitive.
+	 */
+	public static boolean isPrimitive(final Class<?> type){
+		return (type.isPrimitive() && type != void.class);
+	}
+
+	private static boolean isPrimitiveWrapper(final Class<?> type){
 		return WRAPPER_PRIMITIVE_MAP.containsKey(type);
+	}
+
+	/**
+	 * Returns whether the given {@code type} is a primitive or primitive wrapper.
+	 * <p>NOTE: {@code Character} and {@code void}/{@code Void} are NOT considered as primitives!</p>
+	 *
+	 * @param type	The class to query.
+	 * @return	Whether the given {@code type} is a primitive or primitive wrapper.
+	 */
+	public static boolean isPrimitiveOrWrapper(final Class<?> type){
+		return (DataType.isPrimitive(type) || DataType.isPrimitiveWrapper(type));
 	}
 
 }

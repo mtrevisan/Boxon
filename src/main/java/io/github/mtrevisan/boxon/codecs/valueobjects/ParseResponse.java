@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.codecs.valueobjects;
 
-import io.github.mtrevisan.boxon.codecs.exceptions.ParseException;
+import io.github.mtrevisan.boxon.exceptions.ParseException;
 import io.github.mtrevisan.boxon.helpers.ByteHelper;
 
 import java.util.Map;

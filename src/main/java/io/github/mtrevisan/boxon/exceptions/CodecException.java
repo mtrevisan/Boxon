@@ -22,20 +22,20 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.annotations.exceptions;
+package io.github.mtrevisan.boxon.exceptions;
 
 import org.slf4j.helpers.MessageFormatter;
 
 
 /**
- * Thrown if an annotation is not well formatted.
+ * Thrown if no codec is found.
  */
-public class AnnotationException extends RuntimeException{
+public class CodecException extends TemplateException{
 
-	private static final long serialVersionUID = 6429044852678473069L;
+	private static final long serialVersionUID = 2879230296103139872L;
 
 
-	public AnnotationException(final String message, final Object... parameters){
+	public CodecException(final String message, final Object... parameters){
 		super(MessageFormatter.format(message, (parameters.length != 1? parameters: parameters[0])).getMessage());
 	}
 

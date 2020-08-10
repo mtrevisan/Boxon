@@ -22,21 +22,43 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.annotations.exceptions;
+package io.github.mtrevisan.boxon.exceptions;
 
-import org.slf4j.helpers.MessageFormatter;
+import io.github.mtrevisan.boxon.helpers.ExceptionHelper;
 
 
 /**
- * Thrown if no codec is found.
+ * Thrown if a parsing went bad.
  */
-public class CodecException extends TemplateException{
+public class ParseException extends Exception{
 
-	private static final long serialVersionUID = 2879230296103139872L;
+	private static final long serialVersionUID = 5375434179637246605L;
 
 
-	public CodecException(final String message, final Object... parameters){
-		super(MessageFormatter.format(message, (parameters.length != 1? parameters: parameters[0])).getMessage());
+	private final int errorIndex;
+
+
+	public ParseException(final int errorIndex, final Throwable cause){
+		super(cause);
+
+		this.errorIndex = errorIndex;
+	}
+
+	public int getErrorIndex(){
+		return errorIndex;
+	}
+
+	@Override
+	public String getMessage(){
+		final StringBuilder sj = new StringBuilder();
+		final Throwable cause = getCause();
+		if(cause != null)
+			sj.append(ExceptionHelper.getMessageNoLineNumber(cause));
+		if(errorIndex >= 0)
+			sj.append(System.lineSeparator())
+				.append("   at index ")
+				.append(errorIndex);
+		return sj.toString();
 	}
 
 }
