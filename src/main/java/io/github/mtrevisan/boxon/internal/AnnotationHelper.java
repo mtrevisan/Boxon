@@ -50,7 +50,7 @@ public final class AnnotationHelper{
 
 	private enum BucketType{DIRECTORY, FILE}
 
-	private static final FileFilter FILE_FILTER = file -> (file.isDirectory() || file.isFile() && file.getName().endsWith(".class"));
+	private static final FileFilter FILE_FILTER = file -> (file.isDirectory() || file.isFile() && file.getName().endsWith(".class") && !file.getName().contains("$"));
 
 
 	private static final String SCHEMA_FILE = "file:";
@@ -130,6 +130,7 @@ public final class AnnotationHelper{
 		final Collection<Class<?>> classes = new HashSet<>(0);
 		while(resources.hasMoreElements()){
 			final URL resource = resources.nextElement();
+
 			final String directory = resource.getFile();
 			final int exclamationMarkIndex = directory.indexOf('!');
 			final Collection<Class<?>> subClasses;
@@ -157,6 +158,7 @@ public final class AnnotationHelper{
 		final Enumeration<JarEntry> resources = jarFile.entries();
 		while(resources.hasMoreElements()){
 			final JarEntry resource = resources.nextElement();
+
 			final Class<?> cls = getClassFromResource(resource);
 			addIf(classes, cls, type);
 		}
@@ -178,9 +180,10 @@ public final class AnnotationHelper{
 		stack.push(new ClassDescriptor(directory, packageName));
 		while(!stack.isEmpty()){
 			final ClassDescriptor elem = stack.pop();
+//System.out.println(elem.file.getAbsolutePath());
 
-			final File[] files = elem.file.listFiles(FILE_FILTER);
-			final Map<BucketType, DynamicArray<File>> bucket = bucketByFileType(JavaHelper.nonNullOrDefault(files, new File[0]));
+			final File[] files = JavaHelper.nonNullOrDefault(elem.file.listFiles(FILE_FILTER), new File[0]);
+			final Map<BucketType, DynamicArray<File>> bucket = bucketByFileType(files);
 			final DynamicArray<File> bucketDirectory = bucket.get(BucketType.DIRECTORY);
 			for(int i = 0; i < bucketDirectory.limit; i ++){
 				final File dir = bucketDirectory.data[i];
