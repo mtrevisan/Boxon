@@ -268,8 +268,8 @@ final class Template<T>{
 		for(int i = 0; i < declaredAnnotations.length; i ++){
 			final Annotation annotation = declaredAnnotations[i];
 			final Class<? extends Annotation> annotationType = annotation.annotationType();
-			//NOTE: cannot throw an exception if loader has not the codec, because of the possible presence of other
-			//annotations that has nothing to do with this library
+			//NOTE: cannot throw an exception if the loader does not have the codec, due to the possible presence of other
+			//annotations that have nothing to do with this library
 			if(annotationType != Skip.class && annotationType != Evaluate.class && hasCodec.apply(annotationType))
 				annotations.add(annotation);
 		}
