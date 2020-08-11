@@ -39,6 +39,7 @@ import java.util.EnumMap;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -105,15 +106,16 @@ public final class AnnotationHelper{
 	 * @return	The classes.
 	 */
 	public static Collection<Class<?>> extractClasses(final Object type, final Class<?>... basePackageClasses){
+		final DynamicArray<String> basePackageClassNames = extractBasePackageClassNames(basePackageClasses);
+
 		final Collection<Class<?>> classes = new HashSet<>(0);
 
 		final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-		for(int i = 0; i < basePackageClasses.length; i ++){
-			final String basePackageName = basePackageClasses[i].getPackageName();
-			final String path = packageToUri(basePackageName);
+		for(int i = 0; i < basePackageClassNames.limit; i ++){
+			final String path = packageToUri(basePackageClassNames.data[i]);
 			try{
 				final Enumeration<URL> resources = classLoader.getResources(path);
-				classes.addAll(extractClasses(resources, type, basePackageName));
+				classes.addAll(extractClasses(resources, type, basePackageClassNames.data[i]));
 			}
 			catch(final NoSuchFileException e){
 				LOGGER.error("Are you sure you are not running this library from a OneDrive folder?", e);
@@ -124,6 +126,17 @@ public final class AnnotationHelper{
 		}
 
 		return classes;
+	}
+
+	private static DynamicArray<String> extractBasePackageClassNames(final Class<?>[] basePackageClasses){
+		final DynamicArray<String> basePackageClassNames = DynamicArray.create(String.class, basePackageClasses.length);
+		final Set<String> uniqueValues = new HashSet<>();
+		for(int i = 0; i < basePackageClasses.length; i ++){
+			final String packageName = basePackageClasses[i].getPackageName();
+			if(uniqueValues.add(packageName))
+				basePackageClassNames.add(packageName);
+		}
+		return basePackageClassNames;
 	}
 
 	private static Collection<Class<?>> extractClasses(final Enumeration<URL> resources, final Object type, final String basePackageName) throws IOException{
@@ -180,7 +193,6 @@ public final class AnnotationHelper{
 		stack.push(new ClassDescriptor(directory, packageName));
 		while(!stack.isEmpty()){
 			final ClassDescriptor elem = stack.pop();
-//System.out.println(elem.file.getAbsolutePath());
 
 			final File[] files = JavaHelper.nonNullOrDefault(elem.file.listFiles(FILE_FILTER), new File[0]);
 			final Map<BucketType, DynamicArray<File>> bucket = bucketByFileType(files);
