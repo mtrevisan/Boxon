@@ -110,10 +110,7 @@ public final class AnnotationHelper{
 
 		final Collection<Class<?>> classes = new HashSet<>(0);
 
-//		final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-//		ClassLoader classLoader = AnnotationHelper.class.getClassLoader();
-//		ClassLoader classLoader = AnnotationHelper.class.getModule().getClassLoader();
 		for(int i = 0; i < basePackageClassNames.limit; i ++){
 			final String path = packageNameToResourceUri(basePackageClassNames.data[i]);
 			try{
@@ -148,7 +145,6 @@ public final class AnnotationHelper{
 			final URL resource = resources.nextElement();
 
 			final String directory = resource.getFile();
-//System.out.println(directory);
 			final int exclamationMarkIndex = directory.indexOf('!');
 			final Collection<Class<?>> subClasses;
 			if(exclamationMarkIndex >= 0){
