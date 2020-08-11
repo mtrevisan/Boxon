@@ -152,21 +152,23 @@ public final class AnnotationHelper{
 				final String libraryName = directory.substring(SCHEMA_FILE.length(), exclamationMarkIndex);
 				classes.addAll(extractClassesFromLibrary(type, libraryName));
 			}
-			else if("file".equals(resource.getProtocol())){
-				String pathname;
-				try{
-					pathname = toURI(resource.toString()).getSchemeSpecificPart();
-				}
-				catch(final URISyntaxException ignored){
-					pathname = resource.getFile();
-				}
-
-				classes.addAll(extractClasses(type, new File(pathname), basePackageName));
-			}
+			else if("file".equals(resource.getProtocol()))
+				classes.addAll(extractClasses(type, resourceToFile(resource), basePackageName));
 			else
 				LOGGER.warn("URL cannot be resolved to absolute file path because it does not reside in the file system: {}", directory);
 		}
 		return classes;
+	}
+
+	private static File resourceToFile(final URL resource){
+		String pathname;
+		try{
+			pathname = toURI(resource.toString()).getSchemeSpecificPart();
+		}
+		catch(final URISyntaxException ignored){
+			pathname = resource.getFile();
+		}
+		return new File(pathname);
 	}
 
 	private static URI toURI(final String location) throws URISyntaxException{
