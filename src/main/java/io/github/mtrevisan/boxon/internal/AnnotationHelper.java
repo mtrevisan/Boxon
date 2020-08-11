@@ -32,6 +32,8 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.NoSuchFileException;
 import java.util.Collection;
@@ -146,16 +148,29 @@ public final class AnnotationHelper{
 
 			final String directory = resource.getFile();
 			final int exclamationMarkIndex = directory.indexOf('!');
-			final Collection<Class<?>> subClasses;
 			if(exclamationMarkIndex >= 0){
 				final String libraryName = directory.substring(SCHEMA_FILE.length(), exclamationMarkIndex);
-				subClasses = extractClassesFromLibrary(type, libraryName);
+				classes.addAll(extractClassesFromLibrary(type, libraryName));
+			}
+			else if("file".equals(resource.getProtocol())){
+				String pathname;
+				try{
+					pathname = toURI(resource.toString()).getSchemeSpecificPart();
+				}
+				catch(final URISyntaxException ignored){
+					pathname = resource.getFile();
+				}
+
+				classes.addAll(extractClasses(type, new File(pathname), basePackageName));
 			}
 			else
-				subClasses = extractClasses(type, new File(directory), basePackageName);
-			classes.addAll(subClasses);
+				LOGGER.warn("URL cannot be resolved to absolute file path because it does not reside in the file system: {}", directory);
 		}
 		return classes;
+	}
+
+	private static URI toURI(final String location) throws URISyntaxException{
+		return new URI(location.replace(" ", "%20"));
 	}
 
 	/**
