@@ -110,9 +110,13 @@ public final class AnnotationHelper{
 
 		final Collection<Class<?>> classes = new HashSet<>(0);
 
-		final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+//		final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+		ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+//		ClassLoader classLoader = ClassLoader.getPlatformClassLoader();
+//		ClassLoader classLoader = AnnotationHelper.class.getClassLoader();
+//		ClassLoader classLoader = ModuleLayer.boot().findModule("moduleName").get().getClassLoader();
 		for(int i = 0; i < basePackageClassNames.limit; i ++){
-			final String path = packageToUri(basePackageClassNames.data[i]);
+			final String path = packageNameToResourceUri(basePackageClassNames.data[i]);
 			try{
 				final Enumeration<URL> resources = classLoader.getResources(path);
 				classes.addAll(extractClasses(resources, type, basePackageClassNames.data[i]));
@@ -145,6 +149,7 @@ public final class AnnotationHelper{
 			final URL resource = resources.nextElement();
 
 			final String directory = resource.getFile();
+//System.out.println(directory);
 			final int exclamationMarkIndex = directory.indexOf('!');
 			final Collection<Class<?>> subClasses;
 			if(exclamationMarkIndex >= 0){
@@ -231,7 +236,7 @@ public final class AnnotationHelper{
 			final String className = resourceName.substring(
 				(resourceName.startsWith(BOOT_INF_CLASSES)? BOOT_INF_CLASSES.length(): 0),
 				resourceName.length() - EXTENSION_CLASS.length());
-			cls = getClassFromName(uriToPackage(className));
+			cls = getClassFromName(resourceUriToPackageName(className));
 		}
 		return cls;
 	}
@@ -260,12 +265,14 @@ public final class AnnotationHelper{
 			classes.add(cls);
 	}
 
-	private static String packageToUri(final String packageName){
+	/** Returns a resource uri corresponding to the package name. */
+	private static String packageNameToResourceUri(final String packageName){
 		return packageName.replace('.', '/');
 	}
 
-	private static String uriToPackage(final String uri){
-		return uri.replace('/', '.');
+	/** Derive a <em>package name</em> for a resource URI. */
+	private static String resourceUriToPackageName(final String resourceUri){
+		return resourceUri.replace('/', '.');
 	}
 
 }
