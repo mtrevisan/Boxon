@@ -156,6 +156,7 @@ public final class ReflectionHelper{
 	}
 
 
+	//https://www.jboss.org/optaplanner/blog/2018/01/09/JavaReflectionButMuchFaster.html
 	@SuppressWarnings("unchecked")
 	public static <T> T getFieldValue(final Object obj, final String fieldName){
 		try{
