@@ -51,7 +51,7 @@ public final class AnnotationHelper{
 
 	private enum BucketType{DIRECTORY, FILE}
 
-	private static final FileFilter FILE_FILTER = file -> (file.isDirectory() || file.isFile() && file.getName().endsWith(".class") && !file.getName().contains("$"));
+	private static final FileFilter FILE_FILTER = file -> (file.isDirectory() || file.isFile() && file.getName().endsWith(".class"));
 
 
 	private static final String SCHEMA_FILE = "file:";
