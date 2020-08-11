@@ -112,9 +112,8 @@ public final class AnnotationHelper{
 
 //		final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-//		ClassLoader classLoader = ClassLoader.getPlatformClassLoader();
 //		ClassLoader classLoader = AnnotationHelper.class.getClassLoader();
-//		ClassLoader classLoader = ModuleLayer.boot().findModule("moduleName").get().getClassLoader();
+//		ClassLoader classLoader = AnnotationHelper.class.getModule().getClassLoader();
 		for(int i = 0; i < basePackageClassNames.limit; i ++){
 			final String path = packageNameToResourceUri(basePackageClassNames.data[i]);
 			try{
