@@ -106,7 +106,7 @@ public final class AnnotationHelper{
 	 * @return	The classes.
 	 */
 	public static Collection<Class<?>> extractClasses(final Object type, final Class<?>... basePackageClasses){
-		final DynamicArray<String> basePackageClassNames = extractBasePackageClassNames(basePackageClasses);
+		final DynamicArray<String> basePackageClassNames = removeDuplicates(basePackageClasses);
 
 		final Collection<Class<?>> classes = new HashSet<>(0);
 
@@ -128,15 +128,15 @@ public final class AnnotationHelper{
 		return classes;
 	}
 
-	private static DynamicArray<String> extractBasePackageClassNames(final Class<?>[] basePackageClasses){
-		final DynamicArray<String> basePackageClassNames = DynamicArray.create(String.class, basePackageClasses.length);
+	private static DynamicArray<String> removeDuplicates(final Class<?>[] basePackages){
+		final DynamicArray<String> basePackageNames = DynamicArray.create(String.class, basePackages.length);
 		final Set<String> uniqueValues = new HashSet<>();
-		for(int i = 0; i < basePackageClasses.length; i ++){
-			final String packageName = basePackageClasses[i].getPackageName();
+		for(int i = 0; i < basePackages.length; i ++){
+			final String packageName = basePackages[i].getPackageName();
 			if(uniqueValues.add(packageName))
-				basePackageClassNames.add(packageName);
+				basePackageNames.add(packageName);
 		}
-		return basePackageClassNames;
+		return basePackageNames;
 	}
 
 	private static Collection<Class<?>> extractClasses(final Enumeration<URL> resources, final Object type, final String basePackageName) throws IOException{
