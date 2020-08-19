@@ -39,12 +39,12 @@ import java.util.Set;
 /**
  * a fluent builder for {@link Configuration}, to be used for constructing a {@link Reflections} instance
  * <p>usage:
- * <pre>
+ * <pre><code>
  *      new Reflections(
  *          new ConfigurationBuilder()
  *              .filterInputsBy(new FilterBuilder().include("your project's common package prefix here..."))
  *              .withUrls(ClasspathHelper.forClassLoader()));
- * </pre>
+ * </code></pre>
  */
 public class ConfigurationBuilder implements Configuration{
 

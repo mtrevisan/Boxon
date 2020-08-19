@@ -29,29 +29,28 @@ import java.util.stream.StreamSupport;
  * <p>use the {@link VirtualFileSystem#fromURL(URL)} to get a {@link Directory},
  * then use {@link Directory#getFiles()} to iterate over the {@link File}
  * <p>for example:
- * <pre>
- *      Vfs.Dir dir = Vfs.fromURL(url);
- *      Iterable&lt;Vfs.File&gt; files = dir.getFiles();
- *      for (Vfs.File file : files) {
+ * <pre><code>
+ *      VirtualFileSystem.Directory dir = VirtualFileSystem.fromURL(url);
+ *      Iterable&lt;VirtualFileSystem.File&gt; files = dir.getFiles();
+ *      for(VirtualFileSystem.File file : files)
  *          InputStream is = file.openInputStream();
- *      }
- * </pre>
+ * </code></pre>
  * <p>{@link VirtualFileSystem#fromURL(URL)} uses static {@link DefaultUrlTypes} to resolve URLs.
  * It contains VfsTypes for handling for common resources such as local jar file, local directory, jar url, jar input stream and more.
  * <p>It can be plugged in with other {@link UrlType} using {@link VirtualFileSystem#addDefaultURLTypes(UrlType)} or {@link VirtualFileSystem#setDefaultURLTypes(List)}.
  * <p>for example:
- * <pre>
- *      Vfs.addDefaultURLTypes(new Vfs.UrlType() {
- *          public boolean matches(URL url)         {
+ * <pre><code>
+ *      VirtualFileSystem.addDefaultURLTypes(new VirtualFileSystem.UrlType(){
+ *          public boolean matches(URL url){
  *              return url.getProtocol().equals("http");
  *          }
- *          public Vfs.Dir createDir(final URL url) {
+ *          public VirtualFileSystem.Directory createDir(final URL url){
  *              return new HttpDir(url); //implement this type... (check out a naive implementation on VfsTest)
  *          }
  *      });
  *
- *      Vfs.Dir dir = Vfs.fromURL(new URL("http://mirrors.ibiblio.org/pub/mirrors/maven2/org/slf4j/slf4j-api/1.5.6/slf4j-api-1.5.6.jar"));
- * </pre>
+ *      VirtualFileSystem.Directory dir = VirtualFileSystem.fromURL(new URL("http://mirrors.ibiblio.org/pub/mirrors/maven2/org/slf4j/slf4j-api/1.5.6/slf4j-api-1.5.6.jar"));
+ * </code></pre>
  * <p>use {@link VirtualFileSystem#findFiles(Collection, Predicate)} to get an
  * iteration of files matching given name predicate over given list of urls
  */
