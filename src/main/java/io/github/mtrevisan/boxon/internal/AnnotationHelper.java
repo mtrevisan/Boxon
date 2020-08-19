@@ -29,12 +29,12 @@ import org.slf4j.Logger;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.NoSuchFileException;
 import java.util.Collection;
 import java.util.EnumMap;
@@ -172,8 +172,8 @@ public final class AnnotationHelper{
 		}
 		catch(final URISyntaxException ignored){}
 
-		try{
-			String path = URLDecoder.decode(resource.getPath(), "UTF-8");
+		{
+			String path = URLDecoder.decode(resource.getPath(), StandardCharsets.UTF_8);
 			final int idx = path.lastIndexOf(".jar!");
 			if(idx >= 0)
 				path = path.substring(0, idx + ".jar".length());
@@ -182,7 +182,6 @@ public final class AnnotationHelper{
 			if(file.exists())
 				return file;
 		}
-		catch(final UnsupportedEncodingException ignored){}
 
 		try{
 			String path = resource.toExternalForm();
