@@ -71,8 +71,6 @@ public abstract class ReflectionUtils{
 		return result;
 	}
 
-	//predicates
-
 	/**
 	 * where element is annotated with given {@code annotation}, including member matching
 	 *
