@@ -26,6 +26,7 @@ import static org.reflections.util.Utils.names;
 
 
 public class Reflections{
+
 	public static Logger log = findLogger(Reflections.class);
 
 	protected final transient Configuration configuration;
@@ -36,6 +37,8 @@ public class Reflections{
 	/**
 	 * constructs a Reflections instance and scan according to given {@link Configuration}
 	 * <p>it is preferred to use {@link ConfigurationBuilder}
+	 *
+	 * @param configuration	The configuration.
 	 */
 	public Reflections(final Configuration configuration){
 		this.configuration = configuration;
@@ -122,8 +125,8 @@ public class Reflections{
 	 * <p>
 	 * for example, for classes A,B,C where A supertype of B, B supertype of C:
 	 * <ul>
-	 *     <li>if scanning C resulted in B (B->C in store), but A was not scanned (although A supertype of B) - then getSubTypes(A) will not return C</li>
-	 *     <li>if expanding supertypes, B will be expanded with A (A->B in store) - then getSubTypes(A) will return C</li>
+	 *     <li>if scanning C resulted in B (B-&gt;C in store), but A was not scanned (although A supertype of B) - then getSubTypes(A) will not return C</li>
+	 *     <li>if expanding supertypes, B will be expanded with A (A-&gt;B in store) - then getSubTypes(A) will return C</li>
 	 * </ul>
 	 */
 	public void expandSuperTypes(){
@@ -152,7 +155,11 @@ public class Reflections{
 
 	/**
 	 * gets all sub types in hierarchy of a given type
-	 * <p/>depends on SubTypesScanner configured
+	 * <p>depends on SubTypesScanner configured.</p>
+	 *
+	 * @param type	The type.
+	 * @return	The set of classes.
+	 * @param <T>	The type of {@code type}.
 	 */
 	public <T> Set<Class<? extends T>> getSubTypesOf(final Class<T> type){
 		return forNames(store.getAll(SubTypesScanner.class, type.getName()));
@@ -164,7 +171,10 @@ public class Reflections{
 	 * <p>when honoring @Inherited, meta-annotation should only effect annotated super classes and its sub types
 	 * <p><i>Note that this (@Inherited) meta-annotation type has no effect if the annotated type is used for anything other then a class.
 	 * Also, this meta-annotation causes annotations to be inherited only from superclasses; annotations on implemented interfaces have no effect.</i>
-	 * <p/>depends on TypeAnnotationsScanner and SubTypesScanner configured
+	 * <p>depends on TypeAnnotationsScanner and SubTypesScanner configured.</p>
+	 *
+	 * @param annotation	The annotation.
+	 * @return	The set of classes.
 	 */
 	public Set<Class<?>> getTypesAnnotatedWith(final Class<? extends Annotation> annotation){
 		return getTypesAnnotatedWith(annotation, false);
@@ -177,7 +187,11 @@ public class Reflections{
 	 * <p>when not honoring @Inherited, meta annotation effects all subtypes, including annotations interfaces and classes
 	 * <p><i>Note that this (@Inherited) meta-annotation type has no effect if the annotated type is used for anything other then a class.
 	 * Also, this meta-annotation causes annotations to be inherited only from superclasses; annotations on implemented interfaces have no effect.</i>
-	 * <p/>depends on TypeAnnotationsScanner and SubTypesScanner configured
+	 * <p>depends on TypeAnnotationsScanner and SubTypesScanner configured.</p>
+	 *
+	 * @param annotation	The annotation.
+	 * @param honorInherited	Whether to honor inherited.
+	 * @return	The set of classes.
 	 */
 	public Set<Class<?>> getTypesAnnotatedWith(final Class<? extends Annotation> annotation, boolean honorInherited){
 		Set<String> annotated = store.get(TypeAnnotationsScanner.class, annotation.getName());
@@ -187,8 +201,11 @@ public class Reflections{
 
 	/**
 	 * get types annotated with a given annotation, both classes and annotations, including annotation member values matching
-	 * <p>{@link Inherited} is not honored by default
-	 * <p/>depends on TypeAnnotationsScanner configured
+	 * <p>{@link Inherited} is not honored by default.</p>
+	 * <p>depends on TypeAnnotationsScanner configured.</p>
+	 *
+	 * @param annotation	The annotation.
+	 * @return	The set of classes.
 	 */
 	public Set<Class<?>> getTypesAnnotatedWith(final Annotation annotation){
 		return getTypesAnnotatedWith(annotation, false);
@@ -196,8 +213,12 @@ public class Reflections{
 
 	/**
 	 * get types annotated with a given annotation, both classes and annotations, including annotation member values matching
-	 * <p>{@link Inherited} is honored according to given honorInherited
-	 * <p/>depends on TypeAnnotationsScanner configured
+	 * <p>{@link Inherited} is honored according to given honorInherited.</p>
+	 * <p>depends on TypeAnnotationsScanner configured.</p>
+	 *
+	 * @param annotation	The annotation.
+	 * @param honorInherited	Whether to honor inherited.
+	 * @return	The set of classes.
 	 */
 	public Set<Class<?>> getTypesAnnotatedWith(final Annotation annotation, boolean honorInherited){
 		Set<String> annotated = store.get(TypeAnnotationsScanner.class, annotation.annotationType().getName());
@@ -244,6 +265,8 @@ public class Reflections{
 
 	/**
 	 * returns the {@link Store} used for storing and querying the metadata
+	 *
+	 * @return	The store.
 	 */
 	public Store getStore(){
 		return store;
@@ -251,6 +274,8 @@ public class Reflections{
 
 	/**
 	 * returns the {@link Configuration} object of this instance
+	 *
+	 * @return	The configuration.
 	 */
 	public Configuration getConfiguration(){
 		return configuration;

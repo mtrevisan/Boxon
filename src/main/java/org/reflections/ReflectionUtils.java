@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public abstract class ReflectionUtils{
 
 	/**
-	 * would include {@code Object.class} when {@ link #getAllSuperTypes(Class, Predicate[])}. default is false.
+	 * would include {@code Object.class} when {@link #getSuperTypes(Class)}. default is false.
 	 */
 	public static boolean includeObject = false;
 
