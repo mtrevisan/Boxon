@@ -91,14 +91,14 @@ public abstract class VirtualFileSystem{
 
 
 	/**
-	 * default url types used by {@link VirtualFileSystem.DefaultUrlTypes#fromURL(URL)}
-	 * <p>jarFile - creates a {@link ZipDirectory} over jar file
-	 * <p>jarUrl - creates a {@link ZipDirectory} over a jar url (contains ".jar!/" in it's name), using Java's {@link JarURLConnection}
-	 * <p>directory - creates a {@link SystemDirectory} over a file system directory
-	 * <p>jboss vfs - for protocols vfs, using jboss vfs (should be provided in classpath)
-	 * <p>jboss vfsfile - creates a {@link UrlTypeVFS} for protocols vfszip and vfsfile.
-	 * <p>bundle - for bundle protocol, using eclipse FileLocator (should be provided in classpath)
-	 * <p>jarInputStream - creates a {@link JarInputDirectory} over jar files, using Java's JarInputStream
+	 * Default url types used by {@link VirtualFileSystem.DefaultUrlTypes#fromURL(URL)}.
+	 * <p>JAR_FILE - creates a {@link ZipDirectory} over JAR file.
+	 * <p>JAR_URL - creates a {@link ZipDirectory} over a JAR URL (contains {@code ".jar!/"} in it's name), using Java's {@link JarURLConnection}.
+	 * <p>DIRECTORY - creates a {@link SystemDirectory} over a file system directory.
+	 * <p>JBOSS_VFS - for protocols VFS, using jboss VFS (should be provided in classpath).
+	 * <p>JBOSS_VFS_FILE - creates a {@link UrlTypeVFS} for protocols vfszip and vfsfile.
+	 * <p>BUNDLE - for bundle protocol, using eclipse FileLocator (should be provided in classpath).
+	 * <p>JAR_INPUT_STREAM - creates a {@link JarInputDirectory} over JAR files, using Java's JarInputStream.
 	 */
 	public enum DefaultUrlTypes implements UrlType{
 		JAR_FILE{
@@ -164,7 +164,7 @@ public abstract class VirtualFileSystem{
 			}
 		},
 
-		JBOSS_VFSFILE{
+		JBOSS_VFS_FILE{
 			private final Set<String> protocols = new HashSet<>(Arrays.asList("vfszip", "vfsfile"));
 
 			public boolean matches(final URL url){
