@@ -258,7 +258,7 @@ class CodecArrayTest{
 	@Test
 	void arrayOfDifferentObjects(){
 		Parser parser = Parser.create()
-			.withCodecs(CodecChecksum.class)
+			.withCodecs(CodecChecksum.class, CodecCustomTest.VariableLengthByteArray.class)
 			.withTemplates(TestChoice4.class);
 
 		byte[] payload = JavaHelper.toByteArray("7463340112340211223344010666");

@@ -292,6 +292,15 @@
 	</build>
 
 	<dependencies>
+		<!-- Reflections -->
+		<!-- https://mvnrepository.com/artifact/org.reflections/reflections -->
+<!--		<dependency>-->
+<!--			<groupId>org.reflections</groupId>-->
+<!--			<artifactId>reflections</artifactId>-->
+<!--			<version>0.9.12</version>-->
+<!--		</dependency>-->
+
+
 		<!-- SpEL -->
 		<!-- https://mvnrepository.com/artifact/org.springframework/spring-expression -->
 		<dependency>
@@ -330,6 +339,13 @@
 			<artifactId>commons-lang3</artifactId>
 			<version>${apache.commons-lang3.version}</version>
 			<scope>test</scope>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.javassist</groupId>
+			<artifactId>javassist</artifactId>
+			<version>3.23.2-GA</version>
 		</dependency>
 	</dependencies>
 

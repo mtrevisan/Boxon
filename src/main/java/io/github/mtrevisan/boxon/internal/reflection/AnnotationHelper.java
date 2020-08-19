@@ -22,8 +22,12 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.internal;
+package io.github.mtrevisan.boxon.internal.reflection;
 
+import io.github.mtrevisan.boxon.internal.DynamicArray;
+import io.github.mtrevisan.boxon.internal.JavaHelper;
+import org.reflections.Reflections;
+import org.reflections.util.ConfigurationBuilder;
 import org.slf4j.Logger;
 
 import java.io.File;
@@ -36,7 +40,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.NoSuchFileException;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Enumeration;
@@ -49,6 +52,7 @@ import java.util.jar.JarFile;
 
 
 /**
+ * @see <a href="https://bill.burkecentral.com/2008/01/14/scanning-java-annotations-at-runtime/">Scanning Java Annotations at Runtime</a>
  * @see <a href="https://github.com/ronmamo/reflections">Reflections</a>
  */
 public final class AnnotationHelper{
@@ -116,22 +120,37 @@ public final class AnnotationHelper{
 
 		final Collection<Class<?>> classes = new HashSet<>(0);
 
-		ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-		for(int i = 0; i < basePackageClassNames.limit; i ++){
-			final String path = packageNameToResourceUri(basePackageClassNames.data[i]);
-			try{
-				final Enumeration<URL> resources = classLoader.getResources(path);
-				classes.addAll(extractClasses(resources, type, basePackageClassNames.data[i]));
-			}
-			catch(final NoSuchFileException e){
-				if(LOGGER != null)
-					LOGGER.error("Are you sure you are not running this library from a OneDrive folder?", e);
-			}
-			catch(final IOException e){
-				if(LOGGER != null)
-					LOGGER.error("Cannot load classes from {}", path, e);
-			}
-		}
+		final Reflections reflections = new Reflections(new ConfigurationBuilder()
+			.forPackages(basePackageClassNames.extractCopy()));
+		final Set<Class<?>> modules = reflections.getSubTypesOf((Class<Object>)type);
+		final Set<Class<?>> singletons = reflections.getTypesAnnotatedWith((Class<? extends Annotation>)type);
+		classes.addAll(modules);
+		classes.addAll(singletons);
+System.out.println(classes.size());
+for(Class<?> cl : classes)
+	System.out.println(cl.getSimpleName());
+//System.out.println("--");
+//classes.clear();
+
+//		ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+//		for(int i = 0; i < basePackageClassNames.limit; i ++){
+//			final String path = packageNameToResourceUri(basePackageClassNames.data[i]);
+//			try{
+//				final Enumeration<URL> resources = classLoader.getResources(path);
+//				classes.addAll(extractClasses(resources, type, basePackageClassNames.data[i]));
+//			}
+//			catch(final NoSuchFileException e){
+//				if(LOGGER != null)
+//					LOGGER.error("Are you sure you are not running this library from a OneDrive folder?", e);
+//			}
+//			catch(final IOException e){
+//				if(LOGGER != null)
+//					LOGGER.error("Cannot load classes from {}", path, e);
+//			}
+//		}
+//System.out.println(classes.size());
+//for(Class<?> cl : classes)
+//	System.out.println(cl.getSimpleName());
 
 		return classes;
 	}
