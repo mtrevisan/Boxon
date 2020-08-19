@@ -188,9 +188,9 @@ public final class AnnotationHelper{
 			String path = resource.toExternalForm();
 			if(path.startsWith("jar:"))
 				path = path.substring("jar:".length());
-			if(path.startsWith("wsjar:"))
+			else if(path.startsWith("wsjar:"))
 				path = path.substring("wsjar:".length());
-			if(path.startsWith("file:"))
+			else if(path.startsWith("file:"))
 				path = path.substring("file:".length());
 			int idx = path.indexOf(".jar!");
 			if(idx >= 0)
