@@ -48,6 +48,9 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 
+/**
+ * @see <a href="https://github.com/ronmamo/reflections">Reflections</a>
+ */
 public final class AnnotationHelper{
 
 	private static final Logger LOGGER = JavaHelper.getLoggerFor(AnnotationHelper.class);
