@@ -88,7 +88,7 @@ public class Reflections{
 	}
 
 	private void scan(final URL url){
-		final Directory directory = VirtualFileSystem.fromURL(url);
+		final Directory directory = VirtualFileSystem.DefaultUrlTypes.fromURL(url);
 		for(final File file : directory.getFiles()){
 			//scan if inputs filter accepts file relativePath or packageName
 			final String relativePath = file.getRelativePath();

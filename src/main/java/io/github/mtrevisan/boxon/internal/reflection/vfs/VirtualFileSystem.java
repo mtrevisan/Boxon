@@ -38,13 +38,15 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.jar.JarFile;
 
 
 /**
  * A simple Virtual File System bridge.
- * <p>use the {@link VirtualFileSystem#fromURL(URL)} to get a {@link Directory},
+ * <p>use the {@link VirtualFileSystem.DefaultUrlTypes#fromURL(URL)} to get a {@link Directory},
  * then use {@link Directory#getFiles()} to iterate over the {@link File}
  * <p>for example:
  * <pre><code>
@@ -53,7 +55,7 @@ import java.util.jar.JarFile;
  *      for(VirtualFileSystem.File file : files)
  *          InputStream is = file.openInputStream();
  * </code></pre>
- * <p>{@link VirtualFileSystem#fromURL(URL)} uses static {@link DefaultUrlTypes} to resolve URLs.
+ * <p>{@link VirtualFileSystem.DefaultUrlTypes#fromURL(URL)} uses static {@link DefaultUrlTypes} to resolve URLs.
  * It contains VfsTypes for handling for common resources such as local jar file, local directory, jar url, jar input stream and more.
  * <p>It can be plugged in with other {@link UrlType} using {@link VirtualFileSystem#addDefaultURLTypes(UrlType)}.
  * <p>for example:
@@ -87,114 +89,9 @@ public abstract class VirtualFileSystem{
 		defaultUrlTypes.add(0, urlType);
 	}
 
-	/**
-	 * Tries to create a Dir from the given url, using the defaultUrlTypes
-	 *
-	 * @param url	The URL.
-	 * @return	The Dir from the given {@code url}.
-	 */
-	public static Directory fromURL(final URL url){
-		return fromURL(url, defaultUrlTypes);
-	}
 
 	/**
-	 * Tries to create a Dir from the given {@code url}, using the given {@code urlTypes}.
-	 *
-	 * @param url	The URL.
-	 * @param urlTypes	The URL types.
-	 * @return	The Dir from the given {@code url}, using the given {@code urlTypes}.
-	 */
-	public static Directory fromURL(final URL url, final List<UrlType> urlTypes){
-		for(final UrlType type : urlTypes){
-			try{
-				if(type.matches(url)){
-					final Directory directory = type.createDir(url);
-					if(directory != null)
-						return directory;
-				}
-			}
-			catch(final Throwable e){
-				if(LOGGER != null)
-					LOGGER.warn("could not create Dir using " + type + " from url " + url.toExternalForm() + ". skipping.", e);
-			}
-		}
-
-		throw new ReflectionsException("could not create Vfs.Dir from url, no matching UrlType was found [" + url.toExternalForm() + "]\n" + "either use fromURL(final URL url, final List<UrlType> urlTypes) or " + "use the static setDefaultURLTypes(final List<UrlType> urlTypes) or addDefaultURLTypes(UrlType urlType) " + "with your specialized UrlType.");
-	}
-
-	/**
-	 * Get {@link java.io.File} from URL.
-	 *
-	 * @param url	The URL to get the file from.
-	 * @return	{@link java.io.File} from URL.
-	 */
-	public static java.io.File resourceToFile(final URL url){
-		try{
-			final String path = url.toURI().getSchemeSpecificPart();
-			return getFileIfExists(path);
-		}
-		catch(final URISyntaxException | FileNotFoundException ignored){}
-
-		try{
-			final String path = extractDecodedPath(url);
-			return getFileIfExists(path);
-		}
-		catch(final FileNotFoundException ignored){}
-
-		try{
-			String path = extractExternalFormPath(url);
-			final java.io.File file = new java.io.File(path);
-			if(file.exists())
-				return file;
-
-			path = path.replace("%20", " ");
-			return getFileIfExists(path);
-		}
-		catch(final Exception ignored){}
-
-		final String path = url.getFile();
-		return new java.io.File(path);
-	}
-
-	private static String extractDecodedPath(final URL resource){
-		String path = URLDecoder.decode(resource.getPath(), StandardCharsets.UTF_8);
-		final int idx = path.lastIndexOf(".jar!");
-		if(idx >= 0)
-			path = path.substring(0, idx + ".jar".length());
-		return path;
-	}
-
-	private static String extractExternalFormPath(final URL resource){
-		String path = resource.toExternalForm();
-		if(path.startsWith("jar:"))
-			path = path.substring("jar:".length());
-		else if(path.startsWith("wsjar:"))
-			path = path.substring("wsjar:".length());
-		else if(path.startsWith("file:"))
-			path = path.substring("file:".length());
-		int idx = path.indexOf(".jar!");
-		if(idx >= 0)
-			path = path.substring(0, idx + ".jar".length());
-		idx = path.indexOf(".war!");
-		if(idx >= 0)
-			path = path.substring(0, idx + ".war".length());
-		return path;
-	}
-
-	private static java.io.File getFileIfExists(final String path) throws FileNotFoundException{
-		final java.io.File file = new java.io.File(path);
-		if(!file.exists())
-			throw new FileNotFoundException();
-
-		return file;
-	}
-
-	private static boolean hasJarFileInPath(final URL url){
-		return url.toExternalForm().matches(".*\\.jar(!.*|$)");
-	}
-
-	/**
-	 * default url types used by {@link VirtualFileSystem#fromURL(URL)}
+	 * default url types used by {@link VirtualFileSystem.DefaultUrlTypes#fromURL(URL)}
 	 * <p>jarFile - creates a {@link ZipDirectory} over jar file
 	 * <p>jarUrl - creates a {@link ZipDirectory} over a jar url (contains ".jar!/" in it's name), using Java's {@link JarURLConnection}
 	 * <p>directory - creates a {@link SystemDirectory} over a file system directory
@@ -204,9 +101,9 @@ public abstract class VirtualFileSystem{
 	 * <p>jarInputStream - creates a {@link JarInputDirectory} over jar files, using Java's JarInputStream
 	 */
 	public enum DefaultUrlTypes implements UrlType{
-		jarFile{
+		JAR_FILE{
 			public boolean matches(final URL url){
-				return url.getProtocol().equals("file") && hasJarFileInPath(url);
+				return (url.getProtocol().equals("file") && hasJarFileInPath(url));
 			}
 
 			public Directory createDir(final URL url) throws Exception{
@@ -214,9 +111,11 @@ public abstract class VirtualFileSystem{
 			}
 		},
 
-		jarUrl{
+		JAR_URL{
+			private final Set<String> protocols = new HashSet<>(Arrays.asList("jar", "zip", "wsjar"));
+
 			public boolean matches(final URL url){
-				return "jar".equals(url.getProtocol()) || "zip".equals(url.getProtocol()) || "wsjar".equals(url.getProtocol());
+				return protocols.contains(url.getProtocol());
 			}
 
 			public Directory createDir(final URL url) throws Exception{
@@ -226,23 +125,21 @@ public abstract class VirtualFileSystem{
 						urlConnection.setUseCaches(false);
 						return new ZipDirectory(((JarURLConnection) urlConnection).getJarFile());
 					}
-				}catch(final Throwable e){ /*fallback*/ }
-				final java.io.File file = resourceToFile(url);
-				if(file != null){
-					return new ZipDirectory(new JarFile(file));
 				}
-				return null;
+				catch(final Throwable ignored){}
+
+				final java.io.File file = resourceToFile(url);
+				return (file != null? new ZipDirectory(new JarFile(file)): null);
 			}
 		},
 
-		directory{
+		DIRECTORY{
 			public boolean matches(final URL url){
 				if(url.getProtocol().equals("file") && !hasJarFileInPath(url)){
 					final java.io.File file = resourceToFile(url);
-					return file != null && file.isDirectory();
+					return (file != null && file.isDirectory());
 				}
-				else
-					return false;
+				return false;
 			}
 
 			public Directory createDir(final URL url){
@@ -250,7 +147,7 @@ public abstract class VirtualFileSystem{
 			}
 		},
 
-		jboss_vfs{
+		JBOSS_VFS{
 			public boolean matches(final URL url){
 				return url.getProtocol().equals("vfs");
 			}
@@ -258,18 +155,20 @@ public abstract class VirtualFileSystem{
 			public Directory createDir(final URL url) throws Exception{
 				final Object content = url.openConnection().getContent();
 				final Class<?> virtualFile = ClasspathHelper.contextClassLoader().loadClass("org.jboss.vfs.VirtualFile");
-				final java.io.File physicalFile = (java.io.File) virtualFile.getMethod("getPhysicalFile").invoke(content);
-				final String name = (String) virtualFile.getMethod("getName").invoke(content);
+				final java.io.File physicalFile = (java.io.File)virtualFile.getMethod("getPhysicalFile").invoke(content);
+				final String name = (String)virtualFile.getMethod("getName").invoke(content);
 				java.io.File file = new java.io.File(physicalFile.getParentFile(), name);
 				if(!file.exists() || !file.canRead())
 					file = physicalFile;
-				return file.isDirectory()? new SystemDirectory(file): new ZipDirectory(new JarFile(file));
+				return (file.isDirectory()? new SystemDirectory(file): new ZipDirectory(new JarFile(file)));
 			}
 		},
 
-		jboss_vfsfile{
+		JBOSS_VFSFILE{
+			private final Set<String> protocols = new HashSet<>(Arrays.asList("vfszip", "vfsfile"));
+
 			public boolean matches(final URL url){
-				return "vfszip".equals(url.getProtocol()) || "vfsfile".equals(url.getProtocol());
+				return protocols.contains(url.getProtocol());
 			}
 
 			public Directory createDir(final URL url){
@@ -277,18 +176,19 @@ public abstract class VirtualFileSystem{
 			}
 		},
 
-		bundle{
+		BUNDLE{
 			public boolean matches(final URL url){
 				return url.getProtocol().startsWith("bundle");
 			}
 
 			public Directory createDir(final URL url) throws Exception{
-				return fromURL((URL)ClasspathHelper.contextClassLoader().
-					loadClass("org.eclipse.core.runtime.FileLocator").getMethod("resolve", URL.class).invoke(null, url));
+				final Class<?> fileLocatorClass = ClasspathHelper.contextClassLoader().
+					loadClass("org.eclipse.core.runtime.FileLocator");
+				return fromURL((URL)fileLocatorClass.getMethod("resolve", URL.class).invoke(null, url));
 			}
 		},
 
-		jarInputStream{
+		JAR_INPUT_STREAM{
 			public boolean matches(final URL url){
 				return url.toExternalForm().contains(".jar");
 			}
@@ -296,7 +196,115 @@ public abstract class VirtualFileSystem{
 			public Directory createDir(final URL url){
 				return new JarInputDirectory(url);
 			}
+		};
+
+
+		/**
+		 * Tries to create a Dir from the given url, using the defaultUrlTypes
+		 *
+		 * @param url	The URL.
+		 * @return	The Dir from the given {@code url}.
+		 */
+		public static Directory fromURL(final URL url){
+			return fromURL(url, defaultUrlTypes);
 		}
+
+		/**
+		 * Tries to create a Dir from the given {@code url}, using the given {@code urlTypes}.
+		 *
+		 * @param url	The URL.
+		 * @param urlTypes	The URL types.
+		 * @return	The Dir from the given {@code url}, using the given {@code urlTypes}.
+		 */
+		public static Directory fromURL(final URL url, final List<UrlType> urlTypes){
+			for(final UrlType type : urlTypes){
+				try{
+					if(type.matches(url)){
+						final Directory directory = type.createDir(url);
+						if(directory != null)
+							return directory;
+					}
+				}
+				catch(final Throwable e){
+					if(LOGGER != null)
+						LOGGER.warn("could not create VirtualFileSystem.Directory using " + type + " from URL " + url.toExternalForm() + ": skipping", e);
+				}
+			}
+
+			throw new ReflectionsException("could not create VirtualFileSystem.Directory from URL, no matching UrlType was found [" + url.toExternalForm() + "]\n" + "either use fromURL(final URL url, final List<UrlType> urlTypes) or " + "use the static setDefaultURLTypes(final List<UrlType> urlTypes) or addDefaultURLTypes(UrlType urlType) " + "with your specialized UrlType.");
+		}
+
+		/**
+		 * Get {@link java.io.File} from URL.
+		 *
+		 * @param url	The URL to get the file from.
+		 * @return	{@link java.io.File} from URL.
+		 */
+		public static java.io.File resourceToFile(final URL url){
+			try{
+				final String path = url.toURI().getSchemeSpecificPart();
+				return getFileIfExists(path);
+			}
+			catch(final URISyntaxException | FileNotFoundException ignored){}
+
+			try{
+				final String path = extractDecodedPath(url);
+				return getFileIfExists(path);
+			}
+			catch(final FileNotFoundException ignored){}
+
+			try{
+				String path = extractExternalFormPath(url);
+				final java.io.File file = new java.io.File(path);
+				if(file.exists())
+					return file;
+
+				path = path.replace("%20", " ");
+				return getFileIfExists(path);
+			}
+			catch(final Exception ignored){}
+
+			final String path = url.getFile();
+			return new java.io.File(path);
+		}
+
+		private static String extractDecodedPath(final URL resource){
+			String path = URLDecoder.decode(resource.getPath(), StandardCharsets.UTF_8);
+			final int idx = path.lastIndexOf(".jar!");
+			if(idx >= 0)
+				path = path.substring(0, idx + ".jar".length());
+			return path;
+		}
+
+		private static String extractExternalFormPath(final URL resource){
+			String path = resource.toExternalForm();
+			if(path.startsWith("jar:"))
+				path = path.substring("jar:".length());
+			else if(path.startsWith("wsjar:"))
+				path = path.substring("wsjar:".length());
+			else if(path.startsWith("file:"))
+				path = path.substring("file:".length());
+			int idx = path.indexOf(".jar!");
+			if(idx >= 0)
+				path = path.substring(0, idx + ".jar".length());
+			idx = path.indexOf(".war!");
+			if(idx >= 0)
+				path = path.substring(0, idx + ".war".length());
+			return path;
+		}
+
+		private static java.io.File getFileIfExists(final String path) throws FileNotFoundException{
+			final java.io.File file = new java.io.File(path);
+			if(!file.exists())
+				throw new FileNotFoundException();
+
+			return file;
+		}
+
+		private static boolean hasJarFileInPath(final URL url){
+			return url.toExternalForm().matches(".*\\.jar(!.*|$)");
+		}
+
 	}
 
 }
