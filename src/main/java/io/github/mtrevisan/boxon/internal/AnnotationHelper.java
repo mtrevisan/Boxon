@@ -29,11 +29,12 @@ import org.slf4j.Logger;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.nio.file.NoSuchFileException;
 import java.util.Collection;
 import java.util.EnumMap;
@@ -162,18 +163,55 @@ public final class AnnotationHelper{
 	}
 
 	private static File resourceToFile(final URL resource){
-		String pathname;
 		try{
-			pathname = toURI(resource.toString()).getSchemeSpecificPart();
-		}
-		catch(final URISyntaxException ignored){
-			pathname = resource.getFile();
-		}
-		return new File(pathname);
-	}
+			final String path = resource.toURI().getSchemeSpecificPart();
 
-	private static URI toURI(final String location) throws URISyntaxException{
-		return new URI(location.replace(" ", "%20"));
+			final File file = new File(path);
+			if(file.exists())
+				return file;
+		}
+		catch(final URISyntaxException ignored){}
+
+		try{
+			String path = URLDecoder.decode(resource.getPath(), "UTF-8");
+			final int idx = path.lastIndexOf(".jar!");
+			if(idx >= 0)
+				path = path.substring(0, idx + ".jar".length());
+
+			final File file = new File(path);
+			if(file.exists())
+				return file;
+		}
+		catch(final UnsupportedEncodingException ignored){}
+
+		try{
+			String path = resource.toExternalForm();
+			if(path.startsWith("jar:"))
+				path = path.substring("jar:".length());
+			if(path.startsWith("wsjar:"))
+				path = path.substring("wsjar:".length());
+			if(path.startsWith("file:"))
+				path = path.substring("file:".length());
+			int idx = path.indexOf(".jar!");
+			if(idx >= 0)
+				path = path.substring(0, idx + ".jar".length());
+			idx = path.indexOf(".war!");
+			if(idx >= 0)
+				path = path.substring(0, idx + ".war".length());
+
+			File file = new File(path);
+			if(file.exists())
+				return file;
+
+			path = path.replace("%20", " ");
+			file = new File(path);
+			if(file.exists())
+				return file;
+		}
+		catch(final Exception ignored){}
+
+		final String path = resource.getFile();
+		return new File(path);
 	}
 
 	/**
