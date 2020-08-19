@@ -37,7 +37,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 
-public class JavassistAdapter implements MetadataAdapter<ClassFile>{
+public class JavassistAdapter implements MetadataAdapterInterface<ClassFile>{
 
 	/**
 	 * Setting this to false will result in returning only visible annotations from the relevant methods here

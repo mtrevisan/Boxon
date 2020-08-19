@@ -24,13 +24,13 @@
  */
 package io.github.mtrevisan.boxon.internal.reflection.adapters;
 
-import io.github.mtrevisan.boxon.internal.reflection.ReflectionUtils;
+import io.github.mtrevisan.boxon.internal.reflection.util.ReflectionHelper;
 import io.github.mtrevisan.boxon.internal.reflection.vfs.File;
 
 import java.lang.annotation.Annotation;
 
 
-public class JavaReflectionAdapter implements MetadataAdapter<Class<?>>{
+public class JavaReflectionAdapter implements MetadataAdapterInterface<Class<?>>{
 
 	@Override
 	public String getClassName(final Class<?> cls){
@@ -67,7 +67,7 @@ public class JavaReflectionAdapter implements MetadataAdapter<Class<?>>{
 		final String name = file.getRelativePath()
 			.replace("/", ".")
 			.replace(".class", "");
-		return ReflectionUtils.forName(name);
+		return ReflectionHelper.forName(name);
 	}
 
 }

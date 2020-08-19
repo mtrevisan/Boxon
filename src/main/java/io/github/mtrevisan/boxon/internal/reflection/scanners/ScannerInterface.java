@@ -25,45 +25,17 @@
 package io.github.mtrevisan.boxon.internal.reflection.scanners;
 
 import io.github.mtrevisan.boxon.internal.reflection.ClassStore;
-import io.github.mtrevisan.boxon.internal.reflection.ReflectionsException;
 import io.github.mtrevisan.boxon.internal.reflection.adapters.MetadataAdapterInterface;
 import io.github.mtrevisan.boxon.internal.reflection.vfs.File;
 
 
-public abstract class AbstractScanner implements ScannerInterface{
+public interface ScannerInterface{
 
 	@SuppressWarnings("rawtypes")
-	protected MetadataAdapterInterface metadataAdapter;
+	void setMetadataAdapter(final MetadataAdapterInterface metadataAdapter);
 
+	boolean acceptsInput(final String file);
 
-	@SuppressWarnings("rawtypes")
-	public void setMetadataAdapter(final MetadataAdapterInterface metadataAdapter){
-		this.metadataAdapter = metadataAdapter;
-	}
-
-	public boolean acceptsInput(final String file){
-		return metadataAdapter.acceptsInput(file);
-	}
-
-	public Object scan(final File file, Object classObject, final ClassStore classStore){
-		if(classObject == null){
-			try{
-				classObject = metadataAdapter.getOrCreateClassObject(file);
-			}
-			catch(final Exception e){
-				throw new ReflectionsException("Could not create class object from file " + file.getRelativePath(), e);
-			}
-		}
-
-		scan(classObject, classStore);
-
-		return classObject;
-	}
-
-	protected abstract void scan(final Object cls, final ClassStore classStore);
-
-	protected void put(final ClassStore classStore, final String key, final String value){
-		classStore.put(getClass(), key, value);
-	}
+	Object scan(final File file, final Object classObject, final ClassStore classStore);
 
 }

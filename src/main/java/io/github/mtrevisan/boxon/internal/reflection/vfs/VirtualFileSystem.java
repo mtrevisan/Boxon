@@ -27,7 +27,6 @@ package io.github.mtrevisan.boxon.internal.reflection.vfs;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.reflection.ReflectionsException;
 import io.github.mtrevisan.boxon.internal.reflection.util.ClasspathHelper;
-import io.github.mtrevisan.boxon.internal.reflection.util.Utils;
 import org.slf4j.Logger;
 
 import java.io.FileNotFoundException;
@@ -39,12 +38,8 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
-import java.util.function.Predicate;
 import java.util.jar.JarFile;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 
 /**
@@ -60,7 +55,7 @@ import java.util.stream.StreamSupport;
  * </code></pre>
  * <p>{@link VirtualFileSystem#fromURL(URL)} uses static {@link DefaultUrlTypes} to resolve URLs.
  * It contains VfsTypes for handling for common resources such as local jar file, local directory, jar url, jar input stream and more.
- * <p>It can be plugged in with other {@link UrlType} using {@link VirtualFileSystem#addDefaultURLTypes(UrlType)} or {@link VirtualFileSystem#setDefaultURLTypes(List)}.
+ * <p>It can be plugged in with other {@link UrlType} using {@link VirtualFileSystem#addDefaultURLTypes(UrlType)}.
  * <p>for example:
  * <pre><code>
  *      VirtualFileSystem.addDefaultURLTypes(new VirtualFileSystem.UrlType(){
@@ -74,34 +69,14 @@ import java.util.stream.StreamSupport;
  *
  *      VirtualFileSystem.Directory dir = VirtualFileSystem.fromURL(new URL("http://mirrors.ibiblio.org/pub/mirrors/maven2/org/slf4j/slf4j-api/1.5.6/slf4j-api-1.5.6.jar"));
  * </code></pre>
- * <p>use {@link VirtualFileSystem#findFiles(Collection, Predicate)} to get an
- * iteration of files matching given name predicate over given list of urls
  */
 public abstract class VirtualFileSystem{
 
 	public static final Logger LOGGER = JavaHelper.getLoggerFor(VirtualFileSystem.class);
 
 
-	private static List<UrlType> defaultUrlTypes = new ArrayList<>(Arrays.asList(DefaultUrlTypes.values()));
+	private static final List<UrlType> defaultUrlTypes = new ArrayList<>(Arrays.asList(DefaultUrlTypes.values()));
 
-
-	/**
-	 * The default url types that will be used when issuing {@link VirtualFileSystem#fromURL(URL)}
-	 *
-	 * @return	The URL types.
-	 */
-	public static List<UrlType> getDefaultUrlTypes(){
-		return defaultUrlTypes;
-	}
-
-	/**
-	 * Sets the static default url types. can be used to statically plug in urlTypes
-	 *
-	 * @param urlTypes	The URL types.
-	 */
-	public static void setDefaultURLTypes(final List<UrlType> urlTypes){
-		defaultUrlTypes = urlTypes;
-	}
 
 	/**
 	 * Add a static default url types to the beginning of the default url types list. can be used to statically plug in urlTypes
@@ -145,60 +120,6 @@ public abstract class VirtualFileSystem{
 		}
 
 		throw new ReflectionsException("could not create Vfs.Dir from url, no matching UrlType was found [" + url.toExternalForm() + "]\n" + "either use fromURL(final URL url, final List<UrlType> urlTypes) or " + "use the static setDefaultURLTypes(final List<UrlType> urlTypes) or addDefaultURLTypes(UrlType urlType) " + "with your specialized UrlType.");
-	}
-
-	/**
-	 * Create a Dir from the given {@code url}, using the given {@code urlTypes}.
-	 *
-	 * @param url	The URL.
-	 * @param urlTypes	The URL types.
-	 * @return	The Dir from the given {@code url}, using the given {@code urlTypes}.
-	 */
-	public static Directory fromURL(final URL url, final UrlType... urlTypes){
-		return fromURL(url, Arrays.asList(urlTypes));
-	}
-
-	/**
-	 * Return an iterable of all {@link File} in given urls, starting with given {@code packagePrefix} and matching {@code nameFilter}.
-	 *
-	 * @param inUrls	URLs.
-	 * @param packagePrefix	The prefix.
-	 * @param nameFilter	The name filter.
-	 * @return	An iterable of all {@link File} in given urls, starting with given {@code packagePrefix} and matching {@code nameFilter}.
-	 */
-	public static Iterable<File> findFiles(final Collection<URL> inUrls, final String packagePrefix, final Predicate<String> nameFilter){
-		final Predicate<File> fileNamePredicate = file -> {
-			final String path = file.getRelativePath();
-			if(path.startsWith(packagePrefix)){
-				final String filename = path.substring(path.indexOf(packagePrefix) + packagePrefix.length());
-				return !Utils.isEmpty(filename) && nameFilter.test(filename.substring(1));
-			}
-			else
-				return false;
-		};
-
-		return findFiles(inUrls, fileNamePredicate);
-	}
-
-	/**
-	 * Return an iterable of all {@link File} in given {@code urls}, matching {@code filePredicate}.
-	 *
-	 * @param urls	The URLs.
-	 * @param filePredicate	The file predicate.
-	 * @return	An iterable of all {@link File} in given {@code urls}, matching {@code filePredicate}.
-	 */
-	public static Iterable<File> findFiles(final Collection<URL> urls, final Predicate<File> filePredicate){
-		return () -> urls.stream().flatMap(url -> {
-			try{
-				return StreamSupport.stream(fromURL(url).getFiles().spliterator(), false);
-			}
-			catch(final Throwable e){
-				if(LOGGER != null)
-					LOGGER.error("could not findFiles for url. continuing. [" + url + "]", e);
-
-				return Stream.of();
-			}
-		}).filter(filePredicate).iterator();
 	}
 
 	/**
@@ -377,4 +298,5 @@ public abstract class VirtualFileSystem{
 			}
 		}
 	}
+
 }

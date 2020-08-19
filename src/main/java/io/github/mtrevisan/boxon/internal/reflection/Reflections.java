@@ -25,11 +25,11 @@
 package io.github.mtrevisan.boxon.internal.reflection;
 
 import io.github.mtrevisan.boxon.internal.JavaHelper;
-import io.github.mtrevisan.boxon.internal.reflection.adapters.MetadataAdapter;
-import io.github.mtrevisan.boxon.internal.reflection.scanners.Scanner;
+import io.github.mtrevisan.boxon.internal.reflection.adapters.MetadataAdapterInterface;
+import io.github.mtrevisan.boxon.internal.reflection.scanners.ScannerInterface;
 import io.github.mtrevisan.boxon.internal.reflection.scanners.SubTypesScanner;
 import io.github.mtrevisan.boxon.internal.reflection.scanners.TypeAnnotationsScanner;
-import io.github.mtrevisan.boxon.internal.reflection.util.Utils;
+import io.github.mtrevisan.boxon.internal.reflection.util.ReflectionHelper;
 import io.github.mtrevisan.boxon.internal.reflection.vfs.Directory;
 import io.github.mtrevisan.boxon.internal.reflection.vfs.File;
 import io.github.mtrevisan.boxon.internal.reflection.vfs.VirtualFileSystem;
@@ -47,7 +47,7 @@ public class Reflections{
 
 	public static final Logger LOGGER = JavaHelper.getLoggerFor(Reflections.class);
 
-	private final Scanner[] scanners = new Scanner[]{new TypeAnnotationsScanner(), new SubTypesScanner()};
+	private final ScannerInterface[] scanners = new ScannerInterface[]{new TypeAnnotationsScanner(), new SubTypesScanner()};
 	protected final ClassStore classStore = new ClassStore();
 
 
@@ -59,7 +59,7 @@ public class Reflections{
 	 */
 	public Reflections(final Configuration configuration){
 		Objects.requireNonNull(configuration);
-		final MetadataAdapter<?> metadataAdapter = configuration.getMetadataAdapter();
+		final MetadataAdapterInterface<?> metadataAdapter = configuration.getMetadataAdapter();
 		Objects.requireNonNull(metadataAdapter);
 		final Set<URL> urls = configuration.getUrls();
 		if(urls == null || urls.isEmpty())
@@ -94,7 +94,7 @@ public class Reflections{
 			final String relativePath = file.getRelativePath();
 			final String packageName = relativePath.replace('/', '.');
 			Object classObject = null;
-			for(final Scanner scanner : scanners){
+			for(final ScannerInterface scanner : scanners){
 				try{
 					if(scanner.acceptsInput(relativePath) || scanner.acceptsInput(packageName))
 						classObject = scanner.scan(file, classObject, classStore);
@@ -110,7 +110,7 @@ public class Reflections{
 	/**
 	 * Expand super types after scanning (for super types that were not scanned).
 	 * <p>This is helpful in finding the transitive closure without scanning all third party dependencies.</p>
-	 * <p>It uses {@link ReflectionUtils#getSuperTypes(Class)}.</p>
+	 * <p>It uses {@link ReflectionHelper#getSuperTypes(Class)}.</p>
 	 * <p>
 	 * for example, for classes {@code A, B, C} where {@code A} supertype of {@code B}, and {@code B} supertype of {@code C}:
 	 * <ul>
@@ -122,14 +122,14 @@ public class Reflections{
 		final Set<String> keys = classStore.keys(SubTypesScanner.class);
 		keys.removeAll(classStore.values(SubTypesScanner.class));
 		for(final String key : keys){
-			final Class<?> type = ReflectionUtils.forName(key);
+			final Class<?> type = ReflectionHelper.forName(key);
 			if(type != null)
 				expandSupertypes(classStore, key, type);
 		}
 	}
 
 	private void expandSupertypes(final ClassStore classStore, final String key, final Class<?> type){
-		for(final Class<?> superType : ReflectionUtils.getSuperTypes(type))
+		for(final Class<?> superType : ReflectionHelper.getSuperTypes(type))
 			if(classStore.put(SubTypesScanner.class, superType.getName(), key)){
 				if(LOGGER != null)
 					LOGGER.trace("Expanded subtype {} into {}", superType.getName(), key);
@@ -146,7 +146,7 @@ public class Reflections{
 	 * @param <T>	The type of {@code type}.
 	 */
 	public <T> Set<Class<? extends T>> getSubTypesOf(final Class<T> type){
-		return ReflectionUtils.forNames(classStore.getAll(SubTypesScanner.class, type.getName()));
+		return ReflectionHelper.forNames(classStore.getAll(SubTypesScanner.class, type.getName()));
 	}
 
 	/**
@@ -181,7 +181,7 @@ public class Reflections{
 	private Set<Class<?>> getTypesAnnotatedWith(final Class<? extends Annotation> annotation, final boolean honorInherited){
 		final Set<String> annotated = classStore.get(TypeAnnotationsScanner.class, annotation.getName());
 		annotated.addAll(getAllAnnotated(annotated, annotation, honorInherited));
-		return ReflectionUtils.forNames(annotated);
+		return ReflectionHelper.forNames(annotated);
 	}
 
 	/**
@@ -215,8 +215,8 @@ public class Reflections{
 
 	private Set<Class<?>> getTypesAnnotatedWith(final Annotation annotation, final boolean honorInherited){
 		final Set<String> annotated = classStore.get(TypeAnnotationsScanner.class, annotation.annotationType().getName());
-		final Set<Class<?>> allAnnotated = Utils.filter(ReflectionUtils.forNames(annotated), ReflectionUtils.withAnnotation(annotation));
-		final Set<Class<?>> classes = ReflectionUtils.forNames(Utils.filter(getAllAnnotated(Utils.names(allAnnotated), annotation.annotationType(), honorInherited), s -> !annotated.contains(s)));
+		final Set<Class<?>> allAnnotated = ReflectionHelper.filter(ReflectionHelper.forNames(annotated), ReflectionHelper.withAnnotation(annotation));
+		final Set<Class<?>> classes = ReflectionHelper.forNames(ReflectionHelper.filter(getAllAnnotated(ReflectionHelper.names(allAnnotated), annotation.annotationType(), honorInherited), s -> !annotated.contains(s)));
 		allAnnotated.addAll(classes);
 		return allAnnotated;
 	}
@@ -224,8 +224,8 @@ public class Reflections{
 	private Collection<String> getAllAnnotated(final Collection<String> annotated, final Class<? extends Annotation> annotation, final boolean honorInherited){
 		if(honorInherited){
 			if(annotation.isAnnotationPresent(Inherited.class)){
-				final Set<String> subTypes = classStore.get(SubTypesScanner.class, Utils.filter(annotated, input -> {
-					final Class<?> type = ReflectionUtils.forName(input);
+				final Set<String> subTypes = classStore.get(SubTypesScanner.class, ReflectionHelper.filter(annotated, input -> {
+					final Class<?> type = ReflectionHelper.forName(input);
 					return (type != null && !type.isInterface());
 				}));
 				return classStore.getAllIncludingKeys(SubTypesScanner.class, subTypes);

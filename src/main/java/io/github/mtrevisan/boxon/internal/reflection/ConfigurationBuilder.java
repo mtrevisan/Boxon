@@ -26,7 +26,7 @@ package io.github.mtrevisan.boxon.internal.reflection;
 
 import io.github.mtrevisan.boxon.internal.reflection.adapters.JavaReflectionAdapter;
 import io.github.mtrevisan.boxon.internal.reflection.adapters.JavassistAdapter;
-import io.github.mtrevisan.boxon.internal.reflection.adapters.MetadataAdapter;
+import io.github.mtrevisan.boxon.internal.reflection.adapters.MetadataAdapterInterface;
 import io.github.mtrevisan.boxon.internal.reflection.util.ClasspathHelper;
 
 import java.net.URL;
@@ -49,7 +49,7 @@ import java.util.Set;
 public class ConfigurationBuilder implements Configuration{
 
 	private final Set<URL> urls;
-	protected MetadataAdapter<?> metadataAdapter;
+	protected MetadataAdapterInterface<?> metadataAdapter;
 	private boolean expandSuperTypes = true;
 
 
@@ -98,7 +98,7 @@ public class ConfigurationBuilder implements Configuration{
 	 *
 	 * @return	The metadata adapter.
 	 */
-	public MetadataAdapter<?> getMetadataAdapter(){
+	public MetadataAdapterInterface<?> getMetadataAdapter(){
 		if(metadataAdapter != null)
 			return metadataAdapter;
 		else{

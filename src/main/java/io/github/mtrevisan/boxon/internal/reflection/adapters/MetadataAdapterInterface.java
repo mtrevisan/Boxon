@@ -22,40 +22,28 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.internal.reflection;
+package io.github.mtrevisan.boxon.internal.reflection.adapters;
 
-import io.github.mtrevisan.boxon.internal.reflection.adapters.MetadataAdapterInterface;
-
-import java.net.URL;
-import java.util.Set;
+import io.github.mtrevisan.boxon.internal.reflection.vfs.File;
 
 
-/**
- * Configuration is used to create a configured instance of {@link Reflections}
- * <p>it is preferred to use {@link ConfigurationBuilder}
- */
-public interface Configuration{
+public interface MetadataAdapterInterface<C>{
 
-	/**
-	 * The URLs to be scanned.
-	 *
-	 * @return	The URLs to be scanned.
-	 */
-	Set<URL> getUrls();
+	String CLASS = ".class";
 
-	/**
-	 * The metadata adapter used to fetch metadata from classes.
-	 *
-	 * @return	The metadata adapter used to fetch metadata from classes.
-	 */
-	MetadataAdapterInterface<?> getMetadataAdapter();
 
-	/**
-	 * Whether to expand super types after scanning, for super types that were not scanned.
-	 * <p>see {@link Reflections#expandSuperTypes()}.</p>
-	 *
-	 * @return	Whether to expand super types after scanning.
-	 */
-	boolean shouldExpandSuperTypes();
+	String getClassName(final C type);
+
+	String getSuperclassName(final C type);
+
+	String[] getInterfacesNames(final C type);
+
+	String[] getClassAnnotationNames(final C type);
+
+	C getOrCreateClassObject(final File file);
+
+	default boolean acceptsInput(final String file){
+		return file.endsWith(CLASS);
+	}
 
 }
