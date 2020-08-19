@@ -166,21 +166,18 @@ public final class AnnotationHelper{
 	private static File resourceToFile(final URL resource){
 		try{
 			final String path = resource.toURI().getSchemeSpecificPart();
-
 			return getFileIfExists(path);
 		}
 		catch(final URISyntaxException | FileNotFoundException ignored){}
 
 		try{
 			final String path = extractDecodedPath(resource);
-
 			return getFileIfExists(path);
 		}
 		catch(final FileNotFoundException ignored){}
 
 		try{
 			String path = extractExternalFormPath(resource);
-
 			File file = new File(path);
 			if(file.exists())
 				return file;
