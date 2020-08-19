@@ -121,7 +121,7 @@ public final class AnnotationHelper{
 		final Collection<Class<?>> classes = new HashSet<>(0);
 
 		final Reflections reflections = new Reflections(new ConfigurationBuilder()
-			.forPackages(basePackageClassNames.extractCopy()));
+			.withPackages(basePackageClassNames.extractCopy()));
 		final Set<Class<?>> modules = reflections.getSubTypesOf((Class<Object>)type);
 		final Set<Class<?>> singletons = reflections.getTypesAnnotatedWith((Class<? extends Annotation>)type);
 		classes.addAll(modules);

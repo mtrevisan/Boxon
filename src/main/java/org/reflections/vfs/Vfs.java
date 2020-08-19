@@ -30,7 +30,7 @@ import java.util.stream.StreamSupport;
  * <p>for example:
  * <pre>
  *      Vfs.Dir dir = Vfs.fromURL(url);
- *      Iterable<Vfs.File> files = dir.getFiles();
+ *      Iterable&lt;Vfs.File&gt; files = dir.getFiles();
  *      for (Vfs.File file : files) {
  *          InputStream is = file.openInputStream();
  *      }
@@ -89,35 +89,48 @@ public abstract class Vfs{
 	}
 
 	/**
-	 * the default url types that will be used when issuing {@link Vfs#fromURL(URL)}
+	 * The default url types that will be used when issuing {@link Vfs#fromURL(URL)}
+	 *
+	 * @return	The URL types.
 	 */
 	public static List<UrlType> getDefaultUrlTypes(){
 		return defaultUrlTypes;
 	}
 
 	/**
-	 * sets the static default url types. can be used to statically plug in urlTypes
+	 * Sets the static default url types. can be used to statically plug in urlTypes
+	 *
+	 * @param urlTypes	The URL types.
 	 */
 	public static void setDefaultURLTypes(final List<UrlType> urlTypes){
 		defaultUrlTypes = urlTypes;
 	}
 
 	/**
-	 * add a static default url types to the beginning of the default url types list. can be used to statically plug in urlTypes
+	 * Add a static default url types to the beginning of the default url types list. can be used to statically plug in urlTypes
+	 *
+	 * @param urlType	The URL type.
 	 */
 	public static void addDefaultURLTypes(UrlType urlType){
 		defaultUrlTypes.add(0, urlType);
 	}
 
 	/**
-	 * tries to create a Dir from the given url, using the defaultUrlTypes
+	 * Tries to create a Dir from the given url, using the defaultUrlTypes
+	 *
+	 * @param url	The URL.
+	 * @return	The Dir from the given {@code url}.
 	 */
 	public static Dir fromURL(final URL url){
 		return fromURL(url, defaultUrlTypes);
 	}
 
 	/**
-	 * tries to create a Dir from the given url, using the given urlTypes
+	 * Tries to create a Dir from the given {@code url}, using the given {@code urlTypes}.
+	 *
+	 * @param url	The URL.
+	 * @param urlTypes	The URL types.
+	 * @return	The Dir from the given {@code url}, using the given {@code urlTypes}.
 	 */
 	public static Dir fromURL(final URL url, final List<UrlType> urlTypes){
 		for(UrlType type : urlTypes){
@@ -138,14 +151,23 @@ public abstract class Vfs{
 	}
 
 	/**
-	 * tries to create a Dir from the given url, using the given urlTypes
+	 * Create a Dir from the given {@code url}, using the given {@code urlTypes}.
+	 *
+	 * @param url	The URL.
+	 * @param urlTypes	The URL types.
+	 * @return	The Dir from the given {@code url}, using the given {@code urlTypes}.
 	 */
 	public static Dir fromURL(final URL url, final UrlType... urlTypes){
 		return fromURL(url, Arrays.asList(urlTypes));
 	}
 
 	/**
-	 * return an iterable of all {@link File} in given urls, starting with given packagePrefix and matching nameFilter
+	 * Return an iterable of all {@link File} in given urls, starting with given {@code packagePrefix} and matching {@code nameFilter}.
+	 *
+	 * @param inUrls	URLs.
+	 * @param packagePrefix	The prefix.
+	 * @param nameFilter	The name filter.
+	 * @return	An iterable of all {@link File} in given urls, starting with given {@code packagePrefix} and matching {@code nameFilter}.
 	 */
 	public static Iterable<File> findFiles(final Collection<URL> inUrls, final String packagePrefix, final Predicate<String> nameFilter){
 		Predicate<File> fileNamePredicate = file -> {
@@ -163,7 +185,11 @@ public abstract class Vfs{
 	}
 
 	/**
-	 * return an iterable of all {@link File} in given urls, matching filePredicate
+	 * Return an iterable of all {@link File} in given {@code urls}, matching {@code filePredicate}.
+	 *
+	 * @param urls	The URLs.
+	 * @param filePredicate	The file predicate.
+	 * @return	An iterable of all {@link File} in given {@code urls}, matching {@code filePredicate}.
 	 */
 	public static Iterable<File> findFiles(final Collection<URL> urls, final Predicate<File> filePredicate){
 		return () -> urls.stream().flatMap(url -> {
@@ -179,7 +205,10 @@ public abstract class Vfs{
 	}
 
 	/**
-	 * try to get {@link java.io.File} from url
+	 * Get {@link java.io.File} from URL.
+	 *
+	 * @param url	The URL to get the file from.
+	 * @return	{@link java.io.File} from URL.
 	 */
 	public static java.io.File getFile(URL url){
 		java.io.File file;
@@ -233,7 +262,6 @@ public abstract class Vfs{
 
 	/**
 	 * default url types used by {@link Vfs#fromURL(URL)}
-	 * <p>
 	 * <p>jarFile - creates a {@link ZipDir} over jar file
 	 * <p>jarUrl - creates a {@link ZipDir} over a jar url (contains ".jar!/" in it's name), using Java's {@link JarURLConnection}
 	 * <p>directory - creates a {@link SystemDir} over a file system directory

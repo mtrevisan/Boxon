@@ -7,10 +7,10 @@ import org.reflections.vfs.Vfs;
 
 public interface Scanner{
 
-	void setConfiguration(Configuration configuration);
+	void setConfiguration(final Configuration configuration);
 
-	boolean acceptsInput(String file);
+	boolean acceptsInput(final String file);
 
-	Object scan(Vfs.File file, Object classObject, Store store);
+	Object scan(final Vfs.File file, final Object classObject,final  Store store);
 
 }

@@ -14,24 +14,25 @@ import java.util.Set;
 public interface Configuration{
 
 	/**
-	 * the urls to be scanned
+	 * The URLs to be scanned.
+	 *
+	 * @return	The URLs to be scanned.
 	 */
 	Set<URL> getUrls();
 
 	/**
-	 * the metadata adapter used to fetch metadata from classes
+	 * The metadata adapter used to fetch metadata from classes.
+	 *
+	 * @return	The metadata adapter used to fetch metadata from classes.
 	 */
 	@SuppressWarnings({"RawUseOfParameterizedType"})
 	MetadataAdapter getMetadataAdapter();
 
 	/**
-	 * get class loaders, might be used for resolving methods/fields
-	 */
-	ClassLoader[] getClassLoaders();
-
-	/**
-	 * if true (default), expand super types after scanning, for super types that were not scanned.
-	 * <p>see {@link Reflections#expandSuperTypes()}
+	 * Whether to expand super types after scanning, for super types that were not scanned.
+	 * <p>see {@link Reflections#expandSuperTypes()}.</p>
+	 *
+	 * @return	Whether to expand super types after scanning.
 	 */
 	boolean shouldExpandSuperTypes();
 

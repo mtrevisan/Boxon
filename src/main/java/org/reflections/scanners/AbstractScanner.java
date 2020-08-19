@@ -13,32 +13,30 @@ public abstract class AbstractScanner implements Scanner{
 
 	private Configuration configuration;
 
-	public boolean acceptsInput(String file){
+
+	public boolean acceptsInput(final String file){
 		return getMetadataAdapter().acceptsInput(file);
 	}
 
-	public Object scan(Vfs.File file, Object classObject, Store store){
+	public Object scan(final Vfs.File file, Object classObject, final Store store){
 		if(classObject == null){
 			try{
 				classObject = configuration.getMetadataAdapter()
 					.getOrCreateClassObject(file);
 			}
-			catch(Exception e){
+			catch(final Exception e){
 				throw new ReflectionsException("could not create class object from file " + file.getRelativePath(), e);
 			}
 		}
+
 		scan(classObject, store);
 		return classObject;
 	}
 
-	public abstract void scan(Object cls, Store store);
+	public abstract void scan(final Object cls, final Store store);
 
-	protected void put(Store store, String key, String value){
+	protected void put(final Store store, final String key, final String value){
 		store.put(Utils.index(getClass()), key, value);
-	}
-
-	public Configuration getConfiguration(){
-		return configuration;
 	}
 
 	public void setConfiguration(final Configuration configuration){
@@ -50,8 +48,8 @@ public abstract class AbstractScanner implements Scanner{
 	}
 
 	@Override
-	public boolean equals(Object o){
-		return this == o || o != null && getClass() == o.getClass();
+	public boolean equals(final Object o){
+		return (this == o || o != null && getClass() == o.getClass());
 	}
 
 	@Override

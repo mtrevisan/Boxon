@@ -8,6 +8,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
@@ -16,35 +17,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 
-/**
- * convenient java reflection helper methods
- * <p>
- * 1. some helper methods to get type by name: {@link #forName(String, ClassLoader...)} and {@link #forNames(Collection, ClassLoader...)} )}
- * <p>
- * 2. some helper methods to get all types/methods/fields/constructors/properties matching some predicates, generally:
- * > Set&#60?> result = getAllXXX(type/s, withYYY) </pre>
- * here get methods are:
- * <ul>
- *     <li>{@ link #getAllSuperTypes(Class, Predicate...)}
- *     <li>{@ link #getAllFields(Class, Predicate...)}
- *     <li>{@ link #getAllMethods(Class, Predicate...)}
- *     <li>{@ link #getAllConstructors(Class, Predicate...)}
- * </ul>
- * <p>and predicates included here all starts with "with", such as
- * <ul>
- *     <li>{@link #withAnnotation(Annotation)}
- * </ul>
- *
- * <p><br>
- *  for example, getting all getters would be:
- * <pre>
- *  Set&#60Method> getters = getAllMethods(someClasses,
- *          Predicates.and(
- *                  withModifier(Modifier.PUBLIC),
- *                  withPrefix("get"),
- *                  withParametersCount(0)));
- * </pre>
- */
 @SuppressWarnings("unchecked")
 public abstract class ReflectionUtils{
 
@@ -56,8 +28,11 @@ public abstract class ReflectionUtils{
 
 	/**
 	 * get the immediate supertype and interfaces of the given {@code type}
+	 *
+	 * @param type	The class.
+	 * @return	The set of classes.
 	 */
-	public static Set<Class<?>> getSuperTypes(Class<?> type){
+	public static Set<Class<?>> getSuperTypes(final Class<?> type){
 		Set<Class<?>> result = new LinkedHashSet<>();
 		Class<?> superclass = type.getSuperclass();
 		Class<?>[] interfaces = type.getInterfaces();
@@ -72,6 +47,10 @@ public abstract class ReflectionUtils{
 
 	/**
 	 * where element is annotated with given {@code annotation}
+	 *
+	 * @param annotation	The annotation.
+	 * @return	The predicate.
+	 * @param <T>	The type of the returned predicate.
 	 */
 	public static <T extends AnnotatedElement> Predicate<T> withAnnotation(final Class<? extends Annotation> annotation){
 		return input -> input != null && input.isAnnotationPresent(annotation);
@@ -79,6 +58,10 @@ public abstract class ReflectionUtils{
 
 	/**
 	 * where element is annotated with given {@code annotation}, including member matching
+	 *
+	 * @param annotation	The annotation.
+	 * @return	The predicate.
+	 * @param <T>	The type of the returned predicate.
 	 */
 	public static <T extends AnnotatedElement> Predicate<T> withAnnotation(final Annotation annotation){
 		return input -> input != null && input.isAnnotationPresent(annotation.annotationType()) && areAnnotationMembersMatching(input.getAnnotation(annotation.annotationType()), annotation);
@@ -87,7 +70,15 @@ public abstract class ReflectionUtils{
 	/**
 	 * tries to resolve a java type name to a Class
 	 * <p>if optional {@link ClassLoader}s are not specified, then both {@link ClasspathHelper#contextClassLoader()} and {@link ClasspathHelper#staticClassLoader()} are used
+	 *
+	 * @param typeName	The type name.
+	 * @return	The classes.
 	 */
+	public static Class<?> forName(String typeName){
+		final ClassLoader[] classLoaders = new ClassLoader[0];
+		return forName(typeName, classLoaders);
+	}
+
 	public static Class<?> forName(String typeName, ClassLoader... classLoaders){
 		if(getPrimitiveNames().contains(typeName)){
 			return getPrimitiveTypes().get(getPrimitiveNames().indexOf(typeName));
@@ -139,10 +130,18 @@ public abstract class ReflectionUtils{
 	}
 
 	/**
-	 * try to resolve all given string representation of types to a list of java types
+	 * Try to resolve all given string representation of types to a list of java types
+	 *
+	 * @param classes	The classes.
+	 * @param classLoaders	The class loaders.
+	 * @return	The classes.
+	 * @param <T>	The type of the returned classes.
 	 */
 	public static <T> Set<Class<? extends T>> forNames(final Collection<String> classes, ClassLoader... classLoaders){
-		return classes.stream().map(className -> (Class<? extends T>) forName(className, classLoaders)).filter(Objects::nonNull).collect(Collectors.toCollection(LinkedHashSet::new));
+		return classes.stream()
+			.map(className -> (Class<? extends T>)forName(className, classLoaders))
+			.filter(Objects::nonNull)
+			.collect(Collectors.toCollection(HashSet::new));
 	}
 
 

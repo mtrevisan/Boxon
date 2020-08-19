@@ -25,70 +25,6 @@ import static org.reflections.util.Utils.index;
 import static org.reflections.util.Utils.names;
 
 
-/**
- * Reflections one-stop-shop object
- * <p>Reflections scans your classpath, indexes the metadata, allows you to query it on runtime and may save and collect that information for many modules within your project.
- * <p>Using Reflections you can query your metadata such as:
- * <ul>
- *     <li>get all subtypes of some type
- *     <li>get all types/constructors/methods/fields annotated with some annotation, optionally with annotation parameters matching
- *     <li>get all resources matching matching a regular expression
- *     <li>get all methods with specific signature including parameters, parameter annotations and return type
- *     <li>get all methods parameter names
- *     <li>get all fields/methods/constructors usages in code
- * </ul>
- * <p>A typical use of Reflections would be:
- * <pre>
- *      Reflections reflections = new Reflections("my.project.prefix");
- *
- *      Set&#60Class&#60? extends SomeType>> subTypes = reflections.getSubTypesOf(SomeType.class);
- *
- *      Set&#60Class&#60?>> annotated = reflections.getTypesAnnotatedWith(SomeAnnotation.class);
- * </pre>
- * <p>Basically, to use Reflections first instantiate it with one of the constructors, then depending on the scanners, use the convenient query methods:
- * <pre>
- *      Reflections reflections = new Reflections("my.package.prefix");
- *      //or
- *      Reflections reflections = new Reflections(ClasspathHelper.forPackage("my.package.prefix"),
- *            new SubTypesScanner(), new TypesAnnotationScanner(), new FilterBuilder().include(...), ...);
- *
- *       //or using the ConfigurationBuilder
- *       new Reflections(new ConfigurationBuilder()
- *            .filterInputsBy(new FilterBuilder().include(FilterBuilder.prefix("my.project.prefix")))
- *            .setUrls(ClasspathHelper.forPackage("my.project.prefix"))
- *            .setScanners(new SubTypesScanner(), new TypeAnnotationsScanner().filterResultsBy(optionalFilter), ...));
- * </pre>
- * And then query, for example:
- * <pre>
- *       Set&#60Class&#60? extends Module>> modules = reflections.getSubTypesOf(com.google.inject.Module.class);
- *       Set&#60Class&#60?>> singletons =             reflections.getTypesAnnotatedWith(javax.inject.Singleton.class);
- *
- *       Set&#60String> properties =       reflections.getResources(Pattern.compile(".*\\.properties"));
- *       Set&#60Constructor> injectables = reflections.getConstructorsAnnotatedWith(javax.inject.Inject.class);
- *       Set&#60Method> deprecateds =      reflections.getMethodsAnnotatedWith(javax.ws.rs.Path.class);
- *       Set&#60Field> ids =               reflections.getFieldsAnnotatedWith(javax.persistence.Id.class);
- *
- *       Set&#60Method> someMethods =      reflections.getMethodsMatchParams(long.class, int.class);
- *       Set&#60Method> voidMethods =      reflections.getMethodsReturn(void.class);
- *       Set&#60Method> pathParamMethods = reflections.getMethodsWithAnyParamAnnotated(PathParam.class);
- *       Set&#60Method> floatToString =    reflections.getConverters(Float.class, String.class);
- *       List&#60String> parameterNames =  reflections.getMethodsParamNames(Method.class);
- *
- *       Set&#60Member> fieldUsage =       reflections.getFieldUsage(Field.class);
- *       Set&#60Member> methodUsage =      reflections.getMethodUsage(Method.class);
- *       Set&#60Member> constructorUsage = reflections.getConstructorUsage(Constructor.class);
- * </pre>
- * <p>You can use other scanners defined in Reflections as well, such as: SubTypesScanner, TypeAnnotationsScanner (both default),
- * ResourcesScanner, MethodAnnotationsScanner, ConstructorAnnotationsScanner, FieldAnnotationsScanner,
- * MethodParameterScanner, MethodParameterNamesScanner, MemberUsageScanner or any custom scanner.
- * <p>Use {@link #getStore()} to access and query the store directly
- * <p>In order to collect pre saved metadata and avoid re-scanning, use {@ link #collect(String, Predicate, Serializer...)}}
- * <p><i>Make sure to scan all the transitively relevant packages.
- * <br>for instance, given your class C extends B extends A, and both B and A are located in another package than C,
- * when only the package of C is scanned - then querying for sub types of A returns nothing (transitive), but querying for sub types of B returns C (direct).
- * In that case make sure to scan all relevant packages a priori.</i>
- * <p><p><p>For Javadoc, source code, and more information about Reflections Library, see http://github.com/ronmamo/reflections/
- */
 public class Reflections{
 	public static Logger log = findLogger(Reflections.class);
 
@@ -195,7 +131,7 @@ public class Reflections{
 		Set<String> keys = store.keys(index);
 		keys.removeAll(store.values(index));
 		for(String key : keys){
-			final Class<?> type = forName(key, loaders());
+			final Class<?> type = forName(key);
 			if(type != null)
 				expandSupertypes(store, key, type);
 		}
@@ -219,7 +155,7 @@ public class Reflections{
 	 * <p/>depends on SubTypesScanner configured
 	 */
 	public <T> Set<Class<? extends T>> getSubTypesOf(final Class<T> type){
-		return forNames(store.getAll(SubTypesScanner.class, type.getName()), loaders());
+		return forNames(store.getAll(SubTypesScanner.class, type.getName()));
 	}
 
 	/**
@@ -246,7 +182,7 @@ public class Reflections{
 	public Set<Class<?>> getTypesAnnotatedWith(final Class<? extends Annotation> annotation, boolean honorInherited){
 		Set<String> annotated = store.get(TypeAnnotationsScanner.class, annotation.getName());
 		annotated.addAll(getAllAnnotated(annotated, annotation, honorInherited));
-		return forNames(annotated, loaders());
+		return forNames(annotated);
 	}
 
 	/**
@@ -265,8 +201,8 @@ public class Reflections{
 	 */
 	public Set<Class<?>> getTypesAnnotatedWith(final Annotation annotation, boolean honorInherited){
 		Set<String> annotated = store.get(TypeAnnotationsScanner.class, annotation.annotationType().getName());
-		Set<Class<?>> allAnnotated = filter(forNames(annotated, loaders()), withAnnotation(annotation));
-		Set<Class<?>> classes = forNames(filter(getAllAnnotated(names(allAnnotated), annotation.annotationType(), honorInherited), s -> !annotated.contains(s)), loaders());
+		Set<Class<?>> allAnnotated = filter(forNames(annotated), withAnnotation(annotation));
+		Set<Class<?>> classes = forNames(filter(getAllAnnotated(names(allAnnotated), annotation.annotationType(), honorInherited), s -> !annotated.contains(s)));
 		allAnnotated.addAll(classes);
 		return allAnnotated;
 	}
@@ -275,7 +211,7 @@ public class Reflections{
 		if(honorInherited){
 			if(annotation.isAnnotationPresent(Inherited.class)){
 				Set<String> subTypes = store.get(SubTypesScanner.class, filter(annotated, input -> {
-					final Class<?> type = forName(input, loaders());
+					final Class<?> type = forName(input);
 					return type != null && !type.isInterface();
 				}));
 				return store.getAllIncludingKeys(SubTypesScanner.class, subTypes);
@@ -319,7 +255,5 @@ public class Reflections{
 	public Configuration getConfiguration(){
 		return configuration;
 	}
-
-	private ClassLoader[] loaders(){ return configuration.getClassLoaders(); }
 
 }

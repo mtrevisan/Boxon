@@ -27,8 +27,8 @@ import java.util.Set;
 public class ConfigurationBuilder implements Configuration{
 
 	private Set<URL> urls;
-	/*lazy*/ protected MetadataAdapter metadataAdapter;
-	private ClassLoader[] classLoaders;
+	//lazy
+	protected MetadataAdapter metadataAdapter;
 	private boolean expandSuperTypes = true;
 
 
@@ -36,10 +36,9 @@ public class ConfigurationBuilder implements Configuration{
 		urls = new HashSet<>();
 	}
 
-	public ConfigurationBuilder forPackages(String... packages){
-		for(String pkg : packages){
-			addUrls(ClasspathHelper.forPackage(pkg));
-		}
+	public ConfigurationBuilder withPackages(final String... packages){
+		for(final String pkg : packages)
+			withUrls(ClasspathHelper.forPackage(pkg));
 		return this;
 	}
 
@@ -48,19 +47,25 @@ public class ConfigurationBuilder implements Configuration{
 	}
 
 	/**
-	 * add urls to be scanned
-	 * <p>use {@link ClasspathHelper} convenient methods to get the relevant urls
+	 * Add urls to be scanned.
+	 * <p>use {@link ClasspathHelper} convenient methods to get the relevant URLs</p>
+	 *
+	 * @param urls	The URLs.
+	 * @return	The builder, for easy concatenation.
 	 */
-	public ConfigurationBuilder addUrls(final Collection<URL> urls){
+	public ConfigurationBuilder withUrls(final Collection<URL> urls){
 		this.urls.addAll(urls);
 		return this;
 	}
 
 	/**
-	 * add urls to be scanned
-	 * <p>use {@link ClasspathHelper} convenient methods to get the relevant urls
+	 * Add urls to be scanned.
+	 * <p>use {@link ClasspathHelper} convenient methods to get the relevant URLs.</p>
+	 *
+	 * @param urls	The URLs.
+	 * @return	The builder, for easy concatenation.
 	 */
-	public ConfigurationBuilder addUrls(final URL... urls){
+	public ConfigurationBuilder withUrls(final URL... urls){
 		this.urls.addAll(new HashSet<>(Arrays.asList(urls)));
 		return this;
 	}
@@ -69,6 +74,8 @@ public class ConfigurationBuilder implements Configuration{
 	 * returns the metadata adapter.
 	 * if javassist library exists in the classpath, this method returns {@link JavassistAdapter} otherwise defaults to {@link JavaReflectionAdapter}.
 	 * <p>the {@link JavassistAdapter} is preferred in terms of performance and class loading.
+	 *
+	 * @return	The metadata adapter.
 	 */
 	public MetadataAdapter getMetadataAdapter(){
 		if(metadataAdapter != null)
@@ -76,19 +83,14 @@ public class ConfigurationBuilder implements Configuration{
 		else{
 			try{
 				return (metadataAdapter = new JavassistAdapter());
-			}catch(Throwable e){
+			}
+			catch(final Throwable e){
 				if(Reflections.log != null)
 					Reflections.log.warn("could not create JavassistAdapter, using JavaReflectionAdapter", e);
+
 				return (metadataAdapter = new JavaReflectionAdapter());
 			}
 		}
-	}
-
-	/**
-	 * get class loader, might be used for scanning or resolving methods/fields
-	 */
-	public ClassLoader[] getClassLoaders(){
-		return classLoaders;
 	}
 
 	@Override
@@ -98,18 +100,14 @@ public class ConfigurationBuilder implements Configuration{
 
 	/**
 	 * if set to true, Reflections will expand super types after scanning.
-	 * <p>see {@link Reflections#expandSuperTypes()}
+	 * <p>see {@link Reflections#expandSuperTypes()}.</p>
+	 *
+	 * @param expandSuperTypes	Whether to expand super types.
+	 * @return	The builder, for easy concatenation.
 	 */
-	public ConfigurationBuilder setExpandSuperTypes(boolean expandSuperTypes){
+	public ConfigurationBuilder withExpandSuperTypes(final boolean expandSuperTypes){
 		this.expandSuperTypes = expandSuperTypes;
 		return this;
-	}
-
-	/**
-	 * set class loader, might be used for resolving methods/fields
-	 */
-	public void setClassLoaders(ClassLoader[] classLoaders){
-		this.classLoaders = classLoaders;
 	}
 
 }

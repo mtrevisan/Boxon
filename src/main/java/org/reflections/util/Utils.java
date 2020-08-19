@@ -1,7 +1,6 @@
 package org.reflections.util;
 
 import org.reflections.Reflections;
-import org.reflections.ReflectionsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,7 +8,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
@@ -18,8 +16,6 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import static org.reflections.ReflectionUtils.forName;
 
 
 /**
@@ -31,45 +27,8 @@ public abstract class Utils{
 		return IntStream.range(0, times).mapToObj(i -> string).collect(Collectors.joining());
 	}
 
-	/**
-	 * isEmpty compatible with Java 5
-	 */
 	public static boolean isEmpty(String s){
 		return s == null || s.length() == 0;
-	}
-
-	public static Member getMemberFromDescriptor(String descriptor, ClassLoader... classLoaders) throws ReflectionsException{
-		int p0 = descriptor.lastIndexOf('(');
-		String memberKey = p0 != -1? descriptor.substring(0, p0): descriptor;
-		String methodParameters = p0 != -1? descriptor.substring(p0 + 1, descriptor.lastIndexOf(')')): "";
-
-		int p1 = Math.max(memberKey.lastIndexOf('.'), memberKey.lastIndexOf("$"));
-		String className = memberKey.substring(memberKey.lastIndexOf(' ') + 1, p1);
-		String memberName = memberKey.substring(p1 + 1);
-
-		Class<?>[] parameterTypes = null;
-		if(!isEmpty(methodParameters)){
-			String[] parameterNames = methodParameters.split(",");
-			parameterTypes = Arrays.stream(parameterNames).map(name -> forName(name.trim(), classLoaders)).toArray(Class<?>[]::new);
-		}
-
-		Class<?> aClass = forName(className, classLoaders);
-		while(aClass != null){
-			try{
-				if(!descriptor.contains("(")){
-					return aClass.isInterface()? aClass.getField(memberName): aClass.getDeclaredField(memberName);
-				}
-				else if(isConstructor(descriptor)){
-					return aClass.isInterface()? aClass.getConstructor(parameterTypes): aClass.getDeclaredConstructor(parameterTypes);
-				}
-				else{
-					return aClass.isInterface()? aClass.getMethod(memberName, parameterTypes): aClass.getDeclaredMethod(memberName, parameterTypes);
-				}
-			}catch(Exception e){
-				aClass = aClass.getSuperclass();
-			}
-		}
-		throw new ReflectionsException("Can't resolve member named " + memberName + " for class " + className);
 	}
 
 	public static void close(InputStream closeable){
@@ -94,10 +53,6 @@ public abstract class Utils{
 		}catch(Throwable e){
 			return null;
 		}
-	}
-
-	public static boolean isConstructor(String fqn){
-		return fqn.contains("init>");
 	}
 
 	public static String name(Class type){

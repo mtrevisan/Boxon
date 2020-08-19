@@ -11,11 +11,12 @@ import java.util.List;
 @SuppressWarnings({"unchecked"})
 public class TypeAnnotationsScanner extends AbstractScanner{
 
-	public void scan(final Object cls, Store store){
+	public void scan(final Object cls, final Store store){
 		final String className = getMetadataAdapter().getClassName(cls);
 
-		for(String annotationType : (List<String>) getMetadataAdapter().getClassAnnotationNames(cls))
-			put(store, annotationType, className);
+		final List<String> classAnnotationNames = getMetadataAdapter().getClassAnnotationNames(cls);
+		for(final String classAnnotationName : classAnnotationNames)
+			put(store, classAnnotationName, className);
 	}
 
 }

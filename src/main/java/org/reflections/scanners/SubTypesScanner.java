@@ -11,14 +11,15 @@ import java.util.List;
 public class SubTypesScanner extends AbstractScanner{
 
 	@SuppressWarnings({"unchecked"})
-	public void scan(final Object cls, Store store){
-		String className = getMetadataAdapter().getClassName(cls);
-		String superclass = getMetadataAdapter().getSuperclassName(cls);
+	public void scan(final Object cls, final Store store){
+		final String className = getMetadataAdapter().getClassName(cls);
+		final String superclass = getMetadataAdapter().getSuperclassName(cls);
 
 		put(store, superclass, className);
 
-		for(String anInterface : (List<String>) getMetadataAdapter().getInterfacesNames(cls))
-			put(store, anInterface, className);
+		final List<String> interfacesNames = getMetadataAdapter().getInterfacesNames(cls);
+		for(final String interfaceName : interfacesNames)
+			put(store, interfaceName, className);
 	}
 
 }

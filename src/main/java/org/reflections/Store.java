@@ -31,6 +31,7 @@ public class Store{
 	 *
 	 * @param scannerClass	The class of the scanner.
 	 * @param key	The key.
+	 * @return	The classes.
 	 */
 	public Set<String> get(final Class<?> scannerClass, final String key){
 		return get(scannerClass, Collections.singletonList(key));
@@ -41,6 +42,7 @@ public class Store{
 	 *
 	 * @param scannerClass	The class of the scanner.
 	 * @param keys	The keys.
+	 * @return	The classes.
 	 */
 	public Set<String> get(final Class<?> scannerClass, final Collection<String> keys){
 		final String scannerName = Utils.index(scannerClass);
@@ -59,6 +61,7 @@ public class Store{
 	 *
 	 * @param scannerClass	The class of the scanner.
 	 * @param key	The key.
+	 * @return	The classes.
 	 */
 	public Set<String> getAll(final Class<?> scannerClass, final String key){
 		return getAllIncludingKeys(scannerClass, get(scannerClass, key));
@@ -69,6 +72,7 @@ public class Store{
 	 *
 	 * @param scannerClass	The class of the scanner.
 	 * @param keys	The keys.
+	 * @return	The classes, including the keys.
 	 */
 	public Set<String> getAllIncludingKeys(final Class<?> scannerClass, final Collection<String> keys){
 		final String scannerName = Utils.index(scannerClass);
