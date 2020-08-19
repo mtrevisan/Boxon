@@ -1,9 +1,10 @@
 package io.github.mtrevisan.boxon.internal.reflection.vfs;
 
-import io.github.mtrevisan.boxon.internal.reflection.Reflections;
+import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.reflection.ReflectionsException;
 import io.github.mtrevisan.boxon.internal.reflection.util.ClasspathHelper;
 import io.github.mtrevisan.boxon.internal.reflection.util.Utils;
+import org.slf4j.Logger;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -56,21 +57,18 @@ import java.util.stream.StreamSupport;
  */
 public abstract class VirtualFileSystem{
 
+	public static final Logger LOGGER = JavaHelper.getLoggerFor(VirtualFileSystem.class);
+
+
 	private static List<UrlType> defaultUrlTypes = new ArrayList<>(Arrays.asList(DefaultUrlTypes.values()));
 
 
-	/**
-	 * an abstract vfs dir
-	 */
 	public interface Directory{
 		String getPath();
 
 		Iterable<File> getFiles();
 	}
 
-	/**
-	 * an abstract vfs file
-	 */
 	public interface File{
 		String getName();
 
@@ -142,8 +140,8 @@ public abstract class VirtualFileSystem{
 				}
 			}
 			catch(final Throwable e){
-				if(Reflections.LOGGER != null)
-					Reflections.LOGGER.warn("could not create Dir using " + type + " from url " + url.toExternalForm() + ". skipping.", e);
+				if(LOGGER != null)
+					LOGGER.warn("could not create Dir using " + type + " from url " + url.toExternalForm() + ". skipping.", e);
 			}
 		}
 
@@ -194,10 +192,11 @@ public abstract class VirtualFileSystem{
 		return () -> urls.stream().flatMap(url -> {
 			try{
 				return StreamSupport.stream(fromURL(url).getFiles().spliterator(), false);
-			}catch(final Throwable e){
-				if(Reflections.LOGGER != null){
-					Reflections.LOGGER.error("could not findFiles for url. continuing. [" + url + "]", e);
-				}
+			}
+			catch(final Throwable e){
+				if(LOGGER != null)
+					LOGGER.error("could not findFiles for url. continuing. [" + url + "]", e);
+
 				return Stream.of();
 			}
 		}).filter(filePredicate).iterator();
@@ -224,7 +223,7 @@ public abstract class VirtualFileSystem{
 
 		try{
 			String path = extractExternalFormPath(url);
-			java.io.File file = new java.io.File(path);
+			final java.io.File file = new java.io.File(path);
 			if(file.exists())
 				return file;
 
@@ -262,7 +261,7 @@ public abstract class VirtualFileSystem{
 		return path;
 	}
 
-	private static java.io.File getFileIfExists(String path) throws FileNotFoundException{
+	private static java.io.File getFileIfExists(final String path) throws FileNotFoundException{
 		final java.io.File file = new java.io.File(path);
 		if(!file.exists())
 			throw new FileNotFoundException();

@@ -1,6 +1,7 @@
 package io.github.mtrevisan.boxon.internal.reflection.util;
 
-import io.github.mtrevisan.boxon.internal.reflection.Reflections;
+import io.github.mtrevisan.boxon.internal.JavaHelper;
+import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.net.URL;
@@ -16,6 +17,9 @@ import java.util.Map;
  * Helper methods for working with the classpath.
  */
 public abstract class ClasspathHelper{
+
+	public static final Logger LOGGER = JavaHelper.getLoggerFor(ClasspathHelper.class);
+
 
 	/**
 	 * Gets the current thread context class loader.
@@ -34,7 +38,7 @@ public abstract class ClasspathHelper{
 	 * @return	The static library class loader, may be null
 	 */
 	public static ClassLoader staticClassLoader(){
-		return Reflections.class.getClassLoader();
+		return ClasspathHelper.class.getClassLoader();
 	}
 
 	/**
@@ -109,8 +113,8 @@ public abstract class ClasspathHelper{
 				}
 			}
 			catch(final IOException e){
-				if(Reflections.LOGGER != null)
-					Reflections.LOGGER.error("error getting resources for " + resourceName, e);
+				if(LOGGER != null)
+					LOGGER.error("error getting resources for " + resourceName, e);
 			}
 		}
 		return distinctUrls(result);

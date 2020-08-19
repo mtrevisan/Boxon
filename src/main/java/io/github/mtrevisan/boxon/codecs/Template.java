@@ -34,10 +34,10 @@ import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.Skip;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.internal.reflection.AnnotationHelper;
 import io.github.mtrevisan.boxon.internal.DataType;
 import io.github.mtrevisan.boxon.internal.DynamicArray;
 import io.github.mtrevisan.boxon.internal.ReflectionHelper;
+import io.github.mtrevisan.boxon.internal.reflection.AnnotationHelper;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;

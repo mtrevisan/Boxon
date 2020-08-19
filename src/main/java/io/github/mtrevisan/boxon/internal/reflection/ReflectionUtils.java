@@ -24,7 +24,9 @@
  */
 package io.github.mtrevisan.boxon.internal.reflection;
 
+import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.reflection.util.ClasspathHelper;
+import org.slf4j.Logger;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
@@ -42,6 +44,9 @@ import java.util.stream.Collectors;
 
 
 public abstract class ReflectionUtils{
+
+	public static final Logger LOGGER = JavaHelper.getLoggerFor(ReflectionUtils.class);
+
 
 	/**
 	 * would include {@code Object.class} when {@link #getSuperTypes(Class)}. default is false.
@@ -114,9 +119,9 @@ public abstract class ReflectionUtils{
 				}
 			}
 
-			if(Reflections.LOGGER != null)
+			if(LOGGER != null)
 				for(final ReflectionsException reflectionsException : reflectionsExceptions)
-					Reflections.LOGGER.warn("could not get type for name " + typeName + " from any class loader", reflectionsException);
+					LOGGER.warn("could not get type for name " + typeName + " from any class loader", reflectionsException);
 
 			return null;
 		}

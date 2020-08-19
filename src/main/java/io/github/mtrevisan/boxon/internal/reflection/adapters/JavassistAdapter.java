@@ -25,11 +25,11 @@
 package io.github.mtrevisan.boxon.internal.reflection.adapters;
 
 import io.github.mtrevisan.boxon.internal.DynamicArray;
+import io.github.mtrevisan.boxon.internal.reflection.ReflectionsException;
+import io.github.mtrevisan.boxon.internal.reflection.vfs.VirtualFileSystem;
 import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.ClassFile;
 import javassist.bytecode.annotation.Annotation;
-import io.github.mtrevisan.boxon.internal.reflection.ReflectionsException;
-import io.github.mtrevisan.boxon.internal.reflection.vfs.VirtualFileSystem;
 
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;

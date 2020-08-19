@@ -1,6 +1,7 @@
 package io.github.mtrevisan.boxon.internal.reflection.vfs;
 
-import io.github.mtrevisan.boxon.internal.reflection.Reflections;
+import io.github.mtrevisan.boxon.internal.JavaHelper;
+import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.util.jar.JarFile;
@@ -10,7 +11,12 @@ import java.util.jar.JarFile;
  * an implementation of {@link VirtualFileSystem.Directory} for {@link java.util.zip.ZipFile}
  */
 public class ZipDirectory implements VirtualFileSystem.Directory{
+
+	public static final Logger LOGGER = JavaHelper.getLoggerFor(ZipDirectory.class);
+
+
 	final java.util.zip.ZipFile jarFile;
+
 
 	public ZipDirectory(final JarFile jarFile){
 		this.jarFile = jarFile;
@@ -27,10 +33,10 @@ public class ZipDirectory implements VirtualFileSystem.Directory{
 	public void close(){
 		try{
 			jarFile.close();
-		}catch(final IOException e){
-			if(Reflections.LOGGER != null){
-				Reflections.LOGGER.warn("Could not close JarFile", e);
-			}
+		}
+		catch(final IOException e){
+			if(LOGGER != null)
+				LOGGER.warn("Could not close JarFile", e);
 		}
 	}
 

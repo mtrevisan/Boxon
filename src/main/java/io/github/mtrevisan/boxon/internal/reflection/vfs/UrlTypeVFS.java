@@ -1,9 +1,10 @@
 package io.github.mtrevisan.boxon.internal.reflection.vfs;
 
-import io.github.mtrevisan.boxon.internal.reflection.Reflections;
+import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.reflection.ReflectionsException;
 import io.github.mtrevisan.boxon.internal.reflection.vfs.VirtualFileSystem.Directory;
 import io.github.mtrevisan.boxon.internal.reflection.vfs.VirtualFileSystem.UrlType;
+import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,6 +24,9 @@ import java.util.regex.Pattern;
  * @author Sergio Pola
  */
 public class UrlTypeVFS implements UrlType{
+
+	public static final Logger LOGGER = JavaHelper.getLoggerFor(UrlTypeVFS.class);
+
 	public final static String[] REPLACE_EXTENSION = new String[]{".ear/", ".jar/", ".war/", ".sar/", ".har/", ".par/"};
 
 	final String VFSZIP = "vfszip";
@@ -43,9 +47,9 @@ public class UrlTypeVFS implements UrlType{
 				return new ZipDirectory(new JarFile(url.getFile()));
 			}
 			catch(final IOException e1){
-				if(Reflections.LOGGER != null){
-					Reflections.LOGGER.warn("Could not get URL", e);
-					Reflections.LOGGER.warn("Could not get URL", e1);
+				if(LOGGER != null){
+					LOGGER.warn("Could not get URL", e);
+					LOGGER.warn("Could not get URL", e1);
 				}
 			}
 		}
@@ -99,13 +103,13 @@ public class UrlTypeVFS implements UrlType{
 			}
 
 		final StringBuilder prefix = new StringBuilder();
-		for(int i = 0; i < numSubs; i ++)
-			prefix.append("zip:");
-
-		if(zipPath.trim().length() == 0)
-			return new URL(prefix + "/" + zipFile);
-		else
-			return new URL(prefix + "/" + zipFile + "!" + zipPath);
+		prefix.append("zip:".repeat(Math.max(0, numSubs)))
+			.append('/')
+			.append(zipFile);
+		if(zipPath.trim().length() > 0)
+			prefix.append('!')
+				.append(zipPath);
+		return new URL(prefix.toString());
 	}
 
 }
