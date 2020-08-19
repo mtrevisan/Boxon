@@ -25,7 +25,6 @@ import java.util.Set;
 public class ConfigurationBuilder implements Configuration{
 
 	private final Set<URL> urls;
-	//lazy
 	protected MetadataAdapter<?> metadataAdapter;
 	private boolean expandSuperTypes = true;
 
@@ -83,8 +82,8 @@ public class ConfigurationBuilder implements Configuration{
 				return (metadataAdapter = new JavassistAdapter());
 			}
 			catch(final Throwable e){
-				if(Reflections.log != null)
-					Reflections.log.warn("could not create JavassistAdapter, using JavaReflectionAdapter", e);
+				if(Reflections.LOGGER != null)
+					Reflections.LOGGER.warn("could not create JavassistAdapter, using JavaReflectionAdapter", e);
 
 				return (metadataAdapter = new JavaReflectionAdapter());
 			}

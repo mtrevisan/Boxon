@@ -57,24 +57,20 @@ public abstract class ReflectionUtils{
 	}
 
 	public static Class<?> forName(final String typeName, final ClassLoader... classLoaders){
-		if(getPrimitiveNames().contains(typeName))
-			return getPrimitiveTypes().get(getPrimitiveNames().indexOf(typeName));
+		final List<String> primitiveNames = getPrimitiveNames();
+		int index = primitiveNames.indexOf(typeName);
+		if(index >= 0)
+			return getPrimitiveTypes().get(index);
 		else{
-			String type;
-			if(typeName.contains("[")){
-				final int i = typeName.indexOf("[");
-				type = typeName.substring(0, i);
-				final String array = typeName.substring(i).replace("]", "");
+			String type = typeName;
+			index = typeName.indexOf("[");
+			if(index >= 0){
+				final String array = typeName.substring(index).replace("]", "");
 
-				if(getPrimitiveNames().contains(type))
-					type = getPrimitiveDescriptors().get(getPrimitiveNames().indexOf(type));
-				else
-					type = "L" + type + ";";
-
-				type = array + type;
+				type = typeName.substring(0, index);
+				index = primitiveNames.indexOf(type);
+				type = array + (index >= 0? getPrimitiveDescriptors().get(index): "L" + type + ";");
 			}
-			else
-				type = typeName;
 
 
 			final List<ReflectionsException> reflectionsExceptions = new ArrayList<>();
@@ -95,9 +91,9 @@ public abstract class ReflectionUtils{
 				}
 			}
 
-			if(Reflections.log != null)
+			if(Reflections.LOGGER != null)
 				for(final ReflectionsException reflectionsException : reflectionsExceptions)
-					Reflections.log.warn("could not get type for name " + typeName + " from any class loader", reflectionsException);
+					Reflections.LOGGER.warn("could not get type for name " + typeName + " from any class loader", reflectionsException);
 
 			return null;
 		}

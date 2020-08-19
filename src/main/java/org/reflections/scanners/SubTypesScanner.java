@@ -1,7 +1,6 @@
 package org.reflections.scanners;
 
-import org.reflections.Store;
-import org.reflections.adapters.MetadataAdapter;
+import org.reflections.ClassStore;
 
 
 /**
@@ -9,18 +8,16 @@ import org.reflections.adapters.MetadataAdapter;
  */
 public class SubTypesScanner extends AbstractScanner{
 
-	@SuppressWarnings({"unchecked"})
-	public void scan(final Object cls, final Store store){
-		@SuppressWarnings("rawtypes")
-		final MetadataAdapter metadataAdapter = getMetadataAdapter();
+	@SuppressWarnings("unchecked")
+	public void scan(final Object cls, final ClassStore classStore){
 		final String className = metadataAdapter.getClassName(cls);
 		final String superclass = metadataAdapter.getSuperclassName(cls);
 
-		put(store, superclass, className);
+		put(classStore, superclass, className);
 
 		final String[] interfacesNames = metadataAdapter.getInterfacesNames(cls);
 		for(int i = 0; i < interfacesNames.length; i ++)
-			put(store, interfacesNames[i], className);
+			put(classStore, interfacesNames[i], className);
 	}
 
 }

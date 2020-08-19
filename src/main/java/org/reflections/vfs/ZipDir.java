@@ -28,8 +28,8 @@ public class ZipDir implements Vfs.Dir{
 		try{
 			jarFile.close();
 		}catch(final IOException e){
-			if(Reflections.log != null){
-				Reflections.log.warn("Could not close JarFile", e);
+			if(Reflections.LOGGER != null){
+				Reflections.LOGGER.warn("Could not close JarFile", e);
 			}
 		}
 	}

@@ -1,50 +1,45 @@
 package org.reflections.scanners;
 
-import org.reflections.Configuration;
+import org.reflections.ClassStore;
 import org.reflections.ReflectionsException;
-import org.reflections.Store;
 import org.reflections.adapters.MetadataAdapter;
 import org.reflections.vfs.Vfs;
 
 
 public abstract class AbstractScanner implements Scanner{
 
-	private Configuration configuration;
+	@SuppressWarnings("rawtypes")
+	protected MetadataAdapter metadataAdapter;
 
 
-	public void setConfiguration(final Configuration configuration){
-		this.configuration = configuration;
+	@SuppressWarnings("rawtypes")
+	public void setMetadataAdapter(final MetadataAdapter metadataAdapter){
+		this.metadataAdapter = metadataAdapter;
 	}
 
 	public boolean acceptsInput(final String file){
-		return getMetadataAdapter().acceptsInput(file);
+		return metadataAdapter.acceptsInput(file);
 	}
 
-	public Object scan(final Vfs.File file, Object classObject, final Store store){
+	public Object scan(final Vfs.File file, Object classObject, final ClassStore classStore){
 		if(classObject == null){
 			try{
-				classObject = configuration.getMetadataAdapter()
-					.getOrCreateClassObject(file);
+				classObject = metadataAdapter.getOrCreateClassObject(file);
 			}
 			catch(final Exception e){
 				throw new ReflectionsException("Could not create class object from file " + file.getRelativePath(), e);
 			}
 		}
 
-		scan(classObject, store);
+		scan(classObject, classStore);
 
 		return classObject;
 	}
 
-	public abstract void scan(final Object cls, final Store store);
+	protected abstract void scan(final Object cls, final ClassStore classStore);
 
-	protected void put(final Store store, final String key, final String value){
-		store.put(getClass(), key, value);
-	}
-
-	@SuppressWarnings("rawtypes")
-	protected MetadataAdapter getMetadataAdapter(){
-		return configuration.getMetadataAdapter();
+	protected void put(final ClassStore classStore, final String key, final String value){
+		classStore.put(getClass(), key, value);
 	}
 
 }
