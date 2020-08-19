@@ -45,20 +45,22 @@ import java.util.regex.Pattern;
  *
  * @author Sergio Pola
  */
-public class UrlTypeVFS implements UrlType{
+class UrlTypeVFS implements UrlType{
 
-	public static final Logger LOGGER = JavaHelper.getLoggerFor(UrlTypeVFS.class);
+	private static final Logger LOGGER = JavaHelper.getLoggerFor(UrlTypeVFS.class);
 
-	public final static String[] REPLACE_EXTENSION = new String[]{".ear/", ".jar/", ".war/", ".sar/", ".har/", ".par/"};
+	private final static String[] REPLACE_EXTENSION = new String[]{".ear/", ".jar/", ".war/", ".sar/", ".har/", ".par/"};
 
-	final String VFSZIP = "vfszip";
-	final String VFSFILE = "vfsfile";
+	private static final String VFSZIP = "vfszip";
+	private static final String VFSFILE = "vfsfile";
 
 
+	@Override
 	public boolean matches(final URL url){
 		return VFSZIP.equals(url.getProtocol()) || VFSFILE.equals(url.getProtocol());
 	}
 
+	@Override
 	public Directory createDir(final URL url){
 		try{
 			final URL adaptedUrl = adaptURL(url);
@@ -78,7 +80,7 @@ public class UrlTypeVFS implements UrlType{
 		return null;
 	}
 
-	public URL adaptURL(final URL url) throws MalformedURLException{
+	private URL adaptURL(final URL url) throws MalformedURLException{
 		if(VFSZIP.equals(url.getProtocol()))
 			return replaceZipSeparators(url.getPath(), realFile);
 		else if(VFSFILE.equals(url.getProtocol()))
@@ -87,7 +89,7 @@ public class UrlTypeVFS implements UrlType{
 			return url;
 	}
 
-	URL replaceZipSeparators(final String path, final Predicate<File> acceptFile) throws MalformedURLException{
+	private URL replaceZipSeparators(final String path, final Predicate<File> acceptFile) throws MalformedURLException{
 		int pos = 0;
 		while(pos != -1){
 			pos = findFirstMatchOfDeployableExtension(path, pos);
@@ -102,7 +104,7 @@ public class UrlTypeVFS implements UrlType{
 		throw new ReflectionsException("Unable to identify the real zip file in path '" + path + "'.");
 	}
 
-	int findFirstMatchOfDeployableExtension(final String path, final int pos){
+	private int findFirstMatchOfDeployableExtension(final String path, final int pos){
 		final Pattern p = Pattern.compile("\\.[ejprw]ar/");
 		final Matcher m = p.matcher(path);
 		if(m.find(pos))
@@ -111,9 +113,9 @@ public class UrlTypeVFS implements UrlType{
 			return -1;
 	}
 
-	final Predicate<File> realFile = file -> file.exists() && file.isFile();
+	private final Predicate<File> realFile = file -> file.exists() && file.isFile();
 
-	URL replaceZipSeparatorStartingFrom(final String path, final int pos) throws MalformedURLException{
+	private URL replaceZipSeparatorStartingFrom(final String path, final int pos) throws MalformedURLException{
 		final String zipFile = path.substring(0, pos - 1);
 		String zipPath = path.substring(pos);
 

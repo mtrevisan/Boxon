@@ -38,15 +38,17 @@ public class SystemFile implements File{
 	private final java.io.File file;
 
 
-	public SystemFile(final SystemDirectory root, final java.io.File file){
+	SystemFile(final SystemDirectory root, final java.io.File file){
 		this.root = root;
 		this.file = file;
 	}
 
+	@Override
 	public String getName(){
 		return file.getName();
 	}
 
+	@Override
 	public String getRelativePath(){
 		final String filepath = file.getPath().replace("\\", "/");
 		if(filepath.startsWith(root.getPath()))
@@ -56,6 +58,7 @@ public class SystemFile implements File{
 		return null;
 	}
 
+	@Override
 	public InputStream openInputStream(){
 		try{
 			return new FileInputStream(file);

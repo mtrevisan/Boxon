@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
 
 public final class ReflectionHelper{
 
-	public static final Logger LOGGER = JavaHelper.getLoggerFor(ReflectionHelper.class);
+	private static final Logger LOGGER = JavaHelper.getLoggerFor(ReflectionHelper.class);
 
 
 	/**

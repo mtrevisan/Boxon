@@ -37,22 +37,25 @@ public class JarInputFile implements File{
 	private final long endIndex;
 
 
-	public JarInputFile(final ZipEntry entry, final JarInputDirectory jarInputDir, final long cursor, final long nextCursor){
+	JarInputFile(final ZipEntry entry, final JarInputDirectory jarInputDir, final long cursor, final long nextCursor){
 		this.entry = entry;
 		this.jarInputDir = jarInputDir;
 		fromIndex = cursor;
 		endIndex = nextCursor;
 	}
 
+	@Override
 	public String getName(){
 		final String name = entry.getName();
 		return name.substring(name.lastIndexOf("/") + 1);
 	}
 
+	@Override
 	public String getRelativePath(){
 		return entry.getName();
 	}
 
+	@Override
 	public InputStream openInputStream(){
 		return new InputStream(){
 			@Override

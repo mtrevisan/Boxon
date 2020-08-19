@@ -18,7 +18,7 @@ import java.util.Map;
  */
 public final class ClasspathHelper{
 
-	public static final Logger LOGGER = JavaHelper.getLoggerFor(ClasspathHelper.class);
+	private static final Logger LOGGER = JavaHelper.getLoggerFor(ClasspathHelper.class);
 
 
 	private ClasspathHelper(){}

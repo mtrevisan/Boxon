@@ -38,17 +38,19 @@ public class JarInputDirectory implements Directory{
 	private final URL url;
 	JarInputStream jarInputStream;
 	long cursor = 0;
-	long nextCursor = 0;
+	private long nextCursor = 0;
 
 
-	public JarInputDirectory(final URL url){
+	JarInputDirectory(final URL url){
 		this.url = url;
 	}
 
+	@Override
 	public String getPath(){
 		return url.getPath();
 	}
 
+	@Override
 	public Iterable<File> getFiles(){
 		return () -> new Iterator<>(){
 			{

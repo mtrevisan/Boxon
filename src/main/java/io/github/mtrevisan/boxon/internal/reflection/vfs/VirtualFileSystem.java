@@ -74,7 +74,7 @@ import java.util.jar.JarFile;
  */
 public abstract class VirtualFileSystem{
 
-	public static final Logger LOGGER = JavaHelper.getLoggerFor(VirtualFileSystem.class);
+	private static final Logger LOGGER = JavaHelper.getLoggerFor(VirtualFileSystem.class);
 
 
 	private static final List<UrlType> defaultUrlTypes = new ArrayList<>(Arrays.asList(DefaultUrlTypes.values()));
@@ -91,6 +91,41 @@ public abstract class VirtualFileSystem{
 
 
 	/**
+	 * Tries to create a Dir from the given url, using the defaultUrlTypes
+	 *
+	 * @param url	The URL.
+	 * @return	The Dir from the given {@code url}.
+	 */
+	public static Directory fromURL(final URL url){
+		return fromURL(url, defaultUrlTypes);
+	}
+
+	/**
+	 * Tries to create a Dir from the given {@code url}, using the given {@code urlTypes}.
+	 *
+	 * @param url	The URL.
+	 * @param urlTypes	The URL types.
+	 * @return	The Dir from the given {@code url}, using the given {@code urlTypes}.
+	 */
+	private static Directory fromURL(final URL url, final List<UrlType> urlTypes){
+		for(final UrlType type : urlTypes){
+			try{
+				if(type.matches(url)){
+					final Directory directory = type.createDir(url);
+					if(directory != null)
+						return directory;
+				}
+			}
+			catch(final Throwable e){
+				if(LOGGER != null)
+					LOGGER.warn("could not create VirtualFileSystem.Directory using " + type + " from URL " + url.toExternalForm() + ": skipping", e);
+			}
+		}
+
+		throw new ReflectionsException("could not create VirtualFileSystem.Directory from URL, no matching UrlType was found [" + url.toExternalForm() + "]\n" + "either use fromURL(final URL url, final List<UrlType> urlTypes) or " + "use the static setDefaultURLTypes(final List<UrlType> urlTypes) or addDefaultURLTypes(UrlType urlType) " + "with your specialized UrlType.");
+	}
+
+	/**
 	 * Default url types used by {@link VirtualFileSystem.DefaultUrlTypes#fromURL(URL)}.
 	 * <p>JAR_FILE - creates a {@link ZipDirectory} over JAR file.
 	 * <p>JAR_URL - creates a {@link ZipDirectory} over a JAR URL (contains {@code ".jar!/"} in it's name), using Java's {@link JarURLConnection}.
@@ -100,7 +135,7 @@ public abstract class VirtualFileSystem{
 	 * <p>BUNDLE - for bundle protocol, using eclipse FileLocator (should be provided in classpath).
 	 * <p>JAR_INPUT_STREAM - creates a {@link JarInputDirectory} over JAR files, using Java's JarInputStream.
 	 */
-	public enum DefaultUrlTypes implements UrlType{
+	private enum DefaultUrlTypes implements UrlType{
 		JAR_FILE{
 			public boolean matches(final URL url){
 				return (url.getProtocol().equals("file") && hasJarFileInPath(url));
@@ -200,47 +235,12 @@ public abstract class VirtualFileSystem{
 
 
 		/**
-		 * Tries to create a Dir from the given url, using the defaultUrlTypes
-		 *
-		 * @param url	The URL.
-		 * @return	The Dir from the given {@code url}.
-		 */
-		public static Directory fromURL(final URL url){
-			return fromURL(url, defaultUrlTypes);
-		}
-
-		/**
-		 * Tries to create a Dir from the given {@code url}, using the given {@code urlTypes}.
-		 *
-		 * @param url	The URL.
-		 * @param urlTypes	The URL types.
-		 * @return	The Dir from the given {@code url}, using the given {@code urlTypes}.
-		 */
-		public static Directory fromURL(final URL url, final List<UrlType> urlTypes){
-			for(final UrlType type : urlTypes){
-				try{
-					if(type.matches(url)){
-						final Directory directory = type.createDir(url);
-						if(directory != null)
-							return directory;
-					}
-				}
-				catch(final Throwable e){
-					if(LOGGER != null)
-						LOGGER.warn("could not create VirtualFileSystem.Directory using " + type + " from URL " + url.toExternalForm() + ": skipping", e);
-				}
-			}
-
-			throw new ReflectionsException("could not create VirtualFileSystem.Directory from URL, no matching UrlType was found [" + url.toExternalForm() + "]\n" + "either use fromURL(final URL url, final List<UrlType> urlTypes) or " + "use the static setDefaultURLTypes(final List<UrlType> urlTypes) or addDefaultURLTypes(UrlType urlType) " + "with your specialized UrlType.");
-		}
-
-		/**
 		 * Get {@link java.io.File} from URL.
 		 *
 		 * @param url	The URL to get the file from.
 		 * @return	{@link java.io.File} from URL.
 		 */
-		public static java.io.File resourceToFile(final URL url){
+		private static java.io.File resourceToFile(final URL url){
 			try{
 				final String path = url.toURI().getSchemeSpecificPart();
 				return getFileIfExists(path);

@@ -45,7 +45,7 @@ import java.util.Set;
 
 public class Reflections{
 
-	public static final Logger LOGGER = JavaHelper.getLoggerFor(Reflections.class);
+	private static final Logger LOGGER = JavaHelper.getLoggerFor(Reflections.class);
 
 	private final ScannerInterface[] scanners = new ScannerInterface[]{new TypeAnnotationsScanner(), new SubTypesScanner()};
 	protected final ClassStore classStore = new ClassStore();
@@ -88,7 +88,7 @@ public class Reflections{
 	}
 
 	private void scan(final URL url){
-		final Directory directory = VirtualFileSystem.DefaultUrlTypes.fromURL(url);
+		final Directory directory = VirtualFileSystem.fromURL(url);
 		for(final File file : directory.getFiles()){
 			//scan if inputs filter accepts file relativePath or packageName
 			final String relativePath = file.getRelativePath();

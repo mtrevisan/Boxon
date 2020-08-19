@@ -39,17 +39,19 @@ public class SystemDirectory implements Directory{
 	private final java.io.File file;
 
 
-	public SystemDirectory(final java.io.File file){
+	SystemDirectory(final java.io.File file){
 		if(file != null && (!file.isDirectory() || !file.canRead()))
 			throw new RuntimeException("cannot use dir " + file);
 
 		this.file = file;
 	}
 
+	@Override
 	public String getPath(){
 		return (file != null? file.getPath().replace("\\", "/"): "/NO-SUCH-DIRECTORY/");
 	}
 
+	@Override
 	public Iterable<File> getFiles(){
 		if(file == null || !file.exists())
 			return Collections.emptyList();

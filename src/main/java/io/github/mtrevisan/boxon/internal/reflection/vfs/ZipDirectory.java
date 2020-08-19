@@ -36,20 +36,22 @@ import java.util.jar.JarFile;
  */
 public class ZipDirectory implements Directory{
 
-	public static final Logger LOGGER = JavaHelper.getLoggerFor(ZipDirectory.class);
+	private static final Logger LOGGER = JavaHelper.getLoggerFor(ZipDirectory.class);
 
 
 	final java.util.zip.ZipFile jarFile;
 
 
-	public ZipDirectory(final JarFile jarFile){
+	ZipDirectory(final JarFile jarFile){
 		this.jarFile = jarFile;
 	}
 
+	@Override
 	public String getPath(){
 		return jarFile.getName();
 	}
 
+	@Override
 	public Iterable<File> getFiles(){
 		return () -> jarFile.stream()
 			.filter(entry -> !entry.isDirectory())
