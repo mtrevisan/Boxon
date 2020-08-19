@@ -43,7 +43,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 
-public abstract class ReflectionHelper{
+public final class ReflectionHelper{
 
 	public static final Logger LOGGER = JavaHelper.getLoggerFor(ReflectionHelper.class);
 
@@ -53,6 +53,8 @@ public abstract class ReflectionHelper{
 	 */
 	private static final boolean includeObject = false;
 
+
+	private ReflectionHelper(){}
 
 	/**
 	 * get the immediate supertype and interfaces of the given {@code type}

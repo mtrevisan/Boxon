@@ -16,10 +16,12 @@ import java.util.Map;
 /**
  * Helper methods for working with the classpath.
  */
-public abstract class ClasspathHelper{
+public final class ClasspathHelper{
 
 	public static final Logger LOGGER = JavaHelper.getLoggerFor(ClasspathHelper.class);
 
+
+	private ClasspathHelper(){}
 
 	/**
 	 * Gets the current thread context class loader.

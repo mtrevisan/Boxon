@@ -25,11 +25,7 @@
 package io.github.mtrevisan.boxon.internal.reflection;
 
 import io.github.mtrevisan.boxon.internal.DynamicArray;
-import io.github.mtrevisan.boxon.internal.JavaHelper;
-import org.slf4j.Logger;
 
-import java.io.File;
-import java.io.FileFilter;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.Collection;
@@ -42,29 +38,6 @@ import java.util.Set;
  * @see <a href="https://github.com/ronmamo/reflections">Reflections</a>
  */
 public final class AnnotationHelper{
-
-	private static final Logger LOGGER = JavaHelper.getLoggerFor(AnnotationHelper.class);
-
-	private enum BucketType{DIRECTORY, FILE}
-
-	private static final FileFilter FILE_FILTER = file -> (file.isDirectory() || file.isFile() && file.getName().endsWith(".class"));
-
-
-	private static final String SCHEMA_FILE = "file:";
-	private static final String EXTENSION_CLASS = ".class";
-	private static final String BOOT_INF_CLASSES = "BOOT-INF.classes.";
-	private static final String POINT = ".";
-
-	private static final class ClassDescriptor{
-		final File file;
-		final String packageName;
-
-		ClassDescriptor(final File file, final String packageName){
-			this.file = file;
-			this.packageName = packageName;
-		}
-	}
-
 
 	private AnnotationHelper(){}
 
@@ -112,32 +85,6 @@ public final class AnnotationHelper{
 		final Set<Class<?>> singletons = reflections.getTypesAnnotatedWith((Class<? extends Annotation>)type);
 		classes.addAll(modules);
 		classes.addAll(singletons);
-System.out.println(classes.size());
-for(Class<?> cl : classes)
-	System.out.println(cl.getSimpleName());
-//System.out.println("--");
-//classes.clear();
-
-//		ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-//		for(int i = 0; i < basePackageClassNames.limit; i ++){
-//			final String path = packageNameToResourceUri(basePackageClassNames.data[i]);
-//			try{
-//				final Enumeration<URL> resources = classLoader.getResources(path);
-//				classes.addAll(extractClasses(resources, type, basePackageClassNames.data[i]));
-//			}
-//			catch(final NoSuchFileException e){
-//				if(LOGGER != null)
-//					LOGGER.error("Are you sure you are not running this library from a OneDrive folder?", e);
-//			}
-//			catch(final IOException e){
-//				if(LOGGER != null)
-//					LOGGER.error("Cannot load classes from {}", path, e);
-//			}
-//		}
-//System.out.println(classes.size());
-//for(Class<?> cl : classes)
-//	System.out.println(cl.getSimpleName());
-
 		return classes;
 	}
 
@@ -151,136 +98,5 @@ for(Class<?> cl : classes)
 		}
 		return basePackageNames;
 	}
-
-//	private static Collection<Class<?>> extractClasses(final Enumeration<URL> resources, final Object type, final String basePackageName) throws IOException{
-//		final Collection<Class<?>> classes = new HashSet<>(0);
-//		while(resources.hasMoreElements()){
-//			final URL resource = resources.nextElement();
-//
-//			final String directory = resource.getFile();
-//			final int exclamationMarkIndex = directory.indexOf('!');
-//			if(exclamationMarkIndex >= 0){
-//				final String libraryName = directory.substring(SCHEMA_FILE.length(), exclamationMarkIndex);
-//				classes.addAll(extractClassesFromLibrary(type, libraryName));
-//			}
-//			else if("file".equals(resource.getProtocol()))
-//				classes.addAll(extractClasses(type, resourceToFile(resource), basePackageName));
-//			else if(LOGGER != null)
-//				LOGGER.warn("URL cannot be resolved to absolute file path because it does not reside in the file system: {}", directory);
-//		}
-//		return classes;
-//	}
-
-	/**
-	 * Scans all classes accessible from a library which belong to the given package.
-	 *
-	 * @param libraryName The name of the library to load the classes from.
-	 * @return The classes.
-	 */
-//	private static Collection<Class<?>> extractClassesFromLibrary(final Object type, final String libraryName) throws IOException{
-//		final Collection<Class<?>> classes = new HashSet<>(0);
-//
-//		final JarFile jarFile = new JarFile(libraryName);
-//		final Enumeration<JarEntry> resources = jarFile.entries();
-//		while(resources.hasMoreElements()){
-//			final JarEntry resource = resources.nextElement();
-//
-//			final Class<?> cls = getClassFromResource(resource);
-//			addIf(classes, cls, type);
-//		}
-//
-//		return classes;
-//	}
-
-	/**
-	 * Extract all classes from a given directory.
-	 *
-	 * @param directory	The base directory.
-	 * @param packageName The package name for classes found inside the base directory.
-	 * @return The classes.
-	 */
-//	private static Collection<Class<?>> extractClasses(final Object type, final File directory, final String packageName){
-//		final Collection<Class<?>> classes = new HashSet<>(0);
-//
-//		final Stack<ClassDescriptor> stack = new Stack<>();
-//		stack.push(new ClassDescriptor(directory, packageName));
-//		while(!stack.isEmpty()){
-//			final ClassDescriptor elem = stack.pop();
-//
-//			final File[] files = JavaHelper.nonNullOrDefault(elem.file.listFiles(FILE_FILTER), new File[0]);
-//			final Map<BucketType, DynamicArray<File>> bucket = bucketByFileType(files);
-//			final DynamicArray<File> bucketDirectory = bucket.get(BucketType.DIRECTORY);
-//			for(int i = 0; i < bucketDirectory.limit; i ++){
-//				final File dir = bucketDirectory.data[i];
-//				stack.add(new ClassDescriptor(dir, elem.packageName + POINT + dir.getName()));
-//			}
-//			final DynamicArray<File> bucketFile = bucket.get(BucketType.FILE);
-//			for(int i = 0; i < bucketFile.limit; i ++){
-//				final File file = bucketFile.data[i];
-//				final Class<?> cls = getClassFromFilename(elem.packageName, file.getName());
-//				addIf(classes, cls, type);
-//			}
-//		}
-//
-//		return classes;
-//	}
-
-//	private static Map<BucketType, DynamicArray<File>> bucketByFileType(final File[] files){
-//		final Map<BucketType, DynamicArray<File>> bucket = new EnumMap<>(BucketType.class);
-//		bucket.put(BucketType.DIRECTORY, DynamicArray.create(File.class));
-//		bucket.put(BucketType.FILE, DynamicArray.create(File.class, files.length));
-//		for(int i = 0; i < files.length; i ++){
-//			final File file = files[i];
-//			bucket.get(file.isDirectory()? BucketType.DIRECTORY: BucketType.FILE)
-//				.add(file);
-//		}
-//		return bucket;
-//	}
-
-//	private static Class<?> getClassFromResource(final JarEntry resource){
-//		Class<?> cls = null;
-//		final String resourceName = resource.getName();
-//		if(!resource.isDirectory() && resourceName.endsWith(EXTENSION_CLASS)){
-//			final String className = resourceName.substring(
-//				(resourceName.startsWith(BOOT_INF_CLASSES)? BOOT_INF_CLASSES.length(): 0),
-//				resourceName.length() - EXTENSION_CLASS.length());
-//			cls = getClassFromName(resourceUriToPackageName(className));
-//		}
-//		return cls;
-//	}
-
-//	private static Class<?> getClassFromFilename(final String packageName, final String filename){
-//		Class<?> cls = null;
-//		if(filename.endsWith(EXTENSION_CLASS)){
-//			final String className = filename.substring(0, filename.length() - EXTENSION_CLASS.length());
-//			cls = getClassFromName(packageName + POINT + className);
-//		}
-//		return cls;
-//	}
-
-//	private static Class<?> getClassFromName(final String className){
-//		Class<?> type = null;
-//		try{
-//			type = Class.forName(className);
-//		}
-//		catch(final ClassNotFoundException ignored){}
-//		return type;
-//	}
-
-//	@SuppressWarnings("unchecked")
-//	private static void addIf(final Collection<Class<?>> classes, final Class<?> cls, final Object type){
-//		if(cls != null && !cls.isInterface() && (cls.isAnnotationPresent((Class<? extends Annotation>)type) || ((Class<?>)type).isAssignableFrom(cls)))
-//			classes.add(cls);
-//	}
-
-	/** Returns a resource uri corresponding to the package name. */
-//	private static String packageNameToResourceUri(final String packageName){
-//		return packageName.replace('.', '/');
-//	}
-
-	/** Derive a <em>package name</em> for a resource URI. */
-//	private static String resourceUriToPackageName(final String resourceUri){
-//		return resourceUri.replace('/', '.');
-//	}
 
 }
