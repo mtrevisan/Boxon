@@ -8,7 +8,7 @@ import java.util.zip.ZipEntry;
 /**
  *
  */
-public class JarInputFile implements Vfs.File{
+public class JarInputFile implements VirtualFileSystem.File{
 	private final ZipEntry entry;
 	private final JarInputDirectory jarInputDir;
 	private final long fromIndex;

@@ -29,7 +29,7 @@ import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.ClassFile;
 import javassist.bytecode.annotation.Annotation;
 import io.github.mtrevisan.boxon.internal.reflection.ReflectionsException;
-import io.github.mtrevisan.boxon.internal.reflection.vfs.Vfs;
+import io.github.mtrevisan.boxon.internal.reflection.vfs.VirtualFileSystem;
 
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
@@ -85,7 +85,7 @@ public class JavassistAdapter implements MetadataAdapter<ClassFile>{
 	}
 
 	@Override
-	public ClassFile getOrCreateClassObject(final Vfs.File file){
+	public ClassFile getOrCreateClassObject(final VirtualFileSystem.File file){
 		try(final InputStream is = file.openInputStream()){
 			return new ClassFile(new DataInputStream(new BufferedInputStream(is)));
 		}

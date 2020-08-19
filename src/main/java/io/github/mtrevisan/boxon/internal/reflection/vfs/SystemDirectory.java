@@ -11,7 +11,7 @@ import java.util.Collections;
 /*
  * An implementation of {@link io.github.mtrevisan.boxon.internal.reflection.vfs.Vfs.Dir} for directory {@link java.io.File}.
  */
-public class SystemDirectory implements Vfs.Directory{
+public class SystemDirectory implements VirtualFileSystem.Directory{
 	private final File file;
 
 	public SystemDirectory(final File file){
@@ -29,13 +29,13 @@ public class SystemDirectory implements Vfs.Directory{
 		return file.getPath().replace("\\", "/");
 	}
 
-	public Iterable<Vfs.File> getFiles(){
+	public Iterable<VirtualFileSystem.File> getFiles(){
 		if(file == null || !file.exists()){
 			return Collections.emptyList();
 		}
 		return () -> {
 			try{
-				return Files.walk(file.toPath()).filter(Files::isRegularFile).map(path -> (Vfs.File) new SystemFile(SystemDirectory.this, path.toFile())).iterator();
+				return Files.walk(file.toPath()).filter(Files::isRegularFile).map(path -> (VirtualFileSystem.File) new SystemFile(SystemDirectory.this, path.toFile())).iterator();
 			}catch(final IOException e){
 				throw new ReflectionsException("could not get files for " + file, e);
 			}

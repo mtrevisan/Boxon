@@ -26,7 +26,7 @@ package io.github.mtrevisan.boxon.internal.reflection.scanners;
 
 import io.github.mtrevisan.boxon.internal.reflection.ClassStore;
 import io.github.mtrevisan.boxon.internal.reflection.adapters.MetadataAdapter;
-import io.github.mtrevisan.boxon.internal.reflection.vfs.Vfs;
+import io.github.mtrevisan.boxon.internal.reflection.vfs.VirtualFileSystem;
 
 
 public interface Scanner{
@@ -36,6 +36,6 @@ public interface Scanner{
 
 	boolean acceptsInput(final String file);
 
-	Object scan(final Vfs.File file, final Object classObject,final ClassStore classStore);
+	Object scan(final VirtualFileSystem.File file, final Object classObject, final ClassStore classStore);
 
 }

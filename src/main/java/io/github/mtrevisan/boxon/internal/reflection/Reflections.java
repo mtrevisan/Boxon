@@ -30,7 +30,7 @@ import io.github.mtrevisan.boxon.internal.reflection.scanners.Scanner;
 import io.github.mtrevisan.boxon.internal.reflection.scanners.SubTypesScanner;
 import io.github.mtrevisan.boxon.internal.reflection.scanners.TypeAnnotationsScanner;
 import io.github.mtrevisan.boxon.internal.reflection.util.Utils;
-import io.github.mtrevisan.boxon.internal.reflection.vfs.Vfs;
+import io.github.mtrevisan.boxon.internal.reflection.vfs.VirtualFileSystem;
 import org.slf4j.Logger;
 
 import java.lang.annotation.Annotation;
@@ -86,8 +86,8 @@ public class Reflections{
 	}
 
 	private void scan(final URL url){
-		final Vfs.Directory directory = Vfs.fromURL(url);
-		for(final Vfs.File file : directory.getFiles()){
+		final VirtualFileSystem.Directory directory = VirtualFileSystem.fromURL(url);
+		for(final VirtualFileSystem.File file : directory.getFiles()){
 			//scan if inputs filter accepts file relativePath or packageName
 			final String relativePath = file.getRelativePath();
 			final String packageName = relativePath.replace('/', '.');

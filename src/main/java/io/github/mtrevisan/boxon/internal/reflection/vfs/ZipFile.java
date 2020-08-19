@@ -6,9 +6,9 @@ import java.util.zip.ZipEntry;
 
 
 /**
- * an implementation of {@link Vfs.File} for {@link ZipEntry}
+ * an implementation of {@link VirtualFileSystem.File} for {@link ZipEntry}
  */
-public class ZipFile implements Vfs.File{
+public class ZipFile implements VirtualFileSystem.File{
 	private final ZipDirectory root;
 	private final ZipEntry entry;
 

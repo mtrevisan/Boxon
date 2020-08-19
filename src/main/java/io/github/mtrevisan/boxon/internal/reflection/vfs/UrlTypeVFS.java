@@ -2,8 +2,8 @@ package io.github.mtrevisan.boxon.internal.reflection.vfs;
 
 import io.github.mtrevisan.boxon.internal.reflection.Reflections;
 import io.github.mtrevisan.boxon.internal.reflection.ReflectionsException;
-import io.github.mtrevisan.boxon.internal.reflection.vfs.Vfs.Directory;
-import io.github.mtrevisan.boxon.internal.reflection.vfs.Vfs.UrlType;
+import io.github.mtrevisan.boxon.internal.reflection.vfs.VirtualFileSystem.Directory;
+import io.github.mtrevisan.boxon.internal.reflection.vfs.VirtualFileSystem.UrlType;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 /**
  * UrlType to be used by Reflections library.
  * This class handles the vfszip and vfsfile protocol of JBOSS files.
- * <p>to use it, register it in Vfs via {@link Vfs#addDefaultURLTypes(UrlType)} or {@link Vfs#setDefaultURLTypes(java.util.List)}.
+ * <p>to use it, register it in Vfs via {@link VirtualFileSystem#addDefaultURLTypes(UrlType)} or {@link VirtualFileSystem#setDefaultURLTypes(java.util.List)}.
  *
  * @author Sergio Pola
  */

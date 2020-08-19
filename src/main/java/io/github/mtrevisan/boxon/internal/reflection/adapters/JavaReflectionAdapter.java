@@ -25,7 +25,7 @@
 package io.github.mtrevisan.boxon.internal.reflection.adapters;
 
 import io.github.mtrevisan.boxon.internal.reflection.ReflectionUtils;
-import io.github.mtrevisan.boxon.internal.reflection.vfs.Vfs;
+import io.github.mtrevisan.boxon.internal.reflection.vfs.VirtualFileSystem;
 
 import java.lang.annotation.Annotation;
 
@@ -63,7 +63,7 @@ public class JavaReflectionAdapter implements MetadataAdapter<Class<?>>{
 	}
 
 	@Override
-	public Class<?> getOrCreateClassObject(final Vfs.File file){
+	public Class<?> getOrCreateClassObject(final VirtualFileSystem.File file){
 		final String name = file.getRelativePath()
 			.replace("/", ".")
 			.replace(".class", "");

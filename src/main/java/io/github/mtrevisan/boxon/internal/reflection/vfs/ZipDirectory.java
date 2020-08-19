@@ -7,9 +7,9 @@ import java.util.jar.JarFile;
 
 
 /**
- * an implementation of {@link Vfs.Directory} for {@link java.util.zip.ZipFile}
+ * an implementation of {@link VirtualFileSystem.Directory} for {@link java.util.zip.ZipFile}
  */
-public class ZipDirectory implements Vfs.Directory{
+public class ZipDirectory implements VirtualFileSystem.Directory{
 	final java.util.zip.ZipFile jarFile;
 
 	public ZipDirectory(final JarFile jarFile){
@@ -20,8 +20,8 @@ public class ZipDirectory implements Vfs.Directory{
 		return jarFile.getName();
 	}
 
-	public Iterable<Vfs.File> getFiles(){
-		return () -> jarFile.stream().filter(entry -> !entry.isDirectory()).map(entry -> (Vfs.File) new ZipFile(ZipDirectory.this, entry)).iterator();
+	public Iterable<VirtualFileSystem.File> getFiles(){
+		return () -> jarFile.stream().filter(entry -> !entry.isDirectory()).map(entry -> (VirtualFileSystem.File) new ZipFile(ZipDirectory.this, entry)).iterator();
 	}
 
 	public void close(){

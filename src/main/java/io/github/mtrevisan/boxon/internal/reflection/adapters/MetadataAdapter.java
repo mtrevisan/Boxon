@@ -24,10 +24,13 @@
  */
 package io.github.mtrevisan.boxon.internal.reflection.adapters;
 
-import io.github.mtrevisan.boxon.internal.reflection.vfs.Vfs;
+import io.github.mtrevisan.boxon.internal.reflection.vfs.VirtualFileSystem;
 
 
 public interface MetadataAdapter<C>{
+
+	String CLASS = ".class";
+
 
 	String getClassName(final C type);
 
@@ -37,10 +40,10 @@ public interface MetadataAdapter<C>{
 
 	String[] getClassAnnotationNames(final C type);
 
-	C getOrCreateClassObject(final Vfs.File file);
+	C getOrCreateClassObject(final VirtualFileSystem.File file);
 
 	default boolean acceptsInput(final String file){
-		return file.endsWith(".class");
+		return file.endsWith(CLASS);
 	}
 
 }

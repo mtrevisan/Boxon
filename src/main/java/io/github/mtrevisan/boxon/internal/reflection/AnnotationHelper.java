@@ -30,23 +30,11 @@ import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.Collection;
-import java.util.EnumMap;
-import java.util.Enumeration;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
-import java.util.Stack;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 
 
 /**
@@ -164,85 +152,24 @@ for(Class<?> cl : classes)
 		return basePackageNames;
 	}
 
-	private static Collection<Class<?>> extractClasses(final Enumeration<URL> resources, final Object type, final String basePackageName) throws IOException{
-		final Collection<Class<?>> classes = new HashSet<>(0);
-		while(resources.hasMoreElements()){
-			final URL resource = resources.nextElement();
-
-			final String directory = resource.getFile();
-			final int exclamationMarkIndex = directory.indexOf('!');
-			if(exclamationMarkIndex >= 0){
-				final String libraryName = directory.substring(SCHEMA_FILE.length(), exclamationMarkIndex);
-				classes.addAll(extractClassesFromLibrary(type, libraryName));
-			}
-			else if("file".equals(resource.getProtocol()))
-				classes.addAll(extractClasses(type, resourceToFile(resource), basePackageName));
-			else if(LOGGER != null)
-				LOGGER.warn("URL cannot be resolved to absolute file path because it does not reside in the file system: {}", directory);
-		}
-		return classes;
-	}
-
-	private static File resourceToFile(final URL resource){
-		try{
-			final String path = resource.toURI().getSchemeSpecificPart();
-			return getFileIfExists(path);
-		}
-		catch(final URISyntaxException | FileNotFoundException ignored){}
-
-		try{
-			final String path = extractDecodedPath(resource);
-			return getFileIfExists(path);
-		}
-		catch(final FileNotFoundException ignored){}
-
-		try{
-			String path = extractExternalFormPath(resource);
-			File file = new File(path);
-			if(file.exists())
-				return file;
-
-			path = path.replace("%20", " ");
-			return getFileIfExists(path);
-		}
-		catch(final Exception ignored){}
-
-		final String path = resource.getFile();
-		return new File(path);
-	}
-
-	private static String extractDecodedPath(final URL resource){
-		String path = URLDecoder.decode(resource.getPath(), StandardCharsets.UTF_8);
-		final int idx = path.lastIndexOf(".jar!");
-		if(idx >= 0)
-			path = path.substring(0, idx + ".jar".length());
-		return path;
-	}
-
-	private static String extractExternalFormPath(final URL resource){
-		String path = resource.toExternalForm();
-		if(path.startsWith("jar:"))
-			path = path.substring("jar:".length());
-		else if(path.startsWith("wsjar:"))
-			path = path.substring("wsjar:".length());
-		else if(path.startsWith("file:"))
-			path = path.substring("file:".length());
-		int idx = path.indexOf(".jar!");
-		if(idx >= 0)
-			path = path.substring(0, idx + ".jar".length());
-		idx = path.indexOf(".war!");
-		if(idx >= 0)
-			path = path.substring(0, idx + ".war".length());
-		return path;
-	}
-
-	private static File getFileIfExists(String path) throws FileNotFoundException{
-		final File file = new File(path);
-		if(!file.exists())
-			throw new FileNotFoundException();
-
-		return file;
-	}
+//	private static Collection<Class<?>> extractClasses(final Enumeration<URL> resources, final Object type, final String basePackageName) throws IOException{
+//		final Collection<Class<?>> classes = new HashSet<>(0);
+//		while(resources.hasMoreElements()){
+//			final URL resource = resources.nextElement();
+//
+//			final String directory = resource.getFile();
+//			final int exclamationMarkIndex = directory.indexOf('!');
+//			if(exclamationMarkIndex >= 0){
+//				final String libraryName = directory.substring(SCHEMA_FILE.length(), exclamationMarkIndex);
+//				classes.addAll(extractClassesFromLibrary(type, libraryName));
+//			}
+//			else if("file".equals(resource.getProtocol()))
+//				classes.addAll(extractClasses(type, resourceToFile(resource), basePackageName));
+//			else if(LOGGER != null)
+//				LOGGER.warn("URL cannot be resolved to absolute file path because it does not reside in the file system: {}", directory);
+//		}
+//		return classes;
+//	}
 
 	/**
 	 * Scans all classes accessible from a library which belong to the given package.
@@ -250,20 +177,20 @@ for(Class<?> cl : classes)
 	 * @param libraryName The name of the library to load the classes from.
 	 * @return The classes.
 	 */
-	private static Collection<Class<?>> extractClassesFromLibrary(final Object type, final String libraryName) throws IOException{
-		final Collection<Class<?>> classes = new HashSet<>(0);
-
-		final JarFile jarFile = new JarFile(libraryName);
-		final Enumeration<JarEntry> resources = jarFile.entries();
-		while(resources.hasMoreElements()){
-			final JarEntry resource = resources.nextElement();
-
-			final Class<?> cls = getClassFromResource(resource);
-			addIf(classes, cls, type);
-		}
-
-		return classes;
-	}
+//	private static Collection<Class<?>> extractClassesFromLibrary(final Object type, final String libraryName) throws IOException{
+//		final Collection<Class<?>> classes = new HashSet<>(0);
+//
+//		final JarFile jarFile = new JarFile(libraryName);
+//		final Enumeration<JarEntry> resources = jarFile.entries();
+//		while(resources.hasMoreElements()){
+//			final JarEntry resource = resources.nextElement();
+//
+//			final Class<?> cls = getClassFromResource(resource);
+//			addIf(classes, cls, type);
+//		}
+//
+//		return classes;
+//	}
 
 	/**
 	 * Extract all classes from a given directory.
@@ -272,88 +199,88 @@ for(Class<?> cl : classes)
 	 * @param packageName The package name for classes found inside the base directory.
 	 * @return The classes.
 	 */
-	private static Collection<Class<?>> extractClasses(final Object type, final File directory, final String packageName){
-		final Collection<Class<?>> classes = new HashSet<>(0);
+//	private static Collection<Class<?>> extractClasses(final Object type, final File directory, final String packageName){
+//		final Collection<Class<?>> classes = new HashSet<>(0);
+//
+//		final Stack<ClassDescriptor> stack = new Stack<>();
+//		stack.push(new ClassDescriptor(directory, packageName));
+//		while(!stack.isEmpty()){
+//			final ClassDescriptor elem = stack.pop();
+//
+//			final File[] files = JavaHelper.nonNullOrDefault(elem.file.listFiles(FILE_FILTER), new File[0]);
+//			final Map<BucketType, DynamicArray<File>> bucket = bucketByFileType(files);
+//			final DynamicArray<File> bucketDirectory = bucket.get(BucketType.DIRECTORY);
+//			for(int i = 0; i < bucketDirectory.limit; i ++){
+//				final File dir = bucketDirectory.data[i];
+//				stack.add(new ClassDescriptor(dir, elem.packageName + POINT + dir.getName()));
+//			}
+//			final DynamicArray<File> bucketFile = bucket.get(BucketType.FILE);
+//			for(int i = 0; i < bucketFile.limit; i ++){
+//				final File file = bucketFile.data[i];
+//				final Class<?> cls = getClassFromFilename(elem.packageName, file.getName());
+//				addIf(classes, cls, type);
+//			}
+//		}
+//
+//		return classes;
+//	}
 
-		final Stack<ClassDescriptor> stack = new Stack<>();
-		stack.push(new ClassDescriptor(directory, packageName));
-		while(!stack.isEmpty()){
-			final ClassDescriptor elem = stack.pop();
+//	private static Map<BucketType, DynamicArray<File>> bucketByFileType(final File[] files){
+//		final Map<BucketType, DynamicArray<File>> bucket = new EnumMap<>(BucketType.class);
+//		bucket.put(BucketType.DIRECTORY, DynamicArray.create(File.class));
+//		bucket.put(BucketType.FILE, DynamicArray.create(File.class, files.length));
+//		for(int i = 0; i < files.length; i ++){
+//			final File file = files[i];
+//			bucket.get(file.isDirectory()? BucketType.DIRECTORY: BucketType.FILE)
+//				.add(file);
+//		}
+//		return bucket;
+//	}
 
-			final File[] files = JavaHelper.nonNullOrDefault(elem.file.listFiles(FILE_FILTER), new File[0]);
-			final Map<BucketType, DynamicArray<File>> bucket = bucketByFileType(files);
-			final DynamicArray<File> bucketDirectory = bucket.get(BucketType.DIRECTORY);
-			for(int i = 0; i < bucketDirectory.limit; i ++){
-				final File dir = bucketDirectory.data[i];
-				stack.add(new ClassDescriptor(dir, elem.packageName + POINT + dir.getName()));
-			}
-			final DynamicArray<File> bucketFile = bucket.get(BucketType.FILE);
-			for(int i = 0; i < bucketFile.limit; i ++){
-				final File file = bucketFile.data[i];
-				final Class<?> cls = getClassFromFilename(elem.packageName, file.getName());
-				addIf(classes, cls, type);
-			}
-		}
+//	private static Class<?> getClassFromResource(final JarEntry resource){
+//		Class<?> cls = null;
+//		final String resourceName = resource.getName();
+//		if(!resource.isDirectory() && resourceName.endsWith(EXTENSION_CLASS)){
+//			final String className = resourceName.substring(
+//				(resourceName.startsWith(BOOT_INF_CLASSES)? BOOT_INF_CLASSES.length(): 0),
+//				resourceName.length() - EXTENSION_CLASS.length());
+//			cls = getClassFromName(resourceUriToPackageName(className));
+//		}
+//		return cls;
+//	}
 
-		return classes;
-	}
+//	private static Class<?> getClassFromFilename(final String packageName, final String filename){
+//		Class<?> cls = null;
+//		if(filename.endsWith(EXTENSION_CLASS)){
+//			final String className = filename.substring(0, filename.length() - EXTENSION_CLASS.length());
+//			cls = getClassFromName(packageName + POINT + className);
+//		}
+//		return cls;
+//	}
 
-	private static Map<BucketType, DynamicArray<File>> bucketByFileType(final File[] files){
-		final Map<BucketType, DynamicArray<File>> bucket = new EnumMap<>(BucketType.class);
-		bucket.put(BucketType.DIRECTORY, DynamicArray.create(File.class));
-		bucket.put(BucketType.FILE, DynamicArray.create(File.class, files.length));
-		for(int i = 0; i < files.length; i ++){
-			final File file = files[i];
-			bucket.get(file.isDirectory()? BucketType.DIRECTORY: BucketType.FILE)
-				.add(file);
-		}
-		return bucket;
-	}
+//	private static Class<?> getClassFromName(final String className){
+//		Class<?> type = null;
+//		try{
+//			type = Class.forName(className);
+//		}
+//		catch(final ClassNotFoundException ignored){}
+//		return type;
+//	}
 
-	private static Class<?> getClassFromResource(final JarEntry resource){
-		Class<?> cls = null;
-		final String resourceName = resource.getName();
-		if(!resource.isDirectory() && resourceName.endsWith(EXTENSION_CLASS)){
-			final String className = resourceName.substring(
-				(resourceName.startsWith(BOOT_INF_CLASSES)? BOOT_INF_CLASSES.length(): 0),
-				resourceName.length() - EXTENSION_CLASS.length());
-			cls = getClassFromName(resourceUriToPackageName(className));
-		}
-		return cls;
-	}
-
-	private static Class<?> getClassFromFilename(final String packageName, final String filename){
-		Class<?> cls = null;
-		if(filename.endsWith(EXTENSION_CLASS)){
-			final String className = filename.substring(0, filename.length() - EXTENSION_CLASS.length());
-			cls = getClassFromName(packageName + POINT + className);
-		}
-		return cls;
-	}
-
-	private static Class<?> getClassFromName(final String className){
-		Class<?> type = null;
-		try{
-			type = Class.forName(className);
-		}
-		catch(final ClassNotFoundException ignored){}
-		return type;
-	}
-
-	@SuppressWarnings("unchecked")
-	private static void addIf(final Collection<Class<?>> classes, final Class<?> cls, final Object type){
-		if(cls != null && !cls.isInterface() && (cls.isAnnotationPresent((Class<? extends Annotation>)type) || ((Class<?>)type).isAssignableFrom(cls)))
-			classes.add(cls);
-	}
+//	@SuppressWarnings("unchecked")
+//	private static void addIf(final Collection<Class<?>> classes, final Class<?> cls, final Object type){
+//		if(cls != null && !cls.isInterface() && (cls.isAnnotationPresent((Class<? extends Annotation>)type) || ((Class<?>)type).isAssignableFrom(cls)))
+//			classes.add(cls);
+//	}
 
 	/** Returns a resource uri corresponding to the package name. */
-	private static String packageNameToResourceUri(final String packageName){
-		return packageName.replace('.', '/');
-	}
+//	private static String packageNameToResourceUri(final String packageName){
+//		return packageName.replace('.', '/');
+//	}
 
 	/** Derive a <em>package name</em> for a resource URI. */
-	private static String resourceUriToPackageName(final String resourceUri){
-		return resourceUri.replace('/', '.');
-	}
+//	private static String resourceUriToPackageName(final String resourceUri){
+//		return resourceUri.replace('/', '.');
+//	}
 
 }

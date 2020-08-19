@@ -9,7 +9,7 @@ import java.util.jar.JarInputStream;
 import java.util.zip.ZipEntry;
 
 
-public class JarInputDirectory implements Vfs.Directory{
+public class JarInputDirectory implements VirtualFileSystem.Directory{
 	private final URL url;
 	JarInputStream jarInputStream;
 	long cursor = 0;
@@ -23,7 +23,7 @@ public class JarInputDirectory implements Vfs.Directory{
 		return url.getPath();
 	}
 
-	public Iterable<Vfs.File> getFiles(){
+	public Iterable<VirtualFileSystem.File> getFiles(){
 		return () -> new Iterator<>(){
 			{
 				try{
@@ -34,7 +34,7 @@ public class JarInputDirectory implements Vfs.Directory{
 				}
 			}
 
-			Vfs.File entry = null;
+			VirtualFileSystem.File entry = null;
 
 			@Override
 			public boolean hasNext(){
@@ -42,13 +42,13 @@ public class JarInputDirectory implements Vfs.Directory{
 			}
 
 			@Override
-			public Vfs.File next(){
-				final Vfs.File next = entry;
+			public VirtualFileSystem.File next(){
+				final VirtualFileSystem.File next = entry;
 				entry = null;
 				return next;
 			}
 
-			private Vfs.File computeNext(){
+			private VirtualFileSystem.File computeNext(){
 				while(true){
 					try{
 						final ZipEntry entry = jarInputStream.getNextJarEntry();
