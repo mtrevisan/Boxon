@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -166,51 +167,64 @@ public final class AnnotationHelper{
 		try{
 			final String path = resource.toURI().getSchemeSpecificPart();
 
-			final File file = new File(path);
-			if(file.exists())
-				return file;
+			return getFileIfExists(path);
 		}
-		catch(final URISyntaxException ignored){}
-
-		{
-			String path = URLDecoder.decode(resource.getPath(), StandardCharsets.UTF_8);
-			final int idx = path.lastIndexOf(".jar!");
-			if(idx >= 0)
-				path = path.substring(0, idx + ".jar".length());
-
-			final File file = new File(path);
-			if(file.exists())
-				return file;
-		}
+		catch(final URISyntaxException | FileNotFoundException ignored){}
 
 		try{
-			String path = resource.toExternalForm();
-			if(path.startsWith("jar:"))
-				path = path.substring("jar:".length());
-			else if(path.startsWith("wsjar:"))
-				path = path.substring("wsjar:".length());
-			else if(path.startsWith("file:"))
-				path = path.substring("file:".length());
-			int idx = path.indexOf(".jar!");
-			if(idx >= 0)
-				path = path.substring(0, idx + ".jar".length());
-			idx = path.indexOf(".war!");
-			if(idx >= 0)
-				path = path.substring(0, idx + ".war".length());
+			final String path = extractDecodedPath(resource);
+
+			return getFileIfExists(path);
+		}
+		catch(final FileNotFoundException ignored){}
+
+		try{
+			String path = extractExternalFormPath(resource);
 
 			File file = new File(path);
 			if(file.exists())
 				return file;
 
 			path = path.replace("%20", " ");
-			file = new File(path);
-			if(file.exists())
-				return file;
+			return getFileIfExists(path);
 		}
 		catch(final Exception ignored){}
 
 		final String path = resource.getFile();
 		return new File(path);
+	}
+
+	private static String extractDecodedPath(final URL resource){
+		String path = URLDecoder.decode(resource.getPath(), StandardCharsets.UTF_8);
+		final int idx = path.lastIndexOf(".jar!");
+		if(idx >= 0)
+			path = path.substring(0, idx + ".jar".length());
+		return path;
+	}
+
+	private static String extractExternalFormPath(final URL resource){
+		String path = resource.toExternalForm();
+		if(path.startsWith("jar:"))
+			path = path.substring("jar:".length());
+		else if(path.startsWith("wsjar:"))
+			path = path.substring("wsjar:".length());
+		else if(path.startsWith("file:"))
+			path = path.substring("file:".length());
+		int idx = path.indexOf(".jar!");
+		if(idx >= 0)
+			path = path.substring(0, idx + ".jar".length());
+		idx = path.indexOf(".war!");
+		if(idx >= 0)
+			path = path.substring(0, idx + ".war".length());
+		return path;
+	}
+
+	private static File getFileIfExists(String path) throws FileNotFoundException{
+		final File file = new File(path);
+		if(!file.exists())
+			throw new FileNotFoundException();
+
+		return file;
 	}
 
 	/**
