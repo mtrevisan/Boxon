@@ -135,7 +135,7 @@ public abstract class VirtualFileSystem{
 	 * <p>BUNDLE - for bundle protocol, using eclipse FileLocator (should be provided in classpath).
 	 * <p>JAR_INPUT_STREAM - creates a {@link JarInputDirectory} over JAR files, using Java's JarInputStream.
 	 */
-	private enum DefaultUrlTypes implements UrlType{
+	public enum DefaultUrlTypes implements UrlType{
 		JAR_FILE{
 			public boolean matches(final URL url){
 				return (url.getProtocol().equals("file") && hasJarFileInPath(url));

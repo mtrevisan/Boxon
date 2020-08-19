@@ -61,6 +61,12 @@ public class ConfigurationBuilder implements Configuration{
 		urls = new HashSet<>();
 	}
 
+	public ConfigurationBuilder withPackages(final Class<?>... classes){
+		for(final Class<?> cls : classes)
+			withUrls(ClasspathHelper.forPackage(cls.getPackageName()));
+		return this;
+	}
+
 	public ConfigurationBuilder withPackages(final String... packages){
 		for(final String pkg : packages)
 			withUrls(ClasspathHelper.forPackage(pkg));

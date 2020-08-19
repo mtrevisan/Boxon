@@ -4,6 +4,7 @@ import io.github.mtrevisan.boxon.internal.JavaHelper;
 import org.slf4j.Logger;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -62,6 +63,36 @@ public final class ClasspathHelper{
 			new ClassLoader[]{});
 	}
 
+
+	/**
+	 * Returns the URL that contains a {@code Class}.
+	 * <p>
+	 * This searches for the class using {@link ClassLoader#getResource(String)}.
+	 * <p>
+	 * If the optional {@link ClassLoader}s are not specified, then both {@link #contextClassLoader()}
+	 * and {@link #staticClassLoader()} are used for {@link ClassLoader#getResources(String)}.
+	 *
+	 * @return the URL containing the class, null if not found
+	 */
+	public static URL forClass(Class<?> aClass, ClassLoader... classLoaders){
+		final ClassLoader[] loaders = classLoaders(classLoaders);
+		final String resourceName = aClass.getName().replace(".", "/") + ".class";
+		for(ClassLoader classLoader : loaders){
+			try{
+				final URL url = classLoader.getResource(resourceName);
+				if(url != null){
+					final String normalizedUrl = url.toExternalForm().substring(0, url.toExternalForm().lastIndexOf(aClass.getPackage().getName().replace(".", "/")));
+					return new URL(normalizedUrl);
+				}
+			}
+			catch(MalformedURLException e){
+				if(LOGGER != null)
+					LOGGER.warn("Could not get URL", e);
+			}
+		}
+		return null;
+	}
+
 	/**
 	 * Returns a distinct collection of URLs based on a package name.
 	 * <p>
@@ -101,9 +132,9 @@ public final class ClasspathHelper{
 	private static Collection<URL> forResource(final String resourceName, final ClassLoader... classLoaders){
 		final List<URL> result = new ArrayList<>();
 		final ClassLoader[] loaders = classLoaders(classLoaders);
-		for(final ClassLoader classLoader : loaders){
+		for(final ClassLoader loader : loaders){
 			try{
-				final Enumeration<URL> urls = classLoader.getResources(resourceName);
+				final Enumeration<URL> urls = loader.getResources(resourceName);
 				while(urls.hasMoreElements()){
 					final URL url = urls.nextElement();
 					final int index = url.toExternalForm().lastIndexOf(resourceName);

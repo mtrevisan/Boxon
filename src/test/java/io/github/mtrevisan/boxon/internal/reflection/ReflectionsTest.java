@@ -1,10 +1,18 @@
 package io.github.mtrevisan.boxon.internal.reflection;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 
 class ReflectionsTest{
@@ -30,23 +38,23 @@ class ReflectionsTest{
 		@interface B{}
 
 		@A
-		class A1{}
+		static class A1{}
 
 		@B
-		class B1{}
+		static class B1{}
 
 		@A
-		class A2{}
+		static class A2{}
 
 		@Retention(RetentionPolicy.RUNTIME)
 		public @interface TestAnnotation{
-			public String value();
+			String value();
 		}
 
 		@TestAnnotation("foo foo foo")
-		public class ActualFunctionalityClass{
+		public static class ActualFunctionalityClass{
 			@TestAnnotation("bar bar bar")
-			class Thing{}
+			static class Thing{}
 		}
 
 		@Repeatable(Names.class)
@@ -93,64 +101,58 @@ class ReflectionsTest{
 		}
 	}
 
+	static Reflections reflections;
 
-//	@Test
-//	void test_cyclic_annotation(){
-//		Reflections reflections = new Reflections(ReflectionsTestModel.class);
-//		Assertions.assertThat(reflections.getTypesAnnotatedWith(ReflectionsTestModel.CyclicAnnotation.class), are(ReflectionsTestModel.CyclicAnnotation.class));
-//	}
-//
-//	@Test
-//	void no_exception_when_configured_scanner_store_is_empty(){
-//		Reflections reflections = new Reflections(new ConfigurationBuilder()
-//			.withUrls(ClasspathHelper.forPackage("my.project.prefix"));
-//
-//		reflections.getSubTypesOf(String.class);
-//	}
-//
-//	@Test
-//	void getAllAnnotated_returns_meta_annotations(){
-//		Reflections reflections = new Reflections(ReflectionsTestModel.class);
-//		for(Class<?> type : reflections.getTypesAnnotatedWith(ReflectionsTestModel.Meta.class)){
-//			Set<Annotation> allAnnotations = ReflectionUtils.getAllAnnotations(type);
-//			List<? extends Class<? extends Annotation>> collect = allAnnotations.stream().map(Annotation::annotationType).collect(Collectors.toList());
-//			Assertions.assertTrue(collect.contains(ReflectionsTestModel.Meta.class));
-//		}
-//
-//		ReflectionsTestModel.Meta meta = new ReflectionsTestModel.Meta(){
-//			@Override
-//			public String value(){ return "a"; }
-//
-//			@Override
-//			public Class<? extends Annotation> annotationType(){ return Meta.class; }
-//		};
-//		for(Class<?> type : reflections.getTypesAnnotatedWith(meta)){
-//			Set<Annotation> allAnnotations = ReflectionUtils.getAllAnnotations(type);
-//			List<? extends Class<? extends Annotation>> collect = allAnnotations.stream().map(Annotation::annotationType).collect(Collectors.toList());
-//			Assertions.assertTrue(collect.contains(ReflectionsTestModel.Meta.class));
-//		}
-//	}
-//
-//	@Test
-//	void test_custom_url_class_loader() throws MalformedURLException{
-//		URL externalUrl = new URL("jar:file:" + ReflectionsTest.getUserDir() + "/src/test/resources/another-project.jar!/");
-//		URLClassLoader externalClassLoader = new URLClassLoader(new URL[]{externalUrl}, Thread.currentThread().getContextClassLoader());
-//
-//		Reflections reflections = new Reflections(new ConfigurationBuilder().addUrls(ClasspathHelper.forClass(TestModel.class)).addUrls(externalUrl).addClassLoaders(externalClassLoader));
-//
-//		Assertions.assertEquals(toStringSorted(reflections.getSubTypesOf(TestModel.C1.class)), "[class another.project.AnotherTestModel$C2, " + "class org.reflections.TestModel$C2, " + "class org.reflections.TestModel$C3, " + "class org.reflections.TestModel$C5]");
-//	}
-//
-//	@Test
-//	void test_repeatable(){
-//		Reflections ref = new Reflections(ReflectionsTestModel.class);
-//		Set<Class<?>> clazzes = ref.getTypesAnnotatedWith(ReflectionsTestModel.Name.class);
-//		Assertions.assertTrue(clazzes.contains(ReflectionsTestModel.SingleName.class));
-//		Assertions.assertFalse(clazzes.contains(ReflectionsTestModel.MultiName.class));
-//
-//		clazzes = ref.getTypesAnnotatedWith(ReflectionsTestModel.Names.class);
-//		Assertions.assertFalse(clazzes.contains(ReflectionsTestModel.SingleName.class));
-//		Assertions.assertTrue(clazzes.contains(ReflectionsTestModel.MultiName.class));
-//	}
+
+	@BeforeAll
+	static void init(){
+		reflections = new Reflections(new ConfigurationBuilder()
+			.withPackages(ReflectionsTestModel.class));
+	}
+
+	@Test
+	void cyclicAnnotation(){
+		final Set<Class<?>> annotations = reflections.getTypesAnnotatedWith(ReflectionsTestModel.CyclicAnnotation.class);
+
+		for(Class<?> annotation : annotations)
+			Assertions.assertEquals(ReflectionsTestModel.CyclicAnnotation.class, annotation);
+	}
+
+	@Test
+	void repeatable(){
+		Set<Class<?>> classes = reflections.getTypesAnnotatedWith(ReflectionsTestModel.Name.class);
+		Assertions.assertTrue(classes.contains(ReflectionsTestModel.SingleName.class));
+		Assertions.assertFalse(classes.contains(ReflectionsTestModel.MultiName.class));
+
+		classes = reflections.getTypesAnnotatedWith(ReflectionsTestModel.Names.class);
+		Assertions.assertFalse(classes.contains(ReflectionsTestModel.SingleName.class));
+		Assertions.assertTrue(classes.contains(ReflectionsTestModel.MultiName.class));
+	}
+
+	@Test
+	void testSubTypesOf() {
+		Assertions.assertEquals(new HashSet<>(Arrays.asList(TestModel.I2.class, TestModel.C1.class, TestModel.C2.class, TestModel.C3.class, TestModel.C5.class)), reflections.getSubTypesOf(TestModel.I1.class));
+		Assertions.assertEquals(new HashSet<>(Arrays.asList(TestModel.C2.class, TestModel.C3.class, TestModel.C5.class)), reflections.getSubTypesOf(TestModel.C1.class));
+	}
+
+	@Test
+	void typesAnnotatedWith() {
+		Assertions.assertEquals(new HashSet<>(Arrays.asList(TestModel.AI1.class)), reflections.getTypesAnnotatedWithHonorInherited(TestModel.MAI1.class));
+		Assertions.assertEquals(new HashSet<>(Arrays.asList(TestModel.I2.class)), reflections.getTypesAnnotatedWithHonorInherited(TestModel.AI2.class));
+		Assertions.assertEquals(new HashSet<>(Arrays.asList(TestModel.C1.class, TestModel.C2.class, TestModel.C3.class, TestModel.C5.class)), reflections.getTypesAnnotatedWithHonorInherited(TestModel.AC1.class));
+		Assertions.assertEquals(new HashSet<>(Arrays.asList(TestModel.C1.class)), reflections.getTypesAnnotatedWithHonorInherited(TestModel.AC1n.class));
+		Assertions.assertEquals(new HashSet<>(Arrays.asList(TestModel.AI1.class, TestModel.I1.class, TestModel.I2.class, TestModel.C1.class, TestModel.C2.class, TestModel.C3.class, TestModel.C5.class)), reflections.getTypesAnnotatedWith(TestModel.MAI1.class));
+		Assertions.assertEquals(new HashSet<>(Arrays.asList(TestModel.I1.class, TestModel.I2.class, TestModel.C1.class, TestModel.C2.class, TestModel.C3.class, TestModel.C5.class)), reflections.getTypesAnnotatedWith(TestModel.AI1.class));
+		Assertions.assertEquals(new HashSet<>(Arrays.asList(TestModel.I2.class, TestModel.C1.class, TestModel.C2.class, TestModel.C3.class, TestModel.C5.class)), reflections.getTypesAnnotatedWith(TestModel.AI2.class));
+		Assertions.assertTrue(reflections.getTypesAnnotatedWith(TestModel.AM1.class).isEmpty());
+
+		//annotation member value matching
+		TestModel.AC2 ac2 = new TestModel.AC2() {
+			public String value() {return "ugh?!";}
+			public Class<? extends Annotation> annotationType() {return TestModel.AC2.class;}};
+
+		Assertions.assertEquals(new HashSet<>(Arrays.asList(TestModel.C3.class, TestModel.C5.class, TestModel.I3.class, TestModel.C6.class, TestModel.AC3.class, TestModel.C7.class)), reflections.getTypesAnnotatedWith(ac2));
+		Assertions.assertEquals(new HashSet<>(Arrays.asList(TestModel.C3.class, TestModel.I3.class, TestModel.AC3.class)), reflections.getTypesAnnotatedWithHonorInherited(ac2));
+	}
 
 }
