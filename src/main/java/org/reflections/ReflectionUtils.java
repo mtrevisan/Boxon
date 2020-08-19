@@ -23,7 +23,7 @@ public abstract class ReflectionUtils{
 	/**
 	 * would include {@code Object.class} when {@link #getSuperTypes(Class)}. default is false.
 	 */
-	public static boolean includeObject = false;
+	public static final boolean includeObject = false;
 
 
 	/**
@@ -33,12 +33,12 @@ public abstract class ReflectionUtils{
 	 * @return	The set of classes.
 	 */
 	public static Set<Class<?>> getSuperTypes(final Class<?> type){
-		Set<Class<?>> result = new LinkedHashSet<>();
-		Class<?> superclass = type.getSuperclass();
-		Class<?>[] interfaces = type.getInterfaces();
+		final Set<Class<?>> result = new LinkedHashSet<>();
+		final Class<?> superclass = type.getSuperclass();
+		final Class<?>[] interfaces = type.getInterfaces();
 		if(superclass != null && (includeObject || !superclass.equals(Object.class)))
 			result.add(superclass);
-		if(interfaces != null && interfaces.length > 0)
+		if(interfaces.length > 0)
 			result.addAll(Arrays.asList(interfaces));
 		return result;
 	}
@@ -74,56 +74,53 @@ public abstract class ReflectionUtils{
 	 * @param typeName	The type name.
 	 * @return	The classes.
 	 */
-	public static Class<?> forName(String typeName){
+	public static Class<?> forName(final String typeName){
 		final ClassLoader[] classLoaders = new ClassLoader[0];
 		return forName(typeName, classLoaders);
 	}
 
-	public static Class<?> forName(String typeName, ClassLoader... classLoaders){
-		if(getPrimitiveNames().contains(typeName)){
+	public static Class<?> forName(final String typeName, final ClassLoader... classLoaders){
+		if(getPrimitiveNames().contains(typeName))
 			return getPrimitiveTypes().get(getPrimitiveNames().indexOf(typeName));
-		}
 		else{
 			String type;
 			if(typeName.contains("[")){
-				int i = typeName.indexOf("[");
+				final int i = typeName.indexOf("[");
 				type = typeName.substring(0, i);
-				String array = typeName.substring(i).replace("]", "");
+				final String array = typeName.substring(i).replace("]", "");
 
-				if(getPrimitiveNames().contains(type)){
+				if(getPrimitiveNames().contains(type))
 					type = getPrimitiveDescriptors().get(getPrimitiveNames().indexOf(type));
-				}
-				else{
+				else
 					type = "L" + type + ";";
-				}
 
 				type = array + type;
 			}
-			else{
+			else
 				type = typeName;
-			}
 
-			List<ReflectionsException> reflectionsExceptions = new ArrayList<>();
-			for(ClassLoader classLoader : ClasspathHelper.classLoaders(classLoaders)){
+
+			final List<ReflectionsException> reflectionsExceptions = new ArrayList<>();
+			for(final ClassLoader classLoader : ClasspathHelper.classLoaders(classLoaders)){
 				if(type.contains("[")){
 					try{
 						return Class.forName(type, false, classLoader);
-					}catch(Throwable e){
+					}
+					catch(final Throwable e){
 						reflectionsExceptions.add(new ReflectionsException("could not get type for name " + typeName, e));
 					}
 				}
 				try{
 					return classLoader.loadClass(type);
-				}catch(Throwable e){
+				}
+				catch(final Throwable e){
 					reflectionsExceptions.add(new ReflectionsException("could not get type for name " + typeName, e));
 				}
 			}
 
-			if(Reflections.log != null){
-				for(ReflectionsException reflectionsException : reflectionsExceptions){
+			if(Reflections.log != null)
+				for(final ReflectionsException reflectionsException : reflectionsExceptions)
 					Reflections.log.warn("could not get type for name " + typeName + " from any class loader", reflectionsException);
-				}
-			}
 
 			return null;
 		}
@@ -137,7 +134,7 @@ public abstract class ReflectionUtils{
 	 * @return	The classes.
 	 * @param <T>	The type of the returned classes.
 	 */
-	public static <T> Set<Class<? extends T>> forNames(final Collection<String> classes, ClassLoader... classLoaders){
+	public static <T> Set<Class<? extends T>> forNames(final Collection<String> classes, final ClassLoader... classLoaders){
 		return classes.stream()
 			.map(className -> (Class<? extends T>)forName(className, classLoaders))
 			.filter(Objects::nonNull)
@@ -146,7 +143,7 @@ public abstract class ReflectionUtils{
 
 
 	private static List<String> primitiveNames;
-	private static List<Class> primitiveTypes;
+	private static List<Class<?>> primitiveTypes;
 	private static List<String> primitiveDescriptors;
 
 	private static void initPrimitives(){
@@ -162,7 +159,7 @@ public abstract class ReflectionUtils{
 		return primitiveNames;
 	}
 
-	private static List<Class> getPrimitiveTypes(){
+	private static List<Class<?>> getPrimitiveTypes(){
 		initPrimitives();
 		return primitiveTypes;
 	}
@@ -172,13 +169,14 @@ public abstract class ReflectionUtils{
 		return primitiveDescriptors;
 	}
 
-	private static boolean areAnnotationMembersMatching(Annotation annotation1, Annotation annotation2){
+	private static boolean areAnnotationMembersMatching(final Annotation annotation1, final Annotation annotation2){
 		if(annotation2 != null && annotation1.annotationType() == annotation2.annotationType()){
-			for(Method method : annotation1.annotationType().getDeclaredMethods()){
+			for(final Method method : annotation1.annotationType().getDeclaredMethods()){
 				try{
 					if(!method.invoke(annotation1).equals(method.invoke(annotation2)))
 						return false;
-				}catch(Exception e){
+				}
+				catch(final Exception e){
 					throw new ReflectionsException(String.format("could not invoke method %s on annotation %s", method.getName(), annotation1.annotationType()), e);
 				}
 			}

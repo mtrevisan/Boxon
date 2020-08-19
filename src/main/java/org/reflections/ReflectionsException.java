@@ -3,15 +3,15 @@ package org.reflections;
 
 public class ReflectionsException extends RuntimeException{
 
-	public ReflectionsException(String message){
+	public ReflectionsException(final String message){
 		super(message);
 	}
 
-	public ReflectionsException(String message, Throwable cause){
+	public ReflectionsException(final String message, final Throwable cause){
 		super(message, cause);
 	}
 
-	public ReflectionsException(Throwable cause){
+	public ReflectionsException(final Throwable cause){
 		super(cause);
 	}
 

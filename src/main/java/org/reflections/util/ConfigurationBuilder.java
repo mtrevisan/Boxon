@@ -26,9 +26,9 @@ import java.util.Set;
  */
 public class ConfigurationBuilder implements Configuration{
 
-	private Set<URL> urls;
+	private final Set<URL> urls;
 	//lazy
-	protected MetadataAdapter metadataAdapter;
+	protected MetadataAdapter<?> metadataAdapter;
 	private boolean expandSuperTypes = true;
 
 
@@ -77,7 +77,7 @@ public class ConfigurationBuilder implements Configuration{
 	 *
 	 * @return	The metadata adapter.
 	 */
-	public MetadataAdapter getMetadataAdapter(){
+	public MetadataAdapter<?> getMetadataAdapter(){
 		if(metadataAdapter != null)
 			return metadataAdapter;
 		else{

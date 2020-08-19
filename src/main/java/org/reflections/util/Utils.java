@@ -23,26 +23,26 @@ import java.util.stream.IntStream;
  */
 public abstract class Utils{
 
-	public static String repeat(String string, int times){
+	public static String repeat(final String string, final int times){
 		return IntStream.range(0, times).mapToObj(i -> string).collect(Collectors.joining());
 	}
 
-	public static boolean isEmpty(String s){
+	public static boolean isEmpty(final String s){
 		return s == null || s.length() == 0;
 	}
 
-	public static void close(InputStream closeable){
+	public static void close(final InputStream closeable){
 		try{
 			if(closeable != null)
 				closeable.close();
-		}catch(IOException e){
-			if(Reflections.log != null){
+		}
+		catch(final IOException e){
+			if(Reflections.log != null)
 				Reflections.log.warn("Could not close InputStream", e);
-			}
 		}
 	}
 
-	public static Logger findLogger(Class<?> aClass){
+	public static Logger findLogger(final Class<?> aClass){
 		try{
 			// This is to check whether an optional SLF4J binding is available. While SLF4J recommends that libraries
 			// "should not declare a dependency on any SLF4J binding but only depend on slf4j-api", doing so forces
@@ -50,19 +50,19 @@ public abstract class Utils{
 			// "slf4j.suppressInitError" system property in order to avoid the warning, which both is inconvenient.
 			Class.forName("org.slf4j.impl.StaticLoggerBinder");
 			return LoggerFactory.getLogger(aClass);
-		}catch(Throwable e){
+		}
+		catch(final Throwable e){
 			return null;
 		}
 	}
 
-	public static String name(Class type){
-		if(!type.isArray()){
+	public static String name(Class<?> type){
+		if(!type.isArray())
 			return type.getName();
-		}
 		else{
 			int dim = 0;
 			while(type.isArray()){
-				dim++;
+				dim ++;
 				type = type.getComponentType();
 			}
 			return type.getName() + repeat("[]", dim);
@@ -70,45 +70,46 @@ public abstract class Utils{
 	}
 
 
-	public static List<String> names(Collection<Class<?>> types){
+	public static List<String> names(final Collection<Class<?>> types){
 		return types.stream().map(Utils::name).collect(Collectors.toList());
 	}
 
-	public static List<String> names(Class<?>... types){
+	public static List<String> names(final Class<?>... types){
 		return names(Arrays.asList(types));
 	}
 
-	public static String name(Constructor constructor){
+	public static String name(final Constructor<?> constructor){
 		return constructor.getName() + "." + "<init>" + "(" + join(names(constructor.getParameterTypes()), ", ") + ")";
 	}
 
-	public static String name(Method method){
+	public static String name(final Method method){
 		return method.getDeclaringClass().getName() + "." + method.getName() + "(" + join(names(method.getParameterTypes()), ", ") + ")";
 	}
 
-	public static String name(Field field){
+	public static String name(final Field field){
 		return field.getDeclaringClass().getName() + "." + field.getName();
 	}
 
-	public static String index(Class<?> scannerClass){ return scannerClass.getSimpleName(); }
+	public static String index(final Class<?> scannerClass){ return scannerClass.getSimpleName(); }
 
-	public static <T> Predicate<T> and(Predicate... predicates){
+	@SuppressWarnings({"rawtypes", "unchecked"})
+	public static <T> Predicate<T> and(final Predicate... predicates){
 		return Arrays.stream(predicates).reduce(t -> true, Predicate::and);
 	}
 
-	public static String join(Collection<?> elements, String delimiter){
+	public static String join(final Collection<?> elements, final String delimiter){
 		return elements.stream().map(Object::toString).collect(Collectors.joining(delimiter));
 	}
 
-	public static <T> Set<T> filter(Collection<T> result, Predicate<? super T>... predicates){
+	public static <T> Set<T> filter(final Collection<T> result, final Predicate<? super T>... predicates){
 		return result.stream().filter(and(predicates)).collect(Collectors.toSet());
 	}
 
-	public static <T> Set<T> filter(Collection<T> result, Predicate<? super T> predicate){
+	public static <T> Set<T> filter(final Collection<T> result, final Predicate<? super T> predicate){
 		return result.stream().filter(predicate).collect(Collectors.toSet());
 	}
 
-	public static <T> Set<T> filter(T[] result, Predicate<? super T>... predicates){
+	public static <T> Set<T> filter(final T[] result, final Predicate<? super T>... predicates){
 		return Arrays.stream(result).filter(and(predicates)).collect(Collectors.toSet());
 	}
 }

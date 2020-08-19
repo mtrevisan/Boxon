@@ -43,6 +43,7 @@ public abstract class AbstractScanner implements Scanner{
 		this.configuration = configuration;
 	}
 
+	@SuppressWarnings("rawtypes")
 	protected MetadataAdapter getMetadataAdapter(){
 		return configuration.getMetadataAdapter();
 	}

@@ -2,7 +2,6 @@ package org.reflections.adapters;
 
 import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.ClassFile;
-import javassist.bytecode.MethodInfo;
 import javassist.bytecode.annotation.Annotation;
 import org.reflections.ReflectionsException;
 import org.reflections.vfs.Vfs;
@@ -18,7 +17,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 
-public class JavassistAdapter implements MetadataAdapter<ClassFile, MethodInfo>{
+public class JavassistAdapter implements MetadataAdapter<ClassFile>{
 
 	/**
 	 * setting this to false will result in returning only visible annotations from the relevant methods here (only {@link java.lang.annotation.RetentionPolicy#RUNTIME})

@@ -27,7 +27,7 @@ import static org.reflections.util.Utils.names;
 
 public class Reflections{
 
-	public static Logger log = findLogger(Reflections.class);
+	public static final Logger log = findLogger(Reflections.class);
 
 	protected final transient Configuration configuration;
 	private final Set<Scanner> scanners = new HashSet<>(Arrays.asList(new TypeAnnotationsScanner(), new SubTypesScanner()));
@@ -44,16 +44,14 @@ public class Reflections{
 		this.configuration = configuration;
 		store = new Store();
 
-		if(scanners != null && !scanners.isEmpty()){
-			//inject to scanners
-			for(Scanner scanner : scanners)
-				scanner.setConfiguration(configuration);
+		//inject to scanners
+		for(final Scanner scanner : scanners)
+			scanner.setConfiguration(configuration);
 
-			scan();
+		scan();
 
-			if(configuration.shouldExpandSuperTypes())
-				expandSuperTypes();
-		}
+		if(configuration.shouldExpandSuperTypes())
+			expandSuperTypes();
 	}
 
 	protected Reflections(){
@@ -72,48 +70,47 @@ public class Reflections{
 			log.debug("going to scan these urls: {}", configuration.getUrls());
 		}
 
-		long time = System.currentTimeMillis();
+		final long time = System.currentTimeMillis();
 		int scannedUrls = 0;
 
 		for(final URL url : configuration.getUrls()){
 			try{
 				scan(url);
-				scannedUrls++;
-			}catch(ReflectionsException e){
-				if(log != null){
+				scannedUrls ++;
+			}
+			catch(final ReflectionsException e){
+				if(log != null)
 					log.warn("could not create Vfs.Dir from url. ignoring the exception and continuing", e);
-				}
 			}
 		}
 
-		if(log != null){
+		if(log != null)
 			log.info(format("Reflections took %d ms to scan %d urls", System.currentTimeMillis() - time, scannedUrls));
-		}
 	}
 
-	protected void scan(URL url){
-		Vfs.Dir dir = Vfs.fromURL(url);
+	protected void scan(final URL url){
+		final Vfs.Dir dir = Vfs.fromURL(url);
 
 		try{
 			for(final Vfs.File file : dir.getFiles()){
 				// scan if inputs filter accepts file relative path or fqn
-				String path = file.getRelativePath();
-				String fqn = path.replace('/', '.');
+				final String path = file.getRelativePath();
+				final String fqn = path.replace('/', '.');
 				Object classObject = null;
-				for(Scanner scanner : scanners){
+				for(final Scanner scanner : scanners){
 					try{
-						if(scanner.acceptsInput(path) || scanner.acceptsInput(fqn)){
+						if(scanner.acceptsInput(path) || scanner.acceptsInput(fqn))
 							classObject = scanner.scan(file, classObject, store);
-						}
-					}catch(Exception e){
-						if(log != null){
+					}
+					catch(final Exception e){
+						if(log != null)
 							// SLF4J will filter out Throwables from the format string arguments.
 							log.debug("could not scan file {} in url {} with scanner {}", file.getRelativePath(), url.toExternalForm(), scanner.getClass().getSimpleName(), e);
-						}
 					}
 				}
 			}
-		}finally{
+		}
+		finally{
 			dir.close();
 		}
 	}
@@ -130,25 +127,24 @@ public class Reflections{
 	 * </ul>
 	 */
 	public void expandSuperTypes(){
-		String index = index(SubTypesScanner.class);
-		Set<String> keys = store.keys(index);
+		final String index = index(SubTypesScanner.class);
+		final Set<String> keys = store.keys(index);
 		keys.removeAll(store.values(index));
-		for(String key : keys){
+		for(final String key : keys){
 			final Class<?> type = forName(key);
 			if(type != null)
 				expandSupertypes(store, key, type);
 		}
 	}
 
-	private void expandSupertypes(Store store, String key, Class<?> type){
-		for(Class<?> supertype : ReflectionUtils.getSuperTypes(type)){
+	private void expandSupertypes(final Store store, final String key, final Class<?> type){
+		for(final Class<?> supertype : ReflectionUtils.getSuperTypes(type))
 			if(store.put(SubTypesScanner.class, supertype.getName(), key)){
 				if(log != null)
 					log.debug("expanded subtype {} -> {}", supertype.getName(), key);
 
 				expandSupertypes(store, supertype.getName(), supertype);
 			}
-		}
 	}
 
 	//query
@@ -193,8 +189,8 @@ public class Reflections{
 	 * @param honorInherited	Whether to honor inherited.
 	 * @return	The set of classes.
 	 */
-	public Set<Class<?>> getTypesAnnotatedWith(final Class<? extends Annotation> annotation, boolean honorInherited){
-		Set<String> annotated = store.get(TypeAnnotationsScanner.class, annotation.getName());
+	public Set<Class<?>> getTypesAnnotatedWith(final Class<? extends Annotation> annotation, final boolean honorInherited){
+		final Set<String> annotated = store.get(TypeAnnotationsScanner.class, annotation.getName());
 		annotated.addAll(getAllAnnotated(annotated, annotation, honorInherited));
 		return forNames(annotated);
 	}
@@ -220,29 +216,28 @@ public class Reflections{
 	 * @param honorInherited	Whether to honor inherited.
 	 * @return	The set of classes.
 	 */
-	public Set<Class<?>> getTypesAnnotatedWith(final Annotation annotation, boolean honorInherited){
-		Set<String> annotated = store.get(TypeAnnotationsScanner.class, annotation.annotationType().getName());
-		Set<Class<?>> allAnnotated = filter(forNames(annotated), withAnnotation(annotation));
-		Set<Class<?>> classes = forNames(filter(getAllAnnotated(names(allAnnotated), annotation.annotationType(), honorInherited), s -> !annotated.contains(s)));
+	public Set<Class<?>> getTypesAnnotatedWith(final Annotation annotation, final boolean honorInherited){
+		final Set<String> annotated = store.get(TypeAnnotationsScanner.class, annotation.annotationType().getName());
+		final Set<Class<?>> allAnnotated = filter(forNames(annotated), withAnnotation(annotation));
+		final Set<Class<?>> classes = forNames(filter(getAllAnnotated(names(allAnnotated), annotation.annotationType(), honorInherited), s -> !annotated.contains(s)));
 		allAnnotated.addAll(classes);
 		return allAnnotated;
 	}
 
-	protected Collection<String> getAllAnnotated(Collection<String> annotated, Class<? extends Annotation> annotation, boolean honorInherited){
+	protected Collection<String> getAllAnnotated(final Collection<String> annotated, final Class<? extends Annotation> annotation, final boolean honorInherited){
 		if(honorInherited){
 			if(annotation.isAnnotationPresent(Inherited.class)){
-				Set<String> subTypes = store.get(SubTypesScanner.class, filter(annotated, input -> {
+				final Set<String> subTypes = store.get(SubTypesScanner.class, filter(annotated, input -> {
 					final Class<?> type = forName(input);
 					return type != null && !type.isInterface();
 				}));
 				return store.getAllIncludingKeys(SubTypesScanner.class, subTypes);
 			}
-			else{
+			else
 				return annotated;
-			}
 		}
 		else{
-			Collection<String> subTypes = store.getAllIncludingKeys(TypeAnnotationsScanner.class, annotated);
+			final Collection<String> subTypes = store.getAllIncludingKeys(TypeAnnotationsScanner.class, annotated);
 			return store.getAllIncludingKeys(SubTypesScanner.class, subTypes);
 		}
 	}
@@ -256,10 +251,10 @@ public class Reflections{
 	 * @return Set of String, and not of Class, in order to avoid definition of all types in PermGen
 	 */
 	public Set<String> getAllTypes(){
-		Set<String> allTypes = new HashSet<>(store.getAll(SubTypesScanner.class, Object.class.getName()));
-		if(allTypes.isEmpty()){
+		final Set<String> allTypes = new HashSet<>(store.getAll(SubTypesScanner.class, Object.class.getName()));
+		if(allTypes.isEmpty())
 			throw new ReflectionsException("Couldn't find subtypes of Object. " + "Make sure SubTypesScanner initialized to include Object class - new SubTypesScanner(false)");
-		}
+
 		return allTypes;
 	}
 

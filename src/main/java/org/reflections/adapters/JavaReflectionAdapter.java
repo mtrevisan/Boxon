@@ -3,7 +3,6 @@ package org.reflections.adapters;
 import org.reflections.vfs.Vfs;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Member;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,7 +10,7 @@ import java.util.stream.Collectors;
 import static org.reflections.ReflectionUtils.forName;
 
 
-public class JavaReflectionAdapter implements MetadataAdapter<Class<?>, Member>{
+public class JavaReflectionAdapter implements MetadataAdapter<Class<?>>{
 
 	@Override
 	public String getClassName(final Class<?> cls){

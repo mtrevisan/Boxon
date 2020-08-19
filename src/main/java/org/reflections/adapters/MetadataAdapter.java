@@ -5,7 +5,7 @@ import org.reflections.vfs.Vfs;
 import java.util.List;
 
 
-public interface MetadataAdapter<C, M>{
+public interface MetadataAdapter<C>{
 
 	String getClassName(final C cls);
 

@@ -26,7 +26,7 @@ public interface Configuration{
 	 * @return	The metadata adapter used to fetch metadata from classes.
 	 */
 	@SuppressWarnings({"RawUseOfParameterizedType"})
-	MetadataAdapter getMetadataAdapter();
+	MetadataAdapter<?> getMetadataAdapter();
 
 	/**
 	 * Whether to expand super types after scanning, for super types that were not scanned.
