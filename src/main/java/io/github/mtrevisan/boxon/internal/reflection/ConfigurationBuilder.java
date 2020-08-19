@@ -24,10 +24,12 @@
  */
 package io.github.mtrevisan.boxon.internal.reflection;
 
+import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.reflection.adapters.JavaReflectionAdapter;
 import io.github.mtrevisan.boxon.internal.reflection.adapters.JavassistAdapter;
 import io.github.mtrevisan.boxon.internal.reflection.adapters.MetadataAdapterInterface;
 import io.github.mtrevisan.boxon.internal.reflection.util.ClasspathHelper;
+import org.slf4j.Logger;
 
 import java.net.URL;
 import java.util.Arrays;
@@ -47,6 +49,9 @@ import java.util.Set;
  * </code></pre>
  */
 public class ConfigurationBuilder implements Configuration{
+
+	private static final Logger LOGGER = JavaHelper.getLoggerFor(ConfigurationBuilder.class);
+
 
 	private final Set<URL> urls;
 	protected MetadataAdapterInterface<?> metadataAdapter;
@@ -106,8 +111,8 @@ public class ConfigurationBuilder implements Configuration{
 				return (metadataAdapter = new JavassistAdapter());
 			}
 			catch(final Throwable e){
-				if(Reflections.LOGGER != null)
-					Reflections.LOGGER.warn("could not create JavassistAdapter, using JavaReflectionAdapter", e);
+				if(LOGGER != null)
+					LOGGER.warn("could not create JavassistAdapter, using JavaReflectionAdapter", e);
 
 				return (metadataAdapter = new JavaReflectionAdapter());
 			}
@@ -121,7 +126,6 @@ public class ConfigurationBuilder implements Configuration{
 
 	/**
 	 * if set to true, Reflections will expand super types after scanning.
-	 * <p>see {@link Reflections#expandSuperTypes()}.</p>
 	 *
 	 * @param expandSuperTypes	Whether to expand super types.
 	 * @return	The builder, for easy concatenation.
