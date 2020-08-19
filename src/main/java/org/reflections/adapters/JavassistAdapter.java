@@ -1,5 +1,6 @@
 package org.reflections.adapters;
 
+import io.github.mtrevisan.boxon.internal.DynamicArray;
 import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.ClassFile;
 import javassist.bytecode.annotation.Annotation;
@@ -10,17 +11,13 @@ import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 
 public class JavassistAdapter implements MetadataAdapter<ClassFile>{
 
 	/**
-	 * setting this to false will result in returning only visible annotations from the relevant methods here (only {@link java.lang.annotation.RetentionPolicy#RUNTIME})
+	 * Setting this to false will result in returning only visible annotations from the relevant methods here
+	 * (only {@link java.lang.annotation.RetentionPolicy#RUNTIME}).
 	 */
 	public static final boolean includeInvisibleTag = true;
 
@@ -36,28 +33,31 @@ public class JavassistAdapter implements MetadataAdapter<ClassFile>{
 	}
 
 	@Override
-	public List<String> getInterfacesNames(final ClassFile cls){
-		return Arrays.asList(cls.getInterfaces());
+	public String[] getInterfacesNames(final ClassFile cls){
+		return cls.getInterfaces();
 	}
-
 
 	@Override
-	public List<String> getClassAnnotationNames(final ClassFile aClass){
-		return getAnnotationNames(
-			(AnnotationsAttribute)aClass.getAttribute(AnnotationsAttribute.visibleTag),
-			(includeInvisibleTag? (AnnotationsAttribute)aClass.getAttribute(AnnotationsAttribute.invisibleTag): null)
-		);
+	public String[] getClassAnnotationNames(final ClassFile type){
+		final DynamicArray<String> list = DynamicArray.create(String.class, 2);
+
+		AnnotationsAttribute attribute = (AnnotationsAttribute)type.getAttribute(AnnotationsAttribute.visibleTag);
+		extractAnnotationNames(attribute, list);
+
+		if(includeInvisibleTag){
+			attribute = (AnnotationsAttribute)type.getAttribute(AnnotationsAttribute.invisibleTag);
+			extractAnnotationNames(attribute, list);
+		}
+
+		return list.extractCopy();
 	}
 
-	private List<String> getAnnotationNames(final AnnotationsAttribute... annotationsAttributes){
-		if(annotationsAttributes != null)
-			return Arrays.stream(annotationsAttributes)
-				.filter(Objects::nonNull)
-				.flatMap(annotationsAttribute -> Arrays.stream(annotationsAttribute.getAnnotations()))
-				.map(Annotation::getTypeName)
-				.collect(Collectors.toList());
-		else
-			return Collections.emptyList();
+	private void extractAnnotationNames(final AnnotationsAttribute attribute, final DynamicArray<String> list){
+		if(attribute != null){
+			final Annotation[] annotations = attribute.getAnnotations();
+			for(int i = 0; i < annotations.length; i ++)
+				list.add(annotations[i].getTypeName());
+		}
 	}
 
 	@Override

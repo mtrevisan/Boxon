@@ -1,13 +1,9 @@
 package org.reflections.adapters;
 
+import org.reflections.ReflectionUtils;
 import org.reflections.vfs.Vfs;
 
 import java.lang.annotation.Annotation;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static org.reflections.ReflectionUtils.forName;
 
 
 public class JavaReflectionAdapter implements MetadataAdapter<Class<?>>{
@@ -24,35 +20,30 @@ public class JavaReflectionAdapter implements MetadataAdapter<Class<?>>{
 	}
 
 	@Override
-	public List<String> getInterfacesNames(final Class<?> cls){
+	public String[] getInterfacesNames(final Class<?> cls){
 		final Class<?>[] classes = cls.getInterfaces();
-		return Arrays.stream(classes)
-			.map(Class::getName)
-			.collect(Collectors.toList());
+		final String[] result = new String[classes.length];
+		for(int i = 0; i < classes.length; i ++)
+			result[i] = classes[i].getName();
+		return result;
 	}
 
 
 	@Override
-	public List<String> getClassAnnotationNames(final Class<?> cls){
-		return getAnnotationNames(cls.getDeclaredAnnotations());
-	}
-
-	private List<String> getAnnotationNames(final Annotation[] annotations){
-		return Arrays.stream(annotations)
-			.map(annotation -> annotation.annotationType().getName())
-			.collect(Collectors.toList());
+	public String[] getClassAnnotationNames(final Class<?> cls){
+		final Annotation[] annotations = cls.getDeclaredAnnotations();
+		final String[] result = new String[annotations.length];
+		for(int i = 0; i < annotations.length; i ++)
+			result[i] = annotations[i].annotationType().getName();
+		return result;
 	}
 
 	@Override
 	public Class<?> getOrCreateClassObject(final Vfs.File file){
-		return getOrCreateClassObject(file, (ClassLoader)null);
-	}
-
-	public Class<?> getOrCreateClassObject(final Vfs.File file, final ClassLoader... loaders){
 		final String name = file.getRelativePath()
 			.replace("/", ".")
 			.replace(".class", "");
-		return forName(name, loaders);
+		return ReflectionUtils.forName(name);
 	}
 
 }

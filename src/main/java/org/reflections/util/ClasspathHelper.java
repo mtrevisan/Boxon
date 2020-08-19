@@ -66,7 +66,7 @@ public abstract class ClasspathHelper{
 	 * If the optional {@link ClassLoader}s are not specified, then both {@link #contextClassLoader()}
 	 * and {@link #staticClassLoader()} are used for {@link ClassLoader#getResources(String)}.
 	 * <p>
-	 * The returned URLs retainsthe order of the given {@code classLoaders}.
+	 * The returned URLs retains the order of the given {@code classLoaders}.
 	 *
 	 * @param name	The package name.
 	 * @param classLoaders	The class loaders.
@@ -92,7 +92,7 @@ public abstract class ClasspathHelper{
 	 * @param classLoaders	The class loaders.
 	 * @return	The collection of URLs, not null.
 	 */
-	public static Collection<URL> forResource(final String resourceName, final ClassLoader... classLoaders){
+	private static Collection<URL> forResource(final String resourceName, final ClassLoader... classLoaders){
 		final List<URL> result = new ArrayList<>();
 		final ClassLoader[] loaders = classLoaders(classLoaders);
 		for(final ClassLoader classLoader : loaders){

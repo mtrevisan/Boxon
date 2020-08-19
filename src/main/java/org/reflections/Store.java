@@ -80,7 +80,7 @@ public class Store{
 		final List<String> workKeys = new ArrayList<>(keys);
 
 		final Set<String> result = new HashSet<>();
-		for(int i = 0; i < workKeys.size(); i++){
+		for(int i = 0; i < workKeys.size(); i ++){
 			final String key = workKeys.get(i);
 			if(result.add(key)){
 				final Collection<String> values = scannerMap.get(key);

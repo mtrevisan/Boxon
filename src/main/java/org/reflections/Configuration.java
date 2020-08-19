@@ -1,7 +1,6 @@
 package org.reflections;
 
 import org.reflections.adapters.MetadataAdapter;
-import org.reflections.util.ConfigurationBuilder;
 
 import java.net.URL;
 import java.util.Set;
@@ -25,7 +24,6 @@ public interface Configuration{
 	 *
 	 * @return	The metadata adapter used to fetch metadata from classes.
 	 */
-	@SuppressWarnings({"RawUseOfParameterizedType"})
 	MetadataAdapter<?> getMetadataAdapter();
 
 	/**

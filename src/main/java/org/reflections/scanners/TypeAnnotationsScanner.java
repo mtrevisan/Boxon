@@ -1,22 +1,23 @@
 package org.reflections.scanners;
 
 import org.reflections.Store;
-
-import java.util.List;
+import org.reflections.adapters.MetadataAdapter;
 
 
 /**
- * scans for class's annotations, where @Retention(RetentionPolicy.RUNTIME)
+ * Scans for class's annotations, where the annotation is marked with {@code @Retention(RetentionPolicy.RUNTIME)}.
  */
 @SuppressWarnings({"unchecked"})
 public class TypeAnnotationsScanner extends AbstractScanner{
 
 	public void scan(final Object cls, final Store store){
-		final String className = getMetadataAdapter().getClassName(cls);
+		@SuppressWarnings("rawtypes")
+		final MetadataAdapter metadataAdapter = getMetadataAdapter();
+		final String className = metadataAdapter.getClassName(cls);
 
-		final List<String> classAnnotationNames = getMetadataAdapter().getClassAnnotationNames(cls);
-		for(final String classAnnotationName : classAnnotationNames)
-			put(store, classAnnotationName, className);
+		final String[] classAnnotationNames = metadataAdapter.getClassAnnotationNames(cls);
+		for(int i = 0; i < classAnnotationNames.length; i ++)
+			put(store, classAnnotationNames[i], className);
 	}
 
 }

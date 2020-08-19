@@ -1,7 +1,6 @@
 package org.reflections.vfs;
 
 import org.reflections.ReflectionsException;
-import org.reflections.util.Utils;
 
 import java.io.IOException;
 import java.net.URL;
@@ -10,16 +9,13 @@ import java.util.jar.JarInputStream;
 import java.util.zip.ZipEntry;
 
 
-/**
- *
- */
 public class JarInputDir implements Vfs.Dir{
 	private final URL url;
 	JarInputStream jarInputStream;
 	long cursor = 0;
 	long nextCursor = 0;
 
-	public JarInputDir(URL url){
+	public JarInputDir(final URL url){
 		this.url = url;
 	}
 
@@ -28,12 +24,12 @@ public class JarInputDir implements Vfs.Dir{
 	}
 
 	public Iterable<Vfs.File> getFiles(){
-		return () -> new Iterator<Vfs.File>(){
-
+		return () -> new Iterator<>(){
 			{
 				try{
 					jarInputStream = new JarInputStream(url.openConnection().getInputStream());
-				}catch(Exception e){
+				}
+				catch(final Exception e){
 					throw new ReflectionsException("Could not open url connection", e);
 				}
 			}
@@ -47,7 +43,7 @@ public class JarInputDir implements Vfs.Dir{
 
 			@Override
 			public Vfs.File next(){
-				Vfs.File next = entry;
+				final Vfs.File next = entry;
 				entry = null;
 				return next;
 			}
@@ -55,7 +51,7 @@ public class JarInputDir implements Vfs.Dir{
 			private Vfs.File computeNext(){
 				while(true){
 					try{
-						ZipEntry entry = jarInputStream.getNextJarEntry();
+						final ZipEntry entry = jarInputStream.getNextJarEntry();
 						if(entry == null){
 							return null;
 						}
@@ -67,7 +63,7 @@ public class JarInputDir implements Vfs.Dir{
 						if(!entry.isDirectory()){
 							return new JarInputFile(entry, JarInputDir.this, cursor, nextCursor);
 						}
-					}catch(IOException e){
+					}catch(final IOException e){
 						throw new ReflectionsException("could not get next zip entry", e);
 					}
 				}
@@ -75,7 +71,4 @@ public class JarInputDir implements Vfs.Dir{
 		};
 	}
 
-	public void close(){
-		Utils.close(jarInputStream);
-	}
 }

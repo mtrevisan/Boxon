@@ -12,13 +12,13 @@ public class ZipFile implements Vfs.File{
 	private final ZipDir root;
 	private final ZipEntry entry;
 
-	public ZipFile(final ZipDir root, ZipEntry entry){
+	public ZipFile(final ZipDir root, final ZipEntry entry){
 		this.root = root;
 		this.entry = entry;
 	}
 
 	public String getName(){
-		String name = entry.getName();
+		final String name = entry.getName();
 		return name.substring(name.lastIndexOf("/") + 1);
 	}
 

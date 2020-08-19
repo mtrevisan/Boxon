@@ -12,7 +12,7 @@ import java.util.jar.JarFile;
 public class ZipDir implements Vfs.Dir{
 	final java.util.zip.ZipFile jarFile;
 
-	public ZipDir(JarFile jarFile){
+	public ZipDir(final JarFile jarFile){
 		this.jarFile = jarFile;
 	}
 
@@ -27,7 +27,7 @@ public class ZipDir implements Vfs.Dir{
 	public void close(){
 		try{
 			jarFile.close();
-		}catch(IOException e){
+		}catch(final IOException e){
 			if(Reflections.log != null){
 				Reflections.log.warn("Could not close JarFile", e);
 			}

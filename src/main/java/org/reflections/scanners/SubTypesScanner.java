@@ -1,25 +1,26 @@
 package org.reflections.scanners;
 
 import org.reflections.Store;
-
-import java.util.List;
+import org.reflections.adapters.MetadataAdapter;
 
 
 /**
- * scans for superclass and interfaces of a class, allowing a reverse lookup for subtypes
+ * Scans for superclass and interfaces of a class, allowing a reverse lookup for subtypes.
  */
 public class SubTypesScanner extends AbstractScanner{
 
 	@SuppressWarnings({"unchecked"})
 	public void scan(final Object cls, final Store store){
-		final String className = getMetadataAdapter().getClassName(cls);
-		final String superclass = getMetadataAdapter().getSuperclassName(cls);
+		@SuppressWarnings("rawtypes")
+		final MetadataAdapter metadataAdapter = getMetadataAdapter();
+		final String className = metadataAdapter.getClassName(cls);
+		final String superclass = metadataAdapter.getSuperclassName(cls);
 
 		put(store, superclass, className);
 
-		final List<String> interfacesNames = getMetadataAdapter().getInterfacesNames(cls);
-		for(final String interfaceName : interfacesNames)
-			put(store, interfaceName, className);
+		final String[] interfacesNames = metadataAdapter.getInterfacesNames(cls);
+		for(int i = 0; i < interfacesNames.length; i ++)
+			put(store, interfacesNames[i], className);
 	}
 
 }

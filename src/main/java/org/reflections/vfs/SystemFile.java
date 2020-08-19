@@ -12,7 +12,7 @@ public class SystemFile implements Vfs.File{
 	private final SystemDir root;
 	private final java.io.File file;
 
-	public SystemFile(final SystemDir root, java.io.File file){
+	public SystemFile(final SystemDir root, final java.io.File file){
 		this.root = root;
 		this.file = file;
 	}
@@ -22,7 +22,7 @@ public class SystemFile implements Vfs.File{
 	}
 
 	public String getRelativePath(){
-		String filepath = file.getPath().replace("\\", "/");
+		final String filepath = file.getPath().replace("\\", "/");
 		if(filepath.startsWith(root.getPath())){
 			return filepath.substring(root.getPath().length() + 1);
 		}
@@ -33,7 +33,7 @@ public class SystemFile implements Vfs.File{
 	public InputStream openInputStream(){
 		try{
 			return new FileInputStream(file);
-		}catch(FileNotFoundException e){
+		}catch(final FileNotFoundException e){
 			throw new RuntimeException(e);
 		}
 	}

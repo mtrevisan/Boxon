@@ -2,21 +2,18 @@ package org.reflections.adapters;
 
 import org.reflections.vfs.Vfs;
 
-import java.util.List;
-
 
 public interface MetadataAdapter<C>{
 
-	String getClassName(final C cls);
+	String getClassName(final C type);
 
-	String getSuperclassName(final C cls);
+	String getSuperclassName(final C type);
 
-	List<String> getInterfacesNames(final C cls);
+	String[] getInterfacesNames(final C type);
 
-	//
-	List<String> getClassAnnotationNames(final C aClass);
+	String[] getClassAnnotationNames(final C type);
 
-	C getOrCreateClassObject(Vfs.File file) throws Exception;
+	C getOrCreateClassObject(final Vfs.File file);
 
 	default boolean acceptsInput(final String file){
 		return file.endsWith(".class");

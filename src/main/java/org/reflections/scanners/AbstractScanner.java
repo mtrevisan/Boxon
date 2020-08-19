@@ -8,11 +8,14 @@ import org.reflections.util.Utils;
 import org.reflections.vfs.Vfs;
 
 
-@SuppressWarnings({"RawUseOfParameterizedType"})
 public abstract class AbstractScanner implements Scanner{
 
 	private Configuration configuration;
 
+
+	public void setConfiguration(final Configuration configuration){
+		this.configuration = configuration;
+	}
 
 	public boolean acceptsInput(final String file){
 		return getMetadataAdapter().acceptsInput(file);
@@ -25,11 +28,12 @@ public abstract class AbstractScanner implements Scanner{
 					.getOrCreateClassObject(file);
 			}
 			catch(final Exception e){
-				throw new ReflectionsException("could not create class object from file " + file.getRelativePath(), e);
+				throw new ReflectionsException("Could not create class object from file " + file.getRelativePath(), e);
 			}
 		}
 
 		scan(classObject, store);
+
 		return classObject;
 	}
 
@@ -39,23 +43,9 @@ public abstract class AbstractScanner implements Scanner{
 		store.put(Utils.index(getClass()), key, value);
 	}
 
-	public void setConfiguration(final Configuration configuration){
-		this.configuration = configuration;
-	}
-
 	@SuppressWarnings("rawtypes")
 	protected MetadataAdapter getMetadataAdapter(){
 		return configuration.getMetadataAdapter();
-	}
-
-	@Override
-	public boolean equals(final Object o){
-		return (this == o || o != null && getClass() == o.getClass());
-	}
-
-	@Override
-	public int hashCode(){
-		return getClass().hashCode();
 	}
 
 }

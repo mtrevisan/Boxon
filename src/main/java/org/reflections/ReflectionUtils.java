@@ -23,7 +23,7 @@ public abstract class ReflectionUtils{
 	/**
 	 * would include {@code Object.class} when {@link #getSuperTypes(Class)}. default is false.
 	 */
-	public static final boolean includeObject = false;
+	private static final boolean includeObject = false;
 
 
 	/**
@@ -32,7 +32,7 @@ public abstract class ReflectionUtils{
 	 * @param type	The class.
 	 * @return	The set of classes.
 	 */
-	public static Set<Class<?>> getSuperTypes(final Class<?> type){
+	static Set<Class<?>> getSuperTypes(final Class<?> type){
 		final Set<Class<?>> result = new LinkedHashSet<>();
 		final Class<?> superclass = type.getSuperclass();
 		final Class<?>[] interfaces = type.getInterfaces();
@@ -46,37 +46,14 @@ public abstract class ReflectionUtils{
 	//predicates
 
 	/**
-	 * where element is annotated with given {@code annotation}
-	 *
-	 * @param annotation	The annotation.
-	 * @return	The predicate.
-	 * @param <T>	The type of the returned predicate.
-	 */
-	public static <T extends AnnotatedElement> Predicate<T> withAnnotation(final Class<? extends Annotation> annotation){
-		return input -> input != null && input.isAnnotationPresent(annotation);
-	}
-
-	/**
 	 * where element is annotated with given {@code annotation}, including member matching
 	 *
 	 * @param annotation	The annotation.
 	 * @return	The predicate.
 	 * @param <T>	The type of the returned predicate.
 	 */
-	public static <T extends AnnotatedElement> Predicate<T> withAnnotation(final Annotation annotation){
+	static <T extends AnnotatedElement> Predicate<T> withAnnotation(final Annotation annotation){
 		return input -> input != null && input.isAnnotationPresent(annotation.annotationType()) && areAnnotationMembersMatching(input.getAnnotation(annotation.annotationType()), annotation);
-	}
-
-	/**
-	 * tries to resolve a java type name to a Class
-	 * <p>if optional {@link ClassLoader}s are not specified, then both {@link ClasspathHelper#contextClassLoader()} and {@link ClasspathHelper#staticClassLoader()} are used
-	 *
-	 * @param typeName	The type name.
-	 * @return	The classes.
-	 */
-	public static Class<?> forName(final String typeName){
-		final ClassLoader[] classLoaders = new ClassLoader[0];
-		return forName(typeName, classLoaders);
 	}
 
 	public static Class<?> forName(final String typeName, final ClassLoader... classLoaders){
@@ -134,7 +111,7 @@ public abstract class ReflectionUtils{
 	 * @return	The classes.
 	 * @param <T>	The type of the returned classes.
 	 */
-	public static <T> Set<Class<? extends T>> forNames(final Collection<String> classes, final ClassLoader... classLoaders){
+	static <T> Set<Class<? extends T>> forNames(final Collection<String> classes, final ClassLoader... classLoaders){
 		return classes.stream()
 			.map(className -> (Class<? extends T>)forName(className, classLoaders))
 			.filter(Objects::nonNull)

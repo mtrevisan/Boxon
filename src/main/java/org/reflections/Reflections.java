@@ -3,7 +3,7 @@ package org.reflections;
 import org.reflections.scanners.Scanner;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
-import org.reflections.util.ConfigurationBuilder;
+import org.reflections.util.Utils;
 import org.reflections.vfs.Vfs;
 import org.slf4j.Logger;
 
@@ -16,22 +16,15 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static java.lang.String.format;
-import static org.reflections.ReflectionUtils.forName;
-import static org.reflections.ReflectionUtils.forNames;
-import static org.reflections.ReflectionUtils.withAnnotation;
-import static org.reflections.util.Utils.filter;
-import static org.reflections.util.Utils.findLogger;
-import static org.reflections.util.Utils.index;
-import static org.reflections.util.Utils.names;
 
 
 public class Reflections{
 
-	public static final Logger log = findLogger(Reflections.class);
+	public static final Logger log = Utils.getLogger(Reflections.class);
 
 	protected final transient Configuration configuration;
 	private final Set<Scanner> scanners = new HashSet<>(Arrays.asList(new TypeAnnotationsScanner(), new SubTypesScanner()));
-	protected Store store;
+	protected final Store store;
 
 
 	/**
@@ -91,27 +84,22 @@ public class Reflections{
 	protected void scan(final URL url){
 		final Vfs.Dir dir = Vfs.fromURL(url);
 
-		try{
-			for(final Vfs.File file : dir.getFiles()){
-				// scan if inputs filter accepts file relative path or fqn
-				final String path = file.getRelativePath();
-				final String fqn = path.replace('/', '.');
-				Object classObject = null;
-				for(final Scanner scanner : scanners){
-					try{
-						if(scanner.acceptsInput(path) || scanner.acceptsInput(fqn))
-							classObject = scanner.scan(file, classObject, store);
-					}
-					catch(final Exception e){
-						if(log != null)
-							// SLF4J will filter out Throwables from the format string arguments.
-							log.debug("could not scan file {} in url {} with scanner {}", file.getRelativePath(), url.toExternalForm(), scanner.getClass().getSimpleName(), e);
-					}
+		for(final Vfs.File file : dir.getFiles()){
+			// scan if inputs filter accepts file relative path or fqn
+			final String path = file.getRelativePath();
+			final String fqn = path.replace('/', '.');
+			Object classObject = null;
+			for(final Scanner scanner : scanners){
+				try{
+					if(scanner.acceptsInput(path) || scanner.acceptsInput(fqn))
+						classObject = scanner.scan(file, classObject, store);
+				}
+				catch(final Exception e){
+					if(log != null)
+						// SLF4J will filter out Throwables from the format string arguments.
+						log.debug("could not scan file {} in url {} with scanner {}", file.getRelativePath(), url.toExternalForm(), scanner.getClass().getSimpleName(), e);
 				}
 			}
-		}
-		finally{
-			dir.close();
 		}
 	}
 
@@ -127,11 +115,11 @@ public class Reflections{
 	 * </ul>
 	 */
 	public void expandSuperTypes(){
-		final String index = index(SubTypesScanner.class);
+		final String index = Utils.index(SubTypesScanner.class);
 		final Set<String> keys = store.keys(index);
 		keys.removeAll(store.values(index));
 		for(final String key : keys){
-			final Class<?> type = forName(key);
+			final Class<?> type = ReflectionUtils.forName(key);
 			if(type != null)
 				expandSupertypes(store, key, type);
 		}
@@ -158,7 +146,7 @@ public class Reflections{
 	 * @param <T>	The type of {@code type}.
 	 */
 	public <T> Set<Class<? extends T>> getSubTypesOf(final Class<T> type){
-		return forNames(store.getAll(SubTypesScanner.class, type.getName()));
+		return ReflectionUtils.forNames(store.getAll(SubTypesScanner.class, type.getName()));
 	}
 
 	/**
@@ -192,7 +180,7 @@ public class Reflections{
 	public Set<Class<?>> getTypesAnnotatedWith(final Class<? extends Annotation> annotation, final boolean honorInherited){
 		final Set<String> annotated = store.get(TypeAnnotationsScanner.class, annotation.getName());
 		annotated.addAll(getAllAnnotated(annotated, annotation, honorInherited));
-		return forNames(annotated);
+		return ReflectionUtils.forNames(annotated);
 	}
 
 	/**
@@ -218,8 +206,8 @@ public class Reflections{
 	 */
 	public Set<Class<?>> getTypesAnnotatedWith(final Annotation annotation, final boolean honorInherited){
 		final Set<String> annotated = store.get(TypeAnnotationsScanner.class, annotation.annotationType().getName());
-		final Set<Class<?>> allAnnotated = filter(forNames(annotated), withAnnotation(annotation));
-		final Set<Class<?>> classes = forNames(filter(getAllAnnotated(names(allAnnotated), annotation.annotationType(), honorInherited), s -> !annotated.contains(s)));
+		final Set<Class<?>> allAnnotated = Utils.filter(ReflectionUtils.forNames(annotated), ReflectionUtils.withAnnotation(annotation));
+		final Set<Class<?>> classes = ReflectionUtils.forNames(Utils.filter(getAllAnnotated(Utils.names(allAnnotated), annotation.annotationType(), honorInherited), s -> !annotated.contains(s)));
 		allAnnotated.addAll(classes);
 		return allAnnotated;
 	}
@@ -227,8 +215,8 @@ public class Reflections{
 	protected Collection<String> getAllAnnotated(final Collection<String> annotated, final Class<? extends Annotation> annotation, final boolean honorInherited){
 		if(honorInherited){
 			if(annotation.isAnnotationPresent(Inherited.class)){
-				final Set<String> subTypes = store.get(SubTypesScanner.class, filter(annotated, input -> {
-					final Class<?> type = forName(input);
+				final Set<String> subTypes = store.get(SubTypesScanner.class, Utils.filter(annotated, input -> {
+					final Class<?> type = ReflectionUtils.forName(input);
 					return type != null && !type.isInterface();
 				}));
 				return store.getAllIncludingKeys(SubTypesScanner.class, subTypes);
@@ -265,15 +253,6 @@ public class Reflections{
 	 */
 	public Store getStore(){
 		return store;
-	}
-
-	/**
-	 * returns the {@link Configuration} object of this instance
-	 *
-	 * @return	The configuration.
-	 */
-	public Configuration getConfiguration(){
-		return configuration;
 	}
 
 }

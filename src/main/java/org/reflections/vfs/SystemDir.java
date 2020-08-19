@@ -14,7 +14,7 @@ import java.util.Collections;
 public class SystemDir implements Vfs.Dir{
 	private final File file;
 
-	public SystemDir(File file){
+	public SystemDir(final File file){
 		if(file != null && (!file.isDirectory() || !file.canRead())){
 			throw new RuntimeException("cannot use dir " + file);
 		}
@@ -36,13 +36,10 @@ public class SystemDir implements Vfs.Dir{
 		return () -> {
 			try{
 				return Files.walk(file.toPath()).filter(Files::isRegularFile).map(path -> (Vfs.File) new SystemFile(SystemDir.this, path.toFile())).iterator();
-			}catch(IOException e){
+			}catch(final IOException e){
 				throw new ReflectionsException("could not get files for " + file, e);
 			}
 		};
-	}
-
-	public void close(){
 	}
 
 	@Override
