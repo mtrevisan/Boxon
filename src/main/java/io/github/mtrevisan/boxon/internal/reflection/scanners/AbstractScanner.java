@@ -27,7 +27,7 @@ package io.github.mtrevisan.boxon.internal.reflection.scanners;
 import io.github.mtrevisan.boxon.internal.reflection.ClassStore;
 import io.github.mtrevisan.boxon.internal.reflection.ReflectionsException;
 import io.github.mtrevisan.boxon.internal.reflection.adapters.MetadataAdapter;
-import io.github.mtrevisan.boxon.internal.reflection.vfs.VirtualFileSystem;
+import io.github.mtrevisan.boxon.internal.reflection.vfs.File;
 
 
 public abstract class AbstractScanner implements Scanner{
@@ -45,7 +45,7 @@ public abstract class AbstractScanner implements Scanner{
 		return metadataAdapter.acceptsInput(file);
 	}
 
-	public Object scan(final VirtualFileSystem.File file, Object classObject, final ClassStore classStore){
+	public Object scan(final File file, Object classObject, final ClassStore classStore){
 		if(classObject == null){
 			try{
 				classObject = metadataAdapter.getOrCreateClassObject(file);

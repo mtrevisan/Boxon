@@ -30,9 +30,9 @@ import java.util.zip.ZipEntry;
 
 
 /**
- * an implementation of {@link VirtualFileSystem.File} for {@link ZipEntry}
+ * an implementation of {@link File} for {@link ZipEntry}
  */
-public class ZipFile implements VirtualFileSystem.File{
+public class ZipFile implements File{
 
 	private final ZipDirectory root;
 	private final ZipEntry entry;

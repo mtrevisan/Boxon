@@ -31,8 +31,6 @@ import io.github.mtrevisan.boxon.internal.reflection.util.Utils;
 import org.slf4j.Logger;
 
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.JarURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -86,29 +84,6 @@ public abstract class VirtualFileSystem{
 
 	private static List<UrlType> defaultUrlTypes = new ArrayList<>(Arrays.asList(DefaultUrlTypes.values()));
 
-
-	public interface Directory{
-		String getPath();
-
-		Iterable<File> getFiles();
-	}
-
-	public interface File{
-		String getName();
-
-		String getRelativePath();
-
-		InputStream openInputStream() throws IOException;
-	}
-
-	/**
-	 * a matcher and factory for a url
-	 */
-	public interface UrlType{
-		boolean matches(URL url);
-
-		Directory createDir(URL url) throws Exception;
-	}
 
 	/**
 	 * The default url types that will be used when issuing {@link VirtualFileSystem#fromURL(URL)}

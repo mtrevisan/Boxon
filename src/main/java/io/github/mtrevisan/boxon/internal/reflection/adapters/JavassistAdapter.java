@@ -26,7 +26,7 @@ package io.github.mtrevisan.boxon.internal.reflection.adapters;
 
 import io.github.mtrevisan.boxon.internal.DynamicArray;
 import io.github.mtrevisan.boxon.internal.reflection.ReflectionsException;
-import io.github.mtrevisan.boxon.internal.reflection.vfs.VirtualFileSystem;
+import io.github.mtrevisan.boxon.internal.reflection.vfs.File;
 import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.ClassFile;
 import javassist.bytecode.annotation.Annotation;
@@ -85,7 +85,7 @@ public class JavassistAdapter implements MetadataAdapter<ClassFile>{
 	}
 
 	@Override
-	public ClassFile getOrCreateClassObject(final VirtualFileSystem.File file){
+	public ClassFile getOrCreateClassObject(final File file){
 		try(final InputStream is = file.openInputStream()){
 			return new ClassFile(new DataInputStream(new BufferedInputStream(is)));
 		}

@@ -33,7 +33,7 @@ import java.util.jar.JarInputStream;
 import java.util.zip.ZipEntry;
 
 
-public class JarInputDirectory implements VirtualFileSystem.Directory{
+public class JarInputDirectory implements Directory{
 
 	private final URL url;
 	JarInputStream jarInputStream;
@@ -49,7 +49,7 @@ public class JarInputDirectory implements VirtualFileSystem.Directory{
 		return url.getPath();
 	}
 
-	public Iterable<VirtualFileSystem.File> getFiles(){
+	public Iterable<File> getFiles(){
 		return () -> new Iterator<>(){
 			{
 				try{
@@ -60,7 +60,7 @@ public class JarInputDirectory implements VirtualFileSystem.Directory{
 				}
 			}
 
-			VirtualFileSystem.File entry = null;
+			File entry = null;
 
 			@Override
 			public boolean hasNext(){
@@ -68,13 +68,13 @@ public class JarInputDirectory implements VirtualFileSystem.Directory{
 			}
 
 			@Override
-			public VirtualFileSystem.File next(){
-				final VirtualFileSystem.File next = entry;
+			public File next(){
+				final File next = entry;
 				entry = null;
 				return next;
 			}
 
-			private VirtualFileSystem.File computeNext(){
+			private File computeNext(){
 				while(true){
 					try{
 						final ZipEntry entry = jarInputStream.getNextJarEntry();

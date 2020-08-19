@@ -32,9 +32,9 @@ import java.util.jar.JarFile;
 
 
 /**
- * an implementation of {@link VirtualFileSystem.Directory} for {@link java.util.zip.ZipFile}
+ * an implementation of {@link Directory} for {@link java.util.zip.ZipFile}
  */
-public class ZipDirectory implements VirtualFileSystem.Directory{
+public class ZipDirectory implements Directory{
 
 	public static final Logger LOGGER = JavaHelper.getLoggerFor(ZipDirectory.class);
 
@@ -50,10 +50,10 @@ public class ZipDirectory implements VirtualFileSystem.Directory{
 		return jarFile.getName();
 	}
 
-	public Iterable<VirtualFileSystem.File> getFiles(){
+	public Iterable<File> getFiles(){
 		return () -> jarFile.stream()
 			.filter(entry -> !entry.isDirectory())
-			.map(entry -> (VirtualFileSystem.File)new ZipFile(ZipDirectory.this, entry))
+			.map(entry -> (File)new ZipFile(ZipDirectory.this, entry))
 			.iterator();
 	}
 

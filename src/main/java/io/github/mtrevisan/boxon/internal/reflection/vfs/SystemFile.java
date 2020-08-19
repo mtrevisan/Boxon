@@ -30,9 +30,9 @@ import java.io.InputStream;
 
 
 /**
- * an implementation of {@link VirtualFileSystem.File} for a directory {@link java.io.File}
+ * an implementation of {@link File} for a directory {@link java.io.File}
  */
-public class SystemFile implements VirtualFileSystem.File{
+public class SystemFile implements File{
 
 	private final SystemDirectory root;
 	private final java.io.File file;
