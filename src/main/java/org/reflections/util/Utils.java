@@ -55,8 +55,6 @@ public final class Utils{
 		return types.stream().map(Utils::name).collect(Collectors.toList());
 	}
 
-	public static String index(final Class<?> scannerClass){ return scannerClass.getSimpleName(); }
-
 	public static <T> Set<T> filter(final Collection<T> result, final Predicate<? super T> predicate){
 		return result.stream().filter(predicate).collect(Collectors.toSet());
 	}

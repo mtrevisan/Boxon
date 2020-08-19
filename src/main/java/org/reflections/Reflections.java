@@ -115,9 +115,8 @@ public class Reflections{
 	 * </ul>
 	 */
 	public void expandSuperTypes(){
-		final String index = Utils.index(SubTypesScanner.class);
-		final Set<String> keys = store.keys(index);
-		keys.removeAll(store.values(index));
+		final Set<String> keys = store.keys(SubTypesScanner.class);
+		keys.removeAll(store.values(SubTypesScanner.class));
 		for(final String key : keys){
 			final Class<?> type = ReflectionUtils.forName(key);
 			if(type != null)

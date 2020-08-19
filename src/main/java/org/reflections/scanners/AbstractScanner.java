@@ -4,7 +4,6 @@ import org.reflections.Configuration;
 import org.reflections.ReflectionsException;
 import org.reflections.Store;
 import org.reflections.adapters.MetadataAdapter;
-import org.reflections.util.Utils;
 import org.reflections.vfs.Vfs;
 
 
@@ -40,7 +39,7 @@ public abstract class AbstractScanner implements Scanner{
 	public abstract void scan(final Object cls, final Store store);
 
 	protected void put(final Store store, final String key, final String value){
-		store.put(Utils.index(getClass()), key, value);
+		store.put(getClass(), key, value);
 	}
 
 	@SuppressWarnings("rawtypes")
