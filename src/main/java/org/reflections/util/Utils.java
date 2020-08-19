@@ -1,6 +1,7 @@
 package org.reflections.util;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -39,7 +40,11 @@ public final class Utils{
 	}
 
 	public static <T> Set<T> filter(final Collection<T> result, final Predicate<? super T> predicate){
-		return result.stream().filter(predicate).collect(Collectors.toSet());
+		final Set<T> set = new HashSet<>();
+		for(final T t : result)
+			if(predicate.test(t))
+				set.add(t);
+		return set;
 	}
 
 }

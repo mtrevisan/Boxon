@@ -2,7 +2,7 @@ package org.reflections.vfs;
 
 import org.reflections.Reflections;
 import org.reflections.ReflectionsException;
-import org.reflections.vfs.Vfs.Dir;
+import org.reflections.vfs.Vfs.Directory;
 import org.reflections.vfs.Vfs.UrlType;
 
 import java.io.File;
@@ -33,14 +33,14 @@ public class UrlTypeVFS implements UrlType{
 		return VFSZIP.equals(url.getProtocol()) || VFSFILE.equals(url.getProtocol());
 	}
 
-	public Dir createDir(final URL url){
+	public Directory createDir(final URL url){
 		try{
 			final URL adaptedUrl = adaptURL(url);
-			return new ZipDir(new JarFile(adaptedUrl.getFile()));
+			return new ZipDirectory(new JarFile(adaptedUrl.getFile()));
 		}
 		catch(final Exception e){
 			try{
-				return new ZipDir(new JarFile(url.getFile()));
+				return new ZipDirectory(new JarFile(url.getFile()));
 			}
 			catch(final IOException e1){
 				if(Reflections.LOGGER != null){

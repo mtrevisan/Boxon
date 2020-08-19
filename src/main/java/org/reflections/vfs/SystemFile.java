@@ -9,10 +9,10 @@ import java.io.InputStream;
  * an implementation of {@link Vfs.File} for a directory {@link java.io.File}
  */
 public class SystemFile implements Vfs.File{
-	private final SystemDir root;
+	private final SystemDirectory root;
 	private final java.io.File file;
 
-	public SystemFile(final SystemDir root, final java.io.File file){
+	public SystemFile(final SystemDirectory root, final java.io.File file){
 		this.root = root;
 		this.file = file;
 	}

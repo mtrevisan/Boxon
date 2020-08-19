@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
  * stores metadata information in multimaps
  * <p>use the different query methods (getXXX) to query the metadata
  * <p>the query methods are string based, and does not cause the class loader to define the types
- * <p>use {@link Reflections#getStore()} to access this store
  */
 public class ClassStore{
 

@@ -10,11 +10,11 @@ import java.util.zip.ZipEntry;
  */
 public class JarInputFile implements Vfs.File{
 	private final ZipEntry entry;
-	private final JarInputDir jarInputDir;
+	private final JarInputDirectory jarInputDir;
 	private final long fromIndex;
 	private final long endIndex;
 
-	public JarInputFile(final ZipEntry entry, final JarInputDir jarInputDir, final long cursor, final long nextCursor){
+	public JarInputFile(final ZipEntry entry, final JarInputDirectory jarInputDir, final long cursor, final long nextCursor){
 		this.entry = entry;
 		this.jarInputDir = jarInputDir;
 		fromIndex = cursor;

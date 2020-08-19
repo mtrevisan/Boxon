@@ -1,6 +1,7 @@
 package org.reflections;
 
 import io.github.mtrevisan.boxon.internal.JavaHelper;
+import org.reflections.adapters.MetadataAdapter;
 import org.reflections.scanners.Scanner;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
@@ -12,11 +13,8 @@ import java.lang.annotation.Annotation;
 import java.lang.annotation.Inherited;
 import java.net.URL;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-
-import static java.lang.String.format;
 
 
 public class Reflections{
@@ -24,7 +22,7 @@ public class Reflections{
 	public static final Logger LOGGER = JavaHelper.getLoggerFor(Reflections.class);
 
 	private final Scanner[] scanners = new Scanner[]{new TypeAnnotationsScanner(), new SubTypesScanner()};
-	protected final ClassStore classStore;
+	protected final ClassStore classStore = new ClassStore();
 
 
 	/**
@@ -35,78 +33,66 @@ public class Reflections{
 	 */
 	public Reflections(final Configuration configuration){
 		Objects.requireNonNull(configuration);
-		if(configuration.getUrls() == null || configuration.getUrls().isEmpty())
+		final MetadataAdapter<?> metadataAdapter = configuration.getMetadataAdapter();
+		Objects.requireNonNull(metadataAdapter);
+		final Set<URL> urls = configuration.getUrls();
+		if(urls == null || urls.isEmpty())
 			throw new IllegalArgumentException("Given scan URLs are empty");
 
-		classStore = new ClassStore();
-
 		//inject to scanners
-		for(final Scanner scanner : scanners)
-			scanner.setMetadataAdapter(configuration.getMetadataAdapter());
+		for(int i = 0; i < scanners.length; i ++)
+			scanners[i].setMetadataAdapter(metadataAdapter);
 
-		final Set<URL> urls = configuration.getUrls();
 		scan(urls);
 
 		if(configuration.shouldExpandSuperTypes())
 			expandSuperTypes();
 	}
 
-	protected void scan(final Set<URL> urls){
-		if(LOGGER != null)
-			LOGGER.debug("going to scan these urls: {}", urls);
-
-		final long time = System.currentTimeMillis();
-		int scannedUrls = 0;
-
+	private void scan(final Set<URL> urls){
 		for(final URL url : urls){
 			try{
 				scan(url);
-				scannedUrls ++;
 			}
 			catch(final ReflectionsException e){
 				if(LOGGER != null)
-					LOGGER.warn("could not create Vfs.Dir from url. ignoring the exception and continuing", e);
+					LOGGER.warn("Could not create Vfs.Dir from URL, ignoring the exception and continuing", e);
 			}
 		}
-
-		if(LOGGER != null)
-			LOGGER.info(format("Reflections took %d ms to scan %d urls", System.currentTimeMillis() - time, scannedUrls));
 	}
 
-	protected void scan(final URL url){
-		final Vfs.Dir dir = Vfs.fromURL(url);
-
-		for(final Vfs.File file : dir.getFiles()){
-			// scan if inputs filter accepts file relative path or fqn
-			final String path = file.getRelativePath();
-			final String fqn = path.replace('/', '.');
+	private void scan(final URL url){
+		final Vfs.Directory directory = Vfs.fromURL(url);
+		for(final Vfs.File file : directory.getFiles()){
+			//scan if inputs filter accepts file relativePath or packageName
+			final String relativePath = file.getRelativePath();
+			final String packageName = relativePath.replace('/', '.');
 			Object classObject = null;
 			for(final Scanner scanner : scanners){
 				try{
-					if(scanner.acceptsInput(path) || scanner.acceptsInput(fqn))
+					if(scanner.acceptsInput(relativePath) || scanner.acceptsInput(packageName))
 						classObject = scanner.scan(file, classObject, classStore);
 				}
 				catch(final Exception e){
 					if(LOGGER != null)
-						// SLF4J will filter out Throwables from the format string arguments.
-						LOGGER.debug("could not scan file {} in url {} with scanner {}", file.getRelativePath(), url.toExternalForm(), scanner.getClass().getSimpleName(), e);
+						LOGGER.debug("Could not scan file {} in URL {} with scanner {}", relativePath, url.toExternalForm(), scanner.getClass().getSimpleName(), e);
 				}
 			}
 		}
 	}
 
 	/**
-	 * expand super types after scanning, for super types that were not scanned.
-	 * this is helpful in finding the transitive closure without scanning all 3rd party dependencies.
-	 * it uses {@link ReflectionUtils#getSuperTypes(Class)}.
+	 * Expand super types after scanning (for super types that were not scanned).
+	 * <p>This is helpful in finding the transitive closure without scanning all third party dependencies.</p>
+	 * <p>It uses {@link ReflectionUtils#getSuperTypes(Class)}.</p>
 	 * <p>
-	 * for example, for classes A,B,C where A supertype of B, B supertype of C:
+	 * for example, for classes {@code A, B, C} where {@code A} supertype of {@code B}, and {@code B} supertype of {@code C}:
 	 * <ul>
-	 *     <li>if scanning C resulted in B (B-&gt;C in store), but A was not scanned (although A supertype of B) - then getSubTypes(A) will not return C</li>
-	 *     <li>if expanding supertypes, B will be expanded with A (A-&gt;B in store) - then getSubTypes(A) will return C</li>
+	 *     <li>if scanning {@code C} resulted in {@code B} ({@code B -> C} in class store), but {@code A} was not scanned (although {@code A} supertype of {@code B}) - then {@code getSubTypesOf(A)} will not return {@code C}.</li>
+	 *     <li>if expanding supertypes, {@code B} will be expanded with {@code A} ({@code A -> B} in class store) - then {@code getSubTypesOf(A)} will return {@code C}.</li>
 	 * </ul>
 	 */
-	public void expandSuperTypes(){
+	private void expandSuperTypes(){
 		final Set<String> keys = classStore.keys(SubTypesScanner.class);
 		keys.removeAll(classStore.values(SubTypesScanner.class));
 		for(final String key : keys){
@@ -117,22 +103,19 @@ public class Reflections{
 	}
 
 	private void expandSupertypes(final ClassStore classStore, final String key, final Class<?> type){
-		for(final Class<?> supertype : ReflectionUtils.getSuperTypes(type))
-			if(classStore.put(SubTypesScanner.class, supertype.getName(), key)){
+		for(final Class<?> superType : ReflectionUtils.getSuperTypes(type))
+			if(classStore.put(SubTypesScanner.class, superType.getName(), key)){
 				if(LOGGER != null)
-					LOGGER.debug("expanded subtype {} -> {}", supertype.getName(), key);
+					LOGGER.trace("Expanded subtype {} into {}", superType.getName(), key);
 
-				expandSupertypes(classStore, supertype.getName(), supertype);
+				expandSupertypes(classStore, superType.getName(), superType);
 			}
 	}
 
-	//query
-
 	/**
-	 * gets all sub types in hierarchy of a given type
-	 * <p>depends on SubTypesScanner configured.</p>
+	 * Gets all sub types in hierarchy of a given type.
 	 *
-	 * @param type	The type.
+	 * @param type	The type to search for.
 	 * @return	The set of classes.
 	 * @param <T>	The type of {@code type}.
 	 */
@@ -141,14 +124,13 @@ public class Reflections{
 	}
 
 	/**
-	 * get types annotated with a given annotation, both classes and annotations
-	 * <p>{@link Inherited} is not honored by default.
-	 * <p>when honoring @Inherited, meta-annotation should only effect annotated super classes and its sub types
-	 * <p><i>Note that this (@Inherited) meta-annotation type has no effect if the annotated type is used for anything other then a class.
-	 * Also, this meta-annotation causes annotations to be inherited only from superclasses; annotations on implemented interfaces have no effect.</i>
-	 * <p>depends on TypeAnnotationsScanner and SubTypesScanner configured.</p>
+	 * Get types annotated with a given annotation, both classes and annotations.
+	 * <p>{@link Inherited} is not honored by default.</p>
+	 * <p>When honoring {@link Inherited}, meta-annotation should only effect annotated super classes and its sub types.</p>
+	 * <p><i>Note that this ({@link Inherited}) meta-annotation type has no effect if the annotated type is used for anything other then a class.
+	 * Also, this meta-annotation causes annotations to be inherited only from superclasses; annotations on implemented interfaces have no effect.</i></p>
 	 *
-	 * @param annotation	The annotation.
+	 * @param annotation	The annotation to search for.
 	 * @return	The set of classes.
 	 */
 	public Set<Class<?>> getTypesAnnotatedWith(final Class<? extends Annotation> annotation){
@@ -156,28 +138,32 @@ public class Reflections{
 	}
 
 	/**
-	 * get types annotated with a given annotation, both classes and annotations
-	 * <p>{@link Inherited} is honored according to given honorInherited.
-	 * <p>when honoring @Inherited, meta-annotation should only effect annotated super classes and it's sub types
-	 * <p>when not honoring @Inherited, meta annotation effects all subtypes, including annotations interfaces and classes
-	 * <p><i>Note that this (@Inherited) meta-annotation type has no effect if the annotated type is used for anything other then a class.
-	 * Also, this meta-annotation causes annotations to be inherited only from superclasses; annotations on implemented interfaces have no effect.</i>
-	 * <p>depends on TypeAnnotationsScanner and SubTypesScanner configured.</p>
+	 * Get types annotated with a given annotation, both classes and annotations.
+	 * <p>{@link Inherited} is not honored by default.</p>
+	 * <p>When honoring {@link Inherited}, meta-annotation should only effect annotated super classes and its sub types.</p>
+	 * <p>When <b>not</b> honoring {@link Inherited}, meta annotation effects all subtypes, including annotations interfaces and classes.</p>
+	 * <p><i>Note that this ({@link Inherited}) meta-annotation type has no effect if the annotated type is used for anything other then a class.
+	 * Also, this meta-annotation causes annotations to be inherited only from superclasses; annotations on implemented interfaces have no effect.</i></p>
 	 *
-	 * @param annotation	The annotation.
-	 * @param honorInherited	Whether to honor inherited.
+	 * @param annotation	The annotation to search for.
 	 * @return	The set of classes.
 	 */
-	public Set<Class<?>> getTypesAnnotatedWith(final Class<? extends Annotation> annotation, final boolean honorInherited){
+	public Set<Class<?>> getTypesAnnotatedWithHonorInherited(final Class<? extends Annotation> annotation){
+		return getTypesAnnotatedWith(annotation, true);
+	}
+
+	private Set<Class<?>> getTypesAnnotatedWith(final Class<? extends Annotation> annotation, final boolean honorInherited){
 		final Set<String> annotated = classStore.get(TypeAnnotationsScanner.class, annotation.getName());
 		annotated.addAll(getAllAnnotated(annotated, annotation, honorInherited));
 		return ReflectionUtils.forNames(annotated);
 	}
 
 	/**
-	 * get types annotated with a given annotation, both classes and annotations, including annotation member values matching
+	 * Get types annotated with a given annotation, both classes and annotations, including annotation member values matching.
 	 * <p>{@link Inherited} is not honored by default.</p>
-	 * <p>depends on TypeAnnotationsScanner configured.</p>
+	 * <p>When honoring {@link Inherited}, meta-annotation should only effect annotated super classes and its sub types.</p>
+	 * <p><i>Note that this ({@link Inherited}) meta-annotation type has no effect if the annotated type is used for anything other then a class.
+	 * Also, this meta-annotation causes annotations to be inherited only from superclasses; annotations on implemented interfaces have no effect.</i></p>
 	 *
 	 * @param annotation	The annotation.
 	 * @return	The set of classes.
@@ -187,15 +173,21 @@ public class Reflections{
 	}
 
 	/**
-	 * get types annotated with a given annotation, both classes and annotations, including annotation member values matching
-	 * <p>{@link Inherited} is honored according to given honorInherited.</p>
-	 * <p>depends on TypeAnnotationsScanner configured.</p>
+	 * Get types annotated with a given annotation, both classes and annotations, including annotation member values matching.
+	 * <p>{@link Inherited} is not honored by default.</p>
+	 * <p>When honoring {@link Inherited}, meta-annotation should only effect annotated super classes and its sub types.</p>
+	 * <p>When <b>not</b> honoring {@link Inherited}, meta annotation effects all subtypes, including annotations interfaces and classes.</p>
+	 * <p><i>Note that this ({@link Inherited}) meta-annotation type has no effect if the annotated type is used for anything other then a class.
+	 * Also, this meta-annotation causes annotations to be inherited only from superclasses; annotations on implemented interfaces have no effect.</i></p>
 	 *
 	 * @param annotation	The annotation.
-	 * @param honorInherited	Whether to honor inherited.
 	 * @return	The set of classes.
 	 */
-	public Set<Class<?>> getTypesAnnotatedWith(final Annotation annotation, final boolean honorInherited){
+	public Set<Class<?>> getTypesAnnotatedWithHonorInherited(final Annotation annotation){
+		return getTypesAnnotatedWith(annotation, true);
+	}
+
+	private Set<Class<?>> getTypesAnnotatedWith(final Annotation annotation, final boolean honorInherited){
 		final Set<String> annotated = classStore.get(TypeAnnotationsScanner.class, annotation.annotationType().getName());
 		final Set<Class<?>> allAnnotated = Utils.filter(ReflectionUtils.forNames(annotated), ReflectionUtils.withAnnotation(annotation));
 		final Set<Class<?>> classes = ReflectionUtils.forNames(Utils.filter(getAllAnnotated(Utils.names(allAnnotated), annotation.annotationType(), honorInherited), s -> !annotated.contains(s)));
@@ -203,12 +195,12 @@ public class Reflections{
 		return allAnnotated;
 	}
 
-	protected Collection<String> getAllAnnotated(final Collection<String> annotated, final Class<? extends Annotation> annotation, final boolean honorInherited){
+	private Collection<String> getAllAnnotated(final Collection<String> annotated, final Class<? extends Annotation> annotation, final boolean honorInherited){
 		if(honorInherited){
 			if(annotation.isAnnotationPresent(Inherited.class)){
 				final Set<String> subTypes = classStore.get(SubTypesScanner.class, Utils.filter(annotated, input -> {
 					final Class<?> type = ReflectionUtils.forName(input);
-					return type != null && !type.isInterface();
+					return (type != null && !type.isInterface());
 				}));
 				return classStore.getAllIncludingKeys(SubTypesScanner.class, subTypes);
 			}
@@ -219,31 +211,6 @@ public class Reflections{
 			final Collection<String> subTypes = classStore.getAllIncludingKeys(TypeAnnotationsScanner.class, annotated);
 			return classStore.getAllIncludingKeys(SubTypesScanner.class, subTypes);
 		}
-	}
-
-	/**
-	 * get all types scanned. this is effectively similar to getting all subtypes of Object.
-	 * <p>depends on SubTypesScanner configured with {@code SubTypesScanner(false)}, otherwise {@code ReflectionsException} is thrown
-	 * <p><i>note using this might be a bad practice. it is better to get types matching some criteria,
-	 * such as {@link #getSubTypesOf(Class)} or {@link #getTypesAnnotatedWith(Class)}</i>
-	 *
-	 * @return Set of String, and not of Class, in order to avoid definition of all types in PermGen
-	 */
-	public Set<String> getAllTypes(){
-		final Set<String> allTypes = new HashSet<>(classStore.getAll(SubTypesScanner.class, Object.class.getName()));
-		if(allTypes.isEmpty())
-			throw new ReflectionsException("Couldn't find subtypes of Object. " + "Make sure SubTypesScanner initialized to include Object class - new SubTypesScanner(false)");
-
-		return allTypes;
-	}
-
-	/**
-	 * returns the {@link ClassStore} used for storing and querying the metadata
-	 *
-	 * @return	The store.
-	 */
-	public ClassStore getStore(){
-		return classStore;
 	}
 
 }

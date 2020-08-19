@@ -9,10 +9,10 @@ import java.util.zip.ZipEntry;
  * an implementation of {@link Vfs.File} for {@link ZipEntry}
  */
 public class ZipFile implements Vfs.File{
-	private final ZipDir root;
+	private final ZipDirectory root;
 	private final ZipEntry entry;
 
-	public ZipFile(final ZipDir root, final ZipEntry entry){
+	public ZipFile(final ZipDirectory root, final ZipEntry entry){
 		this.root = root;
 		this.entry = entry;
 	}
