@@ -25,7 +25,6 @@
 package io.github.mtrevisan.boxon.internal;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -49,7 +48,7 @@ import java.util.jar.JarFile;
 
 public final class AnnotationHelper{
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(AnnotationHelper.class);
+	private static final Logger LOGGER = JavaHelper.getLoggerFor(AnnotationHelper.class);
 
 	private enum BucketType{DIRECTORY, FILE}
 
@@ -120,10 +119,12 @@ public final class AnnotationHelper{
 				classes.addAll(extractClasses(resources, type, basePackageClassNames.data[i]));
 			}
 			catch(final NoSuchFileException e){
-				LOGGER.error("Are you sure you are not running this library from a OneDrive folder?", e);
+				if(LOGGER != null)
+					LOGGER.error("Are you sure you are not running this library from a OneDrive folder?", e);
 			}
 			catch(final IOException e){
-				LOGGER.error("Cannot load classes from {}", path, e);
+				if(LOGGER != null)
+					LOGGER.error("Cannot load classes from {}", path, e);
 			}
 		}
 
@@ -154,7 +155,7 @@ public final class AnnotationHelper{
 			}
 			else if("file".equals(resource.getProtocol()))
 				classes.addAll(extractClasses(type, resourceToFile(resource), basePackageName));
-			else
+			else if(LOGGER != null)
 				LOGGER.warn("URL cannot be resolved to absolute file path because it does not reside in the file system: {}", directory);
 		}
 		return classes;

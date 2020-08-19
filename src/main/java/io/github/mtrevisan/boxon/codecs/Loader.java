@@ -35,7 +35,6 @@ import io.github.mtrevisan.boxon.internal.ReflectionHelper;
 import io.github.mtrevisan.boxon.internal.matchers.BNDMPatternMatcher;
 import io.github.mtrevisan.boxon.internal.matchers.PatternMatcher;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.nio.charset.Charset;
 import java.util.Arrays;
@@ -51,7 +50,7 @@ import java.util.stream.Collectors;
 
 final class Loader{
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(Loader.class);
+	private static final Logger LOGGER = JavaHelper.getLoggerFor(Loader.class);
 
 	private static final Function<byte[], int[]> PRE_PROCESSED_PATTERNS = Memoizer.memoizeThreadAndRecursionSafe(Loader::getPreProcessedPattern);
 	private static final PatternMatcher PATTERN_MATCHER = new BNDMPatternMatcher();
@@ -77,7 +76,7 @@ final class Loader{
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load codecs.
 	 */
 	void loadCodecs(final Class<?>... basePackageClasses){
-		if(LOGGER.isInfoEnabled())
+		if(LOGGER != null && LOGGER.isInfoEnabled())
 			LOGGER.info("Load codecs from package(s) {}",
 				Arrays.stream(basePackageClasses).map(Class::getPackageName).collect(Collectors.joining(", ", "[", "]")));
 
@@ -87,7 +86,8 @@ final class Loader{
 		final DynamicArray<CodecInterface> codecs = extractCodecs(derivedClasses);
 		addCodecsInner(codecs.data);
 
-		LOGGER.trace("Codecs loaded are {}", codecs.limit);
+		if(LOGGER != null)
+			LOGGER.trace("Codecs loaded are {}", codecs.limit);
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -100,7 +100,7 @@ final class Loader{
 			if(codec != null)
 				//if the codec was created successfully instanced, add it to the list of codecs...
 				codecs.add(codec);
-			else
+			else if(LOGGER != null)
 				//... otherwise warn
 				LOGGER.warn("Cannot create an instance of codec {}", type.getSimpleName());
 		}
@@ -116,11 +116,13 @@ final class Loader{
 	void addCodecs(final CodecInterface<?>... codecs){
 		Objects.requireNonNull(codecs);
 
-		LOGGER.info("Load given codecs");
+		if(LOGGER != null)
+			LOGGER.info("Load given codecs");
 
 		addCodecsInner(codecs);
 
-		LOGGER.trace("Codecs loaded are {}", codecs.length);
+		if(LOGGER != null)
+			LOGGER.trace("Codecs loaded are {}", codecs.length);
 	}
 
 	private void addCodecsInner(final CodecInterface<?>[] codecs){
@@ -160,7 +162,7 @@ final class Loader{
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
 	 */
 	void loadTemplates(final Class<?>... basePackageClasses){
-		if(LOGGER.isInfoEnabled())
+		if(LOGGER != null && LOGGER.isInfoEnabled())
 			LOGGER.info("Load parsing classes from package(s) {}",
 				Arrays.stream(basePackageClasses).map(Class::getPackageName).collect(Collectors.joining(", ", "[", "]")));
 
@@ -170,7 +172,8 @@ final class Loader{
 		final DynamicArray<Template> templates = extractTemplates(annotatedClasses);
 		addTemplatesInner(templates.data);
 
-		LOGGER.trace("Templates loaded are {}", templates.limit);
+		if(LOGGER != null)
+			LOGGER.trace("Templates loaded are {}", templates.limit);
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -210,7 +213,8 @@ final class Loader{
 				loadTemplateInner(template, starts[i], charset);
 		}
 		catch(final Exception e){
-			LOGGER.error("Cannot load class {}", template.getType().getSimpleName(), e);
+			if(LOGGER != null)
+				LOGGER.error("Cannot load class {}", template.getType().getSimpleName(), e);
 		}
 	}
 

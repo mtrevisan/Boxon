@@ -37,7 +37,6 @@ import io.github.mtrevisan.boxon.internal.ExceptionHelper;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.ReflectionHelper;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
@@ -46,7 +45,7 @@ import java.util.Arrays;
 
 final class TemplateParser{
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(TemplateParser.class);
+	private static final Logger LOGGER = JavaHelper.getLoggerFor(TemplateParser.class);
 
 	private static class ParserContext<T>{
 
@@ -111,7 +110,7 @@ final class TemplateParser{
 		final CodecInterface<?> codec = retrieveCodec(binding.annotationType());
 
 		try{
-			if(LOGGER.isTraceEnabled())
+			if(LOGGER != null && LOGGER.isTraceEnabled())
 				LOGGER.trace("reading {}.{} with bind {}", template, field.getName(), binding.annotationType().getSimpleName());
 
 			//decode value from raw message
@@ -119,7 +118,7 @@ final class TemplateParser{
 			//store value in the current object
 			ReflectionHelper.setFieldValue(parserContext.currentObject, field.getName(), value);
 
-			if(LOGGER.isTraceEnabled())
+			if(LOGGER != null && LOGGER.isTraceEnabled())
 				LOGGER.trace("read {}.{} = {}", template, field.getName(), value);
 		}
 		catch(final Exception e){
@@ -218,7 +217,7 @@ final class TemplateParser{
 		final CodecInterface<?> codec = retrieveCodec(binding.annotationType());
 
 		try{
-			if(LOGGER.isTraceEnabled())
+			if(LOGGER != null && LOGGER.isTraceEnabled())
 				LOGGER.trace("writing {}.{} with bind {}", template.getType().getSimpleName(), field.getName(), binding.annotationType().getSimpleName());
 
 			//encode value from current object
@@ -226,7 +225,7 @@ final class TemplateParser{
 			//write value to raw message
 			codec.encode(writer, binding, parserContext.rootObject, value);
 
-			if(LOGGER.isTraceEnabled())
+			if(LOGGER != null && LOGGER.isTraceEnabled())
 				LOGGER.trace("wrote {}.{} = {}", template.getType().getSimpleName(), field.getName(), value);
 		}
 		catch(final Exception e){

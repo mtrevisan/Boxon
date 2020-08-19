@@ -24,10 +24,28 @@
  */
 package io.github.mtrevisan.boxon.internal;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 public final class JavaHelper{
 
 	private JavaHelper(){}
+
+	public static Logger getLoggerFor(final Class<?> type){
+		try{
+			//This is to check whether an optional SLF4J binding is available.
+			//While SLF4J recommends that libraries "should not declare a dependency on any SLF4J binding but only
+			//depend on slf4j-api", doing so forces users of the library to either add a binding to the classpath
+			//(even if just slf4j-nop) or to set the "slf4j.suppressInitError" system property in order to avoid
+			//the warning, which both is inconvenient.
+			Class.forName("org.slf4j.impl.StaticLoggerBinder");
+			return LoggerFactory.getLogger(type);
+		}
+		catch(final Throwable e){
+			return null;
+		}
+	}
 
 	/**
 	 * Converts an array of bytes into a string representing the hexadecimal values of each byte in order.
