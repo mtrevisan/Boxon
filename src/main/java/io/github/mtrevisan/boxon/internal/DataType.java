@@ -55,6 +55,10 @@ public enum DataType{
 	final Class<?> objectiveType;
 
 
+	public static DataType fromType(final Class<?> type){
+		return TYPE_MAP.get(type);
+	}
+
 	DataType(final Class<?> primitiveType, final Class<?> objectiveType){
 		this.primitiveType = primitiveType;
 		this.objectiveType = objectiveType;
@@ -66,10 +70,6 @@ public enum DataType{
 
 	public static Class<?> toPrimitiveTypeOrDefault(final Class<?> objectiveType){
 		return WRAPPER_PRIMITIVE_MAP.getOrDefault(objectiveType, objectiveType);
-	}
-
-	public static DataType fromType(final Class<?> type){
-		return TYPE_MAP.get(type);
 	}
 
 	/**

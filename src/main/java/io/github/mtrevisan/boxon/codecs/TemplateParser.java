@@ -217,8 +217,9 @@ final class TemplateParser{
 		final CodecInterface<?> codec = retrieveCodec(binding.annotationType());
 
 		try{
-			if(LOGGER != null && LOGGER.isTraceEnabled())
-				LOGGER.trace("writing {}.{} with bind {}", template.getType().getSimpleName(), field.getName(), binding.annotationType().getSimpleName());
+			if(LOGGER.isTraceEnabled())
+				LOGGER.trace("writing {}.{} with bind {}", template.getType().getSimpleName(), field.getName(),
+					binding.annotationType().getSimpleName());
 
 			//encode value from current object
 			final Object value = ReflectionHelper.getFieldValue(parserContext.currentObject, field.getName());

@@ -113,7 +113,8 @@ public final class ReflectionHelper{
 		return type;
 	}
 
-	private static <T> Class<?> manageParameterizedAncestor(final ParameterizedType ancestorType, final Class<T> base, final Map<String, Type> typeVariables){
+	private static <T> Class<?> manageParameterizedAncestor(final ParameterizedType ancestorType, final Class<T> base,
+			final Map<String, Type> typeVariables){
 		Class<?> type = null;
 		final Type rawType = ancestorType.getRawType();
 		if(rawType instanceof Class<?> && base.isAssignableFrom((Class<?>)rawType)){
@@ -175,7 +176,8 @@ public final class ReflectionHelper{
 			field.set(obj, value);
 		}
 		catch(final IllegalArgumentException ignored){
-			throw new IllegalArgumentException("Can not set " + field.getType().getSimpleName() + " field to " + value.getClass().getSimpleName());
+			throw new IllegalArgumentException("Can not set " + field.getType().getSimpleName() + " field to "
+				+ value.getClass().getSimpleName());
 		}
 		catch(final IllegalAccessException ignored){}
 	}

@@ -48,7 +48,8 @@ public class Parser{
 
 
 	/**
-	 * Create an empty parser (context, codecs and templates MUST BE manually loaded! -- templates MUST BE loaded AFTER the codecs).
+	 * Create an empty parser (context, codecs and templates MUST BE manually loaded! -- templates MUST BE loaded AFTER
+	 * the codecs).
 	 *
 	 * @return	A basic empty parser.
 	 */
@@ -106,15 +107,15 @@ public class Parser{
 	 * @throws SecurityException	If a security manager, <i>s</i>, is present and any of the following conditions is met:
 	 * 	<ul>
 	 * 		<li>the caller's class loader is not the same as the class loader of this class and invocation of
-	 * 		{@link SecurityManager#checkPermission s.checkPermission} method with {@code RuntimePermission("accessDeclaredMembers")}
-	 * 		denies access to the declared method.</li>
+	 * 		{@link SecurityManager#checkPermission s.checkPermission} method with
+	 * 		{@code RuntimePermission("accessDeclaredMembers")} denies access to the declared method.</li>
 	 *			<li>the caller's class loader is not the same as or an ancestor of the class loader for the current class and
 	 *  		invocation of {@link SecurityManager#checkPackageAccess s.checkPackageAccess()} denies access to the package
 	 * 		of this class.</li>
 	 * 	</ul>
 	 */
-	public Parser withContextFunction(final Class<?> cls, final String methodName, final Class<?>... parameterTypes) throws NoSuchMethodException,
-			SecurityException{
+	public Parser withContextFunction(final Class<?> cls, final String methodName, final Class<?>... parameterTypes)
+			throws NoSuchMethodException, SecurityException{
 		final Method method = cls.getDeclaredMethod(methodName, parameterTypes);
 		return withContextFunction(method);
 	}

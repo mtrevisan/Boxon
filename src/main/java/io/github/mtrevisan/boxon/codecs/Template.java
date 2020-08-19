@@ -123,8 +123,8 @@ final class Template<T>{
 			void validate(final Annotation annotation){
 				final Class<?> type = ((BindArrayPrimitive)annotation).type();
 				if(!DataType.isPrimitive(type))
-					throw new AnnotationException("Bad annotation used for {}, should have been used the type `{}.class`", BindArray.class.getSimpleName(),
-						DataType.toObjectiveTypeOrDefault(type).getSimpleName());
+					throw new AnnotationException("Bad annotation used for {}, should have been used the type `{}.class`",
+						BindArray.class.getSimpleName(), DataType.toObjectiveTypeOrDefault(type).getSimpleName());
 			}
 		},
 
@@ -137,8 +137,8 @@ final class Template<T>{
 				validateChoice(selectFrom);
 
 				if(DataType.isPrimitive(type))
-					throw new AnnotationException("Bad annotation used for {}, should have been used the type `{}.class`", BindArrayPrimitive.class.getSimpleName(),
-						DataType.toPrimitiveTypeOrDefault(type).getSimpleName());
+					throw new AnnotationException("Bad annotation used for {}, should have been used the type `{}.class`",
+						BindArrayPrimitive.class.getSimpleName(), DataType.toPrimitiveTypeOrDefault(type).getSimpleName());
 			}
 		},
 
@@ -151,7 +151,8 @@ final class Template<T>{
 				validateChoice(selectFrom);
 
 				if(DataType.isPrimitive(type))
-					throw new AnnotationException("Bad annotation used for {}, should have been used one of the primitive type's annotations", BindObject.class.getSimpleName());
+					throw new AnnotationException("Bad annotation used for {}, should have been used one of the primitive type's annotations",
+						BindObject.class.getSimpleName());
 			}
 		},
 
@@ -160,7 +161,8 @@ final class Template<T>{
 			void validate(final Annotation annotation){
 				final Class<?> type = ((BindDecimal)annotation).type();
 				if(type != float.class && type != Float.class && type != double.class && type != Double.class)
-					throw new AnnotationException("Bad type, should have been one of `{}.class` or `{}.class`", Float.class.getSimpleName(), Double.class.getSimpleName());
+					throw new AnnotationException("Bad type, should have been one of `{}.class` or `{}.class`", Float.class.getSimpleName(),
+						Double.class.getSimpleName());
 			}
 		},
 
@@ -169,7 +171,8 @@ final class Template<T>{
 			void validate(final Annotation annotation){
 				final Class<?> type = ((BindChecksum)annotation).type();
 				if(!DataType.isPrimitiveOrWrapper(type))
-					throw new AnnotationException("Unrecognized type for field {}<{}>: {}", getClass().getSimpleName(), type.getSimpleName(), type.getComponentType().getSimpleName());
+					throw new AnnotationException("Unrecognized type for field {}<{}>: {}", getClass().getSimpleName(), type.getSimpleName(),
+						type.getComponentType().getSimpleName());
 			}
 		};
 
@@ -219,7 +222,8 @@ final class Template<T>{
 	private final MessageHeader header;
 	private final DynamicArray<BoundedField> boundedFields = DynamicArray.create(BoundedField.class);
 	private final DynamicArray<EvaluatedField> evaluatedFields = DynamicArray.create(EvaluatedField.class);
-	/** necessary to speed-up the creation of a {@link Template} (technically not needed because it's already present somewhere inside {@link #boundedFields}). */
+	/** necessary to speed-up the creation of a {@link Template}
+	 * (technically not needed because it's already present somewhere inside {@link #boundedFields}). */
 	private BoundedField checksum;
 
 
@@ -295,7 +299,8 @@ final class Template<T>{
 		}
 
 		if(checksum != null && this.checksum != null)
-			throw new AnnotationException("Cannot have more than one {} annotations on class {}", BindChecksum.class.getSimpleName(), cls.getSimpleName());
+			throw new AnnotationException("Cannot have more than one {} annotations on class {}", BindChecksum.class.getSimpleName(),
+				cls.getSimpleName());
 
 		if(annotations.limit > 0)
 			validateAnnotation(annotations.data[0]);
