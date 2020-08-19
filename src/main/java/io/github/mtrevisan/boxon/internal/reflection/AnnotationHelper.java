@@ -35,7 +35,6 @@ import java.util.Set;
 
 /**
  * @see <a href="https://bill.burkecentral.com/2008/01/14/scanning-java-annotations-at-runtime/">Scanning Java Annotations at Runtime</a>
- * @see <a href="https://github.com/ronmamo/reflections">Reflections</a>
  */
 public final class AnnotationHelper{
 
@@ -75,12 +74,12 @@ public final class AnnotationHelper{
 	 * @return	The classes.
 	 */
 	public static Collection<Class<?>> extractClasses(final Object type, final Class<?>... basePackageClasses){
-		final DynamicArray<String> basePackageClassNames = removeDuplicates(basePackageClasses);
+		final String[] basePackageClassNames = removeDuplicates(basePackageClasses);
 
 		final Collection<Class<?>> classes = new HashSet<>(0);
 
 		final Reflections reflections = new Reflections(new ConfigurationBuilder()
-			.withPackages(basePackageClassNames.extractCopy()));
+			.withPackages(basePackageClassNames));
 		final Set<Class<?>> modules = reflections.getSubTypesOf((Class<Object>)type);
 		final Set<Class<?>> singletons = reflections.getTypesAnnotatedWith((Class<? extends Annotation>)type);
 		classes.addAll(modules);
@@ -88,7 +87,7 @@ public final class AnnotationHelper{
 		return classes;
 	}
 
-	private static DynamicArray<String> removeDuplicates(final Class<?>[] basePackages){
+	private static String[] removeDuplicates(final Class<?>[] basePackages){
 		final DynamicArray<String> basePackageNames = DynamicArray.create(String.class, basePackages.length);
 		final Set<String> uniqueValues = new HashSet<>();
 		for(int i = 0; i < basePackages.length; i ++){
@@ -96,7 +95,7 @@ public final class AnnotationHelper{
 			if(uniqueValues.add(packageName))
 				basePackageNames.add(packageName);
 		}
-		return basePackageNames;
+		return basePackageNames.extractCopy();
 	}
 
 }

@@ -26,7 +26,7 @@ package io.github.mtrevisan.boxon.internal.reflection.vfs;
 
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.reflection.ReflectionsException;
-import io.github.mtrevisan.boxon.internal.reflection.util.ClasspathHelper;
+import io.github.mtrevisan.boxon.internal.reflection.utils.ClasspathHelper;
 import org.slf4j.Logger;
 
 import java.io.FileNotFoundException;

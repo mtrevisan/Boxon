@@ -28,7 +28,7 @@ import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.reflection.adapters.JavaReflectionAdapter;
 import io.github.mtrevisan.boxon.internal.reflection.adapters.JavassistAdapter;
 import io.github.mtrevisan.boxon.internal.reflection.adapters.MetadataAdapterInterface;
-import io.github.mtrevisan.boxon.internal.reflection.util.ClasspathHelper;
+import io.github.mtrevisan.boxon.internal.reflection.utils.ClasspathHelper;
 import org.slf4j.Logger;
 
 import java.net.URL;
@@ -44,7 +44,6 @@ import java.util.Set;
  * <pre><code>
  *      new Reflections(
  *          new ConfigurationBuilder()
- *              .filterInputsBy(new FilterBuilder().include("your project's common package prefix here..."))
  *              .withUrls(ClasspathHelper.forClassLoader()));
  * </code></pre>
  */

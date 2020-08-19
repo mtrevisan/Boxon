@@ -29,7 +29,7 @@ import io.github.mtrevisan.boxon.internal.reflection.adapters.MetadataAdapterInt
 import io.github.mtrevisan.boxon.internal.reflection.scanners.ScannerInterface;
 import io.github.mtrevisan.boxon.internal.reflection.scanners.SubTypesScanner;
 import io.github.mtrevisan.boxon.internal.reflection.scanners.TypeAnnotationsScanner;
-import io.github.mtrevisan.boxon.internal.reflection.util.ReflectionHelper;
+import io.github.mtrevisan.boxon.internal.reflection.utils.ReflectionHelper;
 import io.github.mtrevisan.boxon.internal.reflection.vfs.Directory;
 import io.github.mtrevisan.boxon.internal.reflection.vfs.File;
 import io.github.mtrevisan.boxon.internal.reflection.vfs.VirtualFileSystem;
@@ -43,6 +43,10 @@ import java.util.Objects;
 import java.util.Set;
 
 
+/**
+ * @see <a href="https://github.com/ronmamo/reflections">Reflections</a>
+ */
+//https://github.com/ronmamo/reflections/tree/master/src/test/java/org/reflections
 public class Reflections{
 
 	private static final Logger LOGGER = JavaHelper.getLoggerFor(Reflections.class);

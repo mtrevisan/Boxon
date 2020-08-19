@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.internal.reflection.adapters;
 
-import io.github.mtrevisan.boxon.internal.reflection.util.ReflectionHelper;
+import io.github.mtrevisan.boxon.internal.reflection.utils.ReflectionHelper;
 import io.github.mtrevisan.boxon.internal.reflection.vfs.File;
 
 import java.lang.annotation.Annotation;
