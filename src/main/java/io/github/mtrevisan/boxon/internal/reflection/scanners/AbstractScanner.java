@@ -41,11 +41,11 @@ public abstract class AbstractScanner implements ScannerInterface{
 		this.metadataAdapter = metadataAdapter;
 	}
 
-	public boolean acceptsInput(final String file){
+	public final boolean acceptsInput(final String file){
 		return metadataAdapter.acceptsInput(file);
 	}
 
-	public Object scan(final VFSFile file, Object classObject, final ClassStore classStore){
+	public final Object scan(final VFSFile file, Object classObject, final ClassStore classStore){
 		if(classObject == null){
 			try{
 				classObject = metadataAdapter.getOrCreateClassObject(file);
@@ -62,7 +62,7 @@ public abstract class AbstractScanner implements ScannerInterface{
 
 	protected abstract void scan(final Object cls, final ClassStore classStore);
 
-	protected void put(final ClassStore classStore, final String key, final String value){
+	protected final void put(final ClassStore classStore, final String key, final String value){
 		classStore.put(getClass(), key, value);
 	}
 
