@@ -59,7 +59,7 @@ import java.util.jar.JarFile;
  * <p>{@link VirtualFileSystem.DefaultUrlTypes#fromURL(URL)} uses static {@link DefaultUrlTypes} to resolve URLs.
  * It contains VfsTypes for handling for common resources such as local jar file, local directory, jar url, jar input stream and more.
  */
-public class VirtualFileSystem{
+public final class VirtualFileSystem{
 
 	private static final Logger LOGGER = JavaHelper.getLoggerFor(VirtualFileSystem.class);
 
