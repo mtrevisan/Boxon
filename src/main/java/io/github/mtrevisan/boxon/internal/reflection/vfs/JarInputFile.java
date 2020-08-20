@@ -65,13 +65,12 @@ public class JarInputFile implements VFSFile{
 		return new InputStream(){
 			@Override
 			public int read() throws IOException{
+				int read = -1;
 				if(jarInputDir.cursor >= fromIndex && jarInputDir.cursor <= endIndex){
-					final int read = jarInputDir.jarInputStream.read();
+					read = jarInputDir.jarInputStream.read();
 					jarInputDir.cursor ++;
-					return read;
 				}
-				else
-					return -1;
+				return read;
 			}
 		};
 	}

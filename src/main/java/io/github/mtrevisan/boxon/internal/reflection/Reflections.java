@@ -144,7 +144,7 @@ public class Reflections{
 	private void scan(final URL url){
 		final VFSDirectory directory = VirtualFileSystem.fromURL(url);
 		for(final VFSFile file : directory.getFiles()){
-			//scan if inputs filter accepts file relativePath or packageName
+			//scan only if inputs filter accepts file `relativePath` or `packageName`
 			final String relativePath = file.getRelativePath();
 			final String packageName = relativePath.replace('/', '.');
 			Object classObject = null;
@@ -165,12 +165,12 @@ public class Reflections{
 	 * Expand super types after scanning (for super types that were not scanned).
 	 * <p>This is helpful in finding the transitive closure without scanning all third party dependencies.</p>
 	 * <p>It uses {@link ReflectionHelper#getSuperTypes(Class)}.</p>
-	 * <p>
-	 * for example, for classes {@code A, B, C} where {@code A} supertype of {@code B}, and {@code B} supertype of {@code C}:
+	 * <p>For example, for classes {@code A, B, C} where {@code A} supertype of {@code B}, and {@code B} supertype of {@code C}:
 	 * <ul>
 	 *     <li>if scanning {@code C} resulted in {@code B} ({@code B -> C} in class store), but {@code A} was not scanned (although {@code A} supertype of {@code B}) - then {@code getSubTypesOf(A)} will not return {@code C}.</li>
 	 *     <li>if expanding supertypes, {@code B} will be expanded with {@code A} ({@code A -> B} in class store) - then {@code getSubTypesOf(A)} will return {@code C}.</li>
 	 * </ul>
+	 * </p>
 	 */
 	private void expandSuperTypes(){
 		final Set<String> keys = classStore.keys(SubTypesScanner.class);

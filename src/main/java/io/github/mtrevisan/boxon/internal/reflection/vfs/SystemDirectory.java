@@ -69,7 +69,7 @@ public class SystemDirectory implements VFSDirectory{
 					.iterator();
 			}
 			catch(final IOException e){
-				throw new ReflectionsException("could not get files for " + file, e);
+				throw new ReflectionsException("Could not get files for " + file, e);
 			}
 		};
 	}

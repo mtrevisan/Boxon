@@ -74,20 +74,19 @@ class UrlTypeVFS implements UrlType{
 			catch(final IOException e1){
 				if(LOGGER != null){
 					LOGGER.warn("Could not get URL", e);
-					LOGGER.warn("Could not get URL", e1);
+					LOGGER.warn("Caused by", e1);
 				}
 			}
 		}
 		return null;
 	}
 
-	private URL adaptURL(final URL url) throws MalformedURLException{
+	private URL adaptURL(URL url) throws MalformedURLException{
 		if(VFSZIP.equals(url.getProtocol()))
-			return replaceZipSeparators(url.getPath(), realFile);
+			url = replaceZipSeparators(url.getPath(), realFile);
 		else if(VFSFILE.equals(url.getProtocol()))
-			return new URL(url.toString().replace(VFSFILE, "file"));
-		else
-			return url;
+			url = new URL(url.toString().replace(VFSFILE, "file"));
+		return url;
 	}
 
 	private URL replaceZipSeparators(final String path, final Predicate<File> acceptFile) throws MalformedURLException{
