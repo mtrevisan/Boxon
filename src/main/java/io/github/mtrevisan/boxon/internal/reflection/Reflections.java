@@ -147,16 +147,16 @@ public class Reflections{
 			final String relativePath = file.getRelativePath();
 			final String packageName = relativePath.replace('/', '.');
 			Object classObject = null;
-			for(final ScannerInterface scanner : scanners){
-				try{
-					if(scanner.acceptsInput(relativePath) || scanner.acceptsInput(packageName))
+			for(final ScannerInterface scanner : scanners)
+				if(scanner.acceptsInput(relativePath) || scanner.acceptsInput(packageName)){
+					try{
 						classObject = scanner.scan(file, classObject, classStore);
+					}
+					catch(final Exception e){
+						if(LOGGER != null)
+							LOGGER.debug("Could not scan file {} in URL {} with scanner {}", relativePath, url.toExternalForm(), scanner.getClass().getSimpleName(), e);
+					}
 				}
-				catch(final Exception e){
-					if(LOGGER != null)
-						LOGGER.debug("Could not scan file {} in URL {} with scanner {}", relativePath, url.toExternalForm(), scanner.getClass().getSimpleName(), e);
-				}
-			}
 		}
 	}
 
