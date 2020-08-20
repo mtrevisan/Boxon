@@ -77,7 +77,7 @@ public abstract class VirtualFileSystem{
 	private static final Logger LOGGER = JavaHelper.getLoggerFor(VirtualFileSystem.class);
 
 
-	private static final List<UrlType> defaultUrlTypes = new ArrayList<>(Arrays.asList(DefaultUrlTypes.values()));
+	private static final List<UrlType> DEFAULT_URL_TYPES = new ArrayList<>(Arrays.asList(DefaultUrlTypes.values()));
 
 
 	/**
@@ -86,7 +86,7 @@ public abstract class VirtualFileSystem{
 	 * @param urlType	The URL type.
 	 */
 	public static void addDefaultURLTypes(final UrlType urlType){
-		defaultUrlTypes.add(0, urlType);
+		DEFAULT_URL_TYPES.add(0, urlType);
 	}
 
 
@@ -97,7 +97,7 @@ public abstract class VirtualFileSystem{
 	 * @return	The Dir from the given {@code url}.
 	 */
 	public static Directory fromURL(final URL url){
-		for(final UrlType type : defaultUrlTypes){
+		for(final UrlType type : DEFAULT_URL_TYPES){
 			try{
 				if(type.matches(url)){
 					final Directory directory = type.createDir(url);
