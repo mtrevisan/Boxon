@@ -79,7 +79,7 @@ public final class ClasspathHelper{
 	 * If the input is null or empty, it defaults to both {@link #contextClassLoader()} and {@link #staticClassLoader()}
 	 *
 	 * @param classLoaders	The class loaders.
-	 * @return	The array of class loaders, not null.
+	 * @return	The array of class loaders, not {@code null}.
 	 */
 	public static ClassLoader[] classLoaders(final ClassLoader... classLoaders){
 		if(classLoaders != null && classLoaders.length != 0)
@@ -101,16 +101,18 @@ public final class ClasspathHelper{
 	 * If the optional {@link ClassLoader}s are not specified, then both {@link #contextClassLoader()}
 	 * and {@link #staticClassLoader()} are used for {@link ClassLoader#getResources(String)}.
 	 *
-	 * @return the URL containing the class, null if not found
+	 * @param cls	The class.
+	 * @param classLoaders	The class loaders.
+	 * @return	The URL containing the class, {@code null} if not found.
 	 */
-	public static URL forClass(final Class<?> aClass, final ClassLoader... classLoaders){
+	public static URL forClass(final Class<?> cls, final ClassLoader... classLoaders){
 		final ClassLoader[] loaders = classLoaders(classLoaders);
-		final String resourceName = aClass.getName().replace(DOT, SLASH) + DOT_CLASS;
+		final String resourceName = cls.getName().replace(DOT, SLASH) + DOT_CLASS;
 		for(final ClassLoader classLoader : loaders){
 			try{
 				final URL url = classLoader.getResource(resourceName);
 				if(url != null){
-					final String normalizedUrl = url.toExternalForm().substring(0, url.toExternalForm().lastIndexOf(aClass.getPackage().getName().replace(DOT, SLASH)));
+					final String normalizedUrl = url.toExternalForm().substring(0, url.toExternalForm().lastIndexOf(cls.getPackage().getName().replace(DOT, SLASH)));
 					return new URL(normalizedUrl);
 				}
 			}
@@ -136,7 +138,7 @@ public final class ClasspathHelper{
 	 *
 	 * @param name	The package name.
 	 * @param classLoaders	The class loaders.
-	 * @return	The collection of URLs, not null.
+	 * @return	The collection of URLs, not {@code null}.
 	 */
 	public static Collection<URL> forPackage(final String name, final ClassLoader... classLoaders){
 		return forResource(resourceName(name), classLoaders);
@@ -156,7 +158,7 @@ public final class ClasspathHelper{
 	 *
 	 * @param resourceName	The resource name.
 	 * @param classLoaders	The class loaders.
-	 * @return	The collection of URLs, not null.
+	 * @return	The collection of URLs, not {@code null}.
 	 */
 	private static Collection<URL> forResource(final String resourceName, final ClassLoader... classLoaders){
 		final List<URL> result = new ArrayList<>();
