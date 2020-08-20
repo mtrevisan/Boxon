@@ -25,6 +25,8 @@
 package io.github.mtrevisan.boxon.internal.reflection;
 
 import io.github.mtrevisan.boxon.internal.JavaHelper;
+import io.github.mtrevisan.boxon.internal.reflection.adapters.JavaReflectionAdapter;
+import io.github.mtrevisan.boxon.internal.reflection.adapters.JavassistAdapter;
 import io.github.mtrevisan.boxon.internal.reflection.adapters.MetadataAdapterInterface;
 import io.github.mtrevisan.boxon.internal.reflection.scanners.ScannerInterface;
 import io.github.mtrevisan.boxon.internal.reflection.scanners.SubTypesScanner;
@@ -50,8 +52,25 @@ public class Reflections{
 
 	private static final Logger LOGGER = JavaHelper.getLoggerFor(Reflections.class);
 
+	private static MetadataAdapterInterface<?> METADATA_ADAPTER;
+	static{
+		/**
+		 * if javassist library exists in the classpath, this method returns {@link JavassistAdapter} otherwise defaults to {@link JavaReflectionAdapter}.
+		 * <p>the {@link JavassistAdapter} is preferred in terms of performance and class loading.
+		 */
+		try{
+			METADATA_ADAPTER = new JavassistAdapter();
+		}
+		catch(final Throwable e){
+			if(LOGGER != null)
+				LOGGER.warn("could not create JavassistAdapter, using JavaReflectionAdapter", e);
+
+			METADATA_ADAPTER = new JavaReflectionAdapter();
+		}
+	}
+
 	private final ScannerInterface[] scanners = new ScannerInterface[]{new TypeAnnotationsScanner(), new SubTypesScanner()};
-	protected final ClassStore classStore = new ClassStore();
+	private final ClassStore classStore = new ClassStore();
 
 
 	/**
@@ -62,15 +81,13 @@ public class Reflections{
 	 */
 	public Reflections(final Configuration configuration){
 		Objects.requireNonNull(configuration);
-		final MetadataAdapterInterface<?> metadataAdapter = configuration.getMetadataAdapter();
-		Objects.requireNonNull(metadataAdapter);
 		final Set<URL> urls = configuration.getUrls();
 		if(urls == null || urls.isEmpty())
 			throw new IllegalArgumentException("Given scan URLs are empty");
 
 		//inject to scanners
 		for(int i = 0; i < scanners.length; i ++)
-			scanners[i].setMetadataAdapter(metadataAdapter);
+			scanners[i].setMetadataAdapter(METADATA_ADAPTER);
 
 		scan(urls);
 

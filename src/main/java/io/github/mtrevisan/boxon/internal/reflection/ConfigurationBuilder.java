@@ -24,12 +24,7 @@
  */
 package io.github.mtrevisan.boxon.internal.reflection;
 
-import io.github.mtrevisan.boxon.internal.JavaHelper;
-import io.github.mtrevisan.boxon.internal.reflection.adapters.JavaReflectionAdapter;
-import io.github.mtrevisan.boxon.internal.reflection.adapters.JavassistAdapter;
-import io.github.mtrevisan.boxon.internal.reflection.adapters.MetadataAdapterInterface;
 import io.github.mtrevisan.boxon.internal.reflection.utils.ClasspathHelper;
-import org.slf4j.Logger;
 
 import java.net.URL;
 import java.util.Arrays;
@@ -49,11 +44,7 @@ import java.util.Set;
  */
 public class ConfigurationBuilder implements Configuration{
 
-	private static final Logger LOGGER = JavaHelper.getLoggerFor(ConfigurationBuilder.class);
-
-
 	private final Set<URL> urls;
-	protected MetadataAdapterInterface<?> metadataAdapter;
 	private boolean expandSuperTypes = true;
 
 
@@ -99,29 +90,6 @@ public class ConfigurationBuilder implements Configuration{
 	public ConfigurationBuilder withUrls(final URL... urls){
 		this.urls.addAll(new HashSet<>(Arrays.asList(urls)));
 		return this;
-	}
-
-	/**
-	 * returns the metadata adapter.
-	 * if javassist library exists in the classpath, this method returns {@link JavassistAdapter} otherwise defaults to {@link JavaReflectionAdapter}.
-	 * <p>the {@link JavassistAdapter} is preferred in terms of performance and class loading.
-	 *
-	 * @return	The metadata adapter.
-	 */
-	public MetadataAdapterInterface<?> getMetadataAdapter(){
-		if(metadataAdapter != null)
-			return metadataAdapter;
-		else{
-			try{
-				return (metadataAdapter = new JavassistAdapter());
-			}
-			catch(final Throwable e){
-				if(LOGGER != null)
-					LOGGER.warn("could not create JavassistAdapter, using JavaReflectionAdapter", e);
-
-				return (metadataAdapter = new JavaReflectionAdapter());
-			}
-		}
 	}
 
 	@Override

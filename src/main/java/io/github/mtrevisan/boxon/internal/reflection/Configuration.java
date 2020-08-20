@@ -24,8 +24,6 @@
  */
 package io.github.mtrevisan.boxon.internal.reflection;
 
-import io.github.mtrevisan.boxon.internal.reflection.adapters.MetadataAdapterInterface;
-
 import java.net.URL;
 import java.util.Set;
 
@@ -44,15 +42,7 @@ public interface Configuration{
 	Set<URL> getUrls();
 
 	/**
-	 * The metadata adapter used to fetch metadata from classes.
-	 *
-	 * @return	The metadata adapter used to fetch metadata from classes.
-	 */
-	MetadataAdapterInterface<?> getMetadataAdapter();
-
-	/**
 	 * Whether to expand super types after scanning, for super types that were not scanned.
-	 * <p>see {@link Reflections#expandSuperTypes()}.</p>
 	 *
 	 * @return	Whether to expand super types after scanning.
 	 */
