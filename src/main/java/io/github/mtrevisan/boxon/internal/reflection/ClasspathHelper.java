@@ -56,9 +56,8 @@ public final class ClasspathHelper{
 
 	/**
 	 * Gets the current thread context class loader.
-	 * {@code Thread.currentThread().getContextClassLoader()}.
 	 *
-	 * @return	The context class loader, may be null
+	 * @return	The context class loader, may be {@code null}.
 	 */
 	public static ClassLoader contextClassLoader(){
 		return Thread.currentThread().getContextClassLoader();

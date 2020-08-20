@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.internal.reflection.vfs;
 
 import io.github.mtrevisan.boxon.internal.JavaHelper;
+import io.github.mtrevisan.boxon.internal.reflection.ClasspathHelper;
 import org.slf4j.Logger;
 
 import java.io.File;
@@ -159,7 +160,7 @@ public final class VirtualFileSystem{
 
 			@Override
 			public VFSDirectory createDir(final URL url) throws Exception{
-				final Class<?> fileLocatorClass = Thread.currentThread().getContextClassLoader()
+				final Class<?> fileLocatorClass = ClasspathHelper.contextClassLoader()
 					.loadClass("org.eclipse.core.runtime.FileLocator");
 				return fromURL((URL)fileLocatorClass.getMethod("resolve", URL.class).invoke(null, url));
 			}
