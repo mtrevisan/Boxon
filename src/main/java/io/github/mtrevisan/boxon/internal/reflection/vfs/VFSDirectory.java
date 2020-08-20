@@ -31,4 +31,6 @@ public interface VFSDirectory{
 
 	Iterable<VFSFile> getFiles();
 
+	void close();
+
 }

@@ -66,6 +66,7 @@ class ZipDirectory implements VFSDirectory{
 		return jarFile.getInputStream(entry);
 	}
 
+	@Override
 	public void close(){
 		try{
 			jarFile.close();

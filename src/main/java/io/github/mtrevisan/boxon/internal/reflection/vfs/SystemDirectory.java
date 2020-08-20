@@ -75,6 +75,9 @@ class SystemDirectory implements VFSDirectory{
 	}
 
 	@Override
+	public void close(){}
+
+	@Override
 	public String toString(){
 		return getPath();
 	}

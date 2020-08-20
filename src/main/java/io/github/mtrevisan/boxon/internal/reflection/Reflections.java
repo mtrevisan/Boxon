@@ -143,21 +143,26 @@ public class Reflections{
 
 	private void scan(final URL url){
 		final VFSDirectory directory = VirtualFileSystem.fromURL(url);
-		for(final VFSFile file : directory.getFiles()){
-			//scan only if inputs filter accepts file `relativePath` or `packageName`
-			final String relativePath = file.getRelativePath();
-			final String packageName = relativePath.replace('/', '.');
-			Object classObject = null;
-			for(final ScannerInterface scanner : scanners)
-				if(scanner.acceptsInput(relativePath) || scanner.acceptsInput(packageName)){
-					try{
-						classObject = scanner.scan(file, classObject, metadataStore);
+		try{
+			for(final VFSFile file : directory.getFiles()){
+				//scan only if inputs filter accepts file `relativePath` or `packageName`
+				final String relativePath = file.getRelativePath();
+				final String packageName = relativePath.replace('/', '.');
+				Object classObject = null;
+				for(final ScannerInterface scanner : scanners)
+					if(scanner.acceptsInput(relativePath) || scanner.acceptsInput(packageName)){
+						try{
+							classObject = scanner.scan(file, classObject, metadataStore);
+						}
+						catch(final Exception e){
+							if(LOGGER != null)
+								LOGGER.debug("Could not scan file {} in URL {} with scanner {}", relativePath, url.toExternalForm(), scanner.getClass().getSimpleName(), e);
+						}
 					}
-					catch(final Exception e){
-						if(LOGGER != null)
-							LOGGER.debug("Could not scan file {} in URL {} with scanner {}", relativePath, url.toExternalForm(), scanner.getClass().getSimpleName(), e);
-					}
-				}
+			}
+		}
+		finally{
+			directory.close();
 		}
 	}
 
