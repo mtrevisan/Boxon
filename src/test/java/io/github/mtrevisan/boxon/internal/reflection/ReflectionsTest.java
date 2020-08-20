@@ -106,8 +106,7 @@ class ReflectionsTest{
 
 	@BeforeAll
 	static void init(){
-		reflections = new Reflections(new ConfigurationBuilder()
-			.withPackages(ReflectionsTestModel.class));
+		reflections = Reflections.create(ReflectionsTestModel.class);
 	}
 
 	@Test

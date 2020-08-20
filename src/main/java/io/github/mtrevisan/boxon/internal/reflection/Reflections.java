@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.internal.reflection;
 
+import io.github.mtrevisan.boxon.internal.DynamicArray;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.reflection.adapters.JavaReflectionAdapter;
 import io.github.mtrevisan.boxon.internal.reflection.adapters.JavassistAdapter;
@@ -31,6 +32,7 @@ import io.github.mtrevisan.boxon.internal.reflection.adapters.MetadataAdapterInt
 import io.github.mtrevisan.boxon.internal.reflection.scanners.ScannerInterface;
 import io.github.mtrevisan.boxon.internal.reflection.scanners.SubTypesScanner;
 import io.github.mtrevisan.boxon.internal.reflection.scanners.TypeAnnotationsScanner;
+import io.github.mtrevisan.boxon.internal.reflection.utils.ClasspathHelper;
 import io.github.mtrevisan.boxon.internal.reflection.utils.ReflectionHelper;
 import io.github.mtrevisan.boxon.internal.reflection.vfs.Directory;
 import io.github.mtrevisan.boxon.internal.reflection.vfs.File;
@@ -41,6 +43,7 @@ import java.lang.annotation.Annotation;
 import java.lang.annotation.Inherited;
 import java.net.URL;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -73,17 +76,47 @@ public class Reflections{
 	private final ClassStore classStore = new ClassStore();
 
 
-	/**
-	 * constructs a Reflections instance and scan according to given {@link Configuration}
-	 * <p>it is preferred to use {@link ConfigurationBuilder}
-	 *
-	 * @param configuration	The configuration.
-	 */
-	public Reflections(final Configuration configuration){
-		Objects.requireNonNull(configuration);
-		final Set<URL> urls = configuration.getUrls();
-		if(urls == null || urls.isEmpty())
-			throw new IllegalArgumentException("Given scan URLs are empty");
+	public static Reflections create(final URL... urls){
+		return new Reflections(false, urls);
+	}
+
+	public static Reflections create(final Class<?>... classes){
+		final String[] basePackages = removeDuplicates(classes);
+		final Set<URL> urls = new HashSet<>();
+		for(int i = 0; i < basePackages.length; i ++)
+			urls.addAll(ClasspathHelper.forPackage(basePackages[i]));
+
+		return new Reflections(false, urls.toArray(URL[]::new));
+	}
+
+	public static Reflections createExpandSuperTypes(final URL... urls){
+		return new Reflections(true, urls);
+	}
+
+	public static Reflections createExpandSuperTypes(final Class<?>... classes){
+		final String[] basePackages = removeDuplicates(classes);
+		final Set<URL> urls = new HashSet<>();
+		for(int i = 0; i < basePackages.length; i ++)
+			urls.addAll(ClasspathHelper.forPackage(basePackages[i]));
+
+		return new Reflections(true, urls.toArray(URL[]::new));
+	}
+
+	private static String[] removeDuplicates(final Class<?>[] basePackages){
+		final DynamicArray<String> basePackageNames = DynamicArray.create(String.class, basePackages.length);
+		final Set<String> uniqueValues = new HashSet<>();
+		for(int i = 0; i < basePackages.length; i ++){
+			final String packageName = basePackages[i].getPackageName();
+			if(uniqueValues.add(packageName))
+				basePackageNames.add(packageName);
+		}
+		return basePackageNames.extractCopy();
+	}
+
+	private Reflections(final boolean expandSuperTypes, final URL... urls){
+		Objects.requireNonNull(urls);
+		if(urls.length == 0)
+			throw new IllegalArgumentException("Packages list cannot be empty");
 
 		//inject to scanners
 		for(int i = 0; i < scanners.length; i ++)
@@ -91,11 +124,11 @@ public class Reflections{
 
 		scan(urls);
 
-		if(configuration.shouldExpandSuperTypes())
+		if(expandSuperTypes)
 			expandSuperTypes();
 	}
 
-	private void scan(final Set<URL> urls){
+	private void scan(final URL... urls){
 		for(final URL url : urls){
 			try{
 				scan(url);

@@ -24,8 +24,6 @@
  */
 package io.github.mtrevisan.boxon.internal;
 
-import io.github.mtrevisan.boxon.internal.DynamicArray;
-import io.github.mtrevisan.boxon.internal.reflection.ConfigurationBuilder;
 import io.github.mtrevisan.boxon.internal.reflection.Reflections;
 
 import java.lang.annotation.Annotation;
@@ -76,28 +74,16 @@ public final class AnnotationHelper{
 	 * @return	The classes.
 	 */
 	public static Collection<Class<?>> extractClasses(final Object type, final Class<?>... basePackageClasses){
-		final String[] basePackageClassNames = removeDuplicates(basePackageClasses);
-
 		final Collection<Class<?>> classes = new HashSet<>(0);
 
-		final Reflections reflections = new Reflections(new ConfigurationBuilder()
-			.withPackages(basePackageClassNames));
+		final Reflections reflections = Reflections.create(basePackageClasses);
+		@SuppressWarnings("unchecked")
 		final Set<Class<?>> modules = reflections.getSubTypesOf((Class<Object>)type);
+		@SuppressWarnings("unchecked")
 		final Set<Class<?>> singletons = reflections.getTypesAnnotatedWith((Class<? extends Annotation>)type);
 		classes.addAll(modules);
 		classes.addAll(singletons);
 		return classes;
-	}
-
-	private static String[] removeDuplicates(final Class<?>[] basePackages){
-		final DynamicArray<String> basePackageNames = DynamicArray.create(String.class, basePackages.length);
-		final Set<String> uniqueValues = new HashSet<>();
-		for(int i = 0; i < basePackages.length; i ++){
-			final String packageName = basePackages[i].getPackageName();
-			if(uniqueValues.add(packageName))
-				basePackageNames.add(packageName);
-		}
-		return basePackageNames.extractCopy();
 	}
 
 }
