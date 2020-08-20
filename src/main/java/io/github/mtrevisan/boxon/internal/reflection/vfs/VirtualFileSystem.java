@@ -97,8 +97,6 @@ public final class VirtualFileSystem{
 	 * <p>JAR_FILE - creates a {@link ZipDirectory} over JAR file.
 	 * <p>JAR_URL - creates a {@link ZipDirectory} over a JAR URL (contains {@code ".jar!/"} in it's name), using Java's {@link JarURLConnection}.
 	 * <p>DIRECTORY - creates a {@link SystemDirectory} over a file system directory.
-	 * <p>JBOSS_VFS - for protocols VFS, using jboss VFS (should be provided in classpath).
-	 * <p>JBOSS_VFS_FILE - creates a {@link UrlTypeVFS} for protocols VFSZIP and VSFFILE.
 	 * <p>BUNDLE - for bundle protocol, using eclipse FileLocator (should be provided in classpath).
 	 * <p>JAR_INPUT_STREAM - creates a {@link JarInputDirectory} over JAR files, using Java's {@link java.util.jar.JarInputStream JarInputStream}.
 	 */
@@ -152,39 +150,6 @@ public final class VirtualFileSystem{
 			@Override
 			public VFSDirectory createDir(final URL url){
 				return new SystemDirectory(resourceToFile(url));
-			}
-		},
-
-		JBOSS_VFS{
-			@Override
-			public boolean matches(final URL url){
-				return url.getProtocol().equals("vfs");
-			}
-
-			@Override
-			public VFSDirectory createDir(final URL url) throws Exception{
-				final Object content = url.openConnection().getContent();
-				final Class<?> virtualFile = ClasspathHelper.contextClassLoader().loadClass("org.jboss.vfs.VirtualFile");
-				final File physicalFile = (File)virtualFile.getMethod("getPhysicalFile").invoke(content);
-				final String name = (String)virtualFile.getMethod("getName").invoke(content);
-				File file = new File(physicalFile.getParentFile(), name);
-				if(!file.exists() || !file.canRead())
-					file = physicalFile;
-				return (file.isDirectory()? new SystemDirectory(file): new ZipDirectory(new JarFile(file)));
-			}
-		},
-
-		JBOSS_VFS_FILE{
-			private final Set<String> protocols = new HashSet<>(Arrays.asList("vfszip", "vfsfile"));
-
-			@Override
-			public boolean matches(final URL url){
-				return protocols.contains(url.getProtocol());
-			}
-
-			@Override
-			public VFSDirectory createDir(final URL url){
-				return new UrlTypeVFS().createDir(url);
 			}
 		},
 
