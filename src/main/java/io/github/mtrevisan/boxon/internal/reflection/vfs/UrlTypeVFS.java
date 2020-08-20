@@ -40,7 +40,7 @@ import java.util.regex.Pattern;
 
 /**
  * {@link UrlType} to be used by {@link io.github.mtrevisan.boxon.internal.reflection.Reflections Reflections}.
- * <p>This class handles the vfszip and vfsfile protocol of JBOSS files.</p>
+ * <p>This class handles the VFSZIP and VFSFILE protocol of JBOSS files.</p>
  *
  * @author	Sergio Pola
  */
