@@ -54,7 +54,7 @@ public final class JavaHelper{
 
 
 	public static <T> Set<T> filter(final Collection<T> result, final Predicate<? super T> predicate){
-		final Set<T> set = new HashSet<>();
+		final Set<T> set = new HashSet<>(result.size());
 		for(final T t : result)
 			if(predicate.test(t))
 				set.add(t);

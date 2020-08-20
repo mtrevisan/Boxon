@@ -83,7 +83,7 @@ public class Reflections{
 
 	public static Reflections create(final Class<?>... classes){
 		final String[] basePackages = extractUniquePackageNames(classes);
-		final Set<URL> urls = new HashSet<>();
+		final Set<URL> urls = new HashSet<>(basePackages.length);
 		for(int i = 0; i < basePackages.length; i ++)
 			urls.addAll(ClasspathHelper.forPackage(basePackages[i]));
 
@@ -96,7 +96,7 @@ public class Reflections{
 
 	public static Reflections createExpandSuperTypes(final Class<?>... classes){
 		final String[] basePackages = extractUniquePackageNames(classes);
-		final Set<URL> urls = new HashSet<>();
+		final Set<URL> urls = new HashSet<>(basePackages.length);
 		for(int i = 0; i < basePackages.length; i ++)
 			urls.addAll(ClasspathHelper.forPackage(basePackages[i]));
 
@@ -105,7 +105,7 @@ public class Reflections{
 
 	private static String[] extractUniquePackageNames(final Class<?>[] basePackages){
 		final DynamicArray<String> basePackageNames = DynamicArray.create(String.class, basePackages.length);
-		final Set<String> uniqueValues = new HashSet<>();
+		final Set<String> uniqueValues = new HashSet<>(basePackages.length);
 		for(int i = 0; i < basePackages.length; i ++){
 			final String packageName = basePackages[i].getPackageName();
 			if(uniqueValues.add(packageName))
@@ -145,11 +145,11 @@ public class Reflections{
 		final VFSDirectory directory = VirtualFileSystem.fromURL(url);
 		try{
 			for(final VFSFile file : directory.getFiles()){
-				//scan only if inputs filter accepts file `relativePath` or `packageName`
 				final String relativePath = file.getRelativePath();
 				final String packageName = relativePath.replace('/', '.');
 				Object classObject = null;
 				for(final ScannerInterface scanner : scanners)
+					//scan only if inputs filter accepts file `relativePath` or `packageName`
 					if(scanner.acceptsInput(relativePath) || scanner.acceptsInput(packageName)){
 						try{
 							classObject = scanner.scan(file, classObject, metadataStore);
@@ -291,9 +291,9 @@ public class Reflections{
 	 * @param <T>	The type of the returned predicate.
 	 */
 	private <T extends AnnotatedElement> Predicate<T> getFilterWithAnnotation(final Annotation annotation){
-		return input -> input != null
+		return input -> (input != null
 			&& input.isAnnotationPresent(annotation.annotationType())
-			&& areAnnotationMembersMatching(input.getAnnotation(annotation.annotationType()), annotation);
+			&& areAnnotationMembersMatching(input.getAnnotation(annotation.annotationType()), annotation));
 	}
 
 	private boolean areAnnotationMembersMatching(final Annotation annotation1, final Annotation annotation2){

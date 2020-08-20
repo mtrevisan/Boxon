@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
  */
 public class MetadataStore{
 
-	private final Map<Class<?>, Map<String, Collection<String>>> map = new ConcurrentHashMap<>();
+	private final Map<Class<?>, Map<String, Collection<String>>> map = new ConcurrentHashMap<>(0);
 
 
 	MetadataStore(){}
@@ -98,7 +98,7 @@ public class MetadataStore{
 		final Map<String, Collection<String>> scannerMap = get(scannerClass);
 		final List<String> workKeys = new ArrayList<>(keys);
 
-		final Set<String> result = new HashSet<>();
+		final Set<String> result = new HashSet<>(keys.size());
 		for(int i = 0; i < workKeys.size(); i ++){
 			final String key = workKeys.get(i);
 			if(result.add(key)){
@@ -134,8 +134,8 @@ public class MetadataStore{
 	}
 
 	public boolean put(final Class<?> scannerClass, final String key, final String value){
-		return map.computeIfAbsent(scannerClass, s -> new ConcurrentHashMap<>())
-			.computeIfAbsent(key, s -> new ArrayList<>())
+		return map.computeIfAbsent(scannerClass, s -> new ConcurrentHashMap<>(1))
+			.computeIfAbsent(key, s -> new ArrayList<>(1))
 			.add(value);
 	}
 
