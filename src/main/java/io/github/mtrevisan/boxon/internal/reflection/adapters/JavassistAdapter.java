@@ -40,10 +40,10 @@ import java.io.InputStream;
 public class JavassistAdapter implements MetadataAdapterInterface<ClassFile>{
 
 	/**
-	 * Setting this to false will result in returning only visible annotations from the relevant methods here
+	 * Setting this to {@code false} will result in returning only visible annotations from the relevant methods here
 	 * (only {@link java.lang.annotation.RetentionPolicy#RUNTIME}).
 	 */
-	public static final boolean includeInvisibleTag = true;
+	public static final boolean INCLUDE_INVISIBLE_TAG = true;
 
 
 	@Override
@@ -68,7 +68,7 @@ public class JavassistAdapter implements MetadataAdapterInterface<ClassFile>{
 		AnnotationsAttribute attribute = (AnnotationsAttribute)type.getAttribute(AnnotationsAttribute.visibleTag);
 		extractAnnotationNames(attribute, list);
 
-		if(includeInvisibleTag){
+		if(INCLUDE_INVISIBLE_TAG){
 			attribute = (AnnotationsAttribute)type.getAttribute(AnnotationsAttribute.invisibleTag);
 			extractAnnotationNames(attribute, list);
 		}
@@ -90,7 +90,7 @@ public class JavassistAdapter implements MetadataAdapterInterface<ClassFile>{
 			return new ClassFile(new DataInputStream(new BufferedInputStream(is)));
 		}
 		catch(final IOException e){
-			throw new ReflectionsException("could not create class file from " + file.getName(), e);
+			throw new ReflectionsException("Could not create class file from " + file.getName(), e);
 		}
 	}
 

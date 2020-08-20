@@ -47,6 +47,8 @@ public final class ReflectionHelper{
 
 	private static final Logger LOGGER = JavaHelper.getLoggerFor(ReflectionHelper.class);
 
+	private static final String EMPTY_STRING = "";
+
 
 	/**
 	 * would include {@code Object.class} when {@link #getSuperTypes(Class)}. default is false.
@@ -93,7 +95,7 @@ public final class ReflectionHelper{
 			String type = typeName;
 			index = typeName.indexOf("[");
 			if(index >= 0){
-				final String array = typeName.substring(index).replace("]", "");
+				final String array = typeName.substring(index).replace("]", EMPTY_STRING);
 
 				type = typeName.substring(0, index);
 				index = primitiveNames.indexOf(type);

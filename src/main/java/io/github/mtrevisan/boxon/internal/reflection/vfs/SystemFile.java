@@ -35,6 +35,10 @@ import java.io.InputStream;
  */
 public class SystemFile implements VFSFile{
 
+	private static final String SLASH = "/";
+	private static final String BACKSLASH = "\\";
+
+
 	private final SystemDirectory root;
 	private final File file;
 
@@ -51,7 +55,7 @@ public class SystemFile implements VFSFile{
 
 	@Override
 	public String getRelativePath(){
-		final String filepath = file.getPath().replace("\\", "/");
+		final String filepath = file.getPath().replace(BACKSLASH, SLASH);
 		return (filepath.startsWith(root.getPath())? filepath.substring(root.getPath().length() + 1): null);
 	}
 

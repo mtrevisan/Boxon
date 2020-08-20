@@ -21,6 +21,11 @@ public final class ClasspathHelper{
 
 	private static final Logger LOGGER = JavaHelper.getLoggerFor(ClasspathHelper.class);
 
+	private static final String SLASH = "/";
+	private static final String BACKSLASH = "\\";
+	private static final String DOT = ".";
+	private static final String DOT_CLASS = ".class";
+
 
 	private ClasspathHelper(){}
 
@@ -76,12 +81,12 @@ public final class ClasspathHelper{
 	 */
 	public static URL forClass(final Class<?> aClass, final ClassLoader... classLoaders){
 		final ClassLoader[] loaders = classLoaders(classLoaders);
-		final String resourceName = aClass.getName().replace(".", "/") + ".class";
+		final String resourceName = aClass.getName().replace(DOT, SLASH) + DOT_CLASS;
 		for(final ClassLoader classLoader : loaders){
 			try{
 				final URL url = classLoader.getResource(resourceName);
 				if(url != null){
-					final String normalizedUrl = url.toExternalForm().substring(0, url.toExternalForm().lastIndexOf(aClass.getPackage().getName().replace(".", "/")));
+					final String normalizedUrl = url.toExternalForm().substring(0, url.toExternalForm().lastIndexOf(aClass.getPackage().getName().replace(DOT, SLASH)));
 					return new URL(normalizedUrl);
 				}
 			}
@@ -155,9 +160,9 @@ public final class ClasspathHelper{
 
 	private static String resourceName(final String name){
 		if(name != null){
-			String resourceName = name.replace(".", "/");
-			resourceName = resourceName.replace("\\", "/");
-			if(resourceName.startsWith("/"))
+			String resourceName = name.replace(DOT, SLASH);
+			resourceName = resourceName.replace(BACKSLASH, SLASH);
+			if(resourceName.startsWith(SLASH))
 				resourceName = resourceName.substring(1);
 			return resourceName;
 		}

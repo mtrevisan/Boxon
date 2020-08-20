@@ -37,6 +37,10 @@ import java.util.Collections;
  */
 public class SystemDirectory implements VFSDirectory{
 
+	private static final String SLASH = "/";
+	private static final String BACKSLASH = "\\";
+
+
 	private final File file;
 
 
@@ -49,7 +53,7 @@ public class SystemDirectory implements VFSDirectory{
 
 	@Override
 	public String getPath(){
-		return (file != null? file.getPath().replace("\\", "/"): "/NO-SUCH-DIRECTORY/");
+		return (file != null? file.getPath().replace(BACKSLASH, SLASH): "/NO-SUCH-DIRECTORY/");
 	}
 
 	@Override

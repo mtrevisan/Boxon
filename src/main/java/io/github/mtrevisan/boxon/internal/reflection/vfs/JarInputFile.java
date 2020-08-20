@@ -31,6 +31,8 @@ import java.util.zip.ZipEntry;
 
 public class JarInputFile implements VFSFile{
 
+	private static final String SLASH = "/";
+
 	private final ZipEntry entry;
 	private final JarInputDirectory jarInputDir;
 	private final long fromIndex;
@@ -47,7 +49,7 @@ public class JarInputFile implements VFSFile{
 	@Override
 	public String getName(){
 		final String name = entry.getName();
-		return name.substring(name.lastIndexOf("/") + 1);
+		return name.substring(name.lastIndexOf(SLASH) + 1);
 	}
 
 	@Override
