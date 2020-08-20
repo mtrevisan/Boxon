@@ -47,6 +47,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.util.ArrayDeque;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
@@ -135,8 +136,7 @@ public final class ReflectionHelper{
 	private static <T> Queue<Type> extractAncestors(final Class<? extends T> offspring){
 		final Type[] genericInterfaces = offspring.getGenericInterfaces();
 		final Queue<Type> ancestorsQueue = new ArrayDeque<>(genericInterfaces.length + 1);
-		for(int i = 0; i < genericInterfaces.length; i ++)
-			ancestorsQueue.add(genericInterfaces[i]);
+		ancestorsQueue.addAll(Arrays.asList(genericInterfaces));
 		if(offspring.getGenericSuperclass() != null)
 			ancestorsQueue.add(offspring.getGenericSuperclass());
 		return ancestorsQueue;
