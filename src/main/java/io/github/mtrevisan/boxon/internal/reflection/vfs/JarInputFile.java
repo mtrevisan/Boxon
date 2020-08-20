@@ -31,7 +31,7 @@ import java.util.zip.ZipEntry;
 /**
  * An implementation of {@link VFSFile} for a {@link ZipEntry} in a JAR.
  */
-public class JarInputFile implements VFSFile{
+class JarInputFile implements VFSFile{
 
 	private static final String SLASH = "/";
 

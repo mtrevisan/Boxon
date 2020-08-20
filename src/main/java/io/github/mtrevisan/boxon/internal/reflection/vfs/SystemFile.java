@@ -33,7 +33,7 @@ import java.io.InputStream;
 /**
  * An implementation of {@link VFSFile} for a {@link File}.
  */
-public class SystemFile implements VFSFile{
+class SystemFile implements VFSFile{
 
 	private static final String SLASH = "/";
 	private static final String BACKSLASH = "\\";

@@ -35,7 +35,7 @@ import java.util.Collections;
 /**
  * An implementation of {@link VFSDirectory} for a {@link File}.
  */
-public class SystemDirectory implements VFSDirectory{
+class SystemDirectory implements VFSDirectory{
 
 	private static final String SLASH = "/";
 	private static final String BACKSLASH = "\\";

@@ -37,7 +37,7 @@ import java.util.zip.ZipEntry;
 /**
  * An implementation of {@link VFSDirectory} for {@link java.util.zip.ZipFile ZipFile}.
  */
-public class ZipDirectory implements VFSDirectory{
+class ZipDirectory implements VFSDirectory{
 
 	private static final Logger LOGGER = JavaHelper.getLoggerFor(ZipDirectory.class);
 

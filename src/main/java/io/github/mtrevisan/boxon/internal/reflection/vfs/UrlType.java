@@ -28,7 +28,7 @@ import java.net.URL;
 
 
 /** A matcher and factory for an URL. */
-public interface UrlType{
+interface UrlType{
 
 	boolean matches(final URL url);
 

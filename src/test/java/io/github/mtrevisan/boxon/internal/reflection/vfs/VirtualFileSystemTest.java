@@ -1,10 +1,8 @@
-package io.github.mtrevisan.boxon.internal.reflection;
+package io.github.mtrevisan.boxon.internal.reflection.vfs;
 
+import io.github.mtrevisan.boxon.internal.reflection.ClasspathHelper;
+import io.github.mtrevisan.boxon.internal.reflection.ReflectionsException;
 import io.github.mtrevisan.boxon.internal.reflection.adapters.JavassistAdapter;
-import io.github.mtrevisan.boxon.internal.reflection.vfs.SystemDirectory;
-import io.github.mtrevisan.boxon.internal.reflection.vfs.VFSDirectory;
-import io.github.mtrevisan.boxon.internal.reflection.vfs.VFSFile;
-import io.github.mtrevisan.boxon.internal.reflection.vfs.VirtualFileSystem;
 import javassist.bytecode.ClassFile;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

@@ -37,7 +37,7 @@ import java.util.zip.ZipEntry;
 /**
  * An implementation of {@link VFSDirectory} for a {@link JarInputStream} in a JAR.
  */
-public class JarInputDirectory implements VFSDirectory{
+class JarInputDirectory implements VFSDirectory{
 
 	private final URL url;
 	private JarInputStream jarInputStream;

@@ -33,7 +33,7 @@ import java.util.zip.ZipEntry;
 /**
  * An implementation of {@link VFSFile} for {@link ZipEntry}.
  */
-public class ZipFile implements VFSFile{
+class ZipFile implements VFSFile{
 
 	private static final String SLASH = "/";
 
