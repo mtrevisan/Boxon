@@ -46,7 +46,6 @@ import java.util.Set;
 /**
  * @see <a href="https://github.com/ronmamo/reflections">Reflections</a>
  */
-//https://github.com/ronmamo/reflections/tree/master/src/test/java/org/reflections
 public class Reflections{
 
 	private static final Logger LOGGER = JavaHelper.getLoggerFor(Reflections.class);
