@@ -48,7 +48,7 @@ public class JarInputFile implements VFSFile{
 
 	@Override
 	public String getName(){
-		final String name = entry.getName();
+		final String name = getRelativePath();
 		return name.substring(name.lastIndexOf(SLASH) + 1);
 	}
 

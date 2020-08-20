@@ -37,8 +37,8 @@ public class JarInputDirectory implements VFSDirectory{
 
 	private final URL url;
 	JarInputStream jarInputStream;
-	long cursor = 0;
-	private long nextCursor = 0;
+	long cursor;
+	private long nextCursor;
 
 
 	JarInputDirectory(final URL url){

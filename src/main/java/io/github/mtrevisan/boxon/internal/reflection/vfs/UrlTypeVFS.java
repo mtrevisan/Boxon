@@ -48,10 +48,12 @@ class UrlTypeVFS implements UrlType{
 
 	private static final Logger LOGGER = JavaHelper.getLoggerFor(UrlTypeVFS.class);
 
-	private final static String[] REPLACE_EXTENSION = new String[]{".ear/", ".jar/", ".war/", ".sar/", ".har/", ".par/"};
+	private static final String[] REPLACE_EXTENSION = new String[]{".ear/", ".jar/", ".war/", ".sar/", ".har/", ".par/"};
 
 	private static final String VFSZIP = "vfszip";
 	private static final String VFSFILE = "vfsfile";
+
+	private static final Matcher EXTENSIONS = Pattern.compile("\\.[ejprw]ar/").matcher("");
 
 
 	@Override
@@ -104,12 +106,8 @@ class UrlTypeVFS implements UrlType{
 	}
 
 	private int findFirstMatchOfDeployableExtension(final String path, final int pos){
-		final Pattern p = Pattern.compile("\\.[ejprw]ar/");
-		final Matcher m = p.matcher(path);
-		if(m.find(pos))
-			return m.end();
-		else
-			return -1;
+		final Matcher m = EXTENSIONS.reset(path);
+		return (m.find(pos)? m.end(): -1);
 	}
 
 	private final Predicate<File> realFile = file -> file.exists() && file.isFile();
