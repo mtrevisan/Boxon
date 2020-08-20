@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.internal.reflection;
 
+import io.github.mtrevisan.boxon.internal.DynamicArray;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import org.slf4j.Logger;
 
@@ -78,18 +79,17 @@ public final class ClasspathHelper{
 	 * <p>
 	 * If the input is null or empty, it defaults to both {@link #contextClassLoader()} and {@link #staticClassLoader()}
 	 *
-	 * @param classLoaders	The class loaders.
 	 * @return	The array of class loaders, not {@code null}.
 	 */
-	public static ClassLoader[] classLoaders(final ClassLoader... classLoaders){
-		if(classLoaders != null && classLoaders.length != 0)
-			return classLoaders;
-
+	public static ClassLoader[] classLoaders(){
 		final ClassLoader contextClassLoader = contextClassLoader();
 		final ClassLoader staticClassLoader = staticClassLoader();
-		return (contextClassLoader != null?
-			(staticClassLoader != null && contextClassLoader != staticClassLoader? new ClassLoader[]{contextClassLoader, staticClassLoader}: new ClassLoader[]{contextClassLoader}):
-			new ClassLoader[]{});
+		final DynamicArray<ClassLoader> loaders = DynamicArray.create(ClassLoader.class, 2);
+		if(contextClassLoader != null)
+			loaders.add(contextClassLoader);
+		if(staticClassLoader != null && contextClassLoader != staticClassLoader)
+			loaders.add(staticClassLoader);
+		return loaders.extractCopy();
 	}
 
 
@@ -102,11 +102,10 @@ public final class ClasspathHelper{
 	 * and {@link #staticClassLoader()} are used for {@link ClassLoader#getResources(String)}.
 	 *
 	 * @param cls	The class.
-	 * @param classLoaders	The class loaders.
 	 * @return	The URL containing the class, {@code null} if not found.
 	 */
-	public static URL forClass(final Class<?> cls, final ClassLoader... classLoaders){
-		final ClassLoader[] loaders = classLoaders(classLoaders);
+	public static URL forClass(final Class<?> cls){
+		final ClassLoader[] loaders = classLoaders();
 		final String resourceName = cls.getName().replace(DOT, SLASH) + DOT_CLASS;
 		for(final ClassLoader classLoader : loaders){
 			try{
@@ -137,11 +136,10 @@ public final class ClasspathHelper{
 	 * The returned URLs retains the order of the given {@code classLoaders}.
 	 *
 	 * @param name	The package name.
-	 * @param classLoaders	The class loaders.
 	 * @return	The collection of URLs, not {@code null}.
 	 */
-	public static Collection<URL> forPackage(final String name, final ClassLoader... classLoaders){
-		return forResource(resourceName(name), classLoaders);
+	public static Collection<URL> forPackage(final String name){
+		return forResource(resourceName(name));
 	}
 
 	/**
@@ -157,12 +155,11 @@ public final class ClasspathHelper{
 	 * The returned URLs retains the order of the given {@code classLoaders}.
 	 *
 	 * @param resourceName	The resource name.
-	 * @param classLoaders	The class loaders.
 	 * @return	The collection of URLs, not {@code null}.
 	 */
-	private static Collection<URL> forResource(final String resourceName, final ClassLoader... classLoaders){
+	private static Collection<URL> forResource(final String resourceName){
 		final List<URL> result = new ArrayList<>();
-		final ClassLoader[] loaders = classLoaders(classLoaders);
+		final ClassLoader[] loaders = classLoaders();
 		for(final ClassLoader loader : loaders){
 			try{
 				final Enumeration<URL> urls = loader.getResources(resourceName);

@@ -109,7 +109,7 @@ public final class ReflectionHelper{
 		return result;
 	}
 
-	public static Class<?> getClassFromName(final String typeName, final ClassLoader... classLoaders){
+	public static Class<?> getClassFromName(final String typeName){
 		int index = PRIMITIVE_NAMES.indexOf(typeName);
 		if(index >= 0)
 			return PRIMITIVE_TYPES.get(index);
@@ -126,7 +126,7 @@ public final class ReflectionHelper{
 
 
 			final List<ReflectionsException> reflectionsExceptions = new ArrayList<>();
-			for(final ClassLoader classLoader : ClasspathHelper.classLoaders(classLoaders)){
+			for(final ClassLoader classLoader : ClasspathHelper.classLoaders()){
 				if(type.contains("[")){
 					try{
 						return Class.forName(type, false, classLoader);
@@ -155,14 +155,13 @@ public final class ReflectionHelper{
 	 * Try to resolve all given string representation of types to a list of java types
 	 *
 	 * @param classes	The classes.
-	 * @param classLoaders	The class loaders.
 	 * @return	The classes.
 	 * @param <T>	The type of the returned classes.
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> Set<Class<? extends T>> getClassesFromNames(final Collection<String> classes, final ClassLoader... classLoaders){
+	public static <T> Set<Class<? extends T>> getClassesFromNames(final Collection<String> classes){
 		return classes.stream()
-			.map(className -> (Class<? extends T>) getClassFromName(className, classLoaders))
+			.map(className -> (Class<? extends T>)getClassFromName(className))
 			.filter(Objects::nonNull)
 			.collect(Collectors.toCollection(HashSet::new));
 	}
