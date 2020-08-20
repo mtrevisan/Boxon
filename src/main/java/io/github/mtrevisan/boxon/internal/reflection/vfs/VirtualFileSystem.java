@@ -126,10 +126,12 @@ public abstract class VirtualFileSystem{
 	 */
 	public enum DefaultUrlTypes implements UrlType{
 		JAR_FILE{
+			@Override
 			public boolean matches(final URL url){
 				return (url.getProtocol().equals("file") && hasJarFileInPath(url));
 			}
 
+			@Override
 			public Directory createDir(final URL url) throws Exception{
 				return new ZipDirectory(new JarFile(resourceToFile(url)));
 			}
@@ -138,16 +140,18 @@ public abstract class VirtualFileSystem{
 		JAR_URL{
 			private final Set<String> protocols = new HashSet<>(Arrays.asList("jar", "zip", "wsjar"));
 
+			@Override
 			public boolean matches(final URL url){
 				return protocols.contains(url.getProtocol());
 			}
 
+			@Override
 			public Directory createDir(final URL url) throws Exception{
 				try{
 					final URLConnection urlConnection = url.openConnection();
 					if(urlConnection instanceof JarURLConnection){
 						urlConnection.setUseCaches(false);
-						return new ZipDirectory(((JarURLConnection) urlConnection).getJarFile());
+						return new ZipDirectory(((JarURLConnection)urlConnection).getJarFile());
 					}
 				}
 				catch(final Throwable ignored){}
@@ -158,6 +162,7 @@ public abstract class VirtualFileSystem{
 		},
 
 		DIRECTORY{
+			@Override
 			public boolean matches(final URL url){
 				if(url.getProtocol().equals("file") && !hasJarFileInPath(url)){
 					final java.io.File file = resourceToFile(url);
@@ -166,16 +171,19 @@ public abstract class VirtualFileSystem{
 				return false;
 			}
 
+			@Override
 			public Directory createDir(final URL url){
 				return new SystemDirectory(resourceToFile(url));
 			}
 		},
 
 		JBOSS_VFS{
+			@Override
 			public boolean matches(final URL url){
 				return url.getProtocol().equals("vfs");
 			}
 
+			@Override
 			public Directory createDir(final URL url) throws Exception{
 				final Object content = url.openConnection().getContent();
 				final Class<?> virtualFile = ClasspathHelper.contextClassLoader().loadClass("org.jboss.vfs.VirtualFile");
@@ -191,20 +199,24 @@ public abstract class VirtualFileSystem{
 		JBOSS_VFS_FILE{
 			private final Set<String> protocols = new HashSet<>(Arrays.asList("vfszip", "vfsfile"));
 
+			@Override
 			public boolean matches(final URL url){
 				return protocols.contains(url.getProtocol());
 			}
 
+			@Override
 			public Directory createDir(final URL url){
 				return new UrlTypeVFS().createDir(url);
 			}
 		},
 
 		BUNDLE{
+			@Override
 			public boolean matches(final URL url){
 				return url.getProtocol().startsWith("bundle");
 			}
 
+			@Override
 			public Directory createDir(final URL url) throws Exception{
 				final Class<?> fileLocatorClass = ClasspathHelper.contextClassLoader().
 					loadClass("org.eclipse.core.runtime.FileLocator");
@@ -213,10 +225,12 @@ public abstract class VirtualFileSystem{
 		},
 
 		JAR_INPUT_STREAM{
+			@Override
 			public boolean matches(final URL url){
 				return url.toExternalForm().contains(".jar");
 			}
 
+			@Override
 			public Directory createDir(final URL url){
 				return new JarInputDirectory(url);
 			}
