@@ -22,13 +22,11 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.internal.reflection.utils;
+package io.github.mtrevisan.boxon.internal.reflection;
 
 import io.github.mtrevisan.boxon.internal.DynamicArray;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.Memoizer;
-import io.github.mtrevisan.boxon.internal.reflection.Reflections;
-import io.github.mtrevisan.boxon.internal.reflection.ReflectionsException;
 import org.slf4j.Logger;
 import org.springframework.objenesis.instantiator.ObjectInstantiator;
 import org.springframework.objenesis.instantiator.android.Android10Instantiator;
@@ -43,7 +41,6 @@ import org.springframework.objenesis.instantiator.sun.UnsafeFactoryInstantiator;
 import org.springframework.objenesis.strategy.PlatformDescription;
 
 import java.io.Serializable;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -73,7 +70,7 @@ import java.util.stream.Collectors;
  */
 public final class ReflectionHelper{
 
-	private static final Logger LOGGER = JavaHelper.getLoggerFor(io.github.mtrevisan.boxon.internal.reflection.utils.ReflectionHelper.class);
+	private static final Logger LOGGER = JavaHelper.getLoggerFor(ReflectionHelper.class);
 
 	private static final Function<Class<?>, Supplier<?>> CREATORS = Memoizer.memoizeThreadAndRecursionSafe(ReflectionHelper::getCreatorInner);
 
@@ -190,26 +187,6 @@ public final class ReflectionHelper{
 		}
 	}
 
-
-	/**
-	 * Scans all classes accessible from the context class loader which belong to the given package.
-	 *
-	 * @param type	Whether a class or an interface (for example).
-	 * @param basePackageClasses	A list of classes that resides in a base package(s).
-	 * @return	The classes.
-	 */
-	public static Collection<Class<?>> extractClasses(final Object type, final Class<?>... basePackageClasses){
-		final Collection<Class<?>> classes = new HashSet<>(0);
-
-		final Reflections reflections = Reflections.create(basePackageClasses);
-		@SuppressWarnings("unchecked")
-		final Set<Class<?>> modules = reflections.getSubTypesOf((Class<Object>)type);
-		@SuppressWarnings("unchecked")
-		final Set<Class<?>> singletons = reflections.getTypesAnnotatedWith((Class<? extends Annotation>)type);
-		classes.addAll(modules);
-		classes.addAll(singletons);
-		return classes;
-	}
 
 	/**
 	 * Retrieve fields list of specified class.

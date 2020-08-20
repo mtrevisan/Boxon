@@ -32,8 +32,6 @@ import io.github.mtrevisan.boxon.internal.reflection.adapters.MetadataAdapterInt
 import io.github.mtrevisan.boxon.internal.reflection.scanners.ScannerInterface;
 import io.github.mtrevisan.boxon.internal.reflection.scanners.SubTypesScanner;
 import io.github.mtrevisan.boxon.internal.reflection.scanners.TypeAnnotationsScanner;
-import io.github.mtrevisan.boxon.internal.reflection.utils.ClasspathHelper;
-import io.github.mtrevisan.boxon.internal.reflection.utils.ReflectionHelper;
 import io.github.mtrevisan.boxon.internal.reflection.vfs.VFSDirectory;
 import io.github.mtrevisan.boxon.internal.reflection.vfs.VFSFile;
 import io.github.mtrevisan.boxon.internal.reflection.vfs.VirtualFileSystem;

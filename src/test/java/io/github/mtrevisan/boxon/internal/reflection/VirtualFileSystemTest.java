@@ -1,7 +1,6 @@
 package io.github.mtrevisan.boxon.internal.reflection;
 
 import io.github.mtrevisan.boxon.internal.reflection.adapters.JavassistAdapter;
-import io.github.mtrevisan.boxon.internal.reflection.utils.ClasspathHelper;
 import io.github.mtrevisan.boxon.internal.reflection.vfs.SystemDirectory;
 import io.github.mtrevisan.boxon.internal.reflection.vfs.VFSDirectory;
 import io.github.mtrevisan.boxon.internal.reflection.vfs.VFSFile;

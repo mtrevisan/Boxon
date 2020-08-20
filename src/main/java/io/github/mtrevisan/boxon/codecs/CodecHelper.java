@@ -34,7 +34,7 @@ import io.github.mtrevisan.boxon.external.BitSet;
 import io.github.mtrevisan.boxon.external.BitWriter;
 import io.github.mtrevisan.boxon.external.ByteOrder;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
-import io.github.mtrevisan.boxon.internal.reflection.utils.ReflectionHelper;
+import io.github.mtrevisan.boxon.internal.reflection.ReflectionHelper;
 
 import java.util.Objects;
 import java.util.regex.Pattern;
