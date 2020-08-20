@@ -81,7 +81,7 @@ public class Reflections{
 	}
 
 	public static Reflections create(final Class<?>... classes){
-		final String[] basePackages = removeDuplicates(classes);
+		final String[] basePackages = extractUniquePackageNames(classes);
 		final Set<URL> urls = new HashSet<>();
 		for(int i = 0; i < basePackages.length; i ++)
 			urls.addAll(ClasspathHelper.forPackage(basePackages[i]));
@@ -94,7 +94,7 @@ public class Reflections{
 	}
 
 	public static Reflections createExpandSuperTypes(final Class<?>... classes){
-		final String[] basePackages = removeDuplicates(classes);
+		final String[] basePackages = extractUniquePackageNames(classes);
 		final Set<URL> urls = new HashSet<>();
 		for(int i = 0; i < basePackages.length; i ++)
 			urls.addAll(ClasspathHelper.forPackage(basePackages[i]));
@@ -102,7 +102,7 @@ public class Reflections{
 		return new Reflections(true, urls.toArray(URL[]::new));
 	}
 
-	private static String[] removeDuplicates(final Class<?>[] basePackages){
+	private static String[] extractUniquePackageNames(final Class<?>[] basePackages){
 		final DynamicArray<String> basePackageNames = DynamicArray.create(String.class, basePackages.length);
 		final Set<String> uniqueValues = new HashSet<>();
 		for(int i = 0; i < basePackages.length; i ++){
@@ -135,7 +135,7 @@ public class Reflections{
 			}
 			catch(final ReflectionsException e){
 				if(LOGGER != null)
-					LOGGER.warn("Could not create Vfs.Dir from URL, ignoring the exception and continuing", e);
+					LOGGER.warn("Could not create VirtualFileSystem.Directory from URL, ignoring the exception and continuing", e);
 			}
 		}
 	}
@@ -233,7 +233,7 @@ public class Reflections{
 
 	private Set<Class<?>> getTypesAnnotatedWith(final Class<? extends Annotation> annotation, final boolean honorInherited){
 		final Set<String> annotated = classStore.get(TypeAnnotationsScanner.class, annotation.getName());
-		annotated.addAll(getAllAnnotated(annotated, annotation, honorInherited));
+		annotated.addAll(getAllAnnotatedClasses(annotated, annotation, honorInherited));
 		return ReflectionHelper.forNames(annotated);
 	}
 
@@ -269,12 +269,12 @@ public class Reflections{
 	private Set<Class<?>> getTypesAnnotatedWith(final Annotation annotation, final boolean honorInherited){
 		final Set<String> annotated = classStore.get(TypeAnnotationsScanner.class, annotation.annotationType().getName());
 		final Set<Class<?>> allAnnotated = ReflectionHelper.filter(ReflectionHelper.forNames(annotated), ReflectionHelper.withAnnotation(annotation));
-		final Set<Class<?>> classes = ReflectionHelper.forNames(ReflectionHelper.filter(getAllAnnotated(ReflectionHelper.names(allAnnotated), annotation.annotationType(), honorInherited), s -> !annotated.contains(s)));
+		final Set<Class<?>> classes = ReflectionHelper.forNames(ReflectionHelper.filter(getAllAnnotatedClasses(ReflectionHelper.names(allAnnotated), annotation.annotationType(), honorInherited), s -> !annotated.contains(s)));
 		allAnnotated.addAll(classes);
 		return allAnnotated;
 	}
 
-	private Collection<String> getAllAnnotated(final Collection<String> annotated, final Class<? extends Annotation> annotation, final boolean honorInherited){
+	private Collection<String> getAllAnnotatedClasses(final Collection<String> annotated, final Class<? extends Annotation> annotation, final boolean honorInherited){
 		if(honorInherited){
 			if(annotation.isAnnotationPresent(Inherited.class)){
 				final Set<String> subTypes = classStore.get(SubTypesScanner.class, ReflectionHelper.filter(annotated, input -> {
