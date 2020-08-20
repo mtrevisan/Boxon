@@ -25,7 +25,8 @@
 package io.github.mtrevisan.boxon.internal.reflection.adapters;
 
 import io.github.mtrevisan.boxon.internal.DynamicArray;
-import io.github.mtrevisan.boxon.internal.reflection.ReflectionsException;
+import io.github.mtrevisan.boxon.internal.reflection.vfs.VFSDirectory;
+import io.github.mtrevisan.boxon.internal.reflection.vfs.VFSException;
 import io.github.mtrevisan.boxon.internal.reflection.vfs.VFSFile;
 import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.ClassFile;
@@ -33,7 +34,6 @@ import javassist.bytecode.annotation.Annotation;
 
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 
 
@@ -85,12 +85,12 @@ public class JavassistAdapter implements MetadataAdapterInterface<ClassFile>{
 	}
 
 	@Override
-	public ClassFile getOrCreateClassObject(final VFSFile file){
-		try(final InputStream is = file.openInputStream()){
+	public ClassFile getOrCreateClassObject(final VFSDirectory root, final VFSFile file){
+		try(final InputStream is = root.openInputStream(file)){
 			return new ClassFile(new DataInputStream(new BufferedInputStream(is)));
 		}
-		catch(final IOException e){
-			throw new ReflectionsException("Could not create class file from " + file.getName(), e);
+		catch(final Exception e){
+			throw new VFSException("Could not create class file from " + file.getName(), e);
 		}
 	}
 

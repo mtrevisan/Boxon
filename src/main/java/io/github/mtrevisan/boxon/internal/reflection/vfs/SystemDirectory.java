@@ -24,10 +24,11 @@
  */
 package io.github.mtrevisan.boxon.internal.reflection.vfs;
 
-import io.github.mtrevisan.boxon.internal.reflection.ReflectionsException;
-
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.Collections;
 
@@ -65,13 +66,23 @@ class SystemDirectory implements VFSDirectory{
 			try{
 				return Files.walk(file.toPath())
 					.filter(Files::isRegularFile)
-					.map(path -> (VFSFile)new SystemFile(SystemDirectory.this, path.toFile()))
+					.map(path -> (VFSFile)new SystemFile(SystemDirectory.this.getPath(), path.toFile()))
 					.iterator();
 			}
 			catch(final IOException e){
-				throw new ReflectionsException("Could not get files for " + file, e);
+				throw new VFSException("Could not get files for " + file, e);
 			}
 		};
+	}
+
+	@Override
+	public InputStream openInputStream(final VFSFile file){
+		try{
+			return new FileInputStream(((SystemFile)file).entry);
+		}
+		catch(final FileNotFoundException e){
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Override

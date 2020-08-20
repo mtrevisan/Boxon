@@ -24,8 +24,6 @@
  */
 package io.github.mtrevisan.boxon.internal.reflection.scanners;
 
-import io.github.mtrevisan.boxon.internal.reflection.MetadataStore;
-
 
 /**
  * Scans for class's annotations, where the annotation is marked with {@code @Retention(RetentionPolicy.RUNTIME)}.
@@ -33,12 +31,12 @@ import io.github.mtrevisan.boxon.internal.reflection.MetadataStore;
 public class TypeAnnotationsScanner extends AbstractScanner{
 
 	@SuppressWarnings("unchecked")
-	public void scan(final Object cls, final MetadataStore metadataStore){
+	public void scan(final Object cls){
 		final String className = metadataAdapter.getClassName(cls);
 
 		final String[] classAnnotationNames = metadataAdapter.getClassAnnotationNames(cls);
 		for(int i = 0; i < classAnnotationNames.length; i ++)
-			put(metadataStore, classAnnotationNames[i], className);
+			put(classAnnotationNames[i], className);
 	}
 
 }

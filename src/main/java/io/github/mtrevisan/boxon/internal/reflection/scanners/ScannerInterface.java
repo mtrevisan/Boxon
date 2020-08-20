@@ -24,8 +24,8 @@
  */
 package io.github.mtrevisan.boxon.internal.reflection.scanners;
 
-import io.github.mtrevisan.boxon.internal.reflection.MetadataStore;
 import io.github.mtrevisan.boxon.internal.reflection.adapters.MetadataAdapterInterface;
+import io.github.mtrevisan.boxon.internal.reflection.vfs.VFSDirectory;
 import io.github.mtrevisan.boxon.internal.reflection.vfs.VFSFile;
 
 
@@ -36,6 +36,6 @@ public interface ScannerInterface{
 
 	boolean acceptsInput(final String file);
 
-	Object scan(final VFSFile file, final Object classObject, final MetadataStore metadataStore);
+	Object scan(final VFSDirectory root, final VFSFile file, final Object classObject);
 
 }

@@ -24,7 +24,6 @@
  */
 package io.github.mtrevisan.boxon.internal.reflection.vfs;
 
-import java.io.InputStream;
 import java.util.zip.ZipEntry;
 
 
@@ -36,14 +35,12 @@ class JarInputFile implements VFSFile{
 	private static final String SLASH = "/";
 
 	private final ZipEntry entry;
-	private final JarInputDirectory jarInputDir;
-	private final long fromIndex;
-	private final long endIndex;
+	final long fromIndex;
+	final long endIndex;
 
 
-	JarInputFile(final ZipEntry entry, final JarInputDirectory jarInputDir, final long cursor, final long nextCursor){
+	JarInputFile(final ZipEntry entry, final long cursor, final long nextCursor){
 		this.entry = entry;
-		this.jarInputDir = jarInputDir;
 		fromIndex = cursor;
 		endIndex = nextCursor;
 	}
@@ -57,11 +54,6 @@ class JarInputFile implements VFSFile{
 	@Override
 	public String getRelativePath(){
 		return entry.getName();
-	}
-
-	@Override
-	public InputStream openInputStream(){
-		return jarInputDir.openInputStream(fromIndex, endIndex);
 	}
 
 	@Override

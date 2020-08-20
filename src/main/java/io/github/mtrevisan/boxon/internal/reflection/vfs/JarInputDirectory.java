@@ -25,7 +25,6 @@
 package io.github.mtrevisan.boxon.internal.reflection.vfs;
 
 import io.github.mtrevisan.boxon.internal.JavaHelper;
-import io.github.mtrevisan.boxon.internal.reflection.ReflectionsException;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -66,7 +65,7 @@ class JarInputDirectory implements VFSDirectory{
 					jarInputStream = new JarInputStream(url.openConnection().getInputStream());
 				}
 				catch(final Exception e){
-					throw new ReflectionsException("Could not open URL connection", e);
+					throw new VFSException("Could not open URL connection", e);
 				}
 			}
 
@@ -98,10 +97,10 @@ class JarInputDirectory implements VFSDirectory{
 							size = 0xFFFF_FFFFl + size;
 						nextCursor += size;
 						if(!entry.isDirectory())
-							return new JarInputFile(entry, JarInputDirectory.this, cursor, nextCursor);
+							return new JarInputFile(entry, cursor, nextCursor);
 					}
 					catch(final IOException e){
-						throw new ReflectionsException("could not get next zip entry", e);
+						throw new VFSException("Could not get next zip entry", e);
 					}
 				}
 			}
@@ -120,16 +119,17 @@ class JarInputDirectory implements VFSDirectory{
 		}
 	}
 
-	public InputStream openInputStream(final long fromIndex, final long endIndex){
+	@Override
+	public InputStream openInputStream(final VFSFile file){
 		return new InputStream(){
 			@Override
 			public int read() throws IOException{
-				int read = -1;
-				if(cursor >= fromIndex && cursor <= endIndex){
-					read = jarInputStream.read();
-					cursor ++;
-				}
-				return read;
+			int read = -1;
+			if(cursor >= ((JarInputFile)file).fromIndex && cursor <= ((JarInputFile)file).endIndex){
+				read = jarInputStream.read();
+				cursor ++;
+			}
+			return read;
 			}
 		};
 	}

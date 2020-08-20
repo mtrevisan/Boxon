@@ -1,7 +1,6 @@
 package io.github.mtrevisan.boxon.internal.reflection.vfs;
 
 import io.github.mtrevisan.boxon.internal.reflection.ClasspathHelper;
-import io.github.mtrevisan.boxon.internal.reflection.ReflectionsException;
 import io.github.mtrevisan.boxon.internal.reflection.adapters.JavassistAdapter;
 import javassist.bytecode.ClassFile;
 import org.junit.jupiter.api.Assertions;
@@ -13,6 +12,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.Collection;
+import java.util.Iterator;
 
 
 class VirtualFileSystemTest{
@@ -63,7 +63,7 @@ class VirtualFileSystemTest{
 	void testJarInputStream() throws Exception{
 		URL url1 = ClasspathHelper.forClass(Logger.class);
 		Assertions.assertTrue(VirtualFileSystem.DefaultUrlTypes.JAR_INPUT_STREAM.matches(url1));
-		Assertions.assertThrows(ReflectionsException.class, () -> testVirtualFileSystemDir(VirtualFileSystem.DefaultUrlTypes.JAR_INPUT_STREAM.createDir(url1)));
+		Assertions.assertThrows(VFSException.class, () -> testVirtualFileSystemDir(VirtualFileSystem.DefaultUrlTypes.JAR_INPUT_STREAM.createDir(url1)));
 
 		URL url2 = new URL(ClasspathHelper.forClass(Logger.class).toExternalForm().replace("jar:", "").replace(".jar!", ".jar"));
 		Assertions.assertTrue(VirtualFileSystem.DefaultUrlTypes.JAR_INPUT_STREAM.matches(url2));
@@ -104,16 +104,19 @@ class VirtualFileSystemTest{
 		}
 	}
 
-	private void testVirtualFileSystemDir(VFSDirectory dir){
+	private void testVirtualFileSystemDir(final VFSDirectory dir){
 		JavassistAdapter mdAdapter = new JavassistAdapter();
 		VFSFile file = null;
-		for(VFSFile f : dir.getFiles())
+		Iterator<VFSFile> itr = dir.getFiles().iterator();
+		while(itr.hasNext()){
+			VFSFile f = itr.next();
 			if(f.getRelativePath().endsWith(".class")){
 				file = f;
 				break;
 			}
+		}
 
-		ClassFile stringCF = mdAdapter.getOrCreateClassObject(file);
+		ClassFile stringCF = mdAdapter.getOrCreateClassObject(dir, file);
 		String className = mdAdapter.getClassName(stringCF);
 		Assertions.assertFalse(className.isEmpty());
 	}

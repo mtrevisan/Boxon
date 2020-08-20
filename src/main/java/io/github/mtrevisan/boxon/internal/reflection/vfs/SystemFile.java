@@ -25,9 +25,6 @@
 package io.github.mtrevisan.boxon.internal.reflection.vfs;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 
 
 /**
@@ -39,39 +36,29 @@ class SystemFile implements VFSFile{
 	private static final String BACKSLASH = "\\";
 
 
-	private final SystemDirectory root;
-	private final File file;
+	private final String rootPath;
+	final File entry;
 
 
-	SystemFile(final SystemDirectory root, final File file){
-		this.root = root;
-		this.file = file;
+	SystemFile(final String rootPath, final File entry){
+		this.rootPath = rootPath;
+		this.entry = entry;
 	}
 
 	@Override
 	public String getName(){
-		return file.getName();
+		return entry.getName();
 	}
 
 	@Override
 	public String getRelativePath(){
-		final String filepath = file.getPath().replace(BACKSLASH, SLASH);
-		return (filepath.startsWith(root.getPath())? filepath.substring(root.getPath().length() + 1): null);
-	}
-
-	@Override
-	public InputStream openInputStream(){
-		try{
-			return new FileInputStream(file);
-		}
-		catch(final FileNotFoundException e){
-			throw new RuntimeException(e);
-		}
+		final String filepath = entry.getPath().replace(BACKSLASH, SLASH);
+		return (filepath.startsWith(rootPath)? filepath.substring(rootPath.length() + 1): null);
 	}
 
 	@Override
 	public String toString(){
-		return file.toString();
+		return entry.toString();
 	}
 
 }

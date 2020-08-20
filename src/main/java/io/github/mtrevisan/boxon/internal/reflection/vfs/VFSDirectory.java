@@ -25,11 +25,16 @@
 package io.github.mtrevisan.boxon.internal.reflection.vfs;
 
 
+import java.io.InputStream;
+
+
 public interface VFSDirectory{
 
 	String getPath();
 
 	Iterable<VFSFile> getFiles();
+
+	InputStream openInputStream(final VFSFile entry);
 
 	void close();
 

@@ -58,12 +58,20 @@ class ZipDirectory implements VFSDirectory{
 	public Iterable<VFSFile> getFiles(){
 		return () -> jarFile.stream()
 			.filter(Predicate.not(ZipEntry::isDirectory))
-			.map(entry -> (VFSFile)new ZipFile(ZipDirectory.this, entry))
+			.map(entry -> (VFSFile)new ZipFile(ZipDirectory.this.getPath(), entry))
 			.iterator();
 	}
 
-	public InputStream openInputStream(final ZipEntry entry) throws IOException{
-		return jarFile.getInputStream(entry);
+	@Override
+	public InputStream openInputStream(final VFSFile file){
+		try{
+			return jarFile.getInputStream(((ZipFile)file).entry);
+		}
+		catch(final IOException e){
+			//cannot happen
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	@Override

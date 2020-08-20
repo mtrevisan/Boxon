@@ -22,29 +22,17 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.internal.reflection.adapters;
-
-import io.github.mtrevisan.boxon.internal.reflection.vfs.VFSDirectory;
-import io.github.mtrevisan.boxon.internal.reflection.vfs.VFSFile;
+package io.github.mtrevisan.boxon.internal.reflection.vfs;
 
 
-public interface MetadataAdapterInterface<C>{
+public class VFSException extends RuntimeException{
 
-	String DOT_CLASS = ".class";
+	public VFSException(final String message){
+		super(message);
+	}
 
-
-	String getClassName(final C type);
-
-	String getSuperclassName(final C type);
-
-	String[] getInterfacesNames(final C type);
-
-	String[] getClassAnnotationNames(final C type);
-
-	C getOrCreateClassObject(final VFSDirectory root, final VFSFile file);
-
-	default boolean acceptsInput(final String file){
-		return file.endsWith(DOT_CLASS);
+	public VFSException(final String message, final Throwable cause){
+		super(message, cause);
 	}
 
 }

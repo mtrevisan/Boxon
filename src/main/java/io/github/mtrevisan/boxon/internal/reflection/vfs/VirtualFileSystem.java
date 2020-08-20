@@ -25,8 +25,6 @@
 package io.github.mtrevisan.boxon.internal.reflection.vfs;
 
 import io.github.mtrevisan.boxon.internal.JavaHelper;
-import io.github.mtrevisan.boxon.internal.reflection.ClasspathHelper;
-import io.github.mtrevisan.boxon.internal.reflection.ReflectionsException;
 import org.slf4j.Logger;
 
 import java.io.File;
@@ -88,7 +86,7 @@ public final class VirtualFileSystem{
 			}
 		}
 
-		throw new ReflectionsException("could not create VFSDirectory from URL, no matching UrlType was found [" + url.toExternalForm() + "]\n"
+		throw new VFSException("Could not create VFSDirectory from URL, no matching UrlType was found [" + url.toExternalForm() + "]\n"
 			+ "either use fromURL(final URL url) with your specialized UrlType.");
 	}
 
@@ -161,7 +159,7 @@ public final class VirtualFileSystem{
 
 			@Override
 			public VFSDirectory createDir(final URL url) throws Exception{
-				final Class<?> fileLocatorClass = ClasspathHelper.contextClassLoader()
+				final Class<?> fileLocatorClass = Thread.currentThread().getContextClassLoader()
 					.loadClass("org.eclipse.core.runtime.FileLocator");
 				return fromURL((URL)fileLocatorClass.getMethod("resolve", URL.class).invoke(null, url));
 			}

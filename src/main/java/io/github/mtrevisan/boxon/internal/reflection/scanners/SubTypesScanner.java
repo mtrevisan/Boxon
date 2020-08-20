@@ -24,8 +24,6 @@
  */
 package io.github.mtrevisan.boxon.internal.reflection.scanners;
 
-import io.github.mtrevisan.boxon.internal.reflection.MetadataStore;
-
 
 /**
  * Scans for superclass and interfaces of a class, allowing a reverse lookup for subtypes.
@@ -33,15 +31,15 @@ import io.github.mtrevisan.boxon.internal.reflection.MetadataStore;
 public class SubTypesScanner extends AbstractScanner{
 
 	@SuppressWarnings("unchecked")
-	public void scan(final Object cls, final MetadataStore metadataStore){
+	public void scan(final Object cls){
 		final String className = metadataAdapter.getClassName(cls);
 		final String superclass = metadataAdapter.getSuperclassName(cls);
 
-		put(metadataStore, superclass, className);
+		put(superclass, className);
 
 		final String[] interfacesNames = metadataAdapter.getInterfacesNames(cls);
 		for(int i = 0; i < interfacesNames.length; i ++)
-			put(metadataStore, interfacesNames[i], className);
+			put(interfacesNames[i], className);
 	}
 
 }
