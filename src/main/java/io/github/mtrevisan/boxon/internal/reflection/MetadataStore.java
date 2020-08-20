@@ -36,16 +36,16 @@ import java.util.stream.Collectors;
 
 
 /**
- * stores metadata information in multimaps
- * <p>use the different query methods (getXXX) to query the metadata
- * <p>the query methods are string based, and does not cause the class loader to define the types
+ * Stores metadata information.
+ * <p>Use the different query methods (getXXX) to query the metadata.</p>
+ * <p>The query methods are string based, and does not cause the class loader to define the types.</p>
  */
-public class ClassStore{
+public class MetadataStore{
 
 	private final Map<Class<?>, Map<String, Collection<String>>> map = new ConcurrentHashMap<>();
 
 
-	ClassStore(){}
+	MetadataStore(){}
 
 	/**
 	 * Get the values stored for the given {@code scannerClass} and {@code key}.

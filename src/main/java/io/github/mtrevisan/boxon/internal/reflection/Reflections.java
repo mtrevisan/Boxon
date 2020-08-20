@@ -74,7 +74,7 @@ public class Reflections{
 	}
 
 	private final ScannerInterface[] scanners = new ScannerInterface[]{new TypeAnnotationsScanner(), new SubTypesScanner()};
-	private final ClassStore classStore = new ClassStore();
+	private final MetadataStore metadataStore = new MetadataStore();
 
 
 	public static Reflections create(final URL... urls){
@@ -151,7 +151,7 @@ public class Reflections{
 			for(final ScannerInterface scanner : scanners)
 				if(scanner.acceptsInput(relativePath) || scanner.acceptsInput(packageName)){
 					try{
-						classObject = scanner.scan(file, classObject, classStore);
+						classObject = scanner.scan(file, classObject, metadataStore);
 					}
 					catch(final Exception e){
 						if(LOGGER != null)
@@ -173,22 +173,22 @@ public class Reflections{
 	 * </p>
 	 */
 	private void expandSuperTypes(){
-		final Set<String> keys = classStore.keys(SubTypesScanner.class);
-		keys.removeAll(classStore.values(SubTypesScanner.class));
+		final Set<String> keys = metadataStore.keys(SubTypesScanner.class);
+		keys.removeAll(metadataStore.values(SubTypesScanner.class));
 		for(final String key : keys){
 			final Class<?> type = ReflectionHelper.getClassFromName(key);
 			if(type != null)
-				expandSupertypes(classStore, key, type);
+				expandSupertypes(metadataStore, key, type);
 		}
 	}
 
-	private void expandSupertypes(final ClassStore classStore, final String key, final Class<?> type){
+	private void expandSupertypes(final MetadataStore metadataStore, final String key, final Class<?> type){
 		for(final Class<?> superType : ReflectionHelper.getSuperTypes(type))
-			if(classStore.put(SubTypesScanner.class, superType.getName(), key)){
+			if(metadataStore.put(SubTypesScanner.class, superType.getName(), key)){
 				if(LOGGER != null)
 					LOGGER.trace("Expanded subtype {} into {}", superType.getName(), key);
 
-				expandSupertypes(classStore, superType.getName(), superType);
+				expandSupertypes(metadataStore, superType.getName(), superType);
 			}
 	}
 
@@ -200,7 +200,7 @@ public class Reflections{
 	 * @param <T>	The type of {@code type}.
 	 */
 	public <T> Set<Class<? extends T>> getSubTypesOf(final Class<T> type){
-		return ReflectionHelper.getClassesFromNames(classStore.getAll(SubTypesScanner.class, type.getName()));
+		return ReflectionHelper.getClassesFromNames(metadataStore.getAll(SubTypesScanner.class, type.getName()));
 	}
 
 	/**
@@ -233,7 +233,7 @@ public class Reflections{
 	}
 
 	private Set<Class<?>> getTypesAnnotatedWith(final Class<? extends Annotation> annotation, final boolean honorInherited){
-		final Set<String> annotated = classStore.get(TypeAnnotationsScanner.class, annotation.getName());
+		final Set<String> annotated = metadataStore.get(TypeAnnotationsScanner.class, annotation.getName());
 		annotated.addAll(getAllAnnotatedClasses(annotated, annotation, honorInherited));
 		return ReflectionHelper.getClassesFromNames(annotated);
 	}
@@ -268,7 +268,7 @@ public class Reflections{
 	}
 
 	private Set<Class<?>> getTypesAnnotatedWith(final Annotation annotation, final boolean honorInherited){
-		final Set<String> annotated = classStore.get(TypeAnnotationsScanner.class, annotation.annotationType().getName());
+		final Set<String> annotated = metadataStore.get(TypeAnnotationsScanner.class, annotation.annotationType().getName());
 		final Set<Class<?>> allAnnotated = JavaHelper.filter(ReflectionHelper.getClassesFromNames(annotated), getFilterWithAnnotation(annotation));
 		final Set<Class<?>> classes = ReflectionHelper.getClassesFromNames(JavaHelper.filter(getAllAnnotatedClasses(ReflectionHelper.getClassNames(allAnnotated), annotation.annotationType(), honorInherited), s -> !annotated.contains(s)));
 		allAnnotated.addAll(classes);
@@ -307,18 +307,18 @@ public class Reflections{
 	private Collection<String> getAllAnnotatedClasses(final Collection<String> annotated, final Class<? extends Annotation> annotation, final boolean honorInherited){
 		if(honorInherited){
 			if(annotation.isAnnotationPresent(Inherited.class)){
-				final Set<String> subTypes = classStore.get(SubTypesScanner.class, JavaHelper.filter(annotated, input -> {
+				final Set<String> subTypes = metadataStore.get(SubTypesScanner.class, JavaHelper.filter(annotated, input -> {
 					final Class<?> type = ReflectionHelper.getClassFromName(input);
 					return (type != null && !type.isInterface());
 				}));
-				return classStore.getAllIncludingKeys(SubTypesScanner.class, subTypes);
+				return metadataStore.getAllIncludingKeys(SubTypesScanner.class, subTypes);
 			}
 			else
 				return annotated;
 		}
 		else{
-			final Collection<String> subTypes = classStore.getAllIncludingKeys(TypeAnnotationsScanner.class, annotated);
-			return classStore.getAllIncludingKeys(SubTypesScanner.class, subTypes);
+			final Collection<String> subTypes = metadataStore.getAllIncludingKeys(TypeAnnotationsScanner.class, annotated);
+			return metadataStore.getAllIncludingKeys(SubTypesScanner.class, subTypes);
 		}
 	}
 

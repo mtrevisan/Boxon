@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.internal.reflection.scanners;
 
-import io.github.mtrevisan.boxon.internal.reflection.ClassStore;
+import io.github.mtrevisan.boxon.internal.reflection.MetadataStore;
 
 
 /**
@@ -33,12 +33,12 @@ import io.github.mtrevisan.boxon.internal.reflection.ClassStore;
 public class TypeAnnotationsScanner extends AbstractScanner{
 
 	@SuppressWarnings("unchecked")
-	public void scan(final Object cls, final ClassStore classStore){
+	public void scan(final Object cls, final MetadataStore metadataStore){
 		final String className = metadataAdapter.getClassName(cls);
 
 		final String[] classAnnotationNames = metadataAdapter.getClassAnnotationNames(cls);
 		for(int i = 0; i < classAnnotationNames.length; i ++)
-			put(classStore, classAnnotationNames[i], className);
+			put(metadataStore, classAnnotationNames[i], className);
 	}
 
 }
