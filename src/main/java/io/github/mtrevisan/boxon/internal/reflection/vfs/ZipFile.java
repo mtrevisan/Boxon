@@ -60,7 +60,7 @@ public class ZipFile implements VFSFile{
 
 	@Override
 	public InputStream openInputStream() throws IOException{
-		return root.jarFile.getInputStream(entry);
+		return root.openInputStream(entry);
 	}
 
 	@Override

@@ -24,7 +24,6 @@
  */
 package io.github.mtrevisan.boxon.internal.reflection.vfs;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.ZipEntry;
 
@@ -62,17 +61,12 @@ public class JarInputFile implements VFSFile{
 
 	@Override
 	public InputStream openInputStream(){
-		return new InputStream(){
-			@Override
-			public int read() throws IOException{
-				int read = -1;
-				if(jarInputDir.cursor >= fromIndex && jarInputDir.cursor <= endIndex){
-					read = jarInputDir.jarInputStream.read();
-					jarInputDir.cursor ++;
-				}
-				return read;
-			}
-		};
+		return jarInputDir.openInputStream(fromIndex, endIndex);
+	}
+
+	@Override
+	public String toString(){
+		return entry.toString();
 	}
 
 }

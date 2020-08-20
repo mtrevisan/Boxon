@@ -27,6 +27,7 @@ package io.github.mtrevisan.boxon.internal.reflection.vfs;
 import io.github.mtrevisan.boxon.internal.reflection.ReflectionsException;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.jar.JarInputStream;
@@ -39,8 +40,8 @@ import java.util.zip.ZipEntry;
 public class JarInputDirectory implements VFSDirectory{
 
 	private final URL url;
-	JarInputStream jarInputStream;
-	long cursor;
+	private JarInputStream jarInputStream;
+	private long cursor;
 	private long nextCursor;
 
 
@@ -99,6 +100,20 @@ public class JarInputDirectory implements VFSDirectory{
 						throw new ReflectionsException("could not get next zip entry", e);
 					}
 				}
+			}
+		};
+	}
+
+	public InputStream openInputStream(final long fromIndex, final long endIndex){
+		return new InputStream(){
+			@Override
+			public int read() throws IOException{
+				int read = -1;
+				if(cursor >= fromIndex && cursor <= endIndex){
+					read = jarInputStream.read();
+					cursor ++;
+				}
+				return read;
 			}
 		};
 	}

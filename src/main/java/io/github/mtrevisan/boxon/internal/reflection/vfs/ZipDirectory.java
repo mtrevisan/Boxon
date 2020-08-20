@@ -28,6 +28,7 @@ import io.github.mtrevisan.boxon.internal.JavaHelper;
 import org.slf4j.Logger;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.function.Predicate;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
@@ -41,7 +42,7 @@ public class ZipDirectory implements VFSDirectory{
 	private static final Logger LOGGER = JavaHelper.getLoggerFor(ZipDirectory.class);
 
 
-	final java.util.zip.ZipFile jarFile;
+	private final java.util.zip.ZipFile jarFile;
 
 
 	ZipDirectory(final JarFile jarFile){
@@ -59,6 +60,10 @@ public class ZipDirectory implements VFSDirectory{
 			.filter(Predicate.not(ZipEntry::isDirectory))
 			.map(entry -> (VFSFile)new ZipFile(ZipDirectory.this, entry))
 			.iterator();
+	}
+
+	public InputStream openInputStream(final ZipEntry entry) throws IOException{
+		return jarFile.getInputStream(entry);
 	}
 
 	public void close(){
