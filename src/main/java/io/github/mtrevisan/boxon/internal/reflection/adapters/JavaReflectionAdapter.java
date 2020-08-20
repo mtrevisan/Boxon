@@ -70,7 +70,7 @@ public class JavaReflectionAdapter implements MetadataAdapterInterface<Class<?>>
 	}
 
 	@Override
-	public Class<?> getOrCreateClassObject(final VFSDirectory root, final VFSFile file){
+	public Class<?> createClassObject(final VFSDirectory root, final VFSFile file){
 		final String name = file.getRelativePath()
 			.replace(SLASH, DOT)
 			.replace(DOT_CLASS, EMPTY_STRING);

@@ -64,7 +64,7 @@ public abstract class AbstractScanner implements ScannerInterface{
 	public final Object scan(final VFSDirectory root, final VFSFile file, Object classObject){
 		if(classObject == null){
 			try{
-				classObject = metadataAdapter.getOrCreateClassObject(root, file);
+				classObject = metadataAdapter.createClassObject(root, file);
 			}
 			catch(final Exception e){
 				throw new VFSException("Could not create class object from file " + file.getRelativePath(), e);

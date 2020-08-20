@@ -85,7 +85,7 @@ public class JavassistAdapter implements MetadataAdapterInterface<ClassFile>{
 	}
 
 	@Override
-	public ClassFile getOrCreateClassObject(final VFSDirectory root, final VFSFile file){
+	public ClassFile createClassObject(final VFSDirectory root, final VFSFile file){
 		try(final InputStream is = root.openInputStream(file)){
 			return new ClassFile(new DataInputStream(new BufferedInputStream(is)));
 		}

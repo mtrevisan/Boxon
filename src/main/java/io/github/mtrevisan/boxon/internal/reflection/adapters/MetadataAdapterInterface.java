@@ -41,7 +41,7 @@ public interface MetadataAdapterInterface<C>{
 
 	String[] getClassAnnotationNames(final C type);
 
-	C getOrCreateClassObject(final VFSDirectory root, final VFSFile file);
+	C createClassObject(final VFSDirectory root, final VFSFile file);
 
 	default boolean acceptsInput(final String file){
 		return file.endsWith(DOT_CLASS);

@@ -116,7 +116,7 @@ class VirtualFileSystemTest{
 			}
 		}
 
-		ClassFile stringCF = mdAdapter.getOrCreateClassObject(dir, file);
+		ClassFile stringCF = mdAdapter.createClassObject(dir, file);
 		String className = mdAdapter.getClassName(stringCF);
 		Assertions.assertFalse(className.isEmpty());
 	}
