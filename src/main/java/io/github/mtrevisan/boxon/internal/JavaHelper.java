@@ -27,6 +27,11 @@ package io.github.mtrevisan.boxon.internal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.function.Predicate;
+
 
 public final class JavaHelper{
 
@@ -46,6 +51,16 @@ public final class JavaHelper{
 			return null;
 		}
 	}
+
+
+	public static <T> Set<T> filter(final Collection<T> result, final Predicate<? super T> predicate){
+		final Set<T> set = new HashSet<>();
+		for(final T t : result)
+			if(predicate.test(t))
+				set.add(t);
+		return set;
+	}
+
 
 	/**
 	 * Converts an array of bytes into a string representing the hexadecimal values of each byte in order.
@@ -80,6 +95,7 @@ public final class JavaHelper{
 			data[i >>> 1] = (byte)((Character.digit(hexString.charAt(i), 16) << 4) + Character.digit(hexString.charAt(i + 1), 16));
 		return data;
 	}
+
 
 	public static <T> T nonNullOrDefault(final T obj, final T defaultObject){
 		return (obj != null? obj: defaultObject);

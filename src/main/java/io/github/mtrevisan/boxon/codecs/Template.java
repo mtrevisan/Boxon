@@ -34,10 +34,9 @@ import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.Skip;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.internal.AnnotationHelper;
 import io.github.mtrevisan.boxon.internal.DataType;
 import io.github.mtrevisan.boxon.internal.DynamicArray;
-import io.github.mtrevisan.boxon.internal.reflection.ReflectionHelper;
+import io.github.mtrevisan.boxon.internal.reflection.utils.ReflectionHelper;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -240,7 +239,7 @@ final class Template<T>{
 
 		header = cls.getAnnotation(MessageHeader.class);
 		//retrieve all declared fields in the current class AND in the parent classes
-		loadAnnotatedFields(AnnotationHelper.getDeclaredFields(cls, true), hasCodec);
+		loadAnnotatedFields(ReflectionHelper.getDeclaredFields(cls, true), hasCodec);
 	}
 
 	private void loadAnnotatedFields(final DynamicArray<Field> fields, final Function<Class<? extends Annotation>, Boolean> hasCodec){

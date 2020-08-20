@@ -63,7 +63,6 @@ public class VirtualFileSystem{
 
 	private static final Logger LOGGER = JavaHelper.getLoggerFor(VirtualFileSystem.class);
 
-
 	private static final List<UrlType> DEFAULT_URL_TYPES = new ArrayList<>(Arrays.asList(DefaultUrlTypes.values()));
 
 

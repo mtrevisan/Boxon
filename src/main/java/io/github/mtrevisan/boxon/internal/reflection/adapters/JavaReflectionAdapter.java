@@ -73,7 +73,7 @@ public class JavaReflectionAdapter implements MetadataAdapterInterface<Class<?>>
 		final String name = file.getRelativePath()
 			.replace(SLASH, DOT)
 			.replace(DOT_CLASS, EMPTY_STRING);
-		return ReflectionHelper.forName(name);
+		return ReflectionHelper.getClassFromName(name);
 	}
 
 }

@@ -27,13 +27,12 @@ package io.github.mtrevisan.boxon.codecs;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.BitReader;
-import io.github.mtrevisan.boxon.internal.AnnotationHelper;
 import io.github.mtrevisan.boxon.internal.DynamicArray;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.Memoizer;
 import io.github.mtrevisan.boxon.internal.matchers.BNDMPatternMatcher;
 import io.github.mtrevisan.boxon.internal.matchers.PatternMatcher;
-import io.github.mtrevisan.boxon.internal.reflection.ReflectionHelper;
+import io.github.mtrevisan.boxon.internal.reflection.utils.ReflectionHelper;
 import org.slf4j.Logger;
 
 import java.nio.charset.Charset;
@@ -81,7 +80,7 @@ final class Loader{
 				Arrays.stream(basePackageClasses).map(Class::getPackageName).collect(Collectors.joining(", ", "[", "]")));
 
 		/** extract all classes that implements {@link CodecInterface}. */
-		final Collection<Class<?>> derivedClasses = AnnotationHelper.extractClasses(CodecInterface.class, basePackageClasses);
+		final Collection<Class<?>> derivedClasses = ReflectionHelper.extractClasses(CodecInterface.class, basePackageClasses);
 		@SuppressWarnings("rawtypes")
 		final DynamicArray<CodecInterface> codecs = extractCodecs(derivedClasses);
 		addCodecsInner(codecs.data);
@@ -167,7 +166,7 @@ final class Loader{
 				Arrays.stream(basePackageClasses).map(Class::getPackageName).collect(Collectors.joining(", ", "[", "]")));
 
 		/** extract all classes annotated with {@link MessageHeader}. */
-		final Collection<Class<?>> annotatedClasses = AnnotationHelper.extractClasses(MessageHeader.class, basePackageClasses);
+		final Collection<Class<?>> annotatedClasses = ReflectionHelper.extractClasses(MessageHeader.class, basePackageClasses);
 		@SuppressWarnings("rawtypes")
 		final DynamicArray<Template> templates = extractTemplates(annotatedClasses);
 		addTemplatesInner(templates.data);

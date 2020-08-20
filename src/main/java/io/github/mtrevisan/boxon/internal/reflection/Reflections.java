@@ -41,11 +41,14 @@ import org.slf4j.Logger;
 
 import java.lang.annotation.Annotation;
 import java.lang.annotation.Inherited;
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Predicate;
 
 
 /**
@@ -175,7 +178,7 @@ public class Reflections{
 		final Set<String> keys = classStore.keys(SubTypesScanner.class);
 		keys.removeAll(classStore.values(SubTypesScanner.class));
 		for(final String key : keys){
-			final Class<?> type = ReflectionHelper.forName(key);
+			final Class<?> type = ReflectionHelper.getClassFromName(key);
 			if(type != null)
 				expandSupertypes(classStore, key, type);
 		}
@@ -199,7 +202,7 @@ public class Reflections{
 	 * @param <T>	The type of {@code type}.
 	 */
 	public <T> Set<Class<? extends T>> getSubTypesOf(final Class<T> type){
-		return ReflectionHelper.forNames(classStore.getAll(SubTypesScanner.class, type.getName()));
+		return ReflectionHelper.getClassesFromNames(classStore.getAll(SubTypesScanner.class, type.getName()));
 	}
 
 	/**
@@ -234,7 +237,7 @@ public class Reflections{
 	private Set<Class<?>> getTypesAnnotatedWith(final Class<? extends Annotation> annotation, final boolean honorInherited){
 		final Set<String> annotated = classStore.get(TypeAnnotationsScanner.class, annotation.getName());
 		annotated.addAll(getAllAnnotatedClasses(annotated, annotation, honorInherited));
-		return ReflectionHelper.forNames(annotated);
+		return ReflectionHelper.getClassesFromNames(annotated);
 	}
 
 	/**
@@ -268,17 +271,46 @@ public class Reflections{
 
 	private Set<Class<?>> getTypesAnnotatedWith(final Annotation annotation, final boolean honorInherited){
 		final Set<String> annotated = classStore.get(TypeAnnotationsScanner.class, annotation.annotationType().getName());
-		final Set<Class<?>> allAnnotated = ReflectionHelper.filter(ReflectionHelper.forNames(annotated), ReflectionHelper.withAnnotation(annotation));
-		final Set<Class<?>> classes = ReflectionHelper.forNames(ReflectionHelper.filter(getAllAnnotatedClasses(ReflectionHelper.names(allAnnotated), annotation.annotationType(), honorInherited), s -> !annotated.contains(s)));
+		final Set<Class<?>> allAnnotated = JavaHelper.filter(ReflectionHelper.getClassesFromNames(annotated), getFilterWithAnnotation(annotation));
+		final Set<Class<?>> classes = ReflectionHelper.getClassesFromNames(JavaHelper.filter(getAllAnnotatedClasses(ReflectionHelper.getClassNames(allAnnotated), annotation.annotationType(), honorInherited), s -> !annotated.contains(s)));
 		allAnnotated.addAll(classes);
 		return allAnnotated;
+	}
+
+	/**
+	 * where element is annotated with given {@code annotation}, including member matching
+	 *
+	 * @param annotation	The annotation.
+	 * @return	The predicate.
+	 * @param <T>	The type of the returned predicate.
+	 */
+	private <T extends AnnotatedElement> Predicate<T> getFilterWithAnnotation(final Annotation annotation){
+		return input -> input != null
+			&& input.isAnnotationPresent(annotation.annotationType())
+			&& areAnnotationMembersMatching(input.getAnnotation(annotation.annotationType()), annotation);
+	}
+
+	private boolean areAnnotationMembersMatching(final Annotation annotation1, final Annotation annotation2){
+		if(annotation2 != null && annotation1.annotationType() == annotation2.annotationType()){
+			for(final Method method : annotation1.annotationType().getDeclaredMethods()){
+				try{
+					if(!method.invoke(annotation1).equals(method.invoke(annotation2)))
+						return false;
+				}
+				catch(final Exception e){
+					throw new ReflectionsException("Could not invoke method " + method.getName() + " on annotation " + annotation1.annotationType(), e);
+				}
+			}
+			return true;
+		}
+		return false;
 	}
 
 	private Collection<String> getAllAnnotatedClasses(final Collection<String> annotated, final Class<? extends Annotation> annotation, final boolean honorInherited){
 		if(honorInherited){
 			if(annotation.isAnnotationPresent(Inherited.class)){
-				final Set<String> subTypes = classStore.get(SubTypesScanner.class, ReflectionHelper.filter(annotated, input -> {
-					final Class<?> type = ReflectionHelper.forName(input);
+				final Set<String> subTypes = classStore.get(SubTypesScanner.class, JavaHelper.filter(annotated, input -> {
+					final Class<?> type = ReflectionHelper.getClassFromName(input);
 					return (type != null && !type.isInterface());
 				}));
 				return classStore.getAllIncludingKeys(SubTypesScanner.class, subTypes);
