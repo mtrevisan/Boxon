@@ -31,7 +31,7 @@ import java.io.InputStream;
 
 
 /**
- * an implementation of {@link VFSFile} for a directory {@link File}
+ * An implementation of {@link VFSFile} for a {@link File}.
  */
 public class SystemFile implements VFSFile{
 

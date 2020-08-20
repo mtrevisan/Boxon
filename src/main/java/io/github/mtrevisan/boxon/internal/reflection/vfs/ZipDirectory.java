@@ -28,11 +28,13 @@ import io.github.mtrevisan.boxon.internal.JavaHelper;
 import org.slf4j.Logger;
 
 import java.io.IOException;
+import java.util.function.Predicate;
 import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
 
 
 /**
- * an implementation of {@link VFSDirectory} for {@link java.util.zip.ZipFile}
+ * An implementation of {@link VFSDirectory} for {@link java.util.zip.ZipFile ZipFile}.
  */
 public class ZipDirectory implements VFSDirectory{
 
@@ -54,7 +56,7 @@ public class ZipDirectory implements VFSDirectory{
 	@Override
 	public Iterable<VFSFile> getFiles(){
 		return () -> jarFile.stream()
-			.filter(entry -> !entry.isDirectory())
+			.filter(Predicate.not(ZipEntry::isDirectory))
 			.map(entry -> (VFSFile)new ZipFile(ZipDirectory.this, entry))
 			.iterator();
 	}

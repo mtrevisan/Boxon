@@ -41,7 +41,7 @@ public class JavassistAdapter implements MetadataAdapterInterface<ClassFile>{
 
 	/**
 	 * Setting this to {@code false} will result in returning only visible annotations from the relevant methods here
-	 * (only {@link java.lang.annotation.RetentionPolicy#RUNTIME}).
+	 * (only {@link java.lang.annotation.RetentionPolicy#RUNTIME RetentionPolicy.RUNTIME}).
 	 */
 	public static final boolean INCLUDE_INVISIBLE_TAG = true;
 

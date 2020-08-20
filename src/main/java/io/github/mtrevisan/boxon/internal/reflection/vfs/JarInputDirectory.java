@@ -33,6 +33,9 @@ import java.util.jar.JarInputStream;
 import java.util.zip.ZipEntry;
 
 
+/**
+ * An implementation of {@link VFSDirectory} for a {@link JarInputStream} in a JAR.
+ */
 public class JarInputDirectory implements VFSDirectory{
 
 	private final URL url;
@@ -85,7 +88,8 @@ public class JarInputDirectory implements VFSDirectory{
 
 						long size = entry.getSize();
 						if(size < 0)
-							size = 0xffffffffl + size; //JDK-6916399
+							//JDK-6916399
+							size = 0xffffffffl + size;
 						nextCursor += size;
 						if(!entry.isDirectory())
 							return new JarInputFile(entry, JarInputDirectory.this, cursor, nextCursor);

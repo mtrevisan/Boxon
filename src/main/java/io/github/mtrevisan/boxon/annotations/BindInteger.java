@@ -37,7 +37,7 @@ import java.lang.annotation.Target;
 
 
 /**
- * Manages a {@code long}/{@link Long} if <code>size &lt; {@link Long#SIZE}</code>, {@link java.math.BigInteger}
+ * Manages a {@code long}/{@link Long} if <code>size &lt; {@link Long#SIZE}</code>, {@link java.math.BigInteger BigInteger}
  * otherwise (... before the application of a converter).
  */
 @Retention(RetentionPolicy.RUNTIME)

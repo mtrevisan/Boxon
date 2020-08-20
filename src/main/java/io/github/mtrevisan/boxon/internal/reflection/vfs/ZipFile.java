@@ -31,7 +31,7 @@ import java.util.zip.ZipEntry;
 
 
 /**
- * an implementation of {@link VFSFile} for {@link ZipEntry}
+ * An implementation of {@link VFSFile} for {@link ZipEntry}.
  */
 public class ZipFile implements VFSFile{
 

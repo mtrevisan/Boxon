@@ -39,10 +39,10 @@ import java.util.regex.Pattern;
 
 
 /**
- * UrlType to be used by Reflections library.
- * This class handles the vfszip and vfsfile protocol of JBOSS files.
+ * {@link UrlType} to be used by {@link io.github.mtrevisan.boxon.internal.reflection.Reflections Reflections}.
+ * <p>This class handles the vfszip and vfsfile protocol of JBOSS files.</p>
  *
- * @author Sergio Pola
+ * @author	Sergio Pola
  */
 class UrlTypeVFS implements UrlType{
 

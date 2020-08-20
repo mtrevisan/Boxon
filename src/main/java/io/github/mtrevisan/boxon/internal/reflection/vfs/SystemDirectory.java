@@ -32,8 +32,8 @@ import java.nio.file.Files;
 import java.util.Collections;
 
 
-/*
- * An implementation of {@link io.github.mtrevisan.boxon.internal.reflection.vfs.Vfs.Dir} for directory {@link File}.
+/**
+ * An implementation of {@link VFSDirectory} for a {@link File}.
  */
 public class SystemDirectory implements VFSDirectory{
 

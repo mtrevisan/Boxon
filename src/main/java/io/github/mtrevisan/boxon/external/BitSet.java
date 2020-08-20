@@ -32,7 +32,7 @@ import java.util.Arrays;
  * This class implements a vector of bits that grows as needed.
  * <p>Each set bit of the bit set is stored as an index.</p>
  * <p>By default, all bits in the set initially are zero.</p>
- * <p>The maximum value that can be stored is {@link java.lang.Integer#MAX_VALUE}</p>
+ * <p>The maximum value that can be stored is {@link java.lang.Integer#MAX_VALUE MAX_VALUE}</p>
  * <p>Unless otherwise noted, passing a {@code null} parameter to any of the
  * methods in a {@code BitSet} will result in a {@code NullPointerException}.</p>
  * <p>Moreover, passing a non-increasing value to {@link #addNextSetBit(int)} will

@@ -29,6 +29,9 @@ import java.io.InputStream;
 import java.util.zip.ZipEntry;
 
 
+/**
+ * An implementation of {@link VFSFile} for a {@link ZipEntry} in a JAR.
+ */
 public class JarInputFile implements VFSFile{
 
 	private static final String SLASH = "/";
@@ -64,7 +67,7 @@ public class JarInputFile implements VFSFile{
 			public int read() throws IOException{
 				if(jarInputDir.cursor >= fromIndex && jarInputDir.cursor <= endIndex){
 					final int read = jarInputDir.jarInputStream.read();
-					jarInputDir.cursor++;
+					jarInputDir.cursor ++;
 					return read;
 				}
 				else

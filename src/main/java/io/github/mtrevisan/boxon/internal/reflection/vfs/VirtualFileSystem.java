@@ -47,17 +47,16 @@ import java.util.jar.JarFile;
 
 /**
  * A simple Virtual File System bridge.
- * <p>use the {@link VirtualFileSystem.DefaultUrlTypes#fromURL(URL)} to get a {@link VFSDirectory},
- * then use {@link VFSDirectory#getFiles()} to iterate over the {@link VFSFile}
+ * <p>Use the {@link VirtualFileSystem#fromURL(URL)} to get a {@link VFSDirectory},
+ * then use {@link VFSDirectory#getFiles()} to iterate over the {@link VFSFile}s.
  * <p>for example:
  * <pre><code>
  *      VFSDirectory dir = VirtualFileSystem.fromURL(url);
- *      Iterable&lt;VFSFile&gt; files = dir.getFiles();
- *      for(VFSFile file : files)
+ *      for(VFSFile file : dir.getFiles())
  *          InputStream is = file.openInputStream();
  * </code></pre>
- * <p>{@link VirtualFileSystem.DefaultUrlTypes#fromURL(URL)} uses static {@link DefaultUrlTypes} to resolve URLs.
- * It contains VfsTypes for handling for common resources such as local jar file, local directory, jar url, jar input stream and more.
+ * <p>{@link VirtualFileSystem#fromURL(URL)} uses static {@link DefaultUrlTypes} to resolve URLs.
+ * It contains types for handling for common resources such as local jar file, local directory, jar url, jar input stream and more.
  */
 public final class VirtualFileSystem{
 

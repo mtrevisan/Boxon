@@ -27,11 +27,11 @@ package io.github.mtrevisan.boxon.internal.reflection.vfs;
 import java.net.URL;
 
 
-/** A matcher and factory for a URL. */
+/** A matcher and factory for an URL. */
 public interface UrlType{
 
-	boolean matches(URL url);
+	boolean matches(final URL url);
 
-	VFSDirectory createDir(URL url) throws Exception;
+	VFSDirectory createDir(final URL url) throws Exception;
 
 }

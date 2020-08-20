@@ -37,7 +37,7 @@ import java.lang.annotation.Target;
 
 
 /**
- * Manages a {@link java.math.BigDecimal} (... before the application of a converter).
+ * Manages a {@link java.math.BigDecimal BigDecimal} (... before the application of a converter).
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
@@ -51,7 +51,7 @@ public @interface BindDecimal{
 	String condition() default "";
 
 	/**
-	 * The type of object to be inserted into a {@link java.math.BigDecimal}.
+	 * The type of object to be inserted into a {@link java.math.BigDecimal BigDecimal}.
 	 * <p>Note that this can be either a {@link Float} or a {@link Double} class.</p>
 	 *
 	 * @return	The type of object to be inserted in the array.
