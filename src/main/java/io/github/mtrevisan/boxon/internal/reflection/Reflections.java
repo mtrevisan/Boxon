@@ -153,6 +153,9 @@ public class Reflections{
 					if(scanner.acceptsInput(relativePath) || scanner.acceptsInput(packageName)){
 						try{
 							classObject = scanner.scan(file, classObject, metadataStore);
+
+							if(LOGGER != null)
+								LOGGER.trace("Scanned file {} in URL {} with scanner {}", relativePath, url.toExternalForm(), scanner.getClass().getSimpleName());
 						}
 						catch(final Exception e){
 							if(LOGGER != null)
