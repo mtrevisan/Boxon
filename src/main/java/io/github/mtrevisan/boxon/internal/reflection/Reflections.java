@@ -34,8 +34,8 @@ import io.github.mtrevisan.boxon.internal.reflection.scanners.SubTypesScanner;
 import io.github.mtrevisan.boxon.internal.reflection.scanners.TypeAnnotationsScanner;
 import io.github.mtrevisan.boxon.internal.reflection.utils.ClasspathHelper;
 import io.github.mtrevisan.boxon.internal.reflection.utils.ReflectionHelper;
-import io.github.mtrevisan.boxon.internal.reflection.vfs.Directory;
-import io.github.mtrevisan.boxon.internal.reflection.vfs.File;
+import io.github.mtrevisan.boxon.internal.reflection.vfs.VFSDirectory;
+import io.github.mtrevisan.boxon.internal.reflection.vfs.VFSFile;
 import io.github.mtrevisan.boxon.internal.reflection.vfs.VirtualFileSystem;
 import org.slf4j.Logger;
 
@@ -135,14 +135,14 @@ public class Reflections{
 			}
 			catch(final ReflectionsException e){
 				if(LOGGER != null)
-					LOGGER.warn("Could not create VirtualFileSystem.Directory from URL, ignoring the exception and continuing", e);
+					LOGGER.warn("Could not create VFSDirectory from URL, ignoring the exception and continuing", e);
 			}
 		}
 	}
 
 	private void scan(final URL url){
-		final Directory directory = VirtualFileSystem.fromURL(url);
-		for(final File file : directory.getFiles()){
+		final VFSDirectory directory = VirtualFileSystem.fromURL(url);
+		for(final VFSFile file : directory.getFiles()){
 			//scan if inputs filter accepts file relativePath or packageName
 			final String relativePath = file.getRelativePath();
 			final String packageName = relativePath.replace('/', '.');

@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.internal.reflection.adapters;
 
-import io.github.mtrevisan.boxon.internal.reflection.vfs.File;
+import io.github.mtrevisan.boxon.internal.reflection.vfs.VFSFile;
 
 
 public interface MetadataAdapterInterface<C>{
@@ -40,7 +40,7 @@ public interface MetadataAdapterInterface<C>{
 
 	String[] getClassAnnotationNames(final C type);
 
-	C getOrCreateClassObject(final File file);
+	C getOrCreateClassObject(final VFSFile file);
 
 	default boolean acceptsInput(final String file){
 		return file.endsWith(CLASS);

@@ -1,10 +1,10 @@
 package io.github.mtrevisan.boxon.internal.reflection.vfs;
 
 
-public interface Directory{
+public interface VFSDirectory{
 
 	String getPath();
 
-	Iterable<File> getFiles();
+	Iterable<VFSFile> getFiles();
 
 }

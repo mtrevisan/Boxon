@@ -29,7 +29,7 @@ import java.io.InputStream;
 import java.util.zip.ZipEntry;
 
 
-public class JarInputFile implements File{
+public class JarInputFile implements VFSFile{
 
 	private final ZipEntry entry;
 	private final JarInputDirectory jarInputDir;

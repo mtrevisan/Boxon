@@ -2,15 +2,16 @@ package io.github.mtrevisan.boxon.internal.reflection;
 
 import io.github.mtrevisan.boxon.internal.reflection.adapters.JavassistAdapter;
 import io.github.mtrevisan.boxon.internal.reflection.utils.ClasspathHelper;
-import io.github.mtrevisan.boxon.internal.reflection.vfs.Directory;
-import io.github.mtrevisan.boxon.internal.reflection.vfs.File;
 import io.github.mtrevisan.boxon.internal.reflection.vfs.SystemDirectory;
+import io.github.mtrevisan.boxon.internal.reflection.vfs.VFSDirectory;
+import io.github.mtrevisan.boxon.internal.reflection.vfs.VFSFile;
 import io.github.mtrevisan.boxon.internal.reflection.vfs.VirtualFileSystem;
 import javassist.bytecode.ClassFile;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
@@ -29,7 +30,7 @@ class VirtualFileSystemTest{
 		Assertions.assertFalse(VirtualFileSystem.DefaultUrlTypes.JAR_URL.matches(url));
 		Assertions.assertFalse(VirtualFileSystem.DefaultUrlTypes.DIRECTORY.matches(url));
 
-		Directory dir = VirtualFileSystem.DefaultUrlTypes.JAR_FILE.createDir(url);
+		VFSDirectory dir = VirtualFileSystem.DefaultUrlTypes.JAR_FILE.createDir(url);
 		testVirtualFileSystemDir(dir);
 	}
 
@@ -43,7 +44,7 @@ class VirtualFileSystemTest{
 		Assertions.assertTrue(VirtualFileSystem.DefaultUrlTypes.JAR_URL.matches(url));
 		Assertions.assertFalse(VirtualFileSystem.DefaultUrlTypes.DIRECTORY.matches(url));
 
-		Directory dir = VirtualFileSystem.DefaultUrlTypes.JAR_URL.createDir(url);
+		VFSDirectory dir = VirtualFileSystem.DefaultUrlTypes.JAR_URL.createDir(url);
 		testVirtualFileSystemDir(dir);
 	}
 
@@ -57,7 +58,7 @@ class VirtualFileSystemTest{
 		Assertions.assertFalse(VirtualFileSystem.DefaultUrlTypes.JAR_URL.matches(url));
 		Assertions.assertTrue(VirtualFileSystem.DefaultUrlTypes.DIRECTORY.matches(url));
 
-		Directory dir = VirtualFileSystem.DefaultUrlTypes.DIRECTORY.createDir(url);
+		VFSDirectory dir = VirtualFileSystem.DefaultUrlTypes.DIRECTORY.createDir(url);
 		testVirtualFileSystemDir(dir);
 	}
 
@@ -81,7 +82,7 @@ class VirtualFileSystemTest{
 		Collection<URL> urls = ClasspathHelper.forPackage("dir+with spaces");
 		Assertions.assertFalse(urls.isEmpty());
 		for(URL url : urls){
-			Directory dir = VirtualFileSystem.fromURL(url);
+			VFSDirectory dir = VirtualFileSystem.fromURL(url);
 			Assertions.assertNotNull(dir);
 			Assertions.assertNotNull(dir.getFiles().iterator().next());
 		}
@@ -90,13 +91,13 @@ class VirtualFileSystemTest{
 //	@Test
 	void virtualFileSystemFromDirWithJarInName() throws MalformedURLException{
 		String tmpFolder = System.getProperty("java.io.tmpdir");
-		tmpFolder = tmpFolder.endsWith(java.io.File.separator)? tmpFolder: tmpFolder + java.io.File.separator;
+		tmpFolder = tmpFolder.endsWith(File.separator)? tmpFolder: tmpFolder + File.separator;
 		String dirWithJarInName = tmpFolder + "tony.jarvis";
-		java.io.File newDir = new java.io.File(dirWithJarInName);
+		File newDir = new File(dirWithJarInName);
 		newDir.mkdir();
 
 		try{
-			Directory dir = VirtualFileSystem.fromURL(new URL(MessageFormat.format("file:{0}", dirWithJarInName)));
+			VFSDirectory dir = VirtualFileSystem.fromURL(new URL(MessageFormat.format("file:{0}", dirWithJarInName)));
 
 			Assertions.assertEquals(dirWithJarInName, dir.getPath());
 			Assertions.assertEquals(SystemDirectory.class, dir.getClass());
@@ -106,10 +107,10 @@ class VirtualFileSystemTest{
 		}
 	}
 
-	private void testVirtualFileSystemDir(Directory dir){
+	private void testVirtualFileSystemDir(VFSDirectory dir){
 		JavassistAdapter mdAdapter = new JavassistAdapter();
-		File file = null;
-		for(File f : dir.getFiles())
+		VFSFile file = null;
+		for(VFSFile f : dir.getFiles())
 			if(f.getRelativePath().endsWith(".class")){
 				file = f;
 				break;

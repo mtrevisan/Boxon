@@ -8,6 +8,6 @@ public interface UrlType{
 
 	boolean matches(URL url);
 
-	Directory createDir(URL url) throws Exception;
+	VFSDirectory createDir(URL url) throws Exception;
 
 }

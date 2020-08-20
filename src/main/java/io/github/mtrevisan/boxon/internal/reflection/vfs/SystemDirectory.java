@@ -26,20 +26,21 @@ package io.github.mtrevisan.boxon.internal.reflection.vfs;
 
 import io.github.mtrevisan.boxon.internal.reflection.ReflectionsException;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Collections;
 
 
 /*
- * An implementation of {@link io.github.mtrevisan.boxon.internal.reflection.vfs.Vfs.Dir} for directory {@link java.io.File}.
+ * An implementation of {@link io.github.mtrevisan.boxon.internal.reflection.vfs.Vfs.Dir} for directory {@link File}.
  */
-public class SystemDirectory implements Directory{
+public class SystemDirectory implements VFSDirectory{
 
-	private final java.io.File file;
+	private final File file;
 
 
-	SystemDirectory(final java.io.File file){
+	SystemDirectory(final File file){
 		if(file != null && (!file.isDirectory() || !file.canRead()))
 			throw new RuntimeException("cannot use dir " + file);
 
@@ -52,7 +53,7 @@ public class SystemDirectory implements Directory{
 	}
 
 	@Override
-	public Iterable<File> getFiles(){
+	public Iterable<VFSFile> getFiles(){
 		if(file == null || !file.exists())
 			return Collections.emptyList();
 
@@ -60,7 +61,7 @@ public class SystemDirectory implements Directory{
 			try{
 				return Files.walk(file.toPath())
 					.filter(Files::isRegularFile)
-					.map(path -> (File)new SystemFile(SystemDirectory.this, path.toFile()))
+					.map(path -> (VFSFile)new SystemFile(SystemDirectory.this, path.toFile()))
 					.iterator();
 			}
 			catch(final IOException e){

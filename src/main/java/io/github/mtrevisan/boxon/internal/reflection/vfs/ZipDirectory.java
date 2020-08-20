@@ -32,9 +32,9 @@ import java.util.jar.JarFile;
 
 
 /**
- * an implementation of {@link Directory} for {@link java.util.zip.ZipFile}
+ * an implementation of {@link VFSDirectory} for {@link java.util.zip.ZipFile}
  */
-public class ZipDirectory implements Directory{
+public class ZipDirectory implements VFSDirectory{
 
 	private static final Logger LOGGER = JavaHelper.getLoggerFor(ZipDirectory.class);
 
@@ -52,10 +52,10 @@ public class ZipDirectory implements Directory{
 	}
 
 	@Override
-	public Iterable<File> getFiles(){
+	public Iterable<VFSFile> getFiles(){
 		return () -> jarFile.stream()
 			.filter(entry -> !entry.isDirectory())
-			.map(entry -> (File)new ZipFile(ZipDirectory.this, entry))
+			.map(entry -> (VFSFile)new ZipFile(ZipDirectory.this, entry))
 			.iterator();
 	}
 

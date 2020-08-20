@@ -24,21 +24,22 @@
  */
 package io.github.mtrevisan.boxon.internal.reflection.vfs;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 
 /**
- * an implementation of {@link File} for a directory {@link java.io.File}
+ * an implementation of {@link VFSFile} for a directory {@link File}
  */
-public class SystemFile implements File{
+public class SystemFile implements VFSFile{
 
 	private final SystemDirectory root;
-	private final java.io.File file;
+	private final File file;
 
 
-	SystemFile(final SystemDirectory root, final java.io.File file){
+	SystemFile(final SystemDirectory root, final File file){
 		this.root = root;
 		this.file = file;
 	}
@@ -51,11 +52,7 @@ public class SystemFile implements File{
 	@Override
 	public String getRelativePath(){
 		final String filepath = file.getPath().replace("\\", "/");
-		if(filepath.startsWith(root.getPath()))
-			return filepath.substring(root.getPath().length() + 1);
-
-		//should not get here
-		return null;
+		return (filepath.startsWith(root.getPath())? filepath.substring(root.getPath().length() + 1): null);
 	}
 
 	@Override

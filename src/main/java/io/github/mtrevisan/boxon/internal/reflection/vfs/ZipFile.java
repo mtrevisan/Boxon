@@ -24,15 +24,16 @@
  */
 package io.github.mtrevisan.boxon.internal.reflection.vfs;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.ZipEntry;
 
 
 /**
- * an implementation of {@link File} for {@link ZipEntry}
+ * an implementation of {@link VFSFile} for {@link ZipEntry}
  */
-public class ZipFile implements File{
+public class ZipFile implements VFSFile{
 
 	private final ZipDirectory root;
 	private final ZipEntry entry;
@@ -61,7 +62,7 @@ public class ZipFile implements File{
 
 	@Override
 	public String toString(){
-		return root.getPath() + "!" + java.io.File.separatorChar + entry.toString();
+		return root.getPath() + "!" + File.separatorChar + entry.toString();
 	}
 
 }

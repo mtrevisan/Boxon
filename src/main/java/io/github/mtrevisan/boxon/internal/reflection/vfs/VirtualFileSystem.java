@@ -29,6 +29,7 @@ import io.github.mtrevisan.boxon.internal.reflection.ReflectionsException;
 import io.github.mtrevisan.boxon.internal.reflection.utils.ClasspathHelper;
 import org.slf4j.Logger;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.JarURLConnection;
 import java.net.URISyntaxException;
@@ -46,31 +47,17 @@ import java.util.jar.JarFile;
 
 /**
  * A simple Virtual File System bridge.
- * <p>use the {@link VirtualFileSystem.DefaultUrlTypes#fromURL(URL)} to get a {@link Directory},
- * then use {@link Directory#getFiles()} to iterate over the {@link File}
+ * <p>use the {@link VirtualFileSystem.DefaultUrlTypes#fromURL(URL)} to get a {@link VFSDirectory},
+ * then use {@link VFSDirectory#getFiles()} to iterate over the {@link VFSFile}
  * <p>for example:
  * <pre><code>
- *      VirtualFileSystem.Directory dir = VirtualFileSystem.fromURL(url);
- *      Iterable&lt;VirtualFileSystem.File&gt; files = dir.getFiles();
- *      for(VirtualFileSystem.File file : files)
+ *      VFSDirectory dir = VirtualFileSystem.fromURL(url);
+ *      Iterable&lt;VFSFile&gt; files = dir.getFiles();
+ *      for(VFSFile file : files)
  *          InputStream is = file.openInputStream();
  * </code></pre>
  * <p>{@link VirtualFileSystem.DefaultUrlTypes#fromURL(URL)} uses static {@link DefaultUrlTypes} to resolve URLs.
  * It contains VfsTypes for handling for common resources such as local jar file, local directory, jar url, jar input stream and more.
- * <p>It can be plugged in with other {@link UrlType} using {@link VirtualFileSystem#addDefaultURLTypes(UrlType)}.
- * <p>for example:
- * <pre><code>
- *      VirtualFileSystem.addDefaultURLTypes(new VirtualFileSystem.UrlType(){
- *          public boolean matches(URL url){
- *              return url.getProtocol().equals("http");
- *          }
- *          public VirtualFileSystem.Directory createDir(final URL url){
- *              return new HttpDir(url); //implement this type... (check out a naive implementation on VfsTest)
- *          }
- *      });
- *
- *      VirtualFileSystem.Directory dir = VirtualFileSystem.fromURL(new URL("http://mirrors.ibiblio.org/pub/mirrors/maven2/org/slf4j/slf4j-api/1.5.6/slf4j-api-1.5.6.jar"));
- * </code></pre>
  */
 public abstract class VirtualFileSystem{
 
@@ -81,37 +68,28 @@ public abstract class VirtualFileSystem{
 
 
 	/**
-	 * Add a static default url types to the beginning of the default url types list. can be used to statically plug in urlTypes
-	 *
-	 * @param urlType	The URL type.
-	 */
-	public static void addDefaultURLTypes(final UrlType urlType){
-		DEFAULT_URL_TYPES.add(0, urlType);
-	}
-
-
-	/**
 	 * Tries to create a Dir from the given url, using the defaultUrlTypes
 	 *
 	 * @param url	The URL.
 	 * @return	The Dir from the given {@code url}.
 	 */
-	public static Directory fromURL(final URL url){
+	public static VFSDirectory fromURL(final URL url){
 		for(final UrlType type : DEFAULT_URL_TYPES){
 			try{
 				if(type.matches(url)){
-					final Directory directory = type.createDir(url);
+					final VFSDirectory directory = type.createDir(url);
 					if(directory != null)
 						return directory;
 				}
 			}
 			catch(final Throwable e){
 				if(LOGGER != null)
-					LOGGER.warn("could not create VirtualFileSystem.Directory using " + type + " from URL " + url.toExternalForm() + ": skipping", e);
+					LOGGER.warn("could not create VFSDirectory using " + type + " from URL " + url.toExternalForm() + ": skipping", e);
 			}
 		}
 
-		throw new ReflectionsException("could not create VirtualFileSystem.Directory from URL, no matching UrlType was found [" + url.toExternalForm() + "]\n" + "either use fromURL(final URL url, final List<UrlType> urlTypes) or " + "use the static setDefaultURLTypes(final List<UrlType> urlTypes) or addDefaultURLTypes(UrlType urlType) " + "with your specialized UrlType.");
+		throw new ReflectionsException("could not create VFSDirectory from URL, no matching UrlType was found [" + url.toExternalForm() + "]\n"
+			+ "either use fromURL(final URL url) with your specialized UrlType.");
 	}
 
 	/**
@@ -132,7 +110,7 @@ public abstract class VirtualFileSystem{
 			}
 
 			@Override
-			public Directory createDir(final URL url) throws Exception{
+			public VFSDirectory createDir(final URL url) throws Exception{
 				return new ZipDirectory(new JarFile(resourceToFile(url)));
 			}
 		},
@@ -146,7 +124,7 @@ public abstract class VirtualFileSystem{
 			}
 
 			@Override
-			public Directory createDir(final URL url) throws Exception{
+			public VFSDirectory createDir(final URL url) throws Exception{
 				try{
 					final URLConnection urlConnection = url.openConnection();
 					if(urlConnection instanceof JarURLConnection){
@@ -156,7 +134,7 @@ public abstract class VirtualFileSystem{
 				}
 				catch(final Throwable ignored){}
 
-				final java.io.File file = resourceToFile(url);
+				final File file = resourceToFile(url);
 				return (file != null? new ZipDirectory(new JarFile(file)): null);
 			}
 		},
@@ -165,14 +143,14 @@ public abstract class VirtualFileSystem{
 			@Override
 			public boolean matches(final URL url){
 				if(url.getProtocol().equals("file") && !hasJarFileInPath(url)){
-					final java.io.File file = resourceToFile(url);
+					final File file = resourceToFile(url);
 					return (file != null && file.isDirectory());
 				}
 				return false;
 			}
 
 			@Override
-			public Directory createDir(final URL url){
+			public VFSDirectory createDir(final URL url){
 				return new SystemDirectory(resourceToFile(url));
 			}
 		},
@@ -184,12 +162,12 @@ public abstract class VirtualFileSystem{
 			}
 
 			@Override
-			public Directory createDir(final URL url) throws Exception{
+			public VFSDirectory createDir(final URL url) throws Exception{
 				final Object content = url.openConnection().getContent();
 				final Class<?> virtualFile = ClasspathHelper.contextClassLoader().loadClass("org.jboss.vfs.VirtualFile");
-				final java.io.File physicalFile = (java.io.File)virtualFile.getMethod("getPhysicalFile").invoke(content);
+				final File physicalFile = (File)virtualFile.getMethod("getPhysicalFile").invoke(content);
 				final String name = (String)virtualFile.getMethod("getName").invoke(content);
-				java.io.File file = new java.io.File(physicalFile.getParentFile(), name);
+				File file = new File(physicalFile.getParentFile(), name);
 				if(!file.exists() || !file.canRead())
 					file = physicalFile;
 				return (file.isDirectory()? new SystemDirectory(file): new ZipDirectory(new JarFile(file)));
@@ -205,7 +183,7 @@ public abstract class VirtualFileSystem{
 			}
 
 			@Override
-			public Directory createDir(final URL url){
+			public VFSDirectory createDir(final URL url){
 				return new UrlTypeVFS().createDir(url);
 			}
 		},
@@ -217,7 +195,7 @@ public abstract class VirtualFileSystem{
 			}
 
 			@Override
-			public Directory createDir(final URL url) throws Exception{
+			public VFSDirectory createDir(final URL url) throws Exception{
 				final Class<?> fileLocatorClass = ClasspathHelper.contextClassLoader().
 					loadClass("org.eclipse.core.runtime.FileLocator");
 				return fromURL((URL)fileLocatorClass.getMethod("resolve", URL.class).invoke(null, url));
@@ -231,19 +209,19 @@ public abstract class VirtualFileSystem{
 			}
 
 			@Override
-			public Directory createDir(final URL url){
+			public VFSDirectory createDir(final URL url){
 				return new JarInputDirectory(url);
 			}
 		};
 
 
 		/**
-		 * Get {@link java.io.File} from URL.
+		 * Get {@link File} from URL.
 		 *
 		 * @param url	The URL to get the file from.
-		 * @return	{@link java.io.File} from URL.
+		 * @return	{@link File} from URL.
 		 */
-		private static java.io.File resourceToFile(final URL url){
+		private static File resourceToFile(final URL url){
 			try{
 				final String path = url.toURI().getSchemeSpecificPart();
 				return getFileIfExists(path);
@@ -258,7 +236,7 @@ public abstract class VirtualFileSystem{
 
 			try{
 				String path = extractExternalFormPath(url);
-				final java.io.File file = new java.io.File(path);
+				final File file = new File(path);
 				if(file.exists())
 					return file;
 
@@ -268,7 +246,7 @@ public abstract class VirtualFileSystem{
 			catch(final Exception ignored){}
 
 			final String path = url.getFile();
-			return new java.io.File(path);
+			return new File(path);
 		}
 
 		private static String extractDecodedPath(final URL resource){
@@ -296,8 +274,8 @@ public abstract class VirtualFileSystem{
 			return path;
 		}
 
-		private static java.io.File getFileIfExists(final String path) throws FileNotFoundException{
-			final java.io.File file = new java.io.File(path);
+		private static File getFileIfExists(final String path) throws FileNotFoundException{
+			final File file = new File(path);
 			if(!file.exists())
 				throw new FileNotFoundException();
 
