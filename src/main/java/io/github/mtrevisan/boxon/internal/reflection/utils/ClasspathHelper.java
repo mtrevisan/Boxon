@@ -74,10 +74,10 @@ public final class ClasspathHelper{
 	 *
 	 * @return the URL containing the class, null if not found
 	 */
-	public static URL forClass(Class<?> aClass, ClassLoader... classLoaders){
+	public static URL forClass(final Class<?> aClass, final ClassLoader... classLoaders){
 		final ClassLoader[] loaders = classLoaders(classLoaders);
 		final String resourceName = aClass.getName().replace(".", "/") + ".class";
-		for(ClassLoader classLoader : loaders){
+		for(final ClassLoader classLoader : loaders){
 			try{
 				final URL url = classLoader.getResource(resourceName);
 				if(url != null){
@@ -85,7 +85,7 @@ public final class ClasspathHelper{
 					return new URL(normalizedUrl);
 				}
 			}
-			catch(MalformedURLException e){
+			catch(final MalformedURLException e){
 				if(LOGGER != null)
 					LOGGER.warn("Could not get URL", e);
 			}

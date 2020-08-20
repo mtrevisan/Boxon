@@ -97,18 +97,7 @@ public abstract class VirtualFileSystem{
 	 * @return	The Dir from the given {@code url}.
 	 */
 	public static Directory fromURL(final URL url){
-		return fromURL(url, defaultUrlTypes);
-	}
-
-	/**
-	 * Tries to create a Dir from the given {@code url}, using the given {@code urlTypes}.
-	 *
-	 * @param url	The URL.
-	 * @param urlTypes	The URL types.
-	 * @return	The Dir from the given {@code url}, using the given {@code urlTypes}.
-	 */
-	private static Directory fromURL(final URL url, final List<UrlType> urlTypes){
-		for(final UrlType type : urlTypes){
+		for(final UrlType type : defaultUrlTypes){
 			try{
 				if(type.matches(url)){
 					final Directory directory = type.createDir(url);
