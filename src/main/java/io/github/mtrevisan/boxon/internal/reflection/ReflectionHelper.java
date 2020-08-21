@@ -57,12 +57,10 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 
 /**
@@ -112,14 +110,17 @@ public final class ReflectionHelper{
 	/**
 	 * Try to resolve all given string representation of types to a list of java types
 	 *
-	 * @param classes	The classes.
+	 * @param classNames	The class names.
 	 * @return	The classes.
 	 */
-	public static Set<Class<?>> getClassesFromNames(final Collection<String> classes){
-		return classes.stream()
-			.map(ReflectionHelper::getClassFromName)
-			.filter(Objects::nonNull)
-			.collect(Collectors.toCollection(HashSet::new));
+	public static Set<Class<?>> getClassesFromNames(final Collection<String> classNames){
+		final Set<Class<?>> result = new HashSet<>(classNames.size());
+		for(final String className : classNames){
+			final Class<?> classFromName = getClassFromName(className);
+			if(classFromName != null)
+				result.add(classFromName);
+		}
+		return result;
 	}
 
 	public static Class<?> getClassFromName(final String typeName){
@@ -166,9 +167,10 @@ public final class ReflectionHelper{
 
 
 	public static List<String> getClassNames(final Collection<Class<?>> types){
-		return types.stream()
-			.map(ReflectionHelper::getClassName)
-			.collect(Collectors.toList());
+		final List<String> list = new ArrayList<>(types.size());
+		for(final Class<?> type : types)
+			list.add(getClassName(type));
+		return list;
 	}
 
 	private static String getClassName(Class<?> type){

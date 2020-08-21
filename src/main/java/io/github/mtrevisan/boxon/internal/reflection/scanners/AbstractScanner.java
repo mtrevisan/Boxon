@@ -38,7 +38,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 
 public abstract class AbstractScanner implements ScannerInterface{
@@ -148,9 +147,10 @@ public abstract class AbstractScanner implements ScannerInterface{
 	}
 
 	public Set<String> values(){
-		return metadataStore.values().stream()
-			.flatMap(Collection::stream)
-			.collect(Collectors.toSet());
+		final Set<String> result = new HashSet<>();
+		for(final Collection<String> value : metadataStore.values())
+			result.addAll(value);
+		return result;
 	}
 
 	public final boolean put(final String key, final String value){
