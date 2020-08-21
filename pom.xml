@@ -328,7 +328,6 @@
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>${slf4j.slf4j-log4j12.version}</version>
 			<scope>test</scope>
-			<optional>true</optional>
 		</dependency>
 
 		<!-- JUnit -->
