@@ -74,7 +74,7 @@ class VirtualFileSystemTest{
 		Assertions.assertThrows(NullPointerException.class, () -> testVirtualFileSystemDir(VirtualFileSystem.DefaultUrlTypes.JAR_INPUT_STREAM.createDir(url3)));
 	}
 
-//	@Test
+	@Test
 	void dirWithSpaces(){
 		Collection<URL> urls = ClasspathHelper.forPackage("dir+with spaces");
 		Assertions.assertFalse(urls.isEmpty());
