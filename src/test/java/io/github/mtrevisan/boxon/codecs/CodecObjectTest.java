@@ -43,7 +43,7 @@ import io.github.mtrevisan.boxon.external.ByteOrder;
 import io.github.mtrevisan.boxon.external.ComposeResponse;
 import io.github.mtrevisan.boxon.external.ParseResponse;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
-import io.github.mtrevisan.boxon.internal.reflection.ReflectionHelper;
+import io.github.mtrevisan.boxon.internal.reflection.helpers.ReflectionHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

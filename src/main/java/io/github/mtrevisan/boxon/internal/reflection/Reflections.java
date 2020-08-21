@@ -28,6 +28,8 @@ import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.reflection.adapters.MetadataAdapterBuilder;
 import io.github.mtrevisan.boxon.internal.reflection.adapters.MetadataAdapterInterface;
 import io.github.mtrevisan.boxon.internal.reflection.exceptions.ReflectionsException;
+import io.github.mtrevisan.boxon.internal.reflection.helpers.ClasspathHelper;
+import io.github.mtrevisan.boxon.internal.reflection.helpers.ReflectionHelper;
 import io.github.mtrevisan.boxon.internal.reflection.scanners.AbstractScanner;
 import io.github.mtrevisan.boxon.internal.reflection.scanners.ScannerInterface;
 import io.github.mtrevisan.boxon.internal.reflection.scanners.SubTypesScanner;

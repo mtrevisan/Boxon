@@ -1,8 +1,8 @@
 package io.github.mtrevisan.boxon.internal.reflection.vfs;
 
-import io.github.mtrevisan.boxon.internal.reflection.ClasspathHelper;
 import io.github.mtrevisan.boxon.internal.reflection.adapters.MetadataAdapterBuilder;
 import io.github.mtrevisan.boxon.internal.reflection.adapters.MetadataAdapterInterface;
+import io.github.mtrevisan.boxon.internal.reflection.helpers.ClasspathHelper;
 import javassist.bytecode.ClassFile;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

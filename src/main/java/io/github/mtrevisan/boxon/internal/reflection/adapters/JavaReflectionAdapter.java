@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.internal.reflection.adapters;
 
-import io.github.mtrevisan.boxon.internal.reflection.ClasspathHelper;
+import io.github.mtrevisan.boxon.internal.reflection.helpers.ClasspathHelper;
 import io.github.mtrevisan.boxon.internal.reflection.vfs.VFSDirectory;
 import io.github.mtrevisan.boxon.internal.reflection.vfs.VFSFile;
 
