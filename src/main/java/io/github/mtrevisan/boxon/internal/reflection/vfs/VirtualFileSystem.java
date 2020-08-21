@@ -185,30 +185,46 @@ public final class VirtualFileSystem{
 		 * @return	{@link File} from URL.
 		 */
 		private static File resourceToFile(final URL url){
+			File file = resourceToFileFromSchemePart(url);
+			if(file == null)
+				file = resourceToFileFromDecodedPath(url);
+			if(file == null)
+				file = resourceToFileFromExternalPath(url);
+			return file;
+		}
+
+		private static File resourceToFileFromSchemePart(final URL url){
+			File file = null;
 			try{
 				final String path = url.toURI().getSchemeSpecificPart();
-				return getFileIfExists(path);
+				file = getFileIfExists(path);
 			}
 			catch(final URISyntaxException | FileNotFoundException ignored){}
+			return file;
+		}
 
+		private static File resourceToFileFromDecodedPath(final URL url){
+			File file = null;
 			try{
 				final String path = extractDecodedPath(url);
-				return getFileIfExists(path);
+				file = getFileIfExists(path);
 			}
 			catch(final FileNotFoundException ignored){}
+			return file;
+		}
 
+		private static File resourceToFileFromExternalPath(final URL url){
+			File file = null;
 			try{
 				String path = extractExternalFormPath(url);
-				final File file = new File(path);
-				if(file.exists())
-					return file;
-
-				path = path.replace("%20", " ");
-				return getFileIfExists(path);
+				file = new File(path);
+				if(!file.exists()){
+					path = path.replace("%20", " ");
+					file = getFileIfExists(path);
+				}
 			}
 			catch(final Exception ignored){}
-
-			return null;
+			return file;
 		}
 
 		private static String extractDecodedPath(final URL resource){
