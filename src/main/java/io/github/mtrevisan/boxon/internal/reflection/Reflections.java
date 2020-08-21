@@ -113,6 +113,20 @@ public final class Reflections{
 	 * @see <a href="http://michaelscharf.blogspot.co.il/2006/11/javaneturlequals-and-hashcode-make.html">java.net.URL.equals and hashCode make (blocking) Internet connections</a>
 	 */
 	private static URL[] extractDistinctURLs(final Class<?>[] classes){
+		final Set<URI> uris = convertIntoURI(classes);
+
+		final List<URL> urls = new ArrayList<>(uris.size());
+		try{
+			for(final URI uri : uris)
+				urls.add(uri.toURL());
+		}
+		catch(final MalformedURLException ignored){
+			//cannot happen
+		}
+		return urls.toArray(URL[]::new);
+	}
+
+	private static Set<URI> convertIntoURI(final Class<?>[] classes){
 		final Set<URI> uris = new HashSet<>(classes.length);
 		for(int i = 0; i < classes.length; i ++){
 			final Collection<URL> urls = ClasspathHelper.forPackage(classes[i].getPackageName());
@@ -125,16 +139,7 @@ public final class Reflections{
 				}
 			}
 		}
-
-		final List<URL> urls = new ArrayList<>(uris.size());
-		try{
-			for(final URI uri : uris)
-				urls.add(uri.toURL());
-		}
-		catch(final MalformedURLException ignored){
-			//cannot happen
-		}
-		return urls.toArray(URL[]::new);
+		return uris;
 	}
 
 	public static Reflections createExpandSuperTypes(final URL... urls){
@@ -213,10 +218,10 @@ public final class Reflections{
 	private void expandSupertypes(final AbstractScanner scanner, final String key, final Class<?> type){
 		for(final Class<?> superType : ReflectionHelper.getSuperTypes(type))
 			if(scanner.put(superType.getName(), key)){
+				expandSupertypes(scanner, superType.getName(), superType);
+
 				if(LOGGER != null)
 					LOGGER.trace("Expanded subtype {} into {}", superType.getName(), key);
-
-				expandSupertypes(scanner, superType.getName(), superType);
 			}
 	}
 
