@@ -203,7 +203,7 @@ public final class Reflections{
 		final Set<String> keys = SUB_TYPES_SCANNER.keys();
 		keys.removeAll(SUB_TYPES_SCANNER.values());
 		for(final String key : keys){
-			final Class<?> type = ReflectionHelper.getClassFromName(key);
+			final Class<?> type = ClasspathHelper.getClassFromName(key);
 			if(type != null)
 				expandSupertypes(SUB_TYPES_SCANNER, key, type);
 		}
@@ -226,7 +226,7 @@ public final class Reflections{
 	 * @return	The set of classes.
 	 */
 	public Set<Class<?>> getSubTypesOf(final Class<?> type){
-		return ReflectionHelper.getClassesFromNames(SUB_TYPES_SCANNER.getAll(type.getName()));
+		return ClasspathHelper.getClassesFromNames(SUB_TYPES_SCANNER.getAll(type.getName()));
 	}
 
 	/**
@@ -261,7 +261,7 @@ public final class Reflections{
 	private Set<Class<?>> getTypesAnnotatedWith(final Class<? extends Annotation> annotation, final boolean honorInherited){
 		final Set<String> annotated = TYPE_ANNOTATIONS_SCANNER.get(annotation.getName());
 		annotated.addAll(getAllAnnotatedClasses(annotated, annotation, honorInherited));
-		return ReflectionHelper.getClassesFromNames(annotated);
+		return ClasspathHelper.getClassesFromNames(annotated);
 	}
 
 	/**
@@ -295,8 +295,8 @@ public final class Reflections{
 
 	private Set<Class<?>> getTypesAnnotatedWith(final Annotation annotation, final boolean honorInherited){
 		final Set<String> annotated = TYPE_ANNOTATIONS_SCANNER.get(annotation.annotationType().getName());
-		final Set<Class<?>> allAnnotated = JavaHelper.filter(ReflectionHelper.getClassesFromNames(annotated), getFilterWithAnnotation(annotation));
-		final Set<Class<?>> classes = ReflectionHelper.getClassesFromNames(JavaHelper.filter(getAllAnnotatedClasses(ReflectionHelper.getClassNames(allAnnotated), annotation.annotationType(), honorInherited), s -> !annotated.contains(s)));
+		final Set<Class<?>> allAnnotated = JavaHelper.filter(ClasspathHelper.getClassesFromNames(annotated), getFilterWithAnnotation(annotation));
+		final Set<Class<?>> classes = ClasspathHelper.getClassesFromNames(JavaHelper.filter(getAllAnnotatedClasses(ClasspathHelper.getClassNames(allAnnotated), annotation.annotationType(), honorInherited), s -> !annotated.contains(s)));
 		allAnnotated.addAll(classes);
 		return allAnnotated;
 	}
@@ -334,7 +334,7 @@ public final class Reflections{
 		if(honorInherited){
 			if(annotation.isAnnotationPresent(Inherited.class)){
 				final Set<String> subTypes = SUB_TYPES_SCANNER.get(JavaHelper.filter(annotated, input -> {
-					final Class<?> type = ReflectionHelper.getClassFromName(input);
+					final Class<?> type = ClasspathHelper.getClassFromName(input);
 					return (type != null && !type.isInterface());
 				}));
 				return SUB_TYPES_SCANNER.getAllIncludingKeys(subTypes);

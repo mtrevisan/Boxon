@@ -32,11 +32,14 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -45,6 +48,17 @@ import java.util.Map;
 public final class ClasspathHelper{
 
 	private static final Logger LOGGER = JavaHelper.getLoggerFor(ClasspathHelper.class);
+
+	private static final String EMPTY_STRING = "";
+
+	private static final List<String> PRIMITIVE_NAMES;
+	private static final List<Class<?>> PRIMITIVE_TYPES;
+	private static final List<String> PRIMITIVE_DESCRIPTORS;
+	static{
+		PRIMITIVE_NAMES = Arrays.asList("boolean", "char", "byte", "short", "int", "long", "float", "double", "void");
+		PRIMITIVE_TYPES = Arrays.asList(boolean.class, char.class, byte.class, short.class, int.class, long.class, float.class, double.class, void.class);
+		PRIMITIVE_DESCRIPTORS = Arrays.asList("Z", "C", "B", "S", "I", "J", "F", "D", "V");
+	}
 
 	private static final String SLASH = "/";
 	private static final String BACKSLASH = "\\";
@@ -219,6 +233,85 @@ public final class ClasspathHelper{
 		for(final URL url : urls)
 			distinct.put(url.toExternalForm(), url);
 		return distinct.values();
+	}
+
+
+	public static List<String> getClassNames(final Collection<Class<?>> types){
+		final List<String> list = new ArrayList<>(types.size());
+		for(final Class<?> type : types)
+			list.add(getClassName(type));
+		return list;
+	}
+
+	private static String getClassName(Class<?> type){
+		if(!type.isArray())
+			return type.getName();
+		else{
+			int dim = 0;
+			while(type.isArray()){
+				dim ++;
+				type = type.getComponentType();
+			}
+			return type.getName() + "[]".repeat(dim);
+		}
+	}
+
+	/**
+	 * Try to resolve all given string representation of types to a list of java types
+	 *
+	 * @param classNames	The class names.
+	 * @return	The classes.
+	 */
+	public static Set<Class<?>> getClassesFromNames(final Collection<String> classNames){
+		final Set<Class<?>> result = new HashSet<>(classNames.size());
+		for(final String className : classNames){
+			final Class<?> classFromName = getClassFromName(className);
+			if(classFromName != null)
+				result.add(classFromName);
+		}
+		return result;
+	}
+
+	public static Class<?> getClassFromName(final String typeName){
+		int index = PRIMITIVE_NAMES.indexOf(typeName);
+		if(index >= 0)
+			return PRIMITIVE_TYPES.get(index);
+		else{
+			String type = typeName;
+			index = typeName.indexOf("[");
+			if(index >= 0){
+				final String array = typeName.substring(index).replace("]", EMPTY_STRING);
+
+				type = typeName.substring(0, index);
+				index = PRIMITIVE_NAMES.indexOf(type);
+				type = array + (index >= 0? PRIMITIVE_DESCRIPTORS.get(index): "L" + type + ";");
+			}
+
+
+			final List<ReflectionsException> reflectionsExceptions = new ArrayList<>();
+			for(final ClassLoader classLoader : ClasspathHelper.classLoaders()){
+				if(type.contains("[")){
+					try{
+						return Class.forName(type, false, classLoader);
+					}
+					catch(final Throwable e){
+						reflectionsExceptions.add(new ReflectionsException("could not get type for name " + typeName, e));
+					}
+				}
+				try{
+					return classLoader.loadClass(type);
+				}
+				catch(final Throwable e){
+					reflectionsExceptions.add(new ReflectionsException("could not get type for name " + typeName, e));
+				}
+			}
+
+			if(LOGGER != null)
+				for(final ReflectionsException reflectionsException : reflectionsExceptions)
+					LOGGER.warn("could not get type for name " + typeName + " from any class loader", reflectionsException);
+
+			return null;
+		}
 	}
 
 }

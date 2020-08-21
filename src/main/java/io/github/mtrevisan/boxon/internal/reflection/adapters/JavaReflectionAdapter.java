@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.internal.reflection.adapters;
 
-import io.github.mtrevisan.boxon.internal.reflection.ReflectionHelper;
+import io.github.mtrevisan.boxon.internal.reflection.ClasspathHelper;
 import io.github.mtrevisan.boxon.internal.reflection.vfs.VFSDirectory;
 import io.github.mtrevisan.boxon.internal.reflection.vfs.VFSFile;
 
@@ -74,7 +74,7 @@ class JavaReflectionAdapter implements MetadataAdapterInterface<Class<?>>{
 		final String name = file.getRelativePath()
 			.replace(SLASH, DOT)
 			.replace(DOT_CLASS, EMPTY_STRING);
-		return ReflectionHelper.getClassFromName(name);
+		return ClasspathHelper.getClassFromName(name);
 	}
 
 }
