@@ -59,48 +59,51 @@ class JarInputDirectory implements VFSDirectory{
 		return url.getPath();
 	}
 
-	@Override
-	public Iterable<VFSFile> getFiles(){
-		return () -> new Iterator<>(){
 
-			private VFSFile entry;
+	private class VFSFileIterator implements Iterator<VFSFile>{
+
+		private VFSFile entry;
 
 
-			@Override
-			public boolean hasNext(){
-				return (entry != null || (entry = computeNext()) != null);
-			}
+		@Override
+		public boolean hasNext(){
+			return (entry != null || (entry = computeNext()) != null);
+		}
 
-			@Override
-			public VFSFile next(){
-				final VFSFile next = entry;
-				entry = null;
-				return next;
-			}
+		@Override
+		public VFSFile next(){
+			final VFSFile next = entry;
+			entry = null;
+			return next;
+		}
 
-			private VFSFile computeNext(){
-				while(true){
-					try{
-						final ZipEntry entry = jarInputStream.getNextJarEntry();
-						if(entry == null)
-							return null;
+		private VFSFile computeNext(){
+			while(true){
+				try{
+					final ZipEntry entry = jarInputStream.getNextJarEntry();
+					if(entry == null)
+						return null;
 
-						long size = entry.getSize();
-						if(size < 0)
-							//JDK-6916399 (no longer reproducible in 6u18+)
-							size += 0xFFFF_FFFFl;
-						nextCursor += size;
+					long size = entry.getSize();
+					if(size < 0)
+						//JDK-6916399 (no longer reproducible in 6u18+)
+						size += 0xFFFF_FFFFl;
+					nextCursor += size;
 
-						if(!entry.isDirectory())
-							return new JarInputFile(entry, cursor, nextCursor);
-					}
-					catch(final IOException e){
-						throw new VFSException("Could not get next zip entry")
-							.withCause(e);
-					}
+					if(!entry.isDirectory())
+						return new JarInputFile(entry, cursor, nextCursor);
+				}
+				catch(final Exception e){
+					throw new VFSException("Could not get next zip entry")
+						.withCause(e);
 				}
 			}
-		};
+		}
+	}
+
+	@Override
+	public Iterable<VFSFile> getFiles(){
+		return VFSFileIterator::new;
 	}
 
 	@Override
@@ -114,12 +117,12 @@ class JarInputDirectory implements VFSDirectory{
 		return new InputStream(){
 			@Override
 			public int read() throws IOException{
-				int read = -1;
-				if(cursor >= ((JarInputFile)file).fromIndex && cursor <= ((JarInputFile)file).endIndex){
-					read = jarInputStream.read();
-					cursor ++;
-				}
-				return read;
+			int read = -1;
+			if(cursor >= ((JarInputFile)file).fromIndex && cursor <= ((JarInputFile)file).endIndex){
+				read = jarInputStream.read();
+				cursor ++;
+			}
+			return read;
 			}
 		};
 	}
