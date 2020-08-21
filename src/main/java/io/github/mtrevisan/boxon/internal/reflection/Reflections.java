@@ -97,7 +97,29 @@ public final class Reflections{
 		return new Reflections(true, urls);
 	}
 
-	//http://michaelscharf.blogspot.co.il/2006/11/javaneturlequals-and-hashcode-make.html
+	/**
+	 * Sometimes simple calls have unexpected side effects. I wanted to update some plugins, but the update manager was hanging my UI. Looking at the stack trace reveals:
+	 * <pre><code>
+	 * at java.net.Inet4AddressImpl.lookupAllHostAddr(Native Method)
+	 * at java.net.InetAddress$1.lookupAllHostAddr(Unknown Source)
+	 * at java.net.InetAddress.getAddressFromNameService(Unknown Source)
+	 * at java.net.InetAddress.getAllByName0(Unknown Source)
+	 * at java.net.InetAddress.getAllByName0(Unknown Source)
+	 * at java.net.InetAddress.getAllByName(Unknown Source)
+	 * at java.net.InetAddress.getByName(Unknown Source)
+	 * at java.net.URLStreamHandler.getHostAddress(Unknown Source)
+	 * - locked <0x15ce1280> (a sun.net.www.protocol.http.Handler)
+	 * at java.net.URLStreamHandler.hashCode(Unknown Source)
+	 * at java.net.URL.hashCode(Unknown Source)
+	 * - locked <0x1a3100d0> (a java.net.URL)
+	 *</code></pre>
+	 * <p>Hmm, I must say that it is very dangerous that {@link URL#hashCode()} and {@link URL#equals(Object)} makes an Internet connection. {@link URL} has the worst
+	 * equals/hasCode implementation I have ever seen: equality DEPENDS on the state of the Internet.</p>
+	 * <p>Do not put {@link URL} into collections unless you can live with the fact that comparing makes calls to the Internet. Use {@link java.net.URI} instead.</p>
+	 * <p>URL is an aggressive beast that can slow down and hang your application by making unexpected network traffic.</p>
+	 *
+	 * @see <a href="http://michaelscharf.blogspot.co.il/2006/11/javaneturlequals-and-hashcode-make.html">java.net.URL.equals and hashCode make (blocking) Internet connections</a>
+	 */
 	private static URL[] extractDistinctURLs(final Class<?>[] classes){
 		final Set<URI> uris = new HashSet<>(classes.length);
 		for(int i = 0; i < classes.length; i ++){
