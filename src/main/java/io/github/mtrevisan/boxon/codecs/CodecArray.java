@@ -44,6 +44,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 	private static final Logger LOGGER = JavaHelper.getLoggerFor(CodecArray.class);
 
 
+	@SuppressWarnings("unused")
 	private TemplateParser templateParser;
 
 

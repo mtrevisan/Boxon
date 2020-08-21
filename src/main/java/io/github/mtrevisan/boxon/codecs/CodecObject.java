@@ -41,6 +41,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 	private static final Logger LOGGER = JavaHelper.getLoggerFor(CodecObject.class);
 
 
+	@SuppressWarnings("unused")
 	private TemplateParser templateParser;
 
 
@@ -51,13 +52,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 		Class<?> type = binding.type();
 		final ObjectChoices selectFrom = binding.selectFrom();
 		try{
-			if(selectFrom.alternatives().length > 0){
-				final ObjectChoices.ObjectChoice chosenAlternative = (selectFrom.prefixSize() > 0?
-					CodecHelper.chooseAlternativeWithPrefix(reader, selectFrom, rootObject):
-					CodecHelper.chooseAlternativeWithoutPrefix(selectFrom, rootObject));
-
-				type = chosenAlternative.type();
-			}
+			type = extractType(reader, rootObject, type, selectFrom);
 
 			final Template<?> template = Template.createFrom(type, templateParser.loader::hasCodec);
 
@@ -77,6 +72,17 @@ final class CodecObject implements CodecInterface<BindObject>{
 
 			return null;
 		}
+	}
+
+	private Class<?> extractType(final BitReader reader, final Object rootObject, Class<?> type, final ObjectChoices selectFrom){
+		if(selectFrom.alternatives().length > 0){
+			final ObjectChoices.ObjectChoice chosenAlternative = (selectFrom.prefixSize() > 0?
+				CodecHelper.chooseAlternativeWithPrefix(reader, selectFrom, rootObject):
+				CodecHelper.chooseAlternativeWithoutPrefix(selectFrom, rootObject));
+
+			type = chosenAlternative.type();
+		}
+		return type;
 	}
 
 	@Override
