@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 
@@ -53,11 +54,17 @@ public final class JavaHelper{
 	}
 
 
-	public static <T> Set<T> filter(final Collection<T> result, final Predicate<? super T> predicate){
-		final Set<T> set = new HashSet<>(result.size());
-		for(final T t : result)
-			if(predicate.test(t))
-				set.add(t);
+	public static <R> Set<R> filter(final Collection<R> result, final Predicate<? super R> predicate){
+		return filter(result, Function.identity(), predicate);
+	}
+
+	public static <R, T> Set<R> filter(final Collection<T> result, final Function<T, R> converter, final Predicate<? super R> predicate){
+		final Set<R> set = new HashSet<>(result.size());
+		for(final T t : result){
+			final R r = converter.apply(t);
+			if(predicate.test(r))
+				set.add(r);
+		}
 		return set;
 	}
 

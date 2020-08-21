@@ -296,7 +296,7 @@ public final class Reflections{
 	private Set<Class<?>> getTypesAnnotatedWith(final Annotation annotation, final boolean honorInherited){
 		final Set<String> annotated = TYPE_ANNOTATIONS_SCANNER.get(annotation.annotationType().getName());
 		final Set<Class<?>> allAnnotated = JavaHelper.filter(ClasspathHelper.getClassFromNames(annotated), getFilterWithAnnotation(annotation));
-		final Set<Class<?>> classes = ClasspathHelper.getClassFromNames(JavaHelper.filter(getAllAnnotatedClasses(ClasspathHelper.getClassNames(allAnnotated), annotation.annotationType(), honorInherited), s -> !annotated.contains(s)));
+		final Set<Class<?>> classes = ClasspathHelper.getClassFromNames(JavaHelper.filter(getAllAnnotatedClasses(ClasspathHelper.getClassNames(allAnnotated), annotation.annotationType(), honorInherited), Predicate.not(annotated::contains)));
 		allAnnotated.addAll(classes);
 		return allAnnotated;
 	}

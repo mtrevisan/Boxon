@@ -36,9 +36,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 
@@ -227,13 +227,7 @@ public final class ClasspathHelper{
 	 * @return	The classes.
 	 */
 	public static Set<Class<?>> getClassFromNames(final Collection<String> classNames){
-		final Set<Class<?>> result = new HashSet<>(classNames.size());
-		for(final String className : classNames){
-			final Class<?> classFromName = getClassFromName(className);
-			if(classFromName != null)
-				result.add(classFromName);
-		}
-		return result;
+		return JavaHelper.filter(classNames, ClasspathHelper::getClassFromName, Objects::nonNull);
 	}
 
 	public static Class<?> getClassFromName(final String typeName){
