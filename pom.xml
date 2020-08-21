@@ -14,7 +14,7 @@
 	<!-- https://central.sonatype.org/pages/releasing-the-deployment.html-->
 	<groupId>io.github.mtrevisan</groupId>
 	<artifactId>boxon</artifactId>
-	<version>0.0.3-SNAPSHOT</version>
+	<version>1.0.0-SNAPSHOT</version>
 
 	<packaging>jar</packaging>
 
