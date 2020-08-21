@@ -69,6 +69,23 @@ public final class ClasspathHelper{
 	private ClasspathHelper(){}
 
 	/**
+	 * Returns an array of class Loaders initialized from the specified array.
+	 * <p>It defaults to both {@link #contextClassLoader()} and {@link #staticClassLoader()}</p>
+	 *
+	 * @return	The array of class loaders.
+	 */
+	private static ClassLoader[] classLoaders(){
+		final ClassLoader contextClassLoader = contextClassLoader();
+		final ClassLoader staticClassLoader = staticClassLoader();
+		final DynamicArray<ClassLoader> loaders = DynamicArray.create(ClassLoader.class, 2);
+		if(contextClassLoader != null)
+			loaders.add(contextClassLoader);
+		if(staticClassLoader != null && contextClassLoader != staticClassLoader)
+			loaders.add(staticClassLoader);
+		return loaders.extractCopy();
+	}
+
+	/**
 	 * Gets the current thread context class loader.
 	 *
 	 * @return	The context class loader, may be {@code null}.
@@ -83,36 +100,14 @@ public final class ClasspathHelper{
 	 *
 	 * @return	The static library class loader, may be null
 	 */
-	public static ClassLoader staticClassLoader(){
+	private static ClassLoader staticClassLoader(){
 		return ClasspathHelper.class.getClassLoader();
-	}
-
-	/**
-	 * Returns an array of class Loaders initialized from the specified array.
-	 * <p>
-	 * If the input is null or empty, it defaults to both {@link #contextClassLoader()} and {@link #staticClassLoader()}
-	 *
-	 * @return	The array of class loaders, not {@code null}.
-	 */
-	public static ClassLoader[] classLoaders(){
-		final ClassLoader contextClassLoader = contextClassLoader();
-		final ClassLoader staticClassLoader = staticClassLoader();
-		final DynamicArray<ClassLoader> loaders = DynamicArray.create(ClassLoader.class, 2);
-		if(contextClassLoader != null)
-			loaders.add(contextClassLoader);
-		if(staticClassLoader != null && contextClassLoader != staticClassLoader)
-			loaders.add(staticClassLoader);
-		return loaders.extractCopy();
 	}
 
 
 	/**
 	 * Returns the URL that contains a {@code Class}.
-	 * <p>
-	 * This searches for the class using {@link ClassLoader#getResource(String)}.
-	 * <p>
-	 * If the optional {@link ClassLoader}s are not specified, then both {@link #contextClassLoader()}
-	 * and {@link #staticClassLoader()} are used for {@link ClassLoader#getResources(String)}.
+	 * <p>This searches for the class using {@link ClassLoader#getResource(String)}.</p>
 	 *
 	 * @param cls	The class.
 	 * @return	The URL containing the class, {@code null} if not found.
@@ -138,18 +133,13 @@ public final class ClasspathHelper{
 
 	/**
 	 * Returns a distinct collection of URLs based on a package name.
-	 * <p>
-	 * This searches for the package name as a resource, using {@link ClassLoader#getResources(String)}.
+	 * <p>This searches for the package name as a resource, using {@link ClassLoader#getResources(String)}.
 	 * For example, {@code forPackage(org.reflections)} effectively returns URLs from the
-	 * classpath containing packages starting with {@code org.reflections}.
-	 * <p>
-	 * If the optional {@link ClassLoader}s are not specified, then both {@link #contextClassLoader()}
-	 * and {@link #staticClassLoader()} are used for {@link ClassLoader#getResources(String)}.
-	 * <p>
-	 * The returned URLs retains the order of the given {@code classLoaders}.
+	 * classpath containing packages starting with {@code org.reflections}.</p>
+	 * <p>The returned URLs retains the order of the given {@code classLoaders}.</p>
 	 *
 	 * @param name	The package name.
-	 * @return	The collection of URLs, not {@code null}.
+	 * @return	The collection of URLs.
 	 */
 	public static Collection<URL> forPackage(final String name){
 		return forResource(resourceName(name));
@@ -161,14 +151,10 @@ public final class ClasspathHelper{
 	 * This searches for the resource name, using {@link ClassLoader#getResources(String)}.
 	 * For example, {@code forResource(test.properties)} effectively returns URLs from the
 	 * classpath containing files of that name.
-	 * <p>
-	 * If the optional {@link ClassLoader}s are not specified, then both {@link #contextClassLoader()}
-	 * and {@link #staticClassLoader()} are used for {@link ClassLoader#getResources(String)}.
-	 * <p>
-	 * The returned URLs retains the order of the given {@code classLoaders}.
+	 * <p>The returned URLs retains the order of the given {@code classLoaders}.</p>
 	 *
 	 * @param resourceName	The resource name.
-	 * @return	The collection of URLs, not {@code null}.
+	 * @return	The collection of URLs.
 	 */
 	private static Collection<URL> forResource(final String resourceName){
 		final List<URL> result = new ArrayList<>();
