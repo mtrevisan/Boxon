@@ -30,9 +30,6 @@ import io.github.mtrevisan.boxon.internal.reflection.vfs.VFSFile;
 
 public interface MetadataAdapterInterface<C>{
 
-	String DOT_CLASS = ".class";
-
-
 	String getClassName(final C type);
 
 	String getSuperclassName(final C type);
@@ -42,9 +39,5 @@ public interface MetadataAdapterInterface<C>{
 	String[] getClassAnnotationNames(final C type);
 
 	C createClassObject(final VFSDirectory root, final VFSFile file);
-
-	default boolean acceptsInput(final String file){
-		return file.endsWith(DOT_CLASS);
-	}
 
 }

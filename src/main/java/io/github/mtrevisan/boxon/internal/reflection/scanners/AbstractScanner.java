@@ -42,6 +42,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class AbstractScanner implements ScannerInterface{
 
+	private static final String DOT_CLASS = ".class";
+
+
 	@SuppressWarnings("rawtypes")
 	protected MetadataAdapterInterface metadataAdapter;
 
@@ -55,8 +58,8 @@ public abstract class AbstractScanner implements ScannerInterface{
 	}
 
 	@Override
-	public final boolean acceptsInput(final String file){
-		return metadataAdapter.acceptsInput(file);
+	public final boolean acceptsInput(final String filename){
+		return filename.endsWith(DOT_CLASS);
 	}
 
 	@Override

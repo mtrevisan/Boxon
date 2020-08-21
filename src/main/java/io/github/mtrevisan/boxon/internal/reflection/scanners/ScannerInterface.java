@@ -34,7 +34,7 @@ public interface ScannerInterface{
 	@SuppressWarnings("rawtypes")
 	void setMetadataAdapter(final MetadataAdapterInterface metadataAdapter);
 
-	boolean acceptsInput(final String file);
+	boolean acceptsInput(final String filename);
 
 	Object scan(final VFSDirectory root, final VFSFile file, final Object classObject);
 
