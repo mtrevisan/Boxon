@@ -42,9 +42,6 @@ import java.util.Map;
 import java.util.Set;
 
 
-/**
- * Helper methods for working with the classpath.
- */
 public final class ClasspathHelper{
 
 	private static final Logger LOGGER = JavaHelper.getLoggerFor(ClasspathHelper.class);
