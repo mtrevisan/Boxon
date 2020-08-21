@@ -36,6 +36,10 @@ public class ReflectionsException extends RuntimeException{
 		super(MessageFormatter.format(message, (parameters.length != 1? parameters: parameters[0])).getMessage());
 	}
 
+	private ReflectionsException(final String message, final Throwable cause){
+		super(message, cause);
+	}
+
 	public ReflectionsException withCause(final Throwable cause){
 		return new ReflectionsException(getMessage(), cause);
 	}
