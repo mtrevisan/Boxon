@@ -28,7 +28,7 @@ class VirtualFileSystemTest{
 		Assertions.assertFalse(VirtualFileSystem.DefaultUrlTypes.JAR_URL.matches(url));
 		Assertions.assertFalse(VirtualFileSystem.DefaultUrlTypes.DIRECTORY.matches(url));
 
-		VFSDirectory dir = VirtualFileSystem.DefaultUrlTypes.JAR_FILE.createDir(url);
+		VFSDirectory dir = VirtualFileSystem.DefaultUrlTypes.JAR_FILE.createDirectory(url);
 		testVirtualFileSystemDir(dir);
 	}
 
@@ -42,7 +42,7 @@ class VirtualFileSystemTest{
 		Assertions.assertTrue(VirtualFileSystem.DefaultUrlTypes.JAR_URL.matches(url));
 		Assertions.assertFalse(VirtualFileSystem.DefaultUrlTypes.DIRECTORY.matches(url));
 
-		VFSDirectory dir = VirtualFileSystem.DefaultUrlTypes.JAR_URL.createDir(url);
+		VFSDirectory dir = VirtualFileSystem.DefaultUrlTypes.JAR_URL.createDirectory(url);
 		testVirtualFileSystemDir(dir);
 	}
 
@@ -56,7 +56,7 @@ class VirtualFileSystemTest{
 		Assertions.assertFalse(VirtualFileSystem.DefaultUrlTypes.JAR_URL.matches(url));
 		Assertions.assertTrue(VirtualFileSystem.DefaultUrlTypes.DIRECTORY.matches(url));
 
-		VFSDirectory dir = VirtualFileSystem.DefaultUrlTypes.DIRECTORY.createDir(url);
+		VFSDirectory dir = VirtualFileSystem.DefaultUrlTypes.DIRECTORY.createDirectory(url);
 		testVirtualFileSystemDir(dir);
 	}
 
@@ -64,15 +64,15 @@ class VirtualFileSystemTest{
 	void testJarInputStream() throws Exception{
 		URL url1 = ClasspathHelper.forClass(Logger.class);
 		Assertions.assertTrue(VirtualFileSystem.DefaultUrlTypes.JAR_INPUT_STREAM.matches(url1));
-		Assertions.assertThrows(VFSException.class, () -> testVirtualFileSystemDir(VirtualFileSystem.DefaultUrlTypes.JAR_INPUT_STREAM.createDir(url1)));
+		Assertions.assertThrows(VFSException.class, () -> testVirtualFileSystemDir(VirtualFileSystem.DefaultUrlTypes.JAR_INPUT_STREAM.createDirectory(url1)));
 
 		URL url2 = new URL(ClasspathHelper.forClass(Logger.class).toExternalForm().replace("jar:", "").replace(".jar!", ".jar"));
 		Assertions.assertTrue(VirtualFileSystem.DefaultUrlTypes.JAR_INPUT_STREAM.matches(url2));
-		testVirtualFileSystemDir(VirtualFileSystem.DefaultUrlTypes.JAR_INPUT_STREAM.createDir(url2));
+		testVirtualFileSystemDir(VirtualFileSystem.DefaultUrlTypes.JAR_INPUT_STREAM.createDirectory(url2));
 
 		URL url3 = ClasspathHelper.forClass(getClass());
 		Assertions.assertFalse(VirtualFileSystem.DefaultUrlTypes.JAR_INPUT_STREAM.matches(url3));
-		Assertions.assertThrows(NullPointerException.class, () -> testVirtualFileSystemDir(VirtualFileSystem.DefaultUrlTypes.JAR_INPUT_STREAM.createDir(url3)));
+		Assertions.assertThrows(NullPointerException.class, () -> testVirtualFileSystemDir(VirtualFileSystem.DefaultUrlTypes.JAR_INPUT_STREAM.createDirectory(url3)));
 	}
 
 	@Test
@@ -105,7 +105,7 @@ class VirtualFileSystemTest{
 		}
 	}
 
-	private void testVirtualFileSystemDir(final VFSDirectory dir){
+	private void testVirtualFileSystemDir(final VFSDirectory dir) throws Exception{
 		//this should be a JavassistAdapter instance
 		MetadataAdapterInterface<ClassFile> mdAdapter = (MetadataAdapterInterface<ClassFile>)MetadataAdapterBuilder.getMetadataAdapter();
 		VFSFile file = null;
@@ -121,6 +121,8 @@ class VirtualFileSystemTest{
 		ClassFile stringCF = mdAdapter.createClassObject(dir, file);
 		String className = mdAdapter.getClassName(stringCF);
 		Assertions.assertFalse(className.isEmpty());
+
+		dir.close();
 	}
 
 

@@ -75,14 +75,14 @@ public final class VirtualFileSystem{
 		for(final UrlType type : DEFAULT_URL_TYPES){
 			try{
 				if(type.matches(url)){
-					final VFSDirectory directory = type.createDir(url);
+					final VFSDirectory directory = type.createDirectory(url);
 					if(directory != null)
 						return directory;
 				}
 			}
 			catch(final Throwable e){
 				if(LOGGER != null)
-					LOGGER.warn("could not create VFSDirectory using {} from URL {}: skipping", type, url.toExternalForm(), e);
+					LOGGER.warn("Could not create VFSDirectory using {} from URL {}: skipping", type, url.toExternalForm(), e);
 			}
 		}
 
@@ -106,7 +106,7 @@ public final class VirtualFileSystem{
 			}
 
 			@Override
-			public VFSDirectory createDir(final URL url) throws Exception{
+			public VFSDirectory createDirectory(final URL url) throws Exception{
 				return new ZipDirectory(new JarFile(resourceToFile(url)));
 			}
 		},
@@ -120,7 +120,7 @@ public final class VirtualFileSystem{
 			}
 
 			@Override
-			public VFSDirectory createDir(final URL url) throws Exception{
+			public VFSDirectory createDirectory(final URL url) throws Exception{
 				try{
 					final URLConnection urlConnection = url.openConnection();
 					if(urlConnection instanceof JarURLConnection){
@@ -146,7 +146,7 @@ public final class VirtualFileSystem{
 			}
 
 			@Override
-			public VFSDirectory createDir(final URL url){
+			public VFSDirectory createDirectory(final URL url){
 				return new SystemDirectory(resourceToFile(url));
 			}
 		},
@@ -158,7 +158,7 @@ public final class VirtualFileSystem{
 			}
 
 			@Override
-			public VFSDirectory createDir(final URL url) throws Exception{
+			public VFSDirectory createDirectory(final URL url) throws Exception{
 				final Class<?> fileLocatorClass = Thread.currentThread().getContextClassLoader()
 					.loadClass("org.eclipse.core.runtime.FileLocator");
 				return fromURL((URL)fileLocatorClass.getMethod("resolve", URL.class).invoke(null, url));
@@ -172,7 +172,7 @@ public final class VirtualFileSystem{
 			}
 
 			@Override
-			public VFSDirectory createDir(final URL url){
+			public VFSDirectory createDirectory(final URL url){
 				return new JarInputDirectory(url);
 			}
 		};

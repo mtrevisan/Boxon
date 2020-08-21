@@ -87,7 +87,7 @@ class SystemDirectory implements VFSDirectory{
 	}
 
 	@Override
-	public void close(){}
+	public void close() throws Exception{}
 
 	@Override
 	public String toString(){

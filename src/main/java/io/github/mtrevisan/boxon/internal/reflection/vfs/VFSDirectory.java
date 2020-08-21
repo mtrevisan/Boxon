@@ -28,14 +28,12 @@ package io.github.mtrevisan.boxon.internal.reflection.vfs;
 import java.io.InputStream;
 
 
-public interface VFSDirectory{
+public interface VFSDirectory extends AutoCloseable{
 
 	String getPath();
 
 	Iterable<VFSFile> getFiles();
 
 	InputStream openInputStream(final VFSFile entry);
-
-	void close();
 
 }

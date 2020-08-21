@@ -32,6 +32,6 @@ interface UrlType{
 
 	boolean matches(final URL url);
 
-	VFSDirectory createDir(final URL url) throws Exception;
+	VFSDirectory createDirectory(final URL url) throws Exception;
 
 }

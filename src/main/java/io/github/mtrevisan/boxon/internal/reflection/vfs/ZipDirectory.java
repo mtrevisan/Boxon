@@ -24,9 +24,6 @@
  */
 package io.github.mtrevisan.boxon.internal.reflection.vfs;
 
-import io.github.mtrevisan.boxon.internal.JavaHelper;
-import org.slf4j.Logger;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.function.Predicate;
@@ -38,9 +35,6 @@ import java.util.zip.ZipEntry;
  * An implementation of {@link VFSDirectory} for {@link java.util.zip.ZipFile ZipFile}.
  */
 class ZipDirectory implements VFSDirectory{
-
-	private static final Logger LOGGER = JavaHelper.getLoggerFor(ZipDirectory.class);
-
 
 	private final java.util.zip.ZipFile jarFile;
 
@@ -75,14 +69,8 @@ class ZipDirectory implements VFSDirectory{
 	}
 
 	@Override
-	public void close(){
-		try{
-			jarFile.close();
-		}
-		catch(final IOException e){
-			if(LOGGER != null)
-				LOGGER.warn("Could not close JarFile", e);
-		}
+	public void close() throws Exception{
+		jarFile.close();
 	}
 
 	@Override

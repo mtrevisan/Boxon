@@ -24,9 +24,6 @@
  */
 package io.github.mtrevisan.boxon.internal.reflection.vfs;
 
-import io.github.mtrevisan.boxon.internal.JavaHelper;
-import org.slf4j.Logger;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -40,10 +37,8 @@ import java.util.zip.ZipEntry;
  */
 class JarInputDirectory implements VFSDirectory{
 
-	private static final Logger LOGGER = JavaHelper.getLoggerFor(JarInputDirectory.class);
-
 	private final URL url;
-	private JarInputStream jarInputStream;
+	private final JarInputStream jarInputStream;
 	private long cursor;
 	private long nextCursor;
 
@@ -109,15 +104,9 @@ class JarInputDirectory implements VFSDirectory{
 	}
 
 	@Override
-	public void close(){
-		try{
-			if(jarInputStream != null)
-				jarInputStream.close();
-		}
-		catch(final IOException e){
-			if(LOGGER != null)
-				LOGGER.warn("Could not close InputStream", e);
-		}
+	public void close() throws Exception{
+		if(jarInputStream != null)
+			jarInputStream.close();
 	}
 
 	@Override
