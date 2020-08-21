@@ -161,7 +161,9 @@ public final class VirtualFileSystem{
 			public VFSDirectory createDirectory(final URL url) throws Exception{
 				final Class<?> fileLocatorClass = Thread.currentThread().getContextClassLoader()
 					.loadClass("org.eclipse.core.runtime.FileLocator");
-				return fromURL((URL)fileLocatorClass.getMethod("resolve", URL.class).invoke(null, url));
+				final URL resolvedURL = (URL)fileLocatorClass.getMethod("resolve", URL.class)
+					.invoke(null, url);
+				return fromURL(resolvedURL);
 			}
 		},
 
