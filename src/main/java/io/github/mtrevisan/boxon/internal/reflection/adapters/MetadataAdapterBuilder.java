@@ -28,7 +28,7 @@ public final class MetadataAdapterBuilder{
 
 	private MetadataAdapterBuilder(){}
 
-	public static final MetadataAdapterInterface<?> getMetadataAdapter(){
+	public static MetadataAdapterInterface<?> getMetadataAdapter(){
 		return INSTANCE;
 	}
 

@@ -42,7 +42,7 @@ import java.util.Map;
 import java.util.Objects;
 
 
-public class Parser{
+public final class Parser{
 
 	private final TemplateParser templateParser = new TemplateParser();
 

@@ -41,7 +41,6 @@ final class CodecObject implements CodecInterface<BindObject>{
 	private static final Logger LOGGER = JavaHelper.getLoggerFor(CodecObject.class);
 
 
-	@SuppressWarnings("unused")
 	private TemplateParser templateParser;
 
 

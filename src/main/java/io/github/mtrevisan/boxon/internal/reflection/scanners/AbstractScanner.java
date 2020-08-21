@@ -45,7 +45,7 @@ public abstract class AbstractScanner implements ScannerInterface{
 	@SuppressWarnings("rawtypes")
 	protected MetadataAdapterInterface metadataAdapter;
 
-	private Map<String, Collection<String>> metadataStore = new ConcurrentHashMap<>(0);
+	private final Map<String, Collection<String>> metadataStore = new ConcurrentHashMap<>(0);
 
 
 	@Override
