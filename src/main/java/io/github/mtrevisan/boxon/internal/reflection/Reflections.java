@@ -24,7 +24,6 @@
  */
 package io.github.mtrevisan.boxon.internal.reflection;
 
-import io.github.mtrevisan.boxon.internal.DynamicArray;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.reflection.adapters.JavaReflectionAdapter;
 import io.github.mtrevisan.boxon.internal.reflection.adapters.JavassistAdapter;
@@ -43,9 +42,14 @@ import java.lang.annotation.Annotation;
 import java.lang.annotation.Inherited;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -84,36 +88,43 @@ public final class Reflections{
 	}
 
 	public static Reflections create(final Class<?>... classes){
-		final String[] basePackages = extractUniquePackageNames(classes);
-		final Set<URL> urls = new HashSet<>(basePackages.length);
-		for(int i = 0; i < basePackages.length; i ++)
-			urls.addAll(ClasspathHelper.forPackage(basePackages[i]));
+		final URL[] urls = extractDistinctURLs(classes);
+		return new Reflections(false, urls);
+	}
 
-		return new Reflections(false, urls.toArray(URL[]::new));
+	public static Reflections createExpandSuperTypes(final Class<?>... classes){
+		final URL[] urls = extractDistinctURLs(classes);
+		return new Reflections(true, urls);
+	}
+
+	//http://michaelscharf.blogspot.co.il/2006/11/javaneturlequals-and-hashcode-make.html
+	private static URL[] extractDistinctURLs(final Class<?>[] classes){
+		final Set<URI> uris = new HashSet<>(classes.length);
+		for(int i = 0; i < classes.length; i ++){
+			final Collection<URL> urls = ClasspathHelper.forPackage(classes[i].getPackageName());
+			for(final URL url : urls){
+				try{
+					uris.add(url.toURI());
+				}
+				catch(final URISyntaxException e){
+					LOGGER.warn("Invalid URL, cannot convert into URI", e);
+				}
+			}
+		}
+
+		final List<URL> urls = new ArrayList<>(uris.size());
+		try{
+			for(final URI uri : uris)
+				urls.add(uri.toURL());
+		}
+		catch(final MalformedURLException ignored){
+			//cannot happen
+		}
+		return urls.toArray(URL[]::new);
 	}
 
 	public static Reflections createExpandSuperTypes(final URL... urls){
 		return new Reflections(true, urls);
-	}
-
-	public static Reflections createExpandSuperTypes(final Class<?>... classes){
-		final String[] basePackages = extractUniquePackageNames(classes);
-		final Set<URL> urls = new HashSet<>(basePackages.length);
-		for(int i = 0; i < basePackages.length; i ++)
-			urls.addAll(ClasspathHelper.forPackage(basePackages[i]));
-
-		return new Reflections(true, urls.toArray(URL[]::new));
-	}
-
-	private static String[] extractUniquePackageNames(final Class<?>[] basePackages){
-		final DynamicArray<String> basePackageNames = DynamicArray.create(String.class, basePackages.length);
-		final Set<String> uniqueValues = new HashSet<>(basePackages.length);
-		for(int i = 0; i < basePackages.length; i ++){
-			final String packageName = basePackages[i].getPackageName();
-			if(uniqueValues.add(packageName))
-				basePackageNames.add(packageName);
-		}
-		return basePackageNames.extractCopy();
 	}
 
 	private Reflections(final boolean expandSuperTypes, final URL... urls){
