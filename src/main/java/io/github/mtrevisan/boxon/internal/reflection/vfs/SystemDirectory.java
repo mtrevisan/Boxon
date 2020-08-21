@@ -87,6 +87,7 @@ class SystemDirectory implements VFSDirectory{
 	}
 
 	@Override
+	@SuppressWarnings("RedundantThrows")
 	public void close() throws Exception{}
 
 	@Override
