@@ -24,8 +24,8 @@
  */
 package io.github.mtrevisan.boxon.internal.reflection.scanners;
 
-import io.github.mtrevisan.boxon.internal.reflection.ReflectionsException;
 import io.github.mtrevisan.boxon.internal.reflection.adapters.MetadataAdapterInterface;
+import io.github.mtrevisan.boxon.internal.reflection.exceptions.ReflectionsException;
 import io.github.mtrevisan.boxon.internal.reflection.vfs.VFSDirectory;
 import io.github.mtrevisan.boxon.internal.reflection.vfs.VFSException;
 import io.github.mtrevisan.boxon.internal.reflection.vfs.VFSFile;

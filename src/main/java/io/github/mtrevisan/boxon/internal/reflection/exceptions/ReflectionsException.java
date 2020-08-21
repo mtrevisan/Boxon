@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.internal.reflection;
+package io.github.mtrevisan.boxon.internal.reflection.exceptions;
 
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 

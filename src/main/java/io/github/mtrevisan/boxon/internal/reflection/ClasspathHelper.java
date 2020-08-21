@@ -26,6 +26,7 @@ package io.github.mtrevisan.boxon.internal.reflection;
 
 import io.github.mtrevisan.boxon.internal.DynamicArray;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
+import io.github.mtrevisan.boxon.internal.reflection.exceptions.ReflectionsException;
 import org.slf4j.Logger;
 
 import java.io.IOException;
