@@ -27,9 +27,8 @@ package io.github.mtrevisan.boxon.internal.reflection;
 
 public class ReflectionsException extends RuntimeException{
 
-	public ReflectionsException(final String message){
-		super(message);
-	}
+	private static final long serialVersionUID = -3739510385200581014L;
+
 
 	public ReflectionsException(final String message, final Throwable cause){
 		super(message, cause);

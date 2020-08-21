@@ -82,12 +82,12 @@ public final class VirtualFileSystem{
 			}
 			catch(final Throwable e){
 				if(LOGGER != null)
-					LOGGER.warn("could not create VFSDirectory using " + type + " from URL " + url.toExternalForm() + ": skipping", e);
+					LOGGER.warn("could not create VFSDirectory using {} from URL {}: skipping", type, url.toExternalForm(), e);
 			}
 		}
 
-		throw new VFSException("Could not create VFSDirectory from URL, no matching UrlType was found [" + url.toExternalForm() + "]\n"
-			+ "either use fromURL(final URL url) with your specialized UrlType.");
+		throw new VFSException("Could not create VFSDirectory from URL, no matching UrlType was found [{}]\n"
+			+ "either use fromURL(final URL url) with your specialized UrlType.", url.toExternalForm());
 	}
 
 	/**

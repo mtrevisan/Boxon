@@ -24,11 +24,16 @@
  */
 package io.github.mtrevisan.boxon.internal.reflection.vfs;
 
+import org.slf4j.helpers.MessageFormatter;
+
 
 public class VFSException extends RuntimeException{
 
-	public VFSException(final String message){
-		super(message);
+	private static final long serialVersionUID = 4412105194502956738L;
+
+
+	public VFSException(final String message, final Object... parameters){
+		super(MessageFormatter.format(message, (parameters.length != 1? parameters: parameters[0])).getMessage());
 	}
 
 	public VFSException(final String message, final Throwable cause){

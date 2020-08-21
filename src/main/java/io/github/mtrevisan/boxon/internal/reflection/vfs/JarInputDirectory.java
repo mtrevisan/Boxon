@@ -124,12 +124,12 @@ class JarInputDirectory implements VFSDirectory{
 		return new InputStream(){
 			@Override
 			public int read() throws IOException{
-			int read = -1;
-			if(cursor >= ((JarInputFile)file).fromIndex && cursor <= ((JarInputFile)file).endIndex){
-				read = jarInputStream.read();
-				cursor ++;
-			}
-			return read;
+				int read = -1;
+				if(cursor >= ((JarInputFile)file).fromIndex && cursor <= ((JarInputFile)file).endIndex){
+					read = jarInputStream.read();
+					cursor ++;
+				}
+				return read;
 			}
 		};
 	}

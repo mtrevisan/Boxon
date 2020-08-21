@@ -47,10 +47,15 @@ public final class ClasspathHelper{
 	private static final Logger LOGGER = JavaHelper.getLoggerFor(ClasspathHelper.class);
 
 	private static final String EMPTY_STRING = "";
+	private static final String SEMICOLON = ";";
+	private static final String LEFT_SQUARE_BRACKET = "[";
+	private static final String RIGHT_SQUARE_BRACKET = "]";
+	private static final String PRIMITIVE_DESCRIPTOR_OBJECT = "L";
 
 	private static final List<String> PRIMITIVE_NAMES;
 	private static final List<Class<?>> PRIMITIVE_TYPES;
 	private static final List<String> PRIMITIVE_DESCRIPTORS;
+
 	static{
 		PRIMITIVE_NAMES = Arrays.asList("boolean", "char", "byte", "short", "int", "long", "float", "double", "void");
 		PRIMITIVE_TYPES = Arrays.asList(boolean.class, char.class, byte.class, short.class, int.class, long.class, float.class, double.class, void.class);
@@ -152,7 +157,7 @@ public final class ClasspathHelper{
 			}
 			catch(final IOException e){
 				if(LOGGER != null)
-					LOGGER.error("error getting resources for " + resourceName, e);
+					LOGGER.error("error getting resources for {}", resourceName, e);
 			}
 		}
 		return distinctUrls(result);
@@ -236,37 +241,37 @@ public final class ClasspathHelper{
 			return PRIMITIVE_TYPES.get(index);
 		else{
 			String type = typeName;
-			index = typeName.indexOf("[");
+			index = typeName.indexOf(LEFT_SQUARE_BRACKET);
 			if(index >= 0){
-				final String array = typeName.substring(index).replace("]", EMPTY_STRING);
+				final String array = typeName.substring(index).replace(RIGHT_SQUARE_BRACKET, EMPTY_STRING);
 
 				type = typeName.substring(0, index);
 				index = PRIMITIVE_NAMES.indexOf(type);
-				type = array + (index >= 0? PRIMITIVE_DESCRIPTORS.get(index): "L" + type + ";");
+				type = array + (index >= 0? PRIMITIVE_DESCRIPTORS.get(index): PRIMITIVE_DESCRIPTOR_OBJECT + type + SEMICOLON);
 			}
 
 
 			final List<ReflectionsException> reflectionsExceptions = new ArrayList<>();
 			for(final ClassLoader classLoader : ClasspathHelper.classLoaders()){
-				if(type.contains("[")){
+				if(type.contains(LEFT_SQUARE_BRACKET)){
 					try{
 						return Class.forName(type, false, classLoader);
 					}
 					catch(final Throwable e){
-						reflectionsExceptions.add(new ReflectionsException("could not get type for name " + typeName, e));
+						reflectionsExceptions.add(new ReflectionsException("Could not get type for name " + typeName, e));
 					}
 				}
 				try{
 					return classLoader.loadClass(type);
 				}
 				catch(final Throwable e){
-					reflectionsExceptions.add(new ReflectionsException("could not get type for name " + typeName, e));
+					reflectionsExceptions.add(new ReflectionsException("Could not get type for name " + typeName, e));
 				}
 			}
 
 			if(LOGGER != null)
 				for(final ReflectionsException reflectionsException : reflectionsExceptions)
-					LOGGER.warn("could not get type for name " + typeName + " from any class loader", reflectionsException);
+					LOGGER.warn("Could not get type for name {} from any class loader", typeName, reflectionsException);
 
 			return null;
 		}
