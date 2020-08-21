@@ -22,21 +22,43 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.exceptions;
+package io.github.mtrevisan.boxon.internal.reflection.vfs;
 
-import io.github.mtrevisan.boxon.internal.JavaHelper;
+import java.io.File;
 
 
 /**
- * Thrown if an annotation is not well formatted.
+ * An implementation of {@link VFSFile} for a {@link File}.
  */
-public class AnnotationException extends RuntimeException{
+class SystemFile implements VFSFile{
 
-	private static final long serialVersionUID = 6429044852678473069L;
+	private static final String SLASH = "/";
+	private static final String BACKSLASH = "\\";
 
 
-	public AnnotationException(final String message, final Object... parameters){
-		super(JavaHelper.format(message, parameters));
+	private final String rootPath;
+	final File entry;
+
+
+	SystemFile(final String rootPath, final File entry){
+		this.rootPath = rootPath;
+		this.entry = entry;
+	}
+
+	@Override
+	public String getName(){
+		return entry.getName();
+	}
+
+	@Override
+	public String getRelativePath(){
+		final String filepath = entry.getPath().replace(BACKSLASH, SLASH);
+		return (filepath.startsWith(rootPath)? filepath.substring(rootPath.length() + 1): null);
+	}
+
+	@Override
+	public String toString(){
+		return entry.toString();
 	}
 
 }

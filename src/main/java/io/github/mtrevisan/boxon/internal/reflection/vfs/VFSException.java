@@ -22,21 +22,26 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.exceptions;
+package io.github.mtrevisan.boxon.internal.reflection.vfs;
 
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 
 
-/**
- * Thrown if an annotation is not well formatted.
- */
-public class AnnotationException extends RuntimeException{
+public class VFSException extends RuntimeException{
 
-	private static final long serialVersionUID = 6429044852678473069L;
+	private static final long serialVersionUID = 4412105194502956738L;
 
 
-	public AnnotationException(final String message, final Object... parameters){
+	public VFSException(final String message, final Object... parameters){
 		super(JavaHelper.format(message, parameters));
+	}
+
+	public VFSException(final String message, final Throwable cause){
+		super(message, cause);
+	}
+
+	public VFSException withCause(final Throwable cause){
+		return new VFSException(getMessage(), cause);
 	}
 
 }

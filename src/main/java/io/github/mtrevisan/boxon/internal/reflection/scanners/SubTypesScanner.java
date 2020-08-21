@@ -22,21 +22,24 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.exceptions;
-
-import io.github.mtrevisan.boxon.internal.JavaHelper;
+package io.github.mtrevisan.boxon.internal.reflection.scanners;
 
 
 /**
- * Thrown if an annotation is not well formatted.
+ * Scans for superclass and interfaces of a class, allowing a reverse lookup for subtypes.
  */
-public class AnnotationException extends RuntimeException{
+public class SubTypesScanner extends AbstractScanner{
 
-	private static final long serialVersionUID = 6429044852678473069L;
+	@SuppressWarnings("unchecked")
+	public void scan(final Object cls){
+		final String className = metadataAdapter.getClassName(cls);
+		final String superclass = metadataAdapter.getSuperclassName(cls);
 
+		put(superclass, className);
 
-	public AnnotationException(final String message, final Object... parameters){
-		super(JavaHelper.format(message, parameters));
+		final String[] interfacesNames = metadataAdapter.getInterfacesNames(cls);
+		for(int i = 0; i < interfacesNames.length; i ++)
+			put(interfacesNames[i], className);
 	}
 
 }

@@ -22,21 +22,43 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.exceptions;
+package io.github.mtrevisan.boxon.internal.reflection.vfs;
 
-import io.github.mtrevisan.boxon.internal.JavaHelper;
+import java.io.File;
+import java.util.zip.ZipEntry;
 
 
 /**
- * Thrown if an annotation is not well formatted.
+ * An implementation of {@link VFSFile} for {@link ZipEntry}.
  */
-public class AnnotationException extends RuntimeException{
+class ZipFile implements VFSFile{
 
-	private static final long serialVersionUID = 6429044852678473069L;
+	private static final String SLASH = "/";
 
 
-	public AnnotationException(final String message, final Object... parameters){
-		super(JavaHelper.format(message, parameters));
+	private final String rootPath;
+	final ZipEntry entry;
+
+
+	ZipFile(final String rootPath, final ZipEntry entry){
+		this.rootPath = rootPath;
+		this.entry = entry;
+	}
+
+	@Override
+	public String getName(){
+		final String name = entry.getName();
+		return name.substring(name.lastIndexOf(SLASH) + 1);
+	}
+
+	@Override
+	public String getRelativePath(){
+		return entry.getName();
+	}
+
+	@Override
+	public String toString(){
+		return rootPath + "!" + File.separatorChar + entry.toString();
 	}
 
 }

@@ -27,22 +27,25 @@ package io.github.mtrevisan.boxon.codecs;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.BitReader;
-import io.github.mtrevisan.boxon.internal.AnnotationHelper;
 import io.github.mtrevisan.boxon.internal.DynamicArray;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.Memoizer;
-import io.github.mtrevisan.boxon.internal.ReflectionHelper;
 import io.github.mtrevisan.boxon.internal.matchers.BNDMPatternMatcher;
 import io.github.mtrevisan.boxon.internal.matchers.PatternMatcher;
+import io.github.mtrevisan.boxon.internal.reflection.Reflections;
+import io.github.mtrevisan.boxon.internal.reflection.helpers.ReflectionHelper;
 import org.slf4j.Logger;
 
+import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -81,7 +84,7 @@ final class Loader{
 				Arrays.stream(basePackageClasses).map(Class::getPackageName).collect(Collectors.joining(", ", "[", "]")));
 
 		/** extract all classes that implements {@link CodecInterface}. */
-		final Collection<Class<?>> derivedClasses = AnnotationHelper.extractClasses(CodecInterface.class, basePackageClasses);
+		final Collection<Class<?>> derivedClasses = extractClasses(CodecInterface.class, basePackageClasses);
 		@SuppressWarnings("rawtypes")
 		final DynamicArray<CodecInterface> codecs = extractCodecs(derivedClasses);
 		addCodecsInner(codecs.data);
@@ -167,7 +170,7 @@ final class Loader{
 				Arrays.stream(basePackageClasses).map(Class::getPackageName).collect(Collectors.joining(", ", "[", "]")));
 
 		/** extract all classes annotated with {@link MessageHeader}. */
-		final Collection<Class<?>> annotatedClasses = AnnotationHelper.extractClasses(MessageHeader.class, basePackageClasses);
+		final Collection<Class<?>> annotatedClasses = extractClasses(MessageHeader.class, basePackageClasses);
 		@SuppressWarnings("rawtypes")
 		final DynamicArray<Template> templates = extractTemplates(annotatedClasses);
 		addTemplatesInner(templates.data);
@@ -275,6 +278,26 @@ final class Loader{
 		return JavaHelper.toHexString(headerStart.getBytes(charset));
 	}
 
+
+	/**
+	 * Scans all classes accessible from the context class loader which belong to the given package.
+	 *
+	 * @param type	Whether a class or an interface (for example).
+	 * @param basePackageClasses	A list of classes that resides in a base package(s).
+	 * @return	The classes.
+	 */
+	private Collection<Class<?>> extractClasses(final Object type, final Class<?>... basePackageClasses){
+		final Collection<Class<?>> classes = new HashSet<>(0);
+
+		final Reflections reflections = Reflections.create(basePackageClasses);
+		@SuppressWarnings("unchecked")
+		final Set<Class<?>> modules = reflections.getSubTypesOf((Class<Object>)type);
+		@SuppressWarnings("unchecked")
+		final Set<Class<?>> singletons = reflections.getTypesAnnotatedWith((Class<? extends Annotation>)type);
+		classes.addAll(modules);
+		classes.addAll(singletons);
+		return classes;
+	}
 
 	/**
 	 * Tries to infer the next message start by scanning all templates in header-start-length order.

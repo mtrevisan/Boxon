@@ -22,21 +22,20 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.exceptions;
+package io.github.mtrevisan.boxon.internal.reflection.scanners;
 
-import io.github.mtrevisan.boxon.internal.JavaHelper;
-
-
-/**
- * Thrown if an annotation is not well formatted.
- */
-public class AnnotationException extends RuntimeException{
-
-	private static final long serialVersionUID = 6429044852678473069L;
+import io.github.mtrevisan.boxon.internal.reflection.adapters.MetadataAdapterInterface;
+import io.github.mtrevisan.boxon.internal.reflection.vfs.VFSDirectory;
+import io.github.mtrevisan.boxon.internal.reflection.vfs.VFSFile;
 
 
-	public AnnotationException(final String message, final Object... parameters){
-		super(JavaHelper.format(message, parameters));
-	}
+public interface ScannerInterface{
+
+	@SuppressWarnings("rawtypes")
+	void setMetadataAdapter(final MetadataAdapterInterface metadataAdapter);
+
+	boolean acceptsInput(final String filename);
+
+	Object scan(final VFSDirectory root, final VFSFile file, final Object classObject);
 
 }

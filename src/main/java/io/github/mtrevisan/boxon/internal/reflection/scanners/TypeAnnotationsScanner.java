@@ -22,21 +22,21 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.exceptions;
-
-import io.github.mtrevisan.boxon.internal.JavaHelper;
+package io.github.mtrevisan.boxon.internal.reflection.scanners;
 
 
 /**
- * Thrown if an annotation is not well formatted.
+ * Scans for class's annotations, where the annotation is marked with {@code @Retention(RetentionPolicy.RUNTIME)}.
  */
-public class AnnotationException extends RuntimeException{
+public class TypeAnnotationsScanner extends AbstractScanner{
 
-	private static final long serialVersionUID = 6429044852678473069L;
+	@SuppressWarnings("unchecked")
+	public void scan(final Object cls){
+		final String className = metadataAdapter.getClassName(cls);
 
-
-	public AnnotationException(final String message, final Object... parameters){
-		super(JavaHelper.format(message, parameters));
+		final String[] classAnnotationNames = metadataAdapter.getClassAnnotationNames(cls);
+		for(int i = 0; i < classAnnotationNames.length; i ++)
+			put(classAnnotationNames[i], className);
 	}
 
 }

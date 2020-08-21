@@ -39,6 +39,11 @@
 		<developerConnection>scm:git:git@github.com:mtrevisan/Boxon.git</developerConnection>
 	</scm>
 
+	<issueManagement>
+		<url>https://github.com/mtrevisan/boxon/issues</url>
+		<system>GitHub Issues</system>
+	</issueManagement>
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -59,6 +64,8 @@
 
 		<!-- Spring Expression -->
 		<springframework.spring-expression.version>5.2.8.RELEASE</springframework.spring-expression.version>
+
+		<javassist.version>3.27.0-GA</javassist.version>
 
 		<!-- Logging -->
 		<slf4j.slf4j-api.version>1.7.30</slf4j.slf4j-api.version>
@@ -146,6 +153,41 @@
 <!--							</ignorePathsToDelete>-->
 <!--						</configuration>-->
 <!--					</plugin>-->
+					<!-- Source -->
+					<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-source-plugin -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-source-plugin</artifactId>
+						<version>${maven-source-plugin.version}</version>
+						<executions>
+							<execution>
+								<id>attach-sources</id>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<!-- JavaDoc -->
+					<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-javadoc-plugin -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<version>${maven-javadoc-plugin.version}</version>
+						<executions>
+							<execution>
+								<id>attach-javadocs</id>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<additionalOptions>-html5</additionalOptions>
+							<javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
+							<detectJavaApiLink>false</detectJavaApiLink>
+						</configuration>
+					</plugin>
 				</plugins>
 			</build>
 
@@ -168,41 +210,6 @@
 
 	<build>
 		<plugins>
-			<!-- Source -->
-			<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-source-plugin -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<version>${maven-source-plugin.version}</version>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<!-- JavaDoc -->
-			<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-javadoc-plugin -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>${maven-javadoc-plugin.version}</version>
-				<executions>
-					<execution>
-						<id>attach-javadocs</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<additionalOptions>-html5</additionalOptions>
-					<javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
-					<detectJavaApiLink>false</detectJavaApiLink>
-				</configuration>
-			</plugin>
 			<!-- Compiler -->
 			<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
 			<plugin>
@@ -300,6 +307,14 @@
 			<version>${springframework.spring-expression.version}</version>
 		</dependency>
 
+		<!-- Javassist -->
+		<!-- https://mvnrepository.com/artifact/org.javassist/javassist -->
+		<dependency>
+			<groupId>org.javassist</groupId>
+			<artifactId>javassist</artifactId>
+			<version>${javassist.version}</version>
+		</dependency>
+
 		<!-- Logger -->
 		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
 		<dependency>
@@ -307,6 +322,7 @@
 			<artifactId>slf4j-api</artifactId>
 			<version>${slf4j.slf4j-api.version}</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-log4j12 -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>

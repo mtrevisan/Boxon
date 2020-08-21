@@ -22,8 +22,10 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.internal;
+package io.github.mtrevisan.boxon.internal.reflection.helpers;
 
+import io.github.mtrevisan.boxon.internal.DynamicArray;
+import io.github.mtrevisan.boxon.internal.Memoizer;
 import org.springframework.objenesis.instantiator.ObjectInstantiator;
 import org.springframework.objenesis.instantiator.android.Android10Instantiator;
 import org.springframework.objenesis.instantiator.android.Android17Instantiator;
@@ -45,20 +47,72 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.util.ArrayDeque;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 
+/**
+ * @see <a href="https://bill.burkecentral.com/2008/01/14/scanning-java-annotations-at-runtime/">Scanning Java Annotations at Runtime</a>
+ */
 public final class ReflectionHelper{
 
 	private static final Function<Class<?>, Supplier<?>> CREATORS = Memoizer.memoizeThreadAndRecursionSafe(ReflectionHelper::getCreatorInner);
 
+	/** Would include {@code Object.class} when calling {@link #getSuperTypes(Class)}. */
+	private static final boolean INCLUDE_OBJECT = false;
+
 
 	private ReflectionHelper(){}
 
+
+	/**
+	 * Get the immediate supertype and interfaces of the given {@code type}.
+	 *
+	 * @param type	The class.
+	 * @return	The set of classes.
+	 */
+	public static Set<Class<?>> getSuperTypes(final Class<?> type){
+		final Set<Class<?>> result = new LinkedHashSet<>();
+		final Class<?> superclass = type.getSuperclass();
+		final Class<?>[] interfaces = type.getInterfaces();
+		if(superclass != null && (INCLUDE_OBJECT || !superclass.equals(Object.class)))
+			result.add(superclass);
+		if(interfaces.length > 0)
+			result.addAll(Arrays.asList(interfaces));
+		return result;
+	}
+
+
+	/**
+	 * Retrieve fields list of specified class.
+	 *
+	 * @param cls	The class from which to extract the declared fields.
+	 * @param recursively	If {@code true}, it retrieves fields from all class hierarchy.
+	 * @return	An array of all the fields of the given class.
+	 */
+	public static DynamicArray<Field> getDeclaredFields(final Class<?> cls, final boolean recursively){
+		final DynamicArray<Field> fields;
+		if(recursively){
+			fields = DynamicArray.create(Field.class);
+			Class<?> currentType = cls;
+			while(currentType != Object.class){
+				final Field[] subfields = currentType.getDeclaredFields();
+				//place parent's fields before all the child's fields
+				fields.addAll(0, subfields);
+
+				currentType = currentType.getSuperclass();
+			}
+		}
+		else
+			fields = DynamicArray.createFrom(cls.getDeclaredFields());
+		return fields;
+	}
 
 	public static Class<?>[] extractCallerClasses(){
 		Class<?>[] classes = new Class[0];
@@ -71,6 +125,7 @@ public final class ReflectionHelper{
 		catch(final ClassNotFoundException ignored){}
 		return classes;
 	}
+
 
 	/**
 	 * Resolves the actual generic type arguments for a base class, as viewed from a subclass or implementation.
@@ -134,8 +189,7 @@ public final class ReflectionHelper{
 	private static <T> Queue<Type> extractAncestors(final Class<? extends T> offspring){
 		final Type[] genericInterfaces = offspring.getGenericInterfaces();
 		final Queue<Type> ancestorsQueue = new ArrayDeque<>(genericInterfaces.length + 1);
-		for(int i = 0; i < genericInterfaces.length; i ++)
-			ancestorsQueue.add(genericInterfaces[i]);
+		ancestorsQueue.addAll(Arrays.asList(genericInterfaces));
 		if(offspring.getGenericSuperclass() != null)
 			ancestorsQueue.add(offspring.getGenericSuperclass());
 		return ancestorsQueue;

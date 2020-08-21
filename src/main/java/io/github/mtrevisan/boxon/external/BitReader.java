@@ -71,7 +71,7 @@ public final class BitReader{
 
 
 	/**
-	 * Wraps a {@link java.io.File} containing a binary stream into a buffer.
+	 * Wraps a {@link File} containing a binary stream into a buffer.
 	 *
 	 * @param file	The file containing the binary stream.
 	 * @return	The new bit buffer.

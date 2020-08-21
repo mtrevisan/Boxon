@@ -41,7 +41,7 @@ import io.github.mtrevisan.boxon.external.ByteOrder;
 import io.github.mtrevisan.boxon.external.ComposeResponse;
 import io.github.mtrevisan.boxon.external.ParseResponse;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
-import io.github.mtrevisan.boxon.internal.ReflectionHelper;
+import io.github.mtrevisan.boxon.internal.reflection.helpers.ReflectionHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -258,7 +258,7 @@ class CodecArrayTest{
 	@Test
 	void arrayOfDifferentObjects(){
 		Parser parser = Parser.create()
-			.withCodecs(CodecChecksum.class)
+			.withCodecs(CodecChecksum.class, CodecCustomTest.VariableLengthByteArray.class)
 			.withTemplates(TestChoice4.class);
 
 		byte[] payload = JavaHelper.toByteArray("7463340112340211223344010666");
