@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.internal.reflection;
 
-import org.slf4j.helpers.MessageFormatter;
+import io.github.mtrevisan.boxon.internal.JavaHelper;
 
 
 public class ReflectionsException extends RuntimeException{
@@ -33,10 +33,10 @@ public class ReflectionsException extends RuntimeException{
 
 
 	public ReflectionsException(final String message, final Object... parameters){
-		super(MessageFormatter.format(message, (parameters.length != 1? parameters: parameters[0])).getMessage());
+		super(JavaHelper.format(message, parameters));
 	}
 
-	private ReflectionsException(final String message, final Throwable cause){
+	public ReflectionsException(final String message, final Throwable cause){
 		super(message, cause);
 	}
 

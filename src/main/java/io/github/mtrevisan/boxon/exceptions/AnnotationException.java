@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.exceptions;
 
-import org.slf4j.helpers.MessageFormatter;
+import io.github.mtrevisan.boxon.internal.JavaHelper;
 
 
 /**
@@ -36,7 +36,7 @@ public class AnnotationException extends RuntimeException{
 
 
 	public AnnotationException(final String message, final Object... parameters){
-		super(MessageFormatter.format(message, (parameters.length != 1? parameters: parameters[0])).getMessage());
+		super(JavaHelper.format(message, parameters));
 	}
 
 }

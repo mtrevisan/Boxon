@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.internal.reflection.vfs;
 
-import org.slf4j.helpers.MessageFormatter;
+import io.github.mtrevisan.boxon.internal.JavaHelper;
 
 
 public class VFSException extends RuntimeException{
@@ -33,10 +33,10 @@ public class VFSException extends RuntimeException{
 
 
 	public VFSException(final String message, final Object... parameters){
-		super(MessageFormatter.format(message, (parameters.length != 1? parameters: parameters[0])).getMessage());
+		super(JavaHelper.format(message, parameters));
 	}
 
-	private VFSException(final String message, final Throwable cause){
+	public VFSException(final String message, final Throwable cause){
 		super(message, cause);
 	}
 

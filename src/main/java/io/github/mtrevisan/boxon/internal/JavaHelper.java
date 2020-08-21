@@ -26,6 +26,7 @@ package io.github.mtrevisan.boxon.internal;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.helpers.MessageFormatter;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -51,6 +52,11 @@ public final class JavaHelper{
 		catch(final Throwable e){
 			return null;
 		}
+	}
+
+	public static String format(final String message, final Object... parameters){
+		return MessageFormatter.format(message, (parameters.length != 1? parameters: parameters[0]))
+			.getMessage();
 	}
 
 
