@@ -85,10 +85,10 @@ class VirtualFileSystemTest{
 		}
 	}
 
-//	@Test
+	@Test
 	void virtualFileSystemFromDirWithJarInName() throws MalformedURLException{
 		String tmpFolder = System.getProperty("java.io.tmpdir");
-		tmpFolder = tmpFolder.endsWith(File.separator)? tmpFolder: tmpFolder + File.separator;
+		tmpFolder = (tmpFolder.endsWith(File.separator)? tmpFolder: tmpFolder + File.separator);
 		String dirWithJarInName = tmpFolder + "tony.jarvis";
 		File newDir = new File(dirWithJarInName);
 		newDir.mkdir();
@@ -96,7 +96,7 @@ class VirtualFileSystemTest{
 		try{
 			VFSDirectory dir = VirtualFileSystem.fromURL(new URL(MessageFormat.format("file:{0}", dirWithJarInName)));
 
-			Assertions.assertEquals(dirWithJarInName, dir.getPath());
+			Assertions.assertEquals(dirWithJarInName.replace('\\', '/'), dir.getPath());
 			Assertions.assertEquals(SystemDirectory.class, dir.getClass());
 		}
 		finally{
