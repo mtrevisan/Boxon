@@ -226,7 +226,7 @@ public final class ClasspathHelper{
 	 * @param classNames	The class names.
 	 * @return	The classes.
 	 */
-	public static Set<Class<?>> getClassesFromNames(final Collection<String> classNames){
+	public static Set<Class<?>> getClassFromNames(final Collection<String> classNames){
 		final Set<Class<?>> result = new HashSet<>(classNames.size());
 		for(final String className : classNames){
 			final Class<?> classFromName = getClassFromName(className);
