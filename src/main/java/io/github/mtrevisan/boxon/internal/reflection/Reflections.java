@@ -296,40 +296,39 @@ public final class Reflections{
 
 	private Set<Class<?>> getTypesAnnotatedWith(final Annotation annotation, final boolean honorInherited){
 		final Set<String> annotated = TYPE_ANNOTATIONS_SCANNER.get(annotation.annotationType().getName());
-		final Set<Class<?>> allAnnotated = JavaHelper.filter(ClasspathHelper.getClassFromNames(annotated), getFilterWithAnnotation(annotation));
+		final Set<Class<?>> allAnnotated = JavaHelper.filter(ClasspathHelper.getClassFromNames(annotated), getFilterOnAnnotation(annotation));
 		final Set<Class<?>> classes = ClasspathHelper.getClassFromNames(JavaHelper.filter(getAllAnnotatedClasses(ClasspathHelper.getClassNames(allAnnotated), annotation.annotationType(), honorInherited), Predicate.not(annotated::contains)));
 		allAnnotated.addAll(classes);
 		return allAnnotated;
 	}
 
 	/**
-	 * where element is annotated with given {@code annotation}, including member matching
+	 * Returns a predicate that tell if the class is annotated with given {@code annotation}, including member matching.
 	 *
 	 * @param annotation	The annotation.
 	 * @return	The predicate.
 	 * @param <T>	The type of the returned predicate.
 	 */
-	private <T extends AnnotatedElement> Predicate<T> getFilterWithAnnotation(final Annotation annotation){
+	private <T extends AnnotatedElement> Predicate<T> getFilterOnAnnotation(final Annotation annotation){
 		return input -> (input != null
 			&& input.isAnnotationPresent(annotation.annotationType())
 			&& areAnnotationMembersMatching(input.getAnnotation(annotation.annotationType()), annotation));
 	}
 
 	private boolean areAnnotationMembersMatching(final Annotation annotation1, final Annotation annotation2){
-		if(annotation2 != null && annotation1.annotationType() == annotation2.annotationType()){
-			for(final Method method : annotation1.annotationType().getDeclaredMethods()){
-				try{
+		final boolean result = (annotation2 != null && annotation1.annotationType() == annotation2.annotationType());
+		if(result){
+			try{
+				for(final Method method : annotation1.annotationType().getDeclaredMethods())
 					if(!method.invoke(annotation1).equals(method.invoke(annotation2)))
 						return false;
-				}
-				catch(final Exception e){
-					throw new ReflectionsException("Could not invoke method {} on annotation {}", method.getName(), annotation1.annotationType())
-						.withCause(e);
-				}
 			}
-			return true;
+			catch(final Exception e){
+				throw new ReflectionsException("Could not invoke a method on annotation {} or {}", annotation1.annotationType(), annotation2.annotationType())
+					.withCause(e);
+			}
 		}
-		return false;
+		return result;
 	}
 
 	private Collection<String> getAllAnnotatedClasses(final Collection<String> annotated, final Class<? extends Annotation> annotation, final boolean honorInherited){
