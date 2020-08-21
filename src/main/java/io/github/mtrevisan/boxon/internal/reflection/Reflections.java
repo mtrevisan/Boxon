@@ -130,16 +130,20 @@ public final class Reflections{
 		final Set<URI> uris = new HashSet<>(classes.length);
 		for(int i = 0; i < classes.length; i ++){
 			final Collection<URL> urls = ClasspathHelper.forPackage(classes[i].getPackageName());
-			for(final URL url : urls){
-				try{
-					uris.add(url.toURI());
-				}
-				catch(final URISyntaxException e){
-					LOGGER.warn("Invalid URL, cannot convert into URI", e);
-				}
-			}
+			collectURIs(urls, uris);
 		}
 		return uris;
+	}
+
+	private static void collectURIs(final Collection<URL> urls, final Set<URI> uris){
+		for(final URL url : urls){
+			try{
+				uris.add(url.toURI());
+			}
+			catch(final URISyntaxException e){
+				LOGGER.warn("Invalid URL, cannot convert into URI", e);
+			}
+		}
 	}
 
 	public static Reflections createExpandSuperTypes(final URL... urls){
