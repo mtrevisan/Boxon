@@ -1,7 +1,8 @@
 package io.github.mtrevisan.boxon.internal.reflection.vfs;
 
 import io.github.mtrevisan.boxon.internal.reflection.ClasspathHelper;
-import io.github.mtrevisan.boxon.internal.reflection.adapters.JavassistAdapter;
+import io.github.mtrevisan.boxon.internal.reflection.adapters.MetadataAdapterBuilder;
+import io.github.mtrevisan.boxon.internal.reflection.adapters.MetadataAdapterInterface;
 import javassist.bytecode.ClassFile;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -105,7 +106,8 @@ class VirtualFileSystemTest{
 	}
 
 	private void testVirtualFileSystemDir(final VFSDirectory dir){
-		JavassistAdapter mdAdapter = new JavassistAdapter();
+		//this should be a JavassistAdapter instance
+		MetadataAdapterInterface<ClassFile> mdAdapter = (MetadataAdapterInterface<ClassFile>)MetadataAdapterBuilder.getMetadataAdapter();
 		VFSFile file = null;
 		Iterator<VFSFile> itr = dir.getFiles().iterator();
 		while(itr.hasNext()){

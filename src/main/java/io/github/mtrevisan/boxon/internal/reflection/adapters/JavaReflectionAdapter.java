@@ -31,7 +31,7 @@ import io.github.mtrevisan.boxon.internal.reflection.vfs.VFSFile;
 import java.lang.annotation.Annotation;
 
 
-public class JavaReflectionAdapter implements MetadataAdapterInterface<Class<?>>{
+class JavaReflectionAdapter implements MetadataAdapterInterface<Class<?>>{
 
 	private static final String EMPTY_STRING = "";
 	private static final String SLASH = "/";

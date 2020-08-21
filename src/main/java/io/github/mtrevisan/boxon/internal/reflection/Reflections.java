@@ -25,8 +25,7 @@
 package io.github.mtrevisan.boxon.internal.reflection;
 
 import io.github.mtrevisan.boxon.internal.JavaHelper;
-import io.github.mtrevisan.boxon.internal.reflection.adapters.JavaReflectionAdapter;
-import io.github.mtrevisan.boxon.internal.reflection.adapters.JavassistAdapter;
+import io.github.mtrevisan.boxon.internal.reflection.adapters.MetadataAdapterBuilder;
 import io.github.mtrevisan.boxon.internal.reflection.adapters.MetadataAdapterInterface;
 import io.github.mtrevisan.boxon.internal.reflection.scanners.AbstractScanner;
 import io.github.mtrevisan.boxon.internal.reflection.scanners.ScannerInterface;
@@ -62,25 +61,14 @@ public final class Reflections{
 
 	private static final Logger LOGGER = JavaHelper.getLoggerFor(Reflections.class);
 
-	private static MetadataAdapterInterface<?> METADATA_ADAPTER;
+	private static final MetadataAdapterInterface<?> METADATA_ADAPTER = MetadataAdapterBuilder.getMetadataAdapter();
+	private static final TypeAnnotationsScanner TYPE_ANNOTATIONS_SCANNER = new TypeAnnotationsScanner();
+	private static final SubTypesScanner SUB_TYPES_SCANNER = new SubTypesScanner();
 	static{
-		/**
-		 * if javassist library exists in the classpath, this method returns {@link JavassistAdapter} otherwise defaults to {@link JavaReflectionAdapter}.
-		 * <p>the {@link JavassistAdapter} is preferred in terms of performance and class loading.
-		 */
-		try{
-			METADATA_ADAPTER = new JavassistAdapter();
-		}
-		catch(final Throwable e){
-			if(LOGGER != null)
-				LOGGER.warn("could not create JavassistAdapter, using JavaReflectionAdapter", e);
-
-			METADATA_ADAPTER = new JavaReflectionAdapter();
-		}
+		//inject to scanners
+		TYPE_ANNOTATIONS_SCANNER.setMetadataAdapter(METADATA_ADAPTER);
+		SUB_TYPES_SCANNER.setMetadataAdapter(METADATA_ADAPTER);
 	}
-
-	private final TypeAnnotationsScanner typeAnnotationsScanner = new TypeAnnotationsScanner();
-	private final SubTypesScanner subTypesScanner = new SubTypesScanner();
 
 
 	public static Reflections create(final URL... urls){
@@ -154,10 +142,6 @@ public final class Reflections{
 		if(urls.length == 0)
 			throw new IllegalArgumentException("Packages list cannot be empty");
 
-		//inject to scanners
-		typeAnnotationsScanner.setMetadataAdapter(METADATA_ADAPTER);
-		subTypesScanner.setMetadataAdapter(METADATA_ADAPTER);
-
 		scan(urls);
 
 		if(expandSuperTypes)
@@ -183,7 +167,7 @@ public final class Reflections{
 				final String relativePath = file.getRelativePath();
 				final String packageName = relativePath.replace('/', '.');
 				Object classObject = null;
-				for(final ScannerInterface scanner : new ScannerInterface[]{typeAnnotationsScanner, subTypesScanner})
+				for(final ScannerInterface scanner : new ScannerInterface[]{TYPE_ANNOTATIONS_SCANNER, SUB_TYPES_SCANNER})
 					//scan only if inputs filter accepts file `relativePath` or `packageName`
 					if(scanner.acceptsInput(relativePath) || scanner.acceptsInput(packageName)){
 						try{
@@ -216,12 +200,12 @@ public final class Reflections{
 	 * </p>
 	 */
 	private void expandSuperTypes(){
-		final Set<String> keys = subTypesScanner.keys();
-		keys.removeAll(subTypesScanner.values());
+		final Set<String> keys = SUB_TYPES_SCANNER.keys();
+		keys.removeAll(SUB_TYPES_SCANNER.values());
 		for(final String key : keys){
 			final Class<?> type = ReflectionHelper.getClassFromName(key);
 			if(type != null)
-				expandSupertypes(subTypesScanner, key, type);
+				expandSupertypes(SUB_TYPES_SCANNER, key, type);
 		}
 	}
 
@@ -242,7 +226,7 @@ public final class Reflections{
 	 * @return	The set of classes.
 	 */
 	public Set<Class<?>> getSubTypesOf(final Class<?> type){
-		return ReflectionHelper.getClassesFromNames(subTypesScanner.getAll(type.getName()));
+		return ReflectionHelper.getClassesFromNames(SUB_TYPES_SCANNER.getAll(type.getName()));
 	}
 
 	/**
@@ -275,7 +259,7 @@ public final class Reflections{
 	}
 
 	private Set<Class<?>> getTypesAnnotatedWith(final Class<? extends Annotation> annotation, final boolean honorInherited){
-		final Set<String> annotated = typeAnnotationsScanner.get(annotation.getName());
+		final Set<String> annotated = TYPE_ANNOTATIONS_SCANNER.get(annotation.getName());
 		annotated.addAll(getAllAnnotatedClasses(annotated, annotation, honorInherited));
 		return ReflectionHelper.getClassesFromNames(annotated);
 	}
@@ -310,7 +294,7 @@ public final class Reflections{
 	}
 
 	private Set<Class<?>> getTypesAnnotatedWith(final Annotation annotation, final boolean honorInherited){
-		final Set<String> annotated = typeAnnotationsScanner.get(annotation.annotationType().getName());
+		final Set<String> annotated = TYPE_ANNOTATIONS_SCANNER.get(annotation.annotationType().getName());
 		final Set<Class<?>> allAnnotated = JavaHelper.filter(ReflectionHelper.getClassesFromNames(annotated), getFilterWithAnnotation(annotation));
 		final Set<Class<?>> classes = ReflectionHelper.getClassesFromNames(JavaHelper.filter(getAllAnnotatedClasses(ReflectionHelper.getClassNames(allAnnotated), annotation.annotationType(), honorInherited), s -> !annotated.contains(s)));
 		allAnnotated.addAll(classes);
@@ -349,18 +333,18 @@ public final class Reflections{
 	private Collection<String> getAllAnnotatedClasses(final Collection<String> annotated, final Class<? extends Annotation> annotation, final boolean honorInherited){
 		if(honorInherited){
 			if(annotation.isAnnotationPresent(Inherited.class)){
-				final Set<String> subTypes = subTypesScanner.get(JavaHelper.filter(annotated, input -> {
+				final Set<String> subTypes = SUB_TYPES_SCANNER.get(JavaHelper.filter(annotated, input -> {
 					final Class<?> type = ReflectionHelper.getClassFromName(input);
 					return (type != null && !type.isInterface());
 				}));
-				return subTypesScanner.getAllIncludingKeys(subTypes);
+				return SUB_TYPES_SCANNER.getAllIncludingKeys(subTypes);
 			}
 			else
 				return annotated;
 		}
 		else{
-			final Collection<String> subTypes = typeAnnotationsScanner.getAllIncludingKeys(annotated);
-			return subTypesScanner.getAllIncludingKeys(subTypes);
+			final Collection<String> subTypes = TYPE_ANNOTATIONS_SCANNER.getAllIncludingKeys(annotated);
+			return SUB_TYPES_SCANNER.getAllIncludingKeys(subTypes);
 		}
 	}
 
