@@ -67,6 +67,7 @@ public final class Reflections{
 	private static final MetadataAdapterInterface<?> METADATA_ADAPTER = MetadataAdapterBuilder.getMetadataAdapter();
 	private static final TypeAnnotationsScanner TYPE_ANNOTATIONS_SCANNER = new TypeAnnotationsScanner();
 	private static final SubTypesScanner SUB_TYPES_SCANNER = new SubTypesScanner();
+	private static final ScannerInterface[] SCANNERS = {TYPE_ANNOTATIONS_SCANNER, SUB_TYPES_SCANNER};
 	static{
 		//inject to scanners
 		TYPE_ANNOTATIONS_SCANNER.setMetadataAdapter(METADATA_ADAPTER);
@@ -145,19 +146,16 @@ public final class Reflections{
 		if(urls.length == 0)
 			throw new IllegalArgumentException("Packages list cannot be empty");
 
-		scan(urls);
+		for(final URL url : urls)
+			scan(url);
 
 		if(expandSuperTypes)
 			expandSuperTypes();
 	}
 
-	private void scan(final URL... urls){
-		for(final URL url : urls)
-			scan(url);
-	}
-
 	private void scan(final URL url){
 		try(final VFSDirectory directory = VirtualFileSystem.fromURL(url)){
+			//process each file in the directory
 			for(final VFSFile file : directory.getFiles())
 				scan(url, directory, file);
 		}
@@ -175,7 +173,7 @@ public final class Reflections{
 		final String relativePath = file.getRelativePath();
 		final String packageName = relativePath.replace('/', '.');
 		Object classObject = null;
-		for(final ScannerInterface scanner : new ScannerInterface[]{TYPE_ANNOTATIONS_SCANNER, SUB_TYPES_SCANNER})
+		for(final ScannerInterface scanner : SCANNERS)
 			//scan only if inputs filter accepts file `relativePath` or `packageName`
 			if(scanner.acceptsInput(relativePath) || scanner.acceptsInput(packageName)){
 				try{
