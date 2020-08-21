@@ -258,8 +258,7 @@ public final class ClasspathHelper{
 			result = getClassFromName(type, typeName, classLoaders[i], reflectionsExceptions);
 
 		if(LOGGER != null)
-			for(final ReflectionsException reflectionsException : reflectionsExceptions)
-				LOGGER.warn("Could not get type for name {} from any class loader", typeName, reflectionsException);
+			reflectionsExceptions.forEach(exc -> LOGGER.warn("Could not get type for name {} from any class loader", typeName, exc));
 
 		return result;
 	}
