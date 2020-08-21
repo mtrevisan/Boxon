@@ -70,38 +70,19 @@ public final class ClasspathHelper{
 
 	/**
 	 * Returns an array of class Loaders initialized from the specified array.
-	 * <p>It defaults to both {@link #contextClassLoader()} and {@link #staticClassLoader()}</p>
+	 * <p>It defaults to both context and static class loaders.</p>
 	 *
 	 * @return	The array of class loaders.
 	 */
 	private static ClassLoader[] classLoaders(){
-		final ClassLoader contextClassLoader = contextClassLoader();
-		final ClassLoader staticClassLoader = staticClassLoader();
+		final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+		final ClassLoader staticClassLoader = ClasspathHelper.class.getClassLoader();
 		final DynamicArray<ClassLoader> loaders = DynamicArray.create(ClassLoader.class, 2);
 		if(contextClassLoader != null)
 			loaders.add(contextClassLoader);
 		if(staticClassLoader != null && contextClassLoader != staticClassLoader)
 			loaders.add(staticClassLoader);
 		return loaders.extractCopy();
-	}
-
-	/**
-	 * Gets the current thread context class loader.
-	 *
-	 * @return	The context class loader, may be {@code null}.
-	 */
-	public static ClassLoader contextClassLoader(){
-		return Thread.currentThread().getContextClassLoader();
-	}
-
-	/**
-	 * Gets the class loader of this library.
-	 * {@code Reflections.class.getClassLoader()}.
-	 *
-	 * @return	The static library class loader, may be null
-	 */
-	private static ClassLoader staticClassLoader(){
-		return ClasspathHelper.class.getClassLoader();
 	}
 
 
