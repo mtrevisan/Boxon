@@ -322,7 +322,8 @@ public final class Reflections{
 						return false;
 				}
 				catch(final Exception e){
-					throw new ReflectionsException("Could not invoke method " + method.getName() + " on annotation " + annotation1.annotationType(), e);
+					throw new ReflectionsException("Could not invoke method {} on annotation {}", method.getName(), annotation1.annotationType())
+						.withCause(e);
 				}
 			}
 			return true;

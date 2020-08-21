@@ -65,7 +65,8 @@ class JarInputDirectory implements VFSDirectory{
 					jarInputStream = new JarInputStream(url.openConnection().getInputStream());
 				}
 				catch(final Exception e){
-					throw new VFSException("Could not open URL connection", e);
+					throw new VFSException("Could not open URL connection")
+						.withCause(e);
 				}
 			}
 
@@ -100,7 +101,8 @@ class JarInputDirectory implements VFSDirectory{
 							return new JarInputFile(entry, cursor, nextCursor);
 					}
 					catch(final IOException e){
-						throw new VFSException("Could not get next zip entry", e);
+						throw new VFSException("Could not get next zip entry")
+							.withCause(e);
 					}
 				}
 			}

@@ -258,14 +258,14 @@ public final class ClasspathHelper{
 						return Class.forName(type, false, classLoader);
 					}
 					catch(final Throwable e){
-						reflectionsExceptions.add(new ReflectionsException("Could not get type for name " + typeName, e));
+						reflectionsExceptions.add(new ReflectionsException("Could not get type for name {}", typeName).withCause(e));
 					}
 				}
 				try{
 					return classLoader.loadClass(type);
 				}
 				catch(final Throwable e){
-					reflectionsExceptions.add(new ReflectionsException("Could not get type for name " + typeName, e));
+					reflectionsExceptions.add(new ReflectionsException("Could not get type for name {}", typeName).withCause(e));
 				}
 			}
 

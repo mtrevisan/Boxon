@@ -90,7 +90,8 @@ class JavassistAdapter implements MetadataAdapterInterface<ClassFile>{
 			return new ClassFile(new DataInputStream(new BufferedInputStream(is)));
 		}
 		catch(final Exception e){
-			throw new VFSException("Could not create class file from " + file.getName(), e);
+			throw new VFSException("Could not create class file from {}", file.getName())
+				.withCause(e);
 		}
 	}
 

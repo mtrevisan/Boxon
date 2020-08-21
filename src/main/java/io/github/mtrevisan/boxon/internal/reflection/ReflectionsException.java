@@ -24,14 +24,20 @@
  */
 package io.github.mtrevisan.boxon.internal.reflection;
 
+import org.slf4j.helpers.MessageFormatter;
+
 
 public class ReflectionsException extends RuntimeException{
 
 	private static final long serialVersionUID = -3739510385200581014L;
 
 
-	public ReflectionsException(final String message, final Throwable cause){
-		super(message, cause);
+	public ReflectionsException(final String message, final Object... parameters){
+		super(MessageFormatter.format(message, (parameters.length != 1? parameters: parameters[0])).getMessage());
+	}
+
+	public ReflectionsException withCause(final Throwable cause){
+		return new ReflectionsException(getMessage(), cause);
 	}
 
 }
