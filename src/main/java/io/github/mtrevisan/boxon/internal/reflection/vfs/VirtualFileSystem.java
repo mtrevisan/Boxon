@@ -208,8 +208,7 @@ public final class VirtualFileSystem{
 			}
 			catch(final Exception ignored){}
 
-			final String path = url.getFile();
-			return new File(path);
+			return null;
 		}
 
 		private static String extractDecodedPath(final URL resource){
