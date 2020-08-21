@@ -152,43 +152,43 @@ public final class Reflections{
 	}
 
 	private void scan(final URL... urls){
-		for(final URL url : urls){
-			try{
-				scan(url);
-			}
-			catch(final VFSException | ReflectionsException e){
-				if(LOGGER != null)
-					LOGGER.warn("Could not create VFSDirectory from URL, ignoring the exception and continuing", e);
-			}
-		}
+		for(final URL url : urls)
+			scan(url);
 	}
 
 	private void scan(final URL url){
 		try(final VFSDirectory directory = VirtualFileSystem.fromURL(url)){
-			for(final VFSFile file : directory.getFiles()){
-				final String relativePath = file.getRelativePath();
-				final String packageName = relativePath.replace('/', '.');
-				Object classObject = null;
-				for(final ScannerInterface scanner : new ScannerInterface[]{TYPE_ANNOTATIONS_SCANNER, SUB_TYPES_SCANNER})
-					//scan only if inputs filter accepts file `relativePath` or `packageName`
-					if(scanner.acceptsInput(relativePath) || scanner.acceptsInput(packageName)){
-						try{
-							classObject = scanner.scan(directory, file, classObject);
-
-							if(LOGGER != null)
-								LOGGER.trace("Scanned file {} in URL {} with scanner {}", relativePath, url.toExternalForm(), scanner.getClass().getSimpleName());
-						}
-						catch(final Exception e){
-							if(LOGGER != null)
-								LOGGER.debug("Could not scan file {} in URL {} with scanner {}", relativePath, url.toExternalForm(), scanner.getClass().getSimpleName(), e);
-						}
-					}
-			}
+			for(final VFSFile file : directory.getFiles())
+				scan(url, directory, file);
+		}
+		catch(final VFSException | ReflectionsException e){
+			if(LOGGER != null)
+				LOGGER.warn("Could not create VFSDirectory from URL, ignoring the exception and continuing", e);
 		}
 		catch(final Exception e){
 			if(LOGGER != null)
 				LOGGER.warn("Could not close directory", e);
 		}
+	}
+
+	private void scan(final URL url, final VFSDirectory directory, final VFSFile file){
+		final String relativePath = file.getRelativePath();
+		final String packageName = relativePath.replace('/', '.');
+		Object classObject = null;
+		for(final ScannerInterface scanner : new ScannerInterface[]{TYPE_ANNOTATIONS_SCANNER, SUB_TYPES_SCANNER})
+			//scan only if inputs filter accepts file `relativePath` or `packageName`
+			if(scanner.acceptsInput(relativePath) || scanner.acceptsInput(packageName)){
+				try{
+					classObject = scanner.scan(directory, file, classObject);
+
+					if(LOGGER != null)
+						LOGGER.trace("Scanned file {} in URL {} with scanner {}", relativePath, url.toExternalForm(), scanner.getClass().getSimpleName());
+				}
+				catch(final Exception e){
+					if(LOGGER != null)
+						LOGGER.debug("Could not scan file {} in URL {} with scanner {}", relativePath, url.toExternalForm(), scanner.getClass().getSimpleName(), e);
+				}
+			}
 	}
 
 	/**
