@@ -240,9 +240,8 @@ public final class Reflections{
 	 *
 	 * @param type	The type to search for.
 	 * @return	The set of classes.
-	 * @param <T>	The type of {@code type}.
 	 */
-	public <T> Set<Class<? extends T>> getSubTypesOf(final Class<T> type){
+	public Set<Class<?>> getSubTypesOf(final Class<?> type){
 		return ReflectionHelper.getClassesFromNames(subTypesScanner.getAll(type.getName()));
 	}
 

@@ -109,6 +109,19 @@ public final class ReflectionHelper{
 		return result;
 	}
 
+	/**
+	 * Try to resolve all given string representation of types to a list of java types
+	 *
+	 * @param classes	The classes.
+	 * @return	The classes.
+	 */
+	public static Set<Class<?>> getClassesFromNames(final Collection<String> classes){
+		return classes.stream()
+			.map(ReflectionHelper::getClassFromName)
+			.filter(Objects::nonNull)
+			.collect(Collectors.toCollection(HashSet::new));
+	}
+
 	public static Class<?> getClassFromName(final String typeName){
 		int index = PRIMITIVE_NAMES.indexOf(typeName);
 		if(index >= 0)
@@ -149,21 +162,6 @@ public final class ReflectionHelper{
 
 			return null;
 		}
-	}
-
-	/**
-	 * Try to resolve all given string representation of types to a list of java types
-	 *
-	 * @param classes	The classes.
-	 * @return	The classes.
-	 * @param <T>	The type of the returned classes.
-	 */
-	@SuppressWarnings("unchecked")
-	public static <T> Set<Class<? extends T>> getClassesFromNames(final Collection<String> classes){
-		return classes.stream()
-			.map(className -> (Class<? extends T>)getClassFromName(className))
-			.filter(Objects::nonNull)
-			.collect(Collectors.toCollection(HashSet::new));
 	}
 
 
