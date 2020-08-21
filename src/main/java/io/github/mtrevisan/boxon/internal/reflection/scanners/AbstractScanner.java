@@ -25,7 +25,6 @@
 package io.github.mtrevisan.boxon.internal.reflection.scanners;
 
 import io.github.mtrevisan.boxon.internal.reflection.adapters.MetadataAdapterInterface;
-import io.github.mtrevisan.boxon.internal.reflection.exceptions.ReflectionsException;
 import io.github.mtrevisan.boxon.internal.reflection.vfs.VFSDirectory;
 import io.github.mtrevisan.boxon.internal.reflection.vfs.VFSException;
 import io.github.mtrevisan.boxon.internal.reflection.vfs.VFSFile;
@@ -93,7 +92,7 @@ public abstract class AbstractScanner implements ScannerInterface{
 	}
 
 	/**
-	 * Get the values stored for the given {@code scannerName} and {@code keys}.
+	 * Get the values stored for this scanner and {@code keys}.
 	 *
 	 * @param keys	The keys.
 	 * @return	The classes.
@@ -119,7 +118,7 @@ public abstract class AbstractScanner implements ScannerInterface{
 	}
 
 	/**
-	 * Recursively get the values stored for the given {@code scannerName} and {@code keys}, including keys.
+	 * Recursively get the values stored for this scanner and {@code keys}, including keys.
 	 *
 	 * @param keys	The keys.
 	 * @return	The classes, including the keys.
@@ -130,20 +129,10 @@ public abstract class AbstractScanner implements ScannerInterface{
 		final Set<String> result = new HashSet<>(keys.size());
 		for(int i = 0; i < workKeys.size(); i ++){
 			final String key = workKeys.get(i);
-			if(result.add(key)){
-				final Collection<String> values = metadataStore.get(key);
-				if(values != null)
-					workKeys.addAll(values);
-			}
+			if(result.add(key))
+				workKeys.addAll(metadataStore.getOrDefault(key, Collections.emptyList()));
 		}
 		return result;
-	}
-
-	/**
-	 * Get the MAP for the given {@code scannerName}, otherwise throws a {@link ReflectionsException}
-	 */
-	private Map<String, Collection<String>> get(){
-		return metadataStore;
 	}
 
 	public Set<String> keys(){
