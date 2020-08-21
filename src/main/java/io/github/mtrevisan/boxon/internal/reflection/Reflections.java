@@ -191,6 +191,24 @@ public final class Reflections{
 		}
 	}
 
+	private Object scan(final ScannerInterface scanner, final String relativePath, final String packageName, final VFSDirectory directory, final VFSFile file, final URL url){
+		Object classObject = null;
+		//scan only if inputs filter accepts file `relativePath` or `packageName`
+		if(scanner.acceptsInput(relativePath) || scanner.acceptsInput(packageName)){
+			try{
+				classObject = scanner.scan(directory, file, classObject);
+
+				if(LOGGER != null)
+					LOGGER.trace("Scanned file {} in URL {} with scanner {}", relativePath, url.toExternalForm(), scanner.getClass().getSimpleName());
+			}
+			catch(final Exception e){
+				if(LOGGER != null)
+					LOGGER.debug("Could not scan file {} in URL {} with scanner {}", relativePath, url.toExternalForm(), scanner.getClass().getSimpleName(), e);
+			}
+		}
+		return classObject;
+	}
+
 	/**
 	 * Expand super types after scanning (for super types that were not scanned).
 	 * <p>This is helpful in finding the transitive closure without scanning all third party dependencies.</p>

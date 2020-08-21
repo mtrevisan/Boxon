@@ -100,17 +100,24 @@ public final class ClasspathHelper{
 		final ClassLoader[] loaders = classLoaders();
 		final String resourceName = cls.getName().replace(DOT, SLASH) + DOT_CLASS;
 		for(final ClassLoader classLoader : loaders){
-			try{
-				final URL url = classLoader.getResource(resourceName);
-				if(url != null){
-					final String normalizedUrl = url.toExternalForm().substring(0, url.toExternalForm().lastIndexOf(cls.getPackage().getName().replace(DOT, SLASH)));
-					return new URL(normalizedUrl);
-				}
+			final URL normalizedUrl = forClass(cls, resourceName, classLoader);
+			if(normalizedUrl != null)
+				return normalizedUrl;
+		}
+		return null;
+	}
+
+	private static URL forClass(final Class<?> cls, final String resourceName, final ClassLoader classLoader){
+		try{
+			final URL url = classLoader.getResource(resourceName);
+			if(url != null){
+				final String normalizedUrl = url.toExternalForm().substring(0, url.toExternalForm().lastIndexOf(cls.getPackage().getName().replace(DOT, SLASH)));
+				return new URL(normalizedUrl);
 			}
-			catch(final MalformedURLException e){
-				if(LOGGER != null)
-					LOGGER.warn("Could not get URL", e);
-			}
+		}
+		catch(final MalformedURLException e){
+			if(LOGGER != null)
+				LOGGER.warn("Could not get URL", e);
 		}
 		return null;
 	}
@@ -143,25 +150,27 @@ public final class ClasspathHelper{
 	private static Collection<URL> forResource(final String resourceName){
 		final List<URL> result = new ArrayList<>();
 		final ClassLoader[] loaders = classLoaders();
-		for(final ClassLoader loader : loaders){
-			try{
-				final Enumeration<URL> urls = loader.getResources(resourceName);
-				while(urls.hasMoreElements()){
-					final URL url = urls.nextElement();
-					final int index = url.toExternalForm().lastIndexOf(resourceName);
-					if(index != -1)
-						//add old url as contextUrl to support exotic url handlers
-						result.add(new URL(url, url.toExternalForm().substring(0, index)));
-					else
-						result.add(url);
-				}
-			}
-			catch(final IOException e){
-				if(LOGGER != null)
-					LOGGER.error("error getting resources for {}", resourceName, e);
+		for(final ClassLoader loader : loaders)
+			forResource(resourceName, loader, result);
+		return distinctUrls(result);
+	}
+
+	private static void forResource(final String resourceName, final ClassLoader loader, final List<URL> result){
+		try{
+			final Enumeration<URL> urls = loader.getResources(resourceName);
+			while(urls.hasMoreElements()){
+				URL url = urls.nextElement();
+				final int index = url.toExternalForm().lastIndexOf(resourceName);
+				if(index != -1)
+					//add old URL as context to support exotic URL handlers
+					url = new URL(url, url.toExternalForm().substring(0, index));
+				result.add(url);
 			}
 		}
-		return distinctUrls(result);
+		catch(final IOException e){
+			if(LOGGER != null)
+				LOGGER.error("error getting resources for {}", resourceName, e);
+		}
 	}
 
 	private static String resourceName(final String name){
@@ -237,45 +246,55 @@ public final class ClasspathHelper{
 	}
 
 	public static Class<?> getClassFromName(final String typeName){
-		int index = PRIMITIVE_NAMES.indexOf(typeName);
+		final int index = PRIMITIVE_NAMES.indexOf(typeName);
 		if(index >= 0)
 			return PRIMITIVE_TYPES.get(index);
-		else{
-			String type = typeName;
-			index = typeName.indexOf(LEFT_SQUARE_BRACKET);
-			if(index >= 0){
-				final String array = typeName.substring(index).replace(RIGHT_SQUARE_BRACKET, EMPTY_STRING);
 
-				type = typeName.substring(0, index);
-				index = PRIMITIVE_NAMES.indexOf(type);
-				type = array + (index >= 0? PRIMITIVE_DESCRIPTORS.get(index): PRIMITIVE_DESCRIPTOR_OBJECT + type + SEMICOLON);
+		Class<?> result = null;
+		final List<ReflectionsException> reflectionsExceptions = new ArrayList<>();
+		final String type = extractType(typeName);
+		final ClassLoader[] classLoaders = classLoaders();
+		for(int i = 0; result == null && i < classLoaders().length; i ++)
+			result = getClassFromName(type, typeName, classLoaders[i], reflectionsExceptions);
+
+		if(LOGGER != null)
+			for(final ReflectionsException reflectionsException : reflectionsExceptions)
+				LOGGER.warn("Could not get type for name {} from any class loader", typeName, reflectionsException);
+
+		return result;
+	}
+
+	private static Class<?> getClassFromName(final String type, final String typeName, final ClassLoader classLoader, final List<ReflectionsException> reflectionsExceptions){
+		if(type.contains(LEFT_SQUARE_BRACKET)){
+			try{
+				return Class.forName(type, false, classLoader);
 			}
-
-
-			final List<ReflectionsException> reflectionsExceptions = new ArrayList<>();
-			for(final ClassLoader classLoader : ClasspathHelper.classLoaders()){
-				if(type.contains(LEFT_SQUARE_BRACKET)){
-					try{
-						return Class.forName(type, false, classLoader);
-					}
-					catch(final Throwable e){
-						reflectionsExceptions.add(new ReflectionsException("Could not get type for name {}", typeName).withCause(e));
-					}
-				}
-				try{
-					return classLoader.loadClass(type);
-				}
-				catch(final Throwable e){
-					reflectionsExceptions.add(new ReflectionsException("Could not get type for name {}", typeName).withCause(e));
-				}
+			catch(final Throwable e){
+				reflectionsExceptions.add(new ReflectionsException("Could not get type for name {}", typeName).withCause(e));
 			}
-
-			if(LOGGER != null)
-				for(final ReflectionsException reflectionsException : reflectionsExceptions)
-					LOGGER.warn("Could not get type for name {} from any class loader", typeName, reflectionsException);
-
-			return null;
 		}
+
+		try{
+			return classLoader.loadClass(type);
+		}
+		catch(final Throwable e){
+			reflectionsExceptions.add(new ReflectionsException("Could not get type for name {}", typeName).withCause(e));
+		}
+
+		return null;
+	}
+
+	private static String extractType(final String typeName){
+		String type = typeName;
+		int index = typeName.indexOf(LEFT_SQUARE_BRACKET);
+		if(index >= 0){
+			final String array = typeName.substring(index).replace(RIGHT_SQUARE_BRACKET, EMPTY_STRING);
+
+			type = typeName.substring(0, index);
+			index = PRIMITIVE_NAMES.indexOf(type);
+			type = array + (index >= 0? PRIMITIVE_DESCRIPTORS.get(index): PRIMITIVE_DESCRIPTOR_OBJECT + type + SEMICOLON);
+		}
+		return type;
 	}
 
 }

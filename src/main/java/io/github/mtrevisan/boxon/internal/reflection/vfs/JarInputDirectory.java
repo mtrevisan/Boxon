@@ -50,6 +50,13 @@ class JarInputDirectory implements VFSDirectory{
 
 	JarInputDirectory(final URL url){
 		this.url = url;
+		try{
+			jarInputStream = new JarInputStream(url.openConnection().getInputStream());
+		}
+		catch(final Exception e){
+			throw new VFSException("Could not open URL connection")
+				.withCause(e);
+		}
 	}
 
 	@Override
@@ -60,15 +67,6 @@ class JarInputDirectory implements VFSDirectory{
 	@Override
 	public Iterable<VFSFile> getFiles(){
 		return () -> new Iterator<>(){
-			{
-				try{
-					jarInputStream = new JarInputStream(url.openConnection().getInputStream());
-				}
-				catch(final Exception e){
-					throw new VFSException("Could not open URL connection")
-						.withCause(e);
-				}
-			}
 
 			private VFSFile entry;
 
@@ -95,8 +93,9 @@ class JarInputDirectory implements VFSDirectory{
 						long size = entry.getSize();
 						if(size < 0)
 							//JDK-6916399 (no longer reproducible in 6u18+)
-							size = 0xFFFF_FFFFl + size;
+							size += 0xFFFF_FFFFl;
 						nextCursor += size;
+
 						if(!entry.isDirectory())
 							return new JarInputFile(entry, cursor, nextCursor);
 					}
