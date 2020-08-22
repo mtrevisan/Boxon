@@ -90,7 +90,8 @@ public final class Reflections{
 	}
 
 	/**
-	 * Sometimes simple calls have unexpected side effects. I wanted to update some plugins, but the update manager was hanging my UI. Looking at the stack trace reveals:
+	 * Sometimes simple calls have unexpected side effects. I wanted to update some plugins, but the update manager was
+	 * hanging my UI. Looking at the stack trace reveals:
 	 * <pre><code>
 	 * at java.net.Inet4AddressImpl.lookupAllHostAddr(Native Method)
 	 * at java.net.InetAddress$1.lookupAllHostAddr(Unknown Source)
@@ -105,9 +106,11 @@ public final class Reflections{
 	 * at java.net.URL.hashCode(Unknown Source)
 	 * - locked <0x1a3100d0> (a java.net.URL)
 	 *</code></pre>
-	 * <p>Hmm, I must say that it is very dangerous that {@link URL#hashCode()} and {@link URL#equals(Object)} makes an Internet connection. {@link URL} has the worst
-	 * equals/hasCode implementation I have ever seen: equality DEPENDS on the state of the Internet.</p>
-	 * <p>Do not put {@link URL} into collections unless you can live with the fact that comparing makes calls to the Internet. Use {@link java.net.URI} instead.</p>
+	 * <p>Hmm, I must say that it is very dangerous that {@link URL#hashCode()} and {@link URL#equals(Object)} makes an
+	 * Internet connection. {@link URL} has the worst equals/hasCode implementation I have ever seen: equality DEPENDS on the state
+	 * of the Internet.</p>
+	 * <p>Do not put {@link URL} into collections unless you can live with the fact that comparing makes calls to the Internet.
+	 * Use {@link java.net.URI} instead.</p>
 	 * <p>URL is an aggressive beast that can slow down and hang your application by making unexpected network traffic.</p>
 	 *
 	 * @see <a href="http://michaelscharf.blogspot.co.il/2006/11/javaneturlequals-and-hashcode-make.html">java.net.URL.equals and hashCode make (blocking) Internet connections</a>
@@ -189,11 +192,13 @@ public final class Reflections{
 					classObject = scanner.scan(directory, file, classObject);
 
 					if(LOGGER != null)
-						LOGGER.trace("Scanned file {} in URL {} with scanner {}", relativePath, url.toExternalForm(), scanner.getClass().getSimpleName());
+						LOGGER.trace("Scanned file {} in URL {} with scanner {}", relativePath, url.toExternalForm(),
+							scanner.getClass().getSimpleName());
 				}
 				catch(final Exception e){
 					if(LOGGER != null)
-						LOGGER.debug("Could not scan file {} in URL {} with scanner {}", relativePath, url.toExternalForm(), scanner.getClass().getSimpleName(), e);
+						LOGGER.debug("Could not scan file {} in URL {} with scanner {}", relativePath, url.toExternalForm(),
+							scanner.getClass().getSimpleName(), e);
 				}
 			}
 	}
@@ -204,8 +209,10 @@ public final class Reflections{
 	 * <p>It uses {@link ReflectionHelper#getSuperTypes(Class)}.</p>
 	 * <p>For example, for classes {@code A, B, C} where {@code A} supertype of {@code B}, and {@code B} supertype of {@code C}:
 	 * <ul>
-	 *     <li>if scanning {@code C} resulted in {@code B} ({@code B -> C} in class store), but {@code A} was not scanned (although {@code A} supertype of {@code B}) - then {@code getSubTypesOf(A)} will not return {@code C}.</li>
-	 *     <li>if expanding supertypes, {@code B} will be expanded with {@code A} ({@code A -> B} in class store) - then {@code getSubTypesOf(A)} will return {@code C}.</li>
+	 *     <li>if scanning {@code C} resulted in {@code B} ({@code B -> C} in class store), but {@code A} was not scanned
+	 *     (although {@code A} supertype of {@code B}) - then {@code getSubTypesOf(A)} will not return {@code C}.</li>
+	 *     <li>if expanding supertypes, {@code B} will be expanded with {@code A} ({@code A -> B} in class store) - then
+	 *     {@code getSubTypesOf(A)} will return {@code C}.</li>
 	 * </ul>
 	 * </p>
 	 */
@@ -243,8 +250,9 @@ public final class Reflections{
 	 * Get types annotated with a given annotation, both classes and annotations.
 	 * <p>{@link Inherited} is not honored by default.</p>
 	 * <p>When honoring {@link Inherited}, meta-annotation should only effect annotated super classes and its sub types.</p>
-	 * <p><i>Note that this ({@link Inherited}) meta-annotation type has no effect if the annotated type is used for anything other then a class.
-	 * Also, this meta-annotation causes annotations to be inherited only from superclasses; annotations on implemented interfaces have no effect.</i></p>
+	 * <p><i>Note that this ({@link Inherited}) meta-annotation type has no effect if the annotated type is used for
+	 * anything other then a class. Also, this meta-annotation causes annotations to be inherited only from superclasses;
+	 * annotations on implemented interfaces have no effect.</i></p>
 	 *
 	 * @param annotation	The annotation to search for.
 	 * @return	The set of classes.
@@ -257,9 +265,11 @@ public final class Reflections{
 	 * Get types annotated with a given annotation, both classes and annotations.
 	 * <p>{@link Inherited} is not honored by default.</p>
 	 * <p>When honoring {@link Inherited}, meta-annotation should only effect annotated super classes and its sub types.</p>
-	 * <p>When <b>not</b> honoring {@link Inherited}, meta annotation effects all subtypes, including annotations interfaces and classes.</p>
-	 * <p><i>Note that this ({@link Inherited}) meta-annotation type has no effect if the annotated type is used for anything other then a class.
-	 * Also, this meta-annotation causes annotations to be inherited only from superclasses; annotations on implemented interfaces have no effect.</i></p>
+	 * <p>When <b>not</b> honoring {@link Inherited}, meta annotation effects all subtypes, including annotations interfaces
+	 * and classes.</p>
+	 * <p><i>Note that this ({@link Inherited}) meta-annotation type has no effect if the annotated type is used for
+	 * anything other then a class. Also, this meta-annotation causes annotations to be inherited only from superclasses;
+	 * annotations on implemented interfaces have no effect.</i></p>
 	 *
 	 * @param annotation	The annotation to search for.
 	 * @return	The set of classes.
@@ -278,8 +288,9 @@ public final class Reflections{
 	 * Get types annotated with a given annotation, both classes and annotations, including annotation member values matching.
 	 * <p>{@link Inherited} is not honored by default.</p>
 	 * <p>When honoring {@link Inherited}, meta-annotation should only effect annotated super classes and its sub types.</p>
-	 * <p><i>Note that this ({@link Inherited}) meta-annotation type has no effect if the annotated type is used for anything other then a class.
-	 * Also, this meta-annotation causes annotations to be inherited only from superclasses; annotations on implemented interfaces have no effect.</i></p>
+	 * <p><i>Note that this ({@link Inherited}) meta-annotation type has no effect if the annotated type is used for
+	 * anything other then a class. Also, this meta-annotation causes annotations to be inherited only from superclasses;
+	 * annotations on implemented interfaces have no effect.</i></p>
 	 *
 	 * @param annotation	The annotation.
 	 * @return	The set of classes.
@@ -292,9 +303,11 @@ public final class Reflections{
 	 * Get types annotated with a given annotation, both classes and annotations, including annotation member values matching.
 	 * <p>{@link Inherited} is not honored by default.</p>
 	 * <p>When honoring {@link Inherited}, meta-annotation should only effect annotated super classes and its sub types.</p>
-	 * <p>When <b>not</b> honoring {@link Inherited}, meta annotation effects all subtypes, including annotations interfaces and classes.</p>
-	 * <p><i>Note that this ({@link Inherited}) meta-annotation type has no effect if the annotated type is used for anything other then a class.
-	 * Also, this meta-annotation causes annotations to be inherited only from superclasses; annotations on implemented interfaces have no effect.</i></p>
+	 * <p>When <b>not</b> honoring {@link Inherited}, meta annotation effects all subtypes, including annotations interfaces
+	 * and classes.</p>
+	 * <p><i>Note that this ({@link Inherited}) meta-annotation type has no effect if the annotated type is used for
+	 * anything other then a class. Also, this meta-annotation causes annotations to be inherited only from superclasses;
+	 * annotations on implemented interfaces have no effect.</i></p>
 	 *
 	 * @param annotation	The annotation.
 	 * @return	The set of classes.
@@ -305,9 +318,11 @@ public final class Reflections{
 
 	private Set<Class<?>> getTypesAnnotatedWith(final Annotation annotation, final boolean honorInherited){
 		final Set<String> annotated = TYPE_ANNOTATIONS_SCANNER.get(annotation.annotationType().getName());
-		final Set<Class<?>> allAnnotated = JavaHelper.filter(ClasspathHelper.getClassFromNames(annotated), getFilterOnAnnotation(annotation));
-		final Set<Class<?>> classes = ClasspathHelper.getClassFromNames(JavaHelper.filter(getAllAnnotatedClasses(ClasspathHelper.getClassNames(allAnnotated), annotation.annotationType(), honorInherited), Predicate.not(annotated::contains)));
-		allAnnotated.addAll(classes);
+		final Set<Class<?>> allAnnotated = JavaHelper.filter(ClasspathHelper.getClassFromNames(annotated),
+			getFilterOnAnnotation(annotation));
+		final Set<String> filtered = JavaHelper.filter(getAllAnnotatedClasses(ClasspathHelper.getClassNames(allAnnotated),
+			annotation.annotationType(), honorInherited), Predicate.not(annotated::contains));
+		allAnnotated.addAll(ClasspathHelper.getClassFromNames(filtered));
 		return allAnnotated;
 	}
 
@@ -333,14 +348,16 @@ public final class Reflections{
 						return false;
 			}
 			catch(final Exception e){
-				throw new ReflectionsException("Could not invoke a method on annotation {} or {}", annotation1.annotationType(), annotation2.annotationType())
+				throw new ReflectionsException("Could not invoke a method on annotation {} or {}", annotation1.annotationType(),
+						annotation2.annotationType())
 					.withCause(e);
 			}
 		}
 		return result;
 	}
 
-	private Collection<String> getAllAnnotatedClasses(final Collection<String> annotated, final Class<? extends Annotation> annotation, final boolean honorInherited){
+	private Collection<String> getAllAnnotatedClasses(final Collection<String> annotated,
+			final Class<? extends Annotation> annotation, final boolean honorInherited){
 		if(honorInherited){
 			if(annotation.isAnnotationPresent(Inherited.class)){
 				final Set<String> subTypes = SUB_TYPES_SCANNER.get(JavaHelper.filter(annotated, input -> {

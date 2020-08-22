@@ -1,17 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<!-- http://maven.apache.org/repository/guide-central-repository-upload.html -->
-	<!-- http://tutorials.jenkov.com/maven/publish-to-central-maven-repository.html -->
-	<!-- https://github.com/chhh/sonatype-ossrh-parent/blob/master/publishing-to-maven-central.md -->
-	<!-- https://central.sonatype.org/pages/ossrh-guide.html -->
-	<!-- https://oss.sonatype.org/#nexus-search;classname~Boxon -->
-	<!-- https://www.freecodecamp.org/news/how-to-upload-an-open-source-java-library-to-maven-central-cac7ce2f57c/ -->
-	<!-- https://ruleoftech.com/2014/distribute-projects-artifacts-in-maven-central-with-ossrh -->
-	<!-- https://dzone.com/articles/comprehensive-step-by-step-guide-on-how-to-upload -->
-	<!-- https://knowm.org/a-practical-guide-to-uploading-artifacts-to-maven-central/-->
-	<!-- https://central.sonatype.org/pages/releasing-the-deployment.html-->
 	<groupId>io.github.mtrevisan</groupId>
 	<artifactId>boxon</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
@@ -65,6 +56,7 @@
 		<!-- Spring Expression -->
 		<springframework.spring-expression.version>5.2.8.RELEASE</springframework.spring-expression.version>
 
+		<!-- Javassist -->
 		<javassist.version>3.27.0-GA</javassist.version>
 
 		<!-- Logging -->
@@ -142,17 +134,6 @@
 							<autoReleaseAfterClose>true</autoReleaseAfterClose>
 						</configuration>
 					</plugin>
-					<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-scm-publish-plugin -->
-<!--					<plugin>-->
-<!--						<groupId>org.apache.maven.plugins</groupId>-->
-<!--						<artifactId>maven-scm-publish-plugin</artifactId>-->
-<!--						<version>3.0.0</version>-->
-<!--						<configuration>-->
-<!--							<ignorePathsToDelete>-->
-<!--								<ignorePathToDelete>javadocs</ignorePathToDelete>-->
-<!--							</ignorePathsToDelete>-->
-<!--						</configuration>-->
-<!--					</plugin>-->
 					<!-- Source -->
 					<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-source-plugin -->
 					<plugin>
