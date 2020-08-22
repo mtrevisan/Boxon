@@ -90,7 +90,8 @@ public final class Reflections{
 	}
 
 	/**
-	 * Sometimes simple calls have unexpected side effects. I wanted to update some plugins, but the update manager was hanging my UI. Looking at the stack trace reveals:
+	 * Sometimes simple calls have unexpected side effects. I wanted to update some plugins, but the update manager was
+	 * hanging my UI. Looking at the stack trace reveals:
 	 * <pre><code>
 	 * at java.net.Inet4AddressImpl.lookupAllHostAddr(Native Method)
 	 * at java.net.InetAddress$1.lookupAllHostAddr(Unknown Source)
@@ -105,9 +106,11 @@ public final class Reflections{
 	 * at java.net.URL.hashCode(Unknown Source)
 	 * - locked <0x1a3100d0> (a java.net.URL)
 	 *</code></pre>
-	 * <p>Hmm, I must say that it is very dangerous that {@link URL#hashCode()} and {@link URL#equals(Object)} makes an Internet connection. {@link URL} has the worst
-	 * equals/hasCode implementation I have ever seen: equality DEPENDS on the state of the Internet.</p>
-	 * <p>Do not put {@link URL} into collections unless you can live with the fact that comparing makes calls to the Internet. Use {@link java.net.URI} instead.</p>
+	 * <p>Hmm, I must say that it is very dangerous that {@link URL#hashCode()} and {@link URL#equals(Object)} makes an
+	 * Internet connection. {@link URL} has the worst equals/hasCode implementation I have ever seen: equality DEPENDS on the state
+	 * of the Internet.</p>
+	 * <p>Do not put {@link URL} into collections unless you can live with the fact that comparing makes calls to the Internet.
+	 * Use {@link java.net.URI} instead.</p>
 	 * <p>URL is an aggressive beast that can slow down and hang your application by making unexpected network traffic.</p>
 	 *
 	 * @see <a href="http://michaelscharf.blogspot.co.il/2006/11/javaneturlequals-and-hashcode-make.html">java.net.URL.equals and hashCode make (blocking) Internet connections</a>
@@ -247,8 +250,9 @@ public final class Reflections{
 	 * Get types annotated with a given annotation, both classes and annotations.
 	 * <p>{@link Inherited} is not honored by default.</p>
 	 * <p>When honoring {@link Inherited}, meta-annotation should only effect annotated super classes and its sub types.</p>
-	 * <p><i>Note that this ({@link Inherited}) meta-annotation type has no effect if the annotated type is used for anything other then a class.
-	 * Also, this meta-annotation causes annotations to be inherited only from superclasses; annotations on implemented interfaces have no effect.</i></p>
+	 * <p><i>Note that this ({@link Inherited}) meta-annotation type has no effect if the annotated type is used for
+	 * anything other then a class. Also, this meta-annotation causes annotations to be inherited only from superclasses;
+	 * annotations on implemented interfaces have no effect.</i></p>
 	 *
 	 * @param annotation	The annotation to search for.
 	 * @return	The set of classes.
@@ -344,7 +348,8 @@ public final class Reflections{
 						return false;
 			}
 			catch(final Exception e){
-				throw new ReflectionsException("Could not invoke a method on annotation {} or {}", annotation1.annotationType(), annotation2.annotationType())
+				throw new ReflectionsException("Could not invoke a method on annotation {} or {}", annotation1.annotationType(),
+						annotation2.annotationType())
 					.withCause(e);
 			}
 		}

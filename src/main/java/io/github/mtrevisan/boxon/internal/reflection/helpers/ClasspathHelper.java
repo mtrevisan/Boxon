@@ -59,7 +59,8 @@ public final class ClasspathHelper{
 
 	static{
 		PRIMITIVE_NAMES = Arrays.asList("boolean", "char", "byte", "short", "int", "long", "float", "double", "void");
-		PRIMITIVE_TYPES = Arrays.asList(boolean.class, char.class, byte.class, short.class, int.class, long.class, float.class, double.class, void.class);
+		PRIMITIVE_TYPES = Arrays.asList(boolean.class, char.class, byte.class, short.class, int.class, long.class, float.class,
+			double.class, void.class);
 		PRIMITIVE_DESCRIPTORS = Arrays.asList("Z", "C", "B", "S", "I", "J", "F", "D", "V");
 	}
 
@@ -111,7 +112,9 @@ public final class ClasspathHelper{
 		try{
 			final URL url = classLoader.getResource(resourceName);
 			if(url != null){
-				final String normalizedUrl = url.toExternalForm().substring(0, url.toExternalForm().lastIndexOf(cls.getPackage().getName().replace(DOT, SLASH)));
+				final String externalForm = url.toExternalForm();
+				final int lastIndex = externalForm.lastIndexOf(cls.getPackage().getName().replace(DOT, SLASH));
+				final String normalizedUrl = (lastIndex >= 0? externalForm.substring(0, lastIndex): externalForm);
 				return new URL(normalizedUrl);
 			}
 		}
@@ -160,10 +163,11 @@ public final class ClasspathHelper{
 			final Enumeration<URL> urls = loader.getResources(resourceName);
 			while(urls.hasMoreElements()){
 				URL url = urls.nextElement();
-				final int index = url.toExternalForm().lastIndexOf(resourceName);
+				String externalForm = url.toExternalForm();
+				final int index = externalForm.lastIndexOf(resourceName);
 				if(index != -1)
 					//add old URL as context to support exotic URL handlers
-					url = new URL(url, url.toExternalForm().substring(0, index));
+					url = new URL(url, externalForm.substring(0, index));
 				result.add(url);
 			}
 		}
@@ -185,7 +189,8 @@ public final class ClasspathHelper{
 	}
 
 	/**
-	 * Sometimes simple calls have unexpected side effects. I wanted to update some plugins, but the update manager was hanging my UI. Looking at the stack trace reveals:
+	 * Sometimes simple calls have unexpected side effects. I wanted to update some plugins, but the update manager was
+	 * hanging my UI. Looking at the stack trace reveals:
 	 * <pre><code>
 	 * at java.net.Inet4AddressImpl.lookupAllHostAddr(Native Method)
 	 * at java.net.InetAddress$1.lookupAllHostAddr(Unknown Source)
@@ -200,9 +205,11 @@ public final class ClasspathHelper{
 	 * at java.net.URL.hashCode(Unknown Source)
 	 * - locked <0x1a3100d0> (a java.net.URL)
 	 *</code></pre>
-	 * <p>Hmm, I must say that it is very dangerous that {@link URL#hashCode()} and {@link URL#equals(Object)} makes an Internet connection. {@link URL} has the worst
-	 * equals/hasCode implementation I have ever seen: equality DEPENDS on the state of the Internet.</p>
-	 * <p>Do not put {@link URL} into collections unless you can live with the fact that comparing makes calls to the Internet. Use {@link java.net.URI} instead.</p>
+	 * <p>Hmm, I must say that it is very dangerous that {@link URL#hashCode()} and {@link URL#equals(Object)} makes an
+	 * Internet connection. {@link URL} has the worst equals/hasCode implementation I have ever seen: equality DEPENDS on the state
+	 * of the Internet.</p>
+	 * <p>Do not put {@link URL} into collections unless you can live with the fact that comparing makes calls to the Internet.
+	 * Use {@link java.net.URI} instead.</p>
 	 * <p>URL is an aggressive beast that can slow down and hang your application by making unexpected network traffic.</p>
 	 *
 	 * @see <a href="http://michaelscharf.blogspot.co.il/2006/11/javaneturlequals-and-hashcode-make.html">java.net.URL.equals and hashCode make (blocking) Internet connections</a>
@@ -263,7 +270,8 @@ public final class ClasspathHelper{
 		return result;
 	}
 
-	private static Class<?> getClassFromName(final String type, final String typeName, final ClassLoader classLoader, final List<ReflectionsException> reflectionsExceptions){
+	private static Class<?> getClassFromName(final String type, final String typeName, final ClassLoader classLoader,
+			final List<ReflectionsException> reflectionsExceptions){
 		if(type.contains(LEFT_SQUARE_BRACKET)){
 			try{
 				return Class.forName(type, false, classLoader);
