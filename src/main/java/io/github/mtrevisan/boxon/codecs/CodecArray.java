@@ -31,8 +31,8 @@ import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
-import io.github.mtrevisan.boxon.internal.DataType;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
+import io.github.mtrevisan.boxon.internal.ParserDataType;
 import org.slf4j.Logger;
 
 import java.lang.annotation.Annotation;
@@ -71,7 +71,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 
 	@SuppressWarnings("unchecked")
 	private static <T> T[] createArray(final Class<? extends T> type, final int length){
-		if(DataType.isPrimitive(type))
+		if(ParserDataType.isPrimitive(type))
 			throw new AnnotationException("Argument cannot be a primitive: {}", type);
 
 		return (T[])Array.newInstance(type, length);

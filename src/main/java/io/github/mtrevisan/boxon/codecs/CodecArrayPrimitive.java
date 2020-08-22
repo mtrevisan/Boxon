@@ -29,7 +29,7 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
-import io.github.mtrevisan.boxon.internal.DataType;
+import io.github.mtrevisan.boxon.internal.ParserDataType;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
@@ -59,7 +59,7 @@ final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 	}
 
 	private static Object createArrayPrimitive(final Class<?> type, final int length){
-		if(!DataType.isPrimitive(type))
+		if(!ParserDataType.isPrimitive(type))
 			throw new AnnotationException("Argument cannot be a non-primitive: {}", type);
 
 		return Array.newInstance(type, length);

@@ -25,8 +25,8 @@
 package io.github.mtrevisan.boxon.external;
 
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.internal.DataType;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
+import io.github.mtrevisan.boxon.internal.ParserDataType;
 
 import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
@@ -50,7 +50,7 @@ public final class BitWriter{
 
 
 	public void put(final Object value, final ByteOrder byteOrder){
-		final DataType t = DataType.fromType(value.getClass());
+		final ParserDataType t = ParserDataType.fromType(value.getClass());
 		if(t == null)
 			throw new AnnotationException("Cannot write type {}", value.getClass().getSimpleName());
 

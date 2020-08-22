@@ -53,15 +53,12 @@ public final class ClasspathHelper{
 	private static final String RIGHT_SQUARE_BRACKET = "]";
 	private static final String PRIMITIVE_DESCRIPTOR_OBJECT = "L";
 
-	private static final List<String> PRIMITIVE_NAMES;
-	private static final List<Class<?>> PRIMITIVE_TYPES;
-	private static final List<String> PRIMITIVE_DESCRIPTORS;
-
+	private static final Map<String, Class<?>> PRIMITIVE_NAMES_TO_TYPES = new HashMap<>(9);
 	static{
-		PRIMITIVE_NAMES = Arrays.asList("boolean", "char", "byte", "short", "int", "long", "float", "double", "void");
-		PRIMITIVE_TYPES = Arrays.asList(boolean.class, char.class, byte.class, short.class, int.class, long.class, float.class,
-			double.class, void.class);
-		PRIMITIVE_DESCRIPTORS = Arrays.asList("Z", "C", "B", "S", "I", "J", "F", "D", "V");
+		final List<Class<?>> types = Arrays.asList(boolean.class, char.class, byte.class, short.class, int.class, long.class,
+			float.class, double.class, void.class);
+		for(final Class<?> type : types)
+			PRIMITIVE_NAMES_TO_TYPES.put(type.getName(), type);
 	}
 
 	private static final String SLASH = "/";
@@ -163,7 +160,7 @@ public final class ClasspathHelper{
 			final Enumeration<URL> urls = loader.getResources(resourceName);
 			while(urls.hasMoreElements()){
 				URL url = urls.nextElement();
-				String externalForm = url.toExternalForm();
+				final String externalForm = url.toExternalForm();
 				final int index = externalForm.lastIndexOf(resourceName);
 				if(index != -1)
 					//add old URL as context to support exotic URL handlers
@@ -253,9 +250,9 @@ public final class ClasspathHelper{
 	}
 
 	public static Class<?> getClassFromName(final String typeName){
-		final int index = PRIMITIVE_NAMES.indexOf(typeName);
-		if(index >= 0)
-			return PRIMITIVE_TYPES.get(index);
+		final Class<?> cls = getPrimitiveType(typeName);
+		if(cls != null)
+			return cls;
 
 		Class<?> result = null;
 		final List<ReflectionsException> reflectionsExceptions = new ArrayList<>();
@@ -293,15 +290,19 @@ public final class ClasspathHelper{
 
 	private static String extractType(final String typeName){
 		String type = typeName;
-		int index = typeName.indexOf(LEFT_SQUARE_BRACKET);
+		final int index = typeName.indexOf(LEFT_SQUARE_BRACKET);
 		if(index >= 0){
 			final String array = typeName.substring(index).replace(RIGHT_SQUARE_BRACKET, EMPTY_STRING);
 
 			type = typeName.substring(0, index);
-			index = PRIMITIVE_NAMES.indexOf(type);
-			type = array + (index >= 0? PRIMITIVE_DESCRIPTORS.get(index): PRIMITIVE_DESCRIPTOR_OBJECT + type + SEMICOLON);
+			final Class<?> cls = getPrimitiveType(type);
+			type = array + (cls != null? cls: PRIMITIVE_DESCRIPTOR_OBJECT + type + SEMICOLON);
 		}
 		return type;
+	}
+
+	private static Class<?> getPrimitiveType(final String typeName){
+		return PRIMITIVE_NAMES_TO_TYPES.get(typeName);
 	}
 
 }
