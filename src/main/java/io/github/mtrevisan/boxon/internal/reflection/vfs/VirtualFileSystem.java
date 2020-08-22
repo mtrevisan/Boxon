@@ -93,10 +93,12 @@ public final class VirtualFileSystem{
 	/**
 	 * Default url types used by {@link VirtualFileSystem#fromURL(URL)}.
 	 * <p>JAR_FILE - creates a {@link ZipDirectory} over JAR file.
-	 * <p>JAR_URL - creates a {@link ZipDirectory} over a JAR URL (contains {@code ".jar!/"} in it's name), using Java's {@link JarURLConnection}.
+	 * <p>JAR_URL - creates a {@link ZipDirectory} over a JAR URL (contains {@code ".jar!/"} in it's name), using Java's
+	 * {@link JarURLConnection}.
 	 * <p>DIRECTORY - creates a {@link SystemDirectory} over a file system directory.
 	 * <p>BUNDLE - for bundle protocol, using eclipse FileLocator (should be provided in classpath).
-	 * <p>JAR_INPUT_STREAM - creates a {@link JarInputDirectory} over JAR files, using Java's {@link java.util.jar.JarInputStream JarInputStream}.
+	 * <p>JAR_INPUT_STREAM - creates a {@link JarInputDirectory} over JAR files, using Java's
+	 * {@link java.util.jar.JarInputStream JarInputStream}.
 	 */
 	enum DefaultUrlTypes implements UrlType{
 		JAR_FILE{
