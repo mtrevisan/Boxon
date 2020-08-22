@@ -26,33 +26,38 @@ package io.github.mtrevisan.boxon.exceptions;
 
 import io.github.mtrevisan.boxon.internal.ExceptionHelper;
 
-import java.util.StringJoiner;
-
 
 /**
- * Thrown if a composition went bad.
+ * Thrown if a parsing (decoding) went bad.
  */
-public class ComposeException extends Exception{
+public class DecodeException extends Exception{
 
-	private static final long serialVersionUID = 4385865753761318892L;
-
-
-	private final Object data;
+	private static final long serialVersionUID = 5375434179637246605L;
 
 
-	public ComposeException(final Object data, final Throwable cause){
+	private final int errorIndex;
+
+
+	public DecodeException(final int errorIndex, final Throwable cause){
 		super(cause);
 
-		this.data = data;
+		this.errorIndex = errorIndex;
+	}
+
+	public int getErrorIndex(){
+		return errorIndex;
 	}
 
 	@Override
 	public String getMessage(){
-		final StringJoiner sj = new StringJoiner(System.lineSeparator());
-		sj.add("Error encoding data: " + data.toString());
+		final StringBuilder sj = new StringBuilder();
 		final Throwable cause = getCause();
 		if(cause != null)
-			sj.add(ExceptionHelper.getMessageNoLineNumber(cause));
+			sj.append(ExceptionHelper.getMessageNoLineNumber(cause));
+		if(errorIndex >= 0)
+			sj.append(System.lineSeparator())
+				.append("   at index ")
+				.append(errorIndex);
 		return sj.toString();
 	}
 

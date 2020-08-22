@@ -28,6 +28,7 @@ import io.github.mtrevisan.boxon.annotations.BindChecksum;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.Skip;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
+import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitSet;
@@ -251,7 +252,7 @@ final class TemplateParser{
 	private CodecInterface<?> retrieveCodec(final Class<? extends Annotation> annotationType){
 		final CodecInterface<?> codec = loader.getCodec(annotationType);
 		if(codec == null)
-			throw new TemplateException("Cannot find codec for binding {}", annotationType.getSimpleName());
+			throw new CodecException("Cannot find codec for binding {}", annotationType.getSimpleName());
 
 		setMessageParser(codec);
 		return codec;

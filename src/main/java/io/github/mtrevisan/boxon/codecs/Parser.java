@@ -25,8 +25,8 @@
 package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
-import io.github.mtrevisan.boxon.exceptions.ComposeException;
-import io.github.mtrevisan.boxon.exceptions.ParseException;
+import io.github.mtrevisan.boxon.exceptions.DecodeException;
+import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
 import io.github.mtrevisan.boxon.external.ComposeResponse;
@@ -238,7 +238,7 @@ public class Parser{
 				response.addParsedMessage(start, partialDecodedMessage);
 			}
 			catch(final Exception e){
-				final ParseException pe = new ParseException(reader.position(), e);
+				final DecodeException pe = new DecodeException(reader.position(), e);
 				response.addError(start, pe);
 
 				//restore state of the reader
@@ -263,7 +263,7 @@ public class Parser{
 		if(!response.hasErrors() && reader.hasRemaining()){
 			final int position = reader.position();
 			final IllegalArgumentException error = new IllegalArgumentException("There are remaining unread bytes");
-			final ParseException pe = new ParseException(position, error);
+			final DecodeException pe = new DecodeException(position, error);
 			response.addError(start, pe);
 		}
 	}
@@ -310,7 +310,7 @@ public class Parser{
 			templateParser.encode(template, writer, null, data);
 		}
 		catch(final Exception e){
-			response.addError(new ComposeException(data, e));
+			response.addError(new EncodeException(data, e));
 		}
 	}
 
