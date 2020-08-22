@@ -47,7 +47,7 @@ Boxon differs from Preon in...
  - Does not have `BoundList`: since the message is a finite sequence of bytes, then any array is of finite length, and thus the standard java array (`[]`) is sufficient. If someone wants a `List` a converter can be used.
  - Does not rely on the type of the annotated variable (because of the existence of the converters); in fact, the annotation, eventually, serves the purpose to pass a predefined type of data to a converter.<br/>
    For this reason too, there is no need for the `Init` annotation, thus the annotated file can contain the least amount of data necessary for its decoding (moreover, this annotation has NOT the inverse operation -- so it seems to me... so it's pretty useless anyway).
- - (by personal experience) enumerations can have different representations, or change between a version and the next of a protocol, even inside the same protocol (!), so having an annotation that tells the value of a particular element of this enum is at least risky. So, for this reason, the `BoundEnumOption` is not present in this library.
+ - (By personal experience) enumerations can have different representations, or change between a version and the next of a protocol, even inside the same protocol (!), so having an annotation that tells the value of a particular element of this enum is at least risky. So, for this reason, the `BoundEnumOption` is not present in this library.
  - Does read and write more than 64 bits at a time (`BitBuffer.readBits`)
 
 <br/>
@@ -632,7 +632,7 @@ private String deviceTypeName;
 ## How to write SpEL expressions
 Care should be taken in writing [SpEL expressions](https://docs.spring.io/spring/docs/4.3.10.RELEASE/spring-framework-reference/html/expressions.html) for the fields `condition`, `size`, and `match`.
 
-The root object is the outermost object. In order to evaluate a variable of a parent object the complete path should be used, as in `object1.variable1`. In order to evaluate a variable of a children object, that is the object currently scanned, the relative path should be used, as in `#self.variable2`).
+The root object is the outermost object. In order to evaluate a variable of a parent object the complete path should be used, as in `object1.variable1`. In order to evaluate a variable of a children object, that is the object currently scanned, the relative path should be used usign by the special keyword `#self`, as in `#self.variable2`).
 
 See also [Spring Expression Language (SpEL) Primer](https://dhruba.wordpress.com/2009/12/30/spring-expression-language-spel-primer/).
 
@@ -664,6 +664,8 @@ class OtherClass{
 Boxon can handle array of primitives, bit, byte, short, int, long, float, double, and their object counterpart, as long as Object, BigInteger, BigDecimal, string (with a given size, or with a terminator), and the special "[checksum](#annotation-checksum)".
 
 You can extend the basic functionalities through the application of converters as shown below in some examples. Here lies the power of Boxon.
+
+Boxon already provides some build-in converters: BitToBoolean, ShortToChar, UnsignedByte, UnsignedInt, and UnsignedShort.
 
 <a name="how-to-converters"></a>
 ### Converters
@@ -719,7 +721,7 @@ public class DateTimeYYYYMMDDHHMMSSConverter implements Converter<byte[], ZonedD
 }
 ```
 
-#### IMEI converter (from 'nibble' array to String)
+#### IMEI converter (from 'nibble' array to String, that is, each nibble represents a character of the IMEI)
 ```java
 @BindArrayPrimitive(size = "8", type = byte.class, converter = IMEIConverter.class, validator = IMEIValidator.class)
 private String imei;
@@ -789,7 +791,7 @@ public class RSSIConverter implements Converter<Byte, Short>{
 ### Custom annotations
 You can also define your own annotation by define an annotation and implementing `CodecInterface` as in the following example.
 
-<b>... and remember to add it to the `Codec`s!</b>
+<b>... and remember to add it to the `Parser`!</b>
 
 ```java
 //annotation
@@ -834,21 +836,19 @@ parser.withCodecs(new VariableLengthByteArray());
 
 <a name="digging"></a>
 ## Digging into the code
-Almost for each base annotation there is a corresponding class defined into `Codec.java` that manages the encoding and decoding of the underlying data.
+Almost for each base annotation there is a corresponding class defined into `Template.java` that manages the encoding and decoding of the underlying data.
 
 The other annotations are managed directly into `TemplateParser.java`, that is the main class that orchestrates the parsing of a single message with all of its annotations.
-If an error occurs a `ParseException` is thrown.
+If an error occurs an `AnnotationException` (an error occurs on an annotation definition), `CodecException` (an error occurs while finding the appropriate codec), `TemplateException` (an error occurs if a template class is badly annotated), or `DecodeException`/`EncodeException` (a container exception for the previous ones for decoding and encoding respectively) is thrown.
 
-Messages can be concatenated, and the `Parser.java` class manages them, returning a [DTO](https://en.wikipedia.org/wiki/Data_transfer_object), `ParseResponse.java`, with a list of all successfully read messages and a list of all errors from problematic messages.
+Messages can be concatenated, and the `Parser.java` class manages them, returning a [DTO](https://en.wikipedia.org/wiki/Data_transfer_object), `ParseResponse.java`, which contains a list of all successfully read messages and a list of all errors from problematic messages.
 
 <br/>
 
 Each annotated class is processed by `Template.class`, that is later retrieved by `Parser.java` depending on the starting header.
-For that reason each starting header defined into `MessageHeader` annotation SHOULD BE unique.
+For that reason each starting header defined into `MessageHeader` annotation MUST BE unique. This class can also accept a context.
 
 All the SpEL expressions are evaluated by `Evaluator.java`.
-
-This class can also accept a context.
 
 <br/>
 
@@ -856,7 +856,7 @@ All the annotated classes are conveniently loaded using the `Loader.java` as is 
 
 Note that all codecs MUST BE loaded before the templates that use them, as they are used to verifying the annotations. 
 
-If you want to provide your own classes you can use the appropriate constructor of `Parser`.
+If you want to provide your own classes you can use the appropriate `with...` method of `Parser`.
 
 <br/>
 
@@ -865,6 +865,14 @@ The `Parser` is also used to encode a message.
 <br/>
 
 `BitBuffer.java` has the task to read the bits, whereas `BitWriter.java` has the task to write the bits.
+
+<br/>
+
+`BitSet.java` is the container for the bits (like `java.utils.BitSet`, but enhanced for speed).
+
+<br/>
+
+`ByteOrder.java` is the enum that is used to indicate the byte order.
 
 
 <br/>
@@ -877,17 +885,19 @@ The `Parser` is also used to encode a message.
 
 All you have to care about, for a simple example on multi-message automatically-loaded templates, is the `Parser`.
 ```java
-//optionally create a context ('null' otherwise)
+//optionally create a context
 Map<String, Object> context = ...
 //read all the codecs and annotated classes from where the parser resides and all of its children packages
 Parser parser = Parser.create()
    .withContext(context);
-//... or pass the parent package (see all the constructors of Parser for more)
+//... or pass the parent package (see all the `with...` methods of Parser for more)
 Parser parser = Parser.create()
    .withContext(context)
    .withContextFunction(VersionHelper.class, "compareVersion", String.class, String.class)
    .withContextFunction(VersionHelper.class.getDeclaredMethod("compareVersion", new Class[]{String.class, String.class}))
+   //scans the parent package and all of its children, searching and loading all the codecs found
    .withDefaultCodecs()
+   //scans the parent package and all of its children, searching and loading all the templates found
    .withDefaultTemplates();
 
 //parse the message
@@ -934,7 +944,7 @@ if(!composeResult.hasErrors()){
 }
 //process the errors
 else{
-    List<ComposeException> errors = result.getErrors();
+    List<EncodeException> errors = result.getErrors();
     ...
 }
 ```

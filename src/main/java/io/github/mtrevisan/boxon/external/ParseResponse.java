@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.external;
 
-import io.github.mtrevisan.boxon.exceptions.ParseException;
+import io.github.mtrevisan.boxon.exceptions.DecodeException;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 
 import java.util.Map;
@@ -41,7 +41,7 @@ public class ParseResponse{
 	private final Map<Integer, Object> parsedMessages = new TreeMap<>(Integer::compareTo);
 
 	/** List of error messages along with their starting index. */
-	private final Map<Integer, ParseException> errors = new TreeMap<>(Integer::compareTo);
+	private final Map<Integer, DecodeException> errors = new TreeMap<>(Integer::compareTo);
 
 
 	public ParseResponse(final byte[] payload){
@@ -101,7 +101,7 @@ public class ParseResponse{
 		return !errors.isEmpty();
 	}
 
-	public ParseException getErrorAt(final int index){
+	public DecodeException getErrorAt(final int index){
 		return errors.get(index);
 	}
 
@@ -115,7 +115,7 @@ public class ParseResponse{
 		return getPayloadAt(index, errors.keySet());
 	}
 
-	public void addError(final int start, final ParseException exception){
+	public void addError(final int start, final DecodeException exception){
 		errors.put(start, exception);
 	}
 

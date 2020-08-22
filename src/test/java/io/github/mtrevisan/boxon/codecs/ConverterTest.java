@@ -28,7 +28,7 @@ import io.github.mtrevisan.boxon.annotations.BindByte;
 import io.github.mtrevisan.boxon.annotations.BindString;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
-import io.github.mtrevisan.boxon.exceptions.ParseException;
+import io.github.mtrevisan.boxon.exceptions.DecodeException;
 import io.github.mtrevisan.boxon.external.ParseResponse;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import org.apache.commons.lang3.StringUtils;
@@ -101,7 +101,7 @@ class ConverterTest{
 		Assertions.assertEquals(1, result.getTotalMessageCount());
 		Assertions.assertArrayEquals(payload, result.getErrorPayloadAt(0));
 		Assertions.assertEquals(1, result.getErrorCount());
-		ParseException error = result.getErrorAt(0);
+		DecodeException error = result.getErrorAt(0);
 		Assertions.assertEquals("IllegalArgumentException: Can not input Byte to decode method of converter WrongConverterInput in field TestConverter1.value\r\n"
 			+ "   at index 4", error.getMessage());
 	}
@@ -120,7 +120,7 @@ class ConverterTest{
 		Assertions.assertEquals(1, result.getTotalMessageCount());
 		Assertions.assertArrayEquals(payload, result.getErrorPayloadAt(0));
 		Assertions.assertEquals(1, result.getErrorCount());
-		ParseException error = result.getErrorAt(0);
+		DecodeException error = result.getErrorAt(0);
 		Assertions.assertEquals("IllegalArgumentException: Can not set String field to Byte in field TestConverter2.value\r\n"
 			+ "   at index 4", error.getMessage());
 	}

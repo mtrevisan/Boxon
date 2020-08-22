@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.external;
 
-import io.github.mtrevisan.boxon.exceptions.ComposeException;
+import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.internal.DynamicArray;
 
 import java.util.Objects;
@@ -33,7 +33,7 @@ import java.util.Objects;
 public class ComposeResponse{
 
 	private byte[] composedMessage;
-	private final DynamicArray<ComposeException> errors = DynamicArray.create(ComposeException.class);
+	private final DynamicArray<EncodeException> errors = DynamicArray.create(EncodeException.class);
 
 
 	public void setComposedMessage(final byte[] composedMessages){
@@ -52,17 +52,17 @@ public class ComposeResponse{
 		return !errors.isEmpty();
 	}
 
-	public ComposeException getErrorAt(final int index){
+	public EncodeException getErrorAt(final int index){
 		return errors.data[index];
 	}
 
-	public void addError(final ComposeException exception){
+	public void addError(final EncodeException exception){
 		Objects.requireNonNull(exception);
 
 		errors.add(exception);
 	}
 
-	public ComposeException[] getErrors(){
+	public EncodeException[] getErrors(){
 		return errors.extractCopy();
 	}
 
