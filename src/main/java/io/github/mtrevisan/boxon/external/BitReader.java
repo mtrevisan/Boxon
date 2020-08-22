@@ -25,8 +25,8 @@
 package io.github.mtrevisan.boxon.external;
 
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.internal.DataType;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
+import io.github.mtrevisan.boxon.internal.ParserDataType;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -175,7 +175,7 @@ public final class BitReader{
 	}
 
 	public Object get(final Class<?> type, final ByteOrder byteOrder){
-		final DataType t = DataType.fromType(type);
+		final ParserDataType t = ParserDataType.fromType(type);
 		if(t == null)
 			throw new AnnotationException("Cannot read type {}", type.getSimpleName());
 

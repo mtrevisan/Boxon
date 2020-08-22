@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public enum DataType{
+public enum ParserDataType{
 
 	BYTE(Byte.TYPE, Byte.class),
 	SHORT(Short.TYPE, Short.class),
@@ -41,9 +41,9 @@ public enum DataType{
 	private static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPER_MAP = new HashMap<>(6);
 	/** Maps wrapper {@code Class}es to their corresponding primitive types. */
 	private static final Map<Class<?>, Class<?>> WRAPPER_PRIMITIVE_MAP = new HashMap<>(6);
-	private static final Map<Class<?>, DataType> TYPE_MAP = new HashMap<>(12);
+	private static final Map<Class<?>, ParserDataType> TYPE_MAP = new HashMap<>(12);
 	static{
-		for(final DataType dt : values()){
+		for(final ParserDataType dt : values()){
 			PRIMITIVE_WRAPPER_MAP.put(dt.primitiveType, dt.objectiveType);
 			WRAPPER_PRIMITIVE_MAP.put(dt.objectiveType, dt.primitiveType);
 			TYPE_MAP.put(dt.primitiveType, dt);
@@ -55,11 +55,11 @@ public enum DataType{
 	final Class<?> objectiveType;
 
 
-	public static DataType fromType(final Class<?> type){
+	public static ParserDataType fromType(final Class<?> type){
 		return TYPE_MAP.get(type);
 	}
 
-	DataType(final Class<?> primitiveType, final Class<?> objectiveType){
+	ParserDataType(final Class<?> primitiveType, final Class<?> objectiveType){
 		this.primitiveType = primitiveType;
 		this.objectiveType = objectiveType;
 	}

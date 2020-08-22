@@ -34,8 +34,8 @@ import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.Skip;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.internal.DataType;
 import io.github.mtrevisan.boxon.internal.DynamicArray;
+import io.github.mtrevisan.boxon.internal.ParserDataType;
 import io.github.mtrevisan.boxon.internal.reflection.helpers.ReflectionHelper;
 
 import java.lang.annotation.Annotation;
@@ -121,9 +121,9 @@ final class Template<T>{
 			@Override
 			void validate(final Annotation annotation){
 				final Class<?> type = ((BindArrayPrimitive)annotation).type();
-				if(!DataType.isPrimitive(type))
+				if(!ParserDataType.isPrimitive(type))
 					throw new AnnotationException("Bad annotation used for {}, should have been used the type `{}.class`",
-						BindArray.class.getSimpleName(), DataType.toObjectiveTypeOrDefault(type).getSimpleName());
+						BindArray.class.getSimpleName(), ParserDataType.toObjectiveTypeOrDefault(type).getSimpleName());
 			}
 		},
 
@@ -135,9 +135,9 @@ final class Template<T>{
 				final Class<?> type = binding.type();
 				validateChoice(selectFrom);
 
-				if(DataType.isPrimitive(type))
+				if(ParserDataType.isPrimitive(type))
 					throw new AnnotationException("Bad annotation used for {}, should have been used the type `{}.class`",
-						BindArrayPrimitive.class.getSimpleName(), DataType.toPrimitiveTypeOrDefault(type).getSimpleName());
+						BindArrayPrimitive.class.getSimpleName(), ParserDataType.toPrimitiveTypeOrDefault(type).getSimpleName());
 			}
 		},
 
@@ -149,7 +149,7 @@ final class Template<T>{
 				final Class<?> type = binding.type();
 				validateChoice(selectFrom);
 
-				if(DataType.isPrimitive(type))
+				if(ParserDataType.isPrimitive(type))
 					throw new AnnotationException("Bad annotation used for {}, should have been used one of the primitive type's annotations",
 						BindObject.class.getSimpleName());
 			}
@@ -169,7 +169,7 @@ final class Template<T>{
 			@Override
 			void validate(final Annotation annotation){
 				final Class<?> type = ((BindChecksum)annotation).type();
-				if(!DataType.isPrimitiveOrWrapper(type))
+				if(!ParserDataType.isPrimitiveOrWrapper(type))
 					throw new AnnotationException("Unrecognized type for field {}<{}>: {}", getClass().getSimpleName(), type.getSimpleName(),
 						type.getComponentType().getSimpleName());
 			}
