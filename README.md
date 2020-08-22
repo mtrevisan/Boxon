@@ -31,6 +31,13 @@ Boxon...
  - Hides the complexities of encoding and decoding, thus simplifying the changes to be made to the code due to frequent protocol changes.
  - Can automatically scans and loads all the binding annotations and/or templates from a package.
 
+---
+
+<a name="footnote-1"></a>
+<sub><sup>1</sup> Currently Limbo is merged with Preon... thus rendering Preon not only a parser, but also an evaluator, over-complicating and cluttering the code.</sub>
+
+<br/>
+
 ### Differences from...
 #### Preon
 Boxon differs from Preon in...
@@ -40,14 +47,8 @@ Boxon differs from Preon in...
  - Does not have `BoundList`: since the message is a finite sequence of bytes, then any array is of finite length, and thus the standard java array (`[]`) is sufficient. If someone wants a `List` a converter can be used.
  - Does not rely on the type of the annotated variable (because of the existence of the converters); in fact, the annotation, eventually, serves the purpose to pass a predefined type of data to a converter.<br/>
    For this reason too, there is no need for the `Init` annotation, thus the annotated file can contain the least amount of data necessary for its decoding (moreover, this annotation has NOT the inverse operation -- so it seems to me... so it's pretty useless anyway).
- - (by personal experience) enumerations can have different representations, or change between a version and the next of a protocol, event inside the same protocol (!), so having an annotation that tells the value of a particular element of this enum is at least risky. So, for this reason, the `BoundEnumOption` is not present in this library.
+ - (by personal experience) enumerations can have different representations, or change between a version and the next of a protocol, even inside the same protocol (!), so having an annotation that tells the value of a particular element of this enum is at least risky. So, for this reason, the `BoundEnumOption` is not present in this library.
  - Does read and write more than 64 bits at a time (`BitBuffer.readBits`)
-
-<br/>
----
-
-<a name="footnote-1"></a>
-<sub><sup>1</sup> Currently Limbo is merged with Preon... thus rendering Preon not only a parser, but also an evaluator, over-complicating and cluttering the code.</sub>
 
 <br/>
 
@@ -55,7 +56,7 @@ Boxon differs from Preon in...
 Get them [here](https://github.com/mtrevisan/Boxon/releases/).
 
 ### Boxon as Java dependency
-In order to include Boxon in a Maven project, first add the following dependency to your pom.xml (Java 11 required):
+In order to include Boxon in a Maven project, first add the following dependency to your pom.xml (<b>Java 11 required</b>):
 
 ```xml
 <dependency>
