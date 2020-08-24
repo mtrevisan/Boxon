@@ -62,6 +62,7 @@ class CodecObjectTest{
 			this.major = major;
 			this.minor = minor;
 		}
+
 	}
 
 

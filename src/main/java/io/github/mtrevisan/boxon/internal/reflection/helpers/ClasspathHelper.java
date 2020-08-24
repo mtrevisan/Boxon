@@ -138,10 +138,9 @@ public final class ClasspathHelper{
 
 	/**
 	 * Returns a distinct collection of URLs based on a resource.
-	 * <p>
-	 * This searches for the resource name, using {@link ClassLoader#getResources(String)}.
+	 * <p>This searches for the resource name, using {@link ClassLoader#getResources(String)}.
 	 * For example, {@code forResource(test.properties)} effectively returns URLs from the
-	 * classpath containing files of that name.
+	 * classpath containing files of that name.</p>
 	 * <p>The returned URLs retains the order of the given {@code classLoaders}.</p>
 	 *
 	 * @param resourceName	The resource name.
@@ -240,7 +239,7 @@ public final class ClasspathHelper{
 	}
 
 	/**
-	 * Try to resolve all given string representation of types to a list of java types
+	 * Try to resolve all given string representation of types to a list of java types.
 	 *
 	 * @param classNames	The class names.
 	 * @return	The classes.
