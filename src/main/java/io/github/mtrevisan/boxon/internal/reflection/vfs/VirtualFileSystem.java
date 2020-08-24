@@ -35,10 +35,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.jar.JarFile;
 
@@ -60,45 +58,44 @@ public final class VirtualFileSystem{
 
 	private static final Logger LOGGER = JavaHelper.getLoggerFor(VirtualFileSystem.class);
 
-	private static final List<UrlType> DEFAULT_URL_TYPES = new ArrayList<>(Arrays.asList(DefaultUrlTypes.values()));
-
 
 	private VirtualFileSystem(){}
 
 	/**
-	 * Tries to create a Dir from the given url, using the defaultUrlTypes
+	 * Tries to create a VFSDirectory from a given URL.
 	 *
 	 * @param url	The URL.
-	 * @return	The Dir from the given {@code url}.
+	 * @return	The VFSDirectory from the given {@code url}.
 	 */
 	public static VFSDirectory fromURL(final URL url){
-		for(final UrlType type : DEFAULT_URL_TYPES){
-			try{
-				if(type.matches(url)){
+		for(final UrlType type : DefaultUrlTypes.values())
+			if(type.matches(url)){
+				try{
 					final VFSDirectory directory = type.createDirectory(url);
 					if(directory != null)
 						return directory;
 				}
+				catch(final Throwable e){
+					if(LOGGER != null)
+						LOGGER.warn("Could not create VFSDirectory using {} from URL {}: skipping", type, url.toExternalForm(), e);
+				}
 			}
-			catch(final Throwable e){
-				if(LOGGER != null)
-					LOGGER.warn("Could not create VFSDirectory using {} from URL {}: skipping", type, url.toExternalForm(), e);
-			}
-		}
 
 		throw new VFSException("Could not create VFSDirectory from URL, no matching UrlType was found [{}]\n"
 			+ "either use fromURL(final URL url) with your specialized UrlType.", url.toExternalForm());
 	}
 
 	/**
-	 * Default url types used by {@link VirtualFileSystem#fromURL(URL)}.
-	 * <p>JAR_FILE - creates a {@link ZipDirectory} over JAR file.
-	 * <p>JAR_URL - creates a {@link ZipDirectory} over a JAR URL (contains {@code ".jar!/"} in it's name), using Java's
-	 * {@link JarURLConnection}.
-	 * <p>DIRECTORY - creates a {@link SystemDirectory} over a file system directory.
-	 * <p>BUNDLE - for bundle protocol, using eclipse FileLocator (should be provided in classpath).
-	 * <p>JAR_INPUT_STREAM - creates a {@link JarInputDirectory} over JAR files, using Java's
-	 * {@link java.util.jar.JarInputStream JarInputStream}.
+	 * Default URL types used by {@link VirtualFileSystem#fromURL(URL)}:
+	 * <ul>
+	 * 	<li>JAR_FILE - creates a {@link ZipDirectory} over JAR file.</li>
+	 * 	<li>JAR_URL - creates a {@link ZipDirectory} over a JAR URL (contains {@code ".jar!/"} in it's name), using Java's
+	 * 	{@link JarURLConnection}.</li>
+	 * 	<li>DIRECTORY - creates a {@link SystemDirectory} over a file system directory.</li>
+	 * 	<li>BUNDLE - for bundle protocol, using eclipse FileLocator (should be provided in classpath).</li>
+	 * 	<li>JAR_INPUT_STREAM - creates a {@link JarInputDirectory} over JAR files, using Java's
+	 * 	{@link java.util.jar.JarInputStream JarInputStream}.</li>
+	 * </ul>
 	 */
 	enum DefaultUrlTypes implements UrlType{
 		JAR_FILE{

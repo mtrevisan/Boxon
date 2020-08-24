@@ -157,9 +157,8 @@ public final class ReflectionHelper{
 			if(ancestorType instanceof ParameterizedType)
 				//ancestor is parameterized: process only if the raw type matches the base class
 				type = manageParameterizedAncestor((ParameterizedType)ancestorType, base, typeVariables);
-			else if(ancestorType instanceof Class<?>
+			else if(ancestorType instanceof Class<?> && base.isAssignableFrom((Class<?>)ancestorType))
 				//ancestor is non-parameterized: process only if it matches the base class
-					&& base.isAssignableFrom((Class<?>)ancestorType))
 				ancestorsQueue.add(ancestorType);
 		}
 		if(type == null && offspring.equals(base))
