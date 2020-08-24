@@ -68,7 +68,7 @@ final class Template<T>{
 		private final Annotation binding;
 
 		//FIXME https://www.jboss.org/optaplanner/blog/2018/01/09/JavaReflectionButMuchFaster.html
-		//extract a list of getters/setters?
+		//extract getter and setter?
 
 
 		private BoundedField(final Field field, final Skip[] skips, final Annotation binding){
