@@ -80,7 +80,7 @@ final class Template<T>{
 			return field.getName();
 		}
 
-		Object getFieldValue(final Object obj){
+		<T> T getFieldValue(final Object obj){
 			return ReflectionHelper.getFieldValue(field, obj);
 		}
 

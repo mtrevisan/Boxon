@@ -163,7 +163,7 @@ final class TemplateParser{
 				.get();
 			final long startValue = checksum.startValue();
 			final long calculatedChecksum = checksummer.calculateChecksum(reader.array(), startPosition, endPosition, startValue);
-			final Number givenChecksum = (Number)checksumData.getFieldValue(data);
+			final Number givenChecksum = checksumData.getFieldValue(data);
 			if(givenChecksum == null)
 				throw new IllegalArgumentException("Something bad happened, cannot read message checksum");
 			if(calculatedChecksum != givenChecksum.longValue())
