@@ -219,6 +219,7 @@ public final class ReflectionHelper{
 		}
 		catch(final IllegalArgumentException | IllegalAccessException ignored){
 			//cannot happen
+			ignored.printStackTrace();
 			return null;
 		}
 	}
@@ -339,6 +340,7 @@ public final class ReflectionHelper{
 			}
 			catch(final Exception ignored){
 				//cannot happen
+				ignored.printStackTrace();
 				return null;
 			}
 		};

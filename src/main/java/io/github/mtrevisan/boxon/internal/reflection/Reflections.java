@@ -119,6 +119,7 @@ public final class Reflections{
 		}
 		catch(final MalformedURLException ignored){
 			//cannot happen
+			ignored.printStackTrace();
 		}
 		return urls.toArray(URL[]::new);
 	}

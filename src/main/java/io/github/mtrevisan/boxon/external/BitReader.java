@@ -198,6 +198,7 @@ public final class BitReader{
 			case DOUBLE:
 				return getDouble(byteOrder);
 		}
+
 		//cannot happen
 		return null;
 	}

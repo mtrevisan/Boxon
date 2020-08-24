@@ -61,9 +61,9 @@ class ZipDirectory implements VFSDirectory{
 		try{
 			return jarFile.getInputStream(((ZipFile)file).entry);
 		}
-		catch(final IOException e){
+		catch(final IOException ignored){
 			//cannot happen
-			e.printStackTrace();
+			ignored.printStackTrace();
 			return null;
 		}
 	}
