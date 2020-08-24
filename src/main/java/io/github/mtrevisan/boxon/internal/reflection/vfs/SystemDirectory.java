@@ -47,7 +47,7 @@ class SystemDirectory implements VFSDirectory{
 
 	SystemDirectory(final File file){
 		if(file != null && (!file.isDirectory() || !file.canRead()))
-			throw new RuntimeException("cannot use dir " + file);
+			throw new RuntimeException("Cannot use directory " + file);
 
 		this.file = file;
 	}

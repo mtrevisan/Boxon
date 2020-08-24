@@ -196,9 +196,9 @@ final class Template<T>{
 		private static void validateChoice(final ObjectChoices selectFrom){
 			final int prefixSize = selectFrom.prefixSize();
 			if(prefixSize < 0)
-				throw new AnnotationException("`prefixSize` must be a non-negative number");
+				throw new AnnotationException("Prefix size must be a non-negative number");
 			if(prefixSize > Integer.SIZE)
-				throw new AnnotationException("`prefixSize` cannot be greater than {} bits", Integer.SIZE);
+				throw new AnnotationException("Prefix size cannot be greater than {} bits", Integer.SIZE);
 
 			final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
 			if(prefixSize > 0){
