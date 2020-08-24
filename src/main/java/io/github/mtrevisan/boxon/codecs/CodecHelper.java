@@ -53,8 +53,7 @@ final class CodecHelper{
 	private CodecHelper(){}
 
 	static ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> type){
-		for(int i = 0; i < alternatives.length; i ++){
-			final ObjectChoices.ObjectChoice alternative = alternatives[i];
+		for(final ObjectChoices.ObjectChoice alternative : alternatives){
 			if(alternative.type() == type)
 				return alternative;
 		}
@@ -89,8 +88,7 @@ final class CodecHelper{
 	}
 
 	private static ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Object rootObject){
-		for(int i = 0; i < alternatives.length; i ++){
-			final ObjectChoices.ObjectChoice alternative = alternatives[i];
+		for(final ObjectChoices.ObjectChoice alternative : alternatives){
 			if(Evaluator.evaluate(alternative.condition(), rootObject, boolean.class))
 				return alternative;
 		}
@@ -100,8 +98,7 @@ final class CodecHelper{
 	static Class<? extends Converter<?, ?>> chooseConverter(final ConverterChoices selectConverterFrom, final Class<? extends Converter<?, ?>> baseConverter,
 			final Object rootObject){
 		final ConverterChoices.ConverterChoice[] alternatives = selectConverterFrom.alternatives();
-		for(int i = 0; i < alternatives.length; i ++){
-			final ConverterChoices.ConverterChoice alternative = alternatives[i];
+		for(final ConverterChoices.ConverterChoice alternative : alternatives){
 			if(Evaluator.evaluate(alternative.condition(), rootObject, boolean.class))
 				return alternative.converter();
 		}

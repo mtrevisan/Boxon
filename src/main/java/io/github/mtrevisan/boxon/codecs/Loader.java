@@ -130,9 +130,9 @@ final class Loader{
 
 	private void addCodecsInner(final CodecInterface<?>[] codecs){
 		//load each codec into the available codec list
-		for(int i = 0; i < codecs.length; i ++)
-			if(codecs[i] != null)
-				addCodecInner(codecs[i]);
+		for(final CodecInterface<?> codec : codecs)
+			if(codec != null)
+				addCodecInner(codec);
 	}
 
 	private void addCodecInner(final CodecInterface<?> codec){
@@ -197,9 +197,9 @@ final class Loader{
 
 	private void addTemplatesInner(final Template<?>[] templates){
 		//load each template into the available templates list
-		for(int i = 0; i < templates.length; i ++)
-			if(templates[i] != null && templates[i].canBeCoded())
-				addTemplateInner(templates[i]);
+		for(final Template<?> template : templates)
+			if(template != null && template.canBeCoded())
+				addTemplateInner(template);
 	}
 
 	/**
@@ -212,8 +212,8 @@ final class Loader{
 			final MessageHeader header = template.getHeader();
 			final Charset charset = Charset.forName(header.charset());
 			final String[] starts = header.start();
-			for(int i = 0; i < starts.length; i ++)
-				loadTemplateInner(template, starts[i], charset);
+			for(final String start : starts)
+				loadTemplateInner(template, start, charset);
 		}
 		catch(final Exception e){
 			if(LOGGER != null)
@@ -319,8 +319,8 @@ final class Loader{
 		final Charset charset = Charset.forName(header.charset());
 		final String[] messageStarts = header.start();
 		//select the minimum index with a valid template
-		for(int i = 0; i < messageStarts.length; i ++){
-			final int offset = searchNextSequence(reader, messageStarts[i].getBytes(charset));
+		for(final String messageStart : messageStarts){
+			final int offset = searchNextSequence(reader, messageStart.getBytes(charset));
 			if(offset >= 0 && (minOffset < 0 || offset < minOffset))
 				minOffset = offset;
 		}

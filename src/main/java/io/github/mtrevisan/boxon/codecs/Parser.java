@@ -289,8 +289,8 @@ public class Parser{
 		final ComposeResponse response = new ComposeResponse();
 
 		final BitWriter writer = new BitWriter();
-		for(int i = 0; i < data.length; i ++)
-			compose(writer, data[i], response);
+		for(final Object datum : data)
+			compose(writer, datum, response);
 		writer.flush();
 
 		response.setComposedMessage(writer.array());

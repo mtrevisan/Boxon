@@ -284,8 +284,7 @@ final class Template<T>{
 
 	private DynamicArray<Annotation> extractAnnotations(final Annotation[] declaredAnnotations, final Function<Class<? extends Annotation>, Boolean> hasCodec){
 		final DynamicArray<Annotation> annotations = DynamicArray.create(Annotation.class, declaredAnnotations.length);
-		for(int i = 0; i < declaredAnnotations.length; i ++){
-			final Annotation annotation = declaredAnnotations[i];
+		for(final Annotation annotation : declaredAnnotations){
 			final Class<? extends Annotation> annotationType = annotation.annotationType();
 			//NOTE: cannot throw an exception if the loader does not have the codec, due to the possible presence of other
 			//annotations that have nothing to do with this library
@@ -298,10 +297,9 @@ final class Template<T>{
 
 	private DynamicArray<EvaluatedField> extractEvaluations(final Annotation[] declaredAnnotations, final Field field){
 		final DynamicArray<EvaluatedField> evaluations = DynamicArray.create(EvaluatedField.class, declaredAnnotations.length);
-		for(int i = 0; i < declaredAnnotations.length; i ++){
-			final Annotation annotation = declaredAnnotations[i];
+		for(final Annotation annotation : declaredAnnotations){
 			if(annotation.annotationType() == Evaluate.class)
-				evaluations.add(new EvaluatedField(field, (Evaluate)annotation));
+				evaluations.add(new EvaluatedField(field, (Evaluate) annotation));
 		}
 		return evaluations;
 	}

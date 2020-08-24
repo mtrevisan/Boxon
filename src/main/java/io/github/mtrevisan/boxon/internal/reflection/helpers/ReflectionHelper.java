@@ -258,8 +258,7 @@ public final class ReflectionHelper{
 
 	private static DynamicArray<Field> filterAccessibleFields(final Field[] fields, final Class<?> fieldType){
 		final DynamicArray<Field> result = DynamicArray.create(Field.class, fields.length);
-		for(int i = 0; i < fields.length; i ++){
-			final Field field = fields[i];
+		for(final Field field : fields){
 			if(field.getType() == fieldType){
 				field.setAccessible(true);
 				result.add(field);

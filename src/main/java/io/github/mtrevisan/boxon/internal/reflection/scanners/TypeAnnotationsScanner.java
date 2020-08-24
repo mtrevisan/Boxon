@@ -35,8 +35,8 @@ public class TypeAnnotationsScanner extends AbstractScanner{
 		final String className = METADATA_ADAPTER.getClassName(cls);
 
 		final String[] classAnnotationNames = METADATA_ADAPTER.getClassAnnotationNames(cls);
-		for(int i = 0; i < classAnnotationNames.length; i ++)
-			put(classAnnotationNames[i], className);
+		for(final String classAnnotationName : classAnnotationNames)
+			put(classAnnotationName, className);
 	}
 
 }

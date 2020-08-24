@@ -101,17 +101,16 @@ public final class BitSet{
 
 	private BitSet(final byte[] words){
 		int length = 0;
-		for(int i = 0; i < words.length; i ++)
-			length += Integer.bitCount(words[i] & 0xFF);
+		for(final byte word : words)
+			length += Integer.bitCount(word & 0xFF);
 
 		indexes = new int[length];
 		int k = 0;
 		int offset = 0;
-		for(int i = 0; i < words.length; i ++){
-			byte word = words[i];
+		for(byte word : words){
 			while(word != 0){
 				final int skip = Integer.numberOfTrailingZeros(word);
-				indexes[k ++] = skip + offset;
+				indexes[k++] = skip + offset;
 				word ^= 1 << skip;
 			}
 			offset += Byte.SIZE;
@@ -121,17 +120,16 @@ public final class BitSet{
 
 	private BitSet(final long[] words){
 		int length = 0;
-		for(int i = 0; i < words.length; i ++)
-			length += Long.bitCount(words[i]);
+		for(final long word : words)
+			length += Long.bitCount(word);
 
 		indexes = new int[length];
 		int k = 0;
 		int offset = 0;
-		for(int i = 0; i < words.length; i ++){
-			long word = words[i];
+		for(long word : words){
 			while(word != 0l){
 				final int skip = Long.numberOfTrailingZeros(word);
-				indexes[k ++] = skip + offset;
+				indexes[k++] = skip + offset;
 				word ^= 1l << skip;
 			}
 			offset += Long.SIZE;
@@ -204,8 +202,7 @@ public final class BitSet{
 			return new byte[]{0};
 
 		final byte[] bytes = new byte[(indexes[cardinality - 1] >>> 3) + 1];
-		for(int i = 0; i < indexes.length; i ++){
-			final int index = indexes[i];
+		for(final int index : indexes){
 			bytes[index >>> 3] |= 1 << (index % Byte.SIZE);
 		}
 		return bytes;

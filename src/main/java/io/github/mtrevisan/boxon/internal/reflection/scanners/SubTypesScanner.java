@@ -37,9 +37,9 @@ public class SubTypesScanner extends AbstractScanner{
 
 		put(superclass, className);
 
-		final String[] interfacesNames = METADATA_ADAPTER.getInterfacesNames(cls);
-		for(int i = 0; i < interfacesNames.length; i ++)
-			put(interfacesNames[i], className);
+		final String[] interfaceNames = METADATA_ADAPTER.getInterfacesNames(cls);
+		for(final String interfaceName : interfaceNames)
+			put(interfaceName, className);
 	}
 
 }

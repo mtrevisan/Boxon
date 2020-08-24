@@ -79,8 +79,8 @@ class JavassistAdapter implements MetadataAdapterInterface<ClassFile>{
 	private void extractAnnotationNames(final AnnotationsAttribute attribute, final DynamicArray<String> list){
 		if(attribute != null){
 			final Annotation[] annotations = attribute.getAnnotations();
-			for(int i = 0; i < annotations.length; i ++)
-				list.add(annotations[i].getTypeName());
+			for(final Annotation annotation : annotations)
+				list.add(annotation.getTypeName());
 		}
 	}
 

@@ -126,8 +126,8 @@ public final class Reflections{
 
 	private static Set<URI> convertIntoURI(final Class<?>[] classes){
 		final Set<URI> uris = new HashSet<>(classes.length);
-		for(int i = 0; i < classes.length; i ++){
-			final Collection<URL> urls = ClasspathHelper.forPackage(classes[i].getPackageName());
+		for(final Class<?> cls : classes){
+			final Collection<URL> urls = ClasspathHelper.forPackage(cls.getPackageName());
 			collectURIs(urls, uris);
 		}
 		return uris;

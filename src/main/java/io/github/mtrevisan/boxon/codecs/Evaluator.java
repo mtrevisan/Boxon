@@ -53,8 +53,7 @@ final class Evaluator{
 				Class<?> currentType = cls;
 				while(currentType != Object.class){
 					final Field[] fields = currentType.getDeclaredFields();
-					for(int i = 0; i < fields.length; i ++){
-						final Field field = fields[i];
+					for(final Field field : fields){
 						if(field.getName().equals(name) && (!mustBeStatic || Modifier.isStatic(field.getModifiers())))
 							return field;
 					}
