@@ -210,7 +210,6 @@ public final class ReflectionHelper{
 	}
 
 
-	//FIXME https://www.jboss.org/optaplanner/blog/2018/01/09/JavaReflectionButMuchFaster.html
 	@SuppressWarnings("unchecked")
 	public static <T> T getFieldValue(final Field field, final Object obj){
 		try{
@@ -223,7 +222,6 @@ public final class ReflectionHelper{
 		}
 	}
 
-	//FIXME https://www.jboss.org/optaplanner/blog/2018/01/09/JavaReflectionButMuchFaster.html
 	public static void setFieldValue(final Field field, final Object obj, final Object value){
 		try{
 			field.set(obj, value);
