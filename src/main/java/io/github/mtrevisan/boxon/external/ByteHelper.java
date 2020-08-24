@@ -82,8 +82,8 @@ public final class ByteHelper{
 	}
 
 	public static boolean hasBit(final byte[] mask, final int index){
-		if(index < 0 || index >= mask.length * Byte.SIZE)
-			throw new IllegalArgumentException("Index value must be between 0 and " + (mask.length * Byte.SIZE) + " exclusive, was " + index);
+		if(index < 0 || index >= mask.length << 3)
+			throw new IllegalArgumentException("Index value must be between 0 and " + (mask.length << 3) + " exclusive, was " + index);
 
 		final int bitGroup = mask.length - 1 - (index >>> 3);
 		final int bitMask = 1 << (index % Byte.SIZE);

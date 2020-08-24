@@ -64,7 +64,7 @@ public class BNDMPatternMatcher implements PatternMatcher{
 			if(pattern[i] == wildcard)
 				j |= 1 << (pattern.length - i - 1);
 
-		final int[] b = new int[Integer.SIZE * Byte.SIZE];
+		final int[] b = new int[Integer.SIZE << 3];
 		if(j != 0)
 			Arrays.fill(b, j);
 
@@ -83,7 +83,7 @@ public class BNDMPatternMatcher implements PatternMatcher{
 		if(pattern.length >= Integer.SIZE)
 			throw new IllegalArgumentException("Cannot process a pattern whose length exceeds " + (Integer.SIZE - 1) + " bytes");
 
-		final int[] b = new int[Integer.SIZE * Byte.SIZE];
+		final int[] b = new int[Integer.SIZE << 3];
 		return fill(pattern, b);
 	}
 
