@@ -210,32 +210,7 @@ public final class ReflectionHelper{
 	}
 
 
-	//https://www.jboss.org/optaplanner/blog/2018/01/09/JavaReflectionButMuchFaster.html
-	@SuppressWarnings("unchecked")
-	public static <T> T getFieldValue(final Object obj, final String fieldName){
-		try{
-			final Field field = getAccessibleField(obj.getClass(), fieldName);
-			return (T)field.get(obj);
-		}
-		catch(final IllegalArgumentException | IllegalAccessException ignored){
-			//cannot happen
-			ignored.printStackTrace();
-			return null;
-		}
-	}
-
-	public static void setFieldValue(final Object obj, final String fieldName, final Object value){
-		final Field field = getAccessibleField(obj.getClass(), fieldName);
-		try{
-			field.set(obj, value);
-		}
-		catch(final IllegalArgumentException ignored){
-			throw new IllegalArgumentException("Can not set " + field.getType().getSimpleName() + " field to "
-				+ value.getClass().getSimpleName());
-		}
-		catch(final IllegalAccessException ignored){}
-	}
-
+	//FIXME https://www.jboss.org/optaplanner/blog/2018/01/09/JavaReflectionButMuchFaster.html
 	public static <T> void setFieldValue(final Object obj, final Class<T> fieldType, final T value){
 		try{
 			final DynamicArray<Field> fields = getAccessibleFields(obj.getClass(), fieldType);
@@ -243,22 +218,6 @@ public final class ReflectionHelper{
 				fields.data[i].set(obj, value);
 		}
 		catch(final IllegalArgumentException | IllegalAccessException ignored){}
-	}
-
-	private static Field getAccessibleField(Class<?> cls, final String fieldName){
-		Field field = null;
-		while(cls != Object.class){
-			try{
-				field = cls.getDeclaredField(fieldName);
-				field.setAccessible(true);
-				break;
-			}
-			catch(final NoSuchFieldException | SecurityException e){
-				//go up to parent class
-				cls = cls.getSuperclass();
-			}
-		}
-		return field;
 	}
 
 	private static DynamicArray<Field> getAccessibleFields(Class<?> cls, final Class<?> fieldType){
@@ -338,9 +297,9 @@ public final class ReflectionHelper{
 			try{
 				return constructor.newInstance();
 			}
-			catch(final Exception ignored){
+			catch(final Exception e){
 				//cannot happen
-				ignored.printStackTrace();
+				e.printStackTrace();
 				return null;
 			}
 		};

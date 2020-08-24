@@ -96,11 +96,17 @@ final class TemplateParser{
 				decodeField(template, reader, parserContext, field);
 		}
 
-		processEvaluatedFields(template, parserContext.rootObject);
+		try{
+			processEvaluatedFields(template, parserContext.rootObject);
 
-		readMessageTerminator(template, reader);
+			readMessageTerminator(template, reader);
 
-		verifyChecksum(template, currentObject, startPosition, reader);
+			verifyChecksum(template, currentObject, startPosition, reader);
+		}
+		catch(final IllegalAccessException e){
+			//cannot happen
+			e.printStackTrace();
+		}
 
 		return currentObject;
 	}
@@ -112,15 +118,15 @@ final class TemplateParser{
 
 		try{
 			if(LOGGER != null && LOGGER.isTraceEnabled())
-				LOGGER.trace("reading {}.{} with bind {}", template, field.getName(), binding.annotationType().getSimpleName());
+				LOGGER.trace("reading {}.{} with bind {}", template, field.getFieldName(), binding.annotationType().getSimpleName());
 
 			//decode value from raw message
 			final Object value = codec.decode(reader, binding, parserContext.rootObject);
 			//store value in the current object
-			ReflectionHelper.setFieldValue(parserContext.currentObject, field.getName(), value);
+			field.setFieldValue(parserContext.currentObject, value);
 
 			if(LOGGER != null && LOGGER.isTraceEnabled())
-				LOGGER.trace("read {}.{} = {}", template, field.getName(), value);
+				LOGGER.trace("read {}.{} = {}", template, field.getFieldName(), value);
 		}
 		catch(final Exception e){
 			//this assumes the reading was done correctly
@@ -152,7 +158,7 @@ final class TemplateParser{
 		}
 	}
 
-	private <T> void verifyChecksum(final Template<T> template, final T data, int startPosition, final BitReader reader){
+	private <T> void verifyChecksum(final Template<T> template, final T data, int startPosition, final BitReader reader) throws IllegalAccessException{
 		if(template.isChecksumPresent()){
 			final Template.BoundedField checksumData = template.getChecksum();
 			final BindChecksum checksum = (BindChecksum)checksumData.getBinding();
@@ -163,7 +169,7 @@ final class TemplateParser{
 				.get();
 			final long startValue = checksum.startValue();
 			final long calculatedChecksum = checksummer.calculateChecksum(reader.array(), startPosition, endPosition, startValue);
-			final Number givenChecksum = ReflectionHelper.getFieldValue(data, checksumData.getName());
+			final Number givenChecksum = (Number)checksumData.getFieldValue(data);
 			if(givenChecksum == null)
 				throw new IllegalArgumentException("Something bad happened, cannot read message checksum");
 			if(calculatedChecksum != givenChecksum.longValue())
@@ -172,7 +178,7 @@ final class TemplateParser{
 		}
 	}
 
-	private void processEvaluatedFields(final Template<?> template, final Object rootObject){
+	private void processEvaluatedFields(final Template<?> template, final Object rootObject) throws IllegalAccessException{
 		final DynamicArray<Template.EvaluatedField> evaluatedFields = template.getEvaluatedFields();
 		for(int i = 0; i < evaluatedFields.limit; i ++){
 			final Template.EvaluatedField field = evaluatedFields.data[i];
@@ -180,7 +186,7 @@ final class TemplateParser{
 			final boolean process = (condition.isEmpty() || Evaluator.evaluate(condition, rootObject, boolean.class));
 			if(process){
 				final Object value = Evaluator.evaluate(field.getBinding().value(), rootObject, field.getType());
-				ReflectionHelper.setFieldValue(rootObject, field.getName(), value);
+				field.setFieldValue(rootObject, value);
 			}
 		}
 	}
@@ -219,16 +225,16 @@ final class TemplateParser{
 
 		try{
 			if(LOGGER != null && LOGGER.isTraceEnabled())
-				LOGGER.trace("writing {}.{} with bind {}", template.getType().getSimpleName(), field.getName(),
+				LOGGER.trace("writing {}.{} with bind {}", template.getType().getSimpleName(), field.getFieldName(),
 					binding.annotationType().getSimpleName());
 
 			//encode value from current object
-			final Object value = ReflectionHelper.getFieldValue(parserContext.currentObject, field.getName());
+			final Object value = field.getFieldValue(parserContext.currentObject);
 			//write value to raw message
 			codec.encode(writer, binding, parserContext.rootObject, value);
 
 			if(LOGGER != null && LOGGER.isTraceEnabled())
-				LOGGER.trace("wrote {}.{} = {}", template.getType().getSimpleName(), field.getName(), value);
+				LOGGER.trace("wrote {}.{} = {}", template.getType().getSimpleName(), field.getFieldName(), value);
 		}
 		catch(final Exception e){
 			//this assumes the writing was done correctly
@@ -267,7 +273,7 @@ final class TemplateParser{
 
 	private void rethrowException(final Template<?> template, final Template.BoundedField field, final Exception e){
 		final String message = ExceptionHelper.getMessageNoLineNumber(e);
-		throw new RuntimeException(message + " in field " + template + "." + field.getName());
+		throw new RuntimeException(message + " in field " + template + "." + field.getFieldName());
 	}
 
 	private void writeSkip(final Skip skip, final BitWriter writer, final Object rootObject){

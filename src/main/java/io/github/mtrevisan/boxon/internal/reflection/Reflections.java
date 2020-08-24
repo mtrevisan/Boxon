@@ -117,9 +117,9 @@ public final class Reflections{
 			for(final URI uri : uris)
 				urls.add(uri.toURL());
 		}
-		catch(final MalformedURLException ignored){
+		catch(final MalformedURLException e){
 			//cannot happen
-			ignored.printStackTrace();
+			e.printStackTrace();
 		}
 		return urls.toArray(URL[]::new);
 	}

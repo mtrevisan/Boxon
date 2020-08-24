@@ -186,13 +186,13 @@ class TemplateTest{
 		Assertions.assertNotNull(evaluatedFields);
 		Assertions.assertEquals(1, evaluatedFields.limit);
 		Template.EvaluatedField evaluatedField = evaluatedFields.data[0];
-		Assertions.assertEquals("receptionTime", evaluatedField.getName());
+		Assertions.assertEquals("receptionTime", evaluatedField.getFieldName());
 		Assertions.assertEquals(ZonedDateTime.class, evaluatedField.getType());
 		Evaluate evaluate = evaluatedField.getBinding();
 		Assertions.assertEquals("T(java.time.ZonedDateTime).now()", evaluate.value());
 		Template.BoundedField checksumField = template.getChecksum();
 		Assertions.assertNotNull(checksumField);
-		Assertions.assertEquals("checksum", checksumField.getName());
+		Assertions.assertEquals("checksum", checksumField.getFieldName());
 		Annotation checksum = checksumField.getBinding();
 		Assertions.assertEquals(BindChecksum.class, checksum.annotationType());
 		BindChecksum cs = new BindChecksum(){
@@ -252,7 +252,7 @@ class TemplateTest{
 		Assertions.assertEquals(16, boundedFields.limit);
 		Template.BoundedField childField = boundedFields.data[boundedFields.limit - 1];
 		Assertions.assertNotNull(childField);
-		Assertions.assertEquals("anotherNumberInt", childField.getName());
+		Assertions.assertEquals("anotherNumberInt", childField.getFieldName());
 	}
 
 }
