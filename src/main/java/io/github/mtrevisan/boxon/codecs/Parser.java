@@ -110,7 +110,7 @@ public class Parser{
 	 * 		{@link SecurityManager#checkPermission s.checkPermission} method with
 	 * 		{@code RuntimePermission("accessDeclaredMembers")} denies access to the declared method.</li>
 	 *			<li>the caller's class loader is not the same as or an ancestor of the class loader for the current class and
-	 *  		invocation of {@link SecurityManager#checkPackageAccess s.checkPackageAccess()} denies access to the package
+	 * 		invocation of {@link SecurityManager#checkPackageAccess s.checkPackageAccess()} denies access to the package
 	 * 		of this class.</li>
 	 * 	</ul>
 	 */

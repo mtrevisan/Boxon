@@ -35,9 +35,9 @@ import java.util.Arrays;
  *
  * <pre><code>
  *  Preprocessing: O(m)
- *  Searching    : O(n/m)	(best case)
- *                 O(n * log<sub>&sum;</sub>(m) / m)	(average)
- *                 O(mn)	(worst case)
+ *  Searching    : O(n / m)	(best case)
+ *                 O(n · log<sub>&sum;</sub>(m) / m)	(average)
+ *                 O(m · n)	(worst case)
  * </code></pre>
  *
  * @see <a href="https://github.com/johannburkard/StringSearch">StringSearch</a>
