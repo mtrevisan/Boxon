@@ -36,7 +36,7 @@ import java.util.Arrays;
  * <pre><code>
  *  Preprocessing: O(m)
  *  Searching    : O(n / m)	(best case)
- *                 O(n · log<sub>&sum;</sub>(m) / m)	(average)
+ *                 O(n · log<sub>&Sigma;</sub>(m) / m)	(average)
  *                 O(m · n)	(worst case)
  * </code></pre>
  *

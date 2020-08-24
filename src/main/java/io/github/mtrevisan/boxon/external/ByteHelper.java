@@ -85,7 +85,7 @@ public final class ByteHelper{
 		if(index < 0 || index >= mask.length * Byte.SIZE)
 			throw new IllegalArgumentException("Index value must be between 0 and " + (mask.length * Byte.SIZE) + " exclusive, was " + index);
 
-		final int bitGroup = mask.length - 1 - index / Byte.SIZE;
+		final int bitGroup = mask.length - 1 - (index >>> 3);
 		final int bitMask = 1 << (index % Byte.SIZE);
 		return ((mask[bitGroup] & bitMask) != 0);
 	}

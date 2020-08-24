@@ -438,7 +438,7 @@ public final class BitReader{
 	 * @return	The position of the backing buffer in {@code byte}s.
 	 */
 	public int position(){
-		return buffer.position() - (remaining + Byte.SIZE - 1) / Byte.SIZE;
+		return buffer.position() - ((remaining + Byte.SIZE - 1) >>> 3);
 	}
 
 	/**

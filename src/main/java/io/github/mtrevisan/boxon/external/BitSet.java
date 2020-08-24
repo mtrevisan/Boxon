@@ -84,7 +84,7 @@ public final class BitSet{
 	 */
 	public static BitSet valueOf(final BigInteger value, final int size, final ByteOrder byteOrder){
 		byte[] array = value.toByteArray();
-		final int newSize = (size + Byte.SIZE - 1) / Byte.SIZE;
+		final int newSize = (size + Byte.SIZE - 1) >>> 3;
 		if(newSize != array.length){
 			final int offset = Math.max(array.length - newSize, 0);
 			final byte[] newArray = new byte[newSize];
@@ -203,10 +203,10 @@ public final class BitSet{
 		if(cardinality == 0)
 			return new byte[]{0};
 
-		final byte[] bytes = new byte[indexes[cardinality - 1] / Byte.SIZE + 1];
+		final byte[] bytes = new byte[(indexes[cardinality - 1] >>> 3) + 1];
 		for(int i = 0; i < indexes.length; i ++){
 			final int index = indexes[i];
-			bytes[index / Byte.SIZE] |= 1 << (index % Byte.SIZE);
+			bytes[index >>> 3] |= 1 << (index % Byte.SIZE);
 		}
 		return bytes;
 	}
@@ -237,7 +237,7 @@ public final class BitSet{
 
 	public BigInteger toInteger(final int size, final ByteOrder byteOrder, final boolean unsigned){
 		byte[] array = toByteArray();
-		final int expectedLength = size / Byte.SIZE;
+		final int expectedLength = size >>> 3;
 		if(array.length < expectedLength)
 			array = Arrays.copyOf(array, expectedLength);
 		if(byteOrder == ByteOrder.LITTLE_ENDIAN)
