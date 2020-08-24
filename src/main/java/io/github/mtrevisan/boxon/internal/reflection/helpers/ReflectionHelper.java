@@ -210,6 +210,31 @@ public final class ReflectionHelper{
 	}
 
 
+	//FIXME https://www.jboss.org/optaplanner/blog/2018/01/09/JavaReflectionButMuchFaster.html
+	@SuppressWarnings("unchecked")
+	public static <T> T getFieldValue(final Field field, final Object obj){
+		try{
+			return (T)field.get(obj);
+		}
+		catch(final IllegalArgumentException | IllegalAccessException ignored){
+			//cannot happen
+			ignored.printStackTrace();
+			return null;
+		}
+	}
+
+	//FIXME https://www.jboss.org/optaplanner/blog/2018/01/09/JavaReflectionButMuchFaster.html
+	public static void setFieldValue(final Field field, final Object obj, final Object value){
+		try{
+			field.set(obj, value);
+		}
+		catch(final IllegalArgumentException ignored){
+			throw new IllegalArgumentException("Can not set " + field.getType().getSimpleName() + " field to "
+				+ value.getClass().getSimpleName());
+		}
+		catch(final IllegalAccessException ignored){}
+	}
+
 	public static <T> void setFieldValue(final Object obj, final Class<T> fieldType, final T value){
 		try{
 			final DynamicArray<Field> fields = getAccessibleFields(obj.getClass(), fieldType);

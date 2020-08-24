@@ -67,9 +67,6 @@ final class Template<T>{
 		private final Skip[] skips;
 		private final Annotation binding;
 
-		//FIXME https://www.jboss.org/optaplanner/blog/2018/01/09/JavaReflectionButMuchFaster.html
-		//add list of getters/setters, in replacement of ReflectionHelper?
-
 
 		private BoundedField(final Field field, final Skip[] skips, final Annotation binding){
 			field.setAccessible(true);
@@ -83,12 +80,12 @@ final class Template<T>{
 			return field.getName();
 		}
 
-		Object getFieldValue(final Object obj) throws IllegalAccessException{
-			return field.get(obj);
+		Object getFieldValue(final Object obj){
+			return ReflectionHelper.getFieldValue(field, obj);
 		}
 
-		void setFieldValue(final Object obj, final Object value) throws IllegalAccessException{
-			field.set(obj, value);
+		void setFieldValue(final Object obj, final Object value){
+			ReflectionHelper.setFieldValue(field, obj, value);
 		}
 
 		Skip[] getSkips(){
@@ -122,8 +119,8 @@ final class Template<T>{
 			return field.getName();
 		}
 
-		void setFieldValue(final Object obj, final Object value) throws IllegalAccessException{
-			field.set(obj, value);
+		void setFieldValue(final Object obj, final Object value){
+			ReflectionHelper.setFieldValue(field, obj, value);
 		}
 
 		Class<?> getType(){

@@ -96,17 +96,11 @@ final class TemplateParser{
 				decodeField(template, reader, parserContext, field);
 		}
 
-		try{
-			processEvaluatedFields(template, parserContext.rootObject);
+		processEvaluatedFields(template, parserContext.rootObject);
 
-			readMessageTerminator(template, reader);
+		readMessageTerminator(template, reader);
 
-			verifyChecksum(template, currentObject, startPosition, reader);
-		}
-		catch(final IllegalAccessException e){
-			//cannot happen
-			e.printStackTrace();
-		}
+		verifyChecksum(template, currentObject, startPosition, reader);
 
 		return currentObject;
 	}
@@ -158,7 +152,7 @@ final class TemplateParser{
 		}
 	}
 
-	private <T> void verifyChecksum(final Template<T> template, final T data, int startPosition, final BitReader reader) throws IllegalAccessException{
+	private <T> void verifyChecksum(final Template<T> template, final T data, int startPosition, final BitReader reader){
 		if(template.isChecksumPresent()){
 			final Template.BoundedField checksumData = template.getChecksum();
 			final BindChecksum checksum = (BindChecksum)checksumData.getBinding();
@@ -178,7 +172,7 @@ final class TemplateParser{
 		}
 	}
 
-	private void processEvaluatedFields(final Template<?> template, final Object rootObject) throws IllegalAccessException{
+	private void processEvaluatedFields(final Template<?> template, final Object rootObject){
 		final DynamicArray<Template.EvaluatedField> evaluatedFields = template.getEvaluatedFields();
 		for(int i = 0; i < evaluatedFields.limit; i ++){
 			final Template.EvaluatedField field = evaluatedFields.data[i];

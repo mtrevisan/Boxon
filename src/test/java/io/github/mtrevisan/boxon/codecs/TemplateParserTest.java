@@ -184,8 +184,7 @@ class TemplateParserTest{
 		Template<TestError3> template = Template.createFrom(TestError3.class, templateParser.loader::hasCodec);
 
 		Exception exc = Assertions.assertThrows(RuntimeException.class, () -> templateParser.decode(template, reader, null));
-		Assertions.assertEquals("IllegalArgumentException: Can not set byte field io.github.mtrevisan.boxon.codecs.TemplateParserTest$TestError3.type to java.lang.String in field TestError3.type",
-			exc.getMessage());
+		Assertions.assertEquals("IllegalArgumentException: Can not set byte field to String in field TestError3.type", exc.getMessage());
 	}
 
 

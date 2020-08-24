@@ -121,7 +121,7 @@ class ConverterTest{
 		Assertions.assertArrayEquals(payload, result.getErrorPayloadAt(0));
 		Assertions.assertEquals(1, result.getErrorCount());
 		DecodeException error = result.getErrorAt(0);
-		Assertions.assertEquals("IllegalArgumentException: Can not set java.lang.String field io.github.mtrevisan.boxon.codecs.ConverterTest$TestConverter2.value to java.lang.Byte in field TestConverter2.value\r\n"
+		Assertions.assertEquals("IllegalArgumentException: Can not set String field to Byte in field TestConverter2.value\r\n"
 			+ "   at index 4", error.getMessage());
 	}
 
