@@ -32,9 +32,9 @@ public class TypeAnnotationsScanner extends AbstractScanner{
 
 	@SuppressWarnings("unchecked")
 	public void scan(final Object cls){
-		final String className = metadataAdapter.getClassName(cls);
+		final String className = METADATA_ADAPTER.getClassName(cls);
 
-		final String[] classAnnotationNames = metadataAdapter.getClassAnnotationNames(cls);
+		final String[] classAnnotationNames = METADATA_ADAPTER.getClassAnnotationNames(cls);
 		for(int i = 0; i < classAnnotationNames.length; i ++)
 			put(classAnnotationNames[i], className);
 	}

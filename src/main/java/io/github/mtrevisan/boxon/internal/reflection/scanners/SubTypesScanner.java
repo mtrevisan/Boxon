@@ -32,12 +32,12 @@ public class SubTypesScanner extends AbstractScanner{
 
 	@SuppressWarnings("unchecked")
 	public void scan(final Object cls){
-		final String className = metadataAdapter.getClassName(cls);
-		final String superclass = metadataAdapter.getSuperclassName(cls);
+		final String className = METADATA_ADAPTER.getClassName(cls);
+		final String superclass = METADATA_ADAPTER.getSuperclassName(cls);
 
 		put(superclass, className);
 
-		final String[] interfacesNames = metadataAdapter.getInterfacesNames(cls);
+		final String[] interfacesNames = METADATA_ADAPTER.getInterfacesNames(cls);
 		for(int i = 0; i < interfacesNames.length; i ++)
 			put(interfacesNames[i], className);
 	}

@@ -25,8 +25,6 @@
 package io.github.mtrevisan.boxon.internal.reflection;
 
 import io.github.mtrevisan.boxon.internal.JavaHelper;
-import io.github.mtrevisan.boxon.internal.reflection.adapters.MetadataAdapterBuilder;
-import io.github.mtrevisan.boxon.internal.reflection.adapters.MetadataAdapterInterface;
 import io.github.mtrevisan.boxon.internal.reflection.exceptions.ReflectionsException;
 import io.github.mtrevisan.boxon.internal.reflection.helpers.ClasspathHelper;
 import io.github.mtrevisan.boxon.internal.reflection.helpers.ReflectionHelper;
@@ -64,15 +62,11 @@ public final class Reflections{
 
 	private static final Logger LOGGER = JavaHelper.getLoggerFor(Reflections.class);
 
-	private static final MetadataAdapterInterface<?> METADATA_ADAPTER = MetadataAdapterBuilder.getMetadataAdapter();
+	private static final String DOT_CLASS = ".class";
+
 	private static final TypeAnnotationsScanner TYPE_ANNOTATIONS_SCANNER = new TypeAnnotationsScanner();
 	private static final SubTypesScanner SUB_TYPES_SCANNER = new SubTypesScanner();
 	private static final ScannerInterface[] SCANNERS = {TYPE_ANNOTATIONS_SCANNER, SUB_TYPES_SCANNER};
-	static{
-		//inject to scanners
-		TYPE_ANNOTATIONS_SCANNER.setMetadataAdapter(METADATA_ADAPTER);
-		SUB_TYPES_SCANNER.setMetadataAdapter(METADATA_ADAPTER);
-	}
 
 
 	public static Reflections create(final URL... urls){
@@ -183,24 +177,26 @@ public final class Reflections{
 
 	private void scan(final URL url, final VFSDirectory directory, final VFSFile file){
 		final String relativePath = file.getRelativePath();
-		final String packageName = relativePath.replace('/', '.');
-		Object classObject = null;
-		for(final ScannerInterface scanner : SCANNERS)
-			//scan only if inputs filter accepts file `relativePath` or `packageName`
-			if(scanner.acceptsInput(relativePath) || scanner.acceptsInput(packageName)){
-				try{
-					classObject = scanner.scan(directory, file, classObject);
+		if(relativePath.endsWith(DOT_CLASS)){
+			final Object classObject = AbstractScanner.createClassObject(directory, file);
+			for(final ScannerInterface scanner : SCANNERS)
+				scan(scanner, url, relativePath, classObject);
+		}
+	}
 
-					if(LOGGER != null)
-						LOGGER.trace("Scanned file {} in URL {} with scanner {}", relativePath, url.toExternalForm(),
-							scanner.getClass().getSimpleName());
-				}
-				catch(final Exception e){
-					if(LOGGER != null)
-						LOGGER.debug("Could not scan file {} in URL {} with scanner {}", relativePath, url.toExternalForm(),
-							scanner.getClass().getSimpleName(), e);
-				}
-			}
+	private void scan(final ScannerInterface scanner, final URL url, final String relativePath, final Object classObject){
+		try{
+			scanner.scan(classObject);
+
+			if(LOGGER != null)
+				LOGGER.trace("Scanned file {} in URL {} with scanner {}", relativePath, url.toExternalForm(),
+					scanner.getClass().getSimpleName());
+		}
+		catch(final Exception e){
+			if(LOGGER != null)
+				LOGGER.debug("Could not scan file {} in URL {} with scanner {}", relativePath, url.toExternalForm(),
+					scanner.getClass().getSimpleName(), e);
+		}
 	}
 
 	/**
