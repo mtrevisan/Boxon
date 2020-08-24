@@ -210,7 +210,6 @@ public final class ReflectionHelper{
 	}
 
 
-	//FIXME https://www.jboss.org/optaplanner/blog/2018/01/09/JavaReflectionButMuchFaster.html
 	public static <T> void setFieldValue(final Object obj, final Class<T> fieldType, final T value){
 		try{
 			final DynamicArray<Field> fields = getAccessibleFields(obj.getClass(), fieldType);

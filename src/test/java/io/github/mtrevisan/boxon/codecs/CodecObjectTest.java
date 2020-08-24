@@ -136,7 +136,6 @@ class CodecObjectTest{
 			}
 		};
 
-		//FIXME retrieve template parser from Parser
 		TemplateParser templateParser = new TemplateParser();
 		templateParser.loader.loadDefaultCodecs();
 		ReflectionHelper.setFieldValue(codec, TemplateParser.class, templateParser);
