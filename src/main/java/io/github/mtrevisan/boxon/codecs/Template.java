@@ -66,6 +66,7 @@ final class Template<T>{
 		private final Field field;
 		private final Skip[] skips;
 		private final Annotation binding;
+
 		//FIXME https://www.jboss.org/optaplanner/blog/2018/01/09/JavaReflectionButMuchFaster.html
 		//add list of getters/setters, in replacement of ReflectionHelper?
 
