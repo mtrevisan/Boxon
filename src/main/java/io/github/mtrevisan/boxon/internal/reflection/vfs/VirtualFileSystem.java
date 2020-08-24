@@ -70,19 +70,26 @@ public final class VirtualFileSystem{
 	public static VFSDirectory fromURL(final URL url){
 		for(final UrlType type : DefaultUrlTypes.values())
 			if(type.matches(url)){
-				try{
-					final VFSDirectory directory = type.createDirectory(url);
-					if(directory != null)
-						return directory;
-				}
-				catch(final Throwable e){
-					if(LOGGER != null)
-						LOGGER.warn("Could not create VFSDirectory using {} from URL {}: skipping", type, url.toExternalForm(), e);
-				}
+				final VFSDirectory directory = fromURL(url, type);
+				if(directory != null)
+					return directory;
 			}
 
 		throw new VFSException("Could not create VFSDirectory from URL, no matching UrlType was found [{}]\n"
 			+ "either use fromURL(final URL url) with your specialized UrlType.", url.toExternalForm());
+	}
+
+	private static VFSDirectory fromURL(final URL url, final UrlType type){
+		try{
+			final VFSDirectory directory = type.createDirectory(url);
+			if(directory != null)
+				return directory;
+		}
+		catch(final Throwable e){
+			if(LOGGER != null)
+				LOGGER.warn("Could not create VFSDirectory using {} from URL {}: skipping", type, url.toExternalForm(), e);
+		}
+		return null;
 	}
 
 	/**
