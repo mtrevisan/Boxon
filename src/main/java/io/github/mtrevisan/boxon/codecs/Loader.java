@@ -79,7 +79,7 @@ final class Loader{
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load codecs.
 	 */
 	void loadCodecs(final Class<?>... basePackageClasses){
-		if(LOGGER != null && LOGGER.isInfoEnabled())
+		if(LOGGER != null)
 			LOGGER.info("Load codecs from package(s) {}",
 				Arrays.stream(basePackageClasses).map(Class::getPackageName).collect(Collectors.joining(", ", "[", "]")));
 
@@ -165,7 +165,7 @@ final class Loader{
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
 	 */
 	void loadTemplates(final Class<?>... basePackageClasses){
-		if(LOGGER != null && LOGGER.isInfoEnabled())
+		if(LOGGER != null)
 			LOGGER.info("Load parsing classes from package(s) {}",
 				Arrays.stream(basePackageClasses).map(Class::getPackageName).collect(Collectors.joining(", ", "[", "]")));
 

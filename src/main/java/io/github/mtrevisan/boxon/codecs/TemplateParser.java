@@ -117,7 +117,7 @@ final class TemplateParser{
 		final CodecInterface<?> codec = retrieveCodec(binding.annotationType());
 
 		try{
-			if(LOGGER != null && LOGGER.isTraceEnabled())
+			if(LOGGER != null)
 				LOGGER.trace("reading {}.{} with bind {}", template, field.getFieldName(), binding.annotationType().getSimpleName());
 
 			//decode value from raw message
@@ -125,7 +125,7 @@ final class TemplateParser{
 			//store value in the current object
 			field.setFieldValue(parserContext.currentObject, value);
 
-			if(LOGGER != null && LOGGER.isTraceEnabled())
+			if(LOGGER != null)
 				LOGGER.trace("read {}.{} = {}", template, field.getFieldName(), value);
 		}
 		catch(final Exception e){
@@ -185,8 +185,14 @@ final class TemplateParser{
 			final String condition = field.getBinding().condition();
 			final boolean process = (condition.isEmpty() || Evaluator.evaluate(condition, rootObject, boolean.class));
 			if(process){
+				if(LOGGER != null)
+					LOGGER.trace("evaluating {}.{}", template.getType().getSimpleName(), field.getFieldName());
+
 				final Object value = Evaluator.evaluate(field.getBinding().value(), rootObject, field.getType());
 				field.setFieldValue(rootObject, value);
+
+				if(LOGGER != null)
+					LOGGER.trace("wrote {}.{} = {}", template.getType().getSimpleName(), field.getFieldName(), value);
 			}
 		}
 	}
@@ -224,7 +230,7 @@ final class TemplateParser{
 		final CodecInterface<?> codec = retrieveCodec(binding.annotationType());
 
 		try{
-			if(LOGGER != null && LOGGER.isTraceEnabled())
+			if(LOGGER != null)
 				LOGGER.trace("writing {}.{} with bind {}", template.getType().getSimpleName(), field.getFieldName(),
 					binding.annotationType().getSimpleName());
 
@@ -233,7 +239,7 @@ final class TemplateParser{
 			//write value to raw message
 			codec.encode(writer, binding, parserContext.rootObject, value);
 
-			if(LOGGER != null && LOGGER.isTraceEnabled())
+			if(LOGGER != null)
 				LOGGER.trace("wrote {}.{} = {}", template.getType().getSimpleName(), field.getFieldName(), value);
 		}
 		catch(final Exception e){
