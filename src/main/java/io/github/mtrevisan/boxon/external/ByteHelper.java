@@ -62,7 +62,7 @@ public final class ByteHelper{
 			array = extendArray(array);
 			array[0] = (byte)-1;
 		}
-		else if(unsigned && size >= array.length * Byte.SIZE)
+		else if(unsigned && size >= array.length << 3)
 			array = extendArray(array);
 		return new BigInteger(array);
 	}

@@ -193,9 +193,9 @@ public final class BitSet{
 	 * Returns a new byte array containing all the bits in this bit set.
 	 * <p>More precisely, if
 	 * {@code byte[] bytes = s.toByteArray();}<br>
-	 * then {@code bytes.length == (s.length()+7)/8} and<br>
-	 * {@code s.get(n) == ((bytes[n/8] & (1<<(n%8))) != 0)}<br>
-	 * for all {@code n < 8 * bytes.length}.</p>
+	 * then {@code bytes.length == (s.length() + Byte.SIZE - 1) / Byte.SIZE} and<br>
+	 * {@code s.get(n) == ((bytes[n / Byte.SIZE] & (1 << (n % Byte.SIZE))) != 0)}<br>
+	 * for all {@code n < bytes.length * Byte.SIZE}.</p>
 	 *
 	 * @return	A byte array containing a little-endian representation of all the bits in this bit set.
 	 */
@@ -273,7 +273,7 @@ public final class BitSet{
 			array = ByteHelper.extendArray(array);
 			array[0] = (byte)-1;
 		}
-		else if(unsigned && size >= array.length * Byte.SIZE)
+		else if(unsigned && size >= array.length << 3)
 			array = ByteHelper.extendArray(array);
 		return new BigInteger(array);
 	}
