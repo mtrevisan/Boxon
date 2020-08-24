@@ -50,11 +50,6 @@ final class Evaluator{
 		CONTEXT.addPropertyAccessor(new ReflectivePropertyAccessor(){
 			@Override
 			protected Field findField(final String name, final Class<?> cls, final boolean mustBeStatic){
-				final Field field = findInClassHierarchy(name, cls, mustBeStatic);
-				return (field != null? field: findInInterface(name, cls, mustBeStatic));
-			}
-
-			private Field findInClassHierarchy(final String name, final Class<?> cls, final boolean mustBeStatic){
 				Class<?> currentType = cls;
 				while(currentType != Object.class){
 					final Field[] fields = currentType.getDeclaredFields();
@@ -65,16 +60,6 @@ final class Evaluator{
 					}
 
 					currentType = currentType.getSuperclass();
-				}
-				return null;
-			}
-
-			private Field findInInterface(final String name, final Class<?> cls, final boolean mustBeStatic){
-				final Class<?>[] interfaces = cls.getInterfaces();
-				for(int i = 0; i < interfaces.length; i ++){
-					final Field field = findField(name, interfaces[i], mustBeStatic);
-					if(field != null)
-						return field;
 				}
 				return null;
 			}

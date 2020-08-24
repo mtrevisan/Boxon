@@ -216,9 +216,9 @@ public final class ReflectionHelper{
 		try{
 			return (T)field.get(obj);
 		}
-		catch(final IllegalArgumentException | IllegalAccessException ignored){
+		catch(final IllegalArgumentException | IllegalAccessException e){
 			//cannot happen
-			ignored.printStackTrace();
+			e.printStackTrace();
 			return null;
 		}
 	}
