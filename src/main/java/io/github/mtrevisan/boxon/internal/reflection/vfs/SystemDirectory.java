@@ -38,8 +38,8 @@ import java.util.Collections;
  */
 class SystemDirectory implements VFSDirectory{
 
-	private static final String SLASH = "/";
-	private static final String BACKSLASH = "\\";
+	private static final char SLASH = '/';
+	private static final char BACKSLASH = '\\';
 
 
 	private final File file;
@@ -47,7 +47,7 @@ class SystemDirectory implements VFSDirectory{
 
 	SystemDirectory(final File file){
 		if(file != null && (!file.isDirectory() || !file.canRead()))
-			throw new RuntimeException("cannot use dir " + file);
+			throw new RuntimeException("Cannot use directory " + file);
 
 		this.file = file;
 	}

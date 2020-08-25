@@ -53,6 +53,19 @@ public final class ClasspathHelper{
 	private static final String RIGHT_SQUARE_BRACKET = "]";
 	private static final String PRIMITIVE_DESCRIPTOR_OBJECT = "L";
 
+	private static final ClassLoader[] CLASS_LOADERS;
+	static{
+		final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+		final ClassLoader staticClassLoader = ClasspathHelper.class.getClassLoader();
+
+		final DynamicArray<ClassLoader> loaders = DynamicArray.create(ClassLoader.class, 2);
+		if(contextClassLoader != null)
+			loaders.add(contextClassLoader);
+		if(staticClassLoader != null && contextClassLoader != staticClassLoader)
+			loaders.add(staticClassLoader);
+		CLASS_LOADERS = loaders.extractCopy();
+	}
+
 	private static final Map<String, Class<?>> PRIMITIVE_NAMES_TO_TYPES = new HashMap<>(9);
 	static{
 		final List<Class<?>> types = Arrays.asList(boolean.class, char.class, byte.class, short.class, int.class, long.class,
@@ -61,31 +74,13 @@ public final class ClasspathHelper{
 			PRIMITIVE_NAMES_TO_TYPES.put(type.getName(), type);
 	}
 
-	private static final String SLASH = "/";
-	private static final String BACKSLASH = "\\";
-	private static final String DOT = ".";
+	private static final char SLASH = '/';
+	private static final char BACKSLASH = '\\';
+	private static final char DOT = '.';
 	private static final String DOT_CLASS = ".class";
 
 
 	private ClasspathHelper(){}
-
-	/**
-	 * Returns an array of class Loaders initialized from the specified array.
-	 * <p>It defaults to both context and static class loaders.</p>
-	 *
-	 * @return	The array of class loaders.
-	 */
-	private static ClassLoader[] classLoaders(){
-		final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-		final ClassLoader staticClassLoader = ClasspathHelper.class.getClassLoader();
-		final DynamicArray<ClassLoader> loaders = DynamicArray.create(ClassLoader.class, 2);
-		if(contextClassLoader != null)
-			loaders.add(contextClassLoader);
-		if(staticClassLoader != null && contextClassLoader != staticClassLoader)
-			loaders.add(staticClassLoader);
-		return loaders.extractCopy();
-	}
-
 
 	/**
 	 * Returns the URL that contains a {@code Class}.
@@ -95,9 +90,8 @@ public final class ClasspathHelper{
 	 * @return	The URL containing the class, {@code null} if not found.
 	 */
 	public static URL forClass(final Class<?> cls){
-		final ClassLoader[] loaders = classLoaders();
 		final String resourceName = cls.getName().replace(DOT, SLASH) + DOT_CLASS;
-		for(final ClassLoader classLoader : loaders){
+		for(final ClassLoader classLoader : CLASS_LOADERS){
 			final URL normalizedUrl = forClass(cls, resourceName, classLoader);
 			if(normalizedUrl != null)
 				return normalizedUrl;
@@ -138,10 +132,9 @@ public final class ClasspathHelper{
 
 	/**
 	 * Returns a distinct collection of URLs based on a resource.
-	 * <p>
-	 * This searches for the resource name, using {@link ClassLoader#getResources(String)}.
+	 * <p>This searches for the resource name, using {@link ClassLoader#getResources(String)}.
 	 * For example, {@code forResource(test.properties)} effectively returns URLs from the
-	 * classpath containing files of that name.
+	 * classpath containing files of that name.</p>
 	 * <p>The returned URLs retains the order of the given {@code classLoaders}.</p>
 	 *
 	 * @param resourceName	The resource name.
@@ -149,8 +142,7 @@ public final class ClasspathHelper{
 	 */
 	private static Collection<URL> forResource(final String resourceName){
 		final List<URL> result = new ArrayList<>();
-		final ClassLoader[] loaders = classLoaders();
-		for(final ClassLoader loader : loaders)
+		for(final ClassLoader loader : CLASS_LOADERS)
 			forResource(resourceName, loader, result);
 		return distinctUrls(result);
 	}
@@ -178,7 +170,7 @@ public final class ClasspathHelper{
 		if(name != null){
 			String resourceName = name.replace(DOT, SLASH);
 			resourceName = resourceName.replace(BACKSLASH, SLASH);
-			if(resourceName.startsWith(SLASH))
+			if(resourceName.charAt(0) == SLASH)
 				resourceName = resourceName.substring(1);
 			return resourceName;
 		}
@@ -240,7 +232,7 @@ public final class ClasspathHelper{
 	}
 
 	/**
-	 * Try to resolve all given string representation of types to a list of java types
+	 * Try to resolve all given string representation of types to a list of java types.
 	 *
 	 * @param classNames	The class names.
 	 * @return	The classes.
@@ -257,9 +249,8 @@ public final class ClasspathHelper{
 		Class<?> result = null;
 		final List<ReflectionsException> reflectionsExceptions = new ArrayList<>();
 		final String type = extractType(typeName);
-		final ClassLoader[] classLoaders = classLoaders();
-		for(int i = 0; result == null && i < classLoaders().length; i ++)
-			result = getClassFromName(type, typeName, classLoaders[i], reflectionsExceptions);
+		for(int i = 0; result == null && i < CLASS_LOADERS.length; i ++)
+			result = getClassFromName(type, typeName, CLASS_LOADERS[i], reflectionsExceptions);
 
 		if(LOGGER != null)
 			reflectionsExceptions.forEach(exc -> LOGGER.warn("Could not get type for name {} from any class loader", typeName, exc));

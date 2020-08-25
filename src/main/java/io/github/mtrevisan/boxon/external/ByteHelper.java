@@ -62,7 +62,7 @@ public final class ByteHelper{
 			array = extendArray(array);
 			array[0] = (byte)-1;
 		}
-		else if(unsigned && size >= array.length * Byte.SIZE)
+		else if(unsigned && size >= array.length << 3)
 			array = extendArray(array);
 		return new BigInteger(array);
 	}
@@ -82,10 +82,10 @@ public final class ByteHelper{
 	}
 
 	public static boolean hasBit(final byte[] mask, final int index){
-		if(index < 0 || index >= mask.length * Byte.SIZE)
-			throw new IllegalArgumentException("Index value must be between 0 and " + (mask.length * Byte.SIZE) + " exclusive, was " + index);
+		if(index < 0 || index >= mask.length << 3)
+			throw new IllegalArgumentException("Index value must be between 0 and " + (mask.length << 3) + " exclusive, was " + index);
 
-		final int bitGroup = mask.length - 1 - index / Byte.SIZE;
+		final int bitGroup = mask.length - 1 - (index >>> 3);
 		final int bitMask = 1 << (index % Byte.SIZE);
 		return ((mask[bitGroup] & bitMask) != 0);
 	}

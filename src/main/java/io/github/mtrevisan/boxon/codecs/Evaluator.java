@@ -50,35 +50,15 @@ final class Evaluator{
 		CONTEXT.addPropertyAccessor(new ReflectivePropertyAccessor(){
 			@Override
 			protected Field findField(final String name, final Class<?> cls, final boolean mustBeStatic){
-				Field field = findInCurrentClass(name, cls, mustBeStatic);
-				if(field == null)
-					field = findInParentClass(name, cls, mustBeStatic);
-				if(field == null)
-					field = findInInterface(name, cls, mustBeStatic);
-				return field;
-			}
+				Class<?> currentType = cls;
+				while(currentType != null && currentType != Object.class){
+					final Field[] fields = currentType.getDeclaredFields();
+					for(final Field field : fields){
+						if(field.getName().equals(name) && (!mustBeStatic || Modifier.isStatic(field.getModifiers())))
+							return field;
+					}
 
-			private Field findInCurrentClass(final String name, final Class<?> cls, final boolean mustBeStatic){
-				final Field[] fields = cls.getDeclaredFields();
-				for(int i = 0; i < fields.length; i ++){
-					final Field field = fields[i];
-					if(field.getName().equals(name) && (!mustBeStatic || Modifier.isStatic(field.getModifiers())))
-						return field;
-				}
-				return null;
-			}
-
-			private Field findInParentClass(final String name, Class<?> cls, final boolean mustBeStatic){
-				cls = cls.getSuperclass();
-				return (cls != null? findField(name, cls, mustBeStatic): null);
-			}
-
-			private Field findInInterface(final String name, final Class<?> cls, final boolean mustBeStatic){
-				final Class<?>[] interfaces = cls.getInterfaces();
-				for(int i = 0; i < interfaces.length; i ++){
-					final Field field = findField(name, interfaces[i], mustBeStatic);
-					if(field != null)
-						return field;
+					currentType = currentType.getSuperclass();
 				}
 				return null;
 			}

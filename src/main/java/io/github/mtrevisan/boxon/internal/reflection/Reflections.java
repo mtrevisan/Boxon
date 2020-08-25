@@ -25,8 +25,6 @@
 package io.github.mtrevisan.boxon.internal.reflection;
 
 import io.github.mtrevisan.boxon.internal.JavaHelper;
-import io.github.mtrevisan.boxon.internal.reflection.adapters.MetadataAdapterBuilder;
-import io.github.mtrevisan.boxon.internal.reflection.adapters.MetadataAdapterInterface;
 import io.github.mtrevisan.boxon.internal.reflection.exceptions.ReflectionsException;
 import io.github.mtrevisan.boxon.internal.reflection.helpers.ClasspathHelper;
 import io.github.mtrevisan.boxon.internal.reflection.helpers.ReflectionHelper;
@@ -64,15 +62,11 @@ public final class Reflections{
 
 	private static final Logger LOGGER = JavaHelper.getLoggerFor(Reflections.class);
 
-	private static final MetadataAdapterInterface<?> METADATA_ADAPTER = MetadataAdapterBuilder.getMetadataAdapter();
+	private static final String DOT_CLASS = ".class";
+
 	private static final TypeAnnotationsScanner TYPE_ANNOTATIONS_SCANNER = new TypeAnnotationsScanner();
 	private static final SubTypesScanner SUB_TYPES_SCANNER = new SubTypesScanner();
 	private static final ScannerInterface[] SCANNERS = {TYPE_ANNOTATIONS_SCANNER, SUB_TYPES_SCANNER};
-	static{
-		//inject to scanners
-		TYPE_ANNOTATIONS_SCANNER.setMetadataAdapter(METADATA_ADAPTER);
-		SUB_TYPES_SCANNER.setMetadataAdapter(METADATA_ADAPTER);
-	}
 
 
 	public static Reflections create(final URL... urls){
@@ -123,16 +117,17 @@ public final class Reflections{
 			for(final URI uri : uris)
 				urls.add(uri.toURL());
 		}
-		catch(final MalformedURLException ignored){
+		catch(final MalformedURLException e){
 			//cannot happen
+			e.printStackTrace();
 		}
 		return urls.toArray(URL[]::new);
 	}
 
 	private static Set<URI> convertIntoURI(final Class<?>[] classes){
 		final Set<URI> uris = new HashSet<>(classes.length);
-		for(int i = 0; i < classes.length; i ++){
-			final Collection<URL> urls = ClasspathHelper.forPackage(classes[i].getPackageName());
+		for(final Class<?> cls : classes){
+			final Collection<URL> urls = ClasspathHelper.forPackage(cls.getPackageName());
 			collectURIs(urls, uris);
 		}
 		return uris;
@@ -183,24 +178,26 @@ public final class Reflections{
 
 	private void scan(final URL url, final VFSDirectory directory, final VFSFile file){
 		final String relativePath = file.getRelativePath();
-		final String packageName = relativePath.replace('/', '.');
-		Object classObject = null;
-		for(final ScannerInterface scanner : SCANNERS)
-			//scan only if inputs filter accepts file `relativePath` or `packageName`
-			if(scanner.acceptsInput(relativePath) || scanner.acceptsInput(packageName)){
-				try{
-					classObject = scanner.scan(directory, file, classObject);
+		if(relativePath.endsWith(DOT_CLASS)){
+			final Object classObject = AbstractScanner.createClassObject(directory, file);
+			for(final ScannerInterface scanner : SCANNERS)
+				scan(scanner, url, relativePath, classObject);
+		}
+	}
 
-					if(LOGGER != null)
-						LOGGER.trace("Scanned file {} in URL {} with scanner {}", relativePath, url.toExternalForm(),
-							scanner.getClass().getSimpleName());
-				}
-				catch(final Exception e){
-					if(LOGGER != null)
-						LOGGER.debug("Could not scan file {} in URL {} with scanner {}", relativePath, url.toExternalForm(),
-							scanner.getClass().getSimpleName(), e);
-				}
-			}
+	private void scan(final ScannerInterface scanner, final URL url, final String relativePath, final Object classObject){
+		try{
+			scanner.scan(classObject);
+
+			if(LOGGER != null)
+				LOGGER.trace("Scanned file {} in URL {} with scanner {}", relativePath, url.toExternalForm(),
+					scanner.getClass().getSimpleName());
+		}
+		catch(final Exception e){
+			if(LOGGER != null)
+				LOGGER.debug("Could not scan file {} in URL {} with scanner {}", relativePath, url.toExternalForm(),
+					scanner.getClass().getSimpleName(), e);
+		}
 	}
 
 	/**
@@ -209,10 +206,10 @@ public final class Reflections{
 	 * <p>It uses {@link ReflectionHelper#getSuperTypes(Class)}.</p>
 	 * <p>For example, for classes {@code A, B, C} where {@code A} supertype of {@code B}, and {@code B} supertype of {@code C}:
 	 * <ul>
-	 *     <li>if scanning {@code C} resulted in {@code B} ({@code B -> C} in class store), but {@code A} was not scanned
-	 *     (although {@code A} supertype of {@code B}) - then {@code getSubTypesOf(A)} will not return {@code C}.</li>
-	 *     <li>if expanding supertypes, {@code B} will be expanded with {@code A} ({@code A -> B} in class store) - then
-	 *     {@code getSubTypesOf(A)} will return {@code C}.</li>
+	 * 	<li>if scanning {@code C} resulted in {@code B} ({@code B -> C} in class store), but {@code A} was not scanned
+	 * 		(although {@code A} supertype of {@code B}) - then {@code getSubTypesOf(A)} will not return {@code C}.</li>
+	 * 	<li>if expanding supertypes, {@code B} will be expanded with {@code A} ({@code A -> B} in class store) - then
+	 * 		{@code getSubTypesOf(A)} will return {@code C}.</li>
 	 * </ul>
 	 * </p>
 	 */
@@ -252,7 +249,7 @@ public final class Reflections{
 	 * <p>When honoring {@link Inherited}, meta-annotation should only effect annotated super classes and its sub types.</p>
 	 * <p><i>Note that this ({@link Inherited}) meta-annotation type has no effect if the annotated type is used for
 	 * anything other then a class. Also, this meta-annotation causes annotations to be inherited only from superclasses;
-	 * annotations on implemented interfaces have no effect.</i></p>
+	 * annotations on implemented interfaces have no effect</i>.</p>
 	 *
 	 * @param annotation	The annotation to search for.
 	 * @return	The set of classes.
@@ -269,7 +266,7 @@ public final class Reflections{
 	 * and classes.</p>
 	 * <p><i>Note that this ({@link Inherited}) meta-annotation type has no effect if the annotated type is used for
 	 * anything other then a class. Also, this meta-annotation causes annotations to be inherited only from superclasses;
-	 * annotations on implemented interfaces have no effect.</i></p>
+	 * annotations on implemented interfaces have no effect</i>.</p>
 	 *
 	 * @param annotation	The annotation to search for.
 	 * @return	The set of classes.
@@ -290,7 +287,7 @@ public final class Reflections{
 	 * <p>When honoring {@link Inherited}, meta-annotation should only effect annotated super classes and its sub types.</p>
 	 * <p><i>Note that this ({@link Inherited}) meta-annotation type has no effect if the annotated type is used for
 	 * anything other then a class. Also, this meta-annotation causes annotations to be inherited only from superclasses;
-	 * annotations on implemented interfaces have no effect.</i></p>
+	 * annotations on implemented interfaces have no effect</i>.</p>
 	 *
 	 * @param annotation	The annotation.
 	 * @return	The set of classes.
@@ -307,7 +304,7 @@ public final class Reflections{
 	 * and classes.</p>
 	 * <p><i>Note that this ({@link Inherited}) meta-annotation type has no effect if the annotated type is used for
 	 * anything other then a class. Also, this meta-annotation causes annotations to be inherited only from superclasses;
-	 * annotations on implemented interfaces have no effect.</i></p>
+	 * annotations on implemented interfaces have no effect</i>.</p>
 	 *
 	 * @param annotation	The annotation.
 	 * @return	The set of classes.
@@ -358,21 +355,19 @@ public final class Reflections{
 
 	private Collection<String> getAllAnnotatedClasses(final Collection<String> annotated,
 			final Class<? extends Annotation> annotation, final boolean honorInherited){
-		if(honorInherited){
-			if(annotation.isAnnotationPresent(Inherited.class)){
-				final Set<String> subTypes = SUB_TYPES_SCANNER.get(JavaHelper.filter(annotated, input -> {
-					final Class<?> type = ClasspathHelper.getClassFromName(input);
-					return (type != null && !type.isInterface());
-				}));
-				return SUB_TYPES_SCANNER.getAllIncludingKeys(subTypes);
-			}
-			else
-				return annotated;
-		}
-		else{
+		if(!honorInherited){
 			final Collection<String> subTypes = TYPE_ANNOTATIONS_SCANNER.getAllIncludingKeys(annotated);
 			return SUB_TYPES_SCANNER.getAllIncludingKeys(subTypes);
 		}
+		else if(annotation.isAnnotationPresent(Inherited.class)){
+			final Set<String> subTypes = SUB_TYPES_SCANNER.get(JavaHelper.filter(annotated, input -> {
+				final Class<?> type = ClasspathHelper.getClassFromName(input);
+				return (type != null && !type.isInterface());
+			}));
+			return SUB_TYPES_SCANNER.getAllIncludingKeys(subTypes);
+		}
+		else
+			return annotated;
 	}
 
 }

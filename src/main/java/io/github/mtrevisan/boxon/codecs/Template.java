@@ -40,6 +40,7 @@ import io.github.mtrevisan.boxon.internal.reflection.helpers.ReflectionHelper;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -60,26 +61,41 @@ final class Template<T>{
 	/** Data associated to an annotated field. */
 	static final class BoundedField{
 
-		/** NOTE: MUST match the name of the method in all the annotations that defines a condition */
+		/** NOTE: MUST match the name of the method in all the annotations that defines a condition! */
 		private static final String CONDITION = "condition";
 
 		private final Field field;
 		private final Skip[] skips;
 		private final Annotation binding;
 
+		private final Method condition;
+		//FIXME https://www.jboss.org/optaplanner/blog/2018/01/09/JavaReflectionButMuchFaster.html
+		//extract getter and setter?
 
-		private BoundedField(final Field field, final Skip[] skips, final Annotation binding){
-			this.field = field;
-			this.skips = skips;
-			this.binding = binding;
+
+		private BoundedField(final Field field, final Annotation binding){
+			this(field, binding, null);
 		}
 
-		String getName(){
+		private BoundedField(final Field field, final Annotation binding, final Skip[] skips){
+			this.field = field;
+			this.binding = binding;
+			this.skips = skips;
+
+			//pre-fetch condition method
+			condition = ReflectionHelper.getAccessibleMethod(binding.annotationType(), CONDITION, String.class);
+		}
+
+		String getFieldName(){
 			return field.getName();
 		}
 
-		Skip[] getSkips(){
-			return skips;
+		<T> T getFieldValue(final Object obj){
+			return ReflectionHelper.getFieldValue(field, obj);
+		}
+
+		void setFieldValue(final Object obj, final Object value){
+			ReflectionHelper.setFieldValue(field, obj, value);
 		}
 
 		Annotation getBinding(){
@@ -87,7 +103,11 @@ final class Template<T>{
 		}
 
 		String getCondition(){
-			return ReflectionHelper.getMethodResponse(binding, CONDITION, EMPTY_STRING);
+			return ReflectionHelper.invokeMethod(binding, condition, EMPTY_STRING);
+		}
+
+		Skip[] getSkips(){
+			return skips;
 		}
 	}
 
@@ -103,12 +123,16 @@ final class Template<T>{
 			this.binding = binding;
 		}
 
-		String getName(){
+		String getFieldName(){
 			return field.getName();
 		}
 
-		Class<?> getType(){
+		Class<?> getFieldType(){
 			return field.getType();
+		}
+
+		void setFieldValue(final Object obj, final Object value){
+			ReflectionHelper.setFieldValue(field, obj, value);
 		}
 
 		Evaluate getBinding(){
@@ -196,9 +220,9 @@ final class Template<T>{
 		private static void validateChoice(final ObjectChoices selectFrom){
 			final int prefixSize = selectFrom.prefixSize();
 			if(prefixSize < 0)
-				throw new AnnotationException("`prefixSize` must be a non-negative number");
+				throw new AnnotationException("Prefix size must be a non-negative number");
 			if(prefixSize > Integer.SIZE)
-				throw new AnnotationException("`prefixSize` cannot be greater than {} bits", Integer.SIZE);
+				throw new AnnotationException("Prefix size cannot be greater than {} bits", Integer.SIZE);
 
 			final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
 			if(prefixSize > 0){
@@ -242,8 +266,7 @@ final class Template<T>{
 		this.cls = cls;
 
 		header = cls.getAnnotation(MessageHeader.class);
-		//retrieve all declared fields in the current class AND in the parent classes
-		loadAnnotatedFields(ReflectionHelper.getDeclaredFields(cls, true), hasCodec);
+		loadAnnotatedFields(ReflectionHelper.getAccessibleFields(cls), hasCodec);
 	}
 
 	private void loadAnnotatedFields(final DynamicArray<Field> fields, final Function<Class<? extends Annotation>, Boolean> hasCodec){
@@ -260,16 +283,15 @@ final class Template<T>{
 			validateField(boundedAnnotations, checksum);
 
 			if(boundedAnnotations.limit == 1)
-				boundedFields.add(new BoundedField(field, (skips.length > 0? skips: null), boundedAnnotations.data[0]));
+				boundedFields.add(new BoundedField(field, boundedAnnotations.data[0], (skips.length > 0? skips: null)));
 			if(checksum != null)
-				this.checksum = new BoundedField(field, null, checksum);
+				this.checksum = new BoundedField(field, checksum);
 		}
 	}
 
 	private DynamicArray<Annotation> extractAnnotations(final Annotation[] declaredAnnotations, final Function<Class<? extends Annotation>, Boolean> hasCodec){
 		final DynamicArray<Annotation> annotations = DynamicArray.create(Annotation.class, declaredAnnotations.length);
-		for(int i = 0; i < declaredAnnotations.length; i ++){
-			final Annotation annotation = declaredAnnotations[i];
+		for(final Annotation annotation : declaredAnnotations){
 			final Class<? extends Annotation> annotationType = annotation.annotationType();
 			//NOTE: cannot throw an exception if the loader does not have the codec, due to the possible presence of other
 			//annotations that have nothing to do with this library
@@ -282,8 +304,7 @@ final class Template<T>{
 
 	private DynamicArray<EvaluatedField> extractEvaluations(final Annotation[] declaredAnnotations, final Field field){
 		final DynamicArray<EvaluatedField> evaluations = DynamicArray.create(EvaluatedField.class, declaredAnnotations.length);
-		for(int i = 0; i < declaredAnnotations.length; i ++){
-			final Annotation annotation = declaredAnnotations[i];
+		for(final Annotation annotation : declaredAnnotations){
 			if(annotation.annotationType() == Evaluate.class)
 				evaluations.add(new EvaluatedField(field, (Evaluate)annotation));
 		}

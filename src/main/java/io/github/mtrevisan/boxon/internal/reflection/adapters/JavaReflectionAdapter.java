@@ -34,8 +34,8 @@ import java.lang.annotation.Annotation;
 class JavaReflectionAdapter implements MetadataAdapterInterface<Class<?>>{
 
 	private static final String EMPTY_STRING = "";
-	private static final String SLASH = "/";
-	private static final String DOT = ".";
+	private static final char SLASH = '/';
+	private static final char DOT = '.';
 	private static final String DOT_CLASS = ".class";
 
 
@@ -71,9 +71,9 @@ class JavaReflectionAdapter implements MetadataAdapterInterface<Class<?>>{
 
 	@Override
 	public Class<?> createClassObject(final VFSDirectory root, final VFSFile file){
-		final String name = file.getRelativePath()
-			.replace(SLASH, DOT)
-			.replace(DOT_CLASS, EMPTY_STRING);
+		String name = file.getRelativePath();
+		name = name.substring(0, name.length() - DOT_CLASS.length())
+			.replace(SLASH, DOT);
 		return ClasspathHelper.getClassFromName(name);
 	}
 

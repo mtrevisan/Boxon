@@ -26,6 +26,7 @@ package io.github.mtrevisan.boxon.annotations;
 
 import io.github.mtrevisan.boxon.external.ByteOrder;
 
+import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -37,6 +38,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.ANNOTATION_TYPE)
+@Documented
 public @interface ObjectChoices{
 
 	/**
@@ -66,6 +68,7 @@ public @interface ObjectChoices{
 	/** The annotation holding a single choice. */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.ANNOTATION_TYPE)
+	@Documented
 	@interface ObjectChoice{
 
 		/**

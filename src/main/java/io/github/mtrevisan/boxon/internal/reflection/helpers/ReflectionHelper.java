@@ -89,31 +89,6 @@ public final class ReflectionHelper{
 	}
 
 
-	/**
-	 * Retrieve fields list of specified class.
-	 *
-	 * @param cls	The class from which to extract the declared fields.
-	 * @param recursively	If {@code true}, it retrieves fields from all class hierarchy.
-	 * @return	An array of all the fields of the given class.
-	 */
-	public static DynamicArray<Field> getDeclaredFields(final Class<?> cls, final boolean recursively){
-		final DynamicArray<Field> fields;
-		if(recursively){
-			fields = DynamicArray.create(Field.class);
-			Class<?> currentType = cls;
-			while(currentType != Object.class){
-				final Field[] subfields = currentType.getDeclaredFields();
-				//place parent's fields before all the child's fields
-				fields.addAll(0, subfields);
-
-				currentType = currentType.getSuperclass();
-			}
-		}
-		else
-			fields = DynamicArray.createFrom(cls.getDeclaredFields());
-		return fields;
-	}
-
 	public static Class<?>[] extractCallerClasses(){
 		Class<?>[] classes = new Class[0];
 		try{
@@ -157,9 +132,8 @@ public final class ReflectionHelper{
 			if(ancestorType instanceof ParameterizedType)
 				//ancestor is parameterized: process only if the raw type matches the base class
 				type = manageParameterizedAncestor((ParameterizedType)ancestorType, base, typeVariables);
-			else if(ancestorType instanceof Class<?>
+			else if(ancestorType instanceof Class<?> && base.isAssignableFrom((Class<?>)ancestorType))
 				//ancestor is non-parameterized: process only if it matches the base class
-					&& base.isAssignableFrom((Class<?>)ancestorType))
 				ancestorsQueue.add(ancestorType);
 		}
 		if(type == null && offspring.equals(base))
@@ -211,21 +185,19 @@ public final class ReflectionHelper{
 	}
 
 
-	//https://www.jboss.org/optaplanner/blog/2018/01/09/JavaReflectionButMuchFaster.html
 	@SuppressWarnings("unchecked")
-	public static <T> T getFieldValue(final Object obj, final String fieldName){
+	public static <T> T getFieldValue(final Field field, final Object obj){
 		try{
-			final Field field = getAccessibleField(obj.getClass(), fieldName);
 			return (T)field.get(obj);
 		}
-		catch(final IllegalArgumentException | IllegalAccessException ignored){
+		catch(final IllegalArgumentException | IllegalAccessException e){
 			//cannot happen
+			e.printStackTrace();
 			return null;
 		}
 	}
 
-	public static void setFieldValue(final Object obj, final String fieldName, final Object value){
-		final Field field = getAccessibleField(obj.getClass(), fieldName);
+	public static void setFieldValue(final Field field, final Object obj, final Object value){
 		try{
 			field.set(obj, value);
 		}
@@ -245,51 +217,48 @@ public final class ReflectionHelper{
 		catch(final IllegalArgumentException | IllegalAccessException ignored){}
 	}
 
-	private static Field getAccessibleField(Class<?> cls, final String fieldName){
-		Field field = null;
-		while(cls != Object.class){
-			try{
-				field = cls.getDeclaredField(fieldName);
-				field.setAccessible(true);
-				break;
-			}
-			catch(final NoSuchFieldException | SecurityException e){
-				//go up to parent class
-				cls = cls.getSuperclass();
-			}
-		}
-		return field;
+	/**
+	 * Retrieve all declared fields in the current class AND in the parent classes.
+	 *
+	 * @param cls	The class from which to extract the declared fields.
+	 * @return	An array of all the fields of the given class.
+	 */
+	public static DynamicArray<Field> getAccessibleFields(Class<?> cls){
+		return getAccessibleFields(cls, null);
 	}
 
-	private static DynamicArray<Field> getAccessibleFields(Class<?> cls, final Class<?> fieldType){
-		final DynamicArray<Field> result = DynamicArray.create(Field.class, 0);
-		while(cls != Object.class){
-			final Field[] fields = cls.getDeclaredFields();
-			result.addAll(filterAccessibleFields(fields, fieldType));
+	/**
+	 * Retrieve all declared fields in the current class AND in the parent classes.
+	 *
+	 * @param cls	The class from which to extract the declared fields.
+	 * @return	An array of all the fields of the given class.
+	 */
+	public static DynamicArray<Field> getAccessibleFields(Class<?> cls, final Class<?> fieldType){
+		final DynamicArray<Field> fields = DynamicArray.create(Field.class, 0);
+
+		//recurse classes:
+		while(cls != null && cls != Object.class){
+			final DynamicArray<Field> subfields = DynamicArray.wrap(cls.getDeclaredFields());
+			if(fieldType != null)
+				//apply filter on field type
+				subfields.filter(field -> field.getType() == fieldType);
+			//place parent's fields before all the child's fields
+			fields.addAll(0, subfields);
 
 			//go up to parent class
 			cls = cls.getSuperclass();
 		}
-		return result;
-	}
 
-	private static DynamicArray<Field> filterAccessibleFields(final Field[] fields, final Class<?> fieldType){
-		final DynamicArray<Field> result = DynamicArray.create(Field.class, fields.length);
-		for(int i = 0; i < fields.length; i ++){
-			final Field field = fields[i];
-			if(field.getType() == fieldType){
-				field.setAccessible(true);
-				result.add(field);
-			}
-		}
-		return result;
+		//make fields accessible
+		for(int i = 0; i < fields.limit; i ++)
+			fields.data[i].setAccessible(true);
+		return fields;
 	}
 
 
 	@SuppressWarnings("unchecked")
-	public static <T> T getMethodResponse(final Object obj, final String methodName, final T defaultValue){
+	public static <T> T invokeMethod(final Object obj, final Method method, final T defaultValue){
 		try{
-			final Method method = getAccessibleMethod(obj.getClass(), methodName);
 			return (method != null? (T)method.invoke(obj): defaultValue);
 		}
 		catch(final IllegalAccessException | InvocationTargetException ignored){
@@ -297,11 +266,14 @@ public final class ReflectionHelper{
 		}
 	}
 
-	private static Method getAccessibleMethod(Class<?> cls, final String methodName){
+	public static Method getAccessibleMethod(Class<?> cls, final String methodName, final Class<?> returnType, final Class<?>... parameterTypes){
 		Method method = null;
-		while(cls != Object.class){
+		while(cls != null && cls != Object.class){
 			try{
-				method = cls.getDeclaredMethod(methodName);
+				method = cls.getDeclaredMethod(methodName, parameterTypes);
+				if(returnType != null && method.getReturnType() != returnType)
+					throw new NoSuchMethodException();
+
 				method.setAccessible(true);
 				break;
 			}
@@ -338,8 +310,9 @@ public final class ReflectionHelper{
 			try{
 				return constructor.newInstance();
 			}
-			catch(final Exception ignored){
+			catch(final Exception e){
 				//cannot happen
+				e.printStackTrace();
 				return null;
 			}
 		};

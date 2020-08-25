@@ -24,10 +24,13 @@
  */
 package io.github.mtrevisan.boxon.internal.reflection.scanners;
 
+import io.github.mtrevisan.boxon.internal.JavaHelper;
+import io.github.mtrevisan.boxon.internal.reflection.adapters.MetadataAdapterBuilder;
 import io.github.mtrevisan.boxon.internal.reflection.adapters.MetadataAdapterInterface;
 import io.github.mtrevisan.boxon.internal.reflection.vfs.VFSDirectory;
 import io.github.mtrevisan.boxon.internal.reflection.vfs.VFSException;
 import io.github.mtrevisan.boxon.internal.reflection.vfs.VFSFile;
+import org.slf4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,44 +44,23 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class AbstractScanner implements ScannerInterface{
 
-	private static final String DOT_CLASS = ".class";
-
+	private static final Logger LOGGER = JavaHelper.getLoggerFor(AbstractScanner.class);
 
 	@SuppressWarnings("rawtypes")
-	protected MetadataAdapterInterface metadataAdapter;
+	protected static final MetadataAdapterInterface METADATA_ADAPTER = MetadataAdapterBuilder.getMetadataAdapter();
 
 	private final Map<String, Collection<String>> metadataStore = new ConcurrentHashMap<>(0);
 
 
-	@Override
-	@SuppressWarnings("rawtypes")
-	public void setMetadataAdapter(final MetadataAdapterInterface metadataAdapter){
-		this.metadataAdapter = metadataAdapter;
-	}
-
-	@Override
-	public final boolean acceptsInput(final String filename){
-		return filename.endsWith(DOT_CLASS);
-	}
-
-	@Override
-	public final Object scan(final VFSDirectory root, final VFSFile file, Object classObject){
-		if(classObject == null){
-			try{
-				classObject = metadataAdapter.createClassObject(root, file);
-			}
-			catch(final Exception e){
-				throw new VFSException("Could not create class object from file {}", file.getRelativePath())
-					.withCause(e);
-			}
+	public static Object createClassObject(final VFSDirectory root, final VFSFile file){
+		try{
+			return METADATA_ADAPTER.createClassObject(root, file);
 		}
-
-		scan(classObject);
-
-		return classObject;
+		catch(final Exception e){
+			throw new VFSException("Could not create class object from file {}", file.getRelativePath())
+				.withCause(e);
+		}
 	}
-
-	protected abstract void scan(final Object cls);
 
 
 	/**
@@ -147,6 +129,9 @@ public abstract class AbstractScanner implements ScannerInterface{
 	}
 
 	public final boolean put(final String key, final String value){
+		if(LOGGER != null)
+			LOGGER.trace("Add {} > {} to metadata store", key, value);
+
 		return metadataStore.computeIfAbsent(key, s -> new ArrayList<>(1))
 			.add(value);
 	}

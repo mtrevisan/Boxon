@@ -110,7 +110,7 @@ public class Parser{
 	 * 		{@link SecurityManager#checkPermission s.checkPermission} method with
 	 * 		{@code RuntimePermission("accessDeclaredMembers")} denies access to the declared method.</li>
 	 *			<li>the caller's class loader is not the same as or an ancestor of the class loader for the current class and
-	 *  		invocation of {@link SecurityManager#checkPackageAccess s.checkPackageAccess()} denies access to the package
+	 * 		invocation of {@link SecurityManager#checkPackageAccess s.checkPackageAccess()} denies access to the package
 	 * 		of this class.</li>
 	 * 	</ul>
 	 */
@@ -289,8 +289,8 @@ public class Parser{
 		final ComposeResponse response = new ComposeResponse();
 
 		final BitWriter writer = new BitWriter();
-		for(int i = 0; i < data.length; i ++)
-			compose(writer, data[i], response);
+		for(final Object datum : data)
+			compose(writer, datum, response);
 		writer.flush();
 
 		response.setComposedMessage(writer.array());

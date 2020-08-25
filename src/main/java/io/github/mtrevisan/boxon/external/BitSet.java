@@ -84,7 +84,7 @@ public final class BitSet{
 	 */
 	public static BitSet valueOf(final BigInteger value, final int size, final ByteOrder byteOrder){
 		byte[] array = value.toByteArray();
-		final int newSize = (size + Byte.SIZE - 1) / Byte.SIZE;
+		final int newSize = (size + Byte.SIZE - 1) >>> 3;
 		if(newSize != array.length){
 			final int offset = Math.max(array.length - newSize, 0);
 			final byte[] newArray = new byte[newSize];
@@ -101,17 +101,16 @@ public final class BitSet{
 
 	private BitSet(final byte[] words){
 		int length = 0;
-		for(int i = 0; i < words.length; i ++)
-			length += Integer.bitCount(words[i] & 0xFF);
+		for(final byte word : words)
+			length += Integer.bitCount(word & 0xFF);
 
 		indexes = new int[length];
 		int k = 0;
 		int offset = 0;
-		for(int i = 0; i < words.length; i ++){
-			byte word = words[i];
+		for(byte word : words){
 			while(word != 0){
 				final int skip = Integer.numberOfTrailingZeros(word);
-				indexes[k ++] = skip + offset;
+				indexes[k++] = skip + offset;
 				word ^= 1 << skip;
 			}
 			offset += Byte.SIZE;
@@ -121,17 +120,16 @@ public final class BitSet{
 
 	private BitSet(final long[] words){
 		int length = 0;
-		for(int i = 0; i < words.length; i ++)
-			length += Long.bitCount(words[i]);
+		for(final long word : words)
+			length += Long.bitCount(word);
 
 		indexes = new int[length];
 		int k = 0;
 		int offset = 0;
-		for(int i = 0; i < words.length; i ++){
-			long word = words[i];
+		for(long word : words){
 			while(word != 0l){
 				final int skip = Long.numberOfTrailingZeros(word);
-				indexes[k ++] = skip + offset;
+				indexes[k++] = skip + offset;
 				word ^= 1l << skip;
 			}
 			offset += Long.SIZE;
@@ -193,9 +191,9 @@ public final class BitSet{
 	 * Returns a new byte array containing all the bits in this bit set.
 	 * <p>More precisely, if
 	 * {@code byte[] bytes = s.toByteArray();}<br>
-	 * then {@code bytes.length == (s.length()+7)/8} and<br>
-	 * {@code s.get(n) == ((bytes[n/8] & (1<<(n%8))) != 0)}<br>
-	 * for all {@code n < 8 * bytes.length}.</p>
+	 * then {@code bytes.length == (s.length() + Byte.SIZE - 1) / Byte.SIZE} and<br>
+	 * {@code s.get(n) == ((bytes[n / Byte.SIZE] & (1 << (n % Byte.SIZE))) != 0)}<br>
+	 * for all {@code n < bytes.length * Byte.SIZE}.</p>
 	 *
 	 * @return	A byte array containing a little-endian representation of all the bits in this bit set.
 	 */
@@ -203,10 +201,9 @@ public final class BitSet{
 		if(cardinality == 0)
 			return new byte[]{0};
 
-		final byte[] bytes = new byte[indexes[cardinality - 1] / Byte.SIZE + 1];
-		for(int i = 0; i < indexes.length; i ++){
-			final int index = indexes[i];
-			bytes[index / Byte.SIZE] |= 1 << (index % Byte.SIZE);
+		final byte[] bytes = new byte[(indexes[cardinality - 1] >>> 3) + 1];
+		for(final int index : indexes){
+			bytes[index >>> 3] |= 1 << (index % Byte.SIZE);
 		}
 		return bytes;
 	}
@@ -237,7 +234,7 @@ public final class BitSet{
 
 	public BigInteger toInteger(final int size, final ByteOrder byteOrder, final boolean unsigned){
 		byte[] array = toByteArray();
-		final int expectedLength = size / Byte.SIZE;
+		final int expectedLength = size >>> 3;
 		if(array.length < expectedLength)
 			array = Arrays.copyOf(array, expectedLength);
 		if(byteOrder == ByteOrder.LITTLE_ENDIAN)
@@ -273,7 +270,7 @@ public final class BitSet{
 			array = ByteHelper.extendArray(array);
 			array[0] = (byte)-1;
 		}
-		else if(unsigned && size >= array.length * Byte.SIZE)
+		else if(unsigned && size >= array.length << 3)
 			array = ByteHelper.extendArray(array);
 		return new BigInteger(array);
 	}

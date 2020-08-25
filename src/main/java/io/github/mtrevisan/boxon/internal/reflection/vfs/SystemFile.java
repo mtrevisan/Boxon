@@ -32,8 +32,8 @@ import java.io.File;
  */
 class SystemFile implements VFSFile{
 
-	private static final String SLASH = "/";
-	private static final String BACKSLASH = "\\";
+	private static final char SLASH = '/';
+	private static final char BACKSLASH = '\\';
 
 
 	private final String rootPath;

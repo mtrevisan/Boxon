@@ -111,16 +111,16 @@ final class TemplateParser{
 		final CodecInterface<?> codec = retrieveCodec(binding.annotationType());
 
 		try{
-			if(LOGGER != null && LOGGER.isTraceEnabled())
-				LOGGER.trace("reading {}.{} with bind {}", template, field.getName(), binding.annotationType().getSimpleName());
+			if(LOGGER != null)
+				LOGGER.trace("reading {}.{} with bind {}", template, field.getFieldName(), binding.annotationType().getSimpleName());
 
 			//decode value from raw message
 			final Object value = codec.decode(reader, binding, parserContext.rootObject);
 			//store value in the current object
-			ReflectionHelper.setFieldValue(parserContext.currentObject, field.getName(), value);
+			field.setFieldValue(parserContext.currentObject, value);
 
-			if(LOGGER != null && LOGGER.isTraceEnabled())
-				LOGGER.trace("read {}.{} = {}", template, field.getName(), value);
+			if(LOGGER != null)
+				LOGGER.trace("read {}.{} = {}", template, field.getFieldName(), value);
 		}
 		catch(final Exception e){
 			//this assumes the reading was done correctly
@@ -163,7 +163,7 @@ final class TemplateParser{
 				.get();
 			final long startValue = checksum.startValue();
 			final long calculatedChecksum = checksummer.calculateChecksum(reader.array(), startPosition, endPosition, startValue);
-			final Number givenChecksum = ReflectionHelper.getFieldValue(data, checksumData.getName());
+			final Number givenChecksum = checksumData.getFieldValue(data);
 			if(givenChecksum == null)
 				throw new IllegalArgumentException("Something bad happened, cannot read message checksum");
 			if(calculatedChecksum != givenChecksum.longValue())
@@ -179,8 +179,14 @@ final class TemplateParser{
 			final String condition = field.getBinding().condition();
 			final boolean process = (condition.isEmpty() || Evaluator.evaluate(condition, rootObject, boolean.class));
 			if(process){
-				final Object value = Evaluator.evaluate(field.getBinding().value(), rootObject, field.getType());
-				ReflectionHelper.setFieldValue(rootObject, field.getName(), value);
+				if(LOGGER != null)
+					LOGGER.trace("evaluating {}.{}", template.getType().getSimpleName(), field.getFieldName());
+
+				final Object value = Evaluator.evaluate(field.getBinding().value(), rootObject, field.getFieldType());
+				field.setFieldValue(rootObject, value);
+
+				if(LOGGER != null)
+					LOGGER.trace("wrote {}.{} = {}", template.getType().getSimpleName(), field.getFieldName(), value);
 			}
 		}
 	}
@@ -218,17 +224,17 @@ final class TemplateParser{
 		final CodecInterface<?> codec = retrieveCodec(binding.annotationType());
 
 		try{
-			if(LOGGER != null && LOGGER.isTraceEnabled())
-				LOGGER.trace("writing {}.{} with bind {}", template.getType().getSimpleName(), field.getName(),
+			if(LOGGER != null)
+				LOGGER.trace("writing {}.{} with bind {}", template.getType().getSimpleName(), field.getFieldName(),
 					binding.annotationType().getSimpleName());
 
 			//encode value from current object
-			final Object value = ReflectionHelper.getFieldValue(parserContext.currentObject, field.getName());
+			final Object value = field.getFieldValue(parserContext.currentObject);
 			//write value to raw message
 			codec.encode(writer, binding, parserContext.rootObject, value);
 
-			if(LOGGER != null && LOGGER.isTraceEnabled())
-				LOGGER.trace("wrote {}.{} = {}", template.getType().getSimpleName(), field.getName(), value);
+			if(LOGGER != null)
+				LOGGER.trace("wrote {}.{} = {}", template.getType().getSimpleName(), field.getFieldName(), value);
 		}
 		catch(final Exception e){
 			//this assumes the writing was done correctly
@@ -267,7 +273,7 @@ final class TemplateParser{
 
 	private void rethrowException(final Template<?> template, final Template.BoundedField field, final Exception e){
 		final String message = ExceptionHelper.getMessageNoLineNumber(e);
-		throw new RuntimeException(message + " in field " + template + "." + field.getName());
+		throw new RuntimeException(message + " in field " + template + "." + field.getFieldName());
 	}
 
 	private void writeSkip(final Skip skip, final BitWriter writer, final Object rootObject){

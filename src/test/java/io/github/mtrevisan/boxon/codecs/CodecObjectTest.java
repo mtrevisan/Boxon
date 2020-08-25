@@ -62,6 +62,7 @@ class CodecObjectTest{
 			this.major = major;
 			this.minor = minor;
 		}
+
 	}
 
 
@@ -138,7 +139,7 @@ class CodecObjectTest{
 
 		TemplateParser templateParser = new TemplateParser();
 		templateParser.loader.loadDefaultCodecs();
-		ReflectionHelper.setFieldValue(codec, "templateParser", templateParser);
+		ReflectionHelper.setFieldValue(codec, TemplateParser.class, templateParser);
 		BitWriter writer = new BitWriter();
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
