@@ -40,6 +40,7 @@ import io.github.mtrevisan.boxon.internal.reflection.helpers.ReflectionHelper;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -67,6 +68,7 @@ final class Template<T>{
 		private final Skip[] skips;
 		private final Annotation binding;
 
+		private final Method condition;
 		//FIXME https://www.jboss.org/optaplanner/blog/2018/01/09/JavaReflectionButMuchFaster.html
 		//extract getter and setter?
 
@@ -77,6 +79,8 @@ final class Template<T>{
 			this.field = field;
 			this.skips = skips;
 			this.binding = binding;
+
+			condition = ReflectionHelper.getAccessibleMethod(binding.annotationType(), CONDITION);
 		}
 
 		String getFieldName(){
@@ -100,7 +104,7 @@ final class Template<T>{
 		}
 
 		String getCondition(){
-			return ReflectionHelper.getMethodResponse(binding, CONDITION, EMPTY_STRING);
+			return ReflectionHelper.invokeMethod(binding, condition, EMPTY_STRING);
 		}
 	}
 

@@ -51,7 +51,7 @@ final class Evaluator{
 			@Override
 			protected Field findField(final String name, final Class<?> cls, final boolean mustBeStatic){
 				Class<?> currentType = cls;
-				while(currentType != Object.class){
+				while(currentType != null && currentType != Object.class){
 					final Field[] fields = currentType.getDeclaredFields();
 					for(final Field field : fields){
 						if(field.getName().equals(name) && (!mustBeStatic || Modifier.isStatic(field.getModifiers())))

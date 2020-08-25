@@ -101,7 +101,7 @@ public final class ReflectionHelper{
 		if(recursively){
 			fields = DynamicArray.create(Field.class);
 			Class<?> currentType = cls;
-			while(currentType != Object.class){
+			while(currentType != null && currentType != Object.class){
 				final Field[] subfields = currentType.getDeclaredFields();
 				//place parent's fields before all the child's fields
 				fields.addAll(0, subfields);
@@ -244,7 +244,7 @@ public final class ReflectionHelper{
 
 	private static DynamicArray<Field> getAccessibleFields(Class<?> cls, final Class<?> fieldType){
 		final DynamicArray<Field> result = DynamicArray.create(Field.class, 0);
-		while(cls != Object.class){
+		while(cls != null && cls != Object.class){
 			final Field[] fields = cls.getDeclaredFields();
 			result.addAll(filterAccessibleFields(fields, fieldType));
 
@@ -267,9 +267,8 @@ public final class ReflectionHelper{
 
 
 	@SuppressWarnings("unchecked")
-	public static <T> T getMethodResponse(final Object obj, final String methodName, final T defaultValue){
+	public static <T> T invokeMethod(final Object obj, final Method method, final T defaultValue){
 		try{
-			final Method method = getAccessibleMethod(obj.getClass(), methodName);
 			return (method != null? (T)method.invoke(obj): defaultValue);
 		}
 		catch(final IllegalAccessException | InvocationTargetException ignored){
@@ -277,9 +276,9 @@ public final class ReflectionHelper{
 		}
 	}
 
-	private static Method getAccessibleMethod(Class<?> cls, final String methodName){
+	public static Method getAccessibleMethod(Class<?> cls, final String methodName){
 		Method method = null;
-		while(cls != Object.class){
+		while(cls != null && cls != Object.class){
 			try{
 				method = cls.getDeclaredMethod(methodName);
 				method.setAccessible(true);
