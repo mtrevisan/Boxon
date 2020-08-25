@@ -182,7 +182,7 @@ final class TemplateParser{
 				if(LOGGER != null)
 					LOGGER.trace("evaluating {}.{}", template.getType().getSimpleName(), field.getFieldName());
 
-				final Object value = Evaluator.evaluate(field.getBinding().value(), rootObject, field.getType());
+				final Object value = Evaluator.evaluate(field.getBinding().value(), rootObject, field.getFieldType());
 				field.setFieldValue(rootObject, value);
 
 				if(LOGGER != null)

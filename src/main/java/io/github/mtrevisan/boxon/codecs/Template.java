@@ -73,12 +73,16 @@ final class Template<T>{
 		//extract getter and setter?
 
 
-		private BoundedField(final Field field, final Skip[] skips, final Annotation binding){
+		private BoundedField(final Field field, final Annotation binding){
+			this(field, binding, null);
+		}
+
+		private BoundedField(final Field field, final Annotation binding, final Skip[] skips){
 			field.setAccessible(true);
 
 			this.field = field;
-			this.skips = skips;
 			this.binding = binding;
+			this.skips = skips;
 
 			condition = ReflectionHelper.getAccessibleMethod(binding.annotationType(), CONDITION);
 		}
@@ -95,16 +99,16 @@ final class Template<T>{
 			ReflectionHelper.setFieldValue(field, obj, value);
 		}
 
-		Skip[] getSkips(){
-			return skips;
-		}
-
 		Annotation getBinding(){
 			return binding;
 		}
 
 		String getCondition(){
 			return ReflectionHelper.invokeMethod(binding, condition, EMPTY_STRING);
+		}
+
+		Skip[] getSkips(){
+			return skips;
 		}
 	}
 
@@ -126,12 +130,12 @@ final class Template<T>{
 			return field.getName();
 		}
 
-		void setFieldValue(final Object obj, final Object value){
-			ReflectionHelper.setFieldValue(field, obj, value);
+		Class<?> getFieldType(){
+			return field.getType();
 		}
 
-		Class<?> getType(){
-			return field.getType();
+		void setFieldValue(final Object obj, final Object value){
+			ReflectionHelper.setFieldValue(field, obj, value);
 		}
 
 		Evaluate getBinding(){
@@ -283,9 +287,9 @@ final class Template<T>{
 			validateField(boundedAnnotations, checksum);
 
 			if(boundedAnnotations.limit == 1)
-				boundedFields.add(new BoundedField(field, (skips.length > 0? skips: null), boundedAnnotations.data[0]));
+				boundedFields.add(new BoundedField(field, boundedAnnotations.data[0], (skips.length > 0? skips: null)));
 			if(checksum != null)
-				this.checksum = new BoundedField(field, null, checksum);
+				this.checksum = new BoundedField(field, checksum);
 		}
 	}
 
@@ -306,7 +310,7 @@ final class Template<T>{
 		final DynamicArray<EvaluatedField> evaluations = DynamicArray.create(EvaluatedField.class, declaredAnnotations.length);
 		for(final Annotation annotation : declaredAnnotations){
 			if(annotation.annotationType() == Evaluate.class)
-				evaluations.add(new EvaluatedField(field, (Evaluate) annotation));
+				evaluations.add(new EvaluatedField(field, (Evaluate)annotation));
 		}
 		return evaluations;
 	}

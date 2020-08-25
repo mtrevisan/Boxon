@@ -187,7 +187,7 @@ class TemplateTest{
 		Assertions.assertEquals(1, evaluatedFields.limit);
 		Template.EvaluatedField evaluatedField = evaluatedFields.data[0];
 		Assertions.assertEquals("receptionTime", evaluatedField.getFieldName());
-		Assertions.assertEquals(ZonedDateTime.class, evaluatedField.getType());
+		Assertions.assertEquals(ZonedDateTime.class, evaluatedField.getFieldType());
 		Evaluate evaluate = evaluatedField.getBinding();
 		Assertions.assertEquals("T(java.time.ZonedDateTime).now()", evaluate.value());
 		Template.BoundedField checksumField = template.getChecksum();
