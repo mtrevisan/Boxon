@@ -24,11 +24,13 @@
  */
 package io.github.mtrevisan.boxon.internal.reflection.scanners;
 
+import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.reflection.adapters.MetadataAdapterBuilder;
 import io.github.mtrevisan.boxon.internal.reflection.adapters.MetadataAdapterInterface;
 import io.github.mtrevisan.boxon.internal.reflection.vfs.VFSDirectory;
 import io.github.mtrevisan.boxon.internal.reflection.vfs.VFSException;
 import io.github.mtrevisan.boxon.internal.reflection.vfs.VFSFile;
+import org.slf4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,6 +43,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 
 public abstract class AbstractScanner implements ScannerInterface{
+
+	private static final Logger LOGGER = JavaHelper.getLoggerFor(AbstractScanner.class);
 
 	@SuppressWarnings("rawtypes")
 	protected static final MetadataAdapterInterface METADATA_ADAPTER = MetadataAdapterBuilder.getMetadataAdapter();
@@ -125,6 +129,9 @@ public abstract class AbstractScanner implements ScannerInterface{
 	}
 
 	public final boolean put(final String key, final String value){
+		if(LOGGER != null)
+			LOGGER.trace("Add {} > {} to metadata store", key, value);
+
 		return metadataStore.computeIfAbsent(key, s -> new ArrayList<>(1))
 			.add(value);
 	}

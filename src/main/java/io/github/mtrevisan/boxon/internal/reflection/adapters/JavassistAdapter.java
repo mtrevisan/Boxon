@@ -47,29 +47,29 @@ class JavassistAdapter implements MetadataAdapterInterface<ClassFile>{
 
 
 	@Override
-	public String getClassName(final ClassFile cls){
-		return cls.getName();
+	public String getClassName(final ClassFile classFile){
+		return classFile.getName();
 	}
 
 	@Override
-	public String getSuperclassName(final ClassFile cls){
-		return cls.getSuperclass();
+	public String getSuperclassName(final ClassFile classFile){
+		return classFile.getSuperclass();
 	}
 
 	@Override
-	public String[] getInterfacesNames(final ClassFile cls){
-		return cls.getInterfaces();
+	public String[] getInterfacesNames(final ClassFile classFile){
+		return classFile.getInterfaces();
 	}
 
 	@Override
-	public String[] getClassAnnotationNames(final ClassFile type){
+	public String[] getClassAnnotationNames(final ClassFile classFile){
 		final DynamicArray<String> list = DynamicArray.create(String.class, 2);
 
-		AnnotationsAttribute attribute = (AnnotationsAttribute)type.getAttribute(AnnotationsAttribute.visibleTag);
+		AnnotationsAttribute attribute = (AnnotationsAttribute)classFile.getAttribute(AnnotationsAttribute.visibleTag);
 		extractAnnotationNames(attribute, list);
 
 		if(INCLUDE_INVISIBLE_TAG){
-			attribute = (AnnotationsAttribute)type.getAttribute(AnnotationsAttribute.invisibleTag);
+			attribute = (AnnotationsAttribute)classFile.getAttribute(AnnotationsAttribute.invisibleTag);
 			extractAnnotationNames(attribute, list);
 		}
 
