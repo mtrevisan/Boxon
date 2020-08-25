@@ -231,6 +231,7 @@ public final class ReflectionHelper{
 	 * Retrieve all declared fields in the current class AND in the parent classes.
 	 *
 	 * @param cls	The class from which to extract the declared fields.
+	 * @param fieldType	The class for which to extract all the fields.
 	 * @return	An array of all the fields of the given class.
 	 */
 	public static DynamicArray<Field> getAccessibleFields(Class<?> cls, final Class<?> fieldType){
