@@ -266,11 +266,14 @@ public final class ReflectionHelper{
 		}
 	}
 
-	public static Method getAccessibleMethod(Class<?> cls, final String methodName){
+	public static Method getAccessibleMethod(Class<?> cls, final String methodName, final Class<?> returnType, final Class<?>... parameterTypes){
 		Method method = null;
 		while(cls != null && cls != Object.class){
 			try{
-				method = cls.getDeclaredMethod(methodName);
+				method = cls.getDeclaredMethod(methodName, parameterTypes);
+				if(returnType != null && method.getReturnType() != returnType)
+					throw new NoSuchMethodException();
+
 				method.setAccessible(true);
 				break;
 			}

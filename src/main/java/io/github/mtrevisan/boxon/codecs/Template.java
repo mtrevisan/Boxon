@@ -83,7 +83,7 @@ final class Template<T>{
 			this.skips = skips;
 
 			//pre-fetch condition method
-			condition = ReflectionHelper.getAccessibleMethod(binding.annotationType(), CONDITION);
+			condition = ReflectionHelper.getAccessibleMethod(binding.annotationType(), CONDITION, String.class);
 		}
 
 		String getFieldName(){
