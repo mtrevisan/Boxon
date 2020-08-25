@@ -166,7 +166,7 @@ final class Loader{
 	 */
 	void loadTemplates(final Class<?>... basePackageClasses){
 		if(LOGGER != null)
-			LOGGER.info("Load parsing classes from package(s) {}",
+			LOGGER.info("Load templates from package(s) {}",
 				Arrays.stream(basePackageClasses).map(Class::getPackageName).collect(Collectors.joining(", ", "[", "]")));
 
 		/** extract all classes annotated with {@link MessageHeader}. */
