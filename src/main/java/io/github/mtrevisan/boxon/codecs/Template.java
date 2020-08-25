@@ -61,7 +61,7 @@ final class Template<T>{
 	/** Data associated to an annotated field. */
 	static final class BoundedField{
 
-		/** NOTE: MUST match the name of the method in all the annotations that defines a condition */
+		/** NOTE: MUST match the name of the method in all the annotations that defines a condition! */
 		private static final String CONDITION = "condition";
 
 		private final Field field;
