@@ -28,6 +28,7 @@ import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.StringJoiner;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 
 public final class DynamicArray<T>{
@@ -123,6 +124,18 @@ public final class DynamicArray<T>{
 		grow(newCapacity - limit);
 	}
 
+	public void filter(final Predicate<T> filter){
+		reset();
+		for(final T elem : data)
+			if(filter.test(elem))
+				data[limit ++] = elem;
+	}
+
+	public void join(final Function<T, String> reducer, final StringJoiner joiner){
+		for(int i = 0; i < limit; i ++)
+			joiner.add(reducer.apply(data[i]));
+	}
+
 	private void grow(final int size){
 		final int delta = limit - data.length + size;
 		if(delta > 0){
@@ -155,11 +168,6 @@ public final class DynamicArray<T>{
 	public void clear(){
 		data = null;
 		limit = -1;
-	}
-
-	public void join(final Function<T, String> reducer, final StringJoiner joiner){
-		for(int i = 0; i < limit; i ++)
-			joiner.add(reducer.apply(data[i]));
 	}
 
 	/**
