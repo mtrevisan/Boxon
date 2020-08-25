@@ -78,8 +78,6 @@ final class Template<T>{
 		}
 
 		private BoundedField(final Field field, final Annotation binding, final Skip[] skips){
-			field.setAccessible(true);
-
 			this.field = field;
 			this.binding = binding;
 			this.skips = skips;
@@ -121,8 +119,6 @@ final class Template<T>{
 
 
 		private EvaluatedField(final Field field, final Evaluate binding){
-			field.setAccessible(true);
-
 			this.field = field;
 			this.binding = binding;
 		}
@@ -271,7 +267,7 @@ final class Template<T>{
 
 		header = cls.getAnnotation(MessageHeader.class);
 		//retrieve all declared fields in the current class AND in the parent classes
-		loadAnnotatedFields(ReflectionHelper.getDeclaredFields(cls, true), hasCodec);
+		loadAnnotatedFields(ReflectionHelper.getAccessibleFields(cls, true), hasCodec);
 	}
 
 	private void loadAnnotatedFields(final DynamicArray<Field> fields, final Function<Class<? extends Annotation>, Boolean> hasCodec){

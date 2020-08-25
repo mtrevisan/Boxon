@@ -93,10 +93,10 @@ public final class ReflectionHelper{
 	 * Retrieve fields list of specified class.
 	 *
 	 * @param cls	The class from which to extract the declared fields.
-	 * @param recursively	If {@code true}, it retrieves fields from all class hierarchy.
+	 * @param recursively	Whether to retrieve fields from all class hierarchy.
 	 * @return	An array of all the fields of the given class.
 	 */
-	public static DynamicArray<Field> getDeclaredFields(final Class<?> cls, final boolean recursively){
+	public static DynamicArray<Field> getAccessibleFields(final Class<?> cls, final boolean recursively){
 		final DynamicArray<Field> fields;
 		if(recursively){
 			fields = DynamicArray.create(Field.class);
@@ -111,6 +111,9 @@ public final class ReflectionHelper{
 		}
 		else
 			fields = DynamicArray.createFrom(cls.getDeclaredFields());
+
+		for(int i = 0; i < fields.limit; i ++)
+			fields.data[i].setAccessible(true);
 		return fields;
 	}
 
@@ -235,18 +238,21 @@ public final class ReflectionHelper{
 
 	public static <T> void setFieldValue(final Object obj, final Class<T> fieldType, final T value){
 		try{
-			final DynamicArray<Field> fields = getAccessibleFields(obj.getClass(), fieldType);
-			for(int i = 0; i < fields.limit; i ++)
-				fields.data[i].set(obj, value);
+			final DynamicArray<Field> fields = getFields(obj.getClass(), fieldType);
+			for(int i = 0; i < fields.limit; i ++){
+				final Field field = fields.data[i];
+				field.setAccessible(true);
+				field.set(obj, value);
+			}
 		}
 		catch(final IllegalArgumentException | IllegalAccessException ignored){}
 	}
 
-	private static DynamicArray<Field> getAccessibleFields(Class<?> cls, final Class<?> fieldType){
+	private static DynamicArray<Field> getFields(Class<?> cls, final Class<?> fieldType){
 		final DynamicArray<Field> result = DynamicArray.create(Field.class, 0);
 		while(cls != null && cls != Object.class){
 			final Field[] fields = cls.getDeclaredFields();
-			result.addAll(filterAccessibleFields(fields, fieldType));
+			result.addAll(filterFields(fields, fieldType));
 
 			//go up to parent class
 			cls = cls.getSuperclass();
@@ -254,14 +260,11 @@ public final class ReflectionHelper{
 		return result;
 	}
 
-	private static DynamicArray<Field> filterAccessibleFields(final Field[] fields, final Class<?> fieldType){
+	private static DynamicArray<Field> filterFields(final Field[] fields, final Class<?> fieldType){
 		final DynamicArray<Field> result = DynamicArray.create(Field.class, fields.length);
-		for(final Field field : fields){
-			if(field.getType() == fieldType){
-				field.setAccessible(true);
+		for(final Field field : fields)
+			if(field.getType() == fieldType)
 				result.add(field);
-			}
-		}
 		return result;
 	}
 
