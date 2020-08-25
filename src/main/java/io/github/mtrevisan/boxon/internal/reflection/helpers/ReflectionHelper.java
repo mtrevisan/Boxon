@@ -90,28 +90,25 @@ public final class ReflectionHelper{
 
 
 	/**
-	 * Retrieve fields list of specified class.
+	 * Retrieve all declared fields in the current class AND in the parent classes.
 	 *
 	 * @param cls	The class from which to extract the declared fields.
-	 * @param recursively	Whether to retrieve fields from all class hierarchy.
 	 * @return	An array of all the fields of the given class.
 	 */
-	public static DynamicArray<Field> getAccessibleFields(final Class<?> cls, final boolean recursively){
-		final DynamicArray<Field> fields;
-		if(recursively){
-			fields = DynamicArray.create(Field.class);
-			Class<?> currentType = cls;
-			while(currentType != null && currentType != Object.class){
-				final Field[] subfields = currentType.getDeclaredFields();
-				//place parent's fields before all the child's fields
-				fields.addAll(0, subfields);
+	public static DynamicArray<Field> getAccessibleFields(final Class<?> cls){
+		final DynamicArray<Field> fields = DynamicArray.createFrom(cls.getDeclaredFields());
 
-				currentType = currentType.getSuperclass();
-			}
+		//recurse classes
+		Class<?> currentType = cls.getSuperclass();
+		while(currentType != null && currentType != Object.class){
+			final Field[] subfields = currentType.getDeclaredFields();
+			//place parent's fields before all the child's fields
+			fields.addAll(0, subfields);
+
+			currentType = currentType.getSuperclass();
 		}
-		else
-			fields = DynamicArray.createFrom(cls.getDeclaredFields());
 
+		//make fields accessible
 		for(int i = 0; i < fields.limit; i ++)
 			fields.data[i].setAccessible(true);
 		return fields;

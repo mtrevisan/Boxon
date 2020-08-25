@@ -266,8 +266,7 @@ final class Template<T>{
 		this.cls = cls;
 
 		header = cls.getAnnotation(MessageHeader.class);
-		//retrieve all declared fields in the current class AND in the parent classes
-		loadAnnotatedFields(ReflectionHelper.getAccessibleFields(cls, true), hasCodec);
+		loadAnnotatedFields(ReflectionHelper.getAccessibleFields(cls), hasCodec);
 	}
 
 	private void loadAnnotatedFields(final DynamicArray<Field> fields, final Function<Class<? extends Annotation>, Boolean> hasCodec){
