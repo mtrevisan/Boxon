@@ -240,6 +240,7 @@ public final class ReflectionHelper{
 		while(cls != null && cls != Object.class){
 			final DynamicArray<Field> subfields = DynamicArray.wrap(cls.getDeclaredFields());
 			if(fieldType != null)
+				//apply filter on field type
 				subfields.filter(field -> field.getType() == fieldType);
 			//place parent's fields before all the child's fields
 			fields.addAll(0, subfields);
