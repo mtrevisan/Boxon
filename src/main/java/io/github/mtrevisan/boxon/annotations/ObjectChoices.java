@@ -68,6 +68,7 @@ public @interface ObjectChoices{
 	/** The annotation holding a single choice. */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.ANNOTATION_TYPE)
+	@Documented
 	@interface ObjectChoice{
 
 		/**

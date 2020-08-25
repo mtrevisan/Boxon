@@ -53,6 +53,7 @@ public @interface ConverterChoices{
 	/** The annotation holding a single choice. */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.ANNOTATION_TYPE)
+	@Documented
 	@interface ConverterChoice{
 
 		/**
