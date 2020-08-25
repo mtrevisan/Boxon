@@ -41,13 +41,8 @@ public final class DynamicArray<T>{
 	private final float growthRate;
 
 
-	public static <T> DynamicArray<T> createFrom(final T[] array){
-		@SuppressWarnings("unchecked")
-		final DynamicArray<T> da = new DynamicArray<>((Class<T>)array.getClass().getComponentType(), array.length,
-			DEFAULT_GROWTH_RATE);
-		System.arraycopy(array, 0, da.data, 0, array.length);
-		da.limit = array.length;
-		return da;
+	public static <T> DynamicArray<T> wrap(final T[] array){
+		return new DynamicArray<>(array);
 	}
 
 	public static <T> DynamicArray<T> create(final Class<T> type){
@@ -60,6 +55,13 @@ public final class DynamicArray<T>{
 
 	public static <T> DynamicArray<T> create(final Class<T> type, final int capacity, final float growthRate){
 		return new DynamicArray<>(type, capacity, growthRate);
+	}
+
+	private DynamicArray(final T[] array){
+		data = array;
+		limit = array.length;
+
+		growthRate = DEFAULT_GROWTH_RATE;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -97,16 +99,16 @@ public final class DynamicArray<T>{
 	 * <p>Shifts the element currently at that position (if any) and any subsequent elements to the right (increases their indices).</p>
 	 *
 	 * @param index	Index at which to insert the first element from the specified collection.
-	 * @param collection	Collection containing elements to be added to this array.
+	 * @param array	Collection containing elements to be added to this array.
 	 */
-	public void addAll(final int index, final T[] collection){
-		final int addLength = collection.length;
+	public void addAll(final int index, final DynamicArray<T> array){
+		final int addLength = array.limit;
 		if(addLength != 0){
 			grow(addLength);
 
 			if(index < limit)
 				System.arraycopy(data, index, data, index + addLength, limit - index);
-			System.arraycopy(collection, 0, data, index, addLength);
+			System.arraycopy(array.data, 0, data, index, addLength);
 			limit += addLength;
 		}
 	}

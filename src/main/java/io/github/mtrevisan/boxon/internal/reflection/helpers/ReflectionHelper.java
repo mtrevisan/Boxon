@@ -89,31 +89,6 @@ public final class ReflectionHelper{
 	}
 
 
-	/**
-	 * Retrieve all declared fields in the current class AND in the parent classes.
-	 *
-	 * @param cls	The class from which to extract the declared fields.
-	 * @return	An array of all the fields of the given class.
-	 */
-	public static DynamicArray<Field> getAccessibleFields(final Class<?> cls){
-		final DynamicArray<Field> fields = DynamicArray.createFrom(cls.getDeclaredFields());
-
-		//recurse classes
-		Class<?> currentType = cls.getSuperclass();
-		while(currentType != null && currentType != Object.class){
-			final Field[] subfields = currentType.getDeclaredFields();
-			//place parent's fields before all the child's fields
-			fields.addAll(0, subfields);
-
-			currentType = currentType.getSuperclass();
-		}
-
-		//make fields accessible
-		for(int i = 0; i < fields.limit; i ++)
-			fields.data[i].setAccessible(true);
-		return fields;
-	}
-
 	public static Class<?>[] extractCallerClasses(){
 		Class<?>[] classes = new Class[0];
 		try{
@@ -235,33 +210,56 @@ public final class ReflectionHelper{
 
 	public static <T> void setFieldValue(final Object obj, final Class<T> fieldType, final T value){
 		try{
-			final DynamicArray<Field> fields = getFields(obj.getClass(), fieldType);
-			for(int i = 0; i < fields.limit; i ++){
-				final Field field = fields.data[i];
-				field.setAccessible(true);
-				field.set(obj, value);
-			}
+			final DynamicArray<Field> fields = getAccessibleFields(obj.getClass(), fieldType);
+			for(int i = 0; i < fields.limit; i ++)
+				fields.data[i].set(obj, value);
 		}
 		catch(final IllegalArgumentException | IllegalAccessException ignored){}
 	}
 
-	private static DynamicArray<Field> getFields(Class<?> cls, final Class<?> fieldType){
-		final DynamicArray<Field> result = DynamicArray.create(Field.class, 0);
+	/**
+	 * Retrieve all declared fields in the current class AND in the parent classes.
+	 *
+	 * @param cls	The class from which to extract the declared fields.
+	 * @return	An array of all the fields of the given class.
+	 */
+	public static DynamicArray<Field> getAccessibleFields(Class<?> cls){
+		return getAccessibleFields(cls, null);
+	}
+
+	/**
+	 * Retrieve all declared fields in the current class AND in the parent classes.
+	 *
+	 * @param cls	The class from which to extract the declared fields.
+	 * @return	An array of all the fields of the given class.
+	 */
+	public static DynamicArray<Field> getAccessibleFields(Class<?> cls, final Class<?> fieldType){
+		final DynamicArray<Field> fields = DynamicArray.create(Field.class, 0);
+
+		//recurse classes:
 		while(cls != null && cls != Object.class){
-			final Field[] fields = cls.getDeclaredFields();
-			result.addAll(filterFields(fields, fieldType));
+			final Field[] subfields = cls.getDeclaredFields();
+			//place parent's fields before all the child's fields
+			fields.addAll(0, filterFields(subfields, fieldType));
 
 			//go up to parent class
 			cls = cls.getSuperclass();
 		}
-		return result;
+
+		//make fields accessible
+		for(int i = 0; i < fields.limit; i ++)
+			fields.data[i].setAccessible(true);
+		return fields;
 	}
 
 	private static DynamicArray<Field> filterFields(final Field[] fields, final Class<?> fieldType){
-		final DynamicArray<Field> result = DynamicArray.create(Field.class, fields.length);
-		for(final Field field : fields)
-			if(field.getType() == fieldType)
-				result.add(field);
+		final DynamicArray<Field> result = DynamicArray.wrap(fields);
+		if(fieldType != null){
+			result.reset();
+			for(final Field field : fields)
+				if(field.getType() == fieldType)
+					result.add(field);
+		}
 		return result;
 	}
 
