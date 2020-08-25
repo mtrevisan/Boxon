@@ -57,6 +57,7 @@ public @interface Skip{
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.FIELD)
+	@Documented
 	@interface Skips{
 
 		Skip[] value();
