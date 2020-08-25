@@ -791,6 +791,8 @@ public class RSSIConverter implements Converter<Byte, Short>{
 ### Custom annotations
 You can also define your own annotation by define an annotation and implementing `CodecInterface` as in the following example.
 
+Optionally, the method `String condition()` could be defined.
+
 <b>... and remember to add it to the `Parser`!</b>
 
 ```java
