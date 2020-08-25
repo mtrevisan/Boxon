@@ -84,6 +84,7 @@ final class Template<T>{
 			this.binding = binding;
 			this.skips = skips;
 
+			//pre-fetch condition method
 			condition = ReflectionHelper.getAccessibleMethod(binding.annotationType(), CONDITION);
 		}
 
