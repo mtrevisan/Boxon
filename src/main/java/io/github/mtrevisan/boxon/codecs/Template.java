@@ -36,7 +36,7 @@ import io.github.mtrevisan.boxon.annotations.Skip;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.internal.DynamicArray;
 import io.github.mtrevisan.boxon.internal.ParserDataType;
-import io.github.mtrevisan.boxon.internal.reflection.helpers.ReflectionHelper;
+import io.github.mtrevisan.boxon.internal.reflection.ReflectionHelper;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;

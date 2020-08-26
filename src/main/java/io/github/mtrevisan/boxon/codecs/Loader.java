@@ -33,7 +33,7 @@ import io.github.mtrevisan.boxon.internal.Memoizer;
 import io.github.mtrevisan.boxon.internal.matchers.BNDMPatternMatcher;
 import io.github.mtrevisan.boxon.internal.matchers.PatternMatcher;
 import io.github.mtrevisan.boxon.internal.reflection.Reflections;
-import io.github.mtrevisan.boxon.internal.reflection.helpers.ReflectionHelper;
+import io.github.mtrevisan.boxon.internal.reflection.ReflectionHelper;
 import org.slf4j.Logger;
 
 import java.lang.annotation.Annotation;
