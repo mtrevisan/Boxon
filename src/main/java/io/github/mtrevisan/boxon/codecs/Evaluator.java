@@ -119,7 +119,7 @@ final class Evaluator{
 		return size;
 	}
 
-	private static boolean isPositiveInteger(final String text){
+	private static boolean isPositiveInteger(final CharSequence text){
 		for(int i = 0; i < text.length(); i ++)
 			if(!Character.isDigit(text.charAt(i)))
 				return false;

@@ -27,6 +27,7 @@ package io.github.mtrevisan.boxon.internal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -60,7 +61,7 @@ public final class Memoizer{
 	 */
 	public static <OUT> Supplier<OUT> memoizeThreadAndRecursionSafe(final Supplier<OUT> supplier){
 		final Map<Object, OUT> cache = new HashMap<>(0);
-		final ReentrantLock lock = new ReentrantLock();
+		final Lock lock = new ReentrantLock();
 		return () -> {
 			lock.lock();
 			try{
@@ -84,7 +85,7 @@ public final class Memoizer{
 	 */
 	public static <IN, OUT> Function<IN, OUT> memoizeThreadAndRecursionSafe(final Function<IN, OUT> function){
 		final Map<IN, OUT> cache = new HashMap<>(0);
-		final ReentrantLock lock = new ReentrantLock();
+		final Lock lock = new ReentrantLock();
 		return input -> {
 			lock.lock();
 			try{

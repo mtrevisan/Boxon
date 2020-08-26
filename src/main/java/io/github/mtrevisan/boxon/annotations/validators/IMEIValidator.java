@@ -32,7 +32,7 @@ public class IMEIValidator implements Validator<String>{
 		return (value != null && luhnValidate(value));
 	}
 
-	private static boolean luhnValidate(final String text){
+	private static boolean luhnValidate(final CharSequence text){
 		int sum = 0;
 		final int parity = text.length() % 2;
 		for(int i = text.length() - 1; i >= 0; i --){

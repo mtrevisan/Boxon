@@ -80,7 +80,7 @@ public final class JavaHelper{
 	 * @param hexString	The hexadecimal string.
 	 * @return	Array of converted hexadecimal characters.
 	 */
-	public static byte[] toByteArray(final String hexString){
+	public static byte[] toByteArray(final CharSequence hexString){
 		final int len = JavaHelper.lengthOrZero(hexString);
 		if(len % 2 != 0)
 			throw new IllegalArgumentException("Malformed input");
@@ -98,7 +98,7 @@ public final class JavaHelper{
 		return (obj != null? obj: defaultObject);
 	}
 
-	public static int lengthOrZero(final String text){
+	public static int lengthOrZero(final CharSequence text){
 		return (text != null? text.length(): 0);
 	}
 

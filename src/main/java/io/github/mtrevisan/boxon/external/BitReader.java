@@ -370,6 +370,7 @@ public final class BitReader{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	A {@link BigDecimal}.
 	 */
+	@SuppressWarnings("ChainOfInstanceofChecks")
 	public BigDecimal getDecimal(final Class<?> cls, final ByteOrder byteOrder){
 		if(cls == float.class || cls == Float.class)
 			return new BigDecimal(Float.toString(getFloat(byteOrder)));

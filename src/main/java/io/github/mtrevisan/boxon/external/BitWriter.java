@@ -195,6 +195,7 @@ public final class BitWriter{
 	 * @param cls	Either a {@code Float} or a {@link Double} class.
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 */
+	@SuppressWarnings("ChainOfInstanceofChecks")
 	public void putDecimal(final BigDecimal value, final Class<?> cls, final ByteOrder byteOrder){
 		if(cls == float.class || cls == Float.class)
 			putFloat(value.floatValue(), byteOrder);

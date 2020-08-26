@@ -28,7 +28,6 @@ import io.github.mtrevisan.boxon.exceptions.DecodeException;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 
@@ -52,7 +51,7 @@ public class ParseResponse{
 		return parsedMessages.size() + errors.size();
 	}
 
-	private byte[] getPayloadAt(final int index, final Set<Integer> keys){
+	private byte[] getPayloadAt(final int index, final Iterable<Integer> keys){
 		//extract limits of payload starting at a given index on a given map:
 		int start = -1;
 		int end = payload.length;
