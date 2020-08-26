@@ -268,7 +268,7 @@ public final class BitSet{
 	private static BigInteger extendSign(byte[] array, final int size, final boolean unsigned){
 		if(!unsigned && (array[0] & 0x80) != 0x00){
 			array = ByteHelper.extendArray(array);
-			array[0] = (byte)-1;
+			array[0] = -1;
 		}
 		else if(unsigned && size >= array.length << 3)
 			array = ByteHelper.extendArray(array);
