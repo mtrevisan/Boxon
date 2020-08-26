@@ -27,8 +27,6 @@ package io.github.mtrevisan.boxon.internal.reflection;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.ScanResult;
-import io.github.mtrevisan.boxon.annotations.MessageHeader;
-import io.github.mtrevisan.boxon.codecs.CodecInterface;
 import io.github.mtrevisan.boxon.internal.DynamicArray;
 
 import java.lang.annotation.Annotation;
@@ -47,7 +45,12 @@ public final class Reflections{
 
 	private static final Map<Class<?>, Collection<Class<?>>> METADATA_STORE = new ConcurrentHashMap<>(0);
 
+	private ClassGraph classGraph;
 
+
+	/**
+	 * @param packageClasses	List of packages to scan into.
+	 */
 	public Reflections(final Class<?>... packageClasses){
 		Objects.requireNonNull(packageClasses);
 		if(packageClasses.length == 0)
@@ -56,13 +59,25 @@ public final class Reflections{
 		final DynamicArray<String> packageNames = DynamicArray.create(String.class, packageClasses.length);
 		for(final Class<?> packageClass : packageClasses)
 			packageNames.add(packageClass.getPackageName());
-		final ClassGraph classGraph = new ClassGraph()
+		classGraph = new ClassGraph()
 			.ignoreClassVisibility()
 			.enableAnnotationInfo()
 			.acceptPackages(packageNames.extractCopy());
+	}
+
+	/**
+	 * Scan the given packages for classes that extends or implements the given classes.
+	 *
+	 * @param classes	Classes that must be extended or implemented.
+	 */
+	public void scan(final Class<?>... classes){
+		Objects.requireNonNull(classes);
+		if(classes.length == 0)
+			throw new IllegalArgumentException("Class list cannot be empty");
+
 		try(final ScanResult scanResult = classGraph.scan()){
-			scan(scanResult, CodecInterface.class);
-			scan(scanResult, MessageHeader.class);
+			for(final Class<?> cls : classes)
+				scan(scanResult, cls);
 		}
 	}
 

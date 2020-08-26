@@ -289,6 +289,7 @@ final class Loader{
 		final Collection<Class<?>> classes = new HashSet<>(0);
 
 		final Reflections reflections = new Reflections(basePackageClasses);
+		reflections.scan(CodecInterface.class, MessageHeader.class);
 		@SuppressWarnings("unchecked")
 		final Collection<Class<?>> modules = reflections.getImplementationsOf((Class<Object>)type);
 		@SuppressWarnings("unchecked")

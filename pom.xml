@@ -56,9 +56,6 @@
 		<!-- Spring Expression -->
 		<springframework.spring-expression.version>5.2.8.RELEASE</springframework.spring-expression.version>
 
-		<!-- Javassist -->
-		<javassist.version>3.27.0-GA</javassist.version>
-
 		<!-- ClassGraph -->
 		<github.classgraph.version>4.8.88</github.classgraph.version>
 
@@ -289,14 +286,6 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-expression</artifactId>
 			<version>${springframework.spring-expression.version}</version>
-		</dependency>
-
-		<!-- Javassist -->
-		<!-- https://mvnrepository.com/artifact/org.javassist/javassist -->
-		<dependency>
-			<groupId>org.javassist</groupId>
-			<artifactId>javassist</artifactId>
-			<version>${javassist.version}</version>
 		</dependency>
 
 		<!-- ClassGraph -->
