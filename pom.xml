@@ -49,6 +49,7 @@
 		<sonatype.nexus-staging-maven-plugin.version>1.6.8</sonatype.nexus-staging-maven-plugin.version>
 		<maven-source-plugin.version>3.2.1</maven-source-plugin.version>
 		<maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
+		<maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
 		<maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
 		<maven-help-plugin.version>3.2.0</maven-help-plugin.version>
 		<maven-shade-plugin.version>3.2.4</maven-shade-plugin.version>
@@ -191,6 +192,16 @@
 
 	<build>
 		<plugins>
+			<!-- Surefire -->
+			<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-surefire-plugin -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>${maven-surefire-plugin.version}</version>
+				<configuration>
+					<argLine>--add-opens boxon/io.github.mtrevisan.boxon.codecs.queclink=spring.core,spring.expression</argLine>
+				</configuration>
+			</plugin>
 			<!-- Compiler -->
 			<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
 			<plugin>
