@@ -49,16 +49,15 @@ final class Evaluator{
 		//trick to allow accessing private fields
 		CONTEXT.addPropertyAccessor(new ReflectivePropertyAccessor(){
 			@Override
-			protected Field findField(final String name, final Class<?> cls, final boolean mustBeStatic){
-				Class<?> currentType = cls;
-				while(currentType != null && currentType != Object.class){
-					final Field[] fields = currentType.getDeclaredFields();
-					for(final Field field : fields){
+			protected Field findField(final String name, Class<?> cls, final boolean mustBeStatic){
+				while(cls != null && cls != Object.class){
+					final Field[] fields = cls.getDeclaredFields();
+					for(final Field field : fields)
 						if(field.getName().equals(name) && (!mustBeStatic || Modifier.isStatic(field.getModifiers())))
 							return field;
-					}
 
-					currentType = currentType.getSuperclass();
+					//go up to parent class
+					cls = cls.getSuperclass();
 				}
 				return null;
 			}

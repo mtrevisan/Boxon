@@ -970,26 +970,28 @@ Remember that the header that will be written is the first in `@MessageHeader`.
 
 <a name="changelog-1.0.1"></a>
 ### version 1.0.1 - 202008??
-- better handling of NOP logger
+- Better handling of NOP logger.
+- Abandoned [Reflections](https://github.com/ronmamo/reflections) in favor of [ClassGraph](https://github.com/classgraph/classgraph).
+- Minor refactorings.
 
 <a name="changelog-1.0.0"></a>
 ### version 1.0.0 - 20200825
-- speed-up execution
-- revision of the packages with removal of cycles
-- better handling of class retrieval (codecs and templates)
+- Speed-up execution.
+- Revision of the packages with removal of cycles.
+- Better handling of class retrieval (codecs and templates).
 
 <a name="changelog-0.0.2"></a>
 ### version 0.0.2 - 20200731
-- final revision
+- Final revision.
 
 <a name="changelog-0.0.1"></a>
 ### version 0.0.1 - 20200721
-- first revision
-- some more thoughts on how it should work
+- First revision.
+- Some more thoughts on how it should work.
 
 <a name="changelog-0.0.0"></a>
 ### version 0.0.0 - 20200629
-- first version
+- First version.
 
 
 <br/>

@@ -260,11 +260,11 @@ final class TemplateParser{
 		if(codec == null)
 			throw new CodecException("Cannot find codec for binding {}", annotationType.getSimpleName());
 
-		setMessageParser(codec);
+		setTemplateParser(codec);
 		return codec;
 	}
 
-	private void setMessageParser(final CodecInterface<?> codec){
+	private void setTemplateParser(final CodecInterface<?> codec){
 		try{
 			ReflectionHelper.setFieldValue(codec, TemplateParser.class, this);
 		}

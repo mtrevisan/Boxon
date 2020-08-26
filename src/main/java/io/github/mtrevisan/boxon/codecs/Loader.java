@@ -140,7 +140,7 @@ final class Loader{
 	}
 
 	boolean hasCodec(final Class<?> type){
-		return (getCodec(type) != null);
+		return codecs.containsKey(type);
 	}
 
 	CodecInterface<?> getCodec(final Class<?> type){
