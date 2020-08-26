@@ -99,10 +99,11 @@ In order to include Boxon in a Maven project, first add the following dependency
     1. [Multi-message parser](#example-multi)
     2. [Message composer](#example-composer)
 7. [Changelog](#changelog)
-    1. [version 1.0.0](#changelog-1.0.0)
-    2. [version 0.0.2](#changelog-0.0.2)
-    3. [version 0.0.1](#changelog-0.0.1)
-    4. [version 0.0.0](#changelog-0.0.0)
+    1. [version 1.0.1](#changelog-1.0.1)
+    2. [version 1.0.0](#changelog-1.0.0)
+    3. [version 0.0.2](#changelog-0.0.2)
+    4. [version 0.0.1](#changelog-0.0.1)
+    5. [version 0.0.0](#changelog-0.0.0)
 8. [License](#license)
 
 <br/>
@@ -959,15 +960,19 @@ Remember that the header that will be written is the first in `@MessageHeader`.
 <a name="changelog"></a>
 ## Changelog
 
+<a name="changelog-1.0.1"></a>
+### version 1.0.1 - 202008??
+- better handling of NOP logger
+
 <a name="changelog-1.0.0"></a>
-### version 1.0.0 - 202008??
+### version 1.0.0 - 20200825
 - speed-up execution
 - revision of the packages with removal of cycles
 - better handling of class retrieval (codecs and templates)
 
 <a name="changelog-0.0.2"></a>
 ### version 0.0.2 - 20200731
-- final revision, first deploy
+- final revision
 
 <a name="changelog-0.0.1"></a>
 ### version 0.0.1 - 20200721
@@ -976,7 +981,7 @@ Remember that the header that will be written is the first in `@MessageHeader`.
 
 <a name="changelog-0.0.0"></a>
 ### version 0.0.0 - 20200629
-- first release
+- first version
 
 
 <br/>
