@@ -45,7 +45,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringJoiner;
-import java.util.function.Function;
+import java.util.function.Predicate;
 
 
 /**
@@ -258,18 +258,18 @@ final class Template<T>{
 	 * @param hasCodec	The function to verify the presence of the codec.
 	 * @return	A new {@link Template} for the given type.
 	 */
-	static <T> Template<T> createFrom(final Class<T> type, final Function<Class<? extends Annotation>, Boolean> hasCodec){
+	static <T> Template<T> createFrom(final Class<T> type, final Predicate<Class<? extends Annotation>> hasCodec){
 		return new Template<>(type, hasCodec);
 	}
 
-	private Template(final Class<T> cls, final Function<Class<? extends Annotation>, Boolean> hasCodec){
+	private Template(final Class<T> cls, final Predicate<Class<? extends Annotation>> hasCodec){
 		this.cls = cls;
 
 		header = cls.getAnnotation(MessageHeader.class);
 		loadAnnotatedFields(ReflectionHelper.getAccessibleFields(cls), hasCodec);
 	}
 
-	private void loadAnnotatedFields(final DynamicArray<Field> fields, final Function<Class<? extends Annotation>, Boolean> hasCodec){
+	private void loadAnnotatedFields(final DynamicArray<Field> fields, final Predicate<Class<? extends Annotation>> hasCodec){
 		boundedFields.ensureCapacity(fields.limit);
 		for(int i = 0; i < fields.limit; i ++){
 			final Field field = fields.data[i];
@@ -289,13 +289,13 @@ final class Template<T>{
 		}
 	}
 
-	private DynamicArray<Annotation> extractAnnotations(final Annotation[] declaredAnnotations, final Function<Class<? extends Annotation>, Boolean> hasCodec){
+	private DynamicArray<Annotation> extractAnnotations(final Annotation[] declaredAnnotations, final Predicate<Class<? extends Annotation>> hasCodec){
 		final DynamicArray<Annotation> annotations = DynamicArray.create(Annotation.class, declaredAnnotations.length);
 		for(final Annotation annotation : declaredAnnotations){
 			final Class<? extends Annotation> annotationType = annotation.annotationType();
 			//NOTE: cannot throw an exception if the loader does not have the codec, due to the possible presence of other
 			//annotations that have nothing to do with this library
-			if(annotationType != Skip.class && annotationType != Evaluate.class && hasCodec.apply(annotationType))
+			if(annotationType != Skip.class && annotationType != Evaluate.class && hasCodec.test(annotationType))
 				//stores only the preloaded codecs, ignore other annotations
 				annotations.add(annotation);
 		}
