@@ -37,12 +37,12 @@ import java.util.function.Predicate;
 
 public final class JavaHelper{
 
-	private static boolean LOGGER_PRESENT = false;
+	private static boolean LOGGER_BINDING_PRESENT = false;
 	static{
 		try{
 			//check whether an optional SLF4J binding is available
 			Class.forName("org.slf4j.impl.StaticLoggerBinder");
-			LOGGER_PRESENT = true;
+			LOGGER_BINDING_PRESENT = true;
 		}
 		catch(final Throwable e){
 			System.out.println("[WARN] SLF4J: No logger is defined, NO LOG will be printed!");
@@ -53,7 +53,7 @@ public final class JavaHelper{
 	private JavaHelper(){}
 
 	public static Logger getLoggerFor(final Class<?> type){
-		return (LOGGER_PRESENT? LoggerFactory.getLogger(type): null);
+		return (LOGGER_BINDING_PRESENT? LoggerFactory.getLogger(type): null);
 	}
 
 	public static String format(final String message, final Object... parameters){
