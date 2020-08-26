@@ -49,7 +49,7 @@ public class EncodeException extends Exception{
 	@Override
 	public String getMessage(){
 		final StringJoiner sj = new StringJoiner(System.lineSeparator());
-		sj.add("Error encoding data: " + data.toString());
+		sj.add("Error encoding data: " + data);
 		final Throwable cause = getCause();
 		if(cause != null)
 			sj.add(ExceptionHelper.getMessageNoLineNumber(cause));

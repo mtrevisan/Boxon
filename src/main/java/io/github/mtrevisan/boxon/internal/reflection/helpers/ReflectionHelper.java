@@ -211,7 +211,7 @@ public final class ReflectionHelper{
 	 * @param fieldType	The class for which to extract all the fields.
 	 * @return	An array of all the fields of the given class.
 	 */
-	public static DynamicArray<Field> getAccessibleFields(Class<?> cls, final Class<?> fieldType){
+	private static DynamicArray<Field> getAccessibleFields(Class<?> cls, final Class<?> fieldType){
 		final DynamicArray<Field> fields = DynamicArray.create(Field.class, 0);
 
 		//recurse classes:

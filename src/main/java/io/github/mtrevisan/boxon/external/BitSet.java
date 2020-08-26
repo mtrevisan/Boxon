@@ -95,7 +95,7 @@ public final class BitSet{
 		if(byteOrder == ByteOrder.LITTLE_ENDIAN)
 			//NOTE: need to reverse the bytes because BigInteger is big-endian and BitMap is little-endian
 			reverse(array);
-		return BitSet.valueOf(array);
+		return valueOf(array);
 	}
 
 

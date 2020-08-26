@@ -32,7 +32,7 @@ import org.slf4j.helpers.MessageFormatter;
 public final class JavaHelper{
 
 	@SuppressWarnings("CanBeFinal")
-	private static boolean LOGGER_BINDING_PRESENT = false;
+	private static boolean LOGGER_BINDING_PRESENT;
 	static{
 		try{
 			//check whether an optional SLF4J binding is available
@@ -64,7 +64,7 @@ public final class JavaHelper{
 	 * @return	The hexadecimal characters.
 	 */
 	public static String toHexString(final byte[] array){
-		final int length = JavaHelper.lengthOrZero(array);
+		final int length = lengthOrZero(array);
 		final StringBuilder sb = new StringBuilder(length << 1);
 		for(int i = 0; i < length; i ++){
 			final byte elem = array[i];
@@ -81,7 +81,7 @@ public final class JavaHelper{
 	 * @return	Array of converted hexadecimal characters.
 	 */
 	public static byte[] toByteArray(final CharSequence hexString){
-		final int len = JavaHelper.lengthOrZero(hexString);
+		final int len = lengthOrZero(hexString);
 		if(len % 2 != 0)
 			throw new IllegalArgumentException("Malformed input");
 
@@ -98,11 +98,11 @@ public final class JavaHelper{
 		return (obj != null? obj: defaultObject);
 	}
 
-	public static int lengthOrZero(final CharSequence text){
+	private static int lengthOrZero(final CharSequence text){
 		return (text != null? text.length(): 0);
 	}
 
-	public static int lengthOrZero(final byte[] array){
+	private static int lengthOrZero(final byte[] array){
 		return (array != null? array.length: 0);
 	}
 

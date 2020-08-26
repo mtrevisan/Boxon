@@ -208,7 +208,7 @@ final class Template<T>{
 		private final Class<? extends Annotation> annotationType;
 
 		AnnotationValidator(final Class<? extends Annotation> type){
-			this.annotationType = type;
+			annotationType = type;
 		}
 
 		private static AnnotationValidator fromAnnotation(final Annotation annotation){

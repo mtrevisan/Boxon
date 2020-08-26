@@ -61,9 +61,6 @@ final class Loader{
 	private final Map<Class<?>, CodecInterface<?>> codecs = new HashMap<>(0);
 
 
-	Loader(){}
-
-
 	/**
 	 * Loads all the codecs that extends {@link CodecInterface}.
 	 * <p>This method SHOULD BE called from a method inside a class that lies on a parent of all the codecs.</p>
@@ -222,10 +219,10 @@ final class Loader{
 
 	private void loadTemplateInner(final Template<?> template, final String headerStart, final Charset charset){
 		final String key = calculateTemplateKey(headerStart, charset);
-		if(this.templates.containsKey(key))
+		if(templates.containsKey(key))
 			throw new TemplateException("Duplicated key `{}` found for class {}", headerStart, template.getType().getSimpleName());
 
-		this.templates.put(key, template);
+		templates.put(key, template);
 	}
 
 	/**

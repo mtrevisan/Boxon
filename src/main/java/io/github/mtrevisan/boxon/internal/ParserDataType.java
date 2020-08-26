@@ -51,8 +51,8 @@ public enum ParserDataType{
 		}
 	}
 
-	final Class<?> primitiveType;
-	final Class<?> objectiveType;
+	private final Class<?> primitiveType;
+	private final Class<?> objectiveType;
 
 
 	public static ParserDataType fromType(final Class<?> type){

@@ -36,8 +36,8 @@ public class ComposeResponse{
 	private final DynamicArray<EncodeException> errors = DynamicArray.create(EncodeException.class);
 
 
-	public void setComposedMessage(final byte[] composedMessages){
-		this.composedMessage = composedMessages;
+	public void setComposedMessage(final byte[] composedMessage){
+		this.composedMessage = composedMessage;
 	}
 
 	public byte[] getComposedMessage(){
