@@ -42,6 +42,7 @@ import org.slf4j.Logger;
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.Locale;
 
 
 final class TemplateParser{
@@ -167,8 +168,8 @@ final class TemplateParser{
 			if(givenChecksum == null)
 				throw new IllegalArgumentException("Something bad happened, cannot read message checksum");
 			if(calculatedChecksum != givenChecksum.longValue())
-				throw new IllegalArgumentException("Calculated checksum (0x" + Long.toHexString(calculatedChecksum).toUpperCase()
-					+ ") does NOT match given checksum (0x" + Long.toHexString(givenChecksum.longValue()).toUpperCase() + ")");
+				throw new IllegalArgumentException("Calculated checksum (0x" + Long.toHexString(calculatedChecksum).toUpperCase(Locale.ROOT)
+					+ ") does NOT match given checksum (0x" + Long.toHexString(givenChecksum.longValue()).toUpperCase(Locale.ROOT) + ")");
 		}
 	}
 

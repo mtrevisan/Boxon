@@ -28,26 +28,30 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.helpers.MessageFormatter;
 
+import java.util.Locale;
+
 
 public final class JavaHelper{
 
-	@SuppressWarnings("CanBeFinal")
-	private static boolean LOGGER_BINDING_PRESENT;
-	static{
-		try{
-			//check whether an optional SLF4J binding is available
-			Class.forName("org.slf4j.impl.StaticLoggerBinder");
-			LOGGER_BINDING_PRESENT = true;
-		}
-		catch(final Throwable e){
-			System.out.println("[WARN] SLF4J: No logger is defined, NO LOG will be printed!");
-		}
-	}
+	private static Boolean LOGGER_BINDING_PRESENT;
 
 
 	private JavaHelper(){}
 
 	public static Logger getLoggerFor(final Class<?> type){
+		if(LOGGER_BINDING_PRESENT == null){
+			try{
+				//check whether an optional SLF4J binding is available
+				Class.forName("org.slf4j.impl.StaticLoggerBinder");
+				LOGGER_BINDING_PRESENT = true;
+			}
+			catch(final Throwable e){
+				LOGGER_BINDING_PRESENT = false;
+
+				System.out.println("[WARN] SLF4J: No logger is defined, NO LOG will be printed!");
+			}
+		}
+
 		return (LOGGER_BINDING_PRESENT? LoggerFactory.getLogger(type): null);
 	}
 
@@ -71,7 +75,7 @@ public final class JavaHelper{
 			sb.append(Character.forDigit((elem >>> 4) & 0x0F, 16));
 			sb.append(Character.forDigit((elem & 0x0F), 16));
 		}
-		return sb.toString().toUpperCase();
+		return sb.toString().toUpperCase(Locale.ROOT);
 	}
 
 	/**
