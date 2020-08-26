@@ -37,21 +37,23 @@ import java.util.function.Predicate;
 
 public final class JavaHelper{
 
+	private static boolean LOGGER_PRESENT = false;
+	static{
+		try{
+			//check whether an optional SLF4J binding is available
+			Class.forName("org.slf4j.impl.StaticLoggerBinder");
+			LOGGER_PRESENT = true;
+		}
+		catch(final Throwable e){
+			System.out.println("[WARN] SLF4J: No logger is defined, NO LOG will be printed!");
+		}
+	}
+
+
 	private JavaHelper(){}
 
 	public static Logger getLoggerFor(final Class<?> type){
-		try{
-			//This is to check whether an optional SLF4J binding is available.
-			//While SLF4J recommends that libraries "should not declare a dependency on any SLF4J binding but only
-			//depend on slf4j-api", doing so forces users of the library to either add a binding to the classpath
-			//(even if just slf4j-nop) or to set the "slf4j.suppressInitError" system property in order to avoid
-			//the warning, which both is inconvenient.
-			Class.forName("org.slf4j.impl.StaticLoggerBinder");
-			return LoggerFactory.getLogger(type);
-		}
-		catch(final Throwable e){
-			return null;
-		}
+		return (LOGGER_PRESENT? LoggerFactory.getLogger(type): null);
 	}
 
 	public static String format(final String message, final Object... parameters){
