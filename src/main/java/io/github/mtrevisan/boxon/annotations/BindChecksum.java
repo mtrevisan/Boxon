@@ -84,6 +84,6 @@ public @interface BindChecksum{
 	 *
 	 * @return	The starting value of the CRC algorithm.
 	 */
-	long startValue();
+	short startValue();
 
 }

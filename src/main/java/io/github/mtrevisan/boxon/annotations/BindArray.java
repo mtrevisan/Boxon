@@ -83,7 +83,7 @@ public @interface BindArray{
 	 *
 	 * @return The choices to select from, based on a prefix of a certain size (defaults to empty {@link ObjectChoices}).
 	 */
-	ObjectChoices selectFrom() default @ObjectChoices();
+	ObjectChoices selectFrom() default @ObjectChoices;
 
 	/**
 	 * The validator to be applied <i>after</i> applying the converter, in the decoding phase (<i>before</i> if in the encoding one), if any.
@@ -106,6 +106,6 @@ public @interface BindArray{
 	 *
 	 * @return The choices to select from to apply a given converter (defaults to empty {@link ConverterChoices}).
 	 */
-	ConverterChoices selectConverterFrom() default @ConverterChoices();
+	ConverterChoices selectConverterFrom() default @ConverterChoices;
 
 }

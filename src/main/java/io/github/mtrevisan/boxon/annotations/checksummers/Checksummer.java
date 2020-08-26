@@ -30,6 +30,6 @@ package io.github.mtrevisan.boxon.annotations.checksummers;
  */
 public interface Checksummer{
 
-	long calculateChecksum(final byte[] data, final int start, final int end, final long startValue);
+	short calculateChecksum(final byte[] data, final int start, final int end, final short startValue);
 
 }

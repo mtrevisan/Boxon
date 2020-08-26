@@ -37,6 +37,7 @@ public class EncodeException extends Exception{
 	private static final long serialVersionUID = 4385865753761318892L;
 
 
+	//FIXME serialize
 	private final Object data;
 
 

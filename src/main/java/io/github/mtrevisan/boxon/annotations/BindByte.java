@@ -79,6 +79,6 @@ public @interface BindByte{
 	 *
 	 * @return The choices to select from to apply a given converter (defaults to empty {@link ConverterChoices}).
 	 */
-	ConverterChoices selectConverterFrom() default @ConverterChoices();
+	ConverterChoices selectConverterFrom() default @ConverterChoices;
 
 }

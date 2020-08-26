@@ -161,7 +161,7 @@ final class TemplateParser{
 
 			final Checksummer checksummer = ReflectionHelper.getCreator(checksum.algorithm())
 				.get();
-			final long startValue = checksum.startValue();
+			final short startValue = checksum.startValue();
 			final long calculatedChecksum = checksummer.calculateChecksum(reader.array(), startPosition, endPosition, startValue);
 			final Number givenChecksum = checksumData.getFieldValue(data);
 			if(givenChecksum == null)
