@@ -49,10 +49,8 @@ import java.lang.reflect.TypeVariable;
 import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Queue;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -64,29 +62,8 @@ public final class ReflectionHelper{
 
 	private static final Function<Class<?>, Supplier<?>> CREATORS = Memoizer.memoizeThreadAndRecursionSafe(ReflectionHelper::getCreatorInner);
 
-	/** Would include {@code Object.class} when calling {@link #getSuperTypes(Class)}. */
-	private static final boolean INCLUDE_OBJECT = false;
-
 
 	private ReflectionHelper(){}
-
-
-	/**
-	 * Get the immediate supertype and interfaces of the given {@code type}.
-	 *
-	 * @param type	The class.
-	 * @return	The set of classes.
-	 */
-	public static Set<Class<?>> getSuperTypes(final Class<?> type){
-		final Set<Class<?>> result = new LinkedHashSet<>();
-		final Class<?> superclass = type.getSuperclass();
-		final Class<?>[] interfaces = type.getInterfaces();
-		if(superclass != null && (INCLUDE_OBJECT || !superclass.equals(Object.class)))
-			result.add(superclass);
-		if(interfaces.length > 0)
-			result.addAll(Arrays.asList(interfaces));
-		return result;
-	}
 
 
 	public static Class<?>[] extractCallerClasses(){
@@ -223,7 +200,7 @@ public final class ReflectionHelper{
 	 * @param cls	The class from which to extract the declared fields.
 	 * @return	An array of all the fields of the given class.
 	 */
-	public static DynamicArray<Field> getAccessibleFields(Class<?> cls){
+	public static DynamicArray<Field> getAccessibleFields(final Class<?> cls){
 		return getAccessibleFields(cls, null);
 	}
 

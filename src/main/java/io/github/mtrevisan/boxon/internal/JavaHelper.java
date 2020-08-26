@@ -28,15 +28,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.helpers.MessageFormatter;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.function.Predicate;
-
 
 public final class JavaHelper{
 
+	@SuppressWarnings("CanBeFinal")
 	private static boolean LOGGER_BINDING_PRESENT = false;
 	static{
 		try{
@@ -59,21 +54,6 @@ public final class JavaHelper{
 	public static String format(final String message, final Object... parameters){
 		return MessageFormatter.format(message, (parameters.length != 1? parameters: parameters[0]))
 			.getMessage();
-	}
-
-
-	public static <R> Set<R> filter(final Collection<R> result, final Predicate<? super R> predicate){
-		return filter(result, Function.identity(), predicate);
-	}
-
-	public static <R, T> Set<R> filter(final Collection<T> result, final Function<T, R> converter, final Predicate<? super R> predicate){
-		final Set<R> set = new HashSet<>(result.size());
-		for(final T t : result){
-			final R r = converter.apply(t);
-			if(predicate.test(r))
-				set.add(r);
-		}
-		return set;
 	}
 
 
