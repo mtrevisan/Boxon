@@ -28,14 +28,6 @@ import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.reflection.exceptions.ReflectionsException;
 import io.github.mtrevisan.boxon.internal.reflection.helpers.ClasspathHelper;
 import io.github.mtrevisan.boxon.internal.reflection.helpers.ReflectionHelper;
-import io.github.mtrevisan.boxon.internal.reflection.scanners.AbstractScanner;
-import io.github.mtrevisan.boxon.internal.reflection.scanners.ScannerInterface;
-import io.github.mtrevisan.boxon.internal.reflection.scanners.SubTypesScanner;
-import io.github.mtrevisan.boxon.internal.reflection.scanners.TypeAnnotationsScanner;
-import io.github.mtrevisan.boxon.internal.reflection.vfs.VFSDirectory;
-import io.github.mtrevisan.boxon.internal.reflection.vfs.VFSException;
-import io.github.mtrevisan.boxon.internal.reflection.vfs.VFSFile;
-import io.github.mtrevisan.boxon.internal.reflection.vfs.VirtualFileSystem;
 import org.slf4j.Logger;
 
 import java.lang.annotation.Annotation;
@@ -64,23 +56,14 @@ public final class Reflections{
 
 	private static final String DOT_CLASS = ".class";
 
-	private static final TypeAnnotationsScanner TYPE_ANNOTATIONS_SCANNER = new TypeAnnotationsScanner();
-	private static final SubTypesScanner SUB_TYPES_SCANNER = new SubTypesScanner();
-	private static final ScannerInterface[] SCANNERS = {TYPE_ANNOTATIONS_SCANNER, SUB_TYPES_SCANNER};
-
 
 	public static Reflections create(final URL... urls){
-		return new Reflections(false, urls);
+		return new Reflections(urls);
 	}
 
 	public static Reflections create(final Class<?>... classes){
 		final URL[] urls = extractDistinctURLs(classes);
-		return new Reflections(false, urls);
-	}
-
-	public static Reflections createExpandSuperTypes(final Class<?>... classes){
-		final URL[] urls = extractDistinctURLs(classes);
-		return new Reflections(true, urls);
+		return new Reflections(urls);
 	}
 
 	/**
@@ -145,19 +128,16 @@ public final class Reflections{
 	}
 
 	public static Reflections createExpandSuperTypes(final URL... urls){
-		return new Reflections(true, urls);
+		return new Reflections(urls);
 	}
 
-	private Reflections(final boolean expandSuperTypes, final URL... urls){
+	private Reflections(final URL... urls){
 		Objects.requireNonNull(urls);
 		if(urls.length == 0)
 			throw new IllegalArgumentException("Packages list cannot be empty");
 
 		for(final URL url : urls)
 			scan(url);
-
-		if(expandSuperTypes)
-			expandSuperTypes();
 	}
 
 	private void scan(final URL url){
@@ -198,39 +178,6 @@ public final class Reflections{
 				LOGGER.debug("Could not scan file {} in URL {} with scanner {}", relativePath, url.toExternalForm(),
 					scanner.getClass().getSimpleName(), e);
 		}
-	}
-
-	/**
-	 * Expand super types after scanning (for super types that were not scanned).
-	 * <p>This is helpful in finding the transitive closure without scanning all third party dependencies.</p>
-	 * <p>It uses {@link ReflectionHelper#getSuperTypes(Class)}.</p>
-	 * <p>For example, for classes {@code A, B, C} where {@code A} supertype of {@code B}, and {@code B} supertype of {@code C}:
-	 * <ul>
-	 * 	<li>if scanning {@code C} resulted in {@code B} ({@code B -> C} in class store), but {@code A} was not scanned
-	 * 		(although {@code A} supertype of {@code B}) - then {@code getSubTypesOf(A)} will not return {@code C}.</li>
-	 * 	<li>if expanding supertypes, {@code B} will be expanded with {@code A} ({@code A -> B} in class store) - then
-	 * 		{@code getSubTypesOf(A)} will return {@code C}.</li>
-	 * </ul>
-	 * </p>
-	 */
-	private void expandSuperTypes(){
-		final Set<String> keys = SUB_TYPES_SCANNER.keys();
-		keys.removeAll(SUB_TYPES_SCANNER.values());
-		for(final String key : keys){
-			final Class<?> type = ClasspathHelper.getClassFromName(key);
-			if(type != null)
-				expandSupertypes(SUB_TYPES_SCANNER, key, type);
-		}
-	}
-
-	private void expandSupertypes(final AbstractScanner scanner, final String key, final Class<?> type){
-		for(final Class<?> superType : ReflectionHelper.getSuperTypes(type))
-			if(scanner.put(superType.getName(), key)){
-				expandSupertypes(scanner, superType.getName(), superType);
-
-				if(LOGGER != null)
-					LOGGER.trace("Expanded subtype {} into {}", superType.getName(), key);
-			}
 	}
 
 	/**
