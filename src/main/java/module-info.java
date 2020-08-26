@@ -1,4 +1,4 @@
-module boxon{
+module io.github.mtrevisan.boxon{
 	requires org.slf4j;
 	requires io.github.classgraph;
 	requires spring.core;
