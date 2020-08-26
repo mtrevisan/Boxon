@@ -45,7 +45,7 @@ public final class Reflections{
 
 	private static final Map<Class<?>, Collection<Class<?>>> METADATA_STORE = new ConcurrentHashMap<>(0);
 
-	private ClassGraph classGraph;
+	private final ClassGraph classGraph;
 
 
 	/**

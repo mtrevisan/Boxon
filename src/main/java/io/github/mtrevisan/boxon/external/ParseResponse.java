@@ -105,7 +105,7 @@ public class ParseResponse{
 		return errors.get(index);
 	}
 
-	public String getMessageForError(final int index){
+	public String getErrorMessageAt(final int index){
 		return "Error decoding message: " + JavaHelper.toHexString(getErrorPayloadAt(index))
 			+ System.lineSeparator()
 			+ errors.get(index).getMessage();

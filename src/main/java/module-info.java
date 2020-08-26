@@ -5,7 +5,7 @@ module boxon{
 	requires spring.expression;
 
 	opens io.github.mtrevisan.boxon.codecs to spring.core, spring.expression;
-//	opens io.github.mtrevisan.boxon.codecs.queclink to spring.core, spring.expression;
+	opens io.github.mtrevisan.boxon.codecs.queclink to spring.core, spring.expression;
 
 	exports io.github.mtrevisan.boxon.annotations;
 	exports io.github.mtrevisan.boxon.annotations.checksummers;
