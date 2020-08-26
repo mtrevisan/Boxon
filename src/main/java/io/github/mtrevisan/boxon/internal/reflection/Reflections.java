@@ -39,7 +39,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
- * @see <a href="https://github.com/ronmamo/reflections">Reflections</a>
+ * @see <a href="https://github.com/classgraph/classgraph">ClassGraph</a>
  */
 public final class Reflections{
 
