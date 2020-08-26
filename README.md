@@ -70,6 +70,10 @@ Alternatively, you could use `LATEST` in place of `x.y.z` if you just want to gr
 </dependency>
 ```
 
+### Pre-built JARs
+
+You can get pre-built JARs (usable on JRE 11 or newer) from [Sonatype](https://oss.sonatype.org/#nexus-search;quick~io.github.mtrevisan).
+
 <br/>
 <br/>
 
