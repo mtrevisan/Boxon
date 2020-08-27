@@ -29,6 +29,8 @@ import io.github.mtrevisan.boxon.annotations.BindArrayPrimitive;
 import io.github.mtrevisan.boxon.annotations.BindChecksum;
 import io.github.mtrevisan.boxon.annotations.BindDecimal;
 import io.github.mtrevisan.boxon.annotations.BindObject;
+import io.github.mtrevisan.boxon.annotations.BindString;
+import io.github.mtrevisan.boxon.annotations.BindStringTerminated;
 import io.github.mtrevisan.boxon.annotations.Evaluate;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.ObjectChoices;
@@ -189,6 +191,22 @@ final class Template<T>{
 			}
 		},
 
+		STRING(BindString.class){
+			@Override
+			void validate(final Annotation annotation){
+				final BindString binding = (BindString)annotation;
+				CodecHelper.assertCharset(binding.charset());
+			}
+		},
+
+		STRING_TERMINATED(BindStringTerminated.class){
+			@Override
+			void validate(final Annotation annotation){
+				final BindStringTerminated binding = (BindStringTerminated)annotation;
+				CodecHelper.assertCharset(binding.charset());
+			}
+		},
+
 		CHECKSUM(BindChecksum.class){
 			@Override
 			void validate(final Annotation annotation){
@@ -266,6 +284,9 @@ final class Template<T>{
 		this.cls = cls;
 
 		header = cls.getAnnotation(MessageHeader.class);
+		if(header != null)
+			CodecHelper.assertCharset(header.charset());
+
 		loadAnnotatedFields(ReflectionHelper.getAccessibleFields(cls), hasCodec);
 	}
 

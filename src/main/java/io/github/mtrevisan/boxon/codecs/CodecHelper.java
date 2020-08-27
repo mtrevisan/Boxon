@@ -37,6 +37,7 @@ import io.github.mtrevisan.boxon.external.ByteOrder;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.reflection.ReflectionHelper;
 
+import java.nio.charset.Charset;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
@@ -61,6 +62,15 @@ final class CodecHelper{
 	static void assertSizeEquals(final int expectedSize, final int size){
 		if(expectedSize != size)
 			throw new IllegalArgumentException("Size mismatch, expected " + expectedSize + ", got " + size);
+	}
+
+	static void assertCharset(final String charsetName){
+		try{
+			Charset.forName(charsetName);
+		}
+		catch(final Exception e){
+			throw new AnnotationException("Invalid charset: '{}'", charsetName);
+		}
 	}
 
 	static ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> type){
