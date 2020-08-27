@@ -114,7 +114,7 @@ You can get pre-built JARs (usable on JRE 11 or newer) from [Sonatype](https://o
     1. [Multi-message parser](#example-multi)
     2. [Message composer](#example-composer)
 7. [Changelog](#changelog)
-    1. [version 1.0.1](#changelog-1.0.1)
+    1. [version 1.1.0](#changelog-1.1.0)
     2. [version 1.0.0](#changelog-1.0.0)
     3. [version 0.0.2](#changelog-0.0.2)
     4. [version 0.0.1](#changelog-0.0.1)
@@ -976,8 +976,8 @@ Remember that the header that will be written is the first in `@MessageHeader`.
 <a name="changelog"></a>
 ## Changelog
 
-<a name="changelog-1.0.1"></a>
-### version 1.0.1 - 202008??
+<a name="changelog-1.1.0"></a>
+### version 1.1.0 - 202008??
 - Better handling of NOP logger.
 - Abandoned [Reflections](https://github.com/ronmamo/reflections) in favor of [ClassGraph](https://github.com/classgraph/classgraph).
 - Added public constructor to Parser to allow for extensions.
