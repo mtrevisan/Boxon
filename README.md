@@ -16,6 +16,11 @@ This is a declarative, bit-level, message parser. All you have to do is write a 
 
 If you want to use the parser straight away, just go [here](#examples).
 
+<br />
+
+| This project adheres to the **[Zero Bugs Commitment](https://github.com/classgraph/classgraph/blob/master/Zero-Bugs-Commitment.md)**. |
+|-----------------------------|
+
 <br/>
 
 ### Notable features
