@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.annotations;
+package io.github.mtrevisan.boxon.annotations.bindings;
 
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
@@ -38,12 +38,12 @@ import java.lang.annotation.Target;
 
 
 /**
- * Manages a {@code float}/{@link Float} (... before the application of a converter).
+ * Manages an array of primitive values (... before the application of a converter).
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 @Documented
-public @interface BindFloat{
+public @interface BindArrayPrimitive{
 
 	/**
 	 * The SpEL expression that determines if an evaluation has to be made.
@@ -53,18 +53,32 @@ public @interface BindFloat{
 	String condition() default "";
 
 	/**
+	 * The type of object to be inserted into the array.
+	 * <p>Note that this allows you to have a field of a super type of the actual type that
+	 * you expect to inject.</p>
+	 * <p>So you might have something like this:</p>
+	 * <pre><code>
+	 * &#064;BoundArray(size = &quot;5&quot;, type = int.class)
+	 * private int[] array;
+	 * </code></pre>
+	 *
+	 * @return	The type of object to be inserted in the array.
+	 */
+	Class<?> type();
+
+	/**
+	 * The SpEL expression evaluating to the size of the array.
+	 *
+	 * @return	The size of the array.
+	 */
+	String size();
+
+	/**
 	 * The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 *
 	 * @return	The type of endianness (defaults to {@link ByteOrder#BIG_ENDIAN}).
 	 */
 	ByteOrder byteOrder() default ByteOrder.BIG_ENDIAN;
-
-	/**
-	 * The value, regex, or SpEL expression evaluating to the value to match, if any.
-	 *
-	 * @return	The value, or regex, or SpEL expression to be checked for equality (defaults to empty, that means &quot;accept anything&quot;).
-	 */
-	String match() default "";
 
 	/**
 	 * The validator to be applied <i>after</i> applying the converter, in the decoding phase (<i>before</i> if in the encoding one), if any.

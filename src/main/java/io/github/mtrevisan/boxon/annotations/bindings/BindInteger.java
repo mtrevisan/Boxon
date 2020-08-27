@@ -22,12 +22,13 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.annotations;
+package io.github.mtrevisan.boxon.annotations.bindings;
 
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
+import io.github.mtrevisan.boxon.external.ByteOrder;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -37,12 +38,13 @@ import java.lang.annotation.Target;
 
 
 /**
- * Manages an array of {@link Object} (... before the application of a converter).
+ * Manages a {@code long}/{@link Long} if <code>size &lt; {@link Long#SIZE}</code>, {@link java.math.BigInteger BigInteger}
+ * otherwise (... before the application of a converter).
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 @Documented
-public @interface BindArray{
+public @interface BindInteger{
 
 	/**
 	 * The SpEL expression that determines if an evaluation has to be made.
@@ -52,38 +54,26 @@ public @interface BindArray{
 	String condition() default "";
 
 	/**
-	 * The type of object to be inserted into the array.
-	 * <p>Note that this allows you to have a field of a super type of the actual type that
-	 * you expect to inject.</p>
-	 * <p>So you might have something like this:</p>
-	 * <pre><code>
-	 * class A { ... }
+	 * The SpEL expression evaluating to the number of bits used to represent the numeric value.
 	 *
-	 * class B extends A { ... }
-	 *
-	 * ...
-	 *
-	 * &#064;BoundArray(size = &quot;5&quot;, type = B.class)
-	 * private A[] array;	//array will contain instances of B
-	 * </code></pre>
-	 *
-	 * @return	The type of object to be inserted in the array (defaults to {@link Object}).
-	 */
-	Class<?> type() default Object.class;
-
-	/**
-	 * The SpEL expression evaluating to the size of the array.
-	 *
-	 * @return	The size of the array.
+	 * @return	The number of bits used to represent the numeric value.
 	 */
 	String size();
 
 	/**
-	 * The choices to select from, based on a prefix of a certain size, if any.
+	 * The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
+	 * <p>NOTE: This works at bit level! (from lowest to highest if little-endian, from highest to lowest for big-endian).</p>
 	 *
-	 * @return The choices to select from, based on a prefix of a certain size (defaults to empty {@link ObjectChoices}).
+	 * @return	The type of endianness (defaults to {@link ByteOrder#BIG_ENDIAN}).
 	 */
-	ObjectChoices selectFrom() default @ObjectChoices;
+	ByteOrder byteOrder() default ByteOrder.BIG_ENDIAN;
+
+	/**
+	 * The value, regex, or SpEL expression evaluating to the value to match, if any.
+	 *
+	 * @return	The value, or regex, or SpEL expression to be checked for equality (defaults to empty, that means &quot;accept anything&quot;).
+	 */
+	String match() default "";
 
 	/**
 	 * The validator to be applied <i>after</i> applying the converter, in the decoding phase (<i>before</i> if in the encoding one), if any.

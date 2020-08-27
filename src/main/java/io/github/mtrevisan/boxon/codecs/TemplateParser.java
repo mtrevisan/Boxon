@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.codecs;
 
-import io.github.mtrevisan.boxon.annotations.BindChecksum;
+import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.Skip;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
@@ -36,7 +36,7 @@ import io.github.mtrevisan.boxon.external.BitWriter;
 import io.github.mtrevisan.boxon.internal.DynamicArray;
 import io.github.mtrevisan.boxon.internal.ExceptionHelper;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
-import io.github.mtrevisan.boxon.internal.reflection.ReflectionHelper;
+import io.github.mtrevisan.boxon.internal.ReflectionHelper;
 import org.slf4j.Logger;
 
 import java.lang.annotation.Annotation;
@@ -159,7 +159,7 @@ final class TemplateParser{
 	private <T> void verifyChecksum(final Template<T> template, final T data, int startPosition, final BitReader reader){
 		if(template.isChecksumPresent()){
 			final Template.BoundedField checksumData = template.getChecksum();
-			final BindChecksum checksum = (BindChecksum)checksumData.getBinding();
+			final Checksum checksum = (Checksum)checksumData.getBinding();
 			startPosition += checksum.skipStart();
 			final int endPosition = reader.position() - checksum.skipEnd();
 

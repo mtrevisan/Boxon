@@ -25,7 +25,10 @@
 package io.github.mtrevisan.boxon.annotations.checksummers;
 
 
-/** The checksum algorithm to be applied to {@link io.github.mtrevisan.boxon.annotations.BindChecksum BindChecksum}. */
+import io.github.mtrevisan.boxon.annotations.Checksum;
+
+
+/** The checksum algorithm to be applied to {@link Checksum Checksum}. */
 public interface Checksummer{
 
 	/**

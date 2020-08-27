@@ -22,12 +22,11 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.internal.reflection;
+package io.github.mtrevisan.boxon.internal;
 
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.ScanResult;
-import io.github.mtrevisan.boxon.internal.DynamicArray;
 
 import java.lang.annotation.Annotation;
 import java.lang.annotation.Inherited;

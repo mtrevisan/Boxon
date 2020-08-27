@@ -41,7 +41,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 @Documented
-public @interface BindChecksum{
+public @interface Checksum{
 
 	/**
 	 * The type of object to be inserted into the checksum field.

@@ -22,12 +22,13 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.annotations;
+package io.github.mtrevisan.boxon.annotations.bindings;
 
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
+import io.github.mtrevisan.boxon.external.ByteOrder;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -37,12 +38,12 @@ import java.lang.annotation.Target;
 
 
 /**
- * Manages a {@link String} with a given terminator {@code byte} (... before the application of a converter).
+ * Manages a {@code double}/{@link Double} (... before the application of a converter).
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 @Documented
-public @interface BindStringTerminated{
+public @interface BindDouble{
 
 	/**
 	 * The SpEL expression that determines if an evaluation has to be made.
@@ -52,25 +53,11 @@ public @interface BindStringTerminated{
 	String condition() default "";
 
 	/**
-	 * The type of encoding used for the {@link String}.
+	 * The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 *
-	 * @return	The type of encoding used (defaults to `UTF-8`).
+	 * @return	The type of endianness (defaults to {@link ByteOrder#BIG_ENDIAN}).
 	 */
-	String charset() default "UTF-8";
-
-	/**
-	 * The byte that terminates the {@link String}.
-	 *
-	 * @return	The terminator byte (defaults to `\0`).
-	 */
-	byte terminator() default '\0';
-
-	/**
-	 * Whether to consume the terminator.
-	 *
-	 * @return	Whether to consume the terminator (defaults to {@code true}).
-	 */
-	boolean consumeTerminator() default true;
+	ByteOrder byteOrder() default ByteOrder.BIG_ENDIAN;
 
 	/**
 	 * The value, regex, or SpEL expression evaluating to the value to match, if any.

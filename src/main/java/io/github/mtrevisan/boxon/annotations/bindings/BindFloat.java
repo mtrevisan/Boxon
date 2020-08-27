@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.annotations;
+package io.github.mtrevisan.boxon.annotations.bindings;
 
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
@@ -38,12 +38,12 @@ import java.lang.annotation.Target;
 
 
 /**
- * Manages a {@code long}/{@link Long} (... before the application of a converter).
+ * Manages a {@code float}/{@link Float} (... before the application of a converter).
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 @Documented
-public @interface BindLong{
+public @interface BindFloat{
 
 	/**
 	 * The SpEL expression that determines if an evaluation has to be made.

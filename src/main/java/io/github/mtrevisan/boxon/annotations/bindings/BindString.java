@@ -22,14 +22,12 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.annotations;
+package io.github.mtrevisan.boxon.annotations.bindings;
 
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
-import io.github.mtrevisan.boxon.external.BitSet;
-import io.github.mtrevisan.boxon.external.ByteOrder;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -39,12 +37,12 @@ import java.lang.annotation.Target;
 
 
 /**
- * Manages a {@link BitSet BitSet} (... before the application of a converter).
+ * Manages a {@link String} (... before the application of a converter).
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 @Documented
-public @interface BindBits{
+public @interface BindString{
 
 	/**
 	 * The SpEL expression that determines if an evaluation has to be made.
@@ -54,22 +52,21 @@ public @interface BindBits{
 	String condition() default "";
 
 	/**
-	 * The SpEL expression evaluating to the number of bits used to represent the numeric value.
+	 * The type of encoding used for the {@link String}.
 	 *
-	 * @return	The number of bits used to represent the numeric value.
+	 * @return	The type of encoding used (defaults to `UTF-8`).
+	 */
+	String charset() default "UTF-8";
+
+	/**
+	 * The SpEL expression evaluating to the number of bytes.
+	 *
+	 * @return	The number of bytes.
 	 */
 	String size();
 
 	/**
-	 * The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
-	 * <p>NOTE: This works at bit level! (from lowest to highest if little-endian, from highest to lowest if big-endian).</p>
-	 *
-	 * @return	The type of endianness (defaults to {@link ByteOrder#BIG_ENDIAN}).
-	 */
-	ByteOrder byteOrder() default ByteOrder.BIG_ENDIAN;
-
-	/**
-	 * The value to match (MUST BE something like `[1, 12]`, where the numbers are the position of the set bits in ascending order), if any.
+	 * The value, regex, or SpEL expression evaluating to the value to match, if any.
 	 *
 	 * @return	The value, or regex, or SpEL expression to be checked for equality (defaults to empty, that means &quot;accept anything&quot;).
 	 */
@@ -85,7 +82,7 @@ public @interface BindBits{
 
 	/**
 	 * The converter to be applied just <i>before</i> writing the parameter value (<i>after</i> if reading), if any.
-	 * <p>Usually the fully qualified name of an implementation class of a {@link Converter}.</p>
+	 * <p>Usually the fully qualified name of an implementation class of a {@link Converter}.</p>.
 	 *
 	 * @return	The class of a {@link Converter} (defaults to {@link NullConverter null converter}).
 	 */

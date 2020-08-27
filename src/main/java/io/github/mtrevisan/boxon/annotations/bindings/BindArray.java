@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.annotations;
+package io.github.mtrevisan.boxon.annotations.bindings;
 
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
@@ -37,12 +37,12 @@ import java.lang.annotation.Target;
 
 
 /**
- * Manages an annotated {@link Class} (... before the application of a converter).
+ * Manages an array of {@link Object} (... before the application of a converter).
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 @Documented
-public @interface BindObject{
+public @interface BindArray{
 
 	/**
 	 * The SpEL expression that determines if an evaluation has to be made.
@@ -52,7 +52,7 @@ public @interface BindObject{
 	String condition() default "";
 
 	/**
-	 * The type of object.
+	 * The type of object to be inserted into the array.
 	 * <p>Note that this allows you to have a field of a super type of the actual type that
 	 * you expect to inject.</p>
 	 * <p>So you might have something like this:</p>
@@ -63,16 +63,23 @@ public @interface BindObject{
 	 *
 	 * ...
 	 *
-	 * &#064;BoundObject(type = B.class)
-	 * private A array;	//object will contain instances of B
+	 * &#064;BoundArray(size = &quot;5&quot;, type = B.class)
+	 * private A[] array;	//array will contain instances of B
 	 * </code></pre>
 	 *
-	 * @return	The (super) type of object to be inserted in the array (defaults to {@link Object}).
+	 * @return	The type of object to be inserted in the array (defaults to {@link Object}).
 	 */
 	Class<?> type() default Object.class;
 
 	/**
-	 * The choices to select from, based on a prefix of a certain size.
+	 * The SpEL expression evaluating to the size of the array.
+	 *
+	 * @return	The size of the array.
+	 */
+	String size();
+
+	/**
+	 * The choices to select from, based on a prefix of a certain size, if any.
 	 *
 	 * @return The choices to select from, based on a prefix of a certain size (defaults to empty {@link ObjectChoices}).
 	 */

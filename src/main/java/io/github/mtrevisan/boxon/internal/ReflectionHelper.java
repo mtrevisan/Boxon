@@ -22,10 +22,8 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.internal.reflection;
+package io.github.mtrevisan.boxon.internal;
 
-import io.github.mtrevisan.boxon.internal.DynamicArray;
-import io.github.mtrevisan.boxon.internal.Memoizer;
 import org.springframework.objenesis.instantiator.ObjectInstantiator;
 import org.springframework.objenesis.instantiator.android.Android10Instantiator;
 import org.springframework.objenesis.instantiator.android.Android17Instantiator;

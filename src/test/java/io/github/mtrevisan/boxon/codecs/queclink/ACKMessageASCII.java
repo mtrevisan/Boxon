@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.codecs.queclink;
 
-import io.github.mtrevisan.boxon.annotations.BindStringTerminated;
+import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.annotations.Evaluate;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;

@@ -33,26 +33,27 @@ import java.util.Locale;
 
 public final class JavaHelper{
 
-	private static Boolean loggerBindingPresent;
+	private static class LoggerBindingPresentHelper{
+		private static boolean PRESENT;
+		static{
+			try{
+				//check whether an optional SLF4J binding is available
+				Class.forName("org.slf4j.impl.StaticLoggerBinder");
+				PRESENT = true;
+			}
+			catch(final Throwable e){
+				PRESENT = false;
+
+				System.out.println("[WARN] SLF4J: No logger is defined, NO LOG will be printed!");
+			}
+		}
+	}
 
 
 	private JavaHelper(){}
 
 	public static Logger getLoggerFor(final Class<?> type){
-		if(loggerBindingPresent == null){
-			try{
-				//check whether an optional SLF4J binding is available
-				Class.forName("org.slf4j.impl.StaticLoggerBinder");
-				loggerBindingPresent = true;
-			}
-			catch(final Throwable e){
-				loggerBindingPresent = false;
-
-				System.out.println("[WARN] SLF4J: No logger is defined, NO LOG will be printed!");
-			}
-		}
-
-		return (loggerBindingPresent? LoggerFactory.getLogger(type): null);
+		return (LoggerBindingPresentHelper.PRESENT? LoggerFactory.getLogger(type): null);
 	}
 
 	public static String format(final String message, final Object... parameters){

@@ -24,21 +24,21 @@
  */
 package io.github.mtrevisan.boxon.codecs;
 
-import io.github.mtrevisan.boxon.annotations.BindArray;
-import io.github.mtrevisan.boxon.annotations.BindArrayPrimitive;
-import io.github.mtrevisan.boxon.annotations.BindChecksum;
-import io.github.mtrevisan.boxon.annotations.BindDecimal;
-import io.github.mtrevisan.boxon.annotations.BindObject;
-import io.github.mtrevisan.boxon.annotations.BindString;
-import io.github.mtrevisan.boxon.annotations.BindStringTerminated;
+import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.Evaluate;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
-import io.github.mtrevisan.boxon.annotations.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.Skip;
+import io.github.mtrevisan.boxon.annotations.bindings.BindArray;
+import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
+import io.github.mtrevisan.boxon.annotations.bindings.BindDecimal;
+import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
+import io.github.mtrevisan.boxon.annotations.bindings.BindString;
+import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
+import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.internal.DynamicArray;
 import io.github.mtrevisan.boxon.internal.ParserDataType;
-import io.github.mtrevisan.boxon.internal.reflection.ReflectionHelper;
+import io.github.mtrevisan.boxon.internal.ReflectionHelper;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -57,14 +57,13 @@ import java.util.function.Predicate;
  */
 final class Template<T>{
 
-	private static final String EMPTY_STRING = "";
-
-
 	/** Data associated to an annotated field. */
 	static final class BoundedField{
 
 		/** NOTE: MUST match the name of the method in all the annotations that defines a condition! */
 		private static final String CONDITION = "condition";
+
+		private static final String EMPTY_STRING = "";
 
 		private final Field field;
 		private final Skip[] skips;
@@ -207,10 +206,10 @@ final class Template<T>{
 			}
 		},
 
-		CHECKSUM(BindChecksum.class){
+		CHECKSUM(Checksum.class){
 			@Override
 			void validate(final Annotation annotation){
-				final Class<?> type = ((BindChecksum)annotation).type();
+				final Class<?> type = ((Checksum)annotation).type();
 				if(!ParserDataType.isPrimitiveOrWrapper(type))
 					throw new AnnotationException("Unrecognized type for field {}<{}>: {}", getClass().getSimpleName(), type.getSimpleName(),
 						type.getComponentType().getSimpleName());
@@ -290,12 +289,12 @@ final class Template<T>{
 		loadAnnotatedFields(ReflectionHelper.getAccessibleFields(type), hasCodec);
 	}
 
-	private void loadAnnotatedFields(final DynamicArray<Field> fields, final Predicate<Class<? extends Annotation>> hasCodec){
+	private void loadAnnotatedFields(final DynamicArray<Field> fields, final Predicate<? super Class<? extends Annotation>> hasCodec){
 		boundedFields.ensureCapacity(fields.limit);
 		for(int i = 0; i < fields.limit; i ++){
 			final Field field = fields.data[i];
 			final Skip[] skips = field.getDeclaredAnnotationsByType(Skip.class);
-			final BindChecksum checksum = field.getDeclaredAnnotation(BindChecksum.class);
+			final Checksum checksum = field.getDeclaredAnnotation(Checksum.class);
 
 			final Annotation[] declaredAnnotations = field.getDeclaredAnnotations();
 			final DynamicArray<Annotation> boundedAnnotations = extractAnnotations(declaredAnnotations, hasCodec);
@@ -332,7 +331,7 @@ final class Template<T>{
 		return evaluations;
 	}
 
-	private void validateField(final DynamicArray<? extends Annotation> annotations, final BindChecksum checksum){
+	private void validateField(final DynamicArray<? extends Annotation> annotations, final Checksum checksum){
 		if(annotations.limit > 1){
 			final StringJoiner sj = new StringJoiner(", ", "[", "]");
 			annotations.join(annotation -> annotation.annotationType().getSimpleName(), sj);
@@ -340,7 +339,7 @@ final class Template<T>{
 		}
 
 		if(checksum != null && this.checksum != null)
-			throw new AnnotationException("Cannot have more than one {} annotations on class {}", BindChecksum.class.getSimpleName(),
+			throw new AnnotationException("Cannot have more than one {} annotations on class {}", Checksum.class.getSimpleName(),
 				type.getSimpleName());
 
 		if(annotations.limit > 0)

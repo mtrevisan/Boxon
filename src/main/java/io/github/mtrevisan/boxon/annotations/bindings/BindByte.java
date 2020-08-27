@@ -22,13 +22,12 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.annotations;
+package io.github.mtrevisan.boxon.annotations.bindings;
 
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
-import io.github.mtrevisan.boxon.external.ByteOrder;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -38,12 +37,12 @@ import java.lang.annotation.Target;
 
 
 /**
- * Manages a {@link java.math.BigDecimal BigDecimal} (... before the application of a converter).
+ * Manages a {@code byte}/{@link Byte} (... before the application of a converter).
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 @Documented
-public @interface BindDecimal{
+public @interface BindByte{
 
 	/**
 	 * The SpEL expression that determines if an evaluation has to be made.
@@ -51,21 +50,6 @@ public @interface BindDecimal{
 	 * @return	The condition that determines if an evaluation has to be made (defaults to empty, that means &quot;accept&quot;).
 	 */
 	String condition() default "";
-
-	/**
-	 * The type of object to be inserted into a {@link java.math.BigDecimal BigDecimal}.
-	 * <p>Note that this can be either a {@link Float} or a {@link Double} class.</p>
-	 *
-	 * @return	The type of object to be inserted in the array.
-	 */
-	Class<?> type();
-
-	/**
-	 * The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
-	 *
-	 * @return	The type of endianness (defaults to {@link ByteOrder#BIG_ENDIAN}).
-	 */
-	ByteOrder byteOrder() default ByteOrder.BIG_ENDIAN;
 
 	/**
 	 * The value, regex, or SpEL expression evaluating to the value to match, if any.

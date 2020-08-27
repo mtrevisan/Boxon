@@ -22,12 +22,13 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.annotations;
+package io.github.mtrevisan.boxon.annotations.bindings;
 
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
+import io.github.mtrevisan.boxon.external.ByteOrder;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -37,12 +38,12 @@ import java.lang.annotation.Target;
 
 
 /**
- * Manages a {@link String} (... before the application of a converter).
+ * Manages an {@code int}/{@link Integer} (... before the application of a converter).
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 @Documented
-public @interface BindString{
+public @interface BindInt{
 
 	/**
 	 * The SpEL expression that determines if an evaluation has to be made.
@@ -52,18 +53,11 @@ public @interface BindString{
 	String condition() default "";
 
 	/**
-	 * The type of encoding used for the {@link String}.
+	 * The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 *
-	 * @return	The type of encoding used (defaults to `UTF-8`).
+	 * @return	The type of endianness (defaults to {@link ByteOrder#BIG_ENDIAN}).
 	 */
-	String charset() default "UTF-8";
-
-	/**
-	 * The SpEL expression evaluating to the number of bytes.
-	 *
-	 * @return	The number of bytes.
-	 */
-	String size();
+	ByteOrder byteOrder() default ByteOrder.BIG_ENDIAN;
 
 	/**
 	 * The value, regex, or SpEL expression evaluating to the value to match, if any.
@@ -82,7 +76,7 @@ public @interface BindString{
 
 	/**
 	 * The converter to be applied just <i>before</i> writing the parameter value (<i>after</i> if reading), if any.
-	 * <p>Usually the fully qualified name of an implementation class of a {@link Converter}.</p>.
+	 * <p>Usually the fully qualified name of an implementation class of a {@link Converter}.</p>
 	 *
 	 * @return	The class of a {@link Converter} (defaults to {@link NullConverter null converter}).
 	 */

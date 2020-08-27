@@ -605,7 +605,7 @@ This annotation is bounded to a variable.
 
 #### example
 ```java
-@BindChecksum(type = short.class, skipStart = 4, skipEnd = 4, algorithm = CRC16.class, startValue = CRC16.START_VALUE_0xFFFF)
+@Checksum(type = short.class, skipStart = 4, skipEnd = 4, algorithm = CRC16.class, startValue = CRC16.START_VALUE_0xFFFF)
 private short checksum;
 ```
 
@@ -994,6 +994,8 @@ Remember that the header that will be written is the first in `@MessageHeader`.
 - Removed BindInteger.unsigned and BitReader.getInteger(int, ByteOrder, boolean) as they are useless.
 - Removed BitWriter.putText(String, byte, boolean) because of the [Boolean Trap](https://ariya.io/2011/08/hall-of-api-shame-boolean-trap).
 - Enhanced the exception message thrown if the type of BitReader.get(Class, ByteOrder) is not recognized.
+- Renamed BindChecksum into Checksum.
+- Relocated all binding annotations inside annotations.bindings (Bind* and *Choices).
 
 <a name="changelog-1.0.0"></a>
 ### version 1.0.0 - 20200825
