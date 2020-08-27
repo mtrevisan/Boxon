@@ -378,7 +378,6 @@ private long numberLong;
  - `condition`: The SpEL expression that determines if this field has to be read.
  - `size`: the number of bits to read (can be a SpEL expression).
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
- - `unsigned`: whether the resulting number is to be treated as unsigned, defaults to `true`.
  - `match`: a string/regex/SpEl expression that is used as an expected value.
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
@@ -988,6 +987,7 @@ Remember that the header that will be written is the first in `@MessageHeader`.
 - Added `originator` variable (and its getter) to ComposeResponse to hold the given objects used to create the message.
 - Added/modified javadocs to better explain some classes.
 - Removed ComposeResponse.getErrors as it is useless.
+- Removed BindInteger.unsigned and BitReader.getInteger(int, ByteOrder, boolean) as they are useless.
 - Enhanced the exception message thrown if the type of BitReader.get(Class, ByteOrder) is not recognized.
 
 <a name="changelog-1.0.0"></a>

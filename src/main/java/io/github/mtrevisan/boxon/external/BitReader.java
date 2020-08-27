@@ -267,19 +267,6 @@ public final class BitReader{
 	}
 
 	/**
-	 * Reads the next {@code length} bits and composes a {@link BigInteger}.
-	 *
-	 * @param length	The amount of bits to read.
-	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
-	 * @param unsigned	Whether to consider the read number as unsigned.
-	 * @return	A {@link BigInteger} value at the {@link BitReader}'s current position.
-	 */
-	public BigInteger getInteger(final int length, final ByteOrder byteOrder, final boolean unsigned){
-		final BitSet bits = getBits(length);
-		return bits.toInteger(length, byteOrder, unsigned);
-	}
-
-	/**
 	 * Reads {@link Byte#SIZE} bits from this {@link BitReader} and composes a {@code byte}.
 	 *
 	 * @return	A {@code byte}.
@@ -315,7 +302,7 @@ public final class BitReader{
 	 * @return	A {@code short}.
 	 */
 	public short getShort(final ByteOrder byteOrder){
-		return (short)getInteger(Short.SIZE, byteOrder);
+		return getInteger(Short.SIZE, byteOrder).shortValue();
 	}
 
 	/**
@@ -326,7 +313,7 @@ public final class BitReader{
 	 * @return	An {@code int}.
 	 */
 	public int getInt(final ByteOrder byteOrder){
-		return (int)getInteger(Integer.SIZE, byteOrder);
+		return getInteger(Integer.SIZE, byteOrder).intValue();
 	}
 
 	/**
@@ -337,16 +324,19 @@ public final class BitReader{
 	 * @return	A {@code long}.
 	 */
 	public long getLong(final ByteOrder byteOrder){
-		return getInteger(Long.SIZE, byteOrder);
+		return getInteger(Long.SIZE, byteOrder).longValue();
 	}
 
-	private long getInteger(final int size, final ByteOrder byteOrder){
-		final long value = getInteger(size);
-		return reverseBytes(value, size, byteOrder);
-	}
-
-	private static long reverseBytes(final long value, final int size, final ByteOrder byteOrder){
-		return (byteOrder == ByteOrder.BIG_ENDIAN? (Long.reverseBytes(value) >> (Long.SIZE - size)): value);
+	/**
+	 * Reads the next {@code size} bits and composes a {@link BigInteger}.
+	 *
+	 * @param size	The amount of bits to read.
+	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
+	 * @return	A {@link BigInteger} value at the {@link BitReader}'s current position.
+	 */
+	public BigInteger getInteger(final int size, final ByteOrder byteOrder){
+		final BitSet bits = getBits(size);
+		return bits.toInteger(size, byteOrder);
 	}
 
 	private long getInteger(final int size){

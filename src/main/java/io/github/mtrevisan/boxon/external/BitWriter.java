@@ -41,6 +41,7 @@ import java.nio.charset.Charset;
 public final class BitWriter{
 
 	/** The backing {@link ByteArrayOutputStream}. */
+	@SuppressWarnings("resource")
 	private final ByteArrayOutputStream os = new ByteArrayOutputStream(0);
 
 	/** The <i>cache</i> used when writing bits. */

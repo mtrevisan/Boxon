@@ -72,11 +72,6 @@ class CodecIntegerTest{
 			}
 
 			@Override
-			public boolean unsigned(){
-				return true;
-			}
-
-			@Override
 			public String match(){
 				return null;
 			}
@@ -142,11 +137,6 @@ class CodecIntegerTest{
 			@Override
 			public ByteOrder byteOrder(){
 				return ByteOrder.LITTLE_ENDIAN;
-			}
-
-			@Override
-			public boolean unsigned(){
-				return true;
 			}
 
 			@Override
@@ -218,11 +208,6 @@ class CodecIntegerTest{
 			}
 
 			@Override
-			public boolean unsigned(){
-				return true;
-			}
-
-			@Override
 			public String match(){
 				return null;
 			}
@@ -288,11 +273,6 @@ class CodecIntegerTest{
 			@Override
 			public ByteOrder byteOrder(){
 				return ByteOrder.LITTLE_ENDIAN;
-			}
-
-			@Override
-			public boolean unsigned(){
-				return true;
 			}
 
 			@Override
@@ -365,11 +345,6 @@ class CodecIntegerTest{
 			}
 
 			@Override
-			public boolean unsigned(){
-				return true;
-			}
-
-			@Override
 			public String match(){
 				return null;
 			}
@@ -435,11 +410,6 @@ class CodecIntegerTest{
 			@Override
 			public ByteOrder byteOrder(){
 				return ByteOrder.BIG_ENDIAN;
-			}
-
-			@Override
-			public boolean unsigned(){
-				return true;
 			}
 
 			@Override
@@ -511,11 +481,6 @@ class CodecIntegerTest{
 			}
 
 			@Override
-			public boolean unsigned(){
-				return true;
-			}
-
-			@Override
 			public String match(){
 				return null;
 			}
@@ -581,11 +546,6 @@ class CodecIntegerTest{
 			@Override
 			public ByteOrder byteOrder(){
 				return ByteOrder.BIG_ENDIAN;
-			}
-
-			@Override
-			public boolean unsigned(){
-				return true;
 			}
 
 			@Override
@@ -658,11 +618,6 @@ class CodecIntegerTest{
 			}
 
 			@Override
-			public boolean unsigned(){
-				return true;
-			}
-
-			@Override
 			public String match(){
 				return null;
 			}
@@ -707,79 +662,6 @@ class CodecIntegerTest{
 
 
 	@Test
-	void smallBigEndianNegativeSigned(){
-		CodecInterface<BindInteger> codec = new CodecInteger();
-		BigInteger encodedValue = BigInteger.valueOf(0xFFFF_FFFF_FF8F_0011l);
-		BindInteger annotation = new BindInteger(){
-			@Override
-			public Class<? extends Annotation> annotationType(){
-				return BindInteger.class;
-			}
-
-			@Override
-			public String condition(){
-				return null;
-			}
-
-			@Override
-			public String size(){
-				return "24";
-			}
-
-			@Override
-			public ByteOrder byteOrder(){
-				return ByteOrder.BIG_ENDIAN;
-			}
-
-			@Override
-			public boolean unsigned(){
-				return false;
-			}
-
-			@Override
-			public String match(){
-				return null;
-			}
-
-			@Override
-			public Class<? extends Validator<?>> validator(){
-				return NullValidator.class;
-			}
-
-			@Override
-			public Class<? extends Converter<?, ?>> converter(){
-				return NullConverter.class;
-			}
-
-			@Override
-			public ConverterChoices selectConverterFrom(){
-				return new ConverterChoices(){
-					@Override
-					public Class<? extends Annotation> annotationType(){
-						return ConverterChoices.class;
-					}
-
-					@Override
-					public ConverterChoice[] alternatives(){
-						return new ConverterChoice[0];
-					}
-				};
-			}
-		};
-
-		BitWriter writer = new BitWriter();
-		codec.encode(writer, annotation, null, encodedValue);
-		writer.flush();
-
-		Assertions.assertEquals("8F0011", writer.toString());
-
-		BitReader reader = BitReader.wrap(writer);
-		BigInteger decoded = (BigInteger)codec.decode(reader, annotation, null);
-
-		Assertions.assertEquals(encodedValue, decoded);
-	}
-
-	@Test
 	void smallBigEndianNegativeUnsigned(){
 		CodecInterface<BindInteger> codec = new CodecInteger();
 		BigInteger encodedValue = new BigInteger("FFFFFFFFFF8F0011", 16);
@@ -802,11 +684,6 @@ class CodecIntegerTest{
 			@Override
 			public ByteOrder byteOrder(){
 				return ByteOrder.BIG_ENDIAN;
-			}
-
-			@Override
-			public boolean unsigned(){
-				return true;
 			}
 
 			@Override
@@ -879,11 +756,6 @@ class CodecIntegerTest{
 			}
 
 			@Override
-			public boolean unsigned(){
-				return true;
-			}
-
-			@Override
 			public String match(){
 				return null;
 			}
@@ -953,11 +825,6 @@ class CodecIntegerTest{
 			}
 
 			@Override
-			public boolean unsigned(){
-				return true;
-			}
-
-			@Override
 			public String match(){
 				return null;
 			}
@@ -1023,11 +890,6 @@ class CodecIntegerTest{
 			@Override
 			public ByteOrder byteOrder(){
 				return ByteOrder.LITTLE_ENDIAN;
-			}
-
-			@Override
-			public boolean unsigned(){
-				return true;
 			}
 
 			@Override
@@ -1100,11 +962,6 @@ class CodecIntegerTest{
 			}
 
 			@Override
-			public boolean unsigned(){
-				return true;
-			}
-
-			@Override
 			public String match(){
 				return null;
 			}
@@ -1173,11 +1030,6 @@ class CodecIntegerTest{
 			}
 
 			@Override
-			public boolean unsigned(){
-				return true;
-			}
-
-			@Override
 			public String match(){
 				return null;
 			}
@@ -1243,11 +1095,6 @@ class CodecIntegerTest{
 			@Override
 			public ByteOrder byteOrder(){
 				return ByteOrder.BIG_ENDIAN;
-			}
-
-			@Override
-			public boolean unsigned(){
-				return true;
 			}
 
 			@Override

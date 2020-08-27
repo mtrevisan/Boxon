@@ -237,10 +237,9 @@ public final class BitSet{
 	 *
 	 * @param size	The number of bits.
 	 * @param byteOrder	The byte order.
-	 * @param unsigned	Whether to consider the bit set unsigned.
 	 * @return	The converted {@link BigInteger}.
 	 */
-	public BigInteger toInteger(final int size, final ByteOrder byteOrder, final boolean unsigned){
+	public BigInteger toInteger(final int size, final ByteOrder byteOrder){
 		byte[] array = toByteArray();
 		final int expectedLength = size >>> 3;
 		if(array.length < expectedLength)
@@ -248,7 +247,7 @@ public final class BitSet{
 		if(byteOrder == ByteOrder.LITTLE_ENDIAN)
 			//NOTE: need to reverse the bytes because BigInteger is big-endian and BitMap is little-endian
 			reverse(array);
-		return ByteHelper.extendSign(array, size, unsigned);
+		return ByteHelper.extendSign(array, size, true);
 	}
 
 	/**

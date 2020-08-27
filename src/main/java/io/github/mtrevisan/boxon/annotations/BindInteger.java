@@ -69,13 +69,6 @@ public @interface BindInteger{
 	ByteOrder byteOrder() default ByteOrder.BIG_ENDIAN;
 
 	/**
-	 * Whether the resulting number is to be treated as unsigned.
-	 *
-	 * @return	Whether the resulting number is to be treated as unsigned (defaults to {@code true}).
-	 */
-	boolean unsigned() default true;
-
-	/**
 	 * The value, regex, or SpEL expression evaluating to the value to match, if any.
 	 *
 	 * @return	The value, or regex, or SpEL expression to be checked for equality (defaults to empty, that means &quot;accept anything&quot;).

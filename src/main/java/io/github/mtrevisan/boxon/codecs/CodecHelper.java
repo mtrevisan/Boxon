@@ -66,7 +66,7 @@ final class CodecHelper{
 		final ByteOrder prefixByteOrder = selectFrom.byteOrder();
 		final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
 
-		final int prefix = reader.getInteger(prefixSize, prefixByteOrder, true)
+		final int prefix = reader.getInteger(prefixSize, prefixByteOrder)
 			.intValue();
 
 		Evaluator.addToContext(CONTEXT_CHOICE_PREFIX, prefix);
