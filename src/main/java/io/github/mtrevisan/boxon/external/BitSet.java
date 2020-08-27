@@ -161,7 +161,7 @@ public final class BitSet{
 	 * @param bitIndex	A bit index (MUST BE greater than the previous index!).
 	 * @return	The state of the bit at a specified index.
 	 */
-	public boolean testBit(final int bitIndex){
+	public boolean isBitSet(final int bitIndex){
 		return (Arrays.binarySearch(indexes, bitIndex) >= 0);
 	}
 

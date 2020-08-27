@@ -124,14 +124,14 @@ public final class DynamicArray<T>{
 		grow(newCapacity - limit);
 	}
 
-	public void filter(final Predicate<T> filter){
+	public void filter(final Predicate<? super T> filter){
 		reset();
 		for(final T elem : data)
 			if(filter.test(elem))
 				data[limit ++] = elem;
 	}
 
-	public void join(final Function<T, String> reducer, final StringJoiner joiner){
+	public void join(final Function<? super T, String> reducer, final StringJoiner joiner){
 		for(int i = 0; i < limit; i ++)
 			joiner.add(reducer.apply(data[i]));
 	}

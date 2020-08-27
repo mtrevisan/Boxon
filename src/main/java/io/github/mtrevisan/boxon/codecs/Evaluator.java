@@ -89,7 +89,7 @@ final class Evaluator{
 		CONTEXT.registerFunction(method.getName(), method);
 	}
 
-	static <T> T evaluate(final String expression, final Object rootObject, final Class<T> returnType) throws EvaluationException{
+	static <T> T evaluate(final String expression, final Object rootObject, final Class<T> returnType){
 		final Expression exp = PARSER.parseExpression(expression);
 		return exp.getValue(CONTEXT, rootObject, returnType);
 	}
@@ -102,7 +102,7 @@ final class Evaluator{
 	 * @return	The size, or a negative number if the expression is not a valid positive integer.
 	 * @throws EvaluationException	If an error occurs during the evaluation of an expression.
 	 */
-	static int evaluateSize(final String expression, final Object rootObject) throws EvaluationException{
+	static int evaluateSize(final String expression, final Object rootObject){
 		int size = -1;
 		if(!expression.isBlank())
 			size = (isPositiveInteger(expression)? Integer.parseInt(expression): evaluate(expression, rootObject, int.class));

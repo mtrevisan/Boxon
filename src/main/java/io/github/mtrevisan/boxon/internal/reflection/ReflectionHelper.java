@@ -249,16 +249,15 @@ public final class ReflectionHelper{
 		while(cls != null && cls != Object.class){
 			try{
 				method = cls.getDeclaredMethod(methodName, parameterTypes);
-				if(returnType != null && method.getReturnType() != returnType)
-					throw new NoSuchMethodException();
+				if(returnType == null || method.getReturnType() == returnType){
+					method.setAccessible(true);
+					break;
+				}
+			}
+			catch(final NoSuchMethodException ignored){}
 
-				method.setAccessible(true);
-				break;
-			}
-			catch(final NoSuchMethodException e){
-				//go up to parent class
-				cls = cls.getSuperclass();
-			}
+			//go up to parent class
+			cls = cls.getSuperclass();
 		}
 		return method;
 	}
@@ -283,7 +282,7 @@ public final class ReflectionHelper{
 		}
 	}
 
-	private static <T> Supplier<T> createSupplierIgnoreExceptions(final Constructor<T> constructor){
+	private static <T> Supplier<T> createSupplierIgnoreExceptions(final Constructor<? extends T> constructor){
 		return () -> {
 			try{
 				return constructor.newInstance();

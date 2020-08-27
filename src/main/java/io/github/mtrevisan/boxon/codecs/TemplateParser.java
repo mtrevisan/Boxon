@@ -92,7 +92,7 @@ final class TemplateParser{
 				readSkip(skips[i], reader, parserContext.rootObject);
 
 			//check if field has to be processed...
-			if(processField(field.getCondition(), parserContext.rootObject))
+			if(canProcessField(field.getCondition(), parserContext.rootObject))
 				//... and if so, process it
 				decodeField(template, reader, parserContext, field);
 		}
@@ -212,7 +212,7 @@ final class TemplateParser{
 				writeSkip(skips[k], writer, parserContext.rootObject);
 
 			//check if field has to be processed...
-			if(processField(field.getCondition(), parserContext.rootObject))
+			if(canProcessField(field.getCondition(), parserContext.rootObject))
 				//... and if so, process it
 				encodeField(template, writer, parserContext, field);
 		}
@@ -246,7 +246,7 @@ final class TemplateParser{
 		}
 	}
 
-	private boolean processField(final String condition, final Object rootObject){
+	private boolean canProcessField(final String condition, final Object rootObject){
 		return (condition.isEmpty() || Evaluator.evaluate(condition, rootObject, boolean.class));
 	}
 
@@ -277,6 +277,7 @@ final class TemplateParser{
 
 	private void rethrowException(final Template<?> template, final Template.BoundedField field, final Exception e){
 		final String message = ExceptionHelper.getMessageNoLineNumber(e);
+		//FIXME overly generic exception
 		throw new RuntimeException(message + " in field " + template + "." + field.getFieldName());
 	}
 

@@ -84,8 +84,7 @@ public final class ByteHelper{
 	 * @return	The state of the bit at a given index in the given byte.
 	 */
 	public static boolean hasBit(final byte mask, final int index){
-		if(index < 0 || index >= Byte.SIZE)
-			throw new IllegalArgumentException("Index value must be between 0 and " + Byte.SIZE + " exclusive, was " + index);
+		assertLength(index, Byte.SIZE);
 
 		final int bitMask = 1 << (index % Byte.SIZE);
 		return ((mask & bitMask) != 0);
@@ -99,12 +98,16 @@ public final class ByteHelper{
 	 * @return	The state of the bit at a given index in the given byte.
 	 */
 	public static boolean hasBit(final byte[] mask, final int index){
-		if(index < 0 || index >= mask.length << 3)
-			throw new IllegalArgumentException("Index value must be between 0 and " + (mask.length << 3) + " exclusive, was " + index);
+		assertLength(index, mask.length << 3);
 
 		final int bitGroup = mask.length - 1 - (index >>> 3);
 		final int bitMask = 1 << (index % Byte.SIZE);
 		return ((mask[bitGroup] & bitMask) != 0);
+	}
+
+	private static void assertLength(final int index, final int maxLength){
+		if(index < 0 || index >= maxLength)
+			throw new IllegalArgumentException("Index value must be between 0 and " + maxLength + " exclusive, was " + index);
 	}
 
 }

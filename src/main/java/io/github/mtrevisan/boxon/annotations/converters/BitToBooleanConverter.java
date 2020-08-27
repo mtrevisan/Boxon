@@ -31,7 +31,7 @@ public final class BitToBooleanConverter implements Converter<BitSet, Boolean>{
 
 	@Override
 	public Boolean decode(final BitSet value){
-		return value.testBit(0);
+		return value.isBitSet(0);
 	}
 
 	@Override

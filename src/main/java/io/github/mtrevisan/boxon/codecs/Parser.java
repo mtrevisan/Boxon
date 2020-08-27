@@ -116,7 +116,7 @@ public final class Parser{
 	 * 	</ul>
 	 */
 	public Parser withContextFunction(final Class<?> cls, final String methodName, final Class<?>... parameterTypes)
-			throws NoSuchMethodException, SecurityException{
+			throws NoSuchMethodException{
 		final Method method = cls.getDeclaredMethod(methodName, parameterTypes);
 		return withContextFunction(method);
 	}

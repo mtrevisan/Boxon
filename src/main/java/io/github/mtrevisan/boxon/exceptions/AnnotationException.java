@@ -35,6 +35,7 @@ import java.io.ObjectOutputStream;
 /**
  * Thrown if an annotation is not well formatted.
  */
+//FIXME should be a checked exception?
 public final class AnnotationException extends RuntimeException{
 
 	private static final long serialVersionUID = 6429044852678473069L;

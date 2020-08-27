@@ -219,8 +219,8 @@ final class Template<T>{
 
 		private static final Map<Class<? extends Annotation>, AnnotationValidator> ANNOTATION_VALIDATORS = new HashMap<>(5);
 		static{
-			for(final AnnotationValidator b : values())
-				ANNOTATION_VALIDATORS.put(b.annotationType, b);
+			for(final AnnotationValidator validator : values())
+				ANNOTATION_VALIDATORS.put(validator.annotationType, validator);
 		}
 
 		private final Class<? extends Annotation> annotationType;
@@ -258,7 +258,7 @@ final class Template<T>{
 	}
 
 
-	private final Class<T> cls;
+	private final Class<T> type;
 
 	private final MessageHeader header;
 	private final DynamicArray<BoundedField> boundedFields = DynamicArray.create(BoundedField.class);
@@ -280,14 +280,14 @@ final class Template<T>{
 		return new Template<>(type, hasCodec);
 	}
 
-	private Template(final Class<T> cls, final Predicate<Class<? extends Annotation>> hasCodec){
-		this.cls = cls;
+	private Template(final Class<T> type, final Predicate<Class<? extends Annotation>> hasCodec){
+		this.type = type;
 
-		header = cls.getAnnotation(MessageHeader.class);
+		header = type.getAnnotation(MessageHeader.class);
 		if(header != null)
 			CodecHelper.assertCharset(header.charset());
 
-		loadAnnotatedFields(ReflectionHelper.getAccessibleFields(cls), hasCodec);
+		loadAnnotatedFields(ReflectionHelper.getAccessibleFields(type), hasCodec);
 	}
 
 	private void loadAnnotatedFields(final DynamicArray<Field> fields, final Predicate<Class<? extends Annotation>> hasCodec){
@@ -310,7 +310,7 @@ final class Template<T>{
 		}
 	}
 
-	private DynamicArray<Annotation> extractAnnotations(final Annotation[] declaredAnnotations, final Predicate<Class<? extends Annotation>> hasCodec){
+	private DynamicArray<Annotation> extractAnnotations(final Annotation[] declaredAnnotations, final Predicate<? super Class<? extends Annotation>> hasCodec){
 		final DynamicArray<Annotation> annotations = DynamicArray.create(Annotation.class, declaredAnnotations.length);
 		for(final Annotation annotation : declaredAnnotations){
 			final Class<? extends Annotation> annotationType = annotation.annotationType();
@@ -332,16 +332,16 @@ final class Template<T>{
 		return evaluations;
 	}
 
-	private void validateField(final DynamicArray<Annotation> annotations, final BindChecksum checksum){
+	private void validateField(final DynamicArray<? extends Annotation> annotations, final BindChecksum checksum){
 		if(annotations.limit > 1){
 			final StringJoiner sj = new StringJoiner(", ", "[", "]");
 			annotations.join(annotation -> annotation.annotationType().getSimpleName(), sj);
-			throw new AnnotationException("Cannot bind more that one annotation on {}: {}", cls.getSimpleName(), sj.toString());
+			throw new AnnotationException("Cannot bind more that one annotation on {}: {}", type.getSimpleName(), sj.toString());
 		}
 
 		if(checksum != null && this.checksum != null)
 			throw new AnnotationException("Cannot have more than one {} annotations on class {}", BindChecksum.class.getSimpleName(),
-				cls.getSimpleName());
+				type.getSimpleName());
 
 		if(annotations.limit > 0)
 			validateAnnotation(annotations.data[0]);
@@ -354,7 +354,7 @@ final class Template<T>{
 	}
 
 	Class<T> getType(){
-		return cls;
+		return type;
 	}
 
 	MessageHeader getHeader(){
@@ -383,7 +383,7 @@ final class Template<T>{
 
 	@Override
 	public String toString(){
-		return cls.getSimpleName();
+		return type.getSimpleName();
 	}
 
 	@Override
@@ -394,12 +394,12 @@ final class Template<T>{
 			return false;
 
 		final Template<?> rhs = (Template<?>)obj;
-		return (cls == rhs.cls);
+		return (type == rhs.type);
 	}
 
 	@Override
 	public int hashCode(){
-		return cls.getName().hashCode();
+		return type.getName().hashCode();
 	}
 
 }

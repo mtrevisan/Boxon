@@ -68,7 +68,7 @@ final class CodecHelper{
 		try{
 			Charset.forName(charsetName);
 		}
-		catch(final Exception e){
+		catch(final Exception ignored){
 			throw new AnnotationException("Invalid charset: '{}'", charsetName);
 		}
 	}
@@ -190,7 +190,7 @@ final class CodecHelper{
 	static <T> void validateData(final Class<? extends Validator<?>> validatorType, final Object data){
 		final Validator<T> validator = (Validator<T>)ReflectionHelper.getCreator(validatorType)
 			.get();
-		if(!validator.validate((T)data))
+		if(!validator.isValid((T)data))
 			throw new IllegalArgumentException("Validation with " + validatorType.getSimpleName() + " not passed (value is " + data + ")");
 	}
 

@@ -25,18 +25,24 @@
 package io.github.mtrevisan.boxon.annotations.validators;
 
 
-public final class IMEIValidator implements Validator<String>{
+public final class IMEIValidator implements Validator<CharSequence>{
 
+	/**
+	 * Validate an IMEI with the Luhn algorithm.
+	 *
+	 * @param imei	The IMEI to be validated.
+	 * @return	Whether the IMEI is valid.
+	 * @see <a href="https://en.wikipedia.org/wiki/Luhn_algorithm">Luhn algorithm</a>
+	 */
 	@Override
-	public boolean validate(final String value){
-		return (value != null && luhnValidate(value));
-	}
+	public boolean isValid(final CharSequence imei){
+		if(imei == null)
+			return false;
 
-	private static boolean luhnValidate(final CharSequence text){
 		int sum = 0;
-		final int parity = text.length() % 2;
-		for(int i = text.length() - 1; i >= 0; i --){
-			int k = Character.getNumericValue(text.charAt(i));
+		final int parity = imei.length() % 2;
+		for(int i = imei.length() - 1; i >= 0; i --){
+			int k = Character.getNumericValue(imei.charAt(i));
 			if(i % 2 == parity)
 				k <<= 1;
 

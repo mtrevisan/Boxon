@@ -97,7 +97,7 @@ public final class ExceptionHelper{
 		return stackTrace0;
 	}
 
-	private static <T> T match(final T[] array, final Predicate<T> condition){
+	private static <T> T match(final T[] array, final Predicate<? super T> condition){
 		for(final T elem : array){
 			if(condition.test(elem))
 				return elem;

@@ -962,8 +962,10 @@ if(!composeResult.hasErrors()){
 }
 //process the errors
 else{
-    List<EncodeException> errors = result.getErrors();
-    ...
+    for(int i = 0; i < result.getErrorCount(); i ++){
+        EncodeException exc = result.getErrorAt(i);
+        ...
+    }
 }
 ```
 
@@ -982,6 +984,7 @@ Remember that the header that will be written is the first in `@MessageHeader`.
 - Added some feasibility checks on annotation data.
 - Added public constructor to Parser to allow for extensions.
 - Changed the signature of Checksummer.calculateChecksum returning short instead of long.
+- Changed method Validator.validate into Validator.isValid.
 - Changed method ParseResponse.getMessageForError into ParseResponse.getErrorMessageAt to align it to other method name's conventions.
 - Moved classes ParseResponse and ComposeResponse from io.github.mtrevisan.boxon.external to io.github.mtrevisan.boxon.codecs in order to hide add methods; the constructors are also hidden.
 - Minor refactorings.

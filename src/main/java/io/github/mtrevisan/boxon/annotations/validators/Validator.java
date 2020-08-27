@@ -34,6 +34,6 @@ public interface Validator<T>{
 	 * @param value	The value to be validated.
 	 * @return	Whether the given value is valid.
 	 */
-	boolean validate(final T value);
+	boolean isValid(final T value);
 
 }
