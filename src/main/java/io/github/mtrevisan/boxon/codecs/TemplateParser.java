@@ -92,7 +92,7 @@ final class TemplateParser{
 				readSkip(skips[i], reader, parserContext.rootObject);
 
 			//check if field has to be processed...
-			if(canProcessField(field.getCondition(), parserContext.rootObject))
+			if(shouldProcessField(field.getCondition(), parserContext.rootObject))
 				//... and if so, process it
 				decodeField(template, reader, parserContext, field);
 		}
@@ -212,7 +212,7 @@ final class TemplateParser{
 				writeSkip(skips[k], writer, parserContext.rootObject);
 
 			//check if field has to be processed...
-			if(canProcessField(field.getCondition(), parserContext.rootObject))
+			if(shouldProcessField(field.getCondition(), parserContext.rootObject))
 				//... and if so, process it
 				encodeField(template, writer, parserContext, field);
 		}
@@ -246,7 +246,7 @@ final class TemplateParser{
 		}
 	}
 
-	private boolean canProcessField(final String condition, final Object rootObject){
+	private boolean shouldProcessField(final String condition, final Object rootObject){
 		return (condition.isEmpty() || Evaluator.evaluate(condition, rootObject, boolean.class));
 	}
 
