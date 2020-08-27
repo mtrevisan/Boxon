@@ -26,6 +26,10 @@ package io.github.mtrevisan.boxon.exceptions;
 
 import io.github.mtrevisan.boxon.internal.ExceptionHelper;
 
+import java.io.IOException;
+import java.io.NotSerializableException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.StringJoiner;
 
 
@@ -37,7 +41,6 @@ public class EncodeException extends Exception{
 	private static final long serialVersionUID = 4385865753761318892L;
 
 
-	//FIXME serialize
 	private final Object data;
 
 
@@ -55,6 +58,14 @@ public class EncodeException extends Exception{
 		if(cause != null)
 			sj.add(ExceptionHelper.getMessageNoLineNumber(cause));
 		return sj.toString();
+	}
+
+	private void writeObject(final ObjectOutputStream os) throws IOException{
+		throw new NotSerializableException(getClass().getName());
+	}
+
+	private void readObject(final ObjectInputStream is) throws IOException{
+		throw new NotSerializableException(getClass().getName());
 	}
 
 }

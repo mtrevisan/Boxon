@@ -80,7 +80,7 @@ class CodecChecksumTest{
 			}
 
 			@Override
-			public long startValue(){
+			public short startValue(){
 				return CRC16CCITT.START_VALUE_0xFFFF;
 			}
 		};

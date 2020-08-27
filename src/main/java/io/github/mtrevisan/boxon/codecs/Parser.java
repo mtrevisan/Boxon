@@ -58,8 +58,6 @@ public class Parser{
 	}
 
 
-	private Parser(){}
-
 	/**
 	 * Adds a key-value pair to the context of this evaluator.
 	 *
