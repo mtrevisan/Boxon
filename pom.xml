@@ -26,9 +26,9 @@
 	</developers>
 
 	<scm>
-		<url>https://github.com/mtrevisan/Boxon</url>
 		<connection>scm:git:git@github.com:mtrevisan/Boxon.git</connection>
 		<developerConnection>scm:git:git@github.com:mtrevisan/Boxon.git</developerConnection>
+		<url>https://github.com/mtrevisan/Boxon</url>
 	</scm>
 
 	<issueManagement>
@@ -43,6 +43,8 @@
 		<java.version>1.11</java.version>
 		<maven.compiler.source>11</maven.compiler.source>
 		<maven.compiler.target>11</maven.compiler.target>
+
+		<javadoc.html.version>-html5</javadoc.html.version>
 
 		<!-- Profiles & Build -->
 		<maven-deploy-plugin.version>2.8.2</maven-deploy-plugin.version>
@@ -163,13 +165,13 @@
 								<goals>
 									<goal>jar</goal>
 								</goals>
+								<configuration>
+									<additionalOptions>${javadoc.html.version}</additionalOptions>
+									<javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
+									<detectJavaApiLink>false</detectJavaApiLink>
+								</configuration>
 							</execution>
 						</executions>
-						<configuration>
-							<additionalOptions>-html5</additionalOptions>
-							<javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
-							<detectJavaApiLink>false</detectJavaApiLink>
-						</configuration>
 					</plugin>
 				</plugins>
 			</build>
@@ -346,6 +348,7 @@
 		<license>
 			<name>MIT License</name>
 			<url>https://opensource.org/licenses/MIT</url>
+			<distribution>repo</distribution>
 		</license>
 	</licenses>
 </project>
