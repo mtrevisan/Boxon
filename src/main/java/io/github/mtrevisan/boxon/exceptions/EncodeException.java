@@ -36,7 +36,7 @@ import java.util.StringJoiner;
 /**
  * Thrown if a composition (encoding) went bad.
  */
-public class EncodeException extends Exception{
+public final class EncodeException extends Exception{
 
 	private static final long serialVersionUID = 4385865753761318892L;
 

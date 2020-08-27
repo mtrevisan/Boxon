@@ -25,7 +25,7 @@
 package io.github.mtrevisan.boxon.annotations.validators;
 
 
-public class IMEIValidator implements Validator<String>{
+public final class IMEIValidator implements Validator<String>{
 
 	@Override
 	public boolean validate(final String value){

@@ -30,7 +30,7 @@ package io.github.mtrevisan.boxon.annotations.checksummers;
  *
  * @see <a href="https://en.wikipedia.org/wiki/Cyclic_redundancy_check">Cyclic Redundancy Check</a>
  */
-public class CRC16CCITT implements Checksummer{
+public final class CRC16CCITT implements Checksummer{
 
 	/** Starting value 0x0000. */
 	public static final short START_VALUE_0x0000 = 0x0000;

@@ -35,7 +35,7 @@ package io.github.mtrevisan.boxon.internal.matchers;
  *
  * @see <a href="http://eprints.fri.uni-lj.si/4287/1/63150349-LINA_LUMBUROVSKA-%C4%8Casovno_u%C4%8Dinkoviti_algoritmi_ujemanja_nizov_in_metoda_grobe_sile.pdf">Time-efficient string matching algorithms and the brute-force method</a>
  */
-public class KMPPatternMatcher implements PatternMatcher{
+public final class KMPPatternMatcher implements PatternMatcher{
 
 	/**
 	 * Returns an array that points to last valid string prefix.

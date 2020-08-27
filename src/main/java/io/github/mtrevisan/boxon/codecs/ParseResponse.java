@@ -34,7 +34,7 @@ import java.util.TreeMap;
 /**
  * Response class for the decoding phase.
  */
-public class ParseResponse{
+public final class ParseResponse{
 
 	/** Whole payload (the index on {@link #parsedMessages} and {@link #errors} point here). */
 	private final byte[] payload;

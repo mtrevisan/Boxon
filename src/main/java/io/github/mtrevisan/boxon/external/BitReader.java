@@ -86,7 +86,7 @@ public final class BitReader{
 			final FileChannel fc = fis.getChannel();
 		){
 			//map file into memory
-			final ByteBuffer inputByteBuffer = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
+			final ByteBuffer inputByteBuffer = fc.map(FileChannel.MapMode.READ_ONLY, 0l, fc.size());
 
 			return wrap(inputByteBuffer);
 		}
@@ -445,11 +445,8 @@ public final class BitReader{
 	 * @throws IOException	If an I/O error occurs.
 	 */
 	private void getTextUntilTerminator(final OutputStreamWriter os, final byte terminator) throws IOException{
-		for(Byte byteRead = peekByte(); byteRead != null && byteRead != terminator && (buffer.position() < buffer.limit() || buffer.remaining() > 0); ){
+		for(Byte byteRead = peekByte(); byteRead != null && byteRead != terminator; byteRead = peekByte())
 			os.write(getByte());
-
-			byteRead = peekByte();
-		}
 		os.flush();
 	}
 

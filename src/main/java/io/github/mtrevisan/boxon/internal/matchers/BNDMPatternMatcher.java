@@ -45,7 +45,7 @@ import java.util.Arrays;
  * @see <a href="https://users.dcc.uchile.cl/~gnavarro/ps/cpm98.pdf">A bit-parallel approach to suffix automata: fast extended string matching</a>
  * @see <a href="http://eprints.fri.uni-lj.si/4287/1/63150349-LINA_LUMBUROVSKA-%C4%8Casovno_u%C4%8Dinkoviti_algoritmi_ujemanja_nizov_in_metoda_grobe_sile.pdf">Time-efficient string matching algorithms and the brute-force method</a>
  */
-public class BNDMPatternMatcher implements PatternMatcher{
+public final class BNDMPatternMatcher implements PatternMatcher{
 
 	/**
 	 * Pre-processing of the pattern.

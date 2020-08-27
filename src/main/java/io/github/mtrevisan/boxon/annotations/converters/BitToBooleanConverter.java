@@ -27,7 +27,7 @@ package io.github.mtrevisan.boxon.annotations.converters;
 import io.github.mtrevisan.boxon.external.BitSet;
 
 
-public class BitToBooleanConverter implements Converter<BitSet, Boolean>{
+public final class BitToBooleanConverter implements Converter<BitSet, Boolean>{
 
 	@Override
 	public Boolean decode(final BitSet value){

@@ -26,11 +26,16 @@ package io.github.mtrevisan.boxon.exceptions;
 
 import io.github.mtrevisan.boxon.internal.ExceptionHelper;
 
+import java.io.IOException;
+import java.io.NotSerializableException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 
 /**
  * Thrown if a parsing (decoding) went bad.
  */
-public class DecodeException extends Exception{
+public final class DecodeException extends Exception{
 
 	private static final long serialVersionUID = 5375434179637246605L;
 
@@ -59,6 +64,16 @@ public class DecodeException extends Exception{
 				.append("   at index ")
 				.append(errorIndex);
 		return sj.toString();
+	}
+
+	@SuppressWarnings("unused")
+	private void writeObject(final ObjectOutputStream os) throws IOException{
+		throw new NotSerializableException(getClass().getName());
+	}
+
+	@SuppressWarnings("unused")
+	private void readObject(final ObjectInputStream is) throws IOException{
+		throw new NotSerializableException(getClass().getName());
 	}
 
 }

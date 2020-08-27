@@ -33,7 +33,7 @@ import java.util.Objects;
 /**
  * Response class for the encoding phase.
  */
-public class ComposeResponse{
+public final class ComposeResponse{
 
 	/** The originators for the message. */
 	private final Object[] originator;

@@ -41,12 +41,12 @@ public final class Memoizer{
 	private Memoizer(){}
 
 	public static <OUT> Supplier<OUT> memoize(final Supplier<OUT> supplier){
-		final Map<Object, OUT> cache = new ConcurrentHashMap<>();
+		final Map<Object, OUT> cache = new ConcurrentHashMap<>(0);
 		return () -> cache.computeIfAbsent(DEFAULT_OBJECT, t -> supplier.get());
 	}
 
 	public static <IN, OUT> Function<IN, OUT> memoize(final Function<IN, OUT> function){
-		final Map<IN, OUT> cache = new ConcurrentHashMap<>();
+		final Map<IN, OUT> cache = new ConcurrentHashMap<>(0);
 		return input -> cache.computeIfAbsent(input, function);
 	}
 

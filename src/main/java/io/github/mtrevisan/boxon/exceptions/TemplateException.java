@@ -26,17 +26,32 @@ package io.github.mtrevisan.boxon.exceptions;
 
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 
+import java.io.IOException;
+import java.io.NotSerializableException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 
 /**
  * Thrown if a template is not well formatted.
  */
-public class TemplateException extends RuntimeException{
+public final class TemplateException extends RuntimeException{
 
 	private static final long serialVersionUID = 7585594459004613305L;
 
 
 	public TemplateException(final String message, final Object... parameters){
 		super(JavaHelper.format(message, parameters));
+	}
+
+	@SuppressWarnings("unused")
+	private void writeObject(final ObjectOutputStream os) throws IOException{
+		throw new NotSerializableException(getClass().getName());
+	}
+
+	@SuppressWarnings("unused")
+	private void readObject(final ObjectInputStream is) throws IOException{
+		throw new NotSerializableException(getClass().getName());
 	}
 
 }

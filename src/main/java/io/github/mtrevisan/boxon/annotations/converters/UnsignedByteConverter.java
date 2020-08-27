@@ -25,7 +25,7 @@
 package io.github.mtrevisan.boxon.annotations.converters;
 
 
-public class UnsignedByteConverter implements Converter<Byte, Short>{
+public final class UnsignedByteConverter implements Converter<Byte, Short>{
 
 	@Override
 	public Short decode(final Byte value){

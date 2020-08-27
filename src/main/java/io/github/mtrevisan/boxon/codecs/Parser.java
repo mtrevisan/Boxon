@@ -43,7 +43,7 @@ import java.util.Objects;
 /**
  * Declarative data binding parser for binary encoded data.
  */
-public class Parser{
+public final class Parser{
 
 	private final TemplateParser templateParser = new TemplateParser();
 
@@ -58,6 +58,8 @@ public class Parser{
 		return new Parser();
 	}
 
+
+	private Parser(){}
 
 	/**
 	 * Adds a key-value pair to the context of this evaluator.
@@ -126,7 +128,7 @@ public class Parser{
 	 *
 	 * @return	The {@link Parser}, used for chaining.
 	 */
-	public final Parser withDefaultCodecs(){
+	public Parser withDefaultCodecs(){
 		templateParser.loader.loadDefaultCodecs();
 		return this;
 	}
@@ -137,7 +139,7 @@ public class Parser{
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load codecs.
 	 * @return	The {@link Parser}, used for chaining.
 	 */
-	public final Parser withCodecs(final Class<?>... basePackageClasses){
+	public Parser withCodecs(final Class<?>... basePackageClasses){
 		templateParser.loader.loadCodecs(basePackageClasses);
 		return this;
 	}
@@ -148,7 +150,7 @@ public class Parser{
 	 * @param codecs	The list of codecs to be loaded.
 	 * @return	The {@link Parser}, used for chaining.
 	 */
-	public final Parser withCodecs(final CodecInterface<?>... codecs){
+	public Parser withCodecs(final CodecInterface<?>... codecs){
 		templateParser.loader.addCodecs(codecs);
 		return this;
 	}
@@ -159,7 +161,7 @@ public class Parser{
 	 *
 	 * @return	The {@link Parser}, used for chaining.
 	 */
-	public final Parser withDefaultTemplates(){
+	public Parser withDefaultTemplates(){
 		templateParser.loader.loadDefaultTemplates();
 		return this;
 	}
@@ -170,7 +172,7 @@ public class Parser{
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
 	 * @return	The {@link Parser}, used for chaining.
 	 */
-	public final Parser withTemplates(final Class<?>... basePackageClasses){
+	public Parser withTemplates(final Class<?>... basePackageClasses){
 		templateParser.loader.loadTemplates(basePackageClasses);
 		return this;
 	}

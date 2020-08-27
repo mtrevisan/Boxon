@@ -26,17 +26,32 @@ package io.github.mtrevisan.boxon.exceptions;
 
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 
+import java.io.IOException;
+import java.io.NotSerializableException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 
 /**
  * Thrown if an annotation is not well formatted.
  */
-public class AnnotationException extends RuntimeException{
+public final class AnnotationException extends RuntimeException{
 
 	private static final long serialVersionUID = 6429044852678473069L;
 
 
 	public AnnotationException(final String message, final Object... parameters){
 		super(JavaHelper.format(message, parameters));
+	}
+
+	@SuppressWarnings("unused")
+	private void writeObject(final ObjectOutputStream os) throws IOException{
+		throw new NotSerializableException(getClass().getName());
+	}
+
+	@SuppressWarnings("unused")
+	private void readObject(final ObjectInputStream is) throws IOException{
+		throw new NotSerializableException(getClass().getName());
 	}
 
 }

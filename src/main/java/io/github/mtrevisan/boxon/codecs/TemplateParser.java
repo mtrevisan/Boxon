@@ -49,7 +49,7 @@ final class TemplateParser{
 
 	private static final Logger LOGGER = JavaHelper.getLoggerFor(TemplateParser.class);
 
-	private static class ParserContext<T>{
+	private static final class ParserContext<T>{
 
 		private final Object rootObject;
 		private final T currentObject;
@@ -166,13 +166,13 @@ final class TemplateParser{
 			final Checksummer checksummer = ReflectionHelper.getCreator(checksum.algorithm())
 				.get();
 			final short startValue = checksum.startValue();
-			final long calculatedChecksum = checksummer.calculateChecksum(reader.array(), startPosition, endPosition, startValue);
+			final short calculatedChecksum = checksummer.calculateChecksum(reader.array(), startPosition, endPosition, startValue);
 			final Number givenChecksum = checksumData.getFieldValue(data);
 			if(givenChecksum == null)
 				throw new IllegalArgumentException("Something bad happened, cannot read message checksum");
-			if(calculatedChecksum != givenChecksum.longValue())
-				throw new IllegalArgumentException("Calculated checksum (0x" + Long.toHexString(calculatedChecksum).toUpperCase(Locale.ROOT)
-					+ ") does NOT match given checksum (0x" + Long.toHexString(givenChecksum.longValue()).toUpperCase(Locale.ROOT) + ")");
+			if(calculatedChecksum != givenChecksum.shortValue())
+				throw new IllegalArgumentException("Calculated checksum (0x" + Integer.toHexString(calculatedChecksum).toUpperCase(Locale.ROOT)
+					+ ") does NOT match given checksum (0x" + Integer.toHexString(givenChecksum.shortValue()).toUpperCase(Locale.ROOT) + ")");
 		}
 	}
 
