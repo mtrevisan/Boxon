@@ -225,7 +225,7 @@ class BitWriterTest{
 	@Test
 	void textWithTerminator(){
 		String value = "test";
-		writer.putText(value, (byte)'w', false, StandardCharsets.UTF_8);
+		writer.putText(value, StandardCharsets.UTF_8);
 		writer.putByte((byte)'w');
 		BitReader reader = BitReader.wrap(writer);
 
@@ -237,7 +237,8 @@ class BitWriterTest{
 	@Test
 	void textWithTerminatorConsumed(){
 		String value = "test";
-		writer.putText(value, (byte)'w', true, StandardCharsets.UTF_8);
+		writer.putText(value, StandardCharsets.UTF_8);
+		writer.putByte((byte)'w');
 		writer.putByte((byte)'w');
 		BitReader reader = BitReader.wrap(writer);
 

@@ -69,9 +69,10 @@ final class Evaluator{
 
 	/**
 	 * Adds a key-value pair to the context of this evaluator.
+	 * <p>Passing {@code null} as `value` then the corresponding key-value pair will be deleted.</p>
 	 *
 	 * @param key	The key used to reference the value.
-	 * @param value	The value.
+	 * @param value	The value (pass {@code null} to remove the `key` from the context).
 	 */
 	static void addToContext(final String key, final Object value){
 		Objects.requireNonNull(key);
@@ -86,17 +87,6 @@ final class Evaluator{
 	 */
 	static void addToContext(final Method method){
 		CONTEXT.registerFunction(method.getName(), method);
-	}
-
-	/**
-	 * Remove a key-value pair from the context of this evaluator.
-	 *
-	 * @param key	The key used to reference the value to be removed.
-	 */
-	static void removeFromContext(final String key){
-		Objects.requireNonNull(key);
-
-		CONTEXT.setVariable(key, null);
 	}
 
 	static <T> T evaluate(final String expression, final Object rootObject, final Class<T> returnType) throws EvaluationException{

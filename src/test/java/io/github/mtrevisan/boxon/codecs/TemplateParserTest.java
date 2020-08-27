@@ -63,7 +63,7 @@ class TemplateParserTest{
 		Evaluator.addToContext("deviceTypes", deviceTypes);
 		Evaluator.addToContext(TemplateParserTest.class.getDeclaredMethod("headerSize"));
 		ACKMessageHex message = templateParser.decode(template, reader, null);
-		Evaluator.removeFromContext("deviceTypes");
+		Evaluator.addToContext("deviceTypes", null);
 
 		BitWriter writer = new BitWriter();
 		templateParser.encode(template, writer, null, message);
@@ -92,7 +92,7 @@ class TemplateParserTest{
 		deviceTypes.add("QUECLINK_GV350M", (byte)0xCF);
 		Evaluator.addToContext("deviceTypes", deviceTypes);
 		ACKMessageASCII message = templateParser.decode(template, reader, null);
-		Evaluator.removeFromContext("deviceTypes");
+		Evaluator.addToContext("deviceTypes", null);
 
 		BitWriter writer = new BitWriter();
 		templateParser.encode(template, writer, null, message);

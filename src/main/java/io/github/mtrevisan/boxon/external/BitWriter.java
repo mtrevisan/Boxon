@@ -215,26 +215,13 @@ public final class BitWriter{
 
 	/**
 	 * Write the text into with a given {@link Charset}.
+	 * <p>Note that if a terminator is needed, it must be manually written.</p>
 	 *
 	 * @param text	The {@code String}s to be written.
 	 * @param charset	The charset.
 	 */
 	public void putText(final String text, final Charset charset){
 		putBytes(text.getBytes(charset));
-	}
-
-	/**
-	 * Write the text into with a given {@link Charset} and terminator.
-	 *
-	 * @param text	The {@code String}s to be written.
-	 * @param terminator	The terminator.
-	 * @param consumeTerminator	Whether to consume the terminator.
-	 * @param charset	The charset.
-	 */
-	public void putText(final String text, final byte terminator, final boolean consumeTerminator, final Charset charset){
-		putBytes(text.getBytes(charset));
-		if(consumeTerminator)
-			putByte(terminator);
 	}
 
 

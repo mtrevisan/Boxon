@@ -62,7 +62,9 @@ final class CodecStringTerminated implements CodecInterface<BindStringTerminated
 		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), rootObject);
 		final String text = CodecHelper.converterEncode(chosenConverter, value);
 
-		writer.putText(text, binding.terminator(), binding.consumeTerminator(), charset);
+		writer.putText(text, charset);
+		if(binding.consumeTerminator())
+			writer.putByte(binding.terminator());
 	}
 
 }
