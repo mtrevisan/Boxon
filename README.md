@@ -988,6 +988,7 @@ Remember that the header that will be written is the first in `@MessageHeader`.
 - Added/modified javadocs to better explain some classes.
 - Removed ComposeResponse.getErrors as it is useless.
 - Removed BindInteger.unsigned and BitReader.getInteger(int, ByteOrder, boolean) as they are useless.
+- Removed BitWriter.putText(String, byte, boolean) because of the [Boolean Trap](https://ariya.io/2011/08/hall-of-api-shame-boolean-trap).
 - Enhanced the exception message thrown if the type of BitReader.get(Class, ByteOrder) is not recognized.
 
 <a name="changelog-1.0.0"></a>
