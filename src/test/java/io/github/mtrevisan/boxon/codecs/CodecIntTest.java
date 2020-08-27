@@ -32,6 +32,7 @@ import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
+import io.github.mtrevisan.boxon.exceptions.ReferenceException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
@@ -51,7 +52,7 @@ class CodecIntTest{
 
 
 	@Test
-	void intLittleEndianNegative() throws AnnotationException, CodecException, TemplateException{
+	void intLittleEndianNegative() throws ReferenceException{
 		CodecInterface<BindInt> codec = new CodecInt();
 		int encodedValue = 0x80FF_0000;
 		BindInt annotation = new BindInt(){
@@ -114,7 +115,7 @@ class CodecIntTest{
 	}
 
 	@Test
-	void intLittleEndianSmall() throws AnnotationException, CodecException, TemplateException{
+	void intLittleEndianSmall() throws ReferenceException{
 		CodecInterface<BindInt> codec = new CodecInt();
 		int encodedValue = 0x0000_7FFF;
 		BindInt annotation = new BindInt(){
@@ -177,7 +178,7 @@ class CodecIntTest{
 	}
 
 	@Test
-	void intLittleEndianPositive() throws AnnotationException, CodecException, TemplateException{
+	void intLittleEndianPositive() throws ReferenceException{
 		CodecInterface<BindInt> codec = new CodecInt();
 		int encodedValue = 0x7FFF_0000;
 		BindInt annotation = new BindInt(){
@@ -240,7 +241,7 @@ class CodecIntTest{
 	}
 
 	@Test
-	void intLittleEndianRandom() throws AnnotationException, CodecException, TemplateException{
+	void intLittleEndianRandom() throws ReferenceException{
 		CodecInterface<BindInt> codec = new CodecInt();
 		int encodedValue = RANDOM.nextInt();
 		BindInt annotation = new BindInt(){
@@ -303,7 +304,7 @@ class CodecIntTest{
 	}
 
 	@Test
-	void intBigEndianNegative() throws AnnotationException, CodecException, TemplateException{
+	void intBigEndianNegative() throws ReferenceException{
 		CodecInterface<BindInt> codec = new CodecInt();
 		int encodedValue = 0x80FF_0000;
 		BindInt annotation = new BindInt(){
@@ -366,7 +367,7 @@ class CodecIntTest{
 	}
 
 	@Test
-	void intBigEndianSmall() throws AnnotationException, CodecException, TemplateException{
+	void intBigEndianSmall() throws ReferenceException{
 		CodecInterface<BindInt> codec = new CodecInt();
 		int encodedValue = 0x0000_7FFF;
 		BindInt annotation = new BindInt(){
@@ -429,7 +430,7 @@ class CodecIntTest{
 	}
 
 	@Test
-	void intBigEndianPositive() throws AnnotationException, CodecException, TemplateException{
+	void intBigEndianPositive() throws ReferenceException{
 		CodecInterface<BindInt> codec = new CodecInt();
 		int encodedValue = 0x7FFF_0000;
 		BindInt annotation = new BindInt(){
@@ -492,7 +493,7 @@ class CodecIntTest{
 	}
 
 	@Test
-	void intBigEndianRandom() throws AnnotationException, CodecException, TemplateException{
+	void intBigEndianRandom() throws ReferenceException{
 		CodecInterface<BindInt> codec = new CodecInt();
 		int encodedValue = RANDOM.nextInt();
 		BindInt annotation = new BindInt(){
@@ -546,7 +547,8 @@ class CodecIntTest{
 		codec.encode( writer, annotation, null, encodedValue);
 		writer.flush();
 
-		Assertions.assertEquals(StringUtils.leftPad(Integer.toHexString(encodedValue).toUpperCase(Locale.ROOT), 8, '0'), writer.toString());
+		Assertions.assertEquals(StringUtils.leftPad(Integer.toHexString(encodedValue).toUpperCase(Locale.ROOT), 8, '0'),
+			writer.toString());
 
 		BitReader reader = BitReader.wrap(writer);
 		int decoded = (int)codec.decode(reader, annotation, null);

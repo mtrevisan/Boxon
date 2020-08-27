@@ -33,6 +33,7 @@ import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
+import io.github.mtrevisan.boxon.exceptions.ReferenceException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
@@ -53,7 +54,7 @@ class CodecDecimalTest{
 
 
 	@Test
-	void decimalPositiveLittleEndian() throws AnnotationException, CodecException, TemplateException{
+	void decimalPositiveLittleEndian() throws ReferenceException{
 		CodecInterface<BindDecimal> codec = new CodecDecimal();
 		BigDecimal encodedValue = BigDecimal.valueOf(RANDOM.nextDouble());
 		BindDecimal annotation = new BindDecimal(){
@@ -121,7 +122,7 @@ class CodecDecimalTest{
 	}
 
 	@Test
-	void decimalNegativeLittleEndian() throws AnnotationException, CodecException, TemplateException{
+	void decimalNegativeLittleEndian() throws ReferenceException{
 		CodecInterface<BindDecimal> codec = new CodecDecimal();
 		BigDecimal encodedValue = BigDecimal.valueOf(-RANDOM.nextDouble());
 		BindDecimal annotation = new BindDecimal(){
@@ -189,7 +190,7 @@ class CodecDecimalTest{
 	}
 
 	@Test
-	void decimalPositiveBigEndian() throws AnnotationException, CodecException, TemplateException{
+	void decimalPositiveBigEndian() throws ReferenceException{
 		CodecInterface<BindDecimal> codec = new CodecDecimal();
 		BigDecimal encodedValue = BigDecimal.valueOf(RANDOM.nextDouble());
 		BindDecimal annotation = new BindDecimal(){
@@ -257,7 +258,7 @@ class CodecDecimalTest{
 	}
 
 	@Test
-	void decimalNegativeBigEndian() throws AnnotationException, CodecException, TemplateException{
+	void decimalNegativeBigEndian() throws ReferenceException{
 		CodecInterface<BindDecimal> codec = new CodecDecimal();
 		BigDecimal encodedValue = BigDecimal.valueOf(-RANDOM.nextDouble());
 		BindDecimal annotation = new BindDecimal(){

@@ -29,6 +29,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
+import io.github.mtrevisan.boxon.exceptions.ReferenceException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
@@ -90,8 +91,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 	}
 
 	@Override
-	public void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value)
-			throws AnnotationException, CodecException{
+	public void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value) throws ReferenceException{
 		final BindObject binding = extractBinding(annotation);
 
 		CodecHelper.validateData(binding.validator(), value);

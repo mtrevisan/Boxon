@@ -37,6 +37,7 @@ import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
+import io.github.mtrevisan.boxon.exceptions.ReferenceException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
@@ -94,7 +95,7 @@ class CodecArrayTest{
 
 
 	@Test
-	void arrayPrimitive() throws AnnotationException, CodecException, TemplateException{
+	void arrayPrimitive() throws ReferenceException{
 		CodecInterface<BindArrayPrimitive> codec = new CodecArrayPrimitive();
 		int[] encodedValue = new int[]{0x0000_0123, 0x0000_0456};
 		BindArrayPrimitive annotation = new BindArrayPrimitive(){
@@ -162,7 +163,7 @@ class CodecArrayTest{
 	}
 
 	@Test
-	void arrayOfSameObject() throws AnnotationException, CodecException, TemplateException{
+	void arrayOfSameObject() throws ReferenceException{
 		CodecArray codec = new CodecArray();
 		Version[] encodedValue = new Version[]{new Version((byte) 0, (byte) 1, (byte) 12), new Version((byte) 1, (byte) 2, (byte) 0)};
 		BindArray annotation = new BindArray(){

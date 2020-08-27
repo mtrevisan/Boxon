@@ -32,6 +32,7 @@ import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
+import io.github.mtrevisan.boxon.exceptions.ReferenceException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitSet;
@@ -52,7 +53,7 @@ class CodecBitsTest{
 
 
 	@Test
-	void bitsLittleEndian() throws AnnotationException, CodecException, TemplateException{
+	void bitsLittleEndian() throws ReferenceException{
 		CodecInterface<BindBits> codec = new CodecBits();
 		byte[] randomBytes = new byte[123];
 		RANDOM.nextBytes(randomBytes);
@@ -126,7 +127,7 @@ class CodecBitsTest{
 	}
 
 	@Test
-	void bitsBigEndian() throws AnnotationException, CodecException, TemplateException{
+	void bitsBigEndian() throws ReferenceException{
 		CodecInterface<BindBits> codec = new CodecBits();
 		byte[] randomBytes = new byte[123];
 		RANDOM.nextBytes(randomBytes);

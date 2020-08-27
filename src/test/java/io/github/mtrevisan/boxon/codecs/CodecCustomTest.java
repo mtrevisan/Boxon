@@ -26,6 +26,7 @@ package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
+import io.github.mtrevisan.boxon.exceptions.ReferenceException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
@@ -76,7 +77,7 @@ class CodecCustomTest{
 
 
 	@Test
-	void customAnnotation() throws AnnotationException, CodecException, TemplateException{
+	void customAnnotation() throws ReferenceException{
 		TemplateParser templateParser = new TemplateParser();
 		templateParser.loader.addCodecs(new VariableLengthByteArray());
 

@@ -35,6 +35,7 @@ import io.github.mtrevisan.boxon.codecs.queclink.ACKMessageHex;
 import io.github.mtrevisan.boxon.codecs.queclink.DeviceTypes;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
+import io.github.mtrevisan.boxon.exceptions.ReferenceException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitSet;
@@ -50,7 +51,7 @@ import java.nio.charset.StandardCharsets;
 class TemplateParserTest{
 
 	@Test
-	void parseSingleMessageHex() throws NoSuchMethodException, AnnotationException, CodecException, TemplateException{
+	void parseSingleMessageHex() throws NoSuchMethodException, ReferenceException{
 		byte[] payload = JavaHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		BitReader reader = BitReader.wrap(payload);
 
@@ -80,7 +81,7 @@ class TemplateParserTest{
 	}
 
 	@Test
-	void parseSingleMessageASCII() throws AnnotationException, CodecException, TemplateException{
+	void parseSingleMessageASCII() throws ReferenceException{
 		byte[] payload = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
 		BitReader reader = BitReader.wrap(payload);
 
@@ -270,7 +271,7 @@ class TemplateParserTest{
 	}
 
 	@Test
-	void parseCompositeMessage() throws AnnotationException, CodecException, TemplateException{
+	void parseCompositeMessage() throws ReferenceException{
 		byte[] payload = JavaHelper.toByteArray("74630102016162");
 		BitReader reader = BitReader.wrap(payload);
 

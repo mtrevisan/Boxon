@@ -35,23 +35,13 @@ import java.io.ObjectOutputStream;
 /**
  * Thrown if a template is not well formatted.
  */
-public final class TemplateException extends Exception{
+public final class TemplateException extends ReferenceException{
 
 	private static final long serialVersionUID = 7585594459004613305L;
 
 
 	public TemplateException(final String message, final Object... parameters){
 		super(JavaHelper.format(message, parameters));
-	}
-
-	@SuppressWarnings("unused")
-	private void writeObject(final ObjectOutputStream os) throws IOException{
-		throw new NotSerializableException(getClass().getName());
-	}
-
-	@SuppressWarnings("unused")
-	private void readObject(final ObjectInputStream is) throws IOException{
-		throw new NotSerializableException(getClass().getName());
 	}
 
 }
