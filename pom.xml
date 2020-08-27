@@ -12,6 +12,7 @@
 	<name>Boxon</name>
 	<description>Library for declarative parsing of a message</description>
 	<url>https://github.com/mtrevisan/Boxon</url>
+<!--	<logo>https://upload.wikimedia.org/wikipedia/commons/1/1d/Symmetricwave2.png</logo>-->
 
 	<developers>
 		<developer>
@@ -209,9 +210,10 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>${maven-compiler-plugin.version}</version>
 				<configuration>
+					<source>${maven.compiler.source}</source>
+					<target>${maven.compiler.target}</target>
+					<encoding>${project.build.sourceEncoding}</encoding>
 					<showDeprecation>true</showDeprecation>
-					<source>11</source>
-					<target>11</target>
 				</configuration>
 			</plugin>
 			<!-- display active profile in compile phase -->
