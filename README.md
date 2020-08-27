@@ -988,6 +988,7 @@ Remember that the header that will be written is the first in `@MessageHeader`.
 - Added `originator` variable (and its getter) to ComposeResponse to hold the given objects used to create the message.
 - Added/modified javadocs to better explain some classes.
 - Removed ComposeResponse.getErrors as it is useless.
+- Enhanced the exception message thrown if the type of BitReader.get(Class, ByteOrder) is not recognized.
 
 <a name="changelog-1.0.0"></a>
 ### version 1.0.0 - 20200825

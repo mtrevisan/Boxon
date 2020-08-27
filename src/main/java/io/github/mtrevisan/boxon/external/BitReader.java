@@ -128,11 +128,6 @@ public final class BitReader{
 	}
 
 
-	/**
-	 * A private constructor.
-	 *
-	 * @param buffer the backing {@link ByteBuffer}.
-	 */
 	private BitReader(final ByteBuffer buffer){
 		this.buffer = buffer;
 	}
@@ -166,18 +161,37 @@ public final class BitReader{
 	}
 
 
+	/**
+	 * Skips a given amount of bits.
+	 *
+	 * @param length	The amount of bits to be skipped.
+	 */
 	public void skip(final int length){
 		getBits(length);
 	}
 
+	/**
+	 * Skips an integral number of bytes until a terminator is found.
+	 *
+	 * @param terminator	The terminator at which to stop.
+	 * @param consumeTerminator	Whether to consume the terminator.
+	 */
 	public void skipUntilTerminator(final byte terminator, final boolean consumeTerminator){
 		getTextUntilTerminator(terminator, consumeTerminator, Charset.defaultCharset());
 	}
 
+	/**
+	 * Reads the given type using the give byte order.
+	 *
+	 * @param type	The type of data to read. Here, the length of the types (in bits) are those defined by java (see {@link Byte#SIZE}, {@link Short#SIZE}, {@link Integer#SIZE},
+	 * 	{@link Long#SIZE}, {@link Float#SIZE}, and {@link Double#SIZE}).
+	 * @param byteOrder	The byte order used to read the bytes.
+	 * @return	The read value of the given type.
+	 */
 	public Object get(final Class<?> type, final ByteOrder byteOrder){
 		final ParserDataType t = ParserDataType.fromType(type);
 		if(t == null)
-			throw new AnnotationException("Cannot read type {}", type.getSimpleName());
+			throw new AnnotationException("Cannot read type {}, should be one of {}, or their objective counterparts", type.getSimpleName(), ParserDataType.describe());
 
 		switch(t){
 			case BYTE:
@@ -429,6 +443,11 @@ public final class BitReader{
 	}
 
 
+	/**
+	 * Returns the byte array that backs this reader.
+	 *
+	 * @return	The array that backs this reader.
+	 */
 	public byte[] array(){
 		return buffer.array();
 	}

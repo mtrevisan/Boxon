@@ -49,6 +49,13 @@ public final class BitWriter{
 	private int remaining;
 
 
+	/**
+	 * Writes the given value using the give byte order.
+	 *
+	 * @param value	The data to written. Here, the length of the types (in bits) are those defined by java (see {@link Byte#SIZE}, {@link Short#SIZE}, {@link Integer#SIZE},
+	 * 	{@link Long#SIZE}, {@link Float#SIZE}, and {@link Double#SIZE}).
+	 * @param byteOrder	The byte order used to write the value.
+	 */
 	public void put(final Object value, final ByteOrder byteOrder){
 		final ParserDataType t = ParserDataType.fromType(value.getClass());
 		if(t == null)
@@ -230,7 +237,7 @@ public final class BitWriter{
 	}
 
 
-	/** Flush an integral number of bytes to the output stream, padding any non-completed byte with zeros. */
+	/** Flush an minimum integral number of bytes to the output stream, padding any non-completed byte with zeros. */
 	public void flush(){
 		//put the cache into the buffer
 		if(remaining > 0)

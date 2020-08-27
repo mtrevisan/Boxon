@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.internal;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -96,6 +97,11 @@ public enum ParserDataType{
 	 */
 	public static boolean isPrimitiveOrWrapper(final Class<?> type){
 		return (isPrimitive(type) || isPrimitiveWrapper(type));
+	}
+
+	public static String describe(){
+		return Arrays.toString(new String[]{byte.class.getSimpleName(), short.class.getSimpleName(), int.class.getSimpleName(), long.class.getSimpleName(),
+			float.class.getSimpleName(), double.class.getSimpleName()});
 	}
 
 }
