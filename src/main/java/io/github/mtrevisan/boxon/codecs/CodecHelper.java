@@ -44,7 +44,7 @@ import java.util.regex.Pattern;
 final class CodecHelper{
 
 	/** The name of the current object being scanner (used for referencing variables from SpEL). */
-	public static final String CONTEXT_SELF = "self";
+	static final String CONTEXT_SELF = "self";
 	/** The name of the prefix for the alternative (used for referencing variables from SpEL). */
 	private static final String CONTEXT_CHOICE_PREFIX = "prefix";
 
