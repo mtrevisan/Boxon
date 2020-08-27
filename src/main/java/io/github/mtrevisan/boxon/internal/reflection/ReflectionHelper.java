@@ -325,7 +325,7 @@ public final class ReflectionHelper{
 	private static <T> ObjectInstantiator<T> instantiatorForOpenJDK(final Class<T> type){
 		final ObjectInstantiator<T> instantiator;
 		//Java 7 GAE was under a security manager so we use a degraded system
-		if(PlatformDescription.isGoogleAppEngine() && PlatformDescription.SPECIFICATION_VERSION.equals("1.7"))
+		if(PlatformDescription.isGoogleAppEngine() && "1.7".equals(PlatformDescription.SPECIFICATION_VERSION))
 			instantiator = (Serializable.class.isAssignableFrom(type)?
 				new ObjectInputStreamInstantiator<>(type):
 				new AccessibleInstantiator<>(type));
