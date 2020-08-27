@@ -232,6 +232,14 @@ public final class BitSet{
 		return (idx >= 0? idx: -idx - 1);
 	}
 
+	/**
+	 * Convert this bit set to {@link BigInteger}.
+	 *
+	 * @param size	The number of bits.
+	 * @param byteOrder	The byte order.
+	 * @param unsigned	Whether to consider the bit set unsigned.
+	 * @return	The converted {@link BigInteger}.
+	 */
 	public BigInteger toInteger(final int size, final ByteOrder byteOrder, final boolean unsigned){
 		byte[] array = toByteArray();
 		final int expectedLength = size >>> 3;
@@ -240,7 +248,7 @@ public final class BitSet{
 		if(byteOrder == ByteOrder.LITTLE_ENDIAN)
 			//NOTE: need to reverse the bytes because BigInteger is big-endian and BitMap is little-endian
 			reverse(array);
-		return extendSign(array, size, unsigned);
+		return ByteHelper.extendSign(array, size, unsigned);
 	}
 
 	/**
@@ -255,24 +263,6 @@ public final class BitSet{
 			array[end] ^= array[start];
 			array[start] ^= array[end];
 		}
-	}
-
-	/**
-	 * Convert the value to signed primitive.
-	 *
-	 * @param array	Field value.
-	 * @param size	The size of the array.
-	 * @param unsigned	Whether to consider this number an unsigned one.
-	 * @return	The 2-complement expressed as int.
-	 */
-	private static BigInteger extendSign(byte[] array, final int size, final boolean unsigned){
-		if(!unsigned && (array[0] & 0x80) != 0x00){
-			array = ByteHelper.extendArray(array);
-			array[0] = -1;
-		}
-		else if(unsigned && size >= array.length << 3)
-			array = ByteHelper.extendArray(array);
-		return new BigInteger(array);
 	}
 
 

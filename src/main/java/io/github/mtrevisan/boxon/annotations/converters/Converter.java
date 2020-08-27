@@ -25,14 +25,15 @@
 package io.github.mtrevisan.boxon.annotations.converters;
 
 
+/** The converter to be applied to values read from a bind annotation. */
 public interface Converter<IN, OUT>{
 
 	/**
 	 * Decoding function.
 	 * <p>MUST BE the inverse of {@link #encode(Object)}.</p>
 	 *
-	 * @param value	The value from and annotation that has to be decoded.
-	 * @return	The decoded (transformed) value.
+	 * @param value	The value from that has to be decoded.
+	 * @return	The decoded value.
 	 */
 	OUT decode(final IN value);
 
@@ -40,8 +41,8 @@ public interface Converter<IN, OUT>{
 	 * Decoding function.
 	 * <p>MUST BE the inverse of {@link #decode(Object)}.</p>
 	 *
-	 * @param value	The value from and annotation that has to be encoded.
-	 * @return	The encoded (transformed) value.
+	 * @param value	The value that has to be encoded.
+	 * @return	The encoded value.
 	 */
 	IN encode(final OUT value);
 

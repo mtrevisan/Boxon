@@ -29,8 +29,6 @@ import io.github.mtrevisan.boxon.exceptions.DecodeException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
-import io.github.mtrevisan.boxon.external.ComposeResponse;
-import io.github.mtrevisan.boxon.external.ParseResponse;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -42,6 +40,9 @@ import java.util.Map;
 import java.util.Objects;
 
 
+/**
+ * Declarative data binding parser for binary encoded data.
+ */
 public class Parser{
 
 	private final TemplateParser templateParser = new TemplateParser();
@@ -284,7 +285,7 @@ public class Parser{
 	 * @return	The composition response.
 	 */
 	public ComposeResponse compose(final Object... data){
-		final ComposeResponse response = new ComposeResponse();
+		final ComposeResponse response = new ComposeResponse(data);
 
 		final BitWriter writer = new BitWriter();
 		for(final Object datum : data)

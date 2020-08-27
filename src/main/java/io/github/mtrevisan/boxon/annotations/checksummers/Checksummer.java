@@ -25,11 +25,18 @@
 package io.github.mtrevisan.boxon.annotations.checksummers;
 
 
-/**
- * The checksum algorithm to be applied to {@link io.github.mtrevisan.boxon.annotations.BindChecksum BindChecksum}.
- */
+/** The checksum algorithm to be applied to {@link io.github.mtrevisan.boxon.annotations.BindChecksum BindChecksum}. */
 public interface Checksummer{
 
+	/**
+	 * Method used to calculate the checksum.
+	 *
+	 * @param data	The byte array from which to calculate the checksum.
+	 * @param start	The starting byte on the given array.
+	 * @param end	The ending byte on the given array.
+	 * @param startValue	The starting value of the checksum.
+	 * @return	The checksum.
+	 */
 	short calculateChecksum(final byte[] data, final int start, final int end, final short startValue);
 
 }

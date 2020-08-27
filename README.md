@@ -980,7 +980,14 @@ Remember that the header that will be written is the first in `@MessageHeader`.
 ### version 1.0.1 - 202008??
 - Better handling of NOP logger.
 - Abandoned [Reflections](https://github.com/ronmamo/reflections) in favor of [ClassGraph](https://github.com/classgraph/classgraph).
+- Added public constructor to Parser to allow for extensions.
+- Changed the signature of Checksummer.calculateChecksum returning short instead of long.
+- Changed method ParseResponse.getMessageForError into ParseResponse.getErrorMessageAt to align it to other method name's conventions.
+- Moved classes ParseResponse and ComposeResponse from io.github.mtrevisan.boxon.external to io.github.mtrevisan.boxon.codecs in order to hide add methods; the constructors are also hidden.
 - Minor refactorings.
+- Added `originator` variable (and its getter) to ComposeResponse to hold the given objects used to create the message.
+- Added/modified javadocs to better explain some classes.
+- Removed ComposeResponse.getErrors as it is useless.
 
 <a name="changelog-1.0.0"></a>
 ### version 1.0.0 - 20200825
