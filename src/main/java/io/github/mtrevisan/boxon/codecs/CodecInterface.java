@@ -35,9 +35,11 @@ import java.lang.annotation.Annotation;
 
 public interface CodecInterface<B extends Annotation>{
 
-	Object decode(final BitReader reader, final Annotation annotation, final Object rootObject) throws AnnotationException, CodecException, TemplateException;
+	Object decode(final BitReader reader, final Annotation annotation, final Object rootObject) throws AnnotationException,
+		CodecException, TemplateException;
 
-	void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value) throws AnnotationException, CodecException;
+	void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value)
+		throws AnnotationException, CodecException;
 
 
 	@SuppressWarnings("unchecked")

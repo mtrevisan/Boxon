@@ -28,6 +28,7 @@ import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.Skip;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.BitReader;
@@ -92,9 +93,17 @@ final class TemplateParser{
 				readSkip(skips[i], reader, parserContext.rootObject);
 
 			//check if field has to be processed...
-			if(shouldProcessField(field.getCondition(), parserContext.rootObject))
+			if(shouldProcessField(field.getCondition(), parserContext.rootObject)){
 				//... and if so, process it
-				decodeField(template, reader, parserContext, field);
+				//FIXME move up
+				try{
+					decodeField(template, reader, parserContext, field);
+				}
+				catch(final Exception e){
+					//this assumes the reading was done correctly
+					rethrowException(template, field, e);
+				}
+			}
 		}
 
 		processEvaluatedFields(template, parserContext.rootObject);
@@ -107,26 +116,20 @@ final class TemplateParser{
 	}
 
 	private <T> void decodeField(final Template<T> template, final BitReader reader, final ParserContext<T> parserContext,
-			final Template.BoundedField field) throws CodecException{
+			final Template.BoundedField field) throws CodecException, AnnotationException, TemplateException{
 		final Annotation binding = field.getBinding();
 		final CodecInterface<?> codec = retrieveCodec(binding.annotationType());
 
-		try{
-			if(LOGGER != null)
-				LOGGER.trace("reading {}.{} with bind {}", template, field.getFieldName(), binding.annotationType().getSimpleName());
+		if(LOGGER != null)
+			LOGGER.trace("reading {}.{} with bind {}", template, field.getFieldName(), binding.annotationType().getSimpleName());
 
-			//decode value from raw message
-			final Object value = codec.decode(reader, binding, parserContext.rootObject);
-			//store value in the current object
-			field.setFieldValue(parserContext.currentObject, value);
+		//decode value from raw message
+		final Object value = codec.decode(reader, binding, parserContext.rootObject);
+		//store value in the current object
+		field.setFieldValue(parserContext.currentObject, value);
 
-			if(LOGGER != null)
-				LOGGER.trace("read {}.{} = {}", template, field.getFieldName(), value);
-		}
-		catch(final Exception e){
-			//this assumes the reading was done correctly
-			rethrowException(template, field, e);
-		}
+		if(LOGGER != null)
+			LOGGER.trace("read {}.{} = {}", template, field.getFieldName(), value);
 	}
 
 	private void readSkip(final Skip skip, final BitReader reader, final Object rootObject){
@@ -213,9 +216,17 @@ final class TemplateParser{
 				writeSkip(skips[k], writer, parserContext.rootObject);
 
 			//check if field has to be processed...
-			if(shouldProcessField(field.getCondition(), parserContext.rootObject))
+			if(shouldProcessField(field.getCondition(), parserContext.rootObject)){
 				//... and if so, process it
-				encodeField(template, writer, parserContext, field);
+				//FIXME move up
+				try{
+					encodeField(template, writer, parserContext, field);
+				}
+				catch(final Exception e){
+					//this assumes the writing was done correctly
+					rethrowException(template, field, e);
+				}
+			}
 		}
 
 		closeMessage(template, writer);
@@ -223,28 +234,28 @@ final class TemplateParser{
 		writer.flush();
 	}
 
+	private void rethrowException(final Template<?> template, final Template.BoundedField field, final Exception e){
+		final String message = ExceptionHelper.getMessageNoLineNumber(e);
+		//FIXME overly generic exception
+		throw new RuntimeException(message + " in field " + template + "." + field.getFieldName());
+	}
+
 	private <T> void encodeField(final Template<?> template, final BitWriter writer, final ParserContext<T> parserContext,
-			final Template.BoundedField field) throws CodecException{
+			final Template.BoundedField field) throws CodecException, AnnotationException{
 		final Annotation binding = field.getBinding();
 		final CodecInterface<?> codec = retrieveCodec(binding.annotationType());
 
-		try{
-			if(LOGGER != null)
-				LOGGER.trace("writing {}.{} with bind {}", template.getType().getSimpleName(), field.getFieldName(),
-					binding.annotationType().getSimpleName());
+		if(LOGGER != null)
+			LOGGER.trace("writing {}.{} with bind {}", template.getType().getSimpleName(), field.getFieldName(),
+				binding.annotationType().getSimpleName());
 
-			//encode value from current object
-			final Object value = field.getFieldValue(parserContext.currentObject);
-			//write value to raw message
-			codec.encode(writer, binding, parserContext.rootObject, value);
+		//encode value from current object
+		final Object value = field.getFieldValue(parserContext.currentObject);
+		//write value to raw message
+		codec.encode(writer, binding, parserContext.rootObject, value);
 
-			if(LOGGER != null)
-				LOGGER.trace("wrote {}.{} = {}", template.getType().getSimpleName(), field.getFieldName(), value);
-		}
-		catch(final Exception e){
-			//this assumes the writing was done correctly
-			rethrowException(template, field, e);
-		}
+		if(LOGGER != null)
+			LOGGER.trace("wrote {}.{} = {}", template.getType().getSimpleName(), field.getFieldName(), value);
 	}
 
 	private boolean shouldProcessField(final String condition, final Object rootObject){
@@ -274,12 +285,6 @@ final class TemplateParser{
 			ReflectionHelper.setFieldValue(codec, TemplateParser.class, this);
 		}
 		catch(final Exception ignored){}
-	}
-
-	private void rethrowException(final Template<?> template, final Template.BoundedField field, final Exception e){
-		final String message = ExceptionHelper.getMessageNoLineNumber(e);
-		//FIXME overly generic exception
-		throw new RuntimeException(message + " in field " + template + "." + field.getFieldName());
 	}
 
 	private void writeSkip(final Skip skip, final BitWriter writer, final Object rootObject){
