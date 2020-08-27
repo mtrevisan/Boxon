@@ -28,6 +28,7 @@ import io.github.mtrevisan.boxon.annotations.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitSet;
@@ -51,6 +52,16 @@ final class CodecHelper{
 
 
 	private CodecHelper(){}
+
+	static void assertSizePositive(final int size){
+		if(size <= 0)
+			throw new AnnotationException("Size must be a positive integer, was {}", size);
+	}
+
+	static void assertSizeEquals(final int expectedSize, final int size){
+		if(expectedSize != size)
+			throw new IllegalArgumentException("Size mismatch, expected " + expectedSize + ", got " + size);
+	}
 
 	static ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> type){
 		for(final ObjectChoices.ObjectChoice alternative : alternatives){

@@ -41,7 +41,9 @@ final class CodecStringTerminated implements CodecInterface<BindStringTerminated
 
 		final Charset charset = Charset.forName(binding.charset());
 
-		final String text = reader.getTextUntilTerminator(binding.terminator(), binding.consumeTerminator(), charset);
+		final String text = reader.getTextUntilTerminator(binding.terminator(), charset);
+		if(binding.consumeTerminator())
+			reader.getByte();
 
 		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), rootObject);
 		final Object value = CodecHelper.converterDecode(chosenConverter, text);

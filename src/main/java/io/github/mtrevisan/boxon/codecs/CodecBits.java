@@ -41,6 +41,7 @@ final class CodecBits implements CodecInterface<BindBits>{
 		final BindBits binding = extractBinding(annotation);
 
 		final int size = Evaluator.evaluateSize(binding.size(), rootObject);
+		CodecHelper.assertSizePositive(size);
 		final BitSet bits = reader.getBits(size);
 		if(binding.byteOrder() == ByteOrder.LITTLE_ENDIAN)
 			bits.reverseBits(size);
@@ -62,8 +63,9 @@ final class CodecBits implements CodecInterface<BindBits>{
 		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), rootObject);
 		final BitSet bits = CodecHelper.converterEncode(chosenConverter, value);
 		final int size = Evaluator.evaluateSize(binding.size(), rootObject);
+		CodecHelper.assertSizePositive(size);
 		if(binding.byteOrder() == ByteOrder.LITTLE_ENDIAN)
-			bits.reverseBits( size);
+			bits.reverseBits(size);
 
 		writer.putBits(bits, size);
 	}

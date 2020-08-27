@@ -181,14 +181,12 @@ public final class BitReader{
 
 	/**
 	 * Skips an integral number of bytes until a terminator is found.
+	 * <p>The terminator is NOT consumed!</p>
 	 *
 	 * @param terminator	The terminator at which to stop.
-	 * @param consumeTerminator	Whether to consume the terminator.
 	 */
-	public void skipUntilTerminator(final byte terminator, final boolean consumeTerminator){
-		getTextUntilTerminator(terminator, consumeTerminator, Charset.defaultCharset());
-		if(consumeTerminator)
-			getByte();
+	public void skipUntilTerminator(final byte terminator){
+		getTextUntilTerminator(terminator, Charset.defaultCharset());
 	}
 
 	/**
@@ -415,22 +413,20 @@ public final class BitReader{
 
 	/**
 	 * Reads a string until a terminator is found.
+	 * <p>The terminator is NOT consumed!</p>
 	 *
 	 * @param terminator	The terminator of the string to be read.
-	 * @param consumeTerminator	Whether to consume the terminator.
 	 * @param charset	The charset.
 	 * @return	A {@link String} of length {@code n} coded with a given {@link Charset} that contains {@code char}s
 	 * 	read from this {@link BitReader}.
 	 */
-	public String getTextUntilTerminator(final byte terminator, final boolean consumeTerminator, final Charset charset){
+	public String getTextUntilTerminator(final byte terminator, final Charset charset){
 		String text = null;
 		try(
 			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			final OutputStreamWriter osw = new OutputStreamWriter(baos, charset);
 		){
 			getTextUntilTerminator(osw, terminator);
-			if(consumeTerminator)
-				getByte();
 
 			text = baos.toString(charset);
 		}

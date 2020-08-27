@@ -136,8 +136,11 @@ final class TemplateParser{
 			final int size = Evaluator.evaluateSize(skip.size(), rootObject);
 			if(size > 0)
 				reader.skip(size);
-			else
-				reader.skipUntilTerminator(skip.terminator(), skip.consumeTerminator());
+			else{
+				reader.skipUntilTerminator(skip.terminator());
+				if(skip.consumeTerminator())
+					reader.getByte();
+			}
 		}
 	}
 

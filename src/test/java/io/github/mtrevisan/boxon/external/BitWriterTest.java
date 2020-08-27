@@ -54,7 +54,7 @@ class BitWriterTest{
 
 	@Test
 	void bytePrimitive(){
-		byte value = (byte)0x16;
+		byte value = 0x16;
 		writer.putByte(value);
 		BitReader reader = BitReader.wrap(writer);
 
@@ -64,7 +64,7 @@ class BitWriterTest{
 
 	@Test
 	void bytesPrimitive(){
-		byte[] value = new byte[]{(byte)0x16, (byte)0xFA};
+		byte[] value = {(byte)0x16, (byte)0xFA};
 		writer.putBytes(value);
 		BitReader reader = BitReader.wrap(writer);
 
@@ -230,7 +230,7 @@ class BitWriterTest{
 		BitReader reader = BitReader.wrap(writer);
 
 		Assertions.assertEquals("7465737477", reader.toString());
-		Assertions.assertEquals(value, reader.getTextUntilTerminator((byte)'w', false, StandardCharsets.UTF_8));
+		Assertions.assertEquals(value, reader.getTextUntilTerminator((byte)'w', StandardCharsets.UTF_8));
 		Assertions.assertEquals((byte)'w', reader.getByte());
 	}
 
@@ -243,7 +243,8 @@ class BitWriterTest{
 		BitReader reader = BitReader.wrap(writer);
 
 		Assertions.assertEquals("746573747777", reader.toString());
-		Assertions.assertEquals(value, reader.getTextUntilTerminator((byte)'w', true, StandardCharsets.UTF_8));
+		Assertions.assertEquals(value, reader.getTextUntilTerminator((byte)'w', StandardCharsets.UTF_8));
+		reader.getByte();
 		writer.putByte((byte)'w');
 	}
 

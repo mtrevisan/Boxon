@@ -78,7 +78,7 @@ class TemplateTest{
 		private final byte mask;
 
 
-		public Mask(byte mask){
+		Mask(byte mask){
 			this.mask = mask;
 		}
 

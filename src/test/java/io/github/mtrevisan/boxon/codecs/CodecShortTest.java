@@ -51,7 +51,7 @@ class CodecShortTest{
 	void shortLittleEndianPositive1(){
 		CodecInterface<BindShort> codec = new CodecShort();
 		short encodedValue = 0x0010;
-		BindShort annotation = new BindShort(){
+		Annotation annotation = new BindShort(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindShort.class;
@@ -114,7 +114,7 @@ class CodecShortTest{
 	void shortLittleEndianPositive2(){
 		CodecInterface<BindShort> codec = new CodecShort();
 		short encodedValue = 0x1000;
-		BindShort annotation = new BindShort(){
+		Annotation annotation = new BindShort(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindShort.class;
@@ -177,7 +177,7 @@ class CodecShortTest{
 	void shortLittleEndianNegative(){
 		CodecInterface<BindShort> codec = new CodecShort();
 		short encodedValue = (short)0x8010;
-		BindShort annotation = new BindShort(){
+		Annotation annotation = new BindShort(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindShort.class;
@@ -240,7 +240,7 @@ class CodecShortTest{
 	void shortLittleEndianRandom(){
 		CodecInterface<BindShort> codec = new CodecShort();
 		short encodedValue = (short)RANDOM.nextInt(0x0000_FFFF);
-		BindShort annotation = new BindShort(){
+		Annotation annotation = new BindShort(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindShort.class;
@@ -303,7 +303,7 @@ class CodecShortTest{
 	void shortBigEndianNegative(){
 		CodecInterface<BindShort> codec = new CodecShort();
 		short encodedValue = (short)0x8F00;
-		BindShort annotation = new BindShort(){
+		Annotation annotation = new BindShort(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindShort.class;
@@ -366,7 +366,7 @@ class CodecShortTest{
 	void shortBigEndianSmall(){
 		CodecInterface<BindShort> codec = new CodecShort();
 		short encodedValue = 0x007F;
-		BindShort annotation = new BindShort(){
+		Annotation annotation = new BindShort(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindShort.class;
@@ -429,7 +429,7 @@ class CodecShortTest{
 	void shortBigEndianPositive(){
 		CodecInterface<BindShort> codec = new CodecShort();
 		short encodedValue = 0x7F00;
-		BindShort annotation = new BindShort(){
+		Annotation annotation = new BindShort(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindShort.class;
@@ -492,7 +492,7 @@ class CodecShortTest{
 	void shortBigEndianRandom(){
 		CodecInterface<BindShort> codec = new CodecShort();
 		short encodedValue = (short)RANDOM.nextInt(0x0000_FFFF);
-		BindShort annotation = new BindShort(){
+		Annotation annotation = new BindShort(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindShort.class;

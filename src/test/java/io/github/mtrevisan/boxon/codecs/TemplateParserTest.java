@@ -250,20 +250,20 @@ class TemplateParserTest{
 	static class TestComposition{
 		static class TestSubComposition{
 			@BindByte
-			public byte subtype;
+			byte subtype;
 			@BindString(condition = "type == 1", size = "1")
-			public String field1;
+			String field1;
 			@BindString(condition = "#self.subtype == 1", size = "1")
-			public String field2;
+			String field2;
 		}
 		@BindString(size = "2")
-		public String header;
+		String header;
 		@BindByte
 		public byte type;
 		@BindByte(condition = "type == 1")
-		public Byte subtype;
+		Byte subtype;
 		@BindObject(type = TestSubComposition.class)
-		public TestSubComposition sub;
+		TestSubComposition sub;
 	}
 
 	@Test

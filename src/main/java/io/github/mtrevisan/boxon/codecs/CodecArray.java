@@ -54,6 +54,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 		final BindArray binding = extractBinding(annotation);
 
 		final int size = Evaluator.evaluateSize(binding.size(), rootObject);
+		CodecHelper.assertSizePositive(size);
 		final ObjectChoices selectFrom = binding.selectFrom();
 
 		final Object[] array = createArray(binding.type(), size);
@@ -118,8 +119,8 @@ final class CodecArray implements CodecInterface<BindArray>{
 		final Object[] array = CodecHelper.converterEncode(chosenConverter, value);
 
 		final int size = Evaluator.evaluateSize(binding.size(), rootObject);
-		if(size != Array.getLength(array))
-			throw new IllegalArgumentException("Size mismatch, expected " + size + ", got " + Array.getLength(value));
+		CodecHelper.assertSizePositive(size);
+		CodecHelper.assertSizeEquals(size, Array.getLength(array));
 
 		if(selectFrom.alternatives().length > 0)
 			encodeWithAlternatives(writer, array, selectFrom);
