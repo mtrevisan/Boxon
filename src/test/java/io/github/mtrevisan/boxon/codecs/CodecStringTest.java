@@ -251,7 +251,7 @@ class CodecStringTest{
 
 			@Override
 			public byte terminator(){
-				return '\0';
+				return 'C';
 			}
 
 			@Override
@@ -300,6 +300,80 @@ class CodecStringTest{
 		writer.flush();
 
 		Assertions.assertArrayEquals(new byte[]{49, 50, 51, 65, 66}, writer.array());
+	}
+
+	@Test
+	void stringTerminatedButEndOfStream(){
+		CodecInterface<BindStringTerminated> codec = new CodecStringTerminated();
+		String encodedValue = "123ABC";
+		BindStringTerminated annotation = new BindStringTerminated(){
+			@Override
+			public Class<? extends Annotation> annotationType(){
+				return BindStringTerminated.class;
+			}
+
+			@Override
+			public String condition(){
+				return null;
+			}
+
+			@Override
+			public String charset(){
+				return StandardCharsets.US_ASCII.name();
+			}
+
+			@Override
+			public byte terminator(){
+				return 'D';
+			}
+
+			@Override
+			public boolean consumeTerminator(){
+				return false;
+			}
+
+			@Override
+			public String match(){
+				return "";
+			}
+
+			@Override
+			public Class<? extends Validator<?>> validator(){
+				return NullValidator.class;
+			}
+
+			@Override
+			public Class<? extends Converter<?, ?>> converter(){
+				return NullConverter.class;
+			}
+
+			@Override
+			public ConverterChoices selectConverterFrom(){
+				return new ConverterChoices(){
+					@Override
+					public Class<? extends Annotation> annotationType(){
+						return ConverterChoices.class;
+					}
+
+					@Override
+					public ConverterChoice[] alternatives(){
+						return new ConverterChoice[0];
+					}
+				};
+			}
+		};
+
+		BitReader reader = BitReader.wrap(encodedValue.getBytes(StandardCharsets.US_ASCII));
+		Object decoded = codec.decode(reader, annotation, null);
+
+		Assertions.assertEquals("123ABC", decoded);
+
+		BitWriter writer = new BitWriter();
+		codec.encode(writer, annotation, null, decoded);
+		writer.flush();
+
+		//this seems strange, but it has to work like this
+		Assertions.assertArrayEquals(new byte[]{49, 50, 51, 65, 66, 67}, writer.array());
 	}
 
 }

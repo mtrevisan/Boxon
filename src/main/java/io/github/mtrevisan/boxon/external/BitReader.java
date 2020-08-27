@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
@@ -141,7 +142,7 @@ public final class BitReader{
 		}
 		else
 			//create new mark
-			fallbackPoint = new State(buffer.position(), remaining, cache);
+			fallbackPoint = createState();
 	}
 
 	public void restoreFallbackPoint(){
@@ -149,11 +150,19 @@ public final class BitReader{
 			//no fallback point was marked before
 			return;
 
-		buffer.position(fallbackPoint.position);
-		remaining = fallbackPoint.remaining;
-		cache = fallbackPoint.cache;
+		restoreState(fallbackPoint);
 
 		clearFallbackPoint();
+	}
+
+	private State createState(){
+		return new State(buffer.position(), remaining, cache);
+	}
+
+	private void restoreState(final State state){
+		buffer.position(state.position);
+		remaining = state.remaining;
+		cache = state.cache;
 	}
 
 	public void clearFallbackPoint(){
@@ -178,6 +187,8 @@ public final class BitReader{
 	 */
 	public void skipUntilTerminator(final byte terminator, final boolean consumeTerminator){
 		getTextUntilTerminator(terminator, consumeTerminator, Charset.defaultCharset());
+		if(consumeTerminator)
+			getByte();
 	}
 
 	/**
@@ -224,13 +235,13 @@ public final class BitReader{
 	 * @return	A {@link BitSet} value at the {@link BitReader}'s current position.
 	 */
 	public BitSet getBits(final int length){
-		final BitSet value = new BitSet();
+		final BitSet bits = new BitSet();
 		int offset = 0;
 		while(offset < length){
 			//transfer the cache values
 			final int size = Math.min(length, remaining);
 			if(size > 0){
-				addCacheToBitSet(value, offset, size);
+				addCacheToBitSet(bits, offset, size);
 
 				offset += size;
 			}
@@ -242,7 +253,24 @@ public final class BitReader{
 				remaining = Byte.SIZE;
 			}
 		}
-		return value;
+		return bits;
+	}
+
+	private Byte peekByte(){
+		//make a copy of internal variables
+		final State originalState = createState();
+
+		try{
+			return getByte();
+		}
+		catch(final BufferUnderflowException ignored){
+			//trap end-of-buffer
+			return null;
+		}
+		finally{
+			//restore original variables
+			restoreState(originalState);
+		}
 	}
 
 	/**
@@ -272,13 +300,7 @@ public final class BitReader{
 	 * @return	A {@code byte}.
 	 */
 	public byte getByte(){
-		return getInteger(Byte.SIZE, ByteOrder.BIG_ENDIAN).byteValue();
-	}
-
-	private byte getByteWithFallback(){
-		createFallbackPoint();
-
-		return getByte();
+		return getInteger(Byte.SIZE, ByteOrder.LITTLE_ENDIAN).byteValue();
 	}
 
 	/**
@@ -406,25 +428,33 @@ public final class BitReader{
 			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			final OutputStreamWriter osw = new OutputStreamWriter(baos, charset);
 		){
-			getTextUntilTerminator(osw, terminator, consumeTerminator);
+			getTextUntilTerminator(osw, terminator);
+			if(consumeTerminator)
+				getByte();
+
 			text = baos.toString(charset);
 		}
-		catch(final IOException ignored){}
+		catch(final IOException e){
+			//should not happen...
+			e.printStackTrace();
+		}
 		return text;
 	}
 
-	private void getTextUntilTerminator(final OutputStreamWriter os, final byte terminator, final boolean consumeTerminator) throws IOException{
-		for(byte byteRead = getByteWithFallback(); byteRead != terminator && (buffer.position() < buffer.limit() || buffer.remaining() > 0); ){
-			os.write(byteRead);
+	/**
+	 * Retrieve text until a terminator (NOT consumed!) is found.
+	 *
+	 * @param os	The stream to write to.
+	 * @param terminator	The terminator.
+	 * @throws IOException	If an I/O error occurs.
+	 */
+	private void getTextUntilTerminator(final OutputStreamWriter os, final byte terminator) throws IOException{
+		for(Byte byteRead = peekByte(); byteRead != null && byteRead != terminator && (buffer.position() < buffer.limit() || buffer.remaining() > 0); ){
+			os.write(getByte());
 
-			byteRead = getByteWithFallback();
+			byteRead = peekByte();
 		}
 		os.flush();
-
-		if(consumeTerminator)
-			clearFallbackPoint();
-		else
-			restoreFallbackPoint();
 	}
 
 
