@@ -979,6 +979,7 @@ Remember that the header that will be written is the first in `@MessageHeader`.
 ### version 1.1.0 - 202008??
 - Better handling of NOP logger.
 - Abandoned [Reflections](https://github.com/ronmamo/reflections) in favor of [ClassGraph](https://github.com/classgraph/classgraph).
+- Added some feasibility checks on annotation data.
 - Added public constructor to Parser to allow for extensions.
 - Changed the signature of Checksummer.calculateChecksum returning short instead of long.
 - Changed method ParseResponse.getMessageForError into ParseResponse.getErrorMessageAt to align it to other method name's conventions.
