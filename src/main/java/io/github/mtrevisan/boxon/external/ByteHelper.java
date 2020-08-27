@@ -53,17 +53,14 @@ public final class ByteHelper{
 	/**
 	 * Convert the value to signed primitive.
 	 *
-	 * @param array	Field value.
-	 * @param unsigned	Whether to consider this number an unsigned one.
+	 * @param array   Field value.
 	 * @return	The 2-complement expressed as int.
 	 */
-	static BigInteger extendSign(byte[] array, final int size, final boolean unsigned){
-		if(!unsigned && (array[0] & 0x80) != 0x00){
+	static BigInteger extendSign(byte[] array){
+		if((array[0] & 0x80) != 0x00){
 			array = leftExtendArray(array);
 			array[0] = -1;
 		}
-		else if(unsigned && size >= array.length << 3)
-			array = leftExtendArray(array);
 		return new BigInteger(array);
 	}
 
@@ -73,7 +70,7 @@ public final class ByteHelper{
 	 * @param array	The array to extend.
 	 * @return	The extended array.
 	 */
-	static byte[] leftExtendArray(final byte[] array){
+	private static byte[] leftExtendArray(final byte[] array){
 		final byte[] extendedArray = new byte[array.length + 1];
 		System.arraycopy(array, 0, extendedArray, 1, array.length);
 		return extendedArray;

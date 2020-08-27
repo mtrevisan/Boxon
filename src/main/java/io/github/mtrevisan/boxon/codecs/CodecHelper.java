@@ -45,7 +45,7 @@ final class CodecHelper{
 	/** The name of the current object being scanner (used for referencing variables from SpEL). */
 	public static final String CONTEXT_SELF = "self";
 	/** The name of the prefix for the alternative (used for referencing variables from SpEL). */
-	public static final String CONTEXT_CHOICE_PREFIX = "prefix";
+	private static final String CONTEXT_CHOICE_PREFIX = "prefix";
 
 	static final Pattern CONTEXT_PREFIXED_CHOICE_PREFIX = Pattern.compile("#" + CONTEXT_CHOICE_PREFIX + "[^a-zA-Z]");
 

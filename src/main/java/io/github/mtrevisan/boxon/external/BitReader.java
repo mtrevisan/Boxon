@@ -272,7 +272,7 @@ public final class BitReader{
 	 * @return	A {@code byte}.
 	 */
 	public byte getByte(){
-		return (byte)getInteger(Byte.SIZE);
+		return getInteger(Byte.SIZE, ByteOrder.BIG_ENDIAN).byteValue();
 	}
 
 	private byte getByteWithFallback(){
@@ -337,11 +337,6 @@ public final class BitReader{
 	public BigInteger getInteger(final int size, final ByteOrder byteOrder){
 		final BitSet bits = getBits(size);
 		return bits.toInteger(size, byteOrder);
-	}
-
-	private long getInteger(final int size){
-		final BitSet bits = getBits(size);
-		return bits.toLong(0, size);
 	}
 
 	/**
