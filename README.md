@@ -113,6 +113,7 @@ You can get pre-built JARs (usable on JRE 11 or newer) from [Sonatype](https://o
     4. [version 0.0.1](#changelog-0.0.1)
     5. [version 0.0.0](#changelog-0.0.0)
 8. [License](#license)
+9. [Attributions](#attributions)
 
 <br/>
 
@@ -1000,3 +1001,7 @@ Remember that the header that will be written is the first in `@MessageHeader`.
 ## License
 This project is licensed under [MIT license](http://opensource.org/licenses/MIT).
 For the full text of the license, see the [LICENSE](LICENSE) file.
+
+<a name="attributions"></a>
+## Attributions
+Logo for the project by TimothyRias - Own work, CC BY 3.0, [https://commons.wikimedia.org/w/index.php?curid=4943351](https://commons.wikimedia.org/w/index.php?curid=4943351).
