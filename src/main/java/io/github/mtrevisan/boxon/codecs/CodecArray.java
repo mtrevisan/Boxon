@@ -29,6 +29,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
+import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
@@ -50,7 +51,8 @@ final class CodecArray implements CodecInterface<BindArray>{
 
 
 	@Override
-	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
+	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject) throws AnnotationException,
+			CodecException, TemplateException{
 		final BindArray binding = extractBinding(annotation);
 
 		final int size = Evaluator.evaluateSize(binding.size(), rootObject);
@@ -63,7 +65,8 @@ final class CodecArray implements CodecInterface<BindArray>{
 		else
 			decodeWithoutAlternatives(reader, array, binding.type());
 
-		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), rootObject);
+		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(),
+			binding.converter(), rootObject);
 		final Object value = CodecHelper.converterDecode(chosenConverter, array);
 
 		CodecHelper.validateData(binding.validator(), value);
@@ -72,14 +75,15 @@ final class CodecArray implements CodecInterface<BindArray>{
 	}
 
 	@SuppressWarnings("unchecked")
-	private static <T> T[] createArray(final Class<? extends T> type, final int length){
+	private static <T> T[] createArray(final Class<? extends T> type, final int length) throws AnnotationException{
 		if(ParserDataType.isPrimitive(type))
 			throw new AnnotationException("Argument cannot be a primitive: {}", type);
 
 		return (T[])Array.newInstance(type, length);
 	}
 
-	private void decodeWithAlternatives(final BitReader reader, final Object[] array, final ObjectChoices selectFrom, final Object rootObject){
+	private void decodeWithAlternatives(final BitReader reader, final Object[] array, final ObjectChoices selectFrom,
+			final Object rootObject) throws AnnotationException{
 		final boolean hasPrefix = (selectFrom.prefixSize() > 0);
 
 		for(int i = 0; i < array.length; i ++){
@@ -93,14 +97,15 @@ final class CodecArray implements CodecInterface<BindArray>{
 
 				array[i] = templateParser.decode(subTemplate, reader, rootObject);
 			}
-			catch(final CodecException e){
+			catch(final Exception e){
 				if(LOGGER != null)
 					LOGGER.warn(e.getMessage());
 			}
 		}
 	}
 
-	private void decodeWithoutAlternatives(final BitReader reader, final Object[] array, final Class<?> type){
+	private void decodeWithoutAlternatives(final BitReader reader, final Object[] array, final Class<?> type)
+			throws AnnotationException, CodecException, TemplateException{
 		final Template<?> template = Template.createFrom(type, templateParser.loader::hasCodec);
 
 		for(int i = 0; i < array.length; i ++)
@@ -108,14 +113,16 @@ final class CodecArray implements CodecInterface<BindArray>{
 	}
 
 	@Override
-	public void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value){
+	public void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value)
+			throws AnnotationException, CodecException{
 		final BindArray binding = extractBinding(annotation);
 
 		CodecHelper.validateData(binding.validator(), value);
 
 		final ObjectChoices selectFrom = binding.selectFrom();
 
-		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), rootObject);
+		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(),
+			binding.converter(), rootObject);
 		final Object[] array = CodecHelper.converterEncode(chosenConverter, value);
 
 		final int size = Evaluator.evaluateSize(binding.size(), rootObject);
@@ -128,7 +135,8 @@ final class CodecArray implements CodecInterface<BindArray>{
 			encodeWithoutAlternatives(writer, array, binding.type());
 	}
 
-	private void encodeWithAlternatives(final BitWriter writer, final Object[] array, final ObjectChoices selectFrom){
+	private void encodeWithAlternatives(final BitWriter writer, final Object[] array, final ObjectChoices selectFrom)
+			throws AnnotationException, CodecException{
 		final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
 		for(final Object elem : array){
 			final Class<?> type = elem.getClass();
@@ -143,7 +151,8 @@ final class CodecArray implements CodecInterface<BindArray>{
 		}
 	}
 
-	private void encodeWithoutAlternatives(final BitWriter writer, final Object[] array, final Class<?> type){
+	private void encodeWithoutAlternatives(final BitWriter writer, final Object[] array, final Class<?> type)
+			throws AnnotationException, CodecException{
 		final Template<?> template = Template.createFrom(type, templateParser.loader::hasCodec);
 
 		for(final Object elem : array)

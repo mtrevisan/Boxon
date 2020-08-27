@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.codecs.queclink.ACKMessageHex;
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
@@ -41,7 +42,7 @@ class LoaderTest{
 	}
 
 	@Test
-	void loadFromScan(){
+	void loadFromScan() throws AnnotationException, TemplateException{
 		Loader loader = new Loader();
 		loader.loadDefaultCodecs();
 
@@ -49,7 +50,7 @@ class LoaderTest{
 	}
 
 	@Test
-	void loadFromScanWithBasePackage(){
+	void loadFromScanWithBasePackage() throws AnnotationException, TemplateException{
 		Loader loader = new Loader();
 		loader.loadDefaultCodecs();
 
@@ -65,7 +66,7 @@ class LoaderTest{
 	}
 
 	@Test
-	void loadTemplate(){
+	void loadTemplate() throws AnnotationException, TemplateException{
 		Loader loader = new Loader();
 		loader.loadDefaultCodecs();
 		loader.loadTemplates(LoaderTest.class);
@@ -79,7 +80,7 @@ class LoaderTest{
 	}
 
 	@Test
-	void cannotLoadTemplate(){
+	void cannotLoadTemplate() throws AnnotationException, TemplateException{
 		Loader loader = new Loader();
 		loader.loadDefaultCodecs();
 		loader.loadTemplates(LoaderTest.class);
@@ -90,7 +91,7 @@ class LoaderTest{
 	}
 
 	@Test
-	void findNextTemplate(){
+	void findNextTemplate() throws AnnotationException, TemplateException{
 		Loader loader = new Loader();
 		loader.loadDefaultCodecs();
 		loader.loadTemplates(LoaderTest.class);
@@ -103,7 +104,7 @@ class LoaderTest{
 	}
 
 	@Test
-	void cannotFindNextTemplate(){
+	void cannotFindNextTemplate() throws AnnotationException, TemplateException{
 		Loader loader = new Loader();
 		loader.loadDefaultCodecs();
 		loader.loadTemplates(LoaderTest.class);

@@ -38,7 +38,7 @@ import java.lang.reflect.Array;
 final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 
 	@Override
-	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
+	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject) throws AnnotationException{
 		final BindArrayPrimitive binding = extractBinding(annotation);
 
 		final Class<?> type = binding.type();
@@ -51,7 +51,8 @@ final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 			Array.set(array, i, value);
 		}
 
-		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), rootObject);
+		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(),
+			binding.converter(), rootObject);
 		final Object value = CodecHelper.converterDecode(chosenConverter, array);
 
 		CodecHelper.validateData(binding.validator(), value);
@@ -59,7 +60,7 @@ final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 		return value;
 	}
 
-	private static Object createArrayPrimitive(final Class<?> type, final int length){
+	private static Object createArrayPrimitive(final Class<?> type, final int length) throws AnnotationException{
 		if(!ParserDataType.isPrimitive(type))
 			throw new AnnotationException("Argument cannot be a non-primitive: {}", type);
 
@@ -67,12 +68,14 @@ final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 	}
 
 	@Override
-	public void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value){
+	public void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value)
+			throws AnnotationException{
 		final BindArrayPrimitive binding = extractBinding(annotation);
 
 		CodecHelper.validateData(binding.validator(), value);
 
-		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), rootObject);
+		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(),
+			binding.converter(), rootObject);
 		final Object array = CodecHelper.converterEncode(chosenConverter, value);
 
 		final int size = Evaluator.evaluateSize(binding.size(), rootObject);

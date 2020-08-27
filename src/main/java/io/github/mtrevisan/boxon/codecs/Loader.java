@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.internal.DynamicArray;
@@ -151,7 +152,7 @@ final class Loader{
 	 *
 	 * @throws IllegalArgumentException	If the codecs was not loaded yet.
 	 */
-	void loadDefaultTemplates(){
+	void loadDefaultTemplates() throws AnnotationException, TemplateException{
 		loadTemplates(ReflectionHelper.extractCallerClasses());
 	}
 
@@ -160,7 +161,7 @@ final class Loader{
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
 	 */
-	void loadTemplates(final Class<?>... basePackageClasses){
+	void loadTemplates(final Class<?>... basePackageClasses) throws AnnotationException, TemplateException{
 		if(LOGGER != null)
 			LOGGER.info("Load templates from package(s) {}",
 				Arrays.stream(basePackageClasses).map(Class::getPackageName).collect(Collectors.joining(", ", "[", "]")));
@@ -176,7 +177,8 @@ final class Loader{
 	}
 
 	@SuppressWarnings("rawtypes")
-	private DynamicArray<Template> extractTemplates(final Collection<Class<?>> annotatedClasses){
+	private DynamicArray<Template> extractTemplates(final Collection<Class<?>> annotatedClasses) throws AnnotationException,
+			TemplateException{
 		final DynamicArray<Template> templates = DynamicArray.create(Template.class, annotatedClasses.size());
 		for(final Class<?> type : annotatedClasses){
 			//for each extracted class, try to parse it, extracting all the information needed for the codec of a message
@@ -217,7 +219,8 @@ final class Loader{
 		}
 	}
 
-	private void loadTemplateInner(final Template<?> template, final String headerStart, final Charset charset){
+	private void loadTemplateInner(final Template<?> template, final String headerStart, final Charset charset)
+			throws TemplateException{
 		final String key = calculateTemplateKey(headerStart, charset);
 		if(templates.containsKey(key))
 			throw new TemplateException("Duplicated key `{}` found for class {}", headerStart, template.getType().getSimpleName());
@@ -231,7 +234,7 @@ final class Loader{
 	 * @param reader	The reader to read the header from.
 	 * @return	The template that is able to decode/encode the next message in the given reader.
 	 */
-	Template<?> getTemplate(final BitReader reader){
+	Template<?> getTemplate(final BitReader reader) throws TemplateException{
 		final int index = reader.position();
 
 		//for each available template, select the first that matches the starting bytes
@@ -257,7 +260,7 @@ final class Loader{
 	 * @param type	The class to retrieve the template.
 	 * @return	The template that is able to decode/encode the given class.
 	 */
-	Template<?> getTemplate(final Class<?> type){
+	Template<?> getTemplate(final Class<?> type) throws TemplateException{
 		final MessageHeader header = type.getAnnotation(MessageHeader.class);
 		if(header == null)
 			throw new TemplateException("The given class type is not a valid template");

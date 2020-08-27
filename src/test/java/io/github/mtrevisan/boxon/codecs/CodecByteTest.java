@@ -30,6 +30,9 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.exceptions.CodecException;
+import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
 import org.junit.jupiter.api.Assertions;
@@ -45,7 +48,7 @@ class CodecByteTest{
 
 
 	@Test
-	void testByte(){
+	void testByte() throws AnnotationException, CodecException, TemplateException{
 		CodecInterface<BindByte> codec = new CodecByte();
 		byte encodedValue = (byte)(RANDOM.nextInt() & 0x0000_00FF);
 		BindByte annotation = new BindByte(){

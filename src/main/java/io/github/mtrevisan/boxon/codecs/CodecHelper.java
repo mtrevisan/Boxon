@@ -54,7 +54,7 @@ final class CodecHelper{
 
 	private CodecHelper(){}
 
-	static void assertSizePositive(final int size){
+	static void assertSizePositive(final int size) throws AnnotationException{
 		if(size <= 0)
 			throw new AnnotationException("Size must be a positive integer, was {}", size);
 	}
@@ -64,7 +64,7 @@ final class CodecHelper{
 			throw new IllegalArgumentException("Size mismatch, expected " + expectedSize + ", got " + size);
 	}
 
-	static void assertCharset(final String charsetName){
+	static void assertCharset(final String charsetName) throws AnnotationException{
 		try{
 			Charset.forName(charsetName);
 		}
@@ -82,7 +82,8 @@ final class CodecHelper{
 		throw new IllegalArgumentException("Cannot find a valid codec for type " + type.getSimpleName());
 	}
 
-	static ObjectChoices.ObjectChoice chooseAlternativeWithPrefix(final BitReader reader, final ObjectChoices selectFrom, final Object rootObject){
+	static ObjectChoices.ObjectChoice chooseAlternativeWithPrefix(final BitReader reader, final ObjectChoices selectFrom,
+			final Object rootObject) throws CodecException{
 		final int prefixSize = selectFrom.prefixSize();
 		final ByteOrder prefixByteOrder = selectFrom.byteOrder();
 		final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
@@ -93,12 +94,14 @@ final class CodecHelper{
 		Evaluator.addToContext(CONTEXT_CHOICE_PREFIX, prefix);
 		final ObjectChoices.ObjectChoice chosenAlternative = chooseAlternative(alternatives, rootObject);
 		if(chosenAlternative == null)
-			throw new CodecException("Cannot find a valid codec for prefix {} in object {}", prefix, rootObject.getClass().getSimpleName());
+			throw new CodecException("Cannot find a valid codec for prefix {} in object {}", prefix,
+				rootObject.getClass().getSimpleName());
 
 		return chosenAlternative;
 	}
 
-	static ObjectChoices.ObjectChoice chooseAlternativeWithoutPrefix(final ObjectChoices selectFrom, final Object rootObject){
+	static ObjectChoices.ObjectChoice chooseAlternativeWithoutPrefix(final ObjectChoices selectFrom, final Object rootObject)
+			throws CodecException{
 		final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
 
 		final ObjectChoices.ObjectChoice chosenAlternative = chooseAlternative(alternatives, rootObject);
@@ -108,16 +111,16 @@ final class CodecHelper{
 		return chosenAlternative;
 	}
 
-	private static ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Object rootObject){
-		for(final ObjectChoices.ObjectChoice alternative : alternatives){
+	private static ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives,
+			final Object rootObject){
+		for(final ObjectChoices.ObjectChoice alternative : alternatives)
 			if(Evaluator.evaluate(alternative.condition(), rootObject, boolean.class))
 				return alternative;
-		}
 		return null;
 	}
 
-	static Class<? extends Converter<?, ?>> chooseConverter(final ConverterChoices selectConverterFrom, final Class<? extends Converter<?, ?>> baseConverter,
-			final Object rootObject){
+	static Class<? extends Converter<?, ?>> chooseConverter(final ConverterChoices selectConverterFrom,
+			final Class<? extends Converter<?, ?>> baseConverter, final Object rootObject){
 		final ConverterChoices.ConverterChoice[] alternatives = selectConverterFrom.alternatives();
 		for(final ConverterChoices.ConverterChoice alternative : alternatives){
 			if(Evaluator.evaluate(alternative.condition(), rootObject, boolean.class))
@@ -203,7 +206,8 @@ final class CodecHelper{
 			return converter.decode((IN)data);
 		}
 		catch(final ClassCastException ignored){
-			throw new IllegalArgumentException("Can not input " + data.getClass().getSimpleName() + " to decode method of converter " + converterType.getSimpleName());
+			throw new IllegalArgumentException("Can not input " + data.getClass().getSimpleName() + " to decode method of converter "
+				+ converterType.getSimpleName());
 		}
 	}
 

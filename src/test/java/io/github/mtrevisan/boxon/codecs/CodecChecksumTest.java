@@ -27,6 +27,9 @@ package io.github.mtrevisan.boxon.codecs;
 import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.checksummers.CRC16CCITT;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.exceptions.CodecException;
+import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
 import io.github.mtrevisan.boxon.external.ByteOrder;
@@ -45,7 +48,7 @@ class CodecChecksumTest{
 
 
 	@Test
-	void checksumShort(){
+	void checksumShort() throws AnnotationException, CodecException, TemplateException{
 		CodecInterface<Checksum> codec = new CodecChecksum();
 		short encodedValue = (short)RANDOM.nextInt(0x0000_FFFF);
 		Checksum annotation = new Checksum(){

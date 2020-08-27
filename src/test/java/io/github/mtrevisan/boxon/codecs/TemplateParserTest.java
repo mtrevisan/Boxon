@@ -33,6 +33,9 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.codecs.queclink.ACKMessageASCII;
 import io.github.mtrevisan.boxon.codecs.queclink.ACKMessageHex;
 import io.github.mtrevisan.boxon.codecs.queclink.DeviceTypes;
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.exceptions.CodecException;
+import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitSet;
 import io.github.mtrevisan.boxon.external.BitWriter;
@@ -47,7 +50,7 @@ import java.nio.charset.StandardCharsets;
 class TemplateParserTest{
 
 	@Test
-	void parseSingleMessageHex() throws NoSuchMethodException{
+	void parseSingleMessageHex() throws NoSuchMethodException, AnnotationException, CodecException, TemplateException{
 		byte[] payload = JavaHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		BitReader reader = BitReader.wrap(payload);
 
@@ -77,7 +80,7 @@ class TemplateParserTest{
 	}
 
 	@Test
-	void parseSingleMessageASCII(){
+	void parseSingleMessageASCII() throws AnnotationException, CodecException, TemplateException{
 		byte[] payload = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
 		BitReader reader = BitReader.wrap(payload);
 
@@ -118,7 +121,7 @@ class TemplateParserTest{
 	}
 
 	@Test
-	void parseWithConditionError(){
+	void parseWithConditionError() throws AnnotationException{
 		byte[] payload = JavaHelper.toByteArray("746335011234");
 		BitReader reader = BitReader.wrap(payload);
 
@@ -140,7 +143,7 @@ class TemplateParserTest{
 	}
 
 	@Test
-	void parseWithMatchError1(){
+	void parseWithMatchError1() throws AnnotationException{
 		byte[] payload = JavaHelper.toByteArray("74633501");
 		BitReader reader = BitReader.wrap(payload);
 
@@ -175,7 +178,7 @@ class TemplateParserTest{
 	}
 
 	@Test
-	void parseWithConverterOutputError(){
+	void parseWithConverterOutputError() throws AnnotationException{
 		byte[] payload = JavaHelper.toByteArray("74633501");
 		BitReader reader = BitReader.wrap(payload);
 
@@ -210,7 +213,7 @@ class TemplateParserTest{
 	}
 
 	@Test
-	void parseWithConverterInputError(){
+	void parseWithConverterInputError() throws AnnotationException{
 		byte[] payload = JavaHelper.toByteArray("74633501");
 		BitReader reader = BitReader.wrap(payload);
 
@@ -232,7 +235,7 @@ class TemplateParserTest{
 	}
 
 	@Test
-	void parseWithMatchError2(){
+	void parseWithMatchError2() throws AnnotationException{
 		byte[] payload = JavaHelper.toByteArray("74633501");
 		BitReader reader = BitReader.wrap(payload);
 
@@ -267,7 +270,7 @@ class TemplateParserTest{
 	}
 
 	@Test
-	void parseCompositeMessage(){
+	void parseCompositeMessage() throws AnnotationException, CodecException, TemplateException{
 		byte[] payload = JavaHelper.toByteArray("74630102016162");
 		BitReader reader = BitReader.wrap(payload);
 

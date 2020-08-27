@@ -31,6 +31,9 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.exceptions.CodecException;
+import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
 import io.github.mtrevisan.boxon.external.ByteOrder;
@@ -49,7 +52,7 @@ class CodecDoubleTest{
 
 
 	@Test
-	void doublePositiveLittleEndian(){
+	void doublePositiveLittleEndian() throws AnnotationException, CodecException, TemplateException{
 		CodecInterface<BindDouble> codec = new CodecDouble();
 		double encodedValue = RANDOM.nextDouble();
 		BindDouble annotation = new BindDouble(){
@@ -112,7 +115,7 @@ class CodecDoubleTest{
 	}
 
 	@Test
-	void doubleNegativeLittleEndian(){
+	void doubleNegativeLittleEndian() throws AnnotationException, CodecException, TemplateException{
 		CodecInterface<BindDouble> codec = new CodecDouble();
 		double encodedValue = -RANDOM.nextDouble();
 		BindDouble annotation = new BindDouble(){
@@ -175,7 +178,7 @@ class CodecDoubleTest{
 	}
 
 	@Test
-	void doublePositiveBigEndian(){
+	void doublePositiveBigEndian() throws AnnotationException, CodecException, TemplateException{
 		CodecInterface<BindDouble> codec = new CodecDouble();
 		double encodedValue = RANDOM.nextDouble();
 		BindDouble annotation = new BindDouble(){
@@ -238,7 +241,7 @@ class CodecDoubleTest{
 	}
 
 	@Test
-	void doubleNegativeBigEndian(){
+	void doubleNegativeBigEndian() throws AnnotationException, CodecException, TemplateException{
 		CodecInterface<BindDouble> codec = new CodecDouble();
 		double encodedValue = -RANDOM.nextDouble();
 		BindDouble annotation = new BindDouble(){

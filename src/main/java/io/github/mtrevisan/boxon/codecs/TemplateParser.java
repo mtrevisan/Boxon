@@ -70,7 +70,7 @@ final class TemplateParser{
 	final Loader loader = new Loader();
 
 
-	<T> T decode(final Template<T> template, final BitReader reader, final Object parentObject){
+	<T> T decode(final Template<T> template, final BitReader reader, final Object parentObject) throws CodecException, TemplateException{
 		final int startPosition = reader.position();
 
 		final T currentObject = ReflectionHelper.getCreator(template.getType())
@@ -107,7 +107,7 @@ final class TemplateParser{
 	}
 
 	private <T> void decodeField(final Template<T> template, final BitReader reader, final ParserContext<T> parserContext,
-			final Template.BoundedField field){
+			final Template.BoundedField field) throws CodecException{
 		final Annotation binding = field.getBinding();
 		final CodecInterface<?> codec = retrieveCodec(binding.annotationType());
 
@@ -144,7 +144,7 @@ final class TemplateParser{
 		}
 	}
 
-	private void readMessageTerminator(final Template<?> template, final BitReader reader){
+	private void readMessageTerminator(final Template<?> template, final BitReader reader) throws TemplateException{
 		final MessageHeader header = template.getHeader();
 		if(header != null && !header.end().isEmpty()){
 			final Charset charset = Charset.forName(header.charset());
@@ -195,7 +195,8 @@ final class TemplateParser{
 		}
 	}
 
-	<T> void encode(final Template<?> template, final BitWriter writer, final Object parentObject, final T currentObject){
+	<T> void encode(final Template<?> template, final BitWriter writer, final Object parentObject, final T currentObject)
+			throws CodecException{
 		final ParserContext<T> parserContext = new ParserContext<>(parentObject, currentObject);
 
 		//encode message fields:
@@ -223,7 +224,7 @@ final class TemplateParser{
 	}
 
 	private <T> void encodeField(final Template<?> template, final BitWriter writer, final ParserContext<T> parserContext,
-			final Template.BoundedField field){
+			final Template.BoundedField field) throws CodecException{
 		final Annotation binding = field.getBinding();
 		final CodecInterface<?> codec = retrieveCodec(binding.annotationType());
 
@@ -259,7 +260,7 @@ final class TemplateParser{
 		}
 	}
 
-	private CodecInterface<?> retrieveCodec(final Class<? extends Annotation> annotationType){
+	private CodecInterface<?> retrieveCodec(final Class<? extends Annotation> annotationType) throws CodecException{
 		final CodecInterface<?> codec = loader.getCodec(annotationType);
 		if(codec == null)
 			throw new CodecException("Cannot find codec for binding {}", annotationType.getSimpleName());

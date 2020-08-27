@@ -35,8 +35,7 @@ import java.io.ObjectOutputStream;
 /**
  * Thrown if a template is not well formatted.
  */
-//FIXME should be a checked exception?
-public final class TemplateException extends RuntimeException{
+public final class TemplateException extends Exception{
 
 	private static final long serialVersionUID = 7585594459004613305L;
 

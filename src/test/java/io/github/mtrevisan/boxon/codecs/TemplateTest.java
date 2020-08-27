@@ -43,6 +43,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.annotations.checksummers.CRC16CCITT;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.external.BitSet;
 import io.github.mtrevisan.boxon.external.ByteHelper;
 import io.github.mtrevisan.boxon.external.ByteOrder;
@@ -167,7 +168,7 @@ class TemplateTest{
 
 	@Test
 	@SuppressWarnings("SimplifiableAssertion")
-	void creation(){
+	void creation() throws AnnotationException{
 		Loader loader = new Loader();
 		loader.loadDefaultCodecs();
 		Template<Message> template = Template.createFrom(Message.class, loader::hasCodec);
@@ -235,7 +236,7 @@ class TemplateTest{
 	}
 
 	@Test
-	void inheritance(){
+	void inheritance() throws AnnotationException{
 		Loader loader = new Loader();
 		loader.loadDefaultCodecs();
 		Template<MessageChild> template = Template.createFrom(MessageChild.class, loader::hasCodec);

@@ -144,7 +144,7 @@ final class Template<T>{
 	private enum AnnotationValidator{
 		ARRAY_PRIMITIVE(BindArrayPrimitive.class){
 			@Override
-			void validate(final Annotation annotation){
+			void validate(final Annotation annotation) throws AnnotationException{
 				final Class<?> type = ((BindArrayPrimitive)annotation).type();
 				if(!ParserDataType.isPrimitive(type))
 					throw new AnnotationException("Bad annotation used for {}, should have been used the type `{}.class`",
@@ -154,7 +154,7 @@ final class Template<T>{
 
 		ARRAY(BindArray.class){
 			@Override
-			void validate(final Annotation annotation){
+			void validate(final Annotation annotation) throws AnnotationException{
 				final BindArray binding = (BindArray)annotation;
 				final ObjectChoices selectFrom = binding.selectFrom();
 				final Class<?> type = binding.type();
@@ -168,7 +168,7 @@ final class Template<T>{
 
 		OBJECT(BindObject.class){
 			@Override
-			void validate(final Annotation annotation){
+			void validate(final Annotation annotation) throws AnnotationException{
 				final BindObject binding = (BindObject)annotation;
 				final ObjectChoices selectFrom = binding.selectFrom();
 				final Class<?> type = binding.type();
@@ -182,7 +182,7 @@ final class Template<T>{
 
 		DECIMAL(BindDecimal.class){
 			@Override
-			void validate(final Annotation annotation){
+			void validate(final Annotation annotation) throws AnnotationException{
 				final Class<?> type = ((BindDecimal)annotation).type();
 				if(type != float.class && type != Float.class && type != double.class && type != Double.class)
 					throw new AnnotationException("Bad type, should have been one of `{}.class` or `{}.class`", Float.class.getSimpleName(),
@@ -192,7 +192,7 @@ final class Template<T>{
 
 		STRING(BindString.class){
 			@Override
-			void validate(final Annotation annotation){
+			void validate(final Annotation annotation) throws AnnotationException{
 				final BindString binding = (BindString)annotation;
 				CodecHelper.assertCharset(binding.charset());
 			}
@@ -200,7 +200,7 @@ final class Template<T>{
 
 		STRING_TERMINATED(BindStringTerminated.class){
 			@Override
-			void validate(final Annotation annotation){
+			void validate(final Annotation annotation) throws AnnotationException{
 				final BindStringTerminated binding = (BindStringTerminated)annotation;
 				CodecHelper.assertCharset(binding.charset());
 			}
@@ -208,7 +208,7 @@ final class Template<T>{
 
 		CHECKSUM(Checksum.class){
 			@Override
-			void validate(final Annotation annotation){
+			void validate(final Annotation annotation) throws AnnotationException{
 				final Class<?> type = ((Checksum)annotation).type();
 				if(!ParserDataType.isPrimitiveOrWrapper(type))
 					throw new AnnotationException("Unrecognized type for field {}<{}>: {}", getClass().getSimpleName(), type.getSimpleName(),
@@ -232,9 +232,9 @@ final class Template<T>{
 			return ANNOTATION_VALIDATORS.get(annotation.annotationType());
 		}
 
-		abstract void validate(final Annotation annotation);
+		abstract void validate(final Annotation annotation) throws AnnotationException;
 
-		private static void validateChoice(final ObjectChoices selectFrom){
+		private static void validateChoice(final ObjectChoices selectFrom) throws AnnotationException{
 			final int prefixSize = selectFrom.prefixSize();
 			if(prefixSize < 0)
 				throw new AnnotationException("Prefix size must be a non-negative number");
@@ -275,11 +275,12 @@ final class Template<T>{
 	 * @param hasCodec	The function to verify the presence of the codec.
 	 * @return	A new {@link Template} for the given type.
 	 */
-	static <T> Template<T> createFrom(final Class<T> type, final Predicate<Class<? extends Annotation>> hasCodec){
+	static <T> Template<T> createFrom(final Class<T> type, final Predicate<Class<? extends Annotation>> hasCodec)
+			throws AnnotationException{
 		return new Template<>(type, hasCodec);
 	}
 
-	private Template(final Class<T> type, final Predicate<Class<? extends Annotation>> hasCodec){
+	private Template(final Class<T> type, final Predicate<Class<? extends Annotation>> hasCodec) throws AnnotationException{
 		this.type = type;
 
 		header = type.getAnnotation(MessageHeader.class);
@@ -289,7 +290,8 @@ final class Template<T>{
 		loadAnnotatedFields(ReflectionHelper.getAccessibleFields(type), hasCodec);
 	}
 
-	private void loadAnnotatedFields(final DynamicArray<Field> fields, final Predicate<? super Class<? extends Annotation>> hasCodec){
+	private void loadAnnotatedFields(final DynamicArray<Field> fields, final Predicate<? super Class<? extends Annotation>> hasCodec)
+			throws AnnotationException{
 		boundedFields.ensureCapacity(fields.limit);
 		for(int i = 0; i < fields.limit; i ++){
 			final Field field = fields.data[i];
@@ -309,7 +311,8 @@ final class Template<T>{
 		}
 	}
 
-	private DynamicArray<Annotation> extractAnnotations(final Annotation[] declaredAnnotations, final Predicate<? super Class<? extends Annotation>> hasCodec){
+	private DynamicArray<Annotation> extractAnnotations(final Annotation[] declaredAnnotations,
+			final Predicate<? super Class<? extends Annotation>> hasCodec){
 		final DynamicArray<Annotation> annotations = DynamicArray.create(Annotation.class, declaredAnnotations.length);
 		for(final Annotation annotation : declaredAnnotations){
 			final Class<? extends Annotation> annotationType = annotation.annotationType();
@@ -331,7 +334,8 @@ final class Template<T>{
 		return evaluations;
 	}
 
-	private void validateField(final DynamicArray<? extends Annotation> annotations, final Checksum checksum){
+	private void validateField(final DynamicArray<? extends Annotation> annotations, final Checksum checksum)
+			throws AnnotationException{
 		if(annotations.limit > 1){
 			final StringJoiner sj = new StringJoiner(", ", "[", "]");
 			annotations.join(annotation -> annotation.annotationType().getSimpleName(), sj);
@@ -346,7 +350,7 @@ final class Template<T>{
 			validateAnnotation(annotations.data[0]);
 	}
 
-	private void validateAnnotation(final Annotation annotation){
+	private void validateAnnotation(final Annotation annotation) throws AnnotationException{
 		final AnnotationValidator validator = AnnotationValidator.fromAnnotation(annotation);
 		if(validator != null)
 			validator.validate(annotation);

@@ -197,7 +197,7 @@ public final class BitReader{
 	 * @param byteOrder	The byte order used to read the bytes.
 	 * @return	The read value of the given type.
 	 */
-	public Object get(final Class<?> type, final ByteOrder byteOrder){
+	public Object get(final Class<?> type, final ByteOrder byteOrder) throws AnnotationException{
 		final ParserDataType t = ParserDataType.fromType(type);
 		if(t == null)
 			throw new AnnotationException("Cannot read type {}, should be one of {}, or their objective counterparts", type.getSimpleName(), ParserDataType.describe());
@@ -390,7 +390,7 @@ public final class BitReader{
 	 * @return	A {@link BigDecimal}.
 	 */
 	@SuppressWarnings("ChainOfInstanceofChecks")
-	public BigDecimal getDecimal(final Class<?> cls, final ByteOrder byteOrder){
+	public BigDecimal getDecimal(final Class<?> cls, final ByteOrder byteOrder) throws AnnotationException{
 		if(cls == float.class || cls == Float.class)
 			return new BigDecimal(Float.toString(getFloat(byteOrder)));
 		if(cls == double.class || cls == Double.class)

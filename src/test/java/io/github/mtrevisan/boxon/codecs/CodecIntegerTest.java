@@ -30,6 +30,9 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.exceptions.CodecException;
+import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitSet;
 import io.github.mtrevisan.boxon.external.BitWriter;
@@ -47,7 +50,7 @@ import java.util.Locale;
 class CodecIntegerTest{
 
 	@Test
-	void smallLittleEndianSmall1(){
+	void smallLittleEndianSmall1() throws AnnotationException, CodecException, TemplateException{
 		CodecInterface<BindInteger> codec = new CodecInteger();
 		BigInteger encodedValue = BigInteger.valueOf(0x00_1020l);
 		BindInteger annotation = new BindInteger(){
@@ -115,7 +118,7 @@ class CodecIntegerTest{
 	}
 
 	@Test
-	void smallLittleEndianSmall2(){
+	void smallLittleEndianSmall2() throws AnnotationException, CodecException, TemplateException{
 		CodecInterface<BindInteger> codec = new CodecInteger();
 		BigInteger encodedValue = BigInteger.valueOf(0x10_2000l);
 		BindInteger annotation = new BindInteger(){
@@ -183,7 +186,7 @@ class CodecIntegerTest{
 	}
 
 	@Test
-	void smallLittleEndian(){
+	void smallLittleEndian() throws AnnotationException, CodecException, TemplateException{
 		CodecInterface<BindInteger> codec = new CodecInteger();
 		BigInteger encodedValue = BigInteger.valueOf(0x7F_00FFl);
 		BindInteger annotation = new BindInteger(){
@@ -252,7 +255,7 @@ class CodecIntegerTest{
 
 
 	@Test
-	void smallBigEndianSmall1(){
+	void smallBigEndianSmall1() throws AnnotationException, CodecException, TemplateException{
 		CodecInterface<BindInteger> codec = new CodecInteger();
 		BigInteger encodedValue = BigInteger.valueOf(0x00_1020l);
 		BindInteger annotation = new BindInteger(){
@@ -320,7 +323,7 @@ class CodecIntegerTest{
 	}
 
 	@Test
-	void smallBigEndianSmall2(){
+	void smallBigEndianSmall2() throws AnnotationException, CodecException, TemplateException{
 		CodecInterface<BindInteger> codec = new CodecInteger();
 		BigInteger encodedValue = BigInteger.valueOf(0x10_2000l);
 		BindInteger annotation = new BindInteger(){
@@ -388,7 +391,7 @@ class CodecIntegerTest{
 	}
 
 	@Test
-	void smallBigEndian(){
+	void smallBigEndian() throws AnnotationException, CodecException, TemplateException{
 		CodecInterface<BindInteger> codec = new CodecInteger();
 		BigInteger encodedValue = BigInteger.valueOf(0x7F_00FFl);
 		BindInteger annotation = new BindInteger(){
@@ -457,7 +460,7 @@ class CodecIntegerTest{
 
 
 	@Test
-	void bigLittleEndianSmall(){
+	void bigLittleEndianSmall() throws AnnotationException, CodecException, TemplateException{
 		CodecInterface<BindInteger> codec = new CodecInteger();
 		BigInteger encodedValue = new BigInteger("00FF0000FFFF00000000000000000000", 16);
 		BindInteger annotation = new BindInteger(){
@@ -526,7 +529,7 @@ class CodecIntegerTest{
 	}
 
 	@Test
-	void bigLittleEndian(){
+	void bigLittleEndian() throws AnnotationException, CodecException, TemplateException{
 		CodecInterface<BindInteger> codec = new CodecInteger();
 		BigInteger encodedValue = new BigInteger("7FFF0000FFFF00000000000000000000", 16);
 		BindInteger annotation = new BindInteger(){
@@ -595,7 +598,7 @@ class CodecIntegerTest{
 
 
 	@Test
-	void bigBigEndianSmall(){
+	void bigBigEndianSmall() throws AnnotationException, CodecException, TemplateException{
 		CodecInterface<BindInteger> codec = new CodecInteger();
 		BigInteger encodedValue = new BigInteger("00FF0000FFFF00000000000000000000", 16);
 		BindInteger annotation = new BindInteger(){
@@ -663,7 +666,7 @@ class CodecIntegerTest{
 	}
 
 	@Test
-	void bigBigEndian(){
+	void bigBigEndian() throws AnnotationException, CodecException, TemplateException{
 		CodecInterface<BindInteger> codec = new CodecInteger();
 		BigInteger encodedValue = new BigInteger("7FFF0000FFFF00000000000000000000", 16);
 		BindInteger annotation = new BindInteger(){

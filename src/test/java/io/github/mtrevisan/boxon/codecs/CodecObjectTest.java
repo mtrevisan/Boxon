@@ -37,6 +37,9 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.exceptions.CodecException;
+import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
 import io.github.mtrevisan.boxon.external.ByteOrder;
@@ -65,7 +68,7 @@ class CodecObjectTest{
 
 
 	@Test
-	void object(){
+	void object() throws AnnotationException, CodecException{
 		CodecObject codec = new CodecObject();
 		Version encodedValue = new Version((byte)1, (byte)2);
 		BindObject annotation = new BindObject(){
@@ -205,7 +208,7 @@ class CodecObjectTest{
 	}
 
 	@Test
-	void choice1(){
+	void choice1() throws AnnotationException, TemplateException{
 		Parser parser = Parser.create()
 			.withDefaultCodecs()
 			.withTemplates(TestChoice1.class);
@@ -245,7 +248,7 @@ class CodecObjectTest{
 	}
 
 	@Test
-	void choice2(){
+	void choice2() throws AnnotationException, TemplateException{
 		Parser parser = Parser.create()
 			.withDefaultCodecs()
 			.withTemplates(TestChoice2.class);
@@ -285,7 +288,7 @@ class CodecObjectTest{
 	}
 
 	@Test
-	void choice3(){
+	void choice3() throws AnnotationException, TemplateException{
 		Parser parser = Parser.create()
 			.withDefaultCodecs()
 			.withTemplates(TestChoice3.class);

@@ -24,6 +24,9 @@
  */
 package io.github.mtrevisan.boxon.codecs;
 
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.exceptions.CodecException;
+import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
 
@@ -32,9 +35,9 @@ import java.lang.annotation.Annotation;
 
 public interface CodecInterface<B extends Annotation>{
 
-	Object decode(final BitReader reader, final Annotation annotation, final Object rootObject);
+	Object decode(final BitReader reader, final Annotation annotation, final Object rootObject) throws AnnotationException, CodecException, TemplateException;
 
-	void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value);
+	void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value) throws AnnotationException, CodecException;
 
 
 	@SuppressWarnings("unchecked")

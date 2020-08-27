@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.external;
 
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -173,7 +174,7 @@ class BitWriterTest{
 	}
 
 	@Test
-	void bigDecimalAsFloat(){
+	void bigDecimalAsFloat() throws AnnotationException{
 		BigDecimal value = new BigDecimal("1.23");
 		writer.putDecimal(value, Float.class, ByteOrder.LITTLE_ENDIAN);
 		BitReader reader = BitReader.wrap(writer);
@@ -183,7 +184,7 @@ class BitWriterTest{
 	}
 
 	@Test
-	void bigDecimalAsFloatBigEndian(){
+	void bigDecimalAsFloatBigEndian() throws AnnotationException{
 		BigDecimal value = new BigDecimal("1.23");
 		writer.putDecimal(value, Float.class, ByteOrder.BIG_ENDIAN);
 		BitReader reader = BitReader.wrap(writer);
@@ -193,7 +194,7 @@ class BitWriterTest{
 	}
 
 	@Test
-	void bigDecimalAsFDouble(){
+	void bigDecimalAsFDouble() throws AnnotationException{
 		BigDecimal value = new BigDecimal("1.23");
 		writer.putDecimal(value, Double.class, ByteOrder.LITTLE_ENDIAN);
 		BitReader reader = BitReader.wrap(writer);
@@ -203,7 +204,7 @@ class BitWriterTest{
 	}
 
 	@Test
-	void bigDecimalAsFDoubleBigEndian(){
+	void bigDecimalAsFDoubleBigEndian() throws AnnotationException{
 		BigDecimal value = new BigDecimal("1.23");
 		writer.putDecimal(value, Double.class, ByteOrder.BIG_ENDIAN);
 		BitReader reader = BitReader.wrap(writer);

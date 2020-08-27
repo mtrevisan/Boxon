@@ -28,7 +28,9 @@ import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.bindings.BindByte;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.DecodeException;
+import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
@@ -87,7 +89,7 @@ class ConverterTest{
 	}
 
 	@Test
-	void wrongInputOnConverter(){
+	void wrongInputOnConverter() throws AnnotationException, TemplateException{
 		Parser parser = Parser.create()
 			.withDefaultCodecs()
 			.withTemplates(TestConverter1.class);
@@ -106,7 +108,7 @@ class ConverterTest{
 	}
 
 	@Test
-	void wrongOutputFromConverter(){
+	void wrongOutputFromConverter() throws AnnotationException, TemplateException{
 		Parser parser = Parser.create()
 			.withDefaultCodecs()
 			.withTemplates(TestConverter2.class);
@@ -125,7 +127,7 @@ class ConverterTest{
 	}
 
 	@Test
-	void allowedOutputFromConverter(){
+	void allowedOutputFromConverter() throws AnnotationException, TemplateException{
 		Parser parser = Parser.create()
 			.withDefaultCodecs()
 			.withTemplates(TestConverter3.class);

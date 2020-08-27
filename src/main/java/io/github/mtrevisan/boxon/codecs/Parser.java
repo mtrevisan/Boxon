@@ -25,8 +25,10 @@
 package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.DecodeException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
+import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
 
@@ -161,7 +163,7 @@ public final class Parser{
 	 *
 	 * @return	The {@link Parser}, used for chaining.
 	 */
-	public Parser withDefaultTemplates(){
+	public Parser withDefaultTemplates() throws AnnotationException, TemplateException{
 		templateParser.loader.loadDefaultTemplates();
 		return this;
 	}
@@ -172,7 +174,7 @@ public final class Parser{
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
 	 * @return	The {@link Parser}, used for chaining.
 	 */
-	public Parser withTemplates(final Class<?>... basePackageClasses){
+	public Parser withTemplates(final Class<?>... basePackageClasses) throws AnnotationException, TemplateException{
 		templateParser.loader.loadTemplates(basePackageClasses);
 		return this;
 	}

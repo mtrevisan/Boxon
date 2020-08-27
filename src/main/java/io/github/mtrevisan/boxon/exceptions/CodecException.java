@@ -35,8 +35,7 @@ import java.io.ObjectOutputStream;
 /**
  * Thrown if no codec is found.
  */
-//FIXME should be a checked exception?
-public final class CodecException extends RuntimeException{
+public final class CodecException extends Exception{
 
 	private static final long serialVersionUID = 2879230296103139872L;
 

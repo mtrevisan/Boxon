@@ -57,7 +57,7 @@ public final class BitWriter{
 	 * 	{@link Long#SIZE}, {@link Float#SIZE}, and {@link Double#SIZE}).
 	 * @param byteOrder	The byte order used to write the value.
 	 */
-	public void put(final Object value, final ByteOrder byteOrder){
+	public void put(final Object value, final ByteOrder byteOrder) throws AnnotationException{
 		final ParserDataType t = ParserDataType.fromType(value.getClass());
 		if(t == null)
 			throw new AnnotationException("Cannot write type {}", value.getClass().getSimpleName());
@@ -204,7 +204,7 @@ public final class BitWriter{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 */
 	@SuppressWarnings("ChainOfInstanceofChecks")
-	public void putDecimal(final BigDecimal value, final Class<?> cls, final ByteOrder byteOrder){
+	public void putDecimal(final BigDecimal value, final Class<?> cls, final ByteOrder byteOrder) throws AnnotationException{
 		if(cls == float.class || cls == Float.class)
 			putFloat(value.floatValue(), byteOrder);
 		else if(cls == double.class || cls == Double.class)

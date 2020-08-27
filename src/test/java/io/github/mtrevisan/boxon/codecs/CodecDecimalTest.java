@@ -31,6 +31,9 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.exceptions.CodecException;
+import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
 import io.github.mtrevisan.boxon.external.ByteOrder;
@@ -50,7 +53,7 @@ class CodecDecimalTest{
 
 
 	@Test
-	void decimalPositiveLittleEndian(){
+	void decimalPositiveLittleEndian() throws AnnotationException, CodecException, TemplateException{
 		CodecInterface<BindDecimal> codec = new CodecDecimal();
 		BigDecimal encodedValue = BigDecimal.valueOf(RANDOM.nextDouble());
 		BindDecimal annotation = new BindDecimal(){
@@ -118,7 +121,7 @@ class CodecDecimalTest{
 	}
 
 	@Test
-	void decimalNegativeLittleEndian(){
+	void decimalNegativeLittleEndian() throws AnnotationException, CodecException, TemplateException{
 		CodecInterface<BindDecimal> codec = new CodecDecimal();
 		BigDecimal encodedValue = BigDecimal.valueOf(-RANDOM.nextDouble());
 		BindDecimal annotation = new BindDecimal(){
@@ -186,7 +189,7 @@ class CodecDecimalTest{
 	}
 
 	@Test
-	void decimalPositiveBigEndian(){
+	void decimalPositiveBigEndian() throws AnnotationException, CodecException, TemplateException{
 		CodecInterface<BindDecimal> codec = new CodecDecimal();
 		BigDecimal encodedValue = BigDecimal.valueOf(RANDOM.nextDouble());
 		BindDecimal annotation = new BindDecimal(){
@@ -254,7 +257,7 @@ class CodecDecimalTest{
 	}
 
 	@Test
-	void decimalNegativeBigEndian(){
+	void decimalNegativeBigEndian() throws AnnotationException, CodecException, TemplateException{
 		CodecInterface<BindDecimal> codec = new CodecDecimal();
 		BigDecimal encodedValue = BigDecimal.valueOf(-RANDOM.nextDouble());
 		BindDecimal annotation = new BindDecimal(){
