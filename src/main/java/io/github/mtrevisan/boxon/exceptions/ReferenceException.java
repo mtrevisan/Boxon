@@ -24,14 +24,6 @@
  */
 package io.github.mtrevisan.boxon.exceptions;
 
-import io.github.mtrevisan.boxon.internal.ExceptionHelper;
-
-import java.io.IOException;
-import java.io.NotSerializableException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-
-
 /**
  * Thrown if an annotation is not well formatted.
  */
@@ -44,8 +36,12 @@ public class ReferenceException extends Exception{
 	private String className;
 
 
-	public ReferenceException(final String message){
+	protected ReferenceException(final String message){
 		super(message);
+	}
+
+	public ReferenceException(final Throwable exc){
+		super(exc);
 	}
 
 	public void setClassNameAndFieldName(final String className, final String fieldName){
@@ -54,18 +50,7 @@ public class ReferenceException extends Exception{
 	}
 
 	public String getMessage(){
-		final String message = ExceptionHelper.getMessageNoLineNumber(this);
-		return message + " in field " + className + "." + fieldName;
-	}
-
-	@SuppressWarnings("unused")
-	private void writeObject(final ObjectOutputStream os) throws IOException{
-		throw new NotSerializableException(getClass().getName());
-	}
-
-	@SuppressWarnings("unused")
-	private void readObject(final ObjectInputStream is) throws IOException{
-		throw new NotSerializableException(getClass().getName());
+		return super.getMessage() + " in field " + className + "." + fieldName;
 	}
 
 }

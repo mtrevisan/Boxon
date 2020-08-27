@@ -129,7 +129,7 @@ final class TemplateParser{
 			throw e;
 		}
 		catch(final Exception e){
-			final ReferenceException exc = new ReferenceException(e.getMessage());
+			final ReferenceException exc = new ReferenceException(e);
 			exc.setClassNameAndFieldName(template.toString(), field.getFieldName());
 			throw exc;
 		}
@@ -252,7 +252,7 @@ final class TemplateParser{
 			throw e;
 		}
 		catch(final Exception e){
-			final ReferenceException exc = new ReferenceException(e.getMessage());
+			final ReferenceException exc = new ReferenceException(e);
 			exc.setClassNameAndFieldName(template.toString(), field.getFieldName());
 			throw exc;
 		}

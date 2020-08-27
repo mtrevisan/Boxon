@@ -24,15 +24,6 @@
  */
 package io.github.mtrevisan.boxon.exceptions;
 
-import io.github.mtrevisan.boxon.internal.ExceptionHelper;
-
-import java.io.IOException;
-import java.io.NotSerializableException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.StringJoiner;
-
-
 /**
  * Thrown if a composition (encoding) went bad.
  */
@@ -52,22 +43,11 @@ public final class EncodeException extends Exception{
 
 	@Override
 	public String getMessage(){
-		final StringJoiner sj = new StringJoiner(System.lineSeparator());
-		sj.add("Error encoding data: " + data);
+		final StringBuilder sj = new StringBuilder();
 		final Throwable cause = getCause();
 		if(cause != null)
-			sj.add(ExceptionHelper.getMessageNoLineNumber(cause));
+			sj.append(cause.getMessage());
 		return sj.toString();
-	}
-
-	@SuppressWarnings("unused")
-	private void writeObject(final ObjectOutputStream os) throws IOException{
-		throw new NotSerializableException(getClass().getName());
-	}
-
-	@SuppressWarnings("unused")
-	private void readObject(final ObjectInputStream is) throws IOException{
-		throw new NotSerializableException(getClass().getName());
 	}
 
 }

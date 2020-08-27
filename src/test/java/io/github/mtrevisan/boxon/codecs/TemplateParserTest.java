@@ -34,9 +34,7 @@ import io.github.mtrevisan.boxon.codecs.queclink.ACKMessageASCII;
 import io.github.mtrevisan.boxon.codecs.queclink.ACKMessageHex;
 import io.github.mtrevisan.boxon.codecs.queclink.DeviceTypes;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ReferenceException;
-import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitSet;
 import io.github.mtrevisan.boxon.external.BitWriter;
@@ -152,8 +150,8 @@ class TemplateParserTest{
 		templateParser.loader.loadDefaultCodecs();
 		Template<TestError2> template = Template.createFrom(TestError2.class, templateParser.loader::hasCodec);
 
-		Exception exc = Assertions.assertThrows(RuntimeException.class, () -> templateParser.decode(template, reader, null));
-		Assertions.assertEquals("IllegalArgumentException: Value `1` does not match constraint `as` in field TestError2.type", exc.getMessage());
+		Exception exc = Assertions.assertThrows(ReferenceException.class, () -> templateParser.decode(template, reader, null));
+		Assertions.assertEquals("java.lang.IllegalArgumentException: Value `1` does not match constraint `as` in field TestError2.type", exc.getMessage());
 	}
 
 
@@ -187,8 +185,8 @@ class TemplateParserTest{
 		templateParser.loader.loadDefaultCodecs();
 		Template<TestError3> template = Template.createFrom(TestError3.class, templateParser.loader::hasCodec);
 
-		Exception exc = Assertions.assertThrows(RuntimeException.class, () -> templateParser.decode(template, reader, null));
-		Assertions.assertEquals("IllegalArgumentException: Can not set byte field to String in field TestError3.type", exc.getMessage());
+		Exception exc = Assertions.assertThrows(ReferenceException.class, () -> templateParser.decode(template, reader, null));
+		Assertions.assertEquals("java.lang.IllegalArgumentException: Can not set byte field to String in field TestError3.type", exc.getMessage());
 	}
 
 
@@ -222,8 +220,8 @@ class TemplateParserTest{
 		templateParser.loader.loadDefaultCodecs();
 		Template<TestError4> template = Template.createFrom(TestError4.class, templateParser.loader::hasCodec);
 
-		Exception exc = Assertions.assertThrows(RuntimeException.class, () -> templateParser.decode(template, reader, null));
-		Assertions.assertEquals("IllegalArgumentException: Can not input Byte to decode method of converter WrongInputConverter in field TestError4.type", exc.getMessage());
+		Exception exc = Assertions.assertThrows(ReferenceException.class, () -> templateParser.decode(template, reader, null));
+		Assertions.assertEquals("java.lang.IllegalArgumentException: Can not input Byte to decode method of converter WrongInputConverter in field TestError4.type", exc.getMessage());
 	}
 
 
@@ -244,8 +242,8 @@ class TemplateParserTest{
 		templateParser.loader.loadDefaultCodecs();
 		Template<TestError5> template = Template.createFrom(TestError5.class, templateParser.loader::hasCodec);
 
-		Exception exc = Assertions.assertThrows(RuntimeException.class, () -> templateParser.decode(template, reader, null));
-		Assertions.assertEquals("IllegalArgumentException: Value `[0]` does not match constraint `[1]` in field TestError5.type", exc.getMessage());
+		Exception exc = Assertions.assertThrows(ReferenceException.class, () -> templateParser.decode(template, reader, null));
+		Assertions.assertEquals("java.lang.IllegalArgumentException: Value `[0]` does not match constraint `[1]` in field TestError5.type", exc.getMessage());
 	}
 
 

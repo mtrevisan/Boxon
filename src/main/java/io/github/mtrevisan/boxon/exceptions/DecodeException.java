@@ -24,14 +24,6 @@
  */
 package io.github.mtrevisan.boxon.exceptions;
 
-import io.github.mtrevisan.boxon.internal.ExceptionHelper;
-
-import java.io.IOException;
-import java.io.NotSerializableException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-
-
 /**
  * Thrown if a parsing (decoding) went bad.
  */
@@ -58,7 +50,7 @@ public final class DecodeException extends Exception{
 		final StringBuilder sj = new StringBuilder();
 		final Throwable cause = getCause();
 		if(cause != null)
-			sj.append(ExceptionHelper.getMessageNoLineNumber(cause));
+			sj.append(cause.getMessage());
 		if(errorIndex >= 0)
 			sj.append(System.lineSeparator())
 				.append("   at index ")
@@ -66,14 +58,14 @@ public final class DecodeException extends Exception{
 		return sj.toString();
 	}
 
-	@SuppressWarnings("unused")
-	private void writeObject(final ObjectOutputStream os) throws IOException{
-		throw new NotSerializableException(getClass().getName());
-	}
-
-	@SuppressWarnings("unused")
-	private void readObject(final ObjectInputStream is) throws IOException{
-		throw new NotSerializableException(getClass().getName());
-	}
+//	@SuppressWarnings("unused")
+//	private void writeObject(final ObjectOutputStream os) throws IOException{
+//		throw new NotSerializableException(getClass().getName());
+//	}
+//
+//	@SuppressWarnings("unused")
+//	private void readObject(final ObjectInputStream is) throws IOException{
+//		throw new NotSerializableException(getClass().getName());
+//	}
 
 }
