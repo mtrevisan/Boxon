@@ -136,8 +136,10 @@ final class Template<T>{
 	private final MessageHeader header;
 	private final DynamicArray<BoundedField> boundedFields = DynamicArray.create(BoundedField.class);
 	private final DynamicArray<EvaluatedField> evaluatedFields = DynamicArray.create(EvaluatedField.class);
-	/** necessary to speed-up the creation of a {@link Template}
-	 * (technically not needed because it's already present somewhere inside {@link #boundedFields}). */
+	/**
+	 * Necessary to speed-up the creation of a {@link Template} (technically not needed because it's already present
+	 * somewhere inside {@link #boundedFields}).
+	 */
 	private BoundedField checksum;
 
 
