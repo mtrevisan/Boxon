@@ -28,25 +28,13 @@ import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.Evaluate;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.Skip;
-import io.github.mtrevisan.boxon.annotations.bindings.BindArray;
-import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
-import io.github.mtrevisan.boxon.annotations.bindings.BindDecimal;
-import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
-import io.github.mtrevisan.boxon.annotations.bindings.BindString;
-import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
-import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.internal.DynamicArray;
-import io.github.mtrevisan.boxon.internal.ParserDataType;
 import io.github.mtrevisan.boxon.internal.ReflectionHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.StringJoiner;
 import java.util.function.Predicate;
 
@@ -57,8 +45,6 @@ import java.util.function.Predicate;
  * @param <T> The type of object the codec is able to decode/encode.
  */
 final class Template<T>{
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(Template.class);
 
 	/** Data associated to an annotated field. */
 	static final class BoundedField{
@@ -141,129 +127,6 @@ final class Template<T>{
 
 		Evaluate getBinding(){
 			return binding;
-		}
-	}
-
-	private enum AnnotationValidator{
-		ARRAY_PRIMITIVE(BindArrayPrimitive.class){
-			@Override
-			void validate(final Annotation annotation) throws AnnotationException{
-				final Class<?> type = ((BindArrayPrimitive)annotation).type();
-				if(!ParserDataType.isPrimitive(type))
-					throw new AnnotationException("Bad annotation used for {}, should have been used the type `{}.class`",
-						BindArray.class.getSimpleName(), ParserDataType.toObjectiveTypeOrDefault(type).getSimpleName());
-			}
-		},
-
-		ARRAY(BindArray.class){
-			@Override
-			void validate(final Annotation annotation) throws AnnotationException{
-				final BindArray binding = (BindArray)annotation;
-				final ObjectChoices selectFrom = binding.selectFrom();
-				final Class<?> type = binding.type();
-				if(ParserDataType.isPrimitive(type))
-					throw new AnnotationException("Bad annotation used for {}, should have been used the type `{}.class`",
-						BindArrayPrimitive.class.getSimpleName(), ParserDataType.toPrimitiveTypeOrDefault(type).getSimpleName());
-
-				validateChoice(selectFrom, binding.selectDefault(), type);
-			}
-		},
-
-		OBJECT(BindObject.class){
-			@Override
-			void validate(final Annotation annotation) throws AnnotationException{
-				final BindObject binding = (BindObject)annotation;
-				final ObjectChoices selectFrom = binding.selectFrom();
-				final Class<?> type = binding.type();
-				if(ParserDataType.isPrimitive(type))
-					throw new AnnotationException("Bad annotation used for {}, should have been used one of the primitive type's annotations",
-						BindObject.class.getSimpleName());
-
-				validateChoice(selectFrom, binding.selectDefault(), type);
-			}
-		},
-
-		DECIMAL(BindDecimal.class){
-			@Override
-			void validate(final Annotation annotation) throws AnnotationException{
-				final Class<?> type = ((BindDecimal)annotation).type();
-				final ParserDataType dataType = ParserDataType.fromType(type);
-				if(dataType != ParserDataType.FLOAT && dataType != ParserDataType.DOUBLE)
-					throw new AnnotationException("Bad type, should have been one of `{}.class` or `{}.class`", Float.class.getSimpleName(),
-						Double.class.getSimpleName());
-			}
-		},
-
-		STRING(BindString.class){
-			@Override
-			void validate(final Annotation annotation) throws AnnotationException{
-				final BindString binding = (BindString)annotation;
-				CodecHelper.assertCharset(binding.charset());
-			}
-		},
-
-		STRING_TERMINATED(BindStringTerminated.class){
-			@Override
-			void validate(final Annotation annotation) throws AnnotationException{
-				final BindStringTerminated binding = (BindStringTerminated)annotation;
-				CodecHelper.assertCharset(binding.charset());
-			}
-		},
-
-		CHECKSUM(Checksum.class){
-			@Override
-			void validate(final Annotation annotation) throws AnnotationException{
-				final Class<?> type = ((Checksum)annotation).type();
-				if(!ParserDataType.isPrimitiveOrWrapper(type))
-					throw new AnnotationException("Unrecognized type for field {}.{}: {}", getClass().getName(), type.getSimpleName(),
-						type.getComponentType().getSimpleName());
-			}
-		};
-
-		private static final Map<Class<? extends Annotation>, AnnotationValidator> ANNOTATION_VALIDATORS = new HashMap<>(5);
-		static{
-			for(final AnnotationValidator validator : values())
-				ANNOTATION_VALIDATORS.put(validator.annotationType, validator);
-		}
-
-		private final Class<? extends Annotation> annotationType;
-
-		AnnotationValidator(final Class<? extends Annotation> type){
-			annotationType = type;
-		}
-
-		private static AnnotationValidator fromAnnotation(final Annotation annotation){
-			return ANNOTATION_VALIDATORS.get(annotation.annotationType());
-		}
-
-		abstract void validate(final Annotation annotation) throws AnnotationException;
-
-		private static void validateChoice(final ObjectChoices selectFrom, final Class<?> selectDefault, final Class<?> type) throws AnnotationException{
-			final int prefixSize = selectFrom.prefixSize();
-			if(prefixSize < 0)
-				throw new AnnotationException("Prefix size must be a non-negative number");
-			if(prefixSize > Integer.SIZE)
-				throw new AnnotationException("Prefix size cannot be greater than {} bits", Integer.SIZE);
-
-			final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
-			final boolean hasPrefixSize = (prefixSize > 0);
-			if(hasPrefixSize && alternatives.length == 0)
-				throw new AnnotationException("No alternatives present");
-			for(final ObjectChoices.ObjectChoice alternative : alternatives){
-				if(!type.isAssignableFrom(alternative.type()))
-					throw new AnnotationException("Type of alternative cannot be assigned to (super) type of annotation");
-
-				final String condition = alternative.condition();
-				if(condition.isEmpty())
-					throw new AnnotationException("All conditions must be non-empty");
-				if(hasPrefixSize ^ CodecHelper.containsPrefixReference(condition))
-					throw new AnnotationException("All conditions must " + (hasPrefixSize? "": "not ") + "contain a reference to the prefix");
-			}
-
-			if(selectDefault != void.class && alternatives.length == 0)
-				LOGGER.warn("Useless definition of default alternative ({}) due to no alternatives present on @BindArray or @BindObject", selectDefault.getSimpleName());
-			if(selectDefault != void.class && !type.isAssignableFrom(selectDefault))
-				throw new AnnotationException("Type of default alternative cannot be assigned to (super) type of annotation");
 		}
 	}
 
