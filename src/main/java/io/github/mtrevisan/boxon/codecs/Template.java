@@ -43,7 +43,6 @@ import io.github.mtrevisan.boxon.internal.ReflectionHelper;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringJoiner;
@@ -246,8 +245,11 @@ final class Template<T>{
 			final boolean hasPrefix = (prefixSize > 0);
 			if(hasPrefix && alternatives.length == 0)
 				throw new AnnotationException("No alternatives");
-			if(Arrays.stream(alternatives).anyMatch(a -> a.condition().isEmpty() || hasPrefix ^ CodecHelper.CONTEXT_PREFIXED_CHOICE_PREFIX.reset(a.condition()).find()))
-				throw new AnnotationException("All conditions must " + (hasPrefix? "": "not ") + "contain a reference to the prefix and be non-empty");
+			for(final ObjectChoices.ObjectChoice alternative : alternatives){
+				final String condition = alternative.condition();
+				if(condition.isEmpty() || hasPrefix ^ CodecHelper.CONTEXT_PREFIXED_CHOICE_PREFIX.reset(condition).find())
+					throw new AnnotationException("All conditions must " + (hasPrefix? "": "not ") + "contain a reference to the prefix and be non-empty");
+			}
 		}
 	}
 

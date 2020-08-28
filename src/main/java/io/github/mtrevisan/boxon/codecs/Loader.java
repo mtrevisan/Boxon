@@ -47,9 +47,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
+import java.util.StringJoiner;
 import java.util.TreeMap;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 
 final class Loader{
@@ -77,9 +77,12 @@ final class Loader{
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load codecs.
 	 */
 	void loadCodecs(final Class<?>... basePackageClasses){
-		if(LOGGER.isInfoEnabled())
-			LOGGER.info("Load codecs from package(s) {}",
-				Arrays.stream(basePackageClasses).map(Class::getPackageName).collect(Collectors.joining(", ", "[", "]")));
+		if(LOGGER.isInfoEnabled()){
+			final StringJoiner sj = new StringJoiner(", ", "[", "]");
+			for(final Class<?> basePackageClass : basePackageClasses)
+				sj.add(basePackageClass.getPackageName());
+			LOGGER.info("Load codecs from package(s) {}", sj);
+		}
 
 		/** extract all classes that implements {@link CodecInterface}. */
 		final Collection<Class<?>> derivedClasses = extractClasses(CodecInterface.class, basePackageClasses);
@@ -160,9 +163,12 @@ final class Loader{
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
 	 */
 	void loadTemplates(final Class<?>... basePackageClasses) throws AnnotationException, TemplateException{
-		if(LOGGER.isInfoEnabled())
-			LOGGER.info("Load templates from package(s) {}",
-				Arrays.stream(basePackageClasses).map(Class::getPackageName).collect(Collectors.joining(", ", "[", "]")));
+		if(LOGGER.isInfoEnabled()){
+			final StringJoiner sj = new StringJoiner(", ", "[", "]");
+			for(final Class<?> basePackageClass : basePackageClasses)
+				sj.add(basePackageClass.getPackageName());
+			LOGGER.info("Load templates from package(s) {}", sj);
+		}
 
 		/** extract all classes annotated with {@link MessageHeader}. */
 		final Collection<Class<?>> annotatedClasses = extractClasses(MessageHeader.class, basePackageClasses);
