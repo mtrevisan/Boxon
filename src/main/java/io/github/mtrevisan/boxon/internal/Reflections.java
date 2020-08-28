@@ -84,7 +84,7 @@ public final class Reflections{
 		final ClassInfoList classInfos = (filteringClass.isAnnotation()? scanResult.getClassesWithAnnotation(filteringClass.getName()):
 			scanResult.getClassesImplementing(filteringClass.getName()));
 		for(final Class<?> cls : classInfos.loadClasses())
-			METADATA_STORE.computeIfAbsent(filteringClass, c -> new ArrayList<>(1))
+			METADATA_STORE.computeIfAbsent(filteringClass, classes -> new ArrayList<>(1))
 				.add(cls);
 	}
 

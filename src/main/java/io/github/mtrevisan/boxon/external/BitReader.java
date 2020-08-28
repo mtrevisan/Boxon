@@ -80,7 +80,7 @@ public final class BitReader{
 	 * 	or for some other reason cannot be opened for reading.
 	 * @throws SecurityException	If a security manager exists and its {@code checkRead} method denies read access to the file.
 	 */
-	public static BitReader wrap(final File file) throws IOException{
+	public static BitReader wrap(final File file) throws IOException, FileNotFoundException{
 		try(
 			final FileInputStream fis = new FileInputStream(file);
 			final FileChannel fc = fis.getChannel();
@@ -431,7 +431,7 @@ public final class BitReader{
 			text = baos.toString(charset);
 		}
 		catch(final IOException e){
-			//should not happen...
+			//should not happen
 			e.printStackTrace();
 		}
 		return text;

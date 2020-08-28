@@ -34,15 +34,15 @@ import java.util.Locale;
 public final class JavaHelper{
 
 	private static class LoggerBindingPresentHelper{
-		private static boolean PRESENT;
+		private static boolean present;
 		static{
 			try{
 				//check whether an optional SLF4J binding is available
 				Class.forName("org.slf4j.impl.StaticLoggerBinder");
-				PRESENT = true;
+				present = true;
 			}
-			catch(final Throwable e){
-				PRESENT = false;
+			catch(final LinkageError | ClassNotFoundException ignored){
+				present = false;
 
 				System.out.println("[WARN] SLF4J: No logger is defined, NO LOG will be printed!");
 			}
@@ -53,11 +53,11 @@ public final class JavaHelper{
 	private JavaHelper(){}
 
 	public static Logger getLoggerFor(final Class<?> type){
-		return (LoggerBindingPresentHelper.PRESENT? LoggerFactory.getLogger(type): null);
+		return (LoggerBindingPresentHelper.present? LoggerFactory.getLogger(type): null);
 	}
 
 	public static String format(final String message, final Object... parameters){
-		return MessageFormatter.format(message, (parameters.length != 1? parameters: parameters[0]))
+		return MessageFormatter.format(message, (parameters.length == 1? parameters[0]: parameters))
 			.getMessage();
 	}
 

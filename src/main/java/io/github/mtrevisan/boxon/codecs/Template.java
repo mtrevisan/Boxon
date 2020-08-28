@@ -184,7 +184,8 @@ final class Template<T>{
 			@Override
 			void validate(final Annotation annotation) throws AnnotationException{
 				final Class<?> type = ((BindDecimal)annotation).type();
-				if(type != float.class && type != Float.class && type != double.class && type != Double.class)
+				final ParserDataType dataType = ParserDataType.fromType(type);
+				if(dataType != ParserDataType.FLOAT && dataType != ParserDataType.DOUBLE)
 					throw new AnnotationException("Bad type, should have been one of `{}.class` or `{}.class`", Float.class.getSimpleName(),
 						Double.class.getSimpleName());
 			}
@@ -249,7 +250,7 @@ final class Template<T>{
 					throw new AnnotationException("Any condition must contain a reference to the prefix");
 				for(int i = 0; i < alternatives.length; i ++)
 					if(alternatives[i].condition().isEmpty())
-						throw new AnnotationException("Any condition must be non-empty, condition at index " + i + " is empty");
+						throw new AnnotationException("Any condition must be non-empty, condition at index {} is empty", i);
 			}
 			else if(Arrays.stream(alternatives).anyMatch(a -> CodecHelper.CONTEXT_PREFIXED_CHOICE_PREFIX.matcher(a.condition()).find()))
 				throw new AnnotationException("Any condition cannot contain a reference to the prefix");

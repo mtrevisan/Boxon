@@ -166,7 +166,7 @@ public final class ReflectionHelper{
 			return (T)field.get(obj);
 		}
 		catch(final IllegalArgumentException | IllegalAccessException e){
-			//cannot happen
+			//should not happen
 			e.printStackTrace();
 			return null;
 		}
@@ -286,7 +286,7 @@ public final class ReflectionHelper{
 				return constructor.newInstance();
 			}
 			catch(final Exception e){
-				//cannot happen
+				//should not happen
 				e.printStackTrace();
 				return null;
 			}

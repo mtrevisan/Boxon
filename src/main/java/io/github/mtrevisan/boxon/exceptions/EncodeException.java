@@ -24,6 +24,11 @@
  */
 package io.github.mtrevisan.boxon.exceptions;
 
+import java.io.NotSerializableException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
+
 /**
  * Thrown if a composition (encoding) went bad.
  */
@@ -43,6 +48,16 @@ public final class EncodeException extends Exception{
 		if(cause != null)
 			sj.append(cause.getMessage());
 		return sj.toString();
+	}
+
+	@SuppressWarnings("unused")
+	private void writeObject(final ObjectOutputStream os) throws NotSerializableException{
+		throw new NotSerializableException(getClass().getName());
+	}
+
+	@SuppressWarnings("unused")
+	private void readObject(final ObjectInputStream is) throws NotSerializableException{
+		throw new NotSerializableException(getClass().getName());
 	}
 
 }

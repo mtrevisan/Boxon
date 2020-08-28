@@ -24,6 +24,10 @@
  */
 package io.github.mtrevisan.boxon.exceptions;
 
+import java.io.NotSerializableException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 
 public class FieldException extends Exception{
 
@@ -42,13 +46,23 @@ public class FieldException extends Exception{
 		super(exc);
 	}
 
-	public void setClassNameAndFieldName(final String className, final String fieldName){
+	public final void setClassNameAndFieldName(final String className, final String fieldName){
 		this.className = className;
 		this.fieldName = fieldName;
 	}
 
-	public String getMessage(){
+	public final String getMessage(){
 		return super.getMessage() + " in field " + className + "." + fieldName;
+	}
+
+	@SuppressWarnings("unused")
+	private void writeObject(final ObjectOutputStream os) throws NotSerializableException{
+		throw new NotSerializableException(getClass().getName());
+	}
+
+	@SuppressWarnings("unused")
+	private void readObject(final ObjectInputStream is) throws NotSerializableException{
+		throw new NotSerializableException(getClass().getName());
 	}
 
 }

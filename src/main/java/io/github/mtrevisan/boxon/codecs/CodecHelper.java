@@ -68,7 +68,7 @@ final class CodecHelper{
 		try{
 			Charset.forName(charsetName);
 		}
-		catch(final Exception ignored){
+		catch(final IllegalArgumentException ignored){
 			throw new AnnotationException("Invalid charset: '{}'", charsetName);
 		}
 	}
