@@ -52,7 +52,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 		final BindObject binding = extractBinding(annotation);
 
 		try{
-			final Class<?> type = extractType(reader, rootObject, binding);
+			final Class<?> type = extractType(reader, binding, rootObject);
 
 			final Template<?> template = Template.createFrom(type, templateParser.loader::hasCodec);
 
@@ -74,7 +74,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 		}
 	}
 
-	private Class<?> extractType(final BitReader reader, final Object rootObject, final BindObject binding) throws CodecException{
+	private Class<?> extractType(final BitReader reader, final BindObject binding, final Object rootObject) throws CodecException{
 		Class<?> chosenAlternativeType = binding.type();
 		final ObjectChoices selectFrom = binding.selectFrom();
 		if(selectFrom.alternatives().length > 0){

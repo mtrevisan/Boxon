@@ -56,11 +56,10 @@ final class CodecArray implements CodecInterface<BindArray>{
 
 		final int size = Evaluator.evaluateSize(binding.size(), rootObject);
 		CodecHelper.assertSizePositive(size);
-		final ObjectChoices selectFrom = binding.selectFrom();
 
 		final Object[] array = createArray(binding.type(), size);
-		if(selectFrom.alternatives().length > 0)
-			decodeWithAlternatives(reader, array, selectFrom, binding.selectDefault(), rootObject);
+		if(binding.selectFrom().alternatives().length > 0)
+			decodeWithAlternatives(reader, array, binding, rootObject);
 		else
 			decodeWithoutAlternatives(reader, array, binding.type());
 
@@ -81,8 +80,8 @@ final class CodecArray implements CodecInterface<BindArray>{
 		return (T[])Array.newInstance(type, length);
 	}
 
-	private void decodeWithAlternatives(final BitReader reader, final Object[] array, final ObjectChoices selectFrom, final Class<?> selectDefaultType,
-			final Object rootObject){
+	private void decodeWithAlternatives(final BitReader reader, final Object[] array, final BindArray binding, final Object rootObject){
+		final ObjectChoices selectFrom = binding.selectFrom();
 		final boolean hasPrefix = (selectFrom.prefixSize() > 0);
 
 		for(int i = 0; i < array.length; i ++){
@@ -90,7 +89,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 				final ObjectChoices.ObjectChoice chosenAlternative = (hasPrefix?
 					CodecHelper.chooseAlternativeWithPrefix(reader, selectFrom, rootObject):
 					CodecHelper.chooseAlternativeWithoutPrefix(selectFrom, rootObject));
-				final Class<?> chosenAlternativeType = (chosenAlternative != null? chosenAlternative.type(): selectDefaultType);
+				final Class<?> chosenAlternativeType = (chosenAlternative != null? chosenAlternative.type(): binding.selectDefault());
 				if(chosenAlternativeType == void.class)
 					throw new CodecException("Cannot find a valid codec from given alternatives for {}", rootObject.getClass().getSimpleName());
 
