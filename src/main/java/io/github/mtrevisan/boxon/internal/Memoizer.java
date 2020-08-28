@@ -40,11 +40,26 @@ public final class Memoizer{
 
 	private Memoizer(){}
 
+	/**
+	 * @param supplier	The function to be memoized.
+	 * @return	The new memoized function.
+	 * @param <OUT>	Type of input to the function.
+	 *
+	 * @see <a href="https://opencredo.com/lambda-memoization-in-java-8/">Lambda memoization in Java 8</a>
+	 */
 	public static <OUT> Supplier<OUT> memoize(final Supplier<? extends OUT> supplier){
 		final Map<Object, OUT> cache = new ConcurrentHashMap<>(0);
 		return () -> cache.computeIfAbsent(DEFAULT_OBJECT, t -> supplier.get());
 	}
 
+	/**
+	 * @param function	The function to be memoized.
+	 * @return	The new memoized function.
+	 * @param <IN>	Type of input to the function. The class MUST implements {@code equals(Object)} and {@code hashCode()}.
+	 * @param <OUT>	Type of output from the function.
+	 *
+	 * @see <a href="https://opencredo.com/lambda-memoization-in-java-8/">Lambda memoization in Java 8</a>
+	 */
 	public static <IN, OUT> Function<IN, OUT> memoize(final Function<? super IN, ? extends OUT> function){
 		final Map<IN, OUT> cache = new ConcurrentHashMap<>(0);
 		return input -> cache.computeIfAbsent(input, function);
@@ -54,8 +69,8 @@ public final class Memoizer{
 	 * Thread-safe and recursion-safe implementation using a re-entrant lock.
 	 *
 	 * @param supplier	The function to be memoized.
-	 * @return				The new memoized function.
-	 * @param <OUT>			Type of input to the function.
+	 * @return	The new memoized function.
+	 * @param <OUT>	Type of input to the function.
 	 *
 	 * @see <a href="https://opencredo.com/lambda-memoization-in-java-8/">Lambda memoization in Java 8</a>
 	 */
@@ -77,9 +92,9 @@ public final class Memoizer{
 	 * Thread-safe and recursion-safe implementation using a re-entrant lock.
 	 *
 	 * @param function	The function to be memoized.
-	 * @return				The new memoized function.
-	 * @param <IN>			Type of input to the function.
-	 * @param <OUT>		Type of output from the function.
+	 * @return	The new memoized function.
+	 * @param <IN>	Type of input to the function. The class MUST implements {@code equals(Object)} and {@code hashCode()}.
+	 * @param <OUT>	Type of output from the function.
 	 *
 	 * @see <a href="https://opencredo.com/lambda-memoization-in-java-8/">Lambda memoization in Java 8</a>
 	 */
