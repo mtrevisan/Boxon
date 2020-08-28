@@ -313,7 +313,7 @@ public final class Parser{
 			templateParser.encode(template, writer, null, data);
 		}
 		catch(final Exception e){
-			response.addError(new EncodeException(data, e));
+			response.addError(new EncodeException(e));
 		}
 	}
 

@@ -27,7 +27,6 @@ package io.github.mtrevisan.boxon.codecs;
 import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
-import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.BitReader;
@@ -49,7 +48,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 
 
 	@Override
-	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject) throws AnnotationException{
+	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
 		final BindObject binding = extractBinding(annotation);
 
 		Class<?> type = binding.type();

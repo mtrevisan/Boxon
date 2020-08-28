@@ -81,7 +81,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 	}
 
 	private void decodeWithAlternatives(final BitReader reader, final Object[] array, final ObjectChoices selectFrom,
-			final Object rootObject) throws AnnotationException{
+			final Object rootObject){
 		final boolean hasPrefix = (selectFrom.prefixSize() > 0);
 
 		for(int i = 0; i < array.length; i ++){
