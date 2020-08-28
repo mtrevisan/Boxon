@@ -51,9 +51,8 @@ final class CodecObject implements CodecInterface<BindObject>{
 	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
 		final BindObject binding = extractBinding(annotation);
 
-		final ObjectChoices selectFrom = binding.selectFrom();
 		try{
-			final Class<?> type = extractType(reader, rootObject, binding.type(), selectFrom, binding.selectDefault());
+			final Class<?> type = extractType(reader, rootObject, binding);
 
 			final Template<?> template = Template.createFrom(type, templateParser.loader::hasCodec);
 
@@ -75,14 +74,14 @@ final class CodecObject implements CodecInterface<BindObject>{
 		}
 	}
 
-	private Class<?> extractType(final BitReader reader, final Object rootObject, final Class<?> type, final ObjectChoices selectFrom, final Class<?> selectDefaultType)
-			throws CodecException{
-		Class<?> chosenAlternativeType = type;
+	private Class<?> extractType(final BitReader reader, final Object rootObject, final BindObject binding) throws CodecException{
+		Class<?> chosenAlternativeType = binding.type();
+		final ObjectChoices selectFrom = binding.selectFrom();
 		if(selectFrom.alternatives().length > 0){
 			final ObjectChoices.ObjectChoice chosenAlternative = (selectFrom.prefixSize() > 0?
 				CodecHelper.chooseAlternativeWithPrefix(reader, selectFrom, rootObject):
 				CodecHelper.chooseAlternativeWithoutPrefix(selectFrom, rootObject));
-			chosenAlternativeType = (chosenAlternative != null? chosenAlternative.type(): selectDefaultType);
+			chosenAlternativeType = (chosenAlternative != null? chosenAlternative.type(): binding.selectDefault());
 			if(chosenAlternativeType == void.class)
 				throw new CodecException("Cannot find a valid codec from given alternatives for {}", rootObject.getClass().getSimpleName());
 		}
