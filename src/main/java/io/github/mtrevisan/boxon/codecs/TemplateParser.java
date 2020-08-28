@@ -124,12 +124,12 @@ final class TemplateParser{
 			LOGGER.trace("read {}.{} = {}", template, field.getFieldName(), value);
 		}
 		catch(final CodecException | AnnotationException | TemplateException e){
-			e.setClassNameAndFieldName(template.toString(), field.getFieldName());
+			e.setClassNameAndFieldName(template.getType().getName(), field.getFieldName());
 			throw e;
 		}
 		catch(final Exception e){
 			final FieldException exc = new FieldException(e);
-			exc.setClassNameAndFieldName(template.toString(), field.getFieldName());
+			exc.setClassNameAndFieldName(template.getType().getName(), field.getFieldName());
 			throw exc;
 		}
 	}
@@ -186,12 +186,12 @@ final class TemplateParser{
 			final Template.EvaluatedField field = evaluatedFields.data[i];
 			final boolean process = Evaluator.evaluateBoolean(field.getBinding().condition(), rootObject);
 			if(process){
-				LOGGER.trace("evaluating {}.{}", template.getType().getSimpleName(), field.getFieldName());
+				LOGGER.trace("evaluating {}.{}", template.getType().getName(), field.getFieldName());
 
 				final Object value = Evaluator.evaluate(field.getBinding().value(), rootObject, field.getFieldType());
 				field.setFieldValue(rootObject, value);
 
-				LOGGER.trace("wrote {}.{} = {}", template.getType().getSimpleName(), field.getFieldName(), value);
+				LOGGER.trace("wrote {}.{} = {}", template.getType().getName(), field.getFieldName(), value);
 			}
 		}
 	}
@@ -230,7 +230,7 @@ final class TemplateParser{
 			final Annotation binding = field.getBinding();
 			final CodecInterface<?> codec = retrieveCodec(binding.annotationType());
 
-			LOGGER.trace("writing {}.{} with bind {}", template.getType().getSimpleName(), field.getFieldName(),
+			LOGGER.trace("writing {}.{} with bind {}", template.getType().getName(), field.getFieldName(),
 				binding.annotationType().getSimpleName());
 
 			//encode value from current object
@@ -238,15 +238,15 @@ final class TemplateParser{
 			//write value to raw message
 			codec.encode(writer, binding, parserContext.rootObject, value);
 
-			LOGGER.trace("wrote {}.{} = {}", template.getType().getSimpleName(), field.getFieldName(), value);
+			LOGGER.trace("wrote {}.{} = {}", template.getType().getName(), field.getFieldName(), value);
 		}
 		catch(final CodecException | AnnotationException e){
-			e.setClassNameAndFieldName(template.toString(), field.getFieldName());
+			e.setClassNameAndFieldName(template.getType().getName(), field.getFieldName());
 			throw e;
 		}
 		catch(final Exception e){
 			final FieldException exc = new FieldException(e);
-			exc.setClassNameAndFieldName(template.toString(), field.getFieldName());
+			exc.setClassNameAndFieldName(template.getType().getName(), field.getFieldName());
 			throw exc;
 		}
 	}

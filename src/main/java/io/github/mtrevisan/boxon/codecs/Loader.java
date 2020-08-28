@@ -217,7 +217,7 @@ final class Loader{
 				loadTemplateInner(template, start, charset);
 		}
 		catch(final Exception e){
-			LOGGER.error("Cannot load class {}", template.getType().getSimpleName(), e);
+			LOGGER.error("Cannot load class {}", template.getType().getName(), e);
 		}
 	}
 
@@ -225,7 +225,7 @@ final class Loader{
 			throws TemplateException{
 		final String key = calculateTemplateKey(headerStart, charset);
 		if(templates.containsKey(key))
-			throw new TemplateException("Duplicated key `{}` found for class {}", headerStart, template.getType().getSimpleName());
+			throw new TemplateException("Duplicated key `{}` found for class {}", headerStart, template.getType().getName());
 
 		templates.put(key, template);
 	}

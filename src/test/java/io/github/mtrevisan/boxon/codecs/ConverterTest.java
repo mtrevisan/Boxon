@@ -103,7 +103,7 @@ class ConverterTest{
 		Assertions.assertArrayEquals(payload, result.getErrorPayloadAt(0));
 		Assertions.assertEquals(1, result.getErrorCount());
 		DecodeException error = result.getErrorAt(0);
-		Assertions.assertEquals("java.lang.IllegalArgumentException: Can not input Byte to decode method of converter WrongConverterInput in field TestConverter1.value\r\n"
+		Assertions.assertEquals("java.lang.IllegalArgumentException: Can not input Byte to decode method of converter WrongConverterInput in field io.github.mtrevisan.boxon.codecs.ConverterTest$TestConverter1.value\r\n"
 			+ "   at index 4", error.getMessage());
 	}
 
@@ -122,7 +122,7 @@ class ConverterTest{
 		Assertions.assertArrayEquals(payload, result.getErrorPayloadAt(0));
 		Assertions.assertEquals(1, result.getErrorCount());
 		DecodeException error = result.getErrorAt(0);
-		Assertions.assertEquals("java.lang.IllegalArgumentException: Can not set String field to Byte in field TestConverter2.value\r\n"
+		Assertions.assertEquals("java.lang.IllegalArgumentException: Can not set String field to Byte in field io.github.mtrevisan.boxon.codecs.ConverterTest$TestConverter2.value\r\n"
 			+ "   at index 4", error.getMessage());
 	}
 

@@ -211,7 +211,7 @@ final class Template<T>{
 			void validate(final Annotation annotation) throws AnnotationException{
 				final Class<?> type = ((Checksum)annotation).type();
 				if(!ParserDataType.isPrimitiveOrWrapper(type))
-					throw new AnnotationException("Unrecognized type for field {}<{}>: {}", getClass().getSimpleName(), type.getSimpleName(),
+					throw new AnnotationException("Unrecognized type for field {}.{}: {}", getClass().getName(), type.getSimpleName(),
 						type.getComponentType().getSimpleName());
 			}
 		};
@@ -305,7 +305,7 @@ final class Template<T>{
 				validateField(boundedAnnotations, checksum);
 			}
 			catch(final AnnotationException e){
-				e.setClassNameAndFieldName(type.getSimpleName(), field.getName());
+				e.setClassNameAndFieldName(type.getName(), field.getName());
 				throw e;
 			}
 
@@ -344,12 +344,12 @@ final class Template<T>{
 		if(annotations.limit > 1){
 			final StringJoiner sj = new StringJoiner(", ", "[", "]");
 			annotations.join(annotation -> annotation.annotationType().getSimpleName(), sj);
-			throw new AnnotationException("Cannot bind more that one annotation on {}: {}", type.getSimpleName(), sj.toString());
+			throw new AnnotationException("Cannot bind more that one annotation on {}: {}", type.getName(), sj.toString());
 		}
 
 		if(checksum != null && this.checksum != null)
 			throw new AnnotationException("Cannot have more than one {} annotations on class {}", Checksum.class.getSimpleName(),
-				type.getSimpleName());
+				type.getName());
 
 		if(annotations.limit > 0)
 			validateAnnotation(annotations.data[0]);
