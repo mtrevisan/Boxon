@@ -39,6 +39,8 @@ import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.internal.DynamicArray;
 import io.github.mtrevisan.boxon.internal.ParserDataType;
 import io.github.mtrevisan.boxon.internal.ReflectionHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -55,6 +57,8 @@ import java.util.function.Predicate;
  * @param <T> The type of object the codec is able to decode/encode.
  */
 final class Template<T>{
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(Template.class);
 
 	/** Data associated to an annotated field. */
 	static final class BoundedField{
@@ -256,8 +260,8 @@ final class Template<T>{
 					throw new AnnotationException("All conditions must " + (hasPrefixSize? "": "not ") + "contain a reference to the prefix");
 			}
 
-//			if(selectDefault != void.class && alternatives.length == 0)
-//				LOGGER.warn("Useless definition of default alternative due to no alternatives present");
+			if(selectDefault != void.class && alternatives.length == 0)
+				LOGGER.warn("Useless definition of default alternative ({}) due to no alternatives present on @BindArray or @BindObject", selectDefault.getSimpleName());
 			if(selectDefault != void.class && !type.isAssignableFrom(selectDefault))
 				throw new AnnotationException("Type of default alternative cannot be assigned to (super) type of annotation");
 		}
