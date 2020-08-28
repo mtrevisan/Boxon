@@ -271,20 +271,20 @@ public final class BitSet{
 	}
 
 	@Override
-	public int hashCode(){
-		return Arrays.hashCode(indexes);
-	}
-
-	@Override
 	public boolean equals(final Object obj){
-		if(!(obj instanceof BitSet))
-			return false;
-		if(this == obj)
+		if(obj == this)
 			return true;
+		if(obj == null || obj.getClass() != getClass())
+			return false;
 
 		final BitSet rhs = (BitSet)obj;
 		return (cardinality == rhs.cardinality
 			&& Arrays.equals(indexes, 0, cardinality, rhs.indexes, 0, rhs.cardinality));
+	}
+
+	@Override
+	public int hashCode(){
+		return Arrays.hashCode(indexes);
 	}
 
 }
