@@ -30,7 +30,7 @@ import io.github.mtrevisan.boxon.annotations.Skip;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
-import io.github.mtrevisan.boxon.exceptions.ReferenceException;
+import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitSet;
@@ -71,7 +71,7 @@ final class TemplateParser{
 	final Loader loader = new Loader();
 
 
-	<T> T decode(final Template<T> template, final BitReader reader, final Object parentObject) throws ReferenceException{
+	<T> T decode(final Template<T> template, final BitReader reader, final Object parentObject) throws FieldException{
 		final int startPosition = reader.position();
 
 		final T currentObject = ReflectionHelper.getCreator(template.getType())
@@ -108,7 +108,7 @@ final class TemplateParser{
 	}
 
 	private <T> void decodeField(final Template<T> template, final BitReader reader, final ParserContext<T> parserContext,
-			final Template.BoundedField field) throws ReferenceException{
+			final Template.BoundedField field) throws FieldException{
 		try{
 			final Annotation binding = field.getBinding();
 			final CodecInterface<?> codec = retrieveCodec(binding.annotationType());
@@ -129,7 +129,7 @@ final class TemplateParser{
 			throw e;
 		}
 		catch(final Exception e){
-			final ReferenceException exc = new ReferenceException(e);
+			final FieldException exc = new FieldException(e);
 			exc.setClassNameAndFieldName(template.toString(), field.getFieldName());
 			throw exc;
 		}
@@ -202,7 +202,7 @@ final class TemplateParser{
 	}
 
 	<T> void encode(final Template<?> template, final BitWriter writer, final Object parentObject, final T currentObject)
-			throws ReferenceException{
+			throws FieldException{
 		final ParserContext<T> parserContext = new ParserContext<>(parentObject, currentObject);
 
 		//encode message fields:
@@ -230,7 +230,7 @@ final class TemplateParser{
 	}
 
 	private <T> void encodeField(final Template<?> template, final BitWriter writer, final ParserContext<T> parserContext,
-			final Template.BoundedField field) throws ReferenceException{
+			final Template.BoundedField field) throws FieldException{
 		try{
 			final Annotation binding = field.getBinding();
 			final CodecInterface<?> codec = retrieveCodec(binding.annotationType());
@@ -252,7 +252,7 @@ final class TemplateParser{
 			throw e;
 		}
 		catch(final Exception e){
-			final ReferenceException exc = new ReferenceException(e);
+			final FieldException exc = new FieldException(e);
 			exc.setClassNameAndFieldName(template.toString(), field.getFieldName());
 			throw exc;
 		}

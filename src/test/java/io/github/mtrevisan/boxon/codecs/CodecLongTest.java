@@ -30,7 +30,7 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
-import io.github.mtrevisan.boxon.exceptions.ReferenceException;
+import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
 import io.github.mtrevisan.boxon.external.ByteOrder;
@@ -49,7 +49,7 @@ class CodecLongTest{
 
 
 	@Test
-	void longLittleEndianNegative() throws ReferenceException{
+	void longLittleEndianNegative() throws FieldException{
 		CodecInterface<BindLong> codec = new CodecLong();
 		long encodedValue = 0x8FFF_0000_FFFF_0000l;
 		BindLong annotation = new BindLong(){
@@ -112,7 +112,7 @@ class CodecLongTest{
 	}
 
 	@Test
-	void longLittleEndianSmall() throws ReferenceException{
+	void longLittleEndianSmall() throws FieldException{
 		CodecInterface<BindLong> codec = new CodecLong();
 		long encodedValue = 0x0000_0000_7F00_FF00l;
 		BindLong annotation = new BindLong(){
@@ -175,7 +175,7 @@ class CodecLongTest{
 	}
 
 	@Test
-	void longLittleEndianPositive() throws ReferenceException{
+	void longLittleEndianPositive() throws FieldException{
 		CodecInterface<BindLong> codec = new CodecLong();
 		long encodedValue = 0x7F00_FF00_0000_0000l;
 		BindLong annotation = new BindLong(){
@@ -238,7 +238,7 @@ class CodecLongTest{
 	}
 
 	@Test
-	void longLittleEndianRandom() throws ReferenceException{
+	void longLittleEndianRandom() throws FieldException{
 		CodecInterface<BindLong> codec = new CodecLong();
 		long encodedValue = RANDOM.nextLong();
 		BindLong annotation = new BindLong(){
@@ -301,7 +301,7 @@ class CodecLongTest{
 	}
 
 	@Test
-	void longBigEndianNegative() throws ReferenceException{
+	void longBigEndianNegative() throws FieldException{
 		CodecInterface<BindLong> codec = new CodecLong();
 		long encodedValue = 0x8FFF_0000_0000_0011l;
 		BindLong annotation = new BindLong(){
@@ -364,7 +364,7 @@ class CodecLongTest{
 	}
 
 	@Test
-	void longBigEndianSmall() throws ReferenceException{
+	void longBigEndianSmall() throws FieldException{
 		CodecInterface<BindLong> codec = new CodecLong();
 		long encodedValue = 0x0000_0000_7F00_FF00l;
 		BindLong annotation = new BindLong(){
@@ -427,7 +427,7 @@ class CodecLongTest{
 	}
 
 	@Test
-	void longBigEndianPositive() throws ReferenceException{
+	void longBigEndianPositive() throws FieldException{
 		CodecInterface<BindLong> codec = new CodecLong();
 		long encodedValue = 0x7F00_FF00_0000_0000l;
 		BindLong annotation = new BindLong(){
@@ -490,7 +490,7 @@ class CodecLongTest{
 	}
 
 	@Test
-	void longBigEndianRandom() throws ReferenceException{
+	void longBigEndianRandom() throws FieldException{
 		CodecInterface<BindLong> codec = new CodecLong();
 		long encodedValue = RANDOM.nextLong();
 		BindLong annotation = new BindLong(){

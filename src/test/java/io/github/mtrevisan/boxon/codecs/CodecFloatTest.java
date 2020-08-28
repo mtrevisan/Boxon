@@ -30,7 +30,7 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
-import io.github.mtrevisan.boxon.exceptions.ReferenceException;
+import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
 import io.github.mtrevisan.boxon.external.ByteOrder;
@@ -49,7 +49,7 @@ class CodecFloatTest{
 
 
 	@Test
-	void floatPositiveLittleEndian() throws ReferenceException{
+	void floatPositiveLittleEndian() throws FieldException{
 		CodecInterface<BindFloat> codec = new CodecFloat();
 		float encodedValue = RANDOM.nextFloat();
 		BindFloat annotation = new BindFloat(){
@@ -112,7 +112,7 @@ class CodecFloatTest{
 	}
 
 	@Test
-	void floatNegativeLittleEndian() throws ReferenceException{
+	void floatNegativeLittleEndian() throws FieldException{
 		CodecInterface<BindFloat> codec = new CodecFloat();
 		float encodedValue = -RANDOM.nextFloat();
 		BindFloat annotation = new BindFloat(){
@@ -175,7 +175,7 @@ class CodecFloatTest{
 	}
 
 	@Test
-	void floatPositiveBigEndian() throws ReferenceException{
+	void floatPositiveBigEndian() throws FieldException{
 		CodecInterface<BindFloat> codec = new CodecFloat();
 		float encodedValue = RANDOM.nextFloat();
 		BindFloat annotation = new BindFloat(){
@@ -238,7 +238,7 @@ class CodecFloatTest{
 	}
 
 	@Test
-	void floatNegativeBigEndian() throws ReferenceException{
+	void floatNegativeBigEndian() throws FieldException{
 		CodecInterface<BindFloat> codec = new CodecFloat();
 		float encodedValue = -RANDOM.nextFloat();
 		BindFloat annotation = new BindFloat(){

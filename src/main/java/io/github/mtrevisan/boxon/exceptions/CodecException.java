@@ -30,7 +30,7 @@ import io.github.mtrevisan.boxon.internal.JavaHelper;
 /**
  * Thrown if no codec is found.
  */
-public final class CodecException extends ReferenceException{
+public final class CodecException extends FieldException{
 
 	private static final long serialVersionUID = 2879230296103139872L;
 

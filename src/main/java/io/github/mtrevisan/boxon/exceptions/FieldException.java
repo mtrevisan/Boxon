@@ -24,19 +24,31 @@
  */
 package io.github.mtrevisan.boxon.exceptions;
 
-import io.github.mtrevisan.boxon.internal.JavaHelper;
+
+public class FieldException extends Exception{
+
+	private static final long serialVersionUID = -8863756843240934380L;
 
 
-/**
- * Thrown if an annotation is not well formatted.
- */
-public final class AnnotationException extends FieldException{
-
-	private static final long serialVersionUID = 6429044852678473069L;
+	private String fieldName;
+	private String className;
 
 
-	public AnnotationException(final String message, final Object... parameters){
-		super(JavaHelper.format(message, parameters));
+	protected FieldException(final String message){
+		super(message);
+	}
+
+	public FieldException(final Throwable exc){
+		super(exc);
+	}
+
+	public void setClassNameAndFieldName(final String className, final String fieldName){
+		this.className = className;
+		this.fieldName = fieldName;
+	}
+
+	public String getMessage(){
+		return super.getMessage() + " in field " + className + "." + fieldName;
 	}
 
 }

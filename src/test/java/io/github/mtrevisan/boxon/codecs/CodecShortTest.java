@@ -30,7 +30,7 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
-import io.github.mtrevisan.boxon.exceptions.ReferenceException;
+import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
 import io.github.mtrevisan.boxon.external.ByteOrder;
@@ -49,7 +49,7 @@ class CodecShortTest{
 
 
 	@Test
-	void shortLittleEndianPositive1() throws ReferenceException{
+	void shortLittleEndianPositive1() throws FieldException{
 		CodecInterface<BindShort> codec = new CodecShort();
 		short encodedValue = 0x0010;
 		Annotation annotation = new BindShort(){
@@ -112,7 +112,7 @@ class CodecShortTest{
 	}
 
 	@Test
-	void shortLittleEndianPositive2() throws ReferenceException{
+	void shortLittleEndianPositive2() throws FieldException{
 		CodecInterface<BindShort> codec = new CodecShort();
 		short encodedValue = 0x1000;
 		Annotation annotation = new BindShort(){
@@ -175,7 +175,7 @@ class CodecShortTest{
 	}
 
 	@Test
-	void shortLittleEndianNegative() throws ReferenceException{
+	void shortLittleEndianNegative() throws FieldException{
 		CodecInterface<BindShort> codec = new CodecShort();
 		short encodedValue = (short)0x8010;
 		Annotation annotation = new BindShort(){
@@ -238,7 +238,7 @@ class CodecShortTest{
 	}
 
 	@Test
-	void shortLittleEndianRandom() throws ReferenceException{
+	void shortLittleEndianRandom() throws FieldException{
 		CodecInterface<BindShort> codec = new CodecShort();
 		short encodedValue = (short)RANDOM.nextInt(0x0000_FFFF);
 		Annotation annotation = new BindShort(){
@@ -301,7 +301,7 @@ class CodecShortTest{
 	}
 
 	@Test
-	void shortBigEndianNegative() throws ReferenceException{
+	void shortBigEndianNegative() throws FieldException{
 		CodecInterface<BindShort> codec = new CodecShort();
 		short encodedValue = (short)0x8F00;
 		Annotation annotation = new BindShort(){
@@ -364,7 +364,7 @@ class CodecShortTest{
 	}
 
 	@Test
-	void shortBigEndianSmall() throws ReferenceException{
+	void shortBigEndianSmall() throws FieldException{
 		CodecInterface<BindShort> codec = new CodecShort();
 		short encodedValue = 0x007F;
 		Annotation annotation = new BindShort(){
@@ -427,7 +427,7 @@ class CodecShortTest{
 	}
 
 	@Test
-	void shortBigEndianPositive() throws ReferenceException{
+	void shortBigEndianPositive() throws FieldException{
 		CodecInterface<BindShort> codec = new CodecShort();
 		short encodedValue = 0x7F00;
 		Annotation annotation = new BindShort(){
@@ -490,7 +490,7 @@ class CodecShortTest{
 	}
 
 	@Test
-	void shortBigEndianRandom() throws ReferenceException{
+	void shortBigEndianRandom() throws FieldException{
 		CodecInterface<BindShort> codec = new CodecShort();
 		short encodedValue = (short)RANDOM.nextInt(0x0000_FFFF);
 		Annotation annotation = new BindShort(){

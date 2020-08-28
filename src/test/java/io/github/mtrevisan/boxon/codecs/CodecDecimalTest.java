@@ -31,7 +31,7 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
-import io.github.mtrevisan.boxon.exceptions.ReferenceException;
+import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
 import io.github.mtrevisan.boxon.external.ByteOrder;
@@ -51,7 +51,7 @@ class CodecDecimalTest{
 
 
 	@Test
-	void decimalPositiveLittleEndian() throws ReferenceException{
+	void decimalPositiveLittleEndian() throws FieldException{
 		CodecInterface<BindDecimal> codec = new CodecDecimal();
 		BigDecimal encodedValue = BigDecimal.valueOf(RANDOM.nextDouble());
 		BindDecimal annotation = new BindDecimal(){
@@ -119,7 +119,7 @@ class CodecDecimalTest{
 	}
 
 	@Test
-	void decimalNegativeLittleEndian() throws ReferenceException{
+	void decimalNegativeLittleEndian() throws FieldException{
 		CodecInterface<BindDecimal> codec = new CodecDecimal();
 		BigDecimal encodedValue = BigDecimal.valueOf(-RANDOM.nextDouble());
 		BindDecimal annotation = new BindDecimal(){
@@ -187,7 +187,7 @@ class CodecDecimalTest{
 	}
 
 	@Test
-	void decimalPositiveBigEndian() throws ReferenceException{
+	void decimalPositiveBigEndian() throws FieldException{
 		CodecInterface<BindDecimal> codec = new CodecDecimal();
 		BigDecimal encodedValue = BigDecimal.valueOf(RANDOM.nextDouble());
 		BindDecimal annotation = new BindDecimal(){
@@ -255,7 +255,7 @@ class CodecDecimalTest{
 	}
 
 	@Test
-	void decimalNegativeBigEndian() throws ReferenceException{
+	void decimalNegativeBigEndian() throws FieldException{
 		CodecInterface<BindDecimal> codec = new CodecDecimal();
 		BigDecimal encodedValue = BigDecimal.valueOf(-RANDOM.nextDouble());
 		BindDecimal annotation = new BindDecimal(){

@@ -30,7 +30,7 @@ import io.github.mtrevisan.boxon.internal.JavaHelper;
 /**
  * Thrown if a template is not well formatted.
  */
-public final class TemplateException extends ReferenceException{
+public final class TemplateException extends FieldException{
 
 	private static final long serialVersionUID = 7585594459004613305L;
 

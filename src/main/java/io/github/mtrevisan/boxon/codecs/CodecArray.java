@@ -28,7 +28,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindArray;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.exceptions.ReferenceException;
+import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
@@ -50,7 +50,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 
 
 	@Override
-	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject) throws ReferenceException{
+	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject) throws FieldException{
 		final BindArray binding = extractBinding(annotation);
 
 		final int size = Evaluator.evaluateSize(binding.size(), rootObject);
@@ -102,7 +102,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 		}
 	}
 
-	private void decodeWithoutAlternatives(final BitReader reader, final Object[] array, final Class<?> type) throws ReferenceException{
+	private void decodeWithoutAlternatives(final BitReader reader, final Object[] array, final Class<?> type) throws FieldException{
 		final Template<?> template = Template.createFrom(type, templateParser.loader::hasCodec);
 
 		for(int i = 0; i < array.length; i ++)
@@ -110,7 +110,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 	}
 
 	@Override
-	public void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value) throws ReferenceException{
+	public void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value) throws FieldException{
 		final BindArray binding = extractBinding(annotation);
 
 		CodecHelper.validateData(binding.validator(), value);
@@ -131,7 +131,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 			encodeWithoutAlternatives(writer, array, binding.type());
 	}
 
-	private void encodeWithAlternatives(final BitWriter writer, final Object[] array, final ObjectChoices selectFrom) throws ReferenceException{
+	private void encodeWithAlternatives(final BitWriter writer, final Object[] array, final ObjectChoices selectFrom) throws FieldException{
 		final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
 		for(final Object elem : array){
 			final Class<?> type = elem.getClass();
@@ -146,7 +146,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 		}
 	}
 
-	private void encodeWithoutAlternatives(final BitWriter writer, final Object[] array, final Class<?> type) throws ReferenceException{
+	private void encodeWithoutAlternatives(final BitWriter writer, final Object[] array, final Class<?> type) throws FieldException{
 		final Template<?> template = Template.createFrom(type, templateParser.loader::hasCodec);
 
 		for(final Object elem : array)
