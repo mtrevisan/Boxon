@@ -144,7 +144,7 @@ final class CodecHelper{
 		}
 	}
 
-	static boolean containsPrefixReference(final String condition){
+	static boolean containsPrefixReference(final CharSequence condition){
 		return CONTEXT_PREFIXED_CHOICE_PREFIX.reset(condition).find();
 	}
 

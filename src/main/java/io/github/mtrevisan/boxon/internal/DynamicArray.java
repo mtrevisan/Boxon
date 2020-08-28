@@ -151,7 +151,6 @@ public final class DynamicArray<T>{
 	 *
 	 * @return	Whether this array contains no elements.
 	 */
-	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
 	public boolean isEmpty(){
 		return (limit == 0);
 	}
