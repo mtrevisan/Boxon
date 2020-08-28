@@ -31,9 +31,9 @@ import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
-import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.ParserDataType;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
@@ -41,7 +41,7 @@ import java.lang.reflect.Array;
 
 final class CodecArray implements CodecInterface<BindArray>{
 
-	private static final Logger LOGGER = JavaHelper.getLoggerFor(CodecArray.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(CodecArray.class);
 
 
 	/** Automatically injected by {@link TemplateParser} */
@@ -96,8 +96,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 				array[i] = templateParser.decode(subTemplate, reader, rootObject);
 			}
 			catch(final Exception e){
-				if(LOGGER != null)
-					LOGGER.warn(e.getMessage());
+				LOGGER.warn(e.getMessage());
 			}
 		}
 	}

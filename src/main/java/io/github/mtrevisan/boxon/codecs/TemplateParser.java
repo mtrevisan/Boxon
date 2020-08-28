@@ -39,6 +39,7 @@ import io.github.mtrevisan.boxon.internal.DynamicArray;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.ReflectionHelper;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
@@ -48,7 +49,7 @@ import java.util.Locale;
 
 final class TemplateParser{
 
-	private static final Logger LOGGER = JavaHelper.getLoggerFor(TemplateParser.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(TemplateParser.class);
 
 	private static final class ParserContext<T>{
 
@@ -113,16 +114,14 @@ final class TemplateParser{
 			final Annotation binding = field.getBinding();
 			final CodecInterface<?> codec = retrieveCodec(binding.annotationType());
 
-			if(LOGGER != null)
-				LOGGER.trace("reading {}.{} with bind {}", template, field.getFieldName(), binding.annotationType().getSimpleName());
+			LOGGER.trace("reading {}.{} with bind {}", template, field.getFieldName(), binding.annotationType().getSimpleName());
 
 			//decode value from raw message
 			final Object value = codec.decode(reader, binding, parserContext.rootObject);
 			//store value in the current object
 			field.setFieldValue(parserContext.currentObject, value);
 
-			if(LOGGER != null)
-				LOGGER.trace("read {}.{} = {}", template, field.getFieldName(), value);
+			LOGGER.trace("read {}.{} = {}", template, field.getFieldName(), value);
 		}
 		catch(final CodecException | AnnotationException | TemplateException e){
 			e.setClassNameAndFieldName(template.toString(), field.getFieldName());
@@ -136,8 +135,7 @@ final class TemplateParser{
 	}
 
 	private void readSkip(final Skip skip, final BitReader reader, final Object rootObject){
-		final String condition = skip.condition();
-		final boolean process = Evaluator.evaluateBoolean(condition, rootObject);
+		final boolean process = Evaluator.evaluateBoolean(skip.condition(), rootObject);
 		if(process){
 			final int size = Evaluator.evaluateSize(skip.size(), rootObject);
 			if(size > 0)
@@ -186,17 +184,14 @@ final class TemplateParser{
 		final DynamicArray<Template.EvaluatedField> evaluatedFields = template.getEvaluatedFields();
 		for(int i = 0; i < evaluatedFields.limit; i ++){
 			final Template.EvaluatedField field = evaluatedFields.data[i];
-			final String condition = field.getBinding().condition();
-			final boolean process = Evaluator.evaluateBoolean(condition, rootObject);
+			final boolean process = Evaluator.evaluateBoolean(field.getBinding().condition(), rootObject);
 			if(process){
-				if(LOGGER != null)
-					LOGGER.trace("evaluating {}.{}", template.getType().getSimpleName(), field.getFieldName());
+				LOGGER.trace("evaluating {}.{}", template.getType().getSimpleName(), field.getFieldName());
 
 				final Object value = Evaluator.evaluate(field.getBinding().value(), rootObject, field.getFieldType());
 				field.setFieldValue(rootObject, value);
 
-				if(LOGGER != null)
-					LOGGER.trace("wrote {}.{} = {}", template.getType().getSimpleName(), field.getFieldName(), value);
+				LOGGER.trace("wrote {}.{} = {}", template.getType().getSimpleName(), field.getFieldName(), value);
 			}
 		}
 	}
@@ -235,17 +230,15 @@ final class TemplateParser{
 			final Annotation binding = field.getBinding();
 			final CodecInterface<?> codec = retrieveCodec(binding.annotationType());
 
-			if(LOGGER != null)
-				LOGGER.trace("writing {}.{} with bind {}", template.getType().getSimpleName(), field.getFieldName(),
-					binding.annotationType().getSimpleName());
+			LOGGER.trace("writing {}.{} with bind {}", template.getType().getSimpleName(), field.getFieldName(),
+				binding.annotationType().getSimpleName());
 
 			//encode value from current object
 			final Object value = field.getFieldValue(parserContext.currentObject);
 			//write value to raw message
 			codec.encode(writer, binding, parserContext.rootObject, value);
 
-			if(LOGGER != null)
-				LOGGER.trace("wrote {}.{} = {}", template.getType().getSimpleName(), field.getFieldName(), value);
+			LOGGER.trace("wrote {}.{} = {}", template.getType().getSimpleName(), field.getFieldName(), value);
 		}
 		catch(final CodecException | AnnotationException e){
 			e.setClassNameAndFieldName(template.toString(), field.getFieldName());
@@ -288,8 +281,7 @@ final class TemplateParser{
 	}
 
 	private void writeSkip(final Skip skip, final BitWriter writer, final Object rootObject){
-		final String condition = skip.condition();
-		final boolean process = Evaluator.evaluateBoolean(condition, rootObject);
+		final boolean process = Evaluator.evaluateBoolean(skip.condition(), rootObject);
 		if(process){
 			final int size = Evaluator.evaluateSize(skip.size(), rootObject);
 			if(size > 0)

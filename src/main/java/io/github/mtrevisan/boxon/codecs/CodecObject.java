@@ -31,15 +31,15 @@ import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
-import io.github.mtrevisan.boxon.internal.JavaHelper;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 
 
 final class CodecObject implements CodecInterface<BindObject>{
 
-	private static final Logger LOGGER = JavaHelper.getLoggerFor(CodecObject.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(CodecObject.class);
 
 
 	/** Automatically injected by {@link TemplateParser} */
@@ -70,8 +70,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 			return value;
 		}
 		catch(final Exception e){
-			if(LOGGER != null)
-				LOGGER.warn(e.getMessage());
+			LOGGER.warn(e.getMessage());
 
 			return null;
 		}
