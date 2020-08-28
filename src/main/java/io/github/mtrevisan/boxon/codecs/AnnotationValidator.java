@@ -143,26 +143,42 @@ enum AnnotationValidator{
 
 	private static void validateChoice(final ObjectChoices selectFrom, final Class<?> selectDefault, final Class<?> type) throws AnnotationException{
 		final int prefixSize = selectFrom.prefixSize();
+		validatePrefixSize(prefixSize);
+
+		final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
+		validateAlternatives(alternatives, type, prefixSize);
+
+		validateDefaultAlternative(alternatives, type, selectDefault);
+	}
+
+	private static void validatePrefixSize(final int prefixSize) throws AnnotationException{
 		if(prefixSize < 0)
 			throw new AnnotationException("Prefix size must be a non-negative number");
 		if(prefixSize > Integer.SIZE)
 			throw new AnnotationException("Prefix size cannot be greater than {} bits", Integer.SIZE);
+	}
 
-		final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
+	private static ObjectChoices.ObjectChoice[] validateAlternatives(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> type, final int prefixSize) throws AnnotationException{
 		final boolean hasPrefixSize = (prefixSize > 0);
 		if(hasPrefixSize && alternatives.length == 0)
 			throw new AnnotationException("No alternatives present");
-		for(final ObjectChoices.ObjectChoice alternative : alternatives){
-			if(!type.isAssignableFrom(alternative.type()))
-				throw new AnnotationException("Type of alternative cannot be assigned to (super) type of annotation");
+		for(final ObjectChoices.ObjectChoice alternative : alternatives)
+			validateAlternative(alternative, type, hasPrefixSize);
+		return alternatives;
+	}
 
-			final String condition = alternative.condition();
-			if(condition.isEmpty())
-				throw new AnnotationException("All conditions must be non-empty");
-			if(hasPrefixSize ^ CodecHelper.containsPrefixReference(condition))
-				throw new AnnotationException("All conditions must " + (hasPrefixSize? "": "not ") + "contain a reference to the prefix");
-		}
+	private static void validateAlternative(final ObjectChoices.ObjectChoice alternative, final Class<?> type, final boolean hasPrefixSize) throws AnnotationException{
+		if(!type.isAssignableFrom(alternative.type()))
+			throw new AnnotationException("Type of alternative cannot be assigned to (super) type of annotation");
 
+		final String condition = alternative.condition();
+		if(condition.isEmpty())
+			throw new AnnotationException("All conditions must be non-empty");
+		if(hasPrefixSize ^ CodecHelper.containsPrefixReference(condition))
+			throw new AnnotationException("All conditions must " + (hasPrefixSize? "": "not ") + "contain a reference to the prefix");
+	}
+
+	private static void validateDefaultAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> type, final Class<?> selectDefault) throws AnnotationException{
 		if(selectDefault != void.class && alternatives.length == 0)
 			LOGGER.warn("Useless definition of default alternative ({}) due to no alternatives present on @BindArray or @BindObject", selectDefault.getSimpleName());
 		if(selectDefault != void.class && !type.isAssignableFrom(selectDefault))
