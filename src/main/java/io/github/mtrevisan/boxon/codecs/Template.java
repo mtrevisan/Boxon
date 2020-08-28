@@ -242,11 +242,16 @@ final class Template<T>{
 				throw new AnnotationException("Prefix size cannot be greater than {} bits", Integer.SIZE);
 
 			final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
-			if(prefixSize > 0 && alternatives.length == 0)
+			final boolean hasPrefixSize = (prefixSize > 0);
+			if(hasPrefixSize && alternatives.length == 0)
 				throw new AnnotationException("No alternatives");
-			for(final ObjectChoices.ObjectChoice alternative : alternatives)
-				if(alternative.condition().isEmpty())
+			for(final ObjectChoices.ObjectChoice alternative : alternatives){
+				final String condition = alternative.condition();
+				if(condition.isEmpty())
 					throw new AnnotationException("All conditions must be non-empty");
+				if(hasPrefixSize ^ CodecHelper.containsPrefixReference(condition))
+					throw new AnnotationException("All conditions must " + (hasPrefixSize? "": "not ") + "contain a reference to the prefix");
+			}
 		}
 	}
 
@@ -281,10 +286,10 @@ final class Template<T>{
 		if(header != null)
 			CodecHelper.assertCharset(header.charset());
 
-		loadAnnotatedFields(ReflectionHelper.getAccessibleFields(type), hasCodec);
+		loadAnnotatedFields(type, ReflectionHelper.getAccessibleFields(type), hasCodec);
 	}
 
-	private void loadAnnotatedFields(final DynamicArray<Field> fields, final Predicate<? super Class<? extends Annotation>> hasCodec)
+	private void loadAnnotatedFields(final Class<T> type, final DynamicArray<Field> fields, final Predicate<? super Class<? extends Annotation>> hasCodec)
 			throws AnnotationException{
 		boundedFields.ensureCapacity(fields.limit);
 		for(int i = 0; i < fields.limit; i ++){
@@ -296,7 +301,13 @@ final class Template<T>{
 			final DynamicArray<Annotation> boundedAnnotations = extractAnnotations(declaredAnnotations, hasCodec);
 			evaluatedFields.addAll(extractEvaluations(declaredAnnotations, field));
 
-			validateField(boundedAnnotations, checksum);
+			try{
+				validateField(boundedAnnotations, checksum);
+			}
+			catch(final AnnotationException e){
+				e.setClassNameAndFieldName(type.getSimpleName(), field.getName());
+				throw e;
+			}
 
 			if(boundedAnnotations.limit == 1)
 				boundedFields.add(new BoundedField(field, boundedAnnotations.data[0], (skips.length > 0? skips: null)));

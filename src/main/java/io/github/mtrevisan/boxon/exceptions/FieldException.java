@@ -52,7 +52,7 @@ public class FieldException extends Exception{
 	}
 
 	public final String getMessage(){
-		return super.getMessage() + " in field " + className + "." + fieldName;
+		return super.getMessage() + (className != null && fieldName != null? " in field " + className + "." + fieldName: "");
 	}
 
 	@SuppressWarnings("unused")
