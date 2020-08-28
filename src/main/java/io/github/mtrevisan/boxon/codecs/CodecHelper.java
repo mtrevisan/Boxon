@@ -39,6 +39,7 @@ import io.github.mtrevisan.boxon.internal.ReflectionHelper;
 
 import java.nio.charset.Charset;
 import java.util.Objects;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
@@ -49,7 +50,7 @@ final class CodecHelper{
 	/** The name of the prefix for the alternative (used for referencing variables from SpEL). */
 	private static final String CONTEXT_CHOICE_PREFIX = "prefix";
 
-	static final Pattern CONTEXT_PREFIXED_CHOICE_PREFIX = Pattern.compile("#" + CONTEXT_CHOICE_PREFIX + "[^a-zA-Z]");
+	static final Matcher CONTEXT_PREFIXED_CHOICE_PREFIX = Pattern.compile("#" + CONTEXT_CHOICE_PREFIX + "[^a-zA-Z]").matcher("");
 
 
 	private CodecHelper(){}
@@ -131,7 +132,7 @@ final class CodecHelper{
 
 	static void writePrefix(final BitWriter writer, final ObjectChoices.ObjectChoice chosenAlternative, final ObjectChoices selectFrom){
 		//if chosenAlternative.condition() contains '#prefix', then write @ObjectChoice.prefix()
-		if(CONTEXT_PREFIXED_CHOICE_PREFIX.matcher(chosenAlternative.condition()).find()){
+		if(CONTEXT_PREFIXED_CHOICE_PREFIX.reset(chosenAlternative.condition()).find()){
 			final int prefixSize = selectFrom.prefixSize();
 			final ByteOrder prefixByteOrder = selectFrom.byteOrder();
 

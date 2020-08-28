@@ -243,17 +243,11 @@ final class Template<T>{
 				throw new AnnotationException("Prefix size cannot be greater than {} bits", Integer.SIZE);
 
 			final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
-			if(prefixSize > 0){
-				if(alternatives.length == 0)
-					throw new AnnotationException("Alternatives missing");
-				if(Arrays.stream(alternatives).noneMatch(a -> CodecHelper.CONTEXT_PREFIXED_CHOICE_PREFIX.matcher(a.condition()).find()))
-					throw new AnnotationException("Any condition must contain a reference to the prefix");
-				for(int i = 0; i < alternatives.length; i ++)
-					if(alternatives[i].condition().isEmpty())
-						throw new AnnotationException("Any condition must be non-empty, condition at index {} is empty", i);
-			}
-			else if(Arrays.stream(alternatives).anyMatch(a -> CodecHelper.CONTEXT_PREFIXED_CHOICE_PREFIX.matcher(a.condition()).find()))
-				throw new AnnotationException("Any condition cannot contain a reference to the prefix");
+			final boolean hasPrefix = (prefixSize > 0);
+			if(hasPrefix && alternatives.length == 0)
+				throw new AnnotationException("No alternatives");
+			if(Arrays.stream(alternatives).anyMatch(a -> a.condition().isEmpty() || hasPrefix ^ CodecHelper.CONTEXT_PREFIXED_CHOICE_PREFIX.reset(a.condition()).find()))
+				throw new AnnotationException("All conditions must " + (hasPrefix? "": "not ") + "contain a reference to the prefix and be non-empty");
 		}
 	}
 
