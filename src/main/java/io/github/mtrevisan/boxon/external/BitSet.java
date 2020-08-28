@@ -175,16 +175,9 @@ public final class BitSet{
 			indexes[i] = size - indexes[i] - 1;
 
 		//re-sort indexes
-		reverseIndexes();
-	}
-
-	private void reverseIndexes(){
-		for(int start = 0, end = indexes.length - 1; start < end; start ++, end --){
+		for(int start = 0, end = cardinality - 1; start < end; start ++, end --)
 			//swap array[start] with array[end]
-			indexes[start] ^= indexes[end];
-			indexes[end] ^= indexes[start];
-			indexes[start] ^= indexes[end];
-		}
+			indexes[start] = indexes[start] ^ indexes[end] ^ (indexes[end] = indexes[start]);
 	}
 
 	/**
@@ -202,9 +195,8 @@ public final class BitSet{
 			return new byte[]{0};
 
 		final byte[] bytes = new byte[(indexes[cardinality - 1] >>> 3) + 1];
-		for(final int index : indexes){
+		for(final int index : indexes)
 			bytes[index >>> 3] |= 1 << (index % Byte.SIZE);
-		}
 		return bytes;
 	}
 
@@ -256,12 +248,9 @@ public final class BitSet{
 	 * @param array	The array to reverse.
 	 */
 	private static void reverse(final byte[] array){
-		for(int start = 0, end = array.length - 1; start < end; start ++, end --){
+		for(int start = 0, end = array.length - 1; start < end; start ++, end --)
 			//swap array[start] with array[end]
-			array[start] ^= array[end];
-			array[end] ^= array[start];
-			array[start] ^= array[end];
-		}
+			array[start] = (byte)(array[start] ^ array[end] ^ (array[end] = array[start]));
 	}
 
 
@@ -272,10 +261,10 @@ public final class BitSet{
 
 	@Override
 	public boolean equals(final Object obj){
-		if(obj == this)
-			return true;
-		if(obj == null || obj.getClass() != getClass())
+		if(!(obj instanceof BitSet))
 			return false;
+		if(this == obj)
+			return true;
 
 		final BitSet rhs = (BitSet)obj;
 		return (cardinality == rhs.cardinality
