@@ -244,11 +244,9 @@ final class Template<T>{
 			final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
 			if(prefixSize > 0 && alternatives.length == 0)
 				throw new AnnotationException("No alternatives");
-			for(final ObjectChoices.ObjectChoice alternative : alternatives){
-				final String condition = alternative.condition();
-				if(condition.isEmpty())
+			for(final ObjectChoices.ObjectChoice alternative : alternatives)
+				if(alternative.condition().isEmpty())
 					throw new AnnotationException("All conditions must be non-empty");
-			}
 		}
 	}
 
