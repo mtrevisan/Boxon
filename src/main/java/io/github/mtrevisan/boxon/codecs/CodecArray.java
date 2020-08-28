@@ -28,6 +28,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindArray;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
@@ -59,7 +60,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 
 		final Object[] array = createArray(binding.type(), size);
 		if(selectFrom.alternatives().length > 0)
-			decodeWithAlternatives(reader, array, selectFrom, rootObject);
+			decodeWithAlternatives(reader, array, selectFrom, binding.selectDefault(), rootObject);
 		else
 			decodeWithoutAlternatives(reader, array, binding.type());
 
@@ -80,7 +81,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 		return (T[])Array.newInstance(type, length);
 	}
 
-	private void decodeWithAlternatives(final BitReader reader, final Object[] array, final ObjectChoices selectFrom,
+	private void decodeWithAlternatives(final BitReader reader, final Object[] array, final ObjectChoices selectFrom, final Class<?> selectDefaultType,
 			final Object rootObject){
 		final boolean hasPrefix = (selectFrom.prefixSize() > 0);
 
@@ -89,9 +90,12 @@ final class CodecArray implements CodecInterface<BindArray>{
 				final ObjectChoices.ObjectChoice chosenAlternative = (hasPrefix?
 					CodecHelper.chooseAlternativeWithPrefix(reader, selectFrom, rootObject):
 					CodecHelper.chooseAlternativeWithoutPrefix(selectFrom, rootObject));
+				final Class<?> chosenAlternativeType = (chosenAlternative != null? chosenAlternative.type(): selectDefaultType);
+				if(chosenAlternativeType == void.class)
+					throw new CodecException("Cannot find a valid codec from given alternatives for {}", rootObject.getClass().getSimpleName());
 
 				//read object
-				final Template<?> subTemplate = Template.createFrom(chosenAlternative.type(), templateParser.loader::hasCodec);
+				final Template<?> subTemplate = Template.createFrom(chosenAlternativeType, templateParser.loader::hasCodec);
 
 				array[i] = templateParser.decode(subTemplate, reader, rootObject);
 			}

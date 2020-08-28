@@ -212,6 +212,11 @@ class CodecArrayTest{
 			}
 
 			@Override
+			public Class<?> selectDefault(){
+				return void.class;
+			}
+
+			@Override
 			public Class<? extends Validator<?>> validator(){
 				return NullValidator.class;
 			}

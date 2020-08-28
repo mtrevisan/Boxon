@@ -161,7 +161,7 @@ final class Template<T>{
 					throw new AnnotationException("Bad annotation used for {}, should have been used the type `{}.class`",
 						BindArrayPrimitive.class.getSimpleName(), ParserDataType.toPrimitiveTypeOrDefault(type).getSimpleName());
 
-				validateChoice(selectFrom, type);
+				validateChoice(selectFrom, binding.selectDefault(), type);
 			}
 		},
 
@@ -175,7 +175,7 @@ final class Template<T>{
 					throw new AnnotationException("Bad annotation used for {}, should have been used one of the primitive type's annotations",
 						BindObject.class.getSimpleName());
 
-				validateChoice(selectFrom, type);
+				validateChoice(selectFrom, binding.selectDefault(), type);
 			}
 		},
 
@@ -234,7 +234,7 @@ final class Template<T>{
 
 		abstract void validate(final Annotation annotation) throws AnnotationException;
 
-		private static void validateChoice(final ObjectChoices selectFrom, final Class<?> type) throws AnnotationException{
+		private static void validateChoice(final ObjectChoices selectFrom, final Class<?> selectDefault, final Class<?> type) throws AnnotationException{
 			final int prefixSize = selectFrom.prefixSize();
 			if(prefixSize < 0)
 				throw new AnnotationException("Prefix size must be a non-negative number");
@@ -244,7 +244,7 @@ final class Template<T>{
 			final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
 			final boolean hasPrefixSize = (prefixSize > 0);
 			if(hasPrefixSize && alternatives.length == 0)
-				throw new AnnotationException("No alternatives");
+				throw new AnnotationException("No alternatives present");
 			for(final ObjectChoices.ObjectChoice alternative : alternatives){
 				if(!type.isAssignableFrom(alternative.type()))
 					throw new AnnotationException("Type of alternative cannot be assigned to (super) type of annotation");
@@ -255,6 +255,11 @@ final class Template<T>{
 				if(hasPrefixSize ^ CodecHelper.containsPrefixReference(condition))
 					throw new AnnotationException("All conditions must " + (hasPrefixSize? "": "not ") + "contain a reference to the prefix");
 			}
+
+//			if(selectDefault != void.class && alternatives.length == 0)
+//				LOGGER.warn("Useless definition of default alternative due to no alternatives present");
+			if(selectDefault != void.class && !type.isAssignableFrom(selectDefault))
+				throw new AnnotationException("Type of default alternative cannot be assigned to (super) type of annotation");
 		}
 	}
 

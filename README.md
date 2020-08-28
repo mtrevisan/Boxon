@@ -135,6 +135,7 @@ You can use them as a starting point to build your own customized readers.
  - `condition`: The SpEL expression that determines if this field has to be read.
  - `type`: the Class of the Object of the single element of the array (defaults to `Object`).
  - `selectFrom`: the selection from which to choose the instance type.
+ - `selectDefault`: the default selection if none can be chosen from `selectFrom` (defaults to `void.class`).
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable.
  - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
@@ -170,6 +171,7 @@ private Version version;
  - `type`: the Class of the Object of the single element of the array (defaults to `Object`).
  - `size`: the size of the array (can be a SpEL expression).
  - `selectFrom`: the selection from which to choose the instance type.
+ - `selectDefault`: the default selection if none can be chosen from `selectFrom` (defaults to `void.class`).
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
  - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
@@ -979,6 +981,7 @@ Remember that the header that will be written is the first in `@MessageHeader`.
 ### version 1.1.0 - 202008??
 - Better handling of NOP logger.
 - Abandoned [Reflections](https://github.com/ronmamo/reflections) in favor of [ClassGraph](https://github.com/classgraph/classgraph).
+- Added BindArray.selectDefault and BindObject.selectDefault to cope with default selector that has no prefix.
 - Added some feasibility checks on annotation data.
 - Added public constructor to Parser to allow for extensions.
 - Changed the signature of Checksummer.calculateChecksum returning short instead of long.

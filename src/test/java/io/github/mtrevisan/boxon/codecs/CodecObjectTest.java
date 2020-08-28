@@ -113,6 +113,11 @@ class CodecObjectTest{
 			}
 
 			@Override
+			public Class<?> selectDefault(){
+				return void.class;
+			}
+
+			@Override
 			public Class<? extends Validator<?>> validator(){
 				return NullValidator.class;
 			}
@@ -172,7 +177,7 @@ class CodecObjectTest{
 	static class TestChoice1{
 		@BindString(size = "3")
 		public String header;
-		@BindObject(selectFrom = @ObjectChoices(prefixSize = 8,
+		@BindObject(type = TestType0.class, selectFrom = @ObjectChoices(prefixSize = 8,
 			alternatives = {
 				@ObjectChoices.ObjectChoice(condition = "#prefix == 1", prefix = 1, type = TestType1.class),
 				@ObjectChoices.ObjectChoice(condition = "#prefix == 2", prefix = 2, type = TestType2.class)

@@ -29,7 +29,6 @@ import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitSet;
 import io.github.mtrevisan.boxon.external.BitWriter;
@@ -75,41 +74,29 @@ final class CodecHelper{
 	}
 
 	static ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> type){
-		for(final ObjectChoices.ObjectChoice alternative : alternatives){
+		for(final ObjectChoices.ObjectChoice alternative : alternatives)
 			if(alternative.type() == type)
 				return alternative;
-		}
 
 		throw new IllegalArgumentException("Cannot find a valid codec for type " + type.getSimpleName());
 	}
 
 	static ObjectChoices.ObjectChoice chooseAlternativeWithPrefix(final BitReader reader, final ObjectChoices selectFrom,
-			final Object rootObject) throws CodecException{
+			final Object rootObject){
 		final int prefixSize = selectFrom.prefixSize();
 		final ByteOrder prefixByteOrder = selectFrom.byteOrder();
-		final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
-
 		final int prefix = reader.getInteger(prefixSize, prefixByteOrder)
 			.intValue();
 
 		Evaluator.addToContext(CONTEXT_CHOICE_PREFIX, prefix);
-		final ObjectChoices.ObjectChoice chosenAlternative = chooseAlternative(alternatives, rootObject);
-		if(chosenAlternative == null)
-			throw new CodecException("Cannot find a valid codec for prefix {} in object {}", prefix,
-				rootObject.getClass().getSimpleName());
 
-		return chosenAlternative;
+		return chooseAlternativeWithoutPrefix(selectFrom, rootObject);
 	}
 
-	static ObjectChoices.ObjectChoice chooseAlternativeWithoutPrefix(final ObjectChoices selectFrom, final Object rootObject)
-			throws CodecException{
+	static ObjectChoices.ObjectChoice chooseAlternativeWithoutPrefix(final ObjectChoices selectFrom, final Object rootObject){
 		final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
 
-		final ObjectChoices.ObjectChoice chosenAlternative = chooseAlternative(alternatives, rootObject);
-		if(chosenAlternative == null)
-			throw new CodecException("Cannot find a valid codec in object {}", rootObject.getClass().getSimpleName());
-
-		return chosenAlternative;
+		return chooseAlternative(alternatives, rootObject);
 	}
 
 	private static ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives,
