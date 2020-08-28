@@ -50,7 +50,7 @@ final class CodecHelper{
 	/** The name of the prefix for the alternative (used for referencing variables from SpEL). */
 	private static final String CONTEXT_CHOICE_PREFIX = "prefix";
 
-	static final Matcher CONTEXT_PREFIXED_CHOICE_PREFIX = Pattern.compile("#" + CONTEXT_CHOICE_PREFIX + "[^a-zA-Z]").matcher("");
+	private static final Matcher CONTEXT_PREFIXED_CHOICE_PREFIX = Pattern.compile("#" + CONTEXT_CHOICE_PREFIX + "[^a-zA-Z]").matcher("");
 
 
 	private CodecHelper(){}
@@ -132,17 +132,20 @@ final class CodecHelper{
 
 	static void writePrefix(final BitWriter writer, final ObjectChoices.ObjectChoice chosenAlternative, final ObjectChoices selectFrom){
 		//if chosenAlternative.condition() contains '#prefix', then write @ObjectChoice.prefix()
-		if(CONTEXT_PREFIXED_CHOICE_PREFIX.reset(chosenAlternative.condition()).find()){
+		if(containsPrefixReference(chosenAlternative.condition())){
 			final int prefixSize = selectFrom.prefixSize();
 			final ByteOrder prefixByteOrder = selectFrom.byteOrder();
 
-			final long prefixValue = chosenAlternative.prefix();
-			final BitSet bits = BitSet.valueOf(new long[]{prefixValue});
+			final BitSet bits = BitSet.valueOf(new long[]{chosenAlternative.prefix()});
 			if(prefixByteOrder == ByteOrder.LITTLE_ENDIAN)
 				bits.reverseBits(prefixSize);
 
 			writer.putBits(bits, prefixSize);
 		}
+	}
+
+	static boolean containsPrefixReference(final String condition){
+		return CONTEXT_PREFIXED_CHOICE_PREFIX.reset(condition).find();
 	}
 
 	static void validateData(final String match, final Class<? extends Validator<?>> validatorType, final Object currentObject){

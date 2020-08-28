@@ -242,15 +242,15 @@ final class Template<T>{
 				throw new AnnotationException("Prefix size cannot be greater than {} bits", Integer.SIZE);
 
 			final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
-			final boolean hasPrefix = (prefixSize > 0);
-			if(hasPrefix && alternatives.length == 0)
+			final boolean hasPrefixSize = (prefixSize > 0);
+			if(hasPrefixSize && alternatives.length == 0)
 				throw new AnnotationException("No alternatives");
 			for(final ObjectChoices.ObjectChoice alternative : alternatives){
 				final String condition = alternative.condition();
 				if(condition.isEmpty())
 					throw new AnnotationException("All conditions must be non-empty");
-				if(hasPrefix ^ CodecHelper.CONTEXT_PREFIXED_CHOICE_PREFIX.reset(condition).find())
-					throw new AnnotationException("All conditions must " + (hasPrefix? "": "not ") + "contain a reference to the prefix");
+				if(hasPrefixSize ^ CodecHelper.containsPrefixReference(condition))
+					throw new AnnotationException("All conditions must " + (hasPrefixSize? "": "not ") + "contain a reference to the prefix");
 			}
 		}
 	}

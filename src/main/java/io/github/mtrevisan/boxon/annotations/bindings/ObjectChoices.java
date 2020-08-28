@@ -43,6 +43,7 @@ public @interface ObjectChoices{
 
 	/**
 	 * The number of bits to be read for determining the prefix.
+	 * <p>It MUST BE in the range {@code [0, }{@link Integer#SIZE}{@code ]}.</p>
 	 *
 	 * @return	The number of bits to be read for determining the prefix (defaults to {@code 0}).
 	 */
@@ -81,11 +82,11 @@ public @interface ObjectChoices{
 
 		/**
 		 * The prefix to be written when serializing the object.
-		 * <p>NOTE: this SpEL expression returns the prefix value, that is, the inverse of {@link #condition() condition}.</p>
+		 * <p>NOTE: this is the inverse of {@link #condition() condition}, if it contains a `#prefix` reference.</p>
 		 *
-		 * @return	A SpEL expression which returns the prefix value, that is, the inverse of {@link #condition() condition} (defaults to {@code 0}).
+		 * @return	The inverse of {@link #condition() condition}, if it contains a `#prefix` reference (defaults to {@code 0}).
 		 */
-		long prefix() default 0l;
+		int prefix() default 0;
 
 		/**
 		 * The type to decode in case the {@link #condition()} holds.
