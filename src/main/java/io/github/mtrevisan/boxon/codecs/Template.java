@@ -157,11 +157,11 @@ final class Template<T>{
 				final BindArray binding = (BindArray)annotation;
 				final ObjectChoices selectFrom = binding.selectFrom();
 				final Class<?> type = binding.type();
-				validateChoice(selectFrom);
-
 				if(ParserDataType.isPrimitive(type))
 					throw new AnnotationException("Bad annotation used for {}, should have been used the type `{}.class`",
 						BindArrayPrimitive.class.getSimpleName(), ParserDataType.toPrimitiveTypeOrDefault(type).getSimpleName());
+
+				validateChoice(selectFrom, type);
 			}
 		},
 
@@ -171,11 +171,11 @@ final class Template<T>{
 				final BindObject binding = (BindObject)annotation;
 				final ObjectChoices selectFrom = binding.selectFrom();
 				final Class<?> type = binding.type();
-				validateChoice(selectFrom);
-
 				if(ParserDataType.isPrimitive(type))
 					throw new AnnotationException("Bad annotation used for {}, should have been used one of the primitive type's annotations",
 						BindObject.class.getSimpleName());
+
+				validateChoice(selectFrom, type);
 			}
 		},
 
@@ -234,7 +234,7 @@ final class Template<T>{
 
 		abstract void validate(final Annotation annotation) throws AnnotationException;
 
-		private static void validateChoice(final ObjectChoices selectFrom) throws AnnotationException{
+		private static void validateChoice(final ObjectChoices selectFrom, final Class<?> type) throws AnnotationException{
 			final int prefixSize = selectFrom.prefixSize();
 			if(prefixSize < 0)
 				throw new AnnotationException("Prefix size must be a non-negative number");
@@ -246,6 +246,9 @@ final class Template<T>{
 			if(hasPrefixSize && alternatives.length == 0)
 				throw new AnnotationException("No alternatives");
 			for(final ObjectChoices.ObjectChoice alternative : alternatives){
+				if(!type.isAssignableFrom(alternative.type()))
+					throw new AnnotationException("Type of alternative cannot be assigned to (super) type of annotation");
+
 				final String condition = alternative.condition();
 				if(condition.isEmpty())
 					throw new AnnotationException("All conditions must be non-empty");
