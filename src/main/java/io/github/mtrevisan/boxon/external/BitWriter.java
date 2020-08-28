@@ -203,11 +203,11 @@ public final class BitWriter{
 	 * @param cls	Either a {@code Float} or a {@link Double} class.
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 */
-	@SuppressWarnings("ChainOfInstanceofChecks")
 	public void putDecimal(final BigDecimal value, final Class<?> cls, final ByteOrder byteOrder) throws AnnotationException{
-		if(cls == float.class || cls == Float.class)
+		final ParserDataType dataType = ParserDataType.fromType(cls);
+		if(dataType == ParserDataType.FLOAT)
 			putFloat(value.floatValue(), byteOrder);
-		else if(cls == double.class || cls == Double.class)
+		else if(dataType == ParserDataType.DOUBLE)
 			putDouble(value.doubleValue(), byteOrder);
 		else
 			throw new AnnotationException("Cannot write {} as a {}", BigDecimal.class.getSimpleName(), cls.getSimpleName());
