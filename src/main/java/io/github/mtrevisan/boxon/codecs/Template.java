@@ -247,8 +247,10 @@ final class Template<T>{
 				throw new AnnotationException("No alternatives");
 			for(final ObjectChoices.ObjectChoice alternative : alternatives){
 				final String condition = alternative.condition();
-				if(condition.isEmpty() || hasPrefix ^ CodecHelper.CONTEXT_PREFIXED_CHOICE_PREFIX.reset(condition).find())
-					throw new AnnotationException("All conditions must " + (hasPrefix? "": "not ") + "contain a reference to the prefix and be non-empty");
+				if(condition.isEmpty())
+					throw new AnnotationException("All conditions must be non-empty");
+				if(hasPrefix ^ CodecHelper.CONTEXT_PREFIXED_CHOICE_PREFIX.reset(condition).find())
+					throw new AnnotationException("All conditions must " + (hasPrefix? "": "not ") + "contain a reference to the prefix");
 			}
 		}
 	}
