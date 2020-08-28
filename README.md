@@ -67,8 +67,6 @@ In order to include Boxon in a Maven project add the following dependency to you
 
 Replace `x.y.z` below int the version tag with the latest [release number](https://github.com/mtrevisan/Boxon/releases).
 
-Alternatively, you could use `LATEST` in place of `x.y.z` if you just want to grab the latest version -- although be aware that that may lead to non-reproducible builds, since the Boxon version number could increase at any time. You could use [dependency locking](https://docs.gradle.org/current/userguide/dependency_locking.html) to address this.
-
 ```xml
 <dependency>
     <groupId>io.github.mtrevisan</groupId>
