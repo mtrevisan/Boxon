@@ -137,7 +137,7 @@ final class TemplateParser{
 
 	private void readSkip(final Skip skip, final BitReader reader, final Object rootObject){
 		final String condition = skip.condition();
-		final boolean process = (condition.isEmpty() || Evaluator.evaluate(condition, rootObject, boolean.class));
+		final boolean process = Evaluator.evaluateBoolean(condition, rootObject);
 		if(process){
 			final int size = Evaluator.evaluateSize(skip.size(), rootObject);
 			if(size > 0)
@@ -187,7 +187,7 @@ final class TemplateParser{
 		for(int i = 0; i < evaluatedFields.limit; i ++){
 			final Template.EvaluatedField field = evaluatedFields.data[i];
 			final String condition = field.getBinding().condition();
-			final boolean process = (condition.isEmpty() || Evaluator.evaluate(condition, rootObject, boolean.class));
+			final boolean process = Evaluator.evaluateBoolean(condition, rootObject);
 			if(process){
 				if(LOGGER != null)
 					LOGGER.trace("evaluating {}.{}", template.getType().getSimpleName(), field.getFieldName());
@@ -289,7 +289,7 @@ final class TemplateParser{
 
 	private void writeSkip(final Skip skip, final BitWriter writer, final Object rootObject){
 		final String condition = skip.condition();
-		final boolean process = (condition.isEmpty() || Evaluator.evaluate(condition, rootObject, boolean.class));
+		final boolean process = Evaluator.evaluateBoolean(condition, rootObject);
 		if(process){
 			final int size = Evaluator.evaluateSize(skip.size(), rootObject);
 			if(size > 0)

@@ -95,6 +95,18 @@ final class Evaluator{
 	}
 
 	/**
+	 * Convenience method to fast evaluate a boolean.
+	 *
+	 * @param expression	The SpEL expression to evaluate (empty string returns {@code true}).
+	 * @param rootObject	The context with which to evaluate the given expression.
+	 * @return	The result of the expression.
+	 * @throws EvaluationException	If an error occurs during the evaluation of an expression.
+	 */
+	static boolean evaluateBoolean(final String expression, final Object rootObject){
+		return (expression.isEmpty() || evaluate(expression, rootObject, boolean.class));
+	}
+
+	/**
 	 * Convenience method to fast evaluate a positive integer.
 	 *
 	 * @param expression	The SpEL expression to evaluate.
