@@ -1,0 +1,91 @@
+package io.github.mtrevisan.boxon.external;
+
+import io.github.mtrevisan.boxon.internal.JavaHelper;
+
+import java.io.ByteArrayOutputStream;
+import java.nio.ReadOnlyBufferException;
+
+
+class BitWriterData{
+
+	/** The backing {@link ByteArrayOutputStream}. */
+	@SuppressWarnings("resource")
+	private final ByteArrayOutputStream os = new ByteArrayOutputStream(0);
+
+	/** The <i>cache</i> used when writing bits. */
+	private byte cache;
+	/** The number of bits available (to write) within {@code cache}. */
+	private int remaining;
+
+
+	/**
+	 * Writes {@code value} to this {@link BitWriter} using {@code length} bits.
+	 *
+	 * @param value	The value to write.
+	 * @param length	The amount of bits to use when writing {@code value}.
+	 */
+	public void putBits(final BitSet value, final int length){
+		//if the value that we're writing is too large to be placed entirely in the cache, then we need to place as
+		//much as we can in the cache (the least significant bits), flush the cache to the backing ByteBuffer, and
+		//place the rest in the cache
+		int offset = 0;
+		while(offset < length){
+			//fill the cache one chunk of bits at a time
+			final int size = Math.min(length - offset, Byte.SIZE - remaining);
+			final byte nextCache = (byte)value.toLong(offset, size);
+			cache = (byte)((cache << size) | nextCache);
+			remaining += size;
+			offset += size;
+
+			//if cache is full, write it
+			if(remaining == Byte.SIZE){
+				os.write(cache);
+
+				resetInnerVariables();
+			}
+		}
+	}
+
+	/**
+	 * Writes {@code value} to this {@link BitWriter} using {@code length} bits.
+	 *
+	 * @param value	The value to write.
+	 * @param length	The amount of bits to use when writing {@code value} (MUST BE less than or equals to {@link Long#SIZE}).
+	 */
+	void putValue(final long value, final int length){
+		final BitSet bits = BitSet.valueOf(new long[]{value});
+		putBits(bits, length);
+	}
+
+
+	/** Flush an minimum integral number of bytes to the output stream, padding any non-completed byte with zeros. */
+	public void flush(){
+		//put the cache into the buffer
+		if(remaining > 0)
+			os.write(cache);
+
+		resetInnerVariables();
+	}
+
+	private void resetInnerVariables(){
+		remaining = 0;
+		cache = 0;
+	}
+
+	/**
+	 * Returns a copy of the byte array that backs the buffer.
+	 *
+	 * @return	The copy of the array that backs this buffer.
+	 * @throws ReadOnlyBufferException   If this buffer is backed by an array but is read-only.
+	 * @throws UnsupportedOperationException	If this buffer is not backed by an accessible array.
+	 */
+	public byte[] array(){
+		return os.toByteArray();
+	}
+
+	@Override
+	public String toString(){
+		return JavaHelper.toHexString(array());
+	}
+
+}

@@ -177,7 +177,7 @@ public final class BitSet{
 		//re-sort indexes
 		for(int start = 0, end = cardinality - 1; start < end; start ++, end --)
 			//swap array[start] with array[end]
-			indexes[start] = indexes[start] ^ indexes[end] ^ (indexes[end] = indexes[start]);
+			indexes[start] ^= indexes[end] ^ (indexes[end] = indexes[start]);
 	}
 
 	/**
@@ -250,7 +250,7 @@ public final class BitSet{
 	private static void reverse(final byte[] array){
 		for(int start = 0, end = array.length - 1; start < end; start ++, end --)
 			//swap array[start] with array[end]
-			array[start] = (byte)(array[start] ^ array[end] ^ (array[end] = array[start]));
+			array[start] ^= array[end] ^ (array[end] = array[start]);
 	}
 
 

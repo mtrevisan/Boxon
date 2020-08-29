@@ -25,7 +25,6 @@
 package io.github.mtrevisan.boxon.external;
 
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.ParserDataType;
 
 import java.io.ByteArrayOutputStream;
@@ -36,7 +35,6 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
@@ -45,31 +43,7 @@ import java.nio.charset.Charset;
 /**
  * @see <a href="https://github.com/jhg023/BitBuffer/blob/master/src/main/java/bitbuffer/BitBuffer.java">BitBuffer</a>
  */
-public final class BitReader{
-
-	private static final class State{
-		private int position;
-		private int remaining;
-		private byte cache;
-
-		State(final int position, final int remaining, final byte cache){
-			this.position = position;
-			this.remaining = remaining;
-			this.cache = cache;
-		}
-	}
-
-
-	/** The backing {@link ByteBuffer}. */
-	private final ByteBuffer buffer;
-
-	/** The <i>cache</i> used when reading bits. */
-	private byte cache;
-	/** The number of bits available (to read) within {@code cache}. */
-	private int remaining;
-
-	private State fallbackPoint;
-
+public final class BitReader extends BitReaderData{
 
 	/**
 	 * Wraps a {@link File} containing a binary stream into a buffer.
@@ -130,45 +104,8 @@ public final class BitReader{
 
 
 	private BitReader(final ByteBuffer buffer){
-		this.buffer = buffer;
+		super(buffer);
 	}
-
-	public void createFallbackPoint(){
-		if(fallbackPoint != null){
-			//update current mark:
-			fallbackPoint.position = buffer.position();
-			fallbackPoint.remaining = remaining;
-			fallbackPoint.cache = cache;
-		}
-		else
-			//create new mark
-			fallbackPoint = createState();
-	}
-
-	public void restoreFallbackPoint(){
-		if(fallbackPoint == null)
-			//no fallback point was marked before
-			return;
-
-		restoreState(fallbackPoint);
-
-		clearFallbackPoint();
-	}
-
-	private State createState(){
-		return new State(buffer.position(), remaining, cache);
-	}
-
-	private void restoreState(final State state){
-		buffer.position(state.position);
-		remaining = state.remaining;
-		cache = state.cache;
-	}
-
-	public void clearFallbackPoint(){
-		fallbackPoint = null;
-	}
-
 
 	/**
 	 * Skips a given amount of bits.
@@ -192,15 +129,17 @@ public final class BitReader{
 	/**
 	 * Reads the given type using the give byte order.
 	 *
-	 * @param type	The type of data to read. Here, the length of the types (in bits) are those defined by java (see {@link Byte#SIZE}, {@link Short#SIZE}, {@link Integer#SIZE},
-	 * 	{@link Long#SIZE}, {@link Float#SIZE}, and {@link Double#SIZE}).
+	 * @param type	The type of data to read. Here, the length of the types (in bits) are those defined by java
+	 * 	(see {@link Byte#SIZE}, {@link Short#SIZE}, {@link Integer#SIZE}, {@link Long#SIZE}, {@link Float#SIZE},
+	 * 	and {@link Double#SIZE}).
 	 * @param byteOrder	The byte order used to read the bytes.
 	 * @return	The read value of the given type.
 	 */
 	public Object get(final Class<?> type, final ByteOrder byteOrder) throws AnnotationException{
 		final ParserDataType t = ParserDataType.fromType(type);
 		if(t == null)
-			throw new AnnotationException("Cannot read type {}, should be one of {}, or their objective counterparts", type.getSimpleName(), ParserDataType.describe());
+			throw new AnnotationException("Cannot read type {}, should be one of {}, or their objective counterparts",
+				type.getSimpleName(), ParserDataType.describe());
 
 		switch(t){
 			case BYTE:
@@ -227,76 +166,11 @@ public final class BitReader{
 	}
 
 	/**
-	 * Reads the next {@code length} bits and composes a {@link BitSet}.
-	 *
-	 * @param length	The amount of bits to read.
-	 * @return	A {@link BitSet} value at the {@link BitReader}'s current position.
-	 */
-	public BitSet getBits(final int length){
-		final BitSet bits = new BitSet();
-		int offset = 0;
-		while(offset < length){
-			//transfer the cache values
-			final int size = Math.min(length, remaining);
-			if(size > 0){
-				addCacheToBitSet(bits, offset, size);
-
-				offset += size;
-			}
-
-			//if cache is empty and there are more bits to be read, fill it
-			if(length > offset){
-				cache = buffer.get();
-
-				remaining = Byte.SIZE;
-			}
-		}
-		return bits;
-	}
-
-	private Byte peekByte(){
-		//make a copy of internal variables
-		final State originalState = createState();
-
-		try{
-			return getByte();
-		}
-		catch(final BufferUnderflowException ignored){
-			//trap end-of-buffer
-			return null;
-		}
-		finally{
-			//restore original variables
-			restoreState(originalState);
-		}
-	}
-
-	/**
-	 * Add {@code size} bits from the cache starting from LSB with a given offset.
-	 *
-	 * @param value	The bit set into which to transfer {@code size} bits from the cache.
-	 * @param offset	The offset for the indexes.
-	 * @param size	The amount of bits to read from the LSB of the cache.
-	 */
-	private void addCacheToBitSet(final BitSet value, final int offset, final int size){
-		final byte mask = (byte)((1 << size) - 1);
-		value.ensureAdditionalSpace(Integer.bitCount(cache & mask));
-
-		int skip;
-		while(cache != 0 && (skip = Integer.numberOfTrailingZeros(cache & 0xFF)) < size){
-			value.addNextSetBit(skip + offset);
-			cache ^= 1 << skip;
-		}
-		//remove read bits from the cache
-		cache >>= size;
-		remaining -= size;
-	}
-
-	/**
 	 * Reads {@link Byte#SIZE} bits from this {@link BitReader} and composes a {@code byte}.
 	 *
 	 * @return	A {@code byte}.
 	 */
+	@Override
 	public byte getByte(){
 		return getInteger(Byte.SIZE, ByteOrder.LITTLE_ENDIAN).byteValue();
 	}
@@ -435,68 +309,6 @@ public final class BitReader{
 			e.printStackTrace();
 		}
 		return text;
-	}
-
-	/**
-	 * Retrieve text until a terminator (NOT consumed!) is found.
-	 *
-	 * @param os	The stream to write to.
-	 * @param terminator	The terminator.
-	 * @throws IOException	If an I/O error occurs.
-	 */
-	private void getTextUntilTerminator(final OutputStreamWriter os, final byte terminator) throws IOException{
-		for(Byte byteRead = peekByte(); byteRead != null && byteRead != terminator; byteRead = peekByte())
-			os.write(getByte());
-		os.flush();
-	}
-
-
-	/**
-	 * Returns the byte array that backs this reader.
-	 *
-	 * @return	The array that backs this reader.
-	 */
-	public byte[] array(){
-		return buffer.array();
-	}
-
-	/**
-	 * Gets the position of the backing {@link ByteBuffer} in integral number of {@code byte}s (lower bound).
-	 *
-	 * @return	The position of the backing buffer in {@code byte}s.
-	 */
-	public int position(){
-		return buffer.position() - ((remaining + Byte.SIZE - 1) >>> 3);
-	}
-
-	/**
-	 * Sets the position of the backing {@link ByteBuffer} in {@code byte}s.
-	 *
-	 * @param newPosition	The position of the backing buffer in {@code byte}s.
-	 */
-	public void position(final int newPosition){
-		buffer.position(newPosition);
-
-		resetInnerVariables();
-	}
-
-	private void resetInnerVariables(){
-		remaining = 0;
-		cache = 0;
-	}
-
-	/**
-	 * Tells whether there are any elements between the current position and the limit of the underlying {@link ByteBuffer}.
-	 *
-	 * @return	Whether there is at least one element remaining in the underlying {@link ByteBuffer}.
-	 */
-	public boolean hasRemaining(){
-		return buffer.hasRemaining();
-	}
-
-	@Override
-	public String toString(){
-		return JavaHelper.toHexString(array());
 	}
 
 }

@@ -166,8 +166,8 @@ final class Template<T>{
 		loadAnnotatedFields(type, ReflectionHelper.getAccessibleFields(type), hasCodec);
 	}
 
-	private void loadAnnotatedFields(final Class<T> type, final DynamicArray<Field> fields, final Predicate<? super Class<? extends Annotation>> hasCodec)
-			throws AnnotationException{
+	private void loadAnnotatedFields(final Class<T> type, final DynamicArray<Field> fields,
+			final Predicate<? super Class<? extends Annotation>> hasCodec) throws AnnotationException{
 		boundedFields.ensureCapacity(fields.limit);
 		for(int i = 0; i < fields.limit; i ++){
 			final Field field = fields.data[i];

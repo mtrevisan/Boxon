@@ -141,7 +141,8 @@ enum AnnotationValidator{
 
 	abstract void validate(final Annotation annotation) throws AnnotationException;
 
-	private static void validateChoice(final ObjectChoices selectFrom, final Class<?> selectDefault, final Class<?> type) throws AnnotationException{
+	private static void validateChoice(final ObjectChoices selectFrom, final Class<?> selectDefault, final Class<?> type)
+			throws AnnotationException{
 		final int prefixSize = selectFrom.prefixSize();
 		validatePrefixSize(prefixSize);
 
@@ -158,16 +159,17 @@ enum AnnotationValidator{
 			throw new AnnotationException("Prefix size cannot be greater than {} bits", Integer.SIZE);
 	}
 
-	private static ObjectChoices.ObjectChoice[] validateAlternatives(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> type, final int prefixSize) throws AnnotationException{
+	private static void validateAlternatives(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> type,
+			final int prefixSize) throws AnnotationException{
 		final boolean hasPrefixSize = (prefixSize > 0);
 		if(hasPrefixSize && alternatives.length == 0)
 			throw new AnnotationException("No alternatives present");
 		for(final ObjectChoices.ObjectChoice alternative : alternatives)
 			validateAlternative(alternative, type, hasPrefixSize);
-		return alternatives;
 	}
 
-	private static void validateAlternative(final ObjectChoices.ObjectChoice alternative, final Class<?> type, final boolean hasPrefixSize) throws AnnotationException{
+	private static void validateAlternative(final ObjectChoices.ObjectChoice alternative, final Class<?> type,
+			final boolean hasPrefixSize) throws AnnotationException{
 		if(!type.isAssignableFrom(alternative.type()))
 			throw new AnnotationException("Type of alternative cannot be assigned to (super) type of annotation");
 
@@ -180,7 +182,8 @@ enum AnnotationValidator{
 
 	private static void validateDefaultAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> type, final Class<?> selectDefault) throws AnnotationException{
 		if(selectDefault != void.class && alternatives.length == 0)
-			LOGGER.warn("Useless definition of default alternative ({}) due to no alternatives present on @BindArray or @BindObject", selectDefault.getSimpleName());
+			LOGGER.warn("Useless definition of default alternative ({}) due to no alternatives present on @BindArray or @BindObject",
+				selectDefault.getSimpleName());
 		if(selectDefault != void.class && !type.isAssignableFrom(selectDefault))
 			throw new AnnotationException("Type of default alternative cannot be assigned to (super) type of annotation");
 	}
