@@ -978,12 +978,13 @@ Remember that the header that will be written is the first in `@MessageHeader`.
 ## Changelog
 
 <a name="changelog-1.1.0"></a>
-### version 1.1.0 - 202008??
+### version 1.1.0 - 202009??
 - Better handling of NOP logger.
 - Abandoned [Reflections](https://github.com/ronmamo/reflections) in favor of [ClassGraph](https://github.com/classgraph/classgraph).
 - Added BindArray.selectDefault and BindObject.selectDefault to cope with default selector that has no prefix.
 - Added some feasibility checks on annotation data.
 - Added public constructor to Parser to allow for extensions.
+- Added method Parser.withTemplates(Template<?>[]).
 - Changed the signature of Checksummer.calculateChecksum returning short instead of long.
 - Changed method Validator.validate into Validator.isValid.
 - Changed method ParseResponse.getMessageForError into ParseResponse.getErrorMessageAt to align it to other method name's conventions.

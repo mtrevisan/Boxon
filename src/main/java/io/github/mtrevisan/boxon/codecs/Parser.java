@@ -169,6 +169,28 @@ public final class Parser{
 	}
 
 	/**
+	 * Constructs a new {@link Template}.
+	 *
+	 * @param <T>	The type of the objects to be returned by the {@link Template}.
+	 * @param type	The type of the objects to be returned by the {@link Template}.
+	 * @return	A new {@link Template} for the given type.
+	 */
+	public <T> Template<T> createTemplate(final Class<T> type) throws AnnotationException{
+		return templateParser.loader.createTemplate(type);
+	}
+
+	/**
+	 * Loads all the given templates instances annotated with {@link MessageHeader}.
+	 *
+	 * @param templates	Template instances.
+	 * @return	The {@link Parser}, used for chaining.
+	 */
+	public Parser withTemplates(final Template<?>... templates){
+		templateParser.loader.loadTemplates(templates);
+		return this;
+	}
+
+	/**
 	 * Loads all the protocol classes annotated with {@link MessageHeader}.
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.

@@ -156,7 +156,7 @@ final class Loader{
 	 * @param type	The type of the objects to be returned by the {@link Template}.
 	 * @return	A new {@link Template} for the given type.
 	 */
-	<T> Template<T> createTemplateFrom(final Class<T> type) throws AnnotationException{
+	<T> Template<T> createTemplate(final Class<T> type) throws AnnotationException{
 		//FIXME use memoization?
 		return new Template<>(type, this);
 //		return (Template<T>)TEMPLATES.apply(type);
@@ -183,6 +183,24 @@ final class Loader{
 	 */
 	void loadDefaultTemplates() throws AnnotationException, TemplateException{
 		loadTemplates(ReflectionHelper.extractCallerClasses());
+	}
+
+	/**
+	 * Loads all the given templates instances annotated with {@link MessageHeader}.
+	 *
+	 * @param templates	Template instances.
+	 */
+	void loadTemplates(final Template<?>... templates){
+		if(LOGGER.isInfoEnabled()){
+			final StringJoiner sj = new StringJoiner(", ", "[", "]");
+			for(final Template<?> template : templates)
+				sj.add(template.getClass().getSimpleName());
+			LOGGER.info("Load templates {}", sj);
+		}
+
+		addTemplatesInner(DynamicArray.wrap(templates));
+
+		LOGGER.trace("Templates loaded are {}", templates.length);
 	}
 
 	/**
@@ -213,7 +231,7 @@ final class Loader{
 		final DynamicArray<Template> templates = DynamicArray.create(Template.class, annotatedClasses.size());
 		for(final Class<?> type : annotatedClasses){
 			//for each extracted class, try to parse it, extracting all the information needed for the codec of a message
-			final Template<?> from = createTemplateFrom(type);
+			final Template<?> from = createTemplate(type);
 			if(from.canBeCoded())
 				//if the template is valid, add it to the list of templates...
 				templates.add(from);

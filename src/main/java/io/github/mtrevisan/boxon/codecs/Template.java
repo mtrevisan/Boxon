@@ -150,6 +150,9 @@ final class Template<T>{
 			CodecHelper.assertCharset(header.charset());
 
 		loadAnnotatedFields(type, ReflectionHelper.getAccessibleFields(type), loader);
+
+		if(boundedFields.isEmpty())
+			throw new AnnotationException("No data can be extracted from this class: {}", type.getName());
 	}
 
 	private void loadAnnotatedFields(final Class<T> type, final DynamicArray<Field> fields, final Loader loader)

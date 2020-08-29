@@ -60,9 +60,9 @@ class LoaderTest{
 	@Test
 	void loadCodecsAfterTemplates(){
 		Loader loader = new Loader();
-		Exception e = Assertions.assertThrows(TemplateException.class,
+		Exception e = Assertions.assertThrows(AnnotationException.class,
 			() -> loader.loadTemplates(LoaderTest.class));
-		Assertions.assertTrue(e.getMessage().startsWith("Cannot create a raw message from data: cannot scan template for "));
+		Assertions.assertTrue(e.getMessage().startsWith("No data can be extracted from this class: "));
 	}
 
 	@Test
