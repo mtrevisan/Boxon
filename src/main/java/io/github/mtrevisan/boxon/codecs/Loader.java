@@ -50,6 +50,7 @@ import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.TreeMap;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 
 final class Loader{
@@ -158,7 +159,7 @@ final class Loader{
 	 */
 	<T> Template<T> createTemplateFrom(final Class<T> type) throws AnnotationException{
 		//FIXME use memoization?
-		return new Template<>(type, this::hasCodec);
+		return new Template<>(type, this);
 //		return (Template<T>)TEMPLATES.apply(type);
 	}
 
@@ -166,6 +167,14 @@ final class Loader{
 //		//final Predicate<Class<? extends Annotation>> hasCodec
 //		return new Template<>(type, hasCodec);
 //	}
+
+	DynamicArray<Annotation> filterAnnotationsWithCodec(final Annotation[] declaredAnnotations){
+		final DynamicArray<Annotation> annotations = DynamicArray.create(Annotation.class, declaredAnnotations.length);
+		for(final Annotation annotation : declaredAnnotations)
+			if(hasCodec(annotation.annotationType()))
+				annotations.add(annotation);
+		return annotations;
+	}
 
 	/**
 	 * Loads all the protocol classes annotated with {@link MessageHeader}.

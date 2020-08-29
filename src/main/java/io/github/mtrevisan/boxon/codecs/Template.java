@@ -143,18 +143,19 @@ final class Template<T>{
 	private BoundedField checksum;
 
 
-	Template(final Class<T> type, final Predicate<Class<? extends Annotation>> hasCodec) throws AnnotationException{
+	//FIXME remove loader reference
+	Template(final Class<T> type, final Loader loader) throws AnnotationException{
 		this.type = type;
 
 		header = type.getAnnotation(MessageHeader.class);
 		if(header != null)
 			CodecHelper.assertCharset(header.charset());
 
-		loadAnnotatedFields(type, ReflectionHelper.getAccessibleFields(type), hasCodec);
+		loadAnnotatedFields(type, ReflectionHelper.getAccessibleFields(type), loader);
 	}
 
-	private void loadAnnotatedFields(final Class<T> type, final DynamicArray<Field> fields,
-			final Predicate<? super Class<? extends Annotation>> hasCodec) throws AnnotationException{
+	private void loadAnnotatedFields(final Class<T> type, final DynamicArray<Field> fields, final Loader loader)
+			throws AnnotationException{
 		boundedFields.ensureCapacity(fields.limit);
 		for(int i = 0; i < fields.limit; i ++){
 			final Field field = fields.data[i];
@@ -162,7 +163,7 @@ final class Template<T>{
 			final Checksum checksum = field.getDeclaredAnnotation(Checksum.class);
 
 			final Annotation[] declaredAnnotations = field.getDeclaredAnnotations();
-			final DynamicArray<Annotation> boundedAnnotations = extractAnnotations(declaredAnnotations, hasCodec);
+			final DynamicArray<Annotation> boundedAnnotations = loader.filterAnnotationsWithCodec(declaredAnnotations);
 			evaluatedFields.addAll(extractEvaluations(declaredAnnotations, field));
 
 			try{
@@ -178,20 +179,6 @@ final class Template<T>{
 			if(checksum != null)
 				this.checksum = new BoundedField(field, checksum);
 		}
-	}
-
-	private DynamicArray<Annotation> extractAnnotations(final Annotation[] declaredAnnotations,
-			final Predicate<? super Class<? extends Annotation>> hasCodec){
-		final DynamicArray<Annotation> annotations = DynamicArray.create(Annotation.class, declaredAnnotations.length);
-		for(final Annotation annotation : declaredAnnotations){
-			final Class<? extends Annotation> annotationType = annotation.annotationType();
-			//NOTE: cannot throw an exception if the loader does not have the codec, due to the possible presence of other
-			//annotations that have nothing to do with this library
-			if(annotationType != Skip.class && annotationType != Evaluate.class && hasCodec.test(annotationType))
-				//stores only the preloaded codecs, ignore other annotations (though the use of `hasCodec`)
-				annotations.add(annotation);
-		}
-		return annotations;
 	}
 
 	private DynamicArray<EvaluatedField> extractEvaluations(final Annotation[] declaredAnnotations, final Field field){
