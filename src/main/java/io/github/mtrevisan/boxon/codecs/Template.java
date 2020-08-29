@@ -36,7 +36,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.StringJoiner;
-import java.util.function.Predicate;
 
 
 /**
@@ -45,8 +44,6 @@ import java.util.function.Predicate;
  * @param <T> The type of object the codec is able to decode/encode.
  */
 final class Template<T>{
-
-//	private static final Function<Class<?>, Template<?>> TEMPLATES = Memoizer.memoizeThreadAndRecursionSafe(Template::getTemplate);
 
 	/** Data associated to an annotated field. */
 	static final class BoundedField{
@@ -145,39 +142,18 @@ final class Template<T>{
 	private BoundedField checksum;
 
 
-	/**
-	 * Constructs a new {@link Template}.
-	 *
-	 * @param <T>	The type of the objects to be returned by the {@link Template}.
-	 * @param type	The type of the objects to be returned by the {@link Template}.
-	 * @param hasCodec	The function to verify the presence of the codec.
-	 * @return	A new {@link Template} for the given type.
-	 */
-	//FIXME remove hasCodec reference?
-	static <T> Template<T> createFrom(final Class<T> type, final Predicate<Class<? extends Annotation>> hasCodec)
-			throws AnnotationException{
-		//FIXME use memoization?
-		return new Template<>(type, hasCodec);
-//		return (Template<T>)TEMPLATES.apply(type);
-	}
-
-//	private static <T> Template<T> getTemplate(final Class<T> type) throws AnnotationException{
-//		//final Predicate<Class<? extends Annotation>> hasCodec
-//		return new Template<>(type, hasCodec);
-//	}
-
-	private Template(final Class<T> type, final Predicate<Class<? extends Annotation>> hasCodec) throws AnnotationException{
+	Template(final Class<T> type, final Loader loader) throws AnnotationException{
 		this.type = type;
 
 		header = type.getAnnotation(MessageHeader.class);
 		if(header != null)
 			CodecHelper.assertCharset(header.charset());
 
-		loadAnnotatedFields(type, ReflectionHelper.getAccessibleFields(type), hasCodec);
+		loadAnnotatedFields(type, ReflectionHelper.getAccessibleFields(type), loader);
 	}
 
-	private void loadAnnotatedFields(final Class<T> type, final DynamicArray<Field> fields,
-			final Predicate<? super Class<? extends Annotation>> hasCodec) throws AnnotationException{
+	private void loadAnnotatedFields(final Class<T> type, final DynamicArray<Field> fields, final Loader loader)
+			throws AnnotationException{
 		boundedFields.ensureCapacity(fields.limit);
 		for(int i = 0; i < fields.limit; i ++){
 			final Field field = fields.data[i];
@@ -185,7 +161,7 @@ final class Template<T>{
 			final Checksum checksum = field.getDeclaredAnnotation(Checksum.class);
 
 			final Annotation[] declaredAnnotations = field.getDeclaredAnnotations();
-			final DynamicArray<Annotation> boundedAnnotations = extractAnnotations(declaredAnnotations, hasCodec);
+			final DynamicArray<Annotation> boundedAnnotations = loader.filterAnnotationsWithCodec(declaredAnnotations);
 			evaluatedFields.addAll(extractEvaluations(declaredAnnotations, field));
 
 			try{
@@ -201,20 +177,6 @@ final class Template<T>{
 			if(checksum != null)
 				this.checksum = new BoundedField(field, checksum);
 		}
-	}
-
-	private DynamicArray<Annotation> extractAnnotations(final Annotation[] declaredAnnotations,
-			final Predicate<? super Class<? extends Annotation>> hasCodec){
-		final DynamicArray<Annotation> annotations = DynamicArray.create(Annotation.class, declaredAnnotations.length);
-		for(final Annotation annotation : declaredAnnotations){
-			final Class<? extends Annotation> annotationType = annotation.annotationType();
-			//NOTE: cannot throw an exception if the loader does not have the codec, due to the possible presence of other
-			//annotations that have nothing to do with this library
-			if(annotationType != Skip.class && annotationType != Evaluate.class && hasCodec.test(annotationType))
-				//stores only the preloaded codecs, ignore other annotations (though the use of `hasCodec`)
-				annotations.add(annotation);
-		}
-		return annotations;
 	}
 
 	private DynamicArray<EvaluatedField> extractEvaluations(final Annotation[] declaredAnnotations, final Field field){

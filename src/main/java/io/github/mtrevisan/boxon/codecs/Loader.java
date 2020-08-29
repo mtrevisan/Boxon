@@ -56,6 +56,8 @@ final class Loader{
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Loader.class);
 
+//	private static final Function<Class<?>, Template<?>> TEMPLATES = Memoizer.memoizeThreadAndRecursionSafe(Template::getTemplate);
+
 	private static final Function<byte[], int[]> PRE_PROCESSED_PATTERNS = Memoizer.memoizeThreadAndRecursionSafe(Loader::getPreProcessedPattern);
 	private static final PatternMatcher PATTERN_MATCHER = new BNDMPatternMatcher();
 
@@ -138,7 +140,7 @@ final class Loader{
 		codecs.put(codecType, codec);
 	}
 
-	boolean hasCodec(final Class<?> type){
+	private boolean hasCodec(final Class<?> type){
 		return codecs.containsKey(type);
 	}
 
@@ -146,6 +148,32 @@ final class Loader{
 		return codecs.get(type);
 	}
 
+
+	/**
+	 * Constructs a new {@link Template}.
+	 *
+	 * @param <T>	The type of the objects to be returned by the {@link Template}.
+	 * @param type	The type of the objects to be returned by the {@link Template}.
+	 * @return	A new {@link Template} for the given type.
+	 */
+	<T> Template<T> createTemplateFrom(final Class<T> type) throws AnnotationException{
+		//FIXME use memoization?
+		return new Template<>(type, this);
+//		return (Template<T>)TEMPLATES.apply(type);
+	}
+
+//	private static <T> Template<T> getTemplate(final Class<T> type) throws AnnotationException{
+//		//final Predicate<Class<? extends Annotation>> hasCodec
+//		return new Template<>(type, hasCodec);
+//	}
+
+	DynamicArray<Annotation> filterAnnotationsWithCodec(final Annotation[] declaredAnnotations){
+		final DynamicArray<Annotation> annotations = DynamicArray.create(Annotation.class, declaredAnnotations.length);
+		for(final Annotation annotation : declaredAnnotations)
+			if(hasCodec(annotation.annotationType()))
+				annotations.add(annotation);
+		return annotations;
+	}
 
 	/**
 	 * Loads all the protocol classes annotated with {@link MessageHeader}.
@@ -174,7 +202,7 @@ final class Loader{
 		final Collection<Class<?>> annotatedClasses = extractClasses(MessageHeader.class, basePackageClasses);
 		@SuppressWarnings("rawtypes")
 		final DynamicArray<Template> templates = extractTemplates(annotatedClasses);
-		addTemplatesInner(templates.data);
+		addTemplatesInner(templates);
 
 		LOGGER.trace("Templates loaded are {}", templates.limit);
 	}
@@ -185,7 +213,7 @@ final class Loader{
 		final DynamicArray<Template> templates = DynamicArray.create(Template.class, annotatedClasses.size());
 		for(final Class<?> type : annotatedClasses){
 			//for each extracted class, try to parse it, extracting all the information needed for the codec of a message
-			final Template<?> from = Template.createFrom(type, this::hasCodec);
+			final Template<?> from = createTemplateFrom(type);
 			if(from.canBeCoded())
 				//if the template is valid, add it to the list of templates...
 				templates.add(from);
@@ -196,11 +224,14 @@ final class Loader{
 		return templates;
 	}
 
-	private void addTemplatesInner(final Template<?>[] templates){
+	@SuppressWarnings("rawtypes")
+	private void addTemplatesInner(final DynamicArray<Template> templates){
 		//load each template into the available templates list
-		for(final Template<?> template : templates)
+		for(int i = 0; i < templates.limit; i ++){
+			final Template<?> template = templates.data[i];
 			if(template != null && template.canBeCoded())
 				addTemplateInner(template);
+		}
 	}
 
 	/**
