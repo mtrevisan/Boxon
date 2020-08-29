@@ -174,7 +174,7 @@ final class Loader{
 		final Collection<Class<?>> annotatedClasses = extractClasses(MessageHeader.class, basePackageClasses);
 		@SuppressWarnings("rawtypes")
 		final DynamicArray<Template> templates = extractTemplates(annotatedClasses);
-		addTemplatesInner(templates.data);
+		addTemplatesInner(templates);
 
 		LOGGER.trace("Templates loaded are {}", templates.limit);
 	}
@@ -196,11 +196,13 @@ final class Loader{
 		return templates;
 	}
 
-	private void addTemplatesInner(final Template<?>[] templates){
+	private void addTemplatesInner(final DynamicArray<Template> templates){
 		//load each template into the available templates list
-		for(final Template<?> template : templates)
+		for(int i = 0; i < templates.limit; i ++){
+			final Template<?> template = templates.data[i];
 			if(template != null && template.canBeCoded())
 				addTemplateInner(template);
+		}
 	}
 
 	/**
