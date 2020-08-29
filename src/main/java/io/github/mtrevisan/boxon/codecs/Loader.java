@@ -50,7 +50,6 @@ import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.TreeMap;
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 
 final class Loader{
@@ -141,7 +140,7 @@ final class Loader{
 		codecs.put(codecType, codec);
 	}
 
-	boolean hasCodec(final Class<?> type){
+	private boolean hasCodec(final Class<?> type){
 		return codecs.containsKey(type);
 	}
 
@@ -225,6 +224,7 @@ final class Loader{
 		return templates;
 	}
 
+	@SuppressWarnings("rawtypes")
 	private void addTemplatesInner(final DynamicArray<Template> templates){
 		//load each template into the available templates list
 		for(int i = 0; i < templates.limit; i ++){
