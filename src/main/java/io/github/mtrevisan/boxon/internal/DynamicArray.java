@@ -97,7 +97,8 @@ public final class DynamicArray<T>{
 
 	/**
 	 * Inserts all of the elements in the specified collection into this array at the specified position.
-	 * <p>Shifts the element currently at that position (if any) and any subsequent elements to the right (increases their indices).</p>
+	 * <p>Shifts the element currently at that position (if any) and any subsequent elements to the right
+	 * (increases their indices).</p>
 	 *
 	 * @param index	Index at which to insert the first element from the specified collection.
 	 * @param array	Collection containing elements to be added to this array.

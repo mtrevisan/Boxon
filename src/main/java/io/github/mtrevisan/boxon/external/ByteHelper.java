@@ -94,7 +94,8 @@ public final class ByteHelper{
 	 * Checks whether the given `mask` has the bit at `index` set.
 	 *
 	 * @param mask	The value (as an array) to check the bit into.
-	 * @param index	The index of the bit (rightmost is zero). The value can range between {@code 0} and <code>mask.length * {@link Byte#SIZE}</code>.
+	 * @param index	The index of the bit (rightmost is zero). The value can range between {@code 0} and
+	 * 	<code>mask.length * {@link Byte#SIZE}</code>.
 	 * @return	The state of the bit at a given index in the given byte.
 	 */
 	public static boolean hasBit(final byte[] mask, final int index){

@@ -55,8 +55,8 @@ public final class BitSet{
 	/**
 	 * Returns a new bit set containing all the bits in the given long array.
 	 *
-	 * @param array	A long array containing a little-endian representation of a sequence of bits to be used as the initial bits of the
-	 * 	new bit set.
+	 * @param array	A long array containing a little-endian representation of a sequence of bits to be used as
+	 * 	the initial bits of the new bit set.
 	 * @return	A {@code BitSet} containing all the bits in the long array.
 	 */
 	public static BitSet valueOf(final long[] array){
@@ -66,8 +66,8 @@ public final class BitSet{
 	/**
 	 * Returns a new bit set containing all the bits in the given byte array.
 	 *
-	 * @param array	A byte array containing a little-endian representation of a sequence of bits to be used as the initial bits of the
-	 * 	new bit set.
+	 * @param array	A byte array containing a little-endian representation of a sequence of bits to be used as
+	 * 	the initial bits of the new bit set.
 	 * @return	A {@code BitSet} containing all the bits in the byte array.
 	 */
 	public static BitSet valueOf(final byte[] array){

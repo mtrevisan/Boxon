@@ -100,8 +100,8 @@ public enum ParserDataType{
 	}
 
 	public static String describe(){
-		return Arrays.toString(new String[]{byte.class.getSimpleName(), short.class.getSimpleName(), int.class.getSimpleName(), long.class.getSimpleName(),
-			float.class.getSimpleName(), double.class.getSimpleName()});
+		return Arrays.toString(new String[]{byte.class.getSimpleName(), short.class.getSimpleName(), int.class.getSimpleName(),
+			long.class.getSimpleName(), float.class.getSimpleName(), double.class.getSimpleName()});
 	}
 
 }

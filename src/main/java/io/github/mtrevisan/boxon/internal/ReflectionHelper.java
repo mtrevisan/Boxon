@@ -242,7 +242,8 @@ public final class ReflectionHelper{
 		}
 	}
 
-	public static Method getAccessibleMethod(Class<?> cls, final String methodName, final Class<?> returnType, final Class<?>... parameterTypes){
+	public static Method getAccessibleMethod(Class<?> cls, final String methodName, final Class<?> returnType,
+			final Class<?>... parameterTypes){
 		Method method = null;
 		while(cls != null && cls != Object.class){
 			try{

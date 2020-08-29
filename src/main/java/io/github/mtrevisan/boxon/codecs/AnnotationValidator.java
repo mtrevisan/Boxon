@@ -180,7 +180,8 @@ enum AnnotationValidator{
 			throw new AnnotationException("All conditions must " + (hasPrefixSize? "": "not ") + "contain a reference to the prefix");
 	}
 
-	private static void validateDefaultAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> type, final Class<?> selectDefault) throws AnnotationException{
+	private static void validateDefaultAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> type,
+			final Class<?> selectDefault) throws AnnotationException{
 		if(selectDefault != void.class && alternatives.length == 0)
 			LOGGER.warn("Useless definition of default alternative ({}) due to no alternatives present on @BindArray or @BindObject",
 				selectDefault.getSimpleName());

@@ -175,8 +175,10 @@ final class TemplateParser{
 			if(givenChecksum == null)
 				throw new IllegalArgumentException("Something bad happened, cannot read message checksum");
 			if(calculatedChecksum != givenChecksum.shortValue())
-				throw new IllegalArgumentException("Calculated checksum (0x" + Integer.toHexString(calculatedChecksum).toUpperCase(Locale.ROOT)
-					+ ") does NOT match given checksum (0x" + Integer.toHexString(givenChecksum.shortValue()).toUpperCase(Locale.ROOT) + ")");
+				throw new IllegalArgumentException("Calculated checksum (0x"
+					+ Integer.toHexString(calculatedChecksum).toUpperCase(Locale.ROOT)
+					+ ") does NOT match given checksum (0x"
+					+ Integer.toHexString(givenChecksum.shortValue()).toUpperCase(Locale.ROOT) + ")");
 		}
 	}
 
