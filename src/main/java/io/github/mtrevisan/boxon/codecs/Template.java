@@ -46,8 +46,6 @@ import java.util.function.Predicate;
  */
 final class Template<T>{
 
-//	private static final Function<Class<?>, Template<?>> TEMPLATES = Memoizer.memoizeThreadAndRecursionSafe(Template::getTemplate);
-
 	/** Data associated to an annotated field. */
 	static final class BoundedField{
 
@@ -145,28 +143,7 @@ final class Template<T>{
 	private BoundedField checksum;
 
 
-	/**
-	 * Constructs a new {@link Template}.
-	 *
-	 * @param <T>	The type of the objects to be returned by the {@link Template}.
-	 * @param type	The type of the objects to be returned by the {@link Template}.
-	 * @param hasCodec	The function to verify the presence of the codec.
-	 * @return	A new {@link Template} for the given type.
-	 */
-	//FIXME remove hasCodec reference?
-	static <T> Template<T> createFrom(final Class<T> type, final Predicate<Class<? extends Annotation>> hasCodec)
-			throws AnnotationException{
-		//FIXME use memoization?
-		return new Template<>(type, hasCodec);
-//		return (Template<T>)TEMPLATES.apply(type);
-	}
-
-//	private static <T> Template<T> getTemplate(final Class<T> type) throws AnnotationException{
-//		//final Predicate<Class<? extends Annotation>> hasCodec
-//		return new Template<>(type, hasCodec);
-//	}
-
-	private Template(final Class<T> type, final Predicate<Class<? extends Annotation>> hasCodec) throws AnnotationException{
+	Template(final Class<T> type, final Predicate<Class<? extends Annotation>> hasCodec) throws AnnotationException{
 		this.type = type;
 
 		header = type.getAnnotation(MessageHeader.class);
