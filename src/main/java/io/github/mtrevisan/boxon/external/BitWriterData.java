@@ -24,7 +24,7 @@ class BitWriterData{
 	 * @param value	The value to write.
 	 * @param length	The amount of bits to use when writing {@code value}.
 	 */
-	public void putBits(final BitSet value, final int length){
+	public final void putBits(final BitSet value, final int length){
 		//if the value that we're writing is too large to be placed entirely in the cache, then we need to place as
 		//much as we can in the cache (the least significant bits), flush the cache to the backing ByteBuffer, and
 		//place the rest in the cache
@@ -52,14 +52,14 @@ class BitWriterData{
 	 * @param value	The value to write.
 	 * @param length	The amount of bits to use when writing {@code value} (MUST BE less than or equals to {@link Long#SIZE}).
 	 */
-	void putValue(final long value, final int length){
+	final void putValue(final long value, final int length){
 		final BitSet bits = BitSet.valueOf(new long[]{value});
 		putBits(bits, length);
 	}
 
 
 	/** Flush an minimum integral number of bytes to the output stream, padding any non-completed byte with zeros. */
-	public void flush(){
+	public final void flush(){
 		//put the cache into the buffer
 		if(remaining > 0)
 			os.write(cache);
@@ -79,12 +79,12 @@ class BitWriterData{
 	 * @throws ReadOnlyBufferException   If this buffer is backed by an array but is read-only.
 	 * @throws UnsupportedOperationException	If this buffer is not backed by an accessible array.
 	 */
-	public byte[] array(){
+	public final byte[] array(){
 		return os.toByteArray();
 	}
 
 	@Override
-	public String toString(){
+	public final String toString(){
 		return JavaHelper.toHexString(array());
 	}
 

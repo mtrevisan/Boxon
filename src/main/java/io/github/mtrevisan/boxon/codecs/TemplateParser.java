@@ -65,7 +65,6 @@ final class TemplateParser{
 		void addSelfToEvaluatorContext(){
 			Evaluator.addToContext(CodecHelper.CONTEXT_SELF, currentObject);
 		}
-
 	}
 
 
@@ -90,8 +89,7 @@ final class TemplateParser{
 
 			//process skip annotations:
 			final Skip[] skips = field.getSkips();
-			for(int k = 0; k < JavaHelper.lengthOrZero(skips); k ++)
-				readSkip(skips[i], reader, parserContext.rootObject);
+			readSkips(skips, reader, parserContext);
 
 			//check if field has to be processed...
 			if(shouldProcessField(field.getCondition(), parserContext.rootObject))
@@ -132,6 +130,11 @@ final class TemplateParser{
 			exc.setClassNameAndFieldName(template.getType().getName(), field.getFieldName());
 			throw exc;
 		}
+	}
+
+	private <T> void readSkips(final Skip[] skips, final BitReader reader, final ParserContext<T> parserContext){
+		for(int i = 0; i < JavaHelper.lengthOrZero(skips); i ++)
+			readSkip(skips[i], reader, parserContext.rootObject);
 	}
 
 	private void readSkip(final Skip skip, final BitReader reader, final Object rootObject){
@@ -212,8 +215,7 @@ final class TemplateParser{
 
 			//process skip annotations:
 			final Skip[] skips = field.getSkips();
-			for(int k = 0; k < JavaHelper.lengthOrZero(skips); k ++)
-				writeSkip(skips[k], writer, parserContext.rootObject);
+			writeSkips(skips, writer, parserContext);
 
 			//check if field has to be processed...
 			if(shouldProcessField(field.getCondition(), parserContext.rootObject))
@@ -280,6 +282,11 @@ final class TemplateParser{
 			ReflectionHelper.setFieldValue(codec, TemplateParser.class, this);
 		}
 		catch(final Exception ignored){}
+	}
+
+	private <T> void writeSkips(final Skip[] skips, final BitWriter writer, final ParserContext<T> parserContext){
+		for(int i = 0; i < JavaHelper.lengthOrZero(skips); i ++)
+			writeSkip(skips[i], writer, parserContext.rootObject);
 	}
 
 	private void writeSkip(final Skip skip, final BitWriter writer, final Object rootObject){

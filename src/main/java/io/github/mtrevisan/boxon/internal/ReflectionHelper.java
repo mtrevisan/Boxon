@@ -167,8 +167,7 @@ public final class ReflectionHelper{
 		}
 		catch(final IllegalArgumentException | IllegalAccessException e){
 			//should not happen
-			e.printStackTrace();
-			return null;
+			throw new RuntimeException(e);
 		}
 	}
 

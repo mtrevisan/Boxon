@@ -46,6 +46,8 @@ import java.util.function.Predicate;
  */
 final class Template<T>{
 
+//	private static final Function<Class<?>, Template<?>> TEMPLATES = Memoizer.memoizeThreadAndRecursionSafe(Template::getTemplate);
+
 	/** Data associated to an annotated field. */
 	static final class BoundedField{
 
@@ -153,8 +155,15 @@ final class Template<T>{
 	 */
 	static <T> Template<T> createFrom(final Class<T> type, final Predicate<Class<? extends Annotation>> hasCodec)
 			throws AnnotationException{
+		//FIXME use memoization
 		return new Template<>(type, hasCodec);
+//		return (Template<T>)TEMPLATES.apply(type);
 	}
+
+//	private static <T> Template<T> getTemplate(final Class<T> type) throws AnnotationException{
+//		//final Predicate<Class<? extends Annotation>> hasCodec
+//		return new Template<>(type, hasCodec);
+//	}
 
 	private Template(final Class<T> type, final Predicate<Class<? extends Annotation>> hasCodec) throws AnnotationException{
 		this.type = type;
@@ -201,7 +210,7 @@ final class Template<T>{
 			//NOTE: cannot throw an exception if the loader does not have the codec, due to the possible presence of other
 			//annotations that have nothing to do with this library
 			if(annotationType != Skip.class && annotationType != Evaluate.class && hasCodec.test(annotationType))
-				//stores only the preloaded codecs, ignore other annotations
+				//stores only the preloaded codecs, ignore other annotations (though the use of `hasCodec`)
 				annotations.add(annotation);
 		}
 		return annotations;

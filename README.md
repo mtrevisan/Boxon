@@ -997,6 +997,7 @@ Remember that the header that will be written is the first in `@MessageHeader`.
 - Enhanced the exception message thrown if the type of BitReader.get(Class, ByteOrder) is not recognized.
 - Renamed BindChecksum into Checksum.
 - Relocated all binding annotations inside annotations.bindings (Bind* and *Choices).
+- Corrected bug while reading skips in TemplateParser.decode.
 
 <a name="changelog-1.0.0"></a>
 ### version 1.0.0 - 20200825

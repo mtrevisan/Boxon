@@ -34,8 +34,8 @@ public class FieldException extends Exception{
 	private static final long serialVersionUID = -8863756843240934380L;
 
 
-	private String fieldName;
 	private String className;
+	private String fieldName;
 
 
 	protected FieldException(final String message){

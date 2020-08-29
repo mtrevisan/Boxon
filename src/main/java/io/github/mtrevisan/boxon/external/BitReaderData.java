@@ -10,7 +10,7 @@ import java.nio.ByteBuffer;
 
 abstract class BitReaderData{
 
-	static final class State{
+	private static final class State{
 		private int position;
 		private int remaining;
 		private byte cache;
@@ -34,7 +34,7 @@ abstract class BitReaderData{
 	private State fallbackPoint;
 
 
-	public void createFallbackPoint(){
+	public final void createFallbackPoint(){
 		if(fallbackPoint != null){
 			//update current mark:
 			fallbackPoint.position = buffer.position();
@@ -46,7 +46,7 @@ abstract class BitReaderData{
 			fallbackPoint = createState();
 	}
 
-	public void restoreFallbackPoint(){
+	public final void restoreFallbackPoint(){
 		if(fallbackPoint == null)
 			//no fallback point was marked before
 			return;
@@ -56,7 +56,7 @@ abstract class BitReaderData{
 		clearFallbackPoint();
 	}
 
-	public void clearFallbackPoint(){
+	public final void clearFallbackPoint(){
 		fallbackPoint = null;
 	}
 
@@ -81,7 +81,7 @@ abstract class BitReaderData{
 	 * @param length	The amount of bits to read.
 	 * @return	A {@link BitSet} value at the {@link BitReader}'s current position.
 	 */
-	public BitSet getBits(final int length){
+	public final BitSet getBits(final int length){
 		final BitSet bits = new BitSet();
 		int offset = 0;
 		while(offset < length){
@@ -155,7 +155,7 @@ abstract class BitReaderData{
 	 * @param terminator	The terminator.
 	 * @throws IOException	If an I/O error occurs.
 	 */
-	void getTextUntilTerminator(final OutputStreamWriter os, final byte terminator) throws IOException{
+	final void getTextUntilTerminator(final OutputStreamWriter os, final byte terminator) throws IOException{
 		for(Byte byteRead = peekByte(); byteRead != null && byteRead != terminator; byteRead = peekByte())
 			os.write(getByte());
 		os.flush();
@@ -167,7 +167,7 @@ abstract class BitReaderData{
 	 *
 	 * @return	The array that backs this reader.
 	 */
-	public byte[] array(){
+	public final byte[] array(){
 		return buffer.array();
 	}
 
@@ -176,7 +176,7 @@ abstract class BitReaderData{
 	 *
 	 * @return	The position of the backing buffer in {@code byte}s.
 	 */
-	public int position(){
+	public final int position(){
 		return buffer.position() - ((remaining + Byte.SIZE - 1) >>> 3);
 	}
 
@@ -185,7 +185,7 @@ abstract class BitReaderData{
 	 *
 	 * @param newPosition	The position of the backing buffer in {@code byte}s.
 	 */
-	public void position(final int newPosition){
+	public final void position(final int newPosition){
 		buffer.position(newPosition);
 
 		resetInnerVariables();
@@ -201,12 +201,12 @@ abstract class BitReaderData{
 	 *
 	 * @return	Whether there is at least one element remaining in the underlying {@link ByteBuffer}.
 	 */
-	public boolean hasRemaining(){
+	public final boolean hasRemaining(){
 		return buffer.hasRemaining();
 	}
 
 	@Override
-	public String toString(){
+	public final String toString(){
 		return JavaHelper.toHexString(array());
 	}
 
