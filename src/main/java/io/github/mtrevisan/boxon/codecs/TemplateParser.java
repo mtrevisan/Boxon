@@ -45,14 +45,11 @@ import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Locale;
-import java.util.function.Predicate;
 
 
 final class TemplateParser{
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TemplateParser.class);
-
-//	private static final Function<Class<?>, Template<?>> TEMPLATES = Memoizer.memoizeThreadAndRecursionSafe(Template::getTemplate);
 
 	private static final class ParserContext<T>{
 
@@ -73,24 +70,6 @@ final class TemplateParser{
 
 	final Loader loader = new Loader();
 
-
-	/**
-	 * Constructs a new {@link Template}.
-	 *
-	 * @param <T>	The type of the objects to be returned by the {@link Template}.
-	 * @param type	The type of the objects to be returned by the {@link Template}.
-	 * @return	A new {@link Template} for the given type.
-	 */
-	<T> Template<T> createTemplateFrom(final Class<T> type) throws AnnotationException{
-		//FIXME use memoization?
-		return new Template<>(type, loader::hasCodec);
-//		return (Template<T>)TEMPLATES.apply(type);
-	}
-
-//	private static <T> Template<T> getTemplate(final Class<T> type) throws AnnotationException{
-//		//final Predicate<Class<? extends Annotation>> hasCodec
-//		return new Template<>(type, hasCodec);
-//	}
 
 	<T> T decode(final Template<T> template, final BitReader reader, final Object parentObject) throws FieldException{
 		final int startPosition = reader.position();

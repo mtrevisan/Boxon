@@ -55,7 +55,7 @@ class TemplateParserTest{
 
 		TemplateParser templateParser = new TemplateParser();
 		templateParser.loader.loadDefaultCodecs();
-		Template<ACKMessageHex> template = templateParser.createTemplateFrom(ACKMessageHex.class);
+		Template<ACKMessageHex> template = templateParser.loader.createTemplateFrom(ACKMessageHex.class);
 
 		if(!template.canBeCoded())
 			Assertions.fail("Cannot decode message");
@@ -85,7 +85,7 @@ class TemplateParserTest{
 
 		TemplateParser templateParser = new TemplateParser();
 		templateParser.loader.loadDefaultCodecs();
-		Template<ACKMessageASCII> template = templateParser.createTemplateFrom(ACKMessageASCII.class);
+		Template<ACKMessageASCII> template = templateParser.loader.createTemplateFrom(ACKMessageASCII.class);
 
 		if(!template.canBeCoded())
 			Assertions.fail("Cannot decode message");
@@ -126,7 +126,7 @@ class TemplateParserTest{
 
 		TemplateParser templateParser = new TemplateParser();
 		templateParser.loader.loadDefaultCodecs();
-		Template<TestError1> template = templateParser.createTemplateFrom(TestError1.class);
+		Template<TestError1> template = templateParser.loader.createTemplateFrom(TestError1.class);
 
 		SpelEvaluationException exc = Assertions.assertThrows(SpelEvaluationException.class, () -> templateParser.decode(template, reader, null));
 		Assertions.assertEquals("EL1008E: Property or field 'e' cannot be found on object of type 'io.github.mtrevisan.boxon.codecs.TemplateParserTest$TestError1' - maybe not public or not valid?", exc.getMessage());
@@ -148,7 +148,7 @@ class TemplateParserTest{
 
 		TemplateParser templateParser = new TemplateParser();
 		templateParser.loader.loadDefaultCodecs();
-		Template<TestError2> template = templateParser.createTemplateFrom(TestError2.class);
+		Template<TestError2> template = templateParser.loader.createTemplateFrom(TestError2.class);
 
 		Exception exc = Assertions.assertThrows(FieldException.class, () -> templateParser.decode(template, reader, null));
 		Assertions.assertEquals("java.lang.IllegalArgumentException: Value `1` does not match constraint `as` in field io.github.mtrevisan.boxon.codecs.TemplateParserTest$TestError2.type", exc.getMessage());
@@ -183,7 +183,7 @@ class TemplateParserTest{
 
 		TemplateParser templateParser = new TemplateParser();
 		templateParser.loader.loadDefaultCodecs();
-		Template<TestError3> template = templateParser.createTemplateFrom(TestError3.class);
+		Template<TestError3> template = templateParser.loader.createTemplateFrom(TestError3.class);
 
 		Exception exc = Assertions.assertThrows(FieldException.class, () -> templateParser.decode(template, reader, null));
 		Assertions.assertEquals("java.lang.IllegalArgumentException: Can not set byte field to String in field io.github.mtrevisan.boxon.codecs.TemplateParserTest$TestError3.type", exc.getMessage());
@@ -218,7 +218,7 @@ class TemplateParserTest{
 
 		TemplateParser templateParser = new TemplateParser();
 		templateParser.loader.loadDefaultCodecs();
-		Template<TestError4> template = templateParser.createTemplateFrom(TestError4.class);
+		Template<TestError4> template = templateParser.loader.createTemplateFrom(TestError4.class);
 
 		Exception exc = Assertions.assertThrows(FieldException.class, () -> templateParser.decode(template, reader, null));
 		Assertions.assertEquals("java.lang.IllegalArgumentException: Can not input Byte to decode method of converter WrongInputConverter in field io.github.mtrevisan.boxon.codecs.TemplateParserTest$TestError4.type", exc.getMessage());
@@ -240,7 +240,7 @@ class TemplateParserTest{
 
 		TemplateParser templateParser = new TemplateParser();
 		templateParser.loader.loadDefaultCodecs();
-		Template<TestError5> template = templateParser.createTemplateFrom(TestError5.class);
+		Template<TestError5> template = templateParser.loader.createTemplateFrom(TestError5.class);
 
 		Exception exc = Assertions.assertThrows(FieldException.class, () -> templateParser.decode(template, reader, null));
 		Assertions.assertEquals("java.lang.IllegalArgumentException: Value `[0]` does not match constraint `[1]` in field io.github.mtrevisan.boxon.codecs.TemplateParserTest$TestError5.type", exc.getMessage());
@@ -275,7 +275,7 @@ class TemplateParserTest{
 
 		TemplateParser templateParser = new TemplateParser();
 		templateParser.loader.loadDefaultCodecs();
-		Template<TestComposition> template = templateParser.createTemplateFrom(TestComposition.class);
+		Template<TestComposition> template = templateParser.loader.createTemplateFrom(TestComposition.class);
 
 		TestComposition parsed = templateParser.decode(template, reader, null);
 		Assertions.assertNotNull(parsed);
