@@ -153,9 +153,10 @@ final class Template<T>{
 	 * @param hasCodec	The function to verify the presence of the codec.
 	 * @return	A new {@link Template} for the given type.
 	 */
+	//FIXME remove hasCodec reference?
 	static <T> Template<T> createFrom(final Class<T> type, final Predicate<Class<? extends Annotation>> hasCodec)
 			throws AnnotationException{
-		//FIXME use memoization
+		//FIXME use memoization?
 		return new Template<>(type, hasCodec);
 //		return (Template<T>)TEMPLATES.apply(type);
 	}
