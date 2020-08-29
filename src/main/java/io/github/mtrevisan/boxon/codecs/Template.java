@@ -142,7 +142,6 @@ final class Template<T>{
 	private BoundedField checksum;
 
 
-	//FIXME remove loader reference
 	Template(final Class<T> type, final Loader loader) throws AnnotationException{
 		this.type = type;
 
