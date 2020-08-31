@@ -97,6 +97,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 				array[i] = templateParser.decode(subTemplate, reader, rootObject);
 			}
 			catch(final Exception e){
+				LOGGER.trace("Error while processing alternative", e);
 				LOGGER.warn(e.getMessage());
 			}
 		}

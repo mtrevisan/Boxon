@@ -68,6 +68,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 			return value;
 		}
 		catch(final Exception e){
+			LOGGER.trace("Error while processing alternative", e);
 			LOGGER.warn(e.getMessage());
 
 			return null;

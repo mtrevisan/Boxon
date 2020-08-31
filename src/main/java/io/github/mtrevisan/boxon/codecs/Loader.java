@@ -149,6 +149,7 @@ final class Loader{
 	}
 
 
+	//FIXME use memoization?
 	/**
 	 * Constructs a new {@link Template}.
 	 *
@@ -157,14 +158,12 @@ final class Loader{
 	 * @return	A new {@link Template} for the given type.
 	 */
 	<T> Template<T> createTemplate(final Class<T> type) throws AnnotationException{
-		//FIXME use memoization?
 		return new Template<>(type, this);
 //		return (Template<T>)TEMPLATES.apply(type);
 	}
 
-//	private static <T> Template<T> getTemplate(final Class<T> type) throws AnnotationException{
-//		//final Predicate<Class<? extends Annotation>> hasCodec
-//		return new Template<>(type, hasCodec);
+//	private static <T> Template<T> getTemplate(final Class<T> type){
+//		return new Template<>(type, this);
 //	}
 
 	DynamicArray<Annotation> filterAnnotationsWithCodec(final Annotation[] declaredAnnotations){
