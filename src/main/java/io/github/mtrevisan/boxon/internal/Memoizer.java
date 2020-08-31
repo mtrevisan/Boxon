@@ -26,67 +26,19 @@ package io.github.mtrevisan.boxon.internal;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 
 public final class Memoizer{
 
-	private static final Object DEFAULT_OBJECT = new Object();
+	public interface FunctionInterface<IN, OUT>{
+		OUT apply(final IN in) throws Exception;
+	}
 
 
 	private Memoizer(){}
-
-	/**
-	 * @param <OUT>	Type of input to the function.
-	 * @param supplier	The function to be memoized.
-	 * @return	The new memoized function.
-	 *
-	 * @see <a href="https://opencredo.com/lambda-memoization-in-java-8/">Lambda memoization in Java 8</a>
-	 */
-	public static <OUT> Supplier<OUT> memoize(final Supplier<? extends OUT> supplier){
-		final Map<Object, OUT> cache = new ConcurrentHashMap<>(0);
-		return () -> cache.computeIfAbsent(DEFAULT_OBJECT, t -> supplier.get());
-	}
-
-	/**
-	 * @param <IN>	Type of input to the function. The class MUST implements {@code equals(Object)} and {@code hashCode()}.
-	 * @param <OUT>	Type of output from the function.
-	 * @param function	The function to be memoized.
-	 * @return	The new memoized function.
-	 *
-	 * @see <a href="https://opencredo.com/lambda-memoization-in-java-8/">Lambda memoization in Java 8</a>
-	 */
-	public static <IN, OUT> Function<IN, OUT> memoize(final Function<? super IN, ? extends OUT> function){
-		final Map<IN, OUT> cache = new ConcurrentHashMap<>(0);
-		return input -> cache.computeIfAbsent(input, function);
-	}
-
-	/**
-	 * Thread-safe and recursion-safe implementation using a re-entrant lock.
-	 *
-	 * @param <OUT>	Type of input to the function.
-	 * @param supplier	The function to be memoized.
-	 * @return	The new memoized function.
-	 *
-	 * @see <a href="https://opencredo.com/lambda-memoization-in-java-8/">Lambda memoization in Java 8</a>
-	 */
-	public static <OUT> Supplier<OUT> memoizeThreadAndRecursionSafe(final Supplier<? extends OUT> supplier){
-		final Map<Object, OUT> cache = new HashMap<>(0);
-		final Lock lock = new ReentrantLock();
-		return () -> {
-			lock.lock();
-			try{
-				return cache.computeIfAbsent(DEFAULT_OBJECT, t -> supplier.get());
-			}
-			finally{
-				lock.unlock();
-			}
-		};
-	}
 
 	/**
 	 * Thread-safe and recursion-safe implementation using a re-entrant lock.
@@ -105,6 +57,35 @@ public final class Memoizer{
 			lock.lock();
 			try{
 				return cache.computeIfAbsent(input, function);
+			}
+			finally{
+				lock.unlock();
+			}
+		};
+	}
+
+	/**
+	 * Thread-safe and recursion-safe implementation using a re-entrant lock.
+	 *
+	 * @param <IN>	Type of input to the function. The class MUST implements {@code equals(Object)} and {@code hashCode()}.
+	 * @param <OUT>	Type of output from the function.
+	 * @param function	The function to be memoized.
+	 * @return	The new memoized function.
+	 *
+	 * @see <a href="https://opencredo.com/lambda-memoization-in-java-8/">Lambda memoization in Java 8</a>
+	 */
+	public static <IN, OUT> FunctionInterface<IN, OUT> memoizeThreadAndRecursionSafeWithException(final FunctionInterface<? super IN, ? extends OUT> function){
+		final Map<IN, OUT> cache = new HashMap<>(0);
+		final Lock lock = new ReentrantLock();
+		return input -> {
+			lock.lock();
+			try{
+				OUT value = cache.get(input);
+				if(value == null){
+					value = function.apply(input);
+					cache.put(input, value);
+				}
+				return value;
 			}
 			finally{
 				lock.unlock();

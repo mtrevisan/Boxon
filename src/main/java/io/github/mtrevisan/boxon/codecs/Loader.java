@@ -49,8 +49,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.TreeMap;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
 
 
@@ -58,8 +56,7 @@ final class Loader{
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Loader.class);
 
-	private final Map<Class<?>, Template<?>> templateStore = new HashMap<>(0);
-	private final Lock templateStoreLock = new ReentrantLock();
+	private final Memoizer.FunctionInterface<Class<?>, Template<?>> templateStore = Memoizer.memoizeThreadAndRecursionSafeWithException(type -> new Template<>(type, this));
 
 	private static final PatternMatcher PATTERN_MATCHER = new BNDMPatternMatcher();
 	private static final Function<byte[], int[]> PRE_PROCESSED_PATTERNS = Memoizer.memoizeThreadAndRecursionSafe(PATTERN_MATCHER::preProcessPattern);
@@ -160,18 +157,14 @@ final class Loader{
 	 * @return	The {@link Template} for the given type.
 	 */
 	<T> Template<T> createTemplate(final Class<T> type) throws AnnotationException{
-		//apply memoization on `type`
-		templateStoreLock.lock();
 		try{
-			Template<T> value = (Template<T>)templateStore.get(type);
-			if(value == null){
-				value = new Template<>(type, this);
-				templateStore.put(type, value);
-			}
-			return value;
+			return (Template<T>)templateStore.apply(type);
 		}
-		finally{
-			templateStoreLock.unlock();
+		catch(final AnnotationException e){
+			throw e;
+		}
+		catch(final Exception e){
+			throw new AnnotationException("Error while creating template for type {}", type.getSimpleName(), e);
 		}
 	}
 
