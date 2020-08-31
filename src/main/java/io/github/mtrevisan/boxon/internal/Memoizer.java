@@ -33,8 +33,9 @@ import java.util.function.Function;
 
 public final class Memoizer{
 
-	public interface FunctionInterface<IN, OUT>{
-		OUT apply(final IN in) throws Exception;
+	@FunctionalInterface
+	public interface ThrowingFunction<IN, OUT, E extends Exception>{
+		OUT apply(final IN in) throws E;
 	}
 
 
@@ -50,7 +51,7 @@ public final class Memoizer{
 	 *
 	 * @see <a href="https://opencredo.com/lambda-memoization-in-java-8/">Lambda memoization in Java 8</a>
 	 */
-	public static <IN, OUT> Function<IN, OUT> memoizeThreadAndRecursionSafe(final Function<? super IN, ? extends OUT> function){
+	public static <IN, OUT> Function<IN, OUT> memoize(final Function<? super IN, ? extends OUT> function){
 		final Map<IN, OUT> cache = new HashMap<>(0);
 		final Lock lock = new ReentrantLock();
 		return input -> {
@@ -74,7 +75,7 @@ public final class Memoizer{
 	 *
 	 * @see <a href="https://opencredo.com/lambda-memoization-in-java-8/">Lambda memoization in Java 8</a>
 	 */
-	public static <IN, OUT> FunctionInterface<IN, OUT> memoizeThreadAndRecursionSafeWithException(final FunctionInterface<? super IN, ? extends OUT> function){
+	public static <IN, OUT, E extends Exception> ThrowingFunction<IN, OUT, E> throwingMemoize(final ThrowingFunction<? super IN, ? extends OUT, ? extends E> function){
 		final Map<IN, OUT> cache = new HashMap<>(0);
 		final Lock lock = new ReentrantLock();
 		return input -> {

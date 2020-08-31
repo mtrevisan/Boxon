@@ -56,10 +56,10 @@ final class Loader{
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Loader.class);
 
-	private final Memoizer.FunctionInterface<Class<?>, Template<?>> templateStore = Memoizer.memoizeThreadAndRecursionSafeWithException(type -> new Template<>(type, this));
+	private final Memoizer.ThrowingFunction<Class<?>, Template<?>, AnnotationException> templateStore = Memoizer.throwingMemoize(type -> new Template<>(type, this));
 
 	private static final PatternMatcher PATTERN_MATCHER = new BNDMPatternMatcher();
-	private static final Function<byte[], int[]> PRE_PROCESSED_PATTERNS = Memoizer.memoizeThreadAndRecursionSafe(PATTERN_MATCHER::preProcessPattern);
+	private static final Function<byte[], int[]> PRE_PROCESSED_PATTERNS = Memoizer.memoize(PATTERN_MATCHER::preProcessPattern);
 
 	private final Map<String, Template<?>> templates = new TreeMap<>(Comparator.comparingInt(String::length).reversed().thenComparing(String::compareTo));
 	private final Map<Class<?>, CodecInterface<?>> codecs = new HashMap<>(0);
@@ -157,15 +157,7 @@ final class Loader{
 	 * @return	The {@link Template} for the given type.
 	 */
 	<T> Template<T> createTemplate(final Class<T> type) throws AnnotationException{
-		try{
-			return (Template<T>)templateStore.apply(type);
-		}
-		catch(final AnnotationException e){
-			throw e;
-		}
-		catch(final Exception e){
-			throw new AnnotationException("Error while creating template for type {}", type.getSimpleName(), e);
-		}
+		return (Template<T>)templateStore.apply(type);
 	}
 
 	DynamicArray<Annotation> filterAnnotationsWithCodec(final Annotation[] declaredAnnotations){
