@@ -575,7 +575,7 @@ This annotation is bounded to a variable.
 @BindString(size = "4")
 public String text1;
 
-@Skip(terminator = "x", consumeTerminator = false)
+@Skip(terminator = 'x', consumeTerminator = false)
 @BindString(size = "10")
 public String text2;
 
