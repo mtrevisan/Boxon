@@ -973,7 +973,6 @@ Remember that the header that will be written is the first in `@MessageHeader`.
 - Added BindArray.selectDefault and BindObject.selectDefault to cope with default selector that has no prefix.
 - Added some feasibility checks on annotation data.
 - Added public constructor to Parser to allow for extensions.
-- Added method Parser.withTemplates(Template<?>[]).
 - Changed the signature of Checksummer.calculateChecksum returning short instead of long.
 - Changed method Validator.validate into Validator.isValid.
 - Changed method ParseResponse.getMessageForError into ParseResponse.getErrorMessageAt to align it to other method name's conventions.
@@ -981,8 +980,7 @@ Remember that the header that will be written is the first in `@MessageHeader`.
 - Minor refactorings.
 - Added `originator` variable (and its getter) to ComposeResponse to hold the given objects used to create the message.
 - Added/modified javadocs to better explain some classes.
-- Removed ComposeResponse.getErrors as it is useless.
-- Removed BindInteger.unsigned and BitReader.getInteger(int, ByteOrder, boolean) as they are useless.
+- Removed ComposeResponse.getErrors, BindInteger.unsigned and BitReader.getInteger(int, ByteOrder, boolean) as they are useless.
 - Removed BitWriter.putText(String, byte, boolean) because of the [Boolean Trap](https://ariya.io/2011/08/hall-of-api-shame-boolean-trap).
 - Removed useless `match()` parameter from bindings.
 - Enhanced the exception message thrown if the type of BitReader.get(Class, ByteOrder) is not recognized.
