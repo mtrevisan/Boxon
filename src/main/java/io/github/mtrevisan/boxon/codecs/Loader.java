@@ -153,9 +153,9 @@ final class Loader{
 	/**
 	 * Constructs a new {@link Template}.
 	 *
-	 * @param <T>	The type of the objects to be returned by the {@link Template}.
-	 * @param type	The type of the objects to be returned by the {@link Template}.
-	 * @return	A new {@link Template} for the given type.
+	 * @param <T>	The type of the object to be returned as a {@link Template}.
+	 * @param type	The class of the object to be returned as a {@link Template}.
+	 * @return	The {@link Template} for the given type.
 	 */
 	<T> Template<T> createTemplate(final Class<T> type) throws AnnotationException{
 		return new Template<>(type, this);
