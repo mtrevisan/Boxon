@@ -156,6 +156,7 @@ final class Loader{
 	 * @param type	The class of the object to be returned as a {@link Template}.
 	 * @return	The {@link Template} for the given type.
 	 */
+	@SuppressWarnings("unchecked")
 	<T> Template<T> createTemplate(final Class<T> type) throws AnnotationException{
 		return (Template<T>)templateStore.apply(type);
 	}

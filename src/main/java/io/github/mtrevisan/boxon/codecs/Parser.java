@@ -169,17 +169,6 @@ public final class Parser{
 	}
 
 	/**
-	 * Constructs a new {@link Template}.
-	 *
-	 * @param <T>	The type of the object to be returned as a {@link Template}.
-	 * @param type	The class of the object to be returned as a {@link Template}.
-	 * @return	The {@link Template} for the given type.
-	 */
-	public <T> Template<T> createTemplate(final Class<T> type) throws AnnotationException{
-		return templateParser.loader.createTemplate(type);
-	}
-
-	/**
 	 * Loads all the given templates instances annotated with {@link MessageHeader}.
 	 *
 	 * @param templates	Template instances.
