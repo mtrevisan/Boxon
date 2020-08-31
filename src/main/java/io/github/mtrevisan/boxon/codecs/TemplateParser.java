@@ -89,13 +89,12 @@ final class TemplateParser{
 			.get();
 
 		final ParserContext<T> parserContext = new ParserContext<>(parentObject, currentObject);
+		//add current object in the context
+		parserContext.addSelfToEvaluatorContext();
 
 		//decode message fields:
 		final DynamicArray<Template.BoundedField> fields = template.getBoundedFields();
 		for(int i = 0; i < fields.limit; i ++){
-			//add current object in the context
-			parserContext.addSelfToEvaluatorContext();
-
 			final Template.BoundedField field = fields.data[i];
 
 			//process skip annotations:
@@ -215,13 +214,12 @@ final class TemplateParser{
 	<T> void encode(final Template<?> template, final BitWriter writer, final Object parentObject, final T currentObject)
 			throws FieldException{
 		final ParserContext<T> parserContext = new ParserContext<>(parentObject, currentObject);
+		//add current object in the context
+		parserContext.addSelfToEvaluatorContext();
 
 		//encode message fields:
 		final DynamicArray<Template.BoundedField> fields = template.getBoundedFields();
 		for(int i = 0; i < fields.limit; i ++){
-			//add current object in the context
-			parserContext.addSelfToEvaluatorContext();
-
 			final Template.BoundedField field = fields.data[i];
 
 			//process skip annotations:

@@ -309,8 +309,10 @@ class TemplateParserTest{
 		static class TestSubComposition2 extends TestSubCompositionBase{
 			@BindString(condition = "type == 2", size = "1")
 			String field1;
-			@BindString(condition = "#self.subsubtype == 2", size = "1")
-			String field2;
+			@BindByte(condition = "#self.subsubtype == 2")
+			byte field2;
+			@BindString(condition = "#self.field2 == 0x62", size = "1")
+			String field3;
 		}
 		@BindString(size = "3")
 		String header;
@@ -351,7 +353,7 @@ class TemplateParserTest{
 
 	@Test
 	void parseCompositeMessage22() throws FieldException{
-		byte[] payload = JavaHelper.toByteArray("74633202026162");
+		byte[] payload = JavaHelper.toByteArray("7463320202616263");
 		BitReader reader = BitReader.wrap(payload);
 
 		TemplateParser templateParser = new TemplateParser();
@@ -364,7 +366,8 @@ class TemplateParserTest{
 		Assertions.assertEquals(2, parsed.type);
 		Assertions.assertEquals(2, parsed.sub.subsubtype);
 		Assertions.assertEquals("a", ((TestComposition2.TestSubComposition2)parsed.sub).field1);
-		Assertions.assertEquals("b", ((TestComposition2.TestSubComposition2)parsed.sub).field2);
+		Assertions.assertEquals(0x62, ((TestComposition2.TestSubComposition2)parsed.sub).field2);
+		Assertions.assertEquals("c", ((TestComposition2.TestSubComposition2)parsed.sub).field3);
 
 		BitWriter writer = new BitWriter();
 		templateParser.encode(template, writer, null, parsed);
