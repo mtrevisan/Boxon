@@ -43,12 +43,11 @@ class ParserTest{
 	void parseAndComposeSingeMessageHex() throws NoSuchMethodException, AnnotationException, TemplateException{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
-		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 		Parser parser = Parser.create()
-			.withContext(context)
+			.addToContext("deviceTypes", deviceTypes)
 			.withDefaultCodecs()
 			.withDefaultTemplates()
-			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"));
+			.withContextFunction(ParserTest.class, "headerSize");
 
 		//parse:
 		byte[] payload = JavaHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
