@@ -98,7 +98,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 			}
 			catch(final Exception e){
 				LOGGER.trace("Error while processing alternative", e);
-				LOGGER.warn(e.getMessage());
+				LOGGER.warn(e.getMessage() != null? e.getMessage(): e.getClass().getSimpleName());
 			}
 		}
 	}
