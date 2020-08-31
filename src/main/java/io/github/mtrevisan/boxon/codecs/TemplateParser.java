@@ -71,6 +71,17 @@ final class TemplateParser{
 	final Loader loader = new Loader();
 
 
+	/**
+	 * Constructs a new {@link Template}.
+	 *
+	 * @param <T>	The type of the object to be returned as a {@link Template}.
+	 * @param type	The class of the object to be returned as a {@link Template}.
+	 * @return	The {@link Template} for the given type.
+	 */
+	<T> Template<T> createTemplate(final Class<T> type) throws AnnotationException{
+		return loader.createTemplate(type);
+	}
+
 	<T> T decode(final Template<T> template, final BitReader reader, final Object parentObject) throws FieldException{
 		final int startPosition = reader.position();
 
