@@ -157,7 +157,7 @@ public final class DynamicArray<T>{
 	}
 
 	/** Removes all of the elements from this array. */
-	public void reset(){
+	private void reset(){
 		limit = 0;
 	}
 
