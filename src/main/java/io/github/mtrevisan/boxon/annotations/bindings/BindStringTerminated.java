@@ -74,7 +74,6 @@ public @interface BindStringTerminated{
 
 	/**
 	 * The validator to be applied <i>after</i> applying the converter, in the decoding phase (<i>before</i> if in the encoding one), if any.
-	 * <p>Usually the fully qualified name of an implementation class of a {@link Validator}.</p>
 	 *
 	 * @return	The class of a {@link Validator} (defaults to {@link NullValidator null validator}).
 	 */
@@ -82,7 +81,6 @@ public @interface BindStringTerminated{
 
 	/**
 	 * The converter to be applied just <i>before</i> writing the parameter value (<i>after</i> if reading), if any.
-	 * <p>Usually the fully qualified name of an implementation class of a {@link Converter}.</p>
 	 * <p>Can be used as a fallback if no converters can be selected from {@link #selectConverterFrom()}.</p>
 	 *
 	 * @return	The class of a {@link Converter} (defaults to {@link NullConverter null converter}).

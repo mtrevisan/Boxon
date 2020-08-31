@@ -25,7 +25,6 @@
 package io.github.mtrevisan.boxon.annotations;
 
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
-import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.external.ByteOrder;
 
 import java.lang.annotation.Documented;
@@ -72,8 +71,7 @@ public @interface Checksum{
 	int skipEnd() default 0;
 
 	/**
-	 * The validator to be applied before applying the converter, if any. Usually the fully qualified
-	 * name of an implementation class of a {@link Validator}.
+	 * The checksum algorithm to be applied to the message to check its feasibility.
 	 *
 	 * @return	The class of a {@link Checksummer}.
 	 */
