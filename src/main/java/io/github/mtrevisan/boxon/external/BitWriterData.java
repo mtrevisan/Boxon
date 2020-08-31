@@ -51,7 +51,7 @@ class BitWriterData{
 	 * @param value	The value to write.
 	 * @param length	The amount of bits to use when writing {@code value} (MUST BE less than or equals to {@link Long#SIZE}).
 	 */
-	final void putValue(final long value, final int length){
+	public final void putValue(final long value, final int length){
 		final BitSet bits = BitSet.valueOf(new long[]{value});
 		putBits(bits, length);
 	}
