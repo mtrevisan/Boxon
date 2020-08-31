@@ -3,7 +3,6 @@ package io.github.mtrevisan.boxon.external;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 
 import java.io.ByteArrayOutputStream;
-import java.nio.ReadOnlyBufferException;
 
 
 class BitWriterData{
@@ -76,7 +75,7 @@ class BitWriterData{
 	 * Returns a copy of the byte array that backs the buffer.
 	 *
 	 * @return	The copy of the array that backs this buffer.
-	 * @throws ReadOnlyBufferException   If this buffer is backed by an array but is read-only.
+	 * @throws ReadOnlyBufferException	If this buffer is backed by an array but is read-only.
 	 * @throws UnsupportedOperationException	If this buffer is not backed by an accessible array.
 	 */
 	public final byte[] array(){

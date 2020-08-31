@@ -53,7 +53,7 @@ public final class ByteHelper{
 	/**
 	 * Convert the value to signed primitive.
 	 *
-	 * @param array   Field value.
+	 * @param array	Field value.
 	 * @return	The 2-complement expressed as int.
 	 */
 	static BigInteger extendSign(byte[] array){
