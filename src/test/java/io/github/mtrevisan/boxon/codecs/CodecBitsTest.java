@@ -77,11 +77,6 @@ class CodecBitsTest{
 			}
 
 			@Override
-			public String match(){
-				return null;
-			}
-
-			@Override
 			public Class<? extends Validator<?>> validator(){
 				return NullValidator.class;
 			}
@@ -148,11 +143,6 @@ class CodecBitsTest{
 			@Override
 			public ByteOrder byteOrder(){
 				return ByteOrder.BIG_ENDIAN;
-			}
-
-			@Override
-			public String match(){
-				return null;
 			}
 
 			@Override

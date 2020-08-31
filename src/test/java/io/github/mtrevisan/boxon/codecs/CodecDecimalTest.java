@@ -76,11 +76,6 @@ class CodecDecimalTest{
 			}
 
 			@Override
-			public String match(){
-				return null;
-			}
-
-			@Override
 			public Class<? extends Validator<?>> validator(){
 				return NullValidator.class;
 			}
@@ -141,11 +136,6 @@ class CodecDecimalTest{
 			@Override
 			public ByteOrder byteOrder(){
 				return ByteOrder.LITTLE_ENDIAN;
-			}
-
-			@Override
-			public String match(){
-				return null;
 			}
 
 			@Override
@@ -212,11 +202,6 @@ class CodecDecimalTest{
 			}
 
 			@Override
-			public String match(){
-				return null;
-			}
-
-			@Override
 			public Class<? extends Validator<?>> validator(){
 				return NullValidator.class;
 			}
@@ -277,11 +262,6 @@ class CodecDecimalTest{
 			@Override
 			public ByteOrder byteOrder(){
 				return ByteOrder.BIG_ENDIAN;
-			}
-
-			@Override
-			public String match(){
-				return null;
 			}
 
 			@Override

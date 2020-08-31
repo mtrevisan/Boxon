@@ -37,7 +37,6 @@ import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.ReflectionHelper;
 
 import java.nio.charset.Charset;
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -129,17 +128,6 @@ final class CodecHelper{
 
 	static boolean containsPrefixReference(final CharSequence condition){
 		return CONTEXT_PREFIXED_CHOICE_PREFIX.reset(condition).find();
-	}
-
-	static void validateData(final String match, final Class<? extends Validator<?>> validatorType, final Object currentObject){
-		matchData(match, currentObject);
-		validateData(validatorType, currentObject);
-	}
-
-	private static void matchData(final String match, final Object currentObject){
-		final Pattern pattern = extractPattern(match);
-		if(pattern != null && !pattern.matcher(Objects.toString(currentObject)).matches())
-			throw new IllegalArgumentException("Value `" + currentObject + "` does not match constraint `" + match + "`");
 	}
 
 	/** Extract pattern from a SpEL expression, or a string, or a regex pattern. */

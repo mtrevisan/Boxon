@@ -73,11 +73,6 @@ class CodecIntegerTest{
 			}
 
 			@Override
-			public String match(){
-				return null;
-			}
-
-			@Override
 			public Class<? extends Validator<?>> validator(){
 				return NullValidator.class;
 			}
@@ -141,11 +136,6 @@ class CodecIntegerTest{
 			}
 
 			@Override
-			public String match(){
-				return null;
-			}
-
-			@Override
 			public Class<? extends Validator<?>> validator(){
 				return NullValidator.class;
 			}
@@ -206,11 +196,6 @@ class CodecIntegerTest{
 			@Override
 			public ByteOrder byteOrder(){
 				return ByteOrder.LITTLE_ENDIAN;
-			}
-
-			@Override
-			public String match(){
-				return null;
 			}
 
 			@Override
@@ -278,11 +263,6 @@ class CodecIntegerTest{
 			}
 
 			@Override
-			public String match(){
-				return null;
-			}
-
-			@Override
 			public Class<? extends Validator<?>> validator(){
 				return NullValidator.class;
 			}
@@ -346,11 +326,6 @@ class CodecIntegerTest{
 			}
 
 			@Override
-			public String match(){
-				return null;
-			}
-
-			@Override
 			public Class<? extends Validator<?>> validator(){
 				return NullValidator.class;
 			}
@@ -411,11 +386,6 @@ class CodecIntegerTest{
 			@Override
 			public ByteOrder byteOrder(){
 				return ByteOrder.BIG_ENDIAN;
-			}
-
-			@Override
-			public String match(){
-				return null;
 			}
 
 			@Override
@@ -483,11 +453,6 @@ class CodecIntegerTest{
 			}
 
 			@Override
-			public String match(){
-				return null;
-			}
-
-			@Override
 			public Class<? extends Validator<?>> validator(){
 				return NullValidator.class;
 			}
@@ -549,11 +514,6 @@ class CodecIntegerTest{
 			@Override
 			public ByteOrder byteOrder(){
 				return ByteOrder.LITTLE_ENDIAN;
-			}
-
-			@Override
-			public String match(){
-				return null;
 			}
 
 			@Override
@@ -621,11 +581,6 @@ class CodecIntegerTest{
 			}
 
 			@Override
-			public String match(){
-				return null;
-			}
-
-			@Override
 			public Class<? extends Validator<?>> validator(){
 				return NullValidator.class;
 			}
@@ -686,11 +641,6 @@ class CodecIntegerTest{
 			@Override
 			public ByteOrder byteOrder(){
 				return ByteOrder.BIG_ENDIAN;
-			}
-
-			@Override
-			public String match(){
-				return null;
 			}
 
 			@Override

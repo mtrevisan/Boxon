@@ -69,11 +69,6 @@ class CodecStringTest{
 			}
 
 			@Override
-			public String match(){
-				return ".*";
-			}
-
-			@Override
 			public Class<? extends Validator<?>> validator(){
 				return NullValidator.class;
 			}
@@ -137,11 +132,6 @@ class CodecStringTest{
 			}
 
 			@Override
-			public String match(){
-				return encodedValue;
-			}
-
-			@Override
 			public Class<? extends Validator<?>> validator(){
 				return NullValidator.class;
 			}
@@ -180,57 +170,6 @@ class CodecStringTest{
 	}
 
 	@Test
-	void stringUS_ASCIINotMatch(){
-		CodecInterface<BindString> codec = new CodecString();
-		String encodedValue = "123ABC";
-		Annotation annotation = new BindString(){
-			@Override
-			public Class<? extends Annotation> annotationType(){
-				return BindString.class;
-			}
-
-			@Override
-			public String condition(){
-				return null;
-			}
-
-			@Override
-			public String charset(){
-				return StandardCharsets.US_ASCII.name();
-			}
-
-			@Override
-			public String size(){
-				return Integer.toString(encodedValue.getBytes(StandardCharsets.US_ASCII).length);
-			}
-
-			@Override
-			public String match(){
-				return encodedValue + "-not-match";
-			}
-
-			@Override
-			public Class<? extends Validator<?>> validator(){
-				return NullValidator.class;
-			}
-
-			@Override
-			public Class<? extends Converter<?, ?>> converter(){
-				return NullConverter.class;
-			}
-
-			@Override
-			public ConverterChoices selectConverterFrom(){
-				return null;
-			}
-		};
-
-		BitWriter writer = new BitWriter();
-		Assertions.assertThrows(IllegalArgumentException.class,
-			() -> codec.encode(writer, annotation, null, encodedValue));
-	}
-
-	@Test
 	void stringTerminated() throws FieldException{
 		CodecInterface<BindStringTerminated> codec = new CodecStringTerminated();
 		String encodedValue = "123ABC";
@@ -258,11 +197,6 @@ class CodecStringTest{
 			@Override
 			public boolean consumeTerminator(){
 				return false;
-			}
-
-			@Override
-			public String match(){
-				return "";
 			}
 
 			@Override
@@ -331,11 +265,6 @@ class CodecStringTest{
 			@Override
 			public boolean consumeTerminator(){
 				return false;
-			}
-
-			@Override
-			public String match(){
-				return "";
 			}
 
 			@Override

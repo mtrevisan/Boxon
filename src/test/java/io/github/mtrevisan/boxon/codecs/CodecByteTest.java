@@ -61,11 +61,6 @@ class CodecByteTest{
 			}
 
 			@Override
-			public String match(){
-				return null;
-			}
-
-			@Override
 			public Class<? extends Validator<?>> validator(){
 				return NullValidator.class;
 			}

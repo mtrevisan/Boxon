@@ -46,7 +46,7 @@ final class CodecDecimal implements CodecInterface<BindDecimal>{
 			binding.converter(), rootObject);
 		final Object value = CodecHelper.converterDecode(chosenConverter, v);
 
-		CodecHelper.validateData(binding.match(), binding.validator(), value);
+		CodecHelper.validateData(binding.validator(), value);
 
 		return value;
 	}
@@ -56,7 +56,7 @@ final class CodecDecimal implements CodecInterface<BindDecimal>{
 			throws AnnotationException{
 		final BindDecimal binding = extractBinding(annotation);
 
-		CodecHelper.validateData(binding.match(), binding.validator(), value);
+		CodecHelper.validateData(binding.validator(), value);
 
 		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(),
 			binding.converter(), rootObject);

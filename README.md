@@ -258,7 +258,6 @@ private BigDecimal[][] crashData;
  - `condition`: The SpEL expression that determines if this field has to be read.
  - `size`: the number of bits to read (can be a SpEL expression).
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
- - `match`: a string/regex/SpEl expression that is used as an expected value (the value to match must be something like `[1, 12]`, where the numbers are the position of the set bits in ascending order).
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
  - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
@@ -281,7 +280,6 @@ private BitMap bits;
 
 #### parameters
  - `condition`: The SpEL expression that determines if this field has to be read.
- - `match`: a string/regex/SpEl expression that is used as an expected value.
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
  - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
@@ -305,7 +303,6 @@ public Byte mask;
 #### parameters
  - `condition`: The SpEL expression that determines if this field has to be read.
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
- - `match`: a string/regex/SpEl expression that is used as an expected value.
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
  - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
@@ -329,7 +326,6 @@ private short numberShort;
 #### parameters
  - `condition`: The SpEL expression that determines if this field has to be read.
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
- - `match`: a string/regex/SpEl expression that is used as an expected value.
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
  - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
@@ -353,7 +349,6 @@ private int numberInt;
 #### parameters
  - `condition`: The SpEL expression that determines if this field has to be read.
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
- - `match`: a string/regex/SpEl expression that is used as an expected value.
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
  - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
@@ -378,7 +373,6 @@ private long numberLong;
  - `condition`: The SpEL expression that determines if this field has to be read.
  - `size`: the number of bits to read (can be a SpEL expression).
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
- - `match`: a string/regex/SpEl expression that is used as an expected value.
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
  - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
@@ -405,7 +399,6 @@ private BigInteger number;
 #### parameters
  - `condition`: The SpEL expression that determines if this field has to be read.
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
- - `match`: a string/regex/SpEl expression that is used as an expected value.
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
  - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
@@ -429,7 +422,6 @@ private float number;
 #### parameters
  - `condition`: The SpEL expression that determines if this field has to be read.
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
- - `match`: a string/regex/SpEl expression that is used as an expected value.
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
  - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
@@ -454,7 +446,6 @@ private double number;
  - `condition`: The SpEL expression that determines if this field has to be read.
  - `type`: the Class of variable to be read (SHOULD BE `Float.class`, or `Double.class`).
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
- - `match`: a string/regex/SpEl expression that is used as an expected value.
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
  - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
@@ -479,7 +470,6 @@ private BigDecimal number;
  - `condition`: The SpEL expression that determines if this field has to be read.
  - `charset`: the charset to be interpreted the string into (SHOULD BE the charset name, eg. `UTF-8` (the default), `ISO-8859-1`, etc).
  - `size`: the size of the string (can be a SpEL expression).
- - `match`: a string/regex/SpEl expression that is used as an expected value.
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
  - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
@@ -505,7 +495,6 @@ public String text;
  - `charset`: the charset to be interpreted the string into (SHOULD BE the charset name, eg. `UTF-8` (the default), `ISO-8859-1`, etc).
  - `terminator`: the byte that terminates the string (defaults to `\0`).
  - `consumeTerminator`: whether to consume the terminator (defaults to `true`).
- - `match`: a string/regex/SpEl expression that is used as an expected value.
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
  - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
@@ -646,7 +635,7 @@ private String deviceTypeName;
 
 <a name="how-to-spel"></a>
 ## How to write SpEL expressions
-Care should be taken in writing [SpEL expressions](https://docs.spring.io/spring/docs/4.3.10.RELEASE/spring-framework-reference/html/expressions.html) for the fields `condition`, `size`, and `match`.
+Care should be taken in writing [SpEL expressions](https://docs.spring.io/spring/docs/4.3.10.RELEASE/spring-framework-reference/html/expressions.html) for the fields `condition`, and `size`.
 
 The root object is the outermost object. In order to evaluate a variable of a parent object the complete path should be used, as in `object1.variable1`. In order to evaluate a variable of a children object, that is the object currently scanned, the relative path should be used using by the special keyword `#self`, as in `#self.variable2`).
 
@@ -995,6 +984,7 @@ Remember that the header that will be written is the first in `@MessageHeader`.
 - Removed ComposeResponse.getErrors as it is useless.
 - Removed BindInteger.unsigned and BitReader.getInteger(int, ByteOrder, boolean) as they are useless.
 - Removed BitWriter.putText(String, byte, boolean) because of the [Boolean Trap](https://ariya.io/2011/08/hall-of-api-shame-boolean-trap).
+- Removed useless `match()` parameter from bindings.
 - Enhanced the exception message thrown if the type of BitReader.get(Class, ByteOrder) is not recognized.
 - Renamed BindChecksum into Checksum.
 - Relocated all binding annotations inside annotations.bindings (Bind* and *Choices).

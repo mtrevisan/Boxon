@@ -25,7 +25,6 @@
 package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
-import io.github.mtrevisan.boxon.annotations.bindings.BindBits;
 import io.github.mtrevisan.boxon.annotations.bindings.BindByte;
 import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
@@ -37,7 +36,6 @@ import io.github.mtrevisan.boxon.codecs.queclink.DeviceTypes;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.BitReader;
-import io.github.mtrevisan.boxon.external.BitSet;
 import io.github.mtrevisan.boxon.external.BitWriter;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import org.junit.jupiter.api.Assertions;
@@ -134,28 +132,6 @@ class TemplateParserTest{
 	}
 
 
-	@MessageHeader(start = "te2")
-	static class TestError2{
-		@BindString(size = "3")
-		public String header;
-		@BindByte(match = "as")
-		public byte type;
-	}
-
-	@Test
-	void parseWithMatchError1() throws AnnotationException{
-		byte[] payload = JavaHelper.toByteArray("74633501");
-		BitReader reader = BitReader.wrap(payload);
-
-		TemplateParser templateParser = new TemplateParser();
-		templateParser.loader.loadDefaultCodecs();
-		Template<TestError2> template = templateParser.loader.createTemplate(TestError2.class);
-
-		Exception exc = Assertions.assertThrows(FieldException.class, () -> templateParser.decode(template, reader, null));
-		Assertions.assertEquals("java.lang.IllegalArgumentException: Value `1` does not match constraint `as` in field io.github.mtrevisan.boxon.codecs.TemplateParserTest$TestError2.type", exc.getMessage());
-	}
-
-
 	@MessageHeader(start = "te3")
 	static class TestError3{
 		static class WrongOutputConverter implements Converter<Byte, String>{
@@ -223,28 +199,6 @@ class TemplateParserTest{
 
 		Exception exc = Assertions.assertThrows(FieldException.class, () -> templateParser.decode(template, reader, null));
 		Assertions.assertEquals("java.lang.IllegalArgumentException: Can not input Byte to decode method of converter WrongInputConverter in field io.github.mtrevisan.boxon.codecs.TemplateParserTest$TestError4.type", exc.getMessage());
-	}
-
-
-	@MessageHeader(start = "te5")
-	static class TestError5{
-		@BindString(size = "3")
-		public String header;
-		@BindBits(size = "8", match = "[1]")
-		public BitSet type;
-	}
-
-	@Test
-	void parseWithMatchError2() throws AnnotationException{
-		byte[] payload = JavaHelper.toByteArray("74633501");
-		BitReader reader = BitReader.wrap(payload);
-
-		TemplateParser templateParser = new TemplateParser();
-		templateParser.loader.loadDefaultCodecs();
-		Template<TestError5> template = templateParser.loader.createTemplate(TestError5.class);
-
-		Exception exc = Assertions.assertThrows(FieldException.class, () -> templateParser.decode(template, reader, null));
-		Assertions.assertEquals("java.lang.IllegalArgumentException: Value `[0]` does not match constraint `[1]` in field io.github.mtrevisan.boxon.codecs.TemplateParserTest$TestError5.type", exc.getMessage());
 	}
 
 

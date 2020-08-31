@@ -49,7 +49,7 @@ final class CodecString implements CodecInterface<BindString>{
 			binding.converter(), rootObject);
 		final Object value = CodecHelper.converterDecode(chosenConverter, text);
 
-		CodecHelper.validateData(binding.match(), binding.validator(), value);
+		CodecHelper.validateData(binding.validator(), value);
 
 		return value;
 	}
@@ -59,7 +59,7 @@ final class CodecString implements CodecInterface<BindString>{
 			throws AnnotationException{
 		final BindString binding = extractBinding(annotation);
 
-		CodecHelper.validateData(binding.match(), binding.validator(), value);
+		CodecHelper.validateData(binding.validator(), value);
 
 		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(),
 			binding.converter(), rootObject);

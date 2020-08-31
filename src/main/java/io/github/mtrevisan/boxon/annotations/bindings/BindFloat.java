@@ -60,13 +60,6 @@ public @interface BindFloat{
 	ByteOrder byteOrder() default ByteOrder.BIG_ENDIAN;
 
 	/**
-	 * The value, regex, or SpEL expression evaluating to the value to match, if any.
-	 *
-	 * @return	The value, or regex, or SpEL expression to be checked for equality (defaults to empty, that means &quot;accept anything&quot;).
-	 */
-	String match() default "";
-
-	/**
 	 * The validator to be applied <i>after</i> applying the converter, in the decoding phase (<i>before</i> if in the encoding one), if any.
 	 * <p>Usually the fully qualified name of an implementation class of a {@link Validator}.</p>
 	 *

@@ -51,7 +51,7 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 			binding.converter(), rootObject);
 		final Object value = CodecHelper.converterDecode(chosenConverter, v);
 
-		CodecHelper.validateData(binding.match(), binding.validator(), value);
+		CodecHelper.validateData(binding.validator(), value);
 
 		return value;
 	}
@@ -61,7 +61,7 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 			throws AnnotationException{
 		final BindInteger binding = extractBinding(annotation);
 
-		CodecHelper.validateData(binding.match(), binding.validator(), value);
+		CodecHelper.validateData(binding.validator(), value);
 
 		final int size = Evaluator.evaluateSize(binding.size(), rootObject);
 		CodecHelper.assertSizePositive(size);
