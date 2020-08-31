@@ -263,8 +263,8 @@ public final class Parser{
 				response.addParsedMessage(start, partialDecodedMessage);
 			}
 			catch(final Exception e){
-				final DecodeException pe = new DecodeException(reader.position(), e);
-				response.addError(start, pe);
+				final DecodeException de = new DecodeException(reader.position(), e);
+				response.addError(start, de);
 
 				//restore state of the reader
 				reader.restoreFallbackPoint();

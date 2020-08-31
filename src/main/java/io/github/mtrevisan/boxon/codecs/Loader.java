@@ -58,8 +58,8 @@ final class Loader{
 
 //	private final Function<Class<?>, Template<?>> templateStore = Memoizer.memoizeThreadAndRecursionSafe(this::createTemplate);
 
-	private static final Function<byte[], int[]> PRE_PROCESSED_PATTERNS = Memoizer.memoizeThreadAndRecursionSafe(Loader::getPreProcessedPattern);
 	private static final PatternMatcher PATTERN_MATCHER = new BNDMPatternMatcher();
+	private static final Function<byte[], int[]> PRE_PROCESSED_PATTERNS = Memoizer.memoizeThreadAndRecursionSafe(PATTERN_MATCHER::preProcessPattern);
 
 	private final Map<String, Template<?>> templates = new TreeMap<>(Comparator.comparingInt(String::length).reversed().thenComparing(String::compareTo));
 	private final Map<Class<?>, CodecInterface<?>> codecs = new HashMap<>(0);
@@ -379,10 +379,6 @@ final class Loader{
 		final int[] preProcessedPattern = PRE_PROCESSED_PATTERNS.apply(startMessageSequence);
 		final int index = PATTERN_MATCHER.indexOf(message, startIndex + 1, startMessageSequence, preProcessedPattern);
 		return (index >= startIndex? index: -1);
-	}
-
-	private static int[] getPreProcessedPattern(final byte[] pattern){
-		return PATTERN_MATCHER.preProcessPattern(pattern);
 	}
 
 }
