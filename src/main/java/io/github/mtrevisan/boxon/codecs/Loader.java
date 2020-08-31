@@ -149,18 +149,6 @@ final class Loader{
 	}
 
 
-	/**
-	 * Constructs a new {@link Template}.
-	 *
-	 * @param <T>	The type of the object to be returned as a {@link Template}.
-	 * @param type	The class of the object to be returned as a {@link Template}.
-	 * @return	The {@link Template} for the given type.
-	 */
-	@SuppressWarnings("unchecked")
-	<T> Template<T> createTemplate(final Class<T> type) throws AnnotationException{
-		return (Template<T>)templateStore.apply(type);
-	}
-
 	DynamicArray<Annotation> filterAnnotationsWithCodec(final Annotation[] declaredAnnotations){
 		final DynamicArray<Annotation> annotations = DynamicArray.create(Annotation.class, declaredAnnotations.length);
 		for(final Annotation annotation : declaredAnnotations)
@@ -177,24 +165,6 @@ final class Loader{
 	 */
 	void loadDefaultTemplates() throws AnnotationException, TemplateException{
 		loadTemplates(ReflectionHelper.extractCallerClasses());
-	}
-
-	/**
-	 * Loads all the given templates instances annotated with {@link MessageHeader}.
-	 *
-	 * @param templates	Template instances.
-	 */
-	void loadTemplates(final Template<?>... templates){
-		if(LOGGER.isInfoEnabled()){
-			final StringJoiner sj = new StringJoiner(", ", "[", "]");
-			for(final Template<?> template : templates)
-				sj.add(template.getClass().getSimpleName());
-			LOGGER.info("Load templates {}", sj);
-		}
-
-		addTemplatesInner(DynamicArray.wrap(templates));
-
-		LOGGER.trace("Templates loaded are {}", templates.length);
 	}
 
 	/**
@@ -234,6 +204,18 @@ final class Loader{
 				throw new TemplateException("Cannot create a raw message from data: cannot scan template for {}", type.getSimpleName());
 		}
 		return templates;
+	}
+
+	/**
+	 * Constructs a new {@link Template}.
+	 *
+	 * @param <T>	The type of the object to be returned as a {@link Template}.
+	 * @param type	The class of the object to be returned as a {@link Template}.
+	 * @return	The {@link Template} for the given type.
+	 */
+	@SuppressWarnings("unchecked")
+	<T> Template<T> createTemplate(final Class<T> type) throws AnnotationException{
+		return (Template<T>)templateStore.apply(type);
 	}
 
 	@SuppressWarnings("rawtypes")

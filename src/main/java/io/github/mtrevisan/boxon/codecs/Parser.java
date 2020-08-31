@@ -169,17 +169,6 @@ public final class Parser{
 	}
 
 	/**
-	 * Loads all the given templates instances annotated with {@link MessageHeader}.
-	 *
-	 * @param templates	Template instances.
-	 * @return	The {@link Parser}, used for chaining.
-	 */
-	public Parser withTemplates(final Template<?>... templates){
-		templateParser.loader.loadTemplates(templates);
-		return this;
-	}
-
-	/**
 	 * Loads all the protocol classes annotated with {@link MessageHeader}.
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
