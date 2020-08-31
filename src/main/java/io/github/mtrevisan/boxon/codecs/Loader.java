@@ -49,6 +49,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.TreeMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
 
 
@@ -56,7 +58,8 @@ final class Loader{
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Loader.class);
 
-//	private final Function<Class<?>, Template<?>> templateStore = Memoizer.memoizeThreadAndRecursionSafe(this::createTemplate);
+	private final Map<Class<?>, Template<?>> templateStore = new HashMap<>(0);
+	private final Lock templateStoreLock = new ReentrantLock();
 
 	private static final PatternMatcher PATTERN_MATCHER = new BNDMPatternMatcher();
 	private static final Function<byte[], int[]> PRE_PROCESSED_PATTERNS = Memoizer.memoizeThreadAndRecursionSafe(PATTERN_MATCHER::preProcessPattern);
@@ -149,7 +152,6 @@ final class Loader{
 	}
 
 
-	//FIXME use memoization?
 	/**
 	 * Constructs a new {@link Template}.
 	 *
@@ -158,8 +160,19 @@ final class Loader{
 	 * @return	The {@link Template} for the given type.
 	 */
 	<T> Template<T> createTemplate(final Class<T> type) throws AnnotationException{
-		return new Template<>(type, this);
-//		return (Template<T>)templateStore.apply(type);
+		//apply memoization on `type`
+		templateStoreLock.lock();
+		try{
+			Template<T> value = (Template<T>)templateStore.get(type);
+			if(value == null){
+				value = new Template<>(type, this);
+				templateStore.put(type, value);
+			}
+			return value;
+		}
+		finally{
+			templateStoreLock.unlock();
+		}
 	}
 
 	DynamicArray<Annotation> filterAnnotationsWithCodec(final Annotation[] declaredAnnotations){
