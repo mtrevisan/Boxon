@@ -56,7 +56,7 @@ final class Loader{
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Loader.class);
 
-//	private static final Function<Class<?>, Template<?>> TEMPLATES = Memoizer.memoizeThreadAndRecursionSafe(Template::getTemplate);
+//	private final Function<Class<?>, Template<?>> templateStore = Memoizer.memoizeThreadAndRecursionSafe(this::createTemplate);
 
 	private static final Function<byte[], int[]> PRE_PROCESSED_PATTERNS = Memoizer.memoizeThreadAndRecursionSafe(Loader::getPreProcessedPattern);
 	private static final PatternMatcher PATTERN_MATCHER = new BNDMPatternMatcher();
@@ -159,12 +159,8 @@ final class Loader{
 	 */
 	<T> Template<T> createTemplate(final Class<T> type) throws AnnotationException{
 		return new Template<>(type, this);
-//		return (Template<T>)TEMPLATES.apply(type);
+//		return (Template<T>)templateStore.apply(type);
 	}
-
-//	private static <T> Template<T> getTemplate(final Class<T> type){
-//		return new Template<>(type, this);
-//	}
 
 	DynamicArray<Annotation> filterAnnotationsWithCodec(final Annotation[] declaredAnnotations){
 		final DynamicArray<Annotation> annotations = DynamicArray.create(Annotation.class, declaredAnnotations.length);
