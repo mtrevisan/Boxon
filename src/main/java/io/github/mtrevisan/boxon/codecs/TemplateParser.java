@@ -108,7 +108,7 @@ final class TemplateParser{
 				decodeField(template, reader, parserContext, field);
 		}
 
-		processEvaluatedFields(template, parserContext.rootObject);
+		processEvaluatedFields(template, parserContext);
 
 		readMessageTerminator(template, reader);
 
@@ -196,16 +196,16 @@ final class TemplateParser{
 		}
 	}
 
-	private void processEvaluatedFields(final Template<?> template, final Object rootObject){
+	private void processEvaluatedFields(final Template<?> template, final ParserContext<?> parserContext){
 		final DynamicArray<Template.EvaluatedField> evaluatedFields = template.getEvaluatedFields();
 		for(int i = 0; i < evaluatedFields.limit; i ++){
 			final Template.EvaluatedField field = evaluatedFields.data[i];
-			final boolean process = Evaluator.evaluateBoolean(field.getBinding().condition(), rootObject);
+			final boolean process = Evaluator.evaluateBoolean(field.getBinding().condition(), parserContext.rootObject);
 			if(process){
 				LOGGER.trace("evaluating {}.{}", template.getType().getName(), field.getFieldName());
 
-				final Object value = Evaluator.evaluate(field.getBinding().value(), rootObject, field.getFieldType());
-				field.setFieldValue(rootObject, value);
+				final Object value = Evaluator.evaluate(field.getBinding().value(), parserContext.rootObject, field.getFieldType());
+				field.setFieldValue(parserContext.currentObject, value);
 
 				LOGGER.trace("wrote {}.{} = {}", template.getType().getName(), field.getFieldName(), value);
 			}
