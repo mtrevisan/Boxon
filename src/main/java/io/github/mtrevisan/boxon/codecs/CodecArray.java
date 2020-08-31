@@ -83,13 +83,9 @@ final class CodecArray implements CodecInterface<BindArray>{
 	private void decodeWithAlternatives(final BitReader reader, final Object[] array, final BindArray binding,
 			final Object rootObject){
 		final ObjectChoices selectFrom = binding.selectFrom();
-		final boolean hasPrefix = (selectFrom.prefixSize() > 0);
-
 		for(int i = 0; i < array.length; i ++){
 			try{
-				final ObjectChoices.ObjectChoice chosenAlternative = (hasPrefix?
-					CodecHelper.chooseAlternativeWithPrefix(reader, selectFrom, rootObject):
-					CodecHelper.chooseAlternativeWithoutPrefix(selectFrom, rootObject));
+				final ObjectChoices.ObjectChoice chosenAlternative = CodecHelper.chooseAlternative(reader, selectFrom, rootObject);
 				final Class<?> chosenAlternativeType = (chosenAlternative != null? chosenAlternative.type(): binding.selectDefault());
 				if(chosenAlternativeType == void.class)
 					throw new CodecException("Cannot find a valid codec from given alternatives for {}",

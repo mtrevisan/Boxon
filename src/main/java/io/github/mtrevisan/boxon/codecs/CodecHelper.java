@@ -81,21 +81,17 @@ final class CodecHelper{
 		throw new IllegalArgumentException("Cannot find a valid codec for type " + type.getSimpleName());
 	}
 
-	static ObjectChoices.ObjectChoice chooseAlternativeWithPrefix(final BitReader reader, final ObjectChoices selectFrom,
-			final Object rootObject){
-		final int prefixSize = selectFrom.prefixSize();
-		final ByteOrder prefixByteOrder = selectFrom.byteOrder();
-		final int prefix = reader.getInteger(prefixSize, prefixByteOrder)
-			.intValue();
+	static ObjectChoices.ObjectChoice chooseAlternative(final BitReader reader, final ObjectChoices selectFrom, final Object rootObject){
+		if(selectFrom.prefixSize() > 0){
+			final int prefixSize = selectFrom.prefixSize();
+			final ByteOrder prefixByteOrder = selectFrom.byteOrder();
+			final int prefix = reader.getInteger(prefixSize, prefixByteOrder)
+				.intValue();
 
-		Evaluator.addToContext(CONTEXT_CHOICE_PREFIX, prefix);
+			Evaluator.addToContext(CONTEXT_CHOICE_PREFIX, prefix);
+		}
 
-		return chooseAlternativeWithoutPrefix(selectFrom, rootObject);
-	}
-
-	static ObjectChoices.ObjectChoice chooseAlternativeWithoutPrefix(final ObjectChoices selectFrom, final Object rootObject){
 		final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
-
 		return chooseAlternative(alternatives, rootObject);
 	}
 

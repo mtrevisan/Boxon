@@ -78,9 +78,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 		Class<?> chosenAlternativeType = binding.type();
 		final ObjectChoices selectFrom = binding.selectFrom();
 		if(selectFrom.alternatives().length > 0){
-			final ObjectChoices.ObjectChoice chosenAlternative = (selectFrom.prefixSize() > 0?
-				CodecHelper.chooseAlternativeWithPrefix(reader, selectFrom, rootObject):
-				CodecHelper.chooseAlternativeWithoutPrefix(selectFrom, rootObject));
+			final ObjectChoices.ObjectChoice chosenAlternative = CodecHelper.chooseAlternative(reader, selectFrom, rootObject);
 			chosenAlternativeType = (chosenAlternative != null? chosenAlternative.type(): binding.selectDefault());
 			if(chosenAlternativeType == void.class)
 				throw new CodecException("Cannot find a valid codec from given alternatives for {}", rootObject.getClass().getSimpleName());
