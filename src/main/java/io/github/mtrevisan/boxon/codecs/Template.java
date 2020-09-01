@@ -36,6 +36,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.StringJoiner;
+import java.util.function.Function;
 
 
 /**
@@ -142,20 +143,20 @@ final class Template<T>{
 	private BoundedField checksum;
 
 
-	Template(final Class<T> type, final Loader loader) throws AnnotationException{
+	Template(final Class<T> type, final Function<Annotation[], DynamicArray<Annotation>> filterAnnotationsWithCodec) throws AnnotationException{
 		this.type = type;
 
 		header = type.getAnnotation(MessageHeader.class);
 		if(header != null)
 			CodecHelper.assertCharset(header.charset());
 
-		loadAnnotatedFields(type, ReflectionHelper.getAccessibleFields(type), loader);
+		loadAnnotatedFields(type, ReflectionHelper.getAccessibleFields(type), filterAnnotationsWithCodec);
 
 		if(boundedFields.isEmpty())
 			throw new AnnotationException("No data can be extracted from this class: {}", type.getName());
 	}
 
-	private void loadAnnotatedFields(final Class<T> type, final DynamicArray<Field> fields, final Loader loader)
+	private void loadAnnotatedFields(final Class<T> type, final DynamicArray<Field> fields, final Function<Annotation[], DynamicArray<Annotation>> filterAnnotationsWithCodec)
 			throws AnnotationException{
 		boundedFields.ensureCapacity(fields.limit);
 		for(int i = 0; i < fields.limit; i ++){
@@ -164,7 +165,7 @@ final class Template<T>{
 			final Checksum checksum = field.getDeclaredAnnotation(Checksum.class);
 
 			final Annotation[] declaredAnnotations = field.getDeclaredAnnotations();
-			final DynamicArray<Annotation> boundedAnnotations = loader.filterAnnotationsWithCodec(declaredAnnotations);
+			final DynamicArray<Annotation> boundedAnnotations = filterAnnotationsWithCodec.apply(declaredAnnotations);
 			evaluatedFields.addAll(extractEvaluations(declaredAnnotations, field));
 
 			try{
