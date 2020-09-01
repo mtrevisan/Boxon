@@ -218,6 +218,7 @@
 					<showDeprecation>true</showDeprecation>
 				</configuration>
 			</plugin>
+			<!-- Help -->
 			<!-- display active profile in compile phase -->
 			<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-help-plugin -->
 			<plugin>
