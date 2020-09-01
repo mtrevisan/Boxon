@@ -24,9 +24,10 @@
  */
 package io.github.mtrevisan.boxon.codecs;
 
-import io.github.mtrevisan.boxon.annotations.BindChecksum;
+import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.checksummers.CRC16CCITT;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
+import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
 import io.github.mtrevisan.boxon.external.ByteOrder;
@@ -45,13 +46,13 @@ class CodecChecksumTest{
 
 
 	@Test
-	void checksumShort(){
-		CodecInterface<BindChecksum> codec = new CodecChecksum();
+	void checksumShort() throws FieldException{
+		CodecInterface<Checksum> codec = new CodecChecksum();
 		short encodedValue = (short)RANDOM.nextInt(0x0000_FFFF);
-		BindChecksum annotation = new BindChecksum(){
+		Checksum annotation = new Checksum(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindChecksum.class;
+				return Checksum.class;
 			}
 
 			@Override
@@ -80,7 +81,7 @@ class CodecChecksumTest{
 			}
 
 			@Override
-			public long startValue(){
+			public short startValue(){
 				return CRC16CCITT.START_VALUE_0xFFFF;
 			}
 		};

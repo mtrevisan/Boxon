@@ -25,7 +25,6 @@
 package io.github.mtrevisan.boxon.external;
 
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.ParserDataType;
 
 import java.io.ByteArrayOutputStream;
@@ -44,31 +43,7 @@ import java.nio.charset.Charset;
 /**
  * @see <a href="https://github.com/jhg023/BitBuffer/blob/master/src/main/java/bitbuffer/BitBuffer.java">BitBuffer</a>
  */
-public final class BitReader{
-
-	private static final class State{
-		private int position;
-		private int remaining;
-		private byte cache;
-
-		State(final int position, final int remaining, final byte cache){
-			this.position = position;
-			this.remaining = remaining;
-			this.cache = cache;
-		}
-	}
-
-
-	/** The backing {@link ByteBuffer}. */
-	private final ByteBuffer buffer;
-
-	/** The <i>cache</i> used when reading bits. */
-	private byte cache;
-	/** The number of bits available (to read) within {@code cache}. */
-	private int remaining;
-
-	private State fallbackPoint;
-
+public final class BitReader extends BitReaderData{
 
 	/**
 	 * Wraps a {@link File} containing a binary stream into a buffer.
@@ -79,13 +54,13 @@ public final class BitReader{
 	 * 	or for some other reason cannot be opened for reading.
 	 * @throws SecurityException	If a security manager exists and its {@code checkRead} method denies read access to the file.
 	 */
-	public static BitReader wrap(final File file) throws IOException{
+	public static BitReader wrap(final File file) throws IOException, FileNotFoundException{
 		try(
 			final FileInputStream fis = new FileInputStream(file);
 			final FileChannel fc = fis.getChannel();
 		){
 			//map file into memory
-			final ByteBuffer inputByteBuffer = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
+			final ByteBuffer inputByteBuffer = fc.map(FileChannel.MapMode.READ_ONLY, 0l, fc.size());
 
 			return wrap(inputByteBuffer);
 		}
@@ -128,56 +103,43 @@ public final class BitReader{
 	}
 
 
-	/**
-	 * A private constructor.
-	 *
-	 * @param buffer the backing {@link ByteBuffer}.
-	 */
 	private BitReader(final ByteBuffer buffer){
-		this.buffer = buffer;
+		super(buffer);
 	}
 
-	public void createFallbackPoint(){
-		if(fallbackPoint != null){
-			//update current mark:
-			fallbackPoint.position = buffer.position();
-			fallbackPoint.remaining = remaining;
-			fallbackPoint.cache = cache;
-		}
-		else
-			//create new mark
-			fallbackPoint = new State(buffer.position(), remaining, cache);
-	}
-
-	public void restoreFallbackPoint(){
-		if(fallbackPoint == null)
-			//no fallback point was marked before
-			return;
-
-		buffer.position(fallbackPoint.position);
-		remaining = fallbackPoint.remaining;
-		cache = fallbackPoint.cache;
-
-		clearFallbackPoint();
-	}
-
-	public void clearFallbackPoint(){
-		fallbackPoint = null;
-	}
-
-
+	/**
+	 * Skips a given amount of bits.
+	 *
+	 * @param length	The amount of bits to be skipped.
+	 */
 	public void skip(final int length){
 		getBits(length);
 	}
 
-	public void skipUntilTerminator(final byte terminator, final boolean consumeTerminator){
-		getTextUntilTerminator(terminator, consumeTerminator, Charset.defaultCharset());
+	/**
+	 * Skips an integral number of bytes until a terminator is found.
+	 * <p>The terminator is NOT consumed!</p>
+	 *
+	 * @param terminator	The terminator at which to stop.
+	 */
+	public void skipUntilTerminator(final byte terminator){
+		getTextUntilTerminator(terminator, Charset.defaultCharset());
 	}
 
-	public Object get(final Class<?> type, final ByteOrder byteOrder){
+	/**
+	 * Reads the given type using the give byte order.
+	 *
+	 * @param type	The type of data to read. Here, the length of the types (in bits) are those defined by java
+	 * 	(see {@link Byte#SIZE}, {@link Short#SIZE}, {@link Integer#SIZE}, {@link Long#SIZE}, {@link Float#SIZE},
+	 * 	and {@link Double#SIZE}).
+	 * @param byteOrder	The byte order used to read the bytes.
+	 * @return	The read value of the given type.
+	 */
+	public Object get(final Class<?> type, final ByteOrder byteOrder) throws AnnotationException{
 		final ParserDataType t = ParserDataType.fromType(type);
 		if(t == null)
-			throw new AnnotationException("Cannot read type {}", type.getSimpleName());
+			throw new AnnotationException("Cannot read type {}, should be one of {}, or their objective counterparts",
+				type.getSimpleName(), ParserDataType.describe());
 
 		switch(t){
 			case BYTE:
@@ -204,80 +166,13 @@ public final class BitReader{
 	}
 
 	/**
-	 * Reads the next {@code length} bits and composes a {@link BitSet}.
-	 *
-	 * @param length	The amount of bits to read.
-	 * @return	A {@link BitSet} value at the {@link BitReader}'s current position.
-	 */
-	public BitSet getBits(final int length){
-		final BitSet value = new BitSet();
-		int offset = 0;
-		while(offset < length){
-			//transfer the cache values
-			final int size = Math.min(length, remaining);
-			if(size > 0){
-				addCacheToBitSet(value, offset, size);
-
-				offset += size;
-			}
-
-			//if cache is empty and there are more bits to be read, fill it
-			if(length > offset){
-				cache = buffer.get();
-
-				remaining = Byte.SIZE;
-			}
-		}
-		return value;
-	}
-
-	/**
-	 * Add {@code size} bits from the cache starting from LSB with a given offset.
-	 *
-	 * @param value	The bit set into which to transfer {@code size} bits from the cache.
-	 * @param offset	The offset for the indexes.
-	 * @param size	The amount of bits to read from the LSB of the cache.
-	 */
-	private void addCacheToBitSet(final BitSet value, final int offset, final int size){
-		final byte mask = (byte)((1 << size) - 1);
-		value.ensureAdditionalSpace(Integer.bitCount(cache & mask));
-
-		int skip;
-		while(cache != 0 && (skip = Integer.numberOfTrailingZeros(cache & 0xFF)) < size){
-			value.addNextSetBit(skip + offset);
-			cache ^= 1 << skip;
-		}
-		//remove read bits from the cache
-		cache >>= size;
-		remaining -= size;
-	}
-
-	/**
-	 * Reads the next {@code length} bits and composes a {@link BigInteger}.
-	 *
-	 * @param length	The amount of bits to read.
-	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
-	 * @param unsigned	Whether to consider the read number as unsigned.
-	 * @return	A {@link BigInteger} value at the {@link BitReader}'s current position.
-	 */
-	public BigInteger getInteger(final int length, final ByteOrder byteOrder, final boolean unsigned){
-		final BitSet bits = getBits(length);
-		return bits.toInteger(length, byteOrder, unsigned);
-	}
-
-	/**
 	 * Reads {@link Byte#SIZE} bits from this {@link BitReader} and composes a {@code byte}.
 	 *
 	 * @return	A {@code byte}.
 	 */
+	@Override
 	public byte getByte(){
-		return (byte)getInteger(Byte.SIZE);
-	}
-
-	private byte getByteWithFallback(){
-		createFallbackPoint();
-
-		return getByte();
+		return getInteger(Byte.SIZE, ByteOrder.LITTLE_ENDIAN).byteValue();
 	}
 
 	/**
@@ -301,7 +196,7 @@ public final class BitReader{
 	 * @return	A {@code short}.
 	 */
 	public short getShort(final ByteOrder byteOrder){
-		return (short)getInteger(Short.SIZE, byteOrder);
+		return getInteger(Short.SIZE, byteOrder).shortValue();
 	}
 
 	/**
@@ -312,7 +207,7 @@ public final class BitReader{
 	 * @return	An {@code int}.
 	 */
 	public int getInt(final ByteOrder byteOrder){
-		return (int)getInteger(Integer.SIZE, byteOrder);
+		return getInteger(Integer.SIZE, byteOrder).intValue();
 	}
 
 	/**
@@ -323,21 +218,19 @@ public final class BitReader{
 	 * @return	A {@code long}.
 	 */
 	public long getLong(final ByteOrder byteOrder){
-		return getInteger(Long.SIZE, byteOrder);
+		return getInteger(Long.SIZE, byteOrder).longValue();
 	}
 
-	private long getInteger(final int size, final ByteOrder byteOrder){
-		final long value = getInteger(size);
-		return reverseBytes(value, size, byteOrder);
-	}
-
-	private static long reverseBytes(final long value, final int size, final ByteOrder byteOrder){
-		return (byteOrder == ByteOrder.BIG_ENDIAN? (Long.reverseBytes(value) >> (Long.SIZE - size)): value);
-	}
-
-	private long getInteger(final int size){
+	/**
+	 * Reads the next {@code size} bits and composes a {@link BigInteger}.
+	 *
+	 * @param size	The amount of bits to read.
+	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
+	 * @return	A {@link BigInteger} value at the {@link BitReader}'s current position.
+	 */
+	public BigInteger getInteger(final int size, final ByteOrder byteOrder){
 		final BitSet bits = getBits(size);
-		return bits.toLong(0, size);
+		return bits.toInteger(size, byteOrder);
 	}
 
 	/**
@@ -370,7 +263,8 @@ public final class BitReader{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	A {@link BigDecimal}.
 	 */
-	public BigDecimal getDecimal(final Class<?> cls, final ByteOrder byteOrder){
+	@SuppressWarnings("ChainOfInstanceofChecks")
+	public BigDecimal getDecimal(final Class<?> cls, final ByteOrder byteOrder) throws AnnotationException{
 		if(cls == float.class || cls == Float.class)
 			return new BigDecimal(Float.toString(getFloat(byteOrder)));
 		if(cls == double.class || cls == Double.class)
@@ -393,82 +287,28 @@ public final class BitReader{
 
 	/**
 	 * Reads a string until a terminator is found.
+	 * <p>The terminator is NOT consumed!</p>
 	 *
 	 * @param terminator	The terminator of the string to be read.
-	 * @param consumeTerminator	Whether to consume the terminator.
 	 * @param charset	The charset.
 	 * @return	A {@link String} of length {@code n} coded with a given {@link Charset} that contains {@code char}s
 	 * 	read from this {@link BitReader}.
 	 */
-	public String getTextUntilTerminator(final byte terminator, final boolean consumeTerminator, final Charset charset){
+	public String getTextUntilTerminator(final byte terminator, final Charset charset){
 		String text = null;
 		try(
 			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			final OutputStreamWriter osw = new OutputStreamWriter(baos, charset);
 		){
-			getTextUntilTerminator(osw, terminator, consumeTerminator);
+			getTextUntilTerminator(osw, terminator);
+
 			text = baos.toString(charset);
 		}
-		catch(final IOException ignored){}
-		return text;
-	}
-
-	private void getTextUntilTerminator(final OutputStreamWriter os, final byte terminator, final boolean consumeTerminator) throws IOException{
-		for(byte byteRead = getByteWithFallback(); byteRead != terminator && (buffer.position() < buffer.limit() || buffer.remaining() > 0); ){
-			os.write(byteRead);
-
-			byteRead = getByteWithFallback();
+		catch(final IOException e){
+			//should not happen
+			e.printStackTrace();
 		}
-		os.flush();
-
-		if(consumeTerminator)
-			clearFallbackPoint();
-		else
-			restoreFallbackPoint();
-	}
-
-
-	public byte[] array(){
-		return buffer.array();
-	}
-
-	/**
-	 * Gets the position of the backing {@link ByteBuffer} in integral number of {@code byte}s (lower bound).
-	 *
-	 * @return	The position of the backing buffer in {@code byte}s.
-	 */
-	public int position(){
-		return buffer.position() - ((remaining + Byte.SIZE - 1) >>> 3);
-	}
-
-	/**
-	 * Sets the position of the backing {@link ByteBuffer} in {@code byte}s.
-	 *
-	 * @param newPosition	The position of the backing buffer in {@code byte}s.
-	 */
-	public void position(final int newPosition){
-		buffer.position(newPosition);
-
-		resetInnerVariables();
-	}
-
-	private void resetInnerVariables(){
-		remaining = 0;
-		cache = 0;
-	}
-
-	/**
-	 * Tells whether there are any elements between the current position and the limit of the underlying {@link ByteBuffer}.
-	 *
-	 * @return	Whether there is at least one element remaining in the underlying {@link ByteBuffer}.
-	 */
-	public boolean hasRemaining(){
-		return buffer.hasRemaining();
-	}
-
-	@Override
-	public String toString(){
-		return JavaHelper.toHexString(array());
+		return text;
 	}
 
 }

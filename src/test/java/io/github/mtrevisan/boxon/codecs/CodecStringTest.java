@@ -24,13 +24,14 @@
  */
 package io.github.mtrevisan.boxon.codecs;
 
-import io.github.mtrevisan.boxon.annotations.BindString;
-import io.github.mtrevisan.boxon.annotations.BindStringTerminated;
-import io.github.mtrevisan.boxon.annotations.ConverterChoices;
+import io.github.mtrevisan.boxon.annotations.bindings.BindString;
+import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
+import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
+import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
 import org.junit.jupiter.api.Assertions;
@@ -43,10 +44,10 @@ import java.nio.charset.StandardCharsets;
 class CodecStringTest{
 
 	@Test
-	void stringUS_ASCII(){
+	void stringUS_ASCII() throws FieldException{
 		CodecInterface<BindString> codec = new CodecString();
 		String encodedValue = "123ABC";
-		BindString annotation = new BindString(){
+		Annotation annotation = new BindString(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindString.class;
@@ -65,11 +66,6 @@ class CodecStringTest{
 			@Override
 			public String size(){
 				return Integer.toString(encodedValue.getBytes(StandardCharsets.US_ASCII).length);
-			}
-
-			@Override
-			public String match(){
-				return ".*";
 			}
 
 			@Override
@@ -111,10 +107,10 @@ class CodecStringTest{
 	}
 
 	@Test
-	void stringUTF_8(){
+	void stringUTF_8() throws FieldException{
 		CodecInterface<BindString> codec = new CodecString();
 		String encodedValue = "123ABCíïóúüđɉƚñŧ";
-		BindString annotation = new BindString(){
+		Annotation annotation = new BindString(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindString.class;
@@ -133,11 +129,6 @@ class CodecStringTest{
 			@Override
 			public String size(){
 				return Integer.toString(encodedValue.getBytes(StandardCharsets.UTF_8).length);
-			}
-
-			@Override
-			public String match(){
-				return encodedValue;
 			}
 
 			@Override
@@ -179,61 +170,10 @@ class CodecStringTest{
 	}
 
 	@Test
-	void stringUS_ASCIINotMatch(){
-		CodecInterface<BindString> codec = new CodecString();
-		String encodedValue = "123ABC";
-		BindString annotation = new BindString(){
-			@Override
-			public Class<? extends Annotation> annotationType(){
-				return BindString.class;
-			}
-
-			@Override
-			public String condition(){
-				return null;
-			}
-
-			@Override
-			public String charset(){
-				return StandardCharsets.US_ASCII.name();
-			}
-
-			@Override
-			public String size(){
-				return Integer.toString(encodedValue.getBytes(StandardCharsets.US_ASCII).length);
-			}
-
-			@Override
-			public String match(){
-				return encodedValue + "-not-match";
-			}
-
-			@Override
-			public Class<? extends Validator<?>> validator(){
-				return NullValidator.class;
-			}
-
-			@Override
-			public Class<? extends Converter<?, ?>> converter(){
-				return NullConverter.class;
-			}
-
-			@Override
-			public ConverterChoices selectConverterFrom(){
-				return null;
-			}
-		};
-
-		BitWriter writer = new BitWriter();
-		Assertions.assertThrows(IllegalArgumentException.class,
-			() -> codec.encode(writer, annotation, null, encodedValue));
-	}
-
-	@Test
-	void stringTerminated(){
+	void stringTerminated() throws FieldException{
 		CodecInterface<BindStringTerminated> codec = new CodecStringTerminated();
 		String encodedValue = "123ABC";
-		BindStringTerminated annotation = new BindStringTerminated(){
+		Annotation annotation = new BindStringTerminated(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindStringTerminated.class;
@@ -251,17 +191,12 @@ class CodecStringTest{
 
 			@Override
 			public byte terminator(){
-				return '\0';
+				return 'C';
 			}
 
 			@Override
 			public boolean consumeTerminator(){
 				return false;
-			}
-
-			@Override
-			public String match(){
-				return "";
 			}
 
 			@Override
@@ -300,6 +235,75 @@ class CodecStringTest{
 		writer.flush();
 
 		Assertions.assertArrayEquals(new byte[]{49, 50, 51, 65, 66}, writer.array());
+	}
+
+	@Test
+	void stringTerminatedButEndOfStream() throws FieldException{
+		CodecInterface<BindStringTerminated> codec = new CodecStringTerminated();
+		String encodedValue = "123ABC";
+		Annotation annotation = new BindStringTerminated(){
+			@Override
+			public Class<? extends Annotation> annotationType(){
+				return BindStringTerminated.class;
+			}
+
+			@Override
+			public String condition(){
+				return null;
+			}
+
+			@Override
+			public String charset(){
+				return StandardCharsets.US_ASCII.name();
+			}
+
+			@Override
+			public byte terminator(){
+				return 'D';
+			}
+
+			@Override
+			public boolean consumeTerminator(){
+				return false;
+			}
+
+			@Override
+			public Class<? extends Validator<?>> validator(){
+				return NullValidator.class;
+			}
+
+			@Override
+			public Class<? extends Converter<?, ?>> converter(){
+				return NullConverter.class;
+			}
+
+			@Override
+			public ConverterChoices selectConverterFrom(){
+				return new ConverterChoices(){
+					@Override
+					public Class<? extends Annotation> annotationType(){
+						return ConverterChoices.class;
+					}
+
+					@Override
+					public ConverterChoice[] alternatives(){
+						return new ConverterChoice[0];
+					}
+				};
+			}
+		};
+
+		BitReader reader = BitReader.wrap(encodedValue.getBytes(StandardCharsets.US_ASCII));
+		Object decoded = codec.decode(reader, annotation, null);
+
+		Assertions.assertEquals("123ABC", decoded);
+
+		BitWriter writer = new BitWriter();
+		codec.encode(writer, annotation, null, decoded);
+		writer.flush();
+
+		//this seems strange, but it has to work like this
+		Assertions.assertArrayEquals(new byte[]{49, 50, 51, 65, 66, 67}, writer.array());
 	}
 
 }

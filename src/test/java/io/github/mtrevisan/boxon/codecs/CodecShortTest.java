@@ -24,12 +24,13 @@
  */
 package io.github.mtrevisan.boxon.codecs;
 
-import io.github.mtrevisan.boxon.annotations.BindShort;
-import io.github.mtrevisan.boxon.annotations.ConverterChoices;
+import io.github.mtrevisan.boxon.annotations.bindings.BindShort;
+import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
+import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
 import io.github.mtrevisan.boxon.external.ByteOrder;
@@ -48,10 +49,10 @@ class CodecShortTest{
 
 
 	@Test
-	void shortLittleEndianPositive1(){
+	void shortLittleEndianPositive1() throws FieldException{
 		CodecInterface<BindShort> codec = new CodecShort();
 		short encodedValue = 0x0010;
-		BindShort annotation = new BindShort(){
+		Annotation annotation = new BindShort(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindShort.class;
@@ -65,11 +66,6 @@ class CodecShortTest{
 			@Override
 			public ByteOrder byteOrder(){
 				return ByteOrder.LITTLE_ENDIAN;
-			}
-
-			@Override
-			public String match(){
-				return null;
 			}
 
 			@Override
@@ -111,10 +107,10 @@ class CodecShortTest{
 	}
 
 	@Test
-	void shortLittleEndianPositive2(){
+	void shortLittleEndianPositive2() throws FieldException{
 		CodecInterface<BindShort> codec = new CodecShort();
 		short encodedValue = 0x1000;
-		BindShort annotation = new BindShort(){
+		Annotation annotation = new BindShort(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindShort.class;
@@ -128,11 +124,6 @@ class CodecShortTest{
 			@Override
 			public ByteOrder byteOrder(){
 				return ByteOrder.LITTLE_ENDIAN;
-			}
-
-			@Override
-			public String match(){
-				return null;
 			}
 
 			@Override
@@ -174,10 +165,10 @@ class CodecShortTest{
 	}
 
 	@Test
-	void shortLittleEndianNegative(){
+	void shortLittleEndianNegative() throws FieldException{
 		CodecInterface<BindShort> codec = new CodecShort();
 		short encodedValue = (short)0x8010;
-		BindShort annotation = new BindShort(){
+		Annotation annotation = new BindShort(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindShort.class;
@@ -191,11 +182,6 @@ class CodecShortTest{
 			@Override
 			public ByteOrder byteOrder(){
 				return ByteOrder.LITTLE_ENDIAN;
-			}
-
-			@Override
-			public String match(){
-				return null;
 			}
 
 			@Override
@@ -237,10 +223,10 @@ class CodecShortTest{
 	}
 
 	@Test
-	void shortLittleEndianRandom(){
+	void shortLittleEndianRandom() throws FieldException{
 		CodecInterface<BindShort> codec = new CodecShort();
 		short encodedValue = (short)RANDOM.nextInt(0x0000_FFFF);
-		BindShort annotation = new BindShort(){
+		Annotation annotation = new BindShort(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindShort.class;
@@ -254,11 +240,6 @@ class CodecShortTest{
 			@Override
 			public ByteOrder byteOrder(){
 				return ByteOrder.LITTLE_ENDIAN;
-			}
-
-			@Override
-			public String match(){
-				return null;
 			}
 
 			@Override
@@ -300,10 +281,10 @@ class CodecShortTest{
 	}
 
 	@Test
-	void shortBigEndianNegative(){
+	void shortBigEndianNegative() throws FieldException{
 		CodecInterface<BindShort> codec = new CodecShort();
 		short encodedValue = (short)0x8F00;
-		BindShort annotation = new BindShort(){
+		Annotation annotation = new BindShort(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindShort.class;
@@ -317,11 +298,6 @@ class CodecShortTest{
 			@Override
 			public ByteOrder byteOrder(){
 				return ByteOrder.BIG_ENDIAN;
-			}
-
-			@Override
-			public String match(){
-				return null;
 			}
 
 			@Override
@@ -363,10 +339,10 @@ class CodecShortTest{
 	}
 
 	@Test
-	void shortBigEndianSmall(){
+	void shortBigEndianSmall() throws FieldException{
 		CodecInterface<BindShort> codec = new CodecShort();
 		short encodedValue = 0x007F;
-		BindShort annotation = new BindShort(){
+		Annotation annotation = new BindShort(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindShort.class;
@@ -380,11 +356,6 @@ class CodecShortTest{
 			@Override
 			public ByteOrder byteOrder(){
 				return ByteOrder.BIG_ENDIAN;
-			}
-
-			@Override
-			public String match(){
-				return null;
 			}
 
 			@Override
@@ -426,10 +397,10 @@ class CodecShortTest{
 	}
 
 	@Test
-	void shortBigEndianPositive(){
+	void shortBigEndianPositive() throws FieldException{
 		CodecInterface<BindShort> codec = new CodecShort();
 		short encodedValue = 0x7F00;
-		BindShort annotation = new BindShort(){
+		Annotation annotation = new BindShort(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindShort.class;
@@ -443,11 +414,6 @@ class CodecShortTest{
 			@Override
 			public ByteOrder byteOrder(){
 				return ByteOrder.BIG_ENDIAN;
-			}
-
-			@Override
-			public String match(){
-				return null;
 			}
 
 			@Override
@@ -489,10 +455,10 @@ class CodecShortTest{
 	}
 
 	@Test
-	void shortBigEndianRandom(){
+	void shortBigEndianRandom() throws FieldException{
 		CodecInterface<BindShort> codec = new CodecShort();
 		short encodedValue = (short)RANDOM.nextInt(0x0000_FFFF);
-		BindShort annotation = new BindShort(){
+		Annotation annotation = new BindShort(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindShort.class;
@@ -506,11 +472,6 @@ class CodecShortTest{
 			@Override
 			public ByteOrder byteOrder(){
 				return ByteOrder.BIG_ENDIAN;
-			}
-
-			@Override
-			public String match(){
-				return null;
 			}
 
 			@Override

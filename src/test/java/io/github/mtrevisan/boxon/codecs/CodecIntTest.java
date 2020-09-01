@@ -24,12 +24,13 @@
  */
 package io.github.mtrevisan.boxon.codecs;
 
-import io.github.mtrevisan.boxon.annotations.BindInt;
-import io.github.mtrevisan.boxon.annotations.ConverterChoices;
+import io.github.mtrevisan.boxon.annotations.bindings.BindInt;
+import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
+import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
 import io.github.mtrevisan.boxon.external.ByteOrder;
@@ -48,7 +49,7 @@ class CodecIntTest{
 
 
 	@Test
-	void intLittleEndianNegative(){
+	void intLittleEndianNegative() throws FieldException{
 		CodecInterface<BindInt> codec = new CodecInt();
 		int encodedValue = 0x80FF_0000;
 		BindInt annotation = new BindInt(){
@@ -65,11 +66,6 @@ class CodecIntTest{
 			@Override
 			public ByteOrder byteOrder(){
 				return ByteOrder.LITTLE_ENDIAN;
-			}
-
-			@Override
-			public String match(){
-				return null;
 			}
 
 			@Override
@@ -111,7 +107,7 @@ class CodecIntTest{
 	}
 
 	@Test
-	void intLittleEndianSmall(){
+	void intLittleEndianSmall() throws FieldException{
 		CodecInterface<BindInt> codec = new CodecInt();
 		int encodedValue = 0x0000_7FFF;
 		BindInt annotation = new BindInt(){
@@ -128,11 +124,6 @@ class CodecIntTest{
 			@Override
 			public ByteOrder byteOrder(){
 				return ByteOrder.LITTLE_ENDIAN;
-			}
-
-			@Override
-			public String match(){
-				return null;
 			}
 
 			@Override
@@ -174,7 +165,7 @@ class CodecIntTest{
 	}
 
 	@Test
-	void intLittleEndianPositive(){
+	void intLittleEndianPositive() throws FieldException{
 		CodecInterface<BindInt> codec = new CodecInt();
 		int encodedValue = 0x7FFF_0000;
 		BindInt annotation = new BindInt(){
@@ -191,11 +182,6 @@ class CodecIntTest{
 			@Override
 			public ByteOrder byteOrder(){
 				return ByteOrder.LITTLE_ENDIAN;
-			}
-
-			@Override
-			public String match(){
-				return null;
 			}
 
 			@Override
@@ -237,7 +223,7 @@ class CodecIntTest{
 	}
 
 	@Test
-	void intLittleEndianRandom(){
+	void intLittleEndianRandom() throws FieldException{
 		CodecInterface<BindInt> codec = new CodecInt();
 		int encodedValue = RANDOM.nextInt();
 		BindInt annotation = new BindInt(){
@@ -254,11 +240,6 @@ class CodecIntTest{
 			@Override
 			public ByteOrder byteOrder(){
 				return ByteOrder.LITTLE_ENDIAN;
-			}
-
-			@Override
-			public String match(){
-				return null;
 			}
 
 			@Override
@@ -300,7 +281,7 @@ class CodecIntTest{
 	}
 
 	@Test
-	void intBigEndianNegative(){
+	void intBigEndianNegative() throws FieldException{
 		CodecInterface<BindInt> codec = new CodecInt();
 		int encodedValue = 0x80FF_0000;
 		BindInt annotation = new BindInt(){
@@ -317,11 +298,6 @@ class CodecIntTest{
 			@Override
 			public ByteOrder byteOrder(){
 				return ByteOrder.BIG_ENDIAN;
-			}
-
-			@Override
-			public String match(){
-				return null;
 			}
 
 			@Override
@@ -363,7 +339,7 @@ class CodecIntTest{
 	}
 
 	@Test
-	void intBigEndianSmall(){
+	void intBigEndianSmall() throws FieldException{
 		CodecInterface<BindInt> codec = new CodecInt();
 		int encodedValue = 0x0000_7FFF;
 		BindInt annotation = new BindInt(){
@@ -380,11 +356,6 @@ class CodecIntTest{
 			@Override
 			public ByteOrder byteOrder(){
 				return ByteOrder.BIG_ENDIAN;
-			}
-
-			@Override
-			public String match(){
-				return null;
 			}
 
 			@Override
@@ -426,7 +397,7 @@ class CodecIntTest{
 	}
 
 	@Test
-	void intBigEndianPositive(){
+	void intBigEndianPositive() throws FieldException{
 		CodecInterface<BindInt> codec = new CodecInt();
 		int encodedValue = 0x7FFF_0000;
 		BindInt annotation = new BindInt(){
@@ -443,11 +414,6 @@ class CodecIntTest{
 			@Override
 			public ByteOrder byteOrder(){
 				return ByteOrder.BIG_ENDIAN;
-			}
-
-			@Override
-			public String match(){
-				return null;
 			}
 
 			@Override
@@ -489,7 +455,7 @@ class CodecIntTest{
 	}
 
 	@Test
-	void intBigEndianRandom(){
+	void intBigEndianRandom() throws FieldException{
 		CodecInterface<BindInt> codec = new CodecInt();
 		int encodedValue = RANDOM.nextInt();
 		BindInt annotation = new BindInt(){
@@ -506,11 +472,6 @@ class CodecIntTest{
 			@Override
 			public ByteOrder byteOrder(){
 				return ByteOrder.BIG_ENDIAN;
-			}
-
-			@Override
-			public String match(){
-				return null;
 			}
 
 			@Override
@@ -543,7 +504,8 @@ class CodecIntTest{
 		codec.encode( writer, annotation, null, encodedValue);
 		writer.flush();
 
-		Assertions.assertEquals(StringUtils.leftPad(Integer.toHexString(encodedValue).toUpperCase(Locale.ROOT), 8, '0'), writer.toString());
+		Assertions.assertEquals(StringUtils.leftPad(Integer.toHexString(encodedValue).toUpperCase(Locale.ROOT), 8, '0'),
+			writer.toString());
 
 		BitReader reader = BitReader.wrap(writer);
 		int decoded = (int)codec.decode(reader, annotation, null);

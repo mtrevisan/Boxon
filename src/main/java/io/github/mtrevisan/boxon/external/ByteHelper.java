@@ -54,40 +54,61 @@ public final class ByteHelper{
 	 * Convert the value to signed primitive.
 	 *
 	 * @param array	Field value.
-	 * @param unsigned	Whether to consider this number an unsigned one.
 	 * @return	The 2-complement expressed as int.
 	 */
-	private static BigInteger extendSign(byte[] array, final int size, final boolean unsigned){
-		if(!unsigned && (array[0] & 0x80) != 0x00){
-			array = extendArray(array);
-			array[0] = (byte)-1;
+	static BigInteger extendSign(byte[] array){
+		if((array[0] & 0x80) != 0x00){
+			array = leftExtendArray(array);
+			array[0] = -1;
 		}
-		else if(unsigned && size >= array.length << 3)
-			array = extendArray(array);
 		return new BigInteger(array);
 	}
 
-	static byte[] extendArray(final byte[] array){
+	/**
+	 * Extends an array leaving room for one more byte at the leftmost index.
+	 *
+	 * @param array	The array to extend.
+	 * @return	The extended array.
+	 */
+	private static byte[] leftExtendArray(final byte[] array){
 		final byte[] extendedArray = new byte[array.length + 1];
 		System.arraycopy(array, 0, extendedArray, 1, array.length);
 		return extendedArray;
 	}
 
+	/**
+	 * Checks whether the given `mask` has the bit at `index` set.
+	 *
+	 * @param mask	The value to check the bit into.
+	 * @param index	The index of the bit (rightmost is zero). The value can range between {@code 0} and {@link Byte#SIZE}.
+	 * @return	The state of the bit at a given index in the given byte.
+	 */
 	public static boolean hasBit(final byte mask, final int index){
-		if(index < 0 || index >= Byte.SIZE)
-			throw new IllegalArgumentException("Index value must be between 0 and " + Byte.SIZE + " exclusive, was " + index);
+		assertLength(index, Byte.SIZE);
 
 		final int bitMask = 1 << (index % Byte.SIZE);
 		return ((mask & bitMask) != 0);
 	}
 
+	/**
+	 * Checks whether the given `mask` has the bit at `index` set.
+	 *
+	 * @param mask	The value (as an array) to check the bit into.
+	 * @param index	The index of the bit (rightmost is zero). The value can range between {@code 0} and
+	 * 	<code>mask.length * {@link Byte#SIZE}</code>.
+	 * @return	The state of the bit at a given index in the given byte.
+	 */
 	public static boolean hasBit(final byte[] mask, final int index){
-		if(index < 0 || index >= mask.length << 3)
-			throw new IllegalArgumentException("Index value must be between 0 and " + (mask.length << 3) + " exclusive, was " + index);
+		assertLength(index, mask.length << 3);
 
 		final int bitGroup = mask.length - 1 - (index >>> 3);
 		final int bitMask = 1 << (index % Byte.SIZE);
 		return ((mask[bitGroup] & bitMask) != 0);
+	}
+
+	private static void assertLength(final int index, final int maxLength){
+		if(index < 0 || index >= maxLength)
+			throw new IllegalArgumentException("Index value must be between 0 and " + maxLength + " exclusive, was " + index);
 	}
 
 }

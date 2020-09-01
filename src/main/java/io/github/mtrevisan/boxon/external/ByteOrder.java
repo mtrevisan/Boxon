@@ -25,9 +25,12 @@
 package io.github.mtrevisan.boxon.external;
 
 
+/** An enumeration for byte orders. */
 public enum ByteOrder{
 
+	/** Little-endian byte order. */
 	LITTLE_ENDIAN,
+	/** Big-endian byte order. */
 	BIG_ENDIAN
 
 }

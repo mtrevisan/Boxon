@@ -24,25 +24,26 @@
  */
 package io.github.mtrevisan.boxon.codecs;
 
-import io.github.mtrevisan.boxon.annotations.BindArray;
-import io.github.mtrevisan.boxon.annotations.BindArrayPrimitive;
-import io.github.mtrevisan.boxon.annotations.BindBits;
-import io.github.mtrevisan.boxon.annotations.BindByte;
-import io.github.mtrevisan.boxon.annotations.BindChecksum;
-import io.github.mtrevisan.boxon.annotations.BindDecimal;
-import io.github.mtrevisan.boxon.annotations.BindDouble;
-import io.github.mtrevisan.boxon.annotations.BindFloat;
-import io.github.mtrevisan.boxon.annotations.BindInt;
-import io.github.mtrevisan.boxon.annotations.BindInteger;
-import io.github.mtrevisan.boxon.annotations.BindLong;
-import io.github.mtrevisan.boxon.annotations.BindShort;
-import io.github.mtrevisan.boxon.annotations.BindString;
-import io.github.mtrevisan.boxon.annotations.BindStringTerminated;
+import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.Evaluate;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
+import io.github.mtrevisan.boxon.annotations.bindings.BindArray;
+import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
+import io.github.mtrevisan.boxon.annotations.bindings.BindBits;
+import io.github.mtrevisan.boxon.annotations.bindings.BindByte;
+import io.github.mtrevisan.boxon.annotations.bindings.BindDecimal;
+import io.github.mtrevisan.boxon.annotations.bindings.BindDouble;
+import io.github.mtrevisan.boxon.annotations.bindings.BindFloat;
+import io.github.mtrevisan.boxon.annotations.bindings.BindInt;
+import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
+import io.github.mtrevisan.boxon.annotations.bindings.BindLong;
+import io.github.mtrevisan.boxon.annotations.bindings.BindShort;
+import io.github.mtrevisan.boxon.annotations.bindings.BindString;
+import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.annotations.checksummers.CRC16CCITT;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.external.BitSet;
 import io.github.mtrevisan.boxon.external.ByteHelper;
 import io.github.mtrevisan.boxon.external.ByteOrder;
@@ -78,7 +79,7 @@ class TemplateTest{
 		private final byte mask;
 
 
-		public Mask(byte mask){
+		Mask(byte mask){
 			this.mask = mask;
 		}
 
@@ -151,7 +152,7 @@ class TemplateTest{
 		@BindStringTerminated(terminator = ',')
 		private String textWithTerminator;
 
-		@BindChecksum(type = short.class, skipStart = 4, skipEnd = 4, algorithm = CRC16CCITT.class, startValue = CRC16CCITT.START_VALUE_0xFFFF)
+		@Checksum(type = short.class, skipStart = 4, skipEnd = 4, algorithm = CRC16CCITT.class, startValue = CRC16CCITT.START_VALUE_0xFFFF)
 		private short checksum;
 
 		@Evaluate("T(java.time.ZonedDateTime).now()")
@@ -167,10 +168,10 @@ class TemplateTest{
 
 	@Test
 	@SuppressWarnings("SimplifiableAssertion")
-	void creation(){
-		Loader loader = new Loader();
-		loader.loadDefaultCodecs();
-		Template<Message> template = Template.createFrom(Message.class, loader::hasCodec);
+	void creation() throws AnnotationException{
+		TemplateParser templateParser = new TemplateParser();
+		templateParser.loader.loadDefaultCodecs();
+		Template<Message> template = templateParser.loader.createTemplate(Message.class);
 
 		Assertions.assertNotNull(template);
 		Assertions.assertEquals(Message.class, template.getType());
@@ -194,11 +195,11 @@ class TemplateTest{
 		Assertions.assertNotNull(checksumField);
 		Assertions.assertEquals("checksum", checksumField.getFieldName());
 		Annotation checksum = checksumField.getBinding();
-		Assertions.assertEquals(BindChecksum.class, checksum.annotationType());
-		BindChecksum cs = new BindChecksum(){
+		Assertions.assertEquals(Checksum.class, checksum.annotationType());
+		Checksum cs = new Checksum(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindChecksum.class;
+				return Checksum.class;
 			}
 
 			@Override
@@ -222,7 +223,7 @@ class TemplateTest{
 			}
 
 			@Override
-			public long startValue(){
+			public short startValue(){
 				return CRC16CCITT.START_VALUE_0xFFFF;
 			}
 
@@ -235,10 +236,10 @@ class TemplateTest{
 	}
 
 	@Test
-	void inheritance(){
-		Loader loader = new Loader();
-		loader.loadDefaultCodecs();
-		Template<MessageChild> template = Template.createFrom(MessageChild.class, loader::hasCodec);
+	void inheritance() throws AnnotationException{
+		TemplateParser templateParser = new TemplateParser();
+		templateParser.loader.loadDefaultCodecs();
+		Template<MessageChild> template = templateParser.loader.createTemplate(MessageChild.class);
 
 		Assertions.assertNotNull(template);
 		Assertions.assertEquals(MessageChild.class, template.getType());

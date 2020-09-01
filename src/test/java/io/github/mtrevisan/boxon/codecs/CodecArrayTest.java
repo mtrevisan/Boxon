@@ -24,24 +24,25 @@
  */
 package io.github.mtrevisan.boxon.codecs;
 
-import io.github.mtrevisan.boxon.annotations.BindArray;
-import io.github.mtrevisan.boxon.annotations.BindArrayPrimitive;
-import io.github.mtrevisan.boxon.annotations.BindByte;
-import io.github.mtrevisan.boxon.annotations.BindString;
-import io.github.mtrevisan.boxon.annotations.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
-import io.github.mtrevisan.boxon.annotations.ObjectChoices;
+import io.github.mtrevisan.boxon.annotations.bindings.BindArray;
+import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
+import io.github.mtrevisan.boxon.annotations.bindings.BindByte;
+import io.github.mtrevisan.boxon.annotations.bindings.BindString;
+import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
+import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.exceptions.FieldException;
+import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
 import io.github.mtrevisan.boxon.external.ByteOrder;
-import io.github.mtrevisan.boxon.external.ComposeResponse;
-import io.github.mtrevisan.boxon.external.ParseResponse;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
-import io.github.mtrevisan.boxon.internal.reflection.helpers.ReflectionHelper;
+import io.github.mtrevisan.boxon.internal.ReflectionHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -93,7 +94,7 @@ class CodecArrayTest{
 
 
 	@Test
-	void arrayPrimitive(){
+	void arrayPrimitive() throws FieldException{
 		CodecInterface<BindArrayPrimitive> codec = new CodecArrayPrimitive();
 		int[] encodedValue = new int[]{0x0000_0123, 0x0000_0456};
 		BindArrayPrimitive annotation = new BindArrayPrimitive(){
@@ -161,7 +162,7 @@ class CodecArrayTest{
 	}
 
 	@Test
-	void arrayOfSameObject(){
+	void arrayOfSameObject() throws FieldException{
 		CodecArray codec = new CodecArray();
 		Version[] encodedValue = new Version[]{new Version((byte) 0, (byte) 1, (byte) 12), new Version((byte) 1, (byte) 2, (byte) 0)};
 		BindArray annotation = new BindArray(){
@@ -211,6 +212,11 @@ class CodecArrayTest{
 			}
 
 			@Override
+			public Class<?> selectDefault(){
+				return void.class;
+			}
+
+			@Override
 			public Class<? extends Validator<?>> validator(){
 				return NullValidator.class;
 			}
@@ -256,7 +262,7 @@ class CodecArrayTest{
 	}
 
 	@Test
-	void arrayOfDifferentObjects(){
+	void arrayOfDifferentObjects() throws AnnotationException, TemplateException{
 		Parser parser = Parser.create()
 			.withCodecs(CodecChecksum.class, CodecCustomTest.VariableLengthByteArray.class)
 			.withTemplates(TestChoice4.class);
@@ -284,7 +290,7 @@ class CodecArrayTest{
 	}
 
 	@Test
-	void arrayOfDifferentObjectsWithNoPrefix(){
+	void arrayOfDifferentObjectsWithNoPrefix() throws AnnotationException, TemplateException{
 		Parser parser = Parser.create()
 			.withDefaultCodecs()
 			.withTemplates(TestChoice5.class);

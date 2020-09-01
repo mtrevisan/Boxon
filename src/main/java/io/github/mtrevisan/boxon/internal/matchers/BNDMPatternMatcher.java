@@ -45,7 +45,7 @@ import java.util.Arrays;
  * @see <a href="https://users.dcc.uchile.cl/~gnavarro/ps/cpm98.pdf">A bit-parallel approach to suffix automata: fast extended string matching</a>
  * @see <a href="http://eprints.fri.uni-lj.si/4287/1/63150349-LINA_LUMBUROVSKA-%C4%8Casovno_u%C4%8Dinkoviti_algoritmi_ujemanja_nizov_in_metoda_grobe_sile.pdf">Time-efficient string matching algorithms and the brute-force method</a>
  */
-public class BNDMPatternMatcher implements PatternMatcher{
+public final class BNDMPatternMatcher implements PatternMatcher{
 
 	/**
 	 * Pre-processing of the pattern.
@@ -56,19 +56,18 @@ public class BNDMPatternMatcher implements PatternMatcher{
 	 * @return	an array of pre-processed pattern.
 	 */
 	public int[] preProcessPatternWithWildcard(final byte[] pattern, final byte wildcard){
-		if(pattern.length >= Integer.SIZE)
-			throw new IllegalArgumentException("Cannot process a pattern whose length exceeds " + (Integer.SIZE - 1) + " bytes");
+		assertLength(pattern.length);
 
 		int j = 0;
 		for(int i = 0; i < pattern.length; i ++)
 			if(pattern[i] == wildcard)
 				j |= 1 << (pattern.length - i - 1);
 
-		final int[] b = new int[Integer.SIZE << 3];
+		final int[] preprocessedPattern = new int[Integer.SIZE << 3];
 		if(j != 0)
-			Arrays.fill(b, j);
+			Arrays.fill(preprocessedPattern, j);
 
-		return fill(pattern, b);
+		return fill(pattern, preprocessedPattern);
 	}
 
 	/**
@@ -80,46 +79,49 @@ public class BNDMPatternMatcher implements PatternMatcher{
 	 */
 	@Override
 	public int[] preProcessPattern(final byte[] pattern){
-		if(pattern.length >= Integer.SIZE)
-			throw new IllegalArgumentException("Cannot process a pattern whose length exceeds " + (Integer.SIZE - 1) + " bytes");
+		assertLength(pattern.length);
 
-		final int[] b = new int[Integer.SIZE << 3];
-		return fill(pattern, b);
+		final int[] preprocessedPattern = new int[Integer.SIZE << 3];
+		return fill(pattern, preprocessedPattern);
 	}
 
-	private int[] fill(final byte[] pattern, final int[] b){
+	private int[] fill(final byte[] pattern, final int[] preprocessedPattern){
 		int j = 1;
 		for(int i = pattern.length - 1; i >= 0; i --, j <<= 1)
-			b[pattern[i] & 0xFF] |= j;
-		return b;
+			preprocessedPattern[pattern[i] & 0xFF] |= j;
+		return preprocessedPattern;
 	}
 
 	@Override
 	public int indexOf(final byte[] source, int offset, final byte[] pattern, final int[] processedPattern){
 		if(pattern.length == 0)
 			return 0;
-		if(pattern.length >= Integer.SIZE)
-			throw new IllegalArgumentException("Cannot process a pattern whose length exceeds " + (Integer.SIZE - 1) + " bytes");
+		assertLength(pattern.length);
 
 		final int length = pattern.length;
 		while(offset <= source.length - length){
 			int j = length - 1;
 			int last = length;
-			int d = -1;
-			while(d != 0){
-				d &= processedPattern[source[offset + j] & 0xFF];
-				if(d != 0){
+			int pp = -1;
+			while(pp != 0){
+				pp &= processedPattern[source[offset + j] & 0xFF];
+				if(pp != 0){
 					if(j == 0)
 						return offset;
 
 					last = j;
 				}
 				j --;
-				d <<= 1;
+				pp <<= 1;
 			}
 			offset += last;
 		}
 		return -1;
+	}
+
+	private void assertLength(final int length){
+		if(length >= Integer.SIZE)
+			throw new IllegalArgumentException("Cannot process a pattern whose length exceeds " + (Integer.SIZE - 1) + " bytes");
 	}
 
 }

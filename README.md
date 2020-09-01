@@ -1,6 +1,6 @@
 # Boxon _[boˈzoŋ]_
 
-![Java-11+](https://img.shields.io/badge/java-11%2B-orange.svg) [![License: GPL v3](https://img.shields.io/badge/License-MIT-blue.svg)](https://www.gnu.org/licenses/gpl-3.0) [![Maven Central](https://img.shields.io/maven-central/v/io.github.mtrevisan/boxon.svg)](http://search.maven.org/#search%7Cga%7C1%7Cg%3Aio.github.mtrevisan%20a%3Aboxon)
+![Java-11+](https://img.shields.io/badge/java-11%2B-orange.svg) [![License: GPL v3](https://img.shields.io/badge/License-MIT-blue.svg)](https://www.gnu.org/licenses/gpl-3.0) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.mtrevisan/boxon/badge.svg)](https://mvnrepository.com/artifact/io.github.mtrevisan/boxon)
 
 <a href="https://codeclimate.com/github/mtrevisan/Boxon/maintainability"><img src="https://api.codeclimate.com/v1/badges/bff8577200d792e1e197/maintainability" /></a>
 
@@ -10,11 +10,18 @@
 <br />
 
 ## Forewords
-Like [Preon](https://github.com/preon/preon) (currently not maintained anymore), but the code is understandable, shorter, easier to extend, uses the more powerful (and maintained) [SpEL expressions](https://docs.spring.io/spring/docs/4.3.10.RELEASE/spring-framework-reference/html/expressions.html), and the documentation is __really__ free...
-
 This is a declarative, bit-level, message parser. All you have to do is write a [POJO](https://en.wikipedia.org/wiki/Plain_old_Java_object) that represents your message and annotate it. That's all. [Boxon](https://en.wikipedia.org/wiki/Boson) will take care of the rest for you.
 
 If you want to use the parser straight away, just go [here](#examples).
+
+<br />
+
+| This project adheres to the **[Zero Bugs Commitment](https://github.com/classgraph/classgraph/blob/master/Zero-Bugs-Commitment.md)**. |
+|-----------------------------|
+
+<br />
+
+(Like [Preon](https://github.com/preon/preon) — currently not maintained anymore —, but the code is understandable, shorter, easier to extend, uses the more powerful (and maintained) [SpEL expressions](https://docs.spring.io/spring/docs/4.3.10.RELEASE/spring-framework-reference/html/expressions.html), and the documentation is __really__ free...)
 
 <br/>
 
@@ -55,16 +62,22 @@ Boxon differs from Preon in...
 ### Pre-compiled executables
 Get them [here](https://github.com/mtrevisan/Boxon/releases/).
 
-### Boxon as Java dependency
-In order to include Boxon in a Maven project, first add the following dependency to your pom.xml (<b>Java 11 required</b>):
+### Maven dependency
+In order to include Boxon in a Maven project add the following dependency to your pom.xml (<b>Java 11 required</b>).
+
+Replace `x.y.z` below int the version tag with the latest [release number](https://github.com/mtrevisan/Boxon/releases).
 
 ```xml
 <dependency>
     <groupId>io.github.mtrevisan</groupId>
     <artifactId>boxon</artifactId>
-    <version>x.x.x</version>
+    <version>x.y.z</version>
 </dependency>
 ```
+
+### Pre-built JARs
+
+You can get pre-built JARs (usable on JRE 11 or newer) from [Sonatype](https://oss.sonatype.org/#nexus-search;quick~io.github.mtrevisan).
 
 <br/>
 <br/>
@@ -99,11 +112,13 @@ In order to include Boxon in a Maven project, first add the following dependency
     1. [Multi-message parser](#example-multi)
     2. [Message composer](#example-composer)
 7. [Changelog](#changelog)
-    1. [version 1.0.0](#changelog-1.0.0)
-    2. [version 0.0.2](#changelog-0.0.2)
-    3. [version 0.0.1](#changelog-0.0.1)
-    4. [version 0.0.0](#changelog-0.0.0)
+    1. [version 1.1.0](#changelog-1.1.0)
+    2. [version 1.0.0](#changelog-1.0.0)
+    3. [version 0.0.2](#changelog-0.0.2)
+    4. [version 0.0.1](#changelog-0.0.1)
+    5. [version 0.0.0](#changelog-0.0.0)
 8. [License](#license)
+9. [Attributions](#attributions)
 
 <br/>
 
@@ -120,6 +135,7 @@ You can use them as a starting point to build your own customized readers.
  - `condition`: The SpEL expression that determines if this field has to be read.
  - `type`: the Class of the Object of the single element of the array (defaults to `Object`).
  - `selectFrom`: the selection from which to choose the instance type.
+ - `selectDefault`: the default selection if none can be chosen from `selectFrom` (defaults to `void.class`).
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable.
  - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
@@ -155,6 +171,7 @@ private Version version;
  - `type`: the Class of the Object of the single element of the array (defaults to `Object`).
  - `size`: the size of the array (can be a SpEL expression).
  - `selectFrom`: the selection from which to choose the instance type.
+ - `selectDefault`: the default selection if none can be chosen from `selectFrom` (defaults to `void.class`).
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
  - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
@@ -241,7 +258,6 @@ private BigDecimal[][] crashData;
  - `condition`: The SpEL expression that determines if this field has to be read.
  - `size`: the number of bits to read (can be a SpEL expression).
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
- - `match`: a string/regex/SpEl expression that is used as an expected value (the value to match must be something like `[1, 12]`, where the numbers are the position of the set bits in ascending order).
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
  - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
@@ -264,7 +280,6 @@ private BitMap bits;
 
 #### parameters
  - `condition`: The SpEL expression that determines if this field has to be read.
- - `match`: a string/regex/SpEl expression that is used as an expected value.
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
  - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
@@ -288,7 +303,6 @@ public Byte mask;
 #### parameters
  - `condition`: The SpEL expression that determines if this field has to be read.
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
- - `match`: a string/regex/SpEl expression that is used as an expected value.
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
  - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
@@ -312,7 +326,6 @@ private short numberShort;
 #### parameters
  - `condition`: The SpEL expression that determines if this field has to be read.
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
- - `match`: a string/regex/SpEl expression that is used as an expected value.
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
  - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
@@ -336,7 +349,6 @@ private int numberInt;
 #### parameters
  - `condition`: The SpEL expression that determines if this field has to be read.
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
- - `match`: a string/regex/SpEl expression that is used as an expected value.
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
  - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
@@ -361,8 +373,6 @@ private long numberLong;
  - `condition`: The SpEL expression that determines if this field has to be read.
  - `size`: the number of bits to read (can be a SpEL expression).
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
- - `unsigned`: whether the resulting number is to be treated as unsigned, defaults to `true`.
- - `match`: a string/regex/SpEl expression that is used as an expected value.
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
  - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
@@ -389,7 +399,6 @@ private BigInteger number;
 #### parameters
  - `condition`: The SpEL expression that determines if this field has to be read.
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
- - `match`: a string/regex/SpEl expression that is used as an expected value.
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
  - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
@@ -413,7 +422,6 @@ private float number;
 #### parameters
  - `condition`: The SpEL expression that determines if this field has to be read.
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
- - `match`: a string/regex/SpEl expression that is used as an expected value.
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
  - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
@@ -438,7 +446,6 @@ private double number;
  - `condition`: The SpEL expression that determines if this field has to be read.
  - `type`: the Class of variable to be read (SHOULD BE `Float.class`, or `Double.class`).
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
- - `match`: a string/regex/SpEl expression that is used as an expected value.
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
  - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
@@ -463,7 +470,6 @@ private BigDecimal number;
  - `condition`: The SpEL expression that determines if this field has to be read.
  - `charset`: the charset to be interpreted the string into (SHOULD BE the charset name, eg. `UTF-8` (the default), `ISO-8859-1`, etc).
  - `size`: the size of the string (can be a SpEL expression).
- - `match`: a string/regex/SpEl expression that is used as an expected value.
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
  - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
@@ -489,7 +495,6 @@ public String text;
  - `charset`: the charset to be interpreted the string into (SHOULD BE the charset name, eg. `UTF-8` (the default), `ISO-8859-1`, etc).
  - `terminator`: the byte that terminates the string (defaults to `\0`).
  - `consumeTerminator`: whether to consume the terminator (defaults to `true`).
- - `match`: a string/regex/SpEl expression that is used as an expected value.
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
  - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
@@ -559,7 +564,7 @@ This annotation is bounded to a variable.
 @BindString(size = "4")
 public String text1;
 
-@Skip(terminator = "x", consumeTerminator = false)
+@Skip(terminator = 'x', consumeTerminator = false)
 @BindString(size = "10")
 public String text2;
 
@@ -589,7 +594,7 @@ This annotation is bounded to a variable.
 
 #### example
 ```java
-@BindChecksum(type = short.class, skipStart = 4, skipEnd = 4, algorithm = CRC16.class, startValue = CRC16.START_VALUE_0xFFFF)
+@Checksum(type = short.class, skipStart = 4, skipEnd = 4, algorithm = CRC16.class, startValue = CRC16.START_VALUE_0xFFFF)
 private short checksum;
 ```
 
@@ -630,9 +635,9 @@ private String deviceTypeName;
 
 <a name="how-to-spel"></a>
 ## How to write SpEL expressions
-Care should be taken in writing [SpEL expressions](https://docs.spring.io/spring/docs/4.3.10.RELEASE/spring-framework-reference/html/expressions.html) for the fields `condition`, `size`, and `match`.
+Care should be taken in writing [SpEL expressions](https://docs.spring.io/spring/docs/4.3.10.RELEASE/spring-framework-reference/html/expressions.html) for the fields `condition`, and `size`.
 
-The root object is the outermost object. In order to evaluate a variable of a parent object the complete path should be used, as in `object1.variable1`. In order to evaluate a variable of a children object, that is the object currently scanned, the relative path should be used usign by the special keyword `#self`, as in `#self.variable2`).
+The root object is the outermost object. In order to evaluate a variable of a parent object the complete path should be used, as in `object1.variable1`. In order to evaluate a variable of a children object, that is the object currently scanned, the relative path should be used using by the special keyword `#self`, as in `#self.variable2`).
 
 See also [Spring Expression Language (SpEL) Primer](https://dhruba.wordpress.com/2009/12/30/spring-expression-language-spel-primer/).
 
@@ -946,8 +951,10 @@ if(!composeResult.hasErrors()){
 }
 //process the errors
 else{
-    List<EncodeException> errors = result.getErrors();
-    ...
+    for(int i = 0; i < result.getErrorCount(); i ++){
+        EncodeException exc = result.getErrorAt(i);
+        ...
+    }
 }
 ```
 
@@ -959,24 +966,46 @@ Remember that the header that will be written is the first in `@MessageHeader`.
 <a name="changelog"></a>
 ## Changelog
 
+<a name="changelog-1.1.0"></a>
+### version 1.1.0 - 202009??
+- Better handling of NOP logger.
+- Abandoned [Reflections](https://github.com/ronmamo/reflections) in favor of [ClassGraph](https://github.com/classgraph/classgraph).
+- Added BindArray.selectDefault and BindObject.selectDefault to cope with default selector that has no prefix.
+- Added some feasibility checks on annotation data.
+- Added public constructor to Parser to allow for extensions.
+- Changed the signature of Checksummer.calculateChecksum returning short instead of long.
+- Changed method Validator.validate into Validator.isValid.
+- Changed method ParseResponse.getMessageForError into ParseResponse.getErrorMessageAt to align it to other method name's conventions.
+- Moved classes ParseResponse and ComposeResponse from io.github.mtrevisan.boxon.external to io.github.mtrevisan.boxon.codecs in order to hide add methods; the constructors are also hidden.
+- Minor refactorings.
+- Added `originator` variable (and its getter) to ComposeResponse to hold the given objects used to create the message.
+- Added/modified javadocs to better explain some classes.
+- Removed ComposeResponse.getErrors, BindInteger.unsigned and BitReader.getInteger(int, ByteOrder, boolean) as they are useless.
+- Removed BitWriter.putText(String, byte, boolean) because of the [Boolean Trap](https://ariya.io/2011/08/hall-of-api-shame-boolean-trap).
+- Removed useless `match()` parameter from bindings.
+- Enhanced the exception message thrown if the type of BitReader.get(Class, ByteOrder) is not recognized.
+- Renamed BindChecksum into Checksum.
+- Relocated all binding annotations inside annotations.bindings (Bind* and *Choices).
+- Corrected bug while reading skips in TemplateParser.decode.
+
 <a name="changelog-1.0.0"></a>
-### version 1.0.0 - 202008??
-- speed-up execution
-- revision of the packages with removal of cycles
-- better handling of class retrieval (codecs and templates)
+### version 1.0.0 - 20200825
+- Speed-up execution.
+- Revision of the packages with removal of cycles.
+- Better handling of class retrieval (codecs and templates).
 
 <a name="changelog-0.0.2"></a>
 ### version 0.0.2 - 20200731
-- final revision, first deploy
+- Final revision.
 
 <a name="changelog-0.0.1"></a>
 ### version 0.0.1 - 20200721
-- first revision
-- some more thoughts on how it should work
+- First revision.
+- Some more thoughts on how it should work.
 
 <a name="changelog-0.0.0"></a>
 ### version 0.0.0 - 20200629
-- first release
+- First version.
 
 
 <br/>
@@ -985,3 +1014,7 @@ Remember that the header that will be written is the first in `@MessageHeader`.
 ## License
 This project is licensed under [MIT license](http://opensource.org/licenses/MIT).
 For the full text of the license, see the [LICENSE](LICENSE) file.
+
+<a name="attributions"></a>
+## Attributions
+Logo for the project by TimothyRias - Own work, CC BY 3.0, [https://commons.wikimedia.org/w/index.php?curid=4943351](https://commons.wikimedia.org/w/index.php?curid=4943351).

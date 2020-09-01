@@ -25,12 +25,9 @@
 package io.github.mtrevisan.boxon.external;
 
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.ParserDataType;
 
-import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
-import java.nio.ReadOnlyBufferException;
 import java.nio.charset.Charset;
 
 
@@ -38,18 +35,16 @@ import java.nio.charset.Charset;
  * @see <a href="https://graphics.stanford.edu/~seander/bithacks.html">Bit Twiddling Hacks</a>
  * @see <a href="https://git.irsamc.ups-tlse.fr/scemama/Bit-Twiddling-Hacks/">Bit Twiddling Hacks</a>
  */
-public final class BitWriter{
+public final class BitWriter extends BitWriterData{
 
-	/** The backing {@link ByteArrayOutputStream}. */
-	private final ByteArrayOutputStream os = new ByteArrayOutputStream(0);
-
-	/** The <i>cache</i> used when writing bits. */
-	private byte cache;
-	/** The number of bits available (to write) within {@code cache}. */
-	private int remaining;
-
-
-	public void put(final Object value, final ByteOrder byteOrder){
+	/**
+	 * Writes the given value using the give byte order.
+	 *
+	 * @param value	The data to written. Here, the length of the types (in bits) are those defined by java (see {@link Byte#SIZE}, {@link Short#SIZE}, {@link Integer#SIZE},
+	 * 	{@link Long#SIZE}, {@link Float#SIZE}, and {@link Double#SIZE}).
+	 * @param byteOrder	The byte order used to write the value.
+	 */
+	public void put(final Object value, final ByteOrder byteOrder) throws AnnotationException{
 		final ParserDataType t = ParserDataType.fromType(value.getClass());
 		if(t == null)
 			throw new AnnotationException("Cannot write type {}", value.getClass().getSimpleName());
@@ -78,45 +73,6 @@ public final class BitWriter{
 			case DOUBLE:
 				putDouble((Double)value, byteOrder);
 		}
-	}
-
-	/**
-	 * Writes {@code value} to this {@link BitWriter} using {@code length} bits.
-	 *
-	 * @param value	The value to write.
-	 * @param length	The amount of bits to use when writing {@code value}.
-	 */
-	public void putBits(final BitSet value, final int length){
-		//if the value that we're writing is too large to be placed entirely in the cache, then we need to place as
-		//much as we can in the cache (the least significant bits), flush the cache to the backing ByteBuffer, and
-		//place the rest in the cache
-		int offset = 0;
-		while(offset < length){
-			//fill the cache one chunk of bits at a time
-			final int size = Math.min(length - offset, Byte.SIZE - remaining);
-			final byte nextCache = (byte)value.toLong(offset, size);
-			cache = (byte)((cache << size) | nextCache);
-			remaining += size;
-			offset += size;
-
-			//if cache is full, write it
-			if(remaining == Byte.SIZE){
-				os.write(cache);
-
-				resetInnerVariables();
-			}
-		}
-	}
-
-	/**
-	 * Writes {@code value} to this {@link BitWriter} using {@code length} bits.
-	 *
-	 * @param value	The value to write.
-	 * @param length	The amount of bits to use when writing {@code value} (MUST BE less than or equals to {@link Long#SIZE}).
-	 */
-	private void putValue(final long value, final int length){
-		final BitSet bits = BitSet.valueOf(new long[]{value});
-		putBits(bits, length);
 	}
 
 	/**
@@ -195,10 +151,11 @@ public final class BitWriter{
 	 * @param cls	Either a {@code Float} or a {@link Double} class.
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 */
-	public void putDecimal(final BigDecimal value, final Class<?> cls, final ByteOrder byteOrder){
-		if(cls == float.class || cls == Float.class)
+	public void putDecimal(final BigDecimal value, final Class<?> cls, final ByteOrder byteOrder) throws AnnotationException{
+		final ParserDataType dataType = ParserDataType.fromType(cls);
+		if(dataType == ParserDataType.FLOAT)
 			putFloat(value.floatValue(), byteOrder);
-		else if(cls == double.class || cls == Double.class)
+		else if(dataType == ParserDataType.DOUBLE)
 			putDouble(value.doubleValue(), byteOrder);
 		else
 			throw new AnnotationException("Cannot write {} as a {}", BigDecimal.class.getSimpleName(), cls.getSimpleName());
@@ -206,57 +163,13 @@ public final class BitWriter{
 
 	/**
 	 * Write the text into with a given {@link Charset}.
+	 * <p>Note that if a terminator is needed, it must be manually written.</p>
 	 *
 	 * @param text	The {@code String}s to be written.
 	 * @param charset	The charset.
 	 */
 	public void putText(final String text, final Charset charset){
 		putBytes(text.getBytes(charset));
-	}
-
-	/**
-	 * Write the text into with a given {@link Charset} and terminator.
-	 *
-	 * @param text	The {@code String}s to be written.
-	 * @param terminator	The terminator.
-	 * @param consumeTerminator	Whether to consume the terminator.
-	 * @param charset	The charset.
-	 */
-	public void putText(final String text, final byte terminator, final boolean consumeTerminator, final Charset charset){
-		putBytes(text.getBytes(charset));
-		if(consumeTerminator)
-			putByte(terminator);
-	}
-
-
-	/** Flush an integral number of bytes to the output stream, padding any non-completed byte with zeros. */
-	public void flush(){
-		//put the cache into the buffer
-		if(remaining > 0)
-			os.write(cache);
-
-		resetInnerVariables();
-	}
-
-	private void resetInnerVariables(){
-		remaining = 0;
-		cache = 0;
-	}
-
-	/**
-	 * Returns a copy of the byte array that backs the buffer.
-	 *
-	 * @return	The copy of the array that backs this buffer.
-	 * @throws ReadOnlyBufferException	If this buffer is backed by an array but is read-only.
-	 * @throws UnsupportedOperationException	If this buffer is not backed by an accessible array.
-	 */
-	public byte[] array(){
-		return os.toByteArray();
-	}
-
-	@Override
-	public String toString(){
-		return JavaHelper.toHexString(array());
 	}
 
 }

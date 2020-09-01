@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.external;
 
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -54,7 +55,7 @@ class BitWriterTest{
 
 	@Test
 	void bytePrimitive(){
-		byte value = (byte)0x16;
+		byte value = 0x16;
 		writer.putByte(value);
 		BitReader reader = BitReader.wrap(writer);
 
@@ -64,7 +65,7 @@ class BitWriterTest{
 
 	@Test
 	void bytesPrimitive(){
-		byte[] value = new byte[]{(byte)0x16, (byte)0xFA};
+		byte[] value = {(byte)0x16, (byte)0xFA};
 		writer.putBytes(value);
 		BitReader reader = BitReader.wrap(writer);
 
@@ -173,7 +174,7 @@ class BitWriterTest{
 	}
 
 	@Test
-	void bigDecimalAsFloat(){
+	void bigDecimalAsFloat() throws AnnotationException{
 		BigDecimal value = new BigDecimal("1.23");
 		writer.putDecimal(value, Float.class, ByteOrder.LITTLE_ENDIAN);
 		BitReader reader = BitReader.wrap(writer);
@@ -183,7 +184,7 @@ class BitWriterTest{
 	}
 
 	@Test
-	void bigDecimalAsFloatBigEndian(){
+	void bigDecimalAsFloatBigEndian() throws AnnotationException{
 		BigDecimal value = new BigDecimal("1.23");
 		writer.putDecimal(value, Float.class, ByteOrder.BIG_ENDIAN);
 		BitReader reader = BitReader.wrap(writer);
@@ -193,7 +194,7 @@ class BitWriterTest{
 	}
 
 	@Test
-	void bigDecimalAsFDouble(){
+	void bigDecimalAsFDouble() throws AnnotationException{
 		BigDecimal value = new BigDecimal("1.23");
 		writer.putDecimal(value, Double.class, ByteOrder.LITTLE_ENDIAN);
 		BitReader reader = BitReader.wrap(writer);
@@ -203,7 +204,7 @@ class BitWriterTest{
 	}
 
 	@Test
-	void bigDecimalAsFDoubleBigEndian(){
+	void bigDecimalAsFDoubleBigEndian() throws AnnotationException{
 		BigDecimal value = new BigDecimal("1.23");
 		writer.putDecimal(value, Double.class, ByteOrder.BIG_ENDIAN);
 		BitReader reader = BitReader.wrap(writer);
@@ -225,24 +226,26 @@ class BitWriterTest{
 	@Test
 	void textWithTerminator(){
 		String value = "test";
-		writer.putText(value, (byte)'w', false, StandardCharsets.UTF_8);
+		writer.putText(value, StandardCharsets.UTF_8);
 		writer.putByte((byte)'w');
 		BitReader reader = BitReader.wrap(writer);
 
 		Assertions.assertEquals("7465737477", reader.toString());
-		Assertions.assertEquals(value, reader.getTextUntilTerminator((byte)'w', false, StandardCharsets.UTF_8));
+		Assertions.assertEquals(value, reader.getTextUntilTerminator((byte)'w', StandardCharsets.UTF_8));
 		Assertions.assertEquals((byte)'w', reader.getByte());
 	}
 
 	@Test
 	void textWithTerminatorConsumed(){
 		String value = "test";
-		writer.putText(value, (byte)'w', true, StandardCharsets.UTF_8);
+		writer.putText(value, StandardCharsets.UTF_8);
+		writer.putByte((byte)'w');
 		writer.putByte((byte)'w');
 		BitReader reader = BitReader.wrap(writer);
 
 		Assertions.assertEquals("746573747777", reader.toString());
-		Assertions.assertEquals(value, reader.getTextUntilTerminator((byte)'w', true, StandardCharsets.UTF_8));
+		Assertions.assertEquals(value, reader.getTextUntilTerminator((byte)'w', StandardCharsets.UTF_8));
+		reader.getByte();
 		writer.putByte((byte)'w');
 	}
 

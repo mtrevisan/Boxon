@@ -25,8 +25,15 @@
 package io.github.mtrevisan.boxon.annotations.validators;
 
 
+/** The validator to be applied to converted values read from a bind annotation. */
 public interface Validator<T>{
 
-	boolean validate(final T value);
+	/**
+	 * Validation method.
+	 *
+	 * @param value	The value to be validated.
+	 * @return	Whether the given value is valid.
+	 */
+	boolean isValid(final T value);
 
 }

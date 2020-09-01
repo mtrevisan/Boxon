@@ -25,16 +25,18 @@
 package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.internal.DynamicArray;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.Memoizer;
+import io.github.mtrevisan.boxon.internal.ReflectionHelper;
+import io.github.mtrevisan.boxon.internal.Reflections;
 import io.github.mtrevisan.boxon.internal.matchers.BNDMPatternMatcher;
 import io.github.mtrevisan.boxon.internal.matchers.PatternMatcher;
-import io.github.mtrevisan.boxon.internal.reflection.Reflections;
-import io.github.mtrevisan.boxon.internal.reflection.helpers.ReflectionHelper;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
@@ -45,24 +47,22 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
+import java.util.StringJoiner;
 import java.util.TreeMap;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 
 final class Loader{
 
-	private static final Logger LOGGER = JavaHelper.getLoggerFor(Loader.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(Loader.class);
 
-	private static final Function<byte[], int[]> PRE_PROCESSED_PATTERNS = Memoizer.memoizeThreadAndRecursionSafe(Loader::getPreProcessedPattern);
+	private final Memoizer.ThrowingFunction<Class<?>, Template<?>, AnnotationException> templateStore = Memoizer.throwingMemoize(type -> new Template<>(type, this::filterAnnotationsWithCodec));
+
 	private static final PatternMatcher PATTERN_MATCHER = new BNDMPatternMatcher();
+	private static final Function<byte[], int[]> PRE_PROCESSED_PATTERNS = Memoizer.memoize(PATTERN_MATCHER::preProcessPattern);
 
 	private final Map<String, Template<?>> templates = new TreeMap<>(Comparator.comparingInt(String::length).reversed().thenComparing(String::compareTo));
 	private final Map<Class<?>, CodecInterface<?>> codecs = new HashMap<>(0);
-
-
-	Loader(){}
 
 
 	/**
@@ -79,9 +79,12 @@ final class Loader{
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load codecs.
 	 */
 	void loadCodecs(final Class<?>... basePackageClasses){
-		if(LOGGER != null)
-			LOGGER.info("Load codecs from package(s) {}",
-				Arrays.stream(basePackageClasses).map(Class::getPackageName).collect(Collectors.joining(", ", "[", "]")));
+		if(LOGGER.isInfoEnabled()){
+			final StringJoiner sj = new StringJoiner(", ", "[", "]");
+			for(final Class<?> basePackageClass : basePackageClasses)
+				sj.add(basePackageClass.getPackageName());
+			LOGGER.info("Load codecs from package(s) {}", sj);
+		}
 
 		/** extract all classes that implements {@link CodecInterface}. */
 		final Collection<Class<?>> derivedClasses = extractClasses(CodecInterface.class, basePackageClasses);
@@ -89,8 +92,7 @@ final class Loader{
 		final DynamicArray<CodecInterface> codecs = extractCodecs(derivedClasses);
 		addCodecsInner(codecs.data);
 
-		if(LOGGER != null)
-			LOGGER.trace("Codecs loaded are {}", codecs.limit);
+		LOGGER.trace("Codecs loaded are {}", codecs.limit);
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -103,7 +105,7 @@ final class Loader{
 			if(codec != null)
 				//if the codec was created successfully instanced, add it to the list of codecs...
 				codecs.add(codec);
-			else if(LOGGER != null)
+			else
 				//... otherwise warn
 				LOGGER.warn("Cannot create an instance of codec {}", type.getSimpleName());
 		}
@@ -119,13 +121,11 @@ final class Loader{
 	void addCodecs(final CodecInterface<?>... codecs){
 		Objects.requireNonNull(codecs);
 
-		if(LOGGER != null)
-			LOGGER.info("Load given codecs");
+		LOGGER.info("Load given codecs");
 
 		addCodecsInner(codecs);
 
-		if(LOGGER != null)
-			LOGGER.trace("Codecs loaded are {}", codecs.length);
+		LOGGER.trace("Codecs loaded are {}", codecs.length);
 	}
 
 	private void addCodecsInner(final CodecInterface<?>[] codecs){
@@ -140,8 +140,8 @@ final class Loader{
 		codecs.put(codecType, codec);
 	}
 
-	boolean hasCodec(final Class<?> type){
-		return (getCodec(type) != null);
+	private boolean hasCodec(final Class<?> type){
+		return codecs.containsKey(type);
 	}
 
 	CodecInterface<?> getCodec(final Class<?> type){
@@ -149,13 +149,21 @@ final class Loader{
 	}
 
 
+	private DynamicArray<Annotation> filterAnnotationsWithCodec(final Annotation[] declaredAnnotations){
+		final DynamicArray<Annotation> annotations = DynamicArray.create(Annotation.class, declaredAnnotations.length);
+		for(final Annotation annotation : declaredAnnotations)
+			if(hasCodec(annotation.annotationType()))
+				annotations.add(annotation);
+		return annotations;
+	}
+
 	/**
 	 * Loads all the protocol classes annotated with {@link MessageHeader}.
 	 * <p>This method SHOULD BE called from a method inside a class that lies on a parent of all the protocol classes.</p>
 	 *
 	 * @throws IllegalArgumentException	If the codecs was not loaded yet.
 	 */
-	void loadDefaultTemplates(){
+	void loadDefaultTemplates() throws AnnotationException, TemplateException{
 		loadTemplates(ReflectionHelper.extractCallerClasses());
 	}
 
@@ -164,27 +172,30 @@ final class Loader{
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
 	 */
-	void loadTemplates(final Class<?>... basePackageClasses){
-		if(LOGGER != null)
-			LOGGER.info("Load templates from package(s) {}",
-				Arrays.stream(basePackageClasses).map(Class::getPackageName).collect(Collectors.joining(", ", "[", "]")));
+	void loadTemplates(final Class<?>... basePackageClasses) throws AnnotationException, TemplateException{
+		if(LOGGER.isInfoEnabled()){
+			final StringJoiner sj = new StringJoiner(", ", "[", "]");
+			for(final Class<?> basePackageClass : basePackageClasses)
+				sj.add(basePackageClass.getPackageName());
+			LOGGER.info("Load templates from package(s) {}", sj);
+		}
 
 		/** extract all classes annotated with {@link MessageHeader}. */
 		final Collection<Class<?>> annotatedClasses = extractClasses(MessageHeader.class, basePackageClasses);
 		@SuppressWarnings("rawtypes")
 		final DynamicArray<Template> templates = extractTemplates(annotatedClasses);
-		addTemplatesInner(templates.data);
+		addTemplatesInner(templates);
 
-		if(LOGGER != null)
-			LOGGER.trace("Templates loaded are {}", templates.limit);
+		LOGGER.trace("Templates loaded are {}", templates.limit);
 	}
 
 	@SuppressWarnings("rawtypes")
-	private DynamicArray<Template> extractTemplates(final Collection<Class<?>> annotatedClasses){
+	private DynamicArray<Template> extractTemplates(final Collection<Class<?>> annotatedClasses) throws AnnotationException,
+			TemplateException{
 		final DynamicArray<Template> templates = DynamicArray.create(Template.class, annotatedClasses.size());
 		for(final Class<?> type : annotatedClasses){
 			//for each extracted class, try to parse it, extracting all the information needed for the codec of a message
-			final Template<?> from = Template.createFrom(type, this::hasCodec);
+			final Template<?> from = createTemplate(type);
 			if(from.canBeCoded())
 				//if the template is valid, add it to the list of templates...
 				templates.add(from);
@@ -195,11 +206,26 @@ final class Loader{
 		return templates;
 	}
 
-	private void addTemplatesInner(final Template<?>[] templates){
+	/**
+	 * Constructs a new {@link Template}.
+	 *
+	 * @param <T>	The type of the object to be returned as a {@link Template}.
+	 * @param type	The class of the object to be returned as a {@link Template}.
+	 * @return	The {@link Template} for the given type.
+	 */
+	@SuppressWarnings("unchecked")
+	<T> Template<T> createTemplate(final Class<T> type) throws AnnotationException{
+		return (Template<T>)templateStore.apply(type);
+	}
+
+	@SuppressWarnings("rawtypes")
+	private void addTemplatesInner(final DynamicArray<Template> templates){
 		//load each template into the available templates list
-		for(final Template<?> template : templates)
+		for(int i = 0; i < templates.limit; i ++){
+			final Template<?> template = templates.data[i];
 			if(template != null && template.canBeCoded())
 				addTemplateInner(template);
+		}
 	}
 
 	/**
@@ -216,17 +242,17 @@ final class Loader{
 				loadTemplateInner(template, start, charset);
 		}
 		catch(final Exception e){
-			if(LOGGER != null)
-				LOGGER.error("Cannot load class {}", template.getType().getSimpleName(), e);
+			LOGGER.error("Cannot load class {}", template.getType().getName(), e);
 		}
 	}
 
-	private void loadTemplateInner(final Template<?> template, final String headerStart, final Charset charset){
+	private void loadTemplateInner(final Template<?> template, final String headerStart, final Charset charset)
+			throws TemplateException{
 		final String key = calculateTemplateKey(headerStart, charset);
-		if(this.templates.containsKey(key))
-			throw new TemplateException("Duplicated key `{}` found for class {}", headerStart, template.getType().getSimpleName());
+		if(templates.containsKey(key))
+			throw new TemplateException("Duplicated key `{}` found for class {}", headerStart, template.getType().getName());
 
-		this.templates.put(key, template);
+		templates.put(key, template);
 	}
 
 	/**
@@ -235,7 +261,7 @@ final class Loader{
 	 * @param reader	The reader to read the header from.
 	 * @return	The template that is able to decode/encode the next message in the given reader.
 	 */
-	Template<?> getTemplate(final BitReader reader){
+	Template<?> getTemplate(final BitReader reader) throws TemplateException{
 		final int index = reader.position();
 
 		//for each available template, select the first that matches the starting bytes
@@ -261,7 +287,7 @@ final class Loader{
 	 * @param type	The class to retrieve the template.
 	 * @return	The template that is able to decode/encode the given class.
 	 */
-	Template<?> getTemplate(final Class<?> type){
+	Template<?> getTemplate(final Class<?> type) throws TemplateException{
 		final MessageHeader header = type.getAnnotation(MessageHeader.class);
 		if(header == null)
 			throw new TemplateException("The given class type is not a valid template");
@@ -289,11 +315,12 @@ final class Loader{
 	private Collection<Class<?>> extractClasses(final Object type, final Class<?>... basePackageClasses){
 		final Collection<Class<?>> classes = new HashSet<>(0);
 
-		final Reflections reflections = Reflections.create(basePackageClasses);
+		final Reflections reflections = new Reflections(basePackageClasses);
+		reflections.scan(CodecInterface.class, MessageHeader.class);
 		@SuppressWarnings("unchecked")
-		final Set<Class<?>> modules = reflections.getSubTypesOf((Class<Object>)type);
+		final Collection<Class<?>> modules = reflections.getImplementationsOf((Class<Object>)type);
 		@SuppressWarnings("unchecked")
-		final Set<Class<?>> singletons = reflections.getTypesAnnotatedWith((Class<? extends Annotation>)type);
+		final Collection<Class<?>> singletons = reflections.getTypesAnnotatedWith((Class<? extends Annotation>)type);
 		classes.addAll(modules);
 		classes.addAll(singletons);
 		return classes;
@@ -333,10 +360,6 @@ final class Loader{
 		final int[] preProcessedPattern = PRE_PROCESSED_PATTERNS.apply(startMessageSequence);
 		final int index = PATTERN_MATCHER.indexOf(message, startIndex + 1, startMessageSequence, preProcessedPattern);
 		return (index >= startIndex? index: -1);
-	}
-
-	private static int[] getPreProcessedPattern(final byte[] pattern){
-		return PATTERN_MATCHER.preProcessPattern(pattern);
 	}
 
 }

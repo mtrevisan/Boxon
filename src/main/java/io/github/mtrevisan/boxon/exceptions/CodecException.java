@@ -26,17 +26,31 @@ package io.github.mtrevisan.boxon.exceptions;
 
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 
+import java.io.NotSerializableException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 
 /**
  * Thrown if no codec is found.
  */
-public class CodecException extends TemplateException{
+public final class CodecException extends FieldException{
 
 	private static final long serialVersionUID = 2879230296103139872L;
 
 
 	public CodecException(final String message, final Object... parameters){
 		super(JavaHelper.format(message, parameters));
+	}
+
+	@SuppressWarnings("unused")
+	private void writeObject(final ObjectOutputStream os) throws NotSerializableException{
+		throw new NotSerializableException(getClass().getName());
+	}
+
+	@SuppressWarnings("unused")
+	private void readObject(final ObjectInputStream is) throws NotSerializableException{
+		throw new NotSerializableException(getClass().getName());
 	}
 
 }

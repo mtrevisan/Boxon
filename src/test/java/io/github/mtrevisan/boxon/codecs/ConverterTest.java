@@ -24,12 +24,13 @@
  */
 package io.github.mtrevisan.boxon.codecs;
 
-import io.github.mtrevisan.boxon.annotations.BindByte;
-import io.github.mtrevisan.boxon.annotations.BindString;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
+import io.github.mtrevisan.boxon.annotations.bindings.BindByte;
+import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.DecodeException;
-import io.github.mtrevisan.boxon.external.ParseResponse;
+import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
@@ -88,7 +89,7 @@ class ConverterTest{
 	}
 
 	@Test
-	void wrongInputOnConverter(){
+	void wrongInputOnConverter() throws AnnotationException, TemplateException{
 		Parser parser = Parser.create()
 			.withDefaultCodecs()
 			.withTemplates(TestConverter1.class);
@@ -102,12 +103,12 @@ class ConverterTest{
 		Assertions.assertArrayEquals(payload, result.getErrorPayloadAt(0));
 		Assertions.assertEquals(1, result.getErrorCount());
 		DecodeException error = result.getErrorAt(0);
-		Assertions.assertEquals("IllegalArgumentException: Can not input Byte to decode method of converter WrongConverterInput in field TestConverter1.value\r\n"
+		Assertions.assertEquals("java.lang.IllegalArgumentException: Can not input Byte to decode method of converter WrongConverterInput in field io.github.mtrevisan.boxon.codecs.ConverterTest$TestConverter1.value\r\n"
 			+ "   at index 4", error.getMessage());
 	}
 
 	@Test
-	void wrongOutputFromConverter(){
+	void wrongOutputFromConverter() throws AnnotationException, TemplateException{
 		Parser parser = Parser.create()
 			.withDefaultCodecs()
 			.withTemplates(TestConverter2.class);
@@ -121,12 +122,12 @@ class ConverterTest{
 		Assertions.assertArrayEquals(payload, result.getErrorPayloadAt(0));
 		Assertions.assertEquals(1, result.getErrorCount());
 		DecodeException error = result.getErrorAt(0);
-		Assertions.assertEquals("IllegalArgumentException: Can not set String field to Byte in field TestConverter2.value\r\n"
+		Assertions.assertEquals("java.lang.IllegalArgumentException: Can not set String field to Byte in field io.github.mtrevisan.boxon.codecs.ConverterTest$TestConverter2.value\r\n"
 			+ "   at index 4", error.getMessage());
 	}
 
 	@Test
-	void allowedOutputFromConverter(){
+	void allowedOutputFromConverter() throws AnnotationException, TemplateException{
 		Parser parser = Parser.create()
 			.withDefaultCodecs()
 			.withTemplates(TestConverter3.class);

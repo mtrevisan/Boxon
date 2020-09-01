@@ -33,7 +33,7 @@ class CRC16CCITTTest{
 	@Test
 	void calculateCRC16(){
 		CRC16CCITT crc = new CRC16CCITT();
-		Number crc16 = crc.calculateChecksum(new byte[]{0x01, 0x02, 0x03, 0x04}, 0, 4, 0x0000_FFFF);
+		Number crc16 = crc.calculateChecksum(new byte[]{0x01, 0x02, 0x03, 0x04}, 0, 4, (short)0xFFFF);
 
 		Assertions.assertEquals((short)0x89C3, crc16.shortValue());
 	}

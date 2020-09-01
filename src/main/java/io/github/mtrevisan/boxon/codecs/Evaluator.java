@@ -49,16 +49,15 @@ final class Evaluator{
 		//trick to allow accessing private fields
 		CONTEXT.addPropertyAccessor(new ReflectivePropertyAccessor(){
 			@Override
-			protected Field findField(final String name, final Class<?> cls, final boolean mustBeStatic){
-				Class<?> currentType = cls;
-				while(currentType != null && currentType != Object.class){
-					final Field[] fields = currentType.getDeclaredFields();
-					for(final Field field : fields){
+			protected Field findField(final String name, Class<?> cls, final boolean mustBeStatic){
+				while(cls != null && cls != Object.class){
+					final Field[] fields = cls.getDeclaredFields();
+					for(final Field field : fields)
 						if(field.getName().equals(name) && (!mustBeStatic || Modifier.isStatic(field.getModifiers())))
 							return field;
-					}
 
-					currentType = currentType.getSuperclass();
+					//go up to parent class
+					cls = cls.getSuperclass();
 				}
 				return null;
 			}
@@ -70,9 +69,10 @@ final class Evaluator{
 
 	/**
 	 * Adds a key-value pair to the context of this evaluator.
+	 * <p>Passing {@code null} as `value` then the corresponding key-value pair will be deleted.</p>
 	 *
 	 * @param key	The key used to reference the value.
-	 * @param value	The value.
+	 * @param value	The value (pass {@code null} to remove the `key` from the context).
 	 */
 	static void addToContext(final String key, final Object value){
 		Objects.requireNonNull(key);
@@ -89,20 +89,21 @@ final class Evaluator{
 		CONTEXT.registerFunction(method.getName(), method);
 	}
 
-	/**
-	 * Remove a key-value pair from the context of this evaluator.
-	 *
-	 * @param key	The key used to reference the value to be removed.
-	 */
-	static void removeFromContext(final String key){
-		Objects.requireNonNull(key);
-
-		CONTEXT.setVariable(key, null);
-	}
-
-	static <T> T evaluate(final String expression, final Object rootObject, final Class<T> returnType) throws EvaluationException{
+	static <T> T evaluate(final String expression, final Object rootObject, final Class<T> returnType){
 		final Expression exp = PARSER.parseExpression(expression);
 		return exp.getValue(CONTEXT, rootObject, returnType);
+	}
+
+	/**
+	 * Convenience method to fast evaluate a boolean.
+	 *
+	 * @param expression	The SpEL expression to evaluate (empty string returns {@code true}).
+	 * @param rootObject	The context with which to evaluate the given expression.
+	 * @return	The result of the expression.
+	 * @throws EvaluationException	If an error occurs during the evaluation of an expression.
+	 */
+	static boolean evaluateBoolean(final String expression, final Object rootObject){
+		return (expression.isEmpty() || evaluate(expression, rootObject, boolean.class));
 	}
 
 	/**
@@ -113,14 +114,14 @@ final class Evaluator{
 	 * @return	The size, or a negative number if the expression is not a valid positive integer.
 	 * @throws EvaluationException	If an error occurs during the evaluation of an expression.
 	 */
-	static int evaluateSize(final String expression, final Object rootObject) throws EvaluationException{
+	static int evaluateSize(final String expression, final Object rootObject){
 		int size = -1;
 		if(!expression.isBlank())
 			size = (isPositiveInteger(expression)? Integer.parseInt(expression): evaluate(expression, rootObject, int.class));
 		return size;
 	}
 
-	private static boolean isPositiveInteger(final String text){
+	private static boolean isPositiveInteger(final CharSequence text){
 		for(int i = 0; i < text.length(); i ++)
 			if(!Character.isDigit(text.charAt(i)))
 				return false;

@@ -60,6 +60,11 @@ public @interface Skip{
 	@Documented
 	@interface Skips{
 
+		/**
+		 * The array holding the Skip annotations.
+		 *
+		 * @return	The array of Skip annotations.
+		 */
 		Skip[] value();
 
 	}

@@ -24,6 +24,8 @@
  */
 package io.github.mtrevisan.boxon.codecs;
 
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
 import io.github.mtrevisan.boxon.external.ByteOrder;
@@ -63,7 +65,8 @@ class CodecCustomTest{
 		}
 
 		@Override
-		public void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value){
+		public void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value)
+				throws AnnotationException{
 			final int size = Array.getLength(value);
 			for(int i = 0; i < size; i ++)
 				writer.put((byte)((byte)Array.get(value, i) | (i < size - 1? (byte)0x80: 0x00)), ByteOrder.BIG_ENDIAN);
@@ -72,7 +75,7 @@ class CodecCustomTest{
 
 
 	@Test
-	void customAnnotation(){
+	void customAnnotation() throws FieldException{
 		TemplateParser templateParser = new TemplateParser();
 		templateParser.loader.addCodecs(new VariableLengthByteArray());
 

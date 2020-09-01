@@ -24,26 +24,27 @@
  */
 package io.github.mtrevisan.boxon.codecs;
 
-import io.github.mtrevisan.boxon.annotations.BindArrayPrimitive;
-import io.github.mtrevisan.boxon.annotations.BindByte;
-import io.github.mtrevisan.boxon.annotations.BindInt;
-import io.github.mtrevisan.boxon.annotations.BindObject;
-import io.github.mtrevisan.boxon.annotations.BindShort;
-import io.github.mtrevisan.boxon.annotations.BindString;
-import io.github.mtrevisan.boxon.annotations.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
-import io.github.mtrevisan.boxon.annotations.ObjectChoices;
+import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
+import io.github.mtrevisan.boxon.annotations.bindings.BindByte;
+import io.github.mtrevisan.boxon.annotations.bindings.BindInt;
+import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
+import io.github.mtrevisan.boxon.annotations.bindings.BindShort;
+import io.github.mtrevisan.boxon.annotations.bindings.BindString;
+import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
+import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.exceptions.FieldException;
+import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
 import io.github.mtrevisan.boxon.external.ByteOrder;
-import io.github.mtrevisan.boxon.external.ComposeResponse;
-import io.github.mtrevisan.boxon.external.ParseResponse;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
-import io.github.mtrevisan.boxon.internal.reflection.helpers.ReflectionHelper;
+import io.github.mtrevisan.boxon.internal.ReflectionHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -67,7 +68,7 @@ class CodecObjectTest{
 
 
 	@Test
-	void object(){
+	void object() throws FieldException{
 		CodecObject codec = new CodecObject();
 		Version encodedValue = new Version((byte)1, (byte)2);
 		BindObject annotation = new BindObject(){
@@ -109,6 +110,11 @@ class CodecObjectTest{
 						return new ObjectChoice[0];
 					}
 				};
+			}
+
+			@Override
+			public Class<?> selectDefault(){
+				return void.class;
 			}
 
 			@Override
@@ -171,7 +177,7 @@ class CodecObjectTest{
 	static class TestChoice1{
 		@BindString(size = "3")
 		public String header;
-		@BindObject(selectFrom = @ObjectChoices(prefixSize = 8,
+		@BindObject(type = TestType0.class, selectFrom = @ObjectChoices(prefixSize = 8,
 			alternatives = {
 				@ObjectChoices.ObjectChoice(condition = "#prefix == 1", prefix = 1, type = TestType1.class),
 				@ObjectChoices.ObjectChoice(condition = "#prefix == 2", prefix = 2, type = TestType2.class)
@@ -207,7 +213,7 @@ class CodecObjectTest{
 	}
 
 	@Test
-	void choice1(){
+	void choice1() throws AnnotationException, TemplateException{
 		Parser parser = Parser.create()
 			.withDefaultCodecs()
 			.withTemplates(TestChoice1.class);
@@ -247,7 +253,7 @@ class CodecObjectTest{
 	}
 
 	@Test
-	void choice2(){
+	void choice2() throws AnnotationException, TemplateException{
 		Parser parser = Parser.create()
 			.withDefaultCodecs()
 			.withTemplates(TestChoice2.class);
@@ -287,7 +293,7 @@ class CodecObjectTest{
 	}
 
 	@Test
-	void choice3(){
+	void choice3() throws AnnotationException, TemplateException{
 		Parser parser = Parser.create()
 			.withDefaultCodecs()
 			.withTemplates(TestChoice3.class);

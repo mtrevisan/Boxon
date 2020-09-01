@@ -30,14 +30,14 @@ package io.github.mtrevisan.boxon.annotations.checksummers;
  *
  * @see <a href="https://en.wikipedia.org/wiki/BSD_checksum">BSD checksum</a>
  */
-public class BSD8 implements Checksummer{
+public final class BSD8 implements Checksummer{
 
 	@Override
-	public long calculateChecksum(final byte[] data, final int start, final int end, final long startValue){
-		int value = 0;
+	public short calculateChecksum(final byte[] data, final int start, final int end, final short startValue){
+		short value = 0;
 		for(int i = Math.max(start, 0); i < Math.min(end, data.length); i ++)
 			//apply circular right shift and add new value
-			value = ((value >>> 1) + ((value & 0x01) << 7) + data[i]) & 0xFF;
+			value = (short)(((value >>> 1) + ((value & 0x01) << 7) + data[i]) & 0xFF);
 		return value;
 	}
 

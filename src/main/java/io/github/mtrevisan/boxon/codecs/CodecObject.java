@@ -24,23 +24,26 @@
  */
 package io.github.mtrevisan.boxon.codecs;
 
-import io.github.mtrevisan.boxon.annotations.BindObject;
-import io.github.mtrevisan.boxon.annotations.ObjectChoices;
+import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
+import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
+import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
+import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
-import io.github.mtrevisan.boxon.internal.JavaHelper;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 
 
 final class CodecObject implements CodecInterface<BindObject>{
 
-	private static final Logger LOGGER = JavaHelper.getLoggerFor(CodecObject.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(CodecObject.class);
 
 
+	/** Automatically injected by {@link TemplateParser} */
 	@SuppressWarnings("unused")
 	private TemplateParser templateParser;
 
@@ -49,44 +52,45 @@ final class CodecObject implements CodecInterface<BindObject>{
 	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
 		final BindObject binding = extractBinding(annotation);
 
-		Class<?> type = binding.type();
-		final ObjectChoices selectFrom = binding.selectFrom();
 		try{
-			type = extractType(reader, rootObject, type, selectFrom);
+			final Class<?> type = extractType(reader, binding, rootObject);
 
-			final Template<?> template = Template.createFrom(type, templateParser.loader::hasCodec);
+			final Template<?> template = templateParser.createTemplate(type);
 
 			final Object instance = templateParser.decode(template, reader, rootObject);
 			Evaluator.addToContext(CodecHelper.CONTEXT_SELF, instance);
 
-			final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), rootObject);
+			final ConverterChoices selectConverterFrom = binding.selectConverterFrom();
+			final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
+			final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(selectConverterFrom, defaultConverter, rootObject);
 			final Object value = CodecHelper.converterDecode(chosenConverter, instance);
 
 			CodecHelper.validateData(binding.validator(), value);
 
 			return value;
 		}
-		catch(final CodecException e){
-			if(LOGGER != null)
-				LOGGER.warn(e.getMessage());
+		catch(final Exception e){
+			LOGGER.trace("Error while processing alternative", e);
+			LOGGER.warn(e.getMessage() != null? e.getMessage(): e.getClass().getSimpleName());
 
 			return null;
 		}
 	}
 
-	private Class<?> extractType(final BitReader reader, final Object rootObject, Class<?> type, final ObjectChoices selectFrom){
+	private Class<?> extractType(final BitReader reader, final BindObject binding, final Object rootObject) throws CodecException{
+		Class<?> chosenAlternativeType = binding.type();
+		final ObjectChoices selectFrom = binding.selectFrom();
 		if(selectFrom.alternatives().length > 0){
-			final ObjectChoices.ObjectChoice chosenAlternative = (selectFrom.prefixSize() > 0?
-				CodecHelper.chooseAlternativeWithPrefix(reader, selectFrom, rootObject):
-				CodecHelper.chooseAlternativeWithoutPrefix(selectFrom, rootObject));
-
-			type = chosenAlternative.type();
+			final ObjectChoices.ObjectChoice chosenAlternative = CodecHelper.chooseAlternative(reader, selectFrom, rootObject);
+			chosenAlternativeType = (chosenAlternative != null? chosenAlternative.type(): binding.selectDefault());
+			if(chosenAlternativeType == void.class)
+				throw new CodecException("Cannot find a valid codec from given alternatives for {}", rootObject.getClass().getSimpleName());
 		}
-		return type;
+		return chosenAlternativeType;
 	}
 
 	@Override
-	public void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value){
+	public void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value) throws FieldException{
 		final BindObject binding = extractBinding(annotation);
 
 		CodecHelper.validateData(binding.validator(), value);
@@ -104,9 +108,10 @@ final class CodecObject implements CodecInterface<BindObject>{
 
 		Evaluator.addToContext(CodecHelper.CONTEXT_SELF, value);
 
-		final Template<?> template = Template.createFrom(type, templateParser.loader::hasCodec);
+		final Template<?> template = templateParser.createTemplate(type);
 
-		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), rootObject);
+		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(),
+			binding.converter(), rootObject);
 		final Object obj = CodecHelper.converterEncode(chosenConverter, value);
 
 		templateParser.encode(template, writer, rootObject, obj);

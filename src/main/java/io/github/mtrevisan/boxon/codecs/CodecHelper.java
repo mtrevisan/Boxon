@@ -24,95 +24,100 @@
  */
 package io.github.mtrevisan.boxon.codecs;
 
-import io.github.mtrevisan.boxon.annotations.ConverterChoices;
-import io.github.mtrevisan.boxon.annotations.ObjectChoices;
+import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
+import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
-import io.github.mtrevisan.boxon.exceptions.CodecException;
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitSet;
 import io.github.mtrevisan.boxon.external.BitWriter;
 import io.github.mtrevisan.boxon.external.ByteOrder;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
-import io.github.mtrevisan.boxon.internal.reflection.helpers.ReflectionHelper;
+import io.github.mtrevisan.boxon.internal.ReflectionHelper;
 
-import java.util.Objects;
+import java.nio.charset.Charset;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
 final class CodecHelper{
 
 	/** The name of the current object being scanner (used for referencing variables from SpEL). */
-	public static final String CONTEXT_SELF = "self";
+	static final String CONTEXT_SELF = "self";
 	/** The name of the prefix for the alternative (used for referencing variables from SpEL). */
-	public static final String CONTEXT_CHOICE_PREFIX = "prefix";
+	private static final String CONTEXT_CHOICE_PREFIX = "prefix";
 
-	static final Pattern CONTEXT_PREFIXED_CHOICE_PREFIX = Pattern.compile("#" + CONTEXT_CHOICE_PREFIX + "[^a-zA-Z]");
+	private static final Matcher CONTEXT_PREFIXED_CHOICE_PREFIX = Pattern.compile("#" + CONTEXT_CHOICE_PREFIX + "[^a-zA-Z]").matcher("");
 
 
 	private CodecHelper(){}
 
+	static void assertSizePositive(final int size) throws AnnotationException{
+		if(size <= 0)
+			throw new AnnotationException("Size must be a positive integer, was {}", size);
+	}
+
+	static void assertSizeEquals(final int expectedSize, final int size){
+		if(expectedSize != size)
+			throw new IllegalArgumentException("Size mismatch, expected " + expectedSize + ", got " + size);
+	}
+
+	static void assertCharset(final String charsetName) throws AnnotationException{
+		try{
+			Charset.forName(charsetName);
+		}
+		catch(final IllegalArgumentException ignored){
+			throw new AnnotationException("Invalid charset: '{}'", charsetName);
+		}
+	}
+
 	static ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> type){
-		for(final ObjectChoices.ObjectChoice alternative : alternatives){
+		for(final ObjectChoices.ObjectChoice alternative : alternatives)
 			if(alternative.type() == type)
 				return alternative;
-		}
 
 		throw new IllegalArgumentException("Cannot find a valid codec for type " + type.getSimpleName());
 	}
 
-	static ObjectChoices.ObjectChoice chooseAlternativeWithPrefix(final BitReader reader, final ObjectChoices selectFrom, final Object rootObject){
-		final int prefixSize = selectFrom.prefixSize();
-		final ByteOrder prefixByteOrder = selectFrom.byteOrder();
+	static ObjectChoices.ObjectChoice chooseAlternative(final BitReader reader, final ObjectChoices selectFrom, final Object rootObject){
+		if(selectFrom.prefixSize() > 0){
+			final int prefixSize = selectFrom.prefixSize();
+			final ByteOrder prefixByteOrder = selectFrom.byteOrder();
+			final int prefix = reader.getInteger(prefixSize, prefixByteOrder)
+				.intValue();
+
+			Evaluator.addToContext(CONTEXT_CHOICE_PREFIX, prefix);
+		}
+
 		final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
-
-		final int prefix = reader.getInteger(prefixSize, prefixByteOrder, true)
-			.intValue();
-
-		Evaluator.addToContext(CONTEXT_CHOICE_PREFIX, prefix);
-		final ObjectChoices.ObjectChoice chosenAlternative = chooseAlternative(alternatives, rootObject);
-		if(chosenAlternative == null)
-			throw new CodecException("Cannot find a valid codec for prefix {} in object {}", prefix, rootObject.getClass().getSimpleName());
-
-		return chosenAlternative;
+		return chooseAlternative(alternatives, rootObject);
 	}
 
-	static ObjectChoices.ObjectChoice chooseAlternativeWithoutPrefix(final ObjectChoices selectFrom, final Object rootObject){
-		final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
-
-		final ObjectChoices.ObjectChoice chosenAlternative = chooseAlternative(alternatives, rootObject);
-		if(chosenAlternative == null)
-			throw new CodecException("Cannot find a valid codec in object {}", rootObject.getClass().getSimpleName());
-
-		return chosenAlternative;
-	}
-
-	private static ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Object rootObject){
-		for(final ObjectChoices.ObjectChoice alternative : alternatives){
+	private static ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives,
+			final Object rootObject){
+		for(final ObjectChoices.ObjectChoice alternative : alternatives)
 			if(Evaluator.evaluate(alternative.condition(), rootObject, boolean.class))
 				return alternative;
-		}
 		return null;
 	}
 
-	static Class<? extends Converter<?, ?>> chooseConverter(final ConverterChoices selectConverterFrom, final Class<? extends Converter<?, ?>> baseConverter,
-			final Object rootObject){
+	static Class<? extends Converter<?, ?>> chooseConverter(final ConverterChoices selectConverterFrom,
+			final Class<? extends Converter<?, ?>> defaultConverter, final Object rootObject){
 		final ConverterChoices.ConverterChoice[] alternatives = selectConverterFrom.alternatives();
-		for(final ConverterChoices.ConverterChoice alternative : alternatives){
+		for(final ConverterChoices.ConverterChoice alternative : alternatives)
 			if(Evaluator.evaluate(alternative.condition(), rootObject, boolean.class))
 				return alternative.converter();
-		}
-		return baseConverter;
+		return defaultConverter;
 	}
 
 	static void writePrefix(final BitWriter writer, final ObjectChoices.ObjectChoice chosenAlternative, final ObjectChoices selectFrom){
 		//if chosenAlternative.condition() contains '#prefix', then write @ObjectChoice.prefix()
-		if(CONTEXT_PREFIXED_CHOICE_PREFIX.matcher(chosenAlternative.condition()).find()){
+		if(containsPrefixReference(chosenAlternative.condition())){
 			final int prefixSize = selectFrom.prefixSize();
 			final ByteOrder prefixByteOrder = selectFrom.byteOrder();
 
-			final long prefixValue = chosenAlternative.prefix();
-			final BitSet bits = BitSet.valueOf(new long[]{prefixValue});
+			final BitSet bits = BitSet.valueOf(new long[]{chosenAlternative.prefix()});
 			if(prefixByteOrder == ByteOrder.LITTLE_ENDIAN)
 				bits.reverseBits(prefixSize);
 
@@ -120,15 +125,8 @@ final class CodecHelper{
 		}
 	}
 
-	static void validateData(final String match, final Class<? extends Validator<?>> validatorType, final Object currentObject){
-		matchData(match, currentObject);
-		validateData(validatorType, currentObject);
-	}
-
-	private static void matchData(final String match, final Object currentObject){
-		final Pattern pattern = extractPattern(match);
-		if(pattern != null && !pattern.matcher(Objects.toString(currentObject)).matches())
-			throw new IllegalArgumentException("Value `" + currentObject + "` does not match constraint `" + match + "`");
+	static boolean containsPrefixReference(final CharSequence condition){
+		return CONTEXT_PREFIXED_CHOICE_PREFIX.reset(condition).find();
 	}
 
 	/** Extract pattern from a SpEL expression, or a string, or a regex pattern. */
@@ -169,7 +167,7 @@ final class CodecHelper{
 	static <T> void validateData(final Class<? extends Validator<?>> validatorType, final Object data){
 		final Validator<T> validator = (Validator<T>)ReflectionHelper.getCreator(validatorType)
 			.get();
-		if(!validator.validate((T)data))
+		if(!validator.isValid((T)data))
 			throw new IllegalArgumentException("Validation with " + validatorType.getSimpleName() + " not passed (value is " + data + ")");
 	}
 
@@ -182,7 +180,8 @@ final class CodecHelper{
 			return converter.decode((IN)data);
 		}
 		catch(final ClassCastException ignored){
-			throw new IllegalArgumentException("Can not input " + data.getClass().getSimpleName() + " to decode method of converter " + converterType.getSimpleName());
+			throw new IllegalArgumentException("Can not input " + data.getClass().getSimpleName() + " to decode method of converter "
+				+ converterType.getSimpleName());
 		}
 	}
 

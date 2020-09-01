@@ -24,12 +24,13 @@
  */
 package io.github.mtrevisan.boxon.codecs;
 
-import io.github.mtrevisan.boxon.annotations.BindBits;
-import io.github.mtrevisan.boxon.annotations.ConverterChoices;
+import io.github.mtrevisan.boxon.annotations.bindings.BindBits;
+import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
+import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitSet;
 import io.github.mtrevisan.boxon.external.BitWriter;
@@ -49,7 +50,7 @@ class CodecBitsTest{
 
 
 	@Test
-	void bitsLittleEndian(){
+	void bitsLittleEndian() throws FieldException{
 		CodecInterface<BindBits> codec = new CodecBits();
 		byte[] randomBytes = new byte[123];
 		RANDOM.nextBytes(randomBytes);
@@ -73,11 +74,6 @@ class CodecBitsTest{
 			@Override
 			public ByteOrder byteOrder(){
 				return ByteOrder.LITTLE_ENDIAN;
-			}
-
-			@Override
-			public String match(){
-				return null;
 			}
 
 			@Override
@@ -123,7 +119,7 @@ class CodecBitsTest{
 	}
 
 	@Test
-	void bitsBigEndian(){
+	void bitsBigEndian() throws FieldException{
 		CodecInterface<BindBits> codec = new CodecBits();
 		byte[] randomBytes = new byte[123];
 		RANDOM.nextBytes(randomBytes);
@@ -147,11 +143,6 @@ class CodecBitsTest{
 			@Override
 			public ByteOrder byteOrder(){
 				return ByteOrder.BIG_ENDIAN;
-			}
-
-			@Override
-			public String match(){
-				return null;
 			}
 
 			@Override

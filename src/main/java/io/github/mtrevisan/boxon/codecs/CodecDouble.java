@@ -24,7 +24,8 @@
  */
 package io.github.mtrevisan.boxon.codecs;
 
-import io.github.mtrevisan.boxon.annotations.BindDouble;
+import io.github.mtrevisan.boxon.annotations.bindings.BindDouble;
+import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
@@ -40,10 +41,12 @@ final class CodecDouble implements CodecInterface<BindDouble>{
 
 		final double v = reader.getDouble(binding.byteOrder());
 
-		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), rootObject);
+		final ConverterChoices selectConverterFrom = binding.selectConverterFrom();
+		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
+		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(selectConverterFrom, defaultConverter, rootObject);
 		final Object value = CodecHelper.converterDecode(chosenConverter, v);
 
-		CodecHelper.validateData(binding.match(), binding.validator(), value);
+		CodecHelper.validateData(binding.validator(), value);
 
 		return value;
 	}
@@ -52,9 +55,10 @@ final class CodecDouble implements CodecInterface<BindDouble>{
 	public void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value){
 		final BindDouble binding = extractBinding(annotation);
 
-		CodecHelper.validateData(binding.match(), binding.validator(), value);
+		CodecHelper.validateData(binding.validator(), value);
 
-		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), rootObject);
+		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(),
+			binding.converter(), rootObject);
 		final double v = CodecHelper.converterEncode(chosenConverter, value);
 
 		writer.putDouble(v, binding.byteOrder());

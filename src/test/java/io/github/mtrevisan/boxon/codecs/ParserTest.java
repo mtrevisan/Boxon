@@ -25,8 +25,8 @@
 package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.codecs.queclink.DeviceTypes;
-import io.github.mtrevisan.boxon.external.ComposeResponse;
-import io.github.mtrevisan.boxon.external.ParseResponse;
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Assertions;
@@ -40,15 +40,14 @@ import java.util.Map;
 class ParserTest{
 
 	@Test
-	void parseAndComposeSingeMessageHex() throws NoSuchMethodException{
+	void parseAndComposeSingeMessageHex() throws NoSuchMethodException, AnnotationException, TemplateException{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
-		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 		Parser parser = Parser.create()
-			.withContext(context)
+			.addToContext("deviceTypes", deviceTypes)
 			.withDefaultCodecs()
 			.withDefaultTemplates()
-			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"));
+			.withContextFunction(ParserTest.class, "headerSize");
 
 		//parse:
 		byte[] payload = JavaHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
@@ -69,7 +68,7 @@ class ParserTest{
 	}
 
 	@Test
-	void parseMultipleMessagesHex() throws NoSuchMethodException{
+	void parseMultipleMessagesHex() throws NoSuchMethodException, AnnotationException, TemplateException{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
@@ -87,7 +86,7 @@ class ParserTest{
 	}
 
 	@Test
-	void parseAndComposeSingleMessageASCII(){
+	void parseAndComposeSingleMessageASCII() throws AnnotationException, TemplateException{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GV350M", (byte)0xCF);
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
@@ -111,7 +110,7 @@ class ParserTest{
 	}
 
 	@Test
-	void parseMultipleMessagesASCII(){
+	void parseMultipleMessagesASCII() throws AnnotationException, TemplateException{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GV350M", (byte)0xCF);
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
@@ -128,7 +127,7 @@ class ParserTest{
 	}
 
 	@Test
-	void parseMultipleMessagesHexASCII() throws NoSuchMethodException{
+	void parseMultipleMessagesHexASCII() throws NoSuchMethodException, AnnotationException, TemplateException{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
 		deviceTypes.add("QUECLINK_GV350M", (byte)0xCF);
@@ -149,7 +148,7 @@ class ParserTest{
 	}
 
 	@Test
-	void parseMultipleMessagesASCIIHex(){
+	void parseMultipleMessagesASCIIHex() throws AnnotationException, TemplateException{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
 		deviceTypes.add("QUECLINK_GV350M", (byte)0xCF);

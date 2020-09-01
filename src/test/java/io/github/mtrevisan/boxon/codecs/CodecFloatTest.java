@@ -24,12 +24,13 @@
  */
 package io.github.mtrevisan.boxon.codecs;
 
-import io.github.mtrevisan.boxon.annotations.BindFloat;
-import io.github.mtrevisan.boxon.annotations.ConverterChoices;
+import io.github.mtrevisan.boxon.annotations.bindings.BindFloat;
+import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
+import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
 import io.github.mtrevisan.boxon.external.ByteOrder;
@@ -48,7 +49,7 @@ class CodecFloatTest{
 
 
 	@Test
-	void floatPositiveLittleEndian(){
+	void floatPositiveLittleEndian() throws FieldException{
 		CodecInterface<BindFloat> codec = new CodecFloat();
 		float encodedValue = RANDOM.nextFloat();
 		BindFloat annotation = new BindFloat(){
@@ -65,11 +66,6 @@ class CodecFloatTest{
 			@Override
 			public ByteOrder byteOrder(){
 				return ByteOrder.LITTLE_ENDIAN;
-			}
-
-			@Override
-			public String match(){
-				return null;
 			}
 
 			@Override
@@ -111,7 +107,7 @@ class CodecFloatTest{
 	}
 
 	@Test
-	void floatNegativeLittleEndian(){
+	void floatNegativeLittleEndian() throws FieldException{
 		CodecInterface<BindFloat> codec = new CodecFloat();
 		float encodedValue = -RANDOM.nextFloat();
 		BindFloat annotation = new BindFloat(){
@@ -131,11 +127,6 @@ class CodecFloatTest{
 			}
 
 			@Override
-			public String match(){
-				return null;
-			}
-
-			@Override
 			public Class<? extends Validator<?>> validator(){
 				return NullValidator.class;
 			}
@@ -174,7 +165,7 @@ class CodecFloatTest{
 	}
 
 	@Test
-	void floatPositiveBigEndian(){
+	void floatPositiveBigEndian() throws FieldException{
 		CodecInterface<BindFloat> codec = new CodecFloat();
 		float encodedValue = RANDOM.nextFloat();
 		BindFloat annotation = new BindFloat(){
@@ -191,11 +182,6 @@ class CodecFloatTest{
 			@Override
 			public ByteOrder byteOrder(){
 				return ByteOrder.BIG_ENDIAN;
-			}
-
-			@Override
-			public String match(){
-				return null;
 			}
 
 			@Override
@@ -237,7 +223,7 @@ class CodecFloatTest{
 	}
 
 	@Test
-	void floatNegativeBigEndian(){
+	void floatNegativeBigEndian() throws FieldException{
 		CodecInterface<BindFloat> codec = new CodecFloat();
 		float encodedValue = -RANDOM.nextFloat();
 		BindFloat annotation = new BindFloat(){
@@ -254,11 +240,6 @@ class CodecFloatTest{
 			@Override
 			public ByteOrder byteOrder(){
 				return ByteOrder.BIG_ENDIAN;
-			}
-
-			@Override
-			public String match(){
-				return null;
 			}
 
 			@Override

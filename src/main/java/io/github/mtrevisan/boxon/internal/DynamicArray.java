@@ -97,7 +97,8 @@ public final class DynamicArray<T>{
 
 	/**
 	 * Inserts all of the elements in the specified collection into this array at the specified position.
-	 * <p>Shifts the element currently at that position (if any) and any subsequent elements to the right (increases their indices).</p>
+	 * <p>Shifts the element currently at that position (if any) and any subsequent elements to the right
+	 * (increases their indices).</p>
 	 *
 	 * @param index	Index at which to insert the first element from the specified collection.
 	 * @param array	Collection containing elements to be added to this array.
@@ -124,14 +125,14 @@ public final class DynamicArray<T>{
 		grow(newCapacity - limit);
 	}
 
-	public void filter(final Predicate<T> filter){
+	public void filter(final Predicate<? super T> filter){
 		reset();
 		for(final T elem : data)
 			if(filter.test(elem))
 				data[limit ++] = elem;
 	}
 
-	public void join(final Function<T, String> reducer, final StringJoiner joiner){
+	public void join(final Function<? super T, String> reducer, final StringJoiner joiner){
 		for(int i = 0; i < limit; i ++)
 			joiner.add(reducer.apply(data[i]));
 	}
@@ -151,13 +152,12 @@ public final class DynamicArray<T>{
 	 *
 	 * @return	Whether this array contains no elements.
 	 */
-	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
 	public boolean isEmpty(){
 		return (limit == 0);
 	}
 
 	/** Removes all of the elements from this array. */
-	public void reset(){
+	private void reset(){
 		limit = 0;
 	}
 

@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+			xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>io.github.mtrevisan</groupId>
 	<artifactId>boxon</artifactId>
-	<version>1.0.0</version>
+	<version>1.1.0-SNAPSHOT</version>
 
 	<packaging>jar</packaging>
 
 	<name>Boxon</name>
 	<description>Library for declarative parsing of a message</description>
 	<url>https://github.com/mtrevisan/Boxon</url>
+<!--	<logo>https://upload.wikimedia.org/wikipedia/commons/1/1d/Symmetricwave2.png</logo>-->
 
 	<developers>
 		<developer>
@@ -19,15 +20,15 @@
 			<email>851903+mtrevisan@users.noreply.github.com</email>
 			<url>https://github.com/mtrevisan/</url>
 			<roles>
-				<role>Java Developer</role>
+				<role>Developer</role>
 			</roles>
 		</developer>
 	</developers>
 
 	<scm>
-		<url>https://github.com/mtrevisan/Boxon</url>
 		<connection>scm:git:git@github.com:mtrevisan/Boxon.git</connection>
 		<developerConnection>scm:git:git@github.com:mtrevisan/Boxon.git</developerConnection>
+		<url>https://github.com/mtrevisan/Boxon</url>
 	</scm>
 
 	<issueManagement>
@@ -43,12 +44,15 @@
 		<maven.compiler.source>11</maven.compiler.source>
 		<maven.compiler.target>11</maven.compiler.target>
 
+		<javadoc.html.version>-html5</javadoc.html.version>
+
 		<!-- Profiles & Build -->
 		<maven-deploy-plugin.version>2.8.2</maven-deploy-plugin.version>
 		<maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
 		<sonatype.nexus-staging-maven-plugin.version>1.6.8</sonatype.nexus-staging-maven-plugin.version>
 		<maven-source-plugin.version>3.2.1</maven-source-plugin.version>
 		<maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
+		<maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
 		<maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
 		<maven-help-plugin.version>3.2.0</maven-help-plugin.version>
 		<maven-shade-plugin.version>3.2.4</maven-shade-plugin.version>
@@ -56,8 +60,8 @@
 		<!-- Spring Expression -->
 		<springframework.spring-expression.version>5.2.8.RELEASE</springframework.spring-expression.version>
 
-		<!-- Javassist -->
-		<javassist.version>3.27.0-GA</javassist.version>
+		<!-- ClassGraph -->
+		<github.classgraph.version>4.8.89</github.classgraph.version>
 
 		<!-- Logging -->
 		<slf4j.slf4j-api.version>1.7.30</slf4j.slf4j-api.version>
@@ -161,13 +165,13 @@
 								<goals>
 									<goal>jar</goal>
 								</goals>
+								<configuration>
+									<additionalOptions>${javadoc.html.version}</additionalOptions>
+									<javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
+									<detectJavaApiLink>false</detectJavaApiLink>
+								</configuration>
 							</execution>
 						</executions>
-						<configuration>
-							<additionalOptions>-html5</additionalOptions>
-							<javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
-							<detectJavaApiLink>false</detectJavaApiLink>
-						</configuration>
 					</plugin>
 				</plugins>
 			</build>
@@ -191,6 +195,16 @@
 
 	<build>
 		<plugins>
+			<!-- Surefire -->
+			<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-surefire-plugin -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>${maven-surefire-plugin.version}</version>
+				<configuration>
+					<argLine>--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.codecs.queclink=spring.core,spring.expression,ALL-UNNAMED --add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.annotations=spring.core,spring.expression,ALL-UNNAMED --add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.annotations.bindings=spring.core,spring.expression,ALL-UNNAMED --add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.annotations.checksummers=spring.core,spring.expression,ALL-UNNAMED --add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.annotations.converters=spring.core,spring.expression,ALL-UNNAMED --add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.annotations.validators=spring.core,spring.expression,ALL-UNNAMED --add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.codecs=spring.core,spring.expression,ALL-UNNAMED --add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.external=ALL-UNNAMED --add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.internal.matchers=ALL-UNNAMED</argLine>
+				</configuration>
+			</plugin>
 			<!-- Compiler -->
 			<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
 			<plugin>
@@ -198,11 +212,13 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>${maven-compiler-plugin.version}</version>
 				<configuration>
+					<source>${maven.compiler.source}</source>
+					<target>${maven.compiler.target}</target>
+					<encoding>${project.build.sourceEncoding}</encoding>
 					<showDeprecation>true</showDeprecation>
-					<source>11</source>
-					<target>11</target>
 				</configuration>
 			</plugin>
+			<!-- Help -->
 			<!-- display active profile in compile phase -->
 			<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-help-plugin -->
 			<plugin>
@@ -288,12 +304,12 @@
 			<version>${springframework.spring-expression.version}</version>
 		</dependency>
 
-		<!-- Javassist -->
-		<!-- https://mvnrepository.com/artifact/org.javassist/javassist -->
+		<!-- ClassGraph -->
+		<!-- https://mvnrepository.com/artifact/io.github.classgraph/classgraph -->
 		<dependency>
-			<groupId>org.javassist</groupId>
-			<artifactId>javassist</artifactId>
-			<version>${javassist.version}</version>
+			<groupId>io.github.classgraph</groupId>
+			<artifactId>classgraph</artifactId>
+			<version>${github.classgraph.version}</version>
 		</dependency>
 
 		<!-- Logger -->
@@ -333,6 +349,7 @@
 		<license>
 			<name>MIT License</name>
 			<url>https://opensource.org/licenses/MIT</url>
+			<distribution>repo</distribution>
 		</license>
 	</licenses>
 </project>

@@ -24,8 +24,10 @@
  */
 package io.github.mtrevisan.boxon.codecs;
 
-import io.github.mtrevisan.boxon.annotations.BindBits;
+import io.github.mtrevisan.boxon.annotations.bindings.BindBits;
+import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitSet;
 import io.github.mtrevisan.boxon.external.BitWriter;
@@ -37,33 +39,39 @@ import java.lang.annotation.Annotation;
 final class CodecBits implements CodecInterface<BindBits>{
 
 	@Override
-	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
+	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject) throws AnnotationException{
 		final BindBits binding = extractBinding(annotation);
 
 		final int size = Evaluator.evaluateSize(binding.size(), rootObject);
+		CodecHelper.assertSizePositive(size);
 		final BitSet bits = reader.getBits(size);
 		if(binding.byteOrder() == ByteOrder.LITTLE_ENDIAN)
 			bits.reverseBits(size);
 
-		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), rootObject);
+		final ConverterChoices selectConverterFrom = binding.selectConverterFrom();
+		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
+		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(selectConverterFrom, defaultConverter, rootObject);
 		final Object value = CodecHelper.converterDecode(chosenConverter, bits);
 
-		CodecHelper.validateData(binding.match(), binding.validator(), value);
+		CodecHelper.validateData(binding.validator(), value);
 
 		return value;
 	}
 
 	@Override
-	public void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value){
+	public void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value)
+			throws AnnotationException{
 		final BindBits binding = extractBinding(annotation);
 
-		CodecHelper.validateData(binding.match(), binding.validator(), value);
+		CodecHelper.validateData(binding.validator(), value);
 
-		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(), binding.converter(), rootObject);
+		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(),
+			binding.converter(), rootObject);
 		final BitSet bits = CodecHelper.converterEncode(chosenConverter, value);
 		final int size = Evaluator.evaluateSize(binding.size(), rootObject);
+		CodecHelper.assertSizePositive(size);
 		if(binding.byteOrder() == ByteOrder.LITTLE_ENDIAN)
-			bits.reverseBits( size);
+			bits.reverseBits(size);
 
 		writer.putBits(bits, size);
 	}

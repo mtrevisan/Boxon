@@ -25,12 +25,12 @@
 package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.DecodeException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
+import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
-import io.github.mtrevisan.boxon.external.ComposeResponse;
-import io.github.mtrevisan.boxon.external.ParseResponse;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -42,7 +42,10 @@ import java.util.Map;
 import java.util.Objects;
 
 
-public class Parser{
+/**
+ * Declarative data binding parser for binary encoded data.
+ */
+public final class Parser{
 
 	private final TemplateParser templateParser = new TemplateParser();
 
@@ -115,7 +118,7 @@ public class Parser{
 	 * 	</ul>
 	 */
 	public Parser withContextFunction(final Class<?> cls, final String methodName, final Class<?>... parameterTypes)
-			throws NoSuchMethodException, SecurityException{
+			throws NoSuchMethodException{
 		final Method method = cls.getDeclaredMethod(methodName, parameterTypes);
 		return withContextFunction(method);
 	}
@@ -127,7 +130,7 @@ public class Parser{
 	 *
 	 * @return	The {@link Parser}, used for chaining.
 	 */
-	public final Parser withDefaultCodecs(){
+	public Parser withDefaultCodecs(){
 		templateParser.loader.loadDefaultCodecs();
 		return this;
 	}
@@ -138,7 +141,7 @@ public class Parser{
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load codecs.
 	 * @return	The {@link Parser}, used for chaining.
 	 */
-	public final Parser withCodecs(final Class<?>... basePackageClasses){
+	public Parser withCodecs(final Class<?>... basePackageClasses){
 		templateParser.loader.loadCodecs(basePackageClasses);
 		return this;
 	}
@@ -149,7 +152,7 @@ public class Parser{
 	 * @param codecs	The list of codecs to be loaded.
 	 * @return	The {@link Parser}, used for chaining.
 	 */
-	public final Parser withCodecs(final CodecInterface<?>... codecs){
+	public Parser withCodecs(final CodecInterface<?>... codecs){
 		templateParser.loader.addCodecs(codecs);
 		return this;
 	}
@@ -160,7 +163,7 @@ public class Parser{
 	 *
 	 * @return	The {@link Parser}, used for chaining.
 	 */
-	public final Parser withDefaultTemplates(){
+	public Parser withDefaultTemplates() throws AnnotationException, TemplateException{
 		templateParser.loader.loadDefaultTemplates();
 		return this;
 	}
@@ -171,7 +174,7 @@ public class Parser{
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
 	 * @return	The {@link Parser}, used for chaining.
 	 */
-	public final Parser withTemplates(final Class<?>... basePackageClasses){
+	public Parser withTemplates(final Class<?>... basePackageClasses) throws AnnotationException, TemplateException{
 		templateParser.loader.loadTemplates(basePackageClasses);
 		return this;
 	}
@@ -186,7 +189,7 @@ public class Parser{
 	 * 	or for some other reason cannot be opened for reading.
 	 * @throws SecurityException	If a security manager exists and its {@code checkRead} method denies read access to the file.
 	 */
-	public ParseResponse parse(final File file) throws IOException{
+	public ParseResponse parse(final File file) throws IOException, FileNotFoundException{
 		final BitReader reader = BitReader.wrap(file);
 		return parse(reader);
 	}
@@ -238,8 +241,8 @@ public class Parser{
 				response.addParsedMessage(start, partialDecodedMessage);
 			}
 			catch(final Exception e){
-				final DecodeException pe = new DecodeException(reader.position(), e);
-				response.addError(start, pe);
+				final DecodeException de = new DecodeException(reader.position(), e);
+				response.addError(start, de);
 
 				//restore state of the reader
 				reader.restoreFallbackPoint();
@@ -286,7 +289,7 @@ public class Parser{
 	 * @return	The composition response.
 	 */
 	public ComposeResponse compose(final Object... data){
-		final ComposeResponse response = new ComposeResponse();
+		final ComposeResponse response = new ComposeResponse(data);
 
 		final BitWriter writer = new BitWriter();
 		for(final Object datum : data)
@@ -310,7 +313,7 @@ public class Parser{
 			templateParser.encode(template, writer, null, data);
 		}
 		catch(final Exception e){
-			response.addError(new EncodeException(data, e));
+			response.addError(new EncodeException(e));
 		}
 	}
 

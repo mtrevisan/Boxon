@@ -24,36 +24,40 @@
  */
 package io.github.mtrevisan.boxon.exceptions;
 
-import io.github.mtrevisan.boxon.internal.ExceptionHelper;
-
-import java.util.StringJoiner;
+import java.io.NotSerializableException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 
 /**
  * Thrown if a composition (encoding) went bad.
  */
-public class EncodeException extends Exception{
+public final class EncodeException extends Exception{
 
 	private static final long serialVersionUID = 4385865753761318892L;
 
 
-	private final Object data;
-
-
-	public EncodeException(final Object data, final Throwable cause){
+	public EncodeException(final Throwable cause){
 		super(cause);
-
-		this.data = data;
 	}
 
 	@Override
 	public String getMessage(){
-		final StringJoiner sj = new StringJoiner(System.lineSeparator());
-		sj.add("Error encoding data: " + data.toString());
+		final StringBuilder sj = new StringBuilder();
 		final Throwable cause = getCause();
 		if(cause != null)
-			sj.add(ExceptionHelper.getMessageNoLineNumber(cause));
+			sj.append(cause.getMessage());
 		return sj.toString();
+	}
+
+	@SuppressWarnings("unused")
+	private void writeObject(final ObjectOutputStream os) throws NotSerializableException{
+		throw new NotSerializableException(getClass().getName());
+	}
+
+	@SuppressWarnings("unused")
+	private void readObject(final ObjectInputStream is) throws NotSerializableException{
+		throw new NotSerializableException(getClass().getName());
 	}
 
 }

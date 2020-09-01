@@ -55,8 +55,8 @@ public final class BitSet{
 	/**
 	 * Returns a new bit set containing all the bits in the given long array.
 	 *
-	 * @param array	A long array containing a little-endian representation of a sequence of bits to be used as the initial bits of the
-	 * 	new bit set.
+	 * @param array	A long array containing a little-endian representation of a sequence of bits to be used as
+	 * 	the initial bits of the new bit set.
 	 * @return	A {@code BitSet} containing all the bits in the long array.
 	 */
 	public static BitSet valueOf(final long[] array){
@@ -66,8 +66,8 @@ public final class BitSet{
 	/**
 	 * Returns a new bit set containing all the bits in the given byte array.
 	 *
-	 * @param array	A byte array containing a little-endian representation of a sequence of bits to be used as the initial bits of the
-	 * 	new bit set.
+	 * @param array	A byte array containing a little-endian representation of a sequence of bits to be used as
+	 * 	the initial bits of the new bit set.
 	 * @return	A {@code BitSet} containing all the bits in the byte array.
 	 */
 	public static BitSet valueOf(final byte[] array){
@@ -95,7 +95,7 @@ public final class BitSet{
 		if(byteOrder == ByteOrder.LITTLE_ENDIAN)
 			//NOTE: need to reverse the bytes because BigInteger is big-endian and BitMap is little-endian
 			reverse(array);
-		return BitSet.valueOf(array);
+		return valueOf(array);
 	}
 
 
@@ -107,15 +107,18 @@ public final class BitSet{
 		indexes = new int[length];
 		int k = 0;
 		int offset = 0;
-		for(byte word : words){
-			while(word != 0){
-				final int skip = Integer.numberOfTrailingZeros(word);
-				indexes[k++] = skip + offset;
-				word ^= 1 << skip;
-			}
-			offset += Byte.SIZE;
-		}
+		for(int i = 0; i < words.length; i ++, offset += Byte.SIZE)
+			k = addWordToIndexes(words[i], k, offset);
 		cardinality = length;
+	}
+
+	private int addWordToIndexes(byte word, int k, final int offset){
+		while(word != 0){
+			final int skip = Integer.numberOfTrailingZeros(word);
+			indexes[k ++] = skip + offset;
+			word ^= 1 << skip;
+		}
+		return k;
 	}
 
 	private BitSet(final long[] words){
@@ -126,15 +129,18 @@ public final class BitSet{
 		indexes = new int[length];
 		int k = 0;
 		int offset = 0;
-		for(long word : words){
-			while(word != 0l){
-				final int skip = Long.numberOfTrailingZeros(word);
-				indexes[k++] = skip + offset;
-				word ^= 1l << skip;
-			}
-			offset += Long.SIZE;
-		}
+		for(int i = 0; i < words.length; i ++, offset += Long.SIZE)
+			k = addWordToIndexes(words[i], k, offset);
 		cardinality = length;
+	}
+
+	private int addWordToIndexes(long word, int k, final int offset){
+		while(word != 0l){
+			final int skip = Long.numberOfTrailingZeros(word);
+			indexes[k ++] = skip + offset;
+			word ^= 1l << skip;
+		}
+		return k;
 	}
 
 	public BitSet(){}
@@ -161,7 +167,7 @@ public final class BitSet{
 	 * @param bitIndex	A bit index (MUST BE greater than the previous index!).
 	 * @return	The state of the bit at a specified index.
 	 */
-	public boolean testBit(final int bitIndex){
+	public boolean isBitSet(final int bitIndex){
 		return (Arrays.binarySearch(indexes, bitIndex) >= 0);
 	}
 
@@ -175,16 +181,9 @@ public final class BitSet{
 			indexes[i] = size - indexes[i] - 1;
 
 		//re-sort indexes
-		reverseIndexes();
-	}
-
-	private void reverseIndexes(){
-		for(int start = 0, end = indexes.length - 1; start < end; start ++, end --){
+		for(int start = 0, end = cardinality - 1; start < end; start ++, end --)
 			//swap array[start] with array[end]
-			indexes[start] ^= indexes[end];
-			indexes[end] ^= indexes[start];
-			indexes[start] ^= indexes[end];
-		}
+			indexes[start] ^= indexes[end] ^ (indexes[end] = indexes[start]);
 	}
 
 	/**
@@ -202,9 +201,8 @@ public final class BitSet{
 			return new byte[]{0};
 
 		final byte[] bytes = new byte[(indexes[cardinality - 1] >>> 3) + 1];
-		for(final int index : indexes){
+		for(final int index : indexes)
 			bytes[index >>> 3] |= 1 << (index % Byte.SIZE);
-		}
 		return bytes;
 	}
 
@@ -232,7 +230,14 @@ public final class BitSet{
 		return (idx >= 0? idx: -idx - 1);
 	}
 
-	public BigInteger toInteger(final int size, final ByteOrder byteOrder, final boolean unsigned){
+	/**
+	 * Convert this bit set to {@link BigInteger}.
+	 *
+	 * @param size	The number of bits.
+	 * @param byteOrder	The byte order.
+	 * @return	The converted {@link BigInteger}.
+	 */
+	public BigInteger toInteger(final int size, final ByteOrder byteOrder){
 		byte[] array = toByteArray();
 		final int expectedLength = size >>> 3;
 		if(array.length < expectedLength)
@@ -240,7 +245,7 @@ public final class BitSet{
 		if(byteOrder == ByteOrder.LITTLE_ENDIAN)
 			//NOTE: need to reverse the bytes because BigInteger is big-endian and BitMap is little-endian
 			reverse(array);
-		return extendSign(array, size, unsigned);
+		return ByteHelper.extendSign(array);
 	}
 
 	/**
@@ -249,41 +254,15 @@ public final class BitSet{
 	 * @param array	The array to reverse.
 	 */
 	private static void reverse(final byte[] array){
-		for(int start = 0, end = array.length - 1; start < end; start ++, end --){
+		for(int start = 0, end = array.length - 1; start < end; start ++, end --)
 			//swap array[start] with array[end]
-			array[start] ^= array[end];
-			array[end] ^= array[start];
-			array[start] ^= array[end];
-		}
-	}
-
-	/**
-	 * Convert the value to signed primitive.
-	 *
-	 * @param array	Field value.
-	 * @param size	The size of the array.
-	 * @param unsigned	Whether to consider this number an unsigned one.
-	 * @return	The 2-complement expressed as int.
-	 */
-	private static BigInteger extendSign(byte[] array, final int size, final boolean unsigned){
-		if(!unsigned && (array[0] & 0x80) != 0x00){
-			array = ByteHelper.extendArray(array);
-			array[0] = (byte)-1;
-		}
-		else if(unsigned && size >= array.length << 3)
-			array = ByteHelper.extendArray(array);
-		return new BigInteger(array);
+			array[start] ^= array[end] ^ (array[end] = array[start]);
 	}
 
 
 	@Override
 	public String toString(){
 		return Arrays.toString(indexes);
-	}
-
-	@Override
-	public int hashCode(){
-		return Arrays.hashCode(indexes);
 	}
 
 	@Override
@@ -296,6 +275,11 @@ public final class BitSet{
 		final BitSet rhs = (BitSet)obj;
 		return (cardinality == rhs.cardinality
 			&& Arrays.equals(indexes, 0, cardinality, rhs.indexes, 0, rhs.cardinality));
+	}
+
+	@Override
+	public int hashCode(){
+		return Arrays.hashCode(indexes);
 	}
 
 }
