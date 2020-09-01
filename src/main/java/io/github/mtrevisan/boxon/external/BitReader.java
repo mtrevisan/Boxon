@@ -50,6 +50,7 @@ public final class BitReader extends BitReaderData{
 	 *
 	 * @param file	The file containing the binary stream.
 	 * @return	The new bit buffer.
+	 * @throws IOException	If an I/O error occurs.
 	 * @throws FileNotFoundException	If the file does not exist, is a directory rather than a regular file,
 	 * 	or for some other reason cannot be opened for reading.
 	 * @throws SecurityException	If a security manager exists and its {@code checkRead} method denies read access to the file.
@@ -134,6 +135,7 @@ public final class BitReader extends BitReaderData{
 	 * 	and {@link Double#SIZE}).
 	 * @param byteOrder	The byte order used to read the bytes.
 	 * @return	The read value of the given type.
+	 * @throws AnnotationException	If an annotation is not well formatted.
 	 */
 	public Object get(final Class<?> type, final ByteOrder byteOrder) throws AnnotationException{
 		final ParserDataType t = ParserDataType.fromType(type);
@@ -262,6 +264,7 @@ public final class BitReader extends BitReaderData{
 	 * @param cls	Either a {@code Float} or a {@link Double} class.
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	A {@link BigDecimal}.
+	 * @throws AnnotationException	If an annotation is not well formatted.
 	 */
 	@SuppressWarnings("ChainOfInstanceofChecks")
 	public BigDecimal getDecimal(final Class<?> cls, final ByteOrder byteOrder) throws AnnotationException{

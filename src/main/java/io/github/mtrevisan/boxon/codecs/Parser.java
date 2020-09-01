@@ -162,6 +162,8 @@ public final class Parser{
 	 * Loads all the protocol classes annotated with {@link MessageHeader}.
 	 *
 	 * @return	The {@link Parser}, used for chaining.
+	 * @throws AnnotationException	If an annotation is not well formatted.
+	 * @throws TemplateException	If a template is not well formatted.
 	 */
 	public Parser withDefaultTemplates() throws AnnotationException, TemplateException{
 		templateParser.loader.loadDefaultTemplates();
@@ -173,6 +175,8 @@ public final class Parser{
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
 	 * @return	The {@link Parser}, used for chaining.
+	 * @throws AnnotationException	If an annotation is not well formatted.
+	 * @throws TemplateException	If a template is not well formatted.
 	 */
 	public Parser withTemplates(final Class<?>... basePackageClasses) throws AnnotationException, TemplateException{
 		templateParser.loader.loadTemplates(basePackageClasses);
@@ -185,6 +189,7 @@ public final class Parser{
 	 *
 	 * @param file	The file containing the binary stream.
 	 * @return	The parse response.
+	 * @throws IOException	If an I/O error occurs.
 	 * @throws FileNotFoundException	If the file does not exist, is a directory rather than a regular file,
 	 * 	or for some other reason cannot be opened for reading.
 	 * @throws SecurityException	If a security manager exists and its {@code checkRead} method denies read access to the file.
