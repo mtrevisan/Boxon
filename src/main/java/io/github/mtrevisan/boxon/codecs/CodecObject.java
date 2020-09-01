@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
+import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
@@ -59,8 +60,9 @@ final class CodecObject implements CodecInterface<BindObject>{
 			final Object instance = templateParser.decode(template, reader, rootObject);
 			Evaluator.addToContext(CodecHelper.CONTEXT_SELF, instance);
 
-			final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(),
-				binding.converter(), rootObject);
+			final ConverterChoices selectConverterFrom = binding.selectConverterFrom();
+			final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
+			final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(selectConverterFrom, defaultConverter, rootObject);
 			final Object value = CodecHelper.converterDecode(chosenConverter, instance);
 
 			CodecHelper.validateData(binding.validator(), value);

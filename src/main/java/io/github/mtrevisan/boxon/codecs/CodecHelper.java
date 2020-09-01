@@ -103,13 +103,12 @@ final class CodecHelper{
 	}
 
 	static Class<? extends Converter<?, ?>> chooseConverter(final ConverterChoices selectConverterFrom,
-			final Class<? extends Converter<?, ?>> baseConverter, final Object rootObject){
+			final Class<? extends Converter<?, ?>> defaultConverter, final Object rootObject){
 		final ConverterChoices.ConverterChoice[] alternatives = selectConverterFrom.alternatives();
-		for(final ConverterChoices.ConverterChoice alternative : alternatives){
+		for(final ConverterChoices.ConverterChoice alternative : alternatives)
 			if(Evaluator.evaluate(alternative.condition(), rootObject, boolean.class))
 				return alternative.converter();
-		}
-		return baseConverter;
+		return defaultConverter;
 	}
 
 	static void writePrefix(final BitWriter writer, final ObjectChoices.ObjectChoice chosenAlternative, final ObjectChoices selectFrom){
