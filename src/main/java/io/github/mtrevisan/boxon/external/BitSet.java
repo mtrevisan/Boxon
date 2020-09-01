@@ -107,15 +107,18 @@ public final class BitSet{
 		indexes = new int[length];
 		int k = 0;
 		int offset = 0;
-		for(byte word : words){
-			while(word != 0){
-				final int skip = Integer.numberOfTrailingZeros(word);
-				indexes[k++] = skip + offset;
-				word ^= 1 << skip;
-			}
-			offset += Byte.SIZE;
-		}
+		for(int i = 0; i < words.length; i ++, offset += Byte.SIZE)
+			k = addWordToIndexes(words[i], k, offset);
 		cardinality = length;
+	}
+
+	private int addWordToIndexes(byte word, int k, final int offset){
+		while(word != 0){
+			final int skip = Integer.numberOfTrailingZeros(word);
+			indexes[k ++] = skip + offset;
+			word ^= 1 << skip;
+		}
+		return k;
 	}
 
 	private BitSet(final long[] words){
@@ -126,15 +129,18 @@ public final class BitSet{
 		indexes = new int[length];
 		int k = 0;
 		int offset = 0;
-		for(long word : words){
-			while(word != 0l){
-				final int skip = Long.numberOfTrailingZeros(word);
-				indexes[k++] = skip + offset;
-				word ^= 1l << skip;
-			}
-			offset += Long.SIZE;
-		}
+		for(int i = 0; i < words.length; i ++, offset += Long.SIZE)
+			k = addWordToIndexes(words[i], k, offset);
 		cardinality = length;
+	}
+
+	private int addWordToIndexes(long word, int k, final int offset){
+		while(word != 0l){
+			final int skip = Long.numberOfTrailingZeros(word);
+			indexes[k ++] = skip + offset;
+			word ^= 1l << skip;
+		}
+		return k;
 	}
 
 	public BitSet(){}

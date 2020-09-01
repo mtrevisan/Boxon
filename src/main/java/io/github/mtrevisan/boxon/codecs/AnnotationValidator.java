@@ -177,7 +177,7 @@ enum AnnotationValidator{
 		if(condition.isEmpty())
 			throw new AnnotationException("All conditions must be non-empty");
 		if(hasPrefixSize ^ CodecHelper.containsPrefixReference(condition))
-			throw new AnnotationException("All conditions must " + (hasPrefixSize? "": "not ") + "contain a reference to the prefix");
+			throw new AnnotationException("All conditions must {}contain a reference to the prefix", (hasPrefixSize? "": "not "));
 	}
 
 	private static void validateDefaultAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> type,

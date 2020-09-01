@@ -165,9 +165,9 @@ public final class ReflectionHelper{
 		try{
 			return (T)field.get(obj);
 		}
-		catch(final IllegalArgumentException | IllegalAccessException e){
+		catch(final IllegalAccessException e){
 			//should not happen
-			throw new RuntimeException(e);
+			throw new IllegalArgumentException(e);
 		}
 	}
 

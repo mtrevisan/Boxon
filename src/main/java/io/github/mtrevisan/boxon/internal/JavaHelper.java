@@ -76,7 +76,7 @@ public final class JavaHelper{
 	public static byte[] toByteArray(final CharSequence hexString){
 		final int len = lengthOrZero(hexString);
 		if(len % 2 != 0)
-			throw new IllegalArgumentException("Malformed input");
+			throw new IllegalArgumentException("Input should be of even length, was " + len);
 
 		final byte[] data = new byte[len >>> 1];
 		for(int i = 0; i < len; i += 2){

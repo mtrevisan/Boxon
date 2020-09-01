@@ -58,7 +58,7 @@ class ByteHelperTest{
 
 		Throwable exception = Assertions.assertThrows(IllegalArgumentException.class,
 			() -> Assertions.assertArrayEquals(new byte[]{0x23, 0x5e, 0x40, 0x03, 0x51, 0x10, 0x42, 0x06}, JavaHelper.toByteArray("235e40035110420")));
-		Assertions.assertEquals("Malformed input", exception.getMessage());
+		Assertions.assertEquals("Input should be of even length, was 15", exception.getMessage());
 	}
 
 	@Test

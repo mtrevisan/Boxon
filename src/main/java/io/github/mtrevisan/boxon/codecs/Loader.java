@@ -149,7 +149,7 @@ final class Loader{
 	}
 
 
-	DynamicArray<Annotation> filterAnnotationsWithCodec(final Annotation[] declaredAnnotations){
+	private DynamicArray<Annotation> filterAnnotationsWithCodec(final Annotation[] declaredAnnotations){
 		final DynamicArray<Annotation> annotations = DynamicArray.create(Annotation.class, declaredAnnotations.length);
 		for(final Annotation annotation : declaredAnnotations)
 			if(hasCodec(annotation.annotationType()))
