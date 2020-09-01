@@ -49,7 +49,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 
@@ -212,11 +214,12 @@ public final class ReflectionHelper{
 		final DynamicArray<Field> fields = DynamicArray.create(Field.class, 0);
 
 		//recurse classes:
+		final Predicate<Field> filterPredicate = (fieldType != null? field -> (field.getType() == fieldType): null);
+		final Consumer<DynamicArray<Field>> filter = (filterPredicate != null? subfields -> subfields.filter(filterPredicate): subfields -> {});
 		while(cls != null && cls != Object.class){
 			final DynamicArray<Field> subfields = DynamicArray.wrap(cls.getDeclaredFields());
-			if(fieldType != null)
-				//apply filter on field type
-				subfields.filter(field -> field.getType() == fieldType);
+			//apply filter on field type if needed
+			filter.accept(subfields);
 			//place parent's fields before all the child's fields
 			fields.addAll(0, subfields);
 
