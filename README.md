@@ -967,7 +967,7 @@ Remember that the header that will be written is the first in `@MessageHeader`.
 ## Changelog
 
 <a name="changelog-1.1.0"></a>
-### version 1.1.0 - 202009??
+### version 1.1.0 - 20200901
 - Better handling of NOP logger.
 - Abandoned [Reflections](https://github.com/ronmamo/reflections) in favor of [ClassGraph](https://github.com/classgraph/classgraph).
 - Added BindArray.selectDefault and BindObject.selectDefault to cope with default selector that has no prefix.
