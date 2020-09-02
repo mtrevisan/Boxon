@@ -51,14 +51,21 @@ final class Evaluator{
 			@Override
 			protected Field findField(final String name, Class<?> cls, final boolean mustBeStatic){
 				while(cls != null && cls != Object.class){
-					final Field[] fields = cls.getDeclaredFields();
-					for(final Field field : fields)
-						if(field.getName().equals(name) && (!mustBeStatic || Modifier.isStatic(field.getModifiers())))
-							return field;
+					final Field field = findFieldInClass(name, cls, mustBeStatic);
+					if(field != null)
+						return field;
 
 					//go up to parent class
 					cls = cls.getSuperclass();
 				}
+				return null;
+			}
+
+			private Field findFieldInClass(final String name, final Class<?> cls, final boolean mustBeStatic){
+				final Field[] fields = cls.getDeclaredFields();
+				for(final Field field : fields)
+					if(field.getName().equals(name) && (!mustBeStatic || Modifier.isStatic(field.getModifiers())))
+						return field;
 				return null;
 			}
 		});
