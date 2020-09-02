@@ -26,6 +26,8 @@ package io.github.mtrevisan.boxon.external;
 
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.internal.ParserDataType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -44,6 +46,9 @@ import java.nio.charset.Charset;
  * @see <a href="https://github.com/jhg023/BitBuffer/blob/master/src/main/java/bitbuffer/BitBuffer.java">BitBuffer</a>
  */
 public final class BitReader extends BitReaderData{
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(BitReader.class);
+
 
 	/**
 	 * Wraps a {@link File} containing a binary stream into a buffer.
@@ -309,7 +314,7 @@ public final class BitReader extends BitReaderData{
 		}
 		catch(final IOException e){
 			//should not happen
-			e.printStackTrace();
+			LOGGER.error("Error while reading bytes", e);
 		}
 		return text;
 	}

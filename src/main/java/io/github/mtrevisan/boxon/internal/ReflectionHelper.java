@@ -24,6 +24,8 @@
  */
 package io.github.mtrevisan.boxon.internal;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.objenesis.instantiator.ObjectInstantiator;
 import org.springframework.objenesis.instantiator.android.Android10Instantiator;
 import org.springframework.objenesis.instantiator.android.Android17Instantiator;
@@ -59,6 +61,9 @@ import java.util.function.Supplier;
  * @see <a href="https://bill.burkecentral.com/2008/01/14/scanning-java-annotations-at-runtime/">Scanning Java Annotations at Runtime</a>
  */
 public final class ReflectionHelper{
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(ReflectionHelper.class);
+
 
 	private static final Function<Class<?>, Supplier<?>> CREATORS = Memoizer.memoize(ReflectionHelper::getCreatorInner);
 
@@ -290,7 +295,7 @@ public final class ReflectionHelper{
 			}
 			catch(final Exception e){
 				//should not happen
-				e.printStackTrace();
+				LOGGER.error("Error while creating supplier", e);
 				return null;
 			}
 		};
