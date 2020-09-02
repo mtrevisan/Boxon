@@ -52,6 +52,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
 		final BindObject binding = extractBinding(annotation);
 
+		Object value = null;
 		try{
 			final Class<?> type = extractType(reader, binding, rootObject);
 
@@ -63,18 +64,15 @@ final class CodecObject implements CodecInterface<BindObject>{
 			final ConverterChoices selectConverterFrom = binding.selectConverterFrom();
 			final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
 			final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(selectConverterFrom, defaultConverter, rootObject);
-			final Object value = CodecHelper.converterDecode(chosenConverter, instance);
+			value = CodecHelper.converterDecode(chosenConverter, instance);
 
 			CodecHelper.validateData(binding.validator(), value);
-
-			return value;
 		}
 		catch(final Exception e){
 			LOGGER.trace("Error while processing alternative", e);
 			LOGGER.warn(e.getMessage() != null? e.getMessage(): e.getClass().getSimpleName());
-
-			return null;
 		}
+		return value;
 	}
 
 	private Class<?> extractType(final BitReader reader, final BindObject binding, final Object rootObject) throws CodecException{

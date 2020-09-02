@@ -158,12 +158,12 @@ public final class ReflectionHelper{
 	}
 
 	private static Class<?> getClassFromName(final Type type){
+		Class<?> cls = null;
 		try{
-			return Class.forName(type.getTypeName());
+			cls = Class.forName(type.getTypeName());
 		}
-		catch(final ClassNotFoundException ignored){
-			return null;
-		}
+		catch(final ClassNotFoundException ignored){}
+		return cls;
 	}
 
 
@@ -241,12 +241,12 @@ public final class ReflectionHelper{
 
 	@SuppressWarnings("unchecked")
 	public static <T> T invokeMethod(final Object obj, final Method method, final T defaultValue){
+		T result = defaultValue;
 		try{
-			return (method != null? (T)method.invoke(obj): defaultValue);
+			result = (method != null? (T)method.invoke(obj): defaultValue);
 		}
-		catch(final IllegalAccessException | InvocationTargetException ignored){
-			return defaultValue;
-		}
+		catch(final IllegalAccessException | InvocationTargetException ignored){}
+		return result;
 	}
 
 	public static Method getAccessibleMethod(Class<?> cls, final String methodName, final Class<?> returnType,
@@ -275,17 +275,19 @@ public final class ReflectionHelper{
 	}
 
 	private static <T> Supplier<T> getCreatorInner(final Class<T> type){
+		Supplier<T> creator;
 		try{
 			final Constructor<T> constructor = type.getDeclaredConstructor();
 			constructor.setAccessible(true);
 			//try create an instance
 			constructor.newInstance();
 
-			return createSupplierIgnoreExceptions(constructor);
+			creator = createSupplierIgnoreExceptions(constructor);
 		}
 		catch(final Exception ignored){
-			return instantiatorOf(type)::newInstance;
+			creator = instantiatorOf(type)::newInstance;
 		}
+		return creator;
 	}
 
 	private static <T> Supplier<T> createSupplierIgnoreExceptions(final Constructor<? extends T> constructor){

@@ -71,13 +71,12 @@ abstract class BitReaderData{
 	}
 
 	public final void restoreFallbackPoint(){
-		if(fallbackPoint == null)
-			//no fallback point was marked before
-			return;
+		if(fallbackPoint != null){
+			//a fallback point has been marked before
+			restoreState(fallbackPoint);
 
-		restoreState(fallbackPoint);
-
-		clearFallbackPoint();
+			clearFallbackPoint();
+		}
 	}
 
 	public final void clearFallbackPoint(){
@@ -131,17 +130,18 @@ abstract class BitReaderData{
 		//make a copy of internal variables
 		final State originalState = createState();
 
+		Byte b = null;
 		try{
-			return getByte();
+			b = getByte();
 		}
 		catch(final BufferUnderflowException ignored){
 			//trap end-of-buffer
-			return null;
 		}
 		finally{
 			//restore original variables
 			restoreState(originalState);
 		}
+		return b;
 	}
 
 	/**
