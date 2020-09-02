@@ -68,6 +68,7 @@ final class TemplateParser{
 	}
 
 
+	//FIXME find a clean way to privatize this variable, avoiding defining many methods in this class
 	final Loader loader = new Loader();
 
 

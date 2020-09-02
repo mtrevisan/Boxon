@@ -90,6 +90,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 				final ObjectChoices.ObjectChoice chosenAlternative = CodecHelper.chooseAlternative(reader, selectFrom, rootObject);
 				final Class<?> chosenAlternativeType = (chosenAlternative != null? chosenAlternative.type(): binding.selectDefault());
 				if(chosenAlternativeType == void.class)
+					//FIXME can this throw be avoided?
 					throw new CodecException("Cannot find a valid codec from given alternatives for {}",
 						rootObject.getClass().getSimpleName());
 
