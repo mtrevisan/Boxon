@@ -33,12 +33,6 @@ import java.util.function.Function;
 
 public final class Memoizer{
 
-	@FunctionalInterface
-	public interface ThrowingFunction<IN, OUT, E extends Exception>{
-		OUT apply(final IN in) throws E;
-	}
-
-
 	private Memoizer(){}
 
 	/**

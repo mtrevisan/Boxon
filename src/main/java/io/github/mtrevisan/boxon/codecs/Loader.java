@@ -33,6 +33,7 @@ import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.Memoizer;
 import io.github.mtrevisan.boxon.internal.ReflectionHelper;
 import io.github.mtrevisan.boxon.internal.Reflections;
+import io.github.mtrevisan.boxon.internal.ThrowingFunction;
 import io.github.mtrevisan.boxon.internal.matchers.BNDMPatternMatcher;
 import io.github.mtrevisan.boxon.internal.matchers.PatternMatcher;
 import org.slf4j.Logger;
@@ -56,7 +57,7 @@ final class Loader{
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Loader.class);
 
-	private final Memoizer.ThrowingFunction<Class<?>, Template<?>, AnnotationException> templateStore = Memoizer.throwingMemoize(type -> new Template<>(type, this::filterAnnotationsWithCodec));
+	private final ThrowingFunction<Class<?>, Template<?>, AnnotationException> templateStore = Memoizer.throwingMemoize(type -> new Template<>(type, this::filterAnnotationsWithCodec));
 
 	private static final PatternMatcher PATTERN_MATCHER = new BNDMPatternMatcher();
 	private static final Function<byte[], int[]> PRE_PROCESSED_PATTERNS = Memoizer.memoize(PATTERN_MATCHER::preProcessPattern);
