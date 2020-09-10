@@ -132,6 +132,8 @@ You can use them as a starting point to build your own customized readers.
 <a name="annotation-summary"></a>
 ### Summary
 
+Here is a brief summary of the parameters (described in detail below) for each annotation.
+
 |                      | condition |  type   | charset | terminator | consumeTerminator |  size   | byteOrder | selectFrom | selectDefault | validator | converter | selectConverterFrom |
 |----------------------|:---------:|:-------:|:-------:|:----------:|:-----------------:|:-------:|:---------:|:----------:|:-------------:|:---------:|:---------:|:-------------------:|
 | BindObject           |  &#9745;  | &#9745; |         |            |                   |         |           |  &#9745;   |    &#9745;    |  &#9745;  |  &#9745;  |       &#9745;       |
