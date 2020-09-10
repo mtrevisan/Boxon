@@ -132,22 +132,22 @@ You can use them as a starting point to build your own customized readers.
 <a name="annotation-summary"></a>
 ### Summary
 
-|                      | condition | type | charset | terminator | consumeTerminator | size | byteOrder | selectFrom | selectDefault | validator | converter | selectConverterFrom |
-|----------------------|-----------|------|---------|------------|-------------------|------|-----------|------------|---------------|-----------|-----------|---------------------|
-| BindObject           | &nbsp;&#9745;  | [x]  |         |            |                   |      |           |    [x]     |      [x]      |    [x]    |    [x]    |         [x]         |
-| BindArray            |    [x]    | [x]  |         |            |                   |  [x] |           |    [x]     |      [x]      |    [x]    |    [x]    |         [x]         |
-| BindArrayPrimitive   |    [x]    | [x]  |         |            |                   |  [x] |    [x]    |            |               |    [x]    |    [x]    |         [x]         |
-| BindBits             |    [x]    |      |         |            |                   |  [x] |    [x]    |            |               |    [x]    |    [x]    |         [x]         |
-| BindByte             |    [x]    |      |         |            |                   |      |           |            |               |    [x]    |    [x]    |         [x]         |
-| BindShort            |    [x]    |      |         |            |                   |      |    [x]    |            |               |    [x]    |    [x]    |         [x]         |
-| BindInt              |    [x]    |      |         |            |                   |      |    [x]    |            |               |    [x]    |    [x]    |         [x]         |
-| BindLong             |    [x]    |      |         |            |                   |      |    [x]    |            |               |    [x]    |    [x]    |         [x]         |
-| BindInteger          |    [x]    |      |         |            |                   |  [x] |    [x]    |            |               |    [x]    |    [x]    |         [x]         |
-| BindFloat            |    [x]    |      |         |            |                   |      |    [x]    |            |               |    [x]    |    [x]    |         [x]         |
-| BindDouble           |    [x]    |      |         |            |                   |      |    [x]    |            |               |    [x]    |    [x]    |         [x]         |
-| BindDecimal          |    [x]    | [x]  |         |            |                   |      |    [x]    |            |               |    [x]    |    [x]    |         [x]         |
-| BindString           |    [x]    |      |   [x]   |            |                   |  [x] |           |            |               |    [x]    |    [x]    |         [x]         |
-| BindStringTerminated |    [x]    |      |   [x]   |    [x]     |        [x]        |      |           |            |               |    [x]    |    [x]    |         [x]         |
+|                      | condition |  type   | charset | terminator | consumeTerminator |  size   | byteOrder | selectFrom | selectDefault | validator | converter | selectConverterFrom |
+|----------------------|-----------|---------|---------|------------|-------------------|---------|-----------|------------|---------------|-----------|-----------|---------------------|
+| BindObject           |  &#9745;  | &#9745; |         |            |                   |         |           |  &#9745;   |    &#9745;    |  &#9745;  |  &#9745;  |       &#9745;       |
+| BindArray            |  &#9745;  | &#9745; |         |            |                   | &#9745; |           |  &#9745;   |    &#9745;    |  &#9745;  |  &#9745;  |       &#9745;       |
+| BindArrayPrimitive   |  &#9745;  | &#9745; |         |            |                   | &#9745; |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |
+| BindBits             |  &#9745;  |         |         |            |                   | &#9745; |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |
+| BindByte             |  &#9745;  |         |         |            |                   |         |           |            |               |  &#9745;  |  &#9745;  |       &#9745;       |
+| BindShort            |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |
+| BindInt              |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |
+| BindLong             |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |
+| BindInteger          |  &#9745;  |         |         |            |                   | &#9745; |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |
+| BindFloat            |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |
+| BindDouble           |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |
+| BindDecimal          |  &#9745;  | &#9745; |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |
+| BindString           |  &#9745;  |         | &#9745; |            |                   | &#9745; |           |            |               |  &#9745;  |  &#9745;  |       &#9745;       |
+| BindStringTerminated |  &#9745;  |         | &#9745; |  &#9745;   |     &#9745;       |         |           |            |               |  &#9745;  |  &#9745;  |       &#9745;       |
 
 
 <a name="annotation-bindobject"></a>
