@@ -134,7 +134,7 @@ You can use them as a starting point to build your own customized readers.
 
 |                      | condition | type | charset | terminator | consumeTerminator | size | byteOrder | selectFrom | selectDefault | validator | converter | selectConverterFrom |
 |----------------------|-----------|------|---------|------------|-------------------|------|-----------|------------|---------------|-----------|-----------|---------------------|
-| BindObject           |    [x]    | [x]  |         |            |                   |      |           |    [x]     |      [x]      |    [x]    |    [x]    |         [x]         |
+| BindObject           |  &#9745;  | [x]  |         |            |                   |      |           |    [x]     |      [x]      |    [x]    |    [x]    |         [x]         |
 | BindArray            |    [x]    | [x]  |         |            |                   |  [x] |           |    [x]     |      [x]      |    [x]    |    [x]    |         [x]         |
 | BindArrayPrimitive   |    [x]    | [x]  |         |            |                   |  [x] |    [x]    |            |               |    [x]    |    [x]    |         [x]         |
 | BindBits             |    [x]    |      |         |            |                   |  [x] |    [x]    |            |               |    [x]    |    [x]    |         [x]         |
