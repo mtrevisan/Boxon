@@ -84,20 +84,21 @@ You can get pre-built JARs (usable on JRE 11 or newer) from [Sonatype](https://o
 
 ## Table of Contents
 1. [Base annotations](#annotation-base)
-    1. [BindObject](#annotation-bindobject)
-    2. [BindArray](#annotation-bindarray)
-    3. [BindArrayPrimitive](#annotation-bindarrayprimitive)
-    4. [BindBits](#annotation-bindbits)
-    5. [BindByte](#annotation-bindbyte)
-    6. [BindShort](#annotation-bindshort)
-    7. [BindInt](#annotation-bindint)
-    8. [BindLong](#annotation-bindlong)
-    9. [BindInteger](#annotation-bindinteger)
-    10. [BindFloat](#annotation-bindfloat)
-    11. [BindDouble](#annotation-binddouble)
-    12. [BindDecimal](#annotation-binddecimal)
-    13. [BindString](#annotation-bindstring)
-    14. [BindStringTerminated](#annotation-bindstringterminated)
+    1. [Summary](#annotation-summary)
+    2. [BindObject](#annotation-bindobject)
+    3. [BindArray](#annotation-bindarray)
+    4. [BindArrayPrimitive](#annotation-bindarrayprimitive)
+    5. [BindBits](#annotation-bindbits)
+    6. [BindByte](#annotation-bindbyte)
+    7. [BindShort](#annotation-bindshort)
+    8. [BindInt](#annotation-bindint)
+    9. [BindLong](#annotation-bindlong)
+    10. [BindInteger](#annotation-bindinteger)
+    11. [BindFloat](#annotation-bindfloat)
+    12. [BindDouble](#annotation-binddouble)
+    13. [BindDecimal](#annotation-binddecimal)
+    14. [BindString](#annotation-bindstring)
+    15. [BindStringTerminated](#annotation-bindstringterminated)
 2. [Special annotations](#annotation-special)
     1. [MessageHeader](#annotation-messageheader)
     2. [Skip](#annotation-skip)
@@ -127,6 +128,27 @@ You can get pre-built JARs (usable on JRE 11 or newer) from [Sonatype](https://o
 Here the build-in base annotations are described.
 
 You can use them as a starting point to build your own customized readers.
+
+<a name="annotation-summary"></a>
+### Summary
+
+|                      | condition | type | charset | terminator | consumeTerminator | size | byteOrder | selectFrom | selectDefault | validator | converter | selectConverterFrom |
+|----------------------|-----------|------|---------|------------|-------------------|------|-----------|------------|---------------|-----------|-----------|---------------------|
+| BindObject           |    [x]    | [x]  |         |            |                   |      |           |    [x]     |      [x]      |    [x]    |    [x]    |         [x]         |
+| BindArray            |    [x]    | [x]  |         |            |                   |  [x] |           |    [x]     |      [x]      |    [x]    |    [x]    |         [x]         |
+| BindArrayPrimitive   |    [x]    | [x]  |         |            |                   |  [x] |    [x]    |            |               |    [x]    |    [x]    |         [x]         |
+| BindBits             |    [x]    |      |         |            |                   |  [x] |    [x]    |            |               |    [x]    |    [x]    |         [x]         |
+| BindByte             |    [x]    |      |         |            |                   |      |           |            |               |    [x]    |    [x]    |         [x]         |
+| BindShort            |    [x]    |      |         |            |                   |      |    [x]    |            |               |    [x]    |    [x]    |         [x]         |
+| BindInt              |    [x]    |      |         |            |                   |      |    [x]    |            |               |    [x]    |    [x]    |         [x]         |
+| BindLong             |    [x]    |      |         |            |                   |      |    [x]    |            |               |    [x]    |    [x]    |         [x]         |
+| BindInteger          |    [x]    |      |         |            |                   |  [x] |    [x]    |            |               |    [x]    |    [x]    |         [x]         |
+| BindFloat            |    [x]    |      |         |            |                   |      |    [x]    |            |               |    [x]    |    [x]    |         [x]         |
+| BindDouble           |    [x]    |      |         |            |                   |      |    [x]    |            |               |    [x]    |    [x]    |         [x]         |
+| BindDecimal          |    [x]    | [x]  |         |            |                   |      |    [x]    |            |               |    [x]    |    [x]    |         [x]         |
+| BindString           |    [x]    |      |   [x]   |            |                   |  [x] |           |            |               |    [x]    |    [x]    |         [x]         |
+| BindStringTerminated |    [x]    |      |   [x]   |    [x]     |        [x]        |      |           |            |               |    [x]    |    [x]    |         [x]         |
+
 
 <a name="annotation-bindobject"></a>
 ### BindObject
