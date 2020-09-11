@@ -64,7 +64,7 @@ enum AnnotationValidator{
 				throw new AnnotationException("Bad annotation used for {}, should have been used the type `{}.class`",
 					BindArrayPrimitive.class.getSimpleName(), ParserDataType.toPrimitiveTypeOrDefault(type).getSimpleName());
 
-			validateChoice(selectFrom, binding.selectDefault(), type);
+			validateObjectChoice(selectFrom, binding.selectDefault(), type);
 		}
 	},
 
@@ -78,7 +78,7 @@ enum AnnotationValidator{
 				throw new AnnotationException("Bad annotation used for {}, should have been used one of the primitive type's annotations",
 					BindObject.class.getSimpleName());
 
-			validateChoice(selectFrom, binding.selectDefault(), type);
+			validateObjectChoice(selectFrom, binding.selectDefault(), type);
 		}
 	},
 
@@ -141,15 +141,15 @@ enum AnnotationValidator{
 
 	abstract void validate(final Annotation annotation) throws AnnotationException;
 
-	private static void validateChoice(final ObjectChoices selectFrom, final Class<?> selectDefault, final Class<?> type)
+	private static void validateObjectChoice(final ObjectChoices selectFrom, final Class<?> selectDefault, final Class<?> type)
 			throws AnnotationException{
 		final int prefixSize = selectFrom.prefixSize();
 		validatePrefixSize(prefixSize);
 
 		final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
-		validateAlternatives(alternatives, type, prefixSize);
+		validateObjectAlternatives(alternatives, type, prefixSize);
 
-		validateDefaultAlternative(alternatives, type, selectDefault);
+		validateObjectDefaultAlternative(alternatives, type, selectDefault);
 	}
 
 	private static void validatePrefixSize(final int prefixSize) throws AnnotationException{
@@ -159,8 +159,8 @@ enum AnnotationValidator{
 			throw new AnnotationException("Prefix size cannot be greater than {} bits", Integer.SIZE);
 	}
 
-	private static void validateAlternatives(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> type,
-			final int prefixSize) throws AnnotationException{
+	private static void validateObjectAlternatives(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> type,
+																  final int prefixSize) throws AnnotationException{
 		final boolean hasPrefixSize = (prefixSize > 0);
 		if(hasPrefixSize && alternatives.length == 0)
 			throw new AnnotationException("No alternatives present");
@@ -180,8 +180,8 @@ enum AnnotationValidator{
 			throw new AnnotationException("All conditions must {}contain a reference to the prefix", (hasPrefixSize? "": "not "));
 	}
 
-	private static void validateDefaultAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> type,
-			final Class<?> selectDefault) throws AnnotationException{
+	private static void validateObjectDefaultAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> type,
+																		  final Class<?> selectDefault) throws AnnotationException{
 		if(selectDefault != void.class && alternatives.length == 0)
 			LOGGER.warn("Useless definition of default alternative ({}) due to no alternatives present on @BindArray or @BindObject",
 				selectDefault.getSimpleName());
