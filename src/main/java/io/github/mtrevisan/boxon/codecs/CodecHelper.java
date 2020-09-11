@@ -74,7 +74,7 @@ final class CodecHelper{
 
 	static ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> type){
 		for(final ObjectChoices.ObjectChoice alternative : alternatives)
-			if(alternative.type() == type)
+			if(alternative.type().isAssignableFrom(type))
 				return alternative;
 
 		throw new IllegalArgumentException("Cannot find a valid codec for type " + type.getSimpleName());
