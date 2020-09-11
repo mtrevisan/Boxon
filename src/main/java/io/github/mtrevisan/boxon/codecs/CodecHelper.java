@@ -48,7 +48,8 @@ final class CodecHelper{
 	/** The name of the prefix for the alternative (used for referencing variables from SpEL). */
 	private static final String CONTEXT_CHOICE_PREFIX = "prefix";
 
-	private static final Matcher CONTEXT_PREFIXED_CHOICE_PREFIX = Pattern.compile("#" + CONTEXT_CHOICE_PREFIX + "[^a-zA-Z]").matcher("");
+	private static final Matcher CONTEXT_PREFIXED_CHOICE_PREFIX = Pattern.compile("#" + CONTEXT_CHOICE_PREFIX + "[^a-zA-Z]")
+		.matcher("");
 
 
 	private CodecHelper(){}

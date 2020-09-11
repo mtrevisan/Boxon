@@ -271,7 +271,9 @@ public final class ReflectionHelper{
 
 		//recurse classes:
 		final Predicate<Field> filterPredicate = (fieldType != null? field -> (field.getType() == fieldType): null);
-		final Consumer<DynamicArray<Field>> filter = (filterPredicate != null? subfields -> subfields.filter(filterPredicate): subfields -> {});
+		final Consumer<DynamicArray<Field>> filter = (filterPredicate != null?
+			subfields -> subfields.filter(filterPredicate):
+			subfields -> {});
 		while(cls != null && cls != Object.class){
 			final DynamicArray<Field> subfields = DynamicArray.wrap(cls.getDeclaredFields());
 			//apply filter on field type if needed
