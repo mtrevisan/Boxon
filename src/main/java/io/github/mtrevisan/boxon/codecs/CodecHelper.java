@@ -130,40 +130,6 @@ final class CodecHelper{
 		return CONTEXT_PREFIXED_CHOICE_PREFIX.reset(condition).find();
 	}
 
-	/** Extract pattern from a SpEL expression, or a string, or a regex pattern. */
-	private static Pattern extractPattern(String match){
-		Pattern p = null;
-		if(JavaHelper.isNotBlank(match)){
-			//try SpEL expression
-			match = extractSpELExpression(match);
-
-			//try regex expression
-			p = extractRegexExpression(match);
-
-			//match exact
-			if(p == null)
-				p = extractRegexExpression("^" + Pattern.quote(match) + "$");
-		}
-		return p;
-	}
-
-	private static String extractSpELExpression(String match){
-		try{
-			match = Evaluator.evaluate(match, null, String.class);
-		}
-		catch(final Exception ignored){}
-		return match;
-	}
-
-	private static Pattern extractRegexExpression(final String match){
-		Pattern p = null;
-		try{
-			p = Pattern.compile(match);
-		}
-		catch(final Exception ignored){}
-		return p;
-	}
-
 	@SuppressWarnings("unchecked")
 	static <T> void validateData(final Class<? extends Validator<?>> validatorType, final Object data){
 		final Validator<T> validator = (Validator<T>)ReflectionHelper.getCreator(validatorType)
