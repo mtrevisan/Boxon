@@ -94,6 +94,8 @@ public final class ReflectionHelper{
 	 * 	If no arguments are given, then the type parameters of the offspring will be used.
 	 * @return	The actual generic type arguments, must match the type parameters of the offspring class.
 	 * 	If omitted, the type parameters will be used instead.
+	 *
+	 * @see <a href="https://stackoverflow.com/questions/17297308/how-do-i-resolve-the-actual-type-for-a-generic-return-type-using-reflection">How do I resolve the actual type for a generic return type using reflection?</>
 	 */
 	public static <T> Class<?>[] resolveGenericTypes(final Class<? extends T> offspring, final Class<T> base, Type... actualArgs){
 		//if actual types are omitted, the type parameters will be used instead
