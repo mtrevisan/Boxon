@@ -37,8 +37,10 @@ import org.springframework.objenesis.instantiator.perc.PercInstantiator;
 import org.springframework.objenesis.instantiator.sun.SunReflectionFactoryInstantiator;
 import org.springframework.objenesis.instantiator.sun.UnsafeFactoryInstantiator;
 import org.springframework.objenesis.strategy.PlatformDescription;
+import org.springframework.util.StringUtils;
 
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -63,6 +65,24 @@ import java.util.function.Supplier;
 public final class ReflectionHelper{
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ReflectionHelper.class);
+
+	private static final ClassLoader CLASS_LOADER = ReflectionHelper.class.getClassLoader();
+	public static final String ARRAY_VARIABLE = "[]";
+
+	/**
+	 * Primitive type name to class map.
+	 */
+	private static final Map<String, Class<?>> PRIMITIVE_NAME_TO_TYPE = new HashMap<>();
+	static{
+		PRIMITIVE_NAME_TO_TYPE.put("boolean", Boolean.TYPE);
+		PRIMITIVE_NAME_TO_TYPE.put("byte", Byte.TYPE);
+		PRIMITIVE_NAME_TO_TYPE.put("char", Character.TYPE);
+		PRIMITIVE_NAME_TO_TYPE.put("short", Short.TYPE);
+		PRIMITIVE_NAME_TO_TYPE.put("int", Integer.TYPE);
+		PRIMITIVE_NAME_TO_TYPE.put("long", Long.TYPE);
+		PRIMITIVE_NAME_TO_TYPE.put("float", Float.TYPE);
+		PRIMITIVE_NAME_TO_TYPE.put("double", Double.TYPE);
+	}
 
 
 	private static final Function<Class<?>, Supplier<?>> CREATORS = Memoizer.memoize(ReflectionHelper::getCreatorInner);
@@ -124,7 +144,7 @@ public final class ReflectionHelper{
 		if(types.isEmpty() && offspring.equals(base))
 			//there is a result if the base class is reached
 			for(final Type actualArg : actualArgs)
-				types.addIfNotNull(getClass(actualArg));
+				types.addIfNotNull(toClass(actualArg.getTypeName()));
 		return types.extractCopy();
 	}
 
@@ -135,7 +155,7 @@ public final class ReflectionHelper{
 		final Type rawType = ancestorType.getRawType();
 		if(rawType instanceof Class<?> && base.isAssignableFrom((Class<?>)rawType)){
 			final Type resolvedType = resolveArgumentType(ancestorType.getActualTypeArguments()[0], typeVariables);
-			types.addIfNotNull(getClass(resolvedType));
+			types.addIfNotNull(toClass(resolvedType.getTypeName()));
 		}
 		return types;
 	}
@@ -162,14 +182,38 @@ public final class ReflectionHelper{
 		return actualTypeArgument;
 	}
 
-	private static Class<?> getClass(final Type type){
-		Class<?> cls = null;
-		try{
-			cls = Class.forName(type.getTypeName());
+	/**
+	 * Convert a given String into the appropriate Class.
+	 *
+	 * @param name Name of class
+	 * @return The class for the given name
+	 * @throws ClassNotFoundException When the class could not be found by the specified ClassLoader
+	 */
+	private final static Class toClass(String name){
+		final int arraysCount = StringUtils.countOccurrencesOf(name, ARRAY_VARIABLE);
+		name = name.substring(0, name.length() - arraysCount * ARRAY_VARIABLE.length());
+
+		//check for a primitive type
+		Class<?> cls = PRIMITIVE_NAME_TO_TYPE.get(name);
+
+		if(cls == null){
+			//not a primitive, try to load it from the given ClassLoader
+			try{
+				cls = CLASS_LOADER.loadClass(name);
+			}
+			catch(final ClassNotFoundException e){
+				LOGGER.warn("Cannot convert type name to class: {}", name, e);
+			}
 		}
-		catch(final ClassNotFoundException e){
-			LOGGER.warn("Cannot convert type to class: {}", type.getTypeName(), e);
+
+		//if we have an array get the array class
+		if(cls != null && arraysCount > 0){
+			final int[] dimensions = new int[arraysCount];
+			Arrays.fill(dimensions, 1);
+			cls = Array.newInstance(cls, dimensions)
+				.getClass();
 		}
+
 		return cls;
 	}
 

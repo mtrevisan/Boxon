@@ -32,7 +32,7 @@ import io.github.mtrevisan.boxon.internal.DynamicArray;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.Memoizer;
 import io.github.mtrevisan.boxon.internal.ReflectionHelper;
-import io.github.mtrevisan.boxon.internal.Reflections;
+import io.github.mtrevisan.boxon.internal.ReflectiveClassLoader;
 import io.github.mtrevisan.boxon.internal.ThrowingFunction;
 import io.github.mtrevisan.boxon.internal.matchers.BNDMPatternMatcher;
 import io.github.mtrevisan.boxon.internal.matchers.PatternMatcher;
@@ -316,12 +316,12 @@ final class Loader{
 	private Collection<Class<?>> extractClasses(final Object type, final Class<?>... basePackageClasses){
 		final Collection<Class<?>> classes = new HashSet<>(0);
 
-		final Reflections reflections = new Reflections(basePackageClasses);
-		reflections.scan(CodecInterface.class, MessageHeader.class);
+		final ReflectiveClassLoader reflectiveClassLoader = new ReflectiveClassLoader(basePackageClasses);
+		reflectiveClassLoader.scan(CodecInterface.class, MessageHeader.class);
 		@SuppressWarnings("unchecked")
-		final Collection<Class<?>> modules = reflections.getImplementationsOf((Class<Object>)type);
+		final Collection<Class<?>> modules = reflectiveClassLoader.getImplementationsOf((Class<Object>)type);
 		@SuppressWarnings("unchecked")
-		final Collection<Class<?>> singletons = reflections.getTypesAnnotatedWith((Class<? extends Annotation>)type);
+		final Collection<Class<?>> singletons = reflectiveClassLoader.getTypesAnnotatedWith((Class<? extends Annotation>)type);
 		classes.addAll(modules);
 		classes.addAll(singletons);
 		return classes;

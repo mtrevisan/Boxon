@@ -40,7 +40,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @see <a href="https://github.com/classgraph/classgraph">ClassGraph</a>
  */
-public final class Reflections{
+public final class ReflectiveClassLoader{
 
 	private static final Map<Class<?>, Collection<Class<?>>> METADATA_STORE = new ConcurrentHashMap<>(0);
 
@@ -50,7 +50,7 @@ public final class Reflections{
 	/**
 	 * @param packageClasses	List of packages to scan into.
 	 */
-	public Reflections(final Class<?>... packageClasses){
+	public ReflectiveClassLoader(final Class<?>... packageClasses){
 		Objects.requireNonNull(packageClasses);
 		if(packageClasses.length == 0)
 			throw new IllegalArgumentException("Packages list cannot be empty");
