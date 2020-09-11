@@ -95,7 +95,7 @@ public final class ReflectionHelper{
 	 * @return	The actual generic type arguments, must match the type parameters of the offspring class.
 	 * 	If omitted, the type parameters will be used instead.
 	 */
-	public static <T> Class<?> resolveGenericType(final Class<? extends T> offspring, final Class<T> base, Type... actualArgs){
+	public static <T> Class<?>[] resolveGenericTypes(final Class<? extends T> offspring, final Class<T> base, Type... actualArgs){
 		//if actual types are omitted, the type parameters will be used instead
 		if(actualArgs.length == 0)
 			actualArgs = offspring.getTypeParameters();
@@ -107,32 +107,35 @@ public final class ReflectionHelper{
 		final Queue<Type> ancestorsQueue = extractAncestors(offspring);
 
 		//iterate over ancestors
-		Class<?> type = null;
-		while(type == null && !ancestorsQueue.isEmpty()){
+		@SuppressWarnings("rawtypes")
+		final DynamicArray<Class> types = DynamicArray.create(Class.class);
+		while(!ancestorsQueue.isEmpty()){
 			final Type ancestorType = ancestorsQueue.poll();
 
 			if(ancestorType instanceof ParameterizedType)
 				//ancestor is parameterized: process only if the raw type matches the base class
-				type = manageParameterizedAncestor((ParameterizedType)ancestorType, base, typeVariables);
+				types.addAll(manageParameterizedAncestor((ParameterizedType)ancestorType, base, typeVariables));
 			else if(ancestorType instanceof Class<?> && base.isAssignableFrom((Class<?>)ancestorType))
 				//ancestor is non-parameterized: process only if it matches the base class
 				ancestorsQueue.add(ancestorType);
 		}
-		if(type == null && offspring.equals(base))
+		if(types.isEmpty() && offspring.equals(base))
 			//there is a result if the base class is reached
-			type = getClassFromName(actualArgs[0]);
-		return type;
+			for(final Type actualArg : actualArgs)
+				types.addIfNotNull(getClass(actualArg));
+		return types.extractCopy();
 	}
 
-	private static <T> Class<?> manageParameterizedAncestor(final ParameterizedType ancestorType, final Class<T> base,
+	@SuppressWarnings("rawtypes")
+	private static <T> DynamicArray<Class> manageParameterizedAncestor(final ParameterizedType ancestorType, final Class<T> base,
 			final Map<String, Type> typeVariables){
-		Class<?> type = null;
+		final DynamicArray<Class> types = DynamicArray.create(Class.class);
 		final Type rawType = ancestorType.getRawType();
 		if(rawType instanceof Class<?> && base.isAssignableFrom((Class<?>)rawType)){
 			final Type resolvedType = resolveArgumentType(ancestorType.getActualTypeArguments()[0], typeVariables);
-			type = getClassFromName(resolvedType);
+			types.addIfNotNull(getClass(resolvedType));
 		}
-		return type;
+		return types;
 	}
 
 	private static <T> Map<String, Type> mapParameterTypes(final Class<? extends T> offspring, final Type[] actualArgs){
@@ -157,12 +160,14 @@ public final class ReflectionHelper{
 		return actualTypeArgument;
 	}
 
-	private static Class<?> getClassFromName(final Type type){
+	private static Class<?> getClass(final Type type){
 		Class<?> cls = null;
 		try{
 			cls = Class.forName(type.getTypeName());
 		}
-		catch(final ClassNotFoundException ignored){}
+		catch(final ClassNotFoundException e){
+			LOGGER.warn("Cannot convert type to class: {}", type.getTypeName(), e);
+		}
 		return cls;
 	}
 

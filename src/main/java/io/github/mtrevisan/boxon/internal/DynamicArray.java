@@ -84,6 +84,16 @@ public final class DynamicArray<T>{
 	}
 
 	/**
+	 * Appends the specified element to the end of this array if not {@code null}.
+	 *
+	 * @param elem	Element to be appended to the internal array.
+	 */
+	public void addIfNotNull(final T elem){
+		if(elem != null)
+			add(elem);
+	}
+
+	/**
 	 * Appends all of the elements in the specified collection to the end of this array.
 	 *
 	 * @param array	Collection containing elements to be added to this array.
