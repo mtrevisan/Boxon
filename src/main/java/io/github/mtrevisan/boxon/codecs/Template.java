@@ -143,7 +143,8 @@ final class Template<T>{
 	private BoundedField checksum;
 
 
-	Template(final Class<T> type, final Function<Annotation[], DynamicArray<Annotation>> filterAnnotationsWithCodec) throws AnnotationException{
+	Template(final Class<T> type, final Function<Annotation[], DynamicArray<Annotation>> filterAnnotationsWithCodec)
+			throws AnnotationException{
 		this.type = type;
 
 		header = type.getAnnotation(MessageHeader.class);
@@ -156,8 +157,8 @@ final class Template<T>{
 			throw new AnnotationException("No data can be extracted from this class: {}", type.getName());
 	}
 
-	private void loadAnnotatedFields(final Class<T> type, final DynamicArray<Field> fields, final Function<Annotation[], DynamicArray<Annotation>> filterAnnotationsWithCodec)
-			throws AnnotationException{
+	private void loadAnnotatedFields(final Class<T> type, final DynamicArray<Field> fields,
+			final Function<Annotation[], DynamicArray<Annotation>> filterAnnotationsWithCodec) throws AnnotationException{
 		boundedFields.ensureCapacity(fields.limit);
 		for(int i = 0; i < fields.limit; i ++){
 			final Field field = fields.data[i];

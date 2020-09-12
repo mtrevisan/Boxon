@@ -63,7 +63,8 @@ final class CodecObject implements CodecInterface<BindObject>{
 
 			final ConverterChoices selectConverterFrom = binding.selectConverterFrom();
 			final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
-			final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(selectConverterFrom, defaultConverter, rootObject);
+			final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(selectConverterFrom, defaultConverter,
+				rootObject);
 			value = CodecHelper.converterDecode(chosenConverter, instance);
 
 			CodecHelper.validateData(binding.validator(), value);
@@ -88,7 +89,8 @@ final class CodecObject implements CodecInterface<BindObject>{
 	}
 
 	@Override
-	public void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value) throws FieldException{
+	public void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value)
+			throws FieldException{
 		final BindObject binding = extractBinding(annotation);
 
 		CodecHelper.validateData(binding.validator(), value);
