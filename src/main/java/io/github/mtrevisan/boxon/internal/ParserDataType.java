@@ -65,11 +65,11 @@ public enum ParserDataType{
 		this.objectiveType = objectiveType;
 	}
 
-	public static Class<?> toObjectiveTypeOrDefault(final Class<?> primitiveType){
+	public static Class<?> toObjectiveTypeOrSelf(final Class<?> primitiveType){
 		return PRIMITIVE_WRAPPER_MAP.getOrDefault(primitiveType, primitiveType);
 	}
 
-	public static Class<?> toPrimitiveTypeOrDefault(final Class<?> objectiveType){
+	public static Class<?> toPrimitiveTypeOrSelf(final Class<?> objectiveType){
 		return WRAPPER_PRIMITIVE_MAP.getOrDefault(objectiveType, objectiveType);
 	}
 

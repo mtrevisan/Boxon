@@ -27,17 +27,31 @@ package io.github.mtrevisan.boxon.codecs;
 import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
+import io.github.mtrevisan.boxon.annotations.bindings.BindBits;
+import io.github.mtrevisan.boxon.annotations.bindings.BindByte;
 import io.github.mtrevisan.boxon.annotations.bindings.BindDecimal;
+import io.github.mtrevisan.boxon.annotations.bindings.BindDouble;
+import io.github.mtrevisan.boxon.annotations.bindings.BindFloat;
+import io.github.mtrevisan.boxon.annotations.bindings.BindInt;
+import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
+import io.github.mtrevisan.boxon.annotations.bindings.BindLong;
 import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
+import io.github.mtrevisan.boxon.annotations.bindings.BindShort;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
+import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
+import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.internal.ParserDataType;
+import io.github.mtrevisan.boxon.internal.ReflectionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -55,16 +69,22 @@ enum AnnotationValidator{
 					BindObject.class.getSimpleName());
 
 			validateObjectChoice(selectFrom, binding.selectDefault(), type);
+
+			validateConverter(binding.type(), binding.selectConverterFrom(), binding.converter());
 		}
 	},
 
 	ARRAY_PRIMITIVE(BindArrayPrimitive.class){
 		@Override
 		void validate(final Annotation annotation) throws AnnotationException{
-			final Class<?> type = ((BindArrayPrimitive)annotation).type();
+			final BindArrayPrimitive binding = (BindArrayPrimitive)annotation;
+			final Class<?> type = binding.type();
 			if(!ParserDataType.isPrimitive(type))
 				throw new AnnotationException("Bad annotation used for {}, should have been used the type `{}.class`",
-					BindArray.class.getSimpleName(), ParserDataType.toObjectiveTypeOrDefault(type).getSimpleName());
+					BindArray.class.getSimpleName(), ParserDataType.toObjectiveTypeOrSelf(type).getSimpleName());
+
+			final Class<?> bindingType = ReflectionHelper.addArrayType(binding.type(), 1);
+			validateConverter(bindingType, binding.selectConverterFrom(), binding.converter());
 		}
 	},
 
@@ -76,20 +96,90 @@ enum AnnotationValidator{
 			final Class<?> type = binding.type();
 			if(ParserDataType.isPrimitive(type))
 				throw new AnnotationException("Bad annotation used for {}, should have been used the type `{}.class`",
-					BindArrayPrimitive.class.getSimpleName(), ParserDataType.toPrimitiveTypeOrDefault(type).getSimpleName());
+					BindArrayPrimitive.class.getSimpleName(), ParserDataType.toPrimitiveTypeOrSelf(type).getSimpleName());
 
 			validateObjectChoice(selectFrom, binding.selectDefault(), type);
+
+			final Class<?> bindingType = ReflectionHelper.addArrayType(binding.type(), 1);
+			validateConverter(bindingType, binding.selectConverterFrom(), binding.converter());
+		}
+	},
+
+	BITS(BindBits.class){
+		@Override
+		void validate(final Annotation annotation) throws AnnotationException{
+			final BindBits binding = (BindBits)annotation;
+			validateConverter(BitSet.class, binding.selectConverterFrom(), binding.converter());
+		}
+	},
+
+	BYTE(BindByte.class){
+		@Override
+		void validate(final Annotation annotation) throws AnnotationException{
+			final BindByte binding = (BindByte)annotation;
+			validateConverter(byte.class, binding.selectConverterFrom(), binding.converter());
+		}
+	},
+
+	SHORT(BindShort.class){
+		@Override
+		void validate(final Annotation annotation) throws AnnotationException{
+			final BindShort binding = (BindShort)annotation;
+			validateConverter(short.class, binding.selectConverterFrom(), binding.converter());
+		}
+	},
+
+	INT(BindInt.class){
+		@Override
+		void validate(final Annotation annotation) throws AnnotationException{
+			final BindInt binding = (BindInt)annotation;
+			validateConverter(int.class, binding.selectConverterFrom(), binding.converter());
+		}
+	},
+
+	LONG(BindLong.class){
+		@Override
+		void validate(final Annotation annotation) throws AnnotationException{
+			final BindLong binding = (BindLong)annotation;
+			validateConverter(long.class, binding.selectConverterFrom(), binding.converter());
+		}
+	},
+
+	INTEGER(BindInteger.class){
+		@Override
+		void validate(final Annotation annotation) throws AnnotationException{
+			final BindInteger binding = (BindInteger)annotation;
+			validateConverter(BigInteger.class, binding.selectConverterFrom(), binding.converter());
+		}
+	},
+
+	FLOAT(BindFloat.class){
+		@Override
+		void validate(final Annotation annotation) throws AnnotationException{
+			final BindFloat binding = (BindFloat)annotation;
+			validateConverter(float.class, binding.selectConverterFrom(), binding.converter());
+		}
+	},
+
+	DOUBLE(BindDouble.class){
+		@Override
+		void validate(final Annotation annotation) throws AnnotationException{
+			final BindDouble binding = (BindDouble)annotation;
+			validateConverter(double.class, binding.selectConverterFrom(), binding.converter());
 		}
 	},
 
 	DECIMAL(BindDecimal.class){
 		@Override
 		void validate(final Annotation annotation) throws AnnotationException{
-			final Class<?> type = ((BindDecimal)annotation).type();
+			final BindDecimal binding = (BindDecimal)annotation;
+			final Class<?> type = binding.type();
 			final ParserDataType dataType = ParserDataType.fromType(type);
 			if(dataType != ParserDataType.FLOAT && dataType != ParserDataType.DOUBLE)
 				throw new AnnotationException("Bad type, should have been one of `{}.class` or `{}.class`", Float.class.getSimpleName(),
 					Double.class.getSimpleName());
+
+			validateConverter(BigDecimal.class, binding.selectConverterFrom(), binding.converter());
 		}
 	},
 
@@ -98,6 +188,8 @@ enum AnnotationValidator{
 		void validate(final Annotation annotation) throws AnnotationException{
 			final BindString binding = (BindString)annotation;
 			CodecHelper.assertCharset(binding.charset());
+
+			validateConverter(String.class, binding.selectConverterFrom(), binding.converter());
 		}
 	},
 
@@ -106,6 +198,8 @@ enum AnnotationValidator{
 		void validate(final Annotation annotation) throws AnnotationException{
 			final BindStringTerminated binding = (BindStringTerminated)annotation;
 			CodecHelper.assertCharset(binding.charset());
+
+			validateConverter(String.class, binding.selectConverterFrom(), binding.converter());
 		}
 	},
 
@@ -187,6 +281,31 @@ enum AnnotationValidator{
 				selectDefault.getSimpleName());
 		if(selectDefault != void.class && !type.isAssignableFrom(selectDefault))
 			throw new AnnotationException("Type of default alternative cannot be assigned to (super) type of annotation");
+	}
+
+	/**
+	 * Assure `type` can be fed to the converters.
+	 *
+	 * @param type	The type of variable fed to the converters.
+	 * @param selectConverterFrom	The list of converters from which to choose.
+	 * @param defaultConverter	The default converter.
+	 * @throws AnnotationException	If the give `type` cannot be fed to the converters.
+	 */
+	private static void validateConverter(Class<?> type, final ConverterChoices selectConverterFrom,
+			final Class<? extends Converter<?, ?>> defaultConverter) throws AnnotationException{
+//		type = ParserDataType.toObjectiveTypeOrSelf(type);
+//		Class<?> converterInputType = ReflectionHelper.resolveGenericTypes(defaultConverter, Converter.class)[0];
+//		if(!converterInputType.isAssignableFrom(type))
+//			throw new AnnotationException("Type of read data ({}) cannot be fed to default converter ({})", type.getSimpleName(),
+//				converterInputType.getSimpleName());
+//
+//		final ConverterChoices.ConverterChoice[] alternatives = selectConverterFrom.alternatives();
+//		for(final ConverterChoices.ConverterChoice alternative : alternatives){
+//			converterInputType = ReflectionHelper.resolveGenericTypes(alternative.converter(), Converter.class)[0];
+//			if(!converterInputType.isAssignableFrom(type))
+//				throw new AnnotationException("Type of read data ({}) cannot be fed to alternative converter ({})", type.getSimpleName(),
+//					converterInputType.getSimpleName());
+//		}
 	}
 
 }
