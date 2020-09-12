@@ -67,7 +67,7 @@ public final class ReflectionHelper{
 	private static final Logger LOGGER = LoggerFactory.getLogger(ReflectionHelper.class);
 
 	private static final ClassLoader CLASS_LOADER = ReflectionHelper.class.getClassLoader();
-	public static final String ARRAY_VARIABLE = "[]";
+	private static final String ARRAY_VARIABLE = "[]";
 
 	/**
 	 * Primitive type name to class map.
@@ -187,9 +187,8 @@ public final class ReflectionHelper{
 	 *
 	 * @param name Name of class
 	 * @return The class for the given name
-	 * @throws ClassNotFoundException When the class could not be found by the specified ClassLoader
 	 */
-	private final static Class toClass(String name){
+	private static Class<?> toClass(String name){
 		final int arraysCount = StringUtils.countOccurrencesOf(name, ARRAY_VARIABLE);
 		name = name.substring(0, name.length() - arraysCount * ARRAY_VARIABLE.length());
 
