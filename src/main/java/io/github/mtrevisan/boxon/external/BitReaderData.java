@@ -40,6 +40,10 @@ abstract class BitReaderData{
 		private byte cache;
 
 		State(final int position, final int remaining, final byte cache){
+			set(position, remaining, cache);
+		}
+
+		public void set(final int position, final int remaining, final byte cache){
 			this.position = position;
 			this.remaining = remaining;
 			this.cache = cache;
@@ -59,12 +63,9 @@ abstract class BitReaderData{
 
 
 	public final void createFallbackPoint(){
-		if(fallbackPoint != null){
+		if(fallbackPoint != null)
 			//update current mark:
-			fallbackPoint.position = buffer.position();
-			fallbackPoint.remaining = remaining;
-			fallbackPoint.cache = cache;
-		}
+			fallbackPoint.set(buffer.position(), remaining, cache);
 		else
 			//create new mark
 			fallbackPoint = createState();

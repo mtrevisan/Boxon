@@ -41,7 +41,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -127,7 +126,7 @@ final class CodecHelper{
 		final ConverterChoices.ConverterChoice[] alternatives = selectConverterFrom.alternatives();
 		if(alternatives.length > 0){
 			//infer supertype of all types accepted by the converters
-			final Set<Class<?>> supertypes = new HashSet<>(alternatives.length);
+			final Collection<Class<?>> supertypes = new HashSet<>(alternatives.length);
 			for(final ConverterChoices.ConverterChoice alternative : alternatives){
 				final Class<?> converterType = ReflectionHelper.resolveGenericTypes(alternative.converter(), Converter.class)[0];
 				supertypes.add(converterType);
