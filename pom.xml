@@ -61,7 +61,7 @@
 		<springframework.spring-expression.version>5.2.8.RELEASE</springframework.spring-expression.version>
 
 		<!-- ClassGraph -->
-		<github.classgraph.version>4.8.89</github.classgraph.version>
+		<github.classgraph.version>4.8.90</github.classgraph.version>
 
 		<!-- Logging -->
 		<slf4j.slf4j-api.version>1.7.30</slf4j.slf4j-api.version>

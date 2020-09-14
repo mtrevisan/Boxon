@@ -185,8 +185,8 @@ public final class ReflectionHelper{
 	/**
 	 * Convert a given String into the appropriate Class.
 	 *
-	 * @param name Name of class
-	 * @return The class for the given name
+	 * @param name Name of class.
+	 * @return The class for the given name, {@code null} if some error happens.
 	 */
 	private static Class<?> toClass(String name){
 		final int arraysCount = StringUtils.countOccurrencesOf(name, ARRAY_VARIABLE);
@@ -196,7 +196,7 @@ public final class ReflectionHelper{
 		Class<?> cls = PRIMITIVE_NAME_TO_TYPE.get(name);
 
 		if(cls == null){
-			//not a primitive, try to load it from the given ClassLoader
+			//not a primitive, try to load it through the ClassLoader
 			try{
 				cls = CLASS_LOADER.loadClass(name);
 			}
