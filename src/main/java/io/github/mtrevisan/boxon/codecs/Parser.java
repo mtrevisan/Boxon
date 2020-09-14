@@ -47,7 +47,8 @@ import java.util.Objects;
  */
 public final class Parser{
 
-	private final TemplateParser templateParser = new TemplateParser();
+	private final Loader loader = new Loader();
+	private final TemplateParser templateParser = new TemplateParser(loader);
 
 
 	/**
@@ -131,7 +132,7 @@ public final class Parser{
 	 * @return	The {@link Parser}, used for chaining.
 	 */
 	public Parser withDefaultCodecs(){
-		templateParser.loader.loadDefaultCodecs();
+		loader.loadDefaultCodecs();
 		return this;
 	}
 
@@ -142,7 +143,7 @@ public final class Parser{
 	 * @return	The {@link Parser}, used for chaining.
 	 */
 	public Parser withCodecs(final Class<?>... basePackageClasses){
-		templateParser.loader.loadCodecs(basePackageClasses);
+		loader.loadCodecs(basePackageClasses);
 		return this;
 	}
 
@@ -153,7 +154,7 @@ public final class Parser{
 	 * @return	The {@link Parser}, used for chaining.
 	 */
 	public Parser withCodecs(final CodecInterface<?>... codecs){
-		templateParser.loader.addCodecs(codecs);
+		loader.addCodecs(codecs);
 		return this;
 	}
 
@@ -166,7 +167,7 @@ public final class Parser{
 	 * @throws TemplateException	If a template is not well formatted.
 	 */
 	public Parser withDefaultTemplates() throws AnnotationException, TemplateException{
-		templateParser.loader.loadDefaultTemplates();
+		loader.loadDefaultTemplates();
 		return this;
 	}
 
@@ -179,7 +180,7 @@ public final class Parser{
 	 * @throws TemplateException	If a template is not well formatted.
 	 */
 	public Parser withTemplates(final Class<?>... basePackageClasses) throws AnnotationException, TemplateException{
-		templateParser.loader.loadTemplates(basePackageClasses);
+		loader.loadTemplates(basePackageClasses);
 		return this;
 	}
 
@@ -239,7 +240,7 @@ public final class Parser{
 			reader.createFallbackPoint();
 
 			try{
-				final Template<?> template = templateParser.loader.getTemplate(reader);
+				final Template<?> template = loader.getTemplate(reader);
 
 				final Object partialDecodedMessage = templateParser.decode(template, reader, null);
 
@@ -252,7 +253,7 @@ public final class Parser{
 				//restore state of the reader
 				reader.restoreFallbackPoint();
 
-				final int position = templateParser.loader.findNextMessageIndex(reader);
+				final int position = loader.findNextMessageIndex(reader);
 				if(position < 0)
 					//cannot find any template for message
 					break;
@@ -313,7 +314,7 @@ public final class Parser{
 	 */
 	private void compose(final BitWriter writer, final Object data, final ComposeResponse response){
 		try{
-			final Template<?> template = templateParser.loader.getTemplate(data.getClass());
+			final Template<?> template = loader.getTemplate(data.getClass());
 
 			templateParser.encode(template, writer, null, data);
 		}

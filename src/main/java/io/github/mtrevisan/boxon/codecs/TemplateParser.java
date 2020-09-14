@@ -68,19 +68,11 @@ final class TemplateParser{
 	}
 
 
-	//FIXME find a clean way to privatize this variable, avoiding defining many methods in this class
-	final Loader loader = new Loader();
+	private final Loader loader;
 
 
-	/**
-	 * Constructs a new {@link Template}.
-	 *
-	 * @param <T>	The type of the object to be returned as a {@link Template}.
-	 * @param type	The class of the object to be returned as a {@link Template}.
-	 * @return	The {@link Template} for the given type.
-	 */
-	<T> Template<T> createTemplate(final Class<T> type) throws AnnotationException{
-		return loader.createTemplate(type);
+	TemplateParser(final Loader loader){
+		this.loader = loader;
 	}
 
 	<T> T decode(final Template<T> template, final BitReader reader, final Object parentObject) throws FieldException{
@@ -288,6 +280,10 @@ final class TemplateParser{
 	}
 
 	private void setTemplateParser(final CodecInterface<?> codec){
+		try{
+			ReflectionHelper.setFieldValue(codec, Loader.class, loader);
+		}
+		catch(final Exception ignored){}
 		try{
 			ReflectionHelper.setFieldValue(codec, TemplateParser.class, this);
 		}

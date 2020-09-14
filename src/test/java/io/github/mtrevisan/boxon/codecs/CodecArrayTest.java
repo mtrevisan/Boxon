@@ -242,8 +242,10 @@ class CodecArrayTest{
 			}
 		};
 
-		TemplateParser templateParser = new TemplateParser();
-		templateParser.loader.loadDefaultCodecs();
+		Loader loader = new Loader();
+		TemplateParser templateParser = new TemplateParser(loader);
+		loader.loadDefaultCodecs();
+		ReflectionHelper.setFieldValue(codec, Loader.class, loader);
 		ReflectionHelper.setFieldValue(codec, TemplateParser.class, templateParser);
 		BitWriter writer = BitWriter.create();
 		codec.encode(writer, annotation, null, encodedValue);

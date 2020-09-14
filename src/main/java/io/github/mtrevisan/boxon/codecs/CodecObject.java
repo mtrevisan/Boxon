@@ -45,6 +45,9 @@ final class CodecObject implements CodecInterface<BindObject>{
 
 	/** Automatically injected by {@link TemplateParser} */
 	@SuppressWarnings("unused")
+	private Loader loader;
+	/** Automatically injected by {@link TemplateParser} */
+	@SuppressWarnings("unused")
 	private TemplateParser templateParser;
 
 
@@ -56,7 +59,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 		try{
 			final Class<?> type = extractType(reader, binding, rootObject);
 
-			final Template<?> template = templateParser.createTemplate(type);
+			final Template<?> template = loader.createTemplate(type);
 
 			final Object instance = templateParser.decode(template, reader, rootObject);
 			Evaluator.addToContext(CodecHelper.CONTEXT_SELF, instance);
@@ -108,7 +111,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 
 		Evaluator.addToContext(CodecHelper.CONTEXT_SELF, value);
 
-		final Template<?> template = templateParser.createTemplate(type);
+		final Template<?> template = loader.createTemplate(type);
 
 		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(),
 			binding.converter(), rootObject);

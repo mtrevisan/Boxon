@@ -169,9 +169,9 @@ class TemplateTest{
 	@Test
 	@SuppressWarnings("SimplifiableAssertion")
 	void creation() throws AnnotationException{
-		TemplateParser templateParser = new TemplateParser();
-		templateParser.loader.loadDefaultCodecs();
-		Template<Message> template = templateParser.loader.createTemplate(Message.class);
+		Loader loader = new Loader();
+		loader.loadDefaultCodecs();
+		Template<Message> template = loader.createTemplate(Message.class);
 
 		Assertions.assertNotNull(template);
 		Assertions.assertEquals(Message.class, template.getType());
@@ -237,9 +237,9 @@ class TemplateTest{
 
 	@Test
 	void inheritance() throws AnnotationException{
-		TemplateParser templateParser = new TemplateParser();
-		templateParser.loader.loadDefaultCodecs();
-		Template<MessageChild> template = templateParser.loader.createTemplate(MessageChild.class);
+		Loader loader = new Loader();
+		loader.loadDefaultCodecs();
+		Template<MessageChild> template = loader.createTemplate(MessageChild.class);
 
 		Assertions.assertNotNull(template);
 		Assertions.assertEquals(MessageChild.class, template.getType());

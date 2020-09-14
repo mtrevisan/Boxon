@@ -48,6 +48,9 @@ final class CodecArray implements CodecInterface<BindArray>{
 
 	/** Automatically injected by {@link TemplateParser} */
 	@SuppressWarnings("unused")
+	private Loader loader;
+	/** Automatically injected by {@link TemplateParser} */
+	@SuppressWarnings("unused")
 	private TemplateParser templateParser;
 
 
@@ -96,7 +99,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 						rootObject.getClass().getSimpleName());
 
 				//read object
-				final Template<?> subTemplate = templateParser.createTemplate(chosenAlternativeType);
+				final Template<?> subTemplate = loader.createTemplate(chosenAlternativeType);
 
 				array[i] = templateParser.decode(subTemplate, reader, rootObject);
 			}
@@ -108,7 +111,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 	}
 
 	private void decodeWithoutAlternatives(final BitReader reader, final Object[] array, final Class<?> type) throws FieldException{
-		final Template<?> template = templateParser.createTemplate(type);
+		final Template<?> template = loader.createTemplate(type);
 
 		for(int i = 0; i < array.length; i ++)
 			array[i] = templateParser.decode(template, reader, null);
@@ -147,14 +150,14 @@ final class CodecArray implements CodecInterface<BindArray>{
 
 			CodecHelper.writePrefix(writer, chosenAlternative, selectFrom);
 
-			final Template<?> template = templateParser.createTemplate(type);
+			final Template<?> template = loader.createTemplate(type);
 
 			templateParser.encode(template, writer, null, elem);
 		}
 	}
 
 	private void encodeWithoutAlternatives(final BitWriter writer, final Object[] array, final Class<?> type) throws FieldException{
-		final Template<?> template = templateParser.createTemplate(type);
+		final Template<?> template = loader.createTemplate(type);
 
 		for(final Object elem : array)
 			templateParser.encode(template, writer, null, elem);
