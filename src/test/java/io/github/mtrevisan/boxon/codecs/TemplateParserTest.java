@@ -167,7 +167,7 @@ class TemplateParserTest{
 	}
 
 
-	@MessageHeader(start = "te4")
+//	@MessageHeader(start = "te4")
 	static class TestError4{
 		static class WrongInputConverter implements Converter<String, Byte>{
 
@@ -188,7 +188,8 @@ class TemplateParserTest{
 		public byte type;
 	}
 
-	@Test
+	//NOTE AnnotationValidator#validateConverter(Class, ConverterChoices, Class) MUST BE disabled in order for this test to run...
+//	@Test
 	void parseWithConverterInputError() throws AnnotationException{
 		byte[] payload = JavaHelper.toByteArray("74633501");
 		BitReader reader = BitReader.wrap(payload);

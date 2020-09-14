@@ -293,19 +293,19 @@ enum AnnotationValidator{
 	 */
 	private static void validateConverter(Class<?> type, final ConverterChoices selectConverterFrom,
 			final Class<? extends Converter<?, ?>> defaultConverter) throws AnnotationException{
-//		type = ParserDataType.toObjectiveTypeOrSelf(type);
-//		Class<?> converterInputType = ReflectionHelper.resolveGenericTypes(defaultConverter, Converter.class)[0];
-//		if(!converterInputType.isAssignableFrom(type))
-//			throw new AnnotationException("Type of read data ({}) cannot be fed to default converter ({})", type.getSimpleName(),
-//				converterInputType.getSimpleName());
-//
-//		final ConverterChoices.ConverterChoice[] alternatives = selectConverterFrom.alternatives();
-//		for(final ConverterChoices.ConverterChoice alternative : alternatives){
-//			converterInputType = ReflectionHelper.resolveGenericTypes(alternative.converter(), Converter.class)[0];
-//			if(!converterInputType.isAssignableFrom(type))
-//				throw new AnnotationException("Type of read data ({}) cannot be fed to alternative converter ({})", type.getSimpleName(),
-//					converterInputType.getSimpleName());
-//		}
+		type = ParserDataType.toObjectiveTypeOrSelf(type);
+		Class<?> converterInputType = ReflectionHelper.resolveGenericTypes(defaultConverter, Converter.class)[0];
+		if(!converterInputType.isAssignableFrom(type))
+			throw new AnnotationException("Type of read data ({}) cannot be fed to default converter ({})", type.getSimpleName(),
+				converterInputType.getSimpleName());
+
+		final ConverterChoices.ConverterChoice[] alternatives = selectConverterFrom.alternatives();
+		for(final ConverterChoices.ConverterChoice alternative : alternatives){
+			converterInputType = ReflectionHelper.resolveGenericTypes(alternative.converter(), Converter.class)[0];
+			if(!converterInputType.isAssignableFrom(type))
+				throw new AnnotationException("Type of read data ({}) cannot be fed to alternative converter ({})", type.getSimpleName(),
+					converterInputType.getSimpleName());
+		}
 	}
 
 }
