@@ -145,9 +145,9 @@ final class CodecHelper{
 
 			return converter.decode((IN)data);
 		}
-		catch(final ClassCastException ignored){
+		catch(final Exception e){
 			throw new IllegalArgumentException("Can not input " + data.getClass().getSimpleName() + " to decode method of converter "
-				+ converterType.getSimpleName());
+				+ converterType.getSimpleName(), e);
 		}
 	}
 

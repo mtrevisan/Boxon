@@ -46,8 +46,8 @@ public final class BitWriter extends BitWriterData{
 	/**
 	 * Writes the given value using the give byte order.
 	 *
-	 * @param value	The data to written. Here, the length of the types (in bits) are those defined by java (see {@link Byte#SIZE}, {@link Short#SIZE}, {@link Integer#SIZE},
-	 * 	{@link Long#SIZE}, {@link Float#SIZE}, and {@link Double#SIZE}).
+	 * @param value	The data to written. Here, the length of the types (in bits) are those defined by java (see {@link Byte#SIZE},
+	 * 	{@link Short#SIZE}, {@link Integer#SIZE}, {@link Long#SIZE}, {@link Float#SIZE}, and {@link Double#SIZE}).
 	 * @param byteOrder	The byte order used to write the value.
 	 * @throws AnnotationException	If an annotation is not well formatted.
 	 */
