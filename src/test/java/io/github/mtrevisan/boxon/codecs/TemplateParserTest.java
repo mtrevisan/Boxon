@@ -110,7 +110,7 @@ class TemplateParserTest{
 	}
 
 
-//	@MessageHeader(start = "te1")
+	@MessageHeader(start = "te1")
 	static class TestError1{
 		@BindString(size = "3")
 		public String header;
@@ -118,8 +118,7 @@ class TemplateParserTest{
 		public byte type;
 	}
 
-	//NOTE AnnotationValidator#validateConverter(Class, ConverterChoices, Class) MUST BE disabled in order for this test to run...
-//	@Test
+	@Test
 	void parseWithConditionError() throws AnnotationException{
 		byte[] payload = JavaHelper.toByteArray("746335011234");
 		BitReader reader = BitReader.wrap(payload);
@@ -133,7 +132,7 @@ class TemplateParserTest{
 	}
 
 
-//	@MessageHeader(start = "te3")
+	@MessageHeader(start = "te3")
 	static class TestError3{
 		static class WrongOutputConverter implements Converter<Byte, String>{
 
@@ -154,8 +153,7 @@ class TemplateParserTest{
 		public byte type;
 	}
 
-	//NOTE AnnotationValidator#validateConverter(Class, ConverterChoices, Class) MUST BE disabled in order for this test to run...
-//	@Test
+	@Test
 	void parseWithConverterOutputError() throws AnnotationException{
 		byte[] payload = JavaHelper.toByteArray("74633501");
 		BitReader reader = BitReader.wrap(payload);
@@ -169,7 +167,7 @@ class TemplateParserTest{
 	}
 
 
-//	@MessageHeader(start = "te4")
+	@MessageHeader(start = "te4")
 	static class TestError4{
 		static class WrongInputConverter implements Converter<String, Byte>{
 
@@ -190,8 +188,7 @@ class TemplateParserTest{
 		public byte type;
 	}
 
-	//NOTE AnnotationValidator#validateConverter(Class, ConverterChoices, Class) MUST BE disabled in order for this test to run...
-//	@Test
+	@Test
 	void parseWithConverterInputError() throws AnnotationException{
 		byte[] payload = JavaHelper.toByteArray("74633501");
 		BitReader reader = BitReader.wrap(payload);
