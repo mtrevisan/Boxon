@@ -154,8 +154,20 @@ public final class ReflectionHelper{
 		final DynamicArray<Class> types = DynamicArray.create(Class.class);
 		final Type rawType = ancestorType.getRawType();
 		if(rawType instanceof Class<?> && base.isAssignableFrom((Class<?>)rawType)){
-			final Type resolvedType = resolveArgumentType(ancestorType.getActualTypeArguments()[0], typeVariables);
-			types.addIfNotNull(toClass(resolvedType.getTypeName()));
+			//loop through all type arguments and replace type variables with the actually known types
+			final DynamicArray<Class> resolvedTypes = DynamicArray.create(Class.class);
+			for(Type t : ancestorType.getActualTypeArguments()){
+				if(t instanceof TypeVariable<?>){
+					final Type resolvedType = typeVariables.get(((TypeVariable<?>)t).getName());
+					if(resolvedType != null)
+						t = resolvedType;
+				}
+				resolvedTypes.addIfNotNull(toClass(t.getTypeName()));
+			}
+
+			final Class<?>[] result = resolveGenericTypes((Class<? extends T>)rawType, base, resolvedTypes.extractCopy());
+			if(result != null)
+				types.addAll(result, result.length);
 		}
 		return types;
 	}

@@ -170,7 +170,7 @@ final class Template<T>{
 			evaluatedFields.addAll(extractEvaluations(declaredAnnotations, field));
 
 			try{
-				validateField(boundedAnnotations, checksum);
+				validateField(boundedAnnotations, checksum, field.getType());
 			}
 			catch(final AnnotationException e){
 				e.setClassNameAndFieldName(type.getName(), field.getName());
@@ -193,7 +193,7 @@ final class Template<T>{
 		return evaluations;
 	}
 
-	private void validateField(final DynamicArray<? extends Annotation> annotations, final Checksum checksum)
+	private void validateField(final DynamicArray<? extends Annotation> annotations, final Checksum checksum, final Class<?> fieldType)
 			throws AnnotationException{
 		if(annotations.limit > 1){
 			final StringJoiner sj = new StringJoiner(", ", "[", "]");
@@ -206,13 +206,13 @@ final class Template<T>{
 				type.getName());
 
 		if(annotations.limit > 0)
-			validateAnnotation(annotations.data[0]);
+			validateAnnotation(annotations.data[0], fieldType);
 	}
 
-	private void validateAnnotation(final Annotation annotation) throws AnnotationException{
+	private void validateAnnotation(final Annotation annotation, final Class<?> fieldType) throws AnnotationException{
 		final AnnotationValidator validator = AnnotationValidator.fromAnnotation(annotation);
 		if(validator != null)
-			validator.validate(annotation);
+			validator.validate(annotation, fieldType);
 	}
 
 	Class<T> getType(){

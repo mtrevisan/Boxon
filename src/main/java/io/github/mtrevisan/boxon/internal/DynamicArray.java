@@ -99,10 +99,19 @@ public final class DynamicArray<T>{
 	 * @param array	Collection containing elements to be added to this array.
 	 */
 	public void addAll(final DynamicArray<T> array){
-		grow(array.limit);
+		addAll(array.data, array.limit);
+	}
+	/**
+	 * Appends all of the elements in the specified collection to the end of this array.
+	 *
+	 * @param array	Collection containing elements to be added to this array.
+	 * @param length	Length of the array.
+	 */
+	public void addAll(final T[] array, final int length){
+		grow(length);
 
-		System.arraycopy(array.data, 0, data, limit, array.limit);
-		limit += array.limit;
+		System.arraycopy(array, 0, data, limit, length);
+		limit += length;
 	}
 
 	/**
