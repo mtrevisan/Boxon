@@ -272,10 +272,11 @@ public final class BitReader extends BitReaderData{
 	 * @throws AnnotationException	If an annotation is not well formatted.
 	 */
 	@SuppressWarnings("ChainOfInstanceofChecks")
-	public BigDecimal getDecimal(final Class<?> cls, final ByteOrder byteOrder) throws AnnotationException{
-		if(cls == float.class || cls == Float.class)
+	public BigDecimal getDecimal(Class<?> cls, final ByteOrder byteOrder) throws AnnotationException{
+		cls = ParserDataType.toPrimitiveTypeOrSelf(cls);
+		if(cls == float.class)
 			return new BigDecimal(Float.toString(getFloat(byteOrder)));
-		if(cls == double.class || cls == Double.class)
+		if(cls == double.class)
 			return new BigDecimal(Double.toString(getDouble(byteOrder)));
 
 		throw new AnnotationException("Cannot read {} as a {}", BigDecimal.class.getSimpleName(), cls.getSimpleName());
