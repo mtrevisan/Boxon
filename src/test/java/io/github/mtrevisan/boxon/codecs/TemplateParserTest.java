@@ -66,7 +66,7 @@ class TemplateParserTest{
 		ACKMessageHex message = templateParser.decode(template, reader, null);
 		Evaluator.addToContext("deviceTypes", null);
 
-		BitWriter writer = new BitWriter();
+		BitWriter writer = BitWriter.create();
 		templateParser.encode(template, writer, null, message);
 		byte[] reconstructedMessage = writer.array();
 
@@ -95,7 +95,7 @@ class TemplateParserTest{
 		ACKMessageASCII message = templateParser.decode(template, reader, null);
 		Evaluator.addToContext("deviceTypes", null);
 
-		BitWriter writer = new BitWriter();
+		BitWriter writer = BitWriter.create();
 		templateParser.encode(template, writer, null, message);
 		byte[] reconstructedMessage = writer.array();
 
@@ -240,7 +240,7 @@ class TemplateParserTest{
 		Assertions.assertEquals("a", parsed.sub.field1);
 		Assertions.assertEquals("b", parsed.sub.field2);
 
-		BitWriter writer = new BitWriter();
+		BitWriter writer = BitWriter.create();
 		templateParser.encode(template, writer, null, parsed);
 		byte[] reconstructedMessage = writer.array();
 
@@ -298,7 +298,7 @@ class TemplateParserTest{
 		Assertions.assertEquals("a", ((TestComposition2.TestSubComposition1)parsed.sub).field1);
 		Assertions.assertEquals("b", ((TestComposition2.TestSubComposition1)parsed.sub).field2);
 
-		BitWriter writer = new BitWriter();
+		BitWriter writer = BitWriter.create();
 		templateParser.encode(template, writer, null, parsed);
 		byte[] reconstructedMessage = writer.array();
 
@@ -323,7 +323,7 @@ class TemplateParserTest{
 		Assertions.assertEquals(0x62, ((TestComposition2.TestSubComposition2)parsed.sub).field2);
 		Assertions.assertEquals("c", ((TestComposition2.TestSubComposition2)parsed.sub).field3);
 
-		BitWriter writer = new BitWriter();
+		BitWriter writer = BitWriter.create();
 		templateParser.encode(template, writer, null, parsed);
 		byte[] reconstructedMessage = writer.array();
 

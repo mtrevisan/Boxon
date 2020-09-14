@@ -39,8 +39,12 @@ public final class TemplateException extends FieldException{
 	private static final long serialVersionUID = 7585594459004613305L;
 
 
-	public TemplateException(final String message, final Object... parameters){
-		super(JavaHelper.format(message, parameters));
+	public static TemplateException create(final String message, final Object... parameters){
+		return new TemplateException(JavaHelper.format(message, parameters));
+	}
+
+	private TemplateException(final String message){
+		super(message);
 	}
 
 	@SuppressWarnings("unused")

@@ -60,7 +60,7 @@ final class Loader{
 	private final ThrowingFunction<Class<?>, Template<?>, AnnotationException> templateStore = Memoizer.throwingMemoize(
 		type -> new Template<>(type, this::filterAnnotationsWithCodec));
 
-	private static final PatternMatcher PATTERN_MATCHER = new BNDMPatternMatcher();
+	private static final PatternMatcher PATTERN_MATCHER = BNDMPatternMatcher.getInstance();
 	private static final Function<byte[], int[]> PRE_PROCESSED_PATTERNS = Memoizer.memoize(PATTERN_MATCHER::preProcessPattern);
 
 	private final Map<String, Template<?>> templates = new TreeMap<>(Comparator.comparingInt(String::length).reversed()
@@ -204,7 +204,7 @@ final class Loader{
 				templates.add(from);
 			else
 				//... otherwise throw exception
-				throw new TemplateException("Cannot create a raw message from data: cannot scan template for {}", type.getSimpleName());
+				throw TemplateException.create("Cannot create a raw message from data: cannot scan template for {}", type.getSimpleName());
 		}
 		return templates;
 	}
@@ -253,7 +253,7 @@ final class Loader{
 			throws TemplateException{
 		final String key = calculateTemplateKey(headerStart, charset);
 		if(templates.containsKey(key))
-			throw new TemplateException("Duplicated key `{}` found for class {}", headerStart, template.getType().getName());
+			throw TemplateException.create("Duplicated key `{}` found for class {}", headerStart, template.getType().getName());
 
 		templates.put(key, template);
 	}
@@ -281,7 +281,7 @@ final class Loader{
 				return entry.getValue();
 		}
 
-		throw new TemplateException("Cannot find any template for given raw message");
+		throw TemplateException.create("Cannot find any template for given raw message");
 	}
 
 	/**
@@ -293,12 +293,12 @@ final class Loader{
 	Template<?> getTemplate(final Class<?> type) throws TemplateException{
 		final MessageHeader header = type.getAnnotation(MessageHeader.class);
 		if(header == null)
-			throw new TemplateException("The given class type is not a valid template");
+			throw TemplateException.create("The given class type is not a valid template");
 
 		final String key = calculateTemplateKey(header.start()[0], Charset.forName(header.charset()));
 		final Template<?> template = templates.get(key);
 		if(template == null)
-			throw new TemplateException("Cannot find any template for given class type");
+			throw TemplateException.create("Cannot find any template for given class type");
 
 		return template;
 	}
@@ -318,7 +318,7 @@ final class Loader{
 	private Collection<Class<?>> extractClasses(final Object type, final Class<?>... basePackageClasses){
 		final Collection<Class<?>> classes = new HashSet<>(0);
 
-		final ReflectiveClassLoader reflectiveClassLoader = new ReflectiveClassLoader(basePackageClasses);
+		final ReflectiveClassLoader reflectiveClassLoader = ReflectiveClassLoader.createFrom(basePackageClasses);
 		reflectiveClassLoader.scan(CodecInterface.class, MessageHeader.class);
 		@SuppressWarnings("unchecked")
 		final Collection<Class<?>> modules = reflectiveClassLoader.getImplementationsOf((Class<Object>)type);

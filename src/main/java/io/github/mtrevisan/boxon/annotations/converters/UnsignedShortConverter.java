@@ -27,6 +27,8 @@ package io.github.mtrevisan.boxon.annotations.converters;
 
 public final class UnsignedShortConverter implements Converter<Short, Integer>{
 
+	UnsignedShortConverter(){}
+
 	@Override
 	public Integer decode(final Short value){
 		return (value & 0x0000_FFFF);

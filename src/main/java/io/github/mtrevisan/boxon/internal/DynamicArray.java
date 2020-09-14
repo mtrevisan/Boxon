@@ -98,7 +98,7 @@ public final class DynamicArray<T>{
 	 *
 	 * @param array	Collection containing elements to be added to this array.
 	 */
-	public void addAll(final DynamicArray<T> array){
+	public void addAll(final DynamicArray<? extends T> array){
 		addAll(array.data, array.limit);
 	}
 	/**

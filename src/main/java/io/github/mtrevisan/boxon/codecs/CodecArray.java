@@ -78,7 +78,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 	@SuppressWarnings("unchecked")
 	private static <T> T[] createArray(final Class<? extends T> type, final int length) throws AnnotationException{
 		if(ParserDataType.isPrimitive(type))
-			throw new AnnotationException("Argument cannot be a primitive: {}", type);
+			throw AnnotationException.create("Argument cannot be a primitive: {}", type);
 
 		return (T[])Array.newInstance(type, length);
 	}
@@ -92,7 +92,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 				final Class<?> chosenAlternativeType = (chosenAlternative != null? chosenAlternative.type(): binding.selectDefault());
 				if(chosenAlternativeType == void.class)
 					//FIXME can this throw be avoided?
-					throw new CodecException("Cannot find a valid codec from given alternatives for {}",
+					throw CodecException.create("Cannot find a valid codec from given alternatives for {}",
 						rootObject.getClass().getSimpleName());
 
 				//read object

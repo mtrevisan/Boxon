@@ -27,6 +27,8 @@ package io.github.mtrevisan.boxon.annotations.converters;
 
 public final class UnsignedByteConverter implements Converter<Byte, Short>{
 
+	UnsignedByteConverter(){}
+
 	@Override
 	public Short decode(final Byte value){
 		return (short)(value & 0x0000_00FF);

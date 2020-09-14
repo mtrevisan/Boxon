@@ -154,7 +154,7 @@ final class Template<T>{
 		loadAnnotatedFields(type, ReflectionHelper.getAccessibleFields(type), filterAnnotationsWithCodec);
 
 		if(boundedFields.isEmpty())
-			throw new AnnotationException("No data can be extracted from this class: {}", type.getName());
+			throw AnnotationException.create("No data can be extracted from this class: {}", type.getName());
 	}
 
 	private void loadAnnotatedFields(final Class<T> type, final DynamicArray<Field> fields,
@@ -170,7 +170,7 @@ final class Template<T>{
 			evaluatedFields.addAll(extractEvaluations(declaredAnnotations, field));
 
 			try{
-				validateField(boundedAnnotations, checksum, field.getType());
+				validateField(boundedAnnotations, checksum);
 			}
 			catch(final AnnotationException e){
 				e.setClassNameAndFieldName(type.getName(), field.getName());
@@ -193,23 +193,23 @@ final class Template<T>{
 		return evaluations;
 	}
 
-	private void validateField(final DynamicArray<? extends Annotation> annotations, final Checksum checksum, final Class<?> fieldType)
+	private void validateField(final DynamicArray<? extends Annotation> annotations, final Checksum checksum)
 			throws AnnotationException{
 		if(annotations.limit > 1){
 			final StringJoiner sj = new StringJoiner(", ", "[", "]");
 			annotations.join(annotation -> annotation.annotationType().getSimpleName(), sj);
-			throw new AnnotationException("Cannot bind more that one annotation on {}: {}", type.getName(), sj.toString());
+			throw AnnotationException.create("Cannot bind more that one annotation on {}: {}", type.getName(), sj.toString());
 		}
 
 		if(checksum != null && this.checksum != null)
-			throw new AnnotationException("Cannot have more than one {} annotations on class {}", Checksum.class.getSimpleName(),
+			throw AnnotationException.create("Cannot have more than one {} annotations on class {}", Checksum.class.getSimpleName(),
 				type.getName());
 
 		if(annotations.limit > 0)
-			validateAnnotation(annotations.data[0], fieldType);
+			validateAnnotation(annotations.data[0]);
 	}
 
-	private void validateAnnotation(final Annotation annotation, final Class<?> fieldType) throws AnnotationException{
+	private void validateAnnotation(final Annotation annotation) throws AnnotationException{
 		final AnnotationValidator annotationValidator = AnnotationValidator.fromAnnotation(annotation);
 		if(annotationValidator != null)
 			annotationValidator.validate(annotation);

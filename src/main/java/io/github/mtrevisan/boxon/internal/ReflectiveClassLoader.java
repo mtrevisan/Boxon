@@ -50,7 +50,11 @@ public final class ReflectiveClassLoader{
 	/**
 	 * @param packageClasses	List of packages to scan into.
 	 */
-	public ReflectiveClassLoader(final Class<?>... packageClasses){
+	public static ReflectiveClassLoader createFrom(final Class<?>... packageClasses){
+		return new ReflectiveClassLoader(packageClasses);
+	}
+
+	private ReflectiveClassLoader(final Class<?>... packageClasses){
 		Objects.requireNonNull(packageClasses);
 		if(packageClasses.length == 0)
 			throw new IllegalArgumentException("Packages list cannot be empty");

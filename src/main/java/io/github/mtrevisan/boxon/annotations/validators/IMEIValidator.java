@@ -27,6 +27,8 @@ package io.github.mtrevisan.boxon.annotations.validators;
 
 public final class IMEIValidator implements Validator<CharSequence>{
 
+	IMEIValidator(){}
+
 	/**
 	 * Validate an IMEI with the Luhn algorithm.
 	 *

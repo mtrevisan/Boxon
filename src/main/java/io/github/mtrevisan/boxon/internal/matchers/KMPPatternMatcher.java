@@ -37,6 +37,17 @@ package io.github.mtrevisan.boxon.internal.matchers;
  */
 public final class KMPPatternMatcher implements PatternMatcher{
 
+	private static class SingletonHelper{
+		private static final PatternMatcher INSTANCE = new KMPPatternMatcher();
+	}
+
+
+	public static PatternMatcher getInstance(){
+		return SingletonHelper.INSTANCE;
+	}
+
+	private KMPPatternMatcher(){}
+
 	/**
 	 * Returns an array that points to last valid string prefix.
 	 *

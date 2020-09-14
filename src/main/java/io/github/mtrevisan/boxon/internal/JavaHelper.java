@@ -103,8 +103,4 @@ public final class JavaHelper{
 		return (array != null? array.length: 0);
 	}
 
-	public static boolean isNotBlank(final String text){
-		return (text != null && !text.isBlank());
-	}
-
 }

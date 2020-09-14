@@ -32,6 +32,8 @@ package io.github.mtrevisan.boxon.annotations.checksummers;
  */
 public final class BSD8 implements Checksummer{
 
+	BSD8(){}
+
 	@Override
 	public short calculateChecksum(final byte[] data, final int start, final int end, final short startValue){
 		short value = 0;

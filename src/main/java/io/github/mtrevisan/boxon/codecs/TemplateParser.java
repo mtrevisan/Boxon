@@ -137,7 +137,7 @@ final class TemplateParser{
 			throw e;
 		}
 		catch(final Exception e){
-			final FieldException exc = new FieldException(e);
+			final FieldException exc = FieldException.create(e);
 			exc.setClassNameAndFieldName(template.getType().getName(), field.getFieldName());
 			throw exc;
 		}
@@ -170,7 +170,7 @@ final class TemplateParser{
 			final byte[] readMessageTerminator = reader.getBytes(messageTerminator.length);
 			//verifying terminators
 			if(!Arrays.equals(messageTerminator, readMessageTerminator))
-				throw new TemplateException("Message does not terminate with 0x{}", JavaHelper.toHexString(messageTerminator));
+				throw TemplateException.create("Message does not terminate with 0x{}", JavaHelper.toHexString(messageTerminator));
 		}
 	}
 
@@ -259,7 +259,7 @@ final class TemplateParser{
 			throw e;
 		}
 		catch(final Exception e){
-			final FieldException exc = new FieldException(e);
+			final FieldException exc = FieldException.create(e);
 			exc.setClassNameAndFieldName(template.getType().getName(), field.getFieldName());
 			throw exc;
 		}
@@ -281,7 +281,7 @@ final class TemplateParser{
 	private CodecInterface<?> retrieveCodec(final Class<? extends Annotation> annotationType) throws CodecException{
 		final CodecInterface<?> codec = loader.getCodec(annotationType);
 		if(codec == null)
-			throw new CodecException("Cannot find codec for binding {}", annotationType.getSimpleName());
+			throw CodecException.create("Cannot find codec for binding {}", annotationType.getSimpleName());
 
 		setTemplateParser(codec);
 		return codec;
@@ -305,7 +305,7 @@ final class TemplateParser{
 			final int size = Evaluator.evaluateSize(skip.size(), rootObject);
 			if(size > 0)
 				/** skip {@link size} bits */
-				writer.putBits(new BitSet(), size);
+				writer.putBits(BitSet.empty(), size);
 			else if(skip.consumeTerminator())
 				//skip until terminator
 				writer.putByte(skip.terminator());

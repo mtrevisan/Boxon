@@ -37,6 +37,12 @@ import java.nio.charset.Charset;
  */
 public final class BitWriter extends BitWriterData{
 
+	public static BitWriter create(){
+		return new BitWriter();
+	}
+
+	private BitWriter(){}
+
 	/**
 	 * Writes the given value using the give byte order.
 	 *
@@ -48,7 +54,7 @@ public final class BitWriter extends BitWriterData{
 	public void put(final Object value, final ByteOrder byteOrder) throws AnnotationException{
 		final ParserDataType t = ParserDataType.fromType(value.getClass());
 		if(t == null)
-			throw new AnnotationException("Cannot write type {}", value.getClass().getSimpleName());
+			throw AnnotationException.create("Cannot write type {}", value.getClass().getSimpleName());
 
 		switch(t){
 			case BYTE:
@@ -160,7 +166,7 @@ public final class BitWriter extends BitWriterData{
 		else if(dataType == ParserDataType.DOUBLE)
 			putDouble(value.doubleValue(), byteOrder);
 		else
-			throw new AnnotationException("Cannot write {} as a {}", BigDecimal.class.getSimpleName(), cls.getSimpleName());
+			throw AnnotationException.create("Cannot write {} as a {}", BigDecimal.class.getSimpleName(), cls.getSimpleName());
 	}
 
 	/**

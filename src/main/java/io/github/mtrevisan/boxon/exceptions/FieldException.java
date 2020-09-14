@@ -38,12 +38,16 @@ public class FieldException extends Exception{
 	private String fieldName;
 
 
+	public static FieldException create(final Throwable cause){
+		return new FieldException(cause);
+	}
+
 	protected FieldException(final String message){
 		super(message);
 	}
 
-	public FieldException(final Throwable exc){
-		super(exc);
+	private FieldException(final Throwable cause){
+		super(cause);
 	}
 
 	public final void setClassNameAndFieldName(final String className, final String fieldName){

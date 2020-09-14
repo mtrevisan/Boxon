@@ -246,7 +246,7 @@ public final class Parser{
 				response.addParsedMessage(start, partialDecodedMessage);
 			}
 			catch(final Exception e){
-				final DecodeException de = new DecodeException(reader.position(), e);
+				final DecodeException de = DecodeException.create(reader.position(), e);
 				response.addError(start, de);
 
 				//restore state of the reader
@@ -271,7 +271,7 @@ public final class Parser{
 		if(!response.hasErrors() && reader.hasRemaining()){
 			final int position = reader.position();
 			final IllegalArgumentException error = new IllegalArgumentException("There are remaining unread bytes");
-			final DecodeException pe = new DecodeException(position, error);
+			final DecodeException pe = DecodeException.create(position, error);
 			response.addError(start, pe);
 		}
 	}
@@ -296,7 +296,7 @@ public final class Parser{
 	public ComposeResponse compose(final Object... data){
 		final ComposeResponse response = new ComposeResponse(data);
 
-		final BitWriter writer = new BitWriter();
+		final BitWriter writer = BitWriter.create();
 		for(final Object datum : data)
 			compose(writer, datum, response);
 		writer.flush();
@@ -318,7 +318,7 @@ public final class Parser{
 			templateParser.encode(template, writer, null, data);
 		}
 		catch(final Exception e){
-			response.addError(new EncodeException(e));
+			response.addError(EncodeException.create(e));
 		}
 	}
 

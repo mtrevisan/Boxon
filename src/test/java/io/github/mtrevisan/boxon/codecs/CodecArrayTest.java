@@ -149,7 +149,7 @@ class CodecArrayTest{
 			}
 		};
 
-		BitWriter writer = new BitWriter();
+		BitWriter writer = BitWriter.create();
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
@@ -245,7 +245,7 @@ class CodecArrayTest{
 		TemplateParser templateParser = new TemplateParser();
 		templateParser.loader.loadDefaultCodecs();
 		ReflectionHelper.setFieldValue(codec, TemplateParser.class, templateParser);
-		BitWriter writer = new BitWriter();
+		BitWriter writer = BitWriter.create();
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 

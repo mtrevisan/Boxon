@@ -47,6 +47,17 @@ import java.util.Arrays;
  */
 public final class BNDMPatternMatcher implements PatternMatcher{
 
+	private static class SingletonHelper{
+		private static final PatternMatcher INSTANCE = new BNDMPatternMatcher();
+	}
+
+
+	public static PatternMatcher getInstance(){
+		return SingletonHelper.INSTANCE;
+	}
+
+	private BNDMPatternMatcher(){}
+
 	/**
 	 * Pre-processing of the pattern.
 	 * <p>The pattern SHOULD NOT exceed 32 bytes in length.</p>

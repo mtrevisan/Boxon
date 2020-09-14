@@ -36,6 +36,7 @@ import io.github.mtrevisan.boxon.external.ByteOrder;
 import io.github.mtrevisan.boxon.internal.ReflectionHelper;
 
 import java.nio.charset.Charset;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -61,7 +62,7 @@ final class CodecHelper{
 
 	static void assertSizePositive(final int size) throws AnnotationException{
 		if(size <= 0)
-			throw new AnnotationException("Size must be a positive integer, was {}", size);
+			throw AnnotationException.create("Size must be a positive integer, was {}", size);
 	}
 
 	static void assertSizeEquals(final int expectedSize, final int size){
@@ -74,7 +75,7 @@ final class CodecHelper{
 			Charset.forName(charsetName);
 		}
 		catch(final IllegalArgumentException ignored){
-			throw new AnnotationException("Invalid charset: '{}'", charsetName);
+			throw AnnotationException.create("Invalid charset: '{}'", charsetName);
 		}
 	}
 
@@ -126,7 +127,7 @@ final class CodecHelper{
 		final ConverterChoices.ConverterChoice[] alternatives = selectConverterFrom.alternatives();
 		if(alternatives.length > 0){
 			//infer supertype of all types accepted by the converters
-			final Set<Class<?>> supertypes = new HashSet<>();
+			final Set<Class<?>> supertypes = new HashSet<>(alternatives.length);
 			for(final ConverterChoices.ConverterChoice alternative : alternatives){
 				final Class<?> converterType = ReflectionHelper.resolveGenericTypes(alternative.converter(), Converter.class)[0];
 				supertypes.add(converterType);
@@ -137,7 +138,7 @@ final class CodecHelper{
 		return type;
 	}
 
-	private static Class<?> reduceTypes(final Set<Class<?>> types){
+	private static Class<?> reduceTypes(final Collection<Class<?>> types){
 		Class<?> type = null;
 		if(!types.isEmpty()){
 			final Map<Integer, Class<?>> map = new TreeMap<>(Collections.reverseOrder(Integer::compareTo));
