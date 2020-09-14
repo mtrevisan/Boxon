@@ -45,7 +45,7 @@ public final class JavaHelper{
 	private JavaHelper(){}
 
 	public static String format(final String message, final Object... parameters){
-		return MessageFormatter.format(message, (parameters.length == 1? parameters[0]: parameters))
+		return MessageFormatter.arrayFormat(message, parameters)
 			.getMessage();
 	}
 
