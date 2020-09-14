@@ -83,7 +83,7 @@ enum AnnotationValidator{
 				throw new AnnotationException("Bad annotation used for {}, should have been used the type `{}.class`",
 					BindArray.class.getSimpleName(), ParserDataType.toObjectiveTypeOrSelf(type).getSimpleName());
 
-			final Class<?> bindingType = ReflectionHelper.addArrayType(binding.type(), 1);
+			final Class<?> bindingType = ReflectionHelper.addArrayToType(binding.type(), 1);
 			validateConverter(bindingType, binding.selectConverterFrom(), binding.converter());
 		}
 	},
@@ -100,7 +100,7 @@ enum AnnotationValidator{
 
 			validateObjectChoice(selectFrom, binding.selectDefault(), type);
 
-			final Class<?> bindingType = ReflectionHelper.addArrayType(binding.type(), 1);
+			final Class<?> bindingType = ReflectionHelper.addArrayToType(binding.type(), 1);
 			validateConverter(bindingType, binding.selectConverterFrom(), binding.converter());
 		}
 	},

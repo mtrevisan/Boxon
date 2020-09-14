@@ -207,12 +207,12 @@ public final class ReflectionHelper{
 
 		//if we have an array get the array class
 		if(cls != null && arraysCount > 0)
-			cls = addArrayType(cls, arraysCount);
+			cls = addArrayToType(cls, arraysCount);
 
 		return cls;
 	}
 
-	public static Class<?> addArrayType(final Class<?> cls, final int arraysCount){
+	public static Class<?> addArrayToType(final Class<?> cls, final int arraysCount){
 		final int[] dimensions = new int[arraysCount];
 		Arrays.fill(dimensions, 1);
 		return Array.newInstance(cls, dimensions)
