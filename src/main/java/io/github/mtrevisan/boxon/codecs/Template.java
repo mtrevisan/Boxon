@@ -59,8 +59,7 @@ final class Template<T>{
 		private final Annotation binding;
 
 		private final Method condition;
-		//FIXME https://www.jboss.org/optaplanner/blog/2018/01/09/JavaReflectionButMuchFaster.html
-		//extract getter and setter?
+		//FIXME extract getters and setters?
 
 
 		private BoundedField(final Field field, final Annotation binding){
