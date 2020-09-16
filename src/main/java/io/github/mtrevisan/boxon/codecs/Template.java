@@ -58,8 +58,7 @@ final class Template<T>{
 		private final Skip[] skips;
 		private final Annotation binding;
 
-		private final Method condition;
-		//FIXME extract getters and setters?
+		private final String condition;
 
 
 		private BoundedField(final Field field, final Annotation binding){
@@ -72,7 +71,8 @@ final class Template<T>{
 			this.skips = skips;
 
 			//pre-fetch condition method
-			condition = ReflectionHelper.getAccessibleMethod(binding.annotationType(), CONDITION, String.class);
+			final Method conditionMethod = ReflectionHelper.getAccessibleMethod(binding.annotationType(), CONDITION, String.class);
+			condition = ReflectionHelper.invokeMethod(binding, conditionMethod, EMPTY_STRING);
 		}
 
 		String getFieldName(){
@@ -92,7 +92,7 @@ final class Template<T>{
 		}
 
 		String getCondition(){
-			return ReflectionHelper.invokeMethod(binding, condition, EMPTY_STRING);
+			return condition;
 		}
 
 		Skip[] getSkips(){
