@@ -195,6 +195,9 @@ public final class DynamicArray<T>{
 	 * @return	A copy of the array.
 	 */
 	public T[] extractCopy(){
+		if(limit == 0)
+			return data;
+
 		final T[] copy = newInstance(limit);
 		System.arraycopy(data, 0, copy, 0, limit);
 		return copy;

@@ -86,9 +86,9 @@ final class TemplateParser{
 		parserContext.addSelfToEvaluatorContext();
 
 		//decode message fields:
-		final DynamicArray<Template.BoundedField> fields = template.getBoundedFields();
+		final DynamicArray<BoundedField> fields = template.getBoundedFields();
 		for(int i = 0; i < fields.limit; i ++){
-			final Template.BoundedField field = fields.data[i];
+			final BoundedField field = fields.data[i];
 
 			//process skip annotations:
 			final Skip[] skips = field.getSkips();
@@ -110,7 +110,7 @@ final class TemplateParser{
 	}
 
 	private <T> void decodeField(final Template<T> template, final BitReader reader, final ParserContext<T> parserContext,
-			final Template.BoundedField field) throws FieldException{
+			final BoundedField field) throws FieldException{
 		try{
 			final Annotation binding = field.getBinding();
 			final CodecInterface<?> codec = retrieveCodec(binding.annotationType());
@@ -168,7 +168,7 @@ final class TemplateParser{
 
 	private <T> void verifyChecksum(final Template<T> template, final T data, int startPosition, final BitReader reader){
 		if(template.isChecksumPresent()){
-			final Template.BoundedField checksumData = template.getChecksum();
+			final BoundedField checksumData = template.getChecksum();
 			final Checksum checksum = (Checksum)checksumData.getBinding();
 			startPosition += checksum.skipStart();
 			final int endPosition = reader.position() - checksum.skipEnd();
@@ -189,9 +189,9 @@ final class TemplateParser{
 	}
 
 	private void processEvaluatedFields(final Template<?> template, final ParserContext<?> parserContext){
-		final DynamicArray<Template.EvaluatedField> evaluatedFields = template.getEvaluatedFields();
+		final DynamicArray<EvaluatedField> evaluatedFields = template.getEvaluatedFields();
 		for(int i = 0; i < evaluatedFields.limit; i ++){
-			final Template.EvaluatedField field = evaluatedFields.data[i];
+			final EvaluatedField field = evaluatedFields.data[i];
 			final boolean process = Evaluator.evaluateBoolean(field.getBinding().condition(), parserContext.rootObject);
 			if(process){
 				LOGGER.trace("evaluating {}.{}", template.getType().getName(), field.getFieldName());
@@ -211,9 +211,9 @@ final class TemplateParser{
 		parserContext.addSelfToEvaluatorContext();
 
 		//encode message fields:
-		final DynamicArray<Template.BoundedField> fields = template.getBoundedFields();
+		final DynamicArray<BoundedField> fields = template.getBoundedFields();
 		for(int i = 0; i < fields.limit; i ++){
-			final Template.BoundedField field = fields.data[i];
+			final BoundedField field = fields.data[i];
 
 			//process skip annotations:
 			final Skip[] skips = field.getSkips();
@@ -231,7 +231,7 @@ final class TemplateParser{
 	}
 
 	private <T> void encodeField(final Template<?> template, final BitWriter writer, final ParserContext<T> parserContext,
-			final Template.BoundedField field) throws FieldException{
+			final BoundedField field) throws FieldException{
 		try{
 			final Annotation binding = field.getBinding();
 			final CodecInterface<?> codec = retrieveCodec(binding.annotationType());
