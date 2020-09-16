@@ -244,11 +244,10 @@ public final class ReflectionHelper{
 		try{
 			field.set(obj, value);
 		}
-		catch(final IllegalArgumentException ignored){
+		catch(final IllegalArgumentException | IllegalAccessException e){
 			throw new IllegalArgumentException("Can not set " + field.getType().getSimpleName() + " field to "
-				+ value.getClass().getSimpleName());
+				+ value.getClass().getSimpleName(), e);
 		}
-		catch(final IllegalAccessException ignored){}
 	}
 
 	public static <T> void setFieldValue(final Object obj, final Class<T> fieldType, final T value){

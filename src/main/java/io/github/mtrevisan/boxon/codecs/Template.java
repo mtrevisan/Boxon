@@ -55,6 +55,7 @@ final class Template<T>{
 		private static final String EMPTY_STRING = "";
 
 		private final Field field;
+		/** List of skips that happen BEFORE the reading/writing of this variable. */
 		private final Skip[] skips;
 		private final Annotation binding;
 
