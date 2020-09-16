@@ -88,16 +88,16 @@ final class Template<T>{
 			ReflectionHelper.setFieldValue(field, obj, value);
 		}
 
+		Skip[] getSkips(){
+			return skips;
+		}
+
 		Annotation getBinding(){
 			return binding;
 		}
 
 		String getCondition(){
 			return condition;
-		}
-
-		Skip[] getSkips(){
-			return skips;
 		}
 	}
 
