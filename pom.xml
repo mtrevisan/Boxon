@@ -58,7 +58,7 @@
 		<maven-shade-plugin.version>3.2.4</maven-shade-plugin.version>
 
 		<!-- Spring Expression -->
-		<springframework.spring-expression.version>5.2.8.RELEASE</springframework.spring-expression.version>
+		<springframework.spring-expression.version>5.2.9.RELEASE</springframework.spring-expression.version>
 
 		<!-- ClassGraph -->
 		<github.classgraph.version>4.8.90</github.classgraph.version>
@@ -68,7 +68,7 @@
 		<slf4j.slf4j-log4j12.version>1.7.30</slf4j.slf4j-log4j12.version>
 
 		<!-- JUnit -->
-		<junit.junit-jupiter-engine.version>5.6.2</junit.junit-jupiter-engine.version>
+		<junit.junit-jupiter-engine.version>5.7.0</junit.junit-jupiter-engine.version>
 		<!-- Apache -->
 		<apache.commons-lang3.version>3.11</apache.commons-lang3.version>
 	</properties>
