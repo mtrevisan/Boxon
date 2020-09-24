@@ -80,7 +80,7 @@ final class Evaluator{
 	 * @param value	The value (pass {@code null} to remove the `key` from the context).
 	 */
 	static void addToContext(final String key, final Object value){
-		Objects.requireNonNull(key);
+		Objects.requireNonNull(key, "Key cannot be null");
 
 		CONTEXT.setVariable(key, value);
 	}

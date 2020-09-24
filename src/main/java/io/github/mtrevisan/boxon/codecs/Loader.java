@@ -122,7 +122,7 @@ final class Loader{
 	 * @param codecs	The list of codecs to be loaded.
 	 */
 	void addCodecs(final CodecInterface<?>... codecs){
-		Objects.requireNonNull(codecs);
+		Objects.requireNonNull(codecs, "Codecs cannot be null");
 
 		LOGGER.info("Load given codecs");
 

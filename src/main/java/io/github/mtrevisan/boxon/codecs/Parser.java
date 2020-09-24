@@ -83,7 +83,7 @@ public final class Parser{
 	 * @return	The {@link Parser}, used for chaining.
 	 */
 	public Parser withContext(final Map<String, Object> context){
-		Objects.requireNonNull(context);
+		Objects.requireNonNull(context, "Context cannot be null");
 
 		context.forEach(Evaluator::addToContext);
 		return this;
