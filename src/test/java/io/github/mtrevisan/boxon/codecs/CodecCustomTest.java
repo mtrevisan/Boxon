@@ -76,10 +76,11 @@ class CodecCustomTest{
 
 	@Test
 	void customAnnotation() throws FieldException{
-		TemplateParser templateParser = new TemplateParser();
-		templateParser.loader.addCodecs(new VariableLengthByteArray());
+		Loader loader = new Loader();
+		TemplateParser templateParser = new TemplateParser(loader);
+		loader.addCodecs(new VariableLengthByteArray());
 
-		CodecInterface<?> codec = templateParser.loader.getCodec(VarLengthEncoded.class);
+		CodecInterface<?> codec = loader.getCodec(VarLengthEncoded.class);
 		byte[] encodedValue = new byte[]{0x01, 0x02, 0x03};
 		VarLengthEncoded annotation = new VarLengthEncoded(){
 			@Override
@@ -88,7 +89,7 @@ class CodecCustomTest{
 			}
 		};
 
-		BitWriter writer = new BitWriter();
+		BitWriter writer = BitWriter.create();
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 

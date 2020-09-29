@@ -47,7 +47,8 @@ import java.util.Objects;
  */
 public final class Parser{
 
-	private final TemplateParser templateParser = new TemplateParser();
+	private final Loader loader = new Loader();
+	private final TemplateParser templateParser = new TemplateParser(loader);
 
 
 	/**
@@ -82,7 +83,7 @@ public final class Parser{
 	 * @return	The {@link Parser}, used for chaining.
 	 */
 	public Parser withContext(final Map<String, Object> context){
-		Objects.requireNonNull(context);
+		Objects.requireNonNull(context, "Context cannot be null");
 
 		context.forEach(Evaluator::addToContext);
 		return this;
@@ -131,7 +132,7 @@ public final class Parser{
 	 * @return	The {@link Parser}, used for chaining.
 	 */
 	public Parser withDefaultCodecs(){
-		templateParser.loader.loadDefaultCodecs();
+		loader.loadDefaultCodecs();
 		return this;
 	}
 
@@ -142,7 +143,7 @@ public final class Parser{
 	 * @return	The {@link Parser}, used for chaining.
 	 */
 	public Parser withCodecs(final Class<?>... basePackageClasses){
-		templateParser.loader.loadCodecs(basePackageClasses);
+		loader.loadCodecs(basePackageClasses);
 		return this;
 	}
 
@@ -153,7 +154,7 @@ public final class Parser{
 	 * @return	The {@link Parser}, used for chaining.
 	 */
 	public Parser withCodecs(final CodecInterface<?>... codecs){
-		templateParser.loader.addCodecs(codecs);
+		loader.addCodecs(codecs);
 		return this;
 	}
 
@@ -166,7 +167,7 @@ public final class Parser{
 	 * @throws TemplateException	If a template is not well formatted.
 	 */
 	public Parser withDefaultTemplates() throws AnnotationException, TemplateException{
-		templateParser.loader.loadDefaultTemplates();
+		loader.loadDefaultTemplates();
 		return this;
 	}
 
@@ -179,7 +180,7 @@ public final class Parser{
 	 * @throws TemplateException	If a template is not well formatted.
 	 */
 	public Parser withTemplates(final Class<?>... basePackageClasses) throws AnnotationException, TemplateException{
-		templateParser.loader.loadTemplates(basePackageClasses);
+		loader.loadTemplates(basePackageClasses);
 		return this;
 	}
 
@@ -239,20 +240,20 @@ public final class Parser{
 			reader.createFallbackPoint();
 
 			try{
-				final Template<?> template = templateParser.loader.getTemplate(reader);
+				final Template<?> template = loader.getTemplate(reader);
 
 				final Object partialDecodedMessage = templateParser.decode(template, reader, null);
 
 				response.addParsedMessage(start, partialDecodedMessage);
 			}
 			catch(final Exception e){
-				final DecodeException de = new DecodeException(reader.position(), e);
+				final DecodeException de = DecodeException.create(reader.position(), e);
 				response.addError(start, de);
 
 				//restore state of the reader
 				reader.restoreFallbackPoint();
 
-				final int position = templateParser.loader.findNextMessageIndex(reader);
+				final int position = loader.findNextMessageIndex(reader);
 				if(position < 0)
 					//cannot find any template for message
 					break;
@@ -271,7 +272,7 @@ public final class Parser{
 		if(!response.hasErrors() && reader.hasRemaining()){
 			final int position = reader.position();
 			final IllegalArgumentException error = new IllegalArgumentException("There are remaining unread bytes");
-			final DecodeException pe = new DecodeException(position, error);
+			final DecodeException pe = DecodeException.create(position, error);
 			response.addError(start, pe);
 		}
 	}
@@ -296,7 +297,7 @@ public final class Parser{
 	public ComposeResponse compose(final Object... data){
 		final ComposeResponse response = new ComposeResponse(data);
 
-		final BitWriter writer = new BitWriter();
+		final BitWriter writer = BitWriter.create();
 		for(final Object datum : data)
 			compose(writer, datum, response);
 		writer.flush();
@@ -313,12 +314,12 @@ public final class Parser{
 	 */
 	private void compose(final BitWriter writer, final Object data, final ComposeResponse response){
 		try{
-			final Template<?> template = templateParser.loader.getTemplate(data.getClass());
+			final Template<?> template = loader.getTemplate(data.getClass());
 
 			templateParser.encode(template, writer, null, data);
 		}
 		catch(final Exception e){
-			response.addError(new EncodeException(e));
+			response.addError(EncodeException.create(e));
 		}
 	}
 

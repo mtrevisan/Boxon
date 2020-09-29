@@ -50,8 +50,12 @@ public final class ReflectiveClassLoader{
 	/**
 	 * @param packageClasses	List of packages to scan into.
 	 */
-	public ReflectiveClassLoader(final Class<?>... packageClasses){
-		Objects.requireNonNull(packageClasses);
+	public static ReflectiveClassLoader createFrom(final Class<?>... packageClasses){
+		return new ReflectiveClassLoader(packageClasses);
+	}
+
+	private ReflectiveClassLoader(final Class<?>... packageClasses){
+		Objects.requireNonNull(packageClasses, "Packages list cannot be null");
 		if(packageClasses.length == 0)
 			throw new IllegalArgumentException("Packages list cannot be empty");
 
@@ -70,7 +74,7 @@ public final class ReflectiveClassLoader{
 	 * @param classes	Classes that must be extended or implemented.
 	 */
 	public void scan(final Class<?>... classes){
-		Objects.requireNonNull(classes);
+		Objects.requireNonNull(classes, "Classes cannot be null");
 		if(classes.length == 0)
 			throw new IllegalArgumentException("Class list cannot be empty");
 

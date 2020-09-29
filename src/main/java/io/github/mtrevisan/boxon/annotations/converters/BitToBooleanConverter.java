@@ -29,6 +29,8 @@ import io.github.mtrevisan.boxon.external.BitSet;
 
 public final class BitToBooleanConverter implements Converter<BitSet, Boolean>{
 
+	BitToBooleanConverter(){}
+
 	@Override
 	public Boolean decode(final BitSet value){
 		return value.isBitSet(0);
@@ -36,7 +38,7 @@ public final class BitToBooleanConverter implements Converter<BitSet, Boolean>{
 
 	@Override
 	public BitSet encode(final Boolean value){
-		final BitSet bs = new BitSet();
+		final BitSet bs = BitSet.empty();
 		if(value)
 			bs.addNextSetBit(0);
 		return bs;

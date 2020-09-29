@@ -37,7 +37,11 @@ public final class EncodeException extends Exception{
 	private static final long serialVersionUID = 4385865753761318892L;
 
 
-	public EncodeException(final Throwable cause){
+	public static EncodeException create(final Throwable cause){
+		return new EncodeException(cause);
+	}
+
+	private EncodeException(final Throwable cause){
 		super(cause);
 	}
 

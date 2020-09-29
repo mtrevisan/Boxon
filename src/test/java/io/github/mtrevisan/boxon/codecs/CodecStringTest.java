@@ -94,7 +94,7 @@ class CodecStringTest{
 			}
 		};
 
-		BitWriter writer = new BitWriter();
+		BitWriter writer = BitWriter.create();
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
@@ -157,7 +157,7 @@ class CodecStringTest{
 			}
 		};
 
-		BitWriter writer = new BitWriter();
+		BitWriter writer = BitWriter.create();
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
@@ -230,7 +230,7 @@ class CodecStringTest{
 
 		Assertions.assertEquals("123AB", decoded);
 
-		BitWriter writer = new BitWriter();
+		BitWriter writer = BitWriter.create();
 		codec.encode(writer, annotation, null, decoded);
 		writer.flush();
 
@@ -298,7 +298,7 @@ class CodecStringTest{
 
 		Assertions.assertEquals("123ABC", decoded);
 
-		BitWriter writer = new BitWriter();
+		BitWriter writer = BitWriter.create();
 		codec.encode(writer, annotation, null, decoded);
 		writer.flush();
 

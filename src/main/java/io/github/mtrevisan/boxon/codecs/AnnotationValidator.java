@@ -51,7 +51,7 @@ enum AnnotationValidator{
 			final ObjectChoices selectFrom = binding.selectFrom();
 			final Class<?> type = binding.type();
 			if(ParserDataType.isPrimitive(type))
-				throw new AnnotationException("Bad annotation used for {}, should have been used one of the primitive type's annotations",
+				throw AnnotationException.create("Bad annotation used for {}, should have been used one of the primitive type's annotations",
 					BindObject.class.getSimpleName());
 
 			validateObjectChoice(selectFrom, binding.selectDefault(), type);
@@ -64,7 +64,7 @@ enum AnnotationValidator{
 			final BindArrayPrimitive binding = (BindArrayPrimitive)annotation;
 			final Class<?> type = binding.type();
 			if(!ParserDataType.isPrimitive(type))
-				throw new AnnotationException("Bad annotation used for {}, should have been used the type `{}.class`",
+				throw AnnotationException.create("Bad annotation used for {}, should have been used the type `{}.class`",
 					BindArray.class.getSimpleName(), ParserDataType.toObjectiveTypeOrSelf(type).getSimpleName());
 		}
 	},
@@ -76,7 +76,7 @@ enum AnnotationValidator{
 			final ObjectChoices selectFrom = binding.selectFrom();
 			final Class<?> type = binding.type();
 			if(ParserDataType.isPrimitive(type))
-				throw new AnnotationException("Bad annotation used for {}, should have been used the type `{}.class`",
+				throw AnnotationException.create("Bad annotation used for {}, should have been used the type `{}.class`",
 					BindArrayPrimitive.class.getSimpleName(), ParserDataType.toPrimitiveTypeOrSelf(type).getSimpleName());
 
 			validateObjectChoice(selectFrom, binding.selectDefault(), type);
@@ -90,7 +90,7 @@ enum AnnotationValidator{
 			final Class<?> type = binding.type();
 			final ParserDataType dataType = ParserDataType.fromType(type);
 			if(dataType != ParserDataType.FLOAT && dataType != ParserDataType.DOUBLE)
-				throw new AnnotationException("Bad type, should have been one of `{}.class` or `{}.class`", Float.class.getSimpleName(),
+				throw AnnotationException.create("Bad type, should have been one of `{}.class` or `{}.class`", Float.class.getSimpleName(),
 					Double.class.getSimpleName());
 		}
 	},
@@ -116,7 +116,7 @@ enum AnnotationValidator{
 		void validate(final Annotation annotation) throws AnnotationException{
 			final Class<?> type = ((Checksum)annotation).type();
 			if(!ParserDataType.isPrimitiveOrWrapper(type))
-				throw new AnnotationException("Unrecognized type for field {}.{}: {}", getClass().getName(), type.getSimpleName(),
+				throw AnnotationException.create("Unrecognized type for field {}.{}: {}", getClass().getName(), type.getSimpleName(),
 					type.getComponentType().getSimpleName());
 		}
 	};
@@ -156,16 +156,16 @@ enum AnnotationValidator{
 
 	private static void validatePrefixSize(final int prefixSize) throws AnnotationException{
 		if(prefixSize < 0)
-			throw new AnnotationException("Prefix size must be a non-negative number");
+			throw AnnotationException.create("Prefix size must be a non-negative number");
 		if(prefixSize > Integer.SIZE)
-			throw new AnnotationException("Prefix size cannot be greater than {} bits", Integer.SIZE);
+			throw AnnotationException.create("Prefix size cannot be greater than {} bits", Integer.SIZE);
 	}
 
 	private static void validateObjectAlternatives(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> type,
 			final int prefixSize) throws AnnotationException{
 		final boolean hasPrefixSize = (prefixSize > 0);
 		if(hasPrefixSize && alternatives.length == 0)
-			throw new AnnotationException("No alternatives present");
+			throw AnnotationException.create("No alternatives present");
 		for(final ObjectChoices.ObjectChoice alternative : alternatives)
 			validateAlternative(alternative, type, hasPrefixSize);
 	}
@@ -173,13 +173,13 @@ enum AnnotationValidator{
 	private static void validateAlternative(final ObjectChoices.ObjectChoice alternative, final Class<?> type,
 			final boolean hasPrefixSize) throws AnnotationException{
 		if(!type.isAssignableFrom(alternative.type()))
-			throw new AnnotationException("Type of alternative cannot be assigned to (super) type of annotation");
+			throw AnnotationException.create("Type of alternative cannot be assigned to (super) type of annotation");
 
 		final String condition = alternative.condition();
 		if(condition.isEmpty())
-			throw new AnnotationException("All conditions must be non-empty");
+			throw AnnotationException.create("All conditions must be non-empty");
 		if(hasPrefixSize ^ CodecHelper.containsPrefixReference(condition))
-			throw new AnnotationException("All conditions must {}contain a reference to the prefix", (hasPrefixSize? "": "not "));
+			throw AnnotationException.create("All conditions must {}contain a reference to the prefix", (hasPrefixSize? "": "not "));
 	}
 
 	private static void validateObjectDefaultAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> type,
@@ -188,7 +188,7 @@ enum AnnotationValidator{
 			LOGGER.warn("Useless definition of default alternative ({}) due to no alternatives present on @BindArray or @BindObject",
 				selectDefault.getSimpleName());
 		if(selectDefault != void.class && !type.isAssignableFrom(selectDefault))
-			throw new AnnotationException("Type of default alternative cannot be assigned to (super) type of annotation");
+			throw AnnotationException.create("Type of default alternative cannot be assigned to (super) type of annotation");
 	}
 
 }

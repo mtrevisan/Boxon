@@ -145,7 +145,7 @@ public final class BitReader extends BitReaderData{
 	public Object get(final Class<?> type, final ByteOrder byteOrder) throws AnnotationException{
 		final ParserDataType t = ParserDataType.fromType(type);
 		if(t == null)
-			throw new AnnotationException("Cannot read type {}, should be one of {}, or their objective counterparts",
+			throw AnnotationException.create("Cannot read type {}, should be one of {}, or their objective counterparts",
 				type.getSimpleName(), ParserDataType.describe());
 
 		switch(t){
@@ -272,14 +272,14 @@ public final class BitReader extends BitReaderData{
 	 * @throws AnnotationException	If an annotation is not well formatted.
 	 */
 	@SuppressWarnings("ChainOfInstanceofChecks")
-	public BigDecimal getDecimal(Class<?> cls, final ByteOrder byteOrder) throws AnnotationException{
-		cls = ParserDataType.toPrimitiveTypeOrSelf(cls);
-		if(cls == float.class)
+	public BigDecimal getDecimal(final Class<?> cls, final ByteOrder byteOrder) throws AnnotationException{
+		final Class<?> primitiveClass = ParserDataType.toPrimitiveTypeOrSelf(cls);
+		if(primitiveClass == float.class)
 			return new BigDecimal(Float.toString(getFloat(byteOrder)));
-		if(cls == double.class)
+		if(primitiveClass == double.class)
 			return new BigDecimal(Double.toString(getDouble(byteOrder)));
 
-		throw new AnnotationException("Cannot read {} as a {}", BigDecimal.class.getSimpleName(), cls.getSimpleName());
+		throw AnnotationException.create("Cannot read {} as a {}", BigDecimal.class.getSimpleName(), cls.getSimpleName());
 	}
 
 	/**

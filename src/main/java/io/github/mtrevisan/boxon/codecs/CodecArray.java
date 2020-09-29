@@ -48,6 +48,9 @@ final class CodecArray implements CodecInterface<BindArray>{
 
 	/** Automatically injected by {@link TemplateParser} */
 	@SuppressWarnings("unused")
+	private Loader loader;
+	/** Automatically injected by {@link TemplateParser} */
+	@SuppressWarnings("unused")
 	private TemplateParser templateParser;
 
 
@@ -78,7 +81,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 	@SuppressWarnings("unchecked")
 	private static <T> T[] createArray(final Class<? extends T> type, final int length) throws AnnotationException{
 		if(ParserDataType.isPrimitive(type))
-			throw new AnnotationException("Argument cannot be a primitive: {}", type);
+			throw AnnotationException.create("Argument cannot be a primitive: {}", type);
 
 		return (T[])Array.newInstance(type, length);
 	}
@@ -91,12 +94,11 @@ final class CodecArray implements CodecInterface<BindArray>{
 				final ObjectChoices.ObjectChoice chosenAlternative = CodecHelper.chooseAlternative(reader, selectFrom, rootObject);
 				final Class<?> chosenAlternativeType = (chosenAlternative != null? chosenAlternative.type(): binding.selectDefault());
 				if(chosenAlternativeType == void.class)
-					//FIXME can this throw be avoided?
-					throw new CodecException("Cannot find a valid codec from given alternatives for {}",
+					throw CodecException.create("Cannot find a valid codec from given alternatives for {}",
 						rootObject.getClass().getSimpleName());
 
 				//read object
-				final Template<?> subTemplate = templateParser.createTemplate(chosenAlternativeType);
+				final Template<?> subTemplate = loader.createTemplate(chosenAlternativeType);
 
 				array[i] = templateParser.decode(subTemplate, reader, rootObject);
 			}
@@ -108,7 +110,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 	}
 
 	private void decodeWithoutAlternatives(final BitReader reader, final Object[] array, final Class<?> type) throws FieldException{
-		final Template<?> template = templateParser.createTemplate(type);
+		final Template<?> template = loader.createTemplate(type);
 
 		for(int i = 0; i < array.length; i ++)
 			array[i] = templateParser.decode(template, reader, null);
@@ -147,14 +149,14 @@ final class CodecArray implements CodecInterface<BindArray>{
 
 			CodecHelper.writePrefix(writer, chosenAlternative, selectFrom);
 
-			final Template<?> template = templateParser.createTemplate(type);
+			final Template<?> template = loader.createTemplate(type);
 
 			templateParser.encode(template, writer, null, elem);
 		}
 	}
 
 	private void encodeWithoutAlternatives(final BitWriter writer, final Object[] array, final Class<?> type) throws FieldException{
-		final Template<?> template = templateParser.createTemplate(type);
+		final Template<?> template = loader.createTemplate(type);
 
 		for(final Object elem : array)
 			templateParser.encode(template, writer, null, elem);

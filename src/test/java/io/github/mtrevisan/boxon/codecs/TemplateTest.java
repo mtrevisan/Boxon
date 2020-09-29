@@ -169,9 +169,9 @@ class TemplateTest{
 	@Test
 	@SuppressWarnings("SimplifiableAssertion")
 	void creation() throws AnnotationException{
-		TemplateParser templateParser = new TemplateParser();
-		templateParser.loader.loadDefaultCodecs();
-		Template<Message> template = templateParser.loader.createTemplate(Message.class);
+		Loader loader = new Loader();
+		loader.loadDefaultCodecs();
+		Template<Message> template = loader.createTemplate(Message.class);
 
 		Assertions.assertNotNull(template);
 		Assertions.assertEquals(Message.class, template.getType());
@@ -180,18 +180,18 @@ class TemplateTest{
 		Assertions.assertArrayEquals(new String[]{"+"}, header.start());
 		Assertions.assertEquals("-", header.end());
 		Assertions.assertTrue(template.canBeCoded());
-		DynamicArray<Template.BoundedField> boundedFields = template.getBoundedFields();
+		DynamicArray<BoundedField> boundedFields = template.getBoundedFields();
 		Assertions.assertNotNull(boundedFields);
 		Assertions.assertEquals(15, boundedFields.limit);
-		DynamicArray<Template.EvaluatedField> evaluatedFields = template.getEvaluatedFields();
+		DynamicArray<EvaluatedField> evaluatedFields = template.getEvaluatedFields();
 		Assertions.assertNotNull(evaluatedFields);
 		Assertions.assertEquals(1, evaluatedFields.limit);
-		Template.EvaluatedField evaluatedField = evaluatedFields.data[0];
+		EvaluatedField evaluatedField = evaluatedFields.data[0];
 		Assertions.assertEquals("receptionTime", evaluatedField.getFieldName());
 		Assertions.assertEquals(ZonedDateTime.class, evaluatedField.getFieldType());
 		Evaluate evaluate = evaluatedField.getBinding();
 		Assertions.assertEquals("T(java.time.ZonedDateTime).now()", evaluate.value());
-		Template.BoundedField checksumField = template.getChecksum();
+		BoundedField checksumField = template.getChecksum();
 		Assertions.assertNotNull(checksumField);
 		Assertions.assertEquals("checksum", checksumField.getFieldName());
 		Annotation checksum = checksumField.getBinding();
@@ -237,9 +237,9 @@ class TemplateTest{
 
 	@Test
 	void inheritance() throws AnnotationException{
-		TemplateParser templateParser = new TemplateParser();
-		templateParser.loader.loadDefaultCodecs();
-		Template<MessageChild> template = templateParser.loader.createTemplate(MessageChild.class);
+		Loader loader = new Loader();
+		loader.loadDefaultCodecs();
+		Template<MessageChild> template = loader.createTemplate(MessageChild.class);
 
 		Assertions.assertNotNull(template);
 		Assertions.assertEquals(MessageChild.class, template.getType());
@@ -248,10 +248,10 @@ class TemplateTest{
 		Assertions.assertArrayEquals(new String[]{"++"}, header.start());
 		Assertions.assertEquals("--", header.end());
 		Assertions.assertTrue(template.canBeCoded());
-		DynamicArray<Template.BoundedField> boundedFields = template.getBoundedFields();
+		DynamicArray<BoundedField> boundedFields = template.getBoundedFields();
 		Assertions.assertNotNull(boundedFields);
 		Assertions.assertEquals(16, boundedFields.limit);
-		Template.BoundedField childField = boundedFields.data[boundedFields.limit - 1];
+		BoundedField childField = boundedFields.data[boundedFields.limit - 1];
 		Assertions.assertNotNull(childField);
 		Assertions.assertEquals("anotherNumberInt", childField.getFieldName());
 	}

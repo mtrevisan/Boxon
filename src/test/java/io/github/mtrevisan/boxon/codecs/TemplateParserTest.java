@@ -52,9 +52,10 @@ class TemplateParserTest{
 		byte[] payload = JavaHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		BitReader reader = BitReader.wrap(payload);
 
-		TemplateParser templateParser = new TemplateParser();
-		templateParser.loader.loadDefaultCodecs();
-		Template<ACKMessageHex> template = templateParser.loader.createTemplate(ACKMessageHex.class);
+		Loader loader = new Loader();
+		TemplateParser templateParser = new TemplateParser(loader);
+		loader.loadDefaultCodecs();
+		Template<ACKMessageHex> template = loader.createTemplate(ACKMessageHex.class);
 
 		if(!template.canBeCoded())
 			Assertions.fail("Cannot decode message");
@@ -66,7 +67,7 @@ class TemplateParserTest{
 		ACKMessageHex message = templateParser.decode(template, reader, null);
 		Evaluator.addToContext("deviceTypes", null);
 
-		BitWriter writer = new BitWriter();
+		BitWriter writer = BitWriter.create();
 		templateParser.encode(template, writer, null, message);
 		byte[] reconstructedMessage = writer.array();
 
@@ -82,9 +83,10 @@ class TemplateParserTest{
 		byte[] payload = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
 		BitReader reader = BitReader.wrap(payload);
 
-		TemplateParser templateParser = new TemplateParser();
-		templateParser.loader.loadDefaultCodecs();
-		Template<ACKMessageASCII> template = templateParser.loader.createTemplate(ACKMessageASCII.class);
+		Loader loader = new Loader();
+		TemplateParser templateParser = new TemplateParser(loader);
+		loader.loadDefaultCodecs();
+		Template<ACKMessageASCII> template = loader.createTemplate(ACKMessageASCII.class);
 
 		if(!template.canBeCoded())
 			Assertions.fail("Cannot decode message");
@@ -95,7 +97,7 @@ class TemplateParserTest{
 		ACKMessageASCII message = templateParser.decode(template, reader, null);
 		Evaluator.addToContext("deviceTypes", null);
 
-		BitWriter writer = new BitWriter();
+		BitWriter writer = BitWriter.create();
 		templateParser.encode(template, writer, null, message);
 		byte[] reconstructedMessage = writer.array();
 
@@ -123,9 +125,10 @@ class TemplateParserTest{
 		byte[] payload = JavaHelper.toByteArray("746335011234");
 		BitReader reader = BitReader.wrap(payload);
 
-		TemplateParser templateParser = new TemplateParser();
-		templateParser.loader.loadDefaultCodecs();
-		Template<TestError1> template = templateParser.loader.createTemplate(TestError1.class);
+		Loader loader = new Loader();
+		TemplateParser templateParser = new TemplateParser(loader);
+		loader.loadDefaultCodecs();
+		Template<TestError1> template = loader.createTemplate(TestError1.class);
 
 		SpelEvaluationException exc = Assertions.assertThrows(SpelEvaluationException.class, () -> templateParser.decode(template, reader, null));
 		Assertions.assertEquals("EL1008E: Property or field 'e' cannot be found on object of type 'io.github.mtrevisan.boxon.codecs.TemplateParserTest$TestError1' - maybe not public or not valid?", exc.getMessage());
@@ -158,9 +161,10 @@ class TemplateParserTest{
 		byte[] payload = JavaHelper.toByteArray("74633501");
 		BitReader reader = BitReader.wrap(payload);
 
-		TemplateParser templateParser = new TemplateParser();
-		templateParser.loader.loadDefaultCodecs();
-		Template<TestError3> template = templateParser.loader.createTemplate(TestError3.class);
+		Loader loader = new Loader();
+		TemplateParser templateParser = new TemplateParser(loader);
+		loader.loadDefaultCodecs();
+		Template<TestError3> template = loader.createTemplate(TestError3.class);
 
 		Exception exc = Assertions.assertThrows(FieldException.class, () -> templateParser.decode(template, reader, null));
 		Assertions.assertEquals("java.lang.IllegalArgumentException: Can not set byte field to String in field io.github.mtrevisan.boxon.codecs.TemplateParserTest$TestError3.type", exc.getMessage());
@@ -193,9 +197,10 @@ class TemplateParserTest{
 		byte[] payload = JavaHelper.toByteArray("74633501");
 		BitReader reader = BitReader.wrap(payload);
 
-		TemplateParser templateParser = new TemplateParser();
-		templateParser.loader.loadDefaultCodecs();
-		Template<TestError4> template = templateParser.loader.createTemplate(TestError4.class);
+		Loader loader = new Loader();
+		TemplateParser templateParser = new TemplateParser(loader);
+		loader.loadDefaultCodecs();
+		Template<TestError4> template = loader.createTemplate(TestError4.class);
 
 		Exception exc = Assertions.assertThrows(FieldException.class, () -> templateParser.decode(template, reader, null));
 		Assertions.assertEquals("java.lang.IllegalArgumentException: Can not input Byte to decode method of converter WrongInputConverter in field io.github.mtrevisan.boxon.codecs.TemplateParserTest$TestError4.type", exc.getMessage());
@@ -227,9 +232,10 @@ class TemplateParserTest{
 		byte[] payload = JavaHelper.toByteArray("746D310102016162");
 		BitReader reader = BitReader.wrap(payload);
 
-		TemplateParser templateParser = new TemplateParser();
-		templateParser.loader.loadDefaultCodecs();
-		Template<TestComposition1> template = templateParser.loader.createTemplate(TestComposition1.class);
+		Loader loader = new Loader();
+		TemplateParser templateParser = new TemplateParser(loader);
+		loader.loadDefaultCodecs();
+		Template<TestComposition1> template = loader.createTemplate(TestComposition1.class);
 
 		TestComposition1 parsed = templateParser.decode(template, reader, null);
 		Assertions.assertNotNull(parsed);
@@ -240,7 +246,7 @@ class TemplateParserTest{
 		Assertions.assertEquals("a", parsed.sub.field1);
 		Assertions.assertEquals("b", parsed.sub.field2);
 
-		BitWriter writer = new BitWriter();
+		BitWriter writer = BitWriter.create();
 		templateParser.encode(template, writer, null, parsed);
 		byte[] reconstructedMessage = writer.array();
 
@@ -286,9 +292,10 @@ class TemplateParserTest{
 		byte[] payload = JavaHelper.toByteArray("746D3201016162");
 		BitReader reader = BitReader.wrap(payload);
 
-		TemplateParser templateParser = new TemplateParser();
-		templateParser.loader.loadDefaultCodecs();
-		Template<TestComposition2> template = templateParser.loader.createTemplate(TestComposition2.class);
+		Loader loader = new Loader();
+		TemplateParser templateParser = new TemplateParser(loader);
+		loader.loadDefaultCodecs();
+		Template<TestComposition2> template = loader.createTemplate(TestComposition2.class);
 
 		TestComposition2 parsed = templateParser.decode(template, reader, null);
 		Assertions.assertNotNull(parsed);
@@ -298,7 +305,7 @@ class TemplateParserTest{
 		Assertions.assertEquals("a", ((TestComposition2.TestSubComposition1)parsed.sub).field1);
 		Assertions.assertEquals("b", ((TestComposition2.TestSubComposition1)parsed.sub).field2);
 
-		BitWriter writer = new BitWriter();
+		BitWriter writer = BitWriter.create();
 		templateParser.encode(template, writer, null, parsed);
 		byte[] reconstructedMessage = writer.array();
 
@@ -310,9 +317,10 @@ class TemplateParserTest{
 		byte[] payload = JavaHelper.toByteArray("7463320202616263");
 		BitReader reader = BitReader.wrap(payload);
 
-		TemplateParser templateParser = new TemplateParser();
-		templateParser.loader.loadDefaultCodecs();
-		Template<TestComposition2> template = templateParser.loader.createTemplate(TestComposition2.class);
+		Loader loader = new Loader();
+		TemplateParser templateParser = new TemplateParser(loader);
+		loader.loadDefaultCodecs();
+		Template<TestComposition2> template = loader.createTemplate(TestComposition2.class);
 
 		TestComposition2 parsed = templateParser.decode(template, reader, null);
 		Assertions.assertNotNull(parsed);
@@ -323,7 +331,7 @@ class TemplateParserTest{
 		Assertions.assertEquals(0x62, ((TestComposition2.TestSubComposition2)parsed.sub).field2);
 		Assertions.assertEquals("c", ((TestComposition2.TestSubComposition2)parsed.sub).field3);
 
-		BitWriter writer = new BitWriter();
+		BitWriter writer = BitWriter.create();
 		templateParser.encode(template, writer, null, parsed);
 		byte[] reconstructedMessage = writer.array();
 

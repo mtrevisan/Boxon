@@ -39,8 +39,12 @@ public final class CodecException extends FieldException{
 	private static final long serialVersionUID = 2879230296103139872L;
 
 
-	public CodecException(final String message, final Object... parameters){
-		super(JavaHelper.format(message, parameters));
+	public static CodecException create(final String message, final Object... parameters){
+		return new CodecException(JavaHelper.format(message, parameters));
+	}
+
+	private CodecException(final String message){
+		super(message);
 	}
 
 	@SuppressWarnings("unused")

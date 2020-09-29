@@ -105,7 +105,7 @@ public final class ComposeResponse{
 	}
 
 	void addError(final EncodeException exception){
-		Objects.requireNonNull(exception);
+		Objects.requireNonNull(exception, "Exception cannot be null");
 
 		errors.add(exception);
 	}

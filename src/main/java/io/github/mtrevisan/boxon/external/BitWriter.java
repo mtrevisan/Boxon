@@ -37,18 +37,24 @@ import java.nio.charset.Charset;
  */
 public final class BitWriter extends BitWriterData{
 
+	public static BitWriter create(){
+		return new BitWriter();
+	}
+
+	private BitWriter(){}
+
 	/**
 	 * Writes the given value using the give byte order.
 	 *
-	 * @param value	The data to written. Here, the length of the types (in bits) are those defined by java (see {@link Byte#SIZE}, {@link Short#SIZE}, {@link Integer#SIZE},
-	 * 	{@link Long#SIZE}, {@link Float#SIZE}, and {@link Double#SIZE}).
+	 * @param value	The data to written. Here, the length of the types (in bits) are those defined by java (see {@link Byte#SIZE},
+	 * 	{@link Short#SIZE}, {@link Integer#SIZE}, {@link Long#SIZE}, {@link Float#SIZE}, and {@link Double#SIZE}).
 	 * @param byteOrder	The byte order used to write the value.
 	 * @throws AnnotationException	If an annotation is not well formatted.
 	 */
 	public void put(final Object value, final ByteOrder byteOrder) throws AnnotationException{
 		final ParserDataType t = ParserDataType.fromType(value.getClass());
 		if(t == null)
-			throw new AnnotationException("Cannot write type {}", value.getClass().getSimpleName());
+			throw AnnotationException.create("Cannot write type {}", value.getClass().getSimpleName());
 
 		switch(t){
 			case BYTE:
@@ -160,7 +166,7 @@ public final class BitWriter extends BitWriterData{
 		else if(dataType == ParserDataType.DOUBLE)
 			putDouble(value.doubleValue(), byteOrder);
 		else
-			throw new AnnotationException("Cannot write {} as a {}", BigDecimal.class.getSimpleName(), cls.getSimpleName());
+			throw AnnotationException.create("Cannot write {} as a {}", BigDecimal.class.getSimpleName(), cls.getSimpleName());
 	}
 
 	/**

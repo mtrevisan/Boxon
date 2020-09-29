@@ -72,7 +72,7 @@ public final class ReflectionHelper{
 	/**
 	 * Primitive type name to class map.
 	 */
-	private static final Map<String, Class<?>> PRIMITIVE_NAME_TO_TYPE = new HashMap<>();
+	private static final Map<String, Class<?>> PRIMITIVE_NAME_TO_TYPE = new HashMap<>(8);
 	static{
 		PRIMITIVE_NAME_TO_TYPE.put("boolean", Boolean.TYPE);
 		PRIMITIVE_NAME_TO_TYPE.put("byte", Byte.TYPE);
@@ -115,7 +115,7 @@ public final class ReflectionHelper{
 	 * @return	The actual generic type arguments, must match the type parameters of the offspring class.
 	 * 	If omitted, the type parameters will be used instead.
 	 *
-	 * @see <a href="https://stackoverflow.com/questions/17297308/how-do-i-resolve-the-actual-type-for-a-generic-return-type-using-reflection">How do I resolve the actual type for a generic return type using reflection?</>
+	 * @see <a href="https://stackoverflow.com/questions/17297308/how-do-i-resolve-the-actual-type-for-a-generic-return-type-using-reflection">How do I resolve the actual type for a generic return type using reflection?</a>
 	 */
 	public static <T> Class<?>[] resolveGenericTypes(final Class<? extends T> offspring, final Class<T> base, Type... actualArgs){
 		//if actual types are omitted, the type parameters will be used instead
@@ -156,15 +156,12 @@ public final class ReflectionHelper{
 		if(rawType instanceof Class<?> && base.isAssignableFrom((Class<?>)rawType)){
 			//loop through all type arguments and replace type variables with the actually known types
 			final DynamicArray<Class> resolvedTypes = DynamicArray.create(Class.class);
-			for(Type t : ancestorType.getActualTypeArguments()){
-				if(t instanceof TypeVariable<?>){
-					final Type resolvedType = typeVariables.get(((TypeVariable<?>)t).getName());
-					if(resolvedType != null)
-						t = resolvedType;
-				}
-				resolvedTypes.addIfNotNull(toClass(t.getTypeName()));
+			for(final Type t : ancestorType.getActualTypeArguments()){
+				final String typeName = resolveArgumentType(typeVariables, t).getTypeName();
+				resolvedTypes.addIfNotNull(toClass(typeName));
 			}
 
+			@SuppressWarnings("unchecked")
 			final Class<?>[] result = resolveGenericTypes((Class<? extends T>)rawType, base, resolvedTypes.extractCopy());
 			if(result != null)
 				types.addAll(result, result.length);
@@ -188,10 +185,10 @@ public final class ReflectionHelper{
 		return ancestorsQueue;
 	}
 
-	private static Type resolveArgumentType(Type actualTypeArgument, final Map<String, Type> typeVariables){
-		if(actualTypeArgument instanceof TypeVariable<?>)
-			actualTypeArgument = typeVariables.getOrDefault(((TypeVariable<?>)actualTypeArgument).getName(), actualTypeArgument);
-		return actualTypeArgument;
+	private static Type resolveArgumentType(final Map<String, Type> typeVariables, final Type actualTypeArgument){
+		return (actualTypeArgument instanceof TypeVariable<?>?
+			typeVariables.getOrDefault(((TypeVariable<?>)actualTypeArgument).getName(), actualTypeArgument):
+			actualTypeArgument);
 	}
 
 	/**
@@ -200,17 +197,17 @@ public final class ReflectionHelper{
 	 * @param name Name of class.
 	 * @return The class for the given name, {@code null} if some error happens.
 	 */
-	private static Class<?> toClass(String name){
+	private static Class<?> toClass(final String name){
 		final int arraysCount = StringUtils.countOccurrencesOf(name, ARRAY_VARIABLE);
-		name = name.substring(0, name.length() - arraysCount * ARRAY_VARIABLE.length());
+		final String baseName = name.substring(0, name.length() - arraysCount * ARRAY_VARIABLE.length());
 
 		//check for a primitive type
-		Class<?> cls = PRIMITIVE_NAME_TO_TYPE.get(name);
+		Class<?> cls = PRIMITIVE_NAME_TO_TYPE.get(baseName);
 
 		if(cls == null){
 			//not a primitive, try to load it through the ClassLoader
 			try{
-				cls = CLASS_LOADER.loadClass(name);
+				cls = CLASS_LOADER.loadClass(baseName);
 			}
 			catch(final ClassNotFoundException e){
 				LOGGER.warn("Cannot convert type name to class: {}", name, e);
@@ -224,7 +221,7 @@ public final class ReflectionHelper{
 		return cls;
 	}
 
-	public static Class<?> addArrayToType(final Class<?> cls, final int arraysCount){
+	private static Class<?> addArrayToType(final Class<?> cls, final int arraysCount){
 		final int[] dimensions = new int[arraysCount];
 		Arrays.fill(dimensions, 1);
 		return Array.newInstance(cls, dimensions)
@@ -247,11 +244,10 @@ public final class ReflectionHelper{
 		try{
 			field.set(obj, value);
 		}
-		catch(final IllegalArgumentException ignored){
+		catch(final IllegalArgumentException | IllegalAccessException e){
 			throw new IllegalArgumentException("Can not set " + field.getType().getSimpleName() + " field to "
-				+ value.getClass().getSimpleName());
+				+ value.getClass().getSimpleName(), e);
 		}
-		catch(final IllegalAccessException ignored){}
 	}
 
 	public static <T> void setFieldValue(final Object obj, final Class<T> fieldType, final T value){

@@ -27,6 +27,8 @@ package io.github.mtrevisan.boxon.annotations.validators;
 
 public final class NullValidator implements Validator<Object>{
 
+	private NullValidator(){}
+
 	@Override
 	public boolean isValid(final Object value){
 		return true;

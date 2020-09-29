@@ -40,7 +40,11 @@ public final class DecodeException extends Exception{
 	private final int errorIndex;
 
 
-	public DecodeException(final int errorIndex, final Throwable cause){
+	public static DecodeException create(final int errorIndex, final Throwable cause){
+		return new DecodeException(errorIndex, cause);
+	}
+
+	private DecodeException(final int errorIndex, final Throwable cause){
 		super(cause);
 
 		this.errorIndex = errorIndex;

@@ -65,7 +65,7 @@ final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 
 	private static Object createArrayPrimitive(final Class<?> type, final int length) throws AnnotationException{
 		if(!ParserDataType.isPrimitive(type))
-			throw new AnnotationException("Argument cannot be a non-primitive: {}", type);
+			throw AnnotationException.create("Argument cannot be a non-primitive: {}", type);
 
 		return Array.newInstance(type, length);
 	}

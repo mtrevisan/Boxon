@@ -27,6 +27,8 @@ package io.github.mtrevisan.boxon.annotations.converters;
 
 public final class ShortToCharConverter implements Converter<Short, Character>{
 
+	ShortToCharConverter(){}
+
 	@Override
 	public Character decode(final Short value){
 		return Character.toChars(value)[0];

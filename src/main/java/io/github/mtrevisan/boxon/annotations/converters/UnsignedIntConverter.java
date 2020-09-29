@@ -27,6 +27,8 @@ package io.github.mtrevisan.boxon.annotations.converters;
 
 public final class UnsignedIntConverter implements Converter<Integer, Long>{
 
+	UnsignedIntConverter(){}
+
 	@Override
 	public Long decode(final Integer value){
 		return (value & 0x0000_0000_FFFF_FFFFl);

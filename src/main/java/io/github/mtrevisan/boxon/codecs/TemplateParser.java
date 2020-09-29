@@ -68,19 +68,11 @@ final class TemplateParser{
 	}
 
 
-	//FIXME find a clean way to privatize this variable, avoiding defining many methods in this class
-	final Loader loader = new Loader();
+	private final Loader loader;
 
 
-	/**
-	 * Constructs a new {@link Template}.
-	 *
-	 * @param <T>	The type of the object to be returned as a {@link Template}.
-	 * @param type	The class of the object to be returned as a {@link Template}.
-	 * @return	The {@link Template} for the given type.
-	 */
-	<T> Template<T> createTemplate(final Class<T> type) throws AnnotationException{
-		return loader.createTemplate(type);
+	TemplateParser(final Loader loader){
+		this.loader = loader;
 	}
 
 	<T> T decode(final Template<T> template, final BitReader reader, final Object parentObject) throws FieldException{
@@ -94,9 +86,9 @@ final class TemplateParser{
 		parserContext.addSelfToEvaluatorContext();
 
 		//decode message fields:
-		final DynamicArray<Template.BoundedField> fields = template.getBoundedFields();
+		final DynamicArray<BoundedField> fields = template.getBoundedFields();
 		for(int i = 0; i < fields.limit; i ++){
-			final Template.BoundedField field = fields.data[i];
+			final BoundedField field = fields.data[i];
 
 			//process skip annotations:
 			final Skip[] skips = field.getSkips();
@@ -118,7 +110,7 @@ final class TemplateParser{
 	}
 
 	private <T> void decodeField(final Template<T> template, final BitReader reader, final ParserContext<T> parserContext,
-			final Template.BoundedField field) throws FieldException{
+			final BoundedField field) throws FieldException{
 		try{
 			final Annotation binding = field.getBinding();
 			final CodecInterface<?> codec = retrieveCodec(binding.annotationType());
@@ -137,7 +129,7 @@ final class TemplateParser{
 			throw e;
 		}
 		catch(final Exception e){
-			final FieldException exc = new FieldException(e);
+			final FieldException exc = FieldException.create(e);
 			exc.setClassNameAndFieldName(template.getType().getName(), field.getFieldName());
 			throw exc;
 		}
@@ -170,13 +162,13 @@ final class TemplateParser{
 			final byte[] readMessageTerminator = reader.getBytes(messageTerminator.length);
 			//verifying terminators
 			if(!Arrays.equals(messageTerminator, readMessageTerminator))
-				throw new TemplateException("Message does not terminate with 0x{}", JavaHelper.toHexString(messageTerminator));
+				throw TemplateException.create("Message does not terminate with 0x{}", JavaHelper.toHexString(messageTerminator));
 		}
 	}
 
 	private <T> void verifyChecksum(final Template<T> template, final T data, int startPosition, final BitReader reader){
 		if(template.isChecksumPresent()){
-			final Template.BoundedField checksumData = template.getChecksum();
+			final BoundedField checksumData = template.getChecksum();
 			final Checksum checksum = (Checksum)checksumData.getBinding();
 			startPosition += checksum.skipStart();
 			final int endPosition = reader.position() - checksum.skipEnd();
@@ -197,9 +189,9 @@ final class TemplateParser{
 	}
 
 	private void processEvaluatedFields(final Template<?> template, final ParserContext<?> parserContext){
-		final DynamicArray<Template.EvaluatedField> evaluatedFields = template.getEvaluatedFields();
+		final DynamicArray<EvaluatedField> evaluatedFields = template.getEvaluatedFields();
 		for(int i = 0; i < evaluatedFields.limit; i ++){
-			final Template.EvaluatedField field = evaluatedFields.data[i];
+			final EvaluatedField field = evaluatedFields.data[i];
 			final boolean process = Evaluator.evaluateBoolean(field.getBinding().condition(), parserContext.rootObject);
 			if(process){
 				LOGGER.trace("evaluating {}.{}", template.getType().getName(), field.getFieldName());
@@ -219,9 +211,9 @@ final class TemplateParser{
 		parserContext.addSelfToEvaluatorContext();
 
 		//encode message fields:
-		final DynamicArray<Template.BoundedField> fields = template.getBoundedFields();
+		final DynamicArray<BoundedField> fields = template.getBoundedFields();
 		for(int i = 0; i < fields.limit; i ++){
-			final Template.BoundedField field = fields.data[i];
+			final BoundedField field = fields.data[i];
 
 			//process skip annotations:
 			final Skip[] skips = field.getSkips();
@@ -239,7 +231,7 @@ final class TemplateParser{
 	}
 
 	private <T> void encodeField(final Template<?> template, final BitWriter writer, final ParserContext<T> parserContext,
-			final Template.BoundedField field) throws FieldException{
+			final BoundedField field) throws FieldException{
 		try{
 			final Annotation binding = field.getBinding();
 			final CodecInterface<?> codec = retrieveCodec(binding.annotationType());
@@ -259,7 +251,7 @@ final class TemplateParser{
 			throw e;
 		}
 		catch(final Exception e){
-			final FieldException exc = new FieldException(e);
+			final FieldException exc = FieldException.create(e);
 			exc.setClassNameAndFieldName(template.getType().getName(), field.getFieldName());
 			throw exc;
 		}
@@ -281,13 +273,17 @@ final class TemplateParser{
 	private CodecInterface<?> retrieveCodec(final Class<? extends Annotation> annotationType) throws CodecException{
 		final CodecInterface<?> codec = loader.getCodec(annotationType);
 		if(codec == null)
-			throw new CodecException("Cannot find codec for binding {}", annotationType.getSimpleName());
+			throw CodecException.create("Cannot find codec for binding {}", annotationType.getSimpleName());
 
 		setTemplateParser(codec);
 		return codec;
 	}
 
 	private void setTemplateParser(final CodecInterface<?> codec){
+		try{
+			ReflectionHelper.setFieldValue(codec, Loader.class, loader);
+		}
+		catch(final Exception ignored){}
 		try{
 			ReflectionHelper.setFieldValue(codec, TemplateParser.class, this);
 		}
@@ -305,7 +301,7 @@ final class TemplateParser{
 			final int size = Evaluator.evaluateSize(skip.size(), rootObject);
 			if(size > 0)
 				/** skip {@link size} bits */
-				writer.putBits(new BitSet(), size);
+				writer.putBits(BitSet.empty(), size);
 			else if(skip.consumeTerminator())
 				//skip until terminator
 				writer.putByte(skip.terminator());

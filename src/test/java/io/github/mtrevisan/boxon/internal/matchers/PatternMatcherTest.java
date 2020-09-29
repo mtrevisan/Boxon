@@ -32,13 +32,13 @@ class PatternMatcherTest{
 
 	@Test
 	void indexOfBNDM(){
-		PatternMatcher pm = new BNDMPatternMatcher();
+		PatternMatcher pm = BNDMPatternMatcher.getInstance();
 		indexOf(pm);
 	}
 
 	@Test
 	void indexOfKMP(){
-		PatternMatcher pm = new KMPPatternMatcher();
+		PatternMatcher pm = KMPPatternMatcher.getInstance();
 		indexOf(pm);
 	}
 

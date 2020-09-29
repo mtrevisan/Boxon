@@ -39,8 +39,12 @@ public final class AnnotationException extends FieldException{
 	private static final long serialVersionUID = 6429044852678473069L;
 
 
-	public AnnotationException(final String message, final Object... parameters){
-		super(JavaHelper.format(message, parameters));
+	public static AnnotationException create(final String message, final Object... parameters){
+		return new AnnotationException(JavaHelper.format(message, parameters));
+	}
+
+	private AnnotationException(final String message){
+		super(message);
 	}
 
 	@SuppressWarnings("unused")

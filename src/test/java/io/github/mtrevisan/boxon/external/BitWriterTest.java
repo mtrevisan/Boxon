@@ -40,7 +40,7 @@ class BitWriterTest{
 
 	@BeforeEach
 	void initialize(){
-		writer = new BitWriter();
+		writer = BitWriter.create();
 	}
 
 	@Test

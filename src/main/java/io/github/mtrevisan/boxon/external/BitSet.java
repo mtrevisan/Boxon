@@ -53,6 +53,15 @@ public final class BitSet{
 
 
 	/**
+	 * Returns an empty new bit set.
+	 *
+	 * @return	A {@code BitSet} containing all the bits in the long array.
+	 */
+	public static BitSet empty(){
+		return new BitSet();
+	}
+
+	/**
 	 * Returns a new bit set containing all the bits in the given long array.
 	 *
 	 * @param array	A long array containing a little-endian representation of a sequence of bits to be used as
@@ -143,7 +152,7 @@ public final class BitSet{
 		return k;
 	}
 
-	public BitSet(){}
+	private BitSet(){}
 
 
 	public void ensureAdditionalSpace(final int size){
