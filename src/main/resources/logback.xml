@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="false">
+
+	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d{HH:mm:ss} %-5level %logger{0}:%L - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="fileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>boxon.log</file>
+		<append>true</append>
+		<immediateFlush>false</immediateFlush>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>boxon.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%d{HH:mm:ss} %-5level %logger{0}:%L - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+
+	<root level="debug">
+		<appender-ref ref="console" />
+<!--		<appender-ref ref="fileAppender"></appender-ref>-->
+	</root>
+
+</configuration>
