@@ -186,9 +186,9 @@ public final class ReflectionHelper{
 	}
 
 	private static Type resolveArgumentType(final Map<String, Type> typeVariables, final Type actualTypeArgument){
-		return (actualTypeArgument instanceof TypeVariable<?>?
-			typeVariables.getOrDefault(((TypeVariable<?>)actualTypeArgument).getName(), actualTypeArgument):
-			actualTypeArgument);
+		return (actualTypeArgument instanceof TypeVariable<?>
+			? typeVariables.getOrDefault(((TypeVariable<?>)actualTypeArgument).getName(), actualTypeArgument)
+			: actualTypeArgument);
 	}
 
 	/**
@@ -281,9 +281,9 @@ public final class ReflectionHelper{
 
 		//recurse classes:
 		final Predicate<Field> filterPredicate = (fieldType != null? field -> (field.getType() == fieldType): null);
-		final Consumer<DynamicArray<Field>> filter = (filterPredicate != null?
-			subfields -> subfields.filter(filterPredicate):
-			subfields -> {});
+		final Consumer<DynamicArray<Field>> filter = (filterPredicate != null
+			? subfields -> subfields.filter(filterPredicate)
+			: subfields -> {});
 		while(cls != null && cls != Object.class){
 			final DynamicArray<Field> subfields = DynamicArray.wrap(cls.getDeclaredFields());
 			//apply filter on field type if needed
@@ -396,9 +396,9 @@ public final class ReflectionHelper{
 		final ObjectInstantiator<T> instantiator;
 		//Java 7 GAE was under a security manager so we use a degraded system
 		if(PlatformDescription.isGoogleAppEngine() && "1.7".equals(PlatformDescription.SPECIFICATION_VERSION))
-			instantiator = (Serializable.class.isAssignableFrom(type)?
-				new ObjectInputStreamInstantiator<>(type):
-				new AccessibleInstantiator<>(type));
+			instantiator = (Serializable.class.isAssignableFrom(type)
+				? new ObjectInputStreamInstantiator<>(type)
+				: new AccessibleInstantiator<>(type));
 		else
 			//the UnsafeFactoryInstantiator would also work, but according to benchmarks, it is 2.5 times slower
 			instantiator = new SunReflectionFactoryInstantiator<>(type);

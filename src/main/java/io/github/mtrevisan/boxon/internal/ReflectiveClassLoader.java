@@ -85,8 +85,9 @@ public final class ReflectiveClassLoader{
 	}
 
 	private void scan(final ScanResult scanResult, final Class<?> filteringClass){
-		final ClassInfoList classInfo = (filteringClass.isAnnotation()? scanResult.getClassesWithAnnotation(filteringClass.getName()):
-			scanResult.getClassesImplementing(filteringClass.getName()));
+		final ClassInfoList classInfo = (filteringClass.isAnnotation()
+			? scanResult.getClassesWithAnnotation(filteringClass.getName())
+			: scanResult.getClassesImplementing(filteringClass.getName()));
 		for(final Class<?> cls : classInfo.loadClasses())
 			METADATA_STORE.computeIfAbsent(filteringClass, classes -> new ArrayList<>(1))
 				.add(cls);
