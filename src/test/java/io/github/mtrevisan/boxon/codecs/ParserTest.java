@@ -63,7 +63,7 @@ class ParserTest{
 	}
 
 	@Test
-	void parseAndComposeSingeMessageHex() throws NoSuchMethodException, AnnotationException, TemplateException{
+	void parseAndComposeSingleMessageHex() throws NoSuchMethodException, AnnotationException, TemplateException{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
 		Parser parser = Parser.create()
