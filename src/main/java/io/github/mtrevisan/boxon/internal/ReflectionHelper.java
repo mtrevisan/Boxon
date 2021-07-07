@@ -264,6 +264,15 @@ public final class ReflectionHelper{
 		catch(final IllegalArgumentException | IllegalAccessException ignored){}
 	}
 
+	public static <T> void setStaticFieldValue(final Class<?> cl, final Class<T> fieldType, final T value){
+		try{
+			final DynamicArray<Field> fields = getAccessibleFields(cl, fieldType);
+			for(int i = 0; i < fields.limit; i ++)
+				fields.data[i].set(null, value);
+		}
+		catch(final IllegalArgumentException | IllegalAccessException ignored){}
+	}
+
 	/**
 	 * Retrieve all declared fields in the current class AND in the parent classes.
 	 *

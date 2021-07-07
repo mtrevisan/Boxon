@@ -26,6 +26,7 @@ package io.github.mtrevisan.boxon.internal;
 
 import org.slf4j.helpers.MessageFormatter;
 
+import java.util.Collection;
 import java.util.Locale;
 
 
@@ -43,6 +44,17 @@ public final class JavaHelper{
 
 
 	private JavaHelper(){}
+
+	//FIXME
+	public static void injectEventListener(final Class<?> basePackageClass, final EventListener listener){
+		final String packageName = basePackageClass.getPackageName();
+		final ReflectiveClassLoader reflectiveClassLoader = ReflectiveClassLoader.createFrom(basePackageClass);
+		reflectiveClassLoader.scan(Object.class);
+		@SuppressWarnings("unchecked")
+		final Collection<Class<?>> classes = reflectiveClassLoader.getTypesAnnotatedWith(Event.class);
+		for(final Class<?> cl : classes)
+			ReflectionHelper.setStaticFieldValue(cl, EventListener.class, listener);
+	}
 
 	public static String format(final String message, final Object... parameters){
 		return MessageFormatter.arrayFormat(message, parameters)
