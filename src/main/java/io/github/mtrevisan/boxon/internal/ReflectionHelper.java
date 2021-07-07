@@ -103,6 +103,11 @@ public final class ReflectionHelper{
 		return classes;
 	}
 
+	public static int extractCallerLineNumber(){
+		final StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+		return stackTrace[1].getLineNumber();
+	}
+
 
 	/**
 	 * Resolves the actual generic type arguments for a base class, as viewed from a subclass or implementation.
