@@ -150,12 +150,7 @@ public final class ReflectionHelper{
 		final DynamicArray<Class> types = DynamicArray.create(Class.class);
 		final Type rawType = ancestorType.getRawType();
 		if(rawType instanceof Class<?> && base.isAssignableFrom((Class<?>)rawType)){
-			//loop through all type arguments and replace type variables with the actually known types
-			final DynamicArray<Class> resolvedTypes = DynamicArray.create(Class.class);
-			for(final Type t : ancestorType.getActualTypeArguments()){
-				final String typeName = resolveArgumentType(typeVariables, t).getTypeName();
-				resolvedTypes.addIfNotNull(toClass(typeName));
-			}
+			final DynamicArray<Class> resolvedTypes = populateResolvedTypes(ancestorType, typeVariables);
 
 			@SuppressWarnings("unchecked")
 			final Class<?>[] result = resolveGenericTypes((Class<? extends T>)rawType, base, resolvedTypes.extractCopy());
@@ -163,6 +158,16 @@ public final class ReflectionHelper{
 				types.addAll(result, result.length);
 		}
 		return types;
+	}
+
+	private static DynamicArray<Class> populateResolvedTypes(final ParameterizedType ancestorType, final Map<String, Type> typeVariables){
+		//loop through all type arguments and replace type variables with the actually known types
+		final DynamicArray<Class> resolvedTypes = DynamicArray.create(Class.class);
+		for(final Type t : ancestorType.getActualTypeArguments()){
+			final String typeName = resolveArgumentType(typeVariables, t).getTypeName();
+			resolvedTypes.addIfNotNull(toClass(typeName));
+		}
+		return resolvedTypes;
 	}
 
 	private static <T> Map<String, Type> mapParameterTypes(final Class<? extends T> offspring, final Type[] actualArgs){
