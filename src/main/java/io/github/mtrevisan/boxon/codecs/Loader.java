@@ -143,7 +143,7 @@ final class Loader{
 	void addCodecs(final CodecInterface<?>... codecs){
 		Objects.requireNonNull(codecs, "Codecs cannot be null");
 
-		eventListener.loadingCodec();
+		eventListener.loadingCodec(codecs);
 
 		addCodecsInner(codecs);
 

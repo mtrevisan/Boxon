@@ -1,5 +1,6 @@
 package io.github.mtrevisan.boxon.external;
 
+import io.github.mtrevisan.boxon.codecs.CodecInterface;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,8 +43,14 @@ public final class EventLogger extends EventListener{
 	}
 
 	@Override
-	public void loadingCodec(){
-		info("Loading given codecs");
+	public void loadingCodec(final CodecInterface<?>[] codecs){
+		if(LOGGER.isInfoEnabled()){
+			final StringJoiner sj = new StringJoiner(", ", "[", "]");
+			for(final CodecInterface<?> codec : codecs)
+				sj.add(codec.getClass().getSimpleName());
+
+			info("Loading codecs: {}", sj.toString());
+		}
 	}
 
 	@Override
