@@ -242,8 +242,8 @@ class CodecArrayTest{
 			}
 		};
 
-		Loader loader = new Loader();
-		TemplateParser templateParser = new TemplateParser(loader);
+		Loader loader = Loader.create();
+		TemplateParser templateParser = TemplateParser.create(loader);
 		loader.loadDefaultCodecs();
 		ReflectionHelper.setFieldValue(codec, Loader.class, loader);
 		ReflectionHelper.setFieldValue(codec, TemplateParser.class, templateParser);

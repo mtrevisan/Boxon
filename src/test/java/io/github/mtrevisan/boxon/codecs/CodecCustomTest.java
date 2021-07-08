@@ -76,8 +76,7 @@ class CodecCustomTest{
 
 	@Test
 	void customAnnotation() throws FieldException{
-		Loader loader = new Loader();
-		TemplateParser templateParser = new TemplateParser(loader);
+		Loader loader = Loader.create();
 		loader.addCodecs(new VariableLengthByteArray());
 
 		CodecInterface<?> codec = loader.getCodec(VarLengthEncoded.class);

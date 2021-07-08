@@ -313,10 +313,7 @@ public final class BitReader extends BitReaderData{
 
 			text = baos.toString(charset);
 		}
-		catch(final IOException e){
-			//should not happen
-			LOGGER.error("Error while reading bytes", e);
-		}
+		catch(final IOException ignored){}
 		return text;
 	}
 

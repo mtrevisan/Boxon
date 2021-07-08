@@ -31,6 +31,9 @@ import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
+import io.github.mtrevisan.boxon.internal.EventListener;
+import io.github.mtrevisan.boxon.internal.ReflectionHelper;
+import io.github.mtrevisan.boxon.internal.ReflectiveClassLoader;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -47,8 +50,8 @@ import java.util.Objects;
  */
 public final class Parser{
 
-	private final Loader loader = new Loader();
-	private final TemplateParser templateParser = new TemplateParser(loader);
+	private final Loader loader;
+	private final TemplateParser templateParser;
 
 
 	/**
@@ -58,11 +61,38 @@ public final class Parser{
 	 * @return	A basic empty parser.
 	 */
 	public static Parser create(){
-		return new Parser();
+		return new Parser(EventListener.getNoOpInstance());
+	}
+
+	/**
+	 * Create an empty parser (context, codecs and templates MUST BE manually loaded! -- templates MUST BE loaded AFTER
+	 * the codecs).
+	 *
+	 * @param eventListener	The event listener.
+	 * @return	A basic empty parser.
+	 */
+	public static Parser create(final EventListener eventListener){
+		return new Parser(eventListener != null? eventListener: EventListener.getNoOpInstance());
 	}
 
 
-	private Parser(){}
+	private Parser(final EventListener eventListener){
+		injectEventListener(eventListener);
+
+		loader = Loader.create(eventListener);
+		templateParser = new TemplateParser(loader, eventListener);
+	}
+
+	private void injectEventListener(final EventListener eventListener){
+		final ReflectiveClassLoader reflectiveClassLoader = ReflectiveClassLoader.createFrom(CodecInterface.class);
+		reflectiveClassLoader.scan(CodecInterface.class);
+		@SuppressWarnings("unchecked")
+		final Collection<Class<?>> classes = reflectiveClassLoader.getImplementationsOf(CodecInterface.class);
+		for(final Class<?> cl : classes)
+			ReflectionHelper.setStaticFieldValue(cl, EventListener.class, eventListener);
+
+		ReflectionHelper.setStaticFieldValue(AnnotationValidator.class, EventListener.class, eventListener);
+	}
 
 	/**
 	 * Adds a key-value pair to the context of this evaluator.

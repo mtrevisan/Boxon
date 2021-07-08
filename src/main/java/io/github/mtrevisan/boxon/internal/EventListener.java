@@ -25,8 +25,49 @@
 package io.github.mtrevisan.boxon.internal;
 
 
-public interface EventListener{
+public class EventListener{
 
-	//TODO
+	private static class SingletonHelper{
+		private static final EventListener INSTANCE = new EventListener();
+	}
+
+
+	public static EventListener getNoOpInstance(){
+		return EventListener.SingletonHelper.INSTANCE;
+	}
+
+
+	public void loadingCodecs(final Class<?>[] basePackageClasses){}
+
+	public void loadingCodec(){}
+
+	public void loadedCodecs(final int count){}
+
+	public void cannotCreateCodec(final String codecClassName){}
+
+
+	public void loadingTemplates(final Class<?>[] basePackageClasses){}
+
+	public void loadedTemplates(final int count){}
+
+	public void cannotLoadTemplate(final String templateClassName, final Exception exception){}
+
+
+	public void uselessAlternative(final String defaultAlternativeClassName){}
+
+	public void processingAlternative(final Exception exception){}
+
+
+	public void decodingField(final String templateName, final String fieldName, final String bindingTypeName){}
+
+	public void decodedField(final String templateName, final String fieldName, final Object value){}
+
+	public void evaluatingField(final String templateName, final String fieldName){}
+
+	public void evaluatedField(final String templateName, final String fieldName, final Object value){}
+
+	public void writingField(final String templateName, final String fieldName, final String bindingTypeName){}
+
+	public void writtenField(final String templateName, final String fieldName, final Object value){}
 
 }

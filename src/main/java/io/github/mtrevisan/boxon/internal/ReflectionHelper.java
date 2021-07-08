@@ -24,8 +24,6 @@
  */
 package io.github.mtrevisan.boxon.internal;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.objenesis.instantiator.ObjectInstantiator;
 import org.springframework.objenesis.instantiator.android.Android10Instantiator;
 import org.springframework.objenesis.instantiator.android.Android17Instantiator;
@@ -64,8 +62,6 @@ import java.util.function.Supplier;
  */
 public final class ReflectionHelper{
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(ReflectionHelper.class);
-
 	private static final ClassLoader CLASS_LOADER = ReflectionHelper.class.getClassLoader();
 	private static final String ARRAY_VARIABLE = "[]";
 
@@ -101,11 +97,6 @@ public final class ReflectionHelper{
 		}
 		catch(final ClassNotFoundException ignored){}
 		return classes;
-	}
-
-	public static int extractCallerLineNumber(){
-		final StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-		return stackTrace[1].getLineNumber();
 	}
 
 
@@ -214,9 +205,7 @@ public final class ReflectionHelper{
 			try{
 				cls = CLASS_LOADER.loadClass(baseName);
 			}
-			catch(final ClassNotFoundException e){
-				LOGGER.warn("Cannot convert type name to class: {}", name, e);
-			}
+			catch(final ClassNotFoundException ignored){}
 		}
 
 		//if we have an array get the array class
@@ -240,7 +229,7 @@ public final class ReflectionHelper{
 			return (T)field.get(obj);
 		}
 		catch(final IllegalAccessException e){
-			//should not happen
+			//should never happen
 			throw new IllegalArgumentException(e);
 		}
 	}
@@ -372,9 +361,8 @@ public final class ReflectionHelper{
 			try{
 				return constructor.newInstance();
 			}
-			catch(final Exception e){
-				//should not happen
-				LOGGER.error("Error while creating supplier", e);
+			catch(final Exception ignored){
+				//should never happen
 				return null;
 			}
 		};

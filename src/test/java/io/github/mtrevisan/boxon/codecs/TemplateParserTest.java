@@ -52,8 +52,8 @@ class TemplateParserTest{
 		byte[] payload = JavaHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		BitReader reader = BitReader.wrap(payload);
 
-		Loader loader = new Loader();
-		TemplateParser templateParser = new TemplateParser(loader);
+		Loader loader = Loader.create();
+		TemplateParser templateParser = TemplateParser.create(loader);
 		loader.loadDefaultCodecs();
 		Template<ACKMessageHex> template = loader.createTemplate(ACKMessageHex.class);
 
@@ -83,8 +83,8 @@ class TemplateParserTest{
 		byte[] payload = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
 		BitReader reader = BitReader.wrap(payload);
 
-		Loader loader = new Loader();
-		TemplateParser templateParser = new TemplateParser(loader);
+		Loader loader = Loader.create();
+		TemplateParser templateParser = TemplateParser.create(loader);
 		loader.loadDefaultCodecs();
 		Template<ACKMessageASCII> template = loader.createTemplate(ACKMessageASCII.class);
 
@@ -125,8 +125,8 @@ class TemplateParserTest{
 		byte[] payload = JavaHelper.toByteArray("746335011234");
 		BitReader reader = BitReader.wrap(payload);
 
-		Loader loader = new Loader();
-		TemplateParser templateParser = new TemplateParser(loader);
+		Loader loader = Loader.create();
+		TemplateParser templateParser = TemplateParser.create(loader);
 		loader.loadDefaultCodecs();
 		Template<TestError1> template = loader.createTemplate(TestError1.class);
 
@@ -161,8 +161,8 @@ class TemplateParserTest{
 		byte[] payload = JavaHelper.toByteArray("74633501");
 		BitReader reader = BitReader.wrap(payload);
 
-		Loader loader = new Loader();
-		TemplateParser templateParser = new TemplateParser(loader);
+		Loader loader = Loader.create();
+		TemplateParser templateParser = TemplateParser.create(loader);
 		loader.loadDefaultCodecs();
 		Template<TestError3> template = loader.createTemplate(TestError3.class);
 
@@ -197,8 +197,8 @@ class TemplateParserTest{
 		byte[] payload = JavaHelper.toByteArray("74633501");
 		BitReader reader = BitReader.wrap(payload);
 
-		Loader loader = new Loader();
-		TemplateParser templateParser = new TemplateParser(loader);
+		Loader loader = Loader.create();
+		TemplateParser templateParser = TemplateParser.create(loader);
 		loader.loadDefaultCodecs();
 		Template<TestError4> template = loader.createTemplate(TestError4.class);
 
@@ -232,8 +232,8 @@ class TemplateParserTest{
 		byte[] payload = JavaHelper.toByteArray("746D310102016162");
 		BitReader reader = BitReader.wrap(payload);
 
-		Loader loader = new Loader();
-		TemplateParser templateParser = new TemplateParser(loader);
+		Loader loader = Loader.create();
+		TemplateParser templateParser = TemplateParser.create(loader);
 		loader.loadDefaultCodecs();
 		Template<TestComposition1> template = loader.createTemplate(TestComposition1.class);
 
@@ -292,8 +292,8 @@ class TemplateParserTest{
 		byte[] payload = JavaHelper.toByteArray("746D3201016162");
 		BitReader reader = BitReader.wrap(payload);
 
-		Loader loader = new Loader();
-		TemplateParser templateParser = new TemplateParser(loader);
+		Loader loader = Loader.create();
+		TemplateParser templateParser = TemplateParser.create(loader);
 		loader.loadDefaultCodecs();
 		Template<TestComposition2> template = loader.createTemplate(TestComposition2.class);
 
@@ -317,8 +317,8 @@ class TemplateParserTest{
 		byte[] payload = JavaHelper.toByteArray("7463320202616263");
 		BitReader reader = BitReader.wrap(payload);
 
-		Loader loader = new Loader();
-		TemplateParser templateParser = new TemplateParser(loader);
+		Loader loader = Loader.create();
+		TemplateParser templateParser = TemplateParser.create(loader);
 		loader.loadDefaultCodecs();
 		Template<TestComposition2> template = loader.createTemplate(TestComposition2.class);
 

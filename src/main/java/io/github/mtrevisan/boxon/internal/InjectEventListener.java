@@ -32,9 +32,9 @@ import java.lang.annotation.Target;
 
 
 /**
- * Defines a class which uses the {@link EventListener event listener}.
+ * Defines a field that has to be injected with an {@link EventListener event listener}.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
+@Target(ElementType.FIELD)
 @Documented
-public @interface Event{}
+public @interface InjectEventListener{}

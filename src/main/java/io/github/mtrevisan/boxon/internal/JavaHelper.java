@@ -26,35 +26,12 @@ package io.github.mtrevisan.boxon.internal;
 
 import org.slf4j.helpers.MessageFormatter;
 
-import java.util.Collection;
 import java.util.Locale;
 
 
 public final class JavaHelper{
 
-	static{
-		try{
-			//check whether an optional SLF4J binding is available
-			Class.forName("org.slf4j.impl.StaticLoggerBinder");
-		}
-		catch(final LinkageError | ClassNotFoundException ignored){
-			System.out.println("[WARN] SLF4J: No logger is defined, NO LOG will be printed!");
-		}
-	}
-
-
 	private JavaHelper(){}
-
-	//FIXME
-	public static void injectEventListener(final Class<?> basePackageClass, final EventListener listener){
-		final String packageName = basePackageClass.getPackageName();
-		final ReflectiveClassLoader reflectiveClassLoader = ReflectiveClassLoader.createFrom(basePackageClass);
-		reflectiveClassLoader.scan(Object.class);
-		@SuppressWarnings("unchecked")
-		final Collection<Class<?>> classes = reflectiveClassLoader.getTypesAnnotatedWith(Event.class);
-		for(final Class<?> cl : classes)
-			ReflectionHelper.setStaticFieldValue(cl, EventListener.class, listener);
-	}
 
 	public static String format(final String message, final Object... parameters){
 		return MessageFormatter.arrayFormat(message, parameters)

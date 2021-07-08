@@ -143,9 +143,9 @@ class CodecObjectTest{
 			}
 		};
 
-		Loader loader = new Loader();
+		Loader loader = Loader.create();
 		loader.loadDefaultCodecs();
-		TemplateParser templateParser = new TemplateParser(loader);
+		TemplateParser templateParser = TemplateParser.create(loader);
 		ReflectionHelper.setFieldValue(codec, Loader.class, loader);
 		ReflectionHelper.setFieldValue(codec, TemplateParser.class, templateParser);
 		BitWriter writer = BitWriter.create();

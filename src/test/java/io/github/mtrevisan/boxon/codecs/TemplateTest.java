@@ -169,7 +169,7 @@ class TemplateTest{
 	@Test
 	@SuppressWarnings("SimplifiableAssertion")
 	void creation() throws AnnotationException{
-		Loader loader = new Loader();
+		Loader loader = Loader.create();
 		loader.loadDefaultCodecs();
 		Template<Message> template = loader.createTemplate(Message.class);
 
@@ -237,7 +237,7 @@ class TemplateTest{
 
 	@Test
 	void inheritance() throws AnnotationException{
-		Loader loader = new Loader();
+		Loader loader = Loader.create();
 		loader.loadDefaultCodecs();
 		Template<MessageChild> template = loader.createTemplate(MessageChild.class);
 
