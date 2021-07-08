@@ -1,5 +1,6 @@
-package io.github.mtrevisan.boxon.internal;
+package io.github.mtrevisan.boxon.external;
 
+import io.github.mtrevisan.boxon.internal.JavaHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -137,7 +138,7 @@ public final class EventLogger extends EventListener{
 	}
 
 	private void info(final String message, final Object... parameters){
-		LOGGER.warn(composeMessage(message, parameters));
+		LOGGER.info(composeMessage(message, parameters));
 	}
 
 	private String composeMessage(final String message, final Object... parameters){

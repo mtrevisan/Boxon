@@ -24,6 +24,8 @@
  */
 package io.github.mtrevisan.boxon.internal;
 
+import io.github.mtrevisan.boxon.external.EventListener;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
