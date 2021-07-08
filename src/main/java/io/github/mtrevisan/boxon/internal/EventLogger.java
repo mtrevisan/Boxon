@@ -141,26 +141,22 @@ public final class EventLogger extends EventListener{
 	}
 
 	private String composeMessage(final String message, final Object... parameters){
-		Class<?> callerClass = null;
-		int callerLineNumber = -1;
+		final StringBuilder sb = new StringBuilder();
 		try{
 			final StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-			callerClass = Class.forName(stackTrace[3].getClassName());
-			callerLineNumber = stackTrace[3].getLineNumber();
-		}
-		catch(final ClassNotFoundException ignored){}
+			final Class<?> callerClass = Class.forName(stackTrace[3].getClassName());
+			final int callerLineNumber = stackTrace[3].getLineNumber();
 
-		final StringBuilder sb = new StringBuilder();
-		if(callerClass != null){
 			sb.append('(')
 				.append(callerClass.getSimpleName());
 			if(callerLineNumber >= 0)
 				sb.append(':')
 					.append(callerLineNumber);
-			if(sb.length() > 0)
-				sb.append(')')
-					.append(' ');
+			sb.append(')')
+				.append(' ');
 		}
+		catch(final ClassNotFoundException ignored){}
+
 		if(message != null)
 			sb.append(message);
 
