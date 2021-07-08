@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020 Mauro Trevisan
+ * Copyright (c) 2020-2021 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -30,17 +30,6 @@ import java.util.Locale;
 
 
 public final class JavaHelper{
-
-	static{
-		try{
-			//check whether an optional SLF4J binding is available
-			Class.forName("org.slf4j.impl.StaticLoggerBinder");
-		}
-		catch(final LinkageError | ClassNotFoundException ignored){
-			System.out.println("[WARN] SLF4J: No logger is defined, NO LOG will be printed!");
-		}
-	}
-
 
 	private JavaHelper(){}
 

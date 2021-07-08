@@ -22,25 +22,21 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.codecs;
+package io.github.mtrevisan.boxon.internal;
 
-import io.github.mtrevisan.boxon.exceptions.FieldException;
-import io.github.mtrevisan.boxon.external.BitReader;
-import io.github.mtrevisan.boxon.external.BitWriter;
+import io.github.mtrevisan.boxon.external.EventListener;
 
-import java.lang.annotation.Annotation;
-
-
-public interface CodecInterface<B extends Annotation>{
-
-	Object decode(final BitReader reader, final Annotation annotation, final Object rootObject) throws FieldException;
-
-	void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value) throws FieldException;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 
-	@SuppressWarnings("unchecked")
-	default B extractBinding(final Annotation annotation){
-		return (B)annotation;
-	}
-
-}
+/**
+ * Defines a field that has to be injected with an {@link EventListener event listener}.
+ */
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
+@Documented
+public @interface InjectEventListener{}

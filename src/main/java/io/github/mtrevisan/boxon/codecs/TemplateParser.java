@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020 Mauro Trevisan
+ * Copyright (c) 2020-2021 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -36,10 +36,10 @@ import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitSet;
 import io.github.mtrevisan.boxon.external.BitWriter;
 import io.github.mtrevisan.boxon.internal.DynamicArray;
+import io.github.mtrevisan.boxon.external.EventListener;
+import io.github.mtrevisan.boxon.internal.InjectEventListener;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.ReflectionHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
@@ -49,7 +49,9 @@ import java.util.Locale;
 
 final class TemplateParser{
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(TemplateParser.class);
+	@InjectEventListener
+	@SuppressWarnings("unused")
+	private static EventListener eventListener;
 
 	private static final class ParserContext<T>{
 
@@ -71,8 +73,31 @@ final class TemplateParser{
 	private final Loader loader;
 
 
-	TemplateParser(final Loader loader){
+	/**
+	 * Create a template parser.
+	 *
+	 * @param loader	A loader.
+	 * @return	A template parser.
+	 */
+	public static TemplateParser create(final Loader loader){
+		return new TemplateParser(loader, EventListener.getNoOpInstance());
+	}
+
+	/**
+	 * Create a template parser.
+	 *
+	 * @param loader	A loader.
+	 * @param eventListener	The event listener.
+	 * @return	A template parser.
+	 */
+	public static TemplateParser create(final Loader loader, final EventListener eventListener){
+		return new TemplateParser(loader, (eventListener != null? eventListener: EventListener.getNoOpInstance()));
+	}
+
+
+	TemplateParser(final Loader loader, final EventListener eventListener){
 		this.loader = loader;
+		this.eventListener = eventListener;
 	}
 
 	<T> T decode(final Template<T> template, final BitReader reader, final Object parentObject) throws FieldException{
@@ -115,14 +140,14 @@ final class TemplateParser{
 			final Annotation binding = field.getBinding();
 			final CodecInterface<?> codec = retrieveCodec(binding.annotationType());
 
-			LOGGER.trace("reading {}.{} with bind {}", template, field.getFieldName(), binding.annotationType().getSimpleName());
+			eventListener.decodingField(template.toString(), field.getFieldName(), binding.annotationType().getSimpleName());
 
 			//decode value from raw message
 			final Object value = codec.decode(reader, binding, parserContext.rootObject);
 			//store value in the current object
 			field.setFieldValue(parserContext.currentObject, value);
 
-			LOGGER.trace("read {}.{} = {}", template, field.getFieldName(), value);
+			eventListener.decodedField(template.toString(), field.getFieldName(), value);
 		}
 		catch(final CodecException | AnnotationException | TemplateException e){
 			e.setClassNameAndFieldName(template.getType().getName(), field.getFieldName());
@@ -194,12 +219,12 @@ final class TemplateParser{
 			final EvaluatedField field = evaluatedFields.data[i];
 			final boolean process = Evaluator.evaluateBoolean(field.getBinding().condition(), parserContext.rootObject);
 			if(process){
-				LOGGER.trace("evaluating {}.{}", template.getType().getName(), field.getFieldName());
+				eventListener.evaluatingField(template.getType().getName(), field.getFieldName());
 
 				final Object value = Evaluator.evaluate(field.getBinding().value(), parserContext.rootObject, field.getFieldType());
 				field.setFieldValue(parserContext.currentObject, value);
 
-				LOGGER.trace("wrote {}.{} = {}", template.getType().getName(), field.getFieldName(), value);
+				eventListener.evaluatedField(template.getType().getName(), field.getFieldName(), value);
 			}
 		}
 	}
@@ -236,15 +261,14 @@ final class TemplateParser{
 			final Annotation binding = field.getBinding();
 			final CodecInterface<?> codec = retrieveCodec(binding.annotationType());
 
-			LOGGER.trace("writing {}.{} with bind {}", template.getType().getName(), field.getFieldName(),
-				binding.annotationType().getSimpleName());
+			eventListener.writingField(template.getType().getName(), field.getFieldName(), binding.annotationType().getSimpleName());
 
 			//encode value from current object
 			final Object value = field.getFieldValue(parserContext.currentObject);
 			//write value to raw message
 			codec.encode(writer, binding, parserContext.rootObject, value);
 
-			LOGGER.trace("wrote {}.{} = {}", template.getType().getName(), field.getFieldName(), value);
+			eventListener.writtenField(template.getType().getName(), field.getFieldName(), value);
 		}
 		catch(final CodecException | AnnotationException e){
 			e.setClassNameAndFieldName(template.getType().getName(), field.getFieldName());

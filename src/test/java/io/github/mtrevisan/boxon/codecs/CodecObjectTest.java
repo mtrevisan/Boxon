@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020 Mauro Trevisan
+ * Copyright (c) 2020-2021 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -143,9 +143,9 @@ class CodecObjectTest{
 			}
 		};
 
-		Loader loader = new Loader();
+		Loader loader = Loader.create();
 		loader.loadDefaultCodecs();
-		TemplateParser templateParser = new TemplateParser(loader);
+		TemplateParser templateParser = TemplateParser.create(loader);
 		ReflectionHelper.setFieldValue(codec, Loader.class, loader);
 		ReflectionHelper.setFieldValue(codec, TemplateParser.class, templateParser);
 		BitWriter writer = BitWriter.create();

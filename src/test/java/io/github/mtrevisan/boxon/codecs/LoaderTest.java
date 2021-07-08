@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020 Mauro Trevisan
+ * Copyright (c) 2020-2021 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -37,13 +37,13 @@ class LoaderTest{
 
 	@Test
 	void loadFromMap(){
-		Loader loader = new Loader();
+		Loader loader = Loader.create();
 		loader.loadDefaultCodecs();
 	}
 
 	@Test
 	void loadFromScan() throws AnnotationException, TemplateException{
-		Loader loader = new Loader();
+		Loader loader = Loader.create();
 		loader.loadDefaultCodecs();
 
 		loader.loadDefaultTemplates();
@@ -51,7 +51,7 @@ class LoaderTest{
 
 	@Test
 	void loadFromScanWithBasePackage() throws AnnotationException, TemplateException{
-		Loader loader = new Loader();
+		Loader loader = Loader.create();
 		loader.loadDefaultCodecs();
 
 		loader.loadTemplates(LoaderTest.class);
@@ -59,7 +59,7 @@ class LoaderTest{
 
 	@Test
 	void loadCodecsAfterTemplates(){
-		Loader loader = new Loader();
+		Loader loader = Loader.create();
 		Exception e = Assertions.assertThrows(AnnotationException.class,
 			() -> loader.loadTemplates(LoaderTest.class));
 		Assertions.assertTrue(e.getMessage().startsWith("No data can be extracted from this class: "));
@@ -67,7 +67,7 @@ class LoaderTest{
 
 	@Test
 	void loadTemplate() throws AnnotationException, TemplateException{
-		Loader loader = new Loader();
+		Loader loader = Loader.create();
 		loader.loadDefaultCodecs();
 		loader.loadTemplates(LoaderTest.class);
 
@@ -81,7 +81,7 @@ class LoaderTest{
 
 	@Test
 	void cannotLoadTemplate() throws AnnotationException, TemplateException{
-		Loader loader = new Loader();
+		Loader loader = Loader.create();
 		loader.loadDefaultCodecs();
 		loader.loadTemplates(LoaderTest.class);
 
@@ -92,7 +92,7 @@ class LoaderTest{
 
 	@Test
 	void findNextTemplate() throws AnnotationException, TemplateException{
-		Loader loader = new Loader();
+		Loader loader = Loader.create();
 		loader.loadDefaultCodecs();
 		loader.loadTemplates(LoaderTest.class);
 
@@ -105,7 +105,7 @@ class LoaderTest{
 
 	@Test
 	void cannotFindNextTemplate() throws AnnotationException, TemplateException{
-		Loader loader = new Loader();
+		Loader loader = Loader.create();
 		loader.loadDefaultCodecs();
 		loader.loadTemplates(LoaderTest.class);
 

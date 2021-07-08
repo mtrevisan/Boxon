@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020 Mauro Trevisan
+ * Copyright (c) 2020-2021 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -24,8 +24,6 @@
  */
 package io.github.mtrevisan.boxon.internal;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.objenesis.instantiator.ObjectInstantiator;
 import org.springframework.objenesis.instantiator.android.Android10Instantiator;
 import org.springframework.objenesis.instantiator.android.Android17Instantiator;
@@ -63,8 +61,6 @@ import java.util.function.Supplier;
  * @see <a href="https://bill.burkecentral.com/2008/01/14/scanning-java-annotations-at-runtime/">Scanning Java Annotations at Runtime</a>
  */
 public final class ReflectionHelper{
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(ReflectionHelper.class);
 
 	private static final ClassLoader CLASS_LOADER = ReflectionHelper.class.getClassLoader();
 	private static final String ARRAY_VARIABLE = "[]";
@@ -154,12 +150,7 @@ public final class ReflectionHelper{
 		final DynamicArray<Class> types = DynamicArray.create(Class.class);
 		final Type rawType = ancestorType.getRawType();
 		if(rawType instanceof Class<?> && base.isAssignableFrom((Class<?>)rawType)){
-			//loop through all type arguments and replace type variables with the actually known types
-			final DynamicArray<Class> resolvedTypes = DynamicArray.create(Class.class);
-			for(final Type t : ancestorType.getActualTypeArguments()){
-				final String typeName = resolveArgumentType(typeVariables, t).getTypeName();
-				resolvedTypes.addIfNotNull(toClass(typeName));
-			}
+			final DynamicArray<Class> resolvedTypes = populateResolvedTypes(ancestorType, typeVariables);
 
 			@SuppressWarnings("unchecked")
 			final Class<?>[] result = resolveGenericTypes((Class<? extends T>)rawType, base, resolvedTypes.extractCopy());
@@ -167,6 +158,16 @@ public final class ReflectionHelper{
 				types.addAll(result, result.length);
 		}
 		return types;
+	}
+
+	private static DynamicArray<Class> populateResolvedTypes(final ParameterizedType ancestorType, final Map<String, Type> typeVariables){
+		//loop through all type arguments and replace type variables with the actually known types
+		final DynamicArray<Class> resolvedTypes = DynamicArray.create(Class.class);
+		for(final Type t : ancestorType.getActualTypeArguments()){
+			final String typeName = resolveArgumentType(typeVariables, t).getTypeName();
+			resolvedTypes.addIfNotNull(toClass(typeName));
+		}
+		return resolvedTypes;
 	}
 
 	private static <T> Map<String, Type> mapParameterTypes(final Class<? extends T> offspring, final Type[] actualArgs){
@@ -209,9 +210,7 @@ public final class ReflectionHelper{
 			try{
 				cls = CLASS_LOADER.loadClass(baseName);
 			}
-			catch(final ClassNotFoundException e){
-				LOGGER.warn("Cannot convert type name to class: {}", name, e);
-			}
+			catch(final ClassNotFoundException ignored){}
 		}
 
 		//if we have an array get the array class
@@ -235,7 +234,7 @@ public final class ReflectionHelper{
 			return (T)field.get(obj);
 		}
 		catch(final IllegalAccessException e){
-			//should not happen
+			//should never happen
 			throw new IllegalArgumentException(e);
 		}
 	}
@@ -255,6 +254,15 @@ public final class ReflectionHelper{
 			final DynamicArray<Field> fields = getAccessibleFields(obj.getClass(), fieldType);
 			for(int i = 0; i < fields.limit; i ++)
 				fields.data[i].set(obj, value);
+		}
+		catch(final IllegalArgumentException | IllegalAccessException ignored){}
+	}
+
+	public static <T> void setStaticFieldValue(final Class<?> cl, final Class<T> fieldType, final T value){
+		try{
+			final DynamicArray<Field> fields = getAccessibleFields(cl, fieldType);
+			for(int i = 0; i < fields.limit; i ++)
+				fields.data[i].set(null, value);
 		}
 		catch(final IllegalArgumentException | IllegalAccessException ignored){}
 	}
@@ -358,9 +366,8 @@ public final class ReflectionHelper{
 			try{
 				return constructor.newInstance();
 			}
-			catch(final Exception e){
-				//should not happen
-				LOGGER.error("Error while creating supplier", e);
+			catch(final Exception ignored){
+				//should never happen
 				return null;
 			}
 		};

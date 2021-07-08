@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020 Mauro Trevisan
+ * Copyright (c) 2020-2021 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -169,7 +169,7 @@ class TemplateTest{
 	@Test
 	@SuppressWarnings("SimplifiableAssertion")
 	void creation() throws AnnotationException{
-		Loader loader = new Loader();
+		Loader loader = Loader.create();
 		loader.loadDefaultCodecs();
 		Template<Message> template = loader.createTemplate(Message.class);
 
@@ -237,7 +237,7 @@ class TemplateTest{
 
 	@Test
 	void inheritance() throws AnnotationException{
-		Loader loader = new Loader();
+		Loader loader = Loader.create();
 		loader.loadDefaultCodecs();
 		Template<MessageChild> template = loader.createTemplate(MessageChild.class);
 

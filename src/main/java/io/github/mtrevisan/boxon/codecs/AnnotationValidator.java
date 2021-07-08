@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020 Mauro Trevisan
+ * Copyright (c) 2020-2021 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -33,9 +33,9 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.external.EventListener;
+import io.github.mtrevisan.boxon.internal.InjectEventListener;
 import io.github.mtrevisan.boxon.internal.ParserDataType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
@@ -122,7 +122,8 @@ enum AnnotationValidator{
 	};
 
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(AnnotationValidator.class);
+	@InjectEventListener
+	private static final EventListener eventListener = EventListener.getNoOpInstance();
 
 	private static final Map<Class<? extends Annotation>, AnnotationValidator> ANNOTATION_VALIDATORS = new HashMap<>(5);
 	static{
@@ -185,8 +186,7 @@ enum AnnotationValidator{
 	private static void validateObjectDefaultAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> type,
 			final Class<?> selectDefault) throws AnnotationException{
 		if(selectDefault != void.class && alternatives.length == 0)
-			LOGGER.warn("Useless definition of default alternative ({}) due to no alternatives present on @BindArray or @BindObject",
-				selectDefault.getSimpleName());
+			eventListener.uselessAlternative(selectDefault.getSimpleName());
 		if(selectDefault != void.class && !type.isAssignableFrom(selectDefault))
 			throw AnnotationException.create("Type of default alternative cannot be assigned to (super) type of annotation");
 	}

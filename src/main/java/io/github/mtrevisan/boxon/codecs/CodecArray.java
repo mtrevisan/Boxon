@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020 Mauro Trevisan
+ * Copyright (c) 2020-2021 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -33,9 +33,9 @@ import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
+import io.github.mtrevisan.boxon.internal.InjectEventListener;
+import io.github.mtrevisan.boxon.external.EventListener;
 import io.github.mtrevisan.boxon.internal.ParserDataType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
@@ -43,7 +43,9 @@ import java.lang.reflect.Array;
 
 final class CodecArray implements CodecInterface<BindArray>{
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(CodecArray.class);
+	@InjectEventListener
+	@SuppressWarnings("unused")
+	private static EventListener eventListener;
 
 
 	/** Automatically injected by {@link TemplateParser} */
@@ -103,8 +105,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 				array[i] = templateParser.decode(subTemplate, reader, rootObject);
 			}
 			catch(final Exception e){
-				LOGGER.trace("Error while processing alternative", e);
-				LOGGER.warn(e.getMessage() != null? e.getMessage(): e.getClass().getSimpleName());
+				eventListener.processingAlternative(e);
 			}
 		}
 	}

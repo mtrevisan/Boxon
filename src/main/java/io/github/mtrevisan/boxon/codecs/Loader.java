@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020 Mauro Trevisan
+ * Copyright (c) 2020-2021 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -29,6 +29,8 @@ import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.internal.DynamicArray;
+import io.github.mtrevisan.boxon.external.EventListener;
+import io.github.mtrevisan.boxon.internal.InjectEventListener;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.Memoizer;
 import io.github.mtrevisan.boxon.internal.ReflectionHelper;
@@ -36,8 +38,6 @@ import io.github.mtrevisan.boxon.internal.ReflectiveClassLoader;
 import io.github.mtrevisan.boxon.internal.ThrowingFunction;
 import io.github.mtrevisan.boxon.internal.matchers.BNDMPatternMatcher;
 import io.github.mtrevisan.boxon.internal.matchers.PatternMatcher;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
@@ -48,14 +48,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
-import java.util.StringJoiner;
 import java.util.TreeMap;
 import java.util.function.Function;
 
 
 final class Loader{
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(Loader.class);
+	@InjectEventListener
+	private static EventListener eventListener;
 
 	private final ThrowingFunction<Class<?>, Template<?>, AnnotationException> templateStore = Memoizer.throwingMemoize(
 		type -> new Template<>(type, this::filterAnnotationsWithCodec));
@@ -67,6 +67,30 @@ final class Loader{
 		.thenComparing(String::compareTo));
 	private final Map<Class<?>, CodecInterface<?>> codecs = new HashMap<>(0);
 
+
+	/**
+	 * Create a loader.
+	 *
+	 * @return	A loader.
+	 */
+	public static Loader create(){
+		return new Loader(EventListener.getNoOpInstance());
+	}
+
+	/**
+	 * Create a loader.
+	 *
+	 * @param eventListener	The event listener.
+	 * @return	A loader.
+	 */
+	public static Loader create(final EventListener eventListener){
+		return new Loader(eventListener != null? eventListener: EventListener.getNoOpInstance());
+	}
+
+
+	private Loader(final EventListener eventListener){
+		this.eventListener = eventListener;
+	}
 
 	/**
 	 * Loads all the codecs that extends {@link CodecInterface}.
@@ -82,12 +106,7 @@ final class Loader{
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load codecs.
 	 */
 	void loadCodecs(final Class<?>... basePackageClasses){
-		if(LOGGER.isInfoEnabled()){
-			final StringJoiner sj = new StringJoiner(", ", "[", "]");
-			for(final Class<?> basePackageClass : basePackageClasses)
-				sj.add(basePackageClass.getPackageName());
-			LOGGER.info("Load codecs from package(s) {}", sj);
-		}
+		eventListener.loadingCodecs(basePackageClasses);
 
 		/** extract all classes that implements {@link CodecInterface}. */
 		final Collection<Class<?>> derivedClasses = extractClasses(CodecInterface.class, basePackageClasses);
@@ -95,7 +114,7 @@ final class Loader{
 		final DynamicArray<CodecInterface> codecs = extractCodecs(derivedClasses);
 		addCodecsInner(codecs.data);
 
-		LOGGER.trace("Codecs loaded are {}", codecs.limit);
+		eventListener.loadedCodecs(codecs.limit);
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -110,7 +129,7 @@ final class Loader{
 				codecs.add(codec);
 			else
 				//... otherwise warn
-				LOGGER.warn("Cannot create an instance of codec {}", type.getSimpleName());
+				eventListener.cannotCreateCodec(type.getSimpleName());
 		}
 		return codecs;
 	}
@@ -124,11 +143,11 @@ final class Loader{
 	void addCodecs(final CodecInterface<?>... codecs){
 		Objects.requireNonNull(codecs, "Codecs cannot be null");
 
-		LOGGER.info("Load given codecs");
+		eventListener.loadingCodec(codecs);
 
 		addCodecsInner(codecs);
 
-		LOGGER.trace("Codecs loaded are {}", codecs.length);
+		eventListener.loadedCodecs(codecs.length);
 	}
 
 	private void addCodecsInner(final CodecInterface<?>[] codecs){
@@ -176,12 +195,7 @@ final class Loader{
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
 	 */
 	void loadTemplates(final Class<?>... basePackageClasses) throws AnnotationException, TemplateException{
-		if(LOGGER.isInfoEnabled()){
-			final StringJoiner sj = new StringJoiner(", ", "[", "]");
-			for(final Class<?> basePackageClass : basePackageClasses)
-				sj.add(basePackageClass.getPackageName());
-			LOGGER.info("Load templates from package(s) {}", sj);
-		}
+		eventListener.loadingTemplates(basePackageClasses);
 
 		/** extract all classes annotated with {@link MessageHeader}. */
 		final Collection<Class<?>> annotatedClasses = extractClasses(MessageHeader.class, basePackageClasses);
@@ -189,7 +203,7 @@ final class Loader{
 		final DynamicArray<Template> templates = extractTemplates(annotatedClasses);
 		addTemplatesInner(templates);
 
-		LOGGER.trace("Templates loaded are {}", templates.limit);
+		eventListener.loadedTemplates(templates.limit);
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -246,7 +260,7 @@ final class Loader{
 				loadTemplateInner(template, start, charset);
 		}
 		catch(final Exception e){
-			LOGGER.error("Cannot load class {}", template.getType().getName(), e);
+			eventListener.cannotLoadTemplate(template.getType().getName(), e);
 		}
 	}
 
