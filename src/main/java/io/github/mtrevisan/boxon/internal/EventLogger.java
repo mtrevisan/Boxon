@@ -36,12 +36,8 @@ public final class EventLogger extends EventListener{
 
 	@Override
 	public void loadingCodecs(final Class<?>[] basePackageClasses){
-		if(LOGGER.isInfoEnabled()){
-			final StringJoiner sj = new StringJoiner(", ", "[", "]");
-			for(final Class<?> basePackageClass : basePackageClasses)
-				sj.add(basePackageClass.getPackageName());
-			info("Load codecs from package(s) {}", sj);
-		}
+		if(LOGGER.isInfoEnabled())
+			info("Load codecs from package(s) {}", joinPackageNames(basePackageClasses));
 	}
 
 	@Override
@@ -62,12 +58,15 @@ public final class EventLogger extends EventListener{
 
 	@Override
 	public void loadingTemplates(final Class<?>[] basePackageClasses){
-		if(LOGGER.isInfoEnabled()){
-			final StringJoiner sj = new StringJoiner(", ", "[", "]");
-			for(final Class<?> basePackageClass : basePackageClasses)
-				sj.add(basePackageClass.getPackageName());
-			info("Load templates from package(s) {}", sj);
-		}
+		if(LOGGER.isInfoEnabled())
+			info("Load templates from package(s) {}", joinPackageNames(basePackageClasses));
+	}
+
+	private StringJoiner joinPackageNames(final Class<?>[] basePackageClasses){
+		final StringJoiner sj = new StringJoiner(", ", "[", "]");
+		for(final Class<?> basePackageClass : basePackageClasses)
+			sj.add(basePackageClass.getPackageName());
+		return sj;
 	}
 
 	@Override
