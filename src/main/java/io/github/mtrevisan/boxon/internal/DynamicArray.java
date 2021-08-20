@@ -43,7 +43,9 @@ public final class DynamicArray<T>{
 
 
 	public static <T> DynamicArray<T> wrap(final T[] array){
-		return new DynamicArray<>(array, GROWTH_RATE_DEFAULT);
+		final DynamicArray<T> wrapped = new DynamicArray<>(array, GROWTH_RATE_DEFAULT);
+		wrapped.limit = array.length;
+		return wrapped;
 	}
 
 	public static <T> DynamicArray<T> create(final Class<T> type){
@@ -66,7 +68,6 @@ public final class DynamicArray<T>{
 
 	private DynamicArray(final T[] array, final float growthRate){
 		data = array;
-		limit = array.length;
 
 		this.growthRate = growthRate;
 	}
