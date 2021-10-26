@@ -33,7 +33,7 @@ import java.util.function.Predicate;
 
 public final class DynamicArray<T>{
 
-	private static final float DEFAULT_GROWTH_RATE = 1.2f;
+	private static final float GROWTH_RATE_DEFAULT = 1.2f;
 
 
 	public T[] data;
@@ -43,31 +43,31 @@ public final class DynamicArray<T>{
 
 
 	public static <T> DynamicArray<T> wrap(final T[] array){
-		return new DynamicArray<>(array);
+		final DynamicArray<T> wrapped = new DynamicArray<>(array, GROWTH_RATE_DEFAULT);
+		wrapped.limit = array.length;
+		return wrapped;
 	}
 
 	public static <T> DynamicArray<T> create(final Class<T> type){
-		return new DynamicArray<>(type, 0, DEFAULT_GROWTH_RATE);
+		return new DynamicArray<>(type, 0, GROWTH_RATE_DEFAULT);
 	}
 
 	public static <T> DynamicArray<T> create(final Class<T> type, final int capacity){
-		return new DynamicArray<>(type, capacity, DEFAULT_GROWTH_RATE);
+		return new DynamicArray<>(type, capacity, GROWTH_RATE_DEFAULT);
 	}
 
 	public static <T> DynamicArray<T> create(final Class<T> type, final int capacity, final float growthRate){
 		return new DynamicArray<>(type, capacity, growthRate);
 	}
 
-	private DynamicArray(final T[] array){
-		data = array;
-		limit = array.length;
-
-		growthRate = DEFAULT_GROWTH_RATE;
-	}
 
 	@SuppressWarnings("unchecked")
 	private DynamicArray(final Class<T> type, final int capacity, final float growthRate){
-		data = (T[])Array.newInstance(type, capacity);
+		this((T[])Array.newInstance(type, capacity), growthRate);
+	}
+
+	private DynamicArray(final T[] array, final float growthRate){
+		data = array;
 
 		this.growthRate = growthRate;
 	}
@@ -94,15 +94,16 @@ public final class DynamicArray<T>{
 	}
 
 	/**
-	 * Appends all of the elements in the specified collection to the end of this array.
+	 * Appends all the elements in the specified collection to the end of this array.
 	 *
 	 * @param array	Collection containing elements to be added to this array.
 	 */
 	public void addAll(final DynamicArray<? extends T> array){
 		addAll(array.data, array.limit);
 	}
+
 	/**
-	 * Appends all of the elements in the specified collection to the end of this array.
+	 * Appends all the elements in the specified collection to the end of this array.
 	 *
 	 * @param array	Collection containing elements to be added to this array.
 	 * @param length	Length of the array.
@@ -115,7 +116,7 @@ public final class DynamicArray<T>{
 	}
 
 	/**
-	 * Inserts all of the elements in the specified collection into this array at the specified position.
+	 * Inserts all the elements in the specified collection into this array at the specified position.
 	 * <p>Shifts the element currently at that position (if any) and any subsequent elements to the right
 	 * (increases their indices).</p>
 	 *
@@ -175,13 +176,13 @@ public final class DynamicArray<T>{
 		return (limit == 0);
 	}
 
-	/** Removes all of the elements from this array. */
+	/** Removes all the elements from this array. */
 	private void reset(){
 		limit = 0;
 	}
 
 	/**
-	 * Removes all of the elements from this array.
+	 * Removes all the elements from this array.
 	 * <p>The array will be emptied after this call returns.</p>
 	 */
 	public void clear(){

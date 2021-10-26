@@ -47,6 +47,7 @@ public final class AnnotationException extends FieldException{
 		super(message);
 	}
 
+
 	@SuppressWarnings("unused")
 	private void writeObject(final ObjectOutputStream os) throws NotSerializableException{
 		throw new NotSerializableException(getClass().getName());

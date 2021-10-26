@@ -129,6 +129,8 @@ public final class ReflectionHelper{
 		final DynamicArray<Class> types = DynamicArray.create(Class.class);
 		while(!ancestorsQueue.isEmpty()){
 			final Type ancestorType = ancestorsQueue.poll();
+			if(ancestorType instanceof Object)
+				break;
 
 			if(ancestorType instanceof ParameterizedType)
 				//ancestor is parameterized: process only if the raw type matches the base class
