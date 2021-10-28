@@ -47,7 +47,6 @@ import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.external.BitSet;
 import io.github.mtrevisan.boxon.external.ByteHelper;
 import io.github.mtrevisan.boxon.external.ByteOrder;
-import io.github.mtrevisan.boxon.internal.DynamicArray;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -56,6 +55,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -180,13 +180,13 @@ class TemplateTest{
 		Assertions.assertArrayEquals(new String[]{"+"}, header.start());
 		Assertions.assertEquals("-", header.end());
 		Assertions.assertTrue(template.canBeCoded());
-		DynamicArray<BoundedField> boundedFields = template.getBoundedFields();
+		List<BoundedField> boundedFields = template.getBoundedFields();
 		Assertions.assertNotNull(boundedFields);
-		Assertions.assertEquals(15, boundedFields.limit);
-		DynamicArray<EvaluatedField> evaluatedFields = template.getEvaluatedFields();
+		Assertions.assertEquals(15, boundedFields.size());
+		List<EvaluatedField> evaluatedFields = template.getEvaluatedFields();
 		Assertions.assertNotNull(evaluatedFields);
-		Assertions.assertEquals(1, evaluatedFields.limit);
-		EvaluatedField evaluatedField = evaluatedFields.data[0];
+		Assertions.assertEquals(1, evaluatedFields.size());
+		EvaluatedField evaluatedField = evaluatedFields.get(0);
 		Assertions.assertEquals("receptionTime", evaluatedField.getFieldName());
 		Assertions.assertEquals(ZonedDateTime.class, evaluatedField.getFieldType());
 		Evaluate evaluate = evaluatedField.getBinding();
@@ -248,10 +248,10 @@ class TemplateTest{
 		Assertions.assertArrayEquals(new String[]{"++"}, header.start());
 		Assertions.assertEquals("--", header.end());
 		Assertions.assertTrue(template.canBeCoded());
-		DynamicArray<BoundedField> boundedFields = template.getBoundedFields();
+		List<BoundedField> boundedFields = template.getBoundedFields();
 		Assertions.assertNotNull(boundedFields);
-		Assertions.assertEquals(16, boundedFields.limit);
-		BoundedField childField = boundedFields.data[boundedFields.limit - 1];
+		Assertions.assertEquals(16, boundedFields.size());
+		BoundedField childField = boundedFields.get(boundedFields.size() - 1);
 		Assertions.assertNotNull(childField);
 		Assertions.assertEquals("anotherNumberInt", childField.getFieldName());
 	}

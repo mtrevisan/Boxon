@@ -32,6 +32,7 @@ import java.lang.annotation.Annotation;
 import java.lang.annotation.Inherited;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -59,13 +60,13 @@ public final class ReflectiveClassLoader{
 		if(packageClasses.length == 0)
 			throw new IllegalArgumentException("Packages list cannot be empty");
 
-		final DynamicArray<String> packageNames = DynamicArray.create(String.class, packageClasses.length);
-		for(final Class<?> packageClass : packageClasses)
-			packageNames.add(packageClass.getPackageName());
+		final Collection<String> packageNames = new ArrayList<>(packageClasses.length);
+		for(int i = 0; i < packageClasses.length; i ++)
+			packageNames.add(packageClasses[i].getPackageName());
 		classGraph = new ClassGraph()
 			.ignoreClassVisibility()
 			.enableAnnotationInfo()
-			.acceptPackages(packageNames.extractCopy());
+			.acceptPackages(packageNames.toArray(String[]::new));
 	}
 
 	/**
@@ -79,8 +80,8 @@ public final class ReflectiveClassLoader{
 			throw new IllegalArgumentException("Class list cannot be empty");
 
 		try(final ScanResult scanResult = classGraph.scan()){
-			for(final Class<?> cls : classes)
-				scan(scanResult, cls);
+			for(int i = 0; i < classes.length; i ++)
+				scan(scanResult, classes[i]);
 		}
 	}
 
@@ -88,9 +89,9 @@ public final class ReflectiveClassLoader{
 		final ClassInfoList classInfo = (filteringClass.isAnnotation()
 			? scanResult.getClassesWithAnnotation(filteringClass.getName())
 			: scanResult.getClassesImplementing(filteringClass.getName()));
-		for(final Class<?> cls : classInfo.loadClasses())
-			METADATA_STORE.computeIfAbsent(filteringClass, classes -> new ArrayList<>(1))
-				.add(cls);
+		final List<Class<?>> loadedClasses = classInfo.loadClasses();
+		METADATA_STORE.computeIfAbsent(filteringClass, classes -> new ArrayList<>(loadedClasses.size()))
+			.addAll(loadedClasses);
 	}
 
 	/**

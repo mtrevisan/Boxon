@@ -61,9 +61,12 @@ final class Evaluator{
 			}
 
 			private Field findFieldInClass(final String name, final Class<?> cls, final boolean mustBeStatic){
-				for(final Field field : cls.getDeclaredFields())
+				final Field[] declaredFields = cls.getDeclaredFields();
+				for(int i = 0; i < declaredFields.length; i ++){
+					final Field field = declaredFields[i];
 					if(field.getName().equals(name) && (!mustBeStatic || Modifier.isStatic(field.getModifiers())))
 						return field;
+				}
 				return null;
 			}
 		});

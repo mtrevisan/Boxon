@@ -70,8 +70,8 @@ public final class EventLogger extends EventListener{
 	public void loadingCodec(final CodecInterface<?>[] codecs){
 		if(LOGGER.isInfoEnabled()){
 			final StringJoiner sj = new StringJoiner(", ", "[", "]");
-			for(final CodecInterface<?> codec : codecs)
-				sj.add(codec.getClass().getSimpleName());
+			for(int i = 0; i < codecs.length; i ++)
+				sj.add(codecs[i].getClass().getSimpleName());
 
 			info("Loading codecs: {}", sj.toString());
 		}
@@ -96,8 +96,8 @@ public final class EventLogger extends EventListener{
 
 	private StringJoiner joinPackageNames(final Class<?>[] basePackageClasses){
 		final StringJoiner sj = new StringJoiner(", ", "[", "]");
-		for(final Class<?> basePackageClass : basePackageClasses)
-			sj.add(basePackageClass.getPackageName());
+		for(int i = 0; i < basePackageClasses.length; i ++)
+			sj.add(basePackageClasses[i].getPackageName());
 		return sj;
 	}
 
@@ -198,8 +198,8 @@ public final class EventLogger extends EventListener{
 	private Object[] extractParameters(final Object[] parameters){
 		if(parameters instanceof Class<?>[]){
 			final Collection<String> packages = new LinkedHashSet<>(parameters.length);
-			for(final Object basePackageClass : parameters)
-				packages.add(((Class<?>)basePackageClass).getPackageName());
+			for(int i = 0; i < parameters.length; i ++)
+				packages.add(((Class<?>)parameters[i]).getPackageName());
 
 			final StringJoiner sj = new StringJoiner(", ", "[", "]");
 			for(final String p : packages)

@@ -35,7 +35,6 @@ import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitSet;
 import io.github.mtrevisan.boxon.external.BitWriter;
-import io.github.mtrevisan.boxon.internal.DynamicArray;
 import io.github.mtrevisan.boxon.external.EventListener;
 import io.github.mtrevisan.boxon.internal.InjectEventListener;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
@@ -44,6 +43,7 @@ import io.github.mtrevisan.boxon.internal.ReflectionHelper;
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 
@@ -51,7 +51,7 @@ final class TemplateParser{
 
 	@InjectEventListener
 	@SuppressWarnings("unused")
-	private static EventListener eventListener;
+	private final EventListener eventListener;
 
 	private static final class ParserContext<T>{
 
@@ -111,9 +111,9 @@ final class TemplateParser{
 		parserContext.addSelfToEvaluatorContext();
 
 		//decode message fields:
-		final DynamicArray<BoundedField> fields = template.getBoundedFields();
-		for(int i = 0; i < fields.limit; i ++){
-			final BoundedField field = fields.data[i];
+		final List<BoundedField> fields = template.getBoundedFields();
+		for(int i = 0; i < fields.size(); i ++){
+			final BoundedField field = fields.get(i);
 
 			//process skip annotations:
 			final Skip[] skips = field.getSkips();
@@ -214,9 +214,9 @@ final class TemplateParser{
 	}
 
 	private void processEvaluatedFields(final Template<?> template, final ParserContext<?> parserContext){
-		final DynamicArray<EvaluatedField> evaluatedFields = template.getEvaluatedFields();
-		for(int i = 0; i < evaluatedFields.limit; i ++){
-			final EvaluatedField field = evaluatedFields.data[i];
+		final List<EvaluatedField> evaluatedFields = template.getEvaluatedFields();
+		for(int i = 0; i < evaluatedFields.size(); i ++){
+			final EvaluatedField field = evaluatedFields.get(i);
 			final boolean process = Evaluator.evaluateBoolean(field.getBinding().condition(), parserContext.rootObject);
 			if(process){
 				eventListener.evaluatingField(template.getType().getName(), field.getFieldName());
@@ -236,9 +236,9 @@ final class TemplateParser{
 		parserContext.addSelfToEvaluatorContext();
 
 		//encode message fields:
-		final DynamicArray<BoundedField> fields = template.getBoundedFields();
-		for(int i = 0; i < fields.limit; i ++){
-			final BoundedField field = fields.data[i];
+		final List<BoundedField> fields = template.getBoundedFields();
+		for(int i = 0; i < fields.size(); i ++){
+			final BoundedField field = fields.get(i);
 
 			//process skip annotations:
 			final Skip[] skips = field.getSkips();

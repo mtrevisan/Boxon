@@ -86,7 +86,6 @@ public final class Parser{
 	private void injectEventListener(final EventListener eventListener){
 		final ReflectiveClassLoader reflectiveClassLoader = ReflectiveClassLoader.createFrom(CodecInterface.class);
 		reflectiveClassLoader.scan(CodecInterface.class);
-		@SuppressWarnings("unchecked")
 		final Collection<Class<?>> classes = reflectiveClassLoader.getImplementationsOf(CodecInterface.class);
 		for(final Class<?> cl : classes)
 			ReflectionHelper.setStaticFieldValue(cl, EventListener.class, eventListener);
@@ -328,8 +327,8 @@ public final class Parser{
 		final ComposeResponse response = new ComposeResponse(data);
 
 		final BitWriter writer = BitWriter.create();
-		for(final Object datum : data)
-			compose(writer, datum, response);
+		for(int i = 0; i < data.length; i ++)
+			compose(writer, data[i], response);
 		writer.flush();
 
 		response.setComposedMessage(writer.array());

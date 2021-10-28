@@ -25,8 +25,9 @@
 package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
-import io.github.mtrevisan.boxon.internal.DynamicArray;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 
@@ -42,7 +43,7 @@ public final class ComposeResponse{
 	private byte[] composedMessage;
 
 	/** List of error messages. */
-	private final DynamicArray<EncodeException> errors = DynamicArray.create(EncodeException.class);
+	private final List<EncodeException> errors = new ArrayList<>();
 
 
 	/**
@@ -82,7 +83,7 @@ public final class ComposeResponse{
 	 * @return	The number of errors occurred while composing a message.
 	 */
 	public int getErrorCount(){
-		return errors.limit;
+		return errors.size();
 	}
 
 	/**
@@ -101,7 +102,7 @@ public final class ComposeResponse{
 	 * @return	The exception resulting from parsing a message.
 	 */
 	public EncodeException getErrorAt(final int index){
-		return errors.data[index];
+		return errors.get(index);
 	}
 
 	void addError(final EncodeException exception){

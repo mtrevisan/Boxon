@@ -97,8 +97,8 @@ public final class BitWriter extends BitWriterData{
 	 * @param array	The array of {@code byte}s to write.
 	 */
 	public void putBytes(final byte[] array){
-		for(final byte elem : array)
-			putByte(elem);
+		for(int i = 0; i < array.length; i ++)
+			putByte(array[i]);
 	}
 
 	/**

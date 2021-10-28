@@ -28,7 +28,6 @@ import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.BitReader;
-import io.github.mtrevisan.boxon.internal.DynamicArray;
 import io.github.mtrevisan.boxon.external.EventListener;
 import io.github.mtrevisan.boxon.internal.InjectEventListener;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
@@ -41,11 +40,13 @@ import io.github.mtrevisan.boxon.internal.matchers.PatternMatcher;
 
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
@@ -55,7 +56,7 @@ import java.util.function.Function;
 final class Loader{
 
 	@InjectEventListener
-	private static EventListener eventListener;
+	private final EventListener eventListener;
 
 	private final ThrowingFunction<Class<?>, Template<?>, AnnotationException> templateStore = Memoizer.throwingMemoize(
 		type -> new Template<>(type, this::filterAnnotationsWithCodec));
@@ -110,16 +111,14 @@ final class Loader{
 
 		/** extract all classes that implements {@link CodecInterface}. */
 		final Collection<Class<?>> derivedClasses = extractClasses(CodecInterface.class, basePackageClasses);
-		@SuppressWarnings("rawtypes")
-		final DynamicArray<CodecInterface> codecs = extractCodecs(derivedClasses);
-		addCodecsInner(codecs.data);
+		final List<CodecInterface<?>> codecs = extractCodecs(derivedClasses);
+		addCodecsInner(codecs);
 
-		eventListener.loadedCodecs(codecs.limit);
+		eventListener.loadedCodecs(codecs.size());
 	}
 
-	@SuppressWarnings("rawtypes")
-	private DynamicArray<CodecInterface> extractCodecs(final Collection<Class<?>> derivedClasses){
-		final DynamicArray<CodecInterface> codecs = DynamicArray.create(CodecInterface.class, derivedClasses.size());
+	private List<CodecInterface<?>> extractCodecs(final Collection<Class<?>> derivedClasses){
+		final List<CodecInterface<?>> codecs = new ArrayList<>(derivedClasses.size());
 		for(final Class<?> type : derivedClasses){
 			//for each extracted class, try to create an instance
 			final CodecInterface<?> codec = (CodecInterface<?>)ReflectionHelper.getCreator(type)
@@ -150,15 +149,22 @@ final class Loader{
 		eventListener.loadedCodecs(codecs.length);
 	}
 
-	private void addCodecsInner(final CodecInterface<?>[] codecs){
+	private void addCodecsInner(final List<CodecInterface<?>> codecs){
 		//load each codec into the available codec list
-		for(final CodecInterface<?> codec : codecs)
-			if(codec != null)
-				addCodecInner(codec);
+		for(int i = 0; i < codecs.size(); i ++)
+			if(codecs.get(i) != null)
+				addCodecInner(codecs.get(i));
+	}
+
+	private void addCodecsInner(final CodecInterface<?>... codecs){
+		//load each codec into the available codec list
+		for(int i = 0; i < codecs.length; i ++)
+			if(codecs[i] != null)
+				addCodecInner(codecs[i]);
 	}
 
 	private void addCodecInner(final CodecInterface<?> codec){
-		final Class<?> codecType = ReflectionHelper.resolveGenericTypes(codec.getClass(), CodecInterface.class)[0];
+		final Class<?> codecType = ReflectionHelper.resolveGenericTypes(codec.getClass(), CodecInterface.class).get(0);
 		codecs.put(codecType, codec);
 	}
 
@@ -171,11 +177,11 @@ final class Loader{
 	}
 
 
-	private DynamicArray<Annotation> filterAnnotationsWithCodec(final Annotation[] declaredAnnotations){
-		final DynamicArray<Annotation> annotations = DynamicArray.create(Annotation.class, declaredAnnotations.length);
-		for(final Annotation annotation : declaredAnnotations)
-			if(hasCodec(annotation.annotationType()))
-				annotations.add(annotation);
+	private List<Annotation> filterAnnotationsWithCodec(final Annotation[] declaredAnnotations){
+		final List<Annotation> annotations = new ArrayList<>(declaredAnnotations.length);
+		for(int i = 0; i < declaredAnnotations.length; i ++)
+			if(hasCodec(declaredAnnotations[i].annotationType()))
+				annotations.add(declaredAnnotations[i]);
 		return annotations;
 	}
 
@@ -199,17 +205,15 @@ final class Loader{
 
 		/** extract all classes annotated with {@link MessageHeader}. */
 		final Collection<Class<?>> annotatedClasses = extractClasses(MessageHeader.class, basePackageClasses);
-		@SuppressWarnings("rawtypes")
-		final DynamicArray<Template> templates = extractTemplates(annotatedClasses);
+		final List<Template<?>> templates = extractTemplates(annotatedClasses);
 		addTemplatesInner(templates);
 
-		eventListener.loadedTemplates(templates.limit);
+		eventListener.loadedTemplates(templates.size());
 	}
 
-	@SuppressWarnings("rawtypes")
-	private DynamicArray<Template> extractTemplates(final Collection<Class<?>> annotatedClasses) throws AnnotationException,
+	private List<Template<?>> extractTemplates(final Collection<Class<?>> annotatedClasses) throws AnnotationException,
 			TemplateException{
-		final DynamicArray<Template> templates = DynamicArray.create(Template.class, annotatedClasses.size());
+		final List<Template<?>> templates = new ArrayList<>(annotatedClasses.size());
 		for(final Class<?> type : annotatedClasses){
 			//for each extracted class, try to parse it, extracting all the information needed for the codec of a message
 			final Template<?> from = createTemplate(type);
@@ -236,11 +240,10 @@ final class Loader{
 		return (Template<T>)templateStore.apply(type);
 	}
 
-	@SuppressWarnings("rawtypes")
-	private void addTemplatesInner(final DynamicArray<Template> templates){
+	private void addTemplatesInner(final List<Template<?>> templates){
 		//load each template into the available templates list
-		for(int i = 0; i < templates.limit; i ++){
-			final Template<?> template = templates.data[i];
+		for(int i = 0; i < templates.size(); i ++){
+			final Template<?> template = templates.get(i);
 			if(template != null && template.canBeCoded())
 				addTemplateInner(template);
 		}
@@ -256,8 +259,8 @@ final class Loader{
 			final MessageHeader header = template.getHeader();
 			final Charset charset = Charset.forName(header.charset());
 			final String[] starts = header.start();
-			for(final String start : starts)
-				loadTemplateInner(template, start, charset);
+			for(int i = 0; i < starts.length; i ++)
+				loadTemplateInner(template, starts[i], charset);
 		}
 		catch(final Exception e){
 			eventListener.cannotLoadTemplate(template.getType().getName(), e);
@@ -364,8 +367,8 @@ final class Loader{
 		final Charset charset = Charset.forName(header.charset());
 		final String[] messageStarts = header.start();
 		//select the minimum index with a valid template
-		for(final String messageStart : messageStarts){
-			final int offset = searchNextSequence(reader, messageStart.getBytes(charset));
+		for(int i = 0; i < messageStarts.length; i ++){
+			final int offset = searchNextSequence(reader, messageStarts[i].getBytes(charset));
 			if(offset >= 0 && (minOffset < 0 || offset < minOffset))
 				minOffset = offset;
 		}

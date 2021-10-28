@@ -40,38 +40,67 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
 		<java.version>1.11</java.version>
-		<maven.compiler.source>1.11</maven.compiler.source>
-		<maven.compiler.target>1.11</maven.compiler.target>
+		<maven.compiler.source>11</maven.compiler.source>
+		<maven.compiler.target>11</maven.compiler.target>
 
 		<javadoc.html.version>-html5</javadoc.html.version>
 
 		<!-- Profiles & Build -->
+		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-deploy-plugin -->
 		<maven-deploy-plugin.version>2.8.2</maven-deploy-plugin.version>
+		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-gpg-plugin -->
 		<maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
+		<!-- https://mvnrepository.com/artifact/org.sonatype.plugins/nexus-staging-maven-plugin -->
 		<sonatype.nexus-staging-maven-plugin.version>1.6.8</sonatype.nexus-staging-maven-plugin.version>
+		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-source-plugin -->
 		<maven-source-plugin.version>3.2.1</maven-source-plugin.version>
+		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-javadoc-plugin -->
 		<maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
+		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-surefire-plugin -->
 		<maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
+		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
 		<maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-help-plugin -->
 		<maven-help-plugin.version>3.2.0</maven-help-plugin.version>
+		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-shade-plugin -->
 		<maven-shade-plugin.version>3.2.4</maven-shade-plugin.version>
 
 		<!-- Spring Expression -->
-		<springframework.spring-expression.version>5.3.9</springframework.spring-expression.version>
+		<!-- https://mvnrepository.com/artifact/org.springframework/spring-expression -->
+		<springframework.spring-expression.version>5.3.12</springframework.spring-expression.version>
 
 		<!-- ClassGraph -->
-		<github.classgraph.version>4.8.110</github.classgraph.version>
+		<!-- https://mvnrepository.com/artifact/io.github.classgraph/classgraph -->
+		<github.classgraph.version>4.8.128</github.classgraph.version>
 
 		<!-- Logging -->
+		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
 		<slf4j.slf4j-api.version>1.7.32</slf4j.slf4j-api.version>
-		<slf4j.slf4j-log4j12.version>1.7.32</slf4j.slf4j-log4j12.version>
-		<logback.logback-classic.version>1.2.4</logback.logback-classic.version>
+		<!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-classic -->
+		<logback.logback-classic.version>1.2.6</logback.logback-classic.version>
 
 		<!-- JUnit -->
-		<junit.junit-jupiter-engine.version>5.7.2</junit.junit-jupiter-engine.version>
+		<!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine -->
+		<junit.junit-jupiter-engine.version>5.8.1</junit.junit-jupiter-engine.version>
 		<!-- Apache -->
+		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
 		<apache.commons-lang3.version>3.12.0</apache.commons-lang3.version>
 	</properties>
+
+	<repositories>
+		<repository>
+			<id>java-net-repo</id>
+			<url>https://maven.java.net/content/repositories/public/</url>
+		</repository>
+		<repository>
+			<id>java-apache-repo</id>
+			<url>https://repo.maven.apache.org/maven2/</url>
+		</repository>
+		<repository>
+			<id>java-spring-repo</id>
+			<url>https://repo.spring.io/ui/native/release/</url>
+		</repository>
+	</repositories>
 
 	<profiles>
 		<profile>
@@ -82,7 +111,6 @@
 			<build>
 				<plugins>
 					<!-- Deploy -->
-					<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-deploy-plugin -->
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-deploy-plugin</artifactId>
@@ -101,7 +129,6 @@
 			<build>
 				<plugins>
 					<!-- Signing JAR Files -->
-					<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-gpg-plugin -->
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-gpg-plugin</artifactId>
@@ -117,7 +144,6 @@
 						</executions>
 					</plugin>
 					<!-- Nexus Staging Plugin -->
-					<!-- https://mvnrepository.com/artifact/org.sonatype.plugins/nexus-staging-maven-plugin -->
 					<plugin>
 						<groupId>org.sonatype.plugins</groupId>
 						<artifactId>nexus-staging-maven-plugin</artifactId>
@@ -140,7 +166,6 @@
 						</configuration>
 					</plugin>
 					<!-- Source -->
-					<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-source-plugin -->
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-source-plugin</artifactId>
@@ -155,7 +180,6 @@
 						</executions>
 					</plugin>
 					<!-- JavaDoc -->
-					<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-javadoc-plugin -->
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-javadoc-plugin</artifactId>
@@ -197,7 +221,6 @@
 	<build>
 		<plugins>
 			<!-- Surefire -->
-			<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-surefire-plugin -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
@@ -207,21 +230,19 @@
 				</configuration>
 			</plugin>
 			<!-- Compiler -->
-			<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>${maven-compiler-plugin.version}</version>
 				<configuration>
 					<source>${maven.compiler.source}</source>
-					<target>${maven.compiler.target}</target>
+					<target>${maven.compiler.source}</target>
 					<encoding>${project.build.sourceEncoding}</encoding>
 					<showDeprecation>true</showDeprecation>
 				</configuration>
 			</plugin>
 			<!-- Help -->
 			<!-- display active profile in compile phase -->
-			<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-help-plugin -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-help-plugin</artifactId>
@@ -252,7 +273,6 @@
 				</executions>
 			</plugin>
 			<!-- Shade -->
-			<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-shade-plugin -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
@@ -298,7 +318,6 @@
 
 	<dependencies>
 		<!-- SpEL -->
-		<!-- https://mvnrepository.com/artifact/org.springframework/spring-expression -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-expression</artifactId>
@@ -306,7 +325,6 @@
 		</dependency>
 
 		<!-- ClassGraph -->
-		<!-- https://mvnrepository.com/artifact/io.github.classgraph/classgraph -->
 		<dependency>
 			<groupId>io.github.classgraph</groupId>
 			<artifactId>classgraph</artifactId>
@@ -314,13 +332,11 @@
 		</dependency>
 
 		<!-- Logging -->
-		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<version>${slf4j.slf4j-api.version}</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-classic -->
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
@@ -329,7 +345,6 @@
 		</dependency>
 
 		<!-- JUnit -->
-		<!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine -->
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-engine</artifactId>
@@ -337,7 +352,6 @@
 			<scope>test</scope>
 		</dependency>
 		<!-- Apache -->
-		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>

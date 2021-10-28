@@ -167,8 +167,8 @@ enum AnnotationValidator{
 		final boolean hasPrefixSize = (prefixSize > 0);
 		if(hasPrefixSize && alternatives.length == 0)
 			throw AnnotationException.create("No alternatives present");
-		for(final ObjectChoices.ObjectChoice alternative : alternatives)
-			validateAlternative(alternative, type, hasPrefixSize);
+		for(int i = 0; i < alternatives.length; i ++)
+			validateAlternative(alternatives[i], type, hasPrefixSize);
 	}
 
 	private static void validateAlternative(final ObjectChoices.ObjectChoice alternative, final Class<?> type,

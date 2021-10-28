@@ -25,13 +25,13 @@
 package io.github.mtrevisan.boxon.codecs.queclink;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 import java.util.StringJoiner;
 
 
 public class DeviceTypes{
 
-	private final Collection<DeviceType> deviceTypes = new ArrayList<>();
+	private final List<DeviceType> deviceTypes = new ArrayList<>();
 
 
 	public void add(final String deviceTypeName, final byte deviceTypeCode){
@@ -49,14 +49,16 @@ public class DeviceTypes{
 	}
 
 	public String getDeviceTypeName(final byte deviceTypeCode){
-		for(final DeviceType dt : deviceTypes)
-			if(dt.getCode() == deviceTypeCode)
-				return dt.getName();
+		for(int i = 0; i < deviceTypes.size(); i ++){
+			final DeviceType deviceType = deviceTypes.get(i);
+			if(deviceType.getCode() == deviceTypeCode)
+				return deviceType.getName();
+		}
 
 		final String actualCode = Integer.toHexString(deviceTypeCode & 0x0000_00FF);
 		final StringJoiner sj = new StringJoiner(", 0x", "[0x", "]");
-		for(final DeviceType deviceType : deviceTypes)
-			sj.add(Integer.toHexString(deviceType.getCode() & 0x0000_00FF));
+		for(int i = 0; i < deviceTypes.size(); i ++)
+			sj.add(Integer.toHexString(deviceTypes.get(i).getCode() & 0x0000_00FF));
 		throw new IllegalArgumentException("Cannot parse message from another device, device type is 0x" + actualCode
 			+ ", should be one of " + sj.toString());
 	}

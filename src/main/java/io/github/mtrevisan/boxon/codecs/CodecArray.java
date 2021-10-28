@@ -143,7 +143,8 @@ final class CodecArray implements CodecInterface<BindArray>{
 	private void encodeWithAlternatives(final BitWriter writer, final Object[] array, final ObjectChoices selectFrom)
 			throws FieldException{
 		final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
-		for(final Object elem : array){
+		for(int i = 0; i < array.length; i ++){
+			final Object elem = array[i];
 			final Class<?> type = elem.getClass();
 
 			final ObjectChoices.ObjectChoice chosenAlternative = CodecHelper.chooseAlternative(alternatives, type);
@@ -159,8 +160,8 @@ final class CodecArray implements CodecInterface<BindArray>{
 	private void encodeWithoutAlternatives(final BitWriter writer, final Object[] array, final Class<?> type) throws FieldException{
 		final Template<?> template = loader.createTemplate(type);
 
-		for(final Object elem : array)
-			templateParser.encode(template, writer, null, elem);
+		for(int i = 0; i < array.length; i ++)
+			templateParser.encode(template, writer, null, array[i]);
 	}
 
 }

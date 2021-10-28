@@ -29,11 +29,12 @@ import io.github.mtrevisan.boxon.annotations.Evaluate;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.Skip;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.internal.DynamicArray;
 import io.github.mtrevisan.boxon.internal.ReflectionHelper;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringJoiner;
 import java.util.function.Function;
 
@@ -48,8 +49,8 @@ final class Template<T>{
 	private final Class<T> type;
 
 	private final MessageHeader header;
-	private final DynamicArray<BoundedField> boundedFields = DynamicArray.create(BoundedField.class);
-	private final DynamicArray<EvaluatedField> evaluatedFields = DynamicArray.create(EvaluatedField.class);
+	private final ArrayList<BoundedField> boundedFields = new ArrayList<>(0);
+	private final List<EvaluatedField> evaluatedFields = new ArrayList<>(0);
 	/**
 	 * Necessary to speed-up the creation of a {@link Template} (technically not needed because it's already present
 	 * somewhere inside {@link #boundedFields}).
@@ -57,7 +58,7 @@ final class Template<T>{
 	private BoundedField checksum;
 
 
-	Template(final Class<T> type, final Function<Annotation[], DynamicArray<Annotation>> filterAnnotationsWithCodec)
+	Template(final Class<T> type, final Function<Annotation[], List<Annotation>> filterAnnotationsWithCodec)
 			throws AnnotationException{
 		this.type = type;
 
@@ -71,16 +72,16 @@ final class Template<T>{
 			throw AnnotationException.create("No data can be extracted from this class: {}", type.getName());
 	}
 
-	private void loadAnnotatedFields(final Class<T> type, final DynamicArray<Field> fields,
-			final Function<Annotation[], DynamicArray<Annotation>> filterAnnotationsWithCodec) throws AnnotationException{
-		boundedFields.ensureCapacity(fields.limit);
-		for(int i = 0; i < fields.limit; i ++){
-			final Field field = fields.data[i];
+	private void loadAnnotatedFields(final Class<T> type, final List<Field> fields,
+			final Function<Annotation[], List<Annotation>> filterAnnotationsWithCodec) throws AnnotationException{
+		boundedFields.ensureCapacity(fields.size());
+		for(int i = 0; i < fields.size(); i ++){
+			final Field field = fields.get(i);
 			final Skip[] skips = field.getDeclaredAnnotationsByType(Skip.class);
 			final Checksum checksum = field.getDeclaredAnnotation(Checksum.class);
 
 			final Annotation[] declaredAnnotations = field.getDeclaredAnnotations();
-			final DynamicArray<Annotation> boundedAnnotations = filterAnnotationsWithCodec.apply(declaredAnnotations);
+			final List<Annotation> boundedAnnotations = filterAnnotationsWithCodec.apply(declaredAnnotations);
 			evaluatedFields.addAll(extractEvaluations(declaredAnnotations, field));
 
 			try{
@@ -91,27 +92,31 @@ final class Template<T>{
 				throw e;
 			}
 
-			if(boundedAnnotations.limit == 1)
-				boundedFields.add(new BoundedField(field, boundedAnnotations.data[0], (skips.length > 0? skips: null)));
+			if(boundedAnnotations.size() == 1)
+				boundedFields.add(new BoundedField(field, boundedAnnotations.get(0), (skips.length > 0? skips: null)));
 			if(checksum != null)
 				this.checksum = new BoundedField(field, checksum);
 		}
 	}
 
-	private DynamicArray<EvaluatedField> extractEvaluations(final Annotation[] declaredAnnotations, final Field field){
-		final DynamicArray<EvaluatedField> evaluations = DynamicArray.create(EvaluatedField.class, declaredAnnotations.length);
-		for(final Annotation annotation : declaredAnnotations){
+	private List<EvaluatedField> extractEvaluations(final Annotation[] declaredAnnotations, final Field field){
+		final List<EvaluatedField> evaluations = new ArrayList<>(declaredAnnotations.length);
+		for(int i = 0; i < declaredAnnotations.length; i ++){
+			final Annotation annotation = declaredAnnotations[i];
 			if(annotation.annotationType() == Evaluate.class)
 				evaluations.add(new EvaluatedField(field, (Evaluate)annotation));
 		}
 		return evaluations;
 	}
 
-	private void validateField(final DynamicArray<? extends Annotation> annotations, final Checksum checksum)
+	private void validateField(final List<? extends Annotation> annotations, final Checksum checksum)
 			throws AnnotationException{
-		if(annotations.limit > 1){
+		if(annotations.size() > 1){
 			final StringJoiner sj = new StringJoiner(", ", "[", "]");
-			annotations.join(annotation -> annotation.annotationType().getSimpleName(), sj);
+			for(int i = 0; i < annotations.size(); i ++){
+				final Class<? extends Annotation> annotationType = annotations.get(i).annotationType();
+				sj.add(annotationType.getSimpleName());
+			}
 			throw AnnotationException.create("Cannot bind more that one annotation on {}: {}", type.getName(), sj.toString());
 		}
 
@@ -119,8 +124,8 @@ final class Template<T>{
 			throw AnnotationException.create("Cannot have more than one {} annotations on class {}", Checksum.class.getSimpleName(),
 				type.getName());
 
-		if(annotations.limit > 0)
-			validateAnnotation(annotations.data[0]);
+		if(!annotations.isEmpty())
+			validateAnnotation(annotations.get(0));
 	}
 
 	private void validateAnnotation(final Annotation annotation) throws AnnotationException{
@@ -137,11 +142,11 @@ final class Template<T>{
 		return header;
 	}
 
-	DynamicArray<BoundedField> getBoundedFields(){
+	List<BoundedField> getBoundedFields(){
 		return boundedFields;
 	}
 
-	DynamicArray<EvaluatedField> getEvaluatedFields(){
+	List<EvaluatedField> getEvaluatedFields(){
 		return evaluatedFields;
 	}
 

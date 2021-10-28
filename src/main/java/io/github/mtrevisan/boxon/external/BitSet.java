@@ -110,8 +110,8 @@ public final class BitSet{
 
 	private BitSet(final byte[] words){
 		int length = 0;
-		for(final byte word : words)
-			length += Integer.bitCount(word & 0xFF);
+		for(int i = 0; i < words.length; i ++)
+			length += Integer.bitCount(words[i] & 0xFF);
 
 		indexes = new int[length];
 		int k = 0;
@@ -132,8 +132,8 @@ public final class BitSet{
 
 	private BitSet(final long[] words){
 		int length = 0;
-		for(final long word : words)
-			length += Long.bitCount(word);
+		for(int i = 0; i < words.length; i ++)
+			length += Long.bitCount(words[i]);
 
 		indexes = new int[length];
 		int k = 0;
@@ -210,8 +210,10 @@ public final class BitSet{
 			return new byte[]{0};
 
 		final byte[] bytes = new byte[(indexes[cardinality - 1] >>> 3) + 1];
-		for(final int index : indexes)
+		for(int i = 0; i < indexes.length; i ++){
+			final int index = indexes[i];
 			bytes[index >>> 3] |= 1 << (index % Byte.SIZE);
+		}
 		return bytes;
 	}
 

@@ -47,13 +47,13 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
-import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 
@@ -113,7 +113,7 @@ public final class ReflectionHelper{
 	 *
 	 * @see <a href="https://stackoverflow.com/questions/17297308/how-do-i-resolve-the-actual-type-for-a-generic-return-type-using-reflection">How do I resolve the actual type for a generic return type using reflection?</a>
 	 */
-	public static <T> Class<?>[] resolveGenericTypes(final Class<? extends T> offspring, final Class<T> base, Type... actualArgs){
+	public static <T> List<Class<?>> resolveGenericTypes(final Class<? extends T> offspring, final Class<T> base, Type... actualArgs){
 		//if actual types are omitted, the type parameters will be used instead
 		if(actualArgs.length == 0)
 			actualArgs = offspring.getTypeParameters();
@@ -125,13 +125,9 @@ public final class ReflectionHelper{
 		final Queue<Type> ancestorsQueue = extractAncestors(offspring);
 
 		//iterate over ancestors
-		@SuppressWarnings("rawtypes")
-		final DynamicArray<Class> types = DynamicArray.create(Class.class);
+		final List<Class<?>> types = new ArrayList<>(0);
 		while(!ancestorsQueue.isEmpty()){
 			final Type ancestorType = ancestorsQueue.poll();
-			if(ancestorType instanceof Object)
-				break;
-
 			if(ancestorType instanceof ParameterizedType)
 				//ancestor is parameterized: process only if the raw type matches the base class
 				types.addAll(manageParameterizedAncestor((ParameterizedType)ancestorType, base, typeVariables));
@@ -141,33 +137,37 @@ public final class ReflectionHelper{
 		}
 		if(types.isEmpty() && offspring.equals(base))
 			//there is a result if the base class is reached
-			for(final Type actualArg : actualArgs)
-				types.addIfNotNull(toClass(actualArg.getTypeName()));
-		return types.extractCopy();
+			for(int i = 0; i < actualArgs.length; i ++){
+				final Class<?> cls = toClass(actualArgs[i].getTypeName());
+				if(cls != null)
+					types.add(cls);
+			}
+		return types;
 	}
 
-	@SuppressWarnings("rawtypes")
-	private static <T> DynamicArray<Class> manageParameterizedAncestor(final ParameterizedType ancestorType, final Class<T> base,
+	@SuppressWarnings("unchecked")
+	private static <T> List<Class<?>> manageParameterizedAncestor(final ParameterizedType ancestorType, final Class<T> base,
 			final Map<String, Type> typeVariables){
-		final DynamicArray<Class> types = DynamicArray.create(Class.class);
+		final List<Class<?>> types = new ArrayList<>(0);
 		final Type rawType = ancestorType.getRawType();
 		if(rawType instanceof Class<?> && base.isAssignableFrom((Class<?>)rawType)){
-			final DynamicArray<Class> resolvedTypes = populateResolvedTypes(ancestorType, typeVariables);
+			final List<Class<?>> resolvedTypes = populateResolvedTypes(ancestorType, typeVariables);
 
-			@SuppressWarnings("unchecked")
-			final Class<?>[] result = resolveGenericTypes((Class<? extends T>)rawType, base, resolvedTypes.extractCopy());
-			if(result != null)
-				types.addAll(result, result.length);
+			final List<Class<?>> result = resolveGenericTypes((Class<? extends T>)rawType, base, resolvedTypes.toArray(Class[]::new));
+			types.addAll(result);
 		}
 		return types;
 	}
 
-	private static DynamicArray<Class> populateResolvedTypes(final ParameterizedType ancestorType, final Map<String, Type> typeVariables){
+	private static List<Class<?>> populateResolvedTypes(final ParameterizedType ancestorType, final Map<String, Type> typeVariables){
 		//loop through all type arguments and replace type variables with the actually known types
-		final DynamicArray<Class> resolvedTypes = DynamicArray.create(Class.class);
-		for(final Type t : ancestorType.getActualTypeArguments()){
-			final String typeName = resolveArgumentType(typeVariables, t).getTypeName();
-			resolvedTypes.addIfNotNull(toClass(typeName));
+		final List<Class<?>> resolvedTypes = new ArrayList<>(0);
+		final Type[] types = ancestorType.getActualTypeArguments();
+		for(int i = 0; i < types.length; i ++){
+			final String typeName = resolveArgumentType(typeVariables, types[i]).getTypeName();
+			final Class<?> cls = toClass(typeName);
+			if(cls != null)
+				resolvedTypes.add(cls);
 		}
 		return resolvedTypes;
 	}
@@ -253,18 +253,18 @@ public final class ReflectionHelper{
 
 	public static <T> void setFieldValue(final Object obj, final Class<T> fieldType, final T value){
 		try{
-			final DynamicArray<Field> fields = getAccessibleFields(obj.getClass(), fieldType);
-			for(int i = 0; i < fields.limit; i ++)
-				fields.data[i].set(obj, value);
+			final List<Field> fields = getAccessibleFields(obj.getClass(), fieldType);
+			for(int i = 0; i < fields.size(); i ++)
+				fields.get(i).set(obj, value);
 		}
 		catch(final IllegalArgumentException | IllegalAccessException ignored){}
 	}
 
 	public static <T> void setStaticFieldValue(final Class<?> cl, final Class<T> fieldType, final T value){
 		try{
-			final DynamicArray<Field> fields = getAccessibleFields(cl, fieldType);
-			for(int i = 0; i < fields.limit; i ++)
-				fields.data[i].set(null, value);
+			final List<Field> fields = getAccessibleFields(cl, fieldType);
+			for(int i = 0; i < fields.size(); i ++)
+				fields.get(i).set(null, value);
 		}
 		catch(final IllegalArgumentException | IllegalAccessException ignored){}
 	}
@@ -275,7 +275,7 @@ public final class ReflectionHelper{
 	 * @param cls	The class from which to extract the declared fields.
 	 * @return	An array of all the fields of the given class.
 	 */
-	public static DynamicArray<Field> getAccessibleFields(final Class<?> cls){
+	public static List<Field> getAccessibleFields(final Class<?> cls){
 		return getAccessibleFields(cls, null);
 	}
 
@@ -286,18 +286,19 @@ public final class ReflectionHelper{
 	 * @param fieldType	The class for which to extract all the fields.
 	 * @return	An array of all the fields of the given class.
 	 */
-	private static DynamicArray<Field> getAccessibleFields(Class<?> cls, final Class<?> fieldType){
-		final DynamicArray<Field> fields = DynamicArray.create(Field.class, 0);
+	private static List<Field> getAccessibleFields(Class<?> cls, final Class<?> fieldType){
+		final List<Field> fields = new ArrayList<>(0);
 
 		//recurse classes:
-		final Predicate<Field> filterPredicate = (fieldType != null? field -> (field.getType() == fieldType): null);
-		final Consumer<DynamicArray<Field>> filter = (filterPredicate != null
-			? subfields -> subfields.filter(filterPredicate)
-			: subfields -> {});
+		final ArrayList<Field> subfields = new ArrayList<>(0);
 		while(cls != null && cls != Object.class){
-			final DynamicArray<Field> subfields = DynamicArray.wrap(cls.getDeclaredFields());
+			final Field[] rawSubfields = cls.getDeclaredFields();
+			subfields.clear();
+			subfields.ensureCapacity(rawSubfields.length);
 			//apply filter on field type if needed
-			filter.accept(subfields);
+			for(int i = 0; i < rawSubfields.length; i ++)
+				if(fieldType == null || rawSubfields[i].getType() == fieldType)
+					subfields.add(rawSubfields[i]);
 			//place parent's fields before all the child's fields
 			fields.addAll(0, subfields);
 
@@ -306,8 +307,8 @@ public final class ReflectionHelper{
 		}
 
 		//make fields accessible
-		for(int i = 0; i < fields.limit; i ++)
-			fields.data[i].setAccessible(true);
+		for(int i = 0; i < fields.size(); i ++)
+			fields.get(i).setAccessible(true);
 		return fields;
 	}
 
