@@ -80,7 +80,7 @@ class BitWriterData{
 	}
 
 
-	/** Flush an minimum integral number of bytes to the output stream, padding any non-completed byte with zeros. */
+	/** Flush a minimum integral number of bytes to the output stream, padding any non-completed byte with zeros. */
 	public final void flush(){
 		//put the cache into the buffer
 		if(remaining > 0)

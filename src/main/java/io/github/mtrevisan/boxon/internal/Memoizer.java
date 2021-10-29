@@ -38,7 +38,7 @@ public final class Memoizer{
 	/**
 	 * Thread-safe and recursion-safe implementation using a re-entrant lock.
 	 *
-	 * @param <IN>	Type of input to the function. The class MUST implements {@code equals(Object)} and {@code hashCode()}.
+	 * @param <IN>	Type of input to the function. The class MUST implement {@code equals(Object)} and {@code hashCode()}.
 	 * @param <OUT>	Type of output from the function.
 	 * @param function	The function to be memoized.
 	 * @return	The new memoized function.
@@ -62,7 +62,7 @@ public final class Memoizer{
 	/**
 	 * Thread-safe and recursion-safe implementation using a re-entrant lock.
 	 *
-	 * @param <IN>	Type of input to the function. The class MUST implements {@code equals(Object)} and {@code hashCode()}.
+	 * @param <IN>	Type of input to the function. The class MUST implement {@code equals(Object)} and {@code hashCode()}.
 	 * @param <OUT>	Type of output from the function.
 	 * @param function	The function to be memoized.
 	 * @return	The new memoized function.

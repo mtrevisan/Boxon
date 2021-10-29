@@ -25,7 +25,7 @@
 package io.github.mtrevisan.boxon.annotations.converters;
 
 
-/** The converter to be applied to values read from a bind annotation. */
+/** The converter to be applied to value read from a bind annotation. */
 public interface Converter<IN, OUT>{
 
 	/**

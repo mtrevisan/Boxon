@@ -74,7 +74,7 @@ Once it's filed:
 * If the team is able to reproduce the issue, it will be marked `needs-fix`, as well as possibly other tags (such as `critical`), and the issue will be left to be [implemented by someone](#contribute-code).
 * If you or the maintainers don't respond to an issue for 30 days, the [issue will be closed](#clean-up-issues-and-prs).<br>
   If you want to come back to it, reply (once, please), and we'll reopen the existing issue. Please avoid filing new issues as extensions of one you already made.
-* `critical` issues may be left open, depending on perceived immediacy and severity, even past the 30 day deadline.
+* `critical` issues may be left open, depending on perceived immediacy and severity, even past the 30 days deadline.
 
 <a name="request-a-feature"></a>
 ## Request a feature

@@ -52,7 +52,7 @@ final class Template<T>{
 	private final ArrayList<BoundedField> boundedFields = new ArrayList<>(0);
 	private final List<EvaluatedField> evaluatedFields = new ArrayList<>(0);
 	/**
-	 * Necessary to speed-up the creation of a {@link Template} (technically not needed because it's already present
+	 * Necessary to speed up the creation of a {@link Template} (technically not needed because it's already present
 	 * somewhere inside {@link #boundedFields}).
 	 */
 	private BoundedField checksum;

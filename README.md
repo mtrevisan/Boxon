@@ -36,7 +36,7 @@ Boxon...
  - Has templates (annotated classes) that are not complex: they do not call each other uselessly complicating the structure (apart, necessarily, for `@BindArray`), no complicated chains of factories: it's just a parser that works.
  - Supports [SLF4J](http://www.slf4j.org/).
  - Hides the complexities of encoding and decoding, thus simplifying the changes to be made to the code due to frequent protocol changes.
- - Can automatically scans and loads all the binding annotations and/or templates from a package.
+ - Can automatically scan and loads all the binding annotations and/or templates from a package.
 
 ---
 
@@ -499,7 +499,7 @@ private BigDecimal number;
 
 #### parameters
  - `condition`: The SpEL expression that determines if this field has to be read.
- - `charset`: the charset to be interpreted the string into (SHOULD BE the charset name, eg. `UTF-8` (the default), `ISO-8859-1`, etc).
+ - `charset`: the charset to be interpreted the string into (SHOULD BE the charset name, e.g. `UTF-8` (the default), `ISO-8859-1`, etc.).
  - `size`: the size of the string (can be a SpEL expression).
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
@@ -523,7 +523,7 @@ public String text;
 
 #### parameters
  - `condition`: The SpEL expression that determines if this field has to be read.
- - `charset`: the charset to be interpreted the string into (SHOULD BE the charset name, eg. `UTF-8` (the default), `ISO-8859-1`, etc).
+ - `charset`: the charset to be interpreted the string into (SHOULD BE the charset name, e.g. `UTF-8` (the default), `ISO-8859-1`, etc.).
  - `terminator`: the byte that terminates the string (defaults to `\0`).
  - `consumeTerminator`: whether to consume the terminator (defaults to `true`).
  - `validator`: the Class of a validator (applied BEFORE the converter).
@@ -554,7 +554,7 @@ Here are described the build-in special annotations.
 #### parameters
  - `start`: an array of possible start sequences (as string) for this message (defaults to empty).
  - `end`: a possible end sequence (as string) for this message (default to empty).
- - `charset`: the charset to be interpreted the `start` and `end` strings into (SHOULD BE the charset name, eg. `UTF-8` (the default), `ISO-8859-1`, etc).
+ - `charset`: the charset to be interpreted the `start` and `end` strings into (SHOULD BE the charset name, e.g. `UTF-8` (the default), `ISO-8859-1`, etc.).
 
 #### description
 Marks a POJO as an annotated message.
@@ -668,7 +668,7 @@ private String deviceTypeName;
 ## How to write SpEL expressions
 Care should be taken in writing [SpEL expressions](https://docs.spring.io/spring/docs/4.3.10.RELEASE/spring-framework-reference/html/expressions.html) for the fields `condition`, and `size`.
 
-The root object is the outermost object. In order to evaluate a variable of a parent object the complete path should be used, as in `object1.variable1`. In order to evaluate a variable of a children object, that is the object currently scanned, the relative path should be used using by the special keyword `#self`, as in `#self.variable2`).
+The root object is the outermost object. In order to evaluate a variable of a parent object the complete path should be used, as in `object1.variable1`. In order to evaluate a variable of a children object, that is the object currently scanned, the relative path should be used introduced by the special keyword `#self`, as in `#self.variable2`).
 
 See also [Spring Expression Language (SpEL) Primer](https://dhruba.wordpress.com/2009/12/30/spring-expression-language-spel-primer/).
 
