@@ -139,7 +139,7 @@ final class Template<T>{
 	private void validateAnnotation(final Field field, final Annotation annotation) throws AnnotationException{
 		final TemplateAnnotationValidator validator = TemplateAnnotationValidator.fromAnnotation(annotation);
 		if(validator != null)
-			validator.validate(field, annotation);
+			validator.validate(annotation);
 	}
 
 	Class<T> getType(){

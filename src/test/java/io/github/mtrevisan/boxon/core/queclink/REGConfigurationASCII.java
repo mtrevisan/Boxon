@@ -43,7 +43,7 @@ public class REGConfigurationASCII{
 	@ConfigurationField(terminator = ',', format = "[0-3]", defaultValue = "0")
 	private int operationMode;
 
-	@ConfigurationField(terminator = ',', enumeration = BooleanType.class, defaultValue = "0")
+	@ConfigurationField(terminator = ',', enumeration = BooleanType.class, defaultValue = "FALSE")
 	private BooleanType updateOverTheAir;
 
 	@ConfigurationField(terminator = ',', format = "[0-1]", defaultValue = "1")
@@ -59,9 +59,9 @@ public class REGConfigurationASCII{
 	@ConfigurationField(terminator = ',', minProtocol = "1.19", minValue = "5", maxValue = "30", defaultValue = "20", unitOfMeasure = "min")
 	private int downloadTimeout1_19;
 
-	@ConfigurationField(terminator = ',', maxProtocol = "1.35", defaultValue = "0", writable = false)
+	@ConfigurationField(terminator = ',', maxProtocol = "1.35", defaultValue = "HTTP", writable = false)
 	private DownloadProtocol downloadProtocol1_35;
-	@ConfigurationField(terminator = ',', minProtocol = "1.36", enumeration = DownloadProtocol.class, defaultValue = "0")
+	@ConfigurationField(terminator = ',', minProtocol = "1.36", enumeration = DownloadProtocol.class, defaultValue = "HTTP")
 	private DownloadProtocol downloadProtocol;
 
 	//NOTE: The length of downloadURL + downloadURLUsername + downloadURLPassword cannot exceed 100 characters
