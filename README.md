@@ -1007,7 +1007,7 @@ Remember that the header that will be written is the first in `@MessageHeader`.
 - Changed the signature of Checksummer.calculateChecksum returning short instead of long.
 - Changed method Validator.validate into Validator.isValid.
 - Changed method ParseResponse.getMessageForError into ParseResponse.getErrorMessageAt to align it to other method name's conventions.
-- Moved classes ParseResponse and ComposeResponse from io.github.mtrevisan.boxon.external to io.github.mtrevisan.boxon.codecs in order to hide add methods; the constructors are also hidden.
+- Moved classes ParseResponse and ComposeResponse from io.github.mtrevisan.boxon.external to io.github.mtrevisan.boxon.core in order to hide add methods; the constructors are also hidden.
 - Minor refactorings.
 - Added `originator` variable (and its getter) to ComposeResponse to hold the given objects used to create the message.
 - Added/modified javadocs to better explain some classes.

@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.external;
 
-import io.github.mtrevisan.boxon.codecs.CodecInterface;
+import io.github.mtrevisan.boxon.core.CodecInterface;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
