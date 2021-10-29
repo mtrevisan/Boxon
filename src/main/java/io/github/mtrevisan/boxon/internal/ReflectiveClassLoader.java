@@ -32,6 +32,7 @@ import java.lang.annotation.Annotation;
 import java.lang.annotation.Inherited;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -101,7 +102,7 @@ public final class ReflectiveClassLoader{
 	 * @return	The collection of classes implementing the given interface.
 	 */
 	public Collection<Class<?>> getImplementationsOf(final Class<?> type){
-		return METADATA_STORE.get(type);
+		return METADATA_STORE.getOrDefault(type, Collections.emptyList());
 	}
 
 	/**
@@ -116,7 +117,7 @@ public final class ReflectiveClassLoader{
 	 * @return	The collection of classes.
 	 */
 	public Collection<Class<?>> getTypesAnnotatedWith(final Class<? extends Annotation> annotation){
-		return METADATA_STORE.get(annotation);
+		return METADATA_STORE.getOrDefault(annotation, Collections.emptyList());
 	}
 
 }

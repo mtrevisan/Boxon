@@ -64,7 +64,7 @@ final class Template<T>{
 
 		header = type.getAnnotation(MessageHeader.class);
 		if(header != null)
-			CodecHelper.assertCharset(header.charset());
+			CodecHelper.assertValidCharset(header.charset());
 
 		loadAnnotatedFields(type, ReflectionHelper.getAccessibleFields(type), filterAnnotationsWithCodec);
 
@@ -111,7 +111,15 @@ final class Template<T>{
 
 	private void validateField(final List<? extends Annotation> annotations, final Checksum checksum)
 			throws AnnotationException{
-		if(annotations.size() > 1){
+		//filter out `@Skip` annotations
+		int annotationCount = 0;
+		for(int i = 0; i < annotations.size(); i ++){
+			final Class<? extends Annotation> annotationType = annotations.get(i).annotationType();
+			if(annotationType != Skip.class && annotationType != Skip.Skips.class)
+				annotationCount ++;
+		}
+
+		if(annotationCount > 1){
 			final StringJoiner sj = new StringJoiner(", ", "[", "]");
 			for(int i = 0; i < annotations.size(); i ++){
 				final Class<? extends Annotation> annotationType = annotations.get(i).annotationType();

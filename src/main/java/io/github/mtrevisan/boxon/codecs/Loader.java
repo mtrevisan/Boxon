@@ -25,7 +25,9 @@
 package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationMessage;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.EventListener;
@@ -58,8 +60,10 @@ final class Loader{
 	@InjectEventListener
 	private final EventListener eventListener;
 
-	private final ThrowingFunction<Class<?>, Template<?>, AnnotationException> templateStore = Memoizer.throwingMemoize(
-		type -> new Template<>(type, this::filterAnnotationsWithCodec));
+	private final ThrowingFunction<Class<?>, Template<?>, AnnotationException> templateStore
+		= Memoizer.throwingMemoize(type -> new Template<>(type, this::filterAnnotationsWithCodec));
+	private final ThrowingFunction<Class<?>, Configuration<?>, AnnotationException> configurationStore
+		= Memoizer.throwingMemoize(Configuration::new);
 
 	private static final PatternMatcher PATTERN_MATCHER = BNDMPatternMatcher.getInstance();
 	private static final Function<byte[], int[]> PRE_PROCESSED_PATTERNS = Memoizer.memoize(PATTERN_MATCHER::preProcessPattern);
@@ -67,6 +71,8 @@ final class Loader{
 	private final Map<String, Template<?>> templates = new TreeMap<>(Comparator.comparingInt(String::length).reversed()
 		.thenComparing(String::compareTo));
 	private final Map<Class<?>, CodecInterface<?>> codecs = new HashMap<>(0);
+	private final Map<String, Configuration<?>> configurations = new TreeMap<>(Comparator.comparingInt(String::length).reversed()
+		.thenComparing(String::compareTo));
 
 
 	/**
@@ -178,14 +184,6 @@ final class Loader{
 	}
 
 
-	private List<Annotation> filterAnnotationsWithCodec(final Annotation[] declaredAnnotations){
-		final List<Annotation> annotations = new ArrayList<>(declaredAnnotations.length);
-		for(int i = 0; i < declaredAnnotations.length; i ++)
-			if(hasCodec(declaredAnnotations[i].annotationType()))
-				annotations.add(declaredAnnotations[i]);
-		return annotations;
-	}
-
 	/**
 	 * Loads all the protocol classes annotated with {@link MessageHeader}.
 	 * <p>This method SHOULD BE called from a method inside a class that lies on a parent of all the protocol classes.</p>
@@ -270,7 +268,7 @@ final class Loader{
 
 	private void loadTemplateInner(final Template<?> template, final String headerStart, final Charset charset)
 			throws TemplateException{
-		final String key = calculateTemplateKey(headerStart, charset);
+		final String key = calculateKey(headerStart, charset);
 		if(templates.containsKey(key))
 			throw TemplateException.create("Duplicated key `{}` found for class {}", headerStart, template.getType().getName());
 
@@ -314,7 +312,7 @@ final class Loader{
 		if(header == null)
 			throw TemplateException.create("The given class type is not a valid template");
 
-		final String key = calculateTemplateKey(header.start()[0], Charset.forName(header.charset()));
+		final String key = calculateKey(header.start()[0], Charset.forName(header.charset()));
 		final Template<?> template = templates.get(key);
 		if(template == null)
 			throw TemplateException.create("Cannot find any template for given class type");
@@ -322,10 +320,128 @@ final class Loader{
 		return template;
 	}
 
-	private String calculateTemplateKey(final String headerStart, final Charset charset){
-		return JavaHelper.toHexString(headerStart.getBytes(charset));
+	private List<Annotation> filterAnnotationsWithCodec(final Annotation[] declaredAnnotations){
+		final List<Annotation> annotations = new ArrayList<>(declaredAnnotations.length);
+		for(int i = 0; i < declaredAnnotations.length; i ++)
+			if(hasCodec(declaredAnnotations[i].annotationType()))
+				annotations.add(declaredAnnotations[i]);
+		return annotations;
 	}
 
+
+
+	/**
+	 * Loads all the configuration classes annotated with {@link ConfigurationMessage}.
+	 * <p>This method SHOULD BE called from a method inside a class that lies on a parent of all the protocol classes.</p>
+	 *
+	 * @throws IllegalArgumentException	If the codecs was not loaded yet.
+	 */
+	void loadDefaultConfigurations() throws AnnotationException, ConfigurationException{
+		loadConfigurations(ReflectionHelper.extractCallerClasses());
+	}
+
+	/**
+	 * Loads all the configuration classes annotated with {@link ConfigurationMessage}.
+	 *
+	 * @param basePackageClasses	Classes to be used ase starting point from which to load configuration classes.
+	 */
+	void loadConfigurations(final Class<?>... basePackageClasses) throws AnnotationException, ConfigurationException{
+		eventListener.loadingConfigurations(basePackageClasses);
+
+		/** extract all classes annotated with {@link MessageHeader}. */
+		final Collection<Class<?>> annotatedClasses = extractClasses(ConfigurationMessage.class, basePackageClasses);
+		final List<Configuration<?>> configurations = extractConfigurations(annotatedClasses);
+		addConfigurationsInner(configurations);
+
+		eventListener.loadedConfigurations(configurations.size());
+	}
+
+	private List<Configuration<?>> extractConfigurations(final Collection<Class<?>> annotatedClasses) throws AnnotationException,
+			ConfigurationException{
+		final List<Configuration<?>> configurations = new ArrayList<>(annotatedClasses.size());
+		for(final Class<?> type : annotatedClasses){
+			//for each extracted class, try to parse it, extracting all the information needed for the configuration of a message
+			final Configuration<?> from = createConfiguration(type);
+			if(from.canBeCoded())
+				//if the configuration is valid, add it to the list of templates...
+				configurations.add(from);
+			else
+				//... otherwise throw exception
+				throw ConfigurationException.create("Cannot create a raw message from data: cannot scan configuration for {}",
+					type.getSimpleName());
+		}
+		return configurations;
+	}
+
+	/**
+	 * Constructs a new {@link Configuration}.
+	 *
+	 * @param <T>	The type of the object to be returned as a {@link Configuration}.
+	 * @param type	The class of the object to be returned as a {@link Configuration}.
+	 * @return	The {@link Configuration} for the given type.
+	 */
+	@SuppressWarnings("unchecked")
+	<T> Configuration<T> createConfiguration(final Class<T> type) throws AnnotationException{
+		return (Configuration<T>)configurationStore.apply(type);
+	}
+
+	private void addConfigurationsInner(final List<Configuration<?>> configurations){
+		//load each configuration into the available configurations list
+		for(int i = 0; i < configurations.size(); i ++){
+			final Configuration<?> configuration = configurations.get(i);
+			if(configuration != null && configuration.canBeCoded())
+				addConfigurationInner(configuration);
+		}
+	}
+
+	/**
+	 * For each valid configuration, add it to the map of configurations indexed by starting message bytes.
+	 *
+	 * @param configuration	The configuration to add to the list of available configurations.
+	 */
+	private void addConfigurationInner(final Configuration<?> configuration){
+		try{
+			final ConfigurationMessage header = configuration.getHeader();
+			final Charset charset = Charset.forName(header.charset());
+			final String[] starts = header.start();
+			for(int i = 0; i < starts.length; i ++)
+				loadConfigurationInner(configuration, starts[i], charset);
+		}
+		catch(final Exception e){
+			eventListener.cannotLoadConfiguration(configuration.getType().getName(), e);
+		}
+	}
+
+	private void loadConfigurationInner(final Configuration<?> configuration, final String headerStart, final Charset charset)
+			throws ConfigurationException{
+		final String key = calculateKey(headerStart, charset);
+		if(configurations.containsKey(key))
+			throw ConfigurationException.create("Duplicated key `{}` found for class {}", headerStart,
+				configuration.getType().getName());
+
+		configurations.put(key, configuration);
+	}
+
+	/**
+	 * Retrieve the next configuration.
+	 *
+	 * @param protocol	The protocol used to extract the configurations.
+	 * @return	The configuration that is able to decode/encode the next message in the given reader.
+	 */
+	Configuration<?> getConfiguration(final String protocol) throws ConfigurationException{
+		for(final Map.Entry<String, Configuration<?>> entry : configurations.entrySet()){
+			final String header = entry.getKey();
+			final byte[] configurationHeader = JavaHelper.toByteArray(header);
+
+			//TODO
+		}
+		return null;
+	}
+
+
+	private String calculateKey(final String headerStart, final Charset charset){
+		return JavaHelper.toHexString(headerStart.getBytes(charset));
+	}
 
 	/**
 	 * Scans all classes accessible from the context class loader which belong to the given package.
@@ -334,13 +450,13 @@ final class Loader{
 	 * @param basePackageClasses	A list of classes that resides in a base package(s).
 	 * @return	The classes.
 	 */
-	private Collection<Class<?>> extractClasses(final Object type, final Class<?>... basePackageClasses){
+	private Collection<Class<?>> extractClasses(final Class<?> type, final Class<?>... basePackageClasses){
 		final Collection<Class<?>> classes = new HashSet<>(0);
 
 		final ReflectiveClassLoader reflectiveClassLoader = ReflectiveClassLoader.createFrom(basePackageClasses);
-		reflectiveClassLoader.scan(CodecInterface.class, MessageHeader.class);
+		reflectiveClassLoader.scan(CodecInterface.class, type);
 		@SuppressWarnings("unchecked")
-		final Collection<Class<?>> modules = reflectiveClassLoader.getImplementationsOf((Class<Object>)type);
+		final Collection<Class<?>> modules = reflectiveClassLoader.getImplementationsOf(type);
 		@SuppressWarnings("unchecked")
 		final Collection<Class<?>> singletons = reflectiveClassLoader.getTypesAnnotatedWith((Class<? extends Annotation>)type);
 		classes.addAll(modules);

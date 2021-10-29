@@ -63,7 +63,7 @@ final class CodecHelper{
 			throw new IllegalArgumentException("Size mismatch, expected " + expectedSize + ", got " + size);
 	}
 
-	static void assertCharset(final String charsetName) throws AnnotationException{
+	static void assertValidCharset(final String charsetName) throws AnnotationException{
 		try{
 			Charset.forName(charsetName);
 		}

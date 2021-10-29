@@ -55,6 +55,13 @@ public class EventListener{
 	public void cannotLoadTemplate(final String templateClassName, final Exception exception){}
 
 
+	public void loadingConfigurations(final Class<?>[] basePackageClasses){}
+
+	public void loadedConfigurations(final int count){}
+
+	public void cannotLoadConfiguration(final String configurationClassName, final Exception exception){}
+
+
 	public void uselessAlternative(final String defaultAlternativeClassName){}
 
 	public void processingAlternative(final Exception exception){}

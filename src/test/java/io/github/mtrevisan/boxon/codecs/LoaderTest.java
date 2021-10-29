@@ -26,6 +26,7 @@ package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.codecs.queclink.ACKMessageHex;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
@@ -77,6 +78,20 @@ class LoaderTest{
 
 		Assertions.assertNotNull(template);
 		Assertions.assertEquals(ACKMessageHex.class, template.getType());
+	}
+
+	@Test
+	void loadConfiguration() throws AnnotationException, TemplateException, ConfigurationException{
+		//TODO
+		Loader loader = Loader.create();
+		loader.loadConfigurations(LoaderTest.class);
+
+//		byte[] payload = JavaHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
+//		BitReader reader = BitReader.wrap(payload);
+//		Template<?> template = loader.getTemplate(reader);
+
+//		Assertions.assertNotNull(template);
+//		Assertions.assertEquals(ACKMessageHex.class, template.getType());
 	}
 
 	@Test

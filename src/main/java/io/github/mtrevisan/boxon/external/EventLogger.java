@@ -113,6 +113,23 @@ public final class EventLogger extends EventListener{
 
 
 	@Override
+	public void loadingConfigurations(final Class<?>[] basePackageClasses){
+		if(LOGGER.isInfoEnabled())
+			info("Load configurations from package(s) {}", joinPackageNames(basePackageClasses));
+	}
+
+	@Override
+	public void loadedConfigurations(final int count){
+		trace("Configurations loaded are {}", count);
+	}
+
+	@Override
+	public void cannotLoadConfiguration(final String configurationClassName, final Exception exception){
+		LOGGER.error("Cannot load class {}", configurationClassName, exception);
+	}
+
+
+	@Override
 	public void uselessAlternative(final String defaultAlternativeClassName){
 		warn("Useless definition of default alternative ({}) due to no alternatives present on @BindArray or @BindObject",
 			defaultAlternativeClassName);
