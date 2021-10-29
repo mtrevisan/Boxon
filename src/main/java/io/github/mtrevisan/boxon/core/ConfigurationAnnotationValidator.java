@@ -28,9 +28,11 @@ import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.internal.ParserDataType;
+import io.github.mtrevisan.boxon.internal.semanticversioning.Version;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -43,6 +45,7 @@ enum ConfigurationAnnotationValidator{
 		void validate(final Field field, final Annotation annotation) throws AnnotationException{
 			final ConfigurationField binding = (ConfigurationField)annotation;
 
+			final ParserDataType fieldType = ParserDataType.fromType(field.getType());
 			final String format = binding.format();
 			final String minValue = binding.minValue();
 			final String maxValue = binding.maxValue();
@@ -55,10 +58,6 @@ enum ConfigurationAnnotationValidator{
 				if(!field.getType().isAssignableFrom(value))
 					throw AnnotationException.create("Incompatible enum in {} in field {}, found {}, expected {}",
 						ConfigurationField.class.getSimpleName(), field.getName(), value.getClass().getSimpleName(), fieldType.toString());
-
-				//defaultValue compatible with format
-				//defaultValue compatible with minValue/maxValue
-				//defaultValue compatible with enumeration
 			}
 
 			//one only of `format`, `minValue`/`maxValue`, and `enumeration` should be set:
@@ -77,15 +76,14 @@ enum ConfigurationAnnotationValidator{
 					ConfigurationField.class.getSimpleName(), field.getName());
 
 			//valid format
-			Pattern formatPattern = null;
 			if(!format.isEmpty()){
 				try{
-					formatPattern = Pattern.compile(format);
+					final Pattern formatPattern = Pattern.compile(format);
 
-					if(!defaultValue.isEmpty()){
-						//TODO
-						//defaultValue compatible with format
-					}
+					//defaultValue compatible with format
+					if(!defaultValue.isEmpty() && !formatPattern.matcher(defaultValue).matches())
+						throw AnnotationException.create("Default value not compatible with `format` in {} in field {}; found {}, expected {}",
+							ConfigurationField.class.getSimpleName(), field.getName(), defaultValue, format);
 				}
 				catch(final Exception e){
 					throw AnnotationException.create("Invalid pattern in {} in field {}", ConfigurationField.class.getSimpleName(),
@@ -93,22 +91,26 @@ enum ConfigurationAnnotationValidator{
 				}
 			}
 
-			final ParserDataType fieldType = ParserDataType.fromType(field.getType());
-
 			if(enumeration != NullEnum.class){
 				//non-empty enumeration
-				if(enumeration.getEnumConstants().length == 0)
+				final Enum<?>[] enumConstants = enumeration.getEnumConstants();
+				if(enumConstants.length == 0)
 					throw AnnotationException.create("Empty enum in {} in field {}", ConfigurationField.class.getSimpleName(),
 						field.getName());
 
 				//enumeration compatible with variable type
 				if(!field.getType().isAssignableFrom(enumeration))
-					throw AnnotationException.create("Incompatible enum in {} in field {}, found {}, expected {}",
+					throw AnnotationException.create("Incompatible enum in {} in field {}; found {}, expected {}",
 						ConfigurationField.class.getSimpleName(), field.getName(), enumeration.getSimpleName(), fieldType.toString());
 
 				if(!defaultValue.isEmpty()){
-					//TODO
-					//defaultValue compatible with enumeration
+					boolean found = false;
+					for(int i = 0; !found && i < enumConstants.length; i ++)
+						if(enumConstants[i].name().equals(defaultValue))
+							found = true;
+					if(!found)
+						throw AnnotationException.create("Default value not compatible with `enumeration` in {} in field {}; found {}, expected on of {}",
+							ConfigurationField.class.getSimpleName(), field.getName(), defaultValue, Arrays.toString(enumConstants));
 				}
 			}
 			else if(!minValue.isEmpty() || !maxValue.isEmpty()){
@@ -116,7 +118,7 @@ enum ConfigurationAnnotationValidator{
 					//TODO
 					//minValue compatible with variable type
 					if(!field.getType().isAssignableFrom(value))
-						throw AnnotationException.create("Incompatible minimum value in {} in field {}, found {}, expected {}",
+						throw AnnotationException.create("Incompatible minimum value in {} in field {}; found {}, expected {}",
 							ConfigurationField.class.getSimpleName(), field.getName(), value.getSimpleName(), fieldType.toString());
 					//minValue compatible with format
 
@@ -129,7 +131,7 @@ enum ConfigurationAnnotationValidator{
 					//TODO
 					//maxValue compatible with variable type
 					if(!field.getType().isAssignableFrom(value))
-						throw AnnotationException.create("Incompatible maximum value in {} in field {}, found {}, expected {}",
+						throw AnnotationException.create("Incompatible maximum value in {} in field {}; found {}, expected {}",
 							ConfigurationField.class.getSimpleName(), field.getName(), value.getSimpleName(), fieldType.toString());
 					//maxValue compatible with format
 
@@ -145,10 +147,35 @@ enum ConfigurationAnnotationValidator{
 				}
 			}
 
-			//TODO
-			//minProtocol/maxProtocol are valid
-			//TODO
-			//maxProtocol after or equal to minProtocol
+			final String minProtocol = binding.minProtocol();
+			final String maxProtocol = binding.minProtocol();
+			if(!minProtocol.isEmpty() || !maxProtocol.isEmpty()){
+				//minProtocol/maxProtocol are valid
+				Version minimum = null;
+				if(!minProtocol.isEmpty()){
+					try{
+						minimum = new Version(minProtocol);
+					}
+					catch(final IllegalArgumentException iae){
+						throw AnnotationException.create("Invalid minimum protocol version in {} in field {}; found {}",
+							ConfigurationField.class.getSimpleName(), field.getName(), minProtocol);
+					}
+				}
+				Version maximum = null;
+				if(!maxProtocol.isEmpty()){
+					try{
+						maximum = new Version(maxProtocol);
+					}
+					catch(final IllegalArgumentException iae){
+						throw AnnotationException.create("Invalid maximum protocol version in {} in field {}; found {}",
+							ConfigurationField.class.getSimpleName(), field.getName(), maxProtocol);
+					}
+				}
+				//maxProtocol after or equal to minProtocol
+				if(minimum != null && maximum != null && maximum.isLessThan(maximum))
+					throw AnnotationException.create("Minimum protocol version is greater than maximum protocol version in {} in field {}; found {}",
+						ConfigurationField.class.getSimpleName(), field.getName(), maxProtocol);
+			}
 		}
 	};
 
