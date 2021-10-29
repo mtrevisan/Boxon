@@ -38,6 +38,7 @@ import io.github.mtrevisan.boxon.internal.InjectEventListener;
 import io.github.mtrevisan.boxon.internal.ParserDataType;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,13 +47,13 @@ enum TemplateAnnotationValidator{
 
 	OBJECT(BindObject.class){
 		@Override
-		void validate(final Annotation annotation) throws AnnotationException{
+		void validate(final Field field, final Annotation annotation) throws AnnotationException{
 			final BindObject binding = (BindObject)annotation;
 			final ObjectChoices selectFrom = binding.selectFrom();
 			final Class<?> type = binding.type();
 			if(ParserDataType.isPrimitive(type))
-				throw AnnotationException.create("Bad annotation used for {}, should have been used one of the primitive type's annotations",
-					BindObject.class.getSimpleName());
+				throw AnnotationException.create("Bad annotation used for {} in field {}, should have been used one of the primitive type's annotations",
+					BindObject.class.getSimpleName(), field.getName());
 
 			validateObjectChoice(selectFrom, binding.selectDefault(), type);
 		}
@@ -60,24 +61,24 @@ enum TemplateAnnotationValidator{
 
 	ARRAY_PRIMITIVE(BindArrayPrimitive.class){
 		@Override
-		void validate(final Annotation annotation) throws AnnotationException{
+		void validate(final Field field, final Annotation annotation) throws AnnotationException{
 			final BindArrayPrimitive binding = (BindArrayPrimitive)annotation;
 			final Class<?> type = binding.type();
 			if(!ParserDataType.isPrimitive(type))
-				throw AnnotationException.create("Bad annotation used for {}, should have been used the type `{}.class`",
-					BindArray.class.getSimpleName(), ParserDataType.toObjectiveTypeOrSelf(type).getSimpleName());
+				throw AnnotationException.create("Bad annotation used for {} in field {}, should have been used the type `{}.class`",
+					BindArray.class.getSimpleName(), field.getName(), ParserDataType.toObjectiveTypeOrSelf(type).getSimpleName());
 		}
 	},
 
 	ARRAY(BindArray.class){
 		@Override
-		void validate(final Annotation annotation) throws AnnotationException{
+		void validate(final Field field, final Annotation annotation) throws AnnotationException{
 			final BindArray binding = (BindArray)annotation;
 			final ObjectChoices selectFrom = binding.selectFrom();
 			final Class<?> type = binding.type();
 			if(ParserDataType.isPrimitive(type))
-				throw AnnotationException.create("Bad annotation used for {}, should have been used the type `{}.class`",
-					BindArrayPrimitive.class.getSimpleName(), ParserDataType.toPrimitiveTypeOrSelf(type).getSimpleName());
+				throw AnnotationException.create("Bad annotation used for {} in field {}, should have been used the type `{}.class`",
+					BindArrayPrimitive.class.getSimpleName(), field.getName(), ParserDataType.toPrimitiveTypeOrSelf(type).getSimpleName());
 
 			validateObjectChoice(selectFrom, binding.selectDefault(), type);
 		}
@@ -85,38 +86,38 @@ enum TemplateAnnotationValidator{
 
 	DECIMAL(BindDecimal.class){
 		@Override
-		void validate(final Annotation annotation) throws AnnotationException{
+		void validate(final Field field, final Annotation annotation) throws AnnotationException{
 			final BindDecimal binding = (BindDecimal)annotation;
 			final Class<?> type = binding.type();
 			final ParserDataType dataType = ParserDataType.fromType(type);
 			if(dataType != ParserDataType.FLOAT && dataType != ParserDataType.DOUBLE)
-				throw AnnotationException.create("Bad type, should have been one of `{}.class` or `{}.class`", Float.class.getSimpleName(),
-					Double.class.getSimpleName());
+				throw AnnotationException.create("Bad type in field {}, should have been one of `{}.class` or `{}.class`",
+					field.getName(), Float.class.getSimpleName(), Double.class.getSimpleName());
 		}
 	},
 
 	STRING(BindString.class){
 		@Override
-		void validate(final Annotation annotation) throws AnnotationException{
+		void validate(final Field field, final Annotation annotation) throws AnnotationException{
 			final BindString binding = (BindString)annotation;
-			CodecHelper.assertValidCharset(binding.charset());
+			CodecHelper.assertValidCharset(binding.charset(), field);
 		}
 	},
 
 	STRING_TERMINATED(BindStringTerminated.class){
 		@Override
-		void validate(final Annotation annotation) throws AnnotationException{
+		void validate(final Field field, final Annotation annotation) throws AnnotationException{
 			final BindStringTerminated binding = (BindStringTerminated)annotation;
-			CodecHelper.assertValidCharset(binding.charset());
+			CodecHelper.assertValidCharset(binding.charset(), field);
 		}
 	},
 
 	CHECKSUM(Checksum.class){
 		@Override
-		void validate(final Annotation annotation) throws AnnotationException{
+		void validate(final Field field, final Annotation annotation) throws AnnotationException{
 			final Class<?> type = ((Checksum)annotation).type();
 			if(!ParserDataType.isPrimitiveOrWrapper(type))
-				throw AnnotationException.create("Unrecognized type for field {}.{}: {}", getClass().getName(), type.getSimpleName(),
+				throw AnnotationException.create("Unrecognized type for field {}.{}: {}", field.getName(), type.getSimpleName(),
 					type.getComponentType().getSimpleName());
 		}
 	};
@@ -142,7 +143,7 @@ enum TemplateAnnotationValidator{
 		return ANNOTATION_VALIDATORS.get(annotation.annotationType());
 	}
 
-	abstract void validate(final Annotation annotation) throws AnnotationException;
+	abstract void validate(final Field field, final Annotation annotation) throws AnnotationException;
 
 	private static void validateObjectChoice(final ObjectChoices selectFrom, final Class<?> selectDefault, final Class<?> type)
 			throws AnnotationException{
