@@ -93,6 +93,7 @@ final class Loader{
 		this.eventListener = eventListener;
 	}
 
+
 	/**
 	 * Loads all the codecs that extends {@link CodecInterface}.
 	 * <p>This method SHOULD BE called from a method inside a class that lies on a parent of all the codecs.</p>

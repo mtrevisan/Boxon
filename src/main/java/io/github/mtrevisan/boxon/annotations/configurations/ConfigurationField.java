@@ -89,6 +89,20 @@ public @interface ConfigurationField{
 	String format() default "";
 
 	/**
+	 * The enumeration that represents the finite possible values for this field.
+	 *
+	 * @return	The enumeration that represents the finite possible values for this field.
+	 */
+	Class<? extends Enum<?>> enumeration() default NullEnum.class;
+
+	/**
+	 * The numeral system (base, or radix), or the type (e.g. URL, email, etc.) of this field.
+	 *
+	 * @return	The numeral system (base, or radix), or the type (e.g. URL, email, etc.) of this field.
+	 */
+	FieldType type() default FieldType.DECIMAL;
+
+	/**
 	 * The default value of the field.
 	 *
 	 * @return	The default value of the field.
