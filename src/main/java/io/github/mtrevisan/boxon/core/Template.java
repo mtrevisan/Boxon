@@ -85,7 +85,7 @@ final class Template<T>{
 			evaluatedFields.addAll(extractEvaluations(declaredAnnotations, field));
 
 			try{
-				validateField(field, boundedAnnotations, checksum);
+				validateField(boundedAnnotations, checksum);
 			}
 			catch(final AnnotationException e){
 				e.setClassNameAndFieldName(type.getName(), field.getName());
@@ -109,8 +109,7 @@ final class Template<T>{
 		return evaluations;
 	}
 
-	private void validateField(final Field field, final List<? extends Annotation> annotations, final Checksum checksum)
-			throws AnnotationException{
+	private void validateField(final List<? extends Annotation> annotations, final Checksum checksum) throws AnnotationException{
 		//filter out `@Skip` annotations
 		int annotationCount = 0;
 		for(int i = 0; i < annotations.size(); i ++){
@@ -133,10 +132,10 @@ final class Template<T>{
 				type.getName());
 
 		if(!annotations.isEmpty())
-			validateAnnotation(field, annotations.get(0));
+			validateAnnotation(annotations.get(0));
 	}
 
-	private void validateAnnotation(final Field field, final Annotation annotation) throws AnnotationException{
+	private void validateAnnotation(final Annotation annotation) throws AnnotationException{
 		final TemplateAnnotationValidator validator = TemplateAnnotationValidator.fromAnnotation(annotation);
 		if(validator != null)
 			validator.validate(annotation);

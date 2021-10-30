@@ -31,7 +31,8 @@ import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
 import io.github.mtrevisan.boxon.annotations.configurations.FieldType;
 
 
-@ConfigurationMessage(start = "AT+", end = "$", shortDescription = "AT+GTREG", longDescription = "The command AT+GTREG is used to do things.")
+@ConfigurationMessage(start = "AT+", end = "$", shortDescription = "AT+GTREG",
+	longDescription = "The command AT+GTREG is used to do things.")
 public class REGConfigurationASCII{
 
 	@ConfigurationField(shortDescription = "Header", terminator = '=', defaultValue = "GTREG", writable = false)
@@ -74,18 +75,22 @@ public class REGConfigurationASCII{
 //	private String downloadURLPassword;
 
 	@ConfigurationSkip(terminator = ',', maxProtocol = "1.18")
-	@ConfigurationField(terminator = ',', minProtocol = "1.19", maxProtocol = "1.20", minValue = "90", maxValue = "86400", defaultValue = "3600", unitOfMeasure = "s")
+	@ConfigurationField(terminator = ',', minProtocol = "1.19", maxProtocol = "1.20", minValue = "90", maxValue = "86400",
+		defaultValue = "3600", unitOfMeasure = "s")
 	private int motionReportInterval;
 	@ConfigurationSkip(terminator = ',', minProtocol = "1.21")
 
 	@ConfigurationSkip(terminator = ',', maxProtocol = "1.18")
-	@ConfigurationField(terminator = ',', minProtocol = "1.19", maxProtocol = "1.20", minValue = "90", maxValue = "86400", defaultValue = "3600", unitOfMeasure = "s")
+	@ConfigurationField(terminator = ',', minProtocol = "1.19", maxProtocol = "1.20", minValue = "90", maxValue = "86400",
+		defaultValue = "3600", unitOfMeasure = "s")
 	private int motionlessReportInterval;
-	@ConfigurationField(terminator = ',', minProtocol = "1.21", minValue = "3600", maxValue = "86400", defaultValue = "3600", unitOfMeasure = "s")
+	@ConfigurationField(terminator = ',', minProtocol = "1.21", minValue = "3600", maxValue = "86400", defaultValue = "3600",
+		unitOfMeasure = "s")
 	private int operationModeReportInterval;
 
-	@ConfigurationField(terminator = ',', enumeration = Workday.class, type = FieldType.HEXADECIMAL, defaultValue = "0x1F")
-	private int workday;
+	@ConfigurationField(terminator = ',', enumeration = Weekday.class, type = FieldType.HEXADECIMAL,
+		defaultValue = "MONDAY|TUESDAY|WEDNESDAY|THURSDAY|FRIDAY|SATURDAY|SUNDAY")
+	private Weekday[] weekday;
 
 	@ConfigurationField(terminator = ',', minValue = "0x0000", maxValue = "0xFFFF", type = FieldType.HEXADECIMAL, writable = false)
 	private int messageCounter;

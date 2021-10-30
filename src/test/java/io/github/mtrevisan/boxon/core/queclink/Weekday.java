@@ -22,23 +22,24 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.annotations.configurations;
+package io.github.mtrevisan.boxon.core.queclink;
 
 
-public enum FieldType{
+public enum Weekday{
 
-	//FIXME transfer this information into unitOfMeasure?
-	IP, URL,
+	MONDAY(0x01),
+	TUESDAY(0x02),
+	WEDNESDAY(0x04),
+	THURSDAY(0x08),
+	FRIDAY(0x10),
+	SATURDAY(0x20),
+	SUNDAY(0x40);
 
-	//FIXME transfer this information into unitOfMeasure?
-	EMAIL,
 
-	//FIXME transfer this information into unitOfMeasure?
-	PHONE_NUMBER,
+	private int code;
 
-	//FIXME transfer this information into unitOfMeasure?
-	DATE, TIME, DATETIME,
-
-	BINARY, DECIMAL, OCTAL, HEXADECIMAL
+	Weekday(final int code){
+		this.code = code;
+	}
 
 }

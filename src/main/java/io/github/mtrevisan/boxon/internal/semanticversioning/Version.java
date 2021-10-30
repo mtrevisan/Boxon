@@ -24,6 +24,8 @@
  */
 package io.github.mtrevisan.boxon.internal.semanticversioning;
 
+import io.github.mtrevisan.boxon.internal.JavaHelper;
+
 import java.util.Arrays;
 import java.util.StringTokenizer;
 
@@ -39,7 +41,7 @@ public class Version implements Comparable<Version>{
 	/** A separator that separates the build metadata from the normal version or the pre-release version. */
 	private static final String BUILD_PREFIX = "+";
 
-	private static final String[] EMPTY_ARRAY = new String[0];
+	private static final char[] VALID_CHARS = "-ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".toCharArray();
 
 
 	private final Integer major;
@@ -57,8 +59,8 @@ public class Version implements Comparable<Version>{
 	 * @param patch	The patch version number
 	 * @throws IllegalArgumentException	If one of the version numbers is a negative integer
 	 */
-	Version(final int major, final int minor, final int patch){
-		this(major, minor, patch, EMPTY_ARRAY, EMPTY_ARRAY);
+	public Version(final int major, final int minor, final int patch){
+		this(major, minor, patch, JavaHelper.EMPTY_ARRAY, JavaHelper.EMPTY_ARRAY);
 	}
 
 	/**
@@ -70,8 +72,8 @@ public class Version implements Comparable<Version>{
 	 * @param preRelease	The pre-release identifiers
 	 * @throws IllegalArgumentException	If one of the version numbers is a negative integer
 	 */
-	Version(final int major, final int minor, final int patch, final String[] preRelease){
-		this(major, minor, patch, preRelease, EMPTY_ARRAY);
+	public Version(final int major, final int minor, final int patch, final String[] preRelease){
+		this(major, minor, patch, preRelease, JavaHelper.EMPTY_ARRAY);
 	}
 
 	/**
@@ -84,15 +86,15 @@ public class Version implements Comparable<Version>{
 	 * @param build	The build identifiers
 	 * @throws IllegalArgumentException	If one of the version numbers is a negative integer
 	 */
-	Version(final int major, final int minor, final int patch, final String[] preRelease, final String[] build){
+	public Version(final int major, final int minor, final int patch, final String[] preRelease, final String[] build){
 		if(major < 0 || minor < 0 || patch < 0)
 			throw new IllegalArgumentException("Major, minor and patch versions MUST be non-negative integers.");
 
 		this.major = major;
 		this.minor = minor;
 		this.patch = patch;
-		this.preRelease = preRelease;
-		this.build = build;
+		this.preRelease = (preRelease != null? preRelease: JavaHelper.EMPTY_ARRAY);
+		this.build = (build != null? build: JavaHelper.EMPTY_ARRAY);
 	}
 
 	/**
@@ -101,18 +103,18 @@ public class Version implements Comparable<Version>{
 	 * @param version	The string representation of the version.
 	 */
 	public Version(String version){
-		if(StringUtils.isBlank(version))
+		if(isBlank(version))
 			throw new IllegalArgumentException("Argument is not a valid version");
 
 		version = version.trim();
 		if(!startsWithNumber(version))
 			throw new IllegalArgumentException("Argument is not a valid version");
 
-		final String[] tokens = StringUtils.split(version, DOT, 3);
-		final String[] tokensWithPatch = StringUtils.split(version, DOT + PRE_RELEASE_PREFIX + BUILD_PREFIX);
+		final String[] tokens = JavaHelper.split(version, DOT, 3);
+		final String[] tokensWithPatch = JavaHelper.split(version, DOT + PRE_RELEASE_PREFIX + BUILD_PREFIX, -1);
 		if(hasLeadingZeros(tokens[0])
-				|| tokensWithPatch.length > 1 && hasLeadingZeros(tokens[1])
-				|| tokensWithPatch.length > 2 && hasLeadingZeros(tokensWithPatch[2]))
+				|| tokensWithPatch != null && (tokensWithPatch.length > 1 && hasLeadingZeros(tokens[1])
+				|| tokensWithPatch.length > 2 && hasLeadingZeros(tokensWithPatch[2])))
 			throw new IllegalArgumentException("Numeric identifier MUST NOT contain leading zeros");
 
 		major = Integer.valueOf(tokens[0]);
@@ -123,36 +125,36 @@ public class Version implements Comparable<Version>{
 			patch = Integer.valueOf(tokenizer.nextToken());
 			String nextToken = (tokenizer.hasMoreElements()? tokenizer.nextToken(): null);
 			if(PRE_RELEASE_PREFIX.equals(nextToken) && tokenizer.hasMoreElements()){
-				preRelease = StringUtils.split(tokenizer.nextToken(), DOT);
+				preRelease = JavaHelper.split(tokenizer.nextToken(), DOT, -1);
 
 				nextToken = (tokenizer.hasMoreElements()? tokenizer.nextToken(): null);
 
-				for(final String pr : preRelease){
-					final boolean numeric = StringUtils.isNumeric(pr);
+				for(int i = 0; i < JavaHelper.lengthOrZero(preRelease); i ++){
+					final String pr = preRelease[i];
+					final boolean numeric = JavaHelper.isNumeric(pr);
 					if(numeric && pr.length() > 1 && pr.charAt(0) == '0')
 						throw new IllegalArgumentException("Numeric identifier MUST NOT contain leading zeros");
-					if(!numeric && !StringUtils.containsOnly(pr, "-ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"))
+					if(!numeric && !containsOnly(pr))
 						throw new IllegalArgumentException("Argument is not a valid version");
 				}
 			}
-			else
-				preRelease = EMPTY_ARRAY;
 			if(BUILD_PREFIX.equals(nextToken) && tokenizer.hasMoreElements()){
-				build = StringUtils.split(tokenizer.nextToken(), DOT);
+				build = JavaHelper.split(tokenizer.nextToken(), DOT, -1);
 
-				for(final String b : build)
-					if(!StringUtils.isNumeric(b) && !StringUtils.containsOnly(b, "-ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"))
+				for(int i = 0; i < JavaHelper.lengthOrZero(build); i ++){
+					final String b = build[i];
+					if(!JavaHelper.isNumeric(b) && !containsOnly(b))
 						throw new IllegalArgumentException("Argument is not a valid version");
+				}
 			}
-			else
-				build = EMPTY_ARRAY;
+
 			if(tokenizer.hasMoreElements())
 				throw new IllegalArgumentException("Argument is not a valid version");
 		}
-		else{
-			preRelease = EMPTY_ARRAY;
-			build = EMPTY_ARRAY;
-		}
+		if(preRelease == null)
+			preRelease = JavaHelper.EMPTY_ARRAY;
+		if(build == null)
+			build = JavaHelper.EMPTY_ARRAY;
 	}
 
 	private static boolean hasLeadingZeros(final CharSequence token){
@@ -160,7 +162,7 @@ public class Version implements Comparable<Version>{
 	}
 
 	private static boolean startsWithNumber(final CharSequence str){
-		return (!StringUtils.isEmpty(str) && Character.isDigit(str.charAt(0)));
+		return (str != null && str.length() > 0 && Character.isDigit(str.charAt(0)));
 	}
 
 	/**
@@ -314,9 +316,66 @@ public class Version implements Comparable<Version>{
 	}
 
 	private static int compareIdentifiers(final String identifier1, final String identifier2){
-		return (StringUtils.isNumeric(identifier1) && StringUtils.isNumeric(identifier2)
+		return (JavaHelper.isNumeric(identifier1) && JavaHelper.isNumeric(identifier2)
 			? Integer.parseInt(identifier1) - Integer.parseInt(identifier2)
 			: identifier1.compareTo(identifier2));
+	}
+
+
+	/**
+	 * <p>Checks if a text is empty (""), {@code null} or whitespace only.</p>
+	 *
+	 * <p>Whitespace is defined by {@link Character#isWhitespace(char)}.</p>
+	 *
+	 * <pre>
+	 * isBlank(null)      = true
+	 * isBlank("")        = true
+	 * isBlank(" ")       = true
+	 * isBlank("bob")     = false
+	 * isBlank("  bob  ") = false
+	 * </pre>
+	 *
+	 * @param text	The text to check, may be {@code null}.
+	 * @return	Whether the given text is {@code null}, empty or whitespace only.
+	 */
+	private static boolean isBlank(final CharSequence text){
+		for(int i = 0; i < JavaHelper.lengthOrZero(text); i ++)
+			if(!Character.isWhitespace(text.charAt(i)))
+				return false;
+		return true;
+	}
+
+	/**
+	 * <p>Checks if the text contains only certain characters.</p>
+	 *
+	 * <p>A {@code null} text will return {@code false}.
+	 * An empty String ({@code length() = 0}) always returns {@code true}.</p>
+	 *
+	 * <pre>
+	 * containsOnly(null, *)       = false
+	 * containsOnly(*, null)       = false
+	 * containsOnly("", *)         = true
+	 * containsOnly("ab", "")      = false
+	 * containsOnly("abab", "abc") = true
+	 * containsOnly("ab1", "abc")  = false
+	 * containsOnly("abz", "abc")  = false
+	 * </pre>
+	 *
+	 * @param text	The text to check, may be {@code null}.
+	 * @return	Whether if the given text only contains valid chars and is non-{@code null}.
+	 */
+	private static boolean containsOnly(final CharSequence text){
+		final int lastIndex = JavaHelper.lengthOrZero(text) - 1;
+		outer:
+		for(int i = 0; i <= lastIndex; i ++){
+			final char chr = text.charAt(i);
+			for(int j = 0; j < VALID_CHARS.length; j ++)
+				if(VALID_CHARS[j] == chr && (i >= lastIndex || j >= VALID_CHARS.length - 1 || !Character.isHighSurrogate(chr)
+					|| VALID_CHARS[j + 1] == text.charAt(i + 1)))
+					continue outer;
+			return false;
+		}
+		return true;
 	}
 
 	@Override

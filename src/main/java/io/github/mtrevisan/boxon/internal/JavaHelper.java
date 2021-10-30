@@ -26,10 +26,16 @@ package io.github.mtrevisan.boxon.internal;
 
 import org.slf4j.helpers.MessageFormatter;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 
 public final class JavaHelper{
+
+	/** An empty immutable {@code String} array. */
+	public static final String[] EMPTY_ARRAY = new String[0];
+
 
 	private JavaHelper(){}
 
@@ -76,15 +82,152 @@ public final class JavaHelper{
 	}
 
 
+	/**
+	 * <p>Splits the provided text into an array with a maximum length, separators specified.</p>
+	 *
+	 * <p>The separator is not included in the returned String array.
+	 * Adjacent separators are treated as one separator.</p>
+	 *
+	 * <p>A {@code null} input String returns {@code null}.
+	 * A {@code null} `separatorChars` splits on whitespace.</p>
+	 *
+	 * <p>If more than {@code max} delimited substrings are found, the last
+	 * returned string includes all characters after the first {@code max - 1}
+	 * returned strings (including separator characters).</p>
+	 *
+	 * <pre>
+	 * split(null, *, *)            = null
+	 * split("", *, *)              = []
+	 * split("ab cd ef", null, 0)   = ["ab", "cd", "ef"]
+	 * split("ab   cd ef", null, 0) = ["ab", "cd", "ef"]
+	 * split("ab:cd:ef", ":", 0)    = ["ab", "cd", "ef"]
+	 * split("ab:cd:ef", ":", 2)    = ["ab", "cd:ef"]
+	 * </pre>
+	 *
+	 * @param str	The text to parse, may be {@code null}.
+	 * @param separatorChars	The characters used as the delimiters, {@code null} splits on whitespace.
+	 * @param max	The maximum number of elements to include in the array. A zero or negative value implies no limit.
+	 * @return	An array of parsed Strings, {@code null} if {@code null} String input.
+	 */
+	public static String[] split(final String str, final String separatorChars, final int max){
+		if(str == null)
+			return null;
+
+		final int length = str.length();
+		if(length == 0)
+			return EMPTY_ARRAY;
+
+		final List<String> list = new ArrayList<>();
+		int sizePlus1 = 1;
+		int i = 0, start = 0;
+		boolean match = false;
+		if(separatorChars == null)
+			//null separator means use whitespace
+			while(i < length){
+				if(Character.isWhitespace(str.charAt(i))){
+					if(match){
+						if(sizePlus1 ++ == max)
+							i = length;
+						list.add(str.substring(start, i));
+						match = false;
+					}
+					start = ++ i;
+					continue;
+				}
+				match = true;
+				i ++;
+			}
+		else if(separatorChars.length() == 1){
+			//optimize 1 character case
+			final char separator = separatorChars.charAt(0);
+			while(i < length){
+				if(str.charAt(i) == separator){
+					if(match){
+						if(sizePlus1 ++ == max)
+							i = length;
+						list.add(str.substring(start, i));
+						match = false;
+					}
+					start = ++ i;
+					continue;
+				}
+				match = true;
+				i ++;
+			}
+		}
+		else
+			//standard case
+			while(i < length){
+				if(separatorChars.indexOf(str.charAt(i)) >= 0){
+					if(match){
+						if(sizePlus1 ++ == max)
+							i = length;
+						list.add(str.substring(start, i));
+						match = false;
+					}
+					start = ++ i;
+					continue;
+				}
+				match = true;
+				i ++;
+			}
+
+		if(match)
+			list.add(str.substring(start, i));
+		return list.toArray(EMPTY_ARRAY);
+	}
+
+
+	/**
+	 * <p>Checks if the text contains only Unicode digits.
+	 * A decimal point is not a Unicode digit and returns false.</p>
+	 *
+	 * <p>{@code null} will return {@code false}.
+	 * An empty text ({@code length() = 0}) will return {@code false}.</p>
+	 *
+	 * <p>Note that the method does not allow for a leading sign, either positive or negative.
+	 * Also, if a String passes the numeric test, it may still generate a NumberFormatException
+	 * when parsed by Integer.parseInt or Long.parseLong, e.g. if the value is outside the range
+	 * for int or long respectively.</p>
+	 *
+	 * <pre>
+	 * isNumeric(null)   = false
+	 * isNumeric("")     = false
+	 * isNumeric("  ")   = false
+	 * isNumeric("123")  = true
+	 * isNumeric("\u0967\u0968\u0969")  = true
+	 * isNumeric("12 3") = false
+	 * isNumeric("ab2c") = false
+	 * isNumeric("12-3") = false
+	 * isNumeric("12.3") = false
+	 * isNumeric("-123") = false
+	 * isNumeric("+123") = false
+	 * </pre>
+	 *
+	 * @param text	The text to check, may be {@code null}.
+	 * @return	Whether the given text contains only digits and is non-{@code null}.
+	 */
+	public static boolean isNumeric(final CharSequence text){
+		if(text == null || text.length() == 0)
+			return false;
+
+		final int sz = text.length();
+		for(int i = 0; i < sz; i ++)
+			if(!Character.isDigit(text.charAt(i)))
+				return false;
+		return true;
+	}
+
+
 	public static <T> T nonNullOrDefault(final T obj, final T defaultObject){
 		return (obj != null? obj: defaultObject);
 	}
 
-	private static int lengthOrZero(final CharSequence text){
+	public static int lengthOrZero(final CharSequence text){
 		return (text != null? text.length(): 0);
 	}
 
-	private static int lengthOrZero(final byte[] array){
+	public static int lengthOrZero(final byte[] array){
 		return (array != null? array.length: 0);
 	}
 

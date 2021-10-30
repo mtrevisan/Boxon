@@ -125,10 +125,10 @@ enum TemplateAnnotationValidator{
 	@InjectEventListener
 	private static final EventListener eventListener = EventListener.getNoOpInstance();
 
-	private static final Map<Class<? extends Annotation>, TemplateAnnotationValidator> ANNOTATION_VALIDATORS = new HashMap<>(5);
+	private static final Map<Class<? extends Annotation>, TemplateAnnotationValidator> VALIDATORS = new HashMap<>(7);
 	static{
 		for(final TemplateAnnotationValidator validator : values())
-			ANNOTATION_VALIDATORS.put(validator.annotationType, validator);
+			VALIDATORS.put(validator.annotationType, validator);
 	}
 
 	private final Class<? extends Annotation> annotationType;
@@ -139,7 +139,7 @@ enum TemplateAnnotationValidator{
 	}
 
 	static TemplateAnnotationValidator fromAnnotation(final Annotation annotation){
-		return ANNOTATION_VALIDATORS.get(annotation.annotationType());
+		return VALIDATORS.get(annotation.annotationType());
 	}
 
 	abstract void validate(final Annotation annotation) throws AnnotationException;

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2021 Mauro Trevisan
+ * Copyright (c) 2019-2021 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -22,24 +22,45 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.queclink;
+package io.github.mtrevisan.boxon.internal.semanticversioning;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 
-public enum Workday{
+class VersionCompareTest{
 
-	MONDAY(0x01),
-	TUESDAY(0x02),
-	WEDNESDAY(0x04),
-	THURSDAY(0x08),
-	FRIDAY(0x10),
-	SATURDAY(0x20),
-	SUNDAY(0x40);
+	@Test
+	void shouldReturnFalseIfOtherVersionIsNull(){
+		Version v1 = new Version("2.3.7");
+		Version v2 = null;
 
+		Assertions.assertNotEquals(v1, v2);
+	}
 
-	private int code;
+	@Test
+	void preReleaseShouldHaveLowerPrecedenceThanAssociatedNormal(){
+		Version v1 = new Version("1.3.7");
+		Version v2 = new Version("1.3.7-alpha");
 
-	Workday(final int code){
-		this.code = code;
+		Assertions.assertTrue(v1.compareTo(v2) > 0);
+		Assertions.assertTrue(v2.compareTo(v1) < 0);
+	}
+
+	@Test
+	void preRelease1(){
+		Version v1 = new Version("2.3.7-alpha");
+		Version v2 = new Version("2.3.7-beta");
+
+		Assertions.assertTrue(v1.isLessThan(v2));
+	}
+
+	@Test
+	void preRelease2(){
+		Version v1 = new Version("2.3.7-beta.1");
+		Version v2 = new Version("2.3.7-beta.2");
+
+		Assertions.assertTrue(v1.isLessThan(v2));
 	}
 
 }
