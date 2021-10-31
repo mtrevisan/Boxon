@@ -85,6 +85,9 @@
 		<!-- Apache -->
 		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
 		<apache.commons-lang3.version>3.12.0</apache.commons-lang3.version>
+		<!-- Jackson -->
+		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
+		<jackson.jackson-databind.version>2.13.0</jackson.jackson-databind.version>
 	</properties>
 
 	<repositories>
@@ -368,6 +371,13 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 			<version>${apache.commons-lang3.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- Jackson -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>${jackson.jackson-databind.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

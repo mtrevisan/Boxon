@@ -77,4 +77,18 @@ public @interface ConfigurationMessage{
 	 */
 	String charset() default "UTF-8";
 
+	/**
+	 * The lowest protocol the message is in.
+	 *
+	 * @return	The lowest protocol the message is in.
+	 */
+	String minProtocol() default "";
+
+	/**
+	 * The highest protocol the message is in.
+	 *
+	 * @return	The highest protocol the message is in.
+	 */
+	String maxProtocol() default "";
+
 }

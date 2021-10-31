@@ -41,6 +41,7 @@ public @interface ConfigurationField{
 
 	/**
 	 * A short description of the field.
+	 * <p>This field is mandatory for ...? TODO</p>
 	 *
 	 * @return	A short description of the field.
 	 */
@@ -52,6 +53,13 @@ public @interface ConfigurationField{
 	 * @return	A long description of the field.
 	 */
 	String longDescription() default "";
+
+	/**
+	 * The unit of measure of the value.
+	 *
+	 * @return	The unit of measure of the value.
+	 */
+	String unitOfMeasure() default "";
 
 	/**
 	 * The lowest protocol the field is in.
@@ -69,6 +77,8 @@ public @interface ConfigurationField{
 
 	/**
 	 * The lowest value the field can have.
+	 * <p>Not compatible with enumeration field.</p>
+	 * <p>Compatible with numeric field.</p>
 	 *
 	 * @return	The lowest value the field can have.
 	 */
@@ -76,6 +86,8 @@ public @interface ConfigurationField{
 
 	/**
 	 * The highest value the field can have.
+	 * <p>Not compatible with enumeration field.</p>
+	 * <p>Compatible with numeric field.</p>
 	 *
 	 * @return	The highest value the field can have.
 	 */
@@ -83,6 +95,7 @@ public @interface ConfigurationField{
 
 	/**
 	 * The format of the value, expressed as a regex.
+	 * <p>Not compatible with enumeration field.</p>
 	 *
 	 * @return	The format of the value, expressed as a regex.
 	 */
@@ -90,13 +103,23 @@ public @interface ConfigurationField{
 
 	/**
 	 * The enumeration that represents the finite possible values for this field.
+	 * <p>Not compatible with format field.</p>
 	 *
 	 * @return	The enumeration that represents the finite possible values for this field.
 	 */
 	Class<? extends Enum<?>> enumeration() default NullEnum.class;
 
 	/**
+	 * The enumeration values are mutually exclusive.
+	 * <p>Compatible only with enumeration field.</p>
+	 *
+	 * @return	Whether the enumeration values are mutually exclusive.
+	 */
+	boolean mutuallyExclusive() default false;
+
+	/**
 	 * The numeral system (base, or radix), or the type (e.g. URL, email, etc.) of this field.
+	 * <p>Compatible with numeric or enumeration field.</p>
 	 *
 	 * @return	The numeral system (base, or radix), or the type (e.g. URL, email, etc.) of this field.
 	 */
@@ -104,17 +127,11 @@ public @interface ConfigurationField{
 
 	/**
 	 * The default value of the field.
+	 * <p>For non-mutually exclusive enumeration fields this is an array.</p>
 	 *
 	 * @return	The default value of the field.
 	 */
 	String defaultValue() default "";
-
-	/**
-	 * The unit of measure of the value.
-	 *
-	 * @return	The unit of measure of the value.
-	 */
-	String unitOfMeasure() default "";
 
 	/**
 	 * Whether the field is writable.

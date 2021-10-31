@@ -103,8 +103,11 @@ public class Version implements Comparable<Version>{
 	 * @param version	The string representation of the version.
 	 */
 	public Version(String version){
-		if(isBlank(version))
-			throw new IllegalArgumentException("Argument is not a valid version");
+		if(JavaHelper.isBlank(version)){
+			major = null;
+			minor = null;
+			return;
+		}
 
 		version = version.trim();
 		if(!startsWithNumber(version))
@@ -207,6 +210,10 @@ public class Version implements Comparable<Version>{
 	 */
 	public final boolean isLessThanOrEqualTo(final Version other){
 		return (compareTo(other) <= 0);
+	}
+
+	public final boolean isEmpty(){
+		return (major == null);
 	}
 
 	@Override
@@ -323,29 +330,6 @@ public class Version implements Comparable<Version>{
 
 
 	/**
-	 * <p>Checks if a text is empty (""), {@code null} or whitespace only.</p>
-	 *
-	 * <p>Whitespace is defined by {@link Character#isWhitespace(char)}.</p>
-	 *
-	 * <pre>
-	 * isBlank(null)      = true
-	 * isBlank("")        = true
-	 * isBlank(" ")       = true
-	 * isBlank("bob")     = false
-	 * isBlank("  bob  ") = false
-	 * </pre>
-	 *
-	 * @param text	The text to check, may be {@code null}.
-	 * @return	Whether the given text is {@code null}, empty or whitespace only.
-	 */
-	private static boolean isBlank(final CharSequence text){
-		for(int i = 0; i < JavaHelper.lengthOrZero(text); i ++)
-			if(!Character.isWhitespace(text.charAt(i)))
-				return false;
-		return true;
-	}
-
-	/**
 	 * <p>Checks if the text contains only certain characters.</p>
 	 *
 	 * <p>A {@code null} text will return {@code false}.
@@ -380,8 +364,9 @@ public class Version implements Comparable<Version>{
 
 	@Override
 	public final String toString(){
-		final StringBuilder sb = (new StringBuilder())
-			.append(major);
+		final StringBuilder sb = new StringBuilder();
+		if(major != null)
+			sb.append(major);
 		if(minor != null)
 			sb.append(DOT)
 				.append(minor);

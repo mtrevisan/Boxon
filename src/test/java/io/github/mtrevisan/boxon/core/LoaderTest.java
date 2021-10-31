@@ -24,6 +24,8 @@
  */
 package io.github.mtrevisan.boxon.core;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.mtrevisan.boxon.core.queclink.ACKMessageHex;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
@@ -33,7 +35,11 @@ import io.github.mtrevisan.boxon.internal.JavaHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+import java.util.Map;
 
+
+@SuppressWarnings("ALL")
 class LoaderTest{
 
 	@Test
@@ -81,15 +87,20 @@ class LoaderTest{
 	}
 
 	@Test
-	void loadConfiguration() throws AnnotationException, TemplateException, ConfigurationException{
+	void loadConfiguration() throws AnnotationException, ConfigurationException, JsonProcessingException{
 		Loader loader = Loader.create();
 		loader.loadConfigurations(LoaderTest.class);
 
-		//TODO
-		Configuration<?> configuration = loader.getConfiguration("1.19");
+		List<Map<String, Object>> configuration = loader.getConfiguration("1.19");
 
-		Assertions.assertNotNull(configuration);
-		Assertions.assertEquals(ACKMessageHex.class, configuration.getType());
+		Assertions.assertEquals(1, configuration.size());
+
+		ObjectMapper mapper = new ObjectMapper();
+		String jsonHeader = mapper.writeValueAsString(configuration.get(0).get("header"));
+		String jsonFields = mapper.writeValueAsString(configuration.get(0).get("fields"));
+
+		Assertions.assertEquals("{\"longDescription\":\"The command AT+GTREG is used to do things.\",\"maxProtocol\":\"2.8\",\"charset\":\"UTF-8\",\"shortDescription\":\"AT+GTREG\"}", jsonHeader);
+		Assertions.assertEquals("{\"Weekday\":{\"defaultValue\":[\"MONDAY\",\"TUESDAY\",\"WEDNESDAY\",\"THURSDAY\",\"FRIDAY\",\"SATURDAY\",\"SUNDAY\"],\"mutuallyExclusive\":false,\"enumeration\":[\"MONDAY\",\"TUESDAY\",\"WEDNESDAY\",\"THURSDAY\",\"FRIDAY\",\"SATURDAY\",\"SUNDAY\"],\"writable\":true},\"Update Over-The-Air\":{\"defaultValue\":[\"FALSE\"],\"mutuallyExclusive\":true,\"enumeration\":[\"TRUE\",\"FALSE\"],\"writable\":true},\"Header\":{\"defaultValue\":\"GTREG\",\"writable\":false},\"Download protocol\":{\"defaultValue\":[\"HTTP\"],\"mutuallyExclusive\":true,\"enumeration\":[\"HTTP\",\"HTTPS\"],\"writable\":false},\"Download URL\":{\"format\":\".{0,100}\",\"writable\":true},\"Update mode\":{\"defaultValue\":1,\"format\":\"[0-1]\",\"writable\":true},\"Maximum download retry count\":{\"defaultValue\":0,\"format\":\"[0-3]\",\"writable\":true},\"Message counter\":{\"minValue\":0,\"maxValue\":65535,\"writable\":false},\"Operation mode\":{\"defaultValue\":0,\"format\":\"[0-3]\",\"writable\":true},\"Password\":{\"defaultValue\":\"gb200s\",\"format\":\"[0-9a-zA-Z]{4,20}\",\"writable\":true},\"Download timeout\":{\"minValue\":5,\"unitOfMeasure\":\"min\",\"maxValue\":30,\"defaultValue\":20,\"writable\":true}}", jsonFields);
 	}
 
 	@Test

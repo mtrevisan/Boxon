@@ -41,7 +41,7 @@ import java.lang.annotation.Annotation;
 final class CodecObject implements CodecInterface<BindObject>{
 
 	@InjectEventListener
-	@SuppressWarnings("unused")
+	@SuppressWarnings({"unused", "StaticVariableMayNotBeInitialized"})
 	private static EventListener eventListener;
 
 

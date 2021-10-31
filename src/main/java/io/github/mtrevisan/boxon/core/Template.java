@@ -34,6 +34,7 @@ import io.github.mtrevisan.boxon.internal.ReflectionHelper;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.StringJoiner;
 import java.util.function.Function;
@@ -46,11 +47,25 @@ import java.util.function.Function;
  */
 final class Template<T>{
 
+	private static final class Pair{
+		private final List<BoundedField> boundedFields;
+		private final List<EvaluatedField> evaluatedFields;
+
+		static Pair of(final List<BoundedField> boundedFields, final List<EvaluatedField> evaluatedFields){
+			return new Pair(boundedFields, evaluatedFields);
+		}
+
+		private Pair(final List<BoundedField> boundedFields, final List<EvaluatedField> evaluatedFields){
+			this.boundedFields = boundedFields;
+			this.evaluatedFields = evaluatedFields;
+		}
+	}
+
 	private final Class<T> type;
 
 	private final MessageHeader header;
-	private final ArrayList<BoundedField> boundedFields = new ArrayList<>(0);
-	private final List<EvaluatedField> evaluatedFields = new ArrayList<>(0);
+	private final List<BoundedField> boundedFields;
+	private final List<EvaluatedField> evaluatedFields;
 	/**
 	 * Necessary to speed up the creation of a {@link Template} (technically not needed because it's already present
 	 * somewhere inside {@link #boundedFields}).
@@ -66,15 +81,19 @@ final class Template<T>{
 		if(header != null)
 			CodecHelper.assertValidCharset(header.charset());
 
-		loadAnnotatedFields(type, ReflectionHelper.getAccessibleFields(type), filterAnnotationsWithCodec);
+		final Pair fields = loadAnnotatedFields(type, ReflectionHelper.getAccessibleFields(type),
+			filterAnnotationsWithCodec);
+		boundedFields = Collections.unmodifiableList(fields.boundedFields);
+		evaluatedFields = Collections.unmodifiableList(fields.evaluatedFields);
 
 		if(boundedFields.isEmpty())
 			throw AnnotationException.create("No data can be extracted from this class: {}", type.getName());
 	}
 
-	private void loadAnnotatedFields(final Class<T> type, final List<Field> fields,
+	private Pair loadAnnotatedFields(final Class<T> type, final List<Field> fields,
 			final Function<Annotation[], List<Annotation>> filterAnnotationsWithCodec) throws AnnotationException{
-		boundedFields.ensureCapacity(fields.size());
+		final List<BoundedField> boundedFields = new ArrayList<>(fields.size());
+		final List<EvaluatedField> evaluatedFields = new ArrayList<>(fields.size());
 		for(int i = 0; i < fields.size(); i ++){
 			final Field field = fields.get(i);
 			final Skip[] skips = field.getDeclaredAnnotationsByType(Skip.class);
@@ -97,6 +116,7 @@ final class Template<T>{
 			if(checksum != null)
 				this.checksum = new BoundedField(field, checksum);
 		}
+		return Pair.of(boundedFields, evaluatedFields);
 	}
 
 	private List<EvaluatedField> extractEvaluations(final Annotation[] declaredAnnotations, final Field field){

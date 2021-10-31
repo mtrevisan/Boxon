@@ -58,4 +58,8 @@ final class EvaluatedField{
 		return binding;
 	}
 
+	@Override
+	public String toString(){
+		return "EvaluatedField{" + "field=" + field + ", binding=" + binding + '}';
+	}
 }

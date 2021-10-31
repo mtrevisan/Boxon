@@ -35,7 +35,6 @@ import io.github.mtrevisan.boxon.external.BitWriter;
 import io.github.mtrevisan.boxon.external.ByteOrder;
 import io.github.mtrevisan.boxon.internal.ReflectionHelper;
 
-import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -65,18 +64,11 @@ final class CodecHelper{
 	}
 
 	static void assertValidCharset(final String charsetName) throws AnnotationException{
-		assertValidCharset(charsetName, null);
-	}
-
-	static void assertValidCharset(final String charsetName, final Field field) throws AnnotationException{
 		try{
 			Charset.forName(charsetName);
 		}
 		catch(final IllegalArgumentException ignored){
-			if(field != null)
-				throw AnnotationException.create("Invalid charset: '{}' in field {}", charsetName, field.getName());
-			else
-				throw AnnotationException.create("Invalid charset: '{}'", charsetName);
+			throw AnnotationException.create("Invalid charset: '{}'", charsetName);
 		}
 	}
 

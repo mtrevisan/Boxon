@@ -25,16 +25,14 @@
 package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationMessage;
 import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
-import io.github.mtrevisan.boxon.internal.ParserDataType;
 import io.github.mtrevisan.boxon.internal.semanticversioning.Version;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,10 +41,36 @@ import java.util.regex.Pattern;
 
 enum ConfigurationAnnotationValidator{
 
+	HEADER(ConfigurationMessage.class){
+		@Override
+		void validate(final Field field, final Annotation annotation) throws AnnotationException{
+			final ConfigurationMessage binding = (ConfigurationMessage)annotation;
+
+			if(JavaHelper.isBlank(binding.shortDescription()))
+				throw AnnotationException.create("Short description must be present");
+
+			//check minimum/maximum protocol
+			final String minProtocol = binding.minProtocol();
+			final String maxProtocol = binding.minProtocol();
+			if(!minProtocol.isEmpty() && !maxProtocol.isEmpty()){
+				final Version min = new Version(minProtocol);
+				final Version max = new Version(maxProtocol);
+				if(max.isLessThan(min))
+					throw AnnotationException.create("Maximum protocol should be after minimum protocol in {}; min is {}, max is {}",
+						ConfigurationField.class.getSimpleName(), minProtocol, maxProtocol);
+			}
+		}
+	},
+
 	FIELD(ConfigurationField.class){
 		@Override
 		void validate(final Field field, final Annotation annotation) throws AnnotationException{
 			final ConfigurationField binding = (ConfigurationField)annotation;
+
+			if(JavaHelper.isBlank(binding.shortDescription()))
+				throw AnnotationException.create("Short description must be present");
+			if(binding.enumeration() == NullEnum.class && binding.mutuallyExclusive())
+				throw AnnotationException.create("Unnecessary mutually exclusive field in a non-enumeration field");
 
 			validateMinimumParameters(field, binding);
 
@@ -54,9 +78,9 @@ enum ConfigurationAnnotationValidator{
 
 			validateDefaultValue(field, binding);
 
-			verifyEnumeration(field, binding);
+			validateEnumeration(field, binding);
 
-			verifyMinMaxValues(field, binding);
+			validateMinMaxValues(field, binding);
 
 			validateProtocol(binding);
 		}
@@ -131,12 +155,12 @@ enum ConfigurationAnnotationValidator{
 
 			if(!defaultValue.isEmpty())
 				//defaultValue compatible with variable type
-				if(enumeration == NullEnum.class && getAssignableFrom(fieldType, defaultValue) == null)
+				if(enumeration == NullEnum.class && JavaHelper.getValue(fieldType, defaultValue) == null)
 					throw AnnotationException.create("Incompatible enum in {}, found {}, expected {}",
 						ConfigurationField.class.getSimpleName(), defaultValue.getClass().getSimpleName(), fieldType.toString());
 		}
 
-		private void verifyMinMaxValues(final Field field, final ConfigurationField binding) throws AnnotationException{
+		private void validateMinMaxValues(final Field field, final ConfigurationField binding) throws AnnotationException{
 			final Class<?> fieldType = field.getType();
 			final boolean isFieldArray = fieldType.isArray();
 			final String minValue = binding.minValue();
@@ -147,9 +171,9 @@ enum ConfigurationAnnotationValidator{
 			if(!minValue.isEmpty() || !maxValue.isEmpty()){
 				Object min = null;
 				Object max = null;
-				Object def = (!defaultValue.isEmpty()? getAssignableFrom(fieldType, defaultValue): null);
+				final Object def = (!defaultValue.isEmpty()? JavaHelper.getValue(fieldType, defaultValue): null);
 				if(!minValue.isEmpty()){
-					min = getAssignableFrom(fieldType, minValue);
+					min = JavaHelper.getValue(fieldType, minValue);
 					//minValue compatible with variable type
 					if(min == null)
 						throw AnnotationException.create("Incompatible minimum value in {}; found {}, expected {}",
@@ -161,7 +185,7 @@ enum ConfigurationAnnotationValidator{
 							ConfigurationField.class.getSimpleName(), defaultValue, minValue.getClass().getSimpleName());
 				}
 				if(!maxValue.isEmpty()){
-					max = getAssignableFrom(fieldType, maxValue);
+					max = JavaHelper.getValue(fieldType, maxValue);
 					//maxValue compatible with variable type
 					if(max == null)
 						throw AnnotationException.create("Incompatible maximum value in {}; found {}, expected {}",
@@ -173,7 +197,7 @@ enum ConfigurationAnnotationValidator{
 							ConfigurationField.class.getSimpleName(), defaultValue, maxValue.getClass().getSimpleName());
 				}
 
-				if(JavaHelper.isNumeric(minValue) && def != null && ((Number)min).doubleValue() > ((Number)max).doubleValue())
+				if(def != null && min != null && max != null && ((Number)min).doubleValue() > ((Number)max).doubleValue())
 					//maxValue after or equal to minValue
 					throw AnnotationException.create("Minimum value should be less than or equal to maximum value in {}; found {}, expected greater than or equals to {}",
 						ConfigurationField.class.getSimpleName(), defaultValue, minValue.getClass().getSimpleName());
@@ -212,7 +236,7 @@ enum ConfigurationAnnotationValidator{
 			}
 		}
 
-		private void verifyEnumeration(final Field field, final ConfigurationField binding) throws AnnotationException{
+		private void validateEnumeration(final Field field, final ConfigurationField binding) throws AnnotationException{
 			final Class<?> fieldType = field.getType();
 			final boolean isFieldArray = fieldType.isArray();
 			final Class<? extends Enum<?>> enumeration = binding.enumeration();
@@ -233,6 +257,10 @@ enum ConfigurationAnnotationValidator{
 
 					if(!defaultValue.isEmpty()){
 						final String[] defaultValues = JavaHelper.split(defaultValue, "|", -1);
+						if(binding.mutuallyExclusive() && defaultValues.length != 1)
+							throw AnnotationException.create("Default value for mutually exclusive enumeration field in {} should be a value; found {}, expected one of {}",
+								ConfigurationField.class.getSimpleName(), defaultValue, Arrays.toString(enumConstants));
+
 						for(int i = 0; i < JavaHelper.lengthOrZero(defaultValues); i ++){
 							final String dv = defaultValues[i];
 							if(!belongsToEnum(enumConstants, dv))
@@ -255,35 +283,10 @@ enum ConfigurationAnnotationValidator{
 
 		private boolean belongsToEnum(final Enum<?>[] enumConstants, final String value){
 			boolean found = false;
-			for(int j = 0; ! found && j < enumConstants.length; j++)
+			for(int j = 0; !found && j < enumConstants.length; j ++)
 				if(enumConstants[j].name().equals(value))
 					found = true;
 			return found;
-		}
-
-		private Object getAssignableFrom(final Class<?> fieldType, final String value){
-			if(fieldType == String.class)
-				return value;
-
-			try{
-				final Class<?> objectiveType = ParserDataType.toObjectiveTypeOrSelf(fieldType);
-				final boolean hexadecimal = value.startsWith("0x");
-				final boolean octal = (!hexadecimal && value.charAt(0) == '0');
-				final Method method = (hexadecimal || octal
-					? objectiveType.getDeclaredMethod("valueOf", String.class, int.class)
-					: objectiveType.getDeclaredMethod("valueOf", String.class));
-				final Object response;
-				if(hexadecimal)
-					response = method.invoke(null, value.substring(2), 16);
-				else if(octal)
-					response = method.invoke(null, value, 8);
-				else
-					response = method.invoke(null, value);
-				return response;
-			}
-			catch(final NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored){
-				return null;
-			}
 		}
 	};
 

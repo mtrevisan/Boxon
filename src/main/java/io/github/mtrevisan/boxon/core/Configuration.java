@@ -32,6 +32,7 @@ import io.github.mtrevisan.boxon.internal.ReflectionHelper;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.StringJoiner;
 
@@ -46,7 +47,7 @@ final class Configuration<T>{
 	private final Class<T> type;
 
 	private final ConfigurationMessage header;
-	private final ArrayList<ConfigurationField> configurationFields = new ArrayList<>(0);
+	private final List<ConfigurationField> configurationFields;
 
 
 	Configuration(final Class<T> type) throws AnnotationException{
@@ -55,17 +56,20 @@ final class Configuration<T>{
 		header = type.getAnnotation(ConfigurationMessage.class);
 		if(header == null)
 			throw AnnotationException.create("No header present in this class: {}", type.getName());
+		ConfigurationAnnotationValidator.fromAnnotation(header)
+			.validate(null, header);
 
 		CodecHelper.assertValidCharset(header.charset());
 
-		loadAnnotatedFields(type, ReflectionHelper.getAccessibleFields(type));
+		final List<ConfigurationField> configurationFields = loadAnnotatedFields(type, ReflectionHelper.getAccessibleFields(type));
+		this.configurationFields = Collections.unmodifiableList(configurationFields);
 
 		if(configurationFields.isEmpty())
 			throw AnnotationException.create("No data can be extracted from this class: {}", type.getName());
 	}
 
-	private void loadAnnotatedFields(final Class<T> type, final List<Field> fields) throws AnnotationException{
-		configurationFields.ensureCapacity(fields.size());
+	private List<ConfigurationField> loadAnnotatedFields(final Class<T> type, final List<Field> fields) throws AnnotationException{
+		final List<ConfigurationField> configurationFields = new ArrayList<>(fields.size());
 		for(int i = 0; i < fields.size(); i ++){
 			final Field field = fields.get(i);
 
@@ -82,6 +86,7 @@ final class Configuration<T>{
 			if(declaredAnnotations.length == 1)
 				configurationFields.add(new ConfigurationField(field, declaredAnnotations[0], null));
 		}
+		return configurationFields;
 	}
 
 	private void validateField(final Field field, final Annotation[] annotations) throws AnnotationException{

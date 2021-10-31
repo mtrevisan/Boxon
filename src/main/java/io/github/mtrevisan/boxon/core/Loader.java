@@ -26,6 +26,7 @@ package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationMessage;
+import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
@@ -34,17 +35,20 @@ import io.github.mtrevisan.boxon.external.EventListener;
 import io.github.mtrevisan.boxon.internal.InjectEventListener;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.Memoizer;
+import io.github.mtrevisan.boxon.internal.ParserDataType;
 import io.github.mtrevisan.boxon.internal.ReflectionHelper;
 import io.github.mtrevisan.boxon.internal.ReflectiveClassLoader;
 import io.github.mtrevisan.boxon.internal.ThrowingFunction;
 import io.github.mtrevisan.boxon.internal.matchers.BNDMPatternMatcher;
 import io.github.mtrevisan.boxon.internal.matchers.PatternMatcher;
+import io.github.mtrevisan.boxon.internal.semanticversioning.Version;
 
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -156,7 +160,7 @@ final class Loader{
 		eventListener.loadedCodecs(codecs.length);
 	}
 
-	private void addCodecsInner(final List<CodecInterface<?>> codecs){
+	private void addCodecsInner(@SuppressWarnings("BoundedWildcard") final List<CodecInterface<?>> codecs){
 		//load each codec into the available codec list
 		for(int i = 0; i < codecs.size(); i ++)
 			if(codecs.get(i) != null)
@@ -381,7 +385,7 @@ final class Loader{
 	 * @return	The {@link Configuration} for the given type.
 	 */
 	@SuppressWarnings("unchecked")
-	<T> Configuration<T> createConfiguration(final Class<T> type) throws AnnotationException{
+	private <T> Configuration<T> createConfiguration(final Class<T> type) throws AnnotationException{
 		return (Configuration<T>)configurationStore.apply(type);
 	}
 
@@ -428,14 +432,107 @@ final class Loader{
 	 * @param protocol	The protocol used to extract the configurations.
 	 * @return	The configuration that is able to decode/encode the next message in the given reader.
 	 */
-	Configuration<?> getConfiguration(final String protocol) throws ConfigurationException{
-		for(final Map.Entry<String, Configuration<?>> entry : configurations.entrySet()){
-			final String header = entry.getKey();
-			final byte[] configurationHeader = JavaHelper.toByteArray(header);
+	List<Map<String, Object>> getConfiguration(final String protocol) throws ConfigurationException{
+		if(JavaHelper.isBlank(protocol))
+			throw new IllegalArgumentException(JavaHelper.format("Invalid protocol: {}", protocol));
 
-			//TODO
+		final Version currentProtocol = new Version(protocol);
+
+		final Collection<Configuration<?>> configurationValues = configurations.values();
+		final List<Map<String, Object>> response = new ArrayList<>(configurationValues.size());
+		for(final Configuration<?> configuration : configurationValues){
+			final ConfigurationMessage header = configuration.getHeader();
+			if(shouldBeExtracted(currentProtocol, header.minProtocol(), header.maxProtocol()))
+				continue;
+
+			final Map<String, Object> headerMap = extractMap(header);
+			final Map<String, Object> fieldsMap = extractFieldsMap(currentProtocol, configuration);
+			response.add(Map.of(
+				"header", headerMap,
+				"fields", fieldsMap
+			));
 		}
-		return null;
+		return Collections.unmodifiableList(response);
+	}
+
+	private Map<String, Object> extractFieldsMap(final Version currentProtocol, final Configuration<?> configuration)
+			throws ConfigurationException{
+		final List<ConfigurationField> fields = configuration.getConfigurationFields();
+		final Map<String, Object> fieldsMap = new HashMap<>(fields.size());
+		for(int i = 0; i < fields.size(); i ++){
+			final ConfigurationField field = fields.get(i);
+			final io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField fieldBinding
+				= (io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField)field.getBinding();
+			if(shouldBeExtracted(currentProtocol, fieldBinding.minProtocol(), fieldBinding.maxProtocol()))
+				continue;
+
+			final Class<?> fieldType = field.getFieldType();
+			final Map<String, Object> fieldMap = extractMap(fieldBinding, fieldType);
+
+			fieldsMap.put(fieldBinding.shortDescription(), fieldMap);
+		}
+		return fieldsMap;
+	}
+
+	private Map<String, Object> extractMap(final ConfigurationMessage header) throws ConfigurationException{
+		final Map<String, Object> map = new HashMap<>(3);
+		putIfNotEmpty(map, "shortDescription", header.shortDescription());
+		putIfNotEmpty(map, "longDescription", header.longDescription());
+		putIfNotEmpty(map, "charset", header.charset());
+		putIfNotEmpty(map, "minProtocol", header.minProtocol());
+		putIfNotEmpty(map, "maxProtocol", header.maxProtocol());
+		return map;
+	}
+
+	private Map<String, Object> extractMap(final io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField fieldBinding,
+			final Class<?> fieldType) throws ConfigurationException{
+		final Map<String, Object> map = new HashMap<>(9);
+		putIfNotEmpty(map, "longDescription", fieldBinding.longDescription());
+		putIfNotEmpty(map, "unitOfMeasure", fieldBinding.unitOfMeasure());
+		putIfNotEmpty(map, "minValue", JavaHelper.getValue(fieldType, fieldBinding.minValue()));
+		putIfNotEmpty(map, "maxValue", JavaHelper.getValue(fieldType, fieldBinding.maxValue()));
+		putIfNotEmpty(map, "format", fieldBinding.format());
+		if(fieldBinding.enumeration() != NullEnum.class){
+			final Enum<?>[] enumConstants = fieldBinding.enumeration().getEnumConstants();
+			final String[] enumValues = new String[enumConstants.length];
+			for(int j = 0; j < enumConstants.length; j ++)
+				enumValues[j] = enumConstants[j].name();
+			putIfNotEmpty(map, "enumeration", enumValues);
+			putIfNotEmpty(map, "mutuallyExclusive", fieldBinding.mutuallyExclusive());
+		}
+		putValueIfNotEmpty(map, "defaultValue", fieldType, fieldBinding.enumeration(), fieldBinding.defaultValue());
+		putIfNotEmpty(map, "writable", fieldBinding.writable());
+		return map;
+	}
+
+	private void putIfNotEmpty(@SuppressWarnings("BoundedWildcard") final Map<String, Object> map, final String key, final Object value)
+			throws ConfigurationException{
+		if(value != null && (!(value instanceof String) || !JavaHelper.isBlank((CharSequence)value))){
+			final Object previousValue = map.put(key, value);
+			if(previousValue != null)
+				throw ConfigurationException.create("Duplicated short description: {}", key);
+		}
+	}
+
+	private void putValueIfNotEmpty(@SuppressWarnings("BoundedWildcard") final Map<String, Object> map, final String key,
+			final Class<?> fieldType, final Class<? extends Enum<?>> enumeration, final String value) throws ConfigurationException{
+		if(!JavaHelper.isBlank(value)){
+			Object val = value;
+			if(enumeration != NullEnum.class)
+				val = JavaHelper.split(value, "|", -1);
+			else if(Number.class.isAssignableFrom(ParserDataType.toObjectiveTypeOrSelf(fieldType)))
+				val = JavaHelper.getValue(fieldType, value);
+			final Object previousValue = map.put(key, val);
+			if(previousValue != null)
+				throw ConfigurationException.create("Duplicated short description: {}", key);
+		}
+	}
+
+	private boolean shouldBeExtracted(final Version currentProtocol, final String minProtocol, final String maxProtocol){
+		final Version min = new Version(minProtocol);
+		final Version max = new Version(maxProtocol);
+		return (!min.isEmpty() && currentProtocol.isLessThan(min)
+			|| !max.isEmpty() && currentProtocol.isGreaterThan(max));
 	}
 
 
@@ -455,7 +552,6 @@ final class Loader{
 
 		final ReflectiveClassLoader reflectiveClassLoader = ReflectiveClassLoader.createFrom(basePackageClasses);
 		reflectiveClassLoader.scan(CodecInterface.class, type);
-		@SuppressWarnings("unchecked")
 		final Collection<Class<?>> modules = reflectiveClassLoader.getImplementationsOf(type);
 		@SuppressWarnings("unchecked")
 		final Collection<Class<?>> singletons = reflectiveClassLoader.getTypesAnnotatedWith((Class<? extends Annotation>)type);

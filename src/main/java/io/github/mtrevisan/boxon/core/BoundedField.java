@@ -55,7 +55,7 @@ final class BoundedField{
 	BoundedField(final Field field, final Annotation binding, final Skip[] skips){
 		this.field = field;
 		this.binding = binding;
-		this.skips = skips;
+		this.skips = (skips != null? skips.clone(): null);
 
 		//pre-fetch condition method
 		final Method conditionMethod = ReflectionHelper.getAccessibleMethod(binding.annotationType(), CONDITION, String.class);
@@ -75,7 +75,7 @@ final class BoundedField{
 	}
 
 	Skip[] getSkips(){
-		return skips;
+		return (skips != null? skips.clone(): null);
 	}
 
 	Annotation getBinding(){

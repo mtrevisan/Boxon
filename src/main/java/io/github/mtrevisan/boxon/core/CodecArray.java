@@ -44,7 +44,7 @@ import java.lang.reflect.Array;
 final class CodecArray implements CodecInterface<BindArray>{
 
 	@InjectEventListener
-	@SuppressWarnings("unused")
+	@SuppressWarnings({"unused", "StaticVariableMayNotBeInitialized"})
 	private static EventListener eventListener;
 
 

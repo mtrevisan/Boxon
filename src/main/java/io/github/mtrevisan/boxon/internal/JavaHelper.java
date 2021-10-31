@@ -26,6 +26,8 @@ package io.github.mtrevisan.boxon.internal;
 
 import org.slf4j.helpers.MessageFormatter;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -179,6 +181,30 @@ public final class JavaHelper{
 
 
 	/**
+	 * <p>Checks if a text is empty (""), {@code null} or whitespace only.</p>
+	 *
+	 * <p>Whitespace is defined by {@link Character#isWhitespace(char)}.</p>
+	 *
+	 * <pre>
+	 * isBlank(null)      = true
+	 * isBlank("")        = true
+	 * isBlank(" ")       = true
+	 * isBlank("bob")     = false
+	 * isBlank("  bob  ") = false
+	 * </pre>
+	 *
+	 * @param text	The text to check, may be {@code null}.
+	 * @return	Whether the given text is {@code null}, empty or whitespace only.
+	 */
+	public static boolean isBlank(final CharSequence text){
+		for(int i = 0; i < lengthOrZero(text); i ++)
+			if(!Character.isWhitespace(text.charAt(i)))
+				return false;
+		return true;
+	}
+
+
+	/**
 	 * <p>Checks if the text contains only Unicode digits.
 	 * A decimal point is not a Unicode digit and returns false.</p>
 	 *
@@ -216,6 +242,33 @@ public final class JavaHelper{
 			if(!Character.isDigit(text.charAt(i)))
 				return false;
 		return true;
+	}
+
+	public static Object getValue(final Class<?> fieldType, final String value){
+		if(fieldType == String.class)
+			return value;
+		if(isBlank(value))
+			return null;
+
+		try{
+			final Class<?> objectiveType = ParserDataType.toObjectiveTypeOrSelf(fieldType);
+			final boolean hexadecimal = value.startsWith("0x");
+			final boolean octal = (!hexadecimal && !value.isEmpty() && value.charAt(0) == '0');
+			final Method method = (hexadecimal || octal
+				? objectiveType.getDeclaredMethod("valueOf", String.class, int.class)
+				: objectiveType.getDeclaredMethod("valueOf", String.class));
+			final Object response;
+			if(hexadecimal)
+				response = method.invoke(null, value.substring(2), 16);
+			else if(octal)
+				response = method.invoke(null, value, 8);
+			else
+				response = method.invoke(null, value);
+			return response;
+		}
+		catch(final NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored){
+			return null;
+		}
 	}
 
 

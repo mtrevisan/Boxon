@@ -52,7 +52,7 @@ public final class ComposeResponse{
 	 * @param originator	The data that originates the message.
 	 */
 	ComposeResponse(final Object[] originator){
-		this.originator = originator;
+		this.originator = (originator != null? originator.clone(): null);
 	}
 
 	/**
@@ -65,7 +65,7 @@ public final class ComposeResponse{
 	}
 
 	void setComposedMessage(final byte[] composedMessage){
-		this.composedMessage = composedMessage;
+		this.composedMessage = (composedMessage != null? composedMessage.clone(): null);
 	}
 
 	/**
@@ -74,7 +74,7 @@ public final class ComposeResponse{
 	 * @return	The message composed by the given originator.
 	 */
 	public byte[] getComposedMessage(){
-		return composedMessage;
+		return (composedMessage != null? composedMessage.clone(): null);
 	}
 
 	/**

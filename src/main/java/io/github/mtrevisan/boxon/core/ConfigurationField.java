@@ -47,11 +47,11 @@ final class ConfigurationField{
 	ConfigurationField(final Field field, final Annotation binding, final ConfigurationSkip[] skips){
 		this.field = field;
 		this.binding = binding;
-		this.skips = skips;
+		this.skips = (skips != null? skips.clone(): null);
 	}
 
-	String getFieldName(){
-		return field.getName();
+	Class<?> getFieldType(){
+		return field.getType();
 	}
 
 	<T> T getFieldValue(final Object obj){
@@ -63,7 +63,7 @@ final class ConfigurationField{
 	}
 
 	ConfigurationSkip[] getSkips(){
-		return skips;
+		return (skips != null? skips.clone(): null);
 	}
 
 	Annotation getBinding(){

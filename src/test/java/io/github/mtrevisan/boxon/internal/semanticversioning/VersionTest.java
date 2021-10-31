@@ -70,14 +70,4 @@ class VersionTest{
 		Assertions.assertEquals("1.2.3+build", version.toString());
 	}
 
-	@Test
-	void shouldRaiseErrorForIllegalInputString(){
-		for(String illegal : new String[]{"", null}){
-			Throwable exception = Assertions.assertThrows(IllegalArgumentException.class,
-				() -> new Version(illegal));
-
-			Assertions.assertEquals("Argument is not a valid version", exception.getMessage());
-		}
-	}
-
 }
