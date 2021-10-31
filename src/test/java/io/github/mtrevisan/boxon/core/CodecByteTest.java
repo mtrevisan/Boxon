@@ -40,6 +40,7 @@ import java.lang.annotation.Annotation;
 import java.util.Random;
 
 
+@SuppressWarnings("ALL")
 class CodecByteTest{
 
 	private static final Random RANDOM = new Random();

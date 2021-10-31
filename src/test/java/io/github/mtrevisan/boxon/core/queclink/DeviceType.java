@@ -28,6 +28,7 @@ import io.github.mtrevisan.boxon.internal.JavaHelper;
 import org.apache.commons.lang3.StringUtils;
 
 
+@SuppressWarnings("ALL")
 public class DeviceType{
 
 	private final String name;

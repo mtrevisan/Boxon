@@ -45,6 +45,7 @@ import org.springframework.expression.spel.SpelEvaluationException;
 import java.nio.charset.StandardCharsets;
 
 
+@SuppressWarnings("ALL")
 class TemplateParserTest{
 
 	@Test

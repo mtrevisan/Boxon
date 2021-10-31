@@ -41,6 +41,7 @@ import java.lang.annotation.Annotation;
 import java.nio.charset.StandardCharsets;
 
 
+@SuppressWarnings("ALL")
 class CodecStringTest{
 
 	@Test

@@ -43,6 +43,7 @@ import java.util.Locale;
 import java.util.Random;
 
 
+@SuppressWarnings("ALL")
 class CodecShortTest{
 
 	private static final Random RANDOM = new Random();

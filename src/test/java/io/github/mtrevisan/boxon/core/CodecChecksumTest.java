@@ -40,6 +40,7 @@ import java.util.Locale;
 import java.util.Random;
 
 
+@SuppressWarnings("ALL")
 class CodecChecksumTest{
 
 	private static final Random RANDOM = new Random();

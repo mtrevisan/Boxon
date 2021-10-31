@@ -38,6 +38,7 @@ import java.util.Collections;
 import java.util.Map;
 
 
+@SuppressWarnings("ALL")
 class ParserTest{
 
 	public static void main(String[] args) throws NoSuchMethodException, AnnotationException, TemplateException{

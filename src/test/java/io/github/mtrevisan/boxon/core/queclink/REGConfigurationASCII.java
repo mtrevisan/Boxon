@@ -31,6 +31,7 @@ import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
 import io.github.mtrevisan.boxon.annotations.configurations.FieldType;
 
 
+@SuppressWarnings("ALL")
 @ConfigurationMessage(start = "AT+", end = "$", shortDescription = "AT+GTREG",
 	longDescription = "The command AT+GTREG is used to do things.", maxProtocol = "2.8")
 public class REGConfigurationASCII{
@@ -100,7 +101,7 @@ public class REGConfigurationASCII{
 	private Weekday[] weekday;
 
 	@ConfigurationField(shortDescription = "Message counter", terminator = ',', minValue = "0x0000", maxValue = "0xFFFF",
-		type = FieldType.HEXADECIMAL, writable = false)
+		type = FieldType.HEXADECIMAL)
 	private int messageCounter;
 
 }

@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.core.queclink;
 
 
+@SuppressWarnings("ALL")
 public enum Weekday{
 
 	MONDAY(0x01),

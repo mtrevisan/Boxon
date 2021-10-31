@@ -51,6 +51,7 @@ import org.junit.jupiter.api.Test;
 import java.lang.annotation.Annotation;
 
 
+@SuppressWarnings("ALL")
 class CodecObjectTest{
 
 	private static class Version{

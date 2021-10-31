@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.StringJoiner;
 
 
+@SuppressWarnings("ALL")
 public class DeviceTypes{
 
 	private final List<DeviceType> deviceTypes = new ArrayList<>();

@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.core.queclink;
 
 
+@SuppressWarnings("ALL")
 public enum DownloadProtocol{
 
 	HTTP(0),

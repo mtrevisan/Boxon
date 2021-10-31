@@ -28,6 +28,7 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.external.ByteHelper;
 
 
+@SuppressWarnings("ALL")
 public class ACKMaskHex{
 
 	public static class ACKMaskConverter implements Converter<Byte, ACKMaskHex>{

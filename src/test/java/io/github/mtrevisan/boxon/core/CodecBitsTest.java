@@ -44,6 +44,7 @@ import java.util.Arrays;
 import java.util.Random;
 
 
+@SuppressWarnings("ALL")
 class CodecBitsTest{
 
 	private static final Random RANDOM = new Random();

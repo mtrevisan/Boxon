@@ -44,6 +44,7 @@ import java.util.Locale;
 import java.util.Random;
 
 
+@SuppressWarnings("ALL")
 class CodecDoubleTest{
 
 	private static final Random RANDOM = new Random();

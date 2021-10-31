@@ -45,6 +45,7 @@ import java.math.BigInteger;
 import java.util.Locale;
 
 
+@SuppressWarnings("ALL")
 class CodecIntegerTest{
 
 	@Test

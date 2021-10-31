@@ -33,6 +33,7 @@ import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 
 
+@SuppressWarnings("ALL")
 class BitWriterTest{
 
 	private BitWriter writer;

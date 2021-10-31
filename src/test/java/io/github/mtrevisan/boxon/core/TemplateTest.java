@@ -59,6 +59,7 @@ import java.util.List;
 import java.util.Map;
 
 
+@SuppressWarnings("ALL")
 class TemplateTest{
 
 	private static class Mask{

@@ -37,6 +37,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 
+@SuppressWarnings("ALL")
 class ConverterTest{
 
 	@MessageHeader(start = "wc1")
