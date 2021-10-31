@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -230,6 +231,16 @@ public final class Parser{
 	public Parser withConfigurations(final Class<?>... basePackageClasses) throws AnnotationException, ConfigurationException{
 		loader.loadConfigurations(basePackageClasses);
 		return this;
+	}
+
+	/**
+	 * Retrieve all the configuration given a protocol version.
+	 *
+	 * @param protocol	The protocol used to extract the configurations.
+	 * @return	The configuration messages for a given protocol version.
+	 */
+	public List<Map<String, Object>> getConfiguration(final String protocol) throws ConfigurationException{
+		return loader.getConfiguration(protocol);
 	}
 
 

@@ -427,10 +427,10 @@ final class Loader{
 	}
 
 	/**
-	 * Retrieve the next configuration.
+	 * Retrieve all the configuration given a protocol version.
 	 *
 	 * @param protocol	The protocol used to extract the configurations.
-	 * @return	The configuration that is able to decode/encode the next message in the given reader.
+	 * @return	The configuration messages for a given protocol version.
 	 */
 	List<Map<String, Object>> getConfiguration(final String protocol) throws ConfigurationException{
 		if(JavaHelper.isBlank(protocol))

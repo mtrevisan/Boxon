@@ -26,6 +26,7 @@ package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.core.queclink.DeviceTypes;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.TimeWatch;
@@ -41,7 +42,7 @@ import java.util.Map;
 @SuppressWarnings("ALL")
 class ParserTest{
 
-	public static void main(String[] args) throws NoSuchMethodException, AnnotationException, TemplateException{
+	public static void main(String[] args) throws NoSuchMethodException, AnnotationException, TemplateException, ConfigurationException{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
@@ -49,6 +50,7 @@ class ParserTest{
 			.withContext(context)
 			.withDefaultCodecs()
 			.withDefaultTemplates()
+			.withDefaultConfigurations()
 			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"));
 
 		//~270 µs/msg = 3.7 kHz
