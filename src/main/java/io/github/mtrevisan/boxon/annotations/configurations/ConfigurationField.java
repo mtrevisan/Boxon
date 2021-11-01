@@ -75,6 +75,7 @@ public @interface ConfigurationField{
 	 */
 	String maxProtocol() default "";
 
+
 	/**
 	 * The lowest value the field can have.
 	 * <p>Not compatible with enumeration field.</p>
@@ -96,6 +97,7 @@ public @interface ConfigurationField{
 	/**
 	 * The format of the value, expressed as a regex.
 	 * <p>Not compatible with enumeration field.</p>
+	 * <p>Not compatible with non-string field.</p>
 	 *
 	 * @return	The format of the value, expressed as a regex.
 	 */
@@ -118,6 +120,14 @@ public @interface ConfigurationField{
 	boolean mutuallyExclusive() default false;
 
 	/**
+	 * The field is mandatory.
+	 * <p>Non-writable fields are all mandatory by default.</p>
+	 *
+	 * @return	Whether the value is mandatory.
+	 */
+	boolean mandatory() default false;
+
+	/**
 	 * The numeral system (base, or radix), or the type (e.g. URL, email, etc.) of this field.
 	 * <p>Compatible with numeric or enumeration field.</p>
 	 *
@@ -135,6 +145,7 @@ public @interface ConfigurationField{
 
 	/**
 	 * Whether the field is writable.
+	 * <p>Non-writable fields are all mandatory by default.</p>
 	 *
 	 * @return	Whether the field is writable.
 	 */

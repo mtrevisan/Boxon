@@ -47,6 +47,7 @@ import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.external.BitSet;
 import io.github.mtrevisan.boxon.external.ByteHelper;
 import io.github.mtrevisan.boxon.external.ByteOrder;
+import io.github.mtrevisan.boxon.external.EventListener;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -170,9 +171,11 @@ class TemplateTest{
 	@Test
 	@SuppressWarnings("SimplifiableAssertion")
 	void creation() throws AnnotationException{
-		Loader loader = Loader.create();
-		loader.loadDefaultCodecs();
-		Template<Message> template = loader.createTemplate(Message.class);
+		EventListener eventListener = EventListener.getNoOpInstance();
+		LoaderCodec loaderCodec = new LoaderCodec(eventListener);
+		loaderCodec.loadDefaultCodecs();
+		LoaderTemplate loaderTemplate = new LoaderTemplate(loaderCodec, eventListener);
+		Template<Message> template = loaderTemplate.createTemplate(Message.class);
 
 		Assertions.assertNotNull(template);
 		Assertions.assertEquals(Message.class, template.getType());
@@ -238,9 +241,11 @@ class TemplateTest{
 
 	@Test
 	void inheritance() throws AnnotationException{
-		Loader loader = Loader.create();
-		loader.loadDefaultCodecs();
-		Template<MessageChild> template = loader.createTemplate(MessageChild.class);
+		EventListener eventListener = EventListener.getNoOpInstance();
+		LoaderCodec loaderCodec = new LoaderCodec(eventListener);
+		loaderCodec.loadDefaultCodecs();
+		LoaderTemplate loaderTemplate = new LoaderTemplate(loaderCodec, eventListener);
+		Template<MessageChild> template = loaderTemplate.createTemplate(MessageChild.class);
 
 		Assertions.assertNotNull(template);
 		Assertions.assertEquals(MessageChild.class, template.getType());

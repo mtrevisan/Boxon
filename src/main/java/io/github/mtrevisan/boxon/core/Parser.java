@@ -34,8 +34,7 @@ import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
 import io.github.mtrevisan.boxon.external.EventListener;
-import io.github.mtrevisan.boxon.internal.ReflectionHelper;
-import io.github.mtrevisan.boxon.internal.ReflectiveClassLoader;
+import io.github.mtrevisan.boxon.internal.semanticversioning.Version;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -53,8 +52,11 @@ import java.util.Objects;
  */
 public final class Parser{
 
-	private final Loader loader;
+	private final LoaderCodec loaderCodec;
+	private final LoaderTemplate loaderTemplate;
+	private final LoaderConfiguration loaderConfiguration;
 	private final TemplateParser templateParser;
+	private final ConfigurationParser configurationParser;
 
 
 	/**
@@ -80,20 +82,11 @@ public final class Parser{
 
 
 	private Parser(final EventListener eventListener){
-		injectEventListener(eventListener);
-
-		loader = Loader.create(eventListener);
-		templateParser = new TemplateParser(loader, eventListener);
-	}
-
-	private void injectEventListener(final EventListener eventListener){
-		final ReflectiveClassLoader reflectiveClassLoader = ReflectiveClassLoader.createFrom(CodecInterface.class);
-		reflectiveClassLoader.scan(CodecInterface.class);
-		final Collection<Class<?>> classes = reflectiveClassLoader.getImplementationsOf(CodecInterface.class);
-		for(final Class<?> cl : classes)
-			ReflectionHelper.setStaticFieldValue(cl, EventListener.class, eventListener);
-
-		ReflectionHelper.setStaticFieldValue(TemplateAnnotationValidator.class, EventListener.class, eventListener);
+		loaderCodec = new LoaderCodec(eventListener);
+		loaderTemplate = new LoaderTemplate(loaderCodec, eventListener);
+		loaderConfiguration = new LoaderConfiguration(eventListener);
+		templateParser = new TemplateParser(loaderCodec, loaderTemplate, eventListener);
+		configurationParser = new ConfigurationParser(loaderCodec, loaderTemplate, templateParser, eventListener);
 	}
 
 	/**
@@ -155,7 +148,7 @@ public final class Parser{
 	 * @return	The {@link Parser}, used for chaining.
 	 */
 	public Parser withDefaultCodecs(){
-		loader.loadDefaultCodecs();
+		loaderCodec.loadDefaultCodecs();
 		return this;
 	}
 
@@ -166,7 +159,7 @@ public final class Parser{
 	 * @return	The {@link Parser}, used for chaining.
 	 */
 	public Parser withCodecs(final Class<?>... basePackageClasses){
-		loader.loadCodecs(basePackageClasses);
+		loaderCodec.loadCodecs(basePackageClasses);
 		return this;
 	}
 
@@ -177,7 +170,7 @@ public final class Parser{
 	 * @return	The {@link Parser}, used for chaining.
 	 */
 	public Parser withCodecs(final CodecInterface<?>... codecs){
-		loader.addCodecs(codecs);
+		loaderCodec.addCodecs(codecs);
 		return this;
 	}
 
@@ -190,7 +183,7 @@ public final class Parser{
 	 * @throws TemplateException	If a template is not well formatted.
 	 */
 	public Parser withDefaultTemplates() throws AnnotationException, TemplateException{
-		loader.loadDefaultTemplates();
+		loaderTemplate.loadDefaultTemplates();
 		return this;
 	}
 
@@ -203,7 +196,7 @@ public final class Parser{
 	 * @throws TemplateException	If a template is not well formatted.
 	 */
 	public Parser withTemplates(final Class<?>... basePackageClasses) throws AnnotationException, TemplateException{
-		loader.loadTemplates(basePackageClasses);
+		loaderTemplate.loadTemplates(basePackageClasses);
 		return this;
 	}
 
@@ -216,7 +209,7 @@ public final class Parser{
 	 * @throws ConfigurationException	If a configuration is not well formatted.
 	 */
 	public Parser withDefaultConfigurations() throws AnnotationException, ConfigurationException{
-		loader.loadDefaultConfigurations();
+		loaderConfiguration.loadDefaultConfigurations();
 		return this;
 	}
 
@@ -229,7 +222,7 @@ public final class Parser{
 	 * @throws ConfigurationException	If a configuration is not well formatted.
 	 */
 	public Parser withConfigurations(final Class<?>... basePackageClasses) throws AnnotationException, ConfigurationException{
-		loader.loadConfigurations(basePackageClasses);
+		loaderConfiguration.loadConfigurations(basePackageClasses);
 		return this;
 	}
 
@@ -239,8 +232,8 @@ public final class Parser{
 	 * @param protocol	The protocol used to extract the configurations.
 	 * @return	The configuration messages for a given protocol version.
 	 */
-	public List<Map<String, Object>> getConfiguration(final String protocol) throws ConfigurationException{
-		return loader.getConfiguration(protocol);
+	public List<Map<String, Object>> getConfigurations(final String protocol) throws ConfigurationException{
+		return loaderConfiguration.getConfigurations(protocol);
 	}
 
 
@@ -299,7 +292,7 @@ public final class Parser{
 			reader.createFallbackPoint();
 
 			try{
-				final Template<?> template = loader.getTemplate(reader);
+				final Template<?> template = loaderTemplate.getTemplate(reader);
 
 				final Object partialDecodedMessage = templateParser.decode(template, reader, null);
 
@@ -312,7 +305,7 @@ public final class Parser{
 				//restore state of the reader
 				reader.restoreFallbackPoint();
 
-				final int position = loader.findNextMessageIndex(reader);
+				final int position = loaderTemplate.findNextMessageIndex(reader);
 				if(position < 0)
 					//cannot find any template for message
 					break;
@@ -343,8 +336,8 @@ public final class Parser{
 	 * @param data	The messages to be composed.
 	 * @return	The composition response.
 	 */
-	public ComposeResponse compose(final Collection<Object> data){
-		return compose(data.toArray(Object[]::new));
+	public ComposeResponse composeMessage(final Collection<Object> data){
+		return composeMessage(data.toArray(Object[]::new));
 	}
 
 	/**
@@ -353,12 +346,12 @@ public final class Parser{
 	 * @param data	The message(s) to be composed.
 	 * @return	The composition response.
 	 */
-	public ComposeResponse compose(final Object... data){
+	public ComposeResponse composeMessage(final Object... data){
 		final ComposeResponse response = new ComposeResponse(data);
 
 		final BitWriter writer = BitWriter.create();
 		for(int i = 0; i < data.length; i ++)
-			compose(writer, data[i], response);
+			composeMessage(writer, data[i], response);
 		writer.flush();
 
 		response.setComposedMessage(writer.array());
@@ -371,11 +364,60 @@ public final class Parser{
 	 *
 	 * @param data	The message to be composed.
 	 */
-	private void compose(final BitWriter writer, final Object data, final ComposeResponse response){
+	private void composeMessage(final BitWriter writer, final Object data, final ComposeResponse response){
 		try{
-			final Template<?> template = loader.getTemplate(data.getClass());
+			final Template<?> template = loaderTemplate.getTemplate(data.getClass());
 
 			templateParser.encode(template, writer, null, data);
+		}
+		catch(final Exception e){
+			response.addError(EncodeException.create(e));
+		}
+	}
+
+
+	/**
+	 * Compose a list of configuration messages.
+	 *
+	 * @param data	The configuration messages to be composed.
+	 * @return	The composition response.
+	 */
+	public ComposeResponse composeConfiguration(final Version protocol, final Collection<Map<String, Object>> data){
+		return composeConfiguration(protocol, data.toArray(Map[]::new));
+	}
+
+	/**
+	 * Compose a list of configuration messages.
+	 *
+	 * @param data	The configuration message(s) to be composed.
+	 * @return	The composition response.
+	 */
+	public ComposeResponse composeConfiguration(final Version protocol, final Map<String, Object>... data){
+		final ComposeResponse response = new ComposeResponse(data);
+
+		final BitWriter writer = BitWriter.create();
+		for(int i = 0; i < data.length; i ++)
+			composeConfiguration(writer, data[i], protocol, response);
+		writer.flush();
+
+		response.setComposedMessage(writer.array());
+
+		return response;
+	}
+
+	/**
+	 * Compose a single configuration message.
+	 *
+	 * @param data   The configuration message to be composed.
+	 */
+	private void composeConfiguration(final BitWriter writer, final Map<String, Object> data, final Version protocol,
+			final ComposeResponse response){
+		try{
+			final LoaderConfiguration.ConfigurationPair configurationPair = loaderConfiguration.getConfiguration(data, protocol);
+
+			final Configuration<?> configuration = configurationPair.getConfiguration();
+			final Object configurationData = configurationPair.getConfigurationData();
+			configurationParser.encode(configuration, writer, configurationData, protocol);
 		}
 		catch(final Exception e){
 			response.addError(EncodeException.create(e));

@@ -70,33 +70,38 @@ final class TemplateParser{
 	}
 
 
-	private final Loader loader;
+	private final LoaderCodec loaderCodec;
+	private final LoaderTemplate loaderTemplate;
 
 
 	/**
 	 * Create a template parser.
 	 *
-	 * @param loader	A loader.
+	 * @param loaderCodec	A codec loader.
+	 * @param loaderTemplate	A template loader.
 	 * @return	A template parser.
 	 */
-	public static TemplateParser create(final Loader loader){
-		return new TemplateParser(loader, EventListener.getNoOpInstance());
+	public static TemplateParser create(final LoaderCodec loaderCodec, final LoaderTemplate loaderTemplate){
+		return new TemplateParser(loaderCodec, loaderTemplate, EventListener.getNoOpInstance());
 	}
 
 	/**
 	 * Create a template parser.
 	 *
-	 * @param loader	A loader.
+	 * @param loaderCodec	A codec loader.
+	 * @param loaderTemplate	A template loader.
 	 * @param eventListener	The event listener.
 	 * @return	A template parser.
 	 */
-	public static TemplateParser create(final Loader loader, final EventListener eventListener){
-		return new TemplateParser(loader, (eventListener != null? eventListener: EventListener.getNoOpInstance()));
+	public static TemplateParser create(final LoaderCodec loaderCodec, final LoaderTemplate loaderTemplate,
+			final EventListener eventListener){
+		return new TemplateParser(loaderCodec, loaderTemplate, (eventListener != null? eventListener: EventListener.getNoOpInstance()));
 	}
 
 
-	TemplateParser(final Loader loader, final EventListener eventListener){
-		this.loader = loader;
+	TemplateParser(final LoaderCodec loaderCodec, final LoaderTemplate loaderTemplate, final EventListener eventListener){
+		this.loaderCodec = loaderCodec;
+		this.loaderTemplate = loaderTemplate;
 		this.eventListener = eventListener;
 	}
 
@@ -295,7 +300,7 @@ final class TemplateParser{
 	}
 
 	private CodecInterface<?> retrieveCodec(final Class<? extends Annotation> annotationType) throws CodecException{
-		final CodecInterface<?> codec = loader.getCodec(annotationType);
+		final CodecInterface<?> codec = loaderCodec.getCodec(annotationType);
 		if(codec == null)
 			throw CodecException.create("Cannot find codec for binding {}", annotationType.getSimpleName());
 
@@ -305,7 +310,7 @@ final class TemplateParser{
 
 	private void setTemplateParser(final CodecInterface<?> codec){
 		try{
-			ReflectionHelper.setFieldValue(codec, Loader.class, loader);
+			ReflectionHelper.setFieldValue(codec, LoaderTemplate.class, loaderTemplate);
 		}
 		catch(final Exception ignored){}
 		try{

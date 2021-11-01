@@ -41,6 +41,7 @@ import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
 import io.github.mtrevisan.boxon.external.ByteOrder;
+import io.github.mtrevisan.boxon.external.EventListener;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.ReflectionHelper;
 import org.junit.jupiter.api.Assertions;
@@ -243,10 +244,12 @@ class CodecArrayTest{
 			}
 		};
 
-		Loader loader = Loader.create();
-		TemplateParser templateParser = TemplateParser.create(loader);
-		loader.loadDefaultCodecs();
-		ReflectionHelper.setFieldValue(codec, Loader.class, loader);
+		EventListener eventListener = EventListener.getNoOpInstance();
+		LoaderCodec loaderCodec = new LoaderCodec(eventListener);
+		LoaderTemplate loaderTemplate = new LoaderTemplate(loaderCodec, eventListener);
+		TemplateParser templateParser = TemplateParser.create(loaderCodec, loaderTemplate);
+		loaderCodec.loadDefaultCodecs();
+		ReflectionHelper.setFieldValue(codec, LoaderTemplate.class, loaderTemplate);
 		ReflectionHelper.setFieldValue(codec, TemplateParser.class, templateParser);
 		BitWriter writer = BitWriter.create();
 		codec.encode(writer, annotation, null, encodedValue);
@@ -286,7 +289,7 @@ class CodecArrayTest{
 		Assertions.assertEquals(CodecObjectTest.TestType1.class, values[2].getClass());
 		Assertions.assertEquals(0x0666, ((CodecObjectTest.TestType1)values[2]).value);
 
-		ComposeResponse response = parser.compose(parsedMessage);
+		ComposeResponse response = parser.composeMessage(parsedMessage);
 		Assertions.assertNotNull(response);
 		Assertions.assertFalse(response.hasErrors());
 		Assertions.assertArrayEquals(payload, response.getComposedMessage());
@@ -310,7 +313,7 @@ class CodecArrayTest{
 		Assertions.assertEquals(CodecObjectTest.TestType1.class, values[0].getClass());
 		Assertions.assertEquals(0x1234, ((CodecObjectTest.TestType1)values[0]).value);
 
-		ComposeResponse response = parser.compose(parsedMessage);
+		ComposeResponse response = parser.composeMessage(parsedMessage);
 		Assertions.assertNotNull(response);
 		Assertions.assertFalse(response.hasErrors());
 		Assertions.assertArrayEquals(payload, response.getComposedMessage());

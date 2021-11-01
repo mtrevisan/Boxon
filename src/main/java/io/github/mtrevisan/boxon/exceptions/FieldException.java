@@ -60,6 +60,7 @@ public class FieldException extends Exception{
 		return super.getMessage() + (className != null && fieldName != null? " in field " + className + "." + fieldName: "");
 	}
 
+
 	@SuppressWarnings("unused")
 	private void writeObject(final ObjectOutputStream os) throws NotSerializableException{
 		throw new NotSerializableException(getClass().getName());

@@ -128,6 +128,10 @@ enum ConfigurationAnnotationValidator{
 				try{
 					final Pattern formatPattern = Pattern.compile(format);
 
+					//defaultValue compatible with field type
+					if(!String.class.isAssignableFrom(field.getType()))
+						throw AnnotationException.create("Data type not compatible with `format` in {}; found {}.class, expected String.class",
+							ConfigurationField.class.getSimpleName(), field.getType());
 					//defaultValue compatible with format
 					if(!defaultValue.isEmpty() && !formatPattern.matcher(defaultValue).matches())
 						throw AnnotationException.create("Default value not compatible with `format` in {}; found {}, expected {}",
@@ -140,6 +144,9 @@ enum ConfigurationAnnotationValidator{
 					if(!maxValue.isEmpty() && !formatPattern.matcher(maxValue).matches())
 						throw AnnotationException.create("Maximum value not compatible with `format` in {}; found {}, expected {}",
 							ConfigurationField.class.getSimpleName(), maxValue, format);
+				}
+				catch(final AnnotationException ae){
+					throw ae;
 				}
 				catch(final Exception e){
 					throw AnnotationException.create("Invalid pattern in {} in field {}", ConfigurationField.class.getSimpleName(),
@@ -162,10 +169,8 @@ enum ConfigurationAnnotationValidator{
 
 		private void validateMinMaxValues(final Field field, final ConfigurationField binding) throws AnnotationException{
 			final Class<?> fieldType = field.getType();
-			final boolean isFieldArray = fieldType.isArray();
 			final String minValue = binding.minValue();
 			final String maxValue = binding.maxValue();
-			final Class<? extends Enum<?>> enumeration = binding.enumeration();
 			final String defaultValue = binding.defaultValue();
 
 			if(!minValue.isEmpty() || !maxValue.isEmpty()){
@@ -263,7 +268,7 @@ enum ConfigurationAnnotationValidator{
 
 						for(int i = 0; i < JavaHelper.lengthOrZero(defaultValues); i ++){
 							final String dv = defaultValues[i];
-							if(!belongsToEnum(enumConstants, dv))
+							if(JavaHelper.extractEnum(enumConstants, dv) == null)
 								throw AnnotationException.create("Default value not compatible with `enumeration` in {}; found {}, expected one of {}",
 									ConfigurationField.class.getSimpleName(), dv, Arrays.toString(enumConstants));
 						}
@@ -274,19 +279,11 @@ enum ConfigurationAnnotationValidator{
 						throw AnnotationException.create("Incompatible enum in {}; found {}, expected {}",
 							ConfigurationField.class.getSimpleName(), enumeration.getSimpleName(), fieldType.toString());
 
-					if(!defaultValue.isEmpty() && !belongsToEnum(enumConstants, defaultValue))
+					if(!defaultValue.isEmpty() && JavaHelper.extractEnum(enumConstants, defaultValue) == null)
 						throw AnnotationException.create("Default value not compatible with `enumeration` in {}; found {}, expected one of {}",
 							ConfigurationField.class.getSimpleName(), defaultValue, Arrays.toString(enumConstants));
 				}
 			}
-		}
-
-		private boolean belongsToEnum(final Enum<?>[] enumConstants, final String value){
-			boolean found = false;
-			for(int j = 0; !found && j < enumConstants.length; j ++)
-				if(enumConstants[j].name().equals(value))
-					found = true;
-			return found;
 		}
 	};
 

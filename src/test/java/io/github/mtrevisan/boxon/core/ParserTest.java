@@ -30,12 +30,14 @@ import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.TimeWatch;
+import io.github.mtrevisan.boxon.internal.semanticversioning.Version;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -83,7 +85,7 @@ class ParserTest{
 		Assertions.assertEquals(1, parseResult.getParsedMessageCount());
 
 		//compose:
-		ComposeResponse composeResult = parser.compose(parseResult.getParsedMessageAt(0));
+		ComposeResponse composeResult = parser.composeMessage(parseResult.getParsedMessageAt(0));
 
 		Assertions.assertFalse(composeResult.hasErrors());
 		Assertions.assertArrayEquals(payload, composeResult.getComposedMessage());
@@ -129,7 +131,7 @@ class ParserTest{
 		Assertions.assertEquals(1, parseResult.getParsedMessageCount());
 
 		//compose:
-		ComposeResponse composeResult = parser.compose(parseResult.getParsedMessageAt(0));
+		ComposeResponse composeResult = parser.composeMessage(parseResult.getParsedMessageAt(0));
 
 		Assertions.assertFalse(composeResult.hasErrors());
 		Assertions.assertArrayEquals(payload, composeResult.getComposedMessage());
@@ -191,6 +193,42 @@ class ParserTest{
 
 		Assertions.assertFalse(result.hasErrors());
 		Assertions.assertEquals(2, result.getParsedMessageCount());
+	}
+
+
+	@Test
+	void composeSingleConfigurationMessage() throws NoSuchMethodException, AnnotationException, TemplateException, ConfigurationException{
+		DeviceTypes deviceTypes = new DeviceTypes();
+		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
+		Parser parser = Parser.create()
+			.addToContext("deviceTypes", deviceTypes)
+			.withDefaultCodecs()
+			.withDefaultTemplates()
+			.withDefaultConfigurations()
+			.withContextFunction(ParserTest.class, "headerSize");
+
+		//data:
+		Version protocol = new Version("1.20");
+		Map<String, Object> configurationData = new HashMap<>();
+		configurationData.put("__type__", "AT+");
+		configurationData.put("__charset__", "UTF-8");
+		configurationData.put("Weekday", "TUESDAY");
+		configurationData.put("Update Over-The-Air", "TRUE");
+		configurationData.put("Header", "GTREG");
+		configurationData.put("Download protocol", "HTTP");
+		configurationData.put("Download URL", "http://url.com");
+		configurationData.put("Update mode", 0);
+		configurationData.put("Maximum download retry count", 2);
+		configurationData.put("Message counter", 123);
+		configurationData.put("Operation mode", 1);
+		configurationData.put("Password", "pass");
+		configurationData.put("Download timeout", 25);
+
+		//compose:
+		Object composeResult = parser.composeConfiguration(protocol, configurationData);
+
+		Assertions.assertNotNull(composeResult);
+//		Assertions.assertArrayEquals(payload, composeResult.getComposedMessage());
 	}
 
 }

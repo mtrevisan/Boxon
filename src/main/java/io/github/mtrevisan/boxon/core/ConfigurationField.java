@@ -54,6 +54,10 @@ final class ConfigurationField{
 		return field.getType();
 	}
 
+	String getFieldName(){
+		return field.getName();
+	}
+
 	<T> T getFieldValue(final Object obj){
 		return ReflectionHelper.getFieldValue(field, obj);
 	}

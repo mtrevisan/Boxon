@@ -42,21 +42,21 @@ public class REGConfigurationASCII{
 	@ConfigurationField(shortDescription = "Password", terminator = ',', format = "[0-9a-zA-Z]{4,20}", defaultValue = "gb200s")
 	private String password;
 
-	@ConfigurationField(shortDescription = "Operation mode", terminator = ',', format = "[0-3]", defaultValue = "0")
+	@ConfigurationField(shortDescription = "Operation mode", terminator = ',', minValue = "0", maxValue = "3", defaultValue = "0")
 	private int operationMode;
 
 	@ConfigurationField(shortDescription = "Update Over-The-Air", terminator = ',', enumeration = BooleanType.class,
 		mutuallyExclusive = true, defaultValue = "FALSE")
 	private BooleanType updateOverTheAir;
 
-	@ConfigurationField(shortDescription = "Update mode", terminator = ',', format = "[0-1]", defaultValue = "1")
+	@ConfigurationField(shortDescription = "Update mode", terminator = ',', minValue = "0", maxValue = "1", defaultValue = "1")
 	private int updateMode;
 
-	@ConfigurationField(shortDescription = "Maximum download retry count", terminator = ',', maxProtocol = "1.20", format = "[0-3]",
-		defaultValue = "0")
+	@ConfigurationField(shortDescription = "Maximum download retry count", terminator = ',', maxProtocol = "1.20", minValue = "0",
+		maxValue = "3", defaultValue = "0")
 	private int maxDownloadRetryCount1_20;
-	@ConfigurationField(shortDescription = "Maximum download retry count", terminator = ',', minProtocol = "1.21", format = "[0-3]",
-		defaultValue = "1")
+	@ConfigurationField(shortDescription = "Maximum download retry count", terminator = ',', minProtocol = "1.21", minValue = "0",
+		maxValue = "3", defaultValue = "1")
 	private int maxDownloadRetryCount1_21;
 
 	@ConfigurationField(shortDescription = "Download timeout", terminator = ',', maxProtocol = "1.18", minValue = "5", maxValue = "30",
@@ -100,7 +100,7 @@ public class REGConfigurationASCII{
 		defaultValue = "MONDAY|TUESDAY|WEDNESDAY|THURSDAY|FRIDAY|SATURDAY|SUNDAY")
 	private Weekday[] weekday;
 
-	@ConfigurationField(shortDescription = "Message counter", terminator = ',', minValue = "0x0000", maxValue = "0xFFFF",
+	@ConfigurationField(shortDescription = "Message counter", terminator = ',', minValue = "0x0000", maxValue = "0xFFFF", mandatory = true,
 		type = FieldType.HEXADECIMAL)
 	private int messageCounter;
 

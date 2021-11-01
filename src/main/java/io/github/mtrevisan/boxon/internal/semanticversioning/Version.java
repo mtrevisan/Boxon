@@ -373,9 +373,9 @@ public class Version implements Comparable<Version>{
 		if(patch != null)
 			sb.append(DOT)
 				.append(patch);
-		if(preRelease.length > 0)
+		if(preRelease != null && preRelease.length > 0)
 			sb.append(PRE_RELEASE_PREFIX).append(String.join(DOT, preRelease));
-		if(build.length > 0)
+		if(build != null && build.length > 0)
 			sb.append(BUILD_PREFIX).append(String.join(DOT, build));
 		return sb.toString();
 	}

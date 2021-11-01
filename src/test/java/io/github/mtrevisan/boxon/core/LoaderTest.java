@@ -31,6 +31,7 @@ import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.BitReader;
+import io.github.mtrevisan.boxon.external.EventListener;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -44,43 +45,52 @@ class LoaderTest{
 
 	@Test
 	void loadFromMap(){
-		Loader loader = Loader.create();
-		loader.loadDefaultCodecs();
+		EventListener eventListener = EventListener.getNoOpInstance();
+		LoaderCodec loaderCodec = new LoaderCodec(eventListener);
+		loaderCodec.loadDefaultCodecs();
 	}
 
 	@Test
 	void loadFromScan() throws AnnotationException, TemplateException{
-		Loader loader = Loader.create();
-		loader.loadDefaultCodecs();
+		EventListener eventListener = EventListener.getNoOpInstance();
+		LoaderCodec loaderCodec = new LoaderCodec(eventListener);
+		loaderCodec.loadDefaultCodecs();
 
-		loader.loadDefaultTemplates();
+		LoaderTemplate loaderTemplate = new LoaderTemplate(loaderCodec, eventListener);
+		loaderTemplate.loadDefaultTemplates();
 	}
 
 	@Test
 	void loadFromScanWithBasePackage() throws AnnotationException, TemplateException{
-		Loader loader = Loader.create();
-		loader.loadDefaultCodecs();
+		EventListener eventListener = EventListener.getNoOpInstance();
+		LoaderCodec loaderCodec = new LoaderCodec(eventListener);
+		loaderCodec.loadDefaultCodecs();
 
-		loader.loadTemplates(LoaderTest.class);
+		LoaderTemplate loaderTemplate = new LoaderTemplate(loaderCodec, eventListener);
+		loaderTemplate.loadTemplates(LoaderTest.class);
 	}
 
 	@Test
 	void loadCodecsAfterTemplates(){
-		Loader loader = Loader.create();
+		EventListener eventListener = EventListener.getNoOpInstance();
+		LoaderCodec loaderCodec = new LoaderCodec(eventListener);
+		LoaderTemplate loaderTemplate = new LoaderTemplate(loaderCodec, eventListener);
 		Exception e = Assertions.assertThrows(AnnotationException.class,
-			() -> loader.loadTemplates(LoaderTest.class));
+			() -> loaderTemplate.loadTemplates(LoaderTest.class));
 		Assertions.assertTrue(e.getMessage().startsWith("No data can be extracted from this class: "));
 	}
 
 	@Test
 	void loadTemplate() throws AnnotationException, TemplateException{
-		Loader loader = Loader.create();
-		loader.loadDefaultCodecs();
-		loader.loadTemplates(LoaderTest.class);
+		EventListener eventListener = EventListener.getNoOpInstance();
+		LoaderCodec loaderCodec = new LoaderCodec(eventListener);
+		loaderCodec.loadDefaultCodecs();
+		LoaderTemplate loaderTemplate = new LoaderTemplate(loaderCodec, eventListener);
+		loaderTemplate.loadTemplates(LoaderTest.class);
 
 		byte[] payload = JavaHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		BitReader reader = BitReader.wrap(payload);
-		Template<?> template = loader.getTemplate(reader);
+		Template<?> template = loaderTemplate.getTemplate(reader);
 
 		Assertions.assertNotNull(template);
 		Assertions.assertEquals(ACKMessageHex.class, template.getType());
@@ -88,10 +98,11 @@ class LoaderTest{
 
 	@Test
 	void loadConfiguration() throws AnnotationException, ConfigurationException, JsonProcessingException{
-		Loader loader = Loader.create();
-		loader.loadConfigurations(LoaderTest.class);
+		EventListener eventListener = EventListener.getNoOpInstance();
+		LoaderConfiguration loaderConfiguration = new LoaderConfiguration(eventListener);
+		loaderConfiguration.loadConfigurations(LoaderTest.class);
 
-		List<Map<String, Object>> configuration = loader.getConfiguration("1.19");
+		List<Map<String, Object>> configuration = loaderConfiguration.getConfigurations("1.19");
 
 		Assertions.assertEquals(1, configuration.size());
 
@@ -100,42 +111,48 @@ class LoaderTest{
 		String jsonFields = mapper.writeValueAsString(configuration.get(0).get("fields"));
 
 		Assertions.assertEquals("{\"longDescription\":\"The command AT+GTREG is used to do things.\",\"maxProtocol\":\"2.8\",\"charset\":\"UTF-8\",\"shortDescription\":\"AT+GTREG\"}", jsonHeader);
-		Assertions.assertEquals("{\"Weekday\":{\"defaultValue\":[\"MONDAY\",\"TUESDAY\",\"WEDNESDAY\",\"THURSDAY\",\"FRIDAY\",\"SATURDAY\",\"SUNDAY\"],\"mutuallyExclusive\":false,\"enumeration\":[\"MONDAY\",\"TUESDAY\",\"WEDNESDAY\",\"THURSDAY\",\"FRIDAY\",\"SATURDAY\",\"SUNDAY\"],\"writable\":true},\"Update Over-The-Air\":{\"defaultValue\":[\"FALSE\"],\"mutuallyExclusive\":true,\"enumeration\":[\"TRUE\",\"FALSE\"],\"writable\":true},\"Header\":{\"defaultValue\":\"GTREG\",\"writable\":false},\"Download protocol\":{\"defaultValue\":[\"HTTP\"],\"mutuallyExclusive\":true,\"enumeration\":[\"HTTP\",\"HTTPS\"],\"writable\":false},\"Download URL\":{\"format\":\".{0,100}\",\"writable\":true},\"Update mode\":{\"defaultValue\":1,\"format\":\"[0-1]\",\"writable\":true},\"Maximum download retry count\":{\"defaultValue\":0,\"format\":\"[0-3]\",\"writable\":true},\"Message counter\":{\"minValue\":0,\"maxValue\":65535,\"writable\":true},\"Operation mode\":{\"defaultValue\":0,\"format\":\"[0-3]\",\"writable\":true},\"Password\":{\"defaultValue\":\"gb200s\",\"format\":\"[0-9a-zA-Z]{4,20}\",\"writable\":true},\"Download timeout\":{\"minValue\":5,\"unitOfMeasure\":\"min\",\"maxValue\":30,\"defaultValue\":20,\"writable\":true}}", jsonFields);
+		Assertions.assertEquals("{\"Weekday\":{\"defaultValue\":[\"MONDAY\",\"TUESDAY\",\"WEDNESDAY\",\"THURSDAY\",\"FRIDAY\",\"SATURDAY\",\"SUNDAY\"],\"mutuallyExclusive\":false,\"enumeration\":[\"MONDAY\",\"TUESDAY\",\"WEDNESDAY\",\"THURSDAY\",\"FRIDAY\",\"SATURDAY\",\"SUNDAY\"],\"mandatory\":false,\"writable\":true},\"Update Over-The-Air\":{\"defaultValue\":[\"FALSE\"],\"mutuallyExclusive\":true,\"enumeration\":[\"TRUE\",\"FALSE\"],\"mandatory\":false,\"writable\":true},\"Header\":{\"defaultValue\":\"GTREG\",\"mandatory\":false,\"writable\":false},\"Download protocol\":{\"defaultValue\":[\"HTTP\"],\"mutuallyExclusive\":true,\"enumeration\":[\"HTTP\",\"HTTPS\"],\"mandatory\":false,\"writable\":false},\"Download URL\":{\"format\":\".{0,100}\",\"mandatory\":false,\"writable\":true},\"Update mode\":{\"minValue\":0,\"maxValue\":1,\"defaultValue\":1,\"mandatory\":false,\"writable\":true},\"Maximum download retry count\":{\"minValue\":0,\"maxValue\":3,\"defaultValue\":0,\"mandatory\":false,\"writable\":true},\"Message counter\":{\"minValue\":0,\"maxValue\":65535,\"mandatory\":true,\"writable\":true},\"Operation mode\":{\"minValue\":0,\"maxValue\":3,\"defaultValue\":0,\"mandatory\":false,\"writable\":true},\"Password\":{\"defaultValue\":\"gb200s\",\"format\":\"[0-9a-zA-Z]{4,20}\",\"mandatory\":false,\"writable\":true},\"Download timeout\":{\"minValue\":5,\"unitOfMeasure\":\"min\",\"maxValue\":30,\"defaultValue\":20,\"mandatory\":false,\"writable\":true}}", jsonFields);
 	}
 
 	@Test
 	void cannotLoadTemplate() throws AnnotationException, TemplateException{
-		Loader loader = Loader.create();
-		loader.loadDefaultCodecs();
-		loader.loadTemplates(LoaderTest.class);
+		EventListener eventListener = EventListener.getNoOpInstance();
+		LoaderCodec loaderCodec = new LoaderCodec(eventListener);
+		loaderCodec.loadDefaultCodecs();
+		LoaderTemplate loaderTemplate = new LoaderTemplate(loaderCodec, eventListener);
+		loaderTemplate.loadTemplates(LoaderTest.class);
 
 		byte[] payload = JavaHelper.toByteArray("3b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		BitReader reader = BitReader.wrap(payload);
-		Assertions.assertThrows(TemplateException.class, () -> loader.getTemplate(reader));
+		Assertions.assertThrows(TemplateException.class, () -> loaderTemplate.getTemplate(reader));
 	}
 
 	@Test
 	void findNextTemplate() throws AnnotationException, TemplateException{
-		Loader loader = Loader.create();
-		loader.loadDefaultCodecs();
-		loader.loadTemplates(LoaderTest.class);
+		EventListener eventListener = EventListener.getNoOpInstance();
+		LoaderCodec loaderCodec = new LoaderCodec(eventListener);
+		loaderCodec.loadDefaultCodecs();
+		LoaderTemplate loaderTemplate = new LoaderTemplate(loaderCodec, eventListener);
+		loaderTemplate.loadTemplates(LoaderTest.class);
 
 		byte[] payload = JavaHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		BitReader reader = BitReader.wrap(payload);
-		int position = loader.findNextMessageIndex(reader);
+		int position = loaderTemplate.findNextMessageIndex(reader);
 
 		Assertions.assertEquals(36, position);
 	}
 
 	@Test
 	void cannotFindNextTemplate() throws AnnotationException, TemplateException{
-		Loader loader = Loader.create();
-		loader.loadDefaultCodecs();
-		loader.loadTemplates(LoaderTest.class);
+		EventListener eventListener = EventListener.getNoOpInstance();
+		LoaderCodec loaderCodec = new LoaderCodec(eventListener);
+		loaderCodec.loadDefaultCodecs();
+		LoaderTemplate loaderTemplate = new LoaderTemplate(loaderCodec, eventListener);
+		loaderTemplate.loadTemplates(LoaderTest.class);
 
 		byte[] payload = JavaHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		BitReader reader = BitReader.wrap(payload);
-		int position = loader.findNextMessageIndex(reader);
+		int position = loaderTemplate.findNextMessageIndex(reader);
 
 		Assertions.assertEquals(-1, position);
 	}

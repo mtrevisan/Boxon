@@ -24,6 +24,8 @@
  */
 package io.github.mtrevisan.boxon.exceptions;
 
+import io.github.mtrevisan.boxon.internal.JavaHelper;
+
 import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -41,6 +43,14 @@ public final class EncodeException extends Exception{
 		return new EncodeException(cause);
 	}
 
+	public static EncodeException create(final String message, final Object... parameters){
+		return new EncodeException(JavaHelper.format(message, parameters));
+	}
+
+	private EncodeException(final String message){
+		super(message);
+	}
+
 	private EncodeException(final Throwable cause){
 		super(cause);
 	}
@@ -53,6 +63,7 @@ public final class EncodeException extends Exception{
 			sj.append(cause.getMessage());
 		return sj.toString();
 	}
+
 
 	@SuppressWarnings("unused")
 	private void writeObject(final ObjectOutputStream os) throws NotSerializableException{

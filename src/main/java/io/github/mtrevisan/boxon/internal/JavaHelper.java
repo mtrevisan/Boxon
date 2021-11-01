@@ -272,6 +272,14 @@ public final class JavaHelper{
 	}
 
 
+	public static Enum<?> extractEnum(final Enum<?>[] enumConstants, final String value){
+		for(int i = 0; i < enumConstants.length; i ++)
+			if(enumConstants[i].name().equals(value))
+				return enumConstants[i];
+		return null;
+	}
+
+
 	public static <T> T nonNullOrDefault(final T obj, final T defaultObject){
 		return (obj != null? obj: defaultObject);
 	}
