@@ -129,12 +129,10 @@ final class LoaderConfiguration{
 			if(from.canBeCoded()){
 				//if the configuration is valid, add it to the list of templates...
 				final ConfigurationMessage header = from.getHeader();
+				final String start = header.start();
 				final Charset charset = Charset.forName(header.charset());
-				final String[] starts = header.start();
-				for(int i = 0; i < starts.length; i ++){
-					final String k = LoaderHelper.calculateKey(starts[i], charset);
-					configurations.put(k, from);
-				}
+				final String k = LoaderHelper.calculateKey(start, charset);
+				configurations.put(k, from);
 			}
 			else
 				//... otherwise throw exception
@@ -171,10 +169,9 @@ final class LoaderConfiguration{
 	private void addConfigurationInner(final Configuration<?> configuration){
 		try{
 			final ConfigurationMessage header = configuration.getHeader();
+			final String start = header.start();
 			final Charset charset = Charset.forName(header.charset());
-			final String[] starts = header.start();
-			for(int i = 0; i < starts.length; i ++)
-				loadConfigurationInner(configuration, starts[i], charset);
+			loadConfigurationInner(configuration, start, charset);
 		}
 		catch(final Exception e){
 			eventListener.cannotLoadConfiguration(configuration.getType().getName(), e);
@@ -476,7 +473,7 @@ final class LoaderConfiguration{
 		}
 	}
 
-	private boolean shouldBeExtracted(final Version protocol, final String minProtocol, final String maxProtocol){
+	public static boolean shouldBeExtracted(final Version protocol, final String minProtocol, final String maxProtocol){
 		final Version min = new Version(minProtocol);
 		final Version max = new Version(maxProtocol);
 		return (min.isEmpty() || protocol.isGreaterThanOrEqualTo(min)) && (max.isEmpty() || protocol.isLessThanOrEqualTo(max));

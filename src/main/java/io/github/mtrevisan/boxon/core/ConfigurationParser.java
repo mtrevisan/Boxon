@@ -92,21 +92,24 @@ final class ConfigurationParser{
 
 	<T> void encode(final Configuration<?> configuration, final BitWriter writer, final T currentObject, final Version protocol)
 			throws FieldException{
+		openMessage(configuration, writer);
+
 		//encode message fields:
 		final List<ConfigurationField> fields = configuration.getConfigurationFields();
 		for(int i = 0; i < fields.size(); i ++){
 			final ConfigurationField field = fields.get(i);
 
+			final io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField binding
+				= (io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField)field.getBinding();
+			if(!LoaderConfiguration.shouldBeExtracted(protocol, binding.minProtocol(), binding.maxProtocol()))
+				continue;
+
 			//process skip annotations:
 			final ConfigurationSkip[] skips = field.getSkips();
 			writeSkips(skips, writer, protocol);
 
-			//check if field has to be processed...
-			final io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField binding
-				= (io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField)field.getBinding();
-			if(shouldBeProcessed(protocol, binding.minProtocol(), binding.maxProtocol()))
-				//... and if so, process it
-				encodeField(configuration, currentObject, writer, field);
+			//process value
+			encodeField(configuration, currentObject, writer, field);
 		}
 
 		closeMessage(configuration, writer);
@@ -141,12 +144,20 @@ final class ConfigurationParser{
 		}
 	}
 
+	private void openMessage(final Configuration<?> configuration, final BitWriter writer){
+		final ConfigurationMessage header = configuration.getHeader();
+		if(header != null && !header.start().isEmpty()){
+			final String start = header.start();
+			final Charset charset = Charset.forName(header.charset());
+			writer.putText(start, charset);
+		}
+	}
+
 	private void closeMessage(final Configuration<?> configuration, final BitWriter writer){
 		final ConfigurationMessage header = configuration.getHeader();
 		if(header != null && !header.end().isEmpty()){
 			final Charset charset = Charset.forName(header.charset());
-			final byte[] messageTerminator = header.end().getBytes(charset);
-			writer.putBytes(messageTerminator);
+			writer.putText(header.end(), charset);
 		}
 	}
 
@@ -176,7 +187,7 @@ final class ConfigurationParser{
 	}
 
 	private void writeSkip(final ConfigurationSkip skip, final BitWriter writer, final Version protocol){
-		final boolean process = shouldBeProcessed(protocol, skip.minProtocol(), skip.maxProtocol());
+		final boolean process = LoaderConfiguration.shouldBeExtracted(protocol, skip.minProtocol(), skip.maxProtocol());
 		if(process){
 			final int size = Integer.parseInt(skip.size());
 			if(size > 0)
@@ -186,14 +197,6 @@ final class ConfigurationParser{
 				//skip until terminator
 				writer.putByte(skip.terminator());
 		}
-	}
-
-	private boolean shouldBeProcessed(final Version protocol, final String minProtocol, final String maxProtocol){
-		final Version min = new Version(minProtocol);
-		final Version max = new Version(maxProtocol);
-		return (min.isEmpty() && max.isEmpty()
-			|| !min.isEmpty() && protocol.isLessThan(min)
-			|| !max.isEmpty() && protocol.isGreaterThan(max));
 	}
 
 }

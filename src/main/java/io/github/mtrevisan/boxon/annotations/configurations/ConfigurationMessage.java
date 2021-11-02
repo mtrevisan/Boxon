@@ -60,7 +60,7 @@ public @interface ConfigurationMessage{
 	 *
 	 * @return	The header bytes of this message.
 	 */
-	String[] start();
+	String start();
 
 	/**
 	 * The final bytes that determines the type of message.
