@@ -152,14 +152,6 @@ public @interface ConfigurationField{
 
 
 	/**
-	 * The numeral system (base, or radix), or the type (e.g. URL, email, etc.) of this field.
-	 * <p>Compatible with numeric or enumeration field.</p>
-	 *
-	 * @return	The numeral system (base, or radix), or the type (e.g. URL, email, etc.) of this field.
-	 */
-	FieldType type() default FieldType.DECIMAL;
-
-	/**
 	 * The string that terminates the field.
 	 *
 	 * @return	The terminator string (defaults to empty).
