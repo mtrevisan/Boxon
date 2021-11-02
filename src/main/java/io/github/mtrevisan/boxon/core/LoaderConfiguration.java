@@ -375,7 +375,7 @@ final class LoaderConfiguration{
 
 			final Object dataEnum;
 			final Enum<?>[] enumConstants = foundEnumeration.getEnumConstants();
-			if(!binding.mutuallyExclusive()){
+			if(field.getFieldType().isArray()){
 				final String[] defaultValues = JavaHelper.split((String)value, "|", -1);
 				dataEnum = Array.newInstance(foundEnumeration, defaultValues.length);
 				for(int i = 0; i < defaultValues.length; i ++)
@@ -447,7 +447,8 @@ final class LoaderConfiguration{
 			for(int j = 0; j < enumConstants.length; j ++)
 				enumValues[j] = enumConstants[j].name();
 			putIfNotEmpty(map, "enumeration", enumValues);
-			putIfNotEmpty(map, "mutuallyExclusive", binding.mutuallyExclusive());
+			if(fieldType.isEnum())
+				putIfNotEmpty(map, "mutuallyExclusive", true);
 		}
 
 		putIfNotEmpty(map, "mandatory", binding.mandatory());

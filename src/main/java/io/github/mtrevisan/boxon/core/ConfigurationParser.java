@@ -128,7 +128,7 @@ final class ConfigurationParser{
 			//encode value from current object
 			final Object value = field.getFieldValue(currentObject);
 			//write value to raw message
-			codec.encode(writer, binding, null, value);
+			codec.encode(writer, binding, field.getFieldType(), value);
 
 			eventListener.writtenField(configuration.getType().getName(), field.getFieldName(), value);
 		}

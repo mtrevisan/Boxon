@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core;
 
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationMessage;
 import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
@@ -69,7 +70,7 @@ enum ConfigurationAnnotationValidator{
 
 			if(JavaHelper.isBlank(binding.shortDescription()))
 				throw AnnotationException.create("Short description must be present");
-			if(binding.enumeration() == NullEnum.class && binding.mutuallyExclusive())
+			if(binding.enumeration() == NullEnum.class && field.getType().isEnum())
 				throw AnnotationException.create("Unnecessary mutually exclusive field in a non-enumeration field");
 			if(String.class.isAssignableFrom(field.getType()))
 				CodecHelper.assertValidCharset(binding.charset());
@@ -252,6 +253,11 @@ enum ConfigurationAnnotationValidator{
 			final String defaultValue = binding.defaultValue();
 
 			if(enumeration != NullEnum.class){
+				//enumeration can be encoded
+				if(!ConfigurationEnum.class.isAssignableFrom(enumeration))
+					throw AnnotationException.create("Enum must implement ConfigurationEnum.class in {} in field {}",
+						ConfigurationField.class.getSimpleName(), field.getName());
+
 				//non-empty enumeration
 				final Enum<?>[] enumConstants = enumeration.getEnumConstants();
 				if(enumConstants.length == 0)
@@ -266,7 +272,7 @@ enum ConfigurationAnnotationValidator{
 
 					if(!defaultValue.isEmpty()){
 						final String[] defaultValues = JavaHelper.split(defaultValue, "|", -1);
-						if(binding.mutuallyExclusive() && defaultValues.length != 1)
+						if(field.getType().isEnum() && defaultValues.length != 1)
 							throw AnnotationException.create("Default value for mutually exclusive enumeration field in {} should be a value; found {}, expected one of {}",
 								ConfigurationField.class.getSimpleName(), defaultValue, Arrays.toString(enumConstants));
 

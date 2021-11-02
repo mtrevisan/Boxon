@@ -212,7 +212,7 @@ class ParserTest{
 		Map<String, Object> configurationData = new HashMap<>();
 		configurationData.put(LoaderConfiguration.CONFIGURATION_FIELD_TYPE, "AT+");
 		configurationData.put(LoaderConfiguration.CONFIGURATION_FIELD_CHARSET, LoaderCodec.CHARSET_DEFAULT);
-		configurationData.put("Weekday", "TUESDAY");
+		configurationData.put("Weekday", "TUESDAY|WEDNESDAY");
 		configurationData.put("Update Over-The-Air", "TRUE");
 		configurationData.put("Header", "GTREG");
 		configurationData.put("Download protocol", "HTTP");

@@ -24,11 +24,14 @@
  */
 package io.github.mtrevisan.boxon.core;
 
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
+import io.github.mtrevisan.boxon.internal.JavaHelper;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Array;
 
 
 final class CodecConfigurationField implements CodecInterface<ConfigurationField>{
@@ -39,9 +42,22 @@ final class CodecConfigurationField implements CodecInterface<ConfigurationField
 	}
 
 	@Override
-	public void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value){
+	public void encode(final BitWriter writer, final Annotation annotation, final Object fieldType, final Object value){
 		final ConfigurationField binding = extractBinding(annotation);
 
+		Object val = value;
+		if(String.class.isAssignableFrom(value.getClass()))
+			val = JavaHelper.getValue((Class<?>)fieldType, (String)value);
+
+		if(value.getClass().isEnum())
+			val = ((ConfigurationEnum)value).getCode();
+		else if(value.getClass().isArray()){
+			int compositeEnumValue = 0;
+			for(int i = 0; i < Array.getLength(value); i ++)
+				compositeEnumValue |= ((ConfigurationEnum)Array.get(value, i)).getCode();
+			val = compositeEnumValue;
+		}
+		//TODO write hex if fieldType requires it
 		//TODO
 		System.out.println();
 //		CodecHelper.validateData(binding.validator(), value);

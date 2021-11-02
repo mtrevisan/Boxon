@@ -111,14 +111,6 @@ public @interface ConfigurationField{
 	 */
 	Class<? extends Enum<?>> enumeration() default NullEnum.class;
 
-	/**
-	 * The enumeration values are mutually exclusive.
-	 * <p>Compatible only with enumeration field.</p>
-	 *
-	 * @return	Whether the enumeration values are mutually exclusive.
-	 */
-	boolean mutuallyExclusive() default false;
-
 
 	/**
 	 * The field is mandatory.

@@ -24,9 +24,11 @@
  */
 package io.github.mtrevisan.boxon.core.queclink;
 
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
+
 
 @SuppressWarnings("ALL")
-public enum Weekday{
+public enum Weekday implements ConfigurationEnum{
 
 	MONDAY(0x01),
 	TUESDAY(0x02),
@@ -41,6 +43,11 @@ public enum Weekday{
 
 	Weekday(final int code){
 		this.code = code;
+	}
+
+	@Override
+	public int getCode(){
+		return code;
 	}
 
 }

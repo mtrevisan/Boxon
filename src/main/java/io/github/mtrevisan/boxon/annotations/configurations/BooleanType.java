@@ -25,7 +25,7 @@
 package io.github.mtrevisan.boxon.annotations.configurations;
 
 
-public enum BooleanType{
+public enum BooleanType implements ConfigurationEnum{
 
 	TRUE(1),
 	FALSE(0);
@@ -35,6 +35,11 @@ public enum BooleanType{
 
 	BooleanType(final int code){
 		this.code = code;
+	}
+
+	@Override
+	public int getCode(){
+		return code;
 	}
 
 }
