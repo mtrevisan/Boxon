@@ -39,6 +39,7 @@ import io.github.mtrevisan.boxon.internal.ReflectionHelper;
 import io.github.mtrevisan.boxon.internal.ThrowingFunction;
 import io.github.mtrevisan.boxon.internal.semanticversioning.Version;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
@@ -411,15 +412,32 @@ final class LoaderConfiguration{
 		final Map<String, Object> fieldsMap = new HashMap<>(fields.size());
 		for(int i = 0; i < fields.size(); i ++){
 			final ConfigurationField field = fields.get(i);
-			final io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField fieldBinding
-				= (io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField)field.getBinding();
-			if(!shouldBeExtracted(protocol, fieldBinding.minProtocol(), fieldBinding.maxProtocol()))
-				continue;
+			final Annotation fieldBinding = field.getBinding();
+			if(fieldBinding instanceof io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField){
+				final io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField binding
+					= (io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField)fieldBinding;
+				if(!shouldBeExtracted(protocol, binding.minProtocol(), binding.maxProtocol()))
+					continue;
 
-			final Class<?> fieldType = field.getFieldType();
-			final Map<String, Object> fieldMap = extractMap(fieldBinding, fieldType);
+				final Class<?> fieldType = field.getFieldType();
+				final Map<String, Object> fieldMap = extractMap(binding, fieldType);
 
-			fieldsMap.put(fieldBinding.shortDescription(), fieldMap);
+				fieldsMap.put(binding.shortDescription(), fieldMap);
+			}
+			else if(fieldBinding instanceof io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField){
+				final io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField compositeBinding
+					= (io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField)fieldBinding;
+				if(!shouldBeExtracted(protocol, compositeBinding.minProtocol(), compositeBinding.maxProtocol()))
+					continue;
+
+				final Class<?> fieldType = field.getFieldType();
+				final io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField[] bindings = compositeBinding.value();
+				for(int j = 0; j < bindings.length; j ++){
+					final Map<String, Object> fieldMap = extractMap(bindings[j], fieldType);
+
+					fieldsMap.put(bindings[j].shortDescription(), fieldMap);
+				}
+			}
 		}
 		return fieldsMap;
 	}

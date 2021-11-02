@@ -216,7 +216,11 @@ class ParserTest{
 		configurationData.put("Update Over-The-Air", "TRUE");
 		configurationData.put("Header", "GTREG");
 		configurationData.put("Download protocol", "HTTP");
-		configurationData.put("Download URL", "http://url.com");
+		configurationData.put("Download URL", Map.of(
+			"URL", "http://url.com",
+			"username", "username",
+			"password", "password"
+		));
 		configurationData.put("Update mode", 0);
 		configurationData.put("Maximum download retry count", 2);
 		configurationData.put("Message counter", 123);

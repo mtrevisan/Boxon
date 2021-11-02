@@ -64,15 +64,11 @@ public class QueclinkHelper{
 
 		@Override
 		public String decode(final byte[] value){
-			final byte[] hex = new byte[2 * value.length];
-			int index = 0;
-			for(int i = 0; i < 7; i ++){
-				final int v = value[i] & 0xFF;
-				hex[index ++] = HEX_CHAR_TABLE[v >>> 4];
-				hex[index ++] = HEX_CHAR_TABLE[v & 0x0F];
-			}
-			hex[index] = HEX_CHAR_TABLE[value[7] & 0x0F];
-			return new String(hex, StandardCharsets.US_ASCII);
+			final StringBuilder sb = new StringBuilder();
+			for(int i = 0; i < 7; i ++)
+				sb.append(String.format("%02d", value[i] & 255));
+			sb.append(applyMaskAndShift(value[7], (byte)0x0F));
+			return sb.toString();
 		}
 
 		private static String encodeHexString(final byte[] array) throws UnsupportedEncodingException{

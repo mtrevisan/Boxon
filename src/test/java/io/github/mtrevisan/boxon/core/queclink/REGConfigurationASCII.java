@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.core.queclink;
 
 import io.github.mtrevisan.boxon.annotations.configurations.BooleanType;
+import io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationMessage;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
@@ -73,13 +74,20 @@ public class REGConfigurationASCII{
 	private DownloadProtocol downloadProtocol;
 
 	//NOTE: The length of downloadURL + downloadURLUsername + downloadURLPassword cannot exceed 100 characters
-	@ConfigurationField(shortDescription = "Download URL", terminator = ",", format = "https?://.{0,92}")
+	@CompositeConfigurationField(
+		value = {
+			@ConfigurationField(shortDescription = "URL", terminator = ",", format = "https?://.{0,92}"),
+			@ConfigurationField(shortDescription = "username", format = ".{1,32}"),
+			@ConfigurationField(shortDescription = "password", format = ".{1,32}")
+		},
+		shortDescription = "Download URL",
+		composition = "{1}(@{2})?(@{3})?",
+		terminator = ",",
+		format = ".{0,100}"
+	)
+//	@ConfigurationField(shortDescription = "Download URL", terminator = ",", format = "https?://.{0,92}")
 	//NOTE: When HTTPS is used, place username and passwords (both have maximum length of 32), with a `@` as a separator, AFTER the URL, i.e. `https://test.server.comgb200s.enc@username@password`
 	private String downloadURL;
-//	@ConfigurationField(shortDescription = "Download URL username", prefix = "@", format = ".{1,32}")
-//	private String downloadURLUsername;
-//	@ConfigurationField(shortDescription = "Download URL password", prefix = "@", format = ".{1,32}")
-//	private String downloadURLPassword;
 
 	@ConfigurationSkip(terminator = ',', maxProtocol = "1.18")
 	@ConfigurationField(shortDescription = "Motion report interval", terminator = ",", minProtocol = "1.19", maxProtocol = "1.20",

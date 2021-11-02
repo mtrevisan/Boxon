@@ -39,7 +39,9 @@ import io.github.mtrevisan.boxon.internal.semanticversioning.Version;
 
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 final class ConfigurationParser{
@@ -99,9 +101,22 @@ final class ConfigurationParser{
 		for(int i = 0; i < fields.size(); i ++){
 			final ConfigurationField field = fields.get(i);
 
-			final io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField binding
-				= (io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField)field.getBinding();
-			if(!LoaderConfiguration.shouldBeExtracted(protocol, binding.minProtocol(), binding.maxProtocol()))
+			final Annotation annotation = field.getBinding();
+			String minProtocol = null;
+			String maxProtocol = null;
+			if(annotation instanceof io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField){
+				final io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField binding
+					= (io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField)annotation;
+				minProtocol = binding.minProtocol();
+				maxProtocol = binding.maxProtocol();
+			}
+			else if(annotation instanceof io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField){
+				final io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField binding
+					= (io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField)annotation;
+				minProtocol = binding.minProtocol();
+				maxProtocol = binding.maxProtocol();
+			}
+			if(!LoaderConfiguration.shouldBeExtracted(protocol, minProtocol, maxProtocol))
 				continue;
 
 			//process skip annotations:
@@ -125,12 +140,41 @@ final class ConfigurationParser{
 
 			eventListener.writingField(configuration.getType().getName(), field.getFieldName(), binding.annotationType().getSimpleName());
 
-			//encode value from current object
-			final Object value = field.getFieldValue(currentObject);
-			//write value to raw message
-			codec.encode(writer, binding, field.getFieldType(), value);
+			if(binding instanceof io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField){
+				//encode value from current object
+				final Object value = field.getFieldValue(currentObject);
+				//write value to raw message
+				codec.encode(writer, binding, field.getFieldType(), value);
 
-			eventListener.writtenField(configuration.getType().getName(), field.getFieldName(), value);
+				eventListener.writtenField(configuration.getType().getName(), field.getFieldName(), value);
+			}
+			else if(binding instanceof io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField){
+				final io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField compositeBinding
+					= (io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField)binding;
+				final io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField[] fields = compositeBinding.value();
+				final Map<String, String> writings = new HashMap<>(fields.length);
+				for(int i = 0; i < fields.length; i ++){
+					final CodecInterface<?> compositeCodec = retrieveCodec(fields[i].annotationType());
+					//encode value from current object
+					final Object value = field.getFieldValue(currentObject);
+					//write value to raw message
+					final BitWriter compositeWriter = BitWriter.create();
+					compositeCodec.encode(compositeWriter, compositeBinding, field.getFieldType(), value);
+					compositeWriter.flush();
+
+					writings.put(fields[i].shortDescription(), compositeWriter.toString());
+				}
+				//TODO compose compositeValue following composition pattern
+				final StringBuilder compositeValue
+					= new StringBuilder(((io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField)binding).composition());
+				for(int i = 0; i < fields.length; i ++){
+					final int index = compositeValue.toString().indexOf("{" + i + "}");
+					compositeValue.replace(index, index + 3, writings.get(i));
+				}
+				codec.encode(writer, binding, field.getFieldType(), compositeValue.toString());
+
+				eventListener.writtenField(configuration.getType().getName(), field.getFieldName(), compositeValue.toString());
+			}
 		}
 		catch(final CodecException | AnnotationException e){
 			e.setClassNameAndFieldName(configuration.getType().getName(), field.getFieldName());

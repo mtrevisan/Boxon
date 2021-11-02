@@ -26,20 +26,73 @@ package io.github.mtrevisan.boxon.annotations.configurations;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
-import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 
 /**
- * Describe a configuration field.
+ * Manages multiple {@link io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField} annotations.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-@Repeatable(CompositeConfigurationField.class)
 @Documented
-public @interface ConfigurationField{
+public @interface CompositeConfigurationField{
+
+	/**
+	 * The array holding the composite field annotations.
+	 *
+	 * @return	The array of composite field annotations.
+	 */
+	ConfigurationField[] value();
+
+
+	/**
+	 * How the composition is made (regex style).
+	 * <p>Ex. there are two configuration fields, and with this field set to `{1}@{2}`, the composition of both are done appending
+	 * the second field to the first using a `@` as a separator.</p>
+	 *
+	 * @return	The composition format of the fields, expressed as a regex.
+	 */
+	String composition();
+
+//	/**
+//	 * The lowest protocol the field is in.
+//	 *
+//	 * @return	The lowest protocol the field is in.
+//	 */
+//	String minProtocol() default "";
+//
+//	/**
+//	 * The highest protocol the field is in.
+//	 *
+//	 * @return	The highest protocol the field is in.
+//	 */
+//	String maxProtocol() default "";
+//
+//	/**
+//	 * The format of the value, expressed as a regex.
+//	 * <p>Not compatible with enumeration field.</p>
+//	 * <p>Not compatible with non-string field.</p>
+//	 *
+//	 * @return	The format of the value, expressed as a regex.
+//	 */
+//	String format() default "";
+//
+//	/**
+//	 * The type of encoding used for string-typed field.
+//	 *
+//	 * @return	The type of encoding used (defaults to `UTF-8`).
+//	 */
+//	String charset() default "UTF-8";
+//
+//	/**
+//	 * The string that terminates the field.
+//	 *
+//	 * @return	The terminator string (defaults to empty).
+//	 */
+//	String terminator() default "";
+
 
 	/**
 	 * A short description of the field.
