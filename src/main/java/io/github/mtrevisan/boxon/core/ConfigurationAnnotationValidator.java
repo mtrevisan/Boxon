@@ -74,8 +74,8 @@ enum ConfigurationAnnotationValidator{
 				throw AnnotationException.create("Unnecessary mutually exclusive field in a non-enumeration field");
 			if(String.class.isAssignableFrom(field.getType()))
 				CodecHelper.assertValidCharset(binding.charset());
-			else if(!LoaderCodec.CHARSET_DEFAULT.equals(binding.charset()) && !JavaHelper.isBlank(binding.charset()))
-				throw AnnotationException.create("Unnecessary charset field in a non-string field");
+			if(binding.radix() < Character.MIN_RADIX || binding.radix() > Character.MAX_RADIX)
+				throw AnnotationException.create("Radix must be in [" + Character.MIN_RADIX + ", " + Character.MAX_RADIX + "]");
 
 			validateMinimumParameters(field, binding);
 

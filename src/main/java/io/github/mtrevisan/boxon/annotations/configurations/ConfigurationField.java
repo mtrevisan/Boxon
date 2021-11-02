@@ -41,11 +41,10 @@ public @interface ConfigurationField{
 
 	/**
 	 * A short description of the field.
-	 * <p>This field is mandatory for ...? TODO</p>
 	 *
 	 * @return	A short description of the field.
 	 */
-	String shortDescription() default "";
+	String shortDescription();
 
 	/**
 	 * A long description of the field.
@@ -136,6 +135,14 @@ public @interface ConfigurationField{
 	String charset() default "UTF-8";
 
 	/**
+	 * The numeral system (base, or radix) of this field.
+	 * <p>Compatible with numeric or enumeration field.</p>
+	 *
+	 * @return	The numeral system (base, or radix) of this field.
+	 */
+	int radix() default 10;
+
+	/**
 	 * Whether the field is writable.
 	 * <p>Non-writable fields are all mandatory by default.</p>
 	 *
@@ -153,10 +160,10 @@ public @interface ConfigurationField{
 	FieldType type() default FieldType.DECIMAL;
 
 	/**
-	 * The byte that terminates the field.
+	 * The string that terminates the field.
 	 *
-	 * @return	The terminator byte (defaults to `\0`).
+	 * @return	The terminator string (defaults to empty).
 	 */
-	byte terminator() default '\0';
+	String terminator() default "";
 
 }

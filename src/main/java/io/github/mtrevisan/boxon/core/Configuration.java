@@ -76,45 +76,45 @@ final class Configuration<T>{
 			final Annotation[] declaredAnnotations = field.getDeclaredAnnotations();
 
 			try{
-				validateField(field, declaredAnnotations);
+				final Annotation validAnnotation = validateField(field, declaredAnnotations);
+
+				if(validAnnotation != null)
+					configurationFields.add(new ConfigurationField(field, validAnnotation, null));
 			}
 			catch(final AnnotationException e){
 				e.setClassNameAndFieldName(type.getName(), field.getName());
 				throw e;
 			}
-
-			if(declaredAnnotations.length == 1)
-				configurationFields.add(new ConfigurationField(field, declaredAnnotations[0], null));
 		}
 		return configurationFields;
 	}
 
-	private void validateField(final Field field, final Annotation[] annotations) throws AnnotationException{
+	private Annotation validateField(final Field field, final Annotation[] annotations) throws AnnotationException{
 		//filter out `@Skip` annotations
-		int annotationCount = 0;
+		Annotation foundAnnotation = null;
 		for(int i = 0; i < annotations.length; i ++){
 			final Class<? extends Annotation> annotationType = annotations[i].annotationType();
-			if(annotationType != ConfigurationSkip.class && annotationType != ConfigurationSkip.ConfigurationSkips.class)
-				annotationCount ++;
-		}
+			if(!io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip.class.isAssignableFrom(annotationType)
+					&& !ConfigurationSkip.ConfigurationSkips.class.isAssignableFrom(annotationType)){
+				if(foundAnnotation != null){
+					final StringJoiner sj = new StringJoiner(", ", "[", "]");
+					for(int j = 0; j < annotations.length; j ++)
+						sj.add(annotations[j].annotationType().getSimpleName());
+					throw AnnotationException.create("Cannot bind more that one annotation on {}: {}", type.getName(), sj.toString());
+				}
 
-		if(annotationCount > 1){
-			final StringJoiner sj = new StringJoiner(", ", "[", "]");
-			for(int i = 0; i < annotations.length; i ++){
-				final Class<? extends Annotation> annotationType = annotations[i].annotationType();
-				sj.add(annotationType.getSimpleName());
+				if(validateAnnotation(field, annotations[i]))
+					foundAnnotation = annotations[i];
 			}
-			throw AnnotationException.create("Cannot bind more that one annotation on {}: {}", type.getName(), sj.toString());
 		}
-
-		if(annotations.length > 0)
-			validateAnnotation(field, annotations[0]);
+		return foundAnnotation;
 	}
 
-	private void validateAnnotation(final Field field, final Annotation annotation) throws AnnotationException{
+	private boolean validateAnnotation(final Field field, final Annotation annotation) throws AnnotationException{
 		final ConfigurationAnnotationValidator validator = ConfigurationAnnotationValidator.fromAnnotation(annotation);
 		if(validator != null)
 			validator.validate(field, annotation);
+		return (validator != null);
 	}
 
 	Class<T> getType(){

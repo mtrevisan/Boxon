@@ -225,10 +225,10 @@ class ParserTest{
 		configurationData.put("Download timeout", 25);
 
 		//compose:
-		Object composeResult = parser.composeConfiguration(protocol, configurationData);
+		ComposeResponse composeResult = parser.composeConfiguration(protocol, configurationData);
 
-		Assertions.assertNotNull(composeResult);
-//		Assertions.assertArrayEquals(payload, composeResult.getComposedMessage());
+		Assertions.assertFalse(composeResult.hasErrors());
+		Assertions.assertEquals("AT+GTREG=pass,1,1,0,2,25,0,http://url.com,3600,3600,6,7b$", new String(composeResult.getComposedMessage()));
 	}
 
 }

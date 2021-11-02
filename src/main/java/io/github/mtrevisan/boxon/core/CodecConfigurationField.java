@@ -52,6 +52,7 @@ final class CodecConfigurationField implements CodecInterface<ConfigurationField
 	public void encode(final BitWriter writer, final Annotation annotation, final Object fieldType, final Object value)
 			throws ConfigurationException, AnnotationException{
 		final ConfigurationField binding = extractBinding(annotation);
+		final Charset charset = Charset.forName(binding.charset());
 
 		Object val = value;
 		if(String.class.isAssignableFrom(value.getClass()))
@@ -67,15 +68,12 @@ final class CodecConfigurationField implements CodecInterface<ConfigurationField
 				val = compositeEnumValue;
 			}
 
-			if(String.class.isAssignableFrom(value.getClass())){
-				final Charset charset = Charset.forName(binding.charset());
+			if(String.class.isAssignableFrom(value.getClass()))
 				writer.putText((String)val, charset);
-			}
 			else{
 				final Class<?> fieldClass = ParserDataType.toObjectiveTypeOrSelf(val.getClass());
 				if(Number.class.isAssignableFrom(fieldClass)){
-					//TODO write hex if fieldType requires it
-					final int radix = 10;
+					final int radix = binding.radix();
 					val = Long.toString(((Number)val).longValue(), radix);
 				}
 				else if(fieldClass == BigDecimal.class)
@@ -92,7 +90,8 @@ final class CodecConfigurationField implements CodecInterface<ConfigurationField
 			}
 		}
 
-		writer.putByte(binding.terminator());
+		if(!binding.terminator().isEmpty())
+			writer.putText(binding.terminator(), charset);
 	}
 
 }
