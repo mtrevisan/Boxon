@@ -207,7 +207,7 @@ final class LoaderConfiguration{
 		final List<Map<String, Object>> response = new ArrayList<>(configurationValues.size());
 		for(final Configuration<?> configuration : configurationValues){
 			final ConfigurationMessage header = configuration.getHeader();
-			if(shouldBeExtracted(currentProtocol, header.minProtocol(), header.maxProtocol()))
+			if(!shouldBeExtracted(currentProtocol, header.minProtocol(), header.maxProtocol()))
 				continue;
 
 			final Map<String, Object> headerMap = extractMap(header);
@@ -322,8 +322,7 @@ final class LoaderConfiguration{
 			final ConfigurationField field = fields.get(i);
 			final io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField binding
 				= (io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField)field.getBinding();
-			if(binding.shortDescription().equals(key) && shouldBeExtracted(protocol, binding.minProtocol(),
-				binding.maxProtocol()))
+			if(binding.shortDescription().equals(key) && shouldBeExtracted(protocol, binding.minProtocol(), binding.maxProtocol()))
 				foundField = field;
 		}
 		if(foundField == null)
@@ -411,7 +410,7 @@ final class LoaderConfiguration{
 			final ConfigurationField field = fields.get(i);
 			final io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField fieldBinding
 				= (io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField)field.getBinding();
-			if(shouldBeExtracted(protocol, fieldBinding.minProtocol(), fieldBinding.maxProtocol()))
+			if(!shouldBeExtracted(protocol, fieldBinding.minProtocol(), fieldBinding.maxProtocol()))
 				continue;
 
 			final Class<?> fieldType = field.getFieldType();
@@ -480,9 +479,7 @@ final class LoaderConfiguration{
 	private boolean shouldBeExtracted(final Version protocol, final String minProtocol, final String maxProtocol){
 		final Version min = new Version(minProtocol);
 		final Version max = new Version(maxProtocol);
-		return (min.isEmpty() && max.isEmpty()
-			|| !min.isEmpty() && protocol.isLessThan(min)
-			|| !max.isEmpty() && protocol.isGreaterThan(max));
+		return (min.isEmpty() || protocol.isGreaterThanOrEqualTo(min)) && (max.isEmpty() || protocol.isLessThanOrEqualTo(max));
 	}
 
 }
