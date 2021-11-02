@@ -276,10 +276,16 @@ enum ConfigurationAnnotationValidator{
 		void validate(final Field field, final Annotation annotation) throws AnnotationException{
 			final CompositeConfigurationField binding = (CompositeConfigurationField)annotation;
 
+			if(JavaHelper.isBlank(binding.shortDescription()))
+				throw AnnotationException.create("Short description must be present");
 			if(!String.class.isAssignableFrom(field.getType()))
 				throw AnnotationException.create("Composite fields must have a string variable to be bounded to");
-
 			CodecHelper.assertValidCharset(binding.charset());
+
+			validateFormat(field, binding);
+
+			validateProtocol(binding.minProtocol(), binding.maxProtocol(), CompositeConfigurationField.class);
+
 
 			final ConfigurationField[] fields = binding.value();
 			for(int i = 0; i < fields.length; i ++)
@@ -296,28 +302,31 @@ enum ConfigurationAnnotationValidator{
 			for(int i = 1; i <= fields.length; i ++)
 				if(!placeholders.contains(i))
 					throw AnnotationException.create("Number of inner configuration fields must match the number of placeholder in the composition field");
-
-			validateFormat(field, binding);
-
-			validateProtocol(binding.minProtocol(), binding.maxProtocol(), CompositeConfigurationField.class);
 		}
 
 		private void validateFormat(final Field field, final CompositeConfigurationField binding) throws AnnotationException{
 			final String format = binding.format();
+			final String defaultValue = binding.defaultValue();
 
 			//valid format
 			if(!format.isEmpty()){
 				try{
+					final Pattern formatPattern = Pattern.compile(format);
+
 					//defaultValue compatible with field type
 					if(!String.class.isAssignableFrom(field.getType()))
 						throw AnnotationException.create("Data type not compatible with `format` in {}; found {}.class, expected String.class",
-							CompositeConfigurationField.class.getSimpleName(), field.getType());
+							ConfigurationField.class.getSimpleName(), field.getType());
+					//defaultValue compatible with format
+					if(!defaultValue.isEmpty() && !formatPattern.matcher(defaultValue).matches())
+						throw AnnotationException.create("Default value not compatible with `format` in {}; found {}, expected {}",
+							ConfigurationField.class.getSimpleName(), defaultValue, format);
 				}
 				catch(final AnnotationException ae){
 					throw ae;
 				}
 				catch(final Exception e){
-					throw AnnotationException.create("Invalid pattern in {} in field {}", CompositeConfigurationField.class.getSimpleName(),
+					throw AnnotationException.create("Invalid pattern in {} in field {}", ConfigurationField.class.getSimpleName(),
 						field.getName(), e);
 				}
 			}
