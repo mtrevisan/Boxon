@@ -48,58 +48,11 @@ public @interface CompositeConfigurationField{
 
 
 	/**
-	 * How the composition is made (regex style).
-	 * <p>Ex. there are two configuration fields, and with this field set to `{1}@{2}`, the composition of both are done appending
-	 * the second field to the first using a `@` as a separator.</p>
-	 *
-	 * @return	The composition format of the fields, expressed as a regex.
-	 */
-	String composition();
-
-//	/**
-//	 * The lowest protocol the field is in.
-//	 *
-//	 * @return	The lowest protocol the field is in.
-//	 */
-//	String minProtocol() default "";
-//
-//	/**
-//	 * The highest protocol the field is in.
-//	 *
-//	 * @return	The highest protocol the field is in.
-//	 */
-//	String maxProtocol() default "";
-//
-//	/**
-//	 * The format of the value, expressed as a regex.
-//	 * <p>Not compatible with enumeration field.</p>
-//	 * <p>Not compatible with non-string field.</p>
-//	 *
-//	 * @return	The format of the value, expressed as a regex.
-//	 */
-//	String format() default "";
-//
-//	/**
-//	 * The type of encoding used for string-typed field.
-//	 *
-//	 * @return	The type of encoding used (defaults to `UTF-8`).
-//	 */
-//	String charset() default "UTF-8";
-//
-//	/**
-//	 * The string that terminates the field.
-//	 *
-//	 * @return	The terminator string (defaults to empty).
-//	 */
-//	String terminator() default "";
-
-
-	/**
 	 * A short description of the field.
 	 *
 	 * @return	A short description of the field.
 	 */
-	String shortDescription();
+	String shortDescription() default "";
 
 	/**
 	 * A long description of the field.
@@ -107,13 +60,6 @@ public @interface CompositeConfigurationField{
 	 * @return	A long description of the field.
 	 */
 	String longDescription() default "";
-
-	/**
-	 * The unit of measure of the value.
-	 *
-	 * @return	The unit of measure of the value.
-	 */
-	String unitOfMeasure() default "";
 
 	/**
 	 * The lowest protocol the field is in.
@@ -131,24 +77,6 @@ public @interface CompositeConfigurationField{
 
 
 	/**
-	 * The lowest value the field can have.
-	 * <p>Not compatible with enumeration field.</p>
-	 * <p>Compatible with numeric field.</p>
-	 *
-	 * @return	The lowest value the field can have.
-	 */
-	String minValue() default "";
-
-	/**
-	 * The highest value the field can have.
-	 * <p>Not compatible with enumeration field.</p>
-	 * <p>Compatible with numeric field.</p>
-	 *
-	 * @return	The highest value the field can have.
-	 */
-	String maxValue() default "";
-
-	/**
 	 * The format of the value, expressed as a regex.
 	 * <p>Not compatible with enumeration field.</p>
 	 * <p>Not compatible with non-string field.</p>
@@ -158,12 +86,13 @@ public @interface CompositeConfigurationField{
 	String format() default "";
 
 	/**
-	 * The enumeration that represents the finite possible values for this field.
-	 * <p>Not compatible with format field.</p>
+	 * How the composition is made (regex style).
+	 * <p>Ex. there are two configuration fields, and with this field set to `{1}@{2}`, the composition of both are done appending
+	 * the second field to the first using a `@` as a separator.</p>
 	 *
-	 * @return	The enumeration that represents the finite possible values for this field.
+	 * @return	The composition format of the fields, expressed as a regex.
 	 */
-	Class<? extends Enum<?>> enumeration() default NullEnum.class;
+	String composition() default "";
 
 
 	/**
@@ -188,14 +117,6 @@ public @interface CompositeConfigurationField{
 	 * @return	The type of encoding used (defaults to `UTF-8`).
 	 */
 	String charset() default "UTF-8";
-
-	/**
-	 * The numeral system (base, or radix) of this field.
-	 * <p>Compatible with numeric or enumeration field.</p>
-	 *
-	 * @return	The numeral system (base, or radix) of this field.
-	 */
-	int radix() default 10;
 
 	/**
 	 * Whether the field is writable.
