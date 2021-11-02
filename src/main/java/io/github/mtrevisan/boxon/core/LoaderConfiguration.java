@@ -57,6 +57,10 @@ import java.util.regex.Pattern;
 
 final class LoaderConfiguration{
 
+	public static final String CONFIGURATION_FIELD_TYPE = "__type__";
+	public static final String CONFIGURATION_FIELD_CHARSET = "__charset__";
+
+
 	static final class ConfigurationPair{
 		private final Configuration<?> configuration;
 		private final Object configurationData;
@@ -268,11 +272,13 @@ final class LoaderConfiguration{
 	 * @return	The configuration.
 	 */
 	private Configuration<?> getConfiguration(final Map<String, Object> data) throws EncodeException{
-		final String headerStart = (String)data.remove("__type__");
-		final Object charsetField = data.remove("__charset__");
+		final String headerStart = (String)data.remove(CONFIGURATION_FIELD_TYPE);
+		String charsetField = (String)data.remove(CONFIGURATION_FIELD_CHARSET);
+		if(JavaHelper.isBlank(charsetField))
+			charsetField = LoaderCodec.CHARSET_DEFAULT;
 		final Charset charset;
 		try{
-			charset = Charset.forName((String)charsetField);
+			charset = Charset.forName(charsetField);
 		}
 		catch(final ClassCastException | UnsupportedCharsetException e){
 			throw EncodeException.create("Missing, or not recognized, mandatory field on data: `__charset__`, found: {}",
@@ -422,17 +428,16 @@ final class LoaderConfiguration{
 		final Map<String, Object> map = new HashMap<>(3);
 		putIfNotEmpty(map, "shortDescription", header.shortDescription());
 		putIfNotEmpty(map, "longDescription", header.longDescription());
-		putIfNotEmpty(map, "charset", header.charset());
-		putIfNotEmpty(map, "minProtocol", header.minProtocol());
-		putIfNotEmpty(map, "maxProtocol", header.maxProtocol());
 		return map;
 	}
 
 	private Map<String, Object> extractMap(final io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField binding,
 			final Class<?> fieldType) throws ConfigurationException{
 		final Map<String, Object> map = new HashMap<>(10);
+
 		putIfNotEmpty(map, "longDescription", binding.longDescription());
 		putIfNotEmpty(map, "unitOfMeasure", binding.unitOfMeasure());
+
 		putIfNotEmpty(map, "minValue", JavaHelper.getValue(fieldType, binding.minValue()));
 		putIfNotEmpty(map, "maxValue", JavaHelper.getValue(fieldType, binding.maxValue()));
 		putIfNotEmpty(map, "format", binding.format());
@@ -444,9 +449,13 @@ final class LoaderConfiguration{
 			putIfNotEmpty(map, "enumeration", enumValues);
 			putIfNotEmpty(map, "mutuallyExclusive", binding.mutuallyExclusive());
 		}
+
 		putIfNotEmpty(map, "mandatory", binding.mandatory());
 		putValueIfNotEmpty(map, "defaultValue", fieldType, binding.enumeration(), binding.defaultValue());
+		if(String.class.isAssignableFrom(fieldType))
+			putIfNotEmpty(map, "charset", binding.charset());
 		putIfNotEmpty(map, "writable", binding.writable());
+
 		return map;
 	}
 

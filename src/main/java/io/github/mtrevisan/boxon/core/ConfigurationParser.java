@@ -126,8 +126,7 @@ final class ConfigurationParser{
 			eventListener.writingField(configuration.getType().getName(), field.getFieldName(), binding.annotationType().getSimpleName());
 
 			//encode value from current object
-			//TODO extract value from currentObject
-			final Object value = field.getFieldValue(null);
+			final Object value = field.getFieldValue(currentObject);
 			//write value to raw message
 			codec.encode(writer, binding, null, value);
 

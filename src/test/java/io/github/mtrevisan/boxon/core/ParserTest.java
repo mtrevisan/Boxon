@@ -210,8 +210,8 @@ class ParserTest{
 		//data:
 		Version protocol = new Version("1.20");
 		Map<String, Object> configurationData = new HashMap<>();
-		configurationData.put("__type__", "AT+");
-		configurationData.put("__charset__", "UTF-8");
+		configurationData.put(LoaderConfiguration.CONFIGURATION_FIELD_TYPE, "AT+");
+		configurationData.put(LoaderConfiguration.CONFIGURATION_FIELD_CHARSET, LoaderCodec.CHARSET_DEFAULT);
 		configurationData.put("Weekday", "TUESDAY");
 		configurationData.put("Update Over-The-Air", "TRUE");
 		configurationData.put("Header", "GTREG");

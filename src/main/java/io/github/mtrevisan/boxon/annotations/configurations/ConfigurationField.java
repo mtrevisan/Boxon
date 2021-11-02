@@ -119,6 +119,7 @@ public @interface ConfigurationField{
 	 */
 	boolean mutuallyExclusive() default false;
 
+
 	/**
 	 * The field is mandatory.
 	 * <p>Non-writable fields are all mandatory by default.</p>
@@ -126,14 +127,6 @@ public @interface ConfigurationField{
 	 * @return	Whether the value is mandatory.
 	 */
 	boolean mandatory() default false;
-
-	/**
-	 * The numeral system (base, or radix), or the type (e.g. URL, email, etc.) of this field.
-	 * <p>Compatible with numeric or enumeration field.</p>
-	 *
-	 * @return	The numeral system (base, or radix), or the type (e.g. URL, email, etc.) of this field.
-	 */
-	FieldType type() default FieldType.DECIMAL;
 
 	/**
 	 * The default value of the field.
@@ -144,12 +137,28 @@ public @interface ConfigurationField{
 	String defaultValue() default "";
 
 	/**
+	 * The type of encoding used for string-typed field.
+	 *
+	 * @return	The type of encoding used (defaults to `UTF-8`).
+	 */
+	String charset() default "UTF-8";
+
+	/**
 	 * Whether the field is writable.
 	 * <p>Non-writable fields are all mandatory by default.</p>
 	 *
 	 * @return	Whether the field is writable.
 	 */
 	boolean writable() default true;
+
+
+	/**
+	 * The numeral system (base, or radix), or the type (e.g. URL, email, etc.) of this field.
+	 * <p>Compatible with numeric or enumeration field.</p>
+	 *
+	 * @return	The numeral system (base, or radix), or the type (e.g. URL, email, etc.) of this field.
+	 */
+	FieldType type() default FieldType.DECIMAL;
 
 	/**
 	 * The byte that terminates the field.

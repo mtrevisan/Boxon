@@ -71,6 +71,10 @@ enum ConfigurationAnnotationValidator{
 				throw AnnotationException.create("Short description must be present");
 			if(binding.enumeration() == NullEnum.class && binding.mutuallyExclusive())
 				throw AnnotationException.create("Unnecessary mutually exclusive field in a non-enumeration field");
+			if(String.class.isAssignableFrom(field.getType()))
+				CodecHelper.assertValidCharset(binding.charset());
+			else if(!LoaderCodec.CHARSET_DEFAULT.equals(binding.charset()) && !JavaHelper.isBlank(binding.charset()))
+				throw AnnotationException.create("Unnecessary charset field in a non-string field");
 
 			validateMinimumParameters(field, binding);
 

@@ -55,6 +55,21 @@ public @interface ConfigurationMessage{
 	String longDescription() default "";
 
 	/**
+	 * The lowest protocol the message is in.
+	 *
+	 * @return	The lowest protocol the message is in.
+	 */
+	String minProtocol() default "";
+
+	/**
+	 * The highest protocol the message is in.
+	 *
+	 * @return	The highest protocol the message is in.
+	 */
+	String maxProtocol() default "";
+
+
+	/**
 	 * The initial bytes that determines the type of message.
 	 * <p>This SHOULD be read by the protocol of a single message.</p>
 	 *
@@ -76,19 +91,5 @@ public @interface ConfigurationMessage{
 	 * @return	The type of encoding used (defaults to `UTF-8`).
 	 */
 	String charset() default "UTF-8";
-
-	/**
-	 * The lowest protocol the message is in.
-	 *
-	 * @return	The lowest protocol the message is in.
-	 */
-	String minProtocol() default "";
-
-	/**
-	 * The highest protocol the message is in.
-	 *
-	 * @return	The highest protocol the message is in.
-	 */
-	String maxProtocol() default "";
 
 }
