@@ -270,8 +270,6 @@ enum ConfigurationAnnotationValidator{
 	},
 
 	COMPOSITE_FIELD(CompositeConfigurationField.class){
-		private final Pattern PLACEHOLDER_PATTERN = Pattern.compile("(?<!\\\\)\\{(\\d)\\}");
-
 		@Override
 		void validate(final Field field, final Annotation annotation) throws AnnotationException{
 			final CompositeConfigurationField binding = (CompositeConfigurationField)annotation;
@@ -294,7 +292,7 @@ enum ConfigurationAnnotationValidator{
 			//validate number of placeholder
 			final String composition = binding.composition();
 			final Collection<Integer> placeholders = new HashSet<>(fields.length);
-			final Matcher countPlaceholderMatcher = PLACEHOLDER_PATTERN.matcher(composition);
+			final Matcher countPlaceholderMatcher = LoaderConfiguration.PLACEHOLDER_PATTERN.matcher(composition);
 			while(countPlaceholderMatcher.find())
 				placeholders.add(Integer.valueOf(countPlaceholderMatcher.group(1)));
 			if(placeholders.size() != fields.length)

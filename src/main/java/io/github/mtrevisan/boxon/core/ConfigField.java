@@ -32,7 +32,7 @@ import java.lang.reflect.Field;
 
 
 /** Data associated to an annotated field. */
-final class ConfigurationField{
+final class ConfigField{
 
 	private final Field field;
 	/** List of skips that happen BEFORE the reading/writing of this variable. */
@@ -40,11 +40,11 @@ final class ConfigurationField{
 	private final Annotation binding;
 
 
-	ConfigurationField(final Field field, final Annotation binding){
+	ConfigField(final Field field, final Annotation binding){
 		this(field, binding, null);
 	}
 
-	ConfigurationField(final Field field, final Annotation binding, final ConfigurationSkip[] skips){
+	ConfigField(final Field field, final Annotation binding, final ConfigurationSkip[] skips){
 		this.field = field;
 		this.binding = binding;
 		this.skips = (skips != null? skips.clone(): null);

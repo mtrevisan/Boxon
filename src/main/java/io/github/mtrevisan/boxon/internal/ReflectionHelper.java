@@ -55,6 +55,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 
 /**
@@ -88,12 +89,16 @@ public final class ReflectionHelper{
 
 
 	public static Class<?>[] extractCallerClasses(){
-		Class<?>[] classes = new Class[0];
+		final StackWalker walker = StackWalker.getInstance();
+		final List<String> classNames = walker.walk(frames -> frames.skip(1)
+			.limit(2)
+			.map(StackWalker.StackFrame::getClassName)
+			.collect(Collectors.toList()));
+
+		final Class<?>[] classes = new Class[classNames.size()];
 		try{
-			final StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-			final Class<?> callerClass1 = Class.forName(stackTrace[2].getClassName());
-			final Class<?> callerClass2 = Class.forName(stackTrace[3].getClassName());
-			classes = new Class[]{callerClass1, callerClass2};
+			for(int i = 0; i < classNames.size(); i ++)
+				classes[i] = Class.forName(classNames.get(i));
 		}
 		catch(final ClassNotFoundException ignored){}
 		return classes;
@@ -128,10 +133,10 @@ public final class ReflectionHelper{
 		final List<Class<?>> types = new ArrayList<>(0);
 		while(!ancestorsQueue.isEmpty()){
 			final Type ancestorType = ancestorsQueue.poll();
-			if(ancestorType instanceof ParameterizedType)
+			if(ParameterizedType.class.isInstance(ancestorType))
 				//ancestor is parameterized: process only if the raw type matches the base class
 				types.addAll(manageParameterizedAncestor((ParameterizedType)ancestorType, base, typeVariables));
-			else if(ancestorType instanceof Class<?> && base.isAssignableFrom((Class<?>)ancestorType))
+			else if(Class.class.isInstance(ancestorType) && base.isAssignableFrom((Class<?>)ancestorType))
 				//ancestor is non-parameterized: process only if it matches the base class
 				ancestorsQueue.add(ancestorType);
 		}
@@ -150,7 +155,7 @@ public final class ReflectionHelper{
 			final Map<String, Type> typeVariables){
 		final List<Class<?>> types = new ArrayList<>(0);
 		final Type rawType = ancestorType.getRawType();
-		if(rawType instanceof Class<?> && base.isAssignableFrom((Class<?>)rawType)){
+		if(Class.class.isInstance(rawType) && base.isAssignableFrom((Class<?>)rawType)){
 			final List<Class<?>> resolvedTypes = populateResolvedTypes(ancestorType, typeVariables);
 
 			final List<Class<?>> result = resolveGenericTypes((Class<? extends T>)rawType, base, resolvedTypes.toArray(Class[]::new));
@@ -189,7 +194,7 @@ public final class ReflectionHelper{
 	}
 
 	private static Type resolveArgumentType(final Map<String, Type> typeVariables, final Type actualTypeArgument){
-		return (actualTypeArgument instanceof TypeVariable<?>
+		return (TypeVariable.class.isInstance(actualTypeArgument)
 			? typeVariables.getOrDefault(((TypeVariable<?>)actualTypeArgument).getName(), actualTypeArgument)
 			: actualTypeArgument);
 	}

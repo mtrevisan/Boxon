@@ -24,24 +24,19 @@
  */
 package io.github.mtrevisan.boxon.core;
 
-import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
-import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
+import io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
-import io.github.mtrevisan.boxon.external.ByteOrder;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.ParserDataType;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Array;
-import java.math.BigDecimal;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 
 
-final class CodecConfigurationField implements CodecInterface<ConfigurationField>{
+final class CodecCompositeConfigurationField implements CodecInterface<CompositeConfigurationField>{
 
 	@Override
 	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
@@ -51,7 +46,7 @@ final class CodecConfigurationField implements CodecInterface<ConfigurationField
 	@Override
 	public void encode(final BitWriter writer, final Annotation annotation, final Object fieldType, final Object value)
 			throws ConfigurationException, AnnotationException{
-		final ConfigurationField binding = extractBinding(annotation);
+		final CompositeConfigurationField binding = extractBinding(annotation);
 		final Charset charset = Charset.forName(binding.charset());
 
 		Object val = value;
@@ -59,35 +54,11 @@ final class CodecConfigurationField implements CodecInterface<ConfigurationField
 			val = JavaHelper.getValue((Class<?>)fieldType, (String)value);
 
 		if(val != null){
-			if(value.getClass().isEnum())
-				val = ((ConfigurationEnum)value).getCode();
-			else if(value.getClass().isArray()){
-				int compositeEnumValue = 0;
-				for(int i = 0; i < Array.getLength(value); i ++)
-					compositeEnumValue |= ((ConfigurationEnum)Array.get(value, i)).getCode();
-				val = compositeEnumValue;
-			}
-
 			if(String.class.isInstance(value))
 				writer.putText((String)val, charset);
-			else{
-				final Class<?> fieldClass = ParserDataType.toObjectiveTypeOrSelf(val.getClass());
-				if(Number.class.isAssignableFrom(fieldClass)){
-					final int radix = binding.radix();
-					val = Long.toString(((Number)val).longValue(), radix);
-				}
-				else if(fieldClass == BigDecimal.class)
-					writer.putDecimal((BigDecimal)val, fieldClass, ByteOrder.BIG_ENDIAN);
-				else if(fieldClass == Float.class)
-					writer.putFloat((Float)val, ByteOrder.BIG_ENDIAN);
-				else if(fieldClass == Double.class)
-					writer.putDouble((Double)val, ByteOrder.BIG_ENDIAN);
-				else
-					throw ConfigurationException.create("Cannot handle this type of field: {}, please report to the developer",
-						fieldClass);
-
-				writer.putText((String)val, StandardCharsets.UTF_8);
-			}
+			else
+				throw ConfigurationException.create("Cannot handle this type of field: {}, please report to the developer",
+					ParserDataType.toObjectiveTypeOrSelf(val.getClass()));
 		}
 
 		if(!binding.terminator().isEmpty())

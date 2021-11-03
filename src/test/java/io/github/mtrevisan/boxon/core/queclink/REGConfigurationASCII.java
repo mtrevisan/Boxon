@@ -76,12 +76,12 @@ public class REGConfigurationASCII{
 	//NOTE: The length of downloadURL + downloadURLUsername + downloadURLPassword cannot exceed 100 characters
 	@CompositeConfigurationField(
 		value = {
-			@ConfigurationField(shortDescription = "URL", terminator = ",", format = "https?://.{0,92}"),
+			@ConfigurationField(shortDescription = "URL", format = "https?://.{0,92}"),
 			@ConfigurationField(shortDescription = "username", format = ".{1,32}"),
 			@ConfigurationField(shortDescription = "password", format = ".{1,32}")
 		},
 		shortDescription = "Download URL",
-		composition = "{1}(@{2})?(@{3})?",
+		composition = "{1}(@{2}(@{3})?)?",
 		terminator = ",",
 		format = ".{0,100}"
 	)

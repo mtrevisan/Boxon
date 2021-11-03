@@ -47,7 +47,7 @@ final class Configuration<T>{
 	private final Class<T> type;
 
 	private final ConfigurationMessage header;
-	private final List<ConfigurationField> configurationFields;
+	private final List<ConfigField> configFields;
 
 
 	Configuration(final Class<T> type) throws AnnotationException{
@@ -61,15 +61,15 @@ final class Configuration<T>{
 
 		CodecHelper.assertValidCharset(header.charset());
 
-		final List<ConfigurationField> configurationFields = loadAnnotatedFields(type, ReflectionHelper.getAccessibleFields(type));
-		this.configurationFields = Collections.unmodifiableList(configurationFields);
+		final List<ConfigField> configFields = loadAnnotatedFields(type, ReflectionHelper.getAccessibleFields(type));
+		this.configFields = Collections.unmodifiableList(configFields);
 
-		if(configurationFields.isEmpty())
+		if(configFields.isEmpty())
 			throw AnnotationException.create("No data can be extracted from this class: {}", type.getName());
 	}
 
-	private List<ConfigurationField> loadAnnotatedFields(final Class<T> type, final List<Field> fields) throws AnnotationException{
-		final List<ConfigurationField> configurationFields = new ArrayList<>(fields.size());
+	private List<ConfigField> loadAnnotatedFields(final Class<T> type, final List<Field> fields) throws AnnotationException{
+		final List<ConfigField> configFields = new ArrayList<>(fields.size());
 		for(int i = 0; i < fields.size(); i ++){
 			final Field field = fields.get(i);
 
@@ -79,14 +79,14 @@ final class Configuration<T>{
 				final Annotation validAnnotation = validateField(field, declaredAnnotations);
 
 				if(validAnnotation != null)
-					configurationFields.add(new ConfigurationField(field, validAnnotation, null));
+					configFields.add(new ConfigField(field, validAnnotation, null));
 			}
 			catch(final AnnotationException e){
 				e.setClassNameAndFieldName(type.getName(), field.getName());
 				throw e;
 			}
 		}
-		return configurationFields;
+		return configFields;
 	}
 
 	private Annotation validateField(final Field field, final Annotation[] annotations) throws AnnotationException{
@@ -125,8 +125,8 @@ final class Configuration<T>{
 		return header;
 	}
 
-	List<ConfigurationField> getConfigurationFields(){
-		return configurationFields;
+	List<ConfigField> getConfigurationFields(){
+		return configFields;
 	}
 
 	boolean canBeCoded(){
