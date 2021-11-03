@@ -43,8 +43,16 @@ public final class EncodeException extends Exception{
 		return new EncodeException(cause);
 	}
 
+	public static EncodeException create(final Throwable cause, final String message, final Object... parameters){
+		return new EncodeException(JavaHelper.format(message, parameters), cause);
+	}
+
 	public static EncodeException create(final String message, final Object... parameters){
 		return new EncodeException(JavaHelper.format(message, parameters));
+	}
+
+	private EncodeException(final String message, final Throwable cause){
+		super(message, cause);
 	}
 
 	private EncodeException(final String message){

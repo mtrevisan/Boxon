@@ -200,8 +200,8 @@ final class LoaderConfiguration{
 			final Charset charset = Charset.forName(header.charset());
 			loadConfigurationInner(configuration, start, charset);
 		}
-		catch(final Exception e){
-			eventListener.cannotLoadConfiguration(configuration.getType().getName(), e);
+		catch(final ConfigurationException ce){
+			eventListener.cannotLoadConfiguration(configuration.getType().getName(), ce);
 		}
 	}
 
@@ -320,7 +320,7 @@ final class LoaderConfiguration{
 			charset = Charset.forName(charsetField);
 		}
 		catch(final ClassCastException | UnsupportedCharsetException e){
-			throw EncodeException.create("Missing, or not recognized, mandatory field on data: `__charset__`, found: {}",
+			throw EncodeException.create(e, "Missing, or not recognized, mandatory field on data: `__charset__`, found: {}",
 				charsetField);
 		}
 		if(JavaHelper.isBlank(headerStart))

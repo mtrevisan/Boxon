@@ -41,6 +41,7 @@ import io.github.mtrevisan.boxon.internal.semanticversioning.Version;
 
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 
@@ -150,8 +151,8 @@ final class ConfigurationParser{
 			e.setClassNameAndFieldName(configuration.getType().getName(), field.getFieldName());
 			throw e;
 		}
-		catch(final Exception e){
-			final FieldException exc = FieldException.create(e);
+		catch(final FieldException fe){
+			final FieldException exc = FieldException.create(fe);
 			exc.setClassNameAndFieldName(configuration.getType().getName(), field.getFieldName());
 			throw exc;
 		}
@@ -208,7 +209,7 @@ final class ConfigurationParser{
 				writer.putBits(BitSet.empty(), size);
 			else if(skip.consumeTerminator())
 				//skip until terminator
-				writer.putByte(skip.terminator());
+				writer.putText(skip.terminator(), StandardCharsets.UTF_8);
 		}
 	}
 

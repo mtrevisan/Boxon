@@ -30,6 +30,7 @@ import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.DecodeException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
+import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
@@ -298,8 +299,8 @@ public final class Parser{
 
 				response.addParsedMessage(start, partialDecodedMessage);
 			}
-			catch(final Exception e){
-				final DecodeException de = DecodeException.create(reader.position(), e);
+			catch(final FieldException fe){
+				final DecodeException de = DecodeException.create(reader.position(), fe);
 				response.addError(start, de);
 
 				//restore state of the reader
@@ -370,8 +371,8 @@ public final class Parser{
 
 			templateParser.encode(template, writer, null, data);
 		}
-		catch(final Exception e){
-			response.addError(EncodeException.create(e));
+		catch(final FieldException fe){
+			response.addError(EncodeException.create(fe));
 		}
 	}
 
@@ -382,8 +383,9 @@ public final class Parser{
 	 * @param data	The configuration messages to be composed.
 	 * @return	The composition response.
 	 */
-	public ComposeResponse composeConfiguration(final Version protocol, final Collection<Map<String, Object>> data){
-		return composeConfiguration(protocol, data.toArray(Map[]::new));
+	@SuppressWarnings("unchecked")
+	public ComposeResponse composeConfiguration(final String protocolVersion, final Collection<Map<String, Object>> data){
+		return composeConfiguration(protocolVersion, data.toArray(Map[]::new));
 	}
 
 	/**
@@ -392,7 +394,11 @@ public final class Parser{
 	 * @param data	The configuration message(s) to be composed.
 	 * @return	The composition response.
 	 */
-	public ComposeResponse composeConfiguration(final Version protocol, final Map<String, Object>... data){
+	public ComposeResponse composeConfiguration(final String protocolVersion, final Map<String, Object>... data){
+		final Version protocol = new Version(protocolVersion);
+		if(protocol.isEmpty())
+			throw new IllegalArgumentException("Invalid protocol version: " + protocolVersion);
+
 		final ComposeResponse response = new ComposeResponse(data);
 
 		final BitWriter writer = BitWriter.create();
@@ -419,7 +425,7 @@ public final class Parser{
 			final Object configurationData = configurationPair.getConfigurationData();
 			configurationParser.encode(configuration, writer, configurationData, protocol);
 		}
-		catch(final Exception e){
+		catch(final FieldException | EncodeException e){
 			response.addError(EncodeException.create(e));
 		}
 	}

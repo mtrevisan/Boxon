@@ -346,8 +346,8 @@ enum ConfigurationAnnotationValidator{
 					minimum = new Version(minProtocol);
 				}
 				catch(final IllegalArgumentException iae){
-					throw AnnotationException.create("Invalid minimum protocol version in {}; found {}",
-						binding.getClass().getSimpleName(), minProtocol);
+					throw AnnotationException.create(iae, "Invalid minimum protocol version in {}; found {}",
+						binding.getSimpleName(), minProtocol);
 				}
 			}
 			Version maximum = null;
@@ -356,14 +356,14 @@ enum ConfigurationAnnotationValidator{
 					maximum = new Version(maxProtocol);
 				}
 				catch(final IllegalArgumentException iae){
-					throw AnnotationException.create("Invalid maximum protocol version in {}; found {}",
-						binding.getClass().getSimpleName(), maxProtocol);
+					throw AnnotationException.create(iae, "Invalid maximum protocol version in {}; found {}",
+						binding.getSimpleName(), maxProtocol);
 				}
 			}
 			//maxProtocol after or equal to minProtocol
 			if(minimum != null && maximum != null && maximum.isLessThan(maximum))
 				throw AnnotationException.create("Minimum protocol version is greater than maximum protocol version in {}; found {}",
-					binding.getClass().getSimpleName(), maxProtocol);
+					binding.getSimpleName(), maxProtocol);
 		}
 	}
 

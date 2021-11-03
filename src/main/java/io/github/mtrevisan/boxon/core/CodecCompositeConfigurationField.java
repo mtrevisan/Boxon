@@ -25,7 +25,6 @@
 package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField;
-import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
@@ -34,6 +33,7 @@ import io.github.mtrevisan.boxon.internal.ParserDataType;
 
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 
 final class CodecCompositeConfigurationField implements CodecInterface<CompositeConfigurationField>{
@@ -45,7 +45,7 @@ final class CodecCompositeConfigurationField implements CodecInterface<Composite
 
 	@Override
 	public void encode(final BitWriter writer, final Annotation annotation, final Object fieldType, final Object value)
-			throws ConfigurationException, AnnotationException{
+			throws ConfigurationException{
 		final CompositeConfigurationField binding = extractBinding(annotation);
 		final Charset charset = Charset.forName(binding.charset());
 
@@ -62,7 +62,7 @@ final class CodecCompositeConfigurationField implements CodecInterface<Composite
 		}
 
 		if(!binding.terminator().isEmpty())
-			writer.putText(binding.terminator(), charset);
+			writer.putText(binding.terminator(), StandardCharsets.UTF_8);
 	}
 
 }
