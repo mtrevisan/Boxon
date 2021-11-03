@@ -36,11 +36,8 @@ import io.github.mtrevisan.boxon.internal.semanticversioning.Version;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
@@ -288,18 +285,6 @@ enum ConfigurationAnnotationValidator{
 			final ConfigurationField[] fields = binding.value();
 			for(int i = 0; i < fields.length; i ++)
 				FIELD.validate(field, fields[i]);
-
-			//validate number of placeholder
-			final String composition = binding.composition();
-			final Collection<Integer> placeholders = new HashSet<>(fields.length);
-			final Matcher countPlaceholderMatcher = LoaderConfiguration.PLACEHOLDER_PATTERN.matcher(composition);
-			while(countPlaceholderMatcher.find())
-				placeholders.add(Integer.valueOf(countPlaceholderMatcher.group(1)));
-			if(placeholders.size() != fields.length)
-				throw AnnotationException.create("Number of inner configuration fields must match the number of placeholder in the composition field");
-			for(int i = 1; i <= fields.length; i ++)
-				if(!placeholders.contains(i))
-					throw AnnotationException.create("Number of inner configuration fields must match the number of placeholder in the composition field");
 		}
 
 		private void validateFormat(final Field field, final CompositeConfigurationField binding) throws AnnotationException{

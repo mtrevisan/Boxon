@@ -73,7 +73,6 @@ public class REGConfigurationASCII{
 		defaultValue = "HTTP")
 	private DownloadProtocol downloadProtocol;
 
-	//NOTE: The length of downloadURL + downloadURLUsername + downloadURLPassword cannot exceed 100 characters
 	@CompositeConfigurationField(
 		value = {
 			@ConfigurationField(shortDescription = "URL", format = "https?://.{0,92}"),
@@ -81,12 +80,10 @@ public class REGConfigurationASCII{
 			@ConfigurationField(shortDescription = "password", format = ".{1,32}")
 		},
 		shortDescription = "Download URL",
-		composition = "{1}(@{2}(@{3})?)?",
+		composition = "${URL}<#if username?? && password??>@${username}@${password}</#if>",
 		terminator = ",",
 		format = ".{0,100}"
 	)
-//	@ConfigurationField(shortDescription = "Download URL", terminator = ",", format = "https?://.{0,92}")
-	//NOTE: When HTTPS is used, place username and passwords (both have maximum length of 32), with a `@` as a separator, AFTER the URL, i.e. `https://test.server.comgb200s.enc@username@password`
 	private String downloadURL;
 
 	@ConfigurationSkip(terminator = ',', maxProtocol = "1.18")

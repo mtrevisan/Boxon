@@ -24,6 +24,10 @@
  */
 package io.github.mtrevisan.boxon.core;
 
+import freemarker.core.Environment;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
+import freemarker.template.TemplateExceptionHandler;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
@@ -41,9 +45,14 @@ import io.github.mtrevisan.boxon.internal.ReflectionHelper;
 import io.github.mtrevisan.boxon.internal.ThrowingFunction;
 import io.github.mtrevisan.boxon.internal.semanticversioning.Version;
 
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -52,10 +61,10 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.StringJoiner;
 import java.util.TreeMap;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
@@ -65,7 +74,14 @@ final class LoaderConfiguration{
 	public static final String CONFIGURATION_FIELD_CHARSET = "__charset__";
 	public static final String CONFIGURATION_COMPOSITE_FIELDS = "__fields__";
 
-	public static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("(?<!\\\\)\\{(\\d+)\\}");
+	private static final String NOTIFICATION_TEMPLATE = "compositeTemplate";
+	private static final freemarker.template.Configuration FREEMARKER_CONFIGURATION
+		= new freemarker.template.Configuration(freemarker.template.Configuration.VERSION_2_3_31);
+	static{
+		FREEMARKER_CONFIGURATION.setDefaultEncoding(StandardCharsets.UTF_8.name());
+		FREEMARKER_CONFIGURATION.setLocale(Locale.US);
+		FREEMARKER_CONFIGURATION.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+	}
 
 
 	static final class ConfigurationPair{
@@ -275,7 +291,7 @@ final class LoaderConfiguration{
 				final ConfigurationField[] fields = foundBinding.value();
 				@SuppressWarnings("unchecked")
 				final String outerValue = replace(composition, (Map<String, Object>)dataValue, fields);
-				setValue(configurationObject, dataValue, foundField);
+				setValue(configurationObject, outerValue, foundField);
 
 				if(foundBinding.mandatory())
 					mandatoryFields.remove(foundField);
@@ -432,21 +448,35 @@ final class LoaderConfiguration{
 		}
 	}
 
-	private static String replace(final CharSequence text, final Map<String, Object> replacements, final ConfigurationField[] fields){
-		final Matcher matcher = PLACEHOLDER_PATTERN.matcher(text);
-		final StringBuilder sb = new StringBuilder();
-		int offset = 0;
-		while(matcher.find()){
-			final int index = Integer.parseInt(matcher.group(1)) - 1;
-			final String replacement = (String)replacements.get(fields[index].shortDescription());
-			sb.append(text, offset, matcher.start(1) - 1)
-				.append(replacement);
-
-			offset = matcher.end(1) + 1;
+	private static String replace(final String text, final Map<String, Object> replacements, final ConfigurationField[] fields)
+			throws EncodeException{
+		final Map<String, Object> trueReplacements = new HashMap<>(fields.length);
+		for(int i = 0; i < fields.length; i ++){
+			final String key = fields[i].shortDescription();
+			trueReplacements.put(key, replacements.get(key));
 		}
-		if(offset < text.length())
-			sb.append(text, offset, text.length());
-		return sb.toString();
+		return substitutePlaceholders(text, trueReplacements);
+	}
+
+	private static String substitutePlaceholders(final String text, final Map<String, Object> dataModel) throws EncodeException{
+		if(dataModel != null){
+			try{
+				final Writer writer = new StringWriter();
+				final Template template = new Template(NOTIFICATION_TEMPLATE, new StringReader(text), FREEMARKER_CONFIGURATION);
+
+				//create a processing environment
+				final Environment mainTemplateEnvironment = template.createProcessingEnvironment(dataModel, writer);
+
+				//process everything
+				mainTemplateEnvironment.process();
+
+				return writer.toString();
+			}
+			catch(final IOException | TemplateException e){
+				throw EncodeException.create(e);
+			}
+		}
+		return text;
 	}
 
 	private void setValue(final Object object, final Class<? extends Enum<?>> enumeration, final String key, final Object value,
