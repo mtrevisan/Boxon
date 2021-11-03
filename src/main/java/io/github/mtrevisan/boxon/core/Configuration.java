@@ -72,6 +72,7 @@ final class Configuration<T>{
 		final List<ConfigField> configFields = new ArrayList<>(fields.size());
 		for(int i = 0; i < fields.size(); i ++){
 			final Field field = fields.get(i);
+			final ConfigurationSkip[] skips = field.getDeclaredAnnotationsByType(ConfigurationSkip.class);
 
 			final Annotation[] declaredAnnotations = field.getDeclaredAnnotations();
 
@@ -79,7 +80,7 @@ final class Configuration<T>{
 				final Annotation validAnnotation = validateField(field, declaredAnnotations);
 
 				if(validAnnotation != null)
-					configFields.add(new ConfigField(field, validAnnotation, null));
+					configFields.add(new ConfigField(field, validAnnotation, (skips.length > 0? skips: null)));
 			}
 			catch(final AnnotationException e){
 				e.setClassNameAndFieldName(type.getName(), field.getName());

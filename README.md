@@ -705,7 +705,7 @@ Boxon already provides some build-in converters: BitToBoolean, ShortToChar, Unsi
 
 <a name="how-to-converters"></a>
 ### Converters
-NOTE that `decode` and `encode` MUST BE one the inverse of the other, that is they MUST BE invertible (injective), or partly invertible, that is, otherwise said, `decode(x) = y iff encode(y) = x` (eventually in a restricted domain).
+NOTE that `decode` and `encode` MUST BE the inverse of each other, that is they MUST BE invertible (injective), or partly invertible, that is, otherwise said, `decode(x) = y iff encode(y) = x` (eventually in a restricted domain).
 
 #### DateTime converter (from Unix timestamp to ZonedDateTime)
 ```java

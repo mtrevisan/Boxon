@@ -30,7 +30,6 @@ import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.TimeWatch;
-import io.github.mtrevisan.boxon.internal.semanticversioning.Version;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -208,7 +207,6 @@ class ParserTest{
 			.withContextFunction(ParserTest.class, "headerSize");
 
 		//data:
-		Version protocol = new Version("1.20");
 		Map<String, Object> configurationData = new HashMap<>();
 		configurationData.put(LoaderConfiguration.CONFIGURATION_FIELD_TYPE, "AT+");
 		configurationData.put(LoaderConfiguration.CONFIGURATION_FIELD_CHARSET, LoaderCodec.CHARSET_DEFAULT);
@@ -229,10 +227,10 @@ class ParserTest{
 		configurationData.put("Download timeout", 25);
 
 		//compose:
-		ComposeResponse composeResult = parser.composeConfiguration(protocol, configurationData);
+		ComposeResponse composeResult = parser.composeConfiguration("1.20", configurationData);
 
 		Assertions.assertFalse(composeResult.hasErrors());
-		Assertions.assertEquals("AT+GTREG=pass,1,1,0,2,25,0,http://url.com@username@password,3600,3600,6,7b$", new String(composeResult.getComposedMessage()));
+		Assertions.assertEquals("AT+GTREG=pass,1,1,0,2,25,0,http://url.com@username@password,3600,3600,6,,7b$", new String(composeResult.getComposedMessage()));
 	}
 
 }

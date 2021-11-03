@@ -31,7 +31,7 @@ public enum BooleanType implements ConfigurationEnum{
 	FALSE(0);
 
 
-	private int code;
+	private final int code;
 
 	BooleanType(final int code){
 		this.code = code;

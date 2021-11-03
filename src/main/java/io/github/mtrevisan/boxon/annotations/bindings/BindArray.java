@@ -56,16 +56,16 @@ public @interface BindArray{
 	 * <p>Note that this allows you to have a field of a super type of the actual type that
 	 * you expect to inject.</p>
 	 * <p>So you might have something like this:</p>
-	 * <pre><code>
+	 * <pre>{@code
 	 * class A { ... }
 	 *
 	 * class B extends A { ... }
 	 *
 	 * ...
 	 *
-	 * &#064;BoundArray(size = &quot;5&quot;, type = B.class)
+	 * &#064;BoundArray(size = "5", type = B.class)
 	 * private A[] array;	//array will contain instances of B
-	 * </code></pre>
+	 * }</pre>
 	 *
 	 * @return	The type of object to be inserted in the array (defaults to {@link Object}).
 	 */

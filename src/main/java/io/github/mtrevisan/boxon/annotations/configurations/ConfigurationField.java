@@ -154,7 +154,7 @@ public @interface ConfigurationField{
 
 
 	/**
-	 * The string that terminates the field.
+	 * The string that terminates the field (charset is UTF-8).
 	 *
 	 * @return	The terminator string (defaults to empty).
 	 */

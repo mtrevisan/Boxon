@@ -91,7 +91,7 @@ final class CodecConfigurationField implements CodecInterface<ConfigurationField
 		}
 
 		if(!binding.terminator().isEmpty())
-			writer.putText(binding.terminator(), charset);
+			writer.putText(binding.terminator(), StandardCharsets.UTF_8);
 	}
 
 }

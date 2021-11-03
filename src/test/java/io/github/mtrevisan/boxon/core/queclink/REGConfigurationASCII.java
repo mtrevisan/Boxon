@@ -86,13 +86,13 @@ public class REGConfigurationASCII{
 	)
 	private String downloadURL;
 
-	@ConfigurationSkip(terminator = ',', maxProtocol = "1.18")
+	@ConfigurationSkip(terminator = ",", maxProtocol = "1.18")
 	@ConfigurationField(shortDescription = "Motion report interval", terminator = ",", minProtocol = "1.19", maxProtocol = "1.20",
 		minValue = "90", maxValue = "86400", defaultValue = "3600", unitOfMeasure = "s")
 	private int motionReportInterval;
-	@ConfigurationSkip(terminator = ',', minProtocol = "1.21")
+	@ConfigurationSkip(terminator = ",", minProtocol = "1.21")
 
-	@ConfigurationSkip(terminator = ',', maxProtocol = "1.18")
+	@ConfigurationSkip(terminator = ",", maxProtocol = "1.18")
 	@ConfigurationField(shortDescription = "Motionless report interval", terminator = ",", minProtocol = "1.19", maxProtocol = "1.20",
 		minValue = "90", maxValue = "86400", defaultValue = "3600", unitOfMeasure = "s")
 	private int motionlessReportInterval;
@@ -104,6 +104,7 @@ public class REGConfigurationASCII{
 		defaultValue = "MONDAY|TUESDAY|WEDNESDAY|THURSDAY|FRIDAY|SATURDAY|SUNDAY")
 	private Weekday[] weekday;
 
+	@ConfigurationSkip(terminator = ",")
 	@ConfigurationField(shortDescription = "Message counter", minValue = "0x0000", maxValue = "0xFFFF", mandatory = true, radix = 16)
 	private int messageCounter;
 

@@ -28,10 +28,10 @@ package io.github.mtrevisan.boxon.internal.matchers;
 /**
  * An implementation of the Knuth-Morris-Pratt searching algorithm.
  *
- * <pre><code>
+ * <pre>{@code
  *  Preprocessing: Θ(m)
  *  Searching    : Θ(n)	(average and worst case)
- * </code></pre>
+ * }</pre>
  *
  * @see <a href="http://eprints.fri.uni-lj.si/4287/1/63150349-LINA_LUMBUROVSKA-%C4%8Casovno_u%C4%8Dinkoviti_algoritmi_ujemanja_nizov_in_metoda_grobe_sile.pdf">Time-efficient string matching algorithms and the brute-force method</a>
  */
