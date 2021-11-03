@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core;
 
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.external.EventListener;
 import io.github.mtrevisan.boxon.internal.InjectEventListener;
 import io.github.mtrevisan.boxon.internal.ReflectionHelper;
@@ -45,7 +46,7 @@ final class LoaderCodec{
 	 * @see io.github.mtrevisan.boxon.annotations.MessageHeader#charset()
 	 * @see io.github.mtrevisan.boxon.annotations.bindings.BindString#charset()
 	 * @see io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated#charset()
-	 * @see io.github.mtrevisan.boxon.annotations.configurations.ConfigurationMessage#charset()
+	 * @see ConfigurationHeader#charset()
 	 * @see io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField#charset()
 	 */
 	public static final String CHARSET_DEFAULT = "UTF-8";

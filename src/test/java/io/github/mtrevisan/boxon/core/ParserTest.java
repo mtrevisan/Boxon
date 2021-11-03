@@ -208,7 +208,7 @@ class ParserTest{
 
 		//data:
 		Map<String, Object> configurationData = new HashMap<>();
-		configurationData.put(LoaderConfiguration.CONFIGURATION_FIELD_TYPE, "AT+");
+		configurationData.put(Parser.CONFIGURATION_FIELD_TYPE, "AT+");
 		configurationData.put("Weekday", "TUESDAY|WEDNESDAY");
 		configurationData.put("Update Over-The-Air", "TRUE");
 		configurationData.put("Header", "GTREG");

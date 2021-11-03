@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core;
 
-import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationMessage;
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.internal.ReflectionHelper;
@@ -46,14 +46,14 @@ final class Configuration<T>{
 
 	private final Class<T> type;
 
-	private final ConfigurationMessage header;
+	private final ConfigurationHeader header;
 	private final List<ConfigField> configFields;
 
 
 	Configuration(final Class<T> type) throws AnnotationException{
 		this.type = type;
 
-		header = type.getAnnotation(ConfigurationMessage.class);
+		header = type.getAnnotation(ConfigurationHeader.class);
 		if(header == null)
 			throw AnnotationException.create("No header present in this class: {}", type.getName());
 		ConfigurationAnnotationValidator.fromAnnotation(header)
@@ -122,7 +122,7 @@ final class Configuration<T>{
 		return type;
 	}
 
-	ConfigurationMessage getHeader(){
+	ConfigurationHeader getHeader(){
 		return header;
 	}
 

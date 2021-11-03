@@ -25,12 +25,11 @@
 package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
-import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationMessage;
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.DecodeException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
-import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
@@ -52,6 +51,10 @@ import java.util.Objects;
  * Declarative data binding parser for binary encoded data.
  */
 public final class Parser{
+
+	public static final String CONFIGURATION_FIELD_TYPE = "__type__";
+	public static final String CONFIGURATION_COMPOSITE_FIELDS = "fields";
+
 
 	private final LoaderCodec loaderCodec;
 	private final LoaderTemplate loaderTemplate;
@@ -203,7 +206,7 @@ public final class Parser{
 
 
 	/**
-	 * Loads all the protocol classes annotated with {@link ConfigurationMessage}.
+	 * Loads all the protocol classes annotated with {@link ConfigurationHeader}.
 	 *
 	 * @return	The {@link Parser}, used for chaining.
 	 * @throws AnnotationException	If an annotation is not well formatted.
@@ -215,7 +218,7 @@ public final class Parser{
 	}
 
 	/**
-	 * Loads all the protocol classes annotated with {@link ConfigurationMessage}.
+	 * Loads all the protocol classes annotated with {@link ConfigurationHeader}.
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
 	 * @return	The {@link Parser}, used for chaining.

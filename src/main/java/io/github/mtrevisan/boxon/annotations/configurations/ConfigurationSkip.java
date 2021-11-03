@@ -85,24 +85,10 @@ public @interface ConfigurationSkip{
 	String maxProtocol() default "";
 
 	/**
-	 * The SpEL expression evaluating to the number of bits to be skipped.
-	 *
-	 * @return	The number of bits to be skipped (defaults to {@code 0}).
-	 */
-	String size() default "0";
-
-	/**
 	 * The string that terminates the skip (charset is UTF-8).
 	 *
 	 * @return	The terminator string (defaults to empty).
 	 */
 	String terminator() default "";
-
-	/**
-	 * Whether to consume the terminator.
-	 *
-	 * @return	Whether to consume the terminator (defaults to {@code true}).
-	 */
-	boolean consumeTerminator() default true;
 
 }

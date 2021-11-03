@@ -26,70 +26,60 @@ package io.github.mtrevisan.boxon.annotations.configurations;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 
 /**
- * Defines a configuration message.
- * <p>This will enable automatic loading through the {@code Loader}.</p>
+ * Describe a configuration field.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
+@Target(ElementType.FIELD)
+@Repeatable(CompositeConfigurationField.class)
 @Documented
-public @interface ConfigurationMessage{
+public @interface ConfigurationSubField{
 
 	/**
-	 * A short description of the message.
+	 * A short description of the field.
 	 *
-	 * @return	A short description of the message.
+	 * @return	A short description of the field.
 	 */
-	String shortDescription() default "";
+	String shortDescription();
 
 	/**
-	 * A long description of the message.
+	 * A long description of the field.
 	 *
-	 * @return	A long description of the message.
+	 * @return	A long description of the field.
 	 */
 	String longDescription() default "";
 
 	/**
-	 * The lowest protocol the message is in.
+	 * The unit of measure of the value.
 	 *
-	 * @return	The lowest protocol the message is in.
+	 * @return	The unit of measure of the value.
 	 */
-	String minProtocol() default "";
-
-	/**
-	 * The highest protocol the message is in.
-	 *
-	 * @return	The highest protocol the message is in.
-	 */
-	String maxProtocol() default "";
+	String unitOfMeasure() default "";
 
 
 	/**
-	 * The initial bytes that determines the type of message.
-	 * <p>This SHOULD be read by the protocol of a single message.</p>
+	 * The pattern of the value, expressed as a regex.
+	 * <p>Not compatible with enumeration field.</p>
+	 * <p>Not compatible with non-string field.</p>
 	 *
-	 * @return	The header bytes of this message.
+	 * @return	The pattern of the value, expressed as a regex.
 	 */
-	String start();
+	String pattern() default "";
+
 
 	/**
-	 * The final bytes that determines the type of message.
-	 * <p>This SHOULD NOT be read by the protocol of a single message.</p>
+	 * The default value of the field.
+	 * <p>For non-mutually exclusive enumeration fields this is an array.</p>
+	 * <p>If not present, the field is mandatory.</p>
 	 *
-	 * @return	The tail bytes of this message (defaults to empty string).
+	 * @return	The default value of the field.
 	 */
-	String end() default "";
-
-	/**
-	 * The type of encoding used for the {@link #start()} and {@link #end()} fields.
-	 *
-	 * @return	The type of encoding used (defaults to `UTF-8`).
-	 */
-	String charset() default "UTF-8";
+	String defaultValue() default "";
 
 }

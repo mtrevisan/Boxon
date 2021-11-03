@@ -27,12 +27,13 @@ package io.github.mtrevisan.boxon.core.queclink;
 import io.github.mtrevisan.boxon.annotations.configurations.BooleanType;
 import io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
-import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationMessage;
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSubField;
 
 
 @SuppressWarnings("ALL")
-@ConfigurationMessage(start = "AT+", end = "$", shortDescription = "AT+GTREG",
+@ConfigurationHeader(start = "AT+", end = "$", shortDescription = "AT+GTREG",
 	longDescription = "The command AT+GTREG is used to do things.", maxProtocol = "2.8")
 public class REGConfigurationASCII{
 
@@ -75,9 +76,9 @@ public class REGConfigurationASCII{
 
 	@CompositeConfigurationField(
 		value = {
-			@ConfigurationField(shortDescription = "URL", pattern = "https?://.{0,92}"),
-			@ConfigurationField(shortDescription = "username", pattern = ".{1,32}"),
-			@ConfigurationField(shortDescription = "password", pattern = ".{1,32}")
+			@ConfigurationSubField(shortDescription = "URL", pattern = "https?://.{0,92}"),
+			@ConfigurationSubField(shortDescription = "username", pattern = ".{1,32}"),
+			@ConfigurationSubField(shortDescription = "password", pattern = ".{1,32}")
 		},
 		shortDescription = "Download URL",
 		composition = "${URL}<#if username?? && password??>@${username}@${password}</#if>",

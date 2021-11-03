@@ -26,12 +26,11 @@ package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
-import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationMessage;
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
-import io.github.mtrevisan.boxon.external.BitSet;
 import io.github.mtrevisan.boxon.external.BitWriter;
 import io.github.mtrevisan.boxon.external.EventListener;
 import io.github.mtrevisan.boxon.internal.InjectEventListener;
@@ -159,7 +158,7 @@ final class ConfigurationParser{
 	}
 
 	private void openMessage(final Configuration<?> configuration, final BitWriter writer){
-		final ConfigurationMessage header = configuration.getHeader();
+		final ConfigurationHeader header = configuration.getHeader();
 		if(header != null && !header.start().isEmpty()){
 			final String start = header.start();
 			final Charset charset = Charset.forName(header.charset());
@@ -168,7 +167,7 @@ final class ConfigurationParser{
 	}
 
 	private void closeMessage(final Configuration<?> configuration, final BitWriter writer){
-		final ConfigurationMessage header = configuration.getHeader();
+		final ConfigurationHeader header = configuration.getHeader();
 		if(header != null && !header.end().isEmpty()){
 			final Charset charset = Charset.forName(header.charset());
 			writer.putText(header.end(), charset);
@@ -202,15 +201,8 @@ final class ConfigurationParser{
 
 	private void writeSkip(final ConfigurationSkip skip, final BitWriter writer, final Version protocol){
 		final boolean process = LoaderConfiguration.shouldBeExtracted(protocol, skip.minProtocol(), skip.maxProtocol());
-		if(process){
-			final int size = Integer.parseInt(skip.size());
-			if(size > 0)
-				/** skip {@link size} bits */
-				writer.putBits(BitSet.empty(), size);
-			else if(skip.consumeTerminator())
-				//skip until terminator
-				writer.putText(skip.terminator(), StandardCharsets.UTF_8);
-		}
+		if(process)
+			writer.putText(skip.terminator(), StandardCharsets.UTF_8);
 	}
 
 }

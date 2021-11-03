@@ -32,84 +32,64 @@ import java.lang.annotation.Target;
 
 
 /**
- * Manages multiple {@link io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField} annotations.
- *
- * <p>This field is mandatory only if one of its children is mandatory.</p>
+ * Defines a configuration message.
+ * <p>This will enable automatic loading through the {@code Loader}.</p>
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
+@Target(ElementType.TYPE)
 @Documented
-public @interface CompositeConfigurationField{
+public @interface ConfigurationHeader{
 
 	/**
-	 * The array holding the composite field annotations.
+	 * A short description of the message.
 	 *
-	 * @return	The array of composite field annotations.
-	 */
-	ConfigurationSubField[] value();
-
-
-	/**
-	 * A short description of the field.
-	 *
-	 * @return	A short description of the field.
+	 * @return	A short description of the message.
 	 */
 	String shortDescription() default "";
 
 	/**
-	 * A long description of the field.
+	 * A long description of the message.
 	 *
-	 * @return	A long description of the field.
+	 * @return	A long description of the message.
 	 */
 	String longDescription() default "";
 
 	/**
-	 * The lowest protocol the field is in.
+	 * The lowest protocol the message is in.
 	 *
-	 * @return	The lowest protocol the field is in.
+	 * @return	The lowest protocol the message is in.
 	 */
 	String minProtocol() default "";
 
 	/**
-	 * The highest protocol the field is in.
+	 * The highest protocol the message is in.
 	 *
-	 * @return	The highest protocol the field is in.
+	 * @return	The highest protocol the message is in.
 	 */
 	String maxProtocol() default "";
 
 
 	/**
-	 * The pattern of the value, expressed as a regex.
-	 * <p>Not compatible with enumeration field.</p>
-	 * <p>Not compatible with non-string field.</p>
+	 * The initial bytes that determines the type of message.
+	 * <p>This SHOULD be read by the protocol of a single message.</p>
 	 *
-	 * @return	The pattern of the value, expressed as a regex.
+	 * @return	The header bytes of this message.
 	 */
-	String pattern() default "";
+	String start();
 
 	/**
-	 * How the composition is made (freemarker style).
-	 * <p>Ex. there are two configuration fields, and with this field set to `{1}@{2}`, the composition of both are done appending
-	 * the second field to the first using a `@` as a separator.</p>
+	 * The final bytes that determines the type of message.
+	 * <p>This SHOULD NOT be read by the protocol of a single message.</p>
 	 *
-	 * @return	The composition pattern of the fields, expressed as a regex.
+	 * @return	The tail bytes of this message (defaults to empty string).
 	 */
-	String composition() default "";
-
+	String end() default "";
 
 	/**
-	 * The type of encoding used for string-typed field.
+	 * The type of encoding used for the {@link #start()} and {@link #end()} fields.
 	 *
 	 * @return	The type of encoding used (defaults to `UTF-8`).
 	 */
 	String charset() default "UTF-8";
-
-
-	/**
-	 * The string that terminates the field.
-	 *
-	 * @return	The terminator string (defaults to empty).
-	 */
-	String terminator() default "";
 
 }

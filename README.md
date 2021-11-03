@@ -104,22 +104,28 @@ You can get pre-built JARs (usable on JRE 11 or newer) from [Sonatype](https://o
     2. [Skip](#annotation-skip)
     3. [Checksum](#annotation-checksum)
     4. [Evaluate](#annotation-evaluate)
-3. [How to write SpEL expressions](#how-to-spel)
-4. [How to extend the functionalities](#how-to-extend)
-5. [Digging into the code](#digging)
+3. [Configuration annotations](#annotation-configuration)
+    1. [ConfigurationHeader](#annotation-configurationheader)
+    2. [ConfigurationSkip](#annotation-configurationskip)
+    3. [ConfigurationField](#annotation-configurationfield)
+    4. [CompositeConfigurationField](#annotation-compositeconfigurationfield)
+    5. [ConfigurationSubField](#annotation-configurationsubfield)
+4. [How to write SpEL expressions](#how-to-spel)
+5. [How to extend the functionalities](#how-to-extend)
+6. [Digging into the code](#digging)
     1. [Converters](#how-to-converters)
     2. [Custom annotations](#how-to-annotations)
-6. [Examples](#examples)
+7. [Examples](#examples)
     1. [Multi-message parser](#example-multi)
     2. [Message composer](#example-composer)
-7. [Changelog](#changelog)
+8. [Changelog](#changelog)
     1. [version 1.1.0](#changelog-1.1.0)
     2. [version 1.0.0](#changelog-1.0.0)
     3. [version 0.0.2](#changelog-0.0.2)
     4. [version 0.0.1](#changelog-0.0.1)
     5. [version 0.0.0](#changelog-0.0.0)
-8. [License](#license)
-9. [Attributions](#attributions)
+9. [License](#license)
+10. [Attributions](#attributions)
 
 <br/>
 
@@ -659,6 +665,196 @@ private boolean buffered;
 //from the variable `deviceTypes` passed in the context
 @Evaluate("#deviceTypes.getDeviceTypeName(deviceTypeCode)")
 private String deviceTypeName;
+```
+
+
+<br/>
+
+<a name="annotation-configuration"></a>
+## Configuration annotations
+Firstly, load the configuration as shown below:
+```java
+//add the custom codec to the list of available codecs
+//(use one of the lines below)
+parser.withDefaultConfigurations(); //loads all configuration from the package where this call was made
+parser.withConfigurations(ConfigurationCustomTest.class); //this class is where the custom configuration resides
+```
+
+Then, to retrieve all the messages for a given protocol version, simply call
+```java
+List<Map<String, Object>> configurationMessages = parser.getConfigurations("1.35");
+```
+
+Moreover, to compose a configuration message, call
+```java
+Map<String, Object> configurationData = new HashMap<>();
+configurationData.put(Parser.CONFIGURATION_FIELD_TYPE, "AT+");
+configurationData.put("Weekday", "TUESDAY|WEDNESDAY");
+...
+
+ComposeResponse composedMessage = parser.composeConfiguration("1.20", configurationData);
+```
+
+
+<br/>
+
+<a name="annotation-configurationheader"></a>
+### ConfigurationHeader
+
+#### parameters
+ - `shortDescription`: a short description of the field, mandatory, used as an identifier (and thus must be unique for every configuration message).
+ - `longDescription`: a more expressive description, optional.
+ - `minProtocol`: minimum protocol for which this configuration message is valid, optional.
+ - `maxProtocol`: maximum protocol for which this configuration message is valid, optional.
+ - `start`: starting text of the message, optional.
+ - `end`: ending text of the message, optional.
+ - `charset`: charset of the message, optional.
+
+#### description
+Marks a POJO as an annotated configuration message.
+
+#### annotation type
+This annotation is bounded to a class.
+
+#### example
+```java
+@ConfigurationHeader(start = "+", end = "-")
+private class ConfigurationMessage{
+    ...
+}
+```
+
+
+<br/>
+
+<a name="annotation-configurationskip"></a>
+### ConfigurationSkip
+
+#### parameters
+- `minProtocol`: minimum protocol for which this configuration message is valid, optional.
+- `maxProtocol`: maximum protocol for which this configuration message is valid, optional.
+- `terminator`: the string that terminates the skip (defaults to empty string), optional.
+
+#### description
+Skips a field.
+
+#### annotation type
+This annotation is bounded to a variable.
+
+#### example
+```java
+@ConfigurationSkip(minProtocol = "1.2", maxProtocol = "1.3")
+@ConfigurationSkip
+@ConfigurationField(shortDescription = "A field")
+public String text;
+```
+
+
+<br/>
+
+<a name="annotation-configurationfield"></a>
+### ConfigurationField
+
+#### parameters
+- `shortDescription`: a short description of the field, mandatory, used as an identifier (and thus must be unique inside every configuration message).
+- `longDescription`: a more expressive description, optional.
+- `unitOfMeasure`: the unit of measure, optional.
+- `minProtocol`: minimum protocol for which this configuration message is valid, optional.
+- `maxProtocol`: maximum protocol for which this configuration message is valid, optional.
+- `minValue`: minimum value this field can assume, optional (alternative to `pattern` and `enumeration`).
+- `maxValue`: maximum value this field can assume, optional (alternative to `pattern` and `enumeration`).
+- `pattern`: regex pattern this field must obey, optional (alternative to `minValue`/`maxValue` and `enumeration`).
+- `enumeration`: enumeration for this field, optional (alternative to `pattern` and `minValue`/`maxValue`). If the field is a single enum, then each value of this enum is mutually exclusive.
+- `defaultValue`: default value, optional. If the variable is an array, then this field may represent an `or` between values (eg. `ONE|TWO|THREE`), otherwise can be a single value (eg. `TWO`). If not present, then the field is mandatory.
+- `charset`: charset of the field (if string value), optional.
+- `radix`: radix of the number field when written to the message, optional.
+- `terminator`: the string that terminates the skip (defaults to empty string), optional.
+
+#### description
+Defines a field of the configuration message.
+
+#### annotation type
+This annotation is bounded to a variable.
+
+#### example
+```java
+@ConfigurationField(shortDescription = "Report interval", terminator = ",", minProtocol = "1.19", maxProtocol = "1.20",
+minValue = "90", maxValue = "86400", defaultValue = "3600", unitOfMeasure = "s")
+public int motionlessReportInterval;
+```
+
+
+<br/>
+
+<a name="annotation-compositeconfigurationfield"></a>
+### CompositeConfigurationField
+
+#### parameters
+- `value`: a set of [ConfigurationSubField](#annotation-configurationsubfield)
+- `shortDescription`: a short description of the field, mandatory, used as an identifier (and thus must be unique inside every configuration message).
+- `longDescription`: a more expressive description, optional.
+- `minProtocol`: minimum protocol for which this configuration message is valid, optional.
+- `maxProtocol`: maximum protocol for which this configuration message is valid, optional.
+- `pattern`: regex pattern this field must obey, optional.
+- `composition`: the [FreeMarker](https://freemarker.apache.org/) pattern used to compose the field. The short description of each sub-field is used as identifier.
+- `charset`: charset of the field (if string value), optional.
+- `terminator`: the string that terminates the skip (defaults to empty string), optional.
+
+#### description
+Defines a composite field of the configuration message.
+
+#### annotation type
+This annotation is bounded to a string variable.
+
+#### example
+```java
+@CompositeConfigurationField(
+	value = {
+		@ConfigurationSubField(shortDescription = "URL", pattern = "https?://.{0,92}"),
+		@ConfigurationSubField(shortDescription = "username", pattern = ".{1,32}"),
+		@ConfigurationSubField(shortDescription = "password", pattern = ".{1,32}")
+	},
+	shortDescription = "Download URL",
+	composition = "${URL}<#if username?? && password??>@${username}@${password}</#if>",
+	terminator = ",",
+	pattern = ".{0,100}"
+)
+public String downloadURL;
+```
+
+
+<br/>
+
+<a name="annotation-configurationsubfield"></a>
+### ConfigurationSubField
+
+#### parameters
+- `shortDescription`: a short description of the field, mandatory, used as an identifier (and thus must be unique inside every configuration message).
+- `longDescription`: a more expressive description, optional.
+- `unitOfMeasure`: the unit of measure, optional.
+- `pattern`: regex pattern this field must obey, optional.
+- `defaultValue`: default value, optional. If the variable is an array, then this field may represent an `or` between values (eg. `ONE|TWO|THREE`), otherwise can be a single value (eg. `TWO`). If not present, then the field is mandatory.
+
+#### description
+Defines a sub-field of a composite field of the configuration message.
+
+#### annotation type
+This annotation is bounded to a string variable.
+
+#### example
+```java
+@CompositeConfigurationField(
+	value = {
+		@ConfigurationSubField(shortDescription = "URL", pattern = "https?://.{0,92}"),
+		@ConfigurationSubField(shortDescription = "username", pattern = ".{1,32}"),
+		@ConfigurationSubField(shortDescription = "password", pattern = ".{1,32}")
+	},
+	shortDescription = "Download URL",
+	composition = "${URL}<#if username?? && password??>@${username}@${password}</#if>",
+	terminator = ",",
+	pattern = ".{0,100}"
+)
+public String downloadURL;
 ```
 
 
