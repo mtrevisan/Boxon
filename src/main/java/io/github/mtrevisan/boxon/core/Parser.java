@@ -299,8 +299,8 @@ public final class Parser{
 
 				response.addParsedMessage(start, partialDecodedMessage);
 			}
-			catch(final FieldException fe){
-				final DecodeException de = DecodeException.create(reader.position(), fe);
+			catch(final Exception e){
+				final DecodeException de = DecodeException.create(reader.position(), e);
 				response.addError(start, de);
 
 				//restore state of the reader
@@ -371,8 +371,8 @@ public final class Parser{
 
 			templateParser.encode(template, writer, null, data);
 		}
-		catch(final FieldException fe){
-			response.addError(EncodeException.create(fe));
+		catch(final Exception e){
+			response.addError(EncodeException.create(e));
 		}
 	}
 
@@ -425,7 +425,7 @@ public final class Parser{
 			final Object configurationData = configurationPair.getConfigurationData();
 			configurationParser.encode(configuration, writer, configurationData, protocol);
 		}
-		catch(final FieldException | EncodeException e){
+		catch(final Exception e){
 			response.addError(EncodeException.create(e));
 		}
 	}

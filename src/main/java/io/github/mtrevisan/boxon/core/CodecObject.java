@@ -74,8 +74,8 @@ final class CodecObject implements CodecInterface<BindObject>{
 
 			CodecHelper.validateData(binding.validator(), value);
 		}
-		catch(final FieldException fe){
-			eventListener.processingAlternative(fe);
+		catch(final Exception e){
+			eventListener.processingAlternative(e);
 		}
 		return value;
 	}

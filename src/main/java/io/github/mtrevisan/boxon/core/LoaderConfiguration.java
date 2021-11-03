@@ -200,8 +200,8 @@ final class LoaderConfiguration{
 			final Charset charset = Charset.forName(header.charset());
 			loadConfigurationInner(configuration, start, charset);
 		}
-		catch(final ConfigurationException ce){
-			eventListener.cannotLoadConfiguration(configuration.getType().getName(), ce);
+		catch(final Exception e){
+			eventListener.cannotLoadConfiguration(configuration.getType().getName(), e);
 		}
 	}
 

@@ -151,8 +151,8 @@ final class ConfigurationParser{
 			e.setClassNameAndFieldName(configuration.getType().getName(), field.getFieldName());
 			throw e;
 		}
-		catch(final FieldException fe){
-			final FieldException exc = FieldException.create(fe);
+		catch(final Exception e){
+			final FieldException exc = FieldException.create(e);
 			exc.setClassNameAndFieldName(configuration.getType().getName(), field.getFieldName());
 			throw exc;
 		}

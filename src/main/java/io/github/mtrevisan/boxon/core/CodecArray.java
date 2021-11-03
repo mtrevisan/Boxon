@@ -104,8 +104,8 @@ final class CodecArray implements CodecInterface<BindArray>{
 
 				array[i] = templateParser.decode(subTemplate, reader, rootObject);
 			}
-			catch(final FieldException fe){
-				eventListener.processingAlternative(fe);
+			catch(final Exception e){
+				eventListener.processingAlternative(e);
 			}
 		}
 	}
