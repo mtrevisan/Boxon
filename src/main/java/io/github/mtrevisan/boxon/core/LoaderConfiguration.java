@@ -31,7 +31,8 @@ import freemarker.template.TemplateExceptionHandler;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
-import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationMessage;
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSubField;
 import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
@@ -67,9 +68,6 @@ import java.util.regex.Pattern;
 
 
 final class LoaderConfiguration{
-
-	public static final String CONFIGURATION_FIELD_TYPE = "__type__";
-	public static final String CONFIGURATION_COMPOSITE_FIELDS = "fields";
 
 	private static final String NOTIFICATION_TEMPLATE = "compositeTemplate";
 	private static final freemarker.template.Configuration FREEMARKER_CONFIGURATION
@@ -119,7 +117,7 @@ final class LoaderConfiguration{
 	}
 
 	/**
-	 * Loads all the configuration classes annotated with {@link ConfigurationMessage}.
+	 * Loads all the configuration classes annotated with {@link ConfigurationHeader}.
 	 * <p>This method SHOULD BE called from a method inside a class that lies on a parent of all the protocol classes.</p>
 	 *
 	 * @throws IllegalArgumentException	If the codecs was not loaded yet.
@@ -129,7 +127,7 @@ final class LoaderConfiguration{
 	}
 
 	/**
-	 * Loads all the configuration classes annotated with {@link ConfigurationMessage}.
+	 * Loads all the configuration classes annotated with {@link ConfigurationHeader}.
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load configuration classes.
 	 */
@@ -137,7 +135,7 @@ final class LoaderConfiguration{
 		eventListener.loadingConfigurations(basePackageClasses);
 
 		/** extract all classes annotated with {@link MessageHeader}. */
-		final Collection<Class<?>> annotatedClasses = LoaderHelper.extractClasses(ConfigurationMessage.class, basePackageClasses);
+		final Collection<Class<?>> annotatedClasses = LoaderHelper.extractClasses(ConfigurationHeader.class, basePackageClasses);
 		final Map<String, Configuration<?>> configurations = extractConfigurations(annotatedClasses);
 		addConfigurationsInner(configurations);
 
@@ -152,7 +150,7 @@ final class LoaderConfiguration{
 			final Configuration<?> from = createConfiguration(type);
 			if(from.canBeCoded()){
 				//if the configuration is valid, add it to the list of templates...
-				final ConfigurationMessage header = from.getHeader();
+				final ConfigurationHeader header = from.getHeader();
 				configurations.put(header.start(), from);
 			}
 			else
@@ -189,7 +187,7 @@ final class LoaderConfiguration{
 	 */
 	private void addConfigurationInner(final Configuration<?> configuration){
 		try{
-			final ConfigurationMessage header = configuration.getHeader();
+			final ConfigurationHeader header = configuration.getHeader();
 			final String start = header.start();
 			loadConfigurationInner(configuration, start);
 		}
@@ -221,7 +219,7 @@ final class LoaderConfiguration{
 		final Collection<Configuration<?>> configurationValues = configurations.values();
 		final List<Map<String, Object>> response = new ArrayList<>(configurationValues.size());
 		for(final Configuration<?> configuration : configurationValues){
-			final ConfigurationMessage header = configuration.getHeader();
+			final ConfigurationHeader header = configuration.getHeader();
 			if(!shouldBeExtracted(currentProtocol, header.minProtocol(), header.maxProtocol()))
 				continue;
 
@@ -279,7 +277,7 @@ final class LoaderConfiguration{
 
 				//compose outer field value
 				final String composition = foundBinding.composition();
-				final ConfigurationField[] fields = foundBinding.value();
+				final ConfigurationSubField[] fields = foundBinding.value();
 				@SuppressWarnings("unchecked")
 				final String outerValue = replace(composition, (Map<String, Object>)dataValue, fields);
 				setValue(configurationObject, outerValue, foundField);
@@ -299,9 +297,9 @@ final class LoaderConfiguration{
 	 * @return	The configuration.
 	 */
 	private Configuration<?> getConfiguration(final Map<String, Object> data) throws EncodeException{
-		final String headerStart = (String)data.remove(CONFIGURATION_FIELD_TYPE);
+		final String headerStart = (String)data.remove(Parser.CONFIGURATION_FIELD_TYPE);
 		if(JavaHelper.isBlank(headerStart))
-			throw EncodeException.create("Missing mandatory field on data: `" + CONFIGURATION_FIELD_TYPE + "`");
+			throw EncodeException.create("Missing mandatory field on data: `" + Parser.CONFIGURATION_FIELD_TYPE + "`");
 
 		final Configuration<?> configuration = configurations.get(headerStart);
 		if(configuration == null)
@@ -336,7 +334,7 @@ final class LoaderConfiguration{
 			}
 			else if(CompositeConfigurationField.class.isAssignableFrom(field.getBinding().annotationType())){
 				final CompositeConfigurationField binding = (CompositeConfigurationField)field.getBinding();
-				final ConfigurationField[] compositeFields = binding.value();
+				final ConfigurationSubField[] compositeFields = binding.value();
 				for(int j = 0; j < compositeFields.length; j ++)
 					mandatory |= !JavaHelper.isBlank(compositeFields[j].defaultValue());
 				minProtocol = binding.minProtocol();
@@ -415,7 +413,7 @@ final class LoaderConfiguration{
 
 			//compose outer field value
 			final String composition = binding.composition();
-			final ConfigurationField[] fields = binding.value();
+			final ConfigurationSubField[] fields = binding.value();
 			@SuppressWarnings("unchecked")
 			final String outerValue = replace(composition, (Map<String, Object>)value, fields);
 
@@ -426,7 +424,7 @@ final class LoaderConfiguration{
 		}
 	}
 
-	private static String replace(final String text, final Map<String, Object> replacements, final ConfigurationField[] fields)
+	private static String replace(final String text, final Map<String, Object> replacements, final ConfigurationSubField[] fields)
 			throws EncodeException{
 		final Map<String, Object> trueReplacements = new HashMap<>(fields.length);
 		for(int i = 0; i < fields.length; i ++){
@@ -531,21 +529,21 @@ final class LoaderConfiguration{
 
 				final Class<?> fieldType = field.getFieldType();
 				final Map<String, Object> compositeMap = extractMap(compositeBinding);
-				final ConfigurationField[] bindings = compositeBinding.value();
+				final ConfigurationSubField[] bindings = compositeBinding.value();
 				final Map<String, Object> compositeFieldsMap = new HashMap<>(bindings.length);
 				for(int j = 0; j < bindings.length; j ++){
 					final Map<String, Object> fieldMap = extractMap(bindings[j], fieldType);
 
 					compositeFieldsMap.put(bindings[j].shortDescription(), fieldMap);
 				}
-				compositeMap.put(CONFIGURATION_COMPOSITE_FIELDS, compositeFieldsMap);
+				compositeMap.put(Parser.CONFIGURATION_COMPOSITE_FIELDS, compositeFieldsMap);
 				fieldsMap.put(compositeBinding.shortDescription(), compositeMap);
 			}
 		}
 		return fieldsMap;
 	}
 
-	private Map<String, Object> extractMap(final ConfigurationMessage header) throws ConfigurationException{
+	private Map<String, Object> extractMap(final ConfigurationHeader header) throws ConfigurationException{
 		final Map<String, Object> map = new HashMap<>(3);
 		putIfNotEmpty(map, "shortDescription", header.shortDescription());
 		putIfNotEmpty(map, "longDescription", header.longDescription());
@@ -583,6 +581,20 @@ final class LoaderConfiguration{
 
 		putIfNotEmpty(map, "longDescription", binding.longDescription());
 		putIfNotEmpty(map, "pattern", binding.pattern());
+		putIfNotEmpty(map, "charset", binding.charset());
+
+		return map;
+	}
+
+	private Map<String, Object> extractMap(final ConfigurationSubField binding, final Class<?> fieldType) throws ConfigurationException{
+		final Map<String, Object> map = new HashMap<>(10);
+
+		putIfNotEmpty(map, "longDescription", binding.longDescription());
+		putIfNotEmpty(map, "unitOfMeasure", binding.unitOfMeasure());
+
+		putIfNotEmpty(map, "pattern", binding.pattern());
+
+		putValueIfNotEmpty(map, "defaultValue", fieldType, NullEnum.class, binding.defaultValue());
 
 		return map;
 	}

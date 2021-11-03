@@ -24,19 +24,18 @@
  */
 package io.github.mtrevisan.boxon.core;
 
-import io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField;
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSubField;
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
-import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.ParserDataType;
 
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 
 
-final class CodecCompositeConfigurationField implements CodecInterface<CompositeConfigurationField>{
+final class CodecConfigurationSubField implements CodecInterface<ConfigurationSubField>{
 
 	@Override
 	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
@@ -44,26 +43,14 @@ final class CodecCompositeConfigurationField implements CodecInterface<Composite
 	}
 
 	@Override
-	public void encode(final BitWriter writer, final Annotation annotation, final Object fieldType, final Object value)
-			throws ConfigurationException{
-		final CompositeConfigurationField binding = extractBinding(annotation);
-
-		final Charset charset = Charset.forName(binding.charset());
-
-		Object val = value;
-		if(String.class.isInstance(value))
-			val = JavaHelper.getValue((Class<?>)fieldType, (String)value);
-
-		if(val != null){
-			if(String.class.isInstance(value))
-				writer.putText((String)val, charset);
-			else
-				throw ConfigurationException.create("Cannot handle this type of field: {}, please report to the developer",
-					ParserDataType.toObjectiveTypeOrSelf(val.getClass()));
+	public void encode(final BitWriter writer, final Annotation annotation, final Object charset, final Object value)
+			throws ConfigurationException, AnnotationException{
+		if(!String.class.isInstance(value)){
+			final Class<?> fieldClass = ParserDataType.toObjectiveTypeOrSelf(value.getClass());
+			throw ConfigurationException.create("Cannot handle this type of field: {}", fieldClass);
 		}
 
-		if(!binding.terminator().isEmpty())
-			writer.putText(binding.terminator(), StandardCharsets.UTF_8);
+		writer.putText((String)value, (Charset)charset);
 	}
 
 }

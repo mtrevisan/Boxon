@@ -27,7 +27,8 @@ package io.github.mtrevisan.boxon.core;
 import io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
-import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationMessage;
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSubField;
 import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
@@ -43,10 +44,10 @@ import java.util.regex.Pattern;
 
 enum ConfigurationAnnotationValidator{
 
-	HEADER(ConfigurationMessage.class){
+	HEADER(ConfigurationHeader.class){
 		@Override
 		void validate(final Field field, final Annotation annotation) throws AnnotationException{
-			final ConfigurationMessage binding = (ConfigurationMessage)annotation;
+			final ConfigurationHeader binding = (ConfigurationHeader)annotation;
 
 			if(JavaHelper.isBlank(binding.shortDescription()))
 				throw AnnotationException.create("Short description must be present");
@@ -271,23 +272,18 @@ enum ConfigurationAnnotationValidator{
 			if(!String.class.isAssignableFrom(field.getType()))
 				throw AnnotationException.create("Composite fields must have a string variable to be bounded to");
 
-			final ConfigurationField[] compositeFields = binding.value();
-			if(compositeFields.length == 0)
+			final ConfigurationSubField[] fields = binding.value();
+			if(fields.length == 0)
 				throw AnnotationException.create("Composite fields must have at least one sub-field");
-			final String charsetName = compositeFields[0].charset();
-			for(int i = 1; i < compositeFields.length; i ++)
-				if(!charsetName.equals(compositeFields[i].charset()))
-					throw AnnotationException.create("Composite fields must have the same charsets");
-			CodecHelper.assertValidCharset(charsetName);
+			CodecHelper.assertValidCharset(binding.charset());
 
 			validatePattern(field, binding);
 
 			validateProtocol(binding.minProtocol(), binding.maxProtocol(), CompositeConfigurationField.class);
 
 
-			final ConfigurationField[] fields = binding.value();
 			for(int i = 0; i < fields.length; i ++)
-				FIELD.validate(field, fields[i]);
+				SUB_FIELD.validate(field, fields[i]);
 		}
 
 		private void validatePattern(final Field field, final CompositeConfigurationField binding) throws AnnotationException{
@@ -310,10 +306,63 @@ enum ConfigurationAnnotationValidator{
 				}
 			}
 		}
+	},
+
+	SUB_FIELD(ConfigurationSubField.class){
+		@Override
+		void validate(final Field field, final Annotation annotation) throws AnnotationException{
+			final ConfigurationSubField binding = (ConfigurationSubField)annotation;
+
+			if(JavaHelper.isBlank(binding.shortDescription()))
+				throw AnnotationException.create("Short description must be present");
+
+			validatePattern(field, binding);
+
+			validateDefaultValue(field, binding);
+		}
+
+		private void validatePattern(final Field field, final ConfigurationSubField binding) throws AnnotationException{
+			final String pattern = binding.pattern();
+			final String defaultValue = binding.defaultValue();
+
+			//valid pattern
+			if(!pattern.isEmpty()){
+				try{
+					final Pattern formatPattern = Pattern.compile(pattern);
+
+					//defaultValue compatible with field type
+					if(!String.class.isAssignableFrom(field.getType()))
+						throw AnnotationException.create("Data type not compatible with `pattern` in {}; found {}.class, expected String.class",
+							ConfigurationSubField.class.getSimpleName(), field.getType());
+					//defaultValue compatible with pattern
+					if(!defaultValue.isEmpty() && !formatPattern.matcher(defaultValue).matches())
+						throw AnnotationException.create("Default value not compatible with `pattern` in {}; found {}, expected {}",
+							ConfigurationSubField.class.getSimpleName(), defaultValue, pattern);
+				}
+				catch(final AnnotationException ae){
+					throw ae;
+				}
+				catch(final Exception e){
+					throw AnnotationException.create("Invalid pattern in {} in field {}", ConfigurationSubField.class.getSimpleName(),
+						field.getName(), e);
+				}
+			}
+		}
+
+		private void validateDefaultValue(final Field field, final ConfigurationSubField binding) throws AnnotationException{
+			final Class<?> fieldType = field.getType();
+			final String defaultValue = binding.defaultValue();
+
+			if(!defaultValue.isEmpty())
+				//defaultValue compatible with variable type
+				if(JavaHelper.getValue(fieldType, defaultValue) == null)
+					throw AnnotationException.create("Incompatible enum in {}, found {}, expected {}",
+						ConfigurationSubField.class.getSimpleName(), defaultValue.getClass().getSimpleName(), fieldType.toString());
+		}
 	};
 
 
-	private static final Map<Class<? extends Annotation>, ConfigurationAnnotationValidator> VALIDATORS = new HashMap<>(1);
+	private static final Map<Class<? extends Annotation>, ConfigurationAnnotationValidator> VALIDATORS = new HashMap<>(4);
 	static{
 		for(final ConfigurationAnnotationValidator validator : values())
 			VALIDATORS.put(validator.annotationType, validator);

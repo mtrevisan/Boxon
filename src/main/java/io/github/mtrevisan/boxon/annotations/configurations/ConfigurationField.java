@@ -37,7 +37,6 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-@Repeatable(CompositeConfigurationField.class)
 @Documented
 public @interface ConfigurationField{
 
