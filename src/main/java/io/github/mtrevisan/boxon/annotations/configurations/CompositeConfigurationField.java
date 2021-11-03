@@ -33,6 +33,8 @@ import java.lang.annotation.Target;
 
 /**
  * Manages multiple {@link io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField} annotations.
+ *
+ * <p>This field is mandatory only if one of its children is mandatory.</p>
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
@@ -77,46 +79,22 @@ public @interface CompositeConfigurationField{
 
 
 	/**
-	 * The format of the value, expressed as a regex.
+	 * The pattern of the value, expressed as a regex.
 	 * <p>Not compatible with enumeration field.</p>
 	 * <p>Not compatible with non-string field.</p>
 	 *
-	 * @return	The format of the value, expressed as a regex.
+	 * @return	The pattern of the value, expressed as a regex.
 	 */
-	String format() default "";
+	String pattern() default "";
 
 	/**
 	 * How the composition is made (freemarker style).
 	 * <p>Ex. there are two configuration fields, and with this field set to `{1}@{2}`, the composition of both are done appending
 	 * the second field to the first using a `@` as a separator.</p>
 	 *
-	 * @return	The composition format of the fields, expressed as a regex.
+	 * @return	The composition pattern of the fields, expressed as a regex.
 	 */
 	String composition() default "";
-
-
-	/**
-	 * The field is mandatory.
-	 * <p>Non-writable fields are all mandatory by default.</p>
-	 *
-	 * @return	Whether the value is mandatory.
-	 */
-	boolean mandatory() default false;
-
-	/**
-	 * The default value of the field.
-	 * <p>For non-mutually exclusive enumeration fields this is an array.</p>
-	 *
-	 * @return	The default value of the field.
-	 */
-	String defaultValue() default "";
-
-	/**
-	 * The type of encoding used for string-typed field.
-	 *
-	 * @return	The type of encoding used (defaults to `UTF-8`).
-	 */
-	String charset() default "UTF-8";
 
 
 	/**

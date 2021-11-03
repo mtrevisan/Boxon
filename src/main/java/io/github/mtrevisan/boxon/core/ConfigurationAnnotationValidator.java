@@ -80,7 +80,7 @@ enum ConfigurationAnnotationValidator{
 
 			validateMinimumParameters(field, binding);
 
-			validateFormat(field, binding);
+			validatePattern(field, binding);
 
 			validateDefaultValue(field, binding);
 
@@ -88,63 +88,63 @@ enum ConfigurationAnnotationValidator{
 
 			validateMinMaxValues(field, binding);
 
-			validateProtocol(binding.minProtocol(), binding.maxProtocol(), CompositeConfigurationField.class);
+			validateProtocol(binding.minProtocol(), binding.maxProtocol(), ConfigurationField.class);
 		}
 
 		private void validateMinimumParameters(final Field field, final ConfigurationField binding) throws AnnotationException{
 			final Class<?> fieldType = field.getType();
 			final boolean isFieldArray = fieldType.isArray();
-			final String format = binding.format();
+			final String pattern = binding.pattern();
 			final String minValue = binding.minValue();
 			final String maxValue = binding.maxValue();
 			final Class<? extends Enum<?>> enumeration = binding.enumeration();
 
-			//one only of `format`, `minValue`/`maxValue`, and `enumeration` should be set:
+			//one only of `pattern`, `minValue`/`maxValue`, and `enumeration` should be set:
 			int set = 0;
-			if(!format.isEmpty())
+			if(!pattern.isEmpty())
 				set ++;
 			if(!minValue.isEmpty() || !maxValue.isEmpty())
 				set ++;
 			if(enumeration != NullEnum.class){
 				set ++;
 
-				if(!format.isEmpty() || !minValue.isEmpty() || !maxValue.isEmpty())
-					throw AnnotationException.create("Enumeration cannot have `format` or `minValue`/`maxValue`");
+				if(!pattern.isEmpty() || !minValue.isEmpty() || !maxValue.isEmpty())
+					throw AnnotationException.create("Enumeration cannot have `pattern` or `minValue`/`maxValue`");
 			}
 			if(isFieldArray && (set != 1 || enumeration == NullEnum.class))
-				throw AnnotationException.create("Array field cannot have `format` or `minValue`/`maxValue`");
+				throw AnnotationException.create("Array field cannot have `pattern` or `minValue`/`maxValue`");
 			if(set > 1)
-				throw AnnotationException.create("Only one of `format`, `minValue`/`maxValue`, or `enumeration` should be used in {}",
+				throw AnnotationException.create("Only one of `pattern`, `minValue`/`maxValue`, or `enumeration` should be used in {}",
 					ConfigurationField.class.getSimpleName());
 		}
 
-		private void validateFormat(final Field field, final ConfigurationField binding) throws AnnotationException{
-			final String format = binding.format();
+		private void validatePattern(final Field field, final ConfigurationField binding) throws AnnotationException{
+			final String pattern = binding.pattern();
 			final String minValue = binding.minValue();
 			final String maxValue = binding.maxValue();
 			final String defaultValue = binding.defaultValue();
 
-			//valid format
-			if(!format.isEmpty()){
+			//valid pattern
+			if(!pattern.isEmpty()){
 				try{
-					final Pattern formatPattern = Pattern.compile(format);
+					final Pattern formatPattern = Pattern.compile(pattern);
 
 					//defaultValue compatible with field type
 					if(!String.class.isAssignableFrom(field.getType()))
-						throw AnnotationException.create("Data type not compatible with `format` in {}; found {}.class, expected String.class",
+						throw AnnotationException.create("Data type not compatible with `pattern` in {}; found {}.class, expected String.class",
 							ConfigurationField.class.getSimpleName(), field.getType());
-					//defaultValue compatible with format
+					//defaultValue compatible with pattern
 					if(!defaultValue.isEmpty() && !formatPattern.matcher(defaultValue).matches())
-						throw AnnotationException.create("Default value not compatible with `format` in {}; found {}, expected {}",
-							ConfigurationField.class.getSimpleName(), defaultValue, format);
-					//minValue compatible with format
+						throw AnnotationException.create("Default value not compatible with `pattern` in {}; found {}, expected {}",
+							ConfigurationField.class.getSimpleName(), defaultValue, pattern);
+					//minValue compatible with pattern
 					if(!minValue.isEmpty() && !formatPattern.matcher(minValue).matches())
-						throw AnnotationException.create("Minimum value not compatible with `format` in {}; found {}, expected {}",
-							ConfigurationField.class.getSimpleName(), minValue, format);
-					//maxValue compatible with format
+						throw AnnotationException.create("Minimum value not compatible with `pattern` in {}; found {}, expected {}",
+							ConfigurationField.class.getSimpleName(), minValue, pattern);
+					//maxValue compatible with pattern
 					if(!maxValue.isEmpty() && !formatPattern.matcher(maxValue).matches())
-						throw AnnotationException.create("Maximum value not compatible with `format` in {}; found {}, expected {}",
-							ConfigurationField.class.getSimpleName(), maxValue, format);
+						throw AnnotationException.create("Maximum value not compatible with `pattern` in {}; found {}, expected {}",
+							ConfigurationField.class.getSimpleName(), maxValue, pattern);
 				}
 				catch(final AnnotationException ae){
 					throw ae;
@@ -270,9 +270,17 @@ enum ConfigurationAnnotationValidator{
 				throw AnnotationException.create("Short description must be present");
 			if(!String.class.isAssignableFrom(field.getType()))
 				throw AnnotationException.create("Composite fields must have a string variable to be bounded to");
-			CodecHelper.assertValidCharset(binding.charset());
 
-			validateFormat(field, binding);
+			final ConfigurationField[] compositeFields = binding.value();
+			if(compositeFields.length == 0)
+				throw AnnotationException.create("Composite fields must have at least one sub-field");
+			final String charsetName = compositeFields[0].charset();
+			for(int i = 1; i < compositeFields.length; i ++)
+				if(!charsetName.equals(compositeFields[i].charset()))
+					throw AnnotationException.create("Composite fields must have the same charsets");
+			CodecHelper.assertValidCharset(charsetName);
+
+			validatePattern(field, binding);
 
 			validateProtocol(binding.minProtocol(), binding.maxProtocol(), CompositeConfigurationField.class);
 
@@ -282,23 +290,16 @@ enum ConfigurationAnnotationValidator{
 				FIELD.validate(field, fields[i]);
 		}
 
-		private void validateFormat(final Field field, final CompositeConfigurationField binding) throws AnnotationException{
-			final String format = binding.format();
-			final String defaultValue = binding.defaultValue();
+		private void validatePattern(final Field field, final CompositeConfigurationField binding) throws AnnotationException{
+			final String pattern = binding.pattern();
 
-			//valid format
-			if(!format.isEmpty()){
+			//valid pattern
+			if(!pattern.isEmpty()){
 				try{
-					final Pattern formatPattern = Pattern.compile(format);
-
 					//defaultValue compatible with field type
 					if(!String.class.isAssignableFrom(field.getType()))
-						throw AnnotationException.create("Data type not compatible with `format` in {}; found {}.class, expected String.class",
+						throw AnnotationException.create("Data type not compatible with `pattern` in {}; found {}.class, expected String.class",
 							ConfigurationField.class.getSimpleName(), field.getType());
-					//defaultValue compatible with format
-					if(!defaultValue.isEmpty() && !formatPattern.matcher(defaultValue).matches())
-						throw AnnotationException.create("Default value not compatible with `format` in {}; found {}, expected {}",
-							ConfigurationField.class.getSimpleName(), defaultValue, format);
 				}
 				catch(final AnnotationException ae){
 					throw ae;

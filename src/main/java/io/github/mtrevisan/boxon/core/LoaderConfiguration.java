@@ -51,7 +51,6 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -192,7 +191,6 @@ final class LoaderConfiguration{
 		try{
 			final ConfigurationMessage header = configuration.getHeader();
 			final String start = header.start();
-			final Charset charset = Charset.forName(header.charset());
 			loadConfigurationInner(configuration, start);
 		}
 		catch(final Exception e){
@@ -285,9 +283,6 @@ final class LoaderConfiguration{
 				@SuppressWarnings("unchecked")
 				final String outerValue = replace(composition, (Map<String, Object>)dataValue, fields);
 				setValue(configurationObject, outerValue, foundField);
-
-				if(foundBinding.mandatory())
-					mandatoryFields.remove(foundField);
 			}
 		}
 
@@ -341,7 +336,9 @@ final class LoaderConfiguration{
 			}
 			else if(CompositeConfigurationField.class.isAssignableFrom(field.getBinding().annotationType())){
 				final CompositeConfigurationField binding = (CompositeConfigurationField)field.getBinding();
-				mandatory = binding.mandatory();
+				final ConfigurationField[] compositeFields = binding.value();
+				for(int j = 0; j < compositeFields.length; j ++)
+					mandatory |= !JavaHelper.isBlank(compositeFields[j].defaultValue());
 				minProtocol = binding.minProtocol();
 				maxProtocol = binding.maxProtocol();
 			}
@@ -382,15 +379,15 @@ final class LoaderConfiguration{
 
 	private void validateValue(final ConfigurationField binding, final String key, final Object value, final ConfigField field)
 			throws EncodeException{
-		//check format
-		final String format = binding.format();
-		if(!format.isEmpty()){
-			final Pattern formatPattern = Pattern.compile(format);
+		//check pattern
+		final String pattern = binding.pattern();
+		if(!pattern.isEmpty()){
+			final Pattern formatPattern = Pattern.compile(pattern);
 
-			//value compatible with data type and format
+			//value compatible with data type and pattern
 			if(!String.class.isInstance(value) || !formatPattern.matcher((CharSequence)value).matches())
-				throw EncodeException.create("Data value not compatible with `format` for data key {}; found {}, expected {}",
-					key, value, format);
+				throw EncodeException.create("Data value not compatible with `pattern` for data key {}; found {}, expected {}",
+					key, value, pattern);
 		}
 		//check minValue
 		final String minValue = binding.minValue();
@@ -411,10 +408,10 @@ final class LoaderConfiguration{
 	}
 
 	private void validateValue(final CompositeConfigurationField binding, final String key, final Object value) throws EncodeException{
-		//check format
-		final String format = binding.format();
-		if(!format.isEmpty()){
-			final Pattern formatPattern = Pattern.compile(format);
+		//check pattern
+		final String pattern = binding.pattern();
+		if(!pattern.isEmpty()){
+			final Pattern formatPattern = Pattern.compile(pattern);
 
 			//compose outer field value
 			final String composition = binding.composition();
@@ -424,8 +421,8 @@ final class LoaderConfiguration{
 
 			//value compatible with data type and format
 			if(!formatPattern.matcher(outerValue).matches())
-				throw EncodeException.create("Data value not compatible with `format` for data key {}; found {}, expected {}",
-					key, outerValue, format);
+				throw EncodeException.create("Data value not compatible with `pattern` for data key {}; found {}, expected {}",
+					key, outerValue, pattern);
 		}
 	}
 
@@ -533,7 +530,7 @@ final class LoaderConfiguration{
 					continue;
 
 				final Class<?> fieldType = field.getFieldType();
-				final Map<String, Object> compositeMap = extractMap(compositeBinding, fieldType);
+				final Map<String, Object> compositeMap = extractMap(compositeBinding);
 				final ConfigurationField[] bindings = compositeBinding.value();
 				final Map<String, Object> compositeFieldsMap = new HashMap<>(bindings.length);
 				for(int j = 0; j < bindings.length; j ++){
@@ -563,7 +560,7 @@ final class LoaderConfiguration{
 
 		putIfNotEmpty(map, "minValue", JavaHelper.getValue(fieldType, binding.minValue()));
 		putIfNotEmpty(map, "maxValue", JavaHelper.getValue(fieldType, binding.maxValue()));
-		putIfNotEmpty(map, "format", binding.format());
+		putIfNotEmpty(map, "pattern", binding.pattern());
 		if(binding.enumeration() != NullEnum.class){
 			final Enum<?>[] enumConstants = binding.enumeration().getEnumConstants();
 			final String[] enumValues = new String[enumConstants.length];
@@ -581,15 +578,11 @@ final class LoaderConfiguration{
 		return map;
 	}
 
-	private Map<String, Object> extractMap(final CompositeConfigurationField binding, final Class<?> fieldType) throws ConfigurationException{
+	private Map<String, Object> extractMap(final CompositeConfigurationField binding) throws ConfigurationException{
 		final Map<String, Object> map = new HashMap<>(6);
 
 		putIfNotEmpty(map, "longDescription", binding.longDescription());
-		putIfNotEmpty(map, "format", binding.format());
-		putIfNotEmpty(map, "mandatory", binding.mandatory());
-		putValueIfNotEmpty(map, "defaultValue", fieldType, NullEnum.class, binding.defaultValue());
-		if(String.class.isAssignableFrom(fieldType))
-			putIfNotEmpty(map, "charset", binding.charset());
+		putIfNotEmpty(map, "pattern", binding.pattern());
 
 		return map;
 	}
@@ -605,7 +598,7 @@ final class LoaderConfiguration{
 			final Class<?> fieldType, final Class<? extends Enum<?>> enumeration, final String value) throws ConfigurationException{
 		if(!JavaHelper.isBlank(value)){
 			Object val = value;
-			if(enumeration != NullEnum.class)
+			if(enumeration != NullEnum.class && fieldType.isArray())
 				val = JavaHelper.split(value, "|", -1);
 			else if(Number.class.isAssignableFrom(ParserDataType.toObjectiveTypeOrSelf(fieldType)))
 				val = JavaHelper.getValue(fieldType, value);

@@ -39,7 +39,7 @@ public class REGConfigurationASCII{
 	@ConfigurationField(shortDescription = "Header", terminator = "=", defaultValue = "GTREG")
 	private String messageHeader;
 
-	@ConfigurationField(shortDescription = "Password", terminator = ",", format = "[0-9a-zA-Z]{4,20}", defaultValue = "gb200s")
+	@ConfigurationField(shortDescription = "Password", terminator = ",", pattern = "[0-9a-zA-Z]{4,20}", defaultValue = "gb200s")
 	private String password;
 
 	@ConfigurationField(shortDescription = "Operation mode", terminator = ",", minValue = "0", maxValue = "3", defaultValue = "0")
@@ -75,14 +75,14 @@ public class REGConfigurationASCII{
 
 	@CompositeConfigurationField(
 		value = {
-			@ConfigurationField(shortDescription = "URL", format = "https?://.{0,92}"),
-			@ConfigurationField(shortDescription = "username", format = ".{1,32}"),
-			@ConfigurationField(shortDescription = "password", format = ".{1,32}")
+			@ConfigurationField(shortDescription = "URL", pattern = "https?://.{0,92}"),
+			@ConfigurationField(shortDescription = "username", pattern = ".{1,32}"),
+			@ConfigurationField(shortDescription = "password", pattern = ".{1,32}")
 		},
 		shortDescription = "Download URL",
 		composition = "${URL}<#if username?? && password??>@${username}@${password}</#if>",
 		terminator = ",",
-		format = ".{0,100}"
+		pattern = ".{0,100}"
 	)
 	private String downloadURL;
 

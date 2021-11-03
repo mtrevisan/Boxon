@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField;
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
@@ -47,7 +48,12 @@ final class CodecCompositeConfigurationField implements CodecInterface<Composite
 	public void encode(final BitWriter writer, final Annotation annotation, final Object fieldType, final Object value)
 			throws ConfigurationException{
 		final CompositeConfigurationField binding = extractBinding(annotation);
-		final Charset charset = Charset.forName(binding.charset());
+
+		String charsetName = null;
+		final ConfigurationField[] compositeFields = binding.value();
+		for(int j = 0; charsetName == null && j < compositeFields.length; j ++)
+			charsetName = compositeFields[j].charset();
+		final Charset charset = (charsetName != null? Charset.forName(charsetName): StandardCharsets.UTF_8);
 
 		Object val = value;
 		if(String.class.isInstance(value))

@@ -96,17 +96,17 @@ public @interface ConfigurationField{
 	String maxValue() default "";
 
 	/**
-	 * The format of the value, expressed as a regex.
+	 * The pattern of the value, expressed as a regex.
 	 * <p>Not compatible with enumeration field.</p>
 	 * <p>Not compatible with non-string field.</p>
 	 *
-	 * @return	The format of the value, expressed as a regex.
+	 * @return	The pattern of the value, expressed as a regex.
 	 */
-	String format() default "";
+	String pattern() default "";
 
 	/**
 	 * The enumeration that represents the finite possible values for this field.
-	 * <p>Not compatible with format field.</p>
+	 * <p>Not compatible with pattern field.</p>
 	 *
 	 * @return	The enumeration that represents the finite possible values for this field.
 	 */
