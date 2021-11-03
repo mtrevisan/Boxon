@@ -113,14 +113,9 @@ enum ConfigurationAnnotationValidator{
 			}
 			if(isFieldArray && (set != 1 || enumeration == NullEnum.class))
 				throw AnnotationException.create("Array field cannot have `format` or `minValue`/`maxValue`");
-			if(binding.writable()){
-				if(set == 0)
-					throw AnnotationException.create("One of `format`, `minValue`/`maxValue`, or `enumeration` should be used in {}",
-						ConfigurationField.class.getSimpleName());
-				if(set != 1)
-					throw AnnotationException.create("Only one of `format`, `minValue`/`maxValue`, or `enumeration` should be used in {}",
-						ConfigurationField.class.getSimpleName());
-			}
+			if(set > 1)
+				throw AnnotationException.create("Only one of `format`, `minValue`/`maxValue`, or `enumeration` should be used in {}",
+					ConfigurationField.class.getSimpleName());
 		}
 
 		private void validateFormat(final Field field, final ConfigurationField binding) throws AnnotationException{

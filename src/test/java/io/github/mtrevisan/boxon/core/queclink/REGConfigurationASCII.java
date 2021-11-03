@@ -36,7 +36,7 @@ import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
 	longDescription = "The command AT+GTREG is used to do things.", maxProtocol = "2.8")
 public class REGConfigurationASCII{
 
-	@ConfigurationField(shortDescription = "Header", terminator = "=", defaultValue = "GTREG", writable = false)
+	@ConfigurationField(shortDescription = "Header", terminator = "=", defaultValue = "GTREG")
 	private String messageHeader;
 
 	@ConfigurationField(shortDescription = "Password", terminator = ",", format = "[0-9a-zA-Z]{4,20}", defaultValue = "gb200s")
@@ -67,7 +67,7 @@ public class REGConfigurationASCII{
 	private int downloadTimeout1_19;
 
 	@ConfigurationField(shortDescription = "Download protocol", terminator = ",", maxProtocol = "1.35", enumeration = DownloadProtocol.class,
-		defaultValue = "HTTP", writable = false)
+		defaultValue = "HTTP")
 	private DownloadProtocol downloadProtocol1_35;
 	@ConfigurationField(shortDescription = "Download protocol", terminator = ",", minProtocol = "1.36", enumeration = DownloadProtocol.class,
 		defaultValue = "HTTP")
@@ -105,7 +105,7 @@ public class REGConfigurationASCII{
 	private Weekday[] weekday;
 
 	@ConfigurationSkip(terminator = ",")
-	@ConfigurationField(shortDescription = "Message counter", minValue = "0x0000", maxValue = "0xFFFF", mandatory = true, radix = 16)
+	@ConfigurationField(shortDescription = "Message counter", minValue = "0x0000", maxValue = "0xFFFF", radix = 16)
 	private int messageCounter;
 
 }

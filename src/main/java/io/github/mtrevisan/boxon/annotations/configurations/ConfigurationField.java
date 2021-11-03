@@ -114,16 +114,9 @@ public @interface ConfigurationField{
 
 
 	/**
-	 * The field is mandatory.
-	 * <p>Non-writable fields are all mandatory by default.</p>
-	 *
-	 * @return	Whether the value is mandatory.
-	 */
-	boolean mandatory() default false;
-
-	/**
 	 * The default value of the field.
 	 * <p>For non-mutually exclusive enumeration fields this is an array.</p>
+	 * <p>If not present, the field is mandatory.</p>
 	 *
 	 * @return	The default value of the field.
 	 */
@@ -143,14 +136,6 @@ public @interface ConfigurationField{
 	 * @return	The numeral system (base, or radix) of this field.
 	 */
 	int radix() default 10;
-
-	/**
-	 * Whether the field is writable.
-	 * <p>Non-writable fields are all mandatory by default.</p>
-	 *
-	 * @return	Whether the field is writable.
-	 */
-	boolean writable() default true;
 
 
 	/**

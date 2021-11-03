@@ -86,7 +86,7 @@ public @interface CompositeConfigurationField{
 	String format() default "";
 
 	/**
-	 * How the composition is made (regex style).
+	 * How the composition is made (freemarker style).
 	 * <p>Ex. there are two configuration fields, and with this field set to `{1}@{2}`, the composition of both are done appending
 	 * the second field to the first using a `@` as a separator.</p>
 	 *
@@ -117,14 +117,6 @@ public @interface CompositeConfigurationField{
 	 * @return	The type of encoding used (defaults to `UTF-8`).
 	 */
 	String charset() default "UTF-8";
-
-	/**
-	 * Whether the field is writable.
-	 * <p>Non-writable fields are all mandatory by default.</p>
-	 *
-	 * @return	Whether the field is writable.
-	 */
-	boolean writable() default true;
 
 
 	/**

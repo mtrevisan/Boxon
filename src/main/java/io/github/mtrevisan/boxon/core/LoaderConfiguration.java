@@ -53,7 +53,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -71,8 +70,7 @@ import java.util.regex.Pattern;
 final class LoaderConfiguration{
 
 	public static final String CONFIGURATION_FIELD_TYPE = "__type__";
-	public static final String CONFIGURATION_FIELD_CHARSET = "__charset__";
-	public static final String CONFIGURATION_COMPOSITE_FIELDS = "__fields__";
+	public static final String CONFIGURATION_COMPOSITE_FIELDS = "fields";
 
 	private static final String NOTIFICATION_TEMPLATE = "compositeTemplate";
 	private static final freemarker.template.Configuration FREEMARKER_CONFIGURATION
@@ -156,10 +154,7 @@ final class LoaderConfiguration{
 			if(from.canBeCoded()){
 				//if the configuration is valid, add it to the list of templates...
 				final ConfigurationMessage header = from.getHeader();
-				final String start = header.start();
-				final Charset charset = Charset.forName(header.charset());
-				final String k = LoaderHelper.calculateKey(start, charset);
-				configurations.put(k, from);
+				configurations.put(header.start(), from);
 			}
 			else
 				//... otherwise throw exception
@@ -198,21 +193,19 @@ final class LoaderConfiguration{
 			final ConfigurationMessage header = configuration.getHeader();
 			final String start = header.start();
 			final Charset charset = Charset.forName(header.charset());
-			loadConfigurationInner(configuration, start, charset);
+			loadConfigurationInner(configuration, start);
 		}
 		catch(final Exception e){
 			eventListener.cannotLoadConfiguration(configuration.getType().getName(), e);
 		}
 	}
 
-	private void loadConfigurationInner(final Configuration<?> configuration, final String headerStart, final Charset charset)
-			throws ConfigurationException{
-		final String key = LoaderHelper.calculateKey(headerStart, charset);
-		if(configurations.containsKey(key))
+	private void loadConfigurationInner(final Configuration<?> configuration, final String headerStart) throws ConfigurationException{
+		if(configurations.containsKey(headerStart))
 			throw ConfigurationException.create("Duplicated key `{}` found for class {}", headerStart,
 				configuration.getType().getName());
 
-		configurations.put(key, configuration);
+		configurations.put(headerStart, configuration);
 	}
 
 	/**
@@ -278,7 +271,7 @@ final class LoaderConfiguration{
 
 				setValue(configurationObject, foundBinding.enumeration(), dataKey, dataValue, foundField);
 
-				if(foundBinding.mandatory())
+				if(JavaHelper.isBlank(foundBinding.defaultValue()))
 					mandatoryFields.remove(foundField);
 			}
 			else if(CompositeConfigurationField.class.isInstance(foundField.getBinding())){
@@ -312,22 +305,10 @@ final class LoaderConfiguration{
 	 */
 	private Configuration<?> getConfiguration(final Map<String, Object> data) throws EncodeException{
 		final String headerStart = (String)data.remove(CONFIGURATION_FIELD_TYPE);
-		String charsetField = (String)data.remove(CONFIGURATION_FIELD_CHARSET);
-		if(JavaHelper.isBlank(charsetField))
-			charsetField = LoaderCodec.CHARSET_DEFAULT;
-		final Charset charset;
-		try{
-			charset = Charset.forName(charsetField);
-		}
-		catch(final ClassCastException | UnsupportedCharsetException e){
-			throw EncodeException.create(e, "Missing, or not recognized, mandatory field on data: `__charset__`, found: {}",
-				charsetField);
-		}
 		if(JavaHelper.isBlank(headerStart))
-			throw EncodeException.create("Missing mandatory field on data: `__type__`");
+			throw EncodeException.create("Missing mandatory field on data: `" + CONFIGURATION_FIELD_TYPE + "`");
 
-		final String key = LoaderHelper.calculateKey(headerStart, charset);
-		final Configuration<?> configuration = configurations.get(key);
+		final Configuration<?> configuration = configurations.get(headerStart);
 		if(configuration == null)
 			throw EncodeException.create("Cannot find any configuration for given class type");
 
@@ -354,7 +335,7 @@ final class LoaderConfiguration{
 			final ConfigField field = fields.get(i);
 			if(ConfigurationField.class.isAssignableFrom(field.getBinding().annotationType())){
 				final ConfigurationField binding = (ConfigurationField)field.getBinding();
-				mandatory = binding.mandatory();
+				mandatory = JavaHelper.isBlank(binding.defaultValue());
 				minProtocol = binding.minProtocol();
 				maxProtocol = binding.maxProtocol();
 			}
@@ -593,11 +574,9 @@ final class LoaderConfiguration{
 				putIfNotEmpty(map, "mutuallyExclusive", true);
 		}
 
-		putIfNotEmpty(map, "mandatory", binding.mandatory());
 		putValueIfNotEmpty(map, "defaultValue", fieldType, binding.enumeration(), binding.defaultValue());
 		if(String.class.isAssignableFrom(fieldType))
 			putIfNotEmpty(map, "charset", binding.charset());
-		putIfNotEmpty(map, "writable", binding.writable());
 
 		return map;
 	}
@@ -611,7 +590,6 @@ final class LoaderConfiguration{
 		putValueIfNotEmpty(map, "defaultValue", fieldType, NullEnum.class, binding.defaultValue());
 		if(String.class.isAssignableFrom(fieldType))
 			putIfNotEmpty(map, "charset", binding.charset());
-		putIfNotEmpty(map, "writable", binding.writable());
 
 		return map;
 	}
