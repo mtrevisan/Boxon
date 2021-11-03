@@ -54,7 +54,7 @@ class ParserTest{
 			.withDefaultConfigurations()
 			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"));
 
-		//~232 µs/msg = 4.3 kHz
+		//~251 µs/msg = 4 kHz
 		byte[] payload = JavaHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		//warm-up
 		for(int i = 0; i < 2_000; i ++)
