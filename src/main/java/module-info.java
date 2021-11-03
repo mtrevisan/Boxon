@@ -3,6 +3,7 @@ module io.github.mtrevisan.boxon{
 	requires io.github.classgraph;
 	requires spring.core;
 	requires spring.expression;
+	requires freemarker;
 
 	opens io.github.mtrevisan.boxon.core to spring.core, spring.expression;
 

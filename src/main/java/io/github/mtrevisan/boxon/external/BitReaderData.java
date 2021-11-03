@@ -43,7 +43,7 @@ abstract class BitReaderData{
 			set(position, remaining, cache);
 		}
 
-		public void set(final int position, final int remaining, final byte cache){
+		void set(final int position, final int remaining, final byte cache){
 			this.position = position;
 			this.remaining = remaining;
 			this.cache = cache;

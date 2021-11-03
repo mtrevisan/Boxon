@@ -104,17 +104,18 @@ final class Template<T>{
 			evaluatedFields.addAll(extractEvaluations(declaredAnnotations, field));
 
 			try{
-				validateField(boundedAnnotations, checksum);
+				final Annotation validAnnotation = validateField(boundedAnnotations, checksum);
+
+				if(validAnnotation != null){
+					boundedFields.add(new BoundedField(field, validAnnotation, (skips.length > 0? skips: null)));
+					if(checksum != null)
+						this.checksum = new BoundedField(field, checksum);
+				}
 			}
 			catch(final AnnotationException e){
 				e.setClassNameAndFieldName(type.getName(), field.getName());
 				throw e;
 			}
-
-			if(boundedAnnotations.size() == 1)
-				boundedFields.add(new BoundedField(field, boundedAnnotations.get(0), (skips.length > 0? skips: null)));
-			if(checksum != null)
-				this.checksum = new BoundedField(field, checksum);
 		}
 		return Pair.of(boundedFields, evaluatedFields);
 	}
@@ -129,30 +130,29 @@ final class Template<T>{
 		return evaluations;
 	}
 
-	private void validateField(final List<? extends Annotation> annotations, final Checksum checksum) throws AnnotationException{
+	private Annotation validateField(final List<? extends Annotation> annotations, final Checksum checksum) throws AnnotationException{
 		//filter out `@Skip` annotations
-		int annotationCount = 0;
+		Annotation foundAnnotation = null;
 		for(int i = 0; i < annotations.size(); i ++){
 			final Class<? extends Annotation> annotationType = annotations.get(i).annotationType();
-			if(annotationType != Skip.class && annotationType != Skip.Skips.class)
-				annotationCount ++;
-		}
+			if(annotationType != Skip.class && annotationType != Skip.Skips.class){
+				if(foundAnnotation != null){
+					final StringJoiner sj = new StringJoiner(", ", "[", "]");
+					for(int j = 0; j < annotations.size(); j ++)
+						sj.add(annotations.get(j).annotationType().getSimpleName());
+					throw AnnotationException.create("Cannot bind more that one annotation on {}: {}", type.getName(), sj.toString());
+				}
 
-		if(annotationCount > 1){
-			final StringJoiner sj = new StringJoiner(", ", "[", "]");
-			for(int i = 0; i < annotations.size(); i ++){
-				final Class<? extends Annotation> annotationType = annotations.get(i).annotationType();
-				sj.add(annotationType.getSimpleName());
+				validateAnnotation(annotations.get(i));
+
+				if(checksum != null && this.checksum != null)
+					throw AnnotationException.create("Cannot have more than one {} annotations on class {}", Checksum.class.getSimpleName(),
+						type.getName());
+
+				foundAnnotation = annotations.get(i);
 			}
-			throw AnnotationException.create("Cannot bind more that one annotation on {}: {}", type.getName(), sj.toString());
 		}
-
-		if(checksum != null && this.checksum != null)
-			throw AnnotationException.create("Cannot have more than one {} annotations on class {}", Checksum.class.getSimpleName(),
-				type.getName());
-
-		if(!annotations.isEmpty())
-			validateAnnotation(annotations.get(0));
+		return foundAnnotation;
 	}
 
 	private void validateAnnotation(final Annotation annotation) throws AnnotationException{

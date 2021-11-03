@@ -278,7 +278,7 @@ public final class BitSet{
 
 	@Override
 	public boolean equals(final Object obj){
-		if(!(obj instanceof BitSet))
+		if(!BitSet.class.isInstance(obj))
 			return false;
 		if(this == obj)
 			return true;

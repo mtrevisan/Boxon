@@ -46,6 +46,10 @@ public class FieldException extends Exception{
 		super(message);
 	}
 
+	protected FieldException(final String message, final Throwable cause){
+		super(message, cause);
+	}
+
 	private FieldException(final Throwable cause){
 		super(cause);
 	}

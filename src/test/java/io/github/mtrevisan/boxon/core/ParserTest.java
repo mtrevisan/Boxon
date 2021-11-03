@@ -30,7 +30,6 @@ import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.TimeWatch;
-import io.github.mtrevisan.boxon.internal.semanticversioning.Version;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -55,7 +54,7 @@ class ParserTest{
 			.withDefaultConfigurations()
 			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"));
 
-		//~270 µs/msg = 3.7 kHz
+		//~251 µs/msg = 4 kHz
 		byte[] payload = JavaHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		//warm-up
 		for(int i = 0; i < 2_000; i ++)
@@ -208,15 +207,17 @@ class ParserTest{
 			.withContextFunction(ParserTest.class, "headerSize");
 
 		//data:
-		Version protocol = new Version("1.20");
 		Map<String, Object> configurationData = new HashMap<>();
-		configurationData.put("__type__", "AT+");
-		configurationData.put("__charset__", "UTF-8");
-		configurationData.put("Weekday", "TUESDAY");
+		configurationData.put(LoaderConfiguration.CONFIGURATION_FIELD_TYPE, "AT+");
+		configurationData.put("Weekday", "TUESDAY|WEDNESDAY");
 		configurationData.put("Update Over-The-Air", "TRUE");
 		configurationData.put("Header", "GTREG");
 		configurationData.put("Download protocol", "HTTP");
-		configurationData.put("Download URL", "http://url.com");
+		configurationData.put("Download URL", Map.of(
+			"URL", "http://url.com",
+			"username", "username",
+			"password", "password"
+		));
 		configurationData.put("Update mode", 0);
 		configurationData.put("Maximum download retry count", 2);
 		configurationData.put("Message counter", 123);
@@ -225,10 +226,10 @@ class ParserTest{
 		configurationData.put("Download timeout", 25);
 
 		//compose:
-		Object composeResult = parser.composeConfiguration(protocol, configurationData);
+		ComposeResponse composeResult = parser.composeConfiguration("1.20", configurationData);
 
-		Assertions.assertNotNull(composeResult);
-//		Assertions.assertArrayEquals(payload, composeResult.getComposedMessage());
+		Assertions.assertFalse(composeResult.hasErrors());
+		Assertions.assertEquals("AT+GTREG=pass,1,1,0,2,25,0,http://url.com@username@password,3600,3600,6,,7b$", new String(composeResult.getComposedMessage()));
 	}
 
 }

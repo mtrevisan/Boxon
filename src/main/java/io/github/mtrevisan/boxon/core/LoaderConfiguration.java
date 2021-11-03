@@ -24,7 +24,13 @@
  */
 package io.github.mtrevisan.boxon.core;
 
+import freemarker.core.Environment;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
+import freemarker.template.TemplateExceptionHandler;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
+import io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField;
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationMessage;
 import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
@@ -39,9 +45,13 @@ import io.github.mtrevisan.boxon.internal.ReflectionHelper;
 import io.github.mtrevisan.boxon.internal.ThrowingFunction;
 import io.github.mtrevisan.boxon.internal.semanticversioning.Version;
 
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
-import java.nio.charset.Charset;
-import java.nio.charset.UnsupportedCharsetException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -49,6 +59,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.StringJoiner;
 import java.util.TreeMap;
@@ -56,6 +67,19 @@ import java.util.regex.Pattern;
 
 
 final class LoaderConfiguration{
+
+	public static final String CONFIGURATION_FIELD_TYPE = "__type__";
+	public static final String CONFIGURATION_COMPOSITE_FIELDS = "fields";
+
+	private static final String NOTIFICATION_TEMPLATE = "compositeTemplate";
+	private static final freemarker.template.Configuration FREEMARKER_CONFIGURATION
+		= new freemarker.template.Configuration(freemarker.template.Configuration.VERSION_2_3_31);
+	static{
+		FREEMARKER_CONFIGURATION.setDefaultEncoding(StandardCharsets.UTF_8.name());
+		FREEMARKER_CONFIGURATION.setLocale(Locale.US);
+		FREEMARKER_CONFIGURATION.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+	}
+
 
 	static final class ConfigurationPair{
 		private final Configuration<?> configuration;
@@ -74,7 +98,7 @@ final class LoaderConfiguration{
 			return configuration;
 		}
 
-		public Object getConfigurationData(){
+		Object getConfigurationData(){
 			return configurationData;
 		}
 	}
@@ -129,12 +153,7 @@ final class LoaderConfiguration{
 			if(from.canBeCoded()){
 				//if the configuration is valid, add it to the list of templates...
 				final ConfigurationMessage header = from.getHeader();
-				final Charset charset = Charset.forName(header.charset());
-				final String[] starts = header.start();
-				for(int i = 0; i < starts.length; i ++){
-					final String k = LoaderHelper.calculateKey(starts[i], charset);
-					configurations.put(k, from);
-				}
+				configurations.put(header.start(), from);
 			}
 			else
 				//... otherwise throw exception
@@ -171,24 +190,20 @@ final class LoaderConfiguration{
 	private void addConfigurationInner(final Configuration<?> configuration){
 		try{
 			final ConfigurationMessage header = configuration.getHeader();
-			final Charset charset = Charset.forName(header.charset());
-			final String[] starts = header.start();
-			for(int i = 0; i < starts.length; i ++)
-				loadConfigurationInner(configuration, starts[i], charset);
+			final String start = header.start();
+			loadConfigurationInner(configuration, start);
 		}
 		catch(final Exception e){
 			eventListener.cannotLoadConfiguration(configuration.getType().getName(), e);
 		}
 	}
 
-	private void loadConfigurationInner(final Configuration<?> configuration, final String headerStart, final Charset charset)
-			throws ConfigurationException{
-		final String key = LoaderHelper.calculateKey(headerStart, charset);
-		if(configurations.containsKey(key))
+	private void loadConfigurationInner(final Configuration<?> configuration, final String headerStart) throws ConfigurationException{
+		if(configurations.containsKey(headerStart))
 			throw ConfigurationException.create("Duplicated key `{}` found for class {}", headerStart,
 				configuration.getType().getName());
 
-		configurations.put(key, configuration);
+		configurations.put(headerStart, configuration);
 	}
 
 	/**
@@ -207,7 +222,7 @@ final class LoaderConfiguration{
 		final List<Map<String, Object>> response = new ArrayList<>(configurationValues.size());
 		for(final Configuration<?> configuration : configurationValues){
 			final ConfigurationMessage header = configuration.getHeader();
-			if(shouldBeExtracted(currentProtocol, header.minProtocol(), header.maxProtocol()))
+			if(!shouldBeExtracted(currentProtocol, header.minProtocol(), header.maxProtocol()))
 				continue;
 
 			final Map<String, Object> headerMap = extractMap(header);
@@ -233,12 +248,12 @@ final class LoaderConfiguration{
 			.get();
 
 		//fill in default values
-		final List<ConfigurationField> configurableFields = configuration.getConfigurationFields();
+		final List<ConfigField> configurableFields = configuration.getConfigurationFields();
 		fillDefaultValues(configurationObject, configurableFields, protocol);
 
 
 		//collect mandatory fields:
-		final Collection<ConfigurationField> mandatoryFields = extractMandatoryFields(configurableFields, protocol);
+		final Collection<ConfigField> mandatoryFields = extractMandatoryFields(configurableFields, protocol);
 
 		//load data into configuration based on protocol version:
 		for(final Map.Entry<String, Object> entry : data.entrySet()){
@@ -246,16 +261,29 @@ final class LoaderConfiguration{
 			final Object dataValue = entry.getValue();
 
 			//find field in `configuration` that matches `dataKey` and `protocol`
-			final ConfigurationField foundField = findField(configurableFields, protocol, dataKey);
-			final io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField foundBinding
-				= (io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField)foundField.getBinding();
+			final ConfigField foundField = findField(configurableFields, protocol, dataKey);
+			if(ConfigurationField.class.isInstance(foundField.getBinding())){
+				final ConfigurationField foundBinding = (ConfigurationField)foundField.getBinding();
 
-			validateValue(foundBinding, dataKey, dataValue, foundField);
+				validateValue(foundBinding, dataKey, dataValue, foundField);
 
-			setValue(configurationObject, foundBinding, dataKey, dataValue, foundField);
+				setValue(configurationObject, foundBinding.enumeration(), dataKey, dataValue, foundField);
 
-			if(foundBinding.mandatory())
-				mandatoryFields.remove(foundField);
+				if(JavaHelper.isBlank(foundBinding.defaultValue()))
+					mandatoryFields.remove(foundField);
+			}
+			else if(CompositeConfigurationField.class.isInstance(foundField.getBinding())){
+				final CompositeConfigurationField foundBinding = (CompositeConfigurationField)foundField.getBinding();
+
+				validateValue(foundBinding, dataKey, dataValue);
+
+				//compose outer field value
+				final String composition = foundBinding.composition();
+				final ConfigurationField[] fields = foundBinding.value();
+				@SuppressWarnings("unchecked")
+				final String outerValue = replace(composition, (Map<String, Object>)dataValue, fields);
+				setValue(configurationObject, outerValue, foundField);
+			}
 		}
 
 		//check mandatory fields
@@ -271,59 +299,76 @@ final class LoaderConfiguration{
 	 * @return	The configuration.
 	 */
 	private Configuration<?> getConfiguration(final Map<String, Object> data) throws EncodeException{
-		final String headerStart = (String)data.remove("__type__");
-		final Object charsetField = data.remove("__charset__");
-		final Charset charset;
-		try{
-			charset = Charset.forName((String)charsetField);
-		}
-		catch(final ClassCastException | UnsupportedCharsetException e){
-			throw EncodeException.create("Missing, or not recognized, mandatory field on data: `__charset__`, found: {}",
-				charsetField);
-		}
+		final String headerStart = (String)data.remove(CONFIGURATION_FIELD_TYPE);
 		if(JavaHelper.isBlank(headerStart))
-			throw EncodeException.create("Missing mandatory field on data: `__type__`");
+			throw EncodeException.create("Missing mandatory field on data: `" + CONFIGURATION_FIELD_TYPE + "`");
 
-		final String key = LoaderHelper.calculateKey(headerStart, charset);
-		final Configuration<?> configuration = configurations.get(key);
+		final Configuration<?> configuration = configurations.get(headerStart);
 		if(configuration == null)
 			throw EncodeException.create("Cannot find any configuration for given class type");
 
 		return configuration;
 	}
 
-	private void fillDefaultValues(final Object object, final List<ConfigurationField> fields, final Version protocol)
-			throws EncodeException{
+	private void fillDefaultValues(final Object object, final List<ConfigField> fields, final Version protocol) throws EncodeException{
 		for(int i = 0; i < fields.size(); i ++){
-			final ConfigurationField field = fields.get(i);
-			final io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField binding
-				= (io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField)field.getBinding();
-			if(!JavaHelper.isBlank(binding.defaultValue()) && shouldBeExtracted(protocol, binding.minProtocol(), binding.maxProtocol()))
-				setValue(object, binding, binding.shortDescription(), binding.defaultValue(), field);
+			final ConfigField field = fields.get(i);
+			if(ConfigurationField.class.isAssignableFrom(field.getBinding().annotationType())){
+				final ConfigurationField binding = (ConfigurationField)field.getBinding();
+				if(!JavaHelper.isBlank(binding.defaultValue()) && shouldBeExtracted(protocol, binding.minProtocol(), binding.maxProtocol()))
+					setValue(object, binding.enumeration(), binding.shortDescription(), binding.defaultValue(), field);
+			}
 		}
 	}
 
-	private Collection<ConfigurationField> extractMandatoryFields(final List<ConfigurationField> fields, final Version protocol){
-		final Collection<ConfigurationField> mandatoryFields = new HashSet<>(fields.size());
+	private Collection<ConfigField> extractMandatoryFields(final List<ConfigField> fields, final Version protocol){
+		final Collection<ConfigField> mandatoryFields = new HashSet<>(fields.size());
 		for(int i = 0; i < fields.size(); i ++){
-			final ConfigurationField field = fields.get(i);
-			final io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField binding
-				= (io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField)field.getBinding();
-			if(binding.mandatory() && shouldBeExtracted(protocol, binding.minProtocol(), binding.maxProtocol()))
+			boolean mandatory = false;
+			String minProtocol = null;
+			String maxProtocol = null;
+			final ConfigField field = fields.get(i);
+			if(ConfigurationField.class.isAssignableFrom(field.getBinding().annotationType())){
+				final ConfigurationField binding = (ConfigurationField)field.getBinding();
+				mandatory = JavaHelper.isBlank(binding.defaultValue());
+				minProtocol = binding.minProtocol();
+				maxProtocol = binding.maxProtocol();
+			}
+			else if(CompositeConfigurationField.class.isAssignableFrom(field.getBinding().annotationType())){
+				final CompositeConfigurationField binding = (CompositeConfigurationField)field.getBinding();
+				final ConfigurationField[] compositeFields = binding.value();
+				for(int j = 0; j < compositeFields.length; j ++)
+					mandatory |= !JavaHelper.isBlank(compositeFields[j].defaultValue());
+				minProtocol = binding.minProtocol();
+				maxProtocol = binding.maxProtocol();
+			}
+			if(mandatory && shouldBeExtracted(protocol, minProtocol, maxProtocol))
 				mandatoryFields.add(field);
 		}
 		return mandatoryFields;
 	}
 
-	private ConfigurationField findField(final List<ConfigurationField> fields, final Version protocol, final String key)
+	private ConfigField findField(final List<ConfigField> fields, final Version protocol, final String key)
 			throws EncodeException{
-		ConfigurationField foundField = null;
+		ConfigField foundField = null;
 		for(int i = 0; foundField == null && i < fields.size(); i ++){
-			final ConfigurationField field = fields.get(i);
-			final io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField binding
-				= (io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField)field.getBinding();
-			if(binding.shortDescription().equals(key) && shouldBeExtracted(protocol, binding.minProtocol(),
-				binding.maxProtocol()))
+			String shortDescription = null;
+			String minProtocol = null;
+			String maxProtocol = null;
+			final ConfigField field = fields.get(i);
+			if(ConfigurationField.class.isAssignableFrom(field.getBinding().annotationType())){
+				final ConfigurationField binding = (ConfigurationField)field.getBinding();
+				shortDescription = binding.shortDescription();
+				minProtocol = binding.minProtocol();
+				maxProtocol = binding.maxProtocol();
+			}
+			else if(CompositeConfigurationField.class.isAssignableFrom(field.getBinding().annotationType())){
+				final CompositeConfigurationField binding = (CompositeConfigurationField)field.getBinding();
+				shortDescription = binding.shortDescription();
+				minProtocol = binding.minProtocol();
+				maxProtocol = binding.maxProtocol();
+			}
+			if(shortDescription.equals(key) && shouldBeExtracted(protocol, minProtocol, maxProtocol))
 				foundField = field;
 		}
 		if(foundField == null)
@@ -332,23 +377,23 @@ final class LoaderConfiguration{
 		return foundField;
 	}
 
-	private void validateValue(final io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField binding,
-			final String key, final Object value, final ConfigurationField field) throws EncodeException{
-		//check format
-		final String format = binding.format();
-		if(!format.isEmpty()){
-			final Pattern formatPattern = Pattern.compile(format);
+	private void validateValue(final ConfigurationField binding, final String key, final Object value, final ConfigField field)
+			throws EncodeException{
+		//check pattern
+		final String pattern = binding.pattern();
+		if(!pattern.isEmpty()){
+			final Pattern formatPattern = Pattern.compile(pattern);
 
-			//value compatible with data type and format
-			if(!String.class.isAssignableFrom(value.getClass()) || !formatPattern.matcher((CharSequence)value).matches())
-				throw EncodeException.create("Data value not compatible with `format` for data key {}; found {}, expected {}",
-					key, value, format);
+			//value compatible with data type and pattern
+			if(!String.class.isInstance(value) || !formatPattern.matcher((CharSequence)value).matches())
+				throw EncodeException.create("Data value not compatible with `pattern` for data key {}; found {}, expected {}",
+					key, value, pattern);
 		}
 		//check minValue
 		final String minValue = binding.minValue();
 		if(!minValue.isEmpty()){
 			final Object min = JavaHelper.getValue(field.getFieldType(), minValue);
-			if(Number.class.isAssignableFrom(value.getClass()) && ((Number)value).doubleValue() < ((Number)min).doubleValue())
+			if(Number.class.isInstance(value) && ((Number)value).doubleValue() < ((Number)min).doubleValue())
 				throw EncodeException.create("Data value incompatible with minimum value for data key {}; found {}, expected greater than or equals to {}",
 					key, value, minValue.getClass().getSimpleName());
 		}
@@ -356,35 +401,83 @@ final class LoaderConfiguration{
 		final String maxValue = binding.maxValue();
 		if(!maxValue.isEmpty()){
 			final Object max = JavaHelper.getValue(field.getFieldType(), maxValue);
-			if(Number.class.isAssignableFrom(value.getClass()) && ((Number)value).doubleValue() > ((Number)max).doubleValue())
+			if(Number.class.isInstance(value) && ((Number)value).doubleValue() > ((Number)max).doubleValue())
 				throw EncodeException.create("Data value incompatible with maximum value for data key {}; found {}, expected greater than or equals to {}",
 					key, value, maxValue.getClass().getSimpleName());
 		}
 	}
 
-	private void setValue(final Object object,
-			final io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField binding, final String key, final Object value,
-			final ConfigurationField field) throws EncodeException{
-		final Class<? extends Enum<?>> foundEnumeration = binding.enumeration();
-		if(foundEnumeration != NullEnum.class){
-			if(!String.class.isAssignableFrom(value.getClass()))
+	private void validateValue(final CompositeConfigurationField binding, final String key, final Object value) throws EncodeException{
+		//check pattern
+		final String pattern = binding.pattern();
+		if(!pattern.isEmpty()){
+			final Pattern formatPattern = Pattern.compile(pattern);
+
+			//compose outer field value
+			final String composition = binding.composition();
+			final ConfigurationField[] fields = binding.value();
+			@SuppressWarnings("unchecked")
+			final String outerValue = replace(composition, (Map<String, Object>)value, fields);
+
+			//value compatible with data type and format
+			if(!formatPattern.matcher(outerValue).matches())
+				throw EncodeException.create("Data value not compatible with `pattern` for data key {}; found {}, expected {}",
+					key, outerValue, pattern);
+		}
+	}
+
+	private static String replace(final String text, final Map<String, Object> replacements, final ConfigurationField[] fields)
+			throws EncodeException{
+		final Map<String, Object> trueReplacements = new HashMap<>(fields.length);
+		for(int i = 0; i < fields.length; i ++){
+			final String key = fields[i].shortDescription();
+			trueReplacements.put(key, replacements.get(key));
+		}
+		return substitutePlaceholders(text, trueReplacements);
+	}
+
+	private static String substitutePlaceholders(final String text, final Map<String, Object> dataModel) throws EncodeException{
+		if(dataModel != null){
+			try{
+				final Writer writer = new StringWriter();
+				final Template template = new Template(NOTIFICATION_TEMPLATE, new StringReader(text), FREEMARKER_CONFIGURATION);
+
+				//create a processing environment
+				final Environment mainTemplateEnvironment = template.createProcessingEnvironment(dataModel, writer);
+
+				//process everything
+				mainTemplateEnvironment.process();
+
+				return writer.toString();
+			}
+			catch(final IOException | TemplateException e){
+				throw EncodeException.create(e);
+			}
+		}
+		return text;
+	}
+
+	private void setValue(final Object object, final Class<? extends Enum<?>> enumeration, final String key, final Object value,
+			final ConfigField field) throws EncodeException{
+		if(enumeration != NullEnum.class){
+			if(!String.class.isInstance(value))
 				throw EncodeException.create("Data value incompatible with field type {}; found {}, expected String.class",
 					key, value.getClass());
 
 			final Object dataEnum;
-			final Enum<?>[] enumConstants = foundEnumeration.getEnumConstants();
-			if(!binding.mutuallyExclusive()){
+			final Enum<?>[] enumConstants = enumeration.getEnumConstants();
+			if(field.getFieldType().isArray()){
 				final String[] defaultValues = JavaHelper.split((String)value, "|", -1);
-				dataEnum = Array.newInstance(foundEnumeration, defaultValues.length);
+				dataEnum = Array.newInstance(enumeration, defaultValues.length);
 				for(int i = 0; i < defaultValues.length; i ++)
 					Array.set(dataEnum, i, JavaHelper.extractEnum(enumConstants, defaultValues[i]));
 			}
 			else
-				dataEnum = foundEnumeration
+				dataEnum = enumeration
 					.cast(JavaHelper.extractEnum(enumConstants, (String)value));
 			field.setFieldValue(object, dataEnum);
 		}
-		else if(String.class.isAssignableFrom(value.getClass())){
+		else if(String.class.isInstance(value)){
 			final Object val = JavaHelper.getValue(field.getFieldType(), (String)value);
 			field.setFieldValue(object, val);
 		}
@@ -392,32 +485,62 @@ final class LoaderConfiguration{
 			field.setFieldValue(object, value);
 	}
 
-	private void validateMandatoryFields(final Collection<ConfigurationField> mandatoryFields) throws EncodeException{
+	private void setValue(final Object object, final Object value, final ConfigField field) throws EncodeException{
+		setValue(object, NullEnum.class, null, value, field);
+	}
+
+	private void validateMandatoryFields(final Collection<ConfigField> mandatoryFields) throws EncodeException{
 		if(!mandatoryFields.isEmpty()){
 			final StringJoiner sj = new StringJoiner(", ", "[", "]");
-			for(final ConfigurationField mandatoryField : mandatoryFields){
-				final io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField foundBinding
-					= (io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField)mandatoryField.getBinding();
-				sj.add(foundBinding.shortDescription());
+			for(final ConfigField mandatoryField : mandatoryFields){
+				String shortDescription = null;
+				if(ConfigurationField.class.isInstance(mandatoryField.getBinding())){
+					final ConfigurationField foundBinding = (ConfigurationField)mandatoryField.getBinding();
+					shortDescription = foundBinding.shortDescription();
+				}
+				else if(CompositeConfigurationField.class.isInstance(mandatoryField.getBinding())){
+					final CompositeConfigurationField foundBinding = (CompositeConfigurationField)mandatoryField.getBinding();
+					shortDescription = foundBinding.shortDescription();
+				}
+				sj.add(shortDescription);
 			}
 			throw EncodeException.create("Mandatory fields missing: {}", sj.toString());
 		}
 	}
 
 	private Map<String, Object> extractFieldsMap(final Version protocol, final Configuration<?> configuration) throws ConfigurationException{
-		final List<ConfigurationField> fields = configuration.getConfigurationFields();
+		final List<ConfigField> fields = configuration.getConfigurationFields();
 		final Map<String, Object> fieldsMap = new HashMap<>(fields.size());
 		for(int i = 0; i < fields.size(); i ++){
-			final ConfigurationField field = fields.get(i);
-			final io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField fieldBinding
-				= (io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField)field.getBinding();
-			if(shouldBeExtracted(protocol, fieldBinding.minProtocol(), fieldBinding.maxProtocol()))
-				continue;
+			final ConfigField field = fields.get(i);
+			final Annotation fieldBinding = field.getBinding();
+			if(ConfigurationField.class.isAssignableFrom(fieldBinding.annotationType())){
+				final ConfigurationField binding = (ConfigurationField)fieldBinding;
+				if(!shouldBeExtracted(protocol, binding.minProtocol(), binding.maxProtocol()))
+					continue;
 
-			final Class<?> fieldType = field.getFieldType();
-			final Map<String, Object> fieldMap = extractMap(fieldBinding, fieldType);
+				final Class<?> fieldType = field.getFieldType();
+				final Map<String, Object> fieldMap = extractMap(binding, fieldType);
 
-			fieldsMap.put(fieldBinding.shortDescription(), fieldMap);
+				fieldsMap.put(binding.shortDescription(), fieldMap);
+			}
+			else if(CompositeConfigurationField.class.isAssignableFrom(fieldBinding.annotationType())){
+				final CompositeConfigurationField compositeBinding = (CompositeConfigurationField)fieldBinding;
+				if(!shouldBeExtracted(protocol, compositeBinding.minProtocol(), compositeBinding.maxProtocol()))
+					continue;
+
+				final Class<?> fieldType = field.getFieldType();
+				final Map<String, Object> compositeMap = extractMap(compositeBinding);
+				final ConfigurationField[] bindings = compositeBinding.value();
+				final Map<String, Object> compositeFieldsMap = new HashMap<>(bindings.length);
+				for(int j = 0; j < bindings.length; j ++){
+					final Map<String, Object> fieldMap = extractMap(bindings[j], fieldType);
+
+					compositeFieldsMap.put(bindings[j].shortDescription(), fieldMap);
+				}
+				compositeMap.put(CONFIGURATION_COMPOSITE_FIELDS, compositeFieldsMap);
+				fieldsMap.put(compositeBinding.shortDescription(), compositeMap);
+			}
 		}
 		return fieldsMap;
 	}
@@ -426,63 +549,68 @@ final class LoaderConfiguration{
 		final Map<String, Object> map = new HashMap<>(3);
 		putIfNotEmpty(map, "shortDescription", header.shortDescription());
 		putIfNotEmpty(map, "longDescription", header.longDescription());
-		putIfNotEmpty(map, "charset", header.charset());
-		putIfNotEmpty(map, "minProtocol", header.minProtocol());
-		putIfNotEmpty(map, "maxProtocol", header.maxProtocol());
 		return map;
 	}
 
-	private Map<String, Object> extractMap(final io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField binding,
-			final Class<?> fieldType) throws ConfigurationException{
+	private Map<String, Object> extractMap(final ConfigurationField binding, final Class<?> fieldType) throws ConfigurationException{
 		final Map<String, Object> map = new HashMap<>(10);
+
 		putIfNotEmpty(map, "longDescription", binding.longDescription());
 		putIfNotEmpty(map, "unitOfMeasure", binding.unitOfMeasure());
+
 		putIfNotEmpty(map, "minValue", JavaHelper.getValue(fieldType, binding.minValue()));
 		putIfNotEmpty(map, "maxValue", JavaHelper.getValue(fieldType, binding.maxValue()));
-		putIfNotEmpty(map, "format", binding.format());
+		putIfNotEmpty(map, "pattern", binding.pattern());
 		if(binding.enumeration() != NullEnum.class){
 			final Enum<?>[] enumConstants = binding.enumeration().getEnumConstants();
 			final String[] enumValues = new String[enumConstants.length];
 			for(int j = 0; j < enumConstants.length; j ++)
 				enumValues[j] = enumConstants[j].name();
 			putIfNotEmpty(map, "enumeration", enumValues);
-			putIfNotEmpty(map, "mutuallyExclusive", binding.mutuallyExclusive());
+			if(fieldType.isEnum())
+				putIfNotEmpty(map, "mutuallyExclusive", true);
 		}
-		putIfNotEmpty(map, "mandatory", binding.mandatory());
+
 		putValueIfNotEmpty(map, "defaultValue", fieldType, binding.enumeration(), binding.defaultValue());
-		putIfNotEmpty(map, "writable", binding.writable());
+		if(String.class.isAssignableFrom(fieldType))
+			putIfNotEmpty(map, "charset", binding.charset());
+
+		return map;
+	}
+
+	private Map<String, Object> extractMap(final CompositeConfigurationField binding) throws ConfigurationException{
+		final Map<String, Object> map = new HashMap<>(6);
+
+		putIfNotEmpty(map, "longDescription", binding.longDescription());
+		putIfNotEmpty(map, "pattern", binding.pattern());
+
 		return map;
 	}
 
 	private void putIfNotEmpty(@SuppressWarnings("BoundedWildcard") final Map<String, Object> map, final String key, final Object value)
 			throws ConfigurationException{
-		if(value != null && (!(value instanceof String) || !JavaHelper.isBlank((CharSequence)value))){
-			final Object previousValue = map.put(key, value);
-			if(previousValue != null)
+		if(value != null && (!String.class.isInstance(value) || !JavaHelper.isBlank((CharSequence)value)))
+			if(map.put(key, value) != null)
 				throw ConfigurationException.create("Duplicated short description: {}", key);
-		}
 	}
 
 	private void putValueIfNotEmpty(@SuppressWarnings("BoundedWildcard") final Map<String, Object> map, final String key,
 			final Class<?> fieldType, final Class<? extends Enum<?>> enumeration, final String value) throws ConfigurationException{
 		if(!JavaHelper.isBlank(value)){
 			Object val = value;
-			if(enumeration != NullEnum.class)
+			if(enumeration != NullEnum.class && fieldType.isArray())
 				val = JavaHelper.split(value, "|", -1);
 			else if(Number.class.isAssignableFrom(ParserDataType.toObjectiveTypeOrSelf(fieldType)))
 				val = JavaHelper.getValue(fieldType, value);
-			final Object previousValue = map.put(key, val);
-			if(previousValue != null)
+			if(map.put(key, val) != null)
 				throw ConfigurationException.create("Duplicated short description: {}", key);
 		}
 	}
 
-	private boolean shouldBeExtracted(final Version protocol, final String minProtocol, final String maxProtocol){
+	public static boolean shouldBeExtracted(final Version protocol, final String minProtocol, final String maxProtocol){
 		final Version min = new Version(minProtocol);
 		final Version max = new Version(maxProtocol);
-		return (min.isEmpty() && max.isEmpty()
-			|| !min.isEmpty() && protocol.isLessThan(min)
-			|| !max.isEmpty() && protocol.isGreaterThan(max));
+		return (min.isEmpty() || protocol.isGreaterThanOrEqualTo(min)) && (max.isEmpty() || protocol.isLessThanOrEqualTo(max));
 	}
 
 }

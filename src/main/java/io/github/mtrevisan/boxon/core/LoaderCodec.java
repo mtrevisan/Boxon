@@ -39,6 +39,18 @@ import java.util.Objects;
 
 final class LoaderCodec{
 
+	/**
+	 * NOTE: all the methods listed below HAS TO HAVE this very same charset!
+	 *
+	 * @see io.github.mtrevisan.boxon.annotations.MessageHeader#charset()
+	 * @see io.github.mtrevisan.boxon.annotations.bindings.BindString#charset()
+	 * @see io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated#charset()
+	 * @see io.github.mtrevisan.boxon.annotations.configurations.ConfigurationMessage#charset()
+	 * @see io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField#charset()
+	 */
+	public static final String CHARSET_DEFAULT = "UTF-8";
+
+
 	@InjectEventListener
 	private final EventListener eventListener;
 

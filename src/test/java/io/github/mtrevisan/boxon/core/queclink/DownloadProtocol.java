@@ -24,9 +24,11 @@
  */
 package io.github.mtrevisan.boxon.core.queclink;
 
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
+
 
 @SuppressWarnings("ALL")
-public enum DownloadProtocol{
+public enum DownloadProtocol implements ConfigurationEnum{
 
 	HTTP(0),
 	HTTPS(2);
@@ -36,6 +38,11 @@ public enum DownloadProtocol{
 
 	DownloadProtocol(final int code){
 		this.code = code;
+	}
+
+	@Override
+	public int getCode(){
+		return code;
 	}
 
 }

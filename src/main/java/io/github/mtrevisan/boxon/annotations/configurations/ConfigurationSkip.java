@@ -36,7 +36,7 @@ import java.lang.annotation.Target;
  * Manages the skipping of a certain amount of bits, or until a given terminator is found.
  * <p>Since this annotation is bound to a field, if it is necessary to skip some amounts of bits from the end, it is necessary
  * to introduce a placeholder field (this can be of any type, since it is not assigned at all):</p>
- * <pre><code>
+ * <pre>{@code
  * &#x40;Skip(size = "3")
  * &#x40;Skip(size = "1")
  * &#x40;BindString(size = "4")
@@ -44,7 +44,7 @@ import java.lang.annotation.Target;
  *
  * &#x40;Skip(size = "10")
  * private int unused;
- * </code></pre>
+ * }</pre>
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
@@ -92,11 +92,11 @@ public @interface ConfigurationSkip{
 	String size() default "0";
 
 	/**
-	 * The byte that terminates the skip.
+	 * The string that terminates the skip (charset is UTF-8).
 	 *
-	 * @return	The terminator byte (defaults to {@code \0}).
+	 * @return	The terminator string (defaults to empty).
 	 */
-	byte terminator() default '\0';
+	String terminator() default "";
 
 	/**
 	 * Whether to consume the terminator.

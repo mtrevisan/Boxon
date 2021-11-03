@@ -25,20 +25,8 @@
 package io.github.mtrevisan.boxon.annotations.configurations;
 
 
-public enum FieldType{
+public interface ConfigurationEnum{
 
-	//FIXME transfer this information into unitOfMeasure?
-	IP, URL,
-
-	//FIXME transfer this information into unitOfMeasure?
-	EMAIL,
-
-	//FIXME transfer this information into unitOfMeasure?
-	PHONE_NUMBER,
-
-	//FIXME transfer this information into unitOfMeasure?
-	DATE, TIME, DATETIME,
-
-	BINARY, DECIMAL, OCTAL, HEXADECIMAL
+	int getCode();
 
 }

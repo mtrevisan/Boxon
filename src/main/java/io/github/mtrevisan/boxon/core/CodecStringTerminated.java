@@ -32,6 +32,7 @@ import io.github.mtrevisan.boxon.external.BitWriter;
 
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 
 final class CodecStringTerminated implements CodecInterface<BindStringTerminated>{
@@ -42,7 +43,7 @@ final class CodecStringTerminated implements CodecInterface<BindStringTerminated
 
 		final Charset charset = Charset.forName(binding.charset());
 
-		final String text = reader.getTextUntilTerminator(binding.terminator(), charset);
+		final String text = reader.getTextUntilTerminator(binding.terminator(), StandardCharsets.UTF_8);
 		if(binding.consumeTerminator())
 			reader.getByte();
 

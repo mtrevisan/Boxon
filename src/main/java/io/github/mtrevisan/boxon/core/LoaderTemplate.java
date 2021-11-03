@@ -161,8 +161,7 @@ final class LoaderTemplate{
 		}
 	}
 
-	private void loadTemplateInner(final Template<?> template, final String headerStart, final Charset charset)
-			throws TemplateException{
+	private void loadTemplateInner(final Template<?> template, final String headerStart, final Charset charset) throws TemplateException{
 		final String key = LoaderHelper.calculateKey(headerStart, charset);
 		if(templates.containsKey(key))
 			throw TemplateException.create("Duplicated key `{}` found for class {}", headerStart, template.getType().getName());

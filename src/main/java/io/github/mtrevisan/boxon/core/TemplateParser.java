@@ -294,8 +294,7 @@ final class TemplateParser{
 		final MessageHeader header = template.getHeader();
 		if(header != null && !header.end().isEmpty()){
 			final Charset charset = Charset.forName(header.charset());
-			final byte[] messageTerminator = header.end().getBytes(charset);
-			writer.putBytes(messageTerminator);
+			writer.putText(header.end(), charset);
 		}
 	}
 

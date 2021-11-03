@@ -43,7 +43,7 @@ public final class ComposeResponse{
 	private byte[] composedMessage;
 
 	/** List of error messages. */
-	private final List<EncodeException> errors = new ArrayList<>();
+	private final List<EncodeException> errors = new ArrayList<>(0);
 
 
 	/**
