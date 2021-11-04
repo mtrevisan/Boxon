@@ -33,7 +33,7 @@ import java.util.StringTokenizer;
 /**
  * @see <a href="https://semver.org/">Semantic Versioning 2.0.0</a>
  */
-public class Version implements Comparable<Version>{
+public final class Version implements Comparable<Version>{
 
 	private static final String DOT = ".";
 	/** A separator that separates the pre-release version from the normal version. */
@@ -52,6 +52,15 @@ public class Version implements Comparable<Version>{
 
 
 	/**
+	 * Creates a new instance of {@code Version} as a result of parsing the specified version string.
+	 *
+	 * @param version	The string representation of the version.
+	 */
+	public static Version of(final String version){
+		return new Version(version);
+	}
+
+	/**
 	 * Constructs a {@code Version} with the major, minor and patch version numbers.
 	 *
 	 * @param major	The major version number
@@ -59,8 +68,8 @@ public class Version implements Comparable<Version>{
 	 * @param patch	The patch version number
 	 * @throws IllegalArgumentException	If one of the version numbers is a negative integer
 	 */
-	public Version(final int major, final int minor, final int patch){
-		this(major, minor, patch, JavaHelper.EMPTY_ARRAY, JavaHelper.EMPTY_ARRAY);
+	public static Version of(final int major, final int minor, final int patch){
+		return new Version(major, minor, patch, JavaHelper.EMPTY_ARRAY, JavaHelper.EMPTY_ARRAY);
 	}
 
 	/**
@@ -72,8 +81,8 @@ public class Version implements Comparable<Version>{
 	 * @param preRelease	The pre-release identifiers
 	 * @throws IllegalArgumentException	If one of the version numbers is a negative integer
 	 */
-	public Version(final int major, final int minor, final int patch, final String[] preRelease){
-		this(major, minor, patch, preRelease, JavaHelper.EMPTY_ARRAY);
+	public static Version of(final int major, final int minor, final int patch, final String[] preRelease){
+		return new Version(major, minor, patch, preRelease, JavaHelper.EMPTY_ARRAY);
 	}
 
 	/**
@@ -86,7 +95,11 @@ public class Version implements Comparable<Version>{
 	 * @param build	The build identifiers
 	 * @throws IllegalArgumentException	If one of the version numbers is a negative integer
 	 */
-	public Version(final int major, final int minor, final int patch, final String[] preRelease, final String[] build){
+	public static Version of(final int major, final int minor, final int patch, final String[] preRelease, final String[] build){
+		return new Version(major, minor, patch, preRelease, build);
+	}
+
+	private Version(final int major, final int minor, final int patch, final String[] preRelease, final String[] build){
 		if(major < 0 || minor < 0 || patch < 0)
 			throw new IllegalArgumentException("Major, minor and patch versions MUST be non-negative integers.");
 
@@ -97,12 +110,7 @@ public class Version implements Comparable<Version>{
 		this.build = (build != null? build: JavaHelper.EMPTY_ARRAY);
 	}
 
-	/**
-	 * Creates a new instance of {@code Version} as a result of parsing the specified version string.
-	 *
-	 * @param version	The string representation of the version.
-	 */
-	public Version(String version){
+	private Version(String version){
 		if(JavaHelper.isBlank(version)){
 			major = null;
 			minor = null;

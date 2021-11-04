@@ -214,7 +214,7 @@ final class LoaderConfiguration{
 		if(JavaHelper.isBlank(protocol))
 			throw new IllegalArgumentException(JavaHelper.format("Invalid protocol: {}", protocol));
 
-		final Version currentProtocol = new Version(protocol);
+		final Version currentProtocol = Version.of(protocol);
 
 		final Collection<Configuration<?>> configurationValues = configurations.values();
 		final List<Map<String, Object>> response = new ArrayList<>(configurationValues.size());
@@ -620,9 +620,11 @@ final class LoaderConfiguration{
 	}
 
 	public static boolean shouldBeExtracted(final Version protocol, final String minProtocol, final String maxProtocol){
-		final Version min = new Version(minProtocol);
-		final Version max = new Version(maxProtocol);
-		return (min.isEmpty() || protocol.isGreaterThanOrEqualTo(min)) && (max.isEmpty() || protocol.isLessThanOrEqualTo(max));
+		final Version min = Version.of(minProtocol);
+		final Version max = Version.of(maxProtocol);
+		final boolean validMinimum = min.isEmpty() || protocol.isGreaterThanOrEqualTo(min);
+		final boolean validMaximum = max.isEmpty() || protocol.isLessThanOrEqualTo(max);
+		return (validMinimum && validMaximum);
 	}
 
 }

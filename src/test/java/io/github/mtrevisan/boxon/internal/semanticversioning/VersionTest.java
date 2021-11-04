@@ -33,41 +33,41 @@ class VersionTest{
 
 	@Test
 	void shouldParseNormalVersion(){
-		Version version = new Version("1.0.0");
+		Version version = Version.of("1.0.0");
 
-		Assertions.assertEquals(new Version(1, 0, 0), version);
+		Assertions.assertEquals(Version.of(1, 0, 0), version);
 		Assertions.assertEquals("1.0.0", version.toString());
 	}
 
 	@Test
 	void shouldRaiseErrorIfNumericIdentifierHasLeadingZeros(){
 		Throwable exception = Assertions.assertThrows(IllegalArgumentException.class,
-			() -> new Version("01.1.0"));
+			() -> Version.of("01.1.0"));
 
 		Assertions.assertEquals("Numeric identifier MUST NOT contain leading zeros", exception.getMessage());
 	}
 
 	@Test
 	void shouldParsePreReleaseVersion(){
-		Version version = new Version("1.1.0-beta");
+		Version version = Version.of("1.1.0-beta");
 
-		Assertions.assertEquals(new Version(1, 1, 0, new String[]{"beta"}), version);
+		Assertions.assertEquals(Version.of(1, 1, 0, new String[]{"beta"}), version);
 		Assertions.assertEquals("1.1.0-beta", version.toString());
 	}
 
 	@Test
 	void shouldParsePreReleaseVersionAndBuild(){
-		Version version = new Version("1.0.0-rc.2+build.05");
+		Version version = Version.of("1.0.0-rc.2+build.05");
 
-		Assertions.assertEquals(new Version(1, 0, 0, new String[]{"rc", "2"}, new String[]{"build", "05"}), version);
+		Assertions.assertEquals(Version.of(1, 0, 0, new String[]{"rc", "2"}, new String[]{"build", "05"}), version);
 		Assertions.assertEquals("1.0.0-rc.2+build.05", version.toString());
 	}
 
 	@Test
 	void shouldParseBuild(){
-		Version version = new Version("1.2.3+build");
+		Version version = Version.of("1.2.3+build");
 
-		Assertions.assertEquals(new Version(1, 2, 3, new String[0], new String[]{"build"}), version);
+		Assertions.assertEquals(Version.of(1, 2, 3, new String[0], new String[]{"build"}), version);
 		Assertions.assertEquals("1.2.3+build", version.toString());
 	}
 

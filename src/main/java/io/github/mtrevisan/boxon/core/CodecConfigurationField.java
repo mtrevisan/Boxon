@@ -36,7 +36,6 @@ import io.github.mtrevisan.boxon.internal.ParserDataType;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
-import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
@@ -72,16 +71,14 @@ final class CodecConfigurationField implements CodecInterface<ConfigurationField
 				writer.putText((String)val, charset);
 			else{
 				final Class<?> fieldClass = ParserDataType.toObjectiveTypeOrSelf(val.getClass());
-				if(Number.class.isAssignableFrom(fieldClass)){
-					final int radix = binding.radix();
-					val = Long.toString(((Number)val).longValue(), radix);
-				}
-				else if(fieldClass == BigDecimal.class)
-					writer.putDecimal((BigDecimal)val, fieldClass, ByteOrder.BIG_ENDIAN);
-				else if(fieldClass == Float.class)
+				if(fieldClass == Float.class)
 					writer.putFloat((Float)val, ByteOrder.BIG_ENDIAN);
 				else if(fieldClass == Double.class)
 					writer.putDouble((Double)val, ByteOrder.BIG_ENDIAN);
+				else if(Number.class.isAssignableFrom(fieldClass)){
+					final int radix = binding.radix();
+					val = Long.toString(((Number)val).longValue(), radix);
+				}
 				else
 					throw ConfigurationException.create("Cannot handle this type of field: {}, please report to the developer",
 						fieldClass);

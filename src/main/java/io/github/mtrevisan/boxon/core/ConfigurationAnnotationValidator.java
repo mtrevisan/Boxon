@@ -56,8 +56,8 @@ enum ConfigurationAnnotationValidator{
 			final String minProtocol = binding.minProtocol();
 			final String maxProtocol = binding.minProtocol();
 			if(!minProtocol.isEmpty() && !maxProtocol.isEmpty()){
-				final Version min = new Version(minProtocol);
-				final Version max = new Version(maxProtocol);
+				final Version min = Version.of(minProtocol);
+				final Version max = Version.of(maxProtocol);
 				if(max.isLessThan(min))
 					throw AnnotationException.create("Maximum protocol should be after minimum protocol in {}; min is {}, max is {}",
 						ConfigurationField.class.getSimpleName(), minProtocol, maxProtocol);
@@ -204,7 +204,7 @@ enum ConfigurationAnnotationValidator{
 							ConfigurationField.class.getSimpleName(), defaultValue, maxValue.getClass().getSimpleName());
 				}
 
-				if(def != null && min != null && max != null && ((Number)min).doubleValue() > ((Number)max).doubleValue())
+				if(min != null && max != null && ((Number)min).doubleValue() > ((Number)max).doubleValue())
 					//maxValue after or equal to minValue
 					throw AnnotationException.create("Minimum value should be less than or equal to maximum value in {}; found {}, expected greater than or equals to {}",
 						ConfigurationField.class.getSimpleName(), defaultValue, minValue.getClass().getSimpleName());
@@ -388,7 +388,7 @@ enum ConfigurationAnnotationValidator{
 			Version minimum = null;
 			if(!minProtocol.isEmpty()){
 				try{
-					minimum = new Version(minProtocol);
+					minimum = Version.of(minProtocol);
 				}
 				catch(final IllegalArgumentException iae){
 					throw AnnotationException.create(iae, "Invalid minimum protocol version in {}; found {}",
@@ -398,7 +398,7 @@ enum ConfigurationAnnotationValidator{
 			Version maximum = null;
 			if(!maxProtocol.isEmpty()){
 				try{
-					maximum = new Version(maxProtocol);
+					maximum = Version.of(maxProtocol);
 				}
 				catch(final IllegalArgumentException iae){
 					throw AnnotationException.create(iae, "Invalid maximum protocol version in {}; found {}",
