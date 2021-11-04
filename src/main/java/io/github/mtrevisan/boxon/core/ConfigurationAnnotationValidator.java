@@ -176,39 +176,51 @@ enum ConfigurationAnnotationValidator{
 			final String defaultValue = binding.defaultValue();
 
 			if(!minValue.isEmpty() || !maxValue.isEmpty()){
-				Object min = null;
-				Object max = null;
 				final Object def = (!defaultValue.isEmpty()? JavaHelper.getValue(fieldType, defaultValue): null);
-				if(!minValue.isEmpty()){
-					min = JavaHelper.getValue(fieldType, minValue);
-					//minValue compatible with variable type
-					if(min == null)
-						throw AnnotationException.create("Incompatible minimum value in {}; found {}, expected {}",
-							ConfigurationField.class.getSimpleName(), minValue.getClass().getSimpleName(), fieldType.toString());
-
-					if(JavaHelper.isNumeric(defaultValue) && def != null && ((Number)def).doubleValue() < ((Number)min).doubleValue())
-						//defaultValue compatible with minValue
-						throw AnnotationException.create("Default value incompatible with minimum value in {}; found {}, expected greater than or equals to {}",
-							ConfigurationField.class.getSimpleName(), defaultValue, minValue.getClass().getSimpleName());
-				}
-				if(!maxValue.isEmpty()){
-					max = JavaHelper.getValue(fieldType, maxValue);
-					//maxValue compatible with variable type
-					if(max == null)
-						throw AnnotationException.create("Incompatible maximum value in {}; found {}, expected {}",
-							ConfigurationField.class.getSimpleName(), maxValue.getClass().getSimpleName(), fieldType.toString());
-
-					if(JavaHelper.isNumeric(defaultValue) && def != null && ((Number)def).doubleValue() > ((Number)max).doubleValue())
-						//defaultValue compatible with maxValue
-						throw AnnotationException.create("Default value incompatible with maximum value in {}; found {}, expected less than or equals to {}",
-							ConfigurationField.class.getSimpleName(), defaultValue, maxValue.getClass().getSimpleName());
-				}
+				final Object min = validateMinValue(fieldType, minValue, defaultValue, def);
+				final Object max = validateMaxValue(fieldType, maxValue, defaultValue, def);
 
 				if(min != null && max != null && ((Number)min).doubleValue() > ((Number)max).doubleValue())
 					//maxValue after or equal to minValue
 					throw AnnotationException.create("Minimum value should be less than or equal to maximum value in {}; found {}, expected greater than or equals to {}",
 						ConfigurationField.class.getSimpleName(), defaultValue, minValue.getClass().getSimpleName());
 			}
+		}
+
+		private Object validateMinValue(final Class<?> fieldType, final String minValue, final String defaultValue, final Object def)
+				throws AnnotationException{
+			Object min = null;
+			if(!minValue.isEmpty()){
+				min = JavaHelper.getValue(fieldType, minValue);
+				//minValue compatible with variable type
+				if(min == null)
+					throw AnnotationException.create("Incompatible minimum value in {}; found {}, expected {}",
+						ConfigurationField.class.getSimpleName(), minValue.getClass().getSimpleName(), fieldType.toString());
+
+				if(def != null && ((Number)def).doubleValue() < ((Number)min).doubleValue())
+					//defaultValue compatible with minValue
+					throw AnnotationException.create("Default value incompatible with minimum value in {}; found {}, expected greater than or equals to {}",
+						ConfigurationField.class.getSimpleName(), defaultValue, minValue.getClass().getSimpleName());
+			}
+			return min;
+		}
+
+		private Object validateMaxValue(final Class<?> fieldType, final String maxValue, final String defaultValue, final Object def)
+				throws AnnotationException{
+			Object max = null;
+			if(!maxValue.isEmpty()){
+				max = JavaHelper.getValue(fieldType, maxValue);
+				//maxValue compatible with variable type
+				if(max == null)
+					throw AnnotationException.create("Incompatible maximum value in {}; found {}, expected {}",
+						ConfigurationField.class.getSimpleName(), maxValue.getClass().getSimpleName(), fieldType.toString());
+
+				if(JavaHelper.isNumeric(defaultValue) && def != null && ((Number)def).doubleValue() > ((Number)max).doubleValue())
+					//defaultValue compatible with maxValue
+					throw AnnotationException.create("Default value incompatible with maximum value in {}; found {}, expected less than or equals to {}",
+						ConfigurationField.class.getSimpleName(), defaultValue, maxValue.getClass().getSimpleName());
+			}
+			return max;
 		}
 
 		private void validateEnumeration(final Field field, final ConfigurationField binding) throws AnnotationException{
@@ -230,35 +242,43 @@ enum ConfigurationAnnotationValidator{
 						field.getName());
 
 				//enumeration compatible with variable type
-				if(isFieldArray){
-					if(!fieldType.getComponentType().isAssignableFrom(enumeration))
-						throw AnnotationException.create("Incompatible enum in {}; found {}, expected {}",
-							ConfigurationField.class.getSimpleName(), enumeration.getSimpleName(), fieldType.toString());
+				if(isFieldArray)
+					validateEnumMultipleValues(field, fieldType, enumeration, enumConstants, defaultValue);
+				else
+					validateEnumerationMutuallyExclusive(fieldType, enumeration, enumConstants, defaultValue);
+			}
+		}
 
-					if(!defaultValue.isEmpty()){
-						final String[] defaultValues = JavaHelper.split(defaultValue, '|', -1);
-						if(field.getType().isEnum() && defaultValues.length != 1)
-							throw AnnotationException.create("Default value for mutually exclusive enumeration field in {} should be a value; found {}, expected one of {}",
-								ConfigurationField.class.getSimpleName(), defaultValue, Arrays.toString(enumConstants));
+		private void validateEnumMultipleValues(final Field field, final Class<?> fieldType, final Class<? extends Enum<?>> enumeration,
+				final Enum<?>[] enumConstants, final String defaultValue) throws AnnotationException{
+			if(!fieldType.getComponentType().isAssignableFrom(enumeration))
+				throw AnnotationException.create("Incompatible enum in {}; found {}, expected {}",
+					ConfigurationField.class.getSimpleName(), enumeration.getSimpleName(), fieldType.toString());
 
-						for(int i = 0; i < JavaHelper.lengthOrZero(defaultValues); i ++){
-							final String dv = defaultValues[i];
-							if(JavaHelper.extractEnum(enumConstants, dv) == null)
-								throw AnnotationException.create("Default value not compatible with `enumeration` in {}; found {}, expected one of {}",
-									ConfigurationField.class.getSimpleName(), dv, Arrays.toString(enumConstants));
-						}
-					}
-				}
-				else{
-					if(!fieldType.isAssignableFrom(enumeration))
-						throw AnnotationException.create("Incompatible enum in {}; found {}, expected {}",
-							ConfigurationField.class.getSimpleName(), enumeration.getSimpleName(), fieldType.toString());
+			if(!defaultValue.isEmpty()){
+				final String[] defaultValues = JavaHelper.split(defaultValue, '|', -1);
+				if(field.getType().isEnum() && defaultValues.length != 1)
+					throw AnnotationException.create("Default value for mutually exclusive enumeration field in {} should be a value; found {}, expected one of {}",
+						ConfigurationField.class.getSimpleName(), defaultValue, Arrays.toString(enumConstants));
 
-					if(!defaultValue.isEmpty() && JavaHelper.extractEnum(enumConstants, defaultValue) == null)
+				for(int i = 0; i < JavaHelper.lengthOrZero(defaultValues); i ++){
+					final String dv = defaultValues[i];
+					if(JavaHelper.extractEnum(enumConstants, dv) == null)
 						throw AnnotationException.create("Default value not compatible with `enumeration` in {}; found {}, expected one of {}",
-							ConfigurationField.class.getSimpleName(), defaultValue, Arrays.toString(enumConstants));
+							ConfigurationField.class.getSimpleName(), dv, Arrays.toString(enumConstants));
 				}
 			}
+		}
+
+		private void validateEnumerationMutuallyExclusive(final Class<?> fieldType, final Class<? extends Enum<?>> enumeration,
+				final Enum<?>[] enumConstants, final String defaultValue) throws AnnotationException{
+			if(!fieldType.isAssignableFrom(enumeration))
+				throw AnnotationException.create("Incompatible enum in {}; found {}, expected {}",
+					ConfigurationField.class.getSimpleName(), enumeration.getSimpleName(), fieldType.toString());
+
+			if(!defaultValue.isEmpty() && JavaHelper.extractEnum(enumConstants, defaultValue) == null)
+				throw AnnotationException.create("Default value not compatible with `enumeration` in {}; found {}, expected one of {}",
+					ConfigurationField.class.getSimpleName(), defaultValue, Arrays.toString(enumConstants));
 		}
 	},
 
