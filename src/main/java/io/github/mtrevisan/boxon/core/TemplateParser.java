@@ -105,6 +105,7 @@ final class TemplateParser{
 		this.eventListener = eventListener;
 	}
 
+	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
 	<T> T decode(final Template<T> template, final BitReader reader, final Object parentObject) throws FieldException{
 		final int startPosition = reader.position();
 
@@ -139,6 +140,7 @@ final class TemplateParser{
 		return currentObject;
 	}
 
+	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
 	private <T> void decodeField(final Template<T> template, final BitReader reader, final ParserContext<T> parserContext,
 			final BoundedField field) throws FieldException{
 		try{
@@ -165,12 +167,13 @@ final class TemplateParser{
 		}
 	}
 
-	private <T> void readSkips(final Skip[] skips, final BitReader reader, final ParserContext<T> parserContext){
+	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
+	private static <T> void readSkips(final Skip[] skips, final BitReader reader, final ParserContext<T> parserContext){
 		for(int i = 0; i < JavaHelper.lengthOrZero(skips); i ++)
 			readSkip(skips[i], reader, parserContext.rootObject);
 	}
 
-	private void readSkip(final Skip skip, final BitReader reader, final Object rootObject){
+	private static void readSkip(final Skip skip, final BitReader reader, final Object rootObject){
 		final boolean process = Evaluator.evaluateBoolean(skip.condition(), rootObject);
 		if(process){
 			final int size = Evaluator.evaluateSize(skip.size(), rootObject);
@@ -184,7 +187,7 @@ final class TemplateParser{
 		}
 	}
 
-	private void readMessageTerminator(final Template<?> template, final BitReader reader) throws TemplateException{
+	private static void readMessageTerminator(final Template<?> template, final BitReader reader) throws TemplateException{
 		final MessageHeader header = template.getHeader();
 		if(header != null && !header.end().isEmpty()){
 			final Charset charset = Charset.forName(header.charset());
@@ -196,7 +199,7 @@ final class TemplateParser{
 		}
 	}
 
-	private <T> void verifyChecksum(final Template<T> template, final T data, int startPosition, final BitReader reader){
+	private static <T> void verifyChecksum(final Template<T> template, final T data, int startPosition, final BitReader reader){
 		if(template.isChecksumPresent()){
 			final BoundedField checksumData = template.getChecksum();
 			final Checksum checksum = (Checksum)checksumData.getBinding();
@@ -218,6 +221,7 @@ final class TemplateParser{
 		}
 	}
 
+	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
 	private void processEvaluatedFields(final Template<?> template, final ParserContext<?> parserContext){
 		final List<EvaluatedField> evaluatedFields = template.getEvaluatedFields();
 		for(int i = 0; i < evaluatedFields.size(); i ++){
@@ -234,6 +238,7 @@ final class TemplateParser{
 		}
 	}
 
+	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
 	<T> void encode(final Template<?> template, final BitWriter writer, final Object parentObject, final T currentObject)
 			throws FieldException{
 		final ParserContext<T> parserContext = new ParserContext<>(parentObject, currentObject);
@@ -260,6 +265,7 @@ final class TemplateParser{
 		writer.flush();
 	}
 
+	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
 	private <T> void encodeField(final Template<?> template, final BitWriter writer, final ParserContext<T> parserContext,
 			final BoundedField field) throws FieldException{
 		try{
@@ -286,11 +292,11 @@ final class TemplateParser{
 		}
 	}
 
-	private boolean shouldProcessField(final String condition, final Object rootObject){
+	private static boolean shouldProcessField(final String condition, final Object rootObject){
 		return (condition.isEmpty() || Evaluator.evaluate(condition, rootObject, boolean.class));
 	}
 
-	private void closeMessage(final Template<?> template, final BitWriter writer){
+	private static void closeMessage(final Template<?> template, final BitWriter writer){
 		final MessageHeader header = template.getHeader();
 		if(header != null && !header.end().isEmpty()){
 			final Charset charset = Charset.forName(header.charset());
@@ -318,12 +324,13 @@ final class TemplateParser{
 		catch(final Exception ignored){}
 	}
 
-	private <T> void writeSkips(final Skip[] skips, final BitWriter writer, final ParserContext<T> parserContext){
+	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
+	private static <T> void writeSkips(final Skip[] skips, final BitWriter writer, final ParserContext<T> parserContext){
 		for(int i = 0; i < JavaHelper.lengthOrZero(skips); i ++)
 			writeSkip(skips[i], writer, parserContext.rootObject);
 	}
 
-	private void writeSkip(final Skip skip, final BitWriter writer, final Object rootObject){
+	private static void writeSkip(final Skip skip, final BitWriter writer, final Object rootObject){
 		final boolean process = Evaluator.evaluateBoolean(skip.condition(), rootObject);
 		if(process){
 			final int size = Evaluator.evaluateSize(skip.size(), rootObject);

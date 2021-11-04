@@ -86,7 +86,7 @@ public final class ReflectiveClassLoader{
 		}
 	}
 
-	private void scan(final ScanResult scanResult, final Class<?> filteringClass){
+	private static void scan(final ScanResult scanResult, final Class<?> filteringClass){
 		final ClassInfoList classInfo = (filteringClass.isAnnotation()
 			? scanResult.getClassesWithAnnotation(filteringClass.getName())
 			: scanResult.getClassesImplementing(filteringClass.getName()));
@@ -101,7 +101,7 @@ public final class ReflectiveClassLoader{
 	 * @param type	The interface to search the implementation for.
 	 * @return	The collection of classes implementing the given interface.
 	 */
-	public Collection<Class<?>> getImplementationsOf(final Class<?> type){
+	public static Collection<Class<?>> getImplementationsOf(final Class<?> type){
 		return METADATA_STORE.getOrDefault(type, Collections.emptyList());
 	}
 
@@ -116,7 +116,7 @@ public final class ReflectiveClassLoader{
 	 * @param annotation	The annotation to search for.
 	 * @return	The collection of classes.
 	 */
-	public Collection<Class<?>> getTypesAnnotatedWith(final Class<? extends Annotation> annotation){
+	public static Collection<Class<?>> getTypesAnnotatedWith(final Class<? extends Annotation> annotation){
 		return METADATA_STORE.getOrDefault(annotation, Collections.emptyList());
 	}
 

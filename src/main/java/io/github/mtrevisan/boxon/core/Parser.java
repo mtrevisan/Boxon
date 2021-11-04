@@ -324,7 +324,7 @@ public final class Parser{
 		return response;
 	}
 
-	private void assertNoLeftBytes(final BitReader reader, final int start, final ParseResponse response){
+	private static void assertNoLeftBytes(final BitReader reader, final int start, final ParseResponse response){
 		if(!response.hasErrors() && reader.hasRemaining()){
 			final int position = reader.position();
 			final IllegalArgumentException error = new IllegalArgumentException("There are remaining unread bytes");

@@ -183,7 +183,7 @@ public final class Version implements Comparable<Version>{
 	 * @return	{@code true} if this version is greater than the other version
 	 * @see #compareTo(Version other)
 	 */
-	public final boolean isGreaterThan(final Version other){
+	public boolean isGreaterThan(final Version other){
 		return (compareTo(other) > 0);
 	}
 
@@ -194,7 +194,7 @@ public final class Version implements Comparable<Version>{
 	 * @return	{@code true} if this version is greater than or equal to the other version
 	 * @see #compareTo(Version other)
 	 */
-	public final boolean isGreaterThanOrEqualTo(final Version other){
+	public boolean isGreaterThanOrEqualTo(final Version other){
 		return (compareTo(other) >= 0);
 	}
 
@@ -205,7 +205,7 @@ public final class Version implements Comparable<Version>{
 	 * @return	{@code true} if this version is less than the other version
 	 * @see #compareTo(Version other)
 	 */
-	public final boolean isLessThan(final Version other){
+	public boolean isLessThan(final Version other){
 		return (compareTo(other) < 0);
 	}
 
@@ -216,16 +216,17 @@ public final class Version implements Comparable<Version>{
 	 * @return	{@code true} if this version is less than or equal to the other version
 	 * @see #compareTo(Version other)
 	 */
-	public final boolean isLessThanOrEqualTo(final Version other){
+	public boolean isLessThanOrEqualTo(final Version other){
 		return (compareTo(other) <= 0);
 	}
 
-	public final boolean isEmpty(){
+	public boolean isEmpty(){
 		return (major == null);
 	}
 
 	@Override
-	public final boolean equals(final Object obj){
+	@SuppressWarnings({"AccessingNonPublicFieldOfAnotherObject", "OverlyComplexBooleanExpression"})
+	public boolean equals(final Object obj){
 		if(this == obj)
 			return true;
 		if(obj == null || getClass() != obj.getClass())
@@ -240,7 +241,7 @@ public final class Version implements Comparable<Version>{
 	}
 
 	@Override
-	public final int hashCode(){
+	public int hashCode(){
 		int result = (major != null? Integer.hashCode(major): 0);
 		if(minor != null)
 			result = 31 * result + Integer.hashCode(minor);
@@ -262,7 +263,8 @@ public final class Version implements Comparable<Version>{
 	 * @see #compareToWithBuilds(Version other)
 	 */
 	@Override
-	public final int compareTo(final Version other){
+	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
+	public int compareTo(final Version other){
 		final int result = compareToCore(other);
 		return (result != 0? result: compareToIdentifiers(preRelease, other.preRelease));
 	}
@@ -279,13 +281,15 @@ public final class Version implements Comparable<Version>{
 	 * @param other	The object to be compared.
 	 * @return	A negative integer, zero, or a positive integer as this object is less than, equal to, or greater than the specified object.
 	 */
-	public final int compareToWithBuilds(final Version other){
+	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
+	public int compareToWithBuilds(final Version other){
 		int result = compareTo(other);
 		if(result == 0)
 			result = compareToIdentifiers(preRelease, other.preRelease);
 		return (result != 0? result: compareToIdentifiers(build, other.build));
 	}
 
+	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
 	private int compareToCore(final Version other){
 		int comparison = compareToCore(major, other.major);
 		if(comparison != 0)
@@ -371,7 +375,7 @@ public final class Version implements Comparable<Version>{
 	}
 
 	@Override
-	public final String toString(){
+	public String toString(){
 		final StringBuilder sb = new StringBuilder();
 		if(major != null)
 			sb.append(major);

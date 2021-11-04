@@ -117,7 +117,7 @@ final class Evaluator{
 
 	private static class MyReflectivePropertyAccessor extends ReflectivePropertyAccessor{
 		@Override
-		protected Field findField(final String name, Class<?> cls, final boolean mustBeStatic){
+		protected final Field findField(final String name, Class<?> cls, final boolean mustBeStatic){
 			Field field = null;
 			while(field == null && cls != null && cls != Object.class){
 				field = findFieldInClass(name, cls, mustBeStatic);
@@ -128,7 +128,7 @@ final class Evaluator{
 			return field;
 		}
 
-		private Field findFieldInClass(final String name, final Class<?> cls, final boolean mustBeStatic){
+		private static Field findFieldInClass(final String name, final Class<?> cls, final boolean mustBeStatic){
 			final Field[] declaredFields = cls.getDeclaredFields();
 			for(int i = 0; i < declaredFields.length; i++){
 				final Field field = declaredFields[i];

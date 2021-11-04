@@ -277,6 +277,7 @@ public final class BitSet{
 	}
 
 	@Override
+	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
 	public boolean equals(final Object obj){
 		if(!BitSet.class.isInstance(obj))
 			return false;

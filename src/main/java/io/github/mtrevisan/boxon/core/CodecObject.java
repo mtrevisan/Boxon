@@ -80,7 +80,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 		return value;
 	}
 
-	private Class<?> extractType(final BitReader reader, final BindObject binding, final Object rootObject) throws CodecException{
+	private static Class<?> extractType(final BitReader reader, final BindObject binding, final Object rootObject) throws CodecException{
 		Class<?> chosenAlternativeType = binding.type();
 		final ObjectChoices selectFrom = binding.selectFrom();
 		if(selectFrom.alternatives().length > 0){

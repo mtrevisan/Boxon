@@ -66,7 +66,7 @@ public final class BNDMPatternMatcher implements PatternMatcher{
 	 * @param wildcard the wildcard {@code byte} character.
 	 * @return	an array of pre-processed pattern.
 	 */
-	public int[] preProcessPatternWithWildcard(final byte[] pattern, final byte wildcard){
+	public static int[] preProcessPatternWithWildcard(final byte[] pattern, final byte wildcard){
 		assertLength(pattern.length);
 
 		int j = 0;
@@ -96,7 +96,7 @@ public final class BNDMPatternMatcher implements PatternMatcher{
 		return fill(pattern, preprocessedPattern);
 	}
 
-	private int[] fill(final byte[] pattern, final int[] preprocessedPattern){
+	private static int[] fill(final byte[] pattern, final int[] preprocessedPattern){
 		int j = 1;
 		for(int i = pattern.length - 1; i >= 0; i --, j <<= 1)
 			preprocessedPattern[pattern[i] & 0xFF] |= j;
@@ -130,7 +130,7 @@ public final class BNDMPatternMatcher implements PatternMatcher{
 		return -1;
 	}
 
-	private void assertLength(final int length){
+	private static void assertLength(final int length){
 		if(length >= Integer.SIZE)
 			throw new IllegalArgumentException("Cannot process a pattern whose length exceeds " + (Integer.SIZE - 1) + " bytes");
 	}

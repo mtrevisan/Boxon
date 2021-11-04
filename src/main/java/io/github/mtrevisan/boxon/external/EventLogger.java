@@ -94,7 +94,7 @@ public final class EventLogger extends EventListener{
 			info("Load templates from package(s) {}", joinPackageNames(basePackageClasses));
 	}
 
-	private StringJoiner joinPackageNames(final Class<?>[] basePackageClasses){
+	private static StringJoiner joinPackageNames(final Class<?>[] basePackageClasses){
 		final StringJoiner sj = new StringJoiner(", ", "[", "]");
 		for(int i = 0; i < basePackageClasses.length; i ++)
 			sj.add(basePackageClasses[i].getPackageName());
@@ -173,23 +173,23 @@ public final class EventLogger extends EventListener{
 	}
 
 
-	private void trace(final String message, final Exception exception){
+	private static void trace(final String message, final Exception exception){
 		LOGGER.trace(composeMessage(message), exception);
 	}
 
-	private void trace(final String message, final Object... parameters){
+	private static void trace(final String message, final Object... parameters){
 		LOGGER.trace(composeMessage(message, parameters));
 	}
 
-	private void warn(final String message, final Object... parameters){
+	private static void warn(final String message, final Object... parameters){
 		LOGGER.warn(composeMessage(message, parameters));
 	}
 
-	private void info(final String message, final Object... parameters){
+	private static void info(final String message, final Object... parameters){
 		LOGGER.info(composeMessage(message, parameters));
 	}
 
-	private String composeMessage(final String message, final Object... parameters){
+	private static String composeMessage(final String message, final Object... parameters){
 		final StringBuilder sb = new StringBuilder();
 		try{
 			final StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
@@ -212,7 +212,7 @@ public final class EventLogger extends EventListener{
 		return JavaHelper.format(sb.toString(), extractParameters(parameters));
 	}
 
-	private Object[] extractParameters(final Object[] parameters){
+	private static Object[] extractParameters(final Object[] parameters){
 		if(parameters instanceof Class<?>[]){
 			final Collection<String> packages = new LinkedHashSet<>(parameters.length);
 			for(int i = 0; i < parameters.length; i ++)

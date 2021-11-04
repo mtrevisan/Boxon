@@ -157,7 +157,7 @@ final class ConfigurationParser{
 		}
 	}
 
-	private void openMessage(final Configuration<?> configuration, final BitWriter writer){
+	private static void openMessage(final Configuration<?> configuration, final BitWriter writer){
 		final ConfigurationHeader header = configuration.getHeader();
 		if(header != null && !header.start().isEmpty()){
 			final String start = header.start();
@@ -166,7 +166,7 @@ final class ConfigurationParser{
 		}
 	}
 
-	private void closeMessage(final Configuration<?> configuration, final BitWriter writer){
+	private static void closeMessage(final Configuration<?> configuration, final BitWriter writer){
 		final ConfigurationHeader header = configuration.getHeader();
 		if(header != null && !header.end().isEmpty()){
 			final Charset charset = Charset.forName(header.charset());
@@ -194,12 +194,12 @@ final class ConfigurationParser{
 		catch(final Exception ignored){}
 	}
 
-	private void writeSkips(final ConfigurationSkip[] skips, final BitWriter writer, final Version protocol){
+	private static void writeSkips(final ConfigurationSkip[] skips, final BitWriter writer, final Version protocol){
 		for(int i = 0; i < JavaHelper.lengthOrZero(skips); i ++)
 			writeSkip(skips[i], writer, protocol);
 	}
 
-	private void writeSkip(final ConfigurationSkip skip, final BitWriter writer, final Version protocol){
+	private static void writeSkip(final ConfigurationSkip skip, final BitWriter writer, final Version protocol){
 		final boolean process = LoaderConfiguration.shouldBeExtracted(protocol, skip.minProtocol(), skip.maxProtocol());
 		if(process)
 			writer.putText(skip.terminator(), StandardCharsets.UTF_8);

@@ -26,7 +26,6 @@ package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
-import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
@@ -49,7 +48,7 @@ final class CodecConfigurationField implements CodecInterface<ConfigurationField
 
 	@Override
 	public void encode(final BitWriter writer, final Annotation annotation, final Object fieldType, final Object value)
-			throws ConfigurationException, AnnotationException{
+			throws ConfigurationException{
 		final ConfigurationField binding = extractBinding(annotation);
 		final Charset charset = Charset.forName(binding.charset());
 

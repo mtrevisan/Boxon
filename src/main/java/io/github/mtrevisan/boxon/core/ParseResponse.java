@@ -52,7 +52,7 @@ public final class ParseResponse{
 	 * @param payload	The payload.
 	 */
 	ParseResponse(final byte[] payload){
-		this.payload = payload;
+		this.payload = (payload != null? payload.clone(): null);
 	}
 
 	/**

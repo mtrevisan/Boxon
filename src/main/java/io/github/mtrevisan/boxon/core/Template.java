@@ -73,6 +73,7 @@ final class Template<T>{
 	private BoundedField checksum;
 
 
+	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
 	Template(final Class<T> type, final Function<Annotation[], List<Annotation>> filterAnnotationsWithCodec)
 			throws AnnotationException{
 		this.type = type;
@@ -120,7 +121,7 @@ final class Template<T>{
 		return Pair.of(boundedFields, evaluatedFields);
 	}
 
-	private List<EvaluatedField> extractEvaluations(final Annotation[] declaredAnnotations, final Field field){
+	private static List<EvaluatedField> extractEvaluations(final Annotation[] declaredAnnotations, final Field field){
 		final List<EvaluatedField> evaluations = new ArrayList<>(declaredAnnotations.length);
 		for(int i = 0; i < declaredAnnotations.length; i ++){
 			final Annotation annotation = declaredAnnotations[i];
@@ -155,7 +156,7 @@ final class Template<T>{
 		return foundAnnotation;
 	}
 
-	private void validateAnnotation(final Annotation annotation) throws AnnotationException{
+	private static void validateAnnotation(final Annotation annotation) throws AnnotationException{
 		final TemplateAnnotationValidator validator = TemplateAnnotationValidator.fromAnnotation(annotation);
 		if(validator != null)
 			validator.validate(annotation);
@@ -195,6 +196,7 @@ final class Template<T>{
 	}
 
 	@Override
+	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
 	public boolean equals(final Object obj){
 		if(obj == this)
 			return true;

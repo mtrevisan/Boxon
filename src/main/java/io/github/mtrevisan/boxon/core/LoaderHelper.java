@@ -53,9 +53,9 @@ final class LoaderHelper{
 
 		final ReflectiveClassLoader reflectiveClassLoader = ReflectiveClassLoader.createFrom(basePackageClasses);
 		reflectiveClassLoader.scan(CodecInterface.class, type);
-		final Collection<Class<?>> modules = reflectiveClassLoader.getImplementationsOf(type);
+		final Collection<Class<?>> modules = ReflectiveClassLoader.getImplementationsOf(type);
 		@SuppressWarnings("unchecked")
-		final Collection<Class<?>> singletons = reflectiveClassLoader.getTypesAnnotatedWith((Class<? extends Annotation>)type);
+		final Collection<Class<?>> singletons = ReflectiveClassLoader.getTypesAnnotatedWith((Class<? extends Annotation>)type);
 		classes.addAll(modules);
 		classes.addAll(singletons);
 		return classes;

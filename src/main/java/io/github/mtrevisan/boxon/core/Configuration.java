@@ -111,7 +111,7 @@ final class Configuration<T>{
 		return foundAnnotation;
 	}
 
-	private boolean validateAnnotation(final Field field, final Annotation annotation) throws AnnotationException{
+	private static boolean validateAnnotation(final Field field, final Annotation annotation) throws AnnotationException{
 		final ConfigurationAnnotationValidator validator = ConfigurationAnnotationValidator.fromAnnotation(annotation);
 		if(validator != null)
 			validator.validate(field, annotation);
@@ -140,6 +140,7 @@ final class Configuration<T>{
 	}
 
 	@Override
+	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
 	public boolean equals(final Object obj){
 		if(obj == this)
 			return true;

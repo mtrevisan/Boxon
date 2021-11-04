@@ -308,7 +308,8 @@ final class LoaderConfiguration{
 		return configuration;
 	}
 
-	private void fillDefaultValues(final Object object, final List<ConfigField> fields, final Version protocol) throws EncodeException{
+	private static void fillDefaultValues(final Object object, final List<ConfigField> fields, final Version protocol)
+			throws EncodeException{
 		for(int i = 0; i < fields.size(); i ++){
 			final ConfigField field = fields.get(i);
 			if(ConfigurationField.class.isAssignableFrom(field.getBinding().annotationType())){
@@ -319,7 +320,7 @@ final class LoaderConfiguration{
 		}
 	}
 
-	private Collection<ConfigField> extractMandatoryFields(final List<ConfigField> fields, final Version protocol){
+	private static Collection<ConfigField> extractMandatoryFields(final List<ConfigField> fields, final Version protocol){
 		final Collection<ConfigField> mandatoryFields = new HashSet<>(fields.size());
 		for(int i = 0; i < fields.size(); i ++){
 			boolean mandatory = false;
@@ -346,8 +347,7 @@ final class LoaderConfiguration{
 		return mandatoryFields;
 	}
 
-	private ConfigField findField(final List<ConfigField> fields, final Version protocol, final String key)
-			throws EncodeException{
+	private static ConfigField findField(final List<ConfigField> fields, final Version protocol, final String key) throws EncodeException{
 		ConfigField foundField = null;
 		for(int i = 0; foundField == null && i < fields.size(); i ++){
 			String shortDescription = null;
@@ -375,7 +375,7 @@ final class LoaderConfiguration{
 		return foundField;
 	}
 
-	private void validateValue(final ConfigurationField binding, final String key, final Object value, final ConfigField field)
+	private static void validateValue(final ConfigurationField binding, final String key, final Object value, final ConfigField field)
 			throws EncodeException{
 		//check pattern
 		final String pattern = binding.pattern();
@@ -405,7 +405,8 @@ final class LoaderConfiguration{
 		}
 	}
 
-	private void validateValue(final CompositeConfigurationField binding, final String key, final Object value) throws EncodeException{
+	private static void validateValue(final CompositeConfigurationField binding, final String key, final Object value)
+			throws EncodeException{
 		//check pattern
 		final String pattern = binding.pattern();
 		if(!pattern.isEmpty()){
@@ -455,7 +456,7 @@ final class LoaderConfiguration{
 		return text;
 	}
 
-	private void setValue(final Object object, final Class<? extends Enum<?>> enumeration, final String key, final Object value,
+	private static void setValue(final Object object, final Class<? extends Enum<?>> enumeration, final String key, final Object value,
 			final ConfigField field) throws EncodeException{
 		if(enumeration != NullEnum.class){
 			if(!String.class.isInstance(value))
@@ -483,11 +484,11 @@ final class LoaderConfiguration{
 			field.setFieldValue(object, value);
 	}
 
-	private void setValue(final Object object, final Object value, final ConfigField field) throws EncodeException{
+	private static void setValue(final Object object, final Object value, final ConfigField field) throws EncodeException{
 		setValue(object, NullEnum.class, null, value, field);
 	}
 
-	private void validateMandatoryFields(final Collection<ConfigField> mandatoryFields) throws EncodeException{
+	private static void validateMandatoryFields(final Collection<ConfigField> mandatoryFields) throws EncodeException{
 		if(!mandatoryFields.isEmpty()){
 			final StringJoiner sj = new StringJoiner(", ", "[", "]");
 			for(final ConfigField mandatoryField : mandatoryFields){
@@ -506,7 +507,8 @@ final class LoaderConfiguration{
 		}
 	}
 
-	private Map<String, Object> extractFieldsMap(final Version protocol, final Configuration<?> configuration) throws ConfigurationException{
+	private static Map<String, Object> extractFieldsMap(final Version protocol, final Configuration<?> configuration)
+			throws ConfigurationException{
 		final List<ConfigField> fields = configuration.getConfigurationFields();
 		final Map<String, Object> fieldsMap = new HashMap<>(fields.size());
 		for(int i = 0; i < fields.size(); i ++){
@@ -543,14 +545,14 @@ final class LoaderConfiguration{
 		return fieldsMap;
 	}
 
-	private Map<String, Object> extractMap(final ConfigurationHeader header) throws ConfigurationException{
+	private static Map<String, Object> extractMap(final ConfigurationHeader header) throws ConfigurationException{
 		final Map<String, Object> map = new HashMap<>(3);
 		putIfNotEmpty(map, "shortDescription", header.shortDescription());
 		putIfNotEmpty(map, "longDescription", header.longDescription());
 		return map;
 	}
 
-	private Map<String, Object> extractMap(final ConfigurationField binding, final Class<?> fieldType) throws ConfigurationException{
+	private static Map<String, Object> extractMap(final ConfigurationField binding, final Class<?> fieldType) throws ConfigurationException{
 		final Map<String, Object> map = new HashMap<>(10);
 
 		putIfNotEmpty(map, "longDescription", binding.longDescription());
@@ -576,7 +578,7 @@ final class LoaderConfiguration{
 		return map;
 	}
 
-	private Map<String, Object> extractMap(final CompositeConfigurationField binding) throws ConfigurationException{
+	private static Map<String, Object> extractMap(final CompositeConfigurationField binding) throws ConfigurationException{
 		final Map<String, Object> map = new HashMap<>(6);
 
 		putIfNotEmpty(map, "longDescription", binding.longDescription());
@@ -586,7 +588,8 @@ final class LoaderConfiguration{
 		return map;
 	}
 
-	private Map<String, Object> extractMap(final ConfigurationSubField binding, final Class<?> fieldType) throws ConfigurationException{
+	private static Map<String, Object> extractMap(final ConfigurationSubField binding, final Class<?> fieldType)
+			throws ConfigurationException{
 		final Map<String, Object> map = new HashMap<>(10);
 
 		putIfNotEmpty(map, "longDescription", binding.longDescription());
@@ -599,14 +602,14 @@ final class LoaderConfiguration{
 		return map;
 	}
 
-	private void putIfNotEmpty(@SuppressWarnings("BoundedWildcard") final Map<String, Object> map, final String key, final Object value)
-			throws ConfigurationException{
+	private static void putIfNotEmpty(@SuppressWarnings("BoundedWildcard") final Map<String, Object> map, final String key,
+			final Object value) throws ConfigurationException{
 		if(value != null && (!String.class.isInstance(value) || !JavaHelper.isBlank((CharSequence)value)))
 			if(map.put(key, value) != null)
 				throw ConfigurationException.create("Duplicated short description: {}", key);
 	}
 
-	private void putValueIfNotEmpty(@SuppressWarnings("BoundedWildcard") final Map<String, Object> map, final String key,
+	private static void putValueIfNotEmpty(@SuppressWarnings("BoundedWildcard") final Map<String, Object> map, final String key,
 			final Class<?> fieldType, final Class<? extends Enum<?>> enumeration, final String value) throws ConfigurationException{
 		if(!JavaHelper.isBlank(value)){
 			Object val = value;

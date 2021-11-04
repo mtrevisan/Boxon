@@ -238,7 +238,7 @@ final class LoaderTemplate{
 		return minOffset;
 	}
 
-	private int findNextMessageIndex(final BitReader reader, final MessageHeader header, int minOffset){
+	private static int findNextMessageIndex(final BitReader reader, final MessageHeader header, int minOffset){
 		final Charset charset = Charset.forName(header.charset());
 		final String[] messageStarts = header.start();
 		//select the minimum index with a valid template
@@ -250,7 +250,7 @@ final class LoaderTemplate{
 		return minOffset;
 	}
 
-	private int searchNextSequence(final BitReader reader, final byte[] startMessageSequence){
+	private static int searchNextSequence(final BitReader reader, final byte[] startMessageSequence){
 		final byte[] message = reader.array();
 		final int startIndex = reader.position();
 		final int[] preProcessedPattern = PRE_PROCESSED_PATTERNS.apply(startMessageSequence);
