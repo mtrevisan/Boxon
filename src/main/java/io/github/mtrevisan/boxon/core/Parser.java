@@ -34,6 +34,7 @@ import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
 import io.github.mtrevisan.boxon.external.EventListener;
+import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.semanticversioning.Version;
 
 import java.io.File;
@@ -388,7 +389,7 @@ public final class Parser{
 		if(protocol.isEmpty())
 			throw new IllegalArgumentException("Invalid protocol version: " + protocolVersion);
 
-		final ComposeResponse response = new ComposeResponse(data.keySet().toArray(new String[0]));
+		final ComposeResponse response = new ComposeResponse(data.keySet().toArray(JavaHelper.EMPTY_ARRAY));
 
 		final BitWriter writer = BitWriter.create();
 		for(final Map.Entry<String, Map<String, Object>> entry : data.entrySet()){
