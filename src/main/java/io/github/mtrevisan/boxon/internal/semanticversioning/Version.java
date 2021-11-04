@@ -124,7 +124,7 @@ public final class Version implements Comparable<Version>{
 		if(!startsWithNumber(version))
 			throw new IllegalArgumentException("Argument is not a valid version");
 
-		final String[] tokens = JavaHelper.split(version, DOT, 3);
+		final String[] tokens = JavaHelper.split(version, '.', 3);
 		validateValues(version, tokens);
 
 		major = Integer.valueOf(tokens[0]);
@@ -136,7 +136,7 @@ public final class Version implements Comparable<Version>{
 
 			String nextToken = (tokenizer.hasMoreElements()? tokenizer.nextToken(): null);
 			if(PRE_RELEASE_PREFIX.equals(nextToken) && tokenizer.hasMoreElements()){
-				preRelease = JavaHelper.split(tokenizer.nextToken(), DOT, -1);
+				preRelease = JavaHelper.split(tokenizer.nextToken(), '.', -1);
 
 				validatePreRelease();
 
@@ -144,7 +144,7 @@ public final class Version implements Comparable<Version>{
 			}
 
 			if(BUILD_PREFIX.equals(nextToken) && tokenizer.hasMoreElements()){
-				build = JavaHelper.split(tokenizer.nextToken(), DOT, -1);
+				build = JavaHelper.split(tokenizer.nextToken(), '.', -1);
 
 				validateBuild();
 			}

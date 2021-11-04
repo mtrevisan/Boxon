@@ -236,7 +236,7 @@ enum ConfigurationAnnotationValidator{
 							ConfigurationField.class.getSimpleName(), enumeration.getSimpleName(), fieldType.toString());
 
 					if(!defaultValue.isEmpty()){
-						final String[] defaultValues = JavaHelper.split(defaultValue, "|", -1);
+						final String[] defaultValues = JavaHelper.split(defaultValue, '|', -1);
 						if(field.getType().isEnum() && defaultValues.length != 1)
 							throw AnnotationException.create("Default value for mutually exclusive enumeration field in {} should be a value; found {}, expected one of {}",
 								ConfigurationField.class.getSimpleName(), defaultValue, Arrays.toString(enumConstants));

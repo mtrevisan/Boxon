@@ -466,7 +466,7 @@ final class LoaderConfiguration{
 			final Object dataEnum;
 			final Enum<?>[] enumConstants = enumeration.getEnumConstants();
 			if(field.getFieldType().isArray()){
-				final String[] defaultValues = JavaHelper.split((String)value, "|", -1);
+				final String[] defaultValues = JavaHelper.split((String)value, '|', -1);
 				dataEnum = Array.newInstance(enumeration, defaultValues.length);
 				for(int i = 0; i < defaultValues.length; i ++)
 					Array.set(dataEnum, i, JavaHelper.extractEnum(enumConstants, defaultValues[i]));
@@ -614,7 +614,7 @@ final class LoaderConfiguration{
 		if(!JavaHelper.isBlank(value)){
 			Object val = value;
 			if(enumeration != NullEnum.class && fieldType.isArray())
-				val = JavaHelper.split(value, "|", -1);
+				val = JavaHelper.split(value, '|', -1);
 			else if(Number.class.isAssignableFrom(ParserDataType.toObjectiveTypeOrSelf(fieldType)))
 				val = JavaHelper.getValue(fieldType, value);
 			if(map.put(key, val) != null)
