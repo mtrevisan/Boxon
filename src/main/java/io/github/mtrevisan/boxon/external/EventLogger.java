@@ -214,17 +214,22 @@ public final class EventLogger extends EventListener{
 
 	private static Object[] extractParameters(final Object[] parameters){
 		if(parameters instanceof Class<?>[]){
-			final Collection<String> packages = new LinkedHashSet<>(parameters.length);
-			for(int i = 0; i < parameters.length; i ++)
-				packages.add(((Class<?>)parameters[i]).getPackageName());
+			final Collection<String> packages = collectPackages(parameters);
 
 			final StringJoiner sj = new StringJoiner(", ", "[", "]");
-			for(final String p : packages)
-				sj.add(p);
+			for(final String pkg : packages)
+				sj.add(pkg);
 
 			return new Object[]{sj.toString()};
 		}
 		return parameters;
+	}
+
+	private static Collection<String> collectPackages(final Object[] parameters){
+		final Collection<String> packages = new LinkedHashSet<>(parameters.length);
+		for(int i = 0; i < parameters.length; i ++)
+			packages.add(((Class<?>)parameters[i]).getPackageName());
+		return packages;
 	}
 
 }

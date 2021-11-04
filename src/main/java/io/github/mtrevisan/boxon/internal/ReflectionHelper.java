@@ -140,6 +140,7 @@ public final class ReflectionHelper{
 				//ancestor is non-parameterized: process only if it matches the base class
 				ancestorsQueue.add(ancestorType);
 		}
+
 		if(types.isEmpty() && offspring.equals(base))
 			//there is a result if the base class is reached
 			for(int i = 0; i < actualArgs.length; i ++){
@@ -147,6 +148,7 @@ public final class ReflectionHelper{
 				if(cls != null)
 					types.add(cls);
 			}
+
 		return types;
 	}
 
@@ -295,26 +297,34 @@ public final class ReflectionHelper{
 		final List<Field> fields = new ArrayList<>(0);
 
 		//recurse classes:
-		final ArrayList<Field> subfields = new ArrayList<>(0);
+		final ArrayList<Field> childFields = new ArrayList<>(0);
 		while(cls != null && cls != Object.class){
 			final Field[] rawSubfields = cls.getDeclaredFields();
-			subfields.clear();
-			subfields.ensureCapacity(rawSubfields.length);
-			//apply filter on field type if needed
-			for(int i = 0; i < rawSubfields.length; i ++)
-				if(fieldType == null || rawSubfields[i].getType() == fieldType)
-					subfields.add(rawSubfields[i]);
+			extractChildFields(childFields, rawSubfields, fieldType);
 			//place parent's fields before all the child's fields
-			fields.addAll(0, subfields);
+			fields.addAll(0, childFields);
 
 			//go up to parent class
 			cls = cls.getSuperclass();
 		}
 
-		//make fields accessible
+		makeFieldsAccessible(fields);
+
+		return fields;
+	}
+
+	private static void extractChildFields(final ArrayList<Field> childFields, final Field[] rawSubfields, final Class<?> fieldType){
+		childFields.clear();
+		childFields.ensureCapacity(rawSubfields.length);
+		//apply filter on field type if needed
+		for(int i = 0; i < rawSubfields.length; i ++)
+			if(fieldType == null || rawSubfields[i].getType() == fieldType)
+				childFields.add(rawSubfields[i]);
+	}
+
+	private static void makeFieldsAccessible(final List<Field> fields){
 		for(int i = 0; i < fields.size(); i ++)
 			fields.get(i).setAccessible(true);
-		return fields;
 	}
 
 

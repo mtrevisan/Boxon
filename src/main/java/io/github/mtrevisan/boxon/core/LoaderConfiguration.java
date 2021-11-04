@@ -69,6 +69,8 @@ import java.util.regex.Pattern;
 
 final class LoaderConfiguration{
 
+	private static final String CONFIGURATION_COMPOSITE_FIELDS = "fields";
+
 	private static final String NOTIFICATION_TEMPLATE = "compositeTemplate";
 	private static final freemarker.template.Configuration FREEMARKER_CONFIGURATION
 		= new freemarker.template.Configuration(freemarker.template.Configuration.VERSION_2_3_31);
@@ -236,12 +238,14 @@ final class LoaderConfiguration{
 	/**
 	 * Retrieve the configuration by class, filled with data, and considering the protocol version.
 	 *
+	 * @param configurationType	The configuration message type.
 	 * @param data   The data to load into the configuration.
 	 * @param protocol   The protocol the data refers to.
 	 * @return	The configuration.
 	 */
-	ConfigurationPair getConfiguration(final Map<String, Object> data, final Version protocol) throws EncodeException{
-		final Configuration<?> configuration = getConfiguration(data);
+	ConfigurationPair getConfiguration(final String configurationType, final Map<String, Object> data, final Version protocol)
+			throws EncodeException{
+		final Configuration<?> configuration = getConfiguration(configurationType, data);
 		final Object configurationObject = ReflectionHelper.getCreator(configuration.getType())
 			.get();
 
@@ -296,12 +300,8 @@ final class LoaderConfiguration{
 	 * @param data   The data to load into the configuration.
 	 * @return	The configuration.
 	 */
-	private Configuration<?> getConfiguration(final Map<String, Object> data) throws EncodeException{
-		final String headerStart = (String)data.remove(Parser.CONFIGURATION_FIELD_TYPE);
-		if(JavaHelper.isBlank(headerStart))
-			throw EncodeException.create("Missing mandatory field on data: `" + Parser.CONFIGURATION_FIELD_TYPE + "`");
-
-		final Configuration<?> configuration = configurations.get(headerStart);
+	private Configuration<?> getConfiguration(final String configurationType, final Map<String, Object> data) throws EncodeException{
+		final Configuration<?> configuration = configurations.get(configurationType);
 		if(configuration == null)
 			throw EncodeException.create("Cannot find any configuration for given class type");
 
@@ -538,7 +538,7 @@ final class LoaderConfiguration{
 
 					compositeFieldsMap.put(bindings[j].shortDescription(), fieldMap);
 				}
-				compositeMap.put(Parser.CONFIGURATION_COMPOSITE_FIELDS, compositeFieldsMap);
+				compositeMap.put(CONFIGURATION_COMPOSITE_FIELDS, compositeFieldsMap);
 				fieldsMap.put(compositeBinding.shortDescription(), compositeMap);
 			}
 		}

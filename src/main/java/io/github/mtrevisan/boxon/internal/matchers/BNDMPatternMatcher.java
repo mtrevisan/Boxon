@@ -107,6 +107,7 @@ public final class BNDMPatternMatcher implements PatternMatcher{
 	public int indexOf(final byte[] source, int offset, final byte[] pattern, final int[] processedPattern){
 		if(pattern.length == 0)
 			return 0;
+
 		assertLength(pattern.length);
 
 		final int length = pattern.length;

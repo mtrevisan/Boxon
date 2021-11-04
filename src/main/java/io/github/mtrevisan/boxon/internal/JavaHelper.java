@@ -121,7 +121,8 @@ public final class JavaHelper{
 
 		final List<String> list = new ArrayList<>();
 		int sizePlus1 = 1;
-		int i = 0, start = 0;
+		int i = 0;
+		int start = 0;
 		boolean match = false;
 		if(separatorChars == null)
 			//null separator means use whitespace
@@ -242,6 +243,12 @@ public final class JavaHelper{
 			if(!Character.isDigit(text.charAt(i)))
 				return false;
 		return true;
+	}
+
+	public static Object getValueOrDefault(final Class<?> fieldType, final Object value){
+		return (String.class.isInstance(value)
+			? getValue(fieldType, (String)value)
+			: value);
 	}
 
 	public static Object getValue(final Class<?> fieldType, final String value){

@@ -114,6 +114,9 @@ public final class Version implements Comparable<Version>{
 		if(JavaHelper.isBlank(version)){
 			major = null;
 			minor = null;
+			patch = null;
+			preRelease = JavaHelper.EMPTY_ARRAY;
+			build = JavaHelper.EMPTY_ARRAY;
 			return;
 		}
 
@@ -122,50 +125,65 @@ public final class Version implements Comparable<Version>{
 			throw new IllegalArgumentException("Argument is not a valid version");
 
 		final String[] tokens = JavaHelper.split(version, DOT, 3);
-		final String[] tokensWithPatch = JavaHelper.split(version, DOT + PRE_RELEASE_PREFIX + BUILD_PREFIX, -1);
-		if(hasLeadingZeros(tokens[0])
-				|| tokensWithPatch != null && (tokensWithPatch.length > 1 && hasLeadingZeros(tokens[1])
-				|| tokensWithPatch.length > 2 && hasLeadingZeros(tokensWithPatch[2])))
-			throw new IllegalArgumentException("Numeric identifier MUST NOT contain leading zeros");
+		validateValues(version, tokens);
 
 		major = Integer.valueOf(tokens[0]);
 		minor = (tokens.length > 1? Integer.valueOf(tokens[1]): null);
 		if(tokens.length > 2){
-			final String patchAndOthers = tokens[2];
-			final StringTokenizer tokenizer = new StringTokenizer(patchAndOthers, PRE_RELEASE_PREFIX + BUILD_PREFIX, true);
+			final StringTokenizer tokenizer = new StringTokenizer(tokens[2], PRE_RELEASE_PREFIX + BUILD_PREFIX, true);
+
 			patch = Integer.valueOf(tokenizer.nextToken());
+
 			String nextToken = (tokenizer.hasMoreElements()? tokenizer.nextToken(): null);
 			if(PRE_RELEASE_PREFIX.equals(nextToken) && tokenizer.hasMoreElements()){
 				preRelease = JavaHelper.split(tokenizer.nextToken(), DOT, -1);
 
-				nextToken = (tokenizer.hasMoreElements()? tokenizer.nextToken(): null);
+				validatePreRelease();
 
-				for(int i = 0; i < JavaHelper.lengthOrZero(preRelease); i ++){
-					final String pr = preRelease[i];
-					final boolean numeric = JavaHelper.isNumeric(pr);
-					if(numeric && pr.length() > 1 && pr.charAt(0) == '0')
-						throw new IllegalArgumentException("Numeric identifier MUST NOT contain leading zeros");
-					if(!numeric && !containsOnly(pr))
-						throw new IllegalArgumentException("Argument is not a valid version");
-				}
+				nextToken = (tokenizer.hasMoreElements()? tokenizer.nextToken(): null);
 			}
+
 			if(BUILD_PREFIX.equals(nextToken) && tokenizer.hasMoreElements()){
 				build = JavaHelper.split(tokenizer.nextToken(), DOT, -1);
 
-				for(int i = 0; i < JavaHelper.lengthOrZero(build); i ++){
-					final String b = build[i];
-					if(!JavaHelper.isNumeric(b) && !containsOnly(b))
-						throw new IllegalArgumentException("Argument is not a valid version");
-				}
+				validateBuild();
 			}
 
 			if(tokenizer.hasMoreElements())
 				throw new IllegalArgumentException("Argument is not a valid version");
 		}
+
 		if(preRelease == null)
 			preRelease = JavaHelper.EMPTY_ARRAY;
 		if(build == null)
 			build = JavaHelper.EMPTY_ARRAY;
+	}
+
+	private static void validateValues(final String version, final String[] tokens){
+		final String[] tokensWithPatch = JavaHelper.split(version, DOT + PRE_RELEASE_PREFIX + BUILD_PREFIX, -1);
+		if(hasLeadingZeros(tokens[0])
+				|| tokensWithPatch != null && (tokensWithPatch.length > 1 && hasLeadingZeros(tokens[1])
+				|| tokensWithPatch.length > 2 && hasLeadingZeros(tokensWithPatch[2])))
+			throw new IllegalArgumentException("Numeric identifier MUST NOT contain leading zeros");
+	}
+
+	private void validatePreRelease(){
+		for(int i = 0; i < JavaHelper.lengthOrZero(preRelease); i ++){
+			final String pr = preRelease[i];
+			final boolean numeric = JavaHelper.isNumeric(pr);
+			if(numeric && pr.length() > 1 && pr.charAt(0) == '0')
+				throw new IllegalArgumentException("Numeric identifier MUST NOT contain leading zeros");
+			if(!numeric && !containsOnly(pr))
+				throw new IllegalArgumentException("Argument is not a valid version");
+		}
+	}
+
+	private void validateBuild(){
+		for(int i = 0; i < JavaHelper.lengthOrZero(build); i ++){
+			final String b = build[i];
+			if(!JavaHelper.isNumeric(b) && !containsOnly(b))
+				throw new IllegalArgumentException("Argument is not a valid version");
+		}
 	}
 
 	private static boolean hasLeadingZeros(final CharSequence token){
@@ -309,6 +327,7 @@ public final class Version implements Comparable<Version>{
 				return 1;
 			if(value1 == null)
 				return -1;
+
 			comparison = Integer.compare(value1, value2);
 		}
 		return comparison;
@@ -369,6 +388,7 @@ public final class Version implements Comparable<Version>{
 				if(VALID_CHARS[j] == chr && (i >= lastIndex || j >= VALID_CHARS.length - 1 || !Character.isHighSurrogate(chr)
 					|| VALID_CHARS[j + 1] == text.charAt(i + 1)))
 					continue outer;
+
 			return false;
 		}
 		return true;

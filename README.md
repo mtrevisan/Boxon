@@ -692,7 +692,7 @@ configurationData.put(Parser.CONFIGURATION_FIELD_TYPE, "AT+");
 configurationData.put("Weekday", "TUESDAY|WEDNESDAY");
 ...
 
-ComposeResponse composedMessage = parser.composeConfiguration("1.20", configurationData);
+ComposeResponse composedMessage = parser.composeConfiguration("1.20", Collections.singletonMap("AT+", configurationData));
 ```
 
 

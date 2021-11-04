@@ -44,22 +44,20 @@ final class CodecCompositeConfigurationField implements CodecInterface<Composite
 	}
 
 	@Override
-	public void encode(final BitWriter writer, final Annotation annotation, final Object fieldType, final Object value)
+	public void encode(final BitWriter writer, final Annotation annotation, final Object fieldType, Object value)
 			throws ConfigurationException{
 		final CompositeConfigurationField binding = extractBinding(annotation);
 
 		final Charset charset = Charset.forName(binding.charset());
 
-		Object val = value;
-		if(String.class.isInstance(value))
-			val = JavaHelper.getValue((Class<?>)fieldType, (String)value);
+		value = JavaHelper.getValueOrDefault((Class<?>)fieldType, value);
 
-		if(val != null){
+		if(value != null){
 			if(String.class.isInstance(value))
-				writer.putText((String)val, charset);
+				writer.putText((String)value, charset);
 			else
 				throw ConfigurationException.create("Cannot handle this type of field: {}, please report to the developer",
-					ParserDataType.toObjectiveTypeOrSelf(val.getClass()));
+					ParserDataType.toObjectiveTypeOrSelf(value.getClass()));
 		}
 
 		if(!binding.terminator().isEmpty())

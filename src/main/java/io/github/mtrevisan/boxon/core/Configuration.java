@@ -91,7 +91,7 @@ final class Configuration<T>{
 	}
 
 	private Annotation validateField(final Field field, final Annotation[] annotations) throws AnnotationException{
-		//filter out `@Skip` annotations
+		//filter out `@ConfigurationSkip` annotations
 		Annotation foundAnnotation = null;
 		for(int i = 0; i < annotations.length; i ++){
 			final Class<? extends Annotation> annotationType = annotations[i].annotationType();

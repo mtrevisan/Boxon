@@ -52,13 +52,10 @@ import java.util.Objects;
  */
 public final class Parser{
 
-	public static final String CONFIGURATION_FIELD_TYPE = "__type__";
-	public static final String CONFIGURATION_COMPOSITE_FIELDS = "fields";
-
-
 	private final LoaderCodec loaderCodec;
 	private final LoaderTemplate loaderTemplate;
 	private final LoaderConfiguration loaderConfiguration;
+
 	private final TemplateParser templateParser;
 	private final ConfigurationParser configurationParser;
 
@@ -383,30 +380,20 @@ public final class Parser{
 	/**
 	 * Compose a list of configuration messages.
 	 *
-	 * @param data	The configuration messages to be composed.
-	 * @return	The composition response.
-	 */
-	@SuppressWarnings("unchecked")
-	public ComposeResponse composeConfiguration(final String protocolVersion, final Collection<Map<String, Object>> data){
-		return composeConfiguration(protocolVersion, data.toArray(Map[]::new));
-	}
-
-	/**
-	 * Compose a list of configuration messages.
-	 *
 	 * @param data	The configuration message(s) to be composed.
 	 * @return	The composition response.
 	 */
-	public ComposeResponse composeConfiguration(final String protocolVersion, final Map<String, Object>... data){
+	public ComposeResponse composeConfiguration(final String protocolVersion, final Map<String, Map<String, Object>> data){
 		final Version protocol = Version.of(protocolVersion);
 		if(protocol.isEmpty())
 			throw new IllegalArgumentException("Invalid protocol version: " + protocolVersion);
 
-		final ComposeResponse response = new ComposeResponse(data);
+		final ComposeResponse response = new ComposeResponse(data.keySet().toArray(new String[0]));
 
 		final BitWriter writer = BitWriter.create();
-		for(int i = 0; i < data.length; i ++)
-			composeConfiguration(writer, data[i], protocol, response);
+		for(final Map.Entry<String, Map<String, Object>> entry : data.entrySet()){
+			composeConfiguration(writer, entry.getKey(), entry.getValue(), protocol, response);
+		}
 		writer.flush();
 
 		response.setComposedMessage(writer.array());
@@ -419,10 +406,11 @@ public final class Parser{
 	 *
 	 * @param data   The configuration message to be composed.
 	 */
-	private void composeConfiguration(final BitWriter writer, final Map<String, Object> data, final Version protocol,
-			final ComposeResponse response){
+	private void composeConfiguration(final BitWriter writer, final String configurationType, final Map<String, Object> data,
+			final Version protocol, final ComposeResponse response){
 		try{
-			final LoaderConfiguration.ConfigurationPair configurationPair = loaderConfiguration.getConfiguration(data, protocol);
+			final LoaderConfiguration.ConfigurationPair configurationPair = loaderConfiguration.getConfiguration(configurationType, data,
+				protocol);
 
 			final Configuration<?> configuration = configurationPair.getConfiguration();
 			final Object configurationData = configurationPair.getConfigurationData();

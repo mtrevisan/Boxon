@@ -47,47 +47,48 @@ final class CodecConfigurationField implements CodecInterface<ConfigurationField
 	}
 
 	@Override
-	public void encode(final BitWriter writer, final Annotation annotation, final Object fieldType, final Object value)
+	public void encode(final BitWriter writer, final Annotation annotation, final Object fieldType, Object value)
 			throws ConfigurationException{
 		final ConfigurationField binding = extractBinding(annotation);
 		final Charset charset = Charset.forName(binding.charset());
 
-		Object val = value;
-		if(String.class.isInstance(value))
-			val = JavaHelper.getValue((Class<?>)fieldType, (String)value);
-
-		if(val != null){
-			if(value.getClass().isEnum())
-				val = ((ConfigurationEnum)value).getCode();
-			else if(value.getClass().isArray()){
-				int compositeEnumValue = 0;
-				for(int i = 0; i < Array.getLength(value); i ++)
-					compositeEnumValue |= ((ConfigurationEnum)Array.get(value, i)).getCode();
-				val = compositeEnumValue;
-			}
-
+		value = interpretValue(value, (Class<?>)fieldType);
+		if(value != null){
 			if(String.class.isInstance(value))
-				writer.putText((String)val, charset);
+				writer.putText((String)value, charset);
 			else{
-				final Class<?> fieldClass = ParserDataType.toObjectiveTypeOrSelf(val.getClass());
+				final Class<?> fieldClass = ParserDataType.toObjectiveTypeOrSelf(value.getClass());
 				if(fieldClass == Float.class)
-					writer.putFloat((Float)val, ByteOrder.BIG_ENDIAN);
+					writer.putFloat((Float)value, ByteOrder.BIG_ENDIAN);
 				else if(fieldClass == Double.class)
-					writer.putDouble((Double)val, ByteOrder.BIG_ENDIAN);
+					writer.putDouble((Double)value, ByteOrder.BIG_ENDIAN);
 				else if(Number.class.isAssignableFrom(fieldClass)){
-					final int radix = binding.radix();
-					val = Long.toString(((Number)val).longValue(), radix);
+					value = Long.toString(((Number)value).longValue(), binding.radix());
+					writer.putText((String)value, charset);
 				}
 				else
 					throw ConfigurationException.create("Cannot handle this type of field: {}, please report to the developer",
 						fieldClass);
-
-				writer.putText((String)val, StandardCharsets.UTF_8);
 			}
 		}
 
 		if(!binding.terminator().isEmpty())
 			writer.putText(binding.terminator(), StandardCharsets.UTF_8);
+	}
+
+	private static Object interpretValue(Object value, final Class<?> fieldType){
+		value = JavaHelper.getValueOrDefault(fieldType, value);
+		if(value != null){
+			if(value.getClass().isEnum())
+				value = ((ConfigurationEnum)value).getCode();
+			else if(value.getClass().isArray()){
+				int compositeEnumValue = 0;
+				for(int i = 0; i < Array.getLength(value); i ++)
+					compositeEnumValue |= ((ConfigurationEnum)Array.get(value, i)).getCode();
+				value = compositeEnumValue;
+			}
+		}
+		return value;
 	}
 
 }

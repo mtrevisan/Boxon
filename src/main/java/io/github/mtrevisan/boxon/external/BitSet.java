@@ -109,16 +109,20 @@ public final class BitSet{
 
 
 	private BitSet(final byte[] words){
-		int length = 0;
-		for(int i = 0; i < words.length; i ++)
-			length += Integer.bitCount(words[i] & 0xFF);
-
+		final int length = bitCount(words);
 		indexes = new int[length];
 		int k = 0;
 		int offset = 0;
 		for(int i = 0; i < words.length; i ++, offset += Byte.SIZE)
 			k = addWordToIndexes(words[i], k, offset);
 		cardinality = length;
+	}
+
+	private static int bitCount(final byte[] words){
+		int length = 0;
+		for(int i = 0; i < words.length; i ++)
+			length += Integer.bitCount(words[i] & 0xFF);
+		return length;
 	}
 
 	private int addWordToIndexes(byte word, int k, final int offset){
@@ -131,16 +135,20 @@ public final class BitSet{
 	}
 
 	private BitSet(final long[] words){
-		int length = 0;
-		for(int i = 0; i < words.length; i ++)
-			length += Long.bitCount(words[i]);
-
+		final int length = bitCount(words);
 		indexes = new int[length];
 		int k = 0;
 		int offset = 0;
 		for(int i = 0; i < words.length; i ++, offset += Long.SIZE)
 			k = addWordToIndexes(words[i], k, offset);
 		cardinality = length;
+	}
+
+	private static int bitCount(final long[] words){
+		int length = 0;
+		for(int i = 0; i < words.length; i ++)
+			length += Long.bitCount(words[i]);
+		return length;
 	}
 
 	private int addWordToIndexes(long word, int k, final int offset){

@@ -88,6 +88,7 @@ abstract class BitReaderData{
 		return new State(buffer.position(), remaining, cache);
 	}
 
+	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
 	private void restoreState(final State state){
 		buffer.position(state.position);
 		remaining = state.remaining;
