@@ -164,6 +164,14 @@ Here is a brief summary of the parameters (described in detail below) for each a
 | Checksum             |           |         |         |         |         |            |                   | &#9745; |  &#9745;  |  &#9745;  | &#9745; |  &#9745;  |  &#9745;   |         | Checksum      |
 | Evaluate             |  &#9745;  |         |         |         |         |            |                   |         |           |           |         |           |            | &#9745; | Evaluate      |
 
+|                             | shortDescription | longDescription | minProtocol | maxProtocol |  start  |   end   | charset | terminator | unitOfMeasure |  minValue | maxValue | pattern | enumeration | defaultValue |  radix  | composition |                             |
+|-----------------------------|:----------------:|:---------------:|:-----------:|:-----------:|:-------:|:-------:|:-------:|:----------:|:-------------:|:---------:|:--------:|:-------:|:-----------:|:------------:|:-------:|:-----------:|:---------------------------:|
+| ConfigurationHeader         |      &#9745;     |     &#9745;     |   &#9745;   |   &#9745;   | &#9745; | &#9745; | &#9745; |            |               |           |          |         |             |              |         |             | ConfigurationHeader         |
+| ConfigurationSkip           |                  |                 |   &#9745;   |   &#9745;   |         |         |         |   &#9745;  |               |           |          |         |             |              |         |             | ConfigurationSkip           |
+| ConfigurationField          |      &#9745;     |     &#9745;     |   &#9745;   |   &#9745;   |         |         | &#9745; |            |    &#9745;    |  &#9745;  |  &#9745; | &#9745; |   &#9745;   |    &#9745;   | &#9745; |             | ConfigurationField          |
+| CompositeConfigurationField |      &#9745;     |     &#9745;     |   &#9745;   |   &#9745;   |         |         | &#9745; |   &#9745;  |               |           |          | &#9745; |             |              |         |   &#9745;   | CompositeConfigurationField |
+| ConfigurationSubField       |      &#9745;     |     &#9745;     |             |             |         |         |         |            |    &#9745;    |           |          | &#9745; |             |    &#9745;   |         |             | ConfigurationSubField       |
+
 
 <a name="annotation-bindobject"></a>
 ### BindObject
