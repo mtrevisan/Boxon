@@ -227,9 +227,11 @@ final class LoaderConfiguration{
 
 			final Map<String, Object> headerMap = extractMap(header);
 			final Map<String, Object> fieldsMap = extractFieldsMap(currentProtocol, configuration);
+			final List<String> protocols = configuration.getProtocols();
 			response.add(Map.of(
 				"header", headerMap,
-				"fields", fieldsMap
+				"fields", fieldsMap,
+				"protocols", protocols
 			));
 		}
 		return Collections.unmodifiableList(response);

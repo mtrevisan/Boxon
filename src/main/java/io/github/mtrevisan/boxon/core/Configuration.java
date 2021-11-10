@@ -24,16 +24,22 @@
  */
 package io.github.mtrevisan.boxon.core;
 
+import io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField;
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.ReflectionHelper;
 import io.github.mtrevisan.boxon.internal.semanticversioning.Version;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.StringJoiner;
 
@@ -50,6 +56,8 @@ final class Configuration<T>{
 	private final ConfigurationHeader header;
 	private final List<ConfigField> configFields;
 
+	private final List<String> protocolVersions;
+
 
 	Configuration(final Class<T> type) throws AnnotationException{
 		this.type = type;
@@ -57,21 +65,41 @@ final class Configuration<T>{
 		header = type.getAnnotation(ConfigurationHeader.class);
 		if(header == null)
 			throw AnnotationException.create("No header present in this class: {}", type.getName());
+		final Version minMessageProtocol = Version.of(header.minProtocol());
 		final Version maxMessageProtocol = Version.of(header.maxProtocol());
 		ConfigurationAnnotationValidator.fromAnnotation(header)
-			.validate(null, header, maxMessageProtocol);
+			.validate(null, header, minMessageProtocol, maxMessageProtocol);
 
 		CodecHelper.assertValidCharset(header.charset());
 
-		final List<ConfigField> configFields = loadAnnotatedFields(type, ReflectionHelper.getAccessibleFields(type), maxMessageProtocol);
+		final List<ConfigField> configFields = loadAnnotatedFields(type, ReflectionHelper.getAccessibleFields(type), minMessageProtocol,
+			maxMessageProtocol);
 		this.configFields = Collections.unmodifiableList(configFields);
+
+		final List<String> protocolVersions = extractProtocolsList(configFields);
+		this.protocolVersions = Collections.unmodifiableList(protocolVersions);
 
 		if(configFields.isEmpty())
 			throw AnnotationException.create("No data can be extracted from this class: {}", type.getName());
 	}
 
-	private List<ConfigField> loadAnnotatedFields(final Class<T> type, final List<Field> fields, final Version maxMessageProtocol)
-			throws AnnotationException{
+	private void removeDuplicates(final List<String> protocolVersions){
+		String previous = null;
+		final Iterator<String> itr = protocolVersions.iterator();
+		while(itr.hasNext()){
+			if(previous == null)
+				previous = itr.next();
+			else{
+				final String current = itr.next();
+				if(current.equals(previous))
+					itr.remove();
+				previous = current;
+			}
+		}
+	}
+
+	private List<ConfigField> loadAnnotatedFields(final Class<T> type, final List<Field> fields, final Version minMessageProtocol,
+			final Version maxMessageProtocol) throws AnnotationException{
 		final List<ConfigField> configFields = new ArrayList<>(fields.size());
 		for(int i = 0; i < fields.size(); i ++){
 			final Field field = fields.get(i);
@@ -80,7 +108,7 @@ final class Configuration<T>{
 			final Annotation[] declaredAnnotations = field.getDeclaredAnnotations();
 
 			try{
-				final Annotation validAnnotation = validateField(field, declaredAnnotations, maxMessageProtocol);
+				final Annotation validAnnotation = validateField(field, declaredAnnotations, minMessageProtocol, maxMessageProtocol);
 
 				if(validAnnotation != null)
 					configFields.add(new ConfigField(field, validAnnotation, (skips.length > 0? skips: null)));
@@ -93,8 +121,8 @@ final class Configuration<T>{
 		return configFields;
 	}
 
-	private Annotation validateField(final Field field, final Annotation[] annotations, final Version maxMessageProtocol)
-			throws AnnotationException{
+	private Annotation validateField(final Field field, final Annotation[] annotations, final Version minMessageProtocol,
+			final Version maxMessageProtocol) throws AnnotationException{
 		//filter out `@ConfigurationSkip` annotations
 		Annotation foundAnnotation = null;
 		for(int i = 0; i < annotations.length; i ++){
@@ -108,19 +136,61 @@ final class Configuration<T>{
 					throw AnnotationException.create("Cannot bind more that one annotation on {}: {}", type.getName(), sj.toString());
 				}
 
-				if(validateAnnotation(field, annotations[i], maxMessageProtocol))
+				if(validateAnnotation(field, annotations[i], minMessageProtocol, maxMessageProtocol))
 					foundAnnotation = annotations[i];
 			}
 		}
 		return foundAnnotation;
 	}
 
-	private static boolean validateAnnotation(final Field field, final Annotation annotation, final Version maxMessageProtocol)
-			throws AnnotationException{
+	private static boolean validateAnnotation(final Field field, final Annotation annotation, final Version minMessageProtocol,
+			final Version maxMessageProtocol) throws AnnotationException{
 		final ConfigurationAnnotationValidator validator = ConfigurationAnnotationValidator.fromAnnotation(annotation);
 		if(validator != null)
-			validator.validate(field, annotation, maxMessageProtocol);
+			validator.validate(field, annotation, minMessageProtocol, maxMessageProtocol);
 		return (validator != null);
+	}
+
+	private List<String> extractProtocolsList(final Collection<ConfigField> configFields){
+		final List<String> protocolVersions = new ArrayList<>(configFields.size() * 2 + 2);
+		if(!JavaHelper.isBlank(header.minProtocol()))
+			protocolVersions.add(header.minProtocol());
+		if(!JavaHelper.isBlank(header.maxProtocol()))
+			protocolVersions.add(header.maxProtocol());
+		for(final ConfigField cf : configFields){
+			String minProtocol = null;
+			String maxProtocol = null;
+			ConfigurationSkip[] skips = null;
+			if(ConfigurationField.class.isInstance(cf.getBinding())){
+				final ConfigurationField binding = (ConfigurationField)cf.getBinding();
+				minProtocol = binding.minProtocol();
+				maxProtocol = binding.maxProtocol();
+				skips = cf.getSkips();
+			}
+			else if(CompositeConfigurationField.class.isInstance(cf.getBinding())){
+				final CompositeConfigurationField binding = (CompositeConfigurationField)cf.getBinding();
+				minProtocol = binding.minProtocol();
+				maxProtocol = binding.maxProtocol();
+				skips = cf.getSkips();
+			}
+
+			if(!JavaHelper.isBlank(minProtocol))
+				protocolVersions.add(minProtocol);
+			if(!JavaHelper.isBlank(maxProtocol))
+				protocolVersions.add(maxProtocol);
+			for(int i = 0; i < JavaHelper.lengthOrZero(skips); i ++){
+				minProtocol = skips[i].minProtocol();
+				maxProtocol = skips[i].maxProtocol();
+				if(!JavaHelper.isBlank(minProtocol))
+					protocolVersions.add(minProtocol);
+				if(!JavaHelper.isBlank(maxProtocol))
+					protocolVersions.add(maxProtocol);
+			}
+		}
+
+		protocolVersions.sort(Comparator.comparing(Version::of));
+		removeDuplicates(protocolVersions);
+		return protocolVersions;
 	}
 
 	Class<T> getType(){
@@ -133,6 +203,10 @@ final class Configuration<T>{
 
 	List<ConfigField> getConfigurationFields(){
 		return configFields;
+	}
+
+	List<String> getProtocols(){
+		return protocolVersions;
 	}
 
 	boolean canBeCoded(){

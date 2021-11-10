@@ -109,9 +109,11 @@ class LoaderTest{
 		ObjectMapper mapper = new ObjectMapper();
 		String jsonHeader = mapper.writeValueAsString(configuration.get(0).get("header"));
 		String jsonFields = mapper.writeValueAsString(configuration.get(0).get("fields"));
+		String jsonProtocols = mapper.writeValueAsString(configuration.get(0).get("protocols"));
 
 		Assertions.assertEquals("{\"longDescription\":\"The command AT+GTREG is used to do things.\",\"maxProtocol\":\"2.8\",\"charset\":\"UTF-8\",\"shortDescription\":\"AT+GTREG\"}", jsonHeader);
 		Assertions.assertEquals("{\"Maximum download retry count\":{\"maxProtocol\":\"1.20\",\"minValue\":0,\"maxValue\":3,\"defaultValue\":0},\"Download timeout\":{\"minValue\":5,\"unitOfMeasure\":\"min\",\"minProtocol\":\"1.19\",\"maxValue\":30,\"defaultValue\":20},\"Weekday\":{\"defaultValue\":[\"MONDAY\",\"TUESDAY\",\"WEDNESDAY\",\"THURSDAY\",\"FRIDAY\",\"SATURDAY\",\"SUNDAY\"],\"enumeration\":[\"MONDAY\",\"TUESDAY\",\"WEDNESDAY\",\"THURSDAY\",\"FRIDAY\",\"SATURDAY\",\"SUNDAY\"]},\"Update Over-The-Air\":{\"defaultValue\":\"FALSE\",\"mutuallyExclusive\":true,\"enumeration\":[\"TRUE\",\"FALSE\"]},\"Header\":{\"charset\":\"UTF-8\",\"defaultValue\":\"GTREG\"},\"Download protocol\":{\"maxProtocol\":\"1.35\",\"defaultValue\":\"HTTP\",\"mutuallyExclusive\":true,\"enumeration\":[\"HTTP\",\"HTTPS\"]},\"Download URL\":{\"pattern\":\".{0,100}\",\"charset\":\"UTF-8\",\"fields\":{\"URL\":{\"pattern\":\"https?://.{0,92}\"},\"password\":{\"pattern\":\".{1,32}\"},\"username\":{\"pattern\":\".{1,32}\"}}},\"Update mode\":{\"minValue\":0,\"maxValue\":1,\"defaultValue\":1},\"Message counter\":{\"minValue\":0,\"maxValue\":65535},\"Operation mode\":{\"minValue\":0,\"maxValue\":3,\"defaultValue\":0},\"Motion report interval\":{\"maxProtocol\":\"1.20\",\"minValue\":90,\"unitOfMeasure\":\"s\",\"minProtocol\":\"1.19\",\"maxValue\":86400,\"defaultValue\":3600},\"Password\":{\"charset\":\"UTF-8\",\"defaultValue\":\"gb200s\",\"pattern\":\"[0-9a-zA-Z]{4,20}\"},\"Motionless report interval\":{\"maxProtocol\":\"1.20\",\"minValue\":90,\"unitOfMeasure\":\"s\",\"minProtocol\":\"1.19\",\"maxValue\":86400,\"defaultValue\":3600}}", jsonFields);
+		Assertions.assertEquals("[\"1.18\",\"1.19\",\"1.20\",\"1.21\",\"1.35\",\"1.36\",\"2.8\"]", jsonProtocols);
 	}
 
 	@Test
