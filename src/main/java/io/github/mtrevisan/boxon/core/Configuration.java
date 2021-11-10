@@ -28,6 +28,7 @@ import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.internal.ReflectionHelper;
+import io.github.mtrevisan.boxon.internal.semanticversioning.Version;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -56,19 +57,21 @@ final class Configuration<T>{
 		header = type.getAnnotation(ConfigurationHeader.class);
 		if(header == null)
 			throw AnnotationException.create("No header present in this class: {}", type.getName());
+		final Version maxMessageProtocol = Version.of(header.maxProtocol());
 		ConfigurationAnnotationValidator.fromAnnotation(header)
-			.validate(null, header);
+			.validate(null, header, maxMessageProtocol);
 
 		CodecHelper.assertValidCharset(header.charset());
 
-		final List<ConfigField> configFields = loadAnnotatedFields(type, ReflectionHelper.getAccessibleFields(type));
+		final List<ConfigField> configFields = loadAnnotatedFields(type, ReflectionHelper.getAccessibleFields(type), maxMessageProtocol);
 		this.configFields = Collections.unmodifiableList(configFields);
 
 		if(configFields.isEmpty())
 			throw AnnotationException.create("No data can be extracted from this class: {}", type.getName());
 	}
 
-	private List<ConfigField> loadAnnotatedFields(final Class<T> type, final List<Field> fields) throws AnnotationException{
+	private List<ConfigField> loadAnnotatedFields(final Class<T> type, final List<Field> fields, final Version maxMessageProtocol)
+			throws AnnotationException{
 		final List<ConfigField> configFields = new ArrayList<>(fields.size());
 		for(int i = 0; i < fields.size(); i ++){
 			final Field field = fields.get(i);
@@ -77,7 +80,7 @@ final class Configuration<T>{
 			final Annotation[] declaredAnnotations = field.getDeclaredAnnotations();
 
 			try{
-				final Annotation validAnnotation = validateField(field, declaredAnnotations);
+				final Annotation validAnnotation = validateField(field, declaredAnnotations, maxMessageProtocol);
 
 				if(validAnnotation != null)
 					configFields.add(new ConfigField(field, validAnnotation, (skips.length > 0? skips: null)));
@@ -90,7 +93,8 @@ final class Configuration<T>{
 		return configFields;
 	}
 
-	private Annotation validateField(final Field field, final Annotation[] annotations) throws AnnotationException{
+	private Annotation validateField(final Field field, final Annotation[] annotations, final Version maxMessageProtocol)
+			throws AnnotationException{
 		//filter out `@ConfigurationSkip` annotations
 		Annotation foundAnnotation = null;
 		for(int i = 0; i < annotations.length; i ++){
@@ -104,17 +108,18 @@ final class Configuration<T>{
 					throw AnnotationException.create("Cannot bind more that one annotation on {}: {}", type.getName(), sj.toString());
 				}
 
-				if(validateAnnotation(field, annotations[i]))
+				if(validateAnnotation(field, annotations[i], maxMessageProtocol))
 					foundAnnotation = annotations[i];
 			}
 		}
 		return foundAnnotation;
 	}
 
-	private static boolean validateAnnotation(final Field field, final Annotation annotation) throws AnnotationException{
+	private static boolean validateAnnotation(final Field field, final Annotation annotation, final Version maxMessageProtocol)
+			throws AnnotationException{
 		final ConfigurationAnnotationValidator validator = ConfigurationAnnotationValidator.fromAnnotation(annotation);
 		if(validator != null)
-			validator.validate(field, annotation);
+			validator.validate(field, annotation, maxMessageProtocol);
 		return (validator != null);
 	}
 

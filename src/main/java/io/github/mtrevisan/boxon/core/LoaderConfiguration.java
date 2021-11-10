@@ -549,6 +549,9 @@ final class LoaderConfiguration{
 		final Map<String, Object> map = new HashMap<>(3);
 		putIfNotEmpty(map, "shortDescription", header.shortDescription());
 		putIfNotEmpty(map, "longDescription", header.longDescription());
+		putIfNotEmpty(map, "minProtocol", header.minProtocol());
+		putIfNotEmpty(map, "maxProtocol", header.maxProtocol());
+		putIfNotEmpty(map, "charset", header.charset());
 		return map;
 	}
 
@@ -557,6 +560,8 @@ final class LoaderConfiguration{
 
 		putIfNotEmpty(map, "longDescription", binding.longDescription());
 		putIfNotEmpty(map, "unitOfMeasure", binding.unitOfMeasure());
+		putIfNotEmpty(map, "minProtocol", binding.minProtocol());
+		putIfNotEmpty(map, "maxProtocol", binding.maxProtocol());
 
 		putIfNotEmpty(map, "minValue", JavaHelper.getValue(fieldType, binding.minValue()));
 		putIfNotEmpty(map, "maxValue", JavaHelper.getValue(fieldType, binding.maxValue()));
@@ -582,6 +587,8 @@ final class LoaderConfiguration{
 		final Map<String, Object> map = new HashMap<>(6);
 
 		putIfNotEmpty(map, "longDescription", binding.longDescription());
+		putIfNotEmpty(map, "minProtocol", binding.minProtocol());
+		putIfNotEmpty(map, "maxProtocol", binding.maxProtocol());
 		putIfNotEmpty(map, "pattern", binding.pattern());
 		putIfNotEmpty(map, "charset", binding.charset());
 

@@ -46,7 +46,7 @@ enum ConfigurationAnnotationValidator{
 
 	HEADER(ConfigurationHeader.class){
 		@Override
-		void validate(final Field field, final Annotation annotation) throws AnnotationException{
+		void validate(final Field field, final Annotation annotation, final Version maxMessageProtocol) throws AnnotationException{
 			final ConfigurationHeader binding = (ConfigurationHeader)annotation;
 
 			if(JavaHelper.isBlank(binding.shortDescription()))
@@ -67,7 +67,7 @@ enum ConfigurationAnnotationValidator{
 
 	FIELD(ConfigurationField.class){
 		@Override
-		void validate(final Field field, final Annotation annotation) throws AnnotationException{
+		void validate(final Field field, final Annotation annotation, final Version maxMessageProtocol) throws AnnotationException{
 			final ConfigurationField binding = (ConfigurationField)annotation;
 
 			if(JavaHelper.isBlank(binding.shortDescription()))
@@ -89,7 +89,7 @@ enum ConfigurationAnnotationValidator{
 
 			validateMinMaxValues(field, binding);
 
-			validateProtocol(binding.minProtocol(), binding.maxProtocol(), ConfigurationField.class);
+			validateProtocol(binding.minProtocol(), binding.maxProtocol(), maxMessageProtocol, ConfigurationField.class);
 		}
 
 		private void validateMinimumParameters(final Field field, final ConfigurationField binding) throws AnnotationException{
@@ -284,7 +284,7 @@ enum ConfigurationAnnotationValidator{
 
 	COMPOSITE_FIELD(CompositeConfigurationField.class){
 		@Override
-		void validate(final Field field, final Annotation annotation) throws AnnotationException{
+		void validate(final Field field, final Annotation annotation, final Version maxMessageProtocol) throws AnnotationException{
 			final CompositeConfigurationField binding = (CompositeConfigurationField)annotation;
 
 			if(JavaHelper.isBlank(binding.shortDescription()))
@@ -299,11 +299,11 @@ enum ConfigurationAnnotationValidator{
 
 			validatePattern(field, binding);
 
-			validateProtocol(binding.minProtocol(), binding.maxProtocol(), CompositeConfigurationField.class);
+			validateProtocol(binding.minProtocol(), binding.maxProtocol(), maxMessageProtocol, CompositeConfigurationField.class);
 
 
 			for(int i = 0; i < fields.length; i ++)
-				SUB_FIELD.validate(field, fields[i]);
+				SUB_FIELD.validate(field, fields[i], maxMessageProtocol);
 		}
 
 		private void validatePattern(final Field field, final CompositeConfigurationField binding) throws AnnotationException{
@@ -330,7 +330,7 @@ enum ConfigurationAnnotationValidator{
 
 	SUB_FIELD(ConfigurationSubField.class){
 		@Override
-		void validate(final Field field, final Annotation annotation) throws AnnotationException{
+		void validate(final Field field, final Annotation annotation, final Version maxMessageProtocol) throws AnnotationException{
 			final ConfigurationSubField binding = (ConfigurationSubField)annotation;
 
 			if(JavaHelper.isBlank(binding.shortDescription()))
@@ -399,10 +399,10 @@ enum ConfigurationAnnotationValidator{
 		return VALIDATORS.get(annotation.annotationType());
 	}
 
-	abstract void validate(final Field field, final Annotation annotation) throws AnnotationException;
+	abstract void validate(final Field field, final Annotation annotation, final Version maxMessageProtocol) throws AnnotationException;
 
-	private static void validateProtocol(final String minProtocol, final String maxProtocol, final Class<? extends Annotation> binding)
-			throws AnnotationException{
+	private static void validateProtocol(final String minProtocol, final String maxProtocol, final Version maxMessageProtocol,
+			final Class<? extends Annotation> binding) throws AnnotationException{
 		if(!minProtocol.isEmpty() || !maxProtocol.isEmpty()){
 			//minProtocol/maxProtocol are valid
 			Version minimum = null;
@@ -426,9 +426,13 @@ enum ConfigurationAnnotationValidator{
 				}
 			}
 			//maxProtocol after or equal to minProtocol
-			if(minimum != null && maximum != null && maximum.isLessThan(maximum))
+			if(minimum != null && maximum != null && maximum.isLessThan(minimum))
 				throw AnnotationException.create("Minimum protocol version is greater than maximum protocol version in {}; found {}",
 					binding.getSimpleName(), maxProtocol);
+			//maxProtocol before or equal to maxMessageProtocol
+			if(maximum != null && maxMessageProtocol != null && !maxMessageProtocol.isEmpty() && maxMessageProtocol.isLessThan(maximum))
+				throw AnnotationException.create("Maximum protocol version is greater than whole message maximum protocol version in {}; found {}",
+					binding.getSimpleName(), maxMessageProtocol);
 		}
 	}
 

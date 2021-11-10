@@ -200,11 +200,8 @@ class ParserTest{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
 		Parser parser = Parser.create()
-			.addToContext("deviceTypes", deviceTypes)
 			.withDefaultCodecs()
-			.withDefaultTemplates()
-			.withDefaultConfigurations()
-			.withContextFunction(ParserTest.class, "headerSize");
+			.withDefaultConfigurations();
 
 		//data:
 		Map<String, Object> configurationData = new HashMap<>();
