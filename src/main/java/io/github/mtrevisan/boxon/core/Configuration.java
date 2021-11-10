@@ -82,7 +82,7 @@ final class Configuration<T>{
 			throw AnnotationException.create("No data can be extracted from this class: {}", type.getName());
 	}
 
-	private void removeDuplicates(final Iterable<String> protocolVersions){
+	private static void removeDuplicates(final Iterable<String> protocolVersions){
 		String previous = null;
 		final Iterator<String> itr = protocolVersions.iterator();
 		while(itr.hasNext()){

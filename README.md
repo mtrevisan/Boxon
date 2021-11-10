@@ -773,7 +773,7 @@ public String text;
 - `maxValue`: maximum value this field can assume, optional (alternative to `pattern` and `enumeration`).
 - `pattern`: regex pattern this field must obey, optional (alternative to `minValue`/`maxValue` and `enumeration`).
 - `enumeration`: enumeration for this field, optional (alternative to `pattern` and `minValue`/`maxValue`). If the field is a single enum, then each value of this enum is mutually exclusive.
-- `defaultValue`: default value, optional. If the variable is an array, then this field may represent an `or` between values (eg. `ONE|TWO|THREE`), otherwise can be a single value (eg. `TWO`). If not present, then the field is mandatory.
+- `defaultValue`: default value, optional. If the variable is an array, then this field may represent an `or` between values (e.g. `ONE|TWO|THREE`), otherwise can be a single value (e.g. `TWO`). If not present, then the field is mandatory.
 - `charset`: charset of the field (if string value), optional.
 - `radix`: radix of the number field when written to the message, optional.
 - `terminator`: the string that terminates the skip (defaults to empty string), optional.
@@ -841,7 +841,7 @@ public String downloadURL;
 - `longDescription`: a more expressive description, optional.
 - `unitOfMeasure`: the unit of measure, optional.
 - `pattern`: regex pattern this field must obey, optional.
-- `defaultValue`: default value, optional. If the variable is an array, then this field may represent an `or` between values (eg. `ONE|TWO|THREE`), otherwise can be a single value (eg. `TWO`). If not present, then the field is mandatory.
+- `defaultValue`: default value, optional. If the variable is an array, then this field may represent an `or` between values (e.g. `ONE|TWO|THREE`), otherwise can be a single value (e.g. `TWO`). If not present, then the field is mandatory.
 
 #### description
 Defines a sub-field of a composite field of the configuration message.
