@@ -36,7 +36,6 @@ import io.github.mtrevisan.boxon.internal.semanticversioning.Version;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -83,7 +82,7 @@ final class Configuration<T>{
 			throw AnnotationException.create("No data can be extracted from this class: {}", type.getName());
 	}
 
-	private void removeDuplicates(final List<String> protocolVersions){
+	private void removeDuplicates(final Iterable<String> protocolVersions){
 		String previous = null;
 		final Iterator<String> itr = protocolVersions.iterator();
 		while(itr.hasNext()){
@@ -151,13 +150,16 @@ final class Configuration<T>{
 		return (validator != null);
 	}
 
-	private List<String> extractProtocolsList(final Collection<ConfigField> configFields){
+	private List<String> extractProtocolsList(final List<ConfigField> configFields){
 		final List<String> protocolVersions = new ArrayList<>(configFields.size() * 2 + 2);
 		if(!JavaHelper.isBlank(header.minProtocol()))
 			protocolVersions.add(header.minProtocol());
 		if(!JavaHelper.isBlank(header.maxProtocol()))
 			protocolVersions.add(header.maxProtocol());
-		for(final ConfigField cf : configFields){
+
+		for(int i = 0; i < configFields.size(); i ++){
+			final ConfigField cf = configFields.get(i);
+
 			String minProtocol = null;
 			String maxProtocol = null;
 			ConfigurationSkip[] skips = null;
@@ -178,9 +180,9 @@ final class Configuration<T>{
 				protocolVersions.add(minProtocol);
 			if(!JavaHelper.isBlank(maxProtocol))
 				protocolVersions.add(maxProtocol);
-			for(int i = 0; i < JavaHelper.lengthOrZero(skips); i ++){
-				minProtocol = skips[i].minProtocol();
-				maxProtocol = skips[i].maxProtocol();
+			for(int j = 0; j < JavaHelper.lengthOrZero(skips); j ++){
+				minProtocol = skips[j].minProtocol();
+				maxProtocol = skips[j].maxProtocol();
 				if(!JavaHelper.isBlank(minProtocol))
 					protocolVersions.add(minProtocol);
 				if(!JavaHelper.isBlank(maxProtocol))
