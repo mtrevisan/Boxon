@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core;
 
-import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
+import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationField;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
@@ -33,10 +33,9 @@ import io.github.mtrevisan.boxon.internal.ParserDataType;
 
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 
 
-final class CodecConfigurationField implements CodecInterface<ConfigurationField>{
+final class CodecAlternativeConfigurationField implements CodecInterface<AlternativeConfigurationField>{
 
 	@Override
 	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
@@ -46,7 +45,7 @@ final class CodecConfigurationField implements CodecInterface<ConfigurationField
 	@Override
 	public void encode(final BitWriter writer, final Annotation annotation, final Object fieldType, Object value)
 			throws ConfigurationException{
-		final ConfigurationField binding = extractBinding(annotation);
+		final AlternativeConfigurationField binding = extractBinding(annotation);
 		final Charset charset = Charset.forName(binding.charset());
 
 		value = CodecHelper.interpretValue(value, (Class<?>)fieldType);
@@ -68,9 +67,6 @@ final class CodecConfigurationField implements CodecInterface<ConfigurationField
 						fieldClass);
 			}
 		}
-
-		if(!binding.terminator().isEmpty())
-			writer.putText(binding.terminator(), StandardCharsets.UTF_8);
 	}
 
 }

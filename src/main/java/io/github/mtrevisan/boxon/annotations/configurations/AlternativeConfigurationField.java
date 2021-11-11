@@ -32,29 +32,12 @@ import java.lang.annotation.Target;
 
 
 /**
- * Manages multiple {@link ConfigurationSubField} annotations.
- *
- * <p>This field is mandatory only if one of its children is mandatory.</p>
+ * Describe an alternative configuration field.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 @Documented
-public @interface CompositeConfigurationField{
-
-	/**
-	 * The array holding the composite field annotations.
-	 *
-	 * @return	The array of composite field annotations.
-	 */
-	ConfigurationSubField[] value();
-
-
-	/**
-	 * A short description of the field.
-	 *
-	 * @return	A short description of the field.
-	 */
-	String shortDescription() default "";
+public @interface AlternativeConfigurationField{
 
 	/**
 	 * A long description of the field.
@@ -62,6 +45,13 @@ public @interface CompositeConfigurationField{
 	 * @return	A long description of the field.
 	 */
 	String longDescription() default "";
+
+	/**
+	 * The unit of measure of the value.
+	 *
+	 * @return	The unit of measure of the value.
+	 */
+	String unitOfMeasure() default "";
 
 	/**
 	 * The lowest protocol the field is in.
@@ -79,6 +69,24 @@ public @interface CompositeConfigurationField{
 
 
 	/**
+	 * The lowest value the field can have.
+	 * <p>Not compatible with enumeration field.</p>
+	 * <p>Compatible with numeric field.</p>
+	 *
+	 * @return	The lowest value the field can have.
+	 */
+	String minValue() default "";
+
+	/**
+	 * The highest value the field can have.
+	 * <p>Not compatible with enumeration field.</p>
+	 * <p>Compatible with numeric field.</p>
+	 *
+	 * @return	The highest value the field can have.
+	 */
+	String maxValue() default "";
+
+	/**
 	 * The pattern of the value, expressed as a regex.
 	 * <p>Not compatible with enumeration field.</p>
 	 * <p>Not compatible with non-string field.</p>
@@ -87,15 +95,15 @@ public @interface CompositeConfigurationField{
 	 */
 	String pattern() default "";
 
-	/**
-	 * How the composition is made (freemarker style).
-	 * <p>Ex. there are two configuration fields, and with this field set to `{1}@{2}`, the composition of both are done appending
-	 * the second field to the first using a `@` as a separator.</p>
-	 *
-	 * @return	The composition pattern of the fields, expressed as a regex.
-	 */
-	String composition() default "";
 
+	/**
+	 * The default value of the field.
+	 * <p>For non-mutually exclusive enumeration fields this is an array.</p>
+	 * <p>If not present, the field is mandatory.</p>
+	 *
+	 * @return	The default value of the field.
+	 */
+	String defaultValue() default "";
 
 	/**
 	 * The type of encoding used for string-typed field.
@@ -104,12 +112,12 @@ public @interface CompositeConfigurationField{
 	 */
 	String charset() default "UTF-8";
 
-
 	/**
-	 * The string that terminates the field.
+	 * The numeral system (base, or radix) of this field.
+	 * <p>Compatible with numeric or enumeration field.</p>
 	 *
-	 * @return	The terminator string (defaults to empty).
+	 * @return	The numeral system (base, or radix) of this field.
 	 */
-	String terminator() default "";
+	int radix() default 10;
 
 }

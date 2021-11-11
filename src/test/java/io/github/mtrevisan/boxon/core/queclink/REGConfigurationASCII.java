@@ -24,6 +24,8 @@
  */
 package io.github.mtrevisan.boxon.core.queclink;
 
+import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationField;
+import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationFields;
 import io.github.mtrevisan.boxon.annotations.configurations.BooleanType;
 import io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
@@ -55,23 +57,27 @@ public class REGConfigurationASCII{
 
 	@ConfigurationField(shortDescription = "Maximum download retry count", terminator = ",", maxProtocol = "1.20", minValue = "0",
 		maxValue = "3", defaultValue = "0")
-	private int maxDownloadRetryCount1_20;
+	private Integer maxDownloadRetryCount1_20;
 	@ConfigurationField(shortDescription = "Maximum download retry count", terminator = ",", minProtocol = "1.21", minValue = "0",
 		maxValue = "3", defaultValue = "1")
-	private int maxDownloadRetryCount1_21;
+	private Integer maxDownloadRetryCount1_21;
 
-	@ConfigurationField(shortDescription = "Download timeout", terminator = ",", maxProtocol = "1.18", minValue = "5", maxValue = "30",
-		defaultValue = "10", unitOfMeasure = "min")
-	private int downloadTimeout1_18;
-	@ConfigurationField(shortDescription = "Download timeout", terminator = ",", minProtocol = "1.19", minValue = "5", maxValue = "30",
-		defaultValue = "20", unitOfMeasure = "min")
-	private int downloadTimeout1_19;
+	@AlternativeConfigurationFields(
+		shortDescription = "Download timeout", terminator = ",", unitOfMeasure = "min",
+		value = {
+			@AlternativeConfigurationField(maxProtocol = "1.18", minValue = "5", maxValue = "30", defaultValue = "10"),
+			@AlternativeConfigurationField(minProtocol = "1.19", minValue = "5", maxValue = "30", defaultValue = "20")
+		}
+	)
+	private int downloadTimeout;
 
-	@ConfigurationField(shortDescription = "Download protocol", terminator = ",", maxProtocol = "1.35", enumeration = DownloadProtocol.class,
-		defaultValue = "HTTP")
-	private DownloadProtocol downloadProtocol1_35;
-	@ConfigurationField(shortDescription = "Download protocol", terminator = ",", minProtocol = "1.36", enumeration = DownloadProtocol.class,
-		defaultValue = "HTTP")
+	@AlternativeConfigurationFields(
+		shortDescription = "Download protocol", terminator = ",", enumeration = DownloadProtocol.class,
+		value = {
+			@AlternativeConfigurationField(maxProtocol = "1.35", defaultValue = "HTTP"),
+			@AlternativeConfigurationField(minProtocol = "1.36", defaultValue = "HTTP")
+		}
+	)
 	private DownloadProtocol downloadProtocol;
 
 	@CompositeConfigurationField(

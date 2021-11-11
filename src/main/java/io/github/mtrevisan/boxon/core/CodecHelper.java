@@ -26,6 +26,7 @@ package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
@@ -33,8 +34,10 @@ import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitSet;
 import io.github.mtrevisan.boxon.external.BitWriter;
 import io.github.mtrevisan.boxon.external.ByteOrder;
+import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.ReflectionHelper;
 
+import java.lang.reflect.Array;
 import java.nio.charset.Charset;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -162,6 +165,21 @@ final class CodecHelper{
 		final Converter<IN, OUT> converter = (Converter<IN, OUT>)ReflectionHelper.getCreator(converterType)
 			.get();
 		return converter.encode((OUT)data);
+	}
+
+	static Object interpretValue(Object value, final Class<?> fieldType){
+		value = JavaHelper.getValueOrDefault(fieldType, value);
+		if(value != null){
+			if(value.getClass().isEnum())
+				value = ((ConfigurationEnum)value).getCode();
+			else if(value.getClass().isArray()){
+				int compositeEnumValue = 0;
+				for(int i = 0; i < Array.getLength(value); i ++)
+					compositeEnumValue |= ((ConfigurationEnum)Array.get(value, i)).getCode();
+				value = compositeEnumValue;
+			}
+		}
+		return value;
 	}
 
 }

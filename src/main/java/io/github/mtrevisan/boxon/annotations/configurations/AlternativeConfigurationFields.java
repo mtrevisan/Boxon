@@ -32,21 +32,19 @@ import java.lang.annotation.Target;
 
 
 /**
- * Manages multiple {@link ConfigurationSubField} annotations.
- *
- * <p>This field is mandatory only if one of its children is mandatory.</p>
+ * Manages multiple {@link AlternativeConfigurationField} annotations.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 @Documented
-public @interface CompositeConfigurationField{
+public @interface AlternativeConfigurationFields{
 
 	/**
-	 * The array holding the composite field annotations.
+	 * The array holding the alternative field annotations.
 	 *
-	 * @return	The array of composite field annotations.
+	 * @return	The array of alternative field annotations.
 	 */
-	ConfigurationSubField[] value();
+	AlternativeConfigurationField[] value();
 
 
 	/**
@@ -54,7 +52,7 @@ public @interface CompositeConfigurationField{
 	 *
 	 * @return	A short description of the field.
 	 */
-	String shortDescription() default "";
+	String shortDescription();
 
 	/**
 	 * A long description of the field.
@@ -62,6 +60,13 @@ public @interface CompositeConfigurationField{
 	 * @return	A long description of the field.
 	 */
 	String longDescription() default "";
+
+	/**
+	 * The unit of measure of the value.
+	 *
+	 * @return	The unit of measure of the value.
+	 */
+	String unitOfMeasure() default "";
 
 	/**
 	 * The lowest protocol the field is in.
@@ -79,34 +84,16 @@ public @interface CompositeConfigurationField{
 
 
 	/**
-	 * The pattern of the value, expressed as a regex.
-	 * <p>Not compatible with enumeration field.</p>
-	 * <p>Not compatible with non-string field.</p>
+	 * The enumeration that represents the finite possible values for this field.
+	 * <p>Not compatible with pattern field.</p>
 	 *
-	 * @return	The pattern of the value, expressed as a regex.
+	 * @return	The enumeration that represents the finite possible values for this field.
 	 */
-	String pattern() default "";
-
-	/**
-	 * How the composition is made (freemarker style).
-	 * <p>Ex. there are two configuration fields, and with this field set to `{1}@{2}`, the composition of both are done appending
-	 * the second field to the first using a `@` as a separator.</p>
-	 *
-	 * @return	The composition pattern of the fields, expressed as a regex.
-	 */
-	String composition() default "";
+	Class<? extends Enum<?>> enumeration() default NullEnum.class;
 
 
 	/**
-	 * The type of encoding used for string-typed field.
-	 *
-	 * @return	The type of encoding used (defaults to `UTF-8`).
-	 */
-	String charset() default "UTF-8";
-
-
-	/**
-	 * The string that terminates the field.
+	 * The string that terminates the field (charset is UTF-8).
 	 *
 	 * @return	The terminator string (defaults to empty).
 	 */

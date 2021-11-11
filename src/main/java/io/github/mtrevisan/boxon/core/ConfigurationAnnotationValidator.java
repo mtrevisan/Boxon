@@ -24,6 +24,8 @@
  */
 package io.github.mtrevisan.boxon.core;
 
+import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationField;
+import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationFields;
 import io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
@@ -114,8 +116,8 @@ enum ConfigurationAnnotationValidator{
 				if(!pattern.isEmpty() || !minValue.isEmpty() || !maxValue.isEmpty())
 					throw AnnotationException.create("Enumeration cannot have `pattern` or `minValue`/`maxValue`");
 			}
-			if(isFieldArray && (set != 1 || enumeration == NullEnum.class))
-				throw AnnotationException.create("Array field cannot have `pattern` or `minValue`/`maxValue`");
+			if(isFieldArray && enumeration == NullEnum.class)
+				throw AnnotationException.create("Array field should have `enumeration`");
 			if(set > 1)
 				throw AnnotationException.create("Only one of `pattern`, `minValue`/`maxValue`, or `enumeration` should be used in {}",
 					ConfigurationField.class.getSimpleName());
@@ -383,6 +385,187 @@ enum ConfigurationAnnotationValidator{
 				if(JavaHelper.getValue(fieldType, defaultValue) == null)
 					throw AnnotationException.create("Incompatible enum in {}, found {}, expected {}",
 						ConfigurationSubField.class.getSimpleName(), defaultValue.getClass().getSimpleName(), fieldType.toString());
+		}
+	},
+
+	ALTERNATIVE_FIELDS(AlternativeConfigurationFields.class){
+		@Override
+		void validate(final Field field, final Annotation annotation, final Version minMessageProtocol, final Version maxMessageProtocol)
+			throws AnnotationException{
+			final AlternativeConfigurationFields binding = (AlternativeConfigurationFields)annotation;
+
+			if(JavaHelper.isBlank(binding.shortDescription()))
+				throw AnnotationException.create("Short description must be present");
+			if(binding.enumeration() == NullEnum.class && field.getType().isEnum())
+				throw AnnotationException.create("Unnecessary mutually exclusive field in a non-enumeration field");
+
+			validateMinimumParameters(field, binding);
+
+			validateEnumeration(field, binding);
+
+			validateProtocol(binding.minProtocol(), binding.maxProtocol(), minMessageProtocol, maxMessageProtocol,
+				AlternativeConfigurationFields.class);
+
+			final AlternativeConfigurationField[] alternatives = binding.value();
+			for(int i = 0; i < JavaHelper.lengthOrZero(alternatives); i ++)
+				validateProtocol(alternatives[i].minProtocol(), alternatives[i].maxProtocol(), minMessageProtocol, maxMessageProtocol,
+					AlternativeConfigurationField.class);
+		}
+
+		private void validateMinimumParameters(final Field field, final AlternativeConfigurationFields binding) throws AnnotationException{
+			final Class<?> fieldType = field.getType();
+			final boolean isFieldArray = fieldType.isArray();
+			final Class<? extends Enum<?>> enumeration = binding.enumeration();
+
+			if(isFieldArray && enumeration == NullEnum.class)
+				throw AnnotationException.create("Array field should have `enumeration`");
+		}
+
+		private void validateEnumeration(final Field field, final AlternativeConfigurationFields binding) throws AnnotationException{
+			final Class<? extends Enum<?>> enumeration = binding.enumeration();
+
+			if(enumeration != NullEnum.class){
+				//enumeration can be encoded
+				if(!ConfigurationEnum.class.isAssignableFrom(enumeration))
+					throw AnnotationException.create("Enum must implement ConfigurationEnum.class in {} in field {}",
+						ConfigurationField.class.getSimpleName(), field.getName());
+
+				//non-empty enumeration
+				final Enum<?>[] enumConstants = enumeration.getEnumConstants();
+				if(enumConstants.length == 0)
+					throw AnnotationException.create("Empty enum in {} in field {}", ConfigurationField.class.getSimpleName(),
+						field.getName());
+			}
+		}
+	},
+
+	ALTERNATIVE_FIELD(AlternativeConfigurationField.class){
+		@Override
+		void validate(final Field field, final Annotation annotation, final Version minMessageProtocol, final Version maxMessageProtocol)
+			throws AnnotationException{
+			final AlternativeConfigurationField binding = (AlternativeConfigurationField)annotation;
+
+			if(String.class.isAssignableFrom(field.getType()))
+				CodecHelper.assertValidCharset(binding.charset());
+			if(binding.radix() < Character.MIN_RADIX || binding.radix() > Character.MAX_RADIX)
+				throw AnnotationException.create("Radix must be in [" + Character.MIN_RADIX + ", " + Character.MAX_RADIX + "]");
+
+			validateMinimumParameters(binding);
+
+			validatePattern(field, binding);
+
+			validateMinMaxValues(field, binding);
+
+			validateProtocol(binding.minProtocol(), binding.maxProtocol(), minMessageProtocol, maxMessageProtocol,
+				AlternativeConfigurationField.class);
+		}
+
+		private void validateMinimumParameters(final AlternativeConfigurationField binding) throws AnnotationException{
+			final String pattern = binding.pattern();
+			final String minValue = binding.minValue();
+			final String maxValue = binding.maxValue();
+
+			//one only of `pattern`, `minValue`/`maxValue`, and `enumeration` should be set:
+			int set = 0;
+			if(!pattern.isEmpty())
+				set ++;
+			if(!minValue.isEmpty() || !maxValue.isEmpty())
+				set ++;
+			if(set > 1)
+				throw AnnotationException.create("Only one of `pattern`, `minValue`/`maxValue`, or `enumeration` should be used in {}",
+					ConfigurationField.class.getSimpleName());
+		}
+
+		private void validatePattern(final Field field, final AlternativeConfigurationField binding) throws AnnotationException{
+			final String pattern = binding.pattern();
+			final String minValue = binding.minValue();
+			final String maxValue = binding.maxValue();
+			final String defaultValue = binding.defaultValue();
+
+			//valid pattern
+			if(!pattern.isEmpty()){
+				try{
+					final Pattern formatPattern = Pattern.compile(pattern);
+
+					//defaultValue compatible with field type
+					if(!String.class.isAssignableFrom(field.getType()))
+						throw AnnotationException.create("Data type not compatible with `pattern` in {}; found {}.class, expected String.class",
+							ConfigurationField.class.getSimpleName(), field.getType());
+					//defaultValue compatible with pattern
+					if(!defaultValue.isEmpty() && !formatPattern.matcher(defaultValue).matches())
+						throw AnnotationException.create("Default value not compatible with `pattern` in {}; found {}, expected {}",
+							ConfigurationField.class.getSimpleName(), defaultValue, pattern);
+					//minValue compatible with pattern
+					if(!minValue.isEmpty() && !formatPattern.matcher(minValue).matches())
+						throw AnnotationException.create("Minimum value not compatible with `pattern` in {}; found {}, expected {}",
+							ConfigurationField.class.getSimpleName(), minValue, pattern);
+					//maxValue compatible with pattern
+					if(!maxValue.isEmpty() && !formatPattern.matcher(maxValue).matches())
+						throw AnnotationException.create("Maximum value not compatible with `pattern` in {}; found {}, expected {}",
+							ConfigurationField.class.getSimpleName(), maxValue, pattern);
+				}
+				catch(final AnnotationException ae){
+					throw ae;
+				}
+				catch(final Exception e){
+					throw AnnotationException.create("Invalid pattern in {} in field {}", ConfigurationField.class.getSimpleName(),
+						field.getName(), e);
+				}
+			}
+		}
+
+		private void validateMinMaxValues(final Field field, final AlternativeConfigurationField binding) throws AnnotationException{
+			final Class<?> fieldType = field.getType();
+			final String minValue = binding.minValue();
+			final String maxValue = binding.maxValue();
+			final String defaultValue = binding.defaultValue();
+
+			if(!minValue.isEmpty() || !maxValue.isEmpty()){
+				final Object def = (!defaultValue.isEmpty()? JavaHelper.getValue(fieldType, defaultValue): null);
+				final Object min = validateMinValue(fieldType, minValue, defaultValue, def);
+				final Object max = validateMaxValue(fieldType, maxValue, defaultValue, def);
+
+				if(min != null && max != null && ((Number)min).doubleValue() > ((Number)max).doubleValue())
+					//maxValue after or equal to minValue
+					throw AnnotationException.create("Minimum value should be less than or equal to maximum value in {}; found {}, expected greater than or equals to {}",
+						ConfigurationField.class.getSimpleName(), defaultValue, minValue.getClass().getSimpleName());
+			}
+		}
+
+		private Object validateMinValue(final Class<?> fieldType, final String minValue, final String defaultValue, final Object def)
+				throws AnnotationException{
+			Object min = null;
+			if(!minValue.isEmpty()){
+				min = JavaHelper.getValue(fieldType, minValue);
+				//minValue compatible with variable type
+				if(min == null)
+					throw AnnotationException.create("Incompatible minimum value in {}; found {}, expected {}",
+						ConfigurationField.class.getSimpleName(), minValue.getClass().getSimpleName(), fieldType.toString());
+
+				if(def != null && ((Number)def).doubleValue() < ((Number)min).doubleValue())
+					//defaultValue compatible with minValue
+					throw AnnotationException.create("Default value incompatible with minimum value in {}; found {}, expected greater than or equals to {}",
+						ConfigurationField.class.getSimpleName(), defaultValue, minValue.getClass().getSimpleName());
+			}
+			return min;
+		}
+
+		private Object validateMaxValue(final Class<?> fieldType, final String maxValue, final String defaultValue, final Object def)
+				throws AnnotationException{
+			Object max = null;
+			if(!maxValue.isEmpty()){
+				max = JavaHelper.getValue(fieldType, maxValue);
+				//maxValue compatible with variable type
+				if(max == null)
+					throw AnnotationException.create("Incompatible maximum value in {}; found {}, expected {}",
+						ConfigurationField.class.getSimpleName(), maxValue.getClass().getSimpleName(), fieldType.toString());
+
+				if(JavaHelper.isNumeric(defaultValue) && def != null && ((Number)def).doubleValue() > ((Number)max).doubleValue())
+					//defaultValue compatible with maxValue
+					throw AnnotationException.create("Default value incompatible with maximum value in {}; found {}, expected less than or equals to {}",
+						ConfigurationField.class.getSimpleName(), defaultValue, maxValue.getClass().getSimpleName());
+			}
+			return max;
 		}
 	};
 

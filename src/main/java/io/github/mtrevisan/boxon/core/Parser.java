@@ -401,9 +401,8 @@ public final class Parser{
 		final ComposeResponse response = new ComposeResponse(data.keySet().toArray(JavaHelper.EMPTY_ARRAY));
 
 		final BitWriter writer = BitWriter.create();
-		for(final Map.Entry<String, Map<String, Object>> entry : data.entrySet()){
+		for(final Map.Entry<String, Map<String, Object>> entry : data.entrySet())
 			composeConfiguration(writer, entry.getKey(), entry.getValue(), protocol, response);
-		}
 		writer.flush();
 
 		response.setComposedMessage(writer.array());

@@ -24,6 +24,8 @@
  */
 package io.github.mtrevisan.boxon.core;
 
+import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationField;
+import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationFields;
 import io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
@@ -101,7 +103,7 @@ final class ConfigurationParser{
 		for(int i = 0; i < fields.size(); i ++){
 			final ConfigField field = fields.get(i);
 
-			final Annotation annotation = field.getBinding();
+			Annotation annotation = field.getBinding();
 			String minProtocol = null;
 			String maxProtocol = null;
 			if(ConfigurationField.class.isInstance(annotation)){
@@ -114,7 +116,25 @@ final class ConfigurationParser{
 				minProtocol = binding.minProtocol();
 				maxProtocol = binding.maxProtocol();
 			}
-			if(!LoaderConfiguration.shouldBeExtracted(protocol, minProtocol, maxProtocol))
+			else if(AlternativeConfigurationFields.class.isInstance(annotation)){
+				final AlternativeConfigurationFields binding = (AlternativeConfigurationFields)annotation;
+				final AlternativeConfigurationField[] alternativeFields = binding.value();
+				for(int j = 0; j < alternativeFields.length; j ++){
+					final AlternativeConfigurationField fieldBinding = alternativeFields[j];
+					minProtocol = fieldBinding.minProtocol();
+					maxProtocol = fieldBinding.maxProtocol();
+
+					if(ConfigurationValidatorHelper.shouldBeExtracted(protocol, minProtocol, maxProtocol)){
+						minProtocol = binding.minProtocol();
+						maxProtocol = binding.maxProtocol();
+
+						annotation = fieldBinding;
+
+						break;
+					}
+				}
+			}
+			if(!ConfigurationValidatorHelper.shouldBeExtracted(protocol, minProtocol, maxProtocol))
 				continue;
 
 			//process skip annotations:
@@ -122,7 +142,9 @@ final class ConfigurationParser{
 			writeSkips(skips, writer, protocol);
 
 			//process value
-			encodeField(configuration, currentObject, writer, field);
+			encodeField(configuration, currentObject, writer, field, annotation);
+			if(annotation != field.getBinding())
+				encodeField(configuration, currentObject, writer, field, field.getBinding());
 		}
 
 		closeMessage(configuration, writer);
@@ -131,10 +153,8 @@ final class ConfigurationParser{
 	}
 
 	private <T> void encodeField(final Configuration<?> configuration, final T currentObject, final BitWriter writer,
-			final ConfigField field) throws FieldException{
+			final ConfigField field, final Annotation binding) throws FieldException{
 		try{
-			final Annotation binding = field.getBinding();
-
 			eventListener.writingField(configuration.getType().getName(), field.getFieldName(), binding.annotationType().getSimpleName());
 
 			final CodecInterface<?> codec = retrieveCodec(binding.annotationType());
@@ -200,7 +220,7 @@ final class ConfigurationParser{
 	}
 
 	private static void writeSkip(final ConfigurationSkip skip, final BitWriter writer, final Version protocol){
-		final boolean process = LoaderConfiguration.shouldBeExtracted(protocol, skip.minProtocol(), skip.maxProtocol());
+		final boolean process = ConfigurationValidatorHelper.shouldBeExtracted(protocol, skip.minProtocol(), skip.maxProtocol());
 		if(process)
 			writer.putText(skip.terminator(), StandardCharsets.UTF_8);
 	}

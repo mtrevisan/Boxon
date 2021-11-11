@@ -24,6 +24,8 @@
  */
 package io.github.mtrevisan.boxon.core;
 
+import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationField;
+import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationFields;
 import io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
@@ -49,6 +51,9 @@ import java.util.StringJoiner;
  * @param <T> The type of object the configuration is able to construct configuration messages.
  */
 final class Configuration<T>{
+
+	private static final String EMPTY_STRING = "";
+
 
 	private final Class<T> type;
 
@@ -152,46 +157,46 @@ final class Configuration<T>{
 
 	private List<String> extractProtocolVersionBoundaries(final List<ConfigField> configFields){
 		final List<String> protocolVersionBoundaries = new ArrayList<>(configFields.size() * 2 + 2);
-		if(!JavaHelper.isBlank(header.minProtocol()))
-			protocolVersionBoundaries.add(header.minProtocol());
-		if(!JavaHelper.isBlank(header.maxProtocol()))
-			protocolVersionBoundaries.add(header.maxProtocol());
+		protocolVersionBoundaries.add(header.minProtocol());
+		protocolVersionBoundaries.add(header.maxProtocol());
 
 		for(int i = 0; i < configFields.size(); i ++){
 			final ConfigField cf = configFields.get(i);
 
-			String minProtocol = null;
-			String maxProtocol = null;
-			ConfigurationSkip[] skips = null;
-			if(ConfigurationField.class.isInstance(cf.getBinding())){
-				final ConfigurationField binding = (ConfigurationField)cf.getBinding();
-				minProtocol = binding.minProtocol();
-				maxProtocol = binding.maxProtocol();
-				skips = cf.getSkips();
+			final Annotation annotation = cf.getBinding();
+			if(ConfigurationField.class.isInstance(annotation)){
+				final ConfigurationField binding = (ConfigurationField)annotation;
+				protocolVersionBoundaries.add(binding.minProtocol());
+				protocolVersionBoundaries.add(binding.maxProtocol());
 			}
-			else if(CompositeConfigurationField.class.isInstance(cf.getBinding())){
-				final CompositeConfigurationField binding = (CompositeConfigurationField)cf.getBinding();
-				minProtocol = binding.minProtocol();
-				maxProtocol = binding.maxProtocol();
-				skips = cf.getSkips();
+			else if(CompositeConfigurationField.class.isInstance(annotation)){
+				final CompositeConfigurationField binding = (CompositeConfigurationField)annotation;
+				protocolVersionBoundaries.add(binding.minProtocol());
+				protocolVersionBoundaries.add(binding.maxProtocol());
+			}
+			else if(AlternativeConfigurationFields.class.isInstance(annotation)){
+				final AlternativeConfigurationFields binding = (AlternativeConfigurationFields)annotation;
+				protocolVersionBoundaries.add(binding.minProtocol());
+				protocolVersionBoundaries.add(binding.maxProtocol());
+
+				final AlternativeConfigurationField[] alternativeFields = binding.value();
+				for(int j = 0; j < alternativeFields.length; j ++){
+					final AlternativeConfigurationField fieldBinding = alternativeFields[j];
+					protocolVersionBoundaries.add(fieldBinding.minProtocol());
+					protocolVersionBoundaries.add(fieldBinding.maxProtocol());
+				}
 			}
 
-			if(!JavaHelper.isBlank(minProtocol))
-				protocolVersionBoundaries.add(minProtocol);
-			if(!JavaHelper.isBlank(maxProtocol))
-				protocolVersionBoundaries.add(maxProtocol);
+			final ConfigurationSkip[] skips = cf.getSkips();
 			for(int j = 0; j < JavaHelper.lengthOrZero(skips); j ++){
-				minProtocol = skips[j].minProtocol();
-				maxProtocol = skips[j].maxProtocol();
-				if(!JavaHelper.isBlank(minProtocol))
-					protocolVersionBoundaries.add(minProtocol);
-				if(!JavaHelper.isBlank(maxProtocol))
-					protocolVersionBoundaries.add(maxProtocol);
+				protocolVersionBoundaries.add(skips[j].minProtocol());
+				protocolVersionBoundaries.add(skips[j].maxProtocol());
 			}
 		}
 
 		protocolVersionBoundaries.sort(Comparator.comparing(Version::of));
 		removeDuplicates(protocolVersionBoundaries);
+		protocolVersionBoundaries.remove(EMPTY_STRING);
 		return protocolVersionBoundaries;
 	}
 

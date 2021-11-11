@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.internal;
 
+import io.github.mtrevisan.boxon.core.CodecInterface;
 import org.springframework.objenesis.instantiator.ObjectInstantiator;
 import org.springframework.objenesis.instantiator.android.Android10Instantiator;
 import org.springframework.objenesis.instantiator.android.Android17Instantiator;
@@ -38,6 +39,7 @@ import org.springframework.objenesis.strategy.PlatformDescription;
 import org.springframework.util.StringUtils;
 
 import java.io.Serializable;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -49,7 +51,9 @@ import java.lang.reflect.TypeVariable;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
@@ -101,6 +105,26 @@ public final class ReflectionHelper{
 				classes[i] = Class.forName(classNames.get(i));
 		}
 		catch(final ClassNotFoundException ignored){}
+		return classes;
+	}
+
+	/**
+	 * Scans all classes accessible from the context class loader which belong to the given package.
+	 *
+	 * @param type	Whether a class or an interface (for example).
+	 * @param basePackageClasses	A list of classes that resides in a base package(s).
+	 * @return	The classes.
+	 */
+	public static Collection<Class<?>> extractClasses(final Class<?> type, final Class<?>... basePackageClasses){
+		final Collection<Class<?>> classes = new HashSet<>(0);
+
+		final ReflectiveClassLoader reflectiveClassLoader = ReflectiveClassLoader.createFrom(basePackageClasses);
+		reflectiveClassLoader.scan(CodecInterface.class, type);
+		final Collection<Class<?>> modules = ReflectiveClassLoader.getImplementationsOf(type);
+		@SuppressWarnings("unchecked")
+		final Collection<Class<?>> singletons = ReflectiveClassLoader.getTypesAnnotatedWith((Class<? extends Annotation>)type);
+		classes.addAll(modules);
+		classes.addAll(singletons);
 		return classes;
 	}
 

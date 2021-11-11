@@ -98,7 +98,7 @@ final class LoaderTemplate{
 		eventListener.loadingTemplates(basePackageClasses);
 
 		/** extract all classes annotated with {@link MessageHeader}. */
-		final Collection<Class<?>> annotatedClasses = LoaderHelper.extractClasses(MessageHeader.class, basePackageClasses);
+		final Collection<Class<?>> annotatedClasses = ReflectionHelper.extractClasses(MessageHeader.class, basePackageClasses);
 		final List<Template<?>> templates = extractTemplates(annotatedClasses);
 		addTemplatesInner(templates);
 
@@ -162,7 +162,7 @@ final class LoaderTemplate{
 	}
 
 	private void loadTemplateInner(final Template<?> template, final String headerStart, final Charset charset) throws TemplateException{
-		final String key = LoaderHelper.calculateKey(headerStart, charset);
+		final String key = calculateKey(headerStart, charset);
 		if(templates.containsKey(key))
 			throw TemplateException.create("Duplicated key `{}` found for class {}", headerStart, template.getType().getName());
 
@@ -206,12 +206,16 @@ final class LoaderTemplate{
 		if(header == null)
 			throw TemplateException.create("The given class type is not a valid template");
 
-		final String key = LoaderHelper.calculateKey(header.start()[0], Charset.forName(header.charset()));
+		final String key = calculateKey(header.start()[0], Charset.forName(header.charset()));
 		final Template<?> template = templates.get(key);
 		if(template == null)
 			throw TemplateException.create("Cannot find any template for given class type");
 
 		return template;
+	}
+
+	private static String calculateKey(final String headerStart, final Charset charset){
+		return JavaHelper.toHexString(headerStart.getBytes(charset));
 	}
 
 	private List<Annotation> filterAnnotationsWithCodec(final Annotation[] declaredAnnotations){

@@ -90,7 +90,7 @@ final class LoaderCodec{
 		eventListener.loadingCodecs(basePackageClasses);
 
 		/** extract all classes that implements {@link CodecInterface}. */
-		final Collection<Class<?>> derivedClasses = LoaderHelper.extractClasses(CodecInterface.class, basePackageClasses);
+		final Collection<Class<?>> derivedClasses = ReflectionHelper.extractClasses(CodecInterface.class, basePackageClasses);
 		final List<CodecInterface<?>> codecs = extractCodecs(derivedClasses);
 		addCodecsInner(codecs);
 
