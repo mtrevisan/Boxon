@@ -61,6 +61,8 @@ final class LoaderConfiguration{
 
 	private static final String CONFIGURATION_COMPOSITE_FIELDS = "fields";
 
+	private static final String EMPTY_STRING = "";
+
 
 	static final class ConfigurationPair{
 		private final Configuration<?> configuration;
@@ -134,7 +136,7 @@ final class LoaderConfiguration{
 			if(from.canBeCoded()){
 				//if the configuration is valid, add it to the list of templates...
 				final ConfigurationHeader header = from.getHeader();
-				configurations.put(header.start(), from);
+				loadConfigurationInner(header.start(), from);
 			}
 			else
 				//... otherwise throw exception
@@ -172,14 +174,14 @@ final class LoaderConfiguration{
 		try{
 			final ConfigurationHeader header = configuration.getHeader();
 			final String start = header.start();
-			loadConfigurationInner(configuration, start);
+			loadConfigurationInner(start, configuration);
 		}
 		catch(final Exception e){
 			eventListener.cannotLoadConfiguration(configuration.getType().getName(), e);
 		}
 	}
 
-	private void loadConfigurationInner(final Configuration<?> configuration, final String headerStart) throws ConfigurationException{
+	private void loadConfigurationInner(final String headerStart, final Configuration<?> configuration) throws ConfigurationException{
 		if(configurations.containsKey(headerStart))
 			throw ConfigurationException.create("Duplicated key `{}` found for class {}", headerStart,
 				configuration.getType().getName());
@@ -202,6 +204,32 @@ final class LoaderConfiguration{
 	}
 
 	/**
+	 * Retrieve all the configuration regardless the protocol version.
+	 *
+	 * @return	The configuration messages regardless the protocol version.
+	 */
+	List<Map<String, Object>> getConfigurations() throws ConfigurationException{
+		final Version currentProtocol = Version.of(EMPTY_STRING);
+
+		final Collection<Configuration<?>> configurationValues = configurations.values();
+		final List<Map<String, Object>> response = new ArrayList<>(configurationValues.size());
+		for(final Configuration<?> configuration : configurationValues){
+			final ConfigurationHeader header = configuration.getHeader();
+			if(!ConfigurationValidatorHelper.shouldBeExtracted(currentProtocol, header.minProtocol(), header.maxProtocol()))
+				continue;
+
+			final Map<String, Object> headerMap = extractMap(currentProtocol, header);
+			final Map<String, Object> fieldsMap = extractFieldsMap(currentProtocol, configuration);
+			response.add(Map.of(
+				"header", headerMap,
+				"fields", fieldsMap,
+				"protocolVersionBoundaries", configuration.getProtocolVersionBoundaries()
+			));
+		}
+		return Collections.unmodifiableList(response);
+	}
+
+	/**
 	 * Retrieve all the configuration given a protocol version.
 	 *
 	 * @param protocol	The protocol used to extract the configurations.
@@ -220,7 +248,7 @@ final class LoaderConfiguration{
 			if(!ConfigurationValidatorHelper.shouldBeExtracted(currentProtocol, header.minProtocol(), header.maxProtocol()))
 				continue;
 
-			final Map<String, Object> headerMap = extractMap(header);
+			final Map<String, Object> headerMap = extractMap(currentProtocol, header);
 			final Map<String, Object> fieldsMap = extractFieldsMap(currentProtocol, configuration);
 			response.add(Map.of(
 				"header", headerMap,
@@ -228,6 +256,17 @@ final class LoaderConfiguration{
 			));
 		}
 		return Collections.unmodifiableList(response);
+	}
+
+	private static Map<String, Object> extractMap(final Version protocol, final ConfigurationHeader header) throws ConfigurationException{
+		final Map<String, Object> map = new HashMap<>(3);
+		putIfNotEmpty(map, "shortDescription", header.shortDescription());
+		putIfNotEmpty(map, "longDescription", header.longDescription());
+		if(protocol.isEmpty()){
+			putIfNotEmpty(map, "minProtocol", header.minProtocol());
+			putIfNotEmpty(map, "maxProtocol", header.maxProtocol());
+		}
+		return map;
 	}
 
 	/**
@@ -238,7 +277,7 @@ final class LoaderConfiguration{
 	 * @param protocol   The protocol the data refers to.
 	 * @return	The configuration.
 	 */
-	ConfigurationPair getConfiguration(final String configurationType, final Map<String, Object> data, final Version protocol)
+	ConfigurationPair getConfigurationWithDefaults(final String configurationType, final Map<String, Object> data, final Version protocol)
 			throws EncodeException{
 		final Configuration<?> configuration = getConfiguration(configurationType);
 		final Object configurationObject = ReflectionHelper.getCreator(configuration.getType())
@@ -446,69 +485,39 @@ final class LoaderConfiguration{
 			final Annotation annotation = field.getBinding();
 			if(ConfigurationField.class.isInstance(annotation)){
 				final ConfigurationField binding = (ConfigurationField)annotation;
-				if(!ConfigurationValidatorHelper.shouldBeExtracted(protocol, binding.minProtocol(), binding.maxProtocol()))
-					continue;
-
-				final Class<?> fieldType = field.getFieldType();
-				final Map<String, Object> fieldMap = extractMap(binding, fieldType);
-
-				fieldsMap.put(binding.shortDescription(), fieldMap);
+				final Map<String, Object> fieldMap = extractFieldMap(field, binding, protocol);
+				if(fieldMap != null)
+					fieldsMap.put(binding.shortDescription(), fieldMap);
 			}
 			else if(CompositeConfigurationField.class.isInstance(annotation)){
 				final CompositeConfigurationField compositeBinding = (CompositeConfigurationField)annotation;
-				if(!ConfigurationValidatorHelper.shouldBeExtracted(protocol, compositeBinding.minProtocol(), compositeBinding.maxProtocol()))
-					continue;
-
-				final Class<?> fieldType = field.getFieldType();
-				final Map<String, Object> compositeMap = extractMap(compositeBinding);
-				final CompositeSubField[] bindings = compositeBinding.value();
-				final Map<String, Object> compositeFieldsMap = new HashMap<>(bindings.length);
-				for(int j = 0; j < bindings.length; j ++){
-					final Map<String, Object> fieldMap = extractMap(bindings[j], fieldType);
-
-					compositeFieldsMap.put(bindings[j].shortDescription(), fieldMap);
-				}
-				compositeMap.put(CONFIGURATION_COMPOSITE_FIELDS, compositeFieldsMap);
-				fieldsMap.put(compositeBinding.shortDescription(), compositeMap);
+				final Map<String, Object> compositeMap = extractCompositeFieldMap(field, compositeBinding, protocol);
+				if(compositeMap != null)
+					fieldsMap.put(compositeBinding.shortDescription(), compositeMap);
 			}
 			else if(AlternativeConfigurationField.class.isInstance(annotation)){
-				final AlternativeConfigurationField binding = (AlternativeConfigurationField)annotation;
-
-				if(ConfigurationValidatorHelper.shouldBeExtracted(protocol, binding.minProtocol(), binding.maxProtocol())){
-					final Class<?> fieldType = field.getFieldType();
-					final Map<String, Object> alternativeMap = extractMap(binding, fieldType);
-
-					final AlternativeSubField fieldBinding = extractField(binding, protocol);
-					if(fieldBinding != null){
-						final Map<String, Object> fieldMap = extractMap(fieldBinding, fieldType);
-
-						putValueIfNotEmpty(alternativeMap, "defaultValue", fieldType, binding.enumeration(), fieldBinding.defaultValue());
-
-						alternativeMap.putAll(fieldMap);
-
-						fieldsMap.put(binding.shortDescription(), alternativeMap);
-					}
-				}
+				final AlternativeConfigurationField alternativeBinding = (AlternativeConfigurationField)annotation;
+				final Map<String, Object> alternativeMap = extractAlternativeField(field, alternativeBinding, protocol);
+				if(alternativeMap != null)
+					fieldsMap.put(alternativeBinding.shortDescription(), alternativeMap);
 			}
 		}
 		return fieldsMap;
 	}
 
-	private static AlternativeSubField extractField(final AlternativeConfigurationField binding, final Version protocol){
-		final AlternativeSubField[] alternativeFields = binding.value();
-		for(int i = 0; i < alternativeFields.length; i ++){
-			final AlternativeSubField fieldBinding = alternativeFields[i];
-			if(ConfigurationValidatorHelper.shouldBeExtracted(protocol, fieldBinding.minProtocol(), fieldBinding.maxProtocol()))
-				return fieldBinding;
-		}
-		return null;
-	}
+	private static Map<String, Object> extractFieldMap(final ConfigField field, final ConfigurationField binding,
+			final Version protocol) throws ConfigurationException{
+		if(!ConfigurationValidatorHelper.shouldBeExtracted(protocol, binding.minProtocol(), binding.maxProtocol()))
+			return null;
 
-	private static Map<String, Object> extractMap(final ConfigurationHeader header) throws ConfigurationException{
-		final Map<String, Object> map = new HashMap<>(3);
-		putIfNotEmpty(map, "shortDescription", header.shortDescription());
-		putIfNotEmpty(map, "longDescription", header.longDescription());
-		return map;
+		final Class<?> fieldType = field.getFieldType();
+		final Map<String, Object> fieldMap = extractMap(binding, fieldType);
+
+		if(protocol.isEmpty()){
+			putIfNotEmpty(fieldMap, "minProtocol", binding.minProtocol());
+			putIfNotEmpty(fieldMap, "maxProtocol", binding.maxProtocol());
+		}
+		return fieldMap;
 	}
 
 	private static Map<String, Object> extractMap(final ConfigurationField binding, final Class<?> fieldType) throws ConfigurationException{
@@ -539,18 +548,31 @@ final class LoaderConfiguration{
 		return map;
 	}
 
-	private static Map<String, Object> extractMap(final CompositeConfigurationField binding) throws ConfigurationException{
-		final Map<String, Object> map = new HashMap<>(6);
+	private static Map<String, Object> extractCompositeFieldMap(final ConfigField field, final CompositeConfigurationField binding,
+			final Version protocol) throws ConfigurationException{
+		if(!ConfigurationValidatorHelper.shouldBeExtracted(protocol, binding.minProtocol(), binding.maxProtocol()))
+			return null;
 
-		putIfNotEmpty(map, "longDescription", binding.longDescription());
-		putIfNotEmpty(map, "pattern", binding.pattern());
-		putIfNotEmpty(map, "charset", binding.charset());
+		final Class<?> fieldType = field.getFieldType();
+		final Map<String, Object> compositeMap = extractMap(binding);
+		final CompositeSubField[] bindings = binding.value();
+		final Map<String, Object> compositeFieldsMap = new HashMap<>(bindings.length);
+		for(int j = 0; j < bindings.length; j ++){
+			final Map<String, Object> fieldMap = extractMap(bindings[j], fieldType);
 
-		return map;
+			compositeFieldsMap.put(bindings[j].shortDescription(), fieldMap);
+		}
+		compositeMap.put(CONFIGURATION_COMPOSITE_FIELDS, compositeFieldsMap);
+
+		if(protocol.isEmpty()){
+			putIfNotEmpty(compositeMap, "minProtocol", binding.minProtocol());
+			putIfNotEmpty(compositeMap, "maxProtocol", binding.maxProtocol());
+		}
+		return compositeMap;
 	}
 
 	private static Map<String, Object> extractMap(final CompositeSubField binding, final Class<?> fieldType)
-			throws ConfigurationException{
+		throws ConfigurationException{
 		final Map<String, Object> map = new HashMap<>(10);
 
 		putIfNotEmpty(map, "longDescription", binding.longDescription());
@@ -565,8 +587,54 @@ final class LoaderConfiguration{
 		return map;
 	}
 
+	private static Map<String, Object> extractAlternativeField(final ConfigField field, final AlternativeConfigurationField binding,
+			final Version protocol) throws ConfigurationException{
+		if(!ConfigurationValidatorHelper.shouldBeExtracted(protocol, binding.minProtocol(), binding.maxProtocol()))
+			return null;
+
+		final Class<?> fieldType = field.getFieldType();
+		final Map<String, Object> alternativeMap = extractMap(binding, fieldType);
+
+		Map<String, Object> alternativesMap = null;
+		if(protocol.isEmpty()){
+			//extract all the alternatives, because it was requested all the configurations regardless of protocol:
+			final AlternativeSubField[] alternativeFields = binding.value();
+			final Collection<Map<String, Object>> alternatives = new ArrayList<>(alternativeFields.length);
+			for(int j = 0; j < alternativeFields.length; j ++){
+				final AlternativeSubField alternativeField = alternativeFields[j];
+
+				final Map<String, Object> fieldMap = extractMap(alternativeField, fieldType);
+
+				putIfNotEmpty(fieldMap, "minProtocol", alternativeField.minProtocol());
+				putIfNotEmpty(fieldMap, "maxProtocol", alternativeField.maxProtocol());
+				putValueIfNotEmpty(fieldMap, "defaultValue", fieldType, binding.enumeration(), alternativeField.defaultValue());
+
+				fieldMap.putAll(alternativeMap);
+
+				alternatives.add(fieldMap);
+			}
+			alternativesMap = new HashMap<>(3);
+			alternativesMap.put("alternatives", alternatives);
+			putIfNotEmpty(alternativesMap, "minProtocol", binding.minProtocol());
+			putIfNotEmpty(alternativesMap, "maxProtocol", binding.maxProtocol());
+		}
+		else{
+			//extract the specific alternative, because it was requested the configuration of a particular protocol:
+			final AlternativeSubField fieldBinding = extractField(binding, protocol);
+			if(fieldBinding != null){
+				alternativesMap = extractMap(fieldBinding, fieldType);
+
+				putValueIfNotEmpty(alternativesMap, "defaultValue", fieldType, binding.enumeration(), fieldBinding.defaultValue());
+
+				alternativesMap.putAll(alternativeMap);
+
+			}
+		}
+		return alternativesMap;
+	}
+
 	private static Map<String, Object> extractMap(final AlternativeConfigurationField binding, final Class<?> fieldType)
-			throws ConfigurationException{
+		throws ConfigurationException{
 		final Map<String, Object> map = new HashMap<>(6);
 
 		putIfNotEmpty(map, "longDescription", binding.longDescription());
@@ -588,7 +656,7 @@ final class LoaderConfiguration{
 	}
 
 	private static Map<String, Object> extractMap(final AlternativeSubField binding, final Class<?> fieldType)
-			throws ConfigurationException{
+		throws ConfigurationException{
 		final Map<String, Object> map = new HashMap<>(6);
 
 		putIfNotEmpty(map, "longDescription", binding.longDescription());
@@ -602,6 +670,26 @@ final class LoaderConfiguration{
 
 		if(String.class.isAssignableFrom(fieldType))
 			putIfNotEmpty(map, "charset", binding.charset());
+
+		return map;
+	}
+
+	private static AlternativeSubField extractField(final AlternativeConfigurationField binding, final Version protocol){
+		final AlternativeSubField[] alternativeFields = binding.value();
+		for(int i = 0; i < alternativeFields.length; i ++){
+			final AlternativeSubField fieldBinding = alternativeFields[i];
+			if(ConfigurationValidatorHelper.shouldBeExtracted(protocol, fieldBinding.minProtocol(), fieldBinding.maxProtocol()))
+				return fieldBinding;
+		}
+		return null;
+	}
+
+	private static Map<String, Object> extractMap(final CompositeConfigurationField binding) throws ConfigurationException{
+		final Map<String, Object> map = new HashMap<>(6);
+
+		putIfNotEmpty(map, "longDescription", binding.longDescription());
+		putIfNotEmpty(map, "pattern", binding.pattern());
+		putIfNotEmpty(map, "charset", binding.charset());
 
 		return map;
 	}

@@ -35,8 +35,8 @@ import io.github.mtrevisan.boxon.annotations.configurations.CompositeSubField;
 
 
 @SuppressWarnings("ALL")
-@ConfigurationHeader(start = "AT+", end = "$", shortDescription = "AT+GTREG",
-	longDescription = "The command AT+GTREG is used to do things.", maxProtocol = "2.8")
+@ConfigurationHeader(longDescription = "The command AT+GTREG is used to do things.", shortDescription = "AT+GTREG", maxProtocol = "2.8",
+	start = "AT+", end = "$")
 public class REGConfigurationASCII{
 
 	@ConfigurationField(shortDescription = "Header", defaultValue = "GTREG", terminator = "=")
@@ -54,12 +54,15 @@ public class REGConfigurationASCII{
 	@ConfigurationField(shortDescription = "Update mode", minValue = "0", maxValue = "1", defaultValue = "1", terminator = ",")
 	private int updateMode;
 
-	@ConfigurationField(shortDescription = "Maximum download retry count", maxProtocol = "1.20", minValue = "0", maxValue = "3",
-		defaultValue = "0", terminator = ",")
-	private Integer maxDownloadRetryCount1_20;
-	@ConfigurationField(shortDescription = "Maximum download retry count", minProtocol = "1.21", minValue = "0", maxValue = "3",
-		defaultValue = "1", terminator = ",")
-	private Integer maxDownloadRetryCount1_21;
+	@AlternativeConfigurationField(
+		shortDescription = "Maximum download retry count",
+		value = {
+			@AlternativeSubField(maxProtocol = "1.20", minValue = "0", maxValue = "3", defaultValue = "0"),
+			@AlternativeSubField(minProtocol = "1.21", minValue = "0", maxValue = "3", defaultValue = "1")
+		},
+		terminator = ","
+	)
+	private int maxDownloadRetryCount;
 
 	@AlternativeConfigurationField(
 		shortDescription = "Download timeout", unitOfMeasure = "min",

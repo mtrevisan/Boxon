@@ -418,7 +418,7 @@ public final class Parser{
 	private void composeConfiguration(final BitWriter writer, final String configurationType, final Map<String, Object> data,
 			final Version protocol, final ComposeResponse response){
 		try{
-			final LoaderConfiguration.ConfigurationPair configurationPair = loaderConfiguration.getConfiguration(configurationType, data,
+			final LoaderConfiguration.ConfigurationPair configurationPair = loaderConfiguration.getConfigurationWithDefaults(configurationType, data,
 				protocol);
 
 			final Configuration<?> configuration = configurationPair.getConfiguration();

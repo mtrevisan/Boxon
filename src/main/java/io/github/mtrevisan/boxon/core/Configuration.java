@@ -24,8 +24,8 @@
  */
 package io.github.mtrevisan.boxon.core;
 
-import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationField;
+import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
 import io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
@@ -38,8 +38,10 @@ import io.github.mtrevisan.boxon.internal.semanticversioning.Version;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringJoiner;
@@ -102,6 +104,7 @@ final class Configuration<T>{
 
 	private List<ConfigField> loadAnnotatedFields(final Class<T> type, final List<Field> fields, final Version minMessageProtocol,
 			final Version maxMessageProtocol) throws AnnotationException{
+		final Collection<String> uniqueShortDescription = new HashSet<>(fields.size());
 		final List<ConfigField> configFields = new ArrayList<>(fields.size());
 		for(int i = 0; i < fields.size(); i ++){
 			final Field field = fields.get(i);
@@ -112,6 +115,8 @@ final class Configuration<T>{
 			try{
 				final Annotation validAnnotation = validateField(field, declaredAnnotations, minMessageProtocol, maxMessageProtocol);
 
+				validateShortDescriptionUniqueness(validAnnotation, uniqueShortDescription, type);
+
 				if(validAnnotation != null)
 					configFields.add(new ConfigField(field, validAnnotation, (skips.length > 0? skips: null)));
 			}
@@ -121,6 +126,19 @@ final class Configuration<T>{
 			}
 		}
 		return configFields;
+	}
+
+	private void validateShortDescriptionUniqueness(final Annotation validAnnotation, final Collection<String> uniqueShortDescription,
+			final Class<T> type) throws AnnotationException{
+		String shortDescription = null;
+		if(ConfigurationField.class.isInstance(validAnnotation))
+			shortDescription = ((ConfigurationField)validAnnotation).shortDescription();
+		else if(CompositeConfigurationField.class.isInstance(validAnnotation))
+			shortDescription = ((CompositeConfigurationField)validAnnotation).shortDescription();
+		else if(AlternativeConfigurationField.class.isInstance(validAnnotation))
+			shortDescription = ((AlternativeConfigurationField)validAnnotation).shortDescription();
+		if(!uniqueShortDescription.add(shortDescription))
+			throw AnnotationException.create("Duplicated short description in {}: {}", type.getName(), shortDescription);
 	}
 
 	private Annotation validateField(final Field field, final Annotation[] annotations, final Version minMessageProtocol,
