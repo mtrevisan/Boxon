@@ -553,7 +553,6 @@ final class LoaderConfiguration{
 		putIfNotEmpty(map, "longDescription", header.longDescription());
 		putIfNotEmpty(map, "minProtocol", header.minProtocol());
 		putIfNotEmpty(map, "maxProtocol", header.maxProtocol());
-		putIfNotEmpty(map, "charset", header.charset());
 		return map;
 	}
 
@@ -565,6 +564,8 @@ final class LoaderConfiguration{
 		putIfNotEmpty(map, "minProtocol", binding.minProtocol());
 		putIfNotEmpty(map, "maxProtocol", binding.maxProtocol());
 
+		if(!fieldType.isEnum() && !fieldType.isArray())
+			putIfNotEmpty(map, "fieldType", ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName());
 		putIfNotEmpty(map, "minValue", JavaHelper.getValue(fieldType, binding.minValue()));
 		putIfNotEmpty(map, "maxValue", JavaHelper.getValue(fieldType, binding.maxValue()));
 		putIfNotEmpty(map, "pattern", binding.pattern());
@@ -605,6 +606,8 @@ final class LoaderConfiguration{
 		putIfNotEmpty(map, "unitOfMeasure", binding.unitOfMeasure());
 
 		putIfNotEmpty(map, "pattern", binding.pattern());
+		if(!fieldType.isEnum() && !fieldType.isArray())
+			putIfNotEmpty(map, "fieldType", ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName());
 
 		putValueIfNotEmpty(map, "defaultValue", fieldType, NullEnum.class, binding.defaultValue());
 

@@ -44,7 +44,7 @@ public class REGConfigurationASCII{
 	private String password;
 
 	@ConfigurationField(shortDescription = "Operation mode", terminator = ",", minValue = "0", maxValue = "3", defaultValue = "0")
-	private int operationMode;
+	private Integer operationMode;
 
 	@ConfigurationField(shortDescription = "Update Over-The-Air", terminator = ",", enumeration = BooleanType.class,
 		defaultValue = "FALSE")
