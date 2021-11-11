@@ -16,4 +16,7 @@ module io.github.mtrevisan.boxon{
 	exports io.github.mtrevisan.boxon.core;
 	exports io.github.mtrevisan.boxon.exceptions;
 	exports io.github.mtrevisan.boxon.external;
+
+	//FIXME
+//	exports io.github.mtrevisan.boxon.internal.semanticversioning;
 }

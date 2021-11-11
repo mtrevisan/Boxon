@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 
-public class CompositeManager implements ConfigurationManagerInterface{
+class CompositeManager implements ConfigurationManagerInterface{
 
 	private static final String CONFIGURATION_COMPOSITE_FIELDS = "fields";
 
