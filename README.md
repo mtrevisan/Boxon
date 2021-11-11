@@ -109,7 +109,9 @@ You can get pre-built JARs (usable on JRE 11 or newer) from [Sonatype](https://o
     2. [ConfigurationSkip](#annotation-configurationskip)
     3. [ConfigurationField](#annotation-configurationfield)
     4. [CompositeConfigurationField](#annotation-compositeconfigurationfield)
-    5. [ConfigurationSubField](#annotation-configurationsubfield)
+    5. [CompositeSubField](#annotation-compositesubfield)
+    6. [AlternativeConfigurationField](#annotation-alternativeconfigurationfield)
+    7. [AlternativeSubField](#annotation-alternativesubfield)
 4. [How to write SpEL expressions](#how-to-spel)
 5. [How to extend the functionalities](#how-to-extend)
 6. [Digging into the code](#digging)
@@ -164,13 +166,15 @@ Here is a brief summary of the parameters (described in detail below) for each a
 | Checksum             |           |         |         |         |         |            |                   | &#9745; |  &#9745;  |  &#9745;  | &#9745; |  &#9745;  |  &#9745;   |         | Checksum      |
 | Evaluate             |  &#9745;  |         |         |         |         |            |                   |         |           |           |         |           |            | &#9745; | Evaluate      |
 
-|                             | shortDescription | longDescription | minProtocol | maxProtocol |  start  |   end   | charset | terminator | unitOfMeasure |  minValue | maxValue | pattern | enumeration | defaultValue |  radix  | composition |                             |
-|-----------------------------|:----------------:|:---------------:|:-----------:|:-----------:|:-------:|:-------:|:-------:|:----------:|:-------------:|:---------:|:--------:|:-------:|:-----------:|:------------:|:-------:|:-----------:|:---------------------------:|
-| ConfigurationHeader         |      &#9745;     |     &#9745;     |   &#9745;   |   &#9745;   | &#9745; | &#9745; | &#9745; |            |               |           |          |         |             |              |         |             | ConfigurationHeader         |
-| ConfigurationSkip           |                  |                 |   &#9745;   |   &#9745;   |         |         |         |   &#9745;  |               |           |          |         |             |              |         |             | ConfigurationSkip           |
-| ConfigurationField          |      &#9745;     |     &#9745;     |   &#9745;   |   &#9745;   |         |         | &#9745; |            |    &#9745;    |  &#9745;  |  &#9745; | &#9745; |   &#9745;   |    &#9745;   | &#9745; |             | ConfigurationField          |
-| CompositeConfigurationField |      &#9745;     |     &#9745;     |   &#9745;   |   &#9745;   |         |         | &#9745; |   &#9745;  |               |           |          | &#9745; |             |              |         |   &#9745;   | CompositeConfigurationField |
-| ConfigurationSubField       |      &#9745;     |     &#9745;     |             |             |         |         |         |            |    &#9745;    |           |          | &#9745; |             |    &#9745;   |         |             | ConfigurationSubField       |
+|                               | shortDescription | longDescription | minProtocol | maxProtocol |  start  |   end   | charset | terminator | unitOfMeasure |  minValue | maxValue | pattern | enumeration | defaultValue |  radix  | composition |                               |
+|-------------------------------|:----------------:|:---------------:|:-----------:|:-----------:|:-------:|:-------:|:-------:|:----------:|:-------------:|:---------:|:--------:|:-------:|:-----------:|:------------:|:-------:|:-----------:|:-----------------------------:|
+| ConfigurationHeader           |      &#9745;     |     &#9745;     |   &#9745;   |   &#9745;   | &#9745; | &#9745; | &#9745; |            |               |           |          |         |             |              |         |             | ConfigurationHeader           |
+| ConfigurationSkip             |                  |                 |   &#9745;   |   &#9745;   |         |         |         |   &#9745;  |               |           |          |         |             |              |         |             | ConfigurationSkip             |
+| ConfigurationField            |      &#9745;     |     &#9745;     |   &#9745;   |   &#9745;   |         |         | &#9745; |            |    &#9745;    |  &#9745;  |  &#9745; | &#9745; |   &#9745;   |    &#9745;   | &#9745; |             | ConfigurationField            |
+| CompositeConfigurationField   |      &#9745;     |     &#9745;     |   &#9745;   |   &#9745;   |         |         | &#9745; |   &#9745;  |               |           |          | &#9745; |             |              |         |   &#9745;   | CompositeConfigurationField   |
+| CompositeSubField             |      &#9745;     |     &#9745;     |             |             |         |         |         |            |    &#9745;    |           |          | &#9745; |             |    &#9745;   |         |             | CompositeSubField             |
+| AlternativeConfigurationField |      &#9745;     |     &#9745;     |   &#9745;   |   &#9745;   |         |         |         |   &#9745;  |    &#9745;    |           |          |         |   &#9745;   |              |         |             | AlternativeConfigurationField |
+| AlternativeSubField           |                  |     &#9745;     |   &#9745;   |   &#9745;   |         |         | &#9745; |            |    &#9745;    |  &#9745;  |  &#9745; | &#9745; |             |    &#9745;   | &#9745; |             | AlternativeSubField           |
 
 
 <a name="annotation-bindobject"></a>
@@ -803,7 +807,7 @@ public int motionlessReportInterval;
 ### CompositeConfigurationField
 
 #### parameters
-- `value`: a set of [ConfigurationSubField](#annotation-configurationsubfield)
+- `value`: a set of [CompositeSubField](#annotation-compositesubfield)
 - `shortDescription`: a short description of the field, mandatory, used as an identifier (and thus must be unique inside every configuration message).
 - `longDescription`: a more expressive description, optional.
 - `minProtocol`: minimum protocol for which this configuration message is valid, optional.
@@ -823,9 +827,9 @@ This annotation is bounded to a string variable.
 ```java
 @CompositeConfigurationField(
 	value = {
-		@ConfigurationSubField(shortDescription = "URL", pattern = "https?://.{0,92}"),
-		@ConfigurationSubField(shortDescription = "username", pattern = ".{1,32}"),
-		@ConfigurationSubField(shortDescription = "password", pattern = ".{1,32}")
+		@CompositeSubField(shortDescription = "URL", pattern = "https?://.{0,92}"),
+		@CompositeSubField(shortDescription = "username", pattern = ".{1,32}"),
+		@CompositeSubField(shortDescription = "password", pattern = ".{1,32}")
 	},
 	shortDescription = "Download URL",
 	composition = "${URL}<#if username?? && password??>@${username}@${password}</#if>",
@@ -838,8 +842,8 @@ public String downloadURL;
 
 <br/>
 
-<a name="annotation-configurationsubfield"></a>
-### ConfigurationSubField
+<a name="annotation-compositesubfield"></a>
+### CompositeSubField
 
 #### parameters
 - `shortDescription`: a short description of the field, mandatory, used as an identifier (and thus must be unique inside every configuration message).
@@ -858,9 +862,9 @@ This annotation is bounded to a string variable.
 ```java
 @CompositeConfigurationField(
 	value = {
-		@ConfigurationSubField(shortDescription = "URL", pattern = "https?://.{0,92}"),
-		@ConfigurationSubField(shortDescription = "username", pattern = ".{1,32}"),
-		@ConfigurationSubField(shortDescription = "password", pattern = ".{1,32}")
+		@CompositeSubField(shortDescription = "URL", pattern = "https?://.{0,92}"),
+		@CompositeSubField(shortDescription = "username", pattern = ".{1,32}"),
+		@CompositeSubField(shortDescription = "password", pattern = ".{1,32}")
 	},
 	shortDescription = "Download URL",
 	composition = "${URL}<#if username?? && password??>@${username}@${password}</#if>",
@@ -868,6 +872,76 @@ This annotation is bounded to a string variable.
 	pattern = ".{0,100}"
 )
 public String downloadURL;
+```
+
+
+<br/>
+
+<a name="annotation-alternativeconfigurationfield"></a>
+### AlternativeConfigurationField
+
+#### parameters
+- `value`: a set of [AlternativeSubField](#annotation-alternativesubfield)
+- `shortDescription`: a short description of the field, mandatory, used as an identifier (and thus must be unique inside every configuration message).
+- `longDescription`: a more expressive description, optional.
+- `unitOfMeasure`: the unit of measure, optional.
+- `minProtocol`: minimum protocol for which this configuration message is valid, optional.
+- `maxProtocol`: maximum protocol for which this configuration message is valid, optional.
+- `enumeration`: enumeration for this field, optional. If the field is a single enum, then each value of this enum is mutually exclusive.
+- `terminator`: the string that terminates the skip (defaults to empty string), optional.
+
+#### description
+Defines an alternative field of the configuration message.
+
+#### annotation type
+This annotation is bounded to a variable.
+
+#### example
+```java
+@AlternativeConfigurationField(
+	shortDescription = "Download protocol", terminator = ",", enumeration = DownloadProtocol.class,
+	value = {
+		@AlternativeSubField(maxProtocol = "1.35", defaultValue = "HTTP"),
+		@AlternativeSubField(minProtocol = "1.36", defaultValue = "HTTP")
+	}
+)
+private DownloadProtocol downloadProtocol;
+```
+
+
+<br/>
+
+<a name="annotation-alternativesubfield"></a>
+### AlternativeSubField
+
+#### parameters
+- `longDescription`: a more expressive description, optional.
+- `unitOfMeasure`: the unit of measure, optional.
+- `minProtocol`: minimum protocol for which this configuration message is valid, optional.
+- `maxProtocol`: maximum protocol for which this configuration message is valid, optional.
+- `minValue`: minimum value this field can assume, optional (alternative to `pattern` and `enumeration`).
+- `maxValue`: maximum value this field can assume, optional (alternative to `pattern` and `enumeration`).
+- `pattern`: regex pattern this field must obey, optional.
+- `defaultValue`: default value, optional. If the variable is an array, then this field may represent an `or` between values (e.g. `ONE|TWO|THREE`), otherwise can be a single value (e.g. `TWO`). If not present, then the field is mandatory.
+- `charset`: charset of the field (if string value), optional.
+- `radix`: radix of the number field when written to the message, optional.
+
+#### description
+Defines a sub-field of an alternative field of the configuration message.
+
+#### annotation type
+This annotation is bounded to a variable.
+
+#### example
+```java
+@AlternativeConfigurationField(
+	shortDescription = "Download timeout", terminator = ",", unitOfMeasure = "min",
+	value = {
+		@AlternativeSubField(maxProtocol = "1.18", minValue = "5", maxValue = "30", defaultValue = "10"),
+		@AlternativeSubField(minProtocol = "1.19", minValue = "5", maxValue = "30", defaultValue = "20")
+	}
+)
+private int downloadTimeout;
 ```
 
 

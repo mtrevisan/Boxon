@@ -24,14 +24,14 @@
  */
 package io.github.mtrevisan.boxon.core.queclink;
 
+import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationField;
-import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationFields;
 import io.github.mtrevisan.boxon.annotations.configurations.BooleanType;
 import io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
-import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSubField;
+import io.github.mtrevisan.boxon.annotations.configurations.CompositeSubField;
 
 
 @SuppressWarnings("ALL")
@@ -62,29 +62,29 @@ public class REGConfigurationASCII{
 		maxValue = "3", defaultValue = "1")
 	private Integer maxDownloadRetryCount1_21;
 
-	@AlternativeConfigurationFields(
+	@AlternativeConfigurationField(
 		shortDescription = "Download timeout", terminator = ",", unitOfMeasure = "min",
 		value = {
-			@AlternativeConfigurationField(maxProtocol = "1.18", minValue = "5", maxValue = "30", defaultValue = "10"),
-			@AlternativeConfigurationField(minProtocol = "1.19", minValue = "5", maxValue = "30", defaultValue = "20")
+			@AlternativeSubField(maxProtocol = "1.18", minValue = "5", maxValue = "30", defaultValue = "10"),
+			@AlternativeSubField(minProtocol = "1.19", minValue = "5", maxValue = "30", defaultValue = "20")
 		}
 	)
 	private int downloadTimeout;
 
-	@AlternativeConfigurationFields(
+	@AlternativeConfigurationField(
 		shortDescription = "Download protocol", terminator = ",", enumeration = DownloadProtocol.class,
 		value = {
-			@AlternativeConfigurationField(maxProtocol = "1.35", defaultValue = "HTTP"),
-			@AlternativeConfigurationField(minProtocol = "1.36", defaultValue = "HTTP")
+			@AlternativeSubField(maxProtocol = "1.35", defaultValue = "HTTP"),
+			@AlternativeSubField(minProtocol = "1.36", defaultValue = "HTTP")
 		}
 	)
 	private DownloadProtocol downloadProtocol;
 
 	@CompositeConfigurationField(
 		value = {
-			@ConfigurationSubField(shortDescription = "URL", pattern = "https?://.{0,92}"),
-			@ConfigurationSubField(shortDescription = "username", pattern = ".{1,32}"),
-			@ConfigurationSubField(shortDescription = "password", pattern = ".{1,32}")
+			@CompositeSubField(shortDescription = "URL", pattern = "https?://.{0,92}"),
+			@CompositeSubField(shortDescription = "username", pattern = ".{1,32}"),
+			@CompositeSubField(shortDescription = "password", pattern = ".{1,32}")
 		},
 		shortDescription = "Download URL",
 		composition = "${URL}<#if username?? && password??>@${username}@${password}</#if>",

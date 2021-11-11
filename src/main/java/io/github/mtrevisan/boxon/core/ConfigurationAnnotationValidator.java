@@ -24,13 +24,13 @@
  */
 package io.github.mtrevisan.boxon.core;
 
+import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationField;
-import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationFields;
 import io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
-import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSubField;
+import io.github.mtrevisan.boxon.annotations.configurations.CompositeSubField;
 import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
@@ -297,7 +297,7 @@ enum ConfigurationAnnotationValidator{
 			if(!String.class.isAssignableFrom(field.getType()))
 				throw AnnotationException.create("Composite fields must have a string variable to be bounded to");
 
-			final ConfigurationSubField[] fields = binding.value();
+			final CompositeSubField[] fields = binding.value();
 			if(fields.length == 0)
 				throw AnnotationException.create("Composite fields must have at least one sub-field");
 			CodecHelper.assertValidCharset(binding.charset());
@@ -334,11 +334,11 @@ enum ConfigurationAnnotationValidator{
 		}
 	},
 
-	SUB_FIELD(ConfigurationSubField.class){
+	SUB_FIELD(CompositeSubField.class){
 		@Override
 		void validate(final Field field, final Annotation annotation, final Version minMessageProtocol, final Version maxMessageProtocol)
 				throws AnnotationException{
-			final ConfigurationSubField binding = (ConfigurationSubField)annotation;
+			final CompositeSubField binding = (CompositeSubField)annotation;
 
 			if(JavaHelper.isBlank(binding.shortDescription()))
 				throw AnnotationException.create("Short description must be present");
@@ -348,7 +348,7 @@ enum ConfigurationAnnotationValidator{
 			validateDefaultValue(field, binding);
 		}
 
-		private void validatePattern(final Field field, final ConfigurationSubField binding) throws AnnotationException{
+		private void validatePattern(final Field field, final CompositeSubField binding) throws AnnotationException{
 			final String pattern = binding.pattern();
 			final String defaultValue = binding.defaultValue();
 
@@ -360,23 +360,23 @@ enum ConfigurationAnnotationValidator{
 					//defaultValue compatible with field type
 					if(!String.class.isAssignableFrom(field.getType()))
 						throw AnnotationException.create("Data type not compatible with `pattern` in {}; found {}.class, expected String.class",
-							ConfigurationSubField.class.getSimpleName(), field.getType());
+							CompositeSubField.class.getSimpleName(), field.getType());
 					//defaultValue compatible with pattern
 					if(!defaultValue.isEmpty() && !formatPattern.matcher(defaultValue).matches())
 						throw AnnotationException.create("Default value not compatible with `pattern` in {}; found {}, expected {}",
-							ConfigurationSubField.class.getSimpleName(), defaultValue, pattern);
+							CompositeSubField.class.getSimpleName(), defaultValue, pattern);
 				}
 				catch(final AnnotationException ae){
 					throw ae;
 				}
 				catch(final Exception e){
-					throw AnnotationException.create("Invalid pattern in {} in field {}", ConfigurationSubField.class.getSimpleName(),
+					throw AnnotationException.create("Invalid pattern in {} in field {}", CompositeSubField.class.getSimpleName(),
 						field.getName(), e);
 				}
 			}
 		}
 
-		private void validateDefaultValue(final Field field, final ConfigurationSubField binding) throws AnnotationException{
+		private void validateDefaultValue(final Field field, final CompositeSubField binding) throws AnnotationException{
 			final Class<?> fieldType = field.getType();
 			final String defaultValue = binding.defaultValue();
 
@@ -384,15 +384,15 @@ enum ConfigurationAnnotationValidator{
 				//defaultValue compatible with variable type
 				if(JavaHelper.getValue(fieldType, defaultValue) == null)
 					throw AnnotationException.create("Incompatible enum in {}, found {}, expected {}",
-						ConfigurationSubField.class.getSimpleName(), defaultValue.getClass().getSimpleName(), fieldType.toString());
+						CompositeSubField.class.getSimpleName(), defaultValue.getClass().getSimpleName(), fieldType.toString());
 		}
 	},
 
-	ALTERNATIVE_FIELDS(AlternativeConfigurationFields.class){
+	ALTERNATIVE_FIELDS(AlternativeConfigurationField.class){
 		@Override
 		void validate(final Field field, final Annotation annotation, final Version minMessageProtocol, final Version maxMessageProtocol)
 			throws AnnotationException{
-			final AlternativeConfigurationFields binding = (AlternativeConfigurationFields)annotation;
+			final AlternativeConfigurationField binding = (AlternativeConfigurationField)annotation;
 
 			if(JavaHelper.isBlank(binding.shortDescription()))
 				throw AnnotationException.create("Short description must be present");
@@ -404,15 +404,15 @@ enum ConfigurationAnnotationValidator{
 			validateEnumeration(field, binding);
 
 			validateProtocol(binding.minProtocol(), binding.maxProtocol(), minMessageProtocol, maxMessageProtocol,
-				AlternativeConfigurationFields.class);
+				AlternativeConfigurationField.class);
 
-			final AlternativeConfigurationField[] alternatives = binding.value();
+			final AlternativeSubField[] alternatives = binding.value();
 			for(int i = 0; i < JavaHelper.lengthOrZero(alternatives); i ++)
 				validateProtocol(alternatives[i].minProtocol(), alternatives[i].maxProtocol(), minMessageProtocol, maxMessageProtocol,
-					AlternativeConfigurationField.class);
+					AlternativeSubField.class);
 		}
 
-		private void validateMinimumParameters(final Field field, final AlternativeConfigurationFields binding) throws AnnotationException{
+		private void validateMinimumParameters(final Field field, final AlternativeConfigurationField binding) throws AnnotationException{
 			final Class<?> fieldType = field.getType();
 			final boolean isFieldArray = fieldType.isArray();
 			final Class<? extends Enum<?>> enumeration = binding.enumeration();
@@ -421,7 +421,7 @@ enum ConfigurationAnnotationValidator{
 				throw AnnotationException.create("Array field should have `enumeration`");
 		}
 
-		private void validateEnumeration(final Field field, final AlternativeConfigurationFields binding) throws AnnotationException{
+		private void validateEnumeration(final Field field, final AlternativeConfigurationField binding) throws AnnotationException{
 			final Class<? extends Enum<?>> enumeration = binding.enumeration();
 
 			if(enumeration != NullEnum.class){
@@ -439,11 +439,11 @@ enum ConfigurationAnnotationValidator{
 		}
 	},
 
-	ALTERNATIVE_FIELD(AlternativeConfigurationField.class){
+	ALTERNATIVE_FIELD(AlternativeSubField.class){
 		@Override
 		void validate(final Field field, final Annotation annotation, final Version minMessageProtocol, final Version maxMessageProtocol)
 			throws AnnotationException{
-			final AlternativeConfigurationField binding = (AlternativeConfigurationField)annotation;
+			final AlternativeSubField binding = (AlternativeSubField)annotation;
 
 			if(String.class.isAssignableFrom(field.getType()))
 				CodecHelper.assertValidCharset(binding.charset());
@@ -457,10 +457,10 @@ enum ConfigurationAnnotationValidator{
 			validateMinMaxValues(field, binding);
 
 			validateProtocol(binding.minProtocol(), binding.maxProtocol(), minMessageProtocol, maxMessageProtocol,
-				AlternativeConfigurationField.class);
+				AlternativeSubField.class);
 		}
 
-		private void validateMinimumParameters(final AlternativeConfigurationField binding) throws AnnotationException{
+		private void validateMinimumParameters(final AlternativeSubField binding) throws AnnotationException{
 			final String pattern = binding.pattern();
 			final String minValue = binding.minValue();
 			final String maxValue = binding.maxValue();
@@ -476,7 +476,7 @@ enum ConfigurationAnnotationValidator{
 					ConfigurationField.class.getSimpleName());
 		}
 
-		private void validatePattern(final Field field, final AlternativeConfigurationField binding) throws AnnotationException{
+		private void validatePattern(final Field field, final AlternativeSubField binding) throws AnnotationException{
 			final String pattern = binding.pattern();
 			final String minValue = binding.minValue();
 			final String maxValue = binding.maxValue();
@@ -514,7 +514,7 @@ enum ConfigurationAnnotationValidator{
 			}
 		}
 
-		private void validateMinMaxValues(final Field field, final AlternativeConfigurationField binding) throws AnnotationException{
+		private void validateMinMaxValues(final Field field, final AlternativeSubField binding) throws AnnotationException{
 			final Class<?> fieldType = field.getType();
 			final String minValue = binding.minValue();
 			final String maxValue = binding.maxValue();

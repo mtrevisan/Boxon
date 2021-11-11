@@ -32,7 +32,7 @@ import java.lang.annotation.Target;
 
 
 /**
- * Manages multiple {@link ConfigurationSubField} annotations.
+ * Manages multiple {@link CompositeSubField} annotations.
  *
  * <p>This field is mandatory only if one of its children is mandatory.</p>
  */
@@ -46,7 +46,7 @@ public @interface CompositeConfigurationField{
 	 *
 	 * @return	The array of composite field annotations.
 	 */
-	ConfigurationSubField[] value();
+	CompositeSubField[] value();
 
 
 	/**

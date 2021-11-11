@@ -24,8 +24,8 @@
  */
 package io.github.mtrevisan.boxon.core;
 
+import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationField;
-import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationFields;
 import io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
@@ -116,11 +116,11 @@ final class ConfigurationParser{
 				minProtocol = binding.minProtocol();
 				maxProtocol = binding.maxProtocol();
 			}
-			else if(AlternativeConfigurationFields.class.isInstance(annotation)){
-				final AlternativeConfigurationFields binding = (AlternativeConfigurationFields)annotation;
-				final AlternativeConfigurationField[] alternativeFields = binding.value();
+			else if(AlternativeConfigurationField.class.isInstance(annotation)){
+				final AlternativeConfigurationField binding = (AlternativeConfigurationField)annotation;
+				final AlternativeSubField[] alternativeFields = binding.value();
 				for(int j = 0; j < alternativeFields.length; j ++){
-					final AlternativeConfigurationField fieldBinding = alternativeFields[j];
+					final AlternativeSubField fieldBinding = alternativeFields[j];
 					minProtocol = fieldBinding.minProtocol();
 					maxProtocol = fieldBinding.maxProtocol();
 

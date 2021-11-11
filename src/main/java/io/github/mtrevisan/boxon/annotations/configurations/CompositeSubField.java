@@ -37,7 +37,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 @Documented
-public @interface ConfigurationSubField{
+public @interface CompositeSubField{
 
 	/**
 	 * A short description of the field.

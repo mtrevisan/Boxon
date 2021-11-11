@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core;
 
-import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationField;
+import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
@@ -35,7 +35,7 @@ import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
 
 
-final class CodecAlternativeConfigurationField implements CodecInterface<AlternativeConfigurationField>{
+final class CodecAlternativeConfigurationField implements CodecInterface<AlternativeSubField>{
 
 	@Override
 	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
@@ -45,7 +45,7 @@ final class CodecAlternativeConfigurationField implements CodecInterface<Alterna
 	@Override
 	public void encode(final BitWriter writer, final Annotation annotation, final Object fieldType, Object value)
 			throws ConfigurationException{
-		final AlternativeConfigurationField binding = extractBinding(annotation);
+		final AlternativeSubField binding = extractBinding(annotation);
 		final Charset charset = Charset.forName(binding.charset());
 
 		value = CodecHelper.interpretValue(value, (Class<?>)fieldType);

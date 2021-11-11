@@ -28,11 +28,11 @@ import freemarker.core.Environment;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
+import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationField;
-import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationFields;
 import io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
-import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSubField;
+import io.github.mtrevisan.boxon.annotations.configurations.CompositeSubField;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.semanticversioning.Version;
@@ -114,7 +114,7 @@ final class ConfigurationValidatorHelper{
 
 			//compose outer field value
 			final String composition = binding.composition();
-			final ConfigurationSubField[] fields = binding.value();
+			final CompositeSubField[] fields = binding.value();
 			@SuppressWarnings("unchecked")
 			final String outerValue = replace(composition, (Map<String, Object>)value, fields);
 
@@ -125,7 +125,7 @@ final class ConfigurationValidatorHelper{
 		}
 	}
 
-	static String replace(final String text, final Map<String, Object> replacements, final ConfigurationSubField[] fields)
+	static String replace(final String text, final Map<String, Object> replacements, final CompositeSubField[] fields)
 		throws EncodeException{
 		final Map<String, Object> trueReplacements = new HashMap<>(fields.length);
 		for(int i = 0; i < fields.length; i ++){
@@ -156,8 +156,8 @@ final class ConfigurationValidatorHelper{
 		return text;
 	}
 
-	static void validateValue(final AlternativeConfigurationField binding, final String key, final Object value,
-			final ConfigField field) throws EncodeException{
+	static void validateValue(final AlternativeSubField binding, final String key, final Object value,
+									  final ConfigField field) throws EncodeException{
 		//check pattern
 		final String pattern = binding.pattern();
 		if(!pattern.isEmpty()){
@@ -199,8 +199,8 @@ final class ConfigurationValidatorHelper{
 					final CompositeConfigurationField foundBinding = (CompositeConfigurationField)mandatoryField.getBinding();
 					shortDescription = foundBinding.shortDescription();
 				}
-				else if(AlternativeConfigurationFields.class.isInstance(mandatoryField.getBinding())){
-					final AlternativeConfigurationFields foundBinding = (AlternativeConfigurationFields)mandatoryField.getBinding();
+				else if(AlternativeConfigurationField.class.isInstance(mandatoryField.getBinding())){
+					final AlternativeConfigurationField foundBinding = (AlternativeConfigurationField)mandatoryField.getBinding();
 					shortDescription = foundBinding.shortDescription();
 				}
 				sj.add(shortDescription);

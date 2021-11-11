@@ -25,12 +25,12 @@
 package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
+import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationField;
-import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationFields;
 import io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
-import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSubField;
+import io.github.mtrevisan.boxon.annotations.configurations.CompositeSubField;
 import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
@@ -274,16 +274,16 @@ final class LoaderConfiguration{
 
 				//compose outer field value
 				final String composition = foundBinding.composition();
-				final ConfigurationSubField[] fields = foundBinding.value();
+				final CompositeSubField[] fields = foundBinding.value();
 				@SuppressWarnings("unchecked")
 				final String outerValue = ConfigurationValidatorHelper.replace(composition, (Map<String, Object>)dataValue, fields);
 				setValue(configurationObject, outerValue, foundField);
 			}
-			else if(AlternativeConfigurationFields.class.isInstance(foundFieldAnnotation)){
-				final AlternativeConfigurationFields binding = (AlternativeConfigurationFields)foundFieldAnnotation;
+			else if(AlternativeConfigurationField.class.isInstance(foundFieldAnnotation)){
+				final AlternativeConfigurationField binding = (AlternativeConfigurationField)foundFieldAnnotation;
 
 				if(ConfigurationValidatorHelper.shouldBeExtracted(protocol, binding.minProtocol(), binding.maxProtocol())){
-					final AlternativeConfigurationField fieldBinding = extractField(binding, protocol);
+					final AlternativeSubField fieldBinding = extractField(binding, protocol);
 					if(fieldBinding != null){
 						ConfigurationValidatorHelper.validateValue(fieldBinding, dataKey, dataValue, foundField);
 
@@ -344,16 +344,16 @@ final class LoaderConfiguration{
 			}
 			else if(CompositeConfigurationField.class.isInstance(annotation)){
 				final CompositeConfigurationField binding = (CompositeConfigurationField)annotation;
-				final ConfigurationSubField[] compositeFields = binding.value();
+				final CompositeSubField[] compositeFields = binding.value();
 				for(int j = 0; !mandatory && j < compositeFields.length; j ++)
 					mandatory = JavaHelper.isBlank(compositeFields[j].defaultValue());
 				minProtocol = binding.minProtocol();
 				maxProtocol = binding.maxProtocol();
 			}
-			else if(AlternativeConfigurationFields.class.isInstance(annotation)){
-				final AlternativeConfigurationFields binding = (AlternativeConfigurationFields)annotation;
+			else if(AlternativeConfigurationField.class.isInstance(annotation)){
+				final AlternativeConfigurationField binding = (AlternativeConfigurationField)annotation;
 
-				final AlternativeConfigurationField fieldBinding = extractField(binding, protocol);
+				final AlternativeSubField fieldBinding = extractField(binding, protocol);
 				if(fieldBinding != null){
 					mandatory = JavaHelper.isBlank(fieldBinding.defaultValue());
 					minProtocol = binding.minProtocol();
@@ -386,11 +386,11 @@ final class LoaderConfiguration{
 				minProtocol = binding.minProtocol();
 				maxProtocol = binding.maxProtocol();
 			}
-			else if(AlternativeConfigurationFields.class.isInstance(annotation)){
-				final AlternativeConfigurationFields binding = (AlternativeConfigurationFields)annotation;
+			else if(AlternativeConfigurationField.class.isInstance(annotation)){
+				final AlternativeConfigurationField binding = (AlternativeConfigurationField)annotation;
 				shortDescription = binding.shortDescription();
 
-				final AlternativeConfigurationField fieldBinding = extractField(binding, protocol);
+				final AlternativeSubField fieldBinding = extractField(binding, protocol);
 				if(fieldBinding != null){
 					minProtocol = binding.minProtocol();
 					maxProtocol = binding.maxProtocol();
@@ -461,7 +461,7 @@ final class LoaderConfiguration{
 
 				final Class<?> fieldType = field.getFieldType();
 				final Map<String, Object> compositeMap = extractMap(compositeBinding);
-				final ConfigurationSubField[] bindings = compositeBinding.value();
+				final CompositeSubField[] bindings = compositeBinding.value();
 				final Map<String, Object> compositeFieldsMap = new HashMap<>(bindings.length);
 				for(int j = 0; j < bindings.length; j ++){
 					final Map<String, Object> fieldMap = extractMap(bindings[j], fieldType);
@@ -471,14 +471,14 @@ final class LoaderConfiguration{
 				compositeMap.put(CONFIGURATION_COMPOSITE_FIELDS, compositeFieldsMap);
 				fieldsMap.put(compositeBinding.shortDescription(), compositeMap);
 			}
-			else if(AlternativeConfigurationFields.class.isInstance(annotation)){
-				final AlternativeConfigurationFields binding = (AlternativeConfigurationFields)annotation;
+			else if(AlternativeConfigurationField.class.isInstance(annotation)){
+				final AlternativeConfigurationField binding = (AlternativeConfigurationField)annotation;
 
 				if(ConfigurationValidatorHelper.shouldBeExtracted(protocol, binding.minProtocol(), binding.maxProtocol())){
 					final Class<?> fieldType = field.getFieldType();
 					final Map<String, Object> alternativeMap = extractMap(binding, fieldType);
 
-					final AlternativeConfigurationField fieldBinding = extractField(binding, protocol);
+					final AlternativeSubField fieldBinding = extractField(binding, protocol);
 					if(fieldBinding != null){
 						final Map<String, Object> fieldMap = extractMap(fieldBinding, fieldType);
 
@@ -494,10 +494,10 @@ final class LoaderConfiguration{
 		return fieldsMap;
 	}
 
-	private static AlternativeConfigurationField extractField(final AlternativeConfigurationFields binding, final Version protocol){
-		final AlternativeConfigurationField[] alternativeFields = binding.value();
+	private static AlternativeSubField extractField(final AlternativeConfigurationField binding, final Version protocol){
+		final AlternativeSubField[] alternativeFields = binding.value();
 		for(int i = 0; i < alternativeFields.length; i ++){
-			final AlternativeConfigurationField fieldBinding = alternativeFields[i];
+			final AlternativeSubField fieldBinding = alternativeFields[i];
 			if(ConfigurationValidatorHelper.shouldBeExtracted(protocol, fieldBinding.minProtocol(), fieldBinding.maxProtocol()))
 				return fieldBinding;
 		}
@@ -549,7 +549,7 @@ final class LoaderConfiguration{
 		return map;
 	}
 
-	private static Map<String, Object> extractMap(final ConfigurationSubField binding, final Class<?> fieldType)
+	private static Map<String, Object> extractMap(final CompositeSubField binding, final Class<?> fieldType)
 			throws ConfigurationException{
 		final Map<String, Object> map = new HashMap<>(10);
 
@@ -565,7 +565,7 @@ final class LoaderConfiguration{
 		return map;
 	}
 
-	private static Map<String, Object> extractMap(final AlternativeConfigurationFields binding, final Class<?> fieldType)
+	private static Map<String, Object> extractMap(final AlternativeConfigurationField binding, final Class<?> fieldType)
 			throws ConfigurationException{
 		final Map<String, Object> map = new HashMap<>(6);
 
@@ -587,7 +587,7 @@ final class LoaderConfiguration{
 		return map;
 	}
 
-	private static Map<String, Object> extractMap(final AlternativeConfigurationField binding, final Class<?> fieldType)
+	private static Map<String, Object> extractMap(final AlternativeSubField binding, final Class<?> fieldType)
 			throws ConfigurationException{
 		final Map<String, Object> map = new HashMap<>(6);
 

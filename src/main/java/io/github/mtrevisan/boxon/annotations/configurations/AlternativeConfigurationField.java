@@ -32,12 +32,27 @@ import java.lang.annotation.Target;
 
 
 /**
- * Describe an alternative configuration field.
+ * Manages multiple {@link AlternativeSubField} annotations.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 @Documented
 public @interface AlternativeConfigurationField{
+
+	/**
+	 * The array holding the alternative field annotations.
+	 *
+	 * @return	The array of alternative field annotations.
+	 */
+	AlternativeSubField[] value();
+
+
+	/**
+	 * A short description of the field.
+	 *
+	 * @return	A short description of the field.
+	 */
+	String shortDescription();
 
 	/**
 	 * A long description of the field.
@@ -69,55 +84,19 @@ public @interface AlternativeConfigurationField{
 
 
 	/**
-	 * The lowest value the field can have.
-	 * <p>Not compatible with enumeration field.</p>
-	 * <p>Compatible with numeric field.</p>
+	 * The enumeration that represents the finite possible values for this field.
+	 * <p>Not compatible with pattern field.</p>
 	 *
-	 * @return	The lowest value the field can have.
+	 * @return	The enumeration that represents the finite possible values for this field.
 	 */
-	String minValue() default "";
-
-	/**
-	 * The highest value the field can have.
-	 * <p>Not compatible with enumeration field.</p>
-	 * <p>Compatible with numeric field.</p>
-	 *
-	 * @return	The highest value the field can have.
-	 */
-	String maxValue() default "";
-
-	/**
-	 * The pattern of the value, expressed as a regex.
-	 * <p>Not compatible with enumeration field.</p>
-	 * <p>Not compatible with non-string field.</p>
-	 *
-	 * @return	The pattern of the value, expressed as a regex.
-	 */
-	String pattern() default "";
+	Class<? extends Enum<?>> enumeration() default NullEnum.class;
 
 
 	/**
-	 * The default value of the field.
-	 * <p>For non-mutually exclusive enumeration fields this is an array.</p>
-	 * <p>If not present, the field is mandatory.</p>
+	 * The string that terminates the field (charset is UTF-8).
 	 *
-	 * @return	The default value of the field.
+	 * @return	The terminator string (defaults to empty).
 	 */
-	String defaultValue() default "";
-
-	/**
-	 * The type of encoding used for string-typed field.
-	 *
-	 * @return	The type of encoding used (defaults to `UTF-8`).
-	 */
-	String charset() default "UTF-8";
-
-	/**
-	 * The numeral system (base, or radix) of this field.
-	 * <p>Compatible with numeric or enumeration field.</p>
-	 *
-	 * @return	The numeral system (base, or radix) of this field.
-	 */
-	int radix() default 10;
+	String terminator() default "";
 
 }
