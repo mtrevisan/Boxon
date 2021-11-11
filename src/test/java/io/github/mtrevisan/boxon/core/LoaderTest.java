@@ -97,17 +97,17 @@ class LoaderTest{
 	}
 
 	@Test
-	void getProtocolBoundaries() throws AnnotationException, ConfigurationException, JsonProcessingException{
+	void getProtocolVersionBoundaries() throws AnnotationException, ConfigurationException, JsonProcessingException{
 		EventListener eventListener = EventListener.getNoOpInstance();
 		LoaderConfiguration loaderConfiguration = new LoaderConfiguration(eventListener);
 		loaderConfiguration.loadConfigurations(LoaderTest.class);
 
-		List<String> protocolBoundaries = loaderConfiguration.getProtocolVersionBoundaries();
+		List<String> protocolVersionBoundaries = loaderConfiguration.getProtocolVersionBoundaries();
 
 		ObjectMapper mapper = new ObjectMapper();
-		String jsonProtocolBoundaries = mapper.writeValueAsString(protocolBoundaries);
+		String jsonProtocolVersionBoundaries = mapper.writeValueAsString(protocolVersionBoundaries);
 
-		Assertions.assertEquals("[\"1.18\",\"1.19\",\"1.20\",\"1.21\",\"1.35\",\"1.36\",\"2.8\"]", jsonProtocolBoundaries);
+		Assertions.assertEquals("[\"1.18\",\"1.19\",\"1.20\",\"1.21\",\"1.35\",\"1.36\",\"2.8\"]", jsonProtocolVersionBoundaries);
 	}
 
 	@Test

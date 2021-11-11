@@ -690,7 +690,7 @@ parser.withConfigurations(ConfigurationCustomTest.class); //this class is where 
 
 Then, to retrieve all the possible protocol version boundaries, call
 ```java
-List<String> protocolBoundaries = parser.getProtocolVersionBoundaries();
+List<String> protocolVersionBoundaries = parser.getProtocolVersionBoundaries();
 ```
 
 Then, to retrieve all the messages for a given protocol version, simply call
