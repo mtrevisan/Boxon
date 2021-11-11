@@ -5,7 +5,6 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 import io.github.mtrevisan.boxon.core.ConfigurationValidatorHelper;
-import io.github.mtrevisan.boxon.core.LoaderConfiguration;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
@@ -103,8 +102,8 @@ class CompositeManager implements ConfigurationManagerInterface{
 		compositeMap.put(CONFIGURATION_COMPOSITE_FIELDS, compositeFieldsMap);
 
 		if(protocol.isEmpty()){
-			LoaderConfiguration.putIfNotEmpty(compositeMap, "minProtocol", annotation.minProtocol());
-			LoaderConfiguration.putIfNotEmpty(compositeMap, "maxProtocol", annotation.maxProtocol());
+			putIfNotEmpty(compositeMap, "minProtocol", annotation.minProtocol());
+			putIfNotEmpty(compositeMap, "maxProtocol", annotation.maxProtocol());
 		}
 		return compositeMap;
 	}
@@ -112,9 +111,9 @@ class CompositeManager implements ConfigurationManagerInterface{
 	private Map<String, Object> extractMap() throws ConfigurationException{
 		final Map<String, Object> map = new HashMap<>(6);
 
-		LoaderConfiguration.putIfNotEmpty(map, "longDescription", annotation.longDescription());
-		LoaderConfiguration.putIfNotEmpty(map, "pattern", annotation.pattern());
-		LoaderConfiguration.putIfNotEmpty(map, "charset", annotation.charset());
+		putIfNotEmpty(map, "longDescription", annotation.longDescription());
+		putIfNotEmpty(map, "pattern", annotation.pattern());
+		putIfNotEmpty(map, "charset", annotation.charset());
 
 		return map;
 	}
@@ -122,16 +121,36 @@ class CompositeManager implements ConfigurationManagerInterface{
 	private static Map<String, Object> extractMap(final CompositeSubField binding, final Class<?> fieldType) throws ConfigurationException{
 		final Map<String, Object> map = new HashMap<>(10);
 
-		LoaderConfiguration.putIfNotEmpty(map, "longDescription", binding.longDescription());
-		LoaderConfiguration.putIfNotEmpty(map, "unitOfMeasure", binding.unitOfMeasure());
+		putIfNotEmpty(map, "longDescription", binding.longDescription());
+		putIfNotEmpty(map, "unitOfMeasure", binding.unitOfMeasure());
 
-		LoaderConfiguration.putIfNotEmpty(map, "pattern", binding.pattern());
+		putIfNotEmpty(map, "pattern", binding.pattern());
 		if(!fieldType.isEnum() && !fieldType.isArray())
-			LoaderConfiguration.putIfNotEmpty(map, "fieldType", ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName());
+			putIfNotEmpty(map, "fieldType", ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName());
 
-		LoaderConfiguration.putValueIfNotEmpty(map, "defaultValue", fieldType, NullEnum.class, binding.defaultValue());
+		putValueIfNotEmpty(map, "defaultValue", fieldType, NullEnum.class, binding.defaultValue());
 
 		return map;
+	}
+
+	private static void putIfNotEmpty(@SuppressWarnings("BoundedWildcard") final Map<String, Object> map, final String key,
+			final Object value) throws ConfigurationException{
+		if(value != null && (!String.class.isInstance(value) || !JavaHelper.isBlank((CharSequence)value)))
+			if(map.put(key, value) != null)
+				throw ConfigurationException.create("Duplicated short description: {}", key);
+	}
+
+	private static void putValueIfNotEmpty(@SuppressWarnings("BoundedWildcard") final Map<String, Object> map, final String key, final Class<?> fieldType,
+			final Class<? extends Enum<?>> enumeration, final String value) throws ConfigurationException{
+		if(!JavaHelper.isBlank(value)){
+			Object val = value;
+			if(enumeration != NullEnum.class && fieldType.isArray())
+				val = JavaHelper.split(value, '|', -1);
+			else if(Number.class.isAssignableFrom(ParserDataType.toObjectiveTypeOrSelf(fieldType)))
+				val = JavaHelper.getValue(fieldType, value);
+			if(map.put(key, val) != null)
+				throw ConfigurationException.create("Duplicated short description: {}", key);
+		}
 	}
 
 	@Override
