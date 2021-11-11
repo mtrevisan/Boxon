@@ -21,6 +21,9 @@ import java.util.regex.Pattern;
 
 public class AlternativeManager implements ConfigurationManagerInterface{
 
+	private static final String EMPTY_STRING = "";
+
+
 	private final AlternativeConfigurationField annotation;
 
 
@@ -34,31 +37,32 @@ public class AlternativeManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	public Object getDefaultValue(final Field field) throws EncodeException{
+	public Object getDefaultValue(final Field field, final Version protocol){
 		//TODO get alternative default value
-		final String value = annotation.defaultValue();
-		if(JavaHelper.isBlank(value))
-		return null;
-
-		final Class<? extends Enum<?>> enumeration = annotation.enumeration();
-		if(enumeration != NullEnum.class){
-			final Object valEnum;
-			final Enum<?>[] enumConstants = enumeration.getEnumConstants();
-			if(field.getType().isArray()){
-				final String[] defaultValues = JavaHelper.split(value, '|', -1);
-				valEnum = Array.newInstance(enumeration, defaultValues.length);
-				for(int i = 0; i < defaultValues.length; i ++)
-					Array.set(valEnum, i, JavaHelper.extractEnum(enumConstants, defaultValues[i]));
+		final AlternativeSubField fieldBinding = extractField(protocol);
+		if(fieldBinding != null){
+			final Class<? extends Enum<?>> enumeration = annotation.enumeration();
+			final String value = fieldBinding.defaultValue();
+			if(enumeration != NullEnum.class){
+				final Object valEnum;
+				final Enum<?>[] enumConstants = enumeration.getEnumConstants();
+				if(field.getType().isArray()){
+					final String[] defaultValues = JavaHelper.split(value, '|', -1);
+					valEnum = Array.newInstance(enumeration, defaultValues.length);
+					for(int i = 0; i < defaultValues.length; i ++)
+						Array.set(valEnum, i, JavaHelper.extractEnum(enumConstants, defaultValues[i]));
+				}
+				else
+					valEnum = enumeration
+						.cast(JavaHelper.extractEnum(enumConstants, value));
+				return valEnum;
 			}
+			else if(field.getType() != String.class)
+				return JavaHelper.getValue(field.getType(), value);
 			else
-				valEnum = enumeration
-					.cast(JavaHelper.extractEnum(enumConstants, value));
-			return valEnum;
+				return value;
 		}
-		else if(field.getType() != String.class)
-			return JavaHelper.getValue(field.getType(), value);
-		else
-			return value;
+		return EMPTY_STRING;
 	}
 
 	@Override
@@ -127,7 +131,7 @@ public class AlternativeManager implements ConfigurationManagerInterface{
 		}
 		else{
 			//extract the specific alternative, because it was requested the configuration of a particular protocol:
-			final AlternativeSubField fieldBinding = extractField(annotation, protocol);
+			final AlternativeSubField fieldBinding = extractField(protocol);
 			if(fieldBinding != null){
 				alternativesMap = extractMap(fieldBinding, fieldType);
 
@@ -181,8 +185,8 @@ public class AlternativeManager implements ConfigurationManagerInterface{
 		return map;
 	}
 
-	private static AlternativeSubField extractField(final AlternativeConfigurationField binding, final Version protocol){
-		final AlternativeSubField[] alternativeFields = binding.value();
+	private AlternativeSubField extractField(final Version protocol){
+		final AlternativeSubField[] alternativeFields = annotation.value();
 		for(int i = 0; i < alternativeFields.length; i ++){
 			final AlternativeSubField fieldBinding = alternativeFields[i];
 			if(ConfigurationValidatorHelper.shouldBeExtracted(protocol, fieldBinding.minProtocol(), fieldBinding.maxProtocol()))
@@ -195,13 +199,15 @@ public class AlternativeManager implements ConfigurationManagerInterface{
 	public void validateValue(final String dataKey, final Object dataValue, final Class<?> fieldType){}
 
 	@Override
-	public void setValue(final Object configurationObject, final String dataKey, final Object dataValue, final Field field,
-			final Version protocol) throws EncodeException{
-		final AlternativeSubField fieldBinding = extractField(annotation, protocol);
+	public void setValue(final Object configurationObject, final String dataKey, Object dataValue, final Field field, final Version protocol)
+			throws EncodeException{
+		final AlternativeSubField fieldBinding = extractField(protocol);
 		if(fieldBinding != null){
 			validateValue(fieldBinding, dataKey, dataValue, field.getType());
 
-			setValue(field, configurationObject, annotation.enumeration(), dataKey, dataValue);
+			if(String.class.isInstance(dataValue))
+				dataValue = JavaHelper.getValue(field.getType(), (String)dataValue);
+			setValue(field, configurationObject, dataValue);
 		}
 	}
 
@@ -233,34 +239,6 @@ public class AlternativeManager implements ConfigurationManagerInterface{
 				throw EncodeException.create("Data value incompatible with maximum value for data key {}; found {}, expected greater than or equals to {}",
 					dataKey, dataValue, maxValue.getClass().getSimpleName());
 		}
-	}
-
-	private static void setValue(final Field field, final Object object, final Class<? extends Enum<?>> enumeration, final String key,
-			final Object value) throws EncodeException{
-		if(enumeration != NullEnum.class){
-			if(!String.class.isInstance(value))
-				throw EncodeException.create("Data value incompatible with field type {}; found {}, expected String.class for enumeration type",
-					key, value.getClass());
-
-			final Object dataEnum;
-			final Enum<?>[] enumConstants = enumeration.getEnumConstants();
-			if(field.getType().isArray()){
-				final String[] defaultValues = JavaHelper.split((String)value, '|', -1);
-				dataEnum = Array.newInstance(enumeration, defaultValues.length);
-				for(int i = 0; i < defaultValues.length; i ++)
-					Array.set(dataEnum, i, JavaHelper.extractEnum(enumConstants, defaultValues[i]));
-			}
-			else
-				dataEnum = enumeration
-					.cast(JavaHelper.extractEnum(enumConstants, (String)value));
-			setValue(field, object, dataEnum);
-		}
-		else if(String.class.isInstance(value)){
-			final Object val = JavaHelper.getValue(field.getType(), (String)value);
-			setValue(field, object, val);
-		}
-		else
-			setValue(field, object, value);
 	}
 
 	private static void setValue(final Field field, final Object configurationObject, final Object dataValue){

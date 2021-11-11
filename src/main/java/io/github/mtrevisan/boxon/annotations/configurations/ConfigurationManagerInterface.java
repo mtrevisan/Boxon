@@ -14,7 +14,7 @@ public interface ConfigurationManagerInterface{
 
 	String getShortDescription();
 
-	Object getDefaultValue(final Field field) throws EncodeException;
+	Object getDefaultValue(final Field field, final Version protocol) throws EncodeException;
 
 	void addProtocolVersionBoundaries(final Collection<String> protocolVersionBoundaries);
 

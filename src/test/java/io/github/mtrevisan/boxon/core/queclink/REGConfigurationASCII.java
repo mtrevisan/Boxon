@@ -91,7 +91,7 @@ public class REGConfigurationASCII{
 			@CompositeSubField(shortDescription = "password", pattern = ".{1,32}")
 		},
 		shortDescription = "Download URL",
-		composition = "${URL}<#if username?? && password??>@${username}@${password}</#if>",
+		composition = "${URL}<#if username?has_content && password?has_content>@${username}@${password}</#if>",
 		pattern = ".{0,100}",
 		terminator = ","
 	)

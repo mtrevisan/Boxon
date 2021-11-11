@@ -832,7 +832,7 @@ This annotation is bounded to a string variable.
 		@CompositeSubField(shortDescription = "password", pattern = ".{1,32}")
 	},
 	shortDescription = "Download URL",
-	composition = "${URL}<#if username?? && password??>@${username}@${password}</#if>",
+	composition = "${URL}<#if username?has_content && password?has_content>@${username}@${password}</#if>",
 	terminator = ",",
 	pattern = ".{0,100}"
 )
@@ -867,7 +867,7 @@ This annotation is bounded to a string variable.
 		@CompositeSubField(shortDescription = "password", pattern = ".{1,32}")
 	},
 	shortDescription = "Download URL",
-	composition = "${URL}<#if username?? && password??>@${username}@${password}</#if>",
+	composition = "${URL}<#if username?has_content && password?has_content>@${username}@${password}</#if>",
 	terminator = ",",
 	pattern = ".{0,100}"
 )

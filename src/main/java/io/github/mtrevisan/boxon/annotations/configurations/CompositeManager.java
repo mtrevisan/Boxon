@@ -18,7 +18,6 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
@@ -55,37 +54,14 @@ public class CompositeManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	public Object getDefaultValue(final Field field) throws EncodeException{
-		//TODO get composite default value
-		final String value = annotation.defaultValue();
-		if(JavaHelper.isBlank(value))
-			return null;
-
-		final Class<? extends Enum<?>> enumeration = annotation.enumeration();
-		if(enumeration != NullEnum.class){
-			if(!String.class.isInstance(value))
-				throw EncodeException.create("Data value incompatible with field type {}; found {}, expected String.class for enumeration type",
-					annotation.shortDescription(), value.getClass());
-
-			final Object valEnum;
-			final Enum<?>[] enumConstants = enumeration.getEnumConstants();
-			if(field.getType().isArray()){
-				final String[] defaultValues = JavaHelper.split(value, '|', -1);
-				valEnum = Array.newInstance(enumeration, defaultValues.length);
-				for(int i = 0; i < defaultValues.length; i ++)
-					Array.set(valEnum, i, JavaHelper.extractEnum(enumConstants, defaultValues[i]));
-			}
-			else
-				valEnum = enumeration
-					.cast(JavaHelper.extractEnum(enumConstants, value));
-			return valEnum;
-		}
-		else if(String.class.isInstance(value)){
-			final Object val = JavaHelper.getValue(field.getType(), value);
-			return val;
-		}
-		else
-			return value;
+	public Object getDefaultValue(final Field field, final Version protocol) throws EncodeException{
+		//compose field value
+		final String composition = annotation.composition();
+		final CompositeSubField[] fields = annotation.value();
+		final Map<String, Object> dataValue = new HashMap<>(fields.length);
+		for(int i = 0; i < fields.length; i ++)
+			dataValue.put(fields[i].shortDescription(), fields[i].defaultValue());
+		return replace(composition, dataValue, fields);
 	}
 
 	@Override
@@ -179,14 +155,15 @@ public class CompositeManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	public void setValue(final Object configurationObject, final String dataKey, final Object dataValue, final Field field,
+	@SuppressWarnings("unchecked")
+	public void setValue(final Object configurationObject, final String dataKey, Object dataValue, final Field field,
 			final Version protocol) throws EncodeException{
-		//compose outer field value
+		//compose field value
 		final String composition = annotation.composition();
 		final CompositeSubField[] fields = annotation.value();
-		@SuppressWarnings("unchecked")
-		final String outerValue = replace(composition, (Map<String, Object>)dataValue, fields);
-		setValue(field, configurationObject, outerValue);
+		if(Map.class.isInstance(dataValue))
+			dataValue = replace(composition, (Map<String, Object>)dataValue, fields);
+		setValue(field, configurationObject, dataValue);
 	}
 
 	private static String replace(final String text, final Map<String, Object> replacements, final CompositeSubField[] fields)

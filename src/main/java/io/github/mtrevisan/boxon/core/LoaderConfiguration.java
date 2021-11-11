@@ -327,7 +327,7 @@ public final class LoaderConfiguration{
 			final ConfigField field = fields.get(i);
 			final Annotation annotation = field.getBinding();
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(annotation);
-			final Object dataValue = manager.getDefaultValue(field.getField());
+			final Object dataValue = manager.getDefaultValue(field.getField(), protocol);
 			manager.setValue(configurationObject, manager.getShortDescription(), dataValue, field.getField(), protocol);
 		}
 	}

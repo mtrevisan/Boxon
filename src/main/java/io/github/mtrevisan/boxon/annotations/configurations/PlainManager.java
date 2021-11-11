@@ -33,30 +33,28 @@ public class PlainManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	public Object getDefaultValue(final Field field){
+	public Object getDefaultValue(final Field field, final Version protocol){
 		final String value = annotation.defaultValue();
-		if(JavaHelper.isBlank(value))
-			return null;
-
-		final Class<? extends Enum<?>> enumeration = annotation.enumeration();
-		if(enumeration != NullEnum.class){
-			final Object valEnum;
-			final Enum<?>[] enumConstants = enumeration.getEnumConstants();
-			if(field.getType().isArray()){
-				final String[] defaultValues = JavaHelper.split(value, '|', -1);
-				valEnum = Array.newInstance(enumeration, defaultValues.length);
-				for(int i = 0; i < defaultValues.length; i ++)
-					Array.set(valEnum, i, JavaHelper.extractEnum(enumConstants, defaultValues[i]));
+		if(!JavaHelper.isBlank(value)){
+			final Class<? extends Enum<?>> enumeration = annotation.enumeration();
+			if(enumeration != NullEnum.class){
+				final Object valEnum;
+				final Enum<?>[] enumConstants = enumeration.getEnumConstants();
+				if(field.getType().isArray()){
+					final String[] defaultValues = JavaHelper.split(value, '|', -1);
+					valEnum = Array.newInstance(enumeration, defaultValues.length);
+					for(int i = 0; i < defaultValues.length; i ++)
+						Array.set(valEnum, i, JavaHelper.extractEnum(enumConstants, defaultValues[i]));
+				}
+				else
+					valEnum = enumeration
+						.cast(JavaHelper.extractEnum(enumConstants, value));
+				return valEnum;
 			}
-			else
-				valEnum = enumeration
-					.cast(JavaHelper.extractEnum(enumConstants, value));
-			return valEnum;
+			else if(field.getType() != String.class)
+				return JavaHelper.getValue(field.getType(), value);
 		}
-		else if(field.getType() != String.class)
-			return JavaHelper.getValue(field.getType(), value);
-		else
-			return value;
+		return value;
 	}
 
 	@Override
@@ -150,27 +148,36 @@ public class PlainManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	public void setValue(final Object configurationObject, final String dataKey, final Object dataValue, final Field field,
-			final Version protocol) throws EncodeException{
+	public void setValue(final Object configurationObject, final String dataKey, Object dataValue, final Field field, final Version protocol)
+			throws EncodeException{
 		final Class<?> fieldType = field.getType();
 		final Class<? extends Enum<?>> enumeration = annotation.enumeration();
 		if(enumeration != NullEnum.class){
-			if(!String.class.isInstance(dataValue))
-				throw EncodeException.create("Data value incompatible with field type {}; found {}, expected String.class for enumeration type",
+			//convert `or` between enumerations
+			if(String.class.isInstance(dataValue)){
+				final Enum<?>[] enumConstants = enumeration.getEnumConstants();
+				if(field.getType().isArray()){
+					final String[] defaultValues = JavaHelper.split((String)dataValue, '|', -1);
+					dataValue = Array.newInstance(enumeration, defaultValues.length);
+					for(int i = 0; i < defaultValues.length; i ++)
+						Array.set(dataValue, i, JavaHelper.extractEnum(enumConstants, defaultValues[i]));
+				}
+				else
+					dataValue = enumeration
+						.cast(JavaHelper.extractEnum(enumConstants, (String)dataValue));
+			}
+
+			if(dataValue.getClass().isArray()){
+				final Class<?> componentType = dataValue.getClass().getComponentType();
+				if(!enumeration.isAssignableFrom(componentType))
+					throw EncodeException.create("Data value incompatible with field type {}; found {}[], expected " + enumeration.getSimpleName() + "[] for enumeration type",
+						dataKey, componentType);
+			}
+			else if(!enumeration.isInstance(dataValue))
+				throw EncodeException.create("Data value incompatible with field type {}; found {}, expected " + enumeration.getSimpleName() + " for enumeration type",
 					dataKey, dataValue.getClass());
 
-			final Object dataEnum;
-			final Enum<?>[] enumConstants = enumeration.getEnumConstants();
-			if(fieldType.isArray()){
-				final String[] defaultValues = JavaHelper.split((String)dataValue, '|', -1);
-				dataEnum = Array.newInstance(enumeration, defaultValues.length);
-				for(int i = 0; i < defaultValues.length; i ++)
-					Array.set(dataEnum, i, JavaHelper.extractEnum(enumConstants, defaultValues[i]));
-			}
-			else
-				dataEnum = enumeration
-					.cast(JavaHelper.extractEnum(enumConstants, (String)dataValue));
-			setValue(field, configurationObject, dataEnum);
+			setValue(field, configurationObject, dataValue);
 		}
 		else if(String.class.isInstance(dataValue)){
 			final Object val = JavaHelper.getValue(fieldType, (String)dataValue);
