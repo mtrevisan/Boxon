@@ -247,7 +247,7 @@ final class LoaderConfiguration{
 	 */
 	ConfigurationPair getConfiguration(final String configurationType, final Map<String, Object> data, final Version protocol)
 			throws EncodeException{
-		final Configuration<?> configuration = getConfiguration(configurationType, data);
+		final Configuration<?> configuration = getConfiguration(configurationType);
 		final Object configurationObject = ReflectionHelper.getCreator(configuration.getType())
 			.get();
 
@@ -299,10 +299,9 @@ final class LoaderConfiguration{
 	/**
 	 * Retrieve the configuration by class.
 	 *
-	 * @param data   The data to load into the configuration.
 	 * @return	The configuration.
 	 */
-	private Configuration<?> getConfiguration(final String configurationType, final Map<String, Object> data) throws EncodeException{
+	private Configuration<?> getConfiguration(final String configurationType) throws EncodeException{
 		final Configuration<?> configuration = configurations.get(configurationType);
 		if(configuration == null)
 			throw EncodeException.create("Cannot find any configuration for given class type");
@@ -634,7 +633,7 @@ final class LoaderConfiguration{
 		}
 	}
 
-	public static boolean shouldBeExtracted(final Version protocol, final String minProtocol, final String maxProtocol){
+	static boolean shouldBeExtracted(final Version protocol, final String minProtocol, final String maxProtocol){
 		final Version min = Version.of(minProtocol);
 		final Version max = Version.of(maxProtocol);
 		final boolean validMinimum = min.isEmpty() || protocol.isGreaterThanOrEqualTo(min);
