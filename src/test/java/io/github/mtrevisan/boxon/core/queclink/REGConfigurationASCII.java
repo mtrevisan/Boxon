@@ -39,44 +39,45 @@ import io.github.mtrevisan.boxon.annotations.configurations.CompositeSubField;
 	longDescription = "The command AT+GTREG is used to do things.", maxProtocol = "2.8")
 public class REGConfigurationASCII{
 
-	@ConfigurationField(shortDescription = "Header", terminator = "=", defaultValue = "GTREG")
+	@ConfigurationField(shortDescription = "Header", defaultValue = "GTREG", terminator = "=")
 	private String messageHeader;
 
-	@ConfigurationField(shortDescription = "Password", terminator = ",", pattern = "[0-9a-zA-Z]{4,20}", defaultValue = "gb200s")
+	@ConfigurationField(shortDescription = "Password", pattern = "[0-9a-zA-Z]{4,20}", defaultValue = "gb200s", terminator = ",")
 	private String password;
 
-	@ConfigurationField(shortDescription = "Operation mode", terminator = ",", minValue = "0", maxValue = "3", defaultValue = "0")
+	@ConfigurationField(shortDescription = "Operation mode", minValue = "0", maxValue = "3", defaultValue = "0", terminator = ",")
 	private Integer operationMode;
 
-	@ConfigurationField(shortDescription = "Update Over-The-Air", terminator = ",", enumeration = BooleanType.class,
-		defaultValue = "FALSE")
+	@ConfigurationField(shortDescription = "Update Over-The-Air", enumeration = BooleanType.class, defaultValue = "FALSE", terminator = ",")
 	private BooleanType updateOverTheAir;
 
-	@ConfigurationField(shortDescription = "Update mode", terminator = ",", minValue = "0", maxValue = "1", defaultValue = "1")
+	@ConfigurationField(shortDescription = "Update mode", minValue = "0", maxValue = "1", defaultValue = "1", terminator = ",")
 	private int updateMode;
 
-	@ConfigurationField(shortDescription = "Maximum download retry count", terminator = ",", maxProtocol = "1.20", minValue = "0",
-		maxValue = "3", defaultValue = "0")
+	@ConfigurationField(shortDescription = "Maximum download retry count", maxProtocol = "1.20", minValue = "0", maxValue = "3",
+		defaultValue = "0", terminator = ",")
 	private Integer maxDownloadRetryCount1_20;
-	@ConfigurationField(shortDescription = "Maximum download retry count", terminator = ",", minProtocol = "1.21", minValue = "0",
-		maxValue = "3", defaultValue = "1")
+	@ConfigurationField(shortDescription = "Maximum download retry count", minProtocol = "1.21", minValue = "0", maxValue = "3",
+		defaultValue = "1", terminator = ",")
 	private Integer maxDownloadRetryCount1_21;
 
 	@AlternativeConfigurationField(
-		shortDescription = "Download timeout", terminator = ",", unitOfMeasure = "min",
+		shortDescription = "Download timeout", unitOfMeasure = "min",
 		value = {
 			@AlternativeSubField(maxProtocol = "1.18", minValue = "5", maxValue = "30", defaultValue = "10"),
 			@AlternativeSubField(minProtocol = "1.19", minValue = "5", maxValue = "30", defaultValue = "20")
-		}
+		},
+		terminator = ","
 	)
 	private int downloadTimeout;
 
 	@AlternativeConfigurationField(
-		shortDescription = "Download protocol", terminator = ",", enumeration = DownloadProtocol.class,
+		shortDescription = "Download protocol", enumeration = DownloadProtocol.class,
 		value = {
 			@AlternativeSubField(maxProtocol = "1.35", defaultValue = "HTTP"),
 			@AlternativeSubField(minProtocol = "1.36", defaultValue = "HTTP")
-		}
+		},
+		terminator = ","
 	)
 	private DownloadProtocol downloadProtocol;
 
@@ -88,27 +89,27 @@ public class REGConfigurationASCII{
 		},
 		shortDescription = "Download URL",
 		composition = "${URL}<#if username?? && password??>@${username}@${password}</#if>",
-		terminator = ",",
-		pattern = ".{0,100}"
+		pattern = ".{0,100}",
+		terminator = ","
 	)
 	private String downloadURL;
 
-	@ConfigurationSkip(terminator = ",", maxProtocol = "1.18")
-	@ConfigurationField(shortDescription = "Motion report interval", terminator = ",", minProtocol = "1.19", maxProtocol = "1.20",
-		minValue = "90", maxValue = "86400", defaultValue = "3600", unitOfMeasure = "s")
+	@ConfigurationSkip(maxProtocol = "1.18", terminator = ",")
+	@ConfigurationField(shortDescription = "Motion report interval", unitOfMeasure = "s", minProtocol = "1.19", maxProtocol = "1.20",
+		minValue = "90", maxValue = "86400", defaultValue = "3600", terminator = ",")
 	private int motionReportInterval;
-	@ConfigurationSkip(terminator = ",", minProtocol = "1.21")
+	@ConfigurationSkip(minProtocol = "1.21", terminator = ",")
 
-	@ConfigurationSkip(terminator = ",", maxProtocol = "1.18")
-	@ConfigurationField(shortDescription = "Motionless report interval", terminator = ",", minProtocol = "1.19", maxProtocol = "1.20",
-		minValue = "90", maxValue = "86400", defaultValue = "3600", unitOfMeasure = "s")
+	@ConfigurationSkip(maxProtocol = "1.18", terminator = ",")
+	@ConfigurationField(shortDescription = "Motionless report interval", unitOfMeasure = "s", minProtocol = "1.19", maxProtocol = "1.20",
+		minValue = "90", maxValue = "86400", defaultValue = "3600", terminator = ",")
 	private int motionlessReportInterval;
-	@ConfigurationField(shortDescription = "Operation mode report interval", terminator = ",", minProtocol = "1.21", minValue = "3600",
-		maxValue = "86400", defaultValue = "3600", unitOfMeasure = "s")
+	@ConfigurationField(shortDescription = "Operation mode report interval", unitOfMeasure = "s", minProtocol = "1.21", minValue = "3600",
+		maxValue = "86400", defaultValue = "3600", terminator = ",")
 	private int operationModeReportInterval;
 
-	@ConfigurationField(shortDescription = "Weekday", terminator = ",", enumeration = Weekday.class, radix = 16,
-		defaultValue = "MONDAY|TUESDAY|WEDNESDAY|THURSDAY|FRIDAY|SATURDAY|SUNDAY")
+	@ConfigurationField(shortDescription = "Weekday", enumeration = Weekday.class, radix = 16,
+		defaultValue = "MONDAY|TUESDAY|WEDNESDAY|THURSDAY|FRIDAY|SATURDAY|SUNDAY", terminator = ",")
 	private Weekday[] weekday;
 
 	@ConfigurationSkip(terminator = ",")
