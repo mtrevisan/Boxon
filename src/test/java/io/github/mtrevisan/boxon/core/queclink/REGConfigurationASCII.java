@@ -113,6 +113,6 @@ public class REGConfigurationASCII{
 
 	@ConfigurationSkip(terminator = ",")
 	@ConfigurationField(shortDescription = "Message counter", minValue = "0x0000", maxValue = "0xFFFF", radix = 16)
-	private int messageCounter;
+	private Integer messageCounter;
 
 }

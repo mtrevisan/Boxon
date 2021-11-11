@@ -34,6 +34,7 @@ import io.github.mtrevisan.boxon.annotations.configurations.CompositeSubField;
 import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
+import io.github.mtrevisan.boxon.internal.ParserDataType;
 import io.github.mtrevisan.boxon.internal.semanticversioning.Version;
 
 import java.lang.annotation.Annotation;
@@ -166,11 +167,17 @@ enum ConfigurationAnnotationValidator{
 			final Class<? extends Enum<?>> enumeration = binding.enumeration();
 			final String defaultValue = binding.defaultValue();
 
-			if(!defaultValue.isEmpty())
+			if(!defaultValue.isEmpty()){
 				//defaultValue compatible with variable type
 				if(enumeration == NullEnum.class && JavaHelper.getValue(fieldType, defaultValue) == null)
 					throw AnnotationException.create("Incompatible enum in {}, found {}, expected {}",
 						ConfigurationField.class.getSimpleName(), defaultValue.getClass().getSimpleName(), fieldType.toString());
+			}
+			//if default value is not present, then field type must be an object
+			else if(ParserDataType.isPrimitive(fieldType))
+				throw AnnotationException.create("Default must be present for primitive type in {}, found {}, expected {}",
+					ConfigurationField.class.getSimpleName(), fieldType.getSimpleName(),
+					ParserDataType.toObjectiveTypeOrSelf(fieldType).getSimpleName());
 		}
 
 		private void validateMinMaxValues(final Field field, final ConfigurationField binding) throws AnnotationException{
@@ -380,11 +387,17 @@ enum ConfigurationAnnotationValidator{
 			final Class<?> fieldType = field.getType();
 			final String defaultValue = binding.defaultValue();
 
-			if(!defaultValue.isEmpty())
+			if(!defaultValue.isEmpty()){
 				//defaultValue compatible with variable type
 				if(JavaHelper.getValue(fieldType, defaultValue) == null)
 					throw AnnotationException.create("Incompatible enum in {}, found {}, expected {}",
 						CompositeSubField.class.getSimpleName(), defaultValue.getClass().getSimpleName(), fieldType.toString());
+			}
+			//if default value is not present, then field type must be an object
+			else if(ParserDataType.isPrimitive(fieldType))
+				throw AnnotationException.create("Default must be present for primitive type in {}, found {}, expected {}",
+					ConfigurationField.class.getSimpleName(), fieldType.getSimpleName(),
+					ParserDataType.toObjectiveTypeOrSelf(fieldType).getSimpleName());
 		}
 	},
 
