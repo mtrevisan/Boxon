@@ -688,12 +688,17 @@ parser.withDefaultConfigurations(); //loads all configuration from the package w
 parser.withConfigurations(ConfigurationCustomTest.class); //this class is where the custom configuration resides
 ```
 
+Then, to retrieve all the possible protocol version boundaries, call
+```java
+List<String> protocolBoundaries = parser.getProtocolVersionBoundaries();
+```
+
 Then, to retrieve all the messages for a given protocol version, simply call
 ```java
 List<Map<String, Object>> configurationMessages = parser.getConfigurations("1.35");
 ```
 
-Moreover, to compose a configuration message, call
+Moreover, to compose a configuration message (remember to also load the codecs), call
 ```java
 Map<String, Object> configurationData = new HashMap<>();
 configurationData.put(Parser.CONFIGURATION_FIELD_TYPE, "AT+");

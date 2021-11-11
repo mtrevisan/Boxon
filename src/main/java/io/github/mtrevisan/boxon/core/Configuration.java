@@ -55,7 +55,7 @@ final class Configuration<T>{
 	private final ConfigurationHeader header;
 	private final List<ConfigField> configFields;
 
-	private final List<String> protocolVersions;
+	private final List<String> protocolVersionBoundaries;
 
 
 	Configuration(final Class<T> type) throws AnnotationException{
@@ -75,8 +75,8 @@ final class Configuration<T>{
 			maxMessageProtocol);
 		this.configFields = Collections.unmodifiableList(configFields);
 
-		final List<String> protocolVersions = extractProtocolsList(configFields);
-		this.protocolVersions = Collections.unmodifiableList(protocolVersions);
+		final List<String> protocolVersionBoundaries = extractProtocolVersionBoundaries(configFields);
+		this.protocolVersionBoundaries = Collections.unmodifiableList(protocolVersionBoundaries);
 
 		if(configFields.isEmpty())
 			throw AnnotationException.create("No data can be extracted from this class: {}", type.getName());
@@ -150,12 +150,12 @@ final class Configuration<T>{
 		return (validator != null);
 	}
 
-	private List<String> extractProtocolsList(final List<ConfigField> configFields){
-		final List<String> protocolVersions = new ArrayList<>(configFields.size() * 2 + 2);
+	private List<String> extractProtocolVersionBoundaries(final List<ConfigField> configFields){
+		final List<String> protocolVersionBoundaries = new ArrayList<>(configFields.size() * 2 + 2);
 		if(!JavaHelper.isBlank(header.minProtocol()))
-			protocolVersions.add(header.minProtocol());
+			protocolVersionBoundaries.add(header.minProtocol());
 		if(!JavaHelper.isBlank(header.maxProtocol()))
-			protocolVersions.add(header.maxProtocol());
+			protocolVersionBoundaries.add(header.maxProtocol());
 
 		for(int i = 0; i < configFields.size(); i ++){
 			final ConfigField cf = configFields.get(i);
@@ -177,22 +177,22 @@ final class Configuration<T>{
 			}
 
 			if(!JavaHelper.isBlank(minProtocol))
-				protocolVersions.add(minProtocol);
+				protocolVersionBoundaries.add(minProtocol);
 			if(!JavaHelper.isBlank(maxProtocol))
-				protocolVersions.add(maxProtocol);
+				protocolVersionBoundaries.add(maxProtocol);
 			for(int j = 0; j < JavaHelper.lengthOrZero(skips); j ++){
 				minProtocol = skips[j].minProtocol();
 				maxProtocol = skips[j].maxProtocol();
 				if(!JavaHelper.isBlank(minProtocol))
-					protocolVersions.add(minProtocol);
+					protocolVersionBoundaries.add(minProtocol);
 				if(!JavaHelper.isBlank(maxProtocol))
-					protocolVersions.add(maxProtocol);
+					protocolVersionBoundaries.add(maxProtocol);
 			}
 		}
 
-		protocolVersions.sort(Comparator.comparing(Version::of));
-		removeDuplicates(protocolVersions);
-		return protocolVersions;
+		protocolVersionBoundaries.sort(Comparator.comparing(Version::of));
+		removeDuplicates(protocolVersionBoundaries);
+		return protocolVersionBoundaries;
 	}
 
 	Class<T> getType(){
@@ -207,8 +207,8 @@ final class Configuration<T>{
 		return configFields;
 	}
 
-	List<String> getProtocols(){
-		return protocolVersions;
+	List<String> getProtocolVersionBoundaries(){
+		return protocolVersionBoundaries;
 	}
 
 	boolean canBeCoded(){

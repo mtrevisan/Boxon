@@ -229,6 +229,15 @@ public final class Parser{
 	}
 
 	/**
+	 * Retrieve all the protocol version boundaries.
+	 *
+	 * @return	The protocol version boundaries.
+	 */
+	public List<String> getProtocolVersionBoundaries(){
+		return loaderConfiguration.getProtocolVersionBoundaries();
+	}
+
+	/**
 	 * Retrieve all the configuration given a protocol version.
 	 *
 	 * @param protocol	The protocol used to extract the configurations.

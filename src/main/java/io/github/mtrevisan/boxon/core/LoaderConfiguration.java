@@ -69,6 +69,8 @@ import java.util.regex.Pattern;
 
 final class LoaderConfiguration{
 
+	private static final String EMPTY_STRING = "";
+
 	private static final String CONFIGURATION_COMPOSITE_FIELDS = "fields";
 
 	private static final String NOTIFICATION_TEMPLATE = "compositeTemplate";
@@ -207,6 +209,19 @@ final class LoaderConfiguration{
 	}
 
 	/**
+	 * Retrieve all the protocol version boundaries.
+	 *
+	 * @return	The protocol version boundaries.
+	 */
+	List<String> getProtocolVersionBoundaries(){
+		final Collection<Configuration<?>> configurationValues = configurations.values();
+		final List<String> protocolVersionBoundaries = new ArrayList<>(configurationValues.size());
+		for(final Configuration<?> configuration : configurationValues)
+			protocolVersionBoundaries.addAll(configuration.getProtocolVersionBoundaries());
+		return Collections.unmodifiableList(protocolVersionBoundaries);
+	}
+
+	/**
 	 * Retrieve all the configuration given a protocol version.
 	 *
 	 * @param protocol	The protocol used to extract the configurations.
@@ -227,11 +242,15 @@ final class LoaderConfiguration{
 
 			final Map<String, Object> headerMap = extractMap(header);
 			final Map<String, Object> fieldsMap = extractFieldsMap(currentProtocol, configuration);
-			final List<String> protocols = configuration.getProtocols();
+//			final List<String> protocols = configuration.getProtocols();
+//			response.add(Map.of(
+//				"header", headerMap,
+//				"fields", fieldsMap,
+//				"protocolBoundaries", protocols
+//			));
 			response.add(Map.of(
 				"header", headerMap,
-				"fields", fieldsMap,
-				"protocolBoundaries", protocols
+				"fields", fieldsMap
 			));
 		}
 		return Collections.unmodifiableList(response);
@@ -550,8 +569,6 @@ final class LoaderConfiguration{
 		final Map<String, Object> map = new HashMap<>(3);
 		putIfNotEmpty(map, "shortDescription", header.shortDescription());
 		putIfNotEmpty(map, "longDescription", header.longDescription());
-		putIfNotEmpty(map, "minProtocol", header.minProtocol());
-		putIfNotEmpty(map, "maxProtocol", header.maxProtocol());
 		return map;
 	}
 
@@ -560,8 +577,6 @@ final class LoaderConfiguration{
 
 		putIfNotEmpty(map, "longDescription", binding.longDescription());
 		putIfNotEmpty(map, "unitOfMeasure", binding.unitOfMeasure());
-		putIfNotEmpty(map, "minProtocol", binding.minProtocol());
-		putIfNotEmpty(map, "maxProtocol", binding.maxProtocol());
 
 		if(!fieldType.isEnum() && !fieldType.isArray())
 			putIfNotEmpty(map, "fieldType", ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName());
@@ -589,8 +604,6 @@ final class LoaderConfiguration{
 		final Map<String, Object> map = new HashMap<>(6);
 
 		putIfNotEmpty(map, "longDescription", binding.longDescription());
-		putIfNotEmpty(map, "minProtocol", binding.minProtocol());
-		putIfNotEmpty(map, "maxProtocol", binding.maxProtocol());
 		putIfNotEmpty(map, "pattern", binding.pattern());
 		putIfNotEmpty(map, "charset", binding.charset());
 
@@ -634,10 +647,13 @@ final class LoaderConfiguration{
 	}
 
 	static boolean shouldBeExtracted(final Version protocol, final String minProtocol, final String maxProtocol){
+		if(protocol.isEmpty())
+			return true;
+
 		final Version min = Version.of(minProtocol);
 		final Version max = Version.of(maxProtocol);
-		final boolean validMinimum = min.isEmpty() || protocol.isGreaterThanOrEqualTo(min);
-		final boolean validMaximum = max.isEmpty() || protocol.isLessThanOrEqualTo(max);
+		final boolean validMinimum = (min.isEmpty() || protocol.isGreaterThanOrEqualTo(min));
+		final boolean validMaximum = (max.isEmpty() || protocol.isLessThanOrEqualTo(max));
 		return (validMinimum && validMaximum);
 	}
 
