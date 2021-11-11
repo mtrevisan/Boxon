@@ -24,11 +24,9 @@
  */
 package io.github.mtrevisan.boxon.core;
 
-import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationField;
-import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
-import io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField;
-import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationManagerFactory;
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationManagerInterface;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
@@ -128,15 +126,10 @@ final class Configuration<T>{
 		return configFields;
 	}
 
-	private void validateShortDescriptionUniqueness(final Annotation validAnnotation, final Collection<String> uniqueShortDescription,
+	private void validateShortDescriptionUniqueness(final Annotation annotation, final Collection<String> uniqueShortDescription,
 			final Class<T> type) throws AnnotationException{
-		String shortDescription = null;
-		if(ConfigurationField.class.isInstance(validAnnotation))
-			shortDescription = ((ConfigurationField)validAnnotation).shortDescription();
-		else if(CompositeConfigurationField.class.isInstance(validAnnotation))
-			shortDescription = ((CompositeConfigurationField)validAnnotation).shortDescription();
-		else if(AlternativeConfigurationField.class.isInstance(validAnnotation))
-			shortDescription = ((AlternativeConfigurationField)validAnnotation).shortDescription();
+		final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(annotation);
+		final String shortDescription = manager.getShortDescription();
 		if(!uniqueShortDescription.add(shortDescription))
 			throw AnnotationException.create("Duplicated short description in {}: {}", type.getName(), shortDescription);
 	}
@@ -180,28 +173,8 @@ final class Configuration<T>{
 			final ConfigField cf = configFields.get(i);
 
 			final Annotation annotation = cf.getBinding();
-			if(ConfigurationField.class.isInstance(annotation)){
-				final ConfigurationField binding = (ConfigurationField)annotation;
-				protocolVersionBoundaries.add(binding.minProtocol());
-				protocolVersionBoundaries.add(binding.maxProtocol());
-			}
-			else if(CompositeConfigurationField.class.isInstance(annotation)){
-				final CompositeConfigurationField binding = (CompositeConfigurationField)annotation;
-				protocolVersionBoundaries.add(binding.minProtocol());
-				protocolVersionBoundaries.add(binding.maxProtocol());
-			}
-			else if(AlternativeConfigurationField.class.isInstance(annotation)){
-				final AlternativeConfigurationField binding = (AlternativeConfigurationField)annotation;
-				protocolVersionBoundaries.add(binding.minProtocol());
-				protocolVersionBoundaries.add(binding.maxProtocol());
-
-				final AlternativeSubField[] alternativeFields = binding.value();
-				for(int j = 0; j < alternativeFields.length; j ++){
-					final AlternativeSubField fieldBinding = alternativeFields[j];
-					protocolVersionBoundaries.add(fieldBinding.minProtocol());
-					protocolVersionBoundaries.add(fieldBinding.maxProtocol());
-				}
-			}
+			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(annotation);
+			manager.addProtocolVersionBoundaries(protocolVersionBoundaries);
 
 			final ConfigurationSkip[] skips = cf.getSkips();
 			for(int j = 0; j < JavaHelper.lengthOrZero(skips); j ++){

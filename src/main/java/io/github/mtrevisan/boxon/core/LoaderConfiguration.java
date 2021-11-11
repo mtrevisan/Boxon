@@ -25,12 +25,9 @@
 package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
-import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
-import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationField;
-import io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField;
-import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
-import io.github.mtrevisan.boxon.annotations.configurations.CompositeSubField;
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationManagerFactory;
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationManagerInterface;
 import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
@@ -45,7 +42,6 @@ import io.github.mtrevisan.boxon.internal.ThrowingFunction;
 import io.github.mtrevisan.boxon.internal.semanticversioning.Version;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -57,9 +53,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 
-final class LoaderConfiguration{
-
-	private static final String CONFIGURATION_COMPOSITE_FIELDS = "fields";
+public final class LoaderConfiguration{
 
 	private static final String EMPTY_STRING = "";
 
@@ -299,37 +293,10 @@ final class LoaderConfiguration{
 			//find field in `configuration` that matches `dataKey` and `protocol`
 			final ConfigField foundField = findField(configurableFields, dataKey, protocol);
 			final Annotation foundFieldAnnotation = foundField.getBinding();
-			if(ConfigurationField.class.isInstance(foundFieldAnnotation)){
-				final ConfigurationField foundBinding = (ConfigurationField)foundFieldAnnotation;
-
-				ConfigurationValidatorHelper.validateValue(foundBinding, dataKey, dataValue, foundField);
-
-				setValue(configurationObject, foundBinding.enumeration(), dataKey, dataValue, foundField);
-			}
-			else if(CompositeConfigurationField.class.isInstance(foundFieldAnnotation)){
-				final CompositeConfigurationField foundBinding = (CompositeConfigurationField)foundFieldAnnotation;
-
-				ConfigurationValidatorHelper.validateValue(foundBinding, dataKey, dataValue);
-
-				//compose outer field value
-				final String composition = foundBinding.composition();
-				final CompositeSubField[] fields = foundBinding.value();
-				@SuppressWarnings("unchecked")
-				final String outerValue = ConfigurationValidatorHelper.replace(composition, (Map<String, Object>)dataValue, fields);
-				setValue(configurationObject, outerValue, foundField);
-			}
-			else if(AlternativeConfigurationField.class.isInstance(foundFieldAnnotation)){
-				final AlternativeConfigurationField binding = (AlternativeConfigurationField)foundFieldAnnotation;
-
-				if(ConfigurationValidatorHelper.shouldBeExtracted(protocol, binding.minProtocol(), binding.maxProtocol())){
-					final AlternativeSubField fieldBinding = extractField(binding, protocol);
-					if(fieldBinding != null){
-						ConfigurationValidatorHelper.validateValue(fieldBinding, dataKey, dataValue, foundField);
-
-						setValue(configurationObject, binding.enumeration(), dataKey, dataValue, foundField);
-					}
-				}
-			}
+			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(foundFieldAnnotation);
+			final Class<?> fieldType = foundField.getFieldType();
+			manager.validateValue(dataKey, dataValue, fieldType);
+			manager.setValue(configurationObject, dataKey, dataValue, foundField.getField(), protocol);
 
 			if(String.class.isInstance(dataValue) && !((String)dataValue).isEmpty() || dataValue != null)
 				mandatoryFields.remove(foundField);
@@ -354,52 +321,25 @@ final class LoaderConfiguration{
 		return configuration;
 	}
 
-	private static void fillDefaultValues(final Object object, final List<ConfigField> fields, final Version protocol)
+	private static void fillDefaultValues(final Object configurationObject, final List<ConfigField> fields, final Version protocol)
 			throws EncodeException{
 		for(int i = 0; i < fields.size(); i ++){
 			final ConfigField field = fields.get(i);
-			if(ConfigurationField.class.isAssignableFrom(field.getBinding().annotationType())){
-				final ConfigurationField binding = (ConfigurationField)field.getBinding();
-				if(!JavaHelper.isBlank(binding.defaultValue())
-						&& ConfigurationValidatorHelper.shouldBeExtracted(protocol, binding.minProtocol(), binding.maxProtocol()))
-					setValue(object, binding.enumeration(), binding.shortDescription(), binding.defaultValue(), field);
-			}
+			final Annotation annotation = field.getBinding();
+			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(annotation);
+			final Object dataValue = manager.getDefaultValue(field.getField());
+			manager.setValue(configurationObject, manager.getShortDescription(), dataValue, field.getField(), protocol);
 		}
 	}
 
 	private static Collection<ConfigField> extractMandatoryFields(final List<ConfigField> fields, final Version protocol){
 		final Collection<ConfigField> mandatoryFields = new HashSet<>(fields.size());
 		for(int i = 0; i < fields.size(); i ++){
-			boolean mandatory = false;
-			String minProtocol = null;
-			String maxProtocol = null;
 			final ConfigField field = fields.get(i);
-			final Annotation annotation = field.getBinding();
-			if(ConfigurationField.class.isInstance(annotation)){
-				final ConfigurationField binding = (ConfigurationField)annotation;
-				mandatory = JavaHelper.isBlank(binding.defaultValue());
-				minProtocol = binding.minProtocol();
-				maxProtocol = binding.maxProtocol();
-			}
-			else if(CompositeConfigurationField.class.isInstance(annotation)){
-				final CompositeConfigurationField binding = (CompositeConfigurationField)annotation;
-				final CompositeSubField[] compositeFields = binding.value();
-				for(int j = 0; !mandatory && j < compositeFields.length; j ++)
-					mandatory = JavaHelper.isBlank(compositeFields[j].defaultValue());
-				minProtocol = binding.minProtocol();
-				maxProtocol = binding.maxProtocol();
-			}
-			else if(AlternativeConfigurationField.class.isInstance(annotation)){
-				final AlternativeConfigurationField binding = (AlternativeConfigurationField)annotation;
-
-				final AlternativeSubField fieldBinding = extractField(binding, protocol);
-				if(fieldBinding != null){
-					mandatory = JavaHelper.isBlank(fieldBinding.defaultValue());
-					minProtocol = binding.minProtocol();
-					maxProtocol = binding.maxProtocol();
-				}
-			}
-			if(mandatory && ConfigurationValidatorHelper.shouldBeExtracted(protocol, minProtocol, maxProtocol))
+			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(field.getBinding());
+			final Annotation annotation = manager.shouldBeExtracted(protocol);
+			final boolean mandatory = manager.isMandatory(annotation);
+			if(mandatory && annotation != null)
 				mandatoryFields.add(field);
 		}
 		return mandatoryFields;
@@ -408,72 +348,17 @@ final class LoaderConfiguration{
 	private static ConfigField findField(final List<ConfigField> fields, final String key, final Version protocol) throws EncodeException{
 		ConfigField foundField = null;
 		for(int i = 0; foundField == null && i < fields.size(); i ++){
-			String shortDescription = null;
-			String minProtocol = null;
-			String maxProtocol = null;
 			final ConfigField field = fields.get(i);
-			final Annotation annotation = field.getBinding();
-			if(ConfigurationField.class.isInstance(annotation)){
-				final ConfigurationField binding = (ConfigurationField)annotation;
-				shortDescription = binding.shortDescription();
-				minProtocol = binding.minProtocol();
-				maxProtocol = binding.maxProtocol();
-			}
-			else if(CompositeConfigurationField.class.isInstance(annotation)){
-				final CompositeConfigurationField binding = (CompositeConfigurationField)annotation;
-				shortDescription = binding.shortDescription();
-				minProtocol = binding.minProtocol();
-				maxProtocol = binding.maxProtocol();
-			}
-			else if(AlternativeConfigurationField.class.isInstance(annotation)){
-				final AlternativeConfigurationField binding = (AlternativeConfigurationField)annotation;
-				shortDescription = binding.shortDescription();
-
-				final AlternativeSubField fieldBinding = extractField(binding, protocol);
-				if(fieldBinding != null){
-					minProtocol = binding.minProtocol();
-					maxProtocol = binding.maxProtocol();
-				}
-			}
-			if(shortDescription.equals(key) && ConfigurationValidatorHelper.shouldBeExtracted(protocol, minProtocol, maxProtocol))
+			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(field.getBinding());
+			final String shortDescription = manager.getShortDescription();
+			final Annotation annotation = manager.shouldBeExtracted(protocol);
+			if(shortDescription.equals(key) && annotation != null)
 				foundField = field;
 		}
 		if(foundField == null)
 			throw EncodeException.create("Cannot find any field to set for data key {}", key);
 
 		return foundField;
-	}
-
-	private static void setValue(final Object object, final Class<? extends Enum<?>> enumeration, final String key, final Object value,
-			final ConfigField field) throws EncodeException{
-		if(enumeration != NullEnum.class){
-			if(!String.class.isInstance(value))
-				throw EncodeException.create("Data value incompatible with field type {}; found {}, expected String.class",
-					key, value.getClass());
-
-			final Object dataEnum;
-			final Enum<?>[] enumConstants = enumeration.getEnumConstants();
-			if(field.getFieldType().isArray()){
-				final String[] defaultValues = JavaHelper.split((String)value, '|', -1);
-				dataEnum = Array.newInstance(enumeration, defaultValues.length);
-				for(int i = 0; i < defaultValues.length; i ++)
-					Array.set(dataEnum, i, JavaHelper.extractEnum(enumConstants, defaultValues[i]));
-			}
-			else
-				dataEnum = enumeration
-					.cast(JavaHelper.extractEnum(enumConstants, (String)value));
-			field.setFieldValue(object, dataEnum);
-		}
-		else if(String.class.isInstance(value)){
-			final Object val = JavaHelper.getValue(field.getFieldType(), (String)value);
-			field.setFieldValue(object, val);
-		}
-		else
-			field.setFieldValue(object, value);
-	}
-
-	private static void setValue(final Object object, final Object value, final ConfigField field) throws EncodeException{
-		setValue(object, NullEnum.class, null, value, field);
 	}
 
 	private static Map<String, Object> extractFieldsMap(final Version protocol, final Configuration<?> configuration)
@@ -483,226 +368,23 @@ final class LoaderConfiguration{
 		for(int i = 0; i < fields.size(); i ++){
 			final ConfigField field = fields.get(i);
 			final Annotation annotation = field.getBinding();
-			if(ConfigurationField.class.isInstance(annotation)){
-				final ConfigurationField binding = (ConfigurationField)annotation;
-				final Map<String, Object> fieldMap = extractFieldMap(field, binding, protocol);
-				if(fieldMap != null)
-					fieldsMap.put(binding.shortDescription(), fieldMap);
-			}
-			else if(CompositeConfigurationField.class.isInstance(annotation)){
-				final CompositeConfigurationField compositeBinding = (CompositeConfigurationField)annotation;
-				final Map<String, Object> compositeMap = extractCompositeFieldMap(field, compositeBinding, protocol);
-				if(compositeMap != null)
-					fieldsMap.put(compositeBinding.shortDescription(), compositeMap);
-			}
-			else if(AlternativeConfigurationField.class.isInstance(annotation)){
-				final AlternativeConfigurationField alternativeBinding = (AlternativeConfigurationField)annotation;
-				final Map<String, Object> alternativeMap = extractAlternativeField(field, alternativeBinding, protocol);
-				if(alternativeMap != null)
-					fieldsMap.put(alternativeBinding.shortDescription(), alternativeMap);
+			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(annotation);
+			final Map<String, Object> fieldMap = manager.extractConfigurationMap(field.getFieldType(), protocol);
+			if(fieldMap != null){
+				final String shortDescription = manager.getShortDescription();
+				fieldsMap.put(shortDescription, fieldMap);
 			}
 		}
 		return fieldsMap;
 	}
 
-	private static Map<String, Object> extractFieldMap(final ConfigField field, final ConfigurationField binding,
-			final Version protocol) throws ConfigurationException{
-		if(!ConfigurationValidatorHelper.shouldBeExtracted(protocol, binding.minProtocol(), binding.maxProtocol()))
-			return null;
-
-		final Class<?> fieldType = field.getFieldType();
-		final Map<String, Object> fieldMap = extractMap(binding, fieldType);
-
-		if(protocol.isEmpty()){
-			putIfNotEmpty(fieldMap, "minProtocol", binding.minProtocol());
-			putIfNotEmpty(fieldMap, "maxProtocol", binding.maxProtocol());
-		}
-		return fieldMap;
-	}
-
-	private static Map<String, Object> extractMap(final ConfigurationField binding, final Class<?> fieldType) throws ConfigurationException{
-		final Map<String, Object> map = new HashMap<>(10);
-
-		putIfNotEmpty(map, "longDescription", binding.longDescription());
-		putIfNotEmpty(map, "unitOfMeasure", binding.unitOfMeasure());
-
-		if(!fieldType.isEnum() && !fieldType.isArray())
-			putIfNotEmpty(map, "fieldType", ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName());
-		putIfNotEmpty(map, "minValue", JavaHelper.getValue(fieldType, binding.minValue()));
-		putIfNotEmpty(map, "maxValue", JavaHelper.getValue(fieldType, binding.maxValue()));
-		putIfNotEmpty(map, "pattern", binding.pattern());
-		if(binding.enumeration() != NullEnum.class){
-			final Enum<?>[] enumConstants = binding.enumeration().getEnumConstants();
-			final String[] enumValues = new String[enumConstants.length];
-			for(int j = 0; j < enumConstants.length; j ++)
-				enumValues[j] = enumConstants[j].name();
-			putIfNotEmpty(map, "enumeration", enumValues);
-			if(fieldType.isEnum())
-				putIfNotEmpty(map, "mutuallyExclusive", true);
-		}
-
-		putValueIfNotEmpty(map, "defaultValue", fieldType, binding.enumeration(), binding.defaultValue());
-		if(String.class.isAssignableFrom(fieldType))
-			putIfNotEmpty(map, "charset", binding.charset());
-
-		return map;
-	}
-
-	private static Map<String, Object> extractCompositeFieldMap(final ConfigField field, final CompositeConfigurationField binding,
-			final Version protocol) throws ConfigurationException{
-		if(!ConfigurationValidatorHelper.shouldBeExtracted(protocol, binding.minProtocol(), binding.maxProtocol()))
-			return null;
-
-		final Class<?> fieldType = field.getFieldType();
-		final Map<String, Object> compositeMap = extractMap(binding);
-		final CompositeSubField[] bindings = binding.value();
-		final Map<String, Object> compositeFieldsMap = new HashMap<>(bindings.length);
-		for(int j = 0; j < bindings.length; j ++){
-			final Map<String, Object> fieldMap = extractMap(bindings[j], fieldType);
-
-			compositeFieldsMap.put(bindings[j].shortDescription(), fieldMap);
-		}
-		compositeMap.put(CONFIGURATION_COMPOSITE_FIELDS, compositeFieldsMap);
-
-		if(protocol.isEmpty()){
-			putIfNotEmpty(compositeMap, "minProtocol", binding.minProtocol());
-			putIfNotEmpty(compositeMap, "maxProtocol", binding.maxProtocol());
-		}
-		return compositeMap;
-	}
-
-	private static Map<String, Object> extractMap(final CompositeSubField binding, final Class<?> fieldType)
-		throws ConfigurationException{
-		final Map<String, Object> map = new HashMap<>(10);
-
-		putIfNotEmpty(map, "longDescription", binding.longDescription());
-		putIfNotEmpty(map, "unitOfMeasure", binding.unitOfMeasure());
-
-		putIfNotEmpty(map, "pattern", binding.pattern());
-		if(!fieldType.isEnum() && !fieldType.isArray())
-			putIfNotEmpty(map, "fieldType", ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName());
-
-		putValueIfNotEmpty(map, "defaultValue", fieldType, NullEnum.class, binding.defaultValue());
-
-		return map;
-	}
-
-	private static Map<String, Object> extractAlternativeField(final ConfigField field, final AlternativeConfigurationField binding,
-			final Version protocol) throws ConfigurationException{
-		if(!ConfigurationValidatorHelper.shouldBeExtracted(protocol, binding.minProtocol(), binding.maxProtocol()))
-			return null;
-
-		final Class<?> fieldType = field.getFieldType();
-		final Map<String, Object> alternativeMap = extractMap(binding, fieldType);
-
-		Map<String, Object> alternativesMap = null;
-		if(protocol.isEmpty()){
-			//extract all the alternatives, because it was requested all the configurations regardless of protocol:
-			final AlternativeSubField[] alternativeFields = binding.value();
-			final Collection<Map<String, Object>> alternatives = new ArrayList<>(alternativeFields.length);
-			for(int j = 0; j < alternativeFields.length; j ++){
-				final AlternativeSubField alternativeField = alternativeFields[j];
-
-				final Map<String, Object> fieldMap = extractMap(alternativeField, fieldType);
-
-				putIfNotEmpty(fieldMap, "minProtocol", alternativeField.minProtocol());
-				putIfNotEmpty(fieldMap, "maxProtocol", alternativeField.maxProtocol());
-				putValueIfNotEmpty(fieldMap, "defaultValue", fieldType, binding.enumeration(), alternativeField.defaultValue());
-
-				fieldMap.putAll(alternativeMap);
-
-				alternatives.add(fieldMap);
-			}
-			alternativesMap = new HashMap<>(3);
-			alternativesMap.put("alternatives", alternatives);
-			putIfNotEmpty(alternativesMap, "minProtocol", binding.minProtocol());
-			putIfNotEmpty(alternativesMap, "maxProtocol", binding.maxProtocol());
-		}
-		else{
-			//extract the specific alternative, because it was requested the configuration of a particular protocol:
-			final AlternativeSubField fieldBinding = extractField(binding, protocol);
-			if(fieldBinding != null){
-				alternativesMap = extractMap(fieldBinding, fieldType);
-
-				putValueIfNotEmpty(alternativesMap, "defaultValue", fieldType, binding.enumeration(), fieldBinding.defaultValue());
-
-				alternativesMap.putAll(alternativeMap);
-
-			}
-		}
-		return alternativesMap;
-	}
-
-	private static Map<String, Object> extractMap(final AlternativeConfigurationField binding, final Class<?> fieldType)
-		throws ConfigurationException{
-		final Map<String, Object> map = new HashMap<>(6);
-
-		putIfNotEmpty(map, "longDescription", binding.longDescription());
-		putIfNotEmpty(map, "unitOfMeasure", binding.unitOfMeasure());
-
-		if(!fieldType.isEnum() && !fieldType.isArray())
-			putIfNotEmpty(map, "fieldType", ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName());
-		if(binding.enumeration() != NullEnum.class){
-			final Enum<?>[] enumConstants = binding.enumeration().getEnumConstants();
-			final String[] enumValues = new String[enumConstants.length];
-			for(int j = 0; j < enumConstants.length; j ++)
-				enumValues[j] = enumConstants[j].name();
-			putIfNotEmpty(map, "enumeration", enumValues);
-			if(fieldType.isEnum())
-				putIfNotEmpty(map, "mutuallyExclusive", true);
-		}
-
-		return map;
-	}
-
-	private static Map<String, Object> extractMap(final AlternativeSubField binding, final Class<?> fieldType)
-		throws ConfigurationException{
-		final Map<String, Object> map = new HashMap<>(6);
-
-		putIfNotEmpty(map, "longDescription", binding.longDescription());
-		putIfNotEmpty(map, "unitOfMeasure", binding.unitOfMeasure());
-
-		if(!fieldType.isEnum() && !fieldType.isArray())
-			putIfNotEmpty(map, "fieldType", ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName());
-		putIfNotEmpty(map, "minValue", JavaHelper.getValue(fieldType, binding.minValue()));
-		putIfNotEmpty(map, "maxValue", JavaHelper.getValue(fieldType, binding.maxValue()));
-		putIfNotEmpty(map, "pattern", binding.pattern());
-
-		if(String.class.isAssignableFrom(fieldType))
-			putIfNotEmpty(map, "charset", binding.charset());
-
-		return map;
-	}
-
-	private static AlternativeSubField extractField(final AlternativeConfigurationField binding, final Version protocol){
-		final AlternativeSubField[] alternativeFields = binding.value();
-		for(int i = 0; i < alternativeFields.length; i ++){
-			final AlternativeSubField fieldBinding = alternativeFields[i];
-			if(ConfigurationValidatorHelper.shouldBeExtracted(protocol, fieldBinding.minProtocol(), fieldBinding.maxProtocol()))
-				return fieldBinding;
-		}
-		return null;
-	}
-
-	private static Map<String, Object> extractMap(final CompositeConfigurationField binding) throws ConfigurationException{
-		final Map<String, Object> map = new HashMap<>(6);
-
-		putIfNotEmpty(map, "longDescription", binding.longDescription());
-		putIfNotEmpty(map, "pattern", binding.pattern());
-		putIfNotEmpty(map, "charset", binding.charset());
-
-		return map;
-	}
-
-	private static void putIfNotEmpty(@SuppressWarnings("BoundedWildcard") final Map<String, Object> map, final String key,
-			final Object value) throws ConfigurationException{
+	public static void putIfNotEmpty(@SuppressWarnings("BoundedWildcard") final Map<String, Object> map, final String key, final Object value) throws ConfigurationException{
 		if(value != null && (!String.class.isInstance(value) || !JavaHelper.isBlank((CharSequence)value)))
 			if(map.put(key, value) != null)
 				throw ConfigurationException.create("Duplicated short description: {}", key);
 	}
 
-	private static void putValueIfNotEmpty(@SuppressWarnings("BoundedWildcard") final Map<String, Object> map, final String key,
-			final Class<?> fieldType, final Class<? extends Enum<?>> enumeration, final String value) throws ConfigurationException{
+	public static void putValueIfNotEmpty(@SuppressWarnings("BoundedWildcard") final Map<String, Object> map, final String key, final Class<?> fieldType, final Class<? extends Enum<?>> enumeration, final String value) throws ConfigurationException{
 		if(!JavaHelper.isBlank(value)){
 			Object val = value;
 			if(enumeration != NullEnum.class && fieldType.isArray())

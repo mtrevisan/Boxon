@@ -1,0 +1,227 @@
+package io.github.mtrevisan.boxon.annotations.configurations;
+
+import freemarker.core.Environment;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
+import freemarker.template.TemplateExceptionHandler;
+import io.github.mtrevisan.boxon.core.ConfigurationValidatorHelper;
+import io.github.mtrevisan.boxon.core.LoaderConfiguration;
+import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
+import io.github.mtrevisan.boxon.exceptions.EncodeException;
+import io.github.mtrevisan.boxon.internal.JavaHelper;
+import io.github.mtrevisan.boxon.internal.ParserDataType;
+import io.github.mtrevisan.boxon.internal.ReflectionHelper;
+import io.github.mtrevisan.boxon.internal.semanticversioning.Version;
+
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.regex.Pattern;
+
+
+public class CompositeManager implements ConfigurationManagerInterface{
+
+	private static final String CONFIGURATION_COMPOSITE_FIELDS = "fields";
+
+	private static final String NOTIFICATION_TEMPLATE = "compositeTemplate";
+	private static final freemarker.template.Configuration FREEMARKER_CONFIGURATION
+		= new freemarker.template.Configuration(freemarker.template.Configuration.VERSION_2_3_31);
+	static{
+		FREEMARKER_CONFIGURATION.setDefaultEncoding(StandardCharsets.UTF_8.name());
+		FREEMARKER_CONFIGURATION.setLocale(Locale.US);
+		FREEMARKER_CONFIGURATION.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+	}
+
+
+	private final CompositeConfigurationField annotation;
+
+
+	CompositeManager(final CompositeConfigurationField annotation){
+		this.annotation = annotation;
+	}
+
+	@Override
+	public String getShortDescription(){
+		return annotation.shortDescription();
+	}
+
+	@Override
+	public Object getDefaultValue(final Field field) throws EncodeException{
+		//TODO get composite default value
+		final String value = annotation.defaultValue();
+		if(JavaHelper.isBlank(value))
+			return null;
+
+		final Class<? extends Enum<?>> enumeration = annotation.enumeration();
+		if(enumeration != NullEnum.class){
+			if(!String.class.isInstance(value))
+				throw EncodeException.create("Data value incompatible with field type {}; found {}, expected String.class for enumeration type",
+					annotation.shortDescription(), value.getClass());
+
+			final Object valEnum;
+			final Enum<?>[] enumConstants = enumeration.getEnumConstants();
+			if(field.getType().isArray()){
+				final String[] defaultValues = JavaHelper.split(value, '|', -1);
+				valEnum = Array.newInstance(enumeration, defaultValues.length);
+				for(int i = 0; i < defaultValues.length; i ++)
+					Array.set(valEnum, i, JavaHelper.extractEnum(enumConstants, defaultValues[i]));
+			}
+			else
+				valEnum = enumeration
+					.cast(JavaHelper.extractEnum(enumConstants, value));
+			return valEnum;
+		}
+		else if(String.class.isInstance(value)){
+			final Object val = JavaHelper.getValue(field.getType(), value);
+			return val;
+		}
+		else
+			return value;
+	}
+
+	@Override
+	public void addProtocolVersionBoundaries(final Collection<String> protocolVersionBoundaries){
+		protocolVersionBoundaries.add(annotation.minProtocol());
+		protocolVersionBoundaries.add(annotation.maxProtocol());
+	}
+
+	@Override
+	public Annotation shouldBeExtracted(final Version protocol){
+		final boolean shouldBeExtracted = ConfigurationValidatorHelper.shouldBeExtracted(protocol, annotation.minProtocol(),
+			annotation.maxProtocol());
+		return (shouldBeExtracted? annotation: null);
+	}
+
+	//at least one field is mandatory
+	@Override
+	public boolean isMandatory(final Annotation annotation){
+		boolean mandatory = false;
+		final CompositeSubField[] compositeFields = this.annotation.value();
+		for(int j = 0; !mandatory && j < compositeFields.length; j ++)
+			mandatory = JavaHelper.isBlank(compositeFields[j].defaultValue());
+		return mandatory;
+	}
+
+	@Override
+	public Map<String, Object> extractConfigurationMap(final Class<?> fieldType, final Version protocol) throws ConfigurationException{
+		if(!ConfigurationValidatorHelper.shouldBeExtracted(protocol, annotation.minProtocol(), annotation.maxProtocol()))
+			return null;
+
+		final Map<String, Object> compositeMap = extractMap();
+		final CompositeSubField[] bindings = annotation.value();
+		final Map<String, Object> compositeFieldsMap = new HashMap<>(bindings.length);
+		for(int j = 0; j < bindings.length; j ++){
+			final Map<String, Object> fieldMap = extractMap(bindings[j], fieldType);
+
+			compositeFieldsMap.put(bindings[j].shortDescription(), fieldMap);
+		}
+		compositeMap.put(CONFIGURATION_COMPOSITE_FIELDS, compositeFieldsMap);
+
+		if(protocol.isEmpty()){
+			LoaderConfiguration.putIfNotEmpty(compositeMap, "minProtocol", annotation.minProtocol());
+			LoaderConfiguration.putIfNotEmpty(compositeMap, "maxProtocol", annotation.maxProtocol());
+		}
+		return compositeMap;
+	}
+
+	private Map<String, Object> extractMap() throws ConfigurationException{
+		final Map<String, Object> map = new HashMap<>(6);
+
+		LoaderConfiguration.putIfNotEmpty(map, "longDescription", annotation.longDescription());
+		LoaderConfiguration.putIfNotEmpty(map, "pattern", annotation.pattern());
+		LoaderConfiguration.putIfNotEmpty(map, "charset", annotation.charset());
+
+		return map;
+	}
+
+	private static Map<String, Object> extractMap(final CompositeSubField binding, final Class<?> fieldType) throws ConfigurationException{
+		final Map<String, Object> map = new HashMap<>(10);
+
+		LoaderConfiguration.putIfNotEmpty(map, "longDescription", binding.longDescription());
+		LoaderConfiguration.putIfNotEmpty(map, "unitOfMeasure", binding.unitOfMeasure());
+
+		LoaderConfiguration.putIfNotEmpty(map, "pattern", binding.pattern());
+		if(!fieldType.isEnum() && !fieldType.isArray())
+			LoaderConfiguration.putIfNotEmpty(map, "fieldType", ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName());
+
+		LoaderConfiguration.putValueIfNotEmpty(map, "defaultValue", fieldType, NullEnum.class, binding.defaultValue());
+
+		return map;
+	}
+
+	@Override
+	public void validateValue(final String dataKey, final Object dataValue, final Class<?> fieldType) throws EncodeException{
+		//check pattern
+		final String pattern = annotation.pattern();
+		if(!pattern.isEmpty()){
+			final Pattern formatPattern = Pattern.compile(pattern);
+
+			//compose outer field value
+			final String composition = annotation.composition();
+			final CompositeSubField[] fields = annotation.value();
+			@SuppressWarnings("unchecked")
+			final String outerValue = replace(composition, (Map<String, Object>)dataValue, fields);
+
+			//value compatible with data type and format
+			if(!formatPattern.matcher(outerValue).matches())
+				throw EncodeException.create("Data value not compatible with `pattern` for data key {}; found {}, expected {}",
+					dataKey, outerValue, pattern);
+		}
+	}
+
+	@Override
+	public void setValue(final Object configurationObject, final String dataKey, final Object dataValue, final Field field,
+			final Version protocol) throws EncodeException{
+		//compose outer field value
+		final String composition = annotation.composition();
+		final CompositeSubField[] fields = annotation.value();
+		@SuppressWarnings("unchecked")
+		final String outerValue = replace(composition, (Map<String, Object>)dataValue, fields);
+		setValue(field, configurationObject, outerValue);
+	}
+
+	private static String replace(final String text, final Map<String, Object> replacements, final CompositeSubField[] fields)
+		throws EncodeException{
+		final Map<String, Object> trueReplacements = new HashMap<>(fields.length);
+		for(int i = 0; i < fields.length; i ++){
+			final String key = fields[i].shortDescription();
+			trueReplacements.put(key, replacements.get(key));
+		}
+		return substitutePlaceholders(text, trueReplacements);
+	}
+
+	private static String substitutePlaceholders(final String text, final Map<String, Object> dataModel) throws EncodeException{
+		if(dataModel != null){
+			try{
+				final Writer writer = new StringWriter();
+				final Template template = new Template(NOTIFICATION_TEMPLATE, new StringReader(text), FREEMARKER_CONFIGURATION);
+
+				//create a processing environment
+				final Environment mainTemplateEnvironment = template.createProcessingEnvironment(dataModel, writer);
+
+				//process everything
+				mainTemplateEnvironment.process();
+
+				return writer.toString();
+			}
+			catch(final IOException | TemplateException e){
+				throw EncodeException.create(e);
+			}
+		}
+		return text;
+	}
+
+	private static void setValue(final Field field, final Object configurationObject, final Object dataValue){
+		ReflectionHelper.setFieldValue(field, configurationObject, dataValue);
+	}
+
+}

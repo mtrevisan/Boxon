@@ -50,6 +50,10 @@ final class ConfigField{
 		this.skips = (skips != null? skips.clone(): null);
 	}
 
+	Field getField(){
+		return field;
+	}
+
 	Class<?> getFieldType(){
 		return field.getType();
 	}

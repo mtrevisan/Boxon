@@ -24,11 +24,9 @@
  */
 package io.github.mtrevisan.boxon.core;
 
-import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
-import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationField;
-import io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField;
-import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationManagerFactory;
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationManagerInterface;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
@@ -103,38 +101,9 @@ final class ConfigurationParser{
 		for(int i = 0; i < fields.size(); i ++){
 			final ConfigField field = fields.get(i);
 
-			Annotation annotation = field.getBinding();
-			String minProtocol = null;
-			String maxProtocol = null;
-			if(ConfigurationField.class.isInstance(annotation)){
-				final ConfigurationField binding = (ConfigurationField)annotation;
-				minProtocol = binding.minProtocol();
-				maxProtocol = binding.maxProtocol();
-			}
-			else if(CompositeConfigurationField.class.isInstance(annotation)){
-				final CompositeConfigurationField binding = (CompositeConfigurationField)annotation;
-				minProtocol = binding.minProtocol();
-				maxProtocol = binding.maxProtocol();
-			}
-			else if(AlternativeConfigurationField.class.isInstance(annotation)){
-				final AlternativeConfigurationField binding = (AlternativeConfigurationField)annotation;
-				final AlternativeSubField[] alternativeFields = binding.value();
-				for(int j = 0; j < alternativeFields.length; j ++){
-					final AlternativeSubField fieldBinding = alternativeFields[j];
-					minProtocol = fieldBinding.minProtocol();
-					maxProtocol = fieldBinding.maxProtocol();
-
-					if(ConfigurationValidatorHelper.shouldBeExtracted(protocol, minProtocol, maxProtocol)){
-						minProtocol = binding.minProtocol();
-						maxProtocol = binding.maxProtocol();
-
-						annotation = fieldBinding;
-
-						break;
-					}
-				}
-			}
-			if(!ConfigurationValidatorHelper.shouldBeExtracted(protocol, minProtocol, maxProtocol))
+			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(field.getBinding());
+			final Annotation annotation = manager.shouldBeExtracted(protocol);
+			if(annotation == null)
 				continue;
 
 			//process skip annotations:
