@@ -25,7 +25,6 @@
 package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationField;
-import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
 
@@ -41,8 +40,7 @@ final class CodecAlternativeConfigurationFields implements CodecInterface<Altern
 	}
 
 	@Override
-	public void encode(final BitWriter writer, final Annotation annotation, final Object fieldType, Object value)
-			throws ConfigurationException{
+	public void encode(final BitWriter writer, final Annotation annotation, final Object fieldType, final Object value){
 		final AlternativeConfigurationField binding = extractBinding(annotation);
 
 		if(!binding.terminator().isEmpty())

@@ -1,16 +1,16 @@
 package io.github.mtrevisan.boxon.annotations.configurations;
 
 import freemarker.core.Environment;
+import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
-import io.github.mtrevisan.boxon.core.ConfigurationValidatorHelper;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
+import io.github.mtrevisan.boxon.external.semanticversioning.Version;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.ParserDataType;
 import io.github.mtrevisan.boxon.internal.ReflectionHelper;
-import io.github.mtrevisan.boxon.internal.semanticversioning.Version;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -31,8 +31,7 @@ class CompositeManager implements ConfigurationManagerInterface{
 	private static final String CONFIGURATION_COMPOSITE_FIELDS = "fields";
 
 	private static final String NOTIFICATION_TEMPLATE = "compositeTemplate";
-	private static final freemarker.template.Configuration FREEMARKER_CONFIGURATION
-		= new freemarker.template.Configuration(freemarker.template.Configuration.VERSION_2_3_31);
+	private static final Configuration FREEMARKER_CONFIGURATION = new Configuration(Configuration.VERSION_2_3_31);
 	static{
 		FREEMARKER_CONFIGURATION.setDefaultEncoding(StandardCharsets.UTF_8.name());
 		FREEMARKER_CONFIGURATION.setLocale(Locale.US);
@@ -48,12 +47,12 @@ class CompositeManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	public String getShortDescription(){
+	public final String getShortDescription(){
 		return annotation.shortDescription();
 	}
 
 	@Override
-	public Object getDefaultValue(final Field field, final Version protocol) throws EncodeException{
+	public final Object getDefaultValue(final Field field, final Version protocol) throws EncodeException{
 		//compose field value
 		final String composition = annotation.composition();
 		final CompositeSubField[] fields = annotation.value();
@@ -64,21 +63,20 @@ class CompositeManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	public void addProtocolVersionBoundaries(final Collection<String> protocolVersionBoundaries){
+	public final void addProtocolVersionBoundaries(final Collection<String> protocolVersionBoundaries){
 		protocolVersionBoundaries.add(annotation.minProtocol());
 		protocolVersionBoundaries.add(annotation.maxProtocol());
 	}
 
 	@Override
-	public Annotation shouldBeExtracted(final Version protocol){
-		final boolean shouldBeExtracted = ConfigurationValidatorHelper.shouldBeExtracted(protocol, annotation.minProtocol(),
-			annotation.maxProtocol());
+	public final Annotation shouldBeExtracted(final Version protocol){
+		final boolean shouldBeExtracted = shouldBeExtracted(protocol, annotation.minProtocol(), annotation.maxProtocol());
 		return (shouldBeExtracted? annotation: null);
 	}
 
 	//at least one field is mandatory
 	@Override
-	public boolean isMandatory(final Annotation annotation){
+	public final boolean isMandatory(final Annotation annotation){
 		boolean mandatory = false;
 		final CompositeSubField[] compositeFields = this.annotation.value();
 		for(int j = 0; !mandatory && j < compositeFields.length; j ++)
@@ -87,8 +85,8 @@ class CompositeManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	public Map<String, Object> extractConfigurationMap(final Class<?> fieldType, final Version protocol) throws ConfigurationException{
-		if(!ConfigurationValidatorHelper.shouldBeExtracted(protocol, annotation.minProtocol(), annotation.maxProtocol()))
+	public final Map<String, Object> extractConfigurationMap(final Class<?> fieldType, final Version protocol) throws ConfigurationException{
+		if(!shouldBeExtracted(protocol, annotation.minProtocol(), annotation.maxProtocol()))
 			return null;
 
 		final Map<String, Object> compositeMap = extractMap();
@@ -154,7 +152,7 @@ class CompositeManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	public void validateValue(final String dataKey, final Object dataValue, final Class<?> fieldType) throws EncodeException{
+	public final void validateValue(final String dataKey, final Object dataValue, final Class<?> fieldType) throws EncodeException{
 		//check pattern
 		final String pattern = annotation.pattern();
 		if(!pattern.isEmpty()){
@@ -175,7 +173,7 @@ class CompositeManager implements ConfigurationManagerInterface{
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public void setValue(final Object configurationObject, final String dataKey, Object dataValue, final Field field,
+	public final void setValue(final Object configurationObject, final String dataKey, Object dataValue, final Field field,
 			final Version protocol) throws EncodeException{
 		//compose field value
 		final String composition = annotation.composition();
@@ -218,6 +216,17 @@ class CompositeManager implements ConfigurationManagerInterface{
 
 	private static void setValue(final Field field, final Object configurationObject, final Object dataValue){
 		ReflectionHelper.setFieldValue(field, configurationObject, dataValue);
+	}
+
+	private static boolean shouldBeExtracted(final Version protocol, final String minProtocol, final String maxProtocol){
+		if(protocol.isEmpty())
+			return true;
+
+		final Version min = Version.of(minProtocol);
+		final Version max = Version.of(maxProtocol);
+		final boolean validMinimum = (min.isEmpty() || protocol.isGreaterThanOrEqualTo(min));
+		final boolean validMaximum = (max.isEmpty() || protocol.isLessThanOrEqualTo(max));
+		return (validMinimum && validMaximum);
 	}
 
 }

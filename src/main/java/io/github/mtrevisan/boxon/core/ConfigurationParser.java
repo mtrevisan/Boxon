@@ -33,10 +33,10 @@ import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.BitWriter;
 import io.github.mtrevisan.boxon.external.EventListener;
+import io.github.mtrevisan.boxon.external.semanticversioning.Version;
 import io.github.mtrevisan.boxon.internal.InjectEventListener;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.ReflectionHelper;
-import io.github.mtrevisan.boxon.internal.semanticversioning.Version;
 
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
@@ -189,9 +189,20 @@ final class ConfigurationParser{
 	}
 
 	private static void writeSkip(final ConfigurationSkip skip, final BitWriter writer, final Version protocol){
-		final boolean process = ConfigurationValidatorHelper.shouldBeExtracted(protocol, skip.minProtocol(), skip.maxProtocol());
+		final boolean process = shouldBeExtracted(protocol, skip.minProtocol(), skip.maxProtocol());
 		if(process)
 			writer.putText(skip.terminator(), StandardCharsets.UTF_8);
+	}
+
+	private static boolean shouldBeExtracted(final Version protocol, final String minProtocol, final String maxProtocol){
+		if(protocol.isEmpty())
+			return true;
+
+		final Version min = Version.of(minProtocol);
+		final Version max = Version.of(maxProtocol);
+		final boolean validMinimum = (min.isEmpty() || protocol.isGreaterThanOrEqualTo(min));
+		final boolean validMaximum = (max.isEmpty() || protocol.isLessThanOrEqualTo(max));
+		return (validMinimum && validMaximum);
 	}
 
 }

@@ -1,12 +1,11 @@
 package io.github.mtrevisan.boxon.annotations.configurations;
 
-import io.github.mtrevisan.boxon.core.ConfigurationValidatorHelper;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
+import io.github.mtrevisan.boxon.external.semanticversioning.Version;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.ParserDataType;
 import io.github.mtrevisan.boxon.internal.ReflectionHelper;
-import io.github.mtrevisan.boxon.internal.semanticversioning.Version;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
@@ -18,7 +17,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 
-public class AlternativeManager implements ConfigurationManagerInterface{
+class AlternativeManager implements ConfigurationManagerInterface{
 
 	private static final String EMPTY_STRING = "";
 
@@ -31,13 +30,12 @@ public class AlternativeManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	public String getShortDescription(){
+	public final String getShortDescription(){
 		return annotation.shortDescription();
 	}
 
 	@Override
-	public Object getDefaultValue(final Field field, final Version protocol){
-		//TODO get alternative default value
+	public final Object getDefaultValue(final Field field, final Version protocol){
 		final AlternativeSubField fieldBinding = extractField(protocol);
 		if(fieldBinding != null){
 			final Class<? extends Enum<?>> enumeration = annotation.enumeration();
@@ -56,16 +54,15 @@ public class AlternativeManager implements ConfigurationManagerInterface{
 						.cast(JavaHelper.extractEnum(enumConstants, value));
 				return valEnum;
 			}
-			else if(field.getType() != String.class)
+			if(field.getType() != String.class)
 				return JavaHelper.getValue(field.getType(), value);
-			else
-				return value;
+			return value;
 		}
 		return EMPTY_STRING;
 	}
 
 	@Override
-	public void addProtocolVersionBoundaries(final Collection<String> protocolVersionBoundaries){
+	public final void addProtocolVersionBoundaries(final Collection<String> protocolVersionBoundaries){
 		protocolVersionBoundaries.add(annotation.minProtocol());
 		protocolVersionBoundaries.add(annotation.maxProtocol());
 
@@ -78,28 +75,28 @@ public class AlternativeManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	public Annotation shouldBeExtracted(final Version protocol){
+	public final Annotation shouldBeExtracted(final Version protocol){
 		Annotation match = null;
 		final AlternativeSubField[] alternativeFields = annotation.value();
 		for(int j = 0; match == null && j < alternativeFields.length; j ++){
 			final AlternativeSubField fieldBinding = alternativeFields[j];
-			if(ConfigurationValidatorHelper.shouldBeExtracted(protocol, fieldBinding.minProtocol(), fieldBinding.maxProtocol()))
+			if(shouldBeExtracted(protocol, fieldBinding.minProtocol(), fieldBinding.maxProtocol()))
 				match = fieldBinding;
 		}
 
-		final boolean shouldBeExtracted = (match != null
-			&& ConfigurationValidatorHelper.shouldBeExtracted(protocol, annotation.minProtocol(), annotation.maxProtocol()));
+		final boolean shouldBeExtracted = (match != null && shouldBeExtracted(protocol, annotation.minProtocol(), annotation.maxProtocol()));
 		return (shouldBeExtracted? match: null);
 	}
 
 	@Override
-	public boolean isMandatory(final Annotation annotation){
+	public final boolean isMandatory(final Annotation annotation){
 		return JavaHelper.isBlank(((AlternativeSubField)annotation).defaultValue());
 	}
 
 	@Override
-	public Map<String, Object> extractConfigurationMap(final Class<?> fieldType, final Version protocol) throws ConfigurationException{
-		if(!ConfigurationValidatorHelper.shouldBeExtracted(protocol, annotation.minProtocol(), annotation.maxProtocol()))
+	public final Map<String, Object> extractConfigurationMap(final Class<?> fieldType, final Version protocol)
+			throws ConfigurationException{
+		if(!shouldBeExtracted(protocol, annotation.minProtocol(), annotation.maxProtocol()))
 			return null;
 
 		final Map<String, Object> alternativeMap = extractMap(fieldType);
@@ -206,7 +203,7 @@ public class AlternativeManager implements ConfigurationManagerInterface{
 		final AlternativeSubField[] alternativeFields = annotation.value();
 		for(int i = 0; i < alternativeFields.length; i ++){
 			final AlternativeSubField fieldBinding = alternativeFields[i];
-			if(ConfigurationValidatorHelper.shouldBeExtracted(protocol, fieldBinding.minProtocol(), fieldBinding.maxProtocol()))
+			if(shouldBeExtracted(protocol, fieldBinding.minProtocol(), fieldBinding.maxProtocol()))
 				return fieldBinding;
 		}
 		return null;
@@ -216,8 +213,8 @@ public class AlternativeManager implements ConfigurationManagerInterface{
 	public void validateValue(final String dataKey, final Object dataValue, final Class<?> fieldType){}
 
 	@Override
-	public void setValue(final Object configurationObject, final String dataKey, Object dataValue, final Field field, final Version protocol)
-			throws EncodeException{
+	public final void setValue(final Object configurationObject, final String dataKey, Object dataValue, final Field field,
+			final Version protocol) throws EncodeException{
 		final AlternativeSubField fieldBinding = extractField(protocol);
 		if(fieldBinding != null){
 			validateValue(fieldBinding, dataKey, dataValue, field.getType());
@@ -228,8 +225,8 @@ public class AlternativeManager implements ConfigurationManagerInterface{
 		}
 	}
 
-	private void validateValue(final AlternativeSubField binding, final String dataKey, final Object dataValue, final Class<?> fieldType)
-			throws EncodeException{
+	private static void validateValue(final AlternativeSubField binding, final String dataKey, final Object dataValue,
+			final Class<?> fieldType) throws EncodeException{
 		//check pattern
 		final String pattern = binding.pattern();
 		if(!pattern.isEmpty()){
@@ -260,6 +257,17 @@ public class AlternativeManager implements ConfigurationManagerInterface{
 
 	private static void setValue(final Field field, final Object configurationObject, final Object dataValue){
 		ReflectionHelper.setFieldValue(field, configurationObject, dataValue);
+	}
+
+	private static boolean shouldBeExtracted(final Version protocol, final String minProtocol, final String maxProtocol){
+		if(protocol.isEmpty())
+			return true;
+
+		final Version min = Version.of(minProtocol);
+		final Version max = Version.of(maxProtocol);
+		final boolean validMinimum = (min.isEmpty() || protocol.isGreaterThanOrEqualTo(min));
+		final boolean validMaximum = (max.isEmpty() || protocol.isLessThanOrEqualTo(max));
+		return (validMinimum && validMaximum);
 	}
 
 }

@@ -1,12 +1,11 @@
 package io.github.mtrevisan.boxon.annotations.configurations;
 
-import io.github.mtrevisan.boxon.core.ConfigurationValidatorHelper;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
+import io.github.mtrevisan.boxon.external.semanticversioning.Version;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.ParserDataType;
 import io.github.mtrevisan.boxon.internal.ReflectionHelper;
-import io.github.mtrevisan.boxon.internal.semanticversioning.Version;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
@@ -17,7 +16,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 
-public class PlainManager implements ConfigurationManagerInterface{
+class PlainManager implements ConfigurationManagerInterface{
 
 	private final ConfigurationField annotation;
 
@@ -27,12 +26,12 @@ public class PlainManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	public String getShortDescription(){
+	public final String getShortDescription(){
 		return annotation.shortDescription();
 	}
 
 	@Override
-	public Object getDefaultValue(final Field field, final Version protocol){
+	public final Object getDefaultValue(final Field field, final Version protocol){
 		final String value = annotation.defaultValue();
 		if(!JavaHelper.isBlank(value)){
 			final Class<? extends Enum<?>> enumeration = annotation.enumeration();
@@ -57,26 +56,25 @@ public class PlainManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	public void addProtocolVersionBoundaries(final Collection<String> protocolVersionBoundaries){
+	public final void addProtocolVersionBoundaries(final Collection<String> protocolVersionBoundaries){
 		protocolVersionBoundaries.add(annotation.minProtocol());
 		protocolVersionBoundaries.add(annotation.maxProtocol());
 	}
 
 	@Override
-	public Annotation shouldBeExtracted(final Version protocol){
-		final boolean shouldBeExtracted = ConfigurationValidatorHelper.shouldBeExtracted(protocol, annotation.minProtocol(),
-			annotation.maxProtocol());
+	public final Annotation shouldBeExtracted(final Version protocol){
+		final boolean shouldBeExtracted = shouldBeExtracted(protocol, annotation.minProtocol(), annotation.maxProtocol());
 		return (shouldBeExtracted? annotation: null);
 	}
 
 	@Override
-	public boolean isMandatory(final Annotation annotation){
+	public final boolean isMandatory(final Annotation annotation){
 		return JavaHelper.isBlank(this.annotation.defaultValue());
 	}
 
 	@Override
-	public Map<String, Object> extractConfigurationMap(final Class<?> fieldType, final Version protocol) throws ConfigurationException{
-		if(!ConfigurationValidatorHelper.shouldBeExtracted(protocol, annotation.minProtocol(), annotation.maxProtocol()))
+	public final Map<String, Object> extractConfigurationMap(final Class<?> fieldType, final Version protocol) throws ConfigurationException{
+		if(!shouldBeExtracted(protocol, annotation.minProtocol(), annotation.maxProtocol()))
 			return null;
 
 		final Map<String, Object> fieldMap = extractMap(fieldType);
@@ -137,7 +135,7 @@ public class PlainManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	public void validateValue(final String dataKey, final Object dataValue, final Class<?> fieldType) throws EncodeException{
+	public final void validateValue(final String dataKey, final Object dataValue, final Class<?> fieldType) throws EncodeException{
 		//check pattern
 		final String pattern = annotation.pattern();
 		if(!pattern.isEmpty()){
@@ -167,8 +165,8 @@ public class PlainManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	public void setValue(final Object configurationObject, final String dataKey, Object dataValue, final Field field, final Version protocol)
-			throws EncodeException{
+	public final void setValue(final Object configurationObject, final String dataKey, Object dataValue, final Field field,
+			final Version protocol) throws EncodeException{
 		final Class<?> fieldType = field.getType();
 		final Class<? extends Enum<?>> enumeration = annotation.enumeration();
 		if(enumeration != NullEnum.class){
@@ -208,6 +206,17 @@ public class PlainManager implements ConfigurationManagerInterface{
 
 	private static void setValue(final Field field, final Object configurationObject, final Object dataValue){
 		ReflectionHelper.setFieldValue(field, configurationObject, dataValue);
+	}
+
+	private static boolean shouldBeExtracted(final Version protocol, final String minProtocol, final String maxProtocol){
+		if(protocol.isEmpty())
+			return true;
+
+		final Version min = Version.of(minProtocol);
+		final Version max = Version.of(maxProtocol);
+		final boolean validMinimum = (min.isEmpty() || protocol.isGreaterThanOrEqualTo(min));
+		final boolean validMaximum = (max.isEmpty() || protocol.isLessThanOrEqualTo(max));
+		return (validMinimum && validMaximum);
 	}
 
 }

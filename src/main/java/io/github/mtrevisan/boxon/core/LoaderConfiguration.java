@@ -28,18 +28,16 @@ import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationManagerFactory;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationManagerInterface;
-import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.external.EventListener;
+import io.github.mtrevisan.boxon.external.semanticversioning.Version;
 import io.github.mtrevisan.boxon.internal.InjectEventListener;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.Memoizer;
-import io.github.mtrevisan.boxon.internal.ParserDataType;
 import io.github.mtrevisan.boxon.internal.ReflectionHelper;
 import io.github.mtrevisan.boxon.internal.ThrowingFunction;
-import io.github.mtrevisan.boxon.internal.semanticversioning.Version;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -50,6 +48,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 import java.util.TreeMap;
 
 
@@ -209,7 +208,7 @@ final class LoaderConfiguration{
 		final List<Map<String, Object>> response = new ArrayList<>(configurationValues.size());
 		for(final Configuration<?> configuration : configurationValues){
 			final ConfigurationHeader header = configuration.getHeader();
-			if(!ConfigurationValidatorHelper.shouldBeExtracted(currentProtocol, header.minProtocol(), header.maxProtocol()))
+			if(!shouldBeExtracted(currentProtocol, header.minProtocol(), header.maxProtocol()))
 				continue;
 
 			final Map<String, Object> headerMap = extractMap(currentProtocol, header);
@@ -239,7 +238,7 @@ final class LoaderConfiguration{
 		final List<Map<String, Object>> response = new ArrayList<>(configurationValues.size());
 		for(final Configuration<?> configuration : configurationValues){
 			final ConfigurationHeader header = configuration.getHeader();
-			if(!ConfigurationValidatorHelper.shouldBeExtracted(currentProtocol, header.minProtocol(), header.maxProtocol()))
+			if(!shouldBeExtracted(currentProtocol, header.minProtocol(), header.maxProtocol()))
 				continue;
 
 			final Map<String, Object> headerMap = extractMap(currentProtocol, header);
@@ -303,7 +302,7 @@ final class LoaderConfiguration{
 		}
 
 		//check mandatory fields
-		ConfigurationValidatorHelper.validateMandatoryFields(mandatoryFields);
+		validateMandatoryFields(mandatoryFields);
 
 		return ConfigurationPair.of(configuration, configurationObject);
 	}
@@ -378,23 +377,34 @@ final class LoaderConfiguration{
 		return fieldsMap;
 	}
 
-	public static void putIfNotEmpty(@SuppressWarnings("BoundedWildcard") final Map<String, Object> map, final String key,
-			final Object value) throws ConfigurationException{
+	private static void putIfNotEmpty(@SuppressWarnings("BoundedWildcard") final Map<String, Object> map, final String key, final Object value)
+			throws ConfigurationException{
 		if(value != null && (!String.class.isInstance(value) || !JavaHelper.isBlank((CharSequence)value)))
 			if(map.put(key, value) != null)
 				throw ConfigurationException.create("Duplicated short description: {}", key);
 	}
 
-	public static void putValueIfNotEmpty(@SuppressWarnings("BoundedWildcard") final Map<String, Object> map, final String key, final Class<?> fieldType,
-			final Class<? extends Enum<?>> enumeration, final String value) throws ConfigurationException{
-		if(!JavaHelper.isBlank(value)){
-			Object val = value;
-			if(enumeration != NullEnum.class && fieldType.isArray())
-				val = JavaHelper.split(value, '|', -1);
-			else if(Number.class.isAssignableFrom(ParserDataType.toObjectiveTypeOrSelf(fieldType)))
-				val = JavaHelper.getValue(fieldType, value);
-			if(map.put(key, val) != null)
-				throw ConfigurationException.create("Duplicated short description: {}", key);
+	private static boolean shouldBeExtracted(final Version protocol, final String minProtocol, final String maxProtocol){
+		if(protocol.isEmpty())
+			return true;
+
+		final Version min = Version.of(minProtocol);
+		final Version max = Version.of(maxProtocol);
+		final boolean validMinimum = (min.isEmpty() || protocol.isGreaterThanOrEqualTo(min));
+		final boolean validMaximum = (max.isEmpty() || protocol.isLessThanOrEqualTo(max));
+		return (validMinimum && validMaximum);
+	}
+
+	private static void validateMandatoryFields(final Collection<ConfigField> mandatoryFields) throws EncodeException{
+		if(!mandatoryFields.isEmpty()){
+			final StringJoiner sj = new StringJoiner(", ", "[", "]");
+			for(final ConfigField mandatoryField : mandatoryFields){
+				final Annotation annotation = mandatoryField.getBinding();
+				final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(annotation);
+				final String shortDescription = manager.getShortDescription();
+				sj.add(shortDescription);
+			}
+			throw EncodeException.create("Mandatory fields missing: {}", sj.toString());
 		}
 	}
 
