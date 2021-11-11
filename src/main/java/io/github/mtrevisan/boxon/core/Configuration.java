@@ -74,8 +74,6 @@ final class Configuration<T>{
 		ConfigurationAnnotationValidator.fromAnnotation(header)
 			.validate(null, header, minMessageProtocol, maxMessageProtocol);
 
-		CodecHelper.assertValidCharset(header.charset());
-
 		final List<ConfigField> configFields = loadAnnotatedFields(type, ReflectionHelper.getAccessibleFields(type), minMessageProtocol,
 			maxMessageProtocol);
 		this.configFields = Collections.unmodifiableList(configFields);
