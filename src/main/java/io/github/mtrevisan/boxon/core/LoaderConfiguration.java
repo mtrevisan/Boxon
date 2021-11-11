@@ -231,7 +231,7 @@ final class LoaderConfiguration{
 			response.add(Map.of(
 				"header", headerMap,
 				"fields", fieldsMap,
-				"protocols", protocols
+				"protocolBoundaries", protocols
 			));
 		}
 		return Collections.unmodifiableList(response);
