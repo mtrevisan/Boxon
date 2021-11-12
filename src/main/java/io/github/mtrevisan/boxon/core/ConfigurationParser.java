@@ -33,7 +33,6 @@ import io.github.mtrevisan.boxon.external.BitWriter;
 import io.github.mtrevisan.boxon.external.EventListener;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
 import io.github.mtrevisan.boxon.internal.InjectEventListener;
-import io.github.mtrevisan.boxon.internal.ReflectionHelper;
 
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
@@ -123,7 +122,7 @@ final class ConfigurationParser{
 		try{
 			eventListener.writingField(configuration.getType().getName(), field.getFieldName(), binding.annotationType().getSimpleName());
 
-			final CodecInterface<?> codec = retrieveCodec(binding.annotationType());
+			final CodecInterface<?> codec = CodecHelper.retrieveCodec(binding.annotationType(), loaderCodec, loaderTemplate, templateParser);
 
 			//encode value from current object
 			final Object value = field.getFieldValue(currentObject);
@@ -158,26 +157,6 @@ final class ConfigurationParser{
 			final Charset charset = Charset.forName(header.charset());
 			writer.putText(header.end(), charset);
 		}
-	}
-
-	private CodecInterface<?> retrieveCodec(final Class<? extends Annotation> annotationType) throws CodecException{
-		final CodecInterface<?> codec = loaderCodec.getCodec(annotationType);
-		if(codec == null)
-			throw CodecException.create("Cannot find codec for binding {}", annotationType.getSimpleName());
-
-		setTemplateParser(codec);
-		return codec;
-	}
-
-	private void setTemplateParser(final CodecInterface<?> codec){
-		try{
-			ReflectionHelper.setFieldValue(codec, LoaderTemplateInterface.class, loaderTemplate);
-		}
-		catch(final Exception ignored){}
-		try{
-			ReflectionHelper.setFieldValue(codec, TemplateParserInterface.class, templateParser);
-		}
-		catch(final Exception ignored){}
 	}
 
 	private static void writeSkips(final ConfigurationSkip[] skips, final BitWriter writer, final Version protocol){
