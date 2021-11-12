@@ -100,7 +100,7 @@ final class CompositeManager implements ConfigurationManagerInterface{
 
 			compositeFieldsMap.put(bindings[j].shortDescription(), fieldMap);
 		}
-		compositeMap.put(LoaderConfiguration.CONFIGURATION_COMPOSITE_FIELDS, compositeFieldsMap);
+		compositeMap.put(LoaderConfiguration.KEY_CONFIGURATION_COMPOSITE_FIELDS, compositeFieldsMap);
 
 		if(protocol.isEmpty()){
 			putIfNotEmpty(compositeMap, LoaderConfiguration.KEY_MIN_PROTOCOL, annotation.minProtocol());

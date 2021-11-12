@@ -54,10 +54,11 @@ final class LoaderConfiguration{
 
 	private static final String EMPTY_STRING = "";
 
-	private static final String KEY_HEADER = "header";
-	private static final String KEY_FIELDS = "fields";
-	private static final String KEY_PROTOCOL_VERSION_BOUNDARIES = "protocolVersionBoundaries";
-	static final String CONFIGURATION_COMPOSITE_FIELDS = "fields";
+	static final String KEY_CONFIGURATION_HEADER = "header";
+	static final String KEY_CONFIGURATION_FIELDS = "fields";
+	static final String KEY_CONFIGURATION_PROTOCOL_VERSION_BOUNDARIES = "protocolVersionBoundaries";
+	static final String KEY_CONFIGURATION_COMPOSITE_FIELDS = "fields";
+
 	static final String KEY_ALTERNATIVES = "alternatives";
 	static final String KEY_FIELD_TYPE = "fieldType";
 	private static final String KEY_SHORT_DESCRIPTION = "shortDescription";
@@ -231,9 +232,10 @@ final class LoaderConfiguration{
 
 			final Map<String, Object> headerMap = extractMap(currentProtocol, header);
 			final Map<String, Object> fieldsMap = extractFieldsMap(currentProtocol, configuration);
-			response.add(Map.of(KEY_HEADER, headerMap,
-				KEY_FIELDS, fieldsMap,
-				KEY_PROTOCOL_VERSION_BOUNDARIES, configuration.getProtocolVersionBoundaries()
+			response.add(Map.of(
+				KEY_CONFIGURATION_HEADER, headerMap,
+				KEY_CONFIGURATION_FIELDS, fieldsMap,
+				KEY_CONFIGURATION_PROTOCOL_VERSION_BOUNDARIES, configuration.getProtocolVersionBoundaries()
 			));
 		}
 		return Collections.unmodifiableList(response);
@@ -262,8 +264,8 @@ final class LoaderConfiguration{
 			final Map<String, Object> headerMap = extractMap(currentProtocol, header);
 			final Map<String, Object> fieldsMap = extractFieldsMap(currentProtocol, configuration);
 			response.add(Map.of(
-				KEY_HEADER, headerMap,
-				KEY_FIELDS, fieldsMap
+				KEY_CONFIGURATION_HEADER, headerMap,
+				KEY_CONFIGURATION_FIELDS, fieldsMap
 			));
 		}
 		return Collections.unmodifiableList(response);
