@@ -8,6 +8,7 @@ import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.ParserDataType;
 import io.github.mtrevisan.boxon.internal.ReflectionHelper;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -63,6 +64,29 @@ final class ManagerHelper{
 			if(map.put(key, val) != null)
 				throw ConfigurationException.create("Duplicated short description: {}", key);
 		}
+	}
+
+	static Object getDefaultValue(final Field field, final String value, final Class<? extends Enum<?>> enumeration){
+		if(!JavaHelper.isBlank(value)){
+			if(enumeration != NullEnum.class){
+				final Object valEnum;
+				final Enum<?>[] enumConstants = enumeration.getEnumConstants();
+				if(field.getType().isArray()){
+					final String[] defaultValues = JavaHelper.split(value, '|', -1);
+					valEnum = Array.newInstance(enumeration, defaultValues.length);
+					for(int i = 0; i < defaultValues.length; i ++)
+						Array.set(valEnum, i, JavaHelper.extractEnum(enumConstants, defaultValues[i]));
+				}
+				else
+					valEnum = enumeration
+						.cast(JavaHelper.extractEnum(enumConstants, value));
+				return valEnum;
+			}
+
+			if(field.getType() != String.class)
+				return JavaHelper.getValue(field.getType(), value);
+		}
+		return value;
 	}
 
 	static void setValue(final Field field, final Object configurationObject, final Object dataValue){

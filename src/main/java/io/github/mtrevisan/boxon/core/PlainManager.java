@@ -37,26 +37,8 @@ final class PlainManager implements ConfigurationManagerInterface{
 	@Override
 	public Object getDefaultValue(final Field field, final Version protocol){
 		final String value = annotation.defaultValue();
-		if(!JavaHelper.isBlank(value)){
-			final Class<? extends Enum<?>> enumeration = annotation.enumeration();
-			if(enumeration != NullEnum.class){
-				final Object valEnum;
-				final Enum<?>[] enumConstants = enumeration.getEnumConstants();
-				if(field.getType().isArray()){
-					final String[] defaultValues = JavaHelper.split(value, '|', -1);
-					valEnum = Array.newInstance(enumeration, defaultValues.length);
-					for(int i = 0; i < defaultValues.length; i ++)
-						Array.set(valEnum, i, JavaHelper.extractEnum(enumConstants, defaultValues[i]));
-				}
-				else
-					valEnum = enumeration
-						.cast(JavaHelper.extractEnum(enumConstants, value));
-				return valEnum;
-			}
-			else if(field.getType() != String.class)
-				return JavaHelper.getValue(field.getType(), value);
-		}
-		return value;
+		final Class<? extends Enum<?>> enumeration = annotation.enumeration();
+		return ManagerHelper.getDefaultValue(field, value, enumeration);
 	}
 
 	@Override

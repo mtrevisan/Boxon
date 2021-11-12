@@ -10,7 +10,6 @@ import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.ParserDataType;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -97,25 +96,9 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 	public Object getDefaultValue(final Field field, final Version protocol){
 		final AlternativeSubField fieldBinding = extractField(protocol);
 		if(fieldBinding != null){
-			final Class<? extends Enum<?>> enumeration = annotation.enumeration();
 			final String value = fieldBinding.defaultValue();
-			if(enumeration != NullEnum.class){
-				final Object valEnum;
-				final Enum<?>[] enumConstants = enumeration.getEnumConstants();
-				if(field.getType().isArray()){
-					final String[] defaultValues = JavaHelper.split(value, '|', -1);
-					valEnum = Array.newInstance(enumeration, defaultValues.length);
-					for(int i = 0; i < defaultValues.length; i ++)
-						Array.set(valEnum, i, JavaHelper.extractEnum(enumConstants, defaultValues[i]));
-				}
-				else
-					valEnum = enumeration
-						.cast(JavaHelper.extractEnum(enumConstants, value));
-				return valEnum;
-			}
-			if(field.getType() != String.class)
-				return JavaHelper.getValue(field.getType(), value);
-			return value;
+			final Class<? extends Enum<?>> enumeration = annotation.enumeration();
+			return ManagerHelper.getDefaultValue(field, value, enumeration);
 		}
 		return EMPTY_STRING;
 	}
