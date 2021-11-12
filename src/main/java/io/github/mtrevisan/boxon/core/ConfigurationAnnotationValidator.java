@@ -40,6 +40,7 @@ import io.github.mtrevisan.boxon.internal.ParserDataType;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -82,7 +83,7 @@ enum ConfigurationAnnotationValidator{
 			if(String.class.isAssignableFrom(field.getType()))
 				CodecHelper.assertValidCharset(binding.charset());
 			if(binding.radix() < Character.MIN_RADIX || binding.radix() > Character.MAX_RADIX)
-				throw AnnotationException.create("Radix must be in [" + Character.MIN_RADIX + ", " + Character.MAX_RADIX + "]");
+				throw AnnotationException.create("Radix must be in [{}, {}]", Character.MIN_RADIX, Character.MAX_RADIX);
 
 			validateMinimumParameters(field, binding);
 
@@ -461,7 +462,7 @@ enum ConfigurationAnnotationValidator{
 			if(String.class.isAssignableFrom(field.getType()))
 				CodecHelper.assertValidCharset(binding.charset());
 			if(binding.radix() < Character.MIN_RADIX || binding.radix() > Character.MAX_RADIX)
-				throw AnnotationException.create("Radix must be in [" + Character.MIN_RADIX + ", " + Character.MAX_RADIX + "]");
+				throw AnnotationException.create("Radix must be in [{}, {}]", Character.MIN_RADIX, Character.MAX_RADIX);
 
 			validateMinimumParameters(binding);
 
@@ -583,10 +584,13 @@ enum ConfigurationAnnotationValidator{
 	};
 
 
-	private static final Map<Class<? extends Annotation>, ConfigurationAnnotationValidator> VALIDATORS = new HashMap<>(4);
+	private static final Map<Class<? extends Annotation>, ConfigurationAnnotationValidator> VALIDATORS;
 	static{
-		for(final ConfigurationAnnotationValidator validator : values())
-			VALIDATORS.put(validator.annotationType, validator);
+		final ConfigurationAnnotationValidator[] values = values();
+		final Map<Class<? extends Annotation>, ConfigurationAnnotationValidator> validators = new HashMap<>(values.length);
+		for(final ConfigurationAnnotationValidator validator : values)
+			validators.put(validator.annotationType, validator);
+		VALIDATORS = Collections.unmodifiableMap(validators);
 	}
 
 	private final Class<? extends Annotation> annotationType;

@@ -128,6 +128,7 @@ final class Evaluator{
 			return field;
 		}
 
+		@SuppressWarnings("ReturnOfNull")
 		private static Field findFieldInClass(final String name, final Class<?> cls, final boolean mustBeStatic){
 			final Field[] declaredFields = cls.getDeclaredFields();
 			for(int i = 0; i < declaredFields.length; i++){

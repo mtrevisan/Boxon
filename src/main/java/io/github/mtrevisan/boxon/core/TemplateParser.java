@@ -169,7 +169,7 @@ final class TemplateParser{
 
 	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
 	private static <T> void readSkips(final Skip[] skips, final BitReader reader, final ParserContext<T> parserContext){
-		for(int i = 0; i < JavaHelper.lengthOrZero(skips); i ++)
+		for(int i = 0; i < skips.length; i ++)
 			readSkip(skips[i], reader, parserContext.rootObject);
 	}
 
@@ -326,7 +326,7 @@ final class TemplateParser{
 
 	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
 	private static <T> void writeSkips(final Skip[] skips, final BitWriter writer, final ParserContext<T> parserContext){
-		for(int i = 0; i < JavaHelper.lengthOrZero(skips); i ++)
+		for(int i = 0; i < skips.length; i ++)
 			writeSkip(skips[i], writer, parserContext.rootObject);
 	}
 

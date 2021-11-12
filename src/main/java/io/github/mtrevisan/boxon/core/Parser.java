@@ -96,7 +96,7 @@ public final class Parser{
 	 *
 	 * @param key	The key used to reference the value.
 	 * @param value	The value.
-	 * @return	The {@link Parser}, used for chaining.
+	 * @return	This instance, used for chaining.
 	 */
 	public Parser addToContext(final String key, final Object value){
 		Evaluator.addToContext(key, value);
@@ -107,7 +107,7 @@ public final class Parser{
 	 * Loads the context for the {@link Evaluator}.
 	 *
 	 * @param context	The context map.
-	 * @return	The {@link Parser}, used for chaining.
+	 * @return	This instance, used for chaining.
 	 */
 	public Parser withContext(final Map<String, Object> context){
 		Objects.requireNonNull(context, "Context cannot be null");
@@ -120,7 +120,7 @@ public final class Parser{
 	 * Add a method to the context for the {@link Evaluator}.
 	 *
 	 * @param method	The method.
-	 * @return	The {@link Parser}, used for chaining.
+	 * @return	This instance, used for chaining.
 	 */
 	public Parser withContextFunction(final Method method){
 		Evaluator.addToContext(method);
@@ -133,7 +133,7 @@ public final class Parser{
 	 * @param cls	The class in which the method resides.
 	 * @param methodName	The name of the method.
 	 * @param parameterTypes	The parameter array.
-	 * @return	The {@link Parser}, used for chaining.
+	 * @return	This instance, used for chaining.
 	 * @throws NoSuchMethodException	If a matching method is not found.
 	 */
 	public Parser withContextFunction(final Class<?> cls, final String methodName, final Class<?>... parameterTypes)
@@ -147,7 +147,7 @@ public final class Parser{
 	 * Loads all the codecs that extends {@link CodecInterface}.
 	 * <p>This method SHOULD BE called from a method inside a class that lies on a parent of all the codecs.</p>
 	 *
-	 * @return	The {@link Parser}, used for chaining.
+	 * @return	This instance, used for chaining.
 	 */
 	public Parser withDefaultCodecs(){
 		loaderCodec.loadDefaultCodecs();
@@ -158,7 +158,7 @@ public final class Parser{
 	 * Loads all the codecs that extends {@link CodecInterface}.
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load codecs.
-	 * @return	The {@link Parser}, used for chaining.
+	 * @return	This instance, used for chaining.
 	 */
 	public Parser withCodecs(final Class<?>... basePackageClasses){
 		loaderCodec.loadCodecs(basePackageClasses);
@@ -169,7 +169,7 @@ public final class Parser{
 	 * Loads all the codecs that extends {@link CodecInterface}.
 	 *
 	 * @param codecs	The list of codecs to be loaded.
-	 * @return	The {@link Parser}, used for chaining.
+	 * @return	This instance, used for chaining.
 	 */
 	public Parser withCodecs(final CodecInterface<?>... codecs){
 		loaderCodec.addCodecs(codecs);
@@ -180,7 +180,7 @@ public final class Parser{
 	/**
 	 * Loads all the protocol classes annotated with {@link MessageHeader}.
 	 *
-	 * @return	The {@link Parser}, used for chaining.
+	 * @return	This instance, used for chaining.
 	 * @throws AnnotationException	If an annotation is not well formatted.
 	 * @throws TemplateException	If a template is not well formatted.
 	 */
@@ -193,7 +193,7 @@ public final class Parser{
 	 * Loads all the protocol classes annotated with {@link MessageHeader}.
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
-	 * @return	The {@link Parser}, used for chaining.
+	 * @return	This instance, used for chaining.
 	 * @throws AnnotationException	If an annotation is not well formatted.
 	 * @throws TemplateException	If a template is not well formatted.
 	 */
@@ -206,7 +206,7 @@ public final class Parser{
 	/**
 	 * Loads all the protocol classes annotated with {@link ConfigurationHeader}.
 	 *
-	 * @return	The {@link Parser}, used for chaining.
+	 * @return	This instance, used for chaining.
 	 * @throws AnnotationException	If an annotation is not well formatted.
 	 * @throws ConfigurationException	If a configuration is not well formatted.
 	 */
@@ -219,7 +219,7 @@ public final class Parser{
 	 * Loads all the protocol classes annotated with {@link ConfigurationHeader}.
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
-	 * @return	The {@link Parser}, used for chaining.
+	 * @return	This instance, used for chaining.
 	 * @throws AnnotationException	If an annotation is not well formatted.
 	 * @throws ConfigurationException	If a configuration is not well formatted.
 	 */
@@ -291,6 +291,7 @@ public final class Parser{
 	 * @param reader	The message to be parsed backed by a {@link BitReader}.
 	 * @return	The parse response.
 	 */
+	@SuppressWarnings("ObjectAllocationInLoop")
 	public ParseResponse parse(final BitReader reader){
 		final byte[] array = reader.array();
 		final ParseResponse response = new ParseResponse(array);

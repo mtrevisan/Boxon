@@ -39,6 +39,8 @@ public final class JavaHelper{
 	/** An empty immutable {@code String} array. */
 	public static final String[] EMPTY_ARRAY = new String[0];
 
+	private static final String METHOD_VALUE_OF = "valueOf";
+
 
 	private JavaHelper(){}
 
@@ -114,7 +116,7 @@ public final class JavaHelper{
 	 */
 	public static String[] split(final String str, final char separator, final int max){
 		if(str == null)
-			return null;
+			return EMPTY_ARRAY;
 
 		final int length = str.length();
 		if(length == 0)
@@ -177,7 +179,7 @@ public final class JavaHelper{
 		if(separatorChars.length() == 1)
 			return split(str, separatorChars.charAt(0), max);
 		if(str == null)
-			return null;
+			return EMPTY_ARRAY;
 
 		final int length = str.length();
 		if(length == 0)
@@ -279,6 +281,7 @@ public final class JavaHelper{
 			: value);
 	}
 
+	@SuppressWarnings("ReturnOfNull")
 	public static Object getValue(final Class<?> fieldType, final String value){
 		if(fieldType == String.class)
 			return value;
@@ -290,8 +293,8 @@ public final class JavaHelper{
 			final boolean hexadecimal = value.startsWith("0x");
 			final boolean octal = (!hexadecimal && !value.isEmpty() && value.charAt(0) == '0');
 			final Method method = (hexadecimal || octal
-				? objectiveType.getDeclaredMethod("valueOf", String.class, int.class)
-				: objectiveType.getDeclaredMethod("valueOf", String.class));
+				? objectiveType.getDeclaredMethod(METHOD_VALUE_OF, String.class, int.class)
+				: objectiveType.getDeclaredMethod(METHOD_VALUE_OF, String.class));
 			final Object response;
 			if(hexadecimal)
 				response = method.invoke(null, value.substring(2), 16);
@@ -307,6 +310,7 @@ public final class JavaHelper{
 	}
 
 
+	@SuppressWarnings("ReturnOfNull")
 	public static Enum<?> extractEnum(final Enum<?>[] enumConstants, final String value){
 		for(int i = 0; i < enumConstants.length; i ++)
 			if(enumConstants[i].name().equals(value))

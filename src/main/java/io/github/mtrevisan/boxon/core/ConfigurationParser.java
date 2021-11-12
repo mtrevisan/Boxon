@@ -33,7 +33,6 @@ import io.github.mtrevisan.boxon.external.BitWriter;
 import io.github.mtrevisan.boxon.external.EventListener;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
 import io.github.mtrevisan.boxon.internal.InjectEventListener;
-import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.ReflectionHelper;
 
 import java.lang.annotation.Annotation;
@@ -101,7 +100,7 @@ final class ConfigurationParser{
 
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(field.getBinding());
 			final Annotation annotation = manager.shouldBeExtracted(protocol);
-			if(annotation == null)
+			if(annotation.annotationType() == Annotation.class)
 				continue;
 
 			//process skip annotations:
@@ -182,7 +181,7 @@ final class ConfigurationParser{
 	}
 
 	private static void writeSkips(final ConfigurationSkip[] skips, final BitWriter writer, final Version protocol){
-		for(int i = 0; i < JavaHelper.lengthOrZero(skips); i ++)
+		for(int i = 0; i < skips.length; i ++)
 			writeSkip(skips[i], writer, protocol);
 	}
 

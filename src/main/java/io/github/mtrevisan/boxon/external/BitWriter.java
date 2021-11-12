@@ -83,7 +83,7 @@ public final class BitWriter extends BitWriterData{
 	}
 
 	/**
-	 * Writes a value to this {@link BitWriter} using {@link Byte#SIZE} bits.
+	 * Writes a value using {@link Byte#SIZE} bits.
 	 *
 	 * @param value	The {@code byte} to write.
 	 */
@@ -92,7 +92,7 @@ public final class BitWriter extends BitWriterData{
 	}
 
 	/**
-	 * Writes an array of {@code byte}s to this {@link BitWriter} using {@link Byte#SIZE} bits for each {@code byte}.
+	 * Writes an array of {@code byte}s using {@link Byte#SIZE} bits for each {@code byte}.
 	 *
 	 * @param array	The array of {@code byte}s to write.
 	 */
@@ -102,7 +102,7 @@ public final class BitWriter extends BitWriterData{
 	}
 
 	/**
-	 * Writes a value with the specified {@link ByteOrder} to this {@link BitWriter} using {@link Short#SIZE} bits.
+	 * Writes a value with the specified {@link ByteOrder} using {@link Short#SIZE} bits.
 	 *
 	 * @param value	The {@code short} to write as an {@code int} for ease-of-use, but internally down-casted to a {@code short}.
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
@@ -112,7 +112,7 @@ public final class BitWriter extends BitWriterData{
 	}
 
 	/**
-	 * Writes a value with the specified {@link ByteOrder} to this {@link BitWriter} using {@link Integer#SIZE} bits.
+	 * Writes a value with the specified {@link ByteOrder} using {@link Integer#SIZE} bits.
 	 *
 	 * @param value	The {@code int} to write.
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
@@ -122,7 +122,7 @@ public final class BitWriter extends BitWriterData{
 	}
 
 	/**
-	 * Writes a value with the specified {@link ByteOrder} to this {@link BitWriter} using {@link Long#SIZE} bits.
+	 * Writes a value with the specified {@link ByteOrder} using {@link Long#SIZE} bits.
 	 *
 	 * @param value	The {@code long} to write.
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
@@ -132,7 +132,7 @@ public final class BitWriter extends BitWriterData{
 	}
 
 	/**
-	 * Writes a value with the specified {@link ByteOrder} to this {@link BitWriter} using {@link Float#SIZE} bits.
+	 * Writes a value with the specified {@link ByteOrder} using {@link Float#SIZE} bits.
 	 *
 	 * @param value	The {@code float} to write.
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
@@ -142,7 +142,7 @@ public final class BitWriter extends BitWriterData{
 	}
 
 	/**
-	 * Writes a value with the specified {@link ByteOrder} to this {@link BitWriter} using {@link Double#SIZE} bits.
+	 * Writes a value with the specified {@link ByteOrder} using {@link Double#SIZE} bits.
 	 *
 	 * @param value	The {@code double} to write.
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
@@ -152,7 +152,7 @@ public final class BitWriter extends BitWriterData{
 	}
 
 	/**
-	 * Writes a {@link BigDecimal} value to this {@link BitWriter}.
+	 * Writes a {@link BigDecimal} value.
 	 *
 	 * @param value	The {@code BigDecimal} to write.
 	 * @param cls	Either a {@code Float} or a {@link Double} class.

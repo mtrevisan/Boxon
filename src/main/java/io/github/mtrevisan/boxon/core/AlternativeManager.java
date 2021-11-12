@@ -15,6 +15,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -23,6 +24,63 @@ import java.util.regex.Pattern;
 final class AlternativeManager implements ConfigurationManagerInterface{
 
 	private static final String EMPTY_STRING = "";
+
+	private static final AlternativeSubField EMPTY_ALTERNATIVE = new AlternativeSubField(){
+		@Override
+		public Class<? extends Annotation> annotationType(){
+			return Annotation.class;
+		}
+
+		@Override
+		public String longDescription(){
+			return EMPTY_STRING;
+		}
+
+		@Override
+		public String unitOfMeasure(){
+			return EMPTY_STRING;
+		}
+
+		@Override
+		public String minProtocol(){
+			return EMPTY_STRING;
+		}
+
+		@Override
+		public String maxProtocol(){
+			return EMPTY_STRING;
+		}
+
+		@Override
+		public String minValue(){
+			return EMPTY_STRING;
+		}
+
+		@Override
+		public String maxValue(){
+			return EMPTY_STRING;
+		}
+
+		@Override
+		public String pattern(){
+			return EMPTY_STRING;
+		}
+
+		@Override
+		public String defaultValue(){
+			return EMPTY_STRING;
+		}
+
+		@Override
+		public String charset(){
+			return EMPTY_STRING;
+		}
+
+		@Override
+		public int radix(){
+			return 0;
+		}
+	};
 
 
 	private final AlternativeConfigurationField annotation;
@@ -88,18 +146,22 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 		}
 
 		final boolean shouldBeExtracted = (match != null && shouldBeExtracted(protocol, annotation.minProtocol(), annotation.maxProtocol()));
-		return (shouldBeExtracted? match: null);
+		return (shouldBeExtracted? match: PlainManager.EMPTY_ANNOTATION);
 	}
 
 	@Override
 	public boolean isMandatory(final Annotation annotation){
-		return JavaHelper.isBlank(((AlternativeSubField)annotation).defaultValue());
+		return (!isEmptyAnnotation(annotation) && JavaHelper.isBlank(((AlternativeSubField)annotation).defaultValue()));
+	}
+
+	private static boolean isEmptyAnnotation(final Annotation annotation){
+		return (annotation.annotationType() == Annotation.class);
 	}
 
 	@Override
 	public Map<String, Object> extractConfigurationMap(final Class<?> fieldType, final Version protocol) throws ConfigurationException{
 		if(!shouldBeExtracted(protocol, annotation.minProtocol(), annotation.maxProtocol()))
-			return null;
+			return Collections.emptyMap();
 
 		final Map<String, Object> alternativeMap = extractMap(fieldType);
 
@@ -113,18 +175,19 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 
 				final Map<String, Object> fieldMap = extractMap(alternativeField, fieldType);
 
-				putIfNotEmpty(fieldMap, "minProtocol", alternativeField.minProtocol());
-				putIfNotEmpty(fieldMap, "maxProtocol", alternativeField.maxProtocol());
-				putValueIfNotEmpty(fieldMap, "defaultValue", fieldType, annotation.enumeration(), alternativeField.defaultValue());
+				putIfNotEmpty(fieldMap, LoaderConfiguration.KEY_MIN_PROTOCOL, alternativeField.minProtocol());
+				putIfNotEmpty(fieldMap, LoaderConfiguration.KEY_MAX_PROTOCOL, alternativeField.maxProtocol());
+				putValueIfNotEmpty(fieldMap, LoaderConfiguration.KEY_DEFAULT_VALUE, fieldType, annotation.enumeration(),
+					alternativeField.defaultValue());
 
 				fieldMap.putAll(alternativeMap);
 
 				alternatives.add(fieldMap);
 			}
 			alternativesMap = new HashMap<>(3);
-			alternativesMap.put("alternatives", alternatives);
-			putIfNotEmpty(alternativesMap, "minProtocol", annotation.minProtocol());
-			putIfNotEmpty(alternativesMap, "maxProtocol", annotation.maxProtocol());
+			alternativesMap.put(LoaderConfiguration.KEY_ALTERNATIVES, alternatives);
+			putIfNotEmpty(alternativesMap, LoaderConfiguration.KEY_MIN_PROTOCOL, annotation.minProtocol());
+			putIfNotEmpty(alternativesMap, LoaderConfiguration.KEY_MAX_PROTOCOL, annotation.maxProtocol());
 		}
 		else{
 			//extract the specific alternative, because it was requested the configuration of a particular protocol:
@@ -132,7 +195,8 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 			if(fieldBinding != null){
 				alternativesMap = extractMap(fieldBinding, fieldType);
 
-				putValueIfNotEmpty(alternativesMap, "defaultValue", fieldType, annotation.enumeration(), fieldBinding.defaultValue());
+				putValueIfNotEmpty(alternativesMap, LoaderConfiguration.KEY_DEFAULT_VALUE, fieldType, annotation.enumeration(),
+					fieldBinding.defaultValue());
 
 				alternativesMap.putAll(alternativeMap);
 
@@ -144,19 +208,19 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 	private Map<String, Object> extractMap(final Class<?> fieldType) throws ConfigurationException{
 		final Map<String, Object> map = new HashMap<>(6);
 
-		putIfNotEmpty(map, "longDescription", annotation.longDescription());
-		putIfNotEmpty(map, "unitOfMeasure", annotation.unitOfMeasure());
+		putIfNotEmpty(map, LoaderConfiguration.KEY_LONG_DESCRIPTION, annotation.longDescription());
+		putIfNotEmpty(map, LoaderConfiguration.KEY_UNIT_OF_MEASURE, annotation.unitOfMeasure());
 
 		if(!fieldType.isEnum() && !fieldType.isArray())
-			putIfNotEmpty(map, "fieldType", ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName());
+			putIfNotEmpty(map, LoaderConfiguration.KEY_FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName());
 		if(annotation.enumeration() != NullEnum.class){
 			final Enum<?>[] enumConstants = annotation.enumeration().getEnumConstants();
 			final String[] enumValues = new String[enumConstants.length];
 			for(int j = 0; j < enumConstants.length; j ++)
 				enumValues[j] = enumConstants[j].name();
-			putIfNotEmpty(map, "enumeration", enumValues);
+			putIfNotEmpty(map, LoaderConfiguration.KEY_ENUMERATION, enumValues);
 			if(fieldType.isEnum())
-				putIfNotEmpty(map, "mutuallyExclusive", true);
+				putIfNotEmpty(map, LoaderConfiguration.KEY_MUTUALLY_EXCLUSIVE, true);
 		}
 
 		return map;
@@ -166,17 +230,17 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 		throws ConfigurationException{
 		final Map<String, Object> map = new HashMap<>(6);
 
-		putIfNotEmpty(map, "longDescription", binding.longDescription());
-		putIfNotEmpty(map, "unitOfMeasure", binding.unitOfMeasure());
+		putIfNotEmpty(map, LoaderConfiguration.KEY_LONG_DESCRIPTION, binding.longDescription());
+		putIfNotEmpty(map, LoaderConfiguration.KEY_UNIT_OF_MEASURE, binding.unitOfMeasure());
 
 		if(!fieldType.isEnum() && !fieldType.isArray())
-			putIfNotEmpty(map, "fieldType", ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName());
-		putIfNotEmpty(map, "minValue", JavaHelper.getValue(fieldType, binding.minValue()));
-		putIfNotEmpty(map, "maxValue", JavaHelper.getValue(fieldType, binding.maxValue()));
-		putIfNotEmpty(map, "pattern", binding.pattern());
+			putIfNotEmpty(map, LoaderConfiguration.KEY_FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName());
+		putIfNotEmpty(map, LoaderConfiguration.KEY_MIN_VALUE, JavaHelper.getValue(fieldType, binding.minValue()));
+		putIfNotEmpty(map, LoaderConfiguration.KEY_MAX_VALUE, JavaHelper.getValue(fieldType, binding.maxValue()));
+		putIfNotEmpty(map, LoaderConfiguration.KEY_PATTERN, binding.pattern());
 
 		if(String.class.isAssignableFrom(fieldType))
-			putIfNotEmpty(map, "charset", binding.charset());
+			putIfNotEmpty(map, LoaderConfiguration.KEY_CHARSET, binding.charset());
 
 		return map;
 	}
@@ -188,8 +252,8 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 				throw ConfigurationException.create("Duplicated short description: {}", key);
 	}
 
-	private static void putValueIfNotEmpty(@SuppressWarnings("BoundedWildcard") final Map<String, Object> map, final String key, final Class<?> fieldType,
-			final Class<? extends Enum<?>> enumeration, final String value) throws ConfigurationException{
+	private static void putValueIfNotEmpty(@SuppressWarnings("BoundedWildcard") final Map<String, Object> map, final String key,
+			final Class<?> fieldType, final Class<? extends Enum<?>> enumeration, final String value) throws ConfigurationException{
 		if(!JavaHelper.isBlank(value)){
 			Object val = value;
 			if(enumeration != NullEnum.class && fieldType.isArray())
@@ -208,7 +272,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 			if(shouldBeExtracted(protocol, fieldBinding.minProtocol(), fieldBinding.maxProtocol()))
 				return fieldBinding;
 		}
-		return null;
+		return EMPTY_ALTERNATIVE;
 	}
 
 	@Override
@@ -227,6 +291,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 		}
 	}
 
+	@SuppressWarnings("ConstantConditions")
 	private static void validateValue(final AlternativeSubField binding, final String dataKey, final Object dataValue,
 			final Class<?> fieldType) throws EncodeException{
 		//check pattern

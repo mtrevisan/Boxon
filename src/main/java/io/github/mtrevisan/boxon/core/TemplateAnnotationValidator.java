@@ -38,6 +38,7 @@ import io.github.mtrevisan.boxon.internal.InjectEventListener;
 import io.github.mtrevisan.boxon.internal.ParserDataType;
 
 import java.lang.annotation.Annotation;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -125,10 +126,13 @@ enum TemplateAnnotationValidator{
 	@InjectEventListener
 	private static final EventListener eventListener = EventListener.getNoOpInstance();
 
-	private static final Map<Class<? extends Annotation>, TemplateAnnotationValidator> VALIDATORS = new HashMap<>(7);
+	private static final Map<Class<? extends Annotation>, TemplateAnnotationValidator> VALIDATORS;
 	static{
-		for(final TemplateAnnotationValidator validator : values())
-			VALIDATORS.put(validator.annotationType, validator);
+		final TemplateAnnotationValidator[] values = values();
+		final Map<Class<? extends Annotation>, TemplateAnnotationValidator> validators = new HashMap<>(values.length);
+		for(final TemplateAnnotationValidator validator : values)
+			validators.put(validator.annotationType, validator);
+		VALIDATORS = Collections.unmodifiableMap(validators);
 	}
 
 	private final Class<? extends Annotation> annotationType;

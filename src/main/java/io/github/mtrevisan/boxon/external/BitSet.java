@@ -89,7 +89,7 @@ public final class BitSet{
 	 * @param value	the value, must not be {@code null}.
 	 * @param size	The size in bits of the value.
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
-	 * @return	The {@link BitSet} representing the given value.
+	 * @return	The bit set representing the given value.
 	 */
 	public static BitSet valueOf(final BigInteger value, final int size, final ByteOrder byteOrder){
 		byte[] array = value.toByteArray();

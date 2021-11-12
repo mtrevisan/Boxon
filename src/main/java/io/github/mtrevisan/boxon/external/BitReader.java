@@ -137,6 +137,7 @@ public final class BitReader extends BitReaderData{
 	 * @return	The read value of the given type.
 	 * @throws AnnotationException	If an annotation is not well formatted.
 	 */
+	@SuppressWarnings("ReturnOfNull")
 	public Object get(final Class<?> type, final ByteOrder byteOrder) throws AnnotationException{
 		final ParserDataType t = ParserDataType.fromType(type);
 		if(t == null)
@@ -168,7 +169,7 @@ public final class BitReader extends BitReaderData{
 	}
 
 	/**
-	 * Reads {@link Byte#SIZE} bits from this {@link BitReader} and composes a {@code byte}.
+	 * Reads {@link Byte#SIZE} bits and composes a {@code byte}.
 	 *
 	 * @return	A {@code byte}.
 	 */
@@ -178,10 +179,10 @@ public final class BitReader extends BitReaderData{
 	}
 
 	/**
-	 * Reads the specified amount of {@code byte}s from this {@link BitReader} into an array of {@code byte}s.
+	 * Reads the specified amount of {@code byte}s into an array of {@code byte}s.
 	 *
 	 * @param length	The number of {@code byte}s to read.
-	 * @return	An array of {@code byte}s of length {@code n} that contains {@code byte}s read from this {@link BitReader}.
+	 * @return	An array of {@code byte}s of length {@code n} that contains {@code byte}s read.
 	 */
 	public byte[] getBytes(final int length){
 		final byte[] array = new byte[length];
@@ -191,7 +192,7 @@ public final class BitReader extends BitReaderData{
 	}
 
 	/**
-	 * Reads {@link Short#SIZE} bits from this {@link BitReader} and composes a {@code short} with the specified
+	 * Reads {@link Short#SIZE} bits and composes a {@code short} with the specified
 	 * {@link ByteOrder}.
 	 *
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
@@ -202,7 +203,7 @@ public final class BitReader extends BitReaderData{
 	}
 
 	/**
-	 * Reads {@link Integer#SIZE} bits from this {@link BitReader} and composes an {@code int} with the specified
+	 * Reads {@link Integer#SIZE} bits and composes an {@code int} with the specified
 	 * {@link ByteOrder}.
 	 *
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
@@ -213,7 +214,7 @@ public final class BitReader extends BitReaderData{
 	}
 
 	/**
-	 * Reads {@link Long#SIZE} bits from this {@link BitReader} and composes a {@code long} with the specified
+	 * Reads {@link Long#SIZE} bits and composes a {@code long} with the specified
 	 * {@link ByteOrder}.
 	 *
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
@@ -228,7 +229,7 @@ public final class BitReader extends BitReaderData{
 	 *
 	 * @param size	The amount of bits to read.
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
-	 * @return	A {@link BigInteger} value at the {@link BitReader}'s current position.
+	 * @return	A {@link BigInteger} value at the current position.
 	 */
 	public BigInteger getInteger(final int size, final ByteOrder byteOrder){
 		final BitSet bits = getBits(size);
@@ -236,7 +237,7 @@ public final class BitReader extends BitReaderData{
 	}
 
 	/**
-	 * Reads {@link Float#SIZE} bits from this {@link BitReader} and composes a {@code float} with the specified
+	 * Reads {@link Float#SIZE} bits and composes a {@code float} with the specified
 	 * {@link ByteOrder}.
 	 *
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
@@ -247,7 +248,7 @@ public final class BitReader extends BitReaderData{
 	}
 
 	/**
-	 * Reads {@link Double#SIZE} bits from this {@link BitReader} and composes a {@code double} with the specified
+	 * Reads {@link Double#SIZE} bits and composes a {@code double} with the specified
 	 * {@link ByteOrder}.
 	 *
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
@@ -258,7 +259,7 @@ public final class BitReader extends BitReaderData{
 	}
 
 	/**
-	 * Reads {@link Double#SIZE} bits from this {@link BitReader} and composes a {@code double} with the specified
+	 * Reads {@link Double#SIZE} bits and composes a {@code double} with the specified
 	 * {@link ByteOrder}.
 	 *
 	 * @param cls	Either a {@code Float} or a {@link Double} class.
@@ -278,12 +279,11 @@ public final class BitReader extends BitReaderData{
 	}
 
 	/**
-	 * Reads the specified amount of {@code char}s from this {@link BitReader} into a {@link String} with a given {@link Charset}.
+	 * Reads the specified amount of {@code char}s with a given {@link Charset}.
 	 *
 	 * @param length	The number of {@code char}s to read.
 	 * @param charset	The charset.
-	 * @return	A {@link String} of length {@code n} coded with a given {@link Charset} that contains {@code char}s
-	 * 	read from this {@link BitReader}.
+	 * @return	A {@link String} of length {@code n} coded with a given {@link Charset} that contains {@code char}s read.
 	 */
 	public String getText(final int length, final Charset charset){
 		return new String(getBytes(length), charset);
@@ -295,8 +295,7 @@ public final class BitReader extends BitReaderData{
 	 *
 	 * @param terminator	The terminator of the string to be read.
 	 * @param charset	The charset.
-	 * @return	A {@link String} of length {@code n} coded with a given {@link Charset} that contains {@code char}s
-	 * 	read from this {@link BitReader}.
+	 * @return	A {@link String} of length {@code n} coded with a given {@link Charset} that contains {@code char}s read.
 	 */
 	public String getTextUntilTerminator(final byte terminator, final Charset charset){
 		String text = null;

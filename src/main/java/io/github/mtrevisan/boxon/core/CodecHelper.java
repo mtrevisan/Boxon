@@ -37,6 +37,7 @@ import io.github.mtrevisan.boxon.external.ByteOrder;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.ReflectionHelper;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.nio.charset.Charset;
 import java.util.regex.Matcher;
@@ -52,6 +53,29 @@ final class CodecHelper{
 
 	private static final Matcher CONTEXT_PREFIXED_CHOICE_PREFIX = Pattern.compile("#" + CONTEXT_CHOICE_PREFIX + "[^a-zA-Z]")
 		.matcher("");
+
+	private static final String EMPTY_STRING = "";
+	private static final ObjectChoices.ObjectChoice EMPTY_CHOICE = new ObjectChoices.ObjectChoice(){
+		@Override
+		public Class<? extends Annotation> annotationType(){
+			return Annotation.class;
+		}
+
+		@Override
+		public String condition(){
+			return EMPTY_STRING;
+		}
+
+		@Override
+		public int prefix(){
+			return 0;
+		}
+
+		@Override
+		public Class<?> type(){
+			return Object.class;
+		}
+	};
 
 
 	private CodecHelper(){}
@@ -106,7 +130,7 @@ final class CodecHelper{
 			if(Evaluator.evaluate(alternative.condition(), rootObject, boolean.class))
 				return alternative;
 		}
-		return null;
+		return EMPTY_CHOICE;
 	}
 
 	static Class<? extends Converter<?, ?>> chooseConverter(final ConverterChoices selectConverterFrom,

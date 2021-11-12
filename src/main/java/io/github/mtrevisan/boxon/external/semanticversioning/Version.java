@@ -43,12 +43,14 @@ public final class Version implements Comparable<Version>{
 
 	private static final char[] VALID_CHARS = "-ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".toCharArray();
 
+	private static final String EMPTY_STRING = "";
+
 
 	private final Integer major;
 	private final Integer minor;
-	private Integer patch;
-	private String[] preRelease;
-	private String[] build;
+	private final Integer patch;
+	private final String[] preRelease;
+	private final String[] build;
 
 
 	/**
@@ -142,28 +144,32 @@ public final class Version implements Comparable<Version>{
 
 				nextToken = (tokenizer.hasMoreElements()? tokenizer.nextToken(): null);
 			}
+			else
+				preRelease = JavaHelper.EMPTY_ARRAY;
 
 			if(BUILD_PREFIX.equals(nextToken) && tokenizer.hasMoreElements()){
 				build = JavaHelper.split(tokenizer.nextToken(), '.', -1);
 
 				validateBuild();
 			}
+			else
+				build = JavaHelper.EMPTY_ARRAY;
 
 			if(tokenizer.hasMoreElements())
 				throw new IllegalArgumentException("Argument is not a valid version");
 		}
-
-		if(preRelease == null)
+		else{
+			patch = null;
 			preRelease = JavaHelper.EMPTY_ARRAY;
-		if(build == null)
 			build = JavaHelper.EMPTY_ARRAY;
+		}
 	}
 
 	private static void validateValues(final String version, final String[] tokens){
 		final String[] tokensWithPatch = JavaHelper.split(version, DOT + PRE_RELEASE_PREFIX + BUILD_PREFIX, -1);
 		if(hasLeadingZeros(tokens[0])
-				|| tokensWithPatch != null && (tokensWithPatch.length > 1 && hasLeadingZeros(tokens[1])
-				|| tokensWithPatch.length > 2 && hasLeadingZeros(tokensWithPatch[2])))
+				|| tokensWithPatch.length > 1 && hasLeadingZeros(tokens[1])
+				|| tokensWithPatch.length > 2 && hasLeadingZeros(tokensWithPatch[2]))
 			throw new IllegalArgumentException("Numeric identifier MUST NOT contain leading zeros");
 	}
 
@@ -396,20 +402,18 @@ public final class Version implements Comparable<Version>{
 
 	@Override
 	public String toString(){
-		final StringBuilder sb = new StringBuilder();
+		String message = EMPTY_STRING;
 		if(major != null)
-			sb.append(major);
+			message += major;
 		if(minor != null)
-			sb.append(DOT)
-				.append(minor);
+			message += DOT + minor;
 		if(patch != null)
-			sb.append(DOT)
-				.append(patch);
+			message += DOT + patch;
 		if(preRelease != null && preRelease.length > 0)
-			sb.append(PRE_RELEASE_PREFIX).append(String.join(DOT, preRelease));
+			message += PRE_RELEASE_PREFIX + String.join(DOT, preRelease);
 		if(build != null && build.length > 0)
-			sb.append(BUILD_PREFIX).append(String.join(DOT, build));
-		return sb.toString();
+			message += BUILD_PREFIX + String.join(DOT, build);
+		return message;
 	}
 
 }

@@ -13,12 +13,16 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
 
 final class PlainManager implements ConfigurationManagerInterface{
+
+	static final Annotation EMPTY_ANNOTATION = () -> Annotation.class;
+
 
 	private final ConfigurationField annotation;
 
@@ -66,7 +70,7 @@ final class PlainManager implements ConfigurationManagerInterface{
 	@Override
 	public Annotation shouldBeExtracted(final Version protocol){
 		final boolean shouldBeExtracted = shouldBeExtracted(protocol, annotation.minProtocol(), annotation.maxProtocol());
-		return (shouldBeExtracted? annotation: null);
+		return (shouldBeExtracted? annotation: EMPTY_ANNOTATION);
 	}
 
 	@Override
@@ -77,13 +81,13 @@ final class PlainManager implements ConfigurationManagerInterface{
 	@Override
 	public Map<String, Object> extractConfigurationMap(final Class<?> fieldType, final Version protocol) throws ConfigurationException{
 		if(!shouldBeExtracted(protocol, annotation.minProtocol(), annotation.maxProtocol()))
-			return null;
+			return Collections.emptyMap();
 
 		final Map<String, Object> fieldMap = extractMap(fieldType);
 
 		if(protocol.isEmpty()){
-			putIfNotEmpty(fieldMap, "minProtocol", annotation.minProtocol());
-			putIfNotEmpty(fieldMap, "maxProtocol", annotation.maxProtocol());
+			putIfNotEmpty(fieldMap, LoaderConfiguration.KEY_MIN_PROTOCOL, annotation.minProtocol());
+			putIfNotEmpty(fieldMap, LoaderConfiguration.KEY_MAX_PROTOCOL, annotation.maxProtocol());
 		}
 		return fieldMap;
 	}
@@ -91,27 +95,27 @@ final class PlainManager implements ConfigurationManagerInterface{
 	private Map<String, Object> extractMap(final Class<?> fieldType) throws ConfigurationException{
 		final Map<String, Object> map = new HashMap<>(10);
 
-		putIfNotEmpty(map, "longDescription", annotation.longDescription());
-		putIfNotEmpty(map, "unitOfMeasure", annotation.unitOfMeasure());
+		putIfNotEmpty(map, LoaderConfiguration.KEY_LONG_DESCRIPTION, annotation.longDescription());
+		putIfNotEmpty(map, LoaderConfiguration.KEY_UNIT_OF_MEASURE, annotation.unitOfMeasure());
 
 		if(!fieldType.isEnum() && !fieldType.isArray())
-			putIfNotEmpty(map, "fieldType", ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName());
-		putIfNotEmpty(map, "minValue", JavaHelper.getValue(fieldType, annotation.minValue()));
-		putIfNotEmpty(map, "maxValue", JavaHelper.getValue(fieldType, annotation.maxValue()));
-		putIfNotEmpty(map, "pattern", annotation.pattern());
+			putIfNotEmpty(map, LoaderConfiguration.KEY_FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName());
+		putIfNotEmpty(map, LoaderConfiguration.KEY_MIN_VALUE, JavaHelper.getValue(fieldType, annotation.minValue()));
+		putIfNotEmpty(map, LoaderConfiguration.KEY_MAX_VALUE, JavaHelper.getValue(fieldType, annotation.maxValue()));
+		putIfNotEmpty(map, LoaderConfiguration.KEY_PATTERN, annotation.pattern());
 		if(annotation.enumeration() != NullEnum.class){
 			final Enum<?>[] enumConstants = annotation.enumeration().getEnumConstants();
 			final String[] enumValues = new String[enumConstants.length];
 			for(int j = 0; j < enumConstants.length; j ++)
 				enumValues[j] = enumConstants[j].name();
-			putIfNotEmpty(map, "enumeration", enumValues);
+			putIfNotEmpty(map, LoaderConfiguration.KEY_ENUMERATION, enumValues);
 			if(fieldType.isEnum())
-				putIfNotEmpty(map, "mutuallyExclusive", true);
+				putIfNotEmpty(map, LoaderConfiguration.KEY_MUTUALLY_EXCLUSIVE, true);
 		}
 
-		putValueIfNotEmpty(map, "defaultValue", fieldType, annotation.enumeration(), annotation.defaultValue());
+		putValueIfNotEmpty(map, LoaderConfiguration.KEY_DEFAULT_VALUE, fieldType, annotation.enumeration(), annotation.defaultValue());
 		if(String.class.isAssignableFrom(fieldType))
-			putIfNotEmpty(map, "charset", annotation.charset());
+			putIfNotEmpty(map, LoaderConfiguration.KEY_CHARSET, annotation.charset());
 
 		return map;
 	}
@@ -137,6 +141,7 @@ final class PlainManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
+	@SuppressWarnings("ConstantConditions")
 	public void validateValue(final String dataKey, final Object dataValue, final Class<?> fieldType) throws EncodeException{
 		//check pattern
 		final String pattern = annotation.pattern();
@@ -169,6 +174,9 @@ final class PlainManager implements ConfigurationManagerInterface{
 	@Override
 	public void setValue(final Object configurationObject, final String dataKey, Object dataValue, final Field field, final Version protocol)
 			throws EncodeException{
+		if(dataValue == null)
+			return;
+
 		final Class<?> fieldType = field.getType();
 		final Class<? extends Enum<?>> enumeration = annotation.enumeration();
 		if(enumeration != NullEnum.class){
@@ -186,15 +194,21 @@ final class PlainManager implements ConfigurationManagerInterface{
 						.cast(JavaHelper.extractEnum(enumConstants, (String)dataValue));
 			}
 
-			if(dataValue.getClass().isArray()){
-				final Class<?> componentType = dataValue.getClass().getComponentType();
-				if(!enumeration.isAssignableFrom(componentType))
-					throw EncodeException.create("Data value incompatible with field type {}; found {}[], expected " + enumeration.getSimpleName() + "[] for enumeration type",
-						dataKey, componentType);
+			final Class<?> dataValueClass = (dataValue != null? dataValue.getClass(): null);
+			if(dataValueClass == null){
+				final Class<?> componentType = (fieldType.isArray()? fieldType.getComponentType(): fieldType);
+				throw EncodeException.create("Data value incompatible with field type {}; found {}[], expected {}[] for enumeration type",
+					dataKey, componentType, enumeration.getSimpleName());
 			}
-			else if(!enumeration.isInstance(dataValue))
-				throw EncodeException.create("Data value incompatible with field type {}; found {}, expected " + enumeration.getSimpleName() + " for enumeration type",
-					dataKey, dataValue.getClass());
+			if(dataValueClass.isArray()){
+				final Class<?> componentType = dataValueClass.getComponentType();
+				if(!enumeration.isAssignableFrom(componentType))
+					throw EncodeException.create("Data value incompatible with field type {}; found {}[], expected {}[] for enumeration type",
+						dataKey, componentType, enumeration.getSimpleName());
+			}
+			else if(!enumeration.isInstance(dataValue) || String.class.isInstance(dataValue) && !((String)dataValue).isEmpty())
+				throw EncodeException.create("Data value incompatible with field type {}; found {}, expected {} for enumeration type",
+					dataKey, dataValueClass, enumeration.getSimpleName());
 
 			setValue(field, configurationObject, dataValue);
 		}

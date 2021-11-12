@@ -39,6 +39,7 @@ final class BoundedField{
 	private static final String CONDITION = "condition";
 
 	private static final String EMPTY_STRING = "";
+	private static final Skip[] EMPTY_ARRAY = new Skip[0];
 
 	private final Field field;
 	/** List of skips that happen BEFORE the reading/writing of this variable. */
@@ -75,7 +76,7 @@ final class BoundedField{
 	}
 
 	Skip[] getSkips(){
-		return (skips != null? skips.clone(): null);
+		return (skips != null? skips.clone(): EMPTY_ARRAY);
 	}
 
 	Annotation getBinding(){

@@ -68,7 +68,7 @@ final class LoaderCodec{
 	private void injectEventListener(){
 		final ReflectiveClassLoader reflectiveClassLoader = ReflectiveClassLoader.createFrom(CodecInterface.class);
 		reflectiveClassLoader.scan(CodecInterface.class);
-		final Collection<Class<?>> classes = ReflectiveClassLoader.getImplementationsOf(CodecInterface.class);
+		final Collection<Class<?>> classes = reflectiveClassLoader.getImplementationsOf(CodecInterface.class);
 		for(final Class<?> cl : classes)
 			ReflectionHelper.setStaticFieldValue(cl, EventListener.class, eventListener);
 	}

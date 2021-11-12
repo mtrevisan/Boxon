@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.internal;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,17 +40,24 @@ public enum ParserDataType{
 	DOUBLE(Double.TYPE, Double.class);
 
 	/** Maps primitive {@code Class}es to their corresponding wrapper {@code Class}. */
-	private static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPER_MAP = new HashMap<>(6);
+	private static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPER_MAP;
 	/** Maps wrapper {@code Class}es to their corresponding primitive types. */
-	private static final Map<Class<?>, Class<?>> WRAPPER_PRIMITIVE_MAP = new HashMap<>(6);
-	private static final Map<Class<?>, ParserDataType> TYPE_MAP = new HashMap<>(12);
+	private static final Map<Class<?>, Class<?>> WRAPPER_PRIMITIVE_MAP;
+	private static final Map<Class<?>, ParserDataType> TYPE_MAP;
 	static{
-		for(final ParserDataType dt : values()){
-			PRIMITIVE_WRAPPER_MAP.put(dt.primitiveType, dt.objectiveType);
-			WRAPPER_PRIMITIVE_MAP.put(dt.objectiveType, dt.primitiveType);
-			TYPE_MAP.put(dt.primitiveType, dt);
-			TYPE_MAP.put(dt.objectiveType, dt);
+		final ParserDataType[] values = values();
+		final Map<Class<?>, Class<?>> primitiveWrapperMap = new HashMap<>(values.length);
+		final Map<Class<?>, Class<?>> wrapperPrimitiveMap = new HashMap<>(values.length);
+		final Map<Class<?>, ParserDataType> typeMap = new HashMap<>(values.length * 2);
+		for(final ParserDataType dt : values){
+			primitiveWrapperMap.put(dt.primitiveType, dt.objectiveType);
+			wrapperPrimitiveMap.put(dt.objectiveType, dt.primitiveType);
+			typeMap.put(dt.primitiveType, dt);
+			typeMap.put(dt.objectiveType, dt);
 		}
+		PRIMITIVE_WRAPPER_MAP = Collections.unmodifiableMap(primitiveWrapperMap);
+		WRAPPER_PRIMITIVE_MAP = Collections.unmodifiableMap(wrapperPrimitiveMap);
+		TYPE_MAP = Collections.unmodifiableMap(typeMap);
 	}
 
 	private final Class<?> primitiveType;

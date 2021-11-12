@@ -52,7 +52,7 @@ public final class KMPPatternMatcher implements PatternMatcher{
 	 * Returns an array that points to last valid string prefix.
 	 *
 	 * @param pattern	The list to search for as a subList of {@code source}.
-	 * @return	The array of Longest Prefix Suffix.
+	 * @return	The array of the Longest Prefix Suffix.
 	 */
 	@Override
 	public int[] preProcessPattern(final byte[] pattern){

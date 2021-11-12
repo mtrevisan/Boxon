@@ -34,6 +34,8 @@ import java.lang.reflect.Field;
 /** Data associated to an annotated field. */
 final class ConfigField{
 
+	private static final ConfigurationSkip[] EMPTY_ARRAY = new ConfigurationSkip[0];
+
 	private final Field field;
 	/** List of skips that happen BEFORE the reading/writing of this variable. */
 	private final ConfigurationSkip[] skips;
@@ -71,7 +73,7 @@ final class ConfigField{
 	}
 
 	ConfigurationSkip[] getSkips(){
-		return (skips != null? skips.clone(): null);
+		return (skips != null? skips.clone(): EMPTY_ARRAY);
 	}
 
 	Annotation getBinding(){

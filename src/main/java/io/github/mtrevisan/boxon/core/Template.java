@@ -91,6 +91,7 @@ final class Template<T>{
 			throw AnnotationException.create("No data can be extracted from this class: {}", type.getName());
 	}
 
+	@SuppressWarnings("ObjectAllocationInLoop")
 	private Pair loadAnnotatedFields(final Class<T> type, final List<Field> fields,
 			final Function<Annotation[], List<Annotation>> filterAnnotationsWithCodec) throws AnnotationException{
 		final List<BoundedField> boundedFields = new ArrayList<>(fields.size());
@@ -121,6 +122,7 @@ final class Template<T>{
 		return Pair.of(boundedFields, evaluatedFields);
 	}
 
+	@SuppressWarnings("ObjectAllocationInLoop")
 	private static List<EvaluatedField> extractEvaluations(final Annotation[] declaredAnnotations, final Field field){
 		final List<EvaluatedField> evaluations = new ArrayList<>(declaredAnnotations.length);
 		for(int i = 0; i < declaredAnnotations.length; i ++){

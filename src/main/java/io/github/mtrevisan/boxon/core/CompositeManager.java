@@ -23,6 +23,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -31,10 +32,9 @@ import java.util.regex.Pattern;
 
 final class CompositeManager implements ConfigurationManagerInterface{
 
-	private static final String CONFIGURATION_COMPOSITE_FIELDS = "fields";
-
 	private static final String NOTIFICATION_TEMPLATE = "compositeTemplate";
 	private static final Configuration FREEMARKER_CONFIGURATION = new Configuration(Configuration.VERSION_2_3_31);
+
 	static{
 		FREEMARKER_CONFIGURATION.setDefaultEncoding(StandardCharsets.UTF_8.name());
 		FREEMARKER_CONFIGURATION.setLocale(Locale.US);
@@ -74,7 +74,7 @@ final class CompositeManager implements ConfigurationManagerInterface{
 	@Override
 	public Annotation shouldBeExtracted(final Version protocol){
 		final boolean shouldBeExtracted = shouldBeExtracted(protocol, annotation.minProtocol(), annotation.maxProtocol());
-		return (shouldBeExtracted? annotation: null);
+		return (shouldBeExtracted? annotation: PlainManager.EMPTY_ANNOTATION);
 	}
 
 	//at least one field is mandatory
@@ -90,7 +90,7 @@ final class CompositeManager implements ConfigurationManagerInterface{
 	@Override
 	public Map<String, Object> extractConfigurationMap(final Class<?> fieldType, final Version protocol) throws ConfigurationException{
 		if(!shouldBeExtracted(protocol, annotation.minProtocol(), annotation.maxProtocol()))
-			return null;
+			return Collections.emptyMap();
 
 		final Map<String, Object> compositeMap = extractMap();
 		final CompositeSubField[] bindings = annotation.value();
@@ -100,11 +100,11 @@ final class CompositeManager implements ConfigurationManagerInterface{
 
 			compositeFieldsMap.put(bindings[j].shortDescription(), fieldMap);
 		}
-		compositeMap.put(CONFIGURATION_COMPOSITE_FIELDS, compositeFieldsMap);
+		compositeMap.put(LoaderConfiguration.CONFIGURATION_COMPOSITE_FIELDS, compositeFieldsMap);
 
 		if(protocol.isEmpty()){
-			putIfNotEmpty(compositeMap, "minProtocol", annotation.minProtocol());
-			putIfNotEmpty(compositeMap, "maxProtocol", annotation.maxProtocol());
+			putIfNotEmpty(compositeMap, LoaderConfiguration.KEY_MIN_PROTOCOL, annotation.minProtocol());
+			putIfNotEmpty(compositeMap, LoaderConfiguration.KEY_MAX_PROTOCOL, annotation.maxProtocol());
 		}
 		return compositeMap;
 	}
@@ -112,9 +112,9 @@ final class CompositeManager implements ConfigurationManagerInterface{
 	private Map<String, Object> extractMap() throws ConfigurationException{
 		final Map<String, Object> map = new HashMap<>(6);
 
-		putIfNotEmpty(map, "longDescription", annotation.longDescription());
-		putIfNotEmpty(map, "pattern", annotation.pattern());
-		putIfNotEmpty(map, "charset", annotation.charset());
+		putIfNotEmpty(map, LoaderConfiguration.KEY_LONG_DESCRIPTION, annotation.longDescription());
+		putIfNotEmpty(map, LoaderConfiguration.KEY_PATTERN, annotation.pattern());
+		putIfNotEmpty(map, LoaderConfiguration.KEY_CHARSET, annotation.charset());
 
 		return map;
 	}
@@ -122,14 +122,14 @@ final class CompositeManager implements ConfigurationManagerInterface{
 	private static Map<String, Object> extractMap(final CompositeSubField binding, final Class<?> fieldType) throws ConfigurationException{
 		final Map<String, Object> map = new HashMap<>(10);
 
-		putIfNotEmpty(map, "longDescription", binding.longDescription());
-		putIfNotEmpty(map, "unitOfMeasure", binding.unitOfMeasure());
+		putIfNotEmpty(map, LoaderConfiguration.KEY_LONG_DESCRIPTION, binding.longDescription());
+		putIfNotEmpty(map, LoaderConfiguration.KEY_UNIT_OF_MEASURE, binding.unitOfMeasure());
 
-		putIfNotEmpty(map, "pattern", binding.pattern());
+		putIfNotEmpty(map, LoaderConfiguration.KEY_PATTERN, binding.pattern());
 		if(!fieldType.isEnum() && !fieldType.isArray())
-			putIfNotEmpty(map, "fieldType", ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName());
+			putIfNotEmpty(map, LoaderConfiguration.KEY_FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName());
 
-		putValueIfNotEmpty(map, "defaultValue", fieldType, NullEnum.class, binding.defaultValue());
+		putValueIfNotEmpty(map, LoaderConfiguration.KEY_DEFAULT_VALUE, fieldType, NullEnum.class, binding.defaultValue());
 
 		return map;
 	}

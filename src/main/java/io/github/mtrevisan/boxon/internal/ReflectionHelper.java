@@ -51,6 +51,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -72,16 +73,18 @@ public final class ReflectionHelper{
 	/**
 	 * Primitive type name to class map.
 	 */
-	private static final Map<String, Class<?>> PRIMITIVE_NAME_TO_TYPE = new HashMap<>(8);
+	private static final Map<String, Class<?>> PRIMITIVE_NAME_TO_TYPE;
 	static{
-		PRIMITIVE_NAME_TO_TYPE.put("boolean", Boolean.TYPE);
-		PRIMITIVE_NAME_TO_TYPE.put("byte", Byte.TYPE);
-		PRIMITIVE_NAME_TO_TYPE.put("char", Character.TYPE);
-		PRIMITIVE_NAME_TO_TYPE.put("short", Short.TYPE);
-		PRIMITIVE_NAME_TO_TYPE.put("int", Integer.TYPE);
-		PRIMITIVE_NAME_TO_TYPE.put("long", Long.TYPE);
-		PRIMITIVE_NAME_TO_TYPE.put("float", Float.TYPE);
-		PRIMITIVE_NAME_TO_TYPE.put("double", Double.TYPE);
+		final Map<String, Class<?>> primitiveNameToType = new HashMap<>(8);
+		primitiveNameToType.put("boolean", Boolean.TYPE);
+		primitiveNameToType.put("byte", Byte.TYPE);
+		primitiveNameToType.put("char", Character.TYPE);
+		primitiveNameToType.put("short", Short.TYPE);
+		primitiveNameToType.put("int", Integer.TYPE);
+		primitiveNameToType.put("long", Long.TYPE);
+		primitiveNameToType.put("float", Float.TYPE);
+		primitiveNameToType.put("double", Double.TYPE);
+		PRIMITIVE_NAME_TO_TYPE = Collections.unmodifiableMap(primitiveNameToType);
 	}
 
 
@@ -119,9 +122,9 @@ public final class ReflectionHelper{
 
 		final ReflectiveClassLoader reflectiveClassLoader = ReflectiveClassLoader.createFrom(basePackageClasses);
 		reflectiveClassLoader.scan(type);
-		final Collection<Class<?>> modules = ReflectiveClassLoader.getImplementationsOf(type);
+		final Collection<Class<?>> modules = reflectiveClassLoader.getImplementationsOf(type);
 		@SuppressWarnings("unchecked")
-		final Collection<Class<?>> singletons = ReflectiveClassLoader.getTypesAnnotatedWith((Class<? extends Annotation>)type);
+		final Collection<Class<?>> singletons = reflectiveClassLoader.getTypesAnnotatedWith((Class<? extends Annotation>)type);
 		classes.addAll(modules);
 		classes.addAll(singletons);
 		return classes;
@@ -402,6 +405,7 @@ public final class ReflectionHelper{
 		return creator;
 	}
 
+	@SuppressWarnings("ReturnOfNull")
 	private static <T> Supplier<T> createSupplierIgnoreExceptions(final Constructor<? extends T> constructor){
 		return () -> {
 			try{

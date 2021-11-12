@@ -29,11 +29,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.StringJoiner;
 
 
 public final class EventLogger extends EventListener{
+
+	private static final String EMPTY_STRING = "";
 
 	static{
 		try{
@@ -189,26 +191,23 @@ public final class EventLogger extends EventListener{
 	}
 
 	private static String composeMessage(final String message, final Object... parameters){
-		final StringBuilder sb = new StringBuilder();
+		String outputMessage = EMPTY_STRING;
 		try{
 			final StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
 			final Class<?> callerClass = Class.forName(stackTrace[3].getClassName());
 			final int callerLineNumber = stackTrace[3].getLineNumber();
 
-			sb.append('(')
-				.append(callerClass.getSimpleName());
+			outputMessage += "(" + callerClass.getSimpleName();
 			if(callerLineNumber >= 0)
-				sb.append(':')
-					.append(callerLineNumber);
-			sb.append(')')
-				.append(' ');
+				outputMessage += ":" + callerLineNumber;
+			outputMessage += ") ";
 		}
 		catch(final ClassNotFoundException ignored){}
 
-		if(message != null)
-			sb.append(message);
+		if(!message.isEmpty())
+			outputMessage += message;
 
-		return JavaHelper.format(sb.toString(), extractParameters(parameters));
+		return JavaHelper.format(outputMessage, extractParameters(parameters));
 	}
 
 	private static Object[] extractParameters(final Object[] parameters){
@@ -225,7 +224,7 @@ public final class EventLogger extends EventListener{
 	}
 
 	private static Collection<String> collectPackages(final Object[] parameters){
-		final Collection<String> packages = new LinkedHashSet<>(parameters.length);
+		final Collection<String> packages = new HashSet<>(parameters.length);
 		for(int i = 0; i < parameters.length; i ++)
 			packages.add(((Class<?>)parameters[i]).getPackageName());
 		return packages;

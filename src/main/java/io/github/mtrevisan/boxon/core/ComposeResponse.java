@@ -36,6 +36,9 @@ import java.util.Objects;
  */
 public final class ComposeResponse{
 
+	private static final byte[] EMPTY_ARRAY = new byte[0];
+
+
 	/** The originators for the message. */
 	private final Object[] originator;
 
@@ -74,7 +77,7 @@ public final class ComposeResponse{
 	 * @return	The message composed by the given originator.
 	 */
 	public byte[] getComposedMessage(){
-		return (composedMessage != null? composedMessage.clone(): null);
+		return (composedMessage != null? composedMessage.clone(): EMPTY_ARRAY);
 	}
 
 	/**

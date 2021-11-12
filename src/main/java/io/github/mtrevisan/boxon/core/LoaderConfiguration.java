@@ -54,6 +54,25 @@ final class LoaderConfiguration{
 
 	private static final String EMPTY_STRING = "";
 
+	private static final String KEY_HEADER = "header";
+	private static final String KEY_FIELDS = "fields";
+	private static final String KEY_PROTOCOL_VERSION_BOUNDARIES = "protocolVersionBoundaries";
+	static final String CONFIGURATION_COMPOSITE_FIELDS = "fields";
+	static final String KEY_ALTERNATIVES = "alternatives";
+	static final String KEY_FIELD_TYPE = "fieldType";
+	private static final String KEY_SHORT_DESCRIPTION = "shortDescription";
+	static final String KEY_LONG_DESCRIPTION = "longDescription";
+	static final String KEY_UNIT_OF_MEASURE = "unitOfMeasure";
+	static final String KEY_MIN_PROTOCOL = "minProtocol";
+	static final String KEY_MAX_PROTOCOL = "maxProtocol";
+	static final String KEY_MIN_VALUE = "minValue";
+	static final String KEY_MAX_VALUE = "maxValue";
+	static final String KEY_PATTERN = "pattern";
+	static final String KEY_ENUMERATION = "enumeration";
+	static final String KEY_MUTUALLY_EXCLUSIVE = "mutuallyExclusive";
+	static final String KEY_DEFAULT_VALUE = "defaultValue";
+	static final String KEY_CHARSET = "charset";
+
 
 	static final class ConfigurationPair{
 		private final Configuration<?> configuration;
@@ -127,7 +146,7 @@ final class LoaderConfiguration{
 			if(from.canBeCoded()){
 				//if the configuration is valid, add it to the list of templates...
 				final ConfigurationHeader header = from.getHeader();
-				loadConfigurationInner(header.start(), from);
+				configurations.put(header.start(), from);
 			}
 			else
 				//... otherwise throw exception
@@ -199,6 +218,7 @@ final class LoaderConfiguration{
 	 *
 	 * @return	The configuration messages regardless the protocol version.
 	 */
+	@SuppressWarnings("ObjectAllocationInLoop")
 	List<Map<String, Object>> getConfigurations() throws ConfigurationException{
 		final Version currentProtocol = Version.of(EMPTY_STRING);
 
@@ -211,10 +231,9 @@ final class LoaderConfiguration{
 
 			final Map<String, Object> headerMap = extractMap(currentProtocol, header);
 			final Map<String, Object> fieldsMap = extractFieldsMap(currentProtocol, configuration);
-			response.add(Map.of(
-				"header", headerMap,
-				"fields", fieldsMap,
-				"protocolVersionBoundaries", configuration.getProtocolVersionBoundaries()
+			response.add(Map.of(KEY_HEADER, headerMap,
+				KEY_FIELDS, fieldsMap,
+				KEY_PROTOCOL_VERSION_BOUNDARIES, configuration.getProtocolVersionBoundaries()
 			));
 		}
 		return Collections.unmodifiableList(response);
@@ -226,6 +245,7 @@ final class LoaderConfiguration{
 	 * @param protocol	The protocol used to extract the configurations.
 	 * @return	The configuration messages for a given protocol version.
 	 */
+	@SuppressWarnings("ObjectAllocationInLoop")
 	List<Map<String, Object>> getConfigurations(final String protocol) throws ConfigurationException{
 		if(JavaHelper.isBlank(protocol))
 			throw new IllegalArgumentException(JavaHelper.format("Invalid protocol: {}", protocol));
@@ -242,8 +262,8 @@ final class LoaderConfiguration{
 			final Map<String, Object> headerMap = extractMap(currentProtocol, header);
 			final Map<String, Object> fieldsMap = extractFieldsMap(currentProtocol, configuration);
 			response.add(Map.of(
-				"header", headerMap,
-				"fields", fieldsMap
+				KEY_HEADER, headerMap,
+				KEY_FIELDS, fieldsMap
 			));
 		}
 		return Collections.unmodifiableList(response);
@@ -251,11 +271,11 @@ final class LoaderConfiguration{
 
 	private static Map<String, Object> extractMap(final Version protocol, final ConfigurationHeader header) throws ConfigurationException{
 		final Map<String, Object> map = new HashMap<>(3);
-		putIfNotEmpty(map, "shortDescription", header.shortDescription());
-		putIfNotEmpty(map, "longDescription", header.longDescription());
+		putIfNotEmpty(map, KEY_SHORT_DESCRIPTION, header.shortDescription());
+		putIfNotEmpty(map, KEY_LONG_DESCRIPTION, header.longDescription());
 		if(protocol.isEmpty()){
-			putIfNotEmpty(map, "minProtocol", header.minProtocol());
-			putIfNotEmpty(map, "maxProtocol", header.maxProtocol());
+			putIfNotEmpty(map, KEY_MIN_PROTOCOL, header.minProtocol());
+			putIfNotEmpty(map, KEY_MAX_PROTOCOL, header.maxProtocol());
 		}
 		return map;
 	}
@@ -335,8 +355,7 @@ final class LoaderConfiguration{
 			final ConfigField field = fields.get(i);
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(field.getBinding());
 			final Annotation annotation = manager.shouldBeExtracted(protocol);
-			final boolean mandatory = manager.isMandatory(annotation);
-			if(mandatory && annotation != null)
+			if(manager.isMandatory(annotation))
 				mandatoryFields.add(field);
 		}
 		return mandatoryFields;
@@ -347,9 +366,8 @@ final class LoaderConfiguration{
 		for(int i = 0; foundField == null && i < fields.size(); i ++){
 			final ConfigField field = fields.get(i);
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(field.getBinding());
-			final String shortDescription = manager.getShortDescription();
 			final Annotation annotation = manager.shouldBeExtracted(protocol);
-			if(shortDescription.equals(key) && annotation != null)
+			if(annotation.annotationType() != Annotation.class && manager.getShortDescription().equals(key))
 				foundField = field;
 		}
 		if(foundField == null)
@@ -367,7 +385,7 @@ final class LoaderConfiguration{
 			final Annotation annotation = field.getBinding();
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(annotation);
 			final Map<String, Object> fieldMap = manager.extractConfigurationMap(field.getFieldType(), protocol);
-			if(fieldMap != null){
+			if(!fieldMap.isEmpty()){
 				final String shortDescription = manager.getShortDescription();
 				fieldsMap.put(shortDescription, fieldMap);
 			}

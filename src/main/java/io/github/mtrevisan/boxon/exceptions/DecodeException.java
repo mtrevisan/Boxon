@@ -36,6 +36,8 @@ public final class DecodeException extends Exception{
 
 	private static final long serialVersionUID = 5375434179637246605L;
 
+	private static final String EMPTY_STRING = "";
+
 
 	private final int errorIndex;
 
@@ -56,15 +58,13 @@ public final class DecodeException extends Exception{
 
 	@Override
 	public String getMessage(){
-		final StringBuilder sj = new StringBuilder();
+		String message = EMPTY_STRING;
 		final Throwable cause = getCause();
 		if(cause != null)
-			sj.append(cause.getMessage());
+			message += cause.getMessage();
 		if(errorIndex >= 0)
-			sj.append(System.lineSeparator())
-				.append("   at index ")
-				.append(errorIndex);
-		return sj.toString();
+			message += System.lineSeparator() + "   at index " + errorIndex;
+		return message;
 	}
 
 

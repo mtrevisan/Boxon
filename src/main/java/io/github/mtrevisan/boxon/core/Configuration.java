@@ -28,7 +28,6 @@ import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
-import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.ReflectionHelper;
 
 import java.lang.annotation.Annotation;
@@ -98,6 +97,7 @@ final class Configuration<T>{
 		}
 	}
 
+	@SuppressWarnings("ObjectAllocationInLoop")
 	private List<ConfigField> loadAnnotatedFields(final Class<T> type, final List<Field> fields, final Version minMessageProtocol,
 			final Version maxMessageProtocol) throws AnnotationException{
 		final Collection<String> uniqueShortDescription = new HashSet<>(fields.size());
@@ -147,14 +147,14 @@ final class Configuration<T>{
 					throw AnnotationException.create("Cannot bind more that one annotation on {}: {}", type.getName(), sj.toString());
 				}
 
-				if(validateAnnotation(field, annotations[i], minMessageProtocol, maxMessageProtocol))
+				if(isValidAnnotation(field, annotations[i], minMessageProtocol, maxMessageProtocol))
 					foundAnnotation = annotations[i];
 			}
 		}
 		return foundAnnotation;
 	}
 
-	private static boolean validateAnnotation(final Field field, final Annotation annotation, final Version minMessageProtocol,
+	private static boolean isValidAnnotation(final Field field, final Annotation annotation, final Version minMessageProtocol,
 			final Version maxMessageProtocol) throws AnnotationException{
 		final ConfigurationAnnotationValidator validator = ConfigurationAnnotationValidator.fromAnnotation(annotation);
 		if(validator != null)
@@ -175,7 +175,7 @@ final class Configuration<T>{
 			manager.addProtocolVersionBoundaries(protocolVersionBoundaries);
 
 			final ConfigurationSkip[] skips = cf.getSkips();
-			for(int j = 0; j < JavaHelper.lengthOrZero(skips); j ++){
+			for(int j = 0; j < skips.length; j ++){
 				protocolVersionBoundaries.add(skips[j].minProtocol());
 				protocolVersionBoundaries.add(skips[j].maxProtocol());
 			}

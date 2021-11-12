@@ -38,6 +38,8 @@ public final class EncodeException extends Exception{
 
 	private static final long serialVersionUID = 4385865753761318892L;
 
+	private static final String EMPTY_STRING = "";
+
 
 	public static EncodeException create(final Throwable cause){
 		return new EncodeException(cause);
@@ -65,11 +67,11 @@ public final class EncodeException extends Exception{
 
 	@Override
 	public String getMessage(){
-		final StringBuilder sj = new StringBuilder();
+		String messsage = EMPTY_STRING;
 		final Throwable cause = getCause();
 		if(cause != null)
-			sj.append(cause.getMessage());
-		return sj.toString();
+			messsage += cause.getMessage();
+		return messsage;
 	}
 
 
