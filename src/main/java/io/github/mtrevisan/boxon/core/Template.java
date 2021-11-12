@@ -74,8 +74,7 @@ final class Template<T>{
 
 
 	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
-	Template(final Class<T> type, final Function<Annotation[], List<Annotation>> filterAnnotationsWithCodec)
-			throws AnnotationException{
+	Template(final Class<T> type, final Function<Annotation[], List<Annotation>> filterAnnotationsWithCodec) throws AnnotationException{
 		this.type = type;
 
 		header = type.getAnnotation(MessageHeader.class);

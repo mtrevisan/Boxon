@@ -187,7 +187,7 @@ final class CompositeManager implements ConfigurationManagerInterface{
 	}
 
 	private static String replace(final String text, final Map<String, Object> replacements, final CompositeSubField[] fields)
-		throws EncodeException{
+			throws EncodeException{
 		final Map<String, Object> trueReplacements = new HashMap<>(fields.length);
 		for(int i = 0; i < fields.length; i ++){
 			final String key = fields[i].shortDescription();

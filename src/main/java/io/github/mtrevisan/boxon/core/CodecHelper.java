@@ -193,9 +193,9 @@ final class CodecHelper{
 		return converter.encode((OUT)data);
 	}
 
-	static void encode(final BitWriter writer, final Class<?> fieldType, Object value, final int radix, final String charset2)
-		throws ConfigurationException{
-		final Charset charset = Charset.forName(charset2);
+	static void encode(final BitWriter writer, final Class<?> fieldType, Object value, final int radix, final String charsetName)
+			throws ConfigurationException{
+		final Charset charset = Charset.forName(charsetName);
 
 		value = interpretValue(value, fieldType);
 		if(value != null){

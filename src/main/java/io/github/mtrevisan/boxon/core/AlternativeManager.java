@@ -226,8 +226,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 		return map;
 	}
 
-	private static Map<String, Object> extractMap(final AlternativeSubField binding, final Class<?> fieldType)
-		throws ConfigurationException{
+	private static Map<String, Object> extractMap(final AlternativeSubField binding, final Class<?> fieldType) throws ConfigurationException{
 		final Map<String, Object> map = new HashMap<>(6);
 
 		putIfNotEmpty(map, LoaderConfiguration.KEY_LONG_DESCRIPTION, binding.longDescription());

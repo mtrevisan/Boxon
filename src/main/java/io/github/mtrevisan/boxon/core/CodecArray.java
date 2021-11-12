@@ -88,8 +88,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 		return (T[])Array.newInstance(type, length);
 	}
 
-	private void decodeWithAlternatives(final BitReader reader, final Object[] array, final BindArray binding,
-			final Object rootObject){
+	private void decodeWithAlternatives(final BitReader reader, final Object[] array, final BindArray binding, final Object rootObject){
 		final ObjectChoices selectFrom = binding.selectFrom();
 		for(int i = 0; i < array.length; i ++){
 			try{
@@ -144,8 +143,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 			encodeWithoutAlternatives(writer, array, binding.type());
 	}
 
-	private void encodeWithAlternatives(final BitWriter writer, final Object[] array, final ObjectChoices selectFrom)
-			throws FieldException{
+	private void encodeWithAlternatives(final BitWriter writer, final Object[] array, final ObjectChoices selectFrom) throws FieldException{
 		final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
 		for(int i = 0; i < array.length; i ++){
 			final Object elem = array[i];
