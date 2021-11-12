@@ -159,7 +159,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 
 				putIfNotEmpty(fieldMap, LoaderConfiguration.KEY_MIN_PROTOCOL, alternativeField.minProtocol());
 				putIfNotEmpty(fieldMap, LoaderConfiguration.KEY_MAX_PROTOCOL, alternativeField.maxProtocol());
-				putValueIfNotEmpty(fieldMap, LoaderConfiguration.KEY_DEFAULT_VALUE, fieldType, annotation.enumeration(),
+				ManagerHelper.putValueIfNotEmpty(fieldMap, LoaderConfiguration.KEY_DEFAULT_VALUE, fieldType, annotation.enumeration(),
 					alternativeField.defaultValue());
 
 				fieldMap.putAll(alternativeMap);
@@ -177,7 +177,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 			if(fieldBinding != null){
 				alternativesMap = extractMap(fieldBinding, fieldType);
 
-				putValueIfNotEmpty(alternativesMap, LoaderConfiguration.KEY_DEFAULT_VALUE, fieldType, annotation.enumeration(),
+				ManagerHelper.putValueIfNotEmpty(alternativesMap, LoaderConfiguration.KEY_DEFAULT_VALUE, fieldType, annotation.enumeration(),
 					fieldBinding.defaultValue());
 
 				alternativesMap.putAll(alternativeMap);
@@ -231,19 +231,6 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 		if(value != null && (!String.class.isInstance(value) || !JavaHelper.isBlank((CharSequence)value)))
 			if(map.put(key, value) != null)
 				throw ConfigurationException.create("Duplicated short description: {}", key);
-	}
-
-	private static void putValueIfNotEmpty(@SuppressWarnings("BoundedWildcard") final Map<String, Object> map, final String key,
-			final Class<?> fieldType, final Class<? extends Enum<?>> enumeration, final String value) throws ConfigurationException{
-		if(!JavaHelper.isBlank(value)){
-			Object val = value;
-			if(enumeration != NullEnum.class && fieldType.isArray())
-				val = JavaHelper.split(value, '|', -1);
-			else if(Number.class.isAssignableFrom(ParserDataType.toObjectiveTypeOrSelf(fieldType)))
-				val = JavaHelper.getValue(fieldType, value);
-			if(map.put(key, val) != null)
-				throw ConfigurationException.create("Duplicated short description: {}", key);
-		}
 	}
 
 	private AlternativeSubField extractField(final Version protocol){
