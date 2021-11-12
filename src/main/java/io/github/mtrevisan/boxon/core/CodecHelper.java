@@ -30,11 +30,13 @@ import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitSet;
 import io.github.mtrevisan.boxon.external.BitWriter;
 import io.github.mtrevisan.boxon.external.ByteOrder;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
+import io.github.mtrevisan.boxon.internal.ParserDataType;
 import io.github.mtrevisan.boxon.internal.ReflectionHelper;
 
 import java.lang.annotation.Annotation;
@@ -191,7 +193,32 @@ final class CodecHelper{
 		return converter.encode((OUT)data);
 	}
 
-	static Object interpretValue(Object value, final Class<?> fieldType){
+	static void encode(final BitWriter writer, final Class<?> fieldType, Object value, final int radix, final String charset2)
+		throws ConfigurationException{
+		final Charset charset = Charset.forName(charset2);
+
+		value = interpretValue(value, fieldType);
+		if(value != null){
+			if(String.class.isInstance(value))
+				writer.putText((String)value, charset);
+			else{
+				final Class<?> fieldClass = ParserDataType.toObjectiveTypeOrSelf(value.getClass());
+				if(fieldClass == Float.class)
+					writer.putFloat((Float)value, ByteOrder.BIG_ENDIAN);
+				else if(fieldClass == Double.class)
+					writer.putDouble((Double)value, ByteOrder.BIG_ENDIAN);
+				else if(Number.class.isAssignableFrom(fieldClass)){
+					value = Long.toString(((Number)value).longValue(), radix);
+					writer.putText((String)value, charset);
+				}
+				else
+					throw ConfigurationException.create("Cannot handle this type of field: {}, please report to the developer",
+						fieldClass);
+			}
+		}
+	}
+
+	private static Object interpretValue(Object value, final Class<?> fieldType){
 		value = JavaHelper.getValueOrDefault(fieldType, value);
 		if(value != null){
 			if(value.getClass().isEnum())

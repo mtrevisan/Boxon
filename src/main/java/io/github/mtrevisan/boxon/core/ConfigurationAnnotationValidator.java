@@ -637,11 +637,11 @@ enum ConfigurationAnnotationValidator{
 					binding.getSimpleName(), maxProtocol);
 
 			//minProtocol after or equal to minMessageProtocol
-			if(minimum != null && minMessageProtocol != null && !minMessageProtocol.isEmpty() && minimum.isLessThan(minMessageProtocol))
+			if(minimum != null && !minMessageProtocol.isEmpty() && minimum.isLessThan(minMessageProtocol))
 				throw AnnotationException.create("Minimum protocol version is less than whole message minimum protocol version in {}; found {}",
 					binding.getSimpleName(), maxMessageProtocol);
 			//maxProtocol before or equal to maxMessageProtocol
-			if(maximum != null && maxMessageProtocol != null && !maxMessageProtocol.isEmpty() && maxMessageProtocol.isLessThan(maximum))
+			if(maximum != null && !maxMessageProtocol.isEmpty() && maxMessageProtocol.isLessThan(maximum))
 				throw AnnotationException.create("Maximum protocol version is greater than whole message maximum protocol version in {}; found {}",
 					binding.getSimpleName(), maxMessageProtocol);
 		}

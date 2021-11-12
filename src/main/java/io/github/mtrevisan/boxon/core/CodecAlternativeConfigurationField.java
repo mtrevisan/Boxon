@@ -28,11 +28,8 @@ import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
-import io.github.mtrevisan.boxon.external.ByteOrder;
-import io.github.mtrevisan.boxon.internal.ParserDataType;
 
 import java.lang.annotation.Annotation;
-import java.nio.charset.Charset;
 
 
 final class CodecAlternativeConfigurationField implements CodecInterface<AlternativeSubField>{
@@ -43,30 +40,10 @@ final class CodecAlternativeConfigurationField implements CodecInterface<Alterna
 	}
 
 	@Override
-	public void encode(final BitWriter writer, final Annotation annotation, final Object fieldType, Object value)
+	public void encode(final BitWriter writer, final Annotation annotation, final Object fieldType, final Object value)
 			throws ConfigurationException{
 		final AlternativeSubField binding = extractBinding(annotation);
-		final Charset charset = Charset.forName(binding.charset());
-
-		value = CodecHelper.interpretValue(value, (Class<?>)fieldType);
-		if(value != null){
-			if(String.class.isInstance(value))
-				writer.putText((String)value, charset);
-			else{
-				final Class<?> fieldClass = ParserDataType.toObjectiveTypeOrSelf(value.getClass());
-				if(fieldClass == Float.class)
-					writer.putFloat((Float)value, ByteOrder.BIG_ENDIAN);
-				else if(fieldClass == Double.class)
-					writer.putDouble((Double)value, ByteOrder.BIG_ENDIAN);
-				else if(Number.class.isAssignableFrom(fieldClass)){
-					value = Long.toString(((Number)value).longValue(), binding.radix());
-					writer.putText((String)value, charset);
-				}
-				else
-					throw ConfigurationException.create("Cannot handle this type of field: {}, please report to the developer",
-						fieldClass);
-			}
-		}
+		CodecHelper.encode(writer, (Class<?>)fieldType, value, binding.radix(), binding.charset());
 	}
 
 }
