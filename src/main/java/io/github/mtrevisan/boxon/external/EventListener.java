@@ -24,9 +24,6 @@
  */
 package io.github.mtrevisan.boxon.external;
 
-import io.github.mtrevisan.boxon.core.CodecInterface;
-
-
 public class EventListener{
 
 	private static class SingletonHelper{
@@ -45,7 +42,7 @@ public class EventListener{
 	public void loadingCodecs(final Class<?>[] basePackageClasses){}
 
 	@SuppressWarnings("unused")
-	public void loadingCodec(final CodecInterface<?>[] codecs){}
+	public void loadingCodec(final Class<?>[] codecClasses){}
 
 	@SuppressWarnings("unused")
 	public void loadedCodecs(final int count){}

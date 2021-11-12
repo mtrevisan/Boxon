@@ -1,5 +1,8 @@
-package io.github.mtrevisan.boxon.annotations.configurations;
+package io.github.mtrevisan.boxon.core;
 
+import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationField;
+import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
+import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
@@ -17,7 +20,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 
-class AlternativeManager implements ConfigurationManagerInterface{
+final class AlternativeManager implements ConfigurationManagerInterface{
 
 	private static final String EMPTY_STRING = "";
 
@@ -30,12 +33,12 @@ class AlternativeManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	public final String getShortDescription(){
+	public String getShortDescription(){
 		return annotation.shortDescription();
 	}
 
 	@Override
-	public final Object getDefaultValue(final Field field, final Version protocol){
+	public Object getDefaultValue(final Field field, final Version protocol){
 		final AlternativeSubField fieldBinding = extractField(protocol);
 		if(fieldBinding != null){
 			final Class<? extends Enum<?>> enumeration = annotation.enumeration();
@@ -62,7 +65,7 @@ class AlternativeManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	public final void addProtocolVersionBoundaries(final Collection<String> protocolVersionBoundaries){
+	public void addProtocolVersionBoundaries(final Collection<String> protocolVersionBoundaries){
 		protocolVersionBoundaries.add(annotation.minProtocol());
 		protocolVersionBoundaries.add(annotation.maxProtocol());
 
@@ -75,7 +78,7 @@ class AlternativeManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	public final Annotation shouldBeExtracted(final Version protocol){
+	public Annotation shouldBeExtracted(final Version protocol){
 		Annotation match = null;
 		final AlternativeSubField[] alternativeFields = annotation.value();
 		for(int j = 0; match == null && j < alternativeFields.length; j ++){
@@ -89,13 +92,12 @@ class AlternativeManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	public final boolean isMandatory(final Annotation annotation){
+	public boolean isMandatory(final Annotation annotation){
 		return JavaHelper.isBlank(((AlternativeSubField)annotation).defaultValue());
 	}
 
 	@Override
-	public final Map<String, Object> extractConfigurationMap(final Class<?> fieldType, final Version protocol)
-			throws ConfigurationException{
+	public Map<String, Object> extractConfigurationMap(final Class<?> fieldType, final Version protocol) throws ConfigurationException{
 		if(!shouldBeExtracted(protocol, annotation.minProtocol(), annotation.maxProtocol()))
 			return null;
 
@@ -213,8 +215,8 @@ class AlternativeManager implements ConfigurationManagerInterface{
 	public void validateValue(final String dataKey, final Object dataValue, final Class<?> fieldType){}
 
 	@Override
-	public final void setValue(final Object configurationObject, final String dataKey, Object dataValue, final Field field,
-			final Version protocol) throws EncodeException{
+	public void setValue(final Object configurationObject, final String dataKey, Object dataValue, final Field field, final Version protocol)
+			throws EncodeException{
 		final AlternativeSubField fieldBinding = extractField(protocol);
 		if(fieldBinding != null){
 			validateValue(fieldBinding, dataKey, dataValue, field.getType());

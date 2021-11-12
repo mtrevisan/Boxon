@@ -24,7 +24,6 @@
  */
 package io.github.mtrevisan.boxon.internal;
 
-import io.github.mtrevisan.boxon.core.CodecInterface;
 import org.springframework.objenesis.instantiator.ObjectInstantiator;
 import org.springframework.objenesis.instantiator.android.Android10Instantiator;
 import org.springframework.objenesis.instantiator.android.Android17Instantiator;
@@ -119,7 +118,7 @@ public final class ReflectionHelper{
 		final Collection<Class<?>> classes = new HashSet<>(0);
 
 		final ReflectiveClassLoader reflectiveClassLoader = ReflectiveClassLoader.createFrom(basePackageClasses);
-		reflectiveClassLoader.scan(CodecInterface.class, type);
+		reflectiveClassLoader.scan(type);
 		final Collection<Class<?>> modules = ReflectiveClassLoader.getImplementationsOf(type);
 		@SuppressWarnings("unchecked")
 		final Collection<Class<?>> singletons = ReflectiveClassLoader.getTypesAnnotatedWith((Class<? extends Annotation>)type);

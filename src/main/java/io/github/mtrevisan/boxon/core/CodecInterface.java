@@ -31,7 +31,7 @@ import io.github.mtrevisan.boxon.external.BitWriter;
 import java.lang.annotation.Annotation;
 
 
-public interface CodecInterface<B extends Annotation>{
+interface CodecInterface<B extends Annotation>{
 
 	Object decode(final BitReader reader, final Annotation annotation, final Object rootObject) throws FieldException;
 

@@ -1,13 +1,17 @@
-package io.github.mtrevisan.boxon.annotations.configurations;
+package io.github.mtrevisan.boxon.core;
+
+import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationField;
+import io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField;
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
 
 import java.lang.annotation.Annotation;
 
 
-public final class ConfigurationManagerFactory{
+final class ConfigurationManagerFactory{
 
 	private ConfigurationManagerFactory(){}
 
-	public static ConfigurationManagerInterface buildManager(final Annotation annotation){
+	static ConfigurationManagerInterface buildManager(final Annotation annotation){
 		ConfigurationManagerInterface manager = null;
 		if(ConfigurationField.class.isInstance(annotation))
 			manager = new PlainManager((ConfigurationField)annotation);

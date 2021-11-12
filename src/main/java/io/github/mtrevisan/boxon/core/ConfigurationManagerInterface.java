@@ -1,4 +1,4 @@
-package io.github.mtrevisan.boxon.annotations.configurations;
+package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.Map;
 
 
-public interface ConfigurationManagerInterface{
+interface ConfigurationManagerInterface{
 
 	String getShortDescription();
 
