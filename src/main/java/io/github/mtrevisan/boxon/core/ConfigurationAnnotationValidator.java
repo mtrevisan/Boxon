@@ -199,42 +199,6 @@ enum ConfigurationAnnotationValidator{
 			}
 		}
 
-		private Object validateMinValue(final Class<?> fieldType, final String minValue, final String defaultValue, final Object def)
-				throws AnnotationException{
-			Object min = null;
-			if(!minValue.isEmpty()){
-				min = JavaHelper.getValue(fieldType, minValue);
-				//minValue compatible with variable type
-				if(min == null)
-					throw AnnotationException.create("Incompatible minimum value in {}; found {}, expected {}",
-						ConfigurationField.class.getSimpleName(), minValue.getClass().getSimpleName(), fieldType.toString());
-
-				if(def != null && ((Number)def).doubleValue() < ((Number)min).doubleValue())
-					//defaultValue compatible with minValue
-					throw AnnotationException.create("Default value incompatible with minimum value in {}; found {}, expected greater than or equals to {}",
-						ConfigurationField.class.getSimpleName(), defaultValue, minValue.getClass().getSimpleName());
-			}
-			return min;
-		}
-
-		private Object validateMaxValue(final Class<?> fieldType, final String maxValue, final String defaultValue, final Object def)
-				throws AnnotationException{
-			Object max = null;
-			if(!maxValue.isEmpty()){
-				max = JavaHelper.getValue(fieldType, maxValue);
-				//maxValue compatible with variable type
-				if(max == null)
-					throw AnnotationException.create("Incompatible maximum value in {}; found {}, expected {}",
-						ConfigurationField.class.getSimpleName(), maxValue.getClass().getSimpleName(), fieldType.toString());
-
-				if(JavaHelper.isNumeric(defaultValue) && def != null && ((Number)def).doubleValue() > ((Number)max).doubleValue())
-					//defaultValue compatible with maxValue
-					throw AnnotationException.create("Default value incompatible with maximum value in {}; found {}, expected less than or equals to {}",
-						ConfigurationField.class.getSimpleName(), defaultValue, maxValue.getClass().getSimpleName());
-			}
-			return max;
-		}
-
 		private void validateEnumeration(final Field field, final ConfigurationField binding) throws AnnotationException{
 			final Class<?> fieldType = field.getType();
 			final boolean isFieldArray = fieldType.isArray();
@@ -545,42 +509,6 @@ enum ConfigurationAnnotationValidator{
 						ConfigurationField.class.getSimpleName(), defaultValue, minValue.getClass().getSimpleName());
 			}
 		}
-
-		private Object validateMinValue(final Class<?> fieldType, final String minValue, final String defaultValue, final Object def)
-				throws AnnotationException{
-			Object min = null;
-			if(!minValue.isEmpty()){
-				min = JavaHelper.getValue(fieldType, minValue);
-				//minValue compatible with variable type
-				if(min == null)
-					throw AnnotationException.create("Incompatible minimum value in {}; found {}, expected {}",
-						ConfigurationField.class.getSimpleName(), minValue.getClass().getSimpleName(), fieldType.toString());
-
-				if(def != null && ((Number)def).doubleValue() < ((Number)min).doubleValue())
-					//defaultValue compatible with minValue
-					throw AnnotationException.create("Default value incompatible with minimum value in {}; found {}, expected greater than or equals to {}",
-						ConfigurationField.class.getSimpleName(), defaultValue, minValue.getClass().getSimpleName());
-			}
-			return min;
-		}
-
-		private Object validateMaxValue(final Class<?> fieldType, final String maxValue, final String defaultValue, final Object def)
-				throws AnnotationException{
-			Object max = null;
-			if(!maxValue.isEmpty()){
-				max = JavaHelper.getValue(fieldType, maxValue);
-				//maxValue compatible with variable type
-				if(max == null)
-					throw AnnotationException.create("Incompatible maximum value in {}; found {}, expected {}",
-						ConfigurationField.class.getSimpleName(), maxValue.getClass().getSimpleName(), fieldType.toString());
-
-				if(JavaHelper.isNumeric(defaultValue) && def != null && ((Number)def).doubleValue() > ((Number)max).doubleValue())
-					//defaultValue compatible with maxValue
-					throw AnnotationException.create("Default value incompatible with maximum value in {}; found {}, expected less than or equals to {}",
-						ConfigurationField.class.getSimpleName(), defaultValue, maxValue.getClass().getSimpleName());
-			}
-			return max;
-		}
 	};
 
 
@@ -645,6 +573,42 @@ enum ConfigurationAnnotationValidator{
 				throw AnnotationException.create("Maximum protocol version is greater than whole message maximum protocol version in {}; found {}",
 					binding.getSimpleName(), maxMessageProtocol);
 		}
+	}
+
+	private static Object validateMinValue(final Class<?> fieldType, final String minValue, final String defaultValue, final Object def)
+			throws AnnotationException{
+		Object min = null;
+		if(!minValue.isEmpty()){
+			min = JavaHelper.getValue(fieldType, minValue);
+			//minValue compatible with variable type
+			if(min == null)
+				throw AnnotationException.create("Incompatible minimum value in {}; found {}, expected {}",
+					ConfigurationField.class.getSimpleName(), minValue.getClass().getSimpleName(), fieldType.toString());
+
+			if(def != null && ((Number)def).doubleValue() < ((Number)min).doubleValue())
+				//defaultValue compatible with minValue
+				throw AnnotationException.create("Default value incompatible with minimum value in {}; found {}, expected greater than or equals to {}",
+					ConfigurationField.class.getSimpleName(), defaultValue, minValue.getClass().getSimpleName());
+		}
+		return min;
+	}
+
+	private static Object validateMaxValue(final Class<?> fieldType, final String maxValue, final String defaultValue, final Object def)
+			throws AnnotationException{
+		Object max = null;
+		if(!maxValue.isEmpty()){
+			max = JavaHelper.getValue(fieldType, maxValue);
+			//maxValue compatible with variable type
+			if(max == null)
+				throw AnnotationException.create("Incompatible maximum value in {}; found {}, expected {}",
+					ConfigurationField.class.getSimpleName(), maxValue.getClass().getSimpleName(), fieldType.toString());
+
+			if(JavaHelper.isNumeric(defaultValue) && def != null && ((Number)def).doubleValue() > ((Number)max).doubleValue())
+				//defaultValue compatible with maxValue
+				throw AnnotationException.create("Default value incompatible with maximum value in {}; found {}, expected less than or equals to {}",
+					ConfigurationField.class.getSimpleName(), defaultValue, maxValue.getClass().getSimpleName());
+		}
+		return max;
 	}
 
 }
