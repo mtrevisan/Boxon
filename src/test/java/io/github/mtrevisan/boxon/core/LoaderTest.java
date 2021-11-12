@@ -97,20 +97,6 @@ class LoaderTest{
 	}
 
 	@Test
-	void getProtocolVersionBoundaries() throws AnnotationException, ConfigurationException, JsonProcessingException{
-		EventListener eventListener = EventListener.getNoOpInstance();
-		LoaderConfiguration loaderConfiguration = new LoaderConfiguration(eventListener);
-		loaderConfiguration.loadConfigurations(LoaderTest.class);
-
-		List<String> protocolVersionBoundaries = loaderConfiguration.getProtocolVersionBoundaries();
-
-		ObjectMapper mapper = new ObjectMapper();
-		String jsonProtocolVersionBoundaries = mapper.writeValueAsString(protocolVersionBoundaries);
-
-		Assertions.assertEquals("[\"1.18\",\"1.19\",\"1.20\",\"1.21\",\"1.35\",\"1.36\",\"2.8\"]", jsonProtocolVersionBoundaries);
-	}
-
-	@Test
 	void getConfigurations() throws AnnotationException, ConfigurationException, JsonProcessingException{
 		EventListener eventListener = EventListener.getNoOpInstance();
 		LoaderConfiguration loaderConfiguration = new LoaderConfiguration(eventListener);
@@ -128,6 +114,20 @@ class LoaderTest{
 
 		Assertions.assertEquals("{\"longDescription\":\"The command AT+GTREG is used to do things.\",\"maxProtocol\":\"2.8\",\"shortDescription\":\"AT+GTREG\"}", jsonHeader);
 		Assertions.assertEquals("{\"Operation mode report interval\":{\"minValue\":3600,\"unitOfMeasure\":\"s\",\"maxValue\":86400,\"defaultValue\":3600,\"minProtocol\":\"1.21\",\"fieldType\":\"int\"},\"Maximum download retry count\":{\"alternatives\":[{\"maxProtocol\":\"1.20\",\"minValue\":0,\"fieldType\":\"int\",\"maxValue\":3,\"defaultValue\":0},{\"minValue\":0,\"fieldType\":\"int\",\"maxValue\":3,\"minProtocol\":\"1.21\",\"defaultValue\":1}]},\"Download timeout\":{\"alternatives\":[{\"maxProtocol\":\"1.18\",\"minValue\":5,\"unitOfMeasure\":\"min\",\"fieldType\":\"int\",\"maxValue\":30,\"defaultValue\":10},{\"minValue\":5,\"unitOfMeasure\":\"min\",\"fieldType\":\"int\",\"maxValue\":30,\"minProtocol\":\"1.19\",\"defaultValue\":20}]},\"Weekday\":{\"defaultValue\":[\"MONDAY\",\"TUESDAY\",\"WEDNESDAY\",\"THURSDAY\",\"FRIDAY\",\"SATURDAY\",\"SUNDAY\"],\"enumeration\":[\"MONDAY\",\"TUESDAY\",\"WEDNESDAY\",\"THURSDAY\",\"FRIDAY\",\"SATURDAY\",\"SUNDAY\"]},\"Update Over-The-Air\":{\"defaultValue\":\"FALSE\",\"mutuallyExclusive\":true,\"enumeration\":[\"TRUE\",\"FALSE\"]},\"Header\":{\"charset\":\"UTF-8\",\"defaultValue\":\"GTREG\",\"fieldType\":\"String\"},\"Download protocol\":{\"alternatives\":[{\"maxProtocol\":\"1.35\",\"enumeration\":[\"HTTP\",\"HTTPS\"],\"defaultValue\":\"HTTP\",\"mutuallyExclusive\":true},{\"enumeration\":[\"HTTP\",\"HTTPS\"],\"minProtocol\":\"1.36\",\"defaultValue\":\"HTTP\",\"mutuallyExclusive\":true}]},\"Download URL\":{\"pattern\":\".{0,100}\",\"charset\":\"UTF-8\",\"fields\":{\"URL\":{\"pattern\":\"https?://.{0,92}\",\"fieldType\":\"String\"},\"password\":{\"pattern\":\".{1,32}\",\"fieldType\":\"String\"},\"username\":{\"pattern\":\".{1,32}\",\"fieldType\":\"String\"}}},\"Update mode\":{\"minValue\":0,\"maxValue\":1,\"defaultValue\":1,\"fieldType\":\"int\"},\"Message counter\":{\"minValue\":0,\"maxValue\":65535,\"fieldType\":\"int\"},\"Operation mode\":{\"minValue\":0,\"maxValue\":3,\"defaultValue\":0,\"fieldType\":\"int\"},\"Motion report interval\":{\"maxProtocol\":\"1.20\",\"minValue\":90,\"unitOfMeasure\":\"s\",\"maxValue\":86400,\"defaultValue\":3600,\"minProtocol\":\"1.19\",\"fieldType\":\"int\"},\"Password\":{\"charset\":\"UTF-8\",\"defaultValue\":\"gb200s\",\"pattern\":\"[0-9a-zA-Z]{4,20}\",\"fieldType\":\"String\"},\"Motionless report interval\":{\"maxProtocol\":\"1.20\",\"minValue\":90,\"unitOfMeasure\":\"s\",\"maxValue\":86400,\"defaultValue\":3600,\"minProtocol\":\"1.19\",\"fieldType\":\"int\"}}", jsonFields);
+		Assertions.assertEquals("[\"1.18\",\"1.19\",\"1.20\",\"1.21\",\"1.35\",\"1.36\",\"2.8\"]", jsonProtocolVersionBoundaries);
+	}
+
+	@Test
+	void getProtocolVersionBoundaries() throws AnnotationException, ConfigurationException, JsonProcessingException{
+		EventListener eventListener = EventListener.getNoOpInstance();
+		LoaderConfiguration loaderConfiguration = new LoaderConfiguration(eventListener);
+		loaderConfiguration.loadConfigurations(LoaderTest.class);
+
+		List<String> protocolVersionBoundaries = loaderConfiguration.getProtocolVersionBoundaries();
+
+		ObjectMapper mapper = new ObjectMapper();
+		String jsonProtocolVersionBoundaries = mapper.writeValueAsString(protocolVersionBoundaries);
+
 		Assertions.assertEquals("[\"1.18\",\"1.19\",\"1.20\",\"1.21\",\"1.35\",\"1.36\",\"2.8\"]", jsonProtocolVersionBoundaries);
 	}
 
