@@ -2,6 +2,7 @@ package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
+import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.ParserDataType;
@@ -9,11 +10,40 @@ import io.github.mtrevisan.boxon.internal.ReflectionHelper;
 
 import java.lang.reflect.Field;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 
 final class ManagerHelper{
 
 	private ManagerHelper(){}
+
+
+	static void validateValue(final String dataKey, final Object dataValue, final Class<?> fieldType,
+			final String pattern, final String minValue, final String maxValue) throws EncodeException{
+		//check pattern
+		if(!pattern.isEmpty()){
+			final Pattern formatPattern = Pattern.compile(pattern);
+
+			//value compatible with data type and pattern
+			if(!String.class.isInstance(dataValue) || !formatPattern.matcher((CharSequence)dataValue).matches())
+				throw EncodeException.create("Data value not compatible with `pattern` for data key {}; found {}, expected {}",
+					dataKey, dataValue, pattern);
+		}
+		//check minValue
+		if(!minValue.isEmpty()){
+			final Object min = JavaHelper.getValue(fieldType, minValue);
+			if(Number.class.isInstance(dataValue) && ((Number)dataValue).doubleValue() < ((Number)min).doubleValue())
+				throw EncodeException.create("Data value incompatible with minimum value for data key {}; found {}, expected greater than or equals to {}",
+					dataKey, dataValue, minValue.getClass().getSimpleName());
+		}
+		//check maxValue
+		if(!maxValue.isEmpty()){
+			final Object max = JavaHelper.getValue(fieldType, maxValue);
+			if(Number.class.isInstance(dataValue) && ((Number)dataValue).doubleValue() > ((Number)max).doubleValue())
+				throw EncodeException.create("Data value incompatible with maximum value for data key {}; found {}, expected greater than or equals to {}",
+					dataKey, dataValue, maxValue.getClass().getSimpleName());
+		}
+	}
 
 	static void putIfNotEmpty(@SuppressWarnings("BoundedWildcard") final Map<String, Object> map, final String key, final Object value)
 			throws ConfigurationException{

@@ -17,7 +17,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 
 final class AlternativeManager implements ConfigurationManagerInterface{
@@ -293,32 +292,11 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 	@SuppressWarnings("ConstantConditions")
 	private static void validateValue(final AlternativeSubField binding, final String dataKey, final Object dataValue,
 			final Class<?> fieldType) throws EncodeException{
-		//check pattern
 		final String pattern = binding.pattern();
-		if(!pattern.isEmpty()){
-			final Pattern formatPattern = Pattern.compile(pattern);
-
-			//value compatible with data type and pattern
-			if(!String.class.isInstance(dataValue) || !formatPattern.matcher((CharSequence)dataValue).matches())
-				throw EncodeException.create("Data value not compatible with `pattern` for data key {}; found {}, expected {}",
-					dataKey, dataValue, pattern);
-		}
-		//check minValue
 		final String minValue = binding.minValue();
-		if(!minValue.isEmpty()){
-			final Object min = JavaHelper.getValue(fieldType, minValue);
-			if(Number.class.isInstance(dataValue) && ((Number)dataValue).doubleValue() < ((Number)min).doubleValue())
-				throw EncodeException.create("Data value incompatible with minimum value for data key {}; found {}, expected greater than or equals to {}",
-					dataKey, dataValue, minValue.getClass().getSimpleName());
-		}
-		//check maxValue
 		final String maxValue = binding.maxValue();
-		if(!maxValue.isEmpty()){
-			final Object max = JavaHelper.getValue(fieldType, maxValue);
-			if(Number.class.isInstance(dataValue) && ((Number)dataValue).doubleValue() > ((Number)max).doubleValue())
-				throw EncodeException.create("Data value incompatible with maximum value for data key {}; found {}, expected greater than or equals to {}",
-					dataKey, dataValue, maxValue.getClass().getSimpleName());
-		}
+		ManagerHelper.validateValue(dataKey, dataValue, fieldType,
+			pattern, minValue, maxValue);
 	}
 
 }
