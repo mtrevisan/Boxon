@@ -149,6 +149,15 @@ public final class ReflectionHelper{
 		if(actualArgs.length == 0)
 			actualArgs = offspring.getTypeParameters();
 
+		final List<Class<?>> types = processAncestors(offspring, base, actualArgs);
+
+		if(types.isEmpty() && offspring.equals(base))
+			types.addAll(processBase(actualArgs));
+
+		return types;
+	}
+
+	private static <T> List<Class<?>> processAncestors(final Class<? extends T> offspring, final Class<T> base, final Type[] actualArgs){
 		//map type parameters into the actual types
 		final Map<String, Type> typeVariables = mapParameterTypes(offspring, actualArgs);
 
@@ -166,15 +175,17 @@ public final class ReflectionHelper{
 				//ancestor is non-parameterized: process only if it matches the base class
 				ancestorsQueue.add(ancestorType);
 		}
+		return types;
+	}
 
-		if(types.isEmpty() && offspring.equals(base))
-			//there is a result if the base class is reached
-			for(int i = 0; i < actualArgs.length; i ++){
-				final Class<?> cls = toClass(actualArgs[i].getTypeName());
-				if(cls != null)
-					types.add(cls);
-			}
-
+	private static <T> List<Class<?>> processBase(final Type[] actualArgs){
+		//there is a result if the base class is reached
+		final List<Class<?>> types = new ArrayList<>(0);
+		for(int i = 0; i < actualArgs.length; i ++){
+			final Class<?> cls = toClass(actualArgs[i].getTypeName());
+			if(cls != null)
+				types.add(cls);
+		}
 		return types;
 	}
 
