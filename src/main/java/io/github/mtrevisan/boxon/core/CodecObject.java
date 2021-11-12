@@ -47,10 +47,10 @@ final class CodecObject implements CodecInterface<BindObject>{
 
 	/** Automatically injected by {@link TemplateParser} */
 	@SuppressWarnings("unused")
-	private LoaderTemplate loaderTemplate;
+	private LoaderTemplateInterface loaderTemplate;
 	/** Automatically injected by {@link TemplateParser} */
 	@SuppressWarnings("unused")
-	private TemplateParser templateParser;
+	private TemplateParserInterface templateParser;
 
 
 	@Override

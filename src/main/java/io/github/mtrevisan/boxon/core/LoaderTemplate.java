@@ -49,7 +49,7 @@ import java.util.TreeMap;
 import java.util.function.Function;
 
 
-final class LoaderTemplate{
+final class LoaderTemplate implements LoaderTemplateInterface{
 
 	private static final PatternMatcher PATTERN_MATCHER = BNDMPatternMatcher.getInstance();
 	private static final Function<byte[], int[]> PRE_PROCESSED_PATTERNS = Memoizer.memoize(PATTERN_MATCHER::preProcessPattern);
@@ -65,10 +65,10 @@ final class LoaderTemplate{
 	private final Map<String, Template<?>> templates = new TreeMap<>(Comparator.comparingInt(String::length).reversed()
 		.thenComparing(String::compareTo));
 
-	private final LoaderCodec loaderCodec;
+	private final LoaderCodecInterface loaderCodec;
 
 
-	LoaderTemplate(final LoaderCodec loaderCodec, final EventListener eventListener){
+	LoaderTemplate(final LoaderCodecInterface loaderCodec, final EventListener eventListener){
 		this.eventListener = eventListener;
 		this.loaderCodec = loaderCodec;
 
@@ -129,8 +129,9 @@ final class LoaderTemplate{
 	 * @param type	The class of the object to be returned as a {@link Template}.
 	 * @return	The {@link Template} for the given type.
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
-	<T> Template<T> createTemplate(final Class<T> type) throws AnnotationException{
+	public <T> Template<T> createTemplate(final Class<T> type) throws AnnotationException{
 		return (Template<T>)templateStore.apply(type);
 	}
 

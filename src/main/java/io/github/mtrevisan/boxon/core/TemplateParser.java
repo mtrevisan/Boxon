@@ -47,7 +47,7 @@ import java.util.List;
 import java.util.Locale;
 
 
-final class TemplateParser{
+final class TemplateParser implements TemplateParserInterface{
 
 	@InjectEventListener
 	@SuppressWarnings("unused")
@@ -70,8 +70,8 @@ final class TemplateParser{
 	}
 
 
-	private final LoaderCodec loaderCodec;
-	private final LoaderTemplate loaderTemplate;
+	private final LoaderCodecInterface loaderCodec;
+	private final LoaderTemplateInterface loaderTemplate;
 
 
 	/**
@@ -81,7 +81,7 @@ final class TemplateParser{
 	 * @param loaderTemplate	A template loader.
 	 * @return	A template parser.
 	 */
-	public static TemplateParser create(final LoaderCodec loaderCodec, final LoaderTemplate loaderTemplate){
+	public static TemplateParserInterface create(final LoaderCodecInterface loaderCodec, final LoaderTemplate loaderTemplate){
 		return new TemplateParser(loaderCodec, loaderTemplate, EventListener.getNoOpInstance());
 	}
 
@@ -93,20 +93,21 @@ final class TemplateParser{
 	 * @param eventListener	The event listener.
 	 * @return	A template parser.
 	 */
-	public static TemplateParser create(final LoaderCodec loaderCodec, final LoaderTemplate loaderTemplate,
+	public static TemplateParserInterface create(final LoaderCodecInterface loaderCodec, final LoaderTemplate loaderTemplate,
 			final EventListener eventListener){
 		return new TemplateParser(loaderCodec, loaderTemplate, (eventListener != null? eventListener: EventListener.getNoOpInstance()));
 	}
 
 
-	TemplateParser(final LoaderCodec loaderCodec, final LoaderTemplate loaderTemplate, final EventListener eventListener){
+	TemplateParser(final LoaderCodecInterface loaderCodec, final LoaderTemplateInterface loaderTemplate, final EventListener eventListener){
 		this.loaderCodec = loaderCodec;
 		this.loaderTemplate = loaderTemplate;
 		this.eventListener = eventListener;
 	}
 
+	@Override
 	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
-	<T> T decode(final Template<T> template, final BitReader reader, final Object parentObject) throws FieldException{
+	public <T> T decode(final Template<T> template, final BitReader reader, final Object parentObject) throws FieldException{
 		final int startPosition = reader.position();
 
 		final T currentObject = ReflectionHelper.getCreator(template.getType())
@@ -238,8 +239,9 @@ final class TemplateParser{
 		}
 	}
 
+	@Override
 	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
-	<T> void encode(final Template<?> template, final BitWriter writer, final Object parentObject, final T currentObject)
+	public <T> void encode(final Template<?> template, final BitWriter writer, final Object parentObject, final T currentObject)
 			throws FieldException{
 		final ParserContext<T> parserContext = new ParserContext<>(parentObject, currentObject);
 		//add current object in the context
@@ -315,11 +317,11 @@ final class TemplateParser{
 
 	private void setTemplateParser(final CodecInterface<?> codec){
 		try{
-			ReflectionHelper.setFieldValue(codec, LoaderTemplate.class, loaderTemplate);
+			ReflectionHelper.setFieldValue(codec, LoaderTemplateInterface.class, loaderTemplate);
 		}
 		catch(final Exception ignored){}
 		try{
-			ReflectionHelper.setFieldValue(codec, TemplateParser.class, this);
+			ReflectionHelper.setFieldValue(codec, TemplateParserInterface.class, this);
 		}
 		catch(final Exception ignored){}
 	}

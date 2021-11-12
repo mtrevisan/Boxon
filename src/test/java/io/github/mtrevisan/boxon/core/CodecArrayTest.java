@@ -247,10 +247,10 @@ class CodecArrayTest{
 		EventListener eventListener = EventListener.getNoOpInstance();
 		LoaderCodec loaderCodec = new LoaderCodec(eventListener);
 		LoaderTemplate loaderTemplate = new LoaderTemplate(loaderCodec, eventListener);
-		TemplateParser templateParser = TemplateParser.create(loaderCodec, loaderTemplate);
+		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, loaderTemplate);
 		loaderCodec.loadDefaultCodecs();
-		ReflectionHelper.setFieldValue(codec, LoaderTemplate.class, loaderTemplate);
-		ReflectionHelper.setFieldValue(codec, TemplateParser.class, templateParser);
+		ReflectionHelper.setFieldValue(codec, LoaderTemplateInterface.class, loaderTemplate);
+		ReflectionHelper.setFieldValue(codec, TemplateParserInterface.class, templateParser);
 		BitWriter writer = BitWriter.create();
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();

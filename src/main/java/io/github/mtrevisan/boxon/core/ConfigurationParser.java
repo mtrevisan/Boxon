@@ -47,9 +47,9 @@ final class ConfigurationParser{
 	@SuppressWarnings("unused")
 	private final EventListener eventListener;
 
-	private final LoaderCodec loaderCodec;
-	private final LoaderTemplate loaderTemplate;
-	private final TemplateParser templateParser;
+	private final LoaderCodecInterface loaderCodec;
+	private final LoaderTemplateInterface loaderTemplate;
+	private final TemplateParserInterface templateParser;
 
 
 	/**
@@ -60,8 +60,8 @@ final class ConfigurationParser{
 	 * @param templateParser	A template parser.
 	 * @return	A configuration parser.
 	 */
-	public static ConfigurationParser create(final LoaderCodec loaderCodec, final LoaderTemplate loaderTemplate,
-			final TemplateParser templateParser){
+	public static ConfigurationParser create(final LoaderCodecInterface loaderCodec, final LoaderTemplateInterface loaderTemplate,
+			final TemplateParserInterface templateParser){
 		return new ConfigurationParser(loaderCodec, loaderTemplate, templateParser, EventListener.getNoOpInstance());
 	}
 
@@ -74,15 +74,15 @@ final class ConfigurationParser{
 	 * @param eventListener	The event listener.
 	 * @return	A configuration parser.
 	 */
-	public static ConfigurationParser create(final LoaderCodec loaderCodec, final LoaderTemplate loaderTemplate,
-			final TemplateParser templateParser, final EventListener eventListener){
+	public static ConfigurationParser create(final LoaderCodecInterface loaderCodec, final LoaderTemplateInterface loaderTemplate,
+			final TemplateParserInterface templateParser, final EventListener eventListener){
 		return new ConfigurationParser(loaderCodec, loaderTemplate, templateParser,
 			(eventListener != null? eventListener: EventListener.getNoOpInstance()));
 	}
 
 
-	ConfigurationParser(final LoaderCodec loaderCodec, final LoaderTemplate loaderTemplate, final TemplateParser templateParser,
-			final EventListener eventListener){
+	ConfigurationParser(final LoaderCodecInterface loaderCodec, final LoaderTemplateInterface loaderTemplate,
+			final TemplateParserInterface templateParser, final EventListener eventListener){
 		this.loaderCodec = loaderCodec;
 		this.loaderTemplate = loaderTemplate;
 		this.templateParser = templateParser;
@@ -171,11 +171,11 @@ final class ConfigurationParser{
 
 	private void setTemplateParser(final CodecInterface<?> codec){
 		try{
-			ReflectionHelper.setFieldValue(codec, LoaderTemplate.class, loaderTemplate);
+			ReflectionHelper.setFieldValue(codec, LoaderTemplateInterface.class, loaderTemplate);
 		}
 		catch(final Exception ignored){}
 		try{
-			ReflectionHelper.setFieldValue(codec, TemplateParser.class, templateParser);
+			ReflectionHelper.setFieldValue(codec, TemplateParserInterface.class, templateParser);
 		}
 		catch(final Exception ignored){}
 	}

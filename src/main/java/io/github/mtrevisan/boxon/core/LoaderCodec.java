@@ -38,7 +38,7 @@ import java.util.Map;
 import java.util.Objects;
 
 
-final class LoaderCodec{
+final class LoaderCodec implements LoaderCodecInterface{
 
 	/**
 	 * NOTE: all the methods listed below HAS TO HAVE this very same charset!
@@ -151,11 +151,13 @@ final class LoaderCodec{
 		codecs.put(codecType, codec);
 	}
 
-	boolean hasCodec(final Class<?> type){
+	@Override
+	public boolean hasCodec(final Class<?> type){
 		return codecs.containsKey(type);
 	}
 
-	CodecInterface<?> getCodec(final Class<?> type){
+	@Override
+	public CodecInterface<?> getCodec(final Class<?> type){
 		return codecs.get(type);
 	}
 

@@ -287,8 +287,10 @@ public final class ReflectionHelper{
 	public static <T> void setFieldValue(final Object obj, final Class<T> fieldType, final T value){
 		try{
 			final List<Field> fields = getAccessibleFields(obj.getClass(), fieldType);
-			for(int i = 0; i < fields.size(); i ++)
-				fields.get(i).set(obj, value);
+			for(int i = 0; i < fields.size(); i ++){
+				final Field field = fields.get(i);
+				field.set(obj, value);
+			}
 		}
 		catch(final IllegalArgumentException | IllegalAccessException ignored){}
 	}
