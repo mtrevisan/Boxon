@@ -8,7 +8,6 @@ import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.ParserDataType;
-import io.github.mtrevisan.boxon.internal.ReflectionHelper;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
@@ -141,11 +140,12 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 		final AlternativeSubField[] alternativeFields = annotation.value();
 		for(int j = 0; match == null && j < alternativeFields.length; j ++){
 			final AlternativeSubField fieldBinding = alternativeFields[j];
-			if(shouldBeExtracted(protocol, fieldBinding.minProtocol(), fieldBinding.maxProtocol()))
+			if(ManagerHelper.shouldBeExtracted(protocol, fieldBinding.minProtocol(), fieldBinding.maxProtocol()))
 				match = fieldBinding;
 		}
 
-		final boolean shouldBeExtracted = (match != null && shouldBeExtracted(protocol, annotation.minProtocol(), annotation.maxProtocol()));
+		final boolean shouldBeExtracted = (match != null
+			&& ManagerHelper.shouldBeExtracted(protocol, annotation.minProtocol(), annotation.maxProtocol()));
 		return (shouldBeExtracted? match: PlainManager.EMPTY_ANNOTATION);
 	}
 
@@ -160,7 +160,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 
 	@Override
 	public Map<String, Object> extractConfigurationMap(final Class<?> fieldType, final Version protocol) throws ConfigurationException{
-		if(!shouldBeExtracted(protocol, annotation.minProtocol(), annotation.maxProtocol()))
+		if(!ManagerHelper.shouldBeExtracted(protocol, annotation.minProtocol(), annotation.maxProtocol()))
 			return Collections.emptyMap();
 
 		final Map<String, Object> alternativeMap = extractMap(fieldType);
@@ -268,7 +268,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 		final AlternativeSubField[] alternativeFields = annotation.value();
 		for(int i = 0; i < alternativeFields.length; i ++){
 			final AlternativeSubField fieldBinding = alternativeFields[i];
-			if(shouldBeExtracted(protocol, fieldBinding.minProtocol(), fieldBinding.maxProtocol()))
+			if(ManagerHelper.shouldBeExtracted(protocol, fieldBinding.minProtocol(), fieldBinding.maxProtocol()))
 				return fieldBinding;
 		}
 		return EMPTY_ALTERNATIVE;
@@ -286,7 +286,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 
 			if(String.class.isInstance(dataValue))
 				dataValue = JavaHelper.getValue(field.getType(), (String)dataValue);
-			setValue(field, configurationObject, dataValue);
+			ManagerHelper.setValue(field, configurationObject, dataValue);
 		}
 	}
 
@@ -319,21 +319,6 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 				throw EncodeException.create("Data value incompatible with maximum value for data key {}; found {}, expected greater than or equals to {}",
 					dataKey, dataValue, maxValue.getClass().getSimpleName());
 		}
-	}
-
-	private static void setValue(final Field field, final Object configurationObject, final Object dataValue){
-		ReflectionHelper.setFieldValue(field, configurationObject, dataValue);
-	}
-
-	private static boolean shouldBeExtracted(final Version protocol, final String minProtocol, final String maxProtocol){
-		if(protocol.isEmpty())
-			return true;
-
-		final Version min = Version.of(minProtocol);
-		final Version max = Version.of(maxProtocol);
-		final boolean validMinimum = (min.isEmpty() || protocol.isGreaterThanOrEqualTo(min));
-		final boolean validMaximum = (max.isEmpty() || protocol.isLessThanOrEqualTo(max));
-		return (validMinimum && validMaximum);
 	}
 
 }

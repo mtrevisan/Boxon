@@ -227,7 +227,7 @@ final class LoaderConfiguration{
 		final List<Map<String, Object>> response = new ArrayList<>(configurationValues.size());
 		for(final Configuration<?> configuration : configurationValues){
 			final ConfigurationHeader header = configuration.getHeader();
-			if(!shouldBeExtracted(currentProtocol, header.minProtocol(), header.maxProtocol()))
+			if(!ManagerHelper.shouldBeExtracted(currentProtocol, header.minProtocol(), header.maxProtocol()))
 				continue;
 
 			final Map<String, Object> headerMap = extractMap(currentProtocol, header);
@@ -258,7 +258,7 @@ final class LoaderConfiguration{
 		final List<Map<String, Object>> response = new ArrayList<>(configurationValues.size());
 		for(final Configuration<?> configuration : configurationValues){
 			final ConfigurationHeader header = configuration.getHeader();
-			if(!shouldBeExtracted(currentProtocol, header.minProtocol(), header.maxProtocol()))
+			if(!ManagerHelper.shouldBeExtracted(currentProtocol, header.minProtocol(), header.maxProtocol()))
 				continue;
 
 			final Map<String, Object> headerMap = extractMap(currentProtocol, header);
@@ -273,11 +273,11 @@ final class LoaderConfiguration{
 
 	private static Map<String, Object> extractMap(final Version protocol, final ConfigurationHeader header) throws ConfigurationException{
 		final Map<String, Object> map = new HashMap<>(3);
-		putIfNotEmpty(map, KEY_SHORT_DESCRIPTION, header.shortDescription());
-		putIfNotEmpty(map, KEY_LONG_DESCRIPTION, header.longDescription());
+		ManagerHelper.putIfNotEmpty(map, KEY_SHORT_DESCRIPTION, header.shortDescription());
+		ManagerHelper.putIfNotEmpty(map, KEY_LONG_DESCRIPTION, header.longDescription());
 		if(protocol.isEmpty()){
-			putIfNotEmpty(map, KEY_MIN_PROTOCOL, header.minProtocol());
-			putIfNotEmpty(map, KEY_MAX_PROTOCOL, header.maxProtocol());
+			ManagerHelper.putIfNotEmpty(map, KEY_MIN_PROTOCOL, header.minProtocol());
+			ManagerHelper.putIfNotEmpty(map, KEY_MAX_PROTOCOL, header.maxProtocol());
 		}
 		return map;
 	}
@@ -393,24 +393,6 @@ final class LoaderConfiguration{
 			}
 		}
 		return fieldsMap;
-	}
-
-	private static void putIfNotEmpty(@SuppressWarnings("BoundedWildcard") final Map<String, Object> map, final String key, final Object value)
-			throws ConfigurationException{
-		if(value != null && (!String.class.isInstance(value) || !JavaHelper.isBlank((CharSequence)value)))
-			if(map.put(key, value) != null)
-				throw ConfigurationException.create("Duplicated short description: {}", key);
-	}
-
-	private static boolean shouldBeExtracted(final Version protocol, final String minProtocol, final String maxProtocol){
-		if(protocol.isEmpty())
-			return true;
-
-		final Version min = Version.of(minProtocol);
-		final Version max = Version.of(maxProtocol);
-		final boolean validMinimum = (min.isEmpty() || protocol.isGreaterThanOrEqualTo(min));
-		final boolean validMaximum = (max.isEmpty() || protocol.isLessThanOrEqualTo(max));
-		return (validMinimum && validMaximum);
 	}
 
 	private static void validateMandatoryFields(final Collection<ConfigField> mandatoryFields) throws EncodeException{

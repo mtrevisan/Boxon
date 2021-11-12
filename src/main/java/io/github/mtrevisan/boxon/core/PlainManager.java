@@ -7,7 +7,6 @@ import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.ParserDataType;
-import io.github.mtrevisan.boxon.internal.ReflectionHelper;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
@@ -69,7 +68,7 @@ final class PlainManager implements ConfigurationManagerInterface{
 
 	@Override
 	public Annotation shouldBeExtracted(final Version protocol){
-		final boolean shouldBeExtracted = shouldBeExtracted(protocol, annotation.minProtocol(), annotation.maxProtocol());
+		final boolean shouldBeExtracted = ManagerHelper.shouldBeExtracted(protocol, annotation.minProtocol(), annotation.maxProtocol());
 		return (shouldBeExtracted? annotation: EMPTY_ANNOTATION);
 	}
 
@@ -80,14 +79,14 @@ final class PlainManager implements ConfigurationManagerInterface{
 
 	@Override
 	public Map<String, Object> extractConfigurationMap(final Class<?> fieldType, final Version protocol) throws ConfigurationException{
-		if(!shouldBeExtracted(protocol, annotation.minProtocol(), annotation.maxProtocol()))
+		if(!ManagerHelper.shouldBeExtracted(protocol, annotation.minProtocol(), annotation.maxProtocol()))
 			return Collections.emptyMap();
 
 		final Map<String, Object> fieldMap = extractMap(fieldType);
 
 		if(protocol.isEmpty()){
-			putIfNotEmpty(fieldMap, LoaderConfiguration.KEY_MIN_PROTOCOL, annotation.minProtocol());
-			putIfNotEmpty(fieldMap, LoaderConfiguration.KEY_MAX_PROTOCOL, annotation.maxProtocol());
+			ManagerHelper.putIfNotEmpty(fieldMap, LoaderConfiguration.KEY_MIN_PROTOCOL, annotation.minProtocol());
+			ManagerHelper.putIfNotEmpty(fieldMap, LoaderConfiguration.KEY_MAX_PROTOCOL, annotation.maxProtocol());
 		}
 		return fieldMap;
 	}
@@ -95,49 +94,31 @@ final class PlainManager implements ConfigurationManagerInterface{
 	private Map<String, Object> extractMap(final Class<?> fieldType) throws ConfigurationException{
 		final Map<String, Object> map = new HashMap<>(10);
 
-		putIfNotEmpty(map, LoaderConfiguration.KEY_LONG_DESCRIPTION, annotation.longDescription());
-		putIfNotEmpty(map, LoaderConfiguration.KEY_UNIT_OF_MEASURE, annotation.unitOfMeasure());
+		ManagerHelper.putIfNotEmpty(map, LoaderConfiguration.KEY_LONG_DESCRIPTION, annotation.longDescription());
+		ManagerHelper.putIfNotEmpty(map, LoaderConfiguration.KEY_UNIT_OF_MEASURE, annotation.unitOfMeasure());
 
 		if(!fieldType.isEnum() && !fieldType.isArray())
-			putIfNotEmpty(map, LoaderConfiguration.KEY_FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName());
-		putIfNotEmpty(map, LoaderConfiguration.KEY_MIN_VALUE, JavaHelper.getValue(fieldType, annotation.minValue()));
-		putIfNotEmpty(map, LoaderConfiguration.KEY_MAX_VALUE, JavaHelper.getValue(fieldType, annotation.maxValue()));
-		putIfNotEmpty(map, LoaderConfiguration.KEY_PATTERN, annotation.pattern());
+			ManagerHelper.putIfNotEmpty(map, LoaderConfiguration.KEY_FIELD_TYPE,
+				ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName());
+		ManagerHelper.putIfNotEmpty(map, LoaderConfiguration.KEY_MIN_VALUE, JavaHelper.getValue(fieldType, annotation.minValue()));
+		ManagerHelper.putIfNotEmpty(map, LoaderConfiguration.KEY_MAX_VALUE, JavaHelper.getValue(fieldType, annotation.maxValue()));
+		ManagerHelper.putIfNotEmpty(map, LoaderConfiguration.KEY_PATTERN, annotation.pattern());
 		if(annotation.enumeration() != NullEnum.class){
 			final Enum<?>[] enumConstants = annotation.enumeration().getEnumConstants();
 			final String[] enumValues = new String[enumConstants.length];
 			for(int j = 0; j < enumConstants.length; j ++)
 				enumValues[j] = enumConstants[j].name();
-			putIfNotEmpty(map, LoaderConfiguration.KEY_ENUMERATION, enumValues);
+			ManagerHelper.putIfNotEmpty(map, LoaderConfiguration.KEY_ENUMERATION, enumValues);
 			if(fieldType.isEnum())
-				putIfNotEmpty(map, LoaderConfiguration.KEY_MUTUALLY_EXCLUSIVE, true);
+				ManagerHelper.putIfNotEmpty(map, LoaderConfiguration.KEY_MUTUALLY_EXCLUSIVE, true);
 		}
 
-		putValueIfNotEmpty(map, LoaderConfiguration.KEY_DEFAULT_VALUE, fieldType, annotation.enumeration(), annotation.defaultValue());
+		ManagerHelper.putValueIfNotEmpty(map, LoaderConfiguration.KEY_DEFAULT_VALUE, fieldType, annotation.enumeration(),
+			annotation.defaultValue());
 		if(String.class.isAssignableFrom(fieldType))
-			putIfNotEmpty(map, LoaderConfiguration.KEY_CHARSET, annotation.charset());
+			ManagerHelper.putIfNotEmpty(map, LoaderConfiguration.KEY_CHARSET, annotation.charset());
 
 		return map;
-	}
-
-	private static void putIfNotEmpty(@SuppressWarnings("BoundedWildcard") final Map<String, Object> map, final String key,
-			final Object value) throws ConfigurationException{
-		if(value != null && (!String.class.isInstance(value) || !JavaHelper.isBlank((CharSequence)value)))
-			if(map.put(key, value) != null)
-				throw ConfigurationException.create("Duplicated short description: {}", key);
-	}
-
-	private static void putValueIfNotEmpty(@SuppressWarnings("BoundedWildcard") final Map<String, Object> map, final String key, final Class<?> fieldType,
-			final Class<? extends Enum<?>> enumeration, final String value) throws ConfigurationException{
-		if(!JavaHelper.isBlank(value)){
-			Object val = value;
-			if(enumeration != NullEnum.class && fieldType.isArray())
-				val = JavaHelper.split(value, '|', -1);
-			else if(Number.class.isAssignableFrom(ParserDataType.toObjectiveTypeOrSelf(fieldType)))
-				val = JavaHelper.getValue(fieldType, value);
-			if(map.put(key, val) != null)
-				throw ConfigurationException.create("Duplicated short description: {}", key);
-		}
 	}
 
 	@Override
@@ -210,29 +191,14 @@ final class PlainManager implements ConfigurationManagerInterface{
 				throw EncodeException.create("Data value incompatible with field type {}; found {}, expected {} for enumeration type",
 					dataKey, dataValueClass, enumeration.getSimpleName());
 
-			setValue(field, configurationObject, dataValue);
+			ManagerHelper.setValue(field, configurationObject, dataValue);
 		}
 		else if(String.class.isInstance(dataValue)){
 			final Object val = JavaHelper.getValue(fieldType, (String)dataValue);
-			setValue(field, configurationObject, val);
+			ManagerHelper.setValue(field, configurationObject, val);
 		}
 		else
-			setValue(field, configurationObject, dataValue);
-	}
-
-	private static void setValue(final Field field, final Object configurationObject, final Object dataValue){
-		ReflectionHelper.setFieldValue(field, configurationObject, dataValue);
-	}
-
-	private static boolean shouldBeExtracted(final Version protocol, final String minProtocol, final String maxProtocol){
-		if(protocol.isEmpty())
-			return true;
-
-		final Version min = Version.of(minProtocol);
-		final Version max = Version.of(maxProtocol);
-		final boolean validMinimum = (min.isEmpty() || protocol.isGreaterThanOrEqualTo(min));
-		final boolean validMaximum = (max.isEmpty() || protocol.isLessThanOrEqualTo(max));
-		return (validMinimum && validMaximum);
+			ManagerHelper.setValue(field, configurationObject, dataValue);
 	}
 
 }
