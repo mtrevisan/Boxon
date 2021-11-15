@@ -57,7 +57,7 @@ public final class Parser{
 	private final LoaderTemplate loaderTemplate;
 	private final LoaderConfiguration loaderConfiguration;
 
-	private final TemplateParser templateParser;
+	private final TemplateParserInterface templateParser;
 	private final ConfigurationParser configurationParser;
 
 
@@ -84,11 +84,11 @@ public final class Parser{
 
 
 	private Parser(final EventListener eventListener){
-		loaderCodec = new LoaderCodec(eventListener);
-		loaderTemplate = new LoaderTemplate(loaderCodec, eventListener);
-		loaderConfiguration = new LoaderConfiguration(eventListener);
-		templateParser = new TemplateParser(loaderCodec, loaderTemplate, eventListener);
-		configurationParser = new ConfigurationParser(loaderCodec, loaderTemplate, templateParser, eventListener);
+		loaderCodec = LoaderCodec.create(eventListener);
+		loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
+		loaderConfiguration = LoaderConfiguration.create(eventListener);
+		templateParser = TemplateParser.create(loaderCodec, loaderTemplate, eventListener);
+		configurationParser = ConfigurationParser.create(loaderCodec, loaderTemplate, templateParser, eventListener);
 	}
 
 	/**
@@ -226,6 +226,15 @@ public final class Parser{
 	public Parser withConfigurations(final Class<?>... basePackageClasses) throws AnnotationException, ConfigurationException{
 		loaderConfiguration.loadConfigurations(basePackageClasses);
 		return this;
+	}
+
+	/**
+	 * Retrieve all the configuration regardless the protocol version.
+	 *
+	 * @return	The configuration messages regardless the protocol version.
+	 */
+	public List<Map<String, Object>> getConfigurations() throws ConfigurationException{
+		return loaderConfiguration.getConfigurations();
 	}
 
 	/**
@@ -419,8 +428,8 @@ public final class Parser{
 	private void composeConfiguration(final BitWriter writer, final String configurationType, final Map<String, Object> data,
 			final Version protocol, final ComposeResponse response){
 		try{
-			final LoaderConfiguration.ConfigurationPair configurationPair = loaderConfiguration.getConfigurationWithDefaults(configurationType, data,
-				protocol);
+			final LoaderConfiguration.ConfigurationPair configurationPair
+				= loaderConfiguration.getConfigurationWithDefaults(configurationType, data, protocol);
 
 			final Configuration<?> configuration = configurationPair.getConfiguration();
 			final Object configurationData = configurationPair.getConfigurationData();

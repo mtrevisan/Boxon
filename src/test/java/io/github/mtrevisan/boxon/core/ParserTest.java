@@ -24,7 +24,9 @@
  */
 package io.github.mtrevisan.boxon.core;
 
+import io.github.mtrevisan.boxon.core.queclink.ACKMessageHex;
 import io.github.mtrevisan.boxon.core.queclink.DeviceTypes;
+import io.github.mtrevisan.boxon.core.queclink.REGConfigurationASCII;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
@@ -50,7 +52,7 @@ class ParserTest{
 		Parser parser = Parser.create()
 			.withContext(context)
 			.withDefaultCodecs()
-			.withDefaultTemplates()
+			.withTemplates(ACKMessageHex.class)
 			.withDefaultConfigurations()
 			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"));
 
@@ -73,7 +75,7 @@ class ParserTest{
 		Parser parser = Parser.create()
 			.addToContext("deviceTypes", deviceTypes)
 			.withDefaultCodecs()
-			.withDefaultTemplates()
+			.withTemplates(ACKMessageHex.class)
 			.withContextFunction(ParserTest.class, "headerSize");
 
 		//parse:
@@ -102,7 +104,7 @@ class ParserTest{
 		Parser parser = Parser.create()
 			.withContext(context)
 			.withDefaultCodecs()
-			.withDefaultTemplates()
+			.withTemplates(ACKMessageHex.class)
 			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"));
 
 		byte[] payload = JavaHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
@@ -120,7 +122,7 @@ class ParserTest{
 		Parser parser = Parser.create()
 			.withContext(context)
 			.withDefaultCodecs()
-			.withDefaultTemplates();
+			.withTemplates(ACKMessageHex.class);
 
 		//parse:
 		byte[] payload = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
@@ -144,7 +146,7 @@ class ParserTest{
 		Parser parser = Parser.create()
 			.withContext(context)
 			.withDefaultCodecs()
-			.withDefaultTemplates();
+			.withTemplates(ACKMessageHex.class);
 
 		byte[] payload = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
 		ParseResponse result = parser.parse(payload);
@@ -162,7 +164,7 @@ class ParserTest{
 		Parser parser = Parser.create()
 			.withContext(context)
 			.withDefaultCodecs()
-			.withDefaultTemplates()
+			.withTemplates(ACKMessageHex.class)
 			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"));
 
 		byte[] payload1 = JavaHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
@@ -183,7 +185,7 @@ class ParserTest{
 		Parser parser = Parser.create()
 			.withContext(context)
 			.withDefaultCodecs()
-			.withDefaultTemplates();
+			.withTemplates(ACKMessageHex.class);
 
 		byte[] payload1 = JavaHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		byte[] payload2 = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
@@ -201,7 +203,7 @@ class ParserTest{
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
 		Parser parser = Parser.create()
 			.withDefaultCodecs()
-			.withDefaultConfigurations();
+			.withConfigurations(REGConfigurationASCII.class);
 
 		//data:
 		Map<String, Object> configurationData = new HashMap<>();

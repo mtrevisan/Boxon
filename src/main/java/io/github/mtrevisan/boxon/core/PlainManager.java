@@ -103,7 +103,6 @@ final class PlainManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	@SuppressWarnings("ConstantConditions")
 	public void validateValue(final String dataKey, final Object dataValue, final Class<?> fieldType) throws EncodeException{
 		final String pattern = annotation.pattern();
 		final String minValue = annotation.minValue();

@@ -172,9 +172,9 @@ class TemplateTest{
 	@SuppressWarnings("SimplifiableAssertion")
 	void creation() throws AnnotationException{
 		EventListener eventListener = EventListener.getNoOpInstance();
-		LoaderCodec loaderCodec = new LoaderCodec(eventListener);
+		LoaderCodec loaderCodec = LoaderCodec.create(eventListener);
 		loaderCodec.loadDefaultCodecs();
-		LoaderTemplate loaderTemplate = new LoaderTemplate(loaderCodec, eventListener);
+		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
 		Template<Message> template = loaderTemplate.createTemplate(Message.class);
 
 		Assertions.assertNotNull(template);
@@ -242,9 +242,9 @@ class TemplateTest{
 	@Test
 	void inheritance() throws AnnotationException{
 		EventListener eventListener = EventListener.getNoOpInstance();
-		LoaderCodec loaderCodec = new LoaderCodec(eventListener);
+		LoaderCodec loaderCodec = LoaderCodec.create(eventListener);
 		loaderCodec.loadDefaultCodecs();
-		LoaderTemplate loaderTemplate = new LoaderTemplate(loaderCodec, eventListener);
+		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
 		Template<MessageChild> template = loaderTemplate.createTemplate(MessageChild.class);
 
 		Assertions.assertNotNull(template);

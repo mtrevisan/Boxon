@@ -55,9 +55,9 @@ class TemplateParserTest{
 		BitReader reader = BitReader.wrap(payload);
 
 		EventListener eventListener = EventListener.getNoOpInstance();
-		LoaderCodec loaderCodec = new LoaderCodec(eventListener);
+		LoaderCodec loaderCodec = LoaderCodec.create(eventListener);
 		loaderCodec.loadDefaultCodecs();
-		LoaderTemplate loaderTemplate = new LoaderTemplate(loaderCodec, eventListener);
+		LoaderTemplateInterface loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
 		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, loaderTemplate);
 		Template<ACKMessageHex> template = loaderTemplate.createTemplate(ACKMessageHex.class);
 
@@ -88,9 +88,9 @@ class TemplateParserTest{
 		BitReader reader = BitReader.wrap(payload);
 
 		EventListener eventListener = EventListener.getNoOpInstance();
-		LoaderCodec loaderCodec = new LoaderCodec(eventListener);
+		LoaderCodec loaderCodec = LoaderCodec.create(eventListener);
 		loaderCodec.loadDefaultCodecs();
-		LoaderTemplate loaderTemplate = new LoaderTemplate(loaderCodec, eventListener);
+		LoaderTemplateInterface loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
 		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, loaderTemplate);
 		Template<ACKMessageASCII> template = loaderTemplate.createTemplate(ACKMessageASCII.class);
 
@@ -132,9 +132,9 @@ class TemplateParserTest{
 		BitReader reader = BitReader.wrap(payload);
 
 		EventListener eventListener = EventListener.getNoOpInstance();
-		LoaderCodec loaderCodec = new LoaderCodec(eventListener);
+		LoaderCodec loaderCodec = LoaderCodec.create(eventListener);
 		loaderCodec.loadDefaultCodecs();
-		LoaderTemplate loaderTemplate = new LoaderTemplate(loaderCodec, eventListener);
+		LoaderTemplateInterface loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
 		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, loaderTemplate);
 		Template<TestError1> template = loaderTemplate.createTemplate(TestError1.class);
 
@@ -170,9 +170,9 @@ class TemplateParserTest{
 		BitReader reader = BitReader.wrap(payload);
 
 		EventListener eventListener = EventListener.getNoOpInstance();
-		LoaderCodec loaderCodec = new LoaderCodec(eventListener);
+		LoaderCodec loaderCodec = LoaderCodec.create(eventListener);
 		loaderCodec.loadDefaultCodecs();
-		LoaderTemplate loaderTemplate = new LoaderTemplate(loaderCodec, eventListener);
+		LoaderTemplateInterface loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
 		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, loaderTemplate);
 		Template<TestError3> template = loaderTemplate.createTemplate(TestError3.class);
 
@@ -208,9 +208,9 @@ class TemplateParserTest{
 		BitReader reader = BitReader.wrap(payload);
 
 		EventListener eventListener = EventListener.getNoOpInstance();
-		LoaderCodec loaderCodec = new LoaderCodec(eventListener);
+		LoaderCodec loaderCodec = LoaderCodec.create(eventListener);
 		loaderCodec.loadDefaultCodecs();
-		LoaderTemplate loaderTemplate = new LoaderTemplate(loaderCodec, eventListener);
+		LoaderTemplateInterface loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
 		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, loaderTemplate);
 		Template<TestError4> template = loaderTemplate.createTemplate(TestError4.class);
 
@@ -245,9 +245,9 @@ class TemplateParserTest{
 		BitReader reader = BitReader.wrap(payload);
 
 		EventListener eventListener = EventListener.getNoOpInstance();
-		LoaderCodec loaderCodec = new LoaderCodec(eventListener);
+		LoaderCodec loaderCodec = LoaderCodec.create(eventListener);
 		loaderCodec.loadDefaultCodecs();
-		LoaderTemplate loaderTemplate = new LoaderTemplate(loaderCodec, eventListener);
+		LoaderTemplateInterface loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
 		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, loaderTemplate);
 		Template<TestComposition1> template = loaderTemplate.createTemplate(TestComposition1.class);
 
@@ -307,9 +307,9 @@ class TemplateParserTest{
 		BitReader reader = BitReader.wrap(payload);
 
 		EventListener eventListener = EventListener.getNoOpInstance();
-		LoaderCodec loaderCodec = new LoaderCodec(eventListener);
+		LoaderCodec loaderCodec = LoaderCodec.create(eventListener);
 		loaderCodec.loadDefaultCodecs();
-		LoaderTemplate loaderTemplate = new LoaderTemplate(loaderCodec, eventListener);
+		LoaderTemplateInterface loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
 		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, loaderTemplate);
 		Template<TestComposition2> template = loaderTemplate.createTemplate(TestComposition2.class);
 
@@ -334,9 +334,9 @@ class TemplateParserTest{
 		BitReader reader = BitReader.wrap(payload);
 
 		EventListener eventListener = EventListener.getNoOpInstance();
-		LoaderCodec loaderCodec = new LoaderCodec(eventListener);
+		LoaderCodec loaderCodec = LoaderCodec.create(eventListener);
 		loaderCodec.loadDefaultCodecs();
-		LoaderTemplate loaderTemplate = new LoaderTemplate(loaderCodec, eventListener);
+		LoaderTemplateInterface loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
 		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, loaderTemplate);
 		Template<TestComposition2> template = loaderTemplate.createTemplate(TestComposition2.class);
 

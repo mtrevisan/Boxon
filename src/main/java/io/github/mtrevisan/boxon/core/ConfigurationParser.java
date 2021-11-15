@@ -80,7 +80,7 @@ final class ConfigurationParser{
 	}
 
 
-	ConfigurationParser(final LoaderCodecInterface loaderCodec, final LoaderTemplateInterface loaderTemplate,
+	private ConfigurationParser(final LoaderCodecInterface loaderCodec, final LoaderTemplateInterface loaderTemplate,
 			final TemplateParserInterface templateParser, final EventListener eventListener){
 		this.loaderCodec = loaderCodec;
 		this.loaderTemplate = loaderTemplate;

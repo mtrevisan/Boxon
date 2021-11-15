@@ -68,7 +68,29 @@ final class LoaderTemplate implements LoaderTemplateInterface{
 	private final LoaderCodecInterface loaderCodec;
 
 
-	LoaderTemplate(final LoaderCodecInterface loaderCodec, final EventListener eventListener){
+	/**
+	 * Create a template parser.
+	 *
+	 * @param loaderCodec	A codec loader.
+	 * @return	A template parser.
+	 */
+	static LoaderTemplate create(final LoaderCodecInterface loaderCodec){
+		return new LoaderTemplate(loaderCodec, EventListener.getNoOpInstance());
+	}
+
+	/**
+	 * Create a template parser.
+	 *
+	 * @param loaderCodec	A codec loader.
+	 * @param eventListener	The event listener.
+	 * @return	A template parser.
+	 */
+	static LoaderTemplate create(final LoaderCodecInterface loaderCodec, final EventListener eventListener){
+		return new LoaderTemplate(loaderCodec, (eventListener != null? eventListener: EventListener.getNoOpInstance()));
+	}
+
+
+	private LoaderTemplate(final LoaderCodecInterface loaderCodec, final EventListener eventListener){
 		this.eventListener = eventListener;
 		this.loaderCodec = loaderCodec;
 
@@ -182,13 +204,13 @@ final class LoaderTemplate implements LoaderTemplateInterface{
 		//for each available template, select the first that matches the starting bytes
 		//note that the templates are ordered by the length of the starting bytes, descending, so the first that matches is that
 		//with the longest match
+		final byte[] array = reader.array();
 		for(final Map.Entry<String, Template<?>> entry : templates.entrySet()){
 			final String header = entry.getKey();
 			final byte[] templateHeader = JavaHelper.toByteArray(header);
 
 			//verify if it's a valid message header
 			final int lastIndex = index + templateHeader.length;
-			final byte[] array = reader.array();
 			if(lastIndex <= array.length && Arrays.equals(array, index, lastIndex, templateHeader, 0, templateHeader.length))
 				return entry.getValue();
 		}

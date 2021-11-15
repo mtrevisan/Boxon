@@ -81,7 +81,7 @@ final class TemplateParser implements TemplateParserInterface{
 	 * @param loaderTemplate	A template loader.
 	 * @return	A template parser.
 	 */
-	public static TemplateParserInterface create(final LoaderCodecInterface loaderCodec, final LoaderTemplate loaderTemplate){
+	public static TemplateParser create(final LoaderCodecInterface loaderCodec, final LoaderTemplateInterface loaderTemplate){
 		return new TemplateParser(loaderCodec, loaderTemplate, EventListener.getNoOpInstance());
 	}
 
@@ -93,13 +93,14 @@ final class TemplateParser implements TemplateParserInterface{
 	 * @param eventListener	The event listener.
 	 * @return	A template parser.
 	 */
-	public static TemplateParserInterface create(final LoaderCodecInterface loaderCodec, final LoaderTemplate loaderTemplate,
+	public static TemplateParser create(final LoaderCodecInterface loaderCodec, final LoaderTemplateInterface loaderTemplate,
 			final EventListener eventListener){
 		return new TemplateParser(loaderCodec, loaderTemplate, (eventListener != null? eventListener: EventListener.getNoOpInstance()));
 	}
 
 
-	TemplateParser(final LoaderCodecInterface loaderCodec, final LoaderTemplateInterface loaderTemplate, final EventListener eventListener){
+	private TemplateParser(final LoaderCodecInterface loaderCodec, final LoaderTemplateInterface loaderTemplate,
+			final EventListener eventListener){
 		this.loaderCodec = loaderCodec;
 		this.loaderTemplate = loaderTemplate;
 		this.eventListener = eventListener;

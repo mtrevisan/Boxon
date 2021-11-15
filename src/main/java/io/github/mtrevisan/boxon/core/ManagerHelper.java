@@ -46,8 +46,8 @@ final class ManagerHelper{
 		}
 	}
 
-	static void putIfNotEmpty(@SuppressWarnings("BoundedWildcard") final Map<String, Object> map, final String key, final Object value)
-			throws ConfigurationException{
+	static void putIfNotEmpty(@SuppressWarnings("BoundedWildcard") final Map<String, Object> map, final String key,
+			final Object value) throws ConfigurationException{
 		if(value != null && (!String.class.isInstance(value) || !JavaHelper.isBlank((CharSequence)value)))
 			if(map.put(key, value) != null)
 				throw ConfigurationException.create("Duplicated short description: {}", key);

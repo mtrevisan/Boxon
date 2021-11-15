@@ -102,13 +102,32 @@ final class LoaderConfiguration{
 	private final EventListener eventListener;
 
 	private final ThrowingFunction<Class<?>, Configuration<?>, AnnotationException> configurationStore
-		= Memoizer.throwingMemoize(Configuration::new);
+		= Memoizer.throwingMemoize(Configuration::create);
 
 	private final Map<String, Configuration<?>> configurations = new TreeMap<>(Comparator.comparingInt(String::length).reversed()
 		.thenComparing(String::compareTo));
 
 
-	LoaderConfiguration(final EventListener eventListener){
+	/**
+	 * Create a configuration loader.
+	 *
+	 * @return	A template parser.
+	 */
+	static LoaderConfiguration create(){
+		return new LoaderConfiguration(EventListener.getNoOpInstance());
+	}
+
+	/**
+	 * Create a configuration loader.
+	 *
+	 * @param eventListener	The event listener.
+	 * @return	A template parser.
+	 */
+	static LoaderConfiguration create(final EventListener eventListener){
+		return new LoaderConfiguration(eventListener != null? eventListener: EventListener.getNoOpInstance());
+	}
+
+	private LoaderConfiguration(final EventListener eventListener){
 		this.eventListener = eventListener;
 	}
 

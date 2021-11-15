@@ -46,35 +46,35 @@ class LoaderTest{
 	@Test
 	void loadFromMap(){
 		EventListener eventListener = EventListener.getNoOpInstance();
-		LoaderCodec loaderCodec = new LoaderCodec(eventListener);
+		LoaderCodec loaderCodec = LoaderCodec.create(eventListener);
 		loaderCodec.loadDefaultCodecs();
 	}
 
 	@Test
 	void loadFromScan() throws AnnotationException, TemplateException{
 		EventListener eventListener = EventListener.getNoOpInstance();
-		LoaderCodec loaderCodec = new LoaderCodec(eventListener);
+		LoaderCodec loaderCodec = LoaderCodec.create(eventListener);
 		loaderCodec.loadDefaultCodecs();
 
-		LoaderTemplate loaderTemplate = new LoaderTemplate(loaderCodec, eventListener);
+		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
 		loaderTemplate.loadDefaultTemplates();
 	}
 
 	@Test
 	void loadFromScanWithBasePackage() throws AnnotationException, TemplateException{
 		EventListener eventListener = EventListener.getNoOpInstance();
-		LoaderCodec loaderCodec = new LoaderCodec(eventListener);
+		LoaderCodec loaderCodec = LoaderCodec.create(eventListener);
 		loaderCodec.loadDefaultCodecs();
 
-		LoaderTemplate loaderTemplate = new LoaderTemplate(loaderCodec, eventListener);
+		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
 		loaderTemplate.loadTemplates(LoaderTest.class);
 	}
 
 	@Test
 	void loadCodecsAfterTemplates(){
 		EventListener eventListener = EventListener.getNoOpInstance();
-		LoaderCodec loaderCodec = new LoaderCodec(eventListener);
-		LoaderTemplate loaderTemplate = new LoaderTemplate(loaderCodec, eventListener);
+		LoaderCodec loaderCodec = LoaderCodec.create(eventListener);
+		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
 		Exception e = Assertions.assertThrows(AnnotationException.class,
 			() -> loaderTemplate.loadTemplates(LoaderTest.class));
 		Assertions.assertTrue(e.getMessage().startsWith("No data can be extracted from this class: "));
@@ -83,9 +83,9 @@ class LoaderTest{
 	@Test
 	void loadTemplate() throws AnnotationException, TemplateException{
 		EventListener eventListener = EventListener.getNoOpInstance();
-		LoaderCodec loaderCodec = new LoaderCodec(eventListener);
+		LoaderCodec loaderCodec = LoaderCodec.create(eventListener);
 		loaderCodec.loadDefaultCodecs();
-		LoaderTemplate loaderTemplate = new LoaderTemplate(loaderCodec, eventListener);
+		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
 		loaderTemplate.loadTemplates(LoaderTest.class);
 
 		byte[] payload = JavaHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
@@ -99,7 +99,7 @@ class LoaderTest{
 	@Test
 	void getConfigurations() throws AnnotationException, ConfigurationException, JsonProcessingException{
 		EventListener eventListener = EventListener.getNoOpInstance();
-		LoaderConfiguration loaderConfiguration = new LoaderConfiguration(eventListener);
+		LoaderConfiguration loaderConfiguration = LoaderConfiguration.create(eventListener);
 		loaderConfiguration.loadConfigurations(LoaderTest.class);
 
 		List<Map<String, Object>> configurations = loaderConfiguration.getConfigurations();
@@ -120,7 +120,7 @@ class LoaderTest{
 	@Test
 	void getProtocolVersionBoundaries() throws AnnotationException, ConfigurationException, JsonProcessingException{
 		EventListener eventListener = EventListener.getNoOpInstance();
-		LoaderConfiguration loaderConfiguration = new LoaderConfiguration(eventListener);
+		LoaderConfiguration loaderConfiguration = LoaderConfiguration.create(eventListener);
 		loaderConfiguration.loadConfigurations(LoaderTest.class);
 
 		List<String> protocolVersionBoundaries = loaderConfiguration.getProtocolVersionBoundaries();
@@ -134,7 +134,7 @@ class LoaderTest{
 	@Test
 	void getConfigurationsByProtocol() throws AnnotationException, ConfigurationException, JsonProcessingException{
 		EventListener eventListener = EventListener.getNoOpInstance();
-		LoaderConfiguration loaderConfiguration = new LoaderConfiguration(eventListener);
+		LoaderConfiguration loaderConfiguration = LoaderConfiguration.create(eventListener);
 		loaderConfiguration.loadConfigurations(LoaderTest.class);
 
 		List<Map<String, Object>> configurations = loaderConfiguration.getConfigurations("1.19");
@@ -153,9 +153,9 @@ class LoaderTest{
 	@Test
 	void cannotLoadTemplate() throws AnnotationException, TemplateException{
 		EventListener eventListener = EventListener.getNoOpInstance();
-		LoaderCodec loaderCodec = new LoaderCodec(eventListener);
+		LoaderCodec loaderCodec = LoaderCodec.create(eventListener);
 		loaderCodec.loadDefaultCodecs();
-		LoaderTemplate loaderTemplate = new LoaderTemplate(loaderCodec, eventListener);
+		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
 		loaderTemplate.loadTemplates(LoaderTest.class);
 
 		byte[] payload = JavaHelper.toByteArray("3b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
@@ -166,9 +166,9 @@ class LoaderTest{
 	@Test
 	void findNextTemplate() throws AnnotationException, TemplateException{
 		EventListener eventListener = EventListener.getNoOpInstance();
-		LoaderCodec loaderCodec = new LoaderCodec(eventListener);
+		LoaderCodec loaderCodec = LoaderCodec.create(eventListener);
 		loaderCodec.loadDefaultCodecs();
-		LoaderTemplate loaderTemplate = new LoaderTemplate(loaderCodec, eventListener);
+		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
 		loaderTemplate.loadTemplates(LoaderTest.class);
 
 		byte[] payload = JavaHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
@@ -181,9 +181,9 @@ class LoaderTest{
 	@Test
 	void cannotFindNextTemplate() throws AnnotationException, TemplateException{
 		EventListener eventListener = EventListener.getNoOpInstance();
-		LoaderCodec loaderCodec = new LoaderCodec(eventListener);
+		LoaderCodec loaderCodec = LoaderCodec.create(eventListener);
 		loaderCodec.loadDefaultCodecs();
-		LoaderTemplate loaderTemplate = new LoaderTemplate(loaderCodec, eventListener);
+		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
 		loaderTemplate.loadTemplates(LoaderTest.class);
 
 		byte[] payload = JavaHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");

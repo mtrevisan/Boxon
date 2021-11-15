@@ -45,10 +45,10 @@ final class CodecObject implements CodecInterface<BindObject>{
 	private static EventListener eventListener;
 
 
-	/** Automatically injected by {@link TemplateParser} */
+	/** Automatically injected */
 	@SuppressWarnings("unused")
 	private LoaderTemplateInterface loaderTemplate;
-	/** Automatically injected by {@link TemplateParser} */
+	/** Automatically injected */
 	@SuppressWarnings("unused")
 	private TemplateParserInterface templateParser;
 

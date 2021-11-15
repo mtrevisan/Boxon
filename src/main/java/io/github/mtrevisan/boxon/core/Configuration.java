@@ -60,7 +60,11 @@ final class Configuration<T>{
 	private final List<String> protocolVersionBoundaries;
 
 
-	Configuration(final Class<T> type) throws AnnotationException{
+	static <T> Configuration<T> create(final Class<T> type) throws AnnotationException{
+		return new Configuration<>(type);
+	}
+
+	private Configuration(final Class<T> type) throws AnnotationException{
 		this.type = type;
 
 		header = type.getAnnotation(ConfigurationHeader.class);

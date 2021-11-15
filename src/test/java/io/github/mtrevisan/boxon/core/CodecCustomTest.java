@@ -79,7 +79,7 @@ class CodecCustomTest{
 	@Test
 	void customAnnotation() throws FieldException{
 		EventListener eventListener = EventListener.getNoOpInstance();
-		LoaderCodec loaderCodec = new LoaderCodec(eventListener);
+		LoaderCodec loaderCodec = LoaderCodec.create(eventListener);
 		loaderCodec.addCodecs(new VariableLengthByteArray());
 
 		CodecInterface<?> codec = loaderCodec.getCodec(VarLengthEncoded.class);

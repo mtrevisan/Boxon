@@ -146,9 +146,9 @@ class CodecObjectTest{
 		};
 
 		EventListener eventListener = EventListener.getNoOpInstance();
-		LoaderCodec loaderCodec = new LoaderCodec(eventListener);
+		LoaderCodec loaderCodec = LoaderCodec.create(eventListener);
 		loaderCodec.loadDefaultCodecs();
-		LoaderTemplate loaderTemplate = new LoaderTemplate(loaderCodec, eventListener);
+		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
 		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, loaderTemplate);
 		ReflectionHelper.setFieldValue(codec, LoaderTemplateInterface.class, loaderTemplate);
 		ReflectionHelper.setFieldValue(codec, TemplateParserInterface.class, templateParser);
