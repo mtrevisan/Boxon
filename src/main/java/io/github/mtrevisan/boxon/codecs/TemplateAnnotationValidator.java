@@ -99,7 +99,7 @@ enum TemplateAnnotationValidator{
 		@Override
 		void validate(final Annotation annotation) throws AnnotationException{
 			final BindString binding = (BindString)annotation;
-			ValidatorHelper.assertValidCharset(binding.charset());
+			ValidationHelper.assertValidCharset(binding.charset());
 		}
 	},
 
@@ -107,7 +107,7 @@ enum TemplateAnnotationValidator{
 		@Override
 		void validate(final Annotation annotation) throws AnnotationException{
 			final BindStringTerminated binding = (BindStringTerminated)annotation;
-			ValidatorHelper.assertValidCharset(binding.charset());
+			ValidationHelper.assertValidCharset(binding.charset());
 		}
 	},
 
