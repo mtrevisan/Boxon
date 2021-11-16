@@ -30,7 +30,6 @@ import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitSet;
@@ -91,15 +90,6 @@ final class CodecHelper{
 	static void assertSizeEquals(final int expectedSize, final int size){
 		if(expectedSize != size)
 			throw new IllegalArgumentException("Size mismatch, expected " + expectedSize + ", got " + size);
-	}
-
-	static void assertValidCharset(final String charsetName) throws AnnotationException{
-		try{
-			Charset.forName(charsetName);
-		}
-		catch(final IllegalArgumentException ignored){
-			throw AnnotationException.create("Invalid charset: '{}'", charsetName);
-		}
 	}
 
 	static ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> type){
@@ -232,29 +222,6 @@ final class CodecHelper{
 			}
 		}
 		return value;
-	}
-
-
-	static CodecInterface<?> retrieveCodec(final Class<? extends Annotation> annotationType, final LoaderCodecInterface loaderCodec,
-			final LoaderTemplateInterface loaderTemplate, final TemplateParserInterface templateParser) throws CodecException{
-		final CodecInterface<?> codec = loaderCodec.getCodec(annotationType);
-		if(codec == null)
-			throw CodecException.create("Cannot find codec for binding {}", annotationType.getSimpleName());
-
-		setTemplateParser(codec, loaderTemplate, templateParser);
-		return codec;
-	}
-
-	private static void setTemplateParser(final CodecInterface<?> codec, final LoaderTemplateInterface loaderTemplate,
-			final TemplateParserInterface templateParser){
-		try{
-			ReflectionHelper.setFieldValue(codec, LoaderTemplateInterface.class, loaderTemplate);
-		}
-		catch(final Exception ignored){}
-		try{
-			ReflectionHelper.setFieldValue(codec, TemplateParserInterface.class, templateParser);
-		}
-		catch(final Exception ignored){}
 	}
 
 }

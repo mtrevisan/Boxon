@@ -147,9 +147,16 @@ final class TemplateParser implements TemplateParserInterface{
 			final BoundedField field) throws FieldException{
 		try{
 			final Annotation binding = field.getBinding();
-			final CodecInterface<?> codec = CodecHelper.retrieveCodec(binding.annotationType(), loaderCodec, loaderTemplate, this);
+			final Class<? extends Annotation> annotationType = binding.annotationType();
+			final CodecInterface<?> codec = loaderCodec.getCodec(annotationType);
+			if(codec == null)
+				throw CodecException.create("Cannot find codec for binding {}", annotationType.getSimpleName());
 
-			eventListener.decodingField(template.toString(), field.getFieldName(), binding.annotationType().getSimpleName());
+			//inject fields:
+			ReflectionHelper.setFieldValue(codec, LoaderTemplateInterface.class, loaderTemplate);
+			ReflectionHelper.setFieldValue(codec, TemplateParserInterface.class, this);
+
+			eventListener.decodingField(template.toString(), field.getFieldName(), annotationType.getSimpleName());
 
 			//decode value from raw message
 			final Object value = codec.decode(reader, binding, parserContext.rootObject);
@@ -273,9 +280,16 @@ final class TemplateParser implements TemplateParserInterface{
 			final BoundedField field) throws FieldException{
 		try{
 			final Annotation binding = field.getBinding();
-			final CodecInterface<?> codec = CodecHelper.retrieveCodec(binding.annotationType(), loaderCodec, loaderTemplate, this);
+			final Class<? extends Annotation> annotationType = binding.annotationType();
+			final CodecInterface<?> codec = loaderCodec.getCodec(annotationType);
+			if(codec == null)
+				throw CodecException.create("Cannot find codec for binding {}", annotationType.getSimpleName());
 
-			eventListener.writingField(template.getType().getName(), field.getFieldName(), binding.annotationType().getSimpleName());
+			//inject fields:
+			ReflectionHelper.setFieldValue(codec, LoaderTemplateInterface.class, loaderTemplate);
+			ReflectionHelper.setFieldValue(codec, TemplateParserInterface.class, this);
+
+			eventListener.writingField(template.getType().getName(), field.getFieldName(), annotationType.getSimpleName());
 
 			//encode value from current object
 			final Object value = field.getFieldValue(parserContext.currentObject);

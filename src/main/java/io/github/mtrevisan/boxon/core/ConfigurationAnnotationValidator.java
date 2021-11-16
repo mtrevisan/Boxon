@@ -81,7 +81,7 @@ enum ConfigurationAnnotationValidator{
 			if(binding.enumeration() == NullEnum.class && field.getType().isEnum())
 				throw AnnotationException.create("Unnecessary mutually exclusive field in a non-enumeration field");
 			if(String.class.isAssignableFrom(field.getType()))
-				CodecHelper.assertValidCharset(binding.charset());
+				ValidatorHelper.assertValidCharset(binding.charset());
 			if(binding.radix() < Character.MIN_RADIX || binding.radix() > Character.MAX_RADIX)
 				throw AnnotationException.create("Radix must be in [{}, {}]", Character.MIN_RADIX, Character.MAX_RADIX);
 
@@ -272,7 +272,7 @@ enum ConfigurationAnnotationValidator{
 			final CompositeSubField[] fields = binding.value();
 			if(fields.length == 0)
 				throw AnnotationException.create("Composite fields must have at least one sub-field");
-			CodecHelper.assertValidCharset(binding.charset());
+			ValidatorHelper.assertValidCharset(binding.charset());
 
 			validatePattern(field, binding);
 
@@ -424,7 +424,7 @@ enum ConfigurationAnnotationValidator{
 			final AlternativeSubField binding = (AlternativeSubField)annotation;
 
 			if(String.class.isAssignableFrom(field.getType()))
-				CodecHelper.assertValidCharset(binding.charset());
+				ValidatorHelper.assertValidCharset(binding.charset());
 			if(binding.radix() < Character.MIN_RADIX || binding.radix() > Character.MAX_RADIX)
 				throw AnnotationException.create("Radix must be in [{}, {}]", Character.MIN_RADIX, Character.MAX_RADIX);
 

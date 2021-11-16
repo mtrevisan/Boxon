@@ -79,7 +79,7 @@ final class Template<T>{
 
 		header = type.getAnnotation(MessageHeader.class);
 		if(header != null)
-			CodecHelper.assertValidCharset(header.charset());
+			ValidatorHelper.assertValidCharset(header.charset());
 
 		final Pair fields = loadAnnotatedFields(type, ReflectionHelper.getAccessibleFields(type),
 			filterAnnotationsWithCodec);

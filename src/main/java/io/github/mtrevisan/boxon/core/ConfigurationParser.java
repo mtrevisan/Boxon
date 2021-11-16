@@ -33,6 +33,7 @@ import io.github.mtrevisan.boxon.external.BitWriter;
 import io.github.mtrevisan.boxon.external.EventListener;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
 import io.github.mtrevisan.boxon.internal.InjectEventListener;
+import io.github.mtrevisan.boxon.internal.ReflectionHelper;
 
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
@@ -120,9 +121,16 @@ final class ConfigurationParser{
 	private <T> void encodeField(final Configuration<?> configuration, final T currentObject, final BitWriter writer,
 			final ConfigField field, final Annotation binding) throws FieldException{
 		try{
-			eventListener.writingField(configuration.getType().getName(), field.getFieldName(), binding.annotationType().getSimpleName());
+			final Class<? extends Annotation> annotationType = binding.annotationType();
+			eventListener.writingField(configuration.getType().getName(), field.getFieldName(), annotationType.getSimpleName());
 
-			final CodecInterface<?> codec = CodecHelper.retrieveCodec(binding.annotationType(), loaderCodec, loaderTemplate, templateParser);
+			final CodecInterface<?> codec = loaderCodec.getCodec(annotationType);
+			if(codec == null)
+				throw CodecException.create("Cannot find codec for binding {}", annotationType.getSimpleName());
+
+			//inject fields:
+			ReflectionHelper.setFieldValue(codec, LoaderTemplateInterface.class, loaderTemplate);
+			ReflectionHelper.setFieldValue(codec, TemplateParserInterface.class, templateParser);
 
 			//encode value from current object
 			final Object value = field.getFieldValue(currentObject);
