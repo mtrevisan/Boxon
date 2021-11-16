@@ -27,7 +27,7 @@ package io.github.mtrevisan.boxon.codecs;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
-import io.github.mtrevisan.boxon.external.BitReader;
+import io.github.mtrevisan.boxon.core.BitReader;
 import io.github.mtrevisan.boxon.core.EventListener;
 import io.github.mtrevisan.boxon.internal.Memoizer;
 import io.github.mtrevisan.boxon.internal.ReflectionHelper;

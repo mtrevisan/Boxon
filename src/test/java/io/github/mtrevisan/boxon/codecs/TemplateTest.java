@@ -45,8 +45,8 @@ import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.core.EventListener;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.external.BitSet;
-import io.github.mtrevisan.boxon.external.ByteOrder;
+import io.github.mtrevisan.boxon.core.BitSet;
+import io.github.mtrevisan.boxon.core.ByteOrder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

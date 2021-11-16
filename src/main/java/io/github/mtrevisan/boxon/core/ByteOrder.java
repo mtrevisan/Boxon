@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2021 Mauro Trevisan
+ * Copyright (c) 2020-2021 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -22,46 +22,15 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.external.semanticversioning;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+package io.github.mtrevisan.boxon.core;
 
 
-@SuppressWarnings("ALL")
-class VersionCompareTest{
+/** An enumeration for byte orders. */
+public enum ByteOrder{
 
-	@Test
-	void shouldReturnFalseIfOtherVersionIsNull(){
-		Version v1 = Version.of("2.3.7");
-		Version v2 = null;
-
-		Assertions.assertNotEquals(v1, v2);
-	}
-
-	@Test
-	void preReleaseShouldHaveLowerPrecedenceThanAssociatedNormal(){
-		Version v1 = Version.of("1.3.7");
-		Version v2 = Version.of("1.3.7-alpha");
-
-		Assertions.assertTrue(v1.compareTo(v2) > 0);
-		Assertions.assertTrue(v2.compareTo(v1) < 0);
-	}
-
-	@Test
-	void preRelease1(){
-		Version v1 = Version.of("2.3.7-alpha");
-		Version v2 = Version.of("2.3.7-beta");
-
-		Assertions.assertTrue(v1.isLessThan(v2));
-	}
-
-	@Test
-	void preRelease2(){
-		Version v1 = Version.of("2.3.7-beta.1");
-		Version v2 = Version.of("2.3.7-beta.2");
-
-		Assertions.assertTrue(v1.isLessThan(v2));
-	}
+	/** Little-endian byte order. */
+	LITTLE_ENDIAN,
+	/** Big-endian byte order. */
+	BIG_ENDIAN
 
 }

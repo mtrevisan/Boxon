@@ -22,15 +22,23 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.external;
+package io.github.mtrevisan.boxon.core;
+
+import io.github.mtrevisan.boxon.exceptions.FieldException;
+
+import java.lang.annotation.Annotation;
 
 
-/** An enumeration for byte orders. */
-public enum ByteOrder{
+public interface CodecInterface<B extends Annotation>{
 
-	/** Little-endian byte order. */
-	LITTLE_ENDIAN,
-	/** Big-endian byte order. */
-	BIG_ENDIAN
+	Object decode(final BitReader reader, final Annotation annotation, final Object rootObject) throws FieldException;
+
+	void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value) throws FieldException;
+
+
+	@SuppressWarnings("unchecked")
+	default B extractBinding(final Annotation annotation){
+		return (B)annotation;
+	}
 
 }

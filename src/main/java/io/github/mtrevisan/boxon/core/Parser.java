@@ -34,15 +34,12 @@ import io.github.mtrevisan.boxon.codecs.LoaderTemplate;
 import io.github.mtrevisan.boxon.codecs.Template;
 import io.github.mtrevisan.boxon.codecs.TemplateParser;
 import io.github.mtrevisan.boxon.codecs.TemplateParserInterface;
-import io.github.mtrevisan.boxon.external.semanticversioning.Version;
+import io.github.mtrevisan.boxon.core.semanticversioning.Version;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.DecodeException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
-import io.github.mtrevisan.boxon.external.BitReader;
-import io.github.mtrevisan.boxon.external.BitWriter;
-import io.github.mtrevisan.boxon.external.CodecInterface;
 import io.github.mtrevisan.boxon.internal.Evaluator;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 

@@ -25,7 +25,7 @@
 package io.github.mtrevisan.boxon.annotations;
 
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
-import io.github.mtrevisan.boxon.external.ByteOrder;
+import io.github.mtrevisan.boxon.core.ByteOrder;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

@@ -24,6 +24,10 @@
  */
 package io.github.mtrevisan.boxon.external;
 
+import io.github.mtrevisan.boxon.core.BitReader;
+import io.github.mtrevisan.boxon.core.BitSet;
+import io.github.mtrevisan.boxon.core.BitWriter;
+import io.github.mtrevisan.boxon.core.ByteOrder;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

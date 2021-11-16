@@ -25,10 +25,10 @@
 package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.configurations.CompositeSubField;
-import io.github.mtrevisan.boxon.external.CodecInterface;
+import io.github.mtrevisan.boxon.core.CodecInterface;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
-import io.github.mtrevisan.boxon.external.BitReader;
-import io.github.mtrevisan.boxon.external.BitWriter;
+import io.github.mtrevisan.boxon.core.BitReader;
+import io.github.mtrevisan.boxon.core.BitWriter;
 import io.github.mtrevisan.boxon.internal.ParserDataType;
 
 import java.lang.annotation.Annotation;
