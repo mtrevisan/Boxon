@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.external;
+package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.core.BitReader;
 import io.github.mtrevisan.boxon.core.BitSet;

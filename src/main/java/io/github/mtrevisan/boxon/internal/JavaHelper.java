@@ -81,6 +81,22 @@ public final class JavaHelper{
 		return null;
 	}
 
+	/**
+	 * Convert the value to signed primitive.
+	 *
+	 * @param value	Field value.
+	 * @param size	Length in bits of the field.
+	 * @return	The 2-complement expressed as int.
+	 */
+	@SuppressWarnings("ShiftOutOfRange")
+	public static long extendSign(final long value, final int size){
+		if(size <= 0)
+			throw new IllegalArgumentException("Size must be a positive value, was " + size);
+
+		final int shift = -size;
+		return (value << shift) >> shift;
+	}
+
 
 	public static <T> T nonNullOrDefault(final T obj, final T defaultObject){
 		return (obj != null? obj: defaultObject);

@@ -22,16 +22,15 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.external;
+package io.github.mtrevisan.boxon.core;
 
-import io.github.mtrevisan.boxon.core.BitSet;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 
 @SuppressWarnings("ALL")
-public class ByteHelperTest{
+public class StringHelperTest{
 
 	@Test
 	void hasBitWithByte(){
@@ -73,56 +72,6 @@ public class ByteHelperTest{
 		Throwable exception = Assertions.assertThrows(IllegalArgumentException.class,
 			() -> Assertions.assertArrayEquals(new byte[]{0x23, 0x5e, 0x40, 0x03, 0x51, 0x10, 0x42, 0x06}, StringHelper.toByteArray("235e40035110420")));
 		Assertions.assertEquals("Input should be of even length, was 15", exception.getMessage());
-	}
-
-	@Test
-	void convert2ComplementWithPositiveNumber(){
-		long value = extendSign(0x6B, 8);
-
-		Assertions.assertEquals(107l, value);
-	}
-
-	@Test
-	void convert2ComplementWithNegativeNumber(){
-		long value = extendSign(0xD7, 8);
-
-		Assertions.assertEquals(-41l, value);
-	}
-
-	/**
-	 * Convert the value to signed primitive.
-	 *
-	 * @param value	Field value.
-	 * @param size	Length in bits of the field.
-	 * @return	The 2-complement expressed as int.
-	 */
-	@SuppressWarnings("ShiftOutOfRange")
-	private static long extendSign(final long value, final int size){
-		if(size <= 0)
-			throw new IllegalArgumentException("Size must be a positive value, was " + size);
-
-		final int shift = -size;
-		return (value << shift) >> shift;
-	}
-
-	@Test
-	void reverseBits(){
-		BitSet bits = BitSet.valueOf(new byte[]{0x10});
-		bits.reverseBits(Byte.SIZE);
-
-		Assertions.assertEquals(BitSet.valueOf(new byte[]{0x08}), bits);
-
-
-		bits = BitSet.valueOf(new byte[]{0x16});
-		bits.reverseBits(Byte.SIZE);
-
-		Assertions.assertEquals(BitSet.valueOf(new byte[]{0x68}), bits);
-
-
-		bits = BitSet.valueOf(new byte[]{(byte)0xE7});
-		bits.reverseBits(Byte.SIZE);
-
-		Assertions.assertEquals(BitSet.valueOf(new byte[]{(byte)0xE7}), bits);
 	}
 
 }
