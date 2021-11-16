@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.semanticversioning;
+package io.github.mtrevisan.boxon.external.semanticversioning;
 
 import java.util.ArrayList;
 import java.util.List;
