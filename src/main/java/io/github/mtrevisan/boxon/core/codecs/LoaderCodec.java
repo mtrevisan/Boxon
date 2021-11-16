@@ -26,8 +26,7 @@ package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.core.CodecInterface;
-import io.github.mtrevisan.boxon.external.EventListener;
-import io.github.mtrevisan.boxon.internal.InjectEventListener;
+import io.github.mtrevisan.boxon.core.EventListener;
 import io.github.mtrevisan.boxon.internal.ReflectionHelper;
 import io.github.mtrevisan.boxon.internal.ReflectiveClassLoader;
 

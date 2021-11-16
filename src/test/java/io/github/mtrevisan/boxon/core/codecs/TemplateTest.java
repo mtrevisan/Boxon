@@ -43,16 +43,10 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.annotations.checksummers.CRC16CCITT;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
-import io.github.mtrevisan.boxon.core.codecs.BoundedField;
-import io.github.mtrevisan.boxon.core.codecs.EvaluatedField;
-import io.github.mtrevisan.boxon.core.codecs.LoaderCodec;
-import io.github.mtrevisan.boxon.core.codecs.LoaderTemplate;
-import io.github.mtrevisan.boxon.core.codecs.Template;
+import io.github.mtrevisan.boxon.core.EventListener;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.external.BitSet;
-import io.github.mtrevisan.boxon.external.ByteHelper;
 import io.github.mtrevisan.boxon.external.ByteOrder;
-import io.github.mtrevisan.boxon.external.EventListener;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -91,7 +85,19 @@ class TemplateTest{
 		}
 
 		public boolean hasProtocolVersion(){
-			return ByteHelper.hasBit(mask, 2);
+			return hasBit(mask, 2);
+		}
+
+		/**
+		 * Checks whether the given `mask` has the bit at `index` set.
+		 *
+		 * @param mask	The value to check the bit into.
+		 * @param index	The index of the bit (rightmost is zero). The value can range between {@code 0} and {@link Byte#SIZE}.
+		 * @return	The state of the bit at a given index in the given byte.
+		 */
+		private static boolean hasBit(final byte mask, final int index){
+			final int bitMask = 1 << (index % Byte.SIZE);
+			return ((mask & bitMask) != 0);
 		}
 
 	}

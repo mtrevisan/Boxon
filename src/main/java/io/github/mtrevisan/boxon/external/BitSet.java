@@ -264,7 +264,33 @@ public final class BitSet{
 		if(byteOrder == ByteOrder.LITTLE_ENDIAN)
 			//NOTE: need to reverse the bytes because BigInteger is big-endian and BitMap is little-endian
 			reverse(array);
-		return ByteHelper.extendSign(array);
+		return extendSign(array);
+	}
+
+	/**
+	 * Convert the value to signed primitive.
+	 *
+	 * @param array	Field value.
+	 * @return	The 2-complement expressed as int.
+	 */
+	private static BigInteger extendSign(byte[] array){
+		if((array[0] & 0x80) != 0x00){
+			array = leftExtendArray(array);
+			array[0] = -1;
+		}
+		return new BigInteger(array);
+	}
+
+	/**
+	 * Extends an array leaving room for one more byte at the leftmost index.
+	 *
+	 * @param array	The array to extend.
+	 * @return	The extended array.
+	 */
+	private static byte[] leftExtendArray(final byte[] array){
+		final byte[] extendedArray = new byte[array.length + 1];
+		System.arraycopy(array, 0, extendedArray, 1, array.length);
+		return extendedArray;
 	}
 
 	/**

@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 
 
 @SuppressWarnings("ALL")
-class ByteHelperTest{
+public class ByteHelperTest{
 
 	@Test
 	void hasBitWithByte(){
@@ -38,10 +38,22 @@ class ByteHelperTest{
 
 		byte output = 0x00;
 		for(int i = 0; i < 8; i ++)
-			if(ByteHelper.hasBit(mask, i))
+			if(hasBit(mask, i))
 				output |= (1 << i);
 
 		Assertions.assertEquals(mask, output);
+	}
+
+	/**
+	 * Checks whether the given `mask` has the bit at `index` set.
+	 *
+	 * @param mask	The value to check the bit into.
+	 * @param index	The index of the bit (rightmost is zero). The value can range between {@code 0} and {@link Byte#SIZE}.
+	 * @return	The state of the bit at a given index in the given byte.
+	 */
+	private static boolean hasBit(final byte mask, final int index){
+		final int bitMask = 1 << (index % Byte.SIZE);
+		return ((mask & bitMask) != 0);
 	}
 
 	@Test
@@ -64,16 +76,32 @@ class ByteHelperTest{
 
 	@Test
 	void convert2ComplementWithPositiveNumber(){
-		long value = ByteHelper.extendSign(0x6B, 8);
+		long value = extendSign(0x6B, 8);
 
 		Assertions.assertEquals(107l, value);
 	}
 
 	@Test
 	void convert2ComplementWithNegativeNumber(){
-		long value = ByteHelper.extendSign(0xD7, 8);
+		long value = extendSign(0xD7, 8);
 
 		Assertions.assertEquals(-41l, value);
+	}
+
+	/**
+	 * Convert the value to signed primitive.
+	 *
+	 * @param value	Field value.
+	 * @param size	Length in bits of the field.
+	 * @return	The 2-complement expressed as int.
+	 */
+	@SuppressWarnings("ShiftOutOfRange")
+	private static long extendSign(final long value, final int size){
+		if(size <= 0)
+			throw new IllegalArgumentException("Size must be a positive value, was " + size);
+
+		final int shift = -size;
+		return (value << shift) >> shift;
 	}
 
 	@Test

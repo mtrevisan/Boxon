@@ -37,7 +37,7 @@ import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
-import io.github.mtrevisan.boxon.external.EventListener;
+import io.github.mtrevisan.boxon.core.EventListener;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -139,7 +139,7 @@ class TemplateParserTest{
 		Template<TestError1> template = loaderTemplate.createTemplate(TestError1.class);
 
 		SpelEvaluationException exc = Assertions.assertThrows(SpelEvaluationException.class, () -> templateParser.decode(template, reader, null));
-		Assertions.assertEquals("EL1008E: Property or field 'e' cannot be found on object of type 'io.github.mtrevisan.boxon.internal.codecs.TemplateParserTest$TestError1' - maybe not public or not valid?", exc.getMessage());
+		Assertions.assertEquals("EL1008E: Property or field 'e' cannot be found on object of type 'io.github.mtrevisan.boxon.core.codecs.TemplateParserTest$TestError1' - maybe not public or not valid?", exc.getMessage());
 	}
 
 
@@ -177,7 +177,7 @@ class TemplateParserTest{
 		Template<TestError3> template = loaderTemplate.createTemplate(TestError3.class);
 
 		Exception exc = Assertions.assertThrows(FieldException.class, () -> templateParser.decode(template, reader, null));
-		Assertions.assertEquals("java.lang.IllegalArgumentException: Can not set byte field to String in field io.github.mtrevisan.boxon.internal.codecs.TemplateParserTest$TestError3.type", exc.getMessage());
+		Assertions.assertEquals("java.lang.IllegalArgumentException: Can not set byte field to String in field io.github.mtrevisan.boxon.core.codecs.TemplateParserTest$TestError3.type", exc.getMessage());
 	}
 
 
@@ -215,7 +215,7 @@ class TemplateParserTest{
 		Template<TestError4> template = loaderTemplate.createTemplate(TestError4.class);
 
 		Exception exc = Assertions.assertThrows(FieldException.class, () -> templateParser.decode(template, reader, null));
-		Assertions.assertEquals("java.lang.IllegalArgumentException: Can not input Byte to decode method of converter WrongInputConverter in field io.github.mtrevisan.boxon.internal.codecs.TemplateParserTest$TestError4.type", exc.getMessage());
+		Assertions.assertEquals("java.lang.IllegalArgumentException: Can not input Byte to decode method of converter WrongInputConverter in field io.github.mtrevisan.boxon.core.codecs.TemplateParserTest$TestError4.type", exc.getMessage());
 	}
 
 

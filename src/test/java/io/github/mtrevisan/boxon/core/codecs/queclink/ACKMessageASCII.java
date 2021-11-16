@@ -29,6 +29,7 @@ import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.IMEIValidator;
+import io.github.mtrevisan.boxon.core.codecs.queclink.QueclinkHelper;
 
 import java.time.ZonedDateTime;
 import java.util.HashMap;
