@@ -24,7 +24,6 @@
  */
 package io.github.mtrevisan.boxon.annotations.checksummers;
 
-
 import io.github.mtrevisan.boxon.annotations.Checksum;
 
 
