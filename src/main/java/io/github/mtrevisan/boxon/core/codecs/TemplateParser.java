@@ -28,7 +28,7 @@ import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.Skip;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
-import io.github.mtrevisan.boxon.core.CodecInterface;
+import io.github.mtrevisan.boxon.core.EventListener;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
@@ -36,7 +36,8 @@ import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitSet;
 import io.github.mtrevisan.boxon.external.BitWriter;
-import io.github.mtrevisan.boxon.core.EventListener;
+import io.github.mtrevisan.boxon.external.CodecInterface;
+import io.github.mtrevisan.boxon.internal.Evaluator;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.ReflectionHelper;
 import io.github.mtrevisan.boxon.internal.StringHelper;
@@ -311,7 +312,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 	private static boolean shouldProcessField(final String condition, final Object rootObject){
-		return (condition.isEmpty() || Evaluator.evaluate(condition, rootObject, boolean.class));
+		return (condition.isEmpty() || Evaluator.evaluateBoolean(condition, rootObject));
 	}
 
 	private static void closeMessage(final Template<?> template, final BitWriter writer){

@@ -35,6 +35,7 @@ import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitSet;
 import io.github.mtrevisan.boxon.external.BitWriter;
 import io.github.mtrevisan.boxon.external.ByteOrder;
+import io.github.mtrevisan.boxon.internal.Evaluator;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.ParserDataType;
 import io.github.mtrevisan.boxon.internal.ReflectionHelper;
@@ -120,7 +121,7 @@ final class CodecHelper{
 			final Object rootObject){
 		for(int i = 0; i < alternatives.length; i ++){
 			final ObjectChoices.ObjectChoice alternative = alternatives[i];
-			if(Evaluator.evaluate(alternative.condition(), rootObject, boolean.class))
+			if(Evaluator.evaluateBoolean(alternative.condition(), rootObject))
 				return alternative;
 		}
 		return EMPTY_CHOICE;
@@ -131,7 +132,7 @@ final class CodecHelper{
 		final ConverterChoices.ConverterChoice[] alternatives = selectConverterFrom.alternatives();
 		for(int i = 0; i < alternatives.length; i ++){
 			final ConverterChoices.ConverterChoice alternative = alternatives[i];
-			if(Evaluator.evaluate(alternative.condition(), rootObject, boolean.class))
+			if(Evaluator.evaluateBoolean(alternative.condition(), rootObject))
 				return alternative.converter();
 		}
 		return defaultConverter;
