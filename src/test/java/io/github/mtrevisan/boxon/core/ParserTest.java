@@ -24,14 +24,14 @@
  */
 package io.github.mtrevisan.boxon.core;
 
-import io.github.mtrevisan.boxon.core.queclink.ACKMessageHex;
-import io.github.mtrevisan.boxon.core.queclink.DeviceTypes;
-import io.github.mtrevisan.boxon.core.queclink.REGConfigurationASCII;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
-import io.github.mtrevisan.boxon.internal.JavaHelper;
+import io.github.mtrevisan.boxon.internal.StringHelper;
 import io.github.mtrevisan.boxon.internal.TimeWatch;
+import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageHex;
+import io.github.mtrevisan.boxon.core.codecs.queclink.DeviceTypes;
+import io.github.mtrevisan.boxon.core.codecs.queclink.REGConfigurationASCII;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -57,7 +57,7 @@ class ParserTest{
 			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"));
 
 		//~251 µs/msg = 4 kHz
-		byte[] payload = JavaHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
+		byte[] payload = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		//warm-up
 		for(int i = 0; i < 2_000; i ++)
 			parser.parse(payload);
@@ -79,7 +79,7 @@ class ParserTest{
 			.withContextFunction(ParserTest.class, "headerSize");
 
 		//parse:
-		byte[] payload = JavaHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
+		byte[] payload = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		ParseResponse parseResult = parser.parse(payload);
 
 		Assertions.assertFalse(parseResult.hasErrors());
@@ -104,10 +104,10 @@ class ParserTest{
 		Parser parser = Parser.create()
 			.withContext(context)
 			.withDefaultCodecs()
-			.withTemplates(ACKMessageHex.class)
+			.withDefaultTemplates()
 			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"));
 
-		byte[] payload = JavaHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
+		byte[] payload = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		ParseResponse result = parser.parse(payload);
 
 		Assertions.assertFalse(result.hasErrors());
@@ -167,7 +167,7 @@ class ParserTest{
 			.withTemplates(ACKMessageHex.class)
 			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"));
 
-		byte[] payload1 = JavaHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
+		byte[] payload1 = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		byte[] payload2 = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
 		byte[] payload = ArrayUtils.addAll(payload1, payload2);
 		ParseResponse result = parser.parse(payload);
@@ -187,7 +187,7 @@ class ParserTest{
 			.withDefaultCodecs()
 			.withTemplates(ACKMessageHex.class);
 
-		byte[] payload1 = JavaHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
+		byte[] payload1 = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		byte[] payload2 = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
 		byte[] payload = ArrayUtils.addAll(payload2, payload1);
 		ParseResponse result = parser.parse(payload);

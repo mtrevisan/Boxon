@@ -36,6 +36,15 @@ import io.github.mtrevisan.boxon.external.BitWriter;
 import io.github.mtrevisan.boxon.external.EventListener;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
+import io.github.mtrevisan.boxon.core.codecs.Configuration;
+import io.github.mtrevisan.boxon.core.codecs.ConfigurationParser;
+import io.github.mtrevisan.boxon.core.codecs.Evaluator;
+import io.github.mtrevisan.boxon.core.codecs.LoaderCodec;
+import io.github.mtrevisan.boxon.core.codecs.LoaderConfiguration;
+import io.github.mtrevisan.boxon.core.codecs.LoaderTemplate;
+import io.github.mtrevisan.boxon.core.codecs.Template;
+import io.github.mtrevisan.boxon.core.codecs.TemplateParser;
+import io.github.mtrevisan.boxon.core.codecs.TemplateParserInterface;
 
 import java.io.File;
 import java.io.FileNotFoundException;

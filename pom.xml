@@ -234,7 +234,7 @@
 				<version>${maven-surefire-plugin.version}</version>
 				<configuration>
 					<argLine>--add-opens
-						io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.core.queclink=spring.core,spring.expression,ALL-UNNAMED --add-opens
+						io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.internal.codecs.queclink=spring.core,spring.expression,ALL-UNNAMED --add-opens
 						io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.annotations=spring.core,spring.expression,ALL-UNNAMED --add-opens
 						io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.annotations.bindings=spring.core,spring.expression,ALL-UNNAMED
 						--add-opens
