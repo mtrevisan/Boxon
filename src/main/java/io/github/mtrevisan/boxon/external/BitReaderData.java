@@ -24,8 +24,6 @@
  */
 package io.github.mtrevisan.boxon.external;
 
-import io.github.mtrevisan.boxon.external.BitReader;
-import io.github.mtrevisan.boxon.external.BitSet;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 
 import java.io.IOException;

@@ -284,7 +284,6 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 		}
 	}
 
-	@SuppressWarnings("ConstantConditions")
 	private static void validateValue(final AlternativeSubField binding, final String dataKey, final Object dataValue,
 			final Class<?> fieldType) throws EncodeException{
 		final String pattern = binding.pattern();

@@ -31,6 +31,8 @@ import java.nio.charset.Charset;
 
 final class ValidatorHelper{
 
+	private ValidatorHelper(){}
+
 	static void assertValidCharset(final String charsetName) throws AnnotationException{
 		try{
 			Charset.forName(charsetName);

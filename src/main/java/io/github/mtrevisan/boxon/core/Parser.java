@@ -61,6 +61,7 @@ import java.util.Objects;
 /**
  * Declarative data binding parser for binary encoded data.
  */
+@SuppressWarnings({"WeakerAccess", "unused"})
 public final class Parser{
 
 	private final LoaderCodec loaderCodec;
