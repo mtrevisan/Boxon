@@ -54,14 +54,14 @@ public @interface BindStringTerminated{
 	/**
 	 * The type of encoding used for the {@link String}.
 	 *
-	 * @return	The type of encoding used (defaults to `UTF-8`).
+	 * @return	The type of encoding used (defaults to {@value io.github.mtrevisan.boxon.core.codecs.LoaderCodec#CHARSET_DEFAULT}).
 	 */
 	String charset() default "UTF-8";
 
 	/**
 	 * The byte that terminates the {@link String}.
 	 *
-	 * @return	The terminator byte (defaults to `\0`).
+	 * @return	The terminator byte (defaults to {@code \0}).
 	 */
 	byte terminator() default '\0';
 

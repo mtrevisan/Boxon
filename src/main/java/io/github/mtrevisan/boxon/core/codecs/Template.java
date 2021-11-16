@@ -133,7 +133,7 @@ public final class Template<T>{
 	}
 
 	private Annotation validateField(final List<? extends Annotation> annotations, final Checksum checksum) throws AnnotationException{
-		//filter out `@Skip` annotations
+		/** filter out {@link Skip} annotations */
 		Annotation foundAnnotation = null;
 		for(int i = 0; i < annotations.size(); i ++){
 			final Class<? extends Annotation> annotationType = annotations.get(i).annotationType();
@@ -148,8 +148,8 @@ public final class Template<T>{
 				validateAnnotation(annotations.get(i));
 
 				if(checksum != null && this.checksum != null)
-					throw AnnotationException.create("Cannot have more than one {} annotations on class {}", Checksum.class.getSimpleName(),
-						type.getName());
+					throw AnnotationException.create("Cannot have more than one {} annotations on class {}",
+						Checksum.class.getSimpleName(), type.getName());
 
 				foundAnnotation = annotations.get(i);
 			}

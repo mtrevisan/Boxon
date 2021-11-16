@@ -82,7 +82,7 @@ public final class BitReader extends BitReaderData{
 	 * Wraps a byte array into a buffer.
 	 * <p>The new buffer will be backed by the given byte array; that is, modifications to the buffer will cause the array
 	 * to be modified and vice versa. The new buffer's capacity and limit will be {@code array.length}, its position will
-	 * be zero, its mark will be undefined, and its byte `byteOrder` will be {@link ByteOrder#BIG_ENDIAN BIG_ENDIAN}.</p>
+	 * be zero, its mark will be undefined, and its byte order will be {@link ByteOrder#BIG_ENDIAN BIG_ENDIAN}.</p>
 	 *
 	 * @param array	The array that will back this buffer.
 	 * @return	The new bit buffer.

@@ -58,7 +58,7 @@ public @interface ConverterChoices{
 
 		/**
 		 * The condition that needs to hold, if an instance of {@link #converter() converter} is to be applied.
-		 * <p>A SpEL expression with the prefix value in the context under the name `{@code prefix}`.</p>
+		 * <p>A SpEL expression with the prefix value in the context under the name {@code prefix}.</p>
 		 *
 		 * @return	The condition that needs to hold, if an instance of {@link #converter() converter} is to be applied.
 		 */

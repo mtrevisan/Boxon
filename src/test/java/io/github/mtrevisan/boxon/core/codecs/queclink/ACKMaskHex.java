@@ -89,7 +89,7 @@ public class ACKMaskHex{
 
 
 	/**
-	 * Checks whether the given `mask` has the bit at `index` set.
+	 * Checks whether the given {@code mask} has the bit at {@code index} set.
 	 *
 	 * @param mask	The value to check the bit into.
 	 * @param index	The index of the bit (rightmost is zero). The value can range between {@code 0} and {@link Byte#SIZE}.

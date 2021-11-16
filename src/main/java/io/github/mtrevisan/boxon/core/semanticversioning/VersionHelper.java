@@ -68,7 +68,6 @@ final class VersionHelper{
 	 * Adjacent separators are treated as one separator.</p>
 	 *
 	 * <p>A {@code null} input String returns {@code null}.
-	 * A {@code null} `separatorChars` splits on whitespace.</p>
 	 *
 	 * <p>If more than {@code max} delimited substrings are found, the last
 	 * returned string includes all characters after the first {@code max - 1}
@@ -128,7 +127,7 @@ final class VersionHelper{
 	 * Adjacent separators are treated as one separator.</p>
 	 *
 	 * <p>A {@code null} input String returns {@code null}.
-	 * A {@code null} `separatorChars` splits on whitespace.</p>
+	 * A {@code null} {@code separatorChars} splits on whitespace.</p>
 	 *
 	 * <p>If more than {@code max} delimited substrings are found, the last
 	 * returned string includes all characters after the first {@code max - 1}

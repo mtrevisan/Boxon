@@ -55,10 +55,10 @@ public final class Evaluator{
 
 	/**
 	 * Adds a key-value pair to the context of this evaluator.
-	 * <p>Passing {@code null} as `value` then the corresponding key-value pair will be deleted.</p>
+	 * <p>Passing {@code null} as {@code value} then the corresponding key-value pair will be deleted.</p>
 	 *
 	 * @param key	The key used to reference the value.
-	 * @param value	The value (pass {@code null} to remove the `key` from the context).
+	 * @param value	The value (pass {@code null} to remove the {@code key} from the context).
 	 */
 	public static void addToContext(final String key, final Object value){
 		Objects.requireNonNull(key, "Key cannot be null");
