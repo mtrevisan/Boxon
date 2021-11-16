@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.annotations;
+package io.github.mtrevisan.boxon.codecs;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -32,35 +32,9 @@ import java.lang.annotation.Target;
 
 
 /**
- * Defines a message with a given header and footer (optional).
- * <p>This will enable automatic loading through the {@code Loader}.</p>
+ * Defines a field that has to be injected with an {@link io.github.mtrevisan.boxon.core.EventListener event listener}.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
+@Target(ElementType.FIELD)
 @Documented
-public @interface MessageHeader{
-
-	/**
-	 * The initial bytes that determines the type of message.
-	 * <p>This SHOULD be read by the protocol of a single message.</p>
-	 *
-	 * @return	The header bytes of this message.
-	 */
-	String[] start();
-
-	/**
-	 * The final bytes that determines the type of message.
-	 * <p>This SHOULD NOT be read by the protocol of a single message.</p>
-	 *
-	 * @return	The tail bytes of this message (defaults to empty string).
-	 */
-	String end() default "";
-
-	/**
-	 * The type of encoding used for the {@link #start()} and {@link #end()} fields.
-	 *
-	 * @return	The type of encoding used (defaults to {@value io.github.mtrevisan.boxon.codecs.LoaderCodec#CHARSET_DEFAULT}).
-	 */
-	String charset() default "UTF-8";
-
-}
+public @interface InjectEventListener{}
