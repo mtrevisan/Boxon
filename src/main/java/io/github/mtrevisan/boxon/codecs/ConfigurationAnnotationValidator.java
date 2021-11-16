@@ -96,7 +96,8 @@ enum ConfigurationAnnotationValidator{
 
 			validateMinMaxValues(field, binding);
 
-			validateProtocol(binding.minProtocol(), binding.maxProtocol(), minMessageProtocol, maxMessageProtocol, ConfigurationField.class);
+			ValidatorHelper.validateProtocol(binding.minProtocol(), binding.maxProtocol(), minMessageProtocol, maxMessageProtocol,
+				ConfigurationField.class);
 		}
 
 		private void validateMinimumParameters(final Field field, final ConfigurationField binding) throws AnnotationException{
@@ -138,7 +139,7 @@ enum ConfigurationAnnotationValidator{
 						throw AnnotationException.create("Data type not compatible with `pattern` in {}; found {}.class, expected String.class",
 							ConfigurationField.class.getSimpleName(), field.getType());
 
-					validateMinMaxDefaultValuesToPattern(formatPattern, minValue, maxValue, defaultValue);
+					ValidatorHelper.validateMinMaxDefaultValuesToPattern(formatPattern, minValue, maxValue, defaultValue);
 				}
 				catch(final AnnotationException ae){
 					throw ae;
@@ -176,8 +177,8 @@ enum ConfigurationAnnotationValidator{
 
 			if(!minValue.isEmpty() || !maxValue.isEmpty()){
 				final Object def = (!defaultValue.isEmpty()? JavaHelper.getValue(fieldType, defaultValue): null);
-				final Object min = validateMinValue(fieldType, minValue, defaultValue, def);
-				final Object max = validateMaxValue(fieldType, maxValue, defaultValue, def);
+				final Object min = ValidatorHelper.validateMinValue(fieldType, minValue, defaultValue, def);
+				final Object max = ValidatorHelper.validateMaxValue(fieldType, maxValue, defaultValue, def);
 
 				if(min != null && max != null && ((Number)min).doubleValue() > ((Number)max).doubleValue())
 					//maxValue after or equal to minValue
@@ -263,7 +264,7 @@ enum ConfigurationAnnotationValidator{
 
 			validatePattern(field, binding);
 
-			validateProtocol(binding.minProtocol(), binding.maxProtocol(), minMessageProtocol, maxMessageProtocol,
+			ValidatorHelper.validateProtocol(binding.minProtocol(), binding.maxProtocol(), minMessageProtocol, maxMessageProtocol,
 				CompositeConfigurationField.class);
 
 
@@ -368,13 +369,13 @@ enum ConfigurationAnnotationValidator{
 
 			validateEnumeration(field, binding);
 
-			validateProtocol(binding.minProtocol(), binding.maxProtocol(), minMessageProtocol, maxMessageProtocol,
+			ValidatorHelper.validateProtocol(binding.minProtocol(), binding.maxProtocol(), minMessageProtocol, maxMessageProtocol,
 				AlternativeConfigurationField.class);
 
 			final AlternativeSubField[] alternatives = binding.value();
 			for(int i = 0; i < JavaHelper.lengthOrZero(alternatives); i ++)
-				validateProtocol(alternatives[i].minProtocol(), alternatives[i].maxProtocol(), minMessageProtocol, maxMessageProtocol,
-					AlternativeSubField.class);
+				ValidatorHelper.validateProtocol(alternatives[i].minProtocol(), alternatives[i].maxProtocol(), minMessageProtocol,
+					maxMessageProtocol, AlternativeSubField.class);
 		}
 
 		private void validateMinimumParameters(final Field field, final AlternativeConfigurationField binding) throws AnnotationException{
@@ -421,7 +422,7 @@ enum ConfigurationAnnotationValidator{
 
 			validateMinMaxValues(field, binding);
 
-			validateProtocol(binding.minProtocol(), binding.maxProtocol(), minMessageProtocol, maxMessageProtocol,
+			ValidatorHelper.validateProtocol(binding.minProtocol(), binding.maxProtocol(), minMessageProtocol, maxMessageProtocol,
 				AlternativeSubField.class);
 		}
 
@@ -457,7 +458,7 @@ enum ConfigurationAnnotationValidator{
 						throw AnnotationException.create("Data type not compatible with `pattern` in {}; found {}.class, expected String.class",
 							ConfigurationField.class.getSimpleName(), field.getType());
 
-					validateMinMaxDefaultValuesToPattern(formatPattern, minValue, maxValue, defaultValue);
+					ValidatorHelper.validateMinMaxDefaultValuesToPattern(formatPattern, minValue, maxValue, defaultValue);
 				}
 				catch(final AnnotationException ae){
 					throw ae;
@@ -477,8 +478,8 @@ enum ConfigurationAnnotationValidator{
 
 			if(!minValue.isEmpty() || !maxValue.isEmpty()){
 				final Object def = (!defaultValue.isEmpty()? JavaHelper.getValue(fieldType, defaultValue): null);
-				final Object min = validateMinValue(fieldType, minValue, defaultValue, def);
-				final Object max = validateMaxValue(fieldType, maxValue, defaultValue, def);
+				final Object min = ValidatorHelper.validateMinValue(fieldType, minValue, defaultValue, def);
+				final Object max = ValidatorHelper.validateMaxValue(fieldType, maxValue, defaultValue, def);
 
 				if(min != null && max != null && ((Number)min).doubleValue() > ((Number)max).doubleValue())
 					//maxValue after or equal to minValue
@@ -511,92 +512,5 @@ enum ConfigurationAnnotationValidator{
 
 	abstract void validate(final Field field, final Annotation annotation, final Version minMessageProtocol,
 		final Version maxMessageProtocol) throws AnnotationException;
-
-	private static void validateProtocol(final String minProtocol, final String maxProtocol, final Version minMessageProtocol,
-			final Version maxMessageProtocol, final Class<? extends Annotation> binding) throws AnnotationException{
-		if(!minProtocol.isEmpty() || !maxProtocol.isEmpty()){
-			//minProtocol/maxProtocol are valid
-			final Version minimum = validateMinMaxProtocol(minProtocol, binding, "Invalid minimum protocol version in {}; found {}");
-			final Version maximum = validateMinMaxProtocol(maxProtocol, binding, "Invalid maximum protocol version in {}; found {}");
-			//maxProtocol after or equal to minProtocol
-			if(minimum != null && maximum != null && maximum.isLessThan(minimum))
-				throw AnnotationException.create("Minimum protocol version is greater than maximum protocol version in {}; found {}",
-					binding.getSimpleName(), maxProtocol);
-
-			//minProtocol after or equal to minMessageProtocol
-			if(minimum != null && !minMessageProtocol.isEmpty() && minimum.isLessThan(minMessageProtocol))
-				throw AnnotationException.create("Minimum protocol version is less than whole message minimum protocol version in {}; found {}",
-					binding.getSimpleName(), maxMessageProtocol);
-			//maxProtocol before or equal to maxMessageProtocol
-			if(maximum != null && !maxMessageProtocol.isEmpty() && maxMessageProtocol.isLessThan(maximum))
-				throw AnnotationException.create("Maximum protocol version is greater than whole message maximum protocol version in {}; found {}",
-					binding.getSimpleName(), maxMessageProtocol);
-		}
-	}
-
-	private static Version validateMinMaxProtocol(final String protocolVersion, final Class<? extends Annotation> binding,
-			final String errorMessage) throws AnnotationException{
-		Version protocol = null;
-		if(!protocolVersion.isEmpty()){
-			try{
-				protocol = Version.of(protocolVersion);
-			}catch(final IllegalArgumentException iae){
-				throw AnnotationException.create(iae, errorMessage, binding.getSimpleName(), protocolVersion);
-			}
-		}
-		return protocol;
-	}
-
-	private static Object validateMinValue(final Class<?> fieldType, final String minValue, final String defaultValue, final Object def)
-			throws AnnotationException{
-		Object min = null;
-		if(!minValue.isEmpty()){
-			min = JavaHelper.getValue(fieldType, minValue);
-			//minValue compatible with variable type
-			if(min == null)
-				throw AnnotationException.create("Incompatible minimum value in {}; found {}, expected {}",
-					ConfigurationField.class.getSimpleName(), minValue.getClass().getSimpleName(), fieldType.toString());
-
-			if(def != null && ((Number)def).doubleValue() < ((Number)min).doubleValue())
-				//defaultValue compatible with minValue
-				throw AnnotationException.create("Default value incompatible with minimum value in {}; found {}, expected greater than or equals to {}",
-					ConfigurationField.class.getSimpleName(), defaultValue, minValue.getClass().getSimpleName());
-		}
-		return min;
-	}
-
-	private static Object validateMaxValue(final Class<?> fieldType, final String maxValue, final String defaultValue, final Object def)
-			throws AnnotationException{
-		Object max = null;
-		if(!maxValue.isEmpty()){
-			max = JavaHelper.getValue(fieldType, maxValue);
-			//maxValue compatible with variable type
-			if(max == null)
-				throw AnnotationException.create("Incompatible maximum value in {}; found {}, expected {}",
-					ConfigurationField.class.getSimpleName(), maxValue.getClass().getSimpleName(), fieldType.toString());
-
-			if(StringHelper.isNumeric(defaultValue) && def != null && ((Number)def).doubleValue() > ((Number)max).doubleValue())
-				//defaultValue compatible with maxValue
-				throw AnnotationException.create("Default value incompatible with maximum value in {}; found {}, expected less than or equals to {}",
-					ConfigurationField.class.getSimpleName(), defaultValue, maxValue.getClass().getSimpleName());
-		}
-		return max;
-	}
-
-	private static void validateMinMaxDefaultValuesToPattern(final Pattern formatPattern, final String minValue, final String maxValue,
-			final String defaultValue) throws AnnotationException{
-		//defaultValue compatible with pattern
-		if(!defaultValue.isEmpty() && !formatPattern.matcher(defaultValue).matches())
-			throw AnnotationException.create("Default value not compatible with `pattern` in {}; found {}, expected {}",
-				ConfigurationField.class.getSimpleName(), defaultValue, formatPattern.pattern());
-		//minValue compatible with pattern
-		if(!minValue.isEmpty() && !formatPattern.matcher(minValue).matches())
-			throw AnnotationException.create("Minimum value not compatible with `pattern` in {}; found {}, expected {}",
-				ConfigurationField.class.getSimpleName(), minValue, formatPattern.pattern());
-		//maxValue compatible with pattern
-		if(!maxValue.isEmpty() && !formatPattern.matcher(maxValue).matches())
-			throw AnnotationException.create("Maximum value not compatible with `pattern` in {}; found {}, expected {}",
-				ConfigurationField.class.getSimpleName(), maxValue, formatPattern.pattern());
-	}
 
 }
