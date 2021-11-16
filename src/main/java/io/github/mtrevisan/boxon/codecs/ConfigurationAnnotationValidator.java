@@ -108,22 +108,18 @@ enum ConfigurationAnnotationValidator{
 			final Class<? extends Enum<?>> enumeration = binding.enumeration();
 
 			//one only of `pattern`, `minValue`/`maxValue`, and `enumeration` should be set:
-			int set = 0;
-			if(!pattern.isEmpty())
-				set ++;
-			if(!minValue.isEmpty() || !maxValue.isEmpty())
-				set ++;
-			if(enumeration != NullEnum.class){
-				set ++;
-
-				if(!pattern.isEmpty() || !minValue.isEmpty() || !maxValue.isEmpty())
-					throw AnnotationException.create("Enumeration cannot have `pattern` or `minValue`/`maxValue`");
-			}
-			if(isFieldArray && enumeration == NullEnum.class)
-				throw AnnotationException.create("Array field should have `enumeration`");
-			if(set > 1)
+			final boolean hasPattern = !pattern.isEmpty();
+			final boolean hasMinMaxValues = (!minValue.isEmpty() || !maxValue.isEmpty());
+			final boolean hasEnumeration = (enumeration != NullEnum.class);
+			if(moreThanOneSet(hasPattern, hasMinMaxValues, hasEnumeration))
 				throw AnnotationException.create("Only one of `pattern`, `minValue`/`maxValue`, or `enumeration` should be used in {}",
 					ConfigurationField.class.getSimpleName());
+			if(isFieldArray && !hasEnumeration)
+				throw AnnotationException.create("Array field should have `enumeration`");
+		}
+
+		private boolean moreThanOneSet(final boolean hasPattern, final boolean hasMinMaxValues, final boolean hasEnumeration){
+			return (hasPattern && hasMinMaxValues || hasPattern && hasEnumeration || hasMinMaxValues && hasEnumeration);
 		}
 
 		private void validatePattern(final Field field, final ConfigurationField binding) throws AnnotationException{
@@ -141,18 +137,8 @@ enum ConfigurationAnnotationValidator{
 					if(!String.class.isAssignableFrom(field.getType()))
 						throw AnnotationException.create("Data type not compatible with `pattern` in {}; found {}.class, expected String.class",
 							ConfigurationField.class.getSimpleName(), field.getType());
-					//defaultValue compatible with pattern
-					if(!defaultValue.isEmpty() && !formatPattern.matcher(defaultValue).matches())
-						throw AnnotationException.create("Default value not compatible with `pattern` in {}; found {}, expected {}",
-							ConfigurationField.class.getSimpleName(), defaultValue, pattern);
-					//minValue compatible with pattern
-					if(!minValue.isEmpty() && !formatPattern.matcher(minValue).matches())
-						throw AnnotationException.create("Minimum value not compatible with `pattern` in {}; found {}, expected {}",
-							ConfigurationField.class.getSimpleName(), minValue, pattern);
-					//maxValue compatible with pattern
-					if(!maxValue.isEmpty() && !formatPattern.matcher(maxValue).matches())
-						throw AnnotationException.create("Maximum value not compatible with `pattern` in {}; found {}, expected {}",
-							ConfigurationField.class.getSimpleName(), maxValue, pattern);
+
+					validateMinMaxDefaultValuesToPattern(formatPattern, minValue, maxValue, defaultValue);
 				}
 				catch(final AnnotationException ae){
 					throw ae;
@@ -470,18 +456,8 @@ enum ConfigurationAnnotationValidator{
 					if(!String.class.isAssignableFrom(field.getType()))
 						throw AnnotationException.create("Data type not compatible with `pattern` in {}; found {}.class, expected String.class",
 							ConfigurationField.class.getSimpleName(), field.getType());
-					//defaultValue compatible with pattern
-					if(!defaultValue.isEmpty() && !formatPattern.matcher(defaultValue).matches())
-						throw AnnotationException.create("Default value not compatible with `pattern` in {}; found {}, expected {}",
-							ConfigurationField.class.getSimpleName(), defaultValue, pattern);
-					//minValue compatible with pattern
-					if(!minValue.isEmpty() && !formatPattern.matcher(minValue).matches())
-						throw AnnotationException.create("Minimum value not compatible with `pattern` in {}; found {}, expected {}",
-							ConfigurationField.class.getSimpleName(), minValue, pattern);
-					//maxValue compatible with pattern
-					if(!maxValue.isEmpty() && !formatPattern.matcher(maxValue).matches())
-						throw AnnotationException.create("Maximum value not compatible with `pattern` in {}; found {}, expected {}",
-							ConfigurationField.class.getSimpleName(), maxValue, pattern);
+
+					validateMinMaxDefaultValuesToPattern(formatPattern, minValue, maxValue, defaultValue);
 				}
 				catch(final AnnotationException ae){
 					throw ae;
@@ -540,26 +516,8 @@ enum ConfigurationAnnotationValidator{
 			final Version maxMessageProtocol, final Class<? extends Annotation> binding) throws AnnotationException{
 		if(!minProtocol.isEmpty() || !maxProtocol.isEmpty()){
 			//minProtocol/maxProtocol are valid
-			Version minimum = null;
-			if(!minProtocol.isEmpty()){
-				try{
-					minimum = Version.of(minProtocol);
-				}
-				catch(final IllegalArgumentException iae){
-					throw AnnotationException.create(iae, "Invalid minimum protocol version in {}; found {}",
-						binding.getSimpleName(), minProtocol);
-				}
-			}
-			Version maximum = null;
-			if(!maxProtocol.isEmpty()){
-				try{
-					maximum = Version.of(maxProtocol);
-				}
-				catch(final IllegalArgumentException iae){
-					throw AnnotationException.create(iae, "Invalid maximum protocol version in {}; found {}",
-						binding.getSimpleName(), maxProtocol);
-				}
-			}
+			final Version minimum = validateMinMaxProtocol(minProtocol, binding, "Invalid minimum protocol version in {}; found {}");
+			final Version maximum = validateMinMaxProtocol(maxProtocol, binding, "Invalid maximum protocol version in {}; found {}");
 			//maxProtocol after or equal to minProtocol
 			if(minimum != null && maximum != null && maximum.isLessThan(minimum))
 				throw AnnotationException.create("Minimum protocol version is greater than maximum protocol version in {}; found {}",
@@ -574,6 +532,19 @@ enum ConfigurationAnnotationValidator{
 				throw AnnotationException.create("Maximum protocol version is greater than whole message maximum protocol version in {}; found {}",
 					binding.getSimpleName(), maxMessageProtocol);
 		}
+	}
+
+	private static Version validateMinMaxProtocol(final String protocolVersion, final Class<? extends Annotation> binding,
+			final String errorMessage) throws AnnotationException{
+		Version protocol = null;
+		if(!protocolVersion.isEmpty()){
+			try{
+				protocol = Version.of(protocolVersion);
+			}catch(final IllegalArgumentException iae){
+				throw AnnotationException.create(iae, errorMessage, binding.getSimpleName(), protocolVersion);
+			}
+		}
+		return protocol;
 	}
 
 	private static Object validateMinValue(final Class<?> fieldType, final String minValue, final String defaultValue, final Object def)
@@ -610,6 +581,22 @@ enum ConfigurationAnnotationValidator{
 					ConfigurationField.class.getSimpleName(), defaultValue, maxValue.getClass().getSimpleName());
 		}
 		return max;
+	}
+
+	private static void validateMinMaxDefaultValuesToPattern(final Pattern formatPattern, final String minValue, final String maxValue,
+			final String defaultValue) throws AnnotationException{
+		//defaultValue compatible with pattern
+		if(!defaultValue.isEmpty() && !formatPattern.matcher(defaultValue).matches())
+			throw AnnotationException.create("Default value not compatible with `pattern` in {}; found {}, expected {}",
+				ConfigurationField.class.getSimpleName(), defaultValue, formatPattern.pattern());
+		//minValue compatible with pattern
+		if(!minValue.isEmpty() && !formatPattern.matcher(minValue).matches())
+			throw AnnotationException.create("Minimum value not compatible with `pattern` in {}; found {}, expected {}",
+				ConfigurationField.class.getSimpleName(), minValue, formatPattern.pattern());
+		//maxValue compatible with pattern
+		if(!maxValue.isEmpty() && !formatPattern.matcher(maxValue).matches())
+			throw AnnotationException.create("Maximum value not compatible with `pattern` in {}; found {}, expected {}",
+				ConfigurationField.class.getSimpleName(), maxValue, formatPattern.pattern());
 	}
 
 }

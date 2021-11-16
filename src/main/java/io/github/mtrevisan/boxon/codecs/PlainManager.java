@@ -144,45 +144,48 @@ final class PlainManager implements ConfigurationManagerInterface{
 
 		final Class<?> fieldType = field.getType();
 		final Class<? extends Enum<?>> enumeration = annotation.enumeration();
-		if(enumeration != NullEnum.class){
-			//convert `or` between enumerations
-			if(String.class.isInstance(dataValue)){
-				final Enum<?>[] enumConstants = enumeration.getEnumConstants();
-				if(field.getType().isArray()){
-					final String[] defaultValues = StringHelper.split((String)dataValue, '|', -1);
-					dataValue = Array.newInstance(enumeration, defaultValues.length);
-					for(int i = 0; i < defaultValues.length; i ++)
-						Array.set(dataValue, i, JavaHelper.extractEnum(enumConstants, defaultValues[i]));
-				}
-				else
-					dataValue = enumeration
-						.cast(JavaHelper.extractEnum(enumConstants, (String)dataValue));
-			}
+		if(enumeration != NullEnum.class)
+			dataValue = extractEnumerationValue(dataKey, dataValue, field, enumeration);
+		else if(String.class.isInstance(dataValue))
+			dataValue = JavaHelper.getValue(fieldType, (String)dataValue);
+		ManagerHelper.setValue(field, configurationObject, dataValue);
+	}
 
-			final Class<?> dataValueClass = (dataValue != null? dataValue.getClass(): null);
-			if(dataValueClass == null){
-				final Class<?> componentType = (fieldType.isArray()? fieldType.getComponentType(): fieldType);
-				throw EncodeException.create("Data value incompatible with field type {}; found {}[], expected {}[] for enumeration type",
-					dataKey, componentType, enumeration.getSimpleName());
+	private Object extractEnumerationValue(final String dataKey, Object dataValue, final Field field,
+			final Class<? extends Enum<?>> enumeration) throws EncodeException{
+		//convert `or` between enumerations
+		if(String.class.isInstance(dataValue)){
+			final Enum<?>[] enumConstants = enumeration.getEnumConstants();
+			if(field.getType().isArray()){
+				final String[] defaultValues = StringHelper.split((String)dataValue, '|', -1);
+				dataValue = Array.newInstance(enumeration, defaultValues.length);
+				for(int i = 0; i < defaultValues.length; i ++)
+					Array.set(dataValue, i, JavaHelper.extractEnum(enumConstants, defaultValues[i]));
 			}
-			if(dataValueClass.isArray()){
-				final Class<?> componentType = dataValueClass.getComponentType();
-				if(!enumeration.isAssignableFrom(componentType))
-					throw EncodeException.create("Data value incompatible with field type {}; found {}[], expected {}[] for enumeration type",
-						dataKey, componentType, enumeration.getSimpleName());
-			}
-			else if(!enumeration.isInstance(dataValue) || String.class.isInstance(dataValue) && !((String)dataValue).isEmpty())
-				throw EncodeException.create("Data value incompatible with field type {}; found {}, expected {} for enumeration type",
-					dataKey, dataValueClass, enumeration.getSimpleName());
+			else
+				dataValue = enumeration
+					.cast(JavaHelper.extractEnum(enumConstants, (String)dataValue));
+		}
 
-			ManagerHelper.setValue(field, configurationObject, dataValue);
+		validateEnumerationValue(dataKey, dataValue, enumeration, field.getType());
+
+		return dataValue;
+	}
+
+	private void validateEnumerationValue(final String dataKey, final Object dataValue, final Class<? extends Enum<?>> enumeration,
+			final Class<?> fieldType) throws EncodeException{
+		final Class<?> dataValueClass = (dataValue != null? dataValue.getClass(): null);
+		if(dataValueClass == null){
+			final Class<?> componentType = (fieldType.isArray()? fieldType.getComponentType(): fieldType);
+			throw EncodeException.create("Data value incompatible with field type {}; found {}[], expected {}[] for enumeration type", dataKey, componentType, enumeration.getSimpleName());
 		}
-		else if(String.class.isInstance(dataValue)){
-			final Object val = JavaHelper.getValue(fieldType, (String)dataValue);
-			ManagerHelper.setValue(field, configurationObject, val);
+		if(dataValueClass.isArray()){
+			final Class<?> componentType = dataValueClass.getComponentType();
+			if(!enumeration.isAssignableFrom(componentType))
+				throw EncodeException.create("Data value incompatible with field type {}; found {}[], expected {}[] for enumeration type", dataKey, componentType, enumeration.getSimpleName());
 		}
-		else
-			ManagerHelper.setValue(field, configurationObject, dataValue);
+		else if(!enumeration.isInstance(dataValue) || String.class.isInstance(dataValue) && !((String)dataValue).isEmpty())
+			throw EncodeException.create("Data value incompatible with field type {}; found {}, expected {} for enumeration type", dataKey, dataValueClass, enumeration.getSimpleName());
 	}
 
 }
