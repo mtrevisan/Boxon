@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.external;
 
-import io.github.mtrevisan.boxon.internal.JavaHelper;
+import io.github.mtrevisan.boxon.internal.StringHelper;
 
 import java.io.ByteArrayOutputStream;
 
@@ -105,7 +105,7 @@ class BitWriterData{
 
 	@Override
 	public final String toString(){
-		return JavaHelper.toHexString(array());
+		return StringHelper.toHexString(array());
 	}
 
 }

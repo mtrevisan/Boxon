@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.exceptions;
 
-import io.github.mtrevisan.boxon.internal.JavaHelper;
+import io.github.mtrevisan.boxon.internal.StringHelper;
 
 import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
@@ -40,7 +40,7 @@ public final class CodecException extends FieldException{
 
 
 	public static CodecException create(final String message, final Object... parameters){
-		return new CodecException(JavaHelper.format(message, parameters));
+		return new CodecException(ExceptionHelper.format(message, parameters));
 	}
 
 	private CodecException(final String message){

@@ -25,7 +25,7 @@
 package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.exceptions.DecodeException;
-import io.github.mtrevisan.boxon.internal.JavaHelper;
+import io.github.mtrevisan.boxon.internal.StringHelper;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -157,7 +157,7 @@ public final class ParseResponse{
 	 * @return	The error message resulting from parsing a message.
 	 */
 	public String getErrorMessageAt(final int index){
-		return "Error decoding message: " + JavaHelper.toHexString(getErrorPayloadAt(index))
+		return "Error decoding message: " + StringHelper.toHexString(getErrorPayloadAt(index))
 			+ System.lineSeparator()
 			+ errors.get(index).getMessage();
 	}

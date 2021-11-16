@@ -22,32 +22,18 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core;
+package io.github.mtrevisan.boxon.exceptions;
 
-import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
-import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
-import io.github.mtrevisan.boxon.external.BitReader;
-import io.github.mtrevisan.boxon.external.BitWriter;
-
-import java.lang.annotation.Annotation;
-import java.nio.charset.StandardCharsets;
+import org.slf4j.helpers.MessageFormatter;
 
 
-final class CodecConfigurationField implements CodecInterface<ConfigurationField>{
+final class ExceptionHelper{
 
-	@Override
-	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
-		throw new UnsupportedOperationException("Cannot decode this type of annotation: " + getClass().getSimpleName());
-	}
+	private ExceptionHelper(){}
 
-	@Override
-	public void encode(final BitWriter writer, final Annotation annotation, final Object fieldType, final Object value)
-			throws ConfigurationException{
-		final ConfigurationField binding = extractBinding(annotation);
-		CodecHelper.encode(writer, (Class<?>)fieldType, value, binding.radix(), binding.charset());
-
-		if(!binding.terminator().isEmpty())
-			writer.putText(binding.terminator(), StandardCharsets.UTF_8);
+	public static String format(final String message, final Object... parameters){
+		return MessageFormatter.arrayFormat(message, parameters)
+			.getMessage();
 	}
 
 }

@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.external;
 
-import io.github.mtrevisan.boxon.internal.JavaHelper;
+import io.github.mtrevisan.boxon.internal.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -207,7 +207,7 @@ public final class EventLogger extends EventListener{
 		if(!message.isEmpty())
 			outputMessage += message;
 
-		return JavaHelper.format(outputMessage, extractParameters(parameters));
+		return StringHelper.format(outputMessage, extractParameters(parameters));
 	}
 
 	private static Object[] extractParameters(final Object[] parameters){

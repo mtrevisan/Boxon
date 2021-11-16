@@ -24,8 +24,6 @@
  */
 package io.github.mtrevisan.boxon.exceptions;
 
-import io.github.mtrevisan.boxon.internal.JavaHelper;
-
 import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -40,7 +38,7 @@ public final class TemplateException extends FieldException{
 
 
 	public static TemplateException create(final String message, final Object... parameters){
-		return new TemplateException(JavaHelper.format(message, parameters));
+		return new TemplateException(ExceptionHelper.format(message, parameters));
 	}
 
 	private TemplateException(final String message){

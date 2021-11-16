@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.exceptions;
 
-import io.github.mtrevisan.boxon.internal.JavaHelper;
+import io.github.mtrevisan.boxon.internal.StringHelper;
 
 import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
@@ -40,11 +40,11 @@ public final class AnnotationException extends FieldException{
 
 
 	public static AnnotationException create(final Throwable cause, final String message, final Object... parameters){
-		return new AnnotationException(JavaHelper.format(message, parameters), cause);
+		return new AnnotationException(ExceptionHelper.format(message, parameters), cause);
 	}
 
 	public static AnnotationException create(final String message, final Object... parameters){
-		return new AnnotationException(JavaHelper.format(message, parameters));
+		return new AnnotationException(ExceptionHelper.format(message, parameters));
 	}
 
 	private AnnotationException(final String message, final Throwable cause){

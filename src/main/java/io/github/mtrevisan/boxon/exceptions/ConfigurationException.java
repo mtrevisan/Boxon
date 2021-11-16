@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.exceptions;
 
-import io.github.mtrevisan.boxon.internal.JavaHelper;
+import io.github.mtrevisan.boxon.internal.StringHelper;
 
 import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
@@ -40,7 +40,7 @@ public final class ConfigurationException extends FieldException{
 
 
 	public static ConfigurationException create(final String message, final Object... parameters){
-		return new ConfigurationException(JavaHelper.format(message, parameters));
+		return new ConfigurationException(ExceptionHelper.format(message, parameters));
 	}
 
 	private ConfigurationException(final String message){
