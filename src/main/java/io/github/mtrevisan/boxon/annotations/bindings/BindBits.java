@@ -28,8 +28,8 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
-import io.github.mtrevisan.boxon.core.BitSet;
-import io.github.mtrevisan.boxon.core.ByteOrder;
+import io.github.mtrevisan.boxon.external.BitSet;
+import io.github.mtrevisan.boxon.external.ByteOrder;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
