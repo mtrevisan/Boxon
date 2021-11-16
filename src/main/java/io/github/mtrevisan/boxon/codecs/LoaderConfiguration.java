@@ -304,8 +304,8 @@ public final class LoaderConfiguration{
 	 * Retrieve the configuration by class, filled with data, and considering the protocol version.
 	 *
 	 * @param configurationType	The configuration message type.
-	 * @param data   The data to load into the configuration.
-	 * @param protocol   The protocol the data refers to.
+	 * @param data	The data to load into the configuration.
+	 * @param protocol	The protocol the data refers to.
 	 * @return	The configuration.
 	 */
 	public ConfigurationPair getConfigurationWithDefaults(final String configurationType, final Map<String, Object> data, final Version protocol)

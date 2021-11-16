@@ -429,7 +429,7 @@ public final class Parser{
 	/**
 	 * Compose a single configuration message.
 	 *
-	 * @param data   The configuration message to be composed.
+	 * @param data	The configuration message to be composed.
 	 */
 	private void composeConfiguration(final BitWriter writer, final String configurationType, final Map<String, Object> data,
 			final Version protocol, final ComposeResponse response){
