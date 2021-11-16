@@ -126,8 +126,8 @@ final class CompositeManager implements ConfigurationManagerInterface{
 		compositeMap.put(LoaderConfiguration.KEY_CONFIGURATION_COMPOSITE_FIELDS, compositeFieldsMap);
 
 		if(protocol.isEmpty()){
-			ManagerHelper.putIfNotEmpty(compositeMap, LoaderConfiguration.KEY_MIN_PROTOCOL, annotation.minProtocol());
-			ManagerHelper.putIfNotEmpty(compositeMap, LoaderConfiguration.KEY_MAX_PROTOCOL, annotation.maxProtocol());
+			ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_MIN_PROTOCOL, annotation.minProtocol(), compositeMap);
+			ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_MAX_PROTOCOL, annotation.maxProtocol(), compositeMap);
 		}
 		return compositeMap;
 	}
@@ -135,9 +135,9 @@ final class CompositeManager implements ConfigurationManagerInterface{
 	private Map<String, Object> extractMap() throws ConfigurationException{
 		final Map<String, Object> map = new HashMap<>(6);
 
-		ManagerHelper.putIfNotEmpty(map, LoaderConfiguration.KEY_LONG_DESCRIPTION, annotation.longDescription());
-		ManagerHelper.putIfNotEmpty(map, LoaderConfiguration.KEY_PATTERN, annotation.pattern());
-		ManagerHelper.putIfNotEmpty(map, LoaderConfiguration.KEY_CHARSET, annotation.charset());
+		ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_LONG_DESCRIPTION, annotation.longDescription(), map);
+		ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_PATTERN, annotation.pattern(), map);
+		ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_CHARSET, annotation.charset(), map);
 
 		return map;
 	}
@@ -145,15 +145,15 @@ final class CompositeManager implements ConfigurationManagerInterface{
 	private static Map<String, Object> extractMap(final CompositeSubField binding, final Class<?> fieldType) throws ConfigurationException{
 		final Map<String, Object> map = new HashMap<>(10);
 
-		ManagerHelper.putIfNotEmpty(map, LoaderConfiguration.KEY_LONG_DESCRIPTION, binding.longDescription());
-		ManagerHelper.putIfNotEmpty(map, LoaderConfiguration.KEY_UNIT_OF_MEASURE, binding.unitOfMeasure());
+		ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_LONG_DESCRIPTION, binding.longDescription(), map);
+		ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_UNIT_OF_MEASURE, binding.unitOfMeasure(), map);
 
-		ManagerHelper.putIfNotEmpty(map, LoaderConfiguration.KEY_PATTERN, binding.pattern());
+		ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_PATTERN, binding.pattern(), map);
 		if(!fieldType.isEnum() && !fieldType.isArray())
-			ManagerHelper.putIfNotEmpty(map, LoaderConfiguration.KEY_FIELD_TYPE,
-				ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName());
+			ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName(),
+				map);
 
-		ManagerHelper.putValueIfNotEmpty(map, LoaderConfiguration.KEY_DEFAULT_VALUE, fieldType, NullEnum.class, binding.defaultValue());
+		ManagerHelper.putValueIfNotEmpty(LoaderConfiguration.KEY_DEFAULT_VALUE, binding.defaultValue(), fieldType, NullEnum.class, map);
 
 		return map;
 	}

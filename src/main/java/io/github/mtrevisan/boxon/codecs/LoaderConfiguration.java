@@ -291,11 +291,11 @@ public final class LoaderConfiguration{
 
 	private static Map<String, Object> extractMap(final Version protocol, final ConfigurationHeader header) throws ConfigurationException{
 		final Map<String, Object> map = new HashMap<>(3);
-		ManagerHelper.putIfNotEmpty(map, KEY_SHORT_DESCRIPTION, header.shortDescription());
-		ManagerHelper.putIfNotEmpty(map, KEY_LONG_DESCRIPTION, header.longDescription());
+		ManagerHelper.putIfNotEmpty(KEY_SHORT_DESCRIPTION, header.shortDescription(), map);
+		ManagerHelper.putIfNotEmpty(KEY_LONG_DESCRIPTION, header.longDescription(), map);
 		if(protocol.isEmpty()){
-			ManagerHelper.putIfNotEmpty(map, KEY_MIN_PROTOCOL, header.minProtocol());
-			ManagerHelper.putIfNotEmpty(map, KEY_MAX_PROTOCOL, header.maxProtocol());
+			ManagerHelper.putIfNotEmpty(KEY_MIN_PROTOCOL, header.minProtocol(), map);
+			ManagerHelper.putIfNotEmpty(KEY_MAX_PROTOCOL, header.maxProtocol(), map);
 		}
 		return map;
 	}

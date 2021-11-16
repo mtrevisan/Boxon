@@ -182,10 +182,10 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 
 				final Map<String, Object> fieldMap = extractMap(alternativeField, fieldType);
 
-				putIfNotEmpty(fieldMap, LoaderConfiguration.KEY_MIN_PROTOCOL, alternativeField.minProtocol());
-				putIfNotEmpty(fieldMap, LoaderConfiguration.KEY_MAX_PROTOCOL, alternativeField.maxProtocol());
-				ManagerHelper.putValueIfNotEmpty(fieldMap, LoaderConfiguration.KEY_DEFAULT_VALUE, fieldType, annotation.enumeration(),
-					alternativeField.defaultValue());
+				ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_MIN_PROTOCOL, alternativeField.minProtocol(), fieldMap);
+				ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_MAX_PROTOCOL, alternativeField.maxProtocol(), fieldMap);
+				ManagerHelper.putValueIfNotEmpty(LoaderConfiguration.KEY_DEFAULT_VALUE, alternativeField.defaultValue(), fieldType,
+					annotation.enumeration(), fieldMap);
 
 				fieldMap.putAll(alternativeMap);
 
@@ -193,8 +193,8 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 			}
 			alternativesMap = new HashMap<>(3);
 			alternativesMap.put(LoaderConfiguration.KEY_ALTERNATIVES, alternatives);
-			putIfNotEmpty(alternativesMap, LoaderConfiguration.KEY_MIN_PROTOCOL, annotation.minProtocol());
-			putIfNotEmpty(alternativesMap, LoaderConfiguration.KEY_MAX_PROTOCOL, annotation.maxProtocol());
+			ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_MIN_PROTOCOL, annotation.minProtocol(), alternativesMap);
+			ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_MAX_PROTOCOL, annotation.maxProtocol(), alternativesMap);
 		}
 		else{
 			//extract the specific alternative, because it was requested the configuration of a particular protocol:
@@ -202,8 +202,8 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 			if(fieldBinding != null){
 				alternativesMap = extractMap(fieldBinding, fieldType);
 
-				ManagerHelper.putValueIfNotEmpty(alternativesMap, LoaderConfiguration.KEY_DEFAULT_VALUE, fieldType, annotation.enumeration(),
-					fieldBinding.defaultValue());
+				ManagerHelper.putValueIfNotEmpty(LoaderConfiguration.KEY_DEFAULT_VALUE, fieldBinding.defaultValue(), fieldType,
+					annotation.enumeration(), alternativesMap);
 
 				alternativesMap.putAll(alternativeMap);
 
@@ -215,19 +215,20 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 	private Map<String, Object> extractMap(final Class<?> fieldType) throws ConfigurationException{
 		final Map<String, Object> map = new HashMap<>(6);
 
-		putIfNotEmpty(map, LoaderConfiguration.KEY_LONG_DESCRIPTION, annotation.longDescription());
-		putIfNotEmpty(map, LoaderConfiguration.KEY_UNIT_OF_MEASURE, annotation.unitOfMeasure());
+		ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_LONG_DESCRIPTION, annotation.longDescription(), map);
+		ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_UNIT_OF_MEASURE, annotation.unitOfMeasure(), map);
 
 		if(!fieldType.isEnum() && !fieldType.isArray())
-			putIfNotEmpty(map, LoaderConfiguration.KEY_FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName());
+			ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName(),
+				map);
 		if(annotation.enumeration() != NullEnum.class){
 			final Enum<?>[] enumConstants = annotation.enumeration().getEnumConstants();
 			final String[] enumValues = new String[enumConstants.length];
 			for(int j = 0; j < enumConstants.length; j ++)
 				enumValues[j] = enumConstants[j].name();
-			putIfNotEmpty(map, LoaderConfiguration.KEY_ENUMERATION, enumValues);
+			ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_ENUMERATION, enumValues, map);
 			if(fieldType.isEnum())
-				putIfNotEmpty(map, LoaderConfiguration.KEY_MUTUALLY_EXCLUSIVE, true);
+				ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_MUTUALLY_EXCLUSIVE, true, map);
 		}
 
 		return map;
@@ -236,26 +237,20 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 	private static Map<String, Object> extractMap(final AlternativeSubField binding, final Class<?> fieldType) throws ConfigurationException{
 		final Map<String, Object> map = new HashMap<>(6);
 
-		putIfNotEmpty(map, LoaderConfiguration.KEY_LONG_DESCRIPTION, binding.longDescription());
-		putIfNotEmpty(map, LoaderConfiguration.KEY_UNIT_OF_MEASURE, binding.unitOfMeasure());
+		ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_LONG_DESCRIPTION, binding.longDescription(), map);
+		ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_UNIT_OF_MEASURE, binding.unitOfMeasure(), map);
 
 		if(!fieldType.isEnum() && !fieldType.isArray())
-			putIfNotEmpty(map, LoaderConfiguration.KEY_FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName());
-		putIfNotEmpty(map, LoaderConfiguration.KEY_MIN_VALUE, JavaHelper.getValue(fieldType, binding.minValue()));
-		putIfNotEmpty(map, LoaderConfiguration.KEY_MAX_VALUE, JavaHelper.getValue(fieldType, binding.maxValue()));
-		putIfNotEmpty(map, LoaderConfiguration.KEY_PATTERN, binding.pattern());
+			ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName(),
+				map);
+		ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_MIN_VALUE, JavaHelper.getValue(fieldType, binding.minValue()), map);
+		ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_MAX_VALUE, JavaHelper.getValue(fieldType, binding.maxValue()), map);
+		ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_PATTERN, binding.pattern(), map);
 
 		if(String.class.isAssignableFrom(fieldType))
-			putIfNotEmpty(map, LoaderConfiguration.KEY_CHARSET, binding.charset());
+			ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_CHARSET, binding.charset(), map);
 
 		return map;
-	}
-
-	private static void putIfNotEmpty(@SuppressWarnings("BoundedWildcard") final Map<String, Object> map, final String key,
-			final Object value) throws ConfigurationException{
-		if(value != null && (!String.class.isInstance(value) || !StringHelper.isBlank((CharSequence)value)))
-			if(map.put(key, value) != null)
-				throw ConfigurationException.create("Duplicated short description: {}", key);
 	}
 
 	private AlternativeSubField extractField(final Version protocol){

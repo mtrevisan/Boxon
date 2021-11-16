@@ -47,39 +47,50 @@ final class ManagerHelper{
 	static void validateValue(final String dataKey, final Object dataValue, final Class<?> fieldType,
 			final String pattern, final String minValue, final String maxValue) throws EncodeException{
 		//check pattern
+		validatePattern(dataKey, dataValue, pattern);
+		//check minValue
+		validateMinValue(dataKey, dataValue, fieldType, minValue);
+		//check maxValue
+		validateMaxValue(dataKey, dataValue, fieldType, maxValue);
+	}
+
+	private static void validatePattern(final String dataKey, final Object dataValue, final String pattern) throws EncodeException{
 		if(!pattern.isEmpty()){
 			final Pattern formatPattern = Pattern.compile(pattern);
 
 			//value compatible with data type and pattern
 			if(!String.class.isInstance(dataValue) || !formatPattern.matcher((CharSequence)dataValue).matches())
-				throw EncodeException.create("Data value not compatible with `pattern` for data key {}; found {}, expected {}",
-					dataKey, dataValue, pattern);
-		}
-		//check minValue
-		if(!minValue.isEmpty()){
-			final Object min = JavaHelper.getValue(fieldType, minValue);
-			if(Number.class.isInstance(dataValue) && ((Number)dataValue).doubleValue() < ((Number)min).doubleValue())
-				throw EncodeException.create("Data value incompatible with minimum value for data key {}; found {}, expected greater than or equals to {}",
-					dataKey, dataValue, minValue.getClass().getSimpleName());
-		}
-		//check maxValue
-		if(!maxValue.isEmpty()){
-			final Object max = JavaHelper.getValue(fieldType, maxValue);
-			if(Number.class.isInstance(dataValue) && ((Number)dataValue).doubleValue() > ((Number)max).doubleValue())
-				throw EncodeException.create("Data value incompatible with maximum value for data key {}; found {}, expected greater than or equals to {}",
-					dataKey, dataValue, maxValue.getClass().getSimpleName());
+				throw EncodeException.create("Data value not compatible with `pattern` for data key {}; found {}, expected {}", dataKey, dataValue, pattern);
 		}
 	}
 
-	static void putIfNotEmpty(@SuppressWarnings("BoundedWildcard") final Map<String, Object> map, final String key,
-			final Object value) throws ConfigurationException{
+	private static void validateMinValue(final String dataKey, final Object dataValue, final Class<?> fieldType, final String minValue)
+			throws EncodeException{
+		if(!minValue.isEmpty()){
+			final Object min = JavaHelper.getValue(fieldType, minValue);
+			if(Number.class.isInstance(dataValue) && ((Number)dataValue).doubleValue() < ((Number)min).doubleValue())
+				throw EncodeException.create("Data value incompatible with minimum value for data key {}; found {}, expected greater than or equals to {}", dataKey, dataValue, minValue.getClass().getSimpleName());
+		}
+	}
+
+	private static void validateMaxValue(final String dataKey, final Object dataValue, final Class<?> fieldType, final String maxValue)
+			throws EncodeException{
+		if(!maxValue.isEmpty()){
+			final Object max = JavaHelper.getValue(fieldType, maxValue);
+			if(Number.class.isInstance(dataValue) && ((Number)dataValue).doubleValue() > ((Number)max).doubleValue())
+				throw EncodeException.create("Data value incompatible with maximum value for data key {}; found {}, expected greater than or equals to {}", dataKey, dataValue, maxValue.getClass().getSimpleName());
+		}
+	}
+
+	static void putIfNotEmpty(final String key, final Object value, @SuppressWarnings("BoundedWildcard") final Map<String, Object> map)
+			throws ConfigurationException{
 		if(value != null && (!String.class.isInstance(value) || !StringHelper.isBlank((CharSequence)value)))
 			if(map.put(key, value) != null)
 				throw ConfigurationException.create("Duplicated short description: {}", key);
 	}
 
-	static void putValueIfNotEmpty(@SuppressWarnings("BoundedWildcard") final Map<String, Object> map, final String key, final Class<?> fieldType,
-			final Class<? extends Enum<?>> enumeration, final String value) throws ConfigurationException{
+	static void putValueIfNotEmpty(final String key, final String value, final Class<?> fieldType,
+			final Class<? extends Enum<?>> enumeration, @SuppressWarnings("BoundedWildcard") final Map<String, Object> map) throws ConfigurationException{
 		if(!StringHelper.isBlank(value)){
 			Object val = value;
 			if(enumeration != NullEnum.class && fieldType.isArray())

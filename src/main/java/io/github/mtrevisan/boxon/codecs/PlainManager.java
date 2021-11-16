@@ -91,8 +91,8 @@ final class PlainManager implements ConfigurationManagerInterface{
 		final Map<String, Object> fieldMap = extractMap(fieldType);
 
 		if(protocol.isEmpty()){
-			ManagerHelper.putIfNotEmpty(fieldMap, LoaderConfiguration.KEY_MIN_PROTOCOL, annotation.minProtocol());
-			ManagerHelper.putIfNotEmpty(fieldMap, LoaderConfiguration.KEY_MAX_PROTOCOL, annotation.maxProtocol());
+			ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_MIN_PROTOCOL, annotation.minProtocol(), fieldMap);
+			ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_MAX_PROTOCOL, annotation.maxProtocol(), fieldMap);
 		}
 		return fieldMap;
 	}
@@ -100,29 +100,29 @@ final class PlainManager implements ConfigurationManagerInterface{
 	private Map<String, Object> extractMap(final Class<?> fieldType) throws ConfigurationException{
 		final Map<String, Object> map = new HashMap<>(10);
 
-		ManagerHelper.putIfNotEmpty(map, LoaderConfiguration.KEY_LONG_DESCRIPTION, annotation.longDescription());
-		ManagerHelper.putIfNotEmpty(map, LoaderConfiguration.KEY_UNIT_OF_MEASURE, annotation.unitOfMeasure());
+		ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_LONG_DESCRIPTION, annotation.longDescription(), map);
+		ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_UNIT_OF_MEASURE, annotation.unitOfMeasure(), map);
 
 		if(!fieldType.isEnum() && !fieldType.isArray())
-			ManagerHelper.putIfNotEmpty(map, LoaderConfiguration.KEY_FIELD_TYPE,
-				ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName());
-		ManagerHelper.putIfNotEmpty(map, LoaderConfiguration.KEY_MIN_VALUE, JavaHelper.getValue(fieldType, annotation.minValue()));
-		ManagerHelper.putIfNotEmpty(map, LoaderConfiguration.KEY_MAX_VALUE, JavaHelper.getValue(fieldType, annotation.maxValue()));
-		ManagerHelper.putIfNotEmpty(map, LoaderConfiguration.KEY_PATTERN, annotation.pattern());
+			ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName(),
+				map);
+		ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_MIN_VALUE, JavaHelper.getValue(fieldType, annotation.minValue()), map);
+		ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_MAX_VALUE, JavaHelper.getValue(fieldType, annotation.maxValue()), map);
+		ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_PATTERN, annotation.pattern(), map);
 		if(annotation.enumeration() != NullEnum.class){
 			final Enum<?>[] enumConstants = annotation.enumeration().getEnumConstants();
 			final String[] enumValues = new String[enumConstants.length];
 			for(int j = 0; j < enumConstants.length; j ++)
 				enumValues[j] = enumConstants[j].name();
-			ManagerHelper.putIfNotEmpty(map, LoaderConfiguration.KEY_ENUMERATION, enumValues);
+			ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_ENUMERATION, enumValues, map);
 			if(fieldType.isEnum())
-				ManagerHelper.putIfNotEmpty(map, LoaderConfiguration.KEY_MUTUALLY_EXCLUSIVE, true);
+				ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_MUTUALLY_EXCLUSIVE, true, map);
 		}
 
-		ManagerHelper.putValueIfNotEmpty(map, LoaderConfiguration.KEY_DEFAULT_VALUE, fieldType, annotation.enumeration(),
-			annotation.defaultValue());
+		ManagerHelper.putValueIfNotEmpty(LoaderConfiguration.KEY_DEFAULT_VALUE, annotation.defaultValue(), fieldType,
+			annotation.enumeration(), map);
 		if(String.class.isAssignableFrom(fieldType))
-			ManagerHelper.putIfNotEmpty(map, LoaderConfiguration.KEY_CHARSET, annotation.charset());
+			ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_CHARSET, annotation.charset(), map);
 
 		return map;
 	}
