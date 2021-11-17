@@ -176,23 +176,21 @@ final class ValidationHelper{
 	static <T extends Annotation> void validatePattern(final ConfigFieldData<T> field) throws AnnotationException{
 		//valid pattern
 		if(!StringHelper.isBlank(field.pattern)){
+			final Pattern formatPattern;
 			try{
-				final Pattern formatPattern = Pattern.compile(field.pattern);
-
-				//defaultValue compatible with field type
-				if(!String.class.isAssignableFrom(field.getFieldType()))
-					throw AnnotationException.create("Data type not compatible with `pattern` in {}; found {}.class, expected String.class",
-						field.annotation.getSimpleName(), field.getFieldType());
-
-				validateMinMaxDefaultValuesToPattern(formatPattern, field);
-			}
-			catch(final AnnotationException ae){
-				throw ae;
+				formatPattern = Pattern.compile(field.pattern);
 			}
 			catch(final Exception e){
 				throw AnnotationException.create("Invalid pattern in {} in field {}", field.annotation.getSimpleName(),
 					field.field.getName(), e);
 			}
+
+			//defaultValue compatible with field type
+			if(!String.class.isAssignableFrom(field.getFieldType()))
+				throw AnnotationException.create("Data type not compatible with `pattern` in {}; found {}.class, expected String.class",
+					field.annotation.getSimpleName(), field.getFieldType());
+
+			validateMinMaxDefaultValuesToPattern(formatPattern, field);
 		}
 	}
 
@@ -212,7 +210,6 @@ final class ValidationHelper{
 				throw AnnotationException.create("Empty enum in {} in field {}", field.annotation.getSimpleName(),
 					field.field.getName());
 
-			//enumeration compatible with variable type
 			if(isFieldArray)
 				validateEnumMultipleValues(field, enumConstants);
 			else
@@ -222,6 +219,7 @@ final class ValidationHelper{
 
 	private static <T extends Annotation> void validateEnumMultipleValues(final ConfigFieldData<T> field, final Enum<?>[] enumConstants)
 			throws AnnotationException{
+		//enumeration compatible with variable type
 		if(!field.getFieldType().getComponentType().isAssignableFrom(field.enumeration))
 			throw AnnotationException.create("Incompatible enum in {}; found {}, expected {}",
 				field.annotation.getSimpleName(), field.enumeration.getSimpleName(), field.getFieldType().toString());
@@ -241,6 +239,7 @@ final class ValidationHelper{
 
 	private static <T extends Annotation> void validateEnumerationMutuallyExclusive(final ConfigFieldData<T> field,
 			final Enum<?>[] enumConstants) throws AnnotationException{
+		//enumeration compatible with variable type
 		if(!field.getFieldType().isAssignableFrom(field.enumeration))
 			throw AnnotationException.create("Incompatible enum in {}; found {}, expected {}",
 				field.annotation.getSimpleName(), field.enumeration.getSimpleName(), field.getFieldType().toString());
