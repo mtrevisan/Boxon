@@ -24,7 +24,6 @@
  */
 package io.github.mtrevisan.boxon.codecs.managers;
 
-import io.github.mtrevisan.boxon.internal.Memoizer;
 import org.springframework.objenesis.instantiator.ObjectInstantiator;
 import org.springframework.objenesis.instantiator.android.Android10Instantiator;
 import org.springframework.objenesis.instantiator.android.Android17Instantiator;

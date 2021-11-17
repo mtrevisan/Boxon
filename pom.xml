@@ -245,7 +245,7 @@
 						io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.annotations.validators=spring.core,spring.expression,ALL-UNNAMED
 						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.core=spring.core,spring.expression,ALL-UNNAMED
 						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.external=ALL-UNNAMED --add-opens
-						io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.internal.matchers=ALL-UNNAMED</argLine>
+						io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.codecs.managers.matchers=ALL-UNNAMED</argLine>
 				</configuration>
 			</plugin>
 			<!-- Compiler -->

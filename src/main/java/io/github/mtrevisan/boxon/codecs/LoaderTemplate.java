@@ -32,12 +32,12 @@ import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.EventListener;
-import io.github.mtrevisan.boxon.internal.Memoizer;
+import io.github.mtrevisan.boxon.codecs.managers.Memoizer;
 import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 import io.github.mtrevisan.boxon.internal.ThrowingFunction;
-import io.github.mtrevisan.boxon.internal.matchers.BNDMPatternMatcher;
-import io.github.mtrevisan.boxon.internal.matchers.PatternMatcher;
+import io.github.mtrevisan.boxon.codecs.managers.matchers.BNDMPatternMatcher;
+import io.github.mtrevisan.boxon.codecs.managers.matchers.PatternMatcher;
 
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;

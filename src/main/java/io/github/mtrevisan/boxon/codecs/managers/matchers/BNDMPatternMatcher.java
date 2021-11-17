@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.internal.matchers;
+package io.github.mtrevisan.boxon.codecs.managers.matchers;
 
 import java.util.Arrays;
 
