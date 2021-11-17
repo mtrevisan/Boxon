@@ -95,9 +95,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 			try{
 				final ObjectChoices.ObjectChoice chosenAlternative = CodecHelper.chooseAlternative(reader, selectFrom, rootObject);
 				final Class<?> chosenAlternativeType = (!isEmptyChoice(chosenAlternative)? chosenAlternative.type(): binding.selectDefault());
-				if(chosenAlternativeType == void.class)
-					throw CodecException.create("Cannot find a valid codec from given alternatives for {}",
-						rootObject.getClass().getSimpleName());
+				validateChosenAlternative(chosenAlternativeType, rootObject);
 
 				//read object
 				final Template<?> subTemplate = loaderTemplate.createTemplate(chosenAlternativeType);
@@ -108,6 +106,12 @@ final class CodecArray implements CodecInterface<BindArray>{
 				eventListener.processingAlternative(e);
 			}
 		}
+	}
+
+	private void validateChosenAlternative(final Class<?> chosenAlternativeType, final Object rootObject) throws CodecException{
+		if(chosenAlternativeType == void.class)
+			throw CodecException.create("Cannot find a valid codec from given alternatives for {}",
+				rootObject.getClass().getSimpleName());
 	}
 
 	private static boolean isEmptyChoice(final ObjectChoices.ObjectChoice choice){
