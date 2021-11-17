@@ -189,7 +189,7 @@ final class CodecHelper{
 			throws ConfigurationException{
 		final Charset charset = Charset.forName(charsetName);
 
-		value = interpretValue(value, fieldType);
+		value = interpretValue(fieldType, value);
 		if(value != null){
 			if(String.class.isInstance(value))
 				writer.putText((String)value, charset);
@@ -210,7 +210,7 @@ final class CodecHelper{
 		}
 	}
 
-	private static Object interpretValue(Object value, final Class<?> fieldType){
+	private static Object interpretValue(final Class<?> fieldType, Object value){
 		value = JavaHelper.getValueOrDefault(fieldType, value);
 		if(value != null){
 			if(value.getClass().isEnum())
