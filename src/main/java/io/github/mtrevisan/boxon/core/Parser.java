@@ -324,33 +324,39 @@ public final class Parser{
 			//save state of the reader (restored upon a decoding error)
 			reader.createFallbackPoint();
 
-			try{
-				final Template<?> template = loaderTemplate.getTemplate(reader);
-
-				final Object partialDecodedMessage = templateParser.decode(template, reader, null);
-
-				response.addParsedMessage(start, partialDecodedMessage);
-			}
-			catch(final Exception e){
-				final DecodeException de = DecodeException.create(reader.position(), e);
-				response.addError(start, de);
-
-				//restore state of the reader
-				reader.restoreFallbackPoint();
-
-				final int position = loaderTemplate.findNextMessageIndex(reader);
-				if(position < 0)
-					//cannot find any template for message
-					break;
-
-				reader.position(position);
-			}
+			if(parse(reader, start, response))
+				break;
 		}
 
 		//check if there are unread bytes
 		assertNoLeftBytes(reader, start, response);
 
 		return response;
+	}
+
+	private boolean parse(final BitReader reader, final int start, final ParseResponse response){
+		try{
+			final Template<?> template = loaderTemplate.getTemplate(reader);
+
+			final Object partialDecodedMessage = templateParser.decode(template, reader, null);
+
+			response.addParsedMessage(start, partialDecodedMessage);
+		}
+		catch(final Exception e){
+			final DecodeException de = DecodeException.create(reader.position(), e);
+			response.addError(start, de);
+
+			//restore state of the reader
+			reader.restoreFallbackPoint();
+
+			final int position = loaderTemplate.findNextMessageIndex(reader);
+			if(position < 0)
+				//cannot find any template for message
+				return true;
+
+			reader.position(position);
+		}
+		return false;
 	}
 
 	private static void assertNoLeftBytes(final BitReader reader, final int start, final ParseResponse response){
