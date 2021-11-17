@@ -28,7 +28,6 @@ import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigura
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
 import io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.CompositeSubField;
-import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
@@ -36,16 +35,13 @@ import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
-import io.github.mtrevisan.boxon.internal.ParserDataType;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 
 enum ConfigurationAnnotationValidator{
@@ -92,13 +88,13 @@ enum ConfigurationAnnotationValidator{
 			final String minValue = binding.minValue();
 			final String maxValue = binding.maxValue();
 			final String defaultValue = binding.defaultValue();
-			ValidationHelper.validatePattern(field, pattern, minValue, maxValue, defaultValue);
+			ValidationHelper.validatePattern(field, pattern, minValue, maxValue, defaultValue, ConfigurationField.class);
 
-			validateDefaultValue(field, binding);
+			ValidationHelper.validateDefaultValue(field, defaultValue, binding.enumeration(), ConfigurationField.class);
 
-			validateEnumeration(field, binding);
+			ValidationHelper.validateEnumeration(field, binding.enumeration(), defaultValue, ConfigurationField.class);
 
-			ValidationHelper.validateMinMaxValues(field, minValue, maxValue, defaultValue);
+			ValidationHelper.validateMinMaxValues(field, minValue, maxValue, defaultValue, ConfigurationField.class);
 
 			ValidationHelper.validateProtocol(binding.minProtocol(), binding.maxProtocol(), minMessageProtocol, maxMessageProtocol,
 				ConfigurationField.class);
@@ -126,82 +122,6 @@ enum ConfigurationAnnotationValidator{
 		private boolean moreThanOneSet(final boolean hasPattern, final boolean hasMinMaxValues, final boolean hasEnumeration){
 			return (hasPattern && hasMinMaxValues || hasPattern && hasEnumeration || hasMinMaxValues && hasEnumeration);
 		}
-
-		private void validateDefaultValue(final Field field, final ConfigurationField binding) throws AnnotationException, CodecException{
-			final Class<?> fieldType = field.getType();
-			final Class<? extends Enum<?>> enumeration = binding.enumeration();
-			final String defaultValue = binding.defaultValue();
-
-			if(!defaultValue.isEmpty()){
-				//defaultValue compatible with variable type
-				if(enumeration == NullEnum.class && JavaHelper.getValue(fieldType, defaultValue) == null)
-					throw AnnotationException.create("Incompatible enum in {}, found {}, expected {}",
-						ConfigurationField.class.getSimpleName(), defaultValue.getClass().getSimpleName(), fieldType.toString());
-			}
-			//if default value is not present, then field type must be an object
-			else if(ParserDataType.isPrimitive(fieldType))
-				throw AnnotationException.create("Default must be present for primitive type in {}, found {}, expected {}",
-					ConfigurationField.class.getSimpleName(), fieldType.getSimpleName(),
-					ParserDataType.toObjectiveTypeOrSelf(fieldType).getSimpleName());
-		}
-
-		private void validateEnumeration(final Field field, final ConfigurationField binding) throws AnnotationException{
-			final Class<?> fieldType = field.getType();
-			final boolean isFieldArray = fieldType.isArray();
-			final Class<? extends Enum<?>> enumeration = binding.enumeration();
-			final String defaultValue = binding.defaultValue();
-
-			if(enumeration != NullEnum.class){
-				//enumeration can be encoded
-				if(!ConfigurationEnum.class.isAssignableFrom(enumeration))
-					throw AnnotationException.create("Enum must implement ConfigurationEnum.class in {} in field {}",
-						ConfigurationField.class.getSimpleName(), field.getName());
-
-				//non-empty enumeration
-				final Enum<?>[] enumConstants = enumeration.getEnumConstants();
-				if(enumConstants.length == 0)
-					throw AnnotationException.create("Empty enum in {} in field {}", ConfigurationField.class.getSimpleName(),
-						field.getName());
-
-				//enumeration compatible with variable type
-				if(isFieldArray)
-					validateEnumMultipleValues(field, fieldType, enumeration, enumConstants, defaultValue);
-				else
-					validateEnumerationMutuallyExclusive(fieldType, enumeration, enumConstants, defaultValue);
-			}
-		}
-
-		private void validateEnumMultipleValues(final Field field, final Class<?> fieldType, final Class<? extends Enum<?>> enumeration,
-				final Enum<?>[] enumConstants, final String defaultValue) throws AnnotationException{
-			if(!fieldType.getComponentType().isAssignableFrom(enumeration))
-				throw AnnotationException.create("Incompatible enum in {}; found {}, expected {}",
-					ConfigurationField.class.getSimpleName(), enumeration.getSimpleName(), fieldType.toString());
-
-			if(!defaultValue.isEmpty()){
-				final String[] defaultValues = StringHelper.split(defaultValue, '|', -1);
-				if(field.getType().isEnum() && defaultValues.length != 1)
-					throw AnnotationException.create("Default value for mutually exclusive enumeration field in {} should be a value; found {}, expected one of {}",
-						ConfigurationField.class.getSimpleName(), defaultValue, Arrays.toString(enumConstants));
-
-				for(int i = 0; i < JavaHelper.lengthOrZero(defaultValues); i ++){
-					final String dv = defaultValues[i];
-					if(JavaHelper.extractEnum(enumConstants, dv) == null)
-						throw AnnotationException.create("Default value not compatible with `enumeration` in {}; found {}, expected one of {}",
-							ConfigurationField.class.getSimpleName(), dv, Arrays.toString(enumConstants));
-				}
-			}
-		}
-
-		private void validateEnumerationMutuallyExclusive(final Class<?> fieldType, final Class<? extends Enum<?>> enumeration,
-				final Enum<?>[] enumConstants, final String defaultValue) throws AnnotationException{
-			if(!fieldType.isAssignableFrom(enumeration))
-				throw AnnotationException.create("Incompatible enum in {}; found {}, expected {}",
-					ConfigurationField.class.getSimpleName(), enumeration.getSimpleName(), fieldType.toString());
-
-			if(!defaultValue.isEmpty() && JavaHelper.extractEnum(enumConstants, defaultValue) == null)
-				throw AnnotationException.create("Default value not compatible with `enumeration` in {}; found {}, expected one of {}",
-					ConfigurationField.class.getSimpleName(), defaultValue, Arrays.toString(enumConstants));
-		}
 	},
 
 	COMPOSITE_FIELD(CompositeConfigurationField.class){
@@ -220,7 +140,8 @@ enum ConfigurationAnnotationValidator{
 				throw AnnotationException.create("Composite fields must have at least one sub-field");
 			ValidationHelper.assertValidCharset(binding.charset());
 
-			validatePattern(field, binding);
+			ValidationHelper.validatePattern(field, binding.pattern(), null, null, null,
+				CompositeConfigurationField.class);
 
 			ValidationHelper.validateProtocol(binding.minProtocol(), binding.maxProtocol(), minMessageProtocol, maxMessageProtocol,
 				CompositeConfigurationField.class);
@@ -228,27 +149,6 @@ enum ConfigurationAnnotationValidator{
 
 			for(int i = 0; i < fields.length; i ++)
 				SUB_FIELD.validate(field, fields[i], minMessageProtocol, maxMessageProtocol);
-		}
-
-		private void validatePattern(final Field field, final CompositeConfigurationField binding) throws AnnotationException{
-			final String pattern = binding.pattern();
-
-			//valid pattern
-			if(!pattern.isEmpty()){
-				try{
-					//defaultValue compatible with field type
-					if(!String.class.isAssignableFrom(field.getType()))
-						throw AnnotationException.create("Data type not compatible with `pattern` in {}; found {}.class, expected String.class",
-							ConfigurationField.class.getSimpleName(), field.getType());
-				}
-				catch(final AnnotationException ae){
-					throw ae;
-				}
-				catch(final Exception e){
-					throw AnnotationException.create("Invalid pattern in {} in field {}", ConfigurationField.class.getSimpleName(),
-						field.getName(), e);
-				}
-			}
 		}
 	},
 
@@ -261,54 +161,10 @@ enum ConfigurationAnnotationValidator{
 			if(StringHelper.isBlank(binding.shortDescription()))
 				throw AnnotationException.create("Short description must be present");
 
-			validatePattern(field, binding);
+			ValidationHelper.validatePattern(field, binding.pattern(), null, null, binding.defaultValue(),
+				CompositeSubField.class);
 
-			validateDefaultValue(field, binding);
-		}
-
-		private void validatePattern(final Field field, final CompositeSubField binding) throws AnnotationException{
-			final String pattern = binding.pattern();
-			final String defaultValue = binding.defaultValue();
-
-			//valid pattern
-			if(!pattern.isEmpty()){
-				try{
-					final Pattern formatPattern = Pattern.compile(pattern);
-
-					//defaultValue compatible with field type
-					if(!String.class.isAssignableFrom(field.getType()))
-						throw AnnotationException.create("Data type not compatible with `pattern` in {}; found {}.class, expected String.class",
-							CompositeSubField.class.getSimpleName(), field.getType());
-					//defaultValue compatible with pattern
-					if(!defaultValue.isEmpty() && !formatPattern.matcher(defaultValue).matches())
-						throw AnnotationException.create("Default value not compatible with `pattern` in {}; found {}, expected {}",
-							CompositeSubField.class.getSimpleName(), defaultValue, pattern);
-				}
-				catch(final AnnotationException ae){
-					throw ae;
-				}
-				catch(final Exception e){
-					throw AnnotationException.create("Invalid pattern in {} in field {}", CompositeSubField.class.getSimpleName(),
-						field.getName(), e);
-				}
-			}
-		}
-
-		private void validateDefaultValue(final Field field, final CompositeSubField binding) throws AnnotationException, CodecException{
-			final Class<?> fieldType = field.getType();
-			final String defaultValue = binding.defaultValue();
-
-			if(!defaultValue.isEmpty()){
-				//defaultValue compatible with variable type
-				if(JavaHelper.getValue(fieldType, defaultValue) == null)
-					throw AnnotationException.create("Incompatible enum in {}, found {}, expected {}",
-						CompositeSubField.class.getSimpleName(), defaultValue.getClass().getSimpleName(), fieldType.toString());
-			}
-			//if default value is not present, then field type must be an object
-			else if(ParserDataType.isPrimitive(fieldType))
-				throw AnnotationException.create("Default must be present for primitive type in {}, found {}, expected {}",
-					ConfigurationField.class.getSimpleName(), fieldType.getSimpleName(),
-					ParserDataType.toObjectiveTypeOrSelf(fieldType).getSimpleName());
+			ValidationHelper.validateDefaultValue(field, binding.defaultValue(), null, CompositeSubField.class);
 		}
 	},
 
@@ -325,7 +181,7 @@ enum ConfigurationAnnotationValidator{
 
 			validateMinimumParameters(field, binding);
 
-			validateEnumeration(field, binding);
+			ValidationHelper.validateEnumeration(field, binding.enumeration(), null, AlternativeConfigurationField.class);
 
 			ValidationHelper.validateProtocol(binding.minProtocol(), binding.maxProtocol(), minMessageProtocol, maxMessageProtocol,
 				AlternativeConfigurationField.class);
@@ -343,23 +199,6 @@ enum ConfigurationAnnotationValidator{
 
 			if(isFieldArray && enumeration == NullEnum.class)
 				throw AnnotationException.create("Array field should have `enumeration`");
-		}
-
-		private void validateEnumeration(final Field field, final AlternativeConfigurationField binding) throws AnnotationException{
-			final Class<? extends Enum<?>> enumeration = binding.enumeration();
-
-			if(enumeration != NullEnum.class){
-				//enumeration can be encoded
-				if(!ConfigurationEnum.class.isAssignableFrom(enumeration))
-					throw AnnotationException.create("Enum must implement ConfigurationEnum.class in {} in field {}",
-						ConfigurationField.class.getSimpleName(), field.getName());
-
-				//non-empty enumeration
-				final Enum<?>[] enumConstants = enumeration.getEnumConstants();
-				if(enumConstants.length == 0)
-					throw AnnotationException.create("Empty enum in {} in field {}", ConfigurationField.class.getSimpleName(),
-						field.getName());
-			}
 		}
 	},
 
@@ -379,9 +218,9 @@ enum ConfigurationAnnotationValidator{
 			final String minValue = binding.minValue();
 			final String maxValue = binding.maxValue();
 			final String defaultValue = binding.defaultValue();
-			ValidationHelper.validatePattern(field, pattern, minValue, maxValue, defaultValue);
+			ValidationHelper.validatePattern(field, pattern, minValue, maxValue, defaultValue, AlternativeSubField.class);
 
-			ValidationHelper.validateMinMaxValues(field, minValue, maxValue, defaultValue);
+			ValidationHelper.validateMinMaxValues(field, minValue, maxValue, defaultValue, AlternativeSubField.class);
 
 			ValidationHelper.validateProtocol(binding.minProtocol(), binding.maxProtocol(), minMessageProtocol, maxMessageProtocol,
 				AlternativeSubField.class);
