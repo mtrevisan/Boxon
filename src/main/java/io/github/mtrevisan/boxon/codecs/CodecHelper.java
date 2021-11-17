@@ -191,21 +191,11 @@ final class CodecHelper{
 
 		value = interpretValue(fieldType, value);
 		if(value != null){
-			if(String.class.isInstance(value))
-				writer.putText((String)value, charset);
-			else{
-				final Class<?> fieldClass = ParserDataType.toObjectiveTypeOrSelf(value.getClass());
-				if(fieldClass == Float.class)
-					writer.putFloat((Float)value, ByteOrder.BIG_ENDIAN);
-				else if(fieldClass == Double.class)
-					writer.putDouble((Double)value, ByteOrder.BIG_ENDIAN);
-				else if(Number.class.isAssignableFrom(fieldClass)){
-					value = Long.toString(((Number)value).longValue(), radix);
-					writer.putText((String)value, charset);
-				}
-				else
-					throw CodecException.create("Cannot handle this type of field: {}, please report to the developer", fieldClass);
-			}
+			final EncodeManagerInterface manager = EncodeManagerFactory.buildManager(value, writer);
+			if(manager == null)
+				throw CodecException.create("Cannot handle this type of field: {}, please report to the developer", ParserDataType.toObjectiveTypeOrSelf(value.getClass()));
+
+			manager.put(value, radix, charset);
 		}
 	}
 
