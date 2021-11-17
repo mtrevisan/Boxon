@@ -24,6 +24,8 @@
  */
 package io.github.mtrevisan.boxon.external.semanticversioning;
 
+import io.github.mtrevisan.boxon.internal.StringHelper;
+
 import java.util.Arrays;
 import java.util.StringTokenizer;
 
@@ -109,7 +111,7 @@ public final class Version implements Comparable<Version>{
 	}
 
 	private Version(String version){
-		if(VersionHelper.isBlank(version)){
+		if(StringHelper.isBlank(version)){
 			major = null;
 			minor = null;
 			patch = null;
@@ -122,7 +124,7 @@ public final class Version implements Comparable<Version>{
 		if(!VersionHelper.startsWithNumber(version))
 			throw new IllegalArgumentException("Argument is not a valid version");
 
-		final String[] tokens = VersionHelper.split(version, '.', 3);
+		final String[] tokens = StringHelper.split(version, '.', 3);
 		validateValues(version, tokens);
 
 		major = Integer.valueOf(tokens[0]);
@@ -134,7 +136,7 @@ public final class Version implements Comparable<Version>{
 
 			String nextToken = (tokenizer.hasMoreElements()? tokenizer.nextToken(): null);
 			if(PRE_RELEASE_PREFIX.equals(nextToken) && tokenizer.hasMoreElements()){
-				preRelease = VersionHelper.split(tokenizer.nextToken(), '.', -1);
+				preRelease = StringHelper.split(tokenizer.nextToken(), '.', -1);
 
 				validatePreRelease();
 
@@ -144,7 +146,7 @@ public final class Version implements Comparable<Version>{
 				preRelease = VersionHelper.EMPTY_ARRAY;
 
 			if(BUILD_PREFIX.equals(nextToken) && tokenizer.hasMoreElements()){
-				build = VersionHelper.split(tokenizer.nextToken(), '.', -1);
+				build = StringHelper.split(tokenizer.nextToken(), '.', -1);
 
 				validateBuild();
 			}
@@ -162,7 +164,7 @@ public final class Version implements Comparable<Version>{
 	}
 
 	private static void validateValues(final String version, final String[] tokens){
-		final String[] tokensWithPatch = VersionHelper.split(version, DOT + PRE_RELEASE_PREFIX + BUILD_PREFIX, -1);
+		final String[] tokensWithPatch = StringHelper.split(version, DOT + PRE_RELEASE_PREFIX + BUILD_PREFIX, -1);
 		if(VersionHelper.hasLeadingZeros(tokens[0])
 				|| tokensWithPatch.length > 1 && VersionHelper.hasLeadingZeros(tokens[1])
 				|| tokensWithPatch.length > 2 && VersionHelper.hasLeadingZeros(tokensWithPatch[2]))
@@ -172,7 +174,7 @@ public final class Version implements Comparable<Version>{
 	private void validatePreRelease(){
 		for(int i = 0; i < preRelease.length; i ++){
 			final String pr = preRelease[i];
-			final boolean numeric = VersionHelper.isNumeric(pr);
+			final boolean numeric = StringHelper.isNumeric(pr);
 			if(numeric && pr.length() > 1 && pr.charAt(0) == '0')
 				throw new IllegalArgumentException("Numeric identifier MUST NOT contain leading zeros");
 			if(!numeric && !containsOnly(pr))
@@ -183,7 +185,7 @@ public final class Version implements Comparable<Version>{
 	private void validateBuild(){
 		for(int i = 0; i < build.length; i ++){
 			final String b = build[i];
-			if(!VersionHelper.isNumeric(b) && !containsOnly(b))
+			if(!StringHelper.isNumeric(b) && !containsOnly(b))
 				throw new IllegalArgumentException("Argument is not a valid version");
 		}
 	}
@@ -344,7 +346,7 @@ public final class Version implements Comparable<Version>{
 	}
 
 	private static int compareIdentifiers(final String identifier1, final String identifier2){
-		return (VersionHelper.isNumeric(identifier1) && VersionHelper.isNumeric(identifier2)
+		return (StringHelper.isNumeric(identifier1) && StringHelper.isNumeric(identifier2)
 			? Integer.parseInt(identifier1) - Integer.parseInt(identifier2)
 			: identifier1.compareTo(identifier2));
 	}
