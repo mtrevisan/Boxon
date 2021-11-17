@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.codecs;
+package io.github.mtrevisan.boxon.codecs.managers;
 
 import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArray;
@@ -32,6 +32,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
+import io.github.mtrevisan.boxon.codecs.CodecHelper;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.external.EventListener;
 import io.github.mtrevisan.boxon.internal.ParserDataType;
@@ -42,7 +43,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-enum TemplateAnnotationValidator{
+public enum TemplateAnnotationValidator{
 
 	OBJECT(BindObject.class){
 		@Override

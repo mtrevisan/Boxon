@@ -49,10 +49,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-final class CodecHelper{
+public final class CodecHelper{
 
 	/** The name of the current object being scanner (used for referencing variables from SpEL). */
-	static final String CONTEXT_SELF = "self";
+	public static final String CONTEXT_SELF = "self";
 	/** The name of the prefix for the alternative (used for referencing variables from SpEL). */
 	private static final String CONTEXT_CHOICE_PREFIX = "prefix";
 
@@ -154,7 +154,7 @@ final class CodecHelper{
 		}
 	}
 
-	static boolean containsPrefixReference(final CharSequence condition){
+	public static boolean containsPrefixReference(final CharSequence condition){
 		return CONTEXT_PREFIXED_CHOICE_PREFIX.reset(condition).find();
 	}
 

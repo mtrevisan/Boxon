@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.codecs;
+package io.github.mtrevisan.boxon.codecs.managers;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -37,4 +37,4 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 @Documented
-@interface InjectEventListener{}
+public @interface InjectEventListener{}

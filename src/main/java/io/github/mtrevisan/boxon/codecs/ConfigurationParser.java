@@ -26,6 +26,9 @@ package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
+import io.github.mtrevisan.boxon.codecs.managers.ConfigField;
+import io.github.mtrevisan.boxon.codecs.managers.ConfigurationMessage;
+import io.github.mtrevisan.boxon.codecs.managers.InjectEventListener;
 import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationManagerFactory;
 import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationManagerInterface;
 import io.github.mtrevisan.boxon.codecs.managers.configuration.ManagerHelper;
@@ -78,7 +81,7 @@ public final class ConfigurationParser{
 		this.eventListener = eventListener;
 	}
 
-	public <T> void encode(final Configuration<?> configuration, final BitWriter writer, final T currentObject, final Version protocol)
+	public <T> void encode(final ConfigurationMessage<?> configuration, final BitWriter writer, final T currentObject, final Version protocol)
 			throws FieldException{
 		final ConfigurationHeader header = configuration.getHeader();
 		openMessage(header, writer);
@@ -108,8 +111,8 @@ public final class ConfigurationParser{
 		writer.flush();
 	}
 
-	private <T> void encodeField(final Configuration<?> configuration, final T currentObject, final BitWriter writer,
-			final ConfigField field, final Annotation binding) throws FieldException{
+	private <T> void encodeField(final ConfigurationMessage<?> configuration, final T currentObject, final BitWriter writer,
+										  final ConfigField field, final Annotation binding) throws FieldException{
 		final Class<? extends Annotation> annotationType = binding.annotationType();
 		eventListener.writingField(configuration.getType().getName(), field.getFieldName(), annotationType.getSimpleName());
 

@@ -22,44 +22,62 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.codecs;
+package io.github.mtrevisan.boxon.codecs.managers;
 
-import io.github.mtrevisan.boxon.annotations.Evaluate;
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
 import io.github.mtrevisan.boxon.internal.ReflectionHelper;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
 
-/** Data associated to a directly evaluable field. */
-final class EvaluatedField{
+/** Data associated to an annotated field. */
+public final class ConfigField{
+
+	private static final ConfigurationSkip[] EMPTY_ARRAY = new ConfigurationSkip[0];
 
 	private final Field field;
-	private final Evaluate binding;
+	/** List of skips that happen BEFORE the reading/writing of this variable. */
+	private final ConfigurationSkip[] skips;
+	private final Annotation binding;
 
 
-	EvaluatedField(final Field field, final Evaluate binding){
-		this.field = field;
-		this.binding = binding;
+	ConfigField(final Field field, final Annotation binding){
+		this(field, binding, null);
 	}
 
-	String getFieldName(){
+	ConfigField(final Field field, final Annotation binding, final ConfigurationSkip[] skips){
+		this.field = field;
+		this.binding = binding;
+		this.skips = (skips != null? skips.clone(): null);
+	}
+
+	public Field getField(){
+		return field;
+	}
+
+	public Class<?> getFieldType(){
+		return field.getType();
+	}
+
+	public String getFieldName(){
 		return field.getName();
 	}
 
-	Class<?> getFieldType(){
-		return field.getType();
+	public <T> T getFieldValue(final Object obj){
+		return ReflectionHelper.getFieldValue(field, obj);
 	}
 
 	void setFieldValue(final Object obj, final Object value){
 		ReflectionHelper.setFieldValue(field, obj, value);
 	}
 
-	Evaluate getBinding(){
+	public ConfigurationSkip[] getSkips(){
+		return (skips != null? skips.clone(): EMPTY_ARRAY);
+	}
+
+	public Annotation getBinding(){
 		return binding;
 	}
 
-	@Override
-	public String toString(){
-		return "EvaluatedField{" + "field=" + field + ", binding=" + binding + '}';
-	}
 }

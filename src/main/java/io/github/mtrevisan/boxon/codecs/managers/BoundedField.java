@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.codecs;
+package io.github.mtrevisan.boxon.codecs.managers;
 
 import io.github.mtrevisan.boxon.annotations.Skip;
 import io.github.mtrevisan.boxon.internal.ReflectionHelper;
@@ -33,7 +33,7 @@ import java.lang.reflect.Method;
 
 
 /** Data associated to an annotated field. */
-final class BoundedField{
+public final class BoundedField{
 
 	/** NOTE: MUST match the name of the method in all the annotations that defines a condition! */
 	private static final String CONDITION = "condition";
@@ -63,27 +63,27 @@ final class BoundedField{
 		condition = ReflectionHelper.invokeMethod(binding, conditionMethod, EMPTY_STRING);
 	}
 
-	String getFieldName(){
+	public String getFieldName(){
 		return field.getName();
 	}
 
-	<T> T getFieldValue(final Object obj){
+	public <T> T getFieldValue(final Object obj){
 		return ReflectionHelper.getFieldValue(field, obj);
 	}
 
-	void setFieldValue(final Object obj, final Object value){
+	public void setFieldValue(final Object obj, final Object value){
 		ReflectionHelper.setFieldValue(field, obj, value);
 	}
 
-	Skip[] getSkips(){
+	public Skip[] getSkips(){
 		return (skips != null? skips.clone(): EMPTY_ARRAY);
 	}
 
-	Annotation getBinding(){
+	public Annotation getBinding(){
 		return binding;
 	}
 
-	String getCondition(){
+	public String getCondition(){
 		return condition;
 	}
 

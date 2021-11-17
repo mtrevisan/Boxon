@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.codecs;
+package io.github.mtrevisan.boxon.codecs.managers;
 
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
@@ -50,7 +50,7 @@ import java.util.List;
  *
  * @param <T> The type of object the configuration is able to construct configuration messages.
  */
-public final class Configuration<T>{
+public final class ConfigurationMessage<T>{
 
 	private static final String EMPTY_STRING = "";
 
@@ -63,11 +63,11 @@ public final class Configuration<T>{
 	private final List<String> protocolVersionBoundaries;
 
 
-	static <T> Configuration<T> create(final Class<T> type) throws AnnotationException{
-		return new Configuration<>(type);
+	public static <T> ConfigurationMessage<T> create(final Class<T> type) throws AnnotationException{
+		return new ConfigurationMessage<>(type);
 	}
 
-	private Configuration(final Class<T> type) throws AnnotationException{
+	private ConfigurationMessage(final Class<T> type) throws AnnotationException{
 		this.type = type;
 
 		header = type.getAnnotation(ConfigurationHeader.class);
@@ -193,23 +193,23 @@ public final class Configuration<T>{
 		return protocolVersionBoundaries;
 	}
 
-	Class<T> getType(){
+	public Class<T> getType(){
 		return type;
 	}
 
-	ConfigurationHeader getHeader(){
+	public ConfigurationHeader getHeader(){
 		return header;
 	}
 
-	List<ConfigField> getConfigurationFields(){
+	public List<ConfigField> getConfigurationFields(){
 		return configFields;
 	}
 
-	List<String> getProtocolVersionBoundaries(){
+	public List<String> getProtocolVersionBoundaries(){
 		return protocolVersionBoundaries;
 	}
 
-	boolean canBeCoded(){
+	public boolean canBeCoded(){
 		return (header != null);
 	}
 
@@ -226,7 +226,7 @@ public final class Configuration<T>{
 		if(obj == null || obj.getClass() != getClass())
 			return false;
 
-		final Configuration<?> rhs = (Configuration<?>)obj;
+		final ConfigurationMessage<?> rhs = (ConfigurationMessage<?>)obj;
 		return (type == rhs.type);
 	}
 

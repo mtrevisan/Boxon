@@ -26,9 +26,11 @@ package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
+import io.github.mtrevisan.boxon.codecs.managers.ConfigField;
+import io.github.mtrevisan.boxon.codecs.managers.ConfigurationMessage;
+import io.github.mtrevisan.boxon.codecs.managers.InjectEventListener;
 import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationManagerFactory;
 import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationManagerInterface;
-import io.github.mtrevisan.boxon.codecs.managers.configuration.ManagerHelper;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
@@ -37,11 +39,9 @@ import io.github.mtrevisan.boxon.external.EventListener;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
 import io.github.mtrevisan.boxon.internal.Memoizer;
 import io.github.mtrevisan.boxon.internal.ReflectionHelper;
-import io.github.mtrevisan.boxon.internal.StringHelper;
 import io.github.mtrevisan.boxon.internal.ThrowingFunction;
 
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -55,16 +55,14 @@ import java.util.TreeMap;
 
 public final class LoaderConfiguration{
 
-	private static final String EMPTY_STRING = "";
-
-	static final String KEY_CONFIGURATION_HEADER = "header";
-	static final String KEY_CONFIGURATION_FIELDS = "fields";
-	static final String KEY_CONFIGURATION_PROTOCOL_VERSION_BOUNDARIES = "protocolVersionBoundaries";
+	public static final String KEY_CONFIGURATION_HEADER = "header";
+	public static final String KEY_CONFIGURATION_FIELDS = "fields";
+	public static final String KEY_CONFIGURATION_PROTOCOL_VERSION_BOUNDARIES = "protocolVersionBoundaries";
 	public static final String KEY_CONFIGURATION_COMPOSITE_FIELDS = "fields";
 
 	public static final String KEY_ALTERNATIVES = "alternatives";
 	public static final String KEY_FIELD_TYPE = "fieldType";
-	private static final String KEY_SHORT_DESCRIPTION = "shortDescription";
+	public static final String KEY_SHORT_DESCRIPTION = "shortDescription";
 	public static final String KEY_LONG_DESCRIPTION = "longDescription";
 	public static final String KEY_UNIT_OF_MEASURE = "unitOfMeasure";
 	public static final String KEY_MIN_PROTOCOL = "minProtocol";
@@ -79,19 +77,19 @@ public final class LoaderConfiguration{
 
 
 	public static final class ConfigurationPair{
-		private final Configuration<?> configuration;
+		private final ConfigurationMessage<?> configuration;
 		private final Object configurationData;
 
-		static ConfigurationPair of(final Configuration<?> configuration, final Object configurationData){
+		static ConfigurationPair of(final ConfigurationMessage<?> configuration, final Object configurationData){
 			return new ConfigurationPair(configuration, configurationData);
 		}
 
-		private ConfigurationPair(final Configuration<?> configuration, final Object configurationData){
+		private ConfigurationPair(final ConfigurationMessage<?> configuration, final Object configurationData){
 			this.configuration = configuration;
 			this.configurationData = configurationData;
 		}
 
-		public Configuration<?> getConfiguration(){
+		public ConfigurationMessage<?> getConfiguration(){
 			return configuration;
 		}
 
@@ -104,10 +102,10 @@ public final class LoaderConfiguration{
 	@InjectEventListener
 	private final EventListener eventListener;
 
-	private final ThrowingFunction<Class<?>, Configuration<?>, AnnotationException> configurationStore
-		= Memoizer.throwingMemoize(Configuration::create);
+	private final ThrowingFunction<Class<?>, ConfigurationMessage<?>, AnnotationException> configurationStore
+		= Memoizer.throwingMemoize(ConfigurationMessage::create);
 
-	private final Map<String, Configuration<?>> configurations = new TreeMap<>(Comparator.comparingInt(String::length).reversed()
+	private final Map<String, ConfigurationMessage<?>> configurations = new TreeMap<>(Comparator.comparingInt(String::length).reversed()
 		.thenComparing(String::compareTo));
 
 
@@ -154,18 +152,18 @@ public final class LoaderConfiguration{
 
 		/** extract all classes annotated with {@link MessageHeader}. */
 		final Collection<Class<?>> annotatedClasses = ReflectionHelper.extractClasses(ConfigurationHeader.class, basePackageClasses);
-		final Map<String, Configuration<?>> configurations = extractConfigurations(annotatedClasses);
+		final Map<String, ConfigurationMessage<?>> configurations = extractConfigurations(annotatedClasses);
 		addConfigurationsInner(configurations);
 
 		eventListener.loadedConfigurations(configurations.size());
 	}
 
-	private Map<String, Configuration<?>> extractConfigurations(final Collection<Class<?>> annotatedClasses) throws AnnotationException,
+	private Map<String, ConfigurationMessage<?>> extractConfigurations(final Collection<Class<?>> annotatedClasses) throws AnnotationException,
 			ConfigurationException{
-		final Map<String, Configuration<?>> configurations = new HashMap<>(annotatedClasses.size());
+		final Map<String, ConfigurationMessage<?>> configurations = new HashMap<>(annotatedClasses.size());
 		for(final Class<?> type : annotatedClasses){
 			//for each extracted class, try to parse it, extracting all the information needed for the configuration of a message
-			final Configuration<?> from = createConfiguration(type);
+			final ConfigurationMessage<?> from = createConfiguration(type);
 			if(from.canBeCoded()){
 				//if the configuration is valid, add it to the list of templates...
 				final ConfigurationHeader header = from.getHeader();
@@ -180,20 +178,20 @@ public final class LoaderConfiguration{
 	}
 
 	/**
-	 * Constructs a new {@link Configuration}.
+	 * Constructs a new {@link ConfigurationMessage}.
 	 *
-	 * @param <T>	The type of the object to be returned as a {@link Configuration}.
-	 * @param type	The class of the object to be returned as a {@link Configuration}.
-	 * @return	The {@link Configuration} for the given type.
+	 * @param <T>	The type of the object to be returned as a {@link ConfigurationMessage}.
+	 * @param type	The class of the object to be returned as a {@link ConfigurationMessage}.
+	 * @return	The {@link ConfigurationMessage} for the given type.
 	 */
 	@SuppressWarnings("unchecked")
-	private <T> Configuration<T> createConfiguration(final Class<T> type) throws AnnotationException{
-		return (Configuration<T>)configurationStore.apply(type);
+	private <T> ConfigurationMessage<T> createConfiguration(final Class<T> type) throws AnnotationException{
+		return (ConfigurationMessage<T>)configurationStore.apply(type);
 	}
 
-	private void addConfigurationsInner(final Map<String, Configuration<?>> configurations){
+	private void addConfigurationsInner(final Map<String, ConfigurationMessage<?>> configurations){
 		//load each configuration into the available configurations list
-		for(final Configuration<?> configuration : configurations.values())
+		for(final ConfigurationMessage<?> configuration : configurations.values())
 			if(configuration != null && configuration.canBeCoded())
 				addConfigurationInner(configuration);
 	}
@@ -203,7 +201,7 @@ public final class LoaderConfiguration{
 	 *
 	 * @param configuration	The configuration to add to the list of available configurations.
 	 */
-	private void addConfigurationInner(final Configuration<?> configuration){
+	private void addConfigurationInner(final ConfigurationMessage<?> configuration){
 		try{
 			final ConfigurationHeader header = configuration.getHeader();
 			final String start = header.start();
@@ -214,7 +212,7 @@ public final class LoaderConfiguration{
 		}
 	}
 
-	private void loadConfigurationInner(final String headerStart, final Configuration<?> configuration) throws ConfigurationException{
+	private void loadConfigurationInner(final String headerStart, final ConfigurationMessage<?> configuration) throws ConfigurationException{
 		if(configurations.containsKey(headerStart))
 			throw ConfigurationException.create("Duplicated key `{}` found for class {}", headerStart,
 				configuration.getType().getName());
@@ -223,85 +221,8 @@ public final class LoaderConfiguration{
 	}
 
 
-	/**
-	 * Retrieve all the protocol version boundaries.
-	 *
-	 * @return	The protocol version boundaries.
-	 */
-	public List<String> getProtocolVersionBoundaries(){
-		final Collection<Configuration<?>> configurationValues = configurations.values();
-		final List<String> protocolVersionBoundaries = new ArrayList<>(configurationValues.size());
-		for(final Configuration<?> configuration : configurationValues)
-			protocolVersionBoundaries.addAll(configuration.getProtocolVersionBoundaries());
-		return Collections.unmodifiableList(protocolVersionBoundaries);
-	}
-
-	/**
-	 * Retrieve all the configuration regardless the protocol version.
-	 *
-	 * @return	The configuration messages regardless the protocol version.
-	 */
-	@SuppressWarnings("ObjectAllocationInLoop")
-	public List<Map<String, Object>> getConfigurations() throws ConfigurationException, CodecException{
-		final Version currentProtocol = Version.of(EMPTY_STRING);
-
-		final Collection<Configuration<?>> configurationValues = configurations.values();
-		final List<Map<String, Object>> response = new ArrayList<>(configurationValues.size());
-		for(final Configuration<?> configuration : configurationValues){
-			final ConfigurationHeader header = configuration.getHeader();
-			if(!ManagerHelper.shouldBeExtracted(currentProtocol, header.minProtocol(), header.maxProtocol()))
-				continue;
-
-			final Map<String, Object> headerMap = extractMap(currentProtocol, header);
-			final Map<String, Object> fieldsMap = extractFieldsMap(currentProtocol, configuration);
-			response.add(Map.of(
-				KEY_CONFIGURATION_HEADER, headerMap,
-				KEY_CONFIGURATION_FIELDS, fieldsMap,
-				KEY_CONFIGURATION_PROTOCOL_VERSION_BOUNDARIES, configuration.getProtocolVersionBoundaries()
-			));
-		}
-		return Collections.unmodifiableList(response);
-	}
-
-	/**
-	 * Retrieve all the configuration given a protocol version.
-	 *
-	 * @param protocol	The protocol used to extract the configurations.
-	 * @return	The configuration messages for a given protocol version.
-	 */
-	@SuppressWarnings("ObjectAllocationInLoop")
-	public List<Map<String, Object>> getConfigurations(final String protocol) throws ConfigurationException, CodecException{
-		if(StringHelper.isBlank(protocol))
-			throw new IllegalArgumentException(StringHelper.format("Invalid protocol: {}", protocol));
-
-		final Version currentProtocol = Version.of(protocol);
-
-		final Collection<Configuration<?>> configurationValues = configurations.values();
-		final List<Map<String, Object>> response = new ArrayList<>(configurationValues.size());
-		for(final Configuration<?> configuration : configurationValues){
-			final ConfigurationHeader header = configuration.getHeader();
-			if(!ManagerHelper.shouldBeExtracted(currentProtocol, header.minProtocol(), header.maxProtocol()))
-				continue;
-
-			final Map<String, Object> headerMap = extractMap(currentProtocol, header);
-			final Map<String, Object> fieldsMap = extractFieldsMap(currentProtocol, configuration);
-			response.add(Map.of(
-				KEY_CONFIGURATION_HEADER, headerMap,
-				KEY_CONFIGURATION_FIELDS, fieldsMap
-			));
-		}
-		return Collections.unmodifiableList(response);
-	}
-
-	private static Map<String, Object> extractMap(final Version protocol, final ConfigurationHeader header) throws ConfigurationException{
-		final Map<String, Object> map = new HashMap<>(3);
-		ManagerHelper.putIfNotEmpty(KEY_SHORT_DESCRIPTION, header.shortDescription(), map);
-		ManagerHelper.putIfNotEmpty(KEY_LONG_DESCRIPTION, header.longDescription(), map);
-		if(protocol.isEmpty()){
-			ManagerHelper.putIfNotEmpty(KEY_MIN_PROTOCOL, header.minProtocol(), map);
-			ManagerHelper.putIfNotEmpty(KEY_MAX_PROTOCOL, header.maxProtocol(), map);
-		}
-		return map;
+	public Collection<ConfigurationMessage<?>> getConfigurations(){
+		return Collections.unmodifiableCollection(configurations.values());
 	}
 
 	/**
@@ -314,7 +235,7 @@ public final class LoaderConfiguration{
 	 */
 	public ConfigurationPair getConfigurationWithDefaults(final String configurationType, final Map<String, Object> data,
 			final Version protocol) throws EncodeException, ConfigurationException, CodecException{
-		final Configuration<?> configuration = getConfiguration(configurationType);
+		final ConfigurationMessage<?> configuration = getConfiguration(configurationType);
 		final Object configurationObject = ReflectionHelper.getCreator(configuration.getType())
 			.get();
 
@@ -354,8 +275,8 @@ public final class LoaderConfiguration{
 	 *
 	 * @return	The configuration.
 	 */
-	private Configuration<?> getConfiguration(final String configurationType) throws EncodeException{
-		final Configuration<?> configuration = configurations.get(configurationType);
+	private ConfigurationMessage<?> getConfiguration(final String configurationType) throws EncodeException{
+		final ConfigurationMessage<?> configuration = configurations.get(configurationType);
 		if(configuration == null)
 			throw EncodeException.create("Cannot find any configuration for given class type");
 
@@ -398,23 +319,6 @@ public final class LoaderConfiguration{
 			throw EncodeException.create("Cannot find any field to set for data key {}", key);
 
 		return foundField;
-	}
-
-	private static Map<String, Object> extractFieldsMap(final Version protocol, final Configuration<?> configuration)
-			throws ConfigurationException, CodecException{
-		final List<ConfigField> fields = configuration.getConfigurationFields();
-		final Map<String, Object> fieldsMap = new HashMap<>(fields.size());
-		for(int i = 0; i < fields.size(); i ++){
-			final ConfigField field = fields.get(i);
-			final Annotation annotation = field.getBinding();
-			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(annotation);
-			final Map<String, Object> fieldMap = manager.extractConfigurationMap(field.getFieldType(), protocol);
-			if(!fieldMap.isEmpty()){
-				final String shortDescription = manager.getShortDescription();
-				fieldsMap.put(shortDescription, fieldMap);
-			}
-		}
-		return fieldsMap;
 	}
 
 	private static void validateMandatoryFields(final Collection<ConfigField> mandatoryFields) throws EncodeException{

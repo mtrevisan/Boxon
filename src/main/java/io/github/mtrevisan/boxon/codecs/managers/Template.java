@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.codecs;
+package io.github.mtrevisan.boxon.codecs.managers;
 
 import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.Evaluate;
@@ -73,7 +73,7 @@ public final class Template<T>{
 
 
 	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
-	Template(final Class<T> type, final Function<Annotation[], List<Annotation>> filterAnnotationsWithCodec) throws AnnotationException{
+	public Template(final Class<T> type, final Function<Annotation[], List<Annotation>> filterAnnotationsWithCodec) throws AnnotationException{
 		this.type = type;
 
 		header = type.getAnnotation(MessageHeader.class);
@@ -156,31 +156,31 @@ public final class Template<T>{
 			validator.validate(annotation);
 	}
 
-	Class<T> getType(){
+	public Class<T> getType(){
 		return type;
 	}
 
-	MessageHeader getHeader(){
+	public MessageHeader getHeader(){
 		return header;
 	}
 
-	List<BoundedField> getBoundedFields(){
+	public List<BoundedField> getBoundedFields(){
 		return boundedFields;
 	}
 
-	List<EvaluatedField> getEvaluatedFields(){
+	public List<EvaluatedField> getEvaluatedFields(){
 		return evaluatedFields;
 	}
 
-	boolean isChecksumPresent(){
+	public boolean isChecksumPresent(){
 		return (checksum != null);
 	}
 
-	BoundedField getChecksum(){
+	public BoundedField getChecksum(){
 		return checksum;
 	}
 
-	boolean canBeCoded(){
+	public boolean canBeCoded(){
 		return (header != null && !boundedFields.isEmpty());
 	}
 

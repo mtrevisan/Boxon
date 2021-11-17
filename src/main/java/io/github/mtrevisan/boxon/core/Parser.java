@@ -26,14 +26,18 @@ package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
-import io.github.mtrevisan.boxon.codecs.Configuration;
+import io.github.mtrevisan.boxon.codecs.managers.ConfigField;
+import io.github.mtrevisan.boxon.codecs.managers.ConfigurationMessage;
 import io.github.mtrevisan.boxon.codecs.ConfigurationParser;
 import io.github.mtrevisan.boxon.codecs.LoaderCodec;
 import io.github.mtrevisan.boxon.codecs.LoaderConfiguration;
 import io.github.mtrevisan.boxon.codecs.LoaderTemplate;
-import io.github.mtrevisan.boxon.codecs.Template;
+import io.github.mtrevisan.boxon.codecs.managers.Template;
 import io.github.mtrevisan.boxon.codecs.TemplateParser;
 import io.github.mtrevisan.boxon.codecs.TemplateParserInterface;
+import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationManagerFactory;
+import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationManagerInterface;
+import io.github.mtrevisan.boxon.codecs.managers.configuration.ManagerHelper;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
@@ -47,13 +51,18 @@ import io.github.mtrevisan.boxon.external.EventListener;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
 import io.github.mtrevisan.boxon.internal.Evaluator;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
+import io.github.mtrevisan.boxon.internal.StringHelper;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -252,34 +261,6 @@ public final class Parser{
 		return this;
 	}
 
-	/**
-	 * Retrieve all the configuration regardless the protocol version.
-	 *
-	 * @return	The configuration messages regardless the protocol version.
-	 */
-	public List<Map<String, Object>> getConfigurations() throws ConfigurationException, CodecException{
-		return loaderConfiguration.getConfigurations();
-	}
-
-	/**
-	 * Retrieve all the protocol version boundaries.
-	 *
-	 * @return	The protocol version boundaries.
-	 */
-	public List<String> getProtocolVersionBoundaries(){
-		return loaderConfiguration.getProtocolVersionBoundaries();
-	}
-
-	/**
-	 * Retrieve all the configuration given a protocol version.
-	 *
-	 * @param protocol	The protocol used to extract the configurations.
-	 * @return	The configuration messages for a given protocol version.
-	 */
-	public List<Map<String, Object>> getConfigurations(final String protocol) throws ConfigurationException, CodecException{
-		return loaderConfiguration.getConfigurations(protocol);
-	}
-
 
 	/**
 	 * Parse a message from a file containing a binary stream.
@@ -428,6 +409,102 @@ public final class Parser{
 
 
 	/**
+	 * Retrieve all the configuration regardless the protocol version.
+	 *
+	 * @return	The configuration messages regardless the protocol version.
+	 */
+	public List<Map<String, Object>> getConfigurations() throws ConfigurationException, CodecException{
+		final Version currentProtocol = Version.EMPTY;
+
+		final Collection<ConfigurationMessage<?>> configurationValues = loaderConfiguration.getConfigurations();
+		final List<Map<String, Object>> response = new ArrayList<>(configurationValues.size());
+		for(final ConfigurationMessage<?> configuration : configurationValues){
+			final ConfigurationHeader header = configuration.getHeader();
+			if(!ManagerHelper.shouldBeExtracted(currentProtocol, header.minProtocol(), header.maxProtocol()))
+				continue;
+
+			final Map<String, Object> headerMap = extractMap(currentProtocol, header);
+			final Map<String, Object> fieldsMap = extractFieldsMap(currentProtocol, configuration);
+			response.add(Map.of(
+				LoaderConfiguration.KEY_CONFIGURATION_HEADER, headerMap,
+				LoaderConfiguration.KEY_CONFIGURATION_FIELDS, fieldsMap,
+				LoaderConfiguration.KEY_CONFIGURATION_PROTOCOL_VERSION_BOUNDARIES, configuration.getProtocolVersionBoundaries()
+			));
+		}
+		return Collections.unmodifiableList(response);
+	}
+
+	private static Map<String, Object> extractMap(final Version protocol, final ConfigurationHeader header) throws ConfigurationException{
+		final Map<String, Object> map = new HashMap<>(3);
+		ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_SHORT_DESCRIPTION, header.shortDescription(), map);
+		ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_LONG_DESCRIPTION, header.longDescription(), map);
+		if(protocol.isEmpty()){
+			ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_MIN_PROTOCOL, header.minProtocol(), map);
+			ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_MAX_PROTOCOL, header.maxProtocol(), map);
+		}
+		return map;
+	}
+
+	private static Map<String, Object> extractFieldsMap(final Version protocol, final ConfigurationMessage<?> configuration)
+		throws ConfigurationException, CodecException{
+		final List<ConfigField> fields = configuration.getConfigurationFields();
+		final Map<String, Object> fieldsMap = new HashMap<>(fields.size());
+		for(int i = 0; i < fields.size(); i ++){
+			final ConfigField field = fields.get(i);
+			final Annotation annotation = field.getBinding();
+			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(annotation);
+			final Map<String, Object> fieldMap = manager.extractConfigurationMap(field.getFieldType(), protocol);
+			if(!fieldMap.isEmpty()){
+				final String shortDescription = manager.getShortDescription();
+				fieldsMap.put(shortDescription, fieldMap);
+			}
+		}
+		return fieldsMap;
+	}
+
+	/**
+	 * Retrieve all the protocol version boundaries.
+	 *
+	 * @return	The protocol version boundaries.
+	 */
+	public List<String> getProtocolVersionBoundaries(){
+		final Collection<ConfigurationMessage<?>> configurationValues = loaderConfiguration.getConfigurations();
+		final List<String> protocolVersionBoundaries = new ArrayList<>(configurationValues.size());
+		for(final ConfigurationMessage<?> configuration : configurationValues)
+			protocolVersionBoundaries.addAll(configuration.getProtocolVersionBoundaries());
+		return Collections.unmodifiableList(protocolVersionBoundaries);
+	}
+
+	/**
+	 * Retrieve all the configuration given a protocol version.
+	 *
+	 * @param protocol	The protocol used to extract the configurations.
+	 * @return	The configuration messages for a given protocol version.
+	 */
+	public List<Map<String, Object>> getConfigurations(final String protocol) throws ConfigurationException, CodecException{
+		if(StringHelper.isBlank(protocol))
+			throw new IllegalArgumentException(StringHelper.format("Invalid protocol: {}", protocol));
+
+		final Version currentProtocol = Version.of(protocol);
+
+		final Collection<ConfigurationMessage<?>> configurationValues = loaderConfiguration.getConfigurations();
+		final List<Map<String, Object>> response = new ArrayList<>(configurationValues.size());
+		for(final ConfigurationMessage<?> configuration : configurationValues){
+			final ConfigurationHeader header = configuration.getHeader();
+			if(!ManagerHelper.shouldBeExtracted(currentProtocol, header.minProtocol(), header.maxProtocol()))
+				continue;
+
+			final Map<String, Object> headerMap = extractMap(currentProtocol, header);
+			final Map<String, Object> fieldsMap = extractFieldsMap(currentProtocol, configuration);
+			response.add(Map.of(
+				LoaderConfiguration.KEY_CONFIGURATION_HEADER, headerMap,
+				LoaderConfiguration.KEY_CONFIGURATION_FIELDS, fieldsMap
+			));
+		}
+		return Collections.unmodifiableList(response);
+	}
+
+	/**
 	 * Compose a list of configuration messages.
 	 *
 	 * @param data	The configuration message(s) to be composed.
@@ -461,7 +538,7 @@ public final class Parser{
 			final LoaderConfiguration.ConfigurationPair configurationPair
 				= loaderConfiguration.getConfigurationWithDefaults(configurationType, data, protocol);
 
-			final Configuration<?> configuration = configurationPair.getConfiguration();
+			final ConfigurationMessage<?> configuration = configurationPair.getConfiguration();
 			final Object configurationData = configurationPair.getConfigurationData();
 			configurationParser.encode(configuration, writer, configurationData, protocol);
 		}

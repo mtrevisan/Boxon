@@ -24,21 +24,15 @@
  */
 package io.github.mtrevisan.boxon.codecs;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.mtrevisan.boxon.codecs.managers.Template;
 import io.github.mtrevisan.boxon.codecs.queclink.ACKMessageHex;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.exceptions.CodecException;
-import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.EventListener;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
-import java.util.Map;
 
 
 @SuppressWarnings("ALL")
@@ -95,60 +89,6 @@ class LoaderTest{
 
 		Assertions.assertNotNull(template);
 		Assertions.assertEquals(ACKMessageHex.class, template.getType());
-	}
-
-	@Test
-	void getConfigurations() throws AnnotationException, ConfigurationException, JsonProcessingException, CodecException{
-		EventListener eventListener = EventListener.getNoOpInstance();
-		LoaderConfiguration loaderConfiguration = LoaderConfiguration.create(eventListener);
-		loaderConfiguration.loadConfigurations(LoaderTest.class);
-
-		List<Map<String, Object>> configurations = loaderConfiguration.getConfigurations();
-
-		Assertions.assertEquals(1, configurations.size());
-
-		ObjectMapper mapper = new ObjectMapper();
-		Map<String, Object> configuration = configurations.get(0);
-		String jsonHeader = mapper.writeValueAsString(configuration.get(LoaderConfiguration.KEY_CONFIGURATION_HEADER));
-		String jsonFields = mapper.writeValueAsString(configuration.get(LoaderConfiguration.KEY_CONFIGURATION_FIELDS));
-		String jsonProtocolVersionBoundaries = mapper.writeValueAsString(configuration.get(LoaderConfiguration.KEY_CONFIGURATION_PROTOCOL_VERSION_BOUNDARIES));
-
-		Assertions.assertEquals("{\"longDescription\":\"The command AT+GTREG is used to do things.\",\"maxProtocol\":\"2.8\",\"shortDescription\":\"AT+GTREG\"}", jsonHeader);
-		Assertions.assertEquals("{\"Operation mode report interval\":{\"minValue\":3600,\"unitOfMeasure\":\"s\",\"maxValue\":86400,\"defaultValue\":3600,\"minProtocol\":\"1.21\",\"fieldType\":\"int\"},\"Maximum download retry count\":{\"alternatives\":[{\"maxProtocol\":\"1.20\",\"minValue\":0,\"fieldType\":\"int\",\"maxValue\":3,\"defaultValue\":0},{\"minValue\":0,\"fieldType\":\"int\",\"maxValue\":3,\"minProtocol\":\"1.21\",\"defaultValue\":1}]},\"Download timeout\":{\"alternatives\":[{\"maxProtocol\":\"1.18\",\"minValue\":5,\"unitOfMeasure\":\"min\",\"fieldType\":\"int\",\"maxValue\":30,\"defaultValue\":10},{\"minValue\":5,\"unitOfMeasure\":\"min\",\"fieldType\":\"int\",\"maxValue\":30,\"minProtocol\":\"1.19\",\"defaultValue\":20}]},\"Weekday\":{\"defaultValue\":[\"MONDAY\",\"TUESDAY\",\"WEDNESDAY\",\"THURSDAY\",\"FRIDAY\",\"SATURDAY\",\"SUNDAY\"],\"enumeration\":[\"MONDAY\",\"TUESDAY\",\"WEDNESDAY\",\"THURSDAY\",\"FRIDAY\",\"SATURDAY\",\"SUNDAY\"]},\"Update Over-The-Air\":{\"defaultValue\":\"FALSE\",\"mutuallyExclusive\":true,\"enumeration\":[\"TRUE\",\"FALSE\"]},\"Header\":{\"charset\":\"UTF-8\",\"defaultValue\":\"GTREG\",\"fieldType\":\"String\"},\"Download protocol\":{\"alternatives\":[{\"maxProtocol\":\"1.35\",\"enumeration\":[\"HTTP\",\"HTTPS\"],\"defaultValue\":\"HTTP\",\"mutuallyExclusive\":true},{\"enumeration\":[\"HTTP\",\"HTTPS\"],\"minProtocol\":\"1.36\",\"defaultValue\":\"HTTP\",\"mutuallyExclusive\":true}]},\"Download URL\":{\"pattern\":\".{0,100}\",\"charset\":\"UTF-8\",\"fields\":{\"URL\":{\"pattern\":\"https?://.{0,92}\",\"fieldType\":\"String\"},\"password\":{\"pattern\":\".{1,32}\",\"fieldType\":\"String\"},\"username\":{\"pattern\":\".{1,32}\",\"fieldType\":\"String\"}}},\"Update mode\":{\"minValue\":0,\"maxValue\":1,\"defaultValue\":1,\"fieldType\":\"int\"},\"Message counter\":{\"minValue\":0,\"maxValue\":65535,\"fieldType\":\"int\"},\"Operation mode\":{\"minValue\":0,\"maxValue\":3,\"defaultValue\":0,\"fieldType\":\"int\"},\"Motion report interval\":{\"maxProtocol\":\"1.20\",\"minValue\":90,\"unitOfMeasure\":\"s\",\"maxValue\":86400,\"defaultValue\":3600,\"minProtocol\":\"1.19\",\"fieldType\":\"int\"},\"Password\":{\"charset\":\"UTF-8\",\"defaultValue\":\"gb200s\",\"pattern\":\"[0-9a-zA-Z]{4,20}\",\"fieldType\":\"String\"},\"Motionless report interval\":{\"maxProtocol\":\"1.20\",\"minValue\":90,\"unitOfMeasure\":\"s\",\"maxValue\":86400,\"defaultValue\":3600,\"minProtocol\":\"1.19\",\"fieldType\":\"int\"}}", jsonFields);
-		Assertions.assertEquals("[\"1.18\",\"1.19\",\"1.20\",\"1.21\",\"1.35\",\"1.36\",\"2.8\"]", jsonProtocolVersionBoundaries);
-	}
-
-	@Test
-	void getProtocolVersionBoundaries() throws AnnotationException, ConfigurationException, JsonProcessingException{
-		EventListener eventListener = EventListener.getNoOpInstance();
-		LoaderConfiguration loaderConfiguration = LoaderConfiguration.create(eventListener);
-		loaderConfiguration.loadConfigurations(LoaderTest.class);
-
-		List<String> protocolVersionBoundaries = loaderConfiguration.getProtocolVersionBoundaries();
-
-		ObjectMapper mapper = new ObjectMapper();
-		String jsonProtocolVersionBoundaries = mapper.writeValueAsString(protocolVersionBoundaries);
-
-		Assertions.assertEquals("[\"1.18\",\"1.19\",\"1.20\",\"1.21\",\"1.35\",\"1.36\",\"2.8\"]", jsonProtocolVersionBoundaries);
-	}
-
-	@Test
-	void getConfigurationsByProtocol() throws AnnotationException, ConfigurationException, JsonProcessingException, CodecException{
-		EventListener eventListener = EventListener.getNoOpInstance();
-		LoaderConfiguration loaderConfiguration = LoaderConfiguration.create(eventListener);
-		loaderConfiguration.loadConfigurations(LoaderTest.class);
-
-		List<Map<String, Object>> configurations = loaderConfiguration.getConfigurations("1.19");
-
-		Assertions.assertEquals(1, configurations.size());
-
-		ObjectMapper mapper = new ObjectMapper();
-		Map<String, Object> configuration = configurations.get(0);
-		String jsonHeader = mapper.writeValueAsString(configuration.get(LoaderConfiguration.KEY_CONFIGURATION_HEADER));
-		String jsonFields = mapper.writeValueAsString(configuration.get(LoaderConfiguration.KEY_CONFIGURATION_FIELDS));
-
-		Assertions.assertEquals("{\"longDescription\":\"The command AT+GTREG is used to do things.\",\"shortDescription\":\"AT+GTREG\"}", jsonHeader);
-		Assertions.assertEquals("{\"Maximum download retry count\":{\"minValue\":0,\"fieldType\":\"int\",\"maxValue\":3,\"defaultValue\":0},\"Download timeout\":{\"minValue\":5,\"unitOfMeasure\":\"min\",\"fieldType\":\"int\",\"maxValue\":30,\"defaultValue\":20},\"Weekday\":{\"defaultValue\":[\"MONDAY\",\"TUESDAY\",\"WEDNESDAY\",\"THURSDAY\",\"FRIDAY\",\"SATURDAY\",\"SUNDAY\"],\"enumeration\":[\"MONDAY\",\"TUESDAY\",\"WEDNESDAY\",\"THURSDAY\",\"FRIDAY\",\"SATURDAY\",\"SUNDAY\"]},\"Update Over-The-Air\":{\"defaultValue\":\"FALSE\",\"mutuallyExclusive\":true,\"enumeration\":[\"TRUE\",\"FALSE\"]},\"Header\":{\"charset\":\"UTF-8\",\"defaultValue\":\"GTREG\",\"fieldType\":\"String\"},\"Download protocol\":{\"enumeration\":[\"HTTP\",\"HTTPS\"],\"defaultValue\":\"HTTP\",\"mutuallyExclusive\":true},\"Download URL\":{\"pattern\":\".{0,100}\",\"charset\":\"UTF-8\",\"fields\":{\"URL\":{\"pattern\":\"https?://.{0,92}\",\"fieldType\":\"String\"},\"password\":{\"pattern\":\".{1,32}\",\"fieldType\":\"String\"},\"username\":{\"pattern\":\".{1,32}\",\"fieldType\":\"String\"}}},\"Update mode\":{\"minValue\":0,\"maxValue\":1,\"defaultValue\":1,\"fieldType\":\"int\"},\"Message counter\":{\"minValue\":0,\"maxValue\":65535,\"fieldType\":\"int\"},\"Operation mode\":{\"minValue\":0,\"maxValue\":3,\"defaultValue\":0,\"fieldType\":\"int\"},\"Motion report interval\":{\"minValue\":90,\"unitOfMeasure\":\"s\",\"maxValue\":86400,\"defaultValue\":3600,\"fieldType\":\"int\"},\"Password\":{\"charset\":\"UTF-8\",\"defaultValue\":\"gb200s\",\"pattern\":\"[0-9a-zA-Z]{4,20}\",\"fieldType\":\"String\"},\"Motionless report interval\":{\"minValue\":90,\"unitOfMeasure\":\"s\",\"maxValue\":86400,\"defaultValue\":3600,\"fieldType\":\"int\"}}", jsonFields);
 	}
 
 	@Test
