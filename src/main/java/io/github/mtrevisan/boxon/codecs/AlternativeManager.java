@@ -26,7 +26,6 @@ package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
-import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
@@ -221,15 +220,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 		if(!fieldType.isEnum() && !fieldType.isArray())
 			ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName(),
 				map);
-		if(annotation.enumeration() != NullEnum.class){
-			final Enum<?>[] enumConstants = annotation.enumeration().getEnumConstants();
-			final String[] enumValues = new String[enumConstants.length];
-			for(int j = 0; j < enumConstants.length; j ++)
-				enumValues[j] = enumConstants[j].name();
-			ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_ENUMERATION, enumValues, map);
-			if(fieldType.isEnum())
-				ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_MUTUALLY_EXCLUSIVE, true, map);
-		}
+		ManagerHelper.extractEnumeration(fieldType, annotation.enumeration(), map);
 
 		return map;
 	}

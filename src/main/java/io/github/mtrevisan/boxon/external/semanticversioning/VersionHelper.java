@@ -33,29 +33,6 @@ final class VersionHelper{
 
 	private VersionHelper(){}
 
-	/**
-	 * <p>Checks if a text is empty (""), {@code null} or whitespace only.</p>
-	 *
-	 * <p>Whitespace is defined by {@link Character#isWhitespace(char)}.</p>
-	 *
-	 * <pre>
-	 * isBlank(null)      = true
-	 * isBlank("")        = true
-	 * isBlank(" ")       = true
-	 * isBlank("bob")     = false
-	 * isBlank("  bob  ") = false
-	 * </pre>
-	 *
-	 * @param text	The text to check, may be {@code null}.
-	 * @return	Whether the given text is {@code null}, empty or whitespace only.
-	 */
-	static boolean isBlank(final CharSequence text){
-		for(int i = 0; i < (text != null? text.length(): 0); i ++)
-			if(!Character.isWhitespace(text.charAt(i)))
-				return false;
-		return true;
-	}
-
 	static boolean hasLeadingZeros(final CharSequence token){
 		return (token.length() > 1 && token.charAt(0) == '0');
 	}
@@ -66,46 +43,6 @@ final class VersionHelper{
 
 	static int getLeastCommonArrayLength(final String[] array1, final String[] array2){
 		return Math.min(array1.length, array2.length);
-	}
-
-	/**
-	 * <p>Checks if the text contains only Unicode digits.
-	 * A decimal point is not a Unicode digit and returns false.</p>
-	 *
-	 * <p>{@code null} will return {@code false}.
-	 * An empty text ({@code length() = 0}) will return {@code false}.</p>
-	 *
-	 * <p>Note that the method does not allow for a leading sign, either positive or negative.
-	 * Also, if a String passes the numeric test, it may still generate a NumberFormatException
-	 * when parsed by Integer.parseInt or Long.parseLong, e.g. if the value is outside the range
-	 * for int or long respectively.</p>
-	 *
-	 * <pre>
-	 * isNumeric(null)   = false
-	 * isNumeric("")     = false
-	 * isNumeric("  ")   = false
-	 * isNumeric("123")  = true
-	 * isNumeric("\u0967\u0968\u0969")  = true
-	 * isNumeric("12 3") = false
-	 * isNumeric("ab2c") = false
-	 * isNumeric("12-3") = false
-	 * isNumeric("12.3") = false
-	 * isNumeric("-123") = false
-	 * isNumeric("+123") = false
-	 * </pre>
-	 *
-	 * @param text	The text to check, may be {@code null}.
-	 * @return	Whether the given text contains only digits and is non-{@code null}.
-	 */
-	static boolean isNumeric(final CharSequence text){
-		if(text == null || text.length() == 0)
-			return false;
-
-		final int sz = text.length();
-		for(int i = 0; i < sz; i ++)
-			if(!Character.isDigit(text.charAt(i)))
-				return false;
-		return true;
 	}
 
 }

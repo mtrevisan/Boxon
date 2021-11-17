@@ -109,15 +109,7 @@ final class PlainManager implements ConfigurationManagerInterface{
 		ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_MIN_VALUE, JavaHelper.getValue(fieldType, annotation.minValue()), map);
 		ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_MAX_VALUE, JavaHelper.getValue(fieldType, annotation.maxValue()), map);
 		ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_PATTERN, annotation.pattern(), map);
-		if(annotation.enumeration() != NullEnum.class){
-			final Enum<?>[] enumConstants = annotation.enumeration().getEnumConstants();
-			final String[] enumValues = new String[enumConstants.length];
-			for(int j = 0; j < enumConstants.length; j ++)
-				enumValues[j] = enumConstants[j].name();
-			ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_ENUMERATION, enumValues, map);
-			if(fieldType.isEnum())
-				ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_MUTUALLY_EXCLUSIVE, true, map);
-		}
+		ManagerHelper.extractEnumeration(fieldType, annotation.enumeration(), map);
 
 		ManagerHelper.putValueIfNotEmpty(LoaderConfiguration.KEY_DEFAULT_VALUE, annotation.defaultValue(), fieldType,
 			annotation.enumeration(), map);

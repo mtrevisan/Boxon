@@ -82,6 +82,7 @@ final class ManagerHelper{
 		}
 	}
 
+
 	static void putIfNotEmpty(final String key, final Object value, @SuppressWarnings("BoundedWildcard") final Map<String, Object> map)
 			throws ConfigurationException{
 		if(value != null && (!String.class.isInstance(value) || !StringHelper.isBlank((CharSequence)value)))
@@ -138,6 +139,20 @@ final class ManagerHelper{
 		final boolean validMinimum = (min.isEmpty() || protocol.isGreaterThanOrEqualTo(min));
 		final boolean validMaximum = (max.isEmpty() || protocol.isLessThanOrEqualTo(max));
 		return (validMinimum && validMaximum);
+	}
+
+
+	static void extractEnumeration(final Class<?> fieldType, final Class<? extends Enum> enumeration, final Map<String, Object> map)
+			throws ConfigurationException{
+		if(enumeration != NullEnum.class){
+			final Enum<?>[] enumConstants = enumeration.getEnumConstants();
+			final String[] enumValues = new String[enumConstants.length];
+			for(int j = 0; j < enumConstants.length; j ++)
+				enumValues[j] = enumConstants[j].name();
+			putIfNotEmpty(LoaderConfiguration.KEY_ENUMERATION, enumValues, map);
+			if(fieldType.isEnum())
+				putIfNotEmpty(LoaderConfiguration.KEY_MUTUALLY_EXCLUSIVE, true, map);
+		}
 	}
 
 }
