@@ -71,8 +71,14 @@ public final class Template<T>{
 	private BoundedField checksum;
 
 
+	public static <T> Template<T> create(final Class<T> type, final Function<Annotation[], List<Annotation>> filterAnnotationsWithCodec)
+			throws AnnotationException{
+		return new Template<>(type, filterAnnotationsWithCodec);
+	}
+
 	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
-	public Template(final Class<T> type, final Function<Annotation[], List<Annotation>> filterAnnotationsWithCodec) throws AnnotationException{
+	private Template(final Class<T> type, final Function<Annotation[], List<Annotation>> filterAnnotationsWithCodec)
+			throws AnnotationException{
 		this.type = type;
 
 		header = type.getAnnotation(MessageHeader.class);
@@ -138,13 +144,13 @@ public final class Template<T>{
 			if(annotationType == Skip.class || annotationType == Skip.Skips.class)
 				continue;
 
-				validateAnnotation(annotations.get(i));
+			validateAnnotation(annotations.get(i));
 
 			if(checksum != null && this.checksum != null)
 				throw AnnotationException.create("Cannot have more than one {} annotations on class {}",
 					Checksum.class.getSimpleName(), type.getName());
 
-				foundAnnotation = annotations.get(i);
+			foundAnnotation = annotations.get(i);
 		}
 		return foundAnnotation;
 	}

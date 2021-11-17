@@ -39,7 +39,7 @@ public interface ConfigurationManagerInterface{
 
 	String getShortDescription();
 
-	Object getDefaultValue(final Field field, final Version protocol) throws EncodeException, ConfigurationException, CodecException;
+	Object getDefaultValue(final Field field, final Version protocol) throws EncodeException, CodecException;
 
 	void addProtocolVersionBoundaries(final Collection<String> protocolVersionBoundaries);
 
@@ -49,8 +49,8 @@ public interface ConfigurationManagerInterface{
 
 	Map<String, Object> extractConfigurationMap(final Class<?> fieldType, final Version protocol) throws ConfigurationException, CodecException;
 
-	void validateValue(final String dataKey, final Object dataValue, final Class<?> fieldType) throws EncodeException, ConfigurationException, CodecException;
+	void validateValue(final String dataKey, final Object dataValue, final Class<?> fieldType) throws EncodeException, CodecException;
 
-	void setValue(final Object configurationObject, final String dataKey, final Object dataValue, final Field field, final Version protocol) throws EncodeException, ConfigurationException, CodecException;
+	void setValue(final Object configurationObject, final String dataKey, final Object dataValue, final Field field, final Version protocol) throws EncodeException, CodecException;
 
 }

@@ -110,7 +110,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 		}
 	}
 
-	private void validateChosenAlternative(final Class<?> chosenAlternativeType, final Object rootObject) throws CodecException{
+	private static void validateChosenAlternative(final Class<?> chosenAlternativeType, final Object rootObject) throws CodecException{
 		if(chosenAlternativeType == void.class)
 			throw CodecException.create("Cannot find a valid codec from given alternatives for {}",
 				rootObject.getClass().getSimpleName());

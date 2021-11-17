@@ -113,7 +113,9 @@ enum ConfigurationAnnotationValidator{
 		}
 
 		private boolean moreThanOneSet(final boolean hasPattern, final boolean hasMinMaxValues, final boolean hasEnumeration){
-			return (hasPattern && hasMinMaxValues || hasPattern && hasEnumeration || hasMinMaxValues && hasEnumeration);
+			return (hasPattern && hasMinMaxValues
+				|| hasPattern && hasEnumeration
+				|| hasMinMaxValues && hasEnumeration);
 		}
 	},
 

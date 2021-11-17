@@ -32,7 +32,6 @@ import io.github.mtrevisan.boxon.codecs.managers.BoundedField;
 import io.github.mtrevisan.boxon.codecs.managers.EvaluatedField;
 import io.github.mtrevisan.boxon.codecs.managers.InjectEventListener;
 import io.github.mtrevisan.boxon.codecs.managers.Template;
-import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
@@ -144,16 +143,17 @@ public final class TemplateParser implements TemplateParserInterface{
 
 	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
 	private <T> void decodeField(final Template<T> template, final BitReader reader, final ParserContext<T> parserContext,
-			final BoundedField field) throws FieldException{
+		final BoundedField field) throws FieldException{
+		final Annotation binding = field.getBinding();
+		final Class<? extends Annotation> annotationType = binding.annotationType();
+		final CodecInterface<?> codec = loaderCodec.getCodec(annotationType);
+		if(codec == null)
+			throw CodecException.create("Cannot find codec for binding {}", annotationType.getSimpleName())
+				.withClassNameAndFieldName(template.getType().getName(), field.getFieldName());
+
+		eventListener.decodingField(template.toString(), field.getFieldName(), annotationType.getSimpleName());
+
 		try{
-			final Annotation binding = field.getBinding();
-			final Class<? extends Annotation> annotationType = binding.annotationType();
-			final CodecInterface<?> codec = loaderCodec.getCodec(annotationType);
-			if(codec == null)
-				throw CodecException.create("Cannot find codec for binding {}", annotationType.getSimpleName());
-
-			eventListener.decodingField(template.toString(), field.getFieldName(), annotationType.getSimpleName());
-
 			//decode value from raw message
 			final Object value = codec.decode(reader, binding, parserContext.rootObject);
 			//store value in the current object
@@ -161,9 +161,9 @@ public final class TemplateParser implements TemplateParserInterface{
 
 			eventListener.decodedField(template.toString(), field.getFieldName(), value);
 		}
-		catch(final CodecException | AnnotationException | TemplateException e){
-			e.withClassNameAndFieldName(template.getType().getName(), field.getFieldName());
-			throw e;
+		catch(final FieldException fe){
+			fe.withClassNameAndFieldName(template.getType().getName(), field.getFieldName());
+			throw fe;
 		}
 		catch(final Exception e){
 			throw FieldException.create(e)
@@ -273,16 +273,17 @@ public final class TemplateParser implements TemplateParserInterface{
 
 	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
 	private <T> void encodeField(final Template<?> template, final BitWriter writer, final ParserContext<T> parserContext,
-			final BoundedField field) throws FieldException{
+		final BoundedField field) throws FieldException{
+		final Annotation binding = field.getBinding();
+		final Class<? extends Annotation> annotationType = binding.annotationType();
+		final CodecInterface<?> codec = loaderCodec.getCodec(annotationType);
+		if(codec == null)
+			throw CodecException.create("Cannot find codec for binding {}", annotationType.getSimpleName())
+				.withClassNameAndFieldName(template.getType().getName(), field.getFieldName());
+
+		eventListener.writingField(template.getType().getName(), field.getFieldName(), annotationType.getSimpleName());
+
 		try{
-			final Annotation binding = field.getBinding();
-			final Class<? extends Annotation> annotationType = binding.annotationType();
-			final CodecInterface<?> codec = loaderCodec.getCodec(annotationType);
-			if(codec == null)
-				throw CodecException.create("Cannot find codec for binding {}", annotationType.getSimpleName());
-
-			eventListener.writingField(template.getType().getName(), field.getFieldName(), annotationType.getSimpleName());
-
 			//encode value from current object
 			final Object value = field.getFieldValue(parserContext.currentObject);
 			//write value to raw message
@@ -290,9 +291,9 @@ public final class TemplateParser implements TemplateParserInterface{
 
 			eventListener.writtenField(template.getType().getName(), field.getFieldName(), value);
 		}
-		catch(final CodecException | AnnotationException e){
-			e.withClassNameAndFieldName(template.getType().getName(), field.getFieldName());
-			throw e;
+		catch(final FieldException fe){
+			fe.withClassNameAndFieldName(template.getType().getName(), field.getFieldName());
+			throw fe;
 		}
 		catch(final Exception e){
 			throw FieldException.create(e)

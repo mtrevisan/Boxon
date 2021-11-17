@@ -123,16 +123,14 @@ final class PlainManager implements ConfigurationManagerInterface{
 	@Override
 	public void validateValue(final String dataKey, final Object dataValue, final Class<?> fieldType) throws EncodeException,
 			CodecException{
-		final String pattern = annotation.pattern();
-		final String minValue = annotation.minValue();
-		final String maxValue = annotation.maxValue();
-		ManagerHelper.validateValue(dataKey, dataValue, fieldType,
-			pattern, minValue, maxValue);
+		ManagerHelper.validatePattern(dataKey, dataValue, annotation.pattern());
+		ManagerHelper.validateMinValue(dataKey, dataValue, fieldType, annotation.minValue());
+		ManagerHelper.validateMaxValue(dataKey, dataValue, fieldType, annotation.maxValue());
 	}
 
 	@Override
 	public void setValue(final Object configurationObject, final String dataKey, Object dataValue, final Field field, final Version protocol)
-			throws EncodeException, ConfigurationException, CodecException{
+			throws EncodeException, CodecException{
 		if(dataValue == null)
 			return;
 
@@ -145,7 +143,7 @@ final class PlainManager implements ConfigurationManagerInterface{
 		ManagerHelper.setValue(field, configurationObject, dataValue);
 	}
 
-	private Object extractEnumerationValue(final String dataKey, Object dataValue, final Field field,
+	private static Object extractEnumerationValue(final String dataKey, Object dataValue, final Field field,
 			final Class<? extends Enum<?>> enumeration) throws EncodeException{
 		//convert `or` between enumerations
 		if(String.class.isInstance(dataValue)){
@@ -157,7 +155,7 @@ final class PlainManager implements ConfigurationManagerInterface{
 		return dataValue;
 	}
 
-	private void validateEnumerationValue(final String dataKey, final Object dataValue, final Class<? extends Enum<?>> enumeration,
+	private static void validateEnumerationValue(final String dataKey, final Object dataValue, final Class<? extends Enum<?>> enumeration,
 			final Class<?> fieldType) throws EncodeException{
 		final Class<?> dataValueClass = (dataValue != null? dataValue.getClass(): null);
 		if(dataValueClass == null){

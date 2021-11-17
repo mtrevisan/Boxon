@@ -90,8 +90,8 @@ final class ValidationHelper{
 		return protocol;
 	}
 
-	static <T extends Annotation> Object validateMinValue(final ConfigFieldData<T> field, final Object def) throws AnnotationException,
-			CodecException{
+	private static <T extends Annotation> Object validateMinValue(final ConfigFieldData<T> field, final Object def)
+			throws AnnotationException, CodecException{
 		Object min = null;
 		if(!StringHelper.isBlank(field.minValue)){
 			min = JavaHelper.getValue(field.getFieldType(), field.minValue);
@@ -108,8 +108,8 @@ final class ValidationHelper{
 		return min;
 	}
 
-	static <T extends Annotation> Object validateMaxValue(final ConfigFieldData<T> field, final Object def) throws AnnotationException,
-			CodecException{
+	private static <T extends Annotation> Object validateMaxValue(final ConfigFieldData<T> field, final Object def)
+			throws AnnotationException, CodecException{
 		Object max = null;
 		if(!StringHelper.isBlank(field.maxValue)){
 			max = JavaHelper.getValue(field.getFieldType(), field.maxValue);
@@ -157,8 +157,8 @@ final class ValidationHelper{
 				ParserDataType.toObjectiveTypeOrSelf(fieldType).getSimpleName());
 	}
 
-	static <T extends Annotation> void validateMinMaxDefaultValuesToPattern(final Pattern formatPattern, final ConfigFieldData<T> field)
-			throws AnnotationException{
+	private static <T extends Annotation> void validateMinMaxDefaultValuesToPattern(final Pattern formatPattern,
+			final ConfigFieldData<T> field) throws AnnotationException{
 		//defaultValue compatible with pattern
 		if(!StringHelper.isBlank(field.defaultValue) && !formatPattern.matcher(field.defaultValue).matches())
 			throw AnnotationException.create("Default value not compatible with `pattern` in {}; found {}, expected {}",

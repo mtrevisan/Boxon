@@ -1,6 +1,6 @@
 /**
- * Copyright (c) 2020-2021 Mauro Trevisan
- *
+ * Copyright (c) 2021 Mauro Trevisan
+ * <p>
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without
@@ -9,10 +9,10 @@
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- *
+ * <p>
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -22,29 +22,72 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.codecs;
+package io.github.mtrevisan.boxon.codecs.managers.configuration;
 
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
-import io.github.mtrevisan.boxon.exceptions.CodecException;
-import io.github.mtrevisan.boxon.external.CodecInterface;
-import io.github.mtrevisan.boxon.external.BitReader;
-import io.github.mtrevisan.boxon.external.BitWriter;
 
 import java.lang.annotation.Annotation;
 
 
-final class CodecAlternativeConfigurationField implements CodecInterface<AlternativeSubField>{
+@SuppressWarnings("ClassExplicitlyAnnotation")
+final class NullAlternativeSubField implements AlternativeSubField{
+
+	private static final String EMPTY_STRING = "";
+
 
 	@Override
-	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
-		throw new UnsupportedOperationException("Cannot decode this type of annotation: " + getClass().getSimpleName());
+	public Class<? extends Annotation> annotationType(){
+		return Annotation.class;
 	}
 
 	@Override
-	public void encode(final BitWriter writer, final Annotation annotation, final Object fieldType, final Object value)
-			throws CodecException{
-		final AlternativeSubField binding = extractBinding(annotation);
-		CodecHelper.encode(writer, (Class<?>)fieldType, value, binding.radix(), binding.charset());
+	public String longDescription(){
+		return EMPTY_STRING;
+	}
+
+	@Override
+	public String unitOfMeasure(){
+		return EMPTY_STRING;
+	}
+
+	@Override
+	public String minProtocol(){
+		return EMPTY_STRING;
+	}
+
+	@Override
+	public String maxProtocol(){
+		return EMPTY_STRING;
+	}
+
+	@Override
+	public String minValue(){
+		return EMPTY_STRING;
+	}
+
+	@Override
+	public String maxValue(){
+		return EMPTY_STRING;
+	}
+
+	@Override
+	public String pattern(){
+		return EMPTY_STRING;
+	}
+
+	@Override
+	public String defaultValue(){
+		return EMPTY_STRING;
+	}
+
+	@Override
+	public String charset(){
+		return EMPTY_STRING;
+	}
+
+	@Override
+	public int radix(){
+		return 0;
 	}
 
 }

@@ -35,7 +35,7 @@ import java.util.StringTokenizer;
  */
 public final class Version implements Comparable<Version>{
 
-	public static Version EMPTY = of("");
+	public static final Version EMPTY = of("");
 
 	private static final String DOT = ".";
 	/** A separator that separates the pre-release version from the normal version. */
@@ -380,7 +380,7 @@ public final class Version implements Comparable<Version>{
 			final char chr = text.charAt(i);
 			for(int j = 0; j < VALID_CHARS.length; j ++)
 				if(VALID_CHARS[j] == chr && (i >= lastIndex || j >= VALID_CHARS.length - 1 || !Character.isHighSurrogate(chr)
-					|| VALID_CHARS[j + 1] == text.charAt(i + 1)))
+						|| VALID_CHARS[j + 1] == text.charAt(i + 1)))
 					continue outer;
 
 			return false;

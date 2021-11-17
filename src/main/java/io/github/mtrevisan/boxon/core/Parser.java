@@ -305,7 +305,6 @@ public final class Parser{
 	 * @param reader	The message to be parsed backed by a {@link BitReader}.
 	 * @return	The parse response.
 	 */
-	@SuppressWarnings("ObjectAllocationInLoop")
 	public ParseResponse parse(final BitReader reader){
 		final byte[] array = reader.array();
 		final ParseResponse response = new ParseResponse(array);

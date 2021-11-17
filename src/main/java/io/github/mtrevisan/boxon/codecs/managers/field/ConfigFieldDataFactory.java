@@ -38,7 +38,7 @@ public final class ConfigFieldDataFactory{
 	private ConfigFieldDataFactory(){}
 
 	public static ConfigFieldData<ConfigurationField> buildData(final Field field, final ConfigurationField annotation){
-		final ConfigFieldData<ConfigurationField> data = new ConfigFieldData<>();
+		final ConfigFieldData<ConfigurationField> data = ConfigFieldData.create();
 		data.field = field;
 		data.minProtocol = annotation.minProtocol();
 		data.maxProtocol = annotation.maxProtocol();
@@ -55,7 +55,7 @@ public final class ConfigFieldDataFactory{
 
 
 	public static ConfigFieldData<CompositeConfigurationField> buildData(final Field field, final CompositeConfigurationField annotation){
-		final ConfigFieldData<CompositeConfigurationField> data = new ConfigFieldData<>();
+		final ConfigFieldData<CompositeConfigurationField> data = ConfigFieldData.create();
 		data.field = field;
 		data.minProtocol = annotation.minProtocol();
 		data.maxProtocol = annotation.maxProtocol();
@@ -66,7 +66,7 @@ public final class ConfigFieldDataFactory{
 	}
 
 	public static ConfigFieldData<CompositeSubField> buildData(final Field field, final CompositeSubField annotation){
-		final ConfigFieldData<CompositeSubField> data = new ConfigFieldData<>();
+		final ConfigFieldData<CompositeSubField> data = ConfigFieldData.create();
 		data.field = field;
 		data.pattern = annotation.pattern();
 		data.defaultValue = annotation.defaultValue();
@@ -77,7 +77,7 @@ public final class ConfigFieldDataFactory{
 
 	public static ConfigFieldData<AlternativeConfigurationField> buildData(final Field field,
 			final AlternativeConfigurationField annotation){
-		final ConfigFieldData<AlternativeConfigurationField> data = new ConfigFieldData<>();
+		final ConfigFieldData<AlternativeConfigurationField> data = ConfigFieldData.create();
 		data.field = field;
 		data.minProtocol = annotation.minProtocol();
 		data.maxProtocol = annotation.maxProtocol();
@@ -87,7 +87,7 @@ public final class ConfigFieldDataFactory{
 	}
 
 	public static ConfigFieldData<AlternativeSubField> buildData(final Field field, final AlternativeSubField annotation){
-		final ConfigFieldData<AlternativeSubField> data = new ConfigFieldData<>();
+		final ConfigFieldData<AlternativeSubField> data = ConfigFieldData.create();
 		data.field = field;
 		data.minProtocol = annotation.minProtocol();
 		data.maxProtocol = annotation.maxProtocol();

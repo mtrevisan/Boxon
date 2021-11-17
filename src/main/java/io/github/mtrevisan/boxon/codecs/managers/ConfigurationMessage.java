@@ -127,7 +127,7 @@ public final class ConfigurationMessage<T>{
 				if(validAnnotation != null)
 					configFields.add(new ConfigField(field, validAnnotation, (skips.length > 0? skips: null)));
 			}
-			catch(final AnnotationException | ConfigurationException | CodecException e){
+			catch(final AnnotationException | CodecException e){
 				e.withClassNameAndFieldName(type.getName(), field.getName());
 				throw e;
 			}
@@ -143,8 +143,8 @@ public final class ConfigurationMessage<T>{
 			throw AnnotationException.create("Duplicated short description in {}: {}", type.getName(), shortDescription);
 	}
 
-	private Annotation validateField(final Field field, final Annotation[] annotations, final Version minProtocolVersion,
-			final Version maxProtocolVersion) throws AnnotationException, ConfigurationException, CodecException{
+	private static Annotation validateField(final Field field, final Annotation[] annotations, final Version minProtocolVersion,
+			final Version maxProtocolVersion) throws AnnotationException, CodecException{
 		/** filter out {@link ConfigurationSkip} annotations */
 		Annotation foundAnnotation = null;
 		for(int i = 0; foundAnnotation == null && i < annotations.length; i ++){

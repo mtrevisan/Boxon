@@ -53,6 +53,12 @@ public final class ConfigFieldData<T extends Annotation>{
 	public Class<T> annotation;
 
 
+	public static <T extends Annotation> ConfigFieldData<T> create(){
+		return new ConfigFieldData<>();
+	}
+
+	private ConfigFieldData(){}
+
 	public Class<?> getFieldType(){
 		return field.getType();
 	}

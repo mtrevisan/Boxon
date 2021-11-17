@@ -62,7 +62,7 @@ public final class LoaderTemplate implements LoaderTemplateInterface{
 
 
 	private final ThrowingFunction<Class<?>, Template<?>, AnnotationException> templateStore
-		= Memoizer.throwingMemoize(type -> new Template<>(type, this::filterAnnotationsWithCodec));
+		= Memoizer.throwingMemoize(type -> Template.create(type, this::filterAnnotationsWithCodec));
 
 	private final Map<String, Template<?>> templates = new TreeMap<>(Comparator.comparingInt(String::length).reversed()
 		.thenComparing(String::compareTo));

@@ -48,62 +48,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 
 	private static final String EMPTY_STRING = "";
 
-	private static final AlternativeSubField EMPTY_ALTERNATIVE = new AlternativeSubField(){
-		@Override
-		public Class<? extends Annotation> annotationType(){
-			return Annotation.class;
-		}
-
-		@Override
-		public String longDescription(){
-			return EMPTY_STRING;
-		}
-
-		@Override
-		public String unitOfMeasure(){
-			return EMPTY_STRING;
-		}
-
-		@Override
-		public String minProtocol(){
-			return EMPTY_STRING;
-		}
-
-		@Override
-		public String maxProtocol(){
-			return EMPTY_STRING;
-		}
-
-		@Override
-		public String minValue(){
-			return EMPTY_STRING;
-		}
-
-		@Override
-		public String maxValue(){
-			return EMPTY_STRING;
-		}
-
-		@Override
-		public String pattern(){
-			return EMPTY_STRING;
-		}
-
-		@Override
-		public String defaultValue(){
-			return EMPTY_STRING;
-		}
-
-		@Override
-		public String charset(){
-			return EMPTY_STRING;
-		}
-
-		@Override
-		public int radix(){
-			return 0;
-		}
-	};
+	private static final AlternativeSubField EMPTY_ALTERNATIVE = new NullAlternativeSubField();
 
 
 	private final AlternativeConfigurationField annotation;
@@ -276,11 +221,9 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 
 	private static void validateValue(final AlternativeSubField binding, final String dataKey, final Object dataValue,
 			final Class<?> fieldType) throws EncodeException, CodecException{
-		final String pattern = binding.pattern();
-		final String minValue = binding.minValue();
-		final String maxValue = binding.maxValue();
-		ManagerHelper.validateValue(dataKey, dataValue, fieldType,
-			pattern, minValue, maxValue);
+		ManagerHelper.validatePattern(dataKey, dataValue, binding.pattern());
+		ManagerHelper.validateMinValue(dataKey, dataValue, fieldType, binding.minValue());
+		ManagerHelper.validateMaxValue(dataKey, dataValue, fieldType, binding.maxValue());
 	}
 
 }

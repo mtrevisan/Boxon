@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.external.semanticversioning;
 
+
 final class VersionHelper{
 
 	static final String EMPTY_STRING = "";

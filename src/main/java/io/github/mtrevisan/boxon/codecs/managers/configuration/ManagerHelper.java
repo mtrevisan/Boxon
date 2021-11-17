@@ -46,17 +46,7 @@ public final class ManagerHelper{
 	private ManagerHelper(){}
 
 
-	static void validateValue(final String dataKey, final Object dataValue, final Class<?> fieldType,
-			final String pattern, final String minValue, final String maxValue) throws EncodeException, CodecException{
-		//check pattern
-		validatePattern(dataKey, dataValue, pattern);
-		//check minValue
-		validateMinValue(dataKey, dataValue, fieldType, minValue);
-		//check maxValue
-		validateMaxValue(dataKey, dataValue, fieldType, maxValue);
-	}
-
-	private static void validatePattern(final String dataKey, final Object dataValue, final String pattern) throws EncodeException{
+	static void validatePattern(final String dataKey, final Object dataValue, final String pattern) throws EncodeException{
 		if(!pattern.isEmpty()){
 			final Pattern formatPattern = Pattern.compile(pattern);
 
@@ -66,7 +56,7 @@ public final class ManagerHelper{
 		}
 	}
 
-	private static void validateMinValue(final String dataKey, final Object dataValue, final Class<?> fieldType, final String minValue)
+	static void validateMinValue(final String dataKey, final Object dataValue, final Class<?> fieldType, final String minValue)
 			throws EncodeException, CodecException{
 		if(!minValue.isEmpty()){
 			final Object min = JavaHelper.getValue(fieldType, minValue);
@@ -75,7 +65,7 @@ public final class ManagerHelper{
 		}
 	}
 
-	private static void validateMaxValue(final String dataKey, final Object dataValue, final Class<?> fieldType, final String maxValue)
+	static void validateMaxValue(final String dataKey, final Object dataValue, final Class<?> fieldType, final String maxValue)
 			throws EncodeException, CodecException{
 		if(!maxValue.isEmpty()){
 			final Object max = JavaHelper.getValue(fieldType, maxValue);
@@ -149,7 +139,7 @@ public final class ManagerHelper{
 	}
 
 
-	static void extractEnumeration(final Class<?> fieldType, final Class<? extends Enum> enumeration, final Map<String, Object> map)
+	static void extractEnumeration(final Class<?> fieldType, final Class<? extends Enum<?>> enumeration, final Map<String, Object> map)
 			throws ConfigurationException{
 		if(enumeration != NullEnum.class){
 			final Enum<?>[] enumConstants = enumeration.getEnumConstants();

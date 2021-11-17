@@ -35,7 +35,7 @@ final class DoubleEncodeManager implements EncodeManagerInterface{
 	private final BitWriter writer;
 
 
-	public DoubleEncodeManager(final BitWriter writer){
+	DoubleEncodeManager(final BitWriter writer){
 		this.writer = writer;
 	}
 
