@@ -22,27 +22,30 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.codecs;
+package io.github.mtrevisan.boxon.codecs.managers.encode;
 
-import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationField;
-import io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField;
-import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
-
-import java.lang.annotation.Annotation;
+import io.github.mtrevisan.boxon.external.BitWriter;
+import io.github.mtrevisan.boxon.internal.ParserDataType;
 
 
-final class ConfigurationManagerFactory{
+public final class EncodeManagerFactory{
 
-	private ConfigurationManagerFactory(){}
+	private EncodeManagerFactory(){}
 
-	static ConfigurationManagerInterface buildManager(final Annotation annotation){
-		ConfigurationManagerInterface manager = null;
-		if(ConfigurationField.class.isInstance(annotation))
-			manager = new PlainManager((ConfigurationField)annotation);
-		else if(CompositeConfigurationField.class.isInstance(annotation))
-			manager = new CompositeManager((CompositeConfigurationField)annotation);
-		else if(AlternativeConfigurationField.class.isInstance(annotation))
-			manager = new AlternativeManager((AlternativeConfigurationField)annotation);
+	public static EncodeManagerInterface buildManager(final Object value, final BitWriter writer){
+		EncodeManagerInterface manager = null;
+		if(String.class.isInstance(value))
+			manager = new StringEncodeManager(writer);
+		else{
+			final Class<?> fieldClass = ParserDataType.toObjectiveTypeOrSelf(value.getClass());
+			if(fieldClass == Float.class)
+				manager = new FloatEncodeManager(writer);
+			else if(fieldClass == Double.class)
+				manager = new DoubleEncodeManager(writer);
+			else if(Number.class.isAssignableFrom(fieldClass)){
+				manager = new NumberEncodeManager(writer);
+			}
+		}
 		return manager;
 	}
 

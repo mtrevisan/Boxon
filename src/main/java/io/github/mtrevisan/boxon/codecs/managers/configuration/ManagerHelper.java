@@ -22,9 +22,10 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.codecs;
+package io.github.mtrevisan.boxon.codecs.managers.configuration;
 
 import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
+import io.github.mtrevisan.boxon.codecs.LoaderConfiguration;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
@@ -40,7 +41,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 
-final class ManagerHelper{
+public final class ManagerHelper{
 
 	private ManagerHelper(){}
 
@@ -84,7 +85,7 @@ final class ManagerHelper{
 	}
 
 
-	static void putIfNotEmpty(final String key, final Object value, @SuppressWarnings("BoundedWildcard") final Map<String, Object> map)
+	public static void putIfNotEmpty(final String key, final Object value, @SuppressWarnings("BoundedWildcard") final Map<String, Object> map)
 			throws ConfigurationException{
 		if(value != null && (!String.class.isInstance(value) || !StringHelper.isBlank((CharSequence)value)))
 			if(map.put(key, value) != null)
@@ -136,7 +137,7 @@ final class ManagerHelper{
 		ReflectionHelper.setFieldValue(field, configurationObject, dataValue);
 	}
 
-	static boolean shouldBeExtracted(final Version protocol, final String minProtocol, final String maxProtocol){
+	public static boolean shouldBeExtracted(final Version protocol, final String minProtocol, final String maxProtocol){
 		if(protocol.isEmpty())
 			return true;
 

@@ -22,25 +22,28 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.codecs.managers;
+package io.github.mtrevisan.boxon.codecs.managers.configuration;
 
-import io.github.mtrevisan.boxon.external.BitWriter;
+import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationField;
+import io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField;
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
 
-import java.nio.charset.Charset;
-
-
-final class StringEncodeManager implements EncodeManagerInterface{
-
-	private final BitWriter writer;
+import java.lang.annotation.Annotation;
 
 
-	StringEncodeManager(final BitWriter writer){
-		this.writer = writer;
-	}
+public final class ConfigurationManagerFactory{
 
-	@Override
-	public void put(final Object value, final int radix, final Charset charset){
-		writer.putText((String)value, charset);
+	private ConfigurationManagerFactory(){}
+
+	public static ConfigurationManagerInterface buildManager(final Annotation annotation){
+		ConfigurationManagerInterface manager = null;
+		if(ConfigurationField.class.isInstance(annotation))
+			manager = new PlainManager((ConfigurationField)annotation);
+		else if(CompositeConfigurationField.class.isInstance(annotation))
+			manager = new CompositeManager((CompositeConfigurationField)annotation);
+		else if(AlternativeConfigurationField.class.isInstance(annotation))
+			manager = new AlternativeManager((AlternativeConfigurationField)annotation);
+		return manager;
 	}
 
 }
