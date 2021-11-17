@@ -32,7 +32,6 @@ import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
-import io.github.mtrevisan.boxon.internal.ReflectionHelper;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;

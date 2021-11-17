@@ -22,8 +22,9 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.internal;
+package io.github.mtrevisan.boxon.codecs.managers;
 
+import io.github.mtrevisan.boxon.internal.Memoizer;
 import org.springframework.objenesis.instantiator.ObjectInstantiator;
 import org.springframework.objenesis.instantiator.android.Android10Instantiator;
 import org.springframework.objenesis.instantiator.android.Android17Instantiator;
@@ -275,7 +276,7 @@ public final class ReflectionHelper{
 
 
 	@SuppressWarnings("unchecked")
-	public static <T> T getFieldValue(final Field field, final Object obj){
+	static <T> T getFieldValue(final Field field, final Object obj){
 		try{
 			return (T)field.get(obj);
 		}
@@ -321,7 +322,7 @@ public final class ReflectionHelper{
 	 * @param cls	The class from which to extract the declared fields.
 	 * @return	An array of all the fields of the given class.
 	 */
-	public static List<Field> getAccessibleFields(final Class<?> cls){
+	static List<Field> getAccessibleFields(final Class<?> cls){
 		return getAccessibleFields(cls, null);
 	}
 
@@ -368,7 +369,7 @@ public final class ReflectionHelper{
 
 
 	@SuppressWarnings("unchecked")
-	public static <T> T invokeMethod(final Object obj, final Method method, final T defaultValue){
+	static <T> T invokeMethod(final Object obj, final Method method, final T defaultValue){
 		T result = defaultValue;
 		try{
 			result = (method != null? (T)method.invoke(obj): defaultValue);
@@ -377,8 +378,7 @@ public final class ReflectionHelper{
 		return result;
 	}
 
-	public static Method getAccessibleMethod(Class<?> cls, final String methodName, final Class<?> returnType,
-			final Class<?>... parameterTypes){
+	static Method getAccessibleMethod(Class<?> cls, final String methodName, final Class<?> returnType, final Class<?>... parameterTypes){
 		Method method = null;
 		while(cls != null && cls != Object.class){
 			try{

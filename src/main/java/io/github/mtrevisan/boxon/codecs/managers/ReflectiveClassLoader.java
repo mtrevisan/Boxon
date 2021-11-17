@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.internal;
+package io.github.mtrevisan.boxon.codecs.managers;
 
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfoList;
@@ -116,7 +116,7 @@ public final class ReflectiveClassLoader{
 	 * @param annotation	The annotation to search for.
 	 * @return	The collection of classes.
 	 */
-	public Collection<Class<?>> getTypesAnnotatedWith(final Class<? extends Annotation> annotation){
+	Collection<Class<?>> getTypesAnnotatedWith(final Class<? extends Annotation> annotation){
 		return metadataStore.getOrDefault(annotation, Collections.emptyList());
 	}
 

@@ -38,7 +38,7 @@ import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.external.EventListener;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
 import io.github.mtrevisan.boxon.internal.Memoizer;
-import io.github.mtrevisan.boxon.internal.ReflectionHelper;
+import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
 import io.github.mtrevisan.boxon.internal.ThrowingFunction;
 
 import java.lang.annotation.Annotation;

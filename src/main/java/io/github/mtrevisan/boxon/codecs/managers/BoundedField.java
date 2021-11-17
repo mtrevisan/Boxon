@@ -25,7 +25,6 @@
 package io.github.mtrevisan.boxon.codecs.managers;
 
 import io.github.mtrevisan.boxon.annotations.Skip;
-import io.github.mtrevisan.boxon.internal.ReflectionHelper;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;

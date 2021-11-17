@@ -47,7 +47,7 @@ import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
 import io.github.mtrevisan.boxon.external.ByteOrder;
 import io.github.mtrevisan.boxon.external.EventListener;
-import io.github.mtrevisan.boxon.internal.ReflectionHelper;
+import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

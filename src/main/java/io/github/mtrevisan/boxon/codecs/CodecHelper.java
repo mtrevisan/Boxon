@@ -40,7 +40,7 @@ import io.github.mtrevisan.boxon.external.ByteOrder;
 import io.github.mtrevisan.boxon.internal.Evaluator;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.ParserDataType;
-import io.github.mtrevisan.boxon.internal.ReflectionHelper;
+import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
@@ -52,7 +52,7 @@ import java.util.regex.Pattern;
 public final class CodecHelper{
 
 	/** The name of the current object being scanner (used for referencing variables from SpEL). */
-	public static final String CONTEXT_SELF = "self";
+	static final String CONTEXT_SELF = "self";
 	/** The name of the prefix for the alternative (used for referencing variables from SpEL). */
 	private static final String CONTEXT_CHOICE_PREFIX = "prefix";
 

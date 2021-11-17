@@ -32,7 +32,7 @@ import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.ParserDataType;
-import io.github.mtrevisan.boxon.internal.ReflectionHelper;
+import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 
 import java.lang.reflect.Array;

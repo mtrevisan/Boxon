@@ -112,7 +112,7 @@ public final class ConfigurationParser{
 	}
 
 	private <T> void encodeField(final ConfigurationMessage<?> configuration, final T currentObject, final BitWriter writer,
-										  final ConfigField field, final Annotation binding) throws FieldException{
+			final ConfigField field, final Annotation binding) throws FieldException{
 		final Class<? extends Annotation> annotationType = binding.annotationType();
 		eventListener.writingField(configuration.getType().getName(), field.getFieldName(), annotationType.getSimpleName());
 

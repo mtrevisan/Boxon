@@ -28,8 +28,8 @@ import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.codecs.managers.InjectEventListener;
 import io.github.mtrevisan.boxon.external.CodecInterface;
 import io.github.mtrevisan.boxon.external.EventListener;
-import io.github.mtrevisan.boxon.internal.ReflectionHelper;
-import io.github.mtrevisan.boxon.internal.ReflectiveClassLoader;
+import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
+import io.github.mtrevisan.boxon.codecs.managers.ReflectiveClassLoader;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -65,7 +65,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	 *
 	 * @return	A codec loader.
 	 */
-	static LoaderCodec create(final LoaderTemplateInterface loaderTemplate, final TemplateParserInterface templateParser){
+	static LoaderCodec create(){
 		return new LoaderCodec(EventListener.getNoOpInstance());
 	}
 

@@ -43,7 +43,7 @@ import io.github.mtrevisan.boxon.external.CodecInterface;
 import io.github.mtrevisan.boxon.external.EventListener;
 import io.github.mtrevisan.boxon.internal.Evaluator;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
-import io.github.mtrevisan.boxon.internal.ReflectionHelper;
+import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 
 import java.lang.annotation.Annotation;
