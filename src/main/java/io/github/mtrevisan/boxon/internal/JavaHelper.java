@@ -54,17 +54,20 @@ public final class JavaHelper{
 			return null;
 
 		final Class<?> objectiveType = ParserDataType.toObjectiveTypeOrSelf(fieldType);
-		Object val = StringHelper.toNumber(value, objectiveType);
-		if(val == null){
-			try{
-				final Method method = objectiveType.getDeclaredMethod(METHOD_VALUE_OF, String.class);
-				val = method.invoke(null, value);
-			}
-			catch(final NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored){
-				throw CodecException.create("Cannot interpret {} as {}", value, objectiveType.getSimpleName());
-			}
+		//try convert to a number...
+		final Object val = StringHelper.toNumber(value, objectiveType);
+		//... otherwise convert it to an object
+		return (val == null? toObjectValue(value, objectiveType): val);
+	}
+
+	private static Object toObjectValue(final String value, final Class<?> objectiveType) throws CodecException{
+		try{
+			final Method method = objectiveType.getDeclaredMethod(METHOD_VALUE_OF, String.class);
+			return method.invoke(null, value);
 		}
-		return val;
+		catch(final NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored){
+			throw CodecException.create("Cannot interpret {} as {}", value, objectiveType.getSimpleName());
+		}
 	}
 
 
