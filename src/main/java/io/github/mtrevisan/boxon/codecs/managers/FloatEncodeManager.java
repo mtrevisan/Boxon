@@ -22,31 +22,26 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.codecs;
+package io.github.mtrevisan.boxon.codecs.managers;
 
 import io.github.mtrevisan.boxon.external.BitWriter;
-import io.github.mtrevisan.boxon.internal.ParserDataType;
+import io.github.mtrevisan.boxon.external.ByteOrder;
+
+import java.nio.charset.Charset;
 
 
-final class EncodeManagerFactory{
+final class FloatEncodeManager implements EncodeManagerInterface{
 
-	private EncodeManagerFactory(){}
+	private final BitWriter writer;
 
-	static EncodeManagerInterface buildManager(final Object value, final BitWriter writer){
-		EncodeManagerInterface manager = null;
-		if(String.class.isInstance(value))
-			manager = new StringEncodeManager(writer);
-		else{
-			final Class<?> fieldClass = ParserDataType.toObjectiveTypeOrSelf(value.getClass());
-			if(fieldClass == Float.class)
-				manager = new FloatEncodeManager(writer);
-			else if(fieldClass == Double.class)
-				manager = new DoubleEncodeManager(writer);
-			else if(Number.class.isAssignableFrom(fieldClass)){
-				manager = new NumberEncodeManager(writer);
-			}
-		}
-		return manager;
+
+	FloatEncodeManager(final BitWriter writer){
+		this.writer = writer;
+	}
+
+	@Override
+	public void put(final Object value, final int radix, final Charset charset){
+		writer.putFloat((Float)value, ByteOrder.BIG_ENDIAN);
 	}
 
 }
