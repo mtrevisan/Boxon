@@ -34,7 +34,6 @@ import io.github.mtrevisan.boxon.internal.ParserDataType;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Collections;
@@ -147,16 +146,7 @@ final class PlainManager implements ConfigurationManagerInterface{
 			final Class<? extends Enum<?>> enumeration) throws EncodeException{
 		//convert `or` between enumerations
 		if(String.class.isInstance(dataValue)){
-			final Enum<?>[] enumConstants = enumeration.getEnumConstants();
-			if(field.getType().isArray()){
-				final String[] defaultValues = StringHelper.split((String)dataValue, '|', -1);
-				dataValue = Array.newInstance(enumeration, defaultValues.length);
-				for(int i = 0; i < defaultValues.length; i ++)
-					Array.set(dataValue, i, JavaHelper.extractEnum(enumConstants, defaultValues[i]));
-			}
-			else
-				dataValue = enumeration
-					.cast(JavaHelper.extractEnum(enumConstants, (String)dataValue));
+			dataValue = ManagerHelper.extractEnumerationValue(field, (String)dataValue, enumeration);
 		}
 
 		validateEnumerationValue(dataKey, dataValue, enumeration, field.getType());

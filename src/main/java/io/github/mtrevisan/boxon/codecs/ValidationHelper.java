@@ -153,7 +153,6 @@ final class ValidationHelper{
 		}
 	}
 
-
 	static void validatePattern(final Field field, final String pattern, final String minValue, final String maxValue,
 			final String defaultValue) throws AnnotationException{
 		//valid pattern
@@ -178,5 +177,9 @@ final class ValidationHelper{
 		}
 	}
 
+	static void validateRadix(final int radix) throws AnnotationException{
+		if(radix < Character.MIN_RADIX || radix > Character.MAX_RADIX)
+			throw AnnotationException.create("Radix must be in [{}, {}]", Character.MIN_RADIX, Character.MAX_RADIX);
+	}
 
 }

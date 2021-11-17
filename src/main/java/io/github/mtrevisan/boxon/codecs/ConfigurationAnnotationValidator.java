@@ -83,8 +83,7 @@ enum ConfigurationAnnotationValidator{
 				throw AnnotationException.create("Unnecessary mutually exclusive field in a non-enumeration field");
 			if(String.class.isAssignableFrom(field.getType()))
 				ValidationHelper.assertValidCharset(binding.charset());
-			if(binding.radix() < Character.MIN_RADIX || binding.radix() > Character.MAX_RADIX)
-				throw AnnotationException.create("Radix must be in [{}, {}]", Character.MIN_RADIX, Character.MAX_RADIX);
+			ValidationHelper.validateRadix(binding.radix());
 
 			validateMinimumParameters(field, binding);
 
@@ -371,8 +370,7 @@ enum ConfigurationAnnotationValidator{
 
 			if(String.class.isAssignableFrom(field.getType()))
 				ValidationHelper.assertValidCharset(binding.charset());
-			if(binding.radix() < Character.MIN_RADIX || binding.radix() > Character.MAX_RADIX)
-				throw AnnotationException.create("Radix must be in [{}, {}]", Character.MIN_RADIX, Character.MAX_RADIX);
+			ValidationHelper.validateRadix(binding.radix());
 
 			validateMinimumParameters(binding);
 

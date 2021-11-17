@@ -105,25 +105,28 @@ final class ManagerHelper{
 
 	static Object getDefaultValue(final Field field, final String value, final Class<? extends Enum<?>> enumeration){
 		if(!StringHelper.isBlank(value)){
-			if(enumeration != NullEnum.class){
-				final Object valEnum;
-				final Enum<?>[] enumConstants = enumeration.getEnumConstants();
-				if(field.getType().isArray()){
-					final String[] defaultValues = StringHelper.split(value, '|', -1);
-					valEnum = Array.newInstance(enumeration, defaultValues.length);
-					for(int i = 0; i < defaultValues.length; i ++)
-						Array.set(valEnum, i, JavaHelper.extractEnum(enumConstants, defaultValues[i]));
-				}
-				else
-					valEnum = enumeration
-						.cast(JavaHelper.extractEnum(enumConstants, value));
-				return valEnum;
-			}
+			if(enumeration != NullEnum.class)
+				return extractEnumerationValue(field, value, enumeration);
 
 			if(field.getType() != String.class)
 				return JavaHelper.getValue(field.getType(), value);
 		}
 		return value;
+	}
+
+	static Object extractEnumerationValue(final Field field, final String value, final Class<? extends Enum<?>> enumeration){
+		final Object valEnum;
+		final Enum<?>[] enumConstants = enumeration.getEnumConstants();
+		if(field.getType().isArray()){
+			final String[] defaultValues = StringHelper.split(value, '|', -1);
+			valEnum = Array.newInstance(enumeration, defaultValues.length);
+			for(int i = 0; i < defaultValues.length; i ++)
+				Array.set(valEnum, i, JavaHelper.extractEnum(enumConstants, defaultValues[i]));
+		}
+		else
+			valEnum = enumeration
+				.cast(JavaHelper.extractEnum(enumConstants, value));
+		return valEnum;
 	}
 
 	static void setValue(final Field field, final Object configurationObject, final Object dataValue){
