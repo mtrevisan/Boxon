@@ -207,14 +207,17 @@ final class CodecHelper{
 		if(value != null){
 			if(value.getClass().isEnum())
 				value = ((ConfigurationEnum)value).getCode();
-			else if(value.getClass().isArray()){
-				int compositeEnumValue = 0;
-				for(int i = 0; i < Array.getLength(value); i ++)
-					compositeEnumValue |= ((ConfigurationEnum)Array.get(value, i)).getCode();
-				value = compositeEnumValue;
-			}
+			else if(value.getClass().isArray())
+				value = calculateCompositeValue(value);
 		}
 		return value;
+	}
+
+	private static int calculateCompositeValue(final Object value){
+		int compositeEnumValue = 0;
+		for(int i = 0; i < Array.getLength(value); i ++)
+			compositeEnumValue |= ((ConfigurationEnum)Array.get(value, i)).getCode();
+		return compositeEnumValue;
 	}
 
 }
