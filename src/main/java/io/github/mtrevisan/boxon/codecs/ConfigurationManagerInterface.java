@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.codecs;
 
+import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
@@ -38,7 +39,7 @@ interface ConfigurationManagerInterface{
 
 	String getShortDescription();
 
-	Object getDefaultValue(final Field field, final Version protocol) throws EncodeException;
+	Object getDefaultValue(final Field field, final Version protocol) throws EncodeException, ConfigurationException, CodecException;
 
 	void addProtocolVersionBoundaries(final Collection<String> protocolVersionBoundaries);
 
@@ -46,11 +47,10 @@ interface ConfigurationManagerInterface{
 
 	boolean isMandatory(final Annotation annotation);
 
-	Map<String, Object> extractConfigurationMap(final Class<?> fieldType, final Version protocol) throws ConfigurationException;
+	Map<String, Object> extractConfigurationMap(final Class<?> fieldType, final Version protocol) throws ConfigurationException, CodecException;
 
-	void validateValue(final String dataKey, final Object dataValue, final Class<?> fieldType) throws EncodeException;
+	void validateValue(final String dataKey, final Object dataValue, final Class<?> fieldType) throws EncodeException, ConfigurationException, CodecException;
 
-	void setValue(final Object configurationObject, final String dataKey, final Object dataValue, final Field field, final Version protocol)
-		throws EncodeException;
+	void setValue(final Object configurationObject, final String dataKey, final Object dataValue, final Field field, final Version protocol) throws EncodeException, ConfigurationException, CodecException;
 
 }

@@ -24,6 +24,8 @@
  */
 package io.github.mtrevisan.boxon.internal;
 
+import io.github.mtrevisan.boxon.exceptions.CodecException;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -33,43 +35,36 @@ public final class JavaHelper{
 	/** An empty immutable {@code String} array. */
 	public static final String[] EMPTY_ARRAY = new String[0];
 
-	private static final String METHOD_VALUE_OF = "valueOf";
+	static final String METHOD_VALUE_OF = "valueOf";
 
 
 	private JavaHelper(){}
 
-	public static Object getValueOrDefault(final Class<?> fieldType, final Object value){
+	public static Object getValueOrDefault(final Class<?> fieldType, final Object value) throws CodecException{
 		return (String.class.isInstance(value)
 			? getValue(fieldType, (String)value)
 			: value);
 	}
 
 	@SuppressWarnings("ReturnOfNull")
-	public static Object getValue(final Class<?> fieldType, final String value){
+	public static Object getValue(final Class<?> fieldType, final String value) throws CodecException{
 		if(fieldType == String.class)
 			return value;
 		if(value == null || value.isEmpty())
 			return null;
 
-		try{
-			final Class<?> objectiveType = ParserDataType.toObjectiveTypeOrSelf(fieldType);
-			final boolean hexadecimal = value.startsWith("0x");
-			final boolean octal = (!hexadecimal && value.charAt(0) == '0');
-			final Method method = (hexadecimal || octal
-				? objectiveType.getDeclaredMethod(METHOD_VALUE_OF, String.class, int.class)
-				: objectiveType.getDeclaredMethod(METHOD_VALUE_OF, String.class));
-			final Object response;
-			if(hexadecimal)
-				response = method.invoke(null, value.substring(2), 16);
-			else if(octal)
-				response = method.invoke(null, value, 8);
-			else
-				response = method.invoke(null, value);
-			return response;
+		final Class<?> objectiveType = ParserDataType.toObjectiveTypeOrSelf(fieldType);
+		Object val = StringHelper.toNumber(value, objectiveType);
+		if(val == null){
+			try{
+				final Method method = objectiveType.getDeclaredMethod(METHOD_VALUE_OF, String.class);
+				val = method.invoke(null, value);
+			}
+			catch(final NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored){
+				throw CodecException.create("Cannot interpret {} as {}", value, objectiveType.getSimpleName());
+			}
 		}
-		catch(final NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored){
-			return null;
-		}
+		return val;
 	}
 
 

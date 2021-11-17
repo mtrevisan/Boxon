@@ -30,7 +30,7 @@ import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
+import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitSet;
 import io.github.mtrevisan.boxon.external.BitWriter;
@@ -186,7 +186,7 @@ final class CodecHelper{
 	}
 
 	static void encode(final BitWriter writer, final Class<?> fieldType, Object value, final int radix, final String charsetName)
-			throws ConfigurationException{
+			throws CodecException{
 		final Charset charset = Charset.forName(charsetName);
 
 		value = interpretValue(fieldType, value);
@@ -204,13 +204,12 @@ final class CodecHelper{
 					writer.putText((String)value, charset);
 				}
 				else
-					throw ConfigurationException.create("Cannot handle this type of field: {}, please report to the developer",
-						fieldClass);
+					throw CodecException.create("Cannot handle this type of field: {}, please report to the developer", fieldClass);
 			}
 		}
 	}
 
-	private static Object interpretValue(final Class<?> fieldType, Object value){
+	private static Object interpretValue(final Class<?> fieldType, Object value) throws CodecException{
 		value = JavaHelper.getValueOrDefault(fieldType, value);
 		if(value != null){
 			if(value.getClass().isEnum())

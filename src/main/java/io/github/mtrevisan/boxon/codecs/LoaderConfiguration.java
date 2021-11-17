@@ -27,6 +27,7 @@ package io.github.mtrevisan.boxon.codecs;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.external.EventListener;
@@ -238,7 +239,7 @@ public final class LoaderConfiguration{
 	 * @return	The configuration messages regardless the protocol version.
 	 */
 	@SuppressWarnings("ObjectAllocationInLoop")
-	public List<Map<String, Object>> getConfigurations() throws ConfigurationException{
+	public List<Map<String, Object>> getConfigurations() throws ConfigurationException, CodecException{
 		final Version currentProtocol = Version.of(EMPTY_STRING);
 
 		final Collection<Configuration<?>> configurationValues = configurations.values();
@@ -266,7 +267,7 @@ public final class LoaderConfiguration{
 	 * @return	The configuration messages for a given protocol version.
 	 */
 	@SuppressWarnings("ObjectAllocationInLoop")
-	public List<Map<String, Object>> getConfigurations(final String protocol) throws ConfigurationException{
+	public List<Map<String, Object>> getConfigurations(final String protocol) throws ConfigurationException, CodecException{
 		if(StringHelper.isBlank(protocol))
 			throw new IllegalArgumentException(StringHelper.format("Invalid protocol: {}", protocol));
 
@@ -308,8 +309,8 @@ public final class LoaderConfiguration{
 	 * @param protocol	The protocol the data refers to.
 	 * @return	The configuration.
 	 */
-	public ConfigurationPair getConfigurationWithDefaults(final String configurationType, final Map<String, Object> data, final Version protocol)
-			throws EncodeException{
+	public ConfigurationPair getConfigurationWithDefaults(final String configurationType, final Map<String, Object> data,
+			final Version protocol) throws EncodeException, ConfigurationException, CodecException{
 		final Configuration<?> configuration = getConfiguration(configurationType);
 		final Object configurationObject = ReflectionHelper.getCreator(configuration.getType())
 			.get();
@@ -359,7 +360,7 @@ public final class LoaderConfiguration{
 	}
 
 	private static void fillDefaultValues(final Object configurationObject, final List<ConfigField> fields, final Version protocol)
-			throws EncodeException{
+			throws EncodeException, ConfigurationException, CodecException{
 		for(int i = 0; i < fields.size(); i ++){
 			final ConfigField field = fields.get(i);
 			final Annotation annotation = field.getBinding();
@@ -397,7 +398,7 @@ public final class LoaderConfiguration{
 	}
 
 	private static Map<String, Object> extractFieldsMap(final Version protocol, final Configuration<?> configuration)
-			throws ConfigurationException{
+			throws ConfigurationException, CodecException{
 		final List<ConfigField> fields = configuration.getConfigurationFields();
 		final Map<String, Object> fieldsMap = new HashMap<>(fields.size());
 		for(int i = 0; i < fields.size(); i ++){

@@ -174,7 +174,7 @@ public final class Version implements Comparable<Version>{
 	private void validatePreRelease(){
 		for(int i = 0; i < preRelease.length; i ++){
 			final String pr = preRelease[i];
-			final boolean numeric = StringHelper.isNumeric(pr);
+			final boolean numeric = StringHelper.isDecimalNumber(pr);
 			if(numeric && pr.length() > 1 && pr.charAt(0) == '0')
 				throw new IllegalArgumentException("Numeric identifier MUST NOT contain leading zeros");
 			if(!numeric && !containsOnly(pr))
@@ -185,7 +185,7 @@ public final class Version implements Comparable<Version>{
 	private void validateBuild(){
 		for(int i = 0; i < build.length; i ++){
 			final String b = build[i];
-			if(!StringHelper.isNumeric(b) && !containsOnly(b))
+			if(!StringHelper.isDecimalNumber(b) && !containsOnly(b))
 				throw new IllegalArgumentException("Argument is not a valid version");
 		}
 	}
@@ -346,7 +346,7 @@ public final class Version implements Comparable<Version>{
 	}
 
 	private static int compareIdentifiers(final String identifier1, final String identifier2){
-		return (StringHelper.isNumeric(identifier1) && StringHelper.isNumeric(identifier2)
+		return (StringHelper.isDecimalNumber(identifier1) && StringHelper.isDecimalNumber(identifier2)
 			? Integer.parseInt(identifier1) - Integer.parseInt(identifier2)
 			: identifier1.compareTo(identifier2));
 	}

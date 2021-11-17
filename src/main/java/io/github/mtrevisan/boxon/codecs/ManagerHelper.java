@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
+import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
@@ -45,7 +46,7 @@ final class ManagerHelper{
 
 
 	static void validateValue(final String dataKey, final Object dataValue, final Class<?> fieldType,
-			final String pattern, final String minValue, final String maxValue) throws EncodeException{
+			final String pattern, final String minValue, final String maxValue) throws EncodeException, CodecException{
 		//check pattern
 		validatePattern(dataKey, dataValue, pattern);
 		//check minValue
@@ -65,7 +66,7 @@ final class ManagerHelper{
 	}
 
 	private static void validateMinValue(final String dataKey, final Object dataValue, final Class<?> fieldType, final String minValue)
-			throws EncodeException{
+			throws EncodeException, CodecException{
 		if(!minValue.isEmpty()){
 			final Object min = JavaHelper.getValue(fieldType, minValue);
 			if(Number.class.isInstance(dataValue) && ((Number)dataValue).doubleValue() < ((Number)min).doubleValue())
@@ -74,7 +75,7 @@ final class ManagerHelper{
 	}
 
 	private static void validateMaxValue(final String dataKey, final Object dataValue, final Class<?> fieldType, final String maxValue)
-			throws EncodeException{
+			throws EncodeException, CodecException{
 		if(!maxValue.isEmpty()){
 			final Object max = JavaHelper.getValue(fieldType, maxValue);
 			if(Number.class.isInstance(dataValue) && ((Number)dataValue).doubleValue() > ((Number)max).doubleValue())
@@ -91,7 +92,8 @@ final class ManagerHelper{
 	}
 
 	static void putValueIfNotEmpty(final String key, final String value, final Class<?> fieldType,
-			final Class<? extends Enum<?>> enumeration, @SuppressWarnings("BoundedWildcard") final Map<String, Object> map) throws ConfigurationException{
+			final Class<? extends Enum<?>> enumeration, @SuppressWarnings("BoundedWildcard") final Map<String, Object> map) throws ConfigurationException,
+			CodecException{
 		if(!StringHelper.isBlank(value)){
 			Object val = value;
 			if(enumeration != NullEnum.class && fieldType.isArray())
@@ -103,7 +105,8 @@ final class ManagerHelper{
 		}
 	}
 
-	static Object getDefaultValue(final Field field, final String value, final Class<? extends Enum<?>> enumeration){
+	static Object getDefaultValue(final Field field, final String value, final Class<? extends Enum<?>> enumeration)
+			throws CodecException{
 		if(!StringHelper.isBlank(value)){
 			if(enumeration != NullEnum.class)
 				return extractEnumerationValue(field, value, enumeration);

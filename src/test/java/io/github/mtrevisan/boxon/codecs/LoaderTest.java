@@ -28,6 +28,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.mtrevisan.boxon.codecs.queclink.ACKMessageHex;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.BitReader;
@@ -97,7 +98,7 @@ class LoaderTest{
 	}
 
 	@Test
-	void getConfigurations() throws AnnotationException, ConfigurationException, JsonProcessingException{
+	void getConfigurations() throws AnnotationException, ConfigurationException, JsonProcessingException, CodecException{
 		EventListener eventListener = EventListener.getNoOpInstance();
 		LoaderConfiguration loaderConfiguration = LoaderConfiguration.create(eventListener);
 		loaderConfiguration.loadConfigurations(LoaderTest.class);
@@ -132,7 +133,7 @@ class LoaderTest{
 	}
 
 	@Test
-	void getConfigurationsByProtocol() throws AnnotationException, ConfigurationException, JsonProcessingException{
+	void getConfigurationsByProtocol() throws AnnotationException, ConfigurationException, JsonProcessingException, CodecException{
 		EventListener eventListener = EventListener.getNoOpInstance();
 		LoaderConfiguration loaderConfiguration = LoaderConfiguration.create(eventListener);
 		loaderConfiguration.loadConfigurations(LoaderTest.class);

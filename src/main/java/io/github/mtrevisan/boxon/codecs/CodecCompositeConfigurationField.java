@@ -25,10 +25,11 @@
 package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField;
-import io.github.mtrevisan.boxon.external.CodecInterface;
+import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
+import io.github.mtrevisan.boxon.external.CodecInterface;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.ParserDataType;
 
@@ -46,7 +47,7 @@ final class CodecCompositeConfigurationField implements CodecInterface<Composite
 
 	@Override
 	public void encode(final BitWriter writer, final Annotation annotation, final Object fieldType, Object value)
-			throws ConfigurationException{
+			throws ConfigurationException, CodecException{
 		final CompositeConfigurationField binding = extractBinding(annotation);
 
 		final Charset charset = Charset.forName(binding.charset());

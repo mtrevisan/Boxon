@@ -26,6 +26,8 @@ package io.github.mtrevisan.boxon.internal;
 
 import org.slf4j.helpers.MessageFormatter;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -259,15 +261,81 @@ public final class StringHelper{
 	 * @param text	The text to check, may be {@code null}.
 	 * @return	Whether the given text contains only digits and is non-{@code null}.
 	 */
-	public static boolean isNumeric(final CharSequence text){
-		if(text == null || text.length() == 0)
+	static Object toNumber(final String text, final Class<?> objectiveType){
+		Object response = null;
+		if(isNumeric(text)){
+			try{
+				final Method method = objectiveType.getDeclaredMethod(JavaHelper.METHOD_VALUE_OF, String.class, int.class);
+				final boolean hexadecimal = text.startsWith("0x");
+				response = method.invoke(null, (hexadecimal? text.substring(2): text), (hexadecimal? 16: 10));
+			}
+			catch(final NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored){}
+		}
+		return response;
+	}
+
+	private static boolean isNumeric(final String text){
+		if(text == null || text.isEmpty())
 			return false;
 
-		final int sz = text.length();
-		for(int i = 0; i < sz; i ++)
+		if(text.startsWith("0x"))
+			//hexadecimal number
+			return !isHexadecimalNumber(text);
+		//non-hexadecimal number
+		else
+			return !isNonHexadecimalNumber(text);
+	}
+
+	/**
+	 * <p>Checks if the text contains only Unicode digits.
+	 * A decimal point is not a Unicode digit and returns false.</p>
+	 *
+	 * <p>{@code null} will return {@code false}.
+	 * An empty text ({@code length() = 0}) will return {@code false}.</p>
+	 *
+	 * <p>Note that the method does not allow for a leading sign, either positive or negative.
+	 * Also, if a String passes the numeric test, it may still generate a NumberFormatException
+	 * when parsed by Integer.parseInt or Long.parseLong, e.g. if the value is outside the range
+	 * for int or long respectively.</p>
+	 *
+	 * <pre>
+	 * isNumeric(null)   = false
+	 * isNumeric("")     = false
+	 * isNumeric("  ")   = false
+	 * isNumeric("123")  = true
+	 * isNumeric("\u0967\u0968\u0969")  = true
+	 * isNumeric("12 3") = false
+	 * isNumeric("ab2c") = false
+	 * isNumeric("12-3") = false
+	 * isNumeric("12.3") = false
+	 * isNumeric("-123") = false
+	 * isNumeric("+123") = false
+	 * </pre>
+	 *
+	 * @param text	The text to check, may be {@code null}.
+	 * @return	Whether the given text contains only digits and is non-{@code null}.
+	 */
+	public static boolean isDecimalNumber(final String text){
+		//non-hexadecimal number
+		return (text != null && !text.isEmpty() && !isNonHexadecimalNumber(text));
+	}
+
+	private static boolean isNonHexadecimalNumber(final CharSequence text){
+		final int length = text.length();
+		for(int i = 0; i < length; i++)
 			if(!Character.isDigit(text.charAt(i)))
-				return false;
-		return true;
+				return true;
+		return false;
+	}
+
+	private static boolean isHexadecimalNumber(final CharSequence text){
+		final int length = text.length();
+		for(int i = 2; i < length; i ++){
+			final char chr = text.charAt(i);
+			if(!Character.isDigit(chr) && (chr < 'a' || chr > 'f') && (chr < 'A' || chr > 'F'))
+				return true;
+		}
+		return false;
 	}
 
 }

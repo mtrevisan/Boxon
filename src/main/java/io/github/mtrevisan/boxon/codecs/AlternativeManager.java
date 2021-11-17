@@ -26,6 +26,7 @@ package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
+import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
@@ -117,7 +118,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	public Object getDefaultValue(final Field field, final Version protocol){
+	public Object getDefaultValue(final Field field, final Version protocol) throws CodecException{
 		final AlternativeSubField fieldBinding = extractField(protocol);
 		if(fieldBinding != null){
 			final String value = fieldBinding.defaultValue();
@@ -165,7 +166,8 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	public Map<String, Object> extractConfigurationMap(final Class<?> fieldType, final Version protocol) throws ConfigurationException{
+	public Map<String, Object> extractConfigurationMap(final Class<?> fieldType, final Version protocol) throws ConfigurationException,
+			CodecException{
 		if(!ManagerHelper.shouldBeExtracted(protocol, annotation.minProtocol(), annotation.maxProtocol()))
 			return Collections.emptyMap();
 
@@ -225,7 +227,8 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 		return map;
 	}
 
-	private static Map<String, Object> extractMap(final AlternativeSubField binding, final Class<?> fieldType) throws ConfigurationException{
+	private static Map<String, Object> extractMap(final AlternativeSubField binding, final Class<?> fieldType) throws ConfigurationException,
+			CodecException{
 		final Map<String, Object> map = new HashMap<>(6);
 
 		ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_LONG_DESCRIPTION, binding.longDescription(), map);
@@ -259,7 +262,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 
 	@Override
 	public void setValue(final Object configurationObject, final String dataKey, Object dataValue, final Field field, final Version protocol)
-			throws EncodeException{
+			throws EncodeException, CodecException{
 		final AlternativeSubField fieldBinding = extractField(protocol);
 		if(fieldBinding != null){
 			validateValue(fieldBinding, dataKey, dataValue, field.getType());
@@ -271,7 +274,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 	}
 
 	private static void validateValue(final AlternativeSubField binding, final String dataKey, final Object dataValue,
-			final Class<?> fieldType) throws EncodeException{
+			final Class<?> fieldType) throws EncodeException, CodecException{
 		final String pattern = binding.pattern();
 		final String minValue = binding.minValue();
 		final String maxValue = binding.maxValue();

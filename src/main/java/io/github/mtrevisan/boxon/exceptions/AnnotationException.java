@@ -37,6 +37,10 @@ public final class AnnotationException extends FieldException{
 	private static final long serialVersionUID = 6429044852678473069L;
 
 
+	public static AnnotationException create(final Throwable cause){
+		return new AnnotationException(cause);
+	}
+
 	public static AnnotationException create(final Throwable cause, final String message, final Object... parameters){
 		return new AnnotationException(ExceptionHelper.format(message, parameters), cause);
 	}
@@ -47,6 +51,10 @@ public final class AnnotationException extends FieldException{
 
 	private AnnotationException(final String message, final Throwable cause){
 		super(message, cause);
+	}
+
+	private AnnotationException(final Throwable cause){
+		super(cause);
 	}
 
 	private AnnotationException(final String message){

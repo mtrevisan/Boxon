@@ -26,9 +26,9 @@ package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
-import io.github.mtrevisan.boxon.internal.StringHelper;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -86,7 +86,7 @@ final class ValidationHelper{
 	}
 
 	static Object validateMinValue(final Class<?> fieldType, final String minValue, final String defaultValue, final Object def)
-			throws AnnotationException{
+			throws AnnotationException, CodecException{
 		Object min = null;
 		if(!minValue.isEmpty()){
 			min = JavaHelper.getValue(fieldType, minValue);
@@ -104,7 +104,7 @@ final class ValidationHelper{
 	}
 
 	static Object validateMaxValue(final Class<?> fieldType, final String maxValue, final String defaultValue, final Object def)
-			throws AnnotationException{
+			throws AnnotationException, CodecException{
 		Object max = null;
 		if(!maxValue.isEmpty()){
 			max = JavaHelper.getValue(fieldType, maxValue);
@@ -113,7 +113,7 @@ final class ValidationHelper{
 				throw AnnotationException.create("Incompatible maximum value in {}; found {}, expected {}",
 					ConfigurationField.class.getSimpleName(), maxValue.getClass().getSimpleName(), fieldType.toString());
 
-			if(StringHelper.isNumeric(defaultValue) && def != null && ((Number)def).doubleValue() > ((Number)max).doubleValue())
+			if(def != null && ((Number)def).doubleValue() > ((Number)max).doubleValue())
 				//defaultValue compatible with maxValue
 				throw AnnotationException.create("Default value incompatible with maximum value in {}; found {}, expected less than or equals to {}",
 					ConfigurationField.class.getSimpleName(), defaultValue, maxValue.getClass().getSimpleName());
@@ -138,7 +138,7 @@ final class ValidationHelper{
 	}
 
 	static void validateMinMaxValues(final Field field, final String minValue, final String maxValue, final String defaultValue)
-			throws AnnotationException{
+			throws AnnotationException, CodecException{
 		final Class<?> fieldType = field.getType();
 
 		if(!minValue.isEmpty() || !maxValue.isEmpty()){

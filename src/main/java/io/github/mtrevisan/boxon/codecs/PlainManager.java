@@ -26,6 +26,7 @@ package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
+import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
@@ -59,7 +60,7 @@ final class PlainManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	public Object getDefaultValue(final Field field, final Version protocol){
+	public Object getDefaultValue(final Field field, final Version protocol) throws CodecException{
 		final String value = annotation.defaultValue();
 		final Class<? extends Enum<?>> enumeration = annotation.enumeration();
 		return ManagerHelper.getDefaultValue(field, value, enumeration);
@@ -83,7 +84,8 @@ final class PlainManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	public Map<String, Object> extractConfigurationMap(final Class<?> fieldType, final Version protocol) throws ConfigurationException{
+	public Map<String, Object> extractConfigurationMap(final Class<?> fieldType, final Version protocol) throws ConfigurationException,
+			CodecException{
 		if(!ManagerHelper.shouldBeExtracted(protocol, annotation.minProtocol(), annotation.maxProtocol()))
 			return Collections.emptyMap();
 
@@ -95,7 +97,7 @@ final class PlainManager implements ConfigurationManagerInterface{
 		return fieldMap;
 	}
 
-	private Map<String, Object> extractMap(final Class<?> fieldType) throws ConfigurationException{
+	private Map<String, Object> extractMap(final Class<?> fieldType) throws ConfigurationException, CodecException{
 		final Map<String, Object> map = new HashMap<>(10);
 
 		ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_LONG_DESCRIPTION, annotation.longDescription(), map);
@@ -118,7 +120,8 @@ final class PlainManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	public void validateValue(final String dataKey, final Object dataValue, final Class<?> fieldType) throws EncodeException{
+	public void validateValue(final String dataKey, final Object dataValue, final Class<?> fieldType) throws EncodeException,
+			CodecException{
 		final String pattern = annotation.pattern();
 		final String minValue = annotation.minValue();
 		final String maxValue = annotation.maxValue();
@@ -128,7 +131,7 @@ final class PlainManager implements ConfigurationManagerInterface{
 
 	@Override
 	public void setValue(final Object configurationObject, final String dataKey, Object dataValue, final Field field, final Version protocol)
-			throws EncodeException{
+			throws EncodeException, ConfigurationException, CodecException{
 		if(dataValue == null)
 			return;
 

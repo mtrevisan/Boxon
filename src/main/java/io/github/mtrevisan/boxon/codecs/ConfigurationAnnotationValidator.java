@@ -33,6 +33,7 @@ import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.ParserDataType;
@@ -74,7 +75,7 @@ enum ConfigurationAnnotationValidator{
 	FIELD(ConfigurationField.class){
 		@Override
 		void validate(final Field field, final Annotation annotation, final Version minMessageProtocol, final Version maxMessageProtocol)
-				throws AnnotationException{
+				throws AnnotationException, CodecException{
 			final ConfigurationField binding = (ConfigurationField)annotation;
 
 			if(StringHelper.isBlank(binding.shortDescription()))
@@ -126,7 +127,7 @@ enum ConfigurationAnnotationValidator{
 			return (hasPattern && hasMinMaxValues || hasPattern && hasEnumeration || hasMinMaxValues && hasEnumeration);
 		}
 
-		private void validateDefaultValue(final Field field, final ConfigurationField binding) throws AnnotationException{
+		private void validateDefaultValue(final Field field, final ConfigurationField binding) throws AnnotationException, CodecException{
 			final Class<?> fieldType = field.getType();
 			final Class<? extends Enum<?>> enumeration = binding.enumeration();
 			final String defaultValue = binding.defaultValue();
@@ -206,7 +207,7 @@ enum ConfigurationAnnotationValidator{
 	COMPOSITE_FIELD(CompositeConfigurationField.class){
 		@Override
 		void validate(final Field field, final Annotation annotation, final Version minMessageProtocol, final Version maxMessageProtocol)
-				throws AnnotationException{
+				throws AnnotationException, CodecException{
 			final CompositeConfigurationField binding = (CompositeConfigurationField)annotation;
 
 			if(StringHelper.isBlank(binding.shortDescription()))
@@ -254,7 +255,7 @@ enum ConfigurationAnnotationValidator{
 	SUB_FIELD(CompositeSubField.class){
 		@Override
 		void validate(final Field field, final Annotation annotation, final Version minMessageProtocol, final Version maxMessageProtocol)
-				throws AnnotationException{
+				throws AnnotationException, CodecException{
 			final CompositeSubField binding = (CompositeSubField)annotation;
 
 			if(StringHelper.isBlank(binding.shortDescription()))
@@ -293,7 +294,7 @@ enum ConfigurationAnnotationValidator{
 			}
 		}
 
-		private void validateDefaultValue(final Field field, final CompositeSubField binding) throws AnnotationException{
+		private void validateDefaultValue(final Field field, final CompositeSubField binding) throws AnnotationException, CodecException{
 			final Class<?> fieldType = field.getType();
 			final String defaultValue = binding.defaultValue();
 
@@ -365,7 +366,7 @@ enum ConfigurationAnnotationValidator{
 	ALTERNATIVE_FIELD(AlternativeSubField.class){
 		@Override
 		void validate(final Field field, final Annotation annotation, final Version minMessageProtocol, final Version maxMessageProtocol)
-			throws AnnotationException{
+				throws AnnotationException, CodecException{
 			final AlternativeSubField binding = (AlternativeSubField)annotation;
 
 			if(String.class.isAssignableFrom(field.getType()))
@@ -425,6 +426,6 @@ enum ConfigurationAnnotationValidator{
 	}
 
 	abstract void validate(final Field field, final Annotation annotation, final Version minMessageProtocol,
-		final Version maxMessageProtocol) throws AnnotationException;
+		final Version maxMessageProtocol) throws AnnotationException, CodecException;
 
 }

@@ -50,7 +50,7 @@ public class FieldException extends Exception{
 		super(message, cause);
 	}
 
-	private FieldException(final Throwable cause){
+	protected FieldException(final Throwable cause){
 		super(cause);
 	}
 

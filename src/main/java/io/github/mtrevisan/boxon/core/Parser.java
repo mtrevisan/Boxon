@@ -34,6 +34,7 @@ import io.github.mtrevisan.boxon.codecs.LoaderTemplate;
 import io.github.mtrevisan.boxon.codecs.Template;
 import io.github.mtrevisan.boxon.codecs.TemplateParser;
 import io.github.mtrevisan.boxon.codecs.TemplateParserInterface;
+import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
 import io.github.mtrevisan.boxon.external.CodecInterface;
@@ -244,7 +245,7 @@ public final class Parser{
 	 *
 	 * @return	The configuration messages regardless the protocol version.
 	 */
-	public List<Map<String, Object>> getConfigurations() throws ConfigurationException{
+	public List<Map<String, Object>> getConfigurations() throws ConfigurationException, CodecException{
 		return loaderConfiguration.getConfigurations();
 	}
 
@@ -263,7 +264,7 @@ public final class Parser{
 	 * @param protocol	The protocol used to extract the configurations.
 	 * @return	The configuration messages for a given protocol version.
 	 */
-	public List<Map<String, Object>> getConfigurations(final String protocol) throws ConfigurationException{
+	public List<Map<String, Object>> getConfigurations(final String protocol) throws ConfigurationException, CodecException{
 		return loaderConfiguration.getConfigurations(protocol);
 	}
 
