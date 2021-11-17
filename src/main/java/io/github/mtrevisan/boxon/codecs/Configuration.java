@@ -43,7 +43,6 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.StringJoiner;
 
 
 /**
@@ -147,22 +146,16 @@ public final class Configuration<T>{
 
 	private Annotation validateField(final Field field, final Annotation[] annotations, final Version minMessageProtocol,
 			final Version maxMessageProtocol) throws AnnotationException, ConfigurationException, CodecException{
-		//filter out `@ConfigurationSkip` annotations
+		/** filter out {@link ConfigurationSkip} annotations */
 		Annotation foundAnnotation = null;
-		for(int i = 0; i < annotations.length; i ++){
+		for(int i = 0; foundAnnotation == null && i < annotations.length; i ++){
 			final Class<? extends Annotation> annotationType = annotations[i].annotationType();
-			if(!io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip.class.isAssignableFrom(annotationType)
-					&& !ConfigurationSkip.ConfigurationSkips.class.isAssignableFrom(annotationType)){
-				if(foundAnnotation != null){
-					final StringJoiner sj = new StringJoiner(", ", "[", "]");
-					for(int j = 0; j < annotations.length; j ++)
-						sj.add(annotations[j].annotationType().getSimpleName());
-					throw AnnotationException.create("Cannot bind more that one annotation on {}: {}", type.getName(), sj.toString());
-				}
+			if(ConfigurationSkip.class.isAssignableFrom(annotationType)
+					|| ConfigurationSkip.ConfigurationSkips.class.isAssignableFrom(annotationType))
+				continue;
 
-				if(isValidAnnotation(field, annotations[i], minMessageProtocol, maxMessageProtocol))
-					foundAnnotation = annotations[i];
-			}
+			if(isValidAnnotation(field, annotations[i], minMessageProtocol, maxMessageProtocol))
+				foundAnnotation = annotations[i];
 		}
 		return foundAnnotation;
 	}

@@ -36,7 +36,6 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.StringJoiner;
 import java.util.function.Function;
 
 
@@ -135,24 +134,18 @@ public final class Template<T>{
 	private Annotation validateField(final List<? extends Annotation> annotations, final Checksum checksum) throws AnnotationException{
 		/** filter out {@link Skip} annotations */
 		Annotation foundAnnotation = null;
-		for(int i = 0; i < annotations.size(); i ++){
+		for(int i = 0; foundAnnotation == null && i < annotations.size(); i ++){
 			final Class<? extends Annotation> annotationType = annotations.get(i).annotationType();
-			if(annotationType != Skip.class && annotationType != Skip.Skips.class){
-				if(foundAnnotation != null){
-					final StringJoiner sj = new StringJoiner(", ", "[", "]");
-					for(int j = 0; j < annotations.size(); j ++)
-						sj.add(annotations.get(j).annotationType().getSimpleName());
-					throw AnnotationException.create("Cannot bind more that one annotation on {}: {}", type.getName(), sj.toString());
-				}
+			if(annotationType == Skip.class || annotationType == Skip.Skips.class)
+				continue;
 
 				validateAnnotation(annotations.get(i));
 
-				if(checksum != null && this.checksum != null)
-					throw AnnotationException.create("Cannot have more than one {} annotations on class {}",
-						Checksum.class.getSimpleName(), type.getName());
+			if(checksum != null && this.checksum != null)
+				throw AnnotationException.create("Cannot have more than one {} annotations on class {}",
+					Checksum.class.getSimpleName(), type.getName());
 
 				foundAnnotation = annotations.get(i);
-			}
 		}
 		return foundAnnotation;
 	}

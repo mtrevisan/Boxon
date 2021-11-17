@@ -162,15 +162,18 @@ final class PlainManager implements ConfigurationManagerInterface{
 		final Class<?> dataValueClass = (dataValue != null? dataValue.getClass(): null);
 		if(dataValueClass == null){
 			final Class<?> componentType = (fieldType.isArray()? fieldType.getComponentType(): fieldType);
-			throw EncodeException.create("Data value incompatible with field type {}; found {}[], expected {}[] for enumeration type", dataKey, componentType, enumeration.getSimpleName());
+			throw EncodeException.create("Data value incompatible with field type {}; found {}[], expected {}[] for enumeration type",
+				dataKey, componentType, enumeration.getSimpleName());
 		}
 		if(dataValueClass.isArray()){
 			final Class<?> componentType = dataValueClass.getComponentType();
 			if(!enumeration.isAssignableFrom(componentType))
-				throw EncodeException.create("Data value incompatible with field type {}; found {}[], expected {}[] for enumeration type", dataKey, componentType, enumeration.getSimpleName());
+				throw EncodeException.create("Data value incompatible with field type {}; found {}[], expected {}[] for enumeration type",
+					dataKey, componentType, enumeration.getSimpleName());
 		}
 		else if(!enumeration.isInstance(dataValue) || String.class.isInstance(dataValue) && !((String)dataValue).isEmpty())
-			throw EncodeException.create("Data value incompatible with field type {}; found {}, expected {} for enumeration type", dataKey, dataValueClass, enumeration.getSimpleName());
+			throw EncodeException.create("Data value incompatible with field type {}; found {}, expected {} for enumeration type",
+				dataKey, dataValueClass, enumeration.getSimpleName());
 	}
 
 }
