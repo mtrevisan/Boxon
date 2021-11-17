@@ -30,7 +30,8 @@ import io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurati
 import io.github.mtrevisan.boxon.annotations.configurations.CompositeSubField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
-import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
+import io.github.mtrevisan.boxon.codecs.managers.field.ConfigFieldData;
+import io.github.mtrevisan.boxon.codecs.managers.field.ConfigFieldDataFactory;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
@@ -48,7 +49,7 @@ enum ConfigurationAnnotationValidator{
 
 	HEADER(ConfigurationHeader.class){
 		@Override
-		void validate(final Field field, final Annotation annotation, final Version minMessageProtocol, final Version maxMessageProtocol)
+		void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
 				throws AnnotationException{
 			final ConfigurationHeader binding = (ConfigurationHeader)annotation;
 
@@ -70,52 +71,44 @@ enum ConfigurationAnnotationValidator{
 
 	FIELD(ConfigurationField.class){
 		@Override
-		void validate(final Field field, final Annotation annotation, final Version minMessageProtocol, final Version maxMessageProtocol)
+		void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
 				throws AnnotationException, CodecException{
+			final ConfigFieldData<ConfigurationField> configData = ConfigFieldDataFactory.buildData(field, (ConfigurationField)annotation);
+
 			final ConfigurationField binding = (ConfigurationField)annotation;
 
 			if(StringHelper.isBlank(binding.shortDescription()))
 				throw AnnotationException.create("Short description must be present");
-			if(binding.enumeration() == NullEnum.class && field.getType().isEnum())
+			if(!configData.hasEnumeration() && field.getType().isEnum())
 				throw AnnotationException.create("Unnecessary mutually exclusive field in a non-enumeration field");
 			if(String.class.isAssignableFrom(field.getType()))
-				ValidationHelper.assertValidCharset(binding.charset());
-			ValidationHelper.validateRadix(binding.radix());
+				ValidationHelper.assertValidCharset(configData.charset);
+			ValidationHelper.validateRadix(configData.radix);
 
-			validateMinimumParameters(field, binding);
+			validateMinimumParameters(configData);
 
-			final String pattern = binding.pattern();
-			final String minValue = binding.minValue();
-			final String maxValue = binding.maxValue();
-			final String defaultValue = binding.defaultValue();
-			ValidationHelper.validatePattern(field, pattern, minValue, maxValue, defaultValue, ConfigurationField.class);
+			ValidationHelper.validatePattern(configData);
 
-			ValidationHelper.validateDefaultValue(field, defaultValue, binding.enumeration(), ConfigurationField.class);
+			ValidationHelper.validateDefaultValue(configData);
 
-			ValidationHelper.validateEnumeration(field, binding.enumeration(), defaultValue, ConfigurationField.class);
+			ValidationHelper.validateEnumeration(configData);
 
-			ValidationHelper.validateMinMaxValues(field, minValue, maxValue, defaultValue, ConfigurationField.class);
+			ValidationHelper.validateMinMaxValues(configData);
 
-			ValidationHelper.validateProtocol(binding.minProtocol(), binding.maxProtocol(), minMessageProtocol, maxMessageProtocol,
-				ConfigurationField.class);
+			ValidationHelper.validateProtocol(configData, minProtocolVersion, maxProtocolVersion);
 		}
 
-		private void validateMinimumParameters(final Field field, final ConfigurationField binding) throws AnnotationException{
-			final Class<?> fieldType = field.getType();
+		private void validateMinimumParameters(final ConfigFieldData<ConfigurationField> field) throws AnnotationException{
+			final Class<?> fieldType = field.field.getType();
 			final boolean isFieldArray = fieldType.isArray();
-			final String pattern = binding.pattern();
-			final String minValue = binding.minValue();
-			final String maxValue = binding.maxValue();
-			final Class<? extends Enum<?>> enumeration = binding.enumeration();
 
 			//one only of `pattern`, `minValue`/`maxValue`, and `enumeration` should be set:
-			final boolean hasPattern = !pattern.isEmpty();
-			final boolean hasMinMaxValues = (!minValue.isEmpty() || !maxValue.isEmpty());
-			final boolean hasEnumeration = (enumeration != NullEnum.class);
-			if(moreThanOneSet(hasPattern, hasMinMaxValues, hasEnumeration))
+			final boolean hasPattern = !field.pattern.isEmpty();
+			final boolean hasMinMaxValues = (!field.minValue.isEmpty() || !field.maxValue.isEmpty());
+			if(moreThanOneSet(hasPattern, hasMinMaxValues, field.hasEnumeration()))
 				throw AnnotationException.create("Only one of `pattern`, `minValue`/`maxValue`, or `enumeration` should be used in {}",
 					ConfigurationField.class.getSimpleName());
-			if(isFieldArray && !hasEnumeration)
+			if(isFieldArray && !field.hasEnumeration())
 				throw AnnotationException.create("Array field should have `enumeration`");
 		}
 
@@ -126,8 +119,11 @@ enum ConfigurationAnnotationValidator{
 
 	COMPOSITE_FIELD(CompositeConfigurationField.class){
 		@Override
-		void validate(final Field field, final Annotation annotation, final Version minMessageProtocol, final Version maxMessageProtocol)
+		void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
 				throws AnnotationException, CodecException{
+			final ConfigFieldData<CompositeConfigurationField> configData = ConfigFieldDataFactory.buildData(field,
+				(CompositeConfigurationField)annotation);
+
 			final CompositeConfigurationField binding = (CompositeConfigurationField)annotation;
 
 			if(StringHelper.isBlank(binding.shortDescription()))
@@ -138,92 +134,91 @@ enum ConfigurationAnnotationValidator{
 			final CompositeSubField[] fields = binding.value();
 			if(fields.length == 0)
 				throw AnnotationException.create("Composite fields must have at least one sub-field");
-			ValidationHelper.assertValidCharset(binding.charset());
+			ValidationHelper.assertValidCharset(configData.charset);
 
-			ValidationHelper.validatePattern(field, binding.pattern(), null, null, null,
-				CompositeConfigurationField.class);
+			ValidationHelper.validatePattern(configData);
 
-			ValidationHelper.validateProtocol(binding.minProtocol(), binding.maxProtocol(), minMessageProtocol, maxMessageProtocol,
-				CompositeConfigurationField.class);
+			ValidationHelper.validateProtocol(configData, minProtocolVersion, maxProtocolVersion);
 
 
 			for(int i = 0; i < fields.length; i ++)
-				SUB_FIELD.validate(field, fields[i], minMessageProtocol, maxMessageProtocol);
+				SUB_FIELD.validate(field, fields[i], minProtocolVersion, maxProtocolVersion);
 		}
 	},
 
 	SUB_FIELD(CompositeSubField.class){
 		@Override
-		void validate(final Field field, final Annotation annotation, final Version minMessageProtocol, final Version maxMessageProtocol)
+		void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
 				throws AnnotationException, CodecException{
+			final ConfigFieldData<CompositeSubField> configData = ConfigFieldDataFactory.buildData(field, (CompositeSubField)annotation);
+
 			final CompositeSubField binding = (CompositeSubField)annotation;
 
 			if(StringHelper.isBlank(binding.shortDescription()))
 				throw AnnotationException.create("Short description must be present");
 
-			ValidationHelper.validatePattern(field, binding.pattern(), null, null, binding.defaultValue(),
-				CompositeSubField.class);
+			ValidationHelper.validatePattern(configData);
 
-			ValidationHelper.validateDefaultValue(field, binding.defaultValue(), null, CompositeSubField.class);
+			ValidationHelper.validateDefaultValue(configData);
 		}
 	},
 
 	ALTERNATIVE_FIELDS(AlternativeConfigurationField.class){
 		@Override
-		void validate(final Field field, final Annotation annotation, final Version minMessageProtocol, final Version maxMessageProtocol)
-			throws AnnotationException{
+		void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
+				throws AnnotationException{
+			final ConfigFieldData<AlternativeConfigurationField> configData = ConfigFieldDataFactory.buildData(field,
+				(AlternativeConfigurationField)annotation);
+
 			final AlternativeConfigurationField binding = (AlternativeConfigurationField)annotation;
 
 			if(StringHelper.isBlank(binding.shortDescription()))
 				throw AnnotationException.create("Short description must be present");
-			if(binding.enumeration() == NullEnum.class && field.getType().isEnum())
+			if(!configData.hasEnumeration() && field.getType().isEnum())
 				throw AnnotationException.create("Unnecessary mutually exclusive field in a non-enumeration field");
 
-			validateMinimumParameters(field, binding);
+			validateMinimumParameters(field, configData);
 
-			ValidationHelper.validateEnumeration(field, binding.enumeration(), null, AlternativeConfigurationField.class);
+			ValidationHelper.validateEnumeration(configData);
 
-			ValidationHelper.validateProtocol(binding.minProtocol(), binding.maxProtocol(), minMessageProtocol, maxMessageProtocol,
-				AlternativeConfigurationField.class);
+			ValidationHelper.validateProtocol(configData, minProtocolVersion, maxProtocolVersion);
 
 			final AlternativeSubField[] alternatives = binding.value();
-			for(int i = 0; i < JavaHelper.lengthOrZero(alternatives); i ++)
-				ValidationHelper.validateProtocol(alternatives[i].minProtocol(), alternatives[i].maxProtocol(), minMessageProtocol,
-					maxMessageProtocol, AlternativeSubField.class);
+			for(int i = 0; i < JavaHelper.lengthOrZero(alternatives); i ++){
+				final ConfigFieldData<AlternativeSubField> alternativeConfigData = ConfigFieldDataFactory.buildData(field, alternatives[i]);
+				ValidationHelper.validateProtocol(alternativeConfigData, minProtocolVersion, maxProtocolVersion);
+			}
 		}
 
-		private void validateMinimumParameters(final Field field, final AlternativeConfigurationField binding) throws AnnotationException{
+		private void validateMinimumParameters(final Field field, final ConfigFieldData<AlternativeConfigurationField> configData)
+				throws AnnotationException{
 			final Class<?> fieldType = field.getType();
 			final boolean isFieldArray = fieldType.isArray();
-			final Class<? extends Enum<?>> enumeration = binding.enumeration();
 
-			if(isFieldArray && enumeration == NullEnum.class)
+			if(isFieldArray && !configData.hasEnumeration())
 				throw AnnotationException.create("Array field should have `enumeration`");
 		}
 	},
 
 	ALTERNATIVE_FIELD(AlternativeSubField.class){
 		@Override
-		void validate(final Field field, final Annotation annotation, final Version minMessageProtocol, final Version maxMessageProtocol)
+		void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
 				throws AnnotationException, CodecException{
+			final ConfigFieldData<AlternativeSubField> configData = ConfigFieldDataFactory.buildData(field, (AlternativeSubField)annotation);
+
 			final AlternativeSubField binding = (AlternativeSubField)annotation;
 
 			if(String.class.isAssignableFrom(field.getType()))
-				ValidationHelper.assertValidCharset(binding.charset());
-			ValidationHelper.validateRadix(binding.radix());
+				ValidationHelper.assertValidCharset(configData.charset);
+			ValidationHelper.validateRadix(configData.radix);
 
 			validateMinimumParameters(binding);
 
-			final String pattern = binding.pattern();
-			final String minValue = binding.minValue();
-			final String maxValue = binding.maxValue();
-			final String defaultValue = binding.defaultValue();
-			ValidationHelper.validatePattern(field, pattern, minValue, maxValue, defaultValue, AlternativeSubField.class);
+			ValidationHelper.validatePattern(configData);
 
-			ValidationHelper.validateMinMaxValues(field, minValue, maxValue, defaultValue, AlternativeSubField.class);
+			ValidationHelper.validateMinMaxValues(configData);
 
-			ValidationHelper.validateProtocol(binding.minProtocol(), binding.maxProtocol(), minMessageProtocol, maxMessageProtocol,
-				AlternativeSubField.class);
+			ValidationHelper.validateProtocol(configData, minProtocolVersion, maxProtocolVersion);
 		}
 
 		private void validateMinimumParameters(final AlternativeSubField binding) throws AnnotationException{
@@ -264,7 +259,7 @@ enum ConfigurationAnnotationValidator{
 		return VALIDATORS.get(annotation.annotationType());
 	}
 
-	abstract void validate(final Field field, final Annotation annotation, final Version minMessageProtocol,
-		final Version maxMessageProtocol) throws AnnotationException, CodecException;
+	abstract void validate(final Field field, final Annotation annotation, final Version minProtocolVersion,
+		final Version maxProtocolVersion) throws AnnotationException, CodecException;
 
 }

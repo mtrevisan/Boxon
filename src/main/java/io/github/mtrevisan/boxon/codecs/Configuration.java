@@ -73,14 +73,14 @@ public final class Configuration<T>{
 		header = type.getAnnotation(ConfigurationHeader.class);
 		if(header == null)
 			throw AnnotationException.create("No header present in this class: {}", type.getName());
-		final Version minMessageProtocol = Version.of(header.minProtocol());
-		final Version maxMessageProtocol = Version.of(header.maxProtocol());
+		final Version minProtocolVersion = Version.of(header.minProtocol());
+		final Version maxProtocolVersion = Version.of(header.maxProtocol());
 		try{
 			ConfigurationAnnotationValidator.fromAnnotation(header)
-				.validate(null, header, minMessageProtocol, maxMessageProtocol);
+				.validate(null, header, minProtocolVersion, maxProtocolVersion);
 
-			final List<ConfigField> configFields = loadAnnotatedFields(type, ReflectionHelper.getAccessibleFields(type), minMessageProtocol,
-				maxMessageProtocol);
+			final List<ConfigField> configFields = loadAnnotatedFields(type, ReflectionHelper.getAccessibleFields(type), minProtocolVersion,
+				maxProtocolVersion);
 			this.configFields = Collections.unmodifiableList(configFields);
 
 			final List<String> protocolVersionBoundaries = extractProtocolVersionBoundaries(configFields);
@@ -110,8 +110,8 @@ public final class Configuration<T>{
 	}
 
 	@SuppressWarnings("ObjectAllocationInLoop")
-	private List<ConfigField> loadAnnotatedFields(final Class<T> type, final List<Field> fields, final Version minMessageProtocol,
-			final Version maxMessageProtocol) throws AnnotationException, ConfigurationException, CodecException{
+	private List<ConfigField> loadAnnotatedFields(final Class<T> type, final List<Field> fields, final Version minProtocolVersion,
+			final Version maxProtocolVersion) throws AnnotationException, ConfigurationException, CodecException{
 		final Collection<String> uniqueShortDescription = new HashSet<>(fields.size());
 		final List<ConfigField> configFields = new ArrayList<>(fields.size());
 		for(int i = 0; i < fields.size(); i ++){
@@ -121,7 +121,7 @@ public final class Configuration<T>{
 			final Annotation[] declaredAnnotations = field.getDeclaredAnnotations();
 
 			try{
-				final Annotation validAnnotation = validateField(field, declaredAnnotations, minMessageProtocol, maxMessageProtocol);
+				final Annotation validAnnotation = validateField(field, declaredAnnotations, minProtocolVersion, maxProtocolVersion);
 
 				validateShortDescriptionUniqueness(validAnnotation, uniqueShortDescription, type);
 
@@ -144,8 +144,8 @@ public final class Configuration<T>{
 			throw AnnotationException.create("Duplicated short description in {}: {}", type.getName(), shortDescription);
 	}
 
-	private Annotation validateField(final Field field, final Annotation[] annotations, final Version minMessageProtocol,
-			final Version maxMessageProtocol) throws AnnotationException, ConfigurationException, CodecException{
+	private Annotation validateField(final Field field, final Annotation[] annotations, final Version minProtocolVersion,
+			final Version maxProtocolVersion) throws AnnotationException, ConfigurationException, CodecException{
 		/** filter out {@link ConfigurationSkip} annotations */
 		Annotation foundAnnotation = null;
 		for(int i = 0; foundAnnotation == null && i < annotations.length; i ++){
@@ -154,17 +154,17 @@ public final class Configuration<T>{
 					|| ConfigurationSkip.ConfigurationSkips.class.isAssignableFrom(annotationType))
 				continue;
 
-			if(isValidAnnotation(field, annotations[i], minMessageProtocol, maxMessageProtocol))
+			if(isValidAnnotation(field, annotations[i], minProtocolVersion, maxProtocolVersion))
 				foundAnnotation = annotations[i];
 		}
 		return foundAnnotation;
 	}
 
-	private static boolean isValidAnnotation(final Field field, final Annotation annotation, final Version minMessageProtocol,
-			final Version maxMessageProtocol) throws AnnotationException, CodecException{
+	private static boolean isValidAnnotation(final Field field, final Annotation annotation, final Version minProtocolVersion,
+			final Version maxProtocolVersion) throws AnnotationException, CodecException{
 		final ConfigurationAnnotationValidator validator = ConfigurationAnnotationValidator.fromAnnotation(annotation);
 		if(validator != null)
-			validator.validate(field, annotation, minMessageProtocol, maxMessageProtocol);
+			validator.validate(field, annotation, minProtocolVersion, maxProtocolVersion);
 		return (validator != null);
 	}
 
