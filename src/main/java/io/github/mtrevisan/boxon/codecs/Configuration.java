@@ -27,6 +27,8 @@ package io.github.mtrevisan.boxon.codecs;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.exceptions.CodecException;
+import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
 import io.github.mtrevisan.boxon.internal.ReflectionHelper;
 
@@ -72,18 +74,23 @@ public final class Configuration<T>{
 			throw AnnotationException.create("No header present in this class: {}", type.getName());
 		final Version minMessageProtocol = Version.of(header.minProtocol());
 		final Version maxMessageProtocol = Version.of(header.maxProtocol());
-		ConfigurationAnnotationValidator.fromAnnotation(header)
-			.validate(null, header, minMessageProtocol, maxMessageProtocol);
+		try{
+			ConfigurationAnnotationValidator.fromAnnotation(header)
+				.validate(null, header, minMessageProtocol, maxMessageProtocol);
 
-		final List<ConfigField> configFields = loadAnnotatedFields(type, ReflectionHelper.getAccessibleFields(type), minMessageProtocol,
-			maxMessageProtocol);
-		this.configFields = Collections.unmodifiableList(configFields);
+			final List<ConfigField> configFields = loadAnnotatedFields(type, ReflectionHelper.getAccessibleFields(type), minMessageProtocol,
+				maxMessageProtocol);
+			this.configFields = Collections.unmodifiableList(configFields);
 
-		final List<String> protocolVersionBoundaries = extractProtocolVersionBoundaries(configFields);
-		this.protocolVersionBoundaries = Collections.unmodifiableList(protocolVersionBoundaries);
+			final List<String> protocolVersionBoundaries = extractProtocolVersionBoundaries(configFields);
+			this.protocolVersionBoundaries = Collections.unmodifiableList(protocolVersionBoundaries);
 
-		if(configFields.isEmpty())
-			throw AnnotationException.create("No data can be extracted from this class: {}", type.getName());
+			if(configFields.isEmpty())
+				throw AnnotationException.create("No data can be extracted from this class: {}", type.getName());
+		}
+		catch(final ConfigurationException | CodecException ce){
+			throw AnnotationException.create(ce);
+		}
 	}
 
 	private static void removeDuplicates(final Iterable<String> protocolVersions){
@@ -103,7 +110,7 @@ public final class Configuration<T>{
 
 	@SuppressWarnings("ObjectAllocationInLoop")
 	private List<ConfigField> loadAnnotatedFields(final Class<T> type, final List<Field> fields, final Version minMessageProtocol,
-			final Version maxMessageProtocol) throws AnnotationException{
+			final Version maxMessageProtocol) throws AnnotationException, ConfigurationException, CodecException{
 		final Collection<String> uniqueShortDescription = new HashSet<>(fields.size());
 		final List<ConfigField> configFields = new ArrayList<>(fields.size());
 		for(int i = 0; i < fields.size(); i ++){
@@ -120,7 +127,7 @@ public final class Configuration<T>{
 				if(validAnnotation != null)
 					configFields.add(new ConfigField(field, validAnnotation, (skips.length > 0? skips: null)));
 			}
-			catch(final AnnotationException e){
+			catch(final AnnotationException | ConfigurationException | CodecException e){
 				e.setClassNameAndFieldName(type.getName(), field.getName());
 				throw e;
 			}
@@ -137,7 +144,7 @@ public final class Configuration<T>{
 	}
 
 	private Annotation validateField(final Field field, final Annotation[] annotations, final Version minMessageProtocol,
-			final Version maxMessageProtocol) throws AnnotationException{
+			final Version maxMessageProtocol) throws AnnotationException, ConfigurationException, CodecException{
 		//filter out `@ConfigurationSkip` annotations
 		Annotation foundAnnotation = null;
 		for(int i = 0; i < annotations.length; i ++){
@@ -159,7 +166,7 @@ public final class Configuration<T>{
 	}
 
 	private static boolean isValidAnnotation(final Field field, final Annotation annotation, final Version minMessageProtocol,
-			final Version maxMessageProtocol) throws AnnotationException{
+			final Version maxMessageProtocol) throws AnnotationException, CodecException{
 		final ConfigurationAnnotationValidator validator = ConfigurationAnnotationValidator.fromAnnotation(annotation);
 		if(validator != null)
 			validator.validate(field, annotation, minMessageProtocol, maxMessageProtocol);
