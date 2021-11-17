@@ -89,10 +89,9 @@ final class PlainManager implements ConfigurationManagerInterface{
 
 		final Map<String, Object> fieldMap = extractMap(fieldType);
 
-		if(protocol.isEmpty()){
-			ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_MIN_PROTOCOL, annotation.minProtocol(), fieldMap);
-			ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_MAX_PROTOCOL, annotation.maxProtocol(), fieldMap);
-		}
+		if(protocol.isEmpty())
+			ManagerHelper.extractMinMaxProtocol(annotation.minProtocol(), annotation.maxProtocol(), fieldMap);
+
 		return fieldMap;
 	}
 

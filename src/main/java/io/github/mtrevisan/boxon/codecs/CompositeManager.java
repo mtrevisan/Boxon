@@ -125,10 +125,9 @@ final class CompositeManager implements ConfigurationManagerInterface{
 		}
 		compositeMap.put(LoaderConfiguration.KEY_CONFIGURATION_COMPOSITE_FIELDS, compositeFieldsMap);
 
-		if(protocol.isEmpty()){
-			ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_MIN_PROTOCOL, annotation.minProtocol(), compositeMap);
-			ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_MAX_PROTOCOL, annotation.maxProtocol(), compositeMap);
-		}
+		if(protocol.isEmpty())
+			ManagerHelper.extractMinMaxProtocol(annotation.minProtocol(), annotation.maxProtocol(), compositeMap);
+
 		return compositeMap;
 	}
 

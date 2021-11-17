@@ -158,4 +158,10 @@ final class ManagerHelper{
 		}
 	}
 
+	static void extractMinMaxProtocol(final String minProtocol, final String maxProtocol, final Map<String, Object> fieldMap)
+			throws ConfigurationException{
+		putIfNotEmpty(LoaderConfiguration.KEY_MIN_PROTOCOL, minProtocol, fieldMap);
+		putIfNotEmpty(LoaderConfiguration.KEY_MAX_PROTOCOL, maxProtocol, fieldMap);
+	}
+
 }
