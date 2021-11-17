@@ -430,7 +430,7 @@ public final class Parser{
 
 		final BitWriter writer = BitWriter.create();
 		for(final Map.Entry<String, Map<String, Object>> entry : data.entrySet())
-			composeConfiguration(writer, entry.getKey(), entry.getValue(), protocol, response);
+			composeConfiguration(writer, entry, protocol, response);
 		writer.flush();
 
 		response.setComposedMessage(writer.array());
@@ -440,12 +440,12 @@ public final class Parser{
 
 	/**
 	 * Compose a single configuration message.
-	 *
-	 * @param data	The configuration message to be composed.
 	 */
-	private void composeConfiguration(final BitWriter writer, final String configurationType, final Map<String, Object> data,
+	private void composeConfiguration(final BitWriter writer, final Map.Entry<String, Map<String, Object>> entry,
 			final Version protocol, final ComposeResponse response){
 		try{
+			final String configurationType = entry.getKey();
+			final Map<String, Object> data = entry.getValue();
 			final LoaderConfiguration.ConfigurationPair configurationPair
 				= loaderConfiguration.getConfigurationWithDefaults(configurationType, data, protocol);
 
