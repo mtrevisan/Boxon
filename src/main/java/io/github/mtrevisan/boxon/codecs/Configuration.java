@@ -128,7 +128,7 @@ public final class Configuration<T>{
 					configFields.add(new ConfigField(field, validAnnotation, (skips.length > 0? skips: null)));
 			}
 			catch(final AnnotationException | ConfigurationException | CodecException e){
-				e.setClassNameAndFieldName(type.getName(), field.getName());
+				e.withClassNameAndFieldName(type.getName(), field.getName());
 				throw e;
 			}
 		}

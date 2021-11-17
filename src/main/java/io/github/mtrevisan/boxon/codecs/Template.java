@@ -114,7 +114,7 @@ public final class Template<T>{
 				}
 			}
 			catch(final AnnotationException e){
-				e.setClassNameAndFieldName(type.getName(), field.getName());
+				e.withClassNameAndFieldName(type.getName(), field.getName());
 				throw e;
 			}
 		}

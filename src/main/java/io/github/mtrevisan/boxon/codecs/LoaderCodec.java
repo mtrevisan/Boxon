@@ -64,7 +64,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	 *
 	 * @return	A codec loader.
 	 */
-	static LoaderCodec create(){
+	static LoaderCodec create(final LoaderTemplateInterface loaderTemplate, final TemplateParserInterface templateParser){
 		return new LoaderCodec(EventListener.getNoOpInstance());
 	}
 
@@ -168,6 +168,13 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	private void addCodecInner(final CodecInterface<?> codec){
 		final Class<?> codecType = ReflectionHelper.resolveGenericTypes(codec.getClass(), CodecInterface.class).get(0);
 		codecs.put(codecType, codec);
+	}
+
+	public void injectFieldsInCodecs(final LoaderTemplateInterface loaderTemplate, final TemplateParserInterface templateParser){
+		for(final CodecInterface<?> codec : codecs.values()){
+			ReflectionHelper.setFieldValue(codec, LoaderTemplateInterface.class, loaderTemplate);
+			ReflectionHelper.setFieldValue(codec, TemplateParserInterface.class, templateParser);
+		}
 	}
 
 	@Override

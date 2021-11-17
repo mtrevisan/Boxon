@@ -54,9 +54,10 @@ public class FieldException extends Exception{
 		super(cause);
 	}
 
-	public final void setClassNameAndFieldName(final String className, final String fieldName){
+	public final FieldException withClassNameAndFieldName(final String className, final String fieldName){
 		this.className = className;
 		this.fieldName = fieldName;
+		return this;
 	}
 
 	@Override

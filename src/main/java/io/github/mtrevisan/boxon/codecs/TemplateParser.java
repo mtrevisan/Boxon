@@ -28,7 +28,6 @@ import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.Skip;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
-import io.github.mtrevisan.boxon.external.EventListener;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
@@ -37,6 +36,7 @@ import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitSet;
 import io.github.mtrevisan.boxon.external.BitWriter;
 import io.github.mtrevisan.boxon.external.CodecInterface;
+import io.github.mtrevisan.boxon.external.EventListener;
 import io.github.mtrevisan.boxon.internal.Evaluator;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.ReflectionHelper;
@@ -73,38 +73,32 @@ public final class TemplateParser implements TemplateParserInterface{
 
 
 	private final LoaderCodecInterface loaderCodec;
-	private final LoaderTemplateInterface loaderTemplate;
 
 
 	/**
 	 * Create a template parser.
 	 *
 	 * @param loaderCodec	A codec loader.
-	 * @param loaderTemplate	A template loader.
 	 * @return	A template parser.
 	 */
-	public static TemplateParser create(final LoaderCodecInterface loaderCodec, final LoaderTemplateInterface loaderTemplate){
-		return new TemplateParser(loaderCodec, loaderTemplate, EventListener.getNoOpInstance());
+	public static TemplateParser create(final LoaderCodecInterface loaderCodec){
+		return new TemplateParser(loaderCodec, EventListener.getNoOpInstance());
 	}
 
 	/**
 	 * Create a template parser.
 	 *
 	 * @param loaderCodec	A codec loader.
-	 * @param loaderTemplate	A template loader.
 	 * @param eventListener	The event listener.
 	 * @return	A template parser.
 	 */
-	public static TemplateParser create(final LoaderCodecInterface loaderCodec, final LoaderTemplateInterface loaderTemplate,
-			final EventListener eventListener){
-		return new TemplateParser(loaderCodec, loaderTemplate, (eventListener != null? eventListener: EventListener.getNoOpInstance()));
+	public static TemplateParser create(final LoaderCodecInterface loaderCodec, final EventListener eventListener){
+		return new TemplateParser(loaderCodec, (eventListener != null? eventListener: EventListener.getNoOpInstance()));
 	}
 
 
-	private TemplateParser(final LoaderCodecInterface loaderCodec, final LoaderTemplateInterface loaderTemplate,
-			final EventListener eventListener){
+	private TemplateParser(final LoaderCodecInterface loaderCodec, final EventListener eventListener){
 		this.loaderCodec = loaderCodec;
-		this.loaderTemplate = loaderTemplate;
 		this.eventListener = eventListener;
 	}
 
@@ -154,10 +148,6 @@ public final class TemplateParser implements TemplateParserInterface{
 			if(codec == null)
 				throw CodecException.create("Cannot find codec for binding {}", annotationType.getSimpleName());
 
-			//inject fields:
-			ReflectionHelper.setFieldValue(codec, LoaderTemplateInterface.class, loaderTemplate);
-			ReflectionHelper.setFieldValue(codec, TemplateParserInterface.class, this);
-
 			eventListener.decodingField(template.toString(), field.getFieldName(), annotationType.getSimpleName());
 
 			//decode value from raw message
@@ -168,13 +158,12 @@ public final class TemplateParser implements TemplateParserInterface{
 			eventListener.decodedField(template.toString(), field.getFieldName(), value);
 		}
 		catch(final CodecException | AnnotationException | TemplateException e){
-			e.setClassNameAndFieldName(template.getType().getName(), field.getFieldName());
+			e.withClassNameAndFieldName(template.getType().getName(), field.getFieldName());
 			throw e;
 		}
 		catch(final Exception e){
-			final FieldException exc = FieldException.create(e);
-			exc.setClassNameAndFieldName(template.getType().getName(), field.getFieldName());
-			throw exc;
+			throw FieldException.create(e)
+				.withClassNameAndFieldName(template.getType().getName(), field.getFieldName());
 		}
 	}
 
@@ -272,7 +261,8 @@ public final class TemplateParser implements TemplateParserInterface{
 				encodeField(template, writer, parserContext, field);
 		}
 
-		closeMessage(template, writer);
+		final MessageHeader header = template.getHeader();
+		closeMessage(header, writer);
 
 		writer.flush();
 	}
@@ -287,10 +277,6 @@ public final class TemplateParser implements TemplateParserInterface{
 			if(codec == null)
 				throw CodecException.create("Cannot find codec for binding {}", annotationType.getSimpleName());
 
-			//inject fields:
-			ReflectionHelper.setFieldValue(codec, LoaderTemplateInterface.class, loaderTemplate);
-			ReflectionHelper.setFieldValue(codec, TemplateParserInterface.class, this);
-
 			eventListener.writingField(template.getType().getName(), field.getFieldName(), annotationType.getSimpleName());
 
 			//encode value from current object
@@ -301,13 +287,12 @@ public final class TemplateParser implements TemplateParserInterface{
 			eventListener.writtenField(template.getType().getName(), field.getFieldName(), value);
 		}
 		catch(final CodecException | AnnotationException e){
-			e.setClassNameAndFieldName(template.getType().getName(), field.getFieldName());
+			e.withClassNameAndFieldName(template.getType().getName(), field.getFieldName());
 			throw e;
 		}
 		catch(final Exception e){
-			final FieldException exc = FieldException.create(e);
-			exc.setClassNameAndFieldName(template.getType().getName(), field.getFieldName());
-			throw exc;
+			throw FieldException.create(e)
+				.withClassNameAndFieldName(template.getType().getName(), field.getFieldName());
 		}
 	}
 
@@ -315,8 +300,7 @@ public final class TemplateParser implements TemplateParserInterface{
 		return (condition.isEmpty() || Evaluator.evaluateBoolean(condition, rootObject));
 	}
 
-	private static void closeMessage(final Template<?> template, final BitWriter writer){
-		final MessageHeader header = template.getHeader();
+	private static void closeMessage(final MessageHeader header, final BitWriter writer){
 		if(header != null && !header.end().isEmpty()){
 			final Charset charset = Charset.forName(header.charset());
 			writer.putText(header.end(), charset);

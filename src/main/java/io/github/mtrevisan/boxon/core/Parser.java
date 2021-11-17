@@ -34,17 +34,17 @@ import io.github.mtrevisan.boxon.codecs.LoaderTemplate;
 import io.github.mtrevisan.boxon.codecs.Template;
 import io.github.mtrevisan.boxon.codecs.TemplateParser;
 import io.github.mtrevisan.boxon.codecs.TemplateParserInterface;
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
+import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
+import io.github.mtrevisan.boxon.exceptions.DecodeException;
+import io.github.mtrevisan.boxon.exceptions.EncodeException;
+import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
 import io.github.mtrevisan.boxon.external.CodecInterface;
 import io.github.mtrevisan.boxon.external.EventListener;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
-import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
-import io.github.mtrevisan.boxon.exceptions.DecodeException;
-import io.github.mtrevisan.boxon.exceptions.EncodeException;
-import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.internal.Evaluator;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 
@@ -99,8 +99,8 @@ public final class Parser{
 		loaderCodec = LoaderCodec.create(eventListener);
 		loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
 		loaderConfiguration = LoaderConfiguration.create(eventListener);
-		templateParser = TemplateParser.create(loaderCodec, loaderTemplate, eventListener);
-		configurationParser = ConfigurationParser.create(loaderCodec, loaderTemplate, templateParser, eventListener);
+		templateParser = TemplateParser.create(loaderCodec, eventListener);
+		configurationParser = ConfigurationParser.create(loaderCodec, eventListener);
 	}
 
 	/**
@@ -163,6 +163,10 @@ public final class Parser{
 	 */
 	public Parser withDefaultCodecs(){
 		loaderCodec.loadDefaultCodecs();
+
+		//post process codecs
+		loaderCodec.injectFieldsInCodecs(loaderTemplate, templateParser);
+
 		return this;
 	}
 
@@ -174,6 +178,10 @@ public final class Parser{
 	 */
 	public Parser withCodecs(final Class<?>... basePackageClasses){
 		loaderCodec.loadCodecs(basePackageClasses);
+
+		//post process codecs
+		loaderCodec.injectFieldsInCodecs(loaderTemplate, templateParser);
+
 		return this;
 	}
 
@@ -185,6 +193,10 @@ public final class Parser{
 	 */
 	public Parser withCodecs(final CodecInterface<?>... codecs){
 		loaderCodec.addCodecs(codecs);
+
+		//post process codecs
+		loaderCodec.injectFieldsInCodecs(loaderTemplate, templateParser);
+
 		return this;
 	}
 

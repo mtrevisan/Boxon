@@ -59,7 +59,7 @@ class TemplateParserTest{
 		LoaderCodec loaderCodec = LoaderCodec.create(eventListener);
 		loaderCodec.loadDefaultCodecs();
 		LoaderTemplateInterface loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
-		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, loaderTemplate);
+		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec);
 		Template<ACKMessageHex> template = loaderTemplate.createTemplate(ACKMessageHex.class);
 
 		if(!template.canBeCoded())
@@ -92,7 +92,7 @@ class TemplateParserTest{
 		LoaderCodec loaderCodec = LoaderCodec.create(eventListener);
 		loaderCodec.loadDefaultCodecs();
 		LoaderTemplateInterface loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
-		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, loaderTemplate);
+		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec);
 		Template<ACKMessageASCII> template = loaderTemplate.createTemplate(ACKMessageASCII.class);
 
 		if(!template.canBeCoded())
@@ -136,7 +136,7 @@ class TemplateParserTest{
 		LoaderCodec loaderCodec = LoaderCodec.create(eventListener);
 		loaderCodec.loadDefaultCodecs();
 		LoaderTemplateInterface loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
-		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, loaderTemplate);
+		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec);
 		Template<TestError1> template = loaderTemplate.createTemplate(TestError1.class);
 
 		SpelEvaluationException exc = Assertions.assertThrows(SpelEvaluationException.class, () -> templateParser.decode(template, reader, null));
@@ -174,7 +174,7 @@ class TemplateParserTest{
 		LoaderCodec loaderCodec = LoaderCodec.create(eventListener);
 		loaderCodec.loadDefaultCodecs();
 		LoaderTemplateInterface loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
-		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, loaderTemplate);
+		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec);
 		Template<TestError3> template = loaderTemplate.createTemplate(TestError3.class);
 
 		Exception exc = Assertions.assertThrows(FieldException.class, () -> templateParser.decode(template, reader, null));
@@ -212,7 +212,7 @@ class TemplateParserTest{
 		LoaderCodec loaderCodec = LoaderCodec.create(eventListener);
 		loaderCodec.loadDefaultCodecs();
 		LoaderTemplateInterface loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
-		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, loaderTemplate);
+		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec);
 		Template<TestError4> template = loaderTemplate.createTemplate(TestError4.class);
 
 		Exception exc = Assertions.assertThrows(FieldException.class, () -> templateParser.decode(template, reader, null));
@@ -249,8 +249,9 @@ class TemplateParserTest{
 		LoaderCodec loaderCodec = LoaderCodec.create(eventListener);
 		loaderCodec.loadDefaultCodecs();
 		LoaderTemplateInterface loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
-		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, loaderTemplate);
+		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec);
 		Template<TestComposition1> template = loaderTemplate.createTemplate(TestComposition1.class);
+		loaderCodec.injectFieldsInCodecs(loaderTemplate, templateParser);
 
 		TestComposition1 parsed = templateParser.decode(template, reader, null);
 		Assertions.assertNotNull(parsed);
@@ -311,8 +312,9 @@ class TemplateParserTest{
 		LoaderCodec loaderCodec = LoaderCodec.create(eventListener);
 		loaderCodec.loadDefaultCodecs();
 		LoaderTemplateInterface loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
-		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, loaderTemplate);
+		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec);
 		Template<TestComposition2> template = loaderTemplate.createTemplate(TestComposition2.class);
+		loaderCodec.injectFieldsInCodecs(loaderTemplate, templateParser);
 
 		TestComposition2 parsed = templateParser.decode(template, reader, null);
 		Assertions.assertNotNull(parsed);
@@ -338,8 +340,9 @@ class TemplateParserTest{
 		LoaderCodec loaderCodec = LoaderCodec.create(eventListener);
 		loaderCodec.loadDefaultCodecs();
 		LoaderTemplateInterface loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
-		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, loaderTemplate);
+		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec);
 		Template<TestComposition2> template = loaderTemplate.createTemplate(TestComposition2.class);
+		loaderCodec.injectFieldsInCodecs(loaderTemplate, templateParser);
 
 		TestComposition2 parsed = templateParser.decode(template, reader, null);
 		Assertions.assertNotNull(parsed);

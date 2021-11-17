@@ -26,14 +26,12 @@ package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
-import io.github.mtrevisan.boxon.external.CodecInterface;
-import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.BitWriter;
+import io.github.mtrevisan.boxon.external.CodecInterface;
 import io.github.mtrevisan.boxon.external.EventListener;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
-import io.github.mtrevisan.boxon.internal.ReflectionHelper;
 
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
@@ -48,50 +46,39 @@ public final class ConfigurationParser{
 	private final EventListener eventListener;
 
 	private final LoaderCodecInterface loaderCodec;
-	private final LoaderTemplateInterface loaderTemplate;
-	private final TemplateParserInterface templateParser;
 
 
 	/**
 	 * Create a configuration parser.
 	 *
 	 * @param loaderCodec	A codec loader.
-	 * @param loaderTemplate	A template loader.
-	 * @param templateParser	A template parser.
 	 * @return	A configuration parser.
 	 */
-	public static ConfigurationParser create(final LoaderCodecInterface loaderCodec, final LoaderTemplateInterface loaderTemplate,
-			final TemplateParserInterface templateParser){
-		return new ConfigurationParser(loaderCodec, loaderTemplate, templateParser, EventListener.getNoOpInstance());
+	public static ConfigurationParser create(final LoaderCodecInterface loaderCodec){
+		return new ConfigurationParser(loaderCodec, EventListener.getNoOpInstance());
 	}
 
 	/**
 	 * Create a configuration parser.
 	 *
 	 * @param loaderCodec	A codec loader.
-	 * @param loaderTemplate	A template loader.
-	 * @param templateParser	A template parser.
 	 * @param eventListener	The event listener.
 	 * @return	A configuration parser.
 	 */
-	public static ConfigurationParser create(final LoaderCodecInterface loaderCodec, final LoaderTemplateInterface loaderTemplate,
-			final TemplateParserInterface templateParser, final EventListener eventListener){
-		return new ConfigurationParser(loaderCodec, loaderTemplate, templateParser,
-			(eventListener != null? eventListener: EventListener.getNoOpInstance()));
+	public static ConfigurationParser create(final LoaderCodecInterface loaderCodec, final EventListener eventListener){
+		return new ConfigurationParser(loaderCodec, (eventListener != null? eventListener: EventListener.getNoOpInstance()));
 	}
 
 
-	private ConfigurationParser(final LoaderCodecInterface loaderCodec, final LoaderTemplateInterface loaderTemplate,
-			final TemplateParserInterface templateParser, final EventListener eventListener){
+	private ConfigurationParser(final LoaderCodecInterface loaderCodec, final EventListener eventListener){
 		this.loaderCodec = loaderCodec;
-		this.loaderTemplate = loaderTemplate;
-		this.templateParser = templateParser;
 		this.eventListener = eventListener;
 	}
 
 	public <T> void encode(final Configuration<?> configuration, final BitWriter writer, final T currentObject, final Version protocol)
 			throws FieldException{
-		openMessage(configuration, writer);
+		final ConfigurationHeader header = configuration.getHeader();
+		openMessage(header, writer);
 
 		//encode message fields:
 		final List<ConfigField> fields = configuration.getConfigurationFields();
@@ -113,25 +100,22 @@ public final class ConfigurationParser{
 				encodeField(configuration, currentObject, writer, field, field.getBinding());
 		}
 
-		closeMessage(configuration, writer);
+		closeMessage(header, writer);
 
 		writer.flush();
 	}
 
 	private <T> void encodeField(final Configuration<?> configuration, final T currentObject, final BitWriter writer,
 			final ConfigField field, final Annotation binding) throws FieldException{
+		final Class<? extends Annotation> annotationType = binding.annotationType();
+		eventListener.writingField(configuration.getType().getName(), field.getFieldName(), annotationType.getSimpleName());
+
+		final CodecInterface<?> codec = loaderCodec.getCodec(annotationType);
+		if(codec == null)
+			throw CodecException.create("Cannot find codec for binding {}", annotationType.getSimpleName())
+				.withClassNameAndFieldName(configuration.getType().getName(), field.getFieldName());
+
 		try{
-			final Class<? extends Annotation> annotationType = binding.annotationType();
-			eventListener.writingField(configuration.getType().getName(), field.getFieldName(), annotationType.getSimpleName());
-
-			final CodecInterface<?> codec = loaderCodec.getCodec(annotationType);
-			if(codec == null)
-				throw CodecException.create("Cannot find codec for binding {}", annotationType.getSimpleName());
-
-			//inject fields:
-			ReflectionHelper.setFieldValue(codec, LoaderTemplateInterface.class, loaderTemplate);
-			ReflectionHelper.setFieldValue(codec, TemplateParserInterface.class, templateParser);
-
 			//encode value from current object
 			final Object value = field.getFieldValue(currentObject);
 			//write value to raw message
@@ -139,19 +123,13 @@ public final class ConfigurationParser{
 
 			eventListener.writtenField(configuration.getType().getName(), field.getFieldName(), value);
 		}
-		catch(final CodecException | AnnotationException e){
-			e.setClassNameAndFieldName(configuration.getType().getName(), field.getFieldName());
-			throw e;
-		}
 		catch(final Exception e){
-			final FieldException exc = FieldException.create(e);
-			exc.setClassNameAndFieldName(configuration.getType().getName(), field.getFieldName());
-			throw exc;
+			throw FieldException.create(e)
+				.withClassNameAndFieldName(configuration.getType().getName(), field.getFieldName());
 		}
 	}
 
-	private static void openMessage(final Configuration<?> configuration, final BitWriter writer){
-		final ConfigurationHeader header = configuration.getHeader();
+	private static void openMessage(final ConfigurationHeader header, final BitWriter writer){
 		if(header != null && !header.start().isEmpty()){
 			final String start = header.start();
 			final Charset charset = Charset.forName(header.charset());
@@ -159,8 +137,7 @@ public final class ConfigurationParser{
 		}
 	}
 
-	private static void closeMessage(final Configuration<?> configuration, final BitWriter writer){
-		final ConfigurationHeader header = configuration.getHeader();
+	private static void closeMessage(final ConfigurationHeader header, final BitWriter writer){
 		if(header != null && !header.end().isEmpty()){
 			final Charset charset = Charset.forName(header.charset());
 			writer.putText(header.end(), charset);
