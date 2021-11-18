@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.codecs.managers.field;
+package io.github.mtrevisan.boxon.codecs.managers.configuration;
 
 import io.github.mtrevisan.boxon.external.ConfigurationEnum;
 import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
@@ -68,7 +68,7 @@ public final class ConfigFieldData<T extends Annotation>{
 		return hasEnumeration(enumeration);
 	}
 
-	public static boolean hasEnumeration(final Class<? extends ConfigurationEnum> enumeration){
+	static boolean hasEnumeration(final Class<? extends ConfigurationEnum> enumeration){
 		return (enumeration != NullEnum.class);
 	}
 

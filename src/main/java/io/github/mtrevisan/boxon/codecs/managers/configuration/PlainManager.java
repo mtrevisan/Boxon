@@ -26,7 +26,6 @@ package io.github.mtrevisan.boxon.codecs.managers.configuration;
 
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.codecs.LoaderConfiguration;
-import io.github.mtrevisan.boxon.codecs.managers.field.ConfigFieldData;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
