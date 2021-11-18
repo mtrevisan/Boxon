@@ -90,6 +90,13 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 
 	@Override
 	public Annotation shouldBeExtracted(final Version protocol){
+		final Annotation match = findAlternative(protocol);
+		final boolean shouldBeExtracted = (match != null
+			&& ConfigurationHelper.shouldBeExtracted(protocol, annotation.minProtocol(), annotation.maxProtocol()));
+		return (shouldBeExtracted? match: PlainManager.EMPTY_ANNOTATION);
+	}
+
+	private Annotation findAlternative(final Version protocol){
 		Annotation match = null;
 		final AlternativeSubField[] alternativeFields = annotation.value();
 		for(int j = 0; match == null && j < alternativeFields.length; j ++){
@@ -97,10 +104,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 			if(ConfigurationHelper.shouldBeExtracted(protocol, fieldBinding.minProtocol(), fieldBinding.maxProtocol()))
 				match = fieldBinding;
 		}
-
-		final boolean shouldBeExtracted = (match != null
-			&& ConfigurationHelper.shouldBeExtracted(protocol, annotation.minProtocol(), annotation.maxProtocol()));
-		return (shouldBeExtracted? match: PlainManager.EMPTY_ANNOTATION);
+		return match;
 	}
 
 	@Override
