@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.codecs.managers.configuration;
 
+import io.github.mtrevisan.boxon.external.ConfigurationEnum;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
 import io.github.mtrevisan.boxon.codecs.LoaderConfiguration;
@@ -63,7 +64,7 @@ final class PlainManager implements ConfigurationManagerInterface{
 	@Override
 	public Object getDefaultValue(final Field field, final Version protocol) throws CodecException{
 		final String value = annotation.defaultValue();
-		final Class<? extends Enum<?>> enumeration = annotation.enumeration();
+		final Class<? extends ConfigurationEnum> enumeration = annotation.enumeration();
 		return ManagerHelper.getDefaultValue(field, value, enumeration);
 	}
 
@@ -135,7 +136,7 @@ final class PlainManager implements ConfigurationManagerInterface{
 			return;
 
 		final Class<?> fieldType = field.getType();
-		final Class<? extends Enum<?>> enumeration = annotation.enumeration();
+		final Class<? extends ConfigurationEnum> enumeration = annotation.enumeration();
 		if(enumeration != NullEnum.class)
 			dataValue = extractEnumerationValue(dataKey, dataValue, field, enumeration);
 		else if(String.class.isInstance(dataValue))
@@ -144,7 +145,7 @@ final class PlainManager implements ConfigurationManagerInterface{
 	}
 
 	private static Object extractEnumerationValue(final String dataKey, Object dataValue, final Field field,
-			final Class<? extends Enum<?>> enumeration) throws EncodeException{
+			final Class<? extends ConfigurationEnum> enumeration) throws EncodeException{
 		//convert `or` between enumerations
 		if(String.class.isInstance(dataValue)){
 			dataValue = ManagerHelper.extractEnumerationValue(field, (String)dataValue, enumeration);
@@ -155,8 +156,8 @@ final class PlainManager implements ConfigurationManagerInterface{
 		return dataValue;
 	}
 
-	private static void validateEnumerationValue(final String dataKey, final Object dataValue, final Class<? extends Enum<?>> enumeration,
-			final Class<?> fieldType) throws EncodeException{
+	private static void validateEnumerationValue(final String dataKey, final Object dataValue,
+			final Class<? extends ConfigurationEnum> enumeration, final Class<?> fieldType) throws EncodeException{
 		final Class<?> dataValueClass = (dataValue != null? dataValue.getClass(): null);
 		if(dataValueClass == null){
 			final Class<?> componentType = (fieldType.isArray()? fieldType.getComponentType(): fieldType);

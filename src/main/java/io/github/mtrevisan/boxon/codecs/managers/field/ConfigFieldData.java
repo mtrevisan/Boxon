@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.codecs.managers.field;
 
+import io.github.mtrevisan.boxon.external.ConfigurationEnum;
 import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
 
 import java.lang.annotation.Annotation;
@@ -42,7 +43,7 @@ public final class ConfigFieldData<T extends Annotation>{
 	public String maxValue;
 
 	public String pattern;
-	public Class<? extends Enum<?>> enumeration;
+	public Class<? extends ConfigurationEnum> enumeration;
 
 	public String defaultValue;
 

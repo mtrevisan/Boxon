@@ -26,6 +26,7 @@ package io.github.mtrevisan.boxon.codecs.managers.configuration;
 
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
+import io.github.mtrevisan.boxon.external.ConfigurationEnum;
 import io.github.mtrevisan.boxon.codecs.LoaderConfiguration;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
@@ -68,7 +69,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 		final AlternativeSubField fieldBinding = extractField(protocol);
 		if(fieldBinding != null){
 			final String value = fieldBinding.defaultValue();
-			final Class<? extends Enum<?>> enumeration = annotation.enumeration();
+			final Class<? extends ConfigurationEnum> enumeration = annotation.enumeration();
 			return ManagerHelper.getDefaultValue(field, value, enumeration);
 		}
 		return EMPTY_STRING;

@@ -71,14 +71,6 @@ public final class JavaHelper{
 	}
 
 
-	@SuppressWarnings("ReturnOfNull")
-	public static Enum<?> extractEnum(final Enum<?>[] enumConstants, final String value){
-		for(int i = 0; i < enumConstants.length; i ++)
-			if(enumConstants[i].name().equals(value))
-				return enumConstants[i];
-		return null;
-	}
-
 	/**
 	 * Convert the value to signed primitive.
 	 *

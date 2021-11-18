@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.codecs.managers.configuration;
 
+import io.github.mtrevisan.boxon.external.ConfigurationEnum;
 import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
 import io.github.mtrevisan.boxon.codecs.LoaderConfiguration;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
@@ -52,7 +53,8 @@ public final class ManagerHelper{
 
 			//value compatible with data type and pattern
 			if(!String.class.isInstance(dataValue) || !formatPattern.matcher((CharSequence)dataValue).matches())
-				throw EncodeException.create("Data value not compatible with `pattern` for data key {}; found {}, expected {}", dataKey, dataValue, pattern);
+				throw EncodeException.create("Data value not compatible with `pattern` for data key {}; found {}, expected {}",
+					dataKey, dataValue, pattern);
 		}
 	}
 
@@ -83,8 +85,8 @@ public final class ManagerHelper{
 	}
 
 	static void putValueIfNotEmpty(final String key, final String value, final Class<?> fieldType,
-			final Class<? extends Enum<?>> enumeration, @SuppressWarnings("BoundedWildcard") final Map<String, Object> map) throws ConfigurationException,
-			CodecException{
+			final Class<? extends ConfigurationEnum> enumeration, @SuppressWarnings("BoundedWildcard") final Map<String, Object> map)
+			throws ConfigurationException, CodecException{
 		if(!StringHelper.isBlank(value)){
 			Object val = value;
 			if(enumeration != NullEnum.class && fieldType.isArray())
@@ -96,7 +98,7 @@ public final class ManagerHelper{
 		}
 	}
 
-	static Object getDefaultValue(final Field field, final String value, final Class<? extends Enum<?>> enumeration)
+	static Object getDefaultValue(final Field field, final String value, final Class<? extends ConfigurationEnum> enumeration)
 			throws CodecException{
 		if(!StringHelper.isBlank(value)){
 			if(enumeration != NullEnum.class)
@@ -108,18 +110,18 @@ public final class ManagerHelper{
 		return value;
 	}
 
-	static Object extractEnumerationValue(final Field field, final String value, final Class<? extends Enum<?>> enumeration){
+	static Object extractEnumerationValue(final Field field, final String value, final Class<? extends ConfigurationEnum> enumeration){
 		final Object valEnum;
-		final Enum<?>[] enumConstants = enumeration.getEnumConstants();
+		final ConfigurationEnum[] enumConstants = enumeration.getEnumConstants();
 		if(field.getType().isArray()){
 			final String[] defaultValues = StringHelper.split(value, '|', -1);
 			valEnum = Array.newInstance(enumeration, defaultValues.length);
 			for(int i = 0; i < defaultValues.length; i ++)
-				Array.set(valEnum, i, JavaHelper.extractEnum(enumConstants, defaultValues[i]));
+				Array.set(valEnum, i, ConfigurationEnum.extractEnum(enumConstants, defaultValues[i]));
 		}
 		else
 			valEnum = enumeration
-				.cast(JavaHelper.extractEnum(enumConstants, value));
+				.cast(ConfigurationEnum.extractEnum(enumConstants, value));
 		return valEnum;
 	}
 
@@ -139,10 +141,10 @@ public final class ManagerHelper{
 	}
 
 
-	static void extractEnumeration(final Class<?> fieldType, final Class<? extends Enum<?>> enumeration, final Map<String, Object> map)
-			throws ConfigurationException{
+	static void extractEnumeration(final Class<?> fieldType, final Class<? extends ConfigurationEnum> enumeration,
+			final Map<String, Object> map) throws ConfigurationException{
 		if(enumeration != NullEnum.class){
-			final Enum<?>[] enumConstants = enumeration.getEnumConstants();
+			final ConfigurationEnum[] enumConstants = enumeration.getEnumConstants();
 			final String[] enumValues = new String[enumConstants.length];
 			for(int j = 0; j < enumConstants.length; j ++)
 				enumValues[j] = enumConstants[j].name();

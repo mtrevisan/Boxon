@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.annotations.configurations;
 
 import io.github.mtrevisan.boxon.codecs.LoaderCodec;
+import io.github.mtrevisan.boxon.external.ConfigurationEnum;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -110,7 +111,7 @@ public @interface ConfigurationField{
 	 *
 	 * @return	The enumeration that represents the finite possible values for this field.
 	 */
-	Class<? extends Enum<?>> enumeration() default NullEnum.class;
+	Class<? extends ConfigurationEnum> enumeration() default NullEnum.class;
 
 
 	/**

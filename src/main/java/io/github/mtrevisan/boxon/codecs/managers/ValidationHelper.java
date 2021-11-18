@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.codecs.managers;
 
-import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
+import io.github.mtrevisan.boxon.external.ConfigurationEnum;
 import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
 import io.github.mtrevisan.boxon.codecs.managers.field.ConfigFieldData;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
@@ -201,11 +201,11 @@ final class ValidationHelper{
 		if(field.enumeration != NullEnum.class){
 			//enumeration can be encoded
 			if(!ConfigurationEnum.class.isAssignableFrom(field.enumeration))
-				throw AnnotationException.create("Enum must implement ConfigurationEnum.class in {} in field {}",
-					field.annotation.getSimpleName(), field.field.getName());
+				throw AnnotationException.create("Enumeration must implement interface {} in {} in field {}",
+					ConfigurationEnum.class.getSimpleName(), field.annotation.getSimpleName(), field.field.getName());
 
 			//non-empty enumeration
-			final Enum<?>[] enumConstants = field.enumeration.getEnumConstants();
+			final ConfigurationEnum[] enumConstants = field.enumeration.getEnumConstants();
 			if(enumConstants.length == 0)
 				throw AnnotationException.create("Empty enum in {} in field {}", field.annotation.getSimpleName(),
 					field.field.getName());
@@ -217,8 +217,8 @@ final class ValidationHelper{
 		}
 	}
 
-	private static <T extends Annotation> void validateEnumMultipleValues(final ConfigFieldData<T> field, final Enum<?>[] enumConstants)
-			throws AnnotationException{
+	private static <T extends Annotation> void validateEnumMultipleValues(final ConfigFieldData<T> field,
+			final ConfigurationEnum[] enumConstants) throws AnnotationException{
 		//enumeration compatible with variable type
 		if(!field.getFieldType().getComponentType().isAssignableFrom(field.enumeration))
 			throw AnnotationException.create("Incompatible enum in {}; found {}, expected {}",
@@ -231,20 +231,20 @@ final class ValidationHelper{
 					field.annotation.getSimpleName(), field.defaultValue, Arrays.toString(enumConstants));
 
 			for(int i = 0; i < JavaHelper.lengthOrZero(defaultValues); i ++)
-				if(JavaHelper.extractEnum(enumConstants, defaultValues[i]) == null)
+				if(ConfigurationEnum.extractEnum(enumConstants, defaultValues[i]) == null)
 					throw AnnotationException.create("Default value not compatible with `enumeration` in {}; found {}, expected one of {}",
 						field.annotation.getSimpleName(), defaultValues[i], Arrays.toString(enumConstants));
 		}
 	}
 
 	private static <T extends Annotation> void validateEnumerationMutuallyExclusive(final ConfigFieldData<T> field,
-			final Enum<?>[] enumConstants) throws AnnotationException{
+			final ConfigurationEnum[] enumConstants) throws AnnotationException{
 		//enumeration compatible with variable type
 		if(!field.getFieldType().isAssignableFrom(field.enumeration))
 			throw AnnotationException.create("Incompatible enum in {}; found {}, expected {}",
 				field.annotation.getSimpleName(), field.enumeration.getSimpleName(), field.getFieldType().toString());
 
-		if(!StringHelper.isBlank(field.defaultValue) && JavaHelper.extractEnum(enumConstants, field.defaultValue) == null)
+		if(!StringHelper.isBlank(field.defaultValue) && ConfigurationEnum.extractEnum(enumConstants, field.defaultValue) == null)
 			throw AnnotationException.create("Default value not compatible with `enumeration` in {}; found {}, expected one of {}",
 				field.annotation.getSimpleName(), field.defaultValue, Arrays.toString(enumConstants));
 	}

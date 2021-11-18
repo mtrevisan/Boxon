@@ -25,4 +25,15 @@
 package io.github.mtrevisan.boxon.annotations.configurations;
 
 
-public enum NullEnum{}
+import io.github.mtrevisan.boxon.external.ConfigurationEnum;
+
+
+public enum NullEnum implements ConfigurationEnum{
+	;
+
+	@Override
+	public int getCode(){
+		return 0;
+	}
+
+}

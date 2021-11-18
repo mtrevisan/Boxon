@@ -25,6 +25,9 @@
 package io.github.mtrevisan.boxon.annotations.configurations;
 
 
+import io.github.mtrevisan.boxon.external.ConfigurationEnum;
+
+
 public enum BooleanType implements ConfigurationEnum{
 
 	TRUE(1),
