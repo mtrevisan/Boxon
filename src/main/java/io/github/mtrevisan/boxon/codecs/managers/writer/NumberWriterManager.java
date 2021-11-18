@@ -26,8 +26,6 @@ package io.github.mtrevisan.boxon.codecs.managers.writer;
 
 import io.github.mtrevisan.boxon.external.BitWriter;
 
-import java.nio.charset.StandardCharsets;
-
 
 final class NumberWriterManager implements WriterManagerInterface{
 
@@ -43,7 +41,7 @@ final class NumberWriterManager implements WriterManagerInterface{
 	@Override
 	public void put(final Object value){
 		final String val = Long.toString(((Number)value).longValue(), radix);
-		writer.putText(val, StandardCharsets.UTF_8);
+		writer.putText(val);
 	}
 
 }

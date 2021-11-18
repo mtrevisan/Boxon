@@ -63,7 +63,7 @@ final class CodecCompositeConfigurationField implements CodecInterface<Composite
 		}
 
 		if(!binding.terminator().isEmpty())
-			writer.putText(binding.terminator(), StandardCharsets.UTF_8);
+			writer.putText(binding.terminator());
 	}
 
 }

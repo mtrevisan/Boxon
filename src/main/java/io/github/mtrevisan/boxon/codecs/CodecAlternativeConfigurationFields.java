@@ -45,7 +45,7 @@ final class CodecAlternativeConfigurationFields implements CodecInterface<Altern
 		final AlternativeConfigurationField binding = extractBinding(annotation);
 
 		if(!binding.terminator().isEmpty())
-			writer.putText(binding.terminator(), StandardCharsets.UTF_8);
+			writer.putText(binding.terminator());
 	}
 
 }

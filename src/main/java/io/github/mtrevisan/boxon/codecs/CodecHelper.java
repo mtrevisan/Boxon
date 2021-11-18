@@ -30,8 +30,6 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.codecs.managers.ConstructorHelper;
 import io.github.mtrevisan.boxon.codecs.managers.ContextHelper;
-import io.github.mtrevisan.boxon.codecs.managers.writer.WriterManagerFactory;
-import io.github.mtrevisan.boxon.codecs.managers.writer.WriterManagerInterface;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.external.BitReader;
@@ -41,7 +39,6 @@ import io.github.mtrevisan.boxon.external.ByteOrder;
 import io.github.mtrevisan.boxon.external.ConfigurationEnum;
 import io.github.mtrevisan.boxon.internal.Evaluator;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
-import io.github.mtrevisan.boxon.internal.ParserDataType;
 
 import java.lang.reflect.Array;
 
@@ -151,20 +148,7 @@ public final class CodecHelper{
 		return converter.encode((OUT)data);
 	}
 
-	static void encode(final BitWriter writer, final Class<?> fieldType, Object value, final int radix, final String charsetName)
-			throws CodecException{
-		value = interpretValue(fieldType, value);
-		if(value != null){
-			final WriterManagerInterface writerManager = WriterManagerFactory.buildManager(value, writer, radix, charsetName);
-			if(writerManager == null)
-				throw CodecException.create("Cannot handle this type of field: {}, please report to the developer",
-					ParserDataType.toObjectiveTypeOrSelf(value.getClass()));
-
-			writerManager.put(value);
-		}
-	}
-
-	private static Object interpretValue(final Class<?> fieldType, Object value) throws CodecException{
+	static Object interpretValue(final Class<?> fieldType, Object value) throws CodecException{
 		value = JavaHelper.getValueOrDefault(fieldType, value);
 		if(value != null){
 			if(value.getClass().isEnum())

@@ -25,10 +25,13 @@
 package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
+import io.github.mtrevisan.boxon.codecs.managers.writer.WriterManagerFactory;
+import io.github.mtrevisan.boxon.codecs.managers.writer.WriterManagerInterface;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.external.CodecInterface;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
+import io.github.mtrevisan.boxon.internal.ParserDataType;
 
 import java.lang.annotation.Annotation;
 
@@ -41,10 +44,18 @@ final class CodecAlternativeConfigurationField implements CodecInterface<Alterna
 	}
 
 	@Override
-	public void encode(final BitWriter writer, final Annotation annotation, final Object fieldType, final Object value)
-			throws CodecException{
-		final AlternativeSubField binding = extractBinding(annotation);
-		CodecHelper.encode(writer, (Class<?>)fieldType, value, binding.radix(), binding.charset());
+	public void encode(final BitWriter writer, final Annotation annotation, final Object fieldType, Object value) throws CodecException{
+		value = CodecHelper.interpretValue((Class<?>)fieldType, value);
+		if(value != null){
+			final AlternativeSubField binding = extractBinding(annotation);
+
+			final WriterManagerInterface writerManager = WriterManagerFactory.buildManager(value, writer, binding.radix(), binding.charset());
+			if(writerManager == null)
+				throw CodecException.create("Cannot handle this type of field: {}, please report to the developer",
+					ParserDataType.toObjectiveTypeOrSelf(value.getClass()));
+
+			writerManager.put(value);
+		}
 	}
 
 }

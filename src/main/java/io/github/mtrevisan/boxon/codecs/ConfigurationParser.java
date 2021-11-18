@@ -158,7 +158,7 @@ public final class ConfigurationParser{
 	private static void writeSkip(final ConfigurationSkip skip, final BitWriter writer, final Version protocol){
 		final boolean process = ConfigurationHelper.shouldBeExtracted(protocol, skip.minProtocol(), skip.maxProtocol());
 		if(process)
-			writer.putText(skip.terminator(), StandardCharsets.UTF_8);
+			writer.putText(skip.terminator());
 	}
 
 }

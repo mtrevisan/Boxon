@@ -38,6 +38,7 @@ import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 
 /**
@@ -290,6 +291,16 @@ public final class BitReader extends BitReaderData{
 	}
 
 	/**
+	 * Reads the specified amount of {@code char}s with an {@link StandardCharsets#UTF_8 UTF-8} charset.
+	 *
+	 * @param length	The number of {@code char}s to read.
+	 * @return	A {@link String} of length {@code n} coded with a given {@link Charset} that contains {@code char}s read.
+	 */
+	public String getText(final int length){
+		return getText(length, StandardCharsets.UTF_8);
+	}
+
+	/**
 	 * Reads a string until a terminator is found.
 	 * <p>The terminator is NOT consumed!</p>
 	 *
@@ -309,6 +320,17 @@ public final class BitReader extends BitReaderData{
 		}
 		catch(final IOException ignored){}
 		return text;
+	}
+
+	/**
+	 * Reads a string, with an {@link StandardCharsets#UTF_8 UTF-8} charset, until a terminator is found.
+	 * <p>The terminator is NOT consumed!</p>
+	 *
+	 * @param terminator	The terminator of the string to be read.
+	 * @return	A {@link String} of length {@code n} coded in {@link StandardCharsets#UTF_8 UTF-8} that contains {@code char}s read.
+	 */
+	public String getTextUntilTerminator(final byte terminator){
+		return getTextUntilTerminator(terminator, StandardCharsets.UTF_8);
 	}
 
 }

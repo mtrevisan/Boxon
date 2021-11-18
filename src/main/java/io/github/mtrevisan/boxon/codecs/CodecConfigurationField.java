@@ -25,13 +25,15 @@
 package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
+import io.github.mtrevisan.boxon.codecs.managers.writer.WriterManagerFactory;
+import io.github.mtrevisan.boxon.codecs.managers.writer.WriterManagerInterface;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
 import io.github.mtrevisan.boxon.external.CodecInterface;
+import io.github.mtrevisan.boxon.internal.ParserDataType;
 
 import java.lang.annotation.Annotation;
-import java.nio.charset.StandardCharsets;
 
 
 final class CodecConfigurationField implements CodecInterface<ConfigurationField>{
@@ -42,13 +44,21 @@ final class CodecConfigurationField implements CodecInterface<ConfigurationField
 	}
 
 	@Override
-	public void encode(final BitWriter writer, final Annotation annotation, final Object fieldType, final Object value)
-			throws CodecException{
+	public void encode(final BitWriter writer, final Annotation annotation, final Object fieldType, Object value) throws CodecException{
 		final ConfigurationField binding = extractBinding(annotation);
-		CodecHelper.encode(writer, (Class<?>)fieldType, value, binding.radix(), binding.charset());
+
+		value = CodecHelper.interpretValue((Class<?>)fieldType, value);
+		if(value != null){
+			final WriterManagerInterface writerManager = WriterManagerFactory.buildManager(value, writer, binding.radix(), binding.charset());
+			if(writerManager == null)
+				throw CodecException.create("Cannot handle this type of field: {}, please report to the developer",
+					ParserDataType.toObjectiveTypeOrSelf(value.getClass()));
+
+			writerManager.put(value);
+		}
 
 		if(!binding.terminator().isEmpty())
-			writer.putText(binding.terminator(), StandardCharsets.UTF_8);
+			writer.putText(binding.terminator());
 	}
 
 }

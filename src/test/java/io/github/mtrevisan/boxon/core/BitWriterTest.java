@@ -24,17 +24,16 @@
  */
 package io.github.mtrevisan.boxon.core;
 
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitSet;
 import io.github.mtrevisan.boxon.external.BitWriter;
-import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.external.ByteOrder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
 
 
 @SuppressWarnings("ALL")
@@ -221,35 +220,36 @@ class BitWriterTest{
 	@Test
 	void text(){
 		String value = "test";
-		writer.putText(value, StandardCharsets.UTF_8);
+		writer.putText(value
+		);
 		BitReader reader = BitReader.wrap(writer);
 
 		Assertions.assertEquals("74657374", reader.toString());
-		Assertions.assertEquals(value, reader.getText(4, StandardCharsets.UTF_8));
+		Assertions.assertEquals(value, reader.getText(4));
 	}
 
 	@Test
 	void textWithTerminator(){
 		String value = "test";
-		writer.putText(value, StandardCharsets.UTF_8);
+		writer.putText(value);
 		writer.putByte((byte)'w');
 		BitReader reader = BitReader.wrap(writer);
 
 		Assertions.assertEquals("7465737477", reader.toString());
-		Assertions.assertEquals(value, reader.getTextUntilTerminator((byte)'w', StandardCharsets.UTF_8));
+		Assertions.assertEquals(value, reader.getTextUntilTerminator((byte)'w'));
 		Assertions.assertEquals((byte)'w', reader.getByte());
 	}
 
 	@Test
 	void textWithTerminatorConsumed(){
 		String value = "test";
-		writer.putText(value, StandardCharsets.UTF_8);
+		writer.putText(value);
 		writer.putByte((byte)'w');
 		writer.putByte((byte)'w');
 		BitReader reader = BitReader.wrap(writer);
 
 		Assertions.assertEquals("746573747777", reader.toString());
-		Assertions.assertEquals(value, reader.getTextUntilTerminator((byte)'w', StandardCharsets.UTF_8));
+		Assertions.assertEquals(value, reader.getTextUntilTerminator((byte)'w'));
 		reader.getByte();
 		writer.putByte((byte)'w');
 	}

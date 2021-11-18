@@ -29,6 +29,7 @@ import io.github.mtrevisan.boxon.internal.ParserDataType;
 
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 
 /**
@@ -178,6 +179,16 @@ public final class BitWriter extends BitWriterData{
 	 */
 	public void putText(final String text, final Charset charset){
 		putBytes(text.getBytes(charset));
+	}
+
+	/**
+	 * Write the text into with an {@link StandardCharsets#UTF_8 UTF-8} charset.
+	 * <p>Note that if a terminator is needed, it must be manually written.</p>
+	 *
+	 * @param text	The {@code String}s to be written.
+	 */
+	public void putText(final String text){
+		putText(text, StandardCharsets.UTF_8);
 	}
 
 }
