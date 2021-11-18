@@ -24,23 +24,11 @@
  */
 package io.github.mtrevisan.boxon.codecs.managers.encode;
 
-import io.github.mtrevisan.boxon.external.BitWriter;
-
 import java.nio.charset.Charset;
 
 
-final class StringEncodeManager implements EncodeManagerInterface{
+public interface WriterManagerInterface{
 
-	private final BitWriter writer;
-
-
-	StringEncodeManager(final BitWriter writer){
-		this.writer = writer;
-	}
-
-	@Override
-	public void put(final Object value, final int radix, final Charset charset){
-		writer.putText((String)value, charset);
-	}
+	void put(final Object value, final int radix, final Charset charset);
 
 }

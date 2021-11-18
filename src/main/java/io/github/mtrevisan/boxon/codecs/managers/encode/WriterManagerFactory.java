@@ -25,23 +25,28 @@
 package io.github.mtrevisan.boxon.codecs.managers.encode;
 
 import io.github.mtrevisan.boxon.external.BitWriter;
-import io.github.mtrevisan.boxon.external.ByteOrder;
-
-import java.nio.charset.Charset;
+import io.github.mtrevisan.boxon.internal.ParserDataType;
 
 
-final class FloatEncodeManager implements EncodeManagerInterface{
+public final class WriterManagerFactory{
 
-	private final BitWriter writer;
+	private WriterManagerFactory(){}
 
-
-	FloatEncodeManager(final BitWriter writer){
-		this.writer = writer;
-	}
-
-	@Override
-	public void put(final Object value, final int radix, final Charset charset){
-		writer.putFloat((Float)value, ByteOrder.BIG_ENDIAN);
+	public static WriterManagerInterface buildManager(final Object value, final BitWriter writer){
+		WriterManagerInterface manager = null;
+		if(String.class.isInstance(value))
+			manager = new StringWriterManager(writer);
+		else{
+			final Class<?> fieldClass = ParserDataType.toObjectiveTypeOrSelf(value.getClass());
+			if(fieldClass == Float.class)
+				manager = new FloatWriterManager(writer);
+			else if(fieldClass == Double.class)
+				manager = new DoubleWriterManager(writer);
+			else if(Number.class.isAssignableFrom(fieldClass)){
+				manager = new NumberWriterManager(writer);
+			}
+		}
+		return manager;
 	}
 
 }

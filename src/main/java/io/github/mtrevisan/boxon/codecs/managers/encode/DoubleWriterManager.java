@@ -24,11 +24,24 @@
  */
 package io.github.mtrevisan.boxon.codecs.managers.encode;
 
+import io.github.mtrevisan.boxon.external.BitWriter;
+import io.github.mtrevisan.boxon.external.ByteOrder;
+
 import java.nio.charset.Charset;
 
 
-public interface EncodeManagerInterface{
+final class DoubleWriterManager implements WriterManagerInterface{
 
-	void put(final Object value, final int radix, final Charset charset);
+	private final BitWriter writer;
+
+
+	DoubleWriterManager(final BitWriter writer){
+		this.writer = writer;
+	}
+
+	@Override
+	public void put(final Object value, final int radix, final Charset charset){
+		writer.putDouble((Double)value, ByteOrder.BIG_ENDIAN);
+	}
 
 }

@@ -25,23 +25,23 @@
 package io.github.mtrevisan.boxon.codecs.managers.encode;
 
 import io.github.mtrevisan.boxon.external.BitWriter;
+import io.github.mtrevisan.boxon.external.ByteOrder;
 
 import java.nio.charset.Charset;
 
 
-final class NumberEncodeManager implements EncodeManagerInterface{
+final class FloatWriterManager implements WriterManagerInterface{
 
 	private final BitWriter writer;
 
 
-	NumberEncodeManager(final BitWriter writer){
+	FloatWriterManager(final BitWriter writer){
 		this.writer = writer;
 	}
 
 	@Override
 	public void put(final Object value, final int radix, final Charset charset){
-		final String val = Long.toString(((Number)value).longValue(), radix);
-		writer.putText(val, charset);
+		writer.putFloat((Float)value, ByteOrder.BIG_ENDIAN);
 	}
 
 }

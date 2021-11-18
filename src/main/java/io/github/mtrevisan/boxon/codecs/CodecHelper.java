@@ -30,8 +30,8 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.codecs.managers.ConstructorHelper;
 import io.github.mtrevisan.boxon.codecs.managers.ContextHelper;
-import io.github.mtrevisan.boxon.codecs.managers.encode.EncodeManagerFactory;
-import io.github.mtrevisan.boxon.codecs.managers.encode.EncodeManagerInterface;
+import io.github.mtrevisan.boxon.codecs.managers.encode.WriterManagerFactory;
+import io.github.mtrevisan.boxon.codecs.managers.encode.WriterManagerInterface;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.external.BitReader;
@@ -158,12 +158,12 @@ public final class CodecHelper{
 
 		value = interpretValue(fieldType, value);
 		if(value != null){
-			final EncodeManagerInterface manager = EncodeManagerFactory.buildManager(value, writer);
-			if(manager == null)
+			final WriterManagerInterface writerManager = WriterManagerFactory.buildManager(value, writer);
+			if(writerManager == null)
 				throw CodecException.create("Cannot handle this type of field: {}, please report to the developer",
 					ParserDataType.toObjectiveTypeOrSelf(value.getClass()));
 
-			manager.put(value, radix, charset);
+			writerManager.put(value, radix, charset);
 		}
 	}
 
