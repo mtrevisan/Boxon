@@ -70,7 +70,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 		if(fieldBinding != null){
 			final String value = fieldBinding.defaultValue();
 			final Class<? extends ConfigurationEnum> enumeration = annotation.enumeration();
-			return ManagerHelper.getDefaultValue(field, value, enumeration);
+			return ConfigurationHelper.getDefaultValue(field, value, enumeration);
 		}
 		return EMPTY_STRING;
 	}
@@ -94,12 +94,12 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 		final AlternativeSubField[] alternativeFields = annotation.value();
 		for(int j = 0; match == null && j < alternativeFields.length; j ++){
 			final AlternativeSubField fieldBinding = alternativeFields[j];
-			if(ManagerHelper.shouldBeExtracted(protocol, fieldBinding.minProtocol(), fieldBinding.maxProtocol()))
+			if(ConfigurationHelper.shouldBeExtracted(protocol, fieldBinding.minProtocol(), fieldBinding.maxProtocol()))
 				match = fieldBinding;
 		}
 
 		final boolean shouldBeExtracted = (match != null
-			&& ManagerHelper.shouldBeExtracted(protocol, annotation.minProtocol(), annotation.maxProtocol()));
+			&& ConfigurationHelper.shouldBeExtracted(protocol, annotation.minProtocol(), annotation.maxProtocol()));
 		return (shouldBeExtracted? match: PlainManager.EMPTY_ANNOTATION);
 	}
 
@@ -115,7 +115,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 	@Override
 	public Map<String, Object> extractConfigurationMap(final Class<?> fieldType, final Version protocol) throws ConfigurationException,
 			CodecException{
-		if(!ManagerHelper.shouldBeExtracted(protocol, annotation.minProtocol(), annotation.maxProtocol()))
+		if(!ConfigurationHelper.shouldBeExtracted(protocol, annotation.minProtocol(), annotation.maxProtocol()))
 			return Collections.emptyMap();
 
 		final Map<String, Object> alternativeMap = extractMap(fieldType);
@@ -130,9 +130,9 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 
 				final Map<String, Object> fieldMap = extractMap(alternativeField, fieldType);
 
-				ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_MIN_PROTOCOL, alternativeField.minProtocol(), fieldMap);
-				ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_MAX_PROTOCOL, alternativeField.maxProtocol(), fieldMap);
-				ManagerHelper.putValueIfNotEmpty(LoaderConfiguration.KEY_DEFAULT_VALUE, alternativeField.defaultValue(), fieldType,
+				ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_MIN_PROTOCOL, alternativeField.minProtocol(), fieldMap);
+				ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_MAX_PROTOCOL, alternativeField.maxProtocol(), fieldMap);
+				ConfigurationHelper.putValueIfNotEmpty(LoaderConfiguration.KEY_DEFAULT_VALUE, alternativeField.defaultValue(), fieldType,
 					annotation.enumeration(), fieldMap);
 
 				fieldMap.putAll(alternativeMap);
@@ -141,8 +141,8 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 			}
 			alternativesMap = new HashMap<>(3);
 			alternativesMap.put(LoaderConfiguration.KEY_ALTERNATIVES, alternatives);
-			ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_MIN_PROTOCOL, annotation.minProtocol(), alternativesMap);
-			ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_MAX_PROTOCOL, annotation.maxProtocol(), alternativesMap);
+			ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_MIN_PROTOCOL, annotation.minProtocol(), alternativesMap);
+			ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_MAX_PROTOCOL, annotation.maxProtocol(), alternativesMap);
 		}
 		else{
 			//extract the specific alternative, because it was requested the configuration of a particular protocol:
@@ -150,7 +150,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 			if(fieldBinding != null){
 				alternativesMap = extractMap(fieldBinding, fieldType);
 
-				ManagerHelper.putValueIfNotEmpty(LoaderConfiguration.KEY_DEFAULT_VALUE, fieldBinding.defaultValue(), fieldType,
+				ConfigurationHelper.putValueIfNotEmpty(LoaderConfiguration.KEY_DEFAULT_VALUE, fieldBinding.defaultValue(), fieldType,
 					annotation.enumeration(), alternativesMap);
 
 				alternativesMap.putAll(alternativeMap);
@@ -163,13 +163,13 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 	private Map<String, Object> extractMap(final Class<?> fieldType) throws ConfigurationException{
 		final Map<String, Object> map = new HashMap<>(6);
 
-		ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_LONG_DESCRIPTION, annotation.longDescription(), map);
-		ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_UNIT_OF_MEASURE, annotation.unitOfMeasure(), map);
+		ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_LONG_DESCRIPTION, annotation.longDescription(), map);
+		ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_UNIT_OF_MEASURE, annotation.unitOfMeasure(), map);
 
 		if(!fieldType.isEnum() && !fieldType.isArray())
-			ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName(),
+			ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName(),
 				map);
-		ManagerHelper.extractEnumeration(fieldType, annotation.enumeration(), map);
+		ConfigurationHelper.extractEnumeration(fieldType, annotation.enumeration(), map);
 
 		return map;
 	}
@@ -178,18 +178,18 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 			CodecException{
 		final Map<String, Object> map = new HashMap<>(6);
 
-		ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_LONG_DESCRIPTION, binding.longDescription(), map);
-		ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_UNIT_OF_MEASURE, binding.unitOfMeasure(), map);
+		ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_LONG_DESCRIPTION, binding.longDescription(), map);
+		ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_UNIT_OF_MEASURE, binding.unitOfMeasure(), map);
 
 		if(!fieldType.isEnum() && !fieldType.isArray())
-			ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName(),
+			ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName(),
 				map);
-		ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_MIN_VALUE, JavaHelper.getValue(fieldType, binding.minValue()), map);
-		ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_MAX_VALUE, JavaHelper.getValue(fieldType, binding.maxValue()), map);
-		ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_PATTERN, binding.pattern(), map);
+		ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_MIN_VALUE, JavaHelper.getValue(fieldType, binding.minValue()), map);
+		ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_MAX_VALUE, JavaHelper.getValue(fieldType, binding.maxValue()), map);
+		ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_PATTERN, binding.pattern(), map);
 
 		if(String.class.isAssignableFrom(fieldType))
-			ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_CHARSET, binding.charset(), map);
+			ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_CHARSET, binding.charset(), map);
 
 		return map;
 	}
@@ -198,7 +198,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 		final AlternativeSubField[] alternativeFields = annotation.value();
 		for(int i = 0; i < alternativeFields.length; i ++){
 			final AlternativeSubField fieldBinding = alternativeFields[i];
-			if(ManagerHelper.shouldBeExtracted(protocol, fieldBinding.minProtocol(), fieldBinding.maxProtocol()))
+			if(ConfigurationHelper.shouldBeExtracted(protocol, fieldBinding.minProtocol(), fieldBinding.maxProtocol()))
 				return fieldBinding;
 		}
 		return EMPTY_ALTERNATIVE;
@@ -216,15 +216,15 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 
 			if(String.class.isInstance(dataValue))
 				dataValue = JavaHelper.getValue(field.getType(), (String)dataValue);
-			ManagerHelper.setValue(field, configurationObject, dataValue);
+			ConfigurationHelper.setValue(field, configurationObject, dataValue);
 		}
 	}
 
 	private static void validateValue(final AlternativeSubField binding, final String dataKey, final Object dataValue,
 			final Class<?> fieldType) throws EncodeException, CodecException{
-		ManagerHelper.validatePattern(dataKey, dataValue, binding.pattern());
-		ManagerHelper.validateMinValue(dataKey, dataValue, fieldType, binding.minValue());
-		ManagerHelper.validateMaxValue(dataKey, dataValue, fieldType, binding.maxValue());
+		ConfigurationHelper.validatePattern(dataKey, dataValue, binding.pattern());
+		ConfigurationHelper.validateMinValue(dataKey, dataValue, fieldType, binding.minValue());
+		ConfigurationHelper.validateMaxValue(dataKey, dataValue, fieldType, binding.maxValue());
 	}
 
 }

@@ -31,7 +31,7 @@ import io.github.mtrevisan.boxon.codecs.managers.ConfigurationMessage;
 import io.github.mtrevisan.boxon.codecs.managers.InjectEventListener;
 import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationManagerFactory;
 import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationManagerInterface;
-import io.github.mtrevisan.boxon.codecs.managers.configuration.ManagerHelper;
+import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationHelper;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.BitWriter;
@@ -156,7 +156,7 @@ public final class ConfigurationParser{
 	}
 
 	private static void writeSkip(final ConfigurationSkip skip, final BitWriter writer, final Version protocol){
-		final boolean process = ManagerHelper.shouldBeExtracted(protocol, skip.minProtocol(), skip.maxProtocol());
+		final boolean process = ConfigurationHelper.shouldBeExtracted(protocol, skip.minProtocol(), skip.maxProtocol());
 		if(process)
 			writer.putText(skip.terminator(), StandardCharsets.UTF_8);
 	}

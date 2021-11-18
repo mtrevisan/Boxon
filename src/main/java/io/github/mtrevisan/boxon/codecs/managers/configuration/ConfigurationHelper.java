@@ -42,9 +42,9 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 
-public final class ManagerHelper{
+public final class ConfigurationHelper{
 
-	private ManagerHelper(){}
+	private ConfigurationHelper(){}
 
 
 	static void validatePattern(final String dataKey, final Object dataValue, final String pattern) throws EncodeException{
@@ -90,7 +90,7 @@ public final class ManagerHelper{
 		if(!StringHelper.isBlank(value)){
 			Object val = value;
 			if(enumeration != NullEnum.class && fieldType.isArray())
-				val = StringHelper.split(value, '|', -1);
+				val = splitMultipleEnumerations(value);
 			else if(Number.class.isAssignableFrom(ParserDataType.toObjectiveTypeOrSelf(fieldType)))
 				val = JavaHelper.getValue(fieldType, value);
 			if(map.put(key, val) != null)
@@ -114,7 +114,7 @@ public final class ManagerHelper{
 		final Object valEnum;
 		final ConfigurationEnum[] enumConstants = enumeration.getEnumConstants();
 		if(field.getType().isArray()){
-			final String[] defaultValues = StringHelper.split(value, '|', -1);
+			final String[] defaultValues = splitMultipleEnumerations(value);
 			valEnum = Array.newInstance(enumeration, defaultValues.length);
 			for(int i = 0; i < defaultValues.length; i ++)
 				Array.set(valEnum, i, ConfigurationEnum.extractEnum(enumConstants, defaultValues[i]));
@@ -123,6 +123,10 @@ public final class ManagerHelper{
 			valEnum = enumeration
 				.cast(ConfigurationEnum.extractEnum(enumConstants, value));
 		return valEnum;
+	}
+
+	private static String[] splitMultipleEnumerations(final String value){
+		return StringHelper.split(value, '|', -1);
 	}
 
 	static void setValue(final Field field, final Object configurationObject, final Object dataValue){

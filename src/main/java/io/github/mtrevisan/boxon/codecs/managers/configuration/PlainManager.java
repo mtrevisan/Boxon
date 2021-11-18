@@ -65,7 +65,7 @@ final class PlainManager implements ConfigurationManagerInterface{
 	public Object getDefaultValue(final Field field, final Version protocol) throws CodecException{
 		final String value = annotation.defaultValue();
 		final Class<? extends ConfigurationEnum> enumeration = annotation.enumeration();
-		return ManagerHelper.getDefaultValue(field, value, enumeration);
+		return ConfigurationHelper.getDefaultValue(field, value, enumeration);
 	}
 
 	@Override
@@ -76,7 +76,7 @@ final class PlainManager implements ConfigurationManagerInterface{
 
 	@Override
 	public Annotation shouldBeExtracted(final Version protocol){
-		final boolean shouldBeExtracted = ManagerHelper.shouldBeExtracted(protocol, annotation.minProtocol(), annotation.maxProtocol());
+		final boolean shouldBeExtracted = ConfigurationHelper.shouldBeExtracted(protocol, annotation.minProtocol(), annotation.maxProtocol());
 		return (shouldBeExtracted? annotation: EMPTY_ANNOTATION);
 	}
 
@@ -88,13 +88,13 @@ final class PlainManager implements ConfigurationManagerInterface{
 	@Override
 	public Map<String, Object> extractConfigurationMap(final Class<?> fieldType, final Version protocol) throws ConfigurationException,
 			CodecException{
-		if(!ManagerHelper.shouldBeExtracted(protocol, annotation.minProtocol(), annotation.maxProtocol()))
+		if(!ConfigurationHelper.shouldBeExtracted(protocol, annotation.minProtocol(), annotation.maxProtocol()))
 			return Collections.emptyMap();
 
 		final Map<String, Object> fieldMap = extractMap(fieldType);
 
 		if(protocol.isEmpty())
-			ManagerHelper.extractMinMaxProtocol(annotation.minProtocol(), annotation.maxProtocol(), fieldMap);
+			ConfigurationHelper.extractMinMaxProtocol(annotation.minProtocol(), annotation.maxProtocol(), fieldMap);
 
 		return fieldMap;
 	}
@@ -102,21 +102,21 @@ final class PlainManager implements ConfigurationManagerInterface{
 	private Map<String, Object> extractMap(final Class<?> fieldType) throws ConfigurationException, CodecException{
 		final Map<String, Object> map = new HashMap<>(10);
 
-		ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_LONG_DESCRIPTION, annotation.longDescription(), map);
-		ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_UNIT_OF_MEASURE, annotation.unitOfMeasure(), map);
+		ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_LONG_DESCRIPTION, annotation.longDescription(), map);
+		ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_UNIT_OF_MEASURE, annotation.unitOfMeasure(), map);
 
 		if(!fieldType.isEnum() && !fieldType.isArray())
-			ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName(),
+			ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName(),
 				map);
-		ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_MIN_VALUE, JavaHelper.getValue(fieldType, annotation.minValue()), map);
-		ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_MAX_VALUE, JavaHelper.getValue(fieldType, annotation.maxValue()), map);
-		ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_PATTERN, annotation.pattern(), map);
-		ManagerHelper.extractEnumeration(fieldType, annotation.enumeration(), map);
+		ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_MIN_VALUE, JavaHelper.getValue(fieldType, annotation.minValue()), map);
+		ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_MAX_VALUE, JavaHelper.getValue(fieldType, annotation.maxValue()), map);
+		ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_PATTERN, annotation.pattern(), map);
+		ConfigurationHelper.extractEnumeration(fieldType, annotation.enumeration(), map);
 
-		ManagerHelper.putValueIfNotEmpty(LoaderConfiguration.KEY_DEFAULT_VALUE, annotation.defaultValue(), fieldType,
+		ConfigurationHelper.putValueIfNotEmpty(LoaderConfiguration.KEY_DEFAULT_VALUE, annotation.defaultValue(), fieldType,
 			annotation.enumeration(), map);
 		if(String.class.isAssignableFrom(fieldType))
-			ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_CHARSET, annotation.charset(), map);
+			ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_CHARSET, annotation.charset(), map);
 
 		return map;
 	}
@@ -124,9 +124,9 @@ final class PlainManager implements ConfigurationManagerInterface{
 	@Override
 	public void validateValue(final String dataKey, final Object dataValue, final Class<?> fieldType) throws EncodeException,
 			CodecException{
-		ManagerHelper.validatePattern(dataKey, dataValue, annotation.pattern());
-		ManagerHelper.validateMinValue(dataKey, dataValue, fieldType, annotation.minValue());
-		ManagerHelper.validateMaxValue(dataKey, dataValue, fieldType, annotation.maxValue());
+		ConfigurationHelper.validatePattern(dataKey, dataValue, annotation.pattern());
+		ConfigurationHelper.validateMinValue(dataKey, dataValue, fieldType, annotation.minValue());
+		ConfigurationHelper.validateMaxValue(dataKey, dataValue, fieldType, annotation.maxValue());
 	}
 
 	@Override
@@ -141,14 +141,14 @@ final class PlainManager implements ConfigurationManagerInterface{
 			dataValue = extractEnumerationValue(dataKey, dataValue, field, enumeration);
 		else if(String.class.isInstance(dataValue))
 			dataValue = JavaHelper.getValue(fieldType, (String)dataValue);
-		ManagerHelper.setValue(field, configurationObject, dataValue);
+		ConfigurationHelper.setValue(field, configurationObject, dataValue);
 	}
 
 	private static Object extractEnumerationValue(final String dataKey, Object dataValue, final Field field,
 			final Class<? extends ConfigurationEnum> enumeration) throws EncodeException{
 		//convert `or` between enumerations
 		if(String.class.isInstance(dataValue)){
-			dataValue = ManagerHelper.extractEnumerationValue(field, (String)dataValue, enumeration);
+			dataValue = ConfigurationHelper.extractEnumerationValue(field, (String)dataValue, enumeration);
 		}
 
 		validateEnumerationValue(dataKey, dataValue, enumeration, field.getType());

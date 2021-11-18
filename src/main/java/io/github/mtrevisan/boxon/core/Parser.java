@@ -37,7 +37,7 @@ import io.github.mtrevisan.boxon.codecs.TemplateParser;
 import io.github.mtrevisan.boxon.codecs.TemplateParserInterface;
 import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationManagerFactory;
 import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationManagerInterface;
-import io.github.mtrevisan.boxon.codecs.managers.configuration.ManagerHelper;
+import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationHelper;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
@@ -419,7 +419,7 @@ public final class Parser{
 		final List<Map<String, Object>> response = new ArrayList<>(configurationValues.size());
 		for(final ConfigurationMessage<?> configuration : configurationValues){
 			final ConfigurationHeader header = configuration.getHeader();
-			if(!ManagerHelper.shouldBeExtracted(currentProtocol, header.minProtocol(), header.maxProtocol()))
+			if(!ConfigurationHelper.shouldBeExtracted(currentProtocol, header.minProtocol(), header.maxProtocol()))
 				continue;
 
 			final Map<String, Object> headerMap = extractMap(currentProtocol, header);
@@ -435,11 +435,11 @@ public final class Parser{
 
 	private static Map<String, Object> extractMap(final Version protocol, final ConfigurationHeader header) throws ConfigurationException{
 		final Map<String, Object> map = new HashMap<>(3);
-		ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_SHORT_DESCRIPTION, header.shortDescription(), map);
-		ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_LONG_DESCRIPTION, header.longDescription(), map);
+		ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_SHORT_DESCRIPTION, header.shortDescription(), map);
+		ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_LONG_DESCRIPTION, header.longDescription(), map);
 		if(protocol.isEmpty()){
-			ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_MIN_PROTOCOL, header.minProtocol(), map);
-			ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_MAX_PROTOCOL, header.maxProtocol(), map);
+			ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_MIN_PROTOCOL, header.minProtocol(), map);
+			ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_MAX_PROTOCOL, header.maxProtocol(), map);
 		}
 		return map;
 	}
@@ -490,7 +490,7 @@ public final class Parser{
 		final List<Map<String, Object>> response = new ArrayList<>(configurationValues.size());
 		for(final ConfigurationMessage<?> configuration : configurationValues){
 			final ConfigurationHeader header = configuration.getHeader();
-			if(!ManagerHelper.shouldBeExtracted(currentProtocol, header.minProtocol(), header.maxProtocol()))
+			if(!ConfigurationHelper.shouldBeExtracted(currentProtocol, header.minProtocol(), header.maxProtocol()))
 				continue;
 
 			final Map<String, Object> headerMap = extractMap(currentProtocol, header);

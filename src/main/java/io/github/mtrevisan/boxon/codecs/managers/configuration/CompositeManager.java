@@ -98,7 +98,7 @@ final class CompositeManager implements ConfigurationManagerInterface{
 
 	@Override
 	public Annotation shouldBeExtracted(final Version protocol){
-		final boolean shouldBeExtracted = ManagerHelper.shouldBeExtracted(protocol, annotation.minProtocol(), annotation.maxProtocol());
+		final boolean shouldBeExtracted = ConfigurationHelper.shouldBeExtracted(protocol, annotation.minProtocol(), annotation.maxProtocol());
 		return (shouldBeExtracted? annotation: PlainManager.EMPTY_ANNOTATION);
 	}
 
@@ -115,7 +115,7 @@ final class CompositeManager implements ConfigurationManagerInterface{
 	@Override
 	public Map<String, Object> extractConfigurationMap(final Class<?> fieldType, final Version protocol) throws ConfigurationException,
 			CodecException{
-		if(!ManagerHelper.shouldBeExtracted(protocol, annotation.minProtocol(), annotation.maxProtocol()))
+		if(!ConfigurationHelper.shouldBeExtracted(protocol, annotation.minProtocol(), annotation.maxProtocol()))
 			return Collections.emptyMap();
 
 		final Map<String, Object> compositeMap = extractMap();
@@ -129,7 +129,7 @@ final class CompositeManager implements ConfigurationManagerInterface{
 		compositeMap.put(LoaderConfiguration.KEY_CONFIGURATION_COMPOSITE_FIELDS, compositeFieldsMap);
 
 		if(protocol.isEmpty())
-			ManagerHelper.extractMinMaxProtocol(annotation.minProtocol(), annotation.maxProtocol(), compositeMap);
+			ConfigurationHelper.extractMinMaxProtocol(annotation.minProtocol(), annotation.maxProtocol(), compositeMap);
 
 		return compositeMap;
 	}
@@ -137,9 +137,9 @@ final class CompositeManager implements ConfigurationManagerInterface{
 	private Map<String, Object> extractMap() throws ConfigurationException{
 		final Map<String, Object> map = new HashMap<>(6);
 
-		ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_LONG_DESCRIPTION, annotation.longDescription(), map);
-		ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_PATTERN, annotation.pattern(), map);
-		ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_CHARSET, annotation.charset(), map);
+		ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_LONG_DESCRIPTION, annotation.longDescription(), map);
+		ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_PATTERN, annotation.pattern(), map);
+		ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_CHARSET, annotation.charset(), map);
 
 		return map;
 	}
@@ -148,15 +148,15 @@ final class CompositeManager implements ConfigurationManagerInterface{
 			CodecException{
 		final Map<String, Object> map = new HashMap<>(10);
 
-		ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_LONG_DESCRIPTION, binding.longDescription(), map);
-		ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_UNIT_OF_MEASURE, binding.unitOfMeasure(), map);
+		ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_LONG_DESCRIPTION, binding.longDescription(), map);
+		ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_UNIT_OF_MEASURE, binding.unitOfMeasure(), map);
 
-		ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_PATTERN, binding.pattern(), map);
+		ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_PATTERN, binding.pattern(), map);
 		if(!fieldType.isEnum() && !fieldType.isArray())
-			ManagerHelper.putIfNotEmpty(LoaderConfiguration.KEY_FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName(),
+			ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName(),
 				map);
 
-		ManagerHelper.putValueIfNotEmpty(LoaderConfiguration.KEY_DEFAULT_VALUE, binding.defaultValue(), fieldType, NullEnum.class, map);
+		ConfigurationHelper.putValueIfNotEmpty(LoaderConfiguration.KEY_DEFAULT_VALUE, binding.defaultValue(), fieldType, NullEnum.class, map);
 
 		return map;
 	}
@@ -190,7 +190,7 @@ final class CompositeManager implements ConfigurationManagerInterface{
 		final CompositeSubField[] fields = annotation.value();
 		if(Map.class.isInstance(dataValue))
 			dataValue = replace(composition, (Map<String, Object>)dataValue, fields);
-		ManagerHelper.setValue(field, configurationObject, dataValue);
+		ConfigurationHelper.setValue(field, configurationObject, dataValue);
 	}
 
 	private static String replace(final String text, final Map<String, Object> replacements, final CompositeSubField[] fields)
