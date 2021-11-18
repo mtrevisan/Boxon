@@ -29,6 +29,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.codecs.managers.ConstructorHelper;
+import io.github.mtrevisan.boxon.codecs.managers.ContextHelper;
 import io.github.mtrevisan.boxon.codecs.managers.encode.EncodeManagerFactory;
 import io.github.mtrevisan.boxon.codecs.managers.encode.EncodeManagerInterface;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
@@ -44,19 +45,9 @@ import io.github.mtrevisan.boxon.internal.ParserDataType;
 
 import java.lang.reflect.Array;
 import java.nio.charset.Charset;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 public final class CodecHelper{
-
-	/** The name of the current object being scanner (used for referencing variables from SpEL). */
-	static final String CONTEXT_SELF = "self";
-	/** The name of the prefix for the alternative (used for referencing variables from SpEL). */
-	private static final String CONTEXT_CHOICE_PREFIX = "prefix";
-
-	private static final Matcher CONTEXT_PREFIXED_CHOICE_PREFIX = Pattern.compile("#" + CONTEXT_CHOICE_PREFIX + "[^a-zA-Z]")
-		.matcher("");
 
 	private static final ObjectChoices.ObjectChoice EMPTY_CHOICE = new NullObjectChoice();
 
@@ -90,7 +81,7 @@ public final class CodecHelper{
 			final int prefix = reader.getInteger(prefixSize, prefixByteOrder)
 				.intValue();
 
-			Evaluator.addToContext(CONTEXT_CHOICE_PREFIX, prefix);
+			Evaluator.addToContext(ContextHelper.CONTEXT_CHOICE_PREFIX, prefix);
 		}
 
 		final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
@@ -120,7 +111,7 @@ public final class CodecHelper{
 
 	static void writePrefix(final BitWriter writer, final ObjectChoices.ObjectChoice chosenAlternative, final ObjectChoices selectFrom){
 		//if chosenAlternative.condition() contains '#prefix', then write @ObjectChoice.prefix()
-		if(containsPrefixReference(chosenAlternative.condition())){
+		if(ContextHelper.containsPrefixReference(chosenAlternative.condition())){
 			final int prefixSize = selectFrom.prefixSize();
 			final ByteOrder prefixByteOrder = selectFrom.byteOrder();
 
@@ -130,10 +121,6 @@ public final class CodecHelper{
 
 			writer.putBits(bits, prefixSize);
 		}
-	}
-
-	public static boolean containsPrefixReference(final CharSequence condition){
-		return CONTEXT_PREFIXED_CHOICE_PREFIX.reset(condition).find();
 	}
 
 	@SuppressWarnings("unchecked")

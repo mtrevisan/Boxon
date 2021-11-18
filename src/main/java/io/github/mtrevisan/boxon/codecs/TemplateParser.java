@@ -30,6 +30,7 @@ import io.github.mtrevisan.boxon.annotations.Skip;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
 import io.github.mtrevisan.boxon.codecs.managers.BoundedField;
 import io.github.mtrevisan.boxon.codecs.managers.ConstructorHelper;
+import io.github.mtrevisan.boxon.codecs.managers.ContextHelper;
 import io.github.mtrevisan.boxon.codecs.managers.EvaluatedField;
 import io.github.mtrevisan.boxon.codecs.managers.InjectEventListener;
 import io.github.mtrevisan.boxon.codecs.managers.Template;
@@ -70,7 +71,7 @@ public final class TemplateParser implements TemplateParserInterface{
 		}
 
 		void addSelfToEvaluatorContext(){
-			Evaluator.addToContext(CodecHelper.CONTEXT_SELF, currentObject);
+			Evaluator.addToContext(ContextHelper.CONTEXT_SELF, currentObject);
 		}
 	}
 

@@ -24,11 +24,10 @@
  */
 package io.github.mtrevisan.boxon.codecs.managers;
 
-import io.github.mtrevisan.boxon.external.ConfigurationEnum;
-import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
 import io.github.mtrevisan.boxon.codecs.managers.field.ConfigFieldData;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
+import io.github.mtrevisan.boxon.external.ConfigurationEnum;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.ParserDataType;
@@ -146,7 +145,7 @@ final class ValidationHelper{
 
 		if(!StringHelper.isBlank(field.defaultValue)){
 			//defaultValue compatible with variable type
-			if(field.enumeration == NullEnum.class && JavaHelper.getValue(fieldType, field.defaultValue) == null)
+			if(!field.hasEnumeration() && JavaHelper.getValue(fieldType, field.defaultValue) == null)
 				throw AnnotationException.create("Incompatible enum in {}, found {}, expected {}",
 					field.annotation.getSimpleName(), field.defaultValue.getClass().getSimpleName(), fieldType.toString());
 		}

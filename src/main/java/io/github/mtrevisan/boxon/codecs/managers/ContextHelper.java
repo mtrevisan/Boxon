@@ -22,54 +22,27 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.codecs.managers.field;
+package io.github.mtrevisan.boxon.codecs.managers;
 
-import io.github.mtrevisan.boxon.external.ConfigurationEnum;
-import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
-/** Data associated to an annotated field. */
-public final class ConfigFieldData<T extends Annotation>{
+public final class ContextHelper{
 
-	public Field field;
+	/** The name of the current object being scanner (used for referencing variables from SpEL). */
+	public static final String CONTEXT_SELF = "self";
+	/** The name of the prefix for the alternative (used for referencing variables from SpEL). */
+	public static final String CONTEXT_CHOICE_PREFIX = "prefix";
 
-	public String minProtocol;
-	public String maxProtocol;
-
-	public String minValue;
-	public String maxValue;
-
-	public String pattern;
-	public Class<? extends ConfigurationEnum> enumeration;
-
-	public String defaultValue;
-
-	public String charset;
-
-	public int radix;
-
-	public Class<T> annotation;
+	private static final Matcher CONTEXT_PREFIXED_CHOICE_PREFIX = Pattern.compile("#" + CONTEXT_CHOICE_PREFIX + "[^a-zA-Z]")
+		.matcher("");
 
 
-	public static <T extends Annotation> ConfigFieldData<T> create(){
-		return new ConfigFieldData<>();
-	}
+	private ContextHelper(){}
 
-	private ConfigFieldData(){}
-
-	public Class<?> getFieldType(){
-		return field.getType();
-	}
-
-	public boolean hasEnumeration(){
-		return hasEnumeration(enumeration);
-	}
-
-	public static boolean hasEnumeration(final Class<? extends ConfigurationEnum> enumeration){
-		return (enumeration != NullEnum.class);
+	public static boolean containsPrefixReference(final CharSequence condition){
+		return CONTEXT_PREFIXED_CHOICE_PREFIX.reset(condition).find();
 	}
 
 }

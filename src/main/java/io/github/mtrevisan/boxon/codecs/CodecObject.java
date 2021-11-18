@@ -28,6 +28,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
+import io.github.mtrevisan.boxon.codecs.managers.ContextHelper;
 import io.github.mtrevisan.boxon.codecs.managers.InjectEventListener;
 import io.github.mtrevisan.boxon.codecs.managers.Template;
 import io.github.mtrevisan.boxon.external.EventListener;
@@ -67,7 +68,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 			final Template<?> template = loaderTemplate.createTemplate(type);
 
 			final Object instance = templateParser.decode(template, reader, rootObject);
-			Evaluator.addToContext(CodecHelper.CONTEXT_SELF, instance);
+			Evaluator.addToContext(ContextHelper.CONTEXT_SELF, instance);
 
 			final ConverterChoices selectConverterFrom = binding.selectConverterFrom();
 			final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
@@ -118,7 +119,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 			CodecHelper.writePrefix(writer, chosenAlternative, selectFrom);
 		}
 
-		Evaluator.addToContext(CodecHelper.CONTEXT_SELF, value);
+		Evaluator.addToContext(ContextHelper.CONTEXT_SELF, value);
 
 		final Template<?> template = loaderTemplate.createTemplate(type);
 

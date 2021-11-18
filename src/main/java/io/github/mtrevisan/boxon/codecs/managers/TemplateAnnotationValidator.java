@@ -32,7 +32,6 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
-import io.github.mtrevisan.boxon.codecs.CodecHelper;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.external.EventListener;
 import io.github.mtrevisan.boxon.internal.ParserDataType;
@@ -183,7 +182,7 @@ public enum TemplateAnnotationValidator{
 		final String condition = alternative.condition();
 		if(condition.isEmpty())
 			throw AnnotationException.create("All conditions must be non-empty");
-		if(hasPrefixSize ^ CodecHelper.containsPrefixReference(condition))
+		if(hasPrefixSize ^ ContextHelper.containsPrefixReference(condition))
 			throw AnnotationException.create("All conditions must {}contain a reference to the prefix", (hasPrefixSize? "": "not "));
 	}
 

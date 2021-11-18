@@ -24,13 +24,13 @@
  */
 package io.github.mtrevisan.boxon.codecs.managers.configuration;
 
-import io.github.mtrevisan.boxon.external.ConfigurationEnum;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
-import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
 import io.github.mtrevisan.boxon.codecs.LoaderConfiguration;
+import io.github.mtrevisan.boxon.codecs.managers.field.ConfigFieldData;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
+import io.github.mtrevisan.boxon.external.ConfigurationEnum;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.ParserDataType;
@@ -137,7 +137,7 @@ final class PlainManager implements ConfigurationManagerInterface{
 
 		final Class<?> fieldType = field.getType();
 		final Class<? extends ConfigurationEnum> enumeration = annotation.enumeration();
-		if(enumeration != NullEnum.class)
+		if(ConfigFieldData.hasEnumeration(enumeration))
 			dataValue = extractEnumerationValue(dataKey, dataValue, field, enumeration);
 		else if(String.class.isInstance(dataValue))
 			dataValue = JavaHelper.getValue(fieldType, (String)dataValue);
