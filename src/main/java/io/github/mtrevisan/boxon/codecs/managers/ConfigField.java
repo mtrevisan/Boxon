@@ -22,45 +22,41 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.codecs.managers.fields;
+package io.github.mtrevisan.boxon.codecs.managers;
 
-import io.github.mtrevisan.boxon.annotations.Skip;
-import io.github.mtrevisan.boxon.internal.ReflectionHelper;
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 
 
 /** Data associated to an annotated field. */
-public final class BoundedField{
+public final class ConfigField{
 
-	/** NOTE: MUST match the name of the method in all the annotations that defines a condition! */
-	private static final String CONDITION = "condition";
-
-	private static final String EMPTY_STRING = "";
-	private static final Skip[] EMPTY_ARRAY = new Skip[0];
+	private static final ConfigurationSkip[] EMPTY_ARRAY = new ConfigurationSkip[0];
 
 	private final Field field;
 	/** List of skips that happen BEFORE the reading/writing of this variable. */
-	private final Skip[] skips;
+	private final ConfigurationSkip[] skips;
 	private final Annotation binding;
 
-	private final String condition;
 
-
-	public BoundedField(final Field field, final Annotation binding){
+	ConfigField(final Field field, final Annotation binding){
 		this(field, binding, null);
 	}
 
-	public BoundedField(final Field field, final Annotation binding, final Skip[] skips){
+	ConfigField(final Field field, final Annotation binding, final ConfigurationSkip[] skips){
 		this.field = field;
 		this.binding = binding;
 		this.skips = (skips != null? skips.clone(): null);
+	}
 
-		//pre-fetch condition method
-		final Method conditionMethod = ReflectionHelper.getAccessibleMethod(binding.annotationType(), CONDITION, String.class);
-		condition = ReflectionHelper.invokeMethod(binding, conditionMethod, EMPTY_STRING);
+	public Field getField(){
+		return field;
+	}
+
+	public Class<?> getFieldType(){
+		return field.getType();
 	}
 
 	public String getFieldName(){
@@ -71,20 +67,16 @@ public final class BoundedField{
 		return ReflectionHelper.getFieldValue(field, obj);
 	}
 
-	public void setFieldValue(final Object obj, final Object value){
+	void setFieldValue(final Object obj, final Object value){
 		ReflectionHelper.setFieldValue(field, obj, value);
 	}
 
-	public Skip[] getSkips(){
+	public ConfigurationSkip[] getSkips(){
 		return (skips != null? skips.clone(): EMPTY_ARRAY);
 	}
 
 	public Annotation getBinding(){
 		return binding;
-	}
-
-	public String getCondition(){
-		return condition;
 	}
 
 }

@@ -22,54 +22,43 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.codecs.managers.fields;
+package io.github.mtrevisan.boxon.codecs.managers;
 
-import io.github.mtrevisan.boxon.external.ConfigurationEnum;
-import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
+import io.github.mtrevisan.boxon.annotations.Evaluate;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
 
-/** Data associated to an annotated field. */
-public final class ConfigFieldData<T extends Annotation>{
+/** Data associated to a directly evaluable field. */
+public final class EvaluatedField{
 
-	public Field field;
-
-	public String minProtocol;
-	public String maxProtocol;
-
-	public String minValue;
-	public String maxValue;
-
-	public String pattern;
-	public Class<? extends ConfigurationEnum> enumeration;
-
-	public String defaultValue;
-
-	public String charset;
-
-	public int radix;
-
-	public Class<T> annotation;
+	private final Field field;
+	private final Evaluate binding;
 
 
-	public static <T extends Annotation> ConfigFieldData<T> create(){
-		return new ConfigFieldData<>();
+	EvaluatedField(final Field field, final Evaluate binding){
+		this.field = field;
+		this.binding = binding;
 	}
 
-	private ConfigFieldData(){}
+	public String getFieldName(){
+		return field.getName();
+	}
 
 	public Class<?> getFieldType(){
 		return field.getType();
 	}
 
-	public boolean hasEnumeration(){
-		return hasEnumeration(enumeration);
+	public void setFieldValue(final Object obj, final Object value){
+		ReflectionHelper.setFieldValue(field, obj, value);
 	}
 
-	public static boolean hasEnumeration(final Class<? extends ConfigurationEnum> enumeration){
-		return (enumeration != NullEnum.class);
+	public Evaluate getBinding(){
+		return binding;
 	}
 
+	@Override
+	public String toString(){
+		return "EvaluatedField{" + "field=" + field + ", binding=" + binding + '}';
+	}
 }
