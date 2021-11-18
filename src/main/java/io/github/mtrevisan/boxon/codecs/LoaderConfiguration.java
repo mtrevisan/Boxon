@@ -44,7 +44,6 @@ import io.github.mtrevisan.boxon.internal.ThrowingFunction;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -222,8 +221,8 @@ public final class LoaderConfiguration{
 	}
 
 
-	public Collection<ConfigurationMessage<?>> getConfigurations(){
-		return Collections.unmodifiableCollection(configurations.values());
+	public List<ConfigurationMessage<?>> getConfigurations(){
+		return List.copyOf(configurations.values());
 	}
 
 	/**

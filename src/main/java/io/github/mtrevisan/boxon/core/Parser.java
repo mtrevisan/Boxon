@@ -413,8 +413,57 @@ public final class Parser{
 	 * @return	The configuration messages regardless the protocol version.
 	 */
 	public List<Map<String, Object>> getConfigurations() throws ConfigurationException, CodecException{
-		final Collection<ConfigurationMessage<?>> configurationValues = loaderConfiguration.getConfigurations();
+		final List<ConfigurationMessage<?>> configurationValues = loaderConfiguration.getConfigurations();
 		return extractConfigurations(configurationValues, Version.EMPTY);
+	}
+
+	/**
+	 * Retrieve all the protocol version boundaries.
+	 *
+	 * @return	The protocol version boundaries.
+	 */
+	public List<String> getProtocolVersionBoundaries(){
+		final List<ConfigurationMessage<?>> configurationValues = loaderConfiguration.getConfigurations();
+		final List<String> protocolVersionBoundaries = new ArrayList<>(configurationValues.size());
+		for(int i = 0; i < configurationValues.size(); i ++)
+			protocolVersionBoundaries.addAll(configurationValues.get(i).getProtocolVersionBoundaries());
+		return Collections.unmodifiableList(protocolVersionBoundaries);
+	}
+
+	/**
+	 * Retrieve all the configuration given a protocol version.
+	 *
+	 * @param protocol	The protocol used to extract the configurations.
+	 * @return	The configuration messages for a given protocol version.
+	 */
+	public List<Map<String, Object>> getConfigurations(final String protocol) throws ConfigurationException, CodecException{
+		if(StringHelper.isBlank(protocol))
+			throw new IllegalArgumentException(StringHelper.format("Invalid protocol: {}", protocol));
+
+		final List<ConfigurationMessage<?>> configurationValues = loaderConfiguration.getConfigurations();
+		final Version currentProtocol = Version.of(protocol);
+		return extractConfigurations(configurationValues, currentProtocol);
+	}
+
+	private static List<Map<String, Object>> extractConfigurations(final List<ConfigurationMessage<?>> configurationValues,
+			final Version protocol) throws ConfigurationException, CodecException{
+		final List<Map<String, Object>> response = new ArrayList<>(configurationValues.size());
+		for(int i = 0; i < configurationValues.size(); i ++){
+			final ConfigurationMessage<?> configuration = configurationValues.get(i);
+			final ConfigurationHeader header = configuration.getHeader();
+			if(!ConfigurationHelper.shouldBeExtracted(protocol, header.minProtocol(), header.maxProtocol()))
+				continue;
+
+			final Map<String, Object> map = new HashMap<>(3);
+			final Map<String, Object> headerMap = extractMap(protocol, header);
+			final Map<String, Object> fieldsMap = extractFieldsMap(protocol, configuration);
+			map.put(LoaderConfiguration.KEY_CONFIGURATION_HEADER, headerMap);
+			map.put(LoaderConfiguration.KEY_CONFIGURATION_FIELDS, fieldsMap);
+			if(protocol.isEmpty())
+				map.put(LoaderConfiguration.KEY_CONFIGURATION_PROTOCOL_VERSION_BOUNDARIES, configuration.getProtocolVersionBoundaries());
+			response.add(map);
+		}
+		return Collections.unmodifiableList(response);
 	}
 
 	private static Map<String, Object> extractMap(final Version protocol, final ConfigurationHeader header) throws ConfigurationException{
@@ -441,54 +490,6 @@ public final class Parser{
 				fieldsMap.put(manager.getShortDescription(), fieldMap);
 		}
 		return fieldsMap;
-	}
-
-	/**
-	 * Retrieve all the protocol version boundaries.
-	 *
-	 * @return	The protocol version boundaries.
-	 */
-	public List<String> getProtocolVersionBoundaries(){
-		final Collection<ConfigurationMessage<?>> configurationValues = loaderConfiguration.getConfigurations();
-		final List<String> protocolVersionBoundaries = new ArrayList<>(configurationValues.size());
-		for(final ConfigurationMessage<?> configuration : configurationValues)
-			protocolVersionBoundaries.addAll(configuration.getProtocolVersionBoundaries());
-		return Collections.unmodifiableList(protocolVersionBoundaries);
-	}
-
-	/**
-	 * Retrieve all the configuration given a protocol version.
-	 *
-	 * @param protocol	The protocol used to extract the configurations.
-	 * @return	The configuration messages for a given protocol version.
-	 */
-	public List<Map<String, Object>> getConfigurations(final String protocol) throws ConfigurationException, CodecException{
-		if(StringHelper.isBlank(protocol))
-			throw new IllegalArgumentException(StringHelper.format("Invalid protocol: {}", protocol));
-
-		final Collection<ConfigurationMessage<?>> configurationValues = loaderConfiguration.getConfigurations();
-		final Version currentProtocol = Version.of(protocol);
-		return extractConfigurations(configurationValues, currentProtocol);
-	}
-
-	private static List<Map<String, Object>> extractConfigurations(final Collection<ConfigurationMessage<?>> configurationValues,
-			final Version protocol) throws ConfigurationException, CodecException{
-		final List<Map<String, Object>> response = new ArrayList<>(configurationValues.size());
-		for(final ConfigurationMessage<?> configuration : configurationValues){
-			final ConfigurationHeader header = configuration.getHeader();
-			if(!ConfigurationHelper.shouldBeExtracted(protocol, header.minProtocol(), header.maxProtocol()))
-				continue;
-
-			final Map<String, Object> map = new HashMap<>(3);
-			final Map<String, Object> headerMap = extractMap(protocol, header);
-			final Map<String, Object> fieldsMap = extractFieldsMap(protocol, configuration);
-			map.put(LoaderConfiguration.KEY_CONFIGURATION_HEADER, headerMap);
-			map.put(LoaderConfiguration.KEY_CONFIGURATION_FIELDS, fieldsMap);
-			if(protocol.isEmpty())
-				map.put(LoaderConfiguration.KEY_CONFIGURATION_PROTOCOL_VERSION_BOUNDARIES, configuration.getProtocolVersionBoundaries());
-			response.add(map);
-		}
-		return Collections.unmodifiableList(response);
 	}
 
 	/**
