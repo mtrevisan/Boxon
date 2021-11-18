@@ -22,26 +22,24 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.codecs.managers.encode;
+package io.github.mtrevisan.boxon.codecs.managers.writer;
 
 import io.github.mtrevisan.boxon.external.BitWriter;
+import io.github.mtrevisan.boxon.external.ByteOrder;
 
-import java.nio.charset.Charset;
 
-
-final class NumberWriterManager implements WriterManagerInterface{
+final class FloatWriterManager implements WriterManagerInterface{
 
 	private final BitWriter writer;
 
 
-	NumberWriterManager(final BitWriter writer){
+	FloatWriterManager(final BitWriter writer){
 		this.writer = writer;
 	}
 
 	@Override
-	public void put(final Object value, final int radix, final Charset charset){
-		final String val = Long.toString(((Number)value).longValue(), radix);
-		writer.putText(val, charset);
+	public void put(final Object value){
+		writer.putFloat((Float)value, ByteOrder.BIG_ENDIAN);
 	}
 
 }

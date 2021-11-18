@@ -22,29 +22,32 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.codecs.managers.encode;
+package io.github.mtrevisan.boxon.codecs.managers.writer;
 
 import io.github.mtrevisan.boxon.external.BitWriter;
 import io.github.mtrevisan.boxon.internal.ParserDataType;
+
+import java.nio.charset.Charset;
 
 
 public final class WriterManagerFactory{
 
 	private WriterManagerFactory(){}
 
-	public static WriterManagerInterface buildManager(final Object value, final BitWriter writer){
+	public static WriterManagerInterface buildManager(final Object value, final BitWriter writer, final int radix, final String charsetName){
 		WriterManagerInterface manager = null;
-		if(String.class.isInstance(value))
-			manager = new StringWriterManager(writer);
+		if(String.class.isInstance(value)){
+			final Charset charset = Charset.forName(charsetName);
+			manager = new StringWriterManager(writer, charset);
+		}
 		else{
 			final Class<?> fieldClass = ParserDataType.toObjectiveTypeOrSelf(value.getClass());
 			if(fieldClass == Float.class)
 				manager = new FloatWriterManager(writer);
 			else if(fieldClass == Double.class)
 				manager = new DoubleWriterManager(writer);
-			else if(Number.class.isAssignableFrom(fieldClass)){
-				manager = new NumberWriterManager(writer);
-			}
+			else if(Number.class.isAssignableFrom(fieldClass))
+				manager = new NumberWriterManager(writer, radix);
 		}
 		return manager;
 	}
