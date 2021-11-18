@@ -26,7 +26,6 @@ package io.github.mtrevisan.boxon.codecs.managers.configuration;
 
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.codecs.LoaderConfiguration;
-import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
 import io.github.mtrevisan.boxon.codecs.managers.field.ConfigFieldData;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
@@ -131,18 +130,17 @@ final class PlainManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	public void setValue(final Object configurationObject, final String dataKey, Object dataValue, final Field field, final Version protocol)
-			throws EncodeException, CodecException{
-		if(dataValue == null)
-			return;
-
-		final Class<?> fieldType = field.getType();
-		final Class<? extends ConfigurationEnum> enumeration = annotation.enumeration();
-		if(ConfigFieldData.hasEnumeration(enumeration))
-			dataValue = extractEnumerationValue(dataKey, dataValue, field, enumeration);
-		else if(String.class.isInstance(dataValue))
-			dataValue = JavaHelper.getValue(fieldType, (String)dataValue);
-		ReflectionHelper.setFieldValue(field, configurationObject, dataValue);
+	public Object convertValue(final Object configurationObject, final String dataKey, Object dataValue, final Field field,
+			final Version protocol) throws EncodeException, CodecException{
+		if(dataValue != null){
+			final Class<?> fieldType = field.getType();
+			final Class<? extends ConfigurationEnum> enumeration = annotation.enumeration();
+			if(ConfigFieldData.hasEnumeration(enumeration))
+				dataValue = extractEnumerationValue(dataKey, dataValue, field, enumeration);
+			else if(String.class.isInstance(dataValue))
+				dataValue = JavaHelper.getValue(fieldType, (String)dataValue);
+		}
+		return dataValue;
 	}
 
 	private static Object extractEnumerationValue(final String dataKey, Object dataValue, final Field field,

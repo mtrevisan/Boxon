@@ -27,7 +27,6 @@ package io.github.mtrevisan.boxon.codecs.managers.configuration;
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
 import io.github.mtrevisan.boxon.codecs.LoaderConfiguration;
-import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
@@ -227,16 +226,16 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 	public void validateValue(final String dataKey, final Object dataValue, final Class<?> fieldType){}
 
 	@Override
-	public void setValue(final Object configurationObject, final String dataKey, Object dataValue, final Field field, final Version protocol)
-			throws EncodeException, CodecException{
+	public Object convertValue(final Object configurationObject, final String dataKey, Object dataValue, final Field field,
+			final Version protocol) throws EncodeException, CodecException{
 		final AlternativeSubField fieldBinding = extractField(protocol);
 		if(fieldBinding != null){
 			validateValue(fieldBinding, dataKey, dataValue, field.getType());
 
 			if(String.class.isInstance(dataValue))
 				dataValue = JavaHelper.getValue(field.getType(), (String)dataValue);
-			ReflectionHelper.setFieldValue(field, configurationObject, dataValue);
 		}
+		return dataValue;
 	}
 
 	private static void validateValue(final AlternativeSubField binding, final String dataKey, final Object dataValue,

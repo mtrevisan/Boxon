@@ -250,7 +250,7 @@ public final class LoaderConfiguration{
 		//load data into configuration based on protocol version:
 		for(final Map.Entry<String, Object> entry : data.entrySet()){
 			final String dataKey = entry.getKey();
-			final Object dataValue = entry.getValue();
+			Object dataValue = entry.getValue();
 
 			//find field in `configuration` that matches `dataKey` and `protocol`
 			final ConfigField foundField = findField(configurableFields, dataKey, protocol);
@@ -258,7 +258,8 @@ public final class LoaderConfiguration{
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(foundFieldAnnotation);
 			final Class<?> fieldType = foundField.getFieldType();
 			manager.validateValue(dataKey, dataValue, fieldType);
-			manager.setValue(configurationObject, dataKey, dataValue, foundField.getField(), protocol);
+			dataValue = manager.convertValue(configurationObject, dataKey, dataValue, foundField.getField(), protocol);
+			ReflectionHelper.setFieldValue(foundField.getField(), configurationObject, dataValue);
 
 			if(String.class.isInstance(dataValue) && !((String)dataValue).isEmpty() || dataValue != null)
 				mandatoryFields.remove(foundField);
@@ -289,8 +290,9 @@ public final class LoaderConfiguration{
 			final ConfigField field = fields.get(i);
 			final Annotation annotation = field.getBinding();
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(annotation);
-			final Object dataValue = manager.getDefaultValue(field.getField(), protocol);
-			manager.setValue(configurationObject, manager.getShortDescription(), dataValue, field.getField(), protocol);
+			Object dataValue = manager.getDefaultValue(field.getField(), protocol);
+			dataValue = manager.convertValue(configurationObject, manager.getShortDescription(), dataValue, field.getField(), protocol);
+			ReflectionHelper.setFieldValue(field.getField(), configurationObject, dataValue);
 		}
 	}
 

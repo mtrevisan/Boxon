@@ -33,7 +33,6 @@ import io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurati
 import io.github.mtrevisan.boxon.annotations.configurations.CompositeSubField;
 import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
 import io.github.mtrevisan.boxon.codecs.LoaderConfiguration;
-import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
@@ -184,14 +183,14 @@ final class CompositeManager implements ConfigurationManagerInterface{
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public void setValue(final Object configurationObject, final String dataKey, Object dataValue, final Field field, final Version protocol)
+	public Object convertValue(final Object configurationObject, final String dataKey, Object dataValue, final Field field, final Version protocol)
 			throws EncodeException{
 		//compose field value
 		final String composition = annotation.composition();
 		final CompositeSubField[] fields = annotation.value();
 		if(Map.class.isInstance(dataValue))
 			dataValue = replace(composition, (Map<String, Object>)dataValue, fields);
-		ReflectionHelper.setFieldValue(field, configurationObject, dataValue);
+		return dataValue;
 	}
 
 	private static String replace(final String text, final Map<String, Object> replacements, final CompositeSubField[] fields)

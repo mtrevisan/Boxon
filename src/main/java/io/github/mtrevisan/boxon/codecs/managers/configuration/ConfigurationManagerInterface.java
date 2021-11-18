@@ -51,6 +51,6 @@ public interface ConfigurationManagerInterface{
 
 	void validateValue(final String dataKey, final Object dataValue, final Class<?> fieldType) throws EncodeException, CodecException;
 
-	void setValue(final Object configurationObject, final String dataKey, final Object dataValue, final Field field, final Version protocol) throws EncodeException, CodecException;
+	Object convertValue(final Object configurationObject, final String dataKey, final Object dataValue, final Field field, final Version protocol) throws EncodeException, CodecException;
 
 }
