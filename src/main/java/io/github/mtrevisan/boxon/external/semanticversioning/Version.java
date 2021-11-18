@@ -179,7 +179,7 @@ public final class Version implements Comparable<Version>{
 			final boolean numeric = StringHelper.isDecimalNumber(pr);
 			if(numeric && pr.length() > 1 && pr.charAt(0) == '0')
 				throw new IllegalArgumentException("Numeric identifier MUST NOT contain leading zeros");
-			if(!numeric && !containsOnly(pr))
+			if(!numeric && !containsOnlyValidChars(pr))
 				throw new IllegalArgumentException("Argument is not a valid version");
 		}
 	}
@@ -187,7 +187,7 @@ public final class Version implements Comparable<Version>{
 	private void validateBuild(){
 		for(int i = 0; i < build.length; i ++){
 			final String b = build[i];
-			if(!StringHelper.isDecimalNumber(b) && !containsOnly(b))
+			if(!StringHelper.isDecimalNumber(b) && !containsOnlyValidChars(b))
 				throw new IllegalArgumentException("Argument is not a valid version");
 		}
 	}
@@ -373,18 +373,10 @@ public final class Version implements Comparable<Version>{
 	 * @param text	The text to check, may be {@code null}.
 	 * @return	Whether if the given text only contains valid chars and is non-{@code null}.
 	 */
-	private static boolean containsOnly(final CharSequence text){
-		final int lastIndex = (text != null? text.length(): 0) - 1;
-		outer:
-		for(int i = 0; i <= lastIndex; i ++){
-			final char chr = text.charAt(i);
-			for(int j = 0; j < VALID_CHARS.length; j ++)
-				if(VALID_CHARS[j] == chr && (i >= lastIndex || j >= VALID_CHARS.length - 1 || !Character.isHighSurrogate(chr)
-						|| VALID_CHARS[j + 1] == text.charAt(i + 1)))
-					continue outer;
-
-			return false;
-		}
+	private static boolean containsOnlyValidChars(final CharSequence text){
+		for(int i = 0; i < (text != null? text.length(): 0); i ++)
+			if(Arrays.binarySearch(VALID_CHARS, text.charAt(i)) < 0)
+				return false;
 		return true;
 	}
 
