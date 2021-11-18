@@ -22,10 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.annotations.configurations;
-
-
-import io.github.mtrevisan.boxon.external.ConfigurationEnum;
+package io.github.mtrevisan.boxon.external;
 
 
 public enum BooleanType implements ConfigurationEnum{
