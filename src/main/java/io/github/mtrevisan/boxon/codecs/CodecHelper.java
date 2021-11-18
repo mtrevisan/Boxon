@@ -43,7 +43,7 @@ import io.github.mtrevisan.boxon.internal.JavaHelper;
 import java.lang.reflect.Array;
 
 
-public final class CodecHelper{
+final class CodecHelper{
 
 	private static final ObjectChoices.ObjectChoice EMPTY_CHOICE = new NullObjectChoice();
 

@@ -38,8 +38,8 @@ final class VersionHelper{
 		return (token.length() > 1 && token.charAt(0) == '0');
 	}
 
-	static boolean startsWithNumber(final CharSequence str){
-		return (str != null && str.length() > 0 && Character.isDigit(str.charAt(0)));
+	static boolean startsWithNumber(final String str){
+		return (str != null && !str.isEmpty() && Character.isDigit(str.charAt(0)));
 	}
 
 	static int getLeastCommonArrayLength(final String[] array1, final String[] array2){

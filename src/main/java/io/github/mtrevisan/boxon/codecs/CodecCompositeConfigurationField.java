@@ -35,7 +35,6 @@ import io.github.mtrevisan.boxon.internal.ParserDataType;
 
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 
 
 final class CodecCompositeConfigurationField implements CodecInterface<CompositeConfigurationField>{

@@ -144,7 +144,7 @@ public final class TemplateParser implements TemplateParserInterface{
 
 	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
 	private <T> void decodeField(final Template<T> template, final BitReader reader, final ParserContext<T> parserContext,
-		final BoundedField field) throws FieldException{
+			final BoundedField field) throws FieldException{
 		final Annotation binding = field.getBinding();
 		final Class<? extends Annotation> annotationType = binding.annotationType();
 		final CodecInterface<?> codec = loaderCodec.getCodec(annotationType);
@@ -152,7 +152,7 @@ public final class TemplateParser implements TemplateParserInterface{
 			throw CodecException.create("Cannot find codec for binding {}", annotationType.getSimpleName())
 				.withClassNameAndFieldName(template.getType().getName(), field.getFieldName());
 
-		eventListener.decodingField(template.toString(), field.getFieldName(), annotationType.getSimpleName());
+		eventListener.readingField(template.toString(), field.getFieldName(), annotationType.getSimpleName());
 
 		try{
 			//decode value from raw message
@@ -160,7 +160,7 @@ public final class TemplateParser implements TemplateParserInterface{
 			//store value in the current object
 			field.setFieldValue(parserContext.currentObject, value);
 
-			eventListener.decodedField(template.toString(), field.getFieldName(), value);
+			eventListener.readField(template.toString(), field.getFieldName(), value);
 		}
 		catch(final FieldException fe){
 			fe.withClassNameAndFieldName(template.getType().getName(), field.getFieldName());
@@ -274,7 +274,7 @@ public final class TemplateParser implements TemplateParserInterface{
 
 	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
 	private <T> void encodeField(final Template<?> template, final BitWriter writer, final ParserContext<T> parserContext,
-		final BoundedField field) throws FieldException{
+			final BoundedField field) throws FieldException{
 		final Annotation binding = field.getBinding();
 		final Class<? extends Annotation> annotationType = binding.annotationType();
 		final CodecInterface<?> codec = loaderCodec.getCodec(annotationType);

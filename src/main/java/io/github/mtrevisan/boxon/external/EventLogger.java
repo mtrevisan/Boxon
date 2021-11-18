@@ -144,12 +144,12 @@ public final class EventLogger extends EventListener{
 
 
 	@Override
-	public void decodingField(final String templateName, final String fieldName, final String bindingTypeName){
+	public void readingField(final String templateName, final String fieldName, final String bindingTypeName){
 		trace("reading {}.{} with bind {}", templateName, fieldName, bindingTypeName);
 	}
 
 	@Override
-	public void decodedField(final String templateName, final String fieldName, final Object value){
+	public void readField(final String templateName, final String fieldName, final Object value){
 		trace("read {}.{} = {}", templateName, fieldName, value);
 	}
 

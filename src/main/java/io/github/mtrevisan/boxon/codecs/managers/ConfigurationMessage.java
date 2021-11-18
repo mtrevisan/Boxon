@@ -30,7 +30,6 @@ import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationMana
 import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationManagerInterface;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
-import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
 
 import java.lang.annotation.Annotation;
@@ -89,7 +88,7 @@ public final class ConfigurationMessage<T>{
 			if(configFields.isEmpty())
 				throw AnnotationException.create("No data can be extracted from this class: {}", type.getName());
 		}
-		catch(final ConfigurationException | CodecException ce){
+		catch(final CodecException ce){
 			throw AnnotationException.create(ce);
 		}
 	}
@@ -108,7 +107,7 @@ public final class ConfigurationMessage<T>{
 
 	@SuppressWarnings("ObjectAllocationInLoop")
 	private List<ConfigField> loadAnnotatedFields(final Class<T> type, final List<Field> fields, final Version minProtocolVersion,
-			final Version maxProtocolVersion) throws AnnotationException, ConfigurationException, CodecException{
+			final Version maxProtocolVersion) throws AnnotationException, CodecException{
 		final Collection<String> uniqueShortDescription = new HashSet<>(fields.size());
 		final List<ConfigField> configFields = new ArrayList<>(fields.size());
 		for(int i = 0; i < fields.size(); i ++){

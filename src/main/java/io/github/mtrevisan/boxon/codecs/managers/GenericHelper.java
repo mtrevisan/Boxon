@@ -33,7 +33,6 @@ import java.lang.reflect.TypeVariable;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,19 +47,15 @@ public final class GenericHelper{
 	/**
 	 * Primitive type name to class map.
 	 */
-	private static final Map<String, Class<?>> PRIMITIVE_NAME_TO_TYPE;
-	static{
-		final Map<String, Class<?>> primitiveNameToType = new HashMap<>(8);
-		primitiveNameToType.put("boolean", Boolean.TYPE);
-		primitiveNameToType.put("byte", Byte.TYPE);
-		primitiveNameToType.put("char", Character.TYPE);
-		primitiveNameToType.put("short", Short.TYPE);
-		primitiveNameToType.put("int", Integer.TYPE);
-		primitiveNameToType.put("long", Long.TYPE);
-		primitiveNameToType.put("float", Float.TYPE);
-		primitiveNameToType.put("double", Double.TYPE);
-		PRIMITIVE_NAME_TO_TYPE = Collections.unmodifiableMap(primitiveNameToType);
-	}
+	private static final Map<String, Class<?>> PRIMITIVE_NAME_TO_TYPE = Map.of(
+		"boolean", Boolean.TYPE,
+		"byte", Byte.TYPE,
+		"char", Character.TYPE,
+		"short", Short.TYPE,
+		"int", Integer.TYPE,
+		"long", Long.TYPE,
+		"float", Float.TYPE,
+		"double", Double.TYPE);
 
 
 	private GenericHelper(){}

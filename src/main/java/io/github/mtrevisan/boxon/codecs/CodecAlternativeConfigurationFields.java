@@ -30,7 +30,6 @@ import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitWriter;
 
 import java.lang.annotation.Annotation;
-import java.nio.charset.StandardCharsets;
 
 
 final class CodecAlternativeConfigurationFields implements CodecInterface<AlternativeConfigurationField>{

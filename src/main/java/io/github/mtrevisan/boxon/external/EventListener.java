@@ -80,10 +80,10 @@ public class EventListener{
 
 
 	@SuppressWarnings("unused")
-	public void decodingField(final String templateName, final String fieldName, final String bindingTypeName){}
+	public void readingField(final String templateName, final String fieldName, final String bindingTypeName){}
 
 	@SuppressWarnings("unused")
-	public void decodedField(final String templateName, final String fieldName, final Object value){}
+	public void readField(final String templateName, final String fieldName, final Object value){}
 
 	@SuppressWarnings("unused")
 	public void evaluatingField(final String templateName, final String fieldName){}

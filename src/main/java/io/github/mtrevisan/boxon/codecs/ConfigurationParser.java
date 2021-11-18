@@ -41,7 +41,6 @@ import io.github.mtrevisan.boxon.external.semanticversioning.Version;
 
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 
