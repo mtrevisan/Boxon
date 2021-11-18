@@ -26,6 +26,7 @@ package io.github.mtrevisan.boxon.codecs.managers.configuration;
 
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.codecs.LoaderConfiguration;
+import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
 import io.github.mtrevisan.boxon.codecs.managers.field.ConfigFieldData;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
@@ -141,7 +142,7 @@ final class PlainManager implements ConfigurationManagerInterface{
 			dataValue = extractEnumerationValue(dataKey, dataValue, field, enumeration);
 		else if(String.class.isInstance(dataValue))
 			dataValue = JavaHelper.getValue(fieldType, (String)dataValue);
-		ConfigurationHelper.setValue(field, configurationObject, dataValue);
+		ReflectionHelper.setFieldValue(field, configurationObject, dataValue);
 	}
 
 	private static Object extractEnumerationValue(final String dataKey, Object dataValue, final Field field,

@@ -26,11 +26,12 @@ package io.github.mtrevisan.boxon.codecs.managers.configuration;
 
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
-import io.github.mtrevisan.boxon.external.ConfigurationEnum;
 import io.github.mtrevisan.boxon.codecs.LoaderConfiguration;
+import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
+import io.github.mtrevisan.boxon.external.ConfigurationEnum;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.ParserDataType;
@@ -234,7 +235,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 
 			if(String.class.isInstance(dataValue))
 				dataValue = JavaHelper.getValue(field.getType(), (String)dataValue);
-			ConfigurationHelper.setValue(field, configurationObject, dataValue);
+			ReflectionHelper.setFieldValue(field, configurationObject, dataValue);
 		}
 	}
 
