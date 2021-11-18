@@ -106,8 +106,8 @@ final class PlainManager implements ConfigurationManagerInterface{
 		ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_UNIT_OF_MEASURE, annotation.unitOfMeasure(), map);
 
 		if(!fieldType.isEnum() && !fieldType.isArray())
-			ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName(),
-				map);
+			ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_FIELD_TYPE,
+				ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName(), map);
 		ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_MIN_VALUE, JavaHelper.getValue(fieldType, annotation.minValue()), map);
 		ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_MAX_VALUE, JavaHelper.getValue(fieldType, annotation.maxValue()), map);
 		ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_PATTERN, annotation.pattern(), map);

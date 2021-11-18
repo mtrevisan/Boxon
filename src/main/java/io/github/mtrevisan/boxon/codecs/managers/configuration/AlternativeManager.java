@@ -185,8 +185,8 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 		ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_UNIT_OF_MEASURE, annotation.unitOfMeasure(), map);
 
 		if(!fieldType.isEnum() && !fieldType.isArray())
-			ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName(),
-				map);
+			ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_FIELD_TYPE,
+				ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName(), map);
 		ConfigurationHelper.extractEnumeration(fieldType, annotation.enumeration(), map);
 
 		return map;
@@ -200,8 +200,8 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 		ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_UNIT_OF_MEASURE, binding.unitOfMeasure(), map);
 
 		if(!fieldType.isEnum() && !fieldType.isArray())
-			ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName(),
-				map);
+			ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_FIELD_TYPE,
+				ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName(), map);
 		ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_MIN_VALUE, JavaHelper.getValue(fieldType, binding.minValue()), map);
 		ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_MAX_VALUE, JavaHelper.getValue(fieldType, binding.maxValue()), map);
 		ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_PATTERN, binding.pattern(), map);
