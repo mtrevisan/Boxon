@@ -72,11 +72,12 @@ public final class ConfigurationMessage<T>{
 		header = type.getAnnotation(ConfigurationHeader.class);
 		if(header == null)
 			throw AnnotationException.create("No header present in this class: {}", type.getName());
+
 		final Version minProtocolVersion = Version.of(header.minProtocol());
 		final Version maxProtocolVersion = Version.of(header.maxProtocol());
 		try{
-			ConfigurationAnnotationValidator.fromAnnotation(header)
-				.validate(null, header, minProtocolVersion, maxProtocolVersion);
+			final ConfigurationAnnotationValidator validator = ConfigurationAnnotationValidator.fromAnnotationType(header.annotationType());
+			validator.validate(null, header, minProtocolVersion, maxProtocolVersion);
 
 			final List<ConfigField> configFields = loadAnnotatedFields(type, ReflectionHelper.getAccessibleFields(type), minProtocolVersion,
 				maxProtocolVersion);
@@ -150,18 +151,17 @@ public final class ConfigurationMessage<T>{
 					|| ConfigurationSkip.ConfigurationSkips.class.isAssignableFrom(annotationType))
 				continue;
 
-			if(isValidAnnotation(field, annotations[i], minProtocolVersion, maxProtocolVersion))
-				foundAnnotation = annotations[i];
+			validateAnnotation(field, annotations[i], minProtocolVersion, maxProtocolVersion);
+
+			foundAnnotation = annotations[i];
 		}
 		return foundAnnotation;
 	}
 
-	private static boolean isValidAnnotation(final Field field, final Annotation annotation, final Version minProtocolVersion,
+	private static void validateAnnotation(final Field field, final Annotation annotation, final Version minProtocolVersion,
 			final Version maxProtocolVersion) throws AnnotationException, CodecException{
-		final ConfigurationAnnotationValidator validator = ConfigurationAnnotationValidator.fromAnnotation(annotation);
-		if(validator != null)
-			validator.validate(field, annotation, minProtocolVersion, maxProtocolVersion);
-		return (validator != null);
+		final ConfigurationAnnotationValidator validator = ConfigurationAnnotationValidator.fromAnnotationType(annotation.annotationType());
+		validator.validate(field, annotation, minProtocolVersion, maxProtocolVersion);
 	}
 
 	private List<String> extractProtocolVersionBoundaries(final List<ConfigField> configFields){

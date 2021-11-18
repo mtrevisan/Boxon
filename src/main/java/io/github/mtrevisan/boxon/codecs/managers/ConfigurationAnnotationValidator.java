@@ -257,8 +257,8 @@ enum ConfigurationAnnotationValidator{
 		annotationType = type;
 	}
 
-	static ConfigurationAnnotationValidator fromAnnotation(final Annotation annotation){
-		return VALIDATORS.get(annotation.annotationType());
+	static ConfigurationAnnotationValidator fromAnnotationType(final Class<? extends Annotation> annotationType){
+		return VALIDATORS.get(annotationType);
 	}
 
 	abstract void validate(final Field field, final Annotation annotation, final Version minProtocolVersion,

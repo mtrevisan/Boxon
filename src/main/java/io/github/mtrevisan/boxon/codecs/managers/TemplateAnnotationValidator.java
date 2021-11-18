@@ -125,6 +125,8 @@ public enum TemplateAnnotationValidator{
 	@InjectEventListener
 	private static final EventListener EVENT_LISTENER = EventListener.getNoOpInstance();
 
+	private static final String EMPTY_STRING = "";
+
 	private static final Map<Class<? extends Annotation>, TemplateAnnotationValidator> VALIDATORS;
 	static{
 		final TemplateAnnotationValidator[] values = values();
@@ -183,7 +185,8 @@ public enum TemplateAnnotationValidator{
 		if(condition.isEmpty())
 			throw AnnotationException.create("All conditions must be non-empty");
 		if(hasPrefixSize ^ ContextHelper.containsPrefixReference(condition))
-			throw AnnotationException.create("All conditions must {}contain a reference to the prefix", (hasPrefixSize? "": "not "));
+			throw AnnotationException.create("All conditions must {}contain a reference to the prefix",
+				(hasPrefixSize? EMPTY_STRING: "not "));
 	}
 
 	private static void validateObjectDefaultAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> type,
