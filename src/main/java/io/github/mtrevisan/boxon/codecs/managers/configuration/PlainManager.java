@@ -170,7 +170,7 @@ final class PlainManager implements ConfigurationManagerInterface{
 				throw EncodeException.create("Data value incompatible with field type {}; found {}[], expected {}[] for enumeration type",
 					dataKey, componentType, enumeration.getSimpleName());
 		}
-		if(!enumeration.isInstance(dataValue) || String.class.isInstance(dataValue) && !((String)dataValue).isEmpty())
+		else if(!enumeration.isInstance(dataValue) || String.class.isInstance(dataValue) && !((String)dataValue).isEmpty())
 			throw EncodeException.create("Data value incompatible with field type {}; found {}, expected {} for enumeration type",
 				dataKey, dataValueClass, enumeration.getSimpleName());
 	}

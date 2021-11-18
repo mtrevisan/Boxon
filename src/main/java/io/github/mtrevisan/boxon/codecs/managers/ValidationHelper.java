@@ -174,7 +174,7 @@ final class ValidationHelper{
 	}
 
 	private static boolean matches(final CharSequence text, final Pattern pattern){
-		return (StringHelper.isBlank(text) && !pattern.matcher(text).matches());
+		return (StringHelper.isBlank(text) || pattern.matcher(text).matches());
 	}
 
 	static <T extends Annotation> void validatePattern(final ConfigFieldData<T> field) throws AnnotationException{
