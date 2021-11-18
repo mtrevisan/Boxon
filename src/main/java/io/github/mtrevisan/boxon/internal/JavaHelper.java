@@ -35,8 +35,6 @@ public final class JavaHelper{
 	/** An empty immutable {@code String} array. */
 	public static final String[] EMPTY_ARRAY = new String[0];
 
-	static final String METHOD_VALUE_OF = "valueOf";
-
 
 	private JavaHelper(){}
 
@@ -62,7 +60,7 @@ public final class JavaHelper{
 
 	private static Object toObjectValue(final String value, final Class<?> objectiveType) throws CodecException{
 		try{
-			final Method method = objectiveType.getDeclaredMethod(METHOD_VALUE_OF, String.class);
+			final Method method = objectiveType.getDeclaredMethod(StringHelper.METHOD_VALUE_OF, String.class);
 			return method.invoke(null, value);
 		}
 		catch(final NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored){

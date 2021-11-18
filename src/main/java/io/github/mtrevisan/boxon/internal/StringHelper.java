@@ -39,6 +39,8 @@ public final class StringHelper{
 	/** An empty immutable {@code String} array. */
 	private static final String[] EMPTY_ARRAY = new String[0];
 
+	static final String METHOD_VALUE_OF = "valueOf";
+
 
 	private StringHelper(){}
 
@@ -265,7 +267,7 @@ public final class StringHelper{
 		Object response = null;
 		if(isNumeric(text)){
 			try{
-				final Method method = objectiveType.getDeclaredMethod(JavaHelper.METHOD_VALUE_OF, String.class, int.class);
+				final Method method = objectiveType.getDeclaredMethod(METHOD_VALUE_OF, String.class, int.class);
 				final boolean hexadecimal = text.startsWith("0x");
 				response = method.invoke(null, (hexadecimal? text.substring(2): text), (hexadecimal? 16: 10));
 			}

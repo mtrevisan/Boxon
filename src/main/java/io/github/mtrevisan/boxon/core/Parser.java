@@ -523,11 +523,8 @@ public final class Parser{
 		try{
 			final String configurationType = entry.getKey();
 			final Map<String, Object> data = entry.getValue();
-			final LoaderConfiguration.ConfigurationPair configurationPair
-				= loaderConfiguration.getConfigurationWithDefaults(configurationType, data, protocol);
-
-			final ConfigurationMessage<?> configuration = configurationPair.getConfiguration();
-			final Object configurationData = configurationPair.getConfigurationData();
+			final ConfigurationMessage<?> configuration = loaderConfiguration.getConfiguration(configurationType);
+			final Object configurationData = loaderConfiguration.getConfigurationWithDefaults(configuration, data, protocol);
 			configurationParser.encode(configuration, writer, configurationData, protocol);
 		}
 		catch(final Exception e){

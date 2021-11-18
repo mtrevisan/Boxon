@@ -76,29 +76,6 @@ public final class LoaderConfiguration{
 	public static final String KEY_CHARSET = "charset";
 
 
-	public static final class ConfigurationPair{
-		private final ConfigurationMessage<?> configuration;
-		private final Object configurationData;
-
-		static ConfigurationPair of(final ConfigurationMessage<?> configuration, final Object configurationData){
-			return new ConfigurationPair(configuration, configurationData);
-		}
-
-		private ConfigurationPair(final ConfigurationMessage<?> configuration, final Object configurationData){
-			this.configuration = configuration;
-			this.configurationData = configurationData;
-		}
-
-		public ConfigurationMessage<?> getConfiguration(){
-			return configuration;
-		}
-
-		public Object getConfigurationData(){
-			return configurationData;
-		}
-	}
-
-
 	@InjectEventListener
 	private final EventListener eventListener;
 
@@ -228,14 +205,13 @@ public final class LoaderConfiguration{
 	/**
 	 * Retrieve the configuration by class, filled with data, and considering the protocol version.
 	 *
-	 * @param configurationType	The configuration message type.
+	 * @param configuration	The configuration message.
 	 * @param data	The data to load into the configuration.
 	 * @param protocol	The protocol the data refers to.
-	 * @return	The configuration.
+	 * @return	The configuration data.
 	 */
-	public ConfigurationPair getConfigurationWithDefaults(final String configurationType, final Map<String, Object> data,
+	public Object getConfigurationWithDefaults(final ConfigurationMessage<?> configuration, final Map<String, Object> data,
 			final Version protocol) throws EncodeException, CodecException{
-		final ConfigurationMessage<?> configuration = getConfiguration(configurationType);
 		final Object configurationObject = ConstructorHelper.getCreator(configuration.getType())
 			.get();
 
@@ -268,7 +244,7 @@ public final class LoaderConfiguration{
 		//check mandatory fields
 		validateMandatoryFields(mandatoryFields);
 
-		return ConfigurationPair.of(configuration, configurationObject);
+		return configurationObject;
 	}
 
 	/**
@@ -276,7 +252,7 @@ public final class LoaderConfiguration{
 	 *
 	 * @return	The configuration.
 	 */
-	private ConfigurationMessage<?> getConfiguration(final String configurationType) throws EncodeException{
+	public ConfigurationMessage<?> getConfiguration(final String configurationType) throws EncodeException{
 		final ConfigurationMessage<?> configuration = configurations.get(configurationType);
 		if(configuration == null)
 			throw EncodeException.create("Cannot find any configuration for given class type");
