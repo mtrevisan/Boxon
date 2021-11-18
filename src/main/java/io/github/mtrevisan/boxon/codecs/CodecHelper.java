@@ -26,9 +26,9 @@ package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
-import io.github.mtrevisan.boxon.external.ConfigurationEnum;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
+import io.github.mtrevisan.boxon.codecs.managers.ConstructorHelper;
 import io.github.mtrevisan.boxon.codecs.managers.encode.EncodeManagerFactory;
 import io.github.mtrevisan.boxon.codecs.managers.encode.EncodeManagerInterface;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
@@ -37,10 +37,10 @@ import io.github.mtrevisan.boxon.external.BitReader;
 import io.github.mtrevisan.boxon.external.BitSet;
 import io.github.mtrevisan.boxon.external.BitWriter;
 import io.github.mtrevisan.boxon.external.ByteOrder;
+import io.github.mtrevisan.boxon.external.ConfigurationEnum;
 import io.github.mtrevisan.boxon.internal.Evaluator;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.ParserDataType;
-import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
 
 import java.lang.reflect.Array;
 import java.nio.charset.Charset;
@@ -138,7 +138,7 @@ public final class CodecHelper{
 
 	@SuppressWarnings("unchecked")
 	static <T> void validateData(final Class<? extends Validator<?>> validatorType, final Object data){
-		final Validator<T> validator = (Validator<T>)ReflectionHelper.getCreator(validatorType)
+		final Validator<T> validator = (Validator<T>)ConstructorHelper.getCreator(validatorType)
 			.get();
 		if(!validator.isValid((T)data))
 			throw new IllegalArgumentException("Validation with " + validatorType.getSimpleName() + " not passed (value is " + data + ")");
@@ -147,7 +147,7 @@ public final class CodecHelper{
 	@SuppressWarnings("unchecked")
 	static <IN, OUT> OUT converterDecode(final Class<? extends Converter<?, ?>> converterType, final Object data){
 		try{
-			final Converter<IN, OUT> converter = (Converter<IN, OUT>)ReflectionHelper.getCreator(converterType)
+			final Converter<IN, OUT> converter = (Converter<IN, OUT>)ConstructorHelper.getCreator(converterType)
 				.get();
 
 			return converter.decode((IN)data);
@@ -160,7 +160,7 @@ public final class CodecHelper{
 
 	@SuppressWarnings("unchecked")
 	static <IN, OUT> IN converterEncode(final Class<? extends Converter<?, ?>> converterType, final Object data){
-		final Converter<IN, OUT> converter = (Converter<IN, OUT>)ReflectionHelper.getCreator(converterType)
+		final Converter<IN, OUT> converter = (Converter<IN, OUT>)ConstructorHelper.getCreator(converterType)
 			.get();
 		return converter.encode((OUT)data);
 	}

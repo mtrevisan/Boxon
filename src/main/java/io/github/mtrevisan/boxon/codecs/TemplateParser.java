@@ -29,6 +29,7 @@ import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.Skip;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
 import io.github.mtrevisan.boxon.codecs.managers.BoundedField;
+import io.github.mtrevisan.boxon.codecs.managers.ConstructorHelper;
 import io.github.mtrevisan.boxon.codecs.managers.EvaluatedField;
 import io.github.mtrevisan.boxon.codecs.managers.InjectEventListener;
 import io.github.mtrevisan.boxon.codecs.managers.Template;
@@ -42,7 +43,6 @@ import io.github.mtrevisan.boxon.external.CodecInterface;
 import io.github.mtrevisan.boxon.external.EventListener;
 import io.github.mtrevisan.boxon.internal.Evaluator;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
-import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 
 import java.lang.annotation.Annotation;
@@ -110,7 +110,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	public <T> T decode(final Template<T> template, final BitReader reader, final Object parentObject) throws FieldException{
 		final int startPosition = reader.position();
 
-		final T currentObject = ReflectionHelper.getCreator(template.getType())
+		final T currentObject = ConstructorHelper.getCreator(template.getType())
 			.get();
 
 		final ParserContext<T> parserContext = new ParserContext<>(parentObject, currentObject);
@@ -210,7 +210,7 @@ public final class TemplateParser implements TemplateParserInterface{
 			startPosition += checksum.skipStart();
 			final int endPosition = reader.position() - checksum.skipEnd();
 
-			final Checksummer checksummer = ReflectionHelper.getCreator(checksum.algorithm())
+			final Checksummer checksummer = ConstructorHelper.getCreator(checksum.algorithm())
 				.get();
 			final short startValue = checksum.startValue();
 			final short calculatedChecksum = checksummer.calculateChecksum(reader.array(), startPosition, endPosition, startValue);

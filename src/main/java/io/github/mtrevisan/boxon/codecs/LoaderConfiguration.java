@@ -28,7 +28,10 @@ import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.codecs.managers.ConfigField;
 import io.github.mtrevisan.boxon.codecs.managers.ConfigurationMessage;
+import io.github.mtrevisan.boxon.codecs.managers.ConstructorHelper;
 import io.github.mtrevisan.boxon.codecs.managers.InjectEventListener;
+import io.github.mtrevisan.boxon.codecs.managers.Memoizer;
+import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
 import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationManagerFactory;
 import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationManagerInterface;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
@@ -37,8 +40,6 @@ import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.external.EventListener;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
-import io.github.mtrevisan.boxon.codecs.managers.Memoizer;
-import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
 import io.github.mtrevisan.boxon.internal.ThrowingFunction;
 
 import java.lang.annotation.Annotation;
@@ -236,7 +237,7 @@ public final class LoaderConfiguration{
 	public ConfigurationPair getConfigurationWithDefaults(final String configurationType, final Map<String, Object> data,
 			final Version protocol) throws EncodeException, ConfigurationException, CodecException{
 		final ConfigurationMessage<?> configuration = getConfiguration(configurationType);
-		final Object configurationObject = ReflectionHelper.getCreator(configuration.getType())
+		final Object configurationObject = ConstructorHelper.getCreator(configuration.getType())
 			.get();
 
 		//fill in default values

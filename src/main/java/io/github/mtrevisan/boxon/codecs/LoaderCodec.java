@@ -25,11 +25,13 @@
 package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
+import io.github.mtrevisan.boxon.codecs.managers.ConstructorHelper;
+import io.github.mtrevisan.boxon.codecs.managers.GenericHelper;
 import io.github.mtrevisan.boxon.codecs.managers.InjectEventListener;
-import io.github.mtrevisan.boxon.external.CodecInterface;
-import io.github.mtrevisan.boxon.external.EventListener;
 import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
 import io.github.mtrevisan.boxon.codecs.managers.ReflectiveClassLoader;
+import io.github.mtrevisan.boxon.external.CodecInterface;
+import io.github.mtrevisan.boxon.external.EventListener;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -121,7 +123,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 		final List<CodecInterface<?>> codecs = new ArrayList<>(derivedClasses.size());
 		for(final Class<?> type : derivedClasses){
 			//for each extracted class, try to create an instance
-			final CodecInterface<?> codec = (CodecInterface<?>)ReflectionHelper.getCreator(type)
+			final CodecInterface<?> codec = (CodecInterface<?>)ConstructorHelper.getCreator(type)
 				.get();
 			if(codec != null)
 				//if the codec was created successfully instanced, add it to the list of codecs...
@@ -167,7 +169,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	}
 
 	private void addCodecInner(final CodecInterface<?> codec){
-		final Class<?> codecType = ReflectionHelper.resolveGenericTypes(codec.getClass(), CodecInterface.class).get(0);
+		final Class<?> codecType = GenericHelper.resolveGenericTypes(codec.getClass(), CodecInterface.class).get(0);
 		codecs.put(codecType, codec);
 	}
 
