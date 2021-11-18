@@ -160,17 +160,21 @@ final class ValidationHelper{
 	private static <T extends Annotation> void validateMinMaxDefaultValuesToPattern(final Pattern formatPattern,
 			final ConfigFieldData<T> field) throws AnnotationException{
 		//defaultValue compatible with pattern
-		if(!StringHelper.isBlank(field.defaultValue) && !formatPattern.matcher(field.defaultValue).matches())
+		if(!matches(field.defaultValue, formatPattern))
 			throw AnnotationException.create("Default value not compatible with `pattern` in {}; found {}, expected {}",
 				field.annotation.getSimpleName(), field.defaultValue, formatPattern.pattern());
 		//minValue compatible with pattern
-		if(!StringHelper.isBlank(field.minValue) && !formatPattern.matcher(field.minValue).matches())
+		if(!matches(field.minValue, formatPattern))
 			throw AnnotationException.create("Minimum value not compatible with `pattern` in {}; found {}, expected {}",
 				field.annotation.getSimpleName(), field.minValue, formatPattern.pattern());
 		//maxValue compatible with pattern
-		if(!StringHelper.isBlank(field.maxValue) && !formatPattern.matcher(field.maxValue).matches())
+		if(!matches(field.maxValue, formatPattern))
 			throw AnnotationException.create("Maximum value not compatible with `pattern` in {}; found {}, expected {}",
 				field.annotation.getSimpleName(), field.maxValue, formatPattern.pattern());
+	}
+
+	private static boolean matches(final CharSequence text, final Pattern pattern){
+		return (StringHelper.isBlank(text) && !pattern.matcher(text).matches());
 	}
 
 	static <T extends Annotation> void validatePattern(final ConfigFieldData<T> field) throws AnnotationException{
@@ -198,7 +202,7 @@ final class ValidationHelper{
 	static <T extends Annotation> void validateEnumeration(final ConfigFieldData<T> field) throws AnnotationException{
 		final boolean isFieldArray = field.getFieldType().isArray();
 
-		if(field.enumeration != NullEnum.class){
+		if(field.hasEnumeration()){
 			//enumeration can be encoded
 			if(!ConfigurationEnum.class.isAssignableFrom(field.enumeration))
 				throw AnnotationException.create("Enumeration must implement interface {} in {} in field {}",
