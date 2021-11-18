@@ -120,48 +120,62 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 
 		final Map<String, Object> alternativeMap = extractMap(fieldType);
 
-		Map<String, Object> alternativesMap = null;
-		if(protocol.isEmpty()){
+		final Map<String, Object> alternativesMap;
+		if(protocol.isEmpty())
 			//extract all the alternatives, because it was requested all the configurations regardless of protocol:
-			final AlternativeSubField[] alternativeFields = annotation.value();
-			final Collection<Map<String, Object>> alternatives = new ArrayList<>(alternativeFields.length);
-			for(int j = 0; j < alternativeFields.length; j ++){
-				final AlternativeSubField alternativeField = alternativeFields[j];
-
-				final Map<String, Object> fieldMap = extractMap(alternativeField, fieldType);
-
-				ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_MIN_PROTOCOL, alternativeField.minProtocol(), fieldMap);
-				ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_MAX_PROTOCOL, alternativeField.maxProtocol(), fieldMap);
-				ConfigurationHelper.putValueIfNotEmpty(LoaderConfiguration.KEY_DEFAULT_VALUE, alternativeField.defaultValue(), fieldType,
-					annotation.enumeration(), fieldMap);
-
-				fieldMap.putAll(alternativeMap);
-
-				alternatives.add(fieldMap);
-			}
-			alternativesMap = new HashMap<>(3);
-			alternativesMap.put(LoaderConfiguration.KEY_ALTERNATIVES, alternatives);
-			ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_MIN_PROTOCOL, annotation.minProtocol(), alternativesMap);
-			ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_MAX_PROTOCOL, annotation.maxProtocol(), alternativesMap);
-		}
-		else{
+			alternativesMap = extractConfigurationMapWithoutProtocol(fieldType, alternativeMap);
+		else
 			//extract the specific alternative, because it was requested the configuration of a particular protocol:
-			final AlternativeSubField fieldBinding = extractField(protocol);
-			if(fieldBinding != null){
-				alternativesMap = extractMap(fieldBinding, fieldType);
+			alternativesMap = extractConfigurationMapWithProtocol(fieldType, alternativeMap, protocol);
+		return alternativesMap;
+	}
 
-				ConfigurationHelper.putValueIfNotEmpty(LoaderConfiguration.KEY_DEFAULT_VALUE, fieldBinding.defaultValue(), fieldType,
-					annotation.enumeration(), alternativesMap);
+	private Map<String, Object> extractConfigurationMapWithoutProtocol(final Class<?> fieldType, final Map<String, Object> alternativeMap)
+			throws ConfigurationException, CodecException{
+		final AlternativeSubField[] alternativeFields = annotation.value();
+		final Collection<Map<String, Object>> alternatives = new ArrayList<>(alternativeFields.length);
+		for(int j = 0; j < alternativeFields.length; j ++){
+			final AlternativeSubField alternativeField = alternativeFields[j];
 
-				alternativesMap.putAll(alternativeMap);
+			final Map<String, Object> fieldMap = extractMap(alternativeField, fieldType);
 
-			}
+			ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_MIN_PROTOCOL, alternativeField.minProtocol(), fieldMap);
+			ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_MAX_PROTOCOL, alternativeField.maxProtocol(), fieldMap);
+			ConfigurationHelper.putValueIfNotEmpty(LoaderConfiguration.KEY_DEFAULT_VALUE, alternativeField.defaultValue(), fieldType,
+				annotation.enumeration(), fieldMap);
+
+			fieldMap.putAll(alternativeMap);
+
+			alternatives.add(fieldMap);
 		}
+		final Map<String, Object> alternativesMap = new HashMap<>(3);
+		alternativesMap.put(LoaderConfiguration.KEY_ALTERNATIVES, alternatives);
+		ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_MIN_PROTOCOL, annotation.minProtocol(), alternativesMap);
+		ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_MAX_PROTOCOL, annotation.maxProtocol(), alternativesMap);
+		return alternativesMap;
+	}
+
+	private Map<String, Object> extractConfigurationMapWithProtocol(final Class<?> fieldType, final Map<String, Object> alternativeMap,
+			final Version protocol) throws ConfigurationException, CodecException{
+		final Map<String, Object> alternativesMap;
+		final AlternativeSubField fieldBinding = extractField(protocol);
+		if(fieldBinding != null){
+			alternativesMap = new HashMap<>(alternativeMap.size() + 6);
+
+			alternativesMap.putAll(extractMap(fieldBinding, fieldType));
+
+			ConfigurationHelper.putValueIfNotEmpty(LoaderConfiguration.KEY_DEFAULT_VALUE, fieldBinding.defaultValue(), fieldType,
+				annotation.enumeration(), alternativesMap);
+
+			alternativesMap.putAll(alternativeMap);
+		}
+		else
+			alternativesMap = Collections.emptyMap();
 		return alternativesMap;
 	}
 
 	private Map<String, Object> extractMap(final Class<?> fieldType) throws ConfigurationException{
-		final Map<String, Object> map = new HashMap<>(6);
+		final Map<String, Object> map = new HashMap<>(4);
 
 		ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_LONG_DESCRIPTION, annotation.longDescription(), map);
 		ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_UNIT_OF_MEASURE, annotation.unitOfMeasure(), map);
@@ -176,7 +190,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 
 	private static Map<String, Object> extractMap(final AlternativeSubField binding, final Class<?> fieldType) throws ConfigurationException,
 			CodecException{
-		final Map<String, Object> map = new HashMap<>(6);
+		final Map<String, Object> map = new HashMap<>(7);
 
 		ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_LONG_DESCRIPTION, binding.longDescription(), map);
 		ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_UNIT_OF_MEASURE, binding.unitOfMeasure(), map);

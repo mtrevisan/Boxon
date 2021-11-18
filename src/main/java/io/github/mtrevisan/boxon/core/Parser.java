@@ -453,10 +453,8 @@ public final class Parser{
 			final Annotation annotation = field.getBinding();
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(annotation);
 			final Map<String, Object> fieldMap = manager.extractConfigurationMap(field.getFieldType(), protocol);
-			if(!fieldMap.isEmpty()){
-				final String shortDescription = manager.getShortDescription();
-				fieldsMap.put(shortDescription, fieldMap);
-			}
+			if(!fieldMap.isEmpty())
+				fieldsMap.put(manager.getShortDescription(), fieldMap);
 		}
 		return fieldsMap;
 	}
