@@ -26,6 +26,7 @@ package io.github.mtrevisan.boxon.codecs.managers;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.InaccessibleObjectException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -193,7 +194,7 @@ public final class ReflectionHelper{
 					break;
 				}
 			}
-			catch(final NoSuchMethodException ignored){}
+			catch(final NoSuchMethodException | SecurityException | InaccessibleObjectException ignored){}
 
 			//go up to parent class
 			cls = cls.getSuperclass();

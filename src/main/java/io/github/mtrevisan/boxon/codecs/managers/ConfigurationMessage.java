@@ -97,14 +97,11 @@ public final class ConfigurationMessage<T>{
 		String previous = null;
 		final Iterator<String> itr = protocolVersions.iterator();
 		while(itr.hasNext()){
-			if(previous == null)
-				previous = itr.next();
-			else{
-				final String current = itr.next();
-				if(current.equals(previous))
-					itr.remove();
-				previous = current;
-			}
+			final String current = itr.next();
+			if(current.equals(previous))
+				itr.remove();
+
+			previous = current;
 		}
 	}
 

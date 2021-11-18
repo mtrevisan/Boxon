@@ -235,7 +235,7 @@ public final class LoaderConfiguration{
 	 * @return	The configuration.
 	 */
 	public ConfigurationPair getConfigurationWithDefaults(final String configurationType, final Map<String, Object> data,
-			final Version protocol) throws EncodeException, ConfigurationException, CodecException{
+			final Version protocol) throws EncodeException, CodecException{
 		final ConfigurationMessage<?> configuration = getConfiguration(configurationType);
 		final Object configurationObject = ConstructorHelper.getCreator(configuration.getType())
 			.get();
@@ -285,7 +285,7 @@ public final class LoaderConfiguration{
 	}
 
 	private static void fillDefaultValues(final Object configurationObject, final List<ConfigField> fields, final Version protocol)
-			throws EncodeException, ConfigurationException, CodecException{
+			throws EncodeException, CodecException{
 		for(int i = 0; i < fields.size(); i ++){
 			final ConfigField field = fields.get(i);
 			final Annotation annotation = field.getBinding();
