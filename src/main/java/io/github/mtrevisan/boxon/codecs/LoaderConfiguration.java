@@ -55,6 +55,7 @@ import java.util.TreeMap;
 
 public final class LoaderConfiguration{
 
+	//FIXME may be an enum?
 	public static final String KEY_CONFIGURATION_HEADER = "header";
 	public static final String KEY_CONFIGURATION_FIELDS = "fields";
 	public static final String KEY_CONFIGURATION_PROTOCOL_VERSION_BOUNDARIES = "protocolVersionBoundaries";
