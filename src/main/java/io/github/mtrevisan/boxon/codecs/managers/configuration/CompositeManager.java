@@ -32,7 +32,7 @@ import freemarker.template.TemplateExceptionHandler;
 import io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.CompositeSubField;
 import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
-import io.github.mtrevisan.boxon.codecs.LoaderConfiguration;
+import io.github.mtrevisan.boxon.codecs.ConfigurationKey;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
@@ -126,7 +126,7 @@ final class CompositeManager implements ConfigurationManagerInterface{
 
 			compositeFieldsMap.put(bindings[j].shortDescription(), fieldMap);
 		}
-		compositeMap.put(LoaderConfiguration.KEY_CONFIGURATION_COMPOSITE_FIELDS, compositeFieldsMap);
+		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.CONFIGURATION_COMPOSITE_FIELDS, compositeFieldsMap, compositeMap);
 
 		if(protocol.isEmpty())
 			ConfigurationHelper.extractMinMaxProtocol(annotation.minProtocol(), annotation.maxProtocol(), compositeMap);
@@ -137,9 +137,9 @@ final class CompositeManager implements ConfigurationManagerInterface{
 	private Map<String, Object> extractMap() throws ConfigurationException{
 		final Map<String, Object> map = new HashMap<>(6);
 
-		ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_LONG_DESCRIPTION, annotation.longDescription(), map);
-		ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_PATTERN, annotation.pattern(), map);
-		ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_CHARSET, annotation.charset(), map);
+		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, annotation.longDescription(), map);
+		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.PATTERN, annotation.pattern(), map);
+		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.CHARSET, annotation.charset(), map);
 
 		return map;
 	}
@@ -148,15 +148,15 @@ final class CompositeManager implements ConfigurationManagerInterface{
 			CodecException{
 		final Map<String, Object> map = new HashMap<>(10);
 
-		ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_LONG_DESCRIPTION, binding.longDescription(), map);
-		ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_UNIT_OF_MEASURE, binding.unitOfMeasure(), map);
+		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, binding.longDescription(), map);
+		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.UNIT_OF_MEASURE, binding.unitOfMeasure(), map);
 
-		ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_PATTERN, binding.pattern(), map);
+		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.PATTERN, binding.pattern(), map);
 		if(!fieldType.isEnum() && !fieldType.isArray())
-			ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_FIELD_TYPE,
-				ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName(), map);
+			ConfigurationHelper.putIfNotEmpty(ConfigurationKey.FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName(),
+				map);
 
-		ConfigurationHelper.putValueIfNotEmpty(LoaderConfiguration.KEY_DEFAULT_VALUE, binding.defaultValue(), fieldType, NullEnum.class, map);
+		ConfigurationHelper.putValueIfNotEmpty(ConfigurationKey.DEFAULT_VALUE, binding.defaultValue(), fieldType, NullEnum.class, map);
 
 		return map;
 	}

@@ -24,9 +24,9 @@
  */
 package io.github.mtrevisan.boxon.codecs.managers.configuration;
 
+import io.github.mtrevisan.boxon.codecs.ConfigurationKey;
 import io.github.mtrevisan.boxon.external.ConfigurationEnum;
 import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
-import io.github.mtrevisan.boxon.codecs.LoaderConfiguration;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
@@ -76,14 +76,14 @@ public final class ConfigurationHelper{
 	}
 
 
-	public static void putIfNotEmpty(final String key, final Object value, @SuppressWarnings("BoundedWildcard") final Map<String, Object> map)
-			throws ConfigurationException{
+	public static void putIfNotEmpty(final ConfigurationKey key, final Object value,
+			@SuppressWarnings("BoundedWildcard") final Map<String, Object> map) throws ConfigurationException{
 		if(value != null && (!String.class.isInstance(value) || !StringHelper.isBlank((CharSequence)value)))
-			if(map.put(key, value) != null)
-				throw ConfigurationException.create("Duplicated short description: {}", key);
+			if(map.put(key.toString(), value) != null)
+				throw ConfigurationException.create("Duplicated short description: {}", key.toString());
 	}
 
-	static void putValueIfNotEmpty(final String key, final String value, final Class<?> fieldType,
+	public static void putValueIfNotEmpty(final ConfigurationKey key, final String value, final Class<?> fieldType,
 			final Class<? extends ConfigurationEnum> enumeration, @SuppressWarnings("BoundedWildcard") final Map<String, Object> map)
 			throws ConfigurationException, CodecException{
 		if(!StringHelper.isBlank(value)){
@@ -92,8 +92,8 @@ public final class ConfigurationHelper{
 				val = splitMultipleEnumerations(value);
 			else if(Number.class.isAssignableFrom(ParserDataType.toObjectiveTypeOrSelf(fieldType)))
 				val = JavaHelper.getValue(fieldType, value);
-			if(map.put(key, val) != null)
-				throw ConfigurationException.create("Duplicated short description: {}", key);
+			if(map.put(key.toString(), val) != null)
+				throw ConfigurationException.create("Duplicated short description: {}", key.toString());
 		}
 	}
 
@@ -147,16 +147,16 @@ public final class ConfigurationHelper{
 			final String[] enumValues = new String[enumConstants.length];
 			for(int j = 0; j < enumConstants.length; j ++)
 				enumValues[j] = enumConstants[j].name();
-			putIfNotEmpty(LoaderConfiguration.KEY_ENUMERATION, enumValues, map);
+			putIfNotEmpty(ConfigurationKey.ENUMERATION, enumValues, map);
 			if(fieldType.isEnum())
-				putIfNotEmpty(LoaderConfiguration.KEY_MUTUALLY_EXCLUSIVE, true, map);
+				putIfNotEmpty(ConfigurationKey.MUTUALLY_EXCLUSIVE, true, map);
 		}
 	}
 
 	static void extractMinMaxProtocol(final String minProtocol, final String maxProtocol, final Map<String, Object> fieldMap)
 			throws ConfigurationException{
-		putIfNotEmpty(LoaderConfiguration.KEY_MIN_PROTOCOL, minProtocol, fieldMap);
-		putIfNotEmpty(LoaderConfiguration.KEY_MAX_PROTOCOL, maxProtocol, fieldMap);
+		putIfNotEmpty(ConfigurationKey.MIN_PROTOCOL, minProtocol, fieldMap);
+		putIfNotEmpty(ConfigurationKey.MAX_PROTOCOL, maxProtocol, fieldMap);
 	}
 
 }

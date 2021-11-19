@@ -55,28 +55,6 @@ import java.util.TreeMap;
 
 public final class LoaderConfiguration{
 
-	//FIXME may be an enum?
-	public static final String KEY_CONFIGURATION_HEADER = "header";
-	public static final String KEY_CONFIGURATION_FIELDS = "fields";
-	public static final String KEY_CONFIGURATION_PROTOCOL_VERSION_BOUNDARIES = "protocolVersionBoundaries";
-	public static final String KEY_CONFIGURATION_COMPOSITE_FIELDS = "fields";
-
-	public static final String KEY_ALTERNATIVES = "alternatives";
-	public static final String KEY_FIELD_TYPE = "fieldType";
-	public static final String KEY_SHORT_DESCRIPTION = "shortDescription";
-	public static final String KEY_LONG_DESCRIPTION = "longDescription";
-	public static final String KEY_UNIT_OF_MEASURE = "unitOfMeasure";
-	public static final String KEY_MIN_PROTOCOL = "minProtocol";
-	public static final String KEY_MAX_PROTOCOL = "maxProtocol";
-	public static final String KEY_MIN_VALUE = "minValue";
-	public static final String KEY_MAX_VALUE = "maxValue";
-	public static final String KEY_PATTERN = "pattern";
-	public static final String KEY_ENUMERATION = "enumeration";
-	public static final String KEY_MUTUALLY_EXCLUSIVE = "mutuallyExclusive";
-	public static final String KEY_DEFAULT_VALUE = "defaultValue";
-	public static final String KEY_CHARSET = "charset";
-
-
 	@InjectEventListener
 	private final EventListener eventListener;
 

@@ -26,6 +26,7 @@ package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
+import io.github.mtrevisan.boxon.codecs.ConfigurationKey;
 import io.github.mtrevisan.boxon.codecs.managers.ConfigField;
 import io.github.mtrevisan.boxon.codecs.managers.ConfigurationMessage;
 import io.github.mtrevisan.boxon.codecs.ConfigurationParser;
@@ -457,10 +458,12 @@ public final class Parser{
 			final Map<String, Object> map = new HashMap<>(3);
 			final Map<String, Object> headerMap = extractMap(protocol, header);
 			final Map<String, Object> fieldsMap = extractFieldsMap(protocol, configuration);
-			map.put(LoaderConfiguration.KEY_CONFIGURATION_HEADER, headerMap);
-			map.put(LoaderConfiguration.KEY_CONFIGURATION_FIELDS, fieldsMap);
-			if(protocol.isEmpty())
-				map.put(LoaderConfiguration.KEY_CONFIGURATION_PROTOCOL_VERSION_BOUNDARIES, configuration.getProtocolVersionBoundaries());
+			ConfigurationHelper.putIfNotEmpty(ConfigurationKey.CONFIGURATION_HEADER, headerMap, map);
+			ConfigurationHelper.putIfNotEmpty(ConfigurationKey.CONFIGURATION_FIELDS, fieldsMap, map);
+			if(protocol.isEmpty()){
+				final List<String> protocolVersionBoundaries = configuration.getProtocolVersionBoundaries();
+				ConfigurationHelper.putIfNotEmpty(ConfigurationKey.CONFIGURATION_PROTOCOL_VERSION_BOUNDARIES, protocolVersionBoundaries, map);
+			}
 			response.add(map);
 		}
 		return Collections.unmodifiableList(response);
@@ -468,11 +471,11 @@ public final class Parser{
 
 	private static Map<String, Object> extractMap(final Version protocol, final ConfigurationHeader header) throws ConfigurationException{
 		final Map<String, Object> map = new HashMap<>(3);
-		ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_SHORT_DESCRIPTION, header.shortDescription(), map);
-		ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_LONG_DESCRIPTION, header.longDescription(), map);
+		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.SHORT_DESCRIPTION, header.shortDescription(), map);
+		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, header.longDescription(), map);
 		if(protocol.isEmpty()){
-			ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_MIN_PROTOCOL, header.minProtocol(), map);
-			ConfigurationHelper.putIfNotEmpty(LoaderConfiguration.KEY_MAX_PROTOCOL, header.maxProtocol(), map);
+			ConfigurationHelper.putIfNotEmpty(ConfigurationKey.MIN_PROTOCOL, header.minProtocol(), map);
+			ConfigurationHelper.putIfNotEmpty(ConfigurationKey.MAX_PROTOCOL, header.maxProtocol(), map);
 		}
 		return map;
 	}
