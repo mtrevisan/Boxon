@@ -177,6 +177,7 @@ public final class StringHelper{
 		Objects.requireNonNull(separatorChars, "Separators must be valued");
 		if(separatorChars.length() == 1)
 			return split(str, separatorChars.charAt(0), max);
+
 		if(str == null)
 			return EMPTY_ARRAY;
 
