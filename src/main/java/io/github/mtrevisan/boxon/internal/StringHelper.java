@@ -282,10 +282,10 @@ public final class StringHelper{
 
 		if(text.startsWith("0x"))
 			//hexadecimal number
-			return !isHexadecimalNumber(text);
+			return isHexadecimalNumber(text);
 		//non-hexadecimal number
 		else
-			return !isNonHexadecimalNumber(text);
+			return isNonHexadecimalNumber(text);
 	}
 
 	/**
@@ -319,25 +319,28 @@ public final class StringHelper{
 	 */
 	public static boolean isDecimalNumber(final String text){
 		//non-hexadecimal number
-		return (text != null && !text.isEmpty() && !isNonHexadecimalNumber(text));
+		return (text != null && !text.isEmpty() && isNonHexadecimalNumber(text));
+	}
+
+	private static boolean isHexadecimalNumber(String text){
+		text = text.toUpperCase(Locale.ROOT);
+		final int length = text.length();
+		for(int i = 2; i < length; i ++){
+			final char chr = text.charAt(i);
+			if((chr < '0' || chr > '9') && (chr < 'A' || chr > 'F'))
+				return false;
+		}
+		return true;
 	}
 
 	private static boolean isNonHexadecimalNumber(final CharSequence text){
 		final int length = text.length();
-		for(int i = 0; i < length; i++)
-			if(!Character.isDigit(text.charAt(i)))
-				return true;
-		return false;
-	}
-
-	private static boolean isHexadecimalNumber(final CharSequence text){
-		final int length = text.length();
-		for(int i = 2; i < length; i ++){
+		for(int i = 0; i < length; i ++){
 			final char chr = text.charAt(i);
-			if(!Character.isDigit(chr) && (chr < 'a' || chr > 'f') && (chr < 'A' || chr > 'F'))
-				return true;
+			if(chr < '0' || chr > '9')
+				return false;
 		}
-		return false;
+		return true;
 	}
 
 }

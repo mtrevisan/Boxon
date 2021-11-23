@@ -131,7 +131,7 @@ public final class Evaluator{
 		@SuppressWarnings("ReturnOfNull")
 		private static Field findFieldInClass(final String name, final Class<?> cls, final boolean mustBeStatic){
 			final Field[] declaredFields = cls.getDeclaredFields();
-			for(int i = 0; i < declaredFields.length; i++){
+			for(int i = 0; i < declaredFields.length; i ++){
 				final Field field = declaredFields[i];
 				if(field.getName().equals(name) && (!mustBeStatic || Modifier.isStatic(field.getModifiers())))
 					return field;

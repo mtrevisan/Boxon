@@ -43,8 +43,6 @@ public final class Version implements Comparable<Version>{
 	/** A separator that separates the build metadata from the normal version or the pre-release version. */
 	private static final String BUILD_PREFIX = "+";
 
-	private static final char[] VALID_CHARS = "-ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".toCharArray();
-
 
 	private final Integer major;
 	private final Integer minor;
@@ -374,9 +372,11 @@ public final class Version implements Comparable<Version>{
 	 * @return	Whether if the given text only contains valid chars and is non-{@code null}.
 	 */
 	private static boolean containsOnlyValidChars(final CharSequence text){
-		for(int i = 0; i < (text != null? text.length(): 0); i ++)
-			if(Arrays.binarySearch(VALID_CHARS, text.charAt(i)) < 0)
+		for(int i = 0; i < (text != null? text.length(): 0); i ++){
+			final char chr = text.charAt(i);
+			if(chr != '-' && (chr < 'A' || chr > 'Z') && (chr < 'a' || chr > 'z'))
 				return false;
+		}
 		return true;
 	}
 
