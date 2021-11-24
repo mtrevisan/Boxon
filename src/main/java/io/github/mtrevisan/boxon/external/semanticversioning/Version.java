@@ -27,6 +27,7 @@ package io.github.mtrevisan.boxon.external.semanticversioning;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.StringTokenizer;
 
 
@@ -371,10 +372,11 @@ public final class Version implements Comparable<Version>{
 	 * @param text	The text to check, may be {@code null}.
 	 * @return	Whether if the given text only contains valid chars and is non-{@code null}.
 	 */
-	private static boolean containsOnlyValidChars(final CharSequence text){
-		for(int i = 0; i < (text != null? text.length(): 0); i ++){
+	private static boolean containsOnlyValidChars(String text){
+		text = text.toUpperCase(Locale.ROOT);
+		for(int i = 0; i < text.length(); i ++){
 			final char chr = text.charAt(i);
-			if(chr != '-' && (chr < 'A' || chr > 'Z') && (chr < 'a' || chr > 'z'))
+			if(chr != '-' && (chr < 'A' || chr > 'Z'))
 				return false;
 		}
 		return true;
