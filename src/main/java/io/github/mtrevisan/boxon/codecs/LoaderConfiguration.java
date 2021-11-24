@@ -213,7 +213,7 @@ public final class LoaderConfiguration{
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(foundFieldAnnotation);
 			final Class<?> fieldType = foundField.getFieldType();
 			manager.validateValue(dataKey, dataValue, fieldType);
-			dataValue = manager.convertValue(configurationObject, dataKey, dataValue, foundField.getField(), protocol);
+			dataValue = manager.convertValue(dataKey, dataValue, foundField.getField(), protocol);
 			ReflectionHelper.setFieldValue(foundField.getField(), configurationObject, dataValue);
 
 			if(String.class.isInstance(dataValue) && !((String)dataValue).isEmpty() || dataValue != null)
@@ -246,7 +246,7 @@ public final class LoaderConfiguration{
 			final Annotation annotation = field.getBinding();
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(annotation);
 			Object dataValue = manager.getDefaultValue(field.getField(), protocol);
-			dataValue = manager.convertValue(configurationObject, manager.getShortDescription(), dataValue, field.getField(), protocol);
+			dataValue = manager.convertValue(manager.getShortDescription(), dataValue, field.getField(), protocol);
 			ReflectionHelper.setFieldValue(field.getField(), configurationObject, dataValue);
 		}
 	}

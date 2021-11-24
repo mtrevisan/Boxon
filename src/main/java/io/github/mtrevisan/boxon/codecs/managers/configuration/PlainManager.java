@@ -129,8 +129,8 @@ final class PlainManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	public Object convertValue(final Object configurationObject, final String dataKey, Object dataValue, final Field field,
-			final Version protocol) throws EncodeException, CodecException{
+	public Object convertValue(final String dataKey, Object dataValue, final Field field, final Version protocol) throws EncodeException,
+			CodecException{
 		if(dataValue != null){
 			final Class<?> fieldType = field.getType();
 			final Class<? extends ConfigurationEnum> enumeration = annotation.enumeration();
@@ -144,12 +144,13 @@ final class PlainManager implements ConfigurationManagerInterface{
 
 	private static Object extractEnumerationValue(final String dataKey, Object dataValue, final Field field,
 			final Class<? extends ConfigurationEnum> enumeration) throws EncodeException{
-		//convert `or` between enumerations
-		if(String.class.isInstance(dataValue)){
-			dataValue = ConfigurationHelper.extractEnumerationValue(field, (String)dataValue, enumeration);
-		}
+		final Class<?> fieldType = field.getType();
 
-		validateEnumerationValue(dataKey, dataValue, enumeration, field.getType());
+		//convert `or` between enumerations
+		if(String.class.isInstance(dataValue))
+			dataValue = ConfigurationHelper.extractEnumerationValue(fieldType, (String)dataValue, enumeration);
+
+		validateEnumerationValue(dataKey, dataValue, enumeration, fieldType);
 
 		return dataValue;
 	}

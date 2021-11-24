@@ -226,8 +226,8 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 	public void validateValue(final String dataKey, final Object dataValue, final Class<?> fieldType){}
 
 	@Override
-	public Object convertValue(final Object configurationObject, final String dataKey, Object dataValue, final Field field,
-			final Version protocol) throws EncodeException, CodecException{
+	public Object convertValue(final String dataKey, Object dataValue, final Field field, final Version protocol) throws EncodeException,
+			CodecException{
 		final AlternativeSubField fieldBinding = extractField(protocol);
 		if(fieldBinding != null){
 			validateValue(fieldBinding, dataKey, dataValue, field.getType());

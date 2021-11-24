@@ -183,8 +183,7 @@ final class CompositeManager implements ConfigurationManagerInterface{
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public Object convertValue(final Object configurationObject, final String dataKey, Object dataValue, final Field field,
-			final Version protocol) throws EncodeException{
+	public Object convertValue(final String dataKey, Object dataValue, final Field field, final Version protocol) throws EncodeException{
 		//compose field value
 		final String composition = annotation.composition();
 		final CompositeSubField[] fields = annotation.value();

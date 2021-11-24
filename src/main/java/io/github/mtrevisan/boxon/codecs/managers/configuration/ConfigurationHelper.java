@@ -100,19 +100,22 @@ public final class ConfigurationHelper{
 	static Object getDefaultValue(final Field field, final String value, final Class<? extends ConfigurationEnum> enumeration)
 			throws CodecException{
 		if(!StringHelper.isBlank(value)){
-			if(enumeration != NullEnum.class)
-				return extractEnumerationValue(field, value, enumeration);
+			final Class<?> fieldType = field.getType();
 
-			if(field.getType() != String.class)
-				return JavaHelper.getValue(field.getType(), value);
+			if(enumeration != NullEnum.class)
+				return extractEnumerationValue(fieldType, value, enumeration);
+
+			if(fieldType != String.class)
+				return JavaHelper.getValue(fieldType, value);
 		}
 		return value;
 	}
 
-	static Object extractEnumerationValue(final Field field, final String value, final Class<? extends ConfigurationEnum> enumeration){
+	static Object extractEnumerationValue(final Class<?> fieldType, final String value,
+			final Class<? extends ConfigurationEnum> enumeration){
 		final Object valEnum;
 		final ConfigurationEnum[] enumConstants = enumeration.getEnumConstants();
-		if(field.getType().isArray()){
+		if(fieldType.isArray()){
 			final String[] defaultValues = splitMultipleEnumerations(value);
 			valEnum = Array.newInstance(enumeration, defaultValues.length);
 			for(int i = 0; i < defaultValues.length; i ++)
