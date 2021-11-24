@@ -186,19 +186,24 @@ public final class ReflectionHelper{
 
 	static Method getAccessibleMethod(Class<?> cls, final String methodName, final Class<?> returnType, final Class<?>... parameterTypes){
 		Method method = null;
-		while(cls != null && cls != Object.class){
-			try{
-				method = cls.getDeclaredMethod(methodName, parameterTypes);
-				if(returnType == null || method.getReturnType() == returnType){
-					method.setAccessible(true);
-					break;
-				}
-			}
-			catch(final NoSuchMethodException | SecurityException | InaccessibleObjectException ignored){}
+		while(method == null && cls != null && cls != Object.class){
+			method = makeMethodAccessible(cls, methodName, returnType, parameterTypes);
 
 			//go up to parent class
 			cls = cls.getSuperclass();
 		}
+		return method;
+	}
+
+	private static Method makeMethodAccessible(final Class<?> cls, final String methodName, final Class<?> returnType,
+			final Class<?>... parameterTypes){
+		Method method = null;
+		try{
+			method = cls.getDeclaredMethod(methodName, parameterTypes);
+			if(returnType == null || method.getReturnType() == returnType)
+				method.setAccessible(true);
+		}
+		catch(final NoSuchMethodException | SecurityException | InaccessibleObjectException ignored){}
 		return method;
 	}
 
