@@ -92,6 +92,7 @@ public final class ConfigurationHelper{
 				val = splitMultipleEnumerations(value);
 			else if(Number.class.isAssignableFrom(ParserDataType.toObjectiveTypeOrSelf(fieldType)))
 				val = JavaHelper.getValue(fieldType, value);
+
 			if(map.put(key.toString(), val) != null)
 				throw ConfigurationException.create("Duplicated short description: {}", key.toString());
 		}

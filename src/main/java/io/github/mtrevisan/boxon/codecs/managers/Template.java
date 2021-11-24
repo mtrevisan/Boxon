@@ -104,18 +104,17 @@ public final class Template<T>{
 			final Skip[] skips = field.getDeclaredAnnotationsByType(Skip.class);
 			final Checksum checksum = field.getDeclaredAnnotation(Checksum.class);
 
+			loadChecksumField(checksum, type, field);
+
 			final Annotation[] declaredAnnotations = field.getDeclaredAnnotations();
 			final List<Annotation> boundedAnnotations = filterAnnotationsWithCodec.apply(declaredAnnotations);
 			evaluatedFields.addAll(extractEvaluations(declaredAnnotations, field));
 
 			try{
-				final Annotation validAnnotation = validateField(boundedAnnotations, checksum);
+				final Annotation validAnnotation = validateField(boundedAnnotations);
 
-				if(validAnnotation != null){
+				if(validAnnotation != null)
 					boundedFields.add(new BoundedField(field, validAnnotation, (skips.length > 0? skips: null)));
-					if(checksum != null)
-						this.checksum = new BoundedField(field, checksum);
-				}
 			}
 			catch(final AnnotationException e){
 				e.withClassNameAndFieldName(type.getName(), field.getName());
@@ -123,6 +122,17 @@ public final class Template<T>{
 			}
 		}
 		return Pair.of(boundedFields, evaluatedFields);
+	}
+
+	private void loadChecksumField(final Checksum checksum, final Class<T> type, final Field field) throws AnnotationException{
+		if(checksum != null){
+			if(this.checksum != null)
+				throw (AnnotationException)AnnotationException.create("Cannot have more than one {} annotations on class {}",
+						Checksum.class.getSimpleName(), type.getName())
+					.withClassNameAndFieldName(type.getName(), field.getName());
+
+			this.checksum = new BoundedField(field, checksum);
+		}
 	}
 
 	@SuppressWarnings("ObjectAllocationInLoop")
@@ -136,7 +146,7 @@ public final class Template<T>{
 		return evaluations;
 	}
 
-	private Annotation validateField(final List<? extends Annotation> annotations, final Checksum checksum) throws AnnotationException{
+	private static Annotation validateField(final List<? extends Annotation> annotations) throws AnnotationException{
 		/** filter out {@link Skip} annotations */
 		Annotation foundAnnotation = null;
 		for(int i = 0; foundAnnotation == null && i < annotations.size(); i ++){
@@ -145,10 +155,6 @@ public final class Template<T>{
 				continue;
 
 			validateAnnotation(annotations.get(i));
-
-			if(checksum != null && this.checksum != null)
-				throw AnnotationException.create("Cannot have more than one {} annotations on class {}",
-					Checksum.class.getSimpleName(), type.getName());
 
 			foundAnnotation = annotations.get(i);
 		}

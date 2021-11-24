@@ -45,6 +45,8 @@ import java.util.Map;
 
 final class PlainManager implements ConfigurationManagerInterface{
 
+	private static final String EMPTY_STRING = "";
+
 	static final Annotation EMPTY_ANNOTATION = () -> Annotation.class;
 
 
@@ -160,8 +162,8 @@ final class PlainManager implements ConfigurationManagerInterface{
 		final Class<?> dataValueClass = (dataValue != null? dataValue.getClass(): null);
 		if(dataValueClass == null){
 			final Class<?> componentType = (fieldType.isArray()? fieldType.getComponentType(): fieldType);
-			throw EncodeException.create("Data value incompatible with field type {}; found {}[], expected {}[] for enumeration type",
-				dataKey, componentType, enumeration.getSimpleName());
+			throw EncodeException.create("Data value incompatible with field type {}; found {}{}, expected {}[] for enumeration type",
+				dataKey, componentType, (fieldType.isArray()? "[]": EMPTY_STRING), enumeration.getSimpleName());
 		}
 		if(dataValueClass.isArray()){
 			final Class<?> componentType = dataValueClass.getComponentType();
