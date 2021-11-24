@@ -325,8 +325,7 @@ public final class StringHelper{
 
 	private static boolean isHexadecimalNumber(String text){
 		text = text.toUpperCase(Locale.ROOT);
-		final int length = text.length();
-		for(int i = 2; i < length; i ++){
+		for(int i = 2; i < text.length(); i ++){
 			final char chr = text.charAt(i);
 			if((chr < '0' || chr > '9') && (chr < 'A' || chr > 'F'))
 				return false;
@@ -335,8 +334,7 @@ public final class StringHelper{
 	}
 
 	private static boolean isNonHexadecimalNumber(final CharSequence text){
-		final int length = text.length();
-		for(int i = 0; i < length; i ++){
+		for(int i = 0; i < text.length(); i ++){
 			final char chr = text.charAt(i);
 			if(chr < '0' || chr > '9')
 				return false;
