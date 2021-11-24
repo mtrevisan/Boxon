@@ -37,12 +37,10 @@ import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.StringHelper;
+import io.github.mtrevisan.boxon.internal.ValueOf;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 
 enum ConfigurationAnnotationValidator{
@@ -241,14 +239,8 @@ enum ConfigurationAnnotationValidator{
 	};
 
 
-	private static final Map<Class<? extends Annotation>, ConfigurationAnnotationValidator> VALIDATORS;
-	static{
-		final ConfigurationAnnotationValidator[] values = values();
-		final Map<Class<? extends Annotation>, ConfigurationAnnotationValidator> validators = new HashMap<>(values.length);
-		for(final ConfigurationAnnotationValidator validator : values)
-			validators.put(validator.annotationType, validator);
-		VALIDATORS = Collections.unmodifiableMap(validators);
-	}
+	private static final ValueOf<ConfigurationAnnotationValidator, Class<? extends Annotation>> VALIDATORS
+		= new ValueOf<>(ConfigurationAnnotationValidator.class, validator -> validator.annotationType);
 
 	private final Class<? extends Annotation> annotationType;
 

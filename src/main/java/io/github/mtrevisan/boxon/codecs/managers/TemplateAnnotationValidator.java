@@ -35,11 +35,9 @@ import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.external.EventListener;
 import io.github.mtrevisan.boxon.internal.ParserDataType;
+import io.github.mtrevisan.boxon.internal.ValueOf;
 
 import java.lang.annotation.Annotation;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 
 public enum TemplateAnnotationValidator{
@@ -127,14 +125,9 @@ public enum TemplateAnnotationValidator{
 
 	private static final String EMPTY_STRING = "";
 
-	private static final Map<Class<? extends Annotation>, TemplateAnnotationValidator> VALIDATORS;
-	static{
-		final TemplateAnnotationValidator[] values = values();
-		final Map<Class<? extends Annotation>, TemplateAnnotationValidator> validators = new HashMap<>(values.length);
-		for(final TemplateAnnotationValidator validator : values)
-			validators.put(validator.annotationType, validator);
-		VALIDATORS = Collections.unmodifiableMap(validators);
-	}
+	private static final ValueOf<TemplateAnnotationValidator, Class<? extends Annotation>> VALIDATORS
+		= new ValueOf<>(TemplateAnnotationValidator.class, validator -> validator.annotationType);
+
 
 	private final Class<? extends Annotation> annotationType;
 
