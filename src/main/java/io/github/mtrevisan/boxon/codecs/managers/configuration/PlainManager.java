@@ -115,7 +115,7 @@ final class PlainManager implements ConfigurationManagerInterface{
 		ConfigurationHelper.extractEnumeration(fieldType, annotation.enumeration(), map);
 
 		final Object defaultValue = ConfigurationHelper.convertValue(annotation.defaultValue(), fieldType, annotation.enumeration());
-		ConfigurationHelper.putValueIfNotEmpty(ConfigurationKey.DEFAULT_VALUE, defaultValue, map);
+		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.DEFAULT_VALUE, defaultValue, map);
 		if(String.class.isAssignableFrom(fieldType))
 			ConfigurationHelper.putIfNotEmpty(ConfigurationKey.CHARSET, annotation.charset(), map);
 

@@ -80,12 +80,6 @@ public final class ConfigurationHelper{
 			throw ConfigurationException.create("Duplicated short description: {}", key.toString());
 	}
 
-	public static void putValueIfNotEmpty(final ConfigurationKey key, final Object value, @SuppressWarnings("BoundedWildcard") final Map<String, Object> map)
-			throws ConfigurationException{
-		if(isValidValue(value) && map.put(key.toString(), value) != null)
-			throw ConfigurationException.create("Duplicated short description: {}", key.toString());
-	}
-
 	private static boolean isValidValue(final Object value){
 		return (value != null && (!CharSequence.class.isInstance(value) || !StringHelper.isBlank((CharSequence)value)));
 	}

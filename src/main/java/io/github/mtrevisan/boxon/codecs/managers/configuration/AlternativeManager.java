@@ -146,7 +146,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 			ConfigurationHelper.putIfNotEmpty(ConfigurationKey.MIN_PROTOCOL, alternativeField.minProtocol(), fieldMap);
 			ConfigurationHelper.putIfNotEmpty(ConfigurationKey.MAX_PROTOCOL, alternativeField.maxProtocol(), fieldMap);
 			final Object defaultValue = ConfigurationHelper.convertValue(alternativeField.defaultValue(), fieldType, annotation.enumeration());
-			ConfigurationHelper.putValueIfNotEmpty(ConfigurationKey.DEFAULT_VALUE, defaultValue, fieldMap);
+			ConfigurationHelper.putIfNotEmpty(ConfigurationKey.DEFAULT_VALUE, defaultValue, fieldMap);
 
 			fieldMap.putAll(alternativeMap);
 
@@ -169,7 +169,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 			alternativesMap.putAll(extractMap(fieldBinding, fieldType));
 
 			final Object defaultValue = ConfigurationHelper.convertValue(fieldBinding.defaultValue(), fieldType, annotation.enumeration());
-			ConfigurationHelper.putValueIfNotEmpty(ConfigurationKey.DEFAULT_VALUE, defaultValue, alternativesMap);
+			ConfigurationHelper.putIfNotEmpty(ConfigurationKey.DEFAULT_VALUE, defaultValue, alternativesMap);
 
 			alternativesMap.putAll(alternativeMap);
 		}
