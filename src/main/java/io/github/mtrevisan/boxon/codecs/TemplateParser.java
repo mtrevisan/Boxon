@@ -46,6 +46,7 @@ import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
 import io.github.mtrevisan.boxon.external.logs.EventListener;
 import io.github.mtrevisan.boxon.internal.Evaluator;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
+import io.github.mtrevisan.boxon.internal.ParserDataType;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 
 import java.lang.annotation.Annotation;
@@ -248,15 +249,17 @@ public final class TemplateParser implements TemplateParserInterface{
 
 	private static void readSkip(final Skip skip, final BitReader reader, final Object rootObject){
 		final boolean process = Evaluator.evaluateBoolean(skip.condition(), rootObject);
-		if(process){
-			final int size = Evaluator.evaluateSize(skip.size(), rootObject);
-			if(size > 0)
-				reader.skip(size);
-			else{
-				reader.skipUntilTerminator(skip.terminator());
-				if(skip.consumeTerminator())
-					reader.getByte();
-			}
+		if(!process)
+			return;
+
+		final int size = Evaluator.evaluateSize(skip.size(), rootObject);
+		if(size > 0)
+			reader.skip(size);
+		else{
+			final byte terminator = skip.terminator();
+			reader.skipUntilTerminator(terminator);
+			if(skip.consumeTerminator())
+				reader.getBits(ParserDataType.getSize(terminator));
 		}
 	}
 
@@ -300,14 +303,15 @@ public final class TemplateParser implements TemplateParserInterface{
 		for(int i = 0; i < evaluatedFields.size(); i ++){
 			final EvaluatedField field = evaluatedFields.get(i);
 			final boolean process = Evaluator.evaluateBoolean(field.getBinding().condition(), parserContext.rootObject);
-			if(process){
-				eventListener.evaluatingField(template.getType().getName(), field.getFieldName());
+			if(!process)
+				continue;
 
-				final Object value = Evaluator.evaluate(field.getBinding().value(), parserContext.rootObject, field.getFieldType());
-				field.setFieldValue(parserContext.currentObject, value);
+			eventListener.evaluatingField(template.getType().getName(), field.getFieldName());
 
-				eventListener.evaluatedField(template.getType().getName(), field.getFieldName(), value);
-			}
+			final Object value = Evaluator.evaluate(field.getBinding().value(), parserContext.rootObject, field.getFieldType());
+			field.setFieldValue(parserContext.currentObject, value);
+
+			eventListener.evaluatedField(template.getType().getName(), field.getFieldName(), value);
 		}
 	}
 
@@ -389,15 +393,16 @@ public final class TemplateParser implements TemplateParserInterface{
 
 	private static void writeSkip(final Skip skip, final BitWriter writer, final Object rootObject){
 		final boolean process = Evaluator.evaluateBoolean(skip.condition(), rootObject);
-		if(process){
-			final int size = Evaluator.evaluateSize(skip.size(), rootObject);
-			if(size > 0)
-				/** skip {@link size} bits */
-				writer.putBits(BitSet.empty(), size);
-			else if(skip.consumeTerminator())
-				//skip until terminator
-				writer.putByte(skip.terminator());
-		}
+		if(!process)
+			return;
+
+		final int size = Evaluator.evaluateSize(skip.size(), rootObject);
+		if(size > 0)
+			/** skip {@link size} bits */
+			writer.putBits(BitSet.empty(), size);
+		else if(skip.consumeTerminator())
+			//skip until terminator
+			writer.putByte(skip.terminator());
 	}
 
 }

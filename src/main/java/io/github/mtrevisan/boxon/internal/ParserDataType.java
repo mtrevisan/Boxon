@@ -32,12 +32,12 @@ import java.util.Map;
 
 public enum ParserDataType{
 
-	BYTE(Byte.TYPE, Byte.class),
-	SHORT(Short.TYPE, Short.class),
-	INTEGER(Integer.TYPE, Integer.class),
-	LONG(Long.TYPE, Long.class),
-	FLOAT(Float.TYPE, Float.class),
-	DOUBLE(Double.TYPE, Double.class);
+	BYTE(Byte.TYPE, Byte.class, Byte.SIZE),
+	SHORT(Short.TYPE, Short.class, Short.SIZE),
+	INTEGER(Integer.TYPE, Integer.class, Integer.SIZE),
+	LONG(Long.TYPE, Long.class, Long.SIZE),
+	FLOAT(Float.TYPE, Float.class, Float.SIZE),
+	DOUBLE(Double.TYPE, Double.class, Double.SIZE);
 
 	/** Maps primitive {@code Class}es to their corresponding wrapper {@code Class}. */
 	private static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPER_MAP;
@@ -62,15 +62,17 @@ public enum ParserDataType{
 
 	private final Class<?> primitiveType;
 	private final Class<?> objectiveType;
+	private final int size;
 
 
 	public static ParserDataType fromType(final Class<?> type){
 		return TYPE_MAP.get(type);
 	}
 
-	ParserDataType(final Class<?> primitiveType, final Class<?> objectiveType){
+	ParserDataType(final Class<?> primitiveType, final Class<?> objectiveType, final int size){
 		this.primitiveType = primitiveType;
 		this.objectiveType = objectiveType;
+		this.size = size;
 	}
 
 	public static Class<?> toObjectiveTypeOrSelf(final Class<?> primitiveType){
@@ -92,10 +94,6 @@ public enum ParserDataType{
 		return (type.isPrimitive() && type != void.class);
 	}
 
-	private static boolean isPrimitiveWrapper(final Class<?> type){
-		return WRAPPER_PRIMITIVE_MAP.containsKey(type);
-	}
-
 	/**
 	 * Returns whether the given {@code type} is a primitive or primitive wrapper.
 	 * <p>NOTE: {@code Character} and {@code void}/{@code Void} are NOT considered as primitives!</p>
@@ -105,6 +103,17 @@ public enum ParserDataType{
 	 */
 	public static boolean isPrimitiveOrWrapper(final Class<?> type){
 		return (isPrimitive(type) || isPrimitiveWrapper(type));
+	}
+
+	private static boolean isPrimitiveWrapper(final Class<?> type){
+		return WRAPPER_PRIMITIVE_MAP.containsKey(type);
+	}
+
+	/**
+	 * The number of bits used to represent the value.
+	 */
+	public static int getSize(final Object value){
+		return fromType(value.getClass()).size;
 	}
 
 	public static String describe(){
