@@ -114,8 +114,8 @@ final class LoaderConfiguration{
 		eventListener.loadedConfigurations(configurations.size());
 	}
 
-	private Map<String, ConfigurationMessage<?>> extractConfigurations(final Collection<Class<?>> annotatedClasses) throws AnnotationException,
-			ConfigurationException{
+	private Map<String, ConfigurationMessage<?>> extractConfigurations(final Collection<Class<?>> annotatedClasses)
+			throws AnnotationException, ConfigurationException{
 		final Map<String, ConfigurationMessage<?>> configurations = new HashMap<>(annotatedClasses.size());
 		for(final Class<?> type : annotatedClasses){
 			//for each extracted class, try to parse it, extracting all the information needed for the configuration of a message

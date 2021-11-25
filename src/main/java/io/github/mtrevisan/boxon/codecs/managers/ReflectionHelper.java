@@ -68,13 +68,13 @@ public final class ReflectionHelper{
 	 * @return	The classes.
 	 */
 	public static Collection<Class<?>> extractClasses(final Class<?> type, final Class<?>... basePackageClasses){
-		final Collection<Class<?>> classes = new HashSet<>(0);
 
 		final ReflectiveClassLoader reflectiveClassLoader = ReflectiveClassLoader.createFrom(basePackageClasses);
 		reflectiveClassLoader.scan(type);
 		final Collection<Class<?>> modules = reflectiveClassLoader.getImplementationsOf(type);
 		@SuppressWarnings("unchecked")
 		final Collection<Class<?>> singletons = reflectiveClassLoader.getTypesAnnotatedWith((Class<? extends Annotation>)type);
+		final Collection<Class<?>> classes = new HashSet<>(modules.size() + singletons.size());
 		classes.addAll(modules);
 		classes.addAll(singletons);
 		return classes;
@@ -105,10 +105,8 @@ public final class ReflectionHelper{
 	public static <T> void setFieldValue(final Object obj, final Class<T> fieldType, final T value){
 		try{
 			final List<Field> fields = getAccessibleFields(obj.getClass(), fieldType);
-			for(int i = 0; i < fields.size(); i ++){
-				final Field field = fields.get(i);
-				field.set(obj, value);
-			}
+			for(int i = 0; i < fields.size(); i ++)
+				fields.get(i).set(obj, value);
 		}
 		catch(final IllegalArgumentException | IllegalAccessException ignored){}
 	}

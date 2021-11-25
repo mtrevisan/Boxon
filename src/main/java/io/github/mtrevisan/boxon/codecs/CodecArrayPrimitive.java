@@ -30,6 +30,7 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.external.codecs.BitReader;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
+import io.github.mtrevisan.boxon.external.codecs.ByteOrder;
 import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
 import io.github.mtrevisan.boxon.internal.Evaluator;
 import io.github.mtrevisan.boxon.internal.ParserDataType;
@@ -48,9 +49,10 @@ final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 		final int size = Evaluator.evaluateSize(binding.size(), rootObject);
 		CodecHelper.assertSizePositive(size);
 
+		final ByteOrder byteOrder = binding.byteOrder();
 		final Object array = createArrayPrimitive(type, size);
 		for(int i = 0; i < size; i ++){
-			final Object value = reader.get(type, binding.byteOrder());
+			final Object value = reader.get(type, byteOrder);
 			Array.set(array, i, value);
 		}
 
@@ -87,8 +89,11 @@ final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 		CodecHelper.assertSizePositive(size);
 		CodecHelper.assertSizeEquals(size, Array.getLength(array));
 
-		for(int i = 0; i < size; i ++)
-			writer.put(Array.get(array, i), binding.byteOrder());
+		final ByteOrder byteOrder = binding.byteOrder();
+		for(int i = 0; i < size; i ++){
+			final Object val = Array.get(array, i);
+			writer.put(val, byteOrder);
+		}
 	}
 
 }

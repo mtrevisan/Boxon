@@ -147,8 +147,10 @@ public final class GenericHelper{
 
 	private static <T> Map<String, Type> mapParameterTypes(final Class<? extends T> offspring, final Type[] actualArgs){
 		final Map<String, Type> typeVariables = new HashMap<>(actualArgs.length);
-		for(int i = 0; i < actualArgs.length; i ++)
-			typeVariables.put(offspring.getTypeParameters()[i].getName(), actualArgs[i]);
+		for(int i = 0; i < actualArgs.length; i ++){
+			final String key = offspring.getTypeParameters()[i].getName();
+			typeVariables.put(key, actualArgs[i]);
+		}
 		return typeVariables;
 	}
 

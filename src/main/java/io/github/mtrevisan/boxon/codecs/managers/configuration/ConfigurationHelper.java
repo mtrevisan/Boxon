@@ -102,8 +102,10 @@ public final class ConfigurationHelper{
 		final ConfigurationEnum[] enumConstants = enumeration.getEnumConstants();
 		final String[] defaultValues = splitMultipleEnumerations(value);
 		final Object valEnum = Array.newInstance(enumeration, defaultValues.length);
-		for(int i = 0; i < defaultValues.length; i ++)
-			Array.set(valEnum, i, ConfigurationEnum.extractEnum(enumConstants, defaultValues[i]));
+		for(int i = 0; i < defaultValues.length; i ++){
+			final ConfigurationEnum val = ConfigurationEnum.extractEnum(enumConstants, defaultValues[i]);
+			Array.set(valEnum, i, val);
+		}
 		return valEnum;
 	}
 
