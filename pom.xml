@@ -235,6 +235,7 @@
 				<configuration>
 					<argLine>
 						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.codecs.queclink=spring.core,spring.expression,ALL-UNNAMED
+						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.core=spring.core,spring.expression,ALL-UNNAMED
 					</argLine>
 				</configuration>
 			</plugin>

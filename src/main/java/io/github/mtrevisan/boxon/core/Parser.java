@@ -102,6 +102,7 @@ public final class Parser{
 
 	private Parser(final EventListener eventListener){
 		loaderCodec = LoaderCodec.create(eventListener);
+
 		templateParser = TemplateParser.create(loaderCodec, eventListener);
 		configurationParser = ConfigurationParser.create(loaderCodec, eventListener);
 	}
