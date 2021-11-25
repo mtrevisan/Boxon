@@ -24,7 +24,6 @@
  */
 package io.github.mtrevisan.boxon.codecs;
 
-import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.codecs.managers.ConstructorHelper;
 import io.github.mtrevisan.boxon.codecs.managers.GenericHelper;
 import io.github.mtrevisan.boxon.codecs.managers.InjectEventListener;
@@ -49,7 +48,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	 * @see io.github.mtrevisan.boxon.annotations.MessageHeader#charset()
 	 * @see io.github.mtrevisan.boxon.annotations.bindings.BindString#charset()
 	 * @see io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated#charset()
-	 * @see ConfigurationHeader#charset()
+	 * @see io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader#charset()
 	 * @see io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField#charset()
 	 */
 	public static final String CHARSET_DEFAULT = "UTF-8";
@@ -173,11 +172,9 @@ public final class LoaderCodec implements LoaderCodecInterface{
 		codecs.put(codecType, codec);
 	}
 
-	public void injectFieldsInCodecs(final LoaderTemplateInterface loaderTemplate, final TemplateParserInterface templateParser){
-		for(final CodecInterface<?> codec : codecs.values()){
-			ReflectionHelper.setFieldValue(codec, LoaderTemplateInterface.class, loaderTemplate);
+	public void injectFieldsInCodecs(final TemplateParserInterface templateParser){
+		for(final CodecInterface<?> codec : codecs.values())
 			ReflectionHelper.setFieldValue(codec, TemplateParserInterface.class, templateParser);
-		}
 	}
 
 	@Override

@@ -33,7 +33,9 @@ import io.github.mtrevisan.boxon.codecs.managers.ConstructorHelper;
 import io.github.mtrevisan.boxon.codecs.managers.ContextHelper;
 import io.github.mtrevisan.boxon.codecs.managers.EvaluatedField;
 import io.github.mtrevisan.boxon.codecs.managers.InjectEventListener;
+import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
 import io.github.mtrevisan.boxon.codecs.managers.Template;
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
@@ -77,6 +79,7 @@ public final class TemplateParser implements TemplateParserInterface{
 
 
 	private final LoaderCodecInterface loaderCodec;
+	private final LoaderTemplate loaderTemplate;
 
 
 	/**
@@ -102,12 +105,77 @@ public final class TemplateParser implements TemplateParserInterface{
 
 
 	private TemplateParser(final LoaderCodecInterface loaderCodec, final EventListener eventListener){
-		this.loaderCodec = loaderCodec;
 		this.eventListener = eventListener;
+
+		this.loaderCodec = loaderCodec;
+		loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
 	}
 
+
+	/**
+	 * Loads all the protocol classes annotated with {@link MessageHeader}.
+	 * <p>This method SHOULD BE called from a method inside a class that lies on a parent of all the protocol classes.</p>
+	 *
+	 * @throws IllegalArgumentException	If the codecs was not loaded yet.
+	 */
+	public void loadDefaultTemplates() throws AnnotationException, TemplateException{
+		loaderTemplate.loadTemplates(ReflectionHelper.extractCallerClasses());
+	}
+
+	/**
+	 * Loads all the protocol classes annotated with {@link MessageHeader}.
+	 *
+	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
+	 */
+	public void loadTemplates(final Class<?>... basePackageClasses) throws AnnotationException, TemplateException{
+		loaderTemplate.loadTemplates(basePackageClasses);
+	}
+
+	/**
+	 * Constructs a new {@link Template}.
+	 *
+	 * @param <T>	The type of the object to be returned as a {@link Template}.
+	 * @param type	The class of the object to be returned as a {@link Template}.
+	 * @return	The {@link Template} for the given type.
+	 */
 	@Override
+	public <T> Template<T> createTemplate(final Class<T> type) throws AnnotationException{
+		return loaderTemplate.createTemplate(type);
+	}
+
+	/**
+	 * Retrieve the next template.
+	 *
+	 * @param reader	The reader to read the header from.
+	 * @return	The template that is able to decode/encode the next message in the given reader.
+	 */
+	public Template<?> getTemplate(final BitReader reader) throws TemplateException{
+		return loaderTemplate.getTemplate(reader);
+	}
+
+	/**
+	 * Retrieve the template by class.
+	 *
+	 * @param type	The class to retrieve the template.
+	 * @return	The template that is able to decode/encode the given class.
+	 */
+	public Template<?> getTemplate(final Class<?> type) throws TemplateException{
+		return loaderTemplate.getTemplate(type);
+	}
+
+	/**
+	 * Tries to infer the next message start by scanning all templates in header-start-length order.
+	 *
+	 * @param reader	The reader.
+	 * @return	The index of the next message.
+	 */
+	public int findNextMessageIndex(final BitReader reader){
+		return loaderTemplate.findNextMessageIndex(reader);
+	}
+
+
 	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
+	@Override
 	public <T> T decode(final Template<T> template, final BitReader reader, final Object parentObject) throws FieldException{
 		final int startPosition = reader.position();
 
@@ -243,8 +311,8 @@ public final class TemplateParser implements TemplateParserInterface{
 		}
 	}
 
-	@Override
 	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
+	@Override
 	public <T> void encode(final Template<?> template, final BitWriter writer, final Object parentObject, final T currentObject)
 			throws FieldException{
 		final ParserContext<T> parserContext = new ParserContext<>(parentObject, currentObject);

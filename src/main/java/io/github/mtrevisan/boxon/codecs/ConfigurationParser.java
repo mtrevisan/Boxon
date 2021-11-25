@@ -29,10 +29,13 @@ import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
 import io.github.mtrevisan.boxon.codecs.managers.ConfigField;
 import io.github.mtrevisan.boxon.codecs.managers.ConfigurationMessage;
 import io.github.mtrevisan.boxon.codecs.managers.InjectEventListener;
+import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationHelper;
 import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationManagerFactory;
 import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationManagerInterface;
-import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationHelper;
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
+import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
+import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
 import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
@@ -42,6 +45,7 @@ import io.github.mtrevisan.boxon.external.semanticversioning.Version;
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
 import java.util.List;
+import java.util.Map;
 
 
 public final class ConfigurationParser{
@@ -51,6 +55,7 @@ public final class ConfigurationParser{
 	private final EventListener eventListener;
 
 	private final LoaderCodecInterface loaderCodec;
+	private final LoaderConfiguration loaderConfiguration;
 
 
 	/**
@@ -76,9 +81,58 @@ public final class ConfigurationParser{
 
 
 	private ConfigurationParser(final LoaderCodecInterface loaderCodec, final EventListener eventListener){
-		this.loaderCodec = loaderCodec;
 		this.eventListener = eventListener;
+
+		this.loaderCodec = loaderCodec;
+		loaderConfiguration = LoaderConfiguration.create(eventListener);
 	}
+
+
+	/**
+	 * Loads all the configuration classes annotated with {@link ConfigurationHeader}.
+	 * <p>This method SHOULD BE called from a method inside a class that lies on a parent of all the protocol classes.</p>
+	 *
+	 * @throws IllegalArgumentException	If the codecs was not loaded yet.
+	 */
+	public void loadDefaultConfigurations() throws AnnotationException, ConfigurationException{
+		loaderConfiguration.loadDefaultConfigurations();
+	}
+
+	/**
+	 * Loads all the configuration classes annotated with {@link ConfigurationHeader}.
+	 *
+	 * @param basePackageClasses	Classes to be used ase starting point from which to load configuration classes.
+	 */
+	public void loadConfigurations(final Class<?>... basePackageClasses) throws AnnotationException, ConfigurationException{
+		loaderConfiguration.loadConfigurations(basePackageClasses);
+	}
+
+	public List<ConfigurationMessage<?>> getConfigurations(){
+		return loaderConfiguration.getConfigurations();
+	}
+
+	/**
+	 * Retrieve the configuration by class, filled with data, and considering the protocol version.
+	 *
+	 * @param configuration	The configuration message.
+	 * @param data	The data to load into the configuration.
+	 * @param protocol	The protocol the data refers to.
+	 * @return	The configuration data.
+	 */
+	public Object getConfigurationWithDefaults(final ConfigurationMessage<?> configuration, final Map<String, Object> data,
+			final Version protocol) throws EncodeException, CodecException{
+		return loaderConfiguration.getConfigurationWithDefaults(configuration, data, protocol);
+	}
+
+	/**
+	 * Retrieve the configuration by class.
+	 *
+	 * @return	The configuration.
+	 */
+	public ConfigurationMessage<?> getConfiguration(final String configurationType) throws EncodeException{
+		return loaderConfiguration.getConfiguration(configurationType);
+	}
+
 
 	public <T> void encode(final ConfigurationMessage<?> configuration, final BitWriter writer, final T currentObject, final Version protocol)
 			throws FieldException{

@@ -51,7 +51,7 @@ import java.util.TreeMap;
 import java.util.function.Function;
 
 
-public final class LoaderTemplate implements LoaderTemplateInterface{
+final class LoaderTemplate implements LoaderTemplateInterface{
 
 	private static final PatternMatcher PATTERN_MATCHER = BNDMPatternMatcher.getInstance();
 	private static final Function<byte[], int[]> PRE_PROCESSED_PATTERNS = Memoizer.memoize(PATTERN_MATCHER::preProcessPattern);
@@ -87,7 +87,7 @@ public final class LoaderTemplate implements LoaderTemplateInterface{
 	 * @param eventListener	The event listener.
 	 * @return	A template parser.
 	 */
-	public static LoaderTemplate create(final LoaderCodecInterface loaderCodec, final EventListener eventListener){
+	static LoaderTemplate create(final LoaderCodecInterface loaderCodec, final EventListener eventListener){
 		return new LoaderTemplate(loaderCodec, (eventListener != null? eventListener: EventListener.getNoOpInstance()));
 	}
 
@@ -109,7 +109,7 @@ public final class LoaderTemplate implements LoaderTemplateInterface{
 	 *
 	 * @throws IllegalArgumentException	If the codecs was not loaded yet.
 	 */
-	public void loadDefaultTemplates() throws AnnotationException, TemplateException{
+	void loadDefaultTemplates() throws AnnotationException, TemplateException{
 		loadTemplates(ReflectionHelper.extractCallerClasses());
 	}
 
@@ -118,7 +118,7 @@ public final class LoaderTemplate implements LoaderTemplateInterface{
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
 	 */
-	public void loadTemplates(final Class<?>... basePackageClasses) throws AnnotationException, TemplateException{
+	void loadTemplates(final Class<?>... basePackageClasses) throws AnnotationException, TemplateException{
 		eventListener.loadingTemplates(basePackageClasses);
 
 		/** extract all classes annotated with {@link MessageHeader}. */
@@ -200,7 +200,7 @@ public final class LoaderTemplate implements LoaderTemplateInterface{
 	 * @param reader	The reader to read the header from.
 	 * @return	The template that is able to decode/encode the next message in the given reader.
 	 */
-	public Template<?> getTemplate(final BitReader reader) throws TemplateException{
+	Template<?> getTemplate(final BitReader reader) throws TemplateException{
 		final int index = reader.position();
 
 		//for each available template, select the first that matches the starting bytes
@@ -226,7 +226,7 @@ public final class LoaderTemplate implements LoaderTemplateInterface{
 	 * @param type	The class to retrieve the template.
 	 * @return	The template that is able to decode/encode the given class.
 	 */
-	public Template<?> getTemplate(final Class<?> type) throws TemplateException{
+	Template<?> getTemplate(final Class<?> type) throws TemplateException{
 		final MessageHeader header = type.getAnnotation(MessageHeader.class);
 		if(header == null)
 			throw TemplateException.create("The given class type is not a valid template");
@@ -257,7 +257,7 @@ public final class LoaderTemplate implements LoaderTemplateInterface{
 	 * @param reader	The reader.
 	 * @return	The index of the next message.
 	 */
-	public int findNextMessageIndex(final BitReader reader){
+	int findNextMessageIndex(final BitReader reader){
 		int minOffset = -1;
 		for(final Template<?> template : templates.values()){
 			final MessageHeader header = template.getHeader();

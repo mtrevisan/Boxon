@@ -53,7 +53,7 @@ import java.util.StringJoiner;
 import java.util.TreeMap;
 
 
-public final class LoaderConfiguration{
+final class LoaderConfiguration{
 
 	@InjectEventListener
 	private final EventListener eventListener;
@@ -80,7 +80,7 @@ public final class LoaderConfiguration{
 	 * @param eventListener	The event listener.
 	 * @return	A template parser.
 	 */
-	public static LoaderConfiguration create(final EventListener eventListener){
+	static LoaderConfiguration create(final EventListener eventListener){
 		return new LoaderConfiguration(eventListener != null? eventListener: EventListener.getNoOpInstance());
 	}
 
@@ -94,7 +94,7 @@ public final class LoaderConfiguration{
 	 *
 	 * @throws IllegalArgumentException	If the codecs was not loaded yet.
 	 */
-	public void loadDefaultConfigurations() throws AnnotationException, ConfigurationException{
+	void loadDefaultConfigurations() throws AnnotationException, ConfigurationException{
 		loadConfigurations(ReflectionHelper.extractCallerClasses());
 	}
 
@@ -103,7 +103,7 @@ public final class LoaderConfiguration{
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load configuration classes.
 	 */
-	public void loadConfigurations(final Class<?>... basePackageClasses) throws AnnotationException, ConfigurationException{
+	void loadConfigurations(final Class<?>... basePackageClasses) throws AnnotationException, ConfigurationException{
 		eventListener.loadingConfigurations(basePackageClasses);
 
 		/** extract all classes annotated with {@link MessageHeader}. */
@@ -177,7 +177,7 @@ public final class LoaderConfiguration{
 	}
 
 
-	public List<ConfigurationMessage<?>> getConfigurations(){
+	List<ConfigurationMessage<?>> getConfigurations(){
 		return List.copyOf(configurations.values());
 	}
 
@@ -189,7 +189,7 @@ public final class LoaderConfiguration{
 	 * @param protocol	The protocol the data refers to.
 	 * @return	The configuration data.
 	 */
-	public Object getConfigurationWithDefaults(final ConfigurationMessage<?> configuration, final Map<String, Object> data,
+	Object getConfigurationWithDefaults(final ConfigurationMessage<?> configuration, final Map<String, Object> data,
 			final Version protocol) throws EncodeException, CodecException{
 		final Object configurationObject = ConstructorHelper.getCreator(configuration.getType())
 			.get();
@@ -231,7 +231,7 @@ public final class LoaderConfiguration{
 	 *
 	 * @return	The configuration.
 	 */
-	public ConfigurationMessage<?> getConfiguration(final String configurationType) throws EncodeException{
+	ConfigurationMessage<?> getConfiguration(final String configurationType) throws EncodeException{
 		final ConfigurationMessage<?> configuration = configurations.get(configurationType);
 		if(configuration == null)
 			throw EncodeException.create("Cannot find any configuration for given class type");

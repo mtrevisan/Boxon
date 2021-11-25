@@ -53,11 +53,13 @@ public final class TimeWatch{
 	public TimeWatch reset(){
 		start = System.nanoTime();
 		end = 0l;
+
 		return this;
 	}
 
 	public TimeWatch stop(){
 		end = System.nanoTime();
+
 		return this;
 	}
 

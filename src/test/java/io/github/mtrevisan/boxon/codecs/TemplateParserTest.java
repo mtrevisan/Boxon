@@ -252,7 +252,7 @@ class TemplateParserTest{
 		LoaderTemplateInterface loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
 		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec);
 		Template<TestComposition1> template = loaderTemplate.createTemplate(TestComposition1.class);
-		loaderCodec.injectFieldsInCodecs(loaderTemplate, templateParser);
+		loaderCodec.injectFieldsInCodecs(templateParser);
 
 		TestComposition1 parsed = templateParser.decode(template, reader, null);
 		Assertions.assertNotNull(parsed);
@@ -315,7 +315,7 @@ class TemplateParserTest{
 		LoaderTemplateInterface loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
 		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec);
 		Template<TestComposition2> template = loaderTemplate.createTemplate(TestComposition2.class);
-		loaderCodec.injectFieldsInCodecs(loaderTemplate, templateParser);
+		loaderCodec.injectFieldsInCodecs(templateParser);
 
 		TestComposition2 parsed = templateParser.decode(template, reader, null);
 		Assertions.assertNotNull(parsed);
@@ -343,7 +343,7 @@ class TemplateParserTest{
 		LoaderTemplateInterface loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
 		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec);
 		Template<TestComposition2> template = loaderTemplate.createTemplate(TestComposition2.class);
-		loaderCodec.injectFieldsInCodecs(loaderTemplate, templateParser);
+		loaderCodec.injectFieldsInCodecs(templateParser);
 
 		TestComposition2 parsed = templateParser.decode(template, reader, null);
 		Assertions.assertNotNull(parsed);

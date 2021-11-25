@@ -26,19 +26,15 @@ package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
-import io.github.mtrevisan.boxon.external.configurations.ConfigurationKey;
-import io.github.mtrevisan.boxon.codecs.managers.ConfigField;
-import io.github.mtrevisan.boxon.codecs.managers.ConfigurationMessage;
 import io.github.mtrevisan.boxon.codecs.ConfigurationParser;
 import io.github.mtrevisan.boxon.codecs.LoaderCodec;
-import io.github.mtrevisan.boxon.codecs.LoaderConfiguration;
-import io.github.mtrevisan.boxon.codecs.LoaderTemplate;
-import io.github.mtrevisan.boxon.codecs.managers.Template;
 import io.github.mtrevisan.boxon.codecs.TemplateParser;
-import io.github.mtrevisan.boxon.codecs.TemplateParserInterface;
+import io.github.mtrevisan.boxon.codecs.managers.ConfigField;
+import io.github.mtrevisan.boxon.codecs.managers.ConfigurationMessage;
+import io.github.mtrevisan.boxon.codecs.managers.Template;
+import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationHelper;
 import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationManagerFactory;
 import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationManagerInterface;
-import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationHelper;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
@@ -48,6 +44,7 @@ import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.codecs.BitReader;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
 import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
+import io.github.mtrevisan.boxon.external.configurations.ConfigurationKey;
 import io.github.mtrevisan.boxon.external.logs.EventListener;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
 import io.github.mtrevisan.boxon.internal.Evaluator;
@@ -76,10 +73,8 @@ import java.util.Objects;
 public final class Parser{
 
 	private final LoaderCodec loaderCodec;
-	private final LoaderTemplate loaderTemplate;
-	private final LoaderConfiguration loaderConfiguration;
 
-	private final TemplateParserInterface templateParser;
+	private final TemplateParser templateParser;
 	private final ConfigurationParser configurationParser;
 
 
@@ -107,8 +102,6 @@ public final class Parser{
 
 	private Parser(final EventListener eventListener){
 		loaderCodec = LoaderCodec.create(eventListener);
-		loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
-		loaderConfiguration = LoaderConfiguration.create(eventListener);
 		templateParser = TemplateParser.create(loaderCodec, eventListener);
 		configurationParser = ConfigurationParser.create(loaderCodec, eventListener);
 	}
@@ -122,6 +115,7 @@ public final class Parser{
 	 */
 	public Parser addToContext(final String key, final Object value){
 		Evaluator.addToContext(key, value);
+
 		return this;
 	}
 
@@ -135,6 +129,7 @@ public final class Parser{
 		Objects.requireNonNull(context, "Context cannot be null");
 
 		context.forEach(Evaluator::addToContext);
+
 		return this;
 	}
 
@@ -146,6 +141,7 @@ public final class Parser{
 	 */
 	public Parser withContextFunction(final Method method){
 		Evaluator.addToContext(method);
+
 		return this;
 	}
 
@@ -175,7 +171,7 @@ public final class Parser{
 		loaderCodec.loadDefaultCodecs();
 
 		//post process codecs
-		loaderCodec.injectFieldsInCodecs(loaderTemplate, templateParser);
+		loaderCodec.injectFieldsInCodecs(templateParser);
 
 		return this;
 	}
@@ -190,7 +186,7 @@ public final class Parser{
 		loaderCodec.loadCodecs(basePackageClasses);
 
 		//post process codecs
-		loaderCodec.injectFieldsInCodecs(loaderTemplate, templateParser);
+		loaderCodec.injectFieldsInCodecs(templateParser);
 
 		return this;
 	}
@@ -205,7 +201,7 @@ public final class Parser{
 		loaderCodec.addCodecs(codecs);
 
 		//post process codecs
-		loaderCodec.injectFieldsInCodecs(loaderTemplate, templateParser);
+		loaderCodec.injectFieldsInCodecs(templateParser);
 
 		return this;
 	}
@@ -219,7 +215,8 @@ public final class Parser{
 	 * @throws TemplateException	If a template is not well formatted.
 	 */
 	public Parser withDefaultTemplates() throws AnnotationException, TemplateException{
-		loaderTemplate.loadDefaultTemplates();
+		templateParser.loadDefaultTemplates();
+
 		return this;
 	}
 
@@ -232,7 +229,8 @@ public final class Parser{
 	 * @throws TemplateException	If a template is not well formatted.
 	 */
 	public Parser withTemplates(final Class<?>... basePackageClasses) throws AnnotationException, TemplateException{
-		loaderTemplate.loadTemplates(basePackageClasses);
+		templateParser.loadTemplates(basePackageClasses);
+
 		return this;
 	}
 
@@ -245,7 +243,8 @@ public final class Parser{
 	 * @throws ConfigurationException	If a configuration is not well formatted.
 	 */
 	public Parser withDefaultConfigurations() throws AnnotationException, ConfigurationException{
-		loaderConfiguration.loadDefaultConfigurations();
+		configurationParser.loadDefaultConfigurations();
+
 		return this;
 	}
 
@@ -258,7 +257,8 @@ public final class Parser{
 	 * @throws ConfigurationException	If a configuration is not well formatted.
 	 */
 	public Parser withConfigurations(final Class<?>... basePackageClasses) throws AnnotationException, ConfigurationException{
-		loaderConfiguration.loadConfigurations(basePackageClasses);
+		configurationParser.loadConfigurations(basePackageClasses);
+
 		return this;
 	}
 
@@ -329,7 +329,7 @@ public final class Parser{
 
 	private boolean parse(final BitReader reader, final int start, final ParseResponse response){
 		try{
-			final Template<?> template = loaderTemplate.getTemplate(reader);
+			final Template<?> template = templateParser.getTemplate(reader);
 
 			final Object partialDecodedMessage = templateParser.decode(template, reader, null);
 
@@ -342,7 +342,7 @@ public final class Parser{
 			//restore state of the reader
 			reader.restoreFallbackPoint();
 
-			final int position = loaderTemplate.findNextMessageIndex(reader);
+			final int position = templateParser.findNextMessageIndex(reader);
 			if(position < 0)
 				//cannot find any template for message
 				return true;
@@ -398,7 +398,7 @@ public final class Parser{
 	 */
 	private void composeMessage(final BitWriter writer, final Object data, final ComposeResponse response){
 		try{
-			final Template<?> template = loaderTemplate.getTemplate(data.getClass());
+			final Template<?> template = templateParser.getTemplate(data.getClass());
 
 			templateParser.encode(template, writer, null, data);
 		}
@@ -414,7 +414,7 @@ public final class Parser{
 	 * @return	The configuration messages regardless the protocol version.
 	 */
 	public List<Map<String, Object>> getConfigurations() throws ConfigurationException, CodecException{
-		final List<ConfigurationMessage<?>> configurationValues = loaderConfiguration.getConfigurations();
+		final List<ConfigurationMessage<?>> configurationValues = configurationParser.getConfigurations();
 		return extractConfigurations(configurationValues, Version.EMPTY);
 	}
 
@@ -424,7 +424,7 @@ public final class Parser{
 	 * @return	The protocol version boundaries.
 	 */
 	public List<String> getProtocolVersionBoundaries(){
-		final List<ConfigurationMessage<?>> configurationValues = loaderConfiguration.getConfigurations();
+		final List<ConfigurationMessage<?>> configurationValues = configurationParser.getConfigurations();
 		final List<String> protocolVersionBoundaries = new ArrayList<>(configurationValues.size());
 		for(int i = 0; i < configurationValues.size(); i ++)
 			protocolVersionBoundaries.addAll(configurationValues.get(i).getProtocolVersionBoundaries());
@@ -441,7 +441,7 @@ public final class Parser{
 		if(StringHelper.isBlank(protocol))
 			throw new IllegalArgumentException(StringHelper.format("Invalid protocol: {}", protocol));
 
-		final List<ConfigurationMessage<?>> configurationValues = loaderConfiguration.getConfigurations();
+		final List<ConfigurationMessage<?>> configurationValues = configurationParser.getConfigurations();
 		final Version currentProtocol = Version.of(protocol);
 		return extractConfigurations(configurationValues, currentProtocol);
 	}
@@ -526,8 +526,8 @@ public final class Parser{
 		try{
 			final String configurationType = entry.getKey();
 			final Map<String, Object> data = entry.getValue();
-			final ConfigurationMessage<?> configuration = loaderConfiguration.getConfiguration(configurationType);
-			final Object configurationData = loaderConfiguration.getConfigurationWithDefaults(configuration, data, protocol);
+			final ConfigurationMessage<?> configuration = configurationParser.getConfiguration(configurationType);
+			final Object configurationData = configurationParser.getConfigurationWithDefaults(configuration, data, protocol);
 			configurationParser.encode(configuration, writer, configurationData, protocol);
 		}
 		catch(final Exception e){
