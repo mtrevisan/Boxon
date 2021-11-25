@@ -98,7 +98,6 @@ final class CodecArray implements CodecInterface<BindArray>{
 
 				//read object
 				final Template<?> subTemplate = templateParser.createTemplate(chosenAlternativeType);
-
 				array[i] = templateParser.decode(subTemplate, reader, rootObject);
 			}
 			catch(final Exception e){

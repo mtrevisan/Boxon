@@ -154,9 +154,9 @@ public final class ConfigurationParser{
 			writeSkips(skips, writer, protocol);
 
 			//process value
-			encodeField(configuration, currentObject, writer, field, annotation);
+			encodeField(configuration, currentObject, field, writer, annotation);
 			if(annotation != field.getBinding())
-				encodeField(configuration, currentObject, writer, field, field.getBinding());
+				encodeField(configuration, currentObject, field, writer, field.getBinding());
 		}
 
 		closeMessage(header, writer);
@@ -164,8 +164,8 @@ public final class ConfigurationParser{
 		writer.flush();
 	}
 
-	private <T> void encodeField(final ConfigurationMessage<?> configuration, final T currentObject, final BitWriter writer,
-			final ConfigField field, final Annotation binding) throws FieldException{
+	private <T> void encodeField(final ConfigurationMessage<?> configuration, final T currentObject, final ConfigField field,
+			final BitWriter writer, final Annotation binding) throws FieldException{
 		final Class<? extends Annotation> annotationType = binding.annotationType();
 		eventListener.writingField(configuration.getType().getName(), field.getFieldName(), annotationType.getSimpleName());
 

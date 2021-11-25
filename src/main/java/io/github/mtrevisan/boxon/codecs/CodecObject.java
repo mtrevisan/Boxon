@@ -63,7 +63,6 @@ final class CodecObject implements CodecInterface<BindObject>{
 			final Class<?> type = extractType(reader, binding, rootObject);
 
 			final Template<?> template = templateParser.createTemplate(type);
-
 			final Object instance = templateParser.decode(template, reader, rootObject);
 			Evaluator.addToContext(ContextHelper.CONTEXT_SELF, instance);
 
