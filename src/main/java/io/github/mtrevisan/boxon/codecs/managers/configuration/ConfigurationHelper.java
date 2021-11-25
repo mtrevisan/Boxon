@@ -76,20 +76,18 @@ public final class ConfigurationHelper{
 
 	public static void putIfNotEmpty(final ConfigurationKey key, final Object value,
 			@SuppressWarnings("BoundedWildcard") final Map<String, Object> map) throws ConfigurationException{
-		if(value != null && (!String.class.isInstance(value) || !StringHelper.isBlank((CharSequence)value)))
-			if(map.put(key.toString(), value) != null)
-				throw ConfigurationException.create("Duplicated short description: {}", key.toString());
+		if(isValidValue(value) && map.put(key.toString(), value) != null)
+			throw ConfigurationException.create("Duplicated short description: {}", key.toString());
 	}
 
-	public static void putValueIfNotEmpty(final ConfigurationKey key, final String value, final Class<?> fieldType,
-			final Class<? extends ConfigurationEnum> enumeration, @SuppressWarnings("BoundedWildcard") final Map<String, Object> map)
-			throws ConfigurationException, CodecException{
-		if(!StringHelper.isBlank(value)){
-			final Object val = convertValue(value, fieldType, enumeration);
+	public static void putValueIfNotEmpty(final ConfigurationKey key, final Object value, @SuppressWarnings("BoundedWildcard") final Map<String, Object> map)
+			throws ConfigurationException{
+		if(isValidValue(value) && map.put(key.toString(), value) != null)
+			throw ConfigurationException.create("Duplicated short description: {}", key.toString());
+	}
 
-			if(map.put(key.toString(), val) != null)
-				throw ConfigurationException.create("Duplicated short description: {}", key.toString());
-		}
+	private static boolean isValidValue(final Object value){
+		return (value != null && (!CharSequence.class.isInstance(value) || !StringHelper.isBlank((CharSequence)value)));
 	}
 
 	static Object convertValue(final String value, final Class<?> fieldType, final Class<? extends ConfigurationEnum> enumeration)

@@ -156,7 +156,8 @@ final class CompositeManager implements ConfigurationManagerInterface{
 			ConfigurationHelper.putIfNotEmpty(ConfigurationKey.FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName(),
 				map);
 
-		ConfigurationHelper.putValueIfNotEmpty(ConfigurationKey.DEFAULT_VALUE, binding.defaultValue(), fieldType, NullEnum.class, map);
+		final Object defaultValue = ConfigurationHelper.convertValue(binding.defaultValue(), fieldType, NullEnum.class);
+		ConfigurationHelper.putValueIfNotEmpty(ConfigurationKey.DEFAULT_VALUE, defaultValue, map);
 
 		return map;
 	}

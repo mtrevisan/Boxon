@@ -26,11 +26,11 @@ package io.github.mtrevisan.boxon.codecs.managers.configuration;
 
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
-import io.github.mtrevisan.boxon.external.configurations.ConfigurationKey;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.external.configurations.ConfigurationEnum;
+import io.github.mtrevisan.boxon.external.configurations.ConfigurationKey;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.ParserDataType;
@@ -145,8 +145,8 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 
 			ConfigurationHelper.putIfNotEmpty(ConfigurationKey.MIN_PROTOCOL, alternativeField.minProtocol(), fieldMap);
 			ConfigurationHelper.putIfNotEmpty(ConfigurationKey.MAX_PROTOCOL, alternativeField.maxProtocol(), fieldMap);
-			ConfigurationHelper.putValueIfNotEmpty(ConfigurationKey.DEFAULT_VALUE, alternativeField.defaultValue(), fieldType,
-				annotation.enumeration(), fieldMap);
+			final Object defaultValue = ConfigurationHelper.convertValue(alternativeField.defaultValue(), fieldType, annotation.enumeration());
+			ConfigurationHelper.putValueIfNotEmpty(ConfigurationKey.DEFAULT_VALUE, defaultValue, fieldMap);
 
 			fieldMap.putAll(alternativeMap);
 
@@ -168,8 +168,8 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 
 			alternativesMap.putAll(extractMap(fieldBinding, fieldType));
 
-			ConfigurationHelper.putValueIfNotEmpty(ConfigurationKey.DEFAULT_VALUE, fieldBinding.defaultValue(), fieldType,
-				annotation.enumeration(), alternativesMap);
+			final Object defaultValue = ConfigurationHelper.convertValue(fieldBinding.defaultValue(), fieldType, annotation.enumeration());
+			ConfigurationHelper.putValueIfNotEmpty(ConfigurationKey.DEFAULT_VALUE, defaultValue, alternativesMap);
 
 			alternativesMap.putAll(alternativeMap);
 		}
