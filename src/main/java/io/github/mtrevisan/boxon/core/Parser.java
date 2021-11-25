@@ -70,7 +70,7 @@ import java.util.Objects;
 
 
 /**
- * Declarative data binding parser for binary encoded data.
+ * Declarative data binding parser for binary encoded data with configuration capabilities.
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
 public final class Parser{
