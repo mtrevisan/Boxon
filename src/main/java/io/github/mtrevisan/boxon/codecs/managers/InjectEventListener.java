@@ -32,7 +32,7 @@ import java.lang.annotation.Target;
 
 
 /**
- * Defines a field that has to be injected with an {@link io.github.mtrevisan.boxon.external.EventListener event listener}.
+ * Defines a field that has to be injected with an {@link io.github.mtrevisan.boxon.external.logs.EventListener event listener}.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)

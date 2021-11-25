@@ -25,7 +25,7 @@
 package io.github.mtrevisan.boxon.annotations.configurations;
 
 
-import io.github.mtrevisan.boxon.external.ConfigurationEnum;
+import io.github.mtrevisan.boxon.external.configurations.ConfigurationEnum;
 
 
 public enum NullEnum implements ConfigurationEnum{

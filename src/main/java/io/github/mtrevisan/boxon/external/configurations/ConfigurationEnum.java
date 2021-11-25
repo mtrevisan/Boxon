@@ -22,24 +22,23 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.external;
+package io.github.mtrevisan.boxon.external.configurations;
 
 
-public enum BooleanType implements ConfigurationEnum{
+public interface ConfigurationEnum{
 
-	TRUE(1),
-	FALSE(0);
+	int getCode();
+
+	/** NOTE: already implemented in an Enum! Normally, it doesn't need to be extended. */
+	String name();
 
 
-	private final int code;
-
-	BooleanType(final int code){
-		this.code = code;
-	}
-
-	@Override
-	public int getCode(){
-		return code;
+	@SuppressWarnings("ReturnOfNull")
+	static ConfigurationEnum extractEnum(final ConfigurationEnum[] enumConstants, final String value){
+		for(int i = 0; i < enumConstants.length; i ++)
+			if(enumConstants[i].name().equals(value))
+				return enumConstants[i];
+		return null;
 	}
 
 }

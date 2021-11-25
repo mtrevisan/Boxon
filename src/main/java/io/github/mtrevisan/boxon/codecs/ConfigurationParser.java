@@ -34,9 +34,9 @@ import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationMana
 import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationHelper;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
-import io.github.mtrevisan.boxon.external.BitWriter;
-import io.github.mtrevisan.boxon.external.CodecInterface;
-import io.github.mtrevisan.boxon.external.EventListener;
+import io.github.mtrevisan.boxon.external.codecs.BitWriter;
+import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
+import io.github.mtrevisan.boxon.external.logs.EventListener;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
 
 import java.lang.annotation.Annotation;

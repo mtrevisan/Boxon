@@ -22,23 +22,23 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.external;
+package io.github.mtrevisan.boxon.external.codecs;
+
+import io.github.mtrevisan.boxon.exceptions.FieldException;
+
+import java.lang.annotation.Annotation;
 
 
-public interface ConfigurationEnum{
+public interface CodecInterface<B extends Annotation>{
 
-	int getCode();
+	Object decode(final BitReader reader, final Annotation annotation, final Object rootObject) throws FieldException;
 
-	/** NOTE: already implemented in an Enum! Normally, it doesn't need to be extended. */
-	String name();
+	void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value) throws FieldException;
 
 
-	@SuppressWarnings("ReturnOfNull")
-	static ConfigurationEnum extractEnum(final ConfigurationEnum[] enumConstants, final String value){
-		for(int i = 0; i < enumConstants.length; i ++)
-			if(enumConstants[i].name().equals(value))
-				return enumConstants[i];
-		return null;
+	@SuppressWarnings("unchecked")
+	default B extractBinding(final Annotation annotation){
+		return (B)annotation;
 	}
 
 }

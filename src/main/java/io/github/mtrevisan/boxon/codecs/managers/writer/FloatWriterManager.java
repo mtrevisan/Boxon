@@ -24,8 +24,8 @@
  */
 package io.github.mtrevisan.boxon.codecs.managers.writer;
 
-import io.github.mtrevisan.boxon.external.BitWriter;
-import io.github.mtrevisan.boxon.external.ByteOrder;
+import io.github.mtrevisan.boxon.external.codecs.BitWriter;
+import io.github.mtrevisan.boxon.external.codecs.ByteOrder;
 
 
 final class FloatWriterManager implements WriterManagerInterface{
