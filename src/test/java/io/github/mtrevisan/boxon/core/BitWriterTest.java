@@ -250,6 +250,7 @@ class BitWriterTest{
 
 		Assertions.assertEquals("746573747777", reader.toString());
 		Assertions.assertEquals(value, reader.getTextUntilTerminator((byte)'w'));
+		//consume terminator (`w`)
 		reader.getByte();
 		writer.putByte((byte)'w');
 	}
