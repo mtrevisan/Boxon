@@ -63,11 +63,12 @@ final class CodecArray implements CodecInterface<BindArray>{
 		final int size = Evaluator.evaluateSize(binding.size(), rootObject);
 		CodecHelper.assertSizePositive(size);
 
-		final Object[] array = createArray(binding.type(), size);
+		final Class<?> bindingType = binding.type();
+		final Object[] array = createArray(bindingType, size);
 		if(binding.selectFrom().alternatives().length > 0)
 			decodeWithAlternatives(reader, array, binding, rootObject);
 		else
-			decodeWithoutAlternatives(reader, array, binding.type());
+			decodeWithoutAlternatives(reader, array, bindingType);
 
 		final ConverterChoices selectConverterFrom = binding.selectConverterFrom();
 		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();

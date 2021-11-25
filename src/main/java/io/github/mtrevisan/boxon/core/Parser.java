@@ -385,9 +385,8 @@ public final class Parser{
 		final BitWriter writer = BitWriter.create();
 		for(int i = 0; i < data.length; i ++)
 			composeMessage(writer, data[i], response);
-		writer.flush();
 
-		response.setComposedMessage(writer.array());
+		response.setComposedMessage(writer);
 
 		return response;
 	}
@@ -512,9 +511,8 @@ public final class Parser{
 		final BitWriter writer = BitWriter.create();
 		for(final Map.Entry<String, Map<String, Object>> entry : data.entrySet())
 			composeConfiguration(writer, entry, protocol, response);
-		writer.flush();
 
-		response.setComposedMessage(writer.array());
+		response.setComposedMessage(writer);
 
 		return response;
 	}

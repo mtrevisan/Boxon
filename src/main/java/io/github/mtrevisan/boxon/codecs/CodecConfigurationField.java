@@ -57,8 +57,9 @@ final class CodecConfigurationField implements CodecInterface<ConfigurationField
 			writerManager.put(value);
 		}
 
-		if(!binding.terminator().isEmpty())
-			writer.putText(binding.terminator());
+		final String terminator = binding.terminator();
+		if(!terminator.isEmpty())
+			writer.putText(terminator);
 	}
 
 }

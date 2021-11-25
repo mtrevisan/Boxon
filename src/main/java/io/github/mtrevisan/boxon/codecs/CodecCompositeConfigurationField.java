@@ -61,8 +61,9 @@ final class CodecCompositeConfigurationField implements CodecInterface<Composite
 					ParserDataType.toObjectiveTypeOrSelf(value.getClass()));
 		}
 
-		if(!binding.terminator().isEmpty())
-			writer.putText(binding.terminator());
+		final String terminator = binding.terminator();
+		if(!terminator.isEmpty())
+			writer.putText(terminator);
 	}
 
 }

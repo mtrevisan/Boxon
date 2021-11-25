@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
+import io.github.mtrevisan.boxon.external.codecs.BitWriter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,6 +66,12 @@ public final class ComposeResponse{
 	 */
 	private Object[] getOriginator(){
 		return originator;
+	}
+
+	void setComposedMessage(final BitWriter writer){
+		writer.flush();
+
+		setComposedMessage(writer.array());
 	}
 
 	void setComposedMessage(final byte[] composedMessage){

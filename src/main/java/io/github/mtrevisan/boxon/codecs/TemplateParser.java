@@ -46,7 +46,6 @@ import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
 import io.github.mtrevisan.boxon.external.logs.EventListener;
 import io.github.mtrevisan.boxon.internal.Evaluator;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
-import io.github.mtrevisan.boxon.internal.ParserDataType;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 
 import java.lang.annotation.Annotation;
@@ -259,7 +258,7 @@ public final class TemplateParser implements TemplateParserInterface{
 			final byte terminator = skip.terminator();
 			reader.skipUntilTerminator(terminator);
 			if(skip.consumeTerminator())
-				reader.getBits(ParserDataType.getSize(terminator));
+				reader.getBitsSizeOf(terminator);
 		}
 	}
 

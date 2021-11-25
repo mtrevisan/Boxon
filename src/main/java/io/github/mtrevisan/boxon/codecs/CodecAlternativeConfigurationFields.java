@@ -43,8 +43,9 @@ final class CodecAlternativeConfigurationFields implements CodecInterface<Altern
 	public void encode(final BitWriter writer, final Annotation annotation, final Object fieldType, final Object value){
 		final AlternativeConfigurationField binding = extractBinding(annotation);
 
-		if(!binding.terminator().isEmpty())
-			writer.putText(binding.terminator());
+		final String terminator = binding.terminator();
+		if(!terminator.isEmpty())
+			writer.putText(terminator);
 	}
 
 }

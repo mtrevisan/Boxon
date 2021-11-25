@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.external.codecs;
 
+import io.github.mtrevisan.boxon.internal.ParserDataType;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 
 import java.io.IOException;
@@ -98,6 +99,16 @@ abstract class BitReaderData{
 
 	BitReaderData(final ByteBuffer buffer){
 		this.buffer = buffer;
+	}
+
+	/**
+	 * Reads the next {@code length} bits and composes a {@link BitSet}.
+	 *
+	 * @param value	The value from which to extract the size.
+	 * @return	A {@link BitSet} value at the {@link BitReader}'s current position.
+	 */
+	public final BitSet getBitsSizeOf(final Object value){
+		return getBits(ParserDataType.getSize(value));
 	}
 
 	/**
