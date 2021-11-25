@@ -24,19 +24,17 @@
  */
 package io.github.mtrevisan.boxon.codecs.managers.configuration;
 
-import io.github.mtrevisan.boxon.external.configurations.ConfigurationKey;
-import io.github.mtrevisan.boxon.external.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
+import io.github.mtrevisan.boxon.external.configurations.ConfigurationEnum;
+import io.github.mtrevisan.boxon.external.configurations.ConfigurationKey;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
-import io.github.mtrevisan.boxon.internal.ParserDataType;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 
 import java.lang.reflect.Array;
-import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -87,45 +85,39 @@ public final class ConfigurationHelper{
 			final Class<? extends ConfigurationEnum> enumeration, @SuppressWarnings("BoundedWildcard") final Map<String, Object> map)
 			throws ConfigurationException, CodecException{
 		if(!StringHelper.isBlank(value)){
-			Object val = value;
-			if(enumeration != NullEnum.class && fieldType.isArray())
-				val = splitMultipleEnumerations(value);
-			else if(Number.class.isAssignableFrom(ParserDataType.toObjectiveTypeOrSelf(fieldType)))
-				val = JavaHelper.getValue(fieldType, value);
+			final Object val = convertValue(value, fieldType, enumeration);
 
 			if(map.put(key.toString(), val) != null)
 				throw ConfigurationException.create("Duplicated short description: {}", key.toString());
 		}
 	}
 
-	static Object getDefaultValue(final Field field, final String value, final Class<? extends ConfigurationEnum> enumeration)
+	static Object convertValue(final String value, final Class<?> fieldType, final Class<? extends ConfigurationEnum> enumeration)
 			throws CodecException{
-		if(!StringHelper.isBlank(value)){
-			final Class<?> fieldType = field.getType();
-
-			if(enumeration != NullEnum.class)
-				return extractEnumerationValue(fieldType, value, enumeration);
-
-			if(fieldType != String.class)
-				return JavaHelper.getValue(fieldType, value);
-		}
-		return value;
+		return (enumeration != NullEnum.class
+			? extractEnumerationValue(fieldType, value, enumeration)
+			: JavaHelper.getValue(fieldType, value));
 	}
 
 	static Object extractEnumerationValue(final Class<?> fieldType, final String value,
 			final Class<? extends ConfigurationEnum> enumeration){
-		final Object valEnum;
+		return (fieldType.isArray()
+			? extractEnumerationArrayValue(value, enumeration)
+			: extractEnumerationSingleValue(value, enumeration));
+	}
+
+	private static Object extractEnumerationArrayValue(final String value, final Class<? extends ConfigurationEnum> enumeration){
 		final ConfigurationEnum[] enumConstants = enumeration.getEnumConstants();
-		if(fieldType.isArray()){
-			final String[] defaultValues = splitMultipleEnumerations(value);
-			valEnum = Array.newInstance(enumeration, defaultValues.length);
-			for(int i = 0; i < defaultValues.length; i ++)
-				Array.set(valEnum, i, ConfigurationEnum.extractEnum(enumConstants, defaultValues[i]));
-		}
-		else
-			valEnum = enumeration
-				.cast(ConfigurationEnum.extractEnum(enumConstants, value));
+		final String[] defaultValues = splitMultipleEnumerations(value);
+		final Object valEnum = Array.newInstance(enumeration, defaultValues.length);
+		for(int i = 0; i < defaultValues.length; i ++)
+			Array.set(valEnum, i, ConfigurationEnum.extractEnum(enumConstants, defaultValues[i]));
 		return valEnum;
+	}
+
+	private static Object extractEnumerationSingleValue(final String value, final Class<? extends ConfigurationEnum> enumeration){
+		final ConfigurationEnum[] enumConstants = enumeration.getEnumConstants();
+		return enumeration.cast(ConfigurationEnum.extractEnum(enumConstants, value));
 	}
 
 	private static String[] splitMultipleEnumerations(final String value){

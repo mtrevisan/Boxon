@@ -129,6 +129,9 @@ final class ValidationHelper{
 		final Class<?> fieldType = field.getFieldType();
 
 		if(!StringHelper.isBlank(field.minValue) || !StringHelper.isBlank(field.maxValue)){
+			if(fieldType.isArray())
+				throw AnnotationException.create("Array field should not have `minValue` or `maxValue`");
+
 			final Object def = (!StringHelper.isBlank(field.defaultValue)? JavaHelper.getValue(fieldType, field.defaultValue): null);
 			final Object min = validateMinValue(field, def);
 			final Object max = validateMaxValue(field, def);

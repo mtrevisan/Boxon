@@ -70,7 +70,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 		if(fieldBinding != null){
 			final String value = fieldBinding.defaultValue();
 			final Class<? extends ConfigurationEnum> enumeration = annotation.enumeration();
-			return ConfigurationHelper.getDefaultValue(field, value, enumeration);
+			return ConfigurationHelper.convertValue(value, field.getType(), enumeration);
 		}
 		return EMPTY_STRING;
 	}
