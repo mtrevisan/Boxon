@@ -32,7 +32,6 @@ import io.github.mtrevisan.boxon.codecs.managers.BoundedField;
 import io.github.mtrevisan.boxon.codecs.managers.ConstructorHelper;
 import io.github.mtrevisan.boxon.codecs.managers.EvaluatedField;
 import io.github.mtrevisan.boxon.codecs.managers.InjectEventListener;
-import io.github.mtrevisan.boxon.codecs.managers.ParserHelper;
 import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
 import io.github.mtrevisan.boxon.codecs.managers.Template;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
@@ -302,9 +301,9 @@ public final class TemplateParser implements TemplateParserInterface{
 			throws FieldException{
 		final ParserContext<T> parserContext = new ParserContext<>(currentObject, parentObject);
 		parserContext.addCurrentObjectToEvaluatorContext();
+		parserContext.setClassName(template.getType().getName());
 
 		//encode message fields:
-		final String typeName = template.getType().getName();
 		final List<BoundedField> fields = template.getBoundedFields();
 		for(int i = 0; i < fields.size(); i ++){
 			final BoundedField field = fields.get(i);
@@ -316,9 +315,10 @@ public final class TemplateParser implements TemplateParserInterface{
 			//check if field has to be processed...
 			if(shouldProcessField(field.getCondition(), parserContext.rootObject)){
 				//... and if so, process it
-				parserContext.setFieldName(field.getFieldName());
+				parserContext.setField(field);
+				parserContext.setBinding(field.getBinding());
 
-				encodeField(typeName, parserContext, field, writer, field.getBinding());
+				ParserHelper.encodeField(parserContext, writer, loaderCodec, eventListener);
 			}
 		}
 
@@ -327,35 +327,6 @@ public final class TemplateParser implements TemplateParserInterface{
 			ParserHelper.writeAffix(header.end(), header.charset(), writer);
 
 		writer.flush();
-	}
-
-	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
-	private void encodeField(final String typeName, final ParserContext<?> parserContext, final BoundedField field, final BitWriter writer,
-			final Annotation binding) throws FieldException{
-		final Class<? extends Annotation> annotationType = binding.annotationType();
-		final CodecInterface<?> codec = loaderCodec.getCodec(annotationType);
-		if(codec == null)
-			throw CodecException.create("Cannot find codec for binding {}", annotationType.getSimpleName())
-				.withClassNameAndFieldName(typeName, parserContext.fieldName);
-
-		eventListener.writingField(typeName, parserContext.fieldName, annotationType.getSimpleName());
-
-		try{
-			//encode value from current object
-			final Object value = field.getFieldValue(parserContext.currentObject);
-			//write value to raw message
-			codec.encode(writer, binding, parserContext.rootObject, value);
-
-			eventListener.writtenField(typeName, parserContext.fieldName, value);
-		}
-		catch(final FieldException fe){
-			fe.withClassNameAndFieldName(typeName, parserContext.fieldName);
-			throw fe;
-		}
-		catch(final Exception e){
-			throw FieldException.create(e)
-				.withClassNameAndFieldName(typeName, parserContext.fieldName);
-		}
 	}
 
 	private static boolean shouldProcessField(final String condition, final Object rootObject){

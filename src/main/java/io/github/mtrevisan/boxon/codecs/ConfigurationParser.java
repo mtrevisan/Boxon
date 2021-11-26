@@ -29,7 +29,6 @@ import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
 import io.github.mtrevisan.boxon.codecs.managers.ConfigField;
 import io.github.mtrevisan.boxon.codecs.managers.ConfigurationMessage;
 import io.github.mtrevisan.boxon.codecs.managers.InjectEventListener;
-import io.github.mtrevisan.boxon.codecs.managers.ParserHelper;
 import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationHelper;
 import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationManagerFactory;
 import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationManagerInterface;
@@ -39,7 +38,6 @@ import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
-import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
 import io.github.mtrevisan.boxon.external.logs.EventListener;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
 
@@ -137,12 +135,12 @@ public final class ConfigurationParser{
 	public <T> void encode(final ConfigurationMessage<?> configuration, final BitWriter writer, final T currentObject,
 			final Version protocol) throws FieldException{
 		final ParserContext<T> parserContext = new ParserContext<>(currentObject);
+		parserContext.setClassName(configuration.getType().getName());
 
 		final ConfigurationHeader header = configuration.getHeader();
 		ParserHelper.writeAffix(header.start(), header.charset(), writer);
 
 		//encode message fields:
-		final String typeName = configuration.getType().getName();
 		final List<ConfigField> fields = configuration.getConfigurationFields();
 		for(int i = 0; i < fields.size(); i ++){
 			final ConfigField field = fields.get(i);
@@ -160,42 +158,18 @@ public final class ConfigurationParser{
 			parserContext.setFieldName(field.getFieldName());
 
 			//process value
-			encodeField(typeName, parserContext, field, writer, annotation);
-			if(annotation != field.getBinding())
-				encodeField(typeName, parserContext, field, writer, field.getBinding());
+			parserContext.setField(field);
+			parserContext.setBinding(annotation);
+			ParserHelper.encodeField(parserContext, writer, loaderCodec, eventListener);
+			if(annotation != field.getBinding()){
+				parserContext.setBinding(field.getBinding());
+				ParserHelper.encodeField(parserContext, writer, loaderCodec, eventListener);
+			}
 		}
 
 		ParserHelper.writeAffix(header.end(), header.charset(), writer);
 
 		writer.flush();
-	}
-
-	private void encodeField(final String typeName, final ParserContext<?> parserContext, final ConfigField field, final BitWriter writer,
-			final Annotation binding) throws FieldException{
-		final Class<? extends Annotation> annotationType = binding.annotationType();
-		final CodecInterface<?> codec = loaderCodec.getCodec(annotationType);
-		if(codec == null)
-			throw CodecException.create("Cannot find codec for binding {}", annotationType.getSimpleName())
-				.withClassNameAndFieldName(typeName, parserContext.fieldName);
-
-		eventListener.writingField(typeName, parserContext.fieldName, annotationType.getSimpleName());
-
-		try{
-			//encode value from current object
-			final Object value = field.getFieldValue(parserContext.currentObject);
-			//write value to raw message
-			codec.encode(writer, binding, parserContext.rootObject, value);
-
-			eventListener.writtenField(typeName, parserContext.fieldName, value);
-		}
-		catch(final FieldException fe){
-			fe.withClassNameAndFieldName(typeName, parserContext.fieldName);
-			throw fe;
-		}
-		catch(final Exception e){
-			throw FieldException.create(e)
-				.withClassNameAndFieldName(typeName, parserContext.fieldName);
-		}
 	}
 
 	private static void writeSkips(final ConfigurationSkip[] skips, final BitWriter writer, final Version protocol){

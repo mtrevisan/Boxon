@@ -24,9 +24,13 @@
  */
 package io.github.mtrevisan.boxon.codecs;
 
+import io.github.mtrevisan.boxon.codecs.managers.BoundedField;
+import io.github.mtrevisan.boxon.codecs.managers.ConfigField;
 import io.github.mtrevisan.boxon.codecs.managers.ContextHelper;
 import io.github.mtrevisan.boxon.internal.Evaluator;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
+
+import java.lang.annotation.Annotation;
 
 
 final class ParserContext<T>{
@@ -34,7 +38,10 @@ final class ParserContext<T>{
 	Object rootObject;
 	final T currentObject;
 
+	String className;
 	String fieldName;
+	Object field;
+	Annotation binding;
 
 
 	ParserContext(final T currentObject){
@@ -54,8 +61,30 @@ final class ParserContext<T>{
 		Evaluator.addToContext(ContextHelper.CONTEXT_SELF, currentObject);
 	}
 
+	void setClassName(final String className){
+		this.className = className;
+	}
+
 	void setFieldName(final String fieldName){
 		this.fieldName = fieldName;
+	}
+
+	void setField(final Object field){
+		this.field = field;
+	}
+
+	Object getFieldValue(){
+		if(BoundedField.class.isInstance(field))
+			return ((BoundedField)field).getFieldValue(currentObject);
+		else if(ConfigField.class.isInstance(field))
+			return ((ConfigField)field).getFieldValue(currentObject);
+		else
+			throw new IllegalArgumentException("Field not of type " + BoundedField.class.getSimpleName() + " or "
+				+ ConfigField.class.getSimpleName());
+	}
+
+	void setBinding(final Annotation binding){
+		this.binding = binding;
 	}
 
 }
