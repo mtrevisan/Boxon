@@ -139,35 +139,13 @@ public final class BitReader extends BitReaderData{
 	 * @return	The read value of the given type.
 	 * @throws AnnotationException	If an annotation is not well formatted.
 	 */
-	@SuppressWarnings("ReturnOfNull")
 	public Object get(final Class<?> type, final ByteOrder byteOrder) throws AnnotationException{
 		final ParserDataType pdt = ParserDataType.fromType(type);
 		if(pdt == null)
 			throw AnnotationException.create("Cannot read type {}, should be one of {}, or their objective counterparts",
 				type.getSimpleName(), ParserDataType.describe());
 
-		switch(pdt){
-			case BYTE:
-				return getByte();
-
-			case SHORT:
-				return getShort(byteOrder);
-
-			case INTEGER:
-				return getInt(byteOrder);
-
-			case LONG:
-				return getLong(byteOrder);
-
-			case FLOAT:
-				return getFloat(byteOrder);
-
-			case DOUBLE:
-				return getDouble(byteOrder);
-		}
-
-		//cannot happen
-		return null;
+		return pdt.read(this, byteOrder);
 	}
 
 	/**
