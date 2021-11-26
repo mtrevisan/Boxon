@@ -30,7 +30,6 @@ import io.github.mtrevisan.boxon.annotations.Skip;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
 import io.github.mtrevisan.boxon.codecs.managers.BoundedField;
 import io.github.mtrevisan.boxon.codecs.managers.ConstructorHelper;
-import io.github.mtrevisan.boxon.codecs.managers.ContextHelper;
 import io.github.mtrevisan.boxon.codecs.managers.EvaluatedField;
 import io.github.mtrevisan.boxon.codecs.managers.InjectEventListener;
 import io.github.mtrevisan.boxon.codecs.managers.ParserHelper;
@@ -46,7 +45,6 @@ import io.github.mtrevisan.boxon.external.codecs.BitWriter;
 import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
 import io.github.mtrevisan.boxon.external.logs.EventListener;
 import io.github.mtrevisan.boxon.internal.Evaluator;
-import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 
 import java.lang.annotation.Annotation;
@@ -61,23 +59,6 @@ public final class TemplateParser implements TemplateParserInterface{
 	@InjectEventListener
 	@SuppressWarnings("unused")
 	private final EventListener eventListener;
-
-	private static final class ParserContext<T>{
-
-		private final Object rootObject;
-		private final T currentObject;
-
-
-		ParserContext(final Object parentObject, final T currentObject){
-			rootObject = JavaHelper.nonNullOrDefault(parentObject, currentObject);
-			this.currentObject = currentObject;
-		}
-
-		void addSelfToEvaluatorContext(){
-			Evaluator.addToContext(ContextHelper.CONTEXT_SELF, currentObject);
-		}
-	}
-
 
 	private final LoaderCodecInterface loaderCodec;
 	private final LoaderTemplate loaderTemplate;
@@ -183,9 +164,9 @@ public final class TemplateParser implements TemplateParserInterface{
 		final T currentObject = ConstructorHelper.getCreator(template.getType())
 			.get();
 
-		final ParserContext<T> parserContext = new ParserContext<>(parentObject, currentObject);
+		final ParserContext<T> parserContext = new ParserContext<>(currentObject, parentObject);
 		//add current object in the context
-		parserContext.addSelfToEvaluatorContext();
+		parserContext.addCurrentObjectToEvaluatorContext();
 
 		//decode message fields:
 		final List<BoundedField> fields = template.getBoundedFields();
@@ -319,9 +300,8 @@ public final class TemplateParser implements TemplateParserInterface{
 	@Override
 	public <T> void encode(final Template<?> template, final BitWriter writer, final Object parentObject, final T currentObject)
 			throws FieldException{
-		final ParserContext<T> parserContext = new ParserContext<>(parentObject, currentObject);
-		//add current object in the context
-		parserContext.addSelfToEvaluatorContext();
+		final ParserContext<T> parserContext = new ParserContext<>(currentObject, parentObject);
+		parserContext.addCurrentObjectToEvaluatorContext();
 
 		//encode message fields:
 		final String typeName = template.getType().getName();

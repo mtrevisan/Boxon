@@ -136,6 +136,8 @@ public final class ConfigurationParser{
 
 	public <T> void encode(final ConfigurationMessage<?> configuration, final BitWriter writer, final T currentObject,
 			final Version protocol) throws FieldException{
+		final ParserContext<T> parserContext = new ParserContext<>(currentObject);
+
 		final ConfigurationHeader header = configuration.getHeader();
 		ParserHelper.writeAffix(header.start(), header.charset(), writer);
 
@@ -154,10 +156,12 @@ public final class ConfigurationParser{
 			final ConfigurationSkip[] skips = field.getSkips();
 			writeSkips(skips, writer, protocol);
 
+			parserContext.setRootObject(field.getFieldType());
+
 			//process value
-			encodeField(typeName, currentObject, field, writer, annotation);
+			encodeField(typeName, parserContext, field, writer, annotation);
 			if(annotation != field.getBinding())
-				encodeField(typeName, currentObject, field, writer, field.getBinding());
+				encodeField(typeName, parserContext, field, writer, field.getBinding());
 		}
 
 		ParserHelper.writeAffix(header.end(), header.charset(), writer);
@@ -165,7 +169,7 @@ public final class ConfigurationParser{
 		writer.flush();
 	}
 
-	private void encodeField(final String typeName, final Object currentObject, final ConfigField field, final BitWriter writer,
+	private void encodeField(final String typeName, final ParserContext<?> parserContext, final ConfigField field, final BitWriter writer,
 			final Annotation binding) throws FieldException{
 		final String fieldName = field.getFieldName();
 		final Class<? extends Annotation> annotationType = binding.annotationType();
@@ -178,9 +182,9 @@ public final class ConfigurationParser{
 
 		try{
 			//encode value from current object
-			final Object value = field.getFieldValue(currentObject);
+			final Object value = field.getFieldValue(parserContext.currentObject);
 			//write value to raw message
-			codec.encode(writer, binding, field.getFieldType(), value);
+			codec.encode(writer, binding, parserContext.rootObject, value);
 
 			eventListener.writtenField(typeName, fieldName, value);
 		}
