@@ -114,10 +114,7 @@ public final class StringHelper{
 	 * @return	An array of parsed Strings, {@code null} if {@code null} String input.
 	 */
 	public static String[] split(final String str, final char separator, final int max){
-		if(str == null)
-			return EMPTY_ARRAY;
-
-		final int length = str.length();
+		final int length = (str != null? str.length(): 0);
 		if(length == 0)
 			return EMPTY_ARRAY;
 
@@ -178,10 +175,7 @@ public final class StringHelper{
 		if(separatorChars.length() == 1)
 			return split(str, separatorChars.charAt(0), max);
 
-		if(str == null)
-			return EMPTY_ARRAY;
-
-		final int length = str.length();
+		final int length = (str != null? str.length(): 0);
 		if(length == 0)
 			return EMPTY_ARRAY;
 
