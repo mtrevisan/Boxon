@@ -324,6 +324,7 @@ public final class TemplateParser implements TemplateParserInterface{
 		parserContext.addSelfToEvaluatorContext();
 
 		//encode message fields:
+		final String typeName = template.getType().getName();
 		final List<BoundedField> fields = template.getBoundedFields();
 		for(int i = 0; i < fields.size(); i ++){
 			final BoundedField field = fields.get(i);
@@ -335,7 +336,7 @@ public final class TemplateParser implements TemplateParserInterface{
 			//check if field has to be processed...
 			if(shouldProcessField(field.getCondition(), parserContext.rootObject))
 				//... and if so, process it
-				encodeField(template, writer, parserContext, field);
+				encodeField(typeName, parserContext, field, writer, field.getBinding());
 		}
 
 		final MessageHeader header = template.getHeader();
@@ -346,16 +347,16 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
-	private <T> void encodeField(final Template<?> template, final BitWriter writer, final ParserContext<T> parserContext,
-			final BoundedField field) throws FieldException{
-		final Annotation binding = field.getBinding();
+	private <T> void encodeField(final String typeName, final ParserContext<T> parserContext, final BoundedField field,
+			final BitWriter writer, final Annotation binding) throws FieldException{
+		final String fieldName = field.getFieldName();
 		final Class<? extends Annotation> annotationType = binding.annotationType();
 		final CodecInterface<?> codec = loaderCodec.getCodec(annotationType);
 		if(codec == null)
 			throw CodecException.create("Cannot find codec for binding {}", annotationType.getSimpleName())
-				.withClassNameAndFieldName(template.getType().getName(), field.getFieldName());
+				.withClassNameAndFieldName(typeName, fieldName);
 
-		eventListener.writingField(template.getType().getName(), field.getFieldName(), annotationType.getSimpleName());
+		eventListener.writingField(typeName, fieldName, annotationType.getSimpleName());
 
 		try{
 			//encode value from current object
@@ -363,15 +364,15 @@ public final class TemplateParser implements TemplateParserInterface{
 			//write value to raw message
 			codec.encode(writer, binding, parserContext.rootObject, value);
 
-			eventListener.writtenField(template.getType().getName(), field.getFieldName(), value);
+			eventListener.writtenField(typeName, fieldName, value);
 		}
 		catch(final FieldException fe){
-			fe.withClassNameAndFieldName(template.getType().getName(), field.getFieldName());
+			fe.withClassNameAndFieldName(typeName, fieldName);
 			throw fe;
 		}
 		catch(final Exception e){
 			throw FieldException.create(e)
-				.withClassNameAndFieldName(template.getType().getName(), field.getFieldName());
+				.withClassNameAndFieldName(typeName, fieldName);
 		}
 	}
 

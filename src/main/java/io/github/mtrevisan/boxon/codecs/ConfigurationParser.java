@@ -140,6 +140,7 @@ public final class ConfigurationParser{
 		ParserHelper.writeAffix(header.start(), header.charset(), writer);
 
 		//encode message fields:
+		final String typeName = configuration.getType().getName();
 		final List<ConfigField> fields = configuration.getConfigurationFields();
 		for(int i = 0; i < fields.size(); i ++){
 			final ConfigField field = fields.get(i);
@@ -154,9 +155,9 @@ public final class ConfigurationParser{
 			writeSkips(skips, writer, protocol);
 
 			//process value
-			encodeField(configuration, currentObject, field, writer, annotation);
+			encodeField(typeName, currentObject, field, writer, annotation);
 			if(annotation != field.getBinding())
-				encodeField(configuration, currentObject, field, writer, field.getBinding());
+				encodeField(typeName, currentObject, field, writer, field.getBinding());
 		}
 
 		ParserHelper.writeAffix(header.end(), header.charset(), writer);
@@ -164,15 +165,16 @@ public final class ConfigurationParser{
 		writer.flush();
 	}
 
-	private <T> void encodeField(final ConfigurationMessage<?> configuration, final T currentObject, final ConfigField field,
-			final BitWriter writer, final Annotation binding) throws FieldException{
+	private <T> void encodeField(final String typeName, final T currentObject, final ConfigField field, final BitWriter writer,
+			final Annotation binding) throws FieldException{
+		final String fieldName = field.getFieldName();
 		final Class<? extends Annotation> annotationType = binding.annotationType();
 		final CodecInterface<?> codec = loaderCodec.getCodec(annotationType);
 		if(codec == null)
 			throw CodecException.create("Cannot find codec for binding {}", annotationType.getSimpleName())
-				.withClassNameAndFieldName(configuration.getType().getName(), field.getFieldName());
+				.withClassNameAndFieldName(typeName, fieldName);
 
-		eventListener.writingField(configuration.getType().getName(), field.getFieldName(), annotationType.getSimpleName());
+		eventListener.writingField(typeName, fieldName, annotationType.getSimpleName());
 
 		try{
 			//encode value from current object
@@ -180,15 +182,15 @@ public final class ConfigurationParser{
 			//write value to raw message
 			codec.encode(writer, binding, field.getFieldType(), value);
 
-			eventListener.writtenField(configuration.getType().getName(), field.getFieldName(), value);
+			eventListener.writtenField(typeName, fieldName, value);
 		}
 		catch(final FieldException fe){
-			fe.withClassNameAndFieldName(configuration.getType().getName(), field.getFieldName());
+			fe.withClassNameAndFieldName(typeName, fieldName);
 			throw fe;
 		}
 		catch(final Exception e){
 			throw FieldException.create(e)
-				.withClassNameAndFieldName(configuration.getType().getName(), field.getFieldName());
+				.withClassNameAndFieldName(typeName, fieldName);
 		}
 	}
 
