@@ -165,7 +165,7 @@ public final class ConfigurationParser{
 		writer.flush();
 	}
 
-	private <T> void encodeField(final String typeName, final T currentObject, final ConfigField field, final BitWriter writer,
+	private void encodeField(final String typeName, final Object currentObject, final ConfigField field, final BitWriter writer,
 			final Annotation binding) throws FieldException{
 		final String fieldName = field.getFieldName();
 		final Class<? extends Annotation> annotationType = binding.annotationType();

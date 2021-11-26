@@ -347,8 +347,8 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
-	private <T> void encodeField(final String typeName, final ParserContext<T> parserContext, final BoundedField field,
-			final BitWriter writer, final Annotation binding) throws FieldException{
+	private void encodeField(final String typeName, final ParserContext<?> parserContext, final BoundedField field, final BitWriter writer,
+			final Annotation binding) throws FieldException{
 		final String fieldName = field.getFieldName();
 		final Class<? extends Annotation> annotationType = binding.annotationType();
 		final CodecInterface<?> codec = loaderCodec.getCodec(annotationType);
