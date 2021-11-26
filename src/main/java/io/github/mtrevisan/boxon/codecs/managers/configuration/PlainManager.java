@@ -160,24 +160,22 @@ final class PlainManager implements ConfigurationManagerInterface{
 	private static void validateEnumerationValue(final String dataKey, final Object dataValue,
 			final Class<? extends ConfigurationEnum> enumeration, final Class<?> fieldType) throws EncodeException{
 		final Class<?> dataValueClass = (dataValue != null? dataValue.getClass(): null);
-		if(dataValueClass == null){
-			final Class<?> componentType = getFieldBaseType(fieldType);
-			throw EncodeException.create("Data value incompatible with field type {}; found {}{}, expected {}[] for enumeration type",
-				dataKey, componentType, (fieldType.isArray()? "[]": EMPTY_STRING), enumeration.getSimpleName());
-		}
+		if(dataValueClass == null)
+			throw EncodeException.create("Data value incompatible with field type {}; found {}, expected {}[] for enumeration type",
+				dataKey, getFieldBaseType(fieldType), enumeration.getSimpleName());
 		if(dataValueClass.isArray()){
 			final Class<?> componentType = dataValueClass.getComponentType();
 			if(!enumeration.isAssignableFrom(componentType))
 				throw EncodeException.create("Data value incompatible with field type {}; found {}[], expected {}[] for enumeration type",
 					dataKey, componentType, enumeration.getSimpleName());
 		}
-		else if(!enumeration.isInstance(dataValue) || String.class.isInstance(dataValue) && !((String)dataValue).isEmpty())
+		else if(!enumeration.isInstance(dataValue) || String.class.isInstance(dataValue) && !StringHelper.isBlank((CharSequence)dataValue))
 			throw EncodeException.create("Data value incompatible with field type {}; found {}, expected {} for enumeration type",
 				dataKey, dataValueClass, enumeration.getSimpleName());
 	}
 
-	private static Class<?> getFieldBaseType(final Class<?> fieldType){
-		return (fieldType.isArray()? fieldType.getComponentType(): fieldType);
+	private static String getFieldBaseType(final Class<?> fieldType){
+		return (fieldType.isArray()? fieldType.getComponentType() + "[]": fieldType.toString());
 	}
 
 }
