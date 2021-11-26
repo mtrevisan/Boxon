@@ -311,27 +311,20 @@ public final class StringHelper{
 	 * @return	Whether the given text contains only digits and is non-{@code null}.
 	 */
 	public static boolean isDecimalNumber(final String text){
-		if(text == null || text.isEmpty())
-			return false;
-
-		for(int i = 0; i < text.length(); i ++){
-			final char chr = text.charAt(i);
-			if(Character.digit(chr, 10) < 0)
-				return false;
-		}
-		return true;
+		return (text != null && !text.isEmpty() && !isBaseNumber(text, 0, 10));
 	}
 
 	private static boolean isHexadecimalNumber(final String text){
-		if(text == null || !text.startsWith("0x"))
-			return false;
+		return (text != null && text.startsWith("0x") && !isBaseNumber(text, 2, 16));
+	}
 
-		for(int i = 2; i < text.length(); i ++){
+	private static boolean isBaseNumber(final CharSequence text, final int offset, final int radix){
+		for(int i = offset; i < text.length(); i ++){
 			final char chr = text.charAt(i);
-			if(Character.digit(chr, 16) < 0)
-				return false;
+			if(Character.digit(chr, radix) < 0)
+				return true;
 		}
-		return true;
+		return false;
 	}
 
 }
