@@ -36,47 +36,12 @@ import java.util.Map;
 
 public enum ParserDataType{
 
-	BYTE(Byte.TYPE, Byte.class, Byte.SIZE){
-		@Override
-		public Object read(final BitReader reader, final ByteOrder byteOrder){
-			return reader.getByte();
-		}
-	},
-
-	SHORT(Short.TYPE, Short.class, Short.SIZE){
-		@Override
-		public Object read(final BitReader reader, final ByteOrder byteOrder){
-			return reader.getShort(byteOrder);
-		}
-	},
-
-	INTEGER(Integer.TYPE, Integer.class, Integer.SIZE){
-		@Override
-		public Object read(final BitReader reader, final ByteOrder byteOrder){
-			return reader.getInt(byteOrder);
-		}
-	},
-
-	LONG(Long.TYPE, Long.class, Long.SIZE){
-		@Override
-		public Object read(final BitReader reader, final ByteOrder byteOrder){
-			return reader.getLong(byteOrder);
-		}
-	},
-
-	FLOAT(Float.TYPE, Float.class, Float.SIZE){
-		@Override
-		public Object read(final BitReader reader, final ByteOrder byteOrder){
-			return reader.getFloat(byteOrder);
-		}
-	},
-
-	DOUBLE(Double.TYPE, Double.class, Double.SIZE){
-		@Override
-		public Object read(final BitReader reader, final ByteOrder byteOrder){
-			return reader.getDouble(byteOrder);
-		}
-	};
+	BYTE(Byte.TYPE, Byte.class, Byte.SIZE),
+	SHORT(Short.TYPE, Short.class, Short.SIZE),
+	INTEGER(Integer.TYPE, Integer.class, Integer.SIZE),
+	LONG(Long.TYPE, Long.class, Long.SIZE),
+	FLOAT(Float.TYPE, Float.class, Float.SIZE),
+	DOUBLE(Double.TYPE, Double.class, Double.SIZE);
 
 	/** Maps primitive {@code Class}es to their corresponding wrapper {@code Class}. */
 	private static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPER_MAP;
@@ -159,8 +124,6 @@ public enum ParserDataType{
 		return Arrays.toString(new String[]{byte.class.getSimpleName(), short.class.getSimpleName(), int.class.getSimpleName(),
 			long.class.getSimpleName(), float.class.getSimpleName(), double.class.getSimpleName()});
 	}
-
-	public abstract Object read(final BitReader reader, final ByteOrder byteOrder);
 
 
 	public static Object getValueOrDefault(final Class<?> fieldType, final Object value) throws CodecException{
