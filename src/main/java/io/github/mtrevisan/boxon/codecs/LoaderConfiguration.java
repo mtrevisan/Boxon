@@ -256,7 +256,7 @@ final class LoaderConfiguration{
 		for(int i = 0; i < fields.size(); i ++){
 			final ConfigField field = fields.get(i);
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(field.getBinding());
-			final Annotation annotation = manager.shouldBeExtracted(protocol);
+			final Annotation annotation = manager.annotationToBeProcessed(protocol);
 			if(manager.isMandatory(annotation))
 				mandatoryFields.add(field);
 		}
@@ -268,7 +268,7 @@ final class LoaderConfiguration{
 		for(int i = 0; foundField == null && i < fields.size(); i ++){
 			final ConfigField field = fields.get(i);
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(field.getBinding());
-			final Annotation annotation = manager.shouldBeExtracted(protocol);
+			final Annotation annotation = manager.annotationToBeProcessed(protocol);
 			if(annotation.annotationType() != Annotation.class && manager.getShortDescription().equals(key))
 				foundField = field;
 		}

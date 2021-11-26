@@ -89,7 +89,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	public Annotation shouldBeExtracted(final Version protocol){
+	public Annotation annotationToBeProcessed(final Version protocol){
 		final Annotation match = findAlternative(protocol);
 		final boolean shouldBeExtracted = (match != null
 			&& ConfigurationHelper.shouldBeExtracted(protocol, annotation.minProtocol(), annotation.maxProtocol()));

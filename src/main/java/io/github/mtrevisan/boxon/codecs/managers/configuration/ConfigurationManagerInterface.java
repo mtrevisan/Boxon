@@ -43,7 +43,7 @@ public interface ConfigurationManagerInterface{
 
 	void addProtocolVersionBoundaries(final Collection<String> protocolVersionBoundaries);
 
-	Annotation shouldBeExtracted(final Version protocol);
+	Annotation annotationToBeProcessed(final Version protocol);
 
 	boolean isMandatory(final Annotation annotation);
 

@@ -97,7 +97,7 @@ final class CompositeManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	public Annotation shouldBeExtracted(final Version protocol){
+	public Annotation annotationToBeProcessed(final Version protocol){
 		final boolean shouldBeExtracted = ConfigurationHelper.shouldBeExtracted(protocol, annotation.minProtocol(), annotation.maxProtocol());
 		return (shouldBeExtracted? annotation: PlainManager.EMPTY_ANNOTATION);
 	}

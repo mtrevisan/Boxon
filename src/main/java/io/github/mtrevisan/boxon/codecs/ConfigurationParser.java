@@ -146,7 +146,7 @@ public final class ConfigurationParser{
 			final ConfigField field = fields.get(i);
 
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(field.getBinding());
-			final Annotation annotation = manager.shouldBeExtracted(protocol);
+			final Annotation annotation = manager.annotationToBeProcessed(protocol);
 			if(annotation.annotationType() == Annotation.class)
 				continue;
 

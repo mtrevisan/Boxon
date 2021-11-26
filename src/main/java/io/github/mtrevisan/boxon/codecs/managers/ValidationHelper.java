@@ -201,8 +201,6 @@ final class ValidationHelper{
 
 
 	static <T extends Annotation> void validateEnumeration(final ConfigFieldData<T> field) throws AnnotationException{
-		final boolean isFieldArray = field.getFieldType().isArray();
-
 		if(field.hasEnumeration()){
 			//enumeration can be encoded
 			if(!ConfigurationEnum.class.isAssignableFrom(field.enumeration))
@@ -215,7 +213,8 @@ final class ValidationHelper{
 				throw AnnotationException.create("Empty enum in {} in field {}", field.annotation.getSimpleName(),
 					field.field.getName());
 
-			if(isFieldArray)
+			final Class<?> fieldType = field.getFieldType();
+			if(fieldType.isArray())
 				validateEnumMultipleValues(field, enumConstants);
 			else
 				validateEnumerationMutuallyExclusive(field, enumConstants);

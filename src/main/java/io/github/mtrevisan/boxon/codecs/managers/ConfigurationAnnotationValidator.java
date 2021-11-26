@@ -97,16 +97,15 @@ enum ConfigurationAnnotationValidator{
 		}
 
 		private void validateMinimumParameters(final ConfigFieldData<ConfigurationField> field) throws AnnotationException{
-			final Class<?> fieldType = field.field.getType();
-			final boolean isFieldArray = fieldType.isArray();
-
 			//one only of `pattern`, `minValue`/`maxValue`, and `enumeration` should be set:
 			final boolean hasPattern = !field.pattern.isEmpty();
 			final boolean hasMinMaxValues = (!field.minValue.isEmpty() || !field.maxValue.isEmpty());
 			if(moreThanOneSet(hasPattern, hasMinMaxValues, field.hasEnumeration()))
 				throw AnnotationException.create("Only one of `pattern`, `minValue`/`maxValue`, or `enumeration` should be used in {}",
 					ConfigurationField.class.getSimpleName());
-			if(isFieldArray && !field.hasEnumeration())
+
+			final Class<?> fieldType = field.getFieldType();
+			if(fieldType.isArray() && !field.hasEnumeration())
 				throw AnnotationException.create("Array field should have `enumeration`");
 		}
 
@@ -193,9 +192,7 @@ enum ConfigurationAnnotationValidator{
 		private void validateMinimumParameters(final Field field, final ConfigFieldData<AlternativeConfigurationField> configData)
 				throws AnnotationException{
 			final Class<?> fieldType = field.getType();
-			final boolean isFieldArray = fieldType.isArray();
-
-			if(isFieldArray && !configData.hasEnumeration())
+			if(fieldType.isArray() && !configData.hasEnumeration())
 				throw AnnotationException.create("Array field should have `enumeration`");
 		}
 	},
