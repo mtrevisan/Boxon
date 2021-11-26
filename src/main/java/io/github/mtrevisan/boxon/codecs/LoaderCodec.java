@@ -25,7 +25,6 @@
 package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.codecs.managers.ConstructorHelper;
-import io.github.mtrevisan.boxon.codecs.managers.GenericHelper;
 import io.github.mtrevisan.boxon.codecs.managers.InjectEventListener;
 import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
 import io.github.mtrevisan.boxon.codecs.managers.ReflectiveClassLoader;

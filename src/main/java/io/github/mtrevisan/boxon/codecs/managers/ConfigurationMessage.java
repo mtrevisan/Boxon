@@ -169,23 +169,28 @@ public final class ConfigurationMessage<T>{
 		protocolVersionBoundaries.add(header.maxProtocol());
 
 		for(int i = 0; i < configFields.size(); i ++){
-			final ConfigField cf = configFields.get(i);
+			final ConfigField configField = configFields.get(i);
 
-			final Annotation annotation = cf.getBinding();
+			final Annotation annotation = configField.getBinding();
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(annotation);
 			manager.addProtocolVersionBoundaries(protocolVersionBoundaries);
 
-			final ConfigurationSkip[] skips = cf.getSkips();
-			for(int j = 0; j < skips.length; j ++){
-				protocolVersionBoundaries.add(skips[j].minProtocol());
-				protocolVersionBoundaries.add(skips[j].maxProtocol());
-			}
+			final ConfigurationSkip[] skips = configField.getSkips();
+			extractProtocolVersionBoundaries(skips, protocolVersionBoundaries);
 		}
 
 		protocolVersionBoundaries.sort(Comparator.comparing(Version::of));
 		removeDuplicates(protocolVersionBoundaries);
 		protocolVersionBoundaries.remove(EMPTY_STRING);
 		return protocolVersionBoundaries;
+	}
+
+	private static void extractProtocolVersionBoundaries(final ConfigurationSkip[] skips,
+			final Collection<String> protocolVersionBoundaries){
+		for(int j = 0; j < skips.length; j ++){
+			protocolVersionBoundaries.add(skips[j].minProtocol());
+			protocolVersionBoundaries.add(skips[j].maxProtocol());
+		}
 	}
 
 	public Class<T> getType(){
