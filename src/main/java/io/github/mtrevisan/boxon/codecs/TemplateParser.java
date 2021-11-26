@@ -33,6 +33,7 @@ import io.github.mtrevisan.boxon.codecs.managers.ConstructorHelper;
 import io.github.mtrevisan.boxon.codecs.managers.ContextHelper;
 import io.github.mtrevisan.boxon.codecs.managers.EvaluatedField;
 import io.github.mtrevisan.boxon.codecs.managers.InjectEventListener;
+import io.github.mtrevisan.boxon.codecs.managers.ParserHelper;
 import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
 import io.github.mtrevisan.boxon.codecs.managers.Template;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
@@ -338,7 +339,8 @@ public final class TemplateParser implements TemplateParserInterface{
 		}
 
 		final MessageHeader header = template.getHeader();
-		closeMessage(header, writer);
+		if(header != null)
+			ParserHelper.writeAffix(header.end(), header.charset(), writer);
 
 		writer.flush();
 	}
@@ -375,13 +377,6 @@ public final class TemplateParser implements TemplateParserInterface{
 
 	private static boolean shouldProcessField(final String condition, final Object rootObject){
 		return (condition.isEmpty() || Evaluator.evaluateBoolean(condition, rootObject));
-	}
-
-	private static void closeMessage(final MessageHeader header, final BitWriter writer){
-		if(header != null && !header.end().isEmpty()){
-			final Charset charset = Charset.forName(header.charset());
-			writer.putText(header.end(), charset);
-		}
 	}
 
 	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
