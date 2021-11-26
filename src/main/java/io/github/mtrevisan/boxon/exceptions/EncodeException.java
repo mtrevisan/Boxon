@@ -65,11 +65,11 @@ public final class EncodeException extends Exception{
 
 	@Override
 	public String getMessage(){
-		String messsage = EMPTY_STRING;
+		String message = EMPTY_STRING;
 		final Throwable cause = getCause();
 		if(cause != null)
-			messsage += cause.getMessage();
-		return messsage;
+			message += cause.getMessage();
+		return message;
 	}
 
 

@@ -219,7 +219,6 @@ public final class TemplateParser implements TemplateParserInterface{
 		}
 	}
 
-	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
 	private static <T> void readSkips(final Skip[] skips, final BitReader reader, final ParserContext<T> parserContext){
 		for(int i = 0; i < skips.length; i ++)
 			readSkip(skips[i], reader, parserContext.getRootObject());
