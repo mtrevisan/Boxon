@@ -176,7 +176,7 @@ public final class Version implements Comparable<Version>{
 		for(int i = 0; i < preRelease.length; i ++){
 			final String pr = preRelease[i];
 			final boolean numeric = StringHelper.isDecimalNumber(pr);
-			if(numeric && pr.length() > 1 && pr.charAt(0) == '0')
+			if(numeric && pr.charAt(0) == '0')
 				throw new IllegalArgumentException("Numeric identifier MUST NOT contain leading zeros");
 			if(!numeric && !containsOnlyValidChars(pr))
 				throw new IllegalArgumentException("Argument is not a valid version");
