@@ -25,10 +25,10 @@
 package io.github.mtrevisan.boxon.codecs.managers.configuration;
 
 import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
-import io.github.mtrevisan.boxon.external.codecs.ParserDataType;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
+import io.github.mtrevisan.boxon.external.codecs.ParserDataType;
 import io.github.mtrevisan.boxon.external.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.external.configurations.ConfigurationKey;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;

@@ -26,6 +26,7 @@ package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
+import io.github.mtrevisan.boxon.codecs.managers.ConfigField;
 import io.github.mtrevisan.boxon.codecs.managers.ConfigurationMessage;
 import io.github.mtrevisan.boxon.codecs.managers.ConstructorHelper;
 import io.github.mtrevisan.boxon.codecs.managers.InjectEventListener;
@@ -33,7 +34,6 @@ import io.github.mtrevisan.boxon.codecs.managers.Memoizer;
 import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
 import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationManagerFactory;
 import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationManagerInterface;
-import io.github.mtrevisan.boxon.codecs.managers.ConfigField;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;

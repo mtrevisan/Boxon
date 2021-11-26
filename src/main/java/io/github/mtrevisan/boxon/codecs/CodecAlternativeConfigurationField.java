@@ -28,9 +28,9 @@ import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
 import io.github.mtrevisan.boxon.codecs.managers.writer.WriterManagerFactory;
 import io.github.mtrevisan.boxon.codecs.managers.writer.WriterManagerInterface;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
-import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
 import io.github.mtrevisan.boxon.external.codecs.BitReader;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
+import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
 import io.github.mtrevisan.boxon.external.codecs.ParserDataType;
 
 import java.lang.annotation.Annotation;

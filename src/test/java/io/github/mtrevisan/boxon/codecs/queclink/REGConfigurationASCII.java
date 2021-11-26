@@ -24,14 +24,14 @@
  */
 package io.github.mtrevisan.boxon.codecs.queclink;
 
-import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationField;
-import io.github.mtrevisan.boxon.external.configurations.BooleanType;
+import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
 import io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField;
+import io.github.mtrevisan.boxon.annotations.configurations.CompositeSubField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
-import io.github.mtrevisan.boxon.annotations.configurations.CompositeSubField;
+import io.github.mtrevisan.boxon.external.configurations.BooleanType;
 
 
 @SuppressWarnings("ALL")
