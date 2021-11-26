@@ -155,7 +155,6 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 
-	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
 	@Override
 	public <T> T decode(final Template<T> template, final BitReader reader, final Object parentObject) throws FieldException{
 		final int startPosition = reader.position();
@@ -191,7 +190,6 @@ public final class TemplateParser implements TemplateParserInterface{
 		return currentObject;
 	}
 
-	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
 	private <T> void decodeField(final Template<T> template, final BitReader reader, final ParserContext<T> parserContext,
 			final BoundedField field) throws FieldException{
 		final Annotation binding = field.getBinding();
@@ -277,7 +275,6 @@ public final class TemplateParser implements TemplateParserInterface{
 		}
 	}
 
-	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
 	private void processEvaluatedFields(final Template<?> template, final ParserContext<?> parserContext){
 		final List<EvaluatedField> evaluatedFields = template.getEvaluatedFields();
 		for(int i = 0; i < evaluatedFields.size(); i ++){
@@ -295,7 +292,6 @@ public final class TemplateParser implements TemplateParserInterface{
 		}
 	}
 
-	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
 	@Override
 	public <T> void encode(final Template<?> template, final BitWriter writer, final Object parentObject, final T currentObject)
 			throws FieldException{
@@ -325,15 +321,12 @@ public final class TemplateParser implements TemplateParserInterface{
 		final MessageHeader header = template.getHeader();
 		if(header != null)
 			ParserHelper.writeAffix(header.end(), header.charset(), writer);
-
-		writer.flush();
 	}
 
 	private static boolean shouldProcessField(final String condition, final Object rootObject){
 		return (condition.isEmpty() || Evaluator.evaluateBoolean(condition, rootObject));
 	}
 
-	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
 	private static <T> void writeSkips(final Skip[] skips, final BitWriter writer, final ParserContext<T> parserContext){
 		for(int i = 0; i < skips.length; i ++)
 			writeSkip(skips[i], writer, parserContext.getRootObject());

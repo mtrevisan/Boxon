@@ -168,8 +168,6 @@ public final class ConfigurationParser{
 		}
 
 		ParserHelper.writeAffix(header.end(), header.charset(), writer);
-
-		writer.flush();
 	}
 
 	private static void writeSkips(final ConfigurationSkip[] skips, final BitWriter writer, final Version protocol){

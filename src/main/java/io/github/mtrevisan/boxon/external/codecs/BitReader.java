@@ -101,6 +101,7 @@ public final class BitReader extends BitReaderData{
 	 */
 	public static BitReader wrap(final BitWriter bitWriter){
 		bitWriter.flush();
+
 		return wrap(bitWriter.array());
 	}
 
