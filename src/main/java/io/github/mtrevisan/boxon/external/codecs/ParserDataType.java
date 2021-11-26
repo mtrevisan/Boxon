@@ -176,7 +176,7 @@ public enum ParserDataType{
 		if(value == null || value.isEmpty())
 			return null;
 
-		final Class<?> objectiveType = ParserDataType.toObjectiveTypeOrSelf(fieldType);
+		final Class<?> objectiveType = toObjectiveTypeOrSelf(fieldType);
 		//try convert to a number...
 		final Object val = toNumber(value, objectiveType);
 		//... otherwise convert it to an object
@@ -230,6 +230,7 @@ public enum ParserDataType{
 	private static boolean isNumeric(final String text){
 		return (isHexadecimalNumber(text) || isDecimalNumber(text));
 	}
+
 
 	/**
 	 * <p>Checks if the text contains only Unicode digits.
