@@ -25,11 +25,11 @@
 package io.github.mtrevisan.boxon.codecs.managers.configuration;
 
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
-import io.github.mtrevisan.boxon.external.configurations.ConfigurationKey;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.external.configurations.ConfigurationEnum;
+import io.github.mtrevisan.boxon.external.configurations.ConfigurationKey;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.ParserDataType;
@@ -161,7 +161,7 @@ final class PlainManager implements ConfigurationManagerInterface{
 			final Class<? extends ConfigurationEnum> enumeration, final Class<?> fieldType) throws EncodeException{
 		final Class<?> dataValueClass = (dataValue != null? dataValue.getClass(): null);
 		if(dataValueClass == null){
-			final Class<?> componentType = (fieldType.isArray()? fieldType.getComponentType(): fieldType);
+			final Class<?> componentType = getFieldBaseType(fieldType);
 			throw EncodeException.create("Data value incompatible with field type {}; found {}{}, expected {}[] for enumeration type",
 				dataKey, componentType, (fieldType.isArray()? "[]": EMPTY_STRING), enumeration.getSimpleName());
 		}
@@ -174,6 +174,10 @@ final class PlainManager implements ConfigurationManagerInterface{
 		else if(!enumeration.isInstance(dataValue) || String.class.isInstance(dataValue) && !((String)dataValue).isEmpty())
 			throw EncodeException.create("Data value incompatible with field type {}; found {}, expected {} for enumeration type",
 				dataKey, dataValueClass, enumeration.getSimpleName());
+	}
+
+	private static Class<?> getFieldBaseType(final Class<?> fieldType){
+		return (fieldType.isArray()? fieldType.getComponentType(): fieldType);
 	}
 
 }
