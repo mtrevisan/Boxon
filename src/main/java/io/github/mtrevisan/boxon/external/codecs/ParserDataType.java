@@ -185,35 +185,6 @@ public enum ParserDataType{
 
 	private static final String METHOD_VALUE_OF = "valueOf";
 
-	/**
-	 * <p>Checks if the text contains only Unicode digits.
-	 * A decimal point is not a Unicode digit and returns false.</p>
-	 *
-	 * <p>{@code null} will return {@code false}.
-	 * An empty text ({@code length() = 0}) will return {@code false}.</p>
-	 *
-	 * <p>Note that the method does not allow for a leading sign, either positive or negative.
-	 * Also, if a String passes the numeric test, it may still generate a NumberFormatException
-	 * when parsed by Integer.parseInt or Long.parseLong, e.g. if the value is outside the range
-	 * for int or long respectively.</p>
-	 *
-	 * <pre>
-	 * isNumeric(null)   = false
-	 * isNumeric("")     = false
-	 * isNumeric("  ")   = false
-	 * isNumeric("123")  = true
-	 * isNumeric("\u0967\u0968\u0969")  = true
-	 * isNumeric("12 3") = false
-	 * isNumeric("ab2c") = false
-	 * isNumeric("12-3") = false
-	 * isNumeric("12.3") = false
-	 * isNumeric("-123") = false
-	 * isNumeric("+123") = false
-	 * </pre>
-	 *
-	 * @param text	The text to check, may be {@code null}.
-	 * @return	Whether the given text contains only digits and is non-{@code null}.
-	 */
 	private static Object toNumber(final String text, final Class<?> objectiveType){
 		Object response = null;
 		if(isNumeric(text)){
