@@ -143,6 +143,7 @@ public final class BitReader extends BitReaderData{
 			throw AnnotationException.create("Cannot read type {}, should be one of {}, or their objective counterparts",
 				type.getSimpleName(), ParserDataType.describe());
 
+		//FIXME `this` is a problem...
 		return pdt.read(this, byteOrder);
 	}
 
