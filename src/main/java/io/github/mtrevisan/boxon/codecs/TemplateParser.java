@@ -314,9 +314,12 @@ public final class TemplateParser implements TemplateParserInterface{
 			writeSkips(skips, writer, parserContext);
 
 			//check if field has to be processed...
-			if(shouldProcessField(field.getCondition(), parserContext.rootObject))
+			if(shouldProcessField(field.getCondition(), parserContext.rootObject)){
 				//... and if so, process it
+				parserContext.setFieldName(field.getFieldName());
+
 				encodeField(typeName, parserContext, field, writer, field.getBinding());
+			}
 		}
 
 		final MessageHeader header = template.getHeader();
@@ -329,14 +332,13 @@ public final class TemplateParser implements TemplateParserInterface{
 	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
 	private void encodeField(final String typeName, final ParserContext<?> parserContext, final BoundedField field, final BitWriter writer,
 			final Annotation binding) throws FieldException{
-		final String fieldName = field.getFieldName();
 		final Class<? extends Annotation> annotationType = binding.annotationType();
 		final CodecInterface<?> codec = loaderCodec.getCodec(annotationType);
 		if(codec == null)
 			throw CodecException.create("Cannot find codec for binding {}", annotationType.getSimpleName())
-				.withClassNameAndFieldName(typeName, fieldName);
+				.withClassNameAndFieldName(typeName, parserContext.fieldName);
 
-		eventListener.writingField(typeName, fieldName, annotationType.getSimpleName());
+		eventListener.writingField(typeName, parserContext.fieldName, annotationType.getSimpleName());
 
 		try{
 			//encode value from current object
@@ -344,15 +346,15 @@ public final class TemplateParser implements TemplateParserInterface{
 			//write value to raw message
 			codec.encode(writer, binding, parserContext.rootObject, value);
 
-			eventListener.writtenField(typeName, fieldName, value);
+			eventListener.writtenField(typeName, parserContext.fieldName, value);
 		}
 		catch(final FieldException fe){
-			fe.withClassNameAndFieldName(typeName, fieldName);
+			fe.withClassNameAndFieldName(typeName, parserContext.fieldName);
 			throw fe;
 		}
 		catch(final Exception e){
 			throw FieldException.create(e)
-				.withClassNameAndFieldName(typeName, fieldName);
+				.withClassNameAndFieldName(typeName, parserContext.fieldName);
 		}
 	}
 

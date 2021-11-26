@@ -157,6 +157,7 @@ public final class ConfigurationParser{
 			writeSkips(skips, writer, protocol);
 
 			parserContext.setRootObject(field.getFieldType());
+			parserContext.setFieldName(field.getFieldName());
 
 			//process value
 			encodeField(typeName, parserContext, field, writer, annotation);
@@ -171,14 +172,13 @@ public final class ConfigurationParser{
 
 	private void encodeField(final String typeName, final ParserContext<?> parserContext, final ConfigField field, final BitWriter writer,
 			final Annotation binding) throws FieldException{
-		final String fieldName = field.getFieldName();
 		final Class<? extends Annotation> annotationType = binding.annotationType();
 		final CodecInterface<?> codec = loaderCodec.getCodec(annotationType);
 		if(codec == null)
 			throw CodecException.create("Cannot find codec for binding {}", annotationType.getSimpleName())
-				.withClassNameAndFieldName(typeName, fieldName);
+				.withClassNameAndFieldName(typeName, parserContext.fieldName);
 
-		eventListener.writingField(typeName, fieldName, annotationType.getSimpleName());
+		eventListener.writingField(typeName, parserContext.fieldName, annotationType.getSimpleName());
 
 		try{
 			//encode value from current object
@@ -186,15 +186,15 @@ public final class ConfigurationParser{
 			//write value to raw message
 			codec.encode(writer, binding, parserContext.rootObject, value);
 
-			eventListener.writtenField(typeName, fieldName, value);
+			eventListener.writtenField(typeName, parserContext.fieldName, value);
 		}
 		catch(final FieldException fe){
-			fe.withClassNameAndFieldName(typeName, fieldName);
+			fe.withClassNameAndFieldName(typeName, parserContext.fieldName);
 			throw fe;
 		}
 		catch(final Exception e){
 			throw FieldException.create(e)
-				.withClassNameAndFieldName(typeName, fieldName);
+				.withClassNameAndFieldName(typeName, parserContext.fieldName);
 		}
 	}
 

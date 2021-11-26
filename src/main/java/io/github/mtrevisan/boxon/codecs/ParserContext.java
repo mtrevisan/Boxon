@@ -34,6 +34,8 @@ final class ParserContext<T>{
 	Object rootObject;
 	final T currentObject;
 
+	String fieldName;
+
 
 	ParserContext(final T currentObject){
 		this(currentObject, null);
@@ -50,6 +52,10 @@ final class ParserContext<T>{
 
 	void addCurrentObjectToEvaluatorContext(){
 		Evaluator.addToContext(ContextHelper.CONTEXT_SELF, currentObject);
+	}
+
+	void setFieldName(final String fieldName){
+		this.fieldName = fieldName;
 	}
 
 }
