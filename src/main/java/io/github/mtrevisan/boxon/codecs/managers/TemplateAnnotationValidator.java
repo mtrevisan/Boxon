@@ -126,7 +126,7 @@ public enum TemplateAnnotationValidator{
 	private static final String EMPTY_STRING = "";
 
 	private static final ValueOf<TemplateAnnotationValidator, Class<? extends Annotation>> VALIDATORS
-		= new ValueOf<>(TemplateAnnotationValidator.class, validator -> validator.annotationType);
+		= ValueOf.create(TemplateAnnotationValidator.class, validator -> validator.annotationType);
 
 
 	private final Class<? extends Annotation> annotationType;

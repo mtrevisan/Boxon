@@ -119,7 +119,7 @@ public final class ConfigurationParser{
 	 */
 	public Object getConfigurationWithDefaults(final ConfigurationMessage<?> configuration, final Map<String, Object> data,
 			final Version protocol) throws EncodeException, CodecException{
-		return loaderConfiguration.getConfigurationWithDefaults(configuration, data, protocol);
+		return LoaderConfiguration.getConfigurationWithDefaults(configuration, data, protocol);
 	}
 
 	/**

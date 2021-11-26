@@ -189,7 +189,7 @@ final class LoaderConfiguration{
 	 * @param protocol	The protocol the data refers to.
 	 * @return	The configuration data.
 	 */
-	Object getConfigurationWithDefaults(final ConfigurationMessage<?> configuration, final Map<String, Object> data,
+	static Object getConfigurationWithDefaults(final ConfigurationMessage<?> configuration, final Map<String, Object> data,
 			final Version protocol) throws EncodeException, CodecException{
 		final Object configurationObject = ConstructorHelper.getCreator(configuration.getType())
 			.get();

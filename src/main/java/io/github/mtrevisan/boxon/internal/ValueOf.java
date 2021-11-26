@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 import java.util.function.Function;
 
@@ -41,27 +42,27 @@ public final class ValueOf<T extends Enum<T>, K>{
 	private final Map<K, T> values;
 
 
-	public ValueOf(final Class<T> type, final Function<T, K> fieldAccessor){
+	public static <T extends Enum<T>, K> ValueOf<T, K> create(final Class<T> type, final Function<T, K> fieldAccessor){
+		return new ValueOf<>(type, fieldAccessor, null);
+	}
+
+	public static <T extends Enum<T>, K> ValueOf<T, K> create(final Class<T> type, final Function<T, K> fieldAccessor,
+			final Comparator<K> comparator){
+		Objects.requireNonNull(comparator, "Comparator has not to be null");
+
+		return new ValueOf<>(type, fieldAccessor, comparator);
+	}
+
+	private ValueOf(final Class<T> type, final Function<T, K> fieldAccessor, final Comparator<K> comparator){
 		this.type = type;
 
 		final T[] enumConstants = type.getEnumConstants();
-		final Map<K, T> map = new HashMap<>(enumConstants.length);
+		final Map<K, T> map = (comparator != null? new TreeMap<>(comparator): new HashMap<>(enumConstants.length));
 		for(int i = 0; i < enumConstants.length; i ++){
 			final K key = fieldAccessor.apply(enumConstants[i]);
 			if(map.put(key, enumConstants[i]) != null)
 				throw new IllegalStateException("Duplicate key in enum " + type.getSimpleName() + ": " + key);
 		}
-
-		values = Collections.unmodifiableMap(map);
-	}
-
-	public ValueOf(final Class<T> type, final Function<T, K> fieldAccessor, final Comparator<K> comparator){
-		this.type = type;
-
-		final Map<K, T> map = new TreeMap<>(comparator);
-		final T[] enumConstants = type.getEnumConstants();
-		for(int i = 0; i < enumConstants.length; i ++)
-			map.putIfAbsent(fieldAccessor.apply(enumConstants[i]), enumConstants[i]);
 
 		values = Collections.unmodifiableMap(map);
 	}
