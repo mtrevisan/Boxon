@@ -143,29 +143,8 @@ public final class BitReader extends BitReaderData{
 			throw AnnotationException.create("Cannot read type {}, should be one of {}, or their objective counterparts",
 				type.getSimpleName(), ParserDataType.describe());
 
-		//FIXME this is a serious problem...
-		switch(pdt){
-			case BYTE:
-				return getByte();
-
-			case SHORT:
-				return getShort(byteOrder);
-
-			case INTEGER:
-				return getInt(byteOrder);
-
-			case LONG:
-				return getLong(byteOrder);
-
-			case FLOAT:
-				return getFloat(byteOrder);
-
-			case DOUBLE:
-				return getDouble(byteOrder);
-		}
-
-		//cannot happen
-		return null;
+		//FIXME `this` is a problem...
+		return pdt.read(this, byteOrder);
 	}
 
 	/**
