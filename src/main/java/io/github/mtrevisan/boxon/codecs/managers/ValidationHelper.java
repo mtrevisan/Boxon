@@ -56,9 +56,9 @@ final class ValidationHelper{
 	static <T extends Annotation> void validateProtocol(final ConfigFieldData<T> field, final Version minProtocolVersion,
 			final Version maxProtocolVersion) throws AnnotationException{
 		if(!StringHelper.isBlank(field.minProtocol) || !StringHelper.isBlank(field.maxProtocol)){
-			//minProtocol/maxProtocol are valid
 			final Version minimum = validateProtocol(field.minProtocol, field.annotation, "Invalid minimum protocol version in {}; found {}");
 			final Version maximum = validateProtocol(field.maxProtocol, field.annotation, "Invalid maximum protocol version in {}; found {}");
+
 			//maxProtocol after or equal to minProtocol
 			if(minimum != null && maximum != null && maximum.isLessThan(minimum))
 				throw AnnotationException.create("Minimum protocol version is greater than maximum protocol version in {}; found {}",
@@ -126,9 +126,8 @@ final class ValidationHelper{
 	}
 
 	static <T extends Annotation> void validateMinMaxValues(final ConfigFieldData<T> field) throws AnnotationException, CodecException{
-		final Class<?> fieldType = field.getFieldType();
-
 		if(!StringHelper.isBlank(field.minValue) || !StringHelper.isBlank(field.maxValue)){
+			final Class<?> fieldType = field.getFieldType();
 			if(fieldType.isArray())
 				throw AnnotationException.create("Array field should not have `minValue` or `maxValue`");
 
@@ -226,13 +225,14 @@ final class ValidationHelper{
 	private static <T extends Annotation> void validateEnumMultipleValues(final ConfigFieldData<T> field,
 			final ConfigurationEnum[] enumConstants) throws AnnotationException{
 		//enumeration compatible with variable type
-		if(!field.getFieldType().getComponentType().isAssignableFrom(field.enumeration))
+		final Class<?> fieldType = field.getFieldType();
+		if(!fieldType.getComponentType().isAssignableFrom(field.enumeration))
 			throw AnnotationException.create("Incompatible enum in {}; found {}, expected {}",
-				field.annotation.getSimpleName(), field.enumeration.getSimpleName(), field.getFieldType().toString());
+				field.annotation.getSimpleName(), field.enumeration.getSimpleName(), fieldType.toString());
 
 		if(!StringHelper.isBlank(field.defaultValue)){
 			final String[] defaultValues = StringHelper.split(field.defaultValue, '|', -1);
-			if(field.getFieldType().isEnum() && defaultValues.length != 1)
+			if(fieldType.isEnum() && defaultValues.length != 1)
 				throw AnnotationException.create("Default value for mutually exclusive enumeration field in {} should be a value; found {}, expected one of {}",
 					field.annotation.getSimpleName(), field.defaultValue, Arrays.toString(enumConstants));
 
@@ -246,9 +246,10 @@ final class ValidationHelper{
 	private static <T extends Annotation> void validateEnumerationMutuallyExclusive(final ConfigFieldData<T> field,
 			final ConfigurationEnum[] enumConstants) throws AnnotationException{
 		//enumeration compatible with variable type
-		if(!field.getFieldType().isAssignableFrom(field.enumeration))
+		final Class<?> fieldType = field.getFieldType();
+		if(!fieldType.isAssignableFrom(field.enumeration))
 			throw AnnotationException.create("Incompatible enum in {}; found {}, expected {}",
-				field.annotation.getSimpleName(), field.enumeration.getSimpleName(), field.getFieldType().toString());
+				field.annotation.getSimpleName(), field.enumeration.getSimpleName(), fieldType.toString());
 
 		if(!StringHelper.isBlank(field.defaultValue) && ConfigurationEnum.extractEnum(enumConstants, field.defaultValue) == null)
 			throw AnnotationException.create("Default value not compatible with `enumeration` in {}; found {}, expected one of {}",
