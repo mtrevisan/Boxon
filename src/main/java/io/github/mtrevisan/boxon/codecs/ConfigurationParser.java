@@ -134,8 +134,8 @@ public final class ConfigurationParser{
 	}
 
 
-	public <T> void encode(final ConfigurationMessage<?> configuration, final BitWriter writer, final T currentObject, final Version protocol)
-			throws FieldException{
+	public <T> void encode(final ConfigurationMessage<?> configuration, final BitWriter writer, final T currentObject,
+			final Version protocol) throws FieldException{
 		final ConfigurationHeader header = configuration.getHeader();
 		ParserHelper.writeAffix(header.start(), header.charset(), writer);
 
