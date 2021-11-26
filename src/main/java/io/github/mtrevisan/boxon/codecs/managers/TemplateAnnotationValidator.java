@@ -32,8 +32,8 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.external.logs.EventListener;
 import io.github.mtrevisan.boxon.external.codecs.ParserDataType;
+import io.github.mtrevisan.boxon.external.logs.EventListener;
 
 import java.lang.annotation.Annotation;
 

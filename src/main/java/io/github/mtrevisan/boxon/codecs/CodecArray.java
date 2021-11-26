@@ -30,6 +30,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.codecs.managers.InjectEventListener;
 import io.github.mtrevisan.boxon.codecs.managers.Template;
+import io.github.mtrevisan.boxon.external.codecs.ParserDataType;
 import io.github.mtrevisan.boxon.external.logs.EventListener;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
@@ -38,7 +39,6 @@ import io.github.mtrevisan.boxon.external.codecs.BitReader;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
 import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
 import io.github.mtrevisan.boxon.internal.Evaluator;
-import io.github.mtrevisan.boxon.external.codecs.ParserDataType;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;

@@ -260,7 +260,7 @@ public enum ParserDataType{
 	 * @param text	The text to check, may be {@code null}.
 	 * @return	Whether the given text contains only digits and is non-{@code null}.
 	 */
-	private static boolean isDecimalNumber(final String text){
+	public static boolean isDecimalNumber(final String text){
 		return (text != null && !text.isEmpty() && !isBaseNumber(text, 0, 10));
 	}
 
