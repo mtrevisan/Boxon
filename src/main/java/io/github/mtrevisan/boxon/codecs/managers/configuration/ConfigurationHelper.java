@@ -28,10 +28,10 @@ import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
+import io.github.mtrevisan.boxon.external.codecs.ParserDataType;
 import io.github.mtrevisan.boxon.external.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.external.configurations.ConfigurationKey;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
-import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 
 import java.lang.reflect.Array;
@@ -58,7 +58,7 @@ public final class ConfigurationHelper{
 	static void validateMinValue(final String dataKey, final Object dataValue, final Class<?> fieldType, final String minValue)
 			throws EncodeException, CodecException{
 		if(!minValue.isEmpty()){
-			final Object min = JavaHelper.getValue(fieldType, minValue);
+			final Object min = ParserDataType.getValue(fieldType, minValue);
 			if(Number.class.isInstance(dataValue) && ((Number)dataValue).doubleValue() < ((Number)min).doubleValue())
 				throw EncodeException.create("Data value incompatible with minimum value for data key {}; found {}, expected greater than or equals to {}", dataKey, dataValue, minValue.getClass().getSimpleName());
 		}
@@ -67,7 +67,7 @@ public final class ConfigurationHelper{
 	static void validateMaxValue(final String dataKey, final Object dataValue, final Class<?> fieldType, final String maxValue)
 			throws EncodeException, CodecException{
 		if(!maxValue.isEmpty()){
-			final Object max = JavaHelper.getValue(fieldType, maxValue);
+			final Object max = ParserDataType.getValue(fieldType, maxValue);
 			if(Number.class.isInstance(dataValue) && ((Number)dataValue).doubleValue() > ((Number)max).doubleValue())
 				throw EncodeException.create("Data value incompatible with maximum value for data key {}; found {}, expected greater than or equals to {}", dataKey, dataValue, maxValue.getClass().getSimpleName());
 		}
@@ -88,7 +88,7 @@ public final class ConfigurationHelper{
 			throws CodecException{
 		return (enumeration != NullEnum.class
 			? extractEnumerationValue(fieldType, value, enumeration)
-			: JavaHelper.getValue(fieldType, value));
+			: ParserDataType.getValue(fieldType, value));
 	}
 
 	static Object extractEnumerationValue(final Class<?> fieldType, final String value,

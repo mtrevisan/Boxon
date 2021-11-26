@@ -30,7 +30,7 @@ import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.external.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
-import io.github.mtrevisan.boxon.internal.ParserDataType;
+import io.github.mtrevisan.boxon.external.codecs.ParserDataType;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 
 import java.lang.annotation.Annotation;
@@ -93,7 +93,7 @@ final class ValidationHelper{
 			throws AnnotationException, CodecException{
 		Object min = null;
 		if(!StringHelper.isBlank(field.minValue)){
-			min = JavaHelper.getValue(field.getFieldType(), field.minValue);
+			min = ParserDataType.getValue(field.getFieldType(), field.minValue);
 			//minValue compatible with variable type
 			if(min == null)
 				throw AnnotationException.create("Incompatible minimum value in {}; found {}, expected {}",
@@ -111,7 +111,7 @@ final class ValidationHelper{
 			throws AnnotationException, CodecException{
 		Object max = null;
 		if(!StringHelper.isBlank(field.maxValue)){
-			max = JavaHelper.getValue(field.getFieldType(), field.maxValue);
+			max = ParserDataType.getValue(field.getFieldType(), field.maxValue);
 			//maxValue compatible with variable type
 			if(max == null)
 				throw AnnotationException.create("Incompatible maximum value in {}; found {}, expected {}",
@@ -131,7 +131,7 @@ final class ValidationHelper{
 			if(fieldType.isArray())
 				throw AnnotationException.create("Array field should not have `minValue` or `maxValue`");
 
-			final Object def = (!StringHelper.isBlank(field.defaultValue)? JavaHelper.getValue(fieldType, field.defaultValue): null);
+			final Object def = (!StringHelper.isBlank(field.defaultValue)? ParserDataType.getValue(fieldType, field.defaultValue): null);
 			final Object min = validateMinValue(field, def);
 			final Object max = validateMaxValue(field, def);
 
@@ -147,7 +147,7 @@ final class ValidationHelper{
 
 		if(!StringHelper.isBlank(field.defaultValue)){
 			//defaultValue compatible with variable type
-			if(!field.hasEnumeration() && JavaHelper.getValue(fieldType, field.defaultValue) == null)
+			if(!field.hasEnumeration() && ParserDataType.getValue(fieldType, field.defaultValue) == null)
 				throw AnnotationException.create("Incompatible enum in {}, found {}, expected {}",
 					field.annotation.getSimpleName(), field.defaultValue.getClass().getSimpleName(), fieldType.toString());
 		}

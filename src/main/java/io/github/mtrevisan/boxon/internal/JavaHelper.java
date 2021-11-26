@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.internal;
 
 import io.github.mtrevisan.boxon.exceptions.CodecException;
+import io.github.mtrevisan.boxon.external.codecs.ParserDataType;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -37,36 +38,6 @@ public final class JavaHelper{
 
 
 	private JavaHelper(){}
-
-	public static Object getValueOrDefault(final Class<?> fieldType, final Object value) throws CodecException{
-		return (String.class.isInstance(value)
-			? getValue(fieldType, (String)value)
-			: value);
-	}
-
-	@SuppressWarnings("ReturnOfNull")
-	public static Object getValue(final Class<?> fieldType, final String value) throws CodecException{
-		if(fieldType == String.class)
-			return value;
-		if(value == null || value.isEmpty())
-			return null;
-
-		final Class<?> objectiveType = ParserDataType.toObjectiveTypeOrSelf(fieldType);
-		//try convert to a number...
-		final Object val = StringHelper.toNumber(value, objectiveType);
-		//... otherwise convert it to an object
-		return (val == null? toObjectValue(value, objectiveType): val);
-	}
-
-	private static Object toObjectValue(final String value, final Class<?> objectiveType) throws CodecException{
-		try{
-			final Method method = objectiveType.getDeclaredMethod(StringHelper.METHOD_VALUE_OF, String.class);
-			return method.invoke(null, value);
-		}
-		catch(final NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored){
-			throw CodecException.create("Cannot interpret {} as {}", value, objectiveType.getSimpleName());
-		}
-	}
 
 
 	/**

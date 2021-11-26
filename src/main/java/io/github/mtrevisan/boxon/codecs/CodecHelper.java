@@ -36,9 +36,9 @@ import io.github.mtrevisan.boxon.external.codecs.BitReader;
 import io.github.mtrevisan.boxon.external.codecs.BitSet;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
 import io.github.mtrevisan.boxon.external.codecs.ByteOrder;
+import io.github.mtrevisan.boxon.external.codecs.ParserDataType;
 import io.github.mtrevisan.boxon.external.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.internal.Evaluator;
-import io.github.mtrevisan.boxon.internal.JavaHelper;
 
 import java.lang.reflect.Array;
 
@@ -149,7 +149,7 @@ final class CodecHelper{
 	}
 
 	static Object interpretValue(final Class<?> fieldType, Object value) throws CodecException{
-		value = JavaHelper.getValueOrDefault(fieldType, value);
+		value = ParserDataType.getValueOrDefault(fieldType, value);
 		if(value != null){
 			if(value.getClass().isEnum())
 				value = ((ConfigurationEnum)value).getCode();

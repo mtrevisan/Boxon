@@ -30,8 +30,7 @@ import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.external.codecs.BitReader;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
 import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
-import io.github.mtrevisan.boxon.internal.JavaHelper;
-import io.github.mtrevisan.boxon.internal.ParserDataType;
+import io.github.mtrevisan.boxon.external.codecs.ParserDataType;
 
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
@@ -51,7 +50,7 @@ final class CodecCompositeConfigurationField implements CodecInterface<Composite
 
 		final Charset charset = Charset.forName(binding.charset());
 
-		value = JavaHelper.getValueOrDefault((Class<?>)fieldType, value);
+		value = ParserDataType.getValueOrDefault((Class<?>)fieldType, value);
 
 		if(value != null){
 			if(String.class.isInstance(value))

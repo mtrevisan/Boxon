@@ -24,7 +24,6 @@
  */
 package io.github.mtrevisan.boxon.external.codecs;
 
-import io.github.mtrevisan.boxon.internal.ParserDataType;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 
 import java.io.IOException;

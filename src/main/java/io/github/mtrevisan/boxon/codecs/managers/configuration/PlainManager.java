@@ -28,11 +28,10 @@ import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
+import io.github.mtrevisan.boxon.external.codecs.ParserDataType;
 import io.github.mtrevisan.boxon.external.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.external.configurations.ConfigurationKey;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
-import io.github.mtrevisan.boxon.internal.JavaHelper;
-import io.github.mtrevisan.boxon.internal.ParserDataType;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 
 import java.lang.annotation.Annotation;
@@ -109,8 +108,8 @@ final class PlainManager implements ConfigurationManagerInterface{
 		if(!fieldType.isEnum() && !fieldType.isArray())
 			ConfigurationHelper.putIfNotEmpty(ConfigurationKey.FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName(),
 				map);
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.MIN_VALUE, JavaHelper.getValue(fieldType, annotation.minValue()), map);
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.MAX_VALUE, JavaHelper.getValue(fieldType, annotation.maxValue()), map);
+		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.MIN_VALUE, ParserDataType.getValue(fieldType, annotation.minValue()), map);
+		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.MAX_VALUE, ParserDataType.getValue(fieldType, annotation.maxValue()), map);
 		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.PATTERN, annotation.pattern(), map);
 		ConfigurationHelper.extractEnumeration(fieldType, annotation.enumeration(), map);
 
@@ -139,7 +138,7 @@ final class PlainManager implements ConfigurationManagerInterface{
 			if(ConfigFieldData.hasEnumeration(enumeration))
 				dataValue = extractEnumerationValue(dataKey, dataValue, field, enumeration);
 			else if(String.class.isInstance(dataValue))
-				dataValue = JavaHelper.getValue(fieldType, (String)dataValue);
+				dataValue = ParserDataType.getValue(fieldType, (String)dataValue);
 		}
 		return dataValue;
 	}

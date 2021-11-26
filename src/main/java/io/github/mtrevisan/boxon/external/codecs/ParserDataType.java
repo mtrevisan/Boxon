@@ -22,11 +22,12 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.internal;
+package io.github.mtrevisan.boxon.external.codecs;
 
-import io.github.mtrevisan.boxon.external.codecs.BitReader;
-import io.github.mtrevisan.boxon.external.codecs.ByteOrder;
+import io.github.mtrevisan.boxon.exceptions.CodecException;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -160,5 +161,130 @@ public enum ParserDataType{
 	}
 
 	public abstract Object read(final BitReader reader, final ByteOrder byteOrder);
+
+
+	public static Object getValueOrDefault(final Class<?> fieldType, final Object value) throws CodecException{
+		return (String.class.isInstance(value)
+			? getValue(fieldType, (String)value)
+			: value);
+	}
+
+	@SuppressWarnings("ReturnOfNull")
+	public static Object getValue(final Class<?> fieldType, final String value) throws CodecException{
+		if(fieldType == String.class)
+			return value;
+		if(value == null || value.isEmpty())
+			return null;
+
+		final Class<?> objectiveType = ParserDataType.toObjectiveTypeOrSelf(fieldType);
+		//try convert to a number...
+		final Object val = toNumber(value, objectiveType);
+		//... otherwise convert it to an object
+		return (val == null? toObjectValue(value, objectiveType): val);
+	}
+
+	private static final String METHOD_VALUE_OF = "valueOf";
+
+	/**
+	 * <p>Checks if the text contains only Unicode digits.
+	 * A decimal point is not a Unicode digit and returns false.</p>
+	 *
+	 * <p>{@code null} will return {@code false}.
+	 * An empty text ({@code length() = 0}) will return {@code false}.</p>
+	 *
+	 * <p>Note that the method does not allow for a leading sign, either positive or negative.
+	 * Also, if a String passes the numeric test, it may still generate a NumberFormatException
+	 * when parsed by Integer.parseInt or Long.parseLong, e.g. if the value is outside the range
+	 * for int or long respectively.</p>
+	 *
+	 * <pre>
+	 * isNumeric(null)   = false
+	 * isNumeric("")     = false
+	 * isNumeric("  ")   = false
+	 * isNumeric("123")  = true
+	 * isNumeric("\u0967\u0968\u0969")  = true
+	 * isNumeric("12 3") = false
+	 * isNumeric("ab2c") = false
+	 * isNumeric("12-3") = false
+	 * isNumeric("12.3") = false
+	 * isNumeric("-123") = false
+	 * isNumeric("+123") = false
+	 * </pre>
+	 *
+	 * @param text	The text to check, may be {@code null}.
+	 * @return	Whether the given text contains only digits and is non-{@code null}.
+	 */
+	private static Object toNumber(final String text, final Class<?> objectiveType){
+		Object response = null;
+		if(isNumeric(text)){
+			try{
+				final Method method = objectiveType.getDeclaredMethod(METHOD_VALUE_OF, String.class, int.class);
+				final boolean hexadecimal = text.startsWith("0x");
+				response = method.invoke(null, (hexadecimal? text.substring(2): text), (hexadecimal? 16: 10));
+			}
+			catch(final NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored){}
+		}
+		return response;
+	}
+
+	private static boolean isNumeric(final String text){
+		return (isHexadecimalNumber(text) || isDecimalNumber(text));
+	}
+
+	/**
+	 * <p>Checks if the text contains only Unicode digits.
+	 * A decimal point is not a Unicode digit and returns false.</p>
+	 *
+	 * <p>{@code null} will return {@code false}.
+	 * An empty text ({@code length() = 0}) will return {@code false}.</p>
+	 *
+	 * <p>Note that the method does not allow for a leading sign, either positive or negative.
+	 * Also, if a String passes the numeric test, it may still generate a NumberFormatException
+	 * when parsed by Integer.parseInt or Long.parseLong, e.g. if the value is outside the range
+	 * for int or long respectively.</p>
+	 *
+	 * <pre>
+	 * isNumeric(null)   = false
+	 * isNumeric("")     = false
+	 * isNumeric("  ")   = false
+	 * isNumeric("123")  = true
+	 * isNumeric("\u0967\u0968\u0969")  = true
+	 * isNumeric("12 3") = false
+	 * isNumeric("ab2c") = false
+	 * isNumeric("12-3") = false
+	 * isNumeric("12.3") = false
+	 * isNumeric("-123") = false
+	 * isNumeric("+123") = false
+	 * </pre>
+	 *
+	 * @param text	The text to check, may be {@code null}.
+	 * @return	Whether the given text contains only digits and is non-{@code null}.
+	 */
+	private static boolean isDecimalNumber(final String text){
+		return (text != null && !text.isEmpty() && !isBaseNumber(text, 0, 10));
+	}
+
+	private static boolean isHexadecimalNumber(final String text){
+		return (text != null && text.startsWith("0x") && !isBaseNumber(text, 2, 16));
+	}
+
+	private static boolean isBaseNumber(final CharSequence text, final int offset, final int radix){
+		for(int i = offset; i < text.length(); i ++){
+			final char chr = text.charAt(i);
+			if(Character.digit(chr, radix) < 0)
+				return true;
+		}
+		return false;
+	}
+
+	private static Object toObjectValue(final String value, final Class<?> objectiveType) throws CodecException{
+		try{
+			final Method method = objectiveType.getDeclaredMethod(METHOD_VALUE_OF, String.class);
+			return method.invoke(null, value);
+		}
+		catch(final NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored){
+			throw CodecException.create("Cannot interpret {} as {}", value, objectiveType.getSimpleName());
+		}
+	}
 
 }

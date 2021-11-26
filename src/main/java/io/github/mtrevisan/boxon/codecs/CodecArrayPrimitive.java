@@ -33,7 +33,7 @@ import io.github.mtrevisan.boxon.external.codecs.BitWriter;
 import io.github.mtrevisan.boxon.external.codecs.ByteOrder;
 import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
 import io.github.mtrevisan.boxon.internal.Evaluator;
-import io.github.mtrevisan.boxon.internal.ParserDataType;
+import io.github.mtrevisan.boxon.external.codecs.ParserDataType;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;

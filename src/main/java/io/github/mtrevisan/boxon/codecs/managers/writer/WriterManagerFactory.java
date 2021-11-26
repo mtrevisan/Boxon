@@ -25,7 +25,7 @@
 package io.github.mtrevisan.boxon.codecs.managers.writer;
 
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
-import io.github.mtrevisan.boxon.internal.ParserDataType;
+import io.github.mtrevisan.boxon.external.codecs.ParserDataType;
 
 import java.nio.charset.Charset;
 

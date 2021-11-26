@@ -29,11 +29,10 @@ import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
+import io.github.mtrevisan.boxon.external.codecs.ParserDataType;
 import io.github.mtrevisan.boxon.external.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.external.configurations.ConfigurationKey;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
-import io.github.mtrevisan.boxon.internal.JavaHelper;
-import io.github.mtrevisan.boxon.internal.ParserDataType;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 
 import java.lang.annotation.Annotation;
@@ -202,8 +201,8 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 		if(!fieldType.isEnum() && !fieldType.isArray())
 			ConfigurationHelper.putIfNotEmpty(ConfigurationKey.FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName(),
 				map);
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.MIN_VALUE, JavaHelper.getValue(fieldType, binding.minValue()), map);
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.MAX_VALUE, JavaHelper.getValue(fieldType, binding.maxValue()), map);
+		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.MIN_VALUE, ParserDataType.getValue(fieldType, binding.minValue()), map);
+		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.MAX_VALUE, ParserDataType.getValue(fieldType, binding.maxValue()), map);
 		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.PATTERN, binding.pattern(), map);
 
 		if(String.class.isAssignableFrom(fieldType))
@@ -233,7 +232,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 			validateValue(fieldBinding, dataKey, dataValue, field.getType());
 
 			if(String.class.isInstance(dataValue))
-				dataValue = JavaHelper.getValue(field.getType(), (String)dataValue);
+				dataValue = ParserDataType.getValue(field.getType(), (String)dataValue);
 		}
 		return dataValue;
 	}
