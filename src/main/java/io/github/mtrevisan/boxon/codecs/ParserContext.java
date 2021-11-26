@@ -35,13 +35,13 @@ import java.lang.annotation.Annotation;
 
 final class ParserContext<T>{
 
-	Object rootObject;
-	final T currentObject;
+	private Object rootObject;
+	private final T currentObject;
 
-	String className;
-	String fieldName;
-	Object field;
-	Annotation binding;
+	private String className;
+	private String fieldName;
+	private Object field;
+	private Annotation binding;
 
 
 	ParserContext(final T currentObject){
@@ -53,20 +53,40 @@ final class ParserContext<T>{
 		setRootObject(parentObject);
 	}
 
+	public Object getRootObject(){
+		return rootObject;
+	}
+
 	void setRootObject(final Object parentObject){
 		rootObject = JavaHelper.nonNullOrDefault(parentObject, currentObject);
+	}
+
+	T getCurrentObject(){
+		return currentObject;
 	}
 
 	void addCurrentObjectToEvaluatorContext(){
 		Evaluator.addToContext(ContextHelper.CONTEXT_SELF, currentObject);
 	}
 
+	String getClassName(){
+		return className;
+	}
+
 	void setClassName(final String className){
 		this.className = className;
 	}
 
+	String getFieldName(){
+		return fieldName;
+	}
+
 	void setFieldName(final String fieldName){
 		this.fieldName = fieldName;
+	}
+
+	public Object getField(){
+		return field;
 	}
 
 	void setField(final Object field){
@@ -81,6 +101,10 @@ final class ParserContext<T>{
 		else
 			throw new IllegalArgumentException("Field not of type " + BoundedField.class.getSimpleName() + " or "
 				+ ConfigField.class.getSimpleName());
+	}
+
+	public Annotation getBinding(){
+		return binding;
 	}
 
 	void setBinding(final Annotation binding){

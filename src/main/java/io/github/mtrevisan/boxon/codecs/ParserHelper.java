@@ -47,29 +47,29 @@ final class ParserHelper{
 
 	static void encodeField(final ParserContext<?> parserContext, final BitWriter writer, final LoaderCodecInterface loaderCodec,
 			final EventListener eventListener) throws FieldException{
-		final Class<? extends Annotation> annotationType = parserContext.binding.annotationType();
+		final Class<? extends Annotation> annotationType = parserContext.getBinding().annotationType();
 		final CodecInterface<?> codec = loaderCodec.getCodec(annotationType);
 		if(codec == null)
 			throw CodecException.create("Cannot find codec for binding {}", annotationType.getSimpleName())
-				.withClassNameAndFieldName(parserContext.className, parserContext.fieldName);
+				.withClassNameAndFieldName(parserContext.getClassName(), parserContext.getFieldName());
 
-		eventListener.writingField(parserContext.className, parserContext.fieldName, annotationType.getSimpleName());
+		eventListener.writingField(parserContext.getClassName(), parserContext.getFieldName(), annotationType.getSimpleName());
 
 		try{
 			//encode value from current object
 			final Object value = parserContext.getFieldValue();
 			//write value to raw message
-			codec.encode(writer, parserContext.binding, parserContext.rootObject, value);
+			codec.encode(writer, parserContext.getBinding(), parserContext.getRootObject(), value);
 
-			eventListener.writtenField(parserContext.className, parserContext.fieldName, value);
+			eventListener.writtenField(parserContext.getClassName(), parserContext.getFieldName(), value);
 		}
 		catch(final FieldException fe){
-			fe.withClassNameAndFieldName(parserContext.className, parserContext.fieldName);
+			fe.withClassNameAndFieldName(parserContext.getClassName(), parserContext.getFieldName());
 			throw fe;
 		}
 		catch(final Exception e){
 			throw FieldException.create(e)
-				.withClassNameAndFieldName(parserContext.className, parserContext.fieldName);
+				.withClassNameAndFieldName(parserContext.getClassName(), parserContext.getFieldName());
 		}
 	}
 

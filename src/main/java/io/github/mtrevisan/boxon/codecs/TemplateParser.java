@@ -177,7 +177,7 @@ public final class TemplateParser implements TemplateParserInterface{
 			readSkips(skips, reader, parserContext);
 
 			//check if field has to be processed...
-			if(shouldProcessField(field.getCondition(), parserContext.rootObject))
+			if(shouldProcessField(field.getCondition(), parserContext.getRootObject()))
 				//... and if so, process it
 				decodeField(template, reader, parserContext, field);
 		}
@@ -205,9 +205,9 @@ public final class TemplateParser implements TemplateParserInterface{
 
 		try{
 			//decode value from raw message
-			final Object value = codec.decode(reader, binding, parserContext.rootObject);
+			final Object value = codec.decode(reader, binding, parserContext.getRootObject());
 			//store value in the current object
-			field.setFieldValue(parserContext.currentObject, value);
+			field.setFieldValue(parserContext.getCurrentObject(), value);
 
 			eventListener.readField(template.toString(), field.getFieldName(), value);
 		}
@@ -224,7 +224,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
 	private static <T> void readSkips(final Skip[] skips, final BitReader reader, final ParserContext<T> parserContext){
 		for(int i = 0; i < skips.length; i ++)
-			readSkip(skips[i], reader, parserContext.rootObject);
+			readSkip(skips[i], reader, parserContext.getRootObject());
 	}
 
 	private static void readSkip(final Skip skip, final BitReader reader, final Object rootObject){
@@ -282,14 +282,14 @@ public final class TemplateParser implements TemplateParserInterface{
 		final List<EvaluatedField> evaluatedFields = template.getEvaluatedFields();
 		for(int i = 0; i < evaluatedFields.size(); i ++){
 			final EvaluatedField field = evaluatedFields.get(i);
-			final boolean process = Evaluator.evaluateBoolean(field.getBinding().condition(), parserContext.rootObject);
+			final boolean process = Evaluator.evaluateBoolean(field.getBinding().condition(), parserContext.getRootObject());
 			if(!process)
 				continue;
 
 			eventListener.evaluatingField(template.getType().getName(), field.getFieldName());
 
-			final Object value = Evaluator.evaluate(field.getBinding().value(), parserContext.rootObject, field.getFieldType());
-			field.setFieldValue(parserContext.currentObject, value);
+			final Object value = Evaluator.evaluate(field.getBinding().value(), parserContext.getRootObject(), field.getFieldType());
+			field.setFieldValue(parserContext.getCurrentObject(), value);
 
 			eventListener.evaluatedField(template.getType().getName(), field.getFieldName(), value);
 		}
@@ -313,7 +313,7 @@ public final class TemplateParser implements TemplateParserInterface{
 			writeSkips(skips, writer, parserContext);
 
 			//check if field has to be processed...
-			if(shouldProcessField(field.getCondition(), parserContext.rootObject)){
+			if(shouldProcessField(field.getCondition(), parserContext.getRootObject())){
 				//... and if so, process it
 				parserContext.setField(field);
 				parserContext.setBinding(field.getBinding());
@@ -336,7 +336,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
 	private static <T> void writeSkips(final Skip[] skips, final BitWriter writer, final ParserContext<T> parserContext){
 		for(int i = 0; i < skips.length; i ++)
-			writeSkip(skips[i], writer, parserContext.rootObject);
+			writeSkip(skips[i], writer, parserContext.getRootObject());
 	}
 
 	private static void writeSkip(final Skip skip, final BitWriter writer, final Object rootObject){
