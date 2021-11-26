@@ -32,7 +32,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
@@ -235,26 +234,6 @@ public final class BitReader extends BitReaderData{
 	 */
 	public double getDouble(final ByteOrder byteOrder){
 		return Double.longBitsToDouble(getLong(byteOrder));
-	}
-
-	/**
-	 * Reads {@link Double#SIZE} bits and composes a {@code double} with the specified
-	 * {@link ByteOrder}.
-	 *
-	 * @param cls	Either a {@code Float} or a {@link Double} class.
-	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
-	 * @return	A {@link BigDecimal}.
-	 * @throws AnnotationException	If an annotation is not well formatted.
-	 */
-	@SuppressWarnings("ChainOfInstanceofChecks")
-	public BigDecimal getDecimal(final Class<?> cls, final ByteOrder byteOrder) throws AnnotationException{
-		final Class<?> primitiveClass = ParserDataType.toPrimitiveTypeOrSelf(cls);
-		if(primitiveClass == float.class)
-			return new BigDecimal(Float.toString(getFloat(byteOrder)));
-		if(primitiveClass == double.class)
-			return new BigDecimal(Double.toString(getDouble(byteOrder)));
-
-		throw AnnotationException.create("Cannot read {} as a {}", BigDecimal.class.getSimpleName(), cls.getSimpleName());
 	}
 
 	/**

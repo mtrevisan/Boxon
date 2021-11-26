@@ -24,7 +24,6 @@
  */
 package io.github.mtrevisan.boxon.core;
 
-import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.external.codecs.BitReader;
 import io.github.mtrevisan.boxon.external.codecs.BitSet;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
@@ -32,8 +31,6 @@ import io.github.mtrevisan.boxon.external.codecs.ByteOrder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.math.BigDecimal;
 
 
 @SuppressWarnings("ALL")
@@ -175,46 +172,6 @@ class BitWriterTest{
 
 		Assertions.assertEquals("3FF3AE147AE147AE", reader.toString());
 		Assertions.assertEquals(value, reader.getDouble(ByteOrder.BIG_ENDIAN));
-	}
-
-	@Test
-	void bigDecimalAsFloat() throws AnnotationException{
-		BigDecimal value = new BigDecimal("1.23");
-		writer.putDecimal(value, Float.class, ByteOrder.LITTLE_ENDIAN);
-		BitReader reader = BitReader.wrap(writer);
-
-		Assertions.assertEquals("A4709D3F", reader.toString());
-		Assertions.assertEquals(value, reader.getDecimal(Float.class, ByteOrder.LITTLE_ENDIAN));
-	}
-
-	@Test
-	void bigDecimalAsFloatBigEndian() throws AnnotationException{
-		BigDecimal value = new BigDecimal("1.23");
-		writer.putDecimal(value, Float.class, ByteOrder.BIG_ENDIAN);
-		BitReader reader = BitReader.wrap(writer);
-
-		Assertions.assertEquals("3F9D70A4", reader.toString());
-		Assertions.assertEquals(value, reader.getDecimal(Float.class, ByteOrder.BIG_ENDIAN));
-	}
-
-	@Test
-	void bigDecimalAsFDouble() throws AnnotationException{
-		BigDecimal value = new BigDecimal("1.23");
-		writer.putDecimal(value, Double.class, ByteOrder.LITTLE_ENDIAN);
-		BitReader reader = BitReader.wrap(writer);
-
-		Assertions.assertEquals("AE47E17A14AEF33F", reader.toString());
-		Assertions.assertEquals(value, reader.getDecimal(Double.class, ByteOrder.LITTLE_ENDIAN));
-	}
-
-	@Test
-	void bigDecimalAsFDoubleBigEndian() throws AnnotationException{
-		BigDecimal value = new BigDecimal("1.23");
-		writer.putDecimal(value, Double.class, ByteOrder.BIG_ENDIAN);
-		BitReader reader = BitReader.wrap(writer);
-
-		Assertions.assertEquals("3FF3AE147AE147AE", reader.toString());
-		Assertions.assertEquals(value, reader.getDecimal(Double.class, ByteOrder.BIG_ENDIAN));
 	}
 
 	@Test

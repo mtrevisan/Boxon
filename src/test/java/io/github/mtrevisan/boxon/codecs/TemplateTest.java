@@ -31,7 +31,6 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
 import io.github.mtrevisan.boxon.annotations.bindings.BindBits;
 import io.github.mtrevisan.boxon.annotations.bindings.BindByte;
-import io.github.mtrevisan.boxon.annotations.bindings.BindDecimal;
 import io.github.mtrevisan.boxon.annotations.bindings.BindDouble;
 import io.github.mtrevisan.boxon.annotations.bindings.BindFloat;
 import io.github.mtrevisan.boxon.annotations.bindings.BindInt;
@@ -46,15 +45,14 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.codecs.managers.BoundedField;
 import io.github.mtrevisan.boxon.codecs.managers.EvaluatedField;
 import io.github.mtrevisan.boxon.codecs.managers.Template;
-import io.github.mtrevisan.boxon.external.logs.EventListener;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.external.codecs.BitSet;
 import io.github.mtrevisan.boxon.external.codecs.ByteOrder;
+import io.github.mtrevisan.boxon.external.logs.EventListener;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.Annotation;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
@@ -159,8 +157,6 @@ class TemplateTest{
 		private long numberLong2;
 		@BindInteger(size = "70")
 		private BigInteger numberLong3;
-		@BindDecimal(type = Double.class)
-		private BigDecimal number;
 		@BindShort
 		private short numberShort;
 		@BindString(size = "4")
@@ -200,7 +196,7 @@ class TemplateTest{
 		Assertions.assertTrue(template.canBeCoded());
 		List<BoundedField> boundedFields = template.getBoundedFields();
 		Assertions.assertNotNull(boundedFields);
-		Assertions.assertEquals(15, boundedFields.size());
+		Assertions.assertEquals(14, boundedFields.size());
 		List<EvaluatedField> evaluatedFields = template.getEvaluatedFields();
 		Assertions.assertNotNull(evaluatedFields);
 		Assertions.assertEquals(1, evaluatedFields.size());
@@ -270,7 +266,7 @@ class TemplateTest{
 		Assertions.assertTrue(template.canBeCoded());
 		List<BoundedField> boundedFields = template.getBoundedFields();
 		Assertions.assertNotNull(boundedFields);
-		Assertions.assertEquals(16, boundedFields.size());
+		Assertions.assertEquals(15, boundedFields.size());
 		BoundedField childField = boundedFields.get(boundedFields.size() - 1);
 		Assertions.assertNotNull(childField);
 		Assertions.assertEquals("anotherNumberInt", childField.getFieldName());

@@ -26,7 +26,6 @@ package io.github.mtrevisan.boxon.external.codecs;
 
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 
-import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
@@ -149,24 +148,6 @@ public final class BitWriter extends BitWriterData{
 	 */
 	public void putDouble(final double value, final ByteOrder byteOrder){
 		putLong(Double.doubleToRawLongBits(value), byteOrder);
-	}
-
-	/**
-	 * Writes a {@link BigDecimal} value.
-	 *
-	 * @param value	The {@code BigDecimal} to write.
-	 * @param cls	Either a {@code Float} or a {@link Double} class.
-	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
-	 * @throws AnnotationException	If an annotation is not well formatted.
-	 */
-	public void putDecimal(final BigDecimal value, final Class<?> cls, final ByteOrder byteOrder) throws AnnotationException{
-		final ParserDataType dataType = ParserDataType.fromType(cls);
-		if(dataType == ParserDataType.FLOAT)
-			putFloat(value.floatValue(), byteOrder);
-		else if(dataType == ParserDataType.DOUBLE)
-			putDouble(value.doubleValue(), byteOrder);
-		else
-			throw AnnotationException.create("Cannot write {} as a {}", BigDecimal.class.getSimpleName(), cls.getSimpleName());
 	}
 
 	/**

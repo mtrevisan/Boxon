@@ -27,7 +27,6 @@ package io.github.mtrevisan.boxon.codecs.managers;
 import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
-import io.github.mtrevisan.boxon.annotations.bindings.BindDecimal;
 import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
@@ -77,18 +76,6 @@ public enum TemplateAnnotationValidator{
 					BindArrayPrimitive.class.getSimpleName(), ParserDataType.toPrimitiveTypeOrSelf(type).getSimpleName());
 
 			validateObjectChoice(selectFrom, binding.selectDefault(), type);
-		}
-	},
-
-	DECIMAL(BindDecimal.class){
-		@Override
-		void validate(final Annotation annotation) throws AnnotationException{
-			final BindDecimal binding = (BindDecimal)annotation;
-			final Class<?> type = binding.type();
-			final ParserDataType dataType = ParserDataType.fromType(type);
-			if(dataType != ParserDataType.FLOAT && dataType != ParserDataType.DOUBLE)
-				throw AnnotationException.create("Bad type, should have been one of `{}.class` or `{}.class`",
-					Float.class.getSimpleName(), Double.class.getSimpleName());
 		}
 	},
 

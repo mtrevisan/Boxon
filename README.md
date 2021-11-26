@@ -96,9 +96,8 @@ You can get pre-built JARs (usable on JRE 11 or newer) from [Sonatype](https://o
     10. [BindInteger](#annotation-bindinteger)
     11. [BindFloat](#annotation-bindfloat)
     12. [BindDouble](#annotation-binddouble)
-    13. [BindDecimal](#annotation-binddecimal)
-    14. [BindString](#annotation-bindstring)
-    15. [BindStringTerminated](#annotation-bindstringterminated)
+    13. [BindString](#annotation-bindstring)
+    14. [BindStringTerminated](#annotation-bindstringterminated)
 2. [Special annotations](#annotation-special)
     1. [MessageHeader](#annotation-messageheader)
     2. [Skip](#annotation-skip)
@@ -155,7 +154,6 @@ Here is a brief summary of the parameters (described in detail below) for each a
 | BindInteger          |  &#9745;  |         |         |            |                   | &#9745; |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       | BindInteger          |
 | BindFloat            |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       | BindFloat            |
 | BindDouble           |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       | BindDouble           |
-| BindDecimal          |  &#9745;  | &#9745; |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       | BindDecimal          |
 | BindString           |  &#9745;  |         | &#9745; |            |                   | &#9745; |           |            |               |  &#9745;  |  &#9745;  |       &#9745;       | BindString           |
 | BindStringTerminated |  &#9745;  |         | &#9745; |  &#9745;   |     &#9745;       |         |           |            |               |  &#9745;  |  &#9745;  |       &#9745;       | BindStringTerminated |
 
@@ -485,30 +483,6 @@ This annotation is bounded to a variable.
 ```java
 @BindDouble
 private double number;
-```
-
-
-<a name="annotation-binddecimal"></a>
-### BindDecimal
-
-#### parameters
- - `condition`: The SpEL expression that determines if this field has to be read.
- - `type`: the Class of variable to be read (SHOULD BE `Float.class`, or `Double.class`).
- - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
- - `validator`: the Class of a validator (applied BEFORE the converter).
- - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
- - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
-
-#### description
-Reads a float or decimal (or Float or Double), depending on `type`, as a BigDecimal.
-
-#### annotation type
-This annotation is bounded to a variable.
-
-#### example
-```java
-@BindDecimal(type = Double.class)
-private BigDecimal number;
 ```
 
 
@@ -980,7 +954,7 @@ class OtherClass{
 
 <a name="how-to-extend"></a>
 ## How to extend the functionalities
-Boxon can handle array of primitives, bit, byte, short, int, long, float, double, and their object counterpart, as long as Object, BigInteger, BigDecimal, string (with a given size, or with a terminator), and the special "[checksum](#annotation-checksum)".
+Boxon can handle array of primitives, bit, byte, short, int, long, float, double, and their object counterpart, as long as Object, BigInteger, string (with a given size, or with a terminator), and the special "[checksum](#annotation-checksum)".
 
 You can extend the basic functionalities through the application of converters as shown below in some examples. Here lies the power of Boxon.
 
