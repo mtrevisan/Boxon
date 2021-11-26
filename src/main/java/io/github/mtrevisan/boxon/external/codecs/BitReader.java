@@ -141,12 +141,12 @@ public final class BitReader extends BitReaderData{
 	 */
 	@SuppressWarnings("ReturnOfNull")
 	public Object get(final Class<?> type, final ByteOrder byteOrder) throws AnnotationException{
-		final ParserDataType t = ParserDataType.fromType(type);
-		if(t == null)
+		final ParserDataType pdt = ParserDataType.fromType(type);
+		if(pdt == null)
 			throw AnnotationException.create("Cannot read type {}, should be one of {}, or their objective counterparts",
 				type.getSimpleName(), ParserDataType.describe());
 
-		switch(t){
+		switch(pdt){
 			case BYTE:
 				return getByte();
 

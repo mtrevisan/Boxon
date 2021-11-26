@@ -53,11 +53,11 @@ public final class BitWriter extends BitWriterData{
 	 * @throws AnnotationException	If an annotation is not well formatted.
 	 */
 	public void put(final Object value, final ByteOrder byteOrder) throws AnnotationException{
-		final ParserDataType t = ParserDataType.fromType(value.getClass());
-		if(t == null)
+		final ParserDataType pdt = ParserDataType.fromType(value.getClass());
+		if(pdt == null)
 			throw AnnotationException.create("Cannot write type {}", value.getClass().getSimpleName());
 
-		switch(t){
+		switch(pdt){
 			case BYTE:
 				putByte((Byte)value);
 				break;
