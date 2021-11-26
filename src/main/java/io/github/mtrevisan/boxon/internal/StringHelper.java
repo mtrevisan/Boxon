@@ -316,20 +316,19 @@ public final class StringHelper{
 
 		for(int i = 0; i < text.length(); i ++){
 			final char chr = text.charAt(i);
-			if(chr < '0' || chr > '9')
+			if(Character.digit(chr, 10) < 0)
 				return false;
 		}
 		return true;
 	}
 
-	private static boolean isHexadecimalNumber(String text){
+	private static boolean isHexadecimalNumber(final String text){
 		if(text == null || !text.startsWith("0x"))
 			return false;
 
-		text = text.toUpperCase(Locale.ROOT);
 		for(int i = 2; i < text.length(); i ++){
 			final char chr = text.charAt(i);
-			if((chr < '0' || chr > '9') && (chr < 'A' || chr > 'F'))
+			if(Character.digit(chr, 16) < 0)
 				return false;
 		}
 		return true;
