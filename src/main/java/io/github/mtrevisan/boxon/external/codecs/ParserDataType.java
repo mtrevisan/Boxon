@@ -99,6 +99,10 @@ public enum ParserDataType{
 		TYPE_MAP = Collections.unmodifiableMap(typeMap);
 	}
 
+
+	private static final String METHOD_VALUE_OF = "valueOf";
+
+
 	private final Class<?> primitiveType;
 	private final Class<?> objectiveType;
 	private final int size;
@@ -183,7 +187,6 @@ public enum ParserDataType{
 		return (val == null? toObjectValue(value, objectiveType): val);
 	}
 
-	private static final String METHOD_VALUE_OF = "valueOf";
 
 	private static Object toNumber(final String text, final Class<?> objectiveType){
 		Object response = null;
