@@ -10,7 +10,7 @@
 	<packaging>jar</packaging>
 
 	<name>Boxon</name>
-	<description>Library for declarative parsing of a message</description>
+	<description>Library for declarative, bit-level, parsing of a message</description>
 	<url>https://github.com/mtrevisan/Boxon</url>
 <!--	<logo>https://upload.wikimedia.org/wikipedia/commons/1/1d/Symmetricwave2.png</logo>-->
 
@@ -26,7 +26,7 @@
 
 	<scm>
 		<connection>scm:git:git@github.com:mtrevisan/Boxon.git</connection>
-		<developerConnection>scm:git:git@github.com:mtrevisan/Boxon.git</developerConnection>
+		<developerConnection>scm:git:ssh://github.com:mtrevisan/Boxon.git</developerConnection>
 		<url>https://github.com/mtrevisan/Boxon</url>
 	</scm>
 
@@ -172,6 +172,18 @@
 							<nexusUrl>https://oss.sonatype.org/</nexusUrl>
 							<autoReleaseAfterClose>true</autoReleaseAfterClose>
 						</configuration>
+						<dependencies>
+							<!--
+							  TODO:
+								 Remove after OSSRH-66257, NEXUS-26993 are fixed,
+								 possibly via https://github.com/sonatype/nexus-maven-plugins/pull/91
+							-->
+							<dependency>
+								<groupId>com.thoughtworks.xstream</groupId>
+								<artifactId>xstream</artifactId>
+								<version>1.4.15</version>
+							</dependency>
+						</dependencies>
 					</plugin>
 					<!-- Source -->
 					<plugin>
@@ -182,7 +194,7 @@
 							<execution>
 								<id>attach-sources</id>
 								<goals>
-									<goal>jar</goal>
+									<goal>jar-no-fork</goal>
 								</goals>
 							</execution>
 						</executions>
