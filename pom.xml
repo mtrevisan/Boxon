@@ -71,7 +71,7 @@
 
 		<!-- Spring Expression -->
 		<!-- https://mvnrepository.com/artifact/org.springframework/spring-expression -->
-		<springframework.spring-expression.version>5.3.12</springframework.spring-expression.version>
+		<springframework.spring-expression.version>5.3.13</springframework.spring-expression.version>
 
 		<!-- FreeMarker -->
 		<!-- https://mvnrepository.com/artifact/org.freemarker/freemarker -->
@@ -234,8 +234,14 @@
 				<version>${maven-surefire-plugin.version}</version>
 				<configuration>
 					<argLine>
+						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.annotations.checksummers=ALL-UNNAMED
+						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.annotations.converters=ALL-UNNAMED
+						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.annotations.validators=ALL-UNNAMED
+						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.codecs=spring.expression,ALL-UNNAMED
+						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.codecs.managers.matchers=ALL-UNNAMED
 						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.codecs.queclink=spring.core,spring.expression,ALL-UNNAMED
-						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.core=spring.core,spring.expression,ALL-UNNAMED
+						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.core=spring.core,ALL-UNNAMED
+						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.external.semanticversioning=ALL-UNNAMED
 					</argLine>
 				</configuration>
 			</plugin>
