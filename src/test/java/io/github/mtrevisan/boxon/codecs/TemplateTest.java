@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020 Mauro Trevisan
+ * Copyright (c) 2020-2021 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -31,7 +31,6 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
 import io.github.mtrevisan.boxon.annotations.bindings.BindBits;
 import io.github.mtrevisan.boxon.annotations.bindings.BindByte;
-import io.github.mtrevisan.boxon.annotations.bindings.BindDecimal;
 import io.github.mtrevisan.boxon.annotations.bindings.BindDouble;
 import io.github.mtrevisan.boxon.annotations.bindings.BindFloat;
 import io.github.mtrevisan.boxon.annotations.bindings.BindInt;
@@ -43,22 +42,25 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.annotations.checksummers.CRC16CCITT;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
+import io.github.mtrevisan.boxon.codecs.managers.BoundedField;
+import io.github.mtrevisan.boxon.codecs.managers.EvaluatedField;
+import io.github.mtrevisan.boxon.codecs.managers.Template;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.external.BitSet;
-import io.github.mtrevisan.boxon.external.ByteHelper;
-import io.github.mtrevisan.boxon.external.ByteOrder;
-import io.github.mtrevisan.boxon.internal.DynamicArray;
+import io.github.mtrevisan.boxon.external.codecs.BitSet;
+import io.github.mtrevisan.boxon.external.codecs.ByteOrder;
+import io.github.mtrevisan.boxon.external.logs.EventListener;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.Annotation;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
+@SuppressWarnings("ALL")
 class TemplateTest{
 
 	private static class Mask{
@@ -84,7 +86,19 @@ class TemplateTest{
 		}
 
 		public boolean hasProtocolVersion(){
-			return ByteHelper.hasBit(mask, 2);
+			return hasBit(mask, 2);
+		}
+
+		/**
+		 * Checks whether the given {@code mask} has the bit at {@code index} set.
+		 *
+		 * @param mask	The value to check the bit into.
+		 * @param index	The index of the bit (rightmost is zero). The value can range between {@code 0} and {@link Byte#SIZE}.
+		 * @return	The state of the bit at a given index in the given byte.
+		 */
+		private static boolean hasBit(final byte mask, final int index){
+			final int bitMask = 1 << (index % Byte.SIZE);
+			return ((mask & bitMask) != 0);
 		}
 
 	}
@@ -143,8 +157,6 @@ class TemplateTest{
 		private long numberLong2;
 		@BindInteger(size = "70")
 		private BigInteger numberLong3;
-		@BindDecimal(type = Double.class)
-		private BigDecimal number;
 		@BindShort
 		private short numberShort;
 		@BindString(size = "4")
@@ -169,9 +181,11 @@ class TemplateTest{
 	@Test
 	@SuppressWarnings("SimplifiableAssertion")
 	void creation() throws AnnotationException{
-		TemplateParser templateParser = new TemplateParser();
-		templateParser.loader.loadDefaultCodecs();
-		Template<Message> template = templateParser.loader.createTemplate(Message.class);
+		EventListener eventListener = EventListener.getNoOpInstance();
+		LoaderCodec loaderCodec = LoaderCodec.create(eventListener);
+		loaderCodec.loadDefaultCodecs();
+		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
+		Template<Message> template = loaderTemplate.createTemplate(Message.class);
 
 		Assertions.assertNotNull(template);
 		Assertions.assertEquals(Message.class, template.getType());
@@ -180,18 +194,18 @@ class TemplateTest{
 		Assertions.assertArrayEquals(new String[]{"+"}, header.start());
 		Assertions.assertEquals("-", header.end());
 		Assertions.assertTrue(template.canBeCoded());
-		DynamicArray<Template.BoundedField> boundedFields = template.getBoundedFields();
+		List<BoundedField> boundedFields = template.getBoundedFields();
 		Assertions.assertNotNull(boundedFields);
-		Assertions.assertEquals(15, boundedFields.limit);
-		DynamicArray<Template.EvaluatedField> evaluatedFields = template.getEvaluatedFields();
+		Assertions.assertEquals(14, boundedFields.size());
+		List<EvaluatedField> evaluatedFields = template.getEvaluatedFields();
 		Assertions.assertNotNull(evaluatedFields);
-		Assertions.assertEquals(1, evaluatedFields.limit);
-		Template.EvaluatedField evaluatedField = evaluatedFields.data[0];
+		Assertions.assertEquals(1, evaluatedFields.size());
+		EvaluatedField evaluatedField = evaluatedFields.get(0);
 		Assertions.assertEquals("receptionTime", evaluatedField.getFieldName());
 		Assertions.assertEquals(ZonedDateTime.class, evaluatedField.getFieldType());
 		Evaluate evaluate = evaluatedField.getBinding();
 		Assertions.assertEquals("T(java.time.ZonedDateTime).now()", evaluate.value());
-		Template.BoundedField checksumField = template.getChecksum();
+		BoundedField checksumField = template.getChecksum();
 		Assertions.assertNotNull(checksumField);
 		Assertions.assertEquals("checksum", checksumField.getFieldName());
 		Annotation checksum = checksumField.getBinding();
@@ -237,9 +251,11 @@ class TemplateTest{
 
 	@Test
 	void inheritance() throws AnnotationException{
-		TemplateParser templateParser = new TemplateParser();
-		templateParser.loader.loadDefaultCodecs();
-		Template<MessageChild> template = templateParser.loader.createTemplate(MessageChild.class);
+		EventListener eventListener = EventListener.getNoOpInstance();
+		LoaderCodec loaderCodec = LoaderCodec.create(eventListener);
+		loaderCodec.loadDefaultCodecs();
+		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
+		Template<MessageChild> template = loaderTemplate.createTemplate(MessageChild.class);
 
 		Assertions.assertNotNull(template);
 		Assertions.assertEquals(MessageChild.class, template.getType());
@@ -248,10 +264,10 @@ class TemplateTest{
 		Assertions.assertArrayEquals(new String[]{"++"}, header.start());
 		Assertions.assertEquals("--", header.end());
 		Assertions.assertTrue(template.canBeCoded());
-		DynamicArray<Template.BoundedField> boundedFields = template.getBoundedFields();
+		List<BoundedField> boundedFields = template.getBoundedFields();
 		Assertions.assertNotNull(boundedFields);
-		Assertions.assertEquals(16, boundedFields.limit);
-		Template.BoundedField childField = boundedFields.data[boundedFields.limit - 1];
+		Assertions.assertEquals(15, boundedFields.size());
+		BoundedField childField = boundedFields.get(boundedFields.size() - 1);
 		Assertions.assertNotNull(childField);
 		Assertions.assertEquals("anotherNumberInt", childField.getFieldName());
 	}

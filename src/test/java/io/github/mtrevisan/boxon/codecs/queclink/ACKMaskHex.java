@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020 Mauro Trevisan
+ * Copyright (c) 2020-2021 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -25,9 +25,9 @@
 package io.github.mtrevisan.boxon.codecs.queclink;
 
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
-import io.github.mtrevisan.boxon.external.ByteHelper;
 
 
+@SuppressWarnings("ALL")
 public class ACKMaskHex{
 
 	public static class ACKMaskConverter implements Converter<Byte, ACKMaskHex>{
@@ -59,32 +59,45 @@ public class ACKMaskHex{
 	}
 
 	public boolean hasMessageId(){
-		return ByteHelper.hasBit(mask, 6);
+		return hasBit(mask, 6);
 	}
 
 	public boolean hasEventTime(){
-		return ByteHelper.hasBit(mask, 5);
+		return hasBit(mask, 5);
 	}
 
 	public boolean hasIMEI(){
 		//NOTE: negated logic!
-		return !ByteHelper.hasBit(mask, 4);
+		return !hasBit(mask, 4);
 	}
 
 	public boolean hasFirmwareVersion(){
-		return ByteHelper.hasBit(mask, 3);
+		return hasBit(mask, 3);
 	}
 
 	public boolean hasProtocolVersion(){
-		return ByteHelper.hasBit(mask, 2);
+		return hasBit(mask, 2);
 	}
 
 	public boolean hasDeviceType(){
-		return ByteHelper.hasBit(mask, 1);
+		return hasBit(mask, 1);
 	}
 
 	public boolean hasLength(){
-		return ByteHelper.hasBit(mask, 0);
+		return hasBit(mask, 0);
+	}
+
+
+	/**
+	 * Checks whether the given {@code mask} has the bit at {@code index} set.
+	 *
+	 * @param mask	The value to check the bit into.
+	 * @param index	The index of the bit (rightmost is zero). The value can range between {@code 0} and {@link Byte#SIZE}.
+	 * @return	The state of the bit at a given index in the given byte.
+	 */
+	private static boolean hasBit(final byte mask, final int index){
+		final int bitMask = 1 << (index % Byte.SIZE);
+		return ((mask & bitMask) != 0);
 	}
 
 }

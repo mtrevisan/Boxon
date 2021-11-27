@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2020 Mauro Trevisan
+ * Copyright (c) 2020-2021 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -53,11 +53,13 @@ public final class TimeWatch{
 	public TimeWatch reset(){
 		start = System.nanoTime();
 		end = 0l;
+
 		return this;
 	}
 
 	public TimeWatch stop(){
 		end = System.nanoTime();
+
 		return this;
 	}
 

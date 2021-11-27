@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020 Mauro Trevisan
+ * Copyright (c) 2020-2021 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -27,12 +27,15 @@ package io.github.mtrevisan.boxon.codecs.queclink;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Locale;
 
 
+@SuppressWarnings("ALL")
 public class QueclinkHelper{
 
 	private static final ZoneId DATE_TIME_ZONE = ZoneId.of("UTC");
@@ -52,13 +55,31 @@ public class QueclinkHelper{
 	}
 
 	public static class IMEIConverter implements Converter<byte[], String>{
+		private static final byte[] HEX_CHAR_TABLE = {
+			(byte)'0', (byte)'1', (byte)'2', (byte)'3',
+			(byte)'4', (byte)'5', (byte)'6', (byte)'7',
+			(byte)'8', (byte)'9', (byte)'a', (byte)'b',
+			(byte)'c', (byte)'d', (byte)'e', (byte)'f'
+		};
+
 		@Override
 		public String decode(final byte[] value){
-			final StringBuilder sb = new StringBuilder();
+			final StringBuilder sb = new StringBuilder(15);
 			for(int i = 0; i < 7; i ++)
 				sb.append(String.format("%02d", value[i] & 255));
 			sb.append(applyMaskAndShift(value[7], (byte)0x0F));
 			return sb.toString();
+		}
+
+		private static String encodeHexString(final byte[] array) throws UnsupportedEncodingException{
+			final byte[] hex = new byte[2 * array.length];
+			int index = 0;
+			for(int i = 0; i < array.length; i ++){
+				final int v = array[i] & 0xFF;
+				hex[index ++] = HEX_CHAR_TABLE[v >>> 4];
+				hex[index ++] = HEX_CHAR_TABLE[v & 0x0F];
+			}
+			return new String(hex, StandardCharsets.US_ASCII);
 		}
 
 		@Override

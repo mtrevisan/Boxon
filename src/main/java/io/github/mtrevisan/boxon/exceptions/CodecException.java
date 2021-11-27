@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020 Mauro Trevisan
+ * Copyright (c) 2020-2021 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -24,8 +24,6 @@
  */
 package io.github.mtrevisan.boxon.exceptions;
 
-import io.github.mtrevisan.boxon.internal.JavaHelper;
-
 import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -39,9 +37,14 @@ public final class CodecException extends FieldException{
 	private static final long serialVersionUID = 2879230296103139872L;
 
 
-	public CodecException(final String message, final Object... parameters){
-		super(JavaHelper.format(message, parameters));
+	public static CodecException create(final String message, final Object... parameters){
+		return new CodecException(ExceptionHelper.format(message, parameters));
 	}
+
+	private CodecException(final String message){
+		super(message);
+	}
+
 
 	@SuppressWarnings("unused")
 	private void writeObject(final ObjectOutputStream os) throws NotSerializableException{

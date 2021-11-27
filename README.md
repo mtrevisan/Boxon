@@ -36,7 +36,7 @@ Boxon...
  - Has templates (annotated classes) that are not complex: they do not call each other uselessly complicating the structure (apart, necessarily, for `@BindArray`), no complicated chains of factories: it's just a parser that works.
  - Supports [SLF4J](http://www.slf4j.org/).
  - Hides the complexities of encoding and decoding, thus simplifying the changes to be made to the code due to frequent protocol changes.
- - Can automatically scans and loads all the binding annotations and/or templates from a package.
+ - Can automatically scan and loads all the binding annotations and/or templates from a package.
 
 ---
 
@@ -96,30 +96,37 @@ You can get pre-built JARs (usable on JRE 11 or newer) from [Sonatype](https://o
     10. [BindInteger](#annotation-bindinteger)
     11. [BindFloat](#annotation-bindfloat)
     12. [BindDouble](#annotation-binddouble)
-    13. [BindDecimal](#annotation-binddecimal)
-    14. [BindString](#annotation-bindstring)
-    15. [BindStringTerminated](#annotation-bindstringterminated)
+    13. [BindString](#annotation-bindstring)
+    14. [BindStringTerminated](#annotation-bindstringterminated)
 2. [Special annotations](#annotation-special)
     1. [MessageHeader](#annotation-messageheader)
     2. [Skip](#annotation-skip)
     3. [Checksum](#annotation-checksum)
     4. [Evaluate](#annotation-evaluate)
-3. [How to write SpEL expressions](#how-to-spel)
-4. [How to extend the functionalities](#how-to-extend)
-5. [Digging into the code](#digging)
+3. [Configuration annotations](#annotation-configuration)
+    1. [ConfigurationHeader](#annotation-configurationheader)
+    2. [ConfigurationSkip](#annotation-configurationskip)
+    3. [ConfigurationField](#annotation-configurationfield)
+    4. [CompositeConfigurationField](#annotation-compositeconfigurationfield)
+    5. [CompositeSubField](#annotation-compositesubfield)
+    6. [AlternativeConfigurationField](#annotation-alternativeconfigurationfield)
+    7. [AlternativeSubField](#annotation-alternativesubfield)
+4. [How to write SpEL expressions](#how-to-spel)
+5. [How to extend the functionalities](#how-to-extend)
+6. [Digging into the code](#digging)
     1. [Converters](#how-to-converters)
     2. [Custom annotations](#how-to-annotations)
-6. [Examples](#examples)
+7. [Examples](#examples)
     1. [Multi-message parser](#example-multi)
     2. [Message composer](#example-composer)
-7. [Changelog](#changelog)
+8. [Changelog](#changelog)
     1. [version 1.1.0](#changelog-1.1.0)
     2. [version 1.0.0](#changelog-1.0.0)
     3. [version 0.0.2](#changelog-0.0.2)
     4. [version 0.0.1](#changelog-0.0.1)
     5. [version 0.0.0](#changelog-0.0.0)
-8. [License](#license)
-9. [Attributions](#attributions)
+9. [License](#license)
+10. [Attributions](#attributions)
 
 <br/>
 
@@ -147,7 +154,6 @@ Here is a brief summary of the parameters (described in detail below) for each a
 | BindInteger          |  &#9745;  |         |         |            |                   | &#9745; |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       | BindInteger          |
 | BindFloat            |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       | BindFloat            |
 | BindDouble           |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       | BindDouble           |
-| BindDecimal          |  &#9745;  | &#9745; |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       | BindDecimal          |
 | BindString           |  &#9745;  |         | &#9745; |            |                   | &#9745; |           |            |               |  &#9745;  |  &#9745;  |       &#9745;       | BindString           |
 | BindStringTerminated |  &#9745;  |         | &#9745; |  &#9745;   |     &#9745;       |         |           |            |               |  &#9745;  |  &#9745;  |       &#9745;       | BindStringTerminated |
 
@@ -157,6 +163,16 @@ Here is a brief summary of the parameters (described in detail below) for each a
 | Skip                 |  &#9745;  |         |         |         | &#9745; |  &#9745;   |      &#9745;      |         |           |           |         |           |            |         | Skip          |
 | Checksum             |           |         |         |         |         |            |                   | &#9745; |  &#9745;  |  &#9745;  | &#9745; |  &#9745;  |  &#9745;   |         | Checksum      |
 | Evaluate             |  &#9745;  |         |         |         |         |            |                   |         |           |           |         |           |            | &#9745; | Evaluate      |
+
+|                               | shortDescription | longDescription | minProtocol | maxProtocol |  start  |   end   | charset | terminator | unitOfMeasure |  minValue | maxValue | pattern | enumeration | defaultValue |  radix  | composition |                               |
+|-------------------------------|:----------------:|:---------------:|:-----------:|:-----------:|:-------:|:-------:|:-------:|:----------:|:-------------:|:---------:|:--------:|:-------:|:-----------:|:------------:|:-------:|:-----------:|------------------------------:|
+| ConfigurationHeader           |      &#9745;     |     &#9745;     |   &#9745;   |   &#9745;   | &#9745; | &#9745; | &#9745; |            |               |           |          |         |             |              |         |             | ConfigurationHeader           |
+| ConfigurationSkip             |                  |                 |   &#9745;   |   &#9745;   |         |         |         |   &#9745;  |               |           |          |         |             |              |         |             | ConfigurationSkip             |
+| ConfigurationField            |      &#9745;     |     &#9745;     |   &#9745;   |   &#9745;   |         |         | &#9745; |            |    &#9745;    |  &#9745;  |  &#9745; | &#9745; |   &#9745;   |    &#9745;   | &#9745; |             | ConfigurationField            |
+| CompositeConfigurationField   |      &#9745;     |     &#9745;     |   &#9745;   |   &#9745;   |         |         | &#9745; |   &#9745;  |               |           |          | &#9745; |             |              |         |   &#9745;   | CompositeConfigurationField   |
+| CompositeSubField             |      &#9745;     |     &#9745;     |             |             |         |         |         |            |    &#9745;    |           |          | &#9745; |             |    &#9745;   |         |             | CompositeSubField             |
+| AlternativeConfigurationField |      &#9745;     |     &#9745;     |   &#9745;   |   &#9745;   |         |         |         |   &#9745;  |    &#9745;    |           |          |         |   &#9745;   |              |         |             | AlternativeConfigurationField |
+| AlternativeSubField           |                  |     &#9745;     |   &#9745;   |   &#9745;   |         |         | &#9745; |            |    &#9745;    |  &#9745;  |  &#9745; | &#9745; |             |    &#9745;   | &#9745; |             | AlternativeSubField           |
 
 
 <a name="annotation-bindobject"></a>
@@ -470,36 +486,12 @@ private double number;
 ```
 
 
-<a name="annotation-binddecimal"></a>
-### BindDecimal
-
-#### parameters
- - `condition`: The SpEL expression that determines if this field has to be read.
- - `type`: the Class of variable to be read (SHOULD BE `Float.class`, or `Double.class`).
- - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
- - `validator`: the Class of a validator (applied BEFORE the converter).
- - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
- - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
-
-#### description
-Reads a float or decimal (or Float or Double), depending on `type`, as a BigDecimal.
-
-#### annotation type
-This annotation is bounded to a variable.
-
-#### example
-```java
-@BindDecimal(type = Double.class)
-private BigDecimal number;
-```
-
-
 <a name="annotation-bindstring"></a>
 ### BindString
 
 #### parameters
  - `condition`: The SpEL expression that determines if this field has to be read.
- - `charset`: the charset to be interpreted the string into (SHOULD BE the charset name, eg. `UTF-8` (the default), `ISO-8859-1`, etc).
+ - `charset`: the charset to be interpreted the string into (SHOULD BE the charset name, e.g. `UTF-8` (the default), `ISO-8859-1`, etc.).
  - `size`: the size of the string (can be a SpEL expression).
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
@@ -523,7 +515,7 @@ public String text;
 
 #### parameters
  - `condition`: The SpEL expression that determines if this field has to be read.
- - `charset`: the charset to be interpreted the string into (SHOULD BE the charset name, eg. `UTF-8` (the default), `ISO-8859-1`, etc).
+ - `charset`: the charset to be interpreted the string into (SHOULD BE the charset name, e.g. `UTF-8` (the default), `ISO-8859-1`, etc.).
  - `terminator`: the byte that terminates the string (defaults to `\0`).
  - `consumeTerminator`: whether to consume the terminator (defaults to `true`).
  - `validator`: the Class of a validator (applied BEFORE the converter).
@@ -554,7 +546,7 @@ Here are described the build-in special annotations.
 #### parameters
  - `start`: an array of possible start sequences (as string) for this message (defaults to empty).
  - `end`: a possible end sequence (as string) for this message (default to empty).
- - `charset`: the charset to be interpreted the `start` and `end` strings into (SHOULD BE the charset name, eg. `UTF-8` (the default), `ISO-8859-1`, etc).
+ - `charset`: the charset to be interpreted the `start` and `end` strings into (SHOULD BE the charset name, e.g. `UTF-8` (the default), `ISO-8859-1`, etc.).
 
 #### description
 Marks a POJO as an annotated message.
@@ -664,11 +656,276 @@ private String deviceTypeName;
 
 <br/>
 
+<a name="annotation-configuration"></a>
+## Configuration annotations
+Firstly, load the configuration as shown below:
+```java
+//add the custom codec to the list of available codecs
+//(use one of the lines below)
+parser.withDefaultConfigurations(); //loads all configuration from the package where this call was made
+parser.withConfigurations(ConfigurationCustomTest.class); //this class is where the custom configuration resides
+```
+
+Then, to retrieve all the possible protocol version boundaries, call
+```java
+List<String> protocolVersionBoundaries = parser.getProtocolVersionBoundaries();
+```
+
+Then, to retrieve all the messages for a given protocol version, simply call
+```java
+List<Map<String, Object>> configurationMessages = parser.getConfigurations("1.35");
+```
+
+Moreover, to compose a configuration message (remember to also load the codecs), call
+```java
+Map<String, Object> configurationData = new HashMap<>();
+configurationData.put(Parser.CONFIGURATION_FIELD_TYPE, "AT+");
+configurationData.put("Weekday", "TUESDAY|WEDNESDAY");
+...
+
+ComposeResponse composedMessage = parser.composeConfiguration("1.20", Collections.singletonMap("AT+", configurationData));
+```
+
+
+<br/>
+
+<a name="annotation-configurationheader"></a>
+### ConfigurationHeader
+
+#### parameters
+ - `shortDescription`: a short description of the field, mandatory, used as an identifier (and thus must be unique for every configuration message).
+ - `longDescription`: a more expressive description, optional.
+ - `minProtocol`: minimum protocol for which this configuration message is valid, optional.
+ - `maxProtocol`: maximum protocol for which this configuration message is valid, optional.
+ - `start`: starting text of the message, optional.
+ - `end`: ending text of the message, optional.
+ - `charset`: charset of the message, optional.
+
+#### description
+Marks a POJO as an annotated configuration message.
+
+#### annotation type
+This annotation is bounded to a class.
+
+#### example
+```java
+@ConfigurationHeader(start = "+", end = "-")
+private class ConfigurationMessage{
+    ...
+}
+```
+
+
+<br/>
+
+<a name="annotation-configurationskip"></a>
+### ConfigurationSkip
+
+#### parameters
+- `minProtocol`: minimum protocol for which this configuration message is valid, optional.
+- `maxProtocol`: maximum protocol for which this configuration message is valid, optional.
+- `terminator`: the string that terminates the skip (defaults to empty string), optional.
+
+#### description
+Skips a field.
+
+#### annotation type
+This annotation is bounded to a variable.
+
+#### example
+```java
+@ConfigurationSkip(minProtocol = "1.2", maxProtocol = "1.3")
+@ConfigurationSkip
+@ConfigurationField(shortDescription = "A field")
+public String text;
+```
+
+
+<br/>
+
+<a name="annotation-configurationfield"></a>
+### ConfigurationField
+
+#### parameters
+- `shortDescription`: a short description of the field, mandatory, used as an identifier (and thus must be unique inside every configuration message).
+- `longDescription`: a more expressive description, optional.
+- `unitOfMeasure`: the unit of measure, optional.
+- `minProtocol`: minimum protocol for which this configuration message is valid, optional.
+- `maxProtocol`: maximum protocol for which this configuration message is valid, optional.
+- `minValue`: minimum value this field can assume, optional (alternative to `pattern` and `enumeration`).
+- `maxValue`: maximum value this field can assume, optional (alternative to `pattern` and `enumeration`).
+- `pattern`: regex pattern this field must obey, optional (alternative to `minValue`/`maxValue` and `enumeration`).
+- `enumeration`: enumeration for this field, optional (alternative to `pattern` and `minValue`/`maxValue`). If the field is a single enum, then each value of this enum is mutually exclusive.
+- `defaultValue`: default value, optional. If the variable is an array, then this field may represent an `or` between values (e.g. `ONE|TWO|THREE`), otherwise can be a single value (e.g. `TWO`). If not present, then the field is mandatory.
+- `charset`: charset of the field (if string value), optional.
+- `radix`: radix of the number field when written to the message, optional.
+- `terminator`: the string that terminates the skip (defaults to empty string), optional.
+
+#### description
+Defines a field of the configuration message.
+
+#### annotation type
+This annotation is bounded to a variable.
+
+#### example
+```java
+@ConfigurationField(shortDescription = "Report interval", terminator = ",", minProtocol = "1.19", maxProtocol = "1.20",
+minValue = "90", maxValue = "86400", defaultValue = "3600", unitOfMeasure = "s")
+public int motionlessReportInterval;
+```
+
+
+<br/>
+
+<a name="annotation-compositeconfigurationfield"></a>
+### CompositeConfigurationField
+
+#### parameters
+- `value`: a set of [CompositeSubField](#annotation-compositesubfield)
+- `shortDescription`: a short description of the field, mandatory, used as an identifier (and thus must be unique inside every configuration message).
+- `longDescription`: a more expressive description, optional.
+- `minProtocol`: minimum protocol for which this configuration message is valid, optional.
+- `maxProtocol`: maximum protocol for which this configuration message is valid, optional.
+- `pattern`: regex pattern this field must obey, optional.
+- `composition`: the [FreeMarker](https://freemarker.apache.org/) pattern used to compose the field. The short description of each sub-field is used as identifier.
+- `charset`: charset of the field (if string value), optional.
+- `terminator`: the string that terminates the skip (defaults to empty string), optional.
+
+#### description
+Defines a composite field of the configuration message.
+
+#### annotation type
+This annotation is bounded to a string variable.
+
+#### example
+```java
+@CompositeConfigurationField(
+	value = {
+		@CompositeSubField(shortDescription = "URL", pattern = "https?://.{0,92}"),
+		@CompositeSubField(shortDescription = "username", pattern = ".{1,32}"),
+		@CompositeSubField(shortDescription = "password", pattern = ".{1,32}")
+	},
+	shortDescription = "Download URL",
+	composition = "${URL}<#if username?has_content && password?has_content>@${username}@${password}</#if>",
+	terminator = ",",
+	pattern = ".{0,100}"
+)
+public String downloadURL;
+```
+
+
+<br/>
+
+<a name="annotation-compositesubfield"></a>
+### CompositeSubField
+
+#### parameters
+- `shortDescription`: a short description of the field, mandatory, used as an identifier (and thus must be unique inside every configuration message).
+- `longDescription`: a more expressive description, optional.
+- `unitOfMeasure`: the unit of measure, optional.
+- `pattern`: regex pattern this field must obey, optional.
+- `defaultValue`: default value, optional. If the variable is an array, then this field may represent an `or` between values (e.g. `ONE|TWO|THREE`), otherwise can be a single value (e.g. `TWO`). If not present, then the field is mandatory.
+
+#### description
+Defines a sub-field of a composite field of the configuration message.
+
+#### annotation type
+This annotation is bounded to a string variable.
+
+#### example
+```java
+@CompositeConfigurationField(
+	value = {
+		@CompositeSubField(shortDescription = "URL", pattern = "https?://.{0,92}"),
+		@CompositeSubField(shortDescription = "username", pattern = ".{1,32}"),
+		@CompositeSubField(shortDescription = "password", pattern = ".{1,32}")
+	},
+	shortDescription = "Download URL",
+	composition = "${URL}<#if username?has_content && password?has_content>@${username}@${password}</#if>",
+	terminator = ",",
+	pattern = ".{0,100}"
+)
+public String downloadURL;
+```
+
+
+<br/>
+
+<a name="annotation-alternativeconfigurationfield"></a>
+### AlternativeConfigurationField
+
+#### parameters
+- `value`: a set of [AlternativeSubField](#annotation-alternativesubfield)
+- `shortDescription`: a short description of the field, mandatory, used as an identifier (and thus must be unique inside every configuration message).
+- `longDescription`: a more expressive description, optional.
+- `unitOfMeasure`: the unit of measure, optional.
+- `minProtocol`: minimum protocol for which this configuration message is valid, optional.
+- `maxProtocol`: maximum protocol for which this configuration message is valid, optional.
+- `enumeration`: enumeration for this field, optional. If the field is a single enum, then each value of this enum is mutually exclusive.
+- `terminator`: the string that terminates the skip (defaults to empty string), optional.
+
+#### description
+Defines an alternative field of the configuration message.
+
+#### annotation type
+This annotation is bounded to a variable.
+
+#### example
+```java
+@AlternativeConfigurationField(
+	shortDescription = "Download protocol", terminator = ",", enumeration = DownloadProtocol.class,
+	value = {
+		@AlternativeSubField(maxProtocol = "1.35", defaultValue = "HTTP"),
+		@AlternativeSubField(minProtocol = "1.36", defaultValue = "HTTP")
+	}
+)
+private DownloadProtocol downloadProtocol;
+```
+
+
+<br/>
+
+<a name="annotation-alternativesubfield"></a>
+### AlternativeSubField
+
+#### parameters
+- `longDescription`: a more expressive description, optional.
+- `unitOfMeasure`: the unit of measure, optional.
+- `minProtocol`: minimum protocol for which this configuration message is valid, optional.
+- `maxProtocol`: maximum protocol for which this configuration message is valid, optional.
+- `minValue`: minimum value this field can assume, optional (alternative to `pattern` and `enumeration`).
+- `maxValue`: maximum value this field can assume, optional (alternative to `pattern` and `enumeration`).
+- `pattern`: regex pattern this field must obey, optional.
+- `defaultValue`: default value, optional. If the variable is an array, then this field may represent an `or` between values (e.g. `ONE|TWO|THREE`), otherwise can be a single value (e.g. `TWO`). If not present, then the field is mandatory.
+- `charset`: charset of the field (if string value), optional.
+- `radix`: radix of the number field when written to the message, optional.
+
+#### description
+Defines a sub-field of an alternative field of the configuration message.
+
+#### annotation type
+This annotation is bounded to a variable.
+
+#### example
+```java
+@AlternativeConfigurationField(
+	shortDescription = "Download timeout", terminator = ",", unitOfMeasure = "min",
+	value = {
+		@AlternativeSubField(maxProtocol = "1.18", minValue = "5", maxValue = "30", defaultValue = "10"),
+		@AlternativeSubField(minProtocol = "1.19", minValue = "5", maxValue = "30", defaultValue = "20")
+	}
+)
+private int downloadTimeout;
+```
+
+
+<br/>
+
 <a name="how-to-spel"></a>
 ## How to write SpEL expressions
 Care should be taken in writing [SpEL expressions](https://docs.spring.io/spring/docs/4.3.10.RELEASE/spring-framework-reference/html/expressions.html) for the fields `condition`, and `size`.
 
-The root object is the outermost object. In order to evaluate a variable of a parent object the complete path should be used, as in `object1.variable1`. In order to evaluate a variable of a children object, that is the object currently scanned, the relative path should be used using by the special keyword `#self`, as in `#self.variable2`).
+The root object is the outermost object. In order to evaluate a variable of a parent object the complete path should be used, as in `object1.variable1`. In order to evaluate a variable of a children object, that is the object currently scanned, the relative path should be used introduced by the special keyword `#self`, as in `#self.variable2`).
 
 See also [Spring Expression Language (SpEL) Primer](https://dhruba.wordpress.com/2009/12/30/spring-expression-language-spel-primer/).
 
@@ -697,7 +954,7 @@ class OtherClass{
 
 <a name="how-to-extend"></a>
 ## How to extend the functionalities
-Boxon can handle array of primitives, bit, byte, short, int, long, float, double, and their object counterpart, as long as Object, BigInteger, BigDecimal, string (with a given size, or with a terminator), and the special "[checksum](#annotation-checksum)".
+Boxon can handle array of primitives, bit, byte, short, int, long, float, double, and their object counterpart, as long as Object, BigInteger, string (with a given size, or with a terminator), and the special "[checksum](#annotation-checksum)".
 
 You can extend the basic functionalities through the application of converters as shown below in some examples. Here lies the power of Boxon.
 
@@ -705,7 +962,7 @@ Boxon already provides some build-in converters: BitToBoolean, ShortToChar, Unsi
 
 <a name="how-to-converters"></a>
 ### Converters
-NOTE that `decode` and `encode` MUST BE one the inverse of the other, that is they MUST BE invertible (injective), or partly invertible, that is, otherwise said, `decode(x) = y iff encode(y) = x` (eventually in a restricted domain).
+NOTE that `decode` and `encode` MUST BE the inverse of each other, that is they MUST BE invertible (injective), or partly invertible, that is, otherwise said, `decode(x) = y iff encode(y) = x` (eventually in a restricted domain).
 
 #### DateTime converter (from Unix timestamp to ZonedDateTime)
 ```java
@@ -765,7 +1022,7 @@ private String imei;
 public class IMEIConverter implements Converter<byte[], String>{
     @Override
     public String decode(final byte[] value){
-        final StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder(15);
         for(int i = 0; i < 7; i ++)
             sb.append(String.format("%02d", value[i] & 255));
         sb.append(ByteHelper.applyMaskAndShift(value[7], Byte.SIZE, (byte)0x0F));
@@ -1007,7 +1264,7 @@ Remember that the header that will be written is the first in `@MessageHeader`.
 - Changed the signature of Checksummer.calculateChecksum returning short instead of long.
 - Changed method Validator.validate into Validator.isValid.
 - Changed method ParseResponse.getMessageForError into ParseResponse.getErrorMessageAt to align it to other method name's conventions.
-- Moved classes ParseResponse and ComposeResponse from io.github.mtrevisan.boxon.external to io.github.mtrevisan.boxon.codecs in order to hide add methods; the constructors are also hidden.
+- Moved classes ParseResponse and ComposeResponse from io.github.mtrevisan.boxon.external to io.github.mtrevisan.boxon.core in order to hide add methods; the constructors are also hidden.
 - Minor refactorings.
 - Added `originator` variable (and its getter) to ComposeResponse to hold the given objects used to create the message.
 - Added/modified javadocs to better explain some classes.

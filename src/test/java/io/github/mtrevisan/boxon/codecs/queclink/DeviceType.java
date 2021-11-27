@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020 Mauro Trevisan
+ * Copyright (c) 2020-2021 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -24,10 +24,11 @@
  */
 package io.github.mtrevisan.boxon.codecs.queclink;
 
-import io.github.mtrevisan.boxon.internal.JavaHelper;
+import io.github.mtrevisan.boxon.internal.StringHelper;
 import org.apache.commons.lang3.StringUtils;
 
 
+@SuppressWarnings("ALL")
 public class DeviceType{
 
 	private final String name;
@@ -53,7 +54,7 @@ public class DeviceType{
 	void validateDeviceTypeCode(final byte deviceTypeCode){
 		if(deviceTypeCode != code)
 			throw new IllegalArgumentException("Cannot parse message from another device, device type is 0x"
-				+ JavaHelper.toHexString(new byte[]{(byte)(deviceTypeCode & 0x0000_00FF)}) + ", should be " + code);
+				+ StringHelper.toHexString(new byte[]{(byte)(deviceTypeCode & 0x0000_00FF)}) + ", should be " + code);
 	}
 
 }

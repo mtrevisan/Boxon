@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020 Mauro Trevisan
+ * Copyright (c) 2020-2021 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -40,6 +40,8 @@ public final class CRC16CCITT implements Checksummer{
 	/** CCITT polynomial: x^16 + x^12 + x^5 + 1 -> 1000000100001 = 0x1021. */
 	private static final int POLYNOMIAL_CCITT = 0x1021;
 
+
+	CRC16CCITT(){}
 
 	@Override
 	public short calculateChecksum(final byte[] data, final int start, final int end, final short startValue){

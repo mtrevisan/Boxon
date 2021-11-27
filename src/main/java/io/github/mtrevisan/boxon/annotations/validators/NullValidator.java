@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020 Mauro Trevisan
+ * Copyright (c) 2020-2021 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -26,6 +26,8 @@ package io.github.mtrevisan.boxon.annotations.validators;
 
 
 public final class NullValidator implements Validator<Object>{
+
+	private NullValidator(){}
 
 	@Override
 	public boolean isValid(final Object value){

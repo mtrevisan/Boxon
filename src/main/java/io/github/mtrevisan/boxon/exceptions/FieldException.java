@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020 Mauro Trevisan
+ * Copyright (c) 2020-2021 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -33,28 +33,41 @@ public class FieldException extends Exception{
 
 	private static final long serialVersionUID = -8863756843240934380L;
 
+	private static final String EMPTY_STRING = "";
+
 
 	private String className;
 	private String fieldName;
 
 
+	public static FieldException create(final Throwable cause){
+		return new FieldException(cause);
+	}
+
 	protected FieldException(final String message){
 		super(message);
 	}
 
-	public FieldException(final Throwable exc){
-		super(exc);
+	protected FieldException(final String message, final Throwable cause){
+		super(message, cause);
 	}
 
-	public final void setClassNameAndFieldName(final String className, final String fieldName){
+	protected FieldException(final Throwable cause){
+		super(cause);
+	}
+
+	public final FieldException withClassNameAndFieldName(final String className, final String fieldName){
 		this.className = className;
 		this.fieldName = fieldName;
+
+		return this;
 	}
 
 	@Override
 	public final String getMessage(){
-		return super.getMessage() + (className != null && fieldName != null? " in field " + className + "." + fieldName: "");
+		return super.getMessage() + (className != null && fieldName != null? " in field " + className + "." + fieldName: EMPTY_STRING);
 	}
+
 
 	@SuppressWarnings("unused")
 	private void writeObject(final ObjectOutputStream os) throws NotSerializableException{

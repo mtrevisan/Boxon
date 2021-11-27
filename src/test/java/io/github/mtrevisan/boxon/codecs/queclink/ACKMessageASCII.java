@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020 Mauro Trevisan
+ * Copyright (c) 2020-2021 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
+@SuppressWarnings("ALL")
 @MessageHeader(start = "+ACK:", end = "$")
 public class ACKMessageASCII{
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020 Mauro Trevisan
+ * Copyright (c) 2020-2021 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -28,9 +28,12 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.external.BitReader;
-import io.github.mtrevisan.boxon.external.BitWriter;
-import io.github.mtrevisan.boxon.internal.ParserDataType;
+import io.github.mtrevisan.boxon.external.codecs.BitReader;
+import io.github.mtrevisan.boxon.external.codecs.BitWriter;
+import io.github.mtrevisan.boxon.external.codecs.ByteOrder;
+import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
+import io.github.mtrevisan.boxon.external.codecs.ParserDataType;
+import io.github.mtrevisan.boxon.internal.Evaluator;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
@@ -46,9 +49,10 @@ final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 		final int size = Evaluator.evaluateSize(binding.size(), rootObject);
 		CodecHelper.assertSizePositive(size);
 
+		final ByteOrder byteOrder = binding.byteOrder();
 		final Object array = createArrayPrimitive(type, size);
 		for(int i = 0; i < size; i ++){
-			final Object value = reader.get(type, binding.byteOrder());
+			final Object value = reader.get(type, byteOrder);
 			Array.set(array, i, value);
 		}
 
@@ -65,7 +69,7 @@ final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 
 	private static Object createArrayPrimitive(final Class<?> type, final int length) throws AnnotationException{
 		if(!ParserDataType.isPrimitive(type))
-			throw new AnnotationException("Argument cannot be a non-primitive: {}", type);
+			throw AnnotationException.create("Argument cannot be a non-primitive: {}", type);
 
 		return Array.newInstance(type, length);
 	}
@@ -85,8 +89,11 @@ final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 		CodecHelper.assertSizePositive(size);
 		CodecHelper.assertSizeEquals(size, Array.getLength(array));
 
-		for(int i = 0; i < size; i ++)
-			writer.put(Array.get(array, i), binding.byteOrder());
+		final ByteOrder byteOrder = binding.byteOrder();
+		for(int i = 0; i < size; i ++){
+			final Object val = Array.get(array, i);
+			writer.put(val, byteOrder);
+		}
 	}
 
 }

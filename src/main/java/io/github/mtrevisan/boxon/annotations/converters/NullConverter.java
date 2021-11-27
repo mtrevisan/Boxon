@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020 Mauro Trevisan
+ * Copyright (c) 2020-2021 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -26,6 +26,8 @@ package io.github.mtrevisan.boxon.annotations.converters;
 
 
 public final class NullConverter implements Converter<Object, Object>{
+
+	private NullConverter(){}
 
 	@Override
 	public Object decode(final Object value){

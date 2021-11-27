@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020 Mauro Trevisan
+ * Copyright (c) 2020-2021 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -32,12 +32,14 @@ package io.github.mtrevisan.boxon.annotations.checksummers;
  */
 public final class BSD16 implements Checksummer{
 
+	BSD16(){}
+
 	@Override
 	public short calculateChecksum(final byte[] data, final int start, final int end, final short startValue){
 		short value = 0;
 		for(int i = Math.max(start, 0); i < Math.min(end, data.length); i ++)
 			//apply circular right shift and add new value
-			value = (short)(((value >>> 1) + ((value & 0x01) << 15) + data[i]) & 0xFFFF);
+			value = (short)((value >>> 1) + ((value & 0x01) << 15) + data[i]);
 		return value;
 	}
 

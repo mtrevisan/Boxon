@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020 Mauro Trevisan
+ * Copyright (c) 2020-2021 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -27,8 +27,9 @@ package io.github.mtrevisan.boxon.codecs;
 import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
-import io.github.mtrevisan.boxon.external.BitReader;
-import io.github.mtrevisan.boxon.external.BitWriter;
+import io.github.mtrevisan.boxon.external.codecs.BitReader;
+import io.github.mtrevisan.boxon.external.codecs.BitWriter;
+import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
 
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
@@ -42,9 +43,10 @@ final class CodecStringTerminated implements CodecInterface<BindStringTerminated
 
 		final Charset charset = Charset.forName(binding.charset());
 
-		final String text = reader.getTextUntilTerminator(binding.terminator(), charset);
+		final byte terminator = binding.terminator();
+		final String text = reader.getTextUntilTerminator(terminator, charset);
 		if(binding.consumeTerminator())
-			reader.getByte();
+			reader.getBitsSizeOf(terminator);
 
 		final ConverterChoices selectConverterFrom = binding.selectConverterFrom();
 		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();

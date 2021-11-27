@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020 Mauro Trevisan
+ * Copyright (c) 2020-2021 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -35,20 +35,26 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
+import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
+import io.github.mtrevisan.boxon.core.ComposeResponse;
+import io.github.mtrevisan.boxon.core.ParseResponse;
+import io.github.mtrevisan.boxon.core.Parser;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
-import io.github.mtrevisan.boxon.external.BitReader;
-import io.github.mtrevisan.boxon.external.BitWriter;
-import io.github.mtrevisan.boxon.external.ByteOrder;
-import io.github.mtrevisan.boxon.internal.JavaHelper;
-import io.github.mtrevisan.boxon.internal.ReflectionHelper;
+import io.github.mtrevisan.boxon.external.codecs.BitReader;
+import io.github.mtrevisan.boxon.external.codecs.BitWriter;
+import io.github.mtrevisan.boxon.external.codecs.ByteOrder;
+import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
+import io.github.mtrevisan.boxon.external.logs.EventListener;
+import io.github.mtrevisan.boxon.internal.StringHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.Annotation;
 
 
+@SuppressWarnings("ALL")
 class CodecArrayTest{
 
 	private static class Version{
@@ -149,7 +155,7 @@ class CodecArrayTest{
 			}
 		};
 
-		BitWriter writer = new BitWriter();
+		BitWriter writer = BitWriter.create();
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
@@ -242,10 +248,14 @@ class CodecArrayTest{
 			}
 		};
 
-		TemplateParser templateParser = new TemplateParser();
-		templateParser.loader.loadDefaultCodecs();
-		ReflectionHelper.setFieldValue(codec, TemplateParser.class, templateParser);
-		BitWriter writer = new BitWriter();
+		EventListener eventListener = EventListener.getNoOpInstance();
+		LoaderCodec loaderCodec = LoaderCodec.create(eventListener);
+		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
+		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec);
+		loaderCodec.loadDefaultCodecs();
+		ReflectionHelper.setFieldValue(codec, LoaderTemplateInterface.class, loaderTemplate);
+		ReflectionHelper.setFieldValue(codec, TemplateParserInterface.class, templateParser);
+		BitWriter writer = BitWriter.create();
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
@@ -267,7 +277,7 @@ class CodecArrayTest{
 			.withCodecs(CodecChecksum.class, CodecCustomTest.VariableLengthByteArray.class)
 			.withTemplates(TestChoice4.class);
 
-		byte[] payload = JavaHelper.toByteArray("7463340112340211223344010666");
+		byte[] payload = StringHelper.toByteArray("7463340112340211223344010666");
 		ParseResponse result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
@@ -283,7 +293,7 @@ class CodecArrayTest{
 		Assertions.assertEquals(CodecObjectTest.TestType1.class, values[2].getClass());
 		Assertions.assertEquals(0x0666, ((CodecObjectTest.TestType1)values[2]).value);
 
-		ComposeResponse response = parser.compose(parsedMessage);
+		ComposeResponse response = parser.composeMessage(parsedMessage);
 		Assertions.assertNotNull(response);
 		Assertions.assertFalse(response.hasErrors());
 		Assertions.assertArrayEquals(payload, response.getComposedMessage());
@@ -295,7 +305,7 @@ class CodecArrayTest{
 			.withDefaultCodecs()
 			.withTemplates(TestChoice5.class);
 
-		byte[] payload = JavaHelper.toByteArray("746335011234");
+		byte[] payload = StringHelper.toByteArray("746335011234");
 		ParseResponse result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
@@ -307,7 +317,7 @@ class CodecArrayTest{
 		Assertions.assertEquals(CodecObjectTest.TestType1.class, values[0].getClass());
 		Assertions.assertEquals(0x1234, ((CodecObjectTest.TestType1)values[0]).value);
 
-		ComposeResponse response = parser.compose(parsedMessage);
+		ComposeResponse response = parser.composeMessage(parsedMessage);
 		Assertions.assertNotNull(response);
 		Assertions.assertFalse(response.hasErrors());
 		Assertions.assertArrayEquals(payload, response.getComposedMessage());

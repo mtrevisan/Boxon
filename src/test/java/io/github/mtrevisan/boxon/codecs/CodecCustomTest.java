@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020 Mauro Trevisan
+ * Copyright (c) 2020-2021 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -26,9 +26,11 @@ package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
-import io.github.mtrevisan.boxon.external.BitReader;
-import io.github.mtrevisan.boxon.external.BitWriter;
-import io.github.mtrevisan.boxon.external.ByteOrder;
+import io.github.mtrevisan.boxon.external.codecs.BitReader;
+import io.github.mtrevisan.boxon.external.codecs.BitWriter;
+import io.github.mtrevisan.boxon.external.codecs.ByteOrder;
+import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
+import io.github.mtrevisan.boxon.external.logs.EventListener;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -41,6 +43,7 @@ import java.lang.annotation.Target;
 import java.lang.reflect.Array;
 
 
+@SuppressWarnings("ALL")
 class CodecCustomTest{
 
 	@Retention(RetentionPolicy.RUNTIME)
@@ -76,10 +79,11 @@ class CodecCustomTest{
 
 	@Test
 	void customAnnotation() throws FieldException{
-		TemplateParser templateParser = new TemplateParser();
-		templateParser.loader.addCodecs(new VariableLengthByteArray());
+		EventListener eventListener = EventListener.getNoOpInstance();
+		LoaderCodec loaderCodec = LoaderCodec.create(eventListener);
+		loaderCodec.addCodecs(new VariableLengthByteArray());
 
-		CodecInterface<?> codec = templateParser.loader.getCodec(VarLengthEncoded.class);
+		CodecInterface<?> codec = loaderCodec.getCodec(VarLengthEncoded.class);
 		byte[] encodedValue = new byte[]{0x01, 0x02, 0x03};
 		VarLengthEncoded annotation = new VarLengthEncoded(){
 			@Override
@@ -88,7 +92,7 @@ class CodecCustomTest{
 			}
 		};
 
-		BitWriter writer = new BitWriter();
+		BitWriter writer = BitWriter.create();
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 

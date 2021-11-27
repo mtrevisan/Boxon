@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020 Mauro Trevisan
+ * Copyright (c) 2020-2021 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -32,8 +32,9 @@ import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
-import io.github.mtrevisan.boxon.external.BitReader;
-import io.github.mtrevisan.boxon.external.BitWriter;
+import io.github.mtrevisan.boxon.external.codecs.BitReader;
+import io.github.mtrevisan.boxon.external.codecs.BitWriter;
+import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -41,6 +42,7 @@ import java.lang.annotation.Annotation;
 import java.nio.charset.StandardCharsets;
 
 
+@SuppressWarnings("ALL")
 class CodecStringTest{
 
 	@Test
@@ -94,7 +96,7 @@ class CodecStringTest{
 			}
 		};
 
-		BitWriter writer = new BitWriter();
+		BitWriter writer = BitWriter.create();
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
@@ -157,7 +159,7 @@ class CodecStringTest{
 			}
 		};
 
-		BitWriter writer = new BitWriter();
+		BitWriter writer = BitWriter.create();
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
@@ -230,7 +232,7 @@ class CodecStringTest{
 
 		Assertions.assertEquals("123AB", decoded);
 
-		BitWriter writer = new BitWriter();
+		BitWriter writer = BitWriter.create();
 		codec.encode(writer, annotation, null, decoded);
 		writer.flush();
 
@@ -298,7 +300,7 @@ class CodecStringTest{
 
 		Assertions.assertEquals("123ABC", decoded);
 
-		BitWriter writer = new BitWriter();
+		BitWriter writer = BitWriter.create();
 		codec.encode(writer, annotation, null, decoded);
 		writer.flush();
 

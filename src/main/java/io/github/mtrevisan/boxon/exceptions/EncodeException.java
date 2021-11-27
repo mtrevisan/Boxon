@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020 Mauro Trevisan
+ * Copyright (c) 2020-2021 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -36,19 +36,42 @@ public final class EncodeException extends Exception{
 
 	private static final long serialVersionUID = 4385865753761318892L;
 
+	private static final String EMPTY_STRING = "";
 
-	public EncodeException(final Throwable cause){
+
+	public static EncodeException create(final Throwable cause){
+		return new EncodeException(cause);
+	}
+
+	public static EncodeException create(final Throwable cause, final String message, final Object... parameters){
+		return new EncodeException(ExceptionHelper.format(message, parameters), cause);
+	}
+
+	public static EncodeException create(final String message, final Object... parameters){
+		return new EncodeException(ExceptionHelper.format(message, parameters));
+	}
+
+	private EncodeException(final String message, final Throwable cause){
+		super(message, cause);
+	}
+
+	private EncodeException(final String message){
+		super(message);
+	}
+
+	private EncodeException(final Throwable cause){
 		super(cause);
 	}
 
 	@Override
 	public String getMessage(){
-		final StringBuilder sj = new StringBuilder();
+		String message = EMPTY_STRING;
 		final Throwable cause = getCause();
 		if(cause != null)
-			sj.append(cause.getMessage());
-		return sj.toString();
+			message += cause.getMessage();
+		return message;
 	}
+
 
 	@SuppressWarnings("unused")
 	private void writeObject(final ObjectOutputStream os) throws NotSerializableException{

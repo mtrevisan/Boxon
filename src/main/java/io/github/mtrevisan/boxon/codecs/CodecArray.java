@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020 Mauro Trevisan
+ * Copyright (c) 2020-2021 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -28,14 +28,17 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindArray;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
+import io.github.mtrevisan.boxon.codecs.managers.InjectEventListener;
+import io.github.mtrevisan.boxon.codecs.managers.Template;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
-import io.github.mtrevisan.boxon.external.BitReader;
-import io.github.mtrevisan.boxon.external.BitWriter;
-import io.github.mtrevisan.boxon.internal.ParserDataType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.github.mtrevisan.boxon.external.codecs.BitReader;
+import io.github.mtrevisan.boxon.external.codecs.BitWriter;
+import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
+import io.github.mtrevisan.boxon.external.codecs.ParserDataType;
+import io.github.mtrevisan.boxon.external.logs.EventListener;
+import io.github.mtrevisan.boxon.internal.Evaluator;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
@@ -43,12 +46,14 @@ import java.lang.reflect.Array;
 
 final class CodecArray implements CodecInterface<BindArray>{
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(CodecArray.class);
+	@InjectEventListener
+	@SuppressWarnings({"unused", "StaticVariableMayNotBeInitialized"})
+	private static EventListener eventListener;
 
 
-	/** Automatically injected by {@link TemplateParser} */
+	/** Automatically injected */
 	@SuppressWarnings("unused")
-	private TemplateParser templateParser;
+	private TemplateParserInterface templateParser;
 
 
 	@Override
@@ -58,11 +63,12 @@ final class CodecArray implements CodecInterface<BindArray>{
 		final int size = Evaluator.evaluateSize(binding.size(), rootObject);
 		CodecHelper.assertSizePositive(size);
 
-		final Object[] array = createArray(binding.type(), size);
+		final Class<?> bindingType = binding.type();
+		final Object[] array = createArray(bindingType, size);
 		if(binding.selectFrom().alternatives().length > 0)
 			decodeWithAlternatives(reader, array, binding, rootObject);
 		else
-			decodeWithoutAlternatives(reader, array, binding.type());
+			decodeWithoutAlternatives(reader, array, bindingType);
 
 		final ConverterChoices selectConverterFrom = binding.selectConverterFrom();
 		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
@@ -78,33 +84,37 @@ final class CodecArray implements CodecInterface<BindArray>{
 	@SuppressWarnings("unchecked")
 	private static <T> T[] createArray(final Class<? extends T> type, final int length) throws AnnotationException{
 		if(ParserDataType.isPrimitive(type))
-			throw new AnnotationException("Argument cannot be a primitive: {}", type);
+			throw AnnotationException.create("Argument cannot be a primitive: {}", type);
 
 		return (T[])Array.newInstance(type, length);
 	}
 
-	private void decodeWithAlternatives(final BitReader reader, final Object[] array, final BindArray binding,
-			final Object rootObject){
+	private void decodeWithAlternatives(final BitReader reader, final Object[] array, final BindArray binding, final Object rootObject){
 		final ObjectChoices selectFrom = binding.selectFrom();
 		for(int i = 0; i < array.length; i ++){
 			try{
 				final ObjectChoices.ObjectChoice chosenAlternative = CodecHelper.chooseAlternative(reader, selectFrom, rootObject);
-				final Class<?> chosenAlternativeType = (chosenAlternative != null? chosenAlternative.type(): binding.selectDefault());
-				if(chosenAlternativeType == void.class)
-					//FIXME can this throw be avoided?
-					throw new CodecException("Cannot find a valid codec from given alternatives for {}",
-						rootObject.getClass().getSimpleName());
+				final Class<?> chosenAlternativeType = (!isEmptyChoice(chosenAlternative)? chosenAlternative.type(): binding.selectDefault());
+				validateChosenAlternative(chosenAlternativeType, rootObject);
 
 				//read object
 				final Template<?> subTemplate = templateParser.createTemplate(chosenAlternativeType);
-
 				array[i] = templateParser.decode(subTemplate, reader, rootObject);
 			}
 			catch(final Exception e){
-				LOGGER.trace("Error while processing alternative", e);
-				LOGGER.warn(e.getMessage() != null? e.getMessage(): e.getClass().getSimpleName());
+				eventListener.processingAlternative(e);
 			}
 		}
+	}
+
+	private static void validateChosenAlternative(final Class<?> chosenAlternativeType, final Object rootObject) throws CodecException{
+		if(chosenAlternativeType == void.class)
+			throw CodecException.create("Cannot find a valid codec from given alternatives for {}",
+				rootObject.getClass().getSimpleName());
+	}
+
+	private static boolean isEmptyChoice(final ObjectChoices.ObjectChoice choice){
+		return (choice.annotationType() == Annotation.class);
 	}
 
 	private void decodeWithoutAlternatives(final BitReader reader, final Object[] array, final Class<?> type) throws FieldException{
@@ -137,10 +147,10 @@ final class CodecArray implements CodecInterface<BindArray>{
 			encodeWithoutAlternatives(writer, array, binding.type());
 	}
 
-	private void encodeWithAlternatives(final BitWriter writer, final Object[] array, final ObjectChoices selectFrom)
-			throws FieldException{
+	private void encodeWithAlternatives(final BitWriter writer, final Object[] array, final ObjectChoices selectFrom) throws FieldException{
 		final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
-		for(final Object elem : array){
+		for(int i = 0; i < array.length; i ++){
+			final Object elem = array[i];
 			final Class<?> type = elem.getClass();
 
 			final ObjectChoices.ObjectChoice chosenAlternative = CodecHelper.chooseAlternative(alternatives, type);
@@ -156,8 +166,8 @@ final class CodecArray implements CodecInterface<BindArray>{
 	private void encodeWithoutAlternatives(final BitWriter writer, final Object[] array, final Class<?> type) throws FieldException{
 		final Template<?> template = templateParser.createTemplate(type);
 
-		for(final Object elem : array)
-			templateParser.encode(template, writer, null, elem);
+		for(int i = 0; i < array.length; i ++)
+			templateParser.encode(template, writer, null, array[i]);
 	}
 
 }

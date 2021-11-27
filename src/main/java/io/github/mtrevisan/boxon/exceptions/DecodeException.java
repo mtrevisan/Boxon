@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020 Mauro Trevisan
+ * Copyright (c) 2020-2021 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -36,11 +36,17 @@ public final class DecodeException extends Exception{
 
 	private static final long serialVersionUID = 5375434179637246605L;
 
+	private static final String EMPTY_STRING = "";
+
 
 	private final int errorIndex;
 
 
-	public DecodeException(final int errorIndex, final Throwable cause){
+	public static DecodeException create(final int errorIndex, final Throwable cause){
+		return new DecodeException(errorIndex, cause);
+	}
+
+	private DecodeException(final int errorIndex, final Throwable cause){
 		super(cause);
 
 		this.errorIndex = errorIndex;
@@ -52,16 +58,15 @@ public final class DecodeException extends Exception{
 
 	@Override
 	public String getMessage(){
-		final StringBuilder sj = new StringBuilder();
+		String message = EMPTY_STRING;
 		final Throwable cause = getCause();
 		if(cause != null)
-			sj.append(cause.getMessage());
+			message += cause.getMessage();
 		if(errorIndex >= 0)
-			sj.append(System.lineSeparator())
-				.append("   at index ")
-				.append(errorIndex);
-		return sj.toString();
+			message += System.lineSeparator() + "   at index " + errorIndex;
+		return message;
 	}
+
 
 	@SuppressWarnings("unused")
 	private void writeObject(final ObjectOutputStream os) throws NotSerializableException{

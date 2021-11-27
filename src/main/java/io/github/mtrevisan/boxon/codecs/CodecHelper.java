@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020 Mauro Trevisan
+ * Copyright (c) 2020-2021 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -28,40 +28,31 @@ import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
+import io.github.mtrevisan.boxon.codecs.managers.ConstructorHelper;
+import io.github.mtrevisan.boxon.codecs.managers.ContextHelper;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.external.BitReader;
-import io.github.mtrevisan.boxon.external.BitSet;
-import io.github.mtrevisan.boxon.external.BitWriter;
-import io.github.mtrevisan.boxon.external.ByteOrder;
-import io.github.mtrevisan.boxon.internal.ReflectionHelper;
+import io.github.mtrevisan.boxon.exceptions.CodecException;
+import io.github.mtrevisan.boxon.external.codecs.BitReader;
+import io.github.mtrevisan.boxon.external.codecs.BitSet;
+import io.github.mtrevisan.boxon.external.codecs.BitWriter;
+import io.github.mtrevisan.boxon.external.codecs.ByteOrder;
+import io.github.mtrevisan.boxon.external.codecs.ParserDataType;
+import io.github.mtrevisan.boxon.external.configurations.ConfigurationEnum;
+import io.github.mtrevisan.boxon.internal.Evaluator;
 
-import java.nio.charset.Charset;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.lang.reflect.Array;
 
 
 final class CodecHelper{
 
-	/** The name of the current object being scanner (used for referencing variables from SpEL). */
-	static final String CONTEXT_SELF = "self";
-	/** The name of the prefix for the alternative (used for referencing variables from SpEL). */
-	private static final String CONTEXT_CHOICE_PREFIX = "prefix";
-
-	private static final Matcher CONTEXT_PREFIXED_CHOICE_PREFIX = Pattern.compile("#" + CONTEXT_CHOICE_PREFIX + "[^a-zA-Z]")
-		.matcher("");
+	private static final ObjectChoices.ObjectChoice EMPTY_CHOICE = new NullObjectChoice();
 
 
 	private CodecHelper(){}
 
 	static void assertSizePositive(final int size) throws AnnotationException{
 		if(size <= 0)
-			throw new AnnotationException("Size must be a positive integer, was {}", size);
+			throw AnnotationException.create("Size must be a positive integer, was {}", size);
 	}
 
 	static void assertSizeEquals(final int expectedSize, final int size){
@@ -69,19 +60,12 @@ final class CodecHelper{
 			throw new IllegalArgumentException("Size mismatch, expected " + expectedSize + ", got " + size);
 	}
 
-	static void assertCharset(final String charsetName) throws AnnotationException{
-		try{
-			Charset.forName(charsetName);
-		}
-		catch(final IllegalArgumentException ignored){
-			throw new AnnotationException("Invalid charset: '{}'", charsetName);
-		}
-	}
-
 	static ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> type){
-		for(final ObjectChoices.ObjectChoice alternative : alternatives)
+		for(int i = 0; i < alternatives.length; i ++){
+			final ObjectChoices.ObjectChoice alternative = alternatives[i];
 			if(alternative.type().isAssignableFrom(type))
 				return alternative;
+		}
 
 		throw new IllegalArgumentException("Cannot find a valid codec for type " + type.getSimpleName());
 	}
@@ -93,7 +77,7 @@ final class CodecHelper{
 			final int prefix = reader.getInteger(prefixSize, prefixByteOrder)
 				.intValue();
 
-			Evaluator.addToContext(CONTEXT_CHOICE_PREFIX, prefix);
+			Evaluator.addToContext(ContextHelper.CONTEXT_CHOICE_PREFIX, prefix);
 		}
 
 		final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
@@ -102,89 +86,28 @@ final class CodecHelper{
 
 	private static ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives,
 			final Object rootObject){
-		for(final ObjectChoices.ObjectChoice alternative : alternatives)
-			if(Evaluator.evaluate(alternative.condition(), rootObject, boolean.class))
+		for(int i = 0; i < alternatives.length; i ++){
+			final ObjectChoices.ObjectChoice alternative = alternatives[i];
+			if(Evaluator.evaluateBoolean(alternative.condition(), rootObject))
 				return alternative;
-		return null;
+		}
+		return EMPTY_CHOICE;
 	}
 
 	static Class<? extends Converter<?, ?>> chooseConverter(final ConverterChoices selectConverterFrom,
 			final Class<? extends Converter<?, ?>> defaultConverter, final Object rootObject){
 		final ConverterChoices.ConverterChoice[] alternatives = selectConverterFrom.alternatives();
-		for(final ConverterChoices.ConverterChoice alternative : alternatives)
-			if(Evaluator.evaluate(alternative.condition(), rootObject, boolean.class))
+		for(int i = 0; i < alternatives.length; i ++){
+			final ConverterChoices.ConverterChoice alternative = alternatives[i];
+			if(Evaluator.evaluateBoolean(alternative.condition(), rootObject))
 				return alternative.converter();
+		}
 		return defaultConverter;
-	}
-
-	static Class<?> inferBindingType(final ConverterChoices selectConverterFrom,
-		final Class<? extends Converter<?, ?>> defaultConverter, final Class<?> fieldType){
-		//get input type from `variable`
-		Class<?> type = fieldType;
-
-		//get input type from `converter`
-		final ConverterChoices.ConverterChoice[] alternatives = selectConverterFrom.alternatives();
-		if(alternatives.length > 0){
-			//infer supertype of all types accepted by the converters
-			final Set<Class<?>> supertypes = new HashSet<>();
-			for(final ConverterChoices.ConverterChoice alternative : alternatives){
-				final Class<?> converterType = ReflectionHelper.resolveGenericTypes(alternative.converter(), Converter.class)[0];
-				supertypes.add(converterType);
-			}
-			type = reduceTypes(supertypes);
-		}
-
-		return type;
-	}
-
-	private static Class<?> reduceTypes(final Set<Class<?>> types){
-		Class<?> type = null;
-		if(!types.isEmpty()){
-			final Map<Integer, Class<?>> map = new TreeMap<>(Collections.reverseOrder(Integer::compareTo));
-			for(final Class<?> t : types){
-				//calculate number of classes to reach Object
-				int num = 0;
-				Class<?> cls = t;
-				while(cls != Object.class){
-					num ++;
-					cls = cls.getSuperclass();
-				}
-				map.put(num, t);
-			}
-
-			//FIXME refactor
-			Iterator<Map.Entry<Integer, Class<?>>> itr = map.entrySet().iterator();
-			while(map.size() > 1){
-				final Map.Entry<Integer, Class<?>> elem = itr.next();
-				final Class<?> value = elem.getValue();
-				if(value != Object.class){
-					itr.remove();
-
-					final int newKey = elem.getKey() - 1;
-					final Class<?> newValue = value.getSuperclass();
-					final Class<?> oldValue = map.get(newKey);
-					if(oldValue == null)
-						map.put(newKey, newValue);
-					else if(newValue != oldValue){
-						if(newValue.isAssignableFrom(oldValue))
-							map.put(newKey, newValue);
-						else if(!oldValue.isAssignableFrom(newValue))
-							throw new IllegalArgumentException("Non-coherent converter inputs: " + oldValue.getSimpleName() + " and "
-								+ newValue.getSimpleName());
-					}
-
-					itr = map.entrySet().iterator();
-				}
-			}
-			type = map.values().iterator()
-				.next();
-		}
-		return type;
 	}
 
 	static void writePrefix(final BitWriter writer, final ObjectChoices.ObjectChoice chosenAlternative, final ObjectChoices selectFrom){
 		//if chosenAlternative.condition() contains '#prefix', then write @ObjectChoice.prefix()
-		if(containsPrefixReference(chosenAlternative.condition())){
+		if(ContextHelper.containsPrefixReference(chosenAlternative.condition())){
 			final int prefixSize = selectFrom.prefixSize();
 			final ByteOrder prefixByteOrder = selectFrom.byteOrder();
 
@@ -196,13 +119,9 @@ final class CodecHelper{
 		}
 	}
 
-	static boolean containsPrefixReference(final CharSequence condition){
-		return CONTEXT_PREFIXED_CHOICE_PREFIX.reset(condition).find();
-	}
-
 	@SuppressWarnings("unchecked")
 	static <T> void validateData(final Class<? extends Validator<?>> validatorType, final Object data){
-		final Validator<T> validator = (Validator<T>)ReflectionHelper.getCreator(validatorType)
+		final Validator<T> validator = (Validator<T>)ConstructorHelper.getCreator(validatorType)
 			.get();
 		if(!validator.isValid((T)data))
 			throw new IllegalArgumentException("Validation with " + validatorType.getSimpleName() + " not passed (value is " + data + ")");
@@ -211,22 +130,40 @@ final class CodecHelper{
 	@SuppressWarnings("unchecked")
 	static <IN, OUT> OUT converterDecode(final Class<? extends Converter<?, ?>> converterType, final Object data){
 		try{
-			final Converter<IN, OUT> converter = (Converter<IN, OUT>)ReflectionHelper.getCreator(converterType)
+			final Converter<IN, OUT> converter = (Converter<IN, OUT>)ConstructorHelper.getCreator(converterType)
 				.get();
 
 			return converter.decode((IN)data);
 		}
-		catch(final ClassCastException ignored){
+		catch(final Exception e){
 			throw new IllegalArgumentException("Can not input " + data.getClass().getSimpleName() + " to decode method of converter "
-				+ converterType.getSimpleName());
+				+ converterType.getSimpleName(), e);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	static <IN, OUT> IN converterEncode(final Class<? extends Converter<?, ?>> converterType, final Object data){
-		final Converter<IN, OUT> converter = (Converter<IN, OUT>)ReflectionHelper.getCreator(converterType)
+		final Converter<IN, OUT> converter = (Converter<IN, OUT>)ConstructorHelper.getCreator(converterType)
 			.get();
 		return converter.encode((OUT)data);
+	}
+
+	static Object interpretValue(final Class<?> fieldType, Object value) throws CodecException{
+		value = ParserDataType.getValueOrDefault(fieldType, value);
+		if(value != null){
+			if(value.getClass().isEnum())
+				value = ((ConfigurationEnum)value).getCode();
+			else if(value.getClass().isArray())
+				value = calculateCompositeValue(value);
+		}
+		return value;
+	}
+
+	private static int calculateCompositeValue(final Object value){
+		int compositeEnumValue = 0;
+		for(int i = 0; i < Array.getLength(value); i ++)
+			compositeEnumValue |= ((ConfigurationEnum)Array.get(value, i)).getCode();
+		return compositeEnumValue;
 	}
 
 }

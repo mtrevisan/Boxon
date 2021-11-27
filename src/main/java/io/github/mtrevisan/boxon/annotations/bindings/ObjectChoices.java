@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020 Mauro Trevisan
+ * Copyright (c) 2020-2021 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.annotations.bindings;
 
-import io.github.mtrevisan.boxon.external.ByteOrder;
+import io.github.mtrevisan.boxon.external.codecs.ByteOrder;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -50,11 +50,10 @@ public @interface ObjectChoices{
 	int prefixSize() default 0;
 
 	/**
-	 * The byte order to take into account when returning a representation of the first {@link #prefixSize() size} bits
-	 * read as a prefix.
+	 * The byte order to consider when returning a representation of the first {@link #prefixSize() size} bits read as a prefix.
 	 *
-	 * @return	The byte order to take into account when returning a representation of the first {@link #prefixSize()
-	 * 	size} bits read as a prefix (defaults to {@link ByteOrder#BIG_ENDIAN}).
+	 * @return	The byte order to consider when returning a representation of the first {@link #prefixSize() size} bits read as a prefix
+	 * 	(defaults to {@link ByteOrder#BIG_ENDIAN}).
 	 */
 	ByteOrder byteOrder() default ByteOrder.BIG_ENDIAN;
 
@@ -74,7 +73,7 @@ public @interface ObjectChoices{
 
 		/**
 		 * The condition that needs to hold, if an instance of {@link #type() type} is to be decoded.
-		 * <p>A SpEL expression with the prefix value in the context under the name `{@code prefix}`.</p>
+		 * <p>A SpEL expression with the prefix value in the context under the name {@code prefix}.</p>
 		 *
 		 * @return	The condition that needs to hold, if an instance of {@link #type() type} is to be decoded.
 		 */

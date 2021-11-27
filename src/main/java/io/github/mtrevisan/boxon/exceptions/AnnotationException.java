@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020 Mauro Trevisan
+ * Copyright (c) 2020-2021 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -24,8 +24,6 @@
  */
 package io.github.mtrevisan.boxon.exceptions;
 
-import io.github.mtrevisan.boxon.internal.JavaHelper;
-
 import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -39,8 +37,28 @@ public final class AnnotationException extends FieldException{
 	private static final long serialVersionUID = 6429044852678473069L;
 
 
-	public AnnotationException(final String message, final Object... parameters){
-		super(JavaHelper.format(message, parameters));
+	public static AnnotationException create(final Throwable cause){
+		return new AnnotationException(cause);
+	}
+
+	public static AnnotationException create(final Throwable cause, final String message, final Object... parameters){
+		return new AnnotationException(ExceptionHelper.format(message, parameters), cause);
+	}
+
+	public static AnnotationException create(final String message, final Object... parameters){
+		return new AnnotationException(ExceptionHelper.format(message, parameters));
+	}
+
+	private AnnotationException(final String message, final Throwable cause){
+		super(message, cause);
+	}
+
+	private AnnotationException(final Throwable cause){
+		super(cause);
+	}
+
+	private AnnotationException(final String message){
+		super(message);
 	}
 
 

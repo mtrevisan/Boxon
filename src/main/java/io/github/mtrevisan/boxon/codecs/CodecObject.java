@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020 Mauro Trevisan
+ * Copyright (c) 2020-2021 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -28,24 +28,30 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
+import io.github.mtrevisan.boxon.codecs.managers.ContextHelper;
+import io.github.mtrevisan.boxon.codecs.managers.InjectEventListener;
+import io.github.mtrevisan.boxon.codecs.managers.Template;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
-import io.github.mtrevisan.boxon.external.BitReader;
-import io.github.mtrevisan.boxon.external.BitWriter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.github.mtrevisan.boxon.external.codecs.BitReader;
+import io.github.mtrevisan.boxon.external.codecs.BitWriter;
+import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
+import io.github.mtrevisan.boxon.external.logs.EventListener;
+import io.github.mtrevisan.boxon.internal.Evaluator;
 
 import java.lang.annotation.Annotation;
 
 
 final class CodecObject implements CodecInterface<BindObject>{
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(CodecObject.class);
+	@InjectEventListener
+	@SuppressWarnings({"unused", "StaticVariableMayNotBeInitialized"})
+	private static EventListener eventListener;
 
 
-	/** Automatically injected by {@link TemplateParser} */
+	/** Automatically injected */
 	@SuppressWarnings("unused")
-	private TemplateParser templateParser;
+	private TemplateParserInterface templateParser;
 
 
 	@Override
@@ -57,9 +63,8 @@ final class CodecObject implements CodecInterface<BindObject>{
 			final Class<?> type = extractType(reader, binding, rootObject);
 
 			final Template<?> template = templateParser.createTemplate(type);
-
 			final Object instance = templateParser.decode(template, reader, rootObject);
-			Evaluator.addToContext(CodecHelper.CONTEXT_SELF, instance);
+			Evaluator.addToContext(ContextHelper.CONTEXT_SELF, instance);
 
 			final ConverterChoices selectConverterFrom = binding.selectConverterFrom();
 			final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
@@ -70,22 +75,26 @@ final class CodecObject implements CodecInterface<BindObject>{
 			CodecHelper.validateData(binding.validator(), value);
 		}
 		catch(final Exception e){
-			LOGGER.trace("Error while processing alternative", e);
-			LOGGER.warn(e.getMessage() != null? e.getMessage(): e.getClass().getSimpleName());
+			eventListener.processingAlternative(e);
 		}
 		return value;
 	}
 
-	private Class<?> extractType(final BitReader reader, final BindObject binding, final Object rootObject) throws CodecException{
+	private static Class<?> extractType(final BitReader reader, final BindObject binding, final Object rootObject) throws CodecException{
 		Class<?> chosenAlternativeType = binding.type();
 		final ObjectChoices selectFrom = binding.selectFrom();
 		if(selectFrom.alternatives().length > 0){
 			final ObjectChoices.ObjectChoice chosenAlternative = CodecHelper.chooseAlternative(reader, selectFrom, rootObject);
-			chosenAlternativeType = (chosenAlternative != null? chosenAlternative.type(): binding.selectDefault());
+			chosenAlternativeType = (!isEmptyChoice(chosenAlternative)? chosenAlternative.type(): binding.selectDefault());
 			if(chosenAlternativeType == void.class)
-				throw new CodecException("Cannot find a valid codec from given alternatives for {}", rootObject.getClass().getSimpleName());
+				throw CodecException.create("Cannot find a valid codec from given alternatives for {}",
+					rootObject.getClass().getSimpleName());
 		}
 		return chosenAlternativeType;
+	}
+
+	private static boolean isEmptyChoice(final ObjectChoices.ObjectChoice choice){
+		return (choice.annotationType() == Annotation.class);
 	}
 
 	@Override
@@ -106,7 +115,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 			CodecHelper.writePrefix(writer, chosenAlternative, selectFrom);
 		}
 
-		Evaluator.addToContext(CodecHelper.CONTEXT_SELF, value);
+		Evaluator.addToContext(ContextHelper.CONTEXT_SELF, value);
 
 		final Template<?> template = templateParser.createTemplate(type);
 

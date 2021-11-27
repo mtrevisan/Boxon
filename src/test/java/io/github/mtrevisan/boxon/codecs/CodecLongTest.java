@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020 Mauro Trevisan
+ * Copyright (c) 2020-2021 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -31,9 +31,10 @@ import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
-import io.github.mtrevisan.boxon.external.BitReader;
-import io.github.mtrevisan.boxon.external.BitWriter;
-import io.github.mtrevisan.boxon.external.ByteOrder;
+import io.github.mtrevisan.boxon.external.codecs.BitReader;
+import io.github.mtrevisan.boxon.external.codecs.BitWriter;
+import io.github.mtrevisan.boxon.external.codecs.ByteOrder;
+import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -43,6 +44,7 @@ import java.util.Locale;
 import java.util.Random;
 
 
+@SuppressWarnings("ALL")
 class CodecLongTest{
 
 	private static final Random RANDOM = new Random();
@@ -94,7 +96,7 @@ class CodecLongTest{
 			}
 		};
 
-		BitWriter writer = new BitWriter();
+		BitWriter writer = BitWriter.create();
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
@@ -152,7 +154,7 @@ class CodecLongTest{
 			}
 		};
 
-		BitWriter writer = new BitWriter();
+		BitWriter writer = BitWriter.create();
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
@@ -210,7 +212,7 @@ class CodecLongTest{
 			}
 		};
 
-		BitWriter writer = new BitWriter();
+		BitWriter writer = BitWriter.create();
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
@@ -268,7 +270,7 @@ class CodecLongTest{
 			}
 		};
 
-		BitWriter writer = new BitWriter();
+		BitWriter writer = BitWriter.create();
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
@@ -326,7 +328,7 @@ class CodecLongTest{
 			}
 		};
 
-		BitWriter writer = new BitWriter();
+		BitWriter writer = BitWriter.create();
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
@@ -384,7 +386,7 @@ class CodecLongTest{
 			}
 		};
 
-		BitWriter writer = new BitWriter();
+		BitWriter writer = BitWriter.create();
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
@@ -442,7 +444,7 @@ class CodecLongTest{
 			}
 		};
 
-		BitWriter writer = new BitWriter();
+		BitWriter writer = BitWriter.create();
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
@@ -500,7 +502,7 @@ class CodecLongTest{
 			}
 		};
 
-		BitWriter writer = new BitWriter();
+		BitWriter writer = BitWriter.create();
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 

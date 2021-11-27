@@ -5,7 +5,7 @@
 
 	<groupId>io.github.mtrevisan</groupId>
 	<artifactId>boxon</artifactId>
-	<version>1.1.1-SNAPSHOT</version>
+	<version>2.0.0-SNAPSHOT</version>
 
 	<packaging>jar</packaging>
 
@@ -17,7 +17,6 @@
 	<developers>
 		<developer>
 			<name>Mauro Trevisan</name>
-			<email>851903+mtrevisan@users.noreply.github.com</email>
 			<url>https://github.com/mtrevisan/</url>
 			<roles>
 				<role>Developer</role>
@@ -47,31 +46,68 @@
 		<javadoc.html.version>-html5</javadoc.html.version>
 
 		<!-- Profiles & Build -->
+		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-deploy-plugin -->
 		<maven-deploy-plugin.version>2.8.2</maven-deploy-plugin.version>
+		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-gpg-plugin -->
 		<maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
+		<!-- https://mvnrepository.com/artifact/org.sonatype.plugins/nexus-staging-maven-plugin -->
 		<sonatype.nexus-staging-maven-plugin.version>1.6.8</sonatype.nexus-staging-maven-plugin.version>
+		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-source-plugin -->
 		<maven-source-plugin.version>3.2.1</maven-source-plugin.version>
-		<maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
+		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-javadoc-plugin -->
+		<maven-javadoc-plugin.version>3.3.1</maven-javadoc-plugin.version>
+		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-surefire-plugin -->
 		<maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
+		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
 		<maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-help-plugin -->
 		<maven-help-plugin.version>3.2.0</maven-help-plugin.version>
+		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-shade-plugin -->
 		<maven-shade-plugin.version>3.2.4</maven-shade-plugin.version>
 
-		<!-- Spring Expression -->
-		<springframework.spring-expression.version>5.2.8.RELEASE</springframework.spring-expression.version>
-
 		<!-- ClassGraph -->
-		<github.classgraph.version>4.8.90</github.classgraph.version>
+		<!-- https://mvnrepository.com/artifact/io.github.classgraph/classgraph -->
+		<github.classgraph.version>4.8.132</github.classgraph.version>
+
+		<!-- Spring Expression -->
+		<!-- https://mvnrepository.com/artifact/org.springframework/spring-expression -->
+		<springframework.spring-expression.version>5.3.13</springframework.spring-expression.version>
+
+		<!-- FreeMarker -->
+		<!-- https://mvnrepository.com/artifact/org.freemarker/freemarker -->
+		<freemarker.freemarker.version>2.3.31</freemarker.freemarker.version>
 
 		<!-- Logging -->
-		<slf4j.slf4j-api.version>1.7.30</slf4j.slf4j-api.version>
-		<slf4j.slf4j-log4j12.version>1.7.30</slf4j.slf4j-log4j12.version>
+		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
+		<slf4j.slf4j-api.version>1.7.32</slf4j.slf4j-api.version>
+		<!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-classic -->
+		<logback.logback-classic.version>1.2.7</logback.logback-classic.version>
 
 		<!-- JUnit -->
-		<junit.junit-jupiter-engine.version>5.6.2</junit.junit-jupiter-engine.version>
+		<!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine -->
+		<junit.junit-jupiter-engine.version>5.8.1</junit.junit-jupiter-engine.version>
 		<!-- Apache -->
-		<apache.commons-lang3.version>3.11</apache.commons-lang3.version>
+		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+		<apache.commons-lang3.version>3.12.0</apache.commons-lang3.version>
+		<!-- Jackson -->
+		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
+		<jackson.jackson-databind.version>2.13.0</jackson.jackson-databind.version>
 	</properties>
+
+	<repositories>
+		<repository>
+			<id>java-net-repo</id>
+			<url>https://maven.java.net/content/repositories/public/</url>
+		</repository>
+		<repository>
+			<id>java-apache-repo</id>
+			<url>https://repo.maven.apache.org/maven2/</url>
+		</repository>
+		<repository>
+			<id>java-spring-repo</id>
+			<url>https://repo.spring.io/ui/native/release/</url>
+		</repository>
+	</repositories>
 
 	<profiles>
 		<profile>
@@ -82,7 +118,6 @@
 			<build>
 				<plugins>
 					<!-- Deploy -->
-					<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-deploy-plugin -->
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-deploy-plugin</artifactId>
@@ -101,7 +136,6 @@
 			<build>
 				<plugins>
 					<!-- Signing JAR Files -->
-					<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-gpg-plugin -->
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-gpg-plugin</artifactId>
@@ -117,7 +151,6 @@
 						</executions>
 					</plugin>
 					<!-- Nexus Staging Plugin -->
-					<!-- https://mvnrepository.com/artifact/org.sonatype.plugins/nexus-staging-maven-plugin -->
 					<plugin>
 						<groupId>org.sonatype.plugins</groupId>
 						<artifactId>nexus-staging-maven-plugin</artifactId>
@@ -140,7 +173,6 @@
 						</configuration>
 					</plugin>
 					<!-- Source -->
-					<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-source-plugin -->
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-source-plugin</artifactId>
@@ -155,7 +187,6 @@
 						</executions>
 					</plugin>
 					<!-- JavaDoc -->
-					<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-javadoc-plugin -->
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-javadoc-plugin</artifactId>
@@ -197,31 +228,37 @@
 	<build>
 		<plugins>
 			<!-- Surefire -->
-			<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-surefire-plugin -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>${maven-surefire-plugin.version}</version>
 				<configuration>
-					<argLine>--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.codecs.queclink=spring.core,spring.expression,ALL-UNNAMED --add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.annotations=spring.core,spring.expression,ALL-UNNAMED --add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.annotations.bindings=spring.core,spring.expression,ALL-UNNAMED --add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.annotations.checksummers=spring.core,spring.expression,ALL-UNNAMED --add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.annotations.converters=spring.core,spring.expression,ALL-UNNAMED --add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.annotations.validators=spring.core,spring.expression,ALL-UNNAMED --add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.codecs=spring.core,spring.expression,ALL-UNNAMED --add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.external=ALL-UNNAMED --add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.internal.matchers=ALL-UNNAMED</argLine>
+					<argLine>
+						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.annotations.checksummers=ALL-UNNAMED
+						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.annotations.converters=ALL-UNNAMED
+						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.annotations.validators=ALL-UNNAMED
+						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.codecs=spring.expression,ALL-UNNAMED
+						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.codecs.managers.matchers=ALL-UNNAMED
+						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.codecs.queclink=spring.core,spring.expression,ALL-UNNAMED
+						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.core=spring.core,ALL-UNNAMED
+						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.external.semanticversioning=ALL-UNNAMED
+					</argLine>
 				</configuration>
 			</plugin>
 			<!-- Compiler -->
-			<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>${maven-compiler-plugin.version}</version>
 				<configuration>
 					<source>${maven.compiler.source}</source>
-					<target>${maven.compiler.target}</target>
+					<target>${maven.compiler.source}</target>
 					<encoding>${project.build.sourceEncoding}</encoding>
 					<showDeprecation>true</showDeprecation>
 				</configuration>
 			</plugin>
 			<!-- Help -->
 			<!-- display active profile in compile phase -->
-			<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-help-plugin -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-help-plugin</artifactId>
@@ -252,7 +289,6 @@
 				</executions>
 			</plugin>
 			<!-- Shade -->
-			<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-shade-plugin -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
@@ -297,39 +333,41 @@
 	</build>
 
 	<dependencies>
-		<!-- SpEL -->
-		<!-- https://mvnrepository.com/artifact/org.springframework/spring-expression -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-expression</artifactId>
-			<version>${springframework.spring-expression.version}</version>
-		</dependency>
-
 		<!-- ClassGraph -->
-		<!-- https://mvnrepository.com/artifact/io.github.classgraph/classgraph -->
 		<dependency>
 			<groupId>io.github.classgraph</groupId>
 			<artifactId>classgraph</artifactId>
 			<version>${github.classgraph.version}</version>
 		</dependency>
 
-		<!-- Logger -->
-		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
+		<!-- SpEL -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-expression</artifactId>
+			<version>${springframework.spring-expression.version}</version>
+		</dependency>
+
+		<!-- FreeMarker -->
+		<dependency>
+			<groupId>org.freemarker</groupId>
+			<artifactId>freemarker</artifactId>
+			<version>${freemarker.freemarker.version}</version>
+		</dependency>
+
+		<!-- Logging -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<version>${slf4j.slf4j-api.version}</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-log4j12 -->
 		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<version>${slf4j.slf4j-log4j12.version}</version>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>${logback.logback-classic.version}</version>
 			<scope>test</scope>
 		</dependency>
 
 		<!-- JUnit -->
-		<!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine -->
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-engine</artifactId>
@@ -337,11 +375,17 @@
 			<scope>test</scope>
 		</dependency>
 		<!-- Apache -->
-		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 			<version>${apache.commons-lang3.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- Jackson -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>${jackson.jackson-databind.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

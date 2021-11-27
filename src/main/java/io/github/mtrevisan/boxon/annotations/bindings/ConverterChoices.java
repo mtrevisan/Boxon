@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020 Mauro Trevisan
+ * Copyright (c) 2020-2021 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -58,7 +58,7 @@ public @interface ConverterChoices{
 
 		/**
 		 * The condition that needs to hold, if an instance of {@link #converter() converter} is to be applied.
-		 * <p>A SpEL expression with the prefix value in the context under the name `{@code prefix}`.</p>
+		 * <p>A SpEL expression with the prefix value in the context under the name {@code prefix}.</p>
 		 *
 		 * @return	The condition that needs to hold, if an instance of {@link #converter() converter} is to be applied.
 		 */

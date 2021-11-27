@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020 Mauro Trevisan
+ * Copyright (c) 2020-2021 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -59,7 +59,7 @@ public @interface MessageHeader{
 	/**
 	 * The type of encoding used for the {@link #start()} and {@link #end()} fields.
 	 *
-	 * @return	The type of encoding used (defaults to `UTF-8`).
+	 * @return	The type of encoding used (defaults to {@value io.github.mtrevisan.boxon.codecs.LoaderCodec#CHARSET_DEFAULT}).
 	 */
 	String charset() default "UTF-8";
 

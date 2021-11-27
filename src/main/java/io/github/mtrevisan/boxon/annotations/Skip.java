@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020 Mauro Trevisan
+ * Copyright (c) 2020-2021 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -36,7 +36,7 @@ import java.lang.annotation.Target;
  * Manages the skipping of a certain amount of bits, or until a given terminator is found.
  * <p>Since this annotation is bound to a field, if it is necessary to skip some amounts of bits from the end, it is necessary
  * to introduce a placeholder field (this can be of any type, since it is not assigned at all):</p>
- * <pre><code>
+ * <pre>{@code
  * &#x40;Skip(size = "3")
  * &#x40;Skip(size = "1")
  * &#x40;BindString(size = "4")
@@ -44,7 +44,7 @@ import java.lang.annotation.Target;
  *
  * &#x40;Skip(size = "10")
  * private int unused;
- * </code></pre>
+ * }</pre>
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
