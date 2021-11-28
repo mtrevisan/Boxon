@@ -49,7 +49,7 @@
 		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-deploy-plugin -->
 		<maven-deploy-plugin.version>2.8.2</maven-deploy-plugin.version>
 		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-gpg-plugin -->
-		<maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
+		<maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
 		<!-- https://mvnrepository.com/artifact/org.sonatype.plugins/nexus-staging-maven-plugin -->
 		<sonatype.nexus-staging-maven-plugin.version>1.6.8</sonatype.nexus-staging-maven-plugin.version>
 		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-source-plugin -->
@@ -67,7 +67,7 @@
 
 		<!-- ClassGraph -->
 		<!-- https://mvnrepository.com/artifact/io.github.classgraph/classgraph -->
-		<github.classgraph.version>4.8.132</github.classgraph.version>
+		<github.classgraph.version>4.8.137</github.classgraph.version>
 
 		<!-- Spring Expression -->
 		<!-- https://mvnrepository.com/artifact/org.springframework/spring-expression -->
@@ -178,10 +178,11 @@
 								 Remove after OSSRH-66257, NEXUS-26993 are fixed,
 								 possibly via https://github.com/sonatype/nexus-maven-plugins/pull/91
 							-->
+
 							<dependency>
 								<groupId>com.thoughtworks.xstream</groupId>
 								<artifactId>xstream</artifactId>
-								<version>1.4.15</version>
+								<version>1.4.18</version>
 							</dependency>
 						</dependencies>
 					</plugin>
