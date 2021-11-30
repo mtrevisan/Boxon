@@ -149,7 +149,7 @@ final class CodecHelper{
 	}
 
 	static Object interpretValue(final Class<?> fieldType, Object value) throws CodecException{
-		value = ParserDataType.getValueOrDefault(fieldType, value);
+		value = ParserDataType.getValueOrSelf(fieldType, value);
 		if(value != null){
 			final Class<?> valueClass = value.getClass();
 			if(valueClass.isEnum())

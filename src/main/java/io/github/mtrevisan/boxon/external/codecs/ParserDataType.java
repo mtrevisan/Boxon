@@ -167,7 +167,7 @@ public enum ParserDataType{
 	public abstract Object read(final BitReader reader, final ByteOrder byteOrder);
 
 
-	public static Object getValueOrDefault(final Class<?> fieldType, final Object value) throws CodecException{
+	public static Object getValueOrSelf(final Class<?> fieldType, final Object value) throws CodecException{
 		return (String.class.isInstance(value)
 			? getValue(fieldType, (String)value)
 			: value);

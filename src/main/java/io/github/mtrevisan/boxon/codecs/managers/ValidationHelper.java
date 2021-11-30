@@ -154,8 +154,7 @@ final class ValidationHelper{
 		//if default value is not present, then field type must be an object
 		else if(ParserDataType.isPrimitive(fieldType))
 			throw AnnotationException.create("Default must be present for primitive type in {}, found {}, expected {}",
-				field.annotation.getSimpleName(), fieldType.getSimpleName(),
-				ParserDataType.toObjectiveTypeOrSelf(fieldType).getSimpleName());
+				field.annotation.getSimpleName(), fieldType.getSimpleName(), fieldType.getSimpleName());
 	}
 
 	private static <T extends Annotation> void validateMinMaxDefaultValuesToPattern(final Pattern formatPattern,

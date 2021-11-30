@@ -61,7 +61,7 @@ public enum TemplateAnnotationValidator{
 			final Class<?> type = binding.type();
 			if(!ParserDataType.isPrimitive(type))
 				throw AnnotationException.create("Bad annotation used for {}, should have been used the type `{}.class`",
-					BindArray.class.getSimpleName(), ParserDataType.toObjectiveTypeOrSelf(type).getSimpleName());
+					BindArray.class.getSimpleName(), type.getSimpleName());
 		}
 	},
 
@@ -73,7 +73,7 @@ public enum TemplateAnnotationValidator{
 			final Class<?> type = binding.type();
 			if(ParserDataType.isPrimitive(type))
 				throw AnnotationException.create("Bad annotation used for {}, should have been used the type `{}.class`",
-					BindArrayPrimitive.class.getSimpleName(), ParserDataType.toPrimitiveTypeOrSelf(type).getSimpleName());
+					BindArrayPrimitive.class.getSimpleName(), type.getSimpleName());
 
 			validateObjectChoice(selectFrom, binding.selectDefault(), type);
 		}
