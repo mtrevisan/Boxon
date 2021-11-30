@@ -29,21 +29,24 @@ import io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurati
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
 
 import java.lang.annotation.Annotation;
+import java.util.Map;
+import java.util.function.Function;
 
 
 public final class ConfigurationManagerFactory{
 
+	private static final Map<Class<? extends Annotation>, Function<Annotation, ConfigurationManagerInterface>> MANAGERS = Map.of(
+		ConfigurationField.class, annotation -> new PlainManager((ConfigurationField)annotation),
+		CompositeConfigurationField.class, annotation -> new CompositeManager((CompositeConfigurationField)annotation),
+		AlternativeConfigurationField.class, annotation -> new AlternativeManager((AlternativeConfigurationField)annotation)
+	);
+
+
 	private ConfigurationManagerFactory(){}
 
 	public static ConfigurationManagerInterface buildManager(final Annotation annotation){
-		ConfigurationManagerInterface manager = null;
-		if(ConfigurationField.class.isInstance(annotation))
-			manager = new PlainManager((ConfigurationField)annotation);
-		else if(CompositeConfigurationField.class.isInstance(annotation))
-			manager = new CompositeManager((CompositeConfigurationField)annotation);
-		else if(AlternativeConfigurationField.class.isInstance(annotation))
-			manager = new AlternativeManager((AlternativeConfigurationField)annotation);
-		return manager;
+		return MANAGERS.get(annotation.annotationType())
+			.apply(annotation);
 	}
 
 }

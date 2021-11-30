@@ -55,7 +55,6 @@ public final class BitWriter extends BitWriterData{
 		if(pdt == null)
 			throw AnnotationException.create("Cannot write type {}", value.getClass().getSimpleName());
 
-		//FIXME this is a problem because of coupling...
 		pdt.write(this, value, byteOrder);
 	}
 
