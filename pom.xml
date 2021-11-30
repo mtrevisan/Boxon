@@ -85,7 +85,7 @@
 
 		<!-- JUnit -->
 		<!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine -->
-		<junit.junit-jupiter-engine.version>5.8.1</junit.junit-jupiter-engine.version>
+		<junit.junit-jupiter-engine.version>5.8.2</junit.junit-jupiter-engine.version>
 		<!-- Apache -->
 		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
 		<apache.commons-lang3.version>3.12.0</apache.commons-lang3.version>
