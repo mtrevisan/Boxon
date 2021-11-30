@@ -151,9 +151,10 @@ final class CodecHelper{
 	static Object interpretValue(final Class<?> fieldType, Object value) throws CodecException{
 		value = ParserDataType.getValueOrDefault(fieldType, value);
 		if(value != null){
-			if(value.getClass().isEnum())
+			final Class<?> valueClass = value.getClass();
+			if(valueClass.isEnum())
 				value = ((ConfigurationEnum)value).getCode();
-			else if(value.getClass().isArray())
+			else if(valueClass.isArray())
 				value = calculateCompositeValue(value);
 		}
 		return value;
