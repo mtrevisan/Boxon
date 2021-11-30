@@ -56,9 +56,8 @@ public final class BitReader extends BitReaderData{
 	 */
 	public static BitReader wrap(final File file) throws IOException, FileNotFoundException{
 		try(
-			final FileInputStream fis = new FileInputStream(file);
-			final FileChannel fc = fis.getChannel();
-		){
+				final FileInputStream fis = new FileInputStream(file);
+				final FileChannel fc = fis.getChannel()){
 			//map file into memory
 			final ByteBuffer inputByteBuffer = fc.map(FileChannel.MapMode.READ_ONLY, 0l, fc.size());
 
@@ -269,9 +268,8 @@ public final class BitReader extends BitReaderData{
 	public String getTextUntilTerminator(final byte terminator, final Charset charset){
 		String text = null;
 		try(
-			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			final OutputStreamWriter osw = new OutputStreamWriter(baos, charset);
-		){
+				final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				final OutputStreamWriter osw = new OutputStreamWriter(baos, charset)){
 			getTextUntilTerminator(osw, terminator);
 
 			text = baos.toString(charset);

@@ -1094,6 +1094,7 @@ Optionally, the method `String condition()` could be defined.
 @Target(ElementType.FIELD)
 @interface VarLengthEncoded{}
 ```
+
 ```java
 //codec
 //the number of bytes to read is determined by the leading bit of each individual bytes
