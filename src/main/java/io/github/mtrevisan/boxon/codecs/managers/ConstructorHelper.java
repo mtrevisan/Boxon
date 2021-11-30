@@ -24,19 +24,9 @@
  */
 package io.github.mtrevisan.boxon.codecs.managers;
 
-import org.springframework.objenesis.instantiator.ObjectInstantiator;
-import org.springframework.objenesis.instantiator.android.Android10Instantiator;
-import org.springframework.objenesis.instantiator.android.Android17Instantiator;
-import org.springframework.objenesis.instantiator.android.Android18Instantiator;
-import org.springframework.objenesis.instantiator.basic.AccessibleInstantiator;
-import org.springframework.objenesis.instantiator.basic.ObjectInputStreamInstantiator;
-import org.springframework.objenesis.instantiator.gcj.GCJInstantiator;
-import org.springframework.objenesis.instantiator.perc.PercInstantiator;
-import org.springframework.objenesis.instantiator.sun.SunReflectionFactoryInstantiator;
-import org.springframework.objenesis.instantiator.sun.UnsafeFactoryInstantiator;
-import org.springframework.objenesis.strategy.PlatformDescription;
+import org.springframework.objenesis.Objenesis;
+import org.springframework.objenesis.ObjenesisStd;
 
-import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -45,6 +35,8 @@ import java.util.function.Supplier;
 public final class ConstructorHelper{
 
 	private static final Function<Class<?>, Supplier<?>> CREATORS = Memoizer.memoize(ConstructorHelper::getCreatorInner);
+
+	private static final Objenesis OBJENESIS = new ObjenesisStd();
 
 
 	private ConstructorHelper(){}
@@ -65,7 +57,7 @@ public final class ConstructorHelper{
 			creator = createSupplierIgnoreExceptions(constructor);
 		}
 		catch(final Exception ignored){
-			creator = instantiatorOf(type)::newInstance;
+			creator = OBJENESIS.getInstantiatorOf(type)::newInstance;
 		}
 		return creator;
 	}
@@ -81,62 +73,6 @@ public final class ConstructorHelper{
 				return null;
 			}
 		};
-	}
-
-	/**
-	 * Return an {@link ObjectInstantiator} allowing to create instance without any constructor being
-	 * called.
-	 *
-	 * @see <a href="https://github.com/easymock/objenesis">objenesis</a>
-	 *
-	 * @param type Class to instantiate.
-	 * @return The ObjectInstantiator for the class.
-	 */
-	private static <T> ObjectInstantiator<T> instantiatorOf(final Class<T> type){
-		final ObjectInstantiator<T> instantiator;
-		if(PlatformDescription.isThisJVM(PlatformDescription.HOTSPOT) || PlatformDescription.isThisJVM(PlatformDescription.OPENJDK))
-			instantiator = instantiatorForOpenJDK(type);
-		else if(PlatformDescription.isThisJVM(PlatformDescription.DALVIK))
-			instantiator = instantiatorForDalvik(type);
-		else if(PlatformDescription.isThisJVM(PlatformDescription.GNU))
-			instantiator = new GCJInstantiator<>(type);
-		else if(PlatformDescription.isThisJVM(PlatformDescription.PERC))
-			instantiator = new PercInstantiator<>(type);
-		else
-			//fallback instantiator, should work with most modern JVM
-			instantiator = new UnsafeFactoryInstantiator<>(type);
-
-		return instantiator;
-	}
-
-	private static <T> ObjectInstantiator<T> instantiatorForOpenJDK(final Class<T> type){
-		final ObjectInstantiator<T> instantiator;
-		//Java 7 GAE was under a security manager, so we use a degraded system
-		if(PlatformDescription.isGoogleAppEngine() && "1.7".equals(PlatformDescription.SPECIFICATION_VERSION))
-			instantiator = (Serializable.class.isAssignableFrom(type)
-				? new ObjectInputStreamInstantiator<>(type)
-				: new AccessibleInstantiator<>(type));
-		else
-			//the UnsafeFactoryInstantiator would also work, but according to benchmarks, it is 2.5 times slower
-			instantiator = new SunReflectionFactoryInstantiator<>(type);
-		return instantiator;
-	}
-
-	private static <T> ObjectInstantiator<T> instantiatorForDalvik(final Class<T> type){
-		final ObjectInstantiator<T> instantiator;
-		if(PlatformDescription.isAndroidOpenJDK())
-			//starting at Android N which is based on OpenJDK
-			instantiator = new UnsafeFactoryInstantiator<>(type);
-		else if(PlatformDescription.ANDROID_VERSION <= 10)
-			//Android 2.3 Gingerbread and lower
-			instantiator = new Android10Instantiator<>(type);
-		else if(PlatformDescription.ANDROID_VERSION <= 17)
-			//Android 3.0 Honeycomb to 4.2 Jelly Bean
-			instantiator = new Android17Instantiator<>(type);
-		else
-			//Android 4.3 until Android N
-			instantiator = new Android18Instantiator<>(type);
-		return instantiator;
 	}
 
 }
