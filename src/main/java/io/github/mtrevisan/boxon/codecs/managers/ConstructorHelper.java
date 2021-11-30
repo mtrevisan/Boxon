@@ -25,7 +25,9 @@
 package io.github.mtrevisan.boxon.codecs.managers;
 
 import org.springframework.objenesis.Objenesis;
+import org.springframework.objenesis.ObjenesisException;
 import org.springframework.objenesis.ObjenesisStd;
+import org.springframework.objenesis.instantiator.ObjectInstantiator;
 
 import java.lang.reflect.Constructor;
 import java.util.function.Function;
@@ -47,32 +49,26 @@ public final class ConstructorHelper{
 	}
 
 	private static <T> Supplier<T> getCreatorInner(final Class<T> type){
-		Supplier<T> creator;
+		ObjectInstantiator<T> instantiator;
 		try{
 			final Constructor<T> constructor = type.getDeclaredConstructor();
 			constructor.setAccessible(true);
 			//try creating an instance
 			constructor.newInstance();
 
-			creator = createSupplierIgnoreExceptions(constructor);
+			instantiator = () -> {
+				try{
+					return constructor.newInstance();
+				}
+				catch(final Exception e){
+					throw new ObjenesisException(e);
+				}
+			};
 		}
 		catch(final Exception ignored){
-			creator = OBJENESIS.getInstantiatorOf(type)::newInstance;
+			instantiator = OBJENESIS.getInstantiatorOf(type);
 		}
-		return creator;
-	}
-
-	@SuppressWarnings("ReturnOfNull")
-	private static <T> Supplier<T> createSupplierIgnoreExceptions(final Constructor<? extends T> constructor){
-		return () -> {
-			try{
-				return constructor.newInstance();
-			}
-			catch(final Exception ignored){
-				//should never happen
-				return null;
-			}
-		};
+		return instantiator::newInstance;
 	}
 
 }
