@@ -41,12 +41,22 @@ public enum ParserDataType{
 		public Object read(final BitReader reader, final ByteOrder byteOrder){
 			return reader.getByte();
 		}
+
+		@Override
+		public void write(final BitWriter writer, final Object value, final ByteOrder byteOrder){
+			writer.putByte((Byte)value);
+		}
 	},
 
 	SHORT(Short.TYPE, Short.class, Short.SIZE){
 		@Override
 		public Object read(final BitReader reader, final ByteOrder byteOrder){
 			return reader.getShort(byteOrder);
+		}
+
+		@Override
+		public void write(final BitWriter writer, final Object value, final ByteOrder byteOrder){
+			writer.putShort((Short)value, byteOrder);
 		}
 	},
 
@@ -55,12 +65,22 @@ public enum ParserDataType{
 		public Object read(final BitReader reader, final ByteOrder byteOrder){
 			return reader.getInt(byteOrder);
 		}
+
+		@Override
+		public void write(final BitWriter writer, final Object value, final ByteOrder byteOrder){
+			writer.putInt((Integer)value, byteOrder);
+		}
 	},
 
 	LONG(Long.TYPE, Long.class, Long.SIZE){
 		@Override
 		public Object read(final BitReader reader, final ByteOrder byteOrder){
 			return reader.getLong(byteOrder);
+		}
+
+		@Override
+		public void write(final BitWriter writer, final Object value, final ByteOrder byteOrder){
+			writer.putLong((Long)value, byteOrder);
 		}
 	},
 
@@ -69,12 +89,22 @@ public enum ParserDataType{
 		public Object read(final BitReader reader, final ByteOrder byteOrder){
 			return reader.getFloat(byteOrder);
 		}
+
+		@Override
+		public void write(final BitWriter writer, final Object value, final ByteOrder byteOrder){
+			writer.putFloat((Float)value, byteOrder);
+		}
 	},
 
 	DOUBLE(Double.TYPE, Double.class, Double.SIZE){
 		@Override
 		public Object read(final BitReader reader, final ByteOrder byteOrder){
 			return reader.getDouble(byteOrder);
+		}
+
+		@Override
+		public void write(final BitWriter writer, final Object value, final ByteOrder byteOrder){
+			writer.putDouble((Double)value, byteOrder);
 		}
 	};
 
@@ -165,6 +195,8 @@ public enum ParserDataType{
 	}
 
 	public abstract Object read(final BitReader reader, final ByteOrder byteOrder);
+
+	public abstract void write(final BitWriter writer, final Object value, final ByteOrder byteOrder);
 
 
 	public static Object getValueOrSelf(final Class<?> fieldType, final Object value) throws CodecException{
