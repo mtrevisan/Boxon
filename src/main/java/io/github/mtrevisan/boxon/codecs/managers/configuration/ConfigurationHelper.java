@@ -55,6 +55,7 @@ public final class ConfigurationHelper{
 		}
 	}
 
+	@SuppressWarnings("ConstantConditions")
 	static void validateMinValue(final String dataKey, final Object dataValue, final Class<?> fieldType, final String minValue)
 			throws EncodeException, CodecException{
 		if(!minValue.isEmpty()){
@@ -64,6 +65,7 @@ public final class ConfigurationHelper{
 		}
 	}
 
+	@SuppressWarnings("ConstantConditions")
 	static void validateMaxValue(final String dataKey, final Object dataValue, final Class<?> fieldType, final String maxValue)
 			throws EncodeException, CodecException{
 		if(!maxValue.isEmpty()){

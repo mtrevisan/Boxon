@@ -117,7 +117,7 @@ public final class ConfigurationParser{
 	 * @param protocol	The protocol the data refers to.
 	 * @return	The configuration data.
 	 */
-	public Object getConfigurationWithDefaults(final ConfigurationMessage<?> configuration, final Map<String, Object> data,
+	public static Object getConfigurationWithDefaults(final ConfigurationMessage<?> configuration, final Map<String, Object> data,
 			final Version protocol) throws EncodeException, CodecException{
 		return LoaderConfiguration.getConfigurationWithDefaults(configuration, data, protocol);
 	}

@@ -526,7 +526,7 @@ public final class Parser{
 			final String configurationType = entry.getKey();
 			final Map<String, Object> data = entry.getValue();
 			final ConfigurationMessage<?> configuration = configurationParser.getConfiguration(configurationType);
-			final Object configurationData = configurationParser.getConfigurationWithDefaults(configuration, data, protocol);
+			final Object configurationData = ConfigurationParser.getConfigurationWithDefaults(configuration, data, protocol);
 			configurationParser.encode(configuration, writer, configurationData, protocol);
 		}
 		catch(final Exception e){
