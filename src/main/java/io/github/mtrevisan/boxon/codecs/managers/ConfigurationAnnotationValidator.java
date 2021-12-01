@@ -31,7 +31,6 @@ import io.github.mtrevisan.boxon.annotations.configurations.CompositeSubField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigFieldData;
-import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigFieldDataFactory;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
@@ -70,7 +69,7 @@ enum ConfigurationAnnotationValidator{
 		@Override
 		void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
 				throws AnnotationException, CodecException{
-			final ConfigFieldData<ConfigurationField> configData = ConfigFieldDataFactory.buildData(field, (ConfigurationField)annotation);
+			final ConfigFieldData<ConfigurationField> configData = ConfigFieldData.create(field, (ConfigurationField)annotation);
 
 			final ConfigurationField binding = (ConfigurationField)annotation;
 
@@ -118,7 +117,7 @@ enum ConfigurationAnnotationValidator{
 		@Override
 		void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
 				throws AnnotationException, CodecException{
-			final ConfigFieldData<CompositeConfigurationField> configData = ConfigFieldDataFactory.buildData(field,
+			final ConfigFieldData<CompositeConfigurationField> configData = ConfigFieldData.create(field,
 				(CompositeConfigurationField)annotation);
 
 			final CompositeConfigurationField binding = (CompositeConfigurationField)annotation;
@@ -147,7 +146,7 @@ enum ConfigurationAnnotationValidator{
 		@Override
 		void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
 				throws AnnotationException, CodecException{
-			final ConfigFieldData<CompositeSubField> configData = ConfigFieldDataFactory.buildData(field, (CompositeSubField)annotation);
+			final ConfigFieldData<CompositeSubField> configData = ConfigFieldData.create(field, (CompositeSubField)annotation);
 
 			final CompositeSubField binding = (CompositeSubField)annotation;
 
@@ -164,7 +163,7 @@ enum ConfigurationAnnotationValidator{
 		@Override
 		void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
 				throws AnnotationException{
-			final ConfigFieldData<AlternativeConfigurationField> configData = ConfigFieldDataFactory.buildData(field,
+			final ConfigFieldData<AlternativeConfigurationField> configData = ConfigFieldData.create(field,
 				(AlternativeConfigurationField)annotation);
 
 			final AlternativeConfigurationField binding = (AlternativeConfigurationField)annotation;
@@ -182,7 +181,7 @@ enum ConfigurationAnnotationValidator{
 
 			final AlternativeSubField[] alternatives = binding.value();
 			for(int i = 0; i < JavaHelper.lengthOrZero(alternatives); i ++){
-				final ConfigFieldData<AlternativeSubField> alternativeConfigData = ConfigFieldDataFactory.buildData(field, alternatives[i]);
+				final ConfigFieldData<AlternativeSubField> alternativeConfigData = ConfigFieldData.create(field, alternatives[i]);
 				ValidationHelper.validateProtocol(alternativeConfigData, minProtocolVersion, maxProtocolVersion);
 			}
 		}
@@ -199,7 +198,7 @@ enum ConfigurationAnnotationValidator{
 		@Override
 		void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
 				throws AnnotationException, CodecException{
-			final ConfigFieldData<AlternativeSubField> configData = ConfigFieldDataFactory.buildData(field, (AlternativeSubField)annotation);
+			final ConfigFieldData<AlternativeSubField> configData = ConfigFieldData.create(field, (AlternativeSubField)annotation);
 
 			final AlternativeSubField binding = (AlternativeSubField)annotation;
 
