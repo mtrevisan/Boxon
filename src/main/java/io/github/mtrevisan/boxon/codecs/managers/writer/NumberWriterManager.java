@@ -30,12 +30,18 @@ import io.github.mtrevisan.boxon.external.codecs.BitWriter;
 final class NumberWriterManager implements WriterManagerInterface{
 
 	private final BitWriter writer;
-	private final int radix;
+	private int radix;
 
 
-	NumberWriterManager(final BitWriter writer, final int radix){
+	NumberWriterManager(final BitWriter writer){
 		this.writer = writer;
+		radix = 10;
+	}
+
+	NumberWriterManager withRadix(final int radix){
 		this.radix = radix;
+
+		return this;
 	}
 
 	@Override
