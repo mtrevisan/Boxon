@@ -41,6 +41,9 @@ import java.util.regex.Pattern;
 
 public final class ConfigurationHelper{
 
+	private static final Pattern PATTERN_PIPE = Pattern.compile("\\|");
+
+
 	private ConfigurationHelper(){}
 
 
@@ -117,7 +120,7 @@ public final class ConfigurationHelper{
 	}
 
 	private static String[] splitMultipleEnumerations(final String value){
-		return StringHelper.split(value, '|', -1);
+		return PATTERN_PIPE.split(value);
 	}
 
 	public static boolean shouldBeExtracted(final Version protocol, final String minProtocol, final String maxProtocol){

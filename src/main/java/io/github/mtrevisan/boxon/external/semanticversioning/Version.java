@@ -30,6 +30,7 @@ import io.github.mtrevisan.boxon.internal.StringHelper;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.StringTokenizer;
+import java.util.regex.Pattern;
 
 
 /**
@@ -44,6 +45,9 @@ public final class Version implements Comparable<Version>{
 	private static final String PRE_RELEASE_PREFIX = "-";
 	/** A separator that separates the build metadata from the normal version or the pre-release version. */
 	private static final String BUILD_PREFIX = "+";
+
+	private static final Pattern PATTERN_DOT = Pattern.compile("\\.");
+	private static final Pattern PATTERN_DOT_PREFIX = Pattern.compile("[" + DOT + BUILD_PREFIX + PRE_RELEASE_PREFIX + "]");
 
 
 	private final Integer major;
@@ -126,7 +130,7 @@ public final class Version implements Comparable<Version>{
 		if(!VersionHelper.startsWithNumber(version))
 			throw new IllegalArgumentException("Argument is not a valid version");
 
-		final String[] tokens = StringHelper.split(version, '.', 3);
+		final String[] tokens = PATTERN_DOT.split(version, 3);
 		validateValues(version, tokens);
 
 		major = Integer.valueOf(tokens[0]);
@@ -138,7 +142,7 @@ public final class Version implements Comparable<Version>{
 
 			String nextToken = (tokenizer.hasMoreTokens()? tokenizer.nextToken(): null);
 			if(PRE_RELEASE_PREFIX.equals(nextToken) && tokenizer.hasMoreTokens()){
-				preRelease = StringHelper.split(tokenizer.nextToken(), '.', -1);
+				preRelease = PATTERN_DOT.split(tokenizer.nextToken());
 
 				validatePreRelease();
 
@@ -148,7 +152,7 @@ public final class Version implements Comparable<Version>{
 				preRelease = VersionHelper.EMPTY_ARRAY;
 
 			if(BUILD_PREFIX.equals(nextToken) && tokenizer.hasMoreTokens()){
-				build = StringHelper.split(tokenizer.nextToken(), '.', -1);
+				build = PATTERN_DOT.split(tokenizer.nextToken());
 
 				validateBuild();
 			}
@@ -165,8 +169,8 @@ public final class Version implements Comparable<Version>{
 		}
 	}
 
-	private static void validateValues(final String version, final String[] tokens){
-		final String[] tokensWithPatch = StringHelper.splitAny(version, DOT + PRE_RELEASE_PREFIX + BUILD_PREFIX, -1);
+	private static void validateValues(final CharSequence version, final String[] tokens){
+		final String[] tokensWithPatch = PATTERN_DOT_PREFIX.split(version);
 		if(VersionHelper.hasLeadingZeros(tokens[0])
 				|| tokensWithPatch.length > 1 && VersionHelper.hasLeadingZeros(tokens[1])
 				|| tokensWithPatch.length > 2 && VersionHelper.hasLeadingZeros(tokensWithPatch[2]))

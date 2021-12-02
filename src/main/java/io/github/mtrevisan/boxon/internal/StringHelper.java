@@ -26,21 +26,10 @@ package io.github.mtrevisan.boxon.internal;
 
 import org.slf4j.helpers.MessageFormatter;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
-import java.util.StringTokenizer;
 
 
 public final class StringHelper{
-
-	/** An empty immutable {@code String} array. */
-	private static final String[] EMPTY_ARRAY = new String[0];
-
-	private static final String EMPTY_STRING = "";
-
 
 	private StringHelper(){}
 
@@ -84,111 +73,6 @@ public final class StringHelper{
 				+ Character.digit(hexString.charAt(i + 1), 16));
 		}
 		return data;
-	}
-
-
-	/**
-	 * <p>Splits the provided text into an array with a maximum length, separators specified.</p>
-	 *
-	 * <p>The separator is not included in the returned String array.
-	 * Adjacent separators are treated as one separator.</p>
-	 *
-	 * <p>A {@code null} input String returns {@code null}.
-	 *
-	 * <p>If more than {@code max} delimited substrings are found, the last
-	 * returned string includes all characters after the first {@code max - 1}
-	 * returned strings (including separator characters).</p>
-	 *
-	 * <pre>
-	 * split(null, *, *)            = null
-	 * split("", *, *)              = []
-	 * split("ab cd ef", null, 0)   = ["ab", "cd", "ef"]
-	 * split("ab   cd ef", null, 0) = ["ab", "cd", "ef"]
-	 * split("ab:cd:ef", ":", 0)    = ["ab", "cd", "ef"]
-	 * split("ab:cd:ef", ":", 2)    = ["ab", "cd:ef"]
-	 * </pre>
-	 *
-	 * @param text	The text to parse, may be {@code null}.
-	 * @param separator	The character used as the delimiters.
-	 * @param max	The maximum number of elements to include in the array. A zero or negative value implies no limit.
-	 * @return	An array of parsed Strings, {@code null} if {@code null} String input.
-	 */
-	public static String[] split(final String text, final char separator, final int max){
-		final int length = (text != null? text.length(): 0);
-		if(length == 0)
-			return EMPTY_ARRAY;
-
-		final Collection<String> list = new ArrayList<>(Math.max(max, 0));
-
-		final StringTokenizer tokenizer = new StringTokenizer(text, String.valueOf(separator));
-		int i = 0;
-		for(; tokenizer.hasMoreTokens() && (max < 0 || i < max - 1); i ++)
-			list.add(tokenizer.nextToken());
-		if(tokenizer.hasMoreTokens())
-			list.add(tokenizer.nextToken(EMPTY_STRING).substring(i == max - 1? 1: 0));
-
-		return list.toArray(String[]::new);
-	}
-
-	/**
-	 * <p>Splits the provided text into an array with a maximum length, separators specified.</p>
-	 *
-	 * <p>The separator is not included in the returned String array.
-	 * Adjacent separators are treated as one separator.</p>
-	 *
-	 * <p>A {@code null} input String returns {@code null}.
-	 * A {@code null} {@code separatorChars} splits on whitespace.</p>
-	 *
-	 * <p>If more than {@code max} delimited substrings are found, the last
-	 * returned string includes all characters after the first {@code max - 1}
-	 * returned strings (including separator characters).</p>
-	 *
-	 * <pre>
-	 * split(null, *, *)            = null
-	 * split("", *, *)              = []
-	 * split("ab cd ef", null, 0)   = ["ab", "cd", "ef"]
-	 * split("ab   cd ef", null, 0) = ["ab", "cd", "ef"]
-	 * split("ab:cd:ef", ":", 0)    = ["ab", "cd", "ef"]
-	 * split("ab:cd:ef", ":", 2)    = ["ab", "cd:ef"]
-	 * </pre>
-	 *
-	 * @param text	The text to parse, may be {@code null}.
-	 * @param separatorChars	The characters used as the delimiters, {@code null} splits on whitespace.
-	 * @param max	The maximum number of elements to include in the array. A zero or negative value implies no limit.
-	 * @return	An array of parsed Strings, {@code null} if {@code null} String input.
-	 */
-	public static String[] splitAny(final String text, final String separatorChars, final int max){
-		Objects.requireNonNull(separatorChars, "Separators must be valued");
-		if(separatorChars.length() == 1)
-			return split(text, separatorChars.charAt(0), max);
-
-		final int length = (text != null? text.length(): 0);
-		if(length == 0)
-			return EMPTY_ARRAY;
-
-		final List<String> list = new ArrayList<>();
-		int i = 0;
-		int start = 0;
-		boolean match = false;
-		while(i < length){
-			if(separatorChars.indexOf(text.charAt(i)) >= 0){
-				if(match){
-					if(list.size() + 1 == max)
-						i = length;
-					list.add(text.substring(start, i));
-					match = false;
-				}
-				start = ++ i;
-				continue;
-			}
-
-			match = true;
-			i ++;
-		}
-
-		if(match)
-			list.add(text.substring(start, i));
-		return list.toArray(EMPTY_ARRAY);
 	}
 
 

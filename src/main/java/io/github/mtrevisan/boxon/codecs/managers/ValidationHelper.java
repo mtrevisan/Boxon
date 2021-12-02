@@ -41,6 +41,9 @@ import java.util.regex.Pattern;
 
 final class ValidationHelper{
 
+	private static final Pattern PATTERN_PIPE = Pattern.compile("\\|");
+
+
 	private ValidationHelper(){}
 
 	static void assertValidCharset(final String charsetName) throws AnnotationException{
@@ -230,7 +233,7 @@ final class ValidationHelper{
 				field.annotation.getSimpleName(), field.enumeration.getSimpleName(), fieldType.toString());
 
 		if(!StringHelper.isBlank(field.defaultValue)){
-			final String[] defaultValues = StringHelper.split(field.defaultValue, '|', -1);
+			final String[] defaultValues = PATTERN_PIPE.split(field.defaultValue);
 			if(fieldType.isEnum() && defaultValues.length != 1)
 				throw AnnotationException.create("Default value for mutually exclusive enumeration field in {} should be a value; found {}, expected one of {}",
 					field.annotation.getSimpleName(), field.defaultValue, Arrays.toString(enumConstants));
