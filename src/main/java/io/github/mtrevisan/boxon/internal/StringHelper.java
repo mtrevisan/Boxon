@@ -27,15 +27,19 @@ package io.github.mtrevisan.boxon.internal;
 import org.slf4j.helpers.MessageFormatter;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.StringTokenizer;
 
 
 public final class StringHelper{
 
 	/** An empty immutable {@code String} array. */
 	private static final String[] EMPTY_ARRAY = new String[0];
+
+	private static final String EMPTY_STRING = "";
 
 
 	private StringHelper(){}
@@ -104,39 +108,26 @@ public final class StringHelper{
 	 * split("ab:cd:ef", ":", 2)    = ["ab", "cd:ef"]
 	 * </pre>
 	 *
-	 * @param str	The text to parse, may be {@code null}.
+	 * @param text	The text to parse, may be {@code null}.
 	 * @param separator	The character used as the delimiters.
 	 * @param max	The maximum number of elements to include in the array. A zero or negative value implies no limit.
 	 * @return	An array of parsed Strings, {@code null} if {@code null} String input.
 	 */
-	public static String[] split(final String str, final char separator, final int max){
-		final int length = (str != null? str.length(): 0);
+	public static String[] split(final String text, final char separator, final int max){
+		final int length = (text != null? text.length(): 0);
 		if(length == 0)
 			return EMPTY_ARRAY;
 
-		final List<String> list = new ArrayList<>();
-		int sizePlus1 = 1;
-		int i = 0;
-		int start = 0;
-		boolean match = false;
-		while(i < length){
-			if(str.charAt(i) == separator){
-				if(match){
-					if(sizePlus1 ++ == max)
-						i = length;
-					list.add(str.substring(start, i));
-					match = false;
-				}
-				start = ++ i;
-				continue;
-			}
-			match = true;
-			i ++;
-		}
+		final Collection<String> list = new ArrayList<>(Math.max(max, 0));
 
-		if(match)
-			list.add(str.substring(start, i));
-		return list.toArray(EMPTY_ARRAY);
+		final StringTokenizer tokenizer = new StringTokenizer(text, String.valueOf(separator));
+		int i = 0;
+		for(; tokenizer.hasMoreTokens() && (max < 0 || i < max - 1); i ++)
+			list.add(tokenizer.nextToken());
+		if(tokenizer.hasMoreTokens())
+			list.add(tokenizer.nextToken(EMPTY_STRING).substring(i == max - 1? 1: 0));
+
+		return list.toArray(String[]::new);
 	}
 
 	/**
@@ -161,42 +152,42 @@ public final class StringHelper{
 	 * split("ab:cd:ef", ":", 2)    = ["ab", "cd:ef"]
 	 * </pre>
 	 *
-	 * @param str	The text to parse, may be {@code null}.
+	 * @param text	The text to parse, may be {@code null}.
 	 * @param separatorChars	The characters used as the delimiters, {@code null} splits on whitespace.
 	 * @param max	The maximum number of elements to include in the array. A zero or negative value implies no limit.
 	 * @return	An array of parsed Strings, {@code null} if {@code null} String input.
 	 */
-	public static String[] split(final String str, final String separatorChars, final int max){
+	public static String[] splitAny(final String text, final String separatorChars, final int max){
 		Objects.requireNonNull(separatorChars, "Separators must be valued");
 		if(separatorChars.length() == 1)
-			return split(str, separatorChars.charAt(0), max);
+			return split(text, separatorChars.charAt(0), max);
 
-		final int length = (str != null? str.length(): 0);
+		final int length = (text != null? text.length(): 0);
 		if(length == 0)
 			return EMPTY_ARRAY;
 
 		final List<String> list = new ArrayList<>();
-		int sizePlus1 = 1;
 		int i = 0;
 		int start = 0;
 		boolean match = false;
 		while(i < length){
-			if(separatorChars.indexOf(str.charAt(i)) >= 0){
+			if(separatorChars.indexOf(text.charAt(i)) >= 0){
 				if(match){
-					if(sizePlus1 ++ == max)
+					if(list.size() + 1 == max)
 						i = length;
-					list.add(str.substring(start, i));
+					list.add(text.substring(start, i));
 					match = false;
 				}
 				start = ++ i;
 				continue;
 			}
+
 			match = true;
 			i ++;
 		}
 
 		if(match)
-			list.add(str.substring(start, i));
+			list.add(text.substring(start, i));
 		return list.toArray(EMPTY_ARRAY);
 	}
 

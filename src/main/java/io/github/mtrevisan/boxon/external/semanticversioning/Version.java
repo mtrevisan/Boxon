@@ -136,18 +136,18 @@ public final class Version implements Comparable<Version>{
 
 			patch = Integer.valueOf(tokenizer.nextToken());
 
-			String nextToken = (tokenizer.hasMoreElements()? tokenizer.nextToken(): null);
-			if(PRE_RELEASE_PREFIX.equals(nextToken) && tokenizer.hasMoreElements()){
+			String nextToken = (tokenizer.hasMoreTokens()? tokenizer.nextToken(): null);
+			if(PRE_RELEASE_PREFIX.equals(nextToken) && tokenizer.hasMoreTokens()){
 				preRelease = StringHelper.split(tokenizer.nextToken(), '.', -1);
 
 				validatePreRelease();
 
-				nextToken = (tokenizer.hasMoreElements()? tokenizer.nextToken(): null);
+				nextToken = (tokenizer.hasMoreTokens()? tokenizer.nextToken(): null);
 			}
 			else
 				preRelease = VersionHelper.EMPTY_ARRAY;
 
-			if(BUILD_PREFIX.equals(nextToken) && tokenizer.hasMoreElements()){
+			if(BUILD_PREFIX.equals(nextToken) && tokenizer.hasMoreTokens()){
 				build = StringHelper.split(tokenizer.nextToken(), '.', -1);
 
 				validateBuild();
@@ -155,7 +155,7 @@ public final class Version implements Comparable<Version>{
 			else
 				build = VersionHelper.EMPTY_ARRAY;
 
-			if(tokenizer.hasMoreElements())
+			if(tokenizer.hasMoreTokens())
 				throw new IllegalArgumentException("Argument is not a valid version");
 		}
 		else{
@@ -166,7 +166,7 @@ public final class Version implements Comparable<Version>{
 	}
 
 	private static void validateValues(final String version, final String[] tokens){
-		final String[] tokensWithPatch = StringHelper.split(version, DOT + PRE_RELEASE_PREFIX + BUILD_PREFIX, -1);
+		final String[] tokensWithPatch = StringHelper.splitAny(version, DOT + PRE_RELEASE_PREFIX + BUILD_PREFIX, -1);
 		if(VersionHelper.hasLeadingZeros(tokens[0])
 				|| tokensWithPatch.length > 1 && VersionHelper.hasLeadingZeros(tokens[1])
 				|| tokensWithPatch.length > 2 && VersionHelper.hasLeadingZeros(tokensWithPatch[2]))
