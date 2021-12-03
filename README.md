@@ -120,11 +120,12 @@ You can get pre-built JARs (usable on JRE 11 or newer) from [Sonatype](https://o
     1. [Multi-message parser](#example-multi)
     2. [Message composer](#example-composer)
 8. [Changelog](#changelog)
-    1. [version 1.1.0](#changelog-1.1.0)
-    2. [version 1.0.0](#changelog-1.0.0)
-    3. [version 0.0.2](#changelog-0.0.2)
-    4. [version 0.0.1](#changelog-0.0.1)
-    5. [version 0.0.0](#changelog-0.0.0)
+    1. [version 2.0.0](#changelog-2.0.0)
+    2. [version 1.1.0](#changelog-1.1.0)
+    3. [version 1.0.0](#changelog-1.0.0)
+    4. [version 0.0.2](#changelog-0.0.2)
+    5. [version 0.0.1](#changelog-0.0.1)
+    6. [version 0.0.0](#changelog-0.0.0)
 9. [License](#license)
 10. [Attributions](#attributions)
 
@@ -1253,6 +1254,11 @@ Remember that the header that will be written is the first in `@MessageHeader`.
 
 <a name="changelog"></a>
 ## Changelog
+
+<a name="changelog-2.0.0"></a>
+### version 2.0.0 - 20211127
+- Completely revised the packages, solving a lot of structural problems and refactorings that have to be done.
+- Added methods to retrieve the configurations, a.k.a. a JSON that tells the configuration parameters of certain annotated messages.
 
 <a name="changelog-1.1.0"></a>
 ### version 1.1.0 - 20200901
