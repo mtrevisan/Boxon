@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.Checksum;
+import io.github.mtrevisan.boxon.annotations.Evaluate;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.Skip;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArray;
@@ -550,6 +551,21 @@ public final class TemplateParser implements TemplateParserInterface{
 				describeValidator(annotation.validator(), fieldDescription);
 				describeConverter(annotation.converter(), fieldDescription);
 				describeAlternatives(annotation.selectConverterFrom().alternatives(), fieldDescription);
+			}
+
+			else if(Checksum.class.isInstance(binding)){
+				final Checksum annotation = (Checksum)binding;
+				putIfNotEmpty("type", annotation.type(), fieldDescription);
+				putIfNotEmpty("byteOrder", annotation.byteOrder(), fieldDescription);
+				putIfNotEmpty("skipStart", annotation.skipStart(), fieldDescription);
+				putIfNotEmpty("skipEnd", annotation.skipEnd(), fieldDescription);
+				putIfNotEmpty("algorithm", annotation.algorithm(), fieldDescription);
+				putIfNotEmpty("startValue", annotation.startValue(), fieldDescription);
+			}
+			else if(Evaluate.class.isInstance(binding)){
+				final Evaluate annotation = (Evaluate)binding;
+				putIfNotEmpty("condition", annotation.condition(), fieldDescription);
+				putIfNotEmpty("value", annotation.value(), fieldDescription);
 			}
 
 			fieldsDescription.add(fieldDescription);
