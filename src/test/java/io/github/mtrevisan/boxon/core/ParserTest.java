@@ -314,7 +314,7 @@ class ParserTest{
 		Map<String, Object> description = descriptions.get(0);
 		String jsonDescription = mapper.writeValueAsString(description);
 
-		Assertions.assertEquals("[\"1.18\",\"1.19\",\"1.20\",\"1.21\",\"1.35\",\"1.36\",\"2.8\"]", jsonDescription);
+		Assertions.assertEquals("{\"fields\":[{\"charset\":\"UTF-8\",\"size\":\"#headerSize()\",\"name\":\"messageHeader\",\"annotationType\":\"BindString\",\"fieldType\":\"String\",\"condition\":\"bla\",\"validator\":\"class\",\"converter\":\"class\",\"selectConverterFrom\":[{\"condition\":\"cond1\",\"converter\":\"conv1\"},{\"condition\":\"cond2\",\"converter\":\"conv2\"}]}, ..., \"header\":{\"charset\":\"UTF-8\",\"start\":[\"+ACK\"],\"end\":\"\\r\\n\"}]}", jsonDescription);
 	}
 
 }

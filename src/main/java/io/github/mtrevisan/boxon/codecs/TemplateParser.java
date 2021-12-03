@@ -27,7 +27,14 @@ package io.github.mtrevisan.boxon.codecs;
 import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.Skip;
+import io.github.mtrevisan.boxon.annotations.bindings.BindString;
+import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
+import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
+import io.github.mtrevisan.boxon.annotations.converters.Converter;
+import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
+import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
+import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.codecs.managers.BoundedField;
 import io.github.mtrevisan.boxon.codecs.managers.ConstructorHelper;
 import io.github.mtrevisan.boxon.codecs.managers.EvaluatedField;
@@ -51,6 +58,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -395,8 +403,99 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 	private Map<String, Object> describeTemplate(final Template<?> template){
-		//TODO
-		return null;
+		final Map<String, Object> description = new HashMap<>(1);
+		final MessageHeader header = template.getHeader();
+		final Map<String, Object> headerDescription = new HashMap<>();
+		putIfNotEmpty("start", header.start(), headerDescription);
+		putIfNotEmpty("end", header.end(), headerDescription);
+		putIfNotEmpty("charset", header.charset(), headerDescription);
+		description.put("header", headerDescription);
+		final List<Map<String, Object>> fieldsDescription = new ArrayList<>(0);
+		final List<BoundedField> fields = template.getBoundedFields();
+		for(int i = 0; i < fields.size(); i ++){
+			final BoundedField field = fields.get(i);
+			final Map<String, Object> fieldDescription = new HashMap<>();
+
+			final Skip[] skips = field.getSkips();
+			describeSkips(skips, fieldDescription);
+
+			putIfNotEmpty("name", field.getFieldName(), fieldDescription);
+			putIfNotEmpty("fieldType", field.getFieldType().getSimpleName(), fieldDescription);
+			final Annotation binding = field.getBinding();
+			fieldDescription.put("annotationType", binding.annotationType().getSimpleName());
+			if(BindString.class.isInstance(binding)){
+				final BindString annotation = (BindString)binding;
+				putIfNotEmpty("condition", annotation.condition(), fieldDescription);
+				putIfNotEmpty("charset", annotation.charset(), fieldDescription);
+				putIfNotEmpty("size", annotation.size(), fieldDescription);
+				describeValidator(annotation.validator(), fieldDescription);
+				describeConverter(annotation.converter(), fieldDescription);
+				describeAlternatives(annotation.selectConverterFrom().alternatives(), fieldDescription);
+			}
+			else if(BindStringTerminated.class.isInstance(binding)){
+				final BindStringTerminated annotation = (BindStringTerminated)binding;
+				putIfNotEmpty("condition", annotation.condition(), fieldDescription);
+				putIfNotEmpty("charset", annotation.charset(), fieldDescription);
+				putIfNotEmpty("terminator", annotation.terminator(), fieldDescription);
+				putIfNotEmpty("consumeTerminator", annotation.consumeTerminator(), fieldDescription);
+				describeValidator(annotation.validator(), fieldDescription);
+				describeConverter(annotation.converter(), fieldDescription);
+				describeAlternatives(annotation.selectConverterFrom().alternatives(), fieldDescription);
+			}
+//			if(field.getFieldName())
+			//TODO
+
+			fieldsDescription.add(fieldDescription);
+		}
+		description.put("fields", fieldsDescription);
+		//TODO add context
+		return description;
+	}
+
+	private static void describeSkips(final Skip[] skips, final Map<String, Object> rootDescription){
+		final Collection<Map<String, Object>> skipsDescription = new ArrayList<>(skips.length);
+		for(int j = 0; j < skips.length; j ++){
+			final Skip skip = skips[j];
+			final Map<String, Object> skipDescription = new HashMap<>(4);
+			putIfNotEmpty("condition", skip.condition(), skipDescription);
+			putIfNotEmpty("size", skip.size(), skipDescription);
+			putIfNotEmpty("terminator", skip.terminator(), skipDescription);
+			putIfNotEmpty("consumeTerminator", skip.consumeTerminator(), skipDescription);
+			skipsDescription.add(skipDescription);
+		}
+		if(!skipsDescription.isEmpty())
+			rootDescription.put("skips", skipsDescription);
+	}
+
+	private static void describeValidator(final Class<? extends Validator<?>> validator, final Map<String, Object> rootDescription){
+		if(validator != NullValidator.class)
+			rootDescription.put("validator", validator.getSimpleName());
+	}
+
+	private static void describeConverter(final Class<? extends Converter<?, ?>> converter, final Map<String, Object> rootDescription){
+		if(converter != NullConverter.class)
+			rootDescription.put("converter", converter.getSimpleName());
+	}
+
+	private static void describeAlternatives(final ConverterChoices.ConverterChoice[] alternatives,
+			final Map<String, Object> rootDescription){
+		if(alternatives.length > 0){
+			final Collection<Map<String, Object>> alternativesDescription = new ArrayList<>(alternatives.length);
+			for(int j = 0; j < alternatives.length; j ++){
+				final ConverterChoices.ConverterChoice alternative = alternatives[j];
+				final Map<String, Object> alternativeDescription = new HashMap<>(2);
+				putIfNotEmpty("condition", alternative.condition(), alternativeDescription);
+				describeConverter(alternative.converter(), alternativeDescription);
+				alternativesDescription.add(alternativeDescription);
+			}
+			rootDescription.put("selectConverterFrom", alternativesDescription);
+		}
+	}
+
+	private static void putIfNotEmpty(final String key, final Object value,
+			@SuppressWarnings("BoundedWildcard") final Map<String, Object> map){
+		if(value != null && (!String.class.isInstance(value) || !StringHelper.isBlank((CharSequence)value)))
+			map.put(key, value);
 	}
 
 }
