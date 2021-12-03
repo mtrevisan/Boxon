@@ -426,7 +426,7 @@ public final class TemplateParser implements TemplateParserInterface{
 		final List<BoundedField> fields = template.getBoundedFields();
 		for(int i = 0; i < fields.size(); i ++){
 			final BoundedField field = fields.get(i);
-			final Map<String, Object> fieldDescription = new HashMap<>();
+			final Map<String, Object> fieldDescription = new HashMap<>(13);
 
 			final Skip[] skips = field.getSkips();
 			describeSkips(skips, fieldDescription);
@@ -435,6 +435,7 @@ public final class TemplateParser implements TemplateParserInterface{
 			putIfNotEmpty("fieldType", field.getFieldType(), fieldDescription);
 			final Annotation binding = field.getBinding();
 			putIfNotEmpty("annotationType", binding.annotationType(), fieldDescription);
+
 			if(BindArray.class.isInstance(binding)){
 				final BindArray annotation = (BindArray)binding;
 				putIfNotEmpty("condition", annotation.condition(), fieldDescription);
@@ -550,8 +551,6 @@ public final class TemplateParser implements TemplateParserInterface{
 				describeConverter(annotation.converter(), fieldDescription);
 				describeAlternatives(annotation.selectConverterFrom().alternatives(), fieldDescription);
 			}
-//			if(field.getFieldName())
-			//TODO
 
 			fieldsDescription.add(fieldDescription);
 		}
