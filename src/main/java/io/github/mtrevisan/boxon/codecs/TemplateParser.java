@@ -48,9 +48,12 @@ import io.github.mtrevisan.boxon.internal.StringHelper;
 
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 
 public final class TemplateParser implements TemplateParserInterface{
@@ -355,6 +358,45 @@ public final class TemplateParser implements TemplateParserInterface{
 		else if(skip.consumeTerminator())
 			//skip until terminator
 			writer.putByte(skip.terminator());
+	}
+
+
+	/**
+	 * Description of all the loaded templates.
+	 *
+	 * @return	The list of descriptions.
+	 */
+	public List<Map<String, Object>> describeTemplates(){
+		final Collection<Template<?>> templates = loaderTemplate.getTemplates();
+		final List<Map<String, Object>> description = new ArrayList<>(templates.size());
+		for(final Template<?> template : templates)
+			description.add(describeTemplate(template));
+		return description;
+	}
+
+	/**
+	 * Description of all the templates in the given package annotated with {@link MessageHeader}.
+	 *
+	 * @param templateClasses	Classes to be used ase starting point from which to load annotated classes.
+	 * @return	The list of descriptions.
+	 * @throws AnnotationException	If an annotation is not well formatted.
+	 * @throws TemplateException	If a template is not well formatted.
+	 */
+	public List<Map<String, Object>> describeTemplates(final Class<?>... templateClasses) throws AnnotationException, TemplateException{
+		final List<Map<String, Object>> description = new ArrayList<>(templateClasses.length);
+		for(int i = 0; i < templateClasses.length; i ++){
+			final Class<?> templateClass = templateClasses[i];
+			if(templateClass.isAnnotationPresent(MessageHeader.class)){
+				final Template<?> template = loaderTemplate.extractTemplate(templateClass);
+				description.add(describeTemplate(template));
+			}
+		}
+		return description;
+	}
+
+	private Map<String, Object> describeTemplate(final Template<?> template){
+		//TODO
+		return null;
 	}
 
 }

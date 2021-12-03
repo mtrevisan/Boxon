@@ -163,7 +163,7 @@ public final class Parser{
 
 
 	/**
-	 * Loads all the codecs that extends {@link CodecInterface}.
+	 * Loads all the default codecs that extends {@link CodecInterface}.
 	 * <p>This method SHOULD BE called from a method inside a class that lies on a parent of all the codecs.</p>
 	 *
 	 * @return	This instance, used for chaining.
@@ -209,7 +209,7 @@ public final class Parser{
 
 
 	/**
-	 * Loads all the protocol classes annotated with {@link MessageHeader}.
+	 * Loads all the default protocol classes annotated with {@link MessageHeader}.
 	 *
 	 * @return	This instance, used for chaining.
 	 * @throws AnnotationException	If an annotation is not well formatted.
@@ -275,6 +275,41 @@ public final class Parser{
 		configurationParser.loadConfigurations(basePackageClasses);
 
 		return this;
+	}
+
+
+	/**
+	 * Description of all the loaded templates.
+	 *
+	 * @return	The list of descriptions.
+	 */
+	public List<Map<String, Object>> describeTemplates(){
+		return templateParser.describeTemplates();
+	}
+
+	/**
+	 * Description of all the templates in the given package annotated with {@link MessageHeader}.
+	 *
+	 * @param templateClasses	Classes to be used ase starting point from which to load annotated classes.
+	 * @return	The list of descriptions.
+	 * @throws AnnotationException	If an annotation is not well formatted.
+	 * @throws TemplateException	If a template is not well formatted.
+	 */
+	public List<Map<String, Object>> describeTemplates(final Class<?>... templateClasses) throws AnnotationException, TemplateException{
+		return templateParser.describeTemplates(templateClasses);
+	}
+
+	/**
+	 * Description of all the templates in the given package annotated with {@link MessageHeader}.
+	 *
+	 * @param templateClass	Template from which to extract the description.
+	 * @return	The description.
+	 * @throws AnnotationException	If an annotation is not well formatted.
+	 * @throws TemplateException	If a template is not well formatted.
+	 */
+	public Map<String, Object> describeTemplate(final Class<?> templateClass) throws AnnotationException, TemplateException{
+		final List<Map<String, Object>> descriptions = describeTemplates(templateClass);
+		return (descriptions.isEmpty()? Collections.emptyMap(): descriptions.get(0));
 	}
 
 

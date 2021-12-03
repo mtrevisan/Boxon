@@ -44,6 +44,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -165,7 +166,7 @@ final class LoaderTemplate implements LoaderTemplateInterface{
 		return templates;
 	}
 
-	private Template<?> extractTemplate(final Class<?> type) throws AnnotationException, TemplateException{
+	Template<?> extractTemplate(final Class<?> type) throws AnnotationException, TemplateException{
 		final Template<?> from = createTemplate(type);
 		if(!from.canBeCoded())
 			throw TemplateException.create("Cannot create a raw message from data: cannot scan template for {}",
@@ -265,6 +266,10 @@ final class LoaderTemplate implements LoaderTemplateInterface{
 			throw TemplateException.create("Cannot find any template for given class type");
 
 		return template;
+	}
+
+	Collection<Template<?>> getTemplates(){
+		return Collections.unmodifiableCollection(templates.values());
 	}
 
 	private static String calculateKey(final String headerStart, final Charset charset){

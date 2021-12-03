@@ -297,4 +297,24 @@ class ParserTest{
 			new String(composeResult.getComposedMessage()));
 	}
 
+
+	@Test
+	void getDescription() throws AnnotationException, ConfigurationException, JsonProcessingException, CodecException, TemplateException{
+		DeviceTypes deviceTypes = new DeviceTypes();
+		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
+		Parser parser = Parser.create()
+			.withDefaultCodecs()
+			.withTemplate(ACKMessageHex.class);
+
+		List<Map<String, Object>> descriptions = parser.describeTemplates();
+
+		Assertions.assertEquals(1, descriptions.size());
+
+		ObjectMapper mapper = new ObjectMapper();
+		Map<String, Object> description = descriptions.get(0);
+		String jsonDescription = mapper.writeValueAsString(description);
+
+		Assertions.assertEquals("[\"1.18\",\"1.19\",\"1.20\",\"1.21\",\"1.35\",\"1.36\",\"2.8\"]", jsonDescription);
+	}
+
 }
