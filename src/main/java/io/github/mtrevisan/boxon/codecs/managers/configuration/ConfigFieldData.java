@@ -39,8 +39,8 @@ import java.lang.reflect.Field;
 /** Data associated to an annotated field. */
 public final class ConfigFieldData<T extends Annotation>{
 
-	public Field field;
-	public Class<T> annotation;
+	public final Field field;
+	public final Class<T> annotation;
 
 	public String minProtocol;
 	public String maxProtocol;

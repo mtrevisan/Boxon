@@ -29,7 +29,6 @@ import io.github.mtrevisan.boxon.internal.StringHelper;
 
 import java.util.Arrays;
 import java.util.Locale;
-import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 
 
@@ -48,6 +47,8 @@ public final class Version implements Comparable<Version>{
 
 	private static final Pattern PATTERN_DOT = Pattern.compile("\\.");
 	private static final Pattern PATTERN_DOT_PREFIX = Pattern.compile("[" + DOT + BUILD_PREFIX + PRE_RELEASE_PREFIX + "]");
+	//split and keep delimiters
+	private static final Pattern PATTERN_PREFIX = Pattern.compile("((?=[" + BUILD_PREFIX + PRE_RELEASE_PREFIX + "])|(?<=[" + BUILD_PREFIX + PRE_RELEASE_PREFIX + "]))");
 
 
 	private final Integer major;
@@ -136,30 +137,31 @@ public final class Version implements Comparable<Version>{
 		major = Integer.valueOf(tokens[0]);
 		minor = (tokens.length > 1? Integer.valueOf(tokens[1]): null);
 		if(tokens.length > 2){
-			final StringTokenizer tokenizer = new StringTokenizer(tokens[2], PRE_RELEASE_PREFIX + BUILD_PREFIX, true);
+			final String[] patchPreReleaseBuild = PATTERN_PREFIX.split(tokens[2]);
 
-			patch = Integer.valueOf(tokenizer.nextToken());
+			patch = Integer.valueOf(patchPreReleaseBuild[0]);
 
-			String nextToken = (tokenizer.hasMoreTokens()? tokenizer.nextToken(): null);
-			if(PRE_RELEASE_PREFIX.equals(nextToken) && tokenizer.hasMoreTokens()){
-				preRelease = PATTERN_DOT.split(tokenizer.nextToken());
+			int offset = 1;
+			String nextToken = (patchPreReleaseBuild.length > offset? patchPreReleaseBuild[offset]: null);
+			if(PRE_RELEASE_PREFIX.equals(nextToken) && patchPreReleaseBuild.length > ++ offset){
+				preRelease = PATTERN_DOT.split(patchPreReleaseBuild[offset ++]);
 
 				validatePreRelease();
 
-				nextToken = (tokenizer.hasMoreTokens()? tokenizer.nextToken(): null);
+				nextToken = (patchPreReleaseBuild.length > offset? patchPreReleaseBuild[offset]: null);
 			}
 			else
 				preRelease = VersionHelper.EMPTY_ARRAY;
 
-			if(BUILD_PREFIX.equals(nextToken) && tokenizer.hasMoreTokens()){
-				build = PATTERN_DOT.split(tokenizer.nextToken());
+			if(BUILD_PREFIX.equals(nextToken) && patchPreReleaseBuild.length > offset){
+				build = PATTERN_DOT.split(patchPreReleaseBuild[++ offset]);
 
 				validateBuild();
 			}
 			else
 				build = VersionHelper.EMPTY_ARRAY;
 
-			if(tokenizer.hasMoreTokens())
+			if(patchPreReleaseBuild.length > offset + 1)
 				throw new IllegalArgumentException("Argument is not a valid version");
 		}
 		else{
