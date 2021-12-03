@@ -53,7 +53,6 @@ import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
@@ -267,7 +266,7 @@ public enum AnnotationDescriptor{
 
 	public abstract void describe(final Annotation annotation, final Map<String, Object> rootDescription);
 
-	public static void describeSkips(final Skip[] skips, final List<Map<String, Object>> rootDescription){
+	public static void describeSkips(final Skip[] skips, final Collection<Map<String, Object>> rootDescription){
 		for(int j = 0; j < skips.length; j ++){
 			final Skip skip = skips[j];
 			final Map<String, Object> skipDescription = new HashMap<>(5);

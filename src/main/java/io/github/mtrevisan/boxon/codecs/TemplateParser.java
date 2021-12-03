@@ -122,7 +122,6 @@ public final class TemplateParser implements TemplateParserInterface{
 	 * Load the specified protocol class annotated with {@link MessageHeader}.
 	 *
 	 * @param templateClass	Template class.
-	 * @return	This instance, used for chaining.
 	 * @throws AnnotationException	If the annotation is not well formatted.
 	 * @throws TemplateException	If the template is not well formatted.
 	 */
@@ -397,7 +396,7 @@ public final class TemplateParser implements TemplateParserInterface{
 		return description;
 	}
 
-	private Map<String, Object> describeTemplate(final Template<?> template) throws TemplateException{
+	private static Map<String, Object> describeTemplate(final Template<?> template) throws TemplateException{
 		final Map<String, Object> description = new HashMap<>(2);
 		final MessageHeader header = template.getHeader();
 		final Map<String, Object> headerDescription = new HashMap<>(3);

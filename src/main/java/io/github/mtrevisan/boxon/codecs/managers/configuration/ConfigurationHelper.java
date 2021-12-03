@@ -119,7 +119,7 @@ public final class ConfigurationHelper{
 		return enumeration.cast(ConfigurationEnum.extractEnum(enumConstants, value));
 	}
 
-	private static String[] splitMultipleEnumerations(final String value){
+	private static String[] splitMultipleEnumerations(final CharSequence value){
 		return PATTERN_PIPE.split(value);
 	}
 

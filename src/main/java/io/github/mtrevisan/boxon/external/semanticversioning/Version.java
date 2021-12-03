@@ -153,8 +153,8 @@ public final class Version implements Comparable<Version>{
 			else
 				preRelease = VersionHelper.EMPTY_ARRAY;
 
-			if(BUILD_PREFIX.equals(nextToken) && patchPreReleaseBuild.length > offset){
-				build = PATTERN_DOT.split(patchPreReleaseBuild[++ offset]);
+			if(BUILD_PREFIX.equals(nextToken) && patchPreReleaseBuild.length > ++ offset){
+				build = PATTERN_DOT.split(patchPreReleaseBuild[offset ++]);
 
 				validateBuild();
 			}
