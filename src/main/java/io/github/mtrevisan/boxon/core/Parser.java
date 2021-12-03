@@ -235,6 +235,20 @@ public final class Parser{
 		return this;
 	}
 
+	/**
+	 * Load the specified protocol class annotated with {@link MessageHeader}.
+	 *
+	 * @param templateClass	Template class.
+	 * @return	This instance, used for chaining.
+	 * @throws AnnotationException	If the annotation is not well formatted.
+	 * @throws TemplateException	If the template is not well formatted.
+	 */
+	public Parser withTemplate(final Class<?> templateClass) throws AnnotationException, TemplateException{
+		templateParser.loadTemplate(templateClass);
+
+		return this;
+	}
+
 
 	/**
 	 * Loads all the protocol classes annotated with {@link ConfigurationHeader}.

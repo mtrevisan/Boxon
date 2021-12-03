@@ -113,6 +113,18 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 	/**
+	 * Load the specified protocol class annotated with {@link MessageHeader}.
+	 *
+	 * @param templateClass	Template class.
+	 * @return	This instance, used for chaining.
+	 * @throws AnnotationException	If the annotation is not well formatted.
+	 * @throws TemplateException	If the template is not well formatted.
+	 */
+	public void loadTemplate(final Class<?> templateClass) throws AnnotationException, TemplateException{
+		loaderTemplate.loadTemplate(templateClass);
+	}
+
+	/**
 	 * Constructs a new {@link Template}.
 	 *
 	 * @param <T>	The type of the object to be returned as a {@link Template}.

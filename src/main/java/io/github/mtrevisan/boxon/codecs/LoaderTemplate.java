@@ -129,6 +129,25 @@ final class LoaderTemplate implements LoaderTemplateInterface{
 		eventListener.loadedTemplates(templates.size());
 	}
 
+	/**
+	 * Load the specified protocol class annotated with {@link MessageHeader}.
+	 *
+	 * @param templateClass	Template class.
+	 */
+	void loadTemplate(final Class<?> templateClass) throws AnnotationException, TemplateException{
+		eventListener.loadingTemplate(templateClass);
+
+		if(templateClass.isAnnotationPresent(MessageHeader.class)){
+			/** extract all classes annotated with {@link MessageHeader}. */
+			final Template<?> template = extractTemplate(templateClass);
+			if(template.canBeCoded()){
+				addTemplateInner(template);
+
+				eventListener.loadedTemplates(templates.size());
+			}
+		}
+	}
+
 	private List<Template<?>> extractTemplates(final Collection<Class<?>> annotatedClasses) throws AnnotationException,
 			TemplateException{
 		final List<Template<?>> templates = new ArrayList<>(annotatedClasses.size());
@@ -144,6 +163,15 @@ final class LoaderTemplate implements LoaderTemplateInterface{
 					type.getSimpleName());
 		}
 		return templates;
+	}
+
+	private Template<?> extractTemplate(final Class<?> type) throws AnnotationException, TemplateException{
+		final Template<?> from = createTemplate(type);
+		if(!from.canBeCoded())
+			throw TemplateException.create("Cannot create a raw message from data: cannot scan template for {}",
+				type.getSimpleName());
+
+		return from;
 	}
 
 	/**

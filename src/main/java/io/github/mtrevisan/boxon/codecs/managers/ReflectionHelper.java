@@ -68,7 +68,6 @@ public final class ReflectionHelper{
 	 * @return	The classes.
 	 */
 	public static Collection<Class<?>> extractClasses(final Class<?> type, final Class<?>... basePackageClasses){
-
 		final ReflectiveClassLoader reflectiveClassLoader = ReflectiveClassLoader.createFrom(basePackageClasses);
 		reflectiveClassLoader.scan(type);
 		final Collection<Class<?>> modules = reflectiveClassLoader.getImplementationsOf(type);

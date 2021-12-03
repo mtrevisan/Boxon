@@ -103,6 +103,12 @@ public final class EventLogger extends EventListener{
 	}
 
 	@Override
+	public void loadingTemplate(final Class<?> templateClass){
+		if(LOGGER.isInfoEnabled())
+			info("Load template {}", templateClass.getName());
+	}
+
+	@Override
 	public void loadedTemplates(final int count){
 		trace("Templates loaded are {}", count);
 	}

@@ -56,6 +56,9 @@ public class EventListener{
 	public void loadingTemplates(final Class<?>[] basePackageClasses){}
 
 	@SuppressWarnings("unused")
+	public void loadingTemplate(final Class<?> templateClass){}
+
+	@SuppressWarnings("unused")
 	public void loadedTemplates(final int count){}
 
 	@SuppressWarnings("unused")
