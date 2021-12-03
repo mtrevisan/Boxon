@@ -52,7 +52,7 @@ import java.util.TreeMap;
 import java.util.function.Function;
 
 
-final class LoaderTemplate implements LoaderTemplateInterface{
+final class LoaderTemplate{
 
 	private static final PatternMatcher PATTERN_MATCHER = BNDMPatternMatcher.getInstance();
 	private static final Function<byte[], int[]> PRE_PROCESSED_PATTERNS = Memoizer.memoize(PATTERN_MATCHER::preProcessPattern);
@@ -182,7 +182,6 @@ final class LoaderTemplate implements LoaderTemplateInterface{
 	 * @param type	The class of the object to be returned as a {@link Template}.
 	 * @return	The {@link Template} for the given type.
 	 */
-	@Override
 	@SuppressWarnings("unchecked")
 	public <T> Template<T> createTemplate(final Class<T> type) throws AnnotationException{
 		return (Template<T>)templateStore.apply(type);
