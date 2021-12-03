@@ -17,7 +17,7 @@ If you want to use the parser straight away, just go [here](#examples).
 <br />
 
 | This project adheres to the **[Zero Bugs Commitment](https://github.com/classgraph/classgraph/blob/master/Zero-Bugs-Commitment.md)**. |
-|-----------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------|
 
 <br />
 
@@ -143,36 +143,36 @@ Here is a brief summary of the parameters (described in detail below) for each a
 
 |                      | condition |  type   | charset | terminator | consumeTerminator |  size   | byteOrder | selectFrom | selectDefault | validator | converter | selectConverterFrom |                      |
 |----------------------|:---------:|:-------:|:-------:|:----------:|:-----------------:|:-------:|:---------:|:----------:|:-------------:|:---------:|:---------:|:-------------------:|---------------------:|
-| BindObject           |  &#9745;  | &#9745; |         |            |                   |         |           |  &#9745;   |    &#9745;    |  &#9745;  |  &#9745;  |       &#9745;       | BindObject           |
-| BindArray            |  &#9745;  | &#9745; |         |            |                   | &#9745; |           |  &#9745;   |    &#9745;    |  &#9745;  |  &#9745;  |       &#9745;       | BindArray            |
-| BindArrayPrimitive   |  &#9745;  | &#9745; |         |            |                   | &#9745; |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       | BindArrayPrimitive   |
-| BindBits             |  &#9745;  |         |         |            |                   | &#9745; |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       | BindBits             |
-| BindByte             |  &#9745;  |         |         |            |                   |         |           |            |               |  &#9745;  |  &#9745;  |       &#9745;       | BindByte             |
-| BindShort            |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       | BindShort            |
-| BindInt              |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       | BindInt              |
-| BindLong             |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       | BindLong             |
-| BindInteger          |  &#9745;  |         |         |            |                   | &#9745; |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       | BindInteger          |
-| BindFloat            |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       | BindFloat            |
-| BindDouble           |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       | BindDouble           |
-| BindString           |  &#9745;  |         | &#9745; |            |                   | &#9745; |           |            |               |  &#9745;  |  &#9745;  |       &#9745;       | BindString           |
+| BindObject           |  &#9745;  | &#9745; |         |            |                   |         |           |  &#9745;   |    &#9745;    |  &#9745;  |  &#9745;  |       &#9745;       |           BindObject |
+| BindArray            |  &#9745;  | &#9745; |         |            |                   | &#9745; |           |  &#9745;   |    &#9745;    |  &#9745;  |  &#9745;  |       &#9745;       |            BindArray |
+| BindArrayPrimitive   |  &#9745;  | &#9745; |         |            |                   | &#9745; |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |   BindArrayPrimitive |
+| BindBits             |  &#9745;  |         |         |            |                   | &#9745; |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |             BindBits |
+| BindByte             |  &#9745;  |         |         |            |                   |         |           |            |               |  &#9745;  |  &#9745;  |       &#9745;       |             BindByte |
+| BindShort            |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |            BindShort |
+| BindInt              |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |              BindInt |
+| BindLong             |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |             BindLong |
+| BindInteger          |  &#9745;  |         |         |            |                   | &#9745; |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |          BindInteger |
+| BindFloat            |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |            BindFloat |
+| BindDouble           |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |           BindDouble |
+| BindString           |  &#9745;  |         | &#9745; |            |                   | &#9745; |           |            |               |  &#9745;  |  &#9745;  |       &#9745;       |           BindString |
 | BindStringTerminated |  &#9745;  |         | &#9745; |  &#9745;   |     &#9745;       |         |           |            |               |  &#9745;  |  &#9745;  |       &#9745;       | BindStringTerminated |
 
 |                      | condition |  start  |   end   | charset |   size  | terminator | consumeTerminator |  type   | byteOrder | skipStart | skipEnd | algorithm | startValue |  value  |               |
 |----------------------|:---------:|:-------:|:-------:|:-------:|:-------:|:----------:|:-----------------:|:-------:|:---------:|:---------:|:-------:|:---------:|:----------:|:-------:|--------------:|
 | MessageHeader        |           | &#9745; | &#9745; | &#9745; |         |            |                   |         |           |           |         |           |            |         | MessageHeader |
-| Skip                 |  &#9745;  |         |         |         | &#9745; |  &#9745;   |      &#9745;      |         |           |           |         |           |            |         | Skip          |
-| Checksum             |           |         |         |         |         |            |                   | &#9745; |  &#9745;  |  &#9745;  | &#9745; |  &#9745;  |  &#9745;   |         | Checksum      |
-| Evaluate             |  &#9745;  |         |         |         |         |            |                   |         |           |           |         |           |            | &#9745; | Evaluate      |
+| Skip                 |  &#9745;  |         |         |         | &#9745; |  &#9745;   |      &#9745;      |         |           |           |         |           |            |         |          Skip |
+| Checksum             |           |         |         |         |         |            |                   | &#9745; |  &#9745;  |  &#9745;  | &#9745; |  &#9745;  |  &#9745;   |         |      Checksum |
+| Evaluate             |  &#9745;  |         |         |         |         |            |                   |         |           |           |         |           |            | &#9745; |      Evaluate |
 
 |                               | shortDescription | longDescription | minProtocol | maxProtocol |  start  |   end   | charset | terminator | unitOfMeasure |  minValue | maxValue | pattern | enumeration | defaultValue |  radix  | composition |                               |
 |-------------------------------|:----------------:|:---------------:|:-----------:|:-----------:|:-------:|:-------:|:-------:|:----------:|:-------------:|:---------:|:--------:|:-------:|:-----------:|:------------:|:-------:|:-----------:|------------------------------:|
-| ConfigurationHeader           |      &#9745;     |     &#9745;     |   &#9745;   |   &#9745;   | &#9745; | &#9745; | &#9745; |            |               |           |          |         |             |              |         |             | ConfigurationHeader           |
-| ConfigurationSkip             |                  |                 |   &#9745;   |   &#9745;   |         |         |         |   &#9745;  |               |           |          |         |             |              |         |             | ConfigurationSkip             |
-| ConfigurationField            |      &#9745;     |     &#9745;     |   &#9745;   |   &#9745;   |         |         | &#9745; |            |    &#9745;    |  &#9745;  |  &#9745; | &#9745; |   &#9745;   |    &#9745;   | &#9745; |             | ConfigurationField            |
-| CompositeConfigurationField   |      &#9745;     |     &#9745;     |   &#9745;   |   &#9745;   |         |         | &#9745; |   &#9745;  |               |           |          | &#9745; |             |              |         |   &#9745;   | CompositeConfigurationField   |
-| CompositeSubField             |      &#9745;     |     &#9745;     |             |             |         |         |         |            |    &#9745;    |           |          | &#9745; |             |    &#9745;   |         |             | CompositeSubField             |
+| ConfigurationHeader           |      &#9745;     |     &#9745;     |   &#9745;   |   &#9745;   | &#9745; | &#9745; | &#9745; |            |               |           |          |         |             |              |         |             |           ConfigurationHeader |
+| ConfigurationSkip             |                  |                 |   &#9745;   |   &#9745;   |         |         |         |   &#9745;  |               |           |          |         |             |              |         |             |             ConfigurationSkip |
+| ConfigurationField            |      &#9745;     |     &#9745;     |   &#9745;   |   &#9745;   |         |         | &#9745; |            |    &#9745;    |  &#9745;  |  &#9745; | &#9745; |   &#9745;   |    &#9745;   | &#9745; |             |            ConfigurationField |
+| CompositeConfigurationField   |      &#9745;     |     &#9745;     |   &#9745;   |   &#9745;   |         |         | &#9745; |   &#9745;  |               |           |          | &#9745; |             |              |         |   &#9745;   |   CompositeConfigurationField |
+| CompositeSubField             |      &#9745;     |     &#9745;     |             |             |         |         |         |            |    &#9745;    |           |          | &#9745; |             |    &#9745;   |         |             |             CompositeSubField |
 | AlternativeConfigurationField |      &#9745;     |     &#9745;     |   &#9745;   |   &#9745;   |         |         |         |   &#9745;  |    &#9745;    |           |          |         |   &#9745;   |              |         |             | AlternativeConfigurationField |
-| AlternativeSubField           |                  |     &#9745;     |   &#9745;   |   &#9745;   |         |         | &#9745; |            |    &#9745;    |  &#9745;  |  &#9745; | &#9745; |             |    &#9745;   | &#9745; |             | AlternativeSubField           |
+| AlternativeSubField           |                  |     &#9745;     |   &#9745;   |   &#9745;   |         |         | &#9745; |            |    &#9745;    |  &#9745;  |  &#9745; | &#9745; |             |    &#9745;   | &#9745; |             |           AlternativeSubField |
 
 
 <a name="annotation-bindobject"></a>
@@ -787,7 +787,7 @@ public int motionlessReportInterval;
 - `minProtocol`: minimum protocol for which this configuration message is valid, optional.
 - `maxProtocol`: maximum protocol for which this configuration message is valid, optional.
 - `pattern`: regex pattern this field must obey, optional.
-- `composition`: the [FreeMarker](https://freemarker.apache.org/) pattern used to compose the field. The short description of each sub-field is used as identifier.
+- `composition`: the [FreeMarker](https://freemarker.apache.org/) pattern used to compose the field. The short description of each subfield is used as identifier.
 - `charset`: charset of the field (if string value), optional.
 - `terminator`: the string that terminates the skip (defaults to empty string), optional.
 
@@ -827,7 +827,7 @@ public String downloadURL;
 - `defaultValue`: default value, optional. If the variable is an array, then this field may represent an `or` between values (e.g. `ONE|TWO|THREE`), otherwise can be a single value (e.g. `TWO`). If not present, then the field is mandatory.
 
 #### description
-Defines a sub-field of a composite field of the configuration message.
+Defines a subfield of a composite field of the configuration message.
 
 #### annotation type
 This annotation is bounded to a string variable.
@@ -901,7 +901,7 @@ private DownloadProtocol downloadProtocol;
 - `radix`: radix of the number field when written to the message, optional.
 
 #### description
-Defines a sub-field of an alternative field of the configuration message.
+Defines a subfield of an alternative field of the configuration message.
 
 #### annotation type
 This annotation is bounded to a variable.
