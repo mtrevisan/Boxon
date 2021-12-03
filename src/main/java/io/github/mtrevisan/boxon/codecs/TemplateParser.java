@@ -25,39 +25,21 @@
 package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.Checksum;
-import io.github.mtrevisan.boxon.annotations.Evaluate;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.Skip;
-import io.github.mtrevisan.boxon.annotations.bindings.BindArray;
-import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
-import io.github.mtrevisan.boxon.annotations.bindings.BindBits;
-import io.github.mtrevisan.boxon.annotations.bindings.BindByte;
-import io.github.mtrevisan.boxon.annotations.bindings.BindDouble;
-import io.github.mtrevisan.boxon.annotations.bindings.BindFloat;
-import io.github.mtrevisan.boxon.annotations.bindings.BindInt;
-import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
-import io.github.mtrevisan.boxon.annotations.bindings.BindLong;
-import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
-import io.github.mtrevisan.boxon.annotations.bindings.BindShort;
-import io.github.mtrevisan.boxon.annotations.bindings.BindString;
-import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
-import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
-import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
-import io.github.mtrevisan.boxon.annotations.converters.Converter;
-import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
-import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
-import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.codecs.managers.BoundedField;
 import io.github.mtrevisan.boxon.codecs.managers.ConstructorHelper;
 import io.github.mtrevisan.boxon.codecs.managers.EvaluatedField;
 import io.github.mtrevisan.boxon.codecs.managers.InjectEventListener;
 import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
 import io.github.mtrevisan.boxon.codecs.managers.Template;
+import io.github.mtrevisan.boxon.codecs.managers.AnnotationDescriptor;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
+import io.github.mtrevisan.boxon.external.DescriberKey;
 import io.github.mtrevisan.boxon.external.codecs.BitReader;
 import io.github.mtrevisan.boxon.external.codecs.BitSet;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
@@ -387,7 +369,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	 *
 	 * @return	The list of descriptions.
 	 */
-	public List<Map<String, Object>> describeTemplates(){
+	public List<Map<String, Object>> describeTemplates() throws TemplateException{
 		final Collection<Template<?>> templates = loaderTemplate.getTemplates();
 		final List<Map<String, Object>> description = new ArrayList<>(templates.size());
 		for(final Template<?> template : templates)
@@ -415,13 +397,13 @@ public final class TemplateParser implements TemplateParserInterface{
 		return description;
 	}
 
-	private Map<String, Object> describeTemplate(final Template<?> template){
+	private Map<String, Object> describeTemplate(final Template<?> template) throws TemplateException{
 		final Map<String, Object> description = new HashMap<>(2);
 		final MessageHeader header = template.getHeader();
 		final Map<String, Object> headerDescription = new HashMap<>(3);
-		putIfNotEmpty("start", header.start(), headerDescription);
-		putIfNotEmpty("end", header.end(), headerDescription);
-		putIfNotEmpty("charset", header.charset(), headerDescription);
+		AnnotationDescriptor.putIfNotEmpty(DescriberKey.HEADER_START, header.start(), headerDescription);
+		AnnotationDescriptor.putIfNotEmpty(DescriberKey.HEADER_END, header.end(), headerDescription);
+		AnnotationDescriptor.putIfNotEmpty(DescriberKey.HEADER_CHARSET, header.charset(), headerDescription);
 		description.put("header", headerDescription);
 		final List<Map<String, Object>> fieldsDescription = new ArrayList<>(0);
 		final List<BoundedField> fields = template.getBoundedFields();
@@ -429,224 +411,28 @@ public final class TemplateParser implements TemplateParserInterface{
 			final BoundedField field = fields.get(i);
 			final Map<String, Object> fieldDescription = new HashMap<>(13);
 
-			final Skip[] skips = field.getSkips();
-			describeSkips(skips, fieldDescription);
+			AnnotationDescriptor.describeSkips(field.getSkips(), fieldsDescription);
 
-			putIfNotEmpty("name", field.getFieldName(), fieldDescription);
-			putIfNotEmpty("fieldType", field.getFieldType(), fieldDescription);
+			AnnotationDescriptor.putIfNotEmpty(DescriberKey.FIELD_NAME, field.getFieldName(), fieldDescription);
+			AnnotationDescriptor.putIfNotEmpty(DescriberKey.FIELD_TYPE, field.getFieldType(), fieldDescription);
 			final Annotation binding = field.getBinding();
-			putIfNotEmpty("annotationType", binding.annotationType(), fieldDescription);
+			final Class<? extends Annotation> annotationType = binding.annotationType();
+			AnnotationDescriptor.putIfNotEmpty(DescriberKey.ANNOTATION_TYPE, binding.annotationType().getSimpleName(), fieldDescription);
 
-			if(BindArray.class.isInstance(binding)){
-				final BindArray annotation = (BindArray)binding;
-				putIfNotEmpty("condition", annotation.condition(), fieldDescription);
-				putIfNotEmpty("type", annotation.type(), fieldDescription);
-				putIfNotEmpty("size", annotation.size(), fieldDescription);
-				describeChoices(annotation.selectFrom(), fieldDescription);
-				putIfNotEmpty("selectDefault", annotation.selectDefault(), fieldDescription);
-				describeValidator(annotation.validator(), fieldDescription);
-				describeConverter(annotation.converter(), fieldDescription);
-				describeAlternatives(annotation.selectConverterFrom().alternatives(), fieldDescription);
-			}
-			else if(BindArrayPrimitive.class.isInstance(binding)){
-				final BindArrayPrimitive annotation = (BindArrayPrimitive)binding;
-				putIfNotEmpty("condition", annotation.condition(), fieldDescription);
-				putIfNotEmpty("type", annotation.type(), fieldDescription);
-				putIfNotEmpty("size", annotation.size(), fieldDescription);
-				putIfNotEmpty("byteOrder", annotation.byteOrder(), fieldDescription);
-				describeValidator(annotation.validator(), fieldDescription);
-				describeConverter(annotation.converter(), fieldDescription);
-				describeAlternatives(annotation.selectConverterFrom().alternatives(), fieldDescription);
-			}
-			else if(BindBits.class.isInstance(binding)){
-				final BindBits annotation = (BindBits)binding;
-				putIfNotEmpty("condition", annotation.condition(), fieldDescription);
-				putIfNotEmpty("size", annotation.size(), fieldDescription);
-				putIfNotEmpty("byteOrder", annotation.byteOrder(), fieldDescription);
-				describeValidator(annotation.validator(), fieldDescription);
-				describeConverter(annotation.converter(), fieldDescription);
-				describeAlternatives(annotation.selectConverterFrom().alternatives(), fieldDescription);
-			}
-			else if(BindByte.class.isInstance(binding)){
-				final BindByte annotation = (BindByte)binding;
-				putIfNotEmpty("condition", annotation.condition(), fieldDescription);
-				describeValidator(annotation.validator(), fieldDescription);
-				describeConverter(annotation.converter(), fieldDescription);
-				describeAlternatives(annotation.selectConverterFrom().alternatives(), fieldDescription);
-			}
-			else if(BindDouble.class.isInstance(binding)){
-				final BindDouble annotation = (BindDouble)binding;
-				putIfNotEmpty("condition", annotation.condition(), fieldDescription);
-				putIfNotEmpty("byteOrder", annotation.byteOrder(), fieldDescription);
-				describeValidator(annotation.validator(), fieldDescription);
-				describeConverter(annotation.converter(), fieldDescription);
-				describeAlternatives(annotation.selectConverterFrom().alternatives(), fieldDescription);
-			}
-			else if(BindFloat.class.isInstance(binding)){
-				final BindFloat annotation = (BindFloat)binding;
-				putIfNotEmpty("condition", annotation.condition(), fieldDescription);
-				putIfNotEmpty("byteOrder", annotation.byteOrder(), fieldDescription);
-				describeValidator(annotation.validator(), fieldDescription);
-				describeConverter(annotation.converter(), fieldDescription);
-				describeAlternatives(annotation.selectConverterFrom().alternatives(), fieldDescription);
-			}
-			else if(BindInt.class.isInstance(binding)){
-				final BindInt annotation = (BindInt)binding;
-				putIfNotEmpty("condition", annotation.condition(), fieldDescription);
-				putIfNotEmpty("byteOrder", annotation.byteOrder(), fieldDescription);
-				describeValidator(annotation.validator(), fieldDescription);
-				describeConverter(annotation.converter(), fieldDescription);
-				describeAlternatives(annotation.selectConverterFrom().alternatives(), fieldDescription);
-			}
-			else if(BindInteger.class.isInstance(binding)){
-				final BindInteger annotation = (BindInteger)binding;
-				putIfNotEmpty("condition", annotation.condition(), fieldDescription);
-				putIfNotEmpty("size", annotation.size(), fieldDescription);
-				putIfNotEmpty("byteOrder", annotation.byteOrder(), fieldDescription);
-				describeValidator(annotation.validator(), fieldDescription);
-				describeConverter(annotation.converter(), fieldDescription);
-				describeAlternatives(annotation.selectConverterFrom().alternatives(), fieldDescription);
-			}
-			else if(BindLong.class.isInstance(binding)){
-				final BindLong annotation = (BindLong)binding;
-				putIfNotEmpty("condition", annotation.condition(), fieldDescription);
-				putIfNotEmpty("byteOrder", annotation.byteOrder(), fieldDescription);
-				describeValidator(annotation.validator(), fieldDescription);
-				describeConverter(annotation.converter(), fieldDescription);
-				describeAlternatives(annotation.selectConverterFrom().alternatives(), fieldDescription);
-			}
-			else if(BindObject.class.isInstance(binding)){
-				final BindObject annotation = (BindObject)binding;
-				putIfNotEmpty("condition", annotation.condition(), fieldDescription);
-				putIfNotEmpty("type", annotation.type(), fieldDescription);
-				describeChoices(annotation.selectFrom(), fieldDescription);
-				putIfNotEmpty("selectDefault", annotation.selectDefault(), fieldDescription);
-				describeValidator(annotation.validator(), fieldDescription);
-				describeConverter(annotation.converter(), fieldDescription);
-				describeAlternatives(annotation.selectConverterFrom().alternatives(), fieldDescription);
-			}
-			else if(BindShort.class.isInstance(binding)){
-				final BindShort annotation = (BindShort)binding;
-				putIfNotEmpty("condition", annotation.condition(), fieldDescription);
-				putIfNotEmpty("byteOrder", annotation.byteOrder(), fieldDescription);
-				describeValidator(annotation.validator(), fieldDescription);
-				describeConverter(annotation.converter(), fieldDescription);
-				describeAlternatives(annotation.selectConverterFrom().alternatives(), fieldDescription);
-			}
-			else if(BindString.class.isInstance(binding)){
-				final BindString annotation = (BindString)binding;
-				putIfNotEmpty("condition", annotation.condition(), fieldDescription);
-				putIfNotEmpty("charset", annotation.charset(), fieldDescription);
-				putIfNotEmpty("size", annotation.size(), fieldDescription);
-				describeValidator(annotation.validator(), fieldDescription);
-				describeConverter(annotation.converter(), fieldDescription);
-				describeAlternatives(annotation.selectConverterFrom().alternatives(), fieldDescription);
-			}
-			else if(BindStringTerminated.class.isInstance(binding)){
-				final BindStringTerminated annotation = (BindStringTerminated)binding;
-				putIfNotEmpty("condition", annotation.condition(), fieldDescription);
-				putIfNotEmpty("charset", annotation.charset(), fieldDescription);
-				putIfNotEmpty("terminator", annotation.terminator(), fieldDescription);
-				putIfNotEmpty("consumeTerminator", annotation.consumeTerminator(), fieldDescription);
-				describeValidator(annotation.validator(), fieldDescription);
-				describeConverter(annotation.converter(), fieldDescription);
-				describeAlternatives(annotation.selectConverterFrom().alternatives(), fieldDescription);
-			}
+			//extract binding descriptor
+			final AnnotationDescriptor descriptor = AnnotationDescriptor.fromAnnotation(binding);
+			if(descriptor == null)
+				throw TemplateException.create("Cannot extract descriptor for this annotation: {}", annotationType.getSimpleName());
 
-			else if(Checksum.class.isInstance(binding)){
-				final Checksum annotation = (Checksum)binding;
-				putIfNotEmpty("type", annotation.type(), fieldDescription);
-				putIfNotEmpty("byteOrder", annotation.byteOrder(), fieldDescription);
-				putIfNotEmpty("skipStart", annotation.skipStart(), fieldDescription);
-				putIfNotEmpty("skipEnd", annotation.skipEnd(), fieldDescription);
-				putIfNotEmpty("algorithm", annotation.algorithm(), fieldDescription);
-				putIfNotEmpty("startValue", annotation.startValue(), fieldDescription);
-			}
-			else if(Evaluate.class.isInstance(binding)){
-				final Evaluate annotation = (Evaluate)binding;
-				putIfNotEmpty("condition", annotation.condition(), fieldDescription);
-				putIfNotEmpty("value", annotation.value(), fieldDescription);
-			}
+			descriptor.describe(binding, fieldDescription);
 
 			fieldsDescription.add(fieldDescription);
 		}
 		description.put("fields", fieldsDescription);
+
 		//TODO add context
+
 		return description;
-	}
-
-	private static void describeSkips(final Skip[] skips, final Map<String, Object> rootDescription){
-		final Collection<Map<String, Object>> skipsDescription = new ArrayList<>(skips.length);
-		for(int j = 0; j < skips.length; j ++){
-			final Skip skip = skips[j];
-			final Map<String, Object> skipDescription = new HashMap<>(4);
-			putIfNotEmpty("condition", skip.condition(), skipDescription);
-			putIfNotEmpty("size", skip.size(), skipDescription);
-			putIfNotEmpty("terminator", skip.terminator(), skipDescription);
-			putIfNotEmpty("consumeTerminator", skip.consumeTerminator(), skipDescription);
-			skipsDescription.add(skipDescription);
-		}
-		if(!skipsDescription.isEmpty())
-			rootDescription.put("skips", skipsDescription);
-	}
-
-	private static void describeChoices(final ObjectChoices choices, final Map<String, Object> rootDescription){
-		putIfNotEmpty("prefixSize", choices.prefixSize(), rootDescription);
-		putIfNotEmpty("byteOrder", choices.byteOrder(), rootDescription);
-		describeAlternatives(choices.alternatives(), rootDescription);
-	}
-
-	private static void describeAlternatives(final ObjectChoices.ObjectChoice[] alternatives,
-			final Map<String, Object> rootDescription){
-		if(alternatives.length > 0){
-			final Collection<Map<String, Object>> alternativesDescription = new ArrayList<>(alternatives.length);
-			for(int j = 0; j < alternatives.length; j ++){
-				final ObjectChoices.ObjectChoice alternative = alternatives[j];
-				final Map<String, Object> alternativeDescription = new HashMap<>(3);
-				putIfNotEmpty("condition", alternative.condition(), alternativeDescription);
-				putIfNotEmpty("prefix", alternative.prefix(), alternativeDescription);
-				putIfNotEmpty("type", alternative.type(), alternativeDescription);
-				alternativesDescription.add(alternativeDescription);
-			}
-			rootDescription.put("selectConverterFrom", alternativesDescription);
-		}
-	}
-
-	private static void describeValidator(final Class<? extends Validator<?>> validator, final Map<String, Object> rootDescription){
-		if(validator != NullValidator.class)
-			rootDescription.put("validator", validator.getSimpleName());
-	}
-
-	private static void describeConverter(final Class<? extends Converter<?, ?>> converter, final Map<String, Object> rootDescription){
-		if(converter != NullConverter.class)
-			rootDescription.put("converter", converter.getSimpleName());
-	}
-
-	private static void describeAlternatives(final ConverterChoices.ConverterChoice[] alternatives,
-			final Map<String, Object> rootDescription){
-		if(alternatives.length > 0){
-			final Collection<Map<String, Object>> alternativesDescription = new ArrayList<>(alternatives.length);
-			for(int j = 0; j < alternatives.length; j ++){
-				final ConverterChoices.ConverterChoice alternative = alternatives[j];
-				final Map<String, Object> alternativeDescription = new HashMap<>(2);
-				putIfNotEmpty("condition", alternative.condition(), alternativeDescription);
-				describeConverter(alternative.converter(), alternativeDescription);
-				alternativesDescription.add(alternativeDescription);
-			}
-			rootDescription.put("selectConverterFrom", alternativesDescription);
-		}
-	}
-
-	private static void putIfNotEmpty(final String key, final Object value,
-			@SuppressWarnings("BoundedWildcard") final Map<String, Object> map){
-		if(value != null && (!String.class.isInstance(value) || !StringHelper.isBlank((CharSequence)value)))
-			map.put(key, value);
-	}
-
-	private static void putIfNotEmpty(final String key, final Class<?> type,
-			@SuppressWarnings("BoundedWildcard") final Map<String, Object> map){
-		if(type != null)
-			map.put(key, type.getSimpleName());
 	}
 
 }

@@ -283,7 +283,7 @@ public final class Parser{
 	 *
 	 * @return	The list of descriptions.
 	 */
-	public List<Map<String, Object>> describeTemplates(){
+	public List<Map<String, Object>> describeTemplates() throws TemplateException{
 		return templateParser.describeTemplates();
 	}
 
