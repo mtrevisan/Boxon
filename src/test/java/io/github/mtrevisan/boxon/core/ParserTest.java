@@ -182,13 +182,14 @@ class ParserTest{
 	}
 
 	@Test
-	void parseMultipleMessagesASCIIHex() throws AnnotationException, TemplateException{
+	void parseMultipleMessagesASCIIHex() throws AnnotationException, TemplateException, NoSuchMethodException{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
 		deviceTypes.add("QUECLINK_GV350M", (byte)0xCF);
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 		Parser parser = Parser.create()
 			.withContext(context)
+			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
 			.withDefaultCodecs()
 			.withTemplates(ACKMessageHex.class);
 
