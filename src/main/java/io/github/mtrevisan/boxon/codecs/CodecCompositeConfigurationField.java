@@ -31,6 +31,7 @@ import io.github.mtrevisan.boxon.external.codecs.BitReader;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
 import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
 import io.github.mtrevisan.boxon.external.codecs.ParserDataType;
+import io.github.mtrevisan.boxon.internal.Evaluator;
 
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
@@ -39,12 +40,12 @@ import java.nio.charset.Charset;
 final class CodecCompositeConfigurationField implements CodecInterface<CompositeConfigurationField>{
 
 	@Override
-	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
+	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject, final Evaluator evaluator){
 		throw new UnsupportedOperationException("Cannot decode this type of annotation: " + getClass().getSimpleName());
 	}
 
 	@Override
-	public void encode(final BitWriter writer, final Annotation annotation, final Object fieldType, Object value)
+	public void encode(final BitWriter writer, final Annotation annotation, final Object fieldType, Object value, final Evaluator evaluator)
 			throws ConfigurationException, CodecException{
 		final CompositeConfigurationField binding = extractBinding(annotation);
 

@@ -29,6 +29,7 @@ import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.external.codecs.BitReader;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
 import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
+import io.github.mtrevisan.boxon.internal.Evaluator;
 
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
@@ -37,13 +38,13 @@ import java.nio.charset.Charset;
 final class CodecConfigurationSubField implements CodecInterface<CompositeSubField>{
 
 	@Override
-	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
+	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject, final Evaluator evaluator){
 		throw new UnsupportedOperationException("Cannot decode this type of annotation: " + getClass().getSimpleName());
 	}
 
 	@Override
-	public void encode(final BitWriter writer, final Annotation annotation, final Object charset, final Object value)
-			throws ConfigurationException{
+	public void encode(final BitWriter writer, final Annotation annotation, final Object charset, final Object value,
+			final Evaluator evaluator) throws ConfigurationException{
 		if(!String.class.isInstance(value))
 			throw ConfigurationException.create("Cannot handle this type of field: {}", value.getClass().getSimpleName());
 

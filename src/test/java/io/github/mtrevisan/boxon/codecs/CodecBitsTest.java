@@ -36,6 +36,7 @@ import io.github.mtrevisan.boxon.external.codecs.BitSet;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
 import io.github.mtrevisan.boxon.external.codecs.ByteOrder;
 import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
+import io.github.mtrevisan.boxon.internal.Evaluator;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -105,7 +106,8 @@ class CodecBitsTest{
 		};
 
 		BitWriter writer = BitWriter.create();
-		codec.encode(writer, annotation, null, encodedValue);
+		Evaluator evaluator = Evaluator.create();
+		codec.encode(writer, annotation, null, encodedValue, evaluator);
 		writer.flush();
 
 		byte[] bb = encodedValue.toByteArray();
@@ -114,7 +116,7 @@ class CodecBitsTest{
 		Assertions.assertEquals(StringHelper.toHexString(bb), writer.toString());
 
 		BitReader reader = BitReader.wrap(writer);
-		BitSet decoded = (BitSet)codec.decode(reader, annotation, null);
+		BitSet decoded = (BitSet)codec.decode(reader, annotation, null, evaluator);
 
 		encodedValue.reverseBits(randomBytes.length * Byte.SIZE);
 		Assertions.assertEquals(encodedValue, decoded);
@@ -174,7 +176,8 @@ class CodecBitsTest{
 		};
 
 		BitWriter writer = BitWriter.create();
-		codec.encode(writer, annotation, null, encodedValue);
+		Evaluator evaluator = Evaluator.create();
+		codec.encode(writer, annotation, null, encodedValue, evaluator);
 		writer.flush();
 
 		byte[] bb = encodedValue.toByteArray();
@@ -183,7 +186,7 @@ class CodecBitsTest{
 		Assertions.assertEquals(StringHelper.toHexString(bb), writer.toString());
 
 		BitReader reader = BitReader.wrap(writer);
-		BitSet decoded = (BitSet)codec.decode(reader, annotation, null);
+		BitSet decoded = (BitSet)codec.decode(reader, annotation, null, evaluator);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}

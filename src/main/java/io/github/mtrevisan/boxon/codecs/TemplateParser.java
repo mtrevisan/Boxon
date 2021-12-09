@@ -156,7 +156,8 @@ public final class TemplateParser implements TemplateParserInterface{
 
 
 	@Override
-	public <T> T decode(final Template<T> template, final BitReader reader, final Object parentObject) throws FieldException{
+	public <T> T decode(final Template<T> template, final BitReader reader, final Object parentObject, final Evaluator evaluator)
+			throws FieldException{
 		final int startPosition = reader.position();
 
 		final T currentObject = ConstructorHelper.getCreator(template.getType())
@@ -164,7 +165,7 @@ public final class TemplateParser implements TemplateParserInterface{
 
 		final ParserContext<T> parserContext = new ParserContext<>(currentObject, parentObject);
 		//add current object in the context
-		parserContext.addCurrentObjectToEvaluatorContext();
+		parserContext.addCurrentObjectToEvaluatorContext(evaluator);
 
 		//decode message fields:
 		final List<BoundedField> fields = template.getBoundedFields();
@@ -173,15 +174,15 @@ public final class TemplateParser implements TemplateParserInterface{
 
 			//process skip annotations:
 			final Skip[] skips = field.getSkips();
-			readSkips(skips, reader, parserContext);
+			readSkips(skips, reader, parserContext, evaluator);
 
 			//check if field has to be processed...
-			if(shouldProcessField(field.getCondition(), parserContext.getRootObject()))
+			if(shouldProcessField(field.getCondition(), parserContext.getRootObject(), evaluator))
 				//... and if so, process it
-				decodeField(template, reader, parserContext, field);
+				decodeField(template, reader, parserContext, field, evaluator);
 		}
 
-		processEvaluatedFields(template, parserContext);
+		processEvaluatedFields(template, parserContext, evaluator);
 
 		readMessageTerminator(template, reader);
 
@@ -191,7 +192,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 	private <T> void decodeField(final Template<T> template, final BitReader reader, final ParserContext<T> parserContext,
-			final BoundedField field) throws FieldException{
+			final BoundedField field, final Evaluator evaluator) throws FieldException{
 		final Annotation binding = field.getBinding();
 		final Class<? extends Annotation> annotationType = binding.annotationType();
 		final CodecInterface<?> codec = loaderCodec.getCodec(annotationType);
@@ -203,7 +204,7 @@ public final class TemplateParser implements TemplateParserInterface{
 
 		try{
 			//decode value from raw message
-			final Object value = codec.decode(reader, binding, parserContext.getRootObject());
+			final Object value = codec.decode(reader, binding, parserContext.getRootObject(), evaluator);
 			//store value in the current object
 			field.setFieldValue(parserContext.getCurrentObject(), value);
 
@@ -219,17 +220,18 @@ public final class TemplateParser implements TemplateParserInterface{
 		}
 	}
 
-	private static <T> void readSkips(final Skip[] skips, final BitReader reader, final ParserContext<T> parserContext){
+	private static <T> void readSkips(final Skip[] skips, final BitReader reader, final ParserContext<T> parserContext,
+			final Evaluator evaluator){
 		for(int i = 0; i < skips.length; i ++)
-			readSkip(skips[i], reader, parserContext.getRootObject());
+			readSkip(skips[i], reader, parserContext.getRootObject(), evaluator);
 	}
 
-	private static void readSkip(final Skip skip, final BitReader reader, final Object rootObject){
-		final boolean process = Evaluator.evaluateBoolean(skip.condition(), rootObject);
+	private static void readSkip(final Skip skip, final BitReader reader, final Object rootObject, final Evaluator evaluator){
+		final boolean process = evaluator.evaluateBoolean(skip.condition(), rootObject);
 		if(!process)
 			return;
 
-		final int size = Evaluator.evaluateSize(skip.size(), rootObject);
+		final int size = evaluator.evaluateSize(skip.size(), rootObject);
 		if(size > 0)
 			reader.skip(size);
 		else{
@@ -274,17 +276,17 @@ public final class TemplateParser implements TemplateParserInterface{
 		}
 	}
 
-	private void processEvaluatedFields(final Template<?> template, final ParserContext<?> parserContext){
+	private void processEvaluatedFields(final Template<?> template, final ParserContext<?> parserContext, final Evaluator evaluator){
 		final List<EvaluatedField> evaluatedFields = template.getEvaluatedFields();
 		for(int i = 0; i < evaluatedFields.size(); i ++){
 			final EvaluatedField field = evaluatedFields.get(i);
-			final boolean process = Evaluator.evaluateBoolean(field.getBinding().condition(), parserContext.getRootObject());
+			final boolean process = evaluator.evaluateBoolean(field.getBinding().condition(), parserContext.getRootObject());
 			if(!process)
 				continue;
 
 			eventListener.evaluatingField(template.getType().getName(), field.getFieldName());
 
-			final Object value = Evaluator.evaluate(field.getBinding().value(), parserContext.getRootObject(), field.getFieldType());
+			final Object value = evaluator.evaluate(field.getBinding().value(), parserContext.getRootObject(), field.getFieldType());
 			field.setFieldValue(parserContext.getCurrentObject(), value);
 
 			eventListener.evaluatedField(template.getType().getName(), field.getFieldName(), value);
@@ -292,10 +294,10 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 	@Override
-	public <T> void encode(final Template<?> template, final BitWriter writer, final Object parentObject, final T currentObject)
-			throws FieldException{
+	public <T> void encode(final Template<?> template, final BitWriter writer, final Object parentObject, final T currentObject,
+			final Evaluator evaluator) throws FieldException{
 		final ParserContext<T> parserContext = new ParserContext<>(currentObject, parentObject);
-		parserContext.addCurrentObjectToEvaluatorContext();
+		parserContext.addCurrentObjectToEvaluatorContext(evaluator);
 		parserContext.setClassName(template.getType().getName());
 
 		//encode message fields:
@@ -305,15 +307,15 @@ public final class TemplateParser implements TemplateParserInterface{
 
 			//process skip annotations:
 			final Skip[] skips = field.getSkips();
-			writeSkips(skips, writer, parserContext);
+			writeSkips(skips, writer, parserContext, evaluator);
 
 			//check if field has to be processed...
-			if(shouldProcessField(field.getCondition(), parserContext.getRootObject())){
+			if(shouldProcessField(field.getCondition(), parserContext.getRootObject(), evaluator)){
 				//... and if so, process it
 				parserContext.setField(field);
 				parserContext.setBinding(field.getBinding());
 
-				ParserHelper.encodeField(parserContext, writer, loaderCodec, eventListener);
+				ParserHelper.encodeField(parserContext, writer, loaderCodec, eventListener, evaluator);
 			}
 		}
 
@@ -322,21 +324,22 @@ public final class TemplateParser implements TemplateParserInterface{
 			ParserHelper.writeAffix(header.end(), header.charset(), writer);
 	}
 
-	private static boolean shouldProcessField(final String condition, final Object rootObject){
-		return (condition.isEmpty() || Evaluator.evaluateBoolean(condition, rootObject));
+	private static boolean shouldProcessField(final String condition, final Object rootObject, final Evaluator evaluator){
+		return (condition.isEmpty() || evaluator.evaluateBoolean(condition, rootObject));
 	}
 
-	private static <T> void writeSkips(final Skip[] skips, final BitWriter writer, final ParserContext<T> parserContext){
+	private static <T> void writeSkips(final Skip[] skips, final BitWriter writer, final ParserContext<T> parserContext,
+			final Evaluator evaluator){
 		for(int i = 0; i < skips.length; i ++)
-			writeSkip(skips[i], writer, parserContext.getRootObject());
+			writeSkip(skips[i], writer, parserContext.getRootObject(), evaluator);
 	}
 
-	private static void writeSkip(final Skip skip, final BitWriter writer, final Object rootObject){
-		final boolean process = Evaluator.evaluateBoolean(skip.condition(), rootObject);
+	private static void writeSkip(final Skip skip, final BitWriter writer, final Object rootObject, final Evaluator evaluator){
+		final boolean process = evaluator.evaluateBoolean(skip.condition(), rootObject);
 		if(!process)
 			return;
 
-		final int size = Evaluator.evaluateSize(skip.size(), rootObject);
+		final int size = evaluator.evaluateSize(skip.size(), rootObject);
 		if(size > 0)
 			/** skip {@link size} bits */
 			writer.putBits(BitSet.empty(), size);

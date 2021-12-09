@@ -57,23 +57,24 @@ final class CodecArray implements CodecInterface<BindArray>{
 
 
 	@Override
-	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject) throws FieldException{
+	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject, final Evaluator evaluator)
+			throws FieldException{
 		final BindArray binding = extractBinding(annotation);
 
-		final int size = Evaluator.evaluateSize(binding.size(), rootObject);
+		final int size = evaluator.evaluateSize(binding.size(), rootObject);
 		CodecHelper.assertSizePositive(size);
 
 		final Class<?> bindingType = binding.type();
 		final Object[] array = createArray(bindingType, size);
 		if(binding.selectFrom().alternatives().length > 0)
-			decodeWithAlternatives(reader, array, binding, rootObject);
+			decodeWithAlternatives(reader, array, binding, rootObject, evaluator);
 		else
-			decodeWithoutAlternatives(reader, array, bindingType);
+			decodeWithoutAlternatives(reader, array, bindingType, evaluator);
 
 		final ConverterChoices selectConverterFrom = binding.selectConverterFrom();
 		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
 		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(selectConverterFrom, defaultConverter,
-			rootObject);
+			rootObject, evaluator);
 		final Object value = CodecHelper.converterDecode(chosenConverter, array);
 
 		CodecHelper.validateData(binding.validator(), value);
@@ -89,17 +90,18 @@ final class CodecArray implements CodecInterface<BindArray>{
 		return (T[])Array.newInstance(type, length);
 	}
 
-	private void decodeWithAlternatives(final BitReader reader, final Object[] array, final BindArray binding, final Object rootObject){
+	private void decodeWithAlternatives(final BitReader reader, final Object[] array, final BindArray binding, final Object rootObject,
+			final Evaluator evaluator){
 		final ObjectChoices selectFrom = binding.selectFrom();
 		for(int i = 0; i < array.length; i ++){
 			try{
-				final ObjectChoices.ObjectChoice chosenAlternative = CodecHelper.chooseAlternative(reader, selectFrom, rootObject);
+				final ObjectChoices.ObjectChoice chosenAlternative = CodecHelper.chooseAlternative(reader, selectFrom, rootObject, evaluator);
 				final Class<?> chosenAlternativeType = (!isEmptyChoice(chosenAlternative)? chosenAlternative.type(): binding.selectDefault());
 				validateChosenAlternative(chosenAlternativeType, rootObject);
 
 				//read object
 				final Template<?> subTemplate = templateParser.createTemplate(chosenAlternativeType);
-				array[i] = templateParser.decode(subTemplate, reader, rootObject);
+				array[i] = templateParser.decode(subTemplate, reader, rootObject, evaluator);
 			}
 			catch(final Exception e){
 				eventListener.processingAlternative(e);
@@ -117,16 +119,17 @@ final class CodecArray implements CodecInterface<BindArray>{
 		return (choice.annotationType() == Annotation.class);
 	}
 
-	private void decodeWithoutAlternatives(final BitReader reader, final Object[] array, final Class<?> type) throws FieldException{
+	private void decodeWithoutAlternatives(final BitReader reader, final Object[] array, final Class<?> type, final Evaluator evaluator)
+			throws FieldException{
 		final Template<?> template = templateParser.createTemplate(type);
 
 		for(int i = 0; i < array.length; i ++)
-			array[i] = templateParser.decode(template, reader, null);
+			array[i] = templateParser.decode(template, reader, null, evaluator);
 	}
 
 	@Override
-	public void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value)
-			throws FieldException{
+	public void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value,
+			final Evaluator evaluator) throws FieldException{
 		final BindArray binding = extractBinding(annotation);
 
 		CodecHelper.validateData(binding.validator(), value);
@@ -134,20 +137,21 @@ final class CodecArray implements CodecInterface<BindArray>{
 		final ObjectChoices selectFrom = binding.selectFrom();
 
 		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(),
-			binding.converter(), rootObject);
+			binding.converter(), rootObject, evaluator);
 		final Object[] array = CodecHelper.converterEncode(chosenConverter, value);
 
-		final int size = Evaluator.evaluateSize(binding.size(), rootObject);
+		final int size = evaluator.evaluateSize(binding.size(), rootObject);
 		CodecHelper.assertSizePositive(size);
 		CodecHelper.assertSizeEquals(size, Array.getLength(array));
 
 		if(selectFrom.alternatives().length > 0)
-			encodeWithAlternatives(writer, array, selectFrom);
+			encodeWithAlternatives(writer, array, selectFrom, evaluator);
 		else
-			encodeWithoutAlternatives(writer, array, binding.type());
+			encodeWithoutAlternatives(writer, array, binding.type(), evaluator);
 	}
 
-	private void encodeWithAlternatives(final BitWriter writer, final Object[] array, final ObjectChoices selectFrom) throws FieldException{
+	private void encodeWithAlternatives(final BitWriter writer, final Object[] array, final ObjectChoices selectFrom,
+			final Evaluator evaluator) throws FieldException{
 		final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
 		for(int i = 0; i < array.length; i ++){
 			final Object elem = array[i];
@@ -159,15 +163,16 @@ final class CodecArray implements CodecInterface<BindArray>{
 
 			final Template<?> template = templateParser.createTemplate(type);
 
-			templateParser.encode(template, writer, null, elem);
+			templateParser.encode(template, writer, null, elem, evaluator);
 		}
 	}
 
-	private void encodeWithoutAlternatives(final BitWriter writer, final Object[] array, final Class<?> type) throws FieldException{
+	private void encodeWithoutAlternatives(final BitWriter writer, final Object[] array, final Class<?> type, final Evaluator evaluator)
+			throws FieldException{
 		final Template<?> template = templateParser.createTemplate(type);
 
 		for(int i = 0; i < array.length; i ++)
-			templateParser.encode(template, writer, null, array[i]);
+			templateParser.encode(template, writer, null, array[i], evaluator);
 	}
 
 }

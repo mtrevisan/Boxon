@@ -48,6 +48,7 @@ import io.github.mtrevisan.boxon.external.codecs.BitReader;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
 import io.github.mtrevisan.boxon.external.codecs.ByteOrder;
 import io.github.mtrevisan.boxon.external.logs.EventListener;
+import io.github.mtrevisan.boxon.internal.Evaluator;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -156,13 +157,14 @@ class CodecObjectTest{
 		ReflectionHelper.setFieldValue(codec, LoaderTemplateInterface.class, loaderTemplate);
 		ReflectionHelper.setFieldValue(codec, TemplateParserInterface.class, templateParser);
 		BitWriter writer = BitWriter.create();
-		codec.encode(writer, annotation, null, encodedValue);
+		Evaluator evaluator = Evaluator.create();
+		codec.encode(writer, annotation, null, encodedValue, evaluator);
 		writer.flush();
 
 		Assertions.assertArrayEquals(new byte[]{0x01, 0x02}, writer.array());
 
 		BitReader reader = BitReader.wrap(writer);
-		Version decoded = (Version)codec.decode(reader, annotation, null);
+		Version decoded = (Version)codec.decode(reader, annotation, null, evaluator);
 
 		Assertions.assertNotNull(decoded);
 		Assertions.assertEquals(encodedValue.major, decoded.major);

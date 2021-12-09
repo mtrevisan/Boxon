@@ -34,6 +34,7 @@ import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.codecs.BitReader;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
 import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
+import io.github.mtrevisan.boxon.internal.Evaluator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -89,14 +90,15 @@ class CodecByteTest{
 		};
 
 		BitWriter writer = BitWriter.create();
-		codec.encode(writer, annotation, null, encodedValue);
+		Evaluator evaluator = Evaluator.create();
+		codec.encode(writer, annotation, null, encodedValue, evaluator);
 		writer.flush();
 
 		Assertions.assertEquals(1, writer.array().length);
 		Assertions.assertEquals(encodedValue, writer.array()[0]);
 
 		BitReader reader = BitReader.wrap(writer);
-		byte decoded = (byte)codec.decode(reader, annotation, null);
+		byte decoded = (byte)codec.decode(reader, annotation, null, evaluator);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}

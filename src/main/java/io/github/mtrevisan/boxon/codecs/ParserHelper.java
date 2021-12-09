@@ -29,6 +29,7 @@ import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
 import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
 import io.github.mtrevisan.boxon.external.logs.EventListener;
+import io.github.mtrevisan.boxon.internal.Evaluator;
 
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
@@ -46,7 +47,7 @@ final class ParserHelper{
 	}
 
 	static void encodeField(final ParserContext<?> parserContext, final BitWriter writer, final LoaderCodecInterface loaderCodec,
-			final EventListener eventListener) throws FieldException{
+			final EventListener eventListener, final Evaluator evaluator) throws FieldException{
 		final Class<? extends Annotation> annotationType = parserContext.getBinding().annotationType();
 		final CodecInterface<?> codec = loaderCodec.getCodec(annotationType);
 		if(codec == null)
@@ -59,7 +60,7 @@ final class ParserHelper{
 			//encode value from current object
 			final Object value = parserContext.getFieldValue();
 			//write value to raw message
-			codec.encode(writer, parserContext.getBinding(), parserContext.getRootObject(), value);
+			codec.encode(writer, parserContext.getBinding(), parserContext.getRootObject(), value, evaluator);
 
 			eventListener.writtenField(parserContext.getClassName(), parserContext.getFieldName(), value);
 		}

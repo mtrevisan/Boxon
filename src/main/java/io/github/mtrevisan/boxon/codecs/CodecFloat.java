@@ -30,6 +30,7 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.external.codecs.BitReader;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
 import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
+import io.github.mtrevisan.boxon.internal.Evaluator;
 
 import java.lang.annotation.Annotation;
 
@@ -37,7 +38,7 @@ import java.lang.annotation.Annotation;
 final class CodecFloat implements CodecInterface<BindFloat>{
 
 	@Override
-	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
+	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject, final Evaluator evaluator){
 		final BindFloat binding = extractBinding(annotation);
 
 		final float v = reader.getFloat(binding.byteOrder());
@@ -45,7 +46,7 @@ final class CodecFloat implements CodecInterface<BindFloat>{
 		final ConverterChoices selectConverterFrom = binding.selectConverterFrom();
 		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
 		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(selectConverterFrom, defaultConverter,
-			rootObject);
+			rootObject, evaluator);
 		final Object value = CodecHelper.converterDecode(chosenConverter, v);
 
 		CodecHelper.validateData(binding.validator(), value);
@@ -54,13 +55,14 @@ final class CodecFloat implements CodecInterface<BindFloat>{
 	}
 
 	@Override
-	public void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value){
+	public void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value,
+			final Evaluator evaluator){
 		final BindFloat binding = extractBinding(annotation);
 
 		CodecHelper.validateData(binding.validator(), value);
 
 		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(),
-			binding.converter(), rootObject);
+			binding.converter(), rootObject, evaluator);
 		final float v = CodecHelper.converterEncode(chosenConverter, value);
 
 		writer.putFloat(v, binding.byteOrder());
