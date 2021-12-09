@@ -56,10 +56,10 @@ class ParserTest{
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 		Parser parser = Parser.create()
 			.withContext(context)
+			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
 			.withDefaultCodecs()
 			.withTemplates(ACKMessageHex.class)
-			.withDefaultConfigurations()
-			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"));
+			.withDefaultConfigurations();
 
 		//~245-265 µs/msg = 4.1-3.8 kHz
 		byte[] payload = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
@@ -182,13 +182,14 @@ class ParserTest{
 	}
 
 	@Test
-	void parseMultipleMessagesASCIIHex() throws AnnotationException, TemplateException{
+	void parseMultipleMessagesASCIIHex() throws AnnotationException, TemplateException, NoSuchMethodException{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
 		deviceTypes.add("QUECLINK_GV350M", (byte)0xCF);
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 		Parser parser = Parser.create()
 			.withContext(context)
+			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
 			.withDefaultCodecs()
 			.withTemplates(ACKMessageHex.class);
 

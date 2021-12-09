@@ -35,6 +35,7 @@ import io.github.mtrevisan.boxon.external.codecs.BitReader;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
 import io.github.mtrevisan.boxon.external.codecs.ByteOrder;
 import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
+import io.github.mtrevisan.boxon.internal.Evaluator;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -97,13 +98,14 @@ class CodecLongTest{
 		};
 
 		BitWriter writer = BitWriter.create();
-		codec.encode(writer, annotation, null, encodedValue);
+		Evaluator evaluator = Evaluator.create();
+		codec.encode(writer, annotation, null, encodedValue, evaluator);
 		writer.flush();
 
 		Assertions.assertEquals("0000FFFF0000FF8F", writer.toString());
 
 		BitReader reader = BitReader.wrap(writer);
-		long decoded = (long)codec.decode(reader, annotation, null);
+		long decoded = (long)codec.decode(reader, annotation, null, evaluator);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -155,13 +157,14 @@ class CodecLongTest{
 		};
 
 		BitWriter writer = BitWriter.create();
-		codec.encode(writer, annotation, null, encodedValue);
+		Evaluator evaluator = Evaluator.create();
+		codec.encode(writer, annotation, null, encodedValue, evaluator);
 		writer.flush();
 
 		Assertions.assertEquals("00FF007F00000000", writer.toString());
 
 		BitReader reader = BitReader.wrap(writer);
-		long decoded = (long)codec.decode(reader, annotation, null);
+		long decoded = (long)codec.decode(reader, annotation, null, evaluator);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -213,13 +216,14 @@ class CodecLongTest{
 		};
 
 		BitWriter writer = BitWriter.create();
-		codec.encode(writer, annotation, null, encodedValue);
+		Evaluator evaluator = Evaluator.create();
+		codec.encode(writer, annotation, null, encodedValue, evaluator);
 		writer.flush();
 
 		Assertions.assertEquals("0000000000FF007F", writer.toString());
 
 		BitReader reader = BitReader.wrap(writer);
-		long decoded = (long)codec.decode(reader, annotation, null);
+		long decoded = (long)codec.decode(reader, annotation, null, evaluator);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -271,13 +275,14 @@ class CodecLongTest{
 		};
 
 		BitWriter writer = BitWriter.create();
-		codec.encode(writer, annotation, null, encodedValue);
+		Evaluator evaluator = Evaluator.create();
+		codec.encode(writer, annotation, null, encodedValue, evaluator);
 		writer.flush();
 
 		Assertions.assertEquals(StringUtils.leftPad(Long.toHexString(Long.reverseBytes(encodedValue)).toUpperCase(Locale.ROOT), 16, '0'), writer.toString());
 
 		BitReader reader = BitReader.wrap(writer);
-		long decoded = (long)codec.decode(reader, annotation, null);
+		long decoded = (long)codec.decode(reader, annotation, null, evaluator);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -329,13 +334,14 @@ class CodecLongTest{
 		};
 
 		BitWriter writer = BitWriter.create();
-		codec.encode(writer, annotation, null, encodedValue);
+		Evaluator evaluator = Evaluator.create();
+		codec.encode(writer, annotation, null, encodedValue, evaluator);
 		writer.flush();
 
 		Assertions.assertEquals("8FFF000000000011", writer.toString());
 
 		BitReader reader = BitReader.wrap(writer);
-		long decoded = (long)codec.decode(reader, annotation, null);
+		long decoded = (long)codec.decode(reader, annotation, null, evaluator);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -387,13 +393,14 @@ class CodecLongTest{
 		};
 
 		BitWriter writer = BitWriter.create();
-		codec.encode(writer, annotation, null, encodedValue);
+		Evaluator evaluator = Evaluator.create();
+		codec.encode(writer, annotation, null, encodedValue, evaluator);
 		writer.flush();
 
 		Assertions.assertEquals("000000007F00FF00", writer.toString());
 
 		BitReader reader = BitReader.wrap(writer);
-		long decoded = (long)codec.decode(reader, annotation, null);
+		long decoded = (long)codec.decode(reader, annotation, null, evaluator);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -445,13 +452,14 @@ class CodecLongTest{
 		};
 
 		BitWriter writer = BitWriter.create();
-		codec.encode(writer, annotation, null, encodedValue);
+		Evaluator evaluator = Evaluator.create();
+		codec.encode(writer, annotation, null, encodedValue, evaluator);
 		writer.flush();
 
 		Assertions.assertEquals("7F00FF0000000000", writer.toString());
 
 		BitReader reader = BitReader.wrap(writer);
-		long decoded = (long)codec.decode(reader, annotation, null);
+		long decoded = (long)codec.decode(reader, annotation, null, evaluator);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -503,13 +511,14 @@ class CodecLongTest{
 		};
 
 		BitWriter writer = BitWriter.create();
-		codec.encode(writer, annotation, null, encodedValue);
+		Evaluator evaluator = Evaluator.create();
+		codec.encode(writer, annotation, null, encodedValue, evaluator);
 		writer.flush();
 
 		Assertions.assertEquals(StringUtils.leftPad(Long.toHexString(encodedValue).toUpperCase(Locale.ROOT), 16, '0'), writer.toString());
 
 		BitReader reader = BitReader.wrap(writer);
-		long decoded = (long)codec.decode(reader, annotation, null);
+		long decoded = (long)codec.decode(reader, annotation, null, evaluator);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}

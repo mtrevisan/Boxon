@@ -44,14 +44,17 @@ public final class Evaluator{
 	//allow for immediate compilation of SpEL expressions
 	private static final SpelParserConfiguration CONFIG = new SpelParserConfiguration(SpelCompilerMode.IMMEDIATE, null);
 	private static final ExpressionParser PARSER = new SpelExpressionParser(CONFIG);
-	private static final StandardEvaluationContext CONTEXT = new StandardEvaluationContext();
-	static{
-		//trick to allow accessing private fields
-		CONTEXT.addPropertyAccessor(new MyReflectivePropertyAccessor());
+	private final StandardEvaluationContext context = new StandardEvaluationContext();
+
+
+	public static Evaluator create(){
+		return new Evaluator();
 	}
 
-
-	private Evaluator(){}
+	private Evaluator(){
+		//trick to allow accessing private fields
+		context.addPropertyAccessor(new MyReflectivePropertyAccessor());
+	}
 
 	/**
 	 * Adds a key-value pair to the context of this evaluator.
@@ -60,10 +63,10 @@ public final class Evaluator{
 	 * @param key	The key used to reference the value.
 	 * @param value	The value (pass {@code null} to remove the {@code key} from the context).
 	 */
-	public static void addToContext(final String key, final Object value){
+	public void addToContext(final String key, final Object value){
 		Objects.requireNonNull(key, "Key cannot be null");
 
-		CONTEXT.setVariable(key, value);
+		context.setVariable(key, value);
 	}
 
 	/**
@@ -71,13 +74,13 @@ public final class Evaluator{
 	 *
 	 * @param method	The method.
 	 */
-	public static void addToContext(final Method method){
-		CONTEXT.registerFunction(method.getName(), method);
+	public void addToContext(final Method method){
+		context.registerFunction(method.getName(), method);
 	}
 
-	public static <T> T evaluate(final String expression, final Object rootObject, final Class<T> returnType){
+	public <T> T evaluate(final String expression, final Object rootObject, final Class<T> returnType){
 		final Expression exp = PARSER.parseExpression(expression);
-		return exp.getValue(CONTEXT, rootObject, returnType);
+		return exp.getValue(context, rootObject, returnType);
 	}
 
 	/**
@@ -88,7 +91,7 @@ public final class Evaluator{
 	 * @return	The result of the expression.
 	 * @throws EvaluationException	If an error occurs during the evaluation of an expression.
 	 */
-	public static boolean evaluateBoolean(final String expression, final Object rootObject){
+	public boolean evaluateBoolean(final String expression, final Object rootObject){
 		return (expression.isEmpty() || evaluate(expression, rootObject, boolean.class));
 	}
 
@@ -100,7 +103,7 @@ public final class Evaluator{
 	 * @return	The size, or a negative number if the expression is not a valid positive integer.
 	 * @throws EvaluationException	If an error occurs during the evaluation of an expression.
 	 */
-	public static int evaluateSize(final String expression, final Object rootObject){
+	public int evaluateSize(final String expression, final Object rootObject){
 		int size = -1;
 		if(!expression.isBlank())
 			size = (isPositiveInteger(expression)? Integer.parseInt(expression): evaluate(expression, rootObject, int.class));

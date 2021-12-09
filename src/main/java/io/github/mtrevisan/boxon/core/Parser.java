@@ -77,6 +77,8 @@ public final class Parser{
 	private final TemplateParser templateParser;
 	private final ConfigurationParser configurationParser;
 
+	private final Evaluator evaluator = Evaluator.create();
+
 
 	/**
 	 * Create an empty parser (context, codecs and templates MUST BE manually loaded! -- templates MUST BE loaded AFTER
@@ -115,7 +117,7 @@ public final class Parser{
 	 * @return	This instance, used for chaining.
 	 */
 	public Parser addToContext(final String key, final Object value){
-		Evaluator.addToContext(key, value);
+		evaluator.addToContext(key, value);
 
 		templateParser.addToBackupContext(key, value);
 
@@ -131,7 +133,7 @@ public final class Parser{
 	public Parser withContext(final Map<String, Object> context){
 		Objects.requireNonNull(context, "Context cannot be null");
 
-		context.forEach(Evaluator::addToContext);
+		context.forEach(evaluator::addToContext);
 
 		templateParser.addToBackupContext(context);
 
@@ -145,7 +147,7 @@ public final class Parser{
 	 * @return	This instance, used for chaining.
 	 */
 	public Parser withContextFunction(final Method method){
-		Evaluator.addToContext(method);
+		evaluator.addToContext(method);
 
 		templateParser.addToBackupContext(method);
 
@@ -387,7 +389,7 @@ public final class Parser{
 		try{
 			final Template<?> template = templateParser.getTemplate(reader);
 
-			final Object partialDecodedMessage = templateParser.decode(template, reader, null);
+			final Object partialDecodedMessage = templateParser.decode(template, reader, null, evaluator);
 
 			response.addParsedMessage(start, partialDecodedMessage);
 		}
@@ -455,7 +457,7 @@ public final class Parser{
 		try{
 			final Template<?> template = templateParser.getTemplate(data.getClass());
 
-			templateParser.encode(template, writer, null, data);
+			templateParser.encode(template, writer, null, data, evaluator);
 		}
 		catch(final Exception e){
 			response.addError(EncodeException.create(e));
@@ -582,7 +584,7 @@ public final class Parser{
 			final Map<String, Object> data = entry.getValue();
 			final ConfigurationMessage<?> configuration = configurationParser.getConfiguration(configurationType);
 			final Object configurationData = ConfigurationParser.getConfigurationWithDefaults(configuration, data, protocol);
-			configurationParser.encode(configuration, writer, configurationData, protocol);
+			configurationParser.encode(configuration, writer, configurationData, protocol, evaluator);
 		}
 		catch(final Exception e){
 			response.addError(EncodeException.create(e));

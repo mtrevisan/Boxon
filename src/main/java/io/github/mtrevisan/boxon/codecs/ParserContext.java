@@ -65,8 +65,8 @@ final class ParserContext<T>{
 		return currentObject;
 	}
 
-	void addCurrentObjectToEvaluatorContext(){
-		Evaluator.addToContext(ContextHelper.CONTEXT_SELF, currentObject);
+	void addCurrentObjectToEvaluatorContext(final Evaluator evaluator){
+		evaluator.addToContext(ContextHelper.CONTEXT_SELF, currentObject);
 	}
 
 	String getClassName(){
