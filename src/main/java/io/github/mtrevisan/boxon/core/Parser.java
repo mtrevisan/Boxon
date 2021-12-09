@@ -29,6 +29,7 @@ import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.codecs.ConfigurationParser;
 import io.github.mtrevisan.boxon.codecs.LoaderCodec;
 import io.github.mtrevisan.boxon.codecs.TemplateParser;
+import io.github.mtrevisan.boxon.codecs.TemplateParserInterface;
 import io.github.mtrevisan.boxon.codecs.managers.ConfigField;
 import io.github.mtrevisan.boxon.codecs.managers.ConfigurationMessage;
 import io.github.mtrevisan.boxon.codecs.managers.Template;
@@ -74,10 +75,10 @@ public final class Parser{
 
 	private final LoaderCodec loaderCodec;
 
+	private final Evaluator evaluator = Evaluator.create();
+
 	private final TemplateParser templateParser;
 	private final ConfigurationParser configurationParser;
-
-	private final Evaluator evaluator = Evaluator.create();
 
 
 	/**
@@ -105,7 +106,7 @@ public final class Parser{
 	private Parser(final EventListener eventListener){
 		loaderCodec = LoaderCodec.create(eventListener);
 
-		templateParser = TemplateParser.create(loaderCodec, eventListener);
+		templateParser = TemplateParser.create(loaderCodec, eventListener, evaluator);
 		configurationParser = ConfigurationParser.create(loaderCodec, eventListener);
 	}
 
@@ -180,7 +181,8 @@ public final class Parser{
 		loaderCodec.loadDefaultCodecs();
 
 		//post process codecs
-		loaderCodec.injectFieldsInCodecs(templateParser);
+		loaderCodec.injectFieldInCodecs(TemplateParserInterface.class, templateParser);
+		loaderCodec.injectFieldInCodecs(Evaluator.class, evaluator);
 
 		return this;
 	}
@@ -195,7 +197,8 @@ public final class Parser{
 		loaderCodec.loadCodecs(basePackageClasses);
 
 		//post process codecs
-		loaderCodec.injectFieldsInCodecs(templateParser);
+		loaderCodec.injectFieldInCodecs(TemplateParserInterface.class, templateParser);
+		loaderCodec.injectFieldInCodecs(Evaluator.class, evaluator);
 
 		return this;
 	}
@@ -210,7 +213,8 @@ public final class Parser{
 		loaderCodec.addCodecs(codecs);
 
 		//post process codecs
-		loaderCodec.injectFieldsInCodecs(templateParser);
+		loaderCodec.injectFieldInCodecs(TemplateParserInterface.class, templateParser);
+		loaderCodec.injectFieldInCodecs(Evaluator.class, evaluator);
 
 		return this;
 	}
@@ -577,14 +581,14 @@ public final class Parser{
 	/**
 	 * Compose a single configuration message.
 	 */
-	private void composeConfiguration(final BitWriter writer, final Map.Entry<String, Map<String, Object>> entry,
-			final Version protocol, final ComposeResponse response){
+	private void composeConfiguration(final BitWriter writer, final Map.Entry<String, Map<String, Object>> entry, final Version protocol,
+			final ComposeResponse response){
 		try{
 			final String configurationType = entry.getKey();
 			final Map<String, Object> data = entry.getValue();
 			final ConfigurationMessage<?> configuration = configurationParser.getConfiguration(configurationType);
 			final Object configurationData = ConfigurationParser.getConfigurationWithDefaults(configuration, data, protocol);
-			configurationParser.encode(configuration, writer, configurationData, protocol, evaluator);
+			configurationParser.encode(configuration, writer, configurationData, protocol);
 		}
 		catch(final Exception e){
 			response.addError(EncodeException.create(e));

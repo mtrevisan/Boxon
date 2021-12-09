@@ -31,6 +31,7 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
+import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.codecs.BitReader;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
@@ -98,14 +99,14 @@ class CodecStringTest{
 		};
 
 		BitWriter writer = BitWriter.create();
-		Evaluator evaluator = Evaluator.create();
-		codec.encode(writer, annotation, null, encodedValue, evaluator);
+		ReflectionHelper.setFieldValue(codec, Evaluator.class, Evaluator.create());
+		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals(encodedValue, new String(writer.array(), StandardCharsets.US_ASCII));
 
 		BitReader reader = BitReader.wrap(writer);
-		String decoded = (String)codec.decode(reader, annotation, null, evaluator);
+		String decoded = (String)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -162,14 +163,14 @@ class CodecStringTest{
 		};
 
 		BitWriter writer = BitWriter.create();
-		Evaluator evaluator = Evaluator.create();
-		codec.encode(writer, annotation, null, encodedValue, evaluator);
+		ReflectionHelper.setFieldValue(codec, Evaluator.class, Evaluator.create());
+		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals(encodedValue, new String(writer.array(), StandardCharsets.UTF_8));
 
 		BitReader reader = BitReader.wrap(writer);
-		String decoded = (String)codec.decode(reader, annotation, null, evaluator);
+		String decoded = (String)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -232,12 +233,12 @@ class CodecStringTest{
 
 		BitReader reader = BitReader.wrap(encodedValue.getBytes(StandardCharsets.US_ASCII));
 		Evaluator evaluator = Evaluator.create();
-		Object decoded = codec.decode(reader, annotation, null, evaluator);
+		Object decoded = codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals("123AB", decoded);
 
 		BitWriter writer = BitWriter.create();
-		codec.encode(writer, annotation, null, decoded, evaluator);
+		codec.encode(writer, annotation, null, decoded);
 		writer.flush();
 
 		Assertions.assertArrayEquals(new byte[]{49, 50, 51, 65, 66}, writer.array());
@@ -301,12 +302,12 @@ class CodecStringTest{
 
 		BitReader reader = BitReader.wrap(encodedValue.getBytes(StandardCharsets.US_ASCII));
 		Evaluator evaluator = Evaluator.create();
-		Object decoded = codec.decode(reader, annotation, null, evaluator);
+		Object decoded = codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals("123ABC", decoded);
 
 		BitWriter writer = BitWriter.create();
-		codec.encode(writer, annotation, null, decoded, evaluator);
+		codec.encode(writer, annotation, null, decoded);
 		writer.flush();
 
 		//this seems strange, but it has to work like this

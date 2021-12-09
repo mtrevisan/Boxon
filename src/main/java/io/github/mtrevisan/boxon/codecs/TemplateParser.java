@@ -72,15 +72,18 @@ public final class TemplateParser implements TemplateParserInterface{
 
 	private final Map<String, Object> backupContext = new HashMap<>(0);
 
+	private Evaluator evaluator;
+
 
 	/**
 	 * Create a template parser.
 	 *
 	 * @param loaderCodec	A codec loader.
+	 * @param evaluator	An evaluator.
 	 * @return	A template parser.
 	 */
-	public static TemplateParser create(final LoaderCodecInterface loaderCodec){
-		return new TemplateParser(loaderCodec, EventListener.getNoOpInstance());
+	public static TemplateParser create(final LoaderCodecInterface loaderCodec, final Evaluator evaluator){
+		return new TemplateParser(loaderCodec, EventListener.getNoOpInstance(), evaluator);
 	}
 
 	/**
@@ -88,18 +91,21 @@ public final class TemplateParser implements TemplateParserInterface{
 	 *
 	 * @param loaderCodec	A codec loader.
 	 * @param eventListener	The event listener.
+	 * @param evaluator	An evaluator.
 	 * @return	A template parser.
 	 */
-	public static TemplateParser create(final LoaderCodecInterface loaderCodec, final EventListener eventListener){
-		return new TemplateParser(loaderCodec, (eventListener != null? eventListener: EventListener.getNoOpInstance()));
+	public static TemplateParser create(final LoaderCodecInterface loaderCodec, final EventListener eventListener,
+			final Evaluator evaluator){
+		return new TemplateParser(loaderCodec, (eventListener != null? eventListener: EventListener.getNoOpInstance()), evaluator);
 	}
 
 
-	private TemplateParser(final LoaderCodecInterface loaderCodec, final EventListener eventListener){
+	private TemplateParser(final LoaderCodecInterface loaderCodec, final EventListener eventListener, final Evaluator evaluator){
 		this.eventListener = eventListener;
 
 		this.loaderCodec = loaderCodec;
 		loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
+		this.evaluator = evaluator;
 	}
 
 
@@ -195,10 +201,10 @@ public final class TemplateParser implements TemplateParserInterface{
 
 			//process skip annotations:
 			final Skip[] skips = field.getSkips();
-			readSkips(skips, reader, parserContext, evaluator);
+			readSkips(skips, reader, parserContext);
 
 			//check if field has to be processed...
-			if(shouldProcessField(field.getCondition(), parserContext.getRootObject(), evaluator))
+			if(shouldProcessField(field.getCondition(), parserContext.getRootObject()))
 				//... and if so, process it
 				decodeField(template, reader, parserContext, field, evaluator);
 		}
@@ -225,7 +231,7 @@ public final class TemplateParser implements TemplateParserInterface{
 
 		try{
 			//decode value from raw message
-			final Object value = codec.decode(reader, binding, parserContext.getRootObject(), evaluator);
+			final Object value = codec.decode(reader, binding, parserContext.getRootObject());
 			//store value in the current object
 			field.setFieldValue(parserContext.getCurrentObject(), value);
 
@@ -241,13 +247,12 @@ public final class TemplateParser implements TemplateParserInterface{
 		}
 	}
 
-	private static <T> void readSkips(final Skip[] skips, final BitReader reader, final ParserContext<T> parserContext,
-			final Evaluator evaluator){
+	private <T> void readSkips(final Skip[] skips, final BitReader reader, final ParserContext<T> parserContext){
 		for(int i = 0; i < skips.length; i ++)
-			readSkip(skips[i], reader, parserContext.getRootObject(), evaluator);
+			readSkip(skips[i], reader, parserContext.getRootObject());
 	}
 
-	private static void readSkip(final Skip skip, final BitReader reader, final Object rootObject, final Evaluator evaluator){
+	private void readSkip(final Skip skip, final BitReader reader, final Object rootObject){
 		final boolean process = evaluator.evaluateBoolean(skip.condition(), rootObject);
 		if(!process)
 			return;
@@ -328,15 +333,15 @@ public final class TemplateParser implements TemplateParserInterface{
 
 			//process skip annotations:
 			final Skip[] skips = field.getSkips();
-			writeSkips(skips, writer, parserContext, evaluator);
+			writeSkips(skips, writer, parserContext);
 
 			//check if field has to be processed...
-			if(shouldProcessField(field.getCondition(), parserContext.getRootObject(), evaluator)){
+			if(shouldProcessField(field.getCondition(), parserContext.getRootObject())){
 				//... and if so, process it
 				parserContext.setField(field);
 				parserContext.setBinding(field.getBinding());
 
-				ParserHelper.encodeField(parserContext, writer, loaderCodec, eventListener, evaluator);
+				ParserHelper.encodeField(parserContext, writer, loaderCodec, eventListener);
 			}
 		}
 
@@ -345,17 +350,16 @@ public final class TemplateParser implements TemplateParserInterface{
 			ParserHelper.writeAffix(header.end(), header.charset(), writer);
 	}
 
-	private static boolean shouldProcessField(final String condition, final Object rootObject, final Evaluator evaluator){
+	private boolean shouldProcessField(final String condition, final Object rootObject){
 		return (condition.isEmpty() || evaluator.evaluateBoolean(condition, rootObject));
 	}
 
-	private static <T> void writeSkips(final Skip[] skips, final BitWriter writer, final ParserContext<T> parserContext,
-			final Evaluator evaluator){
+	private <T> void writeSkips(final Skip[] skips, final BitWriter writer, final ParserContext<T> parserContext){
 		for(int i = 0; i < skips.length; i ++)
-			writeSkip(skips[i], writer, parserContext.getRootObject(), evaluator);
+			writeSkip(skips[i], writer, parserContext.getRootObject());
 	}
 
-	private static void writeSkip(final Skip skip, final BitWriter writer, final Object rootObject, final Evaluator evaluator){
+	private void writeSkip(final Skip skip, final BitWriter writer, final Object rootObject){
 		final boolean process = evaluator.evaluateBoolean(skip.condition(), rootObject);
 		if(!process)
 			return;

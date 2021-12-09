@@ -41,9 +41,13 @@ import java.math.BigInteger;
 
 final class CodecInteger implements CodecInterface<BindInteger>{
 
+	/** Automatically injected */
+	@SuppressWarnings("unused")
+	private Evaluator evaluator;
+
+
 	@Override
-	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject, final Evaluator evaluator)
-			throws AnnotationException{
+	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject) throws AnnotationException{
 		final BindInteger binding = extractBinding(annotation);
 
 		final int size = evaluator.evaluateSize(binding.size(), rootObject);
@@ -63,8 +67,8 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 	}
 
 	@Override
-	public void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value,
-			final Evaluator evaluator) throws AnnotationException{
+	public void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value)
+			throws AnnotationException{
 		final BindInteger binding = extractBinding(annotation);
 
 		CodecHelper.validateData(binding.validator(), value);

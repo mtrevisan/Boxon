@@ -37,8 +37,13 @@ import java.lang.annotation.Annotation;
 
 final class CodecByte implements CodecInterface<BindByte>{
 
+	/** Automatically injected */
+	@SuppressWarnings("unused")
+	private Evaluator evaluator;
+
+
 	@Override
-	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject, final Evaluator evaluator){
+	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
 		final BindByte binding = extractBinding(annotation);
 
 		final byte v = reader.getByte();
@@ -55,8 +60,7 @@ final class CodecByte implements CodecInterface<BindByte>{
 	}
 
 	@Override
-	public void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value,
-			final Evaluator evaluator){
+	public void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value){
 		final BindByte binding = extractBinding(annotation);
 
 		CodecHelper.validateData(binding.validator(), value);

@@ -54,11 +54,12 @@ final class CodecArray implements CodecInterface<BindArray>{
 	/** Automatically injected */
 	@SuppressWarnings("unused")
 	private TemplateParserInterface templateParser;
+	@SuppressWarnings("unused")
+	private Evaluator evaluator;
 
 
 	@Override
-	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject, final Evaluator evaluator)
-			throws FieldException{
+	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject) throws FieldException{
 		final BindArray binding = extractBinding(annotation);
 
 		final int size = evaluator.evaluateSize(binding.size(), rootObject);
@@ -67,9 +68,9 @@ final class CodecArray implements CodecInterface<BindArray>{
 		final Class<?> bindingType = binding.type();
 		final Object[] array = createArray(bindingType, size);
 		if(binding.selectFrom().alternatives().length > 0)
-			decodeWithAlternatives(reader, array, binding, rootObject, evaluator);
+			decodeWithAlternatives(reader, array, binding, rootObject);
 		else
-			decodeWithoutAlternatives(reader, array, bindingType, evaluator);
+			decodeWithoutAlternatives(reader, array, bindingType);
 
 		final ConverterChoices selectConverterFrom = binding.selectConverterFrom();
 		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
@@ -90,8 +91,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 		return (T[])Array.newInstance(type, length);
 	}
 
-	private void decodeWithAlternatives(final BitReader reader, final Object[] array, final BindArray binding, final Object rootObject,
-			final Evaluator evaluator){
+	private void decodeWithAlternatives(final BitReader reader, final Object[] array, final BindArray binding, final Object rootObject){
 		final ObjectChoices selectFrom = binding.selectFrom();
 		for(int i = 0; i < array.length; i ++){
 			try{
@@ -119,7 +119,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 		return (choice.annotationType() == Annotation.class);
 	}
 
-	private void decodeWithoutAlternatives(final BitReader reader, final Object[] array, final Class<?> type, final Evaluator evaluator)
+	private void decodeWithoutAlternatives(final BitReader reader, final Object[] array, final Class<?> type)
 			throws FieldException{
 		final Template<?> template = templateParser.createTemplate(type);
 
@@ -128,8 +128,8 @@ final class CodecArray implements CodecInterface<BindArray>{
 	}
 
 	@Override
-	public void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value,
-			final Evaluator evaluator) throws FieldException{
+	public void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value)
+			throws FieldException{
 		final BindArray binding = extractBinding(annotation);
 
 		CodecHelper.validateData(binding.validator(), value);
@@ -145,13 +145,12 @@ final class CodecArray implements CodecInterface<BindArray>{
 		CodecHelper.assertSizeEquals(size, Array.getLength(array));
 
 		if(selectFrom.alternatives().length > 0)
-			encodeWithAlternatives(writer, array, selectFrom, evaluator);
+			encodeWithAlternatives(writer, array, selectFrom);
 		else
-			encodeWithoutAlternatives(writer, array, binding.type(), evaluator);
+			encodeWithoutAlternatives(writer, array, binding.type());
 	}
 
-	private void encodeWithAlternatives(final BitWriter writer, final Object[] array, final ObjectChoices selectFrom,
-			final Evaluator evaluator) throws FieldException{
+	private void encodeWithAlternatives(final BitWriter writer, final Object[] array, final ObjectChoices selectFrom) throws FieldException{
 		final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
 		for(int i = 0; i < array.length; i ++){
 			final Object elem = array[i];
@@ -167,8 +166,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 		}
 	}
 
-	private void encodeWithoutAlternatives(final BitWriter writer, final Object[] array, final Class<?> type, final Evaluator evaluator)
-			throws FieldException{
+	private void encodeWithoutAlternatives(final BitWriter writer, final Object[] array, final Class<?> type) throws FieldException{
 		final Template<?> template = templateParser.createTemplate(type);
 
 		for(int i = 0; i < array.length; i ++)

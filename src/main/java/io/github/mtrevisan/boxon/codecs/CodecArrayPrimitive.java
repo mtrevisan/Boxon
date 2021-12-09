@@ -41,9 +41,13 @@ import java.lang.reflect.Array;
 
 final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 
+	/** Automatically injected */
+	@SuppressWarnings("unused")
+	private Evaluator evaluator;
+
+
 	@Override
-	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject, final Evaluator evaluator)
-			throws AnnotationException{
+	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject) throws AnnotationException{
 		final BindArrayPrimitive binding = extractBinding(annotation);
 
 		final Class<?> type = binding.type();
@@ -76,8 +80,8 @@ final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 	}
 
 	@Override
-	public void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value,
-			final Evaluator evaluator) throws AnnotationException{
+	public void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value)
+			throws AnnotationException{
 		final BindArrayPrimitive binding = extractBinding(annotation);
 
 		CodecHelper.validateData(binding.validator(), value);

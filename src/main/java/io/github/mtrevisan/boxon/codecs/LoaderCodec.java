@@ -171,9 +171,9 @@ public final class LoaderCodec implements LoaderCodecInterface{
 		codecs.put(codecType, codec);
 	}
 
-	public void injectFieldsInCodecs(final TemplateParserInterface templateParser){
+	public <T> void injectFieldInCodecs(final Class<T> type, final T object){
 		for(final CodecInterface<?> codec : codecs.values())
-			ReflectionHelper.setFieldValue(codec, TemplateParserInterface.class, templateParser);
+			ReflectionHelper.setFieldValue(codec, type, object);
 	}
 
 	@Override

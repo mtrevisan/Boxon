@@ -25,18 +25,15 @@
 package io.github.mtrevisan.boxon.external.codecs;
 
 import io.github.mtrevisan.boxon.exceptions.FieldException;
-import io.github.mtrevisan.boxon.internal.Evaluator;
 
 import java.lang.annotation.Annotation;
 
 
 public interface CodecInterface<B extends Annotation>{
 
-	Object decode(final BitReader reader, final Annotation annotation, final Object rootObject, final Evaluator evaluator)
-		throws FieldException;
+	Object decode(final BitReader reader, final Annotation annotation, final Object rootObject) throws FieldException;
 
-	void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value, final Evaluator evaluator)
-		throws FieldException;
+	void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value) throws FieldException;
 
 
 	@SuppressWarnings("unchecked")

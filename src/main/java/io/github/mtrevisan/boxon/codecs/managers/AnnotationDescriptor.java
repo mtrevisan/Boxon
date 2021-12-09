@@ -304,12 +304,12 @@ public enum AnnotationDescriptor{
 
 	private static void describeValidator(final Class<? extends Validator<?>> validator, final Map<String, Object> rootDescription){
 		if(validator != NullValidator.class)
-			rootDescription.put(DescriberKey.BIND_VALIDATOR.toString(), validator.getSimpleName());
+			rootDescription.put(DescriberKey.BIND_VALIDATOR.toString(), validator.getName());
 	}
 
 	private static void describeConverter(final Class<? extends Converter<?, ?>> converter, final Map<String, Object> rootDescription){
 		if(converter != NullConverter.class)
-			rootDescription.put(DescriberKey.BIND_CONVERTER.toString(), converter.getSimpleName());
+			rootDescription.put(DescriberKey.BIND_CONVERTER.toString(), converter.getName());
 	}
 
 	private static void describeAlternatives(final ConverterChoices.ConverterChoice[] alternatives,

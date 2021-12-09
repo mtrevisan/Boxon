@@ -30,6 +30,7 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
+import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.codecs.BitReader;
 import io.github.mtrevisan.boxon.external.codecs.BitSet;
@@ -106,8 +107,8 @@ class CodecBitsTest{
 		};
 
 		BitWriter writer = BitWriter.create();
-		Evaluator evaluator = Evaluator.create();
-		codec.encode(writer, annotation, null, encodedValue, evaluator);
+		ReflectionHelper.setFieldValue(codec, Evaluator.class, Evaluator.create());
+		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		byte[] bb = encodedValue.toByteArray();
@@ -116,7 +117,7 @@ class CodecBitsTest{
 		Assertions.assertEquals(StringHelper.toHexString(bb), writer.toString());
 
 		BitReader reader = BitReader.wrap(writer);
-		BitSet decoded = (BitSet)codec.decode(reader, annotation, null, evaluator);
+		BitSet decoded = (BitSet)codec.decode(reader, annotation, null);
 
 		encodedValue.reverseBits(randomBytes.length * Byte.SIZE);
 		Assertions.assertEquals(encodedValue, decoded);
@@ -176,8 +177,8 @@ class CodecBitsTest{
 		};
 
 		BitWriter writer = BitWriter.create();
-		Evaluator evaluator = Evaluator.create();
-		codec.encode(writer, annotation, null, encodedValue, evaluator);
+		ReflectionHelper.setFieldValue(codec, Evaluator.class, Evaluator.create());
+		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		byte[] bb = encodedValue.toByteArray();
@@ -186,7 +187,7 @@ class CodecBitsTest{
 		Assertions.assertEquals(StringHelper.toHexString(bb), writer.toString());
 
 		BitReader reader = BitReader.wrap(writer);
-		BitSet decoded = (BitSet)codec.decode(reader, annotation, null, evaluator);
+		BitSet decoded = (BitSet)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}

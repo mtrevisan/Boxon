@@ -153,17 +153,18 @@ class CodecObjectTest{
 		LoaderCodec loaderCodec = LoaderCodec.create(eventListener);
 		loaderCodec.loadDefaultCodecs();
 		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
-		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec);
-		ReflectionHelper.setFieldValue(codec, TemplateParserInterface.class, templateParser);
-		BitWriter writer = BitWriter.create();
 		Evaluator evaluator = Evaluator.create();
-		codec.encode(writer, annotation, null, encodedValue, evaluator);
+		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator);
+		ReflectionHelper.setFieldValue(codec, TemplateParserInterface.class, templateParser);
+		ReflectionHelper.setFieldValue(codec, Evaluator.class, Evaluator.create());
+		BitWriter writer = BitWriter.create();
+		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertArrayEquals(new byte[]{0x01, 0x02}, writer.array());
 
 		BitReader reader = BitReader.wrap(writer);
-		Version decoded = (Version)codec.decode(reader, annotation, null, evaluator);
+		Version decoded = (Version)codec.decode(reader, annotation, null);
 
 		Assertions.assertNotNull(decoded);
 		Assertions.assertEquals(encodedValue.major, decoded.major);

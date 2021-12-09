@@ -31,7 +31,6 @@ import io.github.mtrevisan.boxon.external.codecs.BitWriter;
 import io.github.mtrevisan.boxon.external.codecs.ByteOrder;
 import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
 import io.github.mtrevisan.boxon.external.logs.EventListener;
-import io.github.mtrevisan.boxon.internal.Evaluator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -56,7 +55,7 @@ class CodecCustomTest{
 	//(if the first bit of a byte is 1, then another byte is expected to follow)
 	static class VariableLengthByteArray implements CodecInterface<VarLengthEncoded>{
 		@Override
-		public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject, final Evaluator evaluator){
+		public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
 			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			boolean continuing = true;
 			while(continuing){
@@ -69,8 +68,8 @@ class CodecCustomTest{
 		}
 
 		@Override
-		public void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value,
-				final Evaluator evaluator) throws AnnotationException{
+		public void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value)
+				throws AnnotationException{
 			final int size = Array.getLength(value);
 			for(int i = 0; i < size; i ++)
 				writer.put((byte)((byte)Array.get(value, i) | (i < size - 1? (byte)0x80: 0x00)), ByteOrder.BIG_ENDIAN);
@@ -94,14 +93,13 @@ class CodecCustomTest{
 		};
 
 		BitWriter writer = BitWriter.create();
-		Evaluator evaluator = Evaluator.create();
-		codec.encode(writer, annotation, null, encodedValue, evaluator);
+		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertArrayEquals(new byte[]{(byte)0x81, (byte)0x82, 0x03}, writer.array());
 
 		BitReader reader = BitReader.wrap(writer);
-		byte[] decoded = (byte[])codec.decode(reader, annotation, null, evaluator);
+		byte[] decoded = (byte[])codec.decode(reader, annotation, null);
 
 		Assertions.assertArrayEquals(encodedValue, decoded);
 	}

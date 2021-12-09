@@ -103,7 +103,8 @@ You can get pre-built JARs (usable on JRE 11 or newer) from [Sonatype](https://o
     2. [Skip](#annotation-skip)
     3. [Checksum](#annotation-checksum)
     4. [Evaluate](#annotation-evaluate)
-3. [Configuration annotations](#annotation-configuration)
+3. [Protocol description](#protocol-description)
+4. [Configuration annotations](#annotation-configuration)
     1. [ConfigurationHeader](#annotation-configurationheader)
     2. [ConfigurationSkip](#annotation-configurationskip)
     3. [ConfigurationField](#annotation-configurationfield)
@@ -111,23 +112,24 @@ You can get pre-built JARs (usable on JRE 11 or newer) from [Sonatype](https://o
     5. [CompositeSubField](#annotation-compositesubfield)
     6. [AlternativeConfigurationField](#annotation-alternativeconfigurationfield)
     7. [AlternativeSubField](#annotation-alternativesubfield)
-4. [How to write SpEL expressions](#how-to-spel)
-5. [How to extend the functionalities](#how-to-extend)
-6. [Digging into the code](#digging)
+5. [How to write SpEL expressions](#how-to-spel)
+6. [How to extend the functionalities](#how-to-extend)
+7. [Digging into the code](#digging)
     1. [Converters](#how-to-converters)
     2. [Custom annotations](#how-to-annotations)
-7. [Examples](#examples)
+8. [Examples](#examples)
     1. [Multi-message parser](#example-multi)
     2. [Message composer](#example-composer)
-8. [Changelog](#changelog)
-    1. [version 2.0.0](#changelog-2.0.0)
-    2. [version 1.1.0](#changelog-1.1.0)
-    3. [version 1.0.0](#changelog-1.0.0)
-    4. [version 0.0.2](#changelog-0.0.2)
-    5. [version 0.0.1](#changelog-0.0.1)
-    6. [version 0.0.0](#changelog-0.0.0)
-9. [License](#license)
-10. [Attributions](#attributions)
+9. [Changelog](#changelog)
+    1. [version 2.1.0](#changelog-2.1.0)
+    2. [version 2.0.0](#changelog-2.0.0)
+    3. [version 1.1.0](#changelog-1.1.0)
+    4. [version 1.0.0](#changelog-1.0.0)
+    5. [version 0.0.2](#changelog-0.0.2)
+    6. [version 0.0.1](#changelog-0.0.1)
+    7. [version 0.0.0](#changelog-0.0.0)
+10. [License](#license)
+11. [Attributions](#attributions)
 
 <br/>
 
@@ -654,6 +656,69 @@ private boolean buffered;
 private String deviceTypeName;
 ```
 
+
+<br/>
+
+<a name="protocol-description"></a>
+## Protocol description
+A description of the protocol can be obtained through the methods `Parser.describeTemplates` and `Parser.describeTemplate`.
+
+These returns a JSON with a description of all the annotations of the loaded templates.
+
+Example:
+```java
+DeviceTypes deviceTypes = new DeviceTypes();
+deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
+Parser parser = Parser.create()
+    .addToContext("deviceTypes", deviceTypes)
+    .withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
+    .withDefaultCodecs()
+    .withTemplate(ACKMessageHex.class);
+
+List<Map<String, Object>> descriptions = parser.describeTemplates();
+```
+
+gives as output the following
+
+```json
+{
+   "header": {
+      "start": ["+ACK"],
+      "charset": "UTF-8"
+   },
+   "fields": [
+      {
+         "charset": "UTF-8",
+         "size": "#headerSize()",
+         "name": "messageHeader",
+         "annotationType": "BindString",
+         "fieldType": "String"
+      },
+      {
+         "converter": "MessageTypeConverter",
+         "name": "messageType",
+         "annotationType": "BindByte",
+         "fieldType": "String"
+      },
+      {
+         "condition": "mask.hasProtocolVersion()",
+         "size": "2",
+         "converter": "io.github.mtrevisan.boxon.codecs.queclink.QueclinkHelper$VersionConverter",
+         "name": "protocolVersion",
+         "annotationType": "BindArrayPrimitive",
+         "type": "byte",
+         "fieldType": "String",
+         "byteOrder": "BIG_ENDIAN"
+      }
+   ],
+   "context": {
+      "methods": [
+         "private static int io.github.mtrevisan.boxon.core.ParserTest.headerSize()"
+      ],
+      "deviceTypes": "[QUECLINK_GB200S (0x46)]"
+   }
+}
+```
 
 <br/>
 
@@ -1255,6 +1320,12 @@ Remember that the header that will be written is the first in `@MessageHeader`.
 
 <a name="changelog"></a>
 ## Changelog
+
+<a name="changelog-2.1.0"></a>
+### version 2.1.0 - 20211209
+- Made library thread-safe.
+- Added methods to retrieve a description of the protocol (in JSON format).
+
 
 <a name="changelog-2.0.0"></a>
 ### version 2.0.0 - 20211127

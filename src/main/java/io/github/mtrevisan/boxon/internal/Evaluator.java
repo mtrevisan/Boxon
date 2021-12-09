@@ -44,6 +44,7 @@ public final class Evaluator{
 	//allow for immediate compilation of SpEL expressions
 	private static final SpelParserConfiguration CONFIG = new SpelParserConfiguration(SpelCompilerMode.IMMEDIATE, null);
 	private static final ExpressionParser PARSER = new SpelExpressionParser(CONFIG);
+
 	private final StandardEvaluationContext context = new StandardEvaluationContext();
 
 

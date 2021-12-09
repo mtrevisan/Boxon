@@ -36,7 +36,6 @@ import io.github.mtrevisan.boxon.external.codecs.BitReader;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
 import io.github.mtrevisan.boxon.external.codecs.ByteOrder;
 import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
-import io.github.mtrevisan.boxon.internal.Evaluator;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -99,14 +98,13 @@ class CodecDoubleTest{
 		};
 
 		BitWriter writer = BitWriter.create();
-		Evaluator evaluator = Evaluator.create();
-		codec.encode(writer, annotation, null, encodedValue, evaluator);
+		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals(StringUtils.leftPad(Long.toHexString(Long.reverseBytes(Double.doubleToRawLongBits(encodedValue))).toUpperCase(Locale.ROOT), 16, '0'), writer.toString());
 
 		BitReader reader = BitReader.wrap(writer);
-		double decoded = (double)codec.decode(reader, annotation, null, evaluator);
+		double decoded = (double)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -158,14 +156,13 @@ class CodecDoubleTest{
 		};
 
 		BitWriter writer = BitWriter.create();
-		Evaluator evaluator = Evaluator.create();
-		codec.encode(writer, annotation, null, encodedValue, evaluator);
+		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals(StringUtils.leftPad(Long.toHexString(Long.reverseBytes(Double.doubleToRawLongBits(encodedValue))).toUpperCase(Locale.ROOT), 16, '0'), writer.toString());
 
 		BitReader reader = BitReader.wrap(writer);
-		double decoded = (double)codec.decode(reader, annotation, null, evaluator);
+		double decoded = (double)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -217,14 +214,13 @@ class CodecDoubleTest{
 		};
 
 		BitWriter writer = BitWriter.create();
-		Evaluator evaluator = Evaluator.create();
-		codec.encode(writer, annotation, null, encodedValue, evaluator);
+		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals(StringUtils.leftPad(Long.toHexString(Double.doubleToRawLongBits(encodedValue)).toUpperCase(Locale.ROOT), 8, '0'), writer.toString());
 
 		BitReader reader = BitReader.wrap(writer);
-		double decoded = (double)codec.decode(reader, annotation, null, evaluator);
+		double decoded = (double)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
@@ -276,14 +272,13 @@ class CodecDoubleTest{
 		};
 
 		BitWriter writer = BitWriter.create();
-		Evaluator evaluator = Evaluator.create();
-		codec.encode(writer, annotation, null, encodedValue, evaluator);
+		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals(StringUtils.leftPad(Long.toHexString(Double.doubleToRawLongBits(encodedValue)).toUpperCase(Locale.ROOT), 8, '0'), writer.toString());
 
 		BitReader reader = BitReader.wrap(writer);
-		double decoded = (double)codec.decode(reader, annotation, null, evaluator);
+		double decoded = (double)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}

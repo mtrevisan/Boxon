@@ -52,15 +52,17 @@ final class CodecObject implements CodecInterface<BindObject>{
 	/** Automatically injected */
 	@SuppressWarnings("unused")
 	private TemplateParserInterface templateParser;
+	@SuppressWarnings("unused")
+	private Evaluator evaluator;
 
 
 	@Override
-	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject, final Evaluator evaluator){
+	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
 		final BindObject binding = extractBinding(annotation);
 
 		Object value = null;
 		try{
-			final Class<?> type = extractType(reader, binding, rootObject, evaluator);
+			final Class<?> type = extractType(reader, binding, rootObject);
 
 			final Template<?> template = templateParser.createTemplate(type);
 			final Object instance = templateParser.decode(template, reader, rootObject, evaluator);
@@ -80,8 +82,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 		return value;
 	}
 
-	private static Class<?> extractType(final BitReader reader, final BindObject binding, final Object rootObject, final Evaluator evaluator)
-			throws CodecException{
+	private Class<?> extractType(final BitReader reader, final BindObject binding, final Object rootObject) throws CodecException{
 		Class<?> chosenAlternativeType = binding.type();
 		final ObjectChoices selectFrom = binding.selectFrom();
 		if(selectFrom.alternatives().length > 0){
@@ -99,8 +100,8 @@ final class CodecObject implements CodecInterface<BindObject>{
 	}
 
 	@Override
-	public void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value,
-			final Evaluator evaluator) throws FieldException{
+	public void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value)
+			throws FieldException{
 		final BindObject binding = extractBinding(annotation);
 
 		CodecHelper.validateData(binding.validator(), value);

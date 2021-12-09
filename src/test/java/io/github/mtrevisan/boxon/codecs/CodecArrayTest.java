@@ -157,14 +157,14 @@ class CodecArrayTest{
 		};
 
 		BitWriter writer = BitWriter.create();
-		Evaluator evaluator = Evaluator.create();
-		codec.encode(writer, annotation, null, encodedValue, evaluator);
+		ReflectionHelper.setFieldValue(codec, Evaluator.class, Evaluator.create());
+		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertArrayEquals(new byte[]{0x00, 0x00, 0x01, 0x23, 0x00, 0x00, 0x04, 0x56}, writer.array());
 
 		BitReader reader = BitReader.wrap(writer);
-		Object decoded = codec.decode(reader, annotation, null, evaluator);
+		Object decoded = codec.decode(reader, annotation, null);
 
 		Assertions.assertArrayEquals(encodedValue, (int[])decoded);
 	}
@@ -253,18 +253,19 @@ class CodecArrayTest{
 		EventListener eventListener = EventListener.getNoOpInstance();
 		LoaderCodec loaderCodec = LoaderCodec.create(eventListener);
 		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
-		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec);
+		Evaluator evaluator = Evaluator.create();
+		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator);
 		loaderCodec.loadDefaultCodecs();
 		ReflectionHelper.setFieldValue(codec, TemplateParserInterface.class, templateParser);
+		ReflectionHelper.setFieldValue(codec, Evaluator.class, Evaluator.create());
 		BitWriter writer = BitWriter.create();
-		Evaluator evaluator = Evaluator.create();
-		codec.encode(writer, annotation, null, encodedValue, evaluator);
+		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertArrayEquals(new byte[]{0x00, 0x01, 0x0C, 0x01, 0x02, 0x00}, writer.array());
 
 		BitReader reader = BitReader.wrap(writer);
-		Version[] decoded = (Version[])codec.decode(reader, annotation, null, evaluator);
+		Version[] decoded = (Version[])codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue.length, decoded.length);
 		Assertions.assertEquals(encodedValue[0].major, decoded[0].major);

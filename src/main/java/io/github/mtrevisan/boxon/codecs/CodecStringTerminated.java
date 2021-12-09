@@ -38,8 +38,13 @@ import java.nio.charset.Charset;
 
 final class CodecStringTerminated implements CodecInterface<BindStringTerminated>{
 
+	/** Automatically injected */
+	@SuppressWarnings("unused")
+	private Evaluator evaluator;
+
+
 	@Override
-	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject, final Evaluator evaluator){
+	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
 		final BindStringTerminated binding = extractBinding(annotation);
 
 		final Charset charset = Charset.forName(binding.charset());
@@ -61,8 +66,7 @@ final class CodecStringTerminated implements CodecInterface<BindStringTerminated
 	}
 
 	@Override
-	public void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value,
-			final Evaluator evaluator){
+	public void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value){
 		final BindStringTerminated binding = extractBinding(annotation);
 
 		CodecHelper.validateData(binding.validator(), value);

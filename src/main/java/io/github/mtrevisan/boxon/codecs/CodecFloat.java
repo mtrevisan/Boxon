@@ -37,8 +37,13 @@ import java.lang.annotation.Annotation;
 
 final class CodecFloat implements CodecInterface<BindFloat>{
 
+	/** Automatically injected */
+	@SuppressWarnings("unused")
+	private Evaluator evaluator;
+
+
 	@Override
-	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject, final Evaluator evaluator){
+	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
 		final BindFloat binding = extractBinding(annotation);
 
 		final float v = reader.getFloat(binding.byteOrder());
@@ -55,8 +60,7 @@ final class CodecFloat implements CodecInterface<BindFloat>{
 	}
 
 	@Override
-	public void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value,
-			final Evaluator evaluator){
+	public void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value){
 		final BindFloat binding = extractBinding(annotation);
 
 		CodecHelper.validateData(binding.validator(), value);
