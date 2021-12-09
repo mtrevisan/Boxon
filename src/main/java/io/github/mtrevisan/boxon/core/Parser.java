@@ -29,6 +29,7 @@ import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.codecs.ConfigurationParser;
 import io.github.mtrevisan.boxon.codecs.LoaderCodec;
 import io.github.mtrevisan.boxon.codecs.TemplateParser;
+import io.github.mtrevisan.boxon.codecs.TemplateParserInterface;
 import io.github.mtrevisan.boxon.codecs.managers.ConfigField;
 import io.github.mtrevisan.boxon.codecs.managers.ConfigurationMessage;
 import io.github.mtrevisan.boxon.codecs.managers.Template;
@@ -182,7 +183,8 @@ public final class Parser{
 		loaderCodec.loadDefaultCodecs();
 
 		//post process codecs
-		loaderCodec.injectFieldsInCodecs(templateParser, evaluator);
+		loaderCodec.injectFieldInCodecs(TemplateParserInterface.class, templateParser);
+		loaderCodec.injectFieldInCodecs(Evaluator.class, evaluator);
 
 		return this;
 	}
@@ -197,7 +199,8 @@ public final class Parser{
 		loaderCodec.loadCodecs(basePackageClasses);
 
 		//post process codecs
-		loaderCodec.injectFieldsInCodecs(templateParser, evaluator);
+		loaderCodec.injectFieldInCodecs(TemplateParserInterface.class, templateParser);
+		loaderCodec.injectFieldInCodecs(Evaluator.class, evaluator);
 
 		return this;
 	}
@@ -212,7 +215,8 @@ public final class Parser{
 		loaderCodec.addCodecs(codecs);
 
 		//post process codecs
-		loaderCodec.injectFieldsInCodecs(templateParser, evaluator);
+		loaderCodec.injectFieldInCodecs(TemplateParserInterface.class, templateParser);
+		loaderCodec.injectFieldInCodecs(Evaluator.class, evaluator);
 
 		return this;
 	}
