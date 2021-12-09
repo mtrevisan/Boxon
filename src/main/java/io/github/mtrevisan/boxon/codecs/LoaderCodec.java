@@ -30,6 +30,7 @@ import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
 import io.github.mtrevisan.boxon.codecs.managers.ReflectiveClassLoader;
 import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
 import io.github.mtrevisan.boxon.external.logs.EventListener;
+import io.github.mtrevisan.boxon.internal.Evaluator;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -171,9 +172,12 @@ public final class LoaderCodec implements LoaderCodecInterface{
 		codecs.put(codecType, codec);
 	}
 
-	public void injectFieldsInCodecs(final TemplateParserInterface templateParser){
-		for(final CodecInterface<?> codec : codecs.values())
+	//FIXME generics
+	public void injectFieldsInCodecs(final TemplateParserInterface templateParser, final Evaluator evaluator){
+		for(final CodecInterface<?> codec : codecs.values()){
 			ReflectionHelper.setFieldValue(codec, TemplateParserInterface.class, templateParser);
+			ReflectionHelper.setFieldValue(codec, Evaluator.class, evaluator);
+		}
 	}
 
 	@Override

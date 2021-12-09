@@ -74,6 +74,8 @@ public final class Parser{
 
 	private final LoaderCodec loaderCodec;
 
+	private final Evaluator evaluator;
+
 	private final TemplateParser templateParser;
 	private final ConfigurationParser configurationParser;
 
@@ -103,7 +105,9 @@ public final class Parser{
 	private Parser(final EventListener eventListener){
 		loaderCodec = LoaderCodec.create(eventListener);
 
-		templateParser = TemplateParser.create(loaderCodec, eventListener);
+		evaluator = Evaluator.create();
+
+		templateParser = TemplateParser.create(loaderCodec, eventListener, evaluator);
 		configurationParser = ConfigurationParser.create(loaderCodec, eventListener);
 	}
 
@@ -115,7 +119,7 @@ public final class Parser{
 	 * @return	This instance, used for chaining.
 	 */
 	public Parser addToContext(final String key, final Object value){
-		Evaluator.addToContext(key, value);
+		evaluator.addToContext(key, value);
 
 		templateParser.addToBackupContext(key, value);
 
@@ -131,7 +135,7 @@ public final class Parser{
 	public Parser withContext(final Map<String, Object> context){
 		Objects.requireNonNull(context, "Context cannot be null");
 
-		context.forEach(Evaluator::addToContext);
+		context.forEach(evaluator::addToContext);
 
 		templateParser.addToBackupContext(context);
 
@@ -145,7 +149,7 @@ public final class Parser{
 	 * @return	This instance, used for chaining.
 	 */
 	public Parser withContextFunction(final Method method){
-		Evaluator.addToContext(method);
+		evaluator.addToContext(method);
 
 		templateParser.addToBackupContext(method);
 
@@ -178,7 +182,7 @@ public final class Parser{
 		loaderCodec.loadDefaultCodecs();
 
 		//post process codecs
-		loaderCodec.injectFieldsInCodecs(templateParser);
+		loaderCodec.injectFieldsInCodecs(templateParser, evaluator);
 
 		return this;
 	}
@@ -193,7 +197,7 @@ public final class Parser{
 		loaderCodec.loadCodecs(basePackageClasses);
 
 		//post process codecs
-		loaderCodec.injectFieldsInCodecs(templateParser);
+		loaderCodec.injectFieldsInCodecs(templateParser, evaluator);
 
 		return this;
 	}
@@ -208,7 +212,7 @@ public final class Parser{
 		loaderCodec.addCodecs(codecs);
 
 		//post process codecs
-		loaderCodec.injectFieldsInCodecs(templateParser);
+		loaderCodec.injectFieldsInCodecs(templateParser, evaluator);
 
 		return this;
 	}

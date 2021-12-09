@@ -39,11 +39,16 @@ import java.nio.charset.Charset;
 
 final class CodecString implements CodecInterface<BindString>{
 
+	/** Automatically injected */
+	@SuppressWarnings("unused")
+	private Evaluator evaluator;
+
+
 	@Override
 	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject) throws AnnotationException{
 		final BindString binding = extractBinding(annotation);
 
-		final int size = Evaluator.evaluateSize(binding.size(), rootObject);
+		final int size = evaluator.evaluateSize(binding.size(), rootObject);
 		CodecHelper.assertSizePositive(size);
 		final Charset charset = Charset.forName(binding.charset());
 		final String text = reader.getText(size, charset);
@@ -51,7 +56,7 @@ final class CodecString implements CodecInterface<BindString>{
 		final ConverterChoices selectConverterFrom = binding.selectConverterFrom();
 		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
 		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(selectConverterFrom, defaultConverter,
-			rootObject);
+			rootObject, evaluator);
 		final Object value = CodecHelper.converterDecode(chosenConverter, text);
 
 		CodecHelper.validateData(binding.validator(), value);
@@ -67,10 +72,10 @@ final class CodecString implements CodecInterface<BindString>{
 		CodecHelper.validateData(binding.validator(), value);
 
 		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(),
-			binding.converter(), rootObject);
+			binding.converter(), rootObject, evaluator);
 		final String text = CodecHelper.converterEncode(chosenConverter, value);
 
-		final int size = Evaluator.evaluateSize(binding.size(), rootObject);
+		final int size = evaluator.evaluateSize(binding.size(), rootObject);
 		CodecHelper.assertSizePositive(size);
 		final Charset charset = Charset.forName(binding.charset());
 		writer.putText(text.substring(0, Math.min(text.length(), size)), charset);

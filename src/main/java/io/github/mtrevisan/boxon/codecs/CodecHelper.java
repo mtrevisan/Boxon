@@ -70,36 +70,37 @@ final class CodecHelper{
 		throw new IllegalArgumentException("Cannot find a valid codec for type " + type.getSimpleName());
 	}
 
-	static ObjectChoices.ObjectChoice chooseAlternative(final BitReader reader, final ObjectChoices selectFrom, final Object rootObject){
+	static ObjectChoices.ObjectChoice chooseAlternative(final BitReader reader, final ObjectChoices selectFrom, final Object rootObject,
+			final Evaluator evaluator){
 		if(selectFrom.prefixSize() > 0){
 			final int prefixSize = selectFrom.prefixSize();
 			final ByteOrder prefixByteOrder = selectFrom.byteOrder();
 			final int prefix = reader.getInteger(prefixSize, prefixByteOrder)
 				.intValue();
 
-			Evaluator.addToContext(ContextHelper.CONTEXT_CHOICE_PREFIX, prefix);
+			evaluator.addToContext(ContextHelper.CONTEXT_CHOICE_PREFIX, prefix);
 		}
 
 		final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
-		return chooseAlternative(alternatives, rootObject);
+		return chooseAlternative(alternatives, rootObject, evaluator);
 	}
 
 	private static ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives,
-			final Object rootObject){
+			final Object rootObject, final Evaluator evaluator){
 		for(int i = 0; i < alternatives.length; i ++){
 			final ObjectChoices.ObjectChoice alternative = alternatives[i];
-			if(Evaluator.evaluateBoolean(alternative.condition(), rootObject))
+			if(evaluator.evaluateBoolean(alternative.condition(), rootObject))
 				return alternative;
 		}
 		return EMPTY_CHOICE;
 	}
 
 	static Class<? extends Converter<?, ?>> chooseConverter(final ConverterChoices selectConverterFrom,
-			final Class<? extends Converter<?, ?>> defaultConverter, final Object rootObject){
+			final Class<? extends Converter<?, ?>> defaultConverter, final Object rootObject, final Evaluator evaluator){
 		final ConverterChoices.ConverterChoice[] alternatives = selectConverterFrom.alternatives();
 		for(int i = 0; i < alternatives.length; i ++){
 			final ConverterChoices.ConverterChoice alternative = alternatives[i];
-			if(Evaluator.evaluateBoolean(alternative.condition(), rootObject))
+			if(evaluator.evaluateBoolean(alternative.condition(), rootObject))
 				return alternative.converter();
 		}
 		return defaultConverter;

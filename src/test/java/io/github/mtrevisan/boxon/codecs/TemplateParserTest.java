@@ -60,18 +60,20 @@ class TemplateParserTest{
 		LoaderCodec loaderCodec = LoaderCodec.create(eventListener);
 		loaderCodec.loadDefaultCodecs();
 		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
-		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec);
+		Evaluator evaluator = Evaluator.create();
+		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator);
 		Template<ACKMessageHex> template = loaderTemplate.createTemplate(ACKMessageHex.class);
+		loaderCodec.injectFieldsInCodecs(templateParser, evaluator);
 
 		if(!template.canBeCoded())
 			Assertions.fail("Cannot decode message");
 
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
-		Evaluator.addToContext("deviceTypes", deviceTypes);
-		Evaluator.addToContext(TemplateParserTest.class.getDeclaredMethod("headerSize"));
+		evaluator.addToContext("deviceTypes", deviceTypes);
+		evaluator.addToContext(TemplateParserTest.class.getDeclaredMethod("headerSize"));
 		ACKMessageHex message = templateParser.decode(template, reader, null);
-		Evaluator.addToContext("deviceTypes", null);
+		evaluator.addToContext("deviceTypes", null);
 
 		BitWriter writer = BitWriter.create();
 		templateParser.encode(template, writer, null, message);
@@ -93,7 +95,8 @@ class TemplateParserTest{
 		LoaderCodec loaderCodec = LoaderCodec.create(eventListener);
 		loaderCodec.loadDefaultCodecs();
 		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
-		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec);
+		Evaluator evaluator = Evaluator.create();
+		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator);
 		Template<ACKMessageASCII> template = loaderTemplate.createTemplate(ACKMessageASCII.class);
 
 		if(!template.canBeCoded())
@@ -101,9 +104,9 @@ class TemplateParserTest{
 
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GV350M", (byte)0xCF);
-		Evaluator.addToContext("deviceTypes", deviceTypes);
+		evaluator.addToContext("deviceTypes", deviceTypes);
 		ACKMessageASCII message = templateParser.decode(template, reader, null);
-		Evaluator.addToContext("deviceTypes", null);
+		evaluator.addToContext("deviceTypes", null);
 
 		BitWriter writer = BitWriter.create();
 		templateParser.encode(template, writer, null, message);
@@ -114,7 +117,8 @@ class TemplateParserTest{
 
 	@Test
 	void evaluate(){
-		Integer result = Evaluator.evaluate("8/4", null, Integer.class);
+		Evaluator evaluator = Evaluator.create();
+		Integer result = evaluator.evaluate("8/4", null, Integer.class);
 
 		Assertions.assertEquals(2, result);
 	}
@@ -137,8 +141,10 @@ class TemplateParserTest{
 		LoaderCodec loaderCodec = LoaderCodec.create(eventListener);
 		loaderCodec.loadDefaultCodecs();
 		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
-		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec);
+		Evaluator evaluator = Evaluator.create();
+		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator);
 		Template<TestError1> template = loaderTemplate.createTemplate(TestError1.class);
+		loaderCodec.injectFieldsInCodecs(templateParser, evaluator);
 
 		SpelEvaluationException exc = Assertions.assertThrows(SpelEvaluationException.class, () -> templateParser.decode(template, reader, null));
 		Assertions.assertEquals("EL1008E: Property or field 'e' cannot be found on object of type 'io.github.mtrevisan.boxon.codecs.TemplateParserTest$TestError1' - maybe not public or not valid?", exc.getMessage());
@@ -175,8 +181,10 @@ class TemplateParserTest{
 		LoaderCodec loaderCodec = LoaderCodec.create(eventListener);
 		loaderCodec.loadDefaultCodecs();
 		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
-		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec);
+		Evaluator evaluator = Evaluator.create();
+		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator);
 		Template<TestError3> template = loaderTemplate.createTemplate(TestError3.class);
+		loaderCodec.injectFieldsInCodecs(templateParser, evaluator);
 
 		Exception exc = Assertions.assertThrows(FieldException.class, () -> templateParser.decode(template, reader, null));
 		Assertions.assertEquals("java.lang.IllegalArgumentException: Can not set byte field to String in field io.github.mtrevisan.boxon.codecs.TemplateParserTest$TestError3.type", exc.getMessage());
@@ -213,8 +221,10 @@ class TemplateParserTest{
 		LoaderCodec loaderCodec = LoaderCodec.create(eventListener);
 		loaderCodec.loadDefaultCodecs();
 		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
-		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec);
+		Evaluator evaluator = Evaluator.create();
+		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator);
 		Template<TestError4> template = loaderTemplate.createTemplate(TestError4.class);
+		loaderCodec.injectFieldsInCodecs(templateParser, evaluator);
 
 		Exception exc = Assertions.assertThrows(FieldException.class, () -> templateParser.decode(template, reader, null));
 		Assertions.assertEquals("java.lang.IllegalArgumentException: Can not input Byte to decode method of converter WrongInputConverter in field io.github.mtrevisan.boxon.codecs.TemplateParserTest$TestError4.type", exc.getMessage());
@@ -250,9 +260,10 @@ class TemplateParserTest{
 		LoaderCodec loaderCodec = LoaderCodec.create(eventListener);
 		loaderCodec.loadDefaultCodecs();
 		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
-		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec);
+		Evaluator evaluator = Evaluator.create();
+		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator);
 		Template<TestComposition1> template = loaderTemplate.createTemplate(TestComposition1.class);
-		loaderCodec.injectFieldsInCodecs(templateParser);
+		loaderCodec.injectFieldsInCodecs(templateParser, evaluator);
 
 		TestComposition1 parsed = templateParser.decode(template, reader, null);
 		Assertions.assertNotNull(parsed);
@@ -313,9 +324,10 @@ class TemplateParserTest{
 		LoaderCodec loaderCodec = LoaderCodec.create(eventListener);
 		loaderCodec.loadDefaultCodecs();
 		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
-		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec);
+		Evaluator evaluator = Evaluator.create();
+		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator);
 		Template<TestComposition2> template = loaderTemplate.createTemplate(TestComposition2.class);
-		loaderCodec.injectFieldsInCodecs(templateParser);
+		loaderCodec.injectFieldsInCodecs(templateParser, evaluator);
 
 		TestComposition2 parsed = templateParser.decode(template, reader, null);
 		Assertions.assertNotNull(parsed);
@@ -341,9 +353,10 @@ class TemplateParserTest{
 		LoaderCodec loaderCodec = LoaderCodec.create(eventListener);
 		loaderCodec.loadDefaultCodecs();
 		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
-		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec);
+		Evaluator evaluator = Evaluator.create();
+		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator);
 		Template<TestComposition2> template = loaderTemplate.createTemplate(TestComposition2.class);
-		loaderCodec.injectFieldsInCodecs(templateParser);
+		loaderCodec.injectFieldsInCodecs(templateParser, evaluator);
 
 		TestComposition2 parsed = templateParser.decode(template, reader, null);
 		Assertions.assertNotNull(parsed);
