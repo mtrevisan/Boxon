@@ -57,4 +57,9 @@ public class DeviceType{
 				+ StringHelper.toHexString(new byte[]{(byte)(deviceTypeCode & 0x0000_00FF)}) + ", should be " + code);
 	}
 
+	@Override
+	public String toString(){
+		return name + " (0x" + StringHelper.toHexString(new byte[]{code}) + ")";
+	}
+
 }

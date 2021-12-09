@@ -117,6 +117,8 @@ public final class Parser{
 	public Parser addToContext(final String key, final Object value){
 		Evaluator.addToContext(key, value);
 
+		templateParser.addToBackupContext(key, value);
+
 		return this;
 	}
 
@@ -131,6 +133,8 @@ public final class Parser{
 
 		context.forEach(Evaluator::addToContext);
 
+		templateParser.addToBackupContext(context);
+
 		return this;
 	}
 
@@ -142,6 +146,8 @@ public final class Parser{
 	 */
 	public Parser withContextFunction(final Method method){
 		Evaluator.addToContext(method);
+
+		templateParser.addToBackupContext(method);
 
 		return this;
 	}

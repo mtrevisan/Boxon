@@ -26,6 +26,8 @@ package io.github.mtrevisan.boxon.external;
 
 
 public enum DescriberKey{
+	CONTEXT_METHODS("methods"),
+
 	HEADER_START("start"),
 	HEADER_END("end"),
 	HEADER_CHARSET("charset"),

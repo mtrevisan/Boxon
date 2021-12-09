@@ -28,13 +28,13 @@ import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.Skip;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
+import io.github.mtrevisan.boxon.codecs.managers.AnnotationDescriptor;
 import io.github.mtrevisan.boxon.codecs.managers.BoundedField;
 import io.github.mtrevisan.boxon.codecs.managers.ConstructorHelper;
 import io.github.mtrevisan.boxon.codecs.managers.EvaluatedField;
 import io.github.mtrevisan.boxon.codecs.managers.InjectEventListener;
 import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
 import io.github.mtrevisan.boxon.codecs.managers.Template;
-import io.github.mtrevisan.boxon.codecs.managers.AnnotationDescriptor;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
@@ -49,11 +49,13 @@ import io.github.mtrevisan.boxon.internal.Evaluator;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -67,6 +69,8 @@ public final class TemplateParser implements TemplateParserInterface{
 
 	private final LoaderCodecInterface loaderCodec;
 	private final LoaderTemplate loaderTemplate;
+
+	private final Map<String, Object> backupContext = new HashMap<>(0);
 
 
 	/**
@@ -363,6 +367,25 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 
+	public void addToBackupContext(final String key, final Object value){
+		backupContext.put(key, value.toString());
+	}
+
+	public void addToBackupContext(final Map<String, Object> context){
+		for(final Map.Entry<String, Object> entry : context.entrySet())
+			addToBackupContext(entry.getKey(), entry.getValue());
+	}
+
+	public void addToBackupContext(final Method method){
+		@SuppressWarnings("unchecked")
+		Collection<String> v = (Collection<String>)backupContext.get(DescriberKey.CONTEXT_METHODS.toString());
+		if(v == null){
+			v = new HashSet<>(1);
+			backupContext.put(DescriberKey.CONTEXT_METHODS.toString(), v);
+		}
+		v.add(method.toString());
+	}
+
 	/**
 	 * Description of all the loaded templates.
 	 *
@@ -396,7 +419,7 @@ public final class TemplateParser implements TemplateParserInterface{
 		return description;
 	}
 
-	private static Map<String, Object> describeTemplate(final Template<?> template) throws TemplateException{
+	private Map<String, Object> describeTemplate(final Template<?> template) throws TemplateException{
 		final Map<String, Object> description = new HashMap<>(2);
 		final MessageHeader header = template.getHeader();
 		final Map<String, Object> headerDescription = new HashMap<>(3);
@@ -429,7 +452,7 @@ public final class TemplateParser implements TemplateParserInterface{
 		}
 		description.put("fields", fieldsDescription);
 
-		//TODO add context
+		description.put("context", backupContext);
 
 		return description;
 	}
