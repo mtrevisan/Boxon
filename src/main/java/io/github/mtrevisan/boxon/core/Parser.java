@@ -67,6 +67,7 @@ import java.util.Map;
 import java.util.Objects;
 
 
+//FIXME find a way to simplify this ugly class
 /**
  * Declarative data binding parser for binary encoded data with configuration capabilities.
  */
