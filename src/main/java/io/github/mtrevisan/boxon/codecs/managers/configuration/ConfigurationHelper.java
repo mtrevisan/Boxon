@@ -113,6 +113,7 @@ public final class ConfigurationHelper{
 		return valEnum;
 	}
 
+	@SuppressWarnings("unchecked")
 	private static <T extends ConfigurationEnum> T extractEnumerationSingleValue(final String value, final Class<T> enumeration){
 		final ConfigurationEnum[] enumConstants = enumeration.getEnumConstants();
 		return (T)ConfigurationEnum.extractEnum(enumConstants, value);
