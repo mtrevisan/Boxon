@@ -113,9 +113,9 @@ public final class ConfigurationHelper{
 		return valEnum;
 	}
 
-	private static Object extractEnumerationSingleValue(final String value, final Class<? extends ConfigurationEnum> enumeration){
+	private static <T extends ConfigurationEnum> T extractEnumerationSingleValue(final String value, final Class<T> enumeration){
 		final ConfigurationEnum[] enumConstants = enumeration.getEnumConstants();
-		return enumeration.cast(ConfigurationEnum.extractEnum(enumConstants, value));
+		return (T)ConfigurationEnum.extractEnum(enumConstants, value);
 	}
 
 	private static String[] splitMultipleEnumerations(final CharSequence value){
