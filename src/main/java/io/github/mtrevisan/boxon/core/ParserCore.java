@@ -29,6 +29,7 @@ import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.codecs.ConfigurationParser;
 import io.github.mtrevisan.boxon.codecs.LoaderCodec;
 import io.github.mtrevisan.boxon.codecs.TemplateParser;
+import io.github.mtrevisan.boxon.codecs.TemplateParserCore;
 import io.github.mtrevisan.boxon.codecs.TemplateParserInterface;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
@@ -49,12 +50,13 @@ public final class ParserCore{
 
 	private final Evaluator evaluator = Evaluator.create();
 
+	private final TemplateParserCore templateParserCore;
 	private final TemplateParser templateParser;
 	private final ConfigurationParser configurationParser;
 
 
 	/**
-	 * Create an empty parser (context, codecs and templates MUST BE manually loaded! -- templates MUST BE loaded AFTER
+	 * Create an empty parser core (context, codecs and templates MUST BE manually loaded! -- templates MUST BE loaded AFTER
 	 * the codecs).
 	 *
 	 * @return	A basic empty parser.
@@ -64,7 +66,7 @@ public final class ParserCore{
 	}
 
 	/**
-	 * Create an empty parser (context, codecs and templates MUST BE manually loaded! -- templates MUST BE loaded AFTER
+	 * Create an empty parser core (context, codecs and templates MUST BE manually loaded! -- templates MUST BE loaded AFTER
 	 * the codecs).
 	 *
 	 * @param eventListener	The event listener.
@@ -74,10 +76,12 @@ public final class ParserCore{
 		return new ParserCore(eventListener != null? eventListener: EventListener.getNoOpInstance());
 	}
 
+
 	private ParserCore(final EventListener eventListener){
 		loaderCodec = LoaderCodec.create(eventListener);
 
-		templateParser = TemplateParser.create(loaderCodec, eventListener, evaluator);
+		templateParserCore = TemplateParserCore.create(loaderCodec, eventListener, evaluator);
+		templateParser = TemplateParser.create(templateParserCore);
 		configurationParser = ConfigurationParser.create(loaderCodec, eventListener);
 	}
 
@@ -199,7 +203,7 @@ public final class ParserCore{
 	 * @throws TemplateException	If a template is not well formatted.
 	 */
 	public ParserCore withDefaultTemplates() throws AnnotationException, TemplateException{
-		templateParser.loadDefaultTemplates();
+		templateParserCore.loadDefaultTemplates();
 
 		return this;
 	}
@@ -213,7 +217,7 @@ public final class ParserCore{
 	 * @throws TemplateException	If a template is not well formatted.
 	 */
 	public ParserCore withTemplates(final Class<?>... basePackageClasses) throws AnnotationException, TemplateException{
-		templateParser.loadTemplates(basePackageClasses);
+		templateParserCore.loadTemplates(basePackageClasses);
 
 		return this;
 	}
@@ -227,7 +231,7 @@ public final class ParserCore{
 	 * @throws TemplateException	If the template is not well formatted.
 	 */
 	public ParserCore withTemplate(final Class<?> templateClass) throws AnnotationException, TemplateException{
-		templateParser.loadTemplate(templateClass);
+		templateParserCore.loadTemplate(templateClass);
 
 		return this;
 	}

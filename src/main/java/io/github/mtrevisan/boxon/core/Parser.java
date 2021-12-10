@@ -60,7 +60,6 @@ import java.util.List;
 import java.util.Map;
 
 
-//FIXME find a way to simplify this ugly class
 /**
  * Declarative data binding parser for binary encoded data with configuration capabilities.
  */

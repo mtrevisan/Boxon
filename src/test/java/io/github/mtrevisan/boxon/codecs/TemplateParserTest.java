@@ -61,7 +61,8 @@ class TemplateParserTest{
 		loaderCodec.loadDefaultCodecs();
 		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
 		Evaluator evaluator = Evaluator.create();
-		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator);
+		TemplateParserCore templateParserCore = TemplateParserCore.create(loaderCodec, evaluator);
+		TemplateParserInterface templateParser = TemplateParser.create(templateParserCore);
 		Template<ACKMessageHex> template = loaderTemplate.createTemplate(ACKMessageHex.class);
 		postProcessCodecs(loaderCodec, templateParser, evaluator);
 
@@ -96,7 +97,8 @@ class TemplateParserTest{
 		loaderCodec.loadDefaultCodecs();
 		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
 		Evaluator evaluator = Evaluator.create();
-		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator);
+		TemplateParserCore templateParserCore = TemplateParserCore.create(loaderCodec, evaluator);
+		TemplateParserInterface templateParser = TemplateParser.create(templateParserCore);
 		Template<ACKMessageASCII> template = loaderTemplate.createTemplate(ACKMessageASCII.class);
 
 		if(!template.canBeCoded())
@@ -142,7 +144,8 @@ class TemplateParserTest{
 		loaderCodec.loadDefaultCodecs();
 		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
 		Evaluator evaluator = Evaluator.create();
-		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator);
+		TemplateParserCore templateParserCore = TemplateParserCore.create(loaderCodec, evaluator);
+		TemplateParserInterface templateParser = TemplateParser.create(templateParserCore);
 		Template<TestError1> template = loaderTemplate.createTemplate(TestError1.class);
 		postProcessCodecs(loaderCodec, templateParser, evaluator);
 
@@ -182,7 +185,8 @@ class TemplateParserTest{
 		loaderCodec.loadDefaultCodecs();
 		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
 		Evaluator evaluator = Evaluator.create();
-		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator);
+		TemplateParserCore templateParserCore = TemplateParserCore.create(loaderCodec, evaluator);
+		TemplateParserInterface templateParser = TemplateParser.create(templateParserCore);
 		Template<TestError3> template = loaderTemplate.createTemplate(TestError3.class);
 		postProcessCodecs(loaderCodec, templateParser, evaluator);
 
@@ -222,7 +226,8 @@ class TemplateParserTest{
 		loaderCodec.loadDefaultCodecs();
 		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
 		Evaluator evaluator = Evaluator.create();
-		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator);
+		TemplateParserCore templateParserCore = TemplateParserCore.create(loaderCodec, evaluator);
+		TemplateParserInterface templateParser = TemplateParser.create(templateParserCore);
 		Template<TestError4> template = loaderTemplate.createTemplate(TestError4.class);
 		postProcessCodecs(loaderCodec, templateParser, evaluator);
 
@@ -261,7 +266,8 @@ class TemplateParserTest{
 		loaderCodec.loadDefaultCodecs();
 		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
 		Evaluator evaluator = Evaluator.create();
-		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator);
+		TemplateParserCore templateParserCore = TemplateParserCore.create(loaderCodec, evaluator);
+		TemplateParserInterface templateParser = TemplateParser.create(templateParserCore);
 		Template<TestComposition1> template = loaderTemplate.createTemplate(TestComposition1.class);
 		postProcessCodecs(loaderCodec, templateParser, evaluator);
 
@@ -325,7 +331,8 @@ class TemplateParserTest{
 		loaderCodec.loadDefaultCodecs();
 		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
 		Evaluator evaluator = Evaluator.create();
-		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator);
+		TemplateParserCore templateParserCore = TemplateParserCore.create(loaderCodec, evaluator);
+		TemplateParserInterface templateParser = TemplateParser.create(templateParserCore);
 		Template<TestComposition2> template = loaderTemplate.createTemplate(TestComposition2.class);
 		postProcessCodecs(loaderCodec, templateParser, evaluator);
 
@@ -354,7 +361,8 @@ class TemplateParserTest{
 		loaderCodec.loadDefaultCodecs();
 		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
 		Evaluator evaluator = Evaluator.create();
-		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator);
+		TemplateParserCore templateParserCore = TemplateParserCore.create(loaderCodec, evaluator);
+		TemplateParserInterface templateParser = TemplateParser.create(templateParserCore);
 		Template<TestComposition2> template = loaderTemplate.createTemplate(TestComposition2.class);
 		postProcessCodecs(loaderCodec, templateParser, evaluator);
 

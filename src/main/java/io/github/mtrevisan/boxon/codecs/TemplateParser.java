@@ -32,7 +32,6 @@ import io.github.mtrevisan.boxon.codecs.managers.AnnotationDescriptor;
 import io.github.mtrevisan.boxon.codecs.managers.BoundedField;
 import io.github.mtrevisan.boxon.codecs.managers.ConstructorHelper;
 import io.github.mtrevisan.boxon.codecs.managers.EvaluatedField;
-import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
 import io.github.mtrevisan.boxon.codecs.managers.Template;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
@@ -64,76 +63,25 @@ public final class TemplateParser implements TemplateParserInterface{
 
 	private final EventListener eventListener;
 
-	private final LoaderCodecInterface loaderCodec;
-	private final LoaderTemplate loaderTemplate;
+	private final TemplateParserCore core;
 
 	private final Map<String, Object> backupContext = new HashMap<>(0);
 
-	private final Evaluator evaluator;
-
 
 	/**
 	 * Create a template parser.
 	 *
-	 * @param loaderCodec	A codec loader.
-	 * @param evaluator	An evaluator.
+	 * @param core	The core of the template parser.
 	 * @return	A template parser.
 	 */
-	public static TemplateParser create(final LoaderCodecInterface loaderCodec, final Evaluator evaluator){
-		return new TemplateParser(loaderCodec, EventListener.getNoOpInstance(), evaluator);
+	public static TemplateParser create(final TemplateParserCore core){
+		return new TemplateParser(core);
 	}
 
-	/**
-	 * Create a template parser.
-	 *
-	 * @param loaderCodec	A codec loader.
-	 * @param eventListener	The event listener.
-	 * @param evaluator	An evaluator.
-	 * @return	A template parser.
-	 */
-	public static TemplateParser create(final LoaderCodecInterface loaderCodec, final EventListener eventListener,
-			final Evaluator evaluator){
-		return new TemplateParser(loaderCodec, (eventListener != null? eventListener: EventListener.getNoOpInstance()), evaluator);
-	}
+	private TemplateParser(final TemplateParserCore core){
+		eventListener = core.getEventListener();
 
-
-	private TemplateParser(final LoaderCodecInterface loaderCodec, final EventListener eventListener, final Evaluator evaluator){
-		this.eventListener = eventListener;
-
-		this.loaderCodec = loaderCodec;
-		loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
-		this.evaluator = evaluator;
-	}
-
-
-	/**
-	 * Loads all the protocol classes annotated with {@link MessageHeader}.
-	 * <p>This method SHOULD BE called from a method inside a class that lies on a parent of all the protocol classes.</p>
-	 *
-	 * @throws IllegalArgumentException	If the codecs was not loaded yet.
-	 */
-	public void loadDefaultTemplates() throws AnnotationException, TemplateException{
-		loaderTemplate.loadTemplates(ReflectionHelper.extractCallerClasses());
-	}
-
-	/**
-	 * Loads all the protocol classes annotated with {@link MessageHeader}.
-	 *
-	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
-	 */
-	public void loadTemplates(final Class<?>... basePackageClasses) throws AnnotationException, TemplateException{
-		loaderTemplate.loadTemplates(basePackageClasses);
-	}
-
-	/**
-	 * Load the specified protocol class annotated with {@link MessageHeader}.
-	 *
-	 * @param templateClass	Template class.
-	 * @throws AnnotationException	If the annotation is not well formatted.
-	 * @throws TemplateException	If the template is not well formatted.
-	 */
-	public void loadTemplate(final Class<?> templateClass) throws AnnotationException, TemplateException{
-		loaderTemplate.loadTemplate(templateClass);
+		this.core = core;
 	}
 
 	/**
@@ -145,8 +93,9 @@ public final class TemplateParser implements TemplateParserInterface{
 	 */
 	@Override
 	public <T> Template<T> createTemplate(final Class<T> type) throws AnnotationException{
-		return loaderTemplate.createTemplate(type);
+		return core.createTemplate(type);
 	}
+
 
 	/**
 	 * Retrieve the next template.
@@ -155,7 +104,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	 * @return	The template that is able to decode/encode the next message in the given reader.
 	 */
 	public Template<?> getTemplate(final BitReader reader) throws TemplateException{
-		return loaderTemplate.getTemplate(reader);
+		return core.getLoaderTemplate().getTemplate(reader);
 	}
 
 	/**
@@ -165,7 +114,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	 * @return	The template that is able to decode/encode the given class.
 	 */
 	public Template<?> getTemplate(final Class<?> type) throws TemplateException{
-		return loaderTemplate.getTemplate(type);
+		return core.getLoaderTemplate().getTemplate(type);
 	}
 
 	/**
@@ -175,7 +124,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	 * @return	The index of the next message.
 	 */
 	public int findNextMessageIndex(final BitReader reader){
-		return loaderTemplate.findNextMessageIndex(reader);
+		return core.getLoaderTemplate().findNextMessageIndex(reader);
 	}
 
 
@@ -186,7 +135,7 @@ public final class TemplateParser implements TemplateParserInterface{
 		final T currentObject = ConstructorHelper.getCreator(template.getType())
 			.get();
 
-		final ParserContext<T> parserContext = new ParserContext<>(evaluator, currentObject, parentObject);
+		final ParserContext<T> parserContext = new ParserContext<>(core.getEvaluator(), currentObject, parentObject);
 		//add current object in the context
 		parserContext.addCurrentObjectToEvaluatorContext();
 
@@ -218,7 +167,7 @@ public final class TemplateParser implements TemplateParserInterface{
 			final BoundedField field) throws FieldException{
 		final Annotation binding = field.getBinding();
 		final Class<? extends Annotation> annotationType = binding.annotationType();
-		final CodecInterface<?> codec = loaderCodec.getCodec(annotationType);
+		final CodecInterface<?> codec = core.getLoaderCodec().getCodec(annotationType);
 		if(codec == null)
 			throw CodecException.create("Cannot find codec for binding {}", annotationType.getSimpleName())
 				.withClassNameAndFieldName(template.getType().getName(), field.getFieldName());
@@ -249,6 +198,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 	private void readSkip(final Skip skip, final BitReader reader, final Object rootObject){
+		final Evaluator evaluator = core.getEvaluator();
 		final boolean process = evaluator.evaluateBoolean(skip.condition(), rootObject);
 		if(!process)
 			return;
@@ -302,6 +252,7 @@ public final class TemplateParser implements TemplateParserInterface{
 		final List<EvaluatedField> evaluatedFields = template.getEvaluatedFields();
 		for(int i = 0; i < evaluatedFields.size(); i ++){
 			final EvaluatedField field = evaluatedFields.get(i);
+			final Evaluator evaluator = core.getEvaluator();
 			final boolean process = evaluator.evaluateBoolean(field.getBinding().condition(), parserContext.getRootObject());
 			if(!process)
 				continue;
@@ -318,11 +269,12 @@ public final class TemplateParser implements TemplateParserInterface{
 	@Override
 	public <T> void encode(final Template<?> template, final BitWriter writer, final Object parentObject, final T currentObject)
 			throws FieldException{
-		final ParserContext<T> parserContext = new ParserContext<>(evaluator, currentObject, parentObject);
+		final ParserContext<T> parserContext = new ParserContext<>(core.getEvaluator(), currentObject, parentObject);
 		parserContext.addCurrentObjectToEvaluatorContext();
 		parserContext.setClassName(template.getType().getName());
 
 		//encode message fields:
+		final LoaderCodecInterface loaderCodec = core.getLoaderCodec();
 		final List<BoundedField> fields = template.getBoundedFields();
 		for(int i = 0; i < fields.size(); i ++){
 			final BoundedField field = fields.get(i);
@@ -347,7 +299,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 	private boolean shouldProcessField(final String condition, final Object rootObject){
-		return (condition.isEmpty() || evaluator.evaluateBoolean(condition, rootObject));
+		return (condition.isEmpty() || core.getEvaluator().evaluateBoolean(condition, rootObject));
 	}
 
 	private <T> void writeSkips(final Skip[] skips, final BitWriter writer, final ParserContext<T> parserContext){
@@ -356,6 +308,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 	private void writeSkip(final Skip skip, final BitWriter writer, final Object rootObject){
+		final Evaluator evaluator = core.getEvaluator();
 		final boolean process = evaluator.evaluateBoolean(skip.condition(), rootObject);
 		if(!process)
 			return;
@@ -395,7 +348,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	 * @return	The list of descriptions.
 	 */
 	public List<Map<String, Object>> describeTemplates() throws TemplateException{
-		final Collection<Template<?>> templates = loaderTemplate.getTemplates();
+		final Collection<Template<?>> templates = core.getLoaderTemplate().getTemplates();
 		final List<Map<String, Object>> description = new ArrayList<>(templates.size());
 		for(final Template<?> template : templates)
 			description.add(describeTemplate(template));
@@ -411,6 +364,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	 * @throws TemplateException	If a template is not well formatted.
 	 */
 	public List<Map<String, Object>> describeTemplates(final Class<?>... templateClasses) throws AnnotationException, TemplateException{
+		final LoaderTemplate loaderTemplate = core.getLoaderTemplate();
 		final List<Map<String, Object>> description = new ArrayList<>(templateClasses.length);
 		for(int i = 0; i < templateClasses.length; i ++){
 			final Class<?> templateClass = templateClasses[i];
