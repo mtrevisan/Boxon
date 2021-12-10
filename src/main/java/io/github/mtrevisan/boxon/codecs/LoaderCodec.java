@@ -63,7 +63,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	 * @return	A codec loader.
 	 */
 	static LoaderCodec create(){
-		return new LoaderCodec(EventListener.getNoOpInstance());
+		return create(null);
 	}
 
 	/**
@@ -161,7 +161,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	//FIXME ugliness?
 	public <T> void injectFieldInCodecs(final Class<T> type, final T object){
 		for(final CodecInterface<?> codec : codecs.values())
-			ReflectionHelper.setFieldValue(codec, type, object);
+			ReflectionHelper.injectFieldValue(codec, type, object);
 	}
 
 	@Override

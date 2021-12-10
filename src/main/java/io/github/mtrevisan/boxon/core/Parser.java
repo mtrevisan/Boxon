@@ -91,7 +91,7 @@ public final class Parser{
 	 * @return	A basic empty parser.
 	 */
 	public static Parser create(){
-		return new Parser(EventListener.getNoOpInstance());
+		return create(null);
 	}
 
 	/**

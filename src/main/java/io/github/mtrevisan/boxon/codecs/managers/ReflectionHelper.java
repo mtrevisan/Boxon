@@ -110,11 +110,26 @@ public final class ReflectionHelper{
 		catch(final IllegalArgumentException | IllegalAccessException ignored){}
 	}
 
-	public static <T> void setStaticFieldValue(final Class<?> cl, final Class<T> fieldType, final T value){
+	public static <T> void injectFieldValue(final Object obj, final Class<T> fieldType, final T value){
+		try{
+			final List<Field> fields = getAccessibleFields(obj.getClass(), fieldType);
+			for(int i = 0; i < fields.size(); i ++){
+				final Field field = fields.get(i);
+				if(field.getAnnotation(Injected.class) != null)
+					field.set(obj, value);
+			}
+		}
+		catch(final IllegalArgumentException | IllegalAccessException ignored){}
+	}
+
+	public static <T> void injectStaticFieldValue(final Class<?> cl, final Class<T> fieldType, final T value){
 		try{
 			final List<Field> fields = getAccessibleFields(cl, fieldType);
-			for(int i = 0; i < fields.size(); i ++)
-				fields.get(i).set(null, value);
+			for(int i = 0; i < fields.size(); i ++){
+				final Field field = fields.get(i);
+				if(field.getAnnotation(Injected.class) != null)
+					field.set(null, value);
+			}
 		}
 		catch(final IllegalArgumentException | IllegalAccessException ignored){}
 	}

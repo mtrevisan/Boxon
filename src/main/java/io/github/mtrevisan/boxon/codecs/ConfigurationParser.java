@@ -61,7 +61,7 @@ public final class ConfigurationParser{
 	 * @return	A configuration parser.
 	 */
 	public static ConfigurationParser create(final LoaderCodecInterface loaderCodec){
-		return new ConfigurationParser(loaderCodec, EventListener.getNoOpInstance());
+		return create(loaderCodec, null);
 	}
 
 	/**

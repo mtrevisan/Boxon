@@ -75,7 +75,7 @@ final class LoaderTemplate{
 	 * @return	A template parser.
 	 */
 	static LoaderTemplate create(final LoaderCodecInterface loaderCodec){
-		return new LoaderTemplate(loaderCodec, EventListener.getNoOpInstance());
+		return create(loaderCodec, null);
 	}
 
 	/**

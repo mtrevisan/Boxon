@@ -69,7 +69,7 @@ final class LoaderConfiguration{
 	 * @return	A template parser.
 	 */
 	static LoaderConfiguration create(){
-		return new LoaderConfiguration(EventListener.getNoOpInstance());
+		return create(null);
 	}
 
 	/**

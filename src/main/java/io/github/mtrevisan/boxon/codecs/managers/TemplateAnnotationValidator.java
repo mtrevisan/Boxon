@@ -106,8 +106,8 @@ public enum TemplateAnnotationValidator{
 	};
 
 
-	/** Automatically injected. */
 	@SuppressWarnings("unused")
+	@Injected
 	private static EventListener eventListener;
 
 	private static final String EMPTY_STRING = "";

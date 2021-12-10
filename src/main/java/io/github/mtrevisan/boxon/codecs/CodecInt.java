@@ -27,6 +27,7 @@ package io.github.mtrevisan.boxon.codecs;
 import io.github.mtrevisan.boxon.annotations.bindings.BindInt;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
+import io.github.mtrevisan.boxon.codecs.managers.Injected;
 import io.github.mtrevisan.boxon.external.codecs.BitReader;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
 import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
@@ -37,8 +38,8 @@ import java.lang.annotation.Annotation;
 
 final class CodecInt implements CodecInterface<BindInt>{
 
-	/** Automatically injected. */
 	@SuppressWarnings("unused")
+	@Injected
 	private Evaluator evaluator;
 
 

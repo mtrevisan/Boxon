@@ -27,6 +27,7 @@ package io.github.mtrevisan.boxon.codecs;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
+import io.github.mtrevisan.boxon.codecs.managers.Injected;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.external.codecs.BitReader;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
@@ -41,8 +42,8 @@ import java.lang.reflect.Array;
 
 final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 
-	/** Automatically injected. */
 	@SuppressWarnings("unused")
+	@Injected
 	private Evaluator evaluator;
 
 

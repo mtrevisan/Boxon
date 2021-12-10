@@ -27,6 +27,7 @@ package io.github.mtrevisan.boxon.codecs;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
+import io.github.mtrevisan.boxon.codecs.managers.Injected;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.external.codecs.BitReader;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
@@ -39,8 +40,8 @@ import java.nio.charset.Charset;
 
 final class CodecString implements CodecInterface<BindString>{
 
-	/** Automatically injected. */
 	@SuppressWarnings("unused")
+	@Injected
 	private Evaluator evaluator;
 
 
