@@ -110,7 +110,7 @@ public final class Descriptor{
 		return description;
 	}
 
-	private void describeHeader(final MessageHeader header, final Map<String, Object> description){
+	private static void describeHeader(final MessageHeader header, final Map<String, Object> description){
 		final Map<String, Object> headerDescription = new HashMap<>(3);
 		AnnotationDescriptor.putIfNotEmpty(DescriberKey.HEADER_START, header.start(), headerDescription);
 		AnnotationDescriptor.putIfNotEmpty(DescriberKey.HEADER_END, header.end(), headerDescription);
@@ -118,14 +118,15 @@ public final class Descriptor{
 		description.put(DescriberKey.HEADER.toString(), headerDescription);
 	}
 
-	private void describeFields(final List<BoundedField> fields, final Map<String, Object> description) throws TemplateException{
+	private static void describeFields(final List<BoundedField> fields, final Map<String, Object> description) throws TemplateException{
 		final Collection<Map<String, Object>> fieldsDescription = new ArrayList<>(0);
 		for(int i = 0; i < fields.size(); i ++)
 			describeField(fields.get(i), fieldsDescription);
 		description.put(DescriberKey.FIELDS.toString(), fieldsDescription);
 	}
 
-	private void describeField(final BoundedField field, final Collection<Map<String, Object>> fieldsDescription) throws TemplateException{
+	private static void describeField(final BoundedField field, final Collection<Map<String, Object>> fieldsDescription)
+			throws TemplateException{
 		AnnotationDescriptor.describeSkips(field.getSkips(), fieldsDescription);
 
 		final Map<String, Object> fieldDescription = new HashMap<>(13);
