@@ -100,7 +100,7 @@ public final class TemplateParser implements TemplateParserInterface{
 
 	private TemplateParser(final LoaderCodecInterface loaderCodec, final EventListener eventListener, final Evaluator evaluator){
 		this.eventListener = eventListener;
-		ReflectionHelper.injectStaticValue(TemplateAnnotationValidator.class, EventListener.class, eventListener);
+		TemplateAnnotationValidator.setEventListener(eventListener);
 
 		this.loaderCodec = loaderCodec;
 		loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);

@@ -106,8 +106,6 @@ public enum TemplateAnnotationValidator{
 	};
 
 
-	@SuppressWarnings("unused")
-	@Injected
 	private static EventListener eventListener;
 
 	private static final String EMPTY_STRING = "";
@@ -121,6 +119,10 @@ public enum TemplateAnnotationValidator{
 
 	TemplateAnnotationValidator(final Class<? extends Annotation> type){
 		annotationType = type;
+	}
+
+	public static void setEventListener(final EventListener eventListener){
+		TemplateAnnotationValidator.eventListener = eventListener;
 	}
 
 	static TemplateAnnotationValidator fromAnnotation(final Annotation annotation){
