@@ -37,7 +37,6 @@ import io.github.mtrevisan.boxon.external.codecs.BitReader;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
 import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
 import io.github.mtrevisan.boxon.external.codecs.ParserDataType;
-import io.github.mtrevisan.boxon.external.logs.EventListener;
 import io.github.mtrevisan.boxon.internal.Evaluator;
 
 import java.lang.annotation.Annotation;
@@ -46,9 +45,6 @@ import java.lang.reflect.Array;
 
 final class CodecArray implements CodecInterface<BindArray>{
 
-	@SuppressWarnings("unused")
-	@Injected
-	private EventListener eventListener;
 	@SuppressWarnings("unused")
 	@Injected
 	private TemplateParserInterface templateParser;
@@ -90,21 +86,17 @@ final class CodecArray implements CodecInterface<BindArray>{
 		return (T[])Array.newInstance(type, length);
 	}
 
-	private void decodeWithAlternatives(final BitReader reader, final Object[] array, final BindArray binding, final Object rootObject){
+	private void decodeWithAlternatives(final BitReader reader, final Object[] array, final BindArray binding, final Object rootObject)
+			throws FieldException{
 		final ObjectChoices selectFrom = binding.selectFrom();
 		for(int i = 0; i < array.length; i ++){
-			try{
-				final ObjectChoices.ObjectChoice chosenAlternative = CodecHelper.chooseAlternative(reader, selectFrom, rootObject, evaluator);
-				final Class<?> chosenAlternativeType = (!isEmptyChoice(chosenAlternative)? chosenAlternative.type(): binding.selectDefault());
-				validateChosenAlternative(chosenAlternativeType, rootObject);
+			final ObjectChoices.ObjectChoice chosenAlternative = CodecHelper.chooseAlternative(reader, selectFrom, rootObject, evaluator);
+			final Class<?> chosenAlternativeType = (!isEmptyChoice(chosenAlternative)? chosenAlternative.type(): binding.selectDefault());
+			validateChosenAlternative(chosenAlternativeType, rootObject);
 
-				//read object
-				final Template<?> subTemplate = templateParser.createTemplate(chosenAlternativeType);
-				array[i] = templateParser.decode(subTemplate, reader, rootObject);
-			}
-			catch(final Exception e){
-				eventListener.processingAlternative(e);
-			}
+			//read object
+			final Template<?> subTemplate = templateParser.createTemplate(chosenAlternativeType);
+			array[i] = templateParser.decode(subTemplate, reader, rootObject);
 		}
 	}
 

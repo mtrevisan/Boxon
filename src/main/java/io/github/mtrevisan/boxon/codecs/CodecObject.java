@@ -36,7 +36,6 @@ import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.codecs.BitReader;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
 import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
-import io.github.mtrevisan.boxon.external.logs.EventListener;
 import io.github.mtrevisan.boxon.internal.Evaluator;
 
 import java.lang.annotation.Annotation;
@@ -46,9 +45,6 @@ final class CodecObject implements CodecInterface<BindObject>{
 
 	@SuppressWarnings("unused")
 	@Injected
-	private EventListener eventListener;
-	@SuppressWarnings("unused")
-	@Injected
 	private TemplateParserInterface templateParser;
 	@SuppressWarnings("unused")
 	@Injected
@@ -56,28 +52,23 @@ final class CodecObject implements CodecInterface<BindObject>{
 
 
 	@Override
-	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
+	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject) throws FieldException{
 		final BindObject binding = extractBinding(annotation);
 
-		Object value = null;
-		try{
-			final Class<?> type = extractType(reader, binding, rootObject);
+		final Class<?> type = extractType(reader, binding, rootObject);
 
-			final Template<?> template = templateParser.createTemplate(type);
-			final Object instance = templateParser.decode(template, reader, rootObject);
-			evaluator.addToContext(ContextHelper.CONTEXT_SELF, instance);
+		final Template<?> template = templateParser.createTemplate(type);
+		final Object instance = templateParser.decode(template, reader, rootObject);
+		evaluator.addToContext(ContextHelper.CONTEXT_SELF, instance);
 
-			final ConverterChoices selectConverterFrom = binding.selectConverterFrom();
-			final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
-			final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(selectConverterFrom, defaultConverter,
-				rootObject, evaluator);
-			value = CodecHelper.converterDecode(chosenConverter, instance);
+		final ConverterChoices selectConverterFrom = binding.selectConverterFrom();
+		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
+		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(selectConverterFrom, defaultConverter,
+			rootObject, evaluator);
+		final Object value = CodecHelper.converterDecode(chosenConverter, instance);
 
-			CodecHelper.validateData(binding.validator(), value);
-		}
-		catch(final Exception e){
-			eventListener.processingAlternative(e);
-		}
+		CodecHelper.validateData(binding.validator(), value);
+
 		return value;
 	}
 

@@ -220,7 +220,6 @@ public final class Parser{
 	}
 
 	private void postProcessCodecs(){
-		loaderCodec.injectFieldInCodecs(EventListener.class, eventListener);
 		loaderCodec.injectFieldInCodecs(TemplateParserInterface.class, templateParser);
 		loaderCodec.injectFieldInCodecs(Evaluator.class, evaluator);
 	}

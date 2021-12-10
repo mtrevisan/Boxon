@@ -376,7 +376,6 @@ class TemplateParserTest{
 
 
 	private void postProcessCodecs(LoaderCodec loaderCodec, TemplateParserInterface templateParser, Evaluator evaluator){
-		loaderCodec.injectFieldInCodecs(EventListener.class, EventListener.getNoOpInstance());
 		loaderCodec.injectFieldInCodecs(TemplateParserInterface.class, templateParser);
 		loaderCodec.injectFieldInCodecs(Evaluator.class, evaluator);
 	}
