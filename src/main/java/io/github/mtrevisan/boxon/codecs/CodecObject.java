@@ -45,10 +45,10 @@ final class CodecObject implements CodecInterface<BindObject>{
 
 	@SuppressWarnings("unused")
 	@Injected
-	private TemplateParserInterface templateParser;
+	private Evaluator evaluator;
 	@SuppressWarnings("unused")
 	@Injected
-	private Evaluator evaluator;
+	private TemplateParserInterface templateParser;
 
 
 	@Override

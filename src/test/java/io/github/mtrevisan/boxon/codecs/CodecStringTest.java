@@ -99,7 +99,7 @@ class CodecStringTest{
 		};
 
 		BitWriter writer = BitWriter.create();
-		ReflectionHelper.setValue(codec, Evaluator.class, Evaluator.create());
+		ReflectionHelper.injectValue(codec, Evaluator.class, Evaluator.create());
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
@@ -163,7 +163,7 @@ class CodecStringTest{
 		};
 
 		BitWriter writer = BitWriter.create();
-		ReflectionHelper.setValue(codec, Evaluator.class, Evaluator.create());
+		ReflectionHelper.injectValue(codec, Evaluator.class, Evaluator.create());
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 

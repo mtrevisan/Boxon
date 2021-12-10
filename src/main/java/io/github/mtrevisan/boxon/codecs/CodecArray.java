@@ -47,10 +47,10 @@ final class CodecArray implements CodecInterface<BindArray>{
 
 	@SuppressWarnings("unused")
 	@Injected
-	private TemplateParserInterface templateParser;
+	private Evaluator evaluator;
 	@SuppressWarnings("unused")
 	@Injected
-	private Evaluator evaluator;
+	private TemplateParserInterface templateParser;
 
 
 	@Override

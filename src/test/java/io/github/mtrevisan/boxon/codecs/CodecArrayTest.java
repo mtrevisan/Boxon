@@ -157,7 +157,7 @@ class CodecArrayTest{
 		};
 
 		BitWriter writer = BitWriter.create();
-		ReflectionHelper.setValue(codec, Evaluator.class, Evaluator.create());
+		ReflectionHelper.injectValue(codec, Evaluator.class, Evaluator.create());
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
@@ -256,8 +256,8 @@ class CodecArrayTest{
 		Evaluator evaluator = Evaluator.create();
 		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator);
 		loaderCodec.loadDefaultCodecs();
-		ReflectionHelper.setValue(codec, TemplateParserInterface.class, templateParser);
-		ReflectionHelper.setValue(codec, Evaluator.class, Evaluator.create());
+		ReflectionHelper.injectValue(codec, TemplateParserInterface.class, templateParser);
+		ReflectionHelper.injectValue(codec, Evaluator.class, Evaluator.create());
 		BitWriter writer = BitWriter.create();
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();

@@ -101,7 +101,7 @@ public final class ReflectionHelper{
 		}
 	}
 
-	public static <T> void setValue(final Object obj, final Class<T> fieldType, final T value){
+	public static <T> void injectValue(final Object obj, final Class<T> fieldType, final T value){
 		try{
 			final List<Field> fields = getAccessibleFields(obj.getClass(), fieldType);
 			for(int i = 0; i < fields.size(); i ++)
@@ -110,26 +110,11 @@ public final class ReflectionHelper{
 		catch(final IllegalArgumentException | IllegalAccessException ignored){}
 	}
 
-	public static <T> void injectValue(final Object obj, final Class<T> fieldType, final T value){
-		try{
-			final List<Field> fields = getAccessibleFields(obj.getClass(), fieldType);
-			for(int i = 0; i < fields.size(); i ++){
-				final Field field = fields.get(i);
-				if(field.getAnnotation(Injected.class) != null)
-					field.set(obj, value);
-			}
-		}
-		catch(final IllegalArgumentException | IllegalAccessException ignored){}
-	}
-
 	public static <T> void injectStaticValue(final Class<?> cl, final Class<T> fieldType, final T value){
 		try{
 			final List<Field> fields = getAccessibleFields(cl, fieldType);
-			for(int i = 0; i < fields.size(); i ++){
-				final Field field = fields.get(i);
-				if(field.getAnnotation(Injected.class) != null)
-					field.set(null, value);
-			}
+			for(int i = 0; i < fields.size(); i ++)
+				fields.get(i).set(null, value);
 		}
 		catch(final IllegalArgumentException | IllegalAccessException ignored){}
 	}
@@ -148,7 +133,7 @@ public final class ReflectionHelper{
 	 * Retrieve all declared fields in the current class AND in the parent classes.
 	 *
 	 * @param cls	The class from which to extract the declared fields.
-	 * @param fieldType	The class for which to extract all the fields.
+	 * @param fieldType	The class of the fields to be extracted.
 	 * @return	An array of all the fields of the given class.
 	 */
 	private static List<Field> getAccessibleFields(Class<?> cls, final Class<?> fieldType){
@@ -171,13 +156,16 @@ public final class ReflectionHelper{
 		return fields;
 	}
 
-	private static void extractChildFields(final ArrayList<Field> childFields, final Field[] rawSubfields, final Class<?> fieldType){
+	private static void extractChildFields(final ArrayList<Field> childFields, final Field[] rawSubFields, final Class<?> fieldType){
 		childFields.clear();
-		childFields.ensureCapacity(rawSubfields.length);
+		childFields.ensureCapacity(rawSubFields.length);
 		//apply filter on field type if needed
-		for(int i = 0; i < rawSubfields.length; i ++)
-			if(fieldType == null || rawSubfields[i].getType() == fieldType)
-				childFields.add(rawSubfields[i]);
+		for(int i = 0; i < rawSubFields.length; i ++){
+			final Field rawSubField = rawSubFields[i];
+			//FIXME really ugly (if `fieldType` is not null, it means that an injection must be performed)
+			if(fieldType == null || fieldType.isAssignableFrom(rawSubField.getType()) && rawSubField.isAnnotationPresent(Injected.class))
+				childFields.add(rawSubField);
+		}
 	}
 
 	private static void makeFieldsAccessible(final List<Field> fields){
