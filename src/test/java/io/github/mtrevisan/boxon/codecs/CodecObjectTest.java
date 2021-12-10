@@ -41,6 +41,7 @@ import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
 import io.github.mtrevisan.boxon.core.ComposeResponse;
 import io.github.mtrevisan.boxon.core.ParseResponse;
 import io.github.mtrevisan.boxon.core.Parser;
+import io.github.mtrevisan.boxon.core.ParserCore;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
@@ -225,9 +226,10 @@ class CodecObjectTest{
 
 	@Test
 	void choice1() throws AnnotationException, TemplateException{
-		Parser parser = Parser.create()
+		ParserCore core = ParserCore.create()
 			.withDefaultCodecs()
 			.withTemplates(TestChoice1.class);
+		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.toByteArray("746331011234");
 		ParseResponse result = parser.parse(payload);
@@ -265,9 +267,10 @@ class CodecObjectTest{
 
 	@Test
 	void choice2() throws AnnotationException, TemplateException{
-		Parser parser = Parser.create()
+		ParserCore core = ParserCore.create()
 			.withDefaultCodecs()
 			.withTemplates(TestChoice2.class);
+		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.toByteArray("7463320506001234");
 		ParseResponse result = parser.parse(payload);
@@ -305,9 +308,10 @@ class CodecObjectTest{
 
 	@Test
 	void choice3() throws AnnotationException, TemplateException{
-		Parser parser = Parser.create()
+		ParserCore core = ParserCore.create()
 			.withDefaultCodecs()
 			.withTemplates(TestChoice3.class);
+		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.toByteArray("74633361611234");
 		ParseResponse result = parser.parse(payload);

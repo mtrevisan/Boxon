@@ -671,11 +671,12 @@ Example:
 ```java
 DeviceTypes deviceTypes = new DeviceTypes();
 deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
-Parser parser = Parser.create()
+ParserCore core = ParserCore.create()
     .addToContext("deviceTypes", deviceTypes)
     .withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
     .withDefaultCodecs()
     .withTemplate(ACKMessageHex.class);
+Parser parser = Parser.create(core);
 
 List<Map<String, Object>> descriptions = parser.describeTemplates();
 ```
@@ -730,8 +731,8 @@ Firstly, load the configuration as shown below:
 ```java
 //add the custom codec to the list of available codecs
 //(use one of the lines below)
-parser.withDefaultConfigurations(); //loads all configuration from the package where this call was made
-parser.withConfigurations(ConfigurationCustomTest.class); //this class is where the custom configuration resides
+core.withDefaultConfigurations(); //loads all configuration from the package where this call was made
+core.withConfigurations(ConfigurationCustomTest.class); //this class is where the custom configuration resides
 ```
 
 Then, to retrieve all the possible protocol version boundaries, call
@@ -1191,9 +1192,9 @@ class VariableLengthByteArray implements CodecInterface<VarLengthEncoded>{
 ```java
 //add the custom codec to the list of available codecs
 //(use one of the lines below)
-parser.withDefaultCodecs(); //loads all codecs from the package where this call was made
-parser.withCodecs(CodecCustomTest.class); //this class is where the custom codec resides
-parser.withCodecs(new VariableLengthByteArray());
+core.withDefaultCodecs(); //loads all codecs from the package where this call was made
+core.withCodecs(CodecCustomTest.class); //this class is where the custom codec resides
+core.withCodecs(new VariableLengthByteArray());
 ```
 
 <br/>
@@ -1252,10 +1253,10 @@ All you have to care about, for a simple example on multi-message automatically-
 //optionally create a context
 Map<String, Object> context = ...
 //read all the codecs and annotated classes from where the parser resides and all of its children packages
-Parser parser = Parser.create()
+ParserCore core = ParserCore.create()
    .withContext(context);
 //... or pass the parent package (see all the `with...` methods of Parser for more)
-Parser parser = Parser.create()
+ParserCore core = ParserCore.create()
    .withContext(context)
    .withContextFunction(VersionHelper.class, "compareVersion", String.class, String.class)
    .withContextFunction(VersionHelper.class.getDeclaredMethod("compareVersion", new Class[]{String.class, String.class}))
@@ -1263,6 +1264,7 @@ Parser parser = Parser.create()
    .withDefaultCodecs()
    //scans the parent package and all of its children, searching and loading all the templates found
    .withDefaultTemplates();
+Parser parser = Parser.create(core);
 
 //parse the message
 byte[] payload = ...
@@ -1284,8 +1286,9 @@ or, if you want to pass your templates by hand:
 //optionally create a context ('null' otherwise)
 Map<String, Object> context = ...
 Template<Message> template = Template.createFrom(Message.class);
-Parser parser = Parser.create()
+ParserCore core = ParserCore.create()
    .withTemplates(template);
+Parser parser = Parser.create(core);
 
 //parse the message
 byte[] payload = ...
@@ -1338,23 +1341,23 @@ Remember that the header that will be written is the first in `@MessageHeader`.
 ### version 1.1.0 - 20200901
 - Better handling of NOP logger.
 - Abandoned [Reflections](https://github.com/ronmamo/reflections) in favor of [ClassGraph](https://github.com/classgraph/classgraph).
-- Added BindArray.selectDefault and BindObject.selectDefault to cope with default selector that has no prefix.
+- Added `BindArray.selectDefault` and `BindObject.selectDefault` to cope with default selector that has no prefix.
 - Added some feasibility checks on annotation data.
-- Added public constructor to Parser to allow for extensions.
-- Changed the signature of Checksummer.calculateChecksum returning short instead of long.
-- Changed method Validator.validate into Validator.isValid.
-- Changed method ParseResponse.getMessageForError into ParseResponse.getErrorMessageAt to align it to other method name's conventions.
-- Moved classes ParseResponse and ComposeResponse from io.github.mtrevisan.boxon.external to io.github.mtrevisan.boxon.core in order to hide add methods; the constructors are also hidden.
+- Added public constructor to `Parser` to allow for extensions.
+- Changed the signature of `Checksummer.calculateChecksum` returning short instead of long.
+- Changed method `Validator.validate` into `Validator.isValid`.
+- Changed method `ParseResponse.getMessageForError` into `ParseResponse.getErrorMessageAt` to align it to other method name's conventions.
+- Moved classes `ParseResponse` and `ComposeResponse` from `io.github.mtrevisan.boxon.external` to `io.github.mtrevisan.boxon.core` in order to hide add methods; the constructors are also hidden.
 - Minor refactorings.
-- Added `originator` variable (and its getter) to ComposeResponse to hold the given objects used to create the message.
+- Added `originator` variable (and its getter) to `ComposeResponse` to hold the given objects used to create the message.
 - Added/modified javadocs to better explain some classes.
-- Removed ComposeResponse.getErrors, BindInteger.unsigned and BitReader.getInteger(int, ByteOrder, boolean) as they are useless.
-- Removed BitWriter.putText(String, byte, boolean) because of the [Boolean Trap](https://ariya.io/2011/08/hall-of-api-shame-boolean-trap).
+- Removed `ComposeResponse.getErrors`, `BindInteger.unsigned` and `BitReader.getInteger(int, ByteOrder, boolean)` as they are useless.
+- Removed `BitWriter.putText(String, byte, boolean)` because of the [Boolean Trap](https://ariya.io/2011/08/hall-of-api-shame-boolean-trap).
 - Removed useless `match()` parameter from bindings.
-- Enhanced the exception message thrown if the type of BitReader.get(Class, ByteOrder) is not recognized.
-- Renamed BindChecksum into Checksum.
-- Relocated all binding annotations inside annotations.bindings (Bind* and *Choices).
-- Corrected bug while reading skips in TemplateParser.decode.
+- Enhanced the exception message thrown if the type of `BitReader.get(Class, ByteOrder)` is not recognized.
+- Renamed `BindChecksum` into `Checksum`.
+- Relocated all binding annotations inside `annotations.bindings` (`Bind*` and `*Choices`).
+- Corrected bug while reading skips in `TemplateParser.decode`.
 
 <a name="changelog-1.0.0"></a>
 ### version 1.0.0 - 20200825

@@ -54,12 +54,13 @@ class ParserTest{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
-		Parser parser = Parser.create()
+		ParserCore core = ParserCore.create()
 			.withContext(context)
 			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
 			.withDefaultCodecs()
 			.withTemplates(ACKMessageHex.class)
 			.withDefaultConfigurations();
+		Parser parser = Parser.create(core);
 
 		//~245-265 µs/msg = 4.1-3.8 kHz
 		byte[] payload = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
@@ -77,11 +78,12 @@ class ParserTest{
 	void parseAndComposeSingleMessageHex() throws NoSuchMethodException, AnnotationException, TemplateException{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
-		Parser parser = Parser.create()
+		ParserCore core = ParserCore.create()
 			.addToContext("deviceTypes", deviceTypes)
 			.withContextFunction(ParserTest.class, "headerSize")
 			.withDefaultCodecs()
 			.withTemplates(ACKMessageHex.class);
+		Parser parser = Parser.create(core);
 
 		//parse:
 		byte[] payload = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
@@ -106,11 +108,12 @@ class ParserTest{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
-		Parser parser = Parser.create()
+		ParserCore core = ParserCore.create()
 			.withContext(context)
 			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
 			.withDefaultCodecs()
 			.withDefaultTemplates();
+		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		ParseResponse result = parser.parse(payload);
@@ -124,10 +127,11 @@ class ParserTest{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GV350M", (byte)0xCF);
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
-		Parser parser = Parser.create()
+		ParserCore core = ParserCore.create()
 			.withContext(context)
 			.withDefaultCodecs()
 			.withTemplates(ACKMessageHex.class);
+		Parser parser = Parser.create(core);
 
 		//parse:
 		byte[] payload = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
@@ -148,10 +152,11 @@ class ParserTest{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GV350M", (byte)0xCF);
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
-		Parser parser = Parser.create()
+		ParserCore core = ParserCore.create()
 			.withContext(context)
 			.withDefaultCodecs()
 			.withTemplates(ACKMessageHex.class);
+		Parser parser = Parser.create(core);
 
 		byte[] payload = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
 		ParseResponse result = parser.parse(payload);
@@ -166,11 +171,12 @@ class ParserTest{
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
 		deviceTypes.add("QUECLINK_GV350M", (byte)0xCF);
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
-		Parser parser = Parser.create()
+		ParserCore core = ParserCore.create()
 			.withContext(context)
 			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
 			.withDefaultCodecs()
 			.withTemplates(ACKMessageHex.class);
+		Parser parser = Parser.create(core);
 
 		byte[] payload1 = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		byte[] payload2 = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
@@ -187,11 +193,12 @@ class ParserTest{
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
 		deviceTypes.add("QUECLINK_GV350M", (byte)0xCF);
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
-		Parser parser = Parser.create()
+		ParserCore core = ParserCore.create()
 			.withContext(context)
 			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
 			.withDefaultCodecs()
 			.withTemplates(ACKMessageHex.class);
+		Parser parser = Parser.create(core);
 
 		byte[] payload1 = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		byte[] payload2 = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
@@ -207,9 +214,10 @@ class ParserTest{
 	void getConfigurations() throws AnnotationException, ConfigurationException, JsonProcessingException, CodecException{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
-		Parser parser = Parser.create()
+		ParserCore core = ParserCore.create()
 			.withDefaultCodecs()
 			.withConfigurations(REGConfigurationASCII.class);
+		Parser parser = Parser.create(core);
 
 		List<Map<String, Object>> configurations = parser.getConfigurations();
 
@@ -231,9 +239,10 @@ class ParserTest{
 	void getProtocolVersionBoundaries() throws AnnotationException, ConfigurationException, JsonProcessingException{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
-		Parser parser = Parser.create()
+		ParserCore core = ParserCore.create()
 			.withDefaultCodecs()
 			.withConfigurations(REGConfigurationASCII.class);
+		Parser parser = Parser.create(core);
 
 		List<String> protocolVersionBoundaries = parser.getProtocolVersionBoundaries();
 
@@ -247,9 +256,10 @@ class ParserTest{
 	void getConfigurationsByProtocol() throws AnnotationException, ConfigurationException, JsonProcessingException, CodecException{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
-		Parser parser = Parser.create()
+		ParserCore core = ParserCore.create()
 			.withDefaultCodecs()
 			.withConfigurations(REGConfigurationASCII.class);
+		Parser parser = Parser.create(core);
 
 		List<Map<String, Object>> configurations = parser.getConfigurations("1.19");
 
@@ -268,9 +278,10 @@ class ParserTest{
 	void composeSingleConfigurationMessage() throws NoSuchMethodException, AnnotationException, TemplateException, ConfigurationException{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
-		Parser parser = Parser.create()
+		ParserCore core = ParserCore.create()
 			.withDefaultCodecs()
 			.withConfigurations(REGConfigurationASCII.class);
+		Parser parser = Parser.create(core);
 
 		//data:
 		Map<String, Object> configurationData = new HashMap<>();
@@ -304,11 +315,12 @@ class ParserTest{
 			NoSuchMethodException{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
-		Parser parser = Parser.create()
+		ParserCore core = ParserCore.create()
 			.addToContext("deviceTypes", deviceTypes)
 			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
 			.withDefaultCodecs()
 			.withTemplate(ACKMessageHex.class);
+		Parser parser = Parser.create(core);
 
 		List<Map<String, Object>> descriptions = parser.describeTemplates();
 

@@ -39,6 +39,7 @@ import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
 import io.github.mtrevisan.boxon.core.ComposeResponse;
 import io.github.mtrevisan.boxon.core.ParseResponse;
 import io.github.mtrevisan.boxon.core.Parser;
+import io.github.mtrevisan.boxon.core.ParserCore;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
@@ -276,9 +277,10 @@ class CodecArrayTest{
 
 	@Test
 	void arrayOfDifferentObjects() throws AnnotationException, TemplateException{
-		Parser parser = Parser.create()
+		ParserCore core = ParserCore.create()
 			.withCodecs(CodecChecksum.class, CodecCustomTest.VariableLengthByteArray.class)
 			.withTemplates(TestChoice4.class);
+		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.toByteArray("7463340112340211223344010666");
 		ParseResponse result = parser.parse(payload);
@@ -304,9 +306,10 @@ class CodecArrayTest{
 
 	@Test
 	void arrayOfDifferentObjectsWithNoPrefix() throws AnnotationException, TemplateException{
-		Parser parser = Parser.create()
+		ParserCore core = ParserCore.create()
 			.withDefaultCodecs()
 			.withTemplates(TestChoice5.class);
+		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.toByteArray("746335011234");
 		ParseResponse result = parser.parse(payload);
