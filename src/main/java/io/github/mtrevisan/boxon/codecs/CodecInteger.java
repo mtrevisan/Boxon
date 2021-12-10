@@ -41,7 +41,7 @@ import java.math.BigInteger;
 
 final class CodecInteger implements CodecInterface<BindInteger>{
 
-	/** Automatically injected */
+	/** Automatically injected. */
 	@SuppressWarnings("unused")
 	private Evaluator evaluator;
 

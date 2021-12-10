@@ -41,7 +41,7 @@ import java.lang.reflect.Array;
 
 final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 
-	/** Automatically injected */
+	/** Automatically injected. */
 	@SuppressWarnings("unused")
 	private Evaluator evaluator;
 

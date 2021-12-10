@@ -28,7 +28,6 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindArray;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
-import io.github.mtrevisan.boxon.codecs.managers.InjectEventListener;
 import io.github.mtrevisan.boxon.codecs.managers.Template;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
@@ -46,12 +45,9 @@ import java.lang.reflect.Array;
 
 final class CodecArray implements CodecInterface<BindArray>{
 
-	@InjectEventListener
-	@SuppressWarnings({"unused", "StaticVariableMayNotBeInitialized"})
-	private static EventListener eventListener;
-
-
-	/** Automatically injected */
+	/** Automatically injected. */
+	@SuppressWarnings("unused")
+	private EventListener eventListener;
 	@SuppressWarnings("unused")
 	private TemplateParserInterface templateParser;
 	@SuppressWarnings("unused")

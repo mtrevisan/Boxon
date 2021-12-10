@@ -29,7 +29,6 @@ import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.codecs.managers.ConfigField;
 import io.github.mtrevisan.boxon.codecs.managers.ConfigurationMessage;
 import io.github.mtrevisan.boxon.codecs.managers.ConstructorHelper;
-import io.github.mtrevisan.boxon.codecs.managers.InjectEventListener;
 import io.github.mtrevisan.boxon.codecs.managers.Memoizer;
 import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
 import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationManagerFactory;
@@ -55,7 +54,6 @@ import java.util.TreeMap;
 
 final class LoaderConfiguration{
 
-	@InjectEventListener
 	private final EventListener eventListener;
 
 	private final ThrowingFunction<Class<?>, ConfigurationMessage<?>, AnnotationException> configurationStore

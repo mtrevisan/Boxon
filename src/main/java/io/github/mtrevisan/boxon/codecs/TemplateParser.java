@@ -32,9 +32,9 @@ import io.github.mtrevisan.boxon.codecs.managers.AnnotationDescriptor;
 import io.github.mtrevisan.boxon.codecs.managers.BoundedField;
 import io.github.mtrevisan.boxon.codecs.managers.ConstructorHelper;
 import io.github.mtrevisan.boxon.codecs.managers.EvaluatedField;
-import io.github.mtrevisan.boxon.codecs.managers.InjectEventListener;
 import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
 import io.github.mtrevisan.boxon.codecs.managers.Template;
+import io.github.mtrevisan.boxon.codecs.managers.TemplateAnnotationValidator;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
@@ -63,8 +63,6 @@ import java.util.Map;
 
 public final class TemplateParser implements TemplateParserInterface{
 
-	@InjectEventListener
-	@SuppressWarnings("unused")
 	private final EventListener eventListener;
 
 	private final LoaderCodecInterface loaderCodec;
@@ -102,6 +100,7 @@ public final class TemplateParser implements TemplateParserInterface{
 
 	private TemplateParser(final LoaderCodecInterface loaderCodec, final EventListener eventListener, final Evaluator evaluator){
 		this.eventListener = eventListener;
+		ReflectionHelper.setStaticFieldValue(TemplateAnnotationValidator.class, EventListener.class, eventListener);
 
 		this.loaderCodec = loaderCodec;
 		loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);

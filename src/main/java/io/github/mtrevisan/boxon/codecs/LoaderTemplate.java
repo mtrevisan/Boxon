@@ -25,11 +25,9 @@
 package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
-import io.github.mtrevisan.boxon.codecs.managers.InjectEventListener;
 import io.github.mtrevisan.boxon.codecs.managers.Memoizer;
 import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
 import io.github.mtrevisan.boxon.codecs.managers.Template;
-import io.github.mtrevisan.boxon.codecs.managers.TemplateAnnotationValidator;
 import io.github.mtrevisan.boxon.codecs.managers.matchers.BNDMPatternMatcher;
 import io.github.mtrevisan.boxon.codecs.managers.matchers.PatternMatcher;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
@@ -58,7 +56,6 @@ final class LoaderTemplate{
 	private static final Function<byte[], int[]> PRE_PROCESSED_PATTERNS = Memoizer.memoize(PATTERN_MATCHER::preProcessPattern);
 
 
-	@InjectEventListener
 	private final EventListener eventListener;
 
 
@@ -96,12 +93,6 @@ final class LoaderTemplate{
 	private LoaderTemplate(final LoaderCodecInterface loaderCodec, final EventListener eventListener){
 		this.eventListener = eventListener;
 		this.loaderCodec = loaderCodec;
-
-		injectEventListener();
-	}
-
-	private void injectEventListener(){
-		ReflectionHelper.setStaticFieldValue(TemplateAnnotationValidator.class, EventListener.class, eventListener);
 	}
 
 	/**

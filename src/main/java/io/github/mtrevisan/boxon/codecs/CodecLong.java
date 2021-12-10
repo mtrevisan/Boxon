@@ -37,7 +37,7 @@ import java.lang.annotation.Annotation;
 
 final class CodecLong implements CodecInterface<BindLong>{
 
-	/** Automatically injected */
+	/** Automatically injected. */
 	@SuppressWarnings("unused")
 	private Evaluator evaluator;
 

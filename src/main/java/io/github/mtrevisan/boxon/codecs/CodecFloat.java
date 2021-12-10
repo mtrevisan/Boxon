@@ -37,7 +37,7 @@ import java.lang.annotation.Annotation;
 
 final class CodecFloat implements CodecInterface<BindFloat>{
 
-	/** Automatically injected */
+	/** Automatically injected. */
 	@SuppressWarnings("unused")
 	private Evaluator evaluator;
 

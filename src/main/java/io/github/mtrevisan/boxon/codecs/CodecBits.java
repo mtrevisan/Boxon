@@ -40,7 +40,7 @@ import java.lang.annotation.Annotation;
 
 final class CodecBits implements CodecInterface<BindBits>{
 
-	/** Automatically injected */
+	/** Automatically injected. */
 	@SuppressWarnings("unused")
 	private Evaluator evaluator;
 

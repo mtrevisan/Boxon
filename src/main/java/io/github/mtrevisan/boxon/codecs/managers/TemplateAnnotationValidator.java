@@ -106,8 +106,9 @@ public enum TemplateAnnotationValidator{
 	};
 
 
-	@InjectEventListener
-	private static final EventListener EVENT_LISTENER = EventListener.getNoOpInstance();
+	/** Automatically injected. */
+	@SuppressWarnings("unused")
+	private static EventListener eventListener;
 
 	private static final String EMPTY_STRING = "";
 
@@ -171,7 +172,7 @@ public enum TemplateAnnotationValidator{
 	private static void validateObjectDefaultAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> type,
 			final Class<?> selectDefault) throws AnnotationException{
 		if(selectDefault != void.class && alternatives.length == 0)
-			EVENT_LISTENER.uselessAlternative(selectDefault.getSimpleName());
+			eventListener.uselessAlternative(selectDefault.getSimpleName());
 		if(selectDefault != void.class && !type.isAssignableFrom(selectDefault))
 			throw AnnotationException.create("Type of default alternative cannot be assigned to (super) type of annotation");
 	}

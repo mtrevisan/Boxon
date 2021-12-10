@@ -37,7 +37,7 @@ import java.lang.annotation.Annotation;
 
 final class CodecDouble implements CodecInterface<BindDouble>{
 
-	/** Automatically injected */
+	/** Automatically injected. */
 	@SuppressWarnings("unused")
 	private Evaluator evaluator;
 

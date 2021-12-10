@@ -37,7 +37,7 @@ import java.lang.annotation.Annotation;
 
 final class CodecShort implements CodecInterface<BindShort>{
 
-	/** Automatically injected */
+	/** Automatically injected. */
 	@SuppressWarnings("unused")
 	private Evaluator evaluator;
 

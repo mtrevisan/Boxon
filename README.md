@@ -144,6 +144,8 @@ You can use them as a starting point to build your own customized readers.
 
 Here is a brief summary of the parameters (described in detail below) for each annotation.
 
+Note that [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_injection) is used in codecs on variables with type `TemplateParserInterface` and `Evaluator`.
+
 |                      | condition |  type   | charset | terminator | consumeTerminator |  size   | byteOrder | selectFrom | selectDefault | validator | converter | selectConverterFrom |                      |
 |----------------------|:---------:|:-------:|:-------:|:----------:|:-----------------:|:-------:|:---------:|:----------:|:-------------:|:---------:|:---------:|:-------------------:|---------------------:|
 | BindObject           |  &#9745;  | &#9745; |         |            |                   |         |           |  &#9745;   |    &#9745;    |  &#9745;  |  &#9745;  |       &#9745;       |           BindObject |

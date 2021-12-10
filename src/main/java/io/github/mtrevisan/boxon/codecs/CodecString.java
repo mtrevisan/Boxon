@@ -39,7 +39,7 @@ import java.nio.charset.Charset;
 
 final class CodecString implements CodecInterface<BindString>{
 
-	/** Automatically injected */
+	/** Automatically injected. */
 	@SuppressWarnings("unused")
 	private Evaluator evaluator;
 
