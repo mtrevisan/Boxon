@@ -38,7 +38,6 @@ import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
-import io.github.mtrevisan.boxon.core.ComposeResponse;
 import io.github.mtrevisan.boxon.core.ParseResponse;
 import io.github.mtrevisan.boxon.core.Parser;
 import io.github.mtrevisan.boxon.core.ParserCore;
@@ -243,11 +242,6 @@ class CodecObjectTest{
 		TestType1 value1 = (TestType1)parsedMessage.value;
 		Assertions.assertEquals(0x1234, value1.value);
 
-		ComposeResponse response = parser.composeMessage(parsedMessage);
-		Assertions.assertNotNull(response);
-		Assertions.assertFalse(response.hasErrors());
-		Assertions.assertArrayEquals(payload, response.getComposedMessage());
-
 
 		payload = StringHelper.toByteArray("7463310211223344");
 		result = parser.parse(payload);
@@ -259,11 +253,6 @@ class CodecObjectTest{
 		parsedMessage = (TestChoice1)result.getParsedMessageAt(0);
 		TestType2 value2 = (TestType2)parsedMessage.value;
 		Assertions.assertEquals(0x1122_3344, value2.value);
-
-		response = parser.composeMessage(parsedMessage);
-		Assertions.assertNotNull(response);
-		Assertions.assertFalse(response.hasErrors());
-		Assertions.assertArrayEquals(payload, response.getComposedMessage());
 	}
 
 	@Test
@@ -284,11 +273,6 @@ class CodecObjectTest{
 		TestType1 value1 = (TestType1)parsedMessage.value;
 		Assertions.assertEquals(0x1234, value1.value);
 
-		ComposeResponse response = parser.composeMessage(parsedMessage);
-		Assertions.assertNotNull(response);
-		Assertions.assertFalse(response.hasErrors());
-		Assertions.assertArrayEquals(payload, response.getComposedMessage());
-
 
 		payload = StringHelper.toByteArray("74633205060111223344");
 		result = parser.parse(payload);
@@ -300,11 +284,6 @@ class CodecObjectTest{
 		parsedMessage = (TestChoice2)result.getParsedMessageAt(0);
 		TestType2 value2 = (TestType2)parsedMessage.value;
 		Assertions.assertEquals(0x1122_3344, value2.value);
-
-		response = parser.composeMessage(parsedMessage);
-		Assertions.assertNotNull(response);
-		Assertions.assertFalse(response.hasErrors());
-		Assertions.assertArrayEquals(payload, response.getComposedMessage());
 	}
 
 	@Test
@@ -325,11 +304,6 @@ class CodecObjectTest{
 		TestType1 value1 = (TestType1)parsedMessage.value;
 		Assertions.assertEquals(0x1234, value1.value);
 
-		ComposeResponse response = parser.composeMessage(parsedMessage);
-		Assertions.assertNotNull(response);
-		Assertions.assertFalse(response.hasErrors());
-		Assertions.assertArrayEquals(payload, response.getComposedMessage());
-
 
 		payload = StringHelper.toByteArray("746333626211223344");
 		result = parser.parse(payload);
@@ -341,11 +315,6 @@ class CodecObjectTest{
 		parsedMessage = (TestChoice3)result.getParsedMessageAt(0);
 		TestType2 value2 = (TestType2)parsedMessage.value;
 		Assertions.assertEquals(0x1122_3344, value2.value);
-
-		response = parser.composeMessage(parsedMessage);
-		Assertions.assertNotNull(response);
-		Assertions.assertFalse(response.hasErrors());
-		Assertions.assertArrayEquals(payload, response.getComposedMessage());
 	}
 
 }

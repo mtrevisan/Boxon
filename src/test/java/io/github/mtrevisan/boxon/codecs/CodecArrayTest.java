@@ -36,7 +36,6 @@ import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
-import io.github.mtrevisan.boxon.core.ComposeResponse;
 import io.github.mtrevisan.boxon.core.ParseResponse;
 import io.github.mtrevisan.boxon.core.Parser;
 import io.github.mtrevisan.boxon.core.ParserCore;
@@ -298,11 +297,6 @@ class CodecArrayTest{
 		Assertions.assertEquals(0x1122_3344, ((CodecObjectTest.TestType2)values[1]).value);
 		Assertions.assertEquals(CodecObjectTest.TestType1.class, values[2].getClass());
 		Assertions.assertEquals(0x0666, ((CodecObjectTest.TestType1)values[2]).value);
-
-		ComposeResponse response = parser.composeMessage(parsedMessage);
-		Assertions.assertNotNull(response);
-		Assertions.assertFalse(response.hasErrors());
-		Assertions.assertArrayEquals(payload, response.getComposedMessage());
 	}
 
 	@Test
@@ -323,11 +317,6 @@ class CodecArrayTest{
 		CodecObjectTest.TestType0[] values = parsedMessage.value;
 		Assertions.assertEquals(CodecObjectTest.TestType1.class, values[0].getClass());
 		Assertions.assertEquals(0x1234, ((CodecObjectTest.TestType1)values[0]).value);
-
-		ComposeResponse response = parser.composeMessage(parsedMessage);
-		Assertions.assertNotNull(response);
-		Assertions.assertFalse(response.hasErrors());
-		Assertions.assertArrayEquals(payload, response.getComposedMessage());
 	}
 
 }

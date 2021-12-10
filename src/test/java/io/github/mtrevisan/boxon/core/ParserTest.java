@@ -67,34 +67,11 @@ class ParserTest{
 		System.out.println(watch.toStringMicros(20_000));
 	}
 
-	@Test
-	void parseAndComposeSingleMessageHex() throws NoSuchMethodException, AnnotationException, TemplateException{
-		DeviceTypes deviceTypes = new DeviceTypes();
-		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
-		ParserCore core = ParserCore.create()
-			.addToContext("deviceTypes", deviceTypes)
-			.withContextFunction(ParserTest.class, "headerSize")
-			.withDefaultCodecs()
-			.withTemplates(ACKMessageHex.class);
-		Parser parser = Parser.create(core);
-
-		//parse:
-		byte[] payload = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
-		ParseResponse parseResult = parser.parse(payload);
-
-		Assertions.assertFalse(parseResult.hasErrors());
-		Assertions.assertEquals(1, parseResult.getParsedMessageCount());
-
-		//compose:
-		ComposeResponse composeResult = parser.composeMessage(parseResult.getParsedMessageAt(0));
-
-		Assertions.assertFalse(composeResult.hasErrors());
-		Assertions.assertArrayEquals(payload, composeResult.getComposedMessage());
-	}
 
 	private static int headerSize(){
 		return 4;
 	}
+
 
 	@Test
 	void parseMultipleMessagesHex() throws NoSuchMethodException, AnnotationException, TemplateException{
@@ -113,31 +90,6 @@ class ParserTest{
 
 		Assertions.assertFalse(result.hasErrors());
 		Assertions.assertEquals(2, result.getParsedMessageCount());
-	}
-
-	@Test
-	void parseAndComposeSingleMessageASCII() throws AnnotationException, TemplateException{
-		DeviceTypes deviceTypes = new DeviceTypes();
-		deviceTypes.add("QUECLINK_GV350M", (byte)0xCF);
-		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
-		ParserCore core = ParserCore.create()
-			.withContext(context)
-			.withDefaultCodecs()
-			.withTemplates(ACKMessageHex.class);
-		Parser parser = Parser.create(core);
-
-		//parse:
-		byte[] payload = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
-		ParseResponse parseResult = parser.parse(payload);
-
-		Assertions.assertFalse(parseResult.hasErrors());
-		Assertions.assertEquals(1, parseResult.getParsedMessageCount());
-
-		//compose:
-		ComposeResponse composeResult = parser.composeMessage(parseResult.getParsedMessageAt(0));
-
-		Assertions.assertFalse(composeResult.hasErrors());
-		Assertions.assertArrayEquals(payload, composeResult.getComposedMessage());
 	}
 
 	@Test

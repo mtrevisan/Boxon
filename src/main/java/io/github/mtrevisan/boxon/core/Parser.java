@@ -27,15 +27,12 @@ package io.github.mtrevisan.boxon.core;
 import io.github.mtrevisan.boxon.codecs.TemplateParser;
 import io.github.mtrevisan.boxon.codecs.managers.Template;
 import io.github.mtrevisan.boxon.exceptions.DecodeException;
-import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.external.codecs.BitReader;
-import io.github.mtrevisan.boxon.external.codecs.BitWriter;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.Collection;
 
 
 /**
@@ -160,54 +157,6 @@ public final class Parser{
 			final IllegalArgumentException error = new IllegalArgumentException("There are remaining unread bytes");
 			final DecodeException pe = DecodeException.create(position, error);
 			response.addError(start, pe);
-		}
-	}
-
-
-	//-- Composer section --
-
-	/**
-	 * Compose a list of messages.
-	 *
-	 * @param data	The messages to be composed.
-	 * @return	The composition response.
-	 */
-	public ComposeResponse composeMessage(final Collection<Object> data){
-		return composeMessage(data.toArray(Object[]::new));
-	}
-
-	/**
-	 * Compose a list of messages.
-	 *
-	 * @param data	The message(s) to be composed.
-	 * @return	The composition response.
-	 */
-	public ComposeResponse composeMessage(final Object... data){
-		final ComposeResponse response = new ComposeResponse(data);
-
-		final BitWriter writer = BitWriter.create();
-		for(int i = 0; i < data.length; i ++)
-			composeMessage(writer, data[i], response);
-
-		response.setComposedMessage(writer);
-
-		return response;
-	}
-
-	/**
-	 * Compose a single message.
-	 *
-	 * @param data	The message to be composed.
-	 */
-	private void composeMessage(final BitWriter writer, final Object data, final ComposeResponse response){
-		try{
-			final TemplateParser templateParser = core.getTemplateParser();
-			final Template<?> template = templateParser.getTemplate(data.getClass());
-
-			templateParser.encode(template, writer, null, data);
-		}
-		catch(final Exception e){
-			response.addError(EncodeException.create(e));
 		}
 	}
 
