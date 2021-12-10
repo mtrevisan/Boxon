@@ -163,7 +163,7 @@ public final class ReflectionHelper{
 		for(int i = 0; i < rawSubFields.length; i ++){
 			final Field rawSubField = rawSubFields[i];
 			//FIXME really ugly (if `fieldType` is not null, it means that an injection must be performed)
-			if(fieldType == null || fieldType.isAssignableFrom(rawSubField.getType()) && rawSubField.isAnnotationPresent(Injected.class))
+			if(fieldType == null || rawSubField.isAnnotationPresent(Injected.class) && fieldType.isAssignableFrom(rawSubField.getType()))
 				childFields.add(rawSubField);
 		}
 	}

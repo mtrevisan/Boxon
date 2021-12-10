@@ -158,7 +158,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 		codecs.put(codecType, codec);
 	}
 
-	//FIXME ugliness?
+	//FIXME are generics an ugliness?
 	public <T> void injectFieldInCodecs(final Class<T> type, final T object){
 		for(final CodecInterface<?> codec : codecs.values())
 			ReflectionHelper.injectValue(codec, type, object);
