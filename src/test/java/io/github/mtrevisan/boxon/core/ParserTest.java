@@ -79,9 +79,9 @@ class ParserTest{
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
 		Parser parser = Parser.create()
 			.addToContext("deviceTypes", deviceTypes)
+			.withContextFunction(ParserTest.class, "headerSize")
 			.withDefaultCodecs()
-			.withTemplates(ACKMessageHex.class)
-			.withContextFunction(ParserTest.class, "headerSize");
+			.withTemplates(ACKMessageHex.class);
 
 		//parse:
 		byte[] payload = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
@@ -108,9 +108,9 @@ class ParserTest{
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 		Parser parser = Parser.create()
 			.withContext(context)
+			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
 			.withDefaultCodecs()
-			.withDefaultTemplates()
-			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"));
+			.withDefaultTemplates();
 
 		byte[] payload = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		ParseResponse result = parser.parse(payload);
@@ -168,9 +168,9 @@ class ParserTest{
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 		Parser parser = Parser.create()
 			.withContext(context)
+			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
 			.withDefaultCodecs()
-			.withTemplates(ACKMessageHex.class)
-			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"));
+			.withTemplates(ACKMessageHex.class);
 
 		byte[] payload1 = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		byte[] payload2 = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
