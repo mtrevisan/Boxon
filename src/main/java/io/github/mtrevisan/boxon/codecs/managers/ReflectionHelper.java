@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 
@@ -137,34 +138,47 @@ public final class ReflectionHelper{
 	 * @return	An array of all the fields of the given class.
 	 */
 	private static List<Field> getAccessibleFields(Class<?> cls, final Class<?> fieldType){
-		final List<Field> fields = new ArrayList<>(0);
+		final List<Field> allFields = new ArrayList<>(0);
 
 		//recurse classes:
+		final BiConsumer<Collection<Field>, Field[]> extractChildFields = getExtractChildFieldsMethod(fieldType);
 		final ArrayList<Field> childFields = new ArrayList<>(0);
 		while(cls != null && cls != Object.class){
-			final Field[] rawSubfields = cls.getDeclaredFields();
-			extractChildFields(childFields, rawSubfields, fieldType);
+			final Field[] rawChildFields = cls.getDeclaredFields();
+			childFields.clear();
+			childFields.ensureCapacity(rawChildFields.length);
+			extractChildFields.accept(childFields, rawChildFields);
+
 			//place parent's fields before all the child's fields
-			fields.addAll(0, childFields);
+			allFields.addAll(0, childFields);
 
 			//go up to parent class
 			cls = cls.getSuperclass();
 		}
 
-		makeFieldsAccessible(fields);
+		makeFieldsAccessible(allFields);
 
-		return fields;
+		return allFields;
 	}
 
-	private static void extractChildFields(final ArrayList<Field> childFields, final Field[] rawSubFields, final Class<?> fieldType){
-		childFields.clear();
-		childFields.ensureCapacity(rawSubFields.length);
-		//apply filter on field type if needed
-		for(int i = 0; i < rawSubFields.length; i ++){
-			final Field rawSubField = rawSubFields[i];
-			//FIXME really ugly (if `fieldType` is not null, it means that an injection must be performed)
-			if(fieldType == null || rawSubField.isAnnotationPresent(Injected.class) && fieldType.isAssignableFrom(rawSubField.getType()))
-				childFields.add(rawSubField);
+	private static BiConsumer<Collection<Field>, Field[]> getExtractChildFieldsMethod(final Class<?> fieldType){
+		return (fieldType == null
+			? ReflectionHelper::extractChildFields
+			: (fields, rawFields) -> extractChildFields(fields, rawFields, fieldType)
+		);
+	}
+
+	private static void extractChildFields(final Collection<Field> fields, final Field[] rawFields){
+		for(int i = 0; i < rawFields.length; i ++)
+			fields.add(rawFields[i]);
+	}
+
+	//an injection must be performed
+	private static void extractChildFields(final Collection<Field> fields, final Field[] rawFields, final Class<?> fieldType){
+		for(int i = 0; i < rawFields.length; i ++){
+			final Field rawSubField = rawFields[i];
+			if(rawSubField.isAnnotationPresent(Injected.class) && fieldType.isAssignableFrom(rawSubField.getType()))
+				fields.add(rawSubField);
 		}
 	}
 
