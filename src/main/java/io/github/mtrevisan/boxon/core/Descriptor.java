@@ -43,9 +43,6 @@ import java.util.List;
 import java.util.Map;
 
 
-/**
- * Declarative data binding parser for binary encoded data with configuration capabilities.
- */
 @SuppressWarnings({"WeakerAccess", "unused"})
 public final class Descriptor{
 
@@ -54,8 +51,7 @@ public final class Descriptor{
 
 
 	/**
-	 * Create an empty parser (context, codecs and templates MUST BE manually loaded! -- templates MUST BE loaded AFTER
-	 * the codecs).
+	 * Create an empty descriptor.
 	 *
 	 * @param parserCore	The parser core.
 	 * @return	A basic empty descriptor.

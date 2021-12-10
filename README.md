@@ -737,22 +737,25 @@ core.withConfigurations(ConfigurationCustomTest.class); //this class is where th
 
 Then, to retrieve all the possible protocol version boundaries, call
 ```java
-List<String> protocolVersionBoundaries = parser.getProtocolVersionBoundaries();
+Configurator configurator = Configurator.create(core);
+List<String> protocolVersionBoundaries = configurator.getProtocolVersionBoundaries();
 ```
 
 Then, to retrieve all the messages for a given protocol version, simply call
 ```java
-List<Map<String, Object>> configurationMessages = parser.getConfigurations("1.35");
+Configurator configurator = Configurator.create(core);
+List<Map<String, Object>> configurationMessages = configurator.getConfigurations("1.35");
 ```
 
 Moreover, to compose a configuration message (remember to also load the codecs), call
 ```java
+Configurator configurator = Configurator.create(core);
 Map<String, Object> configurationData = new HashMap<>();
 configurationData.put(Parser.CONFIGURATION_FIELD_TYPE, "AT+");
 configurationData.put("Weekday", "TUESDAY|WEDNESDAY");
 ...
 
-ComposeResponse composedMessage = parser.composeConfiguration("1.20", Collections.singletonMap("AT+", configurationData));
+ComposeResponse composedMessage = configurator.composeConfiguration("1.20", Collections.singletonMap("AT+", configurationData));
 ```
 
 
