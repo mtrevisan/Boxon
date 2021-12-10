@@ -72,7 +72,7 @@ public final class TemplateParser implements TemplateParserInterface{
 
 	private final Map<String, Object> backupContext = new HashMap<>(0);
 
-	private Evaluator evaluator;
+	private final Evaluator evaluator;
 
 
 	/**
@@ -183,16 +183,15 @@ public final class TemplateParser implements TemplateParserInterface{
 
 
 	@Override
-	public <T> T decode(final Template<T> template, final BitReader reader, final Object parentObject, final Evaluator evaluator)
-			throws FieldException{
+	public <T> T decode(final Template<T> template, final BitReader reader, final Object parentObject) throws FieldException{
 		final int startPosition = reader.position();
 
 		final T currentObject = ConstructorHelper.getCreator(template.getType())
 			.get();
 
-		final ParserContext<T> parserContext = new ParserContext<>(currentObject, parentObject);
+		final ParserContext<T> parserContext = new ParserContext<>(evaluator, currentObject, parentObject);
 		//add current object in the context
-		parserContext.addCurrentObjectToEvaluatorContext(evaluator);
+		parserContext.addCurrentObjectToEvaluatorContext();
 
 		//decode message fields:
 		final List<BoundedField> fields = template.getBoundedFields();
@@ -206,10 +205,10 @@ public final class TemplateParser implements TemplateParserInterface{
 			//check if field has to be processed...
 			if(shouldProcessField(field.getCondition(), parserContext.getRootObject()))
 				//... and if so, process it
-				decodeField(template, reader, parserContext, field, evaluator);
+				decodeField(template, reader, parserContext, field);
 		}
 
-		processEvaluatedFields(template, parserContext, evaluator);
+		processEvaluatedFields(template, parserContext);
 
 		readMessageTerminator(template, reader);
 
@@ -219,7 +218,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 	private <T> void decodeField(final Template<T> template, final BitReader reader, final ParserContext<T> parserContext,
-			final BoundedField field, final Evaluator evaluator) throws FieldException{
+			final BoundedField field) throws FieldException{
 		final Annotation binding = field.getBinding();
 		final Class<? extends Annotation> annotationType = binding.annotationType();
 		final CodecInterface<?> codec = loaderCodec.getCodec(annotationType);
@@ -302,7 +301,7 @@ public final class TemplateParser implements TemplateParserInterface{
 		}
 	}
 
-	private void processEvaluatedFields(final Template<?> template, final ParserContext<?> parserContext, final Evaluator evaluator){
+	private void processEvaluatedFields(final Template<?> template, final ParserContext<?> parserContext){
 		final List<EvaluatedField> evaluatedFields = template.getEvaluatedFields();
 		for(int i = 0; i < evaluatedFields.size(); i ++){
 			final EvaluatedField field = evaluatedFields.get(i);
@@ -320,10 +319,10 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 	@Override
-	public <T> void encode(final Template<?> template, final BitWriter writer, final Object parentObject, final T currentObject,
-			final Evaluator evaluator) throws FieldException{
-		final ParserContext<T> parserContext = new ParserContext<>(currentObject, parentObject);
-		parserContext.addCurrentObjectToEvaluatorContext(evaluator);
+	public <T> void encode(final Template<?> template, final BitWriter writer, final Object parentObject, final T currentObject)
+			throws FieldException{
+		final ParserContext<T> parserContext = new ParserContext<>(evaluator, currentObject, parentObject);
+		parserContext.addCurrentObjectToEvaluatorContext();
 		parserContext.setClassName(template.getType().getName());
 
 		//encode message fields:
@@ -434,7 +433,7 @@ public final class TemplateParser implements TemplateParserInterface{
 		AnnotationDescriptor.putIfNotEmpty(DescriberKey.HEADER_END, header.end(), headerDescription);
 		AnnotationDescriptor.putIfNotEmpty(DescriberKey.HEADER_CHARSET, header.charset(), headerDescription);
 		description.put("header", headerDescription);
-		final List<Map<String, Object>> fieldsDescription = new ArrayList<>(0);
+		final Collection<Map<String, Object>> fieldsDescription = new ArrayList<>(0);
 		final List<BoundedField> fields = template.getBoundedFields();
 		for(int i = 0; i < fields.size(); i ++){
 			final BoundedField field = fields.get(i);

@@ -101,7 +101,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 
 				//read object
 				final Template<?> subTemplate = templateParser.createTemplate(chosenAlternativeType);
-				array[i] = templateParser.decode(subTemplate, reader, rootObject, evaluator);
+				array[i] = templateParser.decode(subTemplate, reader, rootObject);
 			}
 			catch(final Exception e){
 				eventListener.processingAlternative(e);
@@ -124,7 +124,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 		final Template<?> template = templateParser.createTemplate(type);
 
 		for(int i = 0; i < array.length; i ++)
-			array[i] = templateParser.decode(template, reader, null, evaluator);
+			array[i] = templateParser.decode(template, reader, null);
 	}
 
 	@Override
@@ -162,7 +162,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 
 			final Template<?> template = templateParser.createTemplate(type);
 
-			templateParser.encode(template, writer, null, elem, evaluator);
+			templateParser.encode(template, writer, null, elem);
 		}
 	}
 
@@ -170,7 +170,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 		final Template<?> template = templateParser.createTemplate(type);
 
 		for(int i = 0; i < array.length; i ++)
-			templateParser.encode(template, writer, null, array[i], evaluator);
+			templateParser.encode(template, writer, null, array[i]);
 	}
 
 }

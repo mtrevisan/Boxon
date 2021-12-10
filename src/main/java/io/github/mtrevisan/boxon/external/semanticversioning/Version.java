@@ -37,6 +37,10 @@ import java.util.regex.Pattern;
  */
 public final class Version implements Comparable<Version>{
 
+	private static final String EMPTY_STRING = "";
+	/** An empty immutable {@code String} array. */
+	private static final String[] EMPTY_ARRAY = new String[0];
+
 	public static final Version EMPTY = of("");
 
 	private static final String DOT = ".";
@@ -76,7 +80,7 @@ public final class Version implements Comparable<Version>{
 	 * @throws IllegalArgumentException	If one of the version numbers is a negative integer
 	 */
 	public static Version of(final int major, final int minor, final int patch){
-		return new Version(major, minor, patch, VersionHelper.EMPTY_ARRAY, VersionHelper.EMPTY_ARRAY);
+		return new Version(major, minor, patch, EMPTY_ARRAY, EMPTY_ARRAY);
 	}
 
 	/**
@@ -89,7 +93,7 @@ public final class Version implements Comparable<Version>{
 	 * @throws IllegalArgumentException	If one of the version numbers is a negative integer
 	 */
 	public static Version of(final int major, final int minor, final int patch, final String[] preRelease){
-		return new Version(major, minor, patch, preRelease, VersionHelper.EMPTY_ARRAY);
+		return new Version(major, minor, patch, preRelease, EMPTY_ARRAY);
 	}
 
 	/**
@@ -113,8 +117,8 @@ public final class Version implements Comparable<Version>{
 		this.major = major;
 		this.minor = minor;
 		this.patch = patch;
-		this.preRelease = (preRelease != null? preRelease: VersionHelper.EMPTY_ARRAY);
-		this.build = (build != null? build: VersionHelper.EMPTY_ARRAY);
+		this.preRelease = (preRelease != null? preRelease: EMPTY_ARRAY);
+		this.build = (build != null? build: EMPTY_ARRAY);
 	}
 
 	private Version(String version){
@@ -122,13 +126,13 @@ public final class Version implements Comparable<Version>{
 			major = null;
 			minor = null;
 			patch = null;
-			preRelease = VersionHelper.EMPTY_ARRAY;
-			build = VersionHelper.EMPTY_ARRAY;
+			preRelease = EMPTY_ARRAY;
+			build = EMPTY_ARRAY;
 			return;
 		}
 
 		version = version.trim();
-		if(!VersionHelper.startsWithNumber(version))
+		if(!startsWithNumber(version))
 			throw new IllegalArgumentException("Argument is not a valid version");
 
 		final String[] tokens = PATTERN_DOT.split(version, 3);
@@ -151,7 +155,7 @@ public final class Version implements Comparable<Version>{
 				nextToken = (patchPreReleaseBuild.length > offset? patchPreReleaseBuild[offset]: null);
 			}
 			else
-				preRelease = VersionHelper.EMPTY_ARRAY;
+				preRelease = EMPTY_ARRAY;
 
 			if(BUILD_PREFIX.equals(nextToken) && patchPreReleaseBuild.length > ++ offset){
 				build = PATTERN_DOT.split(patchPreReleaseBuild[offset ++]);
@@ -159,23 +163,23 @@ public final class Version implements Comparable<Version>{
 				validateBuild();
 			}
 			else
-				build = VersionHelper.EMPTY_ARRAY;
+				build = EMPTY_ARRAY;
 
 			if(patchPreReleaseBuild.length > offset + 1)
 				throw new IllegalArgumentException("Argument is not a valid version");
 		}
 		else{
 			patch = null;
-			preRelease = VersionHelper.EMPTY_ARRAY;
-			build = VersionHelper.EMPTY_ARRAY;
+			preRelease = EMPTY_ARRAY;
+			build = EMPTY_ARRAY;
 		}
 	}
 
 	private static void validateValues(final CharSequence version, final String[] tokens){
 		final String[] tokensWithPatch = PATTERN_DOT_PREFIX.split(version);
-		if(VersionHelper.hasLeadingZeros(tokens[0])
-				|| tokensWithPatch.length > 1 && VersionHelper.hasLeadingZeros(tokens[1])
-				|| tokensWithPatch.length > 2 && VersionHelper.hasLeadingZeros(tokensWithPatch[2]))
+		if(hasLeadingZeros(tokens[0])
+				|| tokensWithPatch.length > 1 && hasLeadingZeros(tokens[1])
+				|| tokensWithPatch.length > 2 && hasLeadingZeros(tokensWithPatch[2]))
 			throw new IllegalArgumentException("Numeric identifier MUST NOT contain leading zeros");
 	}
 
@@ -345,7 +349,7 @@ public final class Version implements Comparable<Version>{
 
 	private static int compareIdentifierArrays(final String[] preRelease, final String[] otherPreRelease){
 		int result = (otherPreRelease.length - preRelease.length);
-		for(int i = 0; i < VersionHelper.getLeastCommonArrayLength(preRelease, otherPreRelease); i ++){
+		for(int i = 0; i < getLeastCommonArrayLength(preRelease, otherPreRelease); i ++){
 			result = compareIdentifiers(preRelease[i], otherPreRelease[i]);
 			if(result != 0)
 				break;
@@ -389,9 +393,22 @@ public final class Version implements Comparable<Version>{
 		return true;
 	}
 
+
+	private static boolean hasLeadingZeros(final CharSequence token){
+		return (token.length() > 1 && token.charAt(0) == '0');
+	}
+
+	private static boolean startsWithNumber(final String text){
+		return (text != null && !text.isEmpty() && Character.isDigit(text.charAt(0)));
+	}
+
+	private static int getLeastCommonArrayLength(final String[] array1, final String[] array2){
+		return Math.min(array1.length, array2.length);
+	}
+
 	@Override
 	public String toString(){
-		String message = VersionHelper.EMPTY_STRING;
+		String message = EMPTY_STRING;
 		if(major != null)
 			message += major;
 		if(minor != null)

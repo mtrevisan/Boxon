@@ -40,6 +40,7 @@ import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
 import io.github.mtrevisan.boxon.external.logs.EventListener;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
+import io.github.mtrevisan.boxon.internal.Evaluator;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
@@ -133,8 +134,8 @@ public final class ConfigurationParser{
 
 
 	public <T> void encode(final ConfigurationMessage<?> configuration, final BitWriter writer, final T currentObject,
-			final Version protocol) throws FieldException{
-		final ParserContext<T> parserContext = new ParserContext<>(currentObject);
+			final Evaluator evaluator, final Version protocol) throws FieldException{
+		final ParserContext<T> parserContext = new ParserContext<>(evaluator, currentObject);
 		parserContext.setClassName(configuration.getType().getName());
 
 		final ConfigurationHeader header = configuration.getHeader();

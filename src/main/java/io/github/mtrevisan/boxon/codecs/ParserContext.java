@@ -35,6 +35,8 @@ import java.lang.annotation.Annotation;
 
 final class ParserContext<T>{
 
+	private final Evaluator evaluator;
+
 	private Object rootObject;
 	private final T currentObject;
 
@@ -44,11 +46,13 @@ final class ParserContext<T>{
 	private Annotation binding;
 
 
-	ParserContext(final T currentObject){
-		this(currentObject, null);
+	ParserContext(final Evaluator evaluator, final T currentObject){
+		this(evaluator, currentObject, null);
 	}
 
-	ParserContext(final T currentObject, final Object parentObject){
+	ParserContext(final Evaluator evaluator, final T currentObject, final Object parentObject){
+		this.evaluator = evaluator;
+
 		this.currentObject = currentObject;
 		setRootObject(parentObject);
 	}
@@ -65,7 +69,7 @@ final class ParserContext<T>{
 		return currentObject;
 	}
 
-	void addCurrentObjectToEvaluatorContext(final Evaluator evaluator){
+	void addCurrentObjectToEvaluatorContext(){
 		evaluator.addToContext(ContextHelper.CONTEXT_SELF, currentObject);
 	}
 

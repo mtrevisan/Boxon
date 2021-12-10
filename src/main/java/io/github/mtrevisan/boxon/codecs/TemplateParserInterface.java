@@ -29,16 +29,14 @@ import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.codecs.BitReader;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
-import io.github.mtrevisan.boxon.internal.Evaluator;
 
 
 public interface TemplateParserInterface{
 
-	<T> T decode(final Template<T> template, final BitReader reader, final Object parentObject, final Evaluator evaluator)
-		throws FieldException;
+	<T> T decode(final Template<T> template, final BitReader reader, final Object parentObject) throws FieldException;
 
-	<T> void encode(final Template<?> template, final BitWriter writer, final Object parentObject, final T currentObject,
-		final Evaluator evaluator) throws FieldException;
+	<T> void encode(final Template<?> template, final BitWriter writer, final Object parentObject, final T currentObject)
+		throws FieldException;
 
 	/**
 	 * Constructs a new {@link Template}.

@@ -135,7 +135,8 @@ public final class Parser{
 	public Parser withContext(final Map<String, Object> context){
 		Objects.requireNonNull(context, "Context cannot be null");
 
-		context.forEach(evaluator::addToContext);
+		for(final Map.Entry<String, Object> entry : context.entrySet())
+			evaluator.addToContext(entry.getKey(), entry.getValue());
 
 		templateParser.addToBackupContext(context);
 
@@ -181,9 +182,7 @@ public final class Parser{
 	public Parser withDefaultCodecs(){
 		loaderCodec.loadDefaultCodecs();
 
-		//post process codecs
-		loaderCodec.injectFieldInCodecs(TemplateParserInterface.class, templateParser);
-		loaderCodec.injectFieldInCodecs(Evaluator.class, evaluator);
+		postProcessCodecs();
 
 		return this;
 	}
@@ -197,9 +196,7 @@ public final class Parser{
 	public Parser withCodecs(final Class<?>... basePackageClasses){
 		loaderCodec.loadCodecs(basePackageClasses);
 
-		//post process codecs
-		loaderCodec.injectFieldInCodecs(TemplateParserInterface.class, templateParser);
-		loaderCodec.injectFieldInCodecs(Evaluator.class, evaluator);
+		postProcessCodecs();
 
 		return this;
 	}
@@ -213,11 +210,14 @@ public final class Parser{
 	public Parser withCodecs(final CodecInterface<?>... codecs){
 		loaderCodec.addCodecs(codecs);
 
-		//post process codecs
-		loaderCodec.injectFieldInCodecs(TemplateParserInterface.class, templateParser);
-		loaderCodec.injectFieldInCodecs(Evaluator.class, evaluator);
+		postProcessCodecs();
 
 		return this;
+	}
+
+	private void postProcessCodecs(){
+		loaderCodec.injectFieldInCodecs(TemplateParserInterface.class, templateParser);
+		loaderCodec.injectFieldInCodecs(Evaluator.class, evaluator);
 	}
 
 
@@ -394,7 +394,7 @@ public final class Parser{
 		try{
 			final Template<?> template = templateParser.getTemplate(reader);
 
-			final Object partialDecodedMessage = templateParser.decode(template, reader, null, evaluator);
+			final Object partialDecodedMessage = templateParser.decode(template, reader, null);
 
 			response.addParsedMessage(start, partialDecodedMessage);
 		}
@@ -462,7 +462,7 @@ public final class Parser{
 		try{
 			final Template<?> template = templateParser.getTemplate(data.getClass());
 
-			templateParser.encode(template, writer, null, data, evaluator);
+			templateParser.encode(template, writer, null, data);
 		}
 		catch(final Exception e){
 			response.addError(EncodeException.create(e));
@@ -589,7 +589,7 @@ public final class Parser{
 			final Map<String, Object> data = entry.getValue();
 			final ConfigurationMessage<?> configuration = configurationParser.getConfiguration(configurationType);
 			final Object configurationData = ConfigurationParser.getConfigurationWithDefaults(configuration, data, protocol);
-			configurationParser.encode(configuration, writer, configurationData, protocol);
+			configurationParser.encode(configuration, writer, configurationData, evaluator, protocol);
 		}
 		catch(final Exception e){
 			response.addError(EncodeException.create(e));

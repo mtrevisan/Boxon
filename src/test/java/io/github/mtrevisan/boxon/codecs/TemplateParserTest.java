@@ -73,11 +73,11 @@ class TemplateParserTest{
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
 		evaluator.addToContext("deviceTypes", deviceTypes);
 		evaluator.addToContext(TemplateParserTest.class.getDeclaredMethod("headerSize"));
-		ACKMessageHex message = templateParser.decode(template, reader, null, evaluator);
+		ACKMessageHex message = templateParser.decode(template, reader, null);
 		evaluator.addToContext("deviceTypes", null);
 
 		BitWriter writer = BitWriter.create();
-		templateParser.encode(template, writer, null, message, evaluator);
+		templateParser.encode(template, writer, null, message);
 		byte[] reconstructedMessage = writer.array();
 
 		Assertions.assertEquals(new String(payload), new String(reconstructedMessage));
@@ -106,11 +106,11 @@ class TemplateParserTest{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GV350M", (byte)0xCF);
 		evaluator.addToContext("deviceTypes", deviceTypes);
-		ACKMessageASCII message = templateParser.decode(template, reader, null, evaluator);
+		ACKMessageASCII message = templateParser.decode(template, reader, null);
 		evaluator.addToContext("deviceTypes", null);
 
 		BitWriter writer = BitWriter.create();
-		templateParser.encode(template, writer, null, message, evaluator);
+		templateParser.encode(template, writer, null, message);
 		byte[] reconstructedMessage = writer.array();
 
 		Assertions.assertEquals(new String(payload), new String(reconstructedMessage));
@@ -148,7 +148,7 @@ class TemplateParserTest{
 		loaderCodec.injectFieldInCodecs(TemplateParserInterface.class, templateParser);
 		loaderCodec.injectFieldInCodecs(Evaluator.class, evaluator);
 
-		SpelEvaluationException exc = Assertions.assertThrows(SpelEvaluationException.class, () -> templateParser.decode(template, reader, null, evaluator));
+		SpelEvaluationException exc = Assertions.assertThrows(SpelEvaluationException.class, () -> templateParser.decode(template, reader, null));
 		Assertions.assertEquals("EL1008E: Property or field 'e' cannot be found on object of type 'io.github.mtrevisan.boxon.codecs.TemplateParserTest$TestError1' - maybe not public or not valid?", exc.getMessage());
 	}
 
@@ -189,7 +189,7 @@ class TemplateParserTest{
 		loaderCodec.injectFieldInCodecs(TemplateParserInterface.class, templateParser);
 		loaderCodec.injectFieldInCodecs(Evaluator.class, evaluator);
 
-		Exception exc = Assertions.assertThrows(FieldException.class, () -> templateParser.decode(template, reader, null, evaluator));
+		Exception exc = Assertions.assertThrows(FieldException.class, () -> templateParser.decode(template, reader, null));
 		Assertions.assertEquals("java.lang.IllegalArgumentException: Can not set byte field to String in field io.github.mtrevisan.boxon.codecs.TemplateParserTest$TestError3.type", exc.getMessage());
 	}
 
@@ -230,7 +230,7 @@ class TemplateParserTest{
 		loaderCodec.injectFieldInCodecs(TemplateParserInterface.class, templateParser);
 		loaderCodec.injectFieldInCodecs(Evaluator.class, evaluator);
 
-		Exception exc = Assertions.assertThrows(FieldException.class, () -> templateParser.decode(template, reader, null, evaluator));
+		Exception exc = Assertions.assertThrows(FieldException.class, () -> templateParser.decode(template, reader, null));
 		Assertions.assertEquals("java.lang.IllegalArgumentException: Can not input Byte to decode method of converter WrongInputConverter in field io.github.mtrevisan.boxon.codecs.TemplateParserTest$TestError4.type", exc.getMessage());
 	}
 
@@ -270,7 +270,7 @@ class TemplateParserTest{
 		loaderCodec.injectFieldInCodecs(TemplateParserInterface.class, templateParser);
 		loaderCodec.injectFieldInCodecs(Evaluator.class, evaluator);
 
-		TestComposition1 parsed = templateParser.decode(template, reader, null, evaluator);
+		TestComposition1 parsed = templateParser.decode(template, reader, null);
 		Assertions.assertNotNull(parsed);
 		Assertions.assertEquals("tm1", parsed.header);
 		Assertions.assertEquals(1, parsed.type);
@@ -280,7 +280,7 @@ class TemplateParserTest{
 		Assertions.assertEquals("b", parsed.sub.field2);
 
 		BitWriter writer = BitWriter.create();
-		templateParser.encode(template, writer, null, parsed, evaluator);
+		templateParser.encode(template, writer, null, parsed);
 		byte[] reconstructedMessage = writer.array();
 
 		Assertions.assertArrayEquals(payload, reconstructedMessage);
@@ -335,7 +335,7 @@ class TemplateParserTest{
 		loaderCodec.injectFieldInCodecs(TemplateParserInterface.class, templateParser);
 		loaderCodec.injectFieldInCodecs(Evaluator.class, evaluator);
 
-		TestComposition2 parsed = templateParser.decode(template, reader, null, evaluator);
+		TestComposition2 parsed = templateParser.decode(template, reader, null);
 		Assertions.assertNotNull(parsed);
 		Assertions.assertEquals("tm2", parsed.header);
 		Assertions.assertEquals(1, parsed.type);
@@ -344,7 +344,7 @@ class TemplateParserTest{
 		Assertions.assertEquals("b", ((TestComposition2.TestSubComposition1)parsed.sub).field2);
 
 		BitWriter writer = BitWriter.create();
-		templateParser.encode(template, writer, null, parsed, evaluator);
+		templateParser.encode(template, writer, null, parsed);
 		byte[] reconstructedMessage = writer.array();
 
 		Assertions.assertArrayEquals(payload, reconstructedMessage);
@@ -365,7 +365,7 @@ class TemplateParserTest{
 		loaderCodec.injectFieldInCodecs(TemplateParserInterface.class, templateParser);
 		loaderCodec.injectFieldInCodecs(Evaluator.class, evaluator);
 
-		TestComposition2 parsed = templateParser.decode(template, reader, null, evaluator);
+		TestComposition2 parsed = templateParser.decode(template, reader, null);
 		Assertions.assertNotNull(parsed);
 		Assertions.assertEquals("tc2", parsed.header);
 		Assertions.assertEquals(2, parsed.type);
@@ -375,7 +375,7 @@ class TemplateParserTest{
 		Assertions.assertEquals("c", ((TestComposition2.TestSubComposition2)parsed.sub).field3);
 
 		BitWriter writer = BitWriter.create();
-		templateParser.encode(template, writer, null, parsed, evaluator);
+		templateParser.encode(template, writer, null, parsed);
 		byte[] reconstructedMessage = writer.array();
 
 		Assertions.assertArrayEquals(payload, reconstructedMessage);

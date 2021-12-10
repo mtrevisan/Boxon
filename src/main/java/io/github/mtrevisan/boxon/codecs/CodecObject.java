@@ -65,7 +65,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 			final Class<?> type = extractType(reader, binding, rootObject);
 
 			final Template<?> template = templateParser.createTemplate(type);
-			final Object instance = templateParser.decode(template, reader, rootObject, evaluator);
+			final Object instance = templateParser.decode(template, reader, rootObject);
 			evaluator.addToContext(ContextHelper.CONTEXT_SELF, instance);
 
 			final ConverterChoices selectConverterFrom = binding.selectConverterFrom();
@@ -125,7 +125,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 			binding.converter(), rootObject, evaluator);
 		final Object obj = CodecHelper.converterEncode(chosenConverter, value);
 
-		templateParser.encode(template, writer, rootObject, obj, evaluator);
+		templateParser.encode(template, writer, rootObject, obj);
 	}
 
 }

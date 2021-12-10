@@ -103,7 +103,7 @@ public final class ConfigurationHelper{
 			: extractEnumerationSingleValue(value, enumeration));
 	}
 
-	private static Object extractEnumerationArrayValue(final String value, final Class<? extends ConfigurationEnum> enumeration){
+	private static Object extractEnumerationArrayValue(final CharSequence value, final Class<? extends ConfigurationEnum> enumeration){
 		final ConfigurationEnum[] enumConstants = enumeration.getEnumConstants();
 		final String[] defaultValues = splitMultipleEnumerations(value);
 		final Object valEnum = Array.newInstance(enumeration, defaultValues.length);
