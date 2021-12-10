@@ -103,14 +103,13 @@ public final class ConfigurationHelper{
 			: extractEnumerationSingleValue(value, enumeration));
 	}
 
-	private static Object extractEnumerationArrayValue(final CharSequence value, final Class<? extends ConfigurationEnum> enumeration){
+	@SuppressWarnings("unchecked")
+	private static <T extends ConfigurationEnum> T[] extractEnumerationArrayValue(final CharSequence value, final Class<T> enumeration){
 		final ConfigurationEnum[] enumConstants = enumeration.getEnumConstants();
 		final String[] defaultValues = splitMultipleEnumerations(value);
-		final Object valEnum = Array.newInstance(enumeration, defaultValues.length);
-		for(int i = 0; i < defaultValues.length; i ++){
-			final ConfigurationEnum val = ConfigurationEnum.extractEnum(enumConstants, defaultValues[i]);
-			Array.set(valEnum, i, val);
-		}
+		final T[] valEnum = (T[])Array.newInstance(enumeration, defaultValues.length);
+		for(int i = 0; i < defaultValues.length; i ++)
+			valEnum[i] = (T)ConfigurationEnum.extractEnum(enumConstants, defaultValues[i]);
 		return valEnum;
 	}
 
