@@ -26,12 +26,15 @@ package io.github.mtrevisan.boxon.external;
 
 
 public enum DescriberKey{
+	CONTEXT("context"),
 	CONTEXT_METHODS("methods"),
 
+	HEADER("header"),
 	HEADER_START("start"),
 	HEADER_END("end"),
 	HEADER_CHARSET("charset"),
 
+	FIELDS("fields"),
 	FIELD_NAME("name"),
 	FIELD_TYPE("fieldType"),
 	ANNOTATION_TYPE("annotationType"),

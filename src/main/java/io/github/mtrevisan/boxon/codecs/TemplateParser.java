@@ -423,41 +423,50 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 	private Map<String, Object> describeTemplate(final Template<?> template) throws TemplateException{
-		final Map<String, Object> description = new HashMap<>(2);
-		final MessageHeader header = template.getHeader();
+		final Map<String, Object> description = new HashMap<>(3);
+		describeHeader(template.getHeader(), description);
+		describeFields(template.getBoundedFields(), description);
+		describeContext(description);
+		return description;
+	}
+
+	private void describeHeader(final MessageHeader header, final Map<String, Object> description){
 		final Map<String, Object> headerDescription = new HashMap<>(3);
 		AnnotationDescriptor.putIfNotEmpty(DescriberKey.HEADER_START, header.start(), headerDescription);
 		AnnotationDescriptor.putIfNotEmpty(DescriberKey.HEADER_END, header.end(), headerDescription);
 		AnnotationDescriptor.putIfNotEmpty(DescriberKey.HEADER_CHARSET, header.charset(), headerDescription);
-		description.put("header", headerDescription);
+		description.put(DescriberKey.HEADER.toString(), headerDescription);
+	}
+
+	private void describeFields(final List<BoundedField> fields, final Map<String, Object> description) throws TemplateException{
 		final Collection<Map<String, Object>> fieldsDescription = new ArrayList<>(0);
-		final List<BoundedField> fields = template.getBoundedFields();
-		for(int i = 0; i < fields.size(); i ++){
-			final BoundedField field = fields.get(i);
-			final Map<String, Object> fieldDescription = new HashMap<>(13);
+		for(int i = 0; i < fields.size(); i ++)
+			describeField(fields.get(i), fieldsDescription);
+		description.put(DescriberKey.FIELDS.toString(), fieldsDescription);
+	}
 
-			AnnotationDescriptor.describeSkips(field.getSkips(), fieldsDescription);
+	private void describeField(final BoundedField field, final Collection<Map<String, Object>> fieldsDescription) throws TemplateException{
+		AnnotationDescriptor.describeSkips(field.getSkips(), fieldsDescription);
 
-			AnnotationDescriptor.putIfNotEmpty(DescriberKey.FIELD_NAME, field.getFieldName(), fieldDescription);
-			AnnotationDescriptor.putIfNotEmpty(DescriberKey.FIELD_TYPE, field.getFieldType(), fieldDescription);
-			final Annotation binding = field.getBinding();
-			final Class<? extends Annotation> annotationType = binding.annotationType();
-			AnnotationDescriptor.putIfNotEmpty(DescriberKey.ANNOTATION_TYPE, binding.annotationType().getSimpleName(), fieldDescription);
+		final Map<String, Object> fieldDescription = new HashMap<>(13);
+		AnnotationDescriptor.putIfNotEmpty(DescriberKey.FIELD_NAME, field.getFieldName(), fieldDescription);
+		AnnotationDescriptor.putIfNotEmpty(DescriberKey.FIELD_TYPE, field.getFieldType(), fieldDescription);
+		final Annotation binding = field.getBinding();
+		final Class<? extends Annotation> annotationType = binding.annotationType();
+		AnnotationDescriptor.putIfNotEmpty(DescriberKey.ANNOTATION_TYPE, binding.annotationType().getSimpleName(), fieldDescription);
 
-			//extract binding descriptor
-			final AnnotationDescriptor descriptor = AnnotationDescriptor.fromAnnotation(binding);
-			if(descriptor == null)
-				throw TemplateException.create("Cannot extract descriptor for this annotation: {}", annotationType.getSimpleName());
+		//extract binding descriptor
+		final AnnotationDescriptor descriptor = AnnotationDescriptor.fromAnnotation(binding);
+		if(descriptor == null)
+			throw TemplateException.create("Cannot extract descriptor for this annotation: {}", annotationType.getSimpleName());
 
-			descriptor.describe(binding, fieldDescription);
+		descriptor.describe(binding, fieldDescription);
 
-			fieldsDescription.add(fieldDescription);
-		}
-		description.put("fields", fieldsDescription);
+		fieldsDescription.add(fieldDescription);
+	}
 
-		description.put("context", backupContext);
-
-		return description;
+	private void describeContext(final Map<String, Object> description){
+		description.put(DescriberKey.CONTEXT.toString(), backupContext);
 	}
 
 }
