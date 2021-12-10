@@ -663,7 +663,7 @@ private String deviceTypeName;
 
 <a name="protocol-description"></a>
 ## Protocol description
-A description of the protocol can be obtained through the methods `Parser.describeTemplates` and `Parser.describeTemplate`.
+A description of the protocol can be obtained through the methods `Describer.describeTemplates` and `Describer.describeTemplate`.
 
 These returns a JSON with a description of all the annotations of the loaded templates.
 
@@ -676,9 +676,9 @@ ParserCore core = ParserCore.create()
     .withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
     .withDefaultCodecs()
     .withTemplate(ACKMessageHex.class);
-Parser parser = Parser.create(core);
+Descriptor descriptor = Descriptor.create(core);
 
-List<Map<String, Object>> descriptions = parser.describeTemplates();
+List<Map<String, Object>> descriptions = descriptor.describeTemplates();
 ```
 
 gives as output the following

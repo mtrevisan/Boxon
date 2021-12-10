@@ -50,7 +50,7 @@ public final class TemplateParserCore{
 	 *
 	 * @param loaderCodec	A codec loader.
 	 * @param evaluator	An evaluator.
-	 * @return	A template parser.
+	 * @return	A template parser core.
 	 */
 	public static TemplateParserCore create(final LoaderCodecInterface loaderCodec, final Evaluator evaluator){
 		return new TemplateParserCore(loaderCodec, EventListener.getNoOpInstance(), evaluator);
@@ -62,7 +62,7 @@ public final class TemplateParserCore{
 	 * @param loaderCodec	A codec loader.
 	 * @param eventListener	The event listener.
 	 * @param evaluator	An evaluator.
-	 * @return	A template parser.
+	 * @return	A template parser core.
 	 */
 	public static TemplateParserCore create(final LoaderCodecInterface loaderCodec, final EventListener eventListener,
 			final Evaluator evaluator){
@@ -159,7 +159,7 @@ public final class TemplateParserCore{
 		return loaderCodec;
 	}
 
-	LoaderTemplate getLoaderTemplate(){
+	public LoaderTemplate getLoaderTemplate(){
 		return loaderTemplate;
 	}
 

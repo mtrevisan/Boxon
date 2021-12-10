@@ -309,28 +309,4 @@ class ParserTest{
 			new String(composeResult.getComposedMessage()));
 	}
 
-
-	@Test
-	void getDescription() throws AnnotationException, ConfigurationException, JsonProcessingException, CodecException, TemplateException,
-			NoSuchMethodException{
-		DeviceTypes deviceTypes = new DeviceTypes();
-		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
-		ParserCore core = ParserCore.create()
-			.addToContext("deviceTypes", deviceTypes)
-			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
-			.withDefaultCodecs()
-			.withTemplate(ACKMessageHex.class);
-		Parser parser = Parser.create(core);
-
-		List<Map<String, Object>> descriptions = parser.describeTemplates();
-
-		Assertions.assertEquals(1, descriptions.size());
-
-		ObjectMapper mapper = new ObjectMapper();
-		Map<String, Object> description = descriptions.get(0);
-		String jsonDescription = mapper.writeValueAsString(description);
-
-		Assertions.assertEquals("{\"fields\":[{\"charset\":\"UTF-8\",\"size\":\"#headerSize()\",\"name\":\"messageHeader\",\"annotationType\":\"BindString\",\"fieldType\":\"String\"},{\"converter\":\"io.github.mtrevisan.boxon.codecs.queclink.ACKMessageHex$MessageTypeConverter\",\"name\":\"messageType\",\"annotationType\":\"BindByte\",\"fieldType\":\"String\"},{\"converter\":\"io.github.mtrevisan.boxon.codecs.queclink.ACKMaskHex$ACKMaskConverter\",\"name\":\"mask\",\"annotationType\":\"BindByte\",\"fieldType\":\"ACKMaskHex\"},{\"condition\":\"mask.hasLength()\",\"name\":\"messageLength\",\"annotationType\":\"BindByte\",\"fieldType\":\"byte\"},{\"condition\":\"mask.hasDeviceType()\",\"name\":\"deviceTypeCode\",\"annotationType\":\"BindByte\",\"fieldType\":\"byte\"},{\"condition\":\"mask.hasProtocolVersion()\",\"size\":\"2\",\"converter\":\"io.github.mtrevisan.boxon.codecs.queclink.QueclinkHelper$VersionConverter\",\"name\":\"protocolVersion\",\"annotationType\":\"BindArrayPrimitive\",\"type\":\"byte\",\"fieldType\":\"String\",\"byteOrder\":\"BIG_ENDIAN\"},{\"condition\":\"mask.hasFirmwareVersion()\",\"size\":\"2\",\"converter\":\"io.github.mtrevisan.boxon.codecs.queclink.QueclinkHelper$VersionConverter\",\"name\":\"firmwareVersion\",\"annotationType\":\"BindArrayPrimitive\",\"type\":\"byte\",\"fieldType\":\"String\",\"byteOrder\":\"BIG_ENDIAN\"},{\"condition\":\"mask.hasIMEI()\",\"size\":\"8\",\"converter\":\"io.github.mtrevisan.boxon.codecs.queclink.QueclinkHelper$IMEIConverter\",\"name\":\"imei\",\"validator\":\"io.github.mtrevisan.boxon.annotations.validators.IMEIValidator\",\"annotationType\":\"BindArrayPrimitive\",\"type\":\"byte\",\"fieldType\":\"String\",\"byteOrder\":\"BIG_ENDIAN\"},{\"charset\":\"UTF-8\",\"condition\":\"!mask.hasIMEI()\",\"size\":\"8\",\"name\":\"deviceName\",\"annotationType\":\"BindString\",\"fieldType\":\"String\"},{\"name\":\"id\",\"annotationType\":\"BindByte\",\"fieldType\":\"byte\"},{\"name\":\"correlationId\",\"annotationType\":\"BindShort\",\"fieldType\":\"short\",\"byteOrder\":\"BIG_ENDIAN\"},{\"condition\":\"mask.hasEventTime()\",\"size\":\"7\",\"converter\":\"io.github.mtrevisan.boxon.codecs.queclink.QueclinkHelper$DateTimeYYYYMMDDHHMMSSConverter\",\"name\":\"eventTime\",\"annotationType\":\"BindArrayPrimitive\",\"type\":\"byte\",\"fieldType\":\"ZonedDateTime\",\"byteOrder\":\"BIG_ENDIAN\"},{\"condition\":\"mask.hasMessageId()\",\"name\":\"messageId\",\"annotationType\":\"BindShort\",\"fieldType\":\"short\",\"byteOrder\":\"BIG_ENDIAN\"},{\"skipEnd\":4,\"skipStart\":4,\"name\":\"checksum\",\"annotationType\":\"Checksum\",\"startValue\":-1,\"type\":\"short\",\"fieldType\":\"short\",\"byteOrder\":\"BIG_ENDIAN\",\"algorithm\":\"CRC16CCITT\"}],\"context\":{\"methods\":[\"private static int io.github.mtrevisan.boxon.core.ParserTest.headerSize()\"],\"deviceTypes\":\"[QUECLINK_GB200S (0x46)]\"},\"header\":{\"start\":[\"+ACK\"],\"charset\":\"UTF-8\"}}", jsonDescription);
-	}
-
 }

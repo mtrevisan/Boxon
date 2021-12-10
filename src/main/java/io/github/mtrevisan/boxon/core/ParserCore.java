@@ -59,7 +59,7 @@ public final class ParserCore{
 	 * Create an empty parser core (context, codecs and templates MUST BE manually loaded! -- templates MUST BE loaded AFTER
 	 * the codecs).
 	 *
-	 * @return	A basic empty parser.
+	 * @return	A basic empty parser core.
 	 */
 	public static ParserCore create(){
 		return create(null);
@@ -70,7 +70,7 @@ public final class ParserCore{
 	 * the codecs).
 	 *
 	 * @param eventListener	The event listener.
-	 * @return	A basic empty parser.
+	 * @return	A basic empty parser core.
 	 */
 	public static ParserCore create(final EventListener eventListener){
 		return new ParserCore(eventListener != null? eventListener: EventListener.getNoOpInstance());

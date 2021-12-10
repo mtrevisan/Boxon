@@ -24,7 +24,6 @@
  */
 package io.github.mtrevisan.boxon.core;
 
-import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.codecs.ConfigurationParser;
 import io.github.mtrevisan.boxon.codecs.TemplateParser;
@@ -34,12 +33,10 @@ import io.github.mtrevisan.boxon.codecs.managers.Template;
 import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationHelper;
 import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationManagerFactory;
 import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationManagerInterface;
-import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.DecodeException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
-import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.codecs.BitReader;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
 import io.github.mtrevisan.boxon.external.configurations.ConfigurationKey;
@@ -85,45 +82,6 @@ public final class Parser{
 		this.core = core;
 	}
 
-
-	//-- Descriptor section --
-
-	/**
-	 * Description of all the loaded templates.
-	 *
-	 * @return	The list of descriptions.
-	 */
-	public List<Map<String, Object>> describeTemplates() throws TemplateException{
-		return core.getTemplateParser().describeTemplates();
-	}
-
-	/**
-	 * Description of all the templates in the given package annotated with {@link MessageHeader}.
-	 *
-	 * @param templateClasses	Classes to be used ase starting point from which to load annotated classes.
-	 * @return	The list of descriptions.
-	 * @throws AnnotationException	If an annotation is not well formatted.
-	 * @throws TemplateException	If a template is not well formatted.
-	 */
-	public List<Map<String, Object>> describeTemplates(final Class<?>... templateClasses) throws AnnotationException, TemplateException{
-		return core.getTemplateParser().describeTemplates(templateClasses);
-	}
-
-	/**
-	 * Description of all the templates in the given package annotated with {@link MessageHeader}.
-	 *
-	 * @param templateClass	Template from which to extract the description.
-	 * @return	The description.
-	 * @throws AnnotationException	If an annotation is not well formatted.
-	 * @throws TemplateException	If a template is not well formatted.
-	 */
-	public Map<String, Object> describeTemplate(final Class<?> templateClass) throws AnnotationException, TemplateException{
-		final List<Map<String, Object>> descriptions = describeTemplates(templateClass);
-		return (descriptions.isEmpty()? Collections.emptyMap(): descriptions.get(0));
-	}
-
-
-	//-- Parser section --
 
 	/**
 	 * Parse a message from a file containing a binary stream.

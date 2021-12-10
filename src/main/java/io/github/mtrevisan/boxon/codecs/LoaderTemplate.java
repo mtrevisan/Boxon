@@ -50,7 +50,7 @@ import java.util.TreeMap;
 import java.util.function.Function;
 
 
-final class LoaderTemplate{
+public final class LoaderTemplate{
 
 	private static final PatternMatcher PATTERN_MATCHER = BNDMPatternMatcher.getInstance();
 	private static final Function<byte[], int[]> PRE_PROCESSED_PATTERNS = Memoizer.memoize(PATTERN_MATCHER::preProcessPattern);
@@ -157,7 +157,7 @@ final class LoaderTemplate{
 		return templates;
 	}
 
-	Template<?> extractTemplate(final Class<?> type) throws AnnotationException, TemplateException{
+	public Template<?> extractTemplate(final Class<?> type) throws AnnotationException, TemplateException{
 		final Template<?> from = createTemplate(type);
 		if(!from.canBeCoded())
 			throw TemplateException.create("Cannot create a raw message from data: cannot scan template for {}",
@@ -258,7 +258,7 @@ final class LoaderTemplate{
 		return template;
 	}
 
-	Collection<Template<?>> getTemplates(){
+	public Collection<Template<?>> getTemplates(){
 		return Collections.unmodifiableCollection(templates.values());
 	}
 
