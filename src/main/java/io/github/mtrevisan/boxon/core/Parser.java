@@ -74,8 +74,6 @@ import java.util.Objects;
 @SuppressWarnings({"WeakerAccess", "unused"})
 public final class Parser{
 
-	private final EventListener eventListener;
-
 	private final LoaderCodec loaderCodec;
 
 	private final Evaluator evaluator = Evaluator.create();
@@ -107,8 +105,6 @@ public final class Parser{
 
 
 	private Parser(final EventListener eventListener){
-		this.eventListener = eventListener;
-
 		loaderCodec = LoaderCodec.create(eventListener);
 
 		templateParser = TemplateParser.create(loaderCodec, eventListener, evaluator);
