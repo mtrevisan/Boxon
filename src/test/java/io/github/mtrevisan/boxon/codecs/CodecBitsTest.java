@@ -107,7 +107,7 @@ class CodecBitsTest{
 		};
 
 		BitWriter writer = BitWriter.create();
-		ReflectionHelper.setFieldValue(codec, Evaluator.class, Evaluator.create());
+		ReflectionHelper.setValue(codec, Evaluator.class, Evaluator.create());
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
@@ -177,7 +177,7 @@ class CodecBitsTest{
 		};
 
 		BitWriter writer = BitWriter.create();
-		ReflectionHelper.setFieldValue(codec, Evaluator.class, Evaluator.create());
+		ReflectionHelper.setValue(codec, Evaluator.class, Evaluator.create());
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 

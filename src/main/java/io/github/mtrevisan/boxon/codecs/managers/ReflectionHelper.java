@@ -81,7 +81,7 @@ public final class ReflectionHelper{
 
 
 	@SuppressWarnings("unchecked")
-	static <T> T getFieldValue(final Field field, final Object obj){
+	static <T> T getValue(final Field field, final Object obj){
 		try{
 			return (T)field.get(obj);
 		}
@@ -91,7 +91,7 @@ public final class ReflectionHelper{
 		}
 	}
 
-	public static void setFieldValue(final Field field, final Object obj, final Object value){
+	public static void setValue(final Field field, final Object obj, final Object value){
 		try{
 			field.set(obj, value);
 		}
@@ -101,7 +101,7 @@ public final class ReflectionHelper{
 		}
 	}
 
-	public static <T> void setFieldValue(final Object obj, final Class<T> fieldType, final T value){
+	public static <T> void setValue(final Object obj, final Class<T> fieldType, final T value){
 		try{
 			final List<Field> fields = getAccessibleFields(obj.getClass(), fieldType);
 			for(int i = 0; i < fields.size(); i ++)
@@ -110,7 +110,7 @@ public final class ReflectionHelper{
 		catch(final IllegalArgumentException | IllegalAccessException ignored){}
 	}
 
-	public static <T> void injectFieldValue(final Object obj, final Class<T> fieldType, final T value){
+	public static <T> void injectValue(final Object obj, final Class<T> fieldType, final T value){
 		try{
 			final List<Field> fields = getAccessibleFields(obj.getClass(), fieldType);
 			for(int i = 0; i < fields.size(); i ++){
@@ -122,7 +122,7 @@ public final class ReflectionHelper{
 		catch(final IllegalArgumentException | IllegalAccessException ignored){}
 	}
 
-	public static <T> void injectStaticFieldValue(final Class<?> cl, final Class<T> fieldType, final T value){
+	public static <T> void injectStaticValue(final Class<?> cl, final Class<T> fieldType, final T value){
 		try{
 			final List<Field> fields = getAccessibleFields(cl, fieldType);
 			for(int i = 0; i < fields.size(); i ++){

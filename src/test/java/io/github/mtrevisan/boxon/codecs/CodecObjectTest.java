@@ -155,8 +155,8 @@ class CodecObjectTest{
 		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
 		Evaluator evaluator = Evaluator.create();
 		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator);
-		ReflectionHelper.setFieldValue(codec, TemplateParserInterface.class, templateParser);
-		ReflectionHelper.setFieldValue(codec, Evaluator.class, Evaluator.create());
+		ReflectionHelper.setValue(codec, TemplateParserInterface.class, templateParser);
+		ReflectionHelper.setValue(codec, Evaluator.class, Evaluator.create());
 		BitWriter writer = BitWriter.create();
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();

@@ -212,7 +212,7 @@ final class LoaderConfiguration{
 			final Class<?> fieldType = foundField.getFieldType();
 			manager.validateValue(dataKey, dataValue, fieldType);
 			dataValue = manager.convertValue(dataKey, dataValue, foundField.getField(), protocol);
-			ReflectionHelper.setFieldValue(foundField.getField(), configurationObject, dataValue);
+			ReflectionHelper.setValue(foundField.getField(), configurationObject, dataValue);
 
 			if(String.class.isInstance(dataValue) && !((String)dataValue).isEmpty() || dataValue != null)
 				mandatoryFields.remove(foundField);
@@ -245,7 +245,7 @@ final class LoaderConfiguration{
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(annotation);
 			Object dataValue = manager.getDefaultValue(field.getField(), protocol);
 			dataValue = manager.convertValue(manager.getShortDescription(), dataValue, field.getField(), protocol);
-			ReflectionHelper.setFieldValue(field.getField(), configurationObject, dataValue);
+			ReflectionHelper.setValue(field.getField(), configurationObject, dataValue);
 		}
 	}
 

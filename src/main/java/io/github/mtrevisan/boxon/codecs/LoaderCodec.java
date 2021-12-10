@@ -161,7 +161,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	//FIXME ugliness?
 	public <T> void injectFieldInCodecs(final Class<T> type, final T object){
 		for(final CodecInterface<?> codec : codecs.values())
-			ReflectionHelper.injectFieldValue(codec, type, object);
+			ReflectionHelper.injectValue(codec, type, object);
 	}
 
 	@Override

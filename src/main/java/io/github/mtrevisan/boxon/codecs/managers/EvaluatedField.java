@@ -50,7 +50,7 @@ public final class EvaluatedField{
 	}
 
 	public void setFieldValue(final Object obj, final Object value){
-		ReflectionHelper.setFieldValue(field, obj, value);
+		ReflectionHelper.setValue(field, obj, value);
 	}
 
 	public Evaluate getBinding(){
