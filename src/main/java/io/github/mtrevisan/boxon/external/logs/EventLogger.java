@@ -137,12 +137,6 @@ public final class EventLogger extends EventListener{
 
 
 	@Override
-	public void uselessAlternative(final String defaultAlternativeClassName){
-		warn("Useless definition of default alternative ({}) due to no alternatives present on @BindArray or @BindObject",
-			defaultAlternativeClassName);
-	}
-
-	@Override
 	public void processingAlternative(final Exception exception){
 		trace("Error while processing alternative", exception);
 		warn(exception.getMessage() != null? exception.getMessage(): exception.getClass().getSimpleName());

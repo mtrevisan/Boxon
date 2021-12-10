@@ -76,9 +76,6 @@ public class EventListener{
 
 
 	@SuppressWarnings("unused")
-	public void uselessAlternative(final String defaultAlternativeClassName){}
-
-	@SuppressWarnings("unused")
 	public void processingAlternative(final Exception exception){}
 
 

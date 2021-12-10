@@ -33,7 +33,6 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.external.codecs.ParserDataType;
-import io.github.mtrevisan.boxon.external.logs.EventListener;
 
 import java.lang.annotation.Annotation;
 
@@ -106,8 +105,6 @@ public enum TemplateAnnotationValidator{
 	};
 
 
-	private static EventListener eventListener;
-
 	private static final String EMPTY_STRING = "";
 
 	private static final ValueOf<TemplateAnnotationValidator, Class<? extends Annotation>> VALIDATORS
@@ -119,10 +116,6 @@ public enum TemplateAnnotationValidator{
 
 	TemplateAnnotationValidator(final Class<? extends Annotation> type){
 		annotationType = type;
-	}
-
-	public static void setEventListener(final EventListener eventListener){
-		TemplateAnnotationValidator.eventListener = eventListener;
 	}
 
 	static TemplateAnnotationValidator fromAnnotation(final Annotation annotation){
@@ -174,7 +167,7 @@ public enum TemplateAnnotationValidator{
 	private static void validateObjectDefaultAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> type,
 			final Class<?> selectDefault) throws AnnotationException{
 		if(selectDefault != void.class && alternatives.length == 0)
-			eventListener.uselessAlternative(selectDefault.getSimpleName());
+			throw AnnotationException.create("Useless empty alternative");
 		if(selectDefault != void.class && !type.isAssignableFrom(selectDefault))
 			throw AnnotationException.create("Type of default alternative cannot be assigned to (super) type of annotation");
 	}
