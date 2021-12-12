@@ -34,6 +34,7 @@ import java.nio.charset.StandardCharsets;
  * @see <a href="https://graphics.stanford.edu/~seander/bithacks.html">Bit Twiddling Hacks</a>
  * @see <a href="https://git.irsamc.ups-tlse.fr/scemama/Bit-Twiddling-Hacks/">Bit Twiddling Hacks</a>
  */
+@SuppressWarnings("WeakerAccess")
 public final class BitWriter extends BitWriterData{
 
 	public static BitWriter create(){

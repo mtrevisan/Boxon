@@ -35,6 +35,7 @@ import java.util.regex.Pattern;
 /**
  * @see <a href="https://semver.org/">Semantic Versioning 2.0.0</a>
  */
+@SuppressWarnings("WeakerAccess")
 public final class Version implements Comparable<Version>{
 
 	private static final String EMPTY_STRING = "";

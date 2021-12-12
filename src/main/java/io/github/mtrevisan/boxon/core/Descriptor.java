@@ -27,7 +27,6 @@ package io.github.mtrevisan.boxon.core;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.codecs.LoaderTemplate;
 import io.github.mtrevisan.boxon.codecs.TemplateParser;
-import io.github.mtrevisan.boxon.codecs.TemplateParserCore;
 import io.github.mtrevisan.boxon.codecs.managers.AnnotationDescriptor;
 import io.github.mtrevisan.boxon.codecs.managers.BoundedField;
 import io.github.mtrevisan.boxon.codecs.managers.Template;
@@ -46,7 +45,7 @@ import java.util.Map;
 @SuppressWarnings({"WeakerAccess", "unused"})
 public final class Descriptor{
 
-	private final TemplateParserCore core;
+	private final LoaderTemplate loaderTemplate;
 	private final Map<String, Object> backupContext;
 
 
@@ -63,7 +62,8 @@ public final class Descriptor{
 
 	private Descriptor(final ParserCore parserCore){
 		final TemplateParser templateParser = parserCore.getTemplateParser();
-		core = templateParser.getTemplateParserCore();
+		loaderTemplate = templateParser.getTemplateParserCore()
+			.getLoaderTemplate();
 		backupContext = templateParser.getBackupContext();
 	}
 
@@ -74,7 +74,7 @@ public final class Descriptor{
 	 * @return	The list of descriptions.
 	 */
 	public List<Map<String, Object>> describeTemplates() throws TemplateException{
-		final Collection<Template<?>> templates = core.getLoaderTemplate().getTemplates();
+		final Collection<Template<?>> templates = loaderTemplate.getTemplates();
 		final List<Map<String, Object>> description = new ArrayList<>(templates.size());
 		for(final Template<?> template : templates)
 			description.add(describeTemplate(template));
@@ -90,7 +90,6 @@ public final class Descriptor{
 	 * @throws TemplateException	If a template is not well formatted.
 	 */
 	public List<Map<String, Object>> describeTemplates(final Class<?>... templateClasses) throws AnnotationException, TemplateException{
-		final LoaderTemplate loaderTemplate = core.getLoaderTemplate();
 		final List<Map<String, Object>> description = new ArrayList<>(templateClasses.length);
 		for(int i = 0; i < templateClasses.length; i ++){
 			final Class<?> templateClass = templateClasses[i];

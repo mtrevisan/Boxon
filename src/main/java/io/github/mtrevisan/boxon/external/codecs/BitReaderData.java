@@ -32,6 +32,7 @@ import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 
 
+@SuppressWarnings("WeakerAccess")
 abstract class BitReaderData{
 
 	private static final class State{

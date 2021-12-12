@@ -57,4 +57,5 @@ public enum ConfigurationKey{
 	public String toString(){
 		return name;
 	}
+
 }

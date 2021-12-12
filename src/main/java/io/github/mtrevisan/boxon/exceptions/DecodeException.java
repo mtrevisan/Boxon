@@ -32,6 +32,7 @@ import java.io.ObjectOutputStream;
 /**
  * Thrown if a parsing (decoding) went bad.
  */
+@SuppressWarnings("unused")
 public final class DecodeException extends Exception{
 
 	private static final long serialVersionUID = 5375434179637246605L;

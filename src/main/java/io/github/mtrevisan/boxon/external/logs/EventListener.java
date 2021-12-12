@@ -39,62 +39,41 @@ public class EventListener{
 	}
 
 
-	@SuppressWarnings("unused")
 	public void loadingCodecs(final Class<?>[] basePackageClasses){}
 
-	@SuppressWarnings("unused")
 	public void loadingCodec(final Class<?>[] codecClasses){}
 
-	@SuppressWarnings("unused")
 	public void loadedCodecs(final int count){}
 
-	@SuppressWarnings("unused")
 	public void cannotCreateCodec(final String codecClassName){}
 
 
-	@SuppressWarnings("unused")
 	public void loadingTemplates(final Class<?>[] basePackageClasses){}
 
-	@SuppressWarnings("unused")
 	public void loadingTemplate(final Class<?> templateClass){}
 
-	@SuppressWarnings("unused")
 	public void loadedTemplates(final int count){}
 
-	@SuppressWarnings("unused")
 	public void cannotLoadTemplate(final String templateClassName, final Exception exception){}
 
 
-	@SuppressWarnings("unused")
 	public void loadingConfigurations(final Class<?>[] basePackageClasses){}
 
-	@SuppressWarnings("unused")
 	public void loadedConfigurations(final int count){}
 
-	@SuppressWarnings("unused")
 	public void cannotLoadConfiguration(final String configurationClassName, final Exception exception){}
 
 
-	@SuppressWarnings("unused")
-	public void processingAlternative(final Exception exception){}
-
-
-	@SuppressWarnings("unused")
 	public void readingField(final String templateName, final String fieldName, final String bindingTypeName){}
 
-	@SuppressWarnings("unused")
 	public void readField(final String templateName, final String fieldName, final Object value){}
 
-	@SuppressWarnings("unused")
 	public void evaluatingField(final String templateName, final String fieldName){}
 
-	@SuppressWarnings("unused")
 	public void evaluatedField(final String templateName, final String fieldName, final Object value){}
 
-	@SuppressWarnings("unused")
 	public void writingField(final String templateName, final String fieldName, final String bindingTypeName){}
 
-	@SuppressWarnings("unused")
 	public void writtenField(final String templateName, final String fieldName, final Object value){}
 
 }

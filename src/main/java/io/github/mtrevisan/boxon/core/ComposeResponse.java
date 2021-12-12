@@ -35,7 +35,7 @@ import java.util.Objects;
 /**
  * Response class for the encoding phase.
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({"WeakerAccess", "unused"})
 public final class ComposeResponse{
 
 	private static final byte[] EMPTY_ARRAY = new byte[0];
