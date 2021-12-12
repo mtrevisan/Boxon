@@ -1333,6 +1333,7 @@ Remember that the header that will be written is the first in `@MessageHeader`.
 ### version 2.1.0 - 20211209
 - Made library thread-safe.
 - Added methods to retrieve a description of the protocol (in JSON format).
+- Decomposed and simplified `Parser` class.
 
 
 <a name="changelog-2.0.0"></a>
