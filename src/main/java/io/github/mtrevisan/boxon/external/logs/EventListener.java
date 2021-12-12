@@ -56,6 +56,9 @@ public class EventListener{
 	public void loadingTemplates(final Class<?>[] basePackageClasses){}
 
 	@SuppressWarnings("unused")
+	public void loadingTemplate(final Class<?> templateClass){}
+
+	@SuppressWarnings("unused")
 	public void loadedTemplates(final int count){}
 
 	@SuppressWarnings("unused")
@@ -71,9 +74,6 @@ public class EventListener{
 	@SuppressWarnings("unused")
 	public void cannotLoadConfiguration(final String configurationClassName, final Exception exception){}
 
-
-	@SuppressWarnings("unused")
-	public void uselessAlternative(final String defaultAlternativeClassName){}
 
 	@SuppressWarnings("unused")
 	public void processingAlternative(final Exception exception){}

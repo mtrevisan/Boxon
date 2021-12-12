@@ -38,9 +38,9 @@ import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
-import io.github.mtrevisan.boxon.core.ComposeResponse;
 import io.github.mtrevisan.boxon.core.ParseResponse;
 import io.github.mtrevisan.boxon.core.Parser;
+import io.github.mtrevisan.boxon.core.ParserCore;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
@@ -48,6 +48,7 @@ import io.github.mtrevisan.boxon.external.codecs.BitReader;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
 import io.github.mtrevisan.boxon.external.codecs.ByteOrder;
 import io.github.mtrevisan.boxon.external.logs.EventListener;
+import io.github.mtrevisan.boxon.internal.Evaluator;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -152,9 +153,11 @@ class CodecObjectTest{
 		LoaderCodec loaderCodec = LoaderCodec.create(eventListener);
 		loaderCodec.loadDefaultCodecs();
 		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
-		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec);
-		ReflectionHelper.setFieldValue(codec, LoaderTemplateInterface.class, loaderTemplate);
-		ReflectionHelper.setFieldValue(codec, TemplateParserInterface.class, templateParser);
+		Evaluator evaluator = Evaluator.create();
+		TemplateParserCore templateParserCore = TemplateParserCore.create(loaderCodec, evaluator);
+		TemplateParserInterface templateParser = TemplateParser.create(templateParserCore);
+		ReflectionHelper.injectValue(codec, TemplateParserInterface.class, templateParser);
+		ReflectionHelper.injectValue(codec, Evaluator.class, Evaluator.create());
 		BitWriter writer = BitWriter.create();
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
@@ -223,9 +226,10 @@ class CodecObjectTest{
 
 	@Test
 	void choice1() throws AnnotationException, TemplateException{
-		Parser parser = Parser.create()
+		ParserCore core = ParserCore.create()
 			.withDefaultCodecs()
 			.withTemplates(TestChoice1.class);
+		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.toByteArray("746331011234");
 		ParseResponse result = parser.parse(payload);
@@ -238,11 +242,6 @@ class CodecObjectTest{
 		TestType1 value1 = (TestType1)parsedMessage.value;
 		Assertions.assertEquals(0x1234, value1.value);
 
-		ComposeResponse response = parser.composeMessage(parsedMessage);
-		Assertions.assertNotNull(response);
-		Assertions.assertFalse(response.hasErrors());
-		Assertions.assertArrayEquals(payload, response.getComposedMessage());
-
 
 		payload = StringHelper.toByteArray("7463310211223344");
 		result = parser.parse(payload);
@@ -254,18 +253,14 @@ class CodecObjectTest{
 		parsedMessage = (TestChoice1)result.getParsedMessageAt(0);
 		TestType2 value2 = (TestType2)parsedMessage.value;
 		Assertions.assertEquals(0x1122_3344, value2.value);
-
-		response = parser.composeMessage(parsedMessage);
-		Assertions.assertNotNull(response);
-		Assertions.assertFalse(response.hasErrors());
-		Assertions.assertArrayEquals(payload, response.getComposedMessage());
 	}
 
 	@Test
 	void choice2() throws AnnotationException, TemplateException{
-		Parser parser = Parser.create()
+		ParserCore core = ParserCore.create()
 			.withDefaultCodecs()
 			.withTemplates(TestChoice2.class);
+		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.toByteArray("7463320506001234");
 		ParseResponse result = parser.parse(payload);
@@ -278,11 +273,6 @@ class CodecObjectTest{
 		TestType1 value1 = (TestType1)parsedMessage.value;
 		Assertions.assertEquals(0x1234, value1.value);
 
-		ComposeResponse response = parser.composeMessage(parsedMessage);
-		Assertions.assertNotNull(response);
-		Assertions.assertFalse(response.hasErrors());
-		Assertions.assertArrayEquals(payload, response.getComposedMessage());
-
 
 		payload = StringHelper.toByteArray("74633205060111223344");
 		result = parser.parse(payload);
@@ -294,18 +284,14 @@ class CodecObjectTest{
 		parsedMessage = (TestChoice2)result.getParsedMessageAt(0);
 		TestType2 value2 = (TestType2)parsedMessage.value;
 		Assertions.assertEquals(0x1122_3344, value2.value);
-
-		response = parser.composeMessage(parsedMessage);
-		Assertions.assertNotNull(response);
-		Assertions.assertFalse(response.hasErrors());
-		Assertions.assertArrayEquals(payload, response.getComposedMessage());
 	}
 
 	@Test
 	void choice3() throws AnnotationException, TemplateException{
-		Parser parser = Parser.create()
+		ParserCore core = ParserCore.create()
 			.withDefaultCodecs()
 			.withTemplates(TestChoice3.class);
+		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.toByteArray("74633361611234");
 		ParseResponse result = parser.parse(payload);
@@ -318,11 +304,6 @@ class CodecObjectTest{
 		TestType1 value1 = (TestType1)parsedMessage.value;
 		Assertions.assertEquals(0x1234, value1.value);
 
-		ComposeResponse response = parser.composeMessage(parsedMessage);
-		Assertions.assertNotNull(response);
-		Assertions.assertFalse(response.hasErrors());
-		Assertions.assertArrayEquals(payload, response.getComposedMessage());
-
 
 		payload = StringHelper.toByteArray("746333626211223344");
 		result = parser.parse(payload);
@@ -334,11 +315,6 @@ class CodecObjectTest{
 		parsedMessage = (TestChoice3)result.getParsedMessageAt(0);
 		TestType2 value2 = (TestType2)parsedMessage.value;
 		Assertions.assertEquals(0x1122_3344, value2.value);
-
-		response = parser.composeMessage(parsedMessage);
-		Assertions.assertNotNull(response);
-		Assertions.assertFalse(response.hasErrors());
-		Assertions.assertArrayEquals(payload, response.getComposedMessage());
 	}
 
 }

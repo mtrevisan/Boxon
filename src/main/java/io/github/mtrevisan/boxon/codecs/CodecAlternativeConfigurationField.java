@@ -31,7 +31,6 @@ import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.external.codecs.BitReader;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
 import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
-import io.github.mtrevisan.boxon.external.codecs.ParserDataType;
 
 import java.lang.annotation.Annotation;
 
@@ -52,7 +51,7 @@ final class CodecAlternativeConfigurationField implements CodecInterface<Alterna
 			final WriterManagerInterface writerManager = WriterManagerFactory.buildManager(value, writer, binding.radix(), binding.charset());
 			if(writerManager == null)
 				throw CodecException.create("Cannot handle this type of field: {}, please report to the developer",
-					ParserDataType.toObjectiveTypeOrSelf(value.getClass()));
+					value.getClass().getSimpleName());
 
 			writerManager.put(value);
 		}

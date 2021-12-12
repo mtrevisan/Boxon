@@ -41,6 +41,9 @@ import java.util.regex.Pattern;
 
 final class ValidationHelper{
 
+	private static final Pattern PATTERN_PIPE = Pattern.compile("\\|");
+
+
 	private ValidationHelper(){}
 
 	static void assertValidCharset(final String charsetName) throws AnnotationException{
@@ -55,24 +58,25 @@ final class ValidationHelper{
 
 	static <T extends Annotation> void validateProtocol(final ConfigFieldData<T> field, final Version minProtocolVersion,
 			final Version maxProtocolVersion) throws AnnotationException{
-		if(!StringHelper.isBlank(field.minProtocol) || !StringHelper.isBlank(field.maxProtocol)){
-			final Version minimum = validateProtocol(field.minProtocol, field.annotation, "Invalid minimum protocol version in {}; found {}");
-			final Version maximum = validateProtocol(field.maxProtocol, field.annotation, "Invalid maximum protocol version in {}; found {}");
+		if(StringHelper.isBlank(field.minProtocol) && StringHelper.isBlank(field.maxProtocol))
+			return;
 
-			//maxProtocol after or equal to minProtocol
-			if(minimum != null && maximum != null && maximum.isLessThan(minimum))
-				throw AnnotationException.create("Minimum protocol version is greater than maximum protocol version in {}; found {}",
-					field.annotation.getSimpleName(), field.maxProtocol);
+		final Version minimum = validateProtocol(field.minProtocol, field.annotation, "Invalid minimum protocol version in {}; found {}");
+		final Version maximum = validateProtocol(field.maxProtocol, field.annotation, "Invalid maximum protocol version in {}; found {}");
 
-			//minProtocol after or equal to minProtocolVersion
-			if(minimum != null && !minProtocolVersion.isEmpty() && minimum.isLessThan(minProtocolVersion))
-				throw AnnotationException.create("Minimum protocol version is less than whole message minimum protocol version in {}; found {}",
-					field.annotation.getSimpleName(), maxProtocolVersion);
-			//maxProtocol before or equal to maxProtocolVersion
-			if(maximum != null && !maxProtocolVersion.isEmpty() && maxProtocolVersion.isLessThan(maximum))
-				throw AnnotationException.create("Maximum protocol version is greater than whole message maximum protocol version in {}; found {}",
-					field.annotation.getSimpleName(), maxProtocolVersion);
-		}
+		//maxProtocol after or equal to minProtocol
+		if(minimum != null && maximum != null && maximum.isLessThan(minimum))
+			throw AnnotationException.create("Minimum protocol version is greater than maximum protocol version in {}; found {}",
+				field.annotation.getSimpleName(), field.maxProtocol);
+
+		//minProtocol after or equal to minProtocolVersion
+		if(minimum != null && !minProtocolVersion.isEmpty() && minimum.isLessThan(minProtocolVersion))
+			throw AnnotationException.create("Minimum protocol version is less than whole message minimum protocol version in {}; found {}",
+				field.annotation.getSimpleName(), maxProtocolVersion);
+		//maxProtocol before or equal to maxProtocolVersion
+		if(maximum != null && !maxProtocolVersion.isEmpty() && maxProtocolVersion.isLessThan(maximum))
+			throw AnnotationException.create("Maximum protocol version is greater than whole message maximum protocol version in {}; found {}",
+				field.annotation.getSimpleName(), maxProtocolVersion);
 	}
 
 	private static Version validateProtocol(final String protocolVersion, final Class<? extends Annotation> binding,
@@ -154,8 +158,7 @@ final class ValidationHelper{
 		//if default value is not present, then field type must be an object
 		else if(ParserDataType.isPrimitive(fieldType))
 			throw AnnotationException.create("Default must be present for primitive type in {}, found {}, expected {}",
-				field.annotation.getSimpleName(), fieldType.getSimpleName(),
-				ParserDataType.toObjectiveTypeOrSelf(fieldType).getSimpleName());
+				field.annotation.getSimpleName(), fieldType.getSimpleName(), fieldType.getSimpleName());
 	}
 
 	private static <T extends Annotation> void validateMinMaxDefaultValuesToPattern(final Pattern formatPattern,
@@ -230,7 +233,7 @@ final class ValidationHelper{
 				field.annotation.getSimpleName(), field.enumeration.getSimpleName(), fieldType.toString());
 
 		if(!StringHelper.isBlank(field.defaultValue)){
-			final String[] defaultValues = StringHelper.split(field.defaultValue, '|', -1);
+			final String[] defaultValues = PATTERN_PIPE.split(field.defaultValue);
 			if(fieldType.isEnum() && defaultValues.length != 1)
 				throw AnnotationException.create("Default value for mutually exclusive enumeration field in {} should be a value; found {}, expected one of {}",
 					field.annotation.getSimpleName(), field.defaultValue, Arrays.toString(enumConstants));

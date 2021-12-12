@@ -103,6 +103,12 @@ public final class EventLogger extends EventListener{
 	}
 
 	@Override
+	public void loadingTemplate(final Class<?> templateClass){
+		if(LOGGER.isInfoEnabled())
+			info("Load template {}", templateClass.getName());
+	}
+
+	@Override
 	public void loadedTemplates(final int count){
 		trace("Templates loaded are {}", count);
 	}
@@ -129,12 +135,6 @@ public final class EventLogger extends EventListener{
 		LOGGER.error("Cannot load class {}", configurationClassName, exception);
 	}
 
-
-	@Override
-	public void uselessAlternative(final String defaultAlternativeClassName){
-		warn("Useless definition of default alternative ({}) due to no alternatives present on @BindArray or @BindObject",
-			defaultAlternativeClassName);
-	}
 
 	@Override
 	public void processingAlternative(final Exception exception){

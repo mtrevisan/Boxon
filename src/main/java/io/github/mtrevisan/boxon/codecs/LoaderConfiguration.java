@@ -29,7 +29,6 @@ import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.codecs.managers.ConfigField;
 import io.github.mtrevisan.boxon.codecs.managers.ConfigurationMessage;
 import io.github.mtrevisan.boxon.codecs.managers.ConstructorHelper;
-import io.github.mtrevisan.boxon.codecs.managers.InjectEventListener;
 import io.github.mtrevisan.boxon.codecs.managers.Memoizer;
 import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
 import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationManagerFactory;
@@ -55,7 +54,6 @@ import java.util.TreeMap;
 
 final class LoaderConfiguration{
 
-	@InjectEventListener
 	private final EventListener eventListener;
 
 	private final ThrowingFunction<Class<?>, ConfigurationMessage<?>, AnnotationException> configurationStore
@@ -71,7 +69,7 @@ final class LoaderConfiguration{
 	 * @return	A template parser.
 	 */
 	static LoaderConfiguration create(){
-		return new LoaderConfiguration(EventListener.getNoOpInstance());
+		return create(null);
 	}
 
 	/**
@@ -214,7 +212,7 @@ final class LoaderConfiguration{
 			final Class<?> fieldType = foundField.getFieldType();
 			manager.validateValue(dataKey, dataValue, fieldType);
 			dataValue = manager.convertValue(dataKey, dataValue, foundField.getField(), protocol);
-			ReflectionHelper.setFieldValue(foundField.getField(), configurationObject, dataValue);
+			ReflectionHelper.setValue(foundField.getField(), configurationObject, dataValue);
 
 			if(String.class.isInstance(dataValue) && !((String)dataValue).isEmpty() || dataValue != null)
 				mandatoryFields.remove(foundField);
@@ -247,7 +245,7 @@ final class LoaderConfiguration{
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(annotation);
 			Object dataValue = manager.getDefaultValue(field.getField(), protocol);
 			dataValue = manager.convertValue(manager.getShortDescription(), dataValue, field.getField(), protocol);
-			ReflectionHelper.setFieldValue(field.getField(), configurationObject, dataValue);
+			ReflectionHelper.setValue(field.getField(), configurationObject, dataValue);
 		}
 	}
 

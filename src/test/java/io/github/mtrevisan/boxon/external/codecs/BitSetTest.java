@@ -22,19 +22,33 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.codecs.managers;
+package io.github.mtrevisan.boxon.external.codecs;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 
-/**
- * Defines a field that has to be injected with an {@link io.github.mtrevisan.boxon.external.logs.EventListener event listener}.
- */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-@Documented
-public @interface InjectEventListener{}
+@SuppressWarnings("ALL")
+public class BitSetTest{
+
+	@Test
+	void reverseBits(){
+		BitSet bits = BitSet.valueOf(new byte[]{0x10});
+		bits.reverseBits(Byte.SIZE);
+
+		Assertions.assertEquals(BitSet.valueOf(new byte[]{0x08}), bits);
+
+
+		bits = BitSet.valueOf(new byte[]{0x16});
+		bits.reverseBits(Byte.SIZE);
+
+		Assertions.assertEquals(BitSet.valueOf(new byte[]{0x68}), bits);
+
+
+		bits = BitSet.valueOf(new byte[]{(byte)0xE7});
+		bits.reverseBits(Byte.SIZE);
+
+		Assertions.assertEquals(BitSet.valueOf(new byte[]{(byte)0xE7}), bits);
+	}
+
+}

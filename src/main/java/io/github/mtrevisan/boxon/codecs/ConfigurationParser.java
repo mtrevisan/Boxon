@@ -28,7 +28,6 @@ import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
 import io.github.mtrevisan.boxon.codecs.managers.ConfigField;
 import io.github.mtrevisan.boxon.codecs.managers.ConfigurationMessage;
-import io.github.mtrevisan.boxon.codecs.managers.InjectEventListener;
 import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationHelper;
 import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationManagerFactory;
 import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationManagerInterface;
@@ -40,6 +39,7 @@ import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
 import io.github.mtrevisan.boxon.external.logs.EventListener;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
+import io.github.mtrevisan.boxon.internal.Evaluator;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
@@ -48,8 +48,6 @@ import java.util.Map;
 
 public final class ConfigurationParser{
 
-	@InjectEventListener
-	@SuppressWarnings("unused")
 	private final EventListener eventListener;
 
 	private final LoaderCodecInterface loaderCodec;
@@ -63,7 +61,7 @@ public final class ConfigurationParser{
 	 * @return	A configuration parser.
 	 */
 	public static ConfigurationParser create(final LoaderCodecInterface loaderCodec){
-		return new ConfigurationParser(loaderCodec, EventListener.getNoOpInstance());
+		return create(loaderCodec, null);
 	}
 
 	/**
@@ -117,7 +115,7 @@ public final class ConfigurationParser{
 	 * @param protocol	The protocol the data refers to.
 	 * @return	The configuration data.
 	 */
-	public Object getConfigurationWithDefaults(final ConfigurationMessage<?> configuration, final Map<String, Object> data,
+	public static Object getConfigurationWithDefaults(final ConfigurationMessage<?> configuration, final Map<String, Object> data,
 			final Version protocol) throws EncodeException, CodecException{
 		return LoaderConfiguration.getConfigurationWithDefaults(configuration, data, protocol);
 	}
@@ -133,8 +131,8 @@ public final class ConfigurationParser{
 
 
 	public <T> void encode(final ConfigurationMessage<?> configuration, final BitWriter writer, final T currentObject,
-			final Version protocol) throws FieldException{
-		final ParserContext<T> parserContext = new ParserContext<>(currentObject);
+			final Evaluator evaluator, final Version protocol) throws FieldException{
+		final ParserContext<T> parserContext = new ParserContext<>(evaluator, currentObject);
 		parserContext.setClassName(configuration.getType().getName());
 
 		final ConfigurationHeader header = configuration.getHeader();

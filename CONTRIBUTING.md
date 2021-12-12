@@ -97,7 +97,7 @@ So you want to contribute some code! That's great! This project uses GitHub Pull
 
 If this seems like a lot, or you aren't able to do all this setup, you might also be able to [edit the files directly](https://help.github.com/articles/editing-files-in-another-user-s-repository/) without having to do any of this setup. Yes, [even code](#contribute-code).
 
-If you want to go the usual route and run the project locally, [fork the project](https://guides.github.com/activities/forking/#fork) and you should be ready to go!
+If you want to go the usual route and run the project locally, [fork the project](https://guides.github.com/activities/forking/#fork), and you should be ready to go!
 
 <a name="contribute-documentation"></a>
 ## Contribute documentation

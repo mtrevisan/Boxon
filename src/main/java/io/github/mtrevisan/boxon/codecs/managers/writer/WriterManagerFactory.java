@@ -28,26 +28,33 @@ import io.github.mtrevisan.boxon.external.codecs.BitWriter;
 import io.github.mtrevisan.boxon.external.codecs.ParserDataType;
 
 import java.nio.charset.Charset;
+import java.util.Map;
+import java.util.function.Function;
 
 
 public final class WriterManagerFactory{
 
+	private static final Map<Class<?>, Function<BitWriter, WriterManagerInterface>> MANAGERS_LEVEL1 = Map.of(
+		Float.class, FloatWriterManager::new,
+		Double.class, DoubleWriterManager::new
+	);
+
 	private WriterManagerFactory(){}
 
 	public static WriterManagerInterface buildManager(final Object value, final BitWriter writer, final int radix, final String charsetName){
+		final Class<?> fieldClass = ParserDataType.toObjectiveTypeOrSelf(value.getClass());
+		final Function<BitWriter, WriterManagerInterface> builder = MANAGERS_LEVEL1.get(fieldClass);
+
 		WriterManagerInterface manager = null;
-		if(String.class.isInstance(value)){
+		if(builder != null)
+			manager = builder.apply(writer);
+		else if(Number.class.isAssignableFrom(fieldClass))
+			manager = new NumberWriterManager(writer)
+				.withRadix(radix);
+		else if(String.class.isAssignableFrom(fieldClass)){
 			final Charset charset = Charset.forName(charsetName);
-			manager = new StringWriterManager(writer, charset);
-		}
-		else{
-			final Class<?> fieldClass = ParserDataType.toObjectiveTypeOrSelf(value.getClass());
-			if(fieldClass == Float.class)
-				manager = new FloatWriterManager(writer);
-			else if(fieldClass == Double.class)
-				manager = new DoubleWriterManager(writer);
-			else if(Number.class.isAssignableFrom(fieldClass))
-				manager = new NumberWriterManager(writer, radix);
+			manager = new StringWriterManager(writer)
+				.withCharset(charset);
 		}
 		return manager;
 	}

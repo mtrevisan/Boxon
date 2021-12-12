@@ -50,9 +50,9 @@ public @interface ObjectChoices{
 	int prefixSize() default 0;
 
 	/**
-	 * The byte order to consider when returning a representation of the first {@link #prefixSize() size} bits read as a prefix.
+	 * The byte order to be considered when returning a representation of the first {@link #prefixSize() size} bits read as a prefix.
 	 *
-	 * @return	The byte order to consider when returning a representation of the first {@link #prefixSize() size} bits read as a prefix
+	 * @return	The byte order to be considered when returning a representation of the first {@link #prefixSize() size} bits read as a prefix
 	 * 	(defaults to {@link ByteOrder#BIG_ENDIAN}).
 	 */
 	ByteOrder byteOrder() default ByteOrder.BIG_ENDIAN;

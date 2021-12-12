@@ -24,6 +24,11 @@
  */
 package io.github.mtrevisan.boxon.codecs.managers.configuration;
 
+import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationField;
+import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
+import io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField;
+import io.github.mtrevisan.boxon.annotations.configurations.CompositeSubField;
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
 import io.github.mtrevisan.boxon.external.configurations.ConfigurationEnum;
 
@@ -34,7 +39,8 @@ import java.lang.reflect.Field;
 /** Data associated to an annotated field. */
 public final class ConfigFieldData<T extends Annotation>{
 
-	public Field field;
+	public final Field field;
+	public final Class<T> annotation;
 
 	public String minProtocol;
 	public String maxProtocol;
@@ -51,14 +57,68 @@ public final class ConfigFieldData<T extends Annotation>{
 
 	public int radix;
 
-	public Class<T> annotation;
 
-
-	public static <T extends Annotation> ConfigFieldData<T> create(){
-		return new ConfigFieldData<>();
+	public static ConfigFieldData<ConfigurationField> create(final Field field, final ConfigurationField annotation){
+		final ConfigFieldData<ConfigurationField> data = new ConfigFieldData<>(field, ConfigurationField.class);
+		data.setProtocolMinMaxVersions(annotation.minProtocol(), annotation.maxProtocol());
+		data.setMinMaxValues(annotation.minValue(), annotation.maxValue());
+		data.pattern = annotation.pattern();
+		data.enumeration = annotation.enumeration();
+		data.defaultValue = annotation.defaultValue();
+		data.charset = annotation.charset();
+		data.radix = annotation.radix();
+		return data;
 	}
 
-	private ConfigFieldData(){}
+
+	public static ConfigFieldData<CompositeConfigurationField> create(final Field field, final CompositeConfigurationField annotation){
+		final ConfigFieldData<CompositeConfigurationField> data = new ConfigFieldData<>(field, CompositeConfigurationField.class);
+		data.setProtocolMinMaxVersions(annotation.minProtocol(), annotation.maxProtocol());
+		data.pattern = annotation.pattern();
+		data.charset = annotation.charset();
+		return data;
+	}
+
+	public static ConfigFieldData<CompositeSubField> create(final Field field, final CompositeSubField annotation){
+		final ConfigFieldData<CompositeSubField> data = new ConfigFieldData<>(field, CompositeSubField.class);
+		data.pattern = annotation.pattern();
+		data.defaultValue = annotation.defaultValue();
+		return data;
+	}
+
+
+	public static ConfigFieldData<AlternativeConfigurationField> create(final Field field, final AlternativeConfigurationField annotation){
+		final ConfigFieldData<AlternativeConfigurationField> data = new ConfigFieldData<>(field, AlternativeConfigurationField.class);
+		data.setProtocolMinMaxVersions(annotation.minProtocol(), annotation.maxProtocol());
+		data.enumeration = annotation.enumeration();
+		return data;
+	}
+
+	public static ConfigFieldData<AlternativeSubField> create(final Field field, final AlternativeSubField annotation){
+		final ConfigFieldData<AlternativeSubField> data = new ConfigFieldData<>(field, AlternativeSubField.class);
+		data.setProtocolMinMaxVersions(annotation.minProtocol(), annotation.maxProtocol());
+		data.setMinMaxValues(annotation.minValue(), annotation.maxValue());
+		data.pattern = annotation.pattern();
+		data.defaultValue = annotation.defaultValue();
+		data.charset = annotation.charset();
+		data.radix = annotation.radix();
+		return data;
+	}
+
+	private ConfigFieldData(final Field field, final Class<T> annotation){
+		this.field = field;
+		this.annotation = annotation;
+	}
+
+	private void setProtocolMinMaxVersions(final String minProtocol, final String maxProtocol){
+		this.minProtocol = minProtocol;
+		this.maxProtocol = maxProtocol;
+	}
+
+	private void setMinMaxValues(final String minValue, final String maxValue){
+		this.minValue = minValue;
+		this.maxValue = maxValue;
+	}
 
 	public Class<?> getFieldType(){
 		return field.getType();

@@ -25,11 +25,9 @@
 package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
-import io.github.mtrevisan.boxon.codecs.managers.InjectEventListener;
 import io.github.mtrevisan.boxon.codecs.managers.Memoizer;
 import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
 import io.github.mtrevisan.boxon.codecs.managers.Template;
-import io.github.mtrevisan.boxon.codecs.managers.TemplateAnnotationValidator;
 import io.github.mtrevisan.boxon.codecs.managers.matchers.BNDMPatternMatcher;
 import io.github.mtrevisan.boxon.codecs.managers.matchers.PatternMatcher;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
@@ -44,6 +42,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -51,13 +50,12 @@ import java.util.TreeMap;
 import java.util.function.Function;
 
 
-final class LoaderTemplate implements LoaderTemplateInterface{
+public final class LoaderTemplate{
 
 	private static final PatternMatcher PATTERN_MATCHER = BNDMPatternMatcher.getInstance();
 	private static final Function<byte[], int[]> PRE_PROCESSED_PATTERNS = Memoizer.memoize(PATTERN_MATCHER::preProcessPattern);
 
 
-	@InjectEventListener
 	private final EventListener eventListener;
 
 
@@ -77,7 +75,7 @@ final class LoaderTemplate implements LoaderTemplateInterface{
 	 * @return	A template parser.
 	 */
 	static LoaderTemplate create(final LoaderCodecInterface loaderCodec){
-		return new LoaderTemplate(loaderCodec, EventListener.getNoOpInstance());
+		return create(loaderCodec, null);
 	}
 
 	/**
@@ -95,12 +93,6 @@ final class LoaderTemplate implements LoaderTemplateInterface{
 	private LoaderTemplate(final LoaderCodecInterface loaderCodec, final EventListener eventListener){
 		this.eventListener = eventListener;
 		this.loaderCodec = loaderCodec;
-
-		injectEventListener();
-	}
-
-	private void injectEventListener(){
-		ReflectionHelper.setStaticFieldValue(TemplateAnnotationValidator.class, EventListener.class, eventListener);
 	}
 
 	/**
@@ -129,6 +121,25 @@ final class LoaderTemplate implements LoaderTemplateInterface{
 		eventListener.loadedTemplates(templates.size());
 	}
 
+	/**
+	 * Load the specified protocol class annotated with {@link MessageHeader}.
+	 *
+	 * @param templateClass	Template class.
+	 */
+	void loadTemplate(final Class<?> templateClass) throws AnnotationException, TemplateException{
+		eventListener.loadingTemplate(templateClass);
+
+		if(templateClass.isAnnotationPresent(MessageHeader.class)){
+			/** extract all classes annotated with {@link MessageHeader}. */
+			final Template<?> template = extractTemplate(templateClass);
+			if(template.canBeCoded()){
+				addTemplateInner(template);
+
+				eventListener.loadedTemplates(templates.size());
+			}
+		}
+	}
+
 	private List<Template<?>> extractTemplates(final Collection<Class<?>> annotatedClasses) throws AnnotationException,
 			TemplateException{
 		final List<Template<?>> templates = new ArrayList<>(annotatedClasses.size());
@@ -146,6 +157,15 @@ final class LoaderTemplate implements LoaderTemplateInterface{
 		return templates;
 	}
 
+	public Template<?> extractTemplate(final Class<?> type) throws AnnotationException, TemplateException{
+		final Template<?> from = createTemplate(type);
+		if(!from.canBeCoded())
+			throw TemplateException.create("Cannot create a raw message from data: cannot scan template for {}",
+				type.getSimpleName());
+
+		return from;
+	}
+
 	/**
 	 * Constructs a new {@link Template}.
 	 *
@@ -153,7 +173,6 @@ final class LoaderTemplate implements LoaderTemplateInterface{
 	 * @param type	The class of the object to be returned as a {@link Template}.
 	 * @return	The {@link Template} for the given type.
 	 */
-	@Override
 	@SuppressWarnings("unchecked")
 	public <T> Template<T> createTemplate(final Class<T> type) throws AnnotationException{
 		return (Template<T>)templateStore.apply(type);
@@ -237,6 +256,10 @@ final class LoaderTemplate implements LoaderTemplateInterface{
 			throw TemplateException.create("Cannot find any template for given class type");
 
 		return template;
+	}
+
+	public Collection<Template<?>> getTemplates(){
+		return Collections.unmodifiableCollection(templates.values());
 	}
 
 	private static String calculateKey(final String headerStart, final Charset charset){

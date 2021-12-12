@@ -25,9 +25,7 @@
 package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.codecs.managers.ConstructorHelper;
-import io.github.mtrevisan.boxon.codecs.managers.InjectEventListener;
 import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
-import io.github.mtrevisan.boxon.codecs.managers.ReflectiveClassLoader;
 import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
 import io.github.mtrevisan.boxon.external.logs.EventListener;
 
@@ -53,7 +51,6 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	public static final String CHARSET_DEFAULT = "UTF-8";
 
 
-	@InjectEventListener
 	private final EventListener eventListener;
 
 
@@ -66,7 +63,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	 * @return	A codec loader.
 	 */
 	static LoaderCodec create(){
-		return new LoaderCodec(EventListener.getNoOpInstance());
+		return create(null);
 	}
 
 	/**
@@ -81,16 +78,6 @@ public final class LoaderCodec implements LoaderCodecInterface{
 
 	private LoaderCodec(final EventListener eventListener){
 		this.eventListener = eventListener;
-
-		injectEventListener();
-	}
-
-	private void injectEventListener(){
-		final ReflectiveClassLoader reflectiveClassLoader = ReflectiveClassLoader.createFrom(CodecInterface.class);
-		reflectiveClassLoader.scan(CodecInterface.class);
-		final Collection<Class<?>> classes = reflectiveClassLoader.getImplementationsOf(CodecInterface.class);
-		for(final Class<?> cl : classes)
-			ReflectionHelper.setStaticFieldValue(cl, EventListener.class, eventListener);
 	}
 
 	/**
@@ -171,9 +158,10 @@ public final class LoaderCodec implements LoaderCodecInterface{
 		codecs.put(codecType, codec);
 	}
 
-	public void injectFieldsInCodecs(final TemplateParserInterface templateParser){
+	//FIXME are generics an ugliness?
+	public <T> void injectFieldInCodecs(final Class<T> type, final T object){
 		for(final CodecInterface<?> codec : codecs.values())
-			ReflectionHelper.setFieldValue(codec, TemplateParserInterface.class, templateParser);
+			ReflectionHelper.injectValue(codec, type, object);
 	}
 
 	@Override

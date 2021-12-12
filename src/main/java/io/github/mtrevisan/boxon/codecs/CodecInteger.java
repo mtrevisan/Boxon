@@ -27,6 +27,7 @@ package io.github.mtrevisan.boxon.codecs;
 import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
+import io.github.mtrevisan.boxon.codecs.managers.Injected;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.external.codecs.BitReader;
 import io.github.mtrevisan.boxon.external.codecs.BitSet;
@@ -41,11 +42,16 @@ import java.math.BigInteger;
 
 final class CodecInteger implements CodecInterface<BindInteger>{
 
+	@SuppressWarnings("unused")
+	@Injected
+	private Evaluator evaluator;
+
+
 	@Override
 	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject) throws AnnotationException{
 		final BindInteger binding = extractBinding(annotation);
 
-		final int size = Evaluator.evaluateSize(binding.size(), rootObject);
+		final int size = evaluator.evaluateSize(binding.size(), rootObject);
 		CodecHelper.assertSizePositive(size);
 
 		final BigInteger v = reader.getInteger(size, binding.byteOrder());
@@ -53,7 +59,7 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 		final ConverterChoices selectConverterFrom = binding.selectConverterFrom();
 		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
 		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(selectConverterFrom, defaultConverter,
-			rootObject);
+			rootObject, evaluator);
 		final Object value = CodecHelper.converterDecode(chosenConverter, v);
 
 		CodecHelper.validateData(binding.validator(), value);
@@ -68,11 +74,11 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 
 		CodecHelper.validateData(binding.validator(), value);
 
-		final int size = Evaluator.evaluateSize(binding.size(), rootObject);
+		final int size = evaluator.evaluateSize(binding.size(), rootObject);
 		CodecHelper.assertSizePositive(size);
 
 		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(),
-			binding.converter(), rootObject);
+			binding.converter(), rootObject, evaluator);
 		final BigInteger v = CodecHelper.converterEncode(chosenConverter, value);
 
 		final ByteOrder byteOrder = binding.byteOrder();

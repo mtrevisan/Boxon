@@ -22,14 +22,19 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.codecs;
+package io.github.mtrevisan.boxon.codecs.managers;
 
-import io.github.mtrevisan.boxon.codecs.managers.Template;
-import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 
-interface LoaderTemplateInterface{
-
-	<T> Template<T> createTemplate(final Class<T> type) throws AnnotationException;
-
-}
+/**
+ * Defines a field that has to be injected.
+ */
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
+@Documented
+public @interface Injected{}

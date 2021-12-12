@@ -33,7 +33,6 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.external.codecs.ParserDataType;
-import io.github.mtrevisan.boxon.external.logs.EventListener;
 
 import java.lang.annotation.Annotation;
 
@@ -61,7 +60,7 @@ public enum TemplateAnnotationValidator{
 			final Class<?> type = binding.type();
 			if(!ParserDataType.isPrimitive(type))
 				throw AnnotationException.create("Bad annotation used for {}, should have been used the type `{}.class`",
-					BindArray.class.getSimpleName(), ParserDataType.toObjectiveTypeOrSelf(type).getSimpleName());
+					BindArray.class.getSimpleName(), type.getSimpleName());
 		}
 	},
 
@@ -73,7 +72,7 @@ public enum TemplateAnnotationValidator{
 			final Class<?> type = binding.type();
 			if(ParserDataType.isPrimitive(type))
 				throw AnnotationException.create("Bad annotation used for {}, should have been used the type `{}.class`",
-					BindArrayPrimitive.class.getSimpleName(), ParserDataType.toPrimitiveTypeOrSelf(type).getSimpleName());
+					BindArrayPrimitive.class.getSimpleName(), type.getSimpleName());
 
 			validateObjectChoice(selectFrom, binding.selectDefault(), type);
 		}
@@ -105,9 +104,6 @@ public enum TemplateAnnotationValidator{
 		}
 	};
 
-
-	@InjectEventListener
-	private static final EventListener EVENT_LISTENER = EventListener.getNoOpInstance();
 
 	private static final String EMPTY_STRING = "";
 
@@ -171,7 +167,7 @@ public enum TemplateAnnotationValidator{
 	private static void validateObjectDefaultAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> type,
 			final Class<?> selectDefault) throws AnnotationException{
 		if(selectDefault != void.class && alternatives.length == 0)
-			EVENT_LISTENER.uselessAlternative(selectDefault.getSimpleName());
+			throw AnnotationException.create("Useless empty alternative");
 		if(selectDefault != void.class && !type.isAssignableFrom(selectDefault))
 			throw AnnotationException.create("Type of default alternative cannot be assigned to (super) type of annotation");
 	}

@@ -64,4 +64,12 @@ public class DeviceTypes{
 			+ ", should be one of " + sj.toString());
 	}
 
+	@Override
+	public String toString(){
+		final StringJoiner sj = new StringJoiner(", ", "[", "]");
+		for(int i = 0; i < deviceTypes.size(); i ++)
+			sj.add(deviceTypes.get(i).toString());
+		return sj.toString();
+	}
+
 }

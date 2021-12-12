@@ -31,10 +31,12 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
+import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.codecs.BitReader;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
 import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
+import io.github.mtrevisan.boxon.internal.Evaluator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -97,6 +99,7 @@ class CodecStringTest{
 		};
 
 		BitWriter writer = BitWriter.create();
+		ReflectionHelper.injectValue(codec, Evaluator.class, Evaluator.create());
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
@@ -160,6 +163,7 @@ class CodecStringTest{
 		};
 
 		BitWriter writer = BitWriter.create();
+		ReflectionHelper.injectValue(codec, Evaluator.class, Evaluator.create());
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
@@ -228,6 +232,7 @@ class CodecStringTest{
 		};
 
 		BitReader reader = BitReader.wrap(encodedValue.getBytes(StandardCharsets.US_ASCII));
+		Evaluator evaluator = Evaluator.create();
 		Object decoded = codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals("123AB", decoded);
@@ -296,6 +301,7 @@ class CodecStringTest{
 		};
 
 		BitReader reader = BitReader.wrap(encodedValue.getBytes(StandardCharsets.US_ASCII));
+		Evaluator evaluator = Evaluator.create();
 		Object decoded = codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals("123ABC", decoded);

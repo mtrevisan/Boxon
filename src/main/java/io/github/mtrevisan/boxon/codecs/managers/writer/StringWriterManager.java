@@ -27,17 +27,24 @@ package io.github.mtrevisan.boxon.codecs.managers.writer;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 
 final class StringWriterManager implements WriterManagerInterface{
 
 	private final BitWriter writer;
-	private final Charset charset;
+	private Charset charset;
 
 
-	StringWriterManager(final BitWriter writer, final Charset charset){
+	StringWriterManager(final BitWriter writer){
 		this.writer = writer;
+		charset = StandardCharsets.UTF_8;
+	}
+
+	StringWriterManager withCharset(final Charset charset){
 		this.charset = charset;
+
+		return this;
 	}
 
 	@Override

@@ -29,7 +29,6 @@ import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.external.codecs.BitReader;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
 import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
-import io.github.mtrevisan.boxon.external.codecs.ParserDataType;
 
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
@@ -45,10 +44,8 @@ final class CodecConfigurationSubField implements CodecInterface<CompositeSubFie
 	@Override
 	public void encode(final BitWriter writer, final Annotation annotation, final Object charset, final Object value)
 			throws ConfigurationException{
-		if(!String.class.isInstance(value)){
-			final Class<?> fieldClass = ParserDataType.toObjectiveTypeOrSelf(value.getClass());
-			throw ConfigurationException.create("Cannot handle this type of field: {}", fieldClass);
-		}
+		if(!String.class.isInstance(value))
+			throw ConfigurationException.create("Cannot handle this type of field: {}", value.getClass().getSimpleName());
 
 		writer.putText((String)value, (Charset)charset);
 	}

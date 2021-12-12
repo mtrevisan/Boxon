@@ -41,6 +41,9 @@ import java.util.regex.Pattern;
 
 public final class ConfigurationHelper{
 
+	private static final Pattern PATTERN_PIPE = Pattern.compile("\\|");
+
+
 	private ConfigurationHelper(){}
 
 
@@ -55,6 +58,7 @@ public final class ConfigurationHelper{
 		}
 	}
 
+	@SuppressWarnings("ConstantConditions")
 	static void validateMinValue(final String dataKey, final Object dataValue, final Class<?> fieldType, final String minValue)
 			throws EncodeException, CodecException{
 		if(!minValue.isEmpty()){
@@ -64,6 +68,7 @@ public final class ConfigurationHelper{
 		}
 	}
 
+	@SuppressWarnings("ConstantConditions")
 	static void validateMaxValue(final String dataKey, final Object dataValue, final Class<?> fieldType, final String maxValue)
 			throws EncodeException, CodecException{
 		if(!maxValue.isEmpty()){
@@ -98,24 +103,24 @@ public final class ConfigurationHelper{
 			: extractEnumerationSingleValue(value, enumeration));
 	}
 
-	private static Object extractEnumerationArrayValue(final String value, final Class<? extends ConfigurationEnum> enumeration){
+	@SuppressWarnings("unchecked")
+	private static <T extends ConfigurationEnum> T[] extractEnumerationArrayValue(final CharSequence value, final Class<T> enumeration){
 		final ConfigurationEnum[] enumConstants = enumeration.getEnumConstants();
 		final String[] defaultValues = splitMultipleEnumerations(value);
-		final Object valEnum = Array.newInstance(enumeration, defaultValues.length);
-		for(int i = 0; i < defaultValues.length; i ++){
-			final ConfigurationEnum val = ConfigurationEnum.extractEnum(enumConstants, defaultValues[i]);
-			Array.set(valEnum, i, val);
-		}
+		final T[] valEnum = (T[])Array.newInstance(enumeration, defaultValues.length);
+		for(int i = 0; i < defaultValues.length; i ++)
+			valEnum[i] = (T)ConfigurationEnum.extractEnum(enumConstants, defaultValues[i]);
 		return valEnum;
 	}
 
-	private static Object extractEnumerationSingleValue(final String value, final Class<? extends ConfigurationEnum> enumeration){
+	@SuppressWarnings("unchecked")
+	private static <T extends ConfigurationEnum> T extractEnumerationSingleValue(final String value, final Class<T> enumeration){
 		final ConfigurationEnum[] enumConstants = enumeration.getEnumConstants();
-		return enumeration.cast(ConfigurationEnum.extractEnum(enumConstants, value));
+		return (T)ConfigurationEnum.extractEnum(enumConstants, value);
 	}
 
-	private static String[] splitMultipleEnumerations(final String value){
-		return StringHelper.split(value, '|', -1);
+	private static String[] splitMultipleEnumerations(final CharSequence value){
+		return PATTERN_PIPE.split(value);
 	}
 
 	public static boolean shouldBeExtracted(final Version protocol, final String minProtocol, final String maxProtocol){

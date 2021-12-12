@@ -66,12 +66,16 @@ public final class BoundedField{
 		return field.getName();
 	}
 
+	public Class<?> getFieldType(){
+		return field.getType();
+	}
+
 	public <T> T getFieldValue(final Object obj){
-		return ReflectionHelper.getFieldValue(field, obj);
+		return ReflectionHelper.getValue(field, obj);
 	}
 
 	public void setFieldValue(final Object obj, final Object value){
-		ReflectionHelper.setFieldValue(field, obj, value);
+		ReflectionHelper.setValue(field, obj, value);
 	}
 
 	public Skip[] getSkips(){
