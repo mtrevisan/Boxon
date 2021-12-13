@@ -137,13 +137,6 @@ public final class EventLogger extends EventListener{
 
 
 	@Override
-	public void processingAlternative(final Exception exception){
-		trace("Error while processing alternative", exception);
-		warn(exception.getMessage() != null? exception.getMessage(): exception.getClass().getSimpleName());
-	}
-
-
-	@Override
 	public void readingField(final String templateName, final String fieldName, final String bindingTypeName){
 		trace("reading {}.{} with bind {}", templateName, fieldName, bindingTypeName);
 	}

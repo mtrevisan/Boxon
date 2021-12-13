@@ -42,6 +42,7 @@ import java.nio.charset.StandardCharsets;
 /**
  * @see <a href="https://github.com/jhg023/BitBuffer/blob/master/src/main/java/bitbuffer/BitBuffer.java">BitBuffer</a>
  */
+@SuppressWarnings("WeakerAccess")
 public final class BitReader extends BitReaderData{
 
 	/**

@@ -34,6 +34,7 @@ import java.util.TreeMap;
 /**
  * Response class for the decoding phase.
  */
+@SuppressWarnings({"WeakerAccess", "unused"})
 public final class ParseResponse{
 
 	/** Whole payload (the index on {@link #parsedMessages} and {@link #errors} point here). */

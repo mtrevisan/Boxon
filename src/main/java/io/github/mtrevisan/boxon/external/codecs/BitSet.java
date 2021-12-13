@@ -44,6 +44,7 @@ import java.util.Arrays;
  * @see <a href="https://w6113.github.io/files/papers/sidm338-wangA.pdf">An Experimental Study of Bitmap Compression vs. Inverted List Compression</a>
  * @see <a href="https://onlinelibrary.wiley.com/doi/pdf/10.1002/spe.2203">Decoding billions of integers per second through vectorization</a>
  */
+@SuppressWarnings("WeakerAccess")
 public final class BitSet{
 
 	/** The array containing the indexes. */

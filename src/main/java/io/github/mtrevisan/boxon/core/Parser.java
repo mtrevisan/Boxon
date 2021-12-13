@@ -41,7 +41,7 @@ import java.nio.ByteBuffer;
 @SuppressWarnings({"WeakerAccess", "unused"})
 public final class Parser{
 
-	private final ParserCore core;
+	private final TemplateParser templateParser;
 
 
 	/**
@@ -57,7 +57,7 @@ public final class Parser{
 
 
 	private Parser(final ParserCore core){
-		this.core = core;
+		templateParser = core.getTemplateParser();
 	}
 
 
@@ -126,7 +126,6 @@ public final class Parser{
 	}
 
 	private boolean parse(final BitReader reader, final int start, final ParseResponse response){
-		final TemplateParser templateParser = core.getTemplateParser();
 		try{
 			final Template<?> template = templateParser.getTemplate(reader);
 
