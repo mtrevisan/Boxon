@@ -67,11 +67,11 @@
 
 		<!-- ClassGraph -->
 		<!-- https://mvnrepository.com/artifact/io.github.classgraph/classgraph -->
-		<github.classgraph.version>4.8.137</github.classgraph.version>
+		<github.classgraph.version>4.8.138</github.classgraph.version>
 
 		<!-- Spring Expression -->
 		<!-- https://mvnrepository.com/artifact/org.springframework/spring-expression -->
-		<springframework.spring-expression.version>5.3.13</springframework.spring-expression.version>
+		<springframework.spring-expression.version>5.3.14</springframework.spring-expression.version>
 
 		<!-- FreeMarker -->
 		<!-- https://mvnrepository.com/artifact/org.freemarker/freemarker -->
@@ -81,7 +81,7 @@
 		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
 		<slf4j.slf4j-api.version>1.7.32</slf4j.slf4j-api.version>
 		<!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-classic -->
-		<logback.logback-classic.version>1.2.7</logback.logback-classic.version>
+		<logback.logback-classic.version>1.2.8</logback.logback-classic.version>
 
 		<!-- JUnit -->
 		<!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine -->
