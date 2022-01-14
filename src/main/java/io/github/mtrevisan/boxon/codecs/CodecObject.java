@@ -53,13 +53,14 @@ final class CodecObject implements CodecInterface<BindObject>{
 	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject) throws FieldException{
 		final BindObject binding = extractBinding(annotation);
 
-		final Class<?> type = extractType(reader, binding, rootObject);
+		final BindingData<BindObject> bindingData = BindingData.create(binding);
+
+		final Class<?> type = extractType(reader, bindingData, rootObject);
 
 		final Template<?> template = templateParser.createTemplate(type);
 		final Object instance = templateParser.decode(template, reader, rootObject);
 		evaluator.addToContext(ContextHelper.CONTEXT_SELF, instance);
 
-		final BindingData<BindObject> bindingData = BindingData.create(binding);
 		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter(rootObject, evaluator);
 		final Object value = CodecHelper.converterDecode(chosenConverter, instance);
 
@@ -68,21 +69,14 @@ final class CodecObject implements CodecInterface<BindObject>{
 		return value;
 	}
 
-	private Class<?> extractType(final BitReader reader, final BindObject binding, final Object rootObject) throws CodecException{
-		Class<?> chosenAlternativeType = binding.type();
-		final ObjectChoices selectFrom = binding.selectFrom();
-		if(selectFrom.alternatives().length > 0){
-			final ObjectChoices.ObjectChoice chosenAlternative = CodecHelper.chooseAlternative(reader, selectFrom, rootObject, evaluator);
-			chosenAlternativeType = (!isEmptyChoice(chosenAlternative)? chosenAlternative.type(): binding.selectDefault());
-			if(chosenAlternativeType == void.class)
-				throw CodecException.create("Cannot find a valid codec from given alternatives for {}",
-					rootObject.getClass().getSimpleName());
+	private Class<?> extractType(final BitReader reader, final BindingData<BindObject> bindingData, final Object rootObject)
+			throws CodecException{
+		Class<?> chosenAlternativeType = bindingData.getType();
+		if(bindingData.hasSelectAlternatives()){
+			chosenAlternativeType = bindingData.chooseAlternativeType(reader, rootObject, evaluator);
+			CodecHelper.validateChosenAlternative(chosenAlternativeType, rootObject);
 		}
 		return chosenAlternativeType;
-	}
-
-	private static boolean isEmptyChoice(final ObjectChoices.ObjectChoice choice){
-		return (choice.annotationType() == Annotation.class);
 	}
 
 	@Override
