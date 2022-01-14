@@ -86,8 +86,15 @@ final class CodecHelper{
 			throw new IllegalArgumentException("Validation with " + validatorType.getSimpleName() + " not passed (value is " + data + ")");
 	}
 
+	static Object convertValue(final BindingData bindingData, final Object value){
+		final Class<? extends Converter<?, ?>> converterType = bindingData.getChosenConverter();
+		final Object convertedValue = converterDecode(converterType, value);
+		bindingData.validate(convertedValue);
+		return convertedValue;
+	}
+
 	@SuppressWarnings("unchecked")
-	static <IN, OUT> OUT converterDecode(final Class<? extends Converter<?, ?>> converterType, final Object data){
+	private static <IN, OUT> OUT converterDecode(final Class<? extends Converter<?, ?>> converterType, final Object data){
 		try{
 			final Converter<IN, OUT> converter = (Converter<IN, OUT>)ConstructorHelper.getCreator(converterType)
 				.get();

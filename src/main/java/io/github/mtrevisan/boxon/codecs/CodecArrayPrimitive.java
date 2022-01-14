@@ -61,12 +61,7 @@ final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 			Array.set(array, i, value);
 		}
 
-		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();
-		final Object value = CodecHelper.converterDecode(chosenConverter, array);
-
-		bindingData.validate(value);
-
-		return value;
+		return CodecHelper.convertValue(bindingData, array);
 	}
 
 	@Override

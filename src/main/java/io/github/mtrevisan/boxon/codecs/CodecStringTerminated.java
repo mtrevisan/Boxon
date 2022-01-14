@@ -54,12 +54,7 @@ final class CodecStringTerminated implements CodecInterface<BindStringTerminated
 			reader.getBitsSizeOf(terminator);
 
 		final BindingData bindingData = BindingData.create(binding, rootObject, evaluator);
-		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();
-		final Object value = CodecHelper.converterDecode(chosenConverter, text);
-
-		bindingData.validate(value);
-
-		return value;
+		return CodecHelper.convertValue(bindingData, text);
 	}
 
 	@Override

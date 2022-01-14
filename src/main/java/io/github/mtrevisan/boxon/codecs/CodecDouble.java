@@ -45,15 +45,10 @@ final class CodecDouble implements CodecInterface<BindDouble>{
 	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
 		final BindDouble binding = extractBinding(annotation);
 
-		final double v = reader.getDouble(binding.byteOrder());
+		final double value = reader.getDouble(binding.byteOrder());
 
 		final BindingData bindingData = BindingData.create(binding, rootObject, evaluator);
-		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();
-		final Object value = CodecHelper.converterDecode(chosenConverter, v);
-
-		bindingData.validate(value);
-
-		return value;
+		return CodecHelper.convertValue(bindingData, value);
 	}
 
 	@Override

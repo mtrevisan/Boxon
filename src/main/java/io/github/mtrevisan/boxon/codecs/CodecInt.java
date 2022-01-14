@@ -45,15 +45,10 @@ final class CodecInt implements CodecInterface<BindInt>{
 	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
 		final BindInt binding = extractBinding(annotation);
 
-		final int v = reader.getInt(binding.byteOrder());
+		final int value = reader.getInt(binding.byteOrder());
 
 		final BindingData bindingData = BindingData.create(binding, rootObject, evaluator);
-		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();
-		final Object value = CodecHelper.converterDecode(chosenConverter, v);
-
-		bindingData.validate(value);
-
-		return value;
+		return CodecHelper.convertValue(bindingData, value);
 	}
 
 	@Override

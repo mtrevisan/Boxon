@@ -45,15 +45,10 @@ final class CodecFloat implements CodecInterface<BindFloat>{
 	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
 		final BindFloat binding = extractBinding(annotation);
 
-		final float v = reader.getFloat(binding.byteOrder());
+		final float value = reader.getFloat(binding.byteOrder());
 
 		final BindingData bindingData = BindingData.create(binding, rootObject, evaluator);
-		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();
-		final Object value = CodecHelper.converterDecode(chosenConverter, v);
-
-		bindingData.validate(value);
-
-		return value;
+		return CodecHelper.convertValue(bindingData, value);
 	}
 
 	@Override

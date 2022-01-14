@@ -54,14 +54,9 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 		final int size = bindingData.evaluateSize();
 		CodecHelper.assertSizePositive(size);
 
-		final BigInteger v = reader.getInteger(size, binding.byteOrder());
+		final BigInteger value = reader.getInteger(size, binding.byteOrder());
 
-		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();
-		final Object value = CodecHelper.converterDecode(chosenConverter, v);
-
-		bindingData.validate(value);
-
-		return value;
+		return CodecHelper.convertValue(bindingData, value);
 	}
 
 	@Override

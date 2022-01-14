@@ -59,12 +59,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 		final Object instance = templateParser.decode(template, reader, rootObject);
 		bindingData.addToContext(instance);
 
-		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();
-		final Object value = CodecHelper.converterDecode(chosenConverter, instance);
-
-		bindingData.validate(value);
-
-		return value;
+		return CodecHelper.convertValue(bindingData, instance);
 	}
 
 	@Override

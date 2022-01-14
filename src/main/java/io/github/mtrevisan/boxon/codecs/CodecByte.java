@@ -45,15 +45,10 @@ final class CodecByte implements CodecInterface<BindByte>{
 	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
 		final BindByte binding = extractBinding(annotation);
 
-		final byte v = reader.getByte();
+		final byte value = reader.getByte();
 
 		final BindingData bindingData = BindingData.create(binding, rootObject, evaluator);
-		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();
-		final Object value = CodecHelper.converterDecode(chosenConverter, v);
-
-		bindingData.validate(value);
-
-		return value;
+		return CodecHelper.convertValue(bindingData, value);
 	}
 
 	@Override

@@ -45,15 +45,10 @@ final class CodecLong implements CodecInterface<BindLong>{
 	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
 		final BindLong binding = extractBinding(annotation);
 
-		final long v = reader.getLong(binding.byteOrder());
+		final long value = reader.getLong(binding.byteOrder());
 
 		final BindingData bindingData = BindingData.create(binding, rootObject, evaluator);
-		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();
-		final Object value = CodecHelper.converterDecode(chosenConverter, v);
-
-		bindingData.validate(value);
-
-		return value;
+		return CodecHelper.convertValue(bindingData, value);
 	}
 
 	@Override
