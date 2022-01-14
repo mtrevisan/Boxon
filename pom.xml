@@ -262,7 +262,12 @@
 						 possibly via https://github.com/sonatype/nexus-maven-plugins/pull/91
 					-->
 					<fork>true</fork>
-					<compilerArgument>--add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.text=ALL-UNNAMED --add-opens=java.desktop/java.awt.font=ALL-UNNAMED</compilerArgument>
+					<compilerArgs>
+						<arg>--add-opens=java.base/java.util=ALL-UNNAMED</arg>
+						<arg>--add-opens=java.base/java.lang.reflect=ALL-UNNAMED</arg>
+						<arg>--add-opens=java.base/java.text=ALL-UNNAMED</arg>
+						<arg>--add-opens=java.desktop/java.awt.font=ALL-UNNAMED</arg>
+					</compilerArgs>
 				</configuration>
 			</plugin>
 			<!-- Help -->
