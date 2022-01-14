@@ -47,8 +47,8 @@ final class CodecByte implements CodecInterface<BindByte>{
 
 		final byte v = reader.getByte();
 
-		final BindingData<BindByte> bindingData = BindingData.create(binding);
-		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter(rootObject, evaluator);
+		final BindingData<BindByte> bindingData = BindingData.create(binding, rootObject, evaluator);
+		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();
 		final Object value = CodecHelper.converterDecode(chosenConverter, v);
 
 		bindingData.validate(value);
@@ -60,10 +60,10 @@ final class CodecByte implements CodecInterface<BindByte>{
 	public void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value){
 		final BindByte binding = extractBinding(annotation);
 
-		final BindingData<BindByte> bindingData = BindingData.create(binding);
+		final BindingData<BindByte> bindingData = BindingData.create(binding, rootObject, evaluator);
 		bindingData.validate(value);
 
-		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter(rootObject, evaluator);
+		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();
 		final byte v = CodecHelper.converterEncode(chosenConverter, value);
 
 		writer.putByte(v);

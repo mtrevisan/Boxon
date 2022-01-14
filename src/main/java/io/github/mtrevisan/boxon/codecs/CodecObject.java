@@ -51,15 +51,15 @@ final class CodecObject implements CodecInterface<BindObject>{
 	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject) throws FieldException{
 		final BindObject binding = extractBinding(annotation);
 
-		final BindingData<BindObject> bindingData = BindingData.create(binding);
+		final BindingData<BindObject> bindingData = BindingData.create(binding, rootObject, evaluator);
 
-		final Class<?> type = bindingData.chooseAlternativeType(reader, rootObject, evaluator);
+		final Class<?> type = bindingData.chooseAlternativeType(reader);
 
 		final Template<?> template = templateParser.createTemplate(type);
 		final Object instance = templateParser.decode(template, reader, rootObject);
-		bindingData.addToContext(instance, evaluator);
+		bindingData.addToContext(instance);
 
-		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter(rootObject, evaluator);
+		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();
 		final Object value = CodecHelper.converterDecode(chosenConverter, instance);
 
 		bindingData.validate(value);
@@ -72,7 +72,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 			throws FieldException{
 		final BindObject binding = extractBinding(annotation);
 
-		final BindingData<BindObject> bindingData = BindingData.create(binding);
+		final BindingData<BindObject> bindingData = BindingData.create(binding, rootObject, evaluator);
 		bindingData.validate(value);
 
 		Class<?> type = binding.type();
@@ -85,11 +85,11 @@ final class CodecObject implements CodecInterface<BindObject>{
 			CodecHelper.writePrefix(writer, chosenAlternative, selectFrom);
 		}
 
-		bindingData.addToContext(value, evaluator);
+		bindingData.addToContext(value);
 
 		final Template<?> template = templateParser.createTemplate(type);
 
-		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter(rootObject, evaluator);
+		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();
 		final Object obj = CodecHelper.converterEncode(chosenConverter, value);
 
 		templateParser.encode(template, writer, rootObject, obj);

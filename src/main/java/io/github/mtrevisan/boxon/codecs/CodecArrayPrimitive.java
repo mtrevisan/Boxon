@@ -48,9 +48,9 @@ final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject) throws AnnotationException{
 		final BindArrayPrimitive binding = extractBinding(annotation);
 
-		final BindingData<BindArrayPrimitive> bindingData = BindingData.create(binding);
+		final BindingData<BindArrayPrimitive> bindingData = BindingData.create(binding, rootObject, evaluator);
 
-		final int size = bindingData.evaluateSize(rootObject, evaluator);
+		final int size = bindingData.evaluateSize();
 		CodecHelper.assertSizePositive(size);
 
 		final Class<?> type = binding.type();
@@ -61,7 +61,7 @@ final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 			Array.set(array, i, value);
 		}
 
-		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter(rootObject, evaluator);
+		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();
 		final Object value = CodecHelper.converterDecode(chosenConverter, array);
 
 		bindingData.validate(value);
@@ -74,13 +74,13 @@ final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 			throws AnnotationException{
 		final BindArrayPrimitive binding = extractBinding(annotation);
 
-		final BindingData<BindArrayPrimitive> bindingData = BindingData.create(binding);
+		final BindingData<BindArrayPrimitive> bindingData = BindingData.create(binding, rootObject, evaluator);
 		bindingData.validate(value);
 
-		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter(rootObject, evaluator);
+		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();
 		final Object array = CodecHelper.converterEncode(chosenConverter, value);
 
-		final int size = bindingData.evaluateSize(rootObject, evaluator);
+		final int size = bindingData.evaluateSize();
 		CodecHelper.assertSizePositive(size);
 		CodecHelper.assertSizeEquals(size, Array.getLength(array));
 

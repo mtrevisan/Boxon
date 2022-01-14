@@ -47,14 +47,14 @@ final class CodecString implements CodecInterface<BindString>{
 	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject) throws AnnotationException{
 		final BindString binding = extractBinding(annotation);
 
-		final BindingData<BindString> bindingData = BindingData.create(binding);
+		final BindingData<BindString> bindingData = BindingData.create(binding, rootObject, evaluator);
 
-		final int size = bindingData.evaluateSize(rootObject, evaluator);
+		final int size = bindingData.evaluateSize();
 		CodecHelper.assertSizePositive(size);
 		final Charset charset = Charset.forName(binding.charset());
 		final String text = reader.getText(size, charset);
 
-		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter(rootObject, evaluator);
+		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();
 		final Object value = CodecHelper.converterDecode(chosenConverter, text);
 
 		bindingData.validate(value);
@@ -67,13 +67,13 @@ final class CodecString implements CodecInterface<BindString>{
 			throws AnnotationException{
 		final BindString binding = extractBinding(annotation);
 
-		final BindingData<BindString> bindingData = BindingData.create(binding);
+		final BindingData<BindString> bindingData = BindingData.create(binding, rootObject, evaluator);
 		bindingData.validate(value);
 
-		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter(rootObject, evaluator);
+		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();
 		final String text = CodecHelper.converterEncode(chosenConverter, value);
 
-		final int size = bindingData.evaluateSize(rootObject, evaluator);
+		final int size = bindingData.evaluateSize();
 		CodecHelper.assertSizePositive(size);
 		final Charset charset = Charset.forName(binding.charset());
 		writer.putText(text.substring(0, Math.min(text.length(), size)), charset);
