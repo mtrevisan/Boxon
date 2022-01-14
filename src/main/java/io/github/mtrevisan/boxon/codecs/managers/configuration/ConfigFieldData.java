@@ -70,7 +70,6 @@ public final class ConfigFieldData<T extends Annotation>{
 		return data;
 	}
 
-
 	public static ConfigFieldData<CompositeConfigurationField> create(final Field field, final CompositeConfigurationField annotation){
 		final ConfigFieldData<CompositeConfigurationField> data = new ConfigFieldData<>(field, CompositeConfigurationField.class);
 		data.setProtocolMinMaxVersions(annotation.minProtocol(), annotation.maxProtocol());
@@ -85,7 +84,6 @@ public final class ConfigFieldData<T extends Annotation>{
 		data.defaultValue = annotation.defaultValue();
 		return data;
 	}
-
 
 	public static ConfigFieldData<AlternativeConfigurationField> create(final Field field, final AlternativeConfigurationField annotation){
 		final ConfigFieldData<AlternativeConfigurationField> data = new ConfigFieldData<>(field, AlternativeConfigurationField.class);

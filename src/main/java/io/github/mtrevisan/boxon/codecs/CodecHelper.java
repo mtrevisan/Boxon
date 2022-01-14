@@ -38,7 +38,6 @@ import io.github.mtrevisan.boxon.external.codecs.BitWriter;
 import io.github.mtrevisan.boxon.external.codecs.ByteOrder;
 import io.github.mtrevisan.boxon.external.codecs.ParserDataType;
 import io.github.mtrevisan.boxon.external.configurations.ConfigurationEnum;
-import io.github.mtrevisan.boxon.internal.Evaluator;
 
 import java.lang.reflect.Array;
 
