@@ -49,7 +49,7 @@ import io.github.mtrevisan.boxon.external.codecs.ByteOrder;
 import java.lang.annotation.Annotation;
 
 
-/** Data associated to an annotated field. */
+/** Data associated to an annotation. */
 final class BindingData{
 
 	private static final ObjectChoices.ObjectChoice EMPTY_CHOICE = new NullObjectChoice();
