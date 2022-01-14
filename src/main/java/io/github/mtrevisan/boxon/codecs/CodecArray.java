@@ -54,14 +54,13 @@ final class CodecArray implements CodecInterface<BindArray>{
 	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject) throws FieldException{
 		final BindArray binding = extractBinding(annotation);
 
-		final int size = evaluator.evaluateSize(binding.size(), rootObject);
-		CodecHelper.assertSizePositive(size);
-
 		final BindingData<BindArray> bindingData = BindingData.create(binding);
+		final int size = bindingData.evaluateSize(rootObject, evaluator);
+		CodecHelper.assertSizePositive(size);
 
 		final Class<?> bindingType = binding.type();
 		final Object[] array = createArray(bindingType, size);
-		if(binding.selectFrom().alternatives().length > 0)
+		if(bindingData.hasSelectAlternatives())
 			decodeWithAlternatives(reader, array, bindingData, rootObject);
 		else
 			decodeWithoutAlternatives(reader, array, bindingType);
@@ -69,7 +68,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter(rootObject, evaluator);
 		final Object value = CodecHelper.converterDecode(chosenConverter, array);
 
-		CodecHelper.validateData(binding.validator(), value);
+		bindingData.validate(value);
 
 		return value;
 	}
@@ -106,20 +105,18 @@ final class CodecArray implements CodecInterface<BindArray>{
 			throws FieldException{
 		final BindArray binding = extractBinding(annotation);
 
-		CodecHelper.validateData(binding.validator(), value);
-
-		final ObjectChoices selectFrom = binding.selectFrom();
-
 		final BindingData<BindArray> bindingData = BindingData.create(binding);
+		bindingData.validate(value);
+
 		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter(rootObject, evaluator);
 		final Object[] array = CodecHelper.converterEncode(chosenConverter, value);
 
-		final int size = evaluator.evaluateSize(binding.size(), rootObject);
+		final int size = bindingData.evaluateSize(rootObject, evaluator);
 		CodecHelper.assertSizePositive(size);
 		CodecHelper.assertSizeEquals(size, Array.getLength(array));
 
-		if(selectFrom.alternatives().length > 0)
-			encodeWithAlternatives(writer, array, selectFrom);
+		if(bindingData.hasSelectAlternatives())
+			encodeWithAlternatives(writer, array, binding.selectFrom());
 		else
 			encodeWithoutAlternatives(writer, array, binding.type());
 	}

@@ -49,16 +49,17 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject) throws AnnotationException{
 		final BindInteger binding = extractBinding(annotation);
 
-		final int size = evaluator.evaluateSize(binding.size(), rootObject);
+		final BindingData<BindInteger> bindingData = BindingData.create(binding);
+
+		final int size = bindingData.evaluateSize(rootObject, evaluator);
 		CodecHelper.assertSizePositive(size);
 
 		final BigInteger v = reader.getInteger(size, binding.byteOrder());
 
-		final BindingData<BindInteger> bindingData = BindingData.create(binding);
 		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter(rootObject, evaluator);
 		final Object value = CodecHelper.converterDecode(chosenConverter, v);
 
-		CodecHelper.validateData(binding.validator(), value);
+		bindingData.validate(value);
 
 		return value;
 	}
@@ -68,12 +69,12 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 			throws AnnotationException{
 		final BindInteger binding = extractBinding(annotation);
 
-		CodecHelper.validateData(binding.validator(), value);
+		final BindingData<BindInteger> bindingData = BindingData.create(binding);
+		bindingData.validate(value);
 
-		final int size = evaluator.evaluateSize(binding.size(), rootObject);
+		final int size = bindingData.evaluateSize(rootObject, evaluator);
 		CodecHelper.assertSizePositive(size);
 
-		final BindingData<BindInteger> bindingData = BindingData.create(binding);
 		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter(rootObject, evaluator);
 		final BigInteger v = CodecHelper.converterEncode(chosenConverter, value);
 

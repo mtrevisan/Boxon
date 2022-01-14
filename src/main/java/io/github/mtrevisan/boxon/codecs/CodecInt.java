@@ -51,7 +51,7 @@ final class CodecInt implements CodecInterface<BindInt>{
 		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter(rootObject, evaluator);
 		final Object value = CodecHelper.converterDecode(chosenConverter, v);
 
-		CodecHelper.validateData(binding.validator(), value);
+		bindingData.validate(value);
 
 		return value;
 	}
@@ -60,9 +60,9 @@ final class CodecInt implements CodecInterface<BindInt>{
 	public void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value){
 		final BindInt binding = extractBinding(annotation);
 
-		CodecHelper.validateData(binding.validator(), value);
-
 		final BindingData<BindInt> bindingData = BindingData.create(binding);
+		bindingData.validate(value);
+
 		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter(rootObject, evaluator);
 		final int v = CodecHelper.converterEncode(chosenConverter, value);
 

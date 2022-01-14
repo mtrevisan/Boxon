@@ -51,7 +51,7 @@ final class CodecLong implements CodecInterface<BindLong>{
 		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter(rootObject, evaluator);
 		final Object value = CodecHelper.converterDecode(chosenConverter, v);
 
-		CodecHelper.validateData(binding.validator(), value);
+		bindingData.validate(value);
 
 		return value;
 	}
@@ -60,9 +60,9 @@ final class CodecLong implements CodecInterface<BindLong>{
 	public void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value){
 		final BindLong binding = extractBinding(annotation);
 
-		CodecHelper.validateData(binding.validator(), value);
-
 		final BindingData<BindLong> bindingData = BindingData.create(binding);
+		bindingData.validate(value);
+
 		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter(rootObject, evaluator);
 		final long v = CodecHelper.converterEncode(chosenConverter, value);
 

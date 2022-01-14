@@ -48,10 +48,12 @@ final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject) throws AnnotationException{
 		final BindArrayPrimitive binding = extractBinding(annotation);
 
-		final Class<?> type = binding.type();
-		final int size = evaluator.evaluateSize(binding.size(), rootObject);
+		final BindingData<BindArrayPrimitive> bindingData = BindingData.create(binding);
+
+		final int size = bindingData.evaluateSize(rootObject, evaluator);
 		CodecHelper.assertSizePositive(size);
 
+		final Class<?> type = binding.type();
 		final ByteOrder byteOrder = binding.byteOrder();
 		final Object array = Array.newInstance(type, size);
 		for(int i = 0; i < size; i ++){
@@ -59,11 +61,10 @@ final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 			Array.set(array, i, value);
 		}
 
-		final BindingData<BindArrayPrimitive> bindingData = BindingData.create(binding);
 		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter(rootObject, evaluator);
 		final Object value = CodecHelper.converterDecode(chosenConverter, array);
 
-		CodecHelper.validateData(binding.validator(), value);
+		bindingData.validate(value);
 
 		return value;
 	}
@@ -73,13 +74,13 @@ final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 			throws AnnotationException{
 		final BindArrayPrimitive binding = extractBinding(annotation);
 
-		CodecHelper.validateData(binding.validator(), value);
-
 		final BindingData<BindArrayPrimitive> bindingData = BindingData.create(binding);
+		bindingData.validate(value);
+
 		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter(rootObject, evaluator);
 		final Object array = CodecHelper.converterEncode(chosenConverter, value);
 
-		final int size = evaluator.evaluateSize(binding.size(), rootObject);
+		final int size = bindingData.evaluateSize(rootObject, evaluator);
 		CodecHelper.assertSizePositive(size);
 		CodecHelper.assertSizeEquals(size, Array.getLength(array));
 

@@ -40,6 +40,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
+import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.codecs.managers.ContextHelper;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.external.codecs.BitReader;
@@ -57,56 +58,69 @@ public final class BindingData<T extends Annotation>{
 	public final Class<T> annotation;
 
 	private Class<?> type;
+	private String size;
 	private Class<?> selectDefault;
 	private ObjectChoices selectObjectFrom;
 	private final ConverterChoices selectConverterFrom;
+	private final Class<? extends Validator<?>> validator;
 	private final Class<? extends Converter<?, ?>> defaultConverter;
 
 
 	public static BindingData<BindArray> create(final BindArray annotation){
-		final BindingData<BindArray> data = new BindingData<>(BindArray.class, annotation.selectConverterFrom(), annotation.converter());
+		final BindingData<BindArray> data = new BindingData<>(BindArray.class, annotation.selectConverterFrom(), annotation.validator(),
+			annotation.converter());
 		data.type = annotation.type();
+		data.size = annotation.size();
 		data.selectDefault = annotation.selectDefault();
 		data.selectObjectFrom = annotation.selectFrom();
 		return data;
 	}
 
 	public static BindingData<BindArrayPrimitive> create(final BindArrayPrimitive annotation){
-		final BindingData<BindArrayPrimitive> data = new BindingData<>(BindArrayPrimitive.class, annotation.selectConverterFrom(), annotation.converter());
+		final BindingData<BindArrayPrimitive> data = new BindingData<>(BindArrayPrimitive.class, annotation.selectConverterFrom(),
+			annotation.validator(), annotation.converter());
 		data.type = annotation.type();
+		data.size = annotation.size();
 		return data;
 	}
 
 	public static BindingData<BindBits> create(final BindBits annotation){
-		return new BindingData<>(BindBits.class, annotation.selectConverterFrom(), annotation.converter());
+		final BindingData<BindBits> data = new BindingData<>(BindBits.class, annotation.selectConverterFrom(), annotation.validator(),
+			annotation.converter());
+		data.size = annotation.size();
+		return data;
 	}
 
 	public static BindingData<BindByte> create(final BindByte annotation){
-		return new BindingData<>(BindByte.class, annotation.selectConverterFrom(), annotation.converter());
+		return new BindingData<>(BindByte.class, annotation.selectConverterFrom(), annotation.validator(), annotation.converter());
 	}
 
 	public static BindingData<BindDouble> create(final BindDouble annotation){
-		return new BindingData<>(BindDouble.class, annotation.selectConverterFrom(), annotation.converter());
+		return new BindingData<>(BindDouble.class, annotation.selectConverterFrom(), annotation.validator(), annotation.converter());
 	}
 
 	public static BindingData<BindFloat> create(final BindFloat annotation){
-		return new BindingData<>(BindFloat.class, annotation.selectConverterFrom(), annotation.converter());
+		return new BindingData<>(BindFloat.class, annotation.selectConverterFrom(), annotation.validator(), annotation.converter());
 	}
 
 	public static BindingData<BindInt> create(final BindInt annotation){
-		return new BindingData<>(BindInt.class, annotation.selectConverterFrom(), annotation.converter());
+		return new BindingData<>(BindInt.class, annotation.selectConverterFrom(), annotation.validator(), annotation.converter());
 	}
 
 	public static BindingData<BindInteger> create(final BindInteger annotation){
-		return new BindingData<>(BindInteger.class, annotation.selectConverterFrom(), annotation.converter());
+		final BindingData<BindInteger> data = new BindingData<>(BindInteger.class, annotation.selectConverterFrom(), annotation.validator(),
+			annotation.converter());
+		data.size = annotation.size();
+		return data;
 	}
 
 	public static BindingData<BindLong> create(final BindLong annotation){
-		return new BindingData<>(BindLong.class, annotation.selectConverterFrom(), annotation.converter());
+		return new BindingData<>(BindLong.class, annotation.selectConverterFrom(), annotation.validator(), annotation.converter());
 	}
 
 	public static BindingData<BindObject> create(final BindObject annotation){
-		final BindingData<BindObject> data = new BindingData<>(BindObject.class, annotation.selectConverterFrom(), annotation.converter());
+		final BindingData<BindObject> data = new BindingData<>(BindObject.class, annotation.selectConverterFrom(), annotation.validator(),
+			annotation.converter());
 		data.type = annotation.type();
 		data.selectDefault = annotation.selectDefault();
 		data.selectObjectFrom = annotation.selectFrom();
@@ -114,31 +128,44 @@ public final class BindingData<T extends Annotation>{
 	}
 
 	public static BindingData<BindShort> create(final BindShort annotation){
-		return new BindingData<>(BindShort.class, annotation.selectConverterFrom(), annotation.converter());
+		return new BindingData<>(BindShort.class, annotation.selectConverterFrom(), annotation.validator(), annotation.converter());
 	}
 
 	public static BindingData<BindString> create(final BindString annotation){
-		return new BindingData<>(BindString.class, annotation.selectConverterFrom(), annotation.converter());
+		final BindingData<BindString> data = new BindingData<>(BindString.class, annotation.selectConverterFrom(), annotation.validator(),
+			annotation.converter());
+		data.size = annotation.size();
+		return data;
 	}
 
 	public static BindingData<BindStringTerminated> create(final BindStringTerminated annotation){
-		return new BindingData<>(BindStringTerminated.class, annotation.selectConverterFrom(), annotation.converter());
+		return new BindingData<>(BindStringTerminated.class, annotation.selectConverterFrom(), annotation.validator(),
+			annotation.converter());
 	}
 
-	private BindingData(final Class<T> annotation, final ConverterChoices selectConverterFrom,
+	private BindingData(final Class<T> annotation, final ConverterChoices selectConverterFrom, final Class<? extends Validator<?>> validator,
 			final Class<? extends Converter<?, ?>> defaultConverter){
 		this.annotation = annotation;
 
 		this.selectConverterFrom = selectConverterFrom;
+		this.validator = validator;
 		this.defaultConverter = defaultConverter;
-	}
-
-	public Class<?> getType(){
-		return type;
 	}
 
 	boolean hasSelectAlternatives(){
 		return (selectObjectFrom.alternatives().length > 0);
+	}
+
+	void validate(final Object value){
+		CodecHelper.validateData(validator, value);
+	}
+
+	void addToContext(final Object instance, final Evaluator evaluator){
+		evaluator.addToContext(ContextHelper.CONTEXT_SELF, instance);
+	}
+
+	int evaluateSize(final Object rootObject, final Evaluator evaluator){
+		return evaluator.evaluateSize(size, rootObject);
 	}
 
 	Class<?> chooseAlternativeType(final BitReader reader, final Object rootObject, final Evaluator evaluator) throws CodecException{
