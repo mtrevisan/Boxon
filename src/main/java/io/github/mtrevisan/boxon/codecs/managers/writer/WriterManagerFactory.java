@@ -39,6 +39,7 @@ public final class WriterManagerFactory{
 		Double.class, DoubleWriterManager::new
 	);
 
+
 	private WriterManagerFactory(){}
 
 	public static WriterManagerInterface buildManager(final Object value, final BitWriter writer, final int radix, final String charsetName){

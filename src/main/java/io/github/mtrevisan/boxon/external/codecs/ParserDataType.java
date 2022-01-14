@@ -129,7 +129,6 @@ public enum ParserDataType{
 		TYPE_MAP = Collections.unmodifiableMap(typeMap);
 	}
 
-
 	private static final String METHOD_VALUE_OF = "valueOf";
 
 

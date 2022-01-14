@@ -58,7 +58,6 @@ public final class LoaderTemplate{
 
 	private final EventListener eventListener;
 
-
 	private final ThrowingFunction<Class<?>, Template<?>, AnnotationException> templateStore
 		= Memoizer.throwingMemoize(type -> Template.create(type, this::filterAnnotationsWithCodec));
 

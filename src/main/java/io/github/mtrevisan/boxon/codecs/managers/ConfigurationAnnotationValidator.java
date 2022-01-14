@@ -233,6 +233,7 @@ enum ConfigurationAnnotationValidator{
 	private static final ValueOf<ConfigurationAnnotationValidator, Class<? extends Annotation>> VALIDATORS
 		= ValueOf.create(ConfigurationAnnotationValidator.class, validator -> validator.annotationType);
 
+
 	private final Class<? extends Annotation> annotationType;
 
 

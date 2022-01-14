@@ -41,6 +41,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
+import io.github.mtrevisan.boxon.codecs.managers.ConstructorHelper;
 import io.github.mtrevisan.boxon.codecs.managers.ContextHelper;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.external.codecs.BitReader;
@@ -187,8 +188,12 @@ final class BindingData{
 		this.evaluator = evaluator;
 	}
 
-	void validate(final Object value){
-		CodecHelper.validateData(validator, value);
+	@SuppressWarnings("unchecked")
+	<T> void validate(final Object value){
+		final Validator<T> validatorCreator = (Validator<T>)ConstructorHelper.getCreator(validator)
+			.get();
+		if(!validatorCreator.isValid((T)value))
+			throw new IllegalArgumentException("Validation with " + validator.getSimpleName() + " not passed (value is " + value + ")");
 	}
 
 	void addToContext(final Object instance){

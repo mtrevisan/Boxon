@@ -45,6 +45,7 @@ public final class Evaluator{
 	private static final SpelParserConfiguration CONFIG = new SpelParserConfiguration(SpelCompilerMode.IMMEDIATE, null);
 	private static final ExpressionParser PARSER = new SpelExpressionParser(CONFIG);
 
+
 	private final StandardEvaluationContext context = new StandardEvaluationContext();
 
 

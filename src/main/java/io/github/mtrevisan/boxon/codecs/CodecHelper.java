@@ -26,7 +26,6 @@ package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
-import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.codecs.managers.ConstructorHelper;
 import io.github.mtrevisan.boxon.codecs.managers.ContextHelper;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
@@ -76,14 +75,6 @@ final class CodecHelper{
 
 			writer.putBits(bits, prefixSize);
 		}
-	}
-
-	@SuppressWarnings("unchecked")
-	static <T> void validateData(final Class<? extends Validator<?>> validatorType, final Object data){
-		final Validator<T> validator = (Validator<T>)ConstructorHelper.getCreator(validatorType)
-			.get();
-		if(!validator.isValid((T)data))
-			throw new IllegalArgumentException("Validation with " + validatorType.getSimpleName() + " not passed (value is " + data + ")");
 	}
 
 	static Object convertValue(final BindingData bindingData, final Object value){

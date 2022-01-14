@@ -35,6 +35,7 @@ public final class ConfigField{
 
 	private static final ConfigurationSkip[] EMPTY_ARRAY = new ConfigurationSkip[0];
 
+
 	private final Field field;
 	/** List of skips that happen BEFORE the reading/writing of this variable. */
 	private final ConfigurationSkip[] skips;
