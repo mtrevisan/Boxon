@@ -104,16 +104,6 @@ abstract class BitReaderData{
 	/**
 	 * Reads the next {@code length} bits and composes a {@link BitSet}.
 	 *
-	 * @param value	The value from which to extract the size.
-	 * @return	A {@link BitSet} value at the {@link BitReader}'s current position.
-	 */
-	public final BitSet getBitsSizeOf(final Object value){
-		return getBits(ParserDataType.getSize(value));
-	}
-
-	/**
-	 * Reads the next {@code length} bits and composes a {@link BitSet}.
-	 *
 	 * @param length	The amount of bits to read.
 	 * @return	A {@link BitSet} value at the {@link BitReader}'s current position.
 	 */

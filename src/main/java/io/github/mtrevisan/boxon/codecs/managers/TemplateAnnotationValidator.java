@@ -43,12 +43,12 @@ public enum TemplateAnnotationValidator{
 		@Override
 		void validate(final Annotation annotation) throws AnnotationException{
 			final BindObject binding = (BindObject)annotation;
-			final ObjectChoices selectFrom = binding.selectFrom();
 			final Class<?> type = binding.type();
 			if(ParserDataType.isPrimitive(type))
 				throw AnnotationException.create("Bad annotation used for {}, should have been used one of the primitive type's annotations",
 					BindObject.class.getSimpleName());
 
+			final ObjectChoices selectFrom = binding.selectFrom();
 			validateObjectChoice(selectFrom, binding.selectDefault(), type);
 		}
 	},
@@ -68,12 +68,12 @@ public enum TemplateAnnotationValidator{
 		@Override
 		void validate(final Annotation annotation) throws AnnotationException{
 			final BindArray binding = (BindArray)annotation;
-			final ObjectChoices selectFrom = binding.selectFrom();
 			final Class<?> type = binding.type();
 			if(ParserDataType.isPrimitive(type))
 				throw AnnotationException.create("Bad annotation used for {}, should have been used the type `{}.class`",
 					BindArrayPrimitive.class.getSimpleName(), type.getSimpleName());
 
+			final ObjectChoices selectFrom = binding.selectFrom();
 			validateObjectChoice(selectFrom, binding.selectDefault(), type);
 		}
 	},

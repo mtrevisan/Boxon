@@ -47,7 +47,7 @@ Boxon...
 
 ### Differences from...
 #### Preon
-Boxon differs from Preon in...
+Boxon differs from [Preon](https://github.com/preon/preon) in...
  - Does not have a generic `Bound` annotation: it uses converters instead.
  - Does not need the "native byte order" constant. This is because the bytes of the message have little chance to be generated from the very same machine that will parse them, what if a message consider 24 bits as an Integer? If the code should be portable and installed and run everywhere it should not rely on the native properties of any machine.
    Moreover, `@Bound boolean visible;` is 1 bit- or 1 byte-length?
@@ -121,13 +121,14 @@ You can get pre-built JARs (usable on JRE 11 or newer) from [Sonatype](https://o
     1. [Multi-message parser](#example-multi)
     2. [Message composer](#example-composer)
 9. [Changelog](#changelog)
-    1. [version 2.1.0](#changelog-2.1.0)
-    2. [version 2.0.0](#changelog-2.0.0)
-    3. [version 1.1.0](#changelog-1.1.0)
-    4. [version 1.0.0](#changelog-1.0.0)
-    5. [version 0.0.2](#changelog-0.0.2)
-    6. [version 0.0.1](#changelog-0.0.1)
-    7. [version 0.0.0](#changelog-0.0.0)
+    1. [version 2.1.1](#changelog-2.1.1)
+    2. [version 2.1.0](#changelog-2.1.0)
+    3. [version 2.0.0](#changelog-2.0.0)
+    4. [version 1.1.0](#changelog-1.1.0)
+    5. [version 1.0.0](#changelog-1.0.0)
+    6. [version 0.0.2](#changelog-0.0.2)
+    7. [version 0.0.1](#changelog-0.0.1)
+    8. [version 0.0.0](#changelog-0.0.0)
 10. [License](#license)
 11. [Attributions](#attributions)
 
@@ -1328,6 +1329,13 @@ Remember that the header that will be written is the first in `@MessageHeader`.
 
 <a name="changelog"></a>
 ## Changelog
+
+<a name="changelog-2.1.1"></a>
+### version 2.1.1 - 20210114
+- Bug fix: `Evaluator` class is now exported.
+- Removed a package cycle.
+- General cleaning of the code (removed duplicated code, useless templates, etc.).
+
 
 <a name="changelog-2.1.0"></a>
 ### version 2.1.0 - 20211213

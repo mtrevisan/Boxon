@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.internal;
+package io.github.mtrevisan.boxon.codecs;
 
 import org.springframework.expression.EvaluationException;
 import org.springframework.expression.Expression;
@@ -44,6 +44,7 @@ public final class Evaluator{
 	//allow for immediate compilation of SpEL expressions
 	private static final SpelParserConfiguration CONFIG = new SpelParserConfiguration(SpelCompilerMode.IMMEDIATE, null);
 	private static final ExpressionParser PARSER = new SpelExpressionParser(CONFIG);
+
 
 	private final StandardEvaluationContext context = new StandardEvaluationContext();
 

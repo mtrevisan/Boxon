@@ -40,6 +40,7 @@ public final class BoundedField{
 	private static final String EMPTY_STRING = "";
 	private static final Skip[] EMPTY_ARRAY = new Skip[0];
 
+
 	private final Field field;
 	/** List of skips that happen BEFORE the reading/writing of this variable. */
 	private final Skip[] skips;

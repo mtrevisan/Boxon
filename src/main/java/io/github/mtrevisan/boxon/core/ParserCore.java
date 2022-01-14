@@ -27,6 +27,7 @@ package io.github.mtrevisan.boxon.core;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.codecs.ConfigurationParser;
+import io.github.mtrevisan.boxon.codecs.Evaluator;
 import io.github.mtrevisan.boxon.codecs.LoaderCodec;
 import io.github.mtrevisan.boxon.codecs.TemplateParser;
 import io.github.mtrevisan.boxon.codecs.TemplateParserCore;
@@ -36,7 +37,6 @@ import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
 import io.github.mtrevisan.boxon.external.logs.EventListener;
-import io.github.mtrevisan.boxon.internal.Evaluator;
 
 import java.lang.reflect.Method;
 import java.util.Map;

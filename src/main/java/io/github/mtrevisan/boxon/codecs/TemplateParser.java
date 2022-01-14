@@ -41,8 +41,8 @@ import io.github.mtrevisan.boxon.external.codecs.BitReader;
 import io.github.mtrevisan.boxon.external.codecs.BitSet;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
 import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
+import io.github.mtrevisan.boxon.external.codecs.ParserDataType;
 import io.github.mtrevisan.boxon.external.logs.EventListener;
-import io.github.mtrevisan.boxon.internal.Evaluator;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 
 import java.lang.annotation.Annotation;
@@ -173,6 +173,8 @@ public final class TemplateParser implements TemplateParserInterface{
 		eventListener.readingField(template.toString(), field.getFieldName(), annotationType.getSimpleName());
 
 		try{
+			//FIXME inject evaluator?
+
 			//decode value from raw message
 			final Object value = codec.decode(reader, binding, parserContext.getRootObject());
 			//store value in the current object
@@ -207,8 +209,10 @@ public final class TemplateParser implements TemplateParserInterface{
 		else{
 			final byte terminator = skip.terminator();
 			reader.skipUntilTerminator(terminator);
-			if(skip.consumeTerminator())
-				reader.getBitsSizeOf(terminator);
+			if(skip.consumeTerminator()){
+				final int length = ParserDataType.getSize(terminator);
+				reader.getBits(length);
+			}
 		}
 	}
 

@@ -59,6 +59,7 @@ public final class Template<T>{
 		}
 	}
 
+
 	private final Class<T> type;
 
 	private final MessageHeader header;

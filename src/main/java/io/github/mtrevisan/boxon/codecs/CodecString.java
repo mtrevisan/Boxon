@@ -25,14 +25,12 @@
 package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
-import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.codecs.managers.Injected;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.external.codecs.BitReader;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
 import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
-import io.github.mtrevisan.boxon.internal.Evaluator;
 
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
@@ -49,20 +47,14 @@ final class CodecString implements CodecInterface<BindString>{
 	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject) throws AnnotationException{
 		final BindString binding = extractBinding(annotation);
 
-		final int size = evaluator.evaluateSize(binding.size(), rootObject);
+		final BindingData bindingData = BindingData.create(binding, rootObject, evaluator);
+
+		final int size = bindingData.evaluateSize();
 		CodecHelper.assertSizePositive(size);
 		final Charset charset = Charset.forName(binding.charset());
 		final String text = reader.getText(size, charset);
 
-		final ConverterChoices selectConverterFrom = binding.selectConverterFrom();
-		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
-		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(selectConverterFrom, defaultConverter,
-			rootObject, evaluator);
-		final Object value = CodecHelper.converterDecode(chosenConverter, text);
-
-		CodecHelper.validateData(binding.validator(), value);
-
-		return value;
+		return CodecHelper.convertValue(bindingData, text);
 	}
 
 	@Override
@@ -70,13 +62,13 @@ final class CodecString implements CodecInterface<BindString>{
 			throws AnnotationException{
 		final BindString binding = extractBinding(annotation);
 
-		CodecHelper.validateData(binding.validator(), value);
+		final BindingData bindingData = BindingData.create(binding, rootObject, evaluator);
+		bindingData.validate(value);
 
-		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(),
-			binding.converter(), rootObject, evaluator);
+		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();
 		final String text = CodecHelper.converterEncode(chosenConverter, value);
 
-		final int size = evaluator.evaluateSize(binding.size(), rootObject);
+		final int size = bindingData.evaluateSize();
 		CodecHelper.assertSizePositive(size);
 		final Charset charset = Charset.forName(binding.charset());
 		writer.putText(text.substring(0, Math.min(text.length(), size)), charset);

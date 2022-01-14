@@ -25,13 +25,11 @@
 package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.bindings.BindLong;
-import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.codecs.managers.Injected;
 import io.github.mtrevisan.boxon.external.codecs.BitReader;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
 import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
-import io.github.mtrevisan.boxon.internal.Evaluator;
 
 import java.lang.annotation.Annotation;
 
@@ -47,27 +45,20 @@ final class CodecLong implements CodecInterface<BindLong>{
 	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
 		final BindLong binding = extractBinding(annotation);
 
-		final long v = reader.getLong(binding.byteOrder());
+		final long value = reader.getLong(binding.byteOrder());
 
-		final ConverterChoices selectConverterFrom = binding.selectConverterFrom();
-		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
-		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(selectConverterFrom, defaultConverter,
-			rootObject, evaluator);
-		final Object value = CodecHelper.converterDecode(chosenConverter, v);
-
-		CodecHelper.validateData(binding.validator(), value);
-
-		return value;
+		final BindingData bindingData = BindingData.create(binding, rootObject, evaluator);
+		return CodecHelper.convertValue(bindingData, value);
 	}
 
 	@Override
 	public void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value){
 		final BindLong binding = extractBinding(annotation);
 
-		CodecHelper.validateData(binding.validator(), value);
+		final BindingData bindingData = BindingData.create(binding, rootObject, evaluator);
+		bindingData.validate(value);
 
-		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(),
-			binding.converter(), rootObject, evaluator);
+		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();
 		final long v = CodecHelper.converterEncode(chosenConverter, value);
 
 		writer.putLong(v, binding.byteOrder());

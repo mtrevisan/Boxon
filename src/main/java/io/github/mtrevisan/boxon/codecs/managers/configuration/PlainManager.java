@@ -44,8 +44,6 @@ import java.util.Map;
 
 final class PlainManager implements ConfigurationManagerInterface{
 
-	private static final String EMPTY_STRING = "";
-
 	static final Annotation EMPTY_ANNOTATION = () -> Annotation.class;
 
 

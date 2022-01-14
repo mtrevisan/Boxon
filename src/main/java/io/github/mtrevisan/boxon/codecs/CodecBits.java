@@ -25,7 +25,6 @@
 package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.bindings.BindBits;
-import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.codecs.managers.Injected;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
@@ -34,7 +33,6 @@ import io.github.mtrevisan.boxon.external.codecs.BitSet;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
 import io.github.mtrevisan.boxon.external.codecs.ByteOrder;
 import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
-import io.github.mtrevisan.boxon.internal.Evaluator;
 
 import java.lang.annotation.Annotation;
 
@@ -50,21 +48,15 @@ final class CodecBits implements CodecInterface<BindBits>{
 	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject) throws AnnotationException{
 		final BindBits binding = extractBinding(annotation);
 
-		final int size = evaluator.evaluateSize(binding.size(), rootObject);
+		final BindingData bindingData = BindingData.create(binding, rootObject, evaluator);
+
+		final int size = bindingData.evaluateSize();
 		CodecHelper.assertSizePositive(size);
 		final BitSet bits = reader.getBits(size);
 		if(binding.byteOrder() == ByteOrder.LITTLE_ENDIAN)
 			bits.reverseBits(size);
 
-		final ConverterChoices selectConverterFrom = binding.selectConverterFrom();
-		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
-		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(selectConverterFrom, defaultConverter,
-			rootObject, evaluator);
-		final Object value = CodecHelper.converterDecode(chosenConverter, bits);
-
-		CodecHelper.validateData(binding.validator(), value);
-
-		return value;
+		return CodecHelper.convertValue(bindingData, bits);
 	}
 
 	@Override
@@ -72,12 +64,12 @@ final class CodecBits implements CodecInterface<BindBits>{
 			throws AnnotationException{
 		final BindBits binding = extractBinding(annotation);
 
-		CodecHelper.validateData(binding.validator(), value);
+		final BindingData bindingData = BindingData.create(binding, rootObject, evaluator);
+		bindingData.validate(value);
 
-		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(),
-			binding.converter(), rootObject, evaluator);
+		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();
 		final BitSet bits = CodecHelper.converterEncode(chosenConverter, value);
-		final int size = evaluator.evaluateSize(binding.size(), rootObject);
+		final int size = bindingData.evaluateSize();
 		CodecHelper.assertSizePositive(size);
 		if(binding.byteOrder() == ByteOrder.LITTLE_ENDIAN)
 			bits.reverseBits(size);

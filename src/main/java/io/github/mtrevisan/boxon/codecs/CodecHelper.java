@@ -24,29 +24,22 @@
  */
 package io.github.mtrevisan.boxon.codecs;
 
-import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
-import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.codecs.managers.ConstructorHelper;
 import io.github.mtrevisan.boxon.codecs.managers.ContextHelper;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
-import io.github.mtrevisan.boxon.external.codecs.BitReader;
 import io.github.mtrevisan.boxon.external.codecs.BitSet;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
 import io.github.mtrevisan.boxon.external.codecs.ByteOrder;
 import io.github.mtrevisan.boxon.external.codecs.ParserDataType;
 import io.github.mtrevisan.boxon.external.configurations.ConfigurationEnum;
-import io.github.mtrevisan.boxon.internal.Evaluator;
 
 import java.lang.reflect.Array;
 
 
 final class CodecHelper{
-
-	private static final ObjectChoices.ObjectChoice EMPTY_CHOICE = new NullObjectChoice();
-
 
 	private CodecHelper(){}
 
@@ -70,42 +63,6 @@ final class CodecHelper{
 		throw new IllegalArgumentException("Cannot find a valid codec for type " + type.getSimpleName());
 	}
 
-	static ObjectChoices.ObjectChoice chooseAlternative(final BitReader reader, final ObjectChoices selectFrom, final Object rootObject,
-			final Evaluator evaluator){
-		if(selectFrom.prefixSize() > 0){
-			final int prefixSize = selectFrom.prefixSize();
-			final ByteOrder prefixByteOrder = selectFrom.byteOrder();
-			final int prefix = reader.getInteger(prefixSize, prefixByteOrder)
-				.intValue();
-
-			evaluator.addToContext(ContextHelper.CONTEXT_CHOICE_PREFIX, prefix);
-		}
-
-		final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
-		return chooseAlternative(alternatives, rootObject, evaluator);
-	}
-
-	private static ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives,
-			final Object rootObject, final Evaluator evaluator){
-		for(int i = 0; i < alternatives.length; i ++){
-			final ObjectChoices.ObjectChoice alternative = alternatives[i];
-			if(evaluator.evaluateBoolean(alternative.condition(), rootObject))
-				return alternative;
-		}
-		return EMPTY_CHOICE;
-	}
-
-	static Class<? extends Converter<?, ?>> chooseConverter(final ConverterChoices selectConverterFrom,
-			final Class<? extends Converter<?, ?>> defaultConverter, final Object rootObject, final Evaluator evaluator){
-		final ConverterChoices.ConverterChoice[] alternatives = selectConverterFrom.alternatives();
-		for(int i = 0; i < alternatives.length; i ++){
-			final ConverterChoices.ConverterChoice alternative = alternatives[i];
-			if(evaluator.evaluateBoolean(alternative.condition(), rootObject))
-				return alternative.converter();
-		}
-		return defaultConverter;
-	}
-
 	static void writePrefix(final BitWriter writer, final ObjectChoices.ObjectChoice chosenAlternative, final ObjectChoices selectFrom){
 		//if chosenAlternative.condition() contains '#prefix', then write @ObjectChoice.prefix()
 		if(ContextHelper.containsPrefixReference(chosenAlternative.condition())){
@@ -120,16 +77,15 @@ final class CodecHelper{
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	static <T> void validateData(final Class<? extends Validator<?>> validatorType, final Object data){
-		final Validator<T> validator = (Validator<T>)ConstructorHelper.getCreator(validatorType)
-			.get();
-		if(!validator.isValid((T)data))
-			throw new IllegalArgumentException("Validation with " + validatorType.getSimpleName() + " not passed (value is " + data + ")");
+	static Object convertValue(final BindingData bindingData, final Object value){
+		final Class<? extends Converter<?, ?>> converterType = bindingData.getChosenConverter();
+		final Object convertedValue = converterDecode(converterType, value);
+		bindingData.validate(convertedValue);
+		return convertedValue;
 	}
 
 	@SuppressWarnings("unchecked")
-	static <IN, OUT> OUT converterDecode(final Class<? extends Converter<?, ?>> converterType, final Object data){
+	private static <IN, OUT> OUT converterDecode(final Class<? extends Converter<?, ?>> converterType, final Object data){
 		try{
 			final Converter<IN, OUT> converter = (Converter<IN, OUT>)ConstructorHelper.getCreator(converterType)
 				.get();

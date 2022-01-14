@@ -31,7 +31,6 @@ import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.codecs.BitReader;
 import io.github.mtrevisan.boxon.external.logs.EventListener;
-import io.github.mtrevisan.boxon.internal.Evaluator;
 
 
 @SuppressWarnings("unused")

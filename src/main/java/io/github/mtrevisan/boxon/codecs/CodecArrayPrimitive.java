@@ -25,7 +25,6 @@
 package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
-import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.codecs.managers.Injected;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
@@ -33,7 +32,6 @@ import io.github.mtrevisan.boxon.external.codecs.BitReader;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
 import io.github.mtrevisan.boxon.external.codecs.ByteOrder;
 import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
-import io.github.mtrevisan.boxon.internal.Evaluator;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
@@ -50,10 +48,12 @@ final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject) throws AnnotationException{
 		final BindArrayPrimitive binding = extractBinding(annotation);
 
-		final Class<?> type = binding.type();
-		final int size = evaluator.evaluateSize(binding.size(), rootObject);
+		final BindingData bindingData = BindingData.create(binding, rootObject, evaluator);
+
+		final int size = bindingData.evaluateSize();
 		CodecHelper.assertSizePositive(size);
 
+		final Class<?> type = binding.type();
 		final ByteOrder byteOrder = binding.byteOrder();
 		final Object array = Array.newInstance(type, size);
 		for(int i = 0; i < size; i ++){
@@ -61,15 +61,7 @@ final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 			Array.set(array, i, value);
 		}
 
-		final ConverterChoices selectConverterFrom = binding.selectConverterFrom();
-		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
-		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(selectConverterFrom, defaultConverter,
-			rootObject, evaluator);
-		final Object value = CodecHelper.converterDecode(chosenConverter, array);
-
-		CodecHelper.validateData(binding.validator(), value);
-
-		return value;
+		return CodecHelper.convertValue(bindingData, array);
 	}
 
 	@Override
@@ -77,13 +69,13 @@ final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 			throws AnnotationException{
 		final BindArrayPrimitive binding = extractBinding(annotation);
 
-		CodecHelper.validateData(binding.validator(), value);
+		final BindingData bindingData = BindingData.create(binding, rootObject, evaluator);
+		bindingData.validate(value);
 
-		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.chooseConverter(binding.selectConverterFrom(),
-			binding.converter(), rootObject, evaluator);
+		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();
 		final Object array = CodecHelper.converterEncode(chosenConverter, value);
 
-		final int size = evaluator.evaluateSize(binding.size(), rootObject);
+		final int size = bindingData.evaluateSize();
 		CodecHelper.assertSizePositive(size);
 		CodecHelper.assertSizeEquals(size, Array.getLength(array));
 
