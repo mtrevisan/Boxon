@@ -41,6 +41,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.codecs.managers.ContextHelper;
+import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.external.codecs.BitReader;
 import io.github.mtrevisan.boxon.external.codecs.ByteOrder;
 
@@ -136,29 +137,33 @@ public final class BindingData<T extends Annotation>{
 		return type;
 	}
 
-	Class<?> getSelectDefault(){
-		return selectDefault;
-	}
-
 	boolean hasSelectAlternatives(){
 		return (selectObjectFrom.alternatives().length > 0);
 	}
 
-	Class<?> chooseAlternativeType(final BitReader reader, final Object rootObject, final Evaluator evaluator){
-		if(selectObjectFrom.prefixSize() > 0){
-			final int prefixSize = selectObjectFrom.prefixSize();
-			final ByteOrder prefixByteOrder = selectObjectFrom.byteOrder();
-			final int prefix = reader.getInteger(prefixSize, prefixByteOrder)
-				.intValue();
+	Class<?> chooseAlternativeType(final BitReader reader, final Object rootObject, final Evaluator evaluator) throws CodecException{
+		Class<?> chosenAlternativeType = type;
+		if(hasSelectAlternatives()){
+			if(selectObjectFrom.prefixSize() > 0){
+				final int prefixSize = selectObjectFrom.prefixSize();
+				final ByteOrder prefixByteOrder = selectObjectFrom.byteOrder();
+				final int prefix = reader.getInteger(prefixSize, prefixByteOrder)
+					.intValue();
 
-			evaluator.addToContext(ContextHelper.CONTEXT_CHOICE_PREFIX, prefix);
+				evaluator.addToContext(ContextHelper.CONTEXT_CHOICE_PREFIX, prefix);
+			}
+
+			final ObjectChoices.ObjectChoice[] alternatives = selectObjectFrom.alternatives();
+			final ObjectChoices.ObjectChoice chosenAlternative = chooseAlternative(alternatives, rootObject, evaluator);
+			chosenAlternativeType = (!isEmptyChoice(chosenAlternative)
+				? chosenAlternative.type()
+				: selectDefault);
+
+			if(chosenAlternativeType == void.class)
+				throw CodecException.create("Cannot find a valid codec from given alternatives for {}",
+					rootObject.getClass().getSimpleName());
 		}
-
-		final ObjectChoices.ObjectChoice[] alternatives = selectObjectFrom.alternatives();
-		final ObjectChoices.ObjectChoice chosenAlternative = chooseAlternative(alternatives, rootObject, evaluator);
-		return (!isEmptyChoice(chosenAlternative)
-			? chosenAlternative.type()
-			: selectDefault);
+		return chosenAlternativeType;
 	}
 
 	private static boolean isEmptyChoice(final ObjectChoices.ObjectChoice choice){

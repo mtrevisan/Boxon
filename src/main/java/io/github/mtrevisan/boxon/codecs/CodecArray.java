@@ -86,7 +86,6 @@ final class CodecArray implements CodecInterface<BindArray>{
 			final Object rootObject) throws FieldException{
 		for(int i = 0; i < array.length; i ++){
 			final Class<?> chosenAlternativeType = bindingData.chooseAlternativeType(reader, rootObject, evaluator);
-			CodecHelper.validateChosenAlternative(chosenAlternativeType, rootObject);
 
 			//read object
 			final Template<?> subTemplate = templateParser.createTemplate(chosenAlternativeType);

@@ -64,12 +64,6 @@ final class CodecHelper{
 		throw new IllegalArgumentException("Cannot find a valid codec for type " + type.getSimpleName());
 	}
 
-	static void validateChosenAlternative(final Class<?> chosenAlternativeType, final Object rootObject) throws CodecException{
-		if(chosenAlternativeType == void.class)
-			throw CodecException.create("Cannot find a valid codec from given alternatives for {}",
-				rootObject.getClass().getSimpleName());
-	}
-
 	static void writePrefix(final BitWriter writer, final ObjectChoices.ObjectChoice chosenAlternative, final ObjectChoices selectFrom){
 		//if chosenAlternative.condition() contains '#prefix', then write @ObjectChoice.prefix()
 		if(ContextHelper.containsPrefixReference(chosenAlternative.condition())){

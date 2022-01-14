@@ -30,7 +30,6 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.codecs.managers.ContextHelper;
 import io.github.mtrevisan.boxon.codecs.managers.Injected;
 import io.github.mtrevisan.boxon.codecs.managers.Template;
-import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.codecs.BitReader;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
@@ -55,7 +54,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 
 		final BindingData<BindObject> bindingData = BindingData.create(binding);
 
-		final Class<?> type = extractType(reader, bindingData, rootObject);
+		final Class<?> type = bindingData.chooseAlternativeType(reader, rootObject, evaluator);
 
 		final Template<?> template = templateParser.createTemplate(type);
 		final Object instance = templateParser.decode(template, reader, rootObject);
@@ -67,16 +66,6 @@ final class CodecObject implements CodecInterface<BindObject>{
 		CodecHelper.validateData(binding.validator(), value);
 
 		return value;
-	}
-
-	private Class<?> extractType(final BitReader reader, final BindingData<BindObject> bindingData, final Object rootObject)
-			throws CodecException{
-		Class<?> chosenAlternativeType = bindingData.getType();
-		if(bindingData.hasSelectAlternatives()){
-			chosenAlternativeType = bindingData.chooseAlternativeType(reader, rootObject, evaluator);
-			CodecHelper.validateChosenAlternative(chosenAlternativeType, rootObject);
-		}
-		return chosenAlternativeType;
 	}
 
 	@Override
