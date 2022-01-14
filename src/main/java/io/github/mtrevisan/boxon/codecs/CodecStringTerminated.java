@@ -30,6 +30,7 @@ import io.github.mtrevisan.boxon.codecs.managers.Injected;
 import io.github.mtrevisan.boxon.external.codecs.BitReader;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
 import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
+import io.github.mtrevisan.boxon.external.codecs.ParserDataType;
 
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
@@ -50,8 +51,10 @@ final class CodecStringTerminated implements CodecInterface<BindStringTerminated
 
 		final byte terminator = binding.terminator();
 		final String text = reader.getTextUntilTerminator(terminator, charset);
-		if(binding.consumeTerminator())
-			reader.getBitsSizeOf(terminator);
+		if(binding.consumeTerminator()){
+			final int length = ParserDataType.getSize(terminator);
+			reader.getBits(length);
+		}
 
 		final BindingData bindingData = BindingData.create(binding, rootObject, evaluator);
 		return CodecHelper.convertValue(bindingData, text);
