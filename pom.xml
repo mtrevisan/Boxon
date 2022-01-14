@@ -25,8 +25,8 @@
 	</developers>
 
 	<scm>
-		<connection>scm:git:git@github.com:mtrevisan/Boxon.git</connection>
-		<developerConnection>scm:git:ssh://github.com:mtrevisan/Boxon.git</developerConnection>
+		<connection>scm:git:git://github.com/mtrevisan/Boxon.git</connection>
+		<developerConnection>scm:git:git@github.com:mtrevisan/Boxon.git</developerConnection>
 		<url>https://github.com/mtrevisan/Boxon</url>
 	</scm>
 
