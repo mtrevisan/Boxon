@@ -54,7 +54,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject) throws FieldException{
 		final BindArray binding = extractBinding(annotation);
 
-		final BindingData<BindArray> bindingData = BindingData.create(binding, rootObject, evaluator);
+		final BindingData bindingData = BindingData.create(binding, rootObject, evaluator);
 		final int size = bindingData.evaluateSize();
 		CodecHelper.assertSizePositive(size);
 
@@ -81,8 +81,8 @@ final class CodecArray implements CodecInterface<BindArray>{
 		return (T[])Array.newInstance(type, length);
 	}
 
-	private void decodeWithAlternatives(final BitReader reader, final Object[] array, final BindingData<BindArray> bindingData,
-			final Object rootObject) throws FieldException{
+	private void decodeWithAlternatives(final BitReader reader, final Object[] array, final BindingData bindingData, final Object rootObject)
+			throws FieldException{
 		for(int i = 0; i < array.length; i ++){
 			final Class<?> chosenAlternativeType = bindingData.chooseAlternativeType(reader);
 
@@ -105,7 +105,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 			throws FieldException{
 		final BindArray binding = extractBinding(annotation);
 
-		final BindingData<BindArray> bindingData = BindingData.create(binding, rootObject, evaluator);
+		final BindingData bindingData = BindingData.create(binding, rootObject, evaluator);
 		bindingData.validate(value);
 
 		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();

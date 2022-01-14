@@ -51,7 +51,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject) throws FieldException{
 		final BindObject binding = extractBinding(annotation);
 
-		final BindingData<BindObject> bindingData = BindingData.create(binding, rootObject, evaluator);
+		final BindingData bindingData = BindingData.create(binding, rootObject, evaluator);
 
 		final Class<?> type = bindingData.chooseAlternativeType(reader);
 
@@ -72,7 +72,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 			throws FieldException{
 		final BindObject binding = extractBinding(annotation);
 
-		final BindingData<BindObject> bindingData = BindingData.create(binding, rootObject, evaluator);
+		final BindingData bindingData = BindingData.create(binding, rootObject, evaluator);
 		bindingData.validate(value);
 
 		Class<?> type = binding.type();

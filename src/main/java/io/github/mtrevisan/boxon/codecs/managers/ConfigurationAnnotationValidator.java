@@ -69,7 +69,7 @@ enum ConfigurationAnnotationValidator{
 		@Override
 		void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
 				throws AnnotationException, CodecException{
-			final ConfigFieldData<ConfigurationField> configData = ConfigFieldData.create(field, (ConfigurationField)annotation);
+			final ConfigFieldData configData = ConfigFieldData.create(field, (ConfigurationField)annotation);
 
 			final ConfigurationField binding = (ConfigurationField)annotation;
 
@@ -94,7 +94,7 @@ enum ConfigurationAnnotationValidator{
 			ValidationHelper.validateProtocol(configData, minProtocolVersion, maxProtocolVersion);
 		}
 
-		private void validateMinimumParameters(final ConfigFieldData<ConfigurationField> field) throws AnnotationException{
+		private void validateMinimumParameters(final ConfigFieldData field) throws AnnotationException{
 			//one only of `pattern`, `minValue`/`maxValue`, and `enumeration` should be set:
 			final boolean hasPattern = !field.pattern.isEmpty();
 			final boolean hasMinMaxValues = (!field.minValue.isEmpty() || !field.maxValue.isEmpty());
@@ -117,8 +117,7 @@ enum ConfigurationAnnotationValidator{
 		@Override
 		void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
 				throws AnnotationException, CodecException{
-			final ConfigFieldData<CompositeConfigurationField> configData = ConfigFieldData.create(field,
-				(CompositeConfigurationField)annotation);
+			final ConfigFieldData configData = ConfigFieldData.create(field, (CompositeConfigurationField)annotation);
 
 			final CompositeConfigurationField binding = (CompositeConfigurationField)annotation;
 
@@ -146,7 +145,7 @@ enum ConfigurationAnnotationValidator{
 		@Override
 		void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
 				throws AnnotationException, CodecException{
-			final ConfigFieldData<CompositeSubField> configData = ConfigFieldData.create(field, (CompositeSubField)annotation);
+			final ConfigFieldData configData = ConfigFieldData.create(field, (CompositeSubField)annotation);
 
 			final CompositeSubField binding = (CompositeSubField)annotation;
 
@@ -163,8 +162,7 @@ enum ConfigurationAnnotationValidator{
 		@Override
 		void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
 				throws AnnotationException{
-			final ConfigFieldData<AlternativeConfigurationField> configData = ConfigFieldData.create(field,
-				(AlternativeConfigurationField)annotation);
+			final ConfigFieldData configData = ConfigFieldData.create(field, (AlternativeConfigurationField)annotation);
 
 			final AlternativeConfigurationField binding = (AlternativeConfigurationField)annotation;
 
@@ -181,13 +179,12 @@ enum ConfigurationAnnotationValidator{
 
 			final AlternativeSubField[] alternatives = binding.value();
 			for(int i = 0; i < JavaHelper.lengthOrZero(alternatives); i ++){
-				final ConfigFieldData<AlternativeSubField> alternativeConfigData = ConfigFieldData.create(field, alternatives[i]);
+				final ConfigFieldData alternativeConfigData = ConfigFieldData.create(field, alternatives[i]);
 				ValidationHelper.validateProtocol(alternativeConfigData, minProtocolVersion, maxProtocolVersion);
 			}
 		}
 
-		private void validateMinimumParameters(final Field field, final ConfigFieldData<AlternativeConfigurationField> configData)
-				throws AnnotationException{
+		private void validateMinimumParameters(final Field field, final ConfigFieldData configData) throws AnnotationException{
 			final Class<?> fieldType = field.getType();
 			if(fieldType.isArray() && !configData.hasEnumeration())
 				throw AnnotationException.create("Array field should have `enumeration`");
@@ -198,7 +195,7 @@ enum ConfigurationAnnotationValidator{
 		@Override
 		void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
 				throws AnnotationException, CodecException{
-			final ConfigFieldData<AlternativeSubField> configData = ConfigFieldData.create(field, (AlternativeSubField)annotation);
+			final ConfigFieldData configData = ConfigFieldData.create(field, (AlternativeSubField)annotation);
 
 			final AlternativeSubField binding = (AlternativeSubField)annotation;
 
