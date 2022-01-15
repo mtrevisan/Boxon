@@ -25,6 +25,9 @@
 package io.github.mtrevisan.boxon.external.configurations;
 
 
+/**
+ * Holds the constants used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}.
+ */
 public enum ConfigurationKey{
 	CONFIGURATION_HEADER("header"),
 	CONFIGURATION_FIELDS("fields"),

@@ -25,6 +25,9 @@
 package io.github.mtrevisan.boxon.exceptions;
 
 
+/**
+ * Represents an error in coding/decoding of a value.
+ */
 public class FieldException extends Exception{
 
 	private static final long serialVersionUID = -8863756843240934380L;
@@ -32,7 +35,9 @@ public class FieldException extends Exception{
 	private static final String EMPTY_STRING = "";
 
 
+	/** Class name that generates the error. */
 	private String className;
+	/** Field name in the class that generates the error. */
 	private String fieldName;
 
 
@@ -77,6 +82,13 @@ public class FieldException extends Exception{
 		super(cause);
 	}
 
+	/**
+	 * Adds class and field names to the exception.
+	 *
+	 * @param className	The class name.
+	 * @param fieldName	The field name.
+	 * @return	The exception itself.
+	 */
 	public final FieldException withClassNameAndFieldName(final String className, final String fieldName){
 		this.className = className;
 		this.fieldName = fieldName;

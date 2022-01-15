@@ -42,6 +42,9 @@ import java.util.List;
 import java.util.Map;
 
 
+/**
+ * Declarative descriptor for binary encoded data.
+ */
 @SuppressWarnings({"WeakerAccess", "unused"})
 public final class Descriptor{
 

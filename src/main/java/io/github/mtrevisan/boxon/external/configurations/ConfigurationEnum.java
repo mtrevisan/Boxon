@@ -30,9 +30,21 @@ package io.github.mtrevisan.boxon.external.configurations;
  */
 public interface ConfigurationEnum{
 
+	/**
+	 * The code associated with this numeration value.
+	 *
+	 * @return	The code for this enumeration.
+	 */
 	int getCode();
 
-	/** NOTE: already implemented in an Enum! Normally, it doesn't need to be extended. */
+	/**
+	 * Name of the value.
+	 * <p>
+	 * NOTE: already implemented in an Enum! Normally, it doesn't need to be extended.
+	 * </p>
+	 *
+	 * @return	The name of the value.
+	 */
 	String name();
 
 

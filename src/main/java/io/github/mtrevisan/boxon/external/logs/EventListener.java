@@ -25,6 +25,12 @@
 package io.github.mtrevisan.boxon.external.logs;
 
 
+/**
+ * An empty logger that logs nothing.
+ * <p>
+ * Used as a base class to construct custom loggers.
+ * </p>
+ */
 public class EventListener{
 
 	private static class SingletonHelper{
@@ -34,6 +40,11 @@ public class EventListener{
 
 	EventListener(){}
 
+	/**
+	 * The singleton instance of this logger.
+	 *
+	 * @return	The instance of this logger.
+	 */
 	public static EventListener getNoOpInstance(){
 		return EventListener.SingletonHelper.INSTANCE;
 	}

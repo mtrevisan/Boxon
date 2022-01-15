@@ -27,6 +27,9 @@ package io.github.mtrevisan.boxon.annotations.converters;
 import io.github.mtrevisan.boxon.external.codecs.BitSet;
 
 
+/**
+ * Convert a bit set to a boolean interpreting only the least common bit (the boolean equals to the lowest bit value).
+ */
 public final class BitToBooleanConverter implements Converter<BitSet, Boolean>{
 
 	BitToBooleanConverter(){}

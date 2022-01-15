@@ -25,6 +25,9 @@
 package io.github.mtrevisan.boxon.annotations.validators;
 
 
+/**
+ * Null validator, the input is always valid.
+ */
 public final class NullValidator implements Validator<Object>{
 
 	private NullValidator(){}

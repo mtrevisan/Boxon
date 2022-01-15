@@ -25,6 +25,9 @@
 package io.github.mtrevisan.boxon.annotations.converters;
 
 
+/**
+ * Convert a short to a char.
+ */
 public final class ShortToCharConverter implements Converter<Short, Character>{
 
 	ShortToCharConverter(){}

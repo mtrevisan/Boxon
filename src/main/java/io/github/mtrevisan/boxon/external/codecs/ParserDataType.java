@@ -34,6 +34,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 
+/**
+ * Holds information about size in memory and primitive-objective types of each data type.
+ */
 public enum ParserDataType{
 
 	BYTE(Byte.TYPE, Byte.class, Byte.SIZE){
@@ -107,6 +110,7 @@ public enum ParserDataType{
 			writer.putDouble((Double)value, byteOrder);
 		}
 	};
+
 
 	/** Maps primitive {@code Class}es to their corresponding wrapper {@code Class}. */
 	private static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPER_MAP;
@@ -183,6 +187,8 @@ public enum ParserDataType{
 
 	/**
 	 * The number of bits used to represent the value.
+	 *
+	 * @return	The size of the value as stored in memory.
 	 */
 	public static int getSize(final Object value){
 		return fromType(value.getClass()).size;
@@ -198,12 +204,29 @@ public enum ParserDataType{
 	public abstract void write(final BitWriter writer, final Object value, final ByteOrder byteOrder);
 
 
+	/**
+	 * Returns the primitive or objective type (depending on the field type) data stored as a string value, if the type is not string,
+	 * in that case the value will be returned.
+	 *
+	 * @param fieldType	The type of the field that will hold the value represented as a string.
+	 * @param value	The string value to be interpreted.
+	 * @return	The primitive or objective value, if the field type is not string, the given value otherwise.
+	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
+	 */
 	public static Object getValueOrSelf(final Class<?> fieldType, final Object value) throws CodecException{
 		return (String.class.isInstance(value)
 			? getValue(fieldType, (String)value)
 			: value);
 	}
 
+	/**
+	 * Returns the primitive or objective type (depending on the field type) data stored as a string value.
+	 *
+	 * @param fieldType	The type of the field that will hold the value represented as a string.
+	 * @param value	The string value to be interpreted.
+	 * @return	The primitive or objective value.
+	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
+	 */
 	@SuppressWarnings("ReturnOfNull")
 	public static Object getValue(final Class<?> fieldType, final String value) throws CodecException{
 		if(fieldType == String.class)

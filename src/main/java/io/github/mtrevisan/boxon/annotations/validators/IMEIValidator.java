@@ -25,6 +25,9 @@
 package io.github.mtrevisan.boxon.annotations.validators;
 
 
+/**
+ * Validator for <a href="https://en.wikipedia.org/wiki/International_Mobile_Equipment_Identity">IMEI</a> codes.
+ */
 public final class IMEIValidator implements Validator<CharSequence>{
 
 	IMEIValidator(){}

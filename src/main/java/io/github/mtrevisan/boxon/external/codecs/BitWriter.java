@@ -37,6 +37,11 @@ import java.nio.charset.StandardCharsets;
 @SuppressWarnings("WeakerAccess")
 public final class BitWriter extends BitWriterData{
 
+	/**
+	 * Create an instance of this class.
+	 *
+	 * @return	An instance of this class.
+	 */
 	public static BitWriter create(){
 		return new BitWriter();
 	}

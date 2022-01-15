@@ -36,6 +36,7 @@ public final class DecodeException extends Exception{
 	private static final String EMPTY_STRING = "";
 
 
+	/** Index of the decoded message this error refers to. */
 	private final int errorIndex;
 
 

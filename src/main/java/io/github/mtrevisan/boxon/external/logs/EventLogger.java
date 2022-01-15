@@ -33,6 +33,9 @@ import java.util.HashSet;
 import java.util.StringJoiner;
 
 
+/**
+ * A logger that uses <a href="https://www.slf4j.org/">SLF4J</a> to log event messages.
+ */
 public final class EventLogger extends EventListener{
 
 	private static final String EMPTY_STRING = "";
@@ -55,6 +58,11 @@ public final class EventLogger extends EventListener{
 	}
 
 
+	/**
+	 * The singleton instance of this logger.
+	 *
+	 * @return	The instance of this logger.
+	 */
 	public static EventLogger getInstance(){
 		return EventLogger.SingletonHelper.INSTANCE;
 	}

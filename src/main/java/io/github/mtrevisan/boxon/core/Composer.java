@@ -32,6 +32,9 @@ import io.github.mtrevisan.boxon.external.codecs.BitWriter;
 import java.util.Collection;
 
 
+/**
+ * Handles the composition of a message.
+ */
 @SuppressWarnings({"WeakerAccess", "unused"})
 public final class Composer{
 

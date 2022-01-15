@@ -25,6 +25,9 @@
 package io.github.mtrevisan.boxon.annotations.converters;
 
 
+/**
+ * Convert an unsigned short to an integer.
+ */
 public final class UnsignedShortConverter implements Converter<Short, Integer>{
 
 	UnsignedShortConverter(){}

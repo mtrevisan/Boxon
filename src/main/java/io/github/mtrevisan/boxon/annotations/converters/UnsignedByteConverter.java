@@ -25,6 +25,9 @@
 package io.github.mtrevisan.boxon.annotations.converters;
 
 
+/**
+ * Convert an unsigned byte to a short.
+ */
 public final class UnsignedByteConverter implements Converter<Byte, Short>{
 
 	UnsignedByteConverter(){}

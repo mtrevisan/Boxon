@@ -25,6 +25,9 @@
 package io.github.mtrevisan.boxon.external;
 
 
+/**
+ * Holds the constants used as a key in the {@link io.github.mtrevisan.boxon.core.Descriptor Descriptor}.
+ */
 public enum DescriberKey{
 	CONTEXT("context"),
 	CONTEXT_METHODS("methods"),

@@ -43,6 +43,9 @@ import java.util.Map;
 import java.util.Objects;
 
 
+/**
+ * Common data used by the {@link Parser}, {@link Descriptor}, {@link Composer}, and {@link Configurator} classes.
+ */
 @SuppressWarnings({"WeakerAccess", "unused"})
 public final class ParserCore{
 

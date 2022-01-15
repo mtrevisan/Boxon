@@ -49,6 +49,9 @@ import java.util.List;
 import java.util.Map;
 
 
+/**
+ * Declarative configurator for binary encoded configuration data.
+ */
 @SuppressWarnings({"WeakerAccess", "unused"})
 public final class Configurator{
 
@@ -76,6 +79,8 @@ public final class Configurator{
 	 * Retrieve all the configuration regardless the protocol version.
 	 *
 	 * @return	The configuration messages regardless the protocol version.
+	 * @throws ConfigurationException	Thrown when a duplicated short description is found.
+	 * @throws CodecException	Thrown when the value as a string cannot be interpreted as a basic type.
 	 */
 	public List<Map<String, Object>> getConfigurations() throws ConfigurationException, CodecException{
 		final List<ConfigurationMessage<?>> configurationValues = configurationParser.getConfigurations();
@@ -100,6 +105,8 @@ public final class Configurator{
 	 *
 	 * @param protocol	The protocol used to extract the configurations.
 	 * @return	The configuration messages for a given protocol version.
+	 * @throws ConfigurationException	Thrown when a duplicated short description is found.
+	 * @throws CodecException	Thrown when the value as a string cannot be interpreted as a basic type.
 	 */
 	public List<Map<String, Object>> getConfigurations(final String protocol) throws ConfigurationException, CodecException{
 		if(StringHelper.isBlank(protocol))
@@ -145,7 +152,7 @@ public final class Configurator{
 	}
 
 	private static Map<String, Object> extractFieldsMap(final Version protocol, final ConfigurationMessage<?> configuration)
-		throws ConfigurationException, CodecException{
+			throws ConfigurationException, CodecException{
 		final List<ConfigField> fields = configuration.getConfigurationFields();
 		final Map<String, Object> fieldsMap = new HashMap<>(fields.size());
 		for(int i = 0; i < fields.size(); i ++){

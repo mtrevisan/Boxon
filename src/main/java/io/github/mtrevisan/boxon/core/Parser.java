@@ -36,7 +36,7 @@ import java.nio.ByteBuffer;
 
 
 /**
- * Declarative data binding parser for binary encoded data with configuration capabilities.
+ * Declarative data binding parser for binary encoded data.
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
 public final class Parser{
