@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2020-2021 Mauro Trevisan
+/*
+ * Copyright (c) 2020-2022 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -40,18 +40,43 @@ public class FieldException extends Exception{
 	private String fieldName;
 
 
+	/**
+	 * Constructs a new exception with the specified cause.
+	 *
+	 * @param cause	The cause (which is saved for later retrieval by the {@link #getCause()} method). (A {@code null} value is
+	 * 					permitted, and indicates that the cause is nonexistent or unknown.)
+	 * @return	An instance of this exception.
+	 */
 	public static FieldException create(final Throwable cause){
 		return new FieldException(cause);
 	}
 
+	/**
+	 * Constructs a new exception with the specified message.
+	 *
+	 * @param message	The message.
+	 */
 	protected FieldException(final String message){
 		super(message);
 	}
 
+	/**
+	 * Constructs a new exception with the specified message and cause.
+	 *
+	 * @param message	The message.
+	 * @param cause	The cause (which is saved for later retrieval by the {@link #getCause()} method). (A {@code null} value is
+	 * 					permitted, and indicates that the cause is nonexistent or unknown.)
+	 */
 	protected FieldException(final String message, final Throwable cause){
 		super(message, cause);
 	}
 
+	/**
+	 * Constructs a new exception with the specified cause.
+	 *
+	 * @param cause	The cause (which is saved for later retrieval by the {@link #getCause()} method). (A {@code null} value is
+	 * 					permitted, and indicates that the cause is nonexistent or unknown.)
+	 */
 	protected FieldException(final Throwable cause){
 		super(cause);
 	}

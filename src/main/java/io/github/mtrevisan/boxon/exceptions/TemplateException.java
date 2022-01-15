@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2020-2021 Mauro Trevisan
+/*
+ * Copyright (c) 2020-2022 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -37,6 +37,13 @@ public final class TemplateException extends FieldException{
 	private static final long serialVersionUID = 7585594459004613305L;
 
 
+	/**
+	 * Constructs a new exception with the specified message, possibly with parameters.
+	 *
+	 * @param message	The message to be formatted (see {@link org.slf4j.helpers.MessageFormatter MessageFormatter}).
+	 * @param parameters	The parameters of the message.
+	 * @return	An instance of this exception.
+	 */
 	public static TemplateException create(final String message, final Object... parameters){
 		return new TemplateException(ExceptionHelper.format(message, parameters));
 	}

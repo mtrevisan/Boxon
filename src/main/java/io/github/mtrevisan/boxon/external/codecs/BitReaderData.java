@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2020-2021 Mauro Trevisan
+/*
+ * Copyright (c) 2020-2022 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -63,6 +63,9 @@ abstract class BitReaderData{
 	private State fallbackPoint;
 
 
+	/**
+	 * Create a fallback point that can later be restored (see {@link #restoreFallbackPoint()}).
+	 */
 	public final void createFallbackPoint(){
 		if(fallbackPoint != null)
 			//update current mark:
@@ -72,6 +75,9 @@ abstract class BitReaderData{
 			fallbackPoint = createState();
 	}
 
+	/**
+	 * Restore a fallback point created with {@link #createFallbackPoint()}.
+	 */
 	public final void restoreFallbackPoint(){
 		if(fallbackPoint != null){
 			//a fallback point has been marked before
@@ -81,6 +87,10 @@ abstract class BitReaderData{
 		}
 	}
 
+	/**
+	 * Clear fallback point data.
+	 * <p>After calling this method, no restoring is possible (see {@link #restoreFallbackPoint()}).</p>
+	 */
 	public final void clearFallbackPoint(){
 		fallbackPoint = null;
 	}

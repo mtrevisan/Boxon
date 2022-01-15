@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2020-2021 Mauro Trevisan
+/*
+ * Copyright (c) 2020-2022 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -162,6 +162,7 @@ public final class Configurator{
 	/**
 	 * Compose a list of configuration messages.
 	 *
+	 * @param protocolVersion	Protocol version.
 	 * @param data	The configuration message(s) to be composed.
 	 * @return	The composition response.
 	 */

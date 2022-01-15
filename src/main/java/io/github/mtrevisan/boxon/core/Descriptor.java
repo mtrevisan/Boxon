@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2020-2021 Mauro Trevisan
+/*
+ * Copyright (c) 2020-2022 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -72,6 +72,7 @@ public final class Descriptor{
 	 * Description of all the loaded templates.
 	 *
 	 * @return	The list of descriptions.
+	 * @throws TemplateException	If a template is not well formatted.
 	 */
 	public List<Map<String, Object>> describeTemplates() throws TemplateException{
 		final Collection<Template<?>> templates = loaderTemplate.getTemplates();
