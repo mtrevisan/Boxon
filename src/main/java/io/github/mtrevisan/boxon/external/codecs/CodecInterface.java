@@ -32,7 +32,7 @@ import java.lang.annotation.Annotation;
 /**
  * The interface every codec should implement.
  *
- * @param <B>	The bind class (see {@link io.github.mtrevisan.boxon.codecs}) associated with this codec.
+ * @param <B>	The bind annotation associated with this codec.
  */
 public interface CodecInterface<B extends Annotation>{
 
@@ -53,6 +53,7 @@ public interface CodecInterface<B extends Annotation>{
 	 * @param writer	The writer, positioned at a certain index, in which the value will be put.
 	 * @param annotation	The annotation that links what have to be read and the variable of the POJO.
 	 * @param rootObject	The parent object that holds what have been read so far.
+	 * @param value	The value that have to be encoded.
 	 * @throws FieldException	If something bad happened while converting, validating, or writing the value.
 	 */
 	void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value) throws FieldException;
