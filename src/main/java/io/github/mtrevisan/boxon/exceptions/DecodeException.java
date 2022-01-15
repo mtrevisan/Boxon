@@ -24,10 +24,6 @@
  */
 package io.github.mtrevisan.boxon.exceptions;
 
-import java.io.NotSerializableException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-
 
 /**
  * Thrown if a parsing (decoding) went bad.
@@ -79,17 +75,6 @@ public final class DecodeException extends Exception{
 		if(errorIndex >= 0)
 			message += System.lineSeparator() + "   at index " + errorIndex;
 		return message;
-	}
-
-
-	@SuppressWarnings("unused")
-	private void writeObject(final ObjectOutputStream os) throws NotSerializableException{
-		throw new NotSerializableException(getClass().getName());
-	}
-
-	@SuppressWarnings("unused")
-	private void readObject(final ObjectInputStream is) throws NotSerializableException{
-		throw new NotSerializableException(getClass().getName());
 	}
 
 }

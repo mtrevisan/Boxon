@@ -24,10 +24,6 @@
  */
 package io.github.mtrevisan.boxon.exceptions;
 
-import java.io.NotSerializableException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-
 
 /**
  * Thrown if no codec is found.
@@ -50,17 +46,6 @@ public final class CodecException extends FieldException{
 
 	private CodecException(final String message){
 		super(message);
-	}
-
-
-	@SuppressWarnings("unused")
-	private void writeObject(final ObjectOutputStream os) throws NotSerializableException{
-		throw new NotSerializableException(getClass().getName());
-	}
-
-	@SuppressWarnings("unused")
-	private void readObject(final ObjectInputStream is) throws NotSerializableException{
-		throw new NotSerializableException(getClass().getName());
 	}
 
 }
