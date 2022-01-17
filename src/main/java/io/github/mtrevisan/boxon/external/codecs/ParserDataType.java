@@ -141,6 +141,12 @@ public enum ParserDataType{
 	private final int size;
 
 
+	/**
+	 * Extract the enumeration corresponding to the given type.
+	 *
+	 * @param type	The type to be converted.
+	 * @return	The enumeration corresponding to the given type.
+	 */
 	public static ParserDataType fromType(final Class<?> type){
 		return TYPE_MAP.get(type);
 	}
@@ -151,10 +157,22 @@ public enum ParserDataType{
 		this.size = size;
 	}
 
+	/**
+	 * Convert a type to an objective type, if applicable, otherwise returns the type itself.
+	 *
+	 * @param primitiveType	The type to be converted.
+	 * @return	The converted type;
+	 */
 	public static Class<?> toObjectiveTypeOrSelf(final Class<?> primitiveType){
 		return PRIMITIVE_WRAPPER_MAP.getOrDefault(primitiveType, primitiveType);
 	}
 
+	/**
+	 * Convert a type to a primitive type, if applicable, otherwise returns the type itself.
+	 *
+	 * @param objectiveType	The type to be converted.
+	 * @return	The converted type;
+	 */
 	public static Class<?> toPrimitiveTypeOrSelf(final Class<?> objectiveType){
 		return WRAPPER_PRIMITIVE_MAP.getOrDefault(objectiveType, objectiveType);
 	}
@@ -188,19 +206,38 @@ public enum ParserDataType{
 	/**
 	 * The number of bits used to represent the value.
 	 *
+	 * @param value	The value from which to extract its memory size.
 	 * @return	The size of the value as stored in memory.
 	 */
 	public static int getSize(final Object value){
 		return fromType(value.getClass()).size;
 	}
 
+	/**
+	 * Describe the data types handled by this class.
+	 *
+	 * @return	A list of data types.
+	 */
 	public static String describe(){
 		return Arrays.toString(new String[]{byte.class.getSimpleName(), short.class.getSimpleName(), int.class.getSimpleName(),
 			long.class.getSimpleName(), float.class.getSimpleName(), double.class.getSimpleName()});
 	}
 
+	/**
+	 * Read a specific data type from the reader, using the given byte order.
+	 *
+	 * @param reader	The reader from which to read the data from.
+	 * @param byteOrder	The byte order.
+	 * @return	The read value.
+	 */
 	public abstract Object read(final BitReader reader, final ByteOrder byteOrder);
 
+	/**
+	 * Write a specific data to the writer, using the given byte order.
+	 * @param writer	The writer used to write the data to.
+	 * @param value	The value to be written.
+	 * @param byteOrder	The byte order.
+	 */
 	public abstract void write(final BitWriter writer, final Object value, final ByteOrder byteOrder);
 
 
