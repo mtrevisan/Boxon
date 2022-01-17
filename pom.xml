@@ -15,6 +15,7 @@
 
 	<developers>
 		<developer>
+			<id>mtrevixan</id>
 			<name>Mauro Trevisan</name>
 			<url>https://github.com/mtrevisan/</url>
 			<roles>
@@ -24,9 +25,8 @@
 	</developers>
 
 	<scm>
-		<connection>scm:git:git://github.com/mtrevisan/Boxon.git</connection>
-		<developerConnection>scm:git:git@github.com:mtrevisan/Boxon.git</developerConnection>
 		<url>https://github.com/mtrevisan/Boxon</url>
+		<connection>scm:git:https://github.com/mtrevisan/Boxon</connection>
 	</scm>
 
 	<issueManagement>
