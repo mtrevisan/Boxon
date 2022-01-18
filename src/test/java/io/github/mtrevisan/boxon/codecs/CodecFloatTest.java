@@ -32,6 +32,7 @@ import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.codecs.BitReader;
+import io.github.mtrevisan.boxon.external.codecs.BitReaderInterface;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
 import io.github.mtrevisan.boxon.external.codecs.ByteOrder;
 import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
@@ -102,7 +103,7 @@ class CodecFloatTest{
 
 		Assertions.assertEquals(StringUtils.leftPad(Integer.toHexString(Integer.reverseBytes(Float.floatToRawIntBits(encodedValue))).toUpperCase(Locale.ROOT), 8, '0'), writer.toString());
 
-		BitReader reader = BitReader.wrap(writer);
+		BitReaderInterface reader = BitReader.wrap(writer);
 		float decoded = (float)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -160,7 +161,7 @@ class CodecFloatTest{
 
 		Assertions.assertEquals(StringUtils.leftPad(Integer.toHexString(Integer.reverseBytes(Float.floatToRawIntBits(encodedValue))).toUpperCase(Locale.ROOT), 8, '0'), writer.toString());
 
-		BitReader reader = BitReader.wrap(writer);
+		BitReaderInterface reader = BitReader.wrap(writer);
 		float decoded = (float)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -218,7 +219,7 @@ class CodecFloatTest{
 
 		Assertions.assertEquals(StringUtils.leftPad(Integer.toHexString(Float.floatToRawIntBits(encodedValue)).toUpperCase(Locale.ROOT), 8, '0'), writer.toString());
 
-		BitReader reader = BitReader.wrap(writer);
+		BitReaderInterface reader = BitReader.wrap(writer);
 		float decoded = (float)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -276,7 +277,7 @@ class CodecFloatTest{
 
 		Assertions.assertEquals(StringUtils.leftPad(Integer.toHexString(Float.floatToRawIntBits(encodedValue)).toUpperCase(Locale.ROOT), 8, '0'), writer.toString());
 
-		BitReader reader = BitReader.wrap(writer);
+		BitReaderInterface reader = BitReader.wrap(writer);
 		float decoded = (float)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);

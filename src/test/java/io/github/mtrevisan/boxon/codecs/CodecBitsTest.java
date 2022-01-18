@@ -33,6 +33,7 @@ import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.codecs.BitReader;
+import io.github.mtrevisan.boxon.external.codecs.BitReaderInterface;
 import io.github.mtrevisan.boxon.external.codecs.BitSet;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
 import io.github.mtrevisan.boxon.external.codecs.ByteOrder;
@@ -115,7 +116,7 @@ class CodecBitsTest{
 			bb = Arrays.copyOf(bb, randomBytes.length);
 		Assertions.assertEquals(StringHelper.toHexString(bb), writer.toString());
 
-		BitReader reader = BitReader.wrap(writer);
+		BitReaderInterface reader = BitReader.wrap(writer);
 		BitSet decoded = (BitSet)codec.decode(reader, annotation, null);
 
 		encodedValue.reverseBits(randomBytes.length * Byte.SIZE);
@@ -185,7 +186,7 @@ class CodecBitsTest{
 			bb = Arrays.copyOf(bb, randomBytes.length);
 		Assertions.assertEquals(StringHelper.toHexString(bb), writer.toString());
 
-		BitReader reader = BitReader.wrap(writer);
+		BitReaderInterface reader = BitReader.wrap(writer);
 		BitSet decoded = (BitSet)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);

@@ -37,6 +37,7 @@ import io.github.mtrevisan.boxon.codecs.queclink.DeviceTypes;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.codecs.BitReader;
+import io.github.mtrevisan.boxon.external.codecs.BitReaderInterface;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
 import io.github.mtrevisan.boxon.external.logs.EventListener;
 import io.github.mtrevisan.boxon.internal.StringHelper;
@@ -53,7 +54,7 @@ class TemplateParserTest{
 	@Test
 	void parseSingleMessageHex() throws NoSuchMethodException, FieldException{
 		byte[] payload = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
-		BitReader reader = BitReader.wrap(payload);
+		BitReaderInterface reader = BitReader.wrap(payload);
 
 		EventListener eventListener = EventListener.getNoOpInstance();
 		LoaderCodec loaderCodec = LoaderCodec.create(eventListener);
@@ -89,7 +90,7 @@ class TemplateParserTest{
 	@Test
 	void parseSingleMessageASCII() throws FieldException{
 		byte[] payload = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
-		BitReader reader = BitReader.wrap(payload);
+		BitReaderInterface reader = BitReader.wrap(payload);
 
 		EventListener eventListener = EventListener.getNoOpInstance();
 		LoaderCodec loaderCodec = LoaderCodec.create(eventListener);
@@ -136,7 +137,7 @@ class TemplateParserTest{
 	@Test
 	void parseWithConditionError() throws AnnotationException{
 		byte[] payload = StringHelper.toByteArray("746335011234");
-		BitReader reader = BitReader.wrap(payload);
+		BitReaderInterface reader = BitReader.wrap(payload);
 
 		EventListener eventListener = EventListener.getNoOpInstance();
 		LoaderCodec loaderCodec = LoaderCodec.create(eventListener);
@@ -177,7 +178,7 @@ class TemplateParserTest{
 	@Test
 	void parseWithConverterOutputError() throws AnnotationException{
 		byte[] payload = StringHelper.toByteArray("74633501");
-		BitReader reader = BitReader.wrap(payload);
+		BitReaderInterface reader = BitReader.wrap(payload);
 
 		EventListener eventListener = EventListener.getNoOpInstance();
 		LoaderCodec loaderCodec = LoaderCodec.create(eventListener);
@@ -218,7 +219,7 @@ class TemplateParserTest{
 	@Test
 	void parseWithConverterInputError() throws AnnotationException{
 		byte[] payload = StringHelper.toByteArray("74633501");
-		BitReader reader = BitReader.wrap(payload);
+		BitReaderInterface reader = BitReader.wrap(payload);
 
 		EventListener eventListener = EventListener.getNoOpInstance();
 		LoaderCodec loaderCodec = LoaderCodec.create(eventListener);
@@ -258,7 +259,7 @@ class TemplateParserTest{
 	@Test
 	void parseCompositeMessage1() throws FieldException{
 		byte[] payload = StringHelper.toByteArray("746D310102016162");
-		BitReader reader = BitReader.wrap(payload);
+		BitReaderInterface reader = BitReader.wrap(payload);
 
 		EventListener eventListener = EventListener.getNoOpInstance();
 		LoaderCodec loaderCodec = LoaderCodec.create(eventListener);
@@ -323,7 +324,7 @@ class TemplateParserTest{
 	@Test
 	void parseCompositeMessage21() throws FieldException{
 		byte[] payload = StringHelper.toByteArray("746D3201016162");
-		BitReader reader = BitReader.wrap(payload);
+		BitReaderInterface reader = BitReader.wrap(payload);
 
 		EventListener eventListener = EventListener.getNoOpInstance();
 		LoaderCodec loaderCodec = LoaderCodec.create(eventListener);
@@ -353,7 +354,7 @@ class TemplateParserTest{
 	@Test
 	void parseCompositeMessage22() throws FieldException{
 		byte[] payload = StringHelper.toByteArray("7463320202616263");
-		BitReader reader = BitReader.wrap(payload);
+		BitReaderInterface reader = BitReader.wrap(payload);
 
 		EventListener eventListener = EventListener.getNoOpInstance();
 		LoaderCodec loaderCodec = LoaderCodec.create(eventListener);

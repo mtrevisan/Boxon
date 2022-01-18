@@ -113,6 +113,7 @@ public final class BitReader extends BitReaderData implements BitReaderInterface
 	 *
 	 * @param length	The amount of bits to be skipped.
 	 */
+	@Override
 	public void skip(final int length){
 		getBits(length);
 	}
@@ -123,6 +124,7 @@ public final class BitReader extends BitReaderData implements BitReaderInterface
 	 *
 	 * @param terminator	The terminator at which to stop.
 	 */
+	@Override
 	public void skipUntilTerminator(final byte terminator){
 		getTextUntilTerminator(terminator, Charset.defaultCharset());
 	}

@@ -37,7 +37,6 @@ import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.DescriberKey;
-import io.github.mtrevisan.boxon.external.codecs.BitReader;
 import io.github.mtrevisan.boxon.external.codecs.BitReaderInterface;
 import io.github.mtrevisan.boxon.external.codecs.BitSet;
 import io.github.mtrevisan.boxon.external.codecs.BitWriterInterface;
@@ -102,7 +101,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	 * @param reader	The reader to read the header from.
 	 * @return	The template that is able to decode/encode the next message in the given reader.
 	 */
-	public Template<?> getTemplate(final BitReader reader) throws TemplateException{
+	public Template<?> getTemplate(final BitReaderInterface reader) throws TemplateException{
 		return core.getLoaderTemplate().getTemplate(reader);
 	}
 
@@ -122,13 +121,13 @@ public final class TemplateParser implements TemplateParserInterface{
 	 * @param reader	The reader.
 	 * @return	The index of the next message.
 	 */
-	public int findNextMessageIndex(final BitReader reader){
+	public int findNextMessageIndex(final BitReaderInterface reader){
 		return core.getLoaderTemplate().findNextMessageIndex(reader);
 	}
 
 
 	@Override
-	public <T> T decode(final Template<T> template, final BitReader reader, final Object parentObject) throws FieldException{
+	public <T> T decode(final Template<T> template, final BitReaderInterface reader, final Object parentObject) throws FieldException{
 		final int startPosition = reader.position();
 
 		final T currentObject = ConstructorHelper.getCreator(template.getType())
@@ -162,7 +161,7 @@ public final class TemplateParser implements TemplateParserInterface{
 		return currentObject;
 	}
 
-	private <T> void decodeField(final Template<T> template, final BitReader reader, final ParserContext<T> parserContext,
+	private <T> void decodeField(final Template<T> template, final BitReaderInterface reader, final ParserContext<T> parserContext,
 			final BoundedField field) throws FieldException{
 		final Annotation binding = field.getBinding();
 		final Class<? extends Annotation> annotationType = binding.annotationType();
@@ -193,12 +192,12 @@ public final class TemplateParser implements TemplateParserInterface{
 		}
 	}
 
-	private <T> void readSkips(final Skip[] skips, final BitReader reader, final ParserContext<T> parserContext){
+	private <T> void readSkips(final Skip[] skips, final BitReaderInterface reader, final ParserContext<T> parserContext){
 		for(int i = 0; i < skips.length; i ++)
 			readSkip(skips[i], reader, parserContext.getRootObject());
 	}
 
-	private void readSkip(final Skip skip, final BitReader reader, final Object rootObject){
+	private void readSkip(final Skip skip, final BitReaderInterface reader, final Object rootObject){
 		final Evaluator evaluator = core.getEvaluator();
 		final boolean process = evaluator.evaluateBoolean(skip.condition(), rootObject);
 		if(!process)
@@ -229,7 +228,7 @@ public final class TemplateParser implements TemplateParserInterface{
 		}
 	}
 
-	private static <T> void verifyChecksum(final Template<T> template, final T data, int startPosition, final BitReader reader){
+	private static <T> void verifyChecksum(final Template<T> template, final T data, int startPosition, final BitReaderInterface reader){
 		if(template.isChecksumPresent()){
 			final BoundedField checksumData = template.getChecksum();
 			final Checksum checksum = (Checksum)checksumData.getBinding();

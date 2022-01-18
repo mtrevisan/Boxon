@@ -27,7 +27,7 @@ package io.github.mtrevisan.boxon.codecs;
 import io.github.mtrevisan.boxon.annotations.bindings.BindByte;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.codecs.managers.Injected;
-import io.github.mtrevisan.boxon.external.codecs.BitReader;
+import io.github.mtrevisan.boxon.external.codecs.BitReaderInterface;
 import io.github.mtrevisan.boxon.external.codecs.BitWriterInterface;
 import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
 
@@ -42,7 +42,7 @@ final class CodecByte implements CodecInterface<BindByte>{
 
 
 	@Override
-	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
+	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject){
 		final BindByte binding = extractBinding(annotation);
 
 		final byte value = reader.getByte();

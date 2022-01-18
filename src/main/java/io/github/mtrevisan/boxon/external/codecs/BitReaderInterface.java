@@ -32,6 +32,16 @@ import java.nio.charset.Charset;
 
 public interface BitReaderInterface{
 
+	byte[] array();
+
+	int position();
+
+
+	void skip(int length);
+
+	void skipUntilTerminator(byte terminator);
+
+
 	Object get(Class<?> type, ByteOrder byteOrder) throws AnnotationException;
 
 	BitSet getBits(int length);

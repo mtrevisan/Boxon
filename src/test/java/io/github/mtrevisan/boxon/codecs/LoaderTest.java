@@ -29,6 +29,7 @@ import io.github.mtrevisan.boxon.codecs.queclink.ACKMessageHex;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.codecs.BitReader;
+import io.github.mtrevisan.boxon.external.codecs.BitReaderInterface;
 import io.github.mtrevisan.boxon.external.logs.EventListener;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 import org.junit.jupiter.api.Assertions;
@@ -84,7 +85,7 @@ class LoaderTest{
 		loaderTemplate.loadTemplates(LoaderTest.class);
 
 		byte[] payload = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
-		BitReader reader = BitReader.wrap(payload);
+		BitReaderInterface reader = BitReader.wrap(payload);
 		Template<?> template = loaderTemplate.getTemplate(reader);
 
 		Assertions.assertNotNull(template);
@@ -100,7 +101,7 @@ class LoaderTest{
 		loaderTemplate.loadTemplates(LoaderTest.class);
 
 		byte[] payload = StringHelper.toByteArray("3b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
-		BitReader reader = BitReader.wrap(payload);
+		BitReaderInterface reader = BitReader.wrap(payload);
 		Assertions.assertThrows(TemplateException.class, () -> loaderTemplate.getTemplate(reader));
 	}
 
@@ -113,7 +114,7 @@ class LoaderTest{
 		loaderTemplate.loadTemplates(LoaderTest.class);
 
 		byte[] payload = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
-		BitReader reader = BitReader.wrap(payload);
+		BitReaderInterface reader = BitReader.wrap(payload);
 		int position = loaderTemplate.findNextMessageIndex(reader);
 
 		Assertions.assertEquals(36, position);
@@ -128,7 +129,7 @@ class LoaderTest{
 		loaderTemplate.loadTemplates(LoaderTest.class);
 
 		byte[] payload = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
-		BitReader reader = BitReader.wrap(payload);
+		BitReaderInterface reader = BitReader.wrap(payload);
 		int position = loaderTemplate.findNextMessageIndex(reader);
 
 		Assertions.assertEquals(-1, position);

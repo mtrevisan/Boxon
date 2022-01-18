@@ -28,7 +28,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.codecs.managers.Injected;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.external.codecs.BitReader;
+import io.github.mtrevisan.boxon.external.codecs.BitReaderInterface;
 import io.github.mtrevisan.boxon.external.codecs.BitWriterInterface;
 import io.github.mtrevisan.boxon.external.codecs.ByteOrder;
 import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
@@ -45,7 +45,7 @@ final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 
 
 	@Override
-	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject) throws AnnotationException{
+	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject) throws AnnotationException{
 		final BindArrayPrimitive binding = extractBinding(annotation);
 
 		final BindingData bindingData = BindingData.create(binding, rootObject, evaluator);

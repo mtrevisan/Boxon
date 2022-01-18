@@ -33,6 +33,7 @@ import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.codecs.BitReader;
+import io.github.mtrevisan.boxon.external.codecs.BitReaderInterface;
 import io.github.mtrevisan.boxon.external.codecs.BitSet;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
 import io.github.mtrevisan.boxon.external.codecs.ByteOrder;
@@ -108,7 +109,7 @@ class CodecIntegerTest{
 
 		Assertions.assertEquals("201000", writer.toString());
 
-		BitReader reader = BitReader.wrap(writer);
+		BitReaderInterface reader = BitReader.wrap(writer);
 		BigInteger decoded = (BigInteger)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -172,7 +173,7 @@ class CodecIntegerTest{
 
 		Assertions.assertEquals("002010", writer.toString());
 
-		BitReader reader = BitReader.wrap(writer);
+		BitReaderInterface reader = BitReader.wrap(writer);
 		BigInteger decoded = (BigInteger)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -236,7 +237,7 @@ class CodecIntegerTest{
 
 		Assertions.assertEquals("FF007F", writer.toString());
 
-		BitReader reader = BitReader.wrap(writer);
+		BitReaderInterface reader = BitReader.wrap(writer);
 		BigInteger decoded = (BigInteger)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -301,7 +302,7 @@ class CodecIntegerTest{
 
 		Assertions.assertEquals("001020", writer.toString());
 
-		BitReader reader = BitReader.wrap(writer);
+		BitReaderInterface reader = BitReader.wrap(writer);
 		BigInteger decoded = (BigInteger)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -365,7 +366,7 @@ class CodecIntegerTest{
 
 		Assertions.assertEquals("102000", writer.toString());
 
-		BitReader reader = BitReader.wrap(writer);
+		BitReaderInterface reader = BitReader.wrap(writer);
 		BigInteger decoded = (BigInteger)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -429,7 +430,7 @@ class CodecIntegerTest{
 
 		Assertions.assertEquals("7F00FF", writer.toString());
 
-		BitReader reader = BitReader.wrap(writer);
+		BitReaderInterface reader = BitReader.wrap(writer);
 		BigInteger decoded = (BigInteger)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -495,7 +496,7 @@ class CodecIntegerTest{
 		BitSet bits = BitSet.valueOf(encodedValue, 128, ByteOrder.LITTLE_ENDIAN);
 		Assertions.assertEquals(StringUtils.rightPad(StringHelper.toHexString(bits.toByteArray()).toUpperCase(Locale.ROOT), 32, '0'), writer.toString());
 
-		BitReader reader = BitReader.wrap(writer);
+		BitReaderInterface reader = BitReader.wrap(writer);
 		BigInteger decoded = (BigInteger)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -559,7 +560,7 @@ class CodecIntegerTest{
 
 		Assertions.assertEquals("00000000000000000000FFFF0000FF7F", writer.toString());
 
-		BitReader reader = BitReader.wrap(writer);
+		BitReaderInterface reader = BitReader.wrap(writer);
 		BigInteger decoded = (BigInteger)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -624,7 +625,7 @@ class CodecIntegerTest{
 
 		Assertions.assertEquals("00FF0000FFFF00000000000000000000", writer.toString());
 
-		BitReader reader = BitReader.wrap(writer);
+		BitReaderInterface reader = BitReader.wrap(writer);
 		BigInteger decoded = (BigInteger)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -688,7 +689,7 @@ class CodecIntegerTest{
 
 		Assertions.assertEquals("7FFF0000FFFF00000000000000000000", writer.toString());
 
-		BitReader reader = BitReader.wrap(writer);
+		BitReaderInterface reader = BitReader.wrap(writer);
 		BigInteger decoded = (BigInteger)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);

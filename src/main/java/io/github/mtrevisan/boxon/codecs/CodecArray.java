@@ -31,7 +31,7 @@ import io.github.mtrevisan.boxon.codecs.managers.Injected;
 import io.github.mtrevisan.boxon.codecs.managers.Template;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
-import io.github.mtrevisan.boxon.external.codecs.BitReader;
+import io.github.mtrevisan.boxon.external.codecs.BitReaderInterface;
 import io.github.mtrevisan.boxon.external.codecs.BitWriterInterface;
 import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
 import io.github.mtrevisan.boxon.external.codecs.ParserDataType;
@@ -51,7 +51,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 
 
 	@Override
-	public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject) throws FieldException{
+	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject) throws FieldException{
 		final BindArray binding = extractBinding(annotation);
 
 		final BindingData bindingData = BindingData.create(binding, rootObject, evaluator);
@@ -76,8 +76,8 @@ final class CodecArray implements CodecInterface<BindArray>{
 		return (T[])Array.newInstance(type, length);
 	}
 
-	private void decodeWithAlternatives(final BitReader reader, final Object[] array, final BindingData bindingData, final Object rootObject)
-			throws FieldException{
+	private void decodeWithAlternatives(final BitReaderInterface reader, final Object[] array, final BindingData bindingData,
+			final Object rootObject) throws FieldException{
 		for(int i = 0; i < array.length; i ++){
 			final Class<?> chosenAlternativeType = bindingData.chooseAlternativeType(reader);
 
@@ -87,7 +87,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 		}
 	}
 
-	private void decodeWithoutAlternatives(final BitReader reader, final Object[] array, final Class<?> type)
+	private void decodeWithoutAlternatives(final BitReaderInterface reader, final Object[] array, final Class<?> type)
 			throws FieldException{
 		final Template<?> template = templateParser.createTemplate(type);
 

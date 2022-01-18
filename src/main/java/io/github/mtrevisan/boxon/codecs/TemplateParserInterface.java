@@ -27,13 +27,13 @@ package io.github.mtrevisan.boxon.codecs;
 import io.github.mtrevisan.boxon.codecs.managers.Template;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
-import io.github.mtrevisan.boxon.external.codecs.BitReader;
+import io.github.mtrevisan.boxon.external.codecs.BitReaderInterface;
 import io.github.mtrevisan.boxon.external.codecs.BitWriterInterface;
 
 
 public interface TemplateParserInterface{
 
-	<T> T decode(Template<T> template, BitReader reader, Object parentObject) throws FieldException;
+	<T> T decode(Template<T> template, BitReaderInterface reader, Object parentObject) throws FieldException;
 
 	<T> void encode(Template<?> template, BitWriterInterface writer, Object parentObject, T currentObject) throws FieldException;
 

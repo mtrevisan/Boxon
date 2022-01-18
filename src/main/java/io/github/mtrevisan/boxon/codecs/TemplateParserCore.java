@@ -29,7 +29,7 @@ import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
 import io.github.mtrevisan.boxon.codecs.managers.Template;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
-import io.github.mtrevisan.boxon.external.codecs.BitReader;
+import io.github.mtrevisan.boxon.external.codecs.BitReaderInterface;
 import io.github.mtrevisan.boxon.external.logs.EventListener;
 
 
@@ -125,7 +125,7 @@ public final class TemplateParserCore{
 	 * @param reader	The reader to read the header from.
 	 * @return	The template that is able to decode/encode the next message in the given reader.
 	 */
-	public Template<?> getTemplate(final BitReader reader) throws TemplateException{
+	public Template<?> getTemplate(final BitReaderInterface reader) throws TemplateException{
 		return loaderTemplate.getTemplate(reader);
 	}
 
@@ -145,7 +145,7 @@ public final class TemplateParserCore{
 	 * @param reader	The reader.
 	 * @return	The index of the next message.
 	 */
-	public int findNextMessageIndex(final BitReader reader){
+	public int findNextMessageIndex(final BitReaderInterface reader){
 		return loaderTemplate.findNextMessageIndex(reader);
 	}
 

@@ -32,6 +32,7 @@ import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.codecs.BitReader;
+import io.github.mtrevisan.boxon.external.codecs.BitReaderInterface;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
 import io.github.mtrevisan.boxon.external.codecs.ByteOrder;
 import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
@@ -102,7 +103,7 @@ class CodecIntTest{
 
 		Assertions.assertEquals("0000FF80", writer.toString());
 
-		BitReader reader = BitReader.wrap(writer);
+		BitReaderInterface reader = BitReader.wrap(writer);
 		int decoded = (int)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -160,7 +161,7 @@ class CodecIntTest{
 
 		Assertions.assertEquals("FF7F0000", writer.toString());
 
-		BitReader reader = BitReader.wrap(writer);
+		BitReaderInterface reader = BitReader.wrap(writer);
 		int decoded = (int)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -218,7 +219,7 @@ class CodecIntTest{
 
 		Assertions.assertEquals("0000FF7F", writer.toString());
 
-		BitReader reader = BitReader.wrap(writer);
+		BitReaderInterface reader = BitReader.wrap(writer);
 		int decoded = (int)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -276,7 +277,7 @@ class CodecIntTest{
 
 		Assertions.assertEquals(StringUtils.leftPad(Integer.toHexString(Integer.reverseBytes(encodedValue)).toUpperCase(Locale.ROOT), 8, '0'), writer.toString());
 
-		BitReader reader = BitReader.wrap(writer);
+		BitReaderInterface reader = BitReader.wrap(writer);
 		int decoded = (int)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -334,7 +335,7 @@ class CodecIntTest{
 
 		Assertions.assertEquals("80FF0000", writer.toString());
 
-		BitReader reader = BitReader.wrap(writer);
+		BitReaderInterface reader = BitReader.wrap(writer);
 		int decoded = (int)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -392,7 +393,7 @@ class CodecIntTest{
 
 		Assertions.assertEquals("00007FFF", writer.toString());
 
-		BitReader reader = BitReader.wrap(writer);
+		BitReaderInterface reader = BitReader.wrap(writer);
 		int decoded = (int)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -450,7 +451,7 @@ class CodecIntTest{
 
 		Assertions.assertEquals("7FFF0000", writer.toString());
 
-		BitReader reader = BitReader.wrap(writer);
+		BitReaderInterface reader = BitReader.wrap(writer);
 		int decoded = (int)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -509,7 +510,7 @@ class CodecIntTest{
 		Assertions.assertEquals(StringUtils.leftPad(Integer.toHexString(encodedValue).toUpperCase(Locale.ROOT), 8, '0'),
 			writer.toString());
 
-		BitReader reader = BitReader.wrap(writer);
+		BitReaderInterface reader = BitReader.wrap(writer);
 		int decoded = (int)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
