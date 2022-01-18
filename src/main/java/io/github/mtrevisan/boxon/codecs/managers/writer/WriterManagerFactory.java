@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.codecs.managers.writer;
 
-import io.github.mtrevisan.boxon.external.codecs.BitWriter;
+import io.github.mtrevisan.boxon.external.codecs.BitWriterInterface;
 import io.github.mtrevisan.boxon.external.codecs.ParserDataType;
 
 import java.nio.charset.Charset;
@@ -34,7 +34,7 @@ import java.util.function.Function;
 
 public final class WriterManagerFactory{
 
-	private static final Map<Class<?>, Function<BitWriter, WriterManagerInterface>> MANAGERS_LEVEL1 = Map.of(
+	private static final Map<Class<?>, Function<BitWriterInterface, WriterManagerInterface>> MANAGERS_LEVEL1 = Map.of(
 		Float.class, FloatWriterManager::new,
 		Double.class, DoubleWriterManager::new
 	);
@@ -42,9 +42,10 @@ public final class WriterManagerFactory{
 
 	private WriterManagerFactory(){}
 
-	public static WriterManagerInterface buildManager(final Object value, final BitWriter writer, final int radix, final String charsetName){
+	public static WriterManagerInterface buildManager(final Object value, final BitWriterInterface writer, final int radix,
+			final String charsetName){
 		final Class<?> fieldClass = ParserDataType.toObjectiveTypeOrSelf(value.getClass());
-		final Function<BitWriter, WriterManagerInterface> builder = MANAGERS_LEVEL1.get(fieldClass);
+		final Function<BitWriterInterface, WriterManagerInterface> builder = MANAGERS_LEVEL1.get(fieldClass);
 
 		WriterManagerInterface manager = null;
 		if(builder != null)

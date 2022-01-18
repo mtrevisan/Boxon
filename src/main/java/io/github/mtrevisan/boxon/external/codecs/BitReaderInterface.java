@@ -22,30 +22,42 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.codecs.managers.matchers;
+package io.github.mtrevisan.boxon.external.codecs;
+
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+
+import java.math.BigInteger;
+import java.nio.charset.Charset;
 
 
-/** The base class for pattern matching algorithm implementations. */
-public interface PatternMatcher{
+public interface BitReaderInterface{
 
-	/**
-	 * Pre-processes the pattern.
-	 *
-	 * @param pattern	The {@code byte} array containing the pattern, may not be {@code null}.
-	 * @return	an array of pre-processed pattern.
-	 */
-	int[] preProcessPattern(byte[] pattern);
+	Object get(Class<?> type, ByteOrder byteOrder) throws AnnotationException;
 
-	/**
-	 * Returns the position in the text at which the pattern was found.
-	 * <p>Returns {@code -1} if the pattern was not found.</p>
-	 *
-	 * @param source	The {@code byte} array containing the text, may not be {@code null}.
-	 * @param offset	At which position in the text the comparing should start.
-	 * @param pattern	The pattern to search for, may not be {@code null}.
-	 * @param processedPattern	Processed pattern, see {@link #preProcessPattern(byte[])}.
-	 * @return the position in the text or {@code -1} if the pattern was not found.
-	 */
-	int indexOf(byte[] source, int offset, byte[] pattern, int[] processedPattern);
+	BitSet getBits(int length);
+
+	byte getByte();
+
+	byte[] getBytes(int length);
+
+	short getShort(ByteOrder byteOrder);
+
+	int getInt(ByteOrder byteOrder);
+
+	long getLong(ByteOrder byteOrder);
+
+	BigInteger getInteger(int size, ByteOrder byteOrder);
+
+	float getFloat(ByteOrder byteOrder);
+
+	double getDouble(ByteOrder byteOrder);
+
+	String getText(int length, Charset charset);
+
+	String getText(int length);
+
+	String getTextUntilTerminator(byte terminator, Charset charset);
+
+	String getTextUntilTerminator(byte terminator);
 
 }

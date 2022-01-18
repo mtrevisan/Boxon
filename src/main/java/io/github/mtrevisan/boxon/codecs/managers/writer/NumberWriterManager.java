@@ -24,16 +24,16 @@
  */
 package io.github.mtrevisan.boxon.codecs.managers.writer;
 
-import io.github.mtrevisan.boxon.external.codecs.BitWriter;
+import io.github.mtrevisan.boxon.external.codecs.BitWriterInterface;
 
 
 final class NumberWriterManager implements WriterManagerInterface{
 
-	private final BitWriter writer;
+	private final BitWriterInterface writer;
 	private int radix;
 
 
-	NumberWriterManager(final BitWriter writer){
+	NumberWriterManager(final BitWriterInterface writer){
 		this.writer = writer;
 		radix = 10;
 	}

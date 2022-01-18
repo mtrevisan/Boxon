@@ -28,15 +28,14 @@ import io.github.mtrevisan.boxon.codecs.managers.Template;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.codecs.BitReader;
-import io.github.mtrevisan.boxon.external.codecs.BitWriter;
+import io.github.mtrevisan.boxon.external.codecs.BitWriterInterface;
 
 
 public interface TemplateParserInterface{
 
-	<T> T decode(final Template<T> template, final BitReader reader, final Object parentObject) throws FieldException;
+	<T> T decode(Template<T> template, BitReader reader, Object parentObject) throws FieldException;
 
-	<T> void encode(final Template<?> template, final BitWriter writer, final Object parentObject, final T currentObject)
-		throws FieldException;
+	<T> void encode(Template<?> template, BitWriterInterface writer, Object parentObject, T currentObject) throws FieldException;
 
 	/**
 	 * Constructs a new {@link Template}.
@@ -45,6 +44,6 @@ public interface TemplateParserInterface{
 	 * @param type	The class of the object to be returned as a {@link Template}.
 	 * @return	The {@link Template} for the given type.
 	 */
-	<T> Template<T> createTemplate(final Class<T> type) throws AnnotationException;
+	<T> Template<T> createTemplate(Class<T> type) throws AnnotationException;
 
 }

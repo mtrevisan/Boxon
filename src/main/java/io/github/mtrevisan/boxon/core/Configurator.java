@@ -36,6 +36,7 @@ import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
+import io.github.mtrevisan.boxon.external.codecs.BitWriterInterface;
 import io.github.mtrevisan.boxon.external.configurations.ConfigurationKey;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
@@ -192,8 +193,8 @@ public final class Configurator{
 	/**
 	 * Compose a single configuration message.
 	 */
-	private void composeConfiguration(final BitWriter writer, final Map.Entry<String, Map<String, Object>> entry, final Version protocol,
-			final ComposeResponse response){
+	private void composeConfiguration(final BitWriterInterface writer, final Map.Entry<String, Map<String, Object>> entry,
+			final Version protocol, final ComposeResponse response){
 		try{
 			final String configurationType = entry.getKey();
 			final Map<String, Object> data = entry.getValue();

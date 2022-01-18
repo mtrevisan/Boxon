@@ -38,8 +38,9 @@ import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.DescriberKey;
 import io.github.mtrevisan.boxon.external.codecs.BitReader;
+import io.github.mtrevisan.boxon.external.codecs.BitReaderInterface;
 import io.github.mtrevisan.boxon.external.codecs.BitSet;
-import io.github.mtrevisan.boxon.external.codecs.BitWriter;
+import io.github.mtrevisan.boxon.external.codecs.BitWriterInterface;
 import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
 import io.github.mtrevisan.boxon.external.codecs.ParserDataType;
 import io.github.mtrevisan.boxon.external.logs.EventListener;
@@ -216,7 +217,7 @@ public final class TemplateParser implements TemplateParserInterface{
 		}
 	}
 
-	private static void readMessageTerminator(final Template<?> template, final BitReader reader) throws TemplateException{
+	private static void readMessageTerminator(final Template<?> template, final BitReaderInterface reader) throws TemplateException{
 		final MessageHeader header = template.getHeader();
 		if(header != null && !header.end().isEmpty()){
 			final Charset charset = Charset.forName(header.charset());
@@ -269,7 +270,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 	@Override
-	public <T> void encode(final Template<?> template, final BitWriter writer, final Object parentObject, final T currentObject)
+	public <T> void encode(final Template<?> template, final BitWriterInterface writer, final Object parentObject, final T currentObject)
 			throws FieldException{
 		final ParserContext<T> parserContext = new ParserContext<>(core.getEvaluator(), currentObject, parentObject);
 		parserContext.addCurrentObjectToEvaluatorContext();
@@ -304,12 +305,12 @@ public final class TemplateParser implements TemplateParserInterface{
 		return (condition.isEmpty() || core.getEvaluator().evaluateBoolean(condition, rootObject));
 	}
 
-	private <T> void writeSkips(final Skip[] skips, final BitWriter writer, final ParserContext<T> parserContext){
+	private <T> void writeSkips(final Skip[] skips, final BitWriterInterface writer, final ParserContext<T> parserContext){
 		for(int i = 0; i < skips.length; i ++)
 			writeSkip(skips[i], writer, parserContext.getRootObject());
 	}
 
-	private void writeSkip(final Skip skip, final BitWriter writer, final Object rootObject){
+	private void writeSkip(final Skip skip, final BitWriterInterface writer, final Object rootObject){
 		final Evaluator evaluator = core.getEvaluator();
 		final boolean process = evaluator.evaluateBoolean(skip.condition(), rootObject);
 		if(!process)

@@ -27,6 +27,6 @@ package io.github.mtrevisan.boxon.codecs.managers.writer;
 
 public interface WriterManagerInterface{
 
-	void put(final Object value);
+	void put(Object value);
 
 }

@@ -28,6 +28,7 @@ import io.github.mtrevisan.boxon.codecs.TemplateParser;
 import io.github.mtrevisan.boxon.codecs.managers.Template;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
+import io.github.mtrevisan.boxon.external.codecs.BitWriterInterface;
 
 import java.util.Collection;
 
@@ -90,7 +91,7 @@ public final class Composer{
 	 *
 	 * @param data	The message to be composed.
 	 */
-	private void composeMessage(final BitWriter writer, final Object data, final ComposeResponse response){
+	private void composeMessage(final BitWriterInterface writer, final Object data, final ComposeResponse response){
 		try{
 			final Template<?> template = templateParser.getTemplate(data.getClass());
 

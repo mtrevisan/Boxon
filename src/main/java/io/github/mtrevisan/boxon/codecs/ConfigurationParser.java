@@ -36,7 +36,7 @@ import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
-import io.github.mtrevisan.boxon.external.codecs.BitWriter;
+import io.github.mtrevisan.boxon.external.codecs.BitWriterInterface;
 import io.github.mtrevisan.boxon.external.logs.EventListener;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
 
@@ -134,7 +134,7 @@ public final class ConfigurationParser{
 	}
 
 
-	public <T> void encode(final ConfigurationMessage<?> configuration, final BitWriter writer, final T currentObject,
+	public <T> void encode(final ConfigurationMessage<?> configuration, final BitWriterInterface writer, final T currentObject,
 			final Evaluator evaluator, final Version protocol) throws FieldException{
 		final ParserContext<T> parserContext = new ParserContext<>(evaluator, currentObject);
 		parserContext.setClassName(configuration.getType().getName());
@@ -172,12 +172,12 @@ public final class ConfigurationParser{
 		ParserHelper.writeAffix(header.end(), header.charset(), writer);
 	}
 
-	private static void writeSkips(final ConfigurationSkip[] skips, final BitWriter writer, final Version protocol){
+	private static void writeSkips(final ConfigurationSkip[] skips, final BitWriterInterface writer, final Version protocol){
 		for(int i = 0; i < skips.length; i ++)
 			writeSkip(skips[i], writer, protocol);
 	}
 
-	private static void writeSkip(final ConfigurationSkip skip, final BitWriter writer, final Version protocol){
+	private static void writeSkip(final ConfigurationSkip skip, final BitWriterInterface writer, final Version protocol){
 		final boolean process = ConfigurationHelper.shouldBeExtracted(protocol, skip.minProtocol(), skip.maxProtocol());
 		if(process)
 			writer.putText(skip.terminator());

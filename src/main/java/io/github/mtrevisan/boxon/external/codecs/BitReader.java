@@ -43,7 +43,7 @@ import java.nio.charset.StandardCharsets;
  * @see <a href="https://github.com/jhg023/BitBuffer/blob/master/src/main/java/bitbuffer/BitBuffer.java">BitBuffer</a>
  */
 @SuppressWarnings("WeakerAccess")
-public final class BitReader extends BitReaderData{
+public final class BitReader extends BitReaderData implements BitReaderInterface{
 
 	/**
 	 * Wraps a {@link File} containing a binary stream into a buffer.
@@ -137,6 +137,7 @@ public final class BitReader extends BitReaderData{
 	 * @return	The read value of the given type.
 	 * @throws AnnotationException	If an annotation is not well formatted.
 	 */
+	@Override
 	public Object get(final Class<?> type, final ByteOrder byteOrder) throws AnnotationException{
 		final ParserDataType pdt = ParserDataType.fromType(type);
 		if(pdt == null)
@@ -162,6 +163,7 @@ public final class BitReader extends BitReaderData{
 	 * @param length	The number of {@code byte}s to read.
 	 * @return	An array of {@code byte}s of length {@code n} that contains {@code byte}s read.
 	 */
+	@Override
 	public byte[] getBytes(final int length){
 		final byte[] array = new byte[length];
 		for(int i = 0; i < length; i ++)
@@ -176,6 +178,7 @@ public final class BitReader extends BitReaderData{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	A {@code short}.
 	 */
+	@Override
 	public short getShort(final ByteOrder byteOrder){
 		return getInteger(Short.SIZE, byteOrder).shortValue();
 	}
@@ -187,6 +190,7 @@ public final class BitReader extends BitReaderData{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	An {@code int}.
 	 */
+	@Override
 	public int getInt(final ByteOrder byteOrder){
 		return getInteger(Integer.SIZE, byteOrder).intValue();
 	}
@@ -198,6 +202,7 @@ public final class BitReader extends BitReaderData{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	A {@code long}.
 	 */
+	@Override
 	public long getLong(final ByteOrder byteOrder){
 		return getInteger(Long.SIZE, byteOrder).longValue();
 	}
@@ -209,6 +214,7 @@ public final class BitReader extends BitReaderData{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	A {@link BigInteger} value at the current position.
 	 */
+	@Override
 	public BigInteger getInteger(final int size, final ByteOrder byteOrder){
 		final BitSet bits = getBits(size);
 		return bits.toInteger(size, byteOrder);
@@ -221,6 +227,7 @@ public final class BitReader extends BitReaderData{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	A {@code float}.
 	 */
+	@Override
 	public float getFloat(final ByteOrder byteOrder){
 		return Float.intBitsToFloat(getInt(byteOrder));
 	}
@@ -232,6 +239,7 @@ public final class BitReader extends BitReaderData{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	A {@code double}.
 	 */
+	@Override
 	public double getDouble(final ByteOrder byteOrder){
 		return Double.longBitsToDouble(getLong(byteOrder));
 	}
@@ -243,6 +251,7 @@ public final class BitReader extends BitReaderData{
 	 * @param charset	The charset.
 	 * @return	A {@link String} of length {@code n} coded with a given {@link Charset} that contains {@code char}s read.
 	 */
+	@Override
 	public String getText(final int length, final Charset charset){
 		return new String(getBytes(length), charset);
 	}
@@ -253,6 +262,7 @@ public final class BitReader extends BitReaderData{
 	 * @param length	The number of {@code char}s to read.
 	 * @return	A {@link String} of length {@code n} coded with a given {@link Charset} that contains {@code char}s read.
 	 */
+	@Override
 	public String getText(final int length){
 		return getText(length, StandardCharsets.UTF_8);
 	}
@@ -265,6 +275,7 @@ public final class BitReader extends BitReaderData{
 	 * @param charset	The charset.
 	 * @return	A {@link String} of length {@code n} coded with a given {@link Charset} that contains {@code char}s read.
 	 */
+	@Override
 	public String getTextUntilTerminator(final byte terminator, final Charset charset){
 		String text = null;
 		try(
@@ -285,6 +296,7 @@ public final class BitReader extends BitReaderData{
 	 * @param terminator	The terminator of the string to be read.
 	 * @return	A {@link String} of length {@code n} coded in {@link StandardCharsets#UTF_8 UTF-8} that contains {@code char}s read.
 	 */
+	@Override
 	public String getTextUntilTerminator(final byte terminator){
 		return getTextUntilTerminator(terminator, StandardCharsets.UTF_8);
 	}

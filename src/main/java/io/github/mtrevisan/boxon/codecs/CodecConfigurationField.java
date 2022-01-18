@@ -29,7 +29,7 @@ import io.github.mtrevisan.boxon.codecs.managers.writer.WriterManagerFactory;
 import io.github.mtrevisan.boxon.codecs.managers.writer.WriterManagerInterface;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.external.codecs.BitReader;
-import io.github.mtrevisan.boxon.external.codecs.BitWriter;
+import io.github.mtrevisan.boxon.external.codecs.BitWriterInterface;
 import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
 
 import java.lang.annotation.Annotation;
@@ -43,7 +43,8 @@ final class CodecConfigurationField implements CodecInterface<ConfigurationField
 	}
 
 	@Override
-	public void encode(final BitWriter writer, final Annotation annotation, final Object fieldType, Object value) throws CodecException{
+	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object fieldType, Object value)
+			throws CodecException{
 		final ConfigurationField binding = extractBinding(annotation);
 
 		value = CodecHelper.interpretValue((Class<?>)fieldType, value);

@@ -22,30 +22,35 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.codecs.managers.matchers;
+package io.github.mtrevisan.boxon.external.codecs;
+
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+
+import java.nio.charset.Charset;
 
 
-/** The base class for pattern matching algorithm implementations. */
-public interface PatternMatcher{
+public interface BitWriterInterface{
 
-	/**
-	 * Pre-processes the pattern.
-	 *
-	 * @param pattern	The {@code byte} array containing the pattern, may not be {@code null}.
-	 * @return	an array of pre-processed pattern.
-	 */
-	int[] preProcessPattern(byte[] pattern);
+	void put(Object value, ByteOrder byteOrder) throws AnnotationException;
 
-	/**
-	 * Returns the position in the text at which the pattern was found.
-	 * <p>Returns {@code -1} if the pattern was not found.</p>
-	 *
-	 * @param source	The {@code byte} array containing the text, may not be {@code null}.
-	 * @param offset	At which position in the text the comparing should start.
-	 * @param pattern	The pattern to search for, may not be {@code null}.
-	 * @param processedPattern	Processed pattern, see {@link #preProcessPattern(byte[])}.
-	 * @return the position in the text or {@code -1} if the pattern was not found.
-	 */
-	int indexOf(byte[] source, int offset, byte[] pattern, int[] processedPattern);
+	void putBits(BitSet value, int length);
+
+	void putByte(byte value);
+
+	void putBytes(byte[] array);
+
+	void putShort(short value, ByteOrder byteOrder);
+
+	void putInt(int value, ByteOrder byteOrder);
+
+	void putLong(long value, ByteOrder byteOrder);
+
+	void putFloat(float value, ByteOrder byteOrder);
+
+	void putDouble(double value, ByteOrder byteOrder);
+
+	void putText(String text, Charset charset);
+
+	void putText(String text);
 
 }

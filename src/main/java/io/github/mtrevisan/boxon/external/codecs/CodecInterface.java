@@ -45,7 +45,7 @@ public interface CodecInterface<B extends Annotation>{
 	 * @return	The object with the new value read and interpreted.
 	 * @throws FieldException	If something bad happened while reading, validating, or converting the raw value.
 	 */
-	Object decode(final BitReader reader, final Annotation annotation, final Object rootObject) throws FieldException;
+	Object decode(BitReader reader, Annotation annotation, Object rootObject) throws FieldException;
 
 	/**
 	 * Encode the next field of a message.
@@ -56,7 +56,7 @@ public interface CodecInterface<B extends Annotation>{
 	 * @param value	The value that have to be encoded.
 	 * @throws FieldException	If something bad happened while converting, validating, or writing the value.
 	 */
-	void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value) throws FieldException;
+	void encode(BitWriterInterface writer, Annotation annotation, Object rootObject, Object value) throws FieldException;
 
 
 	/**

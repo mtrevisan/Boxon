@@ -39,6 +39,6 @@ public interface Checksummer{
 	 * @param startValue	The starting value of the checksum.
 	 * @return	The checksum.
 	 */
-	short calculateChecksum(final byte[] data, final int start, final int end, final short startValue);
+	short calculateChecksum(byte[] data, int start, int end, short startValue);
 
 }

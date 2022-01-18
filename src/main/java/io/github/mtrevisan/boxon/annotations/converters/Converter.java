@@ -35,7 +35,7 @@ public interface Converter<IN, OUT>{
 	 * @param value	The value from that has to be decoded.
 	 * @return	The decoded value.
 	 */
-	OUT decode(final IN value);
+	OUT decode(IN value);
 
 	/**
 	 * Decoding function.
@@ -44,6 +44,6 @@ public interface Converter<IN, OUT>{
 	 * @param value	The value that has to be encoded.
 	 * @return	The encoded value.
 	 */
-	IN encode(final OUT value);
+	IN encode(OUT value);
 
 }
