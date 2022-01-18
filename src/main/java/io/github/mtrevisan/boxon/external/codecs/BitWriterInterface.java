@@ -27,30 +27,98 @@ package io.github.mtrevisan.boxon.external.codecs;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 
 public interface BitWriterInterface{
 
+	/**
+	 * Writes the given value using the give byte order.
+	 *
+	 * @param value	The data to written. Here, the length of the types (in bits) are those defined by java (see {@link Byte#SIZE},
+	 * 	{@link Short#SIZE}, {@link Integer#SIZE}, {@link Long#SIZE}, {@link Float#SIZE}, and {@link Double#SIZE}).
+	 * @param byteOrder	The byte order used to write the value.
+	 * @throws AnnotationException	If an annotation is not well formatted.
+	 */
 	void put(Object value, ByteOrder byteOrder) throws AnnotationException;
 
+	/**
+	 * Writes {@code value} to this {@link BitWriter} using {@code length} bits.
+	 *
+	 * @param value	The value to write.
+	 * @param length	The amount of bits to use when writing {@code value}.
+	 */
 	void putBits(BitSet value, int length);
 
+	/**
+	 * Writes a value using {@link Byte#SIZE} bits.
+	 *
+	 * @param value	The {@code byte} to write.
+	 */
 	void putByte(byte value);
 
+	/**
+	 * Writes an array of {@code byte}s using {@link Byte#SIZE} bits for each {@code byte}.
+	 *
+	 * @param array	The array of {@code byte}s to write.
+	 */
 	void putBytes(byte[] array);
 
+	/**
+	 * Writes a value with the specified {@link ByteOrder} using {@link Short#SIZE} bits.
+	 *
+	 * @param value	The {@code short} to write as an {@code int} for ease-of-use, but internally down-casted to a {@code short}.
+	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
+	 */
 	void putShort(short value, ByteOrder byteOrder);
 
+	/**
+	 * Writes a value with the specified {@link ByteOrder} using {@link Integer#SIZE} bits.
+	 *
+	 * @param value	The {@code int} to write.
+	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
+	 */
 	void putInt(int value, ByteOrder byteOrder);
 
+	/**
+	 * Writes a value with the specified {@link ByteOrder} using {@link Long#SIZE} bits.
+	 *
+	 * @param value	The {@code long} to write.
+	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
+	 */
 	void putLong(long value, ByteOrder byteOrder);
 
+	/**
+	 * Writes a value with the specified {@link ByteOrder} using {@link Float#SIZE} bits.
+	 *
+	 * @param value	The {@code float} to write.
+	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
+	 */
 	void putFloat(float value, ByteOrder byteOrder);
 
+	/**
+	 * Writes a value with the specified {@link ByteOrder} using {@link Double#SIZE} bits.
+	 *
+	 * @param value	The {@code double} to write.
+	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
+	 */
 	void putDouble(double value, ByteOrder byteOrder);
 
+	/**
+	 * Write the text into with a given {@link Charset}.
+	 * <p>Note that if a terminator is needed, it must be manually written.</p>
+	 *
+	 * @param text	The {@code String}s to be written.
+	 * @param charset	The charset.
+	 */
 	void putText(String text, Charset charset);
 
+	/**
+	 * Write the text into with an {@link StandardCharsets#UTF_8 UTF-8} charset.
+	 * <p>Note that if a terminator is needed, it must be manually written.</p>
+	 *
+	 * @param text	The {@code String}s to be written.
+	 */
 	void putText(String text);
 
 }
