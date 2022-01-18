@@ -9,7 +9,7 @@
 
 <br />
 
-<img src="https://i.postimg.cc/D0ydM6Rm/logo.webp" width="50%">
+<img alt="logo" src="https://i.postimg.cc/D0ydM6Rm/logo.webp" width="50%">
 
 ## Forewords
 This is a declarative, bit-level, message parser. All you have to do is write a [POJO](https://en.wikipedia.org/wiki/Plain_old_Java_object) that represents your message and annotate it. That's all. [Boxon](https://en.wikipedia.org/wiki/Boson) will take care of the rest for you.
@@ -1333,8 +1333,9 @@ Remember that the header that will be written is the first in `@MessageHeader`.
 ## Changelog
 
 <a name="changelog-2.1.2"></a>
-### version 2.1.2 - 20210117
+### version 2.1.2 - 20210118
 - Added missing javadoc.
+- No more cycles between classes or packages.
 
 
 <a name="changelog-2.1.1"></a>
