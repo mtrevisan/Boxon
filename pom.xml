@@ -12,15 +12,27 @@
 	<name>Boxon</name>
 	<description>Library for declarative, bit-level, parsing of a message</description>
 	<url>https://github.com/mtrevisan/Boxon</url>
-
+	<inceptionYear>2020</inceptionYear>
+	<licenses>
+		<license>
+			<name>MIT License</name>
+			<url>https://opensource.org/licenses/MIT</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
 	<developers>
 		<developer>
 			<id>mtrevixan</id>
 			<name>Mauro Trevisan</name>
 			<url>https://github.com/mtrevisan/</url>
 			<roles>
+				<role>Administrator</role>
 				<role>Developer</role>
 			</roles>
+			<timezone>Europe/Rome</timezone>
+			<properties>
+				<picUrl>https://www.gravatar.com/avatar/9b8bd4b3a3f142966fd6edb03a38a440</picUrl>
+			</properties>
 		</developer>
 	</developers>
 
@@ -30,8 +42,8 @@
 	</scm>
 
 	<issueManagement>
-		<url>https://github.com/mtrevisan/boxon/issues</url>
 		<system>GitHub Issues</system>
+		<url>https://github.com/mtrevisan/boxon/issues</url>
 	</issueManagement>
 
 	<properties>
@@ -200,6 +212,8 @@
 									<additionalOptions>${javadoc.html.version}</additionalOptions>
 									<javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
 									<detectJavaApiLink>false</detectJavaApiLink>
+									<locale>en</locale>
+									<excludePackageNames>io.github.mtrevisan.boxon.internal.*,io.github.mtrevisan.boxon.codecs.managers.*</excludePackageNames>
 								</configuration>
 							</execution>
 						</executions>
@@ -379,6 +393,7 @@
 			<artifactId>logback-classic</artifactId>
 			<version>${logback.logback-classic.version}</version>
 			<scope>test</scope>
+			<optional>true</optional>
 		</dependency>
 
 		<!-- JUnit -->
@@ -403,12 +418,4 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
-	<licenses>
-		<license>
-			<name>MIT License</name>
-			<url>https://opensource.org/licenses/MIT</url>
-			<distribution>repo</distribution>
-		</license>
-	</licenses>
 </project>
