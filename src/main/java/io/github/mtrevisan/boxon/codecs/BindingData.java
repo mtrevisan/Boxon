@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2020-2021 Mauro Trevisan
+/*
+ * Copyright (c) 2020-2022 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -44,7 +44,7 @@ import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.codecs.managers.ConstructorHelper;
 import io.github.mtrevisan.boxon.codecs.managers.ContextHelper;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
-import io.github.mtrevisan.boxon.external.codecs.BitReader;
+import io.github.mtrevisan.boxon.external.codecs.BitReaderInterface;
 import io.github.mtrevisan.boxon.external.codecs.ByteOrder;
 
 import java.lang.annotation.Annotation;
@@ -204,7 +204,7 @@ final class BindingData{
 		return evaluator.evaluateSize(size, rootObject);
 	}
 
-	Class<?> chooseAlternativeType(final BitReader reader) throws CodecException{
+	Class<?> chooseAlternativeType(final BitReaderInterface reader) throws CodecException{
 		if(!hasSelectAlternatives())
 			return type;
 

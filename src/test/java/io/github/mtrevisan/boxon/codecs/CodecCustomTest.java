@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2020-2021 Mauro Trevisan
+/*
+ * Copyright (c) 2020-2022 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -27,7 +27,9 @@ package io.github.mtrevisan.boxon.codecs;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.codecs.BitReader;
+import io.github.mtrevisan.boxon.external.codecs.BitReaderInterface;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
+import io.github.mtrevisan.boxon.external.codecs.BitWriterInterface;
 import io.github.mtrevisan.boxon.external.codecs.ByteOrder;
 import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
 import io.github.mtrevisan.boxon.external.logs.EventListener;
@@ -55,7 +57,7 @@ class CodecCustomTest{
 	//(if the first bit of a byte is 1, then another byte is expected to follow)
 	static class VariableLengthByteArray implements CodecInterface<VarLengthEncoded>{
 		@Override
-		public Object decode(final BitReader reader, final Annotation annotation, final Object rootObject){
+		public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject){
 			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			boolean continuing = true;
 			while(continuing){
@@ -68,7 +70,7 @@ class CodecCustomTest{
 		}
 
 		@Override
-		public void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value)
+		public void encode(final BitWriterInterface writer, final Annotation annotation, final Object rootObject, final Object value)
 				throws AnnotationException{
 			final int size = Array.getLength(value);
 			for(int i = 0; i < size; i ++)
@@ -98,7 +100,7 @@ class CodecCustomTest{
 
 		Assertions.assertArrayEquals(new byte[]{(byte)0x81, (byte)0x82, 0x03}, writer.array());
 
-		BitReader reader = BitReader.wrap(writer);
+		BitReaderInterface reader = BitReader.wrap(writer);
 		byte[] decoded = (byte[])codec.decode(reader, annotation, null);
 
 		Assertions.assertArrayEquals(encodedValue, decoded);

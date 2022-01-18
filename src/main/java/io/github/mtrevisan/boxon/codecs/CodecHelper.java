@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2020-2021 Mauro Trevisan
+/*
+ * Copyright (c) 2020-2022 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -31,7 +31,7 @@ import io.github.mtrevisan.boxon.codecs.managers.ContextHelper;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.external.codecs.BitSet;
-import io.github.mtrevisan.boxon.external.codecs.BitWriter;
+import io.github.mtrevisan.boxon.external.codecs.BitWriterInterface;
 import io.github.mtrevisan.boxon.external.codecs.ByteOrder;
 import io.github.mtrevisan.boxon.external.codecs.ParserDataType;
 import io.github.mtrevisan.boxon.external.configurations.ConfigurationEnum;
@@ -63,7 +63,8 @@ final class CodecHelper{
 		throw new IllegalArgumentException("Cannot find a valid codec for type " + type.getSimpleName());
 	}
 
-	static void writePrefix(final BitWriter writer, final ObjectChoices.ObjectChoice chosenAlternative, final ObjectChoices selectFrom){
+	static void writePrefix(final BitWriterInterface writer, final ObjectChoices.ObjectChoice chosenAlternative,
+			final ObjectChoices selectFrom){
 		//if chosenAlternative.condition() contains '#prefix', then write @ObjectChoice.prefix()
 		if(ContextHelper.containsPrefixReference(chosenAlternative.condition())){
 			final int prefixSize = selectFrom.prefixSize();

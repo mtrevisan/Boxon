@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2020-2021 Mauro Trevisan
+/*
+ * Copyright (c) 2020-2022 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -32,6 +32,7 @@ import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.codecs.BitReader;
+import io.github.mtrevisan.boxon.external.codecs.BitReaderInterface;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
 import io.github.mtrevisan.boxon.external.codecs.ByteOrder;
 import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
@@ -102,7 +103,7 @@ class CodecShortTest{
 
 		Assertions.assertEquals("1000", writer.toString());
 
-		BitReader reader = BitReader.wrap(writer);
+		BitReaderInterface reader = BitReader.wrap(writer);
 		short decoded = (short)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -160,7 +161,7 @@ class CodecShortTest{
 
 		Assertions.assertEquals("0010", writer.toString());
 
-		BitReader reader = BitReader.wrap(writer);
+		BitReaderInterface reader = BitReader.wrap(writer);
 		short decoded = (short)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -218,7 +219,7 @@ class CodecShortTest{
 
 		Assertions.assertEquals("1080", writer.toString());
 
-		BitReader reader = BitReader.wrap(writer);
+		BitReaderInterface reader = BitReader.wrap(writer);
 		short decoded = (short)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -276,7 +277,7 @@ class CodecShortTest{
 
 		Assertions.assertEquals(StringUtils.leftPad(Integer.toHexString(Short.reverseBytes(encodedValue) & 0x0000_FFFF).toUpperCase(Locale.ROOT), 4, '0'), writer.toString());
 
-		BitReader reader = BitReader.wrap(writer);
+		BitReaderInterface reader = BitReader.wrap(writer);
 		short decoded = (short)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -334,7 +335,7 @@ class CodecShortTest{
 
 		Assertions.assertEquals("8F00", writer.toString());
 
-		BitReader reader = BitReader.wrap(writer);
+		BitReaderInterface reader = BitReader.wrap(writer);
 		short decoded = (short)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -392,7 +393,7 @@ class CodecShortTest{
 
 		Assertions.assertEquals("007F", writer.toString());
 
-		BitReader reader = BitReader.wrap(writer);
+		BitReaderInterface reader = BitReader.wrap(writer);
 		short decoded = (short)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -450,7 +451,7 @@ class CodecShortTest{
 
 		Assertions.assertEquals("7F00", writer.toString());
 
-		BitReader reader = BitReader.wrap(writer);
+		BitReaderInterface reader = BitReader.wrap(writer);
 		short decoded = (short)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -508,7 +509,7 @@ class CodecShortTest{
 
 		Assertions.assertEquals(StringUtils.leftPad(Integer.toHexString(encodedValue & 0x0000_FFFF).toUpperCase(Locale.ROOT), 4, '0'), writer.toString());
 
-		BitReader reader = BitReader.wrap(writer);
+		BitReaderInterface reader = BitReader.wrap(writer);
 		short decoded = (short)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);

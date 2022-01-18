@@ -9,6 +9,8 @@
 
 <br />
 
+<img alt="logo" src="https://i.postimg.cc/D0ydM6Rm/logo.webp" width="50%">
+
 ## Forewords
 This is a declarative, bit-level, message parser. All you have to do is write a [POJO](https://en.wikipedia.org/wiki/Plain_old_Java_object) that represents your message and annotate it. That's all. [Boxon](https://en.wikipedia.org/wiki/Boson) will take care of the rest for you.
 
@@ -121,16 +123,16 @@ You can get pre-built JARs (usable on JRE 11 or newer) from [Sonatype](https://o
     1. [Multi-message parser](#example-multi)
     2. [Message composer](#example-composer)
 9. [Changelog](#changelog)
-    1. [version 2.1.1](#changelog-2.1.1)
-    2. [version 2.1.0](#changelog-2.1.0)
-    3. [version 2.0.0](#changelog-2.0.0)
-    4. [version 1.1.0](#changelog-1.1.0)
-    5. [version 1.0.0](#changelog-1.0.0)
-    6. [version 0.0.2](#changelog-0.0.2)
-    7. [version 0.0.1](#changelog-0.0.1)
-    8. [version 0.0.0](#changelog-0.0.0)
+    1. [version 2.1.2](#changelog-2.1.2)
+    2. [version 2.1.1](#changelog-2.1.1)
+    3. [version 2.1.0](#changelog-2.1.0)
+    4. [version 2.0.0](#changelog-2.0.0)
+    5. [version 1.1.0](#changelog-1.1.0)
+    6. [version 1.0.0](#changelog-1.0.0)
+    7. [version 0.0.2](#changelog-0.0.2)
+    8. [version 0.0.1](#changelog-0.0.1)
+    9. [version 0.0.0](#changelog-0.0.0)
 10. [License](#license)
-11. [Attributions](#attributions)
 
 <br/>
 
@@ -1330,6 +1332,12 @@ Remember that the header that will be written is the first in `@MessageHeader`.
 <a name="changelog"></a>
 ## Changelog
 
+<a name="changelog-2.1.2"></a>
+### version 2.1.2 - 20210118
+- Added missing javadoc.
+- No more cycles between classes or packages.
+
+
 <a name="changelog-2.1.1"></a>
 ### version 2.1.1 - 20210114
 - Bug fix: `Evaluator` class is now exported.
@@ -1397,7 +1405,3 @@ Remember that the header that will be written is the first in `@MessageHeader`.
 ## License
 This project is licensed under [MIT license](http://opensource.org/licenses/MIT).
 For the full text of the license, see the [LICENSE](LICENSE) file.
-
-<a name="attributions"></a>
-## Attributions
-Logo for the project by TimothyRias - Own work, CC BY 3.0, [https://commons.wikimedia.org/w/index.php?curid=4943351](https://commons.wikimedia.org/w/index.php?curid=4943351).

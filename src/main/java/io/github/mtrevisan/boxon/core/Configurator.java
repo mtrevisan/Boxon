@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2020-2021 Mauro Trevisan
+/*
+ * Copyright (c) 2020-2022 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -36,6 +36,7 @@ import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
+import io.github.mtrevisan.boxon.external.codecs.BitWriterInterface;
 import io.github.mtrevisan.boxon.external.configurations.ConfigurationKey;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
@@ -49,6 +50,9 @@ import java.util.List;
 import java.util.Map;
 
 
+/**
+ * Declarative configurator for binary encoded configuration data.
+ */
 @SuppressWarnings({"WeakerAccess", "unused"})
 public final class Configurator{
 
@@ -76,6 +80,8 @@ public final class Configurator{
 	 * Retrieve all the configuration regardless the protocol version.
 	 *
 	 * @return	The configuration messages regardless the protocol version.
+	 * @throws ConfigurationException	Thrown when a duplicated short description is found.
+	 * @throws CodecException	Thrown when the value as a string cannot be interpreted as a basic type.
 	 */
 	public List<Map<String, Object>> getConfigurations() throws ConfigurationException, CodecException{
 		final List<ConfigurationMessage<?>> configurationValues = configurationParser.getConfigurations();
@@ -100,6 +106,8 @@ public final class Configurator{
 	 *
 	 * @param protocol	The protocol used to extract the configurations.
 	 * @return	The configuration messages for a given protocol version.
+	 * @throws ConfigurationException	Thrown when a duplicated short description is found.
+	 * @throws CodecException	Thrown when the value as a string cannot be interpreted as a basic type.
 	 */
 	public List<Map<String, Object>> getConfigurations(final String protocol) throws ConfigurationException, CodecException{
 		if(StringHelper.isBlank(protocol))
@@ -145,7 +153,7 @@ public final class Configurator{
 	}
 
 	private static Map<String, Object> extractFieldsMap(final Version protocol, final ConfigurationMessage<?> configuration)
-		throws ConfigurationException, CodecException{
+			throws ConfigurationException, CodecException{
 		final List<ConfigField> fields = configuration.getConfigurationFields();
 		final Map<String, Object> fieldsMap = new HashMap<>(fields.size());
 		for(int i = 0; i < fields.size(); i ++){
@@ -162,6 +170,7 @@ public final class Configurator{
 	/**
 	 * Compose a list of configuration messages.
 	 *
+	 * @param protocolVersion	Protocol version.
 	 * @param data	The configuration message(s) to be composed.
 	 * @return	The composition response.
 	 */
@@ -184,8 +193,8 @@ public final class Configurator{
 	/**
 	 * Compose a single configuration message.
 	 */
-	private void composeConfiguration(final BitWriter writer, final Map.Entry<String, Map<String, Object>> entry, final Version protocol,
-			final ComposeResponse response){
+	private void composeConfiguration(final BitWriterInterface writer, final Map.Entry<String, Map<String, Object>> entry,
+			final Version protocol, final ComposeResponse response){
 		try{
 			final String configurationType = entry.getKey();
 			final Map<String, Object> data = entry.getValue();

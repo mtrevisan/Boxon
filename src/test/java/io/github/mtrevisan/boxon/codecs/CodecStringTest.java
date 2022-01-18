@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2020-2021 Mauro Trevisan
+/*
+ * Copyright (c) 2020-2022 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -34,6 +34,7 @@ import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.codecs.BitReader;
+import io.github.mtrevisan.boxon.external.codecs.BitReaderInterface;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
 import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
 import org.junit.jupiter.api.Assertions;
@@ -104,7 +105,7 @@ class CodecStringTest{
 
 		Assertions.assertEquals(encodedValue, new String(writer.array(), StandardCharsets.US_ASCII));
 
-		BitReader reader = BitReader.wrap(writer);
+		BitReaderInterface reader = BitReader.wrap(writer);
 		String decoded = (String)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -168,7 +169,7 @@ class CodecStringTest{
 
 		Assertions.assertEquals(encodedValue, new String(writer.array(), StandardCharsets.UTF_8));
 
-		BitReader reader = BitReader.wrap(writer);
+		BitReaderInterface reader = BitReader.wrap(writer);
 		String decoded = (String)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
@@ -230,7 +231,7 @@ class CodecStringTest{
 			}
 		};
 
-		BitReader reader = BitReader.wrap(encodedValue.getBytes(StandardCharsets.US_ASCII));
+		BitReaderInterface reader = BitReader.wrap(encodedValue.getBytes(StandardCharsets.US_ASCII));
 		Evaluator evaluator = Evaluator.create();
 		Object decoded = codec.decode(reader, annotation, null);
 
@@ -299,7 +300,7 @@ class CodecStringTest{
 			}
 		};
 
-		BitReader reader = BitReader.wrap(encodedValue.getBytes(StandardCharsets.US_ASCII));
+		BitReaderInterface reader = BitReader.wrap(encodedValue.getBytes(StandardCharsets.US_ASCII));
 		Evaluator evaluator = Evaluator.create();
 		Object decoded = codec.decode(reader, annotation, null);
 

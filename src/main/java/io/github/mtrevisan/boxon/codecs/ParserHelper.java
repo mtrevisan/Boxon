@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2020-2021 Mauro Trevisan
+/*
+ * Copyright (c) 2020-2022 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -26,7 +26,7 @@ package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
-import io.github.mtrevisan.boxon.external.codecs.BitWriter;
+import io.github.mtrevisan.boxon.external.codecs.BitWriterInterface;
 import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
 import io.github.mtrevisan.boxon.external.logs.EventListener;
 
@@ -38,14 +38,14 @@ final class ParserHelper{
 
 	private ParserHelper(){}
 
-	static void writeAffix(final String affix, final String charsetName, final BitWriter writer){
+	static void writeAffix(final String affix, final String charsetName, final BitWriterInterface writer){
 		if(!affix.isEmpty()){
 			final Charset charset = Charset.forName(charsetName);
 			writer.putText(affix, charset);
 		}
 	}
 
-	static void encodeField(final ParserContext<?> parserContext, final BitWriter writer, final LoaderCodecInterface loaderCodec,
+	static void encodeField(final ParserContext<?> parserContext, final BitWriterInterface writer, final LoaderCodecInterface loaderCodec,
 			final EventListener eventListener) throws FieldException{
 		final Class<? extends Annotation> annotationType = parserContext.getBinding().annotationType();
 		final CodecInterface<?> codec = loaderCodec.getCodec(annotationType);

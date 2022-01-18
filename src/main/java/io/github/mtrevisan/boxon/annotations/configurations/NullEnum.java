@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2020-2021 Mauro Trevisan
+/*
+ * Copyright (c) 2020-2022 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -27,6 +27,12 @@ package io.github.mtrevisan.boxon.annotations.configurations;
 import io.github.mtrevisan.boxon.external.configurations.ConfigurationEnum;
 
 
+/**
+ * Null (empty) enumeration.
+ * <p>
+ * The returned code is always zero.
+ * </p>
+ */
 public enum NullEnum implements ConfigurationEnum{
 	;
 

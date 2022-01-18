@@ -22,24 +22,35 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.annotations.converters;
+package io.github.mtrevisan.boxon.external.codecs;
+
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+
+import java.nio.charset.Charset;
 
 
-/**
- * Convert an unsigned short to an integer.
- */
-public final class UnsignedShortConverter implements Converter<Short, Integer>{
+public interface BitWriterInterface{
 
-	UnsignedShortConverter(){}
+	void put(Object value, ByteOrder byteOrder) throws AnnotationException;
 
-	@Override
-	public Integer decode(final Short value){
-		return (value & 0x0000_FFFF);
-	}
+	void putBits(BitSet value, int length);
 
-	@Override
-	public Short encode(final Integer value){
-		return value.shortValue();
-	}
+	void putByte(byte value);
+
+	void putBytes(byte[] array);
+
+	void putShort(short value, ByteOrder byteOrder);
+
+	void putInt(int value, ByteOrder byteOrder);
+
+	void putLong(long value, ByteOrder byteOrder);
+
+	void putFloat(float value, ByteOrder byteOrder);
+
+	void putDouble(double value, ByteOrder byteOrder);
+
+	void putText(String text, Charset charset);
+
+	void putText(String text);
 
 }

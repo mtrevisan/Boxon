@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2020-2021 Mauro Trevisan
+/*
+ * Copyright (c) 2020-2022 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -36,7 +36,7 @@ import java.nio.ByteBuffer;
 
 
 /**
- * Declarative data binding parser for binary encoded data with configuration capabilities.
+ * Declarative data binding parser for binary encoded data.
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
 public final class Parser{

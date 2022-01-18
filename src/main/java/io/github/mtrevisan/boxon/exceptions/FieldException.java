@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2020-2021 Mauro Trevisan
+/*
+ * Copyright (c) 2020-2022 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -24,11 +24,10 @@
  */
 package io.github.mtrevisan.boxon.exceptions;
 
-import java.io.NotSerializableException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 
-
+/**
+ * Represents an error in coding/decoding of a value.
+ */
 public class FieldException extends Exception{
 
 	private static final long serialVersionUID = -8863756843240934380L;
@@ -36,26 +35,60 @@ public class FieldException extends Exception{
 	private static final String EMPTY_STRING = "";
 
 
+	/** Class name that generates the error. */
 	private String className;
+	/** Field name in the class that generates the error. */
 	private String fieldName;
 
 
+	/**
+	 * Constructs a new exception with the specified cause.
+	 *
+	 * @param cause	The cause (which is saved for later retrieval by the {@link #getCause()} method). (A {@code null} value is
+	 * 					permitted, and indicates that the cause is nonexistent or unknown.)
+	 * @return	An instance of this exception.
+	 */
 	public static FieldException create(final Throwable cause){
 		return new FieldException(cause);
 	}
 
+	/**
+	 * Constructs a new exception with the specified message.
+	 *
+	 * @param message	The message.
+	 */
 	protected FieldException(final String message){
 		super(message);
 	}
 
+	/**
+	 * Constructs a new exception with the specified message and cause.
+	 *
+	 * @param message	The message.
+	 * @param cause	The cause (which is saved for later retrieval by the {@link #getCause()} method). (A {@code null} value is
+	 * 					permitted, and indicates that the cause is nonexistent or unknown.)
+	 */
 	protected FieldException(final String message, final Throwable cause){
 		super(message, cause);
 	}
 
+	/**
+	 * Constructs a new exception with the specified cause.
+	 *
+	 * @param cause	The cause (which is saved for later retrieval by the {@link #getCause()} method). (A {@code null} value is
+	 * 					permitted, and indicates that the cause is nonexistent or unknown.)
+	 */
 	protected FieldException(final Throwable cause){
 		super(cause);
 	}
 
+	/**
+	 * Adds class and field names to the exception.
+	 *
+	 * @param className	The class name.
+	 * @param fieldName	The field name.
+	 * @return	The exception itself.
+	 */
 	public final FieldException withClassNameAndFieldName(final String className, final String fieldName){
 		this.className = className;
 		this.fieldName = fieldName;
@@ -66,17 +99,6 @@ public class FieldException extends Exception{
 	@Override
 	public final String getMessage(){
 		return super.getMessage() + (className != null && fieldName != null? " in field " + className + "." + fieldName: EMPTY_STRING);
-	}
-
-
-	@SuppressWarnings("unused")
-	private void writeObject(final ObjectOutputStream os) throws NotSerializableException{
-		throw new NotSerializableException(getClass().getName());
-	}
-
-	@SuppressWarnings("unused")
-	private void readObject(final ObjectInputStream is) throws NotSerializableException{
-		throw new NotSerializableException(getClass().getName());
 	}
 
 }

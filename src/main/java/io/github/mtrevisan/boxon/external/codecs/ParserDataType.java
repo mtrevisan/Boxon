@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2020-2021 Mauro Trevisan
+/*
+ * Copyright (c) 2020-2022 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -34,79 +34,83 @@ import java.util.HashMap;
 import java.util.Map;
 
 
+/**
+ * Holds information about size in memory and primitive-objective types of each data type.
+ */
 public enum ParserDataType{
 
 	BYTE(Byte.TYPE, Byte.class, Byte.SIZE){
 		@Override
-		public Object read(final BitReader reader, final ByteOrder byteOrder){
+		public Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
 			return reader.getByte();
 		}
 
 		@Override
-		public void write(final BitWriter writer, final Object value, final ByteOrder byteOrder){
+		public void write(final BitWriterInterface writer, final Object value, final ByteOrder byteOrder){
 			writer.putByte((Byte)value);
 		}
 	},
 
 	SHORT(Short.TYPE, Short.class, Short.SIZE){
 		@Override
-		public Object read(final BitReader reader, final ByteOrder byteOrder){
+		public Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
 			return reader.getShort(byteOrder);
 		}
 
 		@Override
-		public void write(final BitWriter writer, final Object value, final ByteOrder byteOrder){
+		public void write(final BitWriterInterface writer, final Object value, final ByteOrder byteOrder){
 			writer.putShort((Short)value, byteOrder);
 		}
 	},
 
 	INTEGER(Integer.TYPE, Integer.class, Integer.SIZE){
 		@Override
-		public Object read(final BitReader reader, final ByteOrder byteOrder){
+		public Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
 			return reader.getInt(byteOrder);
 		}
 
 		@Override
-		public void write(final BitWriter writer, final Object value, final ByteOrder byteOrder){
+		public void write(final BitWriterInterface writer, final Object value, final ByteOrder byteOrder){
 			writer.putInt((Integer)value, byteOrder);
 		}
 	},
 
 	LONG(Long.TYPE, Long.class, Long.SIZE){
 		@Override
-		public Object read(final BitReader reader, final ByteOrder byteOrder){
+		public Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
 			return reader.getLong(byteOrder);
 		}
 
 		@Override
-		public void write(final BitWriter writer, final Object value, final ByteOrder byteOrder){
+		public void write(final BitWriterInterface writer, final Object value, final ByteOrder byteOrder){
 			writer.putLong((Long)value, byteOrder);
 		}
 	},
 
 	FLOAT(Float.TYPE, Float.class, Float.SIZE){
 		@Override
-		public Object read(final BitReader reader, final ByteOrder byteOrder){
+		public Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
 			return reader.getFloat(byteOrder);
 		}
 
 		@Override
-		public void write(final BitWriter writer, final Object value, final ByteOrder byteOrder){
+		public void write(final BitWriterInterface writer, final Object value, final ByteOrder byteOrder){
 			writer.putFloat((Float)value, byteOrder);
 		}
 	},
 
 	DOUBLE(Double.TYPE, Double.class, Double.SIZE){
 		@Override
-		public Object read(final BitReader reader, final ByteOrder byteOrder){
+		public Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
 			return reader.getDouble(byteOrder);
 		}
 
 		@Override
-		public void write(final BitWriter writer, final Object value, final ByteOrder byteOrder){
+		public void write(final BitWriterInterface writer, final Object value, final ByteOrder byteOrder){
 			writer.putDouble((Double)value, byteOrder);
 		}
 	};
+
 
 	/** Maps primitive {@code Class}es to their corresponding wrapper {@code Class}. */
 	private static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPER_MAP;
@@ -137,6 +141,12 @@ public enum ParserDataType{
 	private final int size;
 
 
+	/**
+	 * Extract the enumeration corresponding to the given type.
+	 *
+	 * @param type	The type to be converted.
+	 * @return	The enumeration corresponding to the given type.
+	 */
 	public static ParserDataType fromType(final Class<?> type){
 		return TYPE_MAP.get(type);
 	}
@@ -147,10 +157,22 @@ public enum ParserDataType{
 		this.size = size;
 	}
 
+	/**
+	 * Convert a type to an objective type, if applicable, otherwise returns the type itself.
+	 *
+	 * @param primitiveType	The type to be converted.
+	 * @return	The converted type;
+	 */
 	public static Class<?> toObjectiveTypeOrSelf(final Class<?> primitiveType){
 		return PRIMITIVE_WRAPPER_MAP.getOrDefault(primitiveType, primitiveType);
 	}
 
+	/**
+	 * Convert a type to a primitive type, if applicable, otherwise returns the type itself.
+	 *
+	 * @param objectiveType	The type to be converted.
+	 * @return	The converted type;
+	 */
 	public static Class<?> toPrimitiveTypeOrSelf(final Class<?> objectiveType){
 		return WRAPPER_PRIMITIVE_MAP.getOrDefault(objectiveType, objectiveType);
 	}
@@ -183,27 +205,65 @@ public enum ParserDataType{
 
 	/**
 	 * The number of bits used to represent the value.
+	 *
+	 * @param value	The value from which to extract its memory size.
+	 * @return	The size of the value as stored in memory.
 	 */
 	public static int getSize(final Object value){
 		return fromType(value.getClass()).size;
 	}
 
+	/**
+	 * Describe the data types handled by this class.
+	 *
+	 * @return	A list of data types.
+	 */
 	public static String describe(){
 		return Arrays.toString(new String[]{byte.class.getSimpleName(), short.class.getSimpleName(), int.class.getSimpleName(),
 			long.class.getSimpleName(), float.class.getSimpleName(), double.class.getSimpleName()});
 	}
 
-	public abstract Object read(final BitReader reader, final ByteOrder byteOrder);
+	/**
+	 * Read a specific data type from the reader, using the given byte order.
+	 *
+	 * @param reader	The reader from which to read the data from.
+	 * @param byteOrder	The byte order.
+	 * @return	The read value.
+	 */
+	public abstract Object read(final BitReaderInterface reader, final ByteOrder byteOrder);
 
-	public abstract void write(final BitWriter writer, final Object value, final ByteOrder byteOrder);
+	/**
+	 * Write a specific data to the writer, using the given byte order.
+	 * @param writer	The writer used to write the data to.
+	 * @param value	The value to be written.
+	 * @param byteOrder	The byte order.
+	 */
+	public abstract void write(final BitWriterInterface writer, final Object value, final ByteOrder byteOrder);
 
 
+	/**
+	 * Returns the primitive or objective type (depending on the field type) data stored as a string value, if the type is not string,
+	 * in that case the value will be returned.
+	 *
+	 * @param fieldType	The type of the field that will hold the value represented as a string.
+	 * @param value	The string value to be interpreted.
+	 * @return	The primitive or objective value, if the field type is not string, the given value otherwise.
+	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
+	 */
 	public static Object getValueOrSelf(final Class<?> fieldType, final Object value) throws CodecException{
 		return (String.class.isInstance(value)
 			? getValue(fieldType, (String)value)
 			: value);
 	}
 
+	/**
+	 * Returns the primitive or objective type (depending on the field type) data stored as a string value.
+	 *
+	 * @param fieldType	The type of the field that will hold the value represented as a string.
+	 * @param value	The string value to be interpreted.
+	 * @return	The primitive or objective value.
+	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
+	 */
 	@SuppressWarnings("ReturnOfNull")
 	public static Object getValue(final Class<?> fieldType, final String value) throws CodecException{
 		if(fieldType == String.class)

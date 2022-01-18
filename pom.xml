@@ -5,33 +5,45 @@
 
 	<groupId>io.github.mtrevisan</groupId>
 	<artifactId>boxon</artifactId>
-	<version>2.1.1</version>
+	<version>2.1.2-SNAPSHOT</version>
 
 	<packaging>jar</packaging>
 
 	<name>Boxon</name>
 	<description>Library for declarative, bit-level, parsing of a message</description>
 	<url>https://github.com/mtrevisan/Boxon</url>
-
+	<inceptionYear>2020</inceptionYear>
+	<licenses>
+		<license>
+			<name>MIT License</name>
+			<url>https://opensource.org/licenses/MIT</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
 	<developers>
 		<developer>
+			<id>mtrevixan</id>
 			<name>Mauro Trevisan</name>
 			<url>https://github.com/mtrevisan/</url>
 			<roles>
+				<role>Administrator</role>
 				<role>Developer</role>
 			</roles>
+			<timezone>Europe/Rome</timezone>
+			<properties>
+				<picUrl>https://i.postimg.cc/5tphfyN6/mtrevixan.jpg</picUrl>
+			</properties>
 		</developer>
 	</developers>
 
 	<scm>
-		<connection>scm:git:git://github.com/mtrevisan/Boxon.git</connection>
-		<developerConnection>scm:git:git@github.com:mtrevisan/Boxon.git</developerConnection>
 		<url>https://github.com/mtrevisan/Boxon</url>
+		<connection>scm:git:https://github.com/mtrevisan/Boxon</connection>
 	</scm>
 
 	<issueManagement>
-		<url>https://github.com/mtrevisan/boxon/issues</url>
 		<system>GitHub Issues</system>
+		<url>https://github.com/mtrevisan/boxon/issues</url>
 	</issueManagement>
 
 	<properties>
@@ -58,7 +70,7 @@
 		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-surefire-plugin -->
 		<maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
 		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
-		<maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+		<maven-compiler-plugin.version>3.9.0</maven-compiler-plugin.version>
 		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-help-plugin -->
 		<maven-help-plugin.version>3.2.0</maven-help-plugin.version>
 		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-shade-plugin -->
@@ -78,7 +90,7 @@
 
 		<!-- Logging -->
 		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
-		<slf4j.slf4j-api.version>1.7.32</slf4j.slf4j-api.version>
+		<slf4j.slf4j-api.version>1.7.33</slf4j.slf4j-api.version>
 		<!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-classic -->
 		<logback.logback-classic.version>1.2.10</logback.logback-classic.version>
 
@@ -126,8 +138,7 @@
 			</build>
 		</profile>
 		<profile>
-			<!-- mvn clean deploy -U -Dmaven.test.skip=true -->
-			<!-- mvn clean deploy -Pdeploy -->
+			<!-- mvn clean deploy -Pdeploy -U -Dmaven.test.skip=true -->
 			<!-- https://stackoverflow.com/questions/41265266/how-to-solve-inaccessibleobjectexception-unable-to-make-member-accessible-m/41265267#41265267 -->
 			<id>release</id>
 			<properties>
@@ -201,6 +212,8 @@
 									<additionalOptions>${javadoc.html.version}</additionalOptions>
 									<javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
 									<detectJavaApiLink>false</detectJavaApiLink>
+									<locale>en</locale>
+									<excludePackageNames>io.github.mtrevisan.boxon.internal.*,io.github.mtrevisan.boxon.codecs.managers.*</excludePackageNames>
 								</configuration>
 							</execution>
 						</executions>
@@ -241,6 +254,8 @@
 						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.codecs.managers.matchers=ALL-UNNAMED
 						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.codecs.queclink=spring.core,spring.expression,ALL-UNNAMED
 						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.core=spring.core,ALL-UNNAMED
+						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.internal=ALL-UNNAMED
+						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.external.codecs=ALL-UNNAMED
 						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.external.semanticversioning=ALL-UNNAMED
 					</argLine>
 				</configuration>
@@ -259,6 +274,14 @@
 					  TODO:
 						 Remove .mvn/jvm.config after OSSRH-66257, NEXUS-26993 are fixed,
 						 possibly via https://github.com/sonatype/nexus-maven-plugins/pull/91
+						 Content of the file is:
+							&#45;&#45;add-opens java.base/java.io=ALL-UNNAMED
+							&#45;&#45;add-opens java.base/java.lang=ALL-UNNAMED
+							&#45;&#45;add-opens java.base/java.lang.reflect=ALL-UNNAMED
+							&#45;&#45;add-opens java.base/java.text=ALL-UNNAMED
+							&#45;&#45;add-opens java.base/java.util=ALL-UNNAMED
+							&#45;&#45;add-opens java.base/java.util.concurrent=ALL-UNNAMED
+							&#45;&#45;add-opens java.desktop/java.awt.font=ALL-UNNAMED
 					-->
 				</configuration>
 			</plugin>
@@ -370,6 +393,7 @@
 			<artifactId>logback-classic</artifactId>
 			<version>${logback.logback-classic.version}</version>
 			<scope>test</scope>
+			<optional>true</optional>
 		</dependency>
 
 		<!-- JUnit -->
@@ -394,12 +418,4 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
-	<licenses>
-		<license>
-			<name>MIT License</name>
-			<url>https://opensource.org/licenses/MIT</url>
-			<distribution>repo</distribution>
-		</license>
-	</licenses>
 </project>

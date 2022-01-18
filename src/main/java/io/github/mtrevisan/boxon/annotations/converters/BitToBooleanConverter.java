@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2020-2021 Mauro Trevisan
+/*
+ * Copyright (c) 2020-2022 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -27,6 +27,9 @@ package io.github.mtrevisan.boxon.annotations.converters;
 import io.github.mtrevisan.boxon.external.codecs.BitSet;
 
 
+/**
+ * Convert a bit set to a boolean interpreting only the least common bit (the boolean equals to the lowest bit value).
+ */
 public final class BitToBooleanConverter implements Converter<BitSet, Boolean>{
 
 	BitToBooleanConverter(){}

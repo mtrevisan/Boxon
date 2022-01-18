@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2020-2021 Mauro Trevisan
+/*
+ * Copyright (c) 2020-2022 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -28,6 +28,6 @@ package io.github.mtrevisan.boxon.internal;
 @FunctionalInterface
 public interface ThrowingFunction<IN, OUT, E extends Exception>{
 
-	OUT apply(final IN in) throws E;
+	OUT apply(IN in) throws E;
 
 }

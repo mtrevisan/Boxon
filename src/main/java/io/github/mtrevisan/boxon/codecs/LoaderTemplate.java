@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2020-2021 Mauro Trevisan
+/*
+ * Copyright (c) 2020-2022 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -32,7 +32,7 @@ import io.github.mtrevisan.boxon.codecs.managers.matchers.BNDMPatternMatcher;
 import io.github.mtrevisan.boxon.codecs.managers.matchers.PatternMatcher;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
-import io.github.mtrevisan.boxon.external.codecs.BitReader;
+import io.github.mtrevisan.boxon.external.codecs.BitReaderInterface;
 import io.github.mtrevisan.boxon.external.logs.EventListener;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 import io.github.mtrevisan.boxon.internal.ThrowingFunction;
@@ -218,7 +218,7 @@ public final class LoaderTemplate{
 	 * @param reader	The reader to read the header from.
 	 * @return	The template that is able to decode/encode the next message in the given reader.
 	 */
-	Template<?> getTemplate(final BitReader reader) throws TemplateException{
+	Template<?> getTemplate(final BitReaderInterface reader) throws TemplateException{
 		final int index = reader.position();
 
 		//for each available template, select the first that matches the starting bytes
@@ -279,7 +279,7 @@ public final class LoaderTemplate{
 	 * @param reader	The reader.
 	 * @return	The index of the next message.
 	 */
-	int findNextMessageIndex(final BitReader reader){
+	int findNextMessageIndex(final BitReaderInterface reader){
 		int minOffset = -1;
 		for(final Template<?> template : templates.values()){
 			final MessageHeader header = template.getHeader();
@@ -289,7 +289,7 @@ public final class LoaderTemplate{
 		return minOffset;
 	}
 
-	private static int findNextMessageIndex(final BitReader reader, final MessageHeader header, int minOffset){
+	private static int findNextMessageIndex(final BitReaderInterface reader, final MessageHeader header, int minOffset){
 		final Charset charset = Charset.forName(header.charset());
 		final String[] messageStarts = header.start();
 		//select the minimum index with a valid template
@@ -301,7 +301,7 @@ public final class LoaderTemplate{
 		return minOffset;
 	}
 
-	private static int searchNextSequence(final BitReader reader, final byte[] startMessageSequence){
+	private static int searchNextSequence(final BitReaderInterface reader, final byte[] startMessageSequence){
 		final byte[] message = reader.array();
 		final int startIndex = reader.position();
 		final int[] preProcessedPattern = PRE_PROCESSED_PATTERNS.apply(startMessageSequence);

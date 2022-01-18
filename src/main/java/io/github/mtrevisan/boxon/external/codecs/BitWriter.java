@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2020-2021 Mauro Trevisan
+/*
+ * Copyright (c) 2020-2022 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -35,8 +35,13 @@ import java.nio.charset.StandardCharsets;
  * @see <a href="https://git.irsamc.ups-tlse.fr/scemama/Bit-Twiddling-Hacks/">Bit Twiddling Hacks</a>
  */
 @SuppressWarnings("WeakerAccess")
-public final class BitWriter extends BitWriterData{
+public final class BitWriter extends BitWriterData implements BitWriterInterface{
 
+	/**
+	 * Create an instance of this class.
+	 *
+	 * @return	An instance of this class.
+	 */
 	public static BitWriter create(){
 		return new BitWriter();
 	}
@@ -51,6 +56,7 @@ public final class BitWriter extends BitWriterData{
 	 * @param byteOrder	The byte order used to write the value.
 	 * @throws AnnotationException	If an annotation is not well formatted.
 	 */
+	@Override
 	public void put(final Object value, final ByteOrder byteOrder) throws AnnotationException{
 		final ParserDataType pdt = ParserDataType.fromType(value.getClass());
 		if(pdt == null)
@@ -64,6 +70,7 @@ public final class BitWriter extends BitWriterData{
 	 *
 	 * @param value	The {@code byte} to write.
 	 */
+	@Override
 	public void putByte(final byte value){
 		putValue(value, Byte.SIZE);
 	}
@@ -73,6 +80,7 @@ public final class BitWriter extends BitWriterData{
 	 *
 	 * @param array	The array of {@code byte}s to write.
 	 */
+	@Override
 	public void putBytes(final byte[] array){
 		for(int i = 0; i < array.length; i ++)
 			putByte(array[i]);
@@ -84,6 +92,7 @@ public final class BitWriter extends BitWriterData{
 	 * @param value	The {@code short} to write as an {@code int} for ease-of-use, but internally down-casted to a {@code short}.
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 */
+	@Override
 	public void putShort(final short value, final ByteOrder byteOrder){
 		putValue(byteOrder == ByteOrder.BIG_ENDIAN? Short.reverseBytes(value): value, Short.SIZE);
 	}
@@ -94,6 +103,7 @@ public final class BitWriter extends BitWriterData{
 	 * @param value	The {@code int} to write.
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 */
+	@Override
 	public void putInt(final int value, final ByteOrder byteOrder){
 		putValue((byteOrder == ByteOrder.BIG_ENDIAN? Integer.reverseBytes(value): value), Integer.SIZE);
 	}
@@ -104,6 +114,7 @@ public final class BitWriter extends BitWriterData{
 	 * @param value	The {@code long} to write.
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 */
+	@Override
 	public void putLong(final long value, final ByteOrder byteOrder){
 		putValue((byteOrder == ByteOrder.BIG_ENDIAN? Long.reverseBytes(value): value), Long.SIZE);
 	}
@@ -114,6 +125,7 @@ public final class BitWriter extends BitWriterData{
 	 * @param value	The {@code float} to write.
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 */
+	@Override
 	public void putFloat(final float value, final ByteOrder byteOrder){
 		putInt(Float.floatToRawIntBits(value), byteOrder);
 	}
@@ -124,6 +136,7 @@ public final class BitWriter extends BitWriterData{
 	 * @param value	The {@code double} to write.
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 */
+	@Override
 	public void putDouble(final double value, final ByteOrder byteOrder){
 		putLong(Double.doubleToRawLongBits(value), byteOrder);
 	}
@@ -135,6 +148,7 @@ public final class BitWriter extends BitWriterData{
 	 * @param text	The {@code String}s to be written.
 	 * @param charset	The charset.
 	 */
+	@Override
 	public void putText(final String text, final Charset charset){
 		putBytes(text.getBytes(charset));
 	}
@@ -145,6 +159,7 @@ public final class BitWriter extends BitWriterData{
 	 *
 	 * @param text	The {@code String}s to be written.
 	 */
+	@Override
 	public void putText(final String text){
 		putText(text, StandardCharsets.UTF_8);
 	}

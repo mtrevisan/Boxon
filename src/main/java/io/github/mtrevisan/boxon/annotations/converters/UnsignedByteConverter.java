@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2020-2021 Mauro Trevisan
+/*
+ * Copyright (c) 2020-2022 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -25,6 +25,9 @@
 package io.github.mtrevisan.boxon.annotations.converters;
 
 
+/**
+ * Convert an unsigned byte to a short.
+ */
 public final class UnsignedByteConverter implements Converter<Byte, Short>{
 
 	UnsignedByteConverter(){}

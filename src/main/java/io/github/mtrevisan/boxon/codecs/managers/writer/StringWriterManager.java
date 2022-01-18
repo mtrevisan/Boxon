@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2020-2021 Mauro Trevisan
+/*
+ * Copyright (c) 2020-2022 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.codecs.managers.writer;
 
-import io.github.mtrevisan.boxon.external.codecs.BitWriter;
+import io.github.mtrevisan.boxon.external.codecs.BitWriterInterface;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -32,11 +32,11 @@ import java.nio.charset.StandardCharsets;
 
 final class StringWriterManager implements WriterManagerInterface{
 
-	private final BitWriter writer;
+	private final BitWriterInterface writer;
 	private Charset charset;
 
 
-	StringWriterManager(final BitWriter writer){
+	StringWriterManager(final BitWriterInterface writer){
 		this.writer = writer;
 		charset = StandardCharsets.UTF_8;
 	}

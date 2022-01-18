@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2020-2021 Mauro Trevisan
+/*
+ * Copyright (c) 2020-2022 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -164,6 +164,11 @@ public final class BitSet{
 	private BitSet(){}
 
 
+	/**
+	 * Ensure the set can contain {@code size} more bits.
+	 *
+	 * @param size	The number of bits to be reserved.
+	 */
 	public void ensureAdditionalSpace(final int size){
 		indexes = Arrays.copyOf(indexes, cardinality + size);
 	}

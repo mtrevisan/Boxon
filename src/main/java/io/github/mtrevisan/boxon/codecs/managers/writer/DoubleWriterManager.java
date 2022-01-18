@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2020-2021 Mauro Trevisan
+/*
+ * Copyright (c) 2020-2022 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -24,16 +24,16 @@
  */
 package io.github.mtrevisan.boxon.codecs.managers.writer;
 
-import io.github.mtrevisan.boxon.external.codecs.BitWriter;
+import io.github.mtrevisan.boxon.external.codecs.BitWriterInterface;
 import io.github.mtrevisan.boxon.external.codecs.ByteOrder;
 
 
 final class DoubleWriterManager implements WriterManagerInterface{
 
-	private final BitWriter writer;
+	private final BitWriterInterface writer;
 
 
-	DoubleWriterManager(final BitWriter writer){
+	DoubleWriterManager(final BitWriterInterface writer){
 		this.writer = writer;
 	}
 

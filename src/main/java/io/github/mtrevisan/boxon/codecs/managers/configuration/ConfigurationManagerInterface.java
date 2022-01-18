@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2020-2021 Mauro Trevisan
+/*
+ * Copyright (c) 2020-2022 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -39,20 +39,18 @@ public interface ConfigurationManagerInterface{
 
 	String getShortDescription();
 
-	Object getDefaultValue(final Field field, final Version protocol) throws EncodeException, CodecException;
+	Object getDefaultValue(Field field, Version protocol) throws EncodeException, CodecException;
 
-	void addProtocolVersionBoundaries(final Collection<String> protocolVersionBoundaries);
+	void addProtocolVersionBoundaries(Collection<String> protocolVersionBoundaries);
 
-	Annotation annotationToBeProcessed(final Version protocol);
+	Annotation annotationToBeProcessed(Version protocol);
 
-	boolean isMandatory(final Annotation annotation);
+	boolean isMandatory(Annotation annotation);
 
-	Map<String, Object> extractConfigurationMap(final Class<?> fieldType, final Version protocol) throws ConfigurationException,
-		CodecException;
+	Map<String, Object> extractConfigurationMap(Class<?> fieldType, Version protocol) throws ConfigurationException, CodecException;
 
-	void validateValue(final String dataKey, final Object dataValue, final Class<?> fieldType) throws EncodeException, CodecException;
+	void validateValue(String dataKey, Object dataValue, Class<?> fieldType) throws EncodeException, CodecException;
 
-	Object convertValue(final String dataKey, final Object dataValue, final Field field, final Version protocol) throws EncodeException,
-		CodecException;
+	Object convertValue(String dataKey, Object dataValue, Field field, Version protocol) throws EncodeException, CodecException;
 
 }

@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2020-2021 Mauro Trevisan
+/*
+ * Copyright (c) 2020-2022 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -29,13 +29,42 @@ import io.github.mtrevisan.boxon.exceptions.FieldException;
 import java.lang.annotation.Annotation;
 
 
+/**
+ * The interface every codec should implement.
+ *
+ * @param <B>	The bind annotation associated with this codec.
+ */
 public interface CodecInterface<B extends Annotation>{
 
-	Object decode(final BitReader reader, final Annotation annotation, final Object rootObject) throws FieldException;
+	/**
+	 * Decode the next field of a message.
+	 *
+	 * @param reader	The reader that holds the raw data of the message (to be interpreted), positioned at a certain index.
+	 * @param annotation	The annotation that links what have to be read and the variable of the POJO.
+	 * @param rootObject	The parent object that holds what have been read so far.
+	 * @return	The object with the new value read and interpreted.
+	 * @throws FieldException	If something bad happened while reading, validating, or converting the raw value.
+	 */
+	Object decode(BitReaderInterface reader, Annotation annotation, Object rootObject) throws FieldException;
 
-	void encode(final BitWriter writer, final Annotation annotation, final Object rootObject, final Object value) throws FieldException;
+	/**
+	 * Encode the next field of a message.
+	 *
+	 * @param writer	The writer, positioned at a certain index, in which the value will be put.
+	 * @param annotation	The annotation that links what have to be read and the variable of the POJO.
+	 * @param rootObject	The parent object that holds what have been read so far.
+	 * @param value	The value that have to be encoded.
+	 * @throws FieldException	If something bad happened while converting, validating, or writing the value.
+	 */
+	void encode(BitWriterInterface writer, Annotation annotation, Object rootObject, Object value) throws FieldException;
 
 
+	/**
+	 * Interpret the annotation as the data type indicated in the generic of this codec.
+	 *
+	 * @param annotation	The generic annotation to be interpreted.
+	 * @return	The casted annotation.
+	 */
 	@SuppressWarnings("unchecked")
 	default B extractBinding(final Annotation annotation){
 		return (B)annotation;

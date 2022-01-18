@@ -22,24 +22,52 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.annotations.converters;
+package io.github.mtrevisan.boxon.external.codecs;
+
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+
+import java.math.BigInteger;
+import java.nio.charset.Charset;
 
 
-/**
- * Convert an unsigned short to an integer.
- */
-public final class UnsignedShortConverter implements Converter<Short, Integer>{
+public interface BitReaderInterface{
 
-	UnsignedShortConverter(){}
+	byte[] array();
 
-	@Override
-	public Integer decode(final Short value){
-		return (value & 0x0000_FFFF);
-	}
+	int position();
 
-	@Override
-	public Short encode(final Integer value){
-		return value.shortValue();
-	}
+
+	void skip(int length);
+
+	void skipUntilTerminator(byte terminator);
+
+
+	Object get(Class<?> type, ByteOrder byteOrder) throws AnnotationException;
+
+	BitSet getBits(int length);
+
+	byte getByte();
+
+	byte[] getBytes(int length);
+
+	short getShort(ByteOrder byteOrder);
+
+	int getInt(ByteOrder byteOrder);
+
+	long getLong(ByteOrder byteOrder);
+
+	BigInteger getInteger(int size, ByteOrder byteOrder);
+
+	float getFloat(ByteOrder byteOrder);
+
+	double getDouble(ByteOrder byteOrder);
+
+	String getText(int length, Charset charset);
+
+	String getText(int length);
+
+	String getTextUntilTerminator(byte terminator, Charset charset);
+
+	String getTextUntilTerminator(byte terminator);
 
 }

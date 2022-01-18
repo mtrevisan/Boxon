@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2020-2021 Mauro Trevisan
+/*
+ * Copyright (c) 2020-2022 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -25,6 +25,9 @@
 package io.github.mtrevisan.boxon.annotations.validators;
 
 
+/**
+ * Validator for <a href="https://en.wikipedia.org/wiki/International_Mobile_Equipment_Identity">IMEI</a> codes.
+ */
 public final class IMEIValidator implements Validator<CharSequence>{
 
 	IMEIValidator(){}

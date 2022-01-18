@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2020-2021 Mauro Trevisan
+/*
+ * Copyright (c) 2020-2022 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -24,10 +24,6 @@
  */
 package io.github.mtrevisan.boxon.exceptions;
 
-import java.io.NotSerializableException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-
 
 /**
  * Thrown if a composition (encoding) went bad.
@@ -39,14 +35,37 @@ public final class EncodeException extends Exception{
 	private static final String EMPTY_STRING = "";
 
 
+	/**
+	 * Constructs a new exception with the specified cause.
+	 *
+	 * @param cause	The cause (which is saved for later retrieval by the {@link #getCause()} method). (A {@code null} value is
+	 * 					permitted, and indicates that the cause is nonexistent or unknown.)
+	 * @return	An instance of this exception.
+	 */
 	public static EncodeException create(final Throwable cause){
 		return new EncodeException(cause);
 	}
 
+	/**
+	 * Constructs a new exception with the specified cause and message, possibly with parameters.
+	 *
+	 * @param cause	The cause (which is saved for later retrieval by the {@link #getCause()} method). (A {@code null} value is
+	 * 					permitted, and indicates that the cause is nonexistent or unknown.)
+	 * @param message	The message to be formatted (see {@link org.slf4j.helpers.MessageFormatter MessageFormatter}).
+	 * @param parameters	The parameters of the message.
+	 * @return	An instance of this exception.
+	 */
 	public static EncodeException create(final Throwable cause, final String message, final Object... parameters){
 		return new EncodeException(ExceptionHelper.format(message, parameters), cause);
 	}
 
+	/**
+	 * Constructs a new exception with the specified message, possibly with parameters.
+	 *
+	 * @param message	The message to be formatted (see {@link org.slf4j.helpers.MessageFormatter MessageFormatter}).
+	 * @param parameters	The parameters of the message.
+	 * @return	An instance of this exception.
+	 */
 	public static EncodeException create(final String message, final Object... parameters){
 		return new EncodeException(ExceptionHelper.format(message, parameters));
 	}
@@ -70,17 +89,6 @@ public final class EncodeException extends Exception{
 		if(cause != null)
 			message += cause.getMessage();
 		return message;
-	}
-
-
-	@SuppressWarnings("unused")
-	private void writeObject(final ObjectOutputStream os) throws NotSerializableException{
-		throw new NotSerializableException(getClass().getName());
-	}
-
-	@SuppressWarnings("unused")
-	private void readObject(final ObjectInputStream is) throws NotSerializableException{
-		throw new NotSerializableException(getClass().getName());
 	}
 
 }

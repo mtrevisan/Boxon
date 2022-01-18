@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2020-2021 Mauro Trevisan
+/*
+ * Copyright (c) 2020-2022 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -34,7 +34,7 @@ public interface PatternMatcher{
 	 * @param pattern	The {@code byte} array containing the pattern, may not be {@code null}.
 	 * @return	an array of pre-processed pattern.
 	 */
-	int[] preProcessPattern(final byte[] pattern);
+	int[] preProcessPattern(byte[] pattern);
 
 	/**
 	 * Returns the position in the text at which the pattern was found.
@@ -46,6 +46,6 @@ public interface PatternMatcher{
 	 * @param processedPattern	Processed pattern, see {@link #preProcessPattern(byte[])}.
 	 * @return the position in the text or {@code -1} if the pattern was not found.
 	 */
-	int indexOf(final byte[] source, final int offset, final byte[] pattern, final int[] processedPattern);
+	int indexOf(byte[] source, int offset, byte[] pattern, int[] processedPattern);
 
 }
