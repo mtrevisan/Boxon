@@ -34,7 +34,16 @@ Boxon...
  - Contains a set of [special annotations](#annotation-special) that handles the various messages peculiarities (defining message header properties, conditional choosing of converter, or object while reading an array, skip bits, checksum, 'constant' assignments)
  - Is capable of handle concatenation of messages, using the correct template under the hood.
  - Can handle [SpEL expressions](https://docs.spring.io/spring/docs/4.3.10.RELEASE/spring-framework-reference/html/expressions.html) on certain fields, thus more powerful and simpler than [Limbo](http://limbo.sourceforge.net/apidocs/)<sup>[1](#footnote-1)</sup> (but less than [janino](https://github.com/janino-compiler/janino), that has other problems).
- - Can do decode and encode of data on the fly with a single annotated class (thus avoiding separate decoder and encoder going out-of-sync).
+ - Can decode and encode data on the fly with a single annotated class (thus avoiding separate decoder and encoder going out-of-sync).
+ - Supported data types are:
+   - Integers: 1-, 4-, 8-, 16-, 32- and 64-bit signed and unsigned integers, little- or big-endian.
+   - Floating point numbers: 32- and 64-bit floating point values.
+   - Bit fields: bit fields with length from 1 to 2,147,483,647 bits.
+   - Strings: fixed-length, variable-length and zero terminated strings with various encodings.
+   - Arrays: fixed-length and variable-length arrays of builtin or user-defined element types.
+   - Objects: custom-type POJOs.
+   - Choices: supports integer keys.
+ - User defined types (arbitrary combination of builtin types)
  - Has templates (annotated classes) that are not complex: they do not call each other uselessly complicating the structure (apart, necessarily, for `@BindArray`), no complicated chains of factories: it's just a parser that works.
  - Supports [SLF4J](http://www.slf4j.org/).
  - Hides the complexities of encoding and decoding, thus simplifying the changes to be made to the code due to frequent protocol changes.
@@ -122,17 +131,18 @@ You can get pre-built JARs (usable on JRE 11 or newer) from [Sonatype](https://o
 8. [Examples](#examples)
     1. [Multi-message parser](#example-multi)
     2. [Message composer](#example-composer)
-9. [Changelog](#changelog)
-    1. [version 2.1.2](#changelog-2.1.2)
-    2. [version 2.1.1](#changelog-2.1.1)
-    3. [version 2.1.0](#changelog-2.1.0)
-    4. [version 2.0.0](#changelog-2.0.0)
-    5. [version 1.1.0](#changelog-1.1.0)
-    6. [version 1.0.0](#changelog-1.0.0)
-    7. [version 0.0.2](#changelog-0.0.2)
-    8. [version 0.0.1](#changelog-0.0.1)
-    9. [version 0.0.0](#changelog-0.0.0)
-10. [License](#license)
+9. [Contributing](#contributing)
+10. [Changelog](#changelog)
+     1. [version 2.1.2](#changelog-2.1.2)
+     2. [version 2.1.1](#changelog-2.1.1)
+     3. [version 2.1.0](#changelog-2.1.0)
+     4. [version 2.0.0](#changelog-2.0.0)
+     5. [version 1.1.0](#changelog-1.1.0)
+     6. [version 1.0.0](#changelog-1.0.0)
+     7. [version 0.0.2](#changelog-0.0.2)
+     8. [version 0.0.1](#changelog-0.0.1)
+     9. [version 0.0.0](#changelog-0.0.0)
+11. [License](#license)
 
 <br/>
 
@@ -1325,6 +1335,15 @@ else{
 ```
 
 Remember that the header that will be written is the first in `@MessageHeader`.
+
+
+<br/>
+
+<a name="contributing"></a>
+## Contributing
+Please report issues to the [issue tracker](https://github.com/mtrevisan/boxon/issues) if you have any difficulties using this module, found a bug, or request a new feature.
+
+Pull requests are welcomed.
 
 
 <br/>
