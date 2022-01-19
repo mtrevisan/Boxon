@@ -24,8 +24,8 @@
  */
 package io.github.mtrevisan.boxon.core;
 
-import io.github.mtrevisan.boxon.core.codecs.internal.queclink.ACKMessageHex;
-import io.github.mtrevisan.boxon.core.codecs.internal.queclink.DeviceTypes;
+import io.github.mtrevisan.boxon.codecs.queclink.ACKMessageHex;
+import io.github.mtrevisan.boxon.codecs.queclink.DeviceTypes;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;

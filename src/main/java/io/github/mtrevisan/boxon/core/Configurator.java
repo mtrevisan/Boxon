@@ -25,10 +25,10 @@
 package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
+import io.github.mtrevisan.boxon.codecs.ConfigurationParser;
+import io.github.mtrevisan.boxon.codecs.Evaluator;
 import io.github.mtrevisan.boxon.core.codecs.BitWriter;
 import io.github.mtrevisan.boxon.core.codecs.BitWriterInterface;
-import io.github.mtrevisan.boxon.core.codecs.internal.ConfigurationParser;
-import io.github.mtrevisan.boxon.core.codecs.internal.Evaluator;
 import io.github.mtrevisan.boxon.core.configurations.ConfigurationKey;
 import io.github.mtrevisan.boxon.core.semanticversioning.Version;
 import io.github.mtrevisan.boxon.exceptions.CodecException;

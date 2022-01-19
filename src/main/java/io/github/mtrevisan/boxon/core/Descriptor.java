@@ -25,8 +25,8 @@
 package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
-import io.github.mtrevisan.boxon.core.codecs.internal.LoaderTemplate;
-import io.github.mtrevisan.boxon.core.codecs.internal.TemplateParser;
+import io.github.mtrevisan.boxon.codecs.LoaderTemplate;
+import io.github.mtrevisan.boxon.codecs.TemplateParser;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.internal.AnnotationDescriptor;

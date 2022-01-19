@@ -24,8 +24,8 @@
  */
 package io.github.mtrevisan.boxon.core;
 
+import io.github.mtrevisan.boxon.codecs.TemplateParser;
 import io.github.mtrevisan.boxon.core.codecs.BitReader;
-import io.github.mtrevisan.boxon.core.codecs.internal.TemplateParser;
 import io.github.mtrevisan.boxon.exceptions.DecodeException;
 import io.github.mtrevisan.boxon.internal.Template;
 

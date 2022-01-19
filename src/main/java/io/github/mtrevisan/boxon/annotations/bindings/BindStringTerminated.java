@@ -54,7 +54,7 @@ public @interface BindStringTerminated{
 	/**
 	 * The type of encoding used for the {@link String}.
 	 *
-	 * @return	The type of encoding used (defaults to {@value io.github.mtrevisan.boxon.core.codecs.internal.LoaderCodec#CHARSET_DEFAULT}).
+	 * @return	The type of encoding used (defaults to {@value io.github.mtrevisan.boxon.codecs.LoaderCodec#CHARSET_DEFAULT}).
 	 */
 	String charset() default "UTF-8";
 
