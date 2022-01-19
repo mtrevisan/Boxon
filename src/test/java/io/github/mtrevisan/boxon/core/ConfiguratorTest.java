@@ -26,8 +26,8 @@ package io.github.mtrevisan.boxon.core;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.mtrevisan.boxon.codecs.queclink.DeviceTypes;
-import io.github.mtrevisan.boxon.codecs.queclink.REGConfigurationASCII;
+import io.github.mtrevisan.boxon.core.codecs.internal.queclink.DeviceTypes;
+import io.github.mtrevisan.boxon.core.codecs.internal.queclink.REGConfigurationASCII;
 import io.github.mtrevisan.boxon.core.configurations.ConfigurationKey;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;

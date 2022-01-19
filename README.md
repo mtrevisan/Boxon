@@ -719,7 +719,7 @@ gives as output the following
       {
          "condition": "mask.hasProtocolVersion()",
          "size": "2",
-         "converter": "io.github.mtrevisan.boxon.codecs.queclink.QueclinkHelper$VersionConverter",
+         "converter": "io.github.mtrevisan.boxon.core.codecs.internal.queclink.QueclinkHelper$VersionConverter",
          "name": "protocolVersion",
          "annotationType": "BindArrayPrimitive",
          "type": "byte",
