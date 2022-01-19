@@ -86,7 +86,6 @@ public final class ParserCore{
 	public ParserCore withEventListener(final EventListener eventListener){
 		loaderCodec.withEventListener(eventListener);
 
-		templateParserCore.withEventListener(eventListener);
 		templateParser.withEventListener(eventListener);
 		configurationParser.withEventListener(eventListener);
 

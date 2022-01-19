@@ -96,6 +96,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	public TemplateParser withEventListener(final EventListener eventListener){
 		this.eventListener = eventListener;
 
+		core.withEventListener(eventListener);
 		parserHelper.withEventListener(eventListener);
 
 		return this;
