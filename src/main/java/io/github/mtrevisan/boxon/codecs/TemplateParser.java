@@ -71,16 +71,17 @@ public final class TemplateParser implements TemplateParserInterface{
 	/**
 	 * Create a template parser.
 	 *
-	 * @param core	The core of the template parser.
+	 * @param loaderCodec	A codec loader.
+	 * @param evaluator	An evaluator.
 	 * @return	A template parser.
 	 */
-	public static TemplateParser create(final TemplateParserCore core){
-		return new TemplateParser(core);
+	public static TemplateParser create(final LoaderCodecInterface loaderCodec, final Evaluator evaluator){
+		return new TemplateParser(loaderCodec, evaluator);
 	}
 
 
-	private TemplateParser(final TemplateParserCore core){
-		this.core = core;
+	private TemplateParser(final LoaderCodecInterface loaderCodec, final Evaluator evaluator){
+		core = TemplateParserCore.create(loaderCodec, evaluator);
 
 		parserHelper = ParserHelper.create();
 
@@ -98,6 +99,48 @@ public final class TemplateParser implements TemplateParserInterface{
 
 		core.withEventListener(eventListener);
 		parserHelper.withEventListener(eventListener);
+
+		return this;
+	}
+
+
+	/**
+	 * Loads all the default protocol classes annotated with {@link MessageHeader}.
+	 *
+	 * @return	This instance, used for chaining.
+	 * @throws AnnotationException	If an annotation is not well formatted.
+	 * @throws TemplateException	If a template is not well formatted.
+	 */
+	public TemplateParser withDefaultTemplates() throws AnnotationException, TemplateException{
+		core.loadDefaultTemplates();
+
+		return this;
+	}
+
+	/**
+	 * Loads all the protocol classes annotated with {@link MessageHeader}.
+	 *
+	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
+	 * @return	This instance, used for chaining.
+	 * @throws AnnotationException	If an annotation is not well formatted.
+	 * @throws TemplateException	If a template is not well formatted.
+	 */
+	public TemplateParser withTemplates(final Class<?>... basePackageClasses) throws AnnotationException, TemplateException{
+		core.loadTemplates(basePackageClasses);
+
+		return this;
+	}
+
+	/**
+	 * Load the specified protocol class annotated with {@link MessageHeader}.
+	 *
+	 * @param templateClass	Template class.
+	 * @return	This instance, used for chaining.
+	 * @throws AnnotationException	If the annotation is not well formatted.
+	 * @throws TemplateException	If the template is not well formatted.
+	 */
+	public TemplateParser withTemplate(final Class<?> templateClass) throws AnnotationException, TemplateException{
+		core.loadTemplate(templateClass);
 
 		return this;
 	}
@@ -364,8 +407,8 @@ public final class TemplateParser implements TemplateParserInterface{
 		v.add(method.toString());
 	}
 
-	public TemplateParserCore getTemplateParserCore(){
-		return core;
+	public LoaderTemplate getLoaderTemplate(){
+		return core.getLoaderTemplate();
 	}
 
 	public Map<String, Object> getBackupContext(){

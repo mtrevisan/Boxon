@@ -65,8 +65,7 @@ public final class Descriptor{
 
 	private Descriptor(final ParserCore parserCore){
 		final TemplateParser templateParser = parserCore.getTemplateParser();
-		loaderTemplate = templateParser.getTemplateParserCore()
-			.getLoaderTemplate();
+		loaderTemplate = templateParser.getLoaderTemplate();
 		backupContext = templateParser.getBackupContext();
 	}
 

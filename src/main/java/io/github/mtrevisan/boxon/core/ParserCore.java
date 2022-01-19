@@ -30,7 +30,6 @@ import io.github.mtrevisan.boxon.codecs.ConfigurationParser;
 import io.github.mtrevisan.boxon.codecs.Evaluator;
 import io.github.mtrevisan.boxon.codecs.LoaderCodec;
 import io.github.mtrevisan.boxon.codecs.TemplateParser;
-import io.github.mtrevisan.boxon.codecs.TemplateParserCore;
 import io.github.mtrevisan.boxon.codecs.TemplateParserInterface;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
@@ -53,7 +52,6 @@ public final class ParserCore{
 
 	private final Evaluator evaluator = Evaluator.create();
 
-	private final TemplateParserCore templateParserCore;
 	private final TemplateParser templateParser;
 	private final ConfigurationParser configurationParser;
 
@@ -72,8 +70,7 @@ public final class ParserCore{
 	private ParserCore(){
 		loaderCodec = LoaderCodec.create();
 
-		templateParserCore = TemplateParserCore.create(loaderCodec, evaluator);
-		templateParser = TemplateParser.create(templateParserCore);
+		templateParser = TemplateParser.create(loaderCodec, evaluator);
 		configurationParser = ConfigurationParser.create(loaderCodec);
 	}
 
@@ -210,7 +207,7 @@ public final class ParserCore{
 	 * @throws TemplateException	If a template is not well formatted.
 	 */
 	public ParserCore withDefaultTemplates() throws AnnotationException, TemplateException{
-		templateParserCore.loadDefaultTemplates();
+		templateParser.withDefaultTemplates();
 
 		return this;
 	}
@@ -224,7 +221,7 @@ public final class ParserCore{
 	 * @throws TemplateException	If a template is not well formatted.
 	 */
 	public ParserCore withTemplates(final Class<?>... basePackageClasses) throws AnnotationException, TemplateException{
-		templateParserCore.loadTemplates(basePackageClasses);
+		templateParser.withTemplates(basePackageClasses);
 
 		return this;
 	}
@@ -238,7 +235,7 @@ public final class ParserCore{
 	 * @throws TemplateException	If the template is not well formatted.
 	 */
 	public ParserCore withTemplate(final Class<?> templateClass) throws AnnotationException, TemplateException{
-		templateParserCore.loadTemplate(templateClass);
+		templateParser.withTemplate(templateClass);
 
 		return this;
 	}

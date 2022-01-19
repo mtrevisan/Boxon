@@ -156,8 +156,7 @@ class CodecObjectTest{
 		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec)
 			.withEventListener(eventListener);
 		Evaluator evaluator = Evaluator.create();
-		TemplateParserCore templateParserCore = TemplateParserCore.create(loaderCodec, evaluator);
-		TemplateParserInterface templateParser = TemplateParser.create(templateParserCore)
+		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator)
 			.withEventListener(eventListener);
 		ReflectionHelper.injectValue(codec, TemplateParserInterface.class, templateParser);
 		ReflectionHelper.injectValue(codec, Evaluator.class, Evaluator.create());

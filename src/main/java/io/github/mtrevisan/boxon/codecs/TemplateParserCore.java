@@ -33,7 +33,7 @@ import io.github.mtrevisan.boxon.external.logs.EventListener;
 
 
 @SuppressWarnings("unused")
-public final class TemplateParserCore{
+final class TemplateParserCore{
 
 	private final LoaderCodecInterface loaderCodec;
 	private final LoaderTemplate loaderTemplate;
@@ -50,7 +50,7 @@ public final class TemplateParserCore{
 	 * @param evaluator	An evaluator.
 	 * @return	A template parser core.
 	 */
-	public static TemplateParserCore create(final LoaderCodecInterface loaderCodec, final Evaluator evaluator){
+	static TemplateParserCore create(final LoaderCodecInterface loaderCodec, final Evaluator evaluator){
 		return new TemplateParserCore(loaderCodec, evaluator);
 	}
 
@@ -69,7 +69,7 @@ public final class TemplateParserCore{
 	 * @param eventListener   The event listener.
 	 * @return	The current instance.
 	 */
-	public TemplateParserCore withEventListener(final EventListener eventListener){
+	TemplateParserCore withEventListener(final EventListener eventListener){
 		this.eventListener = (eventListener != null? eventListener: EventListener.getNoOpInstance());
 
 		loaderTemplate.withEventListener(eventListener);
@@ -84,7 +84,7 @@ public final class TemplateParserCore{
 	 *
 	 * @throws IllegalArgumentException	If the codecs was not loaded yet.
 	 */
-	public void loadDefaultTemplates() throws AnnotationException, TemplateException{
+	void loadDefaultTemplates() throws AnnotationException, TemplateException{
 		loaderTemplate.loadDefaultTemplates();
 	}
 
@@ -93,7 +93,7 @@ public final class TemplateParserCore{
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
 	 */
-	public void loadTemplates(final Class<?>... basePackageClasses) throws AnnotationException, TemplateException{
+	void loadTemplates(final Class<?>... basePackageClasses) throws AnnotationException, TemplateException{
 		loaderTemplate.loadTemplates(basePackageClasses);
 	}
 
@@ -104,7 +104,7 @@ public final class TemplateParserCore{
 	 * @throws AnnotationException	If the annotation is not well formatted.
 	 * @throws TemplateException	If the template is not well formatted.
 	 */
-	public void loadTemplate(final Class<?> templateClass) throws AnnotationException, TemplateException{
+	void loadTemplate(final Class<?> templateClass) throws AnnotationException, TemplateException{
 		loaderTemplate.loadTemplate(templateClass);
 	}
 
@@ -115,7 +115,7 @@ public final class TemplateParserCore{
 	 * @param type	The class of the object to be returned as a {@link Template}.
 	 * @return	The {@link Template} for the given type.
 	 */
-	public <T> Template<T> createTemplate(final Class<T> type) throws AnnotationException{
+	<T> Template<T> createTemplate(final Class<T> type) throws AnnotationException{
 		return loaderTemplate.createTemplate(type);
 	}
 
@@ -125,7 +125,7 @@ public final class TemplateParserCore{
 	 * @param reader	The reader to read the header from.
 	 * @return	The template that is able to decode/encode the next message in the given reader.
 	 */
-	public Template<?> getTemplate(final BitReaderInterface reader) throws TemplateException{
+	Template<?> getTemplate(final BitReaderInterface reader) throws TemplateException{
 		return loaderTemplate.getTemplate(reader);
 	}
 
@@ -135,7 +135,7 @@ public final class TemplateParserCore{
 	 * @param type	The class to retrieve the template.
 	 * @return	The template that is able to decode/encode the given class.
 	 */
-	public Template<?> getTemplate(final Class<?> type) throws TemplateException{
+	Template<?> getTemplate(final Class<?> type) throws TemplateException{
 		return loaderTemplate.getTemplate(type);
 	}
 
@@ -145,7 +145,7 @@ public final class TemplateParserCore{
 	 * @param reader	The reader.
 	 * @return	The index of the next message.
 	 */
-	public int findNextMessageIndex(final BitReaderInterface reader){
+	int findNextMessageIndex(final BitReaderInterface reader){
 		return loaderTemplate.findNextMessageIndex(reader);
 	}
 
@@ -158,7 +158,7 @@ public final class TemplateParserCore{
 		return loaderCodec;
 	}
 
-	public LoaderTemplate getLoaderTemplate(){
+	LoaderTemplate getLoaderTemplate(){
 		return loaderTemplate;
 	}
 
