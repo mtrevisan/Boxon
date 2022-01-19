@@ -70,6 +70,7 @@ public final class EncodeException extends Exception{
 		return new EncodeException(ExceptionHelper.format(message, parameters));
 	}
 
+
 	private EncodeException(final String message, final Throwable cause){
 		super(message, cause);
 	}

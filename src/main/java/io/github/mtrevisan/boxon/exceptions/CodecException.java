@@ -44,6 +44,7 @@ public final class CodecException extends FieldException{
 		return new CodecException(ExceptionHelper.format(message, parameters));
 	}
 
+
 	private CodecException(final String message){
 		super(message);
 	}

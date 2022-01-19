@@ -36,17 +36,39 @@ import java.nio.charset.Charset;
 
 final class ParserHelper{
 
-	private ParserHelper(){}
+	private EventListener eventListener;
 
-	static void writeAffix(final String affix, final String charsetName, final BitWriterInterface writer){
+
+	public static ParserHelper create(){
+		return new ParserHelper();
+	}
+
+
+	private ParserHelper(){
+		eventListener = EventListener.getNoOpInstance();
+	}
+
+	/**
+	 * Assign an event listener.
+	 *
+	 * @param eventListener   The event listener.
+	 * @return	The current instance.
+	 */
+	public ParserHelper withEventListener(final EventListener eventListener){
+		this.eventListener = (eventListener != null? eventListener: EventListener.getNoOpInstance());
+
+		return this;
+	}
+
+	void writeAffix(final String affix, final String charsetName, final BitWriterInterface writer){
 		if(!affix.isEmpty()){
 			final Charset charset = Charset.forName(charsetName);
 			writer.putText(affix, charset);
 		}
 	}
 
-	static void encodeField(final ParserContext<?> parserContext, final BitWriterInterface writer, final LoaderCodecInterface loaderCodec,
-			final EventListener eventListener) throws FieldException{
+	void encodeField(final ParserContext<?> parserContext, final BitWriterInterface writer, final LoaderCodecInterface loaderCodec)
+			throws FieldException{
 		final Class<? extends Annotation> annotationType = parserContext.getBinding().annotationType();
 		final CodecInterface<?> codec = loaderCodec.getCodec(annotationType);
 		if(codec == null)

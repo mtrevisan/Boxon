@@ -60,10 +60,12 @@ import java.util.Map;
 
 public final class TemplateParser implements TemplateParserInterface{
 
-	private final EventListener eventListener;
-
 	private final TemplateParserCore core;
 	private final Map<String, Object> backupContext = new HashMap<>(0);
+
+	private final ParserHelper parserHelper;
+
+	private EventListener eventListener;
 
 
 	/**
@@ -76,10 +78,27 @@ public final class TemplateParser implements TemplateParserInterface{
 		return new TemplateParser(core);
 	}
 
-	private TemplateParser(final TemplateParserCore core){
-		eventListener = core.getEventListener();
 
+	private TemplateParser(final TemplateParserCore core){
 		this.core = core;
+
+		parserHelper = ParserHelper.create();
+
+		eventListener = EventListener.getNoOpInstance();
+	}
+
+	/**
+	 * Assign an event listener.
+	 *
+	 * @param eventListener   The event listener.
+	 * @return	The current instance.
+	 */
+	public TemplateParser withEventListener(final EventListener eventListener){
+		this.eventListener = eventListener;
+
+		parserHelper.withEventListener(eventListener);
+
+		return this;
 	}
 
 	/**
@@ -291,13 +310,13 @@ public final class TemplateParser implements TemplateParserInterface{
 				parserContext.setField(field);
 				parserContext.setBinding(field.getBinding());
 
-				ParserHelper.encodeField(parserContext, writer, loaderCodec, eventListener);
+				parserHelper.encodeField(parserContext, writer, loaderCodec);
 			}
 		}
 
 		final MessageHeader header = template.getHeader();
 		if(header != null)
-			ParserHelper.writeAffix(header.end(), header.charset(), writer);
+			parserHelper.writeAffix(header.end(), header.charset(), writer);
 	}
 
 	private boolean shouldProcessField(final String condition, final Object rootObject){

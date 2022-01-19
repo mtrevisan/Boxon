@@ -44,6 +44,7 @@ public final class ConfigurationException extends FieldException{
 		return new ConfigurationException(ExceptionHelper.format(message, parameters));
 	}
 
+
 	private ConfigurationException(final String message){
 		super(message);
 	}

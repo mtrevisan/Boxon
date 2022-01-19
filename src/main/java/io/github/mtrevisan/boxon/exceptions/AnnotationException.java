@@ -68,6 +68,7 @@ public final class AnnotationException extends FieldException{
 		return new AnnotationException(ExceptionHelper.format(message, parameters));
 	}
 
+
 	private AnnotationException(final String message, final Throwable cause){
 		super(message, cause);
 	}

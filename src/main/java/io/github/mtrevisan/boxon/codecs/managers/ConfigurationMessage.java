@@ -65,6 +65,7 @@ public final class ConfigurationMessage<T>{
 		return new ConfigurationMessage<>(type);
 	}
 
+
 	private ConfigurationMessage(final Class<T> type) throws AnnotationException{
 		this.type = type;
 

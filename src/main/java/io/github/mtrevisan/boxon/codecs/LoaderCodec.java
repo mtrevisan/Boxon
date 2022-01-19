@@ -51,33 +51,35 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	public static final String CHARSET_DEFAULT = "UTF-8";
 
 
-	private final EventListener eventListener;
-
-
 	private final Map<Class<?>, CodecInterface<?>> codecs = new HashMap<>(0);
 
+	private EventListener eventListener;
+
 
 	/**
 	 * Create a codec loader.
 	 *
 	 * @return	A codec loader.
 	 */
-	static LoaderCodec create(){
-		return create(null);
+	public static LoaderCodec create(){
+		return new LoaderCodec();
+	}
+
+
+	private LoaderCodec(){
+		eventListener = EventListener.getNoOpInstance();
 	}
 
 	/**
-	 * Create a codec loader.
+	 * Assign an event listener.
 	 *
-	 * @param eventListener	The event listener.
-	 * @return	A codec loader.
+	 * @param eventListener   The event listener.
+	 * @return	The current instance.
 	 */
-	public static LoaderCodec create(final EventListener eventListener){
-		return new LoaderCodec(eventListener != null? eventListener: EventListener.getNoOpInstance());
-	}
+	public LoaderCodec withEventListener(final EventListener eventListener){
+		this.eventListener = (eventListener != null? eventListener: EventListener.getNoOpInstance());
 
-	private LoaderCodec(final EventListener eventListener){
-		this.eventListener = eventListener;
+		return this;
 	}
 
 	/**

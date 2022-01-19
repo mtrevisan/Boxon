@@ -53,6 +53,7 @@ final class ValueOf<T extends Enum<T>, K>{
 		return new ValueOf<>(type, fieldAccessor, comparator);
 	}
 
+
 	private ValueOf(final Class<T> type, final Function<T, K> fieldAccessor, final Comparator<K> comparator){
 		this.type = type;
 

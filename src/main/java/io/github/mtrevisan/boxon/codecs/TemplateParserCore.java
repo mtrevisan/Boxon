@@ -35,12 +35,12 @@ import io.github.mtrevisan.boxon.external.logs.EventListener;
 @SuppressWarnings("unused")
 public final class TemplateParserCore{
 
-	private final EventListener eventListener;
-
 	private final LoaderCodecInterface loaderCodec;
 	private final LoaderTemplate loaderTemplate;
 
 	private final Evaluator evaluator;
+
+	private EventListener eventListener;
 
 
 	/**
@@ -51,29 +51,30 @@ public final class TemplateParserCore{
 	 * @return	A template parser core.
 	 */
 	public static TemplateParserCore create(final LoaderCodecInterface loaderCodec, final Evaluator evaluator){
-		return new TemplateParserCore(loaderCodec, EventListener.getNoOpInstance(), evaluator);
+		return new TemplateParserCore(loaderCodec, evaluator);
+	}
+
+
+	private TemplateParserCore(final LoaderCodecInterface loaderCodec, final Evaluator evaluator){
+		this.loaderCodec = loaderCodec;
+		loaderTemplate = LoaderTemplate.create(loaderCodec);
+		this.evaluator = evaluator;
+
+		eventListener = EventListener.getNoOpInstance();
 	}
 
 	/**
-	 * Create a template parser core.
+	 * Assign an event listener.
 	 *
-	 * @param loaderCodec	A codec loader.
-	 * @param eventListener	The event listener.
-	 * @param evaluator	An evaluator.
-	 * @return	A template parser core.
+	 * @param eventListener   The event listener.
+	 * @return	The current instance.
 	 */
-	public static TemplateParserCore create(final LoaderCodecInterface loaderCodec, final EventListener eventListener,
-			final Evaluator evaluator){
-		return new TemplateParserCore(loaderCodec, (eventListener != null? eventListener: EventListener.getNoOpInstance()), evaluator);
-	}
+	public TemplateParserCore withEventListener(final EventListener eventListener){
+		this.eventListener = (eventListener != null? eventListener: EventListener.getNoOpInstance());
 
+		loaderTemplate.withEventListener(eventListener);
 
-	private TemplateParserCore(final LoaderCodecInterface loaderCodec, final EventListener eventListener, final Evaluator evaluator){
-		this.eventListener = eventListener;
-
-		this.loaderCodec = loaderCodec;
-		loaderTemplate = LoaderTemplate.create(loaderCodec, eventListener);
-		this.evaluator = evaluator;
+		return this;
 	}
 
 

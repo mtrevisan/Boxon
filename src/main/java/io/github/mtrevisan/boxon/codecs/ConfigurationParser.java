@@ -47,10 +47,10 @@ import java.util.Map;
 
 public final class ConfigurationParser{
 
-	private final EventListener eventListener;
-
 	private final LoaderCodecInterface loaderCodec;
 	private final LoaderConfiguration loaderConfiguration;
+
+	private final ParserHelper parserHelper;
 
 
 	/**
@@ -60,26 +60,29 @@ public final class ConfigurationParser{
 	 * @return	A configuration parser.
 	 */
 	public static ConfigurationParser create(final LoaderCodecInterface loaderCodec){
-		return create(loaderCodec, null);
+		return new ConfigurationParser(loaderCodec);
+	}
+
+
+	private ConfigurationParser(final LoaderCodecInterface loaderCodec){
+		this.loaderCodec = loaderCodec;
+		loaderConfiguration = LoaderConfiguration.create();
+
+		parserHelper = ParserHelper.create();
 	}
 
 	/**
-	 * Create a configuration parser.
+	 * Assign an event listener.
 	 *
-	 * @param loaderCodec	A codec loader.
-	 * @param eventListener	The event listener.
-	 * @return	A configuration parser.
+	 * @param eventListener   The event listener.
+	 * @return	The current instance.
 	 */
-	public static ConfigurationParser create(final LoaderCodecInterface loaderCodec, final EventListener eventListener){
-		return new ConfigurationParser(loaderCodec, (eventListener != null? eventListener: EventListener.getNoOpInstance()));
-	}
+	public ConfigurationParser withEventListener(final EventListener eventListener){
+		loaderConfiguration.withEventListener(eventListener);
 
+		parserHelper.withEventListener(eventListener);
 
-	private ConfigurationParser(final LoaderCodecInterface loaderCodec, final EventListener eventListener){
-		this.eventListener = eventListener;
-
-		this.loaderCodec = loaderCodec;
-		loaderConfiguration = LoaderConfiguration.create(eventListener);
+		return this;
 	}
 
 
@@ -140,7 +143,7 @@ public final class ConfigurationParser{
 		parserContext.setClassName(configuration.getType().getName());
 
 		final ConfigurationHeader header = configuration.getHeader();
-		ParserHelper.writeAffix(header.start(), header.charset(), writer);
+		parserHelper.writeAffix(header.start(), header.charset(), writer);
 
 		//encode message fields:
 		final List<ConfigField> fields = configuration.getConfigurationFields();
@@ -162,14 +165,14 @@ public final class ConfigurationParser{
 			//process value
 			parserContext.setField(field);
 			parserContext.setBinding(annotation);
-			ParserHelper.encodeField(parserContext, writer, loaderCodec, eventListener);
+			parserHelper.encodeField(parserContext, writer, loaderCodec);
 			if(annotation != field.getBinding()){
 				parserContext.setBinding(field.getBinding());
-				ParserHelper.encodeField(parserContext, writer, loaderCodec, eventListener);
+				parserHelper.encodeField(parserContext, writer, loaderCodec);
 			}
 		}
 
-		ParserHelper.writeAffix(header.end(), header.charset(), writer);
+		parserHelper.writeAffix(header.end(), header.charset(), writer);
 	}
 
 	private static void writeSkips(final ConfigurationSkip[] skips, final BitWriterInterface writer, final Version protocol){

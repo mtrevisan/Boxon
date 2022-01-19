@@ -46,6 +46,7 @@ public final class BitWriter extends BitWriterData implements BitWriterInterface
 		return new BitWriter();
 	}
 
+
 	private BitWriter(){}
 
 	@Override

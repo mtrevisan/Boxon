@@ -55,8 +55,6 @@ public final class LoaderTemplate{
 	private static final Function<byte[], int[]> PRE_PROCESSED_PATTERNS = Memoizer.memoize(PATTERN_MATCHER::preProcessPattern);
 
 
-	private final EventListener eventListener;
-
 	private final ThrowingFunction<Class<?>, Template<?>, AnnotationException> templateStore
 		= Memoizer.throwingMemoize(type -> Template.create(type, this::filterAnnotationsWithCodec));
 
@@ -64,6 +62,8 @@ public final class LoaderTemplate{
 		.thenComparing(String::compareTo));
 
 	private final LoaderCodecInterface loaderCodec;
+
+	private EventListener eventListener;
 
 
 	/**
@@ -73,24 +73,26 @@ public final class LoaderTemplate{
 	 * @return	A template parser.
 	 */
 	static LoaderTemplate create(final LoaderCodecInterface loaderCodec){
-		return create(loaderCodec, null);
+		return new LoaderTemplate(loaderCodec);
+	}
+
+
+	private LoaderTemplate(final LoaderCodecInterface loaderCodec){
+		this.loaderCodec = loaderCodec;
+
+		eventListener = EventListener.getNoOpInstance();
 	}
 
 	/**
-	 * Create a template parser.
+	 * Assign an event listener.
 	 *
-	 * @param loaderCodec	A codec loader.
-	 * @param eventListener	The event listener.
-	 * @return	A template parser.
+	 * @param eventListener   The event listener.
+	 * @return	The current instance.
 	 */
-	static LoaderTemplate create(final LoaderCodecInterface loaderCodec, final EventListener eventListener){
-		return new LoaderTemplate(loaderCodec, (eventListener != null? eventListener: EventListener.getNoOpInstance()));
-	}
+	public LoaderTemplate withEventListener(final EventListener eventListener){
+		this.eventListener = (eventListener != null? eventListener: EventListener.getNoOpInstance());
 
-
-	private LoaderTemplate(final LoaderCodecInterface loaderCodec, final EventListener eventListener){
-		this.eventListener = eventListener;
-		this.loaderCodec = loaderCodec;
+		return this;
 	}
 
 	/**

@@ -44,6 +44,7 @@ public final class TemplateException extends FieldException{
 		return new TemplateException(ExceptionHelper.format(message, parameters));
 	}
 
+
 	private TemplateException(final String message){
 		super(message);
 	}

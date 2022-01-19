@@ -65,27 +65,32 @@ public final class ParserCore{
 	 * @return	A basic empty parser core.
 	 */
 	public static ParserCore create(){
-		return create(null);
+		return new ParserCore();
+	}
+
+
+	private ParserCore(){
+		loaderCodec = LoaderCodec.create();
+
+		templateParserCore = TemplateParserCore.create(loaderCodec, evaluator);
+		templateParser = TemplateParser.create(templateParserCore);
+		configurationParser = ConfigurationParser.create(loaderCodec);
 	}
 
 	/**
-	 * Create an empty parser core (context, codecs and templates MUST BE manually loaded! -- templates MUST BE loaded AFTER
-	 * the codecs).
+	 * Assign an event listener.
 	 *
-	 * @param eventListener	The event listener.
-	 * @return	A basic empty parser core.
+	 * @param eventListener   The event listener.
+	 * @return	The current instance.
 	 */
-	public static ParserCore create(final EventListener eventListener){
-		return new ParserCore(eventListener != null? eventListener: EventListener.getNoOpInstance());
-	}
+	public ParserCore withEventListener(final EventListener eventListener){
+		loaderCodec.withEventListener(eventListener);
 
+		templateParserCore.withEventListener(eventListener);
+		templateParser.withEventListener(eventListener);
+		configurationParser.withEventListener(eventListener);
 
-	private ParserCore(final EventListener eventListener){
-		loaderCodec = LoaderCodec.create(eventListener);
-
-		templateParserCore = TemplateParserCore.create(loaderCodec, eventListener, evaluator);
-		templateParser = TemplateParser.create(templateParserCore);
-		configurationParser = ConfigurationParser.create(loaderCodec, eventListener);
+		return this;
 	}
 
 	/**

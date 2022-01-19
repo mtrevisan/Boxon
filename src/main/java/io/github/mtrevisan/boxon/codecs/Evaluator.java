@@ -53,6 +53,7 @@ public final class Evaluator{
 		return new Evaluator();
 	}
 
+
 	private Evaluator(){
 		//trick to allow accessing private fields
 		context.addPropertyAccessor(new MyReflectivePropertyAccessor());

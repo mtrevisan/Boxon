@@ -54,13 +54,13 @@ import java.util.TreeMap;
 
 final class LoaderConfiguration{
 
-	private final EventListener eventListener;
-
 	private final ThrowingFunction<Class<?>, ConfigurationMessage<?>, AnnotationException> configurationStore
 		= Memoizer.throwingMemoize(ConfigurationMessage::create);
 
 	private final Map<String, ConfigurationMessage<?>> configurations = new TreeMap<>(Comparator.comparingInt(String::length).reversed()
 		.thenComparing(String::compareTo));
+
+	private EventListener eventListener;
 
 
 	/**
@@ -69,21 +69,24 @@ final class LoaderConfiguration{
 	 * @return	A template parser.
 	 */
 	static LoaderConfiguration create(){
-		return create(null);
+		return new LoaderConfiguration();
+	}
+
+
+	private LoaderConfiguration(){
+		eventListener = EventListener.getNoOpInstance();
 	}
 
 	/**
-	 * Create a configuration loader.
+	 * Assign an event listener.
 	 *
-	 * @param eventListener	The event listener.
-	 * @return	A template parser.
+	 * @param eventListener   The event listener.
+	 * @return	The current instance.
 	 */
-	static LoaderConfiguration create(final EventListener eventListener){
-		return new LoaderConfiguration(eventListener != null? eventListener: EventListener.getNoOpInstance());
-	}
+	public LoaderConfiguration withEventListener(final EventListener eventListener){
+		this.eventListener = (eventListener != null? eventListener: EventListener.getNoOpInstance());
 
-	private LoaderConfiguration(final EventListener eventListener){
-		this.eventListener = eventListener;
+		return this;
 	}
 
 	/**

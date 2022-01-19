@@ -52,6 +52,7 @@ public final class DecodeException extends Exception{
 		return new DecodeException(errorIndex, cause);
 	}
 
+
 	private DecodeException(final int errorIndex, final Throwable cause){
 		super(cause);
 

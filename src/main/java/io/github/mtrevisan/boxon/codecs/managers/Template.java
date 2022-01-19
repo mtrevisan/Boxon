@@ -77,6 +77,7 @@ public final class Template<T>{
 		return new Template<>(type, filterAnnotationsWithCodec);
 	}
 
+
 	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
 	private Template(final Class<T> type, final Function<Annotation[], List<Annotation>> filterAnnotationsWithCodec)
 			throws AnnotationException{
