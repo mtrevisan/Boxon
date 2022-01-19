@@ -26,7 +26,6 @@ package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.codecs.managers.Memoizer;
-import io.github.mtrevisan.boxon.codecs.managers.ReflectiveClassLoader;
 import io.github.mtrevisan.boxon.codecs.managers.Template;
 import io.github.mtrevisan.boxon.codecs.managers.matchers.BNDMPatternMatcher;
 import io.github.mtrevisan.boxon.codecs.managers.matchers.PatternMatcher;

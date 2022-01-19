@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.codecs.managers;
+package io.github.mtrevisan.boxon.codecs;
 
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfoList;
@@ -44,7 +44,7 @@ import java.util.stream.Collectors;
 /**
  * @see <a href="https://github.com/classgraph/classgraph">ClassGraph</a>
  */
-public final class ReflectiveClassLoader{
+final class ReflectiveClassLoader{
 
 	private final Map<Class<?>, Collection<Class<?>>> metadataStore = new ConcurrentHashMap<>(0);
 
@@ -54,7 +54,7 @@ public final class ReflectiveClassLoader{
 	/**
 	 * @param packageClasses	List of packages to scan into.
 	 */
-	public static ReflectiveClassLoader createFrom(final Class<?>... packageClasses){
+	static ReflectiveClassLoader createFrom(final Class<?>... packageClasses){
 		return new ReflectiveClassLoader(packageClasses);
 	}
 
@@ -79,7 +79,7 @@ public final class ReflectiveClassLoader{
 	 * @param type	Whether a class or an interface (for example).
 	 * @return	The classes.
 	 */
-	public Collection<Class<?>> extractClasses(final Class<?> type){
+	Collection<Class<?>> extractClasses(final Class<?> type){
 		scan(type);
 		final Collection<Class<?>> modules = getImplementationsOf(type);
 		@SuppressWarnings("unchecked")
@@ -90,7 +90,7 @@ public final class ReflectiveClassLoader{
 		return classes;
 	}
 
-	public static Class<?>[] extractCallerClasses(){
+	static Class<?>[] extractCallerClasses(){
 		final StackWalker walker = StackWalker.getInstance();
 		final List<String> classNames = walker.walk(frames -> frames.skip(1)
 			.limit(2)
