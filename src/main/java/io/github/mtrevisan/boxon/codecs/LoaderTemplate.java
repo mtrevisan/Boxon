@@ -177,7 +177,7 @@ public final class LoaderTemplate{
 		return (Template<T>)templateStore.apply(type);
 	}
 
-	private void addTemplatesInner(final List<Template<?>> templates){
+	private void addTemplatesInner(final List<Template<?>> templates) throws TemplateException{
 		//load each template into the available templates list
 		for(int i = 0; i < templates.size(); i ++){
 			final Template<?> template = templates.get(i);
@@ -191,7 +191,7 @@ public final class LoaderTemplate{
 	 *
 	 * @param template	The template to add to the list of available templates.
 	 */
-	private void addTemplateInner(final Template<?> template){
+	private void addTemplateInner(final Template<?> template) throws TemplateException{
 		try{
 			final MessageHeader header = template.getHeader();
 			final Charset charset = Charset.forName(header.charset());
@@ -201,6 +201,8 @@ public final class LoaderTemplate{
 		}
 		catch(final Exception e){
 			eventListener.cannotLoadTemplate(template.getType().getName(), e);
+
+			throw e;
 		}
 	}
 
