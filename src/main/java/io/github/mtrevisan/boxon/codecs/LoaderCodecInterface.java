@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.codecs;
 
-import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
+import io.github.mtrevisan.boxon.core.codecs.CodecInterface;
 
 
 interface LoaderCodecInterface{

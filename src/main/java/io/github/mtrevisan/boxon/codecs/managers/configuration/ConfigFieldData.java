@@ -30,7 +30,7 @@ import io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurati
 import io.github.mtrevisan.boxon.annotations.configurations.CompositeSubField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
-import io.github.mtrevisan.boxon.external.configurations.ConfigurationEnum;
+import io.github.mtrevisan.boxon.core.configurations.ConfigurationEnum;
 
 import java.lang.reflect.Field;
 

@@ -44,8 +44,8 @@ import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.codecs.managers.ConstructorHelper;
 import io.github.mtrevisan.boxon.codecs.managers.ContextHelper;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
-import io.github.mtrevisan.boxon.external.codecs.BitReaderInterface;
-import io.github.mtrevisan.boxon.external.codecs.ByteOrder;
+import io.github.mtrevisan.boxon.core.codecs.BitReaderInterface;
+import io.github.mtrevisan.boxon.core.codecs.ByteOrder;
 
 import java.lang.annotation.Annotation;
 

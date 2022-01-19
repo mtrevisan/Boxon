@@ -22,32 +22,29 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.codecs;
-
-import io.github.mtrevisan.boxon.annotations.Checksum;
-import io.github.mtrevisan.boxon.core.codecs.BitReaderInterface;
-import io.github.mtrevisan.boxon.core.codecs.BitWriterInterface;
-import io.github.mtrevisan.boxon.core.codecs.CodecInterface;
-import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-
-import java.lang.annotation.Annotation;
+package io.github.mtrevisan.boxon.core.configurations;
 
 
-final class CodecChecksum implements CodecInterface<Checksum>{
+/**
+ * Boolean enumeration used in a configuration.
+ */
+public enum BooleanType implements ConfigurationEnum{
 
-	@Override
-	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject) throws AnnotationException{
-		final Checksum binding = extractBinding(annotation);
+	/** {@code True/1} value. */
+	TRUE(1),
+	/** {@code False/0} value. */
+	FALSE(0);
 
-		return reader.get(binding.type(), binding.byteOrder());
+
+	private final int code;
+
+	BooleanType(final int code){
+		this.code = code;
 	}
 
 	@Override
-	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object rootObject, final Object value)
-			throws AnnotationException{
-		final Checksum binding = extractBinding(annotation);
-
-		writer.put(value, binding.byteOrder());
+	public int getCode(){
+		return code;
 	}
 
 }

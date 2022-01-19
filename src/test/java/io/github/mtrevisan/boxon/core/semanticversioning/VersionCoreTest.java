@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.external.semanticversioning;
+package io.github.mtrevisan.boxon.core.semanticversioning;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

@@ -24,15 +24,15 @@
  */
 package io.github.mtrevisan.boxon.codecs;
 
+import io.github.mtrevisan.boxon.core.codecs.BitReader;
+import io.github.mtrevisan.boxon.core.codecs.BitReaderInterface;
+import io.github.mtrevisan.boxon.core.codecs.BitWriter;
+import io.github.mtrevisan.boxon.core.codecs.BitWriterInterface;
+import io.github.mtrevisan.boxon.core.codecs.ByteOrder;
+import io.github.mtrevisan.boxon.core.codecs.CodecInterface;
+import io.github.mtrevisan.boxon.core.logs.EventListener;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
-import io.github.mtrevisan.boxon.external.codecs.BitReader;
-import io.github.mtrevisan.boxon.external.codecs.BitReaderInterface;
-import io.github.mtrevisan.boxon.external.codecs.BitWriter;
-import io.github.mtrevisan.boxon.external.codecs.BitWriterInterface;
-import io.github.mtrevisan.boxon.external.codecs.ByteOrder;
-import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
-import io.github.mtrevisan.boxon.external.logs.EventListener;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

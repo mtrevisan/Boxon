@@ -22,37 +22,49 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.external.configurations;
+package io.github.mtrevisan.boxon.core;
 
 
 /**
- * Holds the constants used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}.
+ * Holds the constants used as a key in the {@link Descriptor}.
  */
-public enum ConfigurationKey{
-	CONFIGURATION_HEADER("header"),
-	CONFIGURATION_FIELDS("fields"),
-	CONFIGURATION_PROTOCOL_VERSION_BOUNDARIES("protocolVersionBoundaries"),
-	CONFIGURATION_COMPOSITE_FIELDS("fields"),
+public enum DescriberKey{
+	CONTEXT("context"),
+	CONTEXT_METHODS("methods"),
 
-	ALTERNATIVES("alternatives"),
+	HEADER("header"),
+	HEADER_START("start"),
+	HEADER_END("end"),
+	HEADER_CHARSET("charset"),
+
+	FIELDS("fields"),
+	FIELD_NAME("name"),
 	FIELD_TYPE("fieldType"),
-	SHORT_DESCRIPTION("shortDescription"),
-	LONG_DESCRIPTION("longDescription"),
-	UNIT_OF_MEASURE("unitOfMeasure"),
-	MIN_PROTOCOL("minProtocol"),
-	MAX_PROTOCOL("maxProtocol"),
-	MIN_VALUE("minValue"),
-	MAX_VALUE("maxValue"),
-	PATTERN("pattern"),
-	ENUMERATION("enumeration"),
-	MUTUALLY_EXCLUSIVE("mutuallyExclusive"),
-	DEFAULT_VALUE("defaultValue"),
-	CHARSET("charset");
+	ANNOTATION_TYPE("annotationType"),
+
+	BIND_CONDITION("condition"),
+	BIND_TYPE("type"),
+	BIND_SELECT_DEFAULT("selectDefault"),
+	BIND_CONVERTER("converter"),
+	BIND_SELECT_CONVERTER_FROM("selectConverterFrom"),
+	BIND_SIZE("size"),
+	BIND_BYTE_ORDER("byteOrder"),
+	BIND_CHARSET("charset"),
+	BIND_TERMINATOR("terminator"),
+	BIND_CONSUME_TERMINATOR("consumeTerminator"),
+	BIND_PREFIX("prefix"),
+	BIND_PREFIX_SIZE("prefixSize"),
+	BIND_SKIP_START("skipStart"),
+	BIND_SKIP_END("skipEnd"),
+	BIND_ALGORITHM("algorithm"),
+	BIND_START_VALUE("startValue"),
+	BIND_VALUE("value"),
+	BIND_VALIDATOR("validator");
 
 
 	private final String name;
 
-	ConfigurationKey(final String name){
+	DescriberKey(final String name){
 		this.name = name;
 	}
 

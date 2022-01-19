@@ -31,14 +31,14 @@ import io.github.mtrevisan.boxon.codecs.managers.ConfigurationMessage;
 import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationHelper;
 import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationManagerFactory;
 import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationManagerInterface;
+import io.github.mtrevisan.boxon.core.codecs.BitWriterInterface;
+import io.github.mtrevisan.boxon.core.logs.EventListener;
+import io.github.mtrevisan.boxon.core.semanticversioning.Version;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
-import io.github.mtrevisan.boxon.external.codecs.BitWriterInterface;
-import io.github.mtrevisan.boxon.external.logs.EventListener;
-import io.github.mtrevisan.boxon.external.semanticversioning.Version;
 
 import java.lang.annotation.Annotation;
 import java.util.List;

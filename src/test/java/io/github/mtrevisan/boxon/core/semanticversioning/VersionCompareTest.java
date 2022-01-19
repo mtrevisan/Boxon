@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2020-2022 Mauro Trevisan
+/**
+ * Copyright (c) 2019-2021 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -22,32 +22,46 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.codecs;
+package io.github.mtrevisan.boxon.core.semanticversioning;
 
-import io.github.mtrevisan.boxon.annotations.Checksum;
-import io.github.mtrevisan.boxon.core.codecs.BitReaderInterface;
-import io.github.mtrevisan.boxon.core.codecs.BitWriterInterface;
-import io.github.mtrevisan.boxon.core.codecs.CodecInterface;
-import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-
-import java.lang.annotation.Annotation;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 
-final class CodecChecksum implements CodecInterface<Checksum>{
+@SuppressWarnings("ALL")
+class VersionCompareTest{
 
-	@Override
-	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject) throws AnnotationException{
-		final Checksum binding = extractBinding(annotation);
+	@Test
+	void shouldReturnFalseIfOtherVersionIsNull(){
+		Version v1 = Version.of("2.3.7");
+		Version v2 = null;
 
-		return reader.get(binding.type(), binding.byteOrder());
+		Assertions.assertNotEquals(v1, v2);
 	}
 
-	@Override
-	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object rootObject, final Object value)
-			throws AnnotationException{
-		final Checksum binding = extractBinding(annotation);
+	@Test
+	void preReleaseShouldHaveLowerPrecedenceThanAssociatedNormal(){
+		Version v1 = Version.of("1.3.7");
+		Version v2 = Version.of("1.3.7-alpha");
 
-		writer.put(value, binding.byteOrder());
+		Assertions.assertTrue(v1.compareTo(v2) > 0);
+		Assertions.assertTrue(v2.compareTo(v1) < 0);
+	}
+
+	@Test
+	void preRelease1(){
+		Version v1 = Version.of("2.3.7-alpha");
+		Version v2 = Version.of("2.3.7-beta");
+
+		Assertions.assertTrue(v1.isLessThan(v2));
+	}
+
+	@Test
+	void preRelease2(){
+		Version v1 = Version.of("2.3.7-beta.1");
+		Version v2 = Version.of("2.3.7-beta.2");
+
+		Assertions.assertTrue(v1.isLessThan(v2));
 	}
 
 }

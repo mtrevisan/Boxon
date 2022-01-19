@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.external.codecs;
+package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 
@@ -108,16 +108,37 @@ public final class BitReader extends BitReaderData implements BitReaderInterface
 		super(buffer);
 	}
 
+	/**
+	 * Skips a given amount of bits.
+	 *
+	 * @param length	The amount of bits to be skipped.
+	 */
 	@Override
 	public void skip(final int length){
 		getBits(length);
 	}
 
+	/**
+	 * Skips an integral number of bytes until a terminator is found.
+	 * <p>The terminator is NOT consumed!</p>
+	 *
+	 * @param terminator	The terminator at which to stop.
+	 */
 	@Override
 	public void skipUntilTerminator(final byte terminator){
 		getTextUntilTerminator(terminator, Charset.defaultCharset());
 	}
 
+	/**
+	 * Reads the given type using the give byte order.
+	 *
+	 * @param type	The type of data to read. Here, the length of the types (in bits) are those defined by java
+	 * 	(see {@link Byte#SIZE}, {@link Short#SIZE}, {@link Integer#SIZE}, {@link Long#SIZE}, {@link Float#SIZE},
+	 * 	and {@link Double#SIZE}).
+	 * @param byteOrder	The byte order used to read the bytes.
+	 * @return	The read value of the given type.
+	 * @throws AnnotationException	If an annotation is not well formatted.
+	 */
 	@Override
 	public Object get(final Class<?> type, final ByteOrder byteOrder) throws AnnotationException{
 		final ParserDataType pdt = ParserDataType.fromType(type);
@@ -128,11 +149,22 @@ public final class BitReader extends BitReaderData implements BitReaderInterface
 		return pdt.read(this, byteOrder);
 	}
 
+	/**
+	 * Reads {@link Byte#SIZE} bits and composes a {@code byte}.
+	 *
+	 * @return	A {@code byte}.
+	 */
 	@Override
 	public byte getByte(){
 		return getInteger(Byte.SIZE, ByteOrder.LITTLE_ENDIAN).byteValue();
 	}
 
+	/**
+	 * Reads the specified amount of {@code byte}s into an array of {@code byte}s.
+	 *
+	 * @param length	The number of {@code byte}s to read.
+	 * @return	An array of {@code byte}s of length {@code n} that contains {@code byte}s read.
+	 */
 	@Override
 	public byte[] getBytes(final int length){
 		final byte[] array = new byte[length];
@@ -141,47 +173,110 @@ public final class BitReader extends BitReaderData implements BitReaderInterface
 		return array;
 	}
 
+	/**
+	 * Reads {@link Short#SIZE} bits and composes a {@code short} with the specified
+	 * {@link ByteOrder}.
+	 *
+	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
+	 * @return	A {@code short}.
+	 */
 	@Override
 	public short getShort(final ByteOrder byteOrder){
 		return getInteger(Short.SIZE, byteOrder).shortValue();
 	}
 
+	/**
+	 * Reads {@link Integer#SIZE} bits and composes an {@code int} with the specified
+	 * {@link ByteOrder}.
+	 *
+	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
+	 * @return	An {@code int}.
+	 */
 	@Override
 	public int getInt(final ByteOrder byteOrder){
 		return getInteger(Integer.SIZE, byteOrder).intValue();
 	}
 
+	/**
+	 * Reads {@link Long#SIZE} bits and composes a {@code long} with the specified
+	 * {@link ByteOrder}.
+	 *
+	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
+	 * @return	A {@code long}.
+	 */
 	@Override
 	public long getLong(final ByteOrder byteOrder){
 		return getInteger(Long.SIZE, byteOrder).longValue();
 	}
 
+	/**
+	 * Reads the next {@code size} bits and composes a {@link BigInteger}.
+	 *
+	 * @param size	The amount of bits to read.
+	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
+	 * @return	A {@link BigInteger} value at the current position.
+	 */
 	@Override
 	public BigInteger getInteger(final int size, final ByteOrder byteOrder){
 		final BitSet bits = getBits(size);
 		return bits.toInteger(size, byteOrder);
 	}
 
+	/**
+	 * Reads {@link Float#SIZE} bits and composes a {@code float} with the specified
+	 * {@link ByteOrder}.
+	 *
+	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
+	 * @return	A {@code float}.
+	 */
 	@Override
 	public float getFloat(final ByteOrder byteOrder){
 		return Float.intBitsToFloat(getInt(byteOrder));
 	}
 
+	/**
+	 * Reads {@link Double#SIZE} bits and composes a {@code double} with the specified
+	 * {@link ByteOrder}.
+	 *
+	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
+	 * @return	A {@code double}.
+	 */
 	@Override
 	public double getDouble(final ByteOrder byteOrder){
 		return Double.longBitsToDouble(getLong(byteOrder));
 	}
 
+	/**
+	 * Reads the specified amount of {@code char}s with a given {@link Charset}.
+	 *
+	 * @param length	The number of {@code char}s to read.
+	 * @param charset	The charset.
+	 * @return	A {@link String} of length {@code n} coded with a given {@link Charset} that contains {@code char}s read.
+	 */
 	@Override
 	public String getText(final int length, final Charset charset){
 		return new String(getBytes(length), charset);
 	}
 
+	/**
+	 * Reads the specified amount of {@code char}s with an {@link StandardCharsets#UTF_8 UTF-8} charset.
+	 *
+	 * @param length	The number of {@code char}s to read.
+	 * @return	A {@link String} of length {@code n} coded with a given {@link Charset} that contains {@code char}s read.
+	 */
 	@Override
 	public String getText(final int length){
 		return getText(length, StandardCharsets.UTF_8);
 	}
 
+	/**
+	 * Reads a string until a terminator is found.
+	 * <p>The terminator is NOT consumed!</p>
+	 *
+	 * @param terminator	The terminator of the string to be read.
+	 * @param charset	The charset.
+	 * @return	A {@link String} of length {@code n} coded with a given {@link Charset} that contains {@code char}s read.
+	 */
 	@Override
 	public String getTextUntilTerminator(final byte terminator, final Charset charset){
 		String text = null;
@@ -196,6 +291,13 @@ public final class BitReader extends BitReaderData implements BitReaderInterface
 		return text;
 	}
 
+	/**
+	 * Reads a string, with an {@link StandardCharsets#UTF_8 UTF-8} charset, until a terminator is found.
+	 * <p>The terminator is NOT consumed!</p>
+	 *
+	 * @param terminator	The terminator of the string to be read.
+	 * @return	A {@link String} of length {@code n} coded in {@link StandardCharsets#UTF_8 UTF-8} that contains {@code char}s read.
+	 */
 	@Override
 	public String getTextUntilTerminator(final byte terminator){
 		return getTextUntilTerminator(terminator, StandardCharsets.UTF_8);

@@ -26,10 +26,10 @@ package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.codecs.managers.Template;
+import io.github.mtrevisan.boxon.core.codecs.BitReaderInterface;
+import io.github.mtrevisan.boxon.core.logs.EventListener;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
-import io.github.mtrevisan.boxon.external.codecs.BitReaderInterface;
-import io.github.mtrevisan.boxon.external.logs.EventListener;
 
 
 @SuppressWarnings("unused")

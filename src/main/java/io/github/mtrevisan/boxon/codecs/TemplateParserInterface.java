@@ -25,10 +25,10 @@
 package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.codecs.managers.Template;
+import io.github.mtrevisan.boxon.core.codecs.BitReaderInterface;
+import io.github.mtrevisan.boxon.core.codecs.BitWriterInterface;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
-import io.github.mtrevisan.boxon.external.codecs.BitReaderInterface;
-import io.github.mtrevisan.boxon.external.codecs.BitWriterInterface;
 
 
 public interface TemplateParserInterface{
