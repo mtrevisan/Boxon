@@ -22,15 +22,45 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.codecs;
+package io.github.mtrevisan.boxon.external.configurations;
 
 
-/** An enumeration for byte orders. */
-public enum ByteOrder{
+/**
+ * Interface every enumeration used in a configuration MUST implement.
+ */
+public interface ConfigurationEnum{
 
-	/** Little-endian byte order. */
-	LITTLE_ENDIAN,
-	/** Big-endian byte order. */
-	BIG_ENDIAN
+	/**
+	 * The code associated with this numeration value.
+	 *
+	 * @return	The code for this enumeration.
+	 */
+	int getCode();
+
+	/**
+	 * Name of the value.
+	 * <p>
+	 * NOTE: already implemented in an Enum! Normally, it doesn't need to be extended.
+	 * </p>
+	 *
+	 * @return	The name of the value.
+	 */
+	String name();
+
+
+	/**
+	 * Convert a text value into an enumeration constant.
+	 *
+	 * @param enumConstants	The array of possible constants.
+	 * @param value	The value to be converted.
+	 * @return	The enumeration constant that matches the value.
+	 */
+	@SuppressWarnings("ReturnOfNull")
+	static ConfigurationEnum extractEnum(final ConfigurationEnum[] enumConstants, final String value){
+		for(int i = 0; i < enumConstants.length; i ++)
+			if(enumConstants[i].name().equals(value))
+				return enumConstants[i];
+		return null;
+	}
 
 }

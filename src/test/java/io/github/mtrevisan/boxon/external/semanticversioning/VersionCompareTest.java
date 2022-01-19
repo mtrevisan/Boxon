@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2020-2022 Mauro Trevisan
+/**
+ * Copyright (c) 2019-2021 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -22,33 +22,46 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.codecs;
+package io.github.mtrevisan.boxon.external.semanticversioning;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 
 @SuppressWarnings("ALL")
-public class BitSetTest{
+class VersionCompareTest{
 
 	@Test
-	void reverseBits(){
-		BitSet bits = BitSet.valueOf(new byte[]{0x10});
-		bits.reverseBits(Byte.SIZE);
+	void shouldReturnFalseIfOtherVersionIsNull(){
+		Version v1 = Version.of("2.3.7");
+		Version v2 = null;
 
-		Assertions.assertEquals(BitSet.valueOf(new byte[]{0x08}), bits);
+		Assertions.assertNotEquals(v1, v2);
+	}
 
+	@Test
+	void preReleaseShouldHaveLowerPrecedenceThanAssociatedNormal(){
+		Version v1 = Version.of("1.3.7");
+		Version v2 = Version.of("1.3.7-alpha");
 
-		bits = BitSet.valueOf(new byte[]{0x16});
-		bits.reverseBits(Byte.SIZE);
+		Assertions.assertTrue(v1.compareTo(v2) > 0);
+		Assertions.assertTrue(v2.compareTo(v1) < 0);
+	}
 
-		Assertions.assertEquals(BitSet.valueOf(new byte[]{0x68}), bits);
+	@Test
+	void preRelease1(){
+		Version v1 = Version.of("2.3.7-alpha");
+		Version v2 = Version.of("2.3.7-beta");
 
+		Assertions.assertTrue(v1.isLessThan(v2));
+	}
 
-		bits = BitSet.valueOf(new byte[]{(byte)0xE7});
-		bits.reverseBits(Byte.SIZE);
+	@Test
+	void preRelease2(){
+		Version v1 = Version.of("2.3.7-beta.1");
+		Version v2 = Version.of("2.3.7-beta.2");
 
-		Assertions.assertEquals(BitSet.valueOf(new byte[]{(byte)0xE7}), bits);
+		Assertions.assertTrue(v1.isLessThan(v2));
 	}
 
 }

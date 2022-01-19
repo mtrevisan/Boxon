@@ -24,6 +24,8 @@
  */
 package io.github.mtrevisan.boxon.codecs.managers;
 
+import io.github.mtrevisan.boxon.internal.ThrowingFunction;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;

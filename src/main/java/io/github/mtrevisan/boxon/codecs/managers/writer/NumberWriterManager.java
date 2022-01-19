@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.codecs.managers.writer;
 
-import io.github.mtrevisan.boxon.core.codecs.BitWriterInterface;
+import io.github.mtrevisan.boxon.external.codecs.BitWriterInterface;
 
 
 final class NumberWriterManager implements WriterManagerInterface{

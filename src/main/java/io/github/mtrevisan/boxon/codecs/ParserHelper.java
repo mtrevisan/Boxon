@@ -24,11 +24,11 @@
  */
 package io.github.mtrevisan.boxon.codecs;
 
-import io.github.mtrevisan.boxon.core.codecs.BitWriterInterface;
-import io.github.mtrevisan.boxon.core.codecs.CodecInterface;
-import io.github.mtrevisan.boxon.core.logs.EventListener;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
+import io.github.mtrevisan.boxon.external.codecs.BitWriterInterface;
+import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
+import io.github.mtrevisan.boxon.external.logs.EventListener;
 
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;

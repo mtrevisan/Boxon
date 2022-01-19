@@ -24,8 +24,8 @@
  */
 package io.github.mtrevisan.boxon.codecs.managers.writer;
 
-import io.github.mtrevisan.boxon.core.codecs.BitWriterInterface;
-import io.github.mtrevisan.boxon.core.codecs.ByteOrder;
+import io.github.mtrevisan.boxon.external.codecs.BitWriterInterface;
+import io.github.mtrevisan.boxon.external.codecs.ByteOrder;
 
 
 final class DoubleWriterManager implements WriterManagerInterface{

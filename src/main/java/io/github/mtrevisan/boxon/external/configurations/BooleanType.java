@@ -22,45 +22,29 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.configurations;
+package io.github.mtrevisan.boxon.external.configurations;
 
 
 /**
- * Interface every enumeration used in a configuration MUST implement.
+ * Boolean enumeration used in a configuration.
  */
-public interface ConfigurationEnum{
+public enum BooleanType implements ConfigurationEnum{
 
-	/**
-	 * The code associated with this numeration value.
-	 *
-	 * @return	The code for this enumeration.
-	 */
-	int getCode();
-
-	/**
-	 * Name of the value.
-	 * <p>
-	 * NOTE: already implemented in an Enum! Normally, it doesn't need to be extended.
-	 * </p>
-	 *
-	 * @return	The name of the value.
-	 */
-	String name();
+	/** {@code True/1} value. */
+	TRUE(1),
+	/** {@code False/0} value. */
+	FALSE(0);
 
 
-	/**
-	 * Convert a text value into an enumeration constant.
-	 *
-	 * @param enumConstants	The array of possible constants.
-	 * @param value	The value to be converted.
-	 * @return	The enumeration constant that matches the value.
-	 */
-	@SuppressWarnings("ReturnOfNull")
-	static ConfigurationEnum extractEnum(final ConfigurationEnum[] enumConstants, final String value){
-		for(int i = 0; i < enumConstants.length; i ++)
-			if(enumConstants[i].name().equals(value))
-				return enumConstants[i];
-		return null;
+	private final int code;
+
+	BooleanType(final int code){
+		this.code = code;
+	}
+
+	@Override
+	public int getCode(){
+		return code;
 	}
 
 }

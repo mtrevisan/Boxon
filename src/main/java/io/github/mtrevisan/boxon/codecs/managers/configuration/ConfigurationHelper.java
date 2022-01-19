@@ -28,10 +28,10 @@ import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
-import io.github.mtrevisan.boxon.core.codecs.ParserDataType;
-import io.github.mtrevisan.boxon.core.configurations.ConfigurationEnum;
-import io.github.mtrevisan.boxon.core.configurations.ConfigurationKey;
-import io.github.mtrevisan.boxon.core.semanticversioning.Version;
+import io.github.mtrevisan.boxon.external.codecs.ParserDataType;
+import io.github.mtrevisan.boxon.external.configurations.ConfigurationEnum;
+import io.github.mtrevisan.boxon.external.configurations.ConfigurationKey;
+import io.github.mtrevisan.boxon.external.semanticversioning.Version;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 
 import java.lang.reflect.Array;

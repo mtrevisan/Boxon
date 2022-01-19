@@ -22,29 +22,12 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.annotations.converters;
-
-import io.github.mtrevisan.boxon.external.codecs.BitSet;
+package io.github.mtrevisan.boxon.internal;
 
 
-/**
- * Convert a bit set to a boolean interpreting only the least common bit (the boolean equals to the lowest bit value).
- */
-public final class BitToBooleanConverter implements Converter<BitSet, Boolean>{
+@FunctionalInterface
+public interface ThrowingFunction<IN, OUT, E extends Exception>{
 
-	BitToBooleanConverter(){}
-
-	@Override
-	public Boolean decode(final BitSet value){
-		return value.isBitSet(0);
-	}
-
-	@Override
-	public BitSet encode(final Boolean value){
-		final BitSet bs = BitSet.empty();
-		if(value)
-			bs.addNextSetBit(0);
-		return bs;
-	}
+	OUT apply(IN in) throws E;
 
 }

@@ -22,12 +22,33 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.codecs.managers;
+package io.github.mtrevisan.boxon.external.codecs;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 
-@FunctionalInterface
-public interface ThrowingFunction<IN, OUT, E extends Exception>{
+@SuppressWarnings("ALL")
+public class BitSetTest{
 
-	OUT apply(IN in) throws E;
+	@Test
+	void reverseBits(){
+		BitSet bits = BitSet.valueOf(new byte[]{0x10});
+		bits.reverseBits(Byte.SIZE);
+
+		Assertions.assertEquals(BitSet.valueOf(new byte[]{0x08}), bits);
+
+
+		bits = BitSet.valueOf(new byte[]{0x16});
+		bits.reverseBits(Byte.SIZE);
+
+		Assertions.assertEquals(BitSet.valueOf(new byte[]{0x68}), bits);
+
+
+		bits = BitSet.valueOf(new byte[]{(byte)0xE7});
+		bits.reverseBits(Byte.SIZE);
+
+		Assertions.assertEquals(BitSet.valueOf(new byte[]{(byte)0xE7}), bits);
+	}
 
 }

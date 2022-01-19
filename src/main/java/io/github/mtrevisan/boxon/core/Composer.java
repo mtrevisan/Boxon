@@ -26,9 +26,9 @@ package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.codecs.TemplateParser;
 import io.github.mtrevisan.boxon.codecs.managers.Template;
-import io.github.mtrevisan.boxon.core.codecs.BitWriter;
-import io.github.mtrevisan.boxon.core.codecs.BitWriterInterface;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
+import io.github.mtrevisan.boxon.external.codecs.BitWriter;
+import io.github.mtrevisan.boxon.external.codecs.BitWriterInterface;
 
 import java.util.Collection;
 

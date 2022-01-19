@@ -39,9 +39,9 @@ module io.github.mtrevisan.boxon{
 	exports io.github.mtrevisan.boxon.annotations.converters;
 	exports io.github.mtrevisan.boxon.annotations.validators;
 	exports io.github.mtrevisan.boxon.core;
-	exports io.github.mtrevisan.boxon.core.codecs;
-	exports io.github.mtrevisan.boxon.core.configurations;
-	exports io.github.mtrevisan.boxon.core.logs;
-	exports io.github.mtrevisan.boxon.core.semanticversioning;
 	exports io.github.mtrevisan.boxon.exceptions;
+	exports io.github.mtrevisan.boxon.external.codecs;
+	exports io.github.mtrevisan.boxon.external.configurations;
+	exports io.github.mtrevisan.boxon.external.logs;
+	exports io.github.mtrevisan.boxon.external.semanticversioning;
 }
