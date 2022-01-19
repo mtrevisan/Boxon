@@ -29,9 +29,9 @@ import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.codecs.managers.ConfigField;
 import io.github.mtrevisan.boxon.codecs.managers.ConfigurationMessage;
 import io.github.mtrevisan.boxon.codecs.managers.ConstructorHelper;
-import io.github.mtrevisan.boxon.codecs.managers.LoaderHelper;
 import io.github.mtrevisan.boxon.codecs.managers.Memoizer;
 import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
+import io.github.mtrevisan.boxon.codecs.managers.ReflectiveClassLoader;
 import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationManagerFactory;
 import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationManagerInterface;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
@@ -94,7 +94,7 @@ final class LoaderConfiguration{
 	 * @throws IllegalArgumentException	If the codecs was not loaded yet.
 	 */
 	void loadDefaultConfigurations() throws AnnotationException, ConfigurationException{
-		loadConfigurations(LoaderHelper.extractCallerClasses());
+		loadConfigurations(ReflectiveClassLoader.extractCallerClasses());
 	}
 
 	/**
@@ -105,8 +105,9 @@ final class LoaderConfiguration{
 	void loadConfigurations(final Class<?>... basePackageClasses) throws AnnotationException, ConfigurationException{
 		eventListener.loadingConfigurations(basePackageClasses);
 
+		final ReflectiveClassLoader reflectiveClassLoader = ReflectiveClassLoader.createFrom(basePackageClasses);
 		/** extract all classes annotated with {@link MessageHeader}. */
-		final Collection<Class<?>> annotatedClasses = LoaderHelper.extractClasses(ConfigurationHeader.class, basePackageClasses);
+		final Collection<Class<?>> annotatedClasses = reflectiveClassLoader.extractClasses(ConfigurationHeader.class);
 		final Map<String, ConfigurationMessage<?>> configurations = extractConfigurations(annotatedClasses);
 		addConfigurationsInner(configurations);
 

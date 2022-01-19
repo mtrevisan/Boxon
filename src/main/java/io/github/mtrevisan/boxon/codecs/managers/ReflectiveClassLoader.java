@@ -33,16 +33,18 @@ import java.lang.annotation.Inherited;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 
 /**
  * @see <a href="https://github.com/classgraph/classgraph">ClassGraph</a>
  */
-final class ReflectiveClassLoader{
+public final class ReflectiveClassLoader{
 
 	private final Map<Class<?>, Collection<Class<?>>> metadataStore = new ConcurrentHashMap<>(0);
 
@@ -52,9 +54,10 @@ final class ReflectiveClassLoader{
 	/**
 	 * @param packageClasses	List of packages to scan into.
 	 */
-	static ReflectiveClassLoader createFrom(final Class<?>... packageClasses){
+	public static ReflectiveClassLoader createFrom(final Class<?>... packageClasses){
 		return new ReflectiveClassLoader(packageClasses);
 	}
+
 
 	private ReflectiveClassLoader(final Class<?>... packageClasses){
 		Objects.requireNonNull(packageClasses, "Packages list cannot be null");
@@ -71,11 +74,44 @@ final class ReflectiveClassLoader{
 	}
 
 	/**
+	 * Scans all classes accessible from the context class loader which belong to the given package.
+	 *
+	 * @param type	Whether a class or an interface (for example).
+	 * @return	The classes.
+	 */
+	public Collection<Class<?>> extractClasses(final Class<?> type){
+		scan(type);
+		final Collection<Class<?>> modules = getImplementationsOf(type);
+		@SuppressWarnings("unchecked")
+		final Collection<Class<?>> singletons = getTypesAnnotatedWith((Class<? extends Annotation>)type);
+		final Collection<Class<?>> classes = new HashSet<>(modules.size() + singletons.size());
+		classes.addAll(modules);
+		classes.addAll(singletons);
+		return classes;
+	}
+
+	public static Class<?>[] extractCallerClasses(){
+		final StackWalker walker = StackWalker.getInstance();
+		final List<String> classNames = walker.walk(frames -> frames.skip(1)
+			.limit(2)
+			.map(StackWalker.StackFrame::getClassName)
+			.collect(Collectors.toList()));
+
+		final Class<?>[] classes = new Class[classNames.size()];
+		try{
+			for(int i = 0; i < classNames.size(); i ++)
+				classes[i] = Class.forName(classNames.get(i));
+		}
+		catch(final ClassNotFoundException ignored){}
+		return classes;
+	}
+
+	/**
 	 * Scan the given packages for classes that extends or implements the given classes.
 	 *
 	 * @param classes	Classes that must be extended or implemented.
 	 */
-	void scan(final Class<?>... classes){
+	private void scan(final Class<?>... classes){
 		Objects.requireNonNull(classes, "Classes cannot be null");
 		if(classes.length == 0)
 			throw new IllegalArgumentException("Class list cannot be empty");
@@ -101,7 +137,7 @@ final class ReflectiveClassLoader{
 	 * @param type	The interface to search the implementation for.
 	 * @return	The collection of classes implementing the given interface.
 	 */
-	Collection<Class<?>> getImplementationsOf(final Class<?> type){
+	private Collection<Class<?>> getImplementationsOf(final Class<?> type){
 		return metadataStore.getOrDefault(type, Collections.emptyList());
 	}
 
@@ -116,7 +152,7 @@ final class ReflectiveClassLoader{
 	 * @param annotation	The annotation to search for.
 	 * @return	The collection of classes.
 	 */
-	Collection<Class<?>> getTypesAnnotatedWith(final Class<? extends Annotation> annotation){
+	private Collection<Class<?>> getTypesAnnotatedWith(final Class<? extends Annotation> annotation){
 		return metadataStore.getOrDefault(annotation, Collections.emptyList());
 	}
 
