@@ -29,6 +29,7 @@ import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.codecs.managers.ConfigField;
 import io.github.mtrevisan.boxon.codecs.managers.ConfigurationMessage;
 import io.github.mtrevisan.boxon.codecs.managers.ConstructorHelper;
+import io.github.mtrevisan.boxon.codecs.managers.LoaderHelper;
 import io.github.mtrevisan.boxon.codecs.managers.Memoizer;
 import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
 import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationManagerFactory;
@@ -93,7 +94,7 @@ final class LoaderConfiguration{
 	 * @throws IllegalArgumentException	If the codecs was not loaded yet.
 	 */
 	void loadDefaultConfigurations() throws AnnotationException, ConfigurationException{
-		loadConfigurations(ReflectionHelper.extractCallerClasses());
+		loadConfigurations(LoaderHelper.extractCallerClasses());
 	}
 
 	/**
@@ -105,7 +106,7 @@ final class LoaderConfiguration{
 		eventListener.loadingConfigurations(basePackageClasses);
 
 		/** extract all classes annotated with {@link MessageHeader}. */
-		final Collection<Class<?>> annotatedClasses = ReflectionHelper.extractClasses(ConfigurationHeader.class, basePackageClasses);
+		final Collection<Class<?>> annotatedClasses = LoaderHelper.extractClasses(ConfigurationHeader.class, basePackageClasses);
 		final Map<String, ConfigurationMessage<?>> configurations = extractConfigurations(annotatedClasses);
 		addConfigurationsInner(configurations);
 

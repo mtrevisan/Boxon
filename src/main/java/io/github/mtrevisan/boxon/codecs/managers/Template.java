@@ -86,8 +86,7 @@ public final class Template<T>{
 		if(header != null)
 			ValidationHelper.assertValidCharset(header.charset());
 
-		final Pair fields = loadAnnotatedFields(type, ReflectionHelper.getAccessibleFields(type),
-			filterAnnotationsWithCodec);
+		final Pair fields = loadAnnotatedFields(type, filterAnnotationsWithCodec);
 		boundedFields = Collections.unmodifiableList(fields.boundedFields);
 		evaluatedFields = Collections.unmodifiableList(fields.evaluatedFields);
 
@@ -96,11 +95,13 @@ public final class Template<T>{
 	}
 
 	@SuppressWarnings("ObjectAllocationInLoop")
-	private Pair loadAnnotatedFields(final Class<T> type, final List<Field> fields,
-			final Function<Annotation[], List<Annotation>> filterAnnotationsWithCodec) throws AnnotationException{
-		final List<BoundedField> boundedFields = new ArrayList<>(fields.size());
-		final List<EvaluatedField> evaluatedFields = new ArrayList<>(fields.size());
-		for(int i = 0; i < fields.size(); i ++){
+	private Pair loadAnnotatedFields(final Class<T> type, final Function<Annotation[], List<Annotation>> filterAnnotationsWithCodec)
+			throws AnnotationException{
+		final List<Field> fields = ReflectionHelper.getAccessibleFields(type);
+		final int size = fields.size();
+		final List<BoundedField> boundedFields = new ArrayList<>(size);
+		final List<EvaluatedField> evaluatedFields = new ArrayList<>(size);
+		for(int i = 0; i < size; i ++){
 			final Field field = fields.get(i);
 			final Skip[] skips = field.getDeclaredAnnotationsByType(Skip.class);
 			final Checksum checksum = field.getDeclaredAnnotation(Checksum.class);

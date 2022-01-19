@@ -78,8 +78,7 @@ public final class ConfigurationMessage<T>{
 			final ConfigurationAnnotationValidator validator = ConfigurationAnnotationValidator.fromAnnotationType(header.annotationType());
 			validator.validate(null, header, minProtocolVersion, maxProtocolVersion);
 
-			final List<ConfigField> configFields = loadAnnotatedFields(type, ReflectionHelper.getAccessibleFields(type), minProtocolVersion,
-				maxProtocolVersion);
+			final List<ConfigField> configFields = loadAnnotatedFields(type, minProtocolVersion, maxProtocolVersion);
 			this.configFields = Collections.unmodifiableList(configFields);
 
 			final List<String> protocolVersionBoundaries = extractProtocolVersionBoundaries(configFields);
@@ -106,11 +105,13 @@ public final class ConfigurationMessage<T>{
 	}
 
 	@SuppressWarnings("ObjectAllocationInLoop")
-	private List<ConfigField> loadAnnotatedFields(final Class<T> type, final List<Field> fields, final Version minProtocolVersion,
-			final Version maxProtocolVersion) throws AnnotationException, CodecException{
-		final Collection<String> uniqueShortDescription = new HashSet<>(fields.size());
-		final List<ConfigField> configFields = new ArrayList<>(fields.size());
-		for(int i = 0; i < fields.size(); i ++){
+	private List<ConfigField> loadAnnotatedFields(final Class<T> type, final Version minProtocolVersion, final Version maxProtocolVersion)
+			throws AnnotationException, CodecException{
+		final List<Field> fields = ReflectionHelper.getAccessibleFields(type);
+		final int size = fields.size();
+		final Collection<String> uniqueShortDescription = new HashSet<>(size);
+		final List<ConfigField> configFields = new ArrayList<>(size);
+		for(int i = 0; i < size; i ++){
 			final Field field = fields.get(i);
 			final ConfigurationSkip[] skips = field.getDeclaredAnnotationsByType(ConfigurationSkip.class);
 

@@ -25,7 +25,6 @@
 package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
-import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
 import io.github.mtrevisan.boxon.codecs.managers.Template;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
@@ -85,7 +84,7 @@ public final class TemplateParserCore{
 	 * @throws IllegalArgumentException	If the codecs was not loaded yet.
 	 */
 	public void loadDefaultTemplates() throws AnnotationException, TemplateException{
-		loaderTemplate.loadTemplates(ReflectionHelper.extractCallerClasses());
+		loaderTemplate.loadDefaultTemplates();
 	}
 
 	/**

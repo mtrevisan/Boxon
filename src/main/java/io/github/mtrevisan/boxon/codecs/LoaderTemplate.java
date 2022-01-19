@@ -25,8 +25,8 @@
 package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
+import io.github.mtrevisan.boxon.codecs.managers.LoaderHelper;
 import io.github.mtrevisan.boxon.codecs.managers.Memoizer;
-import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
 import io.github.mtrevisan.boxon.codecs.managers.Template;
 import io.github.mtrevisan.boxon.codecs.managers.matchers.BNDMPatternMatcher;
 import io.github.mtrevisan.boxon.codecs.managers.matchers.PatternMatcher;
@@ -101,7 +101,7 @@ public final class LoaderTemplate{
 	 * @throws IllegalArgumentException	If the codecs was not loaded yet.
 	 */
 	void loadDefaultTemplates() throws AnnotationException, TemplateException{
-		loadTemplates(ReflectionHelper.extractCallerClasses());
+		loadTemplates(LoaderHelper.extractCallerClasses());
 	}
 
 	/**
@@ -113,7 +113,7 @@ public final class LoaderTemplate{
 		eventListener.loadingTemplates(basePackageClasses);
 
 		/** extract all classes annotated with {@link MessageHeader}. */
-		final Collection<Class<?>> annotatedClasses = ReflectionHelper.extractClasses(MessageHeader.class, basePackageClasses);
+		final Collection<Class<?>> annotatedClasses = LoaderHelper.extractClasses(MessageHeader.class, basePackageClasses);
 		final List<Template<?>> templates = extractTemplates(annotatedClasses);
 		addTemplatesInner(templates);
 

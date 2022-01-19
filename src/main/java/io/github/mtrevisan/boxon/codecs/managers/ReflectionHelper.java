@@ -24,17 +24,14 @@
  */
 package io.github.mtrevisan.boxon.codecs.managers;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InaccessibleObjectException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
 
 
 /**
@@ -43,42 +40,6 @@ import java.util.stream.Collectors;
 public final class ReflectionHelper{
 
 	private ReflectionHelper(){}
-
-
-	public static Class<?>[] extractCallerClasses(){
-		final StackWalker walker = StackWalker.getInstance();
-		final List<String> classNames = walker.walk(frames -> frames.skip(1)
-			.limit(2)
-			.map(StackWalker.StackFrame::getClassName)
-			.collect(Collectors.toList()));
-
-		final Class<?>[] classes = new Class[classNames.size()];
-		try{
-			for(int i = 0; i < classNames.size(); i ++)
-				classes[i] = Class.forName(classNames.get(i));
-		}
-		catch(final ClassNotFoundException ignored){}
-		return classes;
-	}
-
-	/**
-	 * Scans all classes accessible from the context class loader which belong to the given package.
-	 *
-	 * @param type	Whether a class or an interface (for example).
-	 * @param basePackageClasses	A list of classes that resides in a base package(s).
-	 * @return	The classes.
-	 */
-	public static Collection<Class<?>> extractClasses(final Class<?> type, final Class<?>... basePackageClasses){
-		final ReflectiveClassLoader reflectiveClassLoader = ReflectiveClassLoader.createFrom(basePackageClasses);
-		reflectiveClassLoader.scan(type);
-		final Collection<Class<?>> modules = reflectiveClassLoader.getImplementationsOf(type);
-		@SuppressWarnings("unchecked")
-		final Collection<Class<?>> singletons = reflectiveClassLoader.getTypesAnnotatedWith((Class<? extends Annotation>)type);
-		final Collection<Class<?>> classes = new HashSet<>(modules.size() + singletons.size());
-		classes.addAll(modules);
-		classes.addAll(singletons);
-		return classes;
-	}
 
 
 	@SuppressWarnings("unchecked")
@@ -101,6 +62,7 @@ public final class ReflectionHelper{
 				+ value.getClass().getSimpleName(), e);
 		}
 	}
+
 
 	public static <T> void injectValue(final Object obj, final Class<T> fieldType, final T value){
 		try{

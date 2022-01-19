@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.codecs.managers.ConstructorHelper;
+import io.github.mtrevisan.boxon.codecs.managers.LoaderHelper;
 import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
 import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
 import io.github.mtrevisan.boxon.external.logs.EventListener;
@@ -85,7 +86,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	 * <p>This method SHOULD BE called from a method inside a class that lies on a parent of all the codecs.</p>
 	 */
 	public void loadDefaultCodecs(){
-		loadCodecs(ReflectionHelper.extractCallerClasses());
+		loadCodecs(LoaderHelper.extractCallerClasses());
 	}
 
 	/**
@@ -97,7 +98,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 		eventListener.loadingCodecs(basePackageClasses);
 
 		/** extract all classes that implements {@link CodecInterface}. */
-		final Collection<Class<?>> derivedClasses = ReflectionHelper.extractClasses(CodecInterface.class, basePackageClasses);
+		final Collection<Class<?>> derivedClasses = LoaderHelper.extractClasses(CodecInterface.class, basePackageClasses);
 		final List<CodecInterface<?>> codecs = extractCodecs(derivedClasses);
 		addCodecsInner(codecs);
 
