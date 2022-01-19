@@ -42,7 +42,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @see <a href="https://github.com/classgraph/classgraph">ClassGraph</a>
  */
-public final class ReflectiveClassLoader{
+final class ReflectiveClassLoader{
 
 	private final Map<Class<?>, Collection<Class<?>>> metadataStore = new ConcurrentHashMap<>(0);
 
@@ -52,7 +52,7 @@ public final class ReflectiveClassLoader{
 	/**
 	 * @param packageClasses	List of packages to scan into.
 	 */
-	public static ReflectiveClassLoader createFrom(final Class<?>... packageClasses){
+	static ReflectiveClassLoader createFrom(final Class<?>... packageClasses){
 		return new ReflectiveClassLoader(packageClasses);
 	}
 
@@ -75,7 +75,7 @@ public final class ReflectiveClassLoader{
 	 *
 	 * @param classes	Classes that must be extended or implemented.
 	 */
-	public void scan(final Class<?>... classes){
+	void scan(final Class<?>... classes){
 		Objects.requireNonNull(classes, "Classes cannot be null");
 		if(classes.length == 0)
 			throw new IllegalArgumentException("Class list cannot be empty");
@@ -101,7 +101,7 @@ public final class ReflectiveClassLoader{
 	 * @param type	The interface to search the implementation for.
 	 * @return	The collection of classes implementing the given interface.
 	 */
-	public Collection<Class<?>> getImplementationsOf(final Class<?> type){
+	Collection<Class<?>> getImplementationsOf(final Class<?> type){
 		return metadataStore.getOrDefault(type, Collections.emptyList());
 	}
 
