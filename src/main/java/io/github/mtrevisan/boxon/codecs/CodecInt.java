@@ -26,10 +26,10 @@ package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.bindings.BindInt;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
+import io.github.mtrevisan.boxon.codecs.managers.Injected;
 import io.github.mtrevisan.boxon.core.codecs.BitReaderInterface;
 import io.github.mtrevisan.boxon.core.codecs.BitWriterInterface;
 import io.github.mtrevisan.boxon.core.codecs.CodecInterface;
-import io.github.mtrevisan.boxon.internal.Injected;
 
 import java.lang.annotation.Annotation;
 

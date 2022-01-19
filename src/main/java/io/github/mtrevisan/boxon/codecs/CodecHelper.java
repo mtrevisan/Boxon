@@ -26,6 +26,8 @@ package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
+import io.github.mtrevisan.boxon.codecs.managers.ConstructorHelper;
+import io.github.mtrevisan.boxon.codecs.managers.ContextHelper;
 import io.github.mtrevisan.boxon.core.codecs.BitSet;
 import io.github.mtrevisan.boxon.core.codecs.BitWriterInterface;
 import io.github.mtrevisan.boxon.core.codecs.ByteOrder;
@@ -33,8 +35,6 @@ import io.github.mtrevisan.boxon.core.codecs.ParserDataType;
 import io.github.mtrevisan.boxon.core.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
-import io.github.mtrevisan.boxon.internal.ConstructorHelper;
-import io.github.mtrevisan.boxon.internal.ContextHelper;
 
 import java.lang.reflect.Array;
 

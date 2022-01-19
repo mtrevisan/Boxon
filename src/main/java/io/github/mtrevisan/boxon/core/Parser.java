@@ -25,9 +25,9 @@
 package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.codecs.TemplateParser;
+import io.github.mtrevisan.boxon.codecs.managers.Template;
 import io.github.mtrevisan.boxon.core.codecs.BitReader;
 import io.github.mtrevisan.boxon.exceptions.DecodeException;
-import io.github.mtrevisan.boxon.internal.Template;
 
 import java.io.File;
 import java.io.FileNotFoundException;

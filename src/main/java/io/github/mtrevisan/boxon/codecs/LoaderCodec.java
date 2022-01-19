@@ -24,10 +24,10 @@
  */
 package io.github.mtrevisan.boxon.codecs;
 
+import io.github.mtrevisan.boxon.codecs.managers.ConstructorHelper;
+import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
 import io.github.mtrevisan.boxon.core.codecs.CodecInterface;
 import io.github.mtrevisan.boxon.core.logs.EventListener;
-import io.github.mtrevisan.boxon.internal.ConstructorHelper;
-import io.github.mtrevisan.boxon.internal.ReflectionHelper;
 
 import java.util.ArrayList;
 import java.util.Collection;
