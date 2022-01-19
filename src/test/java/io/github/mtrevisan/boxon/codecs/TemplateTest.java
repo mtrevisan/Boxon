@@ -42,13 +42,13 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.annotations.checksummers.CRC16CCITT;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
-import io.github.mtrevisan.boxon.codecs.managers.BoundedField;
-import io.github.mtrevisan.boxon.codecs.managers.EvaluatedField;
-import io.github.mtrevisan.boxon.codecs.managers.Template;
 import io.github.mtrevisan.boxon.core.codecs.BitSet;
 import io.github.mtrevisan.boxon.core.codecs.ByteOrder;
 import io.github.mtrevisan.boxon.core.logs.EventListener;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.internal.BoundedField;
+import io.github.mtrevisan.boxon.internal.EvaluatedField;
+import io.github.mtrevisan.boxon.internal.Template;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

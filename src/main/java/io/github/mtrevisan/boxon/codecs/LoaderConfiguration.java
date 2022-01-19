@@ -26,20 +26,20 @@ package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
-import io.github.mtrevisan.boxon.codecs.managers.ConfigField;
-import io.github.mtrevisan.boxon.codecs.managers.ConfigurationMessage;
-import io.github.mtrevisan.boxon.codecs.managers.ConstructorHelper;
-import io.github.mtrevisan.boxon.codecs.managers.Memoizer;
-import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
-import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationManagerFactory;
-import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationManagerInterface;
 import io.github.mtrevisan.boxon.core.logs.EventListener;
 import io.github.mtrevisan.boxon.core.semanticversioning.Version;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
-import io.github.mtrevisan.boxon.codecs.managers.ThrowingFunction;
+import io.github.mtrevisan.boxon.internal.ThrowingFunction;
+import io.github.mtrevisan.boxon.internal.ConfigField;
+import io.github.mtrevisan.boxon.internal.ConfigurationMessage;
+import io.github.mtrevisan.boxon.internal.ConstructorHelper;
+import io.github.mtrevisan.boxon.internal.Memoizer;
+import io.github.mtrevisan.boxon.internal.ReflectionHelper;
+import io.github.mtrevisan.boxon.internal.configuration.ConfigurationManagerFactory;
+import io.github.mtrevisan.boxon.internal.configuration.ConfigurationManagerInterface;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;

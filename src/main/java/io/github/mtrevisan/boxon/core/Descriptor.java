@@ -27,11 +27,11 @@ package io.github.mtrevisan.boxon.core;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.codecs.LoaderTemplate;
 import io.github.mtrevisan.boxon.codecs.TemplateParser;
-import io.github.mtrevisan.boxon.codecs.managers.AnnotationDescriptor;
-import io.github.mtrevisan.boxon.codecs.managers.BoundedField;
-import io.github.mtrevisan.boxon.codecs.managers.Template;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
+import io.github.mtrevisan.boxon.internal.AnnotationDescriptor;
+import io.github.mtrevisan.boxon.internal.BoundedField;
+import io.github.mtrevisan.boxon.internal.Template;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;

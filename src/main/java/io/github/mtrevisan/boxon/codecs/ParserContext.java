@@ -24,9 +24,9 @@
  */
 package io.github.mtrevisan.boxon.codecs;
 
-import io.github.mtrevisan.boxon.codecs.managers.BoundedField;
-import io.github.mtrevisan.boxon.codecs.managers.ConfigField;
-import io.github.mtrevisan.boxon.codecs.managers.ContextHelper;
+import io.github.mtrevisan.boxon.internal.BoundedField;
+import io.github.mtrevisan.boxon.internal.ConfigField;
+import io.github.mtrevisan.boxon.internal.ContextHelper;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 
 import java.lang.annotation.Annotation;
