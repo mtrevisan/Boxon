@@ -112,7 +112,10 @@ abstract class BitReaderData{
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Reads the next {@code length} bits and composes a {@link BitSet}.
+	 *
+	 * @param length	The amount of bits to read.
+	 * @return	A {@link BitSet} value at the {@link BitReader}'s current position.
 	 */
 	public final BitSet getBits(final int length){
 		final BitSet bits = BitSet.empty();
@@ -176,7 +179,9 @@ abstract class BitReaderData{
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Reads {@link Byte#SIZE} bits and composes a {@code byte}.
+	 *
+	 * @return	A {@code byte}.
 	 */
 	public abstract byte getByte();
 
@@ -195,14 +200,18 @@ abstract class BitReaderData{
 
 
 	/**
-	 * {@inheritDoc}
+	 * Returns the byte array that backs this reader.
+	 *
+	 * @return	The array that backs this reader.
 	 */
 	public final byte[] array(){
 		return buffer.array();
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Gets the position of the backing {@link ByteBuffer} in integral number of {@code byte}s (lower bound).
+	 *
+	 * @return	The position of the backing buffer in {@code byte}s.
 	 */
 	public final int position(){
 		return buffer.position() - ((remaining + Byte.SIZE - 1) >>> 3);

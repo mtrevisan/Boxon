@@ -41,7 +41,10 @@ class BitWriterData{
 
 
 	/**
-	 * {@inheritDoc}
+	 * Writes {@code value} to this {@link BitWriter} using {@code length} bits.
+	 *
+	 * @param value	The value to write.
+	 * @param length	The amount of bits to use when writing {@code value}.
 	 */
 	public final void putBits(final BitSet value, final int length){
 		//if the value that we're writing is too large to be placed entirely in the cache, then we need to place as
