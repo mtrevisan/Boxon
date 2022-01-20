@@ -360,7 +360,7 @@ public final class TemplateParser implements TemplateParserInterface{
 
 		final MessageHeader header = template.getHeader();
 		if(header != null)
-			parserHelper.writeAffix(header.end(), header.charset(), writer);
+			ParserHelper.writeAffix(header.end(), header.charset(), writer);
 	}
 
 	private boolean shouldProcessField(final String condition, final Object rootObject){

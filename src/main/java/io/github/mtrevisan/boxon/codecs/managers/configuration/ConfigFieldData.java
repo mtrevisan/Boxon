@@ -36,6 +36,7 @@ import java.lang.reflect.Field;
 
 
 /** Data associated to an annotated field. */
+@SuppressWarnings("ClassWithTooManyFields")
 public final class ConfigFieldData{
 
 	public final Field field;

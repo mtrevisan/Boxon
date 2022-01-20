@@ -57,11 +57,11 @@ public final class Version implements Comparable<Version>{
 	private static final Pattern PATTERN_PREFIX = Pattern.compile("((?=[" + BUILD_PREFIX + PRE_RELEASE_PREFIX + "])|(?<=[" + BUILD_PREFIX + PRE_RELEASE_PREFIX + "]))");
 
 
-	private final Integer major;
-	private final Integer minor;
-	private final Integer patch;
-	private final String[] preRelease;
-	private final String[] build;
+	private Integer major;
+	private Integer minor;
+	private Integer patch;
+	private String[] preRelease;
+	private String[] build;
 
 
 	/**
@@ -129,14 +129,15 @@ public final class Version implements Comparable<Version>{
 
 	private Version(String version){
 		if(StringHelper.isBlank(version)){
-			major = null;
-			minor = null;
-			patch = null;
 			preRelease = EMPTY_ARRAY;
 			build = EMPTY_ARRAY;
 			return;
 		}
 
+		parseVersion(version);
+	}
+
+	private void parseVersion(String version){
 		version = version.trim();
 		if(!startsWithNumber(version))
 			throw new IllegalArgumentException("Argument is not a valid version");

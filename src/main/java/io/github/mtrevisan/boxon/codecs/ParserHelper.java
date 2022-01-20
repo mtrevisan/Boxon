@@ -60,7 +60,7 @@ final class ParserHelper{
 		return this;
 	}
 
-	void writeAffix(final String affix, final String charsetName, final BitWriterInterface writer){
+	static void writeAffix(final String affix, final String charsetName, final BitWriterInterface writer){
 		if(!affix.isEmpty()){
 			final Charset charset = Charset.forName(charsetName);
 			writer.putText(affix, charset);

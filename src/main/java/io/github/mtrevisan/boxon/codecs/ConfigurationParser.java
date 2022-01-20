@@ -143,7 +143,7 @@ public final class ConfigurationParser{
 		parserContext.setClassName(configuration.getType().getName());
 
 		final ConfigurationHeader header = configuration.getHeader();
-		parserHelper.writeAffix(header.start(), header.charset(), writer);
+		ParserHelper.writeAffix(header.start(), header.charset(), writer);
 
 		//encode message fields:
 		final List<ConfigField> fields = configuration.getConfigurationFields();
@@ -172,7 +172,7 @@ public final class ConfigurationParser{
 			}
 		}
 
-		parserHelper.writeAffix(header.end(), header.charset(), writer);
+		ParserHelper.writeAffix(header.end(), header.charset(), writer);
 	}
 
 	private static void writeSkips(final ConfigurationSkip[] skips, final BitWriterInterface writer, final Version protocol){
