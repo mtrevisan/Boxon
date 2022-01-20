@@ -201,7 +201,7 @@ public final class LoaderTemplate{
 			for(int i = 0; i < starts.length; i ++)
 				loadTemplateInner(template, starts[i], charset);
 		}
-		catch(final Exception e){
+		catch(final TemplateException e){
 			eventListener.cannotLoadTemplate(template.getType().getName(), e);
 
 			throw e;
