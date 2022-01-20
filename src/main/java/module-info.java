@@ -42,6 +42,7 @@ module io.github.mtrevisan.boxon{
 	exports io.github.mtrevisan.boxon.exceptions;
 	exports io.github.mtrevisan.boxon.external.codecs;
 	exports io.github.mtrevisan.boxon.external.configurations;
+	exports io.github.mtrevisan.boxon.external.descriptions;
 	exports io.github.mtrevisan.boxon.external.logs;
 	exports io.github.mtrevisan.boxon.external.semanticversioning;
 }
