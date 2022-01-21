@@ -115,7 +115,7 @@ public final class LoaderTemplate{
 
 		final ReflectiveClassLoader reflectiveClassLoader = ReflectiveClassLoader.createFrom(basePackageClasses);
 		/** extract all classes annotated with {@link MessageHeader}. */
-		final Collection<Class<?>> annotatedClasses = reflectiveClassLoader.extractClasses(MessageHeader.class);
+		final Collection<Class<?>> annotatedClasses = reflectiveClassLoader.extractClassesWithAnnotation(MessageHeader.class);
 		final List<Template<?>> templates = extractTemplates(annotatedClasses);
 		addTemplatesInner(templates);
 

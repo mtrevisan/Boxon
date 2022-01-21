@@ -32,8 +32,6 @@ import java.lang.annotation.Annotation;
 import java.lang.annotation.Inherited;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -73,22 +71,79 @@ final class ReflectiveClassLoader{
 			.acceptPackages(packageNames.toArray(String[]::new));
 	}
 
+
 	/**
-	 * Scans all classes accessible from the context class loader which belong to the given package.
+	 * Get types annotated with a given annotation, both classes and annotations.
+	 * <p>{@link Inherited} is not honored by default.</p>
+	 * <p>When honoring {@link Inherited}, meta-annotation should only effect annotated super classes and its sub types.</p>
+	 * <p><i>Note that this ({@link Inherited}) meta-annotation type has no effect if the annotated type is used for
+	 * anything other then a class. Also, this meta-annotation causes annotations to be inherited only from superclasses;
+	 * annotations on implemented interfaces have no effect</i>.</p>
 	 *
-	 * @param type	Whether a class or an interface (for example).
+	 * @param annotation	The annotation to search for.
+	 * @return	The collection of classes.
+	 */
+	List<Class<?>> extractClassesWithAnnotation(final Class<? extends Annotation> annotation){
+		final List<Class<?>> loadedClasses = getStoredClasses(annotation);
+		if(loadedClasses.isEmpty())
+			try(final ScanResult scanResult = classGraph.scan()){
+				final ClassInfoList classInfo = scanResult.getClassesWithAnnotation(annotation.getName());
+				final List<Class<?>> list = classInfo.loadClasses();
+				metadataStore.put(annotation, list);
+
+				loadedClasses.addAll(list);
+			}
+		return loadedClasses;
+	}
+
+	/**
+	 * Gets all classes implementing a give interface.
+	 *
+	 * @param type	The interface to search the implementation for.
+	 * @return	The collection of classes implementing the given interface.
+	 */
+	List<Class<?>> extractClassesImplementing(final Class<?> type){
+		final List<Class<?>> loadedClasses = getStoredClasses(type);
+		if(loadedClasses.isEmpty())
+			try(final ScanResult scanResult = classGraph.scan()){
+				final ClassInfoList classInfo = scanResult.getClassesImplementing(type.getName());
+				final List<Class<?>> list = classInfo.loadClasses();
+				metadataStore.put(type, list);
+
+				loadedClasses.addAll(list);
+			}
+		return loadedClasses;
+	}
+
+	/**
+	 * Scan the given packages for classes that have a field with the given annotation.
+	 *
+	 * @param type	Annotation that must be extended or implemented.
 	 * @return	The classes.
 	 */
-	Collection<Class<?>> extractClasses(final Class<?> type){
-		scan(type);
-		final Collection<Class<?>> modules = getImplementationsOf(type);
-		@SuppressWarnings("unchecked")
-		final Collection<Class<?>> singletons = getTypesAnnotatedWith((Class<? extends Annotation>)type);
-		final Collection<Class<?>> classes = new HashSet<>(modules.size() + singletons.size());
-		classes.addAll(modules);
-		classes.addAll(singletons);
-		return classes;
+	public List<Class<?>> extractClassesWithFieldAnnotation(final Class<? extends Annotation> type){
+		final List<Class<?>> loadedClasses = getStoredClasses(type);
+		if(loadedClasses.isEmpty())
+			try(final ScanResult scanResult = classGraph.scan()){
+				final ClassInfoList classInfo = scanResult.getClassesWithFieldAnnotation(type.getName());
+				final List<Class<?>> list = classInfo.loadClasses();
+				metadataStore.put(type, list);
+
+				loadedClasses.addAll(list);
+			}
+		return loadedClasses;
 	}
+
+	/**
+	 * Gets all classes implementing a give interface.
+	 *
+	 * @param type	The interface to search the implementation for.
+	 * @return	The collection of classes implementing the given interface.
+	 */
+	private List<Class<?>> getStoredClasses(final Class<?> type){
+		return (List<Class<?>>)metadataStore.getOrDefault(type, new ArrayList<>(0));
+	}
+
 
 	static Class<?>[] extractCallerClasses(){
 		final StackWalker walker = StackWalker.getInstance();
@@ -104,56 +159,6 @@ final class ReflectiveClassLoader{
 		}
 		catch(final ClassNotFoundException ignored){}
 		return classes;
-	}
-
-	/**
-	 * Scan the given packages for classes that extends or implements the given classes.
-	 *
-	 * @param classes	Classes that must be extended or implemented.
-	 */
-	private void scan(final Class<?>... classes){
-		Objects.requireNonNull(classes, "Classes cannot be null");
-		if(classes.length == 0)
-			throw new IllegalArgumentException("Class list cannot be empty");
-
-		try(final ScanResult scanResult = classGraph.scan()){
-			for(int i = 0; i < classes.length; i ++)
-				scan(scanResult, classes[i]);
-		}
-	}
-
-	private void scan(final ScanResult scanResult, final Class<?> filteringClass){
-		final ClassInfoList classInfo = (filteringClass.isAnnotation()
-			? scanResult.getClassesWithAnnotation(filteringClass.getName())
-			: scanResult.getClassesImplementing(filteringClass.getName()));
-		final List<Class<?>> loadedClasses = classInfo.loadClasses();
-		metadataStore.computeIfAbsent(filteringClass, classes -> new ArrayList<>(loadedClasses.size()))
-			.addAll(loadedClasses);
-	}
-
-	/**
-	 * Gets all classes implementing a give interface.
-	 *
-	 * @param type	The interface to search the implementation for.
-	 * @return	The collection of classes implementing the given interface.
-	 */
-	private Collection<Class<?>> getImplementationsOf(final Class<?> type){
-		return metadataStore.getOrDefault(type, Collections.emptyList());
-	}
-
-	/**
-	 * Get types annotated with a given annotation, both classes and annotations.
-	 * <p>{@link Inherited} is not honored by default.</p>
-	 * <p>When honoring {@link Inherited}, meta-annotation should only effect annotated super classes and its sub types.</p>
-	 * <p><i>Note that this ({@link Inherited}) meta-annotation type has no effect if the annotated type is used for
-	 * anything other then a class. Also, this meta-annotation causes annotations to be inherited only from superclasses;
-	 * annotations on implemented interfaces have no effect</i>.</p>
-	 *
-	 * @param annotation	The annotation to search for.
-	 * @return	The collection of classes.
-	 */
-	private Collection<Class<?>> getTypesAnnotatedWith(final Class<? extends Annotation> annotation){
-		return metadataStore.getOrDefault(annotation, Collections.emptyList());
 	}
 
 }

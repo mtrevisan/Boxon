@@ -100,7 +100,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 
 		final ReflectiveClassLoader reflectiveClassLoader = ReflectiveClassLoader.createFrom(basePackageClasses);
 		/** extract all classes that implements {@link CodecInterface}. */
-		final Collection<Class<?>> derivedClasses = reflectiveClassLoader.extractClasses(CodecInterface.class);
+		final Collection<Class<?>> derivedClasses = reflectiveClassLoader.extractClassesImplementing(CodecInterface.class);
 		final List<CodecInterface<?>> codecs = extractCodecs(derivedClasses);
 		addCodecsInner(codecs);
 
