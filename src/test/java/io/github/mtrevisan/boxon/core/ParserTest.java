@@ -29,6 +29,7 @@ import io.github.mtrevisan.boxon.codecs.queclink.DeviceTypes;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
+import io.github.mtrevisan.boxon.external.logs.EventLogger;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 import io.github.mtrevisan.boxon.internal.TimeWatch;
 import org.apache.commons.lang3.ArrayUtils;
@@ -48,6 +49,7 @@ class ParserTest{
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 		ParserCore core = ParserCore.create()
+			.withEventListener(EventLogger.getInstance())
 			.withContext(context)
 			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
 			.withDefaultCodecs()

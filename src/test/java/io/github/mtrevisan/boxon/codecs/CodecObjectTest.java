@@ -149,15 +149,11 @@ class CodecObjectTest{
 			}
 		};
 
-		EventListener eventListener = EventListener.getNoOpInstance();
-		LoaderCodec loaderCodec = LoaderCodec.create()
-			.withEventListener(eventListener);
+		LoaderCodec loaderCodec = LoaderCodec.create();
 		loaderCodec.loadDefaultCodecs();
-		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec)
-			.withEventListener(eventListener);
+		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);
 		Evaluator evaluator = Evaluator.create();
-		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator)
-			.withEventListener(eventListener);
+		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator);
 		ReflectionHelper.injectValue(codec, TemplateParserInterface.class, templateParser);
 		ReflectionHelper.injectValue(codec, Evaluator.class, Evaluator.create());
 		BitWriter writer = BitWriter.create();

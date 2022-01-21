@@ -56,15 +56,11 @@ class TemplateParserTest{
 		byte[] payload = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		BitReaderInterface reader = BitReader.wrap(payload);
 
-		EventListener eventListener = EventListener.getNoOpInstance();
-		LoaderCodec loaderCodec = LoaderCodec.create()
-			.withEventListener(eventListener);
+		LoaderCodec loaderCodec = LoaderCodec.create();
 		loaderCodec.loadDefaultCodecs();
-		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec)
-			.withEventListener(eventListener);
+		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);
 		Evaluator evaluator = Evaluator.create();
-		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator)
-			.withEventListener(eventListener);
+		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator);
 		Template<ACKMessageHex> template = loaderTemplate.createTemplate(ACKMessageHex.class);
 		postProcessCodecs(loaderCodec, templateParser, evaluator);
 
@@ -94,15 +90,11 @@ class TemplateParserTest{
 		byte[] payload = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
 		BitReaderInterface reader = BitReader.wrap(payload);
 
-		EventListener eventListener = EventListener.getNoOpInstance();
-		LoaderCodec loaderCodec = LoaderCodec.create()
-			.withEventListener(eventListener);
+		LoaderCodec loaderCodec = LoaderCodec.create();
 		loaderCodec.loadDefaultCodecs();
-		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec)
-			.withEventListener(eventListener);
+		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);
 		Evaluator evaluator = Evaluator.create();
-		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator)
-			.withEventListener(eventListener);
+		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator);
 		Template<ACKMessageASCII> template = loaderTemplate.createTemplate(ACKMessageASCII.class);
 
 		if(!template.canBeCoded())
@@ -143,15 +135,11 @@ class TemplateParserTest{
 		byte[] payload = StringHelper.toByteArray("746335011234");
 		BitReaderInterface reader = BitReader.wrap(payload);
 
-		EventListener eventListener = EventListener.getNoOpInstance();
-		LoaderCodec loaderCodec = LoaderCodec.create()
-			.withEventListener(eventListener);
+		LoaderCodec loaderCodec = LoaderCodec.create();
 		loaderCodec.loadDefaultCodecs();
-		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec)
-			.withEventListener(eventListener);
+		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);
 		Evaluator evaluator = Evaluator.create();
-		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator)
-			.withEventListener(eventListener);
+		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator);
 		Template<TestError1> template = loaderTemplate.createTemplate(TestError1.class);
 		postProcessCodecs(loaderCodec, templateParser, evaluator);
 
@@ -186,15 +174,11 @@ class TemplateParserTest{
 		byte[] payload = StringHelper.toByteArray("74633501");
 		BitReaderInterface reader = BitReader.wrap(payload);
 
-		EventListener eventListener = EventListener.getNoOpInstance();
-		LoaderCodec loaderCodec = LoaderCodec.create()
-			.withEventListener(eventListener);
+		LoaderCodec loaderCodec = LoaderCodec.create();
 		loaderCodec.loadDefaultCodecs();
-		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec)
-			.withEventListener(eventListener);
+		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);
 		Evaluator evaluator = Evaluator.create();
-		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator)
-			.withEventListener(eventListener);
+		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator);
 		Template<TestError3> template = loaderTemplate.createTemplate(TestError3.class);
 		postProcessCodecs(loaderCodec, templateParser, evaluator);
 
@@ -229,15 +213,11 @@ class TemplateParserTest{
 		byte[] payload = StringHelper.toByteArray("74633501");
 		BitReaderInterface reader = BitReader.wrap(payload);
 
-		EventListener eventListener = EventListener.getNoOpInstance();
-		LoaderCodec loaderCodec = LoaderCodec.create()
-			.withEventListener(eventListener);
+		LoaderCodec loaderCodec = LoaderCodec.create();
 		loaderCodec.loadDefaultCodecs();
-		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec)
-			.withEventListener(eventListener);
+		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);
 		Evaluator evaluator = Evaluator.create();
-		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator)
-			.withEventListener(eventListener);
+		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator);
 		Template<TestError4> template = loaderTemplate.createTemplate(TestError4.class);
 		postProcessCodecs(loaderCodec, templateParser, evaluator);
 
@@ -271,15 +251,11 @@ class TemplateParserTest{
 		byte[] payload = StringHelper.toByteArray("746D310102016162");
 		BitReaderInterface reader = BitReader.wrap(payload);
 
-		EventListener eventListener = EventListener.getNoOpInstance();
-		LoaderCodec loaderCodec = LoaderCodec.create()
-			.withEventListener(eventListener);
+		LoaderCodec loaderCodec = LoaderCodec.create();
 		loaderCodec.loadDefaultCodecs();
-		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec)
-			.withEventListener(eventListener);
+		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);
 		Evaluator evaluator = Evaluator.create();
-		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator)
-			.withEventListener(eventListener);
+		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator);
 		Template<TestComposition1> template = loaderTemplate.createTemplate(TestComposition1.class);
 		postProcessCodecs(loaderCodec, templateParser, evaluator);
 
@@ -338,15 +314,11 @@ class TemplateParserTest{
 		byte[] payload = StringHelper.toByteArray("746D3201016162");
 		BitReaderInterface reader = BitReader.wrap(payload);
 
-		EventListener eventListener = EventListener.getNoOpInstance();
-		LoaderCodec loaderCodec = LoaderCodec.create()
-			.withEventListener(eventListener);
+		LoaderCodec loaderCodec = LoaderCodec.create();
 		loaderCodec.loadDefaultCodecs();
-		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec)
-			.withEventListener(eventListener);
+		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);
 		Evaluator evaluator = Evaluator.create();
-		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator)
-			.withEventListener(eventListener);
+		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator);
 		Template<TestComposition2> template = loaderTemplate.createTemplate(TestComposition2.class);
 		postProcessCodecs(loaderCodec, templateParser, evaluator);
 
@@ -370,15 +342,11 @@ class TemplateParserTest{
 		byte[] payload = StringHelper.toByteArray("7463320202616263");
 		BitReaderInterface reader = BitReader.wrap(payload);
 
-		EventListener eventListener = EventListener.getNoOpInstance();
-		LoaderCodec loaderCodec = LoaderCodec.create()
-			.withEventListener(eventListener);
+		LoaderCodec loaderCodec = LoaderCodec.create();
 		loaderCodec.loadDefaultCodecs();
-		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec)
-			.withEventListener(eventListener);
+		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);
 		Evaluator evaluator = Evaluator.create();
-		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator)
-			.withEventListener(eventListener);
+		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator);
 		Template<TestComposition2> template = loaderTemplate.createTemplate(TestComposition2.class);
 		postProcessCodecs(loaderCodec, templateParser, evaluator);
 

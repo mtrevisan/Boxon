@@ -83,7 +83,7 @@ final class LoaderConfiguration{
 	 * @param eventListener   The event listener.
 	 * @return	The current instance.
 	 */
-	public LoaderConfiguration withEventListener(final EventListener eventListener){
+	LoaderConfiguration withEventListener(final EventListener eventListener){
 		this.eventListener = (eventListener != null? eventListener: EventListener.getNoOpInstance());
 
 		return this;

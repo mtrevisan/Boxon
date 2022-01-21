@@ -54,7 +54,7 @@ final class ParserHelper{
 	 * @param eventListener   The event listener.
 	 * @return	The current instance.
 	 */
-	public ParserHelper withEventListener(final EventListener eventListener){
+	ParserHelper withEventListener(final EventListener eventListener){
 		this.eventListener = (eventListener != null? eventListener: EventListener.getNoOpInstance());
 
 		return this;
