@@ -89,7 +89,7 @@ final class ReflectiveClassLoader{
 			try(final ScanResult scanResult = classGraph.scan()){
 				final ClassInfoList classInfo = scanResult.getClassesWithAnnotation(annotation.getName());
 				final List<Class<?>> list = classInfo.loadClasses();
-				metadataStore.put(annotation, list);
+				addStoredClasses(annotation, list);
 
 				loadedClasses.addAll(list);
 			}
@@ -108,7 +108,7 @@ final class ReflectiveClassLoader{
 			try(final ScanResult scanResult = classGraph.scan()){
 				final ClassInfoList classInfo = scanResult.getClassesImplementing(type.getName());
 				final List<Class<?>> list = classInfo.loadClasses();
-				metadataStore.put(type, list);
+				addStoredClasses(type, list);
 
 				loadedClasses.addAll(list);
 			}
@@ -127,21 +127,19 @@ final class ReflectiveClassLoader{
 			try(final ScanResult scanResult = classGraph.scan()){
 				final ClassInfoList classInfo = scanResult.getClassesWithFieldAnnotation(type.getName());
 				final List<Class<?>> list = classInfo.loadClasses();
-				metadataStore.put(type, list);
+				addStoredClasses(type, list);
 
 				loadedClasses.addAll(list);
 			}
 		return loadedClasses;
 	}
 
-	/**
-	 * Gets all classes implementing a give interface.
-	 *
-	 * @param type	The interface to search the implementation for.
-	 * @return	The collection of classes implementing the given interface.
-	 */
 	private List<Class<?>> getStoredClasses(final Class<?> type){
 		return (List<Class<?>>)metadataStore.getOrDefault(type, new ArrayList<>(0));
+	}
+
+	private void addStoredClasses(final Class<?> type, final Collection<Class<?>> list){
+		metadataStore.put(type, list);
 	}
 
 
