@@ -57,11 +57,11 @@ public final class Version implements Comparable<Version>{
 	private static final Pattern PATTERN_PREFIX = Pattern.compile("((?=[" + BUILD_PREFIX + PRE_RELEASE_PREFIX + "])|(?<=[" + BUILD_PREFIX + PRE_RELEASE_PREFIX + "]))");
 
 
-	private Integer major;
-	private Integer minor;
-	private Integer patch;
-	private String[] preRelease;
-	private String[] build;
+	private final Integer major;
+	private final Integer minor;
+	private final Integer patch;
+	private final String[] preRelease;
+	private final String[] build;
 
 
 	/**
@@ -72,6 +72,29 @@ public final class Version implements Comparable<Version>{
 	 */
 	public static Version of(final String version){
 		return new Version(version);
+	}
+
+	/**
+	 * Constructs a {@code Version} with the major, minor and patch version numbers.
+	 *
+	 * @param major	The major version number
+	 * @return	An instance of this class.
+	 * @throws IllegalArgumentException	If one of the version numbers is a negative integer
+	 */
+	public static Version of(final int major){
+		return new Version(major, null, null, EMPTY_ARRAY, EMPTY_ARRAY);
+	}
+
+	/**
+	 * Constructs a {@code Version} with the major, minor and patch version numbers.
+	 *
+	 * @param major	The major version number
+	 * @param minor	The minor version number
+	 * @return	An instance of this class.
+	 * @throws IllegalArgumentException	If one of the version numbers is a negative integer
+	 */
+	public static Version of(final int major, final int minor){
+		return new Version(major, minor, null, EMPTY_ARRAY, EMPTY_ARRAY);
 	}
 
 	/**
@@ -116,9 +139,14 @@ public final class Version implements Comparable<Version>{
 		return new Version(major, minor, patch, preRelease, build);
 	}
 
-	private Version(final int major, final int minor, final int patch, final String[] preRelease, final String[] build){
-		if(major < 0 || minor < 0 || patch < 0)
-			throw new IllegalArgumentException("Major, minor and patch versions MUST be non-negative integers.");
+
+	private Version(final int major, final Integer minor, final Integer patch, final String[] preRelease, final String[] build){
+		if(major < 0)
+			throw new IllegalArgumentException("Major version MUST be a non-negative integer.");
+		if(minor != null && minor < 0)
+			throw new IllegalArgumentException("Minor version MUST be a non-negative integer.");
+		if(patch != null && patch < 0)
+			throw new IllegalArgumentException("Patch version MUST be a non-negative integer.");
 
 		this.major = major;
 		this.minor = minor;
@@ -129,15 +157,14 @@ public final class Version implements Comparable<Version>{
 
 	private Version(String version){
 		if(StringHelper.isBlank(version)){
+			major = null;
+			minor = null;
+			patch = null;
 			preRelease = EMPTY_ARRAY;
 			build = EMPTY_ARRAY;
 			return;
 		}
 
-		parseVersion(version);
-	}
-
-	private void parseVersion(String version){
 		version = version.trim();
 		if(!startsWithNumber(version))
 			throw new IllegalArgumentException("Argument is not a valid version");
@@ -145,19 +172,25 @@ public final class Version implements Comparable<Version>{
 		final String[] tokens = PATTERN_DOT.split(version, 3);
 		validateValues(version, tokens);
 
-		major = Integer.valueOf(tokens[0]);
+		major = Integer.parseInt(tokens[0]);
+		if(major < 0)
+			throw new IllegalArgumentException("Major version MUST be a non-negative integer.");
 		minor = (tokens.length > 1? Integer.valueOf(tokens[1]): null);
+		if(minor != null && minor < 0)
+			throw new IllegalArgumentException("Minor version MUST be a non-negative integer.");
 		if(tokens.length > 2){
 			final String[] patchPreReleaseBuild = PATTERN_PREFIX.split(tokens[2]);
 
 			patch = Integer.valueOf(patchPreReleaseBuild[0]);
+			if(patch < 0)
+				throw new IllegalArgumentException("Patch version MUST be a non-negative integer.");
 
 			int offset = 1;
 			String nextToken = (patchPreReleaseBuild.length > offset? patchPreReleaseBuild[offset]: null);
 			if(PRE_RELEASE_PREFIX.equals(nextToken) && patchPreReleaseBuild.length > ++ offset){
 				preRelease = PATTERN_DOT.split(patchPreReleaseBuild[offset ++]);
 
-				validatePreRelease();
+				validatePreRelease(preRelease);
 
 				nextToken = (patchPreReleaseBuild.length > offset? patchPreReleaseBuild[offset]: null);
 			}
@@ -167,7 +200,7 @@ public final class Version implements Comparable<Version>{
 			if(BUILD_PREFIX.equals(nextToken) && patchPreReleaseBuild.length > ++ offset){
 				build = PATTERN_DOT.split(patchPreReleaseBuild[offset ++]);
 
-				validateBuild();
+				validateBuild(build);
 			}
 			else
 				build = EMPTY_ARRAY;
@@ -190,7 +223,7 @@ public final class Version implements Comparable<Version>{
 			throw new IllegalArgumentException("Numeric identifier MUST NOT contain leading zeros");
 	}
 
-	private void validatePreRelease(){
+	private static void validatePreRelease(final String[] preRelease){
 		for(int i = 0; i < preRelease.length; i ++){
 			final String pr = preRelease[i];
 			final boolean numeric = ParserDataType.isDecimalNumber(pr);
@@ -201,7 +234,7 @@ public final class Version implements Comparable<Version>{
 		}
 	}
 
-	private void validateBuild(){
+	private static void validateBuild(final String[] build){
 		for(int i = 0; i < build.length; i ++){
 			final String b = build[i];
 			if(!ParserDataType.isDecimalNumber(b) && !containsOnlyValidChars(b))
