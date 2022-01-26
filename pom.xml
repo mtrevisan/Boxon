@@ -90,7 +90,7 @@
 
 		<!-- Logging -->
 		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
-		<slf4j.slf4j-api.version>1.7.33</slf4j.slf4j-api.version>
+		<slf4j.slf4j-api.version>1.7.35</slf4j.slf4j-api.version>
 		<!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-classic -->
 		<logback.logback-classic.version>1.2.10</logback.logback-classic.version>
 
