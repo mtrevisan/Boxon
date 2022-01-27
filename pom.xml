@@ -256,7 +256,7 @@
 						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.codecs.queclink=spring.core,spring.expression,ALL-UNNAMED
 						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.core=spring.core,ALL-UNNAMED
 						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.internal=ALL-UNNAMED
-						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.external.codecs=ALL-UNNAMED
+						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.external.io=ALL-UNNAMED
 						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.external.semanticversioning=ALL-UNNAMED
 					</argLine>
 				</configuration>

@@ -30,10 +30,10 @@ import io.github.mtrevisan.boxon.codecs.managers.ConstructorHelper;
 import io.github.mtrevisan.boxon.codecs.managers.ContextHelper;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
-import io.github.mtrevisan.boxon.external.codecs.BoxonBitSet;
-import io.github.mtrevisan.boxon.external.codecs.BitWriterInterface;
-import io.github.mtrevisan.boxon.external.codecs.ByteOrder;
-import io.github.mtrevisan.boxon.external.codecs.ParserDataType;
+import io.github.mtrevisan.boxon.external.io.BoxonBitSet;
+import io.github.mtrevisan.boxon.external.io.BitWriterInterface;
+import io.github.mtrevisan.boxon.external.io.ByteOrder;
+import io.github.mtrevisan.boxon.external.io.ParserDataType;
 import io.github.mtrevisan.boxon.external.configurations.ConfigurationEnum;
 
 import java.lang.reflect.Array;

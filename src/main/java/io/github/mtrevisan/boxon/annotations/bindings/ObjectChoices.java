@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.annotations.bindings;
 
-import io.github.mtrevisan.boxon.external.codecs.ByteOrder;
+import io.github.mtrevisan.boxon.external.io.ByteOrder;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

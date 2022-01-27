@@ -36,8 +36,8 @@ import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.external.codecs.BoxonBitSet;
-import io.github.mtrevisan.boxon.external.codecs.ParserDataType;
+import io.github.mtrevisan.boxon.external.io.BoxonBitSet;
+import io.github.mtrevisan.boxon.external.io.ParserDataType;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;

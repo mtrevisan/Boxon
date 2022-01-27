@@ -37,11 +37,11 @@ import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.descriptions.DescriberKey;
-import io.github.mtrevisan.boxon.external.codecs.BitReaderInterface;
-import io.github.mtrevisan.boxon.external.codecs.BoxonBitSet;
-import io.github.mtrevisan.boxon.external.codecs.BitWriterInterface;
-import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
-import io.github.mtrevisan.boxon.external.codecs.ParserDataType;
+import io.github.mtrevisan.boxon.external.io.BitReaderInterface;
+import io.github.mtrevisan.boxon.external.io.BoxonBitSet;
+import io.github.mtrevisan.boxon.external.io.BitWriterInterface;
+import io.github.mtrevisan.boxon.external.io.CodecInterface;
+import io.github.mtrevisan.boxon.external.io.ParserDataType;
 import io.github.mtrevisan.boxon.external.logs.EventListener;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 

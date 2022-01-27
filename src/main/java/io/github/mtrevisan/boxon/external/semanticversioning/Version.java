@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.external.semanticversioning;
 
-import io.github.mtrevisan.boxon.external.codecs.ParserDataType;
+import io.github.mtrevisan.boxon.external.io.ParserDataType;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 
 import java.util.Arrays;

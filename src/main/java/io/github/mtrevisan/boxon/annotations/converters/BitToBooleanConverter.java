@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.annotations.converters;
 
-import io.github.mtrevisan.boxon.external.codecs.BoxonBitSet;
+import io.github.mtrevisan.boxon.external.io.BoxonBitSet;
 
 
 /**

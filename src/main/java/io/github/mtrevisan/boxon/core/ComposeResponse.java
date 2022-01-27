@@ -25,7 +25,7 @@
 package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
-import io.github.mtrevisan.boxon.external.codecs.BitWriter;
+import io.github.mtrevisan.boxon.external.io.BitWriter;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -40,7 +40,7 @@ module io.github.mtrevisan.boxon{
 	exports io.github.mtrevisan.boxon.annotations.validators;
 	exports io.github.mtrevisan.boxon.core;
 	exports io.github.mtrevisan.boxon.exceptions;
-	exports io.github.mtrevisan.boxon.external.codecs;
+	exports io.github.mtrevisan.boxon.external.io;
 	exports io.github.mtrevisan.boxon.external.configurations;
 	exports io.github.mtrevisan.boxon.external.descriptions;
 	exports io.github.mtrevisan.boxon.external.logs;

@@ -22,15 +22,33 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.external.codecs;
+package io.github.mtrevisan.boxon.external.io;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 
-/** An enumeration for byte orders. */
-public enum ByteOrder{
+@SuppressWarnings("ALL")
+public class BoxonBitSetTest{
 
-	/** Little-endian byte order. */
-	LITTLE_ENDIAN,
-	/** Big-endian byte order. */
-	BIG_ENDIAN
+	@Test
+	void reverseBits(){
+		BoxonBitSet bits = BoxonBitSet.valueOf(new byte[]{0x10});
+		bits.reverseBits(Byte.SIZE);
+
+		Assertions.assertEquals(BoxonBitSet.valueOf(new byte[]{0x08}), bits);
+
+
+		bits = BoxonBitSet.valueOf(new byte[]{0x16});
+		bits.reverseBits(Byte.SIZE);
+
+		Assertions.assertEquals(BoxonBitSet.valueOf(new byte[]{0x68}), bits);
+
+
+		bits = BoxonBitSet.valueOf(new byte[]{(byte)0xE7});
+		bits.reverseBits(Byte.SIZE);
+
+		Assertions.assertEquals(BoxonBitSet.valueOf(new byte[]{(byte)0xE7}), bits);
+	}
 
 }
