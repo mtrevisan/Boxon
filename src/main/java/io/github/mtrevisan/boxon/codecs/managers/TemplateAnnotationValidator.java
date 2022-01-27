@@ -100,7 +100,7 @@ public enum TemplateAnnotationValidator{
 			final Class<?> type = ((Checksum)annotation).type();
 			final ParserDataType dataType = ParserDataType.fromType(type);
 			if(dataType != ParserDataType.BYTE && dataType != ParserDataType.SHORT)
-				throw AnnotationException.create("Unrecognized type: {}", type.getSimpleName(),
+				throw AnnotationException.create("Unrecognized type, must be `byte` or `short`: {}", type.getSimpleName(),
 					type.getComponentType().getSimpleName());
 		}
 	};
