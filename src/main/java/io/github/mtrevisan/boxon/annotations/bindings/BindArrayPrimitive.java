@@ -58,7 +58,7 @@ public @interface BindArrayPrimitive{
 	 * you expect to inject.</p>
 	 * <p>So you might have something like this:</p>
 	 * <pre>{@code
-	 * &#064;BoundArray(size = "5", type = int.class)
+	 * &#064;BindArrayPrimitive(size = "5", type = int.class)
 	 * private int[] array;
 	 * }</pre>
 	 *

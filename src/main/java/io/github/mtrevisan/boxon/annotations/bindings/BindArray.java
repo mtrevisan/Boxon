@@ -63,7 +63,7 @@ public @interface BindArray{
 	 *
 	 * ...
 	 *
-	 * &#064;BoundArray(size = "5", type = B.class)
+	 * &#064;BindArray(size = "5", type = B.class)
 	 * private A[] array;	//array will contain instances of B
 	 * }</pre>
 	 *

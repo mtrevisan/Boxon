@@ -63,7 +63,7 @@ public @interface BindObject{
 	 *
 	 * ...
 	 *
-	 * &#064;BoundObject(type = B.class)
+	 * &#064;BindObject(type = B.class)
 	 * private A array;	//object will contain instances of B
 	 * }</pre>
 	 *
