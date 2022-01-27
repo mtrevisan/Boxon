@@ -89,7 +89,7 @@ public final class LoaderTemplate{
 	 * @param eventListener   The event listener.
 	 * @return	The current instance.
 	 */
-	public LoaderTemplate withEventListener(final EventListener eventListener){
+	LoaderTemplate withEventListener(final EventListener eventListener){
 		this.eventListener = (eventListener != null? eventListener: EventListener.getNoOpInstance());
 
 		return this;
@@ -175,7 +175,7 @@ public final class LoaderTemplate{
 	 * @return	The {@link Template} for the given type.
 	 */
 	@SuppressWarnings("unchecked")
-	public <T> Template<T> createTemplate(final Class<T> type) throws AnnotationException{
+	<T> Template<T> createTemplate(final Class<T> type) throws AnnotationException{
 		return (Template<T>)templateStore.apply(type);
 	}
 
