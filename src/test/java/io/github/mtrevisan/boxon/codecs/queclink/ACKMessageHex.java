@@ -119,11 +119,14 @@ public class ACKMessageHex{
 	private byte messageLength;
 	@BindByte(condition = "mask.hasDeviceType()")
 	private byte deviceTypeCode;
-	@BindArrayPrimitive(condition = "mask.hasProtocolVersion()", size = "2", type = byte.class, converter = QueclinkHelper.VersionConverter.class)
+	@BindArrayPrimitive(condition = "mask.hasProtocolVersion()", size = "2", type = byte.class,
+		converter = QueclinkHelper.VersionConverter.class)
 	private String protocolVersion;
-	@BindArrayPrimitive(condition = "mask.hasFirmwareVersion()", size = "2", type = byte.class, converter = QueclinkHelper.VersionConverter.class)
+	@BindArrayPrimitive(condition = "mask.hasFirmwareVersion()", size = "2", type = byte.class,
+		converter = QueclinkHelper.VersionConverter.class)
 	private String firmwareVersion;
-	@BindArrayPrimitive(condition = "mask.hasIMEI()", size = "8", type = byte.class, converter = QueclinkHelper.IMEIConverter.class, validator = IMEIValidator.class)
+	@BindArrayPrimitive(condition = "mask.hasIMEI()", size = "8", type = byte.class,
+		converter = QueclinkHelper.IMEIConverter.class, validator = IMEIValidator.class)
 	private String imei;
 	@BindString(condition = "!mask.hasIMEI()", size = "8")
 	private String deviceName;
@@ -131,7 +134,8 @@ public class ACKMessageHex{
 	private byte id;
 	@BindShort
 	private short correlationId;
-	@BindArrayPrimitive(condition = "mask.hasEventTime()", size = "7", type = byte.class, converter = QueclinkHelper.DateTimeYYYYMMDDHHMMSSConverter.class)
+	@BindArrayPrimitive(condition = "mask.hasEventTime()", size = "7", type = byte.class,
+		converter = QueclinkHelper.DateTimeYYYYMMDDHHMMSSConverter.class)
 	private ZonedDateTime eventTime;
 	@BindShort(condition = "mask.hasMessageId()")
 	private short messageId;
