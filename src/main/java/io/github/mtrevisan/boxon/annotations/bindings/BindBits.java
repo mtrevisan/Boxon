@@ -39,6 +39,30 @@ import java.lang.annotation.Target;
 
 /**
  * Manages a {@link io.github.mtrevisan.boxon.external.codecs.BitSet BitSet} (... before the application of a converter).
+ * <p>
+ * NOTE THAT only the BitSet of this library is managed by this annotation!!<br />
+ * <br />
+ * If you want to use {@link java.util.BitSet java BitSet} then {@link BindArray} should be used instead.
+ *
+ * <pre><code>
+ * &#64;BindArrayPrimitive(size = "2", type = byte.class, converter = BitSetConverter.class)
+ * private java.util.BitSet bits;
+ * </code></pre>
+ * where
+ * <pre><code>
+ * static class BitSetConverter implements Converter<byte[], java.util.BitSet>{
+ * 	&#64;Override
+ * 	public java.util.BitSet decode(final byte[] value){
+ * 		return BitSet.valueOf(value);
+ * 	}
+ *
+ * 	&#64;Override
+ * 	public byte[] encode(final java.util.BitSet value){
+ * 		return value.toByteArray();
+ * 	}
+ * }
+ * </code></pre>
+ * </p>
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
