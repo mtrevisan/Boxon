@@ -64,7 +64,8 @@ public final class ConfigurationHelper{
 		if(!minValue.isEmpty()){
 			final Object min = ParserDataType.getValue(fieldType, minValue);
 			if(Number.class.isInstance(dataValue) && ((Number)dataValue).doubleValue() < ((Number)min).doubleValue())
-				throw EncodeException.create("Data value incompatible with minimum value for data key {}; found {}, expected greater than or equals to {}", dataKey, dataValue, minValue.getClass().getSimpleName());
+				throw EncodeException.create("Data value incompatible with minimum value for data key {}; found {}, expected greater than or equals to {}",
+					dataKey, dataValue, minValue.getClass().getSimpleName());
 		}
 	}
 
@@ -74,7 +75,8 @@ public final class ConfigurationHelper{
 		if(!maxValue.isEmpty()){
 			final Object max = ParserDataType.getValue(fieldType, maxValue);
 			if(Number.class.isInstance(dataValue) && ((Number)dataValue).doubleValue() > ((Number)max).doubleValue())
-				throw EncodeException.create("Data value incompatible with maximum value for data key {}; found {}, expected greater than or equals to {}", dataKey, dataValue, maxValue.getClass().getSimpleName());
+				throw EncodeException.create("Data value incompatible with maximum value for data key {}; found {}, expected greater than or equals to {}",
+					dataKey, dataValue, maxValue.getClass().getSimpleName());
 		}
 	}
 
