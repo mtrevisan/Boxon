@@ -32,6 +32,10 @@ package io.github.mtrevisan.boxon.annotations.checksummers;
  */
 public final class BSD16 implements Checksummer{
 
+	/** Starting value 0x0000. */
+	public static final short START_VALUE_0x0000 = 0x0000;
+
+
 	BSD16(){}
 
 	@Override

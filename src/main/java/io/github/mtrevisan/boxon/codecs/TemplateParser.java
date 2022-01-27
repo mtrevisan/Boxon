@@ -291,26 +291,38 @@ public final class TemplateParser implements TemplateParserInterface{
 		}
 	}
 
-	private static <T> void verifyChecksum(final Template<T> template, final T data, int startPosition, final BitReaderInterface reader){
+	private static <T> void verifyChecksum(final Template<T> template, final T data, final int startPosition,
+			final BitReaderInterface reader){
 		if(template.isChecksumPresent()){
 			final BoundedField checksumData = template.getChecksum();
 			final Checksum checksum = (Checksum)checksumData.getBinding();
-			startPosition += checksum.skipStart();
-			final int endPosition = reader.position() - checksum.skipEnd();
 
-			final Checksummer checksummer = ConstructorHelper.getCreator(checksum.algorithm())
-				.get();
-			final short startValue = checksum.startValue();
-			final short calculatedChecksum = checksummer.calculateChecksum(reader.array(), startPosition, endPosition, startValue);
+			final short calculatedChecksum = calculateChecksum(startPosition, reader, checksum);
 			final Number givenChecksum = checksumData.getFieldValue(data);
 			if(givenChecksum == null)
 				throw new IllegalArgumentException("Something bad happened, cannot read message checksum");
-			if(calculatedChecksum != givenChecksum.shortValue())
+			if(calculatedChecksum != givenChecksum.shortValue()){
+				final int mask = ParserDataType.fromType(givenChecksum.getClass())
+					.getMask();
 				throw new IllegalArgumentException("Calculated checksum (0x"
-					+ Integer.toHexString(calculatedChecksum).toUpperCase(Locale.ROOT)
+					+ Integer.toHexString(calculatedChecksum & mask).toUpperCase(Locale.ROOT)
 					+ ") does NOT match given checksum (0x"
-					+ Integer.toHexString(givenChecksum.shortValue()).toUpperCase(Locale.ROOT) + ")");
+					+ Integer.toHexString(givenChecksum.shortValue() & mask).toUpperCase(Locale.ROOT) + ")");
+			}
 		}
+	}
+
+	private static short calculateChecksum(final int startPosition, final BitReaderInterface reader, final Checksum checksum){
+		final int skipStart = checksum.skipStart();
+		final int skipEnd = checksum.skipEnd();
+		final Class<? extends Checksummer> algorithm = checksum.algorithm();
+		final short startValue = checksum.startValue();
+
+		final int endPosition = reader.position();
+
+		final Checksummer checksummer = ConstructorHelper.getCreator(algorithm)
+			.get();
+		return checksummer.calculateChecksum(reader.array(), startPosition + skipStart, endPosition - skipEnd, startValue);
 	}
 
 	private void processEvaluatedFields(final Template<?> template, final ParserContext<?> parserContext){

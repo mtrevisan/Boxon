@@ -33,13 +33,13 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.codecs.managers.Template;
 import io.github.mtrevisan.boxon.codecs.queclink.ACKMessageASCII;
 import io.github.mtrevisan.boxon.codecs.queclink.ACKMessageHex;
+import io.github.mtrevisan.boxon.codecs.queclink.ACKMessageHexByteChecksum;
 import io.github.mtrevisan.boxon.codecs.queclink.DeviceTypes;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.codecs.BitReader;
 import io.github.mtrevisan.boxon.external.codecs.BitReaderInterface;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
-import io.github.mtrevisan.boxon.external.logs.EventListener;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -72,6 +72,36 @@ class TemplateParserTest{
 		evaluator.addToContext("deviceTypes", deviceTypes);
 		evaluator.addToContext(TemplateParserTest.class.getDeclaredMethod("headerSize"));
 		ACKMessageHex message = templateParser.decode(template, reader, null);
+		evaluator.addToContext("deviceTypes", null);
+
+		BitWriter writer = BitWriter.create();
+		templateParser.encode(template, writer, null, message);
+		byte[] reconstructedMessage = writer.array();
+
+		Assertions.assertEquals(new String(payload), new String(reconstructedMessage));
+	}
+
+	@Test
+	void parseSingleMessageHexByteChecksum() throws NoSuchMethodException, FieldException{
+		byte[] payload = StringHelper.toByteArray("2d41434b066f2446010a0311235e40035110420600ffff07e304050836390012b80d0a");
+		BitReaderInterface reader = BitReader.wrap(payload);
+
+		LoaderCodec loaderCodec = LoaderCodec.create();
+		loaderCodec.loadDefaultCodecs();
+		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);
+		Evaluator evaluator = Evaluator.create();
+		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator);
+		Template<ACKMessageHexByteChecksum> template = loaderTemplate.createTemplate(ACKMessageHexByteChecksum.class);
+		postProcessCodecs(loaderCodec, templateParser, evaluator);
+
+		if(!template.canBeCoded())
+			Assertions.fail("Cannot decode message");
+
+		DeviceTypes deviceTypes = new DeviceTypes();
+		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
+		evaluator.addToContext("deviceTypes", deviceTypes);
+		evaluator.addToContext(TemplateParserTest.class.getDeclaredMethod("headerSize"));
+		ACKMessageHexByteChecksum message = templateParser.decode(template, reader, null);
 		evaluator.addToContext("deviceTypes", null);
 
 		BitWriter writer = BitWriter.create();

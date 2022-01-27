@@ -31,7 +31,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
 import io.github.mtrevisan.boxon.annotations.bindings.BindByte;
 import io.github.mtrevisan.boxon.annotations.bindings.BindShort;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
-import io.github.mtrevisan.boxon.annotations.checksummers.CRC16CCITT;
+import io.github.mtrevisan.boxon.annotations.checksummers.BSD8;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.IMEIValidator;
 
@@ -41,8 +41,8 @@ import java.util.Map;
 
 
 @SuppressWarnings("ALL")
-@MessageHeader(start = "+ACK", end = "\r\n")
-public class ACKMessageHex{
+@MessageHeader(start = "-ACK", end = "\r\n")
+public class ACKMessageHexByteChecksum{
 
 	private static final Map<Byte, String> MESSAGE_TYPE_MAP = new HashMap<>();
 	static{
@@ -139,8 +139,8 @@ public class ACKMessageHex{
 	@BindShort(condition = "mask.hasMessageId()")
 	private short messageId;
 
-	@Checksum(type = short.class, skipStart = 4, skipEnd = 4, algorithm = CRC16CCITT.class, startValue = CRC16CCITT.START_VALUE_0xFFFF)
-	private short checksum;
+	@Checksum(type = byte.class, skipStart = 4, skipEnd = 3, algorithm = BSD8.class, startValue = BSD8.START_VALUE_0x00)
+	private byte checksum;
 
 	@Evaluate("#deviceTypes.getDeviceTypeName(deviceTypeCode)")
 	private String deviceTypeName;

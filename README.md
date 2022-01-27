@@ -624,6 +624,7 @@ public Void lastUnreadPlaceholder;
  - `skipStart`: how many bytes are to be skipped from the start of the message for the calculation of the checksum (defaults to 0).
  - `skipEnd`: how many bytes are to be skipped from the end of the message for the calculation of the checksum (default to 0).
  - `algorithm`: the algorithm to be applied to calculate the checksum.
+ - `startValue`: the starting value for the algorithm.
 
 #### description
 Reads a checksum.

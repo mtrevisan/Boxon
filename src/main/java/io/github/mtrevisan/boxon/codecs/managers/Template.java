@@ -150,7 +150,7 @@ public final class Template<T>{
 	}
 
 	private static Annotation validateField(final List<? extends Annotation> annotations) throws AnnotationException{
-		/** filter out {@link Skip} annotations */
+		/** filter out {@link Skip} annotations and return the (first) valid binding annotation */
 		Annotation foundAnnotation = null;
 		for(int i = 0; foundAnnotation == null && i < annotations.size(); i ++){
 			final Class<? extends Annotation> annotationType = annotations.get(i).annotationType();

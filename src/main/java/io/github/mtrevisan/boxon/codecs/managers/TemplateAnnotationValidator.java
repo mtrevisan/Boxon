@@ -98,7 +98,8 @@ public enum TemplateAnnotationValidator{
 		@Override
 		void validate(final Annotation annotation) throws AnnotationException{
 			final Class<?> type = ((Checksum)annotation).type();
-			if(!ParserDataType.isPrimitiveOrWrapper(type))
+			final ParserDataType dataType = ParserDataType.fromType(type);
+			if(dataType != ParserDataType.BYTE && dataType != ParserDataType.SHORT)
 				throw AnnotationException.create("Unrecognized type: {}", type.getSimpleName(),
 					type.getComponentType().getSimpleName());
 		}
