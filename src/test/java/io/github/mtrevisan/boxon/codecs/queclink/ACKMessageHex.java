@@ -100,10 +100,9 @@ public class ACKMessageHex{
 
 		@Override
 		public Byte encode(final String value){
-			for(final Map.Entry<Byte, String> elem : MESSAGE_TYPE_MAP.entrySet()){
+			for(final Map.Entry<Byte, String> elem : MESSAGE_TYPE_MAP.entrySet())
 				if(elem.getValue().equals(value))
 					return elem.getKey();
-			}
 			return 0x00;
 		}
 	}
