@@ -24,21 +24,21 @@
  */
 package io.github.mtrevisan.boxon.codecs;
 
-import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
+import io.github.mtrevisan.boxon.annotations.bindings.BindBitSet;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.codecs.managers.Injected;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.external.codecs.BitReaderInterface;
-import io.github.mtrevisan.boxon.external.codecs.BoxonBitSet;
 import io.github.mtrevisan.boxon.external.codecs.BitWriterInterface;
+import io.github.mtrevisan.boxon.external.codecs.BoxonBitSet;
 import io.github.mtrevisan.boxon.external.codecs.ByteOrder;
 import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
 
 import java.lang.annotation.Annotation;
-import java.math.BigInteger;
+import java.util.BitSet;
 
 
-final class CodecInteger implements CodecInterface<BindInteger>{
+final class CodecBitSet implements CodecInterface<BindBitSet>{
 
 	@SuppressWarnings("unused")
 	@Injected
@@ -47,14 +47,17 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 
 	@Override
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject) throws AnnotationException{
-		final BindInteger binding = extractBinding(annotation);
+		final BindBitSet binding = extractBinding(annotation);
 
 		final BindingData bindingData = BindingData.create(binding, rootObject, evaluator);
-
 		final int size = bindingData.evaluateSize();
 		CodecHelper.assertSizePositive(size);
 
-		final BigInteger value = reader.getInteger(size, binding.byteOrder());
+		final byte[] array = reader.getBytes(size);
+		if(binding.byteOrder() == ByteOrder.BIG_ENDIAN)
+			BoxonBitSet.reverse(array);
+
+		final BitSet value = BitSet.valueOf(array);
 
 		return CodecHelper.convertValue(bindingData, value);
 	}
@@ -62,21 +65,19 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 	@Override
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object rootObject, final Object value)
 			throws AnnotationException{
-		final BindInteger binding = extractBinding(annotation);
+		final BindBitSet binding = extractBinding(annotation);
 
 		final BindingData bindingData = BindingData.create(binding, rootObject, evaluator);
 		bindingData.validate(value);
 
-		final int size = bindingData.evaluateSize();
-		CodecHelper.assertSizePositive(size);
-
 		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();
-		final BigInteger v = CodecHelper.converterEncode(chosenConverter, value);
+		final BitSet v = CodecHelper.converterEncode(chosenConverter, value);
 
-		final ByteOrder byteOrder = binding.byteOrder();
-		final BoxonBitSet bits = BoxonBitSet.valueOf(v, size, byteOrder);
+		final byte[] array = v.toByteArray();
+		if(binding.byteOrder() == ByteOrder.BIG_ENDIAN)
+			BoxonBitSet.reverse(array);
 
-		writer.putBits(bits, size);
+		writer.putBytes(array);
 	}
 
 }

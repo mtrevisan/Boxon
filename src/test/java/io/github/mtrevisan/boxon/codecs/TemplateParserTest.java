@@ -53,7 +53,7 @@ class TemplateParserTest{
 
 	@Test
 	void parseSingleMessageHex() throws NoSuchMethodException, FieldException{
-		byte[] payload = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
+		byte[] payload = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600abcd07e30405083639001256080d0a");
 		BitReaderInterface reader = BitReader.wrap(payload);
 
 		LoaderCodec loaderCodec = LoaderCodec.create();

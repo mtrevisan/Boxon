@@ -46,7 +46,7 @@ class BitWriterData{
 	 * @param value	The value to write.
 	 * @param length	The amount of bits to use when writing {@code value}.
 	 */
-	public final void putBits(final BitSet value, final int length){
+	public final void putBits(final BoxonBitSet value, final int length){
 		//if the value that we're writing is too large to be placed entirely in the cache, then we need to place as
 		//much as we can in the cache (the least significant bits), flush the cache to the backing ByteBuffer, and
 		//place the rest in the cache
@@ -75,7 +75,7 @@ class BitWriterData{
 	 * @param length	The amount of bits to use when writing {@code value} (MUST BE less than or equals to {@link Long#SIZE}).
 	 */
 	final void putValue(final long value, final int length){
-		final BitSet bits = BitSet.valueOf(new long[]{value});
+		final BoxonBitSet bits = BoxonBitSet.valueOf(new long[]{value});
 		putBits(bits, length);
 	}
 

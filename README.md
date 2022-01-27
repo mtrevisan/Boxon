@@ -100,15 +100,16 @@ You can get pre-built JARs (usable on JRE 11 or newer) from [Sonatype](https://o
     3. [BindArray](#annotation-bindarray)
     4. [BindArrayPrimitive](#annotation-bindarrayprimitive)
     5. [BindBits](#annotation-bindbits)
-    6. [BindByte](#annotation-bindbyte)
-    7. [BindShort](#annotation-bindshort)
-    8. [BindInt](#annotation-bindint)
-    9. [BindLong](#annotation-bindlong)
-    10. [BindInteger](#annotation-bindinteger)
-    11. [BindFloat](#annotation-bindfloat)
-    12. [BindDouble](#annotation-binddouble)
-    13. [BindString](#annotation-bindstring)
-    14. [BindStringTerminated](#annotation-bindstringterminated)
+    6. [BindBitSet](#annotation-bindbitset)
+    7. [BindByte](#annotation-bindbyte)
+    8. [BindShort](#annotation-bindshort)
+    9. [BindInt](#annotation-bindint)
+    10. [BindLong](#annotation-bindlong)
+    11. [BindInteger](#annotation-bindinteger)
+    12. [BindFloat](#annotation-bindfloat)
+    13. [BindDouble](#annotation-binddouble)
+    14. [BindString](#annotation-bindstring)
+    15. [BindStringTerminated](#annotation-bindstringterminated)
 2. [Special annotations](#annotation-special)
     1. [MessageHeader](#annotation-messageheader)
     2. [Skip](#annotation-skip)
@@ -133,15 +134,16 @@ You can get pre-built JARs (usable on JRE 11 or newer) from [Sonatype](https://o
     2. [Message composer](#example-composer)
 9. [Contributing](#contributing)
 10. [Changelog](#changelog)
-     1. [version 2.1.2](#changelog-2.1.2)
-     2. [version 2.1.1](#changelog-2.1.1)
-     3. [version 2.1.0](#changelog-2.1.0)
-     4. [version 2.0.0](#changelog-2.0.0)
-     5. [version 1.1.0](#changelog-1.1.0)
-     6. [version 1.0.0](#changelog-1.0.0)
-     7. [version 0.0.2](#changelog-0.0.2)
-     8. [version 0.0.1](#changelog-0.0.1)
-     9. [version 0.0.0](#changelog-0.0.0)
+     1. [version 2.2.0](#changelog-2.2.0)
+     2. [version 2.1.2](#changelog-2.1.2)
+     3. [version 2.1.1](#changelog-2.1.1)
+     4. [version 2.1.0](#changelog-2.1.0)
+     5. [version 2.0.0](#changelog-2.0.0)
+     6. [version 1.1.0](#changelog-1.1.0)
+     7. [version 1.0.0](#changelog-1.0.0)
+     8. [version 0.0.2](#changelog-0.0.2)
+     9. [version 0.0.1](#changelog-0.0.1)
+     10. [version 0.0.0](#changelog-0.0.0)
 11. [License](#license)
 
 <br/>
@@ -159,21 +161,22 @@ Here is a brief summary of the parameters (described in detail below) for each a
 
 Note that [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_injection) can be used in codecs on variables with types `TemplateParserInterface` or `Evaluator` IF annotated with `@Injected`.
 
-|                      | condition |  type   | charset | terminator | consumeTerminator |  size   | byteOrder | selectFrom | selectDefault | validator | converter | selectConverterFrom |                      |
-|----------------------|:---------:|:-------:|:-------:|:----------:|:-----------------:|:-------:|:---------:|:----------:|:-------------:|:---------:|:---------:|:-------------------:|---------------------:|
-| BindObject           |  &#9745;  | &#9745; |         |            |                   |         |           |  &#9745;   |    &#9745;    |  &#9745;  |  &#9745;  |       &#9745;       |           BindObject |
-| BindArray            |  &#9745;  | &#9745; |         |            |                   | &#9745; |           |  &#9745;   |    &#9745;    |  &#9745;  |  &#9745;  |       &#9745;       |            BindArray |
-| BindArrayPrimitive   |  &#9745;  | &#9745; |         |            |                   | &#9745; |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |   BindArrayPrimitive |
-| BindBits             |  &#9745;  |         |         |            |                   | &#9745; |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |             BindBits |
-| BindByte             |  &#9745;  |         |         |            |                   |         |           |            |               |  &#9745;  |  &#9745;  |       &#9745;       |             BindByte |
-| BindShort            |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |            BindShort |
-| BindInt              |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |              BindInt |
-| BindLong             |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |             BindLong |
-| BindInteger          |  &#9745;  |         |         |            |                   | &#9745; |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |          BindInteger |
-| BindFloat            |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |            BindFloat |
-| BindDouble           |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |           BindDouble |
-| BindString           |  &#9745;  |         | &#9745; |            |                   | &#9745; |           |            |               |  &#9745;  |  &#9745;  |       &#9745;       |           BindString |
-| BindStringTerminated |  &#9745;  |         | &#9745; |  &#9745;   |      &#9745;      |         |           |            |               |  &#9745;  |  &#9745;  |       &#9745;       | BindStringTerminated |
+|                      | condition |  type   | charset | terminator | consumeTerminator |  size   | byteOrder | selectFrom | selectDefault | validator | converter | selectConverterFrom |                       |
+|----------------------|:---------:|:-------:|:-------:|:----------:|:-----------------:|:-------:|:---------:|:----------:|:-------------:|:---------:|:---------:|:-------------------:|----------------------:|
+| BindObject           |  &#9745;  | &#9745; |         |            |                   |         |           |  &#9745;   |    &#9745;    |  &#9745;  |  &#9745;  |       &#9745;       |            BindObject |
+| BindArray            |  &#9745;  | &#9745; |         |            |                   | &#9745; |           |  &#9745;   |    &#9745;    |  &#9745;  |  &#9745;  |       &#9745;       |             BindArray |
+| BindArrayPrimitive   |  &#9745;  | &#9745; |         |            |                   | &#9745; |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |    BindArrayPrimitive |
+| BindBits             |  &#9745;  |         |         |            |                   | &#9745; |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |              BindBits |
+| BindBitSet           |  &#9745;  |         |         |            |                   | &#9745; |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |            BindBitSet |
+| BindByte             |  &#9745;  |         |         |            |                   |         |           |            |               |  &#9745;  |  &#9745;  |       &#9745;       |              BindByte |
+| BindShort            |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |             BindShort |
+| BindInt              |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |               BindInt |
+| BindLong             |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |              BindLong |
+| BindInteger          |  &#9745;  |         |         |            |                   | &#9745; |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |           BindInteger |
+| BindFloat            |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |             BindFloat |
+| BindDouble           |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |            BindDouble |
+| BindString           |  &#9745;  |         | &#9745; |            |                   | &#9745; |           |            |               |  &#9745;  |  &#9745;  |       &#9745;       |            BindString |
+| BindStringTerminated |  &#9745;  |         | &#9745; |  &#9745;   |      &#9745;      |         |           |            |               |  &#9745;  |  &#9745;  |       &#9745;       |  BindStringTerminated |
 
 |                      | condition |  start  |   end   | charset |  size   | terminator | consumeTerminator |  type   | byteOrder | skipStart | skipEnd | algorithm | startValue |  value  |               |
 |----------------------|:---------:|:-------:|:-------:|:-------:|:-------:|:----------:|:-----------------:|:-------:|:---------:|:---------:|:-------:|:---------:|:----------:|:-------:|--------------:|
@@ -328,7 +331,7 @@ private BigDecimal[][] crashData;
  - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
 
 #### description
-Reads a `BitMap`.
+Reads a `BoxonBitSet`.
 
 #### annotation type
 This annotation is bounded to a variable.
@@ -336,7 +339,31 @@ This annotation is bounded to a variable.
 #### example
 ```java
 @BindBits(size = "2")
-private BitMap bits;
+private BoxonBitSet bits;
+```
+
+
+<a name="annotation-bindbitset"></a>
+### BindBitSet
+
+#### parameters
+- `condition`: The SpEL expression that determines if this field has to be read.
+- `size`: the number of bits to read (can be a SpEL expression).
+- `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
+- `validator`: the Class of a validator (applied BEFORE the converter).
+- `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable.
+- `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
+
+#### description
+Reads a java `BitSet`.
+
+#### annotation type
+This annotation is bounded to a variable.
+
+#### example
+```java
+@BindBitSet(size = "2")
+private BitSet bits;
 ```
 
 
@@ -1351,6 +1378,14 @@ Pull requests are welcomed.
 
 <a name="changelog"></a>
 ## Changelog
+
+<a name="changelog-2.2.0"></a>
+### version 2.2.0 - 20220127
+- Added missing javadoc. Enhanced existing javadoc
+- Added `BindBitSet` binding for java `BitSet`.
+- Renamed boxon `BitSet` into `BoxonBitSet` to avoid confusion with the hava counterpart.
+- Enhanced binding validation.
+
 
 <a name="changelog-2.1.2"></a>
 ### version 2.1.2 - 20210118

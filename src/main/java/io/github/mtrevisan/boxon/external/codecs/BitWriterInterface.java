@@ -48,7 +48,7 @@ public interface BitWriterInterface{
 	 * @param value	The value to write.
 	 * @param length	The amount of bits to use when writing {@code value}.
 	 */
-	void putBits(BitSet value, int length);
+	void putBits(BoxonBitSet value, int length);
 
 	/**
 	 * Writes a value using {@link Byte#SIZE} bits.

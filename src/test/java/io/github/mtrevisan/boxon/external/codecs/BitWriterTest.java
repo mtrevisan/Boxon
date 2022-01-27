@@ -42,7 +42,7 @@ class BitWriterTest{
 
 	@Test
 	void bits(){
-		BitSet value = BitSet.valueOf(new long[]{0x1234_5678_1234_5678l, 0x6666_7777_8888_9999l});
+		BoxonBitSet value = BoxonBitSet.valueOf(new long[]{0x1234_5678_1234_5678l, 0x6666_7777_8888_9999l});
 		writer.putBits(value, Long.SIZE << 1);
 		BitReaderInterface reader = BitReader.wrap(writer);
 

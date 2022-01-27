@@ -27,6 +27,7 @@ package io.github.mtrevisan.boxon.codecs.managers;
 import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
+import io.github.mtrevisan.boxon.annotations.bindings.BindBitSet;
 import io.github.mtrevisan.boxon.annotations.bindings.BindBits;
 import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
@@ -35,7 +36,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.external.codecs.BitSet;
+import io.github.mtrevisan.boxon.external.codecs.BoxonBitSet;
 import io.github.mtrevisan.boxon.external.codecs.ParserDataType;
 
 import java.lang.annotation.Annotation;
@@ -98,7 +99,17 @@ enum TemplateAnnotationValidator{
 			final BindBits binding = (BindBits)annotation;
 
 			final Class<? extends Converter<?, ?>> converter = binding.converter();
-			validateConverter(field, BitSet.class, converter);
+			validateConverter(field, BoxonBitSet.class, converter);
+		}
+	},
+
+	BIT_SET(BindBitSet.class){
+		@Override
+		void validate(final Field field, final Annotation annotation) throws AnnotationException{
+			final BindBitSet binding = (BindBitSet)annotation;
+
+			final Class<? extends Converter<?, ?>> converter = binding.converter();
+			validateConverter(field, java.util.BitSet.class, converter);
 		}
 	},
 

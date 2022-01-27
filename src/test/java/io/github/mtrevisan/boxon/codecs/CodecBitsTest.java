@@ -34,7 +34,7 @@ import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.codecs.BitReader;
 import io.github.mtrevisan.boxon.external.codecs.BitReaderInterface;
-import io.github.mtrevisan.boxon.external.codecs.BitSet;
+import io.github.mtrevisan.boxon.external.codecs.BoxonBitSet;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
 import io.github.mtrevisan.boxon.external.codecs.ByteOrder;
 import io.github.mtrevisan.boxon.external.codecs.CodecInterface;
@@ -58,7 +58,7 @@ class CodecBitsTest{
 		CodecInterface<BindBits> codec = new CodecBits();
 		byte[] randomBytes = new byte[123];
 		RANDOM.nextBytes(randomBytes);
-		BitSet encodedValue = BitSet.valueOf(randomBytes);
+		BoxonBitSet encodedValue = BoxonBitSet.valueOf(randomBytes);
 		BindBits annotation = new BindBits(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
@@ -117,7 +117,7 @@ class CodecBitsTest{
 		Assertions.assertEquals(StringHelper.toHexString(bb), writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		BitSet decoded = (BitSet)codec.decode(reader, annotation, null);
+		BoxonBitSet decoded = (BoxonBitSet)codec.decode(reader, annotation, null);
 
 		encodedValue.reverseBits(randomBytes.length * Byte.SIZE);
 		Assertions.assertEquals(encodedValue, decoded);
@@ -128,7 +128,7 @@ class CodecBitsTest{
 		CodecInterface<BindBits> codec = new CodecBits();
 		byte[] randomBytes = new byte[123];
 		RANDOM.nextBytes(randomBytes);
-		BitSet encodedValue = BitSet.valueOf(randomBytes);
+		BoxonBitSet encodedValue = BoxonBitSet.valueOf(randomBytes);
 		BindBits annotation = new BindBits(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
@@ -187,7 +187,7 @@ class CodecBitsTest{
 		Assertions.assertEquals(StringHelper.toHexString(bb), writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		BitSet decoded = (BitSet)codec.decode(reader, annotation, null);
+		BoxonBitSet decoded = (BoxonBitSet)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}

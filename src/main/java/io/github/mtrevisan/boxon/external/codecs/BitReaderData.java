@@ -112,13 +112,13 @@ abstract class BitReaderData{
 	}
 
 	/**
-	 * Reads the next {@code length} bits and composes a {@link BitSet}.
+	 * Reads the next {@code length} bits and composes a {@link BoxonBitSet}.
 	 *
 	 * @param length	The amount of bits to read.
-	 * @return	A {@link BitSet} value at the {@link BitReader}'s current position.
+	 * @return	A {@link BoxonBitSet} value at the {@link BitReader}'s current position.
 	 */
-	public final BitSet getBits(final int length){
-		final BitSet bits = BitSet.empty();
+	public final BoxonBitSet getBits(final int length){
+		final BoxonBitSet bits = BoxonBitSet.empty();
 		int offset = 0;
 		while(offset < length){
 			//transfer the cache values
@@ -164,7 +164,7 @@ abstract class BitReaderData{
 	 * @param offset	The offset for the indexes.
 	 * @param size	The amount of bits to read from the LSB of the cache.
 	 */
-	private void addCacheToBitSet(final BitSet value, final int offset, final int size){
+	private void addCacheToBitSet(final BoxonBitSet value, final int offset, final int size){
 		final byte mask = (byte)((1 << size) - 1);
 		value.ensureAdditionalSpace(Integer.bitCount(cache & mask));
 

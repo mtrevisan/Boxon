@@ -30,7 +30,7 @@ import io.github.mtrevisan.boxon.codecs.managers.ConstructorHelper;
 import io.github.mtrevisan.boxon.codecs.managers.ContextHelper;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
-import io.github.mtrevisan.boxon.external.codecs.BitSet;
+import io.github.mtrevisan.boxon.external.codecs.BoxonBitSet;
 import io.github.mtrevisan.boxon.external.codecs.BitWriterInterface;
 import io.github.mtrevisan.boxon.external.codecs.ByteOrder;
 import io.github.mtrevisan.boxon.external.codecs.ParserDataType;
@@ -70,7 +70,7 @@ final class CodecHelper{
 			final int prefixSize = selectFrom.prefixSize();
 			final ByteOrder prefixByteOrder = selectFrom.byteOrder();
 
-			final BitSet bits = BitSet.valueOf(new long[]{chosenAlternative.prefix()});
+			final BoxonBitSet bits = BoxonBitSet.valueOf(new long[]{chosenAlternative.prefix()});
 			if(prefixByteOrder == ByteOrder.LITTLE_ENDIAN)
 				bits.reverseBits(prefixSize);
 

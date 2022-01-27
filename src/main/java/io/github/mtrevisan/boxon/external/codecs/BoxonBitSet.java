@@ -34,18 +34,18 @@ import java.util.Arrays;
  * <p>By default, all bits in the set initially are zero.</p>
  * <p>The maximum value that can be stored is {@link java.lang.Integer#MAX_VALUE MAX_VALUE}</p>
  * <p>Unless otherwise noted, passing a {@code null} parameter to any of the
- * methods in a {@code BitSet} will result in a {@code NullPointerException}.</p>
+ * methods in a {@code BoxonBitSet} will result in a {@code NullPointerException}.</p>
  * <p>Moreover, passing a non-increasing value to {@link #addNextSetBit(int)} will
  * result in an unpredictable behavior.</p>
  *
- * <p>A {@code BitSet} is not safe for multi-threaded use without
+ * <p>A {@code BoxonBitSet} is not safe for multi-threaded use without
  * external synchronization.</p>
  *
  * @see <a href="https://w6113.github.io/files/papers/sidm338-wangA.pdf">An Experimental Study of Bitmap Compression vs. Inverted List Compression</a>
  * @see <a href="https://onlinelibrary.wiley.com/doi/pdf/10.1002/spe.2203">Decoding billions of integers per second through vectorization</a>
  */
 @SuppressWarnings("WeakerAccess")
-public final class BitSet{
+public final class BoxonBitSet{
 
 	/** The array containing the indexes. */
 	private int[] indexes = new int[0];
@@ -56,10 +56,10 @@ public final class BitSet{
 	/**
 	 * Returns an empty new bit set.
 	 *
-	 * @return	A {@code BitSet} containing all the bits in the long array.
+	 * @return	A {@code BoxonBitSet} containing all the bits in the long array.
 	 */
-	public static BitSet empty(){
-		return new BitSet();
+	public static BoxonBitSet empty(){
+		return new BoxonBitSet();
 	}
 
 	/**
@@ -67,10 +67,10 @@ public final class BitSet{
 	 *
 	 * @param array	A long array containing a little-endian representation of a sequence of bits to be used as
 	 * 	the initial bits of the new bit set.
-	 * @return	A {@code BitSet} containing all the bits in the long array.
+	 * @return	A {@code BoxonBitSet} containing all the bits in the long array.
 	 */
-	public static BitSet valueOf(final long[] array){
-		return new BitSet(array);
+	public static BoxonBitSet valueOf(final long[] array){
+		return new BoxonBitSet(array);
 	}
 
 	/**
@@ -78,10 +78,10 @@ public final class BitSet{
 	 *
 	 * @param array	A byte array containing a little-endian representation of a sequence of bits to be used as
 	 * 	the initial bits of the new bit set.
-	 * @return	A {@code BitSet} containing all the bits in the byte array.
+	 * @return	A {@code BoxonBitSet} containing all the bits in the byte array.
 	 */
-	public static BitSet valueOf(final byte[] array){
-		return new BitSet(array);
+	public static BoxonBitSet valueOf(final byte[] array){
+		return new BoxonBitSet(array);
 	}
 
 	/**
@@ -92,7 +92,7 @@ public final class BitSet{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	The bit set representing the given value.
 	 */
-	public static BitSet valueOf(final BigInteger value, final int size, final ByteOrder byteOrder){
+	public static BoxonBitSet valueOf(final BigInteger value, final int size, final ByteOrder byteOrder){
 		byte[] array = value.toByteArray();
 		final int newSize = (size + Byte.SIZE - 1) >>> 3;
 		if(newSize != array.length){
@@ -109,7 +109,7 @@ public final class BitSet{
 	}
 
 
-	private BitSet(final byte[] words){
+	private BoxonBitSet(final byte[] words){
 		final int length = bitCount(words);
 		indexes = new int[length];
 		int k = 0;
@@ -135,7 +135,7 @@ public final class BitSet{
 		return k;
 	}
 
-	private BitSet(final long[] words){
+	private BoxonBitSet(final long[] words){
 		final int length = bitCount(words);
 		indexes = new int[length];
 		int k = 0;
@@ -161,7 +161,7 @@ public final class BitSet{
 		return k;
 	}
 
-	private BitSet(){}
+	private BoxonBitSet(){}
 
 
 	/**
@@ -300,11 +300,11 @@ public final class BitSet{
 	}
 
 	/**
-	 * Reverses the order of the given array.
+	 * In-place reverses the order of the given array.
 	 *
 	 * @param array	The array to reverse.
 	 */
-	private static void reverse(final byte[] array){
+	public static void reverse(final byte[] array){
 		for(int start = 0, end = array.length - 1; start < end; start ++, end --)
 			//swap array[start] with array[end]
 			array[start] ^= array[end] ^ (array[end] = array[start]);
@@ -319,12 +319,12 @@ public final class BitSet{
 	@Override
 	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
 	public boolean equals(final Object obj){
-		if(!BitSet.class.isInstance(obj))
+		if(!BoxonBitSet.class.isInstance(obj))
 			return false;
 		if(this == obj)
 			return true;
 
-		final BitSet rhs = (BitSet)obj;
+		final BoxonBitSet rhs = (BoxonBitSet)obj;
 		return (cardinality == rhs.cardinality
 			&& Arrays.equals(indexes, 0, cardinality, rhs.indexes, 0, rhs.cardinality));
 	}

@@ -24,24 +24,24 @@
  */
 package io.github.mtrevisan.boxon.annotations.converters;
 
-import io.github.mtrevisan.boxon.external.codecs.BitSet;
+import io.github.mtrevisan.boxon.external.codecs.BoxonBitSet;
 
 
 /**
  * Convert a bit set to a boolean interpreting only the least common bit (the boolean equals to the lowest bit value).
  */
-public final class BitToBooleanConverter implements Converter<BitSet, Boolean>{
+public final class BitToBooleanConverter implements Converter<BoxonBitSet, Boolean>{
 
 	BitToBooleanConverter(){}
 
 	@Override
-	public Boolean decode(final BitSet value){
+	public Boolean decode(final BoxonBitSet value){
 		return value.isBitSet(0);
 	}
 
 	@Override
-	public BitSet encode(final Boolean value){
-		final BitSet bs = BitSet.empty();
+	public BoxonBitSet encode(final Boolean value){
+		final BoxonBitSet bs = BoxonBitSet.empty();
 		if(value)
 			bs.addNextSetBit(0);
 		return bs;
