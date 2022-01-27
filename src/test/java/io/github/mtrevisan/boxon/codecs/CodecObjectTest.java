@@ -48,7 +48,6 @@ import io.github.mtrevisan.boxon.external.codecs.BitReader;
 import io.github.mtrevisan.boxon.external.codecs.BitReaderInterface;
 import io.github.mtrevisan.boxon.external.codecs.BitWriter;
 import io.github.mtrevisan.boxon.external.codecs.ByteOrder;
-import io.github.mtrevisan.boxon.external.logs.EventListener;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -201,7 +200,7 @@ class CodecObjectTest{
 		public String header;
 		@BindArrayPrimitive(size = "2", type = byte.class)
 		public byte[] index;
-		@BindObject(selectFrom = @ObjectChoices(prefixSize = 8,
+		@BindObject(type = TestType0.class, selectFrom = @ObjectChoices(prefixSize = 8,
 			alternatives = {
 				@ObjectChoices.ObjectChoice(condition = "index[#prefix] == 5", prefix = 0, type = TestType1.class),
 				@ObjectChoices.ObjectChoice(condition = "index[#prefix] == 6", prefix = 1, type = TestType2.class)
@@ -215,7 +214,7 @@ class CodecObjectTest{
 		public String header;
 		@BindString(size = "2")
 		public String key;
-		@BindObject(selectFrom = @ObjectChoices(alternatives = {
+		@BindObject(type = TestType0.class, selectFrom = @ObjectChoices(alternatives = {
 			@ObjectChoices.ObjectChoice(condition = "key == 'aa'", type = TestType1.class),
 			@ObjectChoices.ObjectChoice(condition = "key == 'bb'", type = TestType2.class)
 		}))

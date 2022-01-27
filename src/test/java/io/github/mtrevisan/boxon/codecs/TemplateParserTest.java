@@ -330,7 +330,7 @@ class TemplateParserTest{
 		String header;
 		@BindByte
 		public byte type;
-		@BindObject(selectFrom = @ObjectChoices(
+		@BindObject(type = TestSubCompositionBase.class, selectFrom = @ObjectChoices(
 			alternatives = {
 				@ObjectChoices.ObjectChoice(condition = "type == 1", type = TestSubComposition1.class),
 				@ObjectChoices.ObjectChoice(condition = "type == 2", type = TestSubComposition2.class)

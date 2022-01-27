@@ -67,9 +67,9 @@ public @interface BindObject{
 	 * private A array;	//object will contain instances of B
 	 * }</pre>
 	 *
-	 * @return	The (super) type of object to be inserted in the array (defaults to {@link Object#getClass()}).
+	 * @return	The (super) type of object to be inserted in the array.
 	 */
-	Class<?> type() default Object.class;
+	Class<?> type();
 
 	/**
 	 * The choices to select from, based on a prefix of a certain size.

@@ -114,7 +114,7 @@ public final class Template<T>{
 			evaluatedFields.addAll(extractEvaluations(declaredAnnotations, field));
 
 			try{
-				final Annotation validAnnotation = validateField(boundedAnnotations);
+				final Annotation validAnnotation = validateField(field, boundedAnnotations);
 
 				if(validAnnotation != null)
 					boundedFields.add(new BoundedField(field, validAnnotation, (skips.length > 0? skips: null)));
@@ -149,7 +149,7 @@ public final class Template<T>{
 		return evaluations;
 	}
 
-	private static Annotation validateField(final List<? extends Annotation> annotations) throws AnnotationException{
+	private static Annotation validateField(final Field field, final List<? extends Annotation> annotations) throws AnnotationException{
 		/** filter out {@link Skip} annotations and return the (first) valid binding annotation */
 		Annotation foundAnnotation = null;
 		for(int i = 0; foundAnnotation == null && i < annotations.size(); i ++){
@@ -157,17 +157,17 @@ public final class Template<T>{
 			if(annotationType == Skip.class || annotationType == Skip.Skips.class)
 				continue;
 
-			validateAnnotation(annotations.get(i));
+			validateAnnotation(field, annotations.get(i));
 
 			foundAnnotation = annotations.get(i);
 		}
 		return foundAnnotation;
 	}
 
-	private static void validateAnnotation(final Annotation annotation) throws AnnotationException{
+	private static void validateAnnotation(final Field field, final Annotation annotation) throws AnnotationException{
 		final TemplateAnnotationValidator validator = TemplateAnnotationValidator.fromAnnotation(annotation);
 		if(validator != null)
-			validator.validate(annotation);
+			validator.validate(field, annotation);
 	}
 
 	public Class<T> getType(){
