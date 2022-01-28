@@ -47,6 +47,14 @@ class ParserTest{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
+		//if it is wanted `headerSize` to be a variable and not a method:
+		//- remove Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes); above
+		//- change @BindString(size = "#headerSize()") into @BindString(size = "#headerSize") in ACKMessageHex.messageHeader
+		//- remove .withContextFunction(ParserTest.class.getDeclaredMethod("headerSize")) below
+		//- uncomment the below context map
+//		Map<String, Object> context = Map.of(
+//			"deviceTypes", deviceTypes,
+//			"headerSize", 4);
 		ParserCore core = ParserCore.create()
 //			.withEventListener(EventLogger.getInstance())
 			.withContext(context)
