@@ -29,7 +29,7 @@ import java.util.Arrays;
 
 
 /**
- * This class implements a vector of bits that grows as needed.
+ * This class implements a faster-than-Java-BitSet vector of bits that grows as needed.
  * <p>Each set bit of the bit set is stored as an index.</p>
  * <p>By default, all bits in the set initially are zero.</p>
  * <p>The maximum value that can be stored is {@link java.lang.Integer#MAX_VALUE MAX_VALUE}</p>
