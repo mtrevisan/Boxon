@@ -43,6 +43,8 @@ import java.util.Arrays;
  *
  * @see <a href="https://w6113.github.io/files/papers/sidm338-wangA.pdf">An Experimental Study of Bitmap Compression vs. Inverted List Compression</a>
  * @see <a href="https://onlinelibrary.wiley.com/doi/pdf/10.1002/spe.2203">Decoding billions of integers per second through vectorization</a>
+ * https://medium.com/@amit.desai03/roaring-bitmaps-fast-data-structure-for-inverted-indexes-5490fa4d1b27
+ * @see <a href="https://arxiv.org/pdf/1603.06549.pdf">Consistently faster and smaller compressed bitmaps with Roaring</a>
  */
 @SuppressWarnings("WeakerAccess")
 public final class BoxonBitSet{
