@@ -33,6 +33,8 @@ import java.util.regex.Pattern;
 
 
 /**
+ * An immutable representation of a semantic version number.
+ *
  * @see <a href="https://semver.org/">Semantic Versioning 2.0.0</a>
  */
 @SuppressWarnings("WeakerAccess")
@@ -41,6 +43,10 @@ public final class Version implements Comparable<Version>{
 	private static final String EMPTY_STRING = "";
 	/** An empty immutable {@code String} array. */
 	private static final String[] EMPTY_ARRAY = new String[0];
+
+	private static final String KEY_MAJOR = "major";
+	private static final String KEY_MINOR = "minor";
+	private static final String KEY_PATCH = "patch";
 
 	/** An empty instance (see {@link #isEmpty()}). */
 	public static final Version EMPTY = of("");
@@ -52,9 +58,8 @@ public final class Version implements Comparable<Version>{
 	private static final String BUILD_PREFIX = "+";
 
 	private static final Pattern PATTERN_DOT = Pattern.compile("\\.");
-	private static final Pattern PATTERN_DOT_PREFIX = Pattern.compile("[" + DOT + BUILD_PREFIX + PRE_RELEASE_PREFIX + "]");
-	//split and keep delimiters
-	private static final Pattern PATTERN_PREFIX = Pattern.compile("((?=[" + BUILD_PREFIX + PRE_RELEASE_PREFIX + "])|(?<=[" + BUILD_PREFIX + PRE_RELEASE_PREFIX + "]))");
+	private static final Pattern PATTERN_PRE_RELEASE_PREFIX = Pattern.compile("-");
+	private static final Pattern PATTERN_BUILD_PREFIX = Pattern.compile("\\+");
 
 
 	private final Integer major;
@@ -69,84 +74,90 @@ public final class Version implements Comparable<Version>{
 	 *
 	 * @param version	The string representation of the version.
 	 * @return	An instance of this class.
+	 * @throws VersionException	If the given version is not a valid semver version.
 	 */
-	public static Version of(final String version){
+	public static Version of(final String version) throws VersionException{
 		return new Version(version);
 	}
 
 	/**
 	 * Constructs a {@code Version} with the major, minor and patch version numbers.
 	 *
-	 * @param major	The major version number
+	 * @param major	The major version number.
 	 * @return	An instance of this class.
-	 * @throws IllegalArgumentException	If one of the version numbers is a negative integer
+	 * @throws VersionException	If one of the version numbers is a negative integer
 	 */
-	public static Version of(final int major){
+	public static Version of(final int major) throws VersionException{
 		return new Version(major, null, null, EMPTY_ARRAY, EMPTY_ARRAY);
 	}
 
 	/**
 	 * Constructs a {@code Version} with the major, minor and patch version numbers.
 	 *
-	 * @param major	The major version number
-	 * @param minor	The minor version number
+	 * @param major	The major version number.
+	 * @param minor	The minor version number.
 	 * @return	An instance of this class.
-	 * @throws IllegalArgumentException	If one of the version numbers is a negative integer
+	 * @throws VersionException	If the given version is not a valid semver version.
 	 */
-	public static Version of(final int major, final int minor){
+	public static Version of(final int major, final int minor) throws VersionException{
 		return new Version(major, minor, null, EMPTY_ARRAY, EMPTY_ARRAY);
 	}
 
 	/**
 	 * Constructs a {@code Version} with the major, minor and patch version numbers.
 	 *
-	 * @param major	The major version number
-	 * @param minor	The minor version number
-	 * @param patch	The patch version number
+	 * @param major	The major version number.
+	 * @param minor	The minor version number.
+	 * @param patch	The patch version number.
 	 * @return	An instance of this class.
-	 * @throws IllegalArgumentException	If one of the version numbers is a negative integer
+	 * @throws VersionException	If the given version is not a valid semver version.
 	 */
-	public static Version of(final int major, final int minor, final int patch){
+	public static Version of(final int major, final int minor, final int patch) throws VersionException{
 		return new Version(major, minor, patch, EMPTY_ARRAY, EMPTY_ARRAY);
 	}
 
 	/**
 	 * Constructs a {@code Version} with the major, minor and patch version numbers.
 	 *
-	 * @param major	The major version number
-	 * @param minor	The minor version number
-	 * @param patch	The patch version number
-	 * @param preRelease	The pre-release identifiers
+	 * @param major	The major version number.
+	 * @param minor	The minor version number.
+	 * @param patch	The patch version number.
+	 * @param preRelease	The pre-release identifiers.
 	 * @return	An instance of this class.
-	 * @throws IllegalArgumentException	If one of the version numbers is a negative integer
+	 * @throws VersionException	If the given version is not a valid semver version.
 	 */
-	public static Version of(final int major, final int minor, final int patch, final String[] preRelease){
+	public static Version of(final int major, final int minor, final int patch, final String[] preRelease) throws VersionException{
 		return new Version(major, minor, patch, preRelease, EMPTY_ARRAY);
 	}
 
 	/**
 	 * Constructs a {@code Version} with the major, minor and patch version numbers.
 	 *
-	 * @param major	The major version number
-	 * @param minor	The minor version number
-	 * @param patch	The patch version number
-	 * @param preRelease	The pre-release identifiers
-	 * @param build	The build identifiers
+	 * @param major	The major version number.
+	 * @param minor	The minor version number.
+	 * @param patch	The patch version number.
+	 * @param preRelease	The pre-release identifiers.
+	 * @param build	The build identifiers.
 	 * @return	An instance of this class.
-	 * @throws IllegalArgumentException	If one of the version numbers is a negative integer
+	 * @throws VersionException	If the given version is not a valid semver version.
 	 */
-	public static Version of(final int major, final int minor, final int patch, final String[] preRelease, final String[] build){
+	public static Version of(final int major, final int minor, final int patch, final String[] preRelease, final String[] build)
+			throws VersionException{
 		return new Version(major, minor, patch, preRelease, build);
 	}
 
 
-	private Version(final int major, final Integer minor, final Integer patch, final String[] preRelease, final String[] build){
-		if(major < 0)
-			throw new IllegalArgumentException("Major version MUST be a non-negative integer.");
-		if(minor != null && minor < 0)
-			throw new IllegalArgumentException("Minor version MUST be a non-negative integer.");
-		if(patch != null && patch < 0)
-			throw new IllegalArgumentException("Patch version MUST be a non-negative integer.");
+	private Version(final int major, final Integer minor, final Integer patch, final String[] preRelease, final String[] build)
+			throws VersionException{
+		validateToken(KEY_MAJOR, String.valueOf(major));
+		if(minor != null)
+			validateToken(KEY_MINOR, String.valueOf(minor));
+		if(patch != null)
+			validateToken(KEY_PATCH, String.valueOf(patch));
+		if(preRelease != null)
+			validatePreRelease(preRelease);
+		if(build != null)
+			validateBuild(build);
 
 		this.major = major;
 		this.minor = minor;
@@ -155,7 +166,7 @@ public final class Version implements Comparable<Version>{
 		this.build = (build != null? build: EMPTY_ARRAY);
 	}
 
-	private Version(String version){
+	private Version(String version) throws VersionException{
 		if(StringHelper.isBlank(version)){
 			major = null;
 			minor = null;
@@ -166,81 +177,79 @@ public final class Version implements Comparable<Version>{
 		}
 
 		version = version.trim();
-		if(!startsWithNumber(version))
-			throw new IllegalArgumentException("Argument is not a valid version");
 
-		final String[] tokens = PATTERN_DOT.split(version, 3);
-		validateValues(version, tokens);
+		if(version.contains(BUILD_PREFIX)){
+			final String[] metadata = PATTERN_BUILD_PREFIX.split(version, 2);
+			version = metadata[0];
+			build = PATTERN_DOT.split(metadata[1]);
 
-		major = Integer.parseInt(tokens[0]);
-		if(major < 0)
-			throw new IllegalArgumentException("Major version MUST be a non-negative integer.");
-		minor = (tokens.length > 1? Integer.valueOf(tokens[1]): null);
-		if(minor != null && minor < 0)
-			throw new IllegalArgumentException("Minor version MUST be a non-negative integer.");
-		if(tokens.length > 2){
-			final String[] patchPreReleaseBuild = PATTERN_PREFIX.split(tokens[2]);
-
-			patch = Integer.valueOf(patchPreReleaseBuild[0]);
-			if(patch < 0)
-				throw new IllegalArgumentException("Patch version MUST be a non-negative integer.");
-
-			int offset = 1;
-			String nextToken = (patchPreReleaseBuild.length > offset? patchPreReleaseBuild[offset]: null);
-			if(PRE_RELEASE_PREFIX.equals(nextToken) && patchPreReleaseBuild.length > ++ offset){
-				preRelease = PATTERN_DOT.split(patchPreReleaseBuild[offset ++]);
-
-				validatePreRelease(preRelease);
-
-				nextToken = (patchPreReleaseBuild.length > offset? patchPreReleaseBuild[offset]: null);
-			}
-			else
-				preRelease = EMPTY_ARRAY;
-
-			if(BUILD_PREFIX.equals(nextToken) && patchPreReleaseBuild.length > ++ offset){
-				build = PATTERN_DOT.split(patchPreReleaseBuild[offset ++]);
-
-				validateBuild(build);
-			}
-			else
-				build = EMPTY_ARRAY;
-
-			if(patchPreReleaseBuild.length > offset + 1)
-				throw new IllegalArgumentException("Argument is not a valid version");
+			validateBuild(build);
 		}
-		else{
-			patch = null;
-			preRelease = EMPTY_ARRAY;
+		else
 			build = EMPTY_ARRAY;
+
+		if(version.contains(PRE_RELEASE_PREFIX)){
+			final String[] metadata = PATTERN_PRE_RELEASE_PREFIX.split(version, 2);
+			version = metadata[0];
+			preRelease = PATTERN_DOT.split(metadata[1]);
+
+			validatePreRelease(preRelease);
+		}
+		else
+			preRelease = EMPTY_ARRAY;
+
+		final String[] tokens = PATTERN_DOT.split(version);
+		major = parseIdentifier(tokens, 0, KEY_MAJOR);
+		minor = parseIdentifier(tokens, 1, KEY_MINOR);
+		patch = parseIdentifier(tokens, 2, KEY_PATCH);
+	}
+
+	private static Integer parseIdentifier(final String[] tokens, final int index, final String type) throws VersionException{
+		Integer value = null;
+		if(tokens.length > index){
+			final String token = tokens[index];
+			validateToken(type, token);
+			value = Integer.valueOf(token);
+		}
+		return value;
+	}
+
+	private static void validateToken(final String type, final String token) throws VersionException{
+		if(hasLeadingZeros(token))
+			throw VersionException.create("The {} identifier MUST NOT contain leading zeros", type);
+		try{
+			final int number = Integer.parseInt(token);
+			if(number < 0)
+				throw VersionException.create("The {} identifier MUST be a non-negative integer", type);
+		}
+		catch(final NumberFormatException nfe){
+			throw VersionException.create(nfe, "The {} identifier `{}` could not be parsed as an integer", type, token);
 		}
 	}
 
-	private static void validateValues(final CharSequence version, final String[] tokens){
-		final String[] tokensWithPatch = PATTERN_DOT_PREFIX.split(version);
-		if(hasLeadingZeros(tokens[0])
-				|| tokensWithPatch.length > 1 && hasLeadingZeros(tokens[1])
-				|| tokensWithPatch.length > 2 && hasLeadingZeros(tokensWithPatch[2]))
-			throw new IllegalArgumentException("Numeric identifier MUST NOT contain leading zeros");
+	private static void validatePreRelease(final String[] preRelease) throws VersionException{
+		for(int i = 0; i < preRelease.length; i ++)
+			validatePreRelease(preRelease[i]);
 	}
 
-	private static void validatePreRelease(final String[] preRelease){
-		for(int i = 0; i < preRelease.length; i ++){
-			final String pr = preRelease[i];
-			final boolean numeric = ParserDataType.isDecimalNumber(pr);
-			if(numeric && pr.charAt(0) == '0')
-				throw new IllegalArgumentException("Numeric identifier MUST NOT contain leading zeros");
-			if(!numeric && !containsOnlyValidChars(pr))
-				throw new IllegalArgumentException("Argument is not a valid version");
-		}
+	private static void validatePreRelease(final String pr){
+		final boolean numeric = ParserDataType.isDecimalNumber(pr);
+		if(numeric && pr.charAt(0) == '0')
+			throw VersionException.create("The pre-release identifier MUST NOT contain leading zeros");
+		if(!numeric && !containsOnlyValidChars(pr))
+			throw VersionException.create("Argument is not a valid pre-release identifier");
 	}
 
-	private static void validateBuild(final String[] build){
-		for(int i = 0; i < build.length; i ++){
-			final String b = build[i];
-			if(!ParserDataType.isDecimalNumber(b) && !containsOnlyValidChars(b))
-				throw new IllegalArgumentException("Argument is not a valid version");
-		}
+	private static void validateBuild(final String[] build) throws VersionException{
+		for(int i = 0; i < build.length; i ++)
+			validateBuild(build[i]);
 	}
+
+	private static void validateBuild(final String b){
+		if(!ParserDataType.isDecimalNumber(b) && !containsOnlyValidChars(b))
+			throw VersionException.create("Argument is not a valid build identifier");
+	}
+
 
 	/**
 	 * Checks if this version is greater than the other version.
@@ -439,12 +448,129 @@ public final class Version implements Comparable<Version>{
 	}
 
 
-	private static boolean hasLeadingZeros(final CharSequence token){
-		return (token.length() > 1 && token.charAt(0) == '0');
+	/**
+	 * Checks if the version number is a pre-release version number.
+	 *
+	 * @return	Whether the version is pre-release.
+	 */
+	public boolean isPreRelease(){
+		return (major == 0 || preRelease.length > 0);
 	}
 
-	private static boolean startsWithNumber(final String text){
-		return (text != null && !text.isEmpty() && Character.isDigit(text.charAt(0)));
+	/**
+	 * Checks if the version number is a stable version number.
+	 *
+	 * @return	Whether the version is stable.
+	 */
+	public boolean isStable(){
+		return (major > 0 && preRelease.length == 0);
+	}
+
+	/**
+	 * Checks if this version is API-compatible with another version, that is, the major identifier is the same.
+	 *
+	 * @param other	The other version to compare to.
+	 * @return	Whether this version is API-compatible with the other version.
+	 */
+	public boolean isCompatibleWith(final Version other){
+		return major.equals(other.major);
+	}
+
+	/**
+	 * Checks if this version has added functionalities with respect to another version, that is, the major identifier is the same and
+	 * the minor is greater.
+	 *
+	 * @param other	The other version to compare to.
+	 * @return	Whether this version is an enhancement of the other version.
+	 */
+	public boolean isEnhancementOf(final Version other){
+		return (isCompatibleWith(other)
+			&& minor != null && other.minor != null && minor.intValue() > other.minor.intValue());
+	}
+
+	/**
+	 * Checks if this version is a patch of the another version, that is, the major and minor identifiers are the same and
+	 * the patch is greater.
+	 *
+	 * @param other	The other version to compare to.
+	 * @return	Whether this version is an enhancement of the other version.
+	 */
+	public boolean isPatchOf(final Version other){
+		return (isCompatibleWith(other)
+			&& minor != null && other.minor != null && minor.equals(other.minor)
+			&& patch != null && other.patch != null && patch.intValue() > other.patch.intValue());
+	}
+
+
+	/**
+	 * Increments the major version number by a given amount, clearing all other values.
+	 * <p>
+	 * When the major version number is incremented, the minor and patch version numbers are reset to {@code 0}, and
+	 * the pre-release and build metadata are cleared.
+	 * </p>
+	 *
+	 * @param amount	The amount to increment by.
+	 * @return	The new instance.
+	 * @throws VersionException	If the resulting version number is not valid.
+	 */
+	public Version incrementMajor(final int amount) throws VersionException{
+		return of((major != null? major: 0) + amount);
+	}
+
+	/**
+	 * Increments the minor version number by a given amount, clearing lesser values.
+	 * <p>
+	 * When the minor version number is incremented, the patch version number is reset to {@code 0}, and the pre-release
+	 * and build metadata are cleared.
+	 * </p>
+	 *
+	 * @param amount	The amount to increment by.
+	 * @return	The new instance.
+	 * @throws VersionException	If the resulting version number is not valid.
+	 */
+	public Version incrementMinor(final int amount) throws VersionException{
+		return of(major, (minor != null? minor: 0) + amount);
+	}
+
+	/**
+	 * Increments the patch version number by a given amount, clearing all metadata.
+	 * <p>
+	 * When the patch version number is incremented, the pre-release and build metadata are cleared.
+	 * </p>
+	 *
+	 * @param amount	The amount to increment by.
+	 * @return	The new instance.
+	 * @throws VersionException	If the resulting version number is not valid.
+	 */
+	public Version incrementPatch(final int amount) throws VersionException{
+		return of(major, minor, (patch != null? patch: 0) + amount);
+	}
+
+	/**
+	 * Sets the pre-release metadata.
+	 *
+	 * @param preRelease	The pre-release metadata.
+	 * @return	The new instance.
+	 * @throws VersionException	If the pre-release metadata is not valid.
+	 */
+	public Version setPreRelease(final String... preRelease) throws VersionException{
+		return of(major, minor, patch, preRelease, build);
+	}
+
+	/**
+	 * Sets the build metadata.
+	 *
+	 * @param build	The build metadata.
+	 * @return	The new instance.
+	 * @throws VersionException	If the build metadata is not valid.
+	 */
+	public Version setBuild(final String... build) throws VersionException{
+		return of(major, minor, patch, preRelease, build);
+	}
+
+
+	private static boolean hasLeadingZeros(final CharSequence token){
+		return (token.length() > 1 && token.charAt(0) == '0');
 	}
 
 	private static int getLeastCommonArrayLength(final String[] array1, final String[] array2){

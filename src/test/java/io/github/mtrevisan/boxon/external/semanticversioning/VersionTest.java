@@ -45,7 +45,7 @@ class VersionTest{
 		Throwable exception = Assertions.assertThrows(IllegalArgumentException.class,
 			() -> Version.of("01.1.0"));
 
-		Assertions.assertEquals("Numeric identifier MUST NOT contain leading zeros", exception.getMessage());
+		Assertions.assertEquals("The major identifier MUST NOT contain leading zeros", exception.getMessage());
 	}
 
 	@Test

@@ -27,7 +27,7 @@ package io.github.mtrevisan.boxon.exceptions;
 import org.slf4j.helpers.MessageFormatter;
 
 
-final class ExceptionHelper{
+public final class ExceptionHelper{
 
 	private ExceptionHelper(){}
 
