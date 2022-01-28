@@ -224,7 +224,7 @@ class Version{
     public byte build;
 }
 
-@BindBits(size = "1", converter = BitToBooleanConverter.class)
+@BindBits(size = "1", converter = BitsToBooleanConverter.class)
 private boolean versionPresent;
 @BindObject(condition = "versionPresent", type = Version.class)
 private Version version;
@@ -1071,7 +1071,7 @@ Boxon can handle array of primitives, bit, byte, short, int, long, float, double
 
 You can extend the basic functionalities through the application of converters as shown below in some examples. Here lies the power of Boxon.
 
-Boxon already provides some build-in converters: BitToBoolean, ShortToChar, UnsignedByte, UnsignedInt, and UnsignedShort.
+Boxon already provides some build-in converters: BitsToBoolean, ShortToChar, UnsignedByte, UnsignedInt, and UnsignedShort.
 
 <a name="how-to-converters"></a>
 ### Converters
