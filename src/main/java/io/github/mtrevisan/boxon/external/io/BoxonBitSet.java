@@ -104,12 +104,16 @@ public final class BoxonBitSet{
 		}
 		if(byteOrder == ByteOrder.LITTLE_ENDIAN)
 			//NOTE: need to reverse the bytes because BigInteger is big-endian and BitMap is little-endian
-			reverse(array);
+			byteReverse(array);
 		return valueOf(array);
 	}
 
 
 	private BoxonBitSet(final byte[] words){
+		initialize(words);
+	}
+
+	private void initialize(final byte[] words){
 		final int length = bitCount(words);
 		indexes = new int[length];
 		int k = 0;
@@ -199,7 +203,7 @@ public final class BoxonBitSet{
 	 *
 	 * @param size	The size of the number in bits.
 	 */
-	public void reverseBits(final int size){
+	public void flipBits(final int size){
 		for(int i = 0; i < cardinality; i ++)
 			indexes[i] = size - indexes[i] - 1;
 
@@ -207,6 +211,51 @@ public final class BoxonBitSet{
 		for(int start = 0, end = cardinality - 1; start < end; start ++, end --)
 			//swap array[start] with array[end]
 			indexes[start] ^= indexes[end] ^ (indexes[end] = indexes[start]);
+	}
+
+	/**
+	 * Reverse the endianness bit by bit.
+	 */
+	public void bitReverse(){
+		final byte[] array = toByteArray();
+		bitReverse(array);
+		initialize(array);
+	}
+
+	/**
+	 * Reverse the endianness bit by bit.
+	 *
+	 * @param array	The array to be reversed.
+	 */
+	private static void bitReverse(final byte[] array){
+		for(int i = 0; i < array.length; i ++)
+			array[i] = reverseBits(array[i]);
+		byteReverse(array);
+	}
+
+	/**
+	 * Reverse the endianness bit by bit.
+	 *
+	 * @param number	The byte to be reversed.
+	 */
+	private static byte reverseBits(byte number){
+		byte reverse = 0;
+		for(int i = Byte.SIZE - 1; i >= 0; i --){
+			reverse += ((number & 1) << i);
+			number >>= 1;
+		}
+		return reverse;
+	}
+
+	/**
+	 * In-place reverse the order of the given array.
+	 *
+	 * @param array	The array to be reversed.
+	 */
+	private static void byteReverse(final byte[] array){
+		for(int start = 0, end = array.length - 1; start < end; start ++, end --)
+			//swap array[start] with array[end]
+			array[start] ^= array[end] ^ (array[end] = array[start]);
 	}
 
 	/**
@@ -269,7 +318,7 @@ public final class BoxonBitSet{
 			array = Arrays.copyOf(array, expectedLength);
 		if(byteOrder == ByteOrder.LITTLE_ENDIAN)
 			//NOTE: need to reverse the bytes because BigInteger is big-endian and BitMap is little-endian
-			reverse(array);
+			byteReverse(array);
 		return extendSign(array);
 	}
 
@@ -297,17 +346,6 @@ public final class BoxonBitSet{
 		final byte[] extendedArray = new byte[array.length + 1];
 		System.arraycopy(array, 0, extendedArray, 1, array.length);
 		return extendedArray;
-	}
-
-	/**
-	 * In-place reverses the order of the given array.
-	 *
-	 * @param array	The array to reverse.
-	 */
-	public static void reverse(final byte[] array){
-		for(int start = 0, end = array.length - 1; start < end; start ++, end --)
-			//swap array[start] with array[end]
-			array[start] ^= array[end] ^ (array[end] = array[start]);
 	}
 
 

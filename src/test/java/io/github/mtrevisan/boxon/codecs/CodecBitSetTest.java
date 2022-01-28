@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.codecs;
 
-import io.github.mtrevisan.boxon.annotations.bindings.BindBits;
+import io.github.mtrevisan.boxon.annotations.bindings.BindBitSet;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
@@ -34,7 +34,6 @@ import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.io.BitReader;
 import io.github.mtrevisan.boxon.external.io.BitReaderInterface;
-import io.github.mtrevisan.boxon.external.io.BoxonBitSet;
 import io.github.mtrevisan.boxon.external.io.BitWriter;
 import io.github.mtrevisan.boxon.external.io.ByteOrder;
 import io.github.mtrevisan.boxon.external.io.CodecInterface;
@@ -44,25 +43,26 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
+import java.util.BitSet;
 import java.util.Random;
 
 
 @SuppressWarnings("ALL")
-class CodecBitsTest{
+class CodecBitSetTest{
 
 	private static final Random RANDOM = new Random();
 
 
 	@Test
 	void bitsLittleEndian() throws FieldException{
-		CodecInterface<BindBits> codec = new CodecBits();
+		CodecInterface<BindBitSet> codec = new CodecBitSet();
 		byte[] randomBytes = new byte[123];
 		RANDOM.nextBytes(randomBytes);
-		BoxonBitSet encodedValue = BoxonBitSet.valueOf(randomBytes);
-		BindBits annotation = new BindBits(){
+		BitSet encodedValue = BitSet.valueOf(randomBytes);
+		BindBitSet annotation = new BindBitSet(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindBits.class;
+				return BindBitSet.class;
 			}
 
 			@Override
@@ -112,26 +112,50 @@ class CodecBitsTest{
 		writer.flush();
 
 		byte[] bb = encodedValue.toByteArray();
-		if(bb.length < randomBytes.length)
+		bitReverse(bb);
+		if(bb.length > randomBytes.length)
 			bb = Arrays.copyOf(bb, randomBytes.length);
 		Assertions.assertEquals(StringHelper.toHexString(bb), writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		BoxonBitSet decoded = (BoxonBitSet)codec.decode(reader, annotation, null);
+		BitSet decoded = (BitSet)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}
 
+	/**
+	 * In-place reverse the endianness bit by bit.
+	 */
+	private static void bitReverse(final byte[] array){
+		for(int i = 0; i < array.length; i ++)
+			array[i] = reverseBits(array[i]);
+		reverse(array);
+	}
+
+	private static byte reverseBits(byte number){
+		byte reverse = 0;
+		for(int i = Byte.SIZE - 1; i >= 0; i --){
+			reverse += ((number & 1) << i);
+			number >>= 1;
+		}
+		return reverse;
+	}
+
+	private static void reverse(final byte[] array){
+		for(int start = 0, end = array.length - 1; start < end; start ++, end --)
+			array[start] ^= array[end] ^ (array[end] = array[start]);
+	}
+
 	@Test
 	void bitsBigEndian() throws FieldException{
-		CodecInterface<BindBits> codec = new CodecBits();
+		CodecInterface<BindBitSet> codec = new CodecBitSet();
 		byte[] randomBytes = new byte[123];
 		RANDOM.nextBytes(randomBytes);
-		BoxonBitSet encodedValue = BoxonBitSet.valueOf(randomBytes);
-		BindBits annotation = new BindBits(){
+		BitSet encodedValue = BitSet.valueOf(randomBytes);
+		BindBitSet annotation = new BindBitSet(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindBits.class;
+				return BindBitSet.class;
 			}
 
 			@Override
@@ -181,12 +205,12 @@ class CodecBitsTest{
 		writer.flush();
 
 		byte[] bb = encodedValue.toByteArray();
-		if(bb.length < randomBytes.length)
+		if(bb.length > randomBytes.length)
 			bb = Arrays.copyOf(bb, randomBytes.length);
 		Assertions.assertEquals(StringHelper.toHexString(bb), writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
-		BoxonBitSet decoded = (BoxonBitSet)codec.decode(reader, annotation, null);
+		BitSet decoded = (BitSet)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
 	}

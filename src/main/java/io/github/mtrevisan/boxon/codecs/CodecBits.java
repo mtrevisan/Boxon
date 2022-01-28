@@ -29,9 +29,8 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.codecs.managers.Injected;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.external.io.BitReaderInterface;
-import io.github.mtrevisan.boxon.external.io.BoxonBitSet;
 import io.github.mtrevisan.boxon.external.io.BitWriterInterface;
-import io.github.mtrevisan.boxon.external.io.ByteOrder;
+import io.github.mtrevisan.boxon.external.io.BoxonBitSet;
 import io.github.mtrevisan.boxon.external.io.CodecInterface;
 
 import java.lang.annotation.Annotation;
@@ -49,12 +48,10 @@ final class CodecBits implements CodecInterface<BindBits>{
 		final BindBits binding = extractBinding(annotation);
 
 		final BindingData bindingData = BindingData.create(binding, rootObject, evaluator);
-
 		final int size = bindingData.evaluateSize();
 		CodecHelper.assertSizePositive(size);
+
 		final BoxonBitSet bits = reader.getBits(size);
-		if(binding.byteOrder() == ByteOrder.LITTLE_ENDIAN)
-			bits.reverseBits(size);
 
 		return CodecHelper.convertValue(bindingData, bits);
 	}
@@ -65,14 +62,12 @@ final class CodecBits implements CodecInterface<BindBits>{
 		final BindBits binding = extractBinding(annotation);
 
 		final BindingData bindingData = BindingData.create(binding, rootObject, evaluator);
+		final int size = bindingData.evaluateSize();
 		bindingData.validate(value);
+		CodecHelper.assertSizePositive(size);
 
 		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();
 		final BoxonBitSet bits = CodecHelper.converterEncode(chosenConverter, value);
-		final int size = bindingData.evaluateSize();
-		CodecHelper.assertSizePositive(size);
-		if(binding.byteOrder() == ByteOrder.LITTLE_ENDIAN)
-			bits.reverseBits(size);
 
 		writer.putBits(bits, size);
 	}

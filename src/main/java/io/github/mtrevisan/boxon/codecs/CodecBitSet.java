@@ -53,31 +53,32 @@ final class CodecBitSet implements CodecInterface<BindBitSet>{
 		final int size = bindingData.evaluateSize();
 		CodecHelper.assertSizePositive(size);
 
-		final byte[] array = reader.getBytes(size);
-		if(binding.byteOrder() == ByteOrder.BIG_ENDIAN)
-			BoxonBitSet.reverse(array);
-
-		final BitSet value = BitSet.valueOf(array);
+		final BoxonBitSet bits = reader.getBits(size);
+		if(binding.byteOrder() == ByteOrder.LITTLE_ENDIAN)
+			bits.bitReverse();
+		final BitSet value = BitSet.valueOf(bits.toByteArray());
 
 		return CodecHelper.convertValue(bindingData, value);
 	}
 
 	@Override
-	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object rootObject, final Object value)
+	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object rootObject, Object value)
 			throws AnnotationException{
 		final BindBitSet binding = extractBinding(annotation);
 
 		final BindingData bindingData = BindingData.create(binding, rootObject, evaluator);
+		final int size = bindingData.evaluateSize();
 		bindingData.validate(value);
+		CodecHelper.assertSizePositive(size);
 
 		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();
-		final BitSet v = CodecHelper.converterEncode(chosenConverter, value);
+		final BitSet bits = CodecHelper.converterEncode(chosenConverter, value);
+		final byte[] array = bits.toByteArray();
+		value = BoxonBitSet.valueOf(array);
+		if(binding.byteOrder() == ByteOrder.LITTLE_ENDIAN)
+			((BoxonBitSet)value).bitReverse();
 
-		final byte[] array = v.toByteArray();
-		if(binding.byteOrder() == ByteOrder.BIG_ENDIAN)
-			BoxonBitSet.reverse(array);
-
-		writer.putBytes(array);
+		writer.putBits((BoxonBitSet)value, size);
 	}
 
 }

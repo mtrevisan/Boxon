@@ -34,19 +34,19 @@ public class BoxonBitSetTest{
 	@Test
 	void reverseBits(){
 		BoxonBitSet bits = BoxonBitSet.valueOf(new byte[]{0x10});
-		bits.reverseBits(Byte.SIZE);
+		bits.flipBits(Byte.SIZE);
 
 		Assertions.assertEquals(BoxonBitSet.valueOf(new byte[]{0x08}), bits);
 
 
 		bits = BoxonBitSet.valueOf(new byte[]{0x16});
-		bits.reverseBits(Byte.SIZE);
+		bits.flipBits(Byte.SIZE);
 
 		Assertions.assertEquals(BoxonBitSet.valueOf(new byte[]{0x68}), bits);
 
 
 		bits = BoxonBitSet.valueOf(new byte[]{(byte)0xE7});
-		bits.reverseBits(Byte.SIZE);
+		bits.flipBits(Byte.SIZE);
 
 		Assertions.assertEquals(BoxonBitSet.valueOf(new byte[]{(byte)0xE7}), bits);
 	}

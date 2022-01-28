@@ -72,7 +72,7 @@ final class CodecHelper{
 
 			final BoxonBitSet bits = BoxonBitSet.valueOf(new long[]{chosenAlternative.prefix()});
 			if(prefixByteOrder == ByteOrder.LITTLE_ENDIAN)
-				bits.reverseBits(prefixSize);
+				bits.flipBits(prefixSize);
 
 			writer.putBits(bits, prefixSize);
 		}
