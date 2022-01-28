@@ -29,8 +29,8 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.codecs.managers.Injected;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.external.io.BitReaderInterface;
-import io.github.mtrevisan.boxon.external.io.BoxonBitSet;
 import io.github.mtrevisan.boxon.external.io.BitWriterInterface;
+import io.github.mtrevisan.boxon.external.io.BoxonBitSet;
 import io.github.mtrevisan.boxon.external.io.ByteOrder;
 import io.github.mtrevisan.boxon.external.io.CodecInterface;
 

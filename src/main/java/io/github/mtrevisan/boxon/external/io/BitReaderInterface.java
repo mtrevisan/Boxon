@@ -80,7 +80,7 @@ public interface BitReaderInterface{
 	/**
 	 * Reads the next {@code length} bits and composes a {@link BoxonBitSet}.
 	 *
-	 * @param length	The amount of bits to read.
+	 * @param length   The amount of bits to read.
 	 * @return	A {@link BoxonBitSet} value at the {@link BitReader}'s current position.
 	 */
 	BoxonBitSet getBits(int length);

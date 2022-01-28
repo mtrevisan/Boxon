@@ -349,6 +349,15 @@ public final class BoxonBitSet{
 	}
 
 
+	/**
+	 * Change the byte order appropriately.
+	 */
+	public void changeByteOrder(final ByteOrder byteOrder){
+		if(byteOrder == ByteOrder.LITTLE_ENDIAN)
+			bitReverse();
+	}
+
+
 	@Override
 	public String toString(){
 		return Arrays.toString(indexes);
