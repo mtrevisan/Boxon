@@ -148,12 +148,14 @@ public final class BitReader extends BitReaderData implements BitReaderInterface
 
 	@Override
 	public int getInt(final ByteOrder byteOrder){
-		return getInteger(Integer.SIZE, byteOrder).intValue();
+		return getInteger(Integer.SIZE, byteOrder)
+			.intValue();
 	}
 
 	@Override
 	public long getLong(final ByteOrder byteOrder){
-		return getInteger(Long.SIZE, byteOrder).longValue();
+		return getInteger(Long.SIZE, byteOrder)
+			.longValue();
 	}
 
 	@Override
