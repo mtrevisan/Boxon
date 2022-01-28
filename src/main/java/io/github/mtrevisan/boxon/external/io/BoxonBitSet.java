@@ -199,7 +199,17 @@ public final class BoxonBitSet{
 	}
 
 	/**
-	 * Sets the bits of a number to the complement of its current value.
+	 * Change the byte order appropriately.
+	 *
+	 * @param size	The size of the number in bits.
+	 */
+	public void changeByteOrder(final int size, final ByteOrder byteOrder){
+		if(byteOrder == ByteOrder.LITTLE_ENDIAN)
+			flipBits(size);
+	}
+
+	/**
+	 * Reverse the endianness bit by bit.
 	 *
 	 * @param size	The size of the number in bits.
 	 */
@@ -211,51 +221,6 @@ public final class BoxonBitSet{
 		for(int start = 0, end = cardinality - 1; start < end; start ++, end --)
 			//swap array[start] with array[end]
 			indexes[start] ^= indexes[end] ^ (indexes[end] = indexes[start]);
-	}
-
-	/**
-	 * Reverse the endianness bit by bit.
-	 */
-	public void bitReverse(){
-		final byte[] array = toByteArray();
-		bitReverse(array);
-		initialize(array);
-	}
-
-	/**
-	 * Reverse the endianness bit by bit.
-	 *
-	 * @param array	The array to be reversed.
-	 */
-	private static void bitReverse(final byte[] array){
-		for(int i = 0; i < array.length; i ++)
-			array[i] = reverseBits(array[i]);
-		byteReverse(array);
-	}
-
-	/**
-	 * Reverse the endianness bit by bit.
-	 *
-	 * @param number	The byte to be reversed.
-	 */
-	private static byte reverseBits(byte number){
-		byte reverse = 0;
-		for(int i = Byte.SIZE - 1; i >= 0; i --){
-			reverse += ((number & 1) << i);
-			number >>= 1;
-		}
-		return reverse;
-	}
-
-	/**
-	 * In-place reverse the order of the given array.
-	 *
-	 * @param array	The array to be reversed.
-	 */
-	private static void byteReverse(final byte[] array){
-		for(int start = 0, end = array.length - 1; start < end; start ++, end --)
-			//swap array[start] with array[end]
-			array[start] ^= array[end] ^ (array[end] = array[start]);
 	}
 
 	/**
@@ -323,6 +288,17 @@ public final class BoxonBitSet{
 	}
 
 	/**
+	 * In-place reverse the order of the given array.
+	 *
+	 * @param array	The array to be reversed.
+	 */
+	private static void byteReverse(final byte[] array){
+		for(int start = 0, end = array.length - 1; start < end; start ++, end --)
+			//swap array[start] with array[end]
+			array[start] ^= array[end] ^ (array[end] = array[start]);
+	}
+
+	/**
 	 * Convert the value to signed primitive.
 	 *
 	 * @param array	Field value.
@@ -346,15 +322,6 @@ public final class BoxonBitSet{
 		final byte[] extendedArray = new byte[array.length + 1];
 		System.arraycopy(array, 0, extendedArray, 1, array.length);
 		return extendedArray;
-	}
-
-
-	/**
-	 * Change the byte order appropriately.
-	 */
-	public void changeByteOrder(final ByteOrder byteOrder){
-		if(byteOrder == ByteOrder.LITTLE_ENDIAN)
-			bitReverse();
 	}
 
 

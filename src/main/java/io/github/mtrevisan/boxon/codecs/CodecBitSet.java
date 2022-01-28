@@ -53,7 +53,7 @@ final class CodecBitSet implements CodecInterface<BindBitSet>{
 		CodecHelper.assertSizePositive(size);
 
 		final BoxonBitSet bits = reader.getBits(size);
-		bits.changeByteOrder(binding.byteOrder());
+		bits.changeByteOrder(size, binding.byteOrder());
 		final BitSet value = BitSet.valueOf(bits.toByteArray());
 
 		return CodecHelper.convertValue(bindingData, value);
@@ -72,7 +72,7 @@ final class CodecBitSet implements CodecInterface<BindBitSet>{
 		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();
 		final BitSet bits = CodecHelper.converterEncode(chosenConverter, value);
 		value = BoxonBitSet.valueOf(bits.toByteArray());
-		((BoxonBitSet)value).changeByteOrder(binding.byteOrder());
+		((BoxonBitSet)value).changeByteOrder(size, binding.byteOrder());
 
 		writer.putBits((BoxonBitSet)value, size);
 	}
