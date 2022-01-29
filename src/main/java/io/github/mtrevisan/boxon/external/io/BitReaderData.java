@@ -160,17 +160,17 @@ abstract class BitReaderData{
 	/**
 	 * Add {@code size} bits from the cache starting from LSB with a given offset.
 	 *
-	 * @param value	The bit set into which to transfer {@code size} bits from the cache.
+	 * @param bits	The bit set into which to transfer {@code size} bits from the cache.
 	 * @param offset	The offset for the indexes.
 	 * @param size	The amount of bits to read from the LSB of the cache.
 	 */
-	private void addCacheToBitSet(final BoxonBitSet value, final int offset, final int size){
+	private void addCacheToBitSet(final BoxonBitSet bits, final int offset, final int size){
 		final byte mask = (byte)((1 << size) - 1);
-		value.ensureAdditionalSpace(Integer.bitCount(cache & mask));
+		bits.ensureAdditionalSpace(Integer.bitCount(cache & mask));
 
 		int skip;
 		while(cache != 0 && (skip = Integer.numberOfTrailingZeros(cache & 0xFF)) < size){
-			value.addNextSetBit(skip + offset);
+			bits.addNextSetBit(skip + offset);
 			cache ^= 1 << skip;
 		}
 		//remove read bits from the cache
