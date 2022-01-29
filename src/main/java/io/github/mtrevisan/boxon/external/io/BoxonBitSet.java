@@ -43,7 +43,7 @@ import java.util.Arrays;
  *
  * @see <a href="https://w6113.github.io/files/papers/sidm338-wangA.pdf">An Experimental Study of Bitmap Compression vs. Inverted List Compression</a>
  * @see <a href="https://onlinelibrary.wiley.com/doi/pdf/10.1002/spe.2203">Decoding billions of integers per second through vectorization</a>
- * 
+ *
  * https://medium.com/@amit.desai03/roaring-bitmaps-fast-data-structure-for-inverted-indexes-5490fa4d1b27
  * https://github.com/RoaringBitmap/RoaringBitmap/blob/master/RoaringBitmap/src/main/java/org/roaringbitmap/RoaringBitmap.java
  * @see <a href="https://arxiv.org/pdf/1603.06549.pdf">Consistently faster and smaller compressed bitmaps with Roaring</a>
@@ -53,6 +53,8 @@ public final class BoxonBitSet{
 
 	/** The array containing the indexes. */
 	private int[] indexes = new int[0];
+	/** The array containing the run-length. */
+	private int[] run = new int[0];
 	/** The number of indexes stored. */
 	private int cardinality;
 
@@ -113,9 +115,22 @@ public final class BoxonBitSet{
 	}
 
 
+	private BoxonBitSet(){}
+
 	private BoxonBitSet(final byte[] words){
 		initialize(words);
 	}
+
+	private BoxonBitSet(final long[] words){
+		final int length = bitCount(words);
+		indexes = new int[length];
+		int k = 0;
+		int offset = 0;
+		for(int i = 0; i < words.length; i ++, offset += Long.SIZE)
+			k = addWordToIndexes(words[i], k, offset);
+		cardinality = length;
+	}
+
 
 	private void initialize(final byte[] words){
 		final int length = bitCount(words);
@@ -143,16 +158,6 @@ public final class BoxonBitSet{
 		return k;
 	}
 
-	private BoxonBitSet(final long[] words){
-		final int length = bitCount(words);
-		indexes = new int[length];
-		int k = 0;
-		int offset = 0;
-		for(int i = 0; i < words.length; i ++, offset += Long.SIZE)
-			k = addWordToIndexes(words[i], k, offset);
-		cardinality = length;
-	}
-
 	private static int bitCount(final long[] words){
 		int length = 0;
 		for(int i = 0; i < words.length; i ++)
@@ -168,9 +173,6 @@ public final class BoxonBitSet{
 		}
 		return k;
 	}
-
-	private BoxonBitSet(){}
-
 
 	/**
 	 * Ensure the set can contain {@code size} more bits.
