@@ -80,6 +80,21 @@ public final class BoxonBitSet{
 	}
 
 	/**
+	 * Returns a new bit set containing all the bits in the given long array.
+	 *
+	 * @param array	A long array containing a little-endian representation of a sequence of bits to be used as
+	 * 	the initial bits of the new bit set.
+	 * @param size	The amount of bits to use}.
+	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
+	 * @return	A {@code BoxonBitSet} containing all the bits in the long array.
+	 */
+	public static BoxonBitSet valueOf(final long[] array, final int size, final ByteOrder byteOrder){
+		final BoxonBitSet bits = new BoxonBitSet(array);
+		bits.changeByteOrder(size, byteOrder);
+		return bits;
+	}
+
+	/**
 	 * Returns a new bit set containing all the bits in the given byte array.
 	 *
 	 * @param array	A byte array containing a little-endian representation of a sequence of bits to be used as
@@ -88,6 +103,21 @@ public final class BoxonBitSet{
 	 */
 	public static BoxonBitSet valueOf(final byte[] array){
 		return new BoxonBitSet(array);
+	}
+
+	/**
+	 * Returns a new bit set containing all the bits in the given byte array.
+	 *
+	 * @param array	A byte array containing a little-endian representation of a sequence of bits to be used as
+	 * 	the initial bits of the new bit set.
+	 * @param size	The amount of bits to use}.
+	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
+	 * @return	A {@code BoxonBitSet} containing all the bits in the byte array.
+	 */
+	public static BoxonBitSet valueOf(final byte[] array, final int size, final ByteOrder byteOrder){
+		final BoxonBitSet bits = new BoxonBitSet(array);
+		bits.changeByteOrder(size, byteOrder);
+		return bits;
 	}
 
 	/**
@@ -209,7 +239,7 @@ public final class BoxonBitSet{
 	 *
 	 * @param size	The size of the number in bits.
 	 */
-	public void changeByteOrder(final int size, final ByteOrder byteOrder){
+	void changeByteOrder(final int size, final ByteOrder byteOrder){
 		if(byteOrder == ByteOrder.LITTLE_ENDIAN)
 			flipBits(size);
 	}

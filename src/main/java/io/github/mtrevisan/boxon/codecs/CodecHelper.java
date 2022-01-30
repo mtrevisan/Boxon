@@ -70,8 +70,7 @@ final class CodecHelper{
 			final int prefixSize = selectFrom.prefixSize();
 			final ByteOrder prefixByteOrder = selectFrom.byteOrder();
 
-			final BoxonBitSet bits = BoxonBitSet.valueOf(new long[]{chosenAlternative.prefix()});
-			bits.changeByteOrder(prefixSize, prefixByteOrder);
+			final BoxonBitSet bits = BoxonBitSet.valueOf(new long[]{chosenAlternative.prefix()}, prefixSize, prefixByteOrder);
 
 			writer.putBits(bits, prefixSize);
 		}
