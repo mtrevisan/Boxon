@@ -44,6 +44,13 @@ public interface BitWriterInterface{
 	void put(Object value, ByteOrder byteOrder) throws AnnotationException;
 
 	/**
+	 * Skip {@code length} bits.
+	 *
+	 * @param length	The amount of bits to skip.
+	 */
+	void skipBits(int length);
+
+	/**
 	 * Writes {@code value} to this {@link BitWriter} using {@code length} bits.
 	 *
 	 * @param value	The value to write.

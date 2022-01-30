@@ -42,6 +42,15 @@ class BitWriterData{
 
 
 	/**
+	 * Skip {@code length} bits.
+	 *
+	 * @param length	The amount of bits to skip.
+	 */
+	public final void skipBits(final int length){
+		putBits(BoxonBitSet.empty(), length);
+	}
+
+	/**
 	 * Writes {@code value} to this {@link BitWriter} using {@code length} bits.
 	 *
 	 * @param value	The value to write.

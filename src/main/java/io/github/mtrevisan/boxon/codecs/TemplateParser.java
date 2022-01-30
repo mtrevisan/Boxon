@@ -38,7 +38,6 @@ import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.descriptions.DescriberKey;
 import io.github.mtrevisan.boxon.external.io.BitReaderInterface;
-import io.github.mtrevisan.boxon.external.io.BoxonBitSet;
 import io.github.mtrevisan.boxon.external.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.external.io.CodecInterface;
 import io.github.mtrevisan.boxon.external.io.ParserDataType;
@@ -392,8 +391,7 @@ public final class TemplateParser implements TemplateParserInterface{
 
 		final int size = evaluator.evaluateSize(skip.size(), rootObject);
 		if(size > 0)
-			/** skip {@link size} bits */
-			writer.putBits(BoxonBitSet.empty(), size);
+			writer.skipBits(size);
 		else if(skip.consumeTerminator())
 			//skip until terminator
 			writer.putByte(skip.terminator());
