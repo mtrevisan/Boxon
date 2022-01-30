@@ -28,6 +28,7 @@ import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.BitSet;
 
 
 public interface BitWriterInterface{
@@ -49,6 +50,15 @@ public interface BitWriterInterface{
 	 * @param length	The amount of bits to use when writing {@code value}.
 	 */
 	void putBits(BoxonBitSet value, int length);
+
+	/**
+	 * Writes {@code value} to this {@link BitWriter} using {@code length} bits.
+	 *
+	 * @param value	The value to write.
+	 * @param length	The amount of bits to use when writing {@code value}.
+	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
+	 */
+	void putBitSet(BitSet value, int length, ByteOrder byteOrder);
 
 	/**
 	 * Writes a value using {@link Byte#SIZE} bits.

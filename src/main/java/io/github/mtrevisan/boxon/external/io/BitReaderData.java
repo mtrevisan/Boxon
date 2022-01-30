@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
+import java.util.BitSet;
 
 
 @SuppressWarnings("WeakerAccess")
@@ -137,6 +138,36 @@ abstract class BitReaderData{
 			}
 		}
 		return bits;
+	}
+
+	/**
+	 * Reads the next {@code length} bits and composes a {@link BitSet}.
+	 *
+	 * @param length   The amount of bits to read.
+	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
+	 * @return	A {@link BitSet} value at the {@link BitReader}'s current position.
+	 */
+	public final BitSet getBitSet(final int length, final ByteOrder byteOrder){
+		final BoxonBitSet bits = BoxonBitSet.empty();
+		int offset = 0;
+		while(offset < length){
+			//transfer the cache values
+			final int size = Math.min(length, remaining);
+			if(size > 0){
+				addCacheToBitSet(bits, offset, size);
+
+				offset += size;
+			}
+
+			//if cache is empty and there are more bits to be read, fill it
+			if(length > offset){
+				cache = buffer.get();
+
+				remaining = Byte.SIZE;
+			}
+		}
+		bits.changeByteOrder(length, byteOrder);
+		return BitSet.valueOf(bits.toByteArray());
 	}
 
 	private Byte peekByte(){

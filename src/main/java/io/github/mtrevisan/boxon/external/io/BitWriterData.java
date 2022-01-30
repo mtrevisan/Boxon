@@ -27,6 +27,7 @@ package io.github.mtrevisan.boxon.external.io;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 
 import java.io.ByteArrayOutputStream;
+import java.util.BitSet;
 
 
 class BitWriterData{
@@ -70,6 +71,38 @@ class BitWriterData{
 
 	/**
 	 * Writes {@code value} to this {@link BitWriter} using {@code length} bits.
+	 *
+	 * @param value	The value to write.
+	 * @param length	The amount of bits to use when writing {@code value}.
+	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
+	 */
+	public final void putBitSet(final BitSet value, final int length, final ByteOrder byteOrder){
+		final BoxonBitSet bits = BoxonBitSet.valueOf(value.toByteArray());
+		bits.changeByteOrder(length, byteOrder);
+
+		//if the value that we're writing is too large to be placed entirely in the cache, then we need to place as
+		//much as we can in the cache (the least significant bits), flush the cache to the backing ByteBuffer, and
+		//place the rest in the cache
+		int offset = 0;
+		while(offset < length){
+			//fill the cache one chunk of bits at a time
+			final int size = Math.min(length - offset, Byte.SIZE - remaining);
+			final byte nextCache = (byte)bits.toLong(offset, size);
+			cache = (byte)((cache << size) | nextCache);
+			remaining += size;
+			offset += size;
+
+			//if cache is full, write it
+			if(remaining == Byte.SIZE){
+				os.write(cache);
+
+				resetInnerVariables();
+			}
+		}
+	}
+
+	/**
+	 * Writes {@code value} to this {@link BitWriter} using {@code length} bits in big-endian format.
 	 *
 	 * @param value	The value to write.
 	 * @param length	The amount of bits to use when writing {@code value} (MUST BE less than or equals to {@link Long#SIZE}).

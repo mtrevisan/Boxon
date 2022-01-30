@@ -30,6 +30,7 @@ import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.BitSet;
 
 
 public interface BitReaderInterface{
@@ -84,6 +85,15 @@ public interface BitReaderInterface{
 	 * @return	A {@link BoxonBitSet} value at the {@link BitReader}'s current position.
 	 */
 	BoxonBitSet getBits(int length);
+
+	/**
+	 * Reads the next {@code length} bits and composes a {@link BitSet}.
+	 *
+	 * @param length   The amount of bits to read.
+	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
+	 * @return	A {@link BitSet} value at the {@link BitReader}'s current position.
+	 */
+	BitSet getBitSet(int length, ByteOrder byteOrder);
 
 	/**
 	 * Reads {@link Byte#SIZE} bits and composes a {@code byte}.
