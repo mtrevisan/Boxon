@@ -166,7 +166,7 @@ abstract class BitReaderData{
 				remaining = Byte.SIZE;
 			}
 		}
-		bits.changeByteOrder(length, byteOrder);
+		bits.changeBitOrder(length, byteOrder);
 		return BitSet.valueOf(bits.toByteArray());
 	}
 
