@@ -69,14 +69,14 @@ public final class BoxonBitSet{
 	}
 
 	/**
-	 * Returns a new bit set containing all the bits in the given long array.
+	 * Returns a new bit set containing all the bits in the given long array written in big-endian.
 	 *
-	 * @param array	A long array containing a little-endian representation of a sequence of bits to be used as
+	 * @param array	An array containing a little-endian representation of a sequence of bits to be used as
 	 * 	the initial bits of the new bit set.
-	 * @return	A {@code BoxonBitSet} containing all the bits in the long array.
+	 * @return	A {@code BoxonBitSet} containing all the bits in the array.
 	 */
 	public static BoxonBitSet valueOf(final long[] array){
-		return new BoxonBitSet(array);
+		return valueOf(array, array.length * Byte.BYTES, ByteOrder.BIG_ENDIAN);
 	}
 
 	/**
@@ -95,9 +95,33 @@ public final class BoxonBitSet{
 	}
 
 	/**
+	 * Returns a new bit set containing all the bits in the given long array written in big-endian.
+	 *
+	 * @param array	An array containing a little-endian representation of a sequence of bits to be used as
+	 * 	the initial bits of the new bit set.
+	 * @return	A {@code BoxonBitSet} containing all the bits in the array.
+	 */
+	public static BoxonBitSet valueOf(final byte[] array){
+		return valueOf(array, array.length * Byte.BYTES, ByteOrder.BIG_ENDIAN);
+	}
+
+	/**
 	 * Returns a new bit set containing all the bits in the given byte array.
 	 *
-	 * @param array	A byte array containing a little-endian representation of a sequence of bits to be used as
+	 * @param array	An array containing a little-endian representation of a sequence of bits to be used as
+	 * 	the initial bits of the new bit set.
+	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
+	 * @return	A {@code BoxonBitSet} containing all the bits in the byte array.
+	 */
+	public static BoxonBitSet valueOf(final byte[] array, final ByteOrder byteOrder){
+		changeByteOrder(array, byteOrder);
+		return new BoxonBitSet(array);
+	}
+
+	/**
+	 * Returns a new bit set containing all the bits in the given byte array.
+	 *
+	 * @param array	An array containing a little-endian representation of a sequence of bits to be used as
 	 * 	the initial bits of the new bit set.
 	 * @param size	The amount of bits to use}.
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
@@ -127,8 +151,7 @@ public final class BoxonBitSet{
 			System.arraycopy(array, offset, newArray, newArrayOffset, array.length - offset);
 			array = newArray;
 		}
-		changeByteOrder(array, byteOrder);
-		return new BoxonBitSet(array);
+		return valueOf(array, byteOrder);
 	}
 
 

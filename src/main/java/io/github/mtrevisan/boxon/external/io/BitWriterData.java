@@ -101,13 +101,13 @@ class BitWriterData{
 	}
 
 	/**
-	 * Writes {@code value} to this {@link BitWriter} using {@code length} bits in big-endian format.
+	 * Writes {@code value} as big-endian to this {@link BitWriter} using {@code length} bits in big-endian format.
 	 *
 	 * @param value	The value to write.
 	 * @param size	The amount of bits to use when writing {@code value} (MUST BE less than or equals to {@link Long#SIZE}).
 	 */
 	final void putValue(final long value, final int size){
-		final BoxonBitSet bits = BoxonBitSet.valueOf(new long[]{value});
+		final BoxonBitSet bits = BoxonBitSet.valueOf(new long[]{value}, size, ByteOrder.BIG_ENDIAN);
 		putBits(bits, size);
 	}
 

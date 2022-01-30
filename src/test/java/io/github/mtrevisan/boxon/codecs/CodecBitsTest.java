@@ -127,7 +127,7 @@ class CodecBitsTest{
 		CodecInterface<BindBits> codec = new CodecBits();
 		byte[] randomBytes = new byte[123];
 		RANDOM.nextBytes(randomBytes);
-		BoxonBitSet encodedValue = BoxonBitSet.valueOf(randomBytes, randomBytes.length * Byte.SIZE, ByteOrder.BIG_ENDIAN);
+		BoxonBitSet encodedValue = BoxonBitSet.valueOf(randomBytes);
 		BindBits annotation = new BindBits(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
