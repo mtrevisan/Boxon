@@ -79,7 +79,7 @@ public interface BitReaderInterface{
 	Object get(Class<?> type, ByteOrder byteOrder) throws AnnotationException;
 
 	/**
-	 * Reads the next {@code length} bits and composes a {@link BoxonBitSet}.
+	 * Reads the next {@code length} bits and composes a {@link BoxonBitSet} in big-endian notation.
 	 *
 	 * @param length   The amount of bits to read.
 	 * @return	A {@link BoxonBitSet} value at the {@link BitReader}'s current position.

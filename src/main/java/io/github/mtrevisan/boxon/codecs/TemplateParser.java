@@ -273,7 +273,7 @@ public final class TemplateParser implements TemplateParserInterface{
 			reader.skipUntilTerminator(terminator);
 			if(skip.consumeTerminator()){
 				final int length = ParserDataType.getSize(terminator);
-				reader.getBits(length);
+				reader.skip(length);
 			}
 		}
 	}

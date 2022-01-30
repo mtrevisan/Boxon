@@ -113,7 +113,7 @@ abstract class BitReaderData{
 	}
 
 	/**
-	 * Reads the next {@code length} bits and composes a {@link BoxonBitSet}.
+	 * Reads the next {@code length} bits and composes a {@link BoxonBitSet} in big-endian notation.
 	 *
 	 * @param length   The amount of bits to read.
 	 * @return	A {@link BoxonBitSet} value at the {@link BitReader}'s current position.
@@ -144,29 +144,12 @@ abstract class BitReaderData{
 	 * Reads the next {@code length} bits and composes a {@link BitSet}.
 	 *
 	 * @param length   The amount of bits to read.
-	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
+	 * @param bitOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	A {@link BitSet} value at the {@link BitReader}'s current position.
 	 */
-	public final BitSet getBitSet(final int length, final ByteOrder byteOrder){
-		final BoxonBitSet bits = BoxonBitSet.empty();
-		int offset = 0;
-		while(offset < length){
-			//transfer the cache values
-			final int size = Math.min(length, remaining);
-			if(size > 0){
-				addCacheToBitSet(bits, offset, size);
-
-				offset += size;
-			}
-
-			//if cache is empty and there are more bits to be read, fill it
-			if(length > offset){
-				cache = buffer.get();
-
-				remaining = Byte.SIZE;
-			}
-		}
-		bits.changeBitOrder(length, byteOrder);
+	public final BitSet getBitSet(final int length, final ByteOrder bitOrder){
+		final BoxonBitSet bits = getBits(length);
+		bits.changeBitOrder(length, bitOrder);
 		return BitSet.valueOf(bits.toByteArray());
 	}
 

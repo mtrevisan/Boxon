@@ -53,7 +53,7 @@ final class CodecStringTerminated implements CodecInterface<BindStringTerminated
 		final String text = reader.getTextUntilTerminator(terminator, charset);
 		if(binding.consumeTerminator()){
 			final int length = ParserDataType.getSize(terminator);
-			reader.getBits(length);
+			reader.skip(length);
 		}
 
 		final BindingData bindingData = BindingData.create(binding, rootObject, evaluator);

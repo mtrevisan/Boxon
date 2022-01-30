@@ -51,7 +51,7 @@ public interface BitWriterInterface{
 	void skipBits(int length);
 
 	/**
-	 * Writes {@code value} to this {@link BitWriter} using {@code length} bits.
+	 * Writes {@code value} to this {@link BitWriter} using {@code length} bits in big-endian notation.
 	 *
 	 * @param value	The value to write.
 	 * @param length	The amount of bits to use when writing {@code value}.

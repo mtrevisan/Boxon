@@ -51,7 +51,7 @@ class BitWriterData{
 	}
 
 	/**
-	 * Writes {@code value} to this {@link BitWriter} using {@code length} bits.
+	 * Writes {@code value} to this {@link BitWriter} using {@code length} bits in big-endian notation.
 	 *
 	 * @param value	The value to write.
 	 * @param size	The amount of bits to use when writing {@code value}.
@@ -87,26 +87,7 @@ class BitWriterData{
 	 */
 	public final void putBitSet(final BitSet value, final int size, final ByteOrder byteOrder){
 		final BoxonBitSet bits = BoxonBitSet.valueOf(value.toByteArray(), size, byteOrder);
-
-		//if the value that we're writing is too large to be placed entirely in the cache, then we need to place as
-		//much as we can in the cache (the least significant bits), flush the cache to the backing ByteBuffer, and
-		//place the rest in the cache
-		int offset = 0;
-		while(offset < size){
-			//fill the cache one chunk of bits at a time
-			final int length = Math.min(size - offset, Byte.SIZE - remaining);
-			final byte nextCache = (byte)bits.toLong(offset, length);
-			cache = (byte)((cache << length) | nextCache);
-			remaining += length;
-			offset += length;
-
-			//if cache is full, write it
-			if(remaining == Byte.SIZE){
-				os.write(cache);
-
-				resetInnerVariables();
-			}
-		}
+		putBits(bits, size);
 	}
 
 	/**

@@ -53,8 +53,6 @@ public final class BoxonBitSet{
 
 	/** The array containing the indexes. */
 	private int[] indexes = new int[0];
-	/** The array containing the run-length. */
-	private int[] run = new int[0];
 	/** The number of indexes stored. */
 	private int cardinality;
 
@@ -85,12 +83,12 @@ public final class BoxonBitSet{
 	 * @param array	A long array containing a little-endian representation of a sequence of bits to be used as
 	 * 	the initial bits of the new bit set.
 	 * @param size	The amount of bits to use.
-	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
+	 * @param bitOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	A {@code BoxonBitSet} containing all the bits in the long array.
 	 */
-	public static BoxonBitSet valueOf(final long[] array, final int size, final ByteOrder byteOrder){
+	public static BoxonBitSet valueOf(final long[] array, final int size, final ByteOrder bitOrder){
 		final BoxonBitSet bits = new BoxonBitSet(array);
-		bits.changeBitOrder(size, byteOrder);
+		bits.changeBitOrder(size, bitOrder);
 		return bits;
 	}
 
@@ -124,12 +122,12 @@ public final class BoxonBitSet{
 	 * @param array	An array containing a little-endian representation of a sequence of bits to be used as
 	 * 	the initial bits of the new bit set.
 	 * @param size	The amount of bits to use}.
-	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
+	 * @param bitOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	A {@code BoxonBitSet} containing all the bits in the byte array.
 	 */
-	public static BoxonBitSet valueOf(final byte[] array, final int size, final ByteOrder byteOrder){
+	public static BoxonBitSet valueOf(final byte[] array, final int size, final ByteOrder bitOrder){
 		final BoxonBitSet bits = new BoxonBitSet(array);
-		bits.changeBitOrder(size, byteOrder);
+		bits.changeBitOrder(size, bitOrder);
 		return bits;
 	}
 
