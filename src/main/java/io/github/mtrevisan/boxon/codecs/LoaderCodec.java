@@ -74,7 +74,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	/**
 	 * Assign an event listener.
 	 *
-	 * @param eventListener   The event listener.
+	 * @param eventListener	The event listener.
 	 * @return	The current instance.
 	 */
 	public LoaderCodec withEventListener(final EventListener eventListener){

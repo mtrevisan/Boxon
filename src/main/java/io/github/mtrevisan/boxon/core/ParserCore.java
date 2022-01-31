@@ -77,7 +77,7 @@ public final class ParserCore{
 	/**
 	 * Assign an event listener.
 	 *
-	 * @param eventListener   The event listener.
+	 * @param eventListener	The event listener.
 	 * @return	The current instance.
 	 */
 	public ParserCore withEventListener(final EventListener eventListener){

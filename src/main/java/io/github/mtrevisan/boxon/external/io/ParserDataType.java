@@ -323,7 +323,7 @@ public enum ParserDataType{
 	 * isNumeric("")     = false
 	 * isNumeric("  ")   = false
 	 * isNumeric("123")  = true
-	 * isNumeric("\u0967\u0968\u0969")  = true
+	 * isNumeric("\u0967\u0968\u0969") = true
 	 * isNumeric("12 3") = false
 	 * isNumeric("ab2c") = false
 	 * isNumeric("12-3") = false

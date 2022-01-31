@@ -88,7 +88,7 @@ public final class LoaderTemplate{
 	/**
 	 * Assign an event listener.
 	 *
-	 * @param eventListener   The event listener.
+	 * @param eventListener	The event listener.
 	 * @return	The current instance.
 	 */
 	LoaderTemplate withEventListener(final EventListener eventListener){

@@ -67,7 +67,7 @@ final class TemplateParserCore{
 	/**
 	 * Assign an event listener.
 	 *
-	 * @param eventListener   The event listener.
+	 * @param eventListener	The event listener.
 	 * @return	The current instance.
 	 */
 	TemplateParserCore withEventListener(final EventListener eventListener){

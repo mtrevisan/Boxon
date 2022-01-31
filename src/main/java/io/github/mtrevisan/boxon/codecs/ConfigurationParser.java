@@ -74,7 +74,7 @@ public final class ConfigurationParser{
 	/**
 	 * Assign an event listener.
 	 *
-	 * @param eventListener   The event listener.
+	 * @param eventListener	The event listener.
 	 * @return	The current instance.
 	 */
 	public ConfigurationParser withEventListener(final EventListener eventListener){

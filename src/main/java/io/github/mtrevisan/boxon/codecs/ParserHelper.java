@@ -53,7 +53,7 @@ final class ParserHelper{
 	/**
 	 * Assign an event listener.
 	 *
-	 * @param eventListener   The event listener.
+	 * @param eventListener	The event listener.
 	 * @return	The current instance.
 	 */
 	ParserHelper withEventListener(final EventListener eventListener){
