@@ -209,6 +209,11 @@ public final class ConfigurationMessage<T>{
 		return protocolVersionBoundaries;
 	}
 
+	/**
+	 * Whether the message can be coded, that is, is annotated with {@link ConfigurationHeader}.
+	 *
+	 * @return	Whether the message can be coded.
+	 */
 	public boolean canBeCoded(){
 		return (header != null);
 	}

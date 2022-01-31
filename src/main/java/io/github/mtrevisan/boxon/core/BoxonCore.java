@@ -124,6 +124,19 @@ public final class BoxonCore{
 	/**
 	 * Add a method to the context for the {@link Evaluator}.
 	 *
+	 * @param type	The class containing the method.
+	 * @param methodName	The method name.
+	 * @return	This instance, used for chaining.
+	 * @throws NoSuchMethodException	If a matching method is not found.
+	 * @throws NullPointerException	If {@code methodName} is {@code null}.
+	 */
+	public BoxonCore withContextFunction(final Class<?> type, final String methodName) throws NoSuchMethodException, NullPointerException{
+		return withContextFunction(type.getDeclaredMethod(methodName));
+	}
+
+	/**
+	 * Add a method to the context for the {@link Evaluator}.
+	 *
 	 * @param method	The method.
 	 * @return	This instance, used for chaining.
 	 */

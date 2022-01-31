@@ -39,6 +39,9 @@ import java.lang.reflect.Modifier;
 import java.util.Objects;
 
 
+/**
+ * SpEL evaluator.
+ */
 public final class Evaluator{
 
 	//allow for immediate compilation of SpEL expressions
@@ -49,6 +52,11 @@ public final class Evaluator{
 	private final StandardEvaluationContext context = new StandardEvaluationContext();
 
 
+	/**
+	 * Creates an instance.
+	 *
+	 * @return	An instance.
+	 */
 	public static Evaluator create(){
 		return new Evaluator();
 	}
@@ -81,6 +89,14 @@ public final class Evaluator{
 		context.registerFunction(method.getName(), method);
 	}
 
+	/**
+	 * Evaluates an expression.
+	 *
+	 * @param expression	The SpEL expression to evaluate (empty string returns {@code true}).
+	 * @param rootObject	The context with which to evaluate the given expression.
+	 * @return	The result of the expression.
+	 * @throws EvaluationException	If an error occurs during the evaluation of an expression.
+	 */
 	public <T> T evaluate(final String expression, final Object rootObject, final Class<T> returnType){
 		final Expression exp = PARSER.parseExpression(expression);
 		return exp.getValue(context, rootObject, returnType);

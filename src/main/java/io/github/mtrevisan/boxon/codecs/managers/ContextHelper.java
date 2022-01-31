@@ -42,8 +42,15 @@ public final class ContextHelper{
 	private ContextHelper(){}
 
 
+	/**
+	 * Whether the given condition contains a prefix parameter.
+	 *
+	 * @param condition	The condition.
+	 * @return	Whether the prefix parameter is contained.
+	 */
 	public static boolean containsPrefixReference(final CharSequence condition){
-		return CONTEXT_PREFIXED_CHOICE_PREFIX.reset(condition).find();
+		return CONTEXT_PREFIXED_CHOICE_PREFIX.reset(condition)
+			.find();
 	}
 
 }

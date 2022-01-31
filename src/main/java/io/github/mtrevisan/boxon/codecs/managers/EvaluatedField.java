@@ -59,10 +59,21 @@ public final class EvaluatedField{
 		return field.getType();
 	}
 
+	/**
+	 * Set the field value.
+	 *
+	 * @param obj	The object in which the value is to be loaded.
+	 * @param value	The value.
+	 */
 	public void setFieldValue(final Object obj, final Object value){
 		ReflectionHelper.setValue(field, obj, value);
 	}
 
+	/**
+	 * The annotation bound to the field.
+	 *
+	 * @return	The annotation bound to the field.
+	 */
 	public Evaluate getBinding(){
 		return binding;
 	}

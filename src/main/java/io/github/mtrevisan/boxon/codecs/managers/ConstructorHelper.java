@@ -45,6 +45,13 @@ public final class ConstructorHelper{
 	private ConstructorHelper(){}
 
 
+	/**
+	 * Gets the creator function for the given class.
+	 *
+	 * @param type	The class to extract the creator for.
+	 * @param <T>	The parameter identifying the class.
+	 * @return	A method that construct the given class.
+	 */
 	@SuppressWarnings("unchecked")
 	public static <T> Supplier<T> getCreator(final Class<T> type){
 		return (Supplier<T>)CREATORS.apply(type);
