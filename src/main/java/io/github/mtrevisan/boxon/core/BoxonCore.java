@@ -46,7 +46,7 @@ import java.util.Objects;
  * Common data used by the {@link Parser}, {@link Descriptor}, {@link Composer}, and {@link Configurator} classes.
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
-public final class ParserCore{
+public final class BoxonCore{
 
 	private final LoaderCodec loaderCodec;
 
@@ -62,12 +62,12 @@ public final class ParserCore{
 	 *
 	 * @return	A basic empty parser core.
 	 */
-	public static ParserCore create(){
-		return new ParserCore();
+	public static BoxonCore create(){
+		return new BoxonCore();
 	}
 
 
-	private ParserCore(){
+	private BoxonCore(){
 		loaderCodec = LoaderCodec.create();
 
 		templateParser = TemplateParser.create(loaderCodec, evaluator);
@@ -80,7 +80,7 @@ public final class ParserCore{
 	 * @param eventListener	The event listener.
 	 * @return	The current instance.
 	 */
-	public ParserCore withEventListener(final EventListener eventListener){
+	public BoxonCore withEventListener(final EventListener eventListener){
 		loaderCodec.withEventListener(eventListener);
 
 		templateParser.withEventListener(eventListener);
@@ -96,7 +96,7 @@ public final class ParserCore{
 	 * @param value	The value.
 	 * @return	This instance, used for chaining.
 	 */
-	public ParserCore addToContext(final String key, final Object value){
+	public BoxonCore addToContext(final String key, final Object value){
 		evaluator.addToContext(key, value);
 
 		templateParser.addToBackupContext(key, value);
@@ -110,7 +110,7 @@ public final class ParserCore{
 	 * @param context	The context map.
 	 * @return	This instance, used for chaining.
 	 */
-	public ParserCore withContext(final Map<String, Object> context){
+	public BoxonCore withContext(final Map<String, Object> context){
 		Objects.requireNonNull(context, "Context cannot be null");
 
 		for(final Map.Entry<String, Object> entry : context.entrySet())
@@ -127,7 +127,7 @@ public final class ParserCore{
 	 * @param method	The method.
 	 * @return	This instance, used for chaining.
 	 */
-	public ParserCore withContextFunction(final Method method){
+	public BoxonCore withContextFunction(final Method method){
 		evaluator.addToContext(method);
 
 		templateParser.addToBackupContext(method);
@@ -144,7 +144,7 @@ public final class ParserCore{
 	 * @return	This instance, used for chaining.
 	 * @throws NoSuchMethodException	If a matching method is not found.
 	 */
-	public ParserCore withContextFunction(final Class<?> cls, final String methodName, final Class<?>... parameterTypes)
+	public BoxonCore withContextFunction(final Class<?> cls, final String methodName, final Class<?>... parameterTypes)
 			throws NoSuchMethodException{
 		final Method method = cls.getDeclaredMethod(methodName, parameterTypes);
 		return withContextFunction(method);
@@ -157,7 +157,7 @@ public final class ParserCore{
 	 *
 	 * @return	This instance, used for chaining.
 	 */
-	public ParserCore withDefaultCodecs(){
+	public BoxonCore withDefaultCodecs(){
 		loaderCodec.loadDefaultCodecs();
 
 		postProcessCodecs();
@@ -171,7 +171,7 @@ public final class ParserCore{
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load codecs.
 	 * @return	This instance, used for chaining.
 	 */
-	public ParserCore withCodecs(final Class<?>... basePackageClasses){
+	public BoxonCore withCodecs(final Class<?>... basePackageClasses){
 		loaderCodec.loadCodecs(basePackageClasses);
 
 		postProcessCodecs();
@@ -185,7 +185,7 @@ public final class ParserCore{
 	 * @param codecs	The list of codecs to be loaded.
 	 * @return	This instance, used for chaining.
 	 */
-	public ParserCore withCodecs(final CodecInterface<?>... codecs){
+	public BoxonCore withCodecs(final CodecInterface<?>... codecs){
 		loaderCodec.addCodecs(codecs);
 
 		postProcessCodecs();
@@ -206,7 +206,7 @@ public final class ParserCore{
 	 * @throws AnnotationException	If an annotation is not well formatted.
 	 * @throws TemplateException	If a template is not well formatted.
 	 */
-	public ParserCore withDefaultTemplates() throws AnnotationException, TemplateException{
+	public BoxonCore withDefaultTemplates() throws AnnotationException, TemplateException{
 		templateParser.withDefaultTemplates();
 
 		return this;
@@ -220,7 +220,7 @@ public final class ParserCore{
 	 * @throws AnnotationException	If an annotation is not well formatted.
 	 * @throws TemplateException	If a template is not well formatted.
 	 */
-	public ParserCore withTemplates(final Class<?>... basePackageClasses) throws AnnotationException, TemplateException{
+	public BoxonCore withTemplates(final Class<?>... basePackageClasses) throws AnnotationException, TemplateException{
 		templateParser.withTemplates(basePackageClasses);
 
 		return this;
@@ -234,7 +234,7 @@ public final class ParserCore{
 	 * @throws AnnotationException	If the annotation is not well formatted.
 	 * @throws TemplateException	If the template is not well formatted.
 	 */
-	public ParserCore withTemplate(final Class<?> templateClass) throws AnnotationException, TemplateException{
+	public BoxonCore withTemplate(final Class<?> templateClass) throws AnnotationException, TemplateException{
 		templateParser.withTemplate(templateClass);
 
 		return this;
@@ -248,7 +248,7 @@ public final class ParserCore{
 	 * @throws AnnotationException	If an annotation is not well formatted.
 	 * @throws ConfigurationException	If a configuration is not well formatted.
 	 */
-	public ParserCore withDefaultConfigurations() throws AnnotationException, ConfigurationException{
+	public BoxonCore withDefaultConfigurations() throws AnnotationException, ConfigurationException{
 		configurationParser.loadDefaultConfigurations();
 
 		return this;
@@ -262,7 +262,7 @@ public final class ParserCore{
 	 * @throws AnnotationException	If an annotation is not well formatted.
 	 * @throws ConfigurationException	If a configuration is not well formatted.
 	 */
-	public ParserCore withConfigurations(final Class<?>... basePackageClasses) throws AnnotationException, ConfigurationException{
+	public BoxonCore withConfigurations(final Class<?>... basePackageClasses) throws AnnotationException, ConfigurationException{
 		configurationParser.loadConfigurations(basePackageClasses);
 
 		return this;

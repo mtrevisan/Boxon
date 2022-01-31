@@ -63,17 +63,17 @@ public final class Configurator{
 	/**
 	 * Create an empty configurator.
 	 *
-	 * @param parserCore	The parser core.
+	 * @param boxonCore	The parser core.
 	 * @return	A basic empty descriptor.
 	 */
-	public static Configurator create(final ParserCore parserCore){
-		return new Configurator(parserCore);
+	public static Configurator create(final BoxonCore boxonCore){
+		return new Configurator(boxonCore);
 	}
 
 
-	private Configurator(final ParserCore parserCore){
-		configurationParser = parserCore.getConfigurationParser();
-		evaluator = parserCore.getEvaluator();
+	private Configurator(final BoxonCore boxonCore){
+		configurationParser = boxonCore.getConfigurationParser();
+		evaluator = boxonCore.getEvaluator();
 	}
 
 	/**

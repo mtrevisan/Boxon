@@ -55,7 +55,7 @@ class ParserTest{
 //		Map<String, Object> context = Map.of(
 //			"deviceTypes", deviceTypes,
 //			"headerSize", 4);
-		ParserCore core = ParserCore.create()
+		BoxonCore core = BoxonCore.create()
 //			.withEventListener(EventLogger.getInstance())
 			.withContext(context)
 			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
@@ -87,7 +87,7 @@ class ParserTest{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
-		ParserCore core = ParserCore.create()
+		BoxonCore core = BoxonCore.create()
 			.withContext(context)
 			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
 			.withDefaultCodecs()
@@ -106,7 +106,7 @@ class ParserTest{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GV350M", (byte)0xCF);
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
-		ParserCore core = ParserCore.create()
+		BoxonCore core = BoxonCore.create()
 			.withContext(context)
 			.withDefaultCodecs()
 			.withTemplates(ACKMessageHex.class);
@@ -125,7 +125,7 @@ class ParserTest{
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
 		deviceTypes.add("QUECLINK_GV350M", (byte)0xCF);
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
-		ParserCore core = ParserCore.create()
+		BoxonCore core = BoxonCore.create()
 			.withContext(context)
 			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
 			.withDefaultCodecs()
@@ -147,7 +147,7 @@ class ParserTest{
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
 		deviceTypes.add("QUECLINK_GV350M", (byte)0xCF);
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
-		ParserCore core = ParserCore.create()
+		BoxonCore core = BoxonCore.create()
 			.withContext(context)
 			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
 			.withDefaultCodecs()

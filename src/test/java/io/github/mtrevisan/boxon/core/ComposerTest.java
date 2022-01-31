@@ -44,7 +44,7 @@ class ComposerTest{
 	void parseAndComposeSingleMessageHex() throws NoSuchMethodException, AnnotationException, TemplateException{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
-		ParserCore core = ParserCore.create()
+		BoxonCore core = BoxonCore.create()
 			.addToContext("deviceTypes", deviceTypes)
 			.withContextFunction(ParserTest.class, "headerSize")
 			.withDefaultCodecs()
@@ -71,7 +71,7 @@ class ComposerTest{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GV350M", (byte)0xCF);
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
-		ParserCore core = ParserCore.create()
+		BoxonCore core = BoxonCore.create()
 			.withContext(context)
 			.withDefaultCodecs()
 			.withTemplates(ACKMessageHex.class);

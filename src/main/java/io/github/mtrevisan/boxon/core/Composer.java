@@ -45,16 +45,16 @@ public final class Composer{
 	/**
 	 * Create an empty composer.
 	 *
-	 * @param parserCore	The parser core.
+	 * @param boxonCore	The parser core.
 	 * @return	A basic empty composer.
 	 */
-	public static Composer create(final ParserCore parserCore){
-		return new Composer(parserCore);
+	public static Composer create(final BoxonCore boxonCore){
+		return new Composer(boxonCore);
 	}
 
 
-	private Composer(final ParserCore parserCore){
-		templateParser = parserCore.getTemplateParser();
+	private Composer(final BoxonCore boxonCore){
+		templateParser = boxonCore.getTemplateParser();
 	}
 
 

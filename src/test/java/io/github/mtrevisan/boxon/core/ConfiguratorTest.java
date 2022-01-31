@@ -49,7 +49,7 @@ class ConfiguratorTest{
 	void getConfigurations() throws AnnotationException, ConfigurationException, JsonProcessingException, CodecException{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
-		ParserCore core = ParserCore.create()
+		BoxonCore core = BoxonCore.create()
 			.withDefaultCodecs()
 			.withConfigurations(REGConfigurationASCII.class);
 		Configurator configurator = Configurator.create(core);
@@ -74,7 +74,7 @@ class ConfiguratorTest{
 	void getProtocolVersionBoundaries() throws AnnotationException, ConfigurationException, JsonProcessingException{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
-		ParserCore core = ParserCore.create()
+		BoxonCore core = BoxonCore.create()
 			.withDefaultCodecs()
 			.withConfigurations(REGConfigurationASCII.class);
 		Configurator configurator = Configurator.create(core);
@@ -91,7 +91,7 @@ class ConfiguratorTest{
 	void getConfigurationsByProtocol() throws AnnotationException, ConfigurationException, JsonProcessingException, CodecException{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
-		ParserCore core = ParserCore.create()
+		BoxonCore core = BoxonCore.create()
 			.withDefaultCodecs()
 			.withConfigurations(REGConfigurationASCII.class);
 		Configurator configurator = Configurator.create(core);
@@ -113,7 +113,7 @@ class ConfiguratorTest{
 	void composeSingleConfigurationMessage() throws NoSuchMethodException, AnnotationException, TemplateException, ConfigurationException{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
-		ParserCore core = ParserCore.create()
+		BoxonCore core = BoxonCore.create()
 			.withDefaultCodecs()
 			.withConfigurations(REGConfigurationASCII.class);
 		Configurator configurator = Configurator.create(core);

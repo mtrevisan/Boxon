@@ -91,7 +91,7 @@ class ConverterTest{
 
 	@Test
 	void wrongInputOnConverter() throws AnnotationException, TemplateException{
-		ParserCore core = ParserCore.create()
+		BoxonCore core = BoxonCore.create()
 			.withDefaultCodecs()
 			.withTemplates(TestConverter1.class);
 		Parser parser = Parser.create(core);
@@ -111,7 +111,7 @@ class ConverterTest{
 
 	@Test
 	void wrongOutputFromConverter() throws AnnotationException, TemplateException{
-		ParserCore core = ParserCore.create()
+		BoxonCore core = BoxonCore.create()
 			.withDefaultCodecs()
 			.withTemplates(TestConverter2.class);
 		Parser parser = Parser.create(core);
@@ -131,7 +131,7 @@ class ConverterTest{
 
 	@Test
 	void allowedOutputFromConverter() throws AnnotationException, TemplateException{
-		ParserCore core = ParserCore.create()
+		BoxonCore core = BoxonCore.create()
 			.withDefaultCodecs()
 			.withTemplates(TestConverter3.class);
 		Parser parser = Parser.create(core);

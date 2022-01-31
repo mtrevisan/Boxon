@@ -47,7 +47,7 @@ class DescriptorTest{
 			NoSuchMethodException{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
-		ParserCore core = ParserCore.create()
+		BoxonCore core = BoxonCore.create()
 			.addToContext("deviceTypes", deviceTypes)
 			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
 			.withDefaultCodecs()

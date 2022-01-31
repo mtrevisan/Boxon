@@ -55,16 +55,16 @@ public final class Descriptor{
 	/**
 	 * Create an empty descriptor.
 	 *
-	 * @param parserCore	The parser core.
+	 * @param boxonCore	The parser core.
 	 * @return	A basic empty descriptor.
 	 */
-	public static Descriptor create(final ParserCore parserCore){
-		return new Descriptor(parserCore);
+	public static Descriptor create(final BoxonCore boxonCore){
+		return new Descriptor(boxonCore);
 	}
 
 
-	private Descriptor(final ParserCore parserCore){
-		final TemplateParser templateParser = parserCore.getTemplateParser();
+	private Descriptor(final BoxonCore boxonCore){
+		final TemplateParser templateParser = boxonCore.getTemplateParser();
 		loaderTemplate = templateParser.getLoaderTemplate();
 		backupContext = templateParser.getBackupContext();
 	}

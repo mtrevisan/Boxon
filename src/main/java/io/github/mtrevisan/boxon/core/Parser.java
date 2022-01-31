@@ -51,12 +51,12 @@ public final class Parser{
 	 * @param core	The core of the parser.
 	 * @return	A basic empty parser.
 	 */
-	public static Parser create(final ParserCore core){
+	public static Parser create(final BoxonCore core){
 		return new Parser(core);
 	}
 
 
-	private Parser(final ParserCore core){
+	private Parser(final BoxonCore core){
 		templateParser = core.getTemplateParser();
 	}
 
