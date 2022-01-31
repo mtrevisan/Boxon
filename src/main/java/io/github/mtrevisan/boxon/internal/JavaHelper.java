@@ -27,10 +27,10 @@ package io.github.mtrevisan.boxon.internal;
 
 public final class JavaHelper{
 
-	/** An empty immutable {@code String} array. */
-	public static final String[] EMPTY_ARRAY = new String[0];
-
 	public static final String EMPTY_STRING = "";
+
+	/** An empty {@code String} array. */
+	public static final String[] EMPTY_ARRAY = new String[0];
 
 
 	private JavaHelper(){}
