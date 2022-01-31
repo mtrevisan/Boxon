@@ -135,14 +135,14 @@ public final class BitSetHelper{
 	 * @param byteOrder	The byte order.
 	 * @return	The converted {@link BigInteger}.
 	 */
-	static BigInteger toInteger(final BitSet bits, final int size, final ByteOrder byteOrder){
+	static BigInteger toBigInteger(final BitSet bits, final int size, final ByteOrder byteOrder){
 		byte[] array = bits.toByteArray();
 		final int expectedLength = size >>> 3;
 		if(array.length < expectedLength)
 			array = Arrays.copyOf(array, expectedLength);
 		//NOTE: need to reverse the bytes because BigInteger is big-endian and BitMap is little-endian
 		changeByteOrder(array, byteOrder);
-		return extendSign(array);
+		return new BigInteger(extendSign(array));
 	}
 
 	/**
@@ -151,12 +151,12 @@ public final class BitSetHelper{
 	 * @param array	Field value.
 	 * @return	The 2-complement expressed as int.
 	 */
-	private static BigInteger extendSign(byte[] array){
+	private static byte[] extendSign(byte[] array){
 		if((array[0] & 0x80) != 0x00){
 			array = leftExtendArray(array);
 			array[0] = -1;
 		}
-		return new BigInteger(array);
+		return array;
 	}
 
 	/**

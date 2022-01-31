@@ -136,7 +136,7 @@ public interface BitReaderInterface{
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	A {@link BigInteger} value at the current position.
 	 */
-	BigInteger getInteger(int size, ByteOrder byteOrder);
+	BigInteger getBigInteger(int size, ByteOrder byteOrder);
 
 	/**
 	 * Reads {@link Float#SIZE} bits and composes a {@code float} with the specified

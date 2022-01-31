@@ -55,7 +55,7 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 		final int size = bindingData.evaluateSize();
 		CodecHelper.assertSizePositive(size);
 
-		final BigInteger value = reader.getInteger(size, binding.byteOrder());
+		final BigInteger value = reader.getBigInteger(size, binding.byteOrder());
 
 		return CodecHelper.convertValue(bindingData, value);
 	}
