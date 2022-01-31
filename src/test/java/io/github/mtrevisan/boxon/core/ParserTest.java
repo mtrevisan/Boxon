@@ -64,7 +64,7 @@ class ParserTest{
 			.withDefaultConfigurations();
 		Parser parser = Parser.create(core);
 
-		//BitSet: 243-262 µs/msg = 3.8-4.1 kHz
+		//243-262 µs/msg = 3.8-4.1 kHz
 		byte[] payload = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		//warm-up
 		for(int i = 0; i < 2_000; i ++)

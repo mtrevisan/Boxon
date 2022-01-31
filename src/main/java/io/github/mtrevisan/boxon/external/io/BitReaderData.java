@@ -133,7 +133,7 @@ abstract class BitReaderData{
 			}
 
 			//if cache is empty and there are more bits to be read, fill it
-			if(length > offset){
+			if(offset < length){
 				cache = buffer.get();
 
 				remaining = Byte.SIZE;
