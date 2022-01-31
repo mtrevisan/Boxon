@@ -37,6 +37,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.BitSet;
 
 
@@ -164,7 +165,53 @@ public final class BitReader extends BitReaderData implements BitReaderInterface
 	@Override
 	public BigInteger getBigInteger(final int size, final ByteOrder byteOrder){
 		final BitSet bits = getBitSet(size, ByteOrder.BIG_ENDIAN);
-		return BitSetHelper.toBigInteger(bits, size, byteOrder);
+		return toBigInteger(bits, size, byteOrder);
+	}
+
+	/**
+	 * Convert this bit set to {@link BigInteger}.
+	 *
+	 * @param bits	The bit set.
+	 * @param size	The number of bits.
+	 * @param byteOrder	The byte order.
+	 * @return	The converted {@link BigInteger}.
+	 */
+	private static BigInteger toBigInteger(final BitSet bits, final int size, final ByteOrder byteOrder){
+		byte[] array = bits.toByteArray();
+		final int expectedLength = size >>> 3;
+		if(array.length < expectedLength)
+			array = Arrays.copyOf(array, expectedLength);
+
+		//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
+		BitSetHelper.changeByteOrder(array, byteOrder);
+
+		return new BigInteger(extendSign(array));
+	}
+
+	/**
+	 * Convert the value to signed primitive.
+	 *
+	 * @param array	Field value.
+	 * @return	The 2-complement expressed as int.
+	 */
+	private static byte[] extendSign(byte[] array){
+		if((array[0] & 0x80) != 0x00){
+			array = leftExtendArray(array);
+			array[0] = -1;
+		}
+		return array;
+	}
+
+	/**
+	 * Extends an array leaving room for one more byte at the leftmost index.
+	 *
+	 * @param array	The array to extend.
+	 * @return	The extended array.
+	 */
+	private static byte[] leftExtendArray(final byte[] array){
+		final byte[] extendedArray = new byte[array.length + 1];
+		System.arraycopy(array, 0, extendedArray, 1, array.length);
+		return extendedArray;
 	}
 
 	@Override
