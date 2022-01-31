@@ -26,6 +26,7 @@ package io.github.mtrevisan.boxon.codecs.queclink;
 
 import io.github.mtrevisan.boxon.annotations.Evaluate;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
+import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.IMEIValidator;
@@ -107,8 +108,10 @@ public class ACKMessageASCII{
 	private String messageHeader;
 	@BindStringTerminated(terminator = ',')
 	private String messageType;
-	@BindStringTerminated(terminator = ',')
-	public String deviceTypeAndVersion;
+	@BindString(size = "2", converter = QueclinkHelper.HexStringToByteConverter.class)
+	public byte deviceTypeCode;
+	@BindStringTerminated(terminator = ',', converter = QueclinkHelper.VersionConverter2.class)
+	private String protocolVersion;
 	@BindStringTerminated(terminator = ',', validator = IMEIValidator.class)
 	private String imei;
 	@BindStringTerminated(terminator = ',')
@@ -122,10 +125,6 @@ public class ACKMessageASCII{
 	@BindStringTerminated(terminator = '$', consumeTerminator = false, converter = QueclinkHelper.HexStringToIntConverter.class)
 	private int messageId;
 
-	@Evaluate("T(java.lang.Integer).valueOf(deviceTypeAndVersion.substring(0, 2), 16).byteValue()")
-	private byte deviceTypeCode;
-	@Evaluate("deviceTypeAndVersion.substring(2, 6)")
-	private String deviceVersion;
 	@Evaluate("#deviceTypes.getDeviceTypeName(deviceTypeCode)")
 	private String deviceTypeName;
 	@Evaluate("T(java.time.ZonedDateTime).now()")

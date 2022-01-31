@@ -57,6 +57,19 @@ public class QueclinkHelper{
 		}
 	}
 
+	public static class VersionConverter2 implements Converter<String, String>{
+		@Override
+		public String decode(final String value){
+			return value.substring(0, 2) + "." + value.substring(2, 4);
+		}
+
+		@Override
+		public String encode(final String value){
+			final String[] components = StringUtils.split(value, '.');
+			return components[0] + components[1];
+		}
+	}
+
 	public static class IMEIConverter implements Converter<byte[], String>{
 		private static final byte[] HEX_CHAR_TABLE = {
 			(byte)'0', (byte)'1', (byte)'2', (byte)'3',
@@ -146,6 +159,19 @@ public class QueclinkHelper{
 				+ StringUtils.leftPad(Integer.toString(value.getHour()), 2, '0')
 				+ StringUtils.leftPad(Integer.toString(value.getMinute()), 2, '0')
 				+ StringUtils.leftPad(Integer.toString(value.getSecond()), 2, '0');
+		}
+	}
+
+	public static class HexStringToByteConverter implements Converter<String, Byte>{
+		@Override
+		public Byte decode(final String value){
+			return (byte)Integer.parseInt(value, 16);
+		}
+
+		@Override
+		public String encode(final Byte value){
+			return Integer.toString(value & 0xFF, 16)
+				.toUpperCase(Locale.ROOT);
 		}
 	}
 

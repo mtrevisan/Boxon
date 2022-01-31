@@ -126,6 +126,7 @@ class TemplateParserTest{
 		Evaluator evaluator = Evaluator.create();
 		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator);
 		Template<ACKMessageASCII> template = loaderTemplate.createTemplate(ACKMessageASCII.class);
+		postProcessCodecs(loaderCodec, templateParser, evaluator);
 
 		if(!template.canBeCoded())
 			Assertions.fail("Cannot decode message");
