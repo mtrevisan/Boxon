@@ -94,7 +94,7 @@ You can get pre-built JARs (usable on JRE 11 or newer) from [Sonatype](https://o
 <br/>
 
 ## Table of Contents
-1. [Base annotations](#annotation-base)
+1. [Basic annotations](#annotation-basic)
     1. [Summary](#annotation-summary)
     2. [BindObject](#annotation-bindobject)
     3. [BindArray](#annotation-bindarray)
@@ -147,9 +147,9 @@ You can get pre-built JARs (usable on JRE 11 or newer) from [Sonatype](https://o
 
 <br/>
 
-<a name="annotation-base"></a>
-## Base annotations
-Here the build-in base annotations are described.
+<a name="annotation-basic"></a>
+## Basic annotations
+Here the build-in basic annotations are described.
 
 You can use them as a starting point to build your own customized readers.
 
@@ -160,21 +160,21 @@ Here is a brief summary of the parameters (described in detail below) for each a
 
 Note that [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_injection) can be used in codecs on variables with types `TemplateParserInterface` or `Evaluator` IF annotated with `@Injected`.
 
-|                      | condition |  type   | charset | terminator | consumeTerminator |  size   | byteOrder | selectFrom | selectDefault | validator | converter | selectConverterFrom |                       |
-|----------------------|:---------:|:-------:|:-------:|:----------:|:-----------------:|:-------:|:---------:|:----------:|:-------------:|:---------:|:---------:|:-------------------:|----------------------:|
-| BindObject           |  &#9745;  | &#9745; |         |            |                   |         |           |  &#9745;   |    &#9745;    |  &#9745;  |  &#9745;  |       &#9745;       |            BindObject |
-| BindArray            |  &#9745;  | &#9745; |         |            |                   | &#9745; |           |  &#9745;   |    &#9745;    |  &#9745;  |  &#9745;  |       &#9745;       |             BindArray |
-| BindArrayPrimitive   |  &#9745;  | &#9745; |         |            |                   | &#9745; |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |    BindArrayPrimitive |
-| BindBitSet           |  &#9745;  |         |         |            |                   | &#9745; |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |            BindBitSet |
-| BindByte             |  &#9745;  |         |         |            |                   |         |           |            |               |  &#9745;  |  &#9745;  |       &#9745;       |              BindByte |
-| BindShort            |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |             BindShort |
-| BindInt              |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |               BindInt |
-| BindLong             |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |              BindLong |
-| BindInteger          |  &#9745;  |         |         |            |                   | &#9745; |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |           BindInteger |
-| BindFloat            |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |             BindFloat |
-| BindDouble           |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |            BindDouble |
-| BindString           |  &#9745;  |         | &#9745; |            |                   | &#9745; |           |            |               |  &#9745;  |  &#9745;  |       &#9745;       |            BindString |
-| BindStringTerminated |  &#9745;  |         | &#9745; |  &#9745;   |      &#9745;      |         |           |            |               |  &#9745;  |  &#9745;  |       &#9745;       |  BindStringTerminated |
+|                      | condition |  type   | charset | terminator | consumeTerminator |  size   |     byteOrder      | selectFrom | selectDefault | validator | converter | selectConverterFrom |                       |
+|----------------------|:---------:|:-------:|:-------:|:----------:|:-----------------:|:-------:|:------------------:|:----------:|:-------------:|:---------:|:---------:|:-------------------:|----------------------:|
+| BindObject           |  &#9745;  | &#9745; |         |            |                   |         |                    |  &#9745;   |    &#9745;    |  &#9745;  |  &#9745;  |       &#9745;       |            BindObject |
+| BindArray            |  &#9745;  | &#9745; |         |            |                   | &#9745; |                    |  &#9745;   |    &#9745;    |  &#9745;  |  &#9745;  |       &#9745;       |             BindArray |
+| BindArrayPrimitive   |  &#9745;  | &#9745; |         |            |                   | &#9745; |      &#9745;       |            |               |  &#9745;  |  &#9745;  |       &#9745;       |    BindArrayPrimitive |
+| BindBitSet           |  &#9745;  |         |         |            |                   | &#9745; | &#9745; (bitOrder) |            |               |  &#9745;  |  &#9745;  |       &#9745;       |            BindBitSet |
+| BindByte             |  &#9745;  |         |         |            |                   |         |                    |            |               |  &#9745;  |  &#9745;  |       &#9745;       |              BindByte |
+| BindShort            |  &#9745;  |         |         |            |                   |         |      &#9745;       |            |               |  &#9745;  |  &#9745;  |       &#9745;       |             BindShort |
+| BindInt              |  &#9745;  |         |         |            |                   |         |      &#9745;       |            |               |  &#9745;  |  &#9745;  |       &#9745;       |               BindInt |
+| BindLong             |  &#9745;  |         |         |            |                   |         |      &#9745;       |            |               |  &#9745;  |  &#9745;  |       &#9745;       |              BindLong |
+| BindInteger          |  &#9745;  |         |         |            |                   | &#9745; |      &#9745;       |            |               |  &#9745;  |  &#9745;  |       &#9745;       |           BindInteger |
+| BindFloat            |  &#9745;  |         |         |            |                   |         |      &#9745;       |            |               |  &#9745;  |  &#9745;  |       &#9745;       |             BindFloat |
+| BindDouble           |  &#9745;  |         |         |            |                   |         |      &#9745;       |            |               |  &#9745;  |  &#9745;  |       &#9745;       |            BindDouble |
+| BindString           |  &#9745;  |         | &#9745; |            |                   | &#9745; |                    |            |               |  &#9745;  |  &#9745;  |       &#9745;       |            BindString |
+| BindStringTerminated |  &#9745;  |         | &#9745; |  &#9745;   |      &#9745;      |         |                    |            |               |  &#9745;  |  &#9745;  |       &#9745;       |  BindStringTerminated |
 
 |                      | condition |  start  |   end   | charset |  size   | terminator | consumeTerminator |  type   | byteOrder | skipStart | skipEnd | algorithm | startValue |  value  |               |
 |----------------------|:---------:|:-------:|:-------:|:-------:|:-------:|:----------:|:-----------------:|:-------:|:---------:|:---------:|:-------:|:---------:|:----------:|:-------:|--------------:|
