@@ -448,6 +448,27 @@ public final class Version implements Comparable<Version>{
 	}
 
 
+	public Integer getMajor(){
+		return major;
+	}
+
+	public Integer getMinor(){
+		return minor;
+	}
+
+	public Integer getPatch(){
+		return patch;
+	}
+
+	public String[] getPreRelease(){
+		return (preRelease != null? preRelease.clone(): null);
+	}
+
+	public String[] getBuild(){
+		return (build != null? build.clone(): null);
+	}
+
+
 	/**
 	 * Checks if the version number is a pre-release version number.
 	 *

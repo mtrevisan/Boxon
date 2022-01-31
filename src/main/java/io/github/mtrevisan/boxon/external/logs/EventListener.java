@@ -40,6 +40,7 @@ public class EventListener{
 
 	EventListener(){}
 
+
 	/**
 	 * The singleton instance of this logger.
 	 *

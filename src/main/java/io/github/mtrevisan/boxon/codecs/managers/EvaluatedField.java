@@ -41,10 +41,20 @@ public final class EvaluatedField{
 		this.binding = binding;
 	}
 
+	/**
+	 * The name of the field.
+	 *
+	 * @return	The name of the field.
+	 */
 	public String getFieldName(){
 		return field.getName();
 	}
 
+	/**
+	 * The type of the field.
+	 *
+	 * @return	The type of the field.
+	 */
 	public Class<?> getFieldType(){
 		return field.getType();
 	}

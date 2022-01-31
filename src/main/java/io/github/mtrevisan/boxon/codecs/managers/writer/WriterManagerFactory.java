@@ -43,6 +43,7 @@ public final class WriterManagerFactory{
 
 	private WriterManagerFactory(){}
 
+
 	public static WriterManagerInterface buildManager(final Object value, final BitWriterInterface writer, final int radix,
 			final String charsetName){
 		final Class<?> fieldClass = ParserDataType.toObjectiveTypeOrSelf(value.getClass());

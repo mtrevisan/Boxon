@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.codecs.queclink;
 
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
+import io.github.mtrevisan.boxon.external.semanticversioning.Version;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.UnsupportedEncodingException;
@@ -57,16 +58,24 @@ public class QueclinkHelper{
 		}
 	}
 
-	public static class VersionConverter2 implements Converter<String, String>{
+	public static class VersionConverter2 implements Converter<String, Version>{
 		@Override
-		public String decode(final String value){
-			return value.substring(0, 2) + "." + value.substring(2, 4);
+		public Version decode(final String value){
+			final int major = Integer.parseInt(value.substring(0, 2), 16);
+			final int minor = Integer.parseInt(value.substring(2, 4), 16);
+			return Version.of(major, minor);
 		}
 
 		@Override
-		public String encode(final String value){
-			final String[] components = StringUtils.split(value, '.');
-			return components[0] + components[1];
+		public String encode(final Version value){
+			if(value.isEmpty())
+				return "";
+
+			final Integer major = value.getMajor();
+			final Integer minor = value.getMinor();
+			final String maj = Integer.toHexString(major);
+			final String min = Integer.toHexString(minor);
+			return (major < 10? "0": "") + maj + (minor < 10? "0": "") + min;
 		}
 	}
 

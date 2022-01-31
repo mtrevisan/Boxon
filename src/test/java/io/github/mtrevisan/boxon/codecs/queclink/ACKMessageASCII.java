@@ -30,6 +30,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.IMEIValidator;
+import io.github.mtrevisan.boxon.external.semanticversioning.Version;
 
 import java.time.ZonedDateTime;
 import java.util.HashMap;
@@ -111,7 +112,7 @@ public class ACKMessageASCII{
 	@BindString(size = "2", converter = QueclinkHelper.HexStringToByteConverter.class)
 	public byte deviceTypeCode;
 	@BindStringTerminated(terminator = ',', converter = QueclinkHelper.VersionConverter2.class)
-	private String protocolVersion;
+	private Version protocolVersion;
 	@BindStringTerminated(terminator = ',', validator = IMEIValidator.class)
 	private String imei;
 	@BindStringTerminated(terminator = ',')

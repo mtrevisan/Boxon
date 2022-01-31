@@ -106,10 +106,20 @@ final class ParserContext<T>{
 			+ ConfigField.class.getSimpleName());
 	}
 
+	/**
+	 * The annotation bound to the field.
+	 *
+	 * @return	The annotation bound to the field.
+	 */
 	public Annotation getBinding(){
 		return binding;
 	}
 
+	/**
+	 * Set the annotation bound to the field.
+	 *
+	 * @param binding	The annotation.
+	 */
 	void setBinding(final Annotation binding){
 		this.binding = binding;
 	}

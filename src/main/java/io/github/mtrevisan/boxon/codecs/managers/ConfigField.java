@@ -52,18 +52,40 @@ public final class ConfigField{
 		this.skips = (skips != null? skips.clone(): null);
 	}
 
+	/**
+	 * The configuration field.
+	 *
+	 * @return	The configuration field.
+	 */
 	public Field getField(){
 		return field;
 	}
 
+	/**
+	 * The type of the configuration field.
+	 *
+	 * @return	The type of the configuration field.
+	 */
 	public Class<?> getFieldType(){
 		return field.getType();
 	}
 
+	/**
+	 * The name of the configuration field.
+	 *
+	 * @return	The name of the configuration field.
+	 */
 	public String getFieldName(){
 		return field.getName();
 	}
 
+	/**
+	 * The value of the field in the given object.
+	 *
+	 * @param obj	The object from which to retrieve the value.
+	 * @param <T>	The type of the value.
+	 * @return	The value of the field.
+	 */
 	public <T> T getFieldValue(final Object obj){
 		return ReflectionHelper.getValue(field, obj);
 	}
@@ -72,10 +94,20 @@ public final class ConfigField{
 		ReflectionHelper.setValue(field, obj, value);
 	}
 
+	/**
+	 * The skips that must be made before the field value.
+	 *
+	 * @return	The annotations of the skips that must be made before the field value.
+	 */
 	public ConfigurationSkip[] getSkips(){
 		return (skips != null? skips.clone(): EMPTY_ARRAY);
 	}
 
+	/**
+	 * The annotation bound to the field.
+	 *
+	 * @return	The annotation bound to the field.
+	 */
 	public Annotation getBinding(){
 		return binding;
 	}

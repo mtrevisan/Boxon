@@ -58,6 +58,13 @@ public final class ConfigFieldData{
 	public int radix;
 
 
+	/**
+	 * Create an instance with the given annotation.
+	 *
+	 * @param field	The field.
+	 * @param annotation	The annotation.
+	 * @return	The created instance.
+	 */
 	public static ConfigFieldData create(final Field field, final ConfigurationField annotation){
 		final ConfigFieldData data = new ConfigFieldData(field, annotation.getClass().getSimpleName());
 		data.setProtocolMinMaxVersions(annotation.minProtocol(), annotation.maxProtocol());
@@ -70,6 +77,13 @@ public final class ConfigFieldData{
 		return data;
 	}
 
+	/**
+	 * Create an instance with the given annotation.
+	 *
+	 * @param field	The field.
+	 * @param annotation	The annotation.
+	 * @return	The created instance.
+	 */
 	public static ConfigFieldData create(final Field field, final CompositeConfigurationField annotation){
 		final ConfigFieldData data = new ConfigFieldData(field, annotation.getClass().getSimpleName());
 		data.setProtocolMinMaxVersions(annotation.minProtocol(), annotation.maxProtocol());
@@ -78,6 +92,13 @@ public final class ConfigFieldData{
 		return data;
 	}
 
+	/**
+	 * Create an instance with the given annotation.
+	 *
+	 * @param field	The field.
+	 * @param annotation	The annotation.
+	 * @return	The created instance.
+	 */
 	public static ConfigFieldData create(final Field field, final CompositeSubField annotation){
 		final ConfigFieldData data = new ConfigFieldData(field, annotation.getClass().getSimpleName());
 		data.pattern = annotation.pattern();
@@ -85,6 +106,13 @@ public final class ConfigFieldData{
 		return data;
 	}
 
+	/**
+	 * Create an instance with the given annotation.
+	 *
+	 * @param field	The field.
+	 * @param annotation	The annotation.
+	 * @return	The created instance.
+	 */
 	public static ConfigFieldData create(final Field field, final AlternativeConfigurationField annotation){
 		final ConfigFieldData data = new ConfigFieldData(field, annotation.getClass().getSimpleName());
 		data.setProtocolMinMaxVersions(annotation.minProtocol(), annotation.maxProtocol());
@@ -92,6 +120,13 @@ public final class ConfigFieldData{
 		return data;
 	}
 
+	/**
+	 * Create an instance with the given annotation.
+	 *
+	 * @param field	The field.
+	 * @param annotation	The annotation.
+	 * @return	The created instance.
+	 */
 	public static ConfigFieldData create(final Field field, final AlternativeSubField annotation){
 		final ConfigFieldData data = new ConfigFieldData(field, annotation.getClass().getSimpleName());
 		data.setProtocolMinMaxVersions(annotation.minProtocol(), annotation.maxProtocol());
@@ -118,18 +153,40 @@ public final class ConfigFieldData{
 		this.maxValue = maxValue;
 	}
 
+	/**
+	 * The name of the annotation.
+	 *
+	 * @return	The name of the annotation.
+	 */
 	public String getAnnotationName(){
 		return annotationName;
 	}
 
+	/**
+	 * The type of the configuration field.
+	 *
+	 * @return	The type of the configuration field.
+	 */
 	public Class<?> getFieldType(){
 		return field.getType();
 	}
 
+	/**
+	 * Whether the configuration field is an enumeration.
+	 *
+	 * @return	Whether the configuration field is an enumeration.
+	 */
 	public boolean hasEnumeration(){
 		return hasEnumeration(enumeration);
 	}
 
+
+	/**
+	 * Whether the given class is an enumeration.
+	 *
+	 * @param enumeration	The class to check.
+	 * @return	Whether the given class is an enumeration.
+	 */
 	static boolean hasEnumeration(final Class<? extends ConfigurationEnum> enumeration){
 		return (enumeration != NullEnum.class);
 	}

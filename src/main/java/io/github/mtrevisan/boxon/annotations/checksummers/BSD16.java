@@ -38,6 +38,7 @@ public final class BSD16 implements Checksummer{
 
 	BSD16(){}
 
+
 	@Override
 	public short calculateChecksum(final byte[] data, final int start, final int end, final short startValue){
 		short value = 0;

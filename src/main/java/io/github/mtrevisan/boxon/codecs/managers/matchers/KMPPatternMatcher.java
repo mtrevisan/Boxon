@@ -51,7 +51,9 @@ public final class KMPPatternMatcher implements PatternMatcher{
 		return SingletonHelper.INSTANCE;
 	}
 
+
 	private KMPPatternMatcher(){}
+
 
 	/**
 	 * Returns an array that points to last valid string prefix.

@@ -61,7 +61,9 @@ public final class BNDMPatternMatcher implements PatternMatcher{
 		return SingletonHelper.INSTANCE;
 	}
 
+
 	private BNDMPatternMatcher(){}
+
 
 	/**
 	 * Pre-processing of the pattern.

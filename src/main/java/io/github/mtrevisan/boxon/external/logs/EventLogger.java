@@ -66,7 +66,9 @@ public final class EventLogger extends EventListener{
 		return EventLogger.SingletonHelper.INSTANCE;
 	}
 
+
 	private EventLogger(){}
+
 
 	@Override
 	public void loadingCodecs(final Class<?>[] basePackageClasses){

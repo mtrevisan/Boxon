@@ -32,6 +32,7 @@ public final class NullConverter implements Converter<Object, Object>{
 
 	private NullConverter(){}
 
+
 	@Override
 	public Object decode(final Object value){
 		return value;

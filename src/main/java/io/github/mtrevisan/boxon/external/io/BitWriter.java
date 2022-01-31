@@ -49,6 +49,7 @@ public final class BitWriter extends BitWriterData implements BitWriterInterface
 
 	private BitWriter(){}
 
+
 	@Override
 	public void put(final Object value, final ByteOrder byteOrder) throws AnnotationException{
 		final ParserDataType pdt = ParserDataType.fromType(value.getClass());

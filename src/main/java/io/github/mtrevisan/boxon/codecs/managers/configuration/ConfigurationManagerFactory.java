@@ -44,6 +44,7 @@ public final class ConfigurationManagerFactory{
 
 	private ConfigurationManagerFactory(){}
 
+
 	public static ConfigurationManagerInterface buildManager(final Annotation annotation){
 		return MANAGERS.get(annotation.annotationType())
 			.apply(annotation);

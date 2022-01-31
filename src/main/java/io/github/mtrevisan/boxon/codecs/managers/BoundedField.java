@@ -82,11 +82,11 @@ public final class BoundedField{
 	}
 
 	/**
-	 * The value of the field the given object contains.
+	 * The value of the field in the given object.
 	 *
-	 * @param obj	The object from which to extract the value of the field.
-	 * @param <T>	The field value type.
-	 * @return	The field value.
+	 * @param obj	The object from which to retrieve the value.
+	 * @param <T>	The type of the value.
+	 * @return	The value of the field.
 	 */
 	public <T> T getFieldValue(final Object obj){
 		return ReflectionHelper.getValue(field, obj);

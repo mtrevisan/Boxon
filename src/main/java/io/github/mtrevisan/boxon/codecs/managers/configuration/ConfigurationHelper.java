@@ -81,6 +81,14 @@ public final class ConfigurationHelper{
 	}
 
 
+	/**
+	 * Put the pair key-value into the given map.
+	 *
+	 * @param key	The key.
+	 * @param value	The value.
+	 * @param map	The map in which to load the key-value pair.
+	 * @throws ConfigurationException	If a duplicate is found.
+	 */
 	public static void putIfNotEmpty(final ConfigurationKey key, final Object value,
 			@SuppressWarnings("BoundedWildcard") final Map<String, Object> map) throws ConfigurationException{
 		if(isValidValue(value) && map.put(key.toString(), value) != null)
@@ -125,6 +133,14 @@ public final class ConfigurationHelper{
 		return PATTERN_PIPE.split(value);
 	}
 
+	/**
+	 * Whether the field should be read, that is, the given protocol is between minimum protocol and maximum protocol.
+	 *
+	 * @param protocol	The protocol to check.
+	 * @param minProtocol	The minimum protocol to check against.
+	 * @param maxProtocol	The maximum protocol to check against.
+	 * @return	Whether the field should be read.
+	 */
 	public static boolean shouldBeExtracted(final Version protocol, final String minProtocol, final String maxProtocol){
 		if(protocol.isEmpty())
 			return true;
