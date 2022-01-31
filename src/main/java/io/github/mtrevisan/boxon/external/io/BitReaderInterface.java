@@ -79,21 +79,13 @@ public interface BitReaderInterface{
 	Object get(Class<?> type, ByteOrder byteOrder) throws AnnotationException;
 
 	/**
-	 * Reads the next {@code length} bits and composes a {@link BoxonBitSet} in big-endian notation.
-	 *
-	 * @param length   The amount of bits to read.
-	 * @return	A {@link BoxonBitSet} value at the {@link BitReader}'s current position.
-	 */
-	BoxonBitSet getBits(int length);
-
-	/**
 	 * Reads the next {@code length} bits and composes a {@link BitSet}.
 	 *
-	 * @param length   The amount of bits to read.
-	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
+	 * @param length	The amount of bits to read.
+	 * @param bitOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	A {@link BitSet} value at the {@link BitReader}'s current position.
 	 */
-	BitSet getBitSet(int length, ByteOrder byteOrder);
+	BitSet getBitSet(int length, ByteOrder bitOrder);
 
 	/**
 	 * Reads {@link Byte#SIZE} bits and composes a {@code byte}.

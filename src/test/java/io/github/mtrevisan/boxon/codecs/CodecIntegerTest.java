@@ -34,10 +34,10 @@ import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.io.BitReader;
 import io.github.mtrevisan.boxon.external.io.BitReaderInterface;
-import io.github.mtrevisan.boxon.external.io.BoxonBitSet;
 import io.github.mtrevisan.boxon.external.io.BitWriter;
 import io.github.mtrevisan.boxon.external.io.ByteOrder;
 import io.github.mtrevisan.boxon.external.io.CodecInterface;
+import io.github.mtrevisan.boxon.internal.BitSetHelper;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
@@ -45,6 +45,7 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.Annotation;
 import java.math.BigInteger;
+import java.util.BitSet;
 import java.util.Locale;
 
 
@@ -493,7 +494,9 @@ class CodecIntegerTest{
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		BoxonBitSet bits = BoxonBitSet.valueOf(encodedValue, 128, ByteOrder.LITTLE_ENDIAN);
+		byte[] array = encodedValue.toByteArray();
+		BitSetHelper.changeByteOrder(array, ByteOrder.LITTLE_ENDIAN);
+		BitSet bits = BitSet.valueOf(array);
 		Assertions.assertEquals(StringUtils.rightPad(StringHelper.toHexString(bits.toByteArray()).toUpperCase(Locale.ROOT), 32, '0'), writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);

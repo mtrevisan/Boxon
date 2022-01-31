@@ -51,21 +51,13 @@ public interface BitWriterInterface{
 	void skipBits(int length);
 
 	/**
-	 * Writes {@code value} to this {@link BitWriter} using {@code length} bits in big-endian notation.
-	 *
-	 * @param value	The value to write.
-	 * @param length	The amount of bits to use when writing {@code value}.
-	 */
-	void putBits(BoxonBitSet value, int length);
-
-	/**
 	 * Writes {@code value} to this {@link BitWriter} using {@code length} bits.
 	 *
-	 * @param value	The value to write.
+	 * @param bits	The value to write.
 	 * @param length	The amount of bits to use when writing {@code value}.
-	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
+	 * @param bitOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 */
-	void putBitSet(BitSet value, int length, ByteOrder byteOrder);
+	void putBitSet(BitSet bits, int length, ByteOrder bitOrder);
 
 	/**
 	 * Writes a value using {@link Byte#SIZE} bits.

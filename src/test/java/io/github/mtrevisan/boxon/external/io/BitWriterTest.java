@@ -28,6 +28,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.BitSet;
+
 
 @SuppressWarnings("ALL")
 class BitWriterTest{
@@ -41,13 +43,23 @@ class BitWriterTest{
 	}
 
 	@Test
-	void bits(){
-		BoxonBitSet value = BoxonBitSet.valueOf(new long[]{0x1234_5678_1234_5678l, 0x6666_7777_8888_9999l});
-		writer.putBits(value, Long.SIZE << 1);
+	void bitSetBigEndian(){
+		BitSet value = BitSet.valueOf(new long[]{0x1234_5678_1234_5678l, 0x6666_7777_8888_9999l});
+		writer.putBitSet(value, Long.SIZE << 1, ByteOrder.BIG_ENDIAN);
 		BitReaderInterface reader = BitReader.wrap(writer);
 
 		Assertions.assertEquals("78563412785634129999888877776666", reader.toString());
-		Assertions.assertEquals(value, reader.getBits(Long.SIZE << 1));
+		Assertions.assertEquals(value, reader.getBitSet(Long.SIZE << 1, ByteOrder.BIG_ENDIAN));
+	}
+
+	@Test
+	void bitSetLittleEndian(){
+		BitSet value = BitSet.valueOf(new long[]{0x1234_5678_1234_5678l, 0x6666_7777_8888_9999l});
+		writer.putBitSet(value, Long.SIZE << 1, ByteOrder.LITTLE_ENDIAN);
+		BitReaderInterface reader = BitReader.wrap(writer);
+
+		Assertions.assertEquals("6666EEEE11119999482C6A1E482C6A1E", reader.toString());
+		Assertions.assertEquals(value, reader.getBitSet(Long.SIZE << 1, ByteOrder.LITTLE_ENDIAN));
 	}
 
 	@Test

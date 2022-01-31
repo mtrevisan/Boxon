@@ -28,7 +28,6 @@ import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
 import io.github.mtrevisan.boxon.annotations.bindings.BindBitSet;
-import io.github.mtrevisan.boxon.annotations.bindings.BindBits;
 import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
@@ -36,7 +35,6 @@ import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.external.io.BoxonBitSet;
 import io.github.mtrevisan.boxon.external.io.ParserDataType;
 
 import java.lang.annotation.Annotation;
@@ -90,16 +88,6 @@ enum TemplateAnnotationValidator{
 			final ObjectChoices selectFrom = binding.selectFrom();
 			final Class<?> selectDefault = binding.selectDefault();
 			validateObjectChoice(field, converter, selectFrom, selectDefault, type);
-		}
-	},
-
-	BITS(BindBits.class){
-		@Override
-		void validate(final Field field, final Annotation annotation) throws AnnotationException{
-			final BindBits binding = (BindBits)annotation;
-
-			final Class<? extends Converter<?, ?>> converter = binding.converter();
-			validateConverter(field, BoxonBitSet.class, converter);
 		}
 	},
 

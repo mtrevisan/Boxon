@@ -29,7 +29,7 @@ import io.github.mtrevisan.boxon.annotations.Evaluate;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
-import io.github.mtrevisan.boxon.annotations.bindings.BindBits;
+import io.github.mtrevisan.boxon.annotations.bindings.BindBitSet;
 import io.github.mtrevisan.boxon.annotations.bindings.BindByte;
 import io.github.mtrevisan.boxon.annotations.bindings.BindDouble;
 import io.github.mtrevisan.boxon.annotations.bindings.BindFloat;
@@ -46,7 +46,6 @@ import io.github.mtrevisan.boxon.codecs.managers.BoundedField;
 import io.github.mtrevisan.boxon.codecs.managers.EvaluatedField;
 import io.github.mtrevisan.boxon.codecs.managers.Template;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.external.io.BoxonBitSet;
 import io.github.mtrevisan.boxon.external.io.ByteOrder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -54,6 +53,7 @@ import org.junit.jupiter.api.Test;
 import java.lang.annotation.Annotation;
 import java.math.BigInteger;
 import java.time.ZonedDateTime;
+import java.util.BitSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -142,8 +142,8 @@ class TemplateTest{
 		private Version[] versions;
 		@BindArrayPrimitive(condition = "mask.hasProtocolVersion()", size = "2", type = byte.class)
 		private byte[] protocolVersion;
-		@BindBits(size = "2")
-		private BoxonBitSet bits;
+		@BindBitSet(size = "2")
+		private BitSet bits;
 		@BindDouble
 		private double numberDouble;
 		@BindFloat

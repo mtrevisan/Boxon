@@ -27,7 +27,6 @@ package io.github.mtrevisan.boxon.codecs;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
 import io.github.mtrevisan.boxon.annotations.bindings.BindBitSet;
-import io.github.mtrevisan.boxon.annotations.bindings.BindBits;
 import io.github.mtrevisan.boxon.annotations.bindings.BindByte;
 import io.github.mtrevisan.boxon.annotations.bindings.BindDouble;
 import io.github.mtrevisan.boxon.annotations.bindings.BindFloat;
@@ -87,15 +86,6 @@ final class BindingData{
 		final Class<? extends Converter<?, ?>> converter = annotation.converter();
 		final BindingData data = new BindingData(selectConverterFrom, validator, converter, rootObject, evaluator);
 		data.type = annotation.type();
-		data.size = annotation.size();
-		return data;
-	}
-
-	static BindingData create(final BindBits annotation, final Object rootObject, final Evaluator evaluator){
-		final ConverterChoices selectConverterFrom = annotation.selectConverterFrom();
-		final Class<? extends Validator<?>> validator = annotation.validator();
-		final Class<? extends Converter<?, ?>> converter = annotation.converter();
-		final BindingData data = new BindingData(selectConverterFrom, validator, converter, rootObject, evaluator);
 		data.size = annotation.size();
 		return data;
 	}

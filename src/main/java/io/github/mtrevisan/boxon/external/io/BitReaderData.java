@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.external.io;
 
+import io.github.mtrevisan.boxon.internal.BitSetHelper;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 
 import java.io.IOException;
@@ -113,13 +114,14 @@ abstract class BitReaderData{
 	}
 
 	/**
-	 * Reads the next {@code length} bits and composes a {@link BoxonBitSet} in big-endian notation.
+	 * Reads the next {@code length} bits and composes a {@link BitSet} in big-endian notation.
 	 *
-	 * @param length   The amount of bits to read.
-	 * @return	A {@link BoxonBitSet} value at the {@link BitReader}'s current position.
+	 * @param length	The amount of bits to read.
+	 * @param bitOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
+	 * @return	A {@link BitSet} value at the {@link BitReader}'s current position.
 	 */
-	public final BoxonBitSet getBits(final int length){
-		final BoxonBitSet bits = BoxonBitSet.empty();
+	public final BitSet getBitSet(final int length, final ByteOrder bitOrder){
+		final BitSet bits = new BitSet();
 		int offset = 0;
 		while(offset < length){
 			//transfer the cache values
@@ -137,20 +139,8 @@ abstract class BitReaderData{
 				remaining = Byte.SIZE;
 			}
 		}
+		BitSetHelper.changeBitOrder(bits, bitOrder);
 		return bits;
-	}
-
-	/**
-	 * Reads the next {@code length} bits and composes a {@link BitSet}.
-	 *
-	 * @param length   The amount of bits to read.
-	 * @param bitOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
-	 * @return	A {@link BitSet} value at the {@link BitReader}'s current position.
-	 */
-	public final BitSet getBitSet(final int length, final ByteOrder bitOrder){
-		final BoxonBitSet bits = getBits(length);
-		bits.changeBitOrder(length, bitOrder);
-		return BitSet.valueOf(bits.toByteArray());
 	}
 
 	private Byte peekByte(){
@@ -178,13 +168,10 @@ abstract class BitReaderData{
 	 * @param offset	The offset for the indexes.
 	 * @param size	The amount of bits to read from the LSB of the cache.
 	 */
-	private void addCacheToBitSet(final BoxonBitSet bits, final int offset, final int size){
-		final byte mask = (byte)((1 << size) - 1);
-		bits.ensureAdditionalSpace(Integer.bitCount(cache & mask));
-
+	private void addCacheToBitSet(final BitSet bits, final int offset, final int size){
 		int skip;
 		while(cache != 0 && (skip = Integer.numberOfTrailingZeros(cache & 0xFF)) < size){
-			bits.addNextSetBit(skip + offset);
+			bits.set(skip + offset);
 			cache ^= 1 << skip;
 		}
 		//remove read bits from the cache

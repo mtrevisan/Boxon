@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.external.io;
 
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.internal.BitSetHelper;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -37,6 +38,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.BitSet;
 
 
 /**
@@ -110,7 +112,7 @@ public final class BitReader extends BitReaderData implements BitReaderInterface
 
 	@Override
 	public void skip(final int length){
-		getBits(length);
+		getBitSet(length, ByteOrder.BIG_ENDIAN);
 	}
 
 	@Override
@@ -160,8 +162,8 @@ public final class BitReader extends BitReaderData implements BitReaderInterface
 
 	@Override
 	public BigInteger getInteger(final int size, final ByteOrder byteOrder){
-		final BoxonBitSet bits = getBits(size);
-		return bits.toInteger(size, byteOrder);
+		final BitSet bits = getBitSet(size, ByteOrder.BIG_ENDIAN);
+		return BitSetHelper.toInteger(bits, size, byteOrder);
 	}
 
 	@Override

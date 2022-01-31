@@ -30,7 +30,6 @@ import io.github.mtrevisan.boxon.annotations.Skip;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
 import io.github.mtrevisan.boxon.annotations.bindings.BindBitSet;
-import io.github.mtrevisan.boxon.annotations.bindings.BindBits;
 import io.github.mtrevisan.boxon.annotations.bindings.BindByte;
 import io.github.mtrevisan.boxon.annotations.bindings.BindDouble;
 import io.github.mtrevisan.boxon.annotations.bindings.BindFloat;
@@ -96,19 +95,6 @@ public enum AnnotationDescriptor{
 			putIfNotEmpty(DescriberKey.BIND_SIZE, binding.size(), rootDescription);
 			describeChoices(binding.selectFrom(), rootDescription);
 			putIfNotEmpty(DescriberKey.BIND_SELECT_DEFAULT, binding.selectDefault(), rootDescription);
-			describeValidator(binding.validator(), rootDescription);
-			describeConverter(binding.converter(), rootDescription);
-			describeAlternatives(binding.selectConverterFrom().alternatives(), rootDescription);
-		}
-	},
-
-	BITS(BindBits.class){
-		@Override
-		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
-			final BindBits binding = (BindBits)annotation;
-			putIfNotEmpty(DescriberKey.BIND_CONDITION, binding.condition(), rootDescription);
-			putIfNotEmpty(DescriberKey.BIND_SIZE, binding.size(), rootDescription);
-			putIfNotEmpty(DescriberKey.BIND_BYTE_ORDER, binding.byteOrder(), rootDescription);
 			describeValidator(binding.validator(), rootDescription);
 			describeConverter(binding.converter(), rootDescription);
 			describeAlternatives(binding.selectConverterFrom().alternatives(), rootDescription);

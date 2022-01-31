@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.external.io;
 
+import io.github.mtrevisan.boxon.internal.BitSetHelper;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 
 import java.io.ByteArrayOutputStream;
@@ -47,16 +48,19 @@ class BitWriterData{
 	 * @param length	The amount of bits to skip.
 	 */
 	public final void skipBits(final int length){
-		putBits(BoxonBitSet.empty(), length);
+		putBitSet(new BitSet(), length, ByteOrder.BIG_ENDIAN);
 	}
 
 	/**
 	 * Writes {@code value} to this {@link BitWriter} using {@code length} bits in big-endian notation.
 	 *
-	 * @param value	The value to write.
+	 * @param bits	The value to write.
 	 * @param size	The amount of bits to use when writing {@code value}.
+	 * @param bitOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 */
-	public final void putBits(final BoxonBitSet value, final int size){
+	public final void putBitSet(final BitSet bits, final int size, final ByteOrder bitOrder){
+		BitSetHelper.changeBitOrder(bits, bitOrder);
+
 		//if the value that we're writing is too large to be placed entirely in the cache, then we need to place as
 		//much as we can in the cache (the least significant bits), flush the cache to the backing ByteBuffer, and
 		//place the rest in the cache
@@ -64,7 +68,7 @@ class BitWriterData{
 		while(offset < size){
 			//fill the cache one chunk of bits at a time
 			final int length = Math.min(size - offset, Byte.SIZE - remaining);
-			final byte nextCache = (byte)value.toLong(offset, length);
+			final byte nextCache = BitSetHelper.readNextByte(bits, offset, size);
 			cache = (byte)((cache << length) | nextCache);
 			remaining += length;
 			offset += length;
@@ -79,26 +83,14 @@ class BitWriterData{
 	}
 
 	/**
-	 * Writes {@code value} to this {@link BitWriter} using {@code length} bits.
-	 *
-	 * @param value	The value to write.
-	 * @param size	The amount of bits to use when writing {@code value}.
-	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
-	 */
-	public final void putBitSet(final BitSet value, final int size, final ByteOrder byteOrder){
-		final BoxonBitSet bits = BoxonBitSet.valueOf(value.toByteArray(), size, byteOrder);
-		putBits(bits, size);
-	}
-
-	/**
-	 * Writes {@code value} as big-endian to this {@link BitWriter} using {@code length} bits in big-endian format.
+	 * Writes {@code value} to this {@link BitWriter} using {@code length} bits in big-endian format.
 	 *
 	 * @param value	The value to write.
 	 * @param size	The amount of bits to use when writing {@code value} (MUST BE less than or equals to {@link Long#SIZE}).
 	 */
 	final void putValue(final long value, final int size){
-		final BoxonBitSet bits = BoxonBitSet.valueOf(new long[]{value}, size, ByteOrder.BIG_ENDIAN);
-		putBits(bits, size);
+		final BitSet bits = BitSet.valueOf(new long[]{value});
+		putBitSet(bits, size, ByteOrder.BIG_ENDIAN);
 	}
 
 

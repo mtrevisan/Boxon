@@ -30,12 +30,13 @@ import io.github.mtrevisan.boxon.codecs.managers.Injected;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.external.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.external.io.BitWriterInterface;
-import io.github.mtrevisan.boxon.external.io.BoxonBitSet;
 import io.github.mtrevisan.boxon.external.io.ByteOrder;
 import io.github.mtrevisan.boxon.external.io.CodecInterface;
+import io.github.mtrevisan.boxon.internal.BitSetHelper;
 
 import java.lang.annotation.Annotation;
 import java.math.BigInteger;
+import java.util.BitSet;
 
 
 final class CodecInteger implements CodecInterface<BindInteger>{
@@ -74,9 +75,9 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 		final BigInteger v = CodecHelper.converterEncode(chosenConverter, value);
 
 		final ByteOrder byteOrder = binding.byteOrder();
-		final BoxonBitSet bits = BoxonBitSet.valueOf(v, size, byteOrder);
+		final BitSet bits = BitSetHelper.valueOf(v, size, byteOrder);
 
-		writer.putBits(bits, size);
+		writer.putBitSet(bits, size, ByteOrder.BIG_ENDIAN);
 	}
 
 }
