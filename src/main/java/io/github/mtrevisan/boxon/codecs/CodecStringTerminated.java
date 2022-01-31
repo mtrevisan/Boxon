@@ -27,6 +27,7 @@ package io.github.mtrevisan.boxon.codecs;
 import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.codecs.managers.Injected;
+import io.github.mtrevisan.boxon.codecs.managers.CharsetHelper;
 import io.github.mtrevisan.boxon.external.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.external.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.external.io.CodecInterface;
@@ -47,7 +48,7 @@ final class CodecStringTerminated implements CodecInterface<BindStringTerminated
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject){
 		final BindStringTerminated binding = extractBinding(annotation);
 
-		final Charset charset = Charset.forName(binding.charset());
+		final Charset charset = CharsetHelper.lookup(binding.charset());
 
 		final byte terminator = binding.terminator();
 		final String text = reader.getTextUntilTerminator(terminator, charset);
@@ -67,7 +68,7 @@ final class CodecStringTerminated implements CodecInterface<BindStringTerminated
 		final BindingData bindingData = BindingData.create(binding, rootObject, evaluator);
 		bindingData.validate(value);
 
-		final Charset charset = Charset.forName(binding.charset());
+		final Charset charset = CharsetHelper.lookup(binding.charset());
 
 		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();
 		final String text = CodecHelper.converterEncode(chosenConverter, value);

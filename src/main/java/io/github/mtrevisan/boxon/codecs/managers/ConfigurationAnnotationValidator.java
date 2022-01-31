@@ -78,7 +78,7 @@ enum ConfigurationAnnotationValidator{
 			if(!configData.hasEnumeration() && field.getType().isEnum())
 				throw AnnotationException.create("Unnecessary mutually exclusive field in a non-enumeration field");
 			if(String.class.isAssignableFrom(field.getType()))
-				ValidationHelper.assertValidCharset(configData.charset);
+				CharsetHelper.assertValidCharset(configData.charset);
 			ValidationHelper.validateRadix(configData.radix);
 
 			validateMinimumParameters(configData);
@@ -129,7 +129,7 @@ enum ConfigurationAnnotationValidator{
 			final CompositeSubField[] fields = binding.value();
 			if(fields.length == 0)
 				throw AnnotationException.create("Composite fields must have at least one sub-field");
-			ValidationHelper.assertValidCharset(configData.charset);
+			CharsetHelper.assertValidCharset(configData.charset);
 
 			ValidationHelper.validatePattern(configData);
 
@@ -200,7 +200,7 @@ enum ConfigurationAnnotationValidator{
 			final AlternativeSubField binding = (AlternativeSubField)annotation;
 
 			if(String.class.isAssignableFrom(field.getType()))
-				ValidationHelper.assertValidCharset(configData.charset);
+				CharsetHelper.assertValidCharset(configData.charset);
 			ValidationHelper.validateRadix(configData.radix);
 
 			validateMinimumParameters(binding);

@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.codecs;
 
+import io.github.mtrevisan.boxon.codecs.managers.CharsetHelper;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.io.BitWriterInterface;
@@ -62,7 +63,7 @@ final class ParserHelper{
 
 	static void writeAffix(final String affix, final String charsetName, final BitWriterInterface writer){
 		if(!affix.isEmpty()){
-			final Charset charset = Charset.forName(charsetName);
+			final Charset charset = CharsetHelper.lookup(charsetName);
 			writer.putText(affix, charset);
 		}
 	}

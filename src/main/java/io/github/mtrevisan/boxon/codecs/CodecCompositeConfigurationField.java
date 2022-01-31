@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField;
+import io.github.mtrevisan.boxon.codecs.managers.CharsetHelper;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.external.io.BitReaderInterface;
@@ -48,7 +49,7 @@ final class CodecCompositeConfigurationField implements CodecInterface<Composite
 			throws ConfigurationException, CodecException{
 		final CompositeConfigurationField binding = extractBinding(annotation);
 
-		final Charset charset = Charset.forName(binding.charset());
+		final Charset charset = CharsetHelper.lookup(binding.charset());
 
 		value = ParserDataType.getValueOrSelf((Class<?>)fieldType, value);
 

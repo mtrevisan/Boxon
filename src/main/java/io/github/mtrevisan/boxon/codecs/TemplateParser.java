@@ -32,6 +32,7 @@ import io.github.mtrevisan.boxon.codecs.managers.BoundedField;
 import io.github.mtrevisan.boxon.codecs.managers.ConstructorHelper;
 import io.github.mtrevisan.boxon.codecs.managers.EvaluatedField;
 import io.github.mtrevisan.boxon.codecs.managers.Template;
+import io.github.mtrevisan.boxon.codecs.managers.CharsetHelper;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
@@ -281,7 +282,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	private static void readMessageTerminator(final Template<?> template, final BitReaderInterface reader) throws TemplateException{
 		final MessageHeader header = template.getHeader();
 		if(header != null && !header.end().isEmpty()){
-			final Charset charset = Charset.forName(header.charset());
+			final Charset charset = CharsetHelper.lookup(header.charset());
 			final byte[] messageTerminator = header.end().getBytes(charset);
 			final byte[] readMessageTerminator = reader.getBytes(messageTerminator.length);
 			//verifying terminators

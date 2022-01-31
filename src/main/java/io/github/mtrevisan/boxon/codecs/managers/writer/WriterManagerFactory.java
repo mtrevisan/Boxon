@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.codecs.managers.writer;
 
+import io.github.mtrevisan.boxon.codecs.managers.CharsetHelper;
 import io.github.mtrevisan.boxon.external.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.external.io.ParserDataType;
 
@@ -54,7 +55,7 @@ public final class WriterManagerFactory{
 			manager = new NumberWriterManager(writer)
 				.withRadix(radix);
 		else if(String.class.isAssignableFrom(fieldClass)){
-			final Charset charset = Charset.forName(charsetName);
+			final Charset charset = CharsetHelper.lookup(charsetName);
 			manager = new StringWriterManager(writer)
 				.withCharset(charset);
 		}

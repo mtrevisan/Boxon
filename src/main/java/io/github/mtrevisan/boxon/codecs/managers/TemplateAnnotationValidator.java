@@ -105,7 +105,7 @@ enum TemplateAnnotationValidator{
 		@Override
 		void validate(final Field field, final Annotation annotation) throws AnnotationException{
 			final BindString binding = (BindString)annotation;
-			ValidationHelper.assertValidCharset(binding.charset());
+			CharsetHelper.assertValidCharset(binding.charset());
 
 			final Class<? extends Converter<?, ?>> converter = binding.converter();
 			validateConverter(field, String.class, converter);
@@ -116,7 +116,7 @@ enum TemplateAnnotationValidator{
 		@Override
 		void validate(final Field field, final Annotation annotation) throws AnnotationException{
 			final BindStringTerminated binding = (BindStringTerminated)annotation;
-			ValidationHelper.assertValidCharset(binding.charset());
+			CharsetHelper.assertValidCharset(binding.charset());
 
 			final Class<? extends Converter<?, ?>> converter = binding.converter();
 			validateConverter(field, String.class, converter);

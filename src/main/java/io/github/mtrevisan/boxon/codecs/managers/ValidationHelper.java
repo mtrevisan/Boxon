@@ -27,13 +27,12 @@ package io.github.mtrevisan.boxon.codecs.managers;
 import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigFieldData;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
-import io.github.mtrevisan.boxon.external.io.ParserDataType;
 import io.github.mtrevisan.boxon.external.configurations.ConfigurationEnum;
+import io.github.mtrevisan.boxon.external.io.ParserDataType;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 
-import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
@@ -44,15 +43,6 @@ final class ValidationHelper{
 
 
 	private ValidationHelper(){}
-
-	static void assertValidCharset(final String charsetName) throws AnnotationException{
-		try{
-			Charset.forName(charsetName);
-		}
-		catch(final IllegalArgumentException ignored){
-			throw AnnotationException.create("Invalid charset: '{}'", charsetName);
-		}
-	}
 
 
 	static void validateProtocol(final ConfigFieldData field, final Version minProtocolVersion,

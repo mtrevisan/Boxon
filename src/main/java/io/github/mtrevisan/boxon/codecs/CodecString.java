@@ -27,6 +27,7 @@ package io.github.mtrevisan.boxon.codecs;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.codecs.managers.Injected;
+import io.github.mtrevisan.boxon.codecs.managers.CharsetHelper;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.external.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.external.io.BitWriterInterface;
@@ -51,7 +52,7 @@ final class CodecString implements CodecInterface<BindString>{
 
 		final int size = bindingData.evaluateSize();
 		CodecHelper.assertSizePositive(size);
-		final Charset charset = Charset.forName(binding.charset());
+		final Charset charset = CharsetHelper.lookup(binding.charset());
 		final String text = reader.getText(size, charset);
 
 		return CodecHelper.convertValue(bindingData, text);
@@ -70,7 +71,7 @@ final class CodecString implements CodecInterface<BindString>{
 
 		final int size = bindingData.evaluateSize();
 		CodecHelper.assertSizePositive(size);
-		final Charset charset = Charset.forName(binding.charset());
+		final Charset charset = CharsetHelper.lookup(binding.charset());
 		writer.putText(text.substring(0, Math.min(text.length(), size)), charset);
 	}
 

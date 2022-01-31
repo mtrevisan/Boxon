@@ -30,6 +30,7 @@ import io.github.mtrevisan.boxon.codecs.managers.Template;
 import io.github.mtrevisan.boxon.codecs.managers.ThrowingFunction;
 import io.github.mtrevisan.boxon.codecs.managers.matchers.BNDMPatternMatcher;
 import io.github.mtrevisan.boxon.codecs.managers.matchers.PatternMatcher;
+import io.github.mtrevisan.boxon.codecs.managers.CharsetHelper;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.io.BitReaderInterface;
@@ -196,7 +197,7 @@ public final class LoaderTemplate{
 	private void addTemplateInner(final Template<?> template) throws TemplateException{
 		try{
 			final MessageHeader header = template.getHeader();
-			final Charset charset = Charset.forName(header.charset());
+			final Charset charset = CharsetHelper.lookup(header.charset());
 			final String[] starts = header.start();
 			for(int i = 0; i < starts.length; i ++)
 				loadTemplateInner(template, starts[i], charset);
@@ -253,7 +254,7 @@ public final class LoaderTemplate{
 		if(header == null)
 			throw TemplateException.create("The given class type is not a valid template");
 
-		final String key = calculateKey(header.start()[0], Charset.forName(header.charset()));
+		final String key = calculateKey(header.start()[0], CharsetHelper.lookup(header.charset()));
 		final Template<?> template = templates.get(key);
 		if(template == null)
 			throw TemplateException.create("Cannot find any template for given class type");
@@ -294,7 +295,7 @@ public final class LoaderTemplate{
 	}
 
 	private static int findNextMessageIndex(final BitReaderInterface reader, final MessageHeader header, int minOffset){
-		final Charset charset = Charset.forName(header.charset());
+		final Charset charset = CharsetHelper.lookup(header.charset());
 		final String[] messageStarts = header.start();
 		//select the minimum index with a valid template
 		for(int i = 0; i < messageStarts.length; i ++){
