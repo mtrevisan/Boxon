@@ -30,7 +30,7 @@ import io.github.mtrevisan.boxon.exceptions.ExceptionHelper;
 /**
  * Represents an error in a version.
  */
-public class VersionException extends IllegalArgumentException{
+public final class VersionException extends IllegalArgumentException{
 
 	private static final long serialVersionUID = 6010765672515345324L;
 

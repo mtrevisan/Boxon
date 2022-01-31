@@ -47,7 +47,7 @@ class BitWriterData{
 	 * @param length	The amount of bits to skip.
 	 */
 	public final void skipBits(final int length){
-		putBitSet(new BitSet(), length, ByteOrder.BIG_ENDIAN);
+		putBitSet(new BitSet(0), length, ByteOrder.BIG_ENDIAN);
 	}
 
 	/**

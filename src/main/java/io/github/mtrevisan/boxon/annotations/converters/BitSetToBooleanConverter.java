@@ -41,7 +41,7 @@ public final class BitSetToBooleanConverter implements Converter<BitSet, Boolean
 
 	@Override
 	public BitSet encode(final Boolean value){
-		final BitSet bs = new BitSet();
+		final BitSet bs = new BitSet(1);
 		if(value)
 			bs.set(0);
 		return bs;

@@ -485,7 +485,7 @@ public final class Version implements Comparable<Version>{
 	 */
 	public boolean isEnhancementOf(final Version other){
 		return (isCompatibleWith(other)
-			&& minor != null && other.minor != null && minor.intValue() > other.minor.intValue());
+			&& minor != null && other.minor != null && minor > other.minor);
 	}
 
 	/**
@@ -498,7 +498,7 @@ public final class Version implements Comparable<Version>{
 	public boolean isPatchOf(final Version other){
 		return (isCompatibleWith(other)
 			&& minor != null && other.minor != null && minor.equals(other.minor)
-			&& patch != null && other.patch != null && patch.intValue() > other.patch.intValue());
+			&& patch != null && other.patch != null && patch > other.patch);
 	}
 
 

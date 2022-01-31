@@ -63,7 +63,7 @@ public interface CodecInterface<B extends Annotation>{
 	 * Interpret the annotation as the data type indicated in the generic of this codec.
 	 *
 	 * @param annotation	The generic annotation to be interpreted.
-	 * @return	The casted annotation.
+	 * @return	The cast annotation.
 	 */
 	@SuppressWarnings("unchecked")
 	default B extractBinding(final Annotation annotation){
