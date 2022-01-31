@@ -282,7 +282,7 @@ public enum AnnotationDescriptor{
 
 	private static void describeChoices(final ObjectChoices choices, final Map<String, Object> rootDescription){
 		putIfNotEmpty(DescriberKey.BIND_PREFIX_SIZE, choices.prefixSize(), rootDescription);
-		putIfNotEmpty(DescriberKey.BIND_BYTE_ORDER, choices.byteOrder(), rootDescription);
+		putIfNotEmpty(DescriberKey.BIND_BIT_ORDER, choices.bitOrder(), rootDescription);
 		describeAlternatives(choices.alternatives(), rootDescription);
 	}
 

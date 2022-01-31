@@ -210,9 +210,10 @@ final class BindingData{
 
 		final int prefixSize = selectObjectFrom.prefixSize();
 		if(prefixSize > 0){
-			final ByteOrder prefixByteOrder = selectObjectFrom.byteOrder();
-			final int prefix = reader.getInteger(prefixSize, prefixByteOrder)
-				.intValue();
+			final ByteOrder prefixBitOrder = selectObjectFrom.bitOrder();
+			final long[] array = reader.getBitSet(prefixSize, prefixBitOrder)
+				.toLongArray();
+			final int prefix = (array.length > 0? (int)array[0]: 0);
 
 			evaluator.addToContext(ContextHelper.CONTEXT_CHOICE_PREFIX, prefix);
 		}

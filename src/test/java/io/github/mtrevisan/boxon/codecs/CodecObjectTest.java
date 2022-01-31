@@ -106,8 +106,8 @@ class CodecObjectTest{
 					}
 
 					@Override
-					public ByteOrder byteOrder(){
-						return null;
+					public ByteOrder bitOrder(){
+						return ByteOrder.BIG_ENDIAN;
 					}
 
 					@Override

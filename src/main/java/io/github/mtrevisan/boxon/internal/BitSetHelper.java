@@ -54,9 +54,8 @@ public final class BitSetHelper{
 			System.arraycopy(array, offset, newArray, newArrayOffset, array.length - offset);
 			array = newArray;
 		}
-		if(byteOrder == ByteOrder.LITTLE_ENDIAN)
-			//NOTE: need to reverse the bytes because BigInteger is big-endian and BitMap is little-endian
-			byteReverse(array);
+		//NOTE: need to reverse the bytes because BigInteger is big-endian and BitMap is little-endian
+		changeByteOrder(array, byteOrder);
 		return BitSet.valueOf(array);
 	}
 
@@ -79,16 +78,6 @@ public final class BitSetHelper{
 		return value;
 	}
 
-	/**
-	 * Sets the bits of a number to the complement of its current value.
-	 *
-	 * @param bits	The bit set.
-	 * @param size	The size of the number in bits.
-	 */
-	public static void flipBits(final BitSet bits, final int size){
-		bits.flip(0, size);
-	}
-
 
 	/**
 	 * In-place reverse the order of the given array byte-by-byte.
@@ -96,7 +85,7 @@ public final class BitSetHelper{
 	 * @param array	The array to be reversed.
 	 * @param byteOrder	The byte order.
 	 */
-	public static void changeByteOrder(final byte[] array, final ByteOrder byteOrder){
+	private static void changeByteOrder(final byte[] array, final ByteOrder byteOrder){
 		if(byteOrder == ByteOrder.LITTLE_ENDIAN)
 			for(int start = 0, end = array.length - 1; start < end; start ++, end --)
 				//swap array[start] with array[end]
@@ -174,9 +163,8 @@ public final class BitSetHelper{
 		final int expectedLength = size >>> 3;
 		if(array.length < expectedLength)
 			array = Arrays.copyOf(array, expectedLength);
-		if(byteOrder == ByteOrder.LITTLE_ENDIAN)
-			//NOTE: need to reverse the bytes because BigInteger is big-endian and BitMap is little-endian
-			byteReverse(array);
+		//NOTE: need to reverse the bytes because BigInteger is big-endian and BitMap is little-endian
+		changeByteOrder(array, byteOrder);
 		return extendSign(array);
 	}
 
