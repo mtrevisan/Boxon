@@ -64,6 +64,11 @@ abstract class BitReaderData{
 	private State fallbackPoint;
 
 
+	BitReaderData(final ByteBuffer buffer){
+		this.buffer = buffer;
+	}
+
+
 	/**
 	 * Create a fallback point that can later be restored (see {@link #restoreFallbackPoint()}).
 	 */
@@ -107,10 +112,6 @@ abstract class BitReaderData{
 		cache = state.cache;
 	}
 
-
-	BitReaderData(final ByteBuffer buffer){
-		this.buffer = buffer;
-	}
 
 	/**
 	 * Reads the next {@code length} bits and composes a {@link BitSet} in big-endian notation.
