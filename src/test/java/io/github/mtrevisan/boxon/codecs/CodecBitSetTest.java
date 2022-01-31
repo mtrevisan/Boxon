@@ -37,6 +37,7 @@ import io.github.mtrevisan.boxon.external.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.external.io.BitWriter;
 import io.github.mtrevisan.boxon.external.io.ByteOrder;
 import io.github.mtrevisan.boxon.external.io.CodecInterface;
+import io.github.mtrevisan.boxon.internal.BitSetHelper;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -56,8 +57,9 @@ class CodecBitSetTest{
 	@Test
 	void bitsLittleEndian() throws FieldException{
 		CodecInterface<BindBitSet> codec = new CodecBitSet();
-		byte[] randomBytes = new byte[123];
-		RANDOM.nextBytes(randomBytes);
+//		byte[] randomBytes = new byte[123];
+//		RANDOM.nextBytes(randomBytes);
+byte[] randomBytes = new byte[]{(byte)0xAB, (byte)0xCD};
 		BitSet encodedValue = BitSet.valueOf(randomBytes);
 		BindBitSet annotation = new BindBitSet(){
 			@Override
@@ -76,7 +78,7 @@ class CodecBitSetTest{
 			}
 
 			@Override
-			public ByteOrder byteOrder(){
+			public ByteOrder bitOrder(){
 				return ByteOrder.LITTLE_ENDIAN;
 			}
 
@@ -111,8 +113,8 @@ class CodecBitSetTest{
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		byte[] bb = encodedValue.toByteArray();
-		bitReverse(bb);
+		BitSet bbb = BitSetHelper.changeBitOrder(encodedValue, ByteOrder.LITTLE_ENDIAN);
+		byte[] bb = bbb.toByteArray();
 		if(bb.length > randomBytes.length)
 			bb = Arrays.copyOf(bb, randomBytes.length);
 		Assertions.assertEquals(StringHelper.toHexString(bb), writer.toString());
@@ -169,7 +171,7 @@ class CodecBitSetTest{
 			}
 
 			@Override
-			public ByteOrder byteOrder(){
+			public ByteOrder bitOrder(){
 				return ByteOrder.BIG_ENDIAN;
 			}
 

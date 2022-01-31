@@ -48,6 +48,7 @@ public enum DescriberKey{
 	BIND_CONVERTER("converter"),
 	BIND_SELECT_CONVERTER_FROM("selectConverterFrom"),
 	BIND_SIZE("size"),
+	BIND_BIT_ORDER("bitOrder"),
 	BIND_BYTE_ORDER("byteOrder"),
 	BIND_CHARSET("charset"),
 	BIND_TERMINATOR("terminator"),

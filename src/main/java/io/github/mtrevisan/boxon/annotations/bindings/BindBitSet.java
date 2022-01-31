@@ -65,7 +65,7 @@ public @interface BindBitSet{
 	 *
 	 * @return	The type of endianness (defaults to {@link ByteOrder#BIG_ENDIAN}).
 	 */
-	ByteOrder byteOrder() default ByteOrder.BIG_ENDIAN;
+	ByteOrder bitOrder() default ByteOrder.BIG_ENDIAN;
 
 	/**
 	 * The validator to be applied <i>after</i> applying the converter, in the decoding phase (<i>before</i> if in the encoding one), if any.

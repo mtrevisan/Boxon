@@ -30,6 +30,7 @@ import io.github.mtrevisan.boxon.codecs.managers.Injected;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.external.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.external.io.BitWriterInterface;
+import io.github.mtrevisan.boxon.external.io.ByteOrder;
 import io.github.mtrevisan.boxon.external.io.CodecInterface;
 
 import java.lang.annotation.Annotation;
@@ -51,9 +52,10 @@ final class CodecBitSet implements CodecInterface<BindBitSet>{
 		final int size = bindingData.evaluateSize();
 		CodecHelper.assertSizePositive(size);
 
-		final BitSet value = reader.getBitSet(size, binding.byteOrder());
+		final ByteOrder bitOrder = binding.bitOrder();
+		final BitSet bits = reader.getBitSet(size, bitOrder);
 
-		return CodecHelper.convertValue(bindingData, value);
+		return CodecHelper.convertValue(bindingData, bits);
 	}
 
 	@Override
@@ -68,8 +70,9 @@ final class CodecBitSet implements CodecInterface<BindBitSet>{
 
 		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();
 		final BitSet bits = CodecHelper.converterEncode(chosenConverter, value);
+		final ByteOrder bitOrder = binding.bitOrder();
 
-		writer.putBitSet(bits, size, binding.byteOrder());
+		writer.putBitSet(bits, size, bitOrder);
 	}
 
 }

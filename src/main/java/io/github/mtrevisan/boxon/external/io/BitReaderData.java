@@ -139,8 +139,7 @@ abstract class BitReaderData{
 				remaining = Byte.SIZE;
 			}
 		}
-		BitSetHelper.changeBitOrder(bits, bitOrder);
-		return bits;
+		return BitSetHelper.changeBitOrder(bits, bitOrder);
 	}
 
 	private Byte peekByte(){
