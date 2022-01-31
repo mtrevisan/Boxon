@@ -65,8 +65,12 @@ public class QueclinkHelper{
 		@Override
 		public String decode(final byte[] value){
 			final StringBuilder sb = new StringBuilder(15);
-			for(int i = 0; i < 7; i ++)
-				sb.append(String.format("%02d", value[i] & 255));
+			for(int i = 0; i < 7; i ++){
+				final int val = value[i] & 255;
+				if(val < 10)
+					sb.append('0');
+				sb.append(val);
+			}
 			sb.append(applyMaskAndShift(value[7], (byte)0x0F));
 			return sb.toString();
 		}

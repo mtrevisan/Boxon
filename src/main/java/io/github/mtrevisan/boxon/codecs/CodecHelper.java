@@ -86,12 +86,12 @@ final class CodecHelper{
 	}
 
 	@SuppressWarnings("unchecked")
-	private static <IN, OUT> OUT converterDecode(final Class<? extends Converter<?, ?>> converterType, final Object data){
+	private static <IN> Object converterDecode(final Class<? extends Converter<?, ?>> converterType, final IN data){
 		try{
-			final Converter<IN, OUT> converter = (Converter<IN, OUT>)ConstructorHelper.getCreator(converterType)
+			final Converter<IN, ?> converter = (Converter<IN, ?>)ConstructorHelper.getCreator(converterType)
 				.get();
 
-			return converter.decode((IN)data);
+			return converter.decode(data);
 		}
 		catch(final Exception e){
 			throw new IllegalArgumentException("Can not input " + data.getClass().getSimpleName() + " to decode method of converter "
