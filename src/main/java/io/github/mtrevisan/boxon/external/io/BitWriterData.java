@@ -68,7 +68,7 @@ class BitWriterData{
 		while(offset < size){
 			//fill the cache one chunk of bits at a time
 			final int length = Math.min(size - offset, Byte.SIZE - remaining);
-			final byte nextCache = BitSetHelper.readNextByte(bits, offset, size);
+			final byte nextCache = BitSetHelper.readNextByte(bits, offset, length);
 			cache = (byte)((cache << length) | nextCache);
 			remaining += length;
 			offset += length;
