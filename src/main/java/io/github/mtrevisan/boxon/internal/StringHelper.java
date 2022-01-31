@@ -46,7 +46,7 @@ public final class StringHelper{
 	 * @return	The hexadecimal characters.
 	 */
 	public static String toHexString(final byte[] array){
-		final int length = (array != null? array.length: 0);
+		final int length = JavaHelper.lengthOrZero(array);
 		final StringBuilder sb = new StringBuilder(length << 1);
 		for(int i = 0; i < length; i ++){
 			final byte elem = array[i];

@@ -30,6 +30,7 @@ import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.external.logs.EventListener;
+import io.github.mtrevisan.boxon.internal.JavaHelper;
 
 
 @SuppressWarnings("unused")
@@ -70,7 +71,7 @@ final class TemplateParserCore{
 	 * @return	The current instance.
 	 */
 	TemplateParserCore withEventListener(final EventListener eventListener){
-		this.eventListener = (eventListener != null? eventListener: EventListener.getNoOpInstance());
+		this.eventListener = JavaHelper.nonNullOrDefault(eventListener, EventListener.getNoOpInstance());
 
 		loaderTemplate.withEventListener(eventListener);
 

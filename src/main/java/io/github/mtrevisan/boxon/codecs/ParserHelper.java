@@ -30,6 +30,7 @@ import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.external.io.CodecInterface;
 import io.github.mtrevisan.boxon.external.logs.EventListener;
+import io.github.mtrevisan.boxon.internal.JavaHelper;
 
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
@@ -56,7 +57,7 @@ final class ParserHelper{
 	 * @return	The current instance.
 	 */
 	ParserHelper withEventListener(final EventListener eventListener){
-		this.eventListener = (eventListener != null? eventListener: EventListener.getNoOpInstance());
+		this.eventListener = JavaHelper.nonNullOrDefault(eventListener, EventListener.getNoOpInstance());
 
 		return this;
 	}

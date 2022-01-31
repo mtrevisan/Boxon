@@ -40,6 +40,7 @@ import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.external.logs.EventListener;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
+import io.github.mtrevisan.boxon.internal.JavaHelper;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
@@ -84,7 +85,7 @@ final class LoaderConfiguration{
 	 * @return	The current instance.
 	 */
 	LoaderConfiguration withEventListener(final EventListener eventListener){
-		this.eventListener = (eventListener != null? eventListener: EventListener.getNoOpInstance());
+		this.eventListener = JavaHelper.nonNullOrDefault(eventListener, EventListener.getNoOpInstance());
 
 		return this;
 	}

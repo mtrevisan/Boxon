@@ -57,6 +57,10 @@ public final class JavaHelper{
 		return (obj != null? obj: defaultObject);
 	}
 
+	static <T> int lengthOrZero(final byte[] array){
+		return (array != null? array.length: 0);
+	}
+
 	public static <T> int lengthOrZero(final T[] array){
 		return (array != null? array.length: 0);
 	}

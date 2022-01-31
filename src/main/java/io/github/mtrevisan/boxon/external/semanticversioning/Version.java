@@ -41,7 +41,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("WeakerAccess")
 public final class Version implements Comparable<Version>{
 
-	/** An empty immutable {@code String} array. */
+	/** An empty {@code String} array. */
 	private static final String[] EMPTY_ARRAY = new String[0];
 
 	private static final String KEY_MAJOR = "major";
