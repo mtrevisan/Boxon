@@ -35,7 +35,7 @@ import java.util.function.Function;
 
 final class ValueOf<T extends Enum<T>, K>{
 
-	private static final String ERROR_MESSAGE = "No enum constant %s.%s";
+	private static final String ERROR_MESSAGE = "No enum constant ";
 
 
 	private final Class<T> type;
@@ -75,7 +75,7 @@ final class ValueOf<T extends Enum<T>, K>{
 	public T getOrElseThrow(final K key){
 		final T value = values.get(key);
 		if(value == null)
-			throw new IllegalArgumentException(String.format(ERROR_MESSAGE, type.getName(), key));
+			throw new IllegalArgumentException(ERROR_MESSAGE + type.getName() + "." + key);
 
 		return value;
 	}
