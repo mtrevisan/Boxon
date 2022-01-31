@@ -66,9 +66,7 @@ public final class BitSetHelper{
 	 */
 	private static void changeByteOrder(final byte[] array, final ByteOrder byteOrder){
 		if(byteOrder == ByteOrder.LITTLE_ENDIAN)
-			for(int start = 0, end = array.length - 1; start < end; start ++, end --)
-				//swap array[start] with array[end]
-				array[start] ^= array[end] ^ (array[end] = array[start]);
+			byteReverse(array);
 	}
 
 	/**
