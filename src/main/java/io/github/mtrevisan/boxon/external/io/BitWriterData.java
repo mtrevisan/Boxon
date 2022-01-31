@@ -67,7 +67,7 @@ class BitWriterData{
 		while(offset < size){
 			//fill the cache one chunk of bits at a time
 			final int length = Math.min(size - offset, Byte.SIZE - remaining);
-			final byte nextCache = BitSetHelper.readNextByte(bits, offset, length);
+			final byte nextCache = readNextByte(bits, offset, length);
 			cache = (byte)((cache << length) | nextCache);
 			remaining += length;
 			offset += length;
@@ -79,6 +79,25 @@ class BitWriterData{
 				resetInnerVariables();
 			}
 		}
+	}
+
+	/**
+	 * Returns a long of given length and starting at a given offset.
+	 *
+	 * @param bits	The bit set.
+	 * @param offset	The bit offset to start the extraction.
+	 * @param size	The length in bits of the extraction (MUST BE less than {@link Long#SIZE}!).
+	 * @return	A long starting at a given offset and of a given length.
+	 */
+	private static byte readNextByte(final BitSet bits, final int offset, final int size){
+		byte value = 0;
+		int index = bits.nextSetBit(offset);
+		while(index >= 0 && index <= offset + size){
+			value |= 1 << (index - offset);
+
+			index = bits.nextSetBit(index + 1);
+		}
+		return value;
 	}
 
 	/**
