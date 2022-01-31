@@ -26,6 +26,7 @@ package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.external.io.BitWriter;
+import io.github.mtrevisan.boxon.internal.JavaHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +58,7 @@ public final class ComposeResponse{
 	 * @param originator	The data that originates the message.
 	 */
 	ComposeResponse(final Object[] originator){
-		this.originator = (originator != null? originator.clone(): null);
+		this.originator = JavaHelper.cloneNonNullOrDefault(originator, null);
 	}
 
 	/**
@@ -76,7 +77,7 @@ public final class ComposeResponse{
 	}
 
 	void setComposedMessage(final byte[] composedMessage){
-		this.composedMessage = (composedMessage != null? composedMessage.clone(): null);
+		this.composedMessage = JavaHelper.cloneNonNullOrDefault(composedMessage, null);
 	}
 
 	/**
@@ -85,7 +86,7 @@ public final class ComposeResponse{
 	 * @return	The message composed by the given originator.
 	 */
 	public byte[] getComposedMessage(){
-		return (composedMessage != null? composedMessage.clone(): EMPTY_ARRAY);
+		return JavaHelper.cloneNonNullOrDefault(composedMessage, EMPTY_ARRAY);
 	}
 
 	/**

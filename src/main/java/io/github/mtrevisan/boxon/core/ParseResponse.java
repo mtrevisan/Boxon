@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.exceptions.DecodeException;
+import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 
 import java.util.Map;
@@ -53,7 +54,7 @@ public final class ParseResponse{
 	 * @param payload	The payload.
 	 */
 	ParseResponse(final byte[] payload){
-		this.payload = (payload != null? payload.clone(): null);
+		this.payload = JavaHelper.cloneNonNullOrDefault(payload, null);
 	}
 
 	/**

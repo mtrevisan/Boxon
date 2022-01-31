@@ -58,6 +58,15 @@ public final class JavaHelper{
 	}
 
 
+	public static byte[] cloneNonNullOrDefault(final byte[] obj, final byte[] defaultObject){
+		return (obj != null? obj.clone(): defaultObject);
+	}
+
+	public static Object[] cloneNonNullOrDefault(final Object[] obj, final Object[] defaultObject){
+		return (obj != null? obj.clone(): defaultObject);
+	}
+
+
 	static <T> int lengthOrZero(final byte[] array){
 		return (array != null? array.length: 0);
 	}
