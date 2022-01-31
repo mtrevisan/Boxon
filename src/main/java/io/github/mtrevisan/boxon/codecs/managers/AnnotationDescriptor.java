@@ -56,8 +56,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 
+/**
+ * Descriptors of the various binding annotations.
+ */
 public enum AnnotationDescriptor{
 
+	/**
+	 * Descriptor of the {@link BindObject} annotation.
+	 */
 	OBJECT(BindObject.class){
 		@Override
 		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
@@ -72,6 +78,9 @@ public enum AnnotationDescriptor{
 		}
 	},
 
+	/**
+	 * Descriptor of the {@link BindArrayPrimitive} annotation.
+	 */
 	ARRAY_PRIMITIVE(BindArrayPrimitive.class){
 		@Override
 		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
@@ -86,6 +95,9 @@ public enum AnnotationDescriptor{
 		}
 	},
 
+	/**
+	 * Descriptor of the {@link BindArray} annotation.
+	 */
 	ARRAY(BindArray.class){
 		@Override
 		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
@@ -101,6 +113,9 @@ public enum AnnotationDescriptor{
 		}
 	},
 
+	/**
+	 * Descriptor of the {@link BindBitSet} annotation.
+	 */
 	BIT_SET(BindBitSet.class){
 		@Override
 		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
@@ -114,6 +129,9 @@ public enum AnnotationDescriptor{
 		}
 	},
 
+	/**
+	 * Descriptor of the {@link BindByte} annotation.
+	 */
 	BYTE(BindByte.class){
 		@Override
 		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
@@ -125,6 +143,9 @@ public enum AnnotationDescriptor{
 		}
 	},
 
+	/**
+	 * Descriptor of the {@link BindShort} annotation.
+	 */
 	SHORT(BindShort.class){
 		@Override
 		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
@@ -137,6 +158,9 @@ public enum AnnotationDescriptor{
 		}
 	},
 
+	/**
+	 * Descriptor of the {@link BindInt} annotation.
+	 */
 	INT(BindInt.class){
 		@Override
 		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
@@ -149,6 +173,9 @@ public enum AnnotationDescriptor{
 		}
 	},
 
+	/**
+	 * Descriptor of the {@link BindInteger} annotation.
+	 */
 	INTEGER(BindInteger.class){
 		@Override
 		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
@@ -162,6 +189,9 @@ public enum AnnotationDescriptor{
 		}
 	},
 
+	/**
+	 * Descriptor of the {@link BindLong} annotation.
+	 */
 	LONG(BindLong.class){
 		@Override
 		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
@@ -174,6 +204,9 @@ public enum AnnotationDescriptor{
 		}
 	},
 
+	/**
+	 * Descriptor of the {@link BindFloat} annotation.
+	 */
 	FLOAT(BindFloat.class){
 		@Override
 		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
@@ -186,6 +219,9 @@ public enum AnnotationDescriptor{
 		}
 	},
 
+	/**
+	 * Descriptor of the {@link BindDouble} annotation.
+	 */
 	DOUBLE(BindDouble.class){
 		@Override
 		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
@@ -198,6 +234,9 @@ public enum AnnotationDescriptor{
 		}
 	},
 
+	/**
+	 * Descriptor of the {@link BindString} annotation.
+	 */
 	STRING(BindString.class){
 		@Override
 		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
@@ -211,6 +250,9 @@ public enum AnnotationDescriptor{
 		}
 	},
 
+	/**
+	 * Descriptor of the {@link BindStringTerminated} annotation.
+	 */
 	STRING_TERMINATED(BindStringTerminated.class){
 		@Override
 		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
@@ -226,6 +268,9 @@ public enum AnnotationDescriptor{
 	},
 
 
+	/**
+	 * Descriptor of the {@link Checksum} annotation.
+	 */
 	CHECKSUM(Checksum.class){
 		@Override
 		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
@@ -240,6 +285,9 @@ public enum AnnotationDescriptor{
 	},
 
 
+	/**
+	 * Descriptor of the {@link Evaluate} annotation.
+	 */
 	EVALUATE(Evaluate.class){
 		@Override
 		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
@@ -257,16 +305,35 @@ public enum AnnotationDescriptor{
 	private final Class<? extends Annotation> annotationType;
 
 
-	AnnotationDescriptor(final Class<? extends Annotation> type){
-		annotationType = type;
-	}
-
+	/**
+	 * Create annotation descriptor from annotation.
+	 *
+	 * @param annotation	The annotation.
+	 * @return	The instance.
+	 */
 	public static AnnotationDescriptor fromAnnotation(final Annotation annotation){
 		return VALIDATORS.get(annotation.annotationType());
 	}
 
+
+	AnnotationDescriptor(final Class<? extends Annotation> type){
+		annotationType = type;
+	}
+
+	/**
+	 * Load a description of the given annotation in the given map.
+	 *
+	 * @param annotation	The annotation from which to extract the description.
+	 * @param rootDescription	The map in which to load the description.
+	 */
 	public abstract void describe(final Annotation annotation, final Map<String, Object> rootDescription);
 
+	/**
+	 * Load a description of the given skip annotations in the given map.
+	 *
+	 * @param skips	The skip annotations from which to extract the description.
+	 * @param rootDescription	The map in which to load the descriptions.
+	 */
 	public static void describeSkips(final Skip[] skips, final Collection<Map<String, Object>> rootDescription){
 		for(int j = 0; j < skips.length; j ++){
 			final Skip skip = skips[j];
@@ -327,12 +394,26 @@ public enum AnnotationDescriptor{
 		}
 	}
 
+	/**
+	 * Put the pair key-value into the given map.
+	 *
+	 * @param key	The key.
+	 * @param value	The value.
+	 * @param map	The map in which to load the key-value pair.
+	 */
 	public static void putIfNotEmpty(final DescriberKey key, final Object value,
 			@SuppressWarnings("BoundedWildcard") final Map<String, Object> map){
 		if(value != null && (!String.class.isInstance(value) || !StringHelper.isBlank((CharSequence)value)))
 			map.put(key.toString(), value);
 	}
 
+	/**
+	 * Put the pair key-value into the given map.
+	 *
+	 * @param key	The key.
+	 * @param type	The class whose simple name will be the value.
+	 * @param map	The map in which to load the key-value pair.
+	 */
 	public static void putIfNotEmpty(final DescriberKey key, final Class<?> type,
 			@SuppressWarnings("BoundedWildcard") final Map<String, Object> map){
 		if(type != null)

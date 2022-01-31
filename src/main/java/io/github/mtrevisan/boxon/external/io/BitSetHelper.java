@@ -47,7 +47,8 @@ public final class BitSetHelper{
 	 * Change the byte order appropriately.
 	 *
 	 * @param bits	The bit set.
-	 * @param bitOrder	The byte order.
+	 * @param bitOrder	The bit order.
+	 * @return	The bit set with the bits reversed if the bit order is little-endian.
 	 */
 	public static BitSet changeBitOrder(final BitSet bits, final ByteOrder bitOrder){
 		return (bitOrder == ByteOrder.LITTLE_ENDIAN? bitReverse(bits): bits);

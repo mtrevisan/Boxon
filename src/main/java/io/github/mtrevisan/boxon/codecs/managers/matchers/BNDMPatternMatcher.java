@@ -52,6 +52,11 @@ public final class BNDMPatternMatcher implements PatternMatcher{
 	}
 
 
+	/**
+	 * Singleton instance of this pattern matcher.
+	 *
+	 * @return	The instance of this pattern matcher.
+	 */
 	public static PatternMatcher getInstance(){
 		return SingletonHelper.INSTANCE;
 	}

@@ -38,16 +38,16 @@ public final class CharsetHelper{
 	private CharsetHelper(){}
 
 
-	public static Charset lookup(final String charsetName){
-		return CHARSETS.apply(charsetName);
-	}
-
 	/**
-	 * In-place reverse the order of the given array byte-by-byte.
+	 * Get the charset object for the named charset.
 	 *
 	 * @param charsetName	The charset name.
 	 * @return	The charset.
 	 */
+	public static Charset lookup(final String charsetName){
+		return CHARSETS.apply(charsetName);
+	}
+
 	private static Charset lookupName(final String charsetName){
 		return Charset.forName(charsetName);
 	}

@@ -63,30 +63,68 @@ public final class BoundedField{
 		condition = ReflectionHelper.invokeMethod(binding, conditionMethod, JavaHelper.EMPTY_STRING);
 	}
 
+	/**
+	 * The name of the field.
+	 *
+	 * @return	The name of the field.
+	 */
 	public String getFieldName(){
 		return field.getName();
 	}
 
+	/**
+	 * The type of the field.
+	 *
+	 * @return	The type of the field.
+	 */
 	public Class<?> getFieldType(){
 		return field.getType();
 	}
 
+	/**
+	 * The value of the field the given object contains.
+	 *
+	 * @param obj	The object from which to extract the value of the field.
+	 * @param <T>	The field value type.
+	 * @return	The field value.
+	 */
 	public <T> T getFieldValue(final Object obj){
 		return ReflectionHelper.getValue(field, obj);
 	}
 
+	/**
+	 * Set the field value.
+	 *
+	 * @param obj	The object in which the value is to be loaded.
+	 * @param value	The value.
+	 */
 	public void setFieldValue(final Object obj, final Object value){
 		ReflectionHelper.setValue(field, obj, value);
 	}
 
+	/**
+	 * The skips that must be made before reading the field value.
+	 *
+	 * @return	The annotations of the skips that must be made before reading the field value.
+	 */
 	public Skip[] getSkips(){
 		return (skips != null? skips.clone(): EMPTY_ARRAY);
 	}
 
+	/**
+	 * The annotation bound to the field.
+	 *
+	 * @return	The annotation bound to the field.
+	 */
 	public Annotation getBinding(){
 		return binding;
 	}
 
+	/**
+	 * The condition under which this field should be read.
+	 *
+	 * @return	The condition under which this field should be read.
+	 */
 	public String getCondition(){
 		return condition;
 	}
