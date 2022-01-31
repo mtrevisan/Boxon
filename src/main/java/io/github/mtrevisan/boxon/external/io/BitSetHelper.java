@@ -24,7 +24,6 @@
  */
 package io.github.mtrevisan.boxon.external.io;
 
-import java.math.BigInteger;
 import java.util.BitSet;
 
 
@@ -34,38 +33,12 @@ public final class BitSetHelper{
 
 
 	/**
-	 * Converts a BigInteger into a byte array ignoring the sign of the BigInteger, according to SRP specification.
-	 *
-	 * @param value	the value, must not be {@code null}.
-	 * @param size	The size in bits of the value.
-	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
-	 * @return	The bit set representing the given value.
-	 */
-	public static BitSet valueOf(final BigInteger value, final int size, final ByteOrder byteOrder){
-		byte[] array = value.toByteArray();
-		final int newSize = (size + Byte.SIZE - 1) >>> 3;
-		if(newSize != array.length){
-			final int offset = Math.max(array.length - newSize, 0);
-			final byte[] newArray = new byte[newSize];
-			final int newArrayOffset = Math.max(newArray.length - array.length, 0);
-			System.arraycopy(array, offset, newArray, newArrayOffset, array.length - offset);
-			array = newArray;
-		}
-
-		//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
-		changeByteOrder(array, byteOrder);
-
-		return BitSet.valueOf(array);
-	}
-
-
-	/**
 	 * In-place reverse the order of the given array byte-by-byte.
 	 *
 	 * @param array	The array to be reversed.
 	 * @param byteOrder	The byte order.
 	 */
-	static void changeByteOrder(final byte[] array, final ByteOrder byteOrder){
+	public static void changeByteOrder(final byte[] array, final ByteOrder byteOrder){
 		if(byteOrder == ByteOrder.LITTLE_ENDIAN)
 			byteReverse(array);
 	}

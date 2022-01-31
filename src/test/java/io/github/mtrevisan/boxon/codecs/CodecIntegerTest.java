@@ -494,7 +494,7 @@ class CodecIntegerTest{
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		BitSet bits = BitSetHelper.valueOf(encodedValue, 128, ByteOrder.LITTLE_ENDIAN);
+		BitSet bits = CodecInteger.toBitSet(encodedValue, 128, ByteOrder.LITTLE_ENDIAN);
 		Assertions.assertEquals(StringUtils.rightPad(StringHelper.toHexString(bits.toByteArray()).toUpperCase(Locale.ROOT), 32, '0'), writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);

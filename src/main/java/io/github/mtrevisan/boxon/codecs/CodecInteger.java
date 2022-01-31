@@ -75,9 +75,34 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 		final BigInteger v = CodecHelper.converterEncode(chosenConverter, value);
 
 		final ByteOrder byteOrder = binding.byteOrder();
-		final BitSet bits = BitSetHelper.valueOf(v, size, byteOrder);
+		final BitSet bits = toBitSet(v, size, byteOrder);
 
 		writer.putBitSet(bits, size, ByteOrder.BIG_ENDIAN);
+	}
+
+	/**
+	 * Converts a BigInteger into a byte array ignoring the sign of the BigInteger, according to SRP specification.
+	 *
+	 * @param value	the value, must not be {@code null}.
+	 * @param size	The size in bits of the value.
+	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
+	 * @return	The bit set representing the given value.
+	 */
+	static BitSet toBitSet(final BigInteger value, final int size, final ByteOrder byteOrder){
+		byte[] array = value.toByteArray();
+		final int newSize = (size + Byte.SIZE - 1) >>> 3;
+		if(newSize != array.length){
+			final int offset = Math.max(array.length - newSize, 0);
+			final byte[] newArray = new byte[newSize];
+			final int newArrayOffset = Math.max(newArray.length - array.length, 0);
+			System.arraycopy(array, offset, newArray, newArrayOffset, array.length - offset);
+			array = newArray;
+		}
+
+		//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
+		BitSetHelper.changeByteOrder(array, byteOrder);
+
+		return BitSet.valueOf(array);
 	}
 
 }
