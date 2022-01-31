@@ -99,17 +99,16 @@ You can get pre-built JARs (usable on JRE 11 or newer) from [Sonatype](https://o
     2. [BindObject](#annotation-bindobject)
     3. [BindArray](#annotation-bindarray)
     4. [BindArrayPrimitive](#annotation-bindarrayprimitive)
-    5. [BindBits](#annotation-bindbits)
-    6. [BindBitSet](#annotation-bindbitset)
-    7. [BindByte](#annotation-bindbyte)
-    8. [BindShort](#annotation-bindshort)
-    9. [BindInt](#annotation-bindint)
-    10. [BindLong](#annotation-bindlong)
-    11. [BindInteger](#annotation-bindinteger)
-    12. [BindFloat](#annotation-bindfloat)
-    13. [BindDouble](#annotation-binddouble)
-    14. [BindString](#annotation-bindstring)
-    15. [BindStringTerminated](#annotation-bindstringterminated)
+    5. [BindBitSet](#annotation-bindbitset)
+    6. [BindByte](#annotation-bindbyte)
+    7. [BindShort](#annotation-bindshort)
+    8. [BindInt](#annotation-bindint)
+    9. [BindLong](#annotation-bindlong)
+    10. [BindInteger](#annotation-bindinteger)
+    11. [BindFloat](#annotation-bindfloat)
+    12. [BindDouble](#annotation-binddouble)
+    13. [BindString](#annotation-bindstring)
+    14. [BindStringTerminated](#annotation-bindstringterminated)
 2. [Special annotations](#annotation-special)
     1. [MessageHeader](#annotation-messageheader)
     2. [Skip](#annotation-skip)
@@ -166,7 +165,6 @@ Note that [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_inject
 | BindObject           |  &#9745;  | &#9745; |         |            |                   |         |           |  &#9745;   |    &#9745;    |  &#9745;  |  &#9745;  |       &#9745;       |            BindObject |
 | BindArray            |  &#9745;  | &#9745; |         |            |                   | &#9745; |           |  &#9745;   |    &#9745;    |  &#9745;  |  &#9745;  |       &#9745;       |             BindArray |
 | BindArrayPrimitive   |  &#9745;  | &#9745; |         |            |                   | &#9745; |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |    BindArrayPrimitive |
-| BindBits             |  &#9745;  |         |         |            |                   | &#9745; |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |              BindBits |
 | BindBitSet           |  &#9745;  |         |         |            |                   | &#9745; |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |            BindBitSet |
 | BindByte             |  &#9745;  |         |         |            |                   |         |           |            |               |  &#9745;  |  &#9745;  |       &#9745;       |              BindByte |
 | BindShort            |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |             BindShort |
@@ -224,7 +222,7 @@ class Version{
     public byte build;
 }
 
-@BindBits(size = "1", converter = BitsToBooleanConverter.class)
+@BindBitSet(size = "1", converter = BitSetToBooleanConverter.class)
 private boolean versionPresent;
 @BindObject(condition = "versionPresent", type = Version.class)
 private Version version;
@@ -306,7 +304,7 @@ private byte[] array;
 ```
 
 ```java
-@BindBits(size = "1", converter = BitToBooleanConverter.class)
+@BindBitSet(size = "1", converter = BitSetToBooleanConverter.class)
 private boolean angularDataPresent;
 @BindArrayPrimitive(condition = "angularDataPresent", size = "dataLength", type = byte.class,
     selectConverterFrom = @ConverterChoices(
