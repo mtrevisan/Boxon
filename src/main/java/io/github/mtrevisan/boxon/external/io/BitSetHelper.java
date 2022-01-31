@@ -22,9 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.internal;
-
-import io.github.mtrevisan.boxon.external.io.ByteOrder;
+package io.github.mtrevisan.boxon.external.io;
 
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -67,7 +65,7 @@ public final class BitSetHelper{
 	 * @param size	The length in bits of the extraction (MUST BE less than {@link Long#SIZE}!).
 	 * @return	A long starting at a given offset and of a given length.
 	 */
-	public static byte readNextByte(final BitSet bits, final int offset, final int size){
+	static byte readNextByte(final BitSet bits, final int offset, final int size){
 		byte value = 0;
 		int index = bits.nextSetBit(offset);
 		while(index >= 0 && index <= offset + size){
@@ -158,7 +156,7 @@ public final class BitSetHelper{
 	 * @param byteOrder	The byte order.
 	 * @return	The converted {@link BigInteger}.
 	 */
-	public static BigInteger toInteger(final BitSet bits, final int size, final ByteOrder byteOrder){
+	static BigInteger toInteger(final BitSet bits, final int size, final ByteOrder byteOrder){
 		byte[] array = bits.toByteArray();
 		final int expectedLength = size >>> 3;
 		if(array.length < expectedLength)

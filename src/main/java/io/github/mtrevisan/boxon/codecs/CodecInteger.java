@@ -32,7 +32,7 @@ import io.github.mtrevisan.boxon.external.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.external.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.external.io.ByteOrder;
 import io.github.mtrevisan.boxon.external.io.CodecInterface;
-import io.github.mtrevisan.boxon.internal.BitSetHelper;
+import io.github.mtrevisan.boxon.external.io.BitSetHelper;
 
 import java.lang.annotation.Annotation;
 import java.math.BigInteger;

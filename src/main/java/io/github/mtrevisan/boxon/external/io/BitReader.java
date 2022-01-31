@@ -25,7 +25,6 @@
 package io.github.mtrevisan.boxon.external.io;
 
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.internal.BitSetHelper;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;

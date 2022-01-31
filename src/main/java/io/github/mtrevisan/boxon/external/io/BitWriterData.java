@@ -24,7 +24,6 @@
  */
 package io.github.mtrevisan.boxon.external.io;
 
-import io.github.mtrevisan.boxon.internal.BitSetHelper;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 
 import java.io.ByteArrayOutputStream;
