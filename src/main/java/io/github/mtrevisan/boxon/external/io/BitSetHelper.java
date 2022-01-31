@@ -52,8 +52,10 @@ public final class BitSetHelper{
 			System.arraycopy(array, offset, newArray, newArrayOffset, array.length - offset);
 			array = newArray;
 		}
-		//NOTE: need to reverse the bytes because BigInteger is big-endian and BitMap is little-endian
+
+		//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
 		changeByteOrder(array, byteOrder);
+
 		return BitSet.valueOf(array);
 	}
 
@@ -140,8 +142,10 @@ public final class BitSetHelper{
 		final int expectedLength = size >>> 3;
 		if(array.length < expectedLength)
 			array = Arrays.copyOf(array, expectedLength);
-		//NOTE: need to reverse the bytes because BigInteger is big-endian and BitMap is little-endian
+
+		//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
 		changeByteOrder(array, byteOrder);
+
 		return new BigInteger(extendSign(array));
 	}
 
