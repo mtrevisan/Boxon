@@ -24,6 +24,8 @@
  */
 package io.github.mtrevisan.boxon.exceptions;
 
+import io.github.mtrevisan.boxon.internal.StringHelper;
+
 
 /**
  * Thrown if a configuration is not well formatted.
@@ -41,7 +43,7 @@ public final class ConfigurationException extends FieldException{
 	 * @return	An instance of this exception.
 	 */
 	public static ConfigurationException create(final String message, final Object... parameters){
-		return new ConfigurationException(ExceptionHelper.format(message, parameters));
+		return new ConfigurationException(StringHelper.format(message, parameters));
 	}
 
 

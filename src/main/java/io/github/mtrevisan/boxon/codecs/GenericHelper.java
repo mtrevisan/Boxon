@@ -60,6 +60,7 @@ final class GenericHelper{
 
 	private GenericHelper(){}
 
+
 	/**
 	 * Resolves the actual generic type arguments for a base class, as viewed from a subclass or implementation.
 	 *

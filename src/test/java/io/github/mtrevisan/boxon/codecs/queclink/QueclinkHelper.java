@@ -41,6 +41,9 @@ public class QueclinkHelper{
 	private static final ZoneId DATE_TIME_ZONE = ZoneId.of("UTC");
 
 
+	private QueclinkHelper(){}
+
+
 	public static class VersionConverter implements Converter<byte[], String>{
 		@Override
 		public String decode(final byte[] value){

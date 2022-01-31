@@ -33,6 +33,7 @@ public final class StringHelper{
 
 	private StringHelper(){}
 
+
 	public static String format(final String message, final Object... parameters){
 		return MessageFormatter.arrayFormat(message, parameters)
 			.getMessage();

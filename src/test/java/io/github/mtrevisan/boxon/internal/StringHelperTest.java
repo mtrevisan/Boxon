@@ -31,6 +31,9 @@ import org.junit.jupiter.api.Test;
 @SuppressWarnings("ALL")
 public class StringHelperTest{
 
+	private StringHelperTest(){}
+
+
 	@Test
 	void hasBitWithByte(){
 		byte mask = 0x27;

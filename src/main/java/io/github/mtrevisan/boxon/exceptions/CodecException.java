@@ -24,6 +24,8 @@
  */
 package io.github.mtrevisan.boxon.exceptions;
 
+import io.github.mtrevisan.boxon.internal.StringHelper;
+
 
 /**
  * Thrown if no codec is found.
@@ -41,7 +43,7 @@ public final class CodecException extends FieldException{
 	 * @return	An instance of this exception.
 	 */
 	public static CodecException create(final String message, final Object... parameters){
-		return new CodecException(ExceptionHelper.format(message, parameters));
+		return new CodecException(StringHelper.format(message, parameters));
 	}
 
 

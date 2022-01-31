@@ -63,7 +63,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	private final TemplateParserCore core;
 	private final Map<String, Object> backupContext = new HashMap<>(0);
 
-	private final ParserHelper parserHelper;
+	private final ParserWriterHelper parserWriterHelper;
 
 	private EventListener eventListener;
 
@@ -83,7 +83,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	private TemplateParser(final LoaderCodecInterface loaderCodec, final Evaluator evaluator){
 		core = TemplateParserCore.create(loaderCodec, evaluator);
 
-		parserHelper = ParserHelper.create();
+		parserWriterHelper = ParserWriterHelper.create();
 
 		eventListener = EventListener.getNoOpInstance();
 	}
@@ -98,7 +98,7 @@ public final class TemplateParser implements TemplateParserInterface{
 		this.eventListener = eventListener;
 
 		core.withEventListener(eventListener);
-		parserHelper.withEventListener(eventListener);
+		parserWriterHelper.withEventListener(eventListener);
 
 		return this;
 	}
@@ -366,13 +366,13 @@ public final class TemplateParser implements TemplateParserInterface{
 				parserContext.setField(field);
 				parserContext.setBinding(field.getBinding());
 
-				parserHelper.encodeField(parserContext, writer, loaderCodec);
+				parserWriterHelper.encodeField(parserContext, writer, loaderCodec);
 			}
 		}
 
 		final MessageHeader header = template.getHeader();
 		if(header != null)
-			ParserHelper.writeAffix(header.end(), header.charset(), writer);
+			ParserWriterHelper.writeAffix(header.end(), header.charset(), writer);
 	}
 
 	private boolean shouldProcessField(final String condition, final Object rootObject){

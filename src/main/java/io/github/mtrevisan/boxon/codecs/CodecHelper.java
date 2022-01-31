@@ -44,6 +44,7 @@ final class CodecHelper{
 
 	private CodecHelper(){}
 
+
 	static void assertSizePositive(final int size) throws AnnotationException{
 		if(size <= 0)
 			throw AnnotationException.create("Size must be a positive integer, was {}", size);

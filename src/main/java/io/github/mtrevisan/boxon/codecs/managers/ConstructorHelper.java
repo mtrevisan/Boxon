@@ -44,6 +44,7 @@ public final class ConstructorHelper{
 
 	private ConstructorHelper(){}
 
+
 	@SuppressWarnings("unchecked")
 	public static <T> Supplier<T> getCreator(final Class<T> type){
 		return (Supplier<T>)CREATORS.apply(type);

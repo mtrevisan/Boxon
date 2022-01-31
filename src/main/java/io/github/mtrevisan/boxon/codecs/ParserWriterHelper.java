@@ -36,19 +36,20 @@ import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
 
 
-final class ParserHelper{
+final class ParserWriterHelper{
 
 	private EventListener eventListener;
 
 
-	public static ParserHelper create(){
-		return new ParserHelper();
+	public static ParserWriterHelper create(){
+		return new ParserWriterHelper();
 	}
 
 
-	private ParserHelper(){
+	private ParserWriterHelper(){
 		eventListener = EventListener.getNoOpInstance();
 	}
+
 
 	/**
 	 * Assign an event listener.
@@ -56,7 +57,7 @@ final class ParserHelper{
 	 * @param eventListener	The event listener.
 	 * @return	The current instance.
 	 */
-	ParserHelper withEventListener(final EventListener eventListener){
+	ParserWriterHelper withEventListener(final EventListener eventListener){
 		this.eventListener = JavaHelper.nonNullOrDefault(eventListener, EventListener.getNoOpInstance());
 
 		return this;

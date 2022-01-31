@@ -24,6 +24,8 @@
  */
 package io.github.mtrevisan.boxon.exceptions;
 
+import io.github.mtrevisan.boxon.internal.StringHelper;
+
 
 /**
  * Thrown if a template is not well formatted.
@@ -41,7 +43,7 @@ public final class TemplateException extends FieldException{
 	 * @return	An instance of this exception.
 	 */
 	public static TemplateException create(final String message, final Object... parameters){
-		return new TemplateException(ExceptionHelper.format(message, parameters));
+		return new TemplateException(StringHelper.format(message, parameters));
 	}
 
 

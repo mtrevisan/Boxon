@@ -24,6 +24,8 @@
  */
 package io.github.mtrevisan.boxon.exceptions;
 
+import io.github.mtrevisan.boxon.internal.StringHelper;
+
 
 /**
  * Thrown if an annotation is not well formatted.
@@ -54,7 +56,7 @@ public final class AnnotationException extends FieldException{
 	 * @return	An instance of this exception.
 	 */
 	public static AnnotationException create(final Throwable cause, final String message, final Object... parameters){
-		return new AnnotationException(ExceptionHelper.format(message, parameters), cause);
+		return new AnnotationException(StringHelper.format(message, parameters), cause);
 	}
 
 	/**
@@ -65,7 +67,7 @@ public final class AnnotationException extends FieldException{
 	 * @return	An instance of this exception.
 	 */
 	public static AnnotationException create(final String message, final Object... parameters){
-		return new AnnotationException(ExceptionHelper.format(message, parameters));
+		return new AnnotationException(StringHelper.format(message, parameters));
 	}
 
 

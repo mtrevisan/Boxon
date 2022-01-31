@@ -41,6 +41,7 @@ public final class ContextHelper{
 
 	private ContextHelper(){}
 
+
 	public static boolean containsPrefixReference(final CharSequence condition){
 		return CONTEXT_PREFIXED_CHOICE_PREFIX.reset(condition).find();
 	}

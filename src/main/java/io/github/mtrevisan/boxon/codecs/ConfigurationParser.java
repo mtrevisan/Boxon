@@ -50,7 +50,7 @@ public final class ConfigurationParser{
 	private final LoaderCodecInterface loaderCodec;
 	private final LoaderConfiguration loaderConfiguration;
 
-	private final ParserHelper parserHelper;
+	private final ParserWriterHelper parserWriterHelper;
 
 
 	/**
@@ -68,7 +68,7 @@ public final class ConfigurationParser{
 		this.loaderCodec = loaderCodec;
 		loaderConfiguration = LoaderConfiguration.create();
 
-		parserHelper = ParserHelper.create();
+		parserWriterHelper = ParserWriterHelper.create();
 	}
 
 	/**
@@ -80,7 +80,7 @@ public final class ConfigurationParser{
 	public ConfigurationParser withEventListener(final EventListener eventListener){
 		loaderConfiguration.withEventListener(eventListener);
 
-		parserHelper.withEventListener(eventListener);
+		parserWriterHelper.withEventListener(eventListener);
 
 		return this;
 	}
@@ -143,7 +143,7 @@ public final class ConfigurationParser{
 		parserContext.setClassName(configuration.getType().getName());
 
 		final ConfigurationHeader header = configuration.getHeader();
-		ParserHelper.writeAffix(header.start(), header.charset(), writer);
+		ParserWriterHelper.writeAffix(header.start(), header.charset(), writer);
 
 		//encode message fields:
 		final List<ConfigField> fields = configuration.getConfigurationFields();
@@ -165,14 +165,14 @@ public final class ConfigurationParser{
 			//process value
 			parserContext.setField(field);
 			parserContext.setBinding(annotation);
-			parserHelper.encodeField(parserContext, writer, loaderCodec);
+			parserWriterHelper.encodeField(parserContext, writer, loaderCodec);
 			if(annotation != field.getBinding()){
 				parserContext.setBinding(field.getBinding());
-				parserHelper.encodeField(parserContext, writer, loaderCodec);
+				parserWriterHelper.encodeField(parserContext, writer, loaderCodec);
 			}
 		}
 
-		ParserHelper.writeAffix(header.end(), header.charset(), writer);
+		ParserWriterHelper.writeAffix(header.end(), header.charset(), writer);
 	}
 
 	private static void writeSkips(final ConfigurationSkip[] skips, final BitWriterInterface writer, final Version protocol){

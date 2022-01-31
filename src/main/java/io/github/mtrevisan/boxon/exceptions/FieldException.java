@@ -24,7 +24,6 @@
  */
 package io.github.mtrevisan.boxon.exceptions;
 
-
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 
 
