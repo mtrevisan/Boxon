@@ -1354,10 +1354,10 @@ Pull requests are welcomed.
 ## Changelog
 
 <a name="changelog-2.2.0"></a>
-### version 2.2.0 - 20220128
+### version 2.2.0 - 20220131
 - Added missing javadoc. Enhanced existing javadoc
 - Added `BindBitSet` binding for java `BitSet`.
-- Renamed boxon `BitSet` into `BoxonBitSet` to avoid confusion with the hava counterpart.
+- Removed `Bits`.
 - Enhanced binding validation.
 
 
