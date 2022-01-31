@@ -25,15 +25,13 @@
 package io.github.mtrevisan.boxon.codecs.managers.configuration;
 
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
+import io.github.mtrevisan.boxon.internal.JavaHelper;
 
 import java.lang.annotation.Annotation;
 
 
 @SuppressWarnings("ClassExplicitlyAnnotation")
 final class NullAlternativeSubField implements AlternativeSubField{
-
-	private static final String EMPTY_STRING = "";
-
 
 	@Override
 	public Class<? extends Annotation> annotationType(){
@@ -42,47 +40,47 @@ final class NullAlternativeSubField implements AlternativeSubField{
 
 	@Override
 	public String longDescription(){
-		return EMPTY_STRING;
+		return JavaHelper.EMPTY_STRING;
 	}
 
 	@Override
 	public String unitOfMeasure(){
-		return EMPTY_STRING;
+		return JavaHelper.EMPTY_STRING;
 	}
 
 	@Override
 	public String minProtocol(){
-		return EMPTY_STRING;
+		return JavaHelper.EMPTY_STRING;
 	}
 
 	@Override
 	public String maxProtocol(){
-		return EMPTY_STRING;
+		return JavaHelper.EMPTY_STRING;
 	}
 
 	@Override
 	public String minValue(){
-		return EMPTY_STRING;
+		return JavaHelper.EMPTY_STRING;
 	}
 
 	@Override
 	public String maxValue(){
-		return EMPTY_STRING;
+		return JavaHelper.EMPTY_STRING;
 	}
 
 	@Override
 	public String pattern(){
-		return EMPTY_STRING;
+		return JavaHelper.EMPTY_STRING;
 	}
 
 	@Override
 	public String defaultValue(){
-		return EMPTY_STRING;
+		return JavaHelper.EMPTY_STRING;
 	}
 
 	@Override
 	public String charset(){
-		return EMPTY_STRING;
+		return JavaHelper.EMPTY_STRING;
 	}
 
 	@Override

@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.external.semanticversioning;
 
 import io.github.mtrevisan.boxon.external.io.ParserDataType;
+import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 
 import java.util.Arrays;
@@ -40,7 +41,6 @@ import java.util.regex.Pattern;
 @SuppressWarnings("WeakerAccess")
 public final class Version implements Comparable<Version>{
 
-	private static final String EMPTY_STRING = "";
 	/** An empty immutable {@code String} array. */
 	private static final String[] EMPTY_ARRAY = new String[0];
 
@@ -579,7 +579,7 @@ public final class Version implements Comparable<Version>{
 
 	@Override
 	public String toString(){
-		String message = EMPTY_STRING;
+		String message = JavaHelper.EMPTY_STRING;
 		if(major != null)
 			message += major;
 		if(minor != null)

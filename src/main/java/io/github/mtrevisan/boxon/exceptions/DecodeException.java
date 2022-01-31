@@ -25,6 +25,9 @@
 package io.github.mtrevisan.boxon.exceptions;
 
 
+import io.github.mtrevisan.boxon.internal.JavaHelper;
+
+
 /**
  * Thrown if a parsing (decoding) went bad.
  */
@@ -32,8 +35,6 @@ package io.github.mtrevisan.boxon.exceptions;
 public final class DecodeException extends Exception{
 
 	private static final long serialVersionUID = 5375434179637246605L;
-
-	private static final String EMPTY_STRING = "";
 
 
 	/** Index of the decoded message this error refers to. */
@@ -70,7 +71,7 @@ public final class DecodeException extends Exception{
 
 	@Override
 	public String getMessage(){
-		String message = EMPTY_STRING;
+		String message = JavaHelper.EMPTY_STRING;
 		final Throwable cause = getCause();
 		if(cause != null)
 			message += cause.getMessage();

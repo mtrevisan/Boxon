@@ -25,14 +25,15 @@
 package io.github.mtrevisan.boxon.exceptions;
 
 
+import io.github.mtrevisan.boxon.internal.JavaHelper;
+
+
 /**
  * Thrown if a composition (encoding) went bad.
  */
 public final class EncodeException extends Exception{
 
 	private static final long serialVersionUID = 4385865753761318892L;
-
-	private static final String EMPTY_STRING = "";
 
 
 	/**
@@ -85,7 +86,7 @@ public final class EncodeException extends Exception{
 
 	@Override
 	public String getMessage(){
-		String message = EMPTY_STRING;
+		String message = JavaHelper.EMPTY_STRING;
 		final Throwable cause = getCause();
 		if(cause != null)
 			message += cause.getMessage();

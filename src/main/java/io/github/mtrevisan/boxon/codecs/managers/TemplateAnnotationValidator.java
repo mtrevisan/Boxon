@@ -36,6 +36,7 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.external.io.ParserDataType;
+import io.github.mtrevisan.boxon.internal.JavaHelper;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -138,8 +139,6 @@ enum TemplateAnnotationValidator{
 	};
 
 
-	private static final String EMPTY_STRING = "";
-
 	private static final ValueOf<TemplateAnnotationValidator, Class<? extends Annotation>> VALIDATORS
 		= ValueOf.create(TemplateAnnotationValidator.class, validator -> validator.annotationType);
 
@@ -221,7 +220,7 @@ enum TemplateAnnotationValidator{
 			throw AnnotationException.create("All conditions must be non-empty");
 		if(hasPrefixSize ^ ContextHelper.containsPrefixReference(condition))
 			throw AnnotationException.create("All conditions must {}contain a reference to the prefix",
-				(hasPrefixSize? EMPTY_STRING: "not "));
+				(hasPrefixSize? JavaHelper.EMPTY_STRING: "not "));
 	}
 
 	private static void validateObjectDefaultAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> type,

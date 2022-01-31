@@ -30,6 +30,8 @@ public final class JavaHelper{
 	/** An empty immutable {@code String} array. */
 	public static final String[] EMPTY_ARRAY = new String[0];
 
+	public static final String EMPTY_STRING = "";
+
 
 	private JavaHelper(){}
 

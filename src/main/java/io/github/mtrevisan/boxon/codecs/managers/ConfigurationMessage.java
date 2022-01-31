@@ -31,6 +31,7 @@ import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationMana
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
+import io.github.mtrevisan.boxon.internal.JavaHelper;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -49,9 +50,6 @@ import java.util.List;
  * @param <T> The type of object the configuration is able to construct configuration messages.
  */
 public final class ConfigurationMessage<T>{
-
-	private static final String EMPTY_STRING = "";
-
 
 	private final Class<T> type;
 
@@ -183,7 +181,7 @@ public final class ConfigurationMessage<T>{
 
 		protocolVersionBoundaries.sort(Comparator.comparing(Version::of));
 		removeDuplicates(protocolVersionBoundaries);
-		protocolVersionBoundaries.remove(EMPTY_STRING);
+		protocolVersionBoundaries.remove(JavaHelper.EMPTY_STRING);
 		return protocolVersionBoundaries;
 	}
 

@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.external.logs;
 
+import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,8 +38,6 @@ import java.util.StringJoiner;
  * A logger that uses <a href="https://www.slf4j.org/">SLF4J</a> to log event messages.
  */
 public final class EventLogger extends EventListener{
-
-	private static final String EMPTY_STRING = "";
 
 	static{
 		try{
@@ -192,7 +191,7 @@ public final class EventLogger extends EventListener{
 	}
 
 	private static String composeMessage(final String message, final Object... parameters){
-		String outputMessage = EMPTY_STRING;
+		String outputMessage = JavaHelper.EMPTY_STRING;
 		try{
 			final StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
 			final Class<?> callerClass = Class.forName(stackTrace[3].getClassName());

@@ -25,15 +25,13 @@
 package io.github.mtrevisan.boxon.codecs;
 
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
+import io.github.mtrevisan.boxon.internal.JavaHelper;
 
 import java.lang.annotation.Annotation;
 
 
 @SuppressWarnings("ClassExplicitlyAnnotation")
 final class NullObjectChoice implements ObjectChoices.ObjectChoice{
-
-	private static final String EMPTY_STRING = "";
-
 
 	@Override
 	public Class<? extends Annotation> annotationType(){
@@ -42,7 +40,7 @@ final class NullObjectChoice implements ObjectChoices.ObjectChoice{
 
 	@Override
 	public String condition(){
-		return EMPTY_STRING;
+		return JavaHelper.EMPTY_STRING;
 	}
 
 	@Override

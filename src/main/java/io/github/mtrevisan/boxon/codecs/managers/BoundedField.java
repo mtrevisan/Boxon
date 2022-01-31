@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.codecs.managers;
 
 import io.github.mtrevisan.boxon.annotations.Skip;
+import io.github.mtrevisan.boxon.internal.JavaHelper;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -37,7 +38,6 @@ public final class BoundedField{
 	/** NOTE: MUST match the name of the method in all the annotations that defines a condition! */
 	private static final String CONDITION = "condition";
 
-	private static final String EMPTY_STRING = "";
 	private static final Skip[] EMPTY_ARRAY = new Skip[0];
 
 
@@ -60,7 +60,7 @@ public final class BoundedField{
 
 		//pre-fetch condition method
 		final Method conditionMethod = ReflectionHelper.getAccessibleMethod(binding.annotationType(), CONDITION, String.class);
-		condition = ReflectionHelper.invokeMethod(binding, conditionMethod, EMPTY_STRING);
+		condition = ReflectionHelper.invokeMethod(binding, conditionMethod, JavaHelper.EMPTY_STRING);
 	}
 
 	public String getFieldName(){

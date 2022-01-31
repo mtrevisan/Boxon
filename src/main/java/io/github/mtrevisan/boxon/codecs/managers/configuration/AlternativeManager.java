@@ -33,6 +33,7 @@ import io.github.mtrevisan.boxon.external.io.ParserDataType;
 import io.github.mtrevisan.boxon.external.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.external.configurations.ConfigurationKey;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
+import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 
 import java.lang.annotation.Annotation;
@@ -45,8 +46,6 @@ import java.util.Map;
 
 
 final class AlternativeManager implements ConfigurationManagerInterface{
-
-	private static final String EMPTY_STRING = "";
 
 	private static final AlternativeSubField EMPTY_ALTERNATIVE = new NullAlternativeSubField();
 
@@ -71,7 +70,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 			final Class<? extends ConfigurationEnum> enumeration = annotation.enumeration();
 			return ConfigurationHelper.convertValue(value, field.getType(), enumeration);
 		}
-		return EMPTY_STRING;
+		return JavaHelper.EMPTY_STRING;
 	}
 
 	@Override

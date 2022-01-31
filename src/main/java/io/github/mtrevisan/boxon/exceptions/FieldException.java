@@ -25,14 +25,15 @@
 package io.github.mtrevisan.boxon.exceptions;
 
 
+import io.github.mtrevisan.boxon.internal.JavaHelper;
+
+
 /**
  * Represents an error in coding/decoding of a value.
  */
 public class FieldException extends Exception{
 
 	private static final long serialVersionUID = -8863756843240934380L;
-
-	private static final String EMPTY_STRING = "";
 
 
 	/** Class name that generates the error. */
@@ -99,7 +100,8 @@ public class FieldException extends Exception{
 
 	@Override
 	public final String getMessage(){
-		return super.getMessage() + (className != null && fieldName != null? " in field " + className + "." + fieldName: EMPTY_STRING);
+		return super.getMessage()
+			+ (className != null && fieldName != null? " in field " + className + "." + fieldName: JavaHelper.EMPTY_STRING);
 	}
 
 }
