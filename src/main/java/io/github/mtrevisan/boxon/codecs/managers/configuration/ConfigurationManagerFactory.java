@@ -45,6 +45,12 @@ public final class ConfigurationManagerFactory{
 	private ConfigurationManagerFactory(){}
 
 
+	/**
+	 * Construct a configuration manager for the given annotation.
+	 *
+	 * @param annotation	The annotation to generate the build manager from.
+	 * @return	An instance of the configuration manager.
+	 */
 	public static ConfigurationManagerInterface buildManager(final Annotation annotation){
 		return MANAGERS.get(annotation.annotationType())
 			.apply(annotation);

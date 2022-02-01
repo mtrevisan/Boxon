@@ -39,23 +39,23 @@ import java.lang.reflect.Field;
 @SuppressWarnings("ClassWithTooManyFields")
 public final class ConfigFieldData{
 
-	public final Field field;
+	private final Field field;
 	private final String annotationName;
 
-	public String minProtocol;
-	public String maxProtocol;
+	private String minProtocol;
+	private String maxProtocol;
 
-	public String minValue;
-	public String maxValue;
+	private String minValue;
+	private String maxValue;
 
-	public String pattern;
-	public Class<? extends ConfigurationEnum> enumeration;
+	private String pattern;
+	private Class<? extends ConfigurationEnum> enumeration;
 
-	public String defaultValue;
+	private String defaultValue;
 
-	public String charset;
+	private String charset;
 
-	public int radix;
+	private int radix;
 
 
 	/**
@@ -163,12 +163,75 @@ public final class ConfigFieldData{
 	}
 
 	/**
+	 * The name of the configuration field.
+	 *
+	 * @return	The name of the configuration field.
+	 */
+	public String getFieldName(){
+		return field.getName();
+	}
+
+	/**
 	 * The type of the configuration field.
 	 *
 	 * @return	The type of the configuration field.
 	 */
 	public Class<?> getFieldType(){
 		return field.getType();
+	}
+
+	/**
+	 * The minimum protocol of the configuration field.
+	 *
+	 * @return	The minimum protocol of the configuration field.
+	 */
+	public String getMinProtocol(){
+		return minProtocol;
+	}
+
+	/**
+	 * The maximum protocol of the configuration field.
+	 *
+	 * @return	The maximum protocol of the configuration field.
+	 */
+	public String getMaxProtocol(){
+		return maxProtocol;
+	}
+
+	/**
+	 * The minimum value for the configuration field.
+	 *
+	 * @return	The minimum value for the configuration field.
+	 */
+	public String getMinValue(){
+		return minValue;
+	}
+
+	/**
+	 * The maximum value for the configuration field.
+	 *
+	 * @return	The maximum value for the configuration field.
+	 */
+	public String getMaxValue(){
+		return maxValue;
+	}
+
+	/**
+	 * The pattern for the configuration field.
+	 *
+	 * @return	The pattern for the configuration field.
+	 */
+	public String getPattern(){
+		return pattern;
+	}
+
+	/**
+	 * The enumeration for the configuration field.
+	 *
+	 * @return	The enumeration for the configuration field.
+	 */
+	public Class<? extends ConfigurationEnum> getEnumeration(){
+		return enumeration;
 	}
 
 	/**
@@ -180,6 +243,32 @@ public final class ConfigFieldData{
 		return hasEnumeration(enumeration);
 	}
 
+	/**
+	 * The default value for the configuration field.
+	 *
+	 * @return	The default value for the configuration field.
+	 */
+	public String getDefaultValue(){
+		return defaultValue;
+	}
+
+	/**
+	 * The charset for the configuration field.
+	 *
+	 * @return	The charset for the configuration field.
+	 */
+	public String getCharset(){
+		return charset;
+	}
+
+	/**
+	 * The radix for the configuration field.
+	 *
+	 * @return	The radix for the configuration field.
+	 */
+	public int getRadix(){
+		return radix;
+	}
 
 	/**
 	 * Whether the given class is an enumeration.

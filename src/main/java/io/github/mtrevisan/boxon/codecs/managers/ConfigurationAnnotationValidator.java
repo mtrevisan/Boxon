@@ -78,8 +78,8 @@ enum ConfigurationAnnotationValidator{
 			if(!configData.hasEnumeration() && field.getType().isEnum())
 				throw AnnotationException.create("Unnecessary mutually exclusive field in a non-enumeration field");
 			if(String.class.isAssignableFrom(field.getType()))
-				CharsetHelper.assertValidCharset(configData.charset);
-			ValidationHelper.validateRadix(configData.radix);
+				CharsetHelper.assertValidCharset(configData.getCharset());
+			ValidationHelper.validateRadix(configData.getRadix());
 
 			validateMinimumParameters(configData);
 
@@ -96,8 +96,8 @@ enum ConfigurationAnnotationValidator{
 
 		private void validateMinimumParameters(final ConfigFieldData field) throws AnnotationException{
 			//one only of `pattern`, `minValue`/`maxValue`, and `enumeration` should be set:
-			final boolean hasPattern = !field.pattern.isEmpty();
-			final boolean hasMinMaxValues = (!field.minValue.isEmpty() || !field.maxValue.isEmpty());
+			final boolean hasPattern = !field.getPattern().isEmpty();
+			final boolean hasMinMaxValues = (!field.getMinValue().isEmpty() || !field.getMaxValue().isEmpty());
 			if(moreThanOneSet(hasPattern, hasMinMaxValues, field.hasEnumeration()))
 				throw AnnotationException.create("Only one of `pattern`, `minValue`/`maxValue`, or `enumeration` should be used in {}",
 					ConfigurationField.class.getSimpleName());
@@ -129,7 +129,7 @@ enum ConfigurationAnnotationValidator{
 			final CompositeSubField[] fields = binding.value();
 			if(fields.length == 0)
 				throw AnnotationException.create("Composite fields must have at least one sub-field");
-			CharsetHelper.assertValidCharset(configData.charset);
+			CharsetHelper.assertValidCharset(configData.getCharset());
 
 			ValidationHelper.validatePattern(configData);
 
@@ -200,8 +200,8 @@ enum ConfigurationAnnotationValidator{
 			final AlternativeSubField binding = (AlternativeSubField)annotation;
 
 			if(String.class.isAssignableFrom(field.getType()))
-				CharsetHelper.assertValidCharset(configData.charset);
-			ValidationHelper.validateRadix(configData.radix);
+				CharsetHelper.assertValidCharset(configData.getCharset());
+			ValidationHelper.validateRadix(configData.getRadix());
 
 			validateMinimumParameters(binding);
 

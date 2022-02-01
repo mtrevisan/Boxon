@@ -59,6 +59,13 @@ public final class ConfigurationMessage<T>{
 	private final List<String> protocolVersionBoundaries;
 
 
+	/**
+	 * Create a configuration message for the given class.
+	 * @param type	The class of the configuration message.
+	 * @param <T>	The class type parameter.
+	 * @return	An instance.
+	 * @throws AnnotationException	If a configuration annotation is invalid, or no annotation was found.
+	 */
 	public static <T> ConfigurationMessage<T> create(final Class<T> type) throws AnnotationException{
 		return new ConfigurationMessage<>(type);
 	}
