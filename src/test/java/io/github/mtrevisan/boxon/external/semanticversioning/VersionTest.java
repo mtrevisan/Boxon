@@ -68,7 +68,7 @@ class VersionTest{
 	void shouldParseBuild(){
 		Version version = Version.of("1.2.3+build");
 
-		Assertions.assertEquals(Version.of(1, 2, 3, JavaHelper.EMPTY_ARRAY, new String[]{"build"}), version);
+		Assertions.assertEquals(Version.of(1, 2, 3, JavaHelper.EMPTY_STRING_ARRAY, new String[]{"build"}), version);
 		Assertions.assertEquals("1.2.3+build", version.toString());
 	}
 

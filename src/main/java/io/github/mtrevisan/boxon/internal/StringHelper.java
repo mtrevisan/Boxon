@@ -26,6 +26,9 @@ package io.github.mtrevisan.boxon.internal;
 
 import org.slf4j.helpers.MessageFormatter;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 
@@ -47,6 +50,92 @@ public final class StringHelper{
 	public static String format(final String message, final Object... parameters){
 		return MessageFormatter.arrayFormat(message, parameters)
 			.getMessage();
+	}
+
+
+	/**
+	 * Left pad a string with a specified character.
+	 *
+	 * @param text	The string to pad out, must not be {@code null}.
+	 * @param size	The size to pad to.
+	 * @param padChar	The character to pad with.
+	 * @return	Left padded string or original string if no padding is necessary.
+	 */
+	public static String leftPad(final String text, final int size, final char padChar){
+		final int pads = size - text.length();
+		if(pads <= 0)
+			return text;
+
+		return repeat(padChar, pads) + text;
+	}
+
+	/**
+	 * Right pad a string with a specified character.
+	 *
+	 * @param text	The string to pad out, must not be {@code null}.
+	 * @param size	The size to pad to.
+	 * @param padChar	The character to pad with.
+	 * @return	Right padded string or original string if no padding is necessary.
+	 */
+	public static String rightPad(final String text, final int size, final char padChar){
+		final int pads = size - text.length();
+		if(pads <= 0)
+			return text;
+
+		return text + repeat(padChar, pads);
+	}
+
+	/**
+	 * Returns padding using the specified delimiter repeated to a given length.
+	 *
+	 * @param chr	Character to repeat.
+	 * @param count	Number of times to repeat char.
+	 * @return	String with repeated character.
+	 */
+	private static String repeat(final char chr, final int count){
+		final char[] buf = new char[count];
+		Arrays.fill(buf, chr);
+		return new String(buf);
+	}
+
+
+	/**
+	 * Split the given text into an array, separator specified.
+	 * <p>
+	 *    The separator is not included in the returned String array.
+	 * Adjacent separators are treated as one separator.
+	 * </p>
+	 *
+	 * @param str	The text to parse.
+	 * @param separatorChar	The character used as the delimiter.
+	 * @return	An array of parsed strings.
+	 */
+	public static String[] split(final String str, final char separatorChar){
+		final int len = str.length();
+		if(len == 0)
+			return JavaHelper.EMPTY_STRING_ARRAY;
+
+		final List<String> list = new ArrayList<>(str.length() >> 1);
+		int i = 0;
+		int start = 0;
+		boolean match = false;
+		while(i < len){
+			if(str.charAt(i) == separatorChar){
+				if(match){
+					list.add(str.substring(start, i));
+					match = false;
+				}
+
+				start = ++ i;
+				continue;
+			}
+
+			match = true;
+			i ++;
+		}
+		if(match)
+			list.add(str.substring(start, i));
+		return list.toArray(JavaHelper.EMPTY_STRING_ARRAY);
 	}
 
 

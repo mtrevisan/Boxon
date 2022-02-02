@@ -25,7 +25,6 @@
 package io.github.mtrevisan.boxon.codecs.queclink;
 
 import io.github.mtrevisan.boxon.internal.StringHelper;
-import org.apache.commons.lang3.StringUtils;
 
 
 @SuppressWarnings("ALL")
@@ -36,7 +35,7 @@ public class DeviceType{
 
 
 	public DeviceType(final String name, final byte code){
-		if(StringUtils.isBlank(name))
+		if(StringHelper.isBlank(name))
 			throw new IllegalArgumentException("Device type name cannot be null or empty");
 
 		this.name = name;

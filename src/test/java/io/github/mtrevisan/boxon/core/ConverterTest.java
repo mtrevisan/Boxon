@@ -32,7 +32,6 @@ import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.DecodeException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.internal.StringHelper;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -56,7 +55,7 @@ class ConverterTest{
 
 		@Override
 		public byte[] encode(final String value){
-			final String[] components = StringUtils.split(value, '.');
+			final String[] components = StringHelper.split(value, '.');
 			return new byte[]{Byte.parseByte(components[0]), Byte.parseByte(components[1])};
 		}
 	}

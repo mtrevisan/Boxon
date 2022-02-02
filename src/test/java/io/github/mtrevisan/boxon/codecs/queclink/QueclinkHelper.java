@@ -26,7 +26,7 @@ package io.github.mtrevisan.boxon.codecs.queclink;
 
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
-import org.apache.commons.lang3.StringUtils;
+import io.github.mtrevisan.boxon.internal.StringHelper;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
@@ -53,7 +53,7 @@ public class QueclinkHelper{
 
 		@Override
 		public byte[] encode(final String value){
-			final String[] components = StringUtils.split(value, '.');
+			final String[] components = StringHelper.split(value, '.');
 			return new byte[]{Byte.parseByte(components[0]), Byte.parseByte(components[1])};
 		}
 	}
@@ -162,12 +162,12 @@ public class QueclinkHelper{
 
 		@Override
 		public String encode(final ZonedDateTime value){
-			return StringUtils.leftPad(Integer.toString(value.getYear()), 4, '0')
-				+ StringUtils.leftPad(Integer.toString(value.getMonthValue()), 2, '0')
-				+ StringUtils.leftPad(Integer.toString(value.getDayOfMonth()), 2, '0')
-				+ StringUtils.leftPad(Integer.toString(value.getHour()), 2, '0')
-				+ StringUtils.leftPad(Integer.toString(value.getMinute()), 2, '0')
-				+ StringUtils.leftPad(Integer.toString(value.getSecond()), 2, '0');
+			return StringHelper.leftPad(Integer.toString(value.getYear()), 4, '0')
+				+ StringHelper.leftPad(Integer.toString(value.getMonthValue()), 2, '0')
+				+ StringHelper.leftPad(Integer.toString(value.getDayOfMonth()), 2, '0')
+				+ StringHelper.leftPad(Integer.toString(value.getHour()), 2, '0')
+				+ StringHelper.leftPad(Integer.toString(value.getMinute()), 2, '0')
+				+ StringHelper.leftPad(Integer.toString(value.getSecond()), 2, '0');
 		}
 	}
 

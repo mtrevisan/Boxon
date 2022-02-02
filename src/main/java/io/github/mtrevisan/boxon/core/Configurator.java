@@ -179,7 +179,7 @@ public final class Configurator{
 		if(protocol.isEmpty())
 			throw new IllegalArgumentException("Invalid protocol version: " + protocolVersion);
 
-		final ComposeResponse response = new ComposeResponse(data.keySet().toArray(JavaHelper.EMPTY_ARRAY));
+		final ComposeResponse response = new ComposeResponse(data.keySet().toArray(JavaHelper.EMPTY_STRING_ARRAY));
 
 		final BitWriter writer = BitWriter.create();
 		for(final Map.Entry<String, Map<String, Object>> entry : data.entrySet())

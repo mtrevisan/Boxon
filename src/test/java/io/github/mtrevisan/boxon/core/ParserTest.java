@@ -31,7 +31,6 @@ import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 import io.github.mtrevisan.boxon.internal.TimeWatch;
-import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -134,7 +133,7 @@ class ParserTest{
 
 		byte[] payload1 = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		byte[] payload2 = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
-		byte[] payload = ArrayUtils.addAll(payload1, payload2);
+		byte[] payload = addAll(payload1, payload2);
 		ParseResponse result = parser.parse(payload);
 
 		Assertions.assertFalse(result.hasErrors());
@@ -156,11 +155,18 @@ class ParserTest{
 
 		byte[] payload1 = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		byte[] payload2 = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
-		byte[] payload = ArrayUtils.addAll(payload2, payload1);
+		byte[] payload = addAll(payload2, payload1);
 		ParseResponse result = parser.parse(payload);
 
 		Assertions.assertFalse(result.hasErrors());
 		Assertions.assertEquals(2, result.getParsedMessageCount());
+	}
+
+	private static byte[] addAll(final byte[] array1, final byte[] array2){
+		final byte[] joinedArray = new byte[array1.length + array2.length];
+		System.arraycopy(array1, 0, joinedArray, 0, array1.length);
+		System.arraycopy(array2, 0, joinedArray, array1.length, array2.length);
+		return joinedArray;
 	}
 
 }
