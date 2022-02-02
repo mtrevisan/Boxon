@@ -115,6 +115,7 @@ final class TemplateParserCore{
 	 * @param <T>	The type of the object to be returned as a {@link Template}.
 	 * @param type	The class of the object to be returned as a {@link Template}.
 	 * @return	The {@link Template} for the given type.
+	 * @throws AnnotationException	If an annotation has validation problems.
 	 */
 	<T> Template<T> createTemplate(final Class<T> type) throws AnnotationException{
 		return loaderTemplate.createTemplate(type);

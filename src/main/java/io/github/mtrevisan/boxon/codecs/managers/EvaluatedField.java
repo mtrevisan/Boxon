@@ -66,7 +66,7 @@ public final class EvaluatedField{
 	 * @param value	The value.
 	 */
 	public void setFieldValue(final Object obj, final Object value){
-		ReflectionHelper.setValue(field, obj, value);
+		ReflectionHelper.setValue(obj, field, value);
 	}
 
 	/**

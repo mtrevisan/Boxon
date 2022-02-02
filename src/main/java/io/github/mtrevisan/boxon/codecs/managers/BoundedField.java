@@ -89,7 +89,7 @@ public final class BoundedField{
 	 * @return	The value of the field.
 	 */
 	public <T> T getFieldValue(final Object obj){
-		return ReflectionHelper.getValue(field, obj);
+		return ReflectionHelper.getValue(obj, field);
 	}
 
 	/**
@@ -99,7 +99,7 @@ public final class BoundedField{
 	 * @param value	The value.
 	 */
 	public void setFieldValue(final Object obj, final Object value){
-		ReflectionHelper.setValue(field, obj, value);
+		ReflectionHelper.setValue(obj, field, value);
 	}
 
 	/**

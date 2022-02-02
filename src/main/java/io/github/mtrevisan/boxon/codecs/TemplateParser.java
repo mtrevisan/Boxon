@@ -151,6 +151,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	 * @param <T>	The type of the object to be returned as a {@link Template}.
 	 * @param type	The class of the object to be returned as a {@link Template}.
 	 * @return	The {@link Template} for the given type.
+	 * @throws AnnotationException	If an annotation has validation problems.
 	 */
 	@Override
 	public <T> Template<T> createTemplate(final Class<T> type) throws AnnotationException{
@@ -163,9 +164,11 @@ public final class TemplateParser implements TemplateParserInterface{
 	 *
 	 * @param reader	The reader to read the header from.
 	 * @return	The template that is able to decode/encode the next message in the given reader.
+	 * @throws TemplateException	Whether the template is not valid.
 	 */
 	public Template<?> getTemplate(final BitReaderInterface reader) throws TemplateException{
-		return core.getLoaderTemplate().getTemplate(reader);
+		return core.getLoaderTemplate()
+			.getTemplate(reader);
 	}
 
 	/**
@@ -173,9 +176,11 @@ public final class TemplateParser implements TemplateParserInterface{
 	 *
 	 * @param type	The class to retrieve the template.
 	 * @return	The template that is able to decode/encode the given class.
+	 * @throws TemplateException	Whether the template is not valid.
 	 */
 	public Template<?> getTemplate(final Class<?> type) throws TemplateException{
-		return core.getLoaderTemplate().getTemplate(type);
+		return core.getLoaderTemplate()
+			.getTemplate(type);
 	}
 
 	/**
@@ -185,7 +190,8 @@ public final class TemplateParser implements TemplateParserInterface{
 	 * @return	The index of the next message.
 	 */
 	public int findNextMessageIndex(final BitReaderInterface reader){
-		return core.getLoaderTemplate().findNextMessageIndex(reader);
+		return core.getLoaderTemplate()
+			.findNextMessageIndex(reader);
 	}
 
 
@@ -422,6 +428,11 @@ public final class TemplateParser implements TemplateParserInterface{
 		return core.getLoaderTemplate();
 	}
 
+	/**
+	 * The backup of the context.
+	 *
+	 * @return	The backup of the context.
+	 */
 	public Map<String, Object> getBackupContext(){
 		return Collections.unmodifiableMap(backupContext);
 	}

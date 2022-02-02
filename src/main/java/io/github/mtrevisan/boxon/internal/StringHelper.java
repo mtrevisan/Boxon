@@ -34,6 +34,13 @@ public final class StringHelper{
 	private StringHelper(){}
 
 
+	/**
+	 * Performs argument substitution.
+	 *
+	 * @param message	The message pattern which will be parsed and formatted.
+	 * @param parameters	The arguments to be substituted in place of the formatting anchors.
+	 * @return	The formatted message.
+	 */
 	public static String format(final String message, final Object... parameters){
 		return MessageFormatter.arrayFormat(message, parameters)
 			.getMessage();

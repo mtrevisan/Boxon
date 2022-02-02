@@ -72,6 +72,15 @@ public final class Template<T>{
 	private BoundedField checksum;
 
 
+	/**
+	 * Create an instance of a template.
+	 *
+	 * @param type	The template class.
+	 * @param filterAnnotationsWithCodec	A function that filters the annotation that have a corresponding codec.
+	 * @param <T>	The class type of the template.
+	 * @return	An instance of a template.
+	 * @throws AnnotationException	If an annotation has validation problems.
+	 */
 	public static <T> Template<T> create(final Class<T> type, final Function<Annotation[], List<Annotation>> filterAnnotationsWithCodec)
 			throws AnnotationException{
 		return new Template<>(type, filterAnnotationsWithCodec);
@@ -170,30 +179,65 @@ public final class Template<T>{
 			validator.validate(field, annotation);
 	}
 
+	/**
+	 * The class type of this template.
+	 *
+	 * @return	The class type.
+	 */
 	public Class<T> getType(){
 		return type;
 	}
 
+	/**
+	 * The header of this template.
+	 *
+	 * @return	The header annotation.
+	 */
 	public MessageHeader getHeader(){
 		return header;
 	}
 
+	/**
+	 * List of {@link BoundedField bounded fields}.
+	 *
+	 * @return	List of bounded fields.
+	 */
 	public List<BoundedField> getBoundedFields(){
 		return boundedFields;
 	}
 
+	/**
+	 * List of {@link EvaluatedField evaluated fields}.
+	 *
+	 * @return	List of evaluated fields.
+	 */
 	public List<EvaluatedField> getEvaluatedFields(){
 		return evaluatedFields;
 	}
 
+	/**
+	 * Whether a field is annotated with {@link Checksum}.
+	 *
+	 * @return	Whether a field is annotated with {@link Checksum}.
+	 */
 	public boolean isChecksumPresent(){
 		return (checksum != null);
 	}
 
+	/**
+	 * Checksum bound data.
+	 *
+	 * @return	Checksum bound data.
+	 */
 	public BoundedField getChecksum(){
 		return checksum;
 	}
 
+	/**
+	 * Whether this template is well formatted, that is has a header annotation and has some bounded fields.
+	 *
+	 * @return	Whether this template is well formatted.
+	 */
 	public boolean canBeCoded(){
 		return (header != null && !boundedFields.isEmpty());
 	}

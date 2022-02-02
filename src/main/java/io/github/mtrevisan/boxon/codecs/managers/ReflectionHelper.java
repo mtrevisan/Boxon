@@ -43,7 +43,7 @@ public final class ReflectionHelper{
 
 
 	@SuppressWarnings("unchecked")
-	static <T> T getValue(final Field field, final Object obj){
+	static <T> T getValue(final Object obj, final Field field){
 		try{
 			return (T)field.get(obj);
 		}
@@ -53,7 +53,14 @@ public final class ReflectionHelper{
 		}
 	}
 
-	public static void setValue(final Field field, final Object obj, final Object value){
+	/**
+	 * Sets the field represented by this {@code Field} object on the specified object argument to the specified value.
+	 * <p>The new value is automatically unwrapped if the underlying field has a primitive type.</p>
+	 * @param obj	The object whose field should be modified.
+	 * @param field	The field.
+	 * @param value	The value for the field being modified.
+	 */
+	public static void setValue(final Object obj, final Field field, final Object value){
 		try{
 			field.set(obj, value);
 		}
@@ -64,18 +71,35 @@ public final class ReflectionHelper{
 	}
 
 
+	/**
+	 * Injects the given value of given field type in the given object.
+	 *
+	 * @param obj   The object whose field should be modified.
+	 * @param fieldType	The field class.
+	 * @param value	The value for the field being modified.
+	 * @param <T>	The value class type.
+	 */
 	public static <T> void injectValue(final Object obj, final Class<T> fieldType, final T value){
 		try{
 			final List<Field> fields = getAccessibleFields(obj.getClass(), fieldType);
 			for(int i = 0; i < fields.size(); i ++)
-				fields.get(i).set(obj, value);
+				fields.get(i)
+					.set(obj, value);
 		}
 		catch(final IllegalArgumentException | IllegalAccessException ignored){}
 	}
 
-	public static <T> void injectStaticValue(final Class<?> cl, final Class<T> fieldType, final T value){
+	/**
+	 * Static injects the given value of given field type in the given class.
+	 *
+	 * @param type   The object class whose static field should be modified.
+	 * @param fieldType	The field class.
+	 * @param value	The value for the field being modified.
+	 * @param <T>	The value class type.
+	 */
+	public static <T> void injectStaticValue(final Class<?> type, final Class<T> fieldType, final T value){
 		try{
-			final List<Field> fields = getAccessibleFields(cl, fieldType);
+			final List<Field> fields = getAccessibleFields(type, fieldType);
 			for(int i = 0; i < fields.size(); i ++)
 				fields.get(i).set(null, value);
 		}

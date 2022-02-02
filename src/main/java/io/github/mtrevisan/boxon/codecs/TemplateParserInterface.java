@@ -33,8 +33,28 @@ import io.github.mtrevisan.boxon.external.io.BitWriterInterface;
 
 public interface TemplateParserInterface{
 
+	/**
+	 * Decode the template using the given reader with the parent object.
+	 *
+	 * @param template	The template to decode.
+	 * @param reader	The reader that holds the decoded template.
+	 * @param parentObject	The parent object (for condition evaluation and field evaluation purposes).
+	 * @param <T>	The class type of the template.
+	 * @return	The data read.
+	 * @throws FieldException	If a codec is not found.
+	 */
 	<T> T decode(Template<T> template, BitReaderInterface reader, Object parentObject) throws FieldException;
 
+	/**
+	 * Encode the template using the given writer with the given object that contains the values.
+	 *
+	 * @param template	The template to encode.
+	 * @param writer	The writer that holds the encoded template.
+	 * @param parentObject	The parent object (for condition evaluation and field evaluation purposes).
+	 * @param currentObject	The current object that holds the values.
+	 * @param <T>	The class type of the current object.
+	 * @throws FieldException	If a codec is not found.
+	 */
 	<T> void encode(Template<?> template, BitWriterInterface writer, Object parentObject, T currentObject) throws FieldException;
 
 	/**
@@ -43,6 +63,7 @@ public interface TemplateParserInterface{
 	 * @param <T>	The type of the object to be returned as a {@link Template}.
 	 * @param type	The class of the object to be returned as a {@link Template}.
 	 * @return	The {@link Template} for the given type.
+	 * @throws AnnotationException	If an annotation has validation problems.
 	 */
 	<T> Template<T> createTemplate(Class<T> type) throws AnnotationException;
 
