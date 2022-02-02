@@ -481,7 +481,7 @@ public final class Version implements Comparable<Version>{
 	 * @return	Pre-release parameter.
 	 */
 	public String[] getPreRelease(){
-		return (preRelease != null? preRelease.clone(): null);
+		return (preRelease != null? preRelease.clone(): EMPTY_ARRAY);
 	}
 
 	/**
@@ -490,7 +490,7 @@ public final class Version implements Comparable<Version>{
 	 * @return	Build parameter.
 	 */
 	public String[] getBuild(){
-		return (build != null? build.clone(): null);
+		return (build != null? build.clone(): EMPTY_ARRAY);
 	}
 
 
