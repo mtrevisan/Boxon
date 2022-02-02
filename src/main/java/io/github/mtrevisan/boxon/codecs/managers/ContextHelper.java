@@ -28,6 +28,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
+/**
+ * A collection of convenience methods for working with a context.
+ */
 public final class ContextHelper{
 
 	/** The name of the current object being scanner (used for referencing variables from SpEL). */

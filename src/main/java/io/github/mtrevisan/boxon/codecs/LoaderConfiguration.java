@@ -94,7 +94,8 @@ final class LoaderConfiguration{
 	 * Loads all the configuration classes annotated with {@link ConfigurationHeader}.
 	 * <p>This method SHOULD BE called from a method inside a class that lies on a parent of all the protocol classes.</p>
 	 *
-	 * @throws IllegalArgumentException	If the codecs was not loaded yet.
+	 * @throws AnnotationException	If a configuration annotation is invalid, or no annotation was found.
+	 * @throws ConfigurationException	If a configuration is not well formatted.
 	 */
 	void loadDefaultConfigurations() throws AnnotationException, ConfigurationException{
 		loadConfigurations(ReflectiveClassLoader.extractCallerClasses());
@@ -104,6 +105,8 @@ final class LoaderConfiguration{
 	 * Loads all the configuration classes annotated with {@link ConfigurationHeader}.
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load configuration classes.
+	 * @throws AnnotationException	If a configuration annotation is invalid, or no annotation was found.
+	 * @throws ConfigurationException	If a configuration is not well formatted.
 	 */
 	void loadConfigurations(final Class<?>... basePackageClasses) throws AnnotationException, ConfigurationException{
 		eventListener.loadingConfigurations(basePackageClasses);
@@ -142,6 +145,7 @@ final class LoaderConfiguration{
 	 * @param <T>	The type of the object to be returned as a {@link ConfigurationMessage}.
 	 * @param type	The class of the object to be returned as a {@link ConfigurationMessage}.
 	 * @return	The {@link ConfigurationMessage} for the given type.
+	 * @throws AnnotationException	If a configuration annotation is invalid, or no annotation was found.
 	 */
 	@SuppressWarnings("unchecked")
 	private <T> ConfigurationMessage<T> createConfiguration(final Class<T> type) throws AnnotationException{
@@ -196,6 +200,8 @@ final class LoaderConfiguration{
 	 * @param data	The data to load into the configuration.
 	 * @param protocol	The protocol the data refers to.
 	 * @return	The configuration data.
+	 * @throws EncodeException	If a placeholder cannot be substituted.
+	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
 	 */
 	static Object getConfigurationWithDefaults(final ConfigurationMessage<?> configuration, final Map<String, Object> data,
 			final Version protocol) throws EncodeException, CodecException{
@@ -235,9 +241,11 @@ final class LoaderConfiguration{
 	}
 
 	/**
-	 * Retrieve the configuration by class.
+	 * Retrieve the configuration by header start parameter.
 	 *
+	 * @param configurationType	The header start of a configuration.
 	 * @return	The configuration.
+	 * @throws EncodeException	If a configuration cannot be retrieved.
 	 */
 	ConfigurationMessage<?> getConfiguration(final String configurationType) throws EncodeException{
 		final ConfigurationMessage<?> configuration = configurations.get(configurationType);

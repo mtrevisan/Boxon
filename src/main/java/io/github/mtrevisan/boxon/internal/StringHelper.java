@@ -29,6 +29,9 @@ import org.slf4j.helpers.MessageFormatter;
 import java.util.Locale;
 
 
+/**
+ * A collection of convenience methods for working with {@link String} objects.
+ */
 public final class StringHelper{
 
 	private StringHelper(){}

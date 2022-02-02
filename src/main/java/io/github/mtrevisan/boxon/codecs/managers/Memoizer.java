@@ -31,6 +31,11 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
 
 
+/**
+ * A wrapper around a calculation that takes a parameter and returns a result.
+ * <br />
+ * The results for the calculation will be cached for future requests.
+ */
 public final class Memoizer{
 
 	private Memoizer(){}
@@ -65,6 +70,7 @@ public final class Memoizer{
 	 *
 	 * @param <IN>	Type of input to the function. The class MUST implement {@code equals(Object)} and {@code hashCode()}.
 	 * @param <OUT>	Type of output from the function.
+	 * @param <E>	Type of exception thrown by the function.
 	 * @param function	The function to be memoized.
 	 * @return	The new memoized function.
 	 *

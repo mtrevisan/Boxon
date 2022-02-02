@@ -405,15 +405,31 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 
+	/**
+	 * Add a key-value pair to the backup of the context.
+	 *
+	 * @param key	The key.
+	 * @param value	The value.
+	 */
 	public void addToBackupContext(final String key, final Object value){
 		backupContext.put(key, value.toString());
 	}
 
+	/**
+	 * Add a map to the backup of the context.
+	 *
+	 * @param context	The map.
+	 */
 	public void addToBackupContext(final Map<String, Object> context){
 		for(final Map.Entry<String, Object> entry : context.entrySet())
 			addToBackupContext(entry.getKey(), entry.getValue());
 	}
 
+	/**
+	 * Add a method to the backup of the context.
+	 *
+	 * @param method	The method.
+	 */
 	public void addToBackupContext(final Method method){
 		@SuppressWarnings("unchecked")
 		Collection<String> v = (Collection<String>)backupContext.get(DescriberKey.CONTEXT_METHODS.toString());

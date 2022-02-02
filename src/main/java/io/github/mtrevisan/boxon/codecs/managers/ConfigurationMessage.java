@@ -200,18 +200,38 @@ public final class ConfigurationMessage<T>{
 		}
 	}
 
+	/**
+	 * Class type of the configuration.
+	 *
+	 * @return	Class type of the configuration.
+	 */
 	public Class<T> getType(){
 		return type;
 	}
 
+	/**
+	 * Configuration header annotation.
+	 *
+	 * @return	Configuration header annotation.
+	 */
 	public ConfigurationHeader getHeader(){
 		return header;
 	}
 
+	/**
+	 * List of configuration fields data.
+	 *
+	 * @return	List of configuration fields data.
+	 */
 	public List<ConfigField> getConfigurationFields(){
 		return configFields;
 	}
 
+	/**
+	 * List of protocol version boundaries.
+	 *
+	 * @return	List of protocol version boundaries.
+	 */
 	public List<String> getProtocolVersionBoundaries(){
 		return protocolVersionBoundaries;
 	}

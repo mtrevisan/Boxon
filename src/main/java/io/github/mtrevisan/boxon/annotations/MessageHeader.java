@@ -59,7 +59,7 @@ public @interface MessageHeader{
 	/**
 	 * The type of encoding used for the {@link #start()} and {@link #end()} fields.
 	 *
-	 * @return	The type of encoding used (defaults to {@value io.github.mtrevisan.boxon.codecs.LoaderCodec#CHARSET_DEFAULT}).
+	 * @return	The type of encoding used (defaults to {@value io.github.mtrevisan.boxon.codecs.managers.CharsetHelper#DEFAULT_CHARSET}).
 	 */
 	String charset() default "UTF-8";
 

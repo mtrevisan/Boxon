@@ -31,15 +31,18 @@ import io.github.mtrevisan.boxon.codecs.managers.ContextHelper;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.external.configurations.ConfigurationEnum;
+import io.github.mtrevisan.boxon.external.io.BitSetHelper;
 import io.github.mtrevisan.boxon.external.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.external.io.ByteOrder;
 import io.github.mtrevisan.boxon.external.io.ParserDataType;
-import io.github.mtrevisan.boxon.external.io.BitSetHelper;
 
 import java.lang.reflect.Array;
 import java.util.BitSet;
 
 
+/**
+ * A collection of convenience methods for working with codecs.
+ */
 final class CodecHelper{
 
 	private CodecHelper(){}

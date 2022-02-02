@@ -35,6 +35,8 @@ import java.util.function.BiConsumer;
 
 
 /**
+ * A collection of convenience methods for working with reflection.
+ *
  * @see <a href="https://bill.burkecentral.com/2008/01/14/scanning-java-annotations-at-runtime/">Scanning Java Annotations at Runtime</a>
  */
 public final class ReflectionHelper{

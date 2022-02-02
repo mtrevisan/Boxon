@@ -100,7 +100,7 @@ public @interface CompositeConfigurationField{
 	/**
 	 * The type of encoding used for string-typed field.
 	 *
-	 * @return	The type of encoding used (defaults to {@value io.github.mtrevisan.boxon.codecs.LoaderCodec#CHARSET_DEFAULT}).
+	 * @return	The type of encoding used (defaults to {@value io.github.mtrevisan.boxon.codecs.managers.CharsetHelper#DEFAULT_CHARSET}).
 	 */
 	String charset() default "UTF-8";
 

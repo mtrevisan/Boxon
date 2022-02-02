@@ -37,6 +37,9 @@ import java.util.Arrays;
 import java.util.regex.Pattern;
 
 
+/**
+ * A collection of convenience methods for working with validations.
+ */
 final class ValidationHelper{
 
 	private static final Pattern PATTERN_PIPE = Pattern.compile("\\|");

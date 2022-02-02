@@ -28,9 +28,9 @@ import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
-import io.github.mtrevisan.boxon.external.io.ParserDataType;
 import io.github.mtrevisan.boxon.external.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.external.configurations.ConfigurationKey;
+import io.github.mtrevisan.boxon.external.io.ParserDataType;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 
@@ -39,6 +39,9 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 
+/**
+ * A collection of convenience methods for working with configurations.
+ */
 public final class ConfigurationHelper{
 
 	private static final Pattern PATTERN_PIPE = Pattern.compile("\\|");

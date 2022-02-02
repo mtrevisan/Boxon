@@ -30,6 +30,9 @@ import java.io.ByteArrayOutputStream;
 import java.util.BitSet;
 
 
+/**
+ * Provide bit-level tools for writing bits and skipping bits on a {@link ByteArrayOutputStream}.
+ */
 class BitWriterData{
 
 	/** The backing {@link ByteArrayOutputStream}. */

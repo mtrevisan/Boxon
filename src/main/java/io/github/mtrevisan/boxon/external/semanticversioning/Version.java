@@ -448,22 +448,47 @@ public final class Version implements Comparable<Version>{
 	}
 
 
+	/**
+	 * Major parameter.
+	 *
+	 * @return	Major parameter.
+	 */
 	public Integer getMajor(){
 		return major;
 	}
 
+	/**
+	 * Minor parameter.
+	 *
+	 * @return	Minor parameter.
+	 */
 	public Integer getMinor(){
 		return minor;
 	}
 
+	/**
+	 * Patch parameter.
+	 *
+	 * @return	Patch parameter.
+	 */
 	public Integer getPatch(){
 		return patch;
 	}
 
+	/**
+	 * Pre-release parameter.
+	 *
+	 * @return	Pre-release parameter.
+	 */
 	public String[] getPreRelease(){
 		return (preRelease != null? preRelease.clone(): null);
 	}
 
+	/**
+	 * Build parameter.
+	 *
+	 * @return	Build parameter.
+	 */
 	public String[] getBuild(){
 		return (build != null? build.clone(): null);
 	}

@@ -33,6 +33,9 @@ import java.nio.ByteBuffer;
 import java.util.BitSet;
 
 
+/**
+ * Provide bit-level tools for reading bits, skipping bits, and performing fallback after a reading on a {@link ByteBuffer}.
+ */
 @SuppressWarnings("WeakerAccess")
 abstract class BitReaderData{
 
@@ -161,11 +164,12 @@ abstract class BitReaderData{
 	}
 
 	/**
-	 * Add {@code size} bits from the cache starting from LSB with a given offset.
+	 * Add {@code size} bits from the cache starting from <a href="https://en.wikipedia.org/wiki/Bit_numbering#Bit_significance_and_indexing">LSB</a>
+	 * with a given offset.
 	 *
 	 * @param bits	The bit set into which to transfer {@code size} bits from the cache.
 	 * @param offset	The offset for the indexes.
-	 * @param size	The amount of bits to read from the LSB of the cache.
+	 * @param size	The amount of bits to read from the <a href="https://en.wikipedia.org/wiki/Bit_numbering#Bit_significance_and_indexing">LSB</a> of the cache.
 	 */
 	private void addCacheToBitSet(final BitSet bits, final int offset, final int size){
 		int skip;

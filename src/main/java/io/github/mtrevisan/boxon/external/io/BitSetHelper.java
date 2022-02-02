@@ -27,6 +27,9 @@ package io.github.mtrevisan.boxon.external.io;
 import java.util.BitSet;
 
 
+/**
+ * A collection of convenience methods for working with {@link BitSet} objects.
+ */
 public final class BitSetHelper{
 
 	private BitSetHelper(){}
@@ -58,6 +61,7 @@ public final class BitSetHelper{
 	 * Reverse the endianness bit by bit.
 	 *
 	 * @param bits	The bit set.
+	 * @return	The {@link BitSet} with the bits reversed.
 	 */
 	private static BitSet bitReverse(final BitSet bits){
 		final byte[] array = bits.toByteArray();
@@ -80,6 +84,7 @@ public final class BitSetHelper{
 	 * Reverse the endianness bit by bit.
 	 *
 	 * @param number	The byte to be reversed.
+	 * @return	The given number with the bits reversed.
 	 */
 	private static byte reverseBits(byte number){
 		byte reverse = 0;

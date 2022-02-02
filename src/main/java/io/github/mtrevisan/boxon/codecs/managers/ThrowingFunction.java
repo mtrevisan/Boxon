@@ -25,9 +25,23 @@
 package io.github.mtrevisan.boxon.codecs.managers;
 
 
+/**
+ * Represents a function that accepts one argument, produces a result, and throws an exception.
+ *
+ * @param <IN>	The type of the input to the function.
+ * @param <OUT>	The type of the output to the function.
+ * @param <E>	The type of the exception thrown by the function.
+ */
 @FunctionalInterface
 public interface ThrowingFunction<IN, OUT, E extends Exception>{
 
+	/**
+	 * Applies this function to the given argument.
+	 *
+	 * @param in	The function argument.
+	 * @return	The function result.
+	 * @throws E	The exception thrown.
+	 */
 	OUT apply(IN in) throws E;
 
 }

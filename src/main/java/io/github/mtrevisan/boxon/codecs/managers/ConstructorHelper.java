@@ -34,6 +34,9 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 
+/**
+ * A collection of convenience methods for working with constructors.
+ */
 public final class ConstructorHelper{
 
 	private static final Function<Class<?>, Supplier<?>> CREATORS = Memoizer.memoize(ConstructorHelper::getCreatorInner);

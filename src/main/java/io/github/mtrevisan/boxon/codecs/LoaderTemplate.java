@@ -160,6 +160,14 @@ public final class LoaderTemplate{
 		return templates;
 	}
 
+	/**
+	 * Extract a template for the given class.
+	 *
+	 * @param type	The class type.
+	 * @return	A template.
+	 * @throws AnnotationException	If an annotation has validation problems.
+	 * @throws TemplateException	If a template is not well formatted.
+	 */
 	public Template<?> extractTemplate(final Class<?> type) throws AnnotationException, TemplateException{
 		final Template<?> from = createTemplate(type);
 		if(!from.canBeCoded())
@@ -265,6 +273,11 @@ public final class LoaderTemplate{
 		return template;
 	}
 
+	/**
+	 * Unmodifiable collection of templates.
+	 *
+	 * @return	Collection of templates.
+	 */
 	public Collection<Template<?>> getTemplates(){
 		return Collections.unmodifiableCollection(templates.values());
 	}

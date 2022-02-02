@@ -39,6 +39,9 @@ import java.util.Map;
 import java.util.Queue;
 
 
+/**
+ * A collection of convenience methods for working with generics.
+ */
 final class GenericHelper{
 
 	private static final ClassLoader CLASS_LOADER = GenericHelper.class.getClassLoader();

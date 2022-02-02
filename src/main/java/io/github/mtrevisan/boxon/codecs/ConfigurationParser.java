@@ -90,7 +90,8 @@ public final class ConfigurationParser{
 	 * Loads all the configuration classes annotated with {@link ConfigurationHeader}.
 	 * <p>This method SHOULD BE called from a method inside a class that lies on a parent of all the protocol classes.</p>
 	 *
-	 * @throws IllegalArgumentException	If the codecs was not loaded yet.
+	 * @throws AnnotationException	If a configuration annotation is invalid, or no annotation was found.
+	 * @throws ConfigurationException	If a configuration is not well formatted.
 	 */
 	public void loadDefaultConfigurations() throws AnnotationException, ConfigurationException{
 		loaderConfiguration.loadDefaultConfigurations();
@@ -100,6 +101,8 @@ public final class ConfigurationParser{
 	 * Loads all the configuration classes annotated with {@link ConfigurationHeader}.
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load configuration classes.
+	 * @throws AnnotationException	If a configuration annotation is invalid, or no annotation was found.
+	 * @throws ConfigurationException	If a configuration is not well formatted.
 	 */
 	public void loadConfigurations(final Class<?>... basePackageClasses) throws AnnotationException, ConfigurationException{
 		loaderConfiguration.loadConfigurations(basePackageClasses);
@@ -121,6 +124,8 @@ public final class ConfigurationParser{
 	 * @param data	The data to load into the configuration.
 	 * @param protocol	The protocol the data refers to.
 	 * @return	The configuration data.
+	 * @throws EncodeException	If a placeholder cannot be substituted.
+	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
 	 */
 	public static Object getConfigurationWithDefaults(final ConfigurationMessage<?> configuration, final Map<String, Object> data,
 			final Version protocol) throws EncodeException, CodecException{
@@ -130,13 +135,26 @@ public final class ConfigurationParser{
 	/**
 	 * Retrieve the configuration by class.
 	 *
+	 * @param configurationType	The header start of a configuration.
 	 * @return	The configuration.
+	 * @throws EncodeException	If a configuration cannot be retrieved.
 	 */
 	public ConfigurationMessage<?> getConfiguration(final String configurationType) throws EncodeException{
 		return loaderConfiguration.getConfiguration(configurationType);
 	}
 
 
+	/**
+	 * Encode the configuration using the given writer with the given object that contains the values.
+	 *
+	 * @param configuration	The configuration to encode.
+	 * @param writer	The writer that holds the encoded template.
+	 * @param currentObject	The current object that holds the values.
+	 * @param evaluator	An evaluator.
+	 * @param protocol	A protocol version.
+	 * @param <T>	The class type of the current object.
+	 * @throws FieldException	If a codec is not found.
+	 */
 	public <T> void encode(final ConfigurationMessage<?> configuration, final BitWriterInterface writer, final T currentObject,
 			final Evaluator evaluator, final Version protocol) throws FieldException{
 		final ParserContext<T> parserContext = new ParserContext<>(evaluator, currentObject);

@@ -30,7 +30,14 @@ import java.nio.charset.Charset;
 import java.util.function.Function;
 
 
+/**
+ * A collection of convenience methods for working with {@link Charset} objects.
+ */
 public final class CharsetHelper{
+
+	/** The default character set. */
+	public static final String DEFAULT_CHARSET = "UTF-8";
+
 
 	private static final Function<String, Charset> CHARSETS = Memoizer.memoize(CharsetHelper::lookupName);
 
