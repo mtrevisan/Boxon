@@ -104,7 +104,7 @@ public final class TimeWatch{
 	}
 
 	private static StringBuilder format(final StringBuilder sb, final double value, final int fractionalDigits){
-		long factor = (long)Math.pow(10., fractionalDigits);
+		long factor = (long)StrictMath.pow(10., fractionalDigits);
 		final long scaled = (long)(value * factor + 0.5);
 		int scale = fractionalDigits;
 		long scaled2 = scaled / 10;
