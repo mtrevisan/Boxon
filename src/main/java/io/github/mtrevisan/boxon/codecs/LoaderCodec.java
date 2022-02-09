@@ -150,6 +150,13 @@ public final class LoaderCodec implements LoaderCodecInterface{
 		codecs.put(codecType, codec);
 	}
 
+	/**
+	 * Inject the give object in all the codecs.
+	 *
+	 * @param type	The class type of the object to be injected.
+	 * @param object	The object to be injected.
+	 * @param <T>	The class type of the object.
+	 */
 	//FIXME is injection an ugliness?
 	public <T> void injectFieldInCodecs(final Class<T> type, final T object){
 		for(final CodecInterface<?> codec : codecs.values())

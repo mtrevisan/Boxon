@@ -25,8 +25,12 @@
 package io.github.mtrevisan.boxon.internal;
 
 
+/**
+ * A collection of convenience methods for simplifying Java capabilities.
+ */
 public final class JavaHelper{
 
+	/** An empty {@code String}. */
 	public static final String EMPTY_STRING = "";
 
 	/** An empty {@code String} array. */
@@ -53,24 +57,59 @@ public final class JavaHelper{
 	}
 
 
+	/**
+	 * Return the given object if non-null, the default object otherwise.
+	 *
+	 * @param obj	The object.
+	 * @param defaultObject	The default object to be returned if the given object is {@code null}.
+	 * @param <T>	The class type of the object.
+	 * @return	The object, or the default object if {@code null}.
+	 */
 	public static <T> T nonNullOrDefault(final T obj, final T defaultObject){
 		return (obj != null? obj: defaultObject);
 	}
 
 
+	/**
+	 * Return a cloned object if non-null, the default object otherwise.
+	 *
+	 * @param obj	The object.
+	 * @param defaultObject	The default object to be returned if the given object is {@code null}.
+	 * @return	The cloned object, or the default object if {@code null}.
+	 */
 	public static byte[] cloneNonNullOrDefault(final byte[] obj, final byte[] defaultObject){
 		return (obj != null? obj.clone(): defaultObject);
 	}
 
+	/**
+	 * Return a cloned object if non-null, the default object otherwise.
+	 *
+	 * @param obj	The object.
+	 * @param defaultObject	The default object to be returned if the given object is {@code null}.
+	 * @return	The cloned object, or the default object if {@code null}.
+	 */
 	public static Object[] cloneNonNullOrDefault(final Object[] obj, final Object[] defaultObject){
 		return (obj != null? obj.clone(): defaultObject);
 	}
 
 
-	static <T> int lengthOrZero(final byte[] array){
+	/**
+	 * Return the length of the array, or {@code 0} if {@code null}.
+	 *
+	 * @param array	The array.
+	 * @return	The length of the array, or {@code 0} if {@code null}.
+	 */
+	static int lengthOrZero(final byte[] array){
 		return (array != null? array.length: 0);
 	}
 
+	/**
+	 * Return the length of the array, or {@code 0} if {@code null}.
+	 *
+	 * @param array	The array.
+	 * @param <T>	The class type of the array.
+	 * @return	The length of the array, or {@code 0} if {@code null}.
+	 */
 	public static <T> int lengthOrZero(final T[] array){
 		return (array != null? array.length: 0);
 	}
