@@ -286,7 +286,8 @@ public final class BoxonCoreBuilder{
 
 
 	/**
-	 * Create the common core data.
+	 * Create the common core data executing all the configuration methods called in the order: `EVENT_LISTENER`, `CONTEXT`, `CODEC`,
+	 * `TEMPLATE`, and `CONFIGURATION`.
 	 *
 	 * @return	{@link BoxonCore Core} data used by {@link Parser}, {@link Descriptor}, {@link Composer}, and {@link Configurator}.
 	 * @throws AnnotationException   If an annotation is not well formatted.
