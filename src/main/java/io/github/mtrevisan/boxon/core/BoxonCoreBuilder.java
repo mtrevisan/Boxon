@@ -134,15 +134,15 @@ public final class BoxonCoreBuilder{
 	/**
 	 * Add a method to the context for the {@link Evaluator}.
 	 *
-	 * @param cls	The class in which the method resides.
+	 * @param type	The class in which the method resides.
 	 * @param methodName	The name of the method.
 	 * @param parameterTypes	The parameter array.
 	 * @return	This instance, used for chaining.
 	 * @throws NoSuchMethodException	If a matching method is not found.
 	 */
-	public BoxonCoreBuilder withContextFunction(final Class<?> cls, final String methodName, final Class<?>... parameterTypes)
+	public BoxonCoreBuilder withContextFunction(final Class<?> type, final String methodName, final Class<?>... parameterTypes)
 		throws NoSuchMethodException{
-		final Method method = cls.getDeclaredMethod(methodName, parameterTypes);
+		final Method method = type.getDeclaredMethod(methodName, parameterTypes);
 		return withContextFunction(method);
 	}
 
