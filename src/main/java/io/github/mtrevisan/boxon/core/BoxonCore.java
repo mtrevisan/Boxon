@@ -57,8 +57,10 @@ public final class BoxonCore{
 
 
 	/**
-	 * Create an empty parser core (context, codecs and templates MUST BE manually loaded! -- templates MUST BE loaded AFTER
-	 * the codecs).
+	 * Create an empty parser core.
+	 * <p>
+	 * Remember that templates and configurations MUST BE loaded AFTER the codecs!
+	 * </p>
 	 *
 	 * @return	A basic empty parser core.
 	 */
