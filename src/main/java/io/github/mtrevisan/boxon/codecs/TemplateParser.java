@@ -88,6 +88,7 @@ public final class TemplateParser implements TemplateParserInterface{
 		eventListener = EventListener.getNoOpInstance();
 	}
 
+
 	/**
 	 * Assign an event listener.
 	 *

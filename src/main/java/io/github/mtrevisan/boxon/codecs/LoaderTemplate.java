@@ -85,6 +85,7 @@ public final class LoaderTemplate{
 		eventListener = EventListener.getNoOpInstance();
 	}
 
+
 	/**
 	 * Assign an event listener.
 	 *

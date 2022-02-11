@@ -74,6 +74,7 @@ public final class BoxonCore{
 		configurationParser = ConfigurationParser.create(loaderCodec);
 	}
 
+
 	/**
 	 * Assign an event listener.
 	 *

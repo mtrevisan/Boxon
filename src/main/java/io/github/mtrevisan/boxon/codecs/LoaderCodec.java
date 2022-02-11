@@ -59,6 +59,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 		eventListener = EventListener.getNoOpInstance();
 	}
 
+
 	/**
 	 * Assign an event listener.
 	 *

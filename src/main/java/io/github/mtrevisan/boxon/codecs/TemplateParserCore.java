@@ -64,6 +64,7 @@ final class TemplateParserCore{
 		eventListener = EventListener.getNoOpInstance();
 	}
 
+
 	/**
 	 * Assign an event listener.
 	 *

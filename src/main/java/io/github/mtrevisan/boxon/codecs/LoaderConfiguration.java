@@ -78,6 +78,7 @@ final class LoaderConfiguration{
 		eventListener = EventListener.getNoOpInstance();
 	}
 
+
 	/**
 	 * Assign an event listener.
 	 *

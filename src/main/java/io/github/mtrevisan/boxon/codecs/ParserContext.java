@@ -56,6 +56,7 @@ final class ParserContext<T>{
 		setRootObject(parentObject);
 	}
 
+
 	public Object getRootObject(){
 		return rootObject;
 	}
