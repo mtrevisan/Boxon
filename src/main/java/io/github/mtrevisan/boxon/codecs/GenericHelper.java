@@ -168,9 +168,10 @@ final class GenericHelper{
 	}
 
 	private static Type resolveArgumentType(final Map<String, Type> typeVariables, final Type actualTypeArgument){
-		return (TypeVariable.class.isInstance(actualTypeArgument)
-			? typeVariables.getOrDefault(((TypeVariable<?>)actualTypeArgument).getName(), actualTypeArgument)
-			: actualTypeArgument);
+		final String key = (TypeVariable.class.isInstance(actualTypeArgument)
+			? ((TypeVariable<?>)actualTypeArgument).getName()
+			: null);
+		return typeVariables.getOrDefault(key, actualTypeArgument);
 	}
 
 	/**

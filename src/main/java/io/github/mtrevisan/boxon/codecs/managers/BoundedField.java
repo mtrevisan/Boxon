@@ -60,7 +60,7 @@ public final class BoundedField{
 
 		//pre-fetch condition method
 		final Method conditionMethod = ReflectionHelper.getAccessibleMethod(binding.annotationType(), CONDITION, String.class);
-		condition = ReflectionHelper.invokeMethod(binding, conditionMethod, JavaHelper.EMPTY_STRING);
+		condition = ReflectionHelper.invokeMethodOrDefault(binding, conditionMethod, JavaHelper.EMPTY_STRING);
 	}
 
 	/**
