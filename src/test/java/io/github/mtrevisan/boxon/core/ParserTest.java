@@ -167,7 +167,7 @@ class ParserTest{
 	}
 
 	private static byte[] addAll(final byte[] array1, final byte[] array2){
-		final byte[] joinedArray = new byte[array1.length + array2.length];
+		byte[] joinedArray = new byte[array1.length + array2.length];
 		System.arraycopy(array1, 0, joinedArray, 0, array1.length);
 		System.arraycopy(array2, 0, joinedArray, array1.length, array2.length);
 		return joinedArray;
