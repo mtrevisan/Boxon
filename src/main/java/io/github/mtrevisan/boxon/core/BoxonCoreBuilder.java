@@ -309,8 +309,13 @@ public final class BoxonCoreBuilder{
 			for(final CoreMethods coreMethod : CoreMethods.values()){
 				final Method method = coreMethod.method;
 				List<Object> callbacks = calls.get(method);
-				for(int i = 0; i < JavaHelper.lengthOrZero(callbacks); i++)
-					method.invoke(core, callbacks.get(i));
+				for(int i = 0; i < JavaHelper.lengthOrZero(callbacks); i ++){
+					final Object arguments = callbacks.get(i);
+					if(arguments.getClass().isArray())
+						method.invoke(core, new Object[]{arguments});
+					else
+						method.invoke(core, arguments);
+				}
 			}
 		}
 		catch(final IllegalAccessException | InvocationTargetException ignored){}
