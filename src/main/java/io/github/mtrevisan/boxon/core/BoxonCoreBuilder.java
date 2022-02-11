@@ -42,7 +42,7 @@ import java.util.Map;
 
 
 /**
- * Builder for the common data used by the {@link Parser}, {@link Descriptor}, {@link Composer}, and {@link Configurator}.
+ * Builder for the {@link BoxonCore common data} used by the {@link Parser}, {@link Descriptor}, {@link Composer}, and {@link Configurator}.
  */
 public final class BoxonCoreBuilder{
 
@@ -264,7 +264,7 @@ public final class BoxonCoreBuilder{
 	/**
 	 * Create the common core data.
 	 *
-	 * @return	Core data used by {@link Parser}, {@link Descriptor}, {@link Composer}, and {@link Configurator}.
+	 * @return	{@link BoxonCore Core} data used by {@link Parser}, {@link Descriptor}, {@link Composer}, and {@link Configurator}.
 	 * @throws AnnotationException   If an annotation is not well formatted.
 	 * @throws TemplateException   If a template is not well formatted.
 	 * @throws ConfigurationException   If a configuration is not well formatted.
