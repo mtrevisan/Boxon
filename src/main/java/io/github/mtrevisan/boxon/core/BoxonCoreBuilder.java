@@ -26,11 +26,7 @@ package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
-import io.github.mtrevisan.boxon.codecs.ConfigurationParser;
 import io.github.mtrevisan.boxon.codecs.Evaluator;
-import io.github.mtrevisan.boxon.codecs.LoaderCodec;
-import io.github.mtrevisan.boxon.codecs.TemplateParser;
-import io.github.mtrevisan.boxon.codecs.TemplateParserInterface;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
@@ -39,41 +35,30 @@ import io.github.mtrevisan.boxon.external.logs.EventListener;
 
 import java.lang.reflect.Method;
 import java.util.Map;
-import java.util.Objects;
 
 
 /**
- * Common data used by the {@link Parser}, {@link Descriptor}, {@link Composer}, and {@link Configurator} classes.
+ * Builder for the common data used by the {@link Parser}, {@link Descriptor}, {@link Composer}, and {@link Configurator} classes.
  */
-@SuppressWarnings({"WeakerAccess", "unused"})
-public final class BoxonCore{
+public final class BoxonCoreBuilder{
 
-	private final LoaderCodec loaderCodec;
+	private final BoxonCore core;
 
-	private final Evaluator evaluator = Evaluator.create();
-
-	private final TemplateParser templateParser;
-	private final ConfigurationParser configurationParser;
+	private EventListener eventListener;
 
 
 	/**
-	 * Create an empty parser core.
-	 * <p>
-	 * Remember that templates and configurations MUST BE loaded AFTER the codecs!
-	 * </p>
+	 * Create a core builder.
 	 *
-	 * @return	A basic empty parser core.
+	 * @return	A core builder.
 	 */
-	public static BoxonCore create(){
-		return new BoxonCore();
+	public static BoxonCoreBuilder builder(){
+		return new BoxonCoreBuilder();
 	}
 
 
-	private BoxonCore(){
-		loaderCodec = LoaderCodec.create();
-
-		templateParser = TemplateParser.create(loaderCodec, evaluator);
-		configurationParser = ConfigurationParser.create(loaderCodec);
+	private BoxonCoreBuilder(){
+		core = BoxonCore.create();
 	}
 
 
@@ -83,11 +68,8 @@ public final class BoxonCore{
 	 * @param eventListener	The event listener.
 	 * @return	The current instance.
 	 */
-	BoxonCore withEventListener(final EventListener eventListener){
-		loaderCodec.withEventListener(eventListener);
-
-		templateParser.withEventListener(eventListener);
-		configurationParser.withEventListener(eventListener);
+	public BoxonCoreBuilder withEventListener(final EventListener eventListener){
+		this.eventListener = eventListener;
 
 		return this;
 	}
@@ -100,10 +82,8 @@ public final class BoxonCore{
 	 * @param value	The value.
 	 * @return	This instance, used for chaining.
 	 */
-	BoxonCore addToContext(final String key, final Object value){
-		evaluator.addToContext(key, value);
-
-		templateParser.addToBackupContext(key, value);
+	public BoxonCoreBuilder addToContext(final String key, final Object value){
+		core.addToContext(key, value);
 
 		return this;
 	}
@@ -114,15 +94,23 @@ public final class BoxonCore{
 	 * @param context	The context map.
 	 * @return	This instance, used for chaining.
 	 */
-	BoxonCore withContext(final Map<String, Object> context){
-		Objects.requireNonNull(context, "Context cannot be null");
-
-		for(final Map.Entry<String, Object> entry : context.entrySet())
-			evaluator.addToContext(entry.getKey(), entry.getValue());
-
-		templateParser.addToBackupContext(context);
+	public BoxonCoreBuilder withContext(final Map<String, Object> context){
+		core.withContext(context);
 
 		return this;
+	}
+
+	/**
+	 * Add a method to the context for the {@link Evaluator}.
+	 *
+	 * @param type	The class containing the method.
+	 * @param methodName	The method name.
+	 * @return	This instance, used for chaining.
+	 * @throws NoSuchMethodException	If a matching method is not found.
+	 * @throws NullPointerException	If {@code methodName} is {@code null}.
+	 */
+	public BoxonCoreBuilder withContextFunction(final Class<?> type, final String methodName) throws NoSuchMethodException{
+		return withContextFunction(type.getDeclaredMethod(methodName));
 	}
 
 	/**
@@ -131,12 +119,25 @@ public final class BoxonCore{
 	 * @param method	The method.
 	 * @return	This instance, used for chaining.
 	 */
-	BoxonCore withContextFunction(final Method method){
-		evaluator.addToContext(method);
-
-		templateParser.addToBackupContext(method);
+	public BoxonCoreBuilder withContextFunction(final Method method){
+		core.withContextFunction(method);
 
 		return this;
+	}
+
+	/**
+	 * Add a method to the context for the {@link Evaluator}.
+	 *
+	 * @param cls	The class in which the method resides.
+	 * @param methodName	The name of the method.
+	 * @param parameterTypes	The parameter array.
+	 * @return	This instance, used for chaining.
+	 * @throws NoSuchMethodException	If a matching method is not found.
+	 */
+	public BoxonCoreBuilder withContextFunction(final Class<?> cls, final String methodName, final Class<?>... parameterTypes)
+			throws NoSuchMethodException{
+		final Method method = cls.getDeclaredMethod(methodName, parameterTypes);
+		return withContextFunction(method);
 	}
 
 
@@ -146,10 +147,8 @@ public final class BoxonCore{
 	 *
 	 * @return	This instance, used for chaining.
 	 */
-	BoxonCore withDefaultCodecs(){
-		loaderCodec.loadDefaultCodecs();
-
-		postProcessCodecs();
+	public BoxonCoreBuilder withDefaultCodecs(){
+		core.withDefaultCodecs();
 
 		return this;
 	}
@@ -160,10 +159,8 @@ public final class BoxonCore{
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load codecs.
 	 * @return	This instance, used for chaining.
 	 */
-	BoxonCore withCodecs(final Class<?>... basePackageClasses){
-		loaderCodec.loadCodecs(basePackageClasses);
-
-		postProcessCodecs();
+	public BoxonCoreBuilder withCodecs(final Class<?>... basePackageClasses){
+		core.withCodecs(basePackageClasses);
 
 		return this;
 	}
@@ -174,17 +171,10 @@ public final class BoxonCore{
 	 * @param codecs	The list of codecs to be loaded.
 	 * @return	This instance, used for chaining.
 	 */
-	BoxonCore withCodecs(final CodecInterface<?>... codecs){
-		loaderCodec.addCodecs(codecs);
-
-		postProcessCodecs();
+	public BoxonCoreBuilder withCodecs(final CodecInterface<?>... codecs){
+		core.withCodecs(codecs);
 
 		return this;
-	}
-
-	private void postProcessCodecs(){
-		loaderCodec.injectFieldInCodecs(TemplateParserInterface.class, templateParser);
-		loaderCodec.injectFieldInCodecs(Evaluator.class, evaluator);
 	}
 
 
@@ -195,8 +185,8 @@ public final class BoxonCore{
 	 * @throws AnnotationException	If an annotation is not well formatted.
 	 * @throws TemplateException	If a template is not well formatted.
 	 */
-	BoxonCore withDefaultTemplates() throws AnnotationException, TemplateException{
-		templateParser.withDefaultTemplates();
+	public BoxonCoreBuilder withDefaultTemplates() throws AnnotationException, TemplateException{
+		core.withDefaultTemplates();
 
 		return this;
 	}
@@ -209,8 +199,8 @@ public final class BoxonCore{
 	 * @throws AnnotationException	If an annotation is not well formatted.
 	 * @throws TemplateException	If a template is not well formatted.
 	 */
-	BoxonCore withTemplates(final Class<?>... basePackageClasses) throws AnnotationException, TemplateException{
-		templateParser.withTemplates(basePackageClasses);
+	public BoxonCoreBuilder withTemplates(final Class<?>... basePackageClasses) throws AnnotationException, TemplateException{
+		core.withTemplates(basePackageClasses);
 
 		return this;
 	}
@@ -223,8 +213,8 @@ public final class BoxonCore{
 	 * @throws AnnotationException	If the annotation is not well formatted.
 	 * @throws TemplateException	If the template is not well formatted.
 	 */
-	BoxonCore withTemplate(final Class<?> templateClass) throws AnnotationException, TemplateException{
-		templateParser.withTemplate(templateClass);
+	public BoxonCoreBuilder withTemplate(final Class<?> templateClass) throws AnnotationException, TemplateException{
+		core.withTemplate(templateClass);
 
 		return this;
 	}
@@ -237,8 +227,8 @@ public final class BoxonCore{
 	 * @throws AnnotationException	If an annotation is not well formatted.
 	 * @throws ConfigurationException	If a configuration is not well formatted.
 	 */
-	BoxonCore withDefaultConfigurations() throws AnnotationException, ConfigurationException{
-		configurationParser.loadDefaultConfigurations();
+	public BoxonCoreBuilder withDefaultConfigurations() throws AnnotationException, ConfigurationException{
+		core.withDefaultConfigurations();
 
 		return this;
 	}
@@ -251,23 +241,35 @@ public final class BoxonCore{
 	 * @throws AnnotationException	If an annotation is not well formatted.
 	 * @throws ConfigurationException	If a configuration is not well formatted.
 	 */
-	BoxonCore withConfigurations(final Class<?>... basePackageClasses) throws AnnotationException, ConfigurationException{
-		configurationParser.loadConfigurations(basePackageClasses);
+	public BoxonCoreBuilder withConfigurations(final Class<?>... basePackageClasses) throws AnnotationException, ConfigurationException{
+		core.withConfigurations(basePackageClasses);
 
 		return this;
 	}
 
 
-	Evaluator getEvaluator(){
-		return evaluator;
-	}
+	public BoxonCore create(){
+		if(eventListener != null)
+			core.withEventListener(eventListener);
 
-	TemplateParser getTemplateParser(){
-		return templateParser;
-	}
+		//TODO execute all the methods
+//		public BoxonCoreBuilder addToContext(final String key, final Object value);
+//		public BoxonCoreBuilder withContext(final Map<String, Object> context);
+//		public BoxonCoreBuilder withContextFunction(final Method method);
+//		public BoxonCoreBuilder withContextFunction(final Class<?> cls, final String methodName, final Class<?>... parameterTypes);
 
-	ConfigurationParser getConfigurationParser(){
-		return configurationParser;
+//		public BoxonCoreBuilder withDefaultCodecs();
+//		public BoxonCoreBuilder withCodecs(final Class<?>... basePackageClasses);
+//		public BoxonCoreBuilder withCodecs(final CodecInterface<?>... codecs);
+
+//		public BoxonCoreBuilder withDefaultTemplates();
+//		public BoxonCoreBuilder withTemplates(final Class<?>... basePackageClasses);
+//		public BoxonCoreBuilder withTemplate(final Class<?> templateClass);
+
+//		public BoxonCoreBuilder withDefaultConfigurations();
+//		public BoxonCoreBuilder withConfigurations(final Class<?>... basePackageClasses);
+
+		return core;
 	}
 
 }

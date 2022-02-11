@@ -36,6 +36,7 @@ import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
+import io.github.mtrevisan.boxon.core.BoxonCoreBuilder;
 import io.github.mtrevisan.boxon.core.ParseResponse;
 import io.github.mtrevisan.boxon.core.Parser;
 import io.github.mtrevisan.boxon.core.BoxonCore;
@@ -274,9 +275,10 @@ class CodecArrayTest{
 
 	@Test
 	void arrayOfDifferentObjects() throws AnnotationException, TemplateException{
-		BoxonCore core = BoxonCore.create()
+		BoxonCore core = BoxonCoreBuilder.builder()
 			.withCodecs(CodecChecksum.class, CodecCustomTest.VariableLengthByteArray.class)
-			.withTemplates(TestChoice4.class);
+			.withTemplates(TestChoice4.class)
+			.create();
 		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.toByteArray("7463340112340211223344010666");
@@ -298,9 +300,10 @@ class CodecArrayTest{
 
 	@Test
 	void arrayOfDifferentObjectsWithNoPrefix() throws AnnotationException, TemplateException{
-		BoxonCore core = BoxonCore.create()
+		BoxonCore core = BoxonCoreBuilder.builder()
 			.withDefaultCodecs()
-			.withTemplates(TestChoice5.class);
+			.withTemplates(TestChoice5.class)
+			.create();
 		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.toByteArray("746335011234");

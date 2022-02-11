@@ -47,9 +47,10 @@ class ConfiguratorTest{
 	void getConfigurations() throws AnnotationException, ConfigurationException, CodecException{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
-		BoxonCore core = BoxonCore.create()
+		BoxonCore core = BoxonCoreBuilder.builder()
 			.withDefaultCodecs()
-			.withConfigurations(REGConfigurationASCII.class);
+			.withConfigurations(REGConfigurationASCII.class)
+			.create();
 		Configurator configurator = Configurator.create(core);
 
 		List<Map<String, Object>> configurations = configurator.getConfigurations();
@@ -71,9 +72,10 @@ class ConfiguratorTest{
 	void getProtocolVersionBoundaries() throws AnnotationException, ConfigurationException{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
-		BoxonCore core = BoxonCore.create()
+		BoxonCore core = BoxonCoreBuilder.builder()
 			.withDefaultCodecs()
-			.withConfigurations(REGConfigurationASCII.class);
+			.withConfigurations(REGConfigurationASCII.class)
+			.create();
 		Configurator configurator = Configurator.create(core);
 
 		List<String> protocolVersionBoundaries = configurator.getProtocolVersionBoundaries();
@@ -87,9 +89,10 @@ class ConfiguratorTest{
 	void getConfigurationsByProtocol() throws AnnotationException, ConfigurationException, CodecException{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
-		BoxonCore core = BoxonCore.create()
+		BoxonCore core = BoxonCoreBuilder.builder()
 			.withDefaultCodecs()
-			.withConfigurations(REGConfigurationASCII.class);
+			.withConfigurations(REGConfigurationASCII.class)
+			.create();
 		Configurator configurator = Configurator.create(core);
 
 		List<Map<String, Object>> configurations = configurator.getConfigurations("1.19");
@@ -108,9 +111,10 @@ class ConfiguratorTest{
 	void composeSingleConfigurationMessage() throws NoSuchMethodException, AnnotationException, TemplateException, ConfigurationException{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
-		BoxonCore core = BoxonCore.create()
+		BoxonCore core = BoxonCoreBuilder.builder()
 			.withDefaultCodecs()
-			.withConfigurations(REGConfigurationASCII.class);
+			.withConfigurations(REGConfigurationASCII.class)
+			.create();
 		Configurator configurator = Configurator.create(core);
 
 		//data:

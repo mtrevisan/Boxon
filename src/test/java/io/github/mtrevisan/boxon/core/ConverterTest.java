@@ -90,9 +90,10 @@ class ConverterTest{
 
 	@Test
 	void wrongInputOnConverter() throws AnnotationException, TemplateException{
-		BoxonCore core = BoxonCore.create()
+		BoxonCore core = BoxonCoreBuilder.builder()
 			.withDefaultCodecs()
-			.withTemplates(TestConverter1.class);
+			.withTemplates(TestConverter1.class)
+			.create();
 		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.toByteArray("77633101");
@@ -110,9 +111,10 @@ class ConverterTest{
 
 	@Test
 	void wrongOutputFromConverter() throws AnnotationException, TemplateException{
-		BoxonCore core = BoxonCore.create()
+		BoxonCore core = BoxonCoreBuilder.builder()
 			.withDefaultCodecs()
-			.withTemplates(TestConverter2.class);
+			.withTemplates(TestConverter2.class)
+			.create();
 		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.toByteArray("77633201");
@@ -130,9 +132,10 @@ class ConverterTest{
 
 	@Test
 	void allowedOutputFromConverter() throws AnnotationException, TemplateException{
-		BoxonCore core = BoxonCore.create()
+		BoxonCore core = BoxonCoreBuilder.builder()
 			.withDefaultCodecs()
-			.withTemplates(TestConverter3.class);
+			.withTemplates(TestConverter3.class)
+			.create();
 		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.toByteArray("77633301");

@@ -38,6 +38,7 @@ import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.codecs.managers.ReflectionHelper;
+import io.github.mtrevisan.boxon.core.BoxonCoreBuilder;
 import io.github.mtrevisan.boxon.core.ParseResponse;
 import io.github.mtrevisan.boxon.core.Parser;
 import io.github.mtrevisan.boxon.core.BoxonCore;
@@ -223,9 +224,10 @@ class CodecObjectTest{
 
 	@Test
 	void choice1() throws AnnotationException, TemplateException{
-		BoxonCore core = BoxonCore.create()
+		BoxonCore core = BoxonCoreBuilder.builder()
 			.withDefaultCodecs()
-			.withTemplates(TestChoice1.class);
+			.withTemplates(TestChoice1.class)
+			.create();
 		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.toByteArray("746331011234");
@@ -254,9 +256,10 @@ class CodecObjectTest{
 
 	@Test
 	void choice2() throws AnnotationException, TemplateException{
-		BoxonCore core = BoxonCore.create()
+		BoxonCore core = BoxonCoreBuilder.builder()
 			.withDefaultCodecs()
-			.withTemplates(TestChoice2.class);
+			.withTemplates(TestChoice2.class)
+			.create();
 		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.toByteArray("7463320506001234");
@@ -285,9 +288,10 @@ class CodecObjectTest{
 
 	@Test
 	void choice3() throws AnnotationException, TemplateException{
-		BoxonCore core = BoxonCore.create()
+		BoxonCore core = BoxonCoreBuilder.builder()
 			.withDefaultCodecs()
-			.withTemplates(TestChoice3.class);
+			.withTemplates(TestChoice3.class)
+			.create();
 		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.toByteArray("74633361611234");

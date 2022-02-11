@@ -44,11 +44,12 @@ class DescriptorTest{
 	void description() throws AnnotationException, ConfigurationException, CodecException, TemplateException, NoSuchMethodException{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
-		BoxonCore core = BoxonCore.create()
+		BoxonCore core = BoxonCoreBuilder.builder()
 			.addToContext("deviceTypes", deviceTypes)
 			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
 			.withDefaultCodecs()
-			.withTemplate(ACKMessageHex.class);
+			.withTemplate(ACKMessageHex.class)
+			.create();
 		Descriptor descriptor = Descriptor.create(core);
 
 		List<Map<String, Object>> descriptions = descriptor.describeTemplates();
