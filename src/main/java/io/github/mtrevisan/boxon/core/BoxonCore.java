@@ -81,15 +81,12 @@ public final class BoxonCore{
 	 * Assign an event listener.
 	 *
 	 * @param eventListener	The event listener.
-	 * @return	The current instance.
 	 */
-	BoxonCore withEventListener(final EventListener eventListener){
+	void withEventListener(final EventListener eventListener){
 		loaderCodec.withEventListener(eventListener);
 
 		templateParser.withEventListener(eventListener);
 		configurationParser.withEventListener(eventListener);
-
-		return this;
 	}
 
 
@@ -98,88 +95,69 @@ public final class BoxonCore{
 	 *
 	 * @param key	The key used to reference the value.
 	 * @param value	The value.
-	 * @return	This instance, used for chaining.
 	 */
-	BoxonCore addToContext(final String key, final Object value){
+	void addToContext(final String key, final Object value){
 		evaluator.addToContext(key, value);
 
 		templateParser.addToBackupContext(key, value);
-
-		return this;
 	}
 
 	/**
 	 * Loads the context for the {@link Evaluator}.
 	 *
 	 * @param context	The context map.
-	 * @return	This instance, used for chaining.
 	 */
-	BoxonCore withContext(final Map<String, Object> context){
+	void withContext(final Map<String, Object> context){
 		Objects.requireNonNull(context, "Context cannot be null");
 
 		for(final Map.Entry<String, Object> entry : context.entrySet())
 			evaluator.addToContext(entry.getKey(), entry.getValue());
 
 		templateParser.addToBackupContext(context);
-
-		return this;
 	}
 
 	/**
 	 * Add a method to the context for the {@link Evaluator}.
 	 *
 	 * @param method	The method.
-	 * @return	This instance, used for chaining.
 	 */
-	BoxonCore withContextFunction(final Method method){
+	void withContextFunction(final Method method){
 		evaluator.addToContext(method);
 
 		templateParser.addToBackupContext(method);
-
-		return this;
 	}
 
 
 	/**
 	 * Loads all the default codecs that extends {@link CodecInterface}.
 	 * <p>This method SHOULD BE called from a method inside a class that lies on a parent of all the codecs.</p>
-	 *
-	 * @return	This instance, used for chaining.
 	 */
-	BoxonCore withDefaultCodecs(){
+	void withDefaultCodecs(){
 		loaderCodec.loadDefaultCodecs();
 
 		postProcessCodecs();
-
-		return this;
 	}
 
 	/**
 	 * Loads all the codecs that extends {@link CodecInterface}.
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load codecs.
-	 * @return	This instance, used for chaining.
 	 */
-	BoxonCore withCodecs(final Class<?>... basePackageClasses){
+	void withCodecs(final Class<?>... basePackageClasses){
 		loaderCodec.loadCodecs(basePackageClasses);
 
 		postProcessCodecs();
-
-		return this;
 	}
 
 	/**
 	 * Loads all the codecs that extends {@link CodecInterface}.
 	 *
 	 * @param codecs	The list of codecs to be loaded.
-	 * @return	This instance, used for chaining.
 	 */
-	BoxonCore withCodecs(final CodecInterface<?>... codecs){
+	void withCodecs(final CodecInterface<?>... codecs){
 		loaderCodec.addCodecs(codecs);
 
 		postProcessCodecs();
-
-		return this;
 	}
 
 	private void postProcessCodecs(){
@@ -191,70 +169,55 @@ public final class BoxonCore{
 	/**
 	 * Loads all the default protocol classes annotated with {@link MessageHeader}.
 	 *
-	 * @return	This instance, used for chaining.
 	 * @throws AnnotationException	If an annotation is not well formatted.
 	 * @throws TemplateException	If a template is not well formatted.
 	 */
-	BoxonCore withDefaultTemplates() throws AnnotationException, TemplateException{
+	void withDefaultTemplates() throws AnnotationException, TemplateException{
 		templateParser.withDefaultTemplates();
-
-		return this;
 	}
 
 	/**
 	 * Loads all the protocol classes annotated with {@link MessageHeader}.
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
-	 * @return	This instance, used for chaining.
 	 * @throws AnnotationException	If an annotation is not well formatted.
 	 * @throws TemplateException	If a template is not well formatted.
 	 */
-	BoxonCore withTemplates(final Class<?>... basePackageClasses) throws AnnotationException, TemplateException{
+	void withTemplates(final Class<?>... basePackageClasses) throws AnnotationException, TemplateException{
 		templateParser.withTemplates(basePackageClasses);
-
-		return this;
 	}
 
 	/**
 	 * Load the specified protocol class annotated with {@link MessageHeader}.
 	 *
 	 * @param templateClass	Template class.
-	 * @return	This instance, used for chaining.
 	 * @throws AnnotationException	If the annotation is not well formatted.
 	 * @throws TemplateException	If the template is not well formatted.
 	 */
-	BoxonCore withTemplate(final Class<?> templateClass) throws AnnotationException, TemplateException{
+	void withTemplate(final Class<?> templateClass) throws AnnotationException, TemplateException{
 		templateParser.withTemplate(templateClass);
-
-		return this;
 	}
 
 
 	/**
 	 * Loads all the protocol classes annotated with {@link ConfigurationHeader}.
 	 *
-	 * @return	This instance, used for chaining.
 	 * @throws AnnotationException	If an annotation is not well formatted.
 	 * @throws ConfigurationException	If a configuration is not well formatted.
 	 */
-	BoxonCore withDefaultConfigurations() throws AnnotationException, ConfigurationException{
+	void withDefaultConfigurations() throws AnnotationException, ConfigurationException{
 		configurationParser.loadDefaultConfigurations();
-
-		return this;
 	}
 
 	/**
 	 * Loads all the protocol classes annotated with {@link ConfigurationHeader}.
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
-	 * @return	This instance, used for chaining.
 	 * @throws AnnotationException	If an annotation is not well formatted.
 	 * @throws ConfigurationException	If a configuration is not well formatted.
 	 */
-	BoxonCore withConfigurations(final Class<?>... basePackageClasses) throws AnnotationException, ConfigurationException{
+	void withConfigurations(final Class<?>... basePackageClasses) throws AnnotationException, ConfigurationException{
 		configurationParser.loadConfigurations(basePackageClasses);
-
-		return this;
 	}
 
 

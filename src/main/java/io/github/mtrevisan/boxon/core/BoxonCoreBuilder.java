@@ -34,6 +34,7 @@ import io.github.mtrevisan.boxon.external.io.CodecInterface;
 import io.github.mtrevisan.boxon.external.logs.EventListener;
 
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Map;
 
 
@@ -43,8 +44,6 @@ import java.util.Map;
 public final class BoxonCoreBuilder{
 
 	private final BoxonCore core;
-
-	private EventListener eventListener;
 
 
 	/**
@@ -69,7 +68,7 @@ public final class BoxonCoreBuilder{
 	 * @return	The current instance.
 	 */
 	public BoxonCoreBuilder withEventListener(final EventListener eventListener){
-		this.eventListener = eventListener;
+		core.withEventListener(eventListener);
 
 		return this;
 	}
@@ -249,10 +248,12 @@ public final class BoxonCoreBuilder{
 
 
 	public BoxonCore create(){
-		if(eventListener != null)
-			core.withEventListener(eventListener);
+		//TODO execute in order:
+		Method method;
+		List<Object> arguments;
 
-		//TODO execute all the methods
+//		public BoxonCoreBuilder withEventListener(final EventListener eventListener);
+
 //		public BoxonCoreBuilder addToContext(final String key, final Object value);
 //		public BoxonCoreBuilder withContext(final Map<String, Object> context);
 //		public BoxonCoreBuilder withContextFunction(final Method method);
