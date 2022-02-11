@@ -57,7 +57,7 @@ class ParserTest{
 		BoxonCore core = BoxonCoreBuilder.builder()
 //			.withEventListener(EventLogger.getInstance())
 			.withDefaultCodecs()
-			.withTemplates(ACKMessageHex.class)
+			.withTemplate(ACKMessageHex.class)
 			.withContext(context)
 			.withContextFunction(ParserTest.class, "headerSize")
 			.withDefaultConfigurations()
