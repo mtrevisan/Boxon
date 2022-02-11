@@ -398,12 +398,5 @@
 			<version>${junit.junit-jupiter-engine.version}</version>
 			<scope>test</scope>
 		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/com.googlecode.thread-weaver/threadweaver -->
-		<dependency>
-			<groupId>com.googlecode.thread-weaver</groupId>
-			<artifactId>threadweaver</artifactId>
-			<version>0.2</version>
-		</dependency>
 	</dependencies>
 </project>

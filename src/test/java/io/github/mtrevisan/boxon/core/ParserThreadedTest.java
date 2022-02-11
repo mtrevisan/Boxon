@@ -24,70 +24,54 @@
  */
 package io.github.mtrevisan.boxon.core;
 
-import com.google.testing.threadtester.AnnotatedTestRunner;
-import com.google.testing.threadtester.ThreadedAfter;
-import com.google.testing.threadtester.ThreadedBefore;
-import com.google.testing.threadtester.ThreadedMain;
-import com.google.testing.threadtester.ThreadedSecondary;
 import io.github.mtrevisan.boxon.codecs.queclink.DeviceTypes;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 
+@Tag("parser-group")
 @SuppressWarnings("ALL")
 class ParserThreadedTest{
 
+	private static final byte[] PAYLOAD = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
+
 	private Parser parser;
-	private AtomicInteger errorCount = new AtomicInteger();;
 
 
-	@ThreadedBefore
-	public void before() throws NoSuchMethodException, TemplateException, ConfigurationException, AnnotationException{
+	private ParserThreadedTest() throws NoSuchMethodException, TemplateException, ConfigurationException, AnnotationException{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 		BoxonCore core = BoxonCoreBuilder.builder()
 			.withContext(context)
-			.withContextFunction(ParserThreadedTest.class.getDeclaredMethod("headerSize"))
+			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
 			.withDefaultCodecs()
 			.withDefaultTemplates()
 			.create();
 		parser = Parser.create(core);
 	}
 
-	@ThreadedMain
-	public void mainThread(){
-		byte[] payload = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
-		ParseResponse result = parser.parse(payload);
 
-		errorCount.addAndGet(result.getErrorCount());
-	}
+	@Test
+	void concurrency1(){
+		ParseResponse result = parser.parse(PAYLOAD);
 
-	@ThreadedSecondary
-	public void secondThread(){
-		byte[] payload = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
-		ParseResponse result = parser.parse(payload);
-
-		errorCount.addAndGet(result.getErrorCount());
+		Assertions.assertFalse(result.hasErrors());
 	}
 
 	@Test
-	public void testCounter(){
-		new AnnotatedTestRunner()
-			.runTests(this.getClass(), Parser.class);
-	}
+	void concurrency2() throws InterruptedException, NoSuchMethodException, TemplateException, ConfigurationException, AnnotationException{
+		ParseResponse result = parser.parse(PAYLOAD);
 
-	@ThreadedAfter
-	public void after(){
-		Assertions.assertEquals(0, errorCount.get());
+		Assertions.assertFalse(result.hasErrors());
 	}
 
 }
