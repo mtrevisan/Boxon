@@ -36,7 +36,7 @@ import io.github.mtrevisan.boxon.internal.JavaHelper;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
@@ -46,7 +46,7 @@ import java.util.Map;
  */
 public final class BoxonCoreBuilder{
 
-	private enum CoreMethods{
+	private enum CoreMethod{
 		EVENT_LISTENER,
 		CONTEXT,
 		CODEC,
@@ -55,14 +55,14 @@ public final class BoxonCoreBuilder{
 	}
 
 	@FunctionalInterface
-	interface RunnableThrowable{
+	private interface RunnableThrowable{
 		void execute() throws AnnotationException, TemplateException, ConfigurationException;
 	}
 
 
 	private final BoxonCore core;
 
-	private final Map<CoreMethods, List<RunnableThrowable>> calls = new HashMap<>(0);
+	private final Map<CoreMethod, List<RunnableThrowable>> calls = new EnumMap<>(CoreMethod.class);
 
 
 	/**
@@ -87,8 +87,7 @@ public final class BoxonCoreBuilder{
 	 * @return	The current instance.
 	 */
 	public BoxonCoreBuilder withEventListener(final EventListener eventListener){
-		calls.computeIfAbsent(CoreMethods.EVENT_LISTENER, k -> new ArrayList<>(1))
-			.add(() -> core.withEventListener(eventListener));
+		addMethod(CoreMethod.EVENT_LISTENER, () -> core.withEventListener(eventListener));
 
 		return this;
 	}
@@ -102,8 +101,7 @@ public final class BoxonCoreBuilder{
 	 * @return	This instance, used for chaining.
 	 */
 	public BoxonCoreBuilder addToContext(final String key, final Object value){
-		calls.computeIfAbsent(CoreMethods.CONTEXT, k -> new ArrayList<>(1))
-			.add(() -> core.addToContext(key, value));
+		addMethod(CoreMethod.CONTEXT, () -> core.addToContext(key, value));
 
 		return this;
 	}
@@ -115,8 +113,7 @@ public final class BoxonCoreBuilder{
 	 * @return	This instance, used for chaining.
 	 */
 	public BoxonCoreBuilder withContext(final Map<String, Object> context){
-		calls.computeIfAbsent(CoreMethods.CONTEXT, k -> new ArrayList<>(1))
-			.add(() -> core.withContext(context));
+		addMethod(CoreMethod.CONTEXT, () -> core.withContext(context));
 
 		return this;
 	}
@@ -141,8 +138,7 @@ public final class BoxonCoreBuilder{
 	 * @return	This instance, used for chaining.
 	 */
 	public BoxonCoreBuilder withContextFunction(final Method method){
-		calls.computeIfAbsent(CoreMethods.CONTEXT, k -> new ArrayList<>(1))
-			.add(() -> core.withContextFunction(method));
+		addMethod(CoreMethod.CONTEXT, () -> core.withContextFunction(method));
 
 		return this;
 	}
@@ -170,8 +166,7 @@ public final class BoxonCoreBuilder{
 	 * @return	This instance, used for chaining.
 	 */
 	public BoxonCoreBuilder withDefaultCodecs(){
-		calls.computeIfAbsent(CoreMethods.CODEC, k -> new ArrayList<>(1))
-			.add(() -> core.withDefaultCodecs());
+		addMethod(CoreMethod.CODEC, core::withDefaultCodecs);
 
 		return this;
 	}
@@ -183,8 +178,7 @@ public final class BoxonCoreBuilder{
 	 * @return	This instance, used for chaining.
 	 */
 	public BoxonCoreBuilder withCodecs(final Class<?>... basePackageClasses){
-		calls.computeIfAbsent(CoreMethods.CODEC, k -> new ArrayList<>(1))
-			.add(() -> core.withCodecs(basePackageClasses));
+		addMethod(CoreMethod.CODEC, () -> core.withCodecs(basePackageClasses));
 
 		return this;
 	}
@@ -196,8 +190,7 @@ public final class BoxonCoreBuilder{
 	 * @return	This instance, used for chaining.
 	 */
 	public BoxonCoreBuilder withCodecs(final CodecInterface<?>... codecs){
-		calls.computeIfAbsent(CoreMethods.CODEC, k -> new ArrayList<>(1))
-			.add(() -> core.withCodecs(codecs));
+		addMethod(CoreMethod.CODEC, () -> core.withCodecs(codecs));
 
 		return this;
 	}
@@ -209,8 +202,7 @@ public final class BoxonCoreBuilder{
 	 * @return	This instance, used for chaining.
 	 */
 	public BoxonCoreBuilder withDefaultTemplates(){
-		calls.computeIfAbsent(CoreMethods.TEMPLATE, k -> new ArrayList<>(1))
-			.add(() -> core.withDefaultTemplates());
+		addMethod(CoreMethod.TEMPLATE, core::withDefaultTemplates);
 
 		return this;
 	}
@@ -222,8 +214,7 @@ public final class BoxonCoreBuilder{
 	 * @return	This instance, used for chaining.
 	 */
 	public BoxonCoreBuilder withTemplates(final Class<?>... basePackageClasses){
-		calls.computeIfAbsent(CoreMethods.TEMPLATE, k -> new ArrayList<>(1))
-			.add(() -> core.withTemplates(basePackageClasses));
+		addMethod(CoreMethod.TEMPLATE, () -> core.withTemplates(basePackageClasses));
 
 		return this;
 	}
@@ -235,8 +226,7 @@ public final class BoxonCoreBuilder{
 	 * @return	This instance, used for chaining.
 	 */
 	public BoxonCoreBuilder withTemplate(final Class<?> templateClass){
-		calls.computeIfAbsent(CoreMethods.TEMPLATE, k -> new ArrayList<>(1))
-			.add(() -> core.withTemplate(templateClass));
+		addMethod(CoreMethod.TEMPLATE, () -> core.withTemplate(templateClass));
 
 		return this;
 	}
@@ -248,8 +238,7 @@ public final class BoxonCoreBuilder{
 	 * @return	This instance, used for chaining.
 	 */
 	public BoxonCoreBuilder withDefaultConfigurations(){
-		calls.computeIfAbsent(CoreMethods.CONFIGURATION, k -> new ArrayList<>(1))
-			.add(() -> core.withDefaultConfigurations());
+		addMethod(CoreMethod.CONFIGURATION, core::withDefaultConfigurations);
 
 		return this;
 	}
@@ -261,22 +250,27 @@ public final class BoxonCoreBuilder{
 	 * @return	This instance, used for chaining.
 	 */
 	public BoxonCoreBuilder withConfigurations(final Class<?>... basePackageClasses){
-		calls.computeIfAbsent(CoreMethods.CONFIGURATION, k -> new ArrayList<>(1))
-			.add(() -> core.withConfigurations(basePackageClasses));
+		addMethod(CoreMethod.CONFIGURATION, () -> core.withConfigurations(basePackageClasses));
 
 		return this;
 	}
 
+	private void addMethod(final CoreMethod coreMethod, final RunnableThrowable runnable){
+		calls.computeIfAbsent(coreMethod, k -> new ArrayList<>(1))
+			.add(runnable);
+	}
+
 
 	/**
+	 * Create the common core data.
 	 *
-	 * @return
+	 * @return	Core data used by {@link Parser}, {@link Descriptor}, {@link Composer}, and {@link Configurator}.
 	 * @throws AnnotationException   If an annotation is not well formatted.
 	 * @throws TemplateException   If a template is not well formatted.
 	 * @throws ConfigurationException   If a configuration is not well formatted.
 	 */
 	public BoxonCore create() throws AnnotationException, TemplateException, ConfigurationException{
-		for(final CoreMethods coreMethod : CoreMethods.values()){
+		for(final CoreMethod coreMethod : CoreMethod.values()){
 			final List<RunnableThrowable> executors = calls.get(coreMethod);
 			for(int i = 0; i < JavaHelper.lengthOrZero(executors); i ++){
 				final RunnableThrowable executor = executors.get(i);

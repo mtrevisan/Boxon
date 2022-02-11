@@ -43,14 +43,14 @@ import java.util.Objects;
 
 
 /**
- * Common data used by the {@link Parser}, {@link Descriptor}, {@link Composer}, and {@link Configurator} classes.
+ * Common data used by {@link Parser}, {@link Descriptor}, {@link Composer}, and {@link Configurator}.
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
 public final class BoxonCore{
 
 	private final LoaderCodec loaderCodec;
 
-	private final Evaluator evaluator = Evaluator.create();
+	private final Evaluator evaluator;
 
 	private final TemplateParser templateParser;
 	private final ConfigurationParser configurationParser;
@@ -64,13 +64,15 @@ public final class BoxonCore{
 	 *
 	 * @return	A basic empty parser core.
 	 */
-	public static BoxonCore create(){
+	static BoxonCore create(){
 		return new BoxonCore();
 	}
 
 
 	private BoxonCore(){
 		loaderCodec = LoaderCodec.create();
+
+		evaluator = Evaluator.create();
 
 		templateParser = TemplateParser.create(loaderCodec, evaluator);
 		configurationParser = ConfigurationParser.create(loaderCodec);
