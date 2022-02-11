@@ -42,7 +42,7 @@ import java.util.Map;
 
 
 /**
- * Builder for the common data used by the {@link Parser}, {@link Descriptor}, {@link Composer}, and {@link Configurator} classes.
+ * Builder for the common data used by the {@link Parser}, {@link Descriptor}, {@link Composer}, and {@link Configurator}.
  */
 public final class BoxonCoreBuilder{
 

@@ -321,12 +321,12 @@ private BigDecimal[][] crashData;
 ### BindBitSet
 
 #### parameters
-- `condition`: The SpEL expression that determines if this field has to be read.
-- `size`: the number of bits to read (can be a SpEL expression).
-- `bitOrder`: the bit order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
-- `validator`: the Class of a validator (applied BEFORE the converter).
-- `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable.
-- `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
+ - `condition`: The SpEL expression that determines if this field has to be read.
+ - `size`: the number of bits to read (can be a SpEL expression).
+ - `bitOrder`: the bit order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
+ - `validator`: the Class of a validator (applied BEFORE the converter).
+ - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable.
+ - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
 
 #### description
 Reads a java `BitSet`.
@@ -686,11 +686,12 @@ Example:
 ```java
 DeviceTypes deviceTypes = new DeviceTypes();
 deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
-ParserCore core = ParserCore.create()
+BoxonCore core = BoxonCoreBuilder.builder()
     .addToContext("deviceTypes", deviceTypes)
     .withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
     .withDefaultCodecs()
-    .withTemplate(ACKMessageHex.class);
+    .withTemplate(ACKMessageHex.class)
+   .create();
 Descriptor descriptor = Descriptor.create(core);
 
 List<Map<String, Object>> descriptions = descriptor.describeTemplates();
@@ -1237,8 +1238,6 @@ All the SpEL expressions are evaluated by `Evaluator.java`.
 
 All the annotated classes are conveniently loaded using the `Loader.java` as is done automatically in the `Parser.java`.
 
-Note that all codecs MUST BE loaded before the templates that use them, as they are used to verifying the annotations. 
-
 If you want to provide your own classes you can use the appropriate `with...` method of `Parser`.
 
 <br/>
@@ -1271,17 +1270,19 @@ All you have to care about, for a simple example on multi-message automatically-
 //optionally create a context
 Map<String, Object> context = ...
 //read all the codecs and annotated classes from where the parser resides and all of its children packages
-ParserCore core = ParserCore.create()
-   .withContext(context);
+BoxonCore core = BoxonCoreBuilder.builder()
+   .withContext(context)
+   .creat();
 //... or pass the parent package (see all the `with...` methods of Parser for more)
-ParserCore core = ParserCore.create()
+BoxonCore core = BoxonCoreBuilder.builder()
    .withContext(context)
    .withContextFunction(VersionHelper.class, "compareVersion", String.class, String.class)
    .withContextFunction(VersionHelper.class.getDeclaredMethod("compareVersion", new Class[]{String.class, String.class}))
    //scans the parent package and all of its children, searching and loading all the codecs found
    .withDefaultCodecs()
    //scans the parent package and all of its children, searching and loading all the templates found
-   .withDefaultTemplates();
+   .withDefaultTemplates()
+   .create();
 Parser parser = Parser.create(core);
 
 //parse the message
@@ -1304,8 +1305,9 @@ or, if you want to pass your templates by hand:
 //optionally create a context ('null' otherwise)
 Map<String, Object> context = ...
 Template<Message> template = Template.createFrom(Message.class);
-ParserCore core = ParserCore.create()
-   .withTemplates(template);
+BoxonCore core = BoxonCoreBuilder.builder()
+   .withTemplates(template)
+   .create();
 Parser parser = Parser.create(core);
 
 //parse the message
@@ -1354,7 +1356,8 @@ Pull requests are welcomed.
 ## Changelog
 
 <a name="changelog-2.2.0"></a>
-### version 2.2.0 - 20220131
+### version 2.2.0 - 20220211
+- Added `BoxonCoreBuilder` to facilitate the creation of `BoxonCore`: now it is no longer necessary to remember the order in which the methods should be called.
 - Added missing javadoc. Enhanced existing javadoc
 - Added `BindBitSet` binding for java `BitSet`.
 - Removed `Bits`.
