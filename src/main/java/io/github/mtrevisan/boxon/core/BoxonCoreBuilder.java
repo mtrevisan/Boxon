@@ -27,6 +27,9 @@ package io.github.mtrevisan.boxon.core;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.codecs.Evaluator;
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
+import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.io.CodecInterface;
 import io.github.mtrevisan.boxon.external.logs.EventListener;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
@@ -51,9 +54,15 @@ public final class BoxonCoreBuilder{
 		CONFIGURATION
 	}
 
+	@FunctionalInterface
+	interface RunnableThrowable{
+		void execute() throws AnnotationException, TemplateException, ConfigurationException;
+	}
+
+
 	private final BoxonCore core;
 
-	private final Map<CoreMethods, List<Runnable>> calls = new HashMap<>(0);
+	private final Map<CoreMethods, List<RunnableThrowable>> calls = new HashMap<>(0);
 
 
 	/**
@@ -259,11 +268,19 @@ public final class BoxonCoreBuilder{
 	}
 
 
-	public BoxonCore create(){
+	/**
+	 *
+	 * @return
+	 * @throws AnnotationException   If an annotation is not well formatted.
+	 * @throws TemplateException   If a template is not well formatted.
+	 * @throws ConfigurationException   If a configuration is not well formatted.
+	 */
+	public BoxonCore create() throws AnnotationException, TemplateException, ConfigurationException{
 		for(final CoreMethods coreMethod : CoreMethods.values()){
-			final List<Runnable> callbacks = calls.get(coreMethod);
-			for(int i = 0; i < JavaHelper.lengthOrZero(callbacks); i ++){
-				callbacks.get(i).run();
+			final List<RunnableThrowable> executors = calls.get(coreMethod);
+			for(int i = 0; i < JavaHelper.lengthOrZero(executors); i ++){
+				final RunnableThrowable executor = executors.get(i);
+				executor.execute();
 			}
 		}
 

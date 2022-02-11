@@ -44,7 +44,7 @@ import java.util.Map;
 class ConfiguratorTest{
 
 	@Test
-	void getConfigurations() throws AnnotationException, ConfigurationException, CodecException{
+	void getConfigurations() throws AnnotationException, ConfigurationException, CodecException, TemplateException{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
 		BoxonCore core = BoxonCoreBuilder.builder()
@@ -69,7 +69,7 @@ class ConfiguratorTest{
 	}
 
 	@Test
-	void getProtocolVersionBoundaries() throws AnnotationException, ConfigurationException{
+	void getProtocolVersionBoundaries() throws AnnotationException, ConfigurationException, TemplateException{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
 		BoxonCore core = BoxonCoreBuilder.builder()
@@ -86,7 +86,7 @@ class ConfiguratorTest{
 	}
 
 	@Test
-	void getConfigurationsByProtocol() throws AnnotationException, ConfigurationException, CodecException{
+	void getConfigurationsByProtocol() throws AnnotationException, ConfigurationException, CodecException, TemplateException{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
 		BoxonCore core = BoxonCoreBuilder.builder()

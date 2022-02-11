@@ -29,6 +29,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindByte;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.DecodeException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.internal.StringHelper;
@@ -89,7 +90,7 @@ class ConverterTest{
 	}
 
 	@Test
-	void wrongInputOnConverter() throws AnnotationException, TemplateException{
+	void wrongInputOnConverter() throws AnnotationException, TemplateException, ConfigurationException{
 		BoxonCore core = BoxonCoreBuilder.builder()
 			.withDefaultCodecs()
 			.withTemplates(TestConverter1.class)
@@ -110,7 +111,7 @@ class ConverterTest{
 	}
 
 	@Test
-	void wrongOutputFromConverter() throws AnnotationException, TemplateException{
+	void wrongOutputFromConverter() throws AnnotationException, TemplateException, ConfigurationException{
 		BoxonCore core = BoxonCoreBuilder.builder()
 			.withDefaultCodecs()
 			.withTemplates(TestConverter2.class)
@@ -131,7 +132,7 @@ class ConverterTest{
 	}
 
 	@Test
-	void allowedOutputFromConverter() throws AnnotationException, TemplateException{
+	void allowedOutputFromConverter() throws AnnotationException, TemplateException, ConfigurationException{
 		BoxonCore core = BoxonCoreBuilder.builder()
 			.withDefaultCodecs()
 			.withTemplates(TestConverter3.class)

@@ -83,7 +83,7 @@ class ParserTest{
 
 
 	@Test
-	void parseMultipleMessagesHex() throws NoSuchMethodException, AnnotationException, TemplateException{
+	void parseMultipleMessagesHex() throws NoSuchMethodException, AnnotationException, TemplateException, ConfigurationException{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
@@ -103,7 +103,7 @@ class ParserTest{
 	}
 
 	@Test
-	void parseMultipleMessagesASCII() throws AnnotationException, TemplateException{
+	void parseMultipleMessagesASCII() throws AnnotationException, TemplateException, ConfigurationException{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GV350M", (byte)0xCF);
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
@@ -122,7 +122,7 @@ class ParserTest{
 	}
 
 	@Test
-	void parseMultipleMessagesHexASCII() throws NoSuchMethodException, AnnotationException, TemplateException{
+	void parseMultipleMessagesHexASCII() throws NoSuchMethodException, AnnotationException, TemplateException, ConfigurationException{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
 		deviceTypes.add("QUECLINK_GV350M", (byte)0xCF);
@@ -145,7 +145,7 @@ class ParserTest{
 	}
 
 	@Test
-	void parseMultipleMessagesASCIIHex() throws AnnotationException, TemplateException, NoSuchMethodException{
+	void parseMultipleMessagesASCIIHex() throws AnnotationException, TemplateException, NoSuchMethodException, ConfigurationException{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
 		deviceTypes.add("QUECLINK_GV350M", (byte)0xCF);

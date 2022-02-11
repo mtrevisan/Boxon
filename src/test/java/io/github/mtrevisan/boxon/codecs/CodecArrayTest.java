@@ -41,6 +41,7 @@ import io.github.mtrevisan.boxon.core.ParseResponse;
 import io.github.mtrevisan.boxon.core.Parser;
 import io.github.mtrevisan.boxon.core.BoxonCore;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.io.BitReader;
@@ -274,7 +275,7 @@ class CodecArrayTest{
 	}
 
 	@Test
-	void arrayOfDifferentObjects() throws AnnotationException, TemplateException{
+	void arrayOfDifferentObjects() throws AnnotationException, TemplateException, ConfigurationException{
 		BoxonCore core = BoxonCoreBuilder.builder()
 			.withCodecs(CodecChecksum.class, CodecCustomTest.VariableLengthByteArray.class)
 			.withTemplates(TestChoice4.class)
@@ -299,7 +300,7 @@ class CodecArrayTest{
 	}
 
 	@Test
-	void arrayOfDifferentObjectsWithNoPrefix() throws AnnotationException, TemplateException{
+	void arrayOfDifferentObjectsWithNoPrefix() throws AnnotationException, TemplateException, ConfigurationException{
 		BoxonCore core = BoxonCoreBuilder.builder()
 			.withDefaultCodecs()
 			.withTemplates(TestChoice5.class)
