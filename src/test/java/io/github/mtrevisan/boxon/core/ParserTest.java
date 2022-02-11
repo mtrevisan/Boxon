@@ -76,7 +76,6 @@ class ParserTest{
 		System.out.println(watch.toStringMicros(20_000));
 	}
 
-
 	private static int headerSize(){
 		return 4;
 	}
