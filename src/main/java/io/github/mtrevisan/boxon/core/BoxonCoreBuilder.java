@@ -87,7 +87,7 @@ public final class BoxonCoreBuilder{
 	 * @return	The current instance.
 	 */
 	public BoxonCoreBuilder withEventListener(final EventListener eventListener){
-		addMethod(ConfigurationStep.EVENT_LISTENER, () -> core.withEventListener(eventListener));
+		addMethod(ConfigurationStep.EVENT_LISTENER, () -> core.setEventListener(eventListener));
 
 		return this;
 	}
@@ -113,7 +113,7 @@ public final class BoxonCoreBuilder{
 	 * @return	This instance, used for chaining.
 	 */
 	public BoxonCoreBuilder withContext(final Map<String, Object> context){
-		addMethod(ConfigurationStep.CONTEXT, () -> core.withContext(context));
+		addMethod(ConfigurationStep.CONTEXT, () -> core.addContext(context));
 
 		return this;
 	}
@@ -153,7 +153,7 @@ public final class BoxonCoreBuilder{
 	 * @return	This instance, used for chaining.
 	 */
 	public BoxonCoreBuilder withContextFunction(final Method method){
-		addMethod(ConfigurationStep.CONTEXT, () -> core.withContextFunction(method));
+		addMethod(ConfigurationStep.CONTEXT, () -> core.addContextFunction(method));
 
 		return this;
 	}
@@ -166,7 +166,7 @@ public final class BoxonCoreBuilder{
 	 * @return	This instance, used for chaining.
 	 */
 	public BoxonCoreBuilder withDefaultCodecs(){
-		addMethod(ConfigurationStep.CODEC, core::withDefaultCodecs);
+		addMethod(ConfigurationStep.CODEC, core::useDefaultCodecs);
 
 		return this;
 	}
@@ -178,7 +178,7 @@ public final class BoxonCoreBuilder{
 	 * @return	This instance, used for chaining.
 	 */
 	public BoxonCoreBuilder withCodecs(final Class<?>... basePackageClasses){
-		addMethod(ConfigurationStep.CODEC, () -> core.withCodecs(basePackageClasses));
+		addMethod(ConfigurationStep.CODEC, () -> core.addCodecs(basePackageClasses));
 
 		return this;
 	}
@@ -190,7 +190,7 @@ public final class BoxonCoreBuilder{
 	 * @return	This instance, used for chaining.
 	 */
 	public BoxonCoreBuilder withCodecs(final CodecInterface<?>... codecs){
-		addMethod(ConfigurationStep.CODEC, () -> core.withCodecs(codecs));
+		addMethod(ConfigurationStep.CODEC, () -> core.addCodecs(codecs));
 
 		return this;
 	}
@@ -202,7 +202,7 @@ public final class BoxonCoreBuilder{
 	 * @return	This instance, used for chaining.
 	 */
 	public BoxonCoreBuilder withDefaultTemplates(){
-		addMethod(ConfigurationStep.TEMPLATE, core::withDefaultTemplates);
+		addMethod(ConfigurationStep.TEMPLATE, core::useDefaultTemplates);
 
 		return this;
 	}
@@ -214,7 +214,7 @@ public final class BoxonCoreBuilder{
 	 * @return	This instance, used for chaining.
 	 */
 	public BoxonCoreBuilder withTemplates(final Class<?>... basePackageClasses){
-		addMethod(ConfigurationStep.TEMPLATE, () -> core.withTemplates(basePackageClasses));
+		addMethod(ConfigurationStep.TEMPLATE, () -> core.addTemplates(basePackageClasses));
 
 		return this;
 	}
@@ -226,7 +226,7 @@ public final class BoxonCoreBuilder{
 	 * @return	This instance, used for chaining.
 	 */
 	public BoxonCoreBuilder withTemplate(final Class<?> templateClass){
-		addMethod(ConfigurationStep.TEMPLATE, () -> core.withTemplate(templateClass));
+		addMethod(ConfigurationStep.TEMPLATE, () -> core.addTemplate(templateClass));
 
 		return this;
 	}
@@ -238,7 +238,7 @@ public final class BoxonCoreBuilder{
 	 * @return	This instance, used for chaining.
 	 */
 	public BoxonCoreBuilder withDefaultConfigurations(){
-		addMethod(ConfigurationStep.CONFIGURATION, core::withDefaultConfigurations);
+		addMethod(ConfigurationStep.CONFIGURATION, core::useDefaultConfigurations);
 
 		return this;
 	}
@@ -250,7 +250,7 @@ public final class BoxonCoreBuilder{
 	 * @return	This instance, used for chaining.
 	 */
 	public BoxonCoreBuilder withConfigurations(final Class<?>... basePackageClasses){
-		addMethod(ConfigurationStep.CONFIGURATION, () -> core.withConfigurations(basePackageClasses));
+		addMethod(ConfigurationStep.CONFIGURATION, () -> core.addConfigurations(basePackageClasses));
 
 		return this;
 	}

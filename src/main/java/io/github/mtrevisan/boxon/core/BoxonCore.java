@@ -84,7 +84,7 @@ public final class BoxonCore{
 	 *
 	 * @param eventListener	The event listener.
 	 */
-	void withEventListener(final EventListener eventListener){
+	void setEventListener(final EventListener eventListener){
 		loaderCodec.withEventListener(eventListener);
 
 		templateParser.withEventListener(eventListener);
@@ -109,7 +109,7 @@ public final class BoxonCore{
 	 *
 	 * @param context	The context map.
 	 */
-	void withContext(final Map<String, Object> context){
+	void addContext(final Map<String, Object> context){
 		Objects.requireNonNull(context, "Context cannot be null");
 
 		for(final Map.Entry<String, Object> entry : context.entrySet())
@@ -123,7 +123,7 @@ public final class BoxonCore{
 	 *
 	 * @param method	The method.
 	 */
-	void withContextFunction(final Method method){
+	void addContextFunction(final Method method){
 		evaluator.addToContext(method);
 
 		templateParser.addToBackupContext(method);
@@ -134,7 +134,7 @@ public final class BoxonCore{
 	 * Loads all the default codecs that extends {@link CodecInterface}.
 	 * <p>This method SHOULD BE called from a method inside a class that lies on a parent of all the codecs.</p>
 	 */
-	void withDefaultCodecs(){
+	void useDefaultCodecs(){
 		loaderCodec.loadDefaultCodecs();
 
 		postProcessCodecs();
@@ -145,7 +145,7 @@ public final class BoxonCore{
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load codecs.
 	 */
-	void withCodecs(final Class<?>... basePackageClasses){
+	void addCodecs(final Class<?>... basePackageClasses){
 		loaderCodec.loadCodecs(basePackageClasses);
 
 		postProcessCodecs();
@@ -156,7 +156,7 @@ public final class BoxonCore{
 	 *
 	 * @param codecs	The list of codecs to be loaded.
 	 */
-	void withCodecs(final CodecInterface<?>... codecs){
+	void addCodecs(final CodecInterface<?>... codecs){
 		loaderCodec.addCodecs(codecs);
 
 		postProcessCodecs();
@@ -174,7 +174,7 @@ public final class BoxonCore{
 	 * @throws AnnotationException	If an annotation is not well formatted.
 	 * @throws TemplateException	If a template is not well formatted.
 	 */
-	void withDefaultTemplates() throws AnnotationException, TemplateException{
+	void useDefaultTemplates() throws AnnotationException, TemplateException{
 		templateParser.withDefaultTemplates();
 	}
 
@@ -185,7 +185,7 @@ public final class BoxonCore{
 	 * @throws AnnotationException	If an annotation is not well formatted.
 	 * @throws TemplateException	If a template is not well formatted.
 	 */
-	void withTemplates(final Class<?>... basePackageClasses) throws AnnotationException, TemplateException{
+	void addTemplates(final Class<?>... basePackageClasses) throws AnnotationException, TemplateException{
 		templateParser.withTemplates(basePackageClasses);
 	}
 
@@ -196,7 +196,7 @@ public final class BoxonCore{
 	 * @throws AnnotationException	If the annotation is not well formatted.
 	 * @throws TemplateException	If the template is not well formatted.
 	 */
-	void withTemplate(final Class<?> templateClass) throws AnnotationException, TemplateException{
+	void addTemplate(final Class<?> templateClass) throws AnnotationException, TemplateException{
 		templateParser.withTemplate(templateClass);
 	}
 
@@ -207,7 +207,7 @@ public final class BoxonCore{
 	 * @throws AnnotationException	If an annotation is not well formatted.
 	 * @throws ConfigurationException	If a configuration is not well formatted.
 	 */
-	void withDefaultConfigurations() throws AnnotationException, ConfigurationException{
+	void useDefaultConfigurations() throws AnnotationException, ConfigurationException{
 		configurationParser.loadDefaultConfigurations();
 	}
 
@@ -218,7 +218,7 @@ public final class BoxonCore{
 	 * @throws AnnotationException	If an annotation is not well formatted.
 	 * @throws ConfigurationException	If a configuration is not well formatted.
 	 */
-	void withConfigurations(final Class<?>... basePackageClasses) throws AnnotationException, ConfigurationException{
+	void addConfigurations(final Class<?>... basePackageClasses) throws AnnotationException, ConfigurationException{
 		configurationParser.loadConfigurations(basePackageClasses);
 	}
 
