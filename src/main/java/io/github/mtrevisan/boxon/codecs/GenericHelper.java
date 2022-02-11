@@ -42,7 +42,7 @@ import java.util.Queue;
 /**
  * A collection of convenience methods for working with generics.
  */
-public final class GenericHelper{
+final class GenericHelper{
 
 	private static final ClassLoader CLASS_LOADER = GenericHelper.class.getClassLoader();
 	private static final String ARRAY_VARIABLE = "[]";
@@ -202,7 +202,7 @@ public final class GenericHelper{
 		return cls;
 	}
 
-	public static Class<?> addArrayToType(final Class<?> cls, final int arraysCount){
+	private static Class<?> addArrayToType(final Class<?> cls, final int arraysCount){
 		final int[] dimensions = new int[arraysCount];
 		Arrays.fill(dimensions, 1);
 		return Array.newInstance(cls, dimensions)
