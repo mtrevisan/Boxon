@@ -152,6 +152,17 @@ public final class BoxonCore{
 	}
 
 	/**
+	 * Loads the given codec that extends {@link CodecInterface}.
+	 *
+	 * @param codec	The codec to be loaded.
+	 */
+	void addCodec(final CodecInterface<?> codec){
+		loaderCodec.addCodec(codec);
+
+		postProcessCodecs();
+	}
+
+	/**
 	 * Loads all the codecs that extends {@link CodecInterface}.
 	 *
 	 * @param codecs	The list of codecs to be loaded.

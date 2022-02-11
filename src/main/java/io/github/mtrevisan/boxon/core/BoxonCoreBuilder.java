@@ -184,6 +184,18 @@ public final class BoxonCoreBuilder{
 	}
 
 	/**
+	 * Loads the given codec that extends {@link CodecInterface}.
+	 *
+	 * @param codec	The codec to be loaded.
+	 * @return	This instance, used for chaining.
+	 */
+	public BoxonCoreBuilder withCodec(final CodecInterface<?> codec){
+		addMethod(ConfigurationStep.CODEC, () -> core.addCodec(codec));
+
+		return withCodecs(codec);
+	}
+
+	/**
 	 * Loads all the codecs that extends {@link CodecInterface}.
 	 *
 	 * @param codecs	The list of codecs to be loaded.

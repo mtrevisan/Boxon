@@ -114,6 +114,23 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	}
 
 	/**
+	 * Loads the given codec that extends {@link CodecInterface}.
+	 * <p>NOTE: If the loader previously contains a codec for a given key, the old codec is replaced by the new one.</p>
+	 *
+	 * @param codec	The codec to be loaded.
+	 */
+	public void addCodec(final CodecInterface<?> codec){
+		Objects.requireNonNull(codec, "Codec cannot be null");
+
+		final Class<?>[] codecClasses = new Class<?>[]{codec.getClass()};
+		eventListener.loadingCodec(codecClasses);
+
+		addCodecInner(codec);
+
+		eventListener.loadedCodecs(1);
+	}
+
+	/**
 	 * Loads all the given codecs that extends {@link CodecInterface}.
 	 * <p>NOTE: If the loader previously contains a codec for a given key, the old codec is replaced by the new one.</p>
 	 *
