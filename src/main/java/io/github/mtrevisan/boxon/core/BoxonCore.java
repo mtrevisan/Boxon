@@ -130,7 +130,7 @@ public final class BoxonCore{
 	 * @throws NoSuchMethodException	If a matching method is not found.
 	 * @throws NullPointerException	If {@code methodName} is {@code null}.
 	 */
-	public BoxonCore withContextFunction(final Class<?> type, final String methodName) throws NoSuchMethodException, NullPointerException{
+	public BoxonCore withContextFunction(final Class<?> type, final String methodName) throws NoSuchMethodException{
 		return withContextFunction(type.getDeclaredMethod(methodName));
 	}
 
