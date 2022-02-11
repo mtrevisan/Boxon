@@ -177,7 +177,7 @@ public final class ReflectionHelper{
 
 
 	@SuppressWarnings("unchecked")
-	static <T> T invokeMethod(final Object obj, final Method method, final T defaultValue){
+	static <T> T invokeMethodOrDefault(final Object obj, final Method method, final T defaultValue){
 		T result = defaultValue;
 		try{
 			result = (method != null? (T)method.invoke(obj): defaultValue);
@@ -189,7 +189,7 @@ public final class ReflectionHelper{
 	static Method getAccessibleMethod(Class<?> cls, final String methodName, final Class<?> returnType, final Class<?>... parameterTypes){
 		Method method = null;
 		while(method == null && cls != null && cls != Object.class){
-			method = makeMethodAccessible(cls, methodName, returnType, parameterTypes);
+			method = getMethod(cls, methodName, returnType, parameterTypes);
 
 			//go up to parent class
 			cls = cls.getSuperclass();
@@ -197,7 +197,7 @@ public final class ReflectionHelper{
 		return method;
 	}
 
-	private static Method makeMethodAccessible(final Class<?> cls, final String methodName, final Class<?> returnType,
+	private static Method getMethod(final Class<?> cls, final String methodName, final Class<?> returnType,
 			final Class<?>... parameterTypes){
 		Method method = null;
 		try{

@@ -27,13 +27,14 @@ package io.github.mtrevisan.boxon.core;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.codecs.Evaluator;
-import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
-import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.external.io.CodecInterface;
 import io.github.mtrevisan.boxon.external.logs.EventListener;
+import io.github.mtrevisan.boxon.internal.JavaHelper;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -43,7 +44,61 @@ import java.util.Map;
  */
 public final class BoxonCoreBuilder{
 
+	private static Method METHOD_WITH_EVENT_LISTENER;
+	private static Method METHOD_ADD_TO_CONTEXT;
+	private static Method METHOD_WITH_CONTEXT;
+	private static Method METHOD_WITH_CONTEXT_FUNCTION;
+	private static Method METHOD_WITH_DEFAULT_CODECS;
+	private static Method METHOD_WITH_CODECS;
+	private static Method METHOD_WITH_CODECS_INTERFACE;
+	private static Method METHOD_WITH_DEFAULT_TEMPLATES;
+	private static Method METHOD_WITH_TEMPLATES;
+	private static Method METHOD_WITH_TEMPLATE;
+	private static Method METHOD_WITH_DEFAULT_CONFIGURATIONS;
+	private static Method METHOD_WITH_CONFIGURATIONS;
+	static{
+		try{
+			METHOD_WITH_EVENT_LISTENER = BoxonCore.class.getDeclaredMethod("withEventListener", EventListener.class);
+			METHOD_ADD_TO_CONTEXT = BoxonCore.class.getDeclaredMethod("addToContext", String.class, Object.class);
+			METHOD_WITH_CONTEXT = BoxonCore.class.getDeclaredMethod("withContext", Map.class);
+			METHOD_WITH_CONTEXT_FUNCTION = BoxonCore.class.getDeclaredMethod("withContextFunction", Method.class);
+			METHOD_WITH_DEFAULT_CODECS = BoxonCore.class.getDeclaredMethod("withDefaultCodecs");
+			METHOD_WITH_CODECS = BoxonCore.class.getDeclaredMethod("withCodecs", Class[].class);
+			METHOD_WITH_CODECS_INTERFACE = BoxonCore.class.getDeclaredMethod("withCodecs", CodecInterface[].class);
+			METHOD_WITH_DEFAULT_TEMPLATES = BoxonCore.class.getDeclaredMethod("withDefaultTemplates");
+			METHOD_WITH_TEMPLATES = BoxonCore.class.getDeclaredMethod("withTemplates", Class[].class);
+			METHOD_WITH_TEMPLATE = BoxonCore.class.getDeclaredMethod("withTemplate", Class.class);
+			METHOD_WITH_DEFAULT_CONFIGURATIONS = BoxonCore.class.getDeclaredMethod("withDefaultConfigurations");
+			METHOD_WITH_CONFIGURATIONS = BoxonCore.class.getDeclaredMethod("withConfigurations", Class[].class);
+		}
+		catch(final NoSuchMethodException ignored){}
+	}
+
+	private enum CoreMethods{
+		WITH_EVENT_LISTENER(METHOD_WITH_EVENT_LISTENER),
+		ADD_TO_CONTEXT(METHOD_ADD_TO_CONTEXT),
+		WITH_CONTEXT(METHOD_WITH_CONTEXT),
+		WITH_CONTEXT_FUNCTION(METHOD_WITH_CONTEXT_FUNCTION),
+		WITH_DEFAULT_CODECS(METHOD_WITH_DEFAULT_CODECS),
+		WITH_CODECS(METHOD_WITH_CODECS),
+		WITH_CODECS_INTERFACE(METHOD_WITH_CODECS_INTERFACE),
+		WITH_DEFAULT_TEMPLATES(METHOD_WITH_DEFAULT_TEMPLATES),
+		WITH_TEMPLATES(METHOD_WITH_TEMPLATES),
+		WITH_TEMPLATE(METHOD_WITH_TEMPLATE),
+		WITH_DEFAULT_CONFIGURATIONS(METHOD_WITH_DEFAULT_CONFIGURATIONS),
+		WITH_CONFIGURATIONS(METHOD_WITH_CONFIGURATIONS);
+
+
+		Method method;
+
+		CoreMethods(final Method method){
+			this.method = method;
+		}
+	}
+
 	private final BoxonCore core;
+
+	private final Map<Method, List<Object>> calls = new HashMap<>(0);
 
 
 	/**
@@ -68,7 +123,8 @@ public final class BoxonCoreBuilder{
 	 * @return	The current instance.
 	 */
 	public BoxonCoreBuilder withEventListener(final EventListener eventListener){
-		core.withEventListener(eventListener);
+		calls.computeIfAbsent(METHOD_WITH_EVENT_LISTENER, k -> new ArrayList<>(1))
+			.add(eventListener);
 
 		return this;
 	}
@@ -82,7 +138,8 @@ public final class BoxonCoreBuilder{
 	 * @return	This instance, used for chaining.
 	 */
 	public BoxonCoreBuilder addToContext(final String key, final Object value){
-		core.addToContext(key, value);
+		calls.computeIfAbsent(METHOD_ADD_TO_CONTEXT, k -> new ArrayList<>(1))
+			.add(new Object[]{key, value});
 
 		return this;
 	}
@@ -94,7 +151,8 @@ public final class BoxonCoreBuilder{
 	 * @return	This instance, used for chaining.
 	 */
 	public BoxonCoreBuilder withContext(final Map<String, Object> context){
-		core.withContext(context);
+		calls.computeIfAbsent(METHOD_WITH_CONTEXT, k -> new ArrayList<>(1))
+			.add(context);
 
 		return this;
 	}
@@ -119,7 +177,8 @@ public final class BoxonCoreBuilder{
 	 * @return	This instance, used for chaining.
 	 */
 	public BoxonCoreBuilder withContextFunction(final Method method){
-		core.withContextFunction(method);
+		calls.computeIfAbsent(METHOD_WITH_CONTEXT_FUNCTION, k -> new ArrayList<>(1))
+			.add(method);
 
 		return this;
 	}
@@ -147,7 +206,8 @@ public final class BoxonCoreBuilder{
 	 * @return	This instance, used for chaining.
 	 */
 	public BoxonCoreBuilder withDefaultCodecs(){
-		core.withDefaultCodecs();
+		calls.computeIfAbsent(METHOD_WITH_DEFAULT_CODECS, k -> new ArrayList<>(1))
+			.add(new Object[0]);
 
 		return this;
 	}
@@ -159,7 +219,8 @@ public final class BoxonCoreBuilder{
 	 * @return	This instance, used for chaining.
 	 */
 	public BoxonCoreBuilder withCodecs(final Class<?>... basePackageClasses){
-		core.withCodecs(basePackageClasses);
+		calls.computeIfAbsent(METHOD_WITH_CODECS, k -> new ArrayList<>(1))
+			.add(basePackageClasses);
 
 		return this;
 	}
@@ -171,7 +232,8 @@ public final class BoxonCoreBuilder{
 	 * @return	This instance, used for chaining.
 	 */
 	public BoxonCoreBuilder withCodecs(final CodecInterface<?>... codecs){
-		core.withCodecs(codecs);
+		calls.computeIfAbsent(METHOD_WITH_CODECS_INTERFACE, k -> new ArrayList<>(1))
+			.add(codecs);
 
 		return this;
 	}
@@ -181,11 +243,10 @@ public final class BoxonCoreBuilder{
 	 * Loads all the default protocol classes annotated with {@link MessageHeader}.
 	 *
 	 * @return	This instance, used for chaining.
-	 * @throws AnnotationException	If an annotation is not well formatted.
-	 * @throws TemplateException	If a template is not well formatted.
 	 */
-	public BoxonCoreBuilder withDefaultTemplates() throws AnnotationException, TemplateException{
-		core.withDefaultTemplates();
+	public BoxonCoreBuilder withDefaultTemplates(){
+		calls.computeIfAbsent(METHOD_WITH_DEFAULT_TEMPLATES, k -> new ArrayList<>(1))
+			.add(new Object[0]);
 
 		return this;
 	}
@@ -195,11 +256,10 @@ public final class BoxonCoreBuilder{
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
 	 * @return	This instance, used for chaining.
-	 * @throws AnnotationException	If an annotation is not well formatted.
-	 * @throws TemplateException	If a template is not well formatted.
 	 */
-	public BoxonCoreBuilder withTemplates(final Class<?>... basePackageClasses) throws AnnotationException, TemplateException{
-		core.withTemplates(basePackageClasses);
+	public BoxonCoreBuilder withTemplates(final Class<?>... basePackageClasses){
+		calls.computeIfAbsent(METHOD_WITH_TEMPLATES, k -> new ArrayList<>(1))
+			.add(basePackageClasses);
 
 		return this;
 	}
@@ -209,11 +269,10 @@ public final class BoxonCoreBuilder{
 	 *
 	 * @param templateClass	Template class.
 	 * @return	This instance, used for chaining.
-	 * @throws AnnotationException	If the annotation is not well formatted.
-	 * @throws TemplateException	If the template is not well formatted.
 	 */
-	public BoxonCoreBuilder withTemplate(final Class<?> templateClass) throws AnnotationException, TemplateException{
-		core.withTemplate(templateClass);
+	public BoxonCoreBuilder withTemplate(final Class<?> templateClass){
+		calls.computeIfAbsent(METHOD_WITH_TEMPLATE, k -> new ArrayList<>(1))
+			.add(templateClass);
 
 		return this;
 	}
@@ -223,11 +282,10 @@ public final class BoxonCoreBuilder{
 	 * Loads all the protocol classes annotated with {@link ConfigurationHeader}.
 	 *
 	 * @return	This instance, used for chaining.
-	 * @throws AnnotationException	If an annotation is not well formatted.
-	 * @throws ConfigurationException	If a configuration is not well formatted.
 	 */
-	public BoxonCoreBuilder withDefaultConfigurations() throws AnnotationException, ConfigurationException{
-		core.withDefaultConfigurations();
+	public BoxonCoreBuilder withDefaultConfigurations(){
+		calls.computeIfAbsent(METHOD_WITH_DEFAULT_CONFIGURATIONS, k -> new ArrayList<>(1))
+			.add(new Object[0]);
 
 		return this;
 	}
@@ -237,38 +295,25 @@ public final class BoxonCoreBuilder{
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
 	 * @return	This instance, used for chaining.
-	 * @throws AnnotationException	If an annotation is not well formatted.
-	 * @throws ConfigurationException	If a configuration is not well formatted.
 	 */
-	public BoxonCoreBuilder withConfigurations(final Class<?>... basePackageClasses) throws AnnotationException, ConfigurationException{
-		core.withConfigurations(basePackageClasses);
+	public BoxonCoreBuilder withConfigurations(final Class<?>... basePackageClasses){
+		calls.computeIfAbsent(METHOD_WITH_CONFIGURATIONS, k -> new ArrayList<>(1))
+			.add(basePackageClasses);
 
 		return this;
 	}
 
 
 	public BoxonCore create(){
-		//TODO execute in order:
-		Method method;
-		List<Object> arguments;
-
-//		public BoxonCoreBuilder withEventListener(final EventListener eventListener);
-
-//		public BoxonCoreBuilder addToContext(final String key, final Object value);
-//		public BoxonCoreBuilder withContext(final Map<String, Object> context);
-//		public BoxonCoreBuilder withContextFunction(final Method method);
-//		public BoxonCoreBuilder withContextFunction(final Class<?> cls, final String methodName, final Class<?>... parameterTypes);
-
-//		public BoxonCoreBuilder withDefaultCodecs();
-//		public BoxonCoreBuilder withCodecs(final Class<?>... basePackageClasses);
-//		public BoxonCoreBuilder withCodecs(final CodecInterface<?>... codecs);
-
-//		public BoxonCoreBuilder withDefaultTemplates();
-//		public BoxonCoreBuilder withTemplates(final Class<?>... basePackageClasses);
-//		public BoxonCoreBuilder withTemplate(final Class<?> templateClass);
-
-//		public BoxonCoreBuilder withDefaultConfigurations();
-//		public BoxonCoreBuilder withConfigurations(final Class<?>... basePackageClasses);
+		try{
+			for(final CoreMethods coreMethod : CoreMethods.values()){
+				final Method method = coreMethod.method;
+				List<Object> callbacks = calls.get(method);
+				for(int i = 0; i < JavaHelper.lengthOrZero(callbacks); i++)
+					method.invoke(core, callbacks.get(i));
+			}
+		}
+		catch(final IllegalAccessException | InvocationTargetException ignored){}
 
 		return core;
 	}
