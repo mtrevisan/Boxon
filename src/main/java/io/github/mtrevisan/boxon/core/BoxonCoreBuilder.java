@@ -141,7 +141,7 @@ public final class BoxonCoreBuilder{
 	 * @throws NoSuchMethodException	If a matching method is not found.
 	 */
 	public BoxonCoreBuilder withContextFunction(final Class<?> type, final String methodName, final Class<?>... parameterTypes)
-		throws NoSuchMethodException{
+			throws NoSuchMethodException{
 		final Method method = type.getDeclaredMethod(methodName, parameterTypes);
 		return withContextFunction(method);
 	}
