@@ -49,7 +49,7 @@ class ConfiguratorTest{
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
 		BoxonCore core = BoxonCoreBuilder.builder()
 			.withDefaultCodecs()
-			.withConfigurations(REGConfigurationASCII.class)
+			.withConfiguration(REGConfigurationASCII.class)
 			.create();
 		Configurator configurator = Configurator.create(core);
 
