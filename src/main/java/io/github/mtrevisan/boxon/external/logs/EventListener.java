@@ -90,7 +90,7 @@ public class EventListener{
 	/**
 	 * Called when about to loading a template through codec classes.
 	 *
-	 * @param templateClass	List of template classes.
+	 * @param templateClass	Template class.
 	 */
 	public void loadingTemplate(final Class<?> templateClass){}
 
@@ -123,6 +123,18 @@ public class EventListener{
 	 * @param count	The number of loaded configurations.
 	 */
 	public void loadedConfigurations(final int count){}
+
+	/**
+	 * Called when about to loading a configuration through codec classes.
+	 *
+	 * @param configurationClass	Configuration class.
+	 */
+	public void loadingConfiguration(final Class<?> configurationClass){}
+
+	/**
+	 * Called when a configuration was loaded.
+	 */
+	public void loadedConfiguration(){}
 
 	/**
 	 * Called when a configuration cannot be loaded.

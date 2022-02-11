@@ -255,6 +255,18 @@ public final class BoxonCoreBuilder{
 		return this;
 	}
 
+	/**
+	 * Load the specified protocol class annotated with {@link ConfigurationHeader}.
+	 *
+	 * @param configurationClass	Configuration class.
+	 */
+	public BoxonCoreBuilder withConfiguration(final Class<?> configurationClass){
+		addMethod(ConfigurationStep.CONFIGURATION, () -> core.addConfiguration(configurationClass));
+
+		return this;
+	}
+
+
 	private void addMethod(final ConfigurationStep configurationStep, final RunnableThrowable runnable){
 		calls.computeIfAbsent(configurationStep, k -> new ArrayList<>(1))
 			.add(runnable);

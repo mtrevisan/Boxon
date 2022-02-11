@@ -44,6 +44,7 @@ import io.github.mtrevisan.boxon.internal.JavaHelper;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -120,6 +121,23 @@ final class LoaderConfiguration{
 
 		eventListener.loadedConfigurations(configurations.size());
 	}
+
+	/**
+	 * Loads the specified configuration class annotated with {@link ConfigurationHeader}.
+	 *
+	 * @param configurationClass	Configuration class.
+	 * @throws AnnotationException	If a configuration annotation is invalid, or no annotation was found.
+	 * @throws ConfigurationException   If a configuration is not well formatted.
+	 */
+	void loadConfiguration(final Class<?> configurationClass) throws AnnotationException, ConfigurationException{
+		eventListener.loadingConfiguration(configurationClass);
+
+		final Map<String, ConfigurationMessage<?>> configurations = extractConfigurations(Collections.singleton(configurationClass));
+		addConfigurationsInner(configurations);
+
+		eventListener.loadedConfiguration();
+	}
+
 
 	private Map<String, ConfigurationMessage<?>> extractConfigurations(final Collection<Class<?>> annotatedClasses)
 			throws AnnotationException, ConfigurationException{

@@ -110,6 +110,7 @@ final class TemplateParserCore{
 		loaderTemplate.loadTemplate(templateClass);
 	}
 
+
 	/**
 	 * Constructs a new {@link Template}.
 	 *

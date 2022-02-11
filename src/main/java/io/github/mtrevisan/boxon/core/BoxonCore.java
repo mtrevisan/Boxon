@@ -222,6 +222,17 @@ public final class BoxonCore{
 		configurationParser.loadConfigurations(basePackageClasses);
 	}
 
+	/**
+	 * Load the specified protocol class annotated with {@link ConfigurationHeader}.
+	 *
+	 * @param configurationClass	Configuration class.
+	 * @throws AnnotationException	If the annotation is not well formatted.
+	 * @throws ConfigurationException	If a configuration is not well formatted.
+	 */
+	void addConfiguration(final Class<?> configurationClass) throws AnnotationException, ConfigurationException{
+		configurationParser.withConfiguration(configurationClass);
+	}
+
 
 	Evaluator getEvaluator(){
 		return evaluator;

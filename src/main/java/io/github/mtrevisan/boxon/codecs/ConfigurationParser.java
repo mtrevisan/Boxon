@@ -109,6 +109,17 @@ public final class ConfigurationParser{
 	}
 
 	/**
+	 * Loads the specified configuration class annotated with {@link ConfigurationHeader}.
+	 *
+	 * @param configurationClass	Configuration class.
+	 * @throws AnnotationException	If a configuration annotation is invalid, or no annotation was found.
+	 * @throws ConfigurationException	If a configuration is not well formatted.
+	 */
+	public void withConfiguration(final Class<?> configurationClass) throws AnnotationException, ConfigurationException{
+		loaderConfiguration.loadConfiguration(configurationClass);
+	}
+
+	/**
 	 * Get a list of configuration messages.
 	 *
 	 * @return	The list of configuration messages.
