@@ -230,7 +230,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 		if(fieldBinding != null){
 			validateValue(fieldBinding, dataKey, dataValue, field.getType());
 
-			if(String.class.isInstance(dataValue))
+			if(dataValue instanceof String)
 				dataValue = ParserDataType.getValue(field.getType(), (String)dataValue);
 		}
 		return dataValue;

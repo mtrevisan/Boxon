@@ -55,7 +55,7 @@ public final class ConfigurationHelper{
 			final Pattern formatPattern = Pattern.compile(pattern);
 
 			//value compatible with data type and pattern
-			if(!String.class.isInstance(dataValue) || !formatPattern.matcher((CharSequence)dataValue).matches())
+			if(!(dataValue instanceof String) || !formatPattern.matcher((CharSequence)dataValue).matches())
 				throw EncodeException.create("Data value not compatible with `pattern` for data key {}; found {}, expected {}",
 					dataKey, dataValue, pattern);
 		}
@@ -66,7 +66,7 @@ public final class ConfigurationHelper{
 			throws EncodeException, CodecException{
 		if(!minValue.isEmpty()){
 			final Object min = ParserDataType.getValue(fieldType, minValue);
-			if(Number.class.isInstance(dataValue) && ((Number)dataValue).doubleValue() < ((Number)min).doubleValue())
+			if(dataValue instanceof Number && ((Number)dataValue).doubleValue() < ((Number)min).doubleValue())
 				throw EncodeException.create("Data value incompatible with minimum value for data key {}; found {}, expected greater than or equals to {}",
 					dataKey, dataValue, minValue.getClass().getSimpleName());
 		}
@@ -77,7 +77,7 @@ public final class ConfigurationHelper{
 			throws EncodeException, CodecException{
 		if(!maxValue.isEmpty()){
 			final Object max = ParserDataType.getValue(fieldType, maxValue);
-			if(Number.class.isInstance(dataValue) && ((Number)dataValue).doubleValue() > ((Number)max).doubleValue())
+			if(dataValue instanceof Number && ((Number)dataValue).doubleValue() > ((Number)max).doubleValue())
 				throw EncodeException.create("Data value incompatible with maximum value for data key {}; found {}, expected greater than or equals to {}",
 					dataKey, dataValue, maxValue.getClass().getSimpleName());
 		}
@@ -99,7 +99,7 @@ public final class ConfigurationHelper{
 	}
 
 	private static boolean isValidValue(final Object value){
-		return (value != null && (!CharSequence.class.isInstance(value) || !StringHelper.isBlank((CharSequence)value)));
+		return (value != null && (!(value instanceof CharSequence) || !StringHelper.isBlank((CharSequence)value)));
 	}
 
 	static Object convertValue(final String value, final Class<?> fieldType, final Class<? extends ConfigurationEnum> enumeration)

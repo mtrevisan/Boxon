@@ -44,7 +44,7 @@ final class CodecConfigurationSubField implements CodecInterface<CompositeSubFie
 	@Override
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object charset, final Object value)
 			throws ConfigurationException{
-		if(!String.class.isInstance(value))
+		if(!(value instanceof String))
 			throw ConfigurationException.create("Cannot handle this type of field: {}", value.getClass().getSimpleName());
 
 		writer.putText((String)value, (Charset)charset);

@@ -403,7 +403,7 @@ public enum AnnotationDescriptor{
 	 */
 	public static void putIfNotEmpty(final DescriberKey key, final Object value,
 			@SuppressWarnings("BoundedWildcard") final Map<String, Object> map){
-		if(value != null && (!String.class.isInstance(value) || !StringHelper.isBlank((CharSequence)value)))
+		if(value != null && (!(value instanceof String) || !StringHelper.isBlank((CharSequence)value)))
 			map.put(key.toString(), value);
 	}
 

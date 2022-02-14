@@ -188,7 +188,7 @@ final class CompositeManager implements ConfigurationManagerInterface{
 		//compose field value
 		final String composition = annotation.composition();
 		final CompositeSubField[] fields = annotation.value();
-		if(Map.class.isInstance(dataValue))
+		if(dataValue instanceof Map)
 			dataValue = replace(composition, (Map<String, Object>)dataValue, fields);
 		return dataValue;
 	}
