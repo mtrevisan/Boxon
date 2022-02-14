@@ -1362,6 +1362,7 @@ Pull requests are welcomed.
 - Added `BindBitSet` binding for java `BitSet`.
 - Removed `Bits`.
 - Enhanced binding validation.
+- Fixed a concurrency bug on the validation of alternatives.
 
 
 <a name="changelog-2.1.2"></a>
