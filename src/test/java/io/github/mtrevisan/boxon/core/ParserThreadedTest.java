@@ -69,7 +69,7 @@ class ParserThreadedTest{
 		testMultithreading(
 			() -> parser.parse(PAYLOAD),
 			parseResponse -> errors.addAndGet(parseResponse.getErrorCount()),
-			100
+			10
 		);
 		Assertions.assertEquals(0, errors.get());
 	}
@@ -94,7 +94,7 @@ class ParserThreadedTest{
 				return parser.parse(PAYLOAD);
 			},
 			parseResponse -> errors.addAndGet(parseResponse.getErrorCount()),
-			100
+			10
 		);
 		Assertions.assertEquals(0, errors.get());
 	}
@@ -119,7 +119,7 @@ class ParserThreadedTest{
 				return parser.parse(PAYLOAD);
 			},
 			parseResponse -> errors.addAndGet(parseResponse.getErrorCount()),
-			100
+			10
 		);
 		Assertions.assertEquals(0, errors.get());
 	}
