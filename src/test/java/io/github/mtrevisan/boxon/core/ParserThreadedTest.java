@@ -30,14 +30,18 @@ import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 
-@Tag("parser-group")
 @SuppressWarnings("ALL")
 class ParserThreadedTest{
 
@@ -61,17 +65,17 @@ class ParserThreadedTest{
 
 
 	@Test
-	void concurrency1(){
-		ParseResponse result = parser.parse(PAYLOAD);
+	void concurrency() throws ExecutionException, InterruptedException{
+		int threads = 100;
+		ExecutorService service = Executors.newFixedThreadPool(threads);
+		Collection<Future<ParseResponse>> futures = new ArrayList<>(threads);
+		for(int t = 0; t < threads; t ++)
+			futures.add(service.submit(() -> parser.parse(PAYLOAD)));
 
-		Assertions.assertFalse(result.hasErrors());
-	}
-
-	@Test
-	void concurrency2() throws InterruptedException, NoSuchMethodException, TemplateException, ConfigurationException, AnnotationException{
-		ParseResponse result = parser.parse(PAYLOAD);
-
-		Assertions.assertFalse(result.hasErrors());
+		int errors = 0;
+		for(Future<ParseResponse> f : futures)
+			errors += f.get().getErrorCount();
+		Assertions.assertEquals(0, errors);
 	}
 
 }
