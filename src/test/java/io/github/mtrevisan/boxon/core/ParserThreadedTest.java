@@ -138,11 +138,12 @@ class ParserThreadedTest{
 			for(int t = 0; t < threadCount; t ++)
 				futures[t] = service.submit(() -> {
 					latch.await();
-					if(running.get())
+
+					if(!running.compareAndSet(false, true))
 						overlaps.incrementAndGet();
 
-					running.set(true);
 					final T result = fun.call();
+
 					running.set(false);
 
 					return result;
