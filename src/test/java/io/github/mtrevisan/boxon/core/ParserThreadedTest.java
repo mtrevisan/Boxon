@@ -40,6 +40,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 @SuppressWarnings("ALL")
@@ -68,9 +70,24 @@ class ParserThreadedTest{
 	void concurrency() throws ExecutionException, InterruptedException{
 		int threads = 100;
 		ExecutorService service = Executors.newFixedThreadPool(threads);
+
+		AtomicBoolean running = new AtomicBoolean();
+		AtomicInteger overlaps = new AtomicInteger();
 		Collection<Future<ParseResponse>> futures = new ArrayList<>(threads);
-		for(int t = 0; t < threads; t ++)
-			futures.add(service.submit(() -> parser.parse(PAYLOAD)));
+		//assure overlaps happens
+		while(overlaps.get() == 0){
+			futures.clear();
+			for(int t = 0; t < threads; t ++)
+				futures.add(service.submit(() -> {
+					if(running.get())
+						overlaps.incrementAndGet();
+
+					running.set(true);
+					ParseResponse result = parser.parse(PAYLOAD);
+					running.set(false);
+					return result;
+				}));
+		}
 
 		int errors = 0;
 		for(Future<ParseResponse> f : futures)
