@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -71,6 +72,7 @@ class ParserThreadedTest{
 		int threads = 100;
 		ExecutorService service = Executors.newFixedThreadPool(threads);
 
+		CountDownLatch latch = new CountDownLatch(1);
 		AtomicBoolean running = new AtomicBoolean();
 		AtomicInteger overlaps = new AtomicInteger();
 		Collection<Future<ParseResponse>> futures = new ArrayList<>(threads);
@@ -79,6 +81,7 @@ class ParserThreadedTest{
 			futures.clear();
 			for(int t = 0; t < threads; t ++)
 				futures.add(service.submit(() -> {
+					latch.await();
 					if(running.get())
 						overlaps.incrementAndGet();
 
@@ -87,12 +90,14 @@ class ParserThreadedTest{
 					running.set(false);
 					return result;
 				}));
-		}
 
-		int errors = 0;
-		for(Future<ParseResponse> f : futures)
-			errors += f.get().getErrorCount();
-		Assertions.assertEquals(0, errors);
+			latch.countDown();
+
+			int errors = 0;
+			for(Future<ParseResponse> f : futures)
+				errors += f.get().getErrorCount();
+			Assertions.assertEquals(0, errors);
+		}
 	}
 
 }
