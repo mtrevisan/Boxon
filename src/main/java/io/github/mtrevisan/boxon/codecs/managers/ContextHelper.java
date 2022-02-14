@@ -24,7 +24,6 @@
  */
 package io.github.mtrevisan.boxon.codecs.managers;
 
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
@@ -38,8 +37,7 @@ public final class ContextHelper{
 	/** The name of the prefix for the alternative (used for referencing variables from SpEL). */
 	public static final String CONTEXT_CHOICE_PREFIX = "prefix";
 
-	private static final Matcher CONTEXT_PREFIXED_CHOICE_PREFIX = Pattern.compile("#" + CONTEXT_CHOICE_PREFIX + "[^a-zA-Z]")
-		.matcher("");
+	private static final Pattern CONTEXT_PREFIXED_CHOICE_PREFIX = Pattern.compile("#" + CONTEXT_CHOICE_PREFIX + "[^a-zA-Z]");
 
 
 	private ContextHelper(){}
@@ -52,7 +50,7 @@ public final class ContextHelper{
 	 * @return	Whether the prefix parameter is contained.
 	 */
 	public static boolean containsPrefixReference(final CharSequence condition){
-		return CONTEXT_PREFIXED_CHOICE_PREFIX.reset(condition)
+		return CONTEXT_PREFIXED_CHOICE_PREFIX.matcher(condition)
 			.find();
 	}
 
