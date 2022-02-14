@@ -50,10 +50,10 @@ class ParserThreadedTest{
 
 	private static final byte[] PAYLOAD = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 
-	private Parser parser;
 
-
-	private ParserThreadedTest() throws NoSuchMethodException, TemplateException, ConfigurationException, AnnotationException{
+	@Test
+	void concurrency() throws NoSuchMethodException, TemplateException, ConfigurationException, AnnotationException, ExecutionException,
+			InterruptedException{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
@@ -63,12 +63,8 @@ class ParserThreadedTest{
 			.withDefaultCodecs()
 			.withDefaultTemplates()
 			.create();
-		parser = Parser.create(core);
-	}
+		Parser parser = Parser.create(core);
 
-
-	@Test
-	void concurrency() throws ExecutionException, InterruptedException{
 		int threads = 100;
 		ExecutorService service = Executors.newFixedThreadPool(threads);
 
