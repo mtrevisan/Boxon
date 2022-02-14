@@ -24,49 +24,45 @@
  */
 package io.github.mtrevisan.boxon.core;
 
+import io.github.mtrevisan.boxon.codecs.queclink.ACKMessageHex;
 import io.github.mtrevisan.boxon.codecs.queclink.DeviceTypes;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
-import io.github.mtrevisan.boxon.internal.StringHelper;
 import io.github.mtrevisan.boxon.utils.MultithreadingHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
 @SuppressWarnings("ALL")
-class ParserThreadedTest{
-
-	private static final byte[] PAYLOAD = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
-
+class DescriptorThreadedTest{
 
 	@Test
-	void concurrencySingleParserSingleCore() throws NoSuchMethodException, TemplateException, ConfigurationException, AnnotationException,
-			ExecutionException, InterruptedException{
+	void concurrencySingleParserSingleCore() throws AnnotationException, ConfigurationException, CodecException, TemplateException,
+			NoSuchMethodException, ExecutionException, InterruptedException{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
-		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 		BoxonCore core = BoxonCoreBuilder.builder()
-			.withContext(context)
+			.addToContext("deviceTypes", deviceTypes)
 			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
 			.withDefaultCodecs()
-			.withDefaultTemplates()
+			.withTemplate(ACKMessageHex.class)
 			.create();
-		Parser parser = Parser.create(core);
+		Descriptor descriptor = Descriptor.create(core);
 
-		AtomicInteger errors = new AtomicInteger();
+		int threadCount = 10;
+		AtomicInteger counter = new AtomicInteger();
 		MultithreadingHelper.testMultithreading(
-			() -> parser.parse(PAYLOAD),
-			parseResponse -> errors.addAndGet(parseResponse.getErrorCount()),
-			10
+			() -> descriptor.describeTemplates(),
+			descriptions -> counter.addAndGet(descriptions.size()),
+			threadCount
 		);
 
-		Assertions.assertEquals(0, errors.get());
+		Assertions.assertEquals(threadCount, counter.get());
 	}
 
 	@Test
@@ -74,25 +70,25 @@ class ParserThreadedTest{
 			ExecutionException, InterruptedException{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
-		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 		BoxonCore core = BoxonCoreBuilder.builder()
-			.withContext(context)
+			.addToContext("deviceTypes", deviceTypes)
 			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
 			.withDefaultCodecs()
-			.withDefaultTemplates()
+			.withTemplate(ACKMessageHex.class)
 			.create();
 
-		AtomicInteger errors = new AtomicInteger();
+		int threadCount = 10;
+		AtomicInteger counter = new AtomicInteger();
 		MultithreadingHelper.testMultithreading(
 			() -> {
-				Parser parser = Parser.create(core);
-				return parser.parse(PAYLOAD);
+				Descriptor descriptor = Descriptor.create(core);
+				return descriptor.describeTemplates();
 			},
-			parseResponse -> errors.addAndGet(parseResponse.getErrorCount()),
-			10
+			descriptions -> counter.addAndGet(descriptions.size()),
+			threadCount
 		);
 
-		Assertions.assertEquals(0, errors.get());
+		Assertions.assertEquals(threadCount, counter.get());
 	}
 
 	@Test
@@ -100,25 +96,25 @@ class ParserThreadedTest{
 			AnnotationException, ExecutionException, InterruptedException{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
-		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 
-		AtomicInteger errors = new AtomicInteger();
+		int threadCount = 10;
+		AtomicInteger counter = new AtomicInteger();
 		MultithreadingHelper.testMultithreading(
 			() -> {
 				BoxonCore core = BoxonCoreBuilder.builder()
-					.withContext(context)
+					.addToContext("deviceTypes", deviceTypes)
 					.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
 					.withDefaultCodecs()
-					.withDefaultTemplates()
+					.withTemplate(ACKMessageHex.class)
 					.create();
-				Parser parser = Parser.create(core);
-				return parser.parse(PAYLOAD);
+				Descriptor descriptor = Descriptor.create(core);
+				return descriptor.describeTemplates();
 			},
-			parseResponse -> errors.addAndGet(parseResponse.getErrorCount()),
-			10
+			descriptions -> counter.addAndGet(descriptions.size()),
+			threadCount
 		);
 
-		Assertions.assertEquals(0, errors.get());
+		Assertions.assertEquals(threadCount, counter.get());
 	}
 
 }

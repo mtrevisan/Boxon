@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core;
 
+import io.github.mtrevisan.boxon.codecs.queclink.ACKMessageHex;
 import io.github.mtrevisan.boxon.codecs.queclink.DeviceTypes;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
@@ -33,92 +34,96 @@ import io.github.mtrevisan.boxon.utils.MultithreadingHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicInteger;
 
 
 @SuppressWarnings("ALL")
-class ParserThreadedTest{
+class ComposerThreadedTest{
 
-	private static final byte[] PAYLOAD = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
+	private static final byte[] PAYLOAD = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 
 
 	@Test
-	void concurrencySingleParserSingleCore() throws NoSuchMethodException, TemplateException, ConfigurationException, AnnotationException,
+	void concurrencySingleParserSingleCore() throws NoSuchMethodException, AnnotationException, TemplateException, ConfigurationException,
 			ExecutionException, InterruptedException{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
-		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 		BoxonCore core = BoxonCoreBuilder.builder()
-			.withContext(context)
-			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
+			.addToContext("deviceTypes", deviceTypes)
+			.withContextFunction(ParserTest.class, "headerSize")
 			.withDefaultCodecs()
-			.withDefaultTemplates()
+			.withTemplates(ACKMessageHex.class)
+			.create();
+		Parser parser = Parser.create(core);
+		Composer composer = Composer.create(core);
+
+		//parse:
+		ParseResponse parseResult = parser.parse(PAYLOAD);
+
+		//compose:
+		int threadCount = 10;
+		MultithreadingHelper.testMultithreading(
+			() -> composer.composeMessage(parseResult.getParsedMessageAt(0)),
+			composeResult -> Assertions.assertArrayEquals(PAYLOAD, composeResult.getComposedMessage()),
+			threadCount
+		);
+	}
+
+	@Test
+	void concurrencyMultipleParserSingleCore() throws NoSuchMethodException, AnnotationException, TemplateException, ConfigurationException,
+			ExecutionException, InterruptedException{
+		DeviceTypes deviceTypes = new DeviceTypes();
+		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
+		BoxonCore core = BoxonCoreBuilder.builder()
+			.addToContext("deviceTypes", deviceTypes)
+			.withContextFunction(ParserTest.class, "headerSize")
+			.withDefaultCodecs()
+			.withTemplates(ACKMessageHex.class)
 			.create();
 		Parser parser = Parser.create(core);
 
-		AtomicInteger errors = new AtomicInteger();
-		MultithreadingHelper.testMultithreading(
-			() -> parser.parse(PAYLOAD),
-			parseResponse -> errors.addAndGet(parseResponse.getErrorCount()),
-			10
-		);
+		//parse:
+		ParseResponse parseResult = parser.parse(PAYLOAD);
 
-		Assertions.assertEquals(0, errors.get());
-	}
-
-	@Test
-	void concurrencyMultipleParserSingleCore() throws NoSuchMethodException, TemplateException, ConfigurationException, AnnotationException,
-			ExecutionException, InterruptedException{
-		DeviceTypes deviceTypes = new DeviceTypes();
-		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
-		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
-		BoxonCore core = BoxonCoreBuilder.builder()
-			.withContext(context)
-			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
-			.withDefaultCodecs()
-			.withDefaultTemplates()
-			.create();
-
-		AtomicInteger errors = new AtomicInteger();
+		//compose:
+		int threadCount = 10;
 		MultithreadingHelper.testMultithreading(
 			() -> {
-				Parser parser = Parser.create(core);
-				return parser.parse(PAYLOAD);
+				Composer composer = Composer.create(core);
+				return composer.composeMessage(parseResult.getParsedMessageAt(0));
 			},
-			parseResponse -> errors.addAndGet(parseResponse.getErrorCount()),
-			10
+			composeResult -> Assertions.assertArrayEquals(PAYLOAD, composeResult.getComposedMessage()),
+			threadCount
 		);
-
-		Assertions.assertEquals(0, errors.get());
 	}
 
 	@Test
-	void concurrencyMultipleParserMultipleCore() throws NoSuchMethodException, TemplateException, ConfigurationException,
-			AnnotationException, ExecutionException, InterruptedException{
+	void concurrencyMultipleParserMultipleCore() throws NoSuchMethodException, AnnotationException, TemplateException,
+			ConfigurationException, ExecutionException, InterruptedException{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
-		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 
-		AtomicInteger errors = new AtomicInteger();
+		//compose:
+		int threadCount = 10;
 		MultithreadingHelper.testMultithreading(
 			() -> {
 				BoxonCore core = BoxonCoreBuilder.builder()
-					.withContext(context)
-					.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
+					.addToContext("deviceTypes", deviceTypes)
+					.withContextFunction(ParserTest.class, "headerSize")
 					.withDefaultCodecs()
-					.withDefaultTemplates()
+					.withTemplates(ACKMessageHex.class)
 					.create();
 				Parser parser = Parser.create(core);
-				return parser.parse(PAYLOAD);
-			},
-			parseResponse -> errors.addAndGet(parseResponse.getErrorCount()),
-			10
-		);
 
-		Assertions.assertEquals(0, errors.get());
+				//parse:
+				ParseResponse parseResult = parser.parse(PAYLOAD);
+
+				Composer composer = Composer.create(core);
+				return composer.composeMessage(parseResult.getParsedMessageAt(0));
+			},
+			composeResult -> Assertions.assertArrayEquals(PAYLOAD, composeResult.getComposedMessage()),
+			threadCount
+		);
 	}
 
 }
