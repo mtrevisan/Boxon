@@ -52,8 +52,8 @@ class ParserThreadedTest{
 
 
 	@Test
-	void concurrency() throws NoSuchMethodException, TemplateException, ConfigurationException, AnnotationException, ExecutionException,
-			InterruptedException{
+	void concurrencySingleParserSingleCore() throws NoSuchMethodException, TemplateException, ConfigurationException, AnnotationException,
+			ExecutionException, InterruptedException{
 		DeviceTypes deviceTypes = new DeviceTypes();
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
@@ -82,6 +82,96 @@ class ParserThreadedTest{
 						overlaps.incrementAndGet();
 
 					running.set(true);
+					ParseResponse result = parser.parse(PAYLOAD);
+					running.set(false);
+					return result;
+				}));
+
+			latch.countDown();
+
+			int errors = 0;
+			for(Future<ParseResponse> f : futures)
+				errors += f.get().getErrorCount();
+			Assertions.assertEquals(0, errors);
+		}
+	}
+
+	@Test
+	void concurrencyMultipleParserSingleCore() throws NoSuchMethodException, TemplateException, ConfigurationException, AnnotationException,
+			ExecutionException, InterruptedException{
+		DeviceTypes deviceTypes = new DeviceTypes();
+		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
+		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
+		BoxonCore core = BoxonCoreBuilder.builder()
+			.withContext(context)
+			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
+			.withDefaultCodecs()
+			.withDefaultTemplates()
+			.create();
+
+		int threads = 100;
+		ExecutorService service = Executors.newFixedThreadPool(threads);
+
+		CountDownLatch latch = new CountDownLatch(1);
+		AtomicBoolean running = new AtomicBoolean();
+		AtomicInteger overlaps = new AtomicInteger();
+		Collection<Future<ParseResponse>> futures = new ArrayList<>(threads);
+		//assure overlaps happens
+		while(overlaps.get() == 0){
+			futures.clear();
+			for(int t = 0; t < threads; t ++)
+				futures.add(service.submit(() -> {
+					latch.await();
+					if(running.get())
+						overlaps.incrementAndGet();
+
+					running.set(true);
+					Parser parser = Parser.create(core);
+					ParseResponse result = parser.parse(PAYLOAD);
+					running.set(false);
+					return result;
+				}));
+
+			latch.countDown();
+
+			int errors = 0;
+			for(Future<ParseResponse> f : futures)
+				errors += f.get().getErrorCount();
+			Assertions.assertEquals(0, errors);
+		}
+	}
+
+	@Test
+	void concurrencyMultipleParserMultipleCore() throws NoSuchMethodException, TemplateException, ConfigurationException,
+			AnnotationException, ExecutionException, InterruptedException{
+		DeviceTypes deviceTypes = new DeviceTypes();
+		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
+		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
+
+		int threads = 100;
+		ExecutorService service = Executors.newFixedThreadPool(threads);
+
+		CountDownLatch latch = new CountDownLatch(1);
+		AtomicBoolean running = new AtomicBoolean();
+		AtomicInteger overlaps = new AtomicInteger();
+		Collection<Future<ParseResponse>> futures = new ArrayList<>(threads);
+		//assure overlaps happens
+		while(overlaps.get() == 0){
+			futures.clear();
+			for(int t = 0; t < threads; t ++)
+				futures.add(service.submit(() -> {
+					latch.await();
+					if(running.get())
+						overlaps.incrementAndGet();
+
+					running.set(true);
+					BoxonCore core = BoxonCoreBuilder.builder()
+						.withContext(context)
+						.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
+						.withDefaultCodecs()
+						.withDefaultTemplates()
+						.create();
+					Parser parser = Parser.create(core);
 					ParseResponse result = parser.parse(PAYLOAD);
 					running.set(false);
 					return result;
