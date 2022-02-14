@@ -32,10 +32,9 @@ import io.github.mtrevisan.boxon.internal.StringHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -43,6 +42,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 
 @SuppressWarnings("ALL")
@@ -65,35 +65,13 @@ class ParserThreadedTest{
 			.create();
 		Parser parser = Parser.create(core);
 
-		int threads = 100;
-		ExecutorService service = Executors.newFixedThreadPool(threads);
-
-		CountDownLatch latch = new CountDownLatch(1);
-		AtomicBoolean running = new AtomicBoolean();
-		AtomicInteger overlaps = new AtomicInteger();
-		Collection<Future<ParseResponse>> futures = new ArrayList<>(threads);
-		//assure overlaps happens
-		while(overlaps.get() == 0){
-			futures.clear();
-			for(int t = 0; t < threads; t ++)
-				futures.add(service.submit(() -> {
-					latch.await();
-					if(running.get())
-						overlaps.incrementAndGet();
-
-					running.set(true);
-					ParseResponse result = parser.parse(PAYLOAD);
-					running.set(false);
-					return result;
-				}));
-
-			latch.countDown();
-
-			int errors = 0;
-			for(Future<ParseResponse> f : futures)
-				errors += f.get().getErrorCount();
-			Assertions.assertEquals(0, errors);
-		}
+		AtomicInteger errors = new AtomicInteger();
+		testMultithreading(
+			() -> parser.parse(PAYLOAD),
+			parseResponse -> errors.addAndGet(parseResponse.getErrorCount()),
+			100
+		);
+		Assertions.assertEquals(0, errors.get());
 	}
 
 	@Test
@@ -109,36 +87,16 @@ class ParserThreadedTest{
 			.withDefaultTemplates()
 			.create();
 
-		int threads = 100;
-		ExecutorService service = Executors.newFixedThreadPool(threads);
-
-		CountDownLatch latch = new CountDownLatch(1);
-		AtomicBoolean running = new AtomicBoolean();
-		AtomicInteger overlaps = new AtomicInteger();
-		Collection<Future<ParseResponse>> futures = new ArrayList<>(threads);
-		//assure overlaps happens
-		while(overlaps.get() == 0){
-			futures.clear();
-			for(int t = 0; t < threads; t ++)
-				futures.add(service.submit(() -> {
-					latch.await();
-					if(running.get())
-						overlaps.incrementAndGet();
-
-					running.set(true);
-					Parser parser = Parser.create(core);
-					ParseResponse result = parser.parse(PAYLOAD);
-					running.set(false);
-					return result;
-				}));
-
-			latch.countDown();
-
-			int errors = 0;
-			for(Future<ParseResponse> f : futures)
-				errors += f.get().getErrorCount();
-			Assertions.assertEquals(0, errors);
-		}
+		AtomicInteger errors = new AtomicInteger();
+		testMultithreading(
+			() -> {
+				Parser parser = Parser.create(core);
+				return parser.parse(PAYLOAD);
+			},
+			parseResponse -> errors.addAndGet(parseResponse.getErrorCount()),
+			100
+		);
+		Assertions.assertEquals(0, errors.get());
 	}
 
 	@Test
@@ -148,41 +106,53 @@ class ParserThreadedTest{
 		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 
-		int threads = 100;
-		ExecutorService service = Executors.newFixedThreadPool(threads);
+		AtomicInteger errors = new AtomicInteger();
+		testMultithreading(
+			() -> {
+				BoxonCore core = BoxonCoreBuilder.builder()
+					.withContext(context)
+					.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
+					.withDefaultCodecs()
+					.withDefaultTemplates()
+					.create();
+				Parser parser = Parser.create(core);
+				return parser.parse(PAYLOAD);
+			},
+			parseResponse -> errors.addAndGet(parseResponse.getErrorCount()),
+			100
+		);
+		Assertions.assertEquals(0, errors.get());
+	}
 
-		CountDownLatch latch = new CountDownLatch(1);
-		AtomicBoolean running = new AtomicBoolean();
-		AtomicInteger overlaps = new AtomicInteger();
-		Collection<Future<ParseResponse>> futures = new ArrayList<>(threads);
-		//assure overlaps happens
+
+	private static <T> void testMultithreading(final Callable<T> fun, final Consumer<T> combiner, final int threadCount)
+			throws ExecutionException, InterruptedException{
+		final ExecutorService service = Executors.newFixedThreadPool(threadCount);
+
+		final CountDownLatch latch = new CountDownLatch(1);
+		final AtomicBoolean running = new AtomicBoolean();
+		final AtomicInteger overlaps = new AtomicInteger();
+		final Future<T>[] futures = new Future[threadCount];
+		//assure overlaps happens (cycle until some overlaps happens)
 		while(overlaps.get() == 0){
-			futures.clear();
-			for(int t = 0; t < threads; t ++)
-				futures.add(service.submit(() -> {
+			for(int t = 0; t < threadCount; t ++)
+				futures[t] = service.submit(() -> {
 					latch.await();
 					if(running.get())
 						overlaps.incrementAndGet();
 
 					running.set(true);
-					BoxonCore core = BoxonCoreBuilder.builder()
-						.withContext(context)
-						.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
-						.withDefaultCodecs()
-						.withDefaultTemplates()
-						.create();
-					Parser parser = Parser.create(core);
-					ParseResponse result = parser.parse(PAYLOAD);
+					final T result = fun.call();
 					running.set(false);
-					return result;
-				}));
 
+					return result;
+				});
+
+			//start all the thread simultaneously
 			latch.countDown();
 
-			int errors = 0;
-			for(Future<ParseResponse> f : futures)
-				errors += f.get().getErrorCount();
-			Assertions.assertEquals(0, errors);
+			for(final Future<T> f : futures)
+				combiner.accept(f.get());
 		}
 	}
 
