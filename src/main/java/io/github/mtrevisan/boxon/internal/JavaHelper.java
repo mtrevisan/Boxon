@@ -24,7 +24,6 @@
  */
 package io.github.mtrevisan.boxon.internal;
 
-
 import java.util.List;
 
 
