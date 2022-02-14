@@ -251,7 +251,6 @@ public final class ConfigurationMessage<T>{
 	}
 
 	@Override
-	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
 	public boolean equals(final Object obj){
 		if(obj == this)
 			return true;

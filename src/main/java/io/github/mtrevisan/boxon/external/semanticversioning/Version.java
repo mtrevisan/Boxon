@@ -305,7 +305,7 @@ public final class Version implements Comparable<Version>{
 	}
 
 	@Override
-	@SuppressWarnings({"AccessingNonPublicFieldOfAnotherObject", "OverlyComplexBooleanExpression"})
+	@SuppressWarnings("OverlyComplexBooleanExpression")
 	public boolean equals(final Object obj){
 		if(this == obj)
 			return true;
@@ -343,7 +343,6 @@ public final class Version implements Comparable<Version>{
 	 * @see #compareToWithBuilds(Version other)
 	 */
 	@Override
-	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
 	public int compareTo(final Version other){
 		final int result = compareToCore(other);
 		return (result != 0? result: compareToIdentifiers(preRelease, other.preRelease));
@@ -361,7 +360,6 @@ public final class Version implements Comparable<Version>{
 	 * @param other	The object to be compared.
 	 * @return	A negative integer, zero, or a positive integer as this object is less than, equal to, or greater than the specified object.
 	 */
-	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
 	public int compareToWithBuilds(final Version other){
 		int result = compareTo(other);
 		if(result == 0)
@@ -369,7 +367,6 @@ public final class Version implements Comparable<Version>{
 		return (result != 0? result: compareToIdentifiers(build, other.build));
 	}
 
-	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
 	private int compareToCore(final Version other){
 		int comparison = compareToCore(major, other.major);
 		if(comparison != 0)
