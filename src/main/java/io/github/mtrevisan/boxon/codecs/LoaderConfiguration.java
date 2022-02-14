@@ -115,7 +115,7 @@ final class LoaderConfiguration{
 
 		final ReflectiveClassLoader reflectiveClassLoader = ReflectiveClassLoader.createFrom(basePackageClasses);
 		/** extract all classes annotated with {@link MessageHeader}. */
-		final Collection<Class<?>> annotatedClasses = reflectiveClassLoader.extractClassesWithAnnotation(ConfigurationHeader.class);
+		final List<Class<?>> annotatedClasses = reflectiveClassLoader.extractClassesWithAnnotation(ConfigurationHeader.class);
 		final Map<String, ConfigurationMessage<?>> configurations = extractConfigurations(annotatedClasses);
 		addConfigurationsInner(configurations);
 
@@ -132,17 +132,19 @@ final class LoaderConfiguration{
 	void loadConfiguration(final Class<?> configurationClass) throws AnnotationException, ConfigurationException{
 		eventListener.loadingConfiguration(configurationClass);
 
-		final Map<String, ConfigurationMessage<?>> configurations = extractConfigurations(Collections.singleton(configurationClass));
+		final Map<String, ConfigurationMessage<?>> configurations = extractConfigurations(Collections.singletonList(configurationClass));
 		addConfigurationsInner(configurations);
 
 		eventListener.loadedConfiguration();
 	}
 
 
-	private Map<String, ConfigurationMessage<?>> extractConfigurations(final Collection<Class<?>> annotatedClasses)
+	private Map<String, ConfigurationMessage<?>> extractConfigurations(final List<Class<?>> annotatedClasses)
 			throws AnnotationException, ConfigurationException{
-		final Map<String, ConfigurationMessage<?>> configurations = new HashMap<>(annotatedClasses.size());
-		for(final Class<?> type : annotatedClasses){
+		final int size = annotatedClasses.size();
+		final Map<String, ConfigurationMessage<?>> configurations = new HashMap<>(size);
+		for(int i = 0; i < size; i ++){
+			final Class<?> type = annotatedClasses.get(i);
 			//for each extracted class, try to parse it, extracting all the information needed for the configuration of a message
 			final ConfigurationMessage<?> from = createConfiguration(type);
 			if(from.canBeCoded()){

@@ -31,7 +31,6 @@ import io.github.mtrevisan.boxon.external.logs.EventListener;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -90,16 +89,17 @@ public final class LoaderCodec implements LoaderCodecInterface{
 
 		final ReflectiveClassLoader reflectiveClassLoader = ReflectiveClassLoader.createFrom(basePackageClasses);
 		/** extract all classes that implements {@link CodecInterface}. */
-		final Collection<Class<?>> derivedClasses = reflectiveClassLoader.extractClassesImplementing(CodecInterface.class);
+		final List<Class<?>> derivedClasses = reflectiveClassLoader.extractClassesImplementing(CodecInterface.class);
 		final List<CodecInterface<?>> codecs = extractCodecs(derivedClasses);
 		addCodecsInner(codecs);
 
 		eventListener.loadedCodecs(codecs.size());
 	}
 
-	private List<CodecInterface<?>> extractCodecs(final Collection<Class<?>> derivedClasses){
+	private List<CodecInterface<?>> extractCodecs(final List<Class<?>> derivedClasses){
 		final List<CodecInterface<?>> codecs = new ArrayList<>(derivedClasses.size());
-		for(final Class<?> type : derivedClasses){
+		for(int i = 0; i < derivedClasses.size(); i ++){
+			final Class<?> type = derivedClasses.get(i);
 			//for each extracted class, try to create an instance
 			final CodecInterface<?> codec = (CodecInterface<?>)ConstructorHelper.getCreator(type)
 				.get();

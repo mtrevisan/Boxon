@@ -100,7 +100,7 @@ final class ParserContext<T>{
 	Object getFieldValue(){
 		if(field instanceof BoundedField)
 			return ((BoundedField)field).getFieldValue(currentObject);
-		else if(field instanceof ConfigField)
+		if(field instanceof ConfigField)
 			return ((ConfigField)field).getFieldValue(currentObject);
 
 		throw new IllegalArgumentException("Field not of type " + BoundedField.class.getSimpleName() + " or "

@@ -118,7 +118,7 @@ public final class LoaderTemplate{
 
 		final ReflectiveClassLoader reflectiveClassLoader = ReflectiveClassLoader.createFrom(basePackageClasses);
 		/** extract all classes annotated with {@link MessageHeader}. */
-		final Collection<Class<?>> annotatedClasses = reflectiveClassLoader.extractClassesWithAnnotation(MessageHeader.class);
+		final List<Class<?>> annotatedClasses = reflectiveClassLoader.extractClassesWithAnnotation(MessageHeader.class);
 		final List<Template<?>> templates = extractTemplates(annotatedClasses);
 		addTemplatesInner(templates);
 
@@ -144,10 +144,12 @@ public final class LoaderTemplate{
 		}
 	}
 
-	private List<Template<?>> extractTemplates(final Collection<Class<?>> annotatedClasses) throws AnnotationException,
+	private List<Template<?>> extractTemplates(final List<Class<?>> annotatedClasses) throws AnnotationException,
 			TemplateException{
-		final List<Template<?>> templates = new ArrayList<>(annotatedClasses.size());
-		for(final Class<?> type : annotatedClasses){
+		final int size = annotatedClasses.size();
+		final List<Template<?>> templates = new ArrayList<>(size);
+		for(int i = 0; i < size; i ++){
+			final Class<?> type = annotatedClasses.get(i);
 			//for each extracted class, try to parse it, extracting all the information needed for the codec of a message
 			final Template<?> from = createTemplate(type);
 			if(from.canBeCoded())
