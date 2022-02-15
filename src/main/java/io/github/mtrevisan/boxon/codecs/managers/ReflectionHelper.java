@@ -76,7 +76,7 @@ public final class ReflectionHelper{
 	/**
 	 * Injects the given value of given field type in the given object.
 	 *
-	 * @param obj   The object whose field should be modified.
+	 * @param obj	The object whose field should be modified.
 	 * @param fieldType	The field class.
 	 * @param value	The value for the field being modified.
 	 * @param <T>	The value class type.
@@ -94,7 +94,7 @@ public final class ReflectionHelper{
 	/**
 	 * Static injects the given value of given field type in the given class.
 	 *
-	 * @param type   The object class whose static field should be modified.
+	 * @param type	The object class whose static field should be modified.
 	 * @param fieldType	The field class.
 	 * @param value	The value for the field being modified.
 	 * @param <T>	The value class type.

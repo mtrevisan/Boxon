@@ -289,9 +289,9 @@ public final class BoxonCoreBuilder{
 	 * Create the common core data executing all the configuration commands called in the proper order.
 	 *
 	 * @return	{@link BoxonCore Core} data used by {@link Parser}, {@link Descriptor}, {@link Composer}, and {@link Configurator}.
-	 * @throws AnnotationException   If an annotation is not well formatted.
-	 * @throws TemplateException   If a template is not well formatted.
-	 * @throws ConfigurationException   If a configuration is not well formatted.
+	 * @throws AnnotationException	If an annotation is not well formatted.
+	 * @throws TemplateException	If a template is not well formatted.
+	 * @throws ConfigurationException	If a configuration is not well formatted.
 	 */
 	public BoxonCore create() throws AnnotationException, TemplateException, ConfigurationException{
 		final ConfigurationStep[] values = ConfigurationStep.values();

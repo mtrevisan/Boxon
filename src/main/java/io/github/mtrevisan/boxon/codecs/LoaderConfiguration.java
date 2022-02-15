@@ -127,7 +127,7 @@ final class LoaderConfiguration{
 	 *
 	 * @param configurationClass	Configuration class.
 	 * @throws AnnotationException	If a configuration annotation is invalid, or no annotation was found.
-	 * @throws ConfigurationException   If a configuration is not well formatted.
+	 * @throws ConfigurationException	If a configuration is not well formatted.
 	 */
 	void loadConfiguration(final Class<?> configurationClass) throws AnnotationException, ConfigurationException{
 		eventListener.loadingConfiguration(configurationClass);
