@@ -46,10 +46,33 @@ public final class ComposeResponse{
 	private final Object[] originator;
 
 	/** Successfully composed message. */
-	private byte[] composedMessage;
+	private final byte[] composedMessage;
 
 	/** List of error messages. */
 	private final List<EncodeException> errors = new CopyOnWriteArrayList<>();
+
+
+	/**
+	 * Construct a response from a given object and composed message.
+	 *
+	 * @param originator	The data that originates the message.
+	 * @param writer	The writer to read the composed message from.
+	 */
+	public static ComposeResponse create(final Object[] originator, final BitWriter writer){
+		writer.flush();
+
+		return create(originator, writer.array());
+	}
+
+	/**
+	 * Construct a response from a given object and composed message.
+	 *
+	 * @param originator	The data that originates the message.
+	 * @param composedMessage	The composed message.
+	 */
+	public static ComposeResponse create(final Object[] originator, final byte[] composedMessage){
+		return new ComposeResponse(originator, composedMessage);
+	}
 
 
 	/**
@@ -57,9 +80,11 @@ public final class ComposeResponse{
 	 *
 	 * @param originator	The data that originates the message.
 	 */
-	ComposeResponse(final Object[] originator){
+	private ComposeResponse(final Object[] originator, final byte[] composedMessage){
 		this.originator = JavaHelper.cloneOrDefault(originator, null);
+		this.composedMessage = JavaHelper.cloneOrDefault(composedMessage, null);
 	}
+
 
 	/**
 	 * The originators for the composed message.
@@ -68,16 +93,6 @@ public final class ComposeResponse{
 	 */
 	private Object[] getOriginator(){
 		return originator;
-	}
-
-	void setComposedMessage(final BitWriter writer){
-		writer.flush();
-
-		setComposedMessage(writer.array());
-	}
-
-	void setComposedMessage(final byte[] composedMessage){
-		this.composedMessage = JavaHelper.cloneOrDefault(composedMessage, null);
 	}
 
 	/**
@@ -121,6 +136,18 @@ public final class ComposeResponse{
 		Objects.requireNonNull(exception, "Exception cannot be null");
 
 		errors.add(exception);
+	}
+
+	ComposeResponse withErrors(final List<EncodeException> exceptions){
+		Objects.requireNonNull(exceptions, "Exception cannot be null");
+
+		for(int i = 0; i < exceptions.size(); i ++){
+			final EncodeException exception = exceptions.get(i);
+			if(exception != null)
+				errors.add(exception);
+		}
+
+		return this;
 	}
 
 }

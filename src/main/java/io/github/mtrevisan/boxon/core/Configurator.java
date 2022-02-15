@@ -35,6 +35,7 @@ import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationMana
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
+import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.io.BitWriter;
 import io.github.mtrevisan.boxon.external.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.external.configurations.ConfigurationKey;
@@ -180,31 +181,35 @@ public final class Configurator{
 		if(protocol.isEmpty())
 			throw new IllegalArgumentException("Invalid protocol version: " + protocolVersion);
 
-		final ComposeResponse response = new ComposeResponse(data.keySet().toArray(JavaHelper.EMPTY_STRING_ARRAY));
-
+		final List<EncodeException> errors = new ArrayList<>(data.size());
 		final BitWriter writer = BitWriter.create();
-		for(final Map.Entry<String, Map<String, Object>> entry : data.entrySet())
-			composeConfiguration(writer, entry, protocol, response);
+		for(final Map.Entry<String, Map<String, Object>> entry : data.entrySet()){
+			final EncodeException error = composeConfiguration(writer, entry, protocol);
+			errors.add(error);
+		}
 
-		response.setComposedMessage(writer);
-
-		return response;
+		return ComposeResponse.create(data.keySet().toArray(JavaHelper.EMPTY_STRING_ARRAY), writer)
+			.withErrors(errors);
 	}
 
 	/**
 	 * Compose a single configuration message.
+	 *
+	 * @return	The error, if any.
 	 */
-	private void composeConfiguration(final BitWriterInterface writer, final Map.Entry<String, Map<String, Object>> entry,
-			final Version protocol, final ComposeResponse response){
+	private EncodeException composeConfiguration(final BitWriterInterface writer, final Map.Entry<String, Map<String, Object>> entry,
+			final Version protocol){
 		try{
 			final String configurationType = entry.getKey();
 			final Map<String, Object> data = entry.getValue();
 			final ConfigurationMessage<?> configuration = configurationParser.getConfiguration(configurationType);
 			final Object configurationData = ConfigurationParser.getConfigurationWithDefaults(configuration, data, protocol);
 			configurationParser.encode(configuration, writer, configurationData, evaluator, protocol);
+
+			return null;
 		}
-		catch(final Exception e){
-			response.addError(EncodeException.create(e));
+		catch(final EncodeException | FieldException e){
+			return EncodeException.create(e);
 		}
 	}
 

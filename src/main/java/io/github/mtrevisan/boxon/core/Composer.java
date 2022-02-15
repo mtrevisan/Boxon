@@ -27,10 +27,13 @@ package io.github.mtrevisan.boxon.core;
 import io.github.mtrevisan.boxon.codecs.TemplateParser;
 import io.github.mtrevisan.boxon.codecs.managers.Template;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
+import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.io.BitWriter;
 import io.github.mtrevisan.boxon.external.io.BitWriterInterface;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 
 /**
@@ -75,30 +78,33 @@ public final class Composer{
 	 * @return	The composition response.
 	 */
 	public ComposeResponse composeMessage(final Object... data){
-		final ComposeResponse response = new ComposeResponse(data);
-
+		final List<EncodeException> errors = new ArrayList<>(data.length);
 		final BitWriter writer = BitWriter.create();
-		for(int i = 0; i < data.length; i ++)
-			composeMessage(writer, data[i], response);
+		for(int i = 0; i < data.length; i ++){
+			final EncodeException error = composeMessage(writer, data[i]);
+			errors.add(error);
+		}
 
-		response.setComposedMessage(writer);
-
-		return response;
+		return ComposeResponse.create(data, writer)
+			.withErrors(errors);
 	}
 
 	/**
 	 * Compose a single message.
 	 *
 	 * @param data	The message to be composed.
+	 * @return	The error, if any.
 	 */
-	private void composeMessage(final BitWriterInterface writer, final Object data, final ComposeResponse response){
+	private EncodeException composeMessage(final BitWriterInterface writer, final Object data){
 		try{
 			final Template<?> template = templateParser.getTemplate(data.getClass());
 
 			templateParser.encode(template, writer, null, data);
+
+			return null;
 		}
-		catch(final Exception e){
-			response.addError(EncodeException.create(e));
+		catch(final FieldException e){
+			return EncodeException.create(e);
 		}
 	}
 
