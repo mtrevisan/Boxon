@@ -57,6 +57,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 		this.annotation = annotation;
 	}
 
+
 	@Override
 	public String getShortDescription(){
 		return annotation.shortDescription();

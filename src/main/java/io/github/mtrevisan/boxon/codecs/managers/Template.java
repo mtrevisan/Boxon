@@ -129,7 +129,7 @@ public final class Template<T>{
 					boundedFields.add(new BoundedField(field, validAnnotation, (skips.length > 0? skips: null)));
 			}
 			catch(final AnnotationException e){
-				e.withClassNameAndFieldName(type.getName(), field.getName());
+				e.withClassAndField(type, field);
 				throw e;
 			}
 		}
@@ -138,10 +138,11 @@ public final class Template<T>{
 
 	private void loadChecksumField(final Checksum checksum, final Class<T> type, final Field field) throws AnnotationException{
 		if(checksum != null){
-			if(this.checksum != null)
-				throw (AnnotationException)AnnotationException.create("Cannot have more than one {} annotations on class {}",
-						Checksum.class.getSimpleName(), type.getName())
-					.withClassNameAndFieldName(type.getName(), field.getName());
+			if(this.checksum != null){
+				final AnnotationException exception = AnnotationException.create("Cannot have more than one {} annotations on class {}",
+					Checksum.class.getSimpleName(), type.getName());
+				throw (AnnotationException)exception.withClassAndField(type, field);
+			}
 
 			this.checksum = new BoundedField(field, checksum);
 		}

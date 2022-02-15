@@ -37,6 +37,7 @@ final class FloatWriterManager implements WriterManagerInterface{
 		this.writer = writer;
 	}
 
+
 	@Override
 	public void put(final Object value){
 		writer.putFloat((Float)value, ByteOrder.BIG_ENDIAN);

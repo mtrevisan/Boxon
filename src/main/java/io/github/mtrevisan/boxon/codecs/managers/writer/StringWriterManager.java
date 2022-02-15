@@ -41,6 +41,7 @@ final class StringWriterManager implements WriterManagerInterface{
 		charset = StandardCharsets.UTF_8;
 	}
 
+
 	StringWriterManager withCharset(final Charset charset){
 		this.charset = charset;
 

@@ -26,6 +26,8 @@ package io.github.mtrevisan.boxon.exceptions;
 
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 
+import java.lang.reflect.Field;
+
 
 /**
  * Represents an error in coding/decoding of a value.
@@ -81,6 +83,17 @@ public class FieldException extends Exception{
 	 */
 	protected FieldException(final Throwable cause){
 		super(cause);
+	}
+
+	/**
+	 * Adds class and field names to the exception.
+	 *
+	 * @param type	The class type.
+	 * @param field	The field.
+	 * @return	The exception itself.
+	 */
+	public final <T> FieldException withClassAndField(final Class<T> type, final Field field){
+		return withClassNameAndFieldName(type.getName(), field.getName());
 	}
 
 	/**

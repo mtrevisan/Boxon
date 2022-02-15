@@ -38,6 +38,7 @@ final class NumberWriterManager implements WriterManagerInterface{
 		radix = 10;
 	}
 
+
 	NumberWriterManager withRadix(final int radix){
 		this.radix = radix;
 

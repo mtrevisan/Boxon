@@ -37,6 +37,7 @@ final class DoubleWriterManager implements WriterManagerInterface{
 		this.writer = writer;
 	}
 
+
 	@Override
 	public void put(final Object value){
 		writer.putDouble((Double)value, ByteOrder.BIG_ENDIAN);
