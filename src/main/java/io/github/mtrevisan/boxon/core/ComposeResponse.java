@@ -28,9 +28,9 @@ import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.external.io.BitWriter;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 
 /**
@@ -49,7 +49,7 @@ public final class ComposeResponse{
 	private byte[] composedMessage;
 
 	/** List of error messages. */
-	private final List<EncodeException> errors = new ArrayList<>(0);
+	private final List<EncodeException> errors = new CopyOnWriteArrayList<>();
 
 
 	/**

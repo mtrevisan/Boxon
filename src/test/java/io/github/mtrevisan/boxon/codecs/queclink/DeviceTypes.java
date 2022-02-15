@@ -24,15 +24,15 @@
  */
 package io.github.mtrevisan.boxon.codecs.queclink;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 import java.util.StringJoiner;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 @SuppressWarnings("ALL")
 public class DeviceTypes{
 
-	private final List<DeviceType> deviceTypes;
+	private final Map<String, Byte> deviceTypes;
 
 
 	public static DeviceTypes create(){
@@ -41,13 +41,12 @@ public class DeviceTypes{
 
 
 	private DeviceTypes(){
-		deviceTypes = new ArrayList<>(1);
+		deviceTypes = new ConcurrentHashMap<>(1);
 	}
 
 
 	public DeviceTypes with(final String deviceTypeName, final byte deviceTypeCode){
-		final DeviceType deviceType = new DeviceType(deviceTypeName, deviceTypeCode);
-		deviceTypes.add(deviceType);
+		deviceTypes.put(deviceTypeName, deviceTypeCode);
 
 		return this;
 	}
@@ -62,16 +61,14 @@ public class DeviceTypes{
 	}
 
 	public String getDeviceTypeName(final byte deviceTypeCode){
-		for(int i = 0; i < deviceTypes.size(); i ++){
-			final DeviceType deviceType = deviceTypes.get(i);
-			if(deviceType.getCode() == deviceTypeCode)
-				return deviceType.getName();
-		}
+		for(final Map.Entry<String, Byte> deviceType : deviceTypes.entrySet())
+			if(deviceType.getValue().equals(deviceTypeCode))
+				return deviceType.getKey();
 
 		final String actualCode = Integer.toHexString(deviceTypeCode & 0x0000_00FF);
 		final StringJoiner sj = new StringJoiner(", 0x", "[0x", "]");
-		for(int i = 0; i < deviceTypes.size(); i ++)
-			sj.add(Integer.toHexString(deviceTypes.get(i).getCode() & 0x0000_00FF));
+		for(final Map.Entry<String, Byte> deviceType : deviceTypes.entrySet())
+			sj.add(Integer.toHexString(deviceType.getValue() & 0x0000_00FF));
 		throw new IllegalArgumentException("Cannot parse message from another device, device type is 0x" + actualCode
 			+ ", should be one of " + sj.toString());
 	}
@@ -79,8 +76,8 @@ public class DeviceTypes{
 	@Override
 	public String toString(){
 		final StringJoiner sj = new StringJoiner(", ", "[", "]");
-		for(int i = 0; i < deviceTypes.size(); i ++)
-			sj.add(deviceTypes.get(i).toString());
+		for(final Map.Entry<String, Byte> deviceType : deviceTypes.entrySet())
+			sj.add(deviceType.getKey() + " (0x" + Integer.toHexString(deviceType.getValue() & 0x0000_00FF) + ")");
 		return sj.toString();
 	}
 

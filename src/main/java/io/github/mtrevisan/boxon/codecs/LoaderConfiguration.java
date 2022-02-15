@@ -46,12 +46,12 @@ import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 final class LoaderConfiguration{
@@ -142,7 +142,7 @@ final class LoaderConfiguration{
 	private Map<String, ConfigurationMessage<?>> extractConfigurations(final List<Class<?>> annotatedClasses)
 			throws AnnotationException, ConfigurationException{
 		final int size = annotatedClasses.size();
-		final Map<String, ConfigurationMessage<?>> configurations = new HashMap<>(size);
+		final Map<String, ConfigurationMessage<?>> configurations = new ConcurrentHashMap<>(size);
 		for(int i = 0; i < size; i ++){
 			final Class<?> type = annotatedClasses.get(i);
 			//for each extracted class, try to parse it, extracting all the information needed for the configuration of a message

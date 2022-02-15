@@ -29,10 +29,10 @@ import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.Skip;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
 import io.github.mtrevisan.boxon.codecs.managers.BoundedField;
+import io.github.mtrevisan.boxon.codecs.managers.CharsetHelper;
 import io.github.mtrevisan.boxon.codecs.managers.ConstructorHelper;
 import io.github.mtrevisan.boxon.codecs.managers.EvaluatedField;
 import io.github.mtrevisan.boxon.codecs.managers.Template;
-import io.github.mtrevisan.boxon.codecs.managers.CharsetHelper;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
@@ -51,17 +51,16 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 public final class TemplateParser implements TemplateParserInterface{
 
 	private final TemplateParserCore core;
-	private final Map<String, Object> backupContext = new HashMap<>(0);
+	private final Map<String, Object> backupContext = new ConcurrentHashMap<>(0);
 
 	private final ParserWriterHelper parserWriterHelper;
 
@@ -436,7 +435,7 @@ public final class TemplateParser implements TemplateParserInterface{
 		@SuppressWarnings("unchecked")
 		Collection<String> v = (Collection<String>)backupContext.get(DescriberKey.CONTEXT_METHODS.toString());
 		if(v == null){
-			v = new HashSet<>(1);
+			v = ConcurrentHashMap.newKeySet(1);
 			backupContext.put(DescriberKey.CONTEXT_METHODS.toString(), v);
 		}
 		v.add(method.toString());

@@ -31,15 +31,15 @@ import io.github.mtrevisan.boxon.external.logs.EventListener;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 public final class LoaderCodec implements LoaderCodecInterface{
 
-	private final Map<Class<?>, CodecInterface<?>> codecs = new HashMap<>(0);
+	private final Map<Class<?>, CodecInterface<?>> codecs = new ConcurrentHashMap<>(0);
 
 	private EventListener eventListener;
 

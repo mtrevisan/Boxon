@@ -37,6 +37,7 @@ import io.github.mtrevisan.boxon.external.descriptions.DescriberKey;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -81,7 +82,7 @@ public final class Descriptor{
 		final List<Map<String, Object>> description = new ArrayList<>(templates.size());
 		for(final Template<?> template : templates)
 			description.add(describeTemplate(template));
-		return description;
+		return Collections.unmodifiableList(description);
 	}
 
 	/**
@@ -101,7 +102,7 @@ public final class Descriptor{
 				description.add(describeTemplate(template));
 			}
 		}
-		return description;
+		return Collections.unmodifiableList(description);
 	}
 
 	private Map<String, Object> describeTemplate(final Template<?> template) throws TemplateException{
@@ -109,7 +110,7 @@ public final class Descriptor{
 		describeHeader(template.getHeader(), description);
 		describeFields(template.getBoundedFields(), description);
 		describeContext(description);
-		return description;
+		return Collections.unmodifiableMap(description);
 	}
 
 	private static void describeHeader(final MessageHeader header, final Map<String, Object> description){

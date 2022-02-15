@@ -29,7 +29,7 @@ import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 
 import java.util.Map;
-import java.util.TreeMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 
 /**
@@ -42,10 +42,10 @@ public final class ParseResponse{
 	private final byte[] payload;
 
 	/** List of successfully parsed messages along with their starting index. */
-	private final Map<Integer, Object> parsedMessages = new TreeMap<>(Integer::compareTo);
+	private final Map<Integer, Object> parsedMessages = new ConcurrentSkipListMap<>(Integer::compareTo);
 
 	/** List of error messages along with their starting index. */
-	private final Map<Integer, DecodeException> errors = new TreeMap<>(Integer::compareTo);
+	private final Map<Integer, DecodeException> errors = new ConcurrentSkipListMap<>(Integer::compareTo);
 
 
 	/**

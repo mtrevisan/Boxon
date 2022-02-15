@@ -94,7 +94,7 @@ final class PlainManager implements ConfigurationManagerInterface{
 		if(protocol.isEmpty())
 			ConfigurationHelper.extractMinMaxProtocol(annotation.minProtocol(), annotation.maxProtocol(), fieldMap);
 
-		return fieldMap;
+		return Collections.unmodifiableMap(fieldMap);
 	}
 
 	private Map<String, Object> extractMap(final Class<?> fieldType) throws ConfigurationException, CodecException{

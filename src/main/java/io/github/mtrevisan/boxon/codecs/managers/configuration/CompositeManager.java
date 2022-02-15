@@ -131,7 +131,7 @@ final class CompositeManager implements ConfigurationManagerInterface{
 		if(protocol.isEmpty())
 			ConfigurationHelper.extractMinMaxProtocol(annotation.minProtocol(), annotation.maxProtocol(), compositeMap);
 
-		return compositeMap;
+		return Collections.unmodifiableMap(compositeMap);
 	}
 
 	private Map<String, Object> extractMap() throws ConfigurationException{

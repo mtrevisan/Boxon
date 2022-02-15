@@ -24,8 +24,8 @@
  */
 package io.github.mtrevisan.boxon.codecs.managers;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
@@ -52,7 +52,7 @@ public final class Memoizer{
 	 * @see <a href="https://opencredo.com/lambda-memoization-in-java-8/">Lambda memoization in Java 8</a>
 	 */
 	public static <IN, OUT> Function<IN, OUT> memoize(final Function<? super IN, ? extends OUT> function){
-		final Map<IN, OUT> cache = new HashMap<>(0);
+		final Map<IN, OUT> cache = new ConcurrentHashMap<>(0);
 		final Lock lock = new ReentrantLock();
 		return input -> {
 			lock.lock();
@@ -78,7 +78,7 @@ public final class Memoizer{
 	 */
 	public static <IN, OUT, E extends Exception> ThrowingFunction<IN, OUT, E> throwingMemoize(
 			final ThrowingFunction<? super IN, ? extends OUT, ? extends E> function){
-		final Map<IN, OUT> cache = new HashMap<>(0);
+		final Map<IN, OUT> cache = new ConcurrentHashMap<>(0);
 		final Lock lock = new ReentrantLock();
 		return input -> {
 			lock.lock();

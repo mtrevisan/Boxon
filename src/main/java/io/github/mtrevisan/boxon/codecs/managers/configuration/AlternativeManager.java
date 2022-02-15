@@ -129,7 +129,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 		else
 			//extract the specific alternative, because it was requested the configuration of a particular protocol:
 			alternativesMap = extractConfigurationMapWithProtocol(fieldType, alternativeMap, protocol);
-		return alternativesMap;
+		return Collections.unmodifiableMap(alternativesMap);
 	}
 
 	private Map<String, Object> extractConfigurationMapWithoutProtocol(final Class<?> fieldType, final Map<String, Object> alternativeMap)

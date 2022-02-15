@@ -35,10 +35,10 @@ import io.github.mtrevisan.boxon.external.logs.EventListener;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 
 /**
@@ -280,7 +280,7 @@ public final class BoxonCoreBuilder{
 
 
 	private void addMethod(final ConfigurationStep configurationStep, final RunnableThrowable runnable){
-		calls.computeIfAbsent(configurationStep, k -> new ArrayList<>(3))
+		calls.computeIfAbsent(configurationStep, k -> new CopyOnWriteArrayList<>())
 			.add(runnable);
 	}
 

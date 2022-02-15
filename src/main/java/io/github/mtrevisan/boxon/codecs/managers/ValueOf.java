@@ -26,10 +26,10 @@ package io.github.mtrevisan.boxon.codecs.managers;
 
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.function.Function;
 
 
@@ -70,8 +70,8 @@ final class ValueOf<T extends Enum<T>, K>{
 
 	private Map<K, T> createMap(final Comparator<K> comparator, final T[] enumConstants){
 		return (comparator != null
-			? new TreeMap<>(comparator)
-			: new HashMap<>(enumConstants.length));
+			? new ConcurrentSkipListMap<>(comparator)
+			: new ConcurrentHashMap<>(enumConstants.length));
 	}
 
 	public T get(final K key){

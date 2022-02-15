@@ -32,6 +32,7 @@ import java.lang.annotation.Annotation;
 import java.lang.annotation.Inherited;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -93,7 +94,7 @@ final class ReflectiveClassLoader{
 
 				loadedClasses.addAll(list);
 			}
-		return loadedClasses;
+		return Collections.unmodifiableList(loadedClasses);
 	}
 
 	/**
@@ -112,7 +113,7 @@ final class ReflectiveClassLoader{
 
 				loadedClasses.addAll(list);
 			}
-		return loadedClasses;
+		return Collections.unmodifiableList(loadedClasses);
 	}
 
 	/**
@@ -131,7 +132,7 @@ final class ReflectiveClassLoader{
 
 				loadedClasses.addAll(list);
 			}
-		return loadedClasses;
+		return Collections.unmodifiableList(loadedClasses);
 	}
 
 	private List<Class<?>> getStoredClasses(final Class<?> type){
