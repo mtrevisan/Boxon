@@ -156,10 +156,11 @@ final class PlainManager implements ConfigurationManagerInterface{
 
 	private static void validateEnumerationValue(final String dataKey, final Object dataValue,
 			final Class<? extends ConfigurationEnum> enumeration, final Class<?> fieldType) throws EncodeException{
-		final Class<?> dataValueClass = (dataValue != null? dataValue.getClass(): null);
-		if(dataValueClass == null)
+		if(dataValue == null)
 			throw EncodeException.create("Data value incompatible with field type {}; found {}, expected {}[] for enumeration type",
 				dataKey, getFieldBaseType(fieldType), enumeration.getSimpleName());
+
+		final Class<?> dataValueClass = dataValue.getClass();
 		if(dataValueClass.isArray()){
 			final Class<?> componentType = dataValueClass.getComponentType();
 			if(!enumeration.isAssignableFrom(componentType))

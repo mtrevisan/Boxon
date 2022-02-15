@@ -280,7 +280,7 @@ public final class BoxonCoreBuilder{
 
 
 	private void addMethod(final ConfigurationStep configurationStep, final RunnableThrowable runnable){
-		calls.computeIfAbsent(configurationStep, k -> new ArrayList<>(1))
+		calls.computeIfAbsent(configurationStep, k -> new ArrayList<>(3))
 			.add(runnable);
 	}
 
@@ -295,10 +295,11 @@ public final class BoxonCoreBuilder{
 	 * @throws ConfigurationException   If a configuration is not well formatted.
 	 */
 	public BoxonCore create() throws AnnotationException, TemplateException, ConfigurationException{
-		for(final ConfigurationStep configurationStep : ConfigurationStep.values()){
-			final List<RunnableThrowable> executors = calls.get(configurationStep);
-			for(int i = 0; i < JavaHelper.lengthOrZero(executors); i ++){
-				final RunnableThrowable executor = executors.get(i);
+		final ConfigurationStep[] values = ConfigurationStep.values();
+		for(int i = 0; i < values.length; i ++){
+			final List<RunnableThrowable> executors = calls.get(values[i]);
+			for(int j = 0; j < JavaHelper.lengthOrZero(executors); j ++){
+				final RunnableThrowable executor = executors.get(j);
 				executor.execute();
 			}
 		}

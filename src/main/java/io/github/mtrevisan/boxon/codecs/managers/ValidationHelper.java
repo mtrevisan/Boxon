@@ -130,7 +130,9 @@ final class ValidationHelper{
 				throw AnnotationException.create("Array field should not have `minValue` or `maxValue`");
 
 			final String defaultValue = field.getDefaultValue();
-			final Object def = (!StringHelper.isBlank(defaultValue)? ParserDataType.getValue(fieldType, defaultValue): null);
+			final Object def = (!StringHelper.isBlank(defaultValue)
+				? ParserDataType.getValue(fieldType, defaultValue)
+				: null);
 			final Object min = validateMinValue(field, def);
 			final Object max = validateMaxValue(field, def);
 

@@ -128,7 +128,9 @@ public final class Evaluator{
 	int evaluateSize(final String expression, final Object rootObject){
 		int size = -1;
 		if(!expression.isBlank())
-			size = (isPositiveInteger(expression)? Integer.parseInt(expression): evaluate(expression, rootObject, int.class));
+			size = (isPositiveInteger(expression)
+				? Integer.parseInt(expression)
+				: evaluate(expression, rootObject, int.class));
 		return size;
 	}
 
