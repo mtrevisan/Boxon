@@ -69,14 +69,16 @@ public final class BitReader extends BitReaderData implements BitReaderInterface
 	}
 
 	/**
-	 * Wraps a {@link ByteBuffer} into a buffer.
-	 * <p>The new buffer will be backed by the given byte buffer</p>.
+	 * Wraps a byte array into a buffer.
+	 * <p>The new buffer will be backed by the given byte array contained into the {@link BitWriter}.</p>
 	 *
-	 * @param buffer	The buffer that will back this buffer.
+	 * @param bitWriter	The {@link BitWriter}.
 	 * @return	The new bit buffer.
 	 */
-	public static BitReader wrap(final ByteBuffer buffer){
-		return new BitReader(buffer);
+	public static BitReader wrap(final BitWriter bitWriter){
+		bitWriter.flush();
+
+		return wrap(bitWriter.array());
 	}
 
 	/**
@@ -89,20 +91,18 @@ public final class BitReader extends BitReaderData implements BitReaderInterface
 	 * @return	The new bit buffer.
 	 */
 	public static BitReader wrap(final byte[] array){
-		return new BitReader(ByteBuffer.wrap(array));
+		return wrap(ByteBuffer.wrap(array));
 	}
 
 	/**
-	 * Wraps a byte array into a buffer.
-	 * <p>The new buffer will be backed by the given byte array contained into the {@link BitWriter}.</p>
+	 * Wraps a {@link ByteBuffer} into a buffer.
+	 * <p>The new buffer will be backed by the given byte buffer</p>.
 	 *
-	 * @param bitWriter	The {@link BitWriter}.
+	 * @param buffer	The buffer that will back this buffer.
 	 * @return	The new bit buffer.
 	 */
-	public static BitReader wrap(final BitWriter bitWriter){
-		bitWriter.flush();
-
-		return wrap(bitWriter.array());
+	public static BitReader wrap(final ByteBuffer buffer){
+		return new BitReader(buffer);
 	}
 
 
