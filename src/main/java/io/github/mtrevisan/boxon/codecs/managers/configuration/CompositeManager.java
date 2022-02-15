@@ -91,9 +91,9 @@ final class CompositeManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	public void addProtocolVersionBoundaries(final Collection<String> protocolVersionBoundaries){
-		protocolVersionBoundaries.add(annotation.minProtocol());
-		protocolVersionBoundaries.add(annotation.maxProtocol());
+	public void addProtocolVersionBoundaries(final Collection<String> boundaries){
+		boundaries.add(annotation.minProtocol());
+		boundaries.add(annotation.maxProtocol());
 	}
 
 	@Override

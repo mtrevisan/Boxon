@@ -87,8 +87,8 @@ public final class ConfigurationMessage<T>{
 			final List<ConfigField> configFields = loadAnnotatedFields(type, minProtocolVersion, maxProtocolVersion);
 			this.configFields = Collections.unmodifiableList(configFields);
 
-			final List<String> protocolVersionBoundaries = extractProtocolVersionBoundaries(configFields);
-			this.protocolVersionBoundaries = Collections.unmodifiableList(protocolVersionBoundaries);
+			final List<String> boundaries = extractProtocolVersionBoundaries(configFields);
+			protocolVersionBoundaries = Collections.unmodifiableList(boundaries);
 
 			if(configFields.isEmpty())
 				throw AnnotationException.create("No data can be extracted from this class: {}", type.getName());
@@ -171,32 +171,31 @@ public final class ConfigurationMessage<T>{
 	}
 
 	private List<String> extractProtocolVersionBoundaries(final List<ConfigField> configFields){
-		final List<String> protocolVersionBoundaries = new ArrayList<>(configFields.size() * 2 + 2);
-		protocolVersionBoundaries.add(header.minProtocol());
-		protocolVersionBoundaries.add(header.maxProtocol());
+		final List<String> boundaries = new ArrayList<>(configFields.size() * 2 + 2);
+		boundaries.add(header.minProtocol());
+		boundaries.add(header.maxProtocol());
 
 		for(int i = 0; i < configFields.size(); i ++){
 			final ConfigField configField = configFields.get(i);
 
 			final Annotation annotation = configField.getBinding();
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(annotation);
-			manager.addProtocolVersionBoundaries(protocolVersionBoundaries);
+			manager.addProtocolVersionBoundaries(boundaries);
 
 			final ConfigurationSkip[] skips = configField.getSkips();
-			extractProtocolVersionBoundaries(skips, protocolVersionBoundaries);
+			extractProtocolVersionBoundaries(skips, boundaries);
 		}
 
-		protocolVersionBoundaries.sort(Comparator.comparing(Version::of));
-		removeDuplicates(protocolVersionBoundaries);
-		protocolVersionBoundaries.remove(JavaHelper.EMPTY_STRING);
-		return protocolVersionBoundaries;
+		boundaries.sort(Comparator.comparing(Version::of));
+		removeDuplicates(boundaries);
+		boundaries.remove(JavaHelper.EMPTY_STRING);
+		return boundaries;
 	}
 
-	private static void extractProtocolVersionBoundaries(final ConfigurationSkip[] skips,
-			final Collection<String> protocolVersionBoundaries){
+	private static void extractProtocolVersionBoundaries(final ConfigurationSkip[] skips, final Collection<String> boundaries){
 		for(int j = 0; j < skips.length; j ++){
-			protocolVersionBoundaries.add(skips[j].minProtocol());
-			protocolVersionBoundaries.add(skips[j].maxProtocol());
+			boundaries.add(skips[j].minProtocol());
+			boundaries.add(skips[j].maxProtocol());
 		}
 	}
 
