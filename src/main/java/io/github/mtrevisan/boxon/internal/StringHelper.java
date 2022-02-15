@@ -163,7 +163,7 @@ public final class StringHelper{
 	 * @return	Array of converted hexadecimal characters.
 	 */
 	public static byte[] toByteArray(final CharSequence hexString){
-		final int len = (hexString != null? hexString.length(): 0);
+		final int len = JavaHelper.lengthOrZero(hexString);
 		if(len % 2 != 0)
 			throw new IllegalArgumentException("Input should be of even length, was " + len);
 
@@ -193,7 +193,7 @@ public final class StringHelper{
 	 * @return	Whether the given text is {@code null}, empty or whitespace only.
 	 */
 	public static boolean isBlank(final CharSequence text){
-		for(int i = 0; i < (text != null? text.length(): 0); i ++)
+		for(int i = 0; i < JavaHelper.lengthOrZero(text); i ++)
 			if(!Character.isWhitespace(text.charAt(i)))
 				return false;
 		return true;

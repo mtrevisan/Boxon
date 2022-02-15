@@ -162,8 +162,8 @@ public final class Version implements Comparable<Version>{
 		this.major = major;
 		this.minor = minor;
 		this.patch = patch;
-		this.preRelease = (preRelease != null? preRelease: EMPTY_ARRAY);
-		this.build = (build != null? build: EMPTY_ARRAY);
+		this.preRelease = JavaHelper.nonNullOrDefault(preRelease, EMPTY_ARRAY);
+		this.build = JavaHelper.nonNullOrDefault(build, EMPTY_ARRAY);
 	}
 
 	private Version(String version) throws VersionException{
@@ -557,7 +557,7 @@ public final class Version implements Comparable<Version>{
 	 * @throws VersionException	If the resulting version number is not valid.
 	 */
 	public Version incrementMajor(final int amount) throws VersionException{
-		return of((major != null? major: 0) + amount);
+		return of(JavaHelper.nonNullOrDefault(major, 0) + amount);
 	}
 
 	/**
@@ -572,7 +572,7 @@ public final class Version implements Comparable<Version>{
 	 * @throws VersionException	If the resulting version number is not valid.
 	 */
 	public Version incrementMinor(final int amount) throws VersionException{
-		return of(major, (minor != null? minor: 0) + amount);
+		return of(major, JavaHelper.nonNullOrDefault(minor, 0) + amount);
 	}
 
 	/**
@@ -586,7 +586,7 @@ public final class Version implements Comparable<Version>{
 	 * @throws VersionException	If the resulting version number is not valid.
 	 */
 	public Version incrementPatch(final int amount) throws VersionException{
-		return of(major, minor, (patch != null? patch: 0) + amount);
+		return of(major, minor, JavaHelper.nonNullOrDefault(patch, 0) + amount);
 	}
 
 	/**

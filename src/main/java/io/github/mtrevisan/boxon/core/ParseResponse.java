@@ -54,7 +54,7 @@ public final class ParseResponse{
 	 * @param payload	The payload.
 	 */
 	ParseResponse(final byte[] payload){
-		this.payload = JavaHelper.cloneNonNullOrDefault(payload, null);
+		this.payload = JavaHelper.cloneOrDefault(payload, null);
 	}
 
 	/**

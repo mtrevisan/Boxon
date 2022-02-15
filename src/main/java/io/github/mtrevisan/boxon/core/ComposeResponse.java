@@ -58,7 +58,7 @@ public final class ComposeResponse{
 	 * @param originator	The data that originates the message.
 	 */
 	ComposeResponse(final Object[] originator){
-		this.originator = JavaHelper.cloneNonNullOrDefault(originator, null);
+		this.originator = JavaHelper.cloneOrDefault(originator, null);
 	}
 
 	/**
@@ -77,7 +77,7 @@ public final class ComposeResponse{
 	}
 
 	void setComposedMessage(final byte[] composedMessage){
-		this.composedMessage = JavaHelper.cloneNonNullOrDefault(composedMessage, null);
+		this.composedMessage = JavaHelper.cloneOrDefault(composedMessage, null);
 	}
 
 	/**
@@ -86,7 +86,7 @@ public final class ComposeResponse{
 	 * @return	The message composed by the given originator.
 	 */
 	public byte[] getComposedMessage(){
-		return JavaHelper.cloneNonNullOrDefault(composedMessage, EMPTY_ARRAY);
+		return JavaHelper.cloneOrDefault(composedMessage, EMPTY_ARRAY);
 	}
 
 	/**

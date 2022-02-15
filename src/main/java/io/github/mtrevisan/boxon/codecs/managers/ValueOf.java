@@ -58,7 +58,7 @@ final class ValueOf<T extends Enum<T>, K>{
 		this.type = type;
 
 		final T[] enumConstants = type.getEnumConstants();
-		final Map<K, T> map = (comparator != null? new TreeMap<>(comparator): new HashMap<>(enumConstants.length));
+		final Map<K, T> map = createMap(comparator, enumConstants);
 		for(int i = 0; i < enumConstants.length; i ++){
 			final K key = fieldAccessor.apply(enumConstants[i]);
 			if(map.put(key, enumConstants[i]) != null)
@@ -66,6 +66,12 @@ final class ValueOf<T extends Enum<T>, K>{
 		}
 
 		values = Collections.unmodifiableMap(map);
+	}
+
+	private Map<K, T> createMap(final Comparator<K> comparator, final T[] enumConstants){
+		return (comparator != null
+			? new TreeMap<>(comparator)
+			: new HashMap<>(enumConstants.length));
 	}
 
 	public T get(final K key){
