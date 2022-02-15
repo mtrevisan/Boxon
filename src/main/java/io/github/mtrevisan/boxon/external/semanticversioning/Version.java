@@ -322,9 +322,9 @@ public final class Version implements Comparable<Version>{
 
 	@Override
 	public int hashCode(){
-		int result = (major != null? Integer.hashCode(major): 0);
+		int result = (major != null? major.hashCode(): 0);
 		if(minor != null)
-			result = 31 * result + Integer.hashCode(minor);
+			result = 31 * result + minor.hashCode();
 		if(patch != null)
 			result = 31 * result + patch.hashCode();
 		result = 31 * result + Arrays.hashCode(preRelease);

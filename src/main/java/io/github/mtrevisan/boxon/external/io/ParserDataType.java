@@ -122,7 +122,8 @@ public enum ParserDataType{
 		final Map<Class<?>, Class<?>> primitiveWrapperMap = new HashMap<>(values.length);
 		final Map<Class<?>, Class<?>> wrapperPrimitiveMap = new HashMap<>(values.length);
 		final Map<Class<?>, ParserDataType> typeMap = new HashMap<>(values.length * 2);
-		for(final ParserDataType dt : values){
+		for(int i = 0; i < values.length; i ++){
+			final ParserDataType dt = values[i];
 			primitiveWrapperMap.put(dt.primitiveType, dt.objectiveType);
 			wrapperPrimitiveMap.put(dt.objectiveType, dt.primitiveType);
 			typeMap.put(dt.primitiveType, dt);
