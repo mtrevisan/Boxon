@@ -289,8 +289,9 @@ final class LoaderConfiguration{
 	}
 
 	private static Collection<ConfigField> extractMandatoryFields(final List<ConfigField> fields, final Version protocol){
-		final Collection<ConfigField> mandatoryFields = new HashSet<>(fields.size());
-		for(int i = 0; i < fields.size(); i ++){
+		final int size = fields.size();
+		final Collection<ConfigField> mandatoryFields = new HashSet<>(size);
+		for(int i = 0; i < size; i ++){
 			final ConfigField field = fields.get(i);
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(field.getBinding());
 			final Annotation annotation = manager.annotationToBeProcessed(protocol);

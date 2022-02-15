@@ -113,7 +113,7 @@ final class GenericHelper{
 
 	private static <T> List<Class<?>> processBase(final Type[] actualArgs){
 		//there is a result if the base class is reached
-		final List<Class<?>> types = new ArrayList<>(0);
+		final List<Class<?>> types = new ArrayList<>(actualArgs.length);
 		for(int i = 0; i < actualArgs.length; i ++){
 			final Class<?> cls = toClass(actualArgs[i].getTypeName());
 			if(cls != null)
@@ -137,9 +137,9 @@ final class GenericHelper{
 	}
 
 	private static List<Class<?>> populateResolvedTypes(final ParameterizedType ancestorType, final Map<String, Type> typeVariables){
-		//loop through all type arguments and replace type variables with the actually known types
-		final List<Class<?>> resolvedTypes = new ArrayList<>(0);
 		final Type[] types = ancestorType.getActualTypeArguments();
+		final List<Class<?>> resolvedTypes = new ArrayList<>(types.length);
+		//loop through all type arguments and replace type variables with the actually known types
 		for(int i = 0; i < types.length; i ++){
 			final String typeName = resolveArgumentType(typeVariables, types[i]).getTypeName();
 			final Class<?> cls = toClass(typeName);

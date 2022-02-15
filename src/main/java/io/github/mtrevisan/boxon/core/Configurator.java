@@ -155,8 +155,9 @@ public final class Configurator{
 	private static Map<String, Object> extractFieldsMap(final Version protocol, final ConfigurationMessage<?> configuration)
 			throws ConfigurationException, CodecException{
 		final List<ConfigField> fields = configuration.getConfigurationFields();
-		final Map<String, Object> fieldsMap = new HashMap<>(fields.size());
-		for(int i = 0; i < fields.size(); i ++){
+		final int size = fields.size();
+		final Map<String, Object> fieldsMap = new HashMap<>(size);
+		for(int i = 0; i < size; i ++){
 			final ConfigField field = fields.get(i);
 			final Annotation annotation = field.getBinding();
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(annotation);

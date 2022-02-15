@@ -121,8 +121,9 @@ public final class Descriptor{
 	}
 
 	private static void describeFields(final List<BoundedField> fields, final Map<String, Object> description) throws TemplateException{
-		final Collection<Map<String, Object>> fieldsDescription = new ArrayList<>(0);
-		for(int i = 0; i < fields.size(); i ++)
+		final int size = fields.size();
+		final Collection<Map<String, Object>> fieldsDescription = new ArrayList<>(size);
+		for(int i = 0; i < size; i ++)
 			describeField(fields.get(i), fieldsDescription);
 		description.put(DescriberKey.FIELDS.toString(), fieldsDescription);
 	}
