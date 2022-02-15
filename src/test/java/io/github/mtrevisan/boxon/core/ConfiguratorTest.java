@@ -45,8 +45,8 @@ class ConfiguratorTest{
 
 	@Test
 	void getConfigurations() throws AnnotationException, ConfigurationException, CodecException, TemplateException{
-		DeviceTypes deviceTypes = new DeviceTypes();
-		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
+		DeviceTypes deviceTypes = DeviceTypes.create()
+			.with("QUECLINK_GB200S", (byte)0x46);
 		BoxonCore core = BoxonCoreBuilder.builder()
 			.withDefaultCodecs()
 			.withConfiguration(REGConfigurationASCII.class)
@@ -70,8 +70,8 @@ class ConfiguratorTest{
 
 	@Test
 	void getProtocolVersionBoundaries() throws AnnotationException, ConfigurationException, TemplateException{
-		DeviceTypes deviceTypes = new DeviceTypes();
-		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
+		DeviceTypes deviceTypes = DeviceTypes.create()
+			.with("QUECLINK_GB200S", (byte)0x46);
 		BoxonCore core = BoxonCoreBuilder.builder()
 			.withDefaultCodecs()
 			.withConfigurations(REGConfigurationASCII.class)
@@ -87,8 +87,8 @@ class ConfiguratorTest{
 
 	@Test
 	void getConfigurationsByProtocol() throws AnnotationException, ConfigurationException, CodecException, TemplateException{
-		DeviceTypes deviceTypes = new DeviceTypes();
-		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
+		DeviceTypes deviceTypes = DeviceTypes.create()
+			.with("QUECLINK_GB200S", (byte)0x46);
 		BoxonCore core = BoxonCoreBuilder.builder()
 			.withDefaultCodecs()
 			.withConfigurations(REGConfigurationASCII.class)
@@ -109,8 +109,8 @@ class ConfiguratorTest{
 
 	@Test
 	void composeSingleConfigurationMessage() throws NoSuchMethodException, AnnotationException, TemplateException, ConfigurationException{
-		DeviceTypes deviceTypes = new DeviceTypes();
-		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
+		DeviceTypes deviceTypes = DeviceTypes.create()
+			.with("QUECLINK_GB200S", (byte)0x46);
 		BoxonCore core = BoxonCoreBuilder.builder()
 			.withDefaultCodecs()
 			.withConfigurations(REGConfigurationASCII.class)

@@ -286,8 +286,7 @@ public final class BoxonCoreBuilder{
 
 
 	/**
-	 * Create the common core data executing all the configuration methods called in the order: `EVENT_LISTENER`, `CONTEXT`, `CODEC`,
-	 * `TEMPLATE`, and `CONFIGURATION`.
+	 * Create the common core data executing all the configuration commands called in the proper order.
 	 *
 	 * @return	{@link BoxonCore Core} data used by {@link Parser}, {@link Descriptor}, {@link Composer}, and {@link Configurator}.
 	 * @throws AnnotationException   If an annotation is not well formatted.
@@ -298,13 +297,18 @@ public final class BoxonCoreBuilder{
 		final ConfigurationStep[] values = ConfigurationStep.values();
 		for(int i = 0; i < values.length; i ++){
 			final List<RunnableThrowable> executors = calls.get(values[i]);
-			for(int j = 0; j < JavaHelper.lengthOrZero(executors); j ++){
-				final RunnableThrowable executor = executors.get(j);
-				executor.execute();
-			}
+			executeCommands(executors);
 		}
 
 		return core;
+	}
+
+	private static void executeCommands(final List<RunnableThrowable> executors) throws AnnotationException, TemplateException,
+			ConfigurationException{
+		for(int i = 0; i < JavaHelper.lengthOrZero(executors); i ++){
+			final RunnableThrowable executor = executors.get(i);
+			executor.execute();
+		}
 	}
 
 }

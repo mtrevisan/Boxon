@@ -48,8 +48,8 @@ class ParserThreadedTest{
 	@Test
 	void concurrencySingleParserSingleCore() throws NoSuchMethodException, TemplateException, ConfigurationException, AnnotationException,
 			ExecutionException, InterruptedException{
-		DeviceTypes deviceTypes = new DeviceTypes();
-		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
+		DeviceTypes deviceTypes = DeviceTypes.create()
+			.with("QUECLINK_GB200S", (byte)0x46);
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 		BoxonCore core = BoxonCoreBuilder.builder()
 			.withContext(context)
@@ -72,8 +72,8 @@ class ParserThreadedTest{
 	@Test
 	void concurrencyMultipleParserSingleCore() throws NoSuchMethodException, TemplateException, ConfigurationException, AnnotationException,
 			ExecutionException, InterruptedException{
-		DeviceTypes deviceTypes = new DeviceTypes();
-		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
+		DeviceTypes deviceTypes = DeviceTypes.create()
+			.with("QUECLINK_GB200S", (byte)0x46);
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 		BoxonCore core = BoxonCoreBuilder.builder()
 			.withContext(context)
@@ -98,8 +98,8 @@ class ParserThreadedTest{
 	@Test
 	void concurrencyMultipleParserMultipleCore() throws NoSuchMethodException, TemplateException, ConfigurationException,
 			AnnotationException, ExecutionException, InterruptedException{
-		DeviceTypes deviceTypes = new DeviceTypes();
-		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
+		DeviceTypes deviceTypes = DeviceTypes.create()
+			.with("QUECLINK_GB200S", (byte)0x46);
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 
 		AtomicInteger errors = new AtomicInteger();

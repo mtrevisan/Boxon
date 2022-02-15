@@ -45,8 +45,8 @@ class ConfiguratorThreadedTest{
 	@Test
 	void concurrencySingleParserSingleCore() throws AnnotationException, ConfigurationException, CodecException, TemplateException,
 			ExecutionException, InterruptedException{
-		DeviceTypes deviceTypes = new DeviceTypes();
-		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
+		DeviceTypes deviceTypes = DeviceTypes.create()
+			.with("QUECLINK_GB200S", (byte)0x46);
 		BoxonCore core = BoxonCoreBuilder.builder()
 			.withDefaultCodecs()
 			.withConfiguration(REGConfigurationASCII.class)
@@ -73,8 +73,8 @@ class ConfiguratorThreadedTest{
 	@Test
 	void concurrencyMultipleParserSingleCore() throws AnnotationException, ConfigurationException, CodecException, TemplateException,
 			ExecutionException, InterruptedException{
-		DeviceTypes deviceTypes = new DeviceTypes();
-		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
+		DeviceTypes deviceTypes = DeviceTypes.create()
+			.with("QUECLINK_GB200S", (byte)0x46);
 		BoxonCore core = BoxonCoreBuilder.builder()
 			.withDefaultCodecs()
 			.withConfiguration(REGConfigurationASCII.class)
@@ -103,8 +103,8 @@ class ConfiguratorThreadedTest{
 	@Test
 	void concurrencyMultipleParserMultipleCore() throws AnnotationException, ConfigurationException, CodecException, TemplateException,
 			ExecutionException, InterruptedException{
-		DeviceTypes deviceTypes = new DeviceTypes();
-		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
+		DeviceTypes deviceTypes = DeviceTypes.create()
+			.with("QUECLINK_GB200S", (byte)0x46);
 
 		MultithreadingHelper.testMultithreading(
 			() -> {

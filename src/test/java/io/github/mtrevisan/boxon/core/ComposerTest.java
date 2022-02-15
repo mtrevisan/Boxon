@@ -43,8 +43,8 @@ class ComposerTest{
 
 	@Test
 	void parseAndComposeSingleMessageHex() throws NoSuchMethodException, AnnotationException, TemplateException, ConfigurationException{
-		DeviceTypes deviceTypes = new DeviceTypes();
-		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
+		DeviceTypes deviceTypes = DeviceTypes.create()
+			.with("QUECLINK_GB200S", (byte)0x46);
 		BoxonCore core = BoxonCoreBuilder.builder()
 			.addToContext("deviceTypes", deviceTypes)
 			.withContextFunction(ParserTest.class, "headerSize")
@@ -70,8 +70,8 @@ class ComposerTest{
 
 	@Test
 	void parseAndComposeSingleMessageASCII() throws AnnotationException, TemplateException, ConfigurationException{
-		DeviceTypes deviceTypes = new DeviceTypes();
-		deviceTypes.add("QUECLINK_GV350M", (byte)0xCF);
+		DeviceTypes deviceTypes = DeviceTypes.create()
+			.with("QUECLINK_GV350M", (byte)0xCF);
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 		BoxonCore core = BoxonCoreBuilder.builder()
 			.withContext(context)

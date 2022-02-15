@@ -32,12 +32,24 @@ import java.util.StringJoiner;
 @SuppressWarnings("ALL")
 public class DeviceTypes{
 
-	private final List<DeviceType> deviceTypes = new ArrayList<>();
+	private final List<DeviceType> deviceTypes;
 
 
-	public void add(final String deviceTypeName, final byte deviceTypeCode){
+	public static DeviceTypes create(){
+		return new DeviceTypes();
+	}
+
+
+	private DeviceTypes(){
+		deviceTypes = new ArrayList<>(1);
+	}
+
+
+	public DeviceTypes with(final String deviceTypeName, final byte deviceTypeCode){
 		final DeviceType deviceType = new DeviceType(deviceTypeName, deviceTypeCode);
 		deviceTypes.add(deviceType);
+
+		return this;
 	}
 
 	public boolean has(final byte deviceTypeCode){
