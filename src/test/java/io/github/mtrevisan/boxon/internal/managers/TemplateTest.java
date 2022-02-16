@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.internal.codecs;
+package io.github.mtrevisan.boxon.internal.managers;
 
 import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.Evaluate;
@@ -42,13 +42,10 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.annotations.checksummers.CRC16CCITT;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
-import io.github.mtrevisan.boxon.internal.codecs.LoaderCodec;
-import io.github.mtrevisan.boxon.internal.managers.BoundedField;
-import io.github.mtrevisan.boxon.internal.managers.EvaluatedField;
-import io.github.mtrevisan.boxon.internal.managers.Template;
-import io.github.mtrevisan.boxon.internal.parsers.LoaderTemplate;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.external.io.ByteOrder;
+import io.github.mtrevisan.boxon.internal.codecs.LoaderCodec;
+import io.github.mtrevisan.boxon.internal.parsers.LoaderTemplate;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

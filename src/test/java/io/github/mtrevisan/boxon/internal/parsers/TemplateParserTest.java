@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.internal.codecs;
+package io.github.mtrevisan.boxon.internal.parsers;
 
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.bindings.BindByte;
@@ -30,10 +30,10 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
+import io.github.mtrevisan.boxon.internal.codecs.LoaderCodec;
+import io.github.mtrevisan.boxon.internal.codecs.TemplateParserInterface;
 import io.github.mtrevisan.boxon.internal.helpers.Evaluator;
 import io.github.mtrevisan.boxon.internal.managers.Template;
-import io.github.mtrevisan.boxon.internal.parsers.LoaderTemplate;
-import io.github.mtrevisan.boxon.internal.parsers.TemplateParser;
 import io.github.mtrevisan.boxon.internal.codecs.queclink.ACKMessageASCII;
 import io.github.mtrevisan.boxon.internal.codecs.queclink.ACKMessageHex;
 import io.github.mtrevisan.boxon.internal.codecs.queclink.ACKMessageHexByteChecksum;

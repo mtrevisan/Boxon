@@ -242,16 +242,9 @@
 				<version>${maven-surefire-plugin.version}</version>
 				<configuration>
 					<argLine>
-						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.annotations.checksummers=ALL-UNNAMED
-						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.annotations.converters=ALL-UNNAMED
-						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.annotations.validators=ALL-UNNAMED
-						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.internal.codecs=spring.expression,ALL-UNNAMED
-						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.internal.codecs.queclink=spring.core,spring.expression,ALL-UNNAMED
-						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.internal.matchers=ALL-UNNAMED
-						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.core=spring.core,ALL-UNNAMED
-						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.internal=ALL-UNNAMED
-						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.external.io=ALL-UNNAMED
-						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.external.semanticversioning=ALL-UNNAMED
+						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.internal.codecs.queclink=spring.core,spring.expression
+						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.internal.parsers=spring.core
+						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.core=spring.core
 					</argLine>
 				</configuration>
 			</plugin>
