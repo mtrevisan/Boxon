@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.codecs;
+package io.github.mtrevisan.boxon.codecs.utils;
 
 import org.springframework.expression.EvaluationException;
 import org.springframework.expression.Expression;
@@ -113,7 +113,7 @@ public final class Evaluator{
 	 * @return	The result of the expression.
 	 * @throws EvaluationException	If an error occurs during the evaluation of an expression.
 	 */
-	boolean evaluateBoolean(final String expression, final Object rootObject){
+	public boolean evaluateBoolean(final String expression, final Object rootObject){
 		return (expression.isEmpty() || evaluate(expression, rootObject, boolean.class));
 	}
 
@@ -125,7 +125,7 @@ public final class Evaluator{
 	 * @return	The size, or a negative number if the expression is not a valid positive integer.
 	 * @throws EvaluationException	If an error occurs during the evaluation of an expression.
 	 */
-	int evaluateSize(final String expression, final Object rootObject){
+	public int evaluateSize(final String expression, final Object rootObject){
 		int size = -1;
 		if(!expression.isBlank())
 			size = (isPositiveInteger(expression)

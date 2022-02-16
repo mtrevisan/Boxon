@@ -27,7 +27,7 @@ package io.github.mtrevisan.boxon.codecs;
 import io.github.mtrevisan.boxon.external.io.CodecInterface;
 
 
-interface LoaderCodecInterface{
+public interface LoaderCodecInterface{
 
 	boolean hasCodec(final Class<?> type);
 

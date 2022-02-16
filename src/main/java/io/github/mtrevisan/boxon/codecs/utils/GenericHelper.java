@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.codecs;
+package io.github.mtrevisan.boxon.codecs.utils;
 
 import org.springframework.util.StringUtils;
 
@@ -42,7 +42,7 @@ import java.util.Queue;
 /**
  * A collection of convenience methods for working with generics.
  */
-final class GenericHelper{
+public final class GenericHelper{
 
 	private static final ClassLoader CLASS_LOADER = GenericHelper.class.getClassLoader();
 	private static final String ARRAY_VARIABLE = "[]";
@@ -77,7 +77,7 @@ final class GenericHelper{
 	 *
 	 * @see <a href="https://stackoverflow.com/questions/17297308/how-do-i-resolve-the-actual-type-for-a-generic-return-type-using-reflection">How do I resolve the actual type for a generic return type using reflection?</a>
 	 */
-	static <T> List<Class<?>> resolveGenericTypes(final Class<? extends T> offspring, final Class<T> base, Type... actualArgs){
+	public static <T> List<Class<?>> resolveGenericTypes(final Class<? extends T> offspring, final Class<T> base, Type... actualArgs){
 		//if actual types are omitted, the type parameters will be used instead
 		if(actualArgs.length == 0)
 			actualArgs = offspring.getTypeParameters();

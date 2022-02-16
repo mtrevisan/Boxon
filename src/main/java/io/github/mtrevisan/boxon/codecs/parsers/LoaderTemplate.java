@@ -22,9 +22,11 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.codecs;
+package io.github.mtrevisan.boxon.codecs.parsers;
 
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
+import io.github.mtrevisan.boxon.codecs.LoaderCodecInterface;
+import io.github.mtrevisan.boxon.codecs.utils.ReflectiveClassLoader;
 import io.github.mtrevisan.boxon.codecs.managers.Memoizer;
 import io.github.mtrevisan.boxon.codecs.managers.Template;
 import io.github.mtrevisan.boxon.codecs.managers.ThrowingFunction;
@@ -74,7 +76,7 @@ public final class LoaderTemplate{
 	 * @param loaderCodec	A codec loader.
 	 * @return	A template parser.
 	 */
-	static LoaderTemplate create(final LoaderCodecInterface loaderCodec){
+	public static LoaderTemplate create(final LoaderCodecInterface loaderCodec){
 		return new LoaderTemplate(loaderCodec);
 	}
 
@@ -92,7 +94,7 @@ public final class LoaderTemplate{
 	 * @param eventListener	The event listener.
 	 * @return	The current instance.
 	 */
-	LoaderTemplate withEventListener(final EventListener eventListener){
+	public LoaderTemplate withEventListener(final EventListener eventListener){
 		this.eventListener = JavaHelper.nonNullOrDefault(eventListener, EventListener.getNoOpInstance());
 
 		return this;
@@ -104,7 +106,7 @@ public final class LoaderTemplate{
 	 *
 	 * @throws IllegalArgumentException	If the codecs was not loaded yet.
 	 */
-	void loadDefaultTemplates() throws AnnotationException, TemplateException{
+	public void loadDefaultTemplates() throws AnnotationException, TemplateException{
 		loadTemplates(ReflectiveClassLoader.extractCallerClasses());
 	}
 
@@ -113,7 +115,7 @@ public final class LoaderTemplate{
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
 	 */
-	void loadTemplates(final Class<?>... basePackageClasses) throws AnnotationException, TemplateException{
+	public void loadTemplates(final Class<?>... basePackageClasses) throws AnnotationException, TemplateException{
 		eventListener.loadingTemplates(basePackageClasses);
 
 		final ReflectiveClassLoader reflectiveClassLoader = ReflectiveClassLoader.createFrom(basePackageClasses);
@@ -130,7 +132,7 @@ public final class LoaderTemplate{
 	 *
 	 * @param templateClass	Template class.
 	 */
-	void loadTemplate(final Class<?> templateClass) throws AnnotationException, TemplateException{
+	public void loadTemplate(final Class<?> templateClass) throws AnnotationException, TemplateException{
 		eventListener.loadingTemplate(templateClass);
 
 		if(templateClass.isAnnotationPresent(MessageHeader.class)){
@@ -189,7 +191,7 @@ public final class LoaderTemplate{
 	 * @throws AnnotationException	If an annotation has validation problems.
 	 */
 	@SuppressWarnings("unchecked")
-	<T> Template<T> createTemplate(final Class<T> type) throws AnnotationException{
+	public <T> Template<T> createTemplate(final Class<T> type) throws AnnotationException{
 		return (Template<T>)templateStore.apply(type);
 	}
 
@@ -236,7 +238,7 @@ public final class LoaderTemplate{
 	 * @param reader	The reader to read the header from.
 	 * @return	The template that is able to decode/encode the next message in the given reader.
 	 */
-	Template<?> getTemplate(final BitReaderInterface reader) throws TemplateException{
+	public Template<?> getTemplate(final BitReaderInterface reader) throws TemplateException{
 		final int index = reader.position();
 
 		//for each available template, select the first that matches the starting bytes
@@ -263,7 +265,7 @@ public final class LoaderTemplate{
 	 * @return	The template that is able to decode/encode the given class.
 	 * @throws TemplateException	Whether the template is not valid.
 	 */
-	Template<?> getTemplate(final Class<?> type) throws TemplateException{
+	public Template<?> getTemplate(final Class<?> type) throws TemplateException{
 		final MessageHeader header = type.getAnnotation(MessageHeader.class);
 		if(header == null)
 			throw TemplateException.create("The given class type is not a valid template");
@@ -303,7 +305,7 @@ public final class LoaderTemplate{
 	 * @param reader	The reader.
 	 * @return	The index of the next message.
 	 */
-	int findNextMessageIndex(final BitReaderInterface reader){
+	public int findNextMessageIndex(final BitReaderInterface reader){
 		int minOffset = -1;
 		for(final Template<?> template : templates.values()){
 			final MessageHeader header = template.getHeader();

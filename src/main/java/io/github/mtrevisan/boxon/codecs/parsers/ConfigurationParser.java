@@ -22,10 +22,12 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.codecs;
+package io.github.mtrevisan.boxon.codecs.parsers;
 
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
+import io.github.mtrevisan.boxon.codecs.utils.Evaluator;
+import io.github.mtrevisan.boxon.codecs.LoaderCodecInterface;
 import io.github.mtrevisan.boxon.codecs.managers.ConfigField;
 import io.github.mtrevisan.boxon.codecs.managers.ConfigurationMessage;
 import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationHelper;
@@ -167,7 +169,7 @@ public final class ConfigurationParser{
 	 * @throws FieldException	If a codec is not found.
 	 */
 	public <T> void encode(final ConfigurationMessage<?> configuration, final BitWriterInterface writer, final T currentObject,
-			final Evaluator evaluator, final Version protocol) throws FieldException{
+								  final Evaluator evaluator, final Version protocol) throws FieldException{
 		final ParserContext<T> parserContext = new ParserContext<>(evaluator, currentObject);
 		parserContext.setClassName(configuration.getType().getName());
 

@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.codecs;
+package io.github.mtrevisan.boxon.codecs.utils;
 
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
@@ -38,7 +38,7 @@ import java.lang.annotation.Annotation;
 
 
 /** Data associated to an annotation. */
-final class BindingData{
+public final class BindingData{
 
 	private static final ObjectChoices.ObjectChoice EMPTY_CHOICE = new NullObjectChoice();
 
@@ -83,22 +83,22 @@ final class BindingData{
 	}
 
 	@SuppressWarnings("unchecked")
-	<T> void validate(final Object value){
+	public <T> void validate(final Object value){
 		final Validator<T> validatorCreator = (Validator<T>)ConstructorHelper.getCreator(validator)
 			.get();
 		if(!validatorCreator.isValid((T)value))
 			throw new IllegalArgumentException("Validation with " + validator.getSimpleName() + " not passed (value is " + value + ")");
 	}
 
-	void addToContext(final Object instance){
+	public void addToContext(final Object instance){
 		evaluator.addToContext(ContextHelper.CONTEXT_SELF, instance);
 	}
 
-	int evaluateSize(){
+	public int evaluateSize(){
 		return evaluator.evaluateSize(size, rootObject);
 	}
 
-	Class<?> chooseAlternativeType(final BitReaderInterface reader) throws CodecException{
+	public Class<?> chooseAlternativeType(final BitReaderInterface reader) throws CodecException{
 		if(!hasSelectAlternatives())
 			return type;
 
@@ -125,7 +125,7 @@ final class BindingData{
 		return chosenAlternativeType;
 	}
 
-	boolean hasSelectAlternatives(){
+	public boolean hasSelectAlternatives(){
 		return (selectObjectFrom.alternatives().length > 0);
 	}
 

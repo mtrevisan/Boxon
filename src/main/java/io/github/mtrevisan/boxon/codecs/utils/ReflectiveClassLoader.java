@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.codecs;
+package io.github.mtrevisan.boxon.codecs.utils;
 
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfoList;
@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
 /**
  * @see <a href="https://github.com/classgraph/classgraph">ClassGraph</a>
  */
-final class ReflectiveClassLoader{
+public final class ReflectiveClassLoader{
 
 	private final Map<Class<?>, Collection<Class<?>>> metadataStore = new ConcurrentHashMap<>(0);
 
@@ -53,7 +53,7 @@ final class ReflectiveClassLoader{
 	/**
 	 * @param packageClasses	List of packages to scan into.
 	 */
-	static ReflectiveClassLoader createFrom(final Class<?>... packageClasses){
+	public static ReflectiveClassLoader createFrom(final Class<?>... packageClasses){
 		return new ReflectiveClassLoader(packageClasses);
 	}
 
@@ -84,7 +84,7 @@ final class ReflectiveClassLoader{
 	 * @param annotation	The annotation to search for.
 	 * @return	The collection of classes.
 	 */
-	List<Class<?>> extractClassesWithAnnotation(final Class<? extends Annotation> annotation){
+	public List<Class<?>> extractClassesWithAnnotation(final Class<? extends Annotation> annotation){
 		final List<Class<?>> loadedClasses = getStoredClasses(annotation);
 		if(loadedClasses.isEmpty())
 			try(final ScanResult scanResult = classGraph.scan()){
@@ -103,7 +103,7 @@ final class ReflectiveClassLoader{
 	 * @param type	The interface to search the implementation for.
 	 * @return	The collection of classes implementing the given interface.
 	 */
-	List<Class<?>> extractClassesImplementing(final Class<?> type){
+	public List<Class<?>> extractClassesImplementing(final Class<?> type){
 		final List<Class<?>> loadedClasses = getStoredClasses(type);
 		if(loadedClasses.isEmpty())
 			try(final ScanResult scanResult = classGraph.scan()){
@@ -144,7 +144,7 @@ final class ReflectiveClassLoader{
 	}
 
 
-	static Class<?>[] extractCallerClasses(){
+	public static Class<?>[] extractCallerClasses(){
 		final StackWalker walker = StackWalker.getInstance();
 		final List<String> classNames = walker.walk(frames -> frames.skip(1)
 			.limit(2)
