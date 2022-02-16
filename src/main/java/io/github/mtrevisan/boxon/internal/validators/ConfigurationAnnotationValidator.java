@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.internal.managers;
+package io.github.mtrevisan.boxon.internal.validators;
 
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
@@ -44,11 +44,11 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
 
-enum ConfigurationAnnotationValidator{
+public enum ConfigurationAnnotationValidator{
 
 	HEADER(ConfigurationHeader.class){
 		@Override
-		void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
+		public void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
 				throws AnnotationException{
 			final ConfigurationHeader binding = (ConfigurationHeader)annotation;
 
@@ -70,7 +70,7 @@ enum ConfigurationAnnotationValidator{
 
 	FIELD(ConfigurationField.class){
 		@Override
-		void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
+		public void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
 				throws AnnotationException, CodecException{
 			final ConfigFieldData configData = ConfigFieldDataBuilder.create(field, (ConfigurationField)annotation);
 
@@ -118,7 +118,7 @@ enum ConfigurationAnnotationValidator{
 
 	COMPOSITE_FIELD(CompositeConfigurationField.class){
 		@Override
-		void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
+		public void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
 				throws AnnotationException, CodecException{
 			final ConfigFieldData configData = ConfigFieldDataBuilder.create(field, (CompositeConfigurationField)annotation);
 
@@ -146,7 +146,7 @@ enum ConfigurationAnnotationValidator{
 
 	SUB_FIELD(CompositeSubField.class){
 		@Override
-		void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
+		public void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
 				throws AnnotationException, CodecException{
 			final ConfigFieldData configData = ConfigFieldDataBuilder.create(field, (CompositeSubField)annotation);
 
@@ -163,7 +163,7 @@ enum ConfigurationAnnotationValidator{
 
 	ALTERNATIVE_FIELDS(AlternativeConfigurationField.class){
 		@Override
-		void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
+		public void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
 				throws AnnotationException{
 			final ConfigFieldData configData = ConfigFieldDataBuilder.create(field, (AlternativeConfigurationField)annotation);
 
@@ -196,7 +196,7 @@ enum ConfigurationAnnotationValidator{
 
 	ALTERNATIVE_FIELD(AlternativeSubField.class){
 		@Override
-		void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
+		public void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
 				throws AnnotationException, CodecException{
 			final ConfigFieldData configData = ConfigFieldDataBuilder.create(field, (AlternativeSubField)annotation);
 
@@ -244,11 +244,10 @@ enum ConfigurationAnnotationValidator{
 		annotationType = type;
 	}
 
-	static ConfigurationAnnotationValidator fromAnnotationType(final Class<? extends Annotation> annotationType){
+	public static ConfigurationAnnotationValidator fromAnnotationType(final Class<? extends Annotation> annotationType){
 		return VALIDATORS.get(annotationType);
 	}
 
-	abstract void validate(final Field field, final Annotation annotation, final Version minProtocolVersion,
-		final Version maxProtocolVersion) throws AnnotationException, CodecException;
+	public abstract void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion) throws AnnotationException, CodecException;
 
 }

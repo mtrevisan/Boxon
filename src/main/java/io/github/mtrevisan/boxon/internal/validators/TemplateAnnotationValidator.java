@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.internal.managers;
+package io.github.mtrevisan.boxon.internal.validators;
 
 import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArray;
@@ -44,11 +44,11 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
 
-enum TemplateAnnotationValidator{
+public enum TemplateAnnotationValidator{
 
 	OBJECT(BindObject.class){
 		@Override
-		void validate(final Field field, final Annotation annotation) throws AnnotationException{
+		public void validate(final Field field, final Annotation annotation) throws AnnotationException{
 			final BindObject binding = (BindObject)annotation;
 			final Class<?> type = binding.type();
 			validateType(type, BindObject.class);
@@ -65,7 +65,7 @@ enum TemplateAnnotationValidator{
 
 	ARRAY_PRIMITIVE(BindArrayPrimitive.class){
 		@Override
-		void validate(final Field field, final Annotation annotation) throws AnnotationException{
+		public void validate(final Field field, final Annotation annotation) throws AnnotationException{
 			final BindArrayPrimitive binding = (BindArrayPrimitive)annotation;
 			final Class<?> type = binding.type();
 			if(!ParserDataType.isPrimitive(type))
@@ -79,7 +79,7 @@ enum TemplateAnnotationValidator{
 
 	ARRAY(BindArray.class){
 		@Override
-		void validate(final Field field, final Annotation annotation) throws AnnotationException{
+		public void validate(final Field field, final Annotation annotation) throws AnnotationException{
 			final BindArray binding = (BindArray)annotation;
 			final Class<?> type = binding.type();
 			validateType(type, BindArray.class);
@@ -96,7 +96,7 @@ enum TemplateAnnotationValidator{
 
 	BIT_SET(BindBitSet.class){
 		@Override
-		void validate(final Field field, final Annotation annotation) throws AnnotationException{
+		public void validate(final Field field, final Annotation annotation) throws AnnotationException{
 			final BindBitSet binding = (BindBitSet)annotation;
 
 			final Class<? extends Converter<?, ?>> converter = binding.converter();
@@ -106,7 +106,7 @@ enum TemplateAnnotationValidator{
 
 	STRING(BindString.class){
 		@Override
-		void validate(final Field field, final Annotation annotation) throws AnnotationException{
+		public void validate(final Field field, final Annotation annotation) throws AnnotationException{
 			final BindString binding = (BindString)annotation;
 			CharsetHelper.assertValidCharset(binding.charset());
 
@@ -117,7 +117,7 @@ enum TemplateAnnotationValidator{
 
 	STRING_TERMINATED(BindStringTerminated.class){
 		@Override
-		void validate(final Field field, final Annotation annotation) throws AnnotationException{
+		public void validate(final Field field, final Annotation annotation) throws AnnotationException{
 			final BindStringTerminated binding = (BindStringTerminated)annotation;
 			CharsetHelper.assertValidCharset(binding.charset());
 
@@ -129,7 +129,7 @@ enum TemplateAnnotationValidator{
 
 	CHECKSUM(Checksum.class){
 		@Override
-		void validate(final Field field, final Annotation annotation) throws AnnotationException{
+		public void validate(final Field field, final Annotation annotation) throws AnnotationException{
 			final Class<?> type = ((Checksum)annotation).type();
 			final ParserDataType dataType = ParserDataType.fromType(type);
 			if(dataType != ParserDataType.BYTE && dataType != ParserDataType.SHORT)
@@ -152,11 +152,11 @@ enum TemplateAnnotationValidator{
 		annotationType = type;
 	}
 
-	static TemplateAnnotationValidator fromAnnotation(final Annotation annotation){
+	public static TemplateAnnotationValidator fromAnnotation(final Annotation annotation){
 		return VALIDATORS.get(annotation.annotationType());
 	}
 
-	abstract void validate(final Field field, final Annotation annotation) throws AnnotationException;
+	public abstract void validate(final Field field, final Annotation annotation) throws AnnotationException;
 
 
 	private static void validateType(final Class<?> bindingType, final Class<? extends Annotation> annotation) throws AnnotationException{

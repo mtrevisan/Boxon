@@ -31,6 +31,7 @@ import io.github.mtrevisan.boxon.annotations.Skip;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.internal.helpers.CharsetHelper;
 import io.github.mtrevisan.boxon.internal.helpers.ReflectionHelper;
+import io.github.mtrevisan.boxon.internal.validators.TemplateAnnotationValidator;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
