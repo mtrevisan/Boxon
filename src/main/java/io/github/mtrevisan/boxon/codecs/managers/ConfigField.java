@@ -28,6 +28,7 @@ import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.util.Objects;
 
 
 /** Data associated to an annotated field. */
@@ -42,15 +43,19 @@ public final class ConfigField{
 	private final Annotation binding;
 
 
-	ConfigField(final Field field, final Annotation binding){
-		this(field, binding, null);
+	static ConfigField create(final Field field, final Annotation binding, final ConfigurationSkip[] skips){
+		return new ConfigField(field, binding, skips);
 	}
 
-	ConfigField(final Field field, final Annotation binding, final ConfigurationSkip[] skips){
+
+	private ConfigField(final Field field, final Annotation binding, final ConfigurationSkip[] skips){
+		Objects.requireNonNull(skips, "Configuration skips must not be null");
+
 		this.field = field;
 		this.binding = binding;
-		this.skips = (skips != null? skips.clone(): null);
+		this.skips = (skips.length > 0? skips.clone(): EMPTY_ARRAY);
 	}
+
 
 	/**
 	 * The configuration field.
@@ -100,7 +105,7 @@ public final class ConfigField{
 	 * @return	The annotations of the skips that must be made before the field value.
 	 */
 	public ConfigurationSkip[] getSkips(){
-		return (skips != null? skips.clone(): EMPTY_ARRAY);
+		return skips.clone();
 	}
 
 	/**

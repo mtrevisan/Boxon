@@ -129,7 +129,7 @@ public final class ConfigurationMessage<T>{
 				validateShortDescriptionUniqueness(validAnnotation, uniqueShortDescription, type);
 
 				if(validAnnotation != null)
-					configFields.add(new ConfigField(field, validAnnotation, (skips.length > 0? skips: null)));
+					configFields.add(ConfigField.create(field, validAnnotation, skips));
 			}
 			catch(final AnnotationException | CodecException e){
 				e.withClassAndField(type, field);

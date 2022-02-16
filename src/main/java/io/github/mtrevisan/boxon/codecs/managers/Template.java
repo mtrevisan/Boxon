@@ -126,7 +126,7 @@ public final class Template<T>{
 				final Annotation validAnnotation = validateField(field, boundedAnnotations);
 
 				if(validAnnotation != null)
-					boundedFields.add(new BoundedField(field, validAnnotation, (skips.length > 0? skips: null)));
+					boundedFields.add(BoundedField.create(field, validAnnotation, skips));
 			}
 			catch(final AnnotationException e){
 				e.withClassAndField(type, field);
@@ -144,7 +144,7 @@ public final class Template<T>{
 				throw (AnnotationException)exception.withClassAndField(type, field);
 			}
 
-			this.checksum = new BoundedField(field, checksum);
+			this.checksum = BoundedField.create(field, checksum);
 		}
 	}
 

@@ -30,6 +30,7 @@ import io.github.mtrevisan.boxon.internal.JavaHelper;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Objects;
 
 
 /** Data associated to an annotated field. */
@@ -49,19 +50,27 @@ public final class BoundedField{
 	private final String condition;
 
 
-	BoundedField(final Field field, final Annotation binding){
-		this(field, binding, null);
+	static BoundedField create(final Field field, final Annotation binding){
+		return new BoundedField(field, binding, EMPTY_ARRAY);
 	}
 
-	BoundedField(final Field field, final Annotation binding, final Skip[] skips){
+	static BoundedField create(final Field field, final Annotation binding, final Skip[] skips){
+		return new BoundedField(field, binding, skips);
+	}
+
+
+	private BoundedField(final Field field, final Annotation binding, final Skip[] skips){
+		Objects.requireNonNull(skips, "Skips must not be null");
+
 		this.field = field;
 		this.binding = binding;
-		this.skips = (skips != null? skips.clone(): null);
+		this.skips = (skips.length > 0? skips.clone(): EMPTY_ARRAY);
 
 		//pre-fetch condition method
 		final Method conditionMethod = ReflectionHelper.getAccessibleMethod(binding.annotationType(), CONDITION, String.class);
 		condition = ReflectionHelper.invokeMethodOrDefault(binding, conditionMethod, JavaHelper.EMPTY_STRING);
 	}
+
 
 	/**
 	 * The name of the field.
@@ -108,7 +117,7 @@ public final class BoundedField{
 	 * @return	The annotations of the skips that must be made before reading the field value.
 	 */
 	public Skip[] getSkips(){
-		return (skips != null? skips.clone(): EMPTY_ARRAY);
+		return skips.clone();
 	}
 
 	/**
