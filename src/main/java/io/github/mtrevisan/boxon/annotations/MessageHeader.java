@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.annotations;
 
-import io.github.mtrevisan.boxon.internal.managers.CharsetHelper;
+import io.github.mtrevisan.boxon.internal.helpers.CharsetHelper;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

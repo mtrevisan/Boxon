@@ -246,8 +246,8 @@
 						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.annotations.converters=ALL-UNNAMED
 						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.annotations.validators=ALL-UNNAMED
 						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.internal.codecs=spring.expression,ALL-UNNAMED
-						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.internal.managers.matchers=ALL-UNNAMED
 						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.internal.codecs.queclink=spring.core,spring.expression,ALL-UNNAMED
+						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.internal.matchers=ALL-UNNAMED
 						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.core=spring.core,ALL-UNNAMED
 						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.internal=ALL-UNNAMED
 						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.external.io=ALL-UNNAMED

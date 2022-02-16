@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.internal.managers;
 
 import io.github.mtrevisan.boxon.annotations.Evaluate;
+import io.github.mtrevisan.boxon.internal.helpers.ReflectionHelper;
 
 import java.lang.reflect.Field;
 

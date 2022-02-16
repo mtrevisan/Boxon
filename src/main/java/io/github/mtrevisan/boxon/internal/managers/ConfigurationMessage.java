@@ -26,6 +26,7 @@ package io.github.mtrevisan.boxon.internal.managers;
 
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
+import io.github.mtrevisan.boxon.internal.helpers.ReflectionHelper;
 import io.github.mtrevisan.boxon.internal.managers.configuration.ConfigurationManagerFactory;
 import io.github.mtrevisan.boxon.internal.managers.configuration.ConfigurationManagerInterface;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;

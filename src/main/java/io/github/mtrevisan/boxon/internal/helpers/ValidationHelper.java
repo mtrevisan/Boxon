@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.internal.managers;
+package io.github.mtrevisan.boxon.internal.helpers;
 
 import io.github.mtrevisan.boxon.internal.managers.configuration.ConfigFieldData;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
@@ -40,7 +40,7 @@ import java.util.regex.Pattern;
 /**
  * A collection of convenience methods for working with validations.
  */
-final class ValidationHelper{
+public final class ValidationHelper{
 
 	private static final Pattern PATTERN_PIPE = Pattern.compile("\\|");
 
@@ -48,8 +48,7 @@ final class ValidationHelper{
 	private ValidationHelper(){}
 
 
-	static void validateProtocol(final ConfigFieldData field, final Version minProtocolVersion,
-			final Version maxProtocolVersion) throws AnnotationException{
+	public static void validateProtocol(final ConfigFieldData field, final Version minProtocolVersion, final Version maxProtocolVersion) throws AnnotationException{
 		if(StringHelper.isBlank(field.getMinProtocol()) && StringHelper.isBlank(field.getMaxProtocol()))
 			return;
 
@@ -123,7 +122,7 @@ final class ValidationHelper{
 		return max;
 	}
 
-	static void validateMinMaxValues(final ConfigFieldData field) throws AnnotationException, CodecException{
+	public static void validateMinMaxValues(final ConfigFieldData field) throws AnnotationException, CodecException{
 		if(!StringHelper.isBlank(field.getMinValue()) || !StringHelper.isBlank(field.getMaxValue())){
 			final Class<?> fieldType = field.getFieldType();
 			if(fieldType.isArray())
@@ -143,7 +142,7 @@ final class ValidationHelper{
 		}
 	}
 
-	static void validateDefaultValue(final ConfigFieldData field) throws AnnotationException, CodecException{
+	public static void validateDefaultValue(final ConfigFieldData field) throws AnnotationException, CodecException{
 		final Class<?> fieldType = field.getFieldType();
 
 		final String defaultValue = field.getDefaultValue();
@@ -179,7 +178,7 @@ final class ValidationHelper{
 		return (StringHelper.isBlank(text) || pattern.matcher(text).matches());
 	}
 
-	static void validatePattern(final ConfigFieldData field) throws AnnotationException{
+	public static void validatePattern(final ConfigFieldData field) throws AnnotationException{
 		//valid pattern
 		final String pattern = field.getPattern();
 		if(!StringHelper.isBlank(pattern)){
@@ -202,7 +201,7 @@ final class ValidationHelper{
 	}
 
 
-	static void validateEnumeration(final ConfigFieldData field) throws AnnotationException{
+	public static void validateEnumeration(final ConfigFieldData field) throws AnnotationException{
 		if(field.hasEnumeration()){
 			//enumeration can be encoded
 			final Class<? extends ConfigurationEnum> enumeration = field.getEnumeration();
@@ -259,7 +258,7 @@ final class ValidationHelper{
 				field.getAnnotationName(), defaultValue, Arrays.toString(enumConstants));
 	}
 
-	static void validateRadix(final int radix) throws AnnotationException{
+	public static void validateRadix(final int radix) throws AnnotationException{
 		if(radix < Character.MIN_RADIX || radix > Character.MAX_RADIX)
 			throw AnnotationException.create("Radix must be in [{}, {}]", Character.MIN_RADIX, Character.MAX_RADIX);
 	}

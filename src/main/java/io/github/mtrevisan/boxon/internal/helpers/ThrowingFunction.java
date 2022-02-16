@@ -22,51 +22,26 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.internal.managers;
-
-import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-
-import java.nio.charset.Charset;
-import java.util.function.Function;
+package io.github.mtrevisan.boxon.internal.helpers;
 
 
 /**
- * A collection of convenience methods for working with {@link Charset} objects.
+ * Represents a function that accepts one argument, produces a result, and throws an exception.
+ *
+ * @param <IN>	The type of the input to the function.
+ * @param <OUT>	The type of the output to the function.
+ * @param <E>	The type of the exception thrown by the function.
  */
-public final class CharsetHelper{
-
-	/** The default character set. */
-	public static final String DEFAULT_CHARSET = "UTF-8";
-
-
-	private static final Function<String, Charset> CHARSETS = Memoizer.memoize(CharsetHelper::lookupName);
-
-
-	private CharsetHelper(){}
-
+@FunctionalInterface
+public interface ThrowingFunction<IN, OUT, E extends Exception>{
 
 	/**
-	 * Get the charset object for the named charset.
+	 * Applies this function to the given argument.
 	 *
-	 * @param charsetName	The charset name.
-	 * @return	The charset.
+	 * @param in	The function argument.
+	 * @return	The function result.
+	 * @throws E	The exception thrown.
 	 */
-	public static Charset lookup(final String charsetName){
-		return CHARSETS.apply(charsetName);
-	}
-
-	private static Charset lookupName(final String charsetName){
-		return Charset.forName(charsetName);
-	}
-
-
-	static void assertValidCharset(final String charsetName) throws AnnotationException{
-		try{
-			lookup(charsetName);
-		}
-		catch(final IllegalArgumentException ignored){
-			throw AnnotationException.create("Invalid charset: '{}'", charsetName);
-		}
-	}
+	OUT apply(IN in) throws E;
 
 }

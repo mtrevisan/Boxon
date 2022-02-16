@@ -30,7 +30,7 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.internal.helpers.BindingData;
 import io.github.mtrevisan.boxon.internal.helpers.BindingDataBuilder;
 import io.github.mtrevisan.boxon.internal.helpers.Evaluator;
-import io.github.mtrevisan.boxon.internal.managers.Injected;
+import io.github.mtrevisan.boxon.internal.helpers.Injected;
 import io.github.mtrevisan.boxon.internal.managers.Template;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.io.BitReaderInterface;

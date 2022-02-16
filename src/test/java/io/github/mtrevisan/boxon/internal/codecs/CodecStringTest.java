@@ -32,7 +32,7 @@ import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.internal.helpers.Evaluator;
-import io.github.mtrevisan.boxon.internal.managers.ReflectionHelper;
+import io.github.mtrevisan.boxon.internal.helpers.ReflectionHelper;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.io.BitReader;
 import io.github.mtrevisan.boxon.external.io.BitReaderInterface;

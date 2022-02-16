@@ -28,7 +28,7 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
-import io.github.mtrevisan.boxon.internal.managers.CharsetHelper;
+import io.github.mtrevisan.boxon.internal.helpers.CharsetHelper;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

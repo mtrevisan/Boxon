@@ -25,7 +25,7 @@
 package io.github.mtrevisan.boxon.internal.parsers;
 
 import io.github.mtrevisan.boxon.internal.codecs.LoaderCodecInterface;
-import io.github.mtrevisan.boxon.internal.managers.CharsetHelper;
+import io.github.mtrevisan.boxon.internal.helpers.CharsetHelper;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.external.io.BitWriterInterface;

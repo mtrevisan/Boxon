@@ -25,7 +25,7 @@
 package io.github.mtrevisan.boxon.internal.codecs;
 
 import io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField;
-import io.github.mtrevisan.boxon.internal.managers.CharsetHelper;
+import io.github.mtrevisan.boxon.internal.helpers.CharsetHelper;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.external.io.BitReaderInterface;

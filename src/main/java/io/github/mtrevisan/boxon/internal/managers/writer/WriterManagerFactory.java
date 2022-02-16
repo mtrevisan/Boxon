@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.internal.managers.writer;
 
-import io.github.mtrevisan.boxon.internal.managers.CharsetHelper;
+import io.github.mtrevisan.boxon.internal.helpers.CharsetHelper;
 import io.github.mtrevisan.boxon.external.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.external.io.ParserDataType;
 

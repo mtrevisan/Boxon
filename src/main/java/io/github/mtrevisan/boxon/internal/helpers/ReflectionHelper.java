@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.internal.managers;
+package io.github.mtrevisan.boxon.internal.helpers;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InaccessibleObjectException;
@@ -45,7 +45,7 @@ public final class ReflectionHelper{
 
 
 	@SuppressWarnings("unchecked")
-	static <T> T getValue(final Object obj, final Field field){
+	public static <T> T getValue(final Object obj, final Field field){
 		try{
 			return (T)field.get(obj);
 		}
@@ -114,7 +114,7 @@ public final class ReflectionHelper{
 	 * @param cls	The class from which to extract the declared fields.
 	 * @return	An array of all the fields of the given class.
 	 */
-	static List<Field> getAccessibleFields(final Class<?> cls){
+	public static List<Field> getAccessibleFields(final Class<?> cls){
 		return getAccessibleFields(cls, null);
 	}
 
@@ -177,7 +177,7 @@ public final class ReflectionHelper{
 
 
 	@SuppressWarnings("unchecked")
-	static <T> T invokeMethodOrDefault(final Object obj, final Method method, final T defaultValue){
+	public static <T> T invokeMethodOrDefault(final Object obj, final Method method, final T defaultValue){
 		T result = defaultValue;
 		try{
 			result = (method != null? (T)method.invoke(obj): defaultValue);
@@ -186,7 +186,7 @@ public final class ReflectionHelper{
 		return result;
 	}
 
-	static Method getAccessibleMethod(Class<?> cls, final String methodName, final Class<?> returnType, final Class<?>... parameterTypes){
+	public static Method getAccessibleMethod(Class<?> cls, final String methodName, final Class<?> returnType, final Class<?>... parameterTypes){
 		Method method = null;
 		while(method == null && cls != null && cls != Object.class){
 			method = getMethod(cls, methodName, returnType, parameterTypes);
