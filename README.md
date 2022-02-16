@@ -133,7 +133,7 @@ You can get pre-built JARs (usable on JRE 11 or newer) from [Sonatype](https://o
     2. [Message composer](#example-composer)
 9. [Contributing](#contributing)
 10. [Changelog](#changelog)
-     1. [version 2.2.0](#changelog-2.2.0)
+     1. [version 3.0.0](#changelog-3.0.0)
      2. [version 2.1.2](#changelog-2.1.2)
      3. [version 2.1.1](#changelog-2.1.1)
      4. [version 2.1.0](#changelog-2.1.0)
@@ -1355,8 +1355,8 @@ Pull requests are welcomed.
 <a name="changelog"></a>
 ## Changelog
 
-<a name="changelog-2.2.0"></a>
-### version 2.2.0 - 20220211
+<a name="changelog-3.0.0"></a>
+### version 3.0.0 - 20220216
 - Added `BoxonCoreBuilder` to facilitate the creation of `BoxonCore`: now it is no longer necessary to remember the order in which the methods should be called.
 - Added missing javadoc. Enhanced existing javadoc
 - Added `BindBitSet` binding for java `BitSet`.
