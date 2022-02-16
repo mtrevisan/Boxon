@@ -26,7 +26,7 @@ package io.github.mtrevisan.boxon.internal.codecs;
 
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
-import io.github.mtrevisan.boxon.internal.helpers.BindingData;
+import io.github.mtrevisan.boxon.internal.managers.BindingData;
 import io.github.mtrevisan.boxon.internal.helpers.ConstructorHelper;
 import io.github.mtrevisan.boxon.internal.helpers.ContextHelper;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;

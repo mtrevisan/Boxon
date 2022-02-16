@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.internal.helpers;
+package io.github.mtrevisan.boxon.internal.managers;
 
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
@@ -31,6 +31,9 @@ import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.external.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.external.io.ByteOrder;
+import io.github.mtrevisan.boxon.internal.helpers.ConstructorHelper;
+import io.github.mtrevisan.boxon.internal.helpers.ContextHelper;
+import io.github.mtrevisan.boxon.internal.helpers.Evaluator;
 
 import java.lang.annotation.Annotation;
 
