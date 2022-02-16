@@ -24,8 +24,8 @@
  */
 package io.github.mtrevisan.boxon.core;
 
-import io.github.mtrevisan.boxon.codecs.queclink.ACKMessageHex;
-import io.github.mtrevisan.boxon.codecs.queclink.DeviceTypes;
+import io.github.mtrevisan.boxon.internal.codecs.queclink.ACKMessageHex;
+import io.github.mtrevisan.boxon.internal.codecs.queclink.DeviceTypes;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
@@ -90,7 +90,7 @@ class ParserTest{
 			.withContext(context)
 			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
 			.withDefaultCodecs()
-			.withTemplate(ACKMessageHex.class)
+			.withTemplates(ACKMessageHex.class)
 			.create();
 		Parser parser = Parser.create(core);
 
