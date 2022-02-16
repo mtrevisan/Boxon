@@ -33,7 +33,6 @@ import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
 import java.lang.reflect.Field;
 
 
-/** Data associated to an annotated field. */
 public final class ConfigFieldDataBuilder{
 
 	private ConfigFieldDataBuilder(){}
