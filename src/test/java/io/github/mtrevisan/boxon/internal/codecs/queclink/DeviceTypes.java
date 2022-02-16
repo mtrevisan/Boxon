@@ -24,9 +24,10 @@
  */
 package io.github.mtrevisan.boxon.internal.codecs.queclink;
 
+import java.util.Locale;
 import java.util.Map;
 import java.util.StringJoiner;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 
 @SuppressWarnings("ALL")
@@ -41,7 +42,7 @@ public class DeviceTypes{
 
 
 	private DeviceTypes(){
-		deviceTypes = new ConcurrentHashMap<>(1);
+		deviceTypes = new ConcurrentSkipListMap<>();
 	}
 
 
@@ -69,15 +70,15 @@ public class DeviceTypes{
 		final StringJoiner sj = new StringJoiner(", 0x", "[0x", "]");
 		for(final Map.Entry<String, Byte> deviceType : deviceTypes.entrySet())
 			sj.add(Integer.toHexString(deviceType.getValue() & 0x0000_00FF));
-		throw new IllegalArgumentException("Cannot parse message from another device, device type is 0x" + actualCode
-			+ ", should be one of " + sj.toString());
+		throw new IllegalArgumentException("Cannot parse message from another device, device type is 0x" + actualCode.toUpperCase(Locale.ROOT)
+			+ ", should be one of " + sj.toString().toUpperCase(Locale.ROOT));
 	}
 
 	@Override
 	public String toString(){
 		final StringJoiner sj = new StringJoiner(", ", "[", "]");
 		for(final Map.Entry<String, Byte> deviceType : deviceTypes.entrySet())
-			sj.add(deviceType.getKey() + " (0x" + Integer.toHexString(deviceType.getValue() & 0x0000_00FF) + ")");
+			sj.add(deviceType.getKey() + " (0x" + Integer.toHexString(deviceType.getValue() & 0x0000_00FF).toUpperCase(Locale.ROOT) + ")");
 		return sj.toString();
 	}
 
