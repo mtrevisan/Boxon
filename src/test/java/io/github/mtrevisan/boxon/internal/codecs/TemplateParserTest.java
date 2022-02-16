@@ -30,7 +30,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
-import io.github.mtrevisan.boxon.internal.utils.Evaluator;
+import io.github.mtrevisan.boxon.internal.helpers.Evaluator;
 import io.github.mtrevisan.boxon.internal.managers.Template;
 import io.github.mtrevisan.boxon.internal.parsers.LoaderTemplate;
 import io.github.mtrevisan.boxon.internal.parsers.TemplateParser;

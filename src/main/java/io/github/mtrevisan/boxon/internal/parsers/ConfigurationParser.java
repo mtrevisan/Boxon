@@ -27,7 +27,7 @@ package io.github.mtrevisan.boxon.internal.parsers;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
 import io.github.mtrevisan.boxon.internal.codecs.LoaderCodecInterface;
-import io.github.mtrevisan.boxon.internal.utils.Evaluator;
+import io.github.mtrevisan.boxon.internal.helpers.Evaluator;
 import io.github.mtrevisan.boxon.internal.managers.ConfigField;
 import io.github.mtrevisan.boxon.internal.managers.ConfigurationMessage;
 import io.github.mtrevisan.boxon.internal.managers.configuration.ConfigurationHelper;

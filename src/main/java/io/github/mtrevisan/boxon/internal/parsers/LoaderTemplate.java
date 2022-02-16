@@ -26,7 +26,7 @@ package io.github.mtrevisan.boxon.internal.parsers;
 
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.internal.codecs.LoaderCodecInterface;
-import io.github.mtrevisan.boxon.internal.utils.ReflectiveClassLoader;
+import io.github.mtrevisan.boxon.internal.helpers.ReflectiveClassLoader;
 import io.github.mtrevisan.boxon.internal.managers.Memoizer;
 import io.github.mtrevisan.boxon.internal.managers.Template;
 import io.github.mtrevisan.boxon.internal.managers.ThrowingFunction;

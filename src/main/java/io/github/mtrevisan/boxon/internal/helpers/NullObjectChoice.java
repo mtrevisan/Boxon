@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.internal.utils;
+package io.github.mtrevisan.boxon.internal.helpers;
 
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.internal.JavaHelper;

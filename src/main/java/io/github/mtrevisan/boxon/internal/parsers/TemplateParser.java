@@ -29,7 +29,7 @@ import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.Skip;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
 import io.github.mtrevisan.boxon.internal.codecs.LoaderCodecInterface;
-import io.github.mtrevisan.boxon.internal.utils.Evaluator;
+import io.github.mtrevisan.boxon.internal.helpers.Evaluator;
 import io.github.mtrevisan.boxon.internal.codecs.TemplateParserInterface;
 import io.github.mtrevisan.boxon.internal.managers.BoundedField;
 import io.github.mtrevisan.boxon.internal.managers.CharsetHelper;

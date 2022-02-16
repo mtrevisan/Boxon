@@ -24,8 +24,8 @@
  */
 package io.github.mtrevisan.boxon.internal.codecs;
 
-import io.github.mtrevisan.boxon.internal.utils.GenericHelper;
-import io.github.mtrevisan.boxon.internal.utils.ReflectiveClassLoader;
+import io.github.mtrevisan.boxon.internal.helpers.GenericHelper;
+import io.github.mtrevisan.boxon.internal.helpers.ReflectiveClassLoader;
 import io.github.mtrevisan.boxon.internal.managers.ConstructorHelper;
 import io.github.mtrevisan.boxon.internal.managers.ReflectionHelper;
 import io.github.mtrevisan.boxon.external.io.CodecInterface;

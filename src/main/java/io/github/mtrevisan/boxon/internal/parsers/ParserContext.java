@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.internal.parsers;
 
-import io.github.mtrevisan.boxon.internal.utils.Evaluator;
+import io.github.mtrevisan.boxon.internal.helpers.Evaluator;
 import io.github.mtrevisan.boxon.internal.managers.BoundedField;
 import io.github.mtrevisan.boxon.internal.managers.ConfigField;
 import io.github.mtrevisan.boxon.internal.managers.ContextHelper;

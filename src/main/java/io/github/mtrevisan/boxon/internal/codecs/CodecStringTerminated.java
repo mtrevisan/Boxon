@@ -26,9 +26,9 @@ package io.github.mtrevisan.boxon.internal.codecs;
 
 import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
-import io.github.mtrevisan.boxon.internal.utils.BindingData;
-import io.github.mtrevisan.boxon.internal.utils.BindingDataBuilder;
-import io.github.mtrevisan.boxon.internal.utils.Evaluator;
+import io.github.mtrevisan.boxon.internal.helpers.BindingData;
+import io.github.mtrevisan.boxon.internal.helpers.BindingDataBuilder;
+import io.github.mtrevisan.boxon.internal.helpers.Evaluator;
 import io.github.mtrevisan.boxon.internal.managers.Injected;
 import io.github.mtrevisan.boxon.internal.managers.CharsetHelper;
 import io.github.mtrevisan.boxon.external.io.BitReaderInterface;
