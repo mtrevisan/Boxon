@@ -722,7 +722,7 @@ gives as output the following
       {
          "condition": "mask.hasProtocolVersion()",
          "size": "2",
-         "converter": "io.github.mtrevisan.boxon.codecs.queclink.QueclinkHelper$VersionConverter",
+         "converter": "io.github.mtrevisan.boxon.internal.codecs.queclink.QueclinkHelper$VersionConverter",
          "name": "protocolVersion",
          "annotationType": "BindArrayPrimitive",
          "type": "byte",
@@ -1363,6 +1363,7 @@ Pull requests are welcomed.
 - Removed `Bits`.
 - Enhanced binding validation.
 - Fixed a concurrency bug on the validation of alternatives.
+- Reordered some packages to better reflect usage.
 
 
 <a name="changelog-2.1.2"></a>
