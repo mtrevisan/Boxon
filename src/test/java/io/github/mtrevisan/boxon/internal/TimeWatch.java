@@ -107,7 +107,7 @@ public final class TimeWatch{
 		long factor = (long)StrictMath.pow(10., fractionalDigits);
 		final long scaled = (long)(value * factor + 0.5);
 		int scale = fractionalDigits;
-		long scaled2 = scaled / 10;
+		final long scaled2 = scaled / 10;
 		while(factor <= scaled2){
 			factor *= 10;
 			scale ++;
