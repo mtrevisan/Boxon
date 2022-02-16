@@ -51,7 +51,7 @@ class LoaderTest{
 		loaderCodec.loadDefaultCodecs();
 
 		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);
-		loaderTemplate.loadDefaultTemplates();
+		loaderTemplate.loadTemplates(ACKMessageHex.class);
 	}
 
 	@Test

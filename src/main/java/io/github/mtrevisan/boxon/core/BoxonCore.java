@@ -180,16 +180,6 @@ public final class BoxonCore{
 
 
 	/**
-	 * Loads all the default protocol classes annotated with {@link MessageHeader}.
-	 *
-	 * @throws AnnotationException	If an annotation is not well formatted.
-	 * @throws TemplateException	If a template is not well formatted.
-	 */
-	void useDefaultTemplates() throws AnnotationException, TemplateException{
-		templateParser.withDefaultTemplates();
-	}
-
-	/**
 	 * Loads all the protocol classes annotated with {@link MessageHeader}.
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.

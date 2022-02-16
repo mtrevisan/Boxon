@@ -108,19 +108,6 @@ public final class TemplateParser implements TemplateParserInterface{
 
 
 	/**
-	 * Loads all the default protocol classes annotated with {@link MessageHeader}.
-	 *
-	 * @return	This instance, used for chaining.
-	 * @throws AnnotationException	If an annotation is not well formatted.
-	 * @throws TemplateException	If a template is not well formatted.
-	 */
-	public TemplateParser withDefaultTemplates() throws AnnotationException, TemplateException{
-		core.loadDefaultTemplates();
-
-		return this;
-	}
-
-	/**
 	 * Loads all the protocol classes annotated with {@link MessageHeader}.
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.

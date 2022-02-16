@@ -90,7 +90,7 @@ class ParserTest{
 			.withContext(context)
 			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
 			.withDefaultCodecs()
-			.withDefaultTemplates()
+			.withTemplate(ACKMessageHex.class)
 			.create();
 		Parser parser = Parser.create(core);
 

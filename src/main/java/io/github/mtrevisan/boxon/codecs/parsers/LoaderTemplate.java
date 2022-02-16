@@ -102,16 +102,6 @@ public final class LoaderTemplate{
 
 	/**
 	 * Loads all the protocol classes annotated with {@link MessageHeader}.
-	 * <p>This method SHOULD BE called from a method inside a class that lies on a parent of all the protocol classes.</p>
-	 *
-	 * @throws IllegalArgumentException	If the codecs was not loaded yet.
-	 */
-	public void loadDefaultTemplates() throws AnnotationException, TemplateException{
-		loadTemplates(ReflectiveClassLoader.extractCallerClasses());
-	}
-
-	/**
-	 * Loads all the protocol classes annotated with {@link MessageHeader}.
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
 	 */

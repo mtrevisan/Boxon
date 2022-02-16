@@ -84,16 +84,6 @@ final class TemplateParserCore{
 
 	/**
 	 * Loads all the protocol classes annotated with {@link MessageHeader}.
-	 * <p>This method SHOULD BE called from a method inside a class that lies on a parent of all the protocol classes.</p>
-	 *
-	 * @throws IllegalArgumentException	If the codecs was not loaded yet.
-	 */
-	void loadDefaultTemplates() throws AnnotationException, TemplateException{
-		loaderTemplate.loadDefaultTemplates();
-	}
-
-	/**
-	 * Loads all the protocol classes annotated with {@link MessageHeader}.
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
 	 */

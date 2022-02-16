@@ -209,17 +209,6 @@ public final class BoxonCoreBuilder{
 
 
 	/**
-	 * Loads all the default protocol classes annotated with {@link MessageHeader}.
-	 *
-	 * @return	This instance, used for chaining.
-	 */
-	public BoxonCoreBuilder withDefaultTemplates(){
-		addMethod(ConfigurationStep.TEMPLATE, core::useDefaultTemplates);
-
-		return this;
-	}
-
-	/**
 	 * Loads all the protocol classes annotated with {@link MessageHeader}.
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
