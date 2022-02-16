@@ -50,7 +50,7 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject) throws AnnotationException{
 		final BindInteger binding = extractBinding(annotation);
 
-		final BindingData bindingData = BindingData.create(binding, rootObject, evaluator);
+		final BindingData bindingData = BindingDataBuilder.create(binding, rootObject, evaluator);
 
 		final int size = bindingData.evaluateSize();
 		CodecHelper.assertSizePositive(size);
@@ -65,7 +65,7 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 			throws AnnotationException{
 		final BindInteger binding = extractBinding(annotation);
 
-		final BindingData bindingData = BindingData.create(binding, rootObject, evaluator);
+		final BindingData bindingData = BindingDataBuilder.create(binding, rootObject, evaluator);
 		bindingData.validate(value);
 
 		final int size = bindingData.evaluateSize();

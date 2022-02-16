@@ -47,7 +47,7 @@ final class CodecDouble implements CodecInterface<BindDouble>{
 
 		final double value = reader.getDouble(binding.byteOrder());
 
-		final BindingData bindingData = BindingData.create(binding, rootObject, evaluator);
+		final BindingData bindingData = BindingDataBuilder.create(binding, rootObject, evaluator);
 		return CodecHelper.convertValue(bindingData, value);
 	}
 
@@ -55,7 +55,7 @@ final class CodecDouble implements CodecInterface<BindDouble>{
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object rootObject, final Object value){
 		final BindDouble binding = extractBinding(annotation);
 
-		final BindingData bindingData = BindingData.create(binding, rootObject, evaluator);
+		final BindingData bindingData = BindingDataBuilder.create(binding, rootObject, evaluator);
 		bindingData.validate(value);
 
 		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();
