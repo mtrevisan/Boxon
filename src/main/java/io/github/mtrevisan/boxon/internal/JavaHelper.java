@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.internal;
 
-import java.util.List;
+import java.util.Collection;
 
 
 /**
@@ -133,7 +133,7 @@ public final class JavaHelper{
 	 * @param <T>	The class type of the list.
 	 * @return	The length of the list, or {@code 0} if {@code null}.
 	 */
-	public static <T> int lengthOrZero(final List<T> array){
+	public static <T> int lengthOrZero(final Collection<T> array){
 		return (array != null? array.size(): 0);
 	}
 
