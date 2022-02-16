@@ -31,6 +31,7 @@ import io.github.mtrevisan.boxon.annotations.configurations.CompositeSubField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigFieldData;
+import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigFieldDataBuilder;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.external.semanticversioning.Version;
@@ -69,7 +70,7 @@ enum ConfigurationAnnotationValidator{
 		@Override
 		void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
 				throws AnnotationException, CodecException{
-			final ConfigFieldData configData = ConfigFieldData.create(field, (ConfigurationField)annotation);
+			final ConfigFieldData configData = ConfigFieldDataBuilder.create(field, (ConfigurationField)annotation);
 
 			final ConfigurationField binding = (ConfigurationField)annotation;
 
@@ -117,7 +118,7 @@ enum ConfigurationAnnotationValidator{
 		@Override
 		void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
 				throws AnnotationException, CodecException{
-			final ConfigFieldData configData = ConfigFieldData.create(field, (CompositeConfigurationField)annotation);
+			final ConfigFieldData configData = ConfigFieldDataBuilder.create(field, (CompositeConfigurationField)annotation);
 
 			final CompositeConfigurationField binding = (CompositeConfigurationField)annotation;
 
@@ -145,7 +146,7 @@ enum ConfigurationAnnotationValidator{
 		@Override
 		void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
 				throws AnnotationException, CodecException{
-			final ConfigFieldData configData = ConfigFieldData.create(field, (CompositeSubField)annotation);
+			final ConfigFieldData configData = ConfigFieldDataBuilder.create(field, (CompositeSubField)annotation);
 
 			final CompositeSubField binding = (CompositeSubField)annotation;
 
@@ -162,7 +163,7 @@ enum ConfigurationAnnotationValidator{
 		@Override
 		void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
 				throws AnnotationException{
-			final ConfigFieldData configData = ConfigFieldData.create(field, (AlternativeConfigurationField)annotation);
+			final ConfigFieldData configData = ConfigFieldDataBuilder.create(field, (AlternativeConfigurationField)annotation);
 
 			final AlternativeConfigurationField binding = (AlternativeConfigurationField)annotation;
 
@@ -179,7 +180,7 @@ enum ConfigurationAnnotationValidator{
 
 			final AlternativeSubField[] alternatives = binding.value();
 			for(int i = 0; i < JavaHelper.lengthOrZero(alternatives); i ++){
-				final ConfigFieldData alternativeConfigData = ConfigFieldData.create(field, alternatives[i]);
+				final ConfigFieldData alternativeConfigData = ConfigFieldDataBuilder.create(field, alternatives[i]);
 				ValidationHelper.validateProtocol(alternativeConfigData, minProtocolVersion, maxProtocolVersion);
 			}
 		}
@@ -195,7 +196,7 @@ enum ConfigurationAnnotationValidator{
 		@Override
 		void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
 				throws AnnotationException, CodecException{
-			final ConfigFieldData configData = ConfigFieldData.create(field, (AlternativeSubField)annotation);
+			final ConfigFieldData configData = ConfigFieldDataBuilder.create(field, (AlternativeSubField)annotation);
 
 			final AlternativeSubField binding = (AlternativeSubField)annotation;
 
