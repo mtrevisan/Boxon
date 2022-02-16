@@ -52,7 +52,7 @@ public final class Template<T>{
 		private final List<BoundedField> boundedFields;
 		private final List<EvaluatedField> evaluatedFields;
 
-		static Pair of(final List<BoundedField> boundedFields, final List<EvaluatedField> evaluatedFields){
+		private static Pair of(final List<BoundedField> boundedFields, final List<EvaluatedField> evaluatedFields){
 			return new Pair(boundedFields, evaluatedFields);
 		}
 
