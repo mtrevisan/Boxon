@@ -303,18 +303,14 @@ final class LoaderConfiguration{
 	}
 
 	private static ConfigField findField(final List<ConfigField> fields, final String key, final Version protocol) throws EncodeException{
-		ConfigField foundField = null;
-		for(int i = 0; foundField == null && i < fields.size(); i ++){
+		for(int i = 0; i < fields.size(); i ++){
 			final ConfigField field = fields.get(i);
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(field.getBinding());
 			final Annotation annotation = manager.annotationToBeProcessed(protocol);
 			if(annotation.annotationType() != Annotation.class && manager.getShortDescription().equals(key))
-				foundField = field;
+				return field;
 		}
-		if(foundField == null)
-			throw EncodeException.create("Cannot find any field to set for data key {}", key);
-
-		return foundField;
+		throw EncodeException.create("Cannot find any field to set for data key {}", key);
 	}
 
 	private static void validateMandatoryFields(final Collection<ConfigField> mandatoryFields) throws EncodeException{
