@@ -44,6 +44,9 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
 
+/**
+ * Container of all the validators of a configuration message.
+ */
 public enum ConfigurationAnnotationValidator{
 
 	HEADER(ConfigurationHeader.class){
@@ -244,10 +247,26 @@ public enum ConfigurationAnnotationValidator{
 		annotationType = type;
 	}
 
+	/**
+	 * Get the validator for the given annotation.
+	 *
+	 * @param annotationType	The annotation class type.
+	 * @return	The validator for the given annotation.
+	 */
 	public static ConfigurationAnnotationValidator fromAnnotationType(final Class<? extends Annotation> annotationType){
 		return VALIDATORS.get(annotationType);
 	}
 
+	/**
+	 * Validate field and annotation.
+	 *
+	 * @param field	The field associated to the annotation.
+	 * @param annotation	The annotation.
+	 * @param minProtocolVersion	The minimum protocol version.
+	 * @param maxProtocolVersion	The maximum protocol version.
+	 * @throws AnnotationException	If an error is detected.
+	 * @throws CodecException	If an error was raised reading of interpreting the field value.
+	 */
 	public abstract void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion) throws AnnotationException, CodecException;
 
 }

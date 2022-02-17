@@ -39,6 +39,9 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 
+/**
+ * Loader for the codecs.
+ */
 public final class LoaderCodec implements LoaderCodecInterface{
 
 	private final Map<Class<?>, CodecInterface<?>> codecs = new ConcurrentHashMap<>(0);

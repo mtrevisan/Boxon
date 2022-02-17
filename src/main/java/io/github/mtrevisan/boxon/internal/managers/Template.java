@@ -178,7 +178,7 @@ public final class Template<T>{
 	}
 
 	private static void validateAnnotation(final Field field, final Annotation annotation) throws AnnotationException{
-		final TemplateAnnotationValidator validator = TemplateAnnotationValidator.fromAnnotation(annotation);
+		final TemplateAnnotationValidator validator = TemplateAnnotationValidator.fromAnnotation(annotation.annotationType());
 		if(validator != null)
 			validator.validate(field, annotation);
 	}

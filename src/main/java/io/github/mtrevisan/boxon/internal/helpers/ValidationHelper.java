@@ -48,7 +48,16 @@ public final class ValidationHelper{
 	private ValidationHelper(){}
 
 
-	public static void validateProtocol(final ConfigFieldData field, final Version minProtocolVersion, final Version maxProtocolVersion) throws AnnotationException{
+	/**
+	 * Validate the protocol.
+	 *
+	 * @param field	The configuration field data.
+	 * @param minProtocolVersion	The minimum protocol version.
+	 * @param maxProtocolVersion	The maximum protocol version.
+	 * @throws AnnotationException	If a validation error occurs.
+	 */
+	public static void validateProtocol(final ConfigFieldData field, final Version minProtocolVersion, final Version maxProtocolVersion)
+			throws AnnotationException{
 		if(StringHelper.isBlank(field.getMinProtocol()) && StringHelper.isBlank(field.getMaxProtocol()))
 			return;
 
@@ -122,6 +131,13 @@ public final class ValidationHelper{
 		return max;
 	}
 
+	/**
+	 * Validate the minimum and maximum values.
+	 *
+	 * @param field	The configuration field data.
+	 * @throws AnnotationException	If a validation error occurs.
+	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
+	 */
 	public static void validateMinMaxValues(final ConfigFieldData field) throws AnnotationException, CodecException{
 		if(!StringHelper.isBlank(field.getMinValue()) || !StringHelper.isBlank(field.getMaxValue())){
 			final Class<?> fieldType = field.getFieldType();
@@ -142,6 +158,13 @@ public final class ValidationHelper{
 		}
 	}
 
+	/**
+	 * Validate the default value.
+	 *
+	 * @param field	The configuration field data.
+	 * @throws AnnotationException	If a validation error occurs.
+	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
+	 */
 	public static void validateDefaultValue(final ConfigFieldData field) throws AnnotationException, CodecException{
 		final Class<?> fieldType = field.getFieldType();
 
@@ -178,6 +201,12 @@ public final class ValidationHelper{
 		return (StringHelper.isBlank(text) || pattern.matcher(text).matches());
 	}
 
+	/**
+	 * Validate the pattern.
+	 *
+	 * @param field	The configuration field data.
+	 * @throws AnnotationException	If a validation error occurs.
+	 */
 	public static void validatePattern(final ConfigFieldData field) throws AnnotationException{
 		//valid pattern
 		final String pattern = field.getPattern();
@@ -201,6 +230,12 @@ public final class ValidationHelper{
 	}
 
 
+	/**
+	 * Validate the enumeration.
+	 *
+	 * @param field	The configuration field data.
+	 * @throws AnnotationException	If a validation error occurs.
+	 */
 	public static void validateEnumeration(final ConfigFieldData field) throws AnnotationException{
 		if(field.hasEnumeration()){
 			//enumeration can be encoded
@@ -260,6 +295,12 @@ public final class ValidationHelper{
 				field.getAnnotationName(), defaultValue, Arrays.toString(enumConstants));
 	}
 
+	/**
+	 * Validate the radix.
+	 *
+	 * @param radix	The radix.
+	 * @throws AnnotationException	If a validation error occurs.
+	 */
 	public static void validateRadix(final int radix) throws AnnotationException{
 		if(radix < Character.MIN_RADIX || radix > Character.MAX_RADIX)
 			throw AnnotationException.create("Radix must be in [{}, {}]", Character.MIN_RADIX, Character.MAX_RADIX);

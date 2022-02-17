@@ -33,6 +33,9 @@ import java.util.Map;
 import java.util.function.Function;
 
 
+/**
+ * Factory for the {@link ConfigurationManagerInterface configuration manager}.
+ */
 public final class ConfigurationManagerFactory{
 
 	private static final Map<Class<? extends Annotation>, Function<Annotation, ConfigurationManagerInterface>> MANAGERS = Map.of(

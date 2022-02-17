@@ -47,6 +47,9 @@ import java.util.List;
 import java.util.Map;
 
 
+/**
+ * Declarative data binding parser for configuration messages.
+ */
 public final class ConfigurationParser{
 
 	private final LoaderCodecInterface loaderCodec;

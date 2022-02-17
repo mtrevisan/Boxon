@@ -53,6 +53,9 @@ import java.util.TreeMap;
 import java.util.function.Function;
 
 
+/**
+ * Loader for the templates.
+ */
 public final class LoaderTemplate{
 
 	private static final PatternMatcher PATTERN_MATCHER = BNDMPatternMatcher.getInstance();
@@ -229,7 +232,7 @@ public final class LoaderTemplate{
 	/**
 	 * Retrieve the next template.
 	 *
-	 * @param reader	The reader to read the header from.
+	 * @param reader	The reader from which to read the header from.
 	 * @return	The template that is able to decode/encode the next message in the given reader.
 	 * @throws TemplateException	If no template cannot be found that is able to parse the given message.
 	 */
@@ -297,7 +300,7 @@ public final class LoaderTemplate{
 	/**
 	 * Tries to infer the next message start by scanning all templates in header-start-length order.
 	 *
-	 * @param reader	The reader.
+	 * @param reader	The reader from which to read the data from.
 	 * @return	The index of the next message.
 	 */
 	public int findNextMessageIndex(final BitReaderInterface reader){

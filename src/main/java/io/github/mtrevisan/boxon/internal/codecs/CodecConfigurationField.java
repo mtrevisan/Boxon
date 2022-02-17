@@ -49,7 +49,8 @@ final class CodecConfigurationField implements CodecInterface<ConfigurationField
 
 		value = CodecHelper.interpretValue((Class<?>)fieldType, value);
 		if(value != null){
-			final WriterManagerInterface writerManager = WriterManagerFactory.buildManager(value, writer, binding.radix(), binding.charset());
+			final WriterManagerInterface writerManager = WriterManagerFactory.buildManager(value.getClass(), writer, binding.radix(),
+				binding.charset());
 			if(writerManager == null)
 				throw CodecException.create("Cannot handle this type of field: {}, please report to the developer",
 					value.getClass().getSimpleName());

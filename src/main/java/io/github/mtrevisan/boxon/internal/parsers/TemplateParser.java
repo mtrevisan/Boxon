@@ -60,6 +60,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 
+/**
+ * Declarative data binding parser for message templates.
+ */
 public final class TemplateParser implements TemplateParserInterface{
 
 	private final TemplateParserCore core;
@@ -152,7 +155,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	/**
 	 * Retrieve the next template.
 	 *
-	 * @param reader	The reader to read the header from.
+	 * @param reader	The reader from which to read the header from.
 	 * @return	The template that is able to decode/encode the next message in the given reader.
 	 * @throws TemplateException	Whether the template is not valid.
 	 */
@@ -176,7 +179,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	/**
 	 * Tries to infer the next message start by scanning all templates in header-start-length order.
 	 *
-	 * @param reader	The reader.
+	 * @param reader	The reader from which to read the data from.
 	 * @return	The index of the next message.
 	 */
 	public int findNextMessageIndex(final BitReaderInterface reader){
@@ -431,6 +434,11 @@ public final class TemplateParser implements TemplateParserInterface{
 		v.add(method.toString());
 	}
 
+	/**
+	 * The loader for the templates.
+	 *
+	 * @return	The loader for the templates.
+	 */
 	public LoaderTemplate getLoaderTemplate(){
 		return core.getLoaderTemplate();
 	}

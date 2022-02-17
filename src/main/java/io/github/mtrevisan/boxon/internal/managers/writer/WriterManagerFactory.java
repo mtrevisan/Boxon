@@ -33,6 +33,9 @@ import java.util.Map;
 import java.util.function.Function;
 
 
+/**
+ * Factory for the {@link WriterManagerInterface writer manager}.
+ */
 public final class WriterManagerFactory{
 
 	private static final Map<Class<?>, Function<BitWriterInterface, WriterManagerInterface>> MANAGERS_LEVEL1 = Map.of(
@@ -44,9 +47,19 @@ public final class WriterManagerFactory{
 	private WriterManagerFactory(){}
 
 
-	public static WriterManagerInterface buildManager(final Object value, final BitWriterInterface writer, final int radix,
+	/**
+	 * Returns a {@link WriterManagerInterface writer manager} from the class type of the given value, filling it with the given writer,
+	 * radix, and charset name parameters.
+	 *
+	 * @param valueClass	The class type of the value.
+	 * @param writer	The writer to be injected into the resulting manager.
+	 * @param radix	The (number) radix to be injected into the resulting manager.
+	 * @param charsetName	The charset name to be injected into the resulting manager.
+	 * @return	An instance of writer manager.
+	 */
+	public static WriterManagerInterface buildManager(final Class<?> valueClass, final BitWriterInterface writer, final int radix,
 			final String charsetName){
-		final Class<?> fieldClass = ParserDataType.toObjectiveTypeOrSelf(value.getClass());
+		final Class<?> fieldClass = ParserDataType.toObjectiveTypeOrSelf(valueClass);
 		final Function<BitWriterInterface, WriterManagerInterface> builder = MANAGERS_LEVEL1.get(fieldClass);
 
 		WriterManagerInterface manager = null;

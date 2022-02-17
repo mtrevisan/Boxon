@@ -118,10 +118,18 @@ public final class BindingData{
 		return evaluator.evaluateSize(size, rootObject);
 	}
 
+	/**
+	 * Gets the alternative class type that parses the next data.
+	 *
+	 * @param reader	The reader from which to read the data from.
+	 * @return	The class type of the chosen alternative.
+	 * @throws CodecException	If a codec cannot be found for the chosen alternative.
+	 */
 	public Class<?> chooseAlternativeType(final BitReaderInterface reader) throws CodecException{
 		if(!hasSelectAlternatives())
 			return type;
 
+		//add the prefix to the evaluator context:
 		final int prefixSize = selectObjectFrom.prefixSize();
 		if(prefixSize > 0){
 			final ByteOrder prefixBitOrder = selectObjectFrom.bitOrder();

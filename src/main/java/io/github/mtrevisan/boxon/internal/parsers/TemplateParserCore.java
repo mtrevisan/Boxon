@@ -118,7 +118,7 @@ final class TemplateParserCore{
 	/**
 	 * Retrieve the next template.
 	 *
-	 * @param reader	The reader to read the header from.
+	 * @param reader	The reader from which to read the header from.
 	 * @return	The template that is able to decode/encode the next message in the given reader.
 	 */
 	Template<?> getTemplate(final BitReaderInterface reader) throws TemplateException{
@@ -138,7 +138,7 @@ final class TemplateParserCore{
 	/**
 	 * Tries to infer the next message start by scanning all templates in header-start-length order.
 	 *
-	 * @param reader	The reader.
+	 * @param reader	The reader from which to read the data from.
 	 * @return	The index of the next message.
 	 */
 	int findNextMessageIndex(final BitReaderInterface reader){

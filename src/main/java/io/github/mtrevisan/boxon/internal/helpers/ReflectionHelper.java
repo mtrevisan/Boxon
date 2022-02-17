@@ -203,6 +203,15 @@ public final class ReflectionHelper{
 		return result;
 	}
 
+	/**
+	 * Get an accessible method defined in the given class (or one of its parents), with the given name, return type, and parameters' types.
+	 *
+	 * @param cls	The class from which to extract the method.
+	 * @param methodName	The method name.
+	 * @param returnType	The method return type.
+	 * @param parameterTypes	The method parameters' types.
+	 * @return	The method, or {@code null} if not found.
+	 */
 	public static Method getAccessibleMethod(Class<?> cls, final String methodName, final Class<?> returnType,
 			final Class<?>... parameterTypes){
 		Method method = null;

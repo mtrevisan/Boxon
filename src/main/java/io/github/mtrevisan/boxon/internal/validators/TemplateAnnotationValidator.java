@@ -44,6 +44,9 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
 
+/**
+ * Container of all the validators of a message template.
+ */
 public enum TemplateAnnotationValidator{
 
 	OBJECT(BindObject.class){
@@ -155,13 +158,20 @@ public enum TemplateAnnotationValidator{
 	/**
 	 * Get the validator for the given annotation.
 	 *
-	 * @param annotation	The annotation.
+	 * @param annotationType	The annotation class type.
 	 * @return	The validator for the given annotation.
 	 */
-	public static TemplateAnnotationValidator fromAnnotation(final Annotation annotation){
-		return VALIDATORS.get(annotation.annotationType());
+	public static TemplateAnnotationValidator fromAnnotation(final Class<? extends Annotation> annotationType){
+		return VALIDATORS.get(annotationType);
 	}
 
+	/**
+	 * Validate field and annotation.
+	 *
+	 * @param field	The field associated to the annotation.
+	 * @param annotation	The annotation.
+	 * @throws AnnotationException	If an error is detected.
+	 */
 	public abstract void validate(final Field field, final Annotation annotation) throws AnnotationException;
 
 
