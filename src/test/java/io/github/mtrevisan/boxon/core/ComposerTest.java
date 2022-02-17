@@ -49,7 +49,7 @@ class ComposerTest{
 			.withContext("deviceTypes", deviceTypes)
 			.withContextFunction(ParserTest.class, "headerSize")
 			.withDefaultCodecs()
-			.withTemplates(ACKMessageHex.class)
+			.withTemplatesFrom(ACKMessageHex.class)
 			.create();
 		Parser parser = Parser.create(core);
 		Composer composer = Composer.create(core);
@@ -76,7 +76,7 @@ class ComposerTest{
 		BoxonCore core = BoxonCoreBuilder.builder()
 			.withContext(context)
 			.withDefaultCodecs()
-			.withTemplates(ACKMessageHex.class)
+			.withTemplatesFrom(ACKMessageHex.class)
 			.create();
 		Parser parser = Parser.create(core);
 		Composer composer = Composer.create(core);

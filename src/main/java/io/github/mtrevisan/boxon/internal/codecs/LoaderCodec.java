@@ -78,7 +78,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	 * <p>This method SHOULD BE called from a method inside a class that lies on a parent of all the codecs.</p>
 	 */
 	public void loadDefaultCodecs(){
-		loadCodecs(ReflectiveClassLoader.extractCallerClasses());
+		loadCodecsFrom(ReflectiveClassLoader.extractCallerClasses());
 	}
 
 	/**
@@ -86,7 +86,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load codecs.
 	 */
-	public void loadCodecs(final Class<?>... basePackageClasses){
+	public void loadCodecsFrom(final Class<?>... basePackageClasses){
 		eventListener.loadingCodecs(basePackageClasses);
 
 		final ReflectiveClassLoader reflectiveClassLoader = ReflectiveClassLoader.createFrom(basePackageClasses);

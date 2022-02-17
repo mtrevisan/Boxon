@@ -95,7 +95,7 @@ public final class ConfigurationParser{
 	 * @throws AnnotationException	If a configuration annotation is invalid, or no annotation was found.
 	 * @throws ConfigurationException	If a configuration is not well formatted.
 	 */
-	public void loadConfigurations(final Class<?>... basePackageClasses) throws AnnotationException, ConfigurationException{
+	public void loadConfigurationsFrom(final Class<?>... basePackageClasses) throws AnnotationException, ConfigurationException{
 		loaderConfiguration.loadConfigurations(basePackageClasses);
 	}
 

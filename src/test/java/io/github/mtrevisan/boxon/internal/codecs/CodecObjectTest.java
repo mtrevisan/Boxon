@@ -230,7 +230,7 @@ class CodecObjectTest{
 	void choice1() throws AnnotationException, TemplateException, ConfigurationException{
 		BoxonCore core = BoxonCoreBuilder.builder()
 			.withDefaultCodecs()
-			.withTemplates(TestChoice1.class)
+			.withTemplatesFrom(TestChoice1.class)
 			.create();
 		Parser parser = Parser.create(core);
 
@@ -262,7 +262,7 @@ class CodecObjectTest{
 	void choice2() throws AnnotationException, TemplateException, ConfigurationException{
 		BoxonCore core = BoxonCoreBuilder.builder()
 			.withDefaultCodecs()
-			.withTemplates(TestChoice2.class)
+			.withTemplatesFrom(TestChoice2.class)
 			.create();
 		Parser parser = Parser.create(core);
 
@@ -294,7 +294,7 @@ class CodecObjectTest{
 	void choice3() throws AnnotationException, TemplateException, ConfigurationException{
 		BoxonCore core = BoxonCoreBuilder.builder()
 			.withDefaultCodecs()
-			.withTemplates(TestChoice3.class)
+			.withTemplatesFrom(TestChoice3.class)
 			.create();
 		Parser parser = Parser.create(core);
 

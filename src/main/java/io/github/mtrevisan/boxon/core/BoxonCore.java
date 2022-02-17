@@ -145,8 +145,8 @@ public final class BoxonCore{
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load codecs.
 	 */
-	void addCodecs(final Class<?>... basePackageClasses){
-		loaderCodec.loadCodecs(basePackageClasses);
+	void addCodecsFrom(final Class<?>... basePackageClasses){
+		loaderCodec.loadCodecsFrom(basePackageClasses);
 
 		postProcessCodecs();
 	}
@@ -186,8 +186,8 @@ public final class BoxonCore{
 	 * @throws AnnotationException	If an annotation is not well formatted.
 	 * @throws TemplateException	If a template is not well formatted.
 	 */
-	void addTemplates(final Class<?>... basePackageClasses) throws AnnotationException, TemplateException{
-		templateParser.withTemplates(basePackageClasses);
+	void addTemplatesFrom(final Class<?>... basePackageClasses) throws AnnotationException, TemplateException{
+		templateParser.withTemplatesFrom(basePackageClasses);
 	}
 
 	/**
@@ -209,8 +209,8 @@ public final class BoxonCore{
 	 * @throws AnnotationException	If an annotation is not well formatted.
 	 * @throws ConfigurationException	If a configuration is not well formatted.
 	 */
-	void addConfigurations(final Class<?>... basePackageClasses) throws AnnotationException, ConfigurationException{
-		configurationParser.loadConfigurations(basePackageClasses);
+	void addConfigurationsFrom(final Class<?>... basePackageClasses) throws AnnotationException, ConfigurationException{
+		configurationParser.loadConfigurationsFrom(basePackageClasses);
 	}
 
 	/**

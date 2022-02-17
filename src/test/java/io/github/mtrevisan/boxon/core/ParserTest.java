@@ -89,7 +89,7 @@ class ParserTest{
 			.withContext(context)
 			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
 			.withDefaultCodecs()
-			.withTemplates(ACKMessageHex.class)
+			.withTemplatesFrom(ACKMessageHex.class)
 			.create();
 		Parser parser = Parser.create(core);
 
@@ -108,7 +108,7 @@ class ParserTest{
 		BoxonCore core = BoxonCoreBuilder.builder()
 			.withContext(context)
 			.withDefaultCodecs()
-			.withTemplates(ACKMessageHex.class)
+			.withTemplatesFrom(ACKMessageHex.class)
 			.create();
 		Parser parser = Parser.create(core);
 
@@ -129,7 +129,7 @@ class ParserTest{
 			.withContext(context)
 			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
 			.withDefaultCodecs()
-			.withTemplates(ACKMessageHex.class)
+			.withTemplatesFrom(ACKMessageHex.class)
 			.create();
 		Parser parser = Parser.create(core);
 
@@ -152,7 +152,7 @@ class ParserTest{
 			.withContext(context)
 			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
 			.withDefaultCodecs()
-			.withTemplates(ACKMessageHex.class)
+			.withTemplatesFrom(ACKMessageHex.class)
 			.create();
 		Parser parser = Parser.create(core);
 

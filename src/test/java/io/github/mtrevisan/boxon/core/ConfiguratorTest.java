@@ -74,7 +74,7 @@ class ConfiguratorTest{
 			.with("QUECLINK_GB200S", (byte)0x46);
 		BoxonCore core = BoxonCoreBuilder.builder()
 			.withDefaultCodecs()
-			.withConfigurations(REGConfigurationASCII.class)
+			.withConfigurationsFrom(REGConfigurationASCII.class)
 			.create();
 		Configurator configurator = Configurator.create(core);
 
@@ -91,7 +91,7 @@ class ConfiguratorTest{
 			.with("QUECLINK_GB200S", (byte)0x46);
 		BoxonCore core = BoxonCoreBuilder.builder()
 			.withDefaultCodecs()
-			.withConfigurations(REGConfigurationASCII.class)
+			.withConfigurationsFrom(REGConfigurationASCII.class)
 			.create();
 		Configurator configurator = Configurator.create(core);
 
@@ -113,7 +113,7 @@ class ConfiguratorTest{
 			.with("QUECLINK_GB200S", (byte)0x46);
 		BoxonCore core = BoxonCoreBuilder.builder()
 			.withDefaultCodecs()
-			.withConfigurations(REGConfigurationASCII.class)
+			.withConfigurationsFrom(REGConfigurationASCII.class)
 			.create();
 		Configurator configurator = Configurator.create(core);
 

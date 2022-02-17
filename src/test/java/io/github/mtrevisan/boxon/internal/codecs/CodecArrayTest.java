@@ -280,8 +280,8 @@ class CodecArrayTest{
 	@Test
 	void arrayOfDifferentObjects() throws AnnotationException, TemplateException, ConfigurationException{
 		BoxonCore core = BoxonCoreBuilder.builder()
-			.withCodecs(CodecChecksum.class, CodecCustomTest.VariableLengthByteArray.class)
-			.withTemplates(TestChoice4.class)
+			.withCodecsFrom(CodecChecksum.class, CodecCustomTest.VariableLengthByteArray.class)
+			.withTemplatesFrom(TestChoice4.class)
 			.create();
 		Parser parser = Parser.create(core);
 
@@ -306,7 +306,7 @@ class CodecArrayTest{
 	void arrayOfDifferentObjectsWithNoPrefix() throws AnnotationException, TemplateException, ConfigurationException{
 		BoxonCore core = BoxonCoreBuilder.builder()
 			.withDefaultCodecs()
-			.withTemplates(TestChoice5.class)
+			.withTemplatesFrom(TestChoice5.class)
 			.create();
 		Parser parser = Parser.create(core);
 

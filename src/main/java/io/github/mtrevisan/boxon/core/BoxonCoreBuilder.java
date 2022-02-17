@@ -177,8 +177,8 @@ public final class BoxonCoreBuilder{
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load codecs.
 	 * @return	This instance, used for chaining.
 	 */
-	public BoxonCoreBuilder withCodecs(final Class<?>... basePackageClasses){
-		addMethod(ConfigurationStep.CODEC, () -> core.addCodecs(basePackageClasses));
+	public BoxonCoreBuilder withCodecsFrom(final Class<?>... basePackageClasses){
+		addMethod(ConfigurationStep.CODEC, () -> core.addCodecsFrom(basePackageClasses));
 
 		return this;
 	}
@@ -192,7 +192,7 @@ public final class BoxonCoreBuilder{
 	public BoxonCoreBuilder withCodec(final CodecInterface<?> codec){
 		addMethod(ConfigurationStep.CODEC, () -> core.addCodec(codec));
 
-		return withCodecs(codec);
+		return this;
 	}
 
 	/**
@@ -214,8 +214,8 @@ public final class BoxonCoreBuilder{
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
 	 * @return	This instance, used for chaining.
 	 */
-	public BoxonCoreBuilder withTemplates(final Class<?>... basePackageClasses){
-		addMethod(ConfigurationStep.TEMPLATE, () -> core.addTemplates(basePackageClasses));
+	public BoxonCoreBuilder withTemplatesFrom(final Class<?>... basePackageClasses){
+		addMethod(ConfigurationStep.TEMPLATE, () -> core.addTemplatesFrom(basePackageClasses));
 
 		return this;
 	}
@@ -239,8 +239,8 @@ public final class BoxonCoreBuilder{
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
 	 * @return	This instance, used for chaining.
 	 */
-	public BoxonCoreBuilder withConfigurations(final Class<?>... basePackageClasses){
-		addMethod(ConfigurationStep.CONFIGURATION, () -> core.addConfigurations(basePackageClasses));
+	public BoxonCoreBuilder withConfigurationsFrom(final Class<?>... basePackageClasses){
+		addMethod(ConfigurationStep.CONFIGURATION, () -> core.addConfigurationsFrom(basePackageClasses));
 
 		return this;
 	}

@@ -748,7 +748,7 @@ Firstly, load the configuration as shown below:
 //add the custom codec to the list of available codecs
 //(use one of the lines below)
 core.withConfiguration(ConfigurationCustomTest.class); //loads the given configuration
-core.withConfigurations(ConfigurationCustomTest.class); //loads all configuration from the package where the given class resides
+core.withConfigurationsFrom(ConfigurationCustomTest.class); //loads all configuration from the package where the given class resides
 ```
 
 Then, to retrieve all the possible protocol version boundaries, call
@@ -1212,8 +1212,8 @@ class VariableLengthByteArray implements CodecInterface<VarLengthEncoded>{
 //add the custom codec to the list of available codecs
 //(use one of the lines below)
 core.withDefaultCodecs(); //loads all codecs from the package where this call was made
-core.withCodecs(CodecCustomTest.class); //this class is where the custom codec resides
-core.withCodecs(new VariableLengthByteArray());
+core.withCodec(CodecCustomTest.class); //this class is where the custom codec resides
+core.withCodec(new VariableLengthByteArray());
 ```
 
 <br/>
@@ -1280,8 +1280,7 @@ BoxonCore core = BoxonCoreBuilder.builder()
    .withContextFunction(VersionHelper.class.getDeclaredMethod("compareVersion", new Class[]{String.class, String.class}))
    //scans the parent package and all of its children, searching and loading all the codecs found
    .withDefaultCodecs()
-   //scans the parent package and all of its children, searching and loading all the templates found
-   .withDefaultTemplates()
+	.withTemplate(ACKMessageHex.class)
    .create();
 Parser parser = Parser.create(core);
 
@@ -1306,7 +1305,7 @@ or, if you want to pass your templates by hand:
 Map<String, Object> context = ...
 Template<Message> template = Template.createFrom(Message.class);
 BoxonCore core = BoxonCoreBuilder.builder()
-   .withTemplates(template)
+   .withTemplatesFrom(template)
    .create();
 Parser parser = Parser.create(core);
 
