@@ -44,6 +44,14 @@ public final class ReflectionHelper{
 	private ReflectionHelper(){}
 
 
+	/**
+	 * Returns the value of the field represented by this {@code Field}, on the specified object.
+	 *
+	 * @param obj	Object from which the represented field's value is to be extracted.
+	 * @param field	The field whose value is to be extracted.
+	 * @param <T>	The value class type.
+	 * @return	The value.
+	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T getValue(final Object obj, final Field field){
 		try{
@@ -176,6 +184,15 @@ public final class ReflectionHelper{
 	}
 
 
+	/**
+	 * Invokes the underlying method represented by the given {@code Method} object, on the specified object.
+	 *
+	 * @param obj	The object the underlying method is invoked from.
+	 * @param method	The method to be called on the given object.
+	 * @param defaultValue	The default value should the method not exists, or returns an error.
+	 * @param <T>	The class type of the default value and the returned value.
+	 * @return	The value returned by the given method, or the default value if an exception occurs.
+	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T invokeMethodOrDefault(final Object obj, final Method method, final T defaultValue){
 		T result = defaultValue;
@@ -186,7 +203,8 @@ public final class ReflectionHelper{
 		return result;
 	}
 
-	public static Method getAccessibleMethod(Class<?> cls, final String methodName, final Class<?> returnType, final Class<?>... parameterTypes){
+	public static Method getAccessibleMethod(Class<?> cls, final String methodName, final Class<?> returnType,
+			final Class<?>... parameterTypes){
 		Method method = null;
 		while(method == null && cls != null && cls != Object.class){
 			method = getMethod(cls, methodName, returnType, parameterTypes);

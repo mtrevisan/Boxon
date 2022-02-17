@@ -152,6 +152,12 @@ public enum TemplateAnnotationValidator{
 		annotationType = type;
 	}
 
+	/**
+	 * Get the validator for the given annotation.
+	 *
+	 * @param annotation	The annotation.
+	 * @return	The validator for the given annotation.
+	 */
 	public static TemplateAnnotationValidator fromAnnotation(final Annotation annotation){
 		return VALIDATORS.get(annotation.annotationType());
 	}

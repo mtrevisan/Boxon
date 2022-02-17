@@ -92,7 +92,7 @@ public class FieldException extends Exception{
 	 * @param field	The field.
 	 * @return	The exception itself.
 	 */
-	public final <T> FieldException withClassAndField(final Class<T> type, final Field field){
+	public final FieldException withClassAndField(final Class<?> type, final Field field){
 		return withClassNameAndFieldName(type.getName(), field.getName());
 	}
 

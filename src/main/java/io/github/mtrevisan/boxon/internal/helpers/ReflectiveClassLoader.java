@@ -52,6 +52,7 @@ public final class ReflectiveClassLoader{
 
 	/**
 	 * @param packageClasses	List of packages to scan into.
+	 * @return	The loader instance for the given packages.
 	 */
 	public static ReflectiveClassLoader createFrom(final Class<?>... packageClasses){
 		return new ReflectiveClassLoader(packageClasses);
@@ -144,6 +145,11 @@ public final class ReflectiveClassLoader{
 	}
 
 
+	/**
+	 * Extracts the two direct callers of this method.
+	 *
+	 * @return	An array with the two most direct callers of this method.
+	 */
 	public static Class<?>[] extractCallerClasses(){
 		final StackWalker walker = StackWalker.getInstance();
 		final List<String> classNames = walker.walk(frames -> frames.skip(1)

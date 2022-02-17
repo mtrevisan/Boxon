@@ -34,6 +34,7 @@ import io.github.mtrevisan.boxon.io.ByteOrder;
 import io.github.mtrevisan.boxon.internal.helpers.ConstructorHelper;
 import io.github.mtrevisan.boxon.internal.helpers.ContextHelper;
 import io.github.mtrevisan.boxon.internal.helpers.Evaluator;
+import org.springframework.expression.EvaluationException;
 
 import java.lang.annotation.Annotation;
 
@@ -83,18 +84,36 @@ public final class BindingData{
 		this.selectObjectFrom = selectObjectFrom;
 	}
 
+	/**
+	 * Validate the value passed using the configured validator.
+	 *
+	 * @param value	The value.
+	 * @param <T>	The class type of the value.
+	 */
 	@SuppressWarnings("unchecked")
-	public <T> void validate(final Object value){
+	public <T> void validate(final T value){
 		final Validator<T> validatorCreator = (Validator<T>)ConstructorHelper.getCreator(validator)
 			.get();
-		if(!validatorCreator.isValid((T)value))
-			throw new IllegalArgumentException("Validation with " + validator.getSimpleName() + " not passed (value is " + value + ")");
+		if(!validatorCreator.isValid(value))
+			throw new IllegalArgumentException("Validation of " + validator.getSimpleName() + " didn't passed (value is " + value + ")");
 	}
 
+	/**
+	 * Adds the given instance as `self` to the context of the evaluator.
+	 * <p>Passing {@code null} the `self` key will be deleted.</p>
+	 *
+	 * @param instance	The object (pass {@code null} to remove the `self` key from the context).
+	 */
 	public void addToContext(final Object instance){
 		evaluator.addToContext(ContextHelper.CONTEXT_SELF, instance);
 	}
 
+	/**
+	 * Convenience method to fast evaluate a positive integer.
+	 *
+	 * @return	The size, or a negative number if the expression is not a valid positive integer.
+	 * @throws EvaluationException   If an error occurs during the evaluation of an expression.
+	 */
 	public int evaluateSize(){
 		return evaluator.evaluateSize(size, rootObject);
 	}
@@ -126,6 +145,11 @@ public final class BindingData{
 		return chosenAlternativeType;
 	}
 
+	/**
+	 * Whether the select-object-from binding has any alternatives.
+	 *
+	 * @return	Whether the select-object-from binding has any alternatives.
+	 */
 	public boolean hasSelectAlternatives(){
 		return (selectObjectFrom.alternatives().length > 0);
 	}
@@ -143,6 +167,11 @@ public final class BindingData{
 		return EMPTY_CHOICE;
 	}
 
+	/**
+	 * Get the first converter that matches the condition.
+	 *
+	 * @return	The converter class.
+	 */
 	public Class<? extends Converter<?, ?>> getChosenConverter(){
 		final ConverterChoices.ConverterChoice[] alternatives = selectConverterFrom.alternatives();
 		for(int i = 0; i < alternatives.length; i ++){

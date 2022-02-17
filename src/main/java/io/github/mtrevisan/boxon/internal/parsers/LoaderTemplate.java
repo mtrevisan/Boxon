@@ -104,6 +104,8 @@ public final class LoaderTemplate{
 	 * Loads all the protocol classes annotated with {@link MessageHeader}.
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
+	 * @throws AnnotationException	If an annotation has validation problems.
+	 * @throws TemplateException	If the template was already added (defined by `start` parameter in the header definition).
 	 */
 	public void loadTemplates(final Class<?>... basePackageClasses) throws AnnotationException, TemplateException{
 		eventListener.loadingTemplates(basePackageClasses);
@@ -121,6 +123,8 @@ public final class LoaderTemplate{
 	 * Load the specified protocol class annotated with {@link MessageHeader}.
 	 *
 	 * @param templateClass	Template class.
+	 * @throws AnnotationException	If an annotation has validation problems.
+	 * @throws TemplateException	If a template is not well formatted.
 	 */
 	public void loadTemplate(final Class<?> templateClass) throws AnnotationException, TemplateException{
 		eventListener.loadingTemplate(templateClass);
@@ -136,8 +140,7 @@ public final class LoaderTemplate{
 		}
 	}
 
-	private List<Template<?>> extractTemplates(final List<Class<?>> annotatedClasses) throws AnnotationException,
-			TemplateException{
+	private List<Template<?>> extractTemplates(final List<Class<?>> annotatedClasses) throws AnnotationException, TemplateException{
 		final int size = annotatedClasses.size();
 		final List<Template<?>> templates = new ArrayList<>(size);
 		for(int i = 0; i < size; i ++){
@@ -198,6 +201,7 @@ public final class LoaderTemplate{
 	 * For each valid template, add it to the map of templates indexed by starting message bytes.
 	 *
 	 * @param template	The template to add to the list of available templates.
+	 * @throws TemplateException	If the template was already added (defined by `start` parameter in the header definition).
 	 */
 	private void addTemplateInner(final Template<?> template) throws TemplateException{
 		try{
@@ -227,6 +231,7 @@ public final class LoaderTemplate{
 	 *
 	 * @param reader	The reader to read the header from.
 	 * @return	The template that is able to decode/encode the next message in the given reader.
+	 * @throws TemplateException	If no template cannot be found that is able to parse the given message.
 	 */
 	public Template<?> getTemplate(final BitReaderInterface reader) throws TemplateException{
 		final int index = reader.position();

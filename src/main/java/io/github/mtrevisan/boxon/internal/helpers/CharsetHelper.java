@@ -60,6 +60,12 @@ public final class CharsetHelper{
 	}
 
 
+	/**
+	 * Throw an exception if the given charset name is not valid.
+	 *
+	 * @param charsetName	The charset name.
+	 * @throws AnnotationException	The exception thrown if the name is not valid.
+	 */
 	public static void assertValidCharset(final String charsetName) throws AnnotationException{
 		try{
 			lookup(charsetName);

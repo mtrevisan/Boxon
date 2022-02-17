@@ -249,6 +249,7 @@ public final class BoxonCoreBuilder{
 	 * Load the specified protocol class annotated with {@link ConfigurationHeader}.
 	 *
 	 * @param configurationClass	Configuration class.
+	 * @return	This instance, used for chaining.
 	 */
 	public BoxonCoreBuilder withConfiguration(final Class<?> configurationClass){
 		addMethod(ConfigurationStep.CONFIGURATION, () -> core.addConfiguration(configurationClass));

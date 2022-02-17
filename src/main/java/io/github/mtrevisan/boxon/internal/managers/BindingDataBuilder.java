@@ -43,6 +43,9 @@ import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.internal.helpers.Evaluator;
 
 
+/**
+ * Builder for the {@link BindingData binding data}.
+ */
 public final class BindingDataBuilder{
 
 	private BindingDataBuilder(){}

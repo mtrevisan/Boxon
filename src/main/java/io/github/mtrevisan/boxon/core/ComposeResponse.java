@@ -57,6 +57,7 @@ public final class ComposeResponse{
 	 *
 	 * @param originator	The data that originates the message.
 	 * @param writer	The writer to read the composed message from.
+	 * @return	The instance.
 	 */
 	public static ComposeResponse create(final Object[] originator, final BitWriter writer){
 		writer.flush();
@@ -69,6 +70,7 @@ public final class ComposeResponse{
 	 *
 	 * @param originator	The data that originates the message.
 	 * @param composedMessage	The composed message.
+	 * @return	The instance.
 	 */
 	public static ComposeResponse create(final Object[] originator, final byte[] composedMessage){
 		return new ComposeResponse(originator, composedMessage);

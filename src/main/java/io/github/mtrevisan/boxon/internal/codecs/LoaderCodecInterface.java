@@ -29,8 +29,20 @@ import io.github.mtrevisan.boxon.io.CodecInterface;
 
 public interface LoaderCodecInterface{
 
+	/**
+	 * Whether there is a codec for the given class type.
+	 *
+	 * @param type	The class type.
+	 * @return	Whether there is a codec for the given class type.
+	 */
 	boolean hasCodec(final Class<?> type);
 
+	/**
+	 * Get the codec for the given class type.
+	 *
+	 * @param type	The class type.
+	 * @return	The codec for the given class type.
+	 */
 	CodecInterface<?> getCodec(final Class<?> type);
 
 }
