@@ -747,8 +747,8 @@ Firstly, load the configuration as shown below:
 ```java
 //add the custom codec to the list of available codecs
 //(use one of the lines below)
-core.withDefaultConfigurations(); //loads all configuration from the package where this call was made
-core.withConfigurations(ConfigurationCustomTest.class); //this class is where the custom configuration resides
+core.withConfiguration(ConfigurationCustomTest.class); //loads the given configuration
+core.withConfigurations(ConfigurationCustomTest.class); //loads all configuration from the package where the given class resides
 ```
 
 Then, to retrieve all the possible protocol version boundaries, call

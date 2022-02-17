@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Mauro Trevisan
+ * Copyright (c) 2020-2022 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -22,43 +22,15 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.external.configurations;
+package io.github.mtrevisan.boxon.io;
 
 
-/**
- * Holds the constants used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}.
- */
-public enum ConfigurationKey{
-	CONFIGURATION_HEADER("header"),
-	CONFIGURATION_FIELDS("fields"),
-	CONFIGURATION_PROTOCOL_VERSION_BOUNDARIES("protocolVersionBoundaries"),
-	CONFIGURATION_COMPOSITE_FIELDS("fields"),
+/** An enumeration for byte orders. */
+public enum ByteOrder{
 
-	ALTERNATIVES("alternatives"),
-	FIELD_TYPE("fieldType"),
-	SHORT_DESCRIPTION("shortDescription"),
-	LONG_DESCRIPTION("longDescription"),
-	UNIT_OF_MEASURE("unitOfMeasure"),
-	MIN_PROTOCOL("minProtocol"),
-	MAX_PROTOCOL("maxProtocol"),
-	MIN_VALUE("minValue"),
-	MAX_VALUE("maxValue"),
-	PATTERN("pattern"),
-	ENUMERATION("enumeration"),
-	MUTUALLY_EXCLUSIVE("mutuallyExclusive"),
-	DEFAULT_VALUE("defaultValue"),
-	CHARSET("charset");
-
-
-	private final String name;
-
-	ConfigurationKey(final String name){
-		this.name = name;
-	}
-
-	@Override
-	public String toString(){
-		return name;
-	}
+	/** Little-endian byte order. */
+	LITTLE_ENDIAN,
+	/** Big-endian byte order. */
+	BIG_ENDIAN
 
 }

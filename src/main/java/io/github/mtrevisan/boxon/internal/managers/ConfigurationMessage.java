@@ -31,7 +31,7 @@ import io.github.mtrevisan.boxon.internal.managers.configuration.ConfigurationMa
 import io.github.mtrevisan.boxon.internal.managers.configuration.ConfigurationManagerInterface;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
-import io.github.mtrevisan.boxon.external.semanticversioning.Version;
+import io.github.mtrevisan.boxon.semanticversioning.Version;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.validators.ConfigurationAnnotationValidator;
 

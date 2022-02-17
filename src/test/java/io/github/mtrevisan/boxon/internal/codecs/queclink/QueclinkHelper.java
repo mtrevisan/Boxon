@@ -25,7 +25,7 @@
 package io.github.mtrevisan.boxon.internal.codecs.queclink;
 
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
-import io.github.mtrevisan.boxon.external.semanticversioning.Version;
+import io.github.mtrevisan.boxon.semanticversioning.Version;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 
 import java.io.UnsupportedEncodingException;

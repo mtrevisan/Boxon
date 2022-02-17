@@ -34,8 +34,8 @@ import io.github.mtrevisan.boxon.internal.codecs.TemplateParserInterface;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
-import io.github.mtrevisan.boxon.external.io.CodecInterface;
-import io.github.mtrevisan.boxon.external.logs.EventListener;
+import io.github.mtrevisan.boxon.io.CodecInterface;
+import io.github.mtrevisan.boxon.logs.EventListener;
 
 import java.lang.reflect.Method;
 import java.util.Map;
@@ -201,16 +201,6 @@ public final class BoxonCore{
 		templateParser.withTemplate(templateClass);
 	}
 
-
-	/**
-	 * Loads all the protocol classes annotated with {@link ConfigurationHeader}.
-	 *
-	 * @throws AnnotationException	If an annotation is not well formatted.
-	 * @throws ConfigurationException	If a configuration is not well formatted.
-	 */
-	void useDefaultConfigurations() throws AnnotationException, ConfigurationException{
-		configurationParser.loadDefaultConfigurations();
-	}
 
 	/**
 	 * Loads all the protocol classes annotated with {@link ConfigurationHeader}.

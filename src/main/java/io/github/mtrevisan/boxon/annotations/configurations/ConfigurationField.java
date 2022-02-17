@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.annotations.configurations;
 
-import io.github.mtrevisan.boxon.external.configurations.ConfigurationEnum;
+import io.github.mtrevisan.boxon.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.internal.helpers.CharsetHelper;
 
 import java.lang.annotation.Documented;

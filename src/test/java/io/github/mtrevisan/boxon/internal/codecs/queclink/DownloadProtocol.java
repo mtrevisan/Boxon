@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.internal.codecs.queclink;
 
-import io.github.mtrevisan.boxon.external.configurations.ConfigurationEnum;
+import io.github.mtrevisan.boxon.configurations.ConfigurationEnum;
 
 
 @SuppressWarnings("ALL")

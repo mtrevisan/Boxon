@@ -31,7 +31,7 @@ import io.github.mtrevisan.boxon.annotations.configurations.CompositeSubField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
-import io.github.mtrevisan.boxon.external.configurations.BooleanType;
+import io.github.mtrevisan.boxon.configurations.BooleanType;
 
 
 @SuppressWarnings("ALL")

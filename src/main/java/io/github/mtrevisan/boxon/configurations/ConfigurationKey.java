@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 Mauro Trevisan
+ * Copyright (c) 2021-2022 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -22,45 +22,43 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.external.configurations;
+package io.github.mtrevisan.boxon.configurations;
 
 
 /**
- * Interface every enumeration used in a configuration MUST implement.
+ * Holds the constants used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}.
  */
-public interface ConfigurationEnum{
+public enum ConfigurationKey{
+	CONFIGURATION_HEADER("header"),
+	CONFIGURATION_FIELDS("fields"),
+	CONFIGURATION_PROTOCOL_VERSION_BOUNDARIES("protocolVersionBoundaries"),
+	CONFIGURATION_COMPOSITE_FIELDS("fields"),
 
-	/**
-	 * The code associated with this numeration value.
-	 *
-	 * @return	The code for this enumeration.
-	 */
-	int getCode();
-
-	/**
-	 * Name of the value.
-	 * <p>
-	 * NOTE: already implemented in an Enum! Normally, it doesn't need to be extended.
-	 * </p>
-	 *
-	 * @return	The name of the value.
-	 */
-	String name();
+	ALTERNATIVES("alternatives"),
+	FIELD_TYPE("fieldType"),
+	SHORT_DESCRIPTION("shortDescription"),
+	LONG_DESCRIPTION("longDescription"),
+	UNIT_OF_MEASURE("unitOfMeasure"),
+	MIN_PROTOCOL("minProtocol"),
+	MAX_PROTOCOL("maxProtocol"),
+	MIN_VALUE("minValue"),
+	MAX_VALUE("maxValue"),
+	PATTERN("pattern"),
+	ENUMERATION("enumeration"),
+	MUTUALLY_EXCLUSIVE("mutuallyExclusive"),
+	DEFAULT_VALUE("defaultValue"),
+	CHARSET("charset");
 
 
-	/**
-	 * Convert a text value into an enumeration constant.
-	 *
-	 * @param enumConstants	The array of possible constants.
-	 * @param value	The value to be converted.
-	 * @return	The enumeration constant that matches the value.
-	 */
-	@SuppressWarnings("ReturnOfNull")
-	static ConfigurationEnum extractEnum(final ConfigurationEnum[] enumConstants, final String value){
-		for(int i = 0; i < enumConstants.length; i ++)
-			if(enumConstants[i].name().equals(value))
-				return enumConstants[i];
-		return null;
+	private final String name;
+
+	ConfigurationKey(final String name){
+		this.name = name;
+	}
+
+	@Override
+	public String toString(){
+		return name;
 	}
 
 }

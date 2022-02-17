@@ -38,11 +38,11 @@ module io.github.mtrevisan.boxon{
 	exports io.github.mtrevisan.boxon.annotations.configurations;
 	exports io.github.mtrevisan.boxon.annotations.converters;
 	exports io.github.mtrevisan.boxon.annotations.validators;
+	exports io.github.mtrevisan.boxon.configurations;
 	exports io.github.mtrevisan.boxon.core;
+	exports io.github.mtrevisan.boxon.descriptions;
 	exports io.github.mtrevisan.boxon.exceptions;
-	exports io.github.mtrevisan.boxon.external.configurations;
-	exports io.github.mtrevisan.boxon.external.descriptions;
-	exports io.github.mtrevisan.boxon.external.io;
-	exports io.github.mtrevisan.boxon.external.logs;
-	exports io.github.mtrevisan.boxon.external.semanticversioning;
+	exports io.github.mtrevisan.boxon.io;
+	exports io.github.mtrevisan.boxon.logs;
+	exports io.github.mtrevisan.boxon.semanticversioning;
 }

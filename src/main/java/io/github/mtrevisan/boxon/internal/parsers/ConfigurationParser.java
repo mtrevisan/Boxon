@@ -38,9 +38,9 @@ import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
-import io.github.mtrevisan.boxon.external.io.BitWriterInterface;
-import io.github.mtrevisan.boxon.external.logs.EventListener;
-import io.github.mtrevisan.boxon.external.semanticversioning.Version;
+import io.github.mtrevisan.boxon.io.BitWriterInterface;
+import io.github.mtrevisan.boxon.logs.EventListener;
+import io.github.mtrevisan.boxon.semanticversioning.Version;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
@@ -87,17 +87,6 @@ public final class ConfigurationParser{
 		return this;
 	}
 
-
-	/**
-	 * Loads all the configuration classes annotated with {@link ConfigurationHeader}.
-	 * <p>This method SHOULD BE called from a method inside a class that lies on a parent of all the protocol classes.</p>
-	 *
-	 * @throws AnnotationException	If a configuration annotation is invalid, or no annotation was found.
-	 * @throws ConfigurationException	If a configuration is not well formatted.
-	 */
-	public void loadDefaultConfigurations() throws AnnotationException, ConfigurationException{
-		loaderConfiguration.loadDefaultConfigurations();
-	}
 
 	/**
 	 * Loads all the configuration classes annotated with {@link ConfigurationHeader}.

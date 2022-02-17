@@ -22,15 +22,29 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.external.io;
+package io.github.mtrevisan.boxon.configurations;
 
 
-/** An enumeration for byte orders. */
-public enum ByteOrder{
+/**
+ * Boolean enumeration used in a configuration.
+ */
+public enum BooleanType implements ConfigurationEnum{
 
-	/** Little-endian byte order. */
-	LITTLE_ENDIAN,
-	/** Big-endian byte order. */
-	BIG_ENDIAN
+	/** {@code True/1} value. */
+	TRUE(1),
+	/** {@code False/0} value. */
+	FALSE(0);
+
+
+	private final int code;
+
+	BooleanType(final int code){
+		this.code = code;
+	}
+
+	@Override
+	public int getCode(){
+		return code;
+	}
 
 }

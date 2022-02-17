@@ -39,8 +39,8 @@ import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
-import io.github.mtrevisan.boxon.external.logs.EventListener;
-import io.github.mtrevisan.boxon.external.semanticversioning.Version;
+import io.github.mtrevisan.boxon.logs.EventListener;
+import io.github.mtrevisan.boxon.semanticversioning.Version;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 
 import java.lang.annotation.Annotation;
@@ -91,17 +91,6 @@ final class LoaderConfiguration{
 		this.eventListener = JavaHelper.nonNullOrDefault(eventListener, EventListener.getNoOpInstance());
 
 		return this;
-	}
-
-	/**
-	 * Loads all the configuration classes annotated with {@link ConfigurationHeader}.
-	 * <p>This method SHOULD BE called from a method inside a class that lies on a parent of all the protocol classes.</p>
-	 *
-	 * @throws AnnotationException	If a configuration annotation is invalid, or no annotation was found.
-	 * @throws ConfigurationException	If a configuration is not well formatted.
-	 */
-	void loadDefaultConfigurations() throws AnnotationException, ConfigurationException{
-		loadConfigurations(ReflectiveClassLoader.extractCallerClasses());
 	}
 
 	/**

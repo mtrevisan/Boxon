@@ -28,8 +28,8 @@ import io.github.mtrevisan.boxon.internal.helpers.GenericHelper;
 import io.github.mtrevisan.boxon.internal.helpers.ReflectiveClassLoader;
 import io.github.mtrevisan.boxon.internal.helpers.ConstructorHelper;
 import io.github.mtrevisan.boxon.internal.helpers.ReflectionHelper;
-import io.github.mtrevisan.boxon.external.io.CodecInterface;
-import io.github.mtrevisan.boxon.external.logs.EventListener;
+import io.github.mtrevisan.boxon.io.CodecInterface;
+import io.github.mtrevisan.boxon.logs.EventListener;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 
 import java.util.ArrayList;

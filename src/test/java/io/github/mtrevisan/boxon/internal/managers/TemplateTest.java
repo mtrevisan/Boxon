@@ -43,7 +43,7 @@ import io.github.mtrevisan.boxon.annotations.checksummers.CRC16CCITT;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.external.io.ByteOrder;
+import io.github.mtrevisan.boxon.io.ByteOrder;
 import io.github.mtrevisan.boxon.internal.codecs.LoaderCodec;
 import io.github.mtrevisan.boxon.internal.parsers.LoaderTemplate;
 import org.junit.jupiter.api.Assertions;

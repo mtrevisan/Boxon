@@ -32,7 +32,7 @@ import io.github.mtrevisan.boxon.internal.managers.BoundedField;
 import io.github.mtrevisan.boxon.internal.managers.Template;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
-import io.github.mtrevisan.boxon.external.descriptions.DescriberKey;
+import io.github.mtrevisan.boxon.descriptions.DescriberKey;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;

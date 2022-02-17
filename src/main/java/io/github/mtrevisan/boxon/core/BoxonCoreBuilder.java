@@ -30,8 +30,8 @@ import io.github.mtrevisan.boxon.internal.helpers.Evaluator;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
-import io.github.mtrevisan.boxon.external.io.CodecInterface;
-import io.github.mtrevisan.boxon.external.logs.EventListener;
+import io.github.mtrevisan.boxon.io.CodecInterface;
+import io.github.mtrevisan.boxon.logs.EventListener;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 
 import java.lang.reflect.Method;
@@ -232,17 +232,6 @@ public final class BoxonCoreBuilder{
 		return this;
 	}
 
-
-	/**
-	 * Loads all the protocol classes annotated with {@link ConfigurationHeader}.
-	 *
-	 * @return	This instance, used for chaining.
-	 */
-	public BoxonCoreBuilder withDefaultConfigurations(){
-		addMethod(ConfigurationStep.CONFIGURATION, core::useDefaultConfigurations);
-
-		return this;
-	}
 
 	/**
 	 * Loads all the protocol classes annotated with {@link ConfigurationHeader}.

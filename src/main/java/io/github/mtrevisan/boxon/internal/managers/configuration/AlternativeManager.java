@@ -29,10 +29,10 @@ import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
-import io.github.mtrevisan.boxon.external.io.ParserDataType;
-import io.github.mtrevisan.boxon.external.configurations.ConfigurationEnum;
-import io.github.mtrevisan.boxon.external.configurations.ConfigurationKey;
-import io.github.mtrevisan.boxon.external.semanticversioning.Version;
+import io.github.mtrevisan.boxon.io.ParserDataType;
+import io.github.mtrevisan.boxon.configurations.ConfigurationEnum;
+import io.github.mtrevisan.boxon.configurations.ConfigurationKey;
+import io.github.mtrevisan.boxon.semanticversioning.Version;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 

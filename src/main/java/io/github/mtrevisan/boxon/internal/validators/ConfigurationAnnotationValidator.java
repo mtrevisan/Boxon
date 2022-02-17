@@ -36,7 +36,7 @@ import io.github.mtrevisan.boxon.internal.managers.configuration.ConfigFieldData
 import io.github.mtrevisan.boxon.internal.managers.configuration.ConfigFieldDataBuilder;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
-import io.github.mtrevisan.boxon.external.semanticversioning.Version;
+import io.github.mtrevisan.boxon.semanticversioning.Version;
 import io.github.mtrevisan.boxon.internal.JavaHelper;
 import io.github.mtrevisan.boxon.internal.StringHelper;
 
