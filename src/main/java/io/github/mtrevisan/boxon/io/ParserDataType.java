@@ -285,7 +285,9 @@ public enum ParserDataType{
 		//try convert to a number...
 		final Object val = toNumber(value, objectiveType);
 		//... otherwise convert it to an object
-		return (val == null? toObjectValue(value, objectiveType): val);
+		return (val == null
+			? toObjectValue(value, objectiveType)
+			: val);
 	}
 
 

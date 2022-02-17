@@ -237,10 +237,12 @@ public final class ValidationHelper{
 				throw AnnotationException.create("Default value for mutually exclusive enumeration field in {} should be a value; found {}, expected one of {}",
 					field.getAnnotationName(), defaultValue, Arrays.toString(enumConstants));
 
-			for(int i = 0; i < JavaHelper.lengthOrZero(defaultValues); i ++)
-				if(ConfigurationEnum.extractEnum(enumConstants, defaultValues[i]) == null)
+			for(int i = 0; i < JavaHelper.lengthOrZero(defaultValues); i ++){
+				final ConfigurationEnum enumValue = ConfigurationEnum.extractEnum(enumConstants, defaultValues[i]);
+				if(enumValue == null)
 					throw AnnotationException.create("Default value not compatible with `enumeration` in {}; found {}, expected one of {}",
 						field.getAnnotationName(), defaultValues[i], Arrays.toString(enumConstants));
+			}
 		}
 	}
 
