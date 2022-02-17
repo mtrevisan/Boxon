@@ -100,7 +100,7 @@ public final class BoxonCoreBuilder{
 	 * @param value	The value.
 	 * @return	This instance, used for chaining.
 	 */
-	public BoxonCoreBuilder addToContext(final String key, final Object value){
+	public BoxonCoreBuilder withContext(final String key, final Object value){
 		addMethod(ConfigurationStep.CONTEXT, () -> core.addToContext(key, value));
 
 		return this;
