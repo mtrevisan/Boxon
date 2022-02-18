@@ -29,7 +29,7 @@ import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.helpers.ThrowingFunction;
 import io.github.mtrevisan.boxon.core.managers.configuration.ConfigurationManagerFactory;
 import io.github.mtrevisan.boxon.core.managers.configuration.ConfigurationManagerInterface;
-import io.github.mtrevisan.boxon.core.managers.helpers.ReflectiveClassLoader;
+import io.github.mtrevisan.boxon.helpers.ReflectiveClassLoader;
 import io.github.mtrevisan.boxon.core.managers.ConfigField;
 import io.github.mtrevisan.boxon.core.managers.ConfigurationMessage;
 import io.github.mtrevisan.boxon.helpers.ConstructorHelper;
