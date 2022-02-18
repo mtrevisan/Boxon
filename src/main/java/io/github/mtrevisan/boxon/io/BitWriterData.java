@@ -109,6 +109,7 @@ class BitWriterData{
 	 * @param value	The value to write.
 	 * @param size	The amount of bits to use when writing {@code value} (MUST BE less than or equals to {@link Long#SIZE}).
 	 */
+	@SuppressWarnings("WeakerAccess")
 	public final void putValue(final long value, final int size){
 		final BitSet bits = BitSet.valueOf(new long[]{value});
 		putBitSet(bits, size, ByteOrder.BIG_ENDIAN);

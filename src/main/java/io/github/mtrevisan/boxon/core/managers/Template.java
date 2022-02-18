@@ -96,8 +96,14 @@ public final class Template<T>{
 		this.type = type;
 
 		header = type.getAnnotation(MessageHeader.class);
-		if(header != null)
-			CharsetHelper.assertValidCharset(header.charset());
+		if(header != null){
+			try{
+				CharsetHelper.assertValidCharset(header.charset());
+			}
+			catch(final IllegalArgumentException ignored){
+				throw AnnotationException.create("Invalid charset: '{}'", header.charset());
+			}
+		}
 
 		final Pair fields = loadAnnotatedFields(type, filterAnnotationsWithCodec);
 		boundedFields = Collections.unmodifiableList(fields.boundedFields);

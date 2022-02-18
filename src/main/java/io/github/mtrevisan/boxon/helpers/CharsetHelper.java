@@ -24,8 +24,6 @@
  */
 package io.github.mtrevisan.boxon.helpers;
 
-import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-
 import java.nio.charset.Charset;
 import java.util.function.Function;
 
@@ -64,15 +62,10 @@ public final class CharsetHelper{
 	 * Throw an exception if the given charset name is not valid.
 	 *
 	 * @param charsetName	The charset name.
-	 * @throws AnnotationException	The exception thrown if the name is not valid.
+	 * @throws IllegalArgumentException	The exception thrown if the name is not valid.
 	 */
-	public static void assertValidCharset(final String charsetName) throws AnnotationException{
-		try{
-			lookup(charsetName);
-		}
-		catch(final IllegalArgumentException ignored){
-			throw AnnotationException.create("Invalid charset: '{}'", charsetName);
-		}
+	public static void assertValidCharset(final String charsetName) throws IllegalArgumentException{
+		lookup(charsetName);
 	}
 
 }

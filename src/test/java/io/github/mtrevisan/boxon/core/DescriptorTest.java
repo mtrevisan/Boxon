@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core;
 
+import io.github.mtrevisan.boxon.annotations.checksummers.CRC16CCITT;
 import io.github.mtrevisan.boxon.annotations.validators.IMEIValidator;
 import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMaskHex;
 import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageHex;
@@ -86,7 +87,9 @@ class DescriptorTest{
 			+ QueclinkHelper.DateTimeYYYYMMDDHHMMSSConverter.class.getName()
 			+ ",name:eventTime,annotationType:BindArrayPrimitive,type:byte,fieldType:"
 			+ ZonedDateTime.class.getName()
-			+ ",byteOrder:BIG_ENDIAN},{condition:mask.hasMessageId(),name:messageId,annotationType:BindShort,fieldType:short,byteOrder:BIG_ENDIAN},{skipEnd:4,skipStart:4,name:checksum,annotationType:Checksum,startValue:-1,type:short,fieldType:short,byteOrder:BIG_ENDIAN,algorithm:CRC16CCITT}],context:{methods:[private static int "
+			+ ",byteOrder:BIG_ENDIAN},{condition:mask.hasMessageId(),name:messageId,annotationType:BindShort,fieldType:short,byteOrder:BIG_ENDIAN},{skipEnd:4,skipStart:4,name:checksum,annotationType:Checksum,startValue:-1,type:short,fieldType:short,byteOrder:BIG_ENDIAN,algorithm:"
+			+ CRC16CCITT.class.getName()
+			+ "}],context:{methods:[private static int "
 			+ ParserTest.class.getName()
 			+ ".headerSize()],deviceTypes:[QUECLINK_GB200S (0x46)]},header:{start:[+ACK],charset:UTF-8}}", jsonDescription);
 	}

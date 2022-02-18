@@ -83,7 +83,7 @@ public enum ConfigurationAnnotationValidator{
 			if(!configData.hasEnumeration() && field.getType().isEnum())
 				throw AnnotationException.create("Unnecessary mutually exclusive field in a non-enumeration field");
 			if(String.class.isAssignableFrom(field.getType()))
-				CharsetHelper.assertValidCharset(configData.getCharset());
+				validateCharset(configData.getCharset());
 			ValidationHelper.validateRadix(configData.getRadix());
 
 			validateMinimumParameters(configData);
@@ -134,7 +134,7 @@ public enum ConfigurationAnnotationValidator{
 			final CompositeSubField[] fields = binding.value();
 			if(fields.length == 0)
 				throw AnnotationException.create("Composite fields must have at least one sub-field");
-			CharsetHelper.assertValidCharset(configData.getCharset());
+			validateCharset(configData.getCharset());
 
 			ValidationHelper.validatePattern(configData);
 
@@ -205,7 +205,7 @@ public enum ConfigurationAnnotationValidator{
 			final AlternativeSubField binding = (AlternativeSubField)annotation;
 
 			if(String.class.isAssignableFrom(field.getType()))
-				CharsetHelper.assertValidCharset(configData.getCharset());
+				validateCharset(configData.getCharset());
 			ValidationHelper.validateRadix(configData.getRadix());
 
 			validateMinimumParameters(binding);
@@ -267,5 +267,14 @@ public enum ConfigurationAnnotationValidator{
 	 * @throws CodecException	If an error was raised reading of interpreting the field value.
 	 */
 	public abstract void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion) throws AnnotationException, CodecException;
+
+	private static void validateCharset(final String charsetName) throws AnnotationException{
+		try{
+			CharsetHelper.assertValidCharset(charsetName);
+		}
+		catch(final IllegalArgumentException ignored){
+			throw AnnotationException.create("Invalid charset: '{}'", charsetName);
+		}
+	}
 
 }

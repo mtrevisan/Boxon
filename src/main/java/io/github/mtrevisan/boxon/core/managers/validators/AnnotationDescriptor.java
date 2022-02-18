@@ -279,7 +279,7 @@ public enum AnnotationDescriptor{
 			putIfNotEmpty(DescriberKey.BIND_BYTE_ORDER, binding.byteOrder(), rootDescription);
 			putIfNotEmpty(DescriberKey.BIND_SKIP_START, binding.skipStart(), rootDescription);
 			putIfNotEmpty(DescriberKey.BIND_SKIP_END, binding.skipEnd(), rootDescription);
-			putIfNotEmpty(DescriberKey.BIND_ALGORITHM, binding.algorithm(), rootDescription);
+			putIfNotEmpty(DescriberKey.BIND_ALGORITHM, binding.algorithm().getName(), rootDescription);
 			putIfNotEmpty(DescriberKey.BIND_START_VALUE, binding.startValue(), rootDescription);
 		}
 	},
@@ -414,8 +414,7 @@ public enum AnnotationDescriptor{
 	 * @param type	The class whose simple name will be the value.
 	 * @param map	The map in which to load the key-value pair.
 	 */
-	public static void putIfNotEmpty(final DescriberKey key, final Class<?> type,
-			@SuppressWarnings("BoundedWildcard") final Map<String, Object> map){
+	private static void putIfNotEmpty(final DescriberKey key, final Class<?> type, @SuppressWarnings("BoundedWildcard") final Map<String, Object> map){
 		if(type != null)
 			map.put(key.toString(), type.getSimpleName());
 	}

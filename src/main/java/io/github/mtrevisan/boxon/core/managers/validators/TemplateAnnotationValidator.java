@@ -111,7 +111,7 @@ public enum TemplateAnnotationValidator{
 		@Override
 		public void validate(final Field field, final Annotation annotation) throws AnnotationException{
 			final BindString binding = (BindString)annotation;
-			CharsetHelper.assertValidCharset(binding.charset());
+			validateCharset(binding.charset());
 
 			final Class<? extends Converter<?, ?>> converter = binding.converter();
 			validateConverter(field, String.class, converter);
@@ -122,7 +122,7 @@ public enum TemplateAnnotationValidator{
 		@Override
 		public void validate(final Field field, final Annotation annotation) throws AnnotationException{
 			final BindStringTerminated binding = (BindStringTerminated)annotation;
-			CharsetHelper.assertValidCharset(binding.charset());
+			validateCharset(binding.charset());
 
 			final Class<? extends Converter<?, ?>> converter = binding.converter();
 			validateConverter(field, String.class, converter);
@@ -247,6 +247,15 @@ public enum TemplateAnnotationValidator{
 			throw AnnotationException.create("Useless empty alternative");
 		if(selectDefault != void.class && !type.isAssignableFrom(selectDefault))
 			throw AnnotationException.create("Type of default alternative cannot be assigned to (super) type of annotation");
+	}
+
+	private static void validateCharset(final String charsetName) throws AnnotationException{
+		try{
+			CharsetHelper.assertValidCharset(charsetName);
+		}
+		catch(final IllegalArgumentException ignored){
+			throw AnnotationException.create("Invalid charset: '{}'", charsetName);
+		}
 	}
 
 }

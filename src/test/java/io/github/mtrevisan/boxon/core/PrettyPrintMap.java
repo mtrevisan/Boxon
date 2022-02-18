@@ -28,7 +28,7 @@ import java.util.Arrays;
 import java.util.Map;
 
 
-public final class PrettyPrintMap{
+final class PrettyPrintMap{
 
 	private PrettyPrintMap(){}
 
