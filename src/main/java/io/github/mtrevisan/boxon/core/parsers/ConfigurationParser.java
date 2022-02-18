@@ -161,7 +161,7 @@ public final class ConfigurationParser{
 	 * @throws FieldException	If a codec is not found.
 	 */
 	public <T> void encode(final ConfigurationMessage<?> configuration, final BitWriterInterface writer, final T currentObject,
-								  final Evaluator evaluator, final Version protocol) throws FieldException{
+			final Evaluator evaluator, final Version protocol) throws FieldException{
 		final ParserContext<T> parserContext = new ParserContext<>(evaluator, currentObject);
 		parserContext.setClassName(configuration.getType().getName());
 

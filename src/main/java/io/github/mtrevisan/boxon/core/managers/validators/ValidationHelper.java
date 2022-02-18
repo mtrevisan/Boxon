@@ -73,12 +73,12 @@ final class ValidationHelper{
 
 		//`minProtocol` must be after or equal to `minProtocolVersion`
 		if(minimum != null && !minProtocolVersion.isEmpty() && minimum.isLessThan(minProtocolVersion))
-			throw AnnotationException.create("Minimum protocol version is less than whole message minimum protocol version in {}; found {}",
-				field.getAnnotationName(), maxProtocolVersion);
+			throw AnnotationException.create("Minimum protocol version is less than whole message minimum protocol version in {}; expected {} >= {}",
+				field.getAnnotationName(), minimum, minProtocolVersion);
 		//`maxProtocol` must be before or equal to `maxProtocolVersion`
 		if(maximum != null && !maxProtocolVersion.isEmpty() && maxProtocolVersion.isLessThan(maximum))
-			throw AnnotationException.create("Maximum protocol version is greater than whole message maximum protocol version in {}; found {}",
-				field.getAnnotationName(), maxProtocolVersion);
+			throw AnnotationException.create("Maximum protocol version is greater than whole message maximum protocol version in {}; expected {} <= {}",
+				field.getAnnotationName(), maximum, maxProtocolVersion);
 	}
 
 	private static Version validateProtocol(final String protocolVersion, final String bindingName, final String errorMessage)
