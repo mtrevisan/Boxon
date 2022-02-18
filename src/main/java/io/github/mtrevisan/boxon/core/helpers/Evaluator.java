@@ -106,7 +106,7 @@ public final class Evaluator{
 	}
 
 	/**
-	 * Convenience method to fast evaluate a boolean.
+	 * Convenience method to fast evaluate a boolean value.
 	 *
 	 * @param expression	The SpEL expression to evaluate (empty string returns {@code true}).
 	 * @param rootObject	The context with which to evaluate the given expression.

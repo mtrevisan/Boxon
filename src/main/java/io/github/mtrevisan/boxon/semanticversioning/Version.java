@@ -521,7 +521,7 @@ public final class Version implements Comparable<Version>{
 
 	/**
 	 * Checks if this version has added functionalities with respect to another version, that is, the major identifier is the same and
-	 * the minor is greater.
+	 * the minor identifier is greater.
 	 *
 	 * @param other	The other version to compare to.
 	 * @return	Whether this version is an enhancement of the other version.
@@ -533,7 +533,7 @@ public final class Version implements Comparable<Version>{
 
 	/**
 	 * Checks if this version is a patch of the another version, that is, the major and minor identifiers are the same and
-	 * the patch is greater.
+	 * the patch identifier is greater.
 	 *
 	 * @param other	The other version to compare to.
 	 * @return	Whether this version is an enhancement of the other version.

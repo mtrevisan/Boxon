@@ -39,7 +39,7 @@ public class FieldException extends Exception{
 
 	/** Class name that generates the error. */
 	private String className;
-	/** Field name in the class that generates the error. */
+	/** Name of the field in the class that generates the error. */
 	private String fieldName;
 
 
