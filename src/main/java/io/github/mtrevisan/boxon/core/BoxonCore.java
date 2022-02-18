@@ -26,11 +26,11 @@ package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
-import io.github.mtrevisan.boxon.internal.parsers.ConfigurationParser;
-import io.github.mtrevisan.boxon.internal.helpers.Evaluator;
-import io.github.mtrevisan.boxon.internal.codecs.LoaderCodec;
-import io.github.mtrevisan.boxon.internal.parsers.TemplateParser;
-import io.github.mtrevisan.boxon.internal.codecs.TemplateParserInterface;
+import io.github.mtrevisan.boxon.core.parsers.ConfigurationParser;
+import io.github.mtrevisan.boxon.core.helpers.Evaluator;
+import io.github.mtrevisan.boxon.core.codecs.LoaderCodec;
+import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
+import io.github.mtrevisan.boxon.core.codecs.TemplateParserInterface;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;

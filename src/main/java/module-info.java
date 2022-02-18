@@ -30,7 +30,7 @@ module io.github.mtrevisan.boxon{
 	requires spring.core;
 	requires spring.expression;
 
-	opens io.github.mtrevisan.boxon.internal.codecs to spring.core, spring.expression;
+	opens io.github.mtrevisan.boxon.core.codecs to spring.core, spring.expression;
 
 	exports io.github.mtrevisan.boxon.annotations;
 	exports io.github.mtrevisan.boxon.annotations.bindings;

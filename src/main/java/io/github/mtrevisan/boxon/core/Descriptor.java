@@ -25,11 +25,11 @@
 package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
-import io.github.mtrevisan.boxon.internal.parsers.LoaderTemplate;
-import io.github.mtrevisan.boxon.internal.parsers.TemplateParser;
-import io.github.mtrevisan.boxon.internal.validators.AnnotationDescriptor;
-import io.github.mtrevisan.boxon.internal.managers.BoundedField;
-import io.github.mtrevisan.boxon.internal.managers.Template;
+import io.github.mtrevisan.boxon.core.parsers.LoaderTemplate;
+import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
+import io.github.mtrevisan.boxon.core.validators.AnnotationDescriptor;
+import io.github.mtrevisan.boxon.core.managers.BoundedField;
+import io.github.mtrevisan.boxon.core.managers.Template;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.descriptions.DescriberKey;

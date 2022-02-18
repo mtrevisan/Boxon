@@ -28,7 +28,6 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
-import io.github.mtrevisan.boxon.internal.helpers.CharsetHelper;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -55,7 +54,7 @@ public @interface BindString{
 	/**
 	 * The type of encoding used for the {@link String}.
 	 *
-	 * @return	The type of encoding used (defaults to {@value CharsetHelper#DEFAULT_CHARSET}).
+	 * @return	The type of encoding used (defaults to {@value io.github.mtrevisan.boxon.core.helpers.CharsetHelper#DEFAULT_CHARSET}).
 	 */
 	String charset() default "UTF-8";
 

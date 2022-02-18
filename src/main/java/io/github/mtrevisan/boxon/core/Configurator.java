@@ -25,13 +25,13 @@
 package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
-import io.github.mtrevisan.boxon.internal.parsers.ConfigurationParser;
-import io.github.mtrevisan.boxon.internal.helpers.Evaluator;
-import io.github.mtrevisan.boxon.internal.managers.ConfigField;
-import io.github.mtrevisan.boxon.internal.managers.ConfigurationMessage;
-import io.github.mtrevisan.boxon.internal.managers.configuration.ConfigurationHelper;
-import io.github.mtrevisan.boxon.internal.managers.configuration.ConfigurationManagerFactory;
-import io.github.mtrevisan.boxon.internal.managers.configuration.ConfigurationManagerInterface;
+import io.github.mtrevisan.boxon.core.parsers.ConfigurationParser;
+import io.github.mtrevisan.boxon.core.helpers.Evaluator;
+import io.github.mtrevisan.boxon.core.managers.ConfigField;
+import io.github.mtrevisan.boxon.core.managers.ConfigurationMessage;
+import io.github.mtrevisan.boxon.core.managers.configuration.ConfigurationHelper;
+import io.github.mtrevisan.boxon.core.managers.configuration.ConfigurationManagerFactory;
+import io.github.mtrevisan.boxon.core.managers.configuration.ConfigurationManagerInterface;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
