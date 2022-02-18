@@ -62,15 +62,15 @@
 		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-gpg-plugin -->
 		<maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
 		<!-- https://mvnrepository.com/artifact/org.sonatype.plugins/nexus-staging-maven-plugin -->
-		<sonatype.nexus-staging-maven-plugin.version>1.6.8</sonatype.nexus-staging-maven-plugin.version>
+		<sonatype.nexus-staging-maven-plugin.version>1.6.11</sonatype.nexus-staging-maven-plugin.version>
 		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-source-plugin -->
 		<maven-source-plugin.version>3.2.1</maven-source-plugin.version>
 		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-javadoc-plugin -->
-		<maven-javadoc-plugin.version>3.3.1</maven-javadoc-plugin.version>
+		<maven-javadoc-plugin.version>3.3.2</maven-javadoc-plugin.version>
 		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-surefire-plugin -->
 		<maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
 		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
-		<maven-compiler-plugin.version>3.9.0</maven-compiler-plugin.version>
+		<maven-compiler-plugin.version>3.10.0</maven-compiler-plugin.version>
 		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-help-plugin -->
 		<maven-help-plugin.version>3.2.0</maven-help-plugin.version>
 		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-shade-plugin -->
@@ -208,7 +208,7 @@
 									<javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
 									<detectJavaApiLink>false</detectJavaApiLink>
 									<locale>en</locale>
-									<excludePackageNames>io.github.mtrevisan.boxon.internal.*,io.github.mtrevisan.boxon.codecs.managers.*</excludePackageNames>
+									<excludePackageNames>io.github.mtrevisan.boxon.core.internal.*</excludePackageNames>
 								</configuration>
 							</execution>
 						</executions>
@@ -242,9 +242,18 @@
 				<version>${maven-surefire-plugin.version}</version>
 				<configuration>
 					<argLine>
-						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.core=spring.core
+						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.annotations.checksummers=ALL-UNNAMED
+						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.annotations.converters=ALL-UNNAMED
+						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.annotations.validators=ALL-UNNAMED
+						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.core=spring.core,ALL-UNNAMED
+						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.core.codecs=ALL-UNNAMED
 						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.core.codecs.queclink=spring.core,spring.expression
-						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.core.parsers=spring.core
+						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.core.internal=ALL-UNNAMED
+						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.core.managers=ALL-UNNAMED
+						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.core.matchers=ALL-UNNAMED
+						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.core.parsers=spring.core,ALL-UNNAMED
+						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.io=ALL-UNNAMED
+						--add-opens io.github.mtrevisan.boxon/io.github.mtrevisan.boxon.semanticversioning=ALL-UNNAMED
 					</argLine>
 				</configuration>
 			</plugin>
