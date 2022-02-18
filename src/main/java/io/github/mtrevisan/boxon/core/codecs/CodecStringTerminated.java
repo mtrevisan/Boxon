@@ -30,7 +30,7 @@ import io.github.mtrevisan.boxon.core.managers.BindingData;
 import io.github.mtrevisan.boxon.core.managers.BindingDataBuilder;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.Injected;
-import io.github.mtrevisan.boxon.core.helpers.CharsetHelper;
+import io.github.mtrevisan.boxon.helpers.CharsetHelper;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.io.CodecInterface;

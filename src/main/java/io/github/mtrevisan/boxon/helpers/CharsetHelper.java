@@ -22,10 +22,9 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.helpers;
+package io.github.mtrevisan.boxon.helpers;
 
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.helpers.Memoizer;
 
 import java.nio.charset.Charset;
 import java.util.function.Function;

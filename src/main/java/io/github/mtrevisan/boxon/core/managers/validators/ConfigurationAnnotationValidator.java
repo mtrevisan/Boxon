@@ -32,7 +32,7 @@ import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.core.managers.configuration.ConfigFieldData;
 import io.github.mtrevisan.boxon.core.managers.configuration.ConfigFieldDataBuilder;
-import io.github.mtrevisan.boxon.core.helpers.CharsetHelper;
+import io.github.mtrevisan.boxon.helpers.CharsetHelper;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
