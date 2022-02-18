@@ -22,13 +22,12 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.managers;
+package io.github.mtrevisan.boxon.core.managers.templates;
 
 import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.Evaluate;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.Skip;
-import io.github.mtrevisan.boxon.core.managers.validators.TemplateAnnotationValidator;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.helpers.CharsetHelper;
 import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
@@ -163,7 +162,7 @@ public final class Template<T>{
 		for(int i = 0; i < declaredAnnotations.length; i ++){
 			final Annotation annotation = declaredAnnotations[i];
 			if(annotation.annotationType() == Evaluate.class)
-				evaluations.add(new EvaluatedField(field, (Evaluate)annotation));
+				evaluations.add(EvaluatedField.create(field, (Evaluate)annotation));
 		}
 		return evaluations;
 	}

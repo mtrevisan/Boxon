@@ -25,8 +25,8 @@
 package io.github.mtrevisan.boxon.core.parsers;
 
 import io.github.mtrevisan.boxon.helpers.Evaluator;
-import io.github.mtrevisan.boxon.core.managers.BoundedField;
-import io.github.mtrevisan.boxon.core.managers.ConfigField;
+import io.github.mtrevisan.boxon.core.managers.templates.BoundedField;
+import io.github.mtrevisan.boxon.core.managers.configurations.ConfigField;
 import io.github.mtrevisan.boxon.helpers.ContextHelper;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 

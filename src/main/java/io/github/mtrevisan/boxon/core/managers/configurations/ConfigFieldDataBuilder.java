@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.managers.configuration;
+package io.github.mtrevisan.boxon.core.managers.configurations;
 
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
@@ -36,7 +36,7 @@ import java.lang.reflect.Field;
 /**
  * Builder for the {@link ConfigFieldData configuration field data}.
  */
-public final class ConfigFieldDataBuilder{
+final class ConfigFieldDataBuilder{
 
 	private ConfigFieldDataBuilder(){}
 

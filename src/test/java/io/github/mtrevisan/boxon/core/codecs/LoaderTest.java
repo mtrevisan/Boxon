@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core.codecs;
 
-import io.github.mtrevisan.boxon.core.managers.Template;
+import io.github.mtrevisan.boxon.core.managers.templates.Template;
 import io.github.mtrevisan.boxon.core.parsers.LoaderTemplate;
 import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageHex;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;

@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.managers;
+package io.github.mtrevisan.boxon.core.managers.templates;
 
 import io.github.mtrevisan.boxon.annotations.Evaluate;
 import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
@@ -37,10 +37,16 @@ public final class EvaluatedField{
 	private final Evaluate binding;
 
 
-	EvaluatedField(final Field field, final Evaluate binding){
+	static EvaluatedField create(final Field field, final Evaluate binding){
+		return new EvaluatedField(field, binding);
+	}
+
+
+	private EvaluatedField(final Field field, final Evaluate binding){
 		this.field = field;
 		this.binding = binding;
 	}
+
 
 	/**
 	 * The name of the field.

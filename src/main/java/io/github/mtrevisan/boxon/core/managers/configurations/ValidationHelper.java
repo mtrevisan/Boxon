@@ -22,16 +22,15 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.managers.validators;
+package io.github.mtrevisan.boxon.core.managers.configurations;
 
-import io.github.mtrevisan.boxon.core.managers.configuration.ConfigFieldData;
+import io.github.mtrevisan.boxon.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
-import io.github.mtrevisan.boxon.configurations.ConfigurationEnum;
-import io.github.mtrevisan.boxon.io.ParserDataType;
-import io.github.mtrevisan.boxon.semanticversioning.Version;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
+import io.github.mtrevisan.boxon.io.ParserDataType;
+import io.github.mtrevisan.boxon.semanticversioning.Version;
 
 import java.util.Arrays;
 import java.util.regex.Pattern;

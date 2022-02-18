@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.managers.validators;
+package io.github.mtrevisan.boxon.core.managers;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -33,7 +33,7 @@ import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.function.Function;
 
 
-final class ValueOf<T extends Enum<T>, K>{
+public final class ValueOf<T extends Enum<T>, K>{
 
 	private static final String ERROR_MESSAGE = "No enum constant ";
 

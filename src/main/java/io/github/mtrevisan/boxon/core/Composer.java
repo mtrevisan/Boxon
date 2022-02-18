@@ -25,7 +25,7 @@
 package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
-import io.github.mtrevisan.boxon.core.managers.Template;
+import io.github.mtrevisan.boxon.core.managers.templates.Template;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.io.BitWriter;

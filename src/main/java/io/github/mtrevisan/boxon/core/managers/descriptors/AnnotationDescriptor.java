@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.managers.validators;
+package io.github.mtrevisan.boxon.core.managers.descriptors;
 
 import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.Evaluate;
@@ -46,6 +46,7 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
+import io.github.mtrevisan.boxon.core.managers.ValueOf;
 import io.github.mtrevisan.boxon.descriptions.DescriberKey;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 
@@ -298,7 +299,7 @@ public enum AnnotationDescriptor{
 	};
 
 
-	private static final ValueOf<AnnotationDescriptor, Class<? extends Annotation>> VALIDATORS
+	private static final ValueOf<AnnotationDescriptor, Class<? extends Annotation>> DESCRIPTORS
 		= ValueOf.create(AnnotationDescriptor.class, validator -> validator.annotationType);
 
 
@@ -312,7 +313,7 @@ public enum AnnotationDescriptor{
 	 * @return	The instance.
 	 */
 	public static AnnotationDescriptor fromAnnotation(final Annotation annotation){
-		return VALIDATORS.get(annotation.annotationType());
+		return DESCRIPTORS.get(annotation.annotationType());
 	}
 
 
