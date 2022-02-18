@@ -25,7 +25,7 @@
 package io.github.mtrevisan.boxon.core.managers.helpers;
 
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.internal.Memoizer;
+import io.github.mtrevisan.boxon.helpers.Memoizer;
 
 import java.nio.charset.Charset;
 import java.util.function.Function;

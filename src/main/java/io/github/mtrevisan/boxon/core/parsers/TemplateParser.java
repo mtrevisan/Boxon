@@ -35,7 +35,7 @@ import io.github.mtrevisan.boxon.core.managers.BoundedField;
 import io.github.mtrevisan.boxon.core.managers.EvaluatedField;
 import io.github.mtrevisan.boxon.core.managers.Template;
 import io.github.mtrevisan.boxon.core.managers.helpers.CharsetHelper;
-import io.github.mtrevisan.boxon.internal.ConstructorHelper;
+import io.github.mtrevisan.boxon.helpers.ConstructorHelper;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
@@ -46,7 +46,7 @@ import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.io.CodecInterface;
 import io.github.mtrevisan.boxon.io.ParserDataType;
 import io.github.mtrevisan.boxon.logs.EventListener;
-import io.github.mtrevisan.boxon.internal.StringHelper;
+import io.github.mtrevisan.boxon.helpers.StringHelper;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;

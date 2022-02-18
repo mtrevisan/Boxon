@@ -711,22 +711,22 @@ gives as output the following
          "size": "#headerSize()",
          "name": "messageHeader",
          "annotationType": "BindString",
-         "fieldType": "String"
+         "fieldType": "java.lang.String"
       },
       {
          "converter": "MessageTypeConverter",
          "name": "messageType",
          "annotationType": "BindByte",
-         "fieldType": "String"
+         "fieldType": "java.lang.String"
       },
       {
          "condition": "mask.hasProtocolVersion()",
          "size": "2",
-         "converter": "io.github.mtrevisan.boxon.internal.codecs.queclink.QueclinkHelper$VersionConverter",
+         "converter": "io.github.mtrevisan.boxon.core.codecs.queclink.QueclinkHelper$VersionConverter",
          "name": "protocolVersion",
          "annotationType": "BindArrayPrimitive",
          "type": "byte",
-         "fieldType": "String",
+         "fieldType": "java.lang.String",
          "byteOrder": "BIG_ENDIAN"
       }
    ],

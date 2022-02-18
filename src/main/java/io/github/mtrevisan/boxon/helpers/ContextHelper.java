@@ -22,26 +22,36 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.internal;
+package io.github.mtrevisan.boxon.helpers;
+
+import java.util.regex.Pattern;
 
 
 /**
- * Represents a function that accepts one argument, produces a result, and throws an exception.
- *
- * @param <IN>	The type of the input to the function.
- * @param <OUT>	The type of the output to the function.
- * @param <E>	The type of the exception thrown by the function.
+ * A collection of convenience methods for working with a context.
  */
-@FunctionalInterface
-public interface ThrowingFunction<IN, OUT, E extends Exception>{
+public final class ContextHelper{
+
+	/** The name of the current object being scanner (used for referencing variables from SpEL). */
+	public static final String CONTEXT_SELF = "self";
+	/** The name of the prefix for the alternative (used for referencing variables from SpEL). */
+	public static final String CONTEXT_CHOICE_PREFIX = "prefix";
+
+	private static final Pattern CONTEXT_PREFIXED_CHOICE_PREFIX = Pattern.compile("#" + CONTEXT_CHOICE_PREFIX + "[^a-zA-Z]");
+
+
+	private ContextHelper(){}
+
 
 	/**
-	 * Applies this function to the given argument.
+	 * Whether the given condition contains a prefix parameter.
 	 *
-	 * @param in	The function argument.
-	 * @return	The function result.
-	 * @throws E	The exception thrown.
+	 * @param condition	The condition.
+	 * @return	Whether the prefix parameter is contained.
 	 */
-	OUT apply(IN in) throws E;
+	public static boolean containsPrefixReference(final CharSequence condition){
+		return CONTEXT_PREFIXED_CHOICE_PREFIX.matcher(condition)
+			.find();
+	}
 
 }

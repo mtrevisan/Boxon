@@ -27,8 +27,8 @@ package io.github.mtrevisan.boxon.core.parsers;
 import io.github.mtrevisan.boxon.core.managers.helpers.Evaluator;
 import io.github.mtrevisan.boxon.core.managers.BoundedField;
 import io.github.mtrevisan.boxon.core.managers.ConfigField;
-import io.github.mtrevisan.boxon.core.managers.helpers.ContextHelper;
-import io.github.mtrevisan.boxon.internal.JavaHelper;
+import io.github.mtrevisan.boxon.helpers.ContextHelper;
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
 
 import java.lang.annotation.Annotation;
 

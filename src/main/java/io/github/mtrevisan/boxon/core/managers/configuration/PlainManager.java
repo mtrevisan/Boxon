@@ -32,7 +32,7 @@ import io.github.mtrevisan.boxon.io.ParserDataType;
 import io.github.mtrevisan.boxon.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.configurations.ConfigurationKey;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
-import io.github.mtrevisan.boxon.internal.StringHelper;
+import io.github.mtrevisan.boxon.helpers.StringHelper;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;

@@ -24,8 +24,8 @@
  */
 package io.github.mtrevisan.boxon.logs;
 
-import io.github.mtrevisan.boxon.internal.JavaHelper;
-import io.github.mtrevisan.boxon.internal.StringHelper;
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
+import io.github.mtrevisan.boxon.helpers.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

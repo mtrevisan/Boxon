@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.io;
 
-import io.github.mtrevisan.boxon.internal.StringHelper;
+import io.github.mtrevisan.boxon.helpers.StringHelper;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
