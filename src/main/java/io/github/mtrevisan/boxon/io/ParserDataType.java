@@ -152,11 +152,13 @@ public enum ParserDataType{
 		return TYPE_MAP.get(type);
 	}
 
+
 	ParserDataType(final Class<?> primitiveType, final Class<?> objectiveType, final int size){
 		this.primitiveType = primitiveType;
 		this.objectiveType = objectiveType;
 		this.size = size;
 	}
+
 
 	/**
 	 * Convert a type to an objective type, if applicable, otherwise returns the type itself.

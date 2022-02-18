@@ -52,9 +52,11 @@ public enum ConfigurationKey{
 
 	private final String name;
 
+
 	ConfigurationKey(final String name){
 		this.name = name;
 	}
+
 
 	@Override
 	public String toString(){

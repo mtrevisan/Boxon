@@ -41,9 +41,11 @@ public enum Weekday implements ConfigurationEnum{
 
 	private int code;
 
+
 	Weekday(final int code){
 		this.code = code;
 	}
+
 
 	@Override
 	public int getCode(){

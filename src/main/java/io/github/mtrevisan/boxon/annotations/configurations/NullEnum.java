@@ -36,6 +36,7 @@ import io.github.mtrevisan.boxon.configurations.ConfigurationEnum;
 public enum NullEnum implements ConfigurationEnum{
 	;
 
+
 	@Override
 	public int getCode(){
 		return 0;

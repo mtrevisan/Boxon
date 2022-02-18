@@ -36,9 +36,11 @@ public enum DownloadProtocol implements ConfigurationEnum{
 
 	private int code;
 
+
 	DownloadProtocol(final int code){
 		this.code = code;
 	}
+
 
 	@Override
 	public int getCode(){

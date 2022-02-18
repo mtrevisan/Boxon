@@ -38,9 +38,11 @@ public enum BooleanType implements ConfigurationEnum{
 
 	private final int code;
 
+
 	BooleanType(final int code){
 		this.code = code;
 	}
+
 
 	@Override
 	public int getCode(){
