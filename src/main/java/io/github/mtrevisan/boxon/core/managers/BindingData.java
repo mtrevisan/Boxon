@@ -32,7 +32,7 @@ import io.github.mtrevisan.boxon.core.managers.helpers.Evaluator;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.ByteOrder;
-import io.github.mtrevisan.boxon.core.managers.helpers.ConstructorHelper;
+import io.github.mtrevisan.boxon.internal.ConstructorHelper;
 import io.github.mtrevisan.boxon.core.managers.helpers.ContextHelper;
 import org.springframework.expression.EvaluationException;
 

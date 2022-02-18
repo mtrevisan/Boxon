@@ -26,14 +26,14 @@ package io.github.mtrevisan.boxon.core.parsers;
 
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
-import io.github.mtrevisan.boxon.core.managers.helpers.ThrowingFunction;
+import io.github.mtrevisan.boxon.internal.ThrowingFunction;
 import io.github.mtrevisan.boxon.core.managers.configuration.ConfigurationManagerFactory;
 import io.github.mtrevisan.boxon.core.managers.configuration.ConfigurationManagerInterface;
 import io.github.mtrevisan.boxon.core.managers.helpers.ReflectiveClassLoader;
 import io.github.mtrevisan.boxon.core.managers.ConfigField;
 import io.github.mtrevisan.boxon.core.managers.ConfigurationMessage;
-import io.github.mtrevisan.boxon.core.managers.helpers.ConstructorHelper;
-import io.github.mtrevisan.boxon.core.managers.helpers.Memoizer;
+import io.github.mtrevisan.boxon.internal.ConstructorHelper;
+import io.github.mtrevisan.boxon.internal.Memoizer;
 import io.github.mtrevisan.boxon.core.managers.helpers.ReflectionHelper;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
