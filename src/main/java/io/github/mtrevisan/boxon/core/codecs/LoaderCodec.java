@@ -24,13 +24,13 @@
  */
 package io.github.mtrevisan.boxon.core.codecs;
 
-import io.github.mtrevisan.boxon.core.helpers.GenericHelper;
-import io.github.mtrevisan.boxon.core.helpers.ReflectiveClassLoader;
-import io.github.mtrevisan.boxon.core.helpers.ConstructorHelper;
-import io.github.mtrevisan.boxon.core.helpers.ReflectionHelper;
+import io.github.mtrevisan.boxon.core.managers.helpers.GenericHelper;
+import io.github.mtrevisan.boxon.core.managers.helpers.ReflectiveClassLoader;
+import io.github.mtrevisan.boxon.core.managers.helpers.ConstructorHelper;
+import io.github.mtrevisan.boxon.core.managers.helpers.ReflectionHelper;
 import io.github.mtrevisan.boxon.io.CodecInterface;
 import io.github.mtrevisan.boxon.logs.EventListener;
-import io.github.mtrevisan.boxon.core.internal.JavaHelper;
+import io.github.mtrevisan.boxon.internal.JavaHelper;
 
 import java.util.ArrayList;
 import java.util.List;

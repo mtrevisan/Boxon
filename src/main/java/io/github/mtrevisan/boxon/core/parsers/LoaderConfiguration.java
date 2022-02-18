@@ -26,22 +26,22 @@ package io.github.mtrevisan.boxon.core.parsers;
 
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
-import io.github.mtrevisan.boxon.core.helpers.ThrowingFunction;
+import io.github.mtrevisan.boxon.core.managers.helpers.ThrowingFunction;
 import io.github.mtrevisan.boxon.core.managers.configuration.ConfigurationManagerFactory;
 import io.github.mtrevisan.boxon.core.managers.configuration.ConfigurationManagerInterface;
-import io.github.mtrevisan.boxon.core.helpers.ReflectiveClassLoader;
+import io.github.mtrevisan.boxon.core.managers.helpers.ReflectiveClassLoader;
 import io.github.mtrevisan.boxon.core.managers.ConfigField;
 import io.github.mtrevisan.boxon.core.managers.ConfigurationMessage;
-import io.github.mtrevisan.boxon.core.helpers.ConstructorHelper;
-import io.github.mtrevisan.boxon.core.helpers.Memoizer;
-import io.github.mtrevisan.boxon.core.helpers.ReflectionHelper;
+import io.github.mtrevisan.boxon.core.managers.helpers.ConstructorHelper;
+import io.github.mtrevisan.boxon.core.managers.helpers.Memoizer;
+import io.github.mtrevisan.boxon.core.managers.helpers.ReflectionHelper;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.logs.EventListener;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
-import io.github.mtrevisan.boxon.core.internal.JavaHelper;
+import io.github.mtrevisan.boxon.internal.JavaHelper;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;

@@ -26,14 +26,14 @@ package io.github.mtrevisan.boxon.core.managers;
 
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
-import io.github.mtrevisan.boxon.core.helpers.ReflectionHelper;
+import io.github.mtrevisan.boxon.core.managers.helpers.ReflectionHelper;
 import io.github.mtrevisan.boxon.core.managers.configuration.ConfigurationManagerFactory;
 import io.github.mtrevisan.boxon.core.managers.configuration.ConfigurationManagerInterface;
-import io.github.mtrevisan.boxon.core.validators.ConfigurationAnnotationValidator;
+import io.github.mtrevisan.boxon.core.managers.validators.ConfigurationAnnotationValidator;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
-import io.github.mtrevisan.boxon.core.internal.JavaHelper;
+import io.github.mtrevisan.boxon.internal.JavaHelper;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;

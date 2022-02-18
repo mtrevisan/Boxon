@@ -28,10 +28,10 @@ import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.Evaluate;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.Skip;
-import io.github.mtrevisan.boxon.core.validators.TemplateAnnotationValidator;
+import io.github.mtrevisan.boxon.core.managers.validators.TemplateAnnotationValidator;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.core.helpers.CharsetHelper;
-import io.github.mtrevisan.boxon.core.helpers.ReflectionHelper;
+import io.github.mtrevisan.boxon.core.managers.helpers.CharsetHelper;
+import io.github.mtrevisan.boxon.core.managers.helpers.ReflectionHelper;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;

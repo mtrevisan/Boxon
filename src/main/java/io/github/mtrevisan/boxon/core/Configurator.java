@@ -26,7 +26,7 @@ package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.core.parsers.ConfigurationParser;
-import io.github.mtrevisan.boxon.core.helpers.Evaluator;
+import io.github.mtrevisan.boxon.core.managers.helpers.Evaluator;
 import io.github.mtrevisan.boxon.core.managers.ConfigField;
 import io.github.mtrevisan.boxon.core.managers.ConfigurationMessage;
 import io.github.mtrevisan.boxon.core.managers.configuration.ConfigurationHelper;
@@ -40,8 +40,8 @@ import io.github.mtrevisan.boxon.io.BitWriter;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.configurations.ConfigurationKey;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
-import io.github.mtrevisan.boxon.core.internal.JavaHelper;
-import io.github.mtrevisan.boxon.core.internal.StringHelper;
+import io.github.mtrevisan.boxon.internal.JavaHelper;
+import io.github.mtrevisan.boxon.internal.StringHelper;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;

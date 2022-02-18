@@ -22,19 +22,36 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.helpers;
+package io.github.mtrevisan.boxon.core.managers.helpers;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.util.regex.Pattern;
 
 
 /**
- * Defines a field that has to be injected.
+ * A collection of convenience methods for working with a context.
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-@Documented
-public @interface Injected{}
+public final class ContextHelper{
+
+	/** The name of the current object being scanner (used for referencing variables from SpEL). */
+	public static final String CONTEXT_SELF = "self";
+	/** The name of the prefix for the alternative (used for referencing variables from SpEL). */
+	public static final String CONTEXT_CHOICE_PREFIX = "prefix";
+
+	private static final Pattern CONTEXT_PREFIXED_CHOICE_PREFIX = Pattern.compile("#" + CONTEXT_CHOICE_PREFIX + "[^a-zA-Z]");
+
+
+	private ContextHelper(){}
+
+
+	/**
+	 * Whether the given condition contains a prefix parameter.
+	 *
+	 * @param condition	The condition.
+	 * @return	Whether the prefix parameter is contained.
+	 */
+	public static boolean containsPrefixReference(final CharSequence condition){
+		return CONTEXT_PREFIXED_CHOICE_PREFIX.matcher(condition)
+			.find();
+	}
+
+}

@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core.internal;
 
-import io.github.mtrevisan.boxon.core.internal.StringHelper;
+import io.github.mtrevisan.boxon.internal.StringHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

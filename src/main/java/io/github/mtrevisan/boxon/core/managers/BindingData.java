@@ -28,12 +28,12 @@ import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
-import io.github.mtrevisan.boxon.core.helpers.Evaluator;
+import io.github.mtrevisan.boxon.core.managers.helpers.Evaluator;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.ByteOrder;
-import io.github.mtrevisan.boxon.core.helpers.ConstructorHelper;
-import io.github.mtrevisan.boxon.core.helpers.ContextHelper;
+import io.github.mtrevisan.boxon.core.managers.helpers.ConstructorHelper;
+import io.github.mtrevisan.boxon.core.managers.helpers.ContextHelper;
 import org.springframework.expression.EvaluationException;
 
 import java.lang.annotation.Annotation;

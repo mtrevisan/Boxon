@@ -24,8 +24,7 @@
  */
 package io.github.mtrevisan.boxon.semanticversioning;
 
-import io.github.mtrevisan.boxon.core.internal.JavaHelper;
-import io.github.mtrevisan.boxon.semanticversioning.Version;
+import io.github.mtrevisan.boxon.internal.JavaHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

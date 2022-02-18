@@ -25,8 +25,8 @@
 package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.exceptions.DecodeException;
-import io.github.mtrevisan.boxon.core.internal.JavaHelper;
-import io.github.mtrevisan.boxon.core.internal.StringHelper;
+import io.github.mtrevisan.boxon.internal.JavaHelper;
+import io.github.mtrevisan.boxon.internal.StringHelper;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentSkipListMap;

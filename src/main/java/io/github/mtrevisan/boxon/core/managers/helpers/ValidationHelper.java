@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.helpers;
+package io.github.mtrevisan.boxon.core.managers.helpers;
 
 import io.github.mtrevisan.boxon.core.managers.configuration.ConfigFieldData;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
@@ -30,8 +30,8 @@ import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.io.ParserDataType;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
-import io.github.mtrevisan.boxon.core.internal.JavaHelper;
-import io.github.mtrevisan.boxon.core.internal.StringHelper;
+import io.github.mtrevisan.boxon.internal.JavaHelper;
+import io.github.mtrevisan.boxon.internal.StringHelper;
 
 import java.util.Arrays;
 import java.util.regex.Pattern;

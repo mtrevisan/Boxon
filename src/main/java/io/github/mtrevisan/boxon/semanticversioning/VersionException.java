@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.semanticversioning;
 
-import io.github.mtrevisan.boxon.core.internal.StringHelper;
+import io.github.mtrevisan.boxon.internal.StringHelper;
 
 
 /**

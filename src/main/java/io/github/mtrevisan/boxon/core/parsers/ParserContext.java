@@ -24,11 +24,11 @@
  */
 package io.github.mtrevisan.boxon.core.parsers;
 
-import io.github.mtrevisan.boxon.core.helpers.Evaluator;
+import io.github.mtrevisan.boxon.core.managers.helpers.Evaluator;
 import io.github.mtrevisan.boxon.core.managers.BoundedField;
 import io.github.mtrevisan.boxon.core.managers.ConfigField;
-import io.github.mtrevisan.boxon.core.helpers.ContextHelper;
-import io.github.mtrevisan.boxon.core.internal.JavaHelper;
+import io.github.mtrevisan.boxon.core.managers.helpers.ContextHelper;
+import io.github.mtrevisan.boxon.internal.JavaHelper;
 
 import java.lang.annotation.Annotation;
 
