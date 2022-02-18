@@ -32,7 +32,7 @@ import io.github.mtrevisan.boxon.core.matchers.BNDMPatternMatcher;
 import io.github.mtrevisan.boxon.core.matchers.PatternMatcher;
 import io.github.mtrevisan.boxon.helpers.ReflectiveClassLoader;
 import io.github.mtrevisan.boxon.helpers.Memoizer;
-import io.github.mtrevisan.boxon.core.managers.helpers.CharsetHelper;
+import io.github.mtrevisan.boxon.core.helpers.CharsetHelper;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;

@@ -34,7 +34,7 @@ import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.core.managers.BoundedField;
 import io.github.mtrevisan.boxon.core.managers.EvaluatedField;
 import io.github.mtrevisan.boxon.core.managers.Template;
-import io.github.mtrevisan.boxon.core.managers.helpers.CharsetHelper;
+import io.github.mtrevisan.boxon.core.helpers.CharsetHelper;
 import io.github.mtrevisan.boxon.helpers.ConstructorHelper;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;

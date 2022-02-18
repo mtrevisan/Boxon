@@ -30,7 +30,7 @@ import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.Skip;
 import io.github.mtrevisan.boxon.core.managers.validators.TemplateAnnotationValidator;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.core.managers.helpers.CharsetHelper;
+import io.github.mtrevisan.boxon.core.helpers.CharsetHelper;
 import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
 
 import java.lang.annotation.Annotation;

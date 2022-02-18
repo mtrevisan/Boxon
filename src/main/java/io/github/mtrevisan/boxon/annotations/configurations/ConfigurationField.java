@@ -125,7 +125,7 @@ public @interface ConfigurationField{
 	/**
 	 * The type of encoding used for string-typed field.
 	 *
-	 * @return	The type of encoding used (defaults to {@value io.github.mtrevisan.boxon.core.managers.helpers.CharsetHelper#DEFAULT_CHARSET}).
+	 * @return	The type of encoding used (defaults to {@value io.github.mtrevisan.boxon.core.helpers.CharsetHelper#DEFAULT_CHARSET}).
 	 */
 	String charset() default "UTF-8";
 
