@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.managers.helpers;
+package io.github.mtrevisan.boxon.core.managers.validators;
 
 import io.github.mtrevisan.boxon.core.managers.configuration.ConfigFieldData;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
@@ -40,7 +40,7 @@ import java.util.regex.Pattern;
 /**
  * A collection of convenience methods for working with validations.
  */
-public final class ValidationHelper{
+final class ValidationHelper{
 
 	private static final Pattern PATTERN_PIPE = Pattern.compile("\\|");
 
@@ -56,7 +56,7 @@ public final class ValidationHelper{
 	 * @param maxProtocolVersion	The maximum protocol version.
 	 * @throws AnnotationException	If a validation error occurs.
 	 */
-	public static void validateProtocol(final ConfigFieldData field, final Version minProtocolVersion, final Version maxProtocolVersion)
+	static void validateProtocol(final ConfigFieldData field, final Version minProtocolVersion, final Version maxProtocolVersion)
 			throws AnnotationException{
 		if(StringHelper.isBlank(field.getMinProtocol()) && StringHelper.isBlank(field.getMaxProtocol()))
 			return;
@@ -138,7 +138,7 @@ public final class ValidationHelper{
 	 * @throws AnnotationException	If a validation error occurs.
 	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
 	 */
-	public static void validateMinMaxValues(final ConfigFieldData field) throws AnnotationException, CodecException{
+	static void validateMinMaxValues(final ConfigFieldData field) throws AnnotationException, CodecException{
 		if(!StringHelper.isBlank(field.getMinValue()) || !StringHelper.isBlank(field.getMaxValue())){
 			final Class<?> fieldType = field.getFieldType();
 			if(fieldType.isArray())
@@ -165,7 +165,7 @@ public final class ValidationHelper{
 	 * @throws AnnotationException	If a validation error occurs.
 	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
 	 */
-	public static void validateDefaultValue(final ConfigFieldData field) throws AnnotationException, CodecException{
+	static void validateDefaultValue(final ConfigFieldData field) throws AnnotationException, CodecException{
 		final Class<?> fieldType = field.getFieldType();
 
 		final String defaultValue = field.getDefaultValue();
@@ -207,7 +207,7 @@ public final class ValidationHelper{
 	 * @param field	The configuration field data.
 	 * @throws AnnotationException	If a validation error occurs.
 	 */
-	public static void validatePattern(final ConfigFieldData field) throws AnnotationException{
+	static void validatePattern(final ConfigFieldData field) throws AnnotationException{
 		//valid pattern
 		final String pattern = field.getPattern();
 		if(!StringHelper.isBlank(pattern)){
@@ -236,7 +236,7 @@ public final class ValidationHelper{
 	 * @param field	The configuration field data.
 	 * @throws AnnotationException	If a validation error occurs.
 	 */
-	public static void validateEnumeration(final ConfigFieldData field) throws AnnotationException{
+	static void validateEnumeration(final ConfigFieldData field) throws AnnotationException{
 		if(field.hasEnumeration()){
 			//enumeration can be encoded
 			final Class<? extends ConfigurationEnum> enumeration = field.getEnumeration();
@@ -301,7 +301,7 @@ public final class ValidationHelper{
 	 * @param radix	The radix.
 	 * @throws AnnotationException	If a validation error occurs.
 	 */
-	public static void validateRadix(final int radix) throws AnnotationException{
+	static void validateRadix(final int radix) throws AnnotationException{
 		if(radix < Character.MIN_RADIX || radix > Character.MAX_RADIX)
 			throw AnnotationException.create("Radix must be in [{}, {}]", Character.MIN_RADIX, Character.MAX_RADIX);
 	}

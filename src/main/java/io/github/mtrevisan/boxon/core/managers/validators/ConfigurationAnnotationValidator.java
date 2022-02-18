@@ -30,7 +30,6 @@ import io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurati
 import io.github.mtrevisan.boxon.annotations.configurations.CompositeSubField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
-import io.github.mtrevisan.boxon.core.managers.helpers.ValidationHelper;
 import io.github.mtrevisan.boxon.core.managers.configuration.ConfigFieldData;
 import io.github.mtrevisan.boxon.core.managers.configuration.ConfigFieldDataBuilder;
 import io.github.mtrevisan.boxon.core.managers.helpers.CharsetHelper;
