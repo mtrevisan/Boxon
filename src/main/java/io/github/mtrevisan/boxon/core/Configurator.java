@@ -26,7 +26,7 @@ package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.core.parsers.ConfigurationParser;
-import io.github.mtrevisan.boxon.core.managers.helpers.Evaluator;
+import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.core.managers.ConfigField;
 import io.github.mtrevisan.boxon.core.managers.ConfigurationMessage;
 import io.github.mtrevisan.boxon.core.managers.configuration.ConfigurationHelper;

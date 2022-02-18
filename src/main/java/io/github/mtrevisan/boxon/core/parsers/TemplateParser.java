@@ -30,7 +30,7 @@ import io.github.mtrevisan.boxon.annotations.Skip;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
 import io.github.mtrevisan.boxon.core.codecs.LoaderCodecInterface;
 import io.github.mtrevisan.boxon.core.codecs.TemplateParserInterface;
-import io.github.mtrevisan.boxon.core.managers.helpers.Evaluator;
+import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.core.managers.BoundedField;
 import io.github.mtrevisan.boxon.core.managers.EvaluatedField;
 import io.github.mtrevisan.boxon.core.managers.Template;

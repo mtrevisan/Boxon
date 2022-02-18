@@ -28,7 +28,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.core.managers.BindingData;
 import io.github.mtrevisan.boxon.core.managers.BindingDataBuilder;
-import io.github.mtrevisan.boxon.core.managers.helpers.Evaluator;
+import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.Injected;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
