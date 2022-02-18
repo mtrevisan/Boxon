@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.managers.codecs;
+package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.annotations.bindings.BindArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
@@ -46,7 +46,7 @@ import io.github.mtrevisan.boxon.helpers.Evaluator;
 /**
  * Builder for the {@link BindingData binding data}.
  */
-public final class BindingDataBuilder{
+final class BindingDataBuilder{
 
 	private BindingDataBuilder(){}
 
@@ -59,7 +59,7 @@ public final class BindingDataBuilder{
 	 * @param evaluator	The evaluator.
 	 * @return	The instance.
 	 */
-	public static BindingData create(final BindArray annotation, final Object rootObject, final Evaluator evaluator){
+	static BindingData create(final BindArray annotation, final Object rootObject, final Evaluator evaluator){
 		final ConverterChoices selectConverterFrom = annotation.selectConverterFrom();
 		final Class<? extends Validator<?>> validator = annotation.validator();
 		final Class<? extends Converter<?, ?>> converter = annotation.converter();
@@ -79,7 +79,7 @@ public final class BindingDataBuilder{
 	 * @param evaluator	The evaluator.
 	 * @return	The instance.
 	 */
-	public static BindingData create(final BindArrayPrimitive annotation, final Object rootObject, final Evaluator evaluator){
+	static BindingData create(final BindArrayPrimitive annotation, final Object rootObject, final Evaluator evaluator){
 		final ConverterChoices selectConverterFrom = annotation.selectConverterFrom();
 		final Class<? extends Validator<?>> validator = annotation.validator();
 		final Class<? extends Converter<?, ?>> converter = annotation.converter();
@@ -97,7 +97,7 @@ public final class BindingDataBuilder{
 	 * @param evaluator	The evaluator.
 	 * @return	The instance.
 	 */
-	public static BindingData create(final BindBitSet annotation, final Object rootObject, final Evaluator evaluator){
+	static BindingData create(final BindBitSet annotation, final Object rootObject, final Evaluator evaluator){
 		final ConverterChoices selectConverterFrom = annotation.selectConverterFrom();
 		final Class<? extends Validator<?>> validator = annotation.validator();
 		final Class<? extends Converter<?, ?>> converter = annotation.converter();
@@ -114,7 +114,7 @@ public final class BindingDataBuilder{
 	 * @param evaluator	The evaluator.
 	 * @return	The instance.
 	 */
-	public static BindingData create(final BindByte annotation, final Object rootObject, final Evaluator evaluator){
+	static BindingData create(final BindByte annotation, final Object rootObject, final Evaluator evaluator){
 		final ConverterChoices selectConverterFrom = annotation.selectConverterFrom();
 		final Class<? extends Validator<?>> validator = annotation.validator();
 		final Class<? extends Converter<?, ?>> converter = annotation.converter();
@@ -129,7 +129,7 @@ public final class BindingDataBuilder{
 	 * @param evaluator	The evaluator.
 	 * @return	The instance.
 	 */
-	public static BindingData create(final BindDouble annotation, final Object rootObject, final Evaluator evaluator){
+	static BindingData create(final BindDouble annotation, final Object rootObject, final Evaluator evaluator){
 		final ConverterChoices selectConverterFrom = annotation.selectConverterFrom();
 		final Class<? extends Validator<?>> validator = annotation.validator();
 		final Class<? extends Converter<?, ?>> converter = annotation.converter();
@@ -144,7 +144,7 @@ public final class BindingDataBuilder{
 	 * @param evaluator	The evaluator.
 	 * @return	The instance.
 	 */
-	public static BindingData create(final BindFloat annotation, final Object rootObject, final Evaluator evaluator){
+	static BindingData create(final BindFloat annotation, final Object rootObject, final Evaluator evaluator){
 		final ConverterChoices selectConverterFrom = annotation.selectConverterFrom();
 		final Class<? extends Validator<?>> validator = annotation.validator();
 		final Class<? extends Converter<?, ?>> converter = annotation.converter();
@@ -159,7 +159,7 @@ public final class BindingDataBuilder{
 	 * @param evaluator	The evaluator.
 	 * @return	The instance.
 	 */
-	public static BindingData create(final BindInt annotation, final Object rootObject, final Evaluator evaluator){
+	static BindingData create(final BindInt annotation, final Object rootObject, final Evaluator evaluator){
 		final ConverterChoices selectConverterFrom = annotation.selectConverterFrom();
 		final Class<? extends Validator<?>> validator = annotation.validator();
 		final Class<? extends Converter<?, ?>> converter = annotation.converter();
@@ -174,7 +174,7 @@ public final class BindingDataBuilder{
 	 * @param evaluator	The evaluator.
 	 * @return	The instance.
 	 */
-	public static BindingData create(final BindInteger annotation, final Object rootObject, final Evaluator evaluator){
+	static BindingData create(final BindInteger annotation, final Object rootObject, final Evaluator evaluator){
 		final ConverterChoices selectConverterFrom = annotation.selectConverterFrom();
 		final Class<? extends Validator<?>> validator = annotation.validator();
 		final Class<? extends Converter<?, ?>> converter = annotation.converter();
@@ -191,7 +191,7 @@ public final class BindingDataBuilder{
 	 * @param evaluator	The evaluator.
 	 * @return	The instance.
 	 */
-	public static BindingData create(final BindLong annotation, final Object rootObject, final Evaluator evaluator){
+	static BindingData create(final BindLong annotation, final Object rootObject, final Evaluator evaluator){
 		final ConverterChoices selectConverterFrom = annotation.selectConverterFrom();
 		final Class<? extends Validator<?>> validator = annotation.validator();
 		final Class<? extends Converter<?, ?>> converter = annotation.converter();
@@ -206,7 +206,7 @@ public final class BindingDataBuilder{
 	 * @param evaluator	The evaluator.
 	 * @return	The instance.
 	 */
-	public static BindingData create(final BindObject annotation, final Object rootObject, final Evaluator evaluator){
+	static BindingData create(final BindObject annotation, final Object rootObject, final Evaluator evaluator){
 		final ConverterChoices selectConverterFrom = annotation.selectConverterFrom();
 		final Class<? extends Validator<?>> validator = annotation.validator();
 		final Class<? extends Converter<?, ?>> converter = annotation.converter();
@@ -225,7 +225,7 @@ public final class BindingDataBuilder{
 	 * @param evaluator	The evaluator.
 	 * @return	The instance.
 	 */
-	public static BindingData create(final BindShort annotation, final Object rootObject, final Evaluator evaluator){
+	static BindingData create(final BindShort annotation, final Object rootObject, final Evaluator evaluator){
 		final ConverterChoices selectConverterFrom = annotation.selectConverterFrom();
 		final Class<? extends Validator<?>> validator = annotation.validator();
 		final Class<? extends Converter<?, ?>> converter = annotation.converter();
@@ -240,7 +240,7 @@ public final class BindingDataBuilder{
 	 * @param evaluator	The evaluator.
 	 * @return	The instance.
 	 */
-	public static BindingData create(final BindString annotation, final Object rootObject, final Evaluator evaluator){
+	static BindingData create(final BindString annotation, final Object rootObject, final Evaluator evaluator){
 		final ConverterChoices selectConverterFrom = annotation.selectConverterFrom();
 		final Class<? extends Validator<?>> validator = annotation.validator();
 		final Class<? extends Converter<?, ?>> converter = annotation.converter();
@@ -257,7 +257,7 @@ public final class BindingDataBuilder{
 	 * @param evaluator	The evaluator.
 	 * @return	The instance.
 	 */
-	public static BindingData create(final BindStringTerminated annotation, final Object rootObject, final Evaluator evaluator){
+	static BindingData create(final BindStringTerminated annotation, final Object rootObject, final Evaluator evaluator){
 		final ConverterChoices selectConverterFrom = annotation.selectConverterFrom();
 		final Class<? extends Validator<?>> validator = annotation.validator();
 		final Class<? extends Converter<?, ?>> converter = annotation.converter();

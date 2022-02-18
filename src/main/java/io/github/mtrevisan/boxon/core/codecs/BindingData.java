@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.managers.codecs;
+package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
@@ -40,7 +40,7 @@ import java.lang.annotation.Annotation;
 
 
 /** Data associated to an annotation. */
-public final class BindingData{
+final class BindingData{
 
 	private static final ObjectChoices.ObjectChoice EMPTY_CHOICE = new NullObjectChoice();
 
@@ -91,7 +91,7 @@ public final class BindingData{
 	 * @param <T>	The class type of the value.
 	 */
 	@SuppressWarnings("unchecked")
-	public <T> void validate(final T value){
+	<T> void validate(final T value){
 		final Validator<T> validatorCreator = (Validator<T>)ConstructorHelper.getCreator(validator)
 			.get();
 		if(!validatorCreator.isValid(value))
@@ -104,7 +104,7 @@ public final class BindingData{
 	 *
 	 * @param instance	The object (pass {@code null} to remove the `self` key from the context).
 	 */
-	public void addToContext(final Object instance){
+	void addToContext(final Object instance){
 		evaluator.addToContext(ContextHelper.CONTEXT_SELF, instance);
 	}
 
@@ -114,7 +114,7 @@ public final class BindingData{
 	 * @return	The size, or a negative number if the expression is not a valid positive integer.
 	 * @throws EvaluationException   If an error occurs during the evaluation of an expression.
 	 */
-	public int evaluateSize(){
+	int evaluateSize(){
 		return evaluator.evaluateSize(size, rootObject);
 	}
 
@@ -125,7 +125,7 @@ public final class BindingData{
 	 * @return	The class type of the chosen alternative.
 	 * @throws CodecException	If a codec cannot be found for the chosen alternative.
 	 */
-	public Class<?> chooseAlternativeType(final BitReaderInterface reader) throws CodecException{
+	Class<?> chooseAlternativeType(final BitReaderInterface reader) throws CodecException{
 		if(!hasSelectAlternatives())
 			return type;
 
@@ -158,7 +158,7 @@ public final class BindingData{
 	 *
 	 * @return	Whether the select-object-from binding has any alternatives.
 	 */
-	public boolean hasSelectAlternatives(){
+	boolean hasSelectAlternatives(){
 		return (selectObjectFrom.alternatives().length > 0);
 	}
 
@@ -180,7 +180,7 @@ public final class BindingData{
 	 *
 	 * @return	The converter class.
 	 */
-	public Class<? extends Converter<?, ?>> getChosenConverter(){
+	Class<? extends Converter<?, ?>> getChosenConverter(){
 		final ConverterChoices.ConverterChoice[] alternatives = selectConverterFrom.alternatives();
 		for(int i = 0; i < alternatives.length; i ++){
 			final ConverterChoices.ConverterChoice alternative = alternatives[i];
