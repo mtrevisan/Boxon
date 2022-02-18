@@ -34,6 +34,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.checksummers.CRC16CCITT;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.IMEIValidator;
+import io.github.mtrevisan.boxon.semanticversioning.Version;
 
 import java.time.ZonedDateTime;
 import java.util.HashMap;
@@ -120,10 +121,10 @@ public class ACKMessageHex{
 	private byte deviceTypeCode;
 	@BindArrayPrimitive(condition = "mask.hasProtocolVersion()", size = "2", type = byte.class,
 		converter = QueclinkHelper.VersionConverter.class)
-	private String protocolVersion;
+	private Version protocolVersion;
 	@BindArrayPrimitive(condition = "mask.hasFirmwareVersion()", size = "2", type = byte.class,
 		converter = QueclinkHelper.VersionConverter.class)
-	private String firmwareVersion;
+	private Version firmwareVersion;
 	@BindArrayPrimitive(condition = "mask.hasIMEI()", size = "8", type = byte.class,
 		converter = QueclinkHelper.IMEIConverter.class, validator = IMEIValidator.class)
 	private String imei;

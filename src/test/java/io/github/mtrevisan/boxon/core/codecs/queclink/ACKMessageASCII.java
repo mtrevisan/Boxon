@@ -111,7 +111,7 @@ public class ACKMessageASCII{
 	private String messageType;
 	@BindString(size = "2", converter = QueclinkHelper.HexStringToByteConverter.class)
 	public byte deviceTypeCode;
-	@BindStringTerminated(terminator = ',', converter = QueclinkHelper.VersionConverter2.class)
+	@BindStringTerminated(terminator = ',', converter = QueclinkHelper.StringVersionConverter.class)
 	private Version protocolVersion;
 	@BindStringTerminated(terminator = ',', validator = IMEIValidator.class)
 	private String imei;

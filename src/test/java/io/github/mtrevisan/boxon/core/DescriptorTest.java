@@ -25,17 +25,19 @@
 package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.annotations.validators.IMEIValidator;
-import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.exceptions.CodecException;
-import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
-import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMaskHex;
 import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageHex;
 import io.github.mtrevisan.boxon.core.codecs.queclink.DeviceTypes;
 import io.github.mtrevisan.boxon.core.codecs.queclink.QueclinkHelper;
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.exceptions.CodecException;
+import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
+import io.github.mtrevisan.boxon.exceptions.TemplateException;
+import io.github.mtrevisan.boxon.semanticversioning.Version;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -62,21 +64,29 @@ class DescriptorTest{
 		Map<String, Object> description = descriptions.get(0);
 
 		String jsonDescription = PrettyPrintMap.toString(description);
-		Assertions.assertEquals("{fields:[{charset:UTF-8,size:#headerSize(),name:messageHeader,annotationType:BindString,fieldType:String},{converter:"
+		Assertions.assertEquals("{fields:[{charset:UTF-8,size:#headerSize(),name:messageHeader,annotationType:BindString,fieldType:java.lang.String},{converter:"
 			+ ACKMessageHex.MessageTypeConverter.class.getName()
-			+ ",name:messageType,annotationType:BindByte,fieldType:String},{converter:"
+			+ ",name:messageType,annotationType:BindByte,fieldType:java.lang.String},{converter:"
 			+ ACKMaskHex.ACKMaskConverter.class.getName()
-			+ ",name:mask,annotationType:BindByte,fieldType:ACKMaskHex},{condition:mask.hasLength(),name:messageLength,annotationType:BindByte,fieldType:byte},{condition:mask.hasDeviceType(),name:deviceTypeCode,annotationType:BindByte,fieldType:byte},{condition:mask.hasProtocolVersion(),size:2,converter:"
+			+ ",name:mask,annotationType:BindByte,fieldType:"
+			+ ACKMaskHex.class.getName()
+			+ "},{condition:mask.hasLength(),name:messageLength,annotationType:BindByte,fieldType:byte},{condition:mask.hasDeviceType(),name:deviceTypeCode,annotationType:BindByte,fieldType:byte},{condition:mask.hasProtocolVersion(),size:2,converter:"
 			+ QueclinkHelper.VersionConverter.class.getName()
-			+ ",name:protocolVersion,annotationType:BindArrayPrimitive,type:byte,fieldType:String,byteOrder:BIG_ENDIAN},{condition:mask.hasFirmwareVersion(),size:2,converter:"
+			+ ",name:protocolVersion,annotationType:BindArrayPrimitive,type:byte,fieldType:"
+			+ Version.class.getName()
+			+ ",byteOrder:BIG_ENDIAN},{condition:mask.hasFirmwareVersion(),size:2,converter:"
 			+ QueclinkHelper.VersionConverter.class.getName()
-			+ ",name:firmwareVersion,annotationType:BindArrayPrimitive,type:byte,fieldType:String,byteOrder:BIG_ENDIAN},{condition:mask.hasIMEI(),size:8,converter:"
+			+ ",name:firmwareVersion,annotationType:BindArrayPrimitive,type:byte,fieldType:"
+			+ Version.class.getName()
+			+ ",byteOrder:BIG_ENDIAN},{condition:mask.hasIMEI(),size:8,converter:"
 			+ QueclinkHelper.IMEIConverter.class.getName()
 			+ ",name:imei,validator:"
 			+ IMEIValidator.class.getName()
-			+ ",annotationType:BindArrayPrimitive,type:byte,fieldType:String,byteOrder:BIG_ENDIAN},{charset:UTF-8,condition:!mask.hasIMEI(),size:8,name:deviceName,annotationType:BindString,fieldType:String},{name:id,annotationType:BindByte,fieldType:byte},{name:correlationId,annotationType:BindShort,fieldType:short,byteOrder:BIG_ENDIAN},{condition:mask.hasEventTime(),size:7,converter:"
+			+ ",annotationType:BindArrayPrimitive,type:byte,fieldType:java.lang.String,byteOrder:BIG_ENDIAN},{charset:UTF-8,condition:!mask.hasIMEI(),size:8,name:deviceName,annotationType:BindString,fieldType:java.lang.String},{name:id,annotationType:BindByte,fieldType:byte},{name:correlationId,annotationType:BindShort,fieldType:short,byteOrder:BIG_ENDIAN},{condition:mask.hasEventTime(),size:7,converter:"
 			+ QueclinkHelper.DateTimeYYYYMMDDHHMMSSConverter.class.getName()
-			+ ",name:eventTime,annotationType:BindArrayPrimitive,type:byte,fieldType:ZonedDateTime,byteOrder:BIG_ENDIAN},{condition:mask.hasMessageId(),name:messageId,annotationType:BindShort,fieldType:short,byteOrder:BIG_ENDIAN},{skipEnd:4,skipStart:4,name:checksum,annotationType:Checksum,startValue:-1,type:short,fieldType:short,byteOrder:BIG_ENDIAN,algorithm:CRC16CCITT}],context:{methods:[private static int "
+			+ ",name:eventTime,annotationType:BindArrayPrimitive,type:byte,fieldType:"
+			+ ZonedDateTime.class.getName()
+			+ ",byteOrder:BIG_ENDIAN},{condition:mask.hasMessageId(),name:messageId,annotationType:BindShort,fieldType:short,byteOrder:BIG_ENDIAN},{skipEnd:4,skipStart:4,name:checksum,annotationType:Checksum,startValue:-1,type:short,fieldType:short,byteOrder:BIG_ENDIAN,algorithm:CRC16CCITT}],context:{methods:[private static int "
 			+ ParserTest.class.getName()
 			+ ".headerSize()],deviceTypes:[QUECLINK_GB200S (0x46)]},header:{start:[+ACK],charset:UTF-8}}", jsonDescription);
 	}

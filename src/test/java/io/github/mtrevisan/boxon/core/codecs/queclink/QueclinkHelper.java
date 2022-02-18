@@ -45,20 +45,19 @@ public class QueclinkHelper{
 	private QueclinkHelper(){}
 
 
-	public static class VersionConverter implements Converter<byte[], String>{
+	public static class VersionConverter implements Converter<byte[], Version>{
 		@Override
-		public String decode(final byte[] value){
-			return value[0] + "." + value[1];
+		public Version decode(final byte[] value){
+			return Version.of(value[0], value[1]);
 		}
 
 		@Override
-		public byte[] encode(final String value){
-			final String[] components = StringHelper.split(value, '.');
-			return new byte[]{Byte.parseByte(components[0]), Byte.parseByte(components[1])};
+		public byte[] encode(final Version value){
+			return new byte[]{value.getMajor().byteValue(), value.getMinor().byteValue()};
 		}
 	}
 
-	public static class VersionConverter2 implements Converter<String, Version>{
+	public static class StringVersionConverter implements Converter<String, Version>{
 		@Override
 		public Version decode(final String value){
 			final int major = Integer.parseInt(value.substring(0, 2), 16);
