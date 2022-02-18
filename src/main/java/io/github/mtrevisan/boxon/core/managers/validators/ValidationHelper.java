@@ -107,7 +107,7 @@ final class ValidationHelper{
 
 			if(def != null && ((Number)def).doubleValue() < ((Number)min).doubleValue())
 				//defaultValue compatible with minValue
-				throw AnnotationException.create("Default value incompatible with minimum value in {}; found {}, expected greater than or equals to {}",
+				throw AnnotationException.create("Default value incompatible with minimum value in {}; expected {} >= {}",
 					field.getAnnotationName(), field.getDefaultValue(), minValue.getClass().getSimpleName());
 		}
 		return min;
@@ -125,7 +125,7 @@ final class ValidationHelper{
 
 			if(def != null && ((Number)def).doubleValue() > ((Number)max).doubleValue())
 				//defaultValue compatible with maxValue
-				throw AnnotationException.create("Default value incompatible with maximum value in {}; found {}, expected less than or equals to {}",
+				throw AnnotationException.create("Default value incompatible with maximum value in {}; expected {} <= {}",
 					field.getAnnotationName(), field.getDefaultValue(), maxValue.getClass().getSimpleName());
 		}
 		return max;
