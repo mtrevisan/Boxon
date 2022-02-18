@@ -37,8 +37,8 @@ import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.logs.EventListener;
-import io.github.mtrevisan.boxon.internal.JavaHelper;
-import io.github.mtrevisan.boxon.internal.StringHelper;
+import io.github.mtrevisan.boxon.core.internal.JavaHelper;
+import io.github.mtrevisan.boxon.core.internal.StringHelper;
 
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;

@@ -38,7 +38,7 @@ import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.io.ParserDataType;
 import io.github.mtrevisan.boxon.configurations.ConfigurationKey;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
-import io.github.mtrevisan.boxon.internal.StringHelper;
+import io.github.mtrevisan.boxon.core.internal.StringHelper;
 
 import java.io.IOException;
 import java.io.StringReader;

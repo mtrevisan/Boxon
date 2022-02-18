@@ -25,7 +25,7 @@
 package io.github.mtrevisan.boxon.core.managers;
 
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
-import io.github.mtrevisan.boxon.internal.JavaHelper;
+import io.github.mtrevisan.boxon.core.internal.JavaHelper;
 
 import java.lang.annotation.Annotation;
 

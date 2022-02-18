@@ -30,8 +30,8 @@ import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.io.ParserDataType;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
-import io.github.mtrevisan.boxon.internal.JavaHelper;
-import io.github.mtrevisan.boxon.internal.StringHelper;
+import io.github.mtrevisan.boxon.core.internal.JavaHelper;
+import io.github.mtrevisan.boxon.core.internal.StringHelper;
 
 import java.util.Arrays;
 import java.util.regex.Pattern;

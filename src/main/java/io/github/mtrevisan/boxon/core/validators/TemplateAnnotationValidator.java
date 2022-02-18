@@ -36,7 +36,7 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.io.ParserDataType;
-import io.github.mtrevisan.boxon.internal.JavaHelper;
+import io.github.mtrevisan.boxon.core.internal.JavaHelper;
 import io.github.mtrevisan.boxon.core.helpers.CharsetHelper;
 import io.github.mtrevisan.boxon.core.helpers.ContextHelper;
 

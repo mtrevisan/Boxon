@@ -25,7 +25,7 @@
 package io.github.mtrevisan.boxon.core.managers;
 
 import io.github.mtrevisan.boxon.annotations.Skip;
-import io.github.mtrevisan.boxon.internal.JavaHelper;
+import io.github.mtrevisan.boxon.core.internal.JavaHelper;
 import io.github.mtrevisan.boxon.core.helpers.ReflectionHelper;
 
 import java.lang.annotation.Annotation;

@@ -25,7 +25,7 @@
 package io.github.mtrevisan.boxon.core.managers.configuration;
 
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
-import io.github.mtrevisan.boxon.internal.JavaHelper;
+import io.github.mtrevisan.boxon.core.internal.JavaHelper;
 
 import java.lang.annotation.Annotation;
 

@@ -37,8 +37,8 @@ import io.github.mtrevisan.boxon.core.helpers.CharsetHelper;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
-import io.github.mtrevisan.boxon.internal.JavaHelper;
-import io.github.mtrevisan.boxon.internal.StringHelper;
+import io.github.mtrevisan.boxon.core.internal.JavaHelper;
+import io.github.mtrevisan.boxon.core.internal.StringHelper;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;

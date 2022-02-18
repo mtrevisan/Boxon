@@ -25,8 +25,8 @@
 package io.github.mtrevisan.boxon.semanticversioning;
 
 import io.github.mtrevisan.boxon.io.ParserDataType;
-import io.github.mtrevisan.boxon.internal.JavaHelper;
-import io.github.mtrevisan.boxon.internal.StringHelper;
+import io.github.mtrevisan.boxon.core.internal.JavaHelper;
+import io.github.mtrevisan.boxon.core.internal.StringHelper;
 
 import java.util.Arrays;
 import java.util.Locale;
