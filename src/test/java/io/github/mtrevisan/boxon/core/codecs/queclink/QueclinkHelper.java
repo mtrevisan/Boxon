@@ -78,6 +78,7 @@ public class QueclinkHelper{
 		}
 	}
 
+
 	public static class IMEIConverter implements Converter<byte[], String>{
 		private static final byte[] HEX_CHAR_TABLE = {
 			(byte)'0', (byte)'1', (byte)'2', (byte)'3',
@@ -120,6 +121,7 @@ public class QueclinkHelper{
 		}
 	}
 
+
 	public static class DateTimeYYYYMMDDHHMMSSConverter implements Converter<byte[], ZonedDateTime>{
 		@Override
 		public ZonedDateTime decode(final byte[] value){
@@ -146,7 +148,6 @@ public class QueclinkHelper{
 		}
 	}
 
-
 	public static class StringDateTimeYYYYMMDDHHMMSSConverter implements Converter<String, ZonedDateTime>{
 		@Override
 		public ZonedDateTime decode(final String value){
@@ -169,6 +170,7 @@ public class QueclinkHelper{
 				+ StringHelper.leftPad(Integer.toString(value.getSecond()), 2, '0');
 		}
 	}
+
 
 	public static class HexStringToByteConverter implements Converter<String, Byte>{
 		@Override
