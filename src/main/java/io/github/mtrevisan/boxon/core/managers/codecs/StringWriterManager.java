@@ -22,16 +22,35 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.managers.writer;
+package io.github.mtrevisan.boxon.core.managers.codecs;
+
+import io.github.mtrevisan.boxon.io.BitWriterInterface;
+
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 
-public interface WriterManagerInterface{
+final class StringWriterManager implements WriterManagerInterface{
 
-	/**
-	 * Writes a value.
-	 *
-	 * @param value	The value to write.
-	 */
-	void put(Object value);
+	private final BitWriterInterface writer;
+	private Charset charset;
+
+
+	StringWriterManager(final BitWriterInterface writer){
+		this.writer = writer;
+		charset = StandardCharsets.UTF_8;
+	}
+
+
+	StringWriterManager withCharset(final Charset charset){
+		this.charset = charset;
+
+		return this;
+	}
+
+	@Override
+	public void put(final Object value){
+		writer.putText((String)value, charset);
+	}
 
 }

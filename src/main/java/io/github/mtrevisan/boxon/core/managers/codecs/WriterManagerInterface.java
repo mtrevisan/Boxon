@@ -22,25 +22,16 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.managers.writer;
-
-import io.github.mtrevisan.boxon.io.BitWriterInterface;
-import io.github.mtrevisan.boxon.io.ByteOrder;
+package io.github.mtrevisan.boxon.core.managers.codecs;
 
 
-final class FloatWriterManager implements WriterManagerInterface{
+public interface WriterManagerInterface{
 
-	private final BitWriterInterface writer;
-
-
-	FloatWriterManager(final BitWriterInterface writer){
-		this.writer = writer;
-	}
-
-
-	@Override
-	public void put(final Object value){
-		writer.putFloat((Float)value, ByteOrder.BIG_ENDIAN);
-	}
+	/**
+	 * Writes a value.
+	 *
+	 * @param value	The value to write.
+	 */
+	void put(Object value);
 
 }
