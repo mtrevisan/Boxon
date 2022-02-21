@@ -129,16 +129,7 @@ final class BindingData{
 		if(!hasSelectAlternatives())
 			return type;
 
-		//add the prefix to the evaluator context:
-		final int prefixSize = selectObjectFrom.prefixSize();
-		if(prefixSize > 0){
-			final ByteOrder prefixBitOrder = selectObjectFrom.bitOrder();
-			final long[] array = reader.getBitSet(prefixSize, prefixBitOrder)
-				.toLongArray();
-			final int prefix = (array.length > 0? (int)array[0]: 0);
-
-			evaluator.addToContext(ContextHelper.CONTEXT_CHOICE_PREFIX, prefix);
-		}
+		addPrefixToContext(reader);
 
 		final ObjectChoices.ObjectChoice[] alternatives = selectObjectFrom.alternatives();
 		final ObjectChoices.ObjectChoice chosenAlternative = chooseAlternative(alternatives);
@@ -151,6 +142,19 @@ final class BindingData{
 				rootObject.getClass().getSimpleName());
 
 		return chosenAlternativeType;
+	}
+
+	/** Add the prefix to the evaluator context if needed. */
+	private void addPrefixToContext(final BitReaderInterface reader){
+		final int prefixSize = selectObjectFrom.prefixSize();
+		if(prefixSize > 0){
+			final ByteOrder prefixBitOrder = selectObjectFrom.bitOrder();
+			final long[] array = reader.getBitSet(prefixSize, prefixBitOrder)
+				.toLongArray();
+			final int prefix = (array.length > 0? (int)array[0]: 0);
+
+			evaluator.addToContext(ContextHelper.CONTEXT_CHOICE_PREFIX, prefix);
+		}
 	}
 
 	/**
