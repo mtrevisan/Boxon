@@ -123,9 +123,7 @@ final class PlainManager implements ConfigurationManagerInterface{
 	@Override
 	public void validateValue(final String dataKey, final Object dataValue, final Class<?> fieldType) throws EncodeException,
 			CodecException{
-		ConfigurationHelper.validatePattern(dataKey, dataValue, annotation.pattern());
-		ConfigurationHelper.validateMinValue(dataKey, dataValue, fieldType, annotation.minValue());
-		ConfigurationHelper.validateMaxValue(dataKey, dataValue, fieldType, annotation.maxValue());
+		ValidationHelper.validateValue(dataKey, dataValue, fieldType, annotation.pattern(), annotation.minValue(), annotation.maxValue());
 	}
 
 	@Override

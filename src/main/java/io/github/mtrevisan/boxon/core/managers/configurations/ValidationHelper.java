@@ -27,6 +27,7 @@ package io.github.mtrevisan.boxon.core.managers.configurations;
 import io.github.mtrevisan.boxon.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
+import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.ParserDataType;
@@ -130,6 +131,7 @@ final class ValidationHelper{
 		return max;
 	}
 
+
 	/**
 	 * Validate the minimum and maximum values.
 	 *
@@ -155,6 +157,7 @@ final class ValidationHelper{
 			throw AnnotationException.create("Minimum value should be less than or equal to maximum value in {}; found {}, expected greater than or equals to {}",
 				field.getAnnotationName(), defaultValue, field.getMinValue().getClass().getSimpleName());
 	}
+
 
 	/**
 	 * Validate the default value.
@@ -198,6 +201,15 @@ final class ValidationHelper{
 	private static boolean matches(final CharSequence text, final Pattern pattern){
 		return (StringHelper.isBlank(text) || pattern.matcher(text).matches());
 	}
+
+
+	static void validateValue(final String dataKey, final Object dataValue, final Class<?> fieldType, final String pattern,
+			final String minValue, final String maxValue) throws EncodeException, CodecException{
+		ConfigurationHelper.validatePattern(dataKey, dataValue, pattern);
+		ConfigurationHelper.validateMinValue(dataKey, dataValue, fieldType, minValue);
+		ConfigurationHelper.validateMaxValue(dataKey, dataValue, fieldType, maxValue);
+	}
+
 
 	/**
 	 * Validate the pattern.
@@ -294,6 +306,7 @@ final class ValidationHelper{
 			throw AnnotationException.create("Default value not compatible with `enumeration` in {}; found {}, expected one of {}",
 				field.getAnnotationName(), defaultValue, Arrays.toString(enumConstants));
 	}
+
 
 	/**
 	 * Validate the radix.

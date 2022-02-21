@@ -229,19 +229,14 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 			CodecException{
 		final AlternativeSubField fieldBinding = extractField(protocol);
 		if(fieldBinding != null){
-			validateValue(fieldBinding, dataKey, dataValue, field.getType());
+			final Class<?> fieldType = field.getType();
+			ValidationHelper.validateValue(dataKey, dataValue, fieldType, fieldBinding.pattern(), fieldBinding.minValue(),
+				fieldBinding.maxValue());
 
 			if(dataValue instanceof String)
-				dataValue = ParserDataType.getValue(field.getType(), (String)dataValue);
+				dataValue = ParserDataType.getValue(fieldType, (String)dataValue);
 		}
 		return dataValue;
-	}
-
-	private static void validateValue(final AlternativeSubField binding, final String dataKey, final Object dataValue,
-			final Class<?> fieldType) throws EncodeException, CodecException{
-		ConfigurationHelper.validatePattern(dataKey, dataValue, binding.pattern());
-		ConfigurationHelper.validateMinValue(dataKey, dataValue, fieldType, binding.minValue());
-		ConfigurationHelper.validateMaxValue(dataKey, dataValue, fieldType, binding.maxValue());
 	}
 
 }
