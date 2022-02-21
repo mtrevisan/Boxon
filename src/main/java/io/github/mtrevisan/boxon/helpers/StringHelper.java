@@ -150,8 +150,10 @@ public final class StringHelper{
 		final StringBuilder sb = new StringBuilder(length << 1);
 		for(int i = 0; i < length; i ++){
 			final byte elem = array[i];
-			sb.append(Character.forDigit((elem >>> 4) & 0x0F, 16));
-			sb.append(Character.forDigit((elem & 0x0F), 16));
+			final char highDigit = Character.forDigit((elem >>> 4) & 0x0F, 16);
+			final char lowDigit = Character.forDigit(elem & 0x0F, 16);
+			sb.append(highDigit);
+			sb.append(lowDigit);
 		}
 		return sb.toString().toUpperCase(Locale.ROOT);
 	}
@@ -169,8 +171,9 @@ public final class StringHelper{
 
 		final byte[] data = new byte[len >>> 1];
 		for(int i = 0; i < len; i += 2){
-			data[i >>> 1] = (byte)((Character.digit(hexString.charAt(i), 16) << 4)
-				+ Character.digit(hexString.charAt(i + 1), 16));
+			final int highDigit = Character.digit(hexString.charAt(i), 16);
+			final int lowDigit = Character.digit(hexString.charAt(i + 1), 16);
+			data[i >>> 1] = (byte)((highDigit << 4) + lowDigit);
 		}
 		return data;
 	}
