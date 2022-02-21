@@ -164,7 +164,7 @@ final class CompositeManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	public void validateValue(final String dataKey, final Object dataValue, final Class<?> fieldType) throws EncodeException{
+	public void validateValue(final Field field, final String dataKey, final Object dataValue) throws EncodeException{
 		//check pattern
 		final String pattern = annotation.pattern();
 		if(!pattern.isEmpty()){
@@ -185,7 +185,7 @@ final class CompositeManager implements ConfigurationManagerInterface{
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public Object convertValue(final String dataKey, Object dataValue, final Field field, final Version protocol) throws EncodeException{
+	public Object convertValue(final Field field, final String dataKey, Object dataValue, final Version protocol) throws EncodeException{
 		//compose field value
 		final String composition = annotation.composition();
 		final CompositeSubField[] fields = annotation.value();

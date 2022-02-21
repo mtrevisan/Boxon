@@ -215,7 +215,7 @@ final class LoaderConfiguration{
 	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
 	 */
 	static Object getConfigurationWithDefaults(final ConfigurationMessage<?> configuration, final Map<String, Object> data,
-			final Version protocol) throws EncodeException, CodecException{
+			final Version protocol) throws EncodeException, CodecException, AnnotationException{
 		final Object configurationObject = ConstructorHelper.getCreator(configuration.getType())
 			.get();
 
@@ -236,9 +236,8 @@ final class LoaderConfiguration{
 			final ConfigField foundField = findField(configurableFields, dataKey, protocol);
 			final Annotation foundFieldAnnotation = foundField.getBinding();
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(foundFieldAnnotation);
-			final Class<?> fieldType = foundField.getFieldType();
-			manager.validateValue(dataKey, dataValue, fieldType);
-			dataValue = manager.convertValue(dataKey, dataValue, foundField.getField(), protocol);
+			manager.validateValue(foundField.getField(), dataKey, dataValue);
+			dataValue = manager.convertValue(foundField.getField(), dataKey, dataValue, protocol);
 			ReflectionHelper.setValue(configurationObject, foundField.getField(), dataValue);
 
 			if(dataValue instanceof String && !((String)dataValue).isEmpty() || dataValue != null)
@@ -267,13 +266,13 @@ final class LoaderConfiguration{
 	}
 
 	private static void fillDefaultValues(final Object configurationObject, final List<ConfigField> fields, final Version protocol)
-			throws EncodeException, CodecException{
+			throws EncodeException, CodecException, AnnotationException{
 		for(int i = 0; i < fields.size(); i ++){
 			final ConfigField field = fields.get(i);
 			final Annotation annotation = field.getBinding();
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(annotation);
 			Object dataValue = manager.getDefaultValue(field.getField(), protocol);
-			dataValue = manager.convertValue(manager.getShortDescription(), dataValue, field.getField(), protocol);
+			dataValue = manager.convertValue(field.getField(), manager.getShortDescription(), dataValue, protocol);
 			ReflectionHelper.setValue(configurationObject, field.getField(), dataValue);
 		}
 	}

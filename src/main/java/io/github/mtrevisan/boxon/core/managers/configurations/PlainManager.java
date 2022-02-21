@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.core.managers.configurations;
 
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
@@ -121,13 +122,15 @@ final class PlainManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	public void validateValue(final String dataKey, final Object dataValue, final Class<?> fieldType) throws EncodeException,
-			CodecException{
-		ValidationHelper.validateValue(dataKey, dataValue, fieldType, annotation.pattern(), annotation.minValue(), annotation.maxValue());
+	public void validateValue(final Field field, final String dataKey, final Object dataValue) throws CodecException,
+			AnnotationException{
+		final ConfigFieldData configData = ConfigFieldDataBuilder.create(field, annotation);
+		ValidationHelper.validatePattern(configData, dataValue);
+		ValidationHelper.validateMinMaxValues(configData, dataValue);
 	}
 
 	@Override
-	public Object convertValue(final String dataKey, Object dataValue, final Field field, final Version protocol) throws EncodeException,
+	public Object convertValue(final Field field, final String dataKey, Object dataValue, final Version protocol) throws EncodeException,
 			CodecException{
 		if(dataValue != null){
 			final Class<?> fieldType = field.getType();

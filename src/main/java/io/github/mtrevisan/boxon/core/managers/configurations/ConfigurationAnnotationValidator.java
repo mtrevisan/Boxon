@@ -88,13 +88,13 @@ public enum ConfigurationAnnotationValidator{
 
 			validateMinimumParameters(configData);
 
-			ValidationHelper.validatePattern(configData);
+			ValidationHelper.validatePattern(configData, null);
 
 			ValidationHelper.validateDefaultValue(configData);
 
 			ValidationHelper.validateEnumeration(configData);
 
-			ValidationHelper.validateMinMaxValues(configData);
+			ValidationHelper.validateMinMaxValues(configData, null);
 
 			ValidationHelper.validateProtocol(configData, minProtocolVersion, maxProtocolVersion);
 		}
@@ -136,7 +136,7 @@ public enum ConfigurationAnnotationValidator{
 				throw AnnotationException.create("Composite fields must have at least one sub-field");
 			validateCharset(configData.getCharset());
 
-			ValidationHelper.validatePattern(configData);
+			ValidationHelper.validatePattern(configData, null);
 
 			ValidationHelper.validateProtocol(configData, minProtocolVersion, maxProtocolVersion);
 
@@ -157,7 +157,7 @@ public enum ConfigurationAnnotationValidator{
 			if(StringHelper.isBlank(binding.shortDescription()))
 				throw AnnotationException.create("Short description must be present");
 
-			ValidationHelper.validatePattern(configData);
+			ValidationHelper.validatePattern(configData, null);
 
 			ValidationHelper.validateDefaultValue(configData);
 		}
@@ -210,9 +210,9 @@ public enum ConfigurationAnnotationValidator{
 
 			validateMinimumParameters(binding);
 
-			ValidationHelper.validatePattern(configData);
+			ValidationHelper.validatePattern(configData, null);
 
-			ValidationHelper.validateMinMaxValues(configData);
+			ValidationHelper.validateMinMaxValues(configData, null);
 
 			ValidationHelper.validateProtocol(configData, minProtocolVersion, maxProtocolVersion);
 		}

@@ -26,6 +26,7 @@ package io.github.mtrevisan.boxon.core.managers.configurations;
 
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
@@ -222,19 +223,19 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	public void validateValue(final String dataKey, final Object dataValue, final Class<?> fieldType){}
+	public void validateValue(final Field field, final String dataKey, final Object dataValue){}
 
 	@Override
-	public Object convertValue(final String dataKey, Object dataValue, final Field field, final Version protocol) throws EncodeException,
-			CodecException{
+	public Object convertValue(final Field field, final String dataKey, Object dataValue, final Version protocol) throws EncodeException, CodecException, AnnotationException{
 		final AlternativeSubField fieldBinding = extractField(protocol);
 		if(fieldBinding != null){
 			final Class<?> fieldType = field.getType();
-			ValidationHelper.validateValue(dataKey, dataValue, fieldType, fieldBinding.pattern(), fieldBinding.minValue(),
-				fieldBinding.maxValue());
-
 			if(dataValue instanceof String)
 				dataValue = ParserDataType.getValue(fieldType, (String)dataValue);
+
+			final ConfigFieldData configData = ConfigFieldDataBuilder.create(field, annotation);
+			ValidationHelper.validatePattern(configData, dataValue);
+			ValidationHelper.validateMinMaxValues(configData, dataValue);
 		}
 		return dataValue;
 	}

@@ -27,7 +27,6 @@ package io.github.mtrevisan.boxon.core.managers.configurations;
 import io.github.mtrevisan.boxon.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
-import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.ParserDataType;
@@ -95,6 +94,41 @@ final class ValidationHelper{
 		return protocol;
 	}
 
+
+	/**
+	 * Validate the minimum and maximum values.
+	 *
+	 * @param field	The configuration field data.
+	 * @param dataValue	The value to check against.
+	 * @throws AnnotationException	If a validation error occurs.
+	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
+	 */
+	static void validateMinMaxValues(final ConfigFieldData field, final Object dataValue) throws AnnotationException, CodecException{
+		if(StringHelper.isBlank(field.getMinValue()) && StringHelper.isBlank(field.getMaxValue()))
+			return;
+
+		final Class<?> fieldType = field.getFieldType();
+		if(fieldType.isArray())
+			throw AnnotationException.create("Array field should not have `minValue` or `maxValue`");
+
+		final String defaultValue = field.getDefaultValue();
+		final Object def = ParserDataType.getValue(fieldType, defaultValue);
+		final Object min = validateMinValue(field, def);
+		final Object max = validateMaxValue(field, def);
+
+		if(min != null && max != null && ((Number)min).doubleValue() > ((Number)max).doubleValue())
+			//maxValue after or equal to minValue
+			throw AnnotationException.create("Minimum value should be less than or equal to maximum value in {}; expected {} <= {}",
+				field.getAnnotationName(), field.getMinValue(), field.getMaxValue());
+
+
+		if(dataValue != null && String.class.isAssignableFrom(dataValue.getClass())){
+			final Object val = ParserDataType.getValue(fieldType, (String)dataValue);
+			validateMinValue(field, val);
+			validateMaxValue(field, val);
+		}
+	}
+
 	private static Object validateMinValue(final ConfigFieldData field, final Object def) throws AnnotationException, CodecException{
 		Object min = null;
 		final String minValue = field.getMinValue();
@@ -129,33 +163,6 @@ final class ValidationHelper{
 					field.getAnnotationName(), field.getDefaultValue(), maxValue.getClass().getSimpleName());
 		}
 		return max;
-	}
-
-
-	/**
-	 * Validate the minimum and maximum values.
-	 *
-	 * @param field	The configuration field data.
-	 * @throws AnnotationException	If a validation error occurs.
-	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
-	 */
-	static void validateMinMaxValues(final ConfigFieldData field) throws AnnotationException, CodecException{
-		if(StringHelper.isBlank(field.getMinValue()) && StringHelper.isBlank(field.getMaxValue()))
-			return;
-
-		final Class<?> fieldType = field.getFieldType();
-		if(fieldType.isArray())
-			throw AnnotationException.create("Array field should not have `minValue` or `maxValue`");
-
-		final String defaultValue = field.getDefaultValue();
-		final Object def = ParserDataType.getValue(fieldType, defaultValue);
-		final Object min = validateMinValue(field, def);
-		final Object max = validateMaxValue(field, def);
-
-		if(min != null && max != null && ((Number)min).doubleValue() > ((Number)max).doubleValue())
-			//maxValue after or equal to minValue
-			throw AnnotationException.create("Minimum value should be less than or equal to maximum value in {}; found {}, expected greater than or equals to {}",
-				field.getAnnotationName(), defaultValue, field.getMinValue().getClass().getSimpleName());
 	}
 
 
@@ -203,21 +210,14 @@ final class ValidationHelper{
 	}
 
 
-	static void validateValue(final String dataKey, final Object dataValue, final Class<?> fieldType, final String pattern,
-			final String minValue, final String maxValue) throws EncodeException, CodecException{
-		ConfigurationHelper.validatePattern(dataKey, dataValue, pattern);
-		ConfigurationHelper.validateMinValue(dataKey, dataValue, fieldType, minValue);
-		ConfigurationHelper.validateMaxValue(dataKey, dataValue, fieldType, maxValue);
-	}
-
-
 	/**
 	 * Validate the pattern.
 	 *
 	 * @param field	The configuration field data.
+	 * @param dataValue	The value to check against.
 	 * @throws AnnotationException	If a validation error occurs.
 	 */
-	static void validatePattern(final ConfigFieldData field) throws AnnotationException{
+	static void validatePattern(final ConfigFieldData field, final Object dataValue) throws AnnotationException{
 		//valid pattern
 		final String pattern = field.getPattern();
 		if(StringHelper.isBlank(pattern))
@@ -233,7 +233,8 @@ final class ValidationHelper{
 		}
 
 		//defaultValue compatible with field type
-		if(!String.class.isAssignableFrom(field.getFieldType()))
+		if(!String.class.isAssignableFrom(field.getFieldType())
+				|| dataValue != null && String.class.isAssignableFrom(dataValue.getClass()) && !formatPattern.matcher((String)dataValue).matches())
 			throw AnnotationException.create("Data type not compatible with `pattern` in {}; found {}.class, expected String.class",
 				field.getAnnotationName(), field.getFieldType());
 

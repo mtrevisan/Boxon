@@ -25,14 +25,13 @@
 package io.github.mtrevisan.boxon.core.managers.configurations;
 
 import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
-import io.github.mtrevisan.boxon.exceptions.CodecException;
-import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
-import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.configurations.ConfigurationKey;
+import io.github.mtrevisan.boxon.exceptions.CodecException;
+import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
+import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.ParserDataType;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
-import io.github.mtrevisan.boxon.helpers.StringHelper;
 
 import java.lang.reflect.Array;
 import java.util.Map;
@@ -48,40 +47,6 @@ public final class ConfigurationHelper{
 
 
 	private ConfigurationHelper(){}
-
-
-	static void validatePattern(final String dataKey, final Object dataValue, final String pattern) throws EncodeException{
-		if(!pattern.isEmpty()){
-			final Pattern formatPattern = Pattern.compile(pattern);
-
-			//value compatible with data type and pattern
-			if(!(dataValue instanceof String) || !formatPattern.matcher((CharSequence)dataValue).matches())
-				throw EncodeException.create("Data value not compatible with `pattern` for data key {}; found {}, expected {}",
-					dataKey, dataValue, pattern);
-		}
-	}
-
-	@SuppressWarnings("ConstantConditions")
-	static void validateMinValue(final String dataKey, final Object dataValue, final Class<?> fieldType, final String minValue)
-			throws EncodeException, CodecException{
-		if(!minValue.isEmpty()){
-			final Object min = ParserDataType.getValue(fieldType, minValue);
-			if(dataValue instanceof Number && ((Number)dataValue).doubleValue() < ((Number)min).doubleValue())
-				throw EncodeException.create("Data value incompatible with minimum value for data key {}; found {}, expected greater than or equals to {}",
-					dataKey, dataValue, minValue.getClass().getSimpleName());
-		}
-	}
-
-	@SuppressWarnings("ConstantConditions")
-	static void validateMaxValue(final String dataKey, final Object dataValue, final Class<?> fieldType, final String maxValue)
-			throws EncodeException, CodecException{
-		if(!maxValue.isEmpty()){
-			final Object max = ParserDataType.getValue(fieldType, maxValue);
-			if(dataValue instanceof Number && ((Number)dataValue).doubleValue() > ((Number)max).doubleValue())
-				throw EncodeException.create("Data value incompatible with maximum value for data key {}; found {}, expected greater than or equals to {}",
-					dataKey, dataValue, maxValue.getClass().getSimpleName());
-		}
-	}
 
 
 	/**
@@ -102,12 +67,14 @@ public final class ConfigurationHelper{
 		return (value != null && (!(value instanceof CharSequence) || !StringHelper.isBlank((CharSequence)value)));
 	}
 
+
 	static Object convertValue(final String value, final Class<?> fieldType, final Class<? extends ConfigurationEnum> enumeration)
 			throws CodecException{
 		return (enumeration != NullEnum.class
 			? extractEnumerationValue(fieldType, value, enumeration)
 			: ParserDataType.getValue(fieldType, value));
 	}
+
 
 	static Object extractEnumerationValue(final Class<?> fieldType, final String value,
 			final Class<? extends ConfigurationEnum> enumeration){
@@ -135,6 +102,7 @@ public final class ConfigurationHelper{
 	private static String[] splitMultipleEnumerations(final CharSequence value){
 		return PATTERN_PIPE.split(value);
 	}
+
 
 	/**
 	 * Whether the field should be read, that is, the given protocol is between minimum protocol and maximum protocol.
@@ -168,6 +136,7 @@ public final class ConfigurationHelper{
 				putIfNotEmpty(ConfigurationKey.MUTUALLY_EXCLUSIVE, true, map);
 		}
 	}
+
 
 	static void extractMinMaxProtocol(final String minProtocol, final String maxProtocol, final Map<String, Object> fieldMap)
 			throws ConfigurationException{

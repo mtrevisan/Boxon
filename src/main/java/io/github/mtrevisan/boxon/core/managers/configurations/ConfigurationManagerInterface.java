@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.core.managers.configurations;
 
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
@@ -93,25 +94,25 @@ public interface ConfigurationManagerInterface{
 	/**
 	 * Check if the given value can be assigned and is valid for the given field type.
 	 *
-	 * @param dataKey	The short description of the field.
-	 * @param dataValue	The value to check against.
-	 * @param fieldType	The field type.
+	 * @param field   The field.
+	 * @param dataKey   The short description of the field.
+	 * @param dataValue   The value to check against.
 	 * @throws EncodeException	If a placeholder cannot be substituted.
 	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
 	 */
-	void validateValue(String dataKey, Object dataValue, Class<?> fieldType) throws EncodeException, CodecException;
+	void validateValue(Field field, String dataKey, Object dataValue) throws EncodeException, CodecException, AnnotationException;
 
 	/**
 	 * Convert the given value to the type accepted by the field.
 	 *
-	 * @param dataKey	The short description of the field.
-	 * @param dataValue	The value to check against.
-	 * @param field	The field.
-	 * @param protocol	The protocol version.
+	 * @param field   The field.
+	 * @param dataKey   The short description of the field.
+	 * @param dataValue   The value to check against.
+	 * @param protocol   The protocol version.
 	 * @return	The converted value.
 	 * @throws EncodeException	If a placeholder cannot be substituted.
 	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
 	 */
-	Object convertValue(String dataKey, Object dataValue, Field field, Version protocol) throws EncodeException, CodecException;
+	Object convertValue(Field field, String dataKey, Object dataValue, Version protocol) throws EncodeException, CodecException, AnnotationException;
 
 }

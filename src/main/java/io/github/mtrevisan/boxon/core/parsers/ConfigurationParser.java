@@ -131,9 +131,10 @@ public final class ConfigurationParser{
 	 * @return	The configuration data.
 	 * @throws EncodeException	If a placeholder cannot be substituted.
 	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
+	 * @throws AnnotationException	If an annotation is not well formatted.
 	 */
 	public static Object getConfigurationWithDefaults(final ConfigurationMessage<?> configuration, final Map<String, Object> data,
-			final Version protocol) throws EncodeException, CodecException{
+			final Version protocol) throws EncodeException, CodecException, AnnotationException{
 		return LoaderConfiguration.getConfigurationWithDefaults(configuration, data, protocol);
 	}
 
