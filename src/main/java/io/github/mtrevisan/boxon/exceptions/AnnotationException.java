@@ -51,7 +51,7 @@ public final class AnnotationException extends FieldException{
 	 *
 	 * @param cause	The cause (which is saved for later retrieval by the {@link #getCause()} method). (A {@code null} value is
 	 * 					permitted, and indicates that the cause is nonexistent or unknown.)
-	 * @param message	The message to be formatted (see {@link org.slf4j.helpers.MessageFormatter MessageFormatter}).
+	 * @param message	The message to be formatted (see {@link StringHelper#format(String, Object...)}).
 	 * @param parameters	The parameters of the message.
 	 * @return	An instance of this exception.
 	 */
@@ -62,7 +62,7 @@ public final class AnnotationException extends FieldException{
 	/**
 	 * Constructs a new exception with the specified message, possibly with parameters.
 	 *
-	 * @param message	The message to be formatted (see {@link org.slf4j.helpers.MessageFormatter MessageFormatter}).
+	 * @param message	The message to be formatted (see {@link StringHelper#format(String, Object...)}).
 	 * @param parameters	The parameters of the message.
 	 * @return	An instance of this exception.
 	 */

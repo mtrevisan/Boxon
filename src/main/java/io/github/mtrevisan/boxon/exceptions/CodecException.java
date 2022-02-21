@@ -38,7 +38,7 @@ public final class CodecException extends FieldException{
 	/**
 	 * Constructs a new exception with the specified message, possibly with parameters.
 	 *
-	 * @param message	The message to be formatted (see {@link org.slf4j.helpers.MessageFormatter MessageFormatter}).
+	 * @param message	The message to be formatted (see {@link StringHelper#format(String, Object...)}).
 	 * @param parameters	The parameters of the message.
 	 * @return	An instance of this exception.
 	 */

@@ -43,7 +43,7 @@ public final class StringHelper{
 	/**
 	 * Performs argument substitution.
 	 *
-	 * @param message	The message pattern which will be parsed and formatted.
+	 * @param message	The message pattern which will be parsed and formatted (see {@link MessageFormatter}).
 	 * @param parameters	The arguments to be substituted in place of the formatting anchors.
 	 * @return	The formatted message.
 	 */
