@@ -79,7 +79,7 @@ public final class LoaderTemplate{
 	 * @param loaderCodec	A codec loader.
 	 * @return	A template parser.
 	 */
-	public static LoaderTemplate create(final LoaderCodecInterface loaderCodec){
+	static LoaderTemplate create(final LoaderCodecInterface loaderCodec){
 		return new LoaderTemplate(loaderCodec);
 	}
 
@@ -97,7 +97,7 @@ public final class LoaderTemplate{
 	 * @param eventListener	The event listener.
 	 * @return	The current instance.
 	 */
-	public LoaderTemplate withEventListener(final EventListener eventListener){
+	LoaderTemplate withEventListener(final EventListener eventListener){
 		this.eventListener = JavaHelper.nonNullOrDefault(eventListener, EventListener.getNoOpInstance());
 
 		return this;
@@ -110,8 +110,8 @@ public final class LoaderTemplate{
 	 * @throws AnnotationException	If an annotation has validation problems.
 	 * @throws TemplateException	If the template was already added (defined by `start` parameter in the header definition).
 	 */
-	public void loadTemplates(final Class<?>... basePackageClasses) throws AnnotationException, TemplateException{
-		eventListener.loadingTemplates(basePackageClasses);
+	void loadTemplatesFrom(final Class<?>... basePackageClasses) throws AnnotationException, TemplateException{
+		eventListener.loadingTemplatesFrom(basePackageClasses);
 
 		final ReflectiveClassLoader reflectiveClassLoader = ReflectiveClassLoader.createFrom(basePackageClasses);
 		/** extract all classes annotated with {@link MessageHeader}. */
@@ -187,7 +187,7 @@ public final class LoaderTemplate{
 	 * @throws AnnotationException	If an annotation has validation problems.
 	 */
 	@SuppressWarnings("unchecked")
-	public <T> Template<T> createTemplate(final Class<T> type) throws AnnotationException{
+	<T> Template<T> createTemplate(final Class<T> type) throws AnnotationException{
 		return (Template<T>)templateStore.apply(type);
 	}
 
@@ -236,7 +236,7 @@ public final class LoaderTemplate{
 	 * @return	The template that is able to decode/encode the next message in the given reader.
 	 * @throws TemplateException	If no template cannot be found that is able to parse the given message.
 	 */
-	public Template<?> getTemplate(final BitReaderInterface reader) throws TemplateException{
+	Template<?> getTemplate(final BitReaderInterface reader) throws TemplateException{
 		final int index = reader.position();
 
 		//for each available template, select the first that matches the starting bytes
@@ -263,7 +263,7 @@ public final class LoaderTemplate{
 	 * @return	The template that is able to decode/encode the given class.
 	 * @throws TemplateException	Whether the template is not valid.
 	 */
-	public Template<?> getTemplate(final Class<?> type) throws TemplateException{
+	Template<?> getTemplate(final Class<?> type) throws TemplateException{
 		final MessageHeader header = type.getAnnotation(MessageHeader.class);
 		if(header == null)
 			throw TemplateException.create("The given class type is not a valid template");
@@ -303,7 +303,7 @@ public final class LoaderTemplate{
 	 * @param reader	The reader from which to read the data from.
 	 * @return	The index of the next message.
 	 */
-	public int findNextMessageIndex(final BitReaderInterface reader){
+	int findNextMessageIndex(final BitReaderInterface reader){
 		int minOffset = -1;
 		for(final Template<?> template : templates.values()){
 			final MessageHeader header = template.getHeader();

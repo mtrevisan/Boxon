@@ -35,24 +35,23 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
-import io.github.mtrevisan.boxon.helpers.Evaluator;
-import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
-import io.github.mtrevisan.boxon.core.parsers.LoaderTemplate;
-import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
+import io.github.mtrevisan.boxon.core.BoxonCore;
 import io.github.mtrevisan.boxon.core.BoxonCoreBuilder;
 import io.github.mtrevisan.boxon.core.ParseResponse;
 import io.github.mtrevisan.boxon.core.Parser;
-import io.github.mtrevisan.boxon.core.BoxonCore;
+import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
+import io.github.mtrevisan.boxon.helpers.Evaluator;
+import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
+import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.BitReader;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriter;
 import io.github.mtrevisan.boxon.io.ByteOrder;
 import io.github.mtrevisan.boxon.io.CodecInterface;
-import io.github.mtrevisan.boxon.helpers.StringHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -80,27 +79,27 @@ class CodecArrayTest{
 	@MessageHeader(start = "tc4")
 	static class TestChoice4{
 		@BindString(size = "3")
-		public String header;
+		String header;
 		@BindArray(size = "3", type = CodecObjectTest.TestType0.class, selectFrom = @ObjectChoices(prefixSize = 8,
 			alternatives = {
 				@ObjectChoices.ObjectChoice(condition = "#prefix == 1", prefix = 1, type = CodecObjectTest.TestType1.class),
 				@ObjectChoices.ObjectChoice(condition = "#prefix == 2", prefix = 2, type = CodecObjectTest.TestType2.class)
 			}))
-		public CodecObjectTest.TestType0[] value;
+		CodecObjectTest.TestType0[] value;
 	}
 
 	@MessageHeader(start = "tc5")
 	static class TestChoice5{
 		@BindString(size = "3")
-		public String header;
+		String header;
 		@BindByte
-		public byte type;
+		byte type;
 		@BindArray(size = "1", type = CodecObjectTest.TestType0.class, selectFrom = @ObjectChoices(
 			alternatives = {
 				@ObjectChoices.ObjectChoice(condition = "type == 1", type = CodecObjectTest.TestType1.class),
 				@ObjectChoices.ObjectChoice(condition = "type == 2", type = CodecObjectTest.TestType2.class)
 			}))
-		public CodecObjectTest.TestType0[] value;
+		CodecObjectTest.TestType0[] value;
 	}
 
 
@@ -255,7 +254,6 @@ class CodecArrayTest{
 		};
 
 		LoaderCodec loaderCodec = LoaderCodec.create();
-		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);
 		Evaluator evaluator = Evaluator.create();
 		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator);
 		loaderCodec.loadDefaultCodecs();

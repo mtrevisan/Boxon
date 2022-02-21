@@ -43,12 +43,12 @@ class ConverterTest{
 	@MessageHeader(start = "wc1")
 	static class TestConverter1{
 		@BindString(size = "3")
-		public String header;
+		String header;
 		@BindByte(converter = WrongConverterInput.class)
-		public String value;
+		String value;
 	}
 
-	public static class WrongConverterInput implements Converter<byte[], String>{
+	static class WrongConverterInput implements Converter<byte[], String>{
 		@Override
 		public String decode(final byte[] value){
 			return value[0] + "." + value[1];
@@ -64,20 +64,20 @@ class ConverterTest{
 	@MessageHeader(start = "wc2")
 	static class TestConverter2{
 		@BindString(size = "3")
-		public String header;
+		String header;
 		@BindByte(converter = WrongConverterOutput.class)
-		public String value;
+		String value;
 	}
 
 	@MessageHeader(start = "wc3")
 	static class TestConverter3{
 		@BindString(size = "3")
-		public String header;
+		String header;
 		@BindByte(converter = WrongConverterOutput.class)
-		public int value;
+		int value;
 	}
 
-	public static class WrongConverterOutput implements Converter<Byte, Byte>{
+	static class WrongConverterOutput implements Converter<Byte, Byte>{
 		@Override
 		public Byte decode(final Byte value){
 			return value;

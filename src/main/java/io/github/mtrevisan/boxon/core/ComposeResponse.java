@@ -59,7 +59,7 @@ public final class ComposeResponse{
 	 * @param writer	The writer to read the composed message from.
 	 * @return	The instance.
 	 */
-	public static ComposeResponse create(final Object[] originator, final BitWriter writer){
+	static ComposeResponse create(final Object[] originator, final BitWriter writer){
 		writer.flush();
 
 		return create(originator, writer.array());
@@ -72,15 +72,16 @@ public final class ComposeResponse{
 	 * @param composedMessage	The composed message.
 	 * @return	The instance.
 	 */
-	public static ComposeResponse create(final Object[] originator, final byte[] composedMessage){
+	static ComposeResponse create(final Object[] originator, final byte[] composedMessage){
 		return new ComposeResponse(originator, composedMessage);
 	}
 
 
 	/**
-	 * Construct a response from a given object.
+	 * Construct a response from a given object and composed message.
 	 *
 	 * @param originator	The data that originates the message.
+	 * @param composedMessage	The composed message.
 	 */
 	private ComposeResponse(final Object[] originator, final byte[] composedMessage){
 		this.originator = JavaHelper.cloneOrDefault(originator, null);

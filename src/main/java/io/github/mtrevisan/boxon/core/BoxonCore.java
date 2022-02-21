@@ -123,7 +123,7 @@ public final class BoxonCore{
 		evaluator.addToContext(method);
 	}
 
-	public Map<String, Object> getContext(){
+	Map<String, Object> getContext(){
 		return evaluator.getContext();
 	}
 

@@ -93,7 +93,7 @@ public class ACKMessageHexByteChecksum{
 		MESSAGE_TYPE_MAP.put((byte)64, "AT+GTTRF");
 	}
 
-	public static class MessageTypeConverter implements Converter<Byte, String>{
+	static class MessageTypeConverter implements Converter<Byte, String>{
 		@Override
 		public String decode(final Byte value){
 			return MESSAGE_TYPE_MAP.get(value);

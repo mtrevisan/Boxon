@@ -41,72 +41,72 @@ public enum ParserDataType{
 
 	BYTE(Byte.TYPE, Byte.class, Byte.SIZE){
 		@Override
-		public Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
+		Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
 			return reader.getByte();
 		}
 
 		@Override
-		public void write(final BitWriterInterface writer, final Object value, final ByteOrder byteOrder){
+		void write(final BitWriterInterface writer, final Object value, final ByteOrder byteOrder){
 			writer.putByte((Byte)value);
 		}
 	},
 
 	SHORT(Short.TYPE, Short.class, Short.SIZE){
 		@Override
-		public Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
+		Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
 			return reader.getShort(byteOrder);
 		}
 
 		@Override
-		public void write(final BitWriterInterface writer, final Object value, final ByteOrder byteOrder){
+		void write(final BitWriterInterface writer, final Object value, final ByteOrder byteOrder){
 			writer.putShort((Short)value, byteOrder);
 		}
 	},
 
 	INTEGER(Integer.TYPE, Integer.class, Integer.SIZE){
 		@Override
-		public Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
+		Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
 			return reader.getInt(byteOrder);
 		}
 
 		@Override
-		public void write(final BitWriterInterface writer, final Object value, final ByteOrder byteOrder){
+		void write(final BitWriterInterface writer, final Object value, final ByteOrder byteOrder){
 			writer.putInt((Integer)value, byteOrder);
 		}
 	},
 
 	LONG(Long.TYPE, Long.class, Long.SIZE){
 		@Override
-		public Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
+		Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
 			return reader.getLong(byteOrder);
 		}
 
 		@Override
-		public void write(final BitWriterInterface writer, final Object value, final ByteOrder byteOrder){
+		void write(final BitWriterInterface writer, final Object value, final ByteOrder byteOrder){
 			writer.putLong((Long)value, byteOrder);
 		}
 	},
 
 	FLOAT(Float.TYPE, Float.class, Float.SIZE){
 		@Override
-		public Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
+		Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
 			return reader.getFloat(byteOrder);
 		}
 
 		@Override
-		public void write(final BitWriterInterface writer, final Object value, final ByteOrder byteOrder){
+		void write(final BitWriterInterface writer, final Object value, final ByteOrder byteOrder){
 			writer.putFloat((Float)value, byteOrder);
 		}
 	},
 
 	DOUBLE(Double.TYPE, Double.class, Double.SIZE){
 		@Override
-		public Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
+		Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
 			return reader.getDouble(byteOrder);
 		}
 
 		@Override
-		public void write(final BitWriterInterface writer, final Object value, final ByteOrder byteOrder){
+		void write(final BitWriterInterface writer, final Object value, final ByteOrder byteOrder){
 			writer.putDouble((Double)value, byteOrder);
 		}
 	};
@@ -230,7 +230,7 @@ public enum ParserDataType{
 	 *
 	 * @return	A list of data types.
 	 */
-	public static String describe(){
+	static String describe(){
 		return Arrays.toString(new String[]{byte.class.getSimpleName(), short.class.getSimpleName(), int.class.getSimpleName(),
 			long.class.getSimpleName(), float.class.getSimpleName(), double.class.getSimpleName()});
 	}
@@ -242,7 +242,7 @@ public enum ParserDataType{
 	 * @param byteOrder	The byte order.
 	 * @return	The read value.
 	 */
-	public abstract Object read(final BitReaderInterface reader, final ByteOrder byteOrder);
+	abstract Object read(final BitReaderInterface reader, final ByteOrder byteOrder);
 
 	/**
 	 * Write a specific data to the writer, using the given byte order.
@@ -250,7 +250,7 @@ public enum ParserDataType{
 	 * @param value	The value to be written.
 	 * @param byteOrder	The byte order.
 	 */
-	public abstract void write(final BitWriterInterface writer, final Object value, final ByteOrder byteOrder);
+	abstract void write(final BitWriterInterface writer, final Object value, final ByteOrder byteOrder);
 
 
 	/**

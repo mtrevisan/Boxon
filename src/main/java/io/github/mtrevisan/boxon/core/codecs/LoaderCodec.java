@@ -90,7 +90,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load codecs.
 	 */
 	public void loadCodecsFrom(final Class<?>... basePackageClasses){
-		eventListener.loadingCodecs(basePackageClasses);
+		eventListener.loadingCodecsFrom(basePackageClasses);
 
 		final ReflectiveClassLoader reflectiveClassLoader = ReflectiveClassLoader.createFrom(basePackageClasses);
 		/** extract all classes that implements {@link CodecInterface}. */

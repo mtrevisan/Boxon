@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 
 
 @SuppressWarnings("ALL")
-public class StringHelperTest{
+class StringHelperTest{
 
 	private StringHelperTest(){}
 

@@ -159,9 +159,9 @@ class TemplateParserTest{
 	@MessageHeader(start = "te1")
 	static class TestError1{
 		@BindString(size = "3")
-		public String header;
+		String header;
 		@BindByte(condition = "e")
-		public byte type;
+		byte type;
 	}
 
 	@Test
@@ -199,9 +199,9 @@ class TemplateParserTest{
 
 		}
 		@BindString(size = "3")
-		public String header;
+		String header;
 		@BindByte(converter = WrongOutputConverter.class)
-		public byte type;
+		byte type;
 	}
 
 	@Test
@@ -239,9 +239,9 @@ class TemplateParserTest{
 
 		}
 		@BindString(size = "3")
-		public String header;
+		String header;
 		@BindByte(converter = WrongInputConverter.class)
-		public byte type;
+		byte type;
 	}
 
 	@Test
@@ -276,7 +276,7 @@ class TemplateParserTest{
 		@BindString(size = "3")
 		String header;
 		@BindByte
-		public byte type;
+		byte type;
 		@BindByte(condition = "type == 1")
 		Byte subtype;
 		@BindObject(type = TestSubComposition.class)
@@ -336,7 +336,7 @@ class TemplateParserTest{
 		@BindString(size = "3")
 		String header;
 		@BindByte
-		public byte type;
+		byte type;
 		@BindObject(type = TestSubCompositionBase.class, selectFrom = @ObjectChoices(
 			alternatives = {
 				@ObjectChoices.ObjectChoice(condition = "type == 1", type = TestSubComposition1.class),

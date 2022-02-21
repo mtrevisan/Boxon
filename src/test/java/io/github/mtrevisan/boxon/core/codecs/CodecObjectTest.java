@@ -37,23 +37,22 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
-import io.github.mtrevisan.boxon.helpers.Evaluator;
-import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
-import io.github.mtrevisan.boxon.core.parsers.LoaderTemplate;
-import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
+import io.github.mtrevisan.boxon.core.BoxonCore;
 import io.github.mtrevisan.boxon.core.BoxonCoreBuilder;
 import io.github.mtrevisan.boxon.core.ParseResponse;
 import io.github.mtrevisan.boxon.core.Parser;
-import io.github.mtrevisan.boxon.core.BoxonCore;
+import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
+import io.github.mtrevisan.boxon.helpers.Evaluator;
+import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
+import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.BitReader;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriter;
 import io.github.mtrevisan.boxon.io.ByteOrder;
-import io.github.mtrevisan.boxon.helpers.StringHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -155,7 +154,6 @@ class CodecObjectTest{
 
 		LoaderCodec loaderCodec = LoaderCodec.create();
 		loaderCodec.loadDefaultCodecs();
-		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);
 		Evaluator evaluator = Evaluator.create();
 		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator);
 		ReflectionHelper.injectValue(codec, TemplateParserInterface.class, templateParser);
@@ -179,51 +177,51 @@ class CodecObjectTest{
 
 	static class TestType1 extends TestType0{
 		@BindShort
-		public short value;
+		short value;
 	}
 
 	static class TestType2 extends TestType0{
 		@BindInt
-		public int value;
+		int value;
 	}
 
 	@MessageHeader(start = "tc1")
 	static class TestChoice1{
 		@BindString(size = "3")
-		public String header;
+		String header;
 		@BindObject(type = TestType0.class, selectFrom = @ObjectChoices(prefixSize = 8,
 			alternatives = {
 				@ObjectChoices.ObjectChoice(condition = "#prefix == 1", prefix = 1, type = TestType1.class),
 				@ObjectChoices.ObjectChoice(condition = "#prefix == 2", prefix = 2, type = TestType2.class)
 			}))
-		public TestType0 value;
+		TestType0 value;
 	}
 
 	@MessageHeader(start = "tc2")
 	static class TestChoice2{
 		@BindString(size = "3")
-		public String header;
+		String header;
 		@BindArrayPrimitive(size = "2", type = byte.class)
-		public byte[] index;
+		byte[] index;
 		@BindObject(type = TestType0.class, selectFrom = @ObjectChoices(prefixSize = 8,
 			alternatives = {
 				@ObjectChoices.ObjectChoice(condition = "index[#prefix] == 5", prefix = 0, type = TestType1.class),
 				@ObjectChoices.ObjectChoice(condition = "index[#prefix] == 6", prefix = 1, type = TestType2.class)
 			}))
-		public TestType0 value;
+		TestType0 value;
 	}
 
 	@MessageHeader(start = "tc3")
 	static class TestChoice3{
 		@BindString(size = "3")
-		public String header;
+		String header;
 		@BindString(size = "2")
-		public String key;
+		String key;
 		@BindObject(type = TestType0.class, selectFrom = @ObjectChoices(alternatives = {
 			@ObjectChoices.ObjectChoice(condition = "key == 'aa'", type = TestType1.class),
 			@ObjectChoices.ObjectChoice(condition = "key == 'bb'", type = TestType2.class)
 		}))
-		public TestType0 value;
+		TestType0 value;
 	}
 
 	@Test

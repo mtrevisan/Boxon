@@ -48,7 +48,7 @@ final class ConfigFieldDataBuilder{
 	 * @param annotation	The annotation.
 	 * @return	The created instance.
 	 */
-	public static ConfigFieldData create(final Field field, final ConfigurationField annotation){
+	static ConfigFieldData create(final Field field, final ConfigurationField annotation){
 		final ConfigFieldData data = new ConfigFieldData(field, annotation.getClass().getSimpleName());
 		data.setProtocolMinMaxVersions(annotation.minProtocol(), annotation.maxProtocol());
 		data.setMinMaxValues(annotation.minValue(), annotation.maxValue());
@@ -67,7 +67,7 @@ final class ConfigFieldDataBuilder{
 	 * @param annotation	The annotation.
 	 * @return	The created instance.
 	 */
-	public static ConfigFieldData create(final Field field, final CompositeConfigurationField annotation){
+	static ConfigFieldData create(final Field field, final CompositeConfigurationField annotation){
 		final ConfigFieldData data = new ConfigFieldData(field, annotation.getClass().getSimpleName());
 		data.setProtocolMinMaxVersions(annotation.minProtocol(), annotation.maxProtocol());
 		data.setPattern(annotation.pattern());
@@ -82,7 +82,7 @@ final class ConfigFieldDataBuilder{
 	 * @param annotation	The annotation.
 	 * @return	The created instance.
 	 */
-	public static ConfigFieldData create(final Field field, final CompositeSubField annotation){
+	static ConfigFieldData create(final Field field, final CompositeSubField annotation){
 		final ConfigFieldData data = new ConfigFieldData(field, annotation.getClass().getSimpleName());
 		data.setPattern(annotation.pattern());
 		data.setDefaultValue(annotation.defaultValue());
@@ -96,7 +96,7 @@ final class ConfigFieldDataBuilder{
 	 * @param annotation	The annotation.
 	 * @return	The created instance.
 	 */
-	public static ConfigFieldData create(final Field field, final AlternativeConfigurationField annotation){
+	static ConfigFieldData create(final Field field, final AlternativeConfigurationField annotation){
 		final ConfigFieldData data = new ConfigFieldData(field, annotation.getClass().getSimpleName());
 		data.setProtocolMinMaxVersions(annotation.minProtocol(), annotation.maxProtocol());
 		data.setEnumeration(annotation.enumeration());
@@ -110,7 +110,7 @@ final class ConfigFieldDataBuilder{
 	 * @param annotation	The annotation.
 	 * @return	The created instance.
 	 */
-	public static ConfigFieldData create(final Field field, final AlternativeSubField annotation){
+	static ConfigFieldData create(final Field field, final AlternativeSubField annotation){
 		final ConfigFieldData data = new ConfigFieldData(field, annotation.getClass().getSimpleName());
 		data.setProtocolMinMaxVersions(annotation.minProtocol(), annotation.maxProtocol());
 		data.setMinMaxValues(annotation.minValue(), annotation.maxValue());

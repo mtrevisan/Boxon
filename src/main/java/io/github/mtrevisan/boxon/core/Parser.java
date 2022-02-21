@@ -106,7 +106,7 @@ public final class Parser{
 	 */
 	public ParseResponse parse(final BitReader reader){
 		final byte[] array = reader.array();
-		final ParseResponse response = new ParseResponse(array);
+		final ParseResponse response = ParseResponse.create(array);
 
 		int start = 0;
 		while(reader.hasRemaining()){

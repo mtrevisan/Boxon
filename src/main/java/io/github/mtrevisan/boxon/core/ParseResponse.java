@@ -52,10 +52,22 @@ public final class ParseResponse{
 	 * Construct a response from a given (possibly multiple-message) payload.
 	 *
 	 * @param payload	The payload.
+	 * @return	The instance.
 	 */
-	ParseResponse(final byte[] payload){
+	static ParseResponse create(final byte[] payload){
+		return new ParseResponse(payload);
+	}
+
+
+	/**
+	 * Construct a response from a given (possibly multiple-message) payload.
+	 *
+	 * @param payload	The payload.
+	 */
+	private ParseResponse(final byte[] payload){
 		this.payload = JavaHelper.cloneOrDefault(payload, null);
 	}
+
 
 	/**
 	 * The number of total parsed (concatenated) messages.

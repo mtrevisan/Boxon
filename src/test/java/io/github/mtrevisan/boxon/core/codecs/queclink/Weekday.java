@@ -28,7 +28,7 @@ import io.github.mtrevisan.boxon.configurations.ConfigurationEnum;
 
 
 @SuppressWarnings("ALL")
-public enum Weekday implements ConfigurationEnum{
+enum Weekday implements ConfigurationEnum{
 
 	MONDAY(0x01),
 	TUESDAY(0x02),

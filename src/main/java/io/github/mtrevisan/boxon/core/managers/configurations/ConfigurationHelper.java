@@ -57,8 +57,8 @@ public final class ConfigurationHelper{
 	 * @param map	The map in which to load the key-value pair.
 	 * @throws ConfigurationException	If a duplicate is found.
 	 */
-	public static void putIfNotEmpty(final ConfigurationKey key, final Object value,
-			@SuppressWarnings("BoundedWildcard") final Map<String, Object> map) throws ConfigurationException{
+	public static void putIfNotEmpty(final ConfigurationKey key, final Object value, @SuppressWarnings("BoundedWildcard") final Map<String, Object> map)
+			throws ConfigurationException{
 		if(isValidValue(value) && map.put(key.toString(), value) != null)
 			throw ConfigurationException.create("Duplicated short description: {}", key.toString());
 	}

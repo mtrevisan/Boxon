@@ -100,8 +100,8 @@ final class LoaderConfiguration{
 	 * @throws AnnotationException	If a configuration annotation is invalid, or no annotation was found.
 	 * @throws ConfigurationException	If a configuration is not well formatted.
 	 */
-	void loadConfigurations(final Class<?>... basePackageClasses) throws AnnotationException, ConfigurationException{
-		eventListener.loadingConfigurations(basePackageClasses);
+	void loadConfigurationsFrom(final Class<?>... basePackageClasses) throws AnnotationException, ConfigurationException{
+		eventListener.loadingConfigurationsFrom(basePackageClasses);
 
 		final ReflectiveClassLoader reflectiveClassLoader = ReflectiveClassLoader.createFrom(basePackageClasses);
 		/** extract all classes annotated with {@link MessageHeader}. */

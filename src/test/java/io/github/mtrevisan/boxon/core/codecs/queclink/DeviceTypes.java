@@ -52,7 +52,7 @@ public class DeviceTypes{
 		return this;
 	}
 
-	public boolean has(final byte deviceTypeCode){
+	boolean has(final byte deviceTypeCode){
 		try{
 			getDeviceTypeName(deviceTypeCode);
 			return true;

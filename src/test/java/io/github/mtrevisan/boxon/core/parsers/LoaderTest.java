@@ -22,10 +22,10 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.codecs;
+package io.github.mtrevisan.boxon.core.parsers;
 
+import io.github.mtrevisan.boxon.core.codecs.LoaderCodec;
 import io.github.mtrevisan.boxon.core.managers.templates.Template;
-import io.github.mtrevisan.boxon.core.parsers.LoaderTemplate;
 import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageHex;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
@@ -51,7 +51,7 @@ class LoaderTest{
 		loaderCodec.loadDefaultCodecs();
 
 		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);
-		loaderTemplate.loadTemplates(ACKMessageHex.class);
+		loaderTemplate.loadTemplatesFrom(ACKMessageHex.class);
 	}
 
 	@Test
@@ -60,7 +60,7 @@ class LoaderTest{
 		loaderCodec.loadDefaultCodecs();
 
 		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);
-		loaderTemplate.loadTemplates(LoaderTest.class);
+		loaderTemplate.loadTemplatesFrom(LoaderTest.class);
 	}
 
 	@Test
@@ -68,7 +68,7 @@ class LoaderTest{
 		LoaderCodec loaderCodec = LoaderCodec.create();
 		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);
 		Exception e = Assertions.assertThrows(AnnotationException.class,
-			() -> loaderTemplate.loadTemplates(LoaderTest.class));
+			() -> loaderTemplate.loadTemplatesFrom(LoaderTest.class));
 		Assertions.assertTrue(e.getMessage().startsWith("No data can be extracted from this class: "));
 	}
 
@@ -77,7 +77,7 @@ class LoaderTest{
 		LoaderCodec loaderCodec = LoaderCodec.create();
 		loaderCodec.loadDefaultCodecs();
 		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);
-		loaderTemplate.loadTemplates(LoaderTest.class);
+		loaderTemplate.loadTemplate(ACKMessageHex.class);
 
 		byte[] payload = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		BitReaderInterface reader = BitReader.wrap(payload);
@@ -92,7 +92,7 @@ class LoaderTest{
 		LoaderCodec loaderCodec = LoaderCodec.create();
 		loaderCodec.loadDefaultCodecs();
 		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);
-		loaderTemplate.loadTemplates(LoaderTest.class);
+		loaderTemplate.loadTemplatesFrom(LoaderTest.class);
 
 		byte[] payload = StringHelper.toByteArray("3b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		BitReaderInterface reader = BitReader.wrap(payload);
@@ -104,7 +104,7 @@ class LoaderTest{
 		LoaderCodec loaderCodec = LoaderCodec.create();
 		loaderCodec.loadDefaultCodecs();
 		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);
-		loaderTemplate.loadTemplates(LoaderTest.class);
+		loaderTemplate.loadTemplatesFrom(LoaderTest.class);
 
 		byte[] payload = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		BitReaderInterface reader = BitReader.wrap(payload);
@@ -118,7 +118,7 @@ class LoaderTest{
 		LoaderCodec loaderCodec = LoaderCodec.create();
 		loaderCodec.loadDefaultCodecs();
 		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);
-		loaderTemplate.loadTemplates(LoaderTest.class);
+		loaderTemplate.loadTemplatesFrom(LoaderTest.class);
 
 		byte[] payload = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		BitReaderInterface reader = BitReader.wrap(payload);

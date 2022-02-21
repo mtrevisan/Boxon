@@ -57,7 +57,7 @@ public class QueclinkHelper{
 		}
 	}
 
-	public static class StringVersionConverter implements Converter<String, Version>{
+	static class StringVersionConverter implements Converter<String, Version>{
 		@Override
 		public Version decode(final String value){
 			final int major = Integer.parseInt(value.substring(0, 2), 16);
@@ -148,7 +148,7 @@ public class QueclinkHelper{
 		}
 	}
 
-	public static class StringDateTimeYYYYMMDDHHMMSSConverter implements Converter<String, ZonedDateTime>{
+	static class StringDateTimeYYYYMMDDHHMMSSConverter implements Converter<String, ZonedDateTime>{
 		@Override
 		public ZonedDateTime decode(final String value){
 			final int year = Integer.parseInt(value.substring(0, 4));
@@ -172,7 +172,7 @@ public class QueclinkHelper{
 	}
 
 
-	public static class HexStringToByteConverter implements Converter<String, Byte>{
+	static class HexStringToByteConverter implements Converter<String, Byte>{
 		@Override
 		public Byte decode(final String value){
 			return (byte)Integer.parseInt(value, 16);
@@ -185,7 +185,7 @@ public class QueclinkHelper{
 		}
 	}
 
-	public static class HexStringToIntConverter implements Converter<String, Integer>{
+	static class HexStringToIntConverter implements Converter<String, Integer>{
 		@Override
 		public Integer decode(final String value){
 			return Integer.parseInt(value, 16);
@@ -206,7 +206,7 @@ public class QueclinkHelper{
 	 * @param mask	The mask.
 	 * @return	The masked and shifter value.
 	 */
-	public static long applyMaskAndShift(final long value, long mask){
+	static long applyMaskAndShift(final long value, long mask){
 		final int ctz = Long.numberOfTrailingZeros(mask);
 		return ((value & mask) >>> ctz);
 	}

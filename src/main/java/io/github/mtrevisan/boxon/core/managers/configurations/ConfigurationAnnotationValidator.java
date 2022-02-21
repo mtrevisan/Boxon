@@ -46,11 +46,11 @@ import java.nio.charset.UnsupportedCharsetException;
 /**
  * Container of all the validators of a configuration message.
  */
-public enum ConfigurationAnnotationValidator{
+enum ConfigurationAnnotationValidator{
 
 	HEADER(ConfigurationHeader.class){
 		@Override
-		public void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
+		void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
 				throws AnnotationException{
 			final ConfigurationHeader binding = (ConfigurationHeader)annotation;
 
@@ -72,7 +72,7 @@ public enum ConfigurationAnnotationValidator{
 
 	FIELD(ConfigurationField.class){
 		@Override
-		public void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
+		void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
 				throws AnnotationException, CodecException{
 			final ConfigFieldData configData = ConfigFieldDataBuilder.create(field, (ConfigurationField)annotation);
 
@@ -120,7 +120,7 @@ public enum ConfigurationAnnotationValidator{
 
 	COMPOSITE_FIELD(CompositeConfigurationField.class){
 		@Override
-		public void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
+		void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
 				throws AnnotationException, CodecException{
 			final ConfigFieldData configData = ConfigFieldDataBuilder.create(field, (CompositeConfigurationField)annotation);
 
@@ -148,7 +148,7 @@ public enum ConfigurationAnnotationValidator{
 
 	SUB_FIELD(CompositeSubField.class){
 		@Override
-		public void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
+		void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
 				throws AnnotationException, CodecException{
 			final ConfigFieldData configData = ConfigFieldDataBuilder.create(field, (CompositeSubField)annotation);
 
@@ -165,7 +165,7 @@ public enum ConfigurationAnnotationValidator{
 
 	ALTERNATIVE_FIELDS(AlternativeConfigurationField.class){
 		@Override
-		public void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
+		void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
 				throws AnnotationException{
 			final ConfigFieldData configData = ConfigFieldDataBuilder.create(field, (AlternativeConfigurationField)annotation);
 
@@ -198,7 +198,7 @@ public enum ConfigurationAnnotationValidator{
 
 	ALTERNATIVE_FIELD(AlternativeSubField.class){
 		@Override
-		public void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
+		void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
 				throws AnnotationException, CodecException{
 			final ConfigFieldData configData = ConfigFieldDataBuilder.create(field, (AlternativeSubField)annotation);
 
@@ -252,7 +252,7 @@ public enum ConfigurationAnnotationValidator{
 	 * @param annotationType	The annotation class type.
 	 * @return	The validator for the given annotation.
 	 */
-	public static ConfigurationAnnotationValidator fromAnnotationType(final Class<? extends Annotation> annotationType){
+	static ConfigurationAnnotationValidator fromAnnotationType(final Class<? extends Annotation> annotationType){
 		return VALIDATORS.get(annotationType);
 	}
 
@@ -266,7 +266,7 @@ public enum ConfigurationAnnotationValidator{
 	 * @throws AnnotationException	If an error is detected.
 	 * @throws CodecException	If an error was raised reading of interpreting the field value.
 	 */
-	public abstract void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion) throws AnnotationException, CodecException;
+	abstract void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion) throws AnnotationException, CodecException;
 
 	private static void validateCharset(final String charsetName) throws AnnotationException{
 		try{

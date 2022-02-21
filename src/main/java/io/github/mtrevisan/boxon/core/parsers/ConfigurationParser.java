@@ -99,7 +99,7 @@ public final class ConfigurationParser{
 	 * @throws ConfigurationException	If a configuration is not well formatted.
 	 */
 	public void loadConfigurationsFrom(final Class<?>... basePackageClasses) throws AnnotationException, ConfigurationException{
-		loaderConfiguration.loadConfigurations(basePackageClasses);
+		loaderConfiguration.loadConfigurationsFrom(basePackageClasses);
 	}
 
 	/**

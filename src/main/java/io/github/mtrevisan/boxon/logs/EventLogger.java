@@ -71,7 +71,7 @@ public final class EventLogger extends EventListener{
 
 
 	@Override
-	public void loadingCodecs(final Class<?>[] basePackageClasses){
+	public void loadingCodecsFrom(final Class<?>[] basePackageClasses){
 		if(LOGGER.isInfoEnabled())
 			info("Load codecs from package(s) {}", joinPackageNames(basePackageClasses));
 	}
@@ -99,7 +99,7 @@ public final class EventLogger extends EventListener{
 
 
 	@Override
-	public void loadingTemplates(final Class<?>[] basePackageClasses){
+	public void loadingTemplatesFrom(final Class<?>[] basePackageClasses){
 		if(LOGGER.isInfoEnabled())
 			info("Load templates from package(s) {}", joinPackageNames(basePackageClasses));
 	}
@@ -129,7 +129,7 @@ public final class EventLogger extends EventListener{
 
 
 	@Override
-	public void loadingConfigurations(final Class<?>[] basePackageClasses){
+	public void loadingConfigurationsFrom(final Class<?>[] basePackageClasses){
 		if(LOGGER.isInfoEnabled())
 			info("Load configurations from package(s) {}", joinPackageNames(basePackageClasses));
 	}

@@ -42,7 +42,7 @@ final class ParserWriterHelper{
 	private EventListener eventListener;
 
 
-	public static ParserWriterHelper create(){
+	static ParserWriterHelper create(){
 		return new ParserWriterHelper();
 	}
 

@@ -32,7 +32,7 @@ import java.lang.reflect.Field;
 
 /** Data associated to an annotated field. */
 @SuppressWarnings({"ClassWithTooManyFields", "ClassWithTooManyMethods"})
-public final class ConfigFieldData{
+final class ConfigFieldData{
 
 	private final Field field;
 	private final String annotationName;
@@ -73,7 +73,7 @@ public final class ConfigFieldData{
 	 *
 	 * @return	The name of the annotation.
 	 */
-	public String getAnnotationName(){
+	String getAnnotationName(){
 		return annotationName;
 	}
 
@@ -82,7 +82,7 @@ public final class ConfigFieldData{
 	 *
 	 * @return	The name of the configuration field.
 	 */
-	public String getFieldName(){
+	String getFieldName(){
 		return field.getName();
 	}
 
@@ -91,7 +91,7 @@ public final class ConfigFieldData{
 	 *
 	 * @return	The type of the configuration field.
 	 */
-	public Class<?> getFieldType(){
+	Class<?> getFieldType(){
 		return field.getType();
 	}
 
@@ -100,7 +100,7 @@ public final class ConfigFieldData{
 	 *
 	 * @return	The minimum protocol of the configuration field.
 	 */
-	public String getMinProtocol(){
+	String getMinProtocol(){
 		return minProtocol;
 	}
 
@@ -109,7 +109,7 @@ public final class ConfigFieldData{
 	 *
 	 * @return	The maximum protocol of the configuration field.
 	 */
-	public String getMaxProtocol(){
+	String getMaxProtocol(){
 		return maxProtocol;
 	}
 
@@ -118,7 +118,7 @@ public final class ConfigFieldData{
 	 *
 	 * @return	The minimum value for the configuration field.
 	 */
-	public String getMinValue(){
+	String getMinValue(){
 		return minValue;
 	}
 
@@ -127,7 +127,7 @@ public final class ConfigFieldData{
 	 *
 	 * @return	The maximum value for the configuration field.
 	 */
-	public String getMaxValue(){
+	String getMaxValue(){
 		return maxValue;
 	}
 
@@ -136,7 +136,7 @@ public final class ConfigFieldData{
 	 *
 	 * @return	The pattern for the configuration field.
 	 */
-	public String getPattern(){
+	String getPattern(){
 		return pattern;
 	}
 
@@ -145,7 +145,7 @@ public final class ConfigFieldData{
 	 *
 	 * @param pattern	The pattern.
 	 */
-	public void setPattern(final String pattern){
+	void setPattern(final String pattern){
 		this.pattern = pattern;
 	}
 
@@ -154,7 +154,7 @@ public final class ConfigFieldData{
 	 *
 	 * @return	The enumeration for the configuration field.
 	 */
-	public Class<? extends ConfigurationEnum> getEnumeration(){
+	Class<? extends ConfigurationEnum> getEnumeration(){
 		return enumeration;
 	}
 
@@ -163,7 +163,7 @@ public final class ConfigFieldData{
 	 *
 	 * @param enumeration	The enumeration.
 	 */
-	public void setEnumeration(final Class<? extends ConfigurationEnum> enumeration){
+	void setEnumeration(final Class<? extends ConfigurationEnum> enumeration){
 		this.enumeration = enumeration;
 	}
 
@@ -172,7 +172,7 @@ public final class ConfigFieldData{
 	 *
 	 * @return	Whether the configuration field is an enumeration.
 	 */
-	public boolean hasEnumeration(){
+	boolean hasEnumeration(){
 		return hasEnumeration(enumeration);
 	}
 
@@ -181,7 +181,7 @@ public final class ConfigFieldData{
 	 *
 	 * @return	The default value for the configuration field.
 	 */
-	public String getDefaultValue(){
+	String getDefaultValue(){
 		return defaultValue;
 	}
 
@@ -190,7 +190,7 @@ public final class ConfigFieldData{
 	 *
 	 * @param defaultValue	The default value.
 	 */
-	public void setDefaultValue(final String defaultValue){
+	void setDefaultValue(final String defaultValue){
 		this.defaultValue = defaultValue;
 	}
 
@@ -199,7 +199,7 @@ public final class ConfigFieldData{
 	 *
 	 * @return	The charset for the configuration field.
 	 */
-	public String getCharset(){
+	String getCharset(){
 		return charset;
 	}
 
@@ -208,7 +208,7 @@ public final class ConfigFieldData{
 	 *
 	 * @param charset	The charset.
 	 */
-	public void setCharset(final String charset){
+	void setCharset(final String charset){
 		this.charset = charset;
 	}
 
@@ -217,7 +217,7 @@ public final class ConfigFieldData{
 	 *
 	 * @return	The radix for the configuration field.
 	 */
-	public int getRadix(){
+	int getRadix(){
 		return radix;
 	}
 
@@ -226,7 +226,7 @@ public final class ConfigFieldData{
 	 *
 	 * @param radix	The radix.
 	 */
-	public void setRadix(final int radix){
+	void setRadix(final int radix){
 		this.radix = radix;
 	}
 

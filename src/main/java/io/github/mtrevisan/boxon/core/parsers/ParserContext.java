@@ -58,7 +58,7 @@ final class ParserContext<T>{
 	}
 
 
-	public Object getRootObject(){
+	Object getRootObject(){
 		return rootObject;
 	}
 
@@ -90,10 +90,6 @@ final class ParserContext<T>{
 		this.fieldName = fieldName;
 	}
 
-	public Object getField(){
-		return field;
-	}
-
 	void setField(final Object field){
 		this.field = field;
 	}
@@ -113,7 +109,7 @@ final class ParserContext<T>{
 	 *
 	 * @return	The annotation bound to the field.
 	 */
-	public Annotation getBinding(){
+	Annotation getBinding(){
 		return binding;
 	}
 

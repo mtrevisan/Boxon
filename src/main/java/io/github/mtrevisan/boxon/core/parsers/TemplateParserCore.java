@@ -87,8 +87,8 @@ final class TemplateParserCore{
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
 	 */
-	void loadTemplates(final Class<?>... basePackageClasses) throws AnnotationException, TemplateException{
-		loaderTemplate.loadTemplates(basePackageClasses);
+	void loadTemplatesFrom(final Class<?>... basePackageClasses) throws AnnotationException, TemplateException{
+		loaderTemplate.loadTemplatesFrom(basePackageClasses);
 	}
 
 	/**

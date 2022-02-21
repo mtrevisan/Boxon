@@ -49,11 +49,11 @@ import java.nio.charset.UnsupportedCharsetException;
 /**
  * Container of all the validators of a message template.
  */
-public enum TemplateAnnotationValidator{
+enum TemplateAnnotationValidator{
 
 	OBJECT(BindObject.class){
 		@Override
-		public void validate(final Field field, final Annotation annotation) throws AnnotationException{
+		void validate(final Field field, final Annotation annotation) throws AnnotationException{
 			final BindObject binding = (BindObject)annotation;
 			final Class<?> type = binding.type();
 			validateType(type, BindObject.class);
@@ -70,7 +70,7 @@ public enum TemplateAnnotationValidator{
 
 	ARRAY_PRIMITIVE(BindArrayPrimitive.class){
 		@Override
-		public void validate(final Field field, final Annotation annotation) throws AnnotationException{
+		void validate(final Field field, final Annotation annotation) throws AnnotationException{
 			final BindArrayPrimitive binding = (BindArrayPrimitive)annotation;
 			final Class<?> type = binding.type();
 			if(!ParserDataType.isPrimitive(type))
@@ -84,7 +84,7 @@ public enum TemplateAnnotationValidator{
 
 	ARRAY(BindArray.class){
 		@Override
-		public void validate(final Field field, final Annotation annotation) throws AnnotationException{
+		void validate(final Field field, final Annotation annotation) throws AnnotationException{
 			final BindArray binding = (BindArray)annotation;
 			final Class<?> type = binding.type();
 			validateType(type, BindArray.class);
@@ -101,7 +101,7 @@ public enum TemplateAnnotationValidator{
 
 	BIT_SET(BindBitSet.class){
 		@Override
-		public void validate(final Field field, final Annotation annotation) throws AnnotationException{
+		void validate(final Field field, final Annotation annotation) throws AnnotationException{
 			final BindBitSet binding = (BindBitSet)annotation;
 
 			final Class<? extends Converter<?, ?>> converter = binding.converter();
@@ -111,7 +111,7 @@ public enum TemplateAnnotationValidator{
 
 	STRING(BindString.class){
 		@Override
-		public void validate(final Field field, final Annotation annotation) throws AnnotationException{
+		void validate(final Field field, final Annotation annotation) throws AnnotationException{
 			final BindString binding = (BindString)annotation;
 			validateCharset(binding.charset());
 
@@ -122,7 +122,7 @@ public enum TemplateAnnotationValidator{
 
 	STRING_TERMINATED(BindStringTerminated.class){
 		@Override
-		public void validate(final Field field, final Annotation annotation) throws AnnotationException{
+		void validate(final Field field, final Annotation annotation) throws AnnotationException{
 			final BindStringTerminated binding = (BindStringTerminated)annotation;
 			validateCharset(binding.charset());
 
@@ -134,7 +134,7 @@ public enum TemplateAnnotationValidator{
 
 	CHECKSUM(Checksum.class){
 		@Override
-		public void validate(final Field field, final Annotation annotation) throws AnnotationException{
+		void validate(final Field field, final Annotation annotation) throws AnnotationException{
 			final Class<?> type = ((Checksum)annotation).type();
 			final ParserDataType dataType = ParserDataType.fromType(type);
 			if(dataType != ParserDataType.BYTE && dataType != ParserDataType.SHORT)
@@ -163,7 +163,7 @@ public enum TemplateAnnotationValidator{
 	 * @param annotationType	The annotation class type.
 	 * @return	The validator for the given annotation.
 	 */
-	public static TemplateAnnotationValidator fromAnnotation(final Class<? extends Annotation> annotationType){
+	static TemplateAnnotationValidator fromAnnotation(final Class<? extends Annotation> annotationType){
 		return VALIDATORS.get(annotationType);
 	}
 
@@ -174,7 +174,7 @@ public enum TemplateAnnotationValidator{
 	 * @param annotation	The annotation.
 	 * @throws AnnotationException	If an error is detected.
 	 */
-	public abstract void validate(final Field field, final Annotation annotation) throws AnnotationException;
+	abstract void validate(final Field field, final Annotation annotation) throws AnnotationException;
 
 
 	private static void validateType(final Class<?> bindingType, final Class<? extends Annotation> annotation) throws AnnotationException{

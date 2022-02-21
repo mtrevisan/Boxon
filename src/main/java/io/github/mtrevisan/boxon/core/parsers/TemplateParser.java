@@ -112,7 +112,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	 * @throws TemplateException	If a template is not well formatted.
 	 */
 	public TemplateParser withTemplatesFrom(final Class<?>... basePackageClasses) throws AnnotationException, TemplateException{
-		core.loadTemplates(basePackageClasses);
+		core.loadTemplatesFrom(basePackageClasses);
 
 		return this;
 	}

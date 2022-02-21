@@ -56,7 +56,7 @@ public class EventListener{
 	 *
 	 * @param basePackageClasses	List of base packages.
 	 */
-	public void loadingCodecs(final Class<?>[] basePackageClasses){}
+	public void loadingCodecsFrom(final Class<?>[] basePackageClasses){}
 
 	/**
 	 * Called when about to loading some codecs through codec classes.
@@ -85,7 +85,7 @@ public class EventListener{
 	 *
 	 * @param basePackageClasses	List of base packages.
 	 */
-	public void loadingTemplates(final Class<?>[] basePackageClasses){}
+	public void loadingTemplatesFrom(final Class<?>[] basePackageClasses){}
 
 	/**
 	 * Called when about to loading a template through codec classes.
@@ -115,7 +115,7 @@ public class EventListener{
 	 *
 	 * @param basePackageClasses	List of base packages.
 	 */
-	public void loadingConfigurations(final Class<?>[] basePackageClasses){}
+	public void loadingConfigurationsFrom(final Class<?>[] basePackageClasses){}
 
 	/**
 	 * Called when some configurations are loaded.

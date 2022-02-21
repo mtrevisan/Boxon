@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.managers;
+package io.github.mtrevisan.boxon.core.parsers;
 
 import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.Evaluate;
@@ -42,13 +42,12 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.annotations.checksummers.CRC16CCITT;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
+import io.github.mtrevisan.boxon.core.codecs.LoaderCodec;
 import io.github.mtrevisan.boxon.core.managers.templates.BoundedField;
 import io.github.mtrevisan.boxon.core.managers.templates.EvaluatedField;
 import io.github.mtrevisan.boxon.core.managers.templates.Template;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.io.ByteOrder;
-import io.github.mtrevisan.boxon.core.codecs.LoaderCodec;
-import io.github.mtrevisan.boxon.core.parsers.LoaderTemplate;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -66,7 +65,7 @@ class TemplateTest{
 
 	private static class Mask{
 
-		public static class MaskConverter implements Converter<Byte, Mask>{
+		static class MaskConverter implements Converter<Byte, Mask>{
 			@Override
 			public Mask decode(final Byte value){
 				return new Mask(value);
@@ -86,7 +85,7 @@ class TemplateTest{
 			this.mask = mask;
 		}
 
-		public boolean hasProtocolVersion(){
+		boolean hasProtocolVersion(){
 			return hasBit(mask, 2);
 		}
 
@@ -106,10 +105,10 @@ class TemplateTest{
 
 	private static class Version{
 		@BindByte
-		public byte major;
+		byte major;
 		@BindByte
-		public byte minor;
-		public byte build;
+		byte minor;
+		byte build;
 	}
 
 	@MessageHeader(start = "+", end = "-")
@@ -117,7 +116,7 @@ class TemplateTest{
 
 		private final Map<Byte, String> MESSAGE_TYPE_MAP = new HashMap<>();
 
-		public class MessageTypeConverter implements Converter<Byte, String>{
+		class MessageTypeConverter implements Converter<Byte, String>{
 			@Override
 			public String decode(final Byte value){
 				return MESSAGE_TYPE_MAP.get(value);
@@ -139,7 +138,7 @@ class TemplateTest{
 		}
 
 		@BindByte(converter = Mask.MaskConverter.class)
-		public Mask mask;
+		Mask mask;
 		@BindArray(size = "2", type = Version.class)
 		private Version[] versions;
 		@BindArrayPrimitive(condition = "mask.hasProtocolVersion()", size = "2", type = byte.class)
@@ -161,7 +160,7 @@ class TemplateTest{
 		@BindShort
 		private short numberShort;
 		@BindString(size = "4")
-		public String text;
+		String text;
 		@BindStringTerminated(terminator = ',')
 		private String textWithTerminator;
 

@@ -402,8 +402,7 @@ public enum AnnotationDescriptor{
 	 * @param value	The value.
 	 * @param map	The map in which to load the key-value pair.
 	 */
-	public static void putIfNotEmpty(final DescriberKey key, final Object value,
-			@SuppressWarnings("BoundedWildcard") final Map<String, Object> map){
+	public static void putIfNotEmpty(final DescriberKey key, final Object value, @SuppressWarnings("BoundedWildcard") final Map<String, Object> map){
 		if(value != null && (!(value instanceof String) || !StringHelper.isBlank((CharSequence)value)))
 			map.put(key.toString(), value);
 	}
