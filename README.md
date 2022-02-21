@@ -731,9 +731,7 @@ gives as output the following
       }
    ],
    "context": {
-      "methods": [
-         "private static int io.github.mtrevisan.boxon.core.ParserTest.headerSize()"
-      ],
+      "headerSize": "private static int io.github.mtrevisan.boxon.core.ParserTest.headerSize()",
       "deviceTypes": "[QUECLINK_GB200S (0x46)]"
    }
 }

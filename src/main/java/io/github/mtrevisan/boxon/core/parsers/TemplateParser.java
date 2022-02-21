@@ -30,34 +30,28 @@ import io.github.mtrevisan.boxon.annotations.Skip;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
 import io.github.mtrevisan.boxon.core.codecs.LoaderCodecInterface;
 import io.github.mtrevisan.boxon.core.codecs.TemplateParserInterface;
-import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.core.managers.templates.BoundedField;
 import io.github.mtrevisan.boxon.core.managers.templates.EvaluatedField;
 import io.github.mtrevisan.boxon.core.managers.templates.Template;
-import io.github.mtrevisan.boxon.helpers.CharsetHelper;
-import io.github.mtrevisan.boxon.helpers.ConstructorHelper;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
-import io.github.mtrevisan.boxon.descriptions.DescriberKey;
+import io.github.mtrevisan.boxon.helpers.CharsetHelper;
+import io.github.mtrevisan.boxon.helpers.ConstructorHelper;
+import io.github.mtrevisan.boxon.helpers.Evaluator;
+import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.io.CodecInterface;
 import io.github.mtrevisan.boxon.io.ParserDataType;
 import io.github.mtrevisan.boxon.logs.EventListener;
-import io.github.mtrevisan.boxon.helpers.StringHelper;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
@@ -66,7 +60,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class TemplateParser implements TemplateParserInterface{
 
 	private final TemplateParserCore core;
-	private final Map<String, Object> backupContext = new ConcurrentHashMap<>(0);
 
 	private final ParserWriterHelper parserWriterHelper;
 
@@ -400,56 +393,12 @@ public final class TemplateParser implements TemplateParserInterface{
 
 
 	/**
-	 * Add a key-value pair to the backup of the context.
-	 *
-	 * @param key	The key.
-	 * @param value	The value.
-	 */
-	public void addToBackupContext(final String key, final Object value){
-		backupContext.put(key, value.toString());
-	}
-
-	/**
-	 * Add a map to the backup of the context.
-	 *
-	 * @param context	The map.
-	 */
-	public void addToBackupContext(final Map<String, Object> context){
-		for(final Map.Entry<String, Object> entry : context.entrySet())
-			addToBackupContext(entry.getKey(), entry.getValue());
-	}
-
-	/**
-	 * Add a method to the backup of the context.
-	 *
-	 * @param method	The method.
-	 */
-	public void addToBackupContext(final Method method){
-		@SuppressWarnings("unchecked")
-		Collection<String> v = (Collection<String>)backupContext.get(DescriberKey.CONTEXT_METHODS.toString());
-		if(v == null){
-			v = ConcurrentHashMap.newKeySet(1);
-			backupContext.put(DescriberKey.CONTEXT_METHODS.toString(), v);
-		}
-		v.add(method.toString());
-	}
-
-	/**
 	 * The loader for the templates.
 	 *
 	 * @return	The loader for the templates.
 	 */
 	public LoaderTemplate getLoaderTemplate(){
 		return core.getLoaderTemplate();
-	}
-
-	/**
-	 * The backup of the context.
-	 *
-	 * @return	The backup of the context.
-	 */
-	public Map<String, Object> getBackupContext(){
-		return Collections.unmodifiableMap(backupContext);
 	}
 
 }

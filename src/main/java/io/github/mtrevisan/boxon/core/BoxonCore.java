@@ -26,14 +26,14 @@ package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
-import io.github.mtrevisan.boxon.core.parsers.ConfigurationParser;
-import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.core.codecs.LoaderCodec;
-import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
 import io.github.mtrevisan.boxon.core.codecs.TemplateParserInterface;
+import io.github.mtrevisan.boxon.core.parsers.ConfigurationParser;
+import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
+import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.io.CodecInterface;
 import io.github.mtrevisan.boxon.logs.EventListener;
 
@@ -100,8 +100,6 @@ public final class BoxonCore{
 	 */
 	void addToContext(final String key, final Object value){
 		evaluator.addToContext(key, value);
-
-		templateParser.addToBackupContext(key, value);
 	}
 
 	/**
@@ -114,8 +112,6 @@ public final class BoxonCore{
 
 		for(final Map.Entry<String, Object> entry : context.entrySet())
 			evaluator.addToContext(entry.getKey(), entry.getValue());
-
-		templateParser.addToBackupContext(context);
 	}
 
 	/**
@@ -125,8 +121,10 @@ public final class BoxonCore{
 	 */
 	void addContextFunction(final Method method){
 		evaluator.addToContext(method);
+	}
 
-		templateParser.addToBackupContext(method);
+	public Map<String, Object> getContext(){
+		return evaluator.getContext();
 	}
 
 

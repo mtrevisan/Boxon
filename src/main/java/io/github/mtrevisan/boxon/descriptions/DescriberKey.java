@@ -30,7 +30,6 @@ package io.github.mtrevisan.boxon.descriptions;
  */
 public enum DescriberKey{
 	CONTEXT("context"),
-	CONTEXT_METHODS("methods"),
 
 	HEADER("header"),
 	HEADER_START("start"),

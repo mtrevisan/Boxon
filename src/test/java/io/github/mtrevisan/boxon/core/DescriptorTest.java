@@ -89,9 +89,9 @@ class DescriptorTest{
 			+ ZonedDateTime.class.getName()
 			+ ",byteOrder:BIG_ENDIAN},{condition:mask.hasMessageId(),name:messageId,annotationType:BindShort,fieldType:short,byteOrder:BIG_ENDIAN},{skipEnd:4,skipStart:4,name:checksum,annotationType:Checksum,startValue:-1,type:short,fieldType:short,byteOrder:BIG_ENDIAN,algorithm:"
 			+ CRC16CCITT.class.getName()
-			+ "}],context:{methods:[private static int "
-			+ ParserTest.class.getName()
-			+ ".headerSize()],deviceTypes:[QUECLINK_GB200S (0x46)]},header:{start:[+ACK],charset:UTF-8}}", jsonDescription);
+			+ "}],context:{headerSize:"
+			+ ParserTest.class.getDeclaredMethod("headerSize")
+			+ ",deviceTypes:[QUECLINK_GB200S (0x46)]},header:{start:[+ACK],charset:UTF-8}}", jsonDescription);
 	}
 
 }

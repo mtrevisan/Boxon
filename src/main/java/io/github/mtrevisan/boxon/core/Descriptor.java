@@ -49,8 +49,8 @@ import java.util.Map;
 @SuppressWarnings({"WeakerAccess", "unused"})
 public final class Descriptor{
 
+	private final BoxonCore boxonCore;
 	private final LoaderTemplate loaderTemplate;
-	private final Map<String, Object> backupContext;
 
 
 	/**
@@ -65,9 +65,9 @@ public final class Descriptor{
 
 
 	private Descriptor(final BoxonCore boxonCore){
+		this.boxonCore = boxonCore;
 		final TemplateParser templateParser = boxonCore.getTemplateParser();
 		loaderTemplate = templateParser.getLoaderTemplate();
-		backupContext = templateParser.getBackupContext();
 	}
 
 
@@ -151,7 +151,7 @@ public final class Descriptor{
 	}
 
 	private void describeContext(final Map<String, Object> description){
-		description.put(DescriberKey.CONTEXT.toString(), backupContext);
+		description.put(DescriberKey.CONTEXT.toString(), boxonCore.getContext());
 	}
 
 }

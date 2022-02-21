@@ -36,6 +36,9 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 
@@ -44,12 +47,42 @@ import java.util.Objects;
  */
 public final class Evaluator{
 
+	private static final class BoxonEvaluationContext extends StandardEvaluationContext{
+
+		private final Map<String, Object> backupContext = new HashMap<>(0);
+
+
+		@Override
+		public void setVariable(final String name, final Object value){
+			super.setVariable(name, value);
+
+			if(name != null){
+				if(value != null)
+					backupContext.put(name, value);
+				else
+					backupContext.remove(name);
+			}
+		}
+
+		@Override
+		public void registerFunction(final String name, final Method method){
+			super.registerFunction(name, method);
+
+			backupContext.put(name, method);
+		}
+
+		Map<String, Object> getContext(){
+			return Collections.unmodifiableMap(backupContext);
+		}
+	}
+
+
 	//allow for immediate compilation of SpEL expressions
 	private static final SpelParserConfiguration CONFIG = new SpelParserConfiguration(SpelCompilerMode.IMMEDIATE, null);
 	private static final ExpressionParser PARSER = new SpelExpressionParser(CONFIG);
 
 
-	private final StandardEvaluationContext context = new StandardEvaluationContext();
+	private final BoxonEvaluationContext context = new BoxonEvaluationContext();
 
 
 	/**
@@ -88,6 +121,10 @@ public final class Evaluator{
 	 */
 	public void addToContext(final Method method){
 		context.registerFunction(method.getName(), method);
+	}
+
+	public Map<String, Object> getContext(){
+		return context.getContext();
 	}
 
 	/**
