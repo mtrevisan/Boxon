@@ -70,29 +70,13 @@ public final class StringHelper{
 	}
 
 	/**
-	 * Right pad a string with a specified character.
-	 *
-	 * @param text	The string to pad out, must not be {@code null}.
-	 * @param size	The size to pad to.
-	 * @param padChar	The character to pad with.
-	 * @return	Right padded string or original string if no padding is necessary.
-	 */
-	public static String rightPad(final String text, final int size, final char padChar){
-		final int pads = size - text.length();
-		if(pads <= 0)
-			return text;
-
-		return text + repeat(padChar, pads);
-	}
-
-	/**
 	 * Returns padding using the specified delimiter repeated to a given length.
 	 *
 	 * @param chr	Character to repeat.
 	 * @param count	Number of times to repeat char.
 	 * @return	String with repeated character.
 	 */
-	private static String repeat(final char chr, final int count){
+	public static String repeat(final char chr, final int count){
 		final char[] buf = new char[count];
 		Arrays.fill(buf, chr);
 		return new String(buf);

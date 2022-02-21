@@ -44,6 +44,7 @@ import io.github.mtrevisan.boxon.helpers.ContextHelper;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.nio.charset.UnsupportedCharsetException;
+import java.util.BitSet;
 
 
 /**
@@ -105,7 +106,7 @@ enum TemplateAnnotationValidator{
 			final BindBitSet binding = (BindBitSet)annotation;
 
 			final Class<? extends Converter<?, ?>> converter = binding.converter();
-			validateConverter(field, java.util.BitSet.class, converter);
+			validateConverter(field, BitSet.class, converter);
 		}
 	},
 

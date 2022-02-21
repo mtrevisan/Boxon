@@ -26,16 +26,15 @@ package io.github.mtrevisan.boxon.core.managers.configurations;
 
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
+import io.github.mtrevisan.boxon.configurations.ConfigurationEnum;
+import io.github.mtrevisan.boxon.configurations.ConfigurationKey;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
-import io.github.mtrevisan.boxon.exceptions.EncodeException;
-import io.github.mtrevisan.boxon.io.ParserDataType;
-import io.github.mtrevisan.boxon.configurations.ConfigurationEnum;
-import io.github.mtrevisan.boxon.configurations.ConfigurationKey;
-import io.github.mtrevisan.boxon.semanticversioning.Version;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
+import io.github.mtrevisan.boxon.io.ParserDataType;
+import io.github.mtrevisan.boxon.semanticversioning.Version;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -226,8 +225,8 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 	public void validateValue(final Field field, final String dataKey, final Object dataValue){}
 
 	@Override
-	public Object convertValue(final Field field, final String dataKey, Object dataValue, final Version protocol) throws EncodeException,
-			CodecException, AnnotationException{
+	public Object convertValue(final Field field, final String dataKey, Object dataValue, final Version protocol) throws CodecException,
+			AnnotationException{
 		final AlternativeSubField fieldBinding = extractField(protocol);
 		if(fieldBinding != null){
 			final Class<?> fieldType = field.getType();

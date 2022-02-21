@@ -30,15 +30,15 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
+import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
-import io.github.mtrevisan.boxon.exceptions.FieldException;
+import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.BitReader;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriter;
 import io.github.mtrevisan.boxon.io.ByteOrder;
 import io.github.mtrevisan.boxon.io.CodecInterface;
-import io.github.mtrevisan.boxon.helpers.StringHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -494,12 +494,28 @@ class CodecIntegerTest{
 		writer.flush();
 
 		BitSet bits = CodecInteger.toBitSet(encodedValue, 128, ByteOrder.LITTLE_ENDIAN);
-		Assertions.assertEquals(StringHelper.rightPad(StringHelper.toHexString(bits.toByteArray()).toUpperCase(Locale.ROOT), 32, '0'), writer.toString());
+		Assertions.assertEquals(rightPad(StringHelper.toHexString(bits.toByteArray()).toUpperCase(Locale.ROOT), 32, '0'), writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
 		BigInteger decoded = (BigInteger)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue, decoded);
+	}
+
+	/**
+	 * Right pad a string with a specified character.
+	 *
+	 * @param text	The string to pad out, must not be {@code null}.
+	 * @param size	The size to pad to.
+	 * @param padChar	The character to pad with.
+	 * @return	Right padded string or original string if no padding is necessary.
+	 */
+	private static String rightPad(final String text, final int size, final char padChar){
+		final int pads = size - text.length();
+		if(pads <= 0)
+			return text;
+
+		return text + StringHelper.repeat(padChar, pads);
 	}
 
 	@Test
