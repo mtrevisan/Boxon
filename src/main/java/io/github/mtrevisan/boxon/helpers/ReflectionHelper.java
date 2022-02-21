@@ -90,13 +90,8 @@ public final class ReflectionHelper{
 	 * @param <T>	The value class type.
 	 */
 	public static <T> void injectValue(final Object obj, final Class<T> fieldType, final T value){
-		try{
-			final List<Field> fields = getAccessibleFields(obj.getClass(), fieldType);
-			for(int i = 0; i < fields.size(); i ++)
-				fields.get(i)
-					.set(obj, value);
-		}
-		catch(final IllegalArgumentException | IllegalAccessException ignored){}
+		final Class<?> type = obj.getClass();
+		injectValue(type, obj, fieldType, value);
 	}
 
 	/**
@@ -108,10 +103,15 @@ public final class ReflectionHelper{
 	 * @param <T>	The value class type.
 	 */
 	public static <T> void injectStaticValue(final Class<?> type, final Class<T> fieldType, final T value){
+		injectValue(type, null, fieldType, value);
+	}
+
+	private static <T> void injectValue(final Class<?> objType, final Object obj, final Class<T> fieldType, final T value){
 		try{
-			final List<Field> fields = getAccessibleFields(type, fieldType);
+			final List<Field> fields = getAccessibleFields(objType, fieldType);
 			for(int i = 0; i < fields.size(); i ++)
-				fields.get(i).set(null, value);
+				fields.get(i)
+					.set(obj, value);
 		}
 		catch(final IllegalArgumentException | IllegalAccessException ignored){}
 	}
