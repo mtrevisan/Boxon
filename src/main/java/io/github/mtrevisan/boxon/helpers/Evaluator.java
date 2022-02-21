@@ -77,12 +77,15 @@ public final class Evaluator{
 	}
 
 
-	//allow for immediate compilation of SpEL expressions
-	private static final SpelParserConfiguration CONFIG = new SpelParserConfiguration(SpelCompilerMode.IMMEDIATE, null);
-	private static final ExpressionParser PARSER = new SpelExpressionParser(CONFIG);
+	private static final ExpressionParser PARSER;
+	static{
+		//allow for immediate compilation of SpEL expressions
+		final SpelParserConfiguration config = new SpelParserConfiguration(SpelCompilerMode.IMMEDIATE, null);
+		PARSER = new SpelExpressionParser(config);
+	}
 
 
-	private final BoxonEvaluationContext context = new BoxonEvaluationContext();
+	private final BoxonEvaluationContext context;
 
 
 	/**
@@ -96,13 +99,14 @@ public final class Evaluator{
 
 
 	private Evaluator(){
+		context = new BoxonEvaluationContext();
 		//trick to allow accessing private fields
 		context.addPropertyAccessor(new MyReflectivePropertyAccessor());
 	}
 
 
 	/**
-	 * Adds a key-value pair to the context of this evaluator.
+	 * Add a key-value pair to the context of this evaluator.
 	 * <p>Passing {@code null} as {@code value} the corresponding key-value pair will be deleted.</p>
 	 *
 	 * @param key	The key used to reference the value.
@@ -115,12 +119,30 @@ public final class Evaluator{
 	}
 
 	/**
-	 * Adds a method to the context of this evaluator.
+	 * Add a method to the context of this evaluator.
 	 *
 	 * @param method	The method.
 	 */
 	public void addToContext(final Method method){
 		context.registerFunction(method.getName(), method);
+	}
+
+	/**
+	 * Remove a key-value pair to the context of this evaluator.
+	 *
+	 * @param key	The key used to reference the value.
+	 */
+	public void removeFromContext(final String key){
+		addToContext(key, null);
+	}
+
+	/**
+	 * Remove a method to the context of this evaluator.
+	 *
+	 * @param method	The method.
+	 */
+	public void removeFromContext(final Method method){
+		addToContext(method.getName(), null);
 	}
 
 	public Map<String, Object> getContext(){

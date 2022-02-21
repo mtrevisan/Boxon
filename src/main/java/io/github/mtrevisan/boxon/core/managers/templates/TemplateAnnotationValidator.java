@@ -43,6 +43,7 @@ import io.github.mtrevisan.boxon.helpers.ContextHelper;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.nio.charset.UnsupportedCharsetException;
 
 
 /**
@@ -252,9 +253,9 @@ public enum TemplateAnnotationValidator{
 
 	private static void validateCharset(final String charsetName) throws AnnotationException{
 		try{
-			CharsetHelper.assertValidCharset(charsetName);
+			CharsetHelper.lookup(charsetName);
 		}
-		catch(final IllegalArgumentException ignored){
+		catch(final UnsupportedCharsetException ignored){
 			throw AnnotationException.create("Invalid charset: '{}'", charsetName);
 		}
 	}

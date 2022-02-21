@@ -34,6 +34,7 @@ import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -97,9 +98,9 @@ public final class Template<T>{
 		header = type.getAnnotation(MessageHeader.class);
 		if(header != null){
 			try{
-				CharsetHelper.assertValidCharset(header.charset());
+				CharsetHelper.lookup(header.charset());
 			}
-			catch(final IllegalArgumentException ignored){
+			catch(final UnsupportedCharsetException ignored){
 				throw AnnotationException.create("Invalid charset: '{}'", header.charset());
 			}
 		}

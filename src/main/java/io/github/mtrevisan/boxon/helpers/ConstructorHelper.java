@@ -65,6 +65,7 @@ public final class ConstructorHelper{
 		try{
 			final Constructor<T> constructor = type.getDeclaredConstructor();
 			constructor.setAccessible(true);
+
 			//try creating an instance
 			constructor.newInstance();
 

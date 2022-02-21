@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.helpers;
 
 import java.nio.charset.Charset;
+import java.nio.charset.UnsupportedCharsetException;
 import java.util.function.Function;
 
 
@@ -37,7 +38,7 @@ public final class CharsetHelper{
 	public static final String DEFAULT_CHARSET = "UTF-8";
 
 
-	private static final Function<String, Charset> CHARSETS = Memoizer.memoize(CharsetHelper::lookupName);
+	private static final Function<String, Charset> CHARSETS = Memoizer.memoize(Charset::forName);
 
 
 	private CharsetHelper(){}
@@ -48,24 +49,10 @@ public final class CharsetHelper{
 	 *
 	 * @param charsetName	The charset name.
 	 * @return	The charset.
+	 * @throws UnsupportedCharsetException	If the name is not valid.
 	 */
-	public static Charset lookup(final String charsetName){
+	public static Charset lookup(final String charsetName) throws UnsupportedCharsetException{
 		return CHARSETS.apply(charsetName);
-	}
-
-	private static Charset lookupName(final String charsetName){
-		return Charset.forName(charsetName);
-	}
-
-
-	/**
-	 * Throw an exception if the given charset name is not valid.
-	 *
-	 * @param charsetName	The charset name.
-	 * @throws IllegalArgumentException	The exception thrown if the name is not valid.
-	 */
-	public static void assertValidCharset(final String charsetName) throws IllegalArgumentException{
-		lookup(charsetName);
 	}
 
 }
