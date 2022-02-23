@@ -888,15 +888,15 @@ This annotation is bounded to a string variable.
 #### example
 ```java
 @CompositeConfigurationField(
-	value = {
-		@CompositeSubField(shortDescription = "URL", pattern = "https?://.{0,92}"),
-		@CompositeSubField(shortDescription = "username", pattern = ".{1,32}"),
-		@CompositeSubField(shortDescription = "password", pattern = ".{1,32}")
-	},
-	shortDescription = "Download URL",
-	composition = "${URL}<#if username?has_content && password?has_content>@${username}@${password}</#if>",
-	terminator = ",",
-	pattern = ".{0,100}"
+   value = {
+      @CompositeSubField(shortDescription = "URL", pattern = "https?://.{0,92}"),
+      @CompositeSubField(shortDescription = "username", pattern = ".{1,32}"),
+      @CompositeSubField(shortDescription = "password", pattern = ".{1,32}")
+   },
+   shortDescription = "Download URL",
+   composition = "${URL}<#if username?has_content && password?has_content>@${username}@${password}</#if>",
+   terminator = ",",
+   pattern = ".{0,100}"
 )
 public String downloadURL;
 ```
@@ -923,15 +923,15 @@ This annotation is bounded to a string variable.
 #### example
 ```java
 @CompositeConfigurationField(
-	value = {
-		@CompositeSubField(shortDescription = "URL", pattern = "https?://.{0,92}"),
-		@CompositeSubField(shortDescription = "username", pattern = ".{1,32}"),
-		@CompositeSubField(shortDescription = "password", pattern = ".{1,32}")
-	},
-	shortDescription = "Download URL",
-	composition = "${URL}<#if username?has_content && password?has_content>@${username}@${password}</#if>",
-	terminator = ",",
-	pattern = ".{0,100}"
+   value = {
+      @CompositeSubField(shortDescription = "URL", pattern = "https?://.{0,92}"),
+      @CompositeSubField(shortDescription = "username", pattern = ".{1,32}"),
+      @CompositeSubField(shortDescription = "password", pattern = ".{1,32}")
+   },
+   shortDescription = "Download URL",
+   composition = "${URL}<#if username?has_content && password?has_content>@${username}@${password}</#if>",
+   terminator = ",",
+   pattern = ".{0,100}"
 )
 public String downloadURL;
 ```
@@ -961,11 +961,11 @@ This annotation is bounded to a variable.
 #### example
 ```java
 @AlternativeConfigurationField(
-	shortDescription = "Download protocol", terminator = ",", enumeration = DownloadProtocol.class,
-	value = {
-		@AlternativeSubField(maxProtocol = "1.35", defaultValue = "HTTP"),
-		@AlternativeSubField(minProtocol = "1.36", defaultValue = "HTTP")
-	}
+   shortDescription = "Download protocol", terminator = ",", enumeration = DownloadProtocol.class,
+   value = {
+      @AlternativeSubField(maxProtocol = "1.35", defaultValue = "HTTP"),
+      @AlternativeSubField(minProtocol = "1.36", defaultValue = "HTTP")
+   }
 )
 private DownloadProtocol downloadProtocol;
 ```
@@ -997,11 +997,11 @@ This annotation is bounded to a variable.
 #### example
 ```java
 @AlternativeConfigurationField(
-	shortDescription = "Download timeout", terminator = ",", unitOfMeasure = "min",
-	value = {
-		@AlternativeSubField(maxProtocol = "1.18", minValue = "5", maxValue = "30", defaultValue = "10"),
-		@AlternativeSubField(minProtocol = "1.19", minValue = "5", maxValue = "30", defaultValue = "20")
-	}
+   shortDescription = "Download timeout", terminator = ",", unitOfMeasure = "min",
+   value = {
+      @AlternativeSubField(maxProtocol = "1.18", minValue = "5", maxValue = "30", defaultValue = "10"),
+      @AlternativeSubField(minProtocol = "1.19", minValue = "5", maxValue = "30", defaultValue = "20")
+   }
 )
 private int downloadTimeout;
 ```
@@ -1134,13 +1134,13 @@ public class IMEIConverter implements Converter<byte[], String>{
 private short rssi;
 
 /**
- * input:	output:
+ * input:   output:
  * -----------------------
- * 0:		< -133 dBm
- * 1:		-111 dBm
- * 2-30:	-109 - -53 dBm
- * 31:		> -51 dBm
- * 99:		unknown
+ * 0:      < -133 dBm
+ * 1:      -111 dBm
+ * 2-30:   -109 - -53 dBm
+ * 31:      > -51 dBm
+ * 99:      unknown
  */
 public class RSSIConverter implements Converter<Byte, Short>{
 
@@ -1280,7 +1280,7 @@ BoxonCore core = BoxonCoreBuilder.builder()
    .withContextFunction(VersionHelper.class.getDeclaredMethod("compareVersion", new Class[]{String.class, String.class}))
    //scans the parent package and all of its children, searching and loading all the codecs found
    .withDefaultCodecs()
-	.withTemplate(ACKMessageHex.class)
+   .withTemplate(ACKMessageHex.class)
    .create();
 Parser parser = Parser.create(core);
 
@@ -1297,21 +1297,6 @@ for(int index = 0; index < result.getParsedMessageCount(); index ++){
     Object parsedMessage = result.getParsedMessageAt(index);
     ...
 }
-```
-
-or, if you want to pass your templates by hand:
-```java
-//optionally create a context ('null' otherwise)
-Map<String, Object> context = ...
-Template<Message> template = Template.createFrom(Message.class);
-BoxonCore core = BoxonCoreBuilder.builder()
-   .withTemplatesFrom(template)
-   .create();
-Parser parser = Parser.create(core);
-
-//parse the message
-byte[] payload = ...
-ParseResponse result = parser.parse(payload);
 ```
 
 <a name="example-composer"></a>
