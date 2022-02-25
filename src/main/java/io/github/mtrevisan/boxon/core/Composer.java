@@ -24,15 +24,14 @@
  */
 package io.github.mtrevisan.boxon.core;
 
-import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
 import io.github.mtrevisan.boxon.core.managers.templates.Template;
+import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.io.BitWriter;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 
@@ -46,10 +45,10 @@ public final class Composer{
 
 
 	/**
-	 * Create an empty composer.
+	 * Create a composer.
 	 *
 	 * @param boxonCore	The parser core.
-	 * @return	A basic empty composer.
+	 * @return	A composer.
 	 */
 	public static Composer create(final BoxonCore boxonCore){
 		return new Composer(boxonCore);
@@ -62,28 +61,18 @@ public final class Composer{
 
 
 	/**
-	 * Compose a list of messages.
+	 * Compose a message.
 	 *
-	 * @param data	The messages to be composed.
+	 * @param data	The message to be composed.
 	 * @return	The composition response.
+	 * @param <T>	The class of the composed message.
 	 */
-	public ComposeResponse composeMessage(final Collection<Object> data){
-		return composeMessage(data.toArray(Object[]::new));
-	}
-
-	/**
-	 * Compose a list of messages.
-	 *
-	 * @param data	The message(s) to be composed.
-	 * @return	The composition response.
-	 */
-	public ComposeResponse composeMessage(final Object... data){
-		final List<EncodeException> errors = new ArrayList<>(data.length);
+	public <T> ComposeResponse<T> composeMessage(final T data){
 		final BitWriter writer = BitWriter.create();
-		for(int i = 0; i < data.length; i ++){
-			final EncodeException error = composeMessage(writer, data[i]);
-			errors.add(error);
-		}
+		final EncodeException error = composeMessage(writer, data);
+
+		final List<EncodeException> errors = new ArrayList<>(1);
+		errors.add(error);
 
 		return ComposeResponse.create(data, writer)
 			.withErrors(errors);

@@ -35,15 +35,17 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Response class for the encoding phase.
+ *
+ * @param <T>	The response class.
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
-public final class ComposeResponse{
+public final class ComposeResponse<T>{
 
 	private static final byte[] EMPTY_ARRAY = new byte[0];
 
 
-	/** The originators for the message. */
-	private final Object[] originator;
+	/** The originator for the message. */
+	private final T originator;
 
 	/** Successfully composed message. */
 	private final byte[] composedMessage;
@@ -58,8 +60,9 @@ public final class ComposeResponse{
 	 * @param originator	The data that originates the message.
 	 * @param writer	The writer to read the composed message from.
 	 * @return	The instance.
+	 * @param <T>	The response class.
 	 */
-	static ComposeResponse create(final Object[] originator, final BitWriter writer){
+	static <T> ComposeResponse<T> create(final T originator, final BitWriter writer){
 		writer.flush();
 
 		return create(originator, writer.array());
@@ -72,8 +75,8 @@ public final class ComposeResponse{
 	 * @param composedMessage	The composed message.
 	 * @return	The instance.
 	 */
-	static ComposeResponse create(final Object[] originator, final byte[] composedMessage){
-		return new ComposeResponse(originator, composedMessage);
+	static <T> ComposeResponse<T> create(final T originator, final byte[] composedMessage){
+		return new ComposeResponse<>(originator, composedMessage);
 	}
 
 
@@ -83,18 +86,18 @@ public final class ComposeResponse{
 	 * @param originator	The data that originates the message.
 	 * @param composedMessage	The composed message.
 	 */
-	private ComposeResponse(final Object[] originator, final byte[] composedMessage){
-		this.originator = JavaHelper.cloneOrDefault(originator, null);
+	private ComposeResponse(final T originator, final byte[] composedMessage){
+		this.originator = originator;
 		this.composedMessage = JavaHelper.cloneOrDefault(composedMessage, null);
 	}
 
 
 	/**
-	 * The originators for the composed message.
+	 * The originator for the composed message.
 	 *
-	 * @return	The originators for the composed message.
+	 * @return	The originator for the composed message.
 	 */
-	private Object[] getOriginator(){
+	private T getOriginator(){
 		return originator;
 	}
 
@@ -141,7 +144,7 @@ public final class ComposeResponse{
 		errors.add(exception);
 	}
 
-	ComposeResponse withErrors(final List<EncodeException> exceptions){
+	ComposeResponse<T> withErrors(final List<EncodeException> exceptions){
 		Objects.requireNonNull(exceptions, "Exception cannot be null");
 
 		for(int i = 0; i < exceptions.size(); i ++){
