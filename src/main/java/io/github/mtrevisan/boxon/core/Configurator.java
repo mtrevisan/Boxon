@@ -62,10 +62,10 @@ public final class Configurator{
 
 
 	/**
-	 * Create an empty configurator.
+	 * Create a configurator.
 	 *
 	 * @param boxonCore	The parser core.
-	 * @return	A basic empty descriptor.
+	 * @return	A descriptor.
 	 */
 	public static Configurator create(final BoxonCore boxonCore){
 		return new Configurator(boxonCore);

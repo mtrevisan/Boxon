@@ -54,10 +54,10 @@ public final class Descriptor{
 
 
 	/**
-	 * Create an empty descriptor.
+	 * Create a descriptor.
 	 *
 	 * @param boxonCore	The parser core.
-	 * @return	A basic empty descriptor.
+	 * @return	A descriptor.
 	 */
 	public static Descriptor create(final BoxonCore boxonCore){
 		return new Descriptor(boxonCore);

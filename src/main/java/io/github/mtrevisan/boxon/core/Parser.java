@@ -45,11 +45,10 @@ public final class Parser{
 
 
 	/**
-	 * Create an empty parser (context, codecs and templates MUST BE manually loaded! -- templates MUST BE loaded AFTER
-	 * the codecs).
+	 * Create a parser.
 	 *
 	 * @param core	The core of the parser.
-	 * @return	A basic empty parser.
+	 * @return	A parser.
 	 */
 	public static Parser create(final BoxonCore core){
 		return new Parser(core);

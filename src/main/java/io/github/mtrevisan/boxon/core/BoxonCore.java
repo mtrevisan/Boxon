@@ -62,7 +62,7 @@ public final class BoxonCore{
 	 * Remember that templates and configurations MUST BE loaded AFTER the codecs!
 	 * </p>
 	 *
-	 * @return	A basic empty parser core.
+	 * @return	An empty boxon core.
 	 */
 	static BoxonCore create(){
 		return new BoxonCore();

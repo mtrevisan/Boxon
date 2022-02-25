@@ -62,7 +62,7 @@ public final class ConfigurationMessage<T>{
 	 * Create a configuration message for the given class.
 	 * @param type	The class of the configuration message.
 	 * @param <T>	The class type parameter.
-	 * @return	An instance.
+	 * @return	An instance of configuration message.
 	 * @throws AnnotationException	If a configuration annotation is invalid, or no annotation was found.
 	 */
 	public static <T> ConfigurationMessage<T> create(final Class<T> type) throws AnnotationException{
