@@ -25,8 +25,7 @@
 package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.core.managers.extractors.JSONPath;
-import io.github.mtrevisan.boxon.core.managers.extractors.JSONTypeInterface;
-import io.github.mtrevisan.boxon.helpers.StringHelper;
+import io.github.mtrevisan.boxon.core.managers.extractors.JSONPathException;
 
 import java.util.Objects;
 
@@ -36,9 +35,6 @@ import java.util.Objects;
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
 public final class Extractor{
-
-	private static final char DOT = '.';
-
 
 	private final Object data;
 
@@ -64,24 +60,13 @@ public final class Extractor{
 	/**
 	 * Extract the value corresponding to the given path.
 	 *
-	 * @param path	The path used to extract the corresponding value.
-	 * @param type	The return type class.
-	 * @return	The value.
 	 * @param <T>	The class of the resulting value.
+	 * @param path   The path used to extract the corresponding value.
+	 * @return	The value.
+	 * @throws JSONPathException	If the path has an error.
 	 */
-	public <T> T get(final String path, final Class<T> type){
-		final JSONTypeInterface json = (JSONTypeInterface)data;
-		return JSONPath.extract(cleanPath(path), json);
-	}
-
-	private static String cleanPath(final String path){
-		String[] fields = StringHelper.split(path, DOT);
-		if(fields.length > 0 && fields[0].isEmpty()){
-			final String[] newFields = new String[fields.length - 1];
-			System.arraycopy(fields, 1, newFields, 0, fields.length);
-			fields = newFields;
-		}
-		return String.join(".", fields);
+	public <T> T get(final String path) throws JSONPathException{
+		return JSONPath.extract(path, data);
 	}
 
 }

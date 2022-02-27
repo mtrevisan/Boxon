@@ -24,8 +24,15 @@
  */
 package io.github.mtrevisan.boxon.core.managers.extractors;
 
-import java.util.ArrayList;
-import java.util.List;
+import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
+import io.github.mtrevisan.boxon.helpers.StringHelper;
+import io.github.mtrevisan.boxon.io.ParserDataType;
+
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 
 /**
@@ -35,90 +42,101 @@ public final class JSONPath{
 
 	private static final char SLASH = '/';
 	private static final char TILDE = '~';
+	/** Encoding of a tilde. */
+	private static final String TILDE_ZERO = "~0";
+	/** Encoding of a slash. */
+	private static final String TILDE_ONE = "~1";
 
 
 	private JSONPath(){}
 
 
 	@SuppressWarnings("unchecked")
-	public static <T> T extract(final String path, final JSONTypeInterface json){
-		return (path == null || !path.isEmpty()? extract(path, parse(path), json, 0): (T)json);
+	public static <T> T extract(final String path, final Object data) throws JSONPathException{
+		return (path == null || !path.isEmpty()? extract(parse(path), data): (T)data);
 	}
 
 	@SuppressWarnings("unchecked")
-	private static <T> T extract(final String raw, final List<String> path, final Object json, int index){
-		final int len = path.size();
-		if(index == len)
-			return (T)json;
+	private static <T> T extract(final String[] path, Object data) throws JSONPathException{
+		try{
+			 for(int i = 0; i < path.length; i ++){
+				final String currentPath = path[i];
+				final Integer idx = (ParserDataType.isDecimalNumber(currentPath)? Integer.valueOf(currentPath): null);
+				final Class<?> dataClass = data.getClass();
+				if(idx != null ^ dataClass.isArray())
+					throw JSONPathException.create("No array field '{}' found on path '{}'", currentPath,
+						"/" + String.join("/", path));
 
-		if(index > len)
-			throw JSONPathException.create("unmatched path ['{}']", raw);
-		if(!(json instanceof JSONTypeInterface))
-			throw JSONPathException.create("unmatched path ['{}']", raw);
-
-		final String p = path.get(index);
-		if(json instanceof JSONArray){
-			final JSONArray array = (JSONArray)json;
-			try{
-				final int idx = Integer.parseInt(p);
-				return extract(raw, path, array.get(idx), ++ index);
+				final Field currentField = dataClass.getDeclaredField(currentPath);
+				currentField.setAccessible(true);
+				if(idx != null){
+					final Object value = ReflectionHelper.getValue(data, currentField);
+					data = Array.get(value, idx);
+				}
+				else
+					data = ReflectionHelper.getValue(data, currentField);
 			}
-			catch(final Exception e){
-				throw JSONPathException.create(e, "unmatched path ['{}'] at ['{}'], expect a valid number.", raw, p);
-			}
+
+			return (T)data;
 		}
-
-		if(json instanceof JSONObject){
-			final JSONObject obj = (JSONObject)json;
-			if(!obj.containsKey(p))
-				throw JSONPathException.create("not found path ['{}'] at ['{}']", raw, p);
-
-			return extract(raw, path, obj.get(p), ++ index);
+		catch(final NoSuchFieldException nsfe){
+			throw JSONPathException.create("No field '{}' found on path '{}'", nsfe.getMessage(),
+				"/" + String.join("/", path));
 		}
-
-		throw JSONPathException.create("unmatched path ['{}'] at ['{}']", raw, p);
 	}
 
-	private static List<String> parse(final String path){
+	private static String[] parse(final String path) throws JSONPathException{
 		if(path == null || path.charAt(0) != SLASH)
 			throw JSONPathException.create("invalid path ['{}']", path);
 
-		final char[] array = path.toCharArray();
-		final List<String> r = new ArrayList<>(array.length);
-		final StringBuilder sb = new StringBuilder();
-		char prev = SLASH;
-		for(int i = 1; i < array.length; i ++){
-			final char c = array[i];
-			switch(c){
-				case TILDE:
-					break;
-
-				case SLASH:
-					if(prev == TILDE)
-						sb.append(TILDE);
-					r.add(sb.toString());
-					sb.setLength(0);
-					break;
-
-				case '0':
-					sb.append(prev == TILDE? TILDE: c);
-					break;
-
-				case '1':
-					sb.append(prev == TILDE? SLASH: c);
-					break;
-
-				default:
-					if(prev == TILDE)
-						sb.append(TILDE);
-					sb.append(c);
+		final String[] components = StringHelper.split(path, SLASH);
+		for(int i = 0; i < components.length; i ++)
+			if(!StringHelper.isBlank(components[i])){
+				//NOTE: the order here is important!
+				components[i] = replace(components[i], TILDE_ONE, SLASH);
+				components[i] = replace(components[i], TILDE_ZERO, TILDE);
+				components[i] = URLDecoder.decode(components[i], StandardCharsets.UTF_8);
 			}
-			prev = c;
+		return components;
+	}
+
+	/**
+	 * Replaces all occurrences of a String within another String.
+	 * <p>A {@code null} reference passed to this method is a no-op.</p>
+	 *
+	 * <pre>
+	 * StringUtils.replace(null, *, *)        = null
+	 * StringUtils.replace("", *, *)          = ""
+	 * StringUtils.replace("any", null, *)    = "any"
+	 * StringUtils.replace("any", *, null)    = "any"
+	 * StringUtils.replace("any", "", *)      = "any"
+	 * StringUtils.replace("aba", "a", null)  = "aba"
+	 * StringUtils.replace("aba", "a", "")    = "b"
+	 * StringUtils.replace("aba", "a", "z")   = "zbz"
+	 * </pre>
+	 *
+	 * @param text	Text to search and replace in, may be {@code null}.
+	 * @param searchString	The String to search for, may be {@code null}.
+	 * @param replacement	The String to replace it with, may be {@code null}.
+	 * @return	The text with any replacements processed, {@code null} if {@code null} String input.
+	 */
+	private static String replace(final String text, final String searchString, final char replacement){
+		int start = 0;
+		int end = text.indexOf(searchString, start);
+		if(end < 0)
+			return text;
+
+		final int replacementLength = searchString.length();
+		final StringBuilder sb = new StringBuilder(text.length());
+		while(end >= 0){
+			sb.append(text, start, end)
+				.append(replacement);
+
+			start = end + replacementLength;
+			end = text.indexOf(searchString, start);
 		}
-		if(prev == TILDE)
-			sb.append(TILDE);
-		r.add(sb.toString());
-		return r;
+		sb.append(text, start, text.length());
+		return sb.toString();
 	}
 
 }

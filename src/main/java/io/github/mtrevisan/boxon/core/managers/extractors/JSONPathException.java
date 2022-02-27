@@ -27,7 +27,7 @@ package io.github.mtrevisan.boxon.core.managers.extractors;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 
 
-public final class JSONPathException extends RuntimeException{
+public final class JSONPathException extends Exception{
 
 	private static final long serialVersionUID = 8273242566993098760L;
 

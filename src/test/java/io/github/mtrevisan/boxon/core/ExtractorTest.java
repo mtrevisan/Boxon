@@ -27,6 +27,7 @@ package io.github.mtrevisan.boxon.core;
 import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageASCII;
 import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageHex;
 import io.github.mtrevisan.boxon.core.codecs.queclink.DeviceTypes;
+import io.github.mtrevisan.boxon.core.managers.extractors.JSONPathException;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
@@ -42,7 +43,7 @@ import java.util.Map;
 class ExtractorTest{
 
 	@Test
-	void extract() throws AnnotationException, TemplateException, ConfigurationException{
+	void extract() throws AnnotationException, TemplateException, ConfigurationException, JSONPathException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with("QUECLINK_GV350M", (byte)0xCF);
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
@@ -58,9 +59,11 @@ class ExtractorTest{
 		ACKMessageASCII parsedMessage = (ACKMessageASCII)result.getParsedMessageAt(0);
 		Extractor extractor = Extractor.create(parsedMessage);
 
-		Assertions.assertEquals("+ACK", extractor.get("messageHeader", String.class));
-		Assertions.assertEquals("2", extractor.get("protocolVersion.minor", String.class));
-		Assertions.assertEquals(null, extractor.get("fake", int.class));
+		Assertions.assertEquals("+ACK", extractor.get("/messageHeader"));
+		Assertions.assertEquals(2, (int)extractor.get("/protocolVersion/minor"));
+		Exception e = Assertions.assertThrows(JSONPathException.class,
+			() -> extractor.get("/fake"));
+		Assertions.assertEquals("No field 'fake' found on path '/fake'", e.getMessage());
 	}
 
 	private static int headerSize(){
