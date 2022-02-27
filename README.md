@@ -125,16 +125,18 @@ You can get pre-built JARs (usable on JRE 11 or newer) from [Sonatype](https://o
     5. [CompositeSubField](#annotation-compositesubfield)
     6. [AlternativeConfigurationField](#annotation-alternativeconfigurationfield)
     7. [AlternativeSubField](#annotation-alternativesubfield)
-5. [How to write SpEL expressions](#how-to-spel)
-6. [How to extend the functionalities](#how-to-extend)
-7. [Digging into the code](#digging)
+5. [Descriptor](#descriptor)
+6. [Extractor](#extractor)
+7. [How to write SpEL expressions](#how-to-spel)
+8. [How to extend the functionalities](#how-to-extend)
+9. [Digging into the code](#digging)
     1. [Converters](#how-to-converters)
     2. [Custom annotations](#how-to-annotations)
-8. [Examples](#examples)
-    1. [Multi-message parser](#example-multi)
-    2. [Message composer](#example-composer)
-9. [Contributing](#contributing)
-10. [Changelog](#changelog)
+10. [Examples](#examples)
+     1. [Multi-message parser](#example-multi)
+     2. [Message composer](#example-composer)
+11. [Contributing](#contributing)
+12. [Changelog](#changelog)
      1. [version 3.0.0](#changelog-3.0.0)
      2. [version 2.1.2](#changelog-2.1.2)
      3. [version 2.1.1](#changelog-2.1.1)
@@ -145,7 +147,7 @@ You can get pre-built JARs (usable on JRE 11 or newer) from [Sonatype](https://o
      8. [version 0.0.2](#changelog-0.0.2)
      9. [version 0.0.1](#changelog-0.0.1)
      10. [version 0.0.0](#changelog-0.0.0)
-11. [License](#license)
+13. [License](#license)
 
 <br/>
 
@@ -1009,6 +1011,34 @@ private int downloadTimeout;
 
 <br/>
 
+<a name="descriptor"></a>
+## Descriptor
+Return a description of the loaded templates.
+```java
+Descriptor descriptor = Descriptor.create(core);
+
+List<Map<String, Object>> descriptions = descriptor.describeTemplates();
+```
+
+
+<br/>
+
+<a name="extractor"></a>
+## Extractor
+Extract values from a POJO using <a href="https://tools.ietf.org/html/rfc6901">RFC6901</a> syntax.
+```java
+Parser parser = Parser.create(core);
+ParseResponse result = parser.parse(payload);
+ACKMessageASCII parsedMessage = (ACKMessageASCII)result.getParsedMessageAt(0);
+Extractor extractor = Extractor.create(parsedMessage);
+
+String messageHeader = extractor.get("/messageHeader");
+int protocolVersionMinor = extractor.get("/protocolVersion/minor");
+```
+
+
+<br/>
+
 <a name="how-to-spel"></a>
 ## How to write SpEL expressions
 Care should be taken in writing [SpEL expressions](https://docs.spring.io/spring/docs/4.3.10.RELEASE/spring-framework-reference/html/expressions.html) for the fields `condition`, and `size`.
@@ -1342,8 +1372,9 @@ Pull requests are welcomed.
 <a name="changelog-3.0.0"></a>
 ### version 3.0.0 - 20220216
 - Added `BoxonCoreBuilder` to facilitate the creation of `BoxonCore`: now it is no longer necessary to remember the order in which the methods should be called.
-- Added missing javadoc. Enhanced existing javadoc
+- Added missing javadoc. Enhanced existing javadoc.
 - Added `BindBitSet` binding for java `BitSet`.
+- Added `Extractor`, used to programmatically extract values from a POJO.
 - Removed `Bits`.
 - Enhanced binding validation.
 - Fixed a concurrency bug on the validation of alternatives.
