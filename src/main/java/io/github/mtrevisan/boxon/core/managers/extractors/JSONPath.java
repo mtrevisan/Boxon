@@ -35,12 +35,17 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
  * An implementation of <a href="https://tools.ietf.org/html/rfc6901">RFC6901 - JavaScript Object Notation (JSON) Pointer</a>.
  */
 public final class JSONPath{
+
+	private static final Pattern PATTERN_HEX_URL_ENCODE = Pattern.compile("%x([0-9a-fA-F]{2})");
+
 
 	private static final char SLASH = '/';
 	private static final char TILDE = '~';
@@ -86,9 +91,24 @@ public final class JSONPath{
 				//NOTE: the order here is important!
 				components[i] = replace(components[i], TILDE_ONE, SLASH);
 				components[i] = replace(components[i], TILDE_ZERO, TILDE);
-				components[i] = URLDecoder.decode(components[i], StandardCharsets.UTF_8);
+
+				components[i] = urlDecode(components[i]);
 			}
 		return components;
+	}
+
+	private static String urlDecode(final CharSequence component){
+		//convert (hexadecimal) %x?? to (decimal) %??:
+		final StringBuffer sb = new StringBuffer(component.length());
+		final Matcher m = PATTERN_HEX_URL_ENCODE.matcher(component);
+		while(m.find()){
+			final String hex = m.group(1);
+			final String num = Character.toString((char)Integer.parseInt(hex, 16));
+			m.appendReplacement(sb, num);
+		}
+		m.appendTail(sb);
+
+		return URLDecoder.decode(sb.toString(), StandardCharsets.UTF_8);
 	}
 
 	/**
@@ -148,7 +168,9 @@ public final class JSONPath{
 	}
 
 	private static Integer extractIndex(final String currentPath){
-		return (ParserDataType.isDecimalNumber(currentPath)? Integer.valueOf(currentPath): null);
+		return (ParserDataType.isDecimalNumber(currentPath) && (currentPath.charAt(0) != '0' || currentPath.length() <= 1)
+			? Integer.valueOf(currentPath)
+			: null);
 	}
 
 	private static void validateNextSubPath(final Object data, final String currentPath, final Integer idx, final String[] path)

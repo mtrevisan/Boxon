@@ -45,6 +45,14 @@ class ExtractorTest{
 	}
 
 	@Test
+	void plainEscape() throws JSONPathException{
+		Map<String, Object> map = Map.of("~1/è\\\"", "value");
+		Extractor extractor = Extractor.create(map);
+
+		Assertions.assertEquals("value", extractor.get("/~01~1%C3%A8\\%x22"));
+	}
+
+	@Test
 	void fromMap() throws JSONPathException{
 		Map<String, Object> map = Map.of("key", "value");
 		Extractor extractor = Extractor.create(map);
@@ -69,13 +77,23 @@ class ExtractorTest{
 	}
 
 	@Test
-	void fail(){
+	void failReference(){
 		Version version = Version.of(1, 2);
 		Extractor extractor = Extractor.create(version);
 
 		Exception e = Assertions.assertThrows(JSONPathException.class,
 			() -> extractor.get("/fake"));
 		Assertions.assertEquals("No field 'fake' found on path '/fake'", e.getMessage());
+	}
+
+	@Test
+	void failIndex(){
+		int[] array = new int[]{12, 23};
+		Extractor extractor = Extractor.create(array);
+
+		Exception e = Assertions.assertThrows(JSONPathException.class,
+			() -> extractor.get("/01"));
+		Assertions.assertEquals("No array field '01' found on path '/01'", e.getMessage());
 	}
 
 }
