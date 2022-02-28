@@ -126,7 +126,7 @@ public final class JSONPath{
 		try{
 			for(int i = 0; i < path.length; i ++){
 				final String currentPath = path[i];
-				final Integer idx = (ParserDataType.isDecimalNumber(currentPath)? Integer.valueOf(currentPath): null);
+				final Integer idx = extractIndex(currentPath);
 				validateNextSubPath(data, currentPath, idx, path);
 
 				data = extractNextSubPath(data, currentPath, idx);
@@ -139,9 +139,14 @@ public final class JSONPath{
 		}
 	}
 
+	private static Integer extractIndex(final String currentPath){
+		return (ParserDataType.isDecimalNumber(currentPath)? Integer.valueOf(currentPath): null);
+	}
+
 	private static void validateNextSubPath(final Object data, final String currentPath, final Integer idx, final String[] path)
 			throws JSONPathException{
-		if(idx != null ^ (data.getClass().isArray() || List.class.isInstance(data)))
+		final Class<?> dataClass = data.getClass();
+		if(idx != null ^ (dataClass.isArray() || List.class.isAssignableFrom(dataClass)))
 			throw JSONPathException.create("No array field '{}' found on path '{}'", currentPath, toJSONPath(path));
 	}
 
