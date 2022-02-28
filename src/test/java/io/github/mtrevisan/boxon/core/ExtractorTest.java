@@ -29,6 +29,9 @@ import io.github.mtrevisan.boxon.semanticversioning.Version;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+import java.util.Map;
+
 
 @SuppressWarnings("ALL")
 class ExtractorTest{
@@ -39,6 +42,22 @@ class ExtractorTest{
 		Extractor extractor = Extractor.create(version);
 
 		Assertions.assertEquals(2, (int)extractor.get("/minor"));
+	}
+
+	@Test
+	void fromMap() throws JSONPathException{
+		Map<String, Object> map = Map.of("key", "value");
+		Extractor extractor = Extractor.create(map);
+
+		Assertions.assertEquals("value", extractor.get("/key"));
+	}
+
+	@Test
+	void fromList() throws JSONPathException{
+		List<String> list = List.of("un", "do", "trè", "kuatro", "ŧinkue");
+		Extractor extractor = Extractor.create(list);
+
+		Assertions.assertEquals("trè", extractor.get("/2"));
 	}
 
 	@Test

@@ -33,6 +33,8 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -126,14 +128,18 @@ public final class JSONPath{
 				final String currentPath = path[i];
 				final Integer idx = (ParserDataType.isDecimalNumber(currentPath)? Integer.valueOf(currentPath): null);
 				final Class<?> dataClass = data.getClass();
-				if(idx != null ^ dataClass.isArray())
+				if(idx != null ^ (dataClass.isArray() || List.class.isInstance(data)))
 					throw JSONPathException.create("No array field '{}' found on path '{}'", currentPath, toJSONPath(path));
 
-				if(idx == null){
+				if(Map.class.isInstance(data))
+					data = ((Map<?, ?>)data).get(currentPath);
+				else if(idx == null){
 					final Field currentField = dataClass.getDeclaredField(currentPath);
 					currentField.setAccessible(true);
 					data = ReflectionHelper.getValue(data, currentField);
 				}
+				else if(List.class.isInstance(data))
+					data = ((List<?>)data).get(idx);
 				else
 					data = Array.get(data, idx);
 			}
