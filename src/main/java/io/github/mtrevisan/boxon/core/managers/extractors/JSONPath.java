@@ -64,7 +64,15 @@ public final class JSONPath{
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T extract(final String path, final Object data) throws JSONPathException{
-		return (path == null || !path.isEmpty()? extract(parse(path), data): (T)data);
+		if(path == null || !path.isEmpty()){
+			try{
+				return extract(parse(path), data);
+			}
+			catch(final NoSuchFieldException nsfe){
+				throw JSONPathException.create("No field '{}' found on path '{}'", nsfe.getMessage(), path);
+			}
+		}
+		return (T)data;
 	}
 
 	private static String[] parse(final String path) throws JSONPathException{
@@ -122,26 +130,20 @@ public final class JSONPath{
 	}
 
 	@SuppressWarnings({"unchecked", "ThrowInsideCatchBlockWhichIgnoresCaughtException"})
-	private static <T> T extract(final String[] path, Object data) throws JSONPathException{
-		try{
-			for(int i = 0; i < path.length; i ++){
-				final String currentPath = path[i];
+	private static <T> T extract(final String[] path, Object data) throws JSONPathException, NoSuchFieldException{
+		for(int i = 0; i < path.length; i ++){
+			final String currentPath = path[i];
 
-				final Integer idx = extractIndex(currentPath);
+			final Integer idx = extractIndex(currentPath);
 
-				validateNextSubPath(data, currentPath, idx, path);
+			validateNextSubPath(data, currentPath, idx, path);
 
-				if(idx != null)
-					data = extractNextSubPath(data, idx);
-				else
-					data = extractNextSubPath(data, currentPath);
-			}
-
-			return (T)data;
+			if(idx != null)
+				data = extractNextSubPath(data, idx);
+			else
+				data = extractNextSubPath(data, currentPath);
 		}
-		catch(final NoSuchFieldException nsfe){
-			throw JSONPathException.create("No field '{}' found on path '{}'", nsfe.getMessage(), toJSONPath(path));
-		}
+		return (T)data;
 	}
 
 	private static Integer extractIndex(final String currentPath){
@@ -153,6 +155,10 @@ public final class JSONPath{
 		final Class<?> dataClass = data.getClass();
 		if(idx != null ^ (dataClass.isArray() || List.class.isAssignableFrom(dataClass)))
 			throw JSONPathException.create("No array field '{}' found on path '{}'", currentPath, toJSONPath(path));
+	}
+
+	private static String toJSONPath(final String[] path){
+		return "/" + String.join("/", path);
 	}
 
 	private static Object extractNextSubPath(final Object data, final Integer idx){
@@ -171,10 +177,6 @@ public final class JSONPath{
 			nextData = ReflectionHelper.getValue(data, currentField);
 		}
 		return nextData;
-	}
-
-	private static String toJSONPath(final String[] path){
-		return "/" + String.join("/", path);
 	}
 
 }
