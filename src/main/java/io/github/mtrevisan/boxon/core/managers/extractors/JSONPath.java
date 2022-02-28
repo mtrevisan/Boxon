@@ -124,24 +124,12 @@ public final class JSONPath{
 	@SuppressWarnings({"unchecked", "ThrowInsideCatchBlockWhichIgnoresCaughtException"})
 	private static <T> T extract(final String[] path, Object data) throws JSONPathException{
 		try{
-			 for(int i = 0; i < path.length; i ++){
+			for(int i = 0; i < path.length; i ++){
 				final String currentPath = path[i];
 				final Integer idx = (ParserDataType.isDecimalNumber(currentPath)? Integer.valueOf(currentPath): null);
-				final Class<?> dataClass = data.getClass();
-				if(idx != null ^ (dataClass.isArray() || List.class.isInstance(data)))
-					throw JSONPathException.create("No array field '{}' found on path '{}'", currentPath, toJSONPath(path));
+				validateNextSubPath(data, currentPath, idx, path);
 
-				if(Map.class.isInstance(data))
-					data = ((Map<?, ?>)data).get(currentPath);
-				else if(idx == null){
-					final Field currentField = dataClass.getDeclaredField(currentPath);
-					currentField.setAccessible(true);
-					data = ReflectionHelper.getValue(data, currentField);
-				}
-				else if(List.class.isInstance(data))
-					data = ((List<?>)data).get(idx);
-				else
-					data = Array.get(data, idx);
+				data = extractNextSubPath(data, currentPath, idx);
 			}
 
 			return (T)data;
@@ -149,6 +137,28 @@ public final class JSONPath{
 		catch(final NoSuchFieldException nsfe){
 			throw JSONPathException.create("No field '{}' found on path '{}'", nsfe.getMessage(), toJSONPath(path));
 		}
+	}
+
+	private static void validateNextSubPath(final Object data, final String currentPath, final Integer idx, final String[] path)
+			throws JSONPathException{
+		if(idx != null ^ (data.getClass().isArray() || List.class.isInstance(data)))
+			throw JSONPathException.create("No array field '{}' found on path '{}'", currentPath, toJSONPath(path));
+	}
+
+	private static Object extractNextSubPath(final Object data, final String currentPath, final Integer idx) throws NoSuchFieldException{
+		final Object nextData;
+		if(Map.class.isInstance(data))
+			nextData = ((Map<?, ?>)data).get(currentPath);
+		else if(idx == null){
+			final Field currentField = data.getClass().getDeclaredField(currentPath);
+			currentField.setAccessible(true);
+			nextData = ReflectionHelper.getValue(data, currentField);
+		}
+		else if(List.class.isInstance(data))
+			nextData = ((List<?>)data).get(idx);
+		else
+			nextData = Array.get(data, idx);
+		return nextData;
 	}
 
 	private static String toJSONPath(final String[] path){
