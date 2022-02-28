@@ -24,50 +24,42 @@
  */
 package io.github.mtrevisan.boxon.core;
 
-import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageASCII;
-import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageHex;
-import io.github.mtrevisan.boxon.core.codecs.queclink.DeviceTypes;
-import io.github.mtrevisan.boxon.exceptions.JSONPathException;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
+import io.github.mtrevisan.boxon.exceptions.JSONPathException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
+import io.github.mtrevisan.boxon.semanticversioning.Version;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.Map;
 
 
 @SuppressWarnings("ALL")
 class ExtractorTest{
 
 	@Test
-	void extract() throws AnnotationException, TemplateException, ConfigurationException, JSONPathException{
-		DeviceTypes deviceTypes = DeviceTypes.create()
-			.with("QUECLINK_GV350M", (byte)0xCF);
-		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
-		BoxonCore core = BoxonCoreBuilder.builder()
-			.withContext(context)
-			.withDefaultCodecs()
-			.withTemplatesFrom(ACKMessageHex.class)
-			.create();
-		Parser parser = Parser.create(core);
+	void extractPlain() throws AnnotationException, TemplateException, ConfigurationException, JSONPathException{
+		Version version = Version.of(1, 2);
+		Extractor extractor = Extractor.create(version);
 
-		byte[] payload = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
-		ParseResponse result = parser.parse(payload);
-		ACKMessageASCII parsedMessage = (ACKMessageASCII)result.getParsedMessageAt(0);
-		Extractor extractor = Extractor.create(parsedMessage);
+		Assertions.assertEquals(2, (int)extractor.get("/minor"));
+	}
 
-		Assertions.assertEquals("+ACK", extractor.get("/messageHeader"));
-		Assertions.assertEquals(2, (int)extractor.get("/protocolVersion/minor"));
+	@Test
+	void extractFromArray() throws AnnotationException, TemplateException, ConfigurationException, JSONPathException{
+		int[] array = new int[]{12, 23};
+		Extractor extractor = Extractor.create(array);
+
+		Assertions.assertEquals(23, (int)extractor.get("/1"));
+	}
+
+	@Test
+	void extractFail() throws AnnotationException, TemplateException, ConfigurationException, JSONPathException{
+		Version version = Version.of(1, 2);
+		Extractor extractor = Extractor.create(version);
+
 		Exception e = Assertions.assertThrows(JSONPathException.class,
 			() -> extractor.get("/fake"));
 		Assertions.assertEquals("No field 'fake' found on path '/fake'", e.getMessage());
-	}
-
-	private static int headerSize(){
-		return 4;
 	}
 
 }

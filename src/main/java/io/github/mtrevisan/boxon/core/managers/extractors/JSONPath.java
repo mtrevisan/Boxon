@@ -120,14 +120,13 @@ public final class JSONPath{
 				if(idx != null ^ dataClass.isArray())
 					throw JSONPathException.create("No array field '{}' found on path '{}'", currentPath, toJSONPath(path));
 
-				final Field currentField = dataClass.getDeclaredField(currentPath);
-				currentField.setAccessible(true);
-				if(idx != null){
-					final Object value = ReflectionHelper.getValue(data, currentField);
-					data = Array.get(value, idx);
+				if(idx == null){
+					final Field currentField = dataClass.getDeclaredField(currentPath);
+					currentField.setAccessible(true);
+					data = ReflectionHelper.getValue(data, currentField);
 				}
 				else
-					data = ReflectionHelper.getValue(data, currentField);
+					data = Array.get(data, idx);
 			}
 
 			return (T)data;
