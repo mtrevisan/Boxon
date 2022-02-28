@@ -66,7 +66,8 @@ public final class JSONPath{
 	public static <T> T extract(final String path, final Object data) throws JSONPathException{
 		if(path == null || !path.isEmpty()){
 			try{
-				return extract(parse(path), data);
+				final String[] pathComponents = parsePath(path);
+				return extract(pathComponents, data);
 			}
 			catch(final NoSuchFieldException nsfe){
 				throw JSONPathException.create("No field '{}' found on path '{}'", nsfe.getMessage(), path);
@@ -75,7 +76,7 @@ public final class JSONPath{
 		return (T)data;
 	}
 
-	private static String[] parse(final String path) throws JSONPathException{
+	private static String[] parsePath(final String path) throws JSONPathException{
 		if(path == null || path.charAt(0) != SLASH)
 			throw JSONPathException.create("invalid path ['{}']", path);
 
