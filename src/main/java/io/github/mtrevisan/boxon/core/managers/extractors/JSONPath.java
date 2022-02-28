@@ -78,7 +78,7 @@ public final class JSONPath{
 
 	private static String[] parsePath(final String path) throws JSONPathException{
 		if(path == null || path.charAt(0) != SLASH)
-			throw JSONPathException.create("invalid path ['{}']", path);
+			throw JSONPathException.create("invalid path '{}'", path);
 
 		final String[] components = StringHelper.split(path, SLASH);
 		for(int i = 0; i < components.length; i ++)
