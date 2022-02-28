@@ -94,9 +94,9 @@ public interface ConfigurationManagerInterface{
 	/**
 	 * Check if the given value can be assigned and is valid for the given field type.
 	 *
-	 * @param field   The field.
-	 * @param dataKey   The short description of the field.
-	 * @param dataValue   The value to check against.
+	 * @param field	The field.
+	 * @param dataKey	The short description of the field.
+	 * @param dataValue	The value to check against.
 	 * @throws EncodeException	If a placeholder cannot be substituted.
 	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
 	 */
@@ -105,10 +105,10 @@ public interface ConfigurationManagerInterface{
 	/**
 	 * Convert the given value to the type accepted by the field.
 	 *
-	 * @param field   The field.
-	 * @param dataKey   The short description of the field.
-	 * @param dataValue   The value to check against.
-	 * @param protocol   The protocol version.
+	 * @param field	The field.
+	 * @param dataKey	The short description of the field.
+	 * @param dataValue	The value to check against.
+	 * @param protocol	The protocol version.
 	 * @return	The converted value.
 	 * @throws EncodeException	If a placeholder cannot be substituted.
 	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.

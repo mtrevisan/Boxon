@@ -56,35 +56,6 @@ public final class JSONPath{
 		return (path == null || !path.isEmpty()? extract(parse(path), data): (T)data);
 	}
 
-	@SuppressWarnings("unchecked")
-	private static <T> T extract(final String[] path, Object data) throws JSONPathException{
-		try{
-			 for(int i = 0; i < path.length; i ++){
-				final String currentPath = path[i];
-				final Integer idx = (ParserDataType.isDecimalNumber(currentPath)? Integer.valueOf(currentPath): null);
-				final Class<?> dataClass = data.getClass();
-				if(idx != null ^ dataClass.isArray())
-					throw JSONPathException.create("No array field '{}' found on path '{}'", currentPath,
-						"/" + String.join("/", path));
-
-				final Field currentField = dataClass.getDeclaredField(currentPath);
-				currentField.setAccessible(true);
-				if(idx != null){
-					final Object value = ReflectionHelper.getValue(data, currentField);
-					data = Array.get(value, idx);
-				}
-				else
-					data = ReflectionHelper.getValue(data, currentField);
-			}
-
-			return (T)data;
-		}
-		catch(final NoSuchFieldException nsfe){
-			throw JSONPathException.create("No field '{}' found on path '{}'", nsfe.getMessage(),
-				"/" + String.join("/", path));
-		}
-	}
-
 	private static String[] parse(final String path) throws JSONPathException{
 		if(path == null || path.charAt(0) != SLASH)
 			throw JSONPathException.create("invalid path ['{}']", path);
@@ -137,6 +108,37 @@ public final class JSONPath{
 		}
 		sb.append(text, start, text.length());
 		return sb.toString();
+	}
+
+	@SuppressWarnings({"unchecked", "ThrowInsideCatchBlockWhichIgnoresCaughtException"})
+	private static <T> T extract(final String[] path, Object data) throws JSONPathException{
+		try{
+			 for(int i = 0; i < path.length; i ++){
+				final String currentPath = path[i];
+				final Integer idx = (ParserDataType.isDecimalNumber(currentPath)? Integer.valueOf(currentPath): null);
+				final Class<?> dataClass = data.getClass();
+				if(idx != null ^ dataClass.isArray())
+					throw JSONPathException.create("No array field '{}' found on path '{}'", currentPath, toJSONPath(path));
+
+				final Field currentField = dataClass.getDeclaredField(currentPath);
+				currentField.setAccessible(true);
+				if(idx != null){
+					final Object value = ReflectionHelper.getValue(data, currentField);
+					data = Array.get(value, idx);
+				}
+				else
+					data = ReflectionHelper.getValue(data, currentField);
+			}
+
+			return (T)data;
+		}
+		catch(final NoSuchFieldException nsfe){
+			throw JSONPathException.create("No field '{}' found on path '{}'", nsfe.getMessage(), toJSONPath(path));
+		}
+	}
+
+	private static String toJSONPath(final String[] path){
+		return "/" + String.join("/", path);
 	}
 
 }

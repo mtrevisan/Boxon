@@ -112,7 +112,7 @@ final class BindingData{
 	 * Convenience method to fast evaluate a positive integer.
 	 *
 	 * @return	The size, or a negative number if the expression is not a valid positive integer.
-	 * @throws EvaluationException   If an error occurs during the evaluation of an expression.
+	 * @throws EvaluationException	If an error occurs during the evaluation of an expression.
 	 */
 	int evaluateSize(){
 		return evaluator.evaluateSize(size, rootObject);
