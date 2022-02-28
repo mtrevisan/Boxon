@@ -129,7 +129,7 @@ public final class JSONPath{
 		return sb.toString();
 	}
 
-	@SuppressWarnings({"unchecked", "ThrowInsideCatchBlockWhichIgnoresCaughtException"})
+	@SuppressWarnings("unchecked")
 	private static <T> T extract(final String[] path, Object data) throws JSONPathException, NoSuchFieldException{
 		for(int i = 0; i < path.length; i ++){
 			final String currentPath = path[i];
