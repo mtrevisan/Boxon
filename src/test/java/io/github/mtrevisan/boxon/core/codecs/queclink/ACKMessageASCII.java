@@ -119,12 +119,12 @@ public class ACKMessageASCII{
 	private String deviceName;
 	@BindStringTerminated(terminator = ',')
 	private String id;
-	@BindStringTerminated(terminator = ',')
-	private String ackSerialNumber;
+	@BindStringTerminated(terminator = ',', converter = QueclinkHelper.HexStringToShortConverter.class)
+	private short correlationId;
 	@BindStringTerminated(terminator = ',', converter = QueclinkHelper.StringDateTimeYYYYMMDDHHMMSSConverter.class)
 	private ZonedDateTime eventTime;
-	@BindStringTerminated(terminator = '$', consumeTerminator = false, converter = QueclinkHelper.HexStringToIntConverter.class)
-	private int messageId;
+	@BindStringTerminated(terminator = '$', consumeTerminator = false, converter = QueclinkHelper.HexStringToShortConverter.class)
+	private short messageId;
 
 	@Evaluate("#deviceTypes.getDeviceTypeName(deviceTypeCode)")
 	private String deviceTypeName;

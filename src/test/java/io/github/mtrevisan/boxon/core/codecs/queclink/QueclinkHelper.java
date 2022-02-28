@@ -180,21 +180,22 @@ public class QueclinkHelper{
 
 		@Override
 		public String encode(final Byte value){
-			return Integer.toString(value & 0xFF, 16)
-				.toUpperCase(Locale.ROOT);
+			return StringHelper.leftPad(Integer.toString(value & 0xFF, 16)
+				.toUpperCase(Locale.ROOT), 2, '0');
 		}
 	}
 
-	static class HexStringToIntConverter implements Converter<String, Integer>{
+
+	static class HexStringToShortConverter implements Converter<String, Short>{
 		@Override
-		public Integer decode(final String value){
-			return Integer.parseInt(value, 16);
+		public Short decode(final String value){
+			return (short)Integer.parseInt(value, 16);
 		}
 
 		@Override
-		public String encode(final Integer value){
-			return Integer.toString(value, 16)
-				.toUpperCase(Locale.ROOT);
+		public String encode(final Short value){
+			return StringHelper.leftPad(Integer.toString(value & 0xFFFF, 16)
+				.toUpperCase(Locale.ROOT), 4, '0');
 		}
 	}
 
