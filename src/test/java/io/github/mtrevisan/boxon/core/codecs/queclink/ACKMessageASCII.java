@@ -28,33 +28,15 @@ import io.github.mtrevisan.boxon.annotations.Evaluate;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
-import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.IMEIValidator;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
 
 import java.time.ZonedDateTime;
-import java.util.Map;
 
 
 @SuppressWarnings("ALL")
 @MessageHeader(start = "+ACK:", end = "$")
 public class ACKMessageASCII{
-
-	private static class MessageTypeConverter implements Converter<Byte, String>{
-		@Override
-		public String decode(final Byte value){
-			return ACKMessageHex.MESSAGE_TYPE_MAP.get(value);
-		}
-
-		@Override
-		public Byte encode(final String value){
-			for(final Map.Entry<Byte, String> elem : ACKMessageHex.MESSAGE_TYPE_MAP.entrySet())
-				if(elem.getValue().equals(value))
-					return elem.getKey();
-			return 0x00;
-		}
-	}
-
 
 	@BindStringTerminated(terminator = ':')
 	private String messageHeader;
