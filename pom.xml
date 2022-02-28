@@ -62,7 +62,7 @@
 		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-gpg-plugin -->
 		<maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
 		<!-- https://mvnrepository.com/artifact/org.sonatype.plugins/nexus-staging-maven-plugin -->
-		<sonatype.nexus-staging-maven-plugin.version>1.6.11</sonatype.nexus-staging-maven-plugin.version>
+		<sonatype.nexus-staging-maven-plugin.version>1.6.12</sonatype.nexus-staging-maven-plugin.version>
 		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-source-plugin -->
 		<maven-source-plugin.version>3.2.1</maven-source-plugin.version>
 		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-javadoc-plugin -->
