@@ -126,10 +126,15 @@ public final class JSONPath{
 		try{
 			for(int i = 0; i < path.length; i ++){
 				final String currentPath = path[i];
+
 				final Integer idx = extractIndex(currentPath);
+
 				validateNextSubPath(data, currentPath, idx, path);
 
-				data = extractNextSubPath(data, currentPath, idx);
+				if(idx != null)
+					data = extractNextSubPath(data, idx);
+				else
+					data = extractNextSubPath(data, currentPath);
 			}
 
 			return (T)data;
@@ -150,19 +155,21 @@ public final class JSONPath{
 			throw JSONPathException.create("No array field '{}' found on path '{}'", currentPath, toJSONPath(path));
 	}
 
-	private static Object extractNextSubPath(final Object data, final String currentPath, final Integer idx) throws NoSuchFieldException{
+	private static Object extractNextSubPath(final Object data, final Integer idx){
+		return (List.class.isInstance(data)
+			? ((List<?>)data).get(idx)
+			: Array.get(data, idx));
+	}
+
+	private static Object extractNextSubPath(final Object data, final String currentPath) throws NoSuchFieldException{
 		final Object nextData;
 		if(Map.class.isInstance(data))
 			nextData = ((Map<?, ?>)data).get(currentPath);
-		else if(idx == null){
+		else{
 			final Field currentField = data.getClass().getDeclaredField(currentPath);
 			currentField.setAccessible(true);
 			nextData = ReflectionHelper.getValue(data, currentField);
 		}
-		else if(List.class.isInstance(data))
-			nextData = ((List<?>)data).get(idx);
-		else
-			nextData = Array.get(data, idx);
 		return nextData;
 	}
 
