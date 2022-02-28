@@ -145,6 +145,11 @@ public final class Evaluator{
 		addToContext(method.getName(), null);
 	}
 
+	/**
+	 * Return the context of the evaluator.
+	 *
+	 * @return	The context.
+	 */
 	public Map<String, Object> getContext(){
 		return context.getContext();
 	}

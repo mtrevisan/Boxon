@@ -99,6 +99,7 @@ public interface ConfigurationManagerInterface{
 	 * @param dataValue	The value to check against.
 	 * @throws EncodeException	If a placeholder cannot be substituted.
 	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
+	 * @throws AnnotationException	If an annotation is not well formatted.
 	 */
 	void validateValue(Field field, String dataKey, Object dataValue) throws EncodeException, CodecException, AnnotationException;
 
@@ -112,7 +113,9 @@ public interface ConfigurationManagerInterface{
 	 * @return	The converted value.
 	 * @throws EncodeException	If a placeholder cannot be substituted.
 	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
+	 * @throws AnnotationException	If an annotation is not well formatted.
 	 */
-	Object convertValue(Field field, String dataKey, Object dataValue, Version protocol) throws EncodeException, CodecException, AnnotationException;
+	Object convertValue(Field field, String dataKey, Object dataValue, Version protocol) throws EncodeException, CodecException,
+		AnnotationException;
 
 }

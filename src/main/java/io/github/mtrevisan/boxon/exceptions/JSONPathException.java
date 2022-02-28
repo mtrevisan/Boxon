@@ -27,6 +27,9 @@ package io.github.mtrevisan.boxon.exceptions;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 
 
+/**
+ * Represents an error in a JSON path.
+ */
 public final class JSONPathException extends Exception{
 
 	private static final long serialVersionUID = 8273242566993098760L;

@@ -33,19 +33,41 @@ import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.function.Function;
 
 
+/**
+ * Helper used for fast retrieval of enum.
+ *
+ * @param <T>	The enum class type.
+ * @param <K>	The value class type.
+ */
 public final class ValueOf<T extends Enum<T>, K>{
-
-	private static final String ERROR_MESSAGE = "No enum constant ";
-
 
 	private final Class<T> type;
 	private final Map<K, T> values;
 
 
+	/**
+	 * Create an instance given the enum and a field accessor.
+	 *
+	 * @param type	The class type of the enum.
+	 * @param fieldAccessor	The field accessor whose value is to be considered.
+	 * @param <T>	The enum class type.
+	 * @param <K>	The value class type.
+	 * @return	An instance.
+	 */
 	public static <T extends Enum<T>, K> ValueOf<T, K> create(final Class<T> type, final Function<T, K> fieldAccessor){
 		return new ValueOf<>(type, fieldAccessor, null);
 	}
 
+	/**
+	 * Create an instance given the enum and a field accessor.
+	 *
+	 * @param type	The class type of the enum.
+	 * @param fieldAccessor	The field accessor whose value is to be considered.
+	 * @param comparator	A comparator user to compare values.
+	 * @param <T>	The enum class type.
+	 * @param <K>	The value class type.
+	 * @return	An instance.
+	 */
 	public static <T extends Enum<T>, K> ValueOf<T, K> create(final Class<T> type, final Function<T, K> fieldAccessor,
 			final Comparator<K> comparator){
 		Objects.requireNonNull(comparator, "Comparator has not to be null");
@@ -74,14 +96,27 @@ public final class ValueOf<T extends Enum<T>, K>{
 			: new ConcurrentHashMap<>(enumConstants.length));
 	}
 
+	/**
+	 * Return the enum value corresponding to the given value.
+	 *
+	 * @param key	The value.
+	 * @return	The enum.
+	 */
 	public T get(final K key){
 		return values.get(key);
 	}
 
+	/**
+	 * Return the enum value corresponding to the given value.
+	 *
+	 * @param key	The value.
+	 * @return	The enum.
+	 * @throws IllegalArgumentException	If no enum exists.
+	 */
 	public T getOrElseThrow(final K key){
 		final T value = values.get(key);
 		if(value == null)
-			throw new IllegalArgumentException(ERROR_MESSAGE + type.getName() + "." + key);
+			throw new IllegalArgumentException("No enum constant " + type.getName() + "." + key);
 
 		return value;
 	}

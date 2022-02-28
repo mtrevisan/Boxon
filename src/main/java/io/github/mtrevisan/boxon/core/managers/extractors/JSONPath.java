@@ -51,6 +51,15 @@ public final class JSONPath{
 	private JSONPath(){}
 
 
+	/**
+	 * Extract the value from the given object pointed by the given path.
+	 *
+	 * @param path	The path used to reference the value in the data object.
+	 * @param data	The data from which to extract the valule.
+	 * @param <T>	The value class type.
+	 * @return	The value.
+	 * @throws JSONPathException	If the path is not well formatted.
+	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T extract(final String path, final Object data) throws JSONPathException{
 		return (path == null || !path.isEmpty()? extract(parse(path), data): (T)data);
