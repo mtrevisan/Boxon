@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core.managers.extractors;
 
+import io.github.mtrevisan.boxon.exceptions.JSONPathException;
 import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.ParserDataType;
@@ -32,7 +33,6 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 
 
 /**

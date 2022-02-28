@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core;
 
+import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageASCII;
 import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageHex;
 import io.github.mtrevisan.boxon.core.codecs.queclink.DeviceTypes;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
@@ -62,7 +63,7 @@ class ComposerTest{
 		Assertions.assertEquals(1, parseResult.getParsedMessageCount());
 
 		//compose:
-		ComposeResponse composeResult = composer.composeMessage(parseResult.getParsedMessageAt(0));
+		ComposeResponse<ACKMessageHex> composeResult = composer.composeMessage(parseResult.getParsedMessageAt(0));
 
 		Assertions.assertFalse(composeResult.hasErrors());
 		Assertions.assertArrayEquals(payload, composeResult.getComposedMessage());
@@ -89,7 +90,7 @@ class ComposerTest{
 		Assertions.assertEquals(1, parseResult.getParsedMessageCount());
 
 		//compose:
-		ComposeResponse composeResult = composer.composeMessage(parseResult.getParsedMessageAt(0));
+		ComposeResponse<ACKMessageASCII> composeResult = composer.composeMessage(parseResult.getParsedMessageAt(0));
 
 		Assertions.assertFalse(composeResult.hasErrors());
 		Assertions.assertArrayEquals(payload, composeResult.getComposedMessage());

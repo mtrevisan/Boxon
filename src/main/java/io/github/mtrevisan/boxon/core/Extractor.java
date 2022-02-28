@@ -25,7 +25,7 @@
 package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.core.managers.extractors.JSONPath;
-import io.github.mtrevisan.boxon.core.managers.extractors.JSONPathException;
+import io.github.mtrevisan.boxon.exceptions.JSONPathException;
 
 import java.util.Objects;
 

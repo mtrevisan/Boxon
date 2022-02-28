@@ -773,7 +773,7 @@ configurationData.put(Parser.CONFIGURATION_FIELD_TYPE, "AT+");
 configurationData.put("Weekday", "TUESDAY|WEDNESDAY");
 ...
 
-ComposeResponse composedMessage = configurator.composeConfiguration("1.20", Collections.singletonMap("AT+", configurationData));
+ComposeResponse<String> composedMessage = configurator.composeConfiguration("1.20", Collections.singletonMap("AT+", configurationData));
 ```
 
 
@@ -1336,7 +1336,7 @@ The inverse of parsing is composing, and it's simply done as follows.
 ```java
 //compose the message
 Message data = ...;
-ComposeResponse composeResult = parser.compose(data);
+ComposeResponse<Message> composeResult = composer.composeMessage(data);
 
 //process the read messages
 if(!composeResult.hasErrors()){

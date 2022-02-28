@@ -136,7 +136,7 @@ class ConfiguratorTest{
 		configurationData.put("Download timeout", 25);
 
 		//compose:
-		ComposeResponse composeResult = configurator.composeConfiguration("1.20", Collections.singletonMap("AT+", configurationData));
+		ComposeResponse<String[]> composeResult = configurator.composeConfiguration("1.20", Collections.singletonMap("AT+", configurationData));
 
 		Assertions.assertFalse(composeResult.hasErrors());
 		Assertions.assertEquals("AT+GTREG=pass,1,1,0,2,25,0,http://url.com@username@password,3600,3600,6,,7b$",
