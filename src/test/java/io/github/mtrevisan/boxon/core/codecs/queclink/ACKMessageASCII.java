@@ -89,7 +89,7 @@ public class ACKMessageASCII{
 		MESSAGE_TYPE_MAP.put((byte)64, "AT+GTTRF");
 	}
 
-	static class MessageTypeConverter implements Converter<Byte, String>{
+	private static class MessageTypeConverter implements Converter<Byte, String>{
 		@Override
 		public String decode(final Byte value){
 			return MESSAGE_TYPE_MAP.get(value);
