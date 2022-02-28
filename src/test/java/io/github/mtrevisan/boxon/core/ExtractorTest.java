@@ -24,10 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core;
 
-import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.JSONPathException;
-import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -37,7 +34,7 @@ import org.junit.jupiter.api.Test;
 class ExtractorTest{
 
 	@Test
-	void extractPlain() throws AnnotationException, TemplateException, ConfigurationException, JSONPathException{
+	void plain() throws JSONPathException{
 		Version version = Version.of(1, 2);
 		Extractor extractor = Extractor.create(version);
 
@@ -45,7 +42,7 @@ class ExtractorTest{
 	}
 
 	@Test
-	void extractFromArray() throws AnnotationException, TemplateException, ConfigurationException, JSONPathException{
+	void fromArray() throws JSONPathException{
 		int[] array = new int[]{12, 23};
 		Extractor extractor = Extractor.create(array);
 
@@ -53,7 +50,7 @@ class ExtractorTest{
 	}
 
 	@Test
-	void extractFail() throws AnnotationException, TemplateException, ConfigurationException, JSONPathException{
+	void fail(){
 		Version version = Version.of(1, 2);
 		Extractor extractor = Extractor.create(version);
 
