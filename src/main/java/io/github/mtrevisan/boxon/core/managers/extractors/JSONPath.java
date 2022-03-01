@@ -96,11 +96,19 @@ public final class JSONPath{
 		return components;
 	}
 
-	private static String urlDecode(String component){
+	/**
+	 *	Percent-decode a text.
+	 *
+	 * @param text	The text to be URL decoded.
+	 * @return	The URL-decoded text.
+	 *
+	 * @see <a href="https://datatracker.ietf.org/doc/html/rfc3986">RFC3986 - Uniform Resource Identifier (URI): Generic Syntax</a>
+	 */
+	private static String urlDecode(String text){
 		//convert (hexadecimal) %x?? to (decimal) %??:
-		component = PATTERN_HEX_URL_ENCODE.matcher(component)
+		text = PATTERN_HEX_URL_ENCODE.matcher(text)
 			.replaceAll(match -> Character.toString((char)Integer.parseInt(match.group(1), 16)));
-		return URLDecoder.decode(component, StandardCharsets.UTF_8);
+		return URLDecoder.decode(text, StandardCharsets.UTF_8);
 	}
 
 	/**
