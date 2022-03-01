@@ -67,10 +67,10 @@ public final class MultipleResponse{
 	 * @param index	The index of a message in a group of concatenated messages for which to extract the parsed message.
 	 * @return	The successfully parsed message at a given index.
 	 */
-	@SuppressWarnings("unchecked")
 	public SingleResponse<byte[], Object> getResponseAt(final int index){
 		return responses.get(index);
 	}
+
 
 	void addResponse(final SingleResponse<byte[], Object> response){
 		responses.add(response);
