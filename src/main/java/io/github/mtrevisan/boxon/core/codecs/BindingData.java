@@ -144,7 +144,11 @@ final class BindingData{
 		return chosenAlternativeType;
 	}
 
-	/** Add the prefix to the evaluator context if needed. */
+	/**
+	 * Add the prefix to the evaluator context if needed.
+	 *
+	 * @param reader	The reader from which to read the prefix.
+	 */
 	private void addPrefixToContext(final BitReaderInterface reader){
 		final int prefixSize = selectObjectFrom.prefixSize();
 		if(prefixSize > 0){
