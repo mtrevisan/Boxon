@@ -46,10 +46,10 @@ class ExtractorTest{
 
 	@Test
 	void plainEscape() throws JSONPathException{
-		Map<String, Object> map = Map.of("~1/è\\\"", "value");
+		Map<String, Object> map = Map.of("~1/è\\\"  %", "value");
 		Extractor extractor = Extractor.create(map);
 
-		Assertions.assertEquals("value", extractor.get("/~01~1%C3%A8\\%x22"));
+		Assertions.assertEquals("value", extractor.get("/~01~1%C3%A8\\%x22+%20%25"));
 	}
 
 	@Test
