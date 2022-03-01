@@ -67,6 +67,20 @@ public final class Extractor{
 	 * @throws JSONPathException	If the path has an error.
 	 */
 	public <T> T get(final String path) throws JSONPathException{
+		return get(path, data);
+	}
+
+	/**
+	 * Extract the value corresponding to the given path.
+	 *
+	 * @param <T>	The class of the resulting value.
+	 * @param path	The path used to extract the corresponding value (following
+	 * 	<a href="https://tools.ietf.org/html/rfc6901">RFC6901 - JavaScript Object Notation (JSON) Pointer</a> notation).
+	 * @param data	The data from which to extract values.
+	 * @return	The value.
+	 * @throws JSONPathException	If the path has an error.
+	 */
+	public static  <T> T get(final String path, final Object data) throws JSONPathException{
 		return JSONPath.extract(path, data);
 	}
 

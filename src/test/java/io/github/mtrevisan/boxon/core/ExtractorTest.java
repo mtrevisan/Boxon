@@ -63,9 +63,8 @@ class ExtractorTest{
 	@Test
 	void fromList() throws JSONPathException{
 		List<String> list = List.of("un", "do", "trè", "kuatro", "ŧinkue");
-		Extractor extractor = Extractor.create(list);
 
-		Assertions.assertEquals("trè", extractor.get("/2"));
+		Assertions.assertEquals("trè", Extractor.get("/2", list));
 	}
 
 	@Test
