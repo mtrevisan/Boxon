@@ -35,10 +35,10 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
-import io.github.mtrevisan.boxon.core.BoxonCore;
-import io.github.mtrevisan.boxon.core.BoxonCoreBuilder;
+import io.github.mtrevisan.boxon.core.Core;
+import io.github.mtrevisan.boxon.core.CoreBuilder;
 import io.github.mtrevisan.boxon.core.Parser;
-import io.github.mtrevisan.boxon.core.BoxonResponse;
+import io.github.mtrevisan.boxon.core.Response;
 import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
@@ -278,18 +278,18 @@ class CodecArrayTest{
 
 	@Test
 	void arrayOfDifferentObjects() throws AnnotationException, TemplateException, ConfigurationException{
-		BoxonCore core = BoxonCoreBuilder.builder()
+		Core core = CoreBuilder.builder()
 			.withCodecsFrom(CodecChecksum.class, CodecCustomTest.VariableLengthByteArray.class)
 			.withTemplatesFrom(TestChoice4.class)
 			.create();
 		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.toByteArray("7463340112340211223344010666");
-		List<BoxonResponse<byte[], Object>> result = parser.parse(payload);
+		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(1, result.size());
-		BoxonResponse<byte[], Object> response = result.get(0);
+		Response<byte[], Object> response = result.get(0);
 		Assertions.assertNull(response.getError());
 		Assertions.assertEquals(TestChoice4.class, response.getMessage().getClass());
 		TestChoice4 parsedMessage = (TestChoice4)response.getMessage();
@@ -304,18 +304,18 @@ class CodecArrayTest{
 
 	@Test
 	void arrayOfDifferentObjectsWithNoPrefix() throws AnnotationException, TemplateException, ConfigurationException{
-		BoxonCore core = BoxonCoreBuilder.builder()
+		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withTemplatesFrom(TestChoice5.class)
 			.create();
 		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.toByteArray("746335011234");
-		List<BoxonResponse<byte[], Object>> result = parser.parse(payload);
+		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(1, result.size());
-		BoxonResponse<byte[], Object> response = result.get(0);
+		Response<byte[], Object> response = result.get(0);
 		Assertions.assertNull(response.getError());
 		Assertions.assertEquals(TestChoice5.class, response.getMessage().getClass());
 		TestChoice5 parsedMessage = (TestChoice5)response.getMessage();

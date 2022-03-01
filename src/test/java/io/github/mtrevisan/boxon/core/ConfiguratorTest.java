@@ -46,7 +46,7 @@ class ConfiguratorTest{
 	void getConfigurations() throws AnnotationException, ConfigurationException, CodecException, TemplateException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with("QUECLINK_GB200S", (byte)0x46);
-		BoxonCore core = BoxonCoreBuilder.builder()
+		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withConfiguration(REGConfigurationASCII.class)
 			.create();
@@ -71,7 +71,7 @@ class ConfiguratorTest{
 	void getProtocolVersionBoundaries() throws AnnotationException, ConfigurationException, TemplateException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with("QUECLINK_GB200S", (byte)0x46);
-		BoxonCore core = BoxonCoreBuilder.builder()
+		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withConfigurationsFrom(REGConfigurationASCII.class)
 			.create();
@@ -88,7 +88,7 @@ class ConfiguratorTest{
 	void getConfigurationsByProtocol() throws AnnotationException, ConfigurationException, CodecException, TemplateException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with("QUECLINK_GB200S", (byte)0x46);
-		BoxonCore core = BoxonCoreBuilder.builder()
+		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withConfigurationsFrom(REGConfigurationASCII.class)
 			.create();
@@ -110,7 +110,7 @@ class ConfiguratorTest{
 	void composeSingleConfigurationMessage() throws NoSuchMethodException, AnnotationException, TemplateException, ConfigurationException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with("QUECLINK_GB200S", (byte)0x46);
-		BoxonCore core = BoxonCoreBuilder.builder()
+		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withConfigurationsFrom(REGConfigurationASCII.class)
 			.create();
@@ -135,7 +135,7 @@ class ConfiguratorTest{
 		configurationData.put("Download timeout", 25);
 
 		//compose:
-		BoxonResponse<String, byte[]> composeResult = configurator.composeConfiguration("1.20", "AT+",
+		Response<String, byte[]> composeResult = configurator.composeConfiguration("1.20", "AT+",
 			configurationData);
 
 		Assertions.assertFalse(composeResult.hasError());

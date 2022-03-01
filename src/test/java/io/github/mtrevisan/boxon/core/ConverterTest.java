@@ -92,18 +92,18 @@ class ConverterTest{
 
 	@Test
 	void wrongInputOnConverter() throws AnnotationException, TemplateException, ConfigurationException{
-		BoxonCore core = BoxonCoreBuilder.builder()
+		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withTemplatesFrom(TestConverter1.class)
 			.create();
 		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.toByteArray("77633101");
-		List<BoxonResponse<byte[], Object>> result = parser.parse(payload);
+		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(2, result.size());
-		BoxonResponse<byte[], Object> response = result.get(0);
+		Response<byte[], Object> response = result.get(0);
 		Assertions.assertArrayEquals(payload, response.getOriginator());
 		Exception error = response.getError();
 		Assertions.assertNotNull(error);
@@ -113,18 +113,18 @@ class ConverterTest{
 
 	@Test
 	void wrongOutputFromConverter() throws AnnotationException, TemplateException, ConfigurationException{
-		BoxonCore core = BoxonCoreBuilder.builder()
+		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withTemplatesFrom(TestConverter2.class)
 			.create();
 		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.toByteArray("77633201");
-		List<BoxonResponse<byte[], Object>> result = parser.parse(payload);
+		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(2, result.size());
-		BoxonResponse<byte[], Object> response = result.get(0);
+		Response<byte[], Object> response = result.get(0);
 		Assertions.assertArrayEquals(payload, response.getOriginator());
 		Exception error = response.getError();
 		Assertions.assertNotNull(error);
@@ -134,18 +134,18 @@ class ConverterTest{
 
 	@Test
 	void allowedOutputFromConverter() throws AnnotationException, TemplateException, ConfigurationException{
-		BoxonCore core = BoxonCoreBuilder.builder()
+		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withTemplatesFrom(TestConverter3.class)
 			.create();
 		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.toByteArray("77633301");
-		List<BoxonResponse<byte[], Object>> result = parser.parse(payload);
+		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(1, result.size());
-		BoxonResponse<byte[], Object> response = result.get(0);
+		Response<byte[], Object> response = result.get(0);
 		Assertions.assertArrayEquals(payload, response.getOriginator());
 		Exception error = response.getError();
 		Assertions.assertNull(error);

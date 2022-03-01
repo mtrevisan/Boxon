@@ -47,7 +47,7 @@ class ConfiguratorThreadedTest{
 			ExecutionException, InterruptedException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with("QUECLINK_GB200S", (byte)0x46);
-		BoxonCore core = BoxonCoreBuilder.builder()
+		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withConfiguration(REGConfigurationASCII.class)
 			.create();
@@ -75,7 +75,7 @@ class ConfiguratorThreadedTest{
 			ExecutionException, InterruptedException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with("QUECLINK_GB200S", (byte)0x46);
-		BoxonCore core = BoxonCoreBuilder.builder()
+		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withConfiguration(REGConfigurationASCII.class)
 			.create();
@@ -108,7 +108,7 @@ class ConfiguratorThreadedTest{
 
 		MultithreadingHelper.testMultithreading(
 			() -> {
-				BoxonCore core = BoxonCoreBuilder.builder()
+				Core core = CoreBuilder.builder()
 					.withDefaultCodecs()
 					.withConfiguration(REGConfigurationASCII.class)
 					.create();

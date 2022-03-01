@@ -46,7 +46,7 @@ import java.util.Objects;
  * Common data used by {@link Parser}, {@link Descriptor}, {@link Composer}, and {@link Configurator}.
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
-public final class BoxonCore{
+public final class Core{
 
 	private final LoaderCodec loaderCodec;
 
@@ -64,12 +64,12 @@ public final class BoxonCore{
 	 *
 	 * @return	An empty boxon core.
 	 */
-	static BoxonCore create(){
-		return new BoxonCore();
+	static Core create(){
+		return new Core();
 	}
 
 
-	private BoxonCore(){
+	private Core(){
 		loaderCodec = LoaderCodec.create();
 
 		evaluator = Evaluator.create();

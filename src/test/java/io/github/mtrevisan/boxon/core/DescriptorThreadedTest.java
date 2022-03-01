@@ -46,7 +46,7 @@ class DescriptorThreadedTest{
 			NoSuchMethodException, ExecutionException, InterruptedException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with("QUECLINK_GB200S", (byte)0x46);
-		BoxonCore core = BoxonCoreBuilder.builder()
+		Core core = CoreBuilder.builder()
 			.withContext("deviceTypes", deviceTypes)
 			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
 			.withDefaultCodecs()
@@ -70,7 +70,7 @@ class DescriptorThreadedTest{
 			ExecutionException, InterruptedException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with("QUECLINK_GB200S", (byte)0x46);
-		BoxonCore core = BoxonCoreBuilder.builder()
+		Core core = CoreBuilder.builder()
 			.withContext("deviceTypes", deviceTypes)
 			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
 			.withDefaultCodecs()
@@ -101,7 +101,7 @@ class DescriptorThreadedTest{
 		AtomicInteger counter = new AtomicInteger();
 		MultithreadingHelper.testMultithreading(
 			() -> {
-				BoxonCore core = BoxonCoreBuilder.builder()
+				Core core = CoreBuilder.builder()
 					.withContext("deviceTypes", deviceTypes)
 					.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
 					.withDefaultCodecs()

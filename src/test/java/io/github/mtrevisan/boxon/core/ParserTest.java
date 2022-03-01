@@ -54,7 +54,7 @@ class ParserTest{
 //		Map<String, Object> context = Map.of(
 //			"deviceTypes", deviceTypes,
 //			"headerSize", 4);
-		BoxonCore core = BoxonCoreBuilder.builder()
+		Core core = CoreBuilder.builder()
 //			.withEventListener(EventLogger.getInstance())
 			.withDefaultCodecs()
 			.withTemplate(ACKMessageHex.class)
@@ -85,7 +85,7 @@ class ParserTest{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with("QUECLINK_GB200S", (byte)0x46);
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
-		BoxonCore core = BoxonCoreBuilder.builder()
+		Core core = CoreBuilder.builder()
 			.withContext(context)
 			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
 			.withDefaultCodecs()
@@ -94,7 +94,7 @@ class ParserTest{
 		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
-		List<BoxonResponse<byte[], Object>> result = parser.parse(payload);
+		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertEquals(2, result.size());
 		Assertions.assertNull(result.get(0).getError());
@@ -106,7 +106,7 @@ class ParserTest{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with("QUECLINK_GV350M", (byte)0xCF);
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
-		BoxonCore core = BoxonCoreBuilder.builder()
+		Core core = CoreBuilder.builder()
 			.withContext(context)
 			.withDefaultCodecs()
 			.withTemplatesFrom(ACKMessageHex.class)
@@ -114,7 +114,7 @@ class ParserTest{
 		Parser parser = Parser.create(core);
 
 		byte[] payload = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
-		List<BoxonResponse<byte[], Object>> result = parser.parse(payload);
+		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertEquals(2, result.size());
 		Assertions.assertNull(result.get(0).getError());
@@ -127,7 +127,7 @@ class ParserTest{
 			.with("QUECLINK_GB200S", (byte)0x46)
 			.with("QUECLINK_GV350M", (byte)0xCF);
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
-		BoxonCore core = BoxonCoreBuilder.builder()
+		Core core = CoreBuilder.builder()
 			.withContext(context)
 			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
 			.withDefaultCodecs()
@@ -138,7 +138,7 @@ class ParserTest{
 		byte[] payload1 = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		byte[] payload2 = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
 		byte[] payload = addAll(payload1, payload2);
-		List<BoxonResponse<byte[], Object>> result = parser.parse(payload);
+		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertEquals(2, result.size());
 		Assertions.assertNull(result.get(0).getError());
@@ -151,7 +151,7 @@ class ParserTest{
 			.with("QUECLINK_GB200S", (byte)0x46)
 			.with("QUECLINK_GV350M", (byte)0xCF);
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
-		BoxonCore core = BoxonCoreBuilder.builder()
+		Core core = CoreBuilder.builder()
 			.withContext(context)
 			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
 			.withDefaultCodecs()
@@ -162,7 +162,7 @@ class ParserTest{
 		byte[] payload1 = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		byte[] payload2 = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
 		byte[] payload = addAll(payload2, payload1);
-		List<BoxonResponse<byte[], Object>> result = parser.parse(payload);
+		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertEquals(2, result.size());
 		Assertions.assertNull(result.get(0).getError());

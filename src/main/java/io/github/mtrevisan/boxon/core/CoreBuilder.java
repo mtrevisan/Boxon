@@ -42,9 +42,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 
 /**
- * Builder for the {@link BoxonCore common data} used by the {@link Parser}, {@link Descriptor}, {@link Composer}, and {@link Configurator}.
+ * Builder for the {@link Core common data} used by the {@link Parser}, {@link Descriptor}, {@link Composer}, and {@link Configurator}.
  */
-public final class BoxonCoreBuilder{
+public final class CoreBuilder{
 
 	private enum ConfigurationStep{
 		EVENT_LISTENER,
@@ -60,7 +60,7 @@ public final class BoxonCoreBuilder{
 	}
 
 
-	private final BoxonCore core;
+	private final Core core;
 
 	private final Map<ConfigurationStep, List<RunnableThrowable>> calls = new EnumMap<>(ConfigurationStep.class);
 
@@ -70,13 +70,13 @@ public final class BoxonCoreBuilder{
 	 *
 	 * @return	A core builder.
 	 */
-	public static BoxonCoreBuilder builder(){
-		return new BoxonCoreBuilder();
+	public static CoreBuilder builder(){
+		return new CoreBuilder();
 	}
 
 
-	private BoxonCoreBuilder(){
-		core = BoxonCore.create();
+	private CoreBuilder(){
+		core = Core.create();
 	}
 
 
@@ -86,7 +86,7 @@ public final class BoxonCoreBuilder{
 	 * @param eventListener	The event listener.
 	 * @return	The current instance.
 	 */
-	public BoxonCoreBuilder withEventListener(final EventListener eventListener){
+	public CoreBuilder withEventListener(final EventListener eventListener){
 		addMethod(ConfigurationStep.EVENT_LISTENER, () -> core.setEventListener(eventListener));
 
 		return this;
@@ -100,7 +100,7 @@ public final class BoxonCoreBuilder{
 	 * @param value	The value.
 	 * @return	This instance, used for chaining.
 	 */
-	public BoxonCoreBuilder withContext(final String key, final Object value){
+	public CoreBuilder withContext(final String key, final Object value){
 		addMethod(ConfigurationStep.CONTEXT, () -> core.addToContext(key, value));
 
 		return this;
@@ -112,7 +112,7 @@ public final class BoxonCoreBuilder{
 	 * @param context	The context map.
 	 * @return	This instance, used for chaining.
 	 */
-	public BoxonCoreBuilder withContext(final Map<String, Object> context){
+	public CoreBuilder withContext(final Map<String, Object> context){
 		addMethod(ConfigurationStep.CONTEXT, () -> core.addContext(context));
 
 		return this;
@@ -127,7 +127,7 @@ public final class BoxonCoreBuilder{
 	 * @throws NoSuchMethodException	If a matching method is not found.
 	 * @throws NullPointerException	If {@code methodName} is {@code null}.
 	 */
-	public BoxonCoreBuilder withContextFunction(final Class<?> type, final String methodName) throws NoSuchMethodException{
+	public CoreBuilder withContextFunction(final Class<?> type, final String methodName) throws NoSuchMethodException{
 		return withContextFunction(type.getDeclaredMethod(methodName));
 	}
 
@@ -140,7 +140,7 @@ public final class BoxonCoreBuilder{
 	 * @return	This instance, used for chaining.
 	 * @throws NoSuchMethodException	If a matching method is not found.
 	 */
-	public BoxonCoreBuilder withContextFunction(final Class<?> type, final String methodName, final Class<?>... parameterTypes)
+	public CoreBuilder withContextFunction(final Class<?> type, final String methodName, final Class<?>... parameterTypes)
 			throws NoSuchMethodException{
 		final Method method = type.getDeclaredMethod(methodName, parameterTypes);
 		return withContextFunction(method);
@@ -152,7 +152,7 @@ public final class BoxonCoreBuilder{
 	 * @param method	The method.
 	 * @return	This instance, used for chaining.
 	 */
-	public BoxonCoreBuilder withContextFunction(final Method method){
+	public CoreBuilder withContextFunction(final Method method){
 		addMethod(ConfigurationStep.CONTEXT, () -> core.addContextFunction(method));
 
 		return this;
@@ -165,7 +165,7 @@ public final class BoxonCoreBuilder{
 	 *
 	 * @return	This instance, used for chaining.
 	 */
-	public BoxonCoreBuilder withDefaultCodecs(){
+	public CoreBuilder withDefaultCodecs(){
 		addMethod(ConfigurationStep.CODEC, core::useDefaultCodecs);
 
 		return this;
@@ -177,7 +177,7 @@ public final class BoxonCoreBuilder{
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load codecs.
 	 * @return	This instance, used for chaining.
 	 */
-	public BoxonCoreBuilder withCodecsFrom(final Class<?>... basePackageClasses){
+	public CoreBuilder withCodecsFrom(final Class<?>... basePackageClasses){
 		addMethod(ConfigurationStep.CODEC, () -> core.addCodecsFrom(basePackageClasses));
 
 		return this;
@@ -189,7 +189,7 @@ public final class BoxonCoreBuilder{
 	 * @param codec	The codec to be loaded.
 	 * @return	This instance, used for chaining.
 	 */
-	public BoxonCoreBuilder withCodec(final CodecInterface<?> codec){
+	public CoreBuilder withCodec(final CodecInterface<?> codec){
 		addMethod(ConfigurationStep.CODEC, () -> core.addCodec(codec));
 
 		return this;
@@ -201,7 +201,7 @@ public final class BoxonCoreBuilder{
 	 * @param codecs	The list of codecs to be loaded.
 	 * @return	This instance, used for chaining.
 	 */
-	public BoxonCoreBuilder withCodecs(final CodecInterface<?>... codecs){
+	public CoreBuilder withCodecs(final CodecInterface<?>... codecs){
 		addMethod(ConfigurationStep.CODEC, () -> core.addCodecs(codecs));
 
 		return this;
@@ -214,7 +214,7 @@ public final class BoxonCoreBuilder{
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
 	 * @return	This instance, used for chaining.
 	 */
-	public BoxonCoreBuilder withTemplatesFrom(final Class<?>... basePackageClasses){
+	public CoreBuilder withTemplatesFrom(final Class<?>... basePackageClasses){
 		addMethod(ConfigurationStep.TEMPLATE, () -> core.addTemplatesFrom(basePackageClasses));
 
 		return this;
@@ -226,7 +226,7 @@ public final class BoxonCoreBuilder{
 	 * @param templateClass	Template class.
 	 * @return	This instance, used for chaining.
 	 */
-	public BoxonCoreBuilder withTemplate(final Class<?> templateClass){
+	public CoreBuilder withTemplate(final Class<?> templateClass){
 		addMethod(ConfigurationStep.TEMPLATE, () -> core.addTemplate(templateClass));
 
 		return this;
@@ -239,7 +239,7 @@ public final class BoxonCoreBuilder{
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
 	 * @return	This instance, used for chaining.
 	 */
-	public BoxonCoreBuilder withConfigurationsFrom(final Class<?>... basePackageClasses){
+	public CoreBuilder withConfigurationsFrom(final Class<?>... basePackageClasses){
 		addMethod(ConfigurationStep.CONFIGURATION, () -> core.addConfigurationsFrom(basePackageClasses));
 
 		return this;
@@ -251,7 +251,7 @@ public final class BoxonCoreBuilder{
 	 * @param configurationClass	Configuration class.
 	 * @return	This instance, used for chaining.
 	 */
-	public BoxonCoreBuilder withConfiguration(final Class<?> configurationClass){
+	public CoreBuilder withConfiguration(final Class<?> configurationClass){
 		addMethod(ConfigurationStep.CONFIGURATION, () -> core.addConfiguration(configurationClass));
 
 		return this;
@@ -267,12 +267,12 @@ public final class BoxonCoreBuilder{
 	/**
 	 * Create the common core data executing all the configuration commands called in the proper order.
 	 *
-	 * @return	{@link BoxonCore Core} data used by {@link Parser}, {@link Descriptor}, {@link Composer}, and {@link Configurator}.
+	 * @return	{@link Core Core} data used by {@link Parser}, {@link Descriptor}, {@link Composer}, and {@link Configurator}.
 	 * @throws AnnotationException	If an annotation is not well formatted.
 	 * @throws TemplateException	If a template is not well formatted.
 	 * @throws ConfigurationException	If a configuration is not well formatted.
 	 */
-	public BoxonCore create() throws AnnotationException, TemplateException, ConfigurationException{
+	public Core create() throws AnnotationException, TemplateException, ConfigurationException{
 		final ConfigurationStep[] values = ConfigurationStep.values();
 		for(int i = 0; i < values.length; i ++){
 			final List<RunnableThrowable> executors = calls.get(values[i]);

@@ -47,7 +47,7 @@ class ComposerTest{
 	void parseAndComposeSingleMessageHex() throws NoSuchMethodException, AnnotationException, TemplateException, ConfigurationException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with("QUECLINK_GB200S", (byte)0x46);
-		BoxonCore core = BoxonCoreBuilder.builder()
+		Core core = CoreBuilder.builder()
 			.withContext("deviceTypes", deviceTypes)
 			.withContextFunction(ParserTest.class, "headerSize")
 			.withDefaultCodecs()
@@ -58,17 +58,17 @@ class ComposerTest{
 
 		//parse:
 		byte[] payload = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
-		List<BoxonResponse<byte[], Object>> result = parser.parse(payload);
+		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(1, result.size());
-		BoxonResponse<byte[], Object> response = result.get(0);
+		Response<byte[], Object> response = result.get(0);
 		Assertions.assertArrayEquals(payload, response.getOriginator());
 		Exception error = response.getError();
 		Assertions.assertNull(error);
 
 		//compose:
-		BoxonResponse<ACKMessageHex, byte[]> composeResult = composer.composeMessage((ACKMessageHex)response.getMessage());
+		Response<ACKMessageHex, byte[]> composeResult = composer.composeMessage((ACKMessageHex)response.getMessage());
 
 		Assertions.assertFalse(composeResult.hasError());
 		Assertions.assertArrayEquals(payload, composeResult.getMessage());
@@ -79,7 +79,7 @@ class ComposerTest{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with("QUECLINK_GV350M", (byte)0xCF);
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
-		BoxonCore core = BoxonCoreBuilder.builder()
+		Core core = CoreBuilder.builder()
 			.withContext(context)
 			.withDefaultCodecs()
 			.withTemplatesFrom(ACKMessageHex.class)
@@ -89,17 +89,17 @@ class ComposerTest{
 
 		//parse:
 		byte[] payload = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
-		List<BoxonResponse<byte[], Object>> result = parser.parse(payload);
+		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(1, result.size());
-		BoxonResponse<byte[], Object> response = result.get(0);
+		Response<byte[], Object> response = result.get(0);
 		Assertions.assertArrayEquals(payload, response.getOriginator());
 		Exception error = response.getError();
 		Assertions.assertNull(error);
 
 		//compose:
-		BoxonResponse<ACKMessageASCII, byte[]> composeResult = composer.composeMessage((ACKMessageASCII)response.getMessage());
+		Response<ACKMessageASCII, byte[]> composeResult = composer.composeMessage((ACKMessageASCII)response.getMessage());
 
 		Assertions.assertFalse(composeResult.hasError());
 		Assertions.assertArrayEquals(payload, composeResult.getMessage());

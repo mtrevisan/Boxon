@@ -49,7 +49,7 @@ class ComposerThreadedTest{
 			ExecutionException, InterruptedException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with("QUECLINK_GB200S", (byte)0x46);
-		BoxonCore core = BoxonCoreBuilder.builder()
+		Core core = CoreBuilder.builder()
 			.withContext("deviceTypes", deviceTypes)
 			.withContextFunction(ParserTest.class, "headerSize")
 			.withDefaultCodecs()
@@ -59,7 +59,7 @@ class ComposerThreadedTest{
 		Composer composer = Composer.create(core);
 
 		//parse:
-		List<BoxonResponse<byte[], Object>> parseResult = parser.parse(PAYLOAD);
+		List<Response<byte[], Object>> parseResult = parser.parse(PAYLOAD);
 
 		//compose:
 		int threadCount = 10;
@@ -75,7 +75,7 @@ class ComposerThreadedTest{
 			ExecutionException, InterruptedException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with("QUECLINK_GB200S", (byte)0x46);
-		BoxonCore core = BoxonCoreBuilder.builder()
+		Core core = CoreBuilder.builder()
 			.withContext("deviceTypes", deviceTypes)
 			.withContextFunction(ParserTest.class, "headerSize")
 			.withDefaultCodecs()
@@ -84,7 +84,7 @@ class ComposerThreadedTest{
 		Parser parser = Parser.create(core);
 
 		//parse:
-		List<BoxonResponse<byte[], Object>> parseResult = parser.parse(PAYLOAD);
+		List<Response<byte[], Object>> parseResult = parser.parse(PAYLOAD);
 
 		//compose:
 		int threadCount = 10;
@@ -108,7 +108,7 @@ class ComposerThreadedTest{
 		int threadCount = 10;
 		MultithreadingHelper.testMultithreading(
 			() -> {
-				BoxonCore core = BoxonCoreBuilder.builder()
+				Core core = CoreBuilder.builder()
 					.withContext("deviceTypes", deviceTypes)
 					.withContextFunction(ParserTest.class, "headerSize")
 					.withDefaultCodecs()
@@ -117,7 +117,7 @@ class ComposerThreadedTest{
 				Parser parser = Parser.create(core);
 
 				//parse:
-				List<BoxonResponse<byte[], Object>> parseResult = parser.parse(PAYLOAD);
+				List<Response<byte[], Object>> parseResult = parser.parse(PAYLOAD);
 
 				Composer composer = Composer.create(core);
 				return composer.composeMessage(parseResult.get(0).getMessage());

@@ -44,16 +44,16 @@ public final class Composer{
 	/**
 	 * Create a composer.
 	 *
-	 * @param boxonCore	The parser core.
+	 * @param core	The parser core.
 	 * @return	A composer.
 	 */
-	public static Composer create(final BoxonCore boxonCore){
-		return new Composer(boxonCore);
+	public static Composer create(final Core core){
+		return new Composer(core);
 	}
 
 
-	private Composer(final BoxonCore boxonCore){
-		templateParser = boxonCore.getTemplateParser();
+	private Composer(final Core core){
+		templateParser = core.getTemplateParser();
 	}
 
 
@@ -64,11 +64,11 @@ public final class Composer{
 	 * @param <T>	The class of the originator data.
 	 * @return	The composition response.
 	 */
-	public <T> BoxonResponse<T, byte[]> composeMessage(final T data){
+	public <T> Response<T, byte[]> composeMessage(final T data){
 		final BitWriter writer = BitWriter.create();
 		final EncodeException error = composeMessage(writer, data);
 
-		return BoxonResponse.create(data, writer, error);
+		return Response.create(data, writer, error);
 	}
 
 	/**

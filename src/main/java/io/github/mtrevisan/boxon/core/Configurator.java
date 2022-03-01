@@ -63,17 +63,17 @@ public final class Configurator{
 	/**
 	 * Create a configurator.
 	 *
-	 * @param boxonCore	The parser core.
+	 * @param core	The parser core.
 	 * @return	A descriptor.
 	 */
-	public static Configurator create(final BoxonCore boxonCore){
-		return new Configurator(boxonCore);
+	public static Configurator create(final Core core){
+		return new Configurator(core);
 	}
 
 
-	private Configurator(final BoxonCore boxonCore){
-		configurationParser = boxonCore.getConfigurationParser();
-		evaluator = boxonCore.getEvaluator();
+	private Configurator(final Core core){
+		configurationParser = core.getConfigurationParser();
+		evaluator = core.getEvaluator();
 	}
 
 	/**
@@ -176,8 +176,8 @@ public final class Configurator{
 	 * @param data	The configuration message data to be composed.
 	 * @return	The composition response.
 	 */
-	public BoxonResponse<String, byte[]> composeConfiguration(final String protocolVersion, final String messageStart,
-																				 final Map<String, Object> data){
+	public Response<String, byte[]> composeConfiguration(final String protocolVersion, final String messageStart,
+																		  final Map<String, Object> data){
 		final Version protocol = Version.of(protocolVersion);
 		if(protocol.isEmpty())
 			throw new IllegalArgumentException("Invalid protocol version: " + protocolVersion);
@@ -185,7 +185,7 @@ public final class Configurator{
 		final BitWriter writer = BitWriter.create();
 		final EncodeException error = composeConfiguration(writer, messageStart, data, protocol);
 
-		return BoxonResponse.create(messageStart, writer, error);
+		return Response.create(messageStart, writer, error);
 	}
 
 	/**

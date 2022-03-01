@@ -690,7 +690,7 @@ Example:
 ```java
 DeviceTypes deviceTypes = DeviceTypes.create()
     .with("QUECLINK_GB200S", (byte)0x46);
-BoxonCore core = BoxonCoreBuilder.builder()
+Core core = CoreBuilder.builder()
     .withContext("deviceTypes", deviceTypes)
     .withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
     .withDefaultCodecs()
@@ -1299,7 +1299,7 @@ All you have to care about, for a simple example on multi-message automatically-
 ```java
 //optionally create a context
 Map<String, Object> context = ...
-BoxonCore core = BoxonCoreBuilder.builder()
+Core core = CoreBuilder.builder()
    .withContext(context)
    .withContextFunction(VersionHelper.class, "compareVersion", String.class, String.class)
    .withContextFunction(VersionHelper.class.getDeclaredMethod("compareVersion", new Class[]{String.class, String.class}))
@@ -1310,11 +1310,11 @@ Parser parser = Parser.create(core);
 
 //parse the message
 byte[] payload = ...
-List<BoxonResponse<byte[], Object>> result = parser.parse(payload);
+List<Response<byte[], Object>> result = parser.parse(payload);
 
 //process the successfully parsed messages and errors
 for(int index = 0; index < result.size(); index ++){
-   BoxonResponse<byte[], Object> response = result.get(index);
+   Response<byte[], Object> response = result.get(index);
    Object parsedMessage = response.getMessage();
    Exception error = response.getError();
 
@@ -1334,7 +1334,7 @@ The inverse of parsing is composing, and it's simply done as follows.
 ```java
 //compose the message
 Message data = ...;
-BoxonResponse<Message, byte[]> composeResult = composer.composeMessage(data);
+Response<Message, byte[]> composeResult = composer.composeMessage(data);
 
 //process the composed messages
 byte[] composedMessage = response.getMessage();
@@ -1367,7 +1367,7 @@ Pull requests are welcomed.
 
 <a name="changelog-3.0.0"></a>
 ### version 3.0.0 - 20220216
-- Added `BoxonCoreBuilder` to facilitate the creation of `BoxonCore`: now it is no longer necessary to remember the order in which the methods should be called.
+- Added `CoreBuilder` to facilitate the creation of a `Core`: now it is no longer necessary to remember the order in which the methods should be called.
 - Added missing javadoc. Enhanced existing javadoc.
 - Added `BindBitSet` binding for java `BitSet`.
 - Added `Extractor`, used to programmatically extract values from a POJO.
