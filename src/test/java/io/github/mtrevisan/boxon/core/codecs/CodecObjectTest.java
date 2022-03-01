@@ -39,8 +39,9 @@ import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.core.BoxonCore;
 import io.github.mtrevisan.boxon.core.BoxonCoreBuilder;
-import io.github.mtrevisan.boxon.core.ParserResponse;
+import io.github.mtrevisan.boxon.core.MultipleResponse;
 import io.github.mtrevisan.boxon.core.Parser;
+import io.github.mtrevisan.boxon.core.SingleResponse;
 import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
@@ -233,13 +234,14 @@ class CodecObjectTest{
 		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.toByteArray("746331011234");
-		ParserResponse result = parser.parse(payload);
+		MultipleResponse result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
-		Assertions.assertFalse(result.hasErrors());
-		Assertions.assertEquals(1, result.getParsedMessageCount());
-		Assertions.assertEquals(TestChoice1.class, result.getParsedMessageAt(0).getClass());
-		TestChoice1 parsedMessage = (TestChoice1)result.getParsedMessageAt(0);
+		Assertions.assertEquals(1, result.getTotalMessageCount());
+		SingleResponse<byte[], Object> response = result.getResponseAt(0);
+		Assertions.assertNull(response.getError());
+		Assertions.assertEquals(TestChoice1.class, response.getMessage().getClass());
+		TestChoice1 parsedMessage = (TestChoice1)response.getMessage();
 		TestType1 value1 = (TestType1)parsedMessage.value;
 		Assertions.assertEquals(0x1234, value1.value);
 
@@ -248,10 +250,11 @@ class CodecObjectTest{
 		result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
-		Assertions.assertFalse(result.hasErrors());
-		Assertions.assertEquals(1, result.getParsedMessageCount());
-		Assertions.assertEquals(TestChoice1.class, result.getParsedMessageAt(0).getClass());
-		parsedMessage = (TestChoice1)result.getParsedMessageAt(0);
+		Assertions.assertEquals(1, result.getTotalMessageCount());
+		response = result.getResponseAt(0);
+		Assertions.assertNull(response.getError());
+		Assertions.assertEquals(TestChoice1.class, response.getMessage().getClass());
+		parsedMessage = (TestChoice1)response.getMessage();
 		TestType2 value2 = (TestType2)parsedMessage.value;
 		Assertions.assertEquals(0x1122_3344, value2.value);
 	}
@@ -265,13 +268,14 @@ class CodecObjectTest{
 		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.toByteArray("7463320506001234");
-		ParserResponse result = parser.parse(payload);
+		MultipleResponse result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
-		Assertions.assertFalse(result.hasErrors());
-		Assertions.assertEquals(1, result.getParsedMessageCount());
-		Assertions.assertEquals(TestChoice2.class, result.getParsedMessageAt(0).getClass());
-		TestChoice2 parsedMessage = (TestChoice2)result.getParsedMessageAt(0);
+		Assertions.assertEquals(1, result.getTotalMessageCount());
+		SingleResponse<byte[], Object> response = result.getResponseAt(0);
+		Assertions.assertNull(response.getError());
+		Assertions.assertEquals(TestChoice2.class, response.getMessage().getClass());
+		TestChoice2 parsedMessage = (TestChoice2)response.getMessage();
 		TestType1 value1 = (TestType1)parsedMessage.value;
 		Assertions.assertEquals(0x1234, value1.value);
 
@@ -280,10 +284,11 @@ class CodecObjectTest{
 		result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
-		Assertions.assertFalse(result.hasErrors());
-		Assertions.assertEquals(1, result.getParsedMessageCount());
-		Assertions.assertEquals(TestChoice2.class, result.getParsedMessageAt(0).getClass());
-		parsedMessage = (TestChoice2)result.getParsedMessageAt(0);
+		Assertions.assertEquals(1, result.getTotalMessageCount());
+		response = result.getResponseAt(0);
+		Assertions.assertNull(response.getError());
+		Assertions.assertEquals(TestChoice2.class, response.getMessage().getClass());
+		parsedMessage = (TestChoice2)response.getMessage();
 		TestType2 value2 = (TestType2)parsedMessage.value;
 		Assertions.assertEquals(0x1122_3344, value2.value);
 	}
@@ -297,13 +302,14 @@ class CodecObjectTest{
 		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.toByteArray("74633361611234");
-		ParserResponse result = parser.parse(payload);
+		MultipleResponse result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
-		Assertions.assertFalse(result.hasErrors());
-		Assertions.assertEquals(1, result.getParsedMessageCount());
-		Assertions.assertEquals(TestChoice3.class, result.getParsedMessageAt(0).getClass());
-		TestChoice3 parsedMessage = (TestChoice3)result.getParsedMessageAt(0);
+		Assertions.assertEquals(1, result.getTotalMessageCount());
+		SingleResponse<byte[], Object> response = result.getResponseAt(0);
+		Assertions.assertNull(response.getError());
+		Assertions.assertEquals(TestChoice3.class, response.getMessage().getClass());
+		TestChoice3 parsedMessage = (TestChoice3)response.getMessage();
 		TestType1 value1 = (TestType1)parsedMessage.value;
 		Assertions.assertEquals(0x1234, value1.value);
 
@@ -312,10 +318,11 @@ class CodecObjectTest{
 		result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
-		Assertions.assertFalse(result.hasErrors());
-		Assertions.assertEquals(1, result.getParsedMessageCount());
-		Assertions.assertEquals(TestChoice3.class, result.getParsedMessageAt(0).getClass());
-		parsedMessage = (TestChoice3)result.getParsedMessageAt(0);
+		Assertions.assertEquals(1, result.getTotalMessageCount());
+		response = result.getResponseAt(0);
+		Assertions.assertNull(response.getError());
+		Assertions.assertEquals(TestChoice3.class, response.getMessage().getClass());
+		parsedMessage = (TestChoice3)response.getMessage();
 		TestType2 value2 = (TestType2)parsedMessage.value;
 		Assertions.assertEquals(0x1122_3344, value2.value);
 	}

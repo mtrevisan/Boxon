@@ -61,15 +61,14 @@ public final class Composer{
 	 * Compose a message.
 	 *
 	 * @param data	The message to be composed.
-	 * @param <T>	The class of the composed message.
+	 * @param <T>	The class of the originator data.
 	 * @return	The composition response.
 	 */
-	public <T> ComposerResponse<T> composeMessage(final T data){
+	public <T> SingleResponse<T, byte[]> composeMessage(final T data){
 		final BitWriter writer = BitWriter.create();
 		final EncodeException error = composeMessage(writer, data);
 
-		return ComposerResponse.create(data, writer)
-			.withError(error);
+		return SingleResponse.create(data, writer, error);
 	}
 
 	/**

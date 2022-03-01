@@ -25,23 +25,22 @@
 package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
-import io.github.mtrevisan.boxon.core.parsers.ConfigurationParser;
-import io.github.mtrevisan.boxon.helpers.Evaluator;
+import io.github.mtrevisan.boxon.configurations.ConfigurationKey;
 import io.github.mtrevisan.boxon.core.managers.configurations.ConfigField;
-import io.github.mtrevisan.boxon.core.managers.configurations.ConfigurationMessage;
 import io.github.mtrevisan.boxon.core.managers.configurations.ConfigurationHelper;
 import io.github.mtrevisan.boxon.core.managers.configurations.ConfigurationManagerFactory;
 import io.github.mtrevisan.boxon.core.managers.configurations.ConfigurationManagerInterface;
+import io.github.mtrevisan.boxon.core.managers.configurations.ConfigurationMessage;
+import io.github.mtrevisan.boxon.core.parsers.ConfigurationParser;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
+import io.github.mtrevisan.boxon.helpers.Evaluator;
+import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.BitWriter;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
-import io.github.mtrevisan.boxon.configurations.ConfigurationKey;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
-import io.github.mtrevisan.boxon.helpers.JavaHelper;
-import io.github.mtrevisan.boxon.helpers.StringHelper;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -177,7 +176,7 @@ public final class Configurator{
 	 * @param data	The configuration message data to be composed.
 	 * @return	The composition response.
 	 */
-	public ComposerResponse<String[]> composeConfiguration(final String protocolVersion, final String messageStart,
+	public SingleResponse<String, byte[]> composeConfiguration(final String protocolVersion, final String messageStart,
 			final Map<String, Object> data){
 		final Version protocol = Version.of(protocolVersion);
 		if(protocol.isEmpty())
@@ -186,8 +185,7 @@ public final class Configurator{
 		final BitWriter writer = BitWriter.create();
 		final EncodeException error = composeConfiguration(writer, messageStart, data, protocol);
 
-		return ComposerResponse.create(data.keySet().toArray(JavaHelper.EMPTY_STRING_ARRAY), writer)
-			.withError(error);
+		return SingleResponse.create(messageStart, writer, error);
 	}
 
 	/**

@@ -57,13 +57,17 @@ class ComposerTest{
 
 		//parse:
 		byte[] payload = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
-		ParserResponse parseResult = parser.parse(payload);
+		MultipleResponse result = parser.parse(payload);
 
-		Assertions.assertFalse(parseResult.hasErrors());
-		Assertions.assertEquals(1, parseResult.getParsedMessageCount());
+		Assertions.assertNotNull(result);
+		Assertions.assertEquals(1, result.getTotalMessageCount());
+		SingleResponse<byte[], Object> response = result.getResponseAt(0);
+		Assertions.assertArrayEquals(payload, response.getOriginator());
+		Exception error = response.getError();
+		Assertions.assertNull(error);
 
 		//compose:
-		ComposerResponse<ACKMessageHex> composeResult = composer.composeMessage(parseResult.getParsedMessageAt(0));
+		SingleResponse<ACKMessageHex, byte[]> composeResult = composer.composeMessage((ACKMessageHex)response.getMessage());
 
 		Assertions.assertFalse(composeResult.hasError());
 		Assertions.assertArrayEquals(payload, composeResult.getMessage());
@@ -84,13 +88,17 @@ class ComposerTest{
 
 		//parse:
 		byte[] payload = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
-		ParserResponse parseResult = parser.parse(payload);
+		MultipleResponse result = parser.parse(payload);
 
-		Assertions.assertFalse(parseResult.hasErrors());
-		Assertions.assertEquals(1, parseResult.getParsedMessageCount());
+		Assertions.assertNotNull(result);
+		Assertions.assertEquals(1, result.getTotalMessageCount());
+		SingleResponse<byte[], Object> response = result.getResponseAt(0);
+		Assertions.assertArrayEquals(payload, response.getOriginator());
+		Exception error = response.getError();
+		Assertions.assertNull(error);
 
 		//compose:
-		ComposerResponse<ACKMessageASCII> composeResult = composer.composeMessage(parseResult.getParsedMessageAt(0));
+		SingleResponse<ACKMessageASCII, byte[]> composeResult = composer.composeMessage((ACKMessageASCII)response.getMessage());
 
 		Assertions.assertFalse(composeResult.hasError());
 		Assertions.assertArrayEquals(payload, composeResult.getMessage());

@@ -1299,33 +1299,31 @@ All you have to care about, for a simple example on multi-message automatically-
 ```java
 //optionally create a context
 Map<String, Object> context = ...
-//read all the codecs and annotated classes from where the parser resides and all of its children packages
-BoxonCore core = BoxonCoreBuilder.builder()
-   .withContext(context)
-   .creat();
-//... or pass the parent package (see all the `with...` methods of Parser for more)
 BoxonCore core = BoxonCoreBuilder.builder()
    .withContext(context)
    .withContextFunction(VersionHelper.class, "compareVersion", String.class, String.class)
    .withContextFunction(VersionHelper.class.getDeclaredMethod("compareVersion", new Class[]{String.class, String.class}))
-   //scans the parent package and all of its children, searching and loading all the codecs found
    .withDefaultCodecs()
-   .withTemplate(ACKMessageHex.class)
+   .withTemplate(...)
    .create();
 Parser parser = Parser.create(core);
 
 //parse the message
 byte[] payload = ...
-ParserResponse result = parser.parse(payload);
+MultipleResponse result = parser.parse(payload);
 
-//process the errors
-for(int index = 0; index < result.getErrorCount(); index ++)
-   LOGGER.error("An error occurred while parsing:\r\n   {}", result.getMessageForError(index));
+//process the successfully parsed messages and errors
+for(int index = 0; index < result.getTotalMessageCount(); index ++){
+   SingleResponse<byte[], Object> response = result.getResponseAt(index);
+   Object parsedMessage = response.getMessage();
+   Exception error = response.getError();
 
-//process the successfully parsed messages
-for(int index = 0; index < result.getParsedMessageCount(); index ++){
-    Object parsedMessage = result.getParsedMessageAt(index);
-    ...
+   if(error != null){
+      LOGGER.error("An error occurred while parsing:\r\n   {}", response.getOriginator());
+   }
+   else if(parsedMessage != null){
+      ...
+   }
 }
 ```
 
@@ -1336,19 +1334,17 @@ The inverse of parsing is composing, and it's simply done as follows.
 ```java
 //compose the message
 Message data = ...;
-ComposerResponse<Message> composeResult = composer.composeMessage(data);
+SingleResponse<Message, byte[]> composeResult = composer.composeMessage(data);
 
-//process the read messages
-if(!composeResult.hasErrors()){
-    byte[] message = result.getComposedMessage();
-    ...
+//process the composed messages
+byte[] composedMessage = response.getMessage();
+Exception error = response.getError();
+
+if(error != null){
+   LOGGER.error("An error occurred while composing:\r\n   {}", response.getOriginator());
 }
-//process the errors
-else{
-    for(int i = 0; i < result.getErrorCount(); i ++){
-        EncodeException exc = result.getErrorAt(i);
-        ...
-    }
+else if(composedMessage != null){
+   ...
 }
 ```
 

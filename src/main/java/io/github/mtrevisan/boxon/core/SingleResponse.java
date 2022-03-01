@@ -24,44 +24,39 @@
  */
 package io.github.mtrevisan.boxon.core;
 
-import io.github.mtrevisan.boxon.exceptions.EncodeException;
-import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.io.BitWriter;
 
 
 /**
- * Response class for the encoding phase.
+ * Response class for a single encoding/decoding phase.
  *
- * @param <T>	The response class.
+ * @param <O>	The originator class.
+ * @param <M>	The message class.
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
-public final class ComposerResponse<T>{
-
-	private static final byte[] EMPTY_ARRAY = new byte[0];
-
+public final class SingleResponse<O, M>{
 
 	/** The originator for the message. */
-	private final T originator;
+	private final O originator;
 
 	/** Successfully composed message. */
-	private final byte[] message;
+	private final M message;
 
 	/** Error message. */
-	private EncodeException error;
+	private final Exception error;
 
 
 	/**
-	 * Construct a response from a given object and composed message.
+	 * Construct a response from a given object and composed message or error.
 	 *
 	 * @param originator	The data that originates the message.
 	 * @param writer	The writer to read the composed message from.
-	 * @param <T>	The response class.
+	 * @param error	The error.
+	 * @param <O>	The originator class.
 	 * @return	The instance.
 	 */
-	static <T> ComposerResponse<T> create(final T originator, final BitWriter writer){
-		writer.flush();
-
-		return create(originator, writer.array());
+	static <O> SingleResponse<O, byte[]> create(final O originator, final BitWriter writer, final Exception error){
+		return new SingleResponse<>(originator, writer.array(), error);
 	}
 
 	/**
@@ -69,10 +64,37 @@ public final class ComposerResponse<T>{
 	 *
 	 * @param originator	The data that originates the message.
 	 * @param composedMessage	The composed message.
+	 * @param <O>	The originator class.
+	 * @param <M>	The message class.
 	 * @return	The instance.
 	 */
-	static <T> ComposerResponse<T> create(final T originator, final byte[] composedMessage){
-		return new ComposerResponse<>(originator, composedMessage);
+	static <O, M> SingleResponse<O, M> create(final O originator, final M composedMessage){
+		return new SingleResponse<>(originator, composedMessage, null);
+	}
+
+	/**
+	 * Construct a response from a given object and error.
+	 *
+	 * @param originator	The data that originates the message.
+	 * @param error	The error.
+	 * @param <O>	The originator class.
+	 * @param <M>	The message class.
+	 * @return	The instance.
+	 */
+	static <O, M> SingleResponse<O, M> create(final O originator, final Exception error){
+		return new SingleResponse<>(originator, null, error);
+	}
+
+	/**
+	 * Construct a response from an error.
+	 *
+	 * @param error	The error.
+	 * @param <O>	The originator class.
+	 * @param <M>	The message class.
+	 * @return	The instance.
+	 */
+	static <O, M> SingleResponse<O, M> create(final Exception error){
+		return new SingleResponse<>(null, null, error);
 	}
 
 
@@ -81,10 +103,12 @@ public final class ComposerResponse<T>{
 	 *
 	 * @param originator	The data that originates the message.
 	 * @param message	The composed message.
+	 * @param error	The error.
 	 */
-	private ComposerResponse(final T originator, final byte[] message){
+	private SingleResponse(final O originator, final M message, final Exception error){
 		this.originator = originator;
-		this.message = JavaHelper.cloneOrDefault(message, null);
+		this.message = message;
+		this.error = error;
 	}
 
 
@@ -93,7 +117,7 @@ public final class ComposerResponse<T>{
 	 *
 	 * @return	The originator for the composed message.
 	 */
-	private T getOriginator(){
+	public O getOriginator(){
 		return originator;
 	}
 
@@ -102,8 +126,8 @@ public final class ComposerResponse<T>{
 	 *
 	 * @return	The message composed by the given originator.
 	 */
-	public byte[] getMessage(){
-		return JavaHelper.cloneOrDefault(message, EMPTY_ARRAY);
+	public M getMessage(){
+		return message;
 	}
 
 	/**
@@ -120,18 +144,8 @@ public final class ComposerResponse<T>{
 	 *
 	 * @return	The exception resulting from parsing a message.
 	 */
-	public EncodeException getError(){
+	public Exception getError(){
 		return error;
-	}
-
-	void addError(final EncodeException exception){
-		error = exception;
-	}
-
-	ComposerResponse<T> withError(final EncodeException exception){
-		addError(exception);
-
-		return this;
 	}
 
 }

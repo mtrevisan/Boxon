@@ -30,7 +30,6 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
-import io.github.mtrevisan.boxon.exceptions.DecodeException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import org.junit.jupiter.api.Assertions;
@@ -98,14 +97,14 @@ class ConverterTest{
 		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.toByteArray("77633101");
-		ParserResponse result = parser.parse(payload);
+		MultipleResponse result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
-		Assertions.assertTrue(result.hasErrors());
-		Assertions.assertEquals(1, result.getTotalMessageCount());
-		Assertions.assertArrayEquals(payload, result.getErrorPayloadAt(0));
-		Assertions.assertEquals(1, result.getErrorCount());
-		DecodeException error = result.getErrorAt(0);
+		Assertions.assertEquals(2, result.getTotalMessageCount());
+		SingleResponse<byte[], Object> response = result.getResponseAt(0);
+		Assertions.assertArrayEquals(payload, response.getOriginator());
+		Exception error = response.getError();
+		Assertions.assertNotNull(error);
 		Assertions.assertEquals("java.lang.IllegalArgumentException: Can not input Byte to decode method of converter WrongConverterInput in field io.github.mtrevisan.boxon.core.ConverterTest$TestConverter1.value\r\n"
 			+ "   at index 4", error.getMessage());
 	}
@@ -119,14 +118,14 @@ class ConverterTest{
 		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.toByteArray("77633201");
-		ParserResponse result = parser.parse(payload);
+		MultipleResponse result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
-		Assertions.assertTrue(result.hasErrors());
-		Assertions.assertEquals(1, result.getTotalMessageCount());
-		Assertions.assertArrayEquals(payload, result.getErrorPayloadAt(0));
-		Assertions.assertEquals(1, result.getErrorCount());
-		DecodeException error = result.getErrorAt(0);
+		Assertions.assertEquals(2, result.getTotalMessageCount());
+		SingleResponse<byte[], Object> response = result.getResponseAt(0);
+		Assertions.assertArrayEquals(payload, response.getOriginator());
+		Exception error = response.getError();
+		Assertions.assertNotNull(error);
 		Assertions.assertEquals("java.lang.IllegalArgumentException: Can not set String field to Byte in field io.github.mtrevisan.boxon.core.ConverterTest$TestConverter2.value\r\n"
 			+ "   at index 4", error.getMessage());
 	}
@@ -140,10 +139,14 @@ class ConverterTest{
 		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.toByteArray("77633301");
-		ParserResponse result = parser.parse(payload);
+		MultipleResponse result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
-		Assertions.assertFalse(result.hasErrors());
+		Assertions.assertEquals(1, result.getTotalMessageCount());
+		SingleResponse<byte[], Object> response = result.getResponseAt(0);
+		Assertions.assertArrayEquals(payload, response.getOriginator());
+		Exception error = response.getError();
+		Assertions.assertNull(error);
 	}
 
 }

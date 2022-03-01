@@ -63,7 +63,13 @@ class ParserThreadedTest{
 		AtomicInteger errors = new AtomicInteger();
 		MultithreadingHelper.testMultithreading(
 			() -> parser.parse(PAYLOAD),
-			parserResponse -> errors.addAndGet(parserResponse.getErrorCount()),
+			parserResponse -> {
+				int errorCount = 0;
+				for(int i = 0; i < parserResponse.getTotalMessageCount(); i ++)
+					if(parserResponse.getResponseAt(i).hasError())
+						errorCount ++;
+				errors.addAndGet(errorCount);
+			},
 			10
 		);
 
@@ -89,7 +95,13 @@ class ParserThreadedTest{
 				Parser parser = Parser.create(core);
 				return parser.parse(PAYLOAD);
 			},
-			parserResponse -> errors.addAndGet(parserResponse.getErrorCount()),
+			parserResponse -> {
+				int errorCount = 0;
+				for(int i = 0; i < parserResponse.getTotalMessageCount(); i ++)
+					if(parserResponse.getResponseAt(i).hasError())
+						errorCount ++;
+				errors.addAndGet(errorCount);
+			},
 			10
 		);
 
@@ -115,7 +127,13 @@ class ParserThreadedTest{
 				Parser parser = Parser.create(core);
 				return parser.parse(PAYLOAD);
 			},
-			parserResponse -> errors.addAndGet(parserResponse.getErrorCount()),
+			parserResponse -> {
+				int errorCount = 0;
+				for(int i = 0; i < parserResponse.getTotalMessageCount(); i ++)
+					if(parserResponse.getResponseAt(i).hasError())
+						errorCount ++;
+				errors.addAndGet(errorCount);
+			},
 			10
 		);
 
