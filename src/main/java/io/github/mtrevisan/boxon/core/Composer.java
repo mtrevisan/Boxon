@@ -31,9 +31,6 @@ import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.io.BitWriter;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 
-import java.util.ArrayList;
-import java.util.List;
-
 
 /**
  * Handles the composition of a message.
@@ -71,11 +68,8 @@ public final class Composer{
 		final BitWriter writer = BitWriter.create();
 		final EncodeException error = composeMessage(writer, data);
 
-		final List<EncodeException> errors = new ArrayList<>(1);
-		errors.add(error);
-
 		return ComposerResponse.create(data, writer)
-			.withErrors(errors);
+			.withError(error);
 	}
 
 	/**

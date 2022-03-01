@@ -65,8 +65,8 @@ class ComposerTest{
 		//compose:
 		ComposerResponse<ACKMessageHex> composeResult = composer.composeMessage(parseResult.getParsedMessageAt(0));
 
-		Assertions.assertFalse(composeResult.hasErrors());
-		Assertions.assertArrayEquals(payload, composeResult.getComposedMessage());
+		Assertions.assertFalse(composeResult.hasError());
+		Assertions.assertArrayEquals(payload, composeResult.getMessage());
 	}
 
 	@Test
@@ -92,8 +92,8 @@ class ComposerTest{
 		//compose:
 		ComposerResponse<ACKMessageASCII> composeResult = composer.composeMessage(parseResult.getParsedMessageAt(0));
 
-		Assertions.assertFalse(composeResult.hasErrors());
-		Assertions.assertArrayEquals(payload, composeResult.getComposedMessage());
+		Assertions.assertFalse(composeResult.hasError());
+		Assertions.assertArrayEquals(payload, composeResult.getMessage());
 	}
 
 }

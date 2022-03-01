@@ -38,11 +38,11 @@ import java.util.concurrent.ConcurrentSkipListMap;
 @SuppressWarnings({"WeakerAccess", "unused"})
 public final class ParserResponse{
 
-	/** Whole payload (the index on {@link #parsedMessages} and {@link #errors} point here). */
+	/** Whole payload (the index on {@link #messages} and {@link #errors} point here). */
 	private final byte[] payload;
 
 	/** List of successfully parsed messages along with their starting index. */
-	private final Map<Integer, Object> parsedMessages = new ConcurrentSkipListMap<>(Integer::compareTo);
+	private final Map<Integer, Object> messages = new ConcurrentSkipListMap<>(Integer::compareTo);
 
 	/** List of error messages along with their starting index. */
 	private final Map<Integer, DecodeException> errors = new ConcurrentSkipListMap<>(Integer::compareTo);
@@ -75,7 +75,7 @@ public final class ParserResponse{
 	 * @return	The number of total parsed (concatenated) messages.
 	 */
 	public int getTotalMessageCount(){
-		return parsedMessages.size() + errors.size();
+		return messages.size() + errors.size();
 	}
 
 	private byte[] getPayloadAt(final int index, final Iterable<Integer> keys){
@@ -108,7 +108,7 @@ public final class ParserResponse{
 	 * @return	The number of successfully parsed messages.
 	 */
 	public int getParsedMessageCount(){
-		return parsedMessages.size();
+		return messages.size();
 	}
 
 	/**
@@ -120,7 +120,7 @@ public final class ParserResponse{
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> T getParsedMessageAt(final int index){
-		return (T)parsedMessages.get(index);
+		return (T)messages.get(index);
 	}
 
 	/**
@@ -130,11 +130,11 @@ public final class ParserResponse{
 	 * @return	The payload of a successfully parsed message at a given index.
 	 */
 	public byte[] getParsedMessagePayloadAt(final int index){
-		return getPayloadAt(index, parsedMessages.keySet());
+		return getPayloadAt(index, messages.keySet());
 	}
 
 	void addParsedMessage(final int start, final Object decodedMessage){
-		parsedMessages.put(start, decodedMessage);
+		messages.put(start, decodedMessage);
 	}
 
 

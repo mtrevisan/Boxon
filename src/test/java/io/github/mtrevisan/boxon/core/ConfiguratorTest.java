@@ -24,17 +24,16 @@
  */
 package io.github.mtrevisan.boxon.core;
 
+import io.github.mtrevisan.boxon.configurations.ConfigurationKey;
 import io.github.mtrevisan.boxon.core.codecs.queclink.DeviceTypes;
 import io.github.mtrevisan.boxon.core.codecs.queclink.REGConfigurationASCII;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
-import io.github.mtrevisan.boxon.configurations.ConfigurationKey;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -136,11 +135,12 @@ class ConfiguratorTest{
 		configurationData.put("Download timeout", 25);
 
 		//compose:
-		ComposerResponse<String[]> composeResult = configurator.composeConfiguration("1.20", Collections.singletonMap("AT+", configurationData));
+		ComposerResponse<String[]> composeResult = configurator.composeConfiguration("1.20", "AT+",
+			configurationData);
 
-		Assertions.assertFalse(composeResult.hasErrors());
+		Assertions.assertFalse(composeResult.hasError());
 		Assertions.assertEquals("AT+GTREG=pass,1,1,0,2,25,0,http://url.com@username@password,3600,3600,6,,7b$",
-			new String(composeResult.getComposedMessage()));
+			new String(composeResult.getMessage()));
 	}
 
 }

@@ -170,26 +170,24 @@ public final class Configurator{
 	}
 
 	/**
-	 * Compose a list of configuration messages.
+	 * Compose a configuration message.
 	 *
 	 * @param protocolVersion	Protocol version.
-	 * @param data	The configuration message(s) to be composed.
+	 * @param messageStart	The initial bytes of the message, see {@link ConfigurationHeader#start()}.
+	 * @param data	The configuration message data to be composed.
 	 * @return	The composition response.
 	 */
-	public ComposerResponse<String[]> composeConfiguration(final String protocolVersion, final Map<String, Map<String, Object>> data){
+	public ComposerResponse<String[]> composeConfiguration(final String protocolVersion, final String messageStart,
+			final Map<String, Object> data){
 		final Version protocol = Version.of(protocolVersion);
 		if(protocol.isEmpty())
 			throw new IllegalArgumentException("Invalid protocol version: " + protocolVersion);
 
-		final List<EncodeException> errors = new ArrayList<>(data.size());
 		final BitWriter writer = BitWriter.create();
-		for(final Map.Entry<String, Map<String, Object>> entry : data.entrySet()){
-			final EncodeException error = composeConfiguration(writer, entry, protocol);
-			errors.add(error);
-		}
+		final EncodeException error = composeConfiguration(writer, messageStart, data, protocol);
 
 		return ComposerResponse.create(data.keySet().toArray(JavaHelper.EMPTY_STRING_ARRAY), writer)
-			.withErrors(errors);
+			.withError(error);
 	}
 
 	/**
@@ -197,12 +195,10 @@ public final class Configurator{
 	 *
 	 * @return	The error, if any.
 	 */
-	private EncodeException composeConfiguration(final BitWriterInterface writer, final Map.Entry<String, Map<String, Object>> entry,
+	private EncodeException composeConfiguration(final BitWriterInterface writer, final String messageStart, final Map<String, Object> data,
 			final Version protocol){
 		try{
-			final String configurationType = entry.getKey();
-			final Map<String, Object> data = entry.getValue();
-			final ConfigurationMessage<?> configuration = configurationParser.getConfiguration(configurationType);
+			final ConfigurationMessage<?> configuration = configurationParser.getConfiguration(messageStart);
 			final Object configurationData = ConfigurationParser.getConfigurationWithDefaults(configuration, data, protocol);
 			configurationParser.encode(configuration, writer, configurationData, evaluator, protocol);
 

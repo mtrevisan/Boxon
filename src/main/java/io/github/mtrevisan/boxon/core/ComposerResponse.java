@@ -25,12 +25,8 @@
 package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
-import io.github.mtrevisan.boxon.io.BitWriter;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
-
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.CopyOnWriteArrayList;
+import io.github.mtrevisan.boxon.io.BitWriter;
 
 
 /**
@@ -48,10 +44,10 @@ public final class ComposerResponse<T>{
 	private final T originator;
 
 	/** Successfully composed message. */
-	private final byte[] composedMessage;
+	private final byte[] message;
 
-	/** List of error messages. */
-	private final List<EncodeException> errors = new CopyOnWriteArrayList<>();
+	/** Error message. */
+	private EncodeException error;
 
 
 	/**
@@ -84,11 +80,11 @@ public final class ComposerResponse<T>{
 	 * Construct a response from a given object and composed message.
 	 *
 	 * @param originator	The data that originates the message.
-	 * @param composedMessage	The composed message.
+	 * @param message	The composed message.
 	 */
-	private ComposerResponse(final T originator, final byte[] composedMessage){
+	private ComposerResponse(final T originator, final byte[] message){
 		this.originator = originator;
-		this.composedMessage = JavaHelper.cloneOrDefault(composedMessage, null);
+		this.message = JavaHelper.cloneOrDefault(message, null);
 	}
 
 
@@ -106,52 +102,34 @@ public final class ComposerResponse<T>{
 	 *
 	 * @return	The message composed by the given originator.
 	 */
-	public byte[] getComposedMessage(){
-		return JavaHelper.cloneOrDefault(composedMessage, EMPTY_ARRAY);
+	public byte[] getMessage(){
+		return JavaHelper.cloneOrDefault(message, EMPTY_ARRAY);
 	}
 
 	/**
-	 * The number of errors occurred while composing a message.
+	 * Returns whether there is an error once encoded a message.
 	 *
-	 * @return	The number of errors occurred while composing a message.
+	 * @return	Whether there is an error.
 	 */
-	public int getErrorCount(){
-		return errors.size();
+	public boolean hasError(){
+		return (error != null);
 	}
 
 	/**
-	 * Returns whether there are errors once encoded a message.
+	 * The error occurred.
 	 *
-	 * @return	Whether there are errors.
-	 */
-	public boolean hasErrors(){
-		return !errors.isEmpty();
-	}
-
-	/**
-	 * The error occurred at a given index.
-	 *
-	 * @param index	The index of a message in a group of concatenated messages for which to extract the error.
 	 * @return	The exception resulting from parsing a message.
 	 */
-	public EncodeException getErrorAt(final int index){
-		return errors.get(index);
+	public EncodeException getError(){
+		return error;
 	}
 
 	void addError(final EncodeException exception){
-		Objects.requireNonNull(exception, "Exception cannot be null");
-
-		errors.add(exception);
+		error = exception;
 	}
 
-	ComposerResponse<T> withErrors(final List<EncodeException> exceptions){
-		Objects.requireNonNull(exceptions, "Exception cannot be null");
-
-		for(int i = 0; i < exceptions.size(); i ++){
-			final EncodeException exception = exceptions.get(i);
-			if(exception != null)
-				errors.add(exception);
-		}
+	ComposerResponse<T> withError(final EncodeException exception){
+		addError(exception);
 
 		return this;
 	}
