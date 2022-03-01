@@ -65,8 +65,8 @@ class ParserThreadedTest{
 			() -> parser.parse(PAYLOAD),
 			parserResponse -> {
 				int errorCount = 0;
-				for(int i = 0; i < parserResponse.getTotalMessageCount(); i ++)
-					if(parserResponse.getResponseAt(i).hasError())
+				for(int i = 0; i < parserResponse.size(); i ++)
+					if(parserResponse.get(i).hasError())
 						errorCount ++;
 				errors.addAndGet(errorCount);
 			},
@@ -97,8 +97,8 @@ class ParserThreadedTest{
 			},
 			parserResponse -> {
 				int errorCount = 0;
-				for(int i = 0; i < parserResponse.getTotalMessageCount(); i ++)
-					if(parserResponse.getResponseAt(i).hasError())
+				for(int i = 0; i < parserResponse.size(); i ++)
+					if(parserResponse.get(i).hasError())
 						errorCount ++;
 				errors.addAndGet(errorCount);
 			},
@@ -129,8 +129,8 @@ class ParserThreadedTest{
 			},
 			parserResponse -> {
 				int errorCount = 0;
-				for(int i = 0; i < parserResponse.getTotalMessageCount(); i ++)
-					if(parserResponse.getResponseAt(i).hasError())
+				for(int i = 0; i < parserResponse.size(); i ++)
+					if(parserResponse.get(i).hasError())
 						errorCount ++;
 				errors.addAndGet(errorCount);
 			},

@@ -33,6 +33,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -70,7 +72,7 @@ public final class Parser{
 	 * 	or for some other reason cannot be opened for reading.
 	 * @throws SecurityException	If a security manager exists and its {@code checkRead} method denies read access to the file.
 	 */
-	public MultipleResponse parse(final File file) throws IOException, FileNotFoundException{
+	public List<BoxonResponse<byte[], Object>> parse(final File file) throws IOException, FileNotFoundException{
 		final BitReader reader = BitReader.wrap(file);
 		return parse(reader);
 	}
@@ -81,7 +83,7 @@ public final class Parser{
 	 * @param payload	The message to be parsed.
 	 * @return	The parse response.
 	 */
-	public MultipleResponse parse(final byte[] payload){
+	public List<BoxonResponse<byte[], Object>> parse(final byte[] payload){
 		final BitReader reader = BitReader.wrap(payload);
 		return parse(reader);
 	}
@@ -92,7 +94,7 @@ public final class Parser{
 	 * @param buffer	The message to be parsed backed by a {@link ByteBuffer}.
 	 * @return	The parse response.
 	 */
-	public MultipleResponse parse(final ByteBuffer buffer){
+	public List<BoxonResponse<byte[], Object>> parse(final ByteBuffer buffer){
 		final BitReader reader = BitReader.wrap(buffer);
 		return parse(reader);
 	}
@@ -103,8 +105,8 @@ public final class Parser{
 	 * @param reader	The message to be parsed backed by a {@link BitReader}.
 	 * @return	The parse response.
 	 */
-	public MultipleResponse parse(final BitReader reader){
-		final MultipleResponse response = MultipleResponse.create();
+	public List<BoxonResponse<byte[], Object>> parse(final BitReader reader){
+		final List<BoxonResponse<byte[], Object>> response = new ArrayList<>(0);
 
 		int start = 0;
 		while(reader.hasRemaining()){
@@ -123,19 +125,19 @@ public final class Parser{
 		return response;
 	}
 
-	private boolean parse(final BitReader reader, final int start, final MultipleResponse response){
+	private boolean parse(final BitReader reader, final int start, final List<BoxonResponse<byte[], Object>> response){
 		try{
 			final Template<?> template = templateParser.getTemplate(reader);
 
 			final Object partialDecodedMessage = templateParser.decode(template, reader, null);
 
-			final SingleResponse<byte[], Object> partialResponse = SingleResponse.create(reader.array(), partialDecodedMessage);
-			response.addResponse(partialResponse);
+			final BoxonResponse<byte[], Object> partialResponse = BoxonResponse.create(reader.array(), partialDecodedMessage);
+			response.add(partialResponse);
 		}
 		catch(final Exception e){
 			final DecodeException de = DecodeException.create(reader.position(), e);
-			final SingleResponse<byte[], Object> partialResponse = SingleResponse.create(reader.array(), de);
-			response.addResponse(partialResponse);
+			final BoxonResponse<byte[], Object> partialResponse = BoxonResponse.create(reader.array(), de);
+			response.add(partialResponse);
 
 			//restore state of the reader
 			reader.restoreFallbackPoint();
@@ -150,12 +152,12 @@ public final class Parser{
 		return false;
 	}
 
-	private static void assertNoLeftBytes(final BitReader reader, final int start, final MultipleResponse response){
+	private static void assertNoLeftBytes(final BitReader reader, final int start, final List<BoxonResponse<byte[], Object>> response){
 		if(reader.hasRemaining()){
 			final int position = reader.position();
 			final IllegalArgumentException error = new IllegalArgumentException("There are remaining unread bytes");
 			final DecodeException pe = DecodeException.create(position, error);
-			response.addResponse(SingleResponse.create(pe));
+			response.add(BoxonResponse.create(pe));
 		}
 	}
 

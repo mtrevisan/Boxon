@@ -176,8 +176,8 @@ public final class Configurator{
 	 * @param data	The configuration message data to be composed.
 	 * @return	The composition response.
 	 */
-	public SingleResponse<String, byte[]> composeConfiguration(final String protocolVersion, final String messageStart,
-			final Map<String, Object> data){
+	public BoxonResponse<String, byte[]> composeConfiguration(final String protocolVersion, final String messageStart,
+																				 final Map<String, Object> data){
 		final Version protocol = Version.of(protocolVersion);
 		if(protocol.isEmpty())
 			throw new IllegalArgumentException("Invalid protocol version: " + protocolVersion);
@@ -185,7 +185,7 @@ public final class Configurator{
 		final BitWriter writer = BitWriter.create();
 		final EncodeException error = composeConfiguration(writer, messageStart, data, protocol);
 
-		return SingleResponse.create(messageStart, writer, error);
+		return BoxonResponse.create(messageStart, writer, error);
 	}
 
 	/**

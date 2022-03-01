@@ -35,6 +35,7 @@ import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 
@@ -93,11 +94,11 @@ class ParserTest{
 		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
-		MultipleResponse result = parser.parse(payload);
+		List<BoxonResponse<byte[], Object>> result = parser.parse(payload);
 
-		Assertions.assertEquals(2, result.getTotalMessageCount());
-		Assertions.assertNull(result.getResponseAt(0).getError());
-		Assertions.assertNull(result.getResponseAt(1).getError());
+		Assertions.assertEquals(2, result.size());
+		Assertions.assertNull(result.get(0).getError());
+		Assertions.assertNull(result.get(1).getError());
 	}
 
 	@Test
@@ -113,11 +114,11 @@ class ParserTest{
 		Parser parser = Parser.create(core);
 
 		byte[] payload = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
-		MultipleResponse result = parser.parse(payload);
+		List<BoxonResponse<byte[], Object>> result = parser.parse(payload);
 
-		Assertions.assertEquals(2, result.getTotalMessageCount());
-		Assertions.assertNull(result.getResponseAt(0).getError());
-		Assertions.assertNull(result.getResponseAt(1).getError());
+		Assertions.assertEquals(2, result.size());
+		Assertions.assertNull(result.get(0).getError());
+		Assertions.assertNull(result.get(1).getError());
 	}
 
 	@Test
@@ -137,11 +138,11 @@ class ParserTest{
 		byte[] payload1 = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		byte[] payload2 = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
 		byte[] payload = addAll(payload1, payload2);
-		MultipleResponse result = parser.parse(payload);
+		List<BoxonResponse<byte[], Object>> result = parser.parse(payload);
 
-		Assertions.assertEquals(2, result.getTotalMessageCount());
-		Assertions.assertNull(result.getResponseAt(0).getError());
-		Assertions.assertNull(result.getResponseAt(1).getError());
+		Assertions.assertEquals(2, result.size());
+		Assertions.assertNull(result.get(0).getError());
+		Assertions.assertNull(result.get(1).getError());
 	}
 
 	@Test
@@ -161,11 +162,11 @@ class ParserTest{
 		byte[] payload1 = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		byte[] payload2 = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
 		byte[] payload = addAll(payload2, payload1);
-		MultipleResponse result = parser.parse(payload);
+		List<BoxonResponse<byte[], Object>> result = parser.parse(payload);
 
-		Assertions.assertEquals(2, result.getTotalMessageCount());
-		Assertions.assertNull(result.getResponseAt(0).getError());
-		Assertions.assertNull(result.getResponseAt(1).getError());
+		Assertions.assertEquals(2, result.size());
+		Assertions.assertNull(result.get(0).getError());
+		Assertions.assertNull(result.get(1).getError());
 	}
 
 	private static byte[] addAll(final byte[] array1, final byte[] array2){

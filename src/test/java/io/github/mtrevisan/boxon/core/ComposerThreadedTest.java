@@ -34,6 +34,7 @@ import io.github.mtrevisan.boxon.utils.MultithreadingHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 
@@ -58,12 +59,12 @@ class ComposerThreadedTest{
 		Composer composer = Composer.create(core);
 
 		//parse:
-		MultipleResponse parseResult = parser.parse(PAYLOAD);
+		List<BoxonResponse<byte[], Object>> parseResult = parser.parse(PAYLOAD);
 
 		//compose:
 		int threadCount = 10;
 		MultithreadingHelper.testMultithreading(
-			() -> composer.composeMessage(parseResult.getResponseAt(0).getMessage()),
+			() -> composer.composeMessage(parseResult.get(0).getMessage()),
 			composeResult -> Assertions.assertArrayEquals(PAYLOAD, composeResult.getMessage()),
 			threadCount
 		);
@@ -83,14 +84,14 @@ class ComposerThreadedTest{
 		Parser parser = Parser.create(core);
 
 		//parse:
-		MultipleResponse parseResult = parser.parse(PAYLOAD);
+		List<BoxonResponse<byte[], Object>> parseResult = parser.parse(PAYLOAD);
 
 		//compose:
 		int threadCount = 10;
 		MultithreadingHelper.testMultithreading(
 			() -> {
 				Composer composer = Composer.create(core);
-				return composer.composeMessage(parseResult.getResponseAt(0).getMessage());
+				return composer.composeMessage(parseResult.get(0).getMessage());
 			},
 			composeResult -> Assertions.assertArrayEquals(PAYLOAD, composeResult.getMessage()),
 			threadCount
@@ -116,10 +117,10 @@ class ComposerThreadedTest{
 				Parser parser = Parser.create(core);
 
 				//parse:
-				MultipleResponse parseResult = parser.parse(PAYLOAD);
+				List<BoxonResponse<byte[], Object>> parseResult = parser.parse(PAYLOAD);
 
 				Composer composer = Composer.create(core);
-				return composer.composeMessage(parseResult.getResponseAt(0).getMessage());
+				return composer.composeMessage(parseResult.get(0).getMessage());
 			},
 			composeResult -> Assertions.assertArrayEquals(PAYLOAD, composeResult.getMessage()),
 			threadCount

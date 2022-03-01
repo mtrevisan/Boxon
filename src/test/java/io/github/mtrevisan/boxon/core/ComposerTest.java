@@ -36,6 +36,7 @@ import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 
@@ -57,17 +58,17 @@ class ComposerTest{
 
 		//parse:
 		byte[] payload = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
-		MultipleResponse result = parser.parse(payload);
+		List<BoxonResponse<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
-		Assertions.assertEquals(1, result.getTotalMessageCount());
-		SingleResponse<byte[], Object> response = result.getResponseAt(0);
+		Assertions.assertEquals(1, result.size());
+		BoxonResponse<byte[], Object> response = result.get(0);
 		Assertions.assertArrayEquals(payload, response.getOriginator());
 		Exception error = response.getError();
 		Assertions.assertNull(error);
 
 		//compose:
-		SingleResponse<ACKMessageHex, byte[]> composeResult = composer.composeMessage((ACKMessageHex)response.getMessage());
+		BoxonResponse<ACKMessageHex, byte[]> composeResult = composer.composeMessage((ACKMessageHex)response.getMessage());
 
 		Assertions.assertFalse(composeResult.hasError());
 		Assertions.assertArrayEquals(payload, composeResult.getMessage());
@@ -88,17 +89,17 @@ class ComposerTest{
 
 		//parse:
 		byte[] payload = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
-		MultipleResponse result = parser.parse(payload);
+		List<BoxonResponse<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
-		Assertions.assertEquals(1, result.getTotalMessageCount());
-		SingleResponse<byte[], Object> response = result.getResponseAt(0);
+		Assertions.assertEquals(1, result.size());
+		BoxonResponse<byte[], Object> response = result.get(0);
 		Assertions.assertArrayEquals(payload, response.getOriginator());
 		Exception error = response.getError();
 		Assertions.assertNull(error);
 
 		//compose:
-		SingleResponse<ACKMessageASCII, byte[]> composeResult = composer.composeMessage((ACKMessageASCII)response.getMessage());
+		BoxonResponse<ACKMessageASCII, byte[]> composeResult = composer.composeMessage((ACKMessageASCII)response.getMessage());
 
 		Assertions.assertFalse(composeResult.hasError());
 		Assertions.assertArrayEquals(payload, composeResult.getMessage());

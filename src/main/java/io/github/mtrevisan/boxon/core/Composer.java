@@ -64,11 +64,11 @@ public final class Composer{
 	 * @param <T>	The class of the originator data.
 	 * @return	The composition response.
 	 */
-	public <T> SingleResponse<T, byte[]> composeMessage(final T data){
+	public <T> BoxonResponse<T, byte[]> composeMessage(final T data){
 		final BitWriter writer = BitWriter.create();
 		final EncodeException error = composeMessage(writer, data);
 
-		return SingleResponse.create(data, writer, error);
+		return BoxonResponse.create(data, writer, error);
 	}
 
 	/**

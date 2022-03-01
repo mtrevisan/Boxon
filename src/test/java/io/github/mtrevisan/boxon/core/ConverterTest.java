@@ -35,6 +35,8 @@ import io.github.mtrevisan.boxon.helpers.StringHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 
 @SuppressWarnings("ALL")
 class ConverterTest{
@@ -97,11 +99,11 @@ class ConverterTest{
 		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.toByteArray("77633101");
-		MultipleResponse result = parser.parse(payload);
+		List<BoxonResponse<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
-		Assertions.assertEquals(2, result.getTotalMessageCount());
-		SingleResponse<byte[], Object> response = result.getResponseAt(0);
+		Assertions.assertEquals(2, result.size());
+		BoxonResponse<byte[], Object> response = result.get(0);
 		Assertions.assertArrayEquals(payload, response.getOriginator());
 		Exception error = response.getError();
 		Assertions.assertNotNull(error);
@@ -118,11 +120,11 @@ class ConverterTest{
 		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.toByteArray("77633201");
-		MultipleResponse result = parser.parse(payload);
+		List<BoxonResponse<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
-		Assertions.assertEquals(2, result.getTotalMessageCount());
-		SingleResponse<byte[], Object> response = result.getResponseAt(0);
+		Assertions.assertEquals(2, result.size());
+		BoxonResponse<byte[], Object> response = result.get(0);
 		Assertions.assertArrayEquals(payload, response.getOriginator());
 		Exception error = response.getError();
 		Assertions.assertNotNull(error);
@@ -139,11 +141,11 @@ class ConverterTest{
 		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.toByteArray("77633301");
-		MultipleResponse result = parser.parse(payload);
+		List<BoxonResponse<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
-		Assertions.assertEquals(1, result.getTotalMessageCount());
-		SingleResponse<byte[], Object> response = result.getResponseAt(0);
+		Assertions.assertEquals(1, result.size());
+		BoxonResponse<byte[], Object> response = result.get(0);
 		Assertions.assertArrayEquals(payload, response.getOriginator());
 		Exception error = response.getError();
 		Assertions.assertNull(error);

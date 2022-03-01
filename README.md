@@ -1310,11 +1310,11 @@ Parser parser = Parser.create(core);
 
 //parse the message
 byte[] payload = ...
-MultipleResponse result = parser.parse(payload);
+List<BoxonResponse<byte[], Object>> result = parser.parse(payload);
 
 //process the successfully parsed messages and errors
-for(int index = 0; index < result.getTotalMessageCount(); index ++){
-   SingleResponse<byte[], Object> response = result.getResponseAt(index);
+for(int index = 0; index < result.size(); index ++){
+   BoxonResponse<byte[], Object> response = result.get(index);
    Object parsedMessage = response.getMessage();
    Exception error = response.getError();
 
@@ -1334,7 +1334,7 @@ The inverse of parsing is composing, and it's simply done as follows.
 ```java
 //compose the message
 Message data = ...;
-SingleResponse<Message, byte[]> composeResult = composer.composeMessage(data);
+BoxonResponse<Message, byte[]> composeResult = composer.composeMessage(data);
 
 //process the composed messages
 byte[] composedMessage = response.getMessage();

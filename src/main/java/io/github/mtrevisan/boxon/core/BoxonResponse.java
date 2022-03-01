@@ -34,7 +34,7 @@ import io.github.mtrevisan.boxon.io.BitWriter;
  * @param <M>	The message class.
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
-public final class SingleResponse<O, M>{
+public final class BoxonResponse<O, M>{
 
 	/** The originator for the message. */
 	private final O originator;
@@ -55,8 +55,8 @@ public final class SingleResponse<O, M>{
 	 * @param <O>	The originator class.
 	 * @return	The instance.
 	 */
-	static <O> SingleResponse<O, byte[]> create(final O originator, final BitWriter writer, final Exception error){
-		return new SingleResponse<>(originator, writer.array(), error);
+	static <O> BoxonResponse<O, byte[]> create(final O originator, final BitWriter writer, final Exception error){
+		return new BoxonResponse<>(originator, writer.array(), error);
 	}
 
 	/**
@@ -68,8 +68,8 @@ public final class SingleResponse<O, M>{
 	 * @param <M>	The message class.
 	 * @return	The instance.
 	 */
-	static <O, M> SingleResponse<O, M> create(final O originator, final M composedMessage){
-		return new SingleResponse<>(originator, composedMessage, null);
+	static <O, M> BoxonResponse<O, M> create(final O originator, final M composedMessage){
+		return new BoxonResponse<>(originator, composedMessage, null);
 	}
 
 	/**
@@ -81,8 +81,8 @@ public final class SingleResponse<O, M>{
 	 * @param <M>	The message class.
 	 * @return	The instance.
 	 */
-	static <O, M> SingleResponse<O, M> create(final O originator, final Exception error){
-		return new SingleResponse<>(originator, null, error);
+	static <O, M> BoxonResponse<O, M> create(final O originator, final Exception error){
+		return new BoxonResponse<>(originator, null, error);
 	}
 
 	/**
@@ -93,8 +93,8 @@ public final class SingleResponse<O, M>{
 	 * @param <M>	The message class.
 	 * @return	The instance.
 	 */
-	static <O, M> SingleResponse<O, M> create(final Exception error){
-		return new SingleResponse<>(null, null, error);
+	static <O, M> BoxonResponse<O, M> create(final Exception error){
+		return new BoxonResponse<>(null, null, error);
 	}
 
 
@@ -105,7 +105,7 @@ public final class SingleResponse<O, M>{
 	 * @param message	The composed message.
 	 * @param error	The error.
 	 */
-	private SingleResponse(final O originator, final M message, final Exception error){
+	private BoxonResponse(final O originator, final M message, final Exception error){
 		this.originator = originator;
 		this.message = message;
 		this.error = error;

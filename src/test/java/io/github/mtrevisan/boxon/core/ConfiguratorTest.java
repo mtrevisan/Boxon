@@ -135,7 +135,7 @@ class ConfiguratorTest{
 		configurationData.put("Download timeout", 25);
 
 		//compose:
-		SingleResponse<String, byte[]> composeResult = configurator.composeConfiguration("1.20", "AT+",
+		BoxonResponse<String, byte[]> composeResult = configurator.composeConfiguration("1.20", "AT+",
 			configurationData);
 
 		Assertions.assertFalse(composeResult.hasError());

@@ -37,9 +37,8 @@ import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.core.BoxonCore;
 import io.github.mtrevisan.boxon.core.BoxonCoreBuilder;
-import io.github.mtrevisan.boxon.core.MultipleResponse;
 import io.github.mtrevisan.boxon.core.Parser;
-import io.github.mtrevisan.boxon.core.SingleResponse;
+import io.github.mtrevisan.boxon.core.BoxonResponse;
 import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
@@ -57,6 +56,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.Annotation;
+import java.util.List;
 
 
 @SuppressWarnings("ALL")
@@ -285,11 +285,11 @@ class CodecArrayTest{
 		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.toByteArray("7463340112340211223344010666");
-		MultipleResponse result = parser.parse(payload);
+		List<BoxonResponse<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
-		Assertions.assertEquals(1, result.getTotalMessageCount());
-		SingleResponse<byte[], Object> response = result.getResponseAt(0);
+		Assertions.assertEquals(1, result.size());
+		BoxonResponse<byte[], Object> response = result.get(0);
 		Assertions.assertNull(response.getError());
 		Assertions.assertEquals(TestChoice4.class, response.getMessage().getClass());
 		TestChoice4 parsedMessage = (TestChoice4)response.getMessage();
@@ -311,11 +311,11 @@ class CodecArrayTest{
 		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.toByteArray("746335011234");
-		MultipleResponse result = parser.parse(payload);
+		List<BoxonResponse<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
-		Assertions.assertEquals(1, result.getTotalMessageCount());
-		SingleResponse<byte[], Object> response = result.getResponseAt(0);
+		Assertions.assertEquals(1, result.size());
+		BoxonResponse<byte[], Object> response = result.get(0);
 		Assertions.assertNull(response.getError());
 		Assertions.assertEquals(TestChoice5.class, response.getMessage().getClass());
 		TestChoice5 parsedMessage = (TestChoice5)response.getMessage();
