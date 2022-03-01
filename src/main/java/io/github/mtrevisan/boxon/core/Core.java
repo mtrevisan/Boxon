@@ -62,7 +62,7 @@ public final class Core{
 	 * Remember that templates and configurations MUST BE loaded AFTER the codecs!
 	 * </p>
 	 *
-	 * @return	An empty boxon core.
+	 * @return	An empty core.
 	 */
 	static Core create(){
 		return new Core();
