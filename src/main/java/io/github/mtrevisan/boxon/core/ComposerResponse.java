@@ -39,7 +39,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @param <T>	The response class.
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
-public final class ComposeResponse<T>{
+public final class ComposerResponse<T>{
 
 	private static final byte[] EMPTY_ARRAY = new byte[0];
 
@@ -62,7 +62,7 @@ public final class ComposeResponse<T>{
 	 * @param <T>	The response class.
 	 * @return	The instance.
 	 */
-	static <T> ComposeResponse<T> create(final T originator, final BitWriter writer){
+	static <T> ComposerResponse<T> create(final T originator, final BitWriter writer){
 		writer.flush();
 
 		return create(originator, writer.array());
@@ -75,8 +75,8 @@ public final class ComposeResponse<T>{
 	 * @param composedMessage	The composed message.
 	 * @return	The instance.
 	 */
-	static <T> ComposeResponse<T> create(final T originator, final byte[] composedMessage){
-		return new ComposeResponse<>(originator, composedMessage);
+	static <T> ComposerResponse<T> create(final T originator, final byte[] composedMessage){
+		return new ComposerResponse<>(originator, composedMessage);
 	}
 
 
@@ -86,7 +86,7 @@ public final class ComposeResponse<T>{
 	 * @param originator	The data that originates the message.
 	 * @param composedMessage	The composed message.
 	 */
-	private ComposeResponse(final T originator, final byte[] composedMessage){
+	private ComposerResponse(final T originator, final byte[] composedMessage){
 		this.originator = originator;
 		this.composedMessage = JavaHelper.cloneOrDefault(composedMessage, null);
 	}
@@ -144,7 +144,7 @@ public final class ComposeResponse<T>{
 		errors.add(exception);
 	}
 
-	ComposeResponse<T> withErrors(final List<EncodeException> exceptions){
+	ComposerResponse<T> withErrors(final List<EncodeException> exceptions){
 		Objects.requireNonNull(exceptions, "Exception cannot be null");
 
 		for(int i = 0; i < exceptions.size(); i ++){

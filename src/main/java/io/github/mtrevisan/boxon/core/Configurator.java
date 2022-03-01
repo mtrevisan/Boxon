@@ -176,7 +176,7 @@ public final class Configurator{
 	 * @param data	The configuration message(s) to be composed.
 	 * @return	The composition response.
 	 */
-	public ComposeResponse<String[]> composeConfiguration(final String protocolVersion, final Map<String, Map<String, Object>> data){
+	public ComposerResponse<String[]> composeConfiguration(final String protocolVersion, final Map<String, Map<String, Object>> data){
 		final Version protocol = Version.of(protocolVersion);
 		if(protocol.isEmpty())
 			throw new IllegalArgumentException("Invalid protocol version: " + protocolVersion);
@@ -188,7 +188,7 @@ public final class Configurator{
 			errors.add(error);
 		}
 
-		return ComposeResponse.create(data.keySet().toArray(JavaHelper.EMPTY_STRING_ARRAY), writer)
+		return ComposerResponse.create(data.keySet().toArray(JavaHelper.EMPTY_STRING_ARRAY), writer)
 			.withErrors(errors);
 	}
 

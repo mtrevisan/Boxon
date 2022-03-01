@@ -98,7 +98,7 @@ class ConverterTest{
 		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.toByteArray("77633101");
-		ParseResponse result = parser.parse(payload);
+		ParserResponse result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
 		Assertions.assertTrue(result.hasErrors());
@@ -119,7 +119,7 @@ class ConverterTest{
 		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.toByteArray("77633201");
-		ParseResponse result = parser.parse(payload);
+		ParserResponse result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
 		Assertions.assertTrue(result.hasErrors());
@@ -140,7 +140,7 @@ class ConverterTest{
 		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.toByteArray("77633301");
-		ParseResponse result = parser.parse(payload);
+		ParserResponse result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
 		Assertions.assertFalse(result.hasErrors());

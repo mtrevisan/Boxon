@@ -93,7 +93,7 @@ class ParserTest{
 		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
-		ParseResponse result = parser.parse(payload);
+		ParserResponse result = parser.parse(payload);
 
 		Assertions.assertFalse(result.hasErrors());
 		Assertions.assertEquals(2, result.getParsedMessageCount());
@@ -112,7 +112,7 @@ class ParserTest{
 		Parser parser = Parser.create(core);
 
 		byte[] payload = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
-		ParseResponse result = parser.parse(payload);
+		ParserResponse result = parser.parse(payload);
 
 		Assertions.assertFalse(result.hasErrors());
 		Assertions.assertEquals(2, result.getParsedMessageCount());
@@ -135,7 +135,7 @@ class ParserTest{
 		byte[] payload1 = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		byte[] payload2 = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
 		byte[] payload = addAll(payload1, payload2);
-		ParseResponse result = parser.parse(payload);
+		ParserResponse result = parser.parse(payload);
 
 		Assertions.assertFalse(result.hasErrors());
 		Assertions.assertEquals(2, result.getParsedMessageCount());
@@ -158,7 +158,7 @@ class ParserTest{
 		byte[] payload1 = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		byte[] payload2 = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
 		byte[] payload = addAll(payload2, payload1);
-		ParseResponse result = parser.parse(payload);
+		ParserResponse result = parser.parse(payload);
 
 		Assertions.assertFalse(result.hasErrors());
 		Assertions.assertEquals(2, result.getParsedMessageCount());

@@ -37,7 +37,7 @@ import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.core.BoxonCore;
 import io.github.mtrevisan.boxon.core.BoxonCoreBuilder;
-import io.github.mtrevisan.boxon.core.ParseResponse;
+import io.github.mtrevisan.boxon.core.ParserResponse;
 import io.github.mtrevisan.boxon.core.Parser;
 import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
@@ -284,7 +284,7 @@ class CodecArrayTest{
 		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.toByteArray("7463340112340211223344010666");
-		ParseResponse result = parser.parse(payload);
+		ParserResponse result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
 		Assertions.assertFalse(result.hasErrors());
@@ -309,7 +309,7 @@ class CodecArrayTest{
 		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.toByteArray("746335011234");
-		ParseResponse result = parser.parse(payload);
+		ParserResponse result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
 		Assertions.assertFalse(result.hasErrors());

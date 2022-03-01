@@ -57,13 +57,13 @@ class ComposerTest{
 
 		//parse:
 		byte[] payload = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
-		ParseResponse parseResult = parser.parse(payload);
+		ParserResponse parseResult = parser.parse(payload);
 
 		Assertions.assertFalse(parseResult.hasErrors());
 		Assertions.assertEquals(1, parseResult.getParsedMessageCount());
 
 		//compose:
-		ComposeResponse<ACKMessageHex> composeResult = composer.composeMessage(parseResult.getParsedMessageAt(0));
+		ComposerResponse<ACKMessageHex> composeResult = composer.composeMessage(parseResult.getParsedMessageAt(0));
 
 		Assertions.assertFalse(composeResult.hasErrors());
 		Assertions.assertArrayEquals(payload, composeResult.getComposedMessage());
@@ -84,13 +84,13 @@ class ComposerTest{
 
 		//parse:
 		byte[] payload = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
-		ParseResponse parseResult = parser.parse(payload);
+		ParserResponse parseResult = parser.parse(payload);
 
 		Assertions.assertFalse(parseResult.hasErrors());
 		Assertions.assertEquals(1, parseResult.getParsedMessageCount());
 
 		//compose:
-		ComposeResponse<ACKMessageASCII> composeResult = composer.composeMessage(parseResult.getParsedMessageAt(0));
+		ComposerResponse<ACKMessageASCII> composeResult = composer.composeMessage(parseResult.getParsedMessageAt(0));
 
 		Assertions.assertFalse(composeResult.hasErrors());
 		Assertions.assertArrayEquals(payload, composeResult.getComposedMessage());

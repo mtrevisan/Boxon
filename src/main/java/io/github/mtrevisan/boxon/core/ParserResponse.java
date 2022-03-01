@@ -36,7 +36,7 @@ import java.util.concurrent.ConcurrentSkipListMap;
  * Response class for the decoding phase.
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
-public final class ParseResponse{
+public final class ParserResponse{
 
 	/** Whole payload (the index on {@link #parsedMessages} and {@link #errors} point here). */
 	private final byte[] payload;
@@ -54,8 +54,8 @@ public final class ParseResponse{
 	 * @param payload	The payload.
 	 * @return	The instance.
 	 */
-	static ParseResponse create(final byte[] payload){
-		return new ParseResponse(payload);
+	static ParserResponse create(final byte[] payload){
+		return new ParserResponse(payload);
 	}
 
 
@@ -64,7 +64,7 @@ public final class ParseResponse{
 	 *
 	 * @param payload	The payload.
 	 */
-	private ParseResponse(final byte[] payload){
+	private ParserResponse(final byte[] payload){
 		this.payload = JavaHelper.cloneOrDefault(payload, null);
 	}
 

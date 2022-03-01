@@ -67,14 +67,14 @@ public final class Composer{
 	 * @param <T>	The class of the composed message.
 	 * @return	The composition response.
 	 */
-	public <T> ComposeResponse<T> composeMessage(final T data){
+	public <T> ComposerResponse<T> composeMessage(final T data){
 		final BitWriter writer = BitWriter.create();
 		final EncodeException error = composeMessage(writer, data);
 
 		final List<EncodeException> errors = new ArrayList<>(1);
 		errors.add(error);
 
-		return ComposeResponse.create(data, writer)
+		return ComposerResponse.create(data, writer)
 			.withErrors(errors);
 	}
 

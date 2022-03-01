@@ -58,7 +58,7 @@ class ComposerThreadedTest{
 		Composer composer = Composer.create(core);
 
 		//parse:
-		ParseResponse parseResult = parser.parse(PAYLOAD);
+		ParserResponse parseResult = parser.parse(PAYLOAD);
 
 		//compose:
 		int threadCount = 10;
@@ -83,7 +83,7 @@ class ComposerThreadedTest{
 		Parser parser = Parser.create(core);
 
 		//parse:
-		ParseResponse parseResult = parser.parse(PAYLOAD);
+		ParserResponse parseResult = parser.parse(PAYLOAD);
 
 		//compose:
 		int threadCount = 10;
@@ -116,7 +116,7 @@ class ComposerThreadedTest{
 				Parser parser = Parser.create(core);
 
 				//parse:
-				ParseResponse parseResult = parser.parse(PAYLOAD);
+				ParserResponse parseResult = parser.parse(PAYLOAD);
 
 				Composer composer = Composer.create(core);
 				return composer.composeMessage(parseResult.getParsedMessageAt(0));

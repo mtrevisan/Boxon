@@ -773,7 +773,7 @@ configurationData.put(Parser.CONFIGURATION_FIELD_TYPE, "AT+");
 configurationData.put("Weekday", "TUESDAY|WEDNESDAY");
 ...
 
-ComposeResponse<String> composedMessage = configurator.composeConfiguration("1.20", Collections.singletonMap("AT+", configurationData));
+ComposerResponse<String> composedMessage = configurator.composeConfiguration("1.20", Collections.singletonMap("AT+", configurationData));
 ```
 
 
@@ -1028,7 +1028,7 @@ List<Map<String, Object>> descriptions = descriptor.describeTemplates();
 Extract values from a POJO using <a href="https://tools.ietf.org/html/rfc6901">RFC6901</a> syntax.
 ```java
 Parser parser = Parser.create(core);
-ParseResponse result = parser.parse(payload);
+ParserResponse result = parser.parse(payload);
 ACKMessageASCII parsedMessage = (ACKMessageASCII)result.getParsedMessageAt(0);
 Extractor extractor = Extractor.create(parsedMessage);
 
@@ -1255,7 +1255,7 @@ Almost for each base annotation there is a corresponding class defined into `Tem
 The other annotations are managed directly into `TemplateParser.java`, that is the main class that orchestrates the parsing of a single message with all of its annotations.
 If an error occurs an `AnnotationException` (an error occurs on an annotation definition), `CodecException` (an error occurs while finding the appropriate codec), `TemplateException` (an error occurs if a template class is badly annotated), or `DecodeException`/`EncodeException` (a container exception for the previous ones for decoding and encoding respectively) is thrown.
 
-Messages can be concatenated, and the `Parser.java` class manages them, returning a [DTO](https://en.wikipedia.org/wiki/Data_transfer_object), `ParseResponse.java`, which contains a list of all successfully read messages and a list of all errors from problematic messages.
+Messages can be concatenated, and the `Parser.java` class manages them, returning a [DTO](https://en.wikipedia.org/wiki/Data_transfer_object), `ParserResponse.java`, which contains a list of all successfully read messages and a list of all errors from problematic messages.
 
 <br/>
 
@@ -1316,7 +1316,7 @@ Parser parser = Parser.create(core);
 
 //parse the message
 byte[] payload = ...
-ParseResponse result = parser.parse(payload);
+ParserResponse result = parser.parse(payload);
 
 //process the errors
 for(int index = 0; index < result.getErrorCount(); index ++)
@@ -1336,7 +1336,7 @@ The inverse of parsing is composing, and it's simply done as follows.
 ```java
 //compose the message
 Message data = ...;
-ComposeResponse<Message> composeResult = composer.composeMessage(data);
+ComposerResponse<Message> composeResult = composer.composeMessage(data);
 
 //process the read messages
 if(!composeResult.hasErrors()){
@@ -1415,12 +1415,12 @@ Pull requests are welcomed.
 - Added public constructor to `Parser` to allow for extensions.
 - Changed the signature of `Checksummer.calculateChecksum` returning short instead of long.
 - Changed method `Validator.validate` into `Validator.isValid`.
-- Changed method `ParseResponse.getMessageForError` into `ParseResponse.getErrorMessageAt` to align it to other method name's conventions.
-- Moved classes `ParseResponse` and `ComposeResponse` from `io.github.mtrevisan.boxon.external` to `io.github.mtrevisan.boxon.core` in order to hide add methods; the constructors are also hidden.
+- Changed method `ParserResponse.getMessageForError` into `ParserResponse.getErrorMessageAt` to align it to other method name's conventions.
+- Moved classes `ParserResponse` and `ComposerResponse` from `io.github.mtrevisan.boxon.external` to `io.github.mtrevisan.boxon.core` in order to hide add methods; the constructors are also hidden.
 - Minor refactorings.
-- Added `originator` variable (and its getter) to `ComposeResponse` to hold the given objects used to create the message.
+- Added `originator` variable (and its getter) to `ComposerResponse` to hold the given objects used to create the message.
 - Added/modified javadocs to better explain some classes.
-- Removed `ComposeResponse.getErrors`, `BindInteger.unsigned` and `BitReader.getInteger(int, ByteOrder, boolean)` as they are useless.
+- Removed `ComposerResponse.getErrors`, `BindInteger.unsigned` and `BitReader.getInteger(int, ByteOrder, boolean)` as they are useless.
 - Removed `BitWriter.putText(String, byte, boolean)` because of the [Boolean Trap](https://ariya.io/2011/08/hall-of-api-shame-boolean-trap).
 - Removed useless `match()` parameter from bindings.
 - Enhanced the exception message thrown if the type of `BitReader.get(Class, ByteOrder)` is not recognized.
