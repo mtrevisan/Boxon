@@ -56,6 +56,7 @@ public final class BoxonResponse<O, M>{
 	 * @return	The instance.
 	 */
 	static <O> BoxonResponse<O, byte[]> create(final O originator, final BitWriter writer, final Exception error){
+		writer.flush();
 		return new BoxonResponse<>(originator, writer.array(), error);
 	}
 
