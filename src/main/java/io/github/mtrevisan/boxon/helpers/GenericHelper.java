@@ -67,11 +67,11 @@ public final class GenericHelper{
 	/**
 	 * Resolves the actual generic type arguments for a base class, as viewed from a subclass or implementation.
 	 *
-	 * @param <T>	The base type.
 	 * @param offspring	The class or interface subclassing or extending the base type.
 	 * @param base	The base class.
 	 * @param actualArgs	The actual type arguments passed to the offspring class.
 	 * 	If no arguments are given, then the type parameters of the offspring will be used.
+	 * @param <T>	The base type.
 	 * @return	The actual generic type arguments, must match the type parameters of the offspring class.
 	 * 	If omitted, the type parameters will be used instead.
 	 *

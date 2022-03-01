@@ -160,8 +160,8 @@ public final class Evaluator{
 	 * @param expression	The SpEL expression to evaluate (empty string returns {@code true}).
 	 * @param rootObject	The context with which to evaluate the given expression.
 	 * @param returnType	The class for the return type.
-	 * @return	The result of the expression.
 	 * @param <T>	The class type of the result.
+	 * @return	The result of the expression.
 	 * @throws EvaluationException	If an error occurs during the evaluation of an expression.
 	 */
 	public <T> T evaluate(final String expression, final Object rootObject, final Class<T> returnType){

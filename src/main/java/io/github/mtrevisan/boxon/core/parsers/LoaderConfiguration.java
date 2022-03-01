@@ -153,8 +153,8 @@ final class LoaderConfiguration{
 	/**
 	 * Constructs a new {@link ConfigurationMessage}.
 	 *
-	 * @param <T>	The type of the object to be returned as a {@link ConfigurationMessage}.
 	 * @param type	The class of the object to be returned as a {@link ConfigurationMessage}.
+	 * @param <T>	The type of the object to be returned as a {@link ConfigurationMessage}.
 	 * @return	The {@link ConfigurationMessage} for the given type.
 	 * @throws AnnotationException	If a configuration annotation is invalid, or no annotation was found.
 	 */

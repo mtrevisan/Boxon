@@ -59,8 +59,8 @@ public final class ComposeResponse<T>{
 	 *
 	 * @param originator	The data that originates the message.
 	 * @param writer	The writer to read the composed message from.
-	 * @return	The instance.
 	 * @param <T>	The response class.
+	 * @return	The instance.
 	 */
 	static <T> ComposeResponse<T> create(final T originator, final BitWriter writer){
 		writer.flush();

@@ -44,9 +44,9 @@ public final class Memoizer{
 	/**
 	 * Thread-safe and recursion-safe implementation using a re-entrant lock.
 	 *
+	 * @param function	The function to be memoized.
 	 * @param <IN>	Type of input to the function. The class MUST implement {@code equals(Object)} and {@code hashCode()}.
 	 * @param <OUT>	Type of output from the function.
-	 * @param function	The function to be memoized.
 	 * @return	The new memoized function.
 	 *
 	 * @see <a href="https://opencredo.com/lambda-memoization-in-java-8/">Lambda memoization in Java 8</a>
@@ -68,10 +68,10 @@ public final class Memoizer{
 	/**
 	 * Thread-safe and recursion-safe implementation using a re-entrant lock.
 	 *
+	 * @param function	The function to be memoized.
 	 * @param <IN>	Type of input to the function. The class MUST implement {@code equals(Object)} and {@code hashCode()}.
 	 * @param <OUT>	Type of output from the function.
 	 * @param <E>	Type of exception thrown by the function.
-	 * @param function	The function to be memoized.
 	 * @return	The new memoized function.
 	 *
 	 * @see <a href="https://opencredo.com/lambda-memoization-in-java-8/">Lambda memoization in Java 8</a>

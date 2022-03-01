@@ -115,8 +115,8 @@ public final class ParseResponse{
 	 * The successfully parsed message at a given index.
 	 *
 	 * @param index	The index of a message in a group of concatenated messages for which to extract the parsed message.
-	 * @return	The successfully parsed message at a given index.
 	 * @param <T>	The class of the response.
+	 * @return	The successfully parsed message at a given index.
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> T getParsedMessageAt(final int index){

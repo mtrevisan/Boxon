@@ -64,8 +64,8 @@ public final class Composer{
 	 * Compose a message.
 	 *
 	 * @param data	The message to be composed.
-	 * @return	The composition response.
 	 * @param <T>	The class of the composed message.
+	 * @return	The composition response.
 	 */
 	public <T> ComposeResponse<T> composeMessage(final T data){
 		final BitWriter writer = BitWriter.create();
