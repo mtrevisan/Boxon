@@ -35,7 +35,6 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
@@ -97,18 +96,11 @@ public final class JSONPath{
 		return components;
 	}
 
-	private static String urlDecode(final CharSequence component){
+	private static String urlDecode(String component){
 		//convert (hexadecimal) %x?? to (decimal) %??:
-		final StringBuffer sb = new StringBuffer(component.length());
-		final Matcher m = PATTERN_HEX_URL_ENCODE.matcher(component);
-		while(m.find()){
-			final String hex = m.group(1);
-			final String num = Character.toString((char)Integer.parseInt(hex, 16));
-			m.appendReplacement(sb, num);
-		}
-		m.appendTail(sb);
-
-		return URLDecoder.decode(sb.toString(), StandardCharsets.UTF_8);
+		component = PATTERN_HEX_URL_ENCODE.matcher(component)
+			.replaceAll(match -> Character.toString((char)Integer.parseInt(match.group(1), 16)));
+		return URLDecoder.decode(component, StandardCharsets.UTF_8);
 	}
 
 	/**
