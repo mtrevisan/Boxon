@@ -157,12 +157,12 @@ public final class JSONPath{
 
 			final Integer idx = extractIndex(currentPath);
 
-			validateNextSubPath(data, currentPath, idx, path);
+			validatePath(data, currentPath, idx, path);
 
 			if(idx != null)
-				data = extractNextSubPath(data, idx);
+				data = extractPath(data, idx);
 			else
-				data = extractNextSubPath(data, currentPath);
+				data = extractPath(data, currentPath);
 		}
 		return (T)data;
 	}
@@ -173,7 +173,7 @@ public final class JSONPath{
 			: null);
 	}
 
-	private static void validateNextSubPath(final Object data, final String currentPath, final Integer idx, final String[] path)
+	private static void validatePath(final Object data, final String currentPath, final Integer idx, final String[] path)
 			throws JSONPathException{
 		final Class<?> dataClass = data.getClass();
 		if(idx != null ^ (dataClass.isArray() || List.class.isAssignableFrom(dataClass)))
@@ -184,13 +184,13 @@ public final class JSONPath{
 		return "/" + String.join("/", path);
 	}
 
-	private static Object extractNextSubPath(final Object data, final Integer idx){
+	private static Object extractPath(final Object data, final Integer idx){
 		return (List.class.isInstance(data)
 			? ((List<?>)data).get(idx)
 			: Array.get(data, idx));
 	}
 
-	private static Object extractNextSubPath(final Object data, final String currentPath) throws NoSuchFieldException{
+	private static Object extractPath(final Object data, final String currentPath) throws NoSuchFieldException{
 		final Object nextData;
 		if(Map.class.isInstance(data))
 			nextData = ((Map<?, ?>)data).get(currentPath);
