@@ -34,7 +34,6 @@ import io.github.mtrevisan.boxon.semanticversioning.Version;
 import java.time.ZonedDateTime;
 
 
-@SuppressWarnings("ALL")
 @MessageHeader(start = "+ACK:", end = "$")
 public class ACKMessageASCII{
 

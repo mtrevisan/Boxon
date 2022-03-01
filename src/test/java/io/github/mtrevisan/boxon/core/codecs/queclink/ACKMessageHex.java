@@ -41,7 +41,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-@SuppressWarnings("ALL")
 @MessageHeader(start = "+ACK", end = "\r\n")
 public class ACKMessageHex{
 

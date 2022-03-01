@@ -30,7 +30,6 @@ import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentSkipListMap;
 
 
-@SuppressWarnings("ALL")
 public class DeviceTypes{
 
 	private final Map<String, Byte> deviceTypes;

@@ -34,7 +34,6 @@ import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
 import io.github.mtrevisan.boxon.configurations.BooleanType;
 
 
-@SuppressWarnings("ALL")
 @ConfigurationHeader(longDescription = "The command AT+GTREG is used to do things.", shortDescription = "AT+GTREG", maxProtocol = "2.8",
 	start = "AT+", end = "$")
 public class REGConfigurationASCII{

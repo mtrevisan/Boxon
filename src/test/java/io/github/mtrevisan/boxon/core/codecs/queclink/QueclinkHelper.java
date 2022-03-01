@@ -36,7 +36,6 @@ import java.time.ZonedDateTime;
 import java.util.Locale;
 
 
-@SuppressWarnings("ALL")
 public class QueclinkHelper{
 
 	private static final ZoneId DATE_TIME_ZONE = ZoneId.of("UTC");
