@@ -24,9 +24,6 @@
  */
 package io.github.mtrevisan.boxon.core.matchers;
 
-import io.github.mtrevisan.boxon.core.matchers.BNDMPatternMatcher;
-import io.github.mtrevisan.boxon.core.matchers.KMPPatternMatcher;
-import io.github.mtrevisan.boxon.core.matchers.PatternMatcher;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
