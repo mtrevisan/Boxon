@@ -72,7 +72,7 @@ class ParserTest{
 		for(int i = 0; i < 20_000; i ++)
 			parser.parse(payload);
 		watch.stop();
-		System.out.println(watch.toStringMicros(20_000));
+		System.out.println(watch.toString(20_000));
 	}
 
 	private static int headerSize(){

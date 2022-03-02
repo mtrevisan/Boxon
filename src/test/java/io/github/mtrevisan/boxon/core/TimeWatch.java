@@ -24,18 +24,24 @@
  */
 package io.github.mtrevisan.boxon.core;
 
-import java.util.StringJoiner;
 import java.util.concurrent.TimeUnit;
 
 
 public final class TimeWatch{
 
 	private static final String TIMER_NOT_STOPPED = "timer not stopped";
-	private static final String MINUTES = "min";
-	private static final String SECONDS = "sec";
-	private static final String MILLIS = "ms";
-	private static final String MICROS = "µs";
-	private static final String SPACE = " ";
+	private enum Scale{
+		SECONDS("s"),
+		MILLIS("ms"),
+		MICROS("µs");
+
+		private final String uom;
+
+		Scale(final String uom){
+			this.uom = uom;
+		}
+	}
+
 
 	private long start;
 	private long end;
@@ -70,36 +76,22 @@ public final class TimeWatch{
 		return unit.convert(time(), TimeUnit.NANOSECONDS);
 	}
 
-	public String toStringMinuteSeconds(){
-		if(end == 0l)
-			return TIMER_NOT_STOPPED;
-
-		final long delta = time(TimeUnit.SECONDS);
-
-		final StringJoiner sj = new StringJoiner(SPACE);
-		final long mins = delta / 60l;
-		if(mins > 0)
-			sj.add(Long.toString(mins)).add(MINUTES);
-		final long secs = delta - mins * 60l;
-		if(mins == 0 || secs > 0)
-			sj.add(Long.toString(secs)).add(SECONDS);
-		return sj.toString();
-	}
-
-	public String toStringMillis(){
-		return (end > 0l? time(TimeUnit.MILLISECONDS) + SPACE + MILLIS: TIMER_NOT_STOPPED);
-	}
-
-	public String toStringMicros(final int runs){
+	public String toString(final int runs){
 		if(end < 0l)
 			return TIMER_NOT_STOPPED;
 
-		final double micros = (double)(end - start) / (runs * 1_000);
-		final int fractionalDigits = (micros > 100? 0: (micros > 10? 1: 3));
+		double delta = (end - start) / (runs * 1_000.);
+		final Scale[] scaleValues = Scale.values();
+		int scale = scaleValues.length - 1;
+		while(scale >= 0 && delta >= 1_500.){
+			delta /= 1000.;
+			scale --;
+		}
+		final int fractionalDigits = (delta > 100? 0: (delta > 10? 1: 2));
 
-		final StringBuilder sb = new StringBuilder(fractionalDigits + 2);
-		format(sb, micros, fractionalDigits);
-		sb.append(' ').append(MICROS);
+		final StringBuilder sb = new StringBuilder(16);
+		format(sb, delta, fractionalDigits);
+		sb.append(' ').append(scaleValues[scale].uom);
 		return sb.toString();
 	}
 
