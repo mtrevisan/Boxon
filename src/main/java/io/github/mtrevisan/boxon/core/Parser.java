@@ -34,6 +34,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 
@@ -125,7 +126,7 @@ public final class Parser{
 		return response;
 	}
 
-	private boolean parse(final BitReader reader, final int start, final List<Response<byte[], Object>> response){
+	private boolean parse(final BitReader reader, final int start, final Collection<Response<byte[], Object>> response){
 		try{
 			final Template<?> template = templateParser.getTemplate(reader);
 
@@ -152,7 +153,7 @@ public final class Parser{
 		return false;
 	}
 
-	private static void assertNoLeftBytes(final BitReader reader, final int start, final List<Response<byte[], Object>> response){
+	private static void assertNoLeftBytes(final BitReader reader, final int start, final Collection<Response<byte[], Object>> response){
 		if(reader.hasRemaining()){
 			final int position = reader.position();
 			final IllegalArgumentException error = new IllegalArgumentException("There are remaining unread bytes");
