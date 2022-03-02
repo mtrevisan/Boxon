@@ -139,7 +139,8 @@ public final class StringHelper{
 			sb.append(highDigit);
 			sb.append(lowDigit);
 		}
-		return sb.toString().toUpperCase(Locale.ROOT);
+		return sb.toString()
+			.toUpperCase(Locale.ROOT);
 	}
 
 	/**
