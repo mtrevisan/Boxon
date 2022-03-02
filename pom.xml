@@ -204,7 +204,6 @@
 								<configuration>
 									<additionalOptions>${javadoc.html.version}</additionalOptions>
 									<javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
-									<detectJavaApiLink>false</detectJavaApiLink>
 									<locale>en</locale>
 								</configuration>
 							</execution>
