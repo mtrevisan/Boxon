@@ -45,7 +45,7 @@ public final class DecodeException extends Exception{
 	 *
 	 * @param errorIndex	Index of the decoded message this error refers to.
 	 * @param cause	The cause (which is saved for later retrieval by the {@link #getCause()} method). (A {@code null} value is
-	 * 					permitted, and indicates that the cause is nonexistent or unknown.)
+	 * 	permitted, and indicates that the cause is nonexistent or unknown.)
 	 * @return	An instance of this exception.
 	 */
 	public static DecodeException create(final int errorIndex, final Throwable cause){

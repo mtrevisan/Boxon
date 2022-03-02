@@ -131,12 +131,12 @@ public final class Parser{
 
 			final Object partialDecodedMessage = templateParser.decode(template, reader, null);
 
-			final Response<byte[], Object> partialResponse = Response.create(reader.array(), partialDecodedMessage);
+			final Response<byte[], Object> partialResponse = Response.create(reader, partialDecodedMessage);
 			response.add(partialResponse);
 		}
 		catch(final Exception e){
 			final DecodeException de = DecodeException.create(reader.position(), e);
-			final Response<byte[], Object> partialResponse = Response.create(reader.array(), de);
+			final Response<byte[], Object> partialResponse = Response.create(reader, de);
 			response.add(partialResponse);
 
 			//restore state of the reader

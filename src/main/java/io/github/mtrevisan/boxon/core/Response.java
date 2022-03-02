@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core;
 
+import io.github.mtrevisan.boxon.io.BitReader;
 import io.github.mtrevisan.boxon.io.BitWriter;
 
 
@@ -47,10 +48,10 @@ public final class Response<S, M>{
 
 
 	/**
-	 * Construct a response from a given object and composed message or error.
+	 * Construct a response from a given source and decoded/composed message (as a byte array) or error.
 	 *
 	 * @param source	The source data that originates the message.
-	 * @param writer	The writer to read the composed message from.
+	 * @param writer	The writer to read the decoded/composed message from.
 	 * @param error	The error.
 	 * @param <S>	The source class.
 	 * @return	The instance.
@@ -61,29 +62,27 @@ public final class Response<S, M>{
 	}
 
 	/**
-	 * Construct a response from a given object and composed message.
+	 * Construct a response from a given source and decoded/composed message.
 	 *
-	 * @param source	The source data that originates the message.
-	 * @param composedMessage	The composed message.
-	 * @param <S>	The source class.
+	 * @param reader	The reader to read the source data from.
+	 * @param message	The decoded/composed message.
 	 * @param <M>	The message class.
 	 * @return	The instance.
 	 */
-	static <S, M> Response<S, M> create(final S source, final M composedMessage){
-		return new Response<>(source, composedMessage, null);
+	static <M> Response<byte[], M> create(final BitReader reader, final M message){
+		return new Response<>(reader.array(), message, null);
 	}
 
 	/**
 	 * Construct a response from a given object and error.
 	 *
-	 * @param source	The source data that originates the message.
+	 * @param reader	The reader to read the source data from.
 	 * @param error	The error.
-	 * @param <S>	The source class.
 	 * @param <M>	The message class.
 	 * @return	The instance.
 	 */
-	static <S, M> Response<S, M> create(final S source, final Exception error){
-		return new Response<>(source, null, error);
+	static <M> Response<byte[], M> create(final BitReader reader, final Exception error){
+		return new Response<>(reader.array(), null, error);
 	}
 
 	/**
@@ -100,10 +99,10 @@ public final class Response<S, M>{
 
 
 	/**
-	 * Construct a response from a given object and composed message.
+	 * Construct a response from a given object and decoded/composed message.
 	 *
 	 * @param source	The source data that originates the message.
-	 * @param message	The composed message.
+	 * @param message	The decoded/composed message.
 	 * @param error	The error.
 	 */
 	private Response(final S source, final M message, final Exception error){
@@ -114,18 +113,18 @@ public final class Response<S, M>{
 
 
 	/**
-	 * The source for the composed message.
+	 * The source for the decoded/composed message.
 	 *
-	 * @return	The source for the composed message.
+	 * @return	The source for the decoded/composed message.
 	 */
 	public S getSource(){
 		return source;
 	}
 
 	/**
-	 * The message composed by the given {@link #source}.
+	 * The message decoded/composed by the given {@link #source}.
 	 *
-	 * @return	The message composed by the given source.
+	 * @return	The message decoded/composed by the given source.
 	 */
 	public M getMessage(){
 		return message;

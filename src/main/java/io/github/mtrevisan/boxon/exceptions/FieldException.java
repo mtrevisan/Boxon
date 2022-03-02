@@ -47,7 +47,7 @@ public class FieldException extends Exception{
 	 * Constructs a new exception with the specified cause.
 	 *
 	 * @param cause	The cause (which is saved for later retrieval by the {@link #getCause()} method). (A {@code null} value is
-	 * 					permitted, and indicates that the cause is nonexistent or unknown.)
+	 * 	permitted, and indicates that the cause is nonexistent or unknown.)
 	 * @return	An instance of this exception.
 	 */
 	public static FieldException create(final Throwable cause){
@@ -69,7 +69,7 @@ public class FieldException extends Exception{
 	 *
 	 * @param message	The message.
 	 * @param cause	The cause (which is saved for later retrieval by the {@link #getCause()} method). (A {@code null} value is
-	 * 					permitted, and indicates that the cause is nonexistent or unknown.)
+	 * 	permitted, and indicates that the cause is nonexistent or unknown.)
 	 */
 	protected FieldException(final String message, final Throwable cause){
 		super(message, cause);
@@ -79,7 +79,7 @@ public class FieldException extends Exception{
 	 * Constructs a new exception with the specified cause.
 	 *
 	 * @param cause	The cause (which is saved for later retrieval by the {@link #getCause()} method). (A {@code null} value is
-	 * 					permitted, and indicates that the cause is nonexistent or unknown.)
+	 * 	permitted, and indicates that the cause is nonexistent or unknown.)
 	 */
 	protected FieldException(final Throwable cause){
 		super(cause);

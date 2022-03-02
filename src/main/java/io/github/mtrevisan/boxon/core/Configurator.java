@@ -177,7 +177,7 @@ public final class Configurator{
 	 * @return	The composition response.
 	 */
 	public Response<String, byte[]> composeConfiguration(final String protocolVersion, final String messageStart,
-																		  final Map<String, Object> data){
+			final Map<String, Object> data){
 		final Version protocol = Version.of(protocolVersion);
 		if(protocol.isEmpty())
 			throw new IllegalArgumentException("Invalid protocol version: " + protocolVersion);
