@@ -35,30 +35,6 @@ class StringHelperTest{
 
 
 	@Test
-	void hasBitWithByte(){
-		byte mask = 0x27;
-
-		byte output = 0x00;
-		for(int i = 0; i < 8; i ++)
-			if(hasBit(mask, i))
-				output |= (1 << i);
-
-		Assertions.assertEquals(mask, output);
-	}
-
-	/**
-	 * Checks whether the given {@code mask} has the bit at {@code index} set.
-	 *
-	 * @param mask	The value to check the bit into.
-	 * @param index	The index of the bit (rightmost is zero). The value can range between {@code 0} and {@link Byte#SIZE}.
-	 * @return	The state of the bit at a given index in the given byte.
-	 */
-	private static boolean hasBit(final byte mask, final int index){
-		final int bitMask = 1 << (index % Byte.SIZE);
-		return ((mask & bitMask) != 0);
-	}
-
-	@Test
 	void byteArrayToHexString(){
 		byte[] array = {0x23, 0x5e, 0x40, 0x03, 0x51, 0x10, 0x42, 0x06};
 
@@ -69,10 +45,12 @@ class StringHelperTest{
 
 	@Test
 	void hexStringToByteArray(){
-		Assertions.assertArrayEquals(new byte[]{0x23, 0x5e, 0x40, 0x03, 0x51, 0x10, 0x42, 0x06}, StringHelper.toByteArray("235e400351104206"));
+		Assertions.assertArrayEquals(new byte[]{0x23, 0x5e, 0x40, 0x03, 0x51, 0x10, 0x42, 0x06},
+			StringHelper.toByteArray("235e400351104206"));
 
 		Throwable exception = Assertions.assertThrows(IllegalArgumentException.class,
-			() -> Assertions.assertArrayEquals(new byte[]{0x23, 0x5e, 0x40, 0x03, 0x51, 0x10, 0x42, 0x06}, StringHelper.toByteArray("235e40035110420")));
+			() -> Assertions.assertArrayEquals(new byte[]{0x23, 0x5e, 0x40, 0x03, 0x51, 0x10, 0x42, 0x06},
+				StringHelper.toByteArray("235e40035110420")));
 		Assertions.assertEquals("Input should be of even length, was 15", exception.getMessage());
 	}
 

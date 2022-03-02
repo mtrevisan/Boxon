@@ -29,22 +29,22 @@ import org.junit.jupiter.api.Test;
 
 
 @SuppressWarnings("ALL")
-class CRC16CCITTTest{
+class BSD8Test{
 
 	@Test
 	void test(){
-		CRC16CCITT crc = new CRC16CCITT();
-		Number crc16 = crc.calculateChecksum("9142656".getBytes(), 0, 7, CRC16CCITT.START_VALUE_0xFFFF);
+		BSD8 crc = new BSD8();
+		Number crc8 = crc.calculateChecksum("9142656".getBytes(), 0, 7, BSD8.START_VALUE_0x00);
 
-		Assertions.assertEquals((short)0x763A, crc16.shortValue());
+		Assertions.assertEquals((byte)0x7D, crc8.byteValue());
 	}
 
 	@Test
 	void oneToFour(){
-		CRC16CCITT crc = new CRC16CCITT();
-		Number crc16 = crc.calculateChecksum(new byte[]{0x01, 0x02, 0x03, 0x04}, 0, 4, CRC16CCITT.START_VALUE_0xFFFF);
+		BSD8 crc = new BSD8();
+		Number crc8 = crc.calculateChecksum(new byte[]{0x01, 0x02, 0x03, 0x04}, 0, 4, BSD8.START_VALUE_0x00);
 
-		Assertions.assertEquals((short)0x89C3, crc16.shortValue());
+		Assertions.assertEquals((byte)0xE6, crc8.byteValue());
 	}
 
 }
