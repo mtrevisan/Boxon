@@ -80,7 +80,7 @@ public final class Extractor{
 	 * @return	The value.
 	 * @throws JSONPathException	If the path has an error.
 	 */
-	public static  <T> T get(final String path, final Object data) throws JSONPathException{
+	public static <T> T get(final String path, final Object data) throws JSONPathException{
 		return JSONPath.extract(path, data);
 	}
 
