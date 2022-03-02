@@ -51,31 +51,63 @@ public final class TimeWatch{
 		reset();
 	}
 
+
+	/**
+	 * Start the timer.
+	 *
+	 * @return	The instance.
+	 */
 	public static TimeWatch start(){
 		return new TimeWatch();
 	}
 
+	/**
+	 * Restart the timer.
+	 *
+	 * @return	This instance, used for chaining.
+	 */
 	public TimeWatch reset(){
 		start = System.nanoTime();
-		end = 0l;
 
 		return this;
 	}
 
+	/**
+	 * Stops the current timer.
+	 *
+	 * @return	This instance, used for chaining.
+	 */
 	public TimeWatch stop(){
 		end = System.nanoTime();
 
 		return this;
 	}
 
+	/**
+	 * The elapsed time.
+	 *
+	 * @return	The elapsed time [ns], or a negative number if not stopped.
+	 */
 	public long time(){
 		return (end > 0l? end - start: -1l);
 	}
 
-	public long time(final TimeUnit unit){
-		return unit.convert(time(), TimeUnit.NANOSECONDS);
+	/**
+	 * The elapsed time.
+	 *
+	 * @param uom	The unit of measure.
+	 * @return	The elapsed time.
+	 */
+	public long time(final TimeUnit uom){
+		return uom.convert(time(), TimeUnit.NANOSECONDS);
 	}
 
+	/**
+	 * A string representation of the (mean) elapsed time considering the given runs.
+	 *
+	 * @param runs	The number of runs the elapsed time will be divided to.
+	 * @return	The string representation of the mean elapsed time.
+	 */
 	public String toString(final int runs){
 		if(end < 0l)
 			return TIMER_NOT_STOPPED;
