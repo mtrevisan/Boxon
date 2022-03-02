@@ -65,13 +65,16 @@ class ParserTest{
 
 		//213-223 µs/msg = 4.5-4.7 kHz
 		byte[] payload = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
+
 		//warm-up
 		for(int i = 0; i < 2_000; i ++)
 			parser.parse(payload);
+
 		TimeWatch watch = TimeWatch.start();
 		for(int i = 0; i < 20_000; i ++)
 			parser.parse(payload);
 		watch.stop();
+
 		System.out.println(watch.toString(20_000));
 	}
 
