@@ -64,8 +64,7 @@ class ComposerTest{
 		Assertions.assertEquals(1, result.size());
 		Response<byte[], Object> response = result.get(0);
 		Assertions.assertArrayEquals(payload, response.getSource());
-		Exception error = response.getError();
-		Assertions.assertNull(error);
+		Assertions.assertFalse(response.hasError());
 
 		//compose:
 		Response<ACKMessageHex, byte[]> composeResult = composer.composeMessage((ACKMessageHex)response.getMessage());
@@ -95,8 +94,7 @@ class ComposerTest{
 		Assertions.assertEquals(1, result.size());
 		Response<byte[], Object> response = result.get(0);
 		Assertions.assertArrayEquals(payload, response.getSource());
-		Exception error = response.getError();
-		Assertions.assertNull(error);
+		Assertions.assertFalse(response.hasError());
 
 		//compose:
 		Response<ACKMessageASCII, byte[]> composeResult = composer.composeMessage((ACKMessageASCII)response.getMessage());

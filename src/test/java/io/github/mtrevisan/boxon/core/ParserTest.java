@@ -100,8 +100,8 @@ class ParserTest{
 		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertEquals(2, result.size());
-		Assertions.assertNull(result.get(0).getError());
-		Assertions.assertNull(result.get(1).getError());
+		Assertions.assertFalse(result.get(0).hasError());
+		Assertions.assertFalse(result.get(1).hasError());
 	}
 
 	@Test
@@ -120,8 +120,8 @@ class ParserTest{
 		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertEquals(2, result.size());
-		Assertions.assertNull(result.get(0).getError());
-		Assertions.assertNull(result.get(1).getError());
+		Assertions.assertFalse(result.get(0).hasError());
+		Assertions.assertFalse(result.get(1).hasError());
 	}
 
 	@Test
@@ -144,8 +144,8 @@ class ParserTest{
 		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertEquals(2, result.size());
-		Assertions.assertNull(result.get(0).getError());
-		Assertions.assertNull(result.get(1).getError());
+		Assertions.assertFalse(result.get(0).hasError());
+		Assertions.assertFalse(result.get(1).hasError());
 	}
 
 	@Test
@@ -168,8 +168,8 @@ class ParserTest{
 		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertEquals(2, result.size());
-		Assertions.assertNull(result.get(0).getError());
-		Assertions.assertNull(result.get(1).getError());
+		Assertions.assertFalse(result.get(0).hasError());
+		Assertions.assertFalse(result.get(1).hasError());
 	}
 
 	private static byte[] addAll(final byte[] array1, final byte[] array2){
