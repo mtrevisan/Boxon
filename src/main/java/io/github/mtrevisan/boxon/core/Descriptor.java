@@ -50,6 +50,7 @@ import java.util.Map;
 public final class Descriptor{
 
 	private final Core core;
+
 	private final LoaderTemplate loaderTemplate;
 
 
