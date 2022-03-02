@@ -30,16 +30,16 @@ import io.github.mtrevisan.boxon.io.BitWriter;
 /**
  * Response class for a single encoding/decoding phase.
  *
- * @param <O>	The originator class.
+ * @param <S>	The source class.
  * @param <M>	The message class.
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
-public final class Response<O, M>{
+public final class Response<S, M>{
 
-	/** The originator for the message. */
-	private final O originator;
+	/** The source data for the message. */
+	private final S source;
 
-	/** Successfully composed message. */
+	/** Successfully decoded/composed message. */
 	private final M message;
 
 	/** Error message. */
@@ -49,52 +49,52 @@ public final class Response<O, M>{
 	/**
 	 * Construct a response from a given object and composed message or error.
 	 *
-	 * @param originator	The data that originates the message.
+	 * @param source	The source data that originates the message.
 	 * @param writer	The writer to read the composed message from.
 	 * @param error	The error.
-	 * @param <O>	The originator class.
+	 * @param <S>	The source class.
 	 * @return	The instance.
 	 */
-	static <O> Response<O, byte[]> create(final O originator, final BitWriter writer, final Exception error){
+	static <S> Response<S, byte[]> create(final S source, final BitWriter writer, final Exception error){
 		writer.flush();
-		return new Response<>(originator, writer.array(), error);
+		return new Response<>(source, writer.array(), error);
 	}
 
 	/**
 	 * Construct a response from a given object and composed message.
 	 *
-	 * @param originator	The data that originates the message.
+	 * @param source	The source data that originates the message.
 	 * @param composedMessage	The composed message.
-	 * @param <O>	The originator class.
+	 * @param <S>	The source class.
 	 * @param <M>	The message class.
 	 * @return	The instance.
 	 */
-	static <O, M> Response<O, M> create(final O originator, final M composedMessage){
-		return new Response<>(originator, composedMessage, null);
+	static <S, M> Response<S, M> create(final S source, final M composedMessage){
+		return new Response<>(source, composedMessage, null);
 	}
 
 	/**
 	 * Construct a response from a given object and error.
 	 *
-	 * @param originator	The data that originates the message.
+	 * @param source	The source data that originates the message.
 	 * @param error	The error.
-	 * @param <O>	The originator class.
+	 * @param <S>	The source class.
 	 * @param <M>	The message class.
 	 * @return	The instance.
 	 */
-	static <O, M> Response<O, M> create(final O originator, final Exception error){
-		return new Response<>(originator, null, error);
+	static <S, M> Response<S, M> create(final S source, final Exception error){
+		return new Response<>(source, null, error);
 	}
 
 	/**
 	 * Construct a response from an error.
 	 *
 	 * @param error	The error.
-	 * @param <O>	The originator class.
+	 * @param <S>	The source class.
 	 * @param <M>	The message class.
 	 * @return	The instance.
 	 */
-	static <O, M> Response<O, M> create(final Exception error){
+	static <S, M> Response<S, M> create(final Exception error){
 		return new Response<>(null, null, error);
 	}
 
@@ -102,30 +102,30 @@ public final class Response<O, M>{
 	/**
 	 * Construct a response from a given object and composed message.
 	 *
-	 * @param originator	The data that originates the message.
+	 * @param source	The source data that originates the message.
 	 * @param message	The composed message.
 	 * @param error	The error.
 	 */
-	private Response(final O originator, final M message, final Exception error){
-		this.originator = originator;
+	private Response(final S source, final M message, final Exception error){
+		this.source = source;
 		this.message = message;
 		this.error = error;
 	}
 
 
 	/**
-	 * The originator for the composed message.
+	 * The source for the composed message.
 	 *
-	 * @return	The originator for the composed message.
+	 * @return	The source for the composed message.
 	 */
-	public O getOriginator(){
-		return originator;
+	public S getSource(){
+		return source;
 	}
 
 	/**
-	 * The message composed by the given {@link #originator}.
+	 * The message composed by the given {@link #source}.
 	 *
-	 * @return	The message composed by the given originator.
+	 * @return	The message composed by the given source.
 	 */
 	public M getMessage(){
 		return message;

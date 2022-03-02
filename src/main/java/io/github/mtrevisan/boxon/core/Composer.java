@@ -61,7 +61,7 @@ public final class Composer{
 	 * Compose a message.
 	 *
 	 * @param data	The message to be composed.
-	 * @param <T>	The class of the originator data.
+	 * @param <T>	The class of the source data.
 	 * @return	The composition response.
 	 */
 	public <T> Response<T, byte[]> composeMessage(final T data){

@@ -63,7 +63,7 @@ class ComposerTest{
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(1, result.size());
 		Response<byte[], Object> response = result.get(0);
-		Assertions.assertArrayEquals(payload, response.getOriginator());
+		Assertions.assertArrayEquals(payload, response.getSource());
 		Exception error = response.getError();
 		Assertions.assertNull(error);
 
@@ -94,7 +94,7 @@ class ComposerTest{
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(1, result.size());
 		Response<byte[], Object> response = result.get(0);
-		Assertions.assertArrayEquals(payload, response.getOriginator());
+		Assertions.assertArrayEquals(payload, response.getSource());
 		Exception error = response.getError();
 		Assertions.assertNull(error);
 
