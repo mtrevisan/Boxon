@@ -40,7 +40,7 @@ public final class Response<S, M>{
 	/** The source data for the message. */
 	private final S source;
 
-	/** Successfully decoded/composed message. */
+	/** Successfully processed message. */
 	private final M message;
 
 	/** Error message. */
@@ -48,10 +48,10 @@ public final class Response<S, M>{
 
 
 	/**
-	 * Construct a response from a given source and decoded/composed message (as a byte array) or error.
+	 * Construct a response from a given source and processed message (as a byte array) or error.
 	 *
 	 * @param source	The source data that originates the message.
-	 * @param writer	The writer to read the decoded/composed message from.
+	 * @param writer	The writer to read the processed message from.
 	 * @param error	The error.
 	 * @param <S>	The source class.
 	 * @return	The instance.
@@ -62,10 +62,10 @@ public final class Response<S, M>{
 	}
 
 	/**
-	 * Construct a response from a given source and decoded/composed message.
+	 * Construct a response from a given source and processed message.
 	 *
 	 * @param reader	The reader to read the source data from.
-	 * @param message	The decoded/composed message.
+	 * @param message	The processed message.
 	 * @param <M>	The message class.
 	 * @return	The instance.
 	 */
@@ -99,10 +99,10 @@ public final class Response<S, M>{
 
 
 	/**
-	 * Construct a response from a given object and decoded/composed message.
+	 * Construct a response from a given object and processed message.
 	 *
 	 * @param source	The source data that originates the message.
-	 * @param message	The decoded/composed message.
+	 * @param message	The processed message.
 	 * @param error	The error.
 	 */
 	private Response(final S source, final M message, final Exception error){
@@ -113,18 +113,18 @@ public final class Response<S, M>{
 
 
 	/**
-	 * The source for the decoded/composed message.
+	 * The source for the processed message.
 	 *
-	 * @return	The source for the decoded/composed message.
+	 * @return	The source for the processed message.
 	 */
 	public S getSource(){
 		return source;
 	}
 
 	/**
-	 * The message decoded/composed by the given {@link #source}.
+	 * The message processed from the given {@link #source}.
 	 *
-	 * @return	The message decoded/composed by the given source.
+	 * @return	The message processed from the given source.
 	 */
 	public M getMessage(){
 		return message;
