@@ -62,9 +62,9 @@ public final class BitReader extends BitReaderData implements BitReaderInterface
 				final FileInputStream fis = new FileInputStream(file);
 				final FileChannel fc = fis.getChannel()){
 			//map file into memory
-			final ByteBuffer inputByteBuffer = fc.map(FileChannel.MapMode.READ_ONLY, 0l, fc.size());
+			final ByteBuffer inputBuffer = fc.map(FileChannel.MapMode.READ_ONLY, 0l, fc.size());
 
-			return wrap(inputByteBuffer);
+			return wrap(inputBuffer);
 		}
 	}
 
