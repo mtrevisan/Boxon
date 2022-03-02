@@ -100,7 +100,7 @@ public final class CoreBuilder{
 	 * @param value	The value.
 	 * @return	This instance, used for chaining.
 	 */
-	public CoreBuilder withContext(final String key, final Object value){
+	public CoreBuilder withContextPair(final String key, final Object value){
 		addMethod(ConfigurationStep.CONTEXT, () -> core.addToContext(key, value));
 
 		return this;
