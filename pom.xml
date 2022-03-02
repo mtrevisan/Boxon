@@ -206,7 +206,6 @@
 									<javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
 									<detectJavaApiLink>false</detectJavaApiLink>
 									<locale>en</locale>
-									<excludePackageNames>io.github.mtrevisan.boxon.helpers.*</excludePackageNames>
 								</configuration>
 							</execution>
 						</executions>
