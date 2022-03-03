@@ -191,6 +191,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 		return map;
 	}
 
+	@SuppressWarnings("DuplicatedCode")
 	private static Map<String, Object> extractMap(final AlternativeSubField binding, final Class<?> fieldType) throws ConfigurationException,
 			CodecException{
 		final Map<String, Object> map = new HashMap<>(7);

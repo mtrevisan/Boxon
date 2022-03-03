@@ -99,6 +99,7 @@ final class PlainManager implements ConfigurationManagerInterface{
 		return Collections.unmodifiableMap(fieldMap);
 	}
 
+	@SuppressWarnings("DuplicatedCode")
 	private Map<String, Object> extractMap(final Class<?> fieldType) throws ConfigurationException, CodecException{
 		final Map<String, Object> map = new HashMap<>(10);
 

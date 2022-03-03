@@ -46,6 +46,7 @@ import io.github.mtrevisan.boxon.helpers.Evaluator;
 /**
  * Builder for the {@link BindingData binding data}.
  */
+@SuppressWarnings("DuplicatedCode")
 final class BindingDataBuilder{
 
 	private BindingDataBuilder(){}

@@ -53,6 +53,7 @@ import java.util.BitSet;
 enum TemplateAnnotationValidator{
 
 	OBJECT(BindObject.class){
+		@SuppressWarnings("DuplicatedCode")
 		@Override
 		void validate(final Field field, final Annotation annotation) throws AnnotationException{
 			final BindObject binding = (BindObject)annotation;
@@ -84,6 +85,7 @@ enum TemplateAnnotationValidator{
 	},
 
 	ARRAY(BindArray.class){
+		@SuppressWarnings("DuplicatedCode")
 		@Override
 		void validate(final Field field, final Annotation annotation) throws AnnotationException{
 			final BindArray binding = (BindArray)annotation;
