@@ -30,9 +30,9 @@ package io.github.mtrevisan.boxon.configurations;
  */
 public enum BooleanType implements ConfigurationEnum{
 
-	/** {@code True/1} value. */
+	/** {@code true/1} value. */
 	TRUE(1),
-	/** {@code False/0} value. */
+	/** {@code false/0} value. */
 	FALSE(0);
 
 
