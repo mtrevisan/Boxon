@@ -46,8 +46,9 @@ public final class JSONPath{
 	private static final Pattern PATTERN_HEX_URL_ENCODE = Pattern.compile("%x([0-9a-fA-F]{2})");
 
 
-	private static final char SLASH = '/';
-	private static final char TILDE = '~';
+	private static final String SLASH = "/";
+	private static final char DECODED_TILDE = '~';
+	private static final char DECODED_SLASH = '/';
 	/** Encoding of a tilde. */
 	private static final String TILDE_ZERO = "~0";
 	/** Encoding of a slash. */
@@ -81,15 +82,15 @@ public final class JSONPath{
 	}
 
 	private static String[] parsePath(final String path) throws JSONPathException{
-		if(path == null || path.charAt(0) != SLASH)
+		if(path == null || path.charAt(0) != DECODED_SLASH)
 			throw JSONPathException.create("invalid path '{}'", path);
 
-		final String[] components = StringHelper.split(path, SLASH);
+		final String[] components = StringHelper.split(path, DECODED_SLASH);
 		for(int i = 0; i < components.length; i ++)
 			if(!StringHelper.isBlank(components[i])){
 				//NOTE: the order here is important!
-				components[i] = replace(components[i], TILDE_ONE, SLASH);
-				components[i] = replace(components[i], TILDE_ZERO, TILDE);
+				components[i] = replace(components[i], TILDE_ONE, DECODED_SLASH);
+				components[i] = replace(components[i], TILDE_ZERO, DECODED_TILDE);
 
 				components[i] = urlDecode(components[i]);
 			}
@@ -167,6 +168,7 @@ public final class JSONPath{
 		return (T)data;
 	}
 
+	@SuppressWarnings("ReturnOfNull")
 	private static Integer extractIndex(final String currentPath){
 		return (ParserDataType.isDecimalNumber(currentPath) && (currentPath.charAt(0) != '0' || currentPath.length() <= 1)
 			? Integer.valueOf(currentPath)
@@ -181,7 +183,7 @@ public final class JSONPath{
 	}
 
 	private static String toJSONPath(final String[] path){
-		return "/" + String.join("/", path);
+		return SLASH + String.join(SLASH, path);
 	}
 
 	private static Object extractPath(final Object data, final Integer idx){

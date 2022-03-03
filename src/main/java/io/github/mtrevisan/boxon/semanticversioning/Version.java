@@ -532,7 +532,7 @@ public final class Version implements Comparable<Version>{
 	 */
 	public boolean isEnhancementOf(final Version other){
 		return (isCompatibleWith(other)
-			&& minor != null && other.minor != null && minor > other.minor);
+			&& notNullAndGreaterThan(minor, other.minor));
 	}
 
 	/**
@@ -544,8 +544,20 @@ public final class Version implements Comparable<Version>{
 	 */
 	public boolean isPatchOf(final Version other){
 		return (isCompatibleWith(other)
-			&& minor != null && other.minor != null && minor.equals(other.minor)
-			&& patch != null && other.patch != null && patch > other.patch);
+			&& notNullAndEqualsTo(minor, other.minor)
+			&& notNullAndGreaterThan(patch, other.patch));
+	}
+
+	private static boolean notNullAndEqualsTo(final Integer component1, final Integer component2){
+		return (notNull(component1, component2) && component1.intValue() == component2.intValue());
+	}
+
+	private static boolean notNullAndGreaterThan(final Integer component1, final Integer component2){
+		return (notNull(component1, component2) && component1 > component2);
+	}
+
+	private static boolean notNull(final Integer component1, final Integer component2){
+		return (component1 != null && component2 != null);
 	}
 
 
