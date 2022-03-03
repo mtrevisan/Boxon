@@ -128,6 +128,8 @@ public final class Version implements Comparable<Version>{
 	 * @throws VersionException	If the given version is not a valid semver version.
 	 */
 	public static Version of(final int major, final int minor, final int patch, final String[] preRelease) throws VersionException{
+		Objects.requireNonNull(preRelease, "Pre-release identifier cannot be null");
+
 		return new Version(major, minor, patch, preRelease, EMPTY_ARRAY);
 	}
 
@@ -144,6 +146,9 @@ public final class Version implements Comparable<Version>{
 	 */
 	public static Version of(final int major, final int minor, final int patch, final String[] preRelease, final String[] build)
 			throws VersionException{
+		Objects.requireNonNull(preRelease, "Pre-release identifier cannot be null");
+		Objects.requireNonNull(build, "Build identifier cannot be null");
+
 		return new Version(major, minor, patch, preRelease, build);
 	}
 
