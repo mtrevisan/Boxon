@@ -24,7 +24,6 @@
  */
 package io.github.mtrevisan.boxon.semanticversioning;
 
-import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -68,7 +67,7 @@ class VersionTest{
 	void shouldParseBuild(){
 		Version version = Version.of("1.2.3+build");
 
-		Assertions.assertEquals(Version.of(1, 2, 3, JavaHelper.EMPTY_STRING_ARRAY, new String[]{"build"}), version);
+		Assertions.assertEquals(Version.of(1, 2, 3, new String[0], new String[]{"build"}), version);
 		Assertions.assertEquals("1.2.3+build", version.toString());
 	}
 

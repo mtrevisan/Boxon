@@ -33,6 +33,7 @@ import java.lang.reflect.TypeVariable;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -128,17 +129,16 @@ public final class GenericHelper{
 		final List<Class<?>> types = new ArrayList<>(0);
 		final Type rawType = ancestorType.getRawType();
 		if(rawType instanceof Class && base.isAssignableFrom((Class<?>)rawType)){
-			final List<Class<?>> resolvedTypes = populateResolvedTypes(ancestorType, typeVariables);
-
-			final List<Class<?>> result = resolveGenericTypes((Class<? extends T>)rawType, base, resolvedTypes.toArray(Class[]::new));
+			final Class<?>[] resolvedTypes = populateResolvedTypes(ancestorType, typeVariables);
+			final List<Class<?>> result = resolveGenericTypes((Class<? extends T>)rawType, base, resolvedTypes);
 			types.addAll(result);
 		}
 		return types;
 	}
 
-	private static List<Class<?>> populateResolvedTypes(final ParameterizedType ancestorType, final Map<String, Type> typeVariables){
+	private static Class<?>[] populateResolvedTypes(final ParameterizedType ancestorType, final Map<String, Type> typeVariables){
 		final Type[] types = ancestorType.getActualTypeArguments();
-		final List<Class<?>> resolvedTypes = new ArrayList<>(types.length);
+		final Collection<Class<?>> resolvedTypes = new ArrayList<>(types.length);
 		//loop through all type arguments and replace type variables with the actually known types
 		for(int i = 0; i < types.length; i ++){
 			final String typeName = resolveArgumentType(typeVariables, types[i]).getTypeName();
@@ -146,7 +146,7 @@ public final class GenericHelper{
 			if(cls != null)
 				resolvedTypes.add(cls);
 		}
-		return resolvedTypes;
+		return resolvedTypes.toArray(Class[]::new);
 	}
 
 	private static <T> Map<String, Type> mapParameterTypes(final Class<? extends T> offspring, final Type[] actualArgs){

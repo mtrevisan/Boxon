@@ -36,7 +36,7 @@ public final class JavaHelper{
 	public static final String EMPTY_STRING = "";
 
 	/** An empty {@code String} array. */
-	public static final String[] EMPTY_STRING_ARRAY = new String[0];
+	static final String[] EMPTY_STRING_ARRAY = new String[0];
 
 
 	private JavaHelper(){}

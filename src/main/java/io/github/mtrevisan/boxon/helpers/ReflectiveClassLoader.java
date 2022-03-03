@@ -64,13 +64,13 @@ public final class ReflectiveClassLoader{
 		if(packageClasses.length == 0)
 			throw new IllegalArgumentException("Packages list cannot be empty");
 
-		final Collection<String> packageNames = new ArrayList<>(packageClasses.length);
+		final String[] packageNames = new String[packageClasses.length];
 		for(int i = 0; i < packageClasses.length; i ++)
-			packageNames.add(packageClasses[i].getPackageName());
+			packageNames[i] = packageClasses[i].getPackageName();
 		classGraph = new ClassGraph()
 			.ignoreClassVisibility()
 			.enableAnnotationInfo()
-			.acceptPackages(packageNames.toArray(String[]::new));
+			.acceptPackages(packageNames);
 	}
 
 

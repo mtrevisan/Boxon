@@ -119,7 +119,7 @@ public final class StringHelper{
 		}
 		if(match)
 			list.add(str.substring(start, i));
-		return list.toArray(JavaHelper.EMPTY_STRING_ARRAY);
+		return list.toArray(String[]::new);
 	}
 
 
