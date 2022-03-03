@@ -162,8 +162,9 @@ public final class GenericHelper{
 		final Type[] genericInterfaces = offspring.getGenericInterfaces();
 		final Queue<Type> ancestorsQueue = new ArrayDeque<>(genericInterfaces.length + 1);
 		ancestorsQueue.addAll(Arrays.asList(genericInterfaces));
-		if(offspring.getGenericSuperclass() != null)
-			ancestorsQueue.add(offspring.getGenericSuperclass());
+		final Type genericSuperclass = offspring.getGenericSuperclass();
+		if(genericSuperclass != null)
+			ancestorsQueue.add(genericSuperclass);
 		return ancestorsQueue;
 	}
 

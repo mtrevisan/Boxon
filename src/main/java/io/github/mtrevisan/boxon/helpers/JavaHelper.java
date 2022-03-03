@@ -73,29 +73,6 @@ public final class JavaHelper{
 
 
 	/**
-	 * Return a cloned object if non-null, the default object otherwise.
-	 *
-	 * @param obj	The object.
-	 * @param defaultObject	The default object to be returned if the given object is {@code null}.
-	 * @return	The cloned object, or the default object if {@code null}.
-	 */
-	public static byte[] cloneOrDefault(final byte[] obj, final byte[] defaultObject){
-		return (obj != null? obj.clone(): defaultObject);
-	}
-
-	/**
-	 * Return a cloned object if non-null, the default object otherwise.
-	 *
-	 * @param obj	The object.
-	 * @param defaultObject	The default object to be returned if the given object is {@code null}.
-	 * @return	The cloned object, or the default object if {@code null}.
-	 */
-	public static Object[] cloneOrDefault(final Object[] obj, final Object[] defaultObject){
-		return (obj != null? obj.clone(): defaultObject);
-	}
-
-
-	/**
 	 * Return the length of the text, or {@code 0} if {@code null}.
 	 *
 	 * @param text	The text.

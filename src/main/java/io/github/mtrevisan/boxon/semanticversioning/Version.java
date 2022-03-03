@@ -30,6 +30,7 @@ import io.github.mtrevisan.boxon.helpers.StringHelper;
 
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 
@@ -322,11 +323,9 @@ public final class Version implements Comparable<Version>{
 
 	@Override
 	public int hashCode(){
-		int result = (major != null? major.hashCode(): 0);
-		if(minor != null)
-			result = 31 * result + minor.hashCode();
-		if(patch != null)
-			result = 31 * result + patch.hashCode();
+		int result = Objects.hashCode(major);
+		result = 31 * result + Objects.hashCode(minor);
+		result = 31 * result + Objects.hashCode(patch);
 		result = 31 * result + Arrays.hashCode(preRelease);
 		result = 31 * result + Arrays.hashCode(build);
 		return result;
