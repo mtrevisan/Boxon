@@ -28,7 +28,7 @@ import org.slf4j.helpers.MessageFormatter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
 import java.util.Locale;
 
 
@@ -99,7 +99,7 @@ public final class StringHelper{
 		if(len == 0)
 			return JavaHelper.EMPTY_STRING_ARRAY;
 
-		final List<String> list = new ArrayList<>(str.length() >> 1);
+		final Collection<String> list = new ArrayList<>(str.length() >> 1);
 		int i = 0;
 		int start = 0;
 		boolean match = false;

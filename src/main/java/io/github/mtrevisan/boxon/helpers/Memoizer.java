@@ -52,15 +52,19 @@ public final class Memoizer{
 	 * @see <a href="https://opencredo.com/lambda-memoization-in-java-8/">Lambda memoization in Java 8</a>
 	 */
 	public static <IN, OUT> Function<IN, OUT> memoize(final Function<? super IN, ? extends OUT> function){
-		final Map<IN, OUT> cache = new ConcurrentHashMap<>(0);
-		final Lock lock = new ReentrantLock();
-		return input -> {
-			lock.lock();
-			try{
-				return cache.computeIfAbsent(input, function);
-			}
-			finally{
-				lock.unlock();
+		return new Function<>(){
+			private final Map<IN, OUT> cache = new ConcurrentHashMap<>(0);
+			private final Lock lock = new ReentrantLock();
+
+			@Override
+			public OUT apply(final IN input){
+				lock.lock();
+				try{
+					return cache.computeIfAbsent(input, function);
+				}
+				finally{
+					lock.unlock();
+				}
 			}
 		};
 	}
@@ -78,20 +82,24 @@ public final class Memoizer{
 	 */
 	public static <IN, OUT, E extends Exception> ThrowingFunction<IN, OUT, E> throwingMemoize(
 			final ThrowingFunction<? super IN, ? extends OUT, ? extends E> function){
-		final Map<IN, OUT> cache = new ConcurrentHashMap<>(0);
-		final Lock lock = new ReentrantLock();
-		return input -> {
-			lock.lock();
-			try{
-				OUT value = cache.get(input);
-				if(value == null){
-					value = function.apply(input);
-					cache.put(input, value);
+		return new ThrowingFunction<>(){
+			private final Map<IN, OUT> cache = new ConcurrentHashMap<>(0);
+			private final Lock lock = new ReentrantLock();
+
+			@Override
+			public OUT apply(final IN input) throws E{
+				lock.lock();
+				try{
+					OUT value = cache.get(input);
+					if(value == null){
+						value = function.apply(input);
+						cache.put(input, value);
+					}
+					return value;
 				}
-				return value;
-			}
-			finally{
-				lock.unlock();
+				finally{
+					lock.unlock();
+				}
 			}
 		};
 	}
