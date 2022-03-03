@@ -98,7 +98,7 @@ public final class Version implements Comparable<Version>{
 	 * @param major	The major version number.
 	 * @param minor	The minor version number.
 	 * @return	An instance of this class.
-	 * @throws VersionException	If the given version is not a valid semver version.
+	 * @throws VersionException	If the given version is not a valid version.
 	 */
 	public static Version of(final int major, final int minor) throws VersionException{
 		return new Version(major, minor, null, EMPTY_ARRAY, EMPTY_ARRAY);
@@ -111,7 +111,7 @@ public final class Version implements Comparable<Version>{
 	 * @param minor	The minor version number.
 	 * @param patch	The patch version number.
 	 * @return	An instance of this class.
-	 * @throws VersionException	If the given version is not a valid semver version.
+	 * @throws VersionException	If the given version is not a valid version.
 	 */
 	public static Version of(final int major, final int minor, final int patch) throws VersionException{
 		return new Version(major, minor, patch, EMPTY_ARRAY, EMPTY_ARRAY);
@@ -125,7 +125,7 @@ public final class Version implements Comparable<Version>{
 	 * @param patch	The patch version number.
 	 * @param preRelease	The pre-release identifiers.
 	 * @return	An instance of this class.
-	 * @throws VersionException	If the given version is not a valid semver version.
+	 * @throws VersionException	If the given version is not a valid version.
 	 */
 	public static Version of(final int major, final int minor, final int patch, final String[] preRelease) throws VersionException{
 		Objects.requireNonNull(preRelease, "Pre-release identifier cannot be null");
@@ -142,7 +142,7 @@ public final class Version implements Comparable<Version>{
 	 * @param preRelease	The pre-release identifiers.
 	 * @param build	The build identifiers.
 	 * @return	An instance of this class.
-	 * @throws VersionException	If the given version is not a valid semver version.
+	 * @throws VersionException	If the given version is not a valid version.
 	 */
 	public static Version of(final int major, final int minor, final int patch, final String[] preRelease, final String[] build)
 			throws VersionException{
