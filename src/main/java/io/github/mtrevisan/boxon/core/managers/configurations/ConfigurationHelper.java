@@ -26,7 +26,7 @@ package io.github.mtrevisan.boxon.core.managers.configurations;
 
 import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
-import io.github.mtrevisan.boxon.keys.ConfigurationKey;
+import io.github.mtrevisan.boxon.core.keys.ConfigurationKey;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
