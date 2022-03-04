@@ -24,8 +24,6 @@
  */
 package io.github.mtrevisan.boxon.annotations.configurations;
 
-import io.github.mtrevisan.boxon.configurations.ConfigurationEnum;
-
 
 /**
  * Null (empty) enumeration.

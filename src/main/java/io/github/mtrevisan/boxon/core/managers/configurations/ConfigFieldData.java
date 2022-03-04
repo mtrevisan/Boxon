@@ -25,7 +25,7 @@
 package io.github.mtrevisan.boxon.core.managers.configurations;
 
 import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
-import io.github.mtrevisan.boxon.configurations.ConfigurationEnum;
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
 
 import java.lang.reflect.Field;
 

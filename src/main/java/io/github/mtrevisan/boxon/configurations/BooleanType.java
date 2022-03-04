@@ -25,6 +25,9 @@
 package io.github.mtrevisan.boxon.configurations;
 
 
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
+
+
 /**
  * Boolean enumeration used in a configuration.
  */

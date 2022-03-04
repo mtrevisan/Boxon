@@ -24,8 +24,6 @@
  */
 package io.github.mtrevisan.boxon.annotations.configurations;
 
-import io.github.mtrevisan.boxon.configurations.ConfigurationEnum;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
