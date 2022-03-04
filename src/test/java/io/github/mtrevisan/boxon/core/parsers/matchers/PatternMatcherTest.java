@@ -22,11 +22,8 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.matchers;
+package io.github.mtrevisan.boxon.core.parsers.matchers;
 
-import io.github.mtrevisan.boxon.core.parsers.matchers.BNDMPatternMatcher;
-import io.github.mtrevisan.boxon.core.parsers.matchers.KMPPatternMatcher;
-import io.github.mtrevisan.boxon.core.parsers.matchers.PatternMatcher;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
