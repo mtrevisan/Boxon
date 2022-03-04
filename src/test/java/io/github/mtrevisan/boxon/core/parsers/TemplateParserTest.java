@@ -33,7 +33,7 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.core.codecs.LoaderCodec;
 import io.github.mtrevisan.boxon.core.codecs.TemplateParserInterface;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
-import io.github.mtrevisan.boxon.core.managers.templates.Template;
+import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageASCII;
 import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageHex;
 import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageHexByteChecksum;
