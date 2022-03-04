@@ -26,9 +26,10 @@ package io.github.mtrevisan.boxon.core.parsers.matchers;
 
 
 /**
- * An implementation of the Karp-Rabin searching algorithm.
+ * An implementation of the Karp-Rabin/Rabin-Karb searching algorithm.
  *
  * <pre>{@code
+ *  Preprocessing: Θ(m)
  *  Searching    : Θ(m + n)	(average and best case)
  *                 O(m · n)	(worst case)
  * }</pre>
@@ -70,22 +71,22 @@ public final class KRPatternMatcher implements PatternMatcher{
 	 * @param source	The list in which to search for the first occurrence of {@code pattern}.
 	 * @param offset	Offset to start the search from.
 	 * @param pattern	The list to search for as a subList of {@code source}.
-	 * @param failureTable	Longest Prefix Suffix array precomputed by {@link #preProcessPattern(byte[])}.
+	 * @param hashTable	Hash valye of the pattern precomputed by {@link #preProcessPattern(byte[])}.
 	 * @return	The starting position of the first occurrence of the specified pattern list within the specified source list,
 	 * 	or {@code -1} if there is no such occurrence.
 	 */
 	@Override
-	public int indexOf(final byte[] source, final int offset, final byte[] pattern, final int[] failureTable){
+	public int indexOf(final byte[] source, final int offset, final byte[] pattern, final int[] hashTable){
 		if(pattern.length == 0)
 			return 0;
 		if(source.length < pattern.length + offset)
 			return -1;
 
 		//calculate the hash value of first window of source
-		final int patternHash = failureTable[0];
+		final int patternHash = hashTable[0];
 		int sourceHash = calculateHash(source, offset, pattern.length);
 
-		// check for match at offset 0
+		//check for match at offset 0
 		if(patternHash == sourceHash && equals(source, 0, pattern))
 			return 0;
 

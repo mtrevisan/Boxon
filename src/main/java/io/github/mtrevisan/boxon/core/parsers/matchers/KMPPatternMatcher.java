@@ -103,6 +103,8 @@ public final class KMPPatternMatcher implements PatternMatcher{
 	public int indexOf(final byte[] source, final int offset, final byte[] pattern, final int[] failureTable){
 		if(pattern.length == 0)
 			return 0;
+		if(source.length < pattern.length + offset)
+			return -1;
 
 		//no candidate matched the pattern
 		int index = -1;
