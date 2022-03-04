@@ -38,19 +38,22 @@ class PatternMatcherTest{
 	@Test
 	void indexOfBNDM(){
 		PatternMatcher pm = BNDMPatternMatcher.getInstance();
-		indexOf(pm);
+
+		testIndexOf(pm);
 	}
 
 	@Test
 	void indexOfKMP(){
 		PatternMatcher pm = KMPPatternMatcher.getInstance();
-		indexOf(pm);
+
+		testIndexOf(pm);
 	}
 
 	@Test
 	void indexOfKR(){
 		PatternMatcher pm = KRPatternMatcher.getInstance();
-		indexOf(pm);
+
+		testIndexOf(pm);
 	}
 
 	@Test
@@ -69,18 +72,18 @@ class PatternMatcherTest{
 
 			//warm-up
 			for(int i = 0; i < 2_000; i ++)
-				indexOf(m);
+				testIndexOf(m);
 
 			TimeWatch watch = TimeWatch.start();
 			for(int i = 0; i < 20_000; i ++)
-				indexOf(m);
+				testIndexOf(m);
 			watch.stop();
 
 			System.out.println(key + ": " + watch.toString(20_000));
 		}
 	}
 
-	private void indexOf(PatternMatcher pm){
+	private void testIndexOf(PatternMatcher pm){
 		byte[] source = "".getBytes();
 		byte[] pattern = "".getBytes();
 		int index = pm.indexOf(source, 0, pattern, pm.preProcessPattern(pattern));

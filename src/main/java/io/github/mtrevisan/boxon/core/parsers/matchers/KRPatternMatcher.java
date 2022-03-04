@@ -33,6 +33,8 @@ package io.github.mtrevisan.boxon.core.parsers.matchers;
  *  Searching    : Θ(m + n)	(average and best case)
  *                 O(m · n)	(worst case)
  * }</pre>
+ *
+ * @see <a href="https://en.wikipedia.org/wiki/Rabin%E2%80%93Karp_algorithm">Rabin–Karp algorithm</a>
  */
 public final class KRPatternMatcher implements PatternMatcher{
 
@@ -66,12 +68,11 @@ public final class KRPatternMatcher implements PatternMatcher{
 	 * <p>More formally, returns the lowest index such that {@code source.subArray(i, i + pattern.size()).equals(pattern)},
 	 * or {@code -1} if there is no such index.</p>
 	 * (Returns {@code -1} if {@code pattern.size() > source.size()})
-	 * <p>This implementation uses the "Knuth-Morris-Pratt" technique of scanning over the source list.</p>
 	 *
 	 * @param source	The list in which to search for the first occurrence of {@code pattern}.
 	 * @param offset	Offset to start the search from.
 	 * @param pattern	The list to search for as a subList of {@code source}.
-	 * @param hashTable	Hash valye of the pattern precomputed by {@link #preProcessPattern(byte[])}.
+	 * @param hashTable	Hash value of the pattern precomputed by {@link #preProcessPattern(byte[])}.
 	 * @return	The starting position of the first occurrence of the specified pattern list within the specified source list,
 	 * 	or {@code -1} if there is no such occurrence.
 	 */
@@ -86,18 +87,15 @@ public final class KRPatternMatcher implements PatternMatcher{
 		final int patternHash = hashTable[0];
 		int sourceHash = calculateHash(source, offset, pattern.length);
 
-		//check for match at offset 0
-		if(patternHash == sourceHash && equals(source, 0, pattern))
-			return 0;
-
-		for(int i = 0; i < source.length - pattern.length; ){
-			//calculate hash value for next window of text by removing leading digit add trailing digit
-			sourceHash = updateHashForNextWindow(source, pattern, sourceHash, i);
-
+		final int length = source.length - pattern.length;
+		for(int i = offset; i <= length + offset; i ++){
 			//check the hash values of current window of source and pattern
-			i ++;
 			if(patternHash == sourceHash && equals(source, i, pattern))
 				return i;
+
+			if(i < length)
+				//calculate hash value for next window of text by removing leading digit add trailing digit
+				sourceHash = updateHashForNextWindow(source, pattern, sourceHash, i);
 		}
 
 		return -1;
