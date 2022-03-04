@@ -28,7 +28,7 @@ import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.core.codecs.LoaderCodecInterface;
 import io.github.mtrevisan.boxon.helpers.ThrowingFunction;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
-import io.github.mtrevisan.boxon.core.parsers.matchers.BNDMPatternMatcher;
+import io.github.mtrevisan.boxon.core.parsers.matchers.KRPatternMatcher;
 import io.github.mtrevisan.boxon.core.parsers.matchers.PatternMatcher;
 import io.github.mtrevisan.boxon.helpers.ReflectiveClassLoader;
 import io.github.mtrevisan.boxon.helpers.Memoizer;
@@ -58,7 +58,7 @@ import java.util.function.Function;
  */
 public final class LoaderTemplate{
 
-	private static final PatternMatcher PATTERN_MATCHER = BNDMPatternMatcher.getInstance();
+	private static final PatternMatcher PATTERN_MATCHER = KRPatternMatcher.getInstance();
 	private static final Function<byte[], int[]> PRE_PROCESSED_PATTERNS = Memoizer.memoize(PATTERN_MATCHER::preProcessPattern);
 
 

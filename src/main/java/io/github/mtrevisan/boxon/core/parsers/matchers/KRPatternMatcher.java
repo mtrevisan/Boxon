@@ -55,7 +55,8 @@ public final class KRPatternMatcher implements PatternMatcher{
 
 	@Override
 	public int[] preProcessPattern(final byte[] pattern){
-		return null;
+		//calculate the hash value of pattern
+		return new int[]{calculateHash(pattern, pattern.length)};
 	}
 
 	/**
@@ -77,16 +78,12 @@ public final class KRPatternMatcher implements PatternMatcher{
 	public int indexOf(final byte[] source, final int offset, final byte[] pattern, final int[] failureTable){
 		if(pattern.length == 0)
 			return 0;
-		if(source.length < pattern.length)
+		if(source.length < pattern.length + offset)
 			return -1;
 
-		//calculate the hash value of pattern and first window of text
-		int patternHash = 0;
-		int sourceHash = 0;
-		for(int i = 0; i < pattern.length; i ++){
-			patternHash = (patternHash << 1) + pattern[i];
-			sourceHash = (sourceHash << 1) + source[i + offset];
-		}
+		//calculate the hash value of first window of source
+		final int patternHash = failureTable[0];
+		int sourceHash = calculateHash(source, offset, pattern.length);
 
 		// check for match at offset 0
 		if(patternHash == sourceHash && equals(source, 0, pattern))
@@ -94,8 +91,7 @@ public final class KRPatternMatcher implements PatternMatcher{
 
 		for(int i = 0; i < source.length - pattern.length; ){
 			//calculate hash value for next window of text by removing leading digit add trailing digit
-			sourceHash -= source[i] << (pattern.length - 1);
-			sourceHash = (sourceHash << 1) + source[i + pattern.length];
+			sourceHash = updateHashForNextWindow(source, pattern, sourceHash, i);
 
 			//check the hash values of current window of source and pattern
 			i ++;
@@ -104,6 +100,29 @@ public final class KRPatternMatcher implements PatternMatcher{
 		}
 
 		return -1;
+	}
+
+	private static int calculateHash(final byte[] source, final int length){
+		int hash = 0;
+		for(int i = 0; i < length; i ++){
+			hash <<= 1;
+			hash += source[i];
+		}
+		return hash;
+	}
+
+	private static int calculateHash(final byte[] source, final int offset, final int length){
+		int hash = 0;
+		for(int i = 0; i < length; i ++){
+			hash <<= 1;
+			hash += source[i + offset];
+		}
+		return hash;
+	}
+
+	private static int updateHashForNextWindow(final byte[] source, final byte[] pattern, int sourceHash, final int index){
+		sourceHash -= source[index] << (pattern.length - 1);
+		return (sourceHash << 1) + source[index + pattern.length];
 	}
 
 	private static boolean equals(final byte[] array1, final int offset, final byte[] array2){
