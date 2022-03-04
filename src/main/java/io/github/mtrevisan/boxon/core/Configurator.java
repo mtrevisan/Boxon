@@ -25,7 +25,7 @@
 package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
-import io.github.mtrevisan.boxon.configurations.ConfigurationKey;
+import io.github.mtrevisan.boxon.keys.ConfigurationKey;
 import io.github.mtrevisan.boxon.core.managers.configurations.ConfigField;
 import io.github.mtrevisan.boxon.core.managers.configurations.ConfigurationHelper;
 import io.github.mtrevisan.boxon.core.managers.configurations.ConfigurationManagerFactory;

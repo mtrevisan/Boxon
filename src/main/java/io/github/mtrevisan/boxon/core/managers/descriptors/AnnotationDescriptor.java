@@ -47,7 +47,7 @@ import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.core.managers.ValueOf;
-import io.github.mtrevisan.boxon.descriptions.DescriberKey;
+import io.github.mtrevisan.boxon.keys.DescriberKey;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 
 import java.lang.annotation.Annotation;

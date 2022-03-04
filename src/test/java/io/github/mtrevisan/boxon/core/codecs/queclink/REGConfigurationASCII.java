@@ -31,7 +31,7 @@ import io.github.mtrevisan.boxon.annotations.configurations.CompositeSubField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
-import io.github.mtrevisan.boxon.configurations.BooleanType;
+import io.github.mtrevisan.boxon.annotations.configurations.BooleanType;
 
 
 @ConfigurationHeader(longDescription = "The command AT+GTREG is used to do things.", shortDescription = "AT+GTREG", maxProtocol = "2.8",
