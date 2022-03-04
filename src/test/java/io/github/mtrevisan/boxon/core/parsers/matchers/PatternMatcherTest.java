@@ -66,17 +66,19 @@ class PatternMatcherTest{
 		matchers.put("KMP", kmp);
 		matchers.put("KR", kr);
 
+		byte[] source = "2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a".getBytes();
+		byte[] pattern = "0d0a".getBytes();
 		for(Map.Entry<String, PatternMatcher> entry : matchers.entrySet()){
 			String key = entry.getKey();
 			PatternMatcher m = entry.getValue();
 
 			//warm-up
 			for(int i = 0; i < 2_000; i ++)
-				testIndexOf(m);
+				m.indexOf(source, 0, pattern, m.preProcessPattern(pattern));
 
 			TimeWatch watch = TimeWatch.start();
 			for(int i = 0; i < 20_000; i ++)
-				testIndexOf(m);
+				m.indexOf(source, 0, pattern, m.preProcessPattern(pattern));
 			watch.stop();
 
 			System.out.println(key + ": " + watch.toString(20_000));

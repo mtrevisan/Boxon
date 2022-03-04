@@ -70,16 +70,16 @@ public final class KMPPatternMatcher implements PatternMatcher{
 		int i = 1;
 		int lengthPreviousLPS = 0;
 		while(i < lps.length){
-			//when both chars before `lengthPreviousLPS` and `i` are equal, link both and move both forward
 			if(pattern[i] == pattern[lengthPreviousLPS])
+				//when both chars before `lengthPreviousLPS` and `i` are equal, link both and move both forward
 				lps[i ++] = ++ lengthPreviousLPS;
+			else if(lengthPreviousLPS > 0)
 				//if `lengthPreviousLPS` isn't at the very beginning, then send `lengthPreviousLPS` backward by following
 				//the already set pointer to where it is pointing to
-			else if(lengthPreviousLPS > 0)
 				lengthPreviousLPS = lps[lengthPreviousLPS - 1];
-				//`lengthPreviousLPS` has fallen all the way back to the beginning
 			else
-				lps[i ++] = lengthPreviousLPS;
+				//`lengthPreviousLPS` has fallen all the way back to the beginning
+				lps[i ++] = 0;
 		}
 
 		return lps;

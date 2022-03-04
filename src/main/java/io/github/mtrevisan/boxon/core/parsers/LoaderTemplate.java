@@ -26,19 +26,19 @@ package io.github.mtrevisan.boxon.core.parsers;
 
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.core.codecs.LoaderCodecInterface;
-import io.github.mtrevisan.boxon.helpers.ThrowingFunction;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
-import io.github.mtrevisan.boxon.core.parsers.matchers.KRPatternMatcher;
+import io.github.mtrevisan.boxon.core.parsers.matchers.KMPPatternMatcher;
 import io.github.mtrevisan.boxon.core.parsers.matchers.PatternMatcher;
-import io.github.mtrevisan.boxon.helpers.ReflectiveClassLoader;
-import io.github.mtrevisan.boxon.helpers.Memoizer;
-import io.github.mtrevisan.boxon.helpers.CharsetHelper;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
+import io.github.mtrevisan.boxon.helpers.CharsetHelper;
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
+import io.github.mtrevisan.boxon.helpers.Memoizer;
+import io.github.mtrevisan.boxon.helpers.ReflectiveClassLoader;
+import io.github.mtrevisan.boxon.helpers.StringHelper;
+import io.github.mtrevisan.boxon.helpers.ThrowingFunction;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.logs.EventListener;
-import io.github.mtrevisan.boxon.helpers.JavaHelper;
-import io.github.mtrevisan.boxon.helpers.StringHelper;
 
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
@@ -58,7 +58,7 @@ import java.util.function.Function;
  */
 public final class LoaderTemplate{
 
-	private static final PatternMatcher PATTERN_MATCHER = KRPatternMatcher.getInstance();
+	private static final PatternMatcher PATTERN_MATCHER = KMPPatternMatcher.getInstance();
 	private static final Function<byte[], int[]> PRE_PROCESSED_PATTERNS = Memoizer.memoize(PATTERN_MATCHER::preProcessPattern);
 
 
