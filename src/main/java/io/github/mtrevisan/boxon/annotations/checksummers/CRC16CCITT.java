@@ -30,11 +30,12 @@ package io.github.mtrevisan.boxon.annotations.checksummers;
  *
  * @see <a href="https://en.wikipedia.org/wiki/Cyclic_redundancy_check">Cyclic Redundancy Check</a>
  */
-@SuppressWarnings("unused")
 public final class CRC16CCITT implements Checksummer{
 
 	/** Starting value 0x0000. */
 	public static final short START_VALUE_0x0000 = 0x0000;
+	/** Starting value 0x1D0F. */
+	public static final short START_VALUE_0x1D0F = 0x1D0F;
 	/** Starting value 0xFFFF. */
 	public static final short START_VALUE_0xFFFF = (short)0xFFFF;
 
@@ -44,17 +45,20 @@ public final class CRC16CCITT implements Checksummer{
 
 	CRC16CCITT(){}
 
+
 	@Override
-	public short calculateChecksum(final byte[] data, final int start, final int end, final short startValue){
-		short value = startValue;
-		for(int i = Math.max(start, 0); i < Math.min(end, data.length); i ++)
+	public short calculateChecksum(final byte[] data, final int start, final int end, final int startValue){
+		short value = (short)startValue;
+		for(int i = Math.max(start, 0); i < Math.min(end, data.length); i ++){
+			final byte datum = data[i];
 			for(int j = 0; j < Byte.SIZE; j ++){
-				final boolean bit = (((data[i] >> (7 - j)) & 1) != 0);
+				final boolean bit = (((datum >> (7 - j)) & 1) != 0);
 				final boolean c15 = ((value & 0x8000) != 0);
 				value <<= 1;
 				if(c15 ^ bit)
 					value ^= POLYNOMIAL_CCITT;
 			}
+		}
 		return value;
 	}
 

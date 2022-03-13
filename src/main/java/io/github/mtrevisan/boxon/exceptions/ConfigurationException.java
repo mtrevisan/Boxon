@@ -24,6 +24,8 @@
  */
 package io.github.mtrevisan.boxon.exceptions;
 
+import io.github.mtrevisan.boxon.helpers.StringHelper;
+
 
 /**
  * Thrown if a configuration is not well formatted.
@@ -36,13 +38,14 @@ public final class ConfigurationException extends FieldException{
 	/**
 	 * Constructs a new exception with the specified message, possibly with parameters.
 	 *
-	 * @param message	The message to be formatted (see {@link org.slf4j.helpers.MessageFormatter MessageFormatter}).
+	 * @param message	The message to be formatted (see {@link StringHelper#format(String, Object...)}).
 	 * @param parameters	The parameters of the message.
 	 * @return	An instance of this exception.
 	 */
 	public static ConfigurationException create(final String message, final Object... parameters){
-		return new ConfigurationException(ExceptionHelper.format(message, parameters));
+		return new ConfigurationException(StringHelper.format(message, parameters));
 	}
+
 
 	private ConfigurationException(final String message){
 		super(message);

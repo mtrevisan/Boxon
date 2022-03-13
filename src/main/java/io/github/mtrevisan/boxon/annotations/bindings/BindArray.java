@@ -63,13 +63,13 @@ public @interface BindArray{
 	 *
 	 * ...
 	 *
-	 * &#064;BoundArray(size = "5", type = B.class)
+	 * &#064;BindArray(size = "5", type = B.class)
 	 * private A[] array;	//array will contain instances of B
 	 * }</pre>
 	 *
-	 * @return	The type of object to be inserted in the array (defaults to {@link Object}).
+	 * @return	The type of object to be inserted in the array.
 	 */
-	Class<?> type() default Object.class;
+	Class<?> type();
 
 	/**
 	 * The SpEL expression evaluating to the size of the array.

@@ -24,10 +24,8 @@
  */
 package io.github.mtrevisan.boxon.annotations.checksummers;
 
-import io.github.mtrevisan.boxon.annotations.Checksum;
 
-
-/** The checksum algorithm to be applied to {@link Checksum Checksum}. */
+/** The checksum algorithm to be applied. */
 public interface Checksummer{
 
 	/**
@@ -39,6 +37,6 @@ public interface Checksummer{
 	 * @param startValue	The starting value of the checksum.
 	 * @return	The checksum.
 	 */
-	short calculateChecksum(byte[] data, int start, int end, short startValue);
+	short calculateChecksum(byte[] data, int start, int end, int startValue);
 
 }

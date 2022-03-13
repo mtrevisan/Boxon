@@ -24,16 +24,19 @@
  */
 package io.github.mtrevisan.boxon.core;
 
-import io.github.mtrevisan.boxon.codecs.queclink.ACKMessageHex;
-import io.github.mtrevisan.boxon.codecs.queclink.DeviceTypes;
+import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageASCII;
+import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageHex;
+import io.github.mtrevisan.boxon.core.codecs.queclink.DeviceTypes;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
-import io.github.mtrevisan.boxon.internal.StringHelper;
+import io.github.mtrevisan.boxon.helpers.StringHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 
@@ -41,55 +44,63 @@ import java.util.Map;
 class ComposerTest{
 
 	@Test
-	void parseAndComposeSingleMessageHex() throws NoSuchMethodException, AnnotationException, TemplateException{
-		DeviceTypes deviceTypes = new DeviceTypes();
-		deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
-		ParserCore core = ParserCore.create()
-			.addToContext("deviceTypes", deviceTypes)
+	void parseAndComposeSingleMessageHex() throws NoSuchMethodException, AnnotationException, TemplateException, ConfigurationException{
+		DeviceTypes deviceTypes = DeviceTypes.create()
+			.with("QUECLINK_GB200S", (byte)0x46);
+		Core core = CoreBuilder.builder()
+			.withContextPair("deviceTypes", deviceTypes)
 			.withContextFunction(ParserTest.class, "headerSize")
 			.withDefaultCodecs()
-			.withTemplates(ACKMessageHex.class);
+			.withTemplatesFrom(ACKMessageHex.class)
+			.create();
 		Parser parser = Parser.create(core);
 		Composer composer = Composer.create(core);
 
 		//parse:
 		byte[] payload = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
-		ParseResponse parseResult = parser.parse(payload);
+		List<Response<byte[], Object>> result = parser.parse(payload);
 
-		Assertions.assertFalse(parseResult.hasErrors());
-		Assertions.assertEquals(1, parseResult.getParsedMessageCount());
+		Assertions.assertNotNull(result);
+		Assertions.assertEquals(1, result.size());
+		Response<byte[], Object> response = result.get(0);
+		Assertions.assertArrayEquals(payload, response.getSource());
+		Assertions.assertFalse(response.hasError());
 
 		//compose:
-		ComposeResponse composeResult = composer.composeMessage(parseResult.getParsedMessageAt(0));
+		Response<ACKMessageHex, byte[]> composeResult = composer.composeMessage((ACKMessageHex)response.getMessage());
 
-		Assertions.assertFalse(composeResult.hasErrors());
-		Assertions.assertArrayEquals(payload, composeResult.getComposedMessage());
+		Assertions.assertFalse(composeResult.hasError());
+		Assertions.assertArrayEquals(payload, composeResult.getMessage());
 	}
 
 	@Test
-	void parseAndComposeSingleMessageASCII() throws AnnotationException, TemplateException{
-		DeviceTypes deviceTypes = new DeviceTypes();
-		deviceTypes.add("QUECLINK_GV350M", (byte)0xCF);
+	void parseAndComposeSingleMessageASCII() throws AnnotationException, TemplateException, ConfigurationException{
+		DeviceTypes deviceTypes = DeviceTypes.create()
+			.with("QUECLINK_GV350M", (byte)0xCF);
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
-		ParserCore core = ParserCore.create()
+		Core core = CoreBuilder.builder()
 			.withContext(context)
 			.withDefaultCodecs()
-			.withTemplates(ACKMessageHex.class);
+			.withTemplatesFrom(ACKMessageHex.class)
+			.create();
 		Parser parser = Parser.create(core);
 		Composer composer = Composer.create(core);
 
 		//parse:
 		byte[] payload = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
-		ParseResponse parseResult = parser.parse(payload);
+		List<Response<byte[], Object>> result = parser.parse(payload);
 
-		Assertions.assertFalse(parseResult.hasErrors());
-		Assertions.assertEquals(1, parseResult.getParsedMessageCount());
+		Assertions.assertNotNull(result);
+		Assertions.assertEquals(1, result.size());
+		Response<byte[], Object> response = result.get(0);
+		Assertions.assertArrayEquals(payload, response.getSource());
+		Assertions.assertFalse(response.hasError());
 
 		//compose:
-		ComposeResponse composeResult = composer.composeMessage(parseResult.getParsedMessageAt(0));
+		Response<ACKMessageASCII, byte[]> composeResult = composer.composeMessage((ACKMessageASCII)response.getMessage());
 
-		Assertions.assertFalse(composeResult.hasErrors());
-		Assertions.assertArrayEquals(payload, composeResult.getComposedMessage());
+		Assertions.assertFalse(composeResult.hasError());
+		Assertions.assertArrayEquals(payload, composeResult.getMessage());
 	}
 
 }

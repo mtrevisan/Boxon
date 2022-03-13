@@ -24,15 +24,18 @@
  */
 package io.github.mtrevisan.boxon.core;
 
-import io.github.mtrevisan.boxon.codecs.TemplateParser;
-import io.github.mtrevisan.boxon.codecs.managers.Template;
+import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
+import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.exceptions.DecodeException;
-import io.github.mtrevisan.boxon.external.codecs.BitReader;
+import io.github.mtrevisan.boxon.io.BitReader;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 
 /**
@@ -45,18 +48,17 @@ public final class Parser{
 
 
 	/**
-	 * Create an empty parser (context, codecs and templates MUST BE manually loaded! -- templates MUST BE loaded AFTER
-	 * the codecs).
+	 * Create a parser.
 	 *
 	 * @param core	The core of the parser.
-	 * @return	A basic empty parser.
+	 * @return	A parser.
 	 */
-	public static Parser create(final ParserCore core){
+	public static Parser create(final Core core){
 		return new Parser(core);
 	}
 
 
-	private Parser(final ParserCore core){
+	private Parser(final Core core){
 		templateParser = core.getTemplateParser();
 	}
 
@@ -71,7 +73,7 @@ public final class Parser{
 	 * 	or for some other reason cannot be opened for reading.
 	 * @throws SecurityException	If a security manager exists and its {@code checkRead} method denies read access to the file.
 	 */
-	public ParseResponse parse(final File file) throws IOException, FileNotFoundException{
+	public List<Response<byte[], Object>> parse(final File file) throws IOException, FileNotFoundException{
 		final BitReader reader = BitReader.wrap(file);
 		return parse(reader);
 	}
@@ -82,7 +84,7 @@ public final class Parser{
 	 * @param payload	The message to be parsed.
 	 * @return	The parse response.
 	 */
-	public ParseResponse parse(final byte[] payload){
+	public List<Response<byte[], Object>> parse(final byte[] payload){
 		final BitReader reader = BitReader.wrap(payload);
 		return parse(reader);
 	}
@@ -93,7 +95,7 @@ public final class Parser{
 	 * @param buffer	The message to be parsed backed by a {@link ByteBuffer}.
 	 * @return	The parse response.
 	 */
-	public ParseResponse parse(final ByteBuffer buffer){
+	public List<Response<byte[], Object>> parse(final ByteBuffer buffer){
 		final BitReader reader = BitReader.wrap(buffer);
 		return parse(reader);
 	}
@@ -104,9 +106,8 @@ public final class Parser{
 	 * @param reader	The message to be parsed backed by a {@link BitReader}.
 	 * @return	The parse response.
 	 */
-	public ParseResponse parse(final BitReader reader){
-		final byte[] array = reader.array();
-		final ParseResponse response = new ParseResponse(array);
+	public List<Response<byte[], Object>> parse(final BitReader reader){
+		final List<Response<byte[], Object>> response = new ArrayList<>(0);
 
 		int start = 0;
 		while(reader.hasRemaining()){
@@ -125,17 +126,19 @@ public final class Parser{
 		return response;
 	}
 
-	private boolean parse(final BitReader reader, final int start, final ParseResponse response){
+	private boolean parse(final BitReader reader, final int start, final Collection<Response<byte[], Object>> response){
 		try{
 			final Template<?> template = templateParser.getTemplate(reader);
 
 			final Object partialDecodedMessage = templateParser.decode(template, reader, null);
 
-			response.addParsedMessage(start, partialDecodedMessage);
+			final Response<byte[], Object> partialResponse = Response.create(reader, partialDecodedMessage);
+			response.add(partialResponse);
 		}
 		catch(final Exception e){
 			final DecodeException de = DecodeException.create(reader.position(), e);
-			response.addError(start, de);
+			final Response<byte[], Object> partialResponse = Response.create(reader, de);
+			response.add(partialResponse);
 
 			//restore state of the reader
 			reader.restoreFallbackPoint();
@@ -150,12 +153,12 @@ public final class Parser{
 		return false;
 	}
 
-	private static void assertNoLeftBytes(final BitReader reader, final int start, final ParseResponse response){
-		if(!response.hasErrors() && reader.hasRemaining()){
+	private static void assertNoLeftBytes(final BitReader reader, final int start, final Collection<Response<byte[], Object>> response){
+		if(reader.hasRemaining()){
 			final int position = reader.position();
 			final IllegalArgumentException error = new IllegalArgumentException("There are remaining unread bytes");
 			final DecodeException pe = DecodeException.create(position, error);
-			response.addError(start, pe);
+			response.add(Response.create(pe));
 		}
 	}
 

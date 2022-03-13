@@ -25,18 +25,19 @@
 package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
-import io.github.mtrevisan.boxon.codecs.LoaderTemplate;
-import io.github.mtrevisan.boxon.codecs.TemplateParser;
-import io.github.mtrevisan.boxon.codecs.managers.AnnotationDescriptor;
-import io.github.mtrevisan.boxon.codecs.managers.BoundedField;
-import io.github.mtrevisan.boxon.codecs.managers.Template;
+import io.github.mtrevisan.boxon.core.parsers.LoaderTemplate;
+import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
+import io.github.mtrevisan.boxon.core.helpers.descriptors.AnnotationDescriptor;
+import io.github.mtrevisan.boxon.core.helpers.templates.BoundedField;
+import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
-import io.github.mtrevisan.boxon.external.DescriberKey;
+import io.github.mtrevisan.boxon.core.keys.DescriberKey;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,26 +49,26 @@ import java.util.Map;
 @SuppressWarnings({"WeakerAccess", "unused"})
 public final class Descriptor{
 
+	private final Core core;
+
 	private final LoaderTemplate loaderTemplate;
-	private final Map<String, Object> backupContext;
 
 
 	/**
-	 * Create an empty descriptor.
+	 * Create a descriptor.
 	 *
-	 * @param parserCore	The parser core.
-	 * @return	A basic empty descriptor.
+	 * @param core	The parser core.
+	 * @return	A descriptor.
 	 */
-	public static Descriptor create(final ParserCore parserCore){
-		return new Descriptor(parserCore);
+	public static Descriptor create(final Core core){
+		return new Descriptor(core);
 	}
 
 
-	private Descriptor(final ParserCore parserCore){
-		final TemplateParser templateParser = parserCore.getTemplateParser();
-		loaderTemplate = templateParser.getTemplateParserCore()
-			.getLoaderTemplate();
-		backupContext = templateParser.getBackupContext();
+	private Descriptor(final Core core){
+		this.core = core;
+		final TemplateParser templateParser = core.getTemplateParser();
+		loaderTemplate = templateParser.getLoaderTemplate();
 	}
 
 
@@ -82,7 +83,7 @@ public final class Descriptor{
 		final List<Map<String, Object>> description = new ArrayList<>(templates.size());
 		for(final Template<?> template : templates)
 			description.add(describeTemplate(template));
-		return description;
+		return Collections.unmodifiableList(description);
 	}
 
 	/**
@@ -102,7 +103,7 @@ public final class Descriptor{
 				description.add(describeTemplate(template));
 			}
 		}
-		return description;
+		return Collections.unmodifiableList(description);
 	}
 
 	private Map<String, Object> describeTemplate(final Template<?> template) throws TemplateException{
@@ -110,7 +111,7 @@ public final class Descriptor{
 		describeHeader(template.getHeader(), description);
 		describeFields(template.getBoundedFields(), description);
 		describeContext(description);
-		return description;
+		return Collections.unmodifiableMap(description);
 	}
 
 	private static void describeHeader(final MessageHeader header, final Map<String, Object> description){
@@ -122,8 +123,9 @@ public final class Descriptor{
 	}
 
 	private static void describeFields(final List<BoundedField> fields, final Map<String, Object> description) throws TemplateException{
-		final Collection<Map<String, Object>> fieldsDescription = new ArrayList<>(0);
-		for(int i = 0; i < fields.size(); i ++)
+		final int size = fields.size();
+		final Collection<Map<String, Object>> fieldsDescription = new ArrayList<>(size);
+		for(int i = 0; i < size; i ++)
 			describeField(fields.get(i), fieldsDescription);
 		description.put(DescriberKey.FIELDS.toString(), fieldsDescription);
 	}
@@ -134,7 +136,7 @@ public final class Descriptor{
 
 		final Map<String, Object> fieldDescription = new HashMap<>(13);
 		AnnotationDescriptor.putIfNotEmpty(DescriberKey.FIELD_NAME, field.getFieldName(), fieldDescription);
-		AnnotationDescriptor.putIfNotEmpty(DescriberKey.FIELD_TYPE, field.getFieldType(), fieldDescription);
+		AnnotationDescriptor.putIfNotEmpty(DescriberKey.FIELD_TYPE, field.getFieldType().getName(), fieldDescription);
 		final Annotation binding = field.getBinding();
 		final Class<? extends Annotation> annotationType = binding.annotationType();
 		AnnotationDescriptor.putIfNotEmpty(DescriberKey.ANNOTATION_TYPE, binding.annotationType().getSimpleName(), fieldDescription);
@@ -150,7 +152,7 @@ public final class Descriptor{
 	}
 
 	private void describeContext(final Map<String, Object> description){
-		description.put(DescriberKey.CONTEXT.toString(), backupContext);
+		description.put(DescriberKey.CONTEXT.toString(), core.getContext());
 	}
 
 }

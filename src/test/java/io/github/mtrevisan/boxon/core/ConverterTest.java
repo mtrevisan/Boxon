@@ -29,12 +29,13 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindByte;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.exceptions.DecodeException;
+import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
-import io.github.mtrevisan.boxon.internal.StringHelper;
-import org.apache.commons.lang3.StringUtils;
+import io.github.mtrevisan.boxon.helpers.StringHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 
 @SuppressWarnings("ALL")
@@ -43,12 +44,12 @@ class ConverterTest{
 	@MessageHeader(start = "wc1")
 	static class TestConverter1{
 		@BindString(size = "3")
-		public String header;
+		String header;
 		@BindByte(converter = WrongConverterInput.class)
-		public String value;
+		String value;
 	}
 
-	public static class WrongConverterInput implements Converter<byte[], String>{
+	static class WrongConverterInput implements Converter<byte[], String>{
 		@Override
 		public String decode(final byte[] value){
 			return value[0] + "." + value[1];
@@ -56,7 +57,7 @@ class ConverterTest{
 
 		@Override
 		public byte[] encode(final String value){
-			final String[] components = StringUtils.split(value, '.');
+			final String[] components = StringHelper.split(value, '.');
 			return new byte[]{Byte.parseByte(components[0]), Byte.parseByte(components[1])};
 		}
 	}
@@ -64,20 +65,20 @@ class ConverterTest{
 	@MessageHeader(start = "wc2")
 	static class TestConverter2{
 		@BindString(size = "3")
-		public String header;
+		String header;
 		@BindByte(converter = WrongConverterOutput.class)
-		public String value;
+		String value;
 	}
 
 	@MessageHeader(start = "wc3")
 	static class TestConverter3{
 		@BindString(size = "3")
-		public String header;
+		String header;
 		@BindByte(converter = WrongConverterOutput.class)
-		public int value;
+		int value;
 	}
 
-	public static class WrongConverterOutput implements Converter<Byte, Byte>{
+	static class WrongConverterOutput implements Converter<Byte, Byte>{
 		@Override
 		public Byte decode(final Byte value){
 			return value;
@@ -90,57 +91,61 @@ class ConverterTest{
 	}
 
 	@Test
-	void wrongInputOnConverter() throws AnnotationException, TemplateException{
-		ParserCore core = ParserCore.create()
+	void wrongInputOnConverter() throws AnnotationException, TemplateException, ConfigurationException{
+		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
-			.withTemplates(TestConverter1.class);
+			.withTemplatesFrom(TestConverter1.class)
+			.create();
 		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.toByteArray("77633101");
-		ParseResponse result = parser.parse(payload);
+		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
-		Assertions.assertTrue(result.hasErrors());
-		Assertions.assertEquals(1, result.getTotalMessageCount());
-		Assertions.assertArrayEquals(payload, result.getErrorPayloadAt(0));
-		Assertions.assertEquals(1, result.getErrorCount());
-		DecodeException error = result.getErrorAt(0);
+		Assertions.assertEquals(2, result.size());
+		Response<byte[], Object> response = result.get(0);
+		Assertions.assertArrayEquals(payload, response.getSource());
+		Assertions.assertTrue(response.hasError());
 		Assertions.assertEquals("java.lang.IllegalArgumentException: Can not input Byte to decode method of converter WrongConverterInput in field io.github.mtrevisan.boxon.core.ConverterTest$TestConverter1.value\r\n"
-			+ "   at index 4", error.getMessage());
+			+ "   at index 4", response.getError().getMessage());
 	}
 
 	@Test
-	void wrongOutputFromConverter() throws AnnotationException, TemplateException{
-		ParserCore core = ParserCore.create()
+	void wrongOutputFromConverter() throws AnnotationException, TemplateException, ConfigurationException{
+		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
-			.withTemplates(TestConverter2.class);
+			.withTemplatesFrom(TestConverter2.class)
+			.create();
 		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.toByteArray("77633201");
-		ParseResponse result = parser.parse(payload);
+		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
-		Assertions.assertTrue(result.hasErrors());
-		Assertions.assertEquals(1, result.getTotalMessageCount());
-		Assertions.assertArrayEquals(payload, result.getErrorPayloadAt(0));
-		Assertions.assertEquals(1, result.getErrorCount());
-		DecodeException error = result.getErrorAt(0);
+		Assertions.assertEquals(2, result.size());
+		Response<byte[], Object> response = result.get(0);
+		Assertions.assertArrayEquals(payload, response.getSource());
+		Assertions.assertTrue(response.hasError());
 		Assertions.assertEquals("java.lang.IllegalArgumentException: Can not set String field to Byte in field io.github.mtrevisan.boxon.core.ConverterTest$TestConverter2.value\r\n"
-			+ "   at index 4", error.getMessage());
+			+ "   at index 4", response.getError().getMessage());
 	}
 
 	@Test
-	void allowedOutputFromConverter() throws AnnotationException, TemplateException{
-		ParserCore core = ParserCore.create()
+	void allowedOutputFromConverter() throws AnnotationException, TemplateException, ConfigurationException{
+		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
-			.withTemplates(TestConverter3.class);
+			.withTemplatesFrom(TestConverter3.class)
+			.create();
 		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.toByteArray("77633301");
-		ParseResponse result = parser.parse(payload);
+		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
-		Assertions.assertFalse(result.hasErrors());
+		Assertions.assertEquals(1, result.size());
+		Response<byte[], Object> response = result.get(0);
+		Assertions.assertArrayEquals(payload, response.getSource());
+		Assertions.assertFalse(response.hasError());
 	}
 
 }

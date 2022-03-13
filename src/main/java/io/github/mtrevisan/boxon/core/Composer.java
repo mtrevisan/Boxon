@@ -24,13 +24,12 @@
  */
 package io.github.mtrevisan.boxon.core;
 
-import io.github.mtrevisan.boxon.codecs.TemplateParser;
-import io.github.mtrevisan.boxon.codecs.managers.Template;
+import io.github.mtrevisan.boxon.core.helpers.templates.Template;
+import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
-import io.github.mtrevisan.boxon.external.codecs.BitWriter;
-import io.github.mtrevisan.boxon.external.codecs.BitWriterInterface;
-
-import java.util.Collection;
+import io.github.mtrevisan.boxon.exceptions.FieldException;
+import io.github.mtrevisan.boxon.io.BitWriter;
+import io.github.mtrevisan.boxon.io.BitWriterInterface;
 
 
 /**
@@ -43,62 +42,51 @@ public final class Composer{
 
 
 	/**
-	 * Create an empty composer.
+	 * Create a composer.
 	 *
-	 * @param parserCore	The parser core.
-	 * @return	A basic empty composer.
+	 * @param core	The parser core.
+	 * @return	A composer.
 	 */
-	public static Composer create(final ParserCore parserCore){
-		return new Composer(parserCore);
+	public static Composer create(final Core core){
+		return new Composer(core);
 	}
 
 
-	private Composer(final ParserCore parserCore){
-		templateParser = parserCore.getTemplateParser();
+	private Composer(final Core core){
+		templateParser = core.getTemplateParser();
 	}
 
 
 	/**
-	 * Compose a list of messages.
+	 * Compose a message.
 	 *
-	 * @param data	The messages to be composed.
+	 * @param data	The message to be composed.
+	 * @param <T>	The class of the source data.
 	 * @return	The composition response.
 	 */
-	public ComposeResponse composeMessage(final Collection<Object> data){
-		return composeMessage(data.toArray(Object[]::new));
-	}
-
-	/**
-	 * Compose a list of messages.
-	 *
-	 * @param data	The message(s) to be composed.
-	 * @return	The composition response.
-	 */
-	public ComposeResponse composeMessage(final Object... data){
-		final ComposeResponse response = new ComposeResponse(data);
-
+	public <T> Response<T, byte[]> composeMessage(final T data){
 		final BitWriter writer = BitWriter.create();
-		for(int i = 0; i < data.length; i ++)
-			composeMessage(writer, data[i], response);
+		final EncodeException error = composeMessage(writer, data);
 
-		response.setComposedMessage(writer);
-
-		return response;
+		return Response.create(data, writer, error);
 	}
 
 	/**
 	 * Compose a single message.
 	 *
 	 * @param data	The message to be composed.
+	 * @return	The error, if any.
 	 */
-	private void composeMessage(final BitWriterInterface writer, final Object data, final ComposeResponse response){
+	private EncodeException composeMessage(final BitWriterInterface writer, final Object data){
 		try{
 			final Template<?> template = templateParser.getTemplate(data.getClass());
 
 			templateParser.encode(template, writer, null, data);
+
+			return null;
 		}
-		catch(final Exception e){
-			response.addError(EncodeException.create(e));
+		catch(final FieldException e){
+			return EncodeException.create(e);
 		}
 	}
 

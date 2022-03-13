@@ -24,6 +24,9 @@
  */
 package io.github.mtrevisan.boxon.exceptions;
 
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
+import io.github.mtrevisan.boxon.helpers.StringHelper;
+
 
 /**
  * Thrown if a composition (encoding) went bad.
@@ -32,14 +35,12 @@ public final class EncodeException extends Exception{
 
 	private static final long serialVersionUID = 4385865753761318892L;
 
-	private static final String EMPTY_STRING = "";
-
 
 	/**
 	 * Constructs a new exception with the specified cause.
 	 *
 	 * @param cause	The cause (which is saved for later retrieval by the {@link #getCause()} method). (A {@code null} value is
-	 * 					permitted, and indicates that the cause is nonexistent or unknown.)
+	 * 	permitted, and indicates that the cause is nonexistent or unknown.)
 	 * @return	An instance of this exception.
 	 */
 	public static EncodeException create(final Throwable cause){
@@ -50,25 +51,26 @@ public final class EncodeException extends Exception{
 	 * Constructs a new exception with the specified cause and message, possibly with parameters.
 	 *
 	 * @param cause	The cause (which is saved for later retrieval by the {@link #getCause()} method). (A {@code null} value is
-	 * 					permitted, and indicates that the cause is nonexistent or unknown.)
-	 * @param message	The message to be formatted (see {@link org.slf4j.helpers.MessageFormatter MessageFormatter}).
+	 * 	permitted, and indicates that the cause is nonexistent or unknown.)
+	 * @param message	The message to be formatted (see {@link StringHelper#format(String, Object...)}).
 	 * @param parameters	The parameters of the message.
 	 * @return	An instance of this exception.
 	 */
 	public static EncodeException create(final Throwable cause, final String message, final Object... parameters){
-		return new EncodeException(ExceptionHelper.format(message, parameters), cause);
+		return new EncodeException(StringHelper.format(message, parameters), cause);
 	}
 
 	/**
 	 * Constructs a new exception with the specified message, possibly with parameters.
 	 *
-	 * @param message	The message to be formatted (see {@link org.slf4j.helpers.MessageFormatter MessageFormatter}).
+	 * @param message	The message to be formatted (see {@link StringHelper#format(String, Object...)}).
 	 * @param parameters	The parameters of the message.
 	 * @return	An instance of this exception.
 	 */
 	public static EncodeException create(final String message, final Object... parameters){
-		return new EncodeException(ExceptionHelper.format(message, parameters));
+		return new EncodeException(StringHelper.format(message, parameters));
 	}
+
 
 	private EncodeException(final String message, final Throwable cause){
 		super(message, cause);
@@ -84,7 +86,7 @@ public final class EncodeException extends Exception{
 
 	@Override
 	public String getMessage(){
-		String message = EMPTY_STRING;
+		String message = JavaHelper.EMPTY_STRING;
 		final Throwable cause = getCause();
 		if(cause != null)
 			message += cause.getMessage();

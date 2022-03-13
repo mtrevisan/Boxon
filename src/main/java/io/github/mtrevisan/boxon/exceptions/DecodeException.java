@@ -24,6 +24,8 @@
  */
 package io.github.mtrevisan.boxon.exceptions;
 
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
+
 
 /**
  * Thrown if a parsing (decoding) went bad.
@@ -32,8 +34,6 @@ package io.github.mtrevisan.boxon.exceptions;
 public final class DecodeException extends Exception{
 
 	private static final long serialVersionUID = 5375434179637246605L;
-
-	private static final String EMPTY_STRING = "";
 
 
 	/** Index of the decoded message this error refers to. */
@@ -45,12 +45,13 @@ public final class DecodeException extends Exception{
 	 *
 	 * @param errorIndex	Index of the decoded message this error refers to.
 	 * @param cause	The cause (which is saved for later retrieval by the {@link #getCause()} method). (A {@code null} value is
-	 * 					permitted, and indicates that the cause is nonexistent or unknown.)
+	 * 	permitted, and indicates that the cause is nonexistent or unknown.)
 	 * @return	An instance of this exception.
 	 */
 	public static DecodeException create(final int errorIndex, final Throwable cause){
 		return new DecodeException(errorIndex, cause);
 	}
+
 
 	private DecodeException(final int errorIndex, final Throwable cause){
 		super(cause);
@@ -69,7 +70,7 @@ public final class DecodeException extends Exception{
 
 	@Override
 	public String getMessage(){
-		String message = EMPTY_STRING;
+		String message = JavaHelper.EMPTY_STRING;
 		final Throwable cause = getCause();
 		if(cause != null)
 			message += cause.getMessage();

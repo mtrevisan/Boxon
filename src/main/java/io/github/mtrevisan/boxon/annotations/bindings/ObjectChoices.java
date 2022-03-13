@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.annotations.bindings;
 
-import io.github.mtrevisan.boxon.external.codecs.ByteOrder;
+import io.github.mtrevisan.boxon.io.ByteOrder;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -50,12 +50,12 @@ public @interface ObjectChoices{
 	int prefixSize() default 0;
 
 	/**
-	 * The byte order to be considered when returning a representation of the first {@link #prefixSize() size} bits read as a prefix.
+	 * The bit order to be considered when returning a representation of the first {@link #prefixSize() size} bits read as a prefix.
 	 *
 	 * @return	The byte order to be considered when returning a representation of the first {@link #prefixSize() size} bits read as a prefix
 	 * 	(defaults to {@link ByteOrder#BIG_ENDIAN}).
 	 */
-	ByteOrder byteOrder() default ByteOrder.BIG_ENDIAN;
+	ByteOrder bitOrder() default ByteOrder.BIG_ENDIAN;
 
 	/**
 	 * The choices to select from.

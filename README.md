@@ -1,8 +1,10 @@
 # Boxon _[boˈzoŋ]_
 
-![Java-11+](https://img.shields.io/badge/java-11%2B-orange.svg) [![License: GPL v3](https://img.shields.io/badge/License-MIT-blue.svg)](https://www.gnu.org/licenses/gpl-3.0) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.mtrevisan/boxon/badge.svg)](https://mvnrepository.com/artifact/io.github.mtrevisan/boxon)
+![Java-11+](https://img.shields.io/badge/java-11%2B-orange.svg) [![License: GPL v3](https://img.shields.io/badge/License-MIT-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 <a href="https://codeclimate.com/github/mtrevisan/Boxon/maintainability"><img src="https://api.codeclimate.com/v1/badges/bff8577200d792e1e197/maintainability" /></a>
+
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.mtrevisan/boxon/badge.svg)](https://mvnrepository.com/artifact/io.github.mtrevisan/boxon) [![javadoc](https://javadoc.io/badge2/io.github.mtrevisan/boxon/javadoc.svg)](https://javadoc.io/doc/io.github.mtrevisan/boxon)
 
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 ==========
@@ -94,12 +96,12 @@ You can get pre-built JARs (usable on JRE 11 or newer) from [Sonatype](https://o
 <br/>
 
 ## Table of Contents
-1. [Base annotations](#annotation-base)
+1. [Basic annotations](#annotation-basic)
     1. [Summary](#annotation-summary)
     2. [BindObject](#annotation-bindobject)
     3. [BindArray](#annotation-bindarray)
     4. [BindArrayPrimitive](#annotation-bindarrayprimitive)
-    5. [BindBits](#annotation-bindbits)
+    5. [BindBitSet](#annotation-bindbitset)
     6. [BindByte](#annotation-bindbyte)
     7. [BindShort](#annotation-bindshort)
     8. [BindInt](#annotation-bindint)
@@ -123,32 +125,35 @@ You can get pre-built JARs (usable on JRE 11 or newer) from [Sonatype](https://o
     5. [CompositeSubField](#annotation-compositesubfield)
     6. [AlternativeConfigurationField](#annotation-alternativeconfigurationfield)
     7. [AlternativeSubField](#annotation-alternativesubfield)
-5. [How to write SpEL expressions](#how-to-spel)
-6. [How to extend the functionalities](#how-to-extend)
-7. [Digging into the code](#digging)
+5. [Descriptor](#descriptor)
+6. [Extractor](#extractor)
+7. [How to write SpEL expressions](#how-to-spel)
+8. [How to extend the functionalities](#how-to-extend)
+9. [Digging into the code](#digging)
     1. [Converters](#how-to-converters)
     2. [Custom annotations](#how-to-annotations)
-8. [Examples](#examples)
-    1. [Multi-message parser](#example-multi)
-    2. [Message composer](#example-composer)
-9. [Contributing](#contributing)
-10. [Changelog](#changelog)
-     1. [version 2.1.2](#changelog-2.1.2)
-     2. [version 2.1.1](#changelog-2.1.1)
-     3. [version 2.1.0](#changelog-2.1.0)
-     4. [version 2.0.0](#changelog-2.0.0)
-     5. [version 1.1.0](#changelog-1.1.0)
-     6. [version 1.0.0](#changelog-1.0.0)
-     7. [version 0.0.2](#changelog-0.0.2)
-     8. [version 0.0.1](#changelog-0.0.1)
-     9. [version 0.0.0](#changelog-0.0.0)
-11. [License](#license)
+10. [Examples](#examples)
+     1. [Multi-message parser](#example-multi)
+     2. [Message composer](#example-composer)
+11. [Contributing](#contributing)
+12. [Changelog](#changelog)
+     1. [version 3.0.0](#changelog-3.0.0)
+     2. [version 2.1.2](#changelog-2.1.2)
+     3. [version 2.1.1](#changelog-2.1.1)
+     4. [version 2.1.0](#changelog-2.1.0)
+     5. [version 2.0.0](#changelog-2.0.0)
+     6. [version 1.1.0](#changelog-1.1.0)
+     7. [version 1.0.0](#changelog-1.0.0)
+     8. [version 0.0.2](#changelog-0.0.2)
+     9. [version 0.0.1](#changelog-0.0.1)
+     10. [version 0.0.0](#changelog-0.0.0)
+13. [License](#license)
 
 <br/>
 
-<a name="annotation-base"></a>
-## Base annotations
-Here the build-in base annotations are described.
+<a name="annotation-basic"></a>
+## Basic annotations
+Here the build-in basic annotations are described.
 
 You can use them as a starting point to build your own customized readers.
 
@@ -159,21 +164,21 @@ Here is a brief summary of the parameters (described in detail below) for each a
 
 Note that [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_injection) can be used in codecs on variables with types `TemplateParserInterface` or `Evaluator` IF annotated with `@Injected`.
 
-|                      | condition |  type   | charset | terminator | consumeTerminator |  size   | byteOrder | selectFrom | selectDefault | validator | converter | selectConverterFrom |                      |
-|----------------------|:---------:|:-------:|:-------:|:----------:|:-----------------:|:-------:|:---------:|:----------:|:-------------:|:---------:|:---------:|:-------------------:|---------------------:|
-| BindObject           |  &#9745;  | &#9745; |         |            |                   |         |           |  &#9745;   |    &#9745;    |  &#9745;  |  &#9745;  |       &#9745;       |           BindObject |
-| BindArray            |  &#9745;  | &#9745; |         |            |                   | &#9745; |           |  &#9745;   |    &#9745;    |  &#9745;  |  &#9745;  |       &#9745;       |            BindArray |
-| BindArrayPrimitive   |  &#9745;  | &#9745; |         |            |                   | &#9745; |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |   BindArrayPrimitive |
-| BindBits             |  &#9745;  |         |         |            |                   | &#9745; |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |             BindBits |
-| BindByte             |  &#9745;  |         |         |            |                   |         |           |            |               |  &#9745;  |  &#9745;  |       &#9745;       |             BindByte |
-| BindShort            |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |            BindShort |
-| BindInt              |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |              BindInt |
-| BindLong             |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |             BindLong |
-| BindInteger          |  &#9745;  |         |         |            |                   | &#9745; |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |          BindInteger |
-| BindFloat            |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |            BindFloat |
-| BindDouble           |  &#9745;  |         |         |            |                   |         |  &#9745;  |            |               |  &#9745;  |  &#9745;  |       &#9745;       |           BindDouble |
-| BindString           |  &#9745;  |         | &#9745; |            |                   | &#9745; |           |            |               |  &#9745;  |  &#9745;  |       &#9745;       |           BindString |
-| BindStringTerminated |  &#9745;  |         | &#9745; |  &#9745;   |      &#9745;      |         |           |            |               |  &#9745;  |  &#9745;  |       &#9745;       | BindStringTerminated |
+|                      | condition |  type   | charset | terminator | consumeTerminator |  size   |     byteOrder      | selectFrom | selectDefault | validator | converter | selectConverterFrom |                       |
+|----------------------|:---------:|:-------:|:-------:|:----------:|:-----------------:|:-------:|:------------------:|:----------:|:-------------:|:---------:|:---------:|:-------------------:|----------------------:|
+| BindObject           |  &#9745;  | &#9745; |         |            |                   |         |                    |  &#9745;   |    &#9745;    |  &#9745;  |  &#9745;  |       &#9745;       |            BindObject |
+| BindArray            |  &#9745;  | &#9745; |         |            |                   | &#9745; |                    |  &#9745;   |    &#9745;    |  &#9745;  |  &#9745;  |       &#9745;       |             BindArray |
+| BindArrayPrimitive   |  &#9745;  | &#9745; |         |            |                   | &#9745; |      &#9745;       |            |               |  &#9745;  |  &#9745;  |       &#9745;       |    BindArrayPrimitive |
+| BindBitSet           |  &#9745;  |         |         |            |                   | &#9745; | &#9745; (bitOrder) |            |               |  &#9745;  |  &#9745;  |       &#9745;       |            BindBitSet |
+| BindByte             |  &#9745;  |         |         |            |                   |         |                    |            |               |  &#9745;  |  &#9745;  |       &#9745;       |              BindByte |
+| BindShort            |  &#9745;  |         |         |            |                   |         |      &#9745;       |            |               |  &#9745;  |  &#9745;  |       &#9745;       |             BindShort |
+| BindInt              |  &#9745;  |         |         |            |                   |         |      &#9745;       |            |               |  &#9745;  |  &#9745;  |       &#9745;       |               BindInt |
+| BindLong             |  &#9745;  |         |         |            |                   |         |      &#9745;       |            |               |  &#9745;  |  &#9745;  |       &#9745;       |              BindLong |
+| BindInteger          |  &#9745;  |         |         |            |                   | &#9745; |      &#9745;       |            |               |  &#9745;  |  &#9745;  |       &#9745;       |           BindInteger |
+| BindFloat            |  &#9745;  |         |         |            |                   |         |      &#9745;       |            |               |  &#9745;  |  &#9745;  |       &#9745;       |             BindFloat |
+| BindDouble           |  &#9745;  |         |         |            |                   |         |      &#9745;       |            |               |  &#9745;  |  &#9745;  |       &#9745;       |            BindDouble |
+| BindString           |  &#9745;  |         | &#9745; |            |                   | &#9745; |                    |            |               |  &#9745;  |  &#9745;  |       &#9745;       |            BindString |
+| BindStringTerminated |  &#9745;  |         | &#9745; |  &#9745;   |      &#9745;      |         |                    |            |               |  &#9745;  |  &#9745;  |       &#9745;       |  BindStringTerminated |
 
 |                      | condition |  start  |   end   | charset |  size   | terminator | consumeTerminator |  type   | byteOrder | skipStart | skipEnd | algorithm | startValue |  value  |               |
 |----------------------|:---------:|:-------:|:-------:|:-------:|:-------:|:----------:|:-----------------:|:-------:|:---------:|:---------:|:-------:|:---------:|:----------:|:-------:|--------------:|
@@ -221,7 +226,7 @@ class Version{
     public byte build;
 }
 
-@BindBits(size = "1", converter = BitToBooleanConverter.class)
+@BindBitSet(size = "1", converter = BitSetToBooleanConverter.class)
 private boolean versionPresent;
 @BindObject(condition = "versionPresent", type = Version.class)
 private Version version;
@@ -303,7 +308,7 @@ private byte[] array;
 ```
 
 ```java
-@BindBits(size = "1", converter = BitToBooleanConverter.class)
+@BindBitSet(size = "1", converter = BitSetToBooleanConverter.class)
 private boolean angularDataPresent;
 @BindArrayPrimitive(condition = "angularDataPresent", size = "dataLength", type = byte.class,
     selectConverterFrom = @ConverterChoices(
@@ -316,27 +321,27 @@ private BigDecimal[][] crashData;
 ```
 
 
-<a name="annotation-bindbits"></a>
-### BindBits
+<a name="annotation-bindbitset"></a>
+### BindBitSet
 
 #### parameters
  - `condition`: The SpEL expression that determines if this field has to be read.
  - `size`: the number of bits to read (can be a SpEL expression).
- - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
+ - `bitOrder`: the bit order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
  - `validator`: the Class of a validator (applied BEFORE the converter).
- - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
+ - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable.
  - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
 
 #### description
-Reads a `BitMap`.
+Reads a java `BitSet`.
 
 #### annotation type
 This annotation is bounded to a variable.
 
 #### example
 ```java
-@BindBits(size = "2")
-private BitMap bits;
+@BindBitSet(size = "2")
+private BitSet bits;
 ```
 
 
@@ -624,6 +629,7 @@ public Void lastUnreadPlaceholder;
  - `skipStart`: how many bytes are to be skipped from the start of the message for the calculation of the checksum (defaults to 0).
  - `skipEnd`: how many bytes are to be skipped from the end of the message for the calculation of the checksum (default to 0).
  - `algorithm`: the algorithm to be applied to calculate the checksum.
+ - `startValue`: the starting value for the algorithm.
 
 #### description
 Reads a checksum.
@@ -682,13 +688,14 @@ These returns a JSON with a description of all the annotations of the loaded tem
 
 Example:
 ```java
-DeviceTypes deviceTypes = new DeviceTypes();
-deviceTypes.add("QUECLINK_GB200S", (byte)0x46);
-ParserCore core = ParserCore.create()
-    .addToContext("deviceTypes", deviceTypes)
+DeviceTypes deviceTypes = DeviceTypes.create()
+    .with("QUECLINK_GB200S", (byte)0x46);
+Core core = CoreBuilder.builder()
+    .withContextPair("deviceTypes", deviceTypes)
     .withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
     .withDefaultCodecs()
-    .withTemplate(ACKMessageHex.class);
+    .withTemplate(ACKMessageHex.class)
+   .create();
 Descriptor descriptor = Descriptor.create(core);
 
 List<Map<String, Object>> descriptions = descriptor.describeTemplates();
@@ -708,29 +715,27 @@ gives as output the following
          "size": "#headerSize()",
          "name": "messageHeader",
          "annotationType": "BindString",
-         "fieldType": "String"
+         "fieldType": "java.lang.String"
       },
       {
          "converter": "MessageTypeConverter",
          "name": "messageType",
          "annotationType": "BindByte",
-         "fieldType": "String"
+         "fieldType": "java.lang.String"
       },
       {
          "condition": "mask.hasProtocolVersion()",
          "size": "2",
-         "converter": "io.github.mtrevisan.boxon.codecs.queclink.QueclinkHelper$VersionConverter",
+         "converter": "io.github.mtrevisan.boxon.core.codecs.queclink.QueclinkHelper$VersionConverter",
          "name": "protocolVersion",
          "annotationType": "BindArrayPrimitive",
          "type": "byte",
-         "fieldType": "String",
+         "fieldType": "java.lang.String",
          "byteOrder": "BIG_ENDIAN"
       }
    ],
    "context": {
-      "methods": [
-         "private static int io.github.mtrevisan.boxon.core.ParserTest.headerSize()"
-      ],
+      "headerSize": "private static int io.github.mtrevisan.boxon.core.ParserTest.headerSize()",
       "deviceTypes": "[QUECLINK_GB200S (0x46)]"
    }
 }
@@ -744,8 +749,8 @@ Firstly, load the configuration as shown below:
 ```java
 //add the custom codec to the list of available codecs
 //(use one of the lines below)
-core.withDefaultConfigurations(); //loads all configuration from the package where this call was made
-core.withConfigurations(ConfigurationCustomTest.class); //this class is where the custom configuration resides
+core.withConfiguration(ConfigurationCustomTest.class); //loads the given configuration
+core.withConfigurationsFrom(ConfigurationCustomTest.class); //loads all configuration from the package where the given class resides
 ```
 
 Then, to retrieve all the possible protocol version boundaries, call
@@ -768,7 +773,7 @@ configurationData.put(Parser.CONFIGURATION_FIELD_TYPE, "AT+");
 configurationData.put("Weekday", "TUESDAY|WEDNESDAY");
 ...
 
-ComposeResponse composedMessage = configurator.composeConfiguration("1.20", Collections.singletonMap("AT+", configurationData));
+ComposerResponse<String> composedMessage = configurator.composeConfiguration("1.20", Collections.singletonMap("AT+", configurationData));
 ```
 
 
@@ -885,15 +890,15 @@ This annotation is bounded to a string variable.
 #### example
 ```java
 @CompositeConfigurationField(
-	value = {
-		@CompositeSubField(shortDescription = "URL", pattern = "https?://.{0,92}"),
-		@CompositeSubField(shortDescription = "username", pattern = ".{1,32}"),
-		@CompositeSubField(shortDescription = "password", pattern = ".{1,32}")
-	},
-	shortDescription = "Download URL",
-	composition = "${URL}<#if username?has_content && password?has_content>@${username}@${password}</#if>",
-	terminator = ",",
-	pattern = ".{0,100}"
+   value = {
+      @CompositeSubField(shortDescription = "URL", pattern = "https?://.{0,92}"),
+      @CompositeSubField(shortDescription = "username", pattern = ".{1,32}"),
+      @CompositeSubField(shortDescription = "password", pattern = ".{1,32}")
+   },
+   shortDescription = "Download URL",
+   composition = "${URL}<#if username?has_content && password?has_content>@${username}@${password}</#if>",
+   terminator = ",",
+   pattern = ".{0,100}"
 )
 public String downloadURL;
 ```
@@ -920,15 +925,15 @@ This annotation is bounded to a string variable.
 #### example
 ```java
 @CompositeConfigurationField(
-	value = {
-		@CompositeSubField(shortDescription = "URL", pattern = "https?://.{0,92}"),
-		@CompositeSubField(shortDescription = "username", pattern = ".{1,32}"),
-		@CompositeSubField(shortDescription = "password", pattern = ".{1,32}")
-	},
-	shortDescription = "Download URL",
-	composition = "${URL}<#if username?has_content && password?has_content>@${username}@${password}</#if>",
-	terminator = ",",
-	pattern = ".{0,100}"
+   value = {
+      @CompositeSubField(shortDescription = "URL", pattern = "https?://.{0,92}"),
+      @CompositeSubField(shortDescription = "username", pattern = ".{1,32}"),
+      @CompositeSubField(shortDescription = "password", pattern = ".{1,32}")
+   },
+   shortDescription = "Download URL",
+   composition = "${URL}<#if username?has_content && password?has_content>@${username}@${password}</#if>",
+   terminator = ",",
+   pattern = ".{0,100}"
 )
 public String downloadURL;
 ```
@@ -958,11 +963,11 @@ This annotation is bounded to a variable.
 #### example
 ```java
 @AlternativeConfigurationField(
-	shortDescription = "Download protocol", terminator = ",", enumeration = DownloadProtocol.class,
-	value = {
-		@AlternativeSubField(maxProtocol = "1.35", defaultValue = "HTTP"),
-		@AlternativeSubField(minProtocol = "1.36", defaultValue = "HTTP")
-	}
+   shortDescription = "Download protocol", terminator = ",", enumeration = DownloadProtocol.class,
+   value = {
+      @AlternativeSubField(maxProtocol = "1.35", defaultValue = "HTTP"),
+      @AlternativeSubField(minProtocol = "1.36", defaultValue = "HTTP")
+   }
 )
 private DownloadProtocol downloadProtocol;
 ```
@@ -994,13 +999,41 @@ This annotation is bounded to a variable.
 #### example
 ```java
 @AlternativeConfigurationField(
-	shortDescription = "Download timeout", terminator = ",", unitOfMeasure = "min",
-	value = {
-		@AlternativeSubField(maxProtocol = "1.18", minValue = "5", maxValue = "30", defaultValue = "10"),
-		@AlternativeSubField(minProtocol = "1.19", minValue = "5", maxValue = "30", defaultValue = "20")
-	}
+   shortDescription = "Download timeout", terminator = ",", unitOfMeasure = "min",
+   value = {
+      @AlternativeSubField(maxProtocol = "1.18", minValue = "5", maxValue = "30", defaultValue = "10"),
+      @AlternativeSubField(minProtocol = "1.19", minValue = "5", maxValue = "30", defaultValue = "20")
+   }
 )
 private int downloadTimeout;
+```
+
+
+<br/>
+
+<a name="descriptor"></a>
+## Descriptor
+Return a description of the loaded templates.
+```java
+Descriptor descriptor = Descriptor.create(core);
+
+List<Map<String, Object>> descriptions = descriptor.describeTemplates();
+```
+
+
+<br/>
+
+<a name="extractor"></a>
+## Extractor
+Extract values from a POJO using <a href="https://tools.ietf.org/html/rfc6901">RFC6901</a> syntax.
+```java
+Parser parser = Parser.create(core);
+ParserResponse result = parser.parse(payload);
+ACKMessageASCII parsedMessage = (ACKMessageASCII)result.getParsedMessageAt(0);
+Extractor extractor = Extractor.create(parsedMessage);
+
+String messageHeader = extractor.get("/messageHeader");
+int protocolVersionMinor = extractor.get("/protocolVersion/minor");
 ```
 
 
@@ -1043,7 +1076,7 @@ Boxon can handle array of primitives, bit, byte, short, int, long, float, double
 
 You can extend the basic functionalities through the application of converters as shown below in some examples. Here lies the power of Boxon.
 
-Boxon already provides some build-in converters: BitToBoolean, ShortToChar, UnsignedByte, UnsignedInt, and UnsignedShort.
+Boxon already provides some build-in converters: BitsToBoolean, ShortToChar, UnsignedByte, UnsignedInt, and UnsignedShort.
 
 <a name="how-to-converters"></a>
 ### Converters
@@ -1131,13 +1164,13 @@ public class IMEIConverter implements Converter<byte[], String>{
 private short rssi;
 
 /**
- * input:	output:
+ * input:   output:
  * -----------------------
- * 0:		< -133 dBm
- * 1:		-111 dBm
- * 2-30:	-109 - -53 dBm
- * 31:		> -51 dBm
- * 99:		unknown
+ * 0:      < -133 dBm
+ * 1:      -111 dBm
+ * 2-30:   -109 - -53 dBm
+ * 31:      > -51 dBm
+ * 99:      unknown
  */
 public class RSSIConverter implements Converter<Byte, Short>{
 
@@ -1209,8 +1242,8 @@ class VariableLengthByteArray implements CodecInterface<VarLengthEncoded>{
 //add the custom codec to the list of available codecs
 //(use one of the lines below)
 core.withDefaultCodecs(); //loads all codecs from the package where this call was made
-core.withCodecs(CodecCustomTest.class); //this class is where the custom codec resides
-core.withCodecs(new VariableLengthByteArray());
+core.withCodec(CodecCustomTest.class); //this class is where the custom codec resides
+core.withCodec(new VariableLengthByteArray());
 ```
 
 <br/>
@@ -1222,7 +1255,7 @@ Almost for each base annotation there is a corresponding class defined into `Tem
 The other annotations are managed directly into `TemplateParser.java`, that is the main class that orchestrates the parsing of a single message with all of its annotations.
 If an error occurs an `AnnotationException` (an error occurs on an annotation definition), `CodecException` (an error occurs while finding the appropriate codec), `TemplateException` (an error occurs if a template class is badly annotated), or `DecodeException`/`EncodeException` (a container exception for the previous ones for decoding and encoding respectively) is thrown.
 
-Messages can be concatenated, and the `Parser.java` class manages them, returning a [DTO](https://en.wikipedia.org/wiki/Data_transfer_object), `ParseResponse.java`, which contains a list of all successfully read messages and a list of all errors from problematic messages.
+Messages can be concatenated, and the `Parser.java` class manages them, returning a [DTO](https://en.wikipedia.org/wiki/Data_transfer_object), `ParserResponse.java`, which contains a list of all successfully read messages and a list of all errors from problematic messages.
 
 <br/>
 
@@ -1234,8 +1267,6 @@ All the SpEL expressions are evaluated by `Evaluator.java`.
 <br/>
 
 All the annotated classes are conveniently loaded using the `Loader.java` as is done automatically in the `Parser.java`.
-
-Note that all codecs MUST BE loaded before the templates that use them, as they are used to verifying the annotations. 
 
 If you want to provide your own classes you can use the appropriate `with...` method of `Parser`.
 
@@ -1268,47 +1299,32 @@ All you have to care about, for a simple example on multi-message automatically-
 ```java
 //optionally create a context
 Map<String, Object> context = ...
-//read all the codecs and annotated classes from where the parser resides and all of its children packages
-ParserCore core = ParserCore.create()
-   .withContext(context);
-//... or pass the parent package (see all the `with...` methods of Parser for more)
-ParserCore core = ParserCore.create()
+Core core = CoreBuilder.builder()
    .withContext(context)
    .withContextFunction(VersionHelper.class, "compareVersion", String.class, String.class)
    .withContextFunction(VersionHelper.class.getDeclaredMethod("compareVersion", new Class[]{String.class, String.class}))
-   //scans the parent package and all of its children, searching and loading all the codecs found
    .withDefaultCodecs()
-   //scans the parent package and all of its children, searching and loading all the templates found
-   .withDefaultTemplates();
+   .withTemplate(...)
+   .create();
 Parser parser = Parser.create(core);
 
 //parse the message
 byte[] payload = ...
-ParseResponse result = parser.parse(payload);
+List<Response<byte[], Object>> result = parser.parse(payload);
 
-//process the errors
-for(int index = 0; index < result.getErrorCount(); index ++)
-   LOGGER.error("An error occurred while parsing:\r\n   {}", result.getMessageForError(index));
+//process the successfully parsed messages and errors
+for(int index = 0; index < result.size(); index ++){
+   Response<byte[], Object> response = result.get(index);
+   Object parsedMessage = response.getMessage();
+   Exception error = response.getError();
 
-//process the successfully parsed messages
-for(int index = 0; index < result.getParsedMessageCount(); index ++){
-    Object parsedMessage = result.getParsedMessageAt(index);
-    ...
+   if(error != null){
+      LOGGER.error("An error occurred while parsing:\r\n   {}", response.getOriginator());
+   }
+   else if(parsedMessage != null){
+      ...
+   }
 }
-```
-
-or, if you want to pass your templates by hand:
-```java
-//optionally create a context ('null' otherwise)
-Map<String, Object> context = ...
-Template<Message> template = Template.createFrom(Message.class);
-ParserCore core = ParserCore.create()
-   .withTemplates(template);
-Parser parser = Parser.create(core);
-
-//parse the message
-byte[] payload = ...
-ParseResponse result = parser.parse(payload);
 ```
 
 <a name="example-composer"></a>
@@ -1318,19 +1334,17 @@ The inverse of parsing is composing, and it's simply done as follows.
 ```java
 //compose the message
 Message data = ...;
-ComposeResponse composeResult = parser.compose(data);
+Response<Message, byte[]> composeResult = composer.composeMessage(data);
 
-//process the read messages
-if(!composeResult.hasErrors()){
-    byte[] message = result.getComposedMessage();
-    ...
+//process the composed messages
+byte[] composedMessage = response.getMessage();
+Exception error = response.getError();
+
+if(error != null){
+   LOGGER.error("An error occurred while composing:\r\n   {}", response.getOriginator());
 }
-//process the errors
-else{
-    for(int i = 0; i < result.getErrorCount(); i ++){
-        EncodeException exc = result.getErrorAt(i);
-        ...
-    }
+else if(composedMessage != null){
+   ...
 }
 ```
 
@@ -1350,6 +1364,18 @@ Pull requests are welcomed.
 
 <a name="changelog"></a>
 ## Changelog
+
+<a name="changelog-3.0.0"></a>
+### version 3.0.0 - 20220216
+- Added `CoreBuilder` to facilitate the creation of a `Core`: now it is no longer necessary to remember the order in which the methods should be called.
+- Added missing javadoc. Enhanced existing javadoc.
+- Added `BindBitSet` binding for java `BitSet`.
+- Added `Extractor`, used to programmatically extract values from a POJO.
+- Removed `Bits`.
+- Enhanced binding validation.
+- Fixed a concurrency bug on the validation of alternatives.
+- Reordered some packages to better reflect usage.
+
 
 <a name="changelog-2.1.2"></a>
 ### version 2.1.2 - 20210118
@@ -1385,12 +1411,12 @@ Pull requests are welcomed.
 - Added public constructor to `Parser` to allow for extensions.
 - Changed the signature of `Checksummer.calculateChecksum` returning short instead of long.
 - Changed method `Validator.validate` into `Validator.isValid`.
-- Changed method `ParseResponse.getMessageForError` into `ParseResponse.getErrorMessageAt` to align it to other method name's conventions.
-- Moved classes `ParseResponse` and `ComposeResponse` from `io.github.mtrevisan.boxon.external` to `io.github.mtrevisan.boxon.core` in order to hide add methods; the constructors are also hidden.
+- Changed method `ParserResponse.getMessageForError` into `ParserResponse.getErrorMessageAt` to align it to other method name's conventions.
+- Moved classes `ParserResponse` and `ComposerResponse` from `io.github.mtrevisan.boxon.external` to `io.github.mtrevisan.boxon.core` in order to hide add methods; the constructors are also hidden.
 - Minor refactorings.
-- Added `originator` variable (and its getter) to `ComposeResponse` to hold the given objects used to create the message.
+- Added `originator` variable (and its getter) to `ComposerResponse` to hold the given objects used to create the message.
 - Added/modified javadocs to better explain some classes.
-- Removed `ComposeResponse.getErrors`, `BindInteger.unsigned` and `BitReader.getInteger(int, ByteOrder, boolean)` as they are useless.
+- Removed `ComposerResponse.getErrors`, `BindInteger.unsigned` and `BitReader.getInteger(int, ByteOrder, boolean)` as they are useless.
 - Removed `BitWriter.putText(String, byte, boolean)` because of the [Boolean Trap](https://ariya.io/2011/08/hall-of-api-shame-boolean-trap).
 - Removed useless `match()` parameter from bindings.
 - Enhanced the exception message thrown if the type of `BitReader.get(Class, ByteOrder)` is not recognized.

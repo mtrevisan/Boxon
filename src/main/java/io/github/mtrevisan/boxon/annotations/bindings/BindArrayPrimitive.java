@@ -28,7 +28,7 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
-import io.github.mtrevisan.boxon.external.codecs.ByteOrder;
+import io.github.mtrevisan.boxon.io.ByteOrder;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -58,7 +58,7 @@ public @interface BindArrayPrimitive{
 	 * you expect to inject.</p>
 	 * <p>So you might have something like this:</p>
 	 * <pre>{@code
-	 * &#064;BoundArray(size = "5", type = int.class)
+	 * &#064;BindArrayPrimitive(size = "5", type = int.class)
 	 * private int[] array;
 	 * }</pre>
 	 *

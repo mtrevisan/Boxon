@@ -25,22 +25,22 @@
 package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
-import io.github.mtrevisan.boxon.codecs.ConfigurationParser;
-import io.github.mtrevisan.boxon.codecs.Evaluator;
-import io.github.mtrevisan.boxon.codecs.managers.ConfigField;
-import io.github.mtrevisan.boxon.codecs.managers.ConfigurationMessage;
-import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationHelper;
-import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationManagerFactory;
-import io.github.mtrevisan.boxon.codecs.managers.configuration.ConfigurationManagerInterface;
+import io.github.mtrevisan.boxon.core.keys.ConfigurationKey;
+import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigField;
+import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationHelper;
+import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationManagerFactory;
+import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationManagerInterface;
+import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationMessage;
+import io.github.mtrevisan.boxon.core.parsers.ConfigurationParser;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
-import io.github.mtrevisan.boxon.external.codecs.BitWriter;
-import io.github.mtrevisan.boxon.external.codecs.BitWriterInterface;
-import io.github.mtrevisan.boxon.external.configurations.ConfigurationKey;
-import io.github.mtrevisan.boxon.external.semanticversioning.Version;
-import io.github.mtrevisan.boxon.internal.JavaHelper;
-import io.github.mtrevisan.boxon.internal.StringHelper;
+import io.github.mtrevisan.boxon.exceptions.FieldException;
+import io.github.mtrevisan.boxon.helpers.Evaluator;
+import io.github.mtrevisan.boxon.helpers.StringHelper;
+import io.github.mtrevisan.boxon.io.BitWriter;
+import io.github.mtrevisan.boxon.io.BitWriterInterface;
+import io.github.mtrevisan.boxon.semanticversioning.Version;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -61,19 +61,19 @@ public final class Configurator{
 
 
 	/**
-	 * Create an empty configurator.
+	 * Create a configurator.
 	 *
-	 * @param parserCore	The parser core.
-	 * @return	A basic empty descriptor.
+	 * @param core	The parser core.
+	 * @return	A descriptor.
 	 */
-	public static Configurator create(final ParserCore parserCore){
-		return new Configurator(parserCore);
+	public static Configurator create(final Core core){
+		return new Configurator(core);
 	}
 
 
-	private Configurator(final ParserCore parserCore){
-		configurationParser = parserCore.getConfigurationParser();
-		evaluator = parserCore.getEvaluator();
+	private Configurator(final Core core){
+		configurationParser = core.getConfigurationParser();
+		evaluator = core.getEvaluator();
 	}
 
 	/**
@@ -155,8 +155,9 @@ public final class Configurator{
 	private static Map<String, Object> extractFieldsMap(final Version protocol, final ConfigurationMessage<?> configuration)
 			throws ConfigurationException, CodecException{
 		final List<ConfigField> fields = configuration.getConfigurationFields();
-		final Map<String, Object> fieldsMap = new HashMap<>(fields.size());
-		for(int i = 0; i < fields.size(); i ++){
+		final int size = fields.size();
+		final Map<String, Object> fieldsMap = new HashMap<>(size);
+		for(int i = 0; i < size; i ++){
 			final ConfigField field = fields.get(i);
 			final Annotation annotation = field.getBinding();
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(annotation);
@@ -168,42 +169,41 @@ public final class Configurator{
 	}
 
 	/**
-	 * Compose a list of configuration messages.
+	 * Compose a configuration message.
 	 *
 	 * @param protocolVersion	Protocol version.
-	 * @param data	The configuration message(s) to be composed.
+	 * @param messageStart	The initial bytes of the message, see {@link ConfigurationHeader#start()}.
+	 * @param data	The configuration message data to be composed.
 	 * @return	The composition response.
 	 */
-	public ComposeResponse composeConfiguration(final String protocolVersion, final Map<String, Map<String, Object>> data){
+	public Response<String, byte[]> composeConfiguration(final String protocolVersion, final String messageStart,
+			final Map<String, Object> data){
 		final Version protocol = Version.of(protocolVersion);
 		if(protocol.isEmpty())
 			throw new IllegalArgumentException("Invalid protocol version: " + protocolVersion);
 
-		final ComposeResponse response = new ComposeResponse(data.keySet().toArray(JavaHelper.EMPTY_ARRAY));
-
 		final BitWriter writer = BitWriter.create();
-		for(final Map.Entry<String, Map<String, Object>> entry : data.entrySet())
-			composeConfiguration(writer, entry, protocol, response);
+		final EncodeException error = composeConfiguration(writer, messageStart, data, protocol);
 
-		response.setComposedMessage(writer);
-
-		return response;
+		return Response.create(messageStart, writer, error);
 	}
 
 	/**
 	 * Compose a single configuration message.
+	 *
+	 * @return	The error, if any.
 	 */
-	private void composeConfiguration(final BitWriterInterface writer, final Map.Entry<String, Map<String, Object>> entry,
-			final Version protocol, final ComposeResponse response){
+	private EncodeException composeConfiguration(final BitWriterInterface writer, final String messageStart, final Map<String, Object> data,
+			final Version protocol){
 		try{
-			final String configurationType = entry.getKey();
-			final Map<String, Object> data = entry.getValue();
-			final ConfigurationMessage<?> configuration = configurationParser.getConfiguration(configurationType);
+			final ConfigurationMessage<?> configuration = configurationParser.getConfiguration(messageStart);
 			final Object configurationData = ConfigurationParser.getConfigurationWithDefaults(configuration, data, protocol);
 			configurationParser.encode(configuration, writer, configurationData, evaluator, protocol);
+
+			return null;
 		}
-		catch(final Exception e){
-			response.addError(EncodeException.create(e));
+		catch(final EncodeException | FieldException e){
+			return EncodeException.create(e);
 		}
 	}
 

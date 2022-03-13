@@ -24,8 +24,6 @@
  */
 package io.github.mtrevisan.boxon.annotations.configurations;
 
-import io.github.mtrevisan.boxon.external.configurations.ConfigurationEnum;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -125,7 +123,7 @@ public @interface ConfigurationField{
 	/**
 	 * The type of encoding used for string-typed field.
 	 *
-	 * @return	The type of encoding used (defaults to {@value io.github.mtrevisan.boxon.codecs.LoaderCodec#CHARSET_DEFAULT}).
+	 * @return	The type of encoding used (defaults to {@value io.github.mtrevisan.boxon.helpers.CharsetHelper#DEFAULT_CHARSET}).
 	 */
 	String charset() default "UTF-8";
 

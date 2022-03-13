@@ -30,7 +30,7 @@ module io.github.mtrevisan.boxon{
 	requires spring.core;
 	requires spring.expression;
 
-	opens io.github.mtrevisan.boxon.codecs to spring.core, spring.expression;
+	opens io.github.mtrevisan.boxon.core.codecs to spring.core, spring.expression;
 
 	exports io.github.mtrevisan.boxon.annotations;
 	exports io.github.mtrevisan.boxon.annotations.bindings;
@@ -39,9 +39,9 @@ module io.github.mtrevisan.boxon{
 	exports io.github.mtrevisan.boxon.annotations.converters;
 	exports io.github.mtrevisan.boxon.annotations.validators;
 	exports io.github.mtrevisan.boxon.core;
+	exports io.github.mtrevisan.boxon.core.keys;
 	exports io.github.mtrevisan.boxon.exceptions;
-	exports io.github.mtrevisan.boxon.external.codecs;
-	exports io.github.mtrevisan.boxon.external.configurations;
-	exports io.github.mtrevisan.boxon.external.logs;
-	exports io.github.mtrevisan.boxon.external.semanticversioning;
+	exports io.github.mtrevisan.boxon.io;
+	exports io.github.mtrevisan.boxon.logs;
+	exports io.github.mtrevisan.boxon.semanticversioning;
 }

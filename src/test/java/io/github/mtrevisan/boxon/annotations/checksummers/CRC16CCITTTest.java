@@ -28,12 +28,21 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 
+@SuppressWarnings("ALL")
 class CRC16CCITTTest{
 
 	@Test
-	void calculateCRC16(){
+	void test(){
 		CRC16CCITT crc = new CRC16CCITT();
-		Number crc16 = crc.calculateChecksum(new byte[]{0x01, 0x02, 0x03, 0x04}, 0, 4, (short)0xFFFF);
+		Number crc16 = crc.calculateChecksum("9142656".getBytes(), 0, 7, CRC16CCITT.START_VALUE_0xFFFF);
+
+		Assertions.assertEquals((short)0x763A, crc16.shortValue());
+	}
+
+	@Test
+	void oneToFour(){
+		CRC16CCITT crc = new CRC16CCITT();
+		Number crc16 = crc.calculateChecksum(new byte[]{0x01, 0x02, 0x03, 0x04}, 0, 4, CRC16CCITT.START_VALUE_0xFFFF);
 
 		Assertions.assertEquals((short)0x89C3, crc16.shortValue());
 	}

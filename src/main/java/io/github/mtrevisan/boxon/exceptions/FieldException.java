@@ -24,6 +24,10 @@
  */
 package io.github.mtrevisan.boxon.exceptions;
 
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
+
+import java.lang.reflect.Field;
+
 
 /**
  * Represents an error in coding/decoding of a value.
@@ -32,12 +36,10 @@ public class FieldException extends Exception{
 
 	private static final long serialVersionUID = -8863756843240934380L;
 
-	private static final String EMPTY_STRING = "";
-
 
 	/** Class name that generates the error. */
 	private String className;
-	/** Field name in the class that generates the error. */
+	/** Name of the field in the class that generates the error. */
 	private String fieldName;
 
 
@@ -45,12 +47,13 @@ public class FieldException extends Exception{
 	 * Constructs a new exception with the specified cause.
 	 *
 	 * @param cause	The cause (which is saved for later retrieval by the {@link #getCause()} method). (A {@code null} value is
-	 * 					permitted, and indicates that the cause is nonexistent or unknown.)
+	 * 	permitted, and indicates that the cause is nonexistent or unknown.)
 	 * @return	An instance of this exception.
 	 */
 	public static FieldException create(final Throwable cause){
 		return new FieldException(cause);
 	}
+
 
 	/**
 	 * Constructs a new exception with the specified message.
@@ -66,7 +69,7 @@ public class FieldException extends Exception{
 	 *
 	 * @param message	The message.
 	 * @param cause	The cause (which is saved for later retrieval by the {@link #getCause()} method). (A {@code null} value is
-	 * 					permitted, and indicates that the cause is nonexistent or unknown.)
+	 * 	permitted, and indicates that the cause is nonexistent or unknown.)
 	 */
 	protected FieldException(final String message, final Throwable cause){
 		super(message, cause);
@@ -76,10 +79,21 @@ public class FieldException extends Exception{
 	 * Constructs a new exception with the specified cause.
 	 *
 	 * @param cause	The cause (which is saved for later retrieval by the {@link #getCause()} method). (A {@code null} value is
-	 * 					permitted, and indicates that the cause is nonexistent or unknown.)
+	 * 	permitted, and indicates that the cause is nonexistent or unknown.)
 	 */
 	protected FieldException(final Throwable cause){
 		super(cause);
+	}
+
+	/**
+	 * Adds class and field names to the exception.
+	 *
+	 * @param type	The class type.
+	 * @param field	The field.
+	 * @return	The exception itself.
+	 */
+	public final FieldException withClassAndField(final Class<?> type, final Field field){
+		return withClassNameAndFieldName(type.getName(), field.getName());
 	}
 
 	/**
@@ -98,7 +112,8 @@ public class FieldException extends Exception{
 
 	@Override
 	public final String getMessage(){
-		return super.getMessage() + (className != null && fieldName != null? " in field " + className + "." + fieldName: EMPTY_STRING);
+		return super.getMessage()
+			+ (className != null && fieldName != null? " in field " + className + "." + fieldName: JavaHelper.EMPTY_STRING);
 	}
 
 }
