@@ -1366,7 +1366,7 @@ Pull requests are welcomed.
 ## Changelog
 
 <a name="changelog-3.0.0"></a>
-### version 3.0.0 - 20220216
+### version 3.0.0 - 20220313
 - Added `CoreBuilder` to facilitate the creation of a `Core`: now it is no longer necessary to remember the order in which the methods should be called.
 - Added missing javadoc. Enhanced existing javadoc.
 - Added `BindBitSet` binding for java `BitSet`.
