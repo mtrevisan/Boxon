@@ -76,11 +76,11 @@
 
 		<!-- ClassGraph -->
 		<!-- https://mvnrepository.com/artifact/io.github.classgraph/classgraph -->
-		<github.classgraph.version>4.8.146</github.classgraph.version>
+		<github.classgraph.version>4.8.147</github.classgraph.version>
 
 		<!-- Spring Expression -->
 		<!-- https://mvnrepository.com/artifact/org.springframework/spring-expression -->
-		<springframework.spring-expression.version>5.3.19</springframework.spring-expression.version>
+		<springframework.spring-expression.version>5.3.20</springframework.spring-expression.version>
 
 		<!-- FreeMarker -->
 		<!-- https://mvnrepository.com/artifact/org.freemarker/freemarker -->
