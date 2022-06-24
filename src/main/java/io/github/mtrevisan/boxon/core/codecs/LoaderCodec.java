@@ -77,6 +77,15 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	}
 
 	/**
+	 * Get the number of the loaded codecs.
+	 *
+	 * @return	The number of loaded codecs.
+	 */
+	public int getCodecsCount(){
+		return codecs.size();
+	}
+
+	/**
 	 * Loads all the codecs that extends {@link CodecInterface}.
 	 * <p>This method SHOULD BE called from a method inside a class that lies on a parent of all the codecs.</p>
 	 */

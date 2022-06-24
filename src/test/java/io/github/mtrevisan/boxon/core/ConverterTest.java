@@ -96,6 +96,9 @@ class ConverterTest{
 			.withDefaultCodecs()
 			.withTemplatesFrom(TestConverter1.class)
 			.create();
+		Assertions.assertTrue(core.getCodecsCount() > 0, "Some codecs must be loaded");
+		Assertions.assertTrue(core.getTemplatesCount() > 0, "Some templates must be loaded");
+
 		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.toByteArray("77633101");
@@ -116,6 +119,9 @@ class ConverterTest{
 			.withDefaultCodecs()
 			.withTemplatesFrom(TestConverter2.class)
 			.create();
+		Assertions.assertTrue(core.getCodecsCount() > 0, "Some codecs must be loaded");
+		Assertions.assertTrue(core.getTemplatesCount() > 0, "Some templates must be loaded");
+
 		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.toByteArray("77633201");
@@ -136,6 +142,9 @@ class ConverterTest{
 			.withDefaultCodecs()
 			.withTemplatesFrom(TestConverter3.class)
 			.create();
+		Assertions.assertTrue(core.getCodecsCount() > 0, "Some codecs must be loaded");
+		Assertions.assertTrue(core.getTemplatesCount() > 0, "Some templates must be loaded");
+
 		Parser parser = Parser.create(core);
 
 		byte[] payload = StringHelper.toByteArray("77633301");

@@ -176,6 +176,15 @@ public final class Core{
 		loaderCodec.injectFieldInCodecs(Evaluator.class, evaluator);
 	}
 
+	/**
+	 * Get the number of the loaded codecs.
+	 *
+	 * @return	The number of loaded codecs.
+	 */
+	public int getCodecsCount(){
+		return loaderCodec.getCodecsCount();
+	}
+
 
 	/**
 	 * Loads all the protocol classes annotated with {@link MessageHeader}.
@@ -199,6 +208,15 @@ public final class Core{
 		templateParser.withTemplate(templateClass);
 	}
 
+	/**
+	 * Get the number of the loaded templates.
+	 *
+	 * @return	The number of loaded templates.
+	 */
+	public int getTemplatesCount(){
+		return templateParser.getLoaderTemplate().getTemplates().size();
+	}
+
 
 	/**
 	 * Loads all the protocol classes annotated with {@link ConfigurationHeader}.
@@ -220,6 +238,15 @@ public final class Core{
 	 */
 	void addConfiguration(final Class<?> configurationClass) throws AnnotationException, ConfigurationException{
 		configurationParser.withConfiguration(configurationClass);
+	}
+
+	/**
+	 * Get the number of the loaded configurations.
+	 *
+	 * @return	The number of loaded configurations.
+	 */
+	public int getConfigurationsCount(){
+		return configurationParser.getConfigurations().size();
 	}
 
 
