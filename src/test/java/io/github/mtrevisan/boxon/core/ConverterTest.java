@@ -106,8 +106,8 @@ class ConverterTest{
 		Response<byte[], Object> response = result.get(0);
 		Assertions.assertArrayEquals(payload, response.getSource());
 		Assertions.assertTrue(response.hasError());
-		Assertions.assertEquals("java.lang.IllegalArgumentException: Can not input Byte to decode method of converter WrongConverterInput in field io.github.mtrevisan.boxon.core"
-			+ ".ConverterTest$TestConverter1.value" + System.lineSeparator() + "   at index 4", response.getError().getMessage());
+		Assertions.assertEquals("java.lang.IllegalArgumentException: Can not input Byte to decode method of converter WrongConverterInput in field io.github.mtrevisan.boxon.core" +
+			".ConverterTest$TestConverter1.value" + System.lineSeparator() + "   at index 4", response.getError().getMessage());
 	}
 
 	@Test
