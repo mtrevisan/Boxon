@@ -26,8 +26,6 @@ package io.github.mtrevisan.boxon.exceptions;
 
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 
-import java.io.Serial;
-
 
 /**
  * Thrown if an annotation is not well formatted.
