@@ -60,27 +60,27 @@
 		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-deploy-plugin -->
 		<maven-deploy-plugin.version>3.1.1</maven-deploy-plugin.version>
 		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-gpg-plugin -->
-		<maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
+		<maven-gpg-plugin.version>3.1.0</maven-gpg-plugin.version>
 		<!-- https://mvnrepository.com/artifact/org.sonatype.plugins/nexus-staging-maven-plugin -->
 		<sonatype.nexus-staging-maven-plugin.version>1.6.13</sonatype.nexus-staging-maven-plugin.version>
 		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-source-plugin -->
-		<maven-source-plugin.version>3.2.1</maven-source-plugin.version>
+		<maven-source-plugin.version>3.3.0</maven-source-plugin.version>
 		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-javadoc-plugin -->
-		<maven-javadoc-plugin.version>3.5.0</maven-javadoc-plugin.version>
+		<maven-javadoc-plugin.version>3.6.3</maven-javadoc-plugin.version>
 		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-surefire-plugin -->
-		<maven-surefire-plugin.version>3.0.0</maven-surefire-plugin.version>
+		<maven-surefire-plugin.version>3.2.3</maven-surefire-plugin.version>
 		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
-		<maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
+		<maven-compiler-plugin.version>3.12.0</maven-compiler-plugin.version>
 		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-help-plugin -->
 		<maven-help-plugin.version>3.4.0</maven-help-plugin.version>
 
 		<!-- ClassGraph -->
 		<!-- https://mvnrepository.com/artifact/io.github.classgraph/classgraph -->
-		<github.classgraph.version>4.8.157</github.classgraph.version>
+		<github.classgraph.version>4.8.165</github.classgraph.version>
 
 		<!-- Spring Expression -->
 		<!-- https://mvnrepository.com/artifact/org.springframework/spring-expression -->
-		<springframework.spring-expression.version>6.0.7</springframework.spring-expression.version>
+		<springframework.spring-expression.version>6.1.2</springframework.spring-expression.version>
 
 		<!-- FreeMarker -->
 		<!-- https://mvnrepository.com/artifact/org.freemarker/freemarker -->
@@ -88,13 +88,13 @@
 
 		<!-- Logging -->
 		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
-		<slf4j.slf4j-api.version>2.0.7</slf4j.slf4j-api.version>
+		<slf4j.slf4j-api.version>2.0.9</slf4j.slf4j-api.version>
 		<!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-classic -->
-		<logback.logback-classic.version>1.4.6</logback.logback-classic.version>
+		<logback.logback-classic.version>1.4.14</logback.logback-classic.version>
 
 		<!-- JUnit -->
 		<!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine -->
-		<junit.junit-jupiter-engine.version>5.9.2</junit.junit-jupiter-engine.version>
+		<junit.junit-jupiter-engine.version>5.10.1</junit.junit-jupiter-engine.version>
 	</properties>
 
 	<repositories>
