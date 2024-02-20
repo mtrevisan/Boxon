@@ -42,10 +42,10 @@ Boxon...
    - Floating point numbers: 32- and 64-bit floating point values.
    - Bit fields: bit fields with length from 1 to 2,147,483,647 bits.
    - Strings: fixed-length, variable-length and zero terminated strings with various encodings.
-   - Arrays: fixed-length and variable-length arrays of builtin or user-defined element types.
+   - Arrays: fixed-length and variable-length arrays of built-in or user-defined element types.
    - Objects: custom-type POJOs.
    - Choices: supports integer keys.
- - User defined types (arbitrary combination of builtin types)
+ - User defined types (arbitrary combination of built-in types)
  - Has templates (annotated classes) that are not complex: they do not call each other uselessly complicating the structure (apart, necessarily, for `@BindArray`), no complicated chains of factories: it's just a parser that works.
  - Supports [SLF4J](http://www.slf4j.org/).
  - Hides the complexities of encoding and decoding, thus simplifying the changes to be made to the code due to frequent protocol changes.
@@ -1366,7 +1366,7 @@ Pull requests are welcomed.
 ## Changelog
 
 <a name="changelog-3.0.0"></a>
-### version 3.0.0 - 20220216
+### version 3.0.0 - 20220313
 - Added `CoreBuilder` to facilitate the creation of a `Core`: now it is no longer necessary to remember the order in which the methods should be called.
 - Added missing javadoc. Enhanced existing javadoc.
 - Added `BindBitSet` binding for java `BitSet`.

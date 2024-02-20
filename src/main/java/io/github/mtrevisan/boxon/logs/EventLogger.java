@@ -26,8 +26,10 @@ package io.github.mtrevisan.boxon.logs;
 
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
+import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.helpers.NOPLoggerFactory;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -40,13 +42,10 @@ import java.util.StringJoiner;
 public final class EventLogger extends EventListener{
 
 	static{
-		try{
-			//check whether an optional SLF4J binding is available
-			Class.forName("org.slf4j.impl.StaticLoggerBinder");
-		}
-		catch(final LinkageError | ClassNotFoundException ignored){
-			System.out.println("[WARN] SLF4J: No logger is defined, no log will be printed!");
-		}
+		//check whether an optional SLF4J binding is available
+		final ILoggerFactory loggerFactory = LoggerFactory.getILoggerFactory();
+		if(loggerFactory == null || loggerFactory.getClass().equals(NOPLoggerFactory.class))
+			System.out.println("[WARN] SLF4J: No logger is defined, NO LOG will be printed!");
 	}
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(EventLogger.class);
