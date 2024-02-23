@@ -934,7 +934,7 @@ public String text;
 
 - `shortDescription`: a short description of the field, mandatory, used as an identifier (and thus must be unique inside every configuration message).
 - `longDescription`: a more expressive description, optional.
-- `unitOfMeasure`: the unit of measure, optional.
+- `unitOfMeasure`: the unit of measure, optional (the format should follow [UCUM](https://ucum.org/ucum.html)/[ISO 80000](https://en.wikipedia.org/wiki/Unified_Code_for_Units_of_Measure) standard).
 - `minProtocol`: minimum protocol for which this configuration message is valid, optional.
 - `maxProtocol`: maximum protocol for which this configuration message is valid, optional.
 - `minValue`: minimum value this field can assume, optional (alternative to `pattern` and `enumeration`).
@@ -1015,7 +1015,7 @@ public String downloadURL;
 
 - `shortDescription`: a short description of the field, mandatory, used as an identifier (and thus must be unique inside every configuration message).
 - `longDescription`: a more expressive description, optional.
-- `unitOfMeasure`: the unit of measure, optional.
+- `unitOfMeasure`: the unit of measure, optional (the format should follow [UCUM](https://ucum.org/ucum.html)/[ISO 80000](https://en.wikipedia.org/wiki/Unified_Code_for_Units_of_Measure) standard).
 - `pattern`: regex pattern this field must obey, optional.
 - `defaultValue`: default value, optional. If the variable is an array, then this field may represent an `or` between values (e.g. `ONE|TWO|THREE`), otherwise can be a single value (e.g. `TWO`). If not present, then the field is mandatory.
 
@@ -1055,7 +1055,7 @@ public String downloadURL;
 - `value`: a set of [AlternativeSubField](#annotation-alternativesubfield)
 - `shortDescription`: a short description of the field, mandatory, used as an identifier (and thus must be unique inside every configuration message).
 - `longDescription`: a more expressive description, optional.
-- `unitOfMeasure`: the unit of measure, optional.
+- `unitOfMeasure`: the unit of measure, optional (the format should follow [UCUM](https://ucum.org/ucum.html)/[ISO 80000](https://en.wikipedia.org/wiki/Unified_Code_for_Units_of_Measure) standard).
 - `minProtocol`: minimum protocol for which this configuration message is valid, optional.
 - `maxProtocol`: maximum protocol for which this configuration message is valid, optional.
 - `enumeration`: enumeration for this field, optional. If the field is a single enum, then each value of this enum is mutually exclusive.
@@ -1091,7 +1091,7 @@ private DownloadProtocol downloadProtocol;
 #### parameters
 
 - `longDescription`: a more expressive description, optional.
-- `unitOfMeasure`: the unit of measure, optional.
+- `unitOfMeasure`: the unit of measure, optional (the format should follow [UCUM](https://ucum.org/ucum.html)/[ISO 80000](https://en.wikipedia.org/wiki/Unified_Code_for_Units_of_Measure) standard).
 - `minProtocol`: minimum protocol for which this configuration message is valid, optional.
 - `maxProtocol`: maximum protocol for which this configuration message is valid, optional.
 - `minValue`: minimum value this field can assume, optional (alternative to `pattern` and `enumeration`).
