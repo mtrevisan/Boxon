@@ -96,7 +96,7 @@ class BitWriterData{
 		byte value = 0;
 		int index = bits.nextSetBit(offset);
 		while(index >= 0 && index <= offset + size){
-			value |= 1 << (index - offset);
+			value |= (byte)(1 << (index - offset));
 
 			index = bits.nextSetBit(index + 1);
 		}

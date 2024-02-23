@@ -170,7 +170,7 @@ public final class JSONPath{
 
 	@SuppressWarnings("ReturnOfNull")
 	private static Integer extractIndex(final String currentPath){
-		return (ParserDataType.isDecimalNumber(currentPath) && (currentPath.charAt(0) != '0' || currentPath.length() <= 1)
+		return (ParserDataType.isDecimalNumber(currentPath) && (currentPath.charAt(0) != '0' || currentPath.length() == 1)
 			? Integer.valueOf(currentPath)
 			: null);
 	}

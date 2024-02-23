@@ -175,7 +175,7 @@ abstract class BitReaderData{
 		int skip;
 		while(cache != 0 && (skip = Integer.numberOfTrailingZeros(cache & 0xFF)) < size){
 			bits.set(skip + offset);
-			cache ^= 1 << skip;
+			cache ^= (byte)(1 << skip);
 		}
 		//remove read bits from the cache
 		cache >>= size;

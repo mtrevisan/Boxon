@@ -872,8 +872,8 @@ ComposerResponse<String> composedMessage = configurator.composeConfiguration("1.
 
  - `shortDescription`: a short description of the field, mandatory, used as an identifier (and thus must be unique for every configuration message).
  - `longDescription`: a more expressive description, optional.
- - `minProtocol`: minimum protocol for which this configuration message is valid, optional.
- - `maxProtocol`: maximum protocol for which this configuration message is valid, optional.
+ - `minProtocol`: minimum protocol for which this configuration message is valid, optional (should follow [Semantic Versioning](https://semver.org/)).
+ - `maxProtocol`: maximum protocol for which this configuration message is valid, optional (should follow [Semantic Versioning](https://semver.org/)).
  - `start`: starting text of the message, optional.
  - `end`: ending text of the message, optional.
  - `charset`: charset of the message, optional.
@@ -903,8 +903,8 @@ private class ConfigurationMessage{
 
 #### parameters
 
-- `minProtocol`: minimum protocol for which this configuration message is valid, optional.
-- `maxProtocol`: maximum protocol for which this configuration message is valid, optional.
+- `minProtocol`: minimum protocol for which this configuration message is valid, optional (should follow [Semantic Versioning](https://semver.org/)).
+- `maxProtocol`: maximum protocol for which this configuration message is valid, optional (should follow [Semantic Versioning](https://semver.org/)).
 - `terminator`: the string that terminates the skip (defaults to empty string), optional.
 
 #### description
@@ -935,8 +935,8 @@ public String text;
 - `shortDescription`: a short description of the field, mandatory, used as an identifier (and thus must be unique inside every configuration message).
 - `longDescription`: a more expressive description, optional.
 - `unitOfMeasure`: the unit of measure, optional (the format should follow [UCUM](https://ucum.org/ucum.html)/[ISO 80000](https://en.wikipedia.org/wiki/Unified_Code_for_Units_of_Measure) standard).
-- `minProtocol`: minimum protocol for which this configuration message is valid, optional.
-- `maxProtocol`: maximum protocol for which this configuration message is valid, optional.
+- `minProtocol`: minimum protocol for which this configuration message is valid, optional (should follow [Semantic Versioning](https://semver.org/)).
+- `maxProtocol`: maximum protocol for which this configuration message is valid, optional (should follow [Semantic Versioning](https://semver.org/)).
 - `minValue`: minimum value this field can assume, optional (alternative to `pattern` and `enumeration`).
 - `maxValue`: maximum value this field can assume, optional (alternative to `pattern` and `enumeration`).
 - `pattern`: regex pattern this field must obey, optional (alternative to `minValue`/`maxValue` and `enumeration`).
@@ -973,8 +973,8 @@ public int motionlessReportInterval;
 - `value`: a set of [CompositeSubField](#annotation-compositesubfield)
 - `shortDescription`: a short description of the field, mandatory, used as an identifier (and thus must be unique inside every configuration message).
 - `longDescription`: a more expressive description, optional.
-- `minProtocol`: minimum protocol for which this configuration message is valid, optional.
-- `maxProtocol`: maximum protocol for which this configuration message is valid, optional.
+- `minProtocol`: minimum protocol for which this configuration message is valid, optional (should follow [Semantic Versioning](https://semver.org/)).
+- `maxProtocol`: maximum protocol for which this configuration message is valid, optional (should follow [Semantic Versioning](https://semver.org/)).
 - `pattern`: regex pattern this field must obey, optional.
 - `composition`: the [FreeMarker](https://freemarker.apache.org/) pattern used to compose the field. The short description of each subfield is used as identifier.
 - `charset`: charset of the field (if string value), optional.
@@ -1056,8 +1056,8 @@ public String downloadURL;
 - `shortDescription`: a short description of the field, mandatory, used as an identifier (and thus must be unique inside every configuration message).
 - `longDescription`: a more expressive description, optional.
 - `unitOfMeasure`: the unit of measure, optional (the format should follow [UCUM](https://ucum.org/ucum.html)/[ISO 80000](https://en.wikipedia.org/wiki/Unified_Code_for_Units_of_Measure) standard).
-- `minProtocol`: minimum protocol for which this configuration message is valid, optional.
-- `maxProtocol`: maximum protocol for which this configuration message is valid, optional.
+- `minProtocol`: minimum protocol for which this configuration message is valid, optional (should follow [Semantic Versioning](https://semver.org/)).
+- `maxProtocol`: maximum protocol for which this configuration message is valid, optional (should follow [Semantic Versioning](https://semver.org/)).
 - `enumeration`: enumeration for this field, optional. If the field is a single enum, then each value of this enum is mutually exclusive.
 - `terminator`: the string that terminates the skip (defaults to empty string), optional.
 
@@ -1092,8 +1092,8 @@ private DownloadProtocol downloadProtocol;
 
 - `longDescription`: a more expressive description, optional.
 - `unitOfMeasure`: the unit of measure, optional (the format should follow [UCUM](https://ucum.org/ucum.html)/[ISO 80000](https://en.wikipedia.org/wiki/Unified_Code_for_Units_of_Measure) standard).
-- `minProtocol`: minimum protocol for which this configuration message is valid, optional.
-- `maxProtocol`: maximum protocol for which this configuration message is valid, optional.
+- `minProtocol`: minimum protocol for which this configuration message is valid, optional (should follow [Semantic Versioning](https://semver.org/)).
+- `maxProtocol`: maximum protocol for which this configuration message is valid, optional (should follow [Semantic Versioning](https://semver.org/)).
 - `minValue`: minimum value this field can assume, optional (alternative to `pattern` and `enumeration`).
 - `maxValue`: maximum value this field can assume, optional (alternative to `pattern` and `enumeration`).
 - `pattern`: regex pattern this field must obey, optional.
@@ -1495,6 +1495,16 @@ Pull requests are welcomed.
 
 <a name="changelog"></a>
 ## Changelog
+
+<a name="changelog-3.0.2"></a>
+### version 3.0.2 - 20240223
+
+- Fixed a bug on `ConfigurationHeader` where the protocol range check was incorrectly done considering the minimum protocol as the maximum.
+
+<a name="changelog-3.0.1"></a>
+### version 3.0.1 - 20240220
+
+- Updated library versions.
 
 <a name="changelog-3.0.0"></a>
 ### version 3.0.0 - 20220313

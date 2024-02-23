@@ -59,7 +59,7 @@ enum ConfigurationAnnotationValidator{
 
 			//check minimum/maximum protocol
 			final String minProtocol = binding.minProtocol();
-			final String maxProtocol = binding.minProtocol();
+			final String maxProtocol = binding.maxProtocol();
 			if(!minProtocol.isEmpty() && !maxProtocol.isEmpty()){
 				final Version min = Version.of(minProtocol);
 				final Version max = Version.of(maxProtocol);
@@ -261,8 +261,8 @@ enum ConfigurationAnnotationValidator{
 	 *
 	 * @param field	The field associated to the annotation.
 	 * @param annotation	The annotation.
-	 * @param minProtocolVersion	The minimum protocol version.
-	 * @param maxProtocolVersion	The maximum protocol version.
+	 * @param minProtocolVersion	The minimum protocol version (should follow <a href="https://semver.org/">Semantic Versioning</a>).
+	 * @param maxProtocolVersion	The maximum protocol version (should follow <a href="https://semver.org/">Semantic Versioning</a>).
 	 * @throws AnnotationException	If an error is detected.
 	 * @throws CodecException	If an error was raised reading of interpreting the field value.
 	 */
