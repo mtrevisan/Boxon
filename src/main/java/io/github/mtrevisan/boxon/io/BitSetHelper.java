@@ -89,7 +89,7 @@ public final class BitSetHelper{
 	private static byte reverseBits(byte number){
 		byte reverse = 0;
 		for(int i = Byte.SIZE - 1; i >= 0; i --){
-			reverse += ((number & 1) << i);
+			reverse += (byte)((number & 1) << i);
 			number >>= 1;
 		}
 		return reverse;
@@ -103,7 +103,7 @@ public final class BitSetHelper{
 	private static void byteReverse(final byte[] array){
 		for(int start = 0, end = array.length - 1; start < end; start ++, end --)
 			//swap array[start] with array[end]
-			array[start] ^= array[end] ^ (array[end] = array[start]);
+			array[start] ^= (byte)(array[end] ^ (array[end] = array[start]));
 	}
 
 }

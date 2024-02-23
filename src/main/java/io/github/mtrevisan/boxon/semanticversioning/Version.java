@@ -37,7 +37,7 @@ import java.util.regex.Pattern;
 /**
  * An immutable representation of a semantic version number.
  *
- * @see <a href="https://semver.org/">Semantic Versioning 2.0.0</a>
+ * @see <a href="https://semver.org/">Semantic Versioning</a>
  */
 @SuppressWarnings("WeakerAccess")
 public final class Version implements Comparable<Version>{

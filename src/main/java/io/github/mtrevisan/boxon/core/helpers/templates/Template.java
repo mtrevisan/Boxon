@@ -244,7 +244,7 @@ public final class Template<T>{
 	}
 
 	/**
-	 * Whether this template is well formatted, that is has a header annotation and has some bounded fields.
+	 * Whether this template is well formatted, that it has a header annotation and has some bounded fields.
 	 *
 	 * @return	Whether this template is well formatted.
 	 */
