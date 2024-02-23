@@ -157,7 +157,7 @@ public final class ConfigurationParser{
 	 * @param writer	The writer that holds the encoded template.
 	 * @param currentObject	The current object that holds the values.
 	 * @param evaluator	An evaluator.
-	 * @param protocol	The protocol version (should follow [Semantic Versioning](https://semver.org/)).
+	 * @param protocol	The protocol version (should follow <a href="https://semver.org/">Semantic Versioning</a>).
 	 * @param <T>	The class type of the current object.
 	 * @throws FieldException	If a codec is not found.
 	 */

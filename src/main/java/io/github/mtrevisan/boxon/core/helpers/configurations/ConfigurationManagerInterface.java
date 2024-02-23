@@ -67,7 +67,7 @@ public interface ConfigurationManagerInterface{
 	/**
 	 * Retrieve the annotation to be processed given a protocol version.
 	 *
-	 * @param protocol	The protocol version (should follow [Semantic Versioning](https://semver.org/)).
+	 * @param protocol	The protocol version (should follow <a href="https://semver.org/">Semantic Versioning</a>).
 	 * @return	The annotation to be processed.
 	 */
 	Annotation annotationToBeProcessed(Version protocol);
@@ -84,7 +84,7 @@ public interface ConfigurationManagerInterface{
 	 * Extract the configuration map for the given field and protocol version.
 	 *
 	 * @param fieldType	The field from which to extract the configuration.
-	 * @param protocol	The protocol version (should follow [Semantic Versioning](https://semver.org/)).
+	 * @param protocol	The protocol version (should follow <a href="https://semver.org/">Semantic Versioning</a>).
 	 * @return	The configuration map.
 	 * @throws ConfigurationException	If a duplicate is found.
 	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
@@ -109,7 +109,7 @@ public interface ConfigurationManagerInterface{
 	 * @param field	The field.
 	 * @param dataKey	The short description of the field.
 	 * @param dataValue	The value to check against.
-	 * @param protocol	The protocol version (should follow [Semantic Versioning](https://semver.org/)).
+	 * @param protocol	The protocol version (should follow <a href="https://semver.org/">Semantic Versioning</a>).
 	 * @return	The converted value.
 	 * @throws EncodeException	If a placeholder cannot be substituted.
 	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.

@@ -51,8 +51,8 @@ final class ValidationHelper{
 	 * Validate the protocol.
 	 *
 	 * @param field	The configuration field data.
-	 * @param minProtocolVersion	The minimum protocol version (should follow [Semantic Versioning](https://semver.org/)).
-	 * @param maxProtocolVersion	The maximum protocol version (should follow [Semantic Versioning](https://semver.org/)).
+	 * @param minProtocolVersion	The minimum protocol version (should follow <a href="https://semver.org/">Semantic Versioning</a>).
+	 * @param maxProtocolVersion	The maximum protocol version (should follow <a href="https://semver.org/">Semantic Versioning</a>).
 	 * @throws AnnotationException	If a validation error occurs.
 	 */
 	static void validateProtocol(final ConfigFieldData field, final Version minProtocolVersion, final Version maxProtocolVersion)
