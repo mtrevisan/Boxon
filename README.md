@@ -14,6 +14,7 @@
 <img alt="logo" src="https://i.postimg.cc/500W5mVV/horizontal-white.png" width="50%">
 
 ## Forewords
+
 This is a declarative, bit-level, message parser. All you have to do is write a [POJO](https://en.wikipedia.org/wiki/Plain_old_Java_object) that represents your message and annotate it. That's all. [Boxon](https://en.wikipedia.org/wiki/Boson) will take care of the rest for you.
 
 If you want to use the parser straight away, just go [here](#examples).
@@ -30,6 +31,7 @@ If you want to use the parser straight away, just go [here](#examples).
 <br/>
 
 ### Notable features
+
 Boxon...
  - Is easily extensible through the use of [converters](#how-to).
  - Contains a minimal set of [annotations](#annotation-base) capable of handling "all" the primitive data (aside `char`, but this could be easily handled with a converter).
@@ -59,7 +61,9 @@ Boxon...
 <br/>
 
 ### Differences from...
+
 #### Preon
+
 Boxon differs from [Preon](https://github.com/preon/preon) in...
  - Does not have a generic `Bound` annotation: it uses converters instead.
  - Does not need the "native byte order" constant. This is because the bytes of the message have little chance to be generated from the very same machine that will parse them, what if a message consider 24 bits as an Integer? If the code should be portable and installed and run everywhere it should not rely on the native properties of any machine.
@@ -73,9 +77,11 @@ Boxon differs from [Preon](https://github.com/preon/preon) in...
 <br/>
 
 ### Pre-compiled executables
+
 Get them [here](https://github.com/mtrevisan/Boxon/releases/).
 
 ### Maven dependency
+
 In order to include Boxon in a Maven project add the following dependency to your pom.xml (<b>Java 11 required</b>).
 
 Replace `x.y.z` below int the version tag with the latest [release number](https://github.com/mtrevisan/Boxon/releases).
@@ -96,6 +102,7 @@ You can get pre-built JARs (usable on JRE 11 or newer) from [Sonatype](https://o
 <br/>
 
 ## Table of Contents
+
 1. [Basic annotations](#annotation-basic)
     1. [Summary](#annotation-summary)
     2. [BindObject](#annotation-bindobject)
@@ -153,6 +160,7 @@ You can get pre-built JARs (usable on JRE 11 or newer) from [Sonatype](https://o
 
 <a name="annotation-basic"></a>
 ## Basic annotations
+
 Here the build-in basic annotations are described.
 
 You can use them as a starting point to build your own customized readers.
@@ -202,6 +210,7 @@ Note that [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_inject
 ### BindObject
 
 #### parameters
+
  - `condition`: The SpEL expression that determines if this field has to be read.
  - `type`: the Class of the Object of the single element of the array (defaults to `Object`).
  - `selectFrom`: the selection from which to choose the instance type.
@@ -211,12 +220,15 @@ Note that [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_inject
  - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
 
 #### description
+
 Reads a single Object.
 
 #### annotation type
+
 This annotation is bounded to a variable.
 
 #### example
+
 ```java
 class Version{
     @BindByte
@@ -237,6 +249,7 @@ private Version version;
 ### BindArray
 
 #### parameters
+
  - `condition`: The SpEL expression that determines if this field has to be read.
  - `type`: the Class of the Object of the single element of the array (defaults to `Object`).
  - `size`: the size of the array (can be a SpEL expression).
@@ -247,12 +260,15 @@ private Version version;
  - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
 
 #### description
+
 Reads an array of Objects.
 
 #### annotation type
+
 This annotation is bounded to a variable.
 
 #### example
+
 ```java
 class Version{
     @BindByte
@@ -287,6 +303,7 @@ private Position[] positions;
 ### BindArrayPrimitive
 
 #### parameters
+
  - `condition`: The SpEL expression that determines if this field has to be read.
  - `type`: the Class of primitive of the single element of the array.
  - `size`: the size of the array (can be a SpEL expression).
@@ -296,12 +313,15 @@ private Position[] positions;
  - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
 
 #### description
+
 Reads an array of primitives.
 
 #### annotation type
+
 This annotation is bounded to a variable.
 
 #### example
+
 ```java
 @BindArrayPrimitive(size = "2", type = byte.class)
 private byte[] array;
@@ -325,6 +345,7 @@ private BigDecimal[][] crashData;
 ### BindBitSet
 
 #### parameters
+
  - `condition`: The SpEL expression that determines if this field has to be read.
  - `size`: the number of bits to read (can be a SpEL expression).
  - `bitOrder`: the bit order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
@@ -333,12 +354,15 @@ private BigDecimal[][] crashData;
  - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
 
 #### description
+
 Reads a java `BitSet`.
 
 #### annotation type
+
 This annotation is bounded to a variable.
 
 #### example
+
 ```java
 @BindBitSet(size = "2")
 private BitSet bits;
@@ -349,18 +373,22 @@ private BitSet bits;
 ### BindByte
 
 #### parameters
+
  - `condition`: The SpEL expression that determines if this field has to be read.
  - `validator`: the Class of a validator (applied BEFORE the converter).
  - `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable. 
  - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
 
 #### description
+
 Reads a byte (or Byte).
 
 #### annotation type
+
 This annotation is bounded to a variable.
 
 #### example
+
 ```java
 @BindByte
 public Byte mask;
@@ -371,6 +399,7 @@ public Byte mask;
 ### BindShort
 
 #### parameters
+
  - `condition`: The SpEL expression that determines if this field has to be read.
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
  - `validator`: the Class of a validator (applied BEFORE the converter).
@@ -378,12 +407,15 @@ public Byte mask;
  - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
 
 #### description
+
 Reads a short (or Short).
 
 #### annotation type
+
 This annotation is bounded to a variable.
 
 #### example
+
 ```java
 @BindShort
 private short numberShort;
@@ -394,6 +426,7 @@ private short numberShort;
 ### BindInt
 
 #### parameters
+
  - `condition`: The SpEL expression that determines if this field has to be read.
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
  - `validator`: the Class of a validator (applied BEFORE the converter).
@@ -401,12 +434,15 @@ private short numberShort;
  - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
 
 #### description
+
 Reads an int (or Integer).
 
 #### annotation type
+
 This annotation is bounded to a variable.
 
 #### example
+
 ```java
 @BindInt
 private int numberInt;
@@ -417,6 +453,7 @@ private int numberInt;
 ### BindLong
 
 #### parameters
+
  - `condition`: The SpEL expression that determines if this field has to be read.
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
  - `validator`: the Class of a validator (applied BEFORE the converter).
@@ -424,12 +461,15 @@ private int numberInt;
  - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
 
 #### description
+
 Reads a long (or Long).
 
 #### annotation type
+
 This annotation is bounded to a variable.
 
 #### example
+
 ```java
 @BindLong
 private long numberLong;
@@ -440,6 +480,7 @@ private long numberLong;
 ### BindInteger
 
 #### parameters
+
  - `condition`: The SpEL expression that determines if this field has to be read.
  - `size`: the number of bits to read (can be a SpEL expression).
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
@@ -448,12 +489,15 @@ private long numberLong;
  - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
 
 #### description
+
 Reads a long number (primitive or not) or a BigInteger given the amount of bits.
 
 #### annotation type
+
 This annotation is bounded to a variable.
 
 #### example
+
 ```java
 @BindInteger(size = "3")
 private BigInteger number;
@@ -467,6 +511,7 @@ private BigInteger number;
 ### BindFloat
 
 #### parameters
+
  - `condition`: The SpEL expression that determines if this field has to be read.
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
  - `validator`: the Class of a validator (applied BEFORE the converter).
@@ -474,12 +519,15 @@ private BigInteger number;
  - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
 
 #### description
+
 Reads a float (or Float).
 
 #### annotation type
+
 This annotation is bounded to a variable.
 
 #### example
+
 ```java
 @BindFloat
 private float number;
@@ -490,6 +538,7 @@ private float number;
 ### BindDouble
 
 #### parameters
+
  - `condition`: The SpEL expression that determines if this field has to be read.
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN`.
  - `validator`: the Class of a validator (applied BEFORE the converter).
@@ -497,12 +546,15 @@ private float number;
  - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
 
 #### description
+
 Reads a double (or Double).
 
 #### annotation type
+
 This annotation is bounded to a variable.
 
 #### example
+
 ```java
 @BindDouble
 private double number;
@@ -513,6 +565,7 @@ private double number;
 ### BindString
 
 #### parameters
+
  - `condition`: The SpEL expression that determines if this field has to be read.
  - `charset`: the charset to be interpreted the string into (SHOULD BE the charset name, e.g. `UTF-8` (the default), `ISO-8859-1`, etc.).
  - `size`: the size of the string (can be a SpEL expression).
@@ -521,12 +574,15 @@ private double number;
  - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
 
 #### description
+
 Reads a String.
 
 #### annotation type
+
 This annotation is bounded to a variable.
 
 #### example
+
 ```java
 @BindString(size = "4")
 public String text;
@@ -537,6 +593,7 @@ public String text;
 ### BindStringTerminated
 
 #### parameters
+
  - `condition`: The SpEL expression that determines if this field has to be read.
  - `charset`: the charset to be interpreted the string into (SHOULD BE the charset name, e.g. `UTF-8` (the default), `ISO-8859-1`, etc.).
  - `terminator`: the byte that terminates the string (defaults to `\0`).
@@ -546,12 +603,15 @@ public String text;
  - `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
 
 #### description
+
 Reads a String.
 
 #### annotation type
+
 This annotation is bounded to a variable.
 
 #### example
+
 ```java
 @BindStringTerminated(terminator = ',')
 public String text;
@@ -561,23 +621,28 @@ public String text;
 
 <a name="annotation-special"></a>
 ## Special annotations
+
 Here are described the build-in special annotations.
 
 <a name="annotation-messageheader"></a>
 ### MessageHeader
 
 #### parameters
+
  - `start`: an array of possible start sequences (as string) for this message (defaults to empty).
  - `end`: a possible end sequence (as string) for this message (default to empty).
  - `charset`: the charset to be interpreted the `start` and `end` strings into (SHOULD BE the charset name, e.g. `UTF-8` (the default), `ISO-8859-1`, etc.).
 
 #### description
+
 Marks a POJO as an annotated message.
 
 #### annotation type
+
 This annotation is bounded to a class.
 
 #### example
+
 ```java
 @MessageHeader(start = "+", end = "-")
 private class Message{
@@ -590,20 +655,24 @@ private class Message{
 ### Skip
 
 #### parameters
+
  - `condition`: The SpEL expression that determines if this field has to be read.
  - `size`: the number of bits to be skipped (can be a SpEL expression).
  - `terminator`: the byte that terminates the skip (defaults to `\0`).
  - `consumeTerminator`: whether to consume the terminator (defaults to `true`).
 
 #### description
+
 Skips `size` bits, or until a terminator is found.
 
 If this should be placed at the end of the message, then a placeholder variable (that WILL NOT be read, and thus can be of any type) should be added.
 
 #### annotation type
+
 This annotation is bounded to a variable.
 
 #### example
+
 ```java
 @Skip(size = "3")
 @Skip(size = "1")
@@ -624,6 +693,7 @@ public Void lastUnreadPlaceholder;
 ### Checksum
 
 #### parameters
+
  - `type`: the Class of variable to be read.
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN` (used for primitives other than `byte`).
  - `skipStart`: how many bytes are to be skipped from the start of the message for the calculation of the checksum (defaults to 0).
@@ -632,14 +702,17 @@ public Void lastUnreadPlaceholder;
  - `startValue`: the starting value for the algorithm.
 
 #### description
+
 Reads a checksum.
 
 Compute the message checksum and compare it to the read variable once a message has been completely read.
 
 #### annotation type
+
 This annotation is bounded to a variable.
 
 #### example
+
 ```java
 @Checksum(type = short.class, skipStart = 4, skipEnd = 4, algorithm = CRC16.class, startValue = CRC16.START_VALUE_0xFFFF)
 private short checksum;
@@ -650,18 +723,22 @@ private short checksum;
 ### Evaluate
 
 #### parameters
+
  - `condition`: The SpEL expression that determines if this field has to be read.
  - `value`: the value to be assigned, or calculated (can be a SpEL expression).
 
 #### description
+
 Assign a constant, calculated value to a field.
 
 Note that the evaluations are done AFTER parsing the entire message.
 
 #### annotation type
+
 This annotation is bounded to a variable.
 
 #### example
+
 ```java
 @BindString(size = "4")
 private String messageHeader;
@@ -682,11 +759,13 @@ private String deviceTypeName;
 
 <a name="protocol-description"></a>
 ## Protocol description
+
 A description of the protocol can be obtained through the methods `Describer.describeTemplates` and `Describer.describeTemplate`.
 
 These returns a JSON with a description of all the annotations of the loaded templates.
 
 Example:
+
 ```java
 DeviceTypes deviceTypes = DeviceTypes.create()
     .with("QUECLINK_GB200S", (byte)0x46);
@@ -745,7 +824,11 @@ gives as output the following
 
 <a name="annotation-configuration"></a>
 ## Configuration annotations
+
+Configurations are mainly used to compose a message.
+
 Firstly, load the configuration as shown below:
+
 ```java
 //add the custom codec to the list of available codecs
 //(use one of the lines below)
@@ -754,18 +837,21 @@ core.withConfigurationsFrom(ConfigurationCustomTest.class); //loads all configur
 ```
 
 Then, to retrieve all the possible protocol version boundaries, call
+
 ```java
 Configurator configurator = Configurator.create(core);
 List<String> protocolVersionBoundaries = configurator.getProtocolVersionBoundaries();
 ```
 
 Then, to retrieve all the messages for a given protocol version, simply call
+
 ```java
 Configurator configurator = Configurator.create(core);
 List<Map<String, Object>> configurationMessages = configurator.getConfigurations("1.35");
 ```
 
 Moreover, to compose a configuration message (remember to also load the codecs), call
+
 ```java
 Configurator configurator = Configurator.create(core);
 Map<String, Object> configurationData = new HashMap<>();
@@ -783,6 +869,7 @@ ComposerResponse<String> composedMessage = configurator.composeConfiguration("1.
 ### ConfigurationHeader
 
 #### parameters
+
  - `shortDescription`: a short description of the field, mandatory, used as an identifier (and thus must be unique for every configuration message).
  - `longDescription`: a more expressive description, optional.
  - `minProtocol`: minimum protocol for which this configuration message is valid, optional.
@@ -792,12 +879,15 @@ ComposerResponse<String> composedMessage = configurator.composeConfiguration("1.
  - `charset`: charset of the message, optional.
 
 #### description
+
 Marks a POJO as an annotated configuration message.
 
 #### annotation type
+
 This annotation is bounded to a class.
 
 #### example
+
 ```java
 @ConfigurationHeader(start = "+", end = "-")
 private class ConfigurationMessage{
@@ -812,17 +902,21 @@ private class ConfigurationMessage{
 ### ConfigurationSkip
 
 #### parameters
+
 - `minProtocol`: minimum protocol for which this configuration message is valid, optional.
 - `maxProtocol`: maximum protocol for which this configuration message is valid, optional.
 - `terminator`: the string that terminates the skip (defaults to empty string), optional.
 
 #### description
+
 Skips a field.
 
 #### annotation type
+
 This annotation is bounded to a variable.
 
 #### example
+
 ```java
 @ConfigurationSkip(minProtocol = "1.2", maxProtocol = "1.3")
 @ConfigurationSkip
@@ -837,9 +931,10 @@ public String text;
 ### ConfigurationField
 
 #### parameters
+
 - `shortDescription`: a short description of the field, mandatory, used as an identifier (and thus must be unique inside every configuration message).
 - `longDescription`: a more expressive description, optional.
-- `unitOfMeasure`: the unit of measure, optional.
+- `unitOfMeasure`: the unit of measure, optional (the format should follow [UCUM](https://ucum.org/ucum.html)/[ISO 80000](https://en.wikipedia.org/wiki/Unified_Code_for_Units_of_Measure) standard).
 - `minProtocol`: minimum protocol for which this configuration message is valid, optional.
 - `maxProtocol`: maximum protocol for which this configuration message is valid, optional.
 - `minValue`: minimum value this field can assume, optional (alternative to `pattern` and `enumeration`).
@@ -852,12 +947,15 @@ public String text;
 - `terminator`: the string that terminates the skip (defaults to empty string), optional.
 
 #### description
+
 Defines a field of the configuration message.
 
 #### annotation type
+
 This annotation is bounded to a variable.
 
 #### example
+
 ```java
 @ConfigurationField(shortDescription = "Report interval", terminator = ",", minProtocol = "1.19", maxProtocol = "1.20",
 minValue = "90", maxValue = "86400", defaultValue = "3600", unitOfMeasure = "s")
@@ -871,6 +969,7 @@ public int motionlessReportInterval;
 ### CompositeConfigurationField
 
 #### parameters
+
 - `value`: a set of [CompositeSubField](#annotation-compositesubfield)
 - `shortDescription`: a short description of the field, mandatory, used as an identifier (and thus must be unique inside every configuration message).
 - `longDescription`: a more expressive description, optional.
@@ -882,12 +981,15 @@ public int motionlessReportInterval;
 - `terminator`: the string that terminates the skip (defaults to empty string), optional.
 
 #### description
+
 Defines a composite field of the configuration message.
 
 #### annotation type
+
 This annotation is bounded to a string variable.
 
 #### example
+
 ```java
 @CompositeConfigurationField(
    value = {
@@ -910,19 +1012,23 @@ public String downloadURL;
 ### CompositeSubField
 
 #### parameters
+
 - `shortDescription`: a short description of the field, mandatory, used as an identifier (and thus must be unique inside every configuration message).
 - `longDescription`: a more expressive description, optional.
-- `unitOfMeasure`: the unit of measure, optional.
+- `unitOfMeasure`: the unit of measure, optional (the format should follow [UCUM](https://ucum.org/ucum.html)/[ISO 80000](https://en.wikipedia.org/wiki/Unified_Code_for_Units_of_Measure) standard).
 - `pattern`: regex pattern this field must obey, optional.
 - `defaultValue`: default value, optional. If the variable is an array, then this field may represent an `or` between values (e.g. `ONE|TWO|THREE`), otherwise can be a single value (e.g. `TWO`). If not present, then the field is mandatory.
 
 #### description
+
 Defines a subfield of a composite field of the configuration message.
 
 #### annotation type
+
 This annotation is bounded to a string variable.
 
 #### example
+
 ```java
 @CompositeConfigurationField(
    value = {
@@ -945,22 +1051,26 @@ public String downloadURL;
 ### AlternativeConfigurationField
 
 #### parameters
+
 - `value`: a set of [AlternativeSubField](#annotation-alternativesubfield)
 - `shortDescription`: a short description of the field, mandatory, used as an identifier (and thus must be unique inside every configuration message).
 - `longDescription`: a more expressive description, optional.
-- `unitOfMeasure`: the unit of measure, optional.
+- `unitOfMeasure`: the unit of measure, optional (the format should follow [UCUM](https://ucum.org/ucum.html)/[ISO 80000](https://en.wikipedia.org/wiki/Unified_Code_for_Units_of_Measure) standard).
 - `minProtocol`: minimum protocol for which this configuration message is valid, optional.
 - `maxProtocol`: maximum protocol for which this configuration message is valid, optional.
 - `enumeration`: enumeration for this field, optional. If the field is a single enum, then each value of this enum is mutually exclusive.
 - `terminator`: the string that terminates the skip (defaults to empty string), optional.
 
 #### description
+
 Defines an alternative field of the configuration message.
 
 #### annotation type
+
 This annotation is bounded to a variable.
 
 #### example
+
 ```java
 @AlternativeConfigurationField(
    shortDescription = "Download protocol", terminator = ",", enumeration = DownloadProtocol.class,
@@ -979,8 +1089,9 @@ private DownloadProtocol downloadProtocol;
 ### AlternativeSubField
 
 #### parameters
+
 - `longDescription`: a more expressive description, optional.
-- `unitOfMeasure`: the unit of measure, optional.
+- `unitOfMeasure`: the unit of measure, optional (the format should follow [UCUM](https://ucum.org/ucum.html)/[ISO 80000](https://en.wikipedia.org/wiki/Unified_Code_for_Units_of_Measure) standard).
 - `minProtocol`: minimum protocol for which this configuration message is valid, optional.
 - `maxProtocol`: maximum protocol for which this configuration message is valid, optional.
 - `minValue`: minimum value this field can assume, optional (alternative to `pattern` and `enumeration`).
@@ -991,12 +1102,15 @@ private DownloadProtocol downloadProtocol;
 - `radix`: radix of the number field when written to the message, optional.
 
 #### description
+
 Defines a subfield of an alternative field of the configuration message.
 
 #### annotation type
+
 This annotation is bounded to a variable.
 
 #### example
+
 ```java
 @AlternativeConfigurationField(
    shortDescription = "Download timeout", terminator = ",", unitOfMeasure = "min",
@@ -1013,7 +1127,9 @@ private int downloadTimeout;
 
 <a name="descriptor"></a>
 ## Descriptor
+
 Return a description of the loaded templates.
+
 ```java
 Descriptor descriptor = Descriptor.create(core);
 
@@ -1025,7 +1141,9 @@ List<Map<String, Object>> descriptions = descriptor.describeTemplates();
 
 <a name="extractor"></a>
 ## Extractor
+
 Extract values from a POJO using <a href="https://tools.ietf.org/html/rfc6901">RFC6901</a> syntax.
+
 ```java
 Parser parser = Parser.create(core);
 ParserResponse result = parser.parse(payload);
@@ -1041,6 +1159,7 @@ int protocolVersionMinor = extractor.get("/protocolVersion/minor");
 
 <a name="how-to-spel"></a>
 ## How to write SpEL expressions
+
 Care should be taken in writing [SpEL expressions](https://docs.spring.io/spring/docs/4.3.10.RELEASE/spring-framework-reference/html/expressions.html) for the fields `condition`, and `size`.
 
 The root object is the outermost object. In order to evaluate a variable of a parent object the complete path should be used, as in `object1.variable1`. In order to evaluate a variable of a children object, that is the object currently scanned, the relative path should be used introduced by the special keyword `#self`, as in `#self.variable2`).
@@ -1048,6 +1167,7 @@ The root object is the outermost object. In order to evaluate a variable of a pa
 See also [Spring Expression Language (SpEL) Primer](https://dhruba.wordpress.com/2009/12/30/spring-expression-language-spel-primer/).
 
 ### Example:
+
 ```java
 class A{
     @BindByte
@@ -1072,6 +1192,7 @@ class OtherClass{
 
 <a name="how-to-extend"></a>
 ## How to extend the functionalities
+
 Boxon can handle array of primitives, bit, byte, short, int, long, float, double, and their object counterpart, as long as Object, BigInteger, string (with a given size, or with a terminator), and the special "[checksum](#annotation-checksum)".
 
 You can extend the basic functionalities through the application of converters as shown below in some examples. Here lies the power of Boxon.
@@ -1080,9 +1201,11 @@ Boxon already provides some build-in converters: BitsToBoolean, ShortToChar, Uns
 
 <a name="how-to-converters"></a>
 ### Converters
+
 NOTE that `decode` and `encode` MUST BE the inverse of each other, that is they MUST BE invertible (injective), or partly invertible, that is, otherwise said, `decode(x) = y iff encode(y) = x` (eventually in a restricted domain).
 
 #### DateTime converter (from Unix timestamp to ZonedDateTime)
+
 ```java
 @BindLong(converter = DateTimeUnixConverter.class)
 private ZonedDateTime eventTime;
@@ -1101,6 +1224,7 @@ public class DateTimeUnixConverter implements Converter<Long, ZonedDateTime>{
 ```
 
 #### DateTime converter (from YYYYMMDDHHMMSS as bytes to ZonedDateTime)
+
 ```java
 @BindArrayPrimitive(size = "7", type = byte.class, converter = DateTimeYYYYMMDDHHMMSSConverter.class)
 private ZonedDateTime eventTime;
@@ -1133,6 +1257,7 @@ public class DateTimeYYYYMMDDHHMMSSConverter implements Converter<byte[], ZonedD
 ```
 
 #### IMEI converter (from 'nibble' array to String, that is, each nibble represents a character of the IMEI)
+
 ```java
 @BindArrayPrimitive(size = "8", type = byte.class, converter = IMEIConverter.class, validator = IMEIValidator.class)
 private String imei;
@@ -1159,6 +1284,7 @@ public class IMEIConverter implements Converter<byte[], String>{
 ```
 
 #### RSSI converter (from encoded byte to short value)
+
 ```java
 @BindByte(converter = RSSIConverter.class)
 private short rssi;
@@ -1200,6 +1326,7 @@ public class RSSIConverter implements Converter<Byte, Short>{
 
 <a name="how-to-annotations"></a>
 ### Custom annotations
+
 You can also define your own annotation by define an annotation and implementing `CodecInterface` as in the following example.
 
 Optionally, the method `String condition()` could be defined.
@@ -1250,6 +1377,7 @@ core.withCodec(new VariableLengthByteArray());
 
 <a name="digging"></a>
 ## Digging into the code
+
 Almost for each base annotation there is a corresponding class defined into `Template.java` that manages the encoding and decoding of the underlying data.
 
 The other annotations are managed directly into `TemplateParser.java`, that is the main class that orchestrates the parsing of a single message with all of its annotations.
@@ -1296,6 +1424,7 @@ The `Parser` is also used to encode a message.
 ### Multi-message parser
 
 All you have to care about, for a simple example on multi-message automatically-loaded templates, is the `Parser`.
+
 ```java
 //optionally create a context
 Map<String, Object> context = ...
@@ -1331,6 +1460,7 @@ for(int index = 0; index < result.size(); index ++){
 ### Message composer
 
 The inverse of parsing is composing, and it's simply done as follows.
+
 ```java
 //compose the message
 Message data = ...;
@@ -1355,6 +1485,7 @@ Remember that the header that will be written is the first in `@MessageHeader`.
 
 <a name="contributing"></a>
 ## Contributing
+
 Please report issues to the [issue tracker](https://github.com/mtrevisan/boxon/issues) if you have any difficulties using this module, found a bug, or request a new feature.
 
 Pull requests are welcomed.
@@ -1367,6 +1498,7 @@ Pull requests are welcomed.
 
 <a name="changelog-3.0.0"></a>
 ### version 3.0.0 - 20220313
+
 - Added `CoreBuilder` to facilitate the creation of a `Core`: now it is no longer necessary to remember the order in which the methods should be called.
 - Added missing javadoc. Enhanced existing javadoc.
 - Added `BindBitSet` binding for java `BitSet`.
@@ -1379,12 +1511,14 @@ Pull requests are welcomed.
 
 <a name="changelog-2.1.2"></a>
 ### version 2.1.2 - 20210118
+
 - Added missing javadoc.
 - No more cycles between classes or packages.
 
 
 <a name="changelog-2.1.1"></a>
 ### version 2.1.1 - 20210114
+
 - Bug fix: `Evaluator` class is now exported.
 - Removed a package cycle.
 - General cleaning of the code (removed duplicated code, useless templates, etc.).
@@ -1392,6 +1526,7 @@ Pull requests are welcomed.
 
 <a name="changelog-2.1.0"></a>
 ### version 2.1.0 - 20211213
+
 - Made library thread-safe.
 - Added methods to retrieve a description of the protocol (in JSON format).
 - Decomposed and simplified `Parser` class.
@@ -1399,11 +1534,13 @@ Pull requests are welcomed.
 
 <a name="changelog-2.0.0"></a>
 ### version 2.0.0 - 20211127
+
 - Completely revised the packages, solving a lot of structural problems and refactorings that have to be done.
 - Added methods to retrieve the configurations, a.k.a. a JSON that tells the configuration parameters of certain annotated messages.
 
 <a name="changelog-1.1.0"></a>
 ### version 1.1.0 - 20200901
+
 - Better handling of NOP logger.
 - Abandoned [Reflections](https://github.com/ronmamo/reflections) in favor of [ClassGraph](https://github.com/classgraph/classgraph).
 - Added `BindArray.selectDefault` and `BindObject.selectDefault` to cope with default selector that has no prefix.
@@ -1426,21 +1563,25 @@ Pull requests are welcomed.
 
 <a name="changelog-1.0.0"></a>
 ### version 1.0.0 - 20200825
+
 - Speed-up execution.
 - Revision of the packages with removal of cycles.
 - Better handling of class retrieval (codecs and templates).
 
 <a name="changelog-0.0.2"></a>
 ### version 0.0.2 - 20200731
+
 - Final revision.
 
 <a name="changelog-0.0.1"></a>
 ### version 0.0.1 - 20200721
+
 - First revision.
 - Some more thoughts on how it should work.
 
 <a name="changelog-0.0.0"></a>
 ### version 0.0.0 - 20200629
+
 - First version.
 
 
@@ -1448,5 +1589,6 @@ Pull requests are welcomed.
 
 <a name="license"></a>
 ## License
+
 This project is licensed under [MIT license](http://opensource.org/licenses/MIT).
 For the full text of the license, see the [LICENSE](LICENSE) file.

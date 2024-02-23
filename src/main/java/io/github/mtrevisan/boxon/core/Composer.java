@@ -60,7 +60,7 @@ public final class Composer{
 	/**
 	 * Compose a message.
 	 *
-	 * @param data	The message to be composed.
+	 * @param data	The message (template) to be composed.
 	 * @param <T>	The class of the source data.
 	 * @return	The composition response.
 	 */

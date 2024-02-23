@@ -171,7 +171,7 @@ public final class Configurator{
 	/**
 	 * Compose a configuration message.
 	 *
-	 * @param protocolVersion	Protocol version.
+	 * @param protocolVersion	The protocol version (should follow [Semantic Versioning](https://semver.org/)).
 	 * @param messageStart	The initial bytes of the message, see {@link ConfigurationHeader#start()}.
 	 * @param data	The configuration message data to be composed.
 	 * @return	The composition response.
