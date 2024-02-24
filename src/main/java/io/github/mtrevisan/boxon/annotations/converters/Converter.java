@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 Mauro Trevisan
+ * Copyright (c) 2020-2024 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -25,7 +25,12 @@
 package io.github.mtrevisan.boxon.annotations.converters;
 
 
-/** The converter to be applied to value read from a bind annotation. */
+/**
+ * The converter to be applied to value read from a bind annotation.
+ *
+ * @param <IN>	The type of the input to the function.
+ * @param <OUT>	The type of the output to the function.
+ */
 public interface Converter<IN, OUT>{
 
 	/**
