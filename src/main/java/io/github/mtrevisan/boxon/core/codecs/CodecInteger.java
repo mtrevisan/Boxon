@@ -82,7 +82,7 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 	}
 
 	/**
-	 * Converts a BigInteger into a byte array ignoring the sign of the BigInteger, according to SRP specification.
+	 * Converts a {@link BigInteger} into a byte array ignoring the sign of the {@link BigInteger}, according to SRP specification.
 	 *
 	 * @param value	the value, must not be {@code null}.
 	 * @param size	The size in bits of the value.
@@ -100,7 +100,7 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 			array = newArray;
 		}
 
-		//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
+		//NOTE: need to reverse the bytes because {@link BigInteger} is big-endian and BitSet is little-endian
 		BitSetHelper.changeByteOrder(array, byteOrder);
 
 		return BitSet.valueOf(array);

@@ -189,14 +189,14 @@ public final class GenericHelper{
 		Class<?> cls = PRIMITIVE_NAME_TO_TYPE.get(baseName);
 
 		if(cls == null){
-			//not a primitive, try to load it through the ClassLoader
+			//not a primitive, try to load it through the `ClassLoader`
 			try{
 				cls = CLASS_LOADER.loadClass(baseName);
 			}
 			catch(final ClassNotFoundException ignored){}
 		}
 
-		//if we have an array get the array class
+		//if we have an array, get the array class
 		if(cls != null && arraysCount > 0)
 			cls = addArrayToType(cls, arraysCount);
 

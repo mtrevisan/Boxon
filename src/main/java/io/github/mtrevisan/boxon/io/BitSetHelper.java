@@ -102,7 +102,7 @@ public final class BitSetHelper{
 	 */
 	private static void byteReverse(final byte[] array){
 		for(int start = 0, end = array.length - 1; start < end; start ++, end --)
-			//swap array[start] with array[end]
+			//swap `array[start]` with `array[end]`
 			array[start] ^= (byte)(array[end] ^ (array[end] = array[start]));
 	}
 

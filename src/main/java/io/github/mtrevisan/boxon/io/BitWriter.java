@@ -74,7 +74,7 @@ public final class BitWriter extends BitWriterData implements BitWriterInterface
 
 	@Override
 	public void putShort(final short value, final ByteOrder byteOrder){
-		putValue(byteOrder == ByteOrder.BIG_ENDIAN? Short.reverseBytes(value): value, Short.SIZE);
+		putValue((byteOrder == ByteOrder.BIG_ENDIAN? Short.reverseBytes(value): value), Short.SIZE);
 	}
 
 	@Override

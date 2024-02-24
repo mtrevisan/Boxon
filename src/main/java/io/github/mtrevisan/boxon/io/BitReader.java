@@ -98,7 +98,7 @@ public final class BitReader extends BitReaderData implements BitReaderInterface
 
 	/**
 	 * Wraps a {@link ByteBuffer} into a buffer.
-	 * <p>The new buffer will be backed by the given byte buffer</p>.
+	 * <p>The new buffer will be backed by the given byte buffer.</p>
 	 *
 	 * @param buffer	The buffer that will back this buffer.
 	 * @return	The new bit buffer.
@@ -184,7 +184,7 @@ public final class BitReader extends BitReaderData implements BitReaderInterface
 		if(array.length < expectedLength)
 			array = Arrays.copyOf(array, expectedLength);
 
-		//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
+		//NOTE: need to reverse the bytes because `BigInteger` is big-endian and `BitSet` is little-endian
 		BitSetHelper.changeByteOrder(array, byteOrder);
 
 		return new BigInteger(extendSign(array));

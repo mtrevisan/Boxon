@@ -40,18 +40,21 @@ import java.util.BitSet;
 abstract class BitReaderData{
 
 	private static final class State{
+		/** The position in the byte buffer of the cached value. */
 		private int position;
-		private int remaining;
+		/** The <i>cache</i> used when reading bits. */
 		private byte cache;
+		/** The number of bits available (to read) within {@code cache}. */
+		private int remaining;
 
-		State(final int position, final int remaining, final byte cache){
-			set(position, remaining, cache);
+		State(final int position, final byte cache, final int remaining){
+			set(position, cache, remaining);
 		}
 
-		void set(final int position, final int remaining, final byte cache){
+		void set(final int position, final byte cache, final int remaining){
 			this.position = position;
-			this.remaining = remaining;
 			this.cache = cache;
+			this.remaining = remaining;
 		}
 	}
 
@@ -78,7 +81,7 @@ abstract class BitReaderData{
 	public final void createFallbackPoint(){
 		if(fallbackPoint != null)
 			//update current mark:
-			fallbackPoint.set(buffer.position(), remaining, cache);
+			fallbackPoint.set(buffer.position(), cache, remaining);
 		else
 			//create new mark
 			fallbackPoint = createState();
@@ -105,7 +108,7 @@ abstract class BitReaderData{
 	}
 
 	private State createState(){
-		return new State(buffer.position(), remaining, cache);
+		return new State(buffer.position(), cache, remaining);
 	}
 
 	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
