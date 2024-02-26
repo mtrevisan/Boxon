@@ -116,7 +116,7 @@ class ParserTest{
 			.create();
 		Parser parser = Parser.create(core);
 
-		byte[] payload = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
+		byte[] payload = toByteArray("+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$");
 		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertEquals(2, result.size());
@@ -139,7 +139,7 @@ class ParserTest{
 		Parser parser = Parser.create(core);
 
 		byte[] payload1 = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
-		byte[] payload2 = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
+		byte[] payload2 = toByteArray("+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$");
 		byte[] payload = addAll(payload1, payload2);
 		List<Response<byte[], Object>> result = parser.parse(payload);
 
@@ -163,13 +163,18 @@ class ParserTest{
 		Parser parser = Parser.create(core);
 
 		byte[] payload1 = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
-		byte[] payload2 = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
+		byte[] payload2 = toByteArray("+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$");
 		byte[] payload = addAll(payload2, payload1);
 		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertEquals(2, result.size());
 		Assertions.assertFalse(result.get(0).hasError());
 		Assertions.assertFalse(result.get(1).hasError());
+	}
+
+
+	private byte[] toByteArray(final String payload){
+		return payload.getBytes(StandardCharsets.ISO_8859_1);
 	}
 
 	private static byte[] addAll(final byte[] array1, final byte[] array2){

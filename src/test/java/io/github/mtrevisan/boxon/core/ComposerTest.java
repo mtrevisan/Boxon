@@ -87,7 +87,7 @@ class ComposerTest{
 		Composer composer = Composer.create(core);
 
 		//parse:
-		byte[] payload = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
+		byte[] payload = toByteArray("+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$");
 		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
@@ -101,6 +101,11 @@ class ComposerTest{
 
 		Assertions.assertFalse(composeResult.hasError());
 		Assertions.assertArrayEquals(payload, composeResult.getMessage());
+	}
+
+
+	private byte[] toByteArray(final String payload){
+		return payload.getBytes(StandardCharsets.ISO_8859_1);
 	}
 
 }

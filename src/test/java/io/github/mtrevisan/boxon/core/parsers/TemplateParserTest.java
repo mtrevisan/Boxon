@@ -120,7 +120,7 @@ class TemplateParserTest{
 
 	@Test
 	void parseSingleMessageASCII() throws FieldException{
-		byte[] payload = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
+		byte[] payload = toByteArray("+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$");
 		BitReaderInterface reader = BitReader.wrap(payload);
 
 		LoaderCodec loaderCodec = LoaderCodec.create();
@@ -403,6 +403,10 @@ class TemplateParserTest{
 		Assertions.assertArrayEquals(payload, reconstructedMessage);
 	}
 
+
+	private byte[] toByteArray(final String payload){
+		return payload.getBytes(StandardCharsets.ISO_8859_1);
+	}
 
 	private void postProcessCodecs(LoaderCodec loaderCodec, TemplateParserInterface templateParser, Evaluator evaluator){
 		loaderCodec.injectFieldInCodecs(TemplateParserInterface.class, templateParser);

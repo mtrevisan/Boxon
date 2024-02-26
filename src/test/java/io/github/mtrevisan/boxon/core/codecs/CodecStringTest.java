@@ -70,7 +70,7 @@ class CodecStringTest{
 
 			@Override
 			public String size(){
-				return Integer.toString(encodedValue.getBytes(StandardCharsets.US_ASCII).length);
+				return Integer.toString(toByteArray(encodedValue).length);
 			}
 
 			@Override
@@ -134,7 +134,7 @@ class CodecStringTest{
 
 			@Override
 			public String size(){
-				return Integer.toString(encodedValue.getBytes(StandardCharsets.UTF_8).length);
+				return Integer.toString(toByteArray(encodedValue).length);
 			}
 
 			@Override
@@ -160,6 +160,11 @@ class CodecStringTest{
 						return new ConverterChoice[0];
 					}
 				};
+			}
+
+
+			private byte[] toByteArray(final String payload){
+				return payload.getBytes(StandardCharsets.UTF_8);
 			}
 		};
 
@@ -232,7 +237,7 @@ class CodecStringTest{
 			}
 		};
 
-		BitReaderInterface reader = BitReader.wrap(encodedValue.getBytes(StandardCharsets.US_ASCII));
+		BitReaderInterface reader = BitReader.wrap(toByteArray(encodedValue));
 		Evaluator evaluator = Evaluator.create();
 		Object decoded = codec.decode(reader, annotation, null);
 
@@ -301,7 +306,7 @@ class CodecStringTest{
 			}
 		};
 
-		BitReaderInterface reader = BitReader.wrap(encodedValue.getBytes(StandardCharsets.US_ASCII));
+		BitReaderInterface reader = BitReader.wrap(toByteArray(encodedValue));
 		Evaluator evaluator = Evaluator.create();
 		Object decoded = codec.decode(reader, annotation, null);
 
@@ -313,6 +318,11 @@ class CodecStringTest{
 
 		//this seems strange, but it has to work like this
 		Assertions.assertArrayEquals(new byte[]{49, 50, 51, 65, 66, 67}, writer.array());
+	}
+
+
+	private byte[] toByteArray(final String payload){
+		return payload.getBytes(StandardCharsets.ISO_8859_1);
 	}
 
 }
