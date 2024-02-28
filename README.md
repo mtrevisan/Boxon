@@ -1147,8 +1147,8 @@ Extract values from a POJO using <a href="https://tools.ietf.org/html/rfc6901">R
 
 ```java
 Parser parser = Parser.create(core);
-ParserResponse result = parser.parse(payload);
-ACKMessageASCII parsedMessage = (ACKMessageASCII)result.getParsedMessageAt(0);
+List<Response<byte[], Object>> result = parser.parse(payload);
+ACKMessageASCII parsedMessage = (ACKMessageASCII)result.get(0).getMessage();
 Extractor extractor = Extractor.create(parsedMessage);
 
 String messageHeader = extractor.get("/messageHeader");
