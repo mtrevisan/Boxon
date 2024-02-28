@@ -28,18 +28,20 @@ import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
 import io.github.mtrevisan.boxon.annotations.bindings.BindBitSet;
+import io.github.mtrevisan.boxon.annotations.bindings.BindListSeparated;
 import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
+import io.github.mtrevisan.boxon.annotations.bindings.ObjectSeparatedChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.core.helpers.ValueOf;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.io.ParserDataType;
-import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.CharsetHelper;
 import io.github.mtrevisan.boxon.helpers.ContextHelper;
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
+import io.github.mtrevisan.boxon.io.ParserDataType;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -93,12 +95,30 @@ enum TemplateAnnotationValidator{
 			validateType(type, BindArray.class);
 			if(ParserDataType.isPrimitive(type))
 				throw AnnotationException.create("Bad annotation used for {}, should have been used the type `{}.class`",
-					BindArrayPrimitive.class.getSimpleName(), type.getSimpleName());
+					BindArray.class.getSimpleName(), type.getSimpleName());
 
 			final Class<? extends Converter<?, ?>> converter = binding.converter();
 			final ObjectChoices selectFrom = binding.selectFrom();
 			final Class<?> selectDefault = binding.selectDefault();
 			validateObjectChoice(field, converter, selectFrom, selectDefault, type);
+		}
+	},
+
+	LIST_SEPARATED(BindListSeparated.class){
+		@SuppressWarnings("DuplicatedCode")
+		@Override
+		void validate(final Field field, final Annotation annotation) throws AnnotationException{
+			final BindListSeparated binding = (BindListSeparated)annotation;
+			final Class<?> type = binding.type();
+			validateType(type, BindListSeparated.class);
+			final Class<?> fieldType = field.getType();
+			if(!fieldType.isArray())
+				throw AnnotationException.create("Bad annotation used for {}, should have been used the type `{}.class`",
+					BindListSeparated.class.getSimpleName(), type.getSimpleName());
+
+			final Class<? extends Converter<?, ?>> converter = binding.converter();
+			final ObjectSeparatedChoices selectFrom = binding.selectFrom();
+			validateObjectChoice(field, converter, selectFrom, type);
 		}
 	},
 
@@ -201,7 +221,7 @@ enum TemplateAnnotationValidator{
 
 	private static void validateObjectChoice(final Field field, final Class<? extends Converter<?, ?>> converter,
 			final ObjectChoices selectFrom, final Class<?> selectDefault, final Class<?> type) throws AnnotationException{
-		final int prefixSize = selectFrom.prefixSize();
+		final int prefixSize = selectFrom.headerLength();
 		validatePrefixSize(prefixSize);
 
 
@@ -209,7 +229,7 @@ enum TemplateAnnotationValidator{
 		validateObjectAlternatives(field, converter, alternatives, type, prefixSize);
 
 
-		validateObjectDefaultAlternative(alternatives, type, selectDefault);
+		validateObjectDefaultAlternative(alternatives.length, type, selectDefault);
 
 		validateConverter(field, type, converter);
 	}
@@ -222,33 +242,64 @@ enum TemplateAnnotationValidator{
 	}
 
 	private static void validateObjectAlternatives(final Field field, final Class<? extends Converter<?, ?>> converter,
-			final ObjectChoices.ObjectChoice[] alternatives, final Class<?> type, final int prefixSize) throws AnnotationException{
-		final boolean hasPrefixSize = (prefixSize > 0);
-		if(hasPrefixSize && alternatives.length == 0)
+			final ObjectChoices.ObjectChoice[] alternatives, final Class<?> type, final int prefixLength) throws AnnotationException{
+		final boolean hasPrefix = (prefixLength > 0);
+		if(hasPrefix && alternatives.length == 0)
 			throw AnnotationException.create("No alternatives present");
 		for(int i = 0; i < alternatives.length; i ++){
-			validateAlternative(alternatives[i], type, hasPrefixSize);
+			final ObjectChoices.ObjectChoice alternative = alternatives[i];
+			validateAlternative(alternative.type(), alternative.condition(), type, hasPrefix);
 
-			validateConverter(field, alternatives[i].type(), converter);
+			validateConverter(field, alternative.type(), converter);
 		}
 	}
 
-	private static void validateAlternative(final ObjectChoices.ObjectChoice alternative, final Class<?> type,
+
+	private static void validateObjectChoice(final Field field, final Class<? extends Converter<?, ?>> converter,
+			final ObjectSeparatedChoices selectFrom, final Class<?> type) throws AnnotationException{
+		final ObjectSeparatedChoices.ObjectSeparatedChoice[] alternatives = selectFrom.alternatives();
+		int minHeaderLength = Integer.MAX_VALUE;
+		for(int i = 0; i < alternatives.length; i ++){
+			final int headerLength = alternatives[i].header().length();
+			if(headerLength < minHeaderLength)
+				minHeaderLength = headerLength;
+		}
+		validateObjectAlternatives(field, converter, alternatives, type, minHeaderLength);
+
+
+		validateConverter(field, type, converter);
+	}
+
+	private static void validateObjectAlternatives(final Field field, final Class<? extends Converter<?, ?>> converter,
+			final ObjectSeparatedChoices.ObjectSeparatedChoice[] alternatives, final Class<?> type, final int prefixLength)
+			throws AnnotationException{
+		final boolean hasPrefix = (prefixLength > 0);
+		if(hasPrefix && alternatives.length == 0)
+			throw AnnotationException.create("No alternatives present");
+		for(int i = 0; i < alternatives.length; i ++){
+			final ObjectSeparatedChoices.ObjectSeparatedChoice alternative = alternatives[i];
+			validateAlternative(alternative.type(), alternative.condition(), type, hasPrefix);
+
+			validateConverter(field, alternative.type(), converter);
+		}
+	}
+
+	private static void validateAlternative(final Class<?> alternativeType, final String alternativeCondition, final Class<?> type,
 			final boolean hasPrefixSize) throws AnnotationException{
-		if(!type.isAssignableFrom(alternative.type()))
+		if(!type.isAssignableFrom(alternativeType))
 			throw AnnotationException.create("Type of alternative cannot be assigned to (super) type of annotation");
 
-		final String condition = alternative.condition();
-		if(condition.isEmpty())
+		if(alternativeCondition.isEmpty())
 			throw AnnotationException.create("All conditions must be non-empty");
-		if(hasPrefixSize ^ ContextHelper.containsPrefixReference(condition))
-			throw AnnotationException.create("All conditions must {}contain a reference to the prefix",
+		if(hasPrefixSize ^ ContextHelper.containsHeaderReference(alternativeCondition))
+			throw AnnotationException.create("All conditions must {}contain a reference to the header",
 				(hasPrefixSize? JavaHelper.EMPTY_STRING: "not "));
 	}
 
-	private static void validateObjectDefaultAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> type,
+
+	private static void validateObjectDefaultAlternative(final int alternativesCount, final Class<?> type,
 			final Class<?> selectDefault) throws AnnotationException{
-		if(selectDefault != void.class && alternatives.length == 0)
+		if(selectDefault != void.class && alternativesCount == 0)
 			throw AnnotationException.create("Useless empty alternative");
 		if(selectDefault != void.class && !type.isAssignableFrom(selectDefault))
 			throw AnnotationException.create("Type of default alternative cannot be assigned to (super) type of annotation");

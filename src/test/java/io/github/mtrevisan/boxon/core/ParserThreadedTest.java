@@ -54,7 +54,7 @@ class ParserThreadedTest{
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 		Core core = CoreBuilder.builder()
 			.withContext(context)
-			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
+			.withContextFunction(ParserTest.class.getDeclaredMethod("headerLength"))
 			.withDefaultCodecs()
 			.withTemplate(ACKMessageHex.class)
 			.create();
@@ -84,7 +84,7 @@ class ParserThreadedTest{
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 		Core core = CoreBuilder.builder()
 			.withContext(context)
-			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
+			.withContextFunction(ParserTest.class.getDeclaredMethod("headerLength"))
 			.withDefaultCodecs()
 			.withTemplate(ACKMessageHex.class)
 			.create();
@@ -120,7 +120,7 @@ class ParserThreadedTest{
 			() -> {
 				Core core = CoreBuilder.builder()
 					.withContext(context)
-					.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
+					.withContextFunction(ParserTest.class.getDeclaredMethod("headerLength"))
 					.withDefaultCodecs()
 					.withTemplate(ACKMessageHex.class)
 					.create();

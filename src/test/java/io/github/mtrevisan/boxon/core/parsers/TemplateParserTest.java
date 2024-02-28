@@ -73,7 +73,7 @@ class TemplateParserTest{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with("QUECLINK_GB200S", (byte)0x46);
 		evaluator.addToContext("deviceTypes", deviceTypes);
-		evaluator.addToContext(TemplateParserTest.class.getDeclaredMethod("headerSize"));
+		evaluator.addToContext(TemplateParserTest.class.getDeclaredMethod("headerLength"));
 		ACKMessageHex message = templateParser.decode(template, reader, null);
 		evaluator.addToContext("deviceTypes", null);
 
@@ -103,7 +103,7 @@ class TemplateParserTest{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with("QUECLINK_GB200S", (byte)0x46);
 		evaluator.addToContext("deviceTypes", deviceTypes);
-		evaluator.addToContext(TemplateParserTest.class.getDeclaredMethod("headerSize"));
+		evaluator.addToContext(TemplateParserTest.class.getDeclaredMethod("headerLength"));
 		ACKMessageHexByteChecksum message = templateParser.decode(template, reader, null);
 		evaluator.addToContext("deviceTypes", null);
 
@@ -114,7 +114,7 @@ class TemplateParserTest{
 		Assertions.assertEquals(new String(payload), new String(reconstructedMessage));
 	}
 
-	private static int headerSize(){
+	private static int headerLength(){
 		return 4;
 	}
 

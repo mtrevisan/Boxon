@@ -41,7 +41,7 @@ import java.time.ZonedDateTime;
 @MessageHeader(start = "-ACK", end = "\r\n")
 public class ACKMessageHexByteChecksum{
 
-	@BindString(size = "#headerSize()")
+	@BindString(size = "#headerLength()")
 	private String messageHeader;
 	@BindByte(converter = ACKMessageHex.MessageTypeConverter.class)
 	private String messageType;

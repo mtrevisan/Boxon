@@ -108,7 +108,7 @@ public class ACKMessageHex{
 	}
 
 
-	@BindString(size = "#headerSize()")
+	@BindString(size = "#headerLength()")
 	private String messageHeader;
 	@BindByte(converter = MessageTypeConverter.class)
 	private String messageType;

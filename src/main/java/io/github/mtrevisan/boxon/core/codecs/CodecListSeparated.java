@@ -24,24 +24,25 @@
  */
 package io.github.mtrevisan.boxon.core.codecs;
 
-import io.github.mtrevisan.boxon.annotations.bindings.BindArray;
-import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
+import io.github.mtrevisan.boxon.annotations.bindings.BindListSeparated;
+import io.github.mtrevisan.boxon.annotations.bindings.ObjectSeparatedChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
-import io.github.mtrevisan.boxon.helpers.Evaluator;
-import io.github.mtrevisan.boxon.helpers.Injected;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
+import io.github.mtrevisan.boxon.helpers.Evaluator;
+import io.github.mtrevisan.boxon.helpers.Injected;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.io.CodecInterface;
 import io.github.mtrevisan.boxon.io.ParserDataType;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
 
 
-final class CodecArray implements CodecInterface<BindArray>{
+final class CodecListSeparated implements CodecInterface<BindListSeparated>{
 
 	@SuppressWarnings("unused")
 	@Injected
@@ -53,53 +54,50 @@ final class CodecArray implements CodecInterface<BindArray>{
 
 	@Override
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject) throws FieldException{
-		final BindArray binding = extractBinding(annotation);
+		final BindListSeparated binding = extractBinding(annotation);
 
 		final BindingData bindingData = BindingDataBuilder.create(binding, rootObject, evaluator);
-		final int size = bindingData.evaluateSize();
-		CodecHelper.assertSizePositive(size);
 
 		final Class<?> bindingType = binding.type();
-		final Object[] array = createArray(bindingType, size);
-		if(bindingData.hasSelectAlternatives())
-			decodeWithAlternatives(reader, array, bindingData, rootObject);
+		final List<Object> list = createList(bindingType);
+		if(bindingData.hasSelectSeparatedAlternatives())
+			decodeWithAlternatives(reader, list, bindingData, rootObject);
 		else
-			decodeWithoutAlternatives(reader, array, bindingType);
+			decodeWithoutAlternatives(reader, list, bindingType);
 
-		return CodecHelper.convertValue(bindingData, array);
+		return CodecHelper.convertValue(bindingData, list);
 	}
 
-	@SuppressWarnings("unchecked")
-	private static <T> T[] createArray(final Class<? extends T> type, final int length) throws AnnotationException{
+	private static <T> List<T> createList(final Class<? extends T> type) throws AnnotationException{
 		if(ParserDataType.isPrimitive(type))
 			throw AnnotationException.create("Argument cannot be a primitive: {}", type);
 
-		return (T[])Array.newInstance(type, length);
+		return new ArrayList<>();
 	}
 
-	private void decodeWithAlternatives(final BitReaderInterface reader, final Object[] array, final BindingData bindingData,
-			final Object rootObject) throws FieldException{
-		for(int i = 0; i < array.length; i ++){
+	private void decodeWithAlternatives(final BitReaderInterface reader, final List<Object> list, final BindingData bindingData,
+		final Object rootObject) throws FieldException{
+		for(int i = 0; i < list.size(); i ++){
 			final Class<?> chosenAlternativeType = bindingData.chooseAlternativeType(reader);
 
 			//read object
 			final Template<?> subTemplate = templateParser.createTemplate(chosenAlternativeType);
-			array[i] = templateParser.decode(subTemplate, reader, rootObject);
+			list.set(i, templateParser.decode(subTemplate, reader, rootObject));
 		}
 	}
 
-	private void decodeWithoutAlternatives(final BitReaderInterface reader, final Object[] array, final Class<?> type)
-			throws FieldException{
+	private void decodeWithoutAlternatives(final BitReaderInterface reader, final List<Object> list, final Class<?> type)
+		throws FieldException{
 		final Template<?> template = templateParser.createTemplate(type);
 
-		for(int i = 0; i < array.length; i ++)
-			array[i] = templateParser.decode(template, reader, null);
+		for(int i = 0; i < list.size(); i ++)
+			list.set(i, templateParser.decode(template, reader, null));
 	}
 
 	@Override
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object rootObject, final Object value)
 			throws FieldException{
-		final BindArray binding = extractBinding(annotation);
+		final BindListSeparated binding = extractBinding(annotation);
 
 		final BindingData bindingData = BindingDataBuilder.create(binding, rootObject, evaluator);
 		bindingData.validate(value);
@@ -107,26 +105,24 @@ final class CodecArray implements CodecInterface<BindArray>{
 		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();
 		final Object[] array = CodecHelper.converterEncode(chosenConverter, value);
 
-		final int size = bindingData.evaluateSize();
-		CodecHelper.assertSizePositive(size);
-		CodecHelper.assertSizeEquals(size, Array.getLength(array));
-
-		if(bindingData.hasSelectAlternatives())
+		if(bindingData.hasSelectSeparatedAlternatives())
 			encodeWithAlternatives(writer, array, binding.selectFrom());
 		else
 			encodeWithoutAlternatives(writer, array, binding.type());
 	}
 
-	private void encodeWithAlternatives(final BitWriterInterface writer, final Object[] array, final ObjectChoices selectFrom)
+	private void encodeWithAlternatives(final BitWriterInterface writer, final Object[] array, final ObjectSeparatedChoices selectFrom)
 			throws FieldException{
-		final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
+		final ObjectSeparatedChoices.ObjectSeparatedChoice[] alternatives = selectFrom.alternatives();
 		for(int i = 0; i < array.length; i ++){
 			final Object elem = array[i];
 			final Class<?> type = elem.getClass();
 
-			final ObjectChoices.ObjectChoice chosenAlternative = CodecHelper.chooseAlternative(alternatives, type);
+			final ObjectSeparatedChoices.ObjectSeparatedChoice chosenAlternative = CodecHelper.chooseAlternative(alternatives, type);
 
 			CodecHelper.writeHeader(writer, chosenAlternative, selectFrom);
+			final byte terminator = selectFrom.terminator();
+			writer.putByte(terminator);
 
 			final Template<?> template = templateParser.createTemplate(type);
 

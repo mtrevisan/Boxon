@@ -289,10 +289,10 @@ private byte positionsCount;
 @BindArray(size = "positionsCount", type = Position.class,
    selectFrom = @ObjectChoices(prefixSize = 8,
         alternatives = {
-          @ObjectChoices.ObjectChoice(condition = "#prefix == 0", prefix = 0, type = PositionInvalid.class),
-          @ObjectChoices.ObjectChoice(condition = "#prefix == 1", prefix = 1, type = PositionAbsolute.class),
-          @ObjectChoices.ObjectChoice(condition = "#prefix == 2", prefix = 2, type = PositionRelative.class),
-          @ObjectChoices.ObjectChoice(condition = "#prefix == 3", prefix = 3, type = PositionSameAsPrevious.class)
+          @ObjectChoices.ObjectChoice(condition = "#header == 0", prefix = 0, type = PositionInvalid.class),
+          @ObjectChoices.ObjectChoice(condition = "#header == 1", prefix = 1, type = PositionAbsolute.class),
+          @ObjectChoices.ObjectChoice(condition = "#header == 2", prefix = 2, type = PositionRelative.class),
+          @ObjectChoices.ObjectChoice(condition = "#header == 3", prefix = 3, type = PositionSameAsPrevious.class)
        }
     ),
    converter = PositionsConverter.class)
@@ -772,7 +772,7 @@ DeviceTypes deviceTypes = DeviceTypes.create()
     .with("QUECLINK_GB200S", (byte)0x46);
 Core core = CoreBuilder.builder()
     .withContextPair("deviceTypes", deviceTypes)
-    .withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
+    .withContextFunction(ParserTest.class.getDeclaredMethod("headerLength"))
     .withDefaultCodecs()
     .withTemplate(ACKMessageHex.class)
    .create();
@@ -792,7 +792,7 @@ gives as output the following
    "fields": [
       {
          "charset": "UTF-8",
-         "size": "#headerSize()",
+         "size": "#headerLength()",
          "name": "messageHeader",
          "annotationType": "BindString",
          "fieldType": "java.lang.String"
@@ -815,7 +815,7 @@ gives as output the following
       }
    ],
    "context": {
-      "headerSize": "private static int io.github.mtrevisan.boxon.core.ParserTest.headerSize()",
+      "headerLength": "private static int io.github.mtrevisan.boxon.core.ParserTest.headerLength()",
       "deviceTypes": "[QUECLINK_GB200S (0x46)]"
    }
 }

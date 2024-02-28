@@ -22,57 +22,35 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.keys;
+package io.github.mtrevisan.boxon.core.codecs;
+
+import io.github.mtrevisan.boxon.annotations.bindings.ObjectSeparatedChoices;
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
+
+import java.lang.annotation.Annotation;
 
 
-/**
- * Holds the constants used as a key in the {@link io.github.mtrevisan.boxon.core.Descriptor Descriptor}.
- */
-public enum DescriberKey{
-	CONTEXT("context"),
-
-	HEADER("header"),
-	HEADER_START("start"),
-	HEADER_END("end"),
-	HEADER_CHARSET("charset"),
-
-	FIELDS("fields"),
-	FIELD_NAME("name"),
-	FIELD_TYPE("fieldType"),
-	ANNOTATION_TYPE("annotationType"),
-
-	BIND_CONDITION("condition"),
-	BIND_TYPE("type"),
-	BIND_SELECT_DEFAULT("selectDefault"),
-	BIND_CONVERTER("converter"),
-	BIND_SELECT_CONVERTER_FROM("selectConverterFrom"),
-	BIND_SIZE("size"),
-	BIND_BIT_ORDER("bitOrder"),
-	BIND_BYTE_ORDER("byteOrder"),
-	BIND_CHARSET("charset"),
-	BIND_TERMINATOR("terminator"),
-	BIND_CONSUME_TERMINATOR("consumeTerminator"),
-	BIND_HEADER("header"),
-	BIND_HEADER_LENGTH("headerLength"),
-	BIND_SKIP_START("skipStart"),
-	BIND_SKIP_END("skipEnd"),
-	BIND_ALGORITHM("algorithm"),
-	BIND_START_VALUE("startValue"),
-	BIND_VALUE("value"),
-	BIND_VALIDATOR("validator");
-
-
-	private final String name;
-
-
-	DescriberKey(final String name){
-		this.name = name;
-	}
-
+@SuppressWarnings("ClassExplicitlyAnnotation")
+final class NullObjectSeparatedChoice implements ObjectSeparatedChoices.ObjectSeparatedChoice{
 
 	@Override
-	public String toString(){
-		return name;
+	public Class<? extends Annotation> annotationType(){
+		return Annotation.class;
+	}
+
+	@Override
+	public String condition(){
+		return JavaHelper.EMPTY_STRING;
+	}
+
+	@Override
+	public String header(){
+		return null;
+	}
+
+	@Override
+	public Class<?> type(){
+		return Object.class;
 	}
 
 }

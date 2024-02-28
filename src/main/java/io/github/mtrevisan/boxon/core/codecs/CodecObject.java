@@ -78,7 +78,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 
 			final ObjectChoices.ObjectChoice chosenAlternative = CodecHelper.chooseAlternative(selectFrom.alternatives(), type);
 
-			CodecHelper.writePrefix(writer, chosenAlternative, selectFrom);
+			CodecHelper.writeHeader(writer, chosenAlternative, selectFrom);
 		}
 
 		bindingData.addToContext(value);

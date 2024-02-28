@@ -44,7 +44,7 @@ final class NullObjectChoice implements ObjectChoices.ObjectChoice{
 	}
 
 	@Override
-	public int prefix(){
+	public int header(){
 		return 0;
 	}
 

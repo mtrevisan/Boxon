@@ -46,20 +46,20 @@ class ParserTest{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with("QUECLINK_GB200S", (byte)0x46);
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
-		//if it is wanted `headerSize` to be a variable and not a method:
+		//if it is wanted `headerLength` to be a variable and not a method:
 		//- remove Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes); above
-		//- change @BindString(size = "#headerSize()") into @BindString(size = "#headerSize") in ACKMessageHex.messageHeader
-		//- remove .withContextFunction(ParserTest.class, "headerSize") below
+		//- change @BindString(size = "#headerLength()") into @BindString(size = "#headerLength") in ACKMessageHex.messageHeader
+		//- remove .withContextFunction(ParserTest.class, "headerLength") below
 		//- uncomment the below context map
 //		Map<String, Object> context = Map.of(
 //			"deviceTypes", deviceTypes,
-//			"headerSize", 4);
+//			"headerLength", 4);
 		Core core = CoreBuilder.builder()
 //			.withEventListener(EventLogger.getInstance())
 			.withDefaultCodecs()
 			.withTemplate(ACKMessageHex.class)
 			.withContext(context)
-			.withContextFunction(ParserTest.class, "headerSize")
+			.withContextFunction(ParserTest.class, "headerLength")
 			.create();
 		Parser parser = Parser.create(core);
 
@@ -78,7 +78,7 @@ class ParserTest{
 		System.out.println(watch.toString(20_000));
 	}
 
-	private static int headerSize(){
+	private static int headerLength(){
 		return 4;
 	}
 
@@ -90,7 +90,7 @@ class ParserTest{
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 		Core core = CoreBuilder.builder()
 			.withContext(context)
-			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
+			.withContextFunction(ParserTest.class.getDeclaredMethod("headerLength"))
 			.withDefaultCodecs()
 			.withTemplatesFrom(ACKMessageHex.class)
 			.create();
@@ -132,7 +132,7 @@ class ParserTest{
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 		Core core = CoreBuilder.builder()
 			.withContext(context)
-			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
+			.withContextFunction(ParserTest.class.getDeclaredMethod("headerLength"))
 			.withDefaultCodecs()
 			.withTemplatesFrom(ACKMessageHex.class)
 			.create();
@@ -156,7 +156,7 @@ class ParserTest{
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 		Core core = CoreBuilder.builder()
 			.withContext(context)
-			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
+			.withContextFunction(ParserTest.class.getDeclaredMethod("headerLength"))
 			.withDefaultCodecs()
 			.withTemplatesFrom(ACKMessageHex.class)
 			.create();

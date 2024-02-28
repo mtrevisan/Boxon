@@ -24,8 +24,6 @@
  */
 package io.github.mtrevisan.boxon.annotations.bindings;
 
-import io.github.mtrevisan.boxon.io.ByteOrder;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -34,58 +32,56 @@ import java.lang.annotation.Target;
 
 
 /**
- * Allow to define a number of choices, based on a header of a certain {@link #headerLength() length}.
+ * Allow to define a number of choices, based on a prefix.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.ANNOTATION_TYPE)
 @Documented
-public @interface ObjectChoices{
+public @interface ObjectSeparatedChoices{
 
 	/**
-	 * The number of bits to be read for determining the header.
-	 * <p>It MUST BE in the range {@code [0, }{@link Integer#SIZE}{@code ]}.</p>
+	 * The type of encoding used for the {@link String}.
 	 *
-	 * @return	The number of bits to be read for determining the header (defaults to {@code 0}).
+	 * @return	The type of encoding used (defaults to {@value io.github.mtrevisan.boxon.helpers.CharsetHelper#DEFAULT_CHARSET}).
 	 */
-	int headerLength() default 0;
+	String charset() default "UTF-8";
 
 	/**
-	 * The bit order to be considered when returning a representation of the first {@link #headerLength() size} bits read as a header.
+	 * The byte that terminates the {@link String}.
 	 *
-	 * @return	The byte order to be considered when returning a representation of the first {@link #headerLength() size} bits read as a header
-	 * 	(defaults to {@link ByteOrder#BIG_ENDIAN}).
+	 * @return	The terminator byte (defaults to {@code \0}).
 	 */
-	ByteOrder bitOrder() default ByteOrder.BIG_ENDIAN;
+	byte terminator() default '\0';
 
 	/**
 	 * The choices to select from.
 	 *
 	 * @return	The choices to select from (defaults to no alternatives).
 	 */
-	ObjectChoice[] alternatives() default {};
+	ObjectSeparatedChoice[] alternatives() default {};
 
 
 	/** The annotation holding a single choice. */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.ANNOTATION_TYPE)
 	@Documented
-	@interface ObjectChoice{
+	@interface ObjectSeparatedChoice{
 
 		/**
 		 * The condition that needs to hold, if an instance of {@link #type() type} is to be decoded.
-		 * <p>A SpEL expression with the header value in the context under the name {@code header}.</p>
+		 * <p>A SpEL expression with the prefix value in the context under the name {@code prefix}.</p>
 		 *
 		 * @return	The condition that needs to hold, if an instance of {@link #type() type} is to be decoded.
 		 */
 		String condition();
 
 		/**
-		 * The header to be written when serializing the object.
+		 * The prefix to be written when serializing the object.
 		 * <p>NOTE: this is the inverse of {@link #condition() condition}, if it contains a `#header` reference.</p>
 		 *
 		 * @return	The inverse of {@link #condition() condition}, if it contains a `#header` reference (defaults to {@code 0}).
 		 */
-		int header() default 0;
+		String header();
 
 		/**
 		 * The type to decode in case the {@link #condition()} holds.

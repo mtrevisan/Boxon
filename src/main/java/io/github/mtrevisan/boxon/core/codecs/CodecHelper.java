@@ -25,7 +25,9 @@
 package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
+import io.github.mtrevisan.boxon.annotations.bindings.ObjectSeparatedChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
+import io.github.mtrevisan.boxon.helpers.CharsetHelper;
 import io.github.mtrevisan.boxon.helpers.ConstructorHelper;
 import io.github.mtrevisan.boxon.helpers.ContextHelper;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
@@ -37,6 +39,7 @@ import io.github.mtrevisan.boxon.io.ByteOrder;
 import io.github.mtrevisan.boxon.io.ParserDataType;
 
 import java.lang.reflect.Array;
+import java.nio.charset.Charset;
 import java.util.BitSet;
 
 
@@ -68,17 +71,39 @@ final class CodecHelper{
 		throw new IllegalArgumentException("Cannot find a valid codec for type " + type.getSimpleName());
 	}
 
-	static void writePrefix(final BitWriterInterface writer, final ObjectChoices.ObjectChoice chosenAlternative,
+	static void writeHeader(final BitWriterInterface writer, final ObjectChoices.ObjectChoice chosenAlternative,
 			final ObjectChoices selectFrom){
-		//if chosenAlternative.condition() contains '#prefix', then write @ObjectChoice.prefix()
-		if(ContextHelper.containsPrefixReference(chosenAlternative.condition())){
-			final int prefixSize = selectFrom.prefixSize();
+		//if chosenAlternative.condition() contains '#header', then write @ObjectChoice.header()
+		if(ContextHelper.containsHeaderReference(chosenAlternative.condition())){
+			final int prefixSize = selectFrom.headerLength();
 			final ByteOrder prefixBitOrder = selectFrom.bitOrder();
 
-			BitSet bits = BitSet.valueOf(new long[]{chosenAlternative.prefix()});
+			BitSet bits = BitSet.valueOf(new long[]{chosenAlternative.header()});
 			bits = BitSetHelper.changeBitOrder(bits, prefixBitOrder);
 
 			writer.putBitSet(bits, prefixSize, ByteOrder.BIG_ENDIAN);
+		}
+	}
+
+	static ObjectSeparatedChoices.ObjectSeparatedChoice chooseAlternative(final ObjectSeparatedChoices.ObjectSeparatedChoice[] alternatives,
+			final Class<?> type){
+		for(int i = 0; i < alternatives.length; i ++){
+			final ObjectSeparatedChoices.ObjectSeparatedChoice alternative = alternatives[i];
+			if(alternative.type().isAssignableFrom(type))
+				return alternative;
+		}
+
+		throw new IllegalArgumentException("Cannot find a valid codec for type " + type.getSimpleName());
+	}
+
+	static void writeHeader(final BitWriterInterface writer, final ObjectSeparatedChoices.ObjectSeparatedChoice chosenAlternative,
+			final ObjectSeparatedChoices selectFrom){
+		//if chosenAlternative.condition() contains '#header', then write @ObjectSeparatedChoice.header()
+		if(ContextHelper.containsHeaderReference(chosenAlternative.condition())){
+			final String header = chosenAlternative.header();
+			final Charset charset = CharsetHelper.lookup(selectFrom.charset());
+
+			writer.putText(header, charset);
 		}
 	}
 

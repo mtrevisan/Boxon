@@ -26,8 +26,10 @@ package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
+import io.github.mtrevisan.boxon.annotations.bindings.ObjectSeparatedChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
+import io.github.mtrevisan.boxon.helpers.CharsetHelper;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
@@ -37,18 +39,21 @@ import io.github.mtrevisan.boxon.helpers.ContextHelper;
 import org.springframework.expression.EvaluationException;
 
 import java.lang.annotation.Annotation;
+import java.nio.charset.Charset;
 
 
 /** Data associated to an annotation. */
 final class BindingData{
 
 	private static final ObjectChoices.ObjectChoice EMPTY_CHOICE = new NullObjectChoice();
+	private static final ObjectSeparatedChoices.ObjectSeparatedChoice EMPTY_CHOICE_SEPARATED = new NullObjectSeparatedChoice();
 
 
 	private Class<?> type;
 	private String size;
 	private Class<?> selectDefault = void.class;
 	private ObjectChoices selectObjectFrom;
+	private ObjectSeparatedChoices selectObjectSeparatedFrom;
 	private final ConverterChoices selectConverterFrom;
 	private final Class<? extends Validator<?>> validator;
 	private final Class<? extends Converter<?, ?>> defaultConverter;
@@ -82,6 +87,10 @@ final class BindingData{
 
 	void setSelectObjectFrom(final ObjectChoices selectObjectFrom){
 		this.selectObjectFrom = selectObjectFrom;
+	}
+
+	void setSelectObjectSeparatedFrom(final ObjectSeparatedChoices selectObjectSeparatedFrom){
+		this.selectObjectSeparatedFrom = selectObjectSeparatedFrom;
 	}
 
 	/**
@@ -150,15 +159,28 @@ final class BindingData{
 	 * @param reader	The reader from which to read the prefix.
 	 */
 	private void addPrefixToContext(final BitReaderInterface reader){
-		final int prefixSize = selectObjectFrom.prefixSize();
+		final int prefixSize = selectObjectFrom.headerLength();
 		if(prefixSize > 0){
 			final ByteOrder prefixBitOrder = selectObjectFrom.bitOrder();
 			final long[] array = reader.getBitSet(prefixSize, prefixBitOrder)
 				.toLongArray();
 			final int prefix = (array.length > 0? (int)array[0]: 0);
 
-			evaluator.addToContext(ContextHelper.CONTEXT_CHOICE_PREFIX, prefix);
+			evaluator.addToContext(ContextHelper.CONTEXT_CHOICE_HEADER, prefix);
 		}
+	}
+
+	private ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives){
+		for(int i = 0; i < alternatives.length; i ++){
+			final ObjectChoices.ObjectChoice alternative = alternatives[i];
+			if(evaluator.evaluateBoolean(alternative.condition(), rootObject))
+				return alternative;
+		}
+		return EMPTY_CHOICE;
+	}
+
+	private static boolean isEmptyChoice(final ObjectChoices.ObjectChoice choice){
+		return (choice.annotationType() == Annotation.class);
 	}
 
 	/**
@@ -170,17 +192,64 @@ final class BindingData{
 		return (selectObjectFrom.alternatives().length > 0);
 	}
 
-	private static boolean isEmptyChoice(final ObjectChoices.ObjectChoice choice){
-		return (choice.annotationType() == Annotation.class);
+	/**
+	 * Gets the alternative class type that parses the next data.
+	 *
+	 * @param reader	The reader from which to read the data from.
+	 * @return	The class type of the chosen alternative.
+	 * @throws CodecException	If a codec cannot be found for the chosen alternative.
+	 */
+	Class<?> chooseAlternativeSeparatedType(final BitReaderInterface reader) throws CodecException{
+		if(!hasSelectAlternatives())
+			return type;
+
+		addHeaderToContext(reader);
+
+		final ObjectSeparatedChoices.ObjectSeparatedChoice[] alternatives = selectObjectSeparatedFrom.alternatives();
+		final ObjectSeparatedChoices.ObjectSeparatedChoice chosenAlternative = chooseAlternative(alternatives);
+		final Class<?> chosenAlternativeType = (!isEmptyChoice(chosenAlternative)
+			? chosenAlternative.type()
+			: selectDefault);
+
+		if(chosenAlternativeType == void.class)
+			throw CodecException.create("Cannot find a valid codec from given alternatives for {}",
+				rootObject.getClass().getSimpleName());
+
+		return chosenAlternativeType;
 	}
 
-	private ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives){
+	/**
+	 * Add the prefix to the evaluator context if needed.
+	 *
+	 * @param reader	The reader from which to read the header.
+	 */
+	private void addHeaderToContext(final BitReaderInterface reader){
+		final byte terminator = selectObjectSeparatedFrom.terminator();
+		final Charset charset = CharsetHelper.lookup(selectObjectSeparatedFrom.charset());
+		final String header = reader.getTextUntilTerminatorWithoutConsuming(terminator, charset);
+		evaluator.addToContext(ContextHelper.CONTEXT_CHOICE_HEADER, header);
+	}
+
+	/**
+	 * Whether the select-object-separated-from binding has any alternatives.
+	 *
+	 * @return	Whether the select-object-separated-from binding has any alternatives.
+	 */
+	boolean hasSelectSeparatedAlternatives(){
+		return (selectObjectSeparatedFrom.alternatives().length > 0);
+	}
+
+	private ObjectSeparatedChoices.ObjectSeparatedChoice chooseAlternative(final ObjectSeparatedChoices.ObjectSeparatedChoice[] alternatives){
 		for(int i = 0; i < alternatives.length; i ++){
-			final ObjectChoices.ObjectChoice alternative = alternatives[i];
+			final ObjectSeparatedChoices.ObjectSeparatedChoice alternative = alternatives[i];
 			if(evaluator.evaluateBoolean(alternative.condition(), rootObject))
 				return alternative;
 		}
-		return EMPTY_CHOICE;
+		return EMPTY_CHOICE_SEPARATED;
+	}
+
+	private static boolean isEmptyChoice(final ObjectSeparatedChoices.ObjectSeparatedChoice choice){
+		return (choice.annotationType() == Annotation.class);
 	}
 
 	/**
