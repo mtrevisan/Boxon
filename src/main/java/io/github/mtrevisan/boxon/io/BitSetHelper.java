@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 Mauro Trevisan
+ * Copyright (c) 2020-2024 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -102,7 +102,7 @@ public final class BitSetHelper{
 	 */
 	private static void byteReverse(final byte[] array){
 		for(int start = 0, end = array.length - 1; start < end; start ++, end --)
-			//swap array[start] with array[end]
+			//swap `array[start]` with `array[end]`
 			array[start] ^= (byte)(array[end] ^ (array[end] = array[start]));
 	}
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 Mauro Trevisan
+ * Copyright (c) 2020-2024 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -42,6 +42,8 @@ import java.util.BitSet;
 
 
 /**
+ * A reader bit-by-bit from a byte buffer or byte array.
+ *
  * @see <a href="https://github.com/jhg023/BitBuffer/blob/master/src/main/java/bitbuffer/BitBuffer.java">BitBuffer</a>
  */
 @SuppressWarnings("WeakerAccess")
@@ -96,7 +98,7 @@ public final class BitReader extends BitReaderData implements BitReaderInterface
 
 	/**
 	 * Wraps a {@link ByteBuffer} into a buffer.
-	 * <p>The new buffer will be backed by the given byte buffer</p>.
+	 * <p>The new buffer will be backed by the given byte buffer.</p>
 	 *
 	 * @param buffer	The buffer that will back this buffer.
 	 * @return	The new bit buffer.
@@ -182,7 +184,7 @@ public final class BitReader extends BitReaderData implements BitReaderInterface
 		if(array.length < expectedLength)
 			array = Arrays.copyOf(array, expectedLength);
 
-		//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
+		//NOTE: need to reverse the bytes because `BigInteger` is big-endian and `BitSet` is little-endian
 		BitSetHelper.changeByteOrder(array, byteOrder);
 
 		return new BigInteger(extendSign(array));
@@ -235,6 +237,11 @@ public final class BitReader extends BitReaderData implements BitReaderInterface
 	}
 
 	@Override
+	public String getTextUntilTerminator(final byte terminator){
+		return getTextUntilTerminator(terminator, StandardCharsets.UTF_8);
+	}
+
+	@Override
 	public String getTextUntilTerminator(final byte terminator, final Charset charset){
 		String text = null;
 		try(
@@ -249,8 +256,17 @@ public final class BitReader extends BitReaderData implements BitReaderInterface
 	}
 
 	@Override
-	public String getTextUntilTerminator(final byte terminator){
-		return getTextUntilTerminator(terminator, StandardCharsets.UTF_8);
+	public String getTextUntilTerminatorWithoutConsuming(final byte terminator, final Charset charset){
+		String text = null;
+		try(
+			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			final OutputStreamWriter osw = new OutputStreamWriter(baos, charset)){
+			getTextUntilTerminatorWithoutConsuming(osw, terminator);
+
+			text = baos.toString(charset);
+		}
+		catch(final IOException ignored){}
+		return text;
 	}
 
 }

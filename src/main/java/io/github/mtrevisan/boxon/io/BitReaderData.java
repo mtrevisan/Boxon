@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 Mauro Trevisan
+ * Copyright (c) 2020-2024 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -40,18 +40,21 @@ import java.util.BitSet;
 abstract class BitReaderData{
 
 	private static final class State{
+		/** The position in the byte buffer of the cached value. */
 		private int position;
-		private int remaining;
+		/** The <i>cache</i> used when reading bits. */
 		private byte cache;
+		/** The number of bits available (to read) within {@code cache}. */
+		private int remaining;
 
-		State(final int position, final int remaining, final byte cache){
-			set(position, remaining, cache);
+		State(final int position, final byte cache, final int remaining){
+			set(position, cache, remaining);
 		}
 
-		void set(final int position, final int remaining, final byte cache){
+		void set(final int position, final byte cache, final int remaining){
 			this.position = position;
-			this.remaining = remaining;
 			this.cache = cache;
+			this.remaining = remaining;
 		}
 	}
 
@@ -78,7 +81,7 @@ abstract class BitReaderData{
 	public final void createFallbackPoint(){
 		if(fallbackPoint != null)
 			//update current mark:
-			fallbackPoint.set(buffer.position(), remaining, cache);
+			fallbackPoint.set(buffer.position(), cache, remaining);
 		else
 			//create new mark
 			fallbackPoint = createState();
@@ -105,7 +108,7 @@ abstract class BitReaderData{
 	}
 
 	private State createState(){
-		return new State(buffer.position(), remaining, cache);
+		return new State(buffer.position(), cache, remaining);
 	}
 
 	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
@@ -200,6 +203,29 @@ abstract class BitReaderData{
 		for(Byte byteRead = peekByte(); byteRead != null && byteRead != terminator; byteRead = peekByte())
 			os.write(getByte());
 		os.flush();
+	}
+
+	/**
+	 * Retrieve text until a terminator is found. Not bytes are consumed.
+	 *
+	 * @param os	The stream to write to.
+	 * @param terminator	The terminator.
+	 * @throws IOException	If an I/O error occurs.
+	 */
+	protected final void getTextUntilTerminatorWithoutConsuming(final OutputStreamWriter os, final byte terminator) throws IOException{
+		//make a copy of internal variables
+		final State originalState = createState();
+
+		try{
+			getTextUntilTerminator(os, terminator);
+		}
+		catch(final BufferUnderflowException ignored){
+			//trap end-of-buffer
+		}
+		finally{
+			//restore original variables
+			restoreState(originalState);
+		}
 	}
 
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 Mauro Trevisan
+ * Copyright (c) 2020-2024 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -31,6 +31,8 @@ import java.nio.charset.StandardCharsets;
 
 
 /**
+ * A writer bit-by-bit to a byte array.
+ *
  * @see <a href="https://graphics.stanford.edu/~seander/bithacks.html">Bit Twiddling Hacks</a>
  * @see <a href="https://git.irsamc.ups-tlse.fr/scemama/Bit-Twiddling-Hacks/">Bit Twiddling Hacks</a>
  */
@@ -72,7 +74,7 @@ public final class BitWriter extends BitWriterData implements BitWriterInterface
 
 	@Override
 	public void putShort(final short value, final ByteOrder byteOrder){
-		putValue(byteOrder == ByteOrder.BIG_ENDIAN? Short.reverseBytes(value): value, Short.SIZE);
+		putValue((byteOrder == ByteOrder.BIG_ENDIAN? Short.reverseBytes(value): value), Short.SIZE);
 	}
 
 	@Override

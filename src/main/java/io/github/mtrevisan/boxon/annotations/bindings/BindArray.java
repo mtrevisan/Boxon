@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 Mauro Trevisan
+ * Copyright (c) 2020-2024 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -67,9 +67,9 @@ public @interface BindArray{
 	 * private A[] array;	//array will contain instances of B
 	 * }</pre>
 	 *
-	 * @return	The type of object to be inserted in the array.
+	 * @return	The type of object to be inserted in the array (defaults to {@link Object}).
 	 */
-	Class<?> type();
+	Class<?> type() default Object.class;
 
 	/**
 	 * The SpEL expression evaluating to the size of the array.

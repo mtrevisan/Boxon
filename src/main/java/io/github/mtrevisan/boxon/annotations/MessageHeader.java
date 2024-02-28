@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 Mauro Trevisan
+ * Copyright (c) 2020-2024 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -42,15 +42,15 @@ public @interface MessageHeader{
 
 	/**
 	 * The initial bytes that determines the type of message.
-	 * <p>This SHOULD be read by the protocol of a single message.</p>
+	 * <p>This SHOULD be read by the template of a message.</p>
 	 *
 	 * @return	The header bytes of this message.
 	 */
 	String[] start();
 
 	/**
-	 * The final bytes that determines the type of message.
-	 * <p>This SHOULD NOT be read by the protocol of a single message.</p>
+	 * The final bytes that closes the message.
+	 * <p>This SHOULD NOT be read by the template of a message.</p>
 	 *
 	 * @return	The tail bytes of this message (defaults to empty string).
 	 */

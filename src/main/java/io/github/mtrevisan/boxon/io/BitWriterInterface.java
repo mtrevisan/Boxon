@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 Mauro Trevisan
+ * Copyright (c) 2020-2024 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -31,6 +31,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.BitSet;
 
 
+/** Interface for a writer bit-by-bit. */
 public interface BitWriterInterface{
 
 	/**

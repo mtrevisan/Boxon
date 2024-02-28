@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 Mauro Trevisan
+ * Copyright (c) 2020-2024 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -51,7 +51,7 @@ class ComposerThreadedTest{
 			.with("QUECLINK_GB200S", (byte)0x46);
 		Core core = CoreBuilder.builder()
 			.withContextPair("deviceTypes", deviceTypes)
-			.withContextFunction(ParserTest.class, "headerSize")
+			.withContextFunction(ParserTest.class, "headerLength")
 			.withDefaultCodecs()
 			.withTemplatesFrom(ACKMessageHex.class)
 			.create();
@@ -77,7 +77,7 @@ class ComposerThreadedTest{
 			.with("QUECLINK_GB200S", (byte)0x46);
 		Core core = CoreBuilder.builder()
 			.withContextPair("deviceTypes", deviceTypes)
-			.withContextFunction(ParserTest.class, "headerSize")
+			.withContextFunction(ParserTest.class, "headerLength")
 			.withDefaultCodecs()
 			.withTemplatesFrom(ACKMessageHex.class)
 			.create();
@@ -110,7 +110,7 @@ class ComposerThreadedTest{
 			() -> {
 				Core core = CoreBuilder.builder()
 					.withContextPair("deviceTypes", deviceTypes)
-					.withContextFunction(ParserTest.class, "headerSize")
+					.withContextFunction(ParserTest.class, "headerLength")
 					.withDefaultCodecs()
 					.withTemplatesFrom(ACKMessageHex.class)
 					.create();

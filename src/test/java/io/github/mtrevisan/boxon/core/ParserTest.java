@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 Mauro Trevisan
+ * Copyright (c) 2020-2024 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -46,20 +46,20 @@ class ParserTest{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with("QUECLINK_GB200S", (byte)0x46);
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
-		//if it is wanted `headerSize` to be a variable and not a method:
+		//if it is wanted `headerLength` to be a variable and not a method:
 		//- remove Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes); above
-		//- change @BindString(size = "#headerSize()") into @BindString(size = "#headerSize") in ACKMessageHex.messageHeader
-		//- remove .withContextFunction(ParserTest.class, "headerSize") below
+		//- change @BindString(size = "#prefixLength()") into @BindString(size = "#headerLength") in ACKMessageHex.messageHeader
+		//- remove .withContextFunction(ParserTest.class, "headerLength") below
 		//- uncomment the below context map
 //		Map<String, Object> context = Map.of(
 //			"deviceTypes", deviceTypes,
-//			"headerSize", 4);
+//			"headerLength", 4);
 		Core core = CoreBuilder.builder()
 //			.withEventListener(EventLogger.getInstance())
 			.withDefaultCodecs()
 			.withTemplate(ACKMessageHex.class)
 			.withContext(context)
-			.withContextFunction(ParserTest.class, "headerSize")
+			.withContextFunction(ParserTest.class, "headerLength")
 			.create();
 		Parser parser = Parser.create(core);
 
@@ -78,7 +78,7 @@ class ParserTest{
 		System.out.println(watch.toString(20_000));
 	}
 
-	private static int headerSize(){
+	private static int headerLength(){
 		return 4;
 	}
 
@@ -90,7 +90,7 @@ class ParserTest{
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 		Core core = CoreBuilder.builder()
 			.withContext(context)
-			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
+			.withContextFunction(ParserTest.class.getDeclaredMethod("headerLength"))
 			.withDefaultCodecs()
 			.withTemplatesFrom(ACKMessageHex.class)
 			.create();
@@ -116,7 +116,7 @@ class ParserTest{
 			.create();
 		Parser parser = Parser.create(core);
 
-		byte[] payload = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
+		byte[] payload = toByteArray("+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$");
 		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertEquals(2, result.size());
@@ -132,14 +132,14 @@ class ParserTest{
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 		Core core = CoreBuilder.builder()
 			.withContext(context)
-			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
+			.withContextFunction(ParserTest.class.getDeclaredMethod("headerLength"))
 			.withDefaultCodecs()
 			.withTemplatesFrom(ACKMessageHex.class)
 			.create();
 		Parser parser = Parser.create(core);
 
 		byte[] payload1 = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
-		byte[] payload2 = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
+		byte[] payload2 = toByteArray("+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$");
 		byte[] payload = addAll(payload1, payload2);
 		List<Response<byte[], Object>> result = parser.parse(payload);
 
@@ -156,20 +156,25 @@ class ParserTest{
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 		Core core = CoreBuilder.builder()
 			.withContext(context)
-			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
+			.withContextFunction(ParserTest.class.getDeclaredMethod("headerLength"))
 			.withDefaultCodecs()
 			.withTemplatesFrom(ACKMessageHex.class)
 			.create();
 		Parser parser = Parser.create(core);
 
 		byte[] payload1 = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
-		byte[] payload2 = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
+		byte[] payload2 = toByteArray("+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$");
 		byte[] payload = addAll(payload2, payload1);
 		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertEquals(2, result.size());
 		Assertions.assertFalse(result.get(0).hasError());
 		Assertions.assertFalse(result.get(1).hasError());
+	}
+
+
+	private byte[] toByteArray(final String payload){
+		return payload.getBytes(StandardCharsets.ISO_8859_1);
 	}
 
 	private static byte[] addAll(final byte[] array1, final byte[] array2){

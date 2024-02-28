@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 Mauro Trevisan
+ * Copyright (c) 2020-2024 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -26,12 +26,12 @@ package io.github.mtrevisan.boxon.core.codecs.queclink;
 
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
+import io.github.mtrevisan.boxon.annotations.configurations.BooleanType;
 import io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.CompositeSubField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
-import io.github.mtrevisan.boxon.annotations.configurations.BooleanType;
 
 
 @ConfigurationHeader(longDescription = "The command AT+GTREG is used to do things.", shortDescription = "AT+GTREG", maxProtocol = "2.8",

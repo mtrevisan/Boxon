@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 Mauro Trevisan
+ * Copyright (c) 2020-2024 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -44,12 +44,12 @@ public final class ContextHelper{
 
 
 	/**
-	 * Whether the given condition contains a prefix parameter.
+	 * Whether the given condition contains a header parameter.
 	 *
 	 * @param condition	The condition.
 	 * @return	Whether the prefix parameter is contained.
 	 */
-	public static boolean containsPrefixReference(final CharSequence condition){
+	public static boolean containsHeaderReference(final CharSequence condition){
 		return CONTEXT_PREFIXED_CHOICE_PREFIX.matcher(condition)
 			.find();
 	}

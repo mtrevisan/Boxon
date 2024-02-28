@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 Mauro Trevisan
+ * Copyright (c) 2020-2024 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -49,7 +49,7 @@ class ComposerTest{
 			.with("QUECLINK_GB200S", (byte)0x46);
 		Core core = CoreBuilder.builder()
 			.withContextPair("deviceTypes", deviceTypes)
-			.withContextFunction(ParserTest.class, "headerSize")
+			.withContextFunction(ParserTest.class, "headerLength")
 			.withDefaultCodecs()
 			.withTemplatesFrom(ACKMessageHex.class)
 			.create();
@@ -87,7 +87,7 @@ class ComposerTest{
 		Composer composer = Composer.create(core);
 
 		//parse:
-		byte[] payload = "+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$".getBytes(StandardCharsets.ISO_8859_1);
+		byte[] payload = toByteArray("+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$");
 		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
@@ -101,6 +101,11 @@ class ComposerTest{
 
 		Assertions.assertFalse(composeResult.hasError());
 		Assertions.assertArrayEquals(payload, composeResult.getMessage());
+	}
+
+
+	private byte[] toByteArray(final String payload){
+		return payload.getBytes(StandardCharsets.ISO_8859_1);
 	}
 
 }

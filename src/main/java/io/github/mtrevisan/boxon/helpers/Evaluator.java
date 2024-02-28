@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 Mauro Trevisan
+ * Copyright (c) 2020-2024 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -47,7 +47,7 @@ import java.util.Objects;
  */
 public final class Evaluator{
 
-	private static final class BoxonEvaluationContext extends StandardEvaluationContext{
+	private static final class EvaluationContext extends StandardEvaluationContext{
 
 		private final Map<String, Object> backupContext = new HashMap<>(0);
 
@@ -85,7 +85,7 @@ public final class Evaluator{
 	}
 
 
-	private final BoxonEvaluationContext context;
+	private final EvaluationContext context;
 
 
 	/**
@@ -99,9 +99,9 @@ public final class Evaluator{
 
 
 	private Evaluator(){
-		context = new BoxonEvaluationContext();
+		context = new EvaluationContext();
 		//trick to allow accessing private fields
-		context.addPropertyAccessor(new MyReflectivePropertyAccessor());
+		context.addPropertyAccessor(new ReflectiveProperty());
 	}
 
 
@@ -206,7 +206,7 @@ public final class Evaluator{
 	}
 
 
-	private static class MyReflectivePropertyAccessor extends ReflectivePropertyAccessor{
+	private static class ReflectiveProperty extends ReflectivePropertyAccessor{
 		@Override
 		protected final Field findField(final String name, Class<?> cls, final boolean mustBeStatic){
 			Field field = null;

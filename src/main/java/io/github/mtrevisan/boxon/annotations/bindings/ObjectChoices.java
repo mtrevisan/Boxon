@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 Mauro Trevisan
+ * Copyright (c) 2020-2024 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -34,7 +34,7 @@ import java.lang.annotation.Target;
 
 
 /**
- * Allow to define a number of choices, based on a prefix of a certain {@link #prefixSize() size}.
+ * Allow to define a number of choices, based on a header of a certain {@link #prefixLength() length}.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.ANNOTATION_TYPE)
@@ -42,17 +42,17 @@ import java.lang.annotation.Target;
 public @interface ObjectChoices{
 
 	/**
-	 * The number of bits to be read for determining the prefix.
+	 * The number of bits to be read for determining the header.
 	 * <p>It MUST BE in the range {@code [0, }{@link Integer#SIZE}{@code ]}.</p>
 	 *
-	 * @return	The number of bits to be read for determining the prefix (defaults to {@code 0}).
+	 * @return	The number of bits to be read for determining the header (defaults to {@code 0}).
 	 */
-	int prefixSize() default 0;
+	int prefixLength() default 0;
 
 	/**
-	 * The bit order to be considered when returning a representation of the first {@link #prefixSize() size} bits read as a prefix.
+	 * The bit order to be considered when returning a representation of the first {@link #prefixLength() length} bits read as a header.
 	 *
-	 * @return	The byte order to be considered when returning a representation of the first {@link #prefixSize() size} bits read as a prefix
+	 * @return	The byte order to be considered when returning a representation of the first {@link #prefixLength() length} bits read as a header
 	 * 	(defaults to {@link ByteOrder#BIG_ENDIAN}).
 	 */
 	ByteOrder bitOrder() default ByteOrder.BIG_ENDIAN;
@@ -73,14 +73,14 @@ public @interface ObjectChoices{
 
 		/**
 		 * The condition that needs to hold, if an instance of {@link #type() type} is to be decoded.
-		 * <p>A SpEL expression with the prefix value in the context under the name {@code prefix}.</p>
+		 * <p>A SpEL expression with the header value in the context under the name {@code header}.</p>
 		 *
 		 * @return	The condition that needs to hold, if an instance of {@link #type() type} is to be decoded.
 		 */
 		String condition();
 
 		/**
-		 * The prefix to be written when serializing the object.
+		 * The header to be written when serializing the object.
 		 * <p>NOTE: this is the inverse of {@link #condition() condition}, if it contains a `#prefix` reference.</p>
 		 *
 		 * @return	The inverse of {@link #condition() condition}, if it contains a `#prefix` reference (defaults to {@code 0}).

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 Mauro Trevisan
+ * Copyright (c) 2020-2024 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -108,7 +108,7 @@ public class ACKMessageHex{
 	}
 
 
-	@BindString(size = "#headerSize()")
+	@BindString(size = "#headerLength()")
 	private String messageHeader;
 	@BindByte(converter = MessageTypeConverter.class)
 	private String messageType;

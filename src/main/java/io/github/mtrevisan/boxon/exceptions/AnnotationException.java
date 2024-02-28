@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 Mauro Trevisan
+ * Copyright (c) 2020-2024 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -62,7 +62,7 @@ public final class AnnotationException extends FieldException{
 	/**
 	 * Constructs a new exception with the specified message, possibly with parameters.
 	 *
-	 * @param message	The message to be formatted (see {@link StringHelper#format(String, Object...)}).
+	 * @param message	The message to be formatted ({@link StringHelper#format(String, Object...)}).
 	 * @param parameters	The parameters of the message.
 	 * @return	An instance of this exception.
 	 */

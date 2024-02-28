@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 Mauro Trevisan
+ * Copyright (c) 2020-2024 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -24,10 +24,10 @@
  */
 package io.github.mtrevisan.boxon.core.parsers;
 
-import io.github.mtrevisan.boxon.helpers.Evaluator;
-import io.github.mtrevisan.boxon.core.helpers.templates.BoundedField;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigField;
+import io.github.mtrevisan.boxon.core.helpers.templates.BoundedField;
 import io.github.mtrevisan.boxon.helpers.ContextHelper;
+import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 
 import java.lang.annotation.Annotation;

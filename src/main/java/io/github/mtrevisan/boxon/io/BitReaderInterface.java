@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 Mauro Trevisan
+ * Copyright (c) 2020-2024 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -33,6 +33,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.BitSet;
 
 
+/** Interface for a reader bit-by-bit. */
 public interface BitReaderInterface{
 
 	/**
@@ -174,6 +175,15 @@ public interface BitReaderInterface{
 	String getText(int length);
 
 	/**
+	 * Reads a string, with an {@link StandardCharsets#UTF_8 UTF-8} charset, until a terminator is found.
+	 * <p>The terminator is NOT consumed!</p>
+	 *
+	 * @param terminator	The terminator of the string to be read.
+	 * @return	A {@link String} of length {@code n} coded in {@link StandardCharsets#UTF_8 UTF-8} that contains {@code char}s read.
+	 */
+	String getTextUntilTerminator(byte terminator);
+
+	/**
 	 * Reads a string until a terminator is found.
 	 * <p>The terminator is NOT consumed!</p>
 	 *
@@ -184,12 +194,12 @@ public interface BitReaderInterface{
 	String getTextUntilTerminator(byte terminator, Charset charset);
 
 	/**
-	 * Reads a string, with an {@link StandardCharsets#UTF_8 UTF-8} charset, until a terminator is found.
-	 * <p>The terminator is NOT consumed!</p>
+	 * Reads a string until a terminator is found without consuming the bytes read.
 	 *
 	 * @param terminator	The terminator of the string to be read.
-	 * @return	A {@link String} of length {@code n} coded in {@link StandardCharsets#UTF_8 UTF-8} that contains {@code char}s read.
+	 * @param charset	The charset.
+	 * @return	A {@link String} of length {@code n} coded with a given {@link Charset} that contains {@code char}s read.
 	 */
-	String getTextUntilTerminator(byte terminator);
+	String getTextUntilTerminatorWithoutConsuming(byte terminator, Charset charset);
 
 }

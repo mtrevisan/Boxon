@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 Mauro Trevisan
+ * Copyright (c) 2020-2024 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -26,14 +26,14 @@ package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.Injected;
-import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
+import io.github.mtrevisan.boxon.io.BitSetHelper;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.io.ByteOrder;
 import io.github.mtrevisan.boxon.io.CodecInterface;
-import io.github.mtrevisan.boxon.io.BitSetHelper;
 
 import java.lang.annotation.Annotation;
 import java.math.BigInteger;
@@ -82,7 +82,7 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 	}
 
 	/**
-	 * Converts a BigInteger into a byte array ignoring the sign of the BigInteger, according to SRP specification.
+	 * Converts a {@link BigInteger} into a byte array ignoring the sign of the {@link BigInteger}, according to SRP specification.
 	 *
 	 * @param value	the value, must not be {@code null}.
 	 * @param size	The size in bits of the value.
@@ -100,7 +100,7 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 			array = newArray;
 		}
 
-		//NOTE: need to reverse the bytes because BigInteger is big-endian and BitSet is little-endian
+		//NOTE: need to reverse the bytes because {@link BigInteger} is big-endian and BitSet is little-endian
 		BitSetHelper.changeByteOrder(array, byteOrder);
 
 		return BitSet.valueOf(array);

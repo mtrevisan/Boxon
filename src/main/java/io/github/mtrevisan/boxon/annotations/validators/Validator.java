@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 Mauro Trevisan
+ * Copyright (c) 2020-2024 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -25,7 +25,11 @@
 package io.github.mtrevisan.boxon.annotations.validators;
 
 
-/** The validator to be applied to converted values read from a bind annotation. */
+/**
+ * The validator to be applied to converted values read from a bind annotation.
+ *
+ * @param <T>	The validated class type.
+ */
 public interface Validator<T>{
 
 	/**
