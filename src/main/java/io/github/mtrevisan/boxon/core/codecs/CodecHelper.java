@@ -26,13 +26,13 @@ package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectSeparatedChoices;
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.helpers.CharsetHelper;
 import io.github.mtrevisan.boxon.helpers.ConstructorHelper;
 import io.github.mtrevisan.boxon.helpers.ContextHelper;
-import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.exceptions.CodecException;
-import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.io.BitSetHelper;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.io.ByteOrder;
@@ -73,12 +73,12 @@ final class CodecHelper{
 
 	static void writeHeader(final BitWriterInterface writer, final ObjectChoices.ObjectChoice chosenAlternative,
 			final ObjectChoices selectFrom){
-		//if chosenAlternative.condition() contains '#header', then write @ObjectChoice.header()
+		//if chosenAlternative.condition() contains '#prefix', then write @ObjectChoice.prefix()
 		if(ContextHelper.containsHeaderReference(chosenAlternative.condition())){
-			final int prefixSize = selectFrom.headerLength();
+			final int prefixSize = selectFrom.prefixLength();
 			final ByteOrder prefixBitOrder = selectFrom.bitOrder();
 
-			BitSet bits = BitSet.valueOf(new long[]{chosenAlternative.header()});
+			BitSet bits = BitSet.valueOf(new long[]{chosenAlternative.prefix()});
 			bits = BitSetHelper.changeBitOrder(bits, prefixBitOrder);
 
 			writer.putBitSet(bits, prefixSize, ByteOrder.BIG_ENDIAN);
@@ -98,12 +98,12 @@ final class CodecHelper{
 
 	static void writeHeader(final BitWriterInterface writer, final ObjectSeparatedChoices.ObjectSeparatedChoice chosenAlternative,
 			final ObjectSeparatedChoices selectFrom){
-		//if chosenAlternative.condition() contains '#header', then write @ObjectSeparatedChoice.header()
+		//if chosenAlternative.condition() contains '#prefix', then write @ObjectSeparatedChoice.prefix()
 		if(ContextHelper.containsHeaderReference(chosenAlternative.condition())){
-			final String header = chosenAlternative.header();
+			final String prefix = chosenAlternative.prefix();
 			final Charset charset = CharsetHelper.lookup(selectFrom.charset());
 
-			writer.putText(header, charset);
+			writer.putText(prefix, charset);
 		}
 	}
 

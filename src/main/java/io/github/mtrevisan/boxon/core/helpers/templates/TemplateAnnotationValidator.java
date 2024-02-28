@@ -47,6 +47,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.BitSet;
+import java.util.List;
 
 
 /**
@@ -110,15 +111,14 @@ enum TemplateAnnotationValidator{
 		void validate(final Field field, final Annotation annotation) throws AnnotationException{
 			final BindListSeparated binding = (BindListSeparated)annotation;
 			final Class<?> type = binding.type();
-			validateType(type, BindListSeparated.class);
 			final Class<?> fieldType = field.getType();
-			if(!fieldType.isArray())
-				throw AnnotationException.create("Bad annotation used for {}, should have been used the type `{}.class`",
-					BindListSeparated.class.getSimpleName(), type.getSimpleName());
+			if(!List.class.isAssignableFrom(fieldType))
+				throw AnnotationException.create("Bad annotation used for {}, should have been used the type `List<{}>.class`",
+					BindListSeparated.class.getSimpleName(), type.getName());
 
 			final Class<? extends Converter<?, ?>> converter = binding.converter();
 			final ObjectSeparatedChoices selectFrom = binding.selectFrom();
-			validateObjectChoice(field, converter, selectFrom, type);
+			validateObjectSeparatedChoice(field, converter, selectFrom, type);
 		}
 	},
 
@@ -219,14 +219,25 @@ enum TemplateAnnotationValidator{
 		}
 	}
 
+	private static void validateConverterToList(final Field field, final Class<?> bindingType,
+			final Class<? extends Converter<?, ?>> converter, final Class<?> type) throws AnnotationException{
+		if(converter == NullConverter.class && bindingType != Object.class){
+			final Class<?> fieldType = field.getType();
+
+			if(!type.isAssignableFrom(bindingType))
+				throw AnnotationException.create("Bad annotation used for type {}: {}",
+					fieldType.getSimpleName(), bindingType.getSimpleName());
+		}
+	}
+
 	private static void validateObjectChoice(final Field field, final Class<? extends Converter<?, ?>> converter,
 			final ObjectChoices selectFrom, final Class<?> selectDefault, final Class<?> type) throws AnnotationException{
-		final int prefixSize = selectFrom.headerLength();
-		validatePrefixSize(prefixSize);
+		final int prefixLength = selectFrom.prefixLength();
+		validatePrefixLength(prefixLength);
 
 
 		final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
-		validateObjectAlternatives(field, converter, alternatives, type, prefixSize);
+		validateObjectAlternatives(field, converter, alternatives, type, prefixLength);
 
 
 		validateObjectDefaultAlternative(alternatives.length, type, selectDefault);
@@ -234,7 +245,7 @@ enum TemplateAnnotationValidator{
 		validateConverter(field, type, converter);
 	}
 
-	private static void validatePrefixSize(final int prefixSize) throws AnnotationException{
+	private static void validatePrefixLength(final int prefixSize) throws AnnotationException{
 		if(prefixSize < 0)
 			throw AnnotationException.create("Prefix size must be a non-negative number");
 		if(prefixSize > Integer.SIZE)
@@ -255,22 +266,25 @@ enum TemplateAnnotationValidator{
 	}
 
 
-	private static void validateObjectChoice(final Field field, final Class<? extends Converter<?, ?>> converter,
+	private static void validateObjectSeparatedChoice(final Field field, final Class<? extends Converter<?, ?>> converter,
 			final ObjectSeparatedChoices selectFrom, final Class<?> type) throws AnnotationException{
 		final ObjectSeparatedChoices.ObjectSeparatedChoice[] alternatives = selectFrom.alternatives();
+		if(alternatives.length == 0)
+			throw AnnotationException.create("All alternatives must be non-empty");
+
 		int minHeaderLength = Integer.MAX_VALUE;
 		for(int i = 0; i < alternatives.length; i ++){
-			final int headerLength = alternatives[i].header().length();
+			final int headerLength = alternatives[i].prefix().length();
 			if(headerLength < minHeaderLength)
 				minHeaderLength = headerLength;
 		}
-		validateObjectAlternatives(field, converter, alternatives, type, minHeaderLength);
+		validateObjectSeparatedAlternatives(field, converter, alternatives, type, minHeaderLength);
 
 
-		validateConverter(field, type, converter);
+		validateConverterToList(field, type, converter, type);
 	}
 
-	private static void validateObjectAlternatives(final Field field, final Class<? extends Converter<?, ?>> converter,
+	private static void validateObjectSeparatedAlternatives(final Field field, final Class<? extends Converter<?, ?>> converter,
 			final ObjectSeparatedChoices.ObjectSeparatedChoice[] alternatives, final Class<?> type, final int prefixLength)
 			throws AnnotationException{
 		final boolean hasPrefix = (prefixLength > 0);
@@ -280,20 +294,20 @@ enum TemplateAnnotationValidator{
 			final ObjectSeparatedChoices.ObjectSeparatedChoice alternative = alternatives[i];
 			validateAlternative(alternative.type(), alternative.condition(), type, hasPrefix);
 
-			validateConverter(field, alternative.type(), converter);
+			validateConverterToList(field, alternative.type(), converter, type);
 		}
 	}
 
 	private static void validateAlternative(final Class<?> alternativeType, final String alternativeCondition, final Class<?> type,
-			final boolean hasPrefixSize) throws AnnotationException{
+			final boolean hasPrefixLength) throws AnnotationException{
 		if(!type.isAssignableFrom(alternativeType))
 			throw AnnotationException.create("Type of alternative cannot be assigned to (super) type of annotation");
 
 		if(alternativeCondition.isEmpty())
 			throw AnnotationException.create("All conditions must be non-empty");
-		if(hasPrefixSize ^ ContextHelper.containsHeaderReference(alternativeCondition))
-			throw AnnotationException.create("All conditions must {}contain a reference to the header",
-				(hasPrefixSize? JavaHelper.EMPTY_STRING: "not "));
+		if(hasPrefixLength ^ ContextHelper.containsHeaderReference(alternativeCondition))
+			throw AnnotationException.create("All conditions must {}contain a reference to the prefix",
+				(hasPrefixLength? JavaHelper.EMPTY_STRING: "not "));
 	}
 
 

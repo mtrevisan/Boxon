@@ -48,7 +48,7 @@ class ParserTest{
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 		//if it is wanted `headerLength` to be a variable and not a method:
 		//- remove Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes); above
-		//- change @BindString(size = "#headerLength()") into @BindString(size = "#headerLength") in ACKMessageHex.messageHeader
+		//- change @BindString(size = "#prefixLength()") into @BindString(size = "#headerLength") in ACKMessageHex.messageHeader
 		//- remove .withContextFunction(ParserTest.class, "headerLength") below
 		//- uncomment the below context map
 //		Map<String, Object> context = Map.of(

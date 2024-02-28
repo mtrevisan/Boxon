@@ -35,9 +35,9 @@ public final class ContextHelper{
 	/** The name of the current object being scanner (used for referencing variables from SpEL). */
 	public static final String CONTEXT_SELF = "self";
 	/** The name of the prefix for the alternative (used for referencing variables from SpEL). */
-	public static final String CONTEXT_CHOICE_HEADER = "header";
+	public static final String CONTEXT_CHOICE_PREFIX = "prefix";
 
-	private static final Pattern CONTEXT_PREFIXED_CHOICE_HEADER = Pattern.compile("#" + CONTEXT_CHOICE_HEADER + "[^a-zA-Z]");
+	private static final Pattern CONTEXT_PREFIXED_CHOICE_PREFIX = Pattern.compile("#" + CONTEXT_CHOICE_PREFIX + "[^a-zA-Z]");
 
 
 	private ContextHelper(){}
@@ -50,7 +50,7 @@ public final class ContextHelper{
 	 * @return	Whether the prefix parameter is contained.
 	 */
 	public static boolean containsHeaderReference(final CharSequence condition){
-		return CONTEXT_PREFIXED_CHOICE_HEADER.matcher(condition)
+		return CONTEXT_PREFIXED_CHOICE_PREFIX.matcher(condition)
 			.find();
 	}
 

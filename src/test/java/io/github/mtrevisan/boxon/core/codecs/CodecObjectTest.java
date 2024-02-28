@@ -106,7 +106,7 @@ class CodecObjectTest{
 					}
 
 					@Override
-					public int headerLength(){
+					public int prefixLength(){
 						return 0;
 					}
 
@@ -190,10 +190,10 @@ class CodecObjectTest{
 	static class TestChoice1{
 		@BindString(size = "3")
 		String header;
-		@BindObject(type = TestType0.class, selectFrom = @ObjectChoices(headerLength = 8,
+		@BindObject(type = TestType0.class, selectFrom = @ObjectChoices(prefixLength = 8,
 			alternatives = {
-				@ObjectChoices.ObjectChoice(condition = "#header == 1", header = 1, type = TestType1.class),
-				@ObjectChoices.ObjectChoice(condition = "#header == 2", header = 2, type = TestType2.class)
+				@ObjectChoices.ObjectChoice(condition = "#prefix == 1", prefix = 1, type = TestType1.class),
+				@ObjectChoices.ObjectChoice(condition = "#prefix == 2", prefix = 2, type = TestType2.class)
 			}))
 		TestType0 value;
 	}
@@ -204,10 +204,10 @@ class CodecObjectTest{
 		String header;
 		@BindArrayPrimitive(size = "2", type = byte.class)
 		byte[] index;
-		@BindObject(type = TestType0.class, selectFrom = @ObjectChoices(headerLength = 8,
+		@BindObject(type = TestType0.class, selectFrom = @ObjectChoices(prefixLength = 8,
 			alternatives = {
-				@ObjectChoices.ObjectChoice(condition = "index[#header] == 5", header = 0, type = TestType1.class),
-				@ObjectChoices.ObjectChoice(condition = "index[#header] == 6", header = 1, type = TestType2.class)
+				@ObjectChoices.ObjectChoice(condition = "index[#prefix] == 5", prefix = 0, type = TestType1.class),
+				@ObjectChoices.ObjectChoice(condition = "index[#prefix] == 6", prefix = 1, type = TestType2.class)
 			}))
 		TestType0 value;
 	}

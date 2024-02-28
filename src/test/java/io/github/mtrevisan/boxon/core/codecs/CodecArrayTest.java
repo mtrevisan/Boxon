@@ -81,10 +81,10 @@ class CodecArrayTest{
 	static class TestChoice4{
 		@BindString(size = "3")
 		String header;
-		@BindArray(size = "3", type = CodecObjectTest.TestType0.class, selectFrom = @ObjectChoices(headerLength = 8,
+		@BindArray(size = "3", type = CodecObjectTest.TestType0.class, selectFrom = @ObjectChoices(prefixLength = 8,
 			alternatives = {
-				@ObjectChoices.ObjectChoice(condition = "#header == 1", header = 1, type = CodecObjectTest.TestType1.class),
-				@ObjectChoices.ObjectChoice(condition = "#header == 2", header = 2, type = CodecObjectTest.TestType2.class)
+				@ObjectChoices.ObjectChoice(condition = "#prefix == 1", prefix = 1, type = CodecObjectTest.TestType1.class),
+				@ObjectChoices.ObjectChoice(condition = "#prefix == 2", prefix = 2, type = CodecObjectTest.TestType2.class)
 			}))
 		CodecObjectTest.TestType0[] value;
 	}
@@ -207,7 +207,7 @@ class CodecArrayTest{
 					}
 
 					@Override
-					public int headerLength(){
+					public int prefixLength(){
 						return 0;
 					}
 

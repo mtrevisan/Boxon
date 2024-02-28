@@ -289,10 +289,10 @@ private byte positionsCount;
 @BindArray(size = "positionsCount", type = Position.class,
    selectFrom = @ObjectChoices(prefixSize = 8,
         alternatives = {
-          @ObjectChoices.ObjectChoice(condition = "#header == 0", prefix = 0, type = PositionInvalid.class),
-          @ObjectChoices.ObjectChoice(condition = "#header == 1", prefix = 1, type = PositionAbsolute.class),
-          @ObjectChoices.ObjectChoice(condition = "#header == 2", prefix = 2, type = PositionRelative.class),
-          @ObjectChoices.ObjectChoice(condition = "#header == 3", prefix = 3, type = PositionSameAsPrevious.class)
+          @ObjectChoices.ObjectChoice(condition = "#prefix == 0", prefix = 0, type = PositionInvalid.class),
+          @ObjectChoices.ObjectChoice(condition = "#prefix == 1", prefix = 1, type = PositionAbsolute.class),
+          @ObjectChoices.ObjectChoice(condition = "#prefix == 2", prefix = 2, type = PositionRelative.class),
+          @ObjectChoices.ObjectChoice(condition = "#prefix == 3", prefix = 3, type = PositionSameAsPrevious.class)
        }
     ),
    converter = PositionsConverter.class)

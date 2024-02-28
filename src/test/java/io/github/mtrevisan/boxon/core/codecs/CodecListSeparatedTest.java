@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2024 Mauro Trevisan
+ * Copyright (c) 2024 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -25,9 +25,7 @@
 package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
-import io.github.mtrevisan.boxon.annotations.bindings.BindByte;
 import io.github.mtrevisan.boxon.annotations.bindings.BindListSeparated;
-import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectSeparatedChoices;
@@ -46,7 +44,6 @@ import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
-import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.BitReader;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriter;
@@ -55,6 +52,8 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.Annotation;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -63,50 +62,58 @@ class CodecListSeparatedTest{
 
 	private static class Version{
 		@BindStringTerminated(terminator = ',')
+		private final String type;
+		@BindStringTerminated(terminator = ',')
 		private final String major;
 		@BindStringTerminated(terminator = ',')
 		private final String minor;
 		@BindStringTerminated(terminator = ',')
 		private final String build;
 
-		private Version(final String major, final String minor, final String build){
+		private Version(final String type, final String major, final String minor, final String build){
+			this.type = type;
 			this.major = major;
 			this.minor = minor;
 			this.build = build;
 		}
 	}
 
-	@MessageHeader(start = "tl4")
-	static class TestChoice4{
-		@BindString(size = "3")
-		String header;
-		@BindListSeparated(type = CodecObjectTest.TestType0.class, selectFrom = @ObjectSeparatedChoices(terminator = ',',
-			alternatives = {
-				@ObjectSeparatedChoices.ObjectSeparatedChoice(condition = "#header == '1'", header = "1", type = CodecObjectTest.TestType1.class),
-				@ObjectSeparatedChoices.ObjectSeparatedChoice(condition = "#header == '2'", header = "2", type = CodecObjectTest.TestType2.class)
-			}))
-		CodecObjectTest.TestType0[] value;
+	static class TestType3{}
+
+	static class TestType4 extends TestType3{
+		@BindStringTerminated(terminator = ',')
+		String subtype;
+		@BindStringTerminated(terminator = '.')
+		String value;
 	}
 
-	@MessageHeader(start = "tl5")
-	static class TestChoice5{
-		@BindString(size = "3")
-		String header;
-		@BindByte
-		byte type;
-		@BindListSeparated(selectFrom = @ObjectSeparatedChoices(terminator = ',',
+	static class TestType5 extends TestType3{
+		@BindStringTerminated(terminator = ',')
+		String subtype;
+		@BindStringTerminated(terminator = '.')
+		String value1;
+		@BindStringTerminated(terminator = '.')
+		String value2;
+	}
+
+	@MessageHeader(start = "tc6")
+	static class TestChoice6{
+		@BindStringTerminated(terminator = ',')
+		String type;
+		@BindListSeparated(type = TestType3.class, selectFrom = @ObjectSeparatedChoices(terminator = ',',
 			alternatives = {
-				@ObjectSeparatedChoices.ObjectSeparatedChoice(condition = "type == '1'", header = "1", type = CodecObjectTest.TestType1.class),
-				@ObjectSeparatedChoices.ObjectSeparatedChoice(condition = "type == '2'", header = "2", type = CodecObjectTest.TestType2.class)
+				@ObjectSeparatedChoices.ObjectSeparatedChoice(condition = "#prefix == '1'", prefix = "1", type = TestType4.class),
+				@ObjectSeparatedChoices.ObjectSeparatedChoice(condition = "#prefix == '2'", prefix = "2", type = TestType5.class)
 			}))
-		List<CodecObjectTest.TestType0> value;
+		List<TestType3> value;
 	}
 
 
 	@Test
 	void listOfSameObject() throws FieldException{
 		CodecListSeparated codec = new CodecListSeparated();
-		Version[] encodedValue = new Version[]{new Version("0", "1", "12"), new Version("1", "2", "0")};
+		List<Version> encodedValue = new ArrayList<>(
+			Arrays.asList(new Version("2", "0", "1", "12"), new Version("2", "1", "2", "0")));
 		BindListSeparated annotation = new BindListSeparated(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
@@ -152,11 +159,11 @@ class CodecListSeparatedTest{
 
 								@Override
 								public String condition(){
-									return "#header == '666'";
+									return "#prefix == '2'";
 								}
 
 								@Override
-								public String header(){
+								public String prefix(){
 									return "2";
 								}
 
@@ -203,7 +210,7 @@ class CodecListSeparatedTest{
 		ReflectionHelper.injectValue(codec, TemplateParserInterface.class, templateParser);
 		ReflectionHelper.injectValue(codec, Evaluator.class, Evaluator.create());
 		BitWriter writer = BitWriter.create();
-		codec.encode(writer, annotation, null, encodedValue);
+ 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("2,0,1,12,2,1,2,0,", new String(writer.array(), StandardCharsets.UTF_8));
@@ -211,37 +218,45 @@ class CodecListSeparatedTest{
 		BitReaderInterface reader = BitReader.wrap(writer);
 		List<Version> decoded = (List<Version>)codec.decode(reader, annotation, null);
 
-		Assertions.assertEquals(encodedValue.length, decoded.size());
-		Assertions.assertEquals(encodedValue[0].major, decoded.get(0).major);
-		Assertions.assertEquals(encodedValue[0].minor, decoded.get(0).minor);
-		Assertions.assertEquals(encodedValue[1].major, decoded.get(1).major);
-		Assertions.assertEquals(encodedValue[1].minor, decoded.get(1).minor);
+		Assertions.assertEquals(encodedValue.size(), decoded.size());
+		Assertions.assertEquals(encodedValue.get(0).type, decoded.get(0).type);
+		Assertions.assertEquals(encodedValue.get(0).major, decoded.get(0).major);
+		Assertions.assertEquals(encodedValue.get(0).minor, decoded.get(0).minor);
+		Assertions.assertEquals(encodedValue.get(1).type, decoded.get(1).type);
+		Assertions.assertEquals(encodedValue.get(1).major, decoded.get(1).major);
+		Assertions.assertEquals(encodedValue.get(1).minor, decoded.get(1).minor);
 	}
 
 	@Test
 	void listOfDifferentObjects() throws AnnotationException, TemplateException, ConfigurationException{
 		Core core = CoreBuilder.builder()
 			.withCodecsFrom(CodecChecksum.class, CodecCustomTest.VariableLengthByteArray.class)
-			.withTemplatesFrom(TestChoice4.class)
+			.withTemplatesFrom(TestChoice6.class)
 			.create();
 		Parser parser = Parser.create(core);
 
-		byte[] payload = StringHelper.toByteArray("7463340112340211223344010666");
+		byte[] payload = toByteArray("tc6,1,1.2,v1.v2.1,2.");
 		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(1, result.size());
 		Response<byte[], Object> response = result.get(0);
 		Assertions.assertFalse(response.hasError());
-		Assertions.assertEquals(TestChoice4.class, response.getMessage().getClass());
-		TestChoice4 parsedMessage = (TestChoice4)response.getMessage();
-//		List<CodecListSeparatedTest.TestType0> values = parsedMessage.value;
-//		Assertions.assertEquals(CodecListSeparatedTest.TestType1.class, values.get(0).getClass());
-//		Assertions.assertEquals(0x1234, ((CodecListSeparatedTest.TestType1)values.get(0)).value);
-//		Assertions.assertEquals(CodecListSeparatedTest.TestType2.class, values.get(1).getClass());
-//		Assertions.assertEquals(0x1122_3344, ((CodecListSeparatedTest.TestType2)values.get(1)).value);
-//		Assertions.assertEquals(CodecListSeparatedTest.TestType1.class, values.get(2).getClass());
-//		Assertions.assertEquals(0x0666, ((CodecListSeparatedTest.TestType1)values.get(2)).value);
+		Assertions.assertEquals(TestChoice6.class, response.getMessage().getClass());
+		TestChoice6 parsedMessage = (TestChoice6)response.getMessage();
+		List<TestType3> values = parsedMessage.value;
+		Assertions.assertEquals(TestType4.class, values.get(0).getClass());
+		Assertions.assertEquals("1", ((TestType4)values.get(0)).value);
+		Assertions.assertEquals(TestType5.class, values.get(1).getClass());
+		Assertions.assertEquals("v1", ((TestType5)values.get(1)).value1);
+		Assertions.assertEquals("v2", ((TestType5)values.get(1)).value2);
+		Assertions.assertEquals(TestType4.class, values.get(2).getClass());
+		Assertions.assertEquals("2", ((TestType4)values.get(2)).value);
+	}
+
+
+	private byte[] toByteArray(final String payload){
+		return payload.getBytes(StandardCharsets.ISO_8859_1);
 	}
 
 }

@@ -29,13 +29,13 @@ import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectSeparatedChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
-import io.github.mtrevisan.boxon.helpers.CharsetHelper;
-import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
-import io.github.mtrevisan.boxon.io.BitReaderInterface;
-import io.github.mtrevisan.boxon.io.ByteOrder;
+import io.github.mtrevisan.boxon.helpers.CharsetHelper;
 import io.github.mtrevisan.boxon.helpers.ConstructorHelper;
 import io.github.mtrevisan.boxon.helpers.ContextHelper;
+import io.github.mtrevisan.boxon.helpers.Evaluator;
+import io.github.mtrevisan.boxon.io.BitReaderInterface;
+import io.github.mtrevisan.boxon.io.ByteOrder;
 import org.springframework.expression.EvaluationException;
 
 import java.lang.annotation.Annotation;
@@ -159,14 +159,14 @@ final class BindingData{
 	 * @param reader	The reader from which to read the prefix.
 	 */
 	private void addPrefixToContext(final BitReaderInterface reader){
-		final int prefixSize = selectObjectFrom.headerLength();
+		final int prefixSize = selectObjectFrom.prefixLength();
 		if(prefixSize > 0){
 			final ByteOrder prefixBitOrder = selectObjectFrom.bitOrder();
 			final long[] array = reader.getBitSet(prefixSize, prefixBitOrder)
 				.toLongArray();
 			final int prefix = (array.length > 0? (int)array[0]: 0);
 
-			evaluator.addToContext(ContextHelper.CONTEXT_CHOICE_HEADER, prefix);
+			evaluator.addToContext(ContextHelper.CONTEXT_CHOICE_PREFIX, prefix);
 		}
 	}
 
@@ -200,10 +200,12 @@ final class BindingData{
 	 * @throws CodecException	If a codec cannot be found for the chosen alternative.
 	 */
 	Class<?> chooseAlternativeSeparatedType(final BitReaderInterface reader) throws CodecException{
-		if(!hasSelectAlternatives())
+		if(!hasSelectSeparatedAlternatives())
 			return type;
 
-		addHeaderToContext(reader);
+		final boolean hasHeader = addListHeaderToContext(reader);
+		if(!hasHeader)
+			return null;
 
 		final ObjectSeparatedChoices.ObjectSeparatedChoice[] alternatives = selectObjectSeparatedFrom.alternatives();
 		final ObjectSeparatedChoices.ObjectSeparatedChoice chosenAlternative = chooseAlternative(alternatives);
@@ -222,12 +224,14 @@ final class BindingData{
 	 * Add the prefix to the evaluator context if needed.
 	 *
 	 * @param reader	The reader from which to read the header.
+	 * @return	Whether a prefix was retrieved.
 	 */
-	private void addHeaderToContext(final BitReaderInterface reader){
+	private boolean addListHeaderToContext(final BitReaderInterface reader){
 		final byte terminator = selectObjectSeparatedFrom.terminator();
 		final Charset charset = CharsetHelper.lookup(selectObjectSeparatedFrom.charset());
-		final String header = reader.getTextUntilTerminatorWithoutConsuming(terminator, charset);
-		evaluator.addToContext(ContextHelper.CONTEXT_CHOICE_HEADER, header);
+		final String prefix = reader.getTextUntilTerminatorWithoutConsuming(terminator, charset);
+		evaluator.addToContext(ContextHelper.CONTEXT_CHOICE_PREFIX, prefix);
+		return !prefix.isEmpty();
 	}
 
 	/**

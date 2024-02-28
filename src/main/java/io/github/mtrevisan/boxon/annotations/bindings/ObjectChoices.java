@@ -34,7 +34,7 @@ import java.lang.annotation.Target;
 
 
 /**
- * Allow to define a number of choices, based on a header of a certain {@link #headerLength() length}.
+ * Allow to define a number of choices, based on a header of a certain {@link #prefixLength() length}.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.ANNOTATION_TYPE)
@@ -47,12 +47,12 @@ public @interface ObjectChoices{
 	 *
 	 * @return	The number of bits to be read for determining the header (defaults to {@code 0}).
 	 */
-	int headerLength() default 0;
+	int prefixLength() default 0;
 
 	/**
-	 * The bit order to be considered when returning a representation of the first {@link #headerLength() size} bits read as a header.
+	 * The bit order to be considered when returning a representation of the first {@link #prefixLength() length} bits read as a header.
 	 *
-	 * @return	The byte order to be considered when returning a representation of the first {@link #headerLength() size} bits read as a header
+	 * @return	The byte order to be considered when returning a representation of the first {@link #prefixLength() length} bits read as a header
 	 * 	(defaults to {@link ByteOrder#BIG_ENDIAN}).
 	 */
 	ByteOrder bitOrder() default ByteOrder.BIG_ENDIAN;
@@ -81,11 +81,11 @@ public @interface ObjectChoices{
 
 		/**
 		 * The header to be written when serializing the object.
-		 * <p>NOTE: this is the inverse of {@link #condition() condition}, if it contains a `#header` reference.</p>
+		 * <p>NOTE: this is the inverse of {@link #condition() condition}, if it contains a `#prefix` reference.</p>
 		 *
-		 * @return	The inverse of {@link #condition() condition}, if it contains a `#header` reference (defaults to {@code 0}).
+		 * @return	The inverse of {@link #condition() condition}, if it contains a `#prefix` reference (defaults to {@code 0}).
 		 */
-		int header() default 0;
+		int prefix() default 0;
 
 		/**
 		 * The type to decode in case the {@link #condition()} holds.

@@ -44,7 +44,7 @@ final class NullObjectSeparatedChoice implements ObjectSeparatedChoices.ObjectSe
 	}
 
 	@Override
-	public String header(){
+	public String prefix(){
 		return null;
 	}
 

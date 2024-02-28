@@ -367,7 +367,7 @@ public enum AnnotationDescriptor{
 	}
 
 	private static void describeChoices(final ObjectChoices choices, final Map<String, Object> rootDescription){
-		putIfNotEmpty(DescriberKey.BIND_HEADER_LENGTH, choices.headerLength(), rootDescription);
+		putIfNotEmpty(DescriberKey.BIND_PREFIX_LENGTH, choices.prefixLength(), rootDescription);
 		putIfNotEmpty(DescriberKey.BIND_BIT_ORDER, choices.bitOrder(), rootDescription);
 		describeAlternatives(choices.alternatives(), rootDescription);
 	}
@@ -380,7 +380,7 @@ public enum AnnotationDescriptor{
 				final ObjectChoices.ObjectChoice alternative = alternatives[j];
 				final Map<String, Object> alternativeDescription = new HashMap<>(3);
 				putIfNotEmpty(DescriberKey.BIND_CONDITION, alternative.condition(), alternativeDescription);
-				putIfNotEmpty(DescriberKey.BIND_HEADER, alternative.header(), alternativeDescription);
+				putIfNotEmpty(DescriberKey.BIND_PREFIX, alternative.prefix(), alternativeDescription);
 				putIfNotEmpty(DescriberKey.BIND_TYPE, alternative.type(), alternativeDescription);
 				alternativesDescription.add(alternativeDescription);
 			}
@@ -402,7 +402,7 @@ public enum AnnotationDescriptor{
 				final ObjectSeparatedChoices.ObjectSeparatedChoice alternative = alternatives[j];
 				final Map<String, Object> alternativeDescription = new HashMap<>(3);
 				putIfNotEmpty(DescriberKey.BIND_CONDITION, alternative.condition(), alternativeDescription);
-				putIfNotEmpty(DescriberKey.BIND_HEADER, alternative.header(), alternativeDescription);
+				putIfNotEmpty(DescriberKey.BIND_PREFIX, alternative.prefix(), alternativeDescription);
 				putIfNotEmpty(DescriberKey.BIND_TYPE, alternative.type(), alternativeDescription);
 				alternativesDescription.add(alternativeDescription);
 			}
