@@ -109,16 +109,17 @@ You can get pre-built JARs (usable on JRE 11 or newer) from [Sonatype](https://o
     2. [BindObject](#annotation-bindobject)
     3. [BindArray](#annotation-bindarray)
     4. [BindArrayPrimitive](#annotation-bindarrayprimitive)
-    5. [BindBitSet](#annotation-bindbitset)
-    6. [BindByte](#annotation-bindbyte)
-    7. [BindShort](#annotation-bindshort)
-    8. [BindInt](#annotation-bindint)
-    9. [BindLong](#annotation-bindlong)
-    10. [BindInteger](#annotation-bindinteger)
-    11. [BindFloat](#annotation-bindfloat)
-    12. [BindDouble](#annotation-binddouble)
-    13. [BindString](#annotation-bindstring)
-    14. [BindStringTerminated](#annotation-bindstringterminated)
+    5. [BindListSeparated](#annotation-bindlistseparated)
+    6. [BindBitSet](#annotation-bindbitset)
+    7. [BindByte](#annotation-bindbyte)
+    8. [BindShort](#annotation-bindshort)
+    9. [BindInt](#annotation-bindint)
+    10. [BindLong](#annotation-bindlong)
+    11. [BindInteger](#annotation-bindinteger)
+    12. [BindFloat](#annotation-bindfloat)
+    13. [BindDouble](#annotation-binddouble)
+    14. [BindString](#annotation-bindstring)
+    15. [BindStringTerminated](#annotation-bindstringterminated)
 2. [Special annotations](#annotation-special)
     1. [MessageHeader](#annotation-messageheader)
     2. [Skip](#annotation-skip)
@@ -173,21 +174,22 @@ Here is a brief summary of the parameters (described in detail below) for each a
 
 Note that [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_injection) can be used in codecs on variables with types `TemplateParserInterface` or `Evaluator` IF annotated with `@Injected`.
 
-|                      | condition |  type   | charset | terminator | consumeTerminator |  size   |     byteOrder      | selectFrom | selectDefault | validator | converter | selectConverterFrom |                       |
-|----------------------|:---------:|:-------:|:-------:|:----------:|:-----------------:|:-------:|:------------------:|:----------:|:-------------:|:---------:|:---------:|:-------------------:|----------------------:|
-| BindObject           |  &#9745;  | &#9745; |         |            |                   |         |                    |  &#9745;   |    &#9745;    |  &#9745;  |  &#9745;  |       &#9745;       |            BindObject |
-| BindArray            |  &#9745;  | &#9745; |         |            |                   | &#9745; |                    |  &#9745;   |    &#9745;    |  &#9745;  |  &#9745;  |       &#9745;       |             BindArray |
-| BindArrayPrimitive   |  &#9745;  | &#9745; |         |            |                   | &#9745; |      &#9745;       |            |               |  &#9745;  |  &#9745;  |       &#9745;       |    BindArrayPrimitive |
-| BindBitSet           |  &#9745;  |         |         |            |                   | &#9745; | &#9745; (bitOrder) |            |               |  &#9745;  |  &#9745;  |       &#9745;       |            BindBitSet |
-| BindByte             |  &#9745;  |         |         |            |                   |         |                    |            |               |  &#9745;  |  &#9745;  |       &#9745;       |              BindByte |
-| BindShort            |  &#9745;  |         |         |            |                   |         |      &#9745;       |            |               |  &#9745;  |  &#9745;  |       &#9745;       |             BindShort |
-| BindInt              |  &#9745;  |         |         |            |                   |         |      &#9745;       |            |               |  &#9745;  |  &#9745;  |       &#9745;       |               BindInt |
-| BindLong             |  &#9745;  |         |         |            |                   |         |      &#9745;       |            |               |  &#9745;  |  &#9745;  |       &#9745;       |              BindLong |
-| BindInteger          |  &#9745;  |         |         |            |                   | &#9745; |      &#9745;       |            |               |  &#9745;  |  &#9745;  |       &#9745;       |           BindInteger |
-| BindFloat            |  &#9745;  |         |         |            |                   |         |      &#9745;       |            |               |  &#9745;  |  &#9745;  |       &#9745;       |             BindFloat |
-| BindDouble           |  &#9745;  |         |         |            |                   |         |      &#9745;       |            |               |  &#9745;  |  &#9745;  |       &#9745;       |            BindDouble |
-| BindString           |  &#9745;  |         | &#9745; |            |                   | &#9745; |                    |            |               |  &#9745;  |  &#9745;  |       &#9745;       |            BindString |
-| BindStringTerminated |  &#9745;  |         | &#9745; |  &#9745;   |      &#9745;      |         |                    |            |               |  &#9745;  |  &#9745;  |       &#9745;       |  BindStringTerminated |
+|                      | condition |  type   | charset | terminator | consumeTerminator |  size   |     byteOrder      | selectFrom | selectDefault | validator | converter | selectConverterFrom |                      |
+|----------------------|:---------:|:-------:|:-------:|:----------:|:-----------------:|:-------:|:------------------:|:----------:|:-------------:|:---------:|:---------:|:-------------------:|---------------------:|
+| BindObject           |  &#9745;  | &#9745; |         |            |                   |         |                    |  &#9745;   |    &#9745;    |  &#9745;  |  &#9745;  |       &#9745;       |           BindObject |
+| BindArray            |  &#9745;  | &#9745; |         |            |                   | &#9745; |                    |  &#9745;   |    &#9745;    |  &#9745;  |  &#9745;  |       &#9745;       |            BindArray |
+| BindArrayPrimitive   |  &#9745;  | &#9745; |         |            |                   | &#9745; |      &#9745;       |            |               |  &#9745;  |  &#9745;  |       &#9745;       |   BindArrayPrimitive |
+| BindListSeparated    |  &#9745;  | &#9745; |         |            |                   |         |                    |  &#9745;   |               |  &#9745;  |  &#9745;  |       &#9745;       |    BindListSeparated |
+| BindBitSet           |  &#9745;  |         |         |            |                   | &#9745; | &#9745; (bitOrder) |            |               |  &#9745;  |  &#9745;  |       &#9745;       |           BindBitSet |
+| BindByte             |  &#9745;  |         |         |            |                   |         |                    |            |               |  &#9745;  |  &#9745;  |       &#9745;       |             BindByte |
+| BindShort            |  &#9745;  |         |         |            |                   |         |      &#9745;       |            |               |  &#9745;  |  &#9745;  |       &#9745;       |            BindShort |
+| BindInt              |  &#9745;  |         |         |            |                   |         |      &#9745;       |            |               |  &#9745;  |  &#9745;  |       &#9745;       |              BindInt |
+| BindLong             |  &#9745;  |         |         |            |                   |         |      &#9745;       |            |               |  &#9745;  |  &#9745;  |       &#9745;       |             BindLong |
+| BindInteger          |  &#9745;  |         |         |            |                   | &#9745; |      &#9745;       |            |               |  &#9745;  |  &#9745;  |       &#9745;       |          BindInteger |
+| BindFloat            |  &#9745;  |         |         |            |                   |         |      &#9745;       |            |               |  &#9745;  |  &#9745;  |       &#9745;       |            BindFloat |
+| BindDouble           |  &#9745;  |         |         |            |                   |         |      &#9745;       |            |               |  &#9745;  |  &#9745;  |       &#9745;       |           BindDouble |
+| BindString           |  &#9745;  |         | &#9745; |            |                   | &#9745; |                    |            |               |  &#9745;  |  &#9745;  |       &#9745;       |           BindString |
+| BindStringTerminated |  &#9745;  |         | &#9745; |  &#9745;   |      &#9745;      |         |                    |            |               |  &#9745;  |  &#9745;  |       &#9745;       | BindStringTerminated |
 
 |                      | condition |  start  |   end   | charset |  size   | terminator | consumeTerminator |  type   | byteOrder | skipStart | skipEnd | algorithm | startValue |  value  |               |
 |----------------------|:---------:|:-------:|:-------:|:-------:|:-------:|:----------:|:-----------------:|:-------:|:---------:|:---------:|:-------:|:---------:|:----------:|:-------:|--------------:|
@@ -339,6 +341,38 @@ private boolean angularDataPresent;
         })
     )
 private BigDecimal[][] crashData;
+```
+
+
+<a name="annotation-bindlistseparated"></a>
+### BindListSeparated
+
+#### parameters
+
+- `condition`: The SpEL expression that determines if this field has to be read.
+- `type`: the Class of primitive of the single element of the array.
+- `selectFrom`: the selection from which to choose the instance type.
+- `validator`: the Class of a validator (applied BEFORE the converter).
+- `converter`: the converter used to convert the read value into the value that is assigned to the annotated variable.
+- `selectConverterFrom`: the selection from which to choose the converter to apply (the `converter` parameter can be used as a default converter whenever no converters are selected from this parameter).
+
+#### description
+
+Reads a list of Objects.
+
+#### annotation type
+
+This annotation is bounded to a variable.
+
+#### example
+
+```java
+@BindListSeparated(type = TestType3.class, selectFrom = @ObjectSeparatedChoices(terminator = ',',
+    alternatives = {
+        @ObjectSeparatedChoices.ObjectSeparatedChoice(condition = "#prefix == '1'", prefix = "1", type = TestType4.class),
+        @ObjectSeparatedChoices.ObjectSeparatedChoice(condition = "#prefix == '2'", prefix = "2", type = TestType5.class)
+    }))
+private List<TestType3> value;
 ```
 
 
@@ -1496,6 +1530,11 @@ Pull requests are welcomed.
 
 <a name="changelog"></a>
 ## Changelog
+
+<a name="changelog-3.1.0"></a>
+### version 3.1.0 - 20240228
+
+- Added `BindListSeparated`, the equivalent of `BindArray` for separated messages.
 
 <a name="changelog-3.0.2"></a>
 ### version 3.0.2 - 20240223
