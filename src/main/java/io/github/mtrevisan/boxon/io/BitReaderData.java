@@ -205,6 +205,29 @@ abstract class BitReaderData{
 		os.flush();
 	}
 
+	/**
+	 * Retrieve text until a terminator is found. Not bytes are consumed.
+	 *
+	 * @param os	The stream to write to.
+	 * @param terminator	The terminator.
+	 * @throws IOException	If an I/O error occurs.
+	 */
+	protected final void getTextUntilTerminatorWithoutConsuming(final OutputStreamWriter os, final byte terminator) throws IOException{
+		//make a copy of internal variables
+		final State originalState = createState();
+
+		try{
+			getTextUntilTerminator(os, terminator);
+		}
+		catch(final BufferUnderflowException ignored){
+			//trap end-of-buffer
+		}
+		finally{
+			//restore original variables
+			restoreState(originalState);
+		}
+	}
+
 
 	/**
 	 * Returns the byte array that backs this reader.

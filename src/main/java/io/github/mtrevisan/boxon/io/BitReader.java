@@ -237,6 +237,11 @@ public final class BitReader extends BitReaderData implements BitReaderInterface
 	}
 
 	@Override
+	public String getTextUntilTerminator(final byte terminator){
+		return getTextUntilTerminator(terminator, StandardCharsets.UTF_8);
+	}
+
+	@Override
 	public String getTextUntilTerminator(final byte terminator, final Charset charset){
 		String text = null;
 		try(
@@ -251,8 +256,17 @@ public final class BitReader extends BitReaderData implements BitReaderInterface
 	}
 
 	@Override
-	public String getTextUntilTerminator(final byte terminator){
-		return getTextUntilTerminator(terminator, StandardCharsets.UTF_8);
+	public String getTextUntilTerminatorWithoutConsuming(final byte terminator, final Charset charset){
+		String text = null;
+		try(
+			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			final OutputStreamWriter osw = new OutputStreamWriter(baos, charset)){
+			getTextUntilTerminatorWithoutConsuming(osw, terminator);
+
+			text = baos.toString(charset);
+		}
+		catch(final IOException ignored){}
+		return text;
 	}
 
 }
