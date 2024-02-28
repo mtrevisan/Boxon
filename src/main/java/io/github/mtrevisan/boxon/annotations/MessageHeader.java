@@ -49,7 +49,7 @@ public @interface MessageHeader{
 	String[] start();
 
 	/**
-	 * The final bytes that determines the type of message.
+	 * The final bytes that closes the message.
 	 * <p>This SHOULD NOT be read by the template of a message.</p>
 	 *
 	 * @return	The tail bytes of this message (defaults to empty string).
