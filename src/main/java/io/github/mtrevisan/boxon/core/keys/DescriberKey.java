@@ -53,7 +53,7 @@ public enum DescriberKey{
 	BIND_TERMINATOR("terminator"),
 	BIND_CONSUME_TERMINATOR("consumeTerminator"),
 	BIND_PREFIX("prefix"),
-	BIND_PREFIX_SIZE("prefixSize"),
+	BIND_PREFIX_LENGTH("prefixLength"),
 	BIND_SKIP_START("skipStart"),
 	BIND_SKIP_END("skipEnd"),
 	BIND_ALGORITHM("algorithm"),

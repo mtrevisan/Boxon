@@ -25,14 +25,14 @@
 package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
-import io.github.mtrevisan.boxon.core.parsers.LoaderTemplate;
-import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
 import io.github.mtrevisan.boxon.core.helpers.descriptors.AnnotationDescriptor;
 import io.github.mtrevisan.boxon.core.helpers.templates.BoundedField;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
+import io.github.mtrevisan.boxon.core.keys.DescriberKey;
+import io.github.mtrevisan.boxon.core.parsers.LoaderTemplate;
+import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
-import io.github.mtrevisan.boxon.core.keys.DescriberKey;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;

@@ -772,7 +772,7 @@ DeviceTypes deviceTypes = DeviceTypes.create()
     .with("QUECLINK_GB200S", (byte)0x46);
 Core core = CoreBuilder.builder()
     .withContextPair("deviceTypes", deviceTypes)
-    .withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
+    .withContextFunction(ParserTest.class.getDeclaredMethod("headerLength"))
     .withDefaultCodecs()
     .withTemplate(ACKMessageHex.class)
    .create();
@@ -792,7 +792,7 @@ gives as output the following
    "fields": [
       {
          "charset": "UTF-8",
-         "size": "#headerSize()",
+         "size": "#headerLength()",
          "name": "messageHeader",
          "annotationType": "BindString",
          "fieldType": "java.lang.String"
@@ -815,7 +815,7 @@ gives as output the following
       }
    ],
    "context": {
-      "headerSize": "private static int io.github.mtrevisan.boxon.core.ParserTest.headerSize()",
+      "headerLength": "private static int io.github.mtrevisan.boxon.core.ParserTest.headerLength()",
       "deviceTypes": "[QUECLINK_GB200S (0x46)]"
    }
 }
@@ -1147,8 +1147,8 @@ Extract values from a POJO using <a href="https://tools.ietf.org/html/rfc6901">R
 
 ```java
 Parser parser = Parser.create(core);
-ParserResponse result = parser.parse(payload);
-ACKMessageASCII parsedMessage = (ACKMessageASCII)result.getParsedMessageAt(0);
+List<Response<byte[], Object>> result = parser.parse(payload);
+ACKMessageASCII parsedMessage = (ACKMessageASCII)result.get(0).getMessage();
 Extractor extractor = Extractor.create(parsedMessage);
 
 String messageHeader = extractor.get("/messageHeader");

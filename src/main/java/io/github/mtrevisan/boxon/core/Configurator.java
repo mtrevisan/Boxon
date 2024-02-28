@@ -25,12 +25,12 @@
 package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
-import io.github.mtrevisan.boxon.core.keys.ConfigurationKey;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigField;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationHelper;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationManagerFactory;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationManagerInterface;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationMessage;
+import io.github.mtrevisan.boxon.core.keys.ConfigurationKey;
 import io.github.mtrevisan.boxon.core.parsers.ConfigurationParser;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;

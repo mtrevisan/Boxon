@@ -70,7 +70,7 @@ public class DeviceTypes{
 		for(final Map.Entry<String, Byte> deviceType : deviceTypes.entrySet())
 			sj.add(Integer.toHexString(deviceType.getValue() & 0x0000_00FF));
 		throw new IllegalArgumentException("Cannot parse message from another device, device type is 0x" + actualCode.toUpperCase(Locale.ROOT)
-			+ ", should be one of " + sj.toString().toUpperCase(Locale.ROOT));
+			+ ", should be one of " + sj);
 	}
 
 	@Override

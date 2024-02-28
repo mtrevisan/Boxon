@@ -24,9 +24,9 @@
  */
 package io.github.mtrevisan.boxon.semanticversioning;
 
-import io.github.mtrevisan.boxon.io.ParserDataType;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
+import io.github.mtrevisan.boxon.io.ParserDataType;
 
 import java.util.Arrays;
 import java.util.Locale;
@@ -320,8 +320,8 @@ public final class Version implements Comparable<Version>{
 
 		final Version rhs = (Version)obj;
 		return (major.equals(rhs.major)
-			&& minor.equals(rhs.minor)
-			&& patch.equals(rhs.patch)
+			&& Objects.equals(minor, rhs.minor)
+			&& Objects.equals(patch, rhs.patch)
 			&& Arrays.equals(preRelease, rhs.preRelease)
 			&& Arrays.equals(build, rhs.build));
 	}

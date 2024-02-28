@@ -49,7 +49,7 @@ class ComposerTest{
 			.with("QUECLINK_GB200S", (byte)0x46);
 		Core core = CoreBuilder.builder()
 			.withContextPair("deviceTypes", deviceTypes)
-			.withContextFunction(ParserTest.class, "headerSize")
+			.withContextFunction(ParserTest.class, "headerLength")
 			.withDefaultCodecs()
 			.withTemplatesFrom(ACKMessageHex.class)
 			.create();

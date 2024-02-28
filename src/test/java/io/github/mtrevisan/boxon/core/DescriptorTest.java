@@ -52,7 +52,7 @@ class DescriptorTest{
 			.with("QUECLINK_GB200S", (byte)0x46);
 		Core core = CoreBuilder.builder()
 			.withContextPair("deviceTypes", deviceTypes)
-			.withContextFunction(ParserTest.class.getDeclaredMethod("headerSize"))
+			.withContextFunction(ParserTest.class.getDeclaredMethod("headerLength"))
 			.withDefaultCodecs()
 			.withTemplate(ACKMessageHex.class)
 			.create();
@@ -65,7 +65,7 @@ class DescriptorTest{
 		Map<String, Object> description = descriptions.get(0);
 
 		String jsonDescription = PrettyPrintMap.toString(description);
-		Assertions.assertEquals("{fields:[{charset:UTF-8,size:#headerSize(),name:messageHeader,annotationType:BindString,fieldType:java.lang.String},{converter:"
+		Assertions.assertEquals("{fields:[{charset:UTF-8,size:#headerLength(),name:messageHeader,annotationType:BindString,fieldType:java.lang.String},{converter:"
 			+ ACKMessageHex.MessageTypeConverter.class.getName()
 			+ ",name:messageType,annotationType:BindByte,fieldType:java.lang.String},{converter:"
 			+ ACKMaskHex.ACKMaskConverter.class.getName()
@@ -89,8 +89,8 @@ class DescriptorTest{
 			+ ZonedDateTime.class.getName()
 			+ ",byteOrder:BIG_ENDIAN},{condition:mask.hasMessageId(),name:messageId,annotationType:BindShort,fieldType:short,byteOrder:BIG_ENDIAN},{skipEnd:4,skipStart:4,name:checksum,annotationType:Checksum,startValue:-1,type:short,fieldType:short,byteOrder:BIG_ENDIAN,algorithm:"
 			+ CRC16CCITT.class.getName()
-			+ "}],context:{headerSize:"
-			+ ParserTest.class.getDeclaredMethod("headerSize")
+			+ "}],context:{headerLength:"
+			+ ParserTest.class.getDeclaredMethod("headerLength")
 			+ ",deviceTypes:[QUECLINK_GB200S (0x46)]},header:{start:[+ACK],charset:UTF-8}}", jsonDescription);
 	}
 

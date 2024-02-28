@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2024 Mauro Trevisan
+ * Copyright (c) 2021-2024 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -22,36 +22,35 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.helpers;
+package io.github.mtrevisan.boxon.core.codecs;
 
-import java.util.regex.Pattern;
+import io.github.mtrevisan.boxon.annotations.bindings.ObjectSeparatedChoices;
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
 
-
-/**
- * A collection of convenience methods for working with a context.
- */
-public final class ContextHelper{
-
-	/** The name of the current object being scanner (used for referencing variables from SpEL). */
-	public static final String CONTEXT_SELF = "self";
-	/** The name of the prefix for the alternative (used for referencing variables from SpEL). */
-	public static final String CONTEXT_CHOICE_PREFIX = "prefix";
-
-	private static final Pattern CONTEXT_PREFIXED_CHOICE_PREFIX = Pattern.compile("#" + CONTEXT_CHOICE_PREFIX + "[^a-zA-Z]");
+import java.lang.annotation.Annotation;
 
 
-	private ContextHelper(){}
+@SuppressWarnings("ClassExplicitlyAnnotation")
+final class NullObjectSeparatedChoice implements ObjectSeparatedChoices.ObjectSeparatedChoice{
 
+	@Override
+	public Class<? extends Annotation> annotationType(){
+		return Annotation.class;
+	}
 
-	/**
-	 * Whether the given condition contains a header parameter.
-	 *
-	 * @param condition	The condition.
-	 * @return	Whether the prefix parameter is contained.
-	 */
-	public static boolean containsHeaderReference(final CharSequence condition){
-		return CONTEXT_PREFIXED_CHOICE_PREFIX.matcher(condition)
-			.find();
+	@Override
+	public String condition(){
+		return JavaHelper.EMPTY_STRING;
+	}
+
+	@Override
+	public String prefix(){
+		return null;
+	}
+
+	@Override
+	public Class<?> type(){
+		return Object.class;
 	}
 
 }

@@ -24,21 +24,25 @@
  */
 package io.github.mtrevisan.boxon.core.codecs;
 
-import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
-import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
+import io.github.mtrevisan.boxon.annotations.bindings.BindListSeparated;
+import io.github.mtrevisan.boxon.annotations.bindings.ObjectSeparatedChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.Injected;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.io.CodecInterface;
+import io.github.mtrevisan.boxon.io.ParserDataType;
 
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.List;
 
 
-final class CodecObject implements CodecInterface<BindObject>{
+final class CodecListSeparated implements CodecInterface<BindListSeparated>{
 
 	@SuppressWarnings("unused")
 	@Injected
@@ -50,45 +54,59 @@ final class CodecObject implements CodecInterface<BindObject>{
 
 	@Override
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject) throws FieldException{
-		final BindObject binding = extractBinding(annotation);
+		final BindListSeparated binding = extractBinding(annotation);
 
 		final BindingData bindingData = BindingDataBuilder.create(binding, rootObject, evaluator);
 
-		final Class<?> type = bindingData.chooseAlternativeType(reader);
+		final Class<?> bindingType = binding.type();
+		final List<Object> list = createList(bindingType);
+		decodeWithAlternatives(reader, list, bindingData, rootObject);
 
-		final Template<?> template = templateParser.createTemplate(type);
-		final Object instance = templateParser.decode(template, reader, rootObject);
-		bindingData.addToContext(instance);
+		return CodecHelper.convertValue(bindingData, list);
+	}
 
-		return CodecHelper.convertValue(bindingData, instance);
+	private static <T> List<T> createList(final Class<? extends T> type) throws AnnotationException{
+		if(ParserDataType.isPrimitive(type))
+			throw AnnotationException.create("Argument cannot be a primitive: {}", type);
+
+		return new ArrayList<>(0);
+	}
+
+	private void decodeWithAlternatives(final BitReaderInterface reader, final List<Object> list, final BindingData bindingData,
+			final Object rootObject) throws FieldException{
+		Class<?> chosenAlternativeType;
+		while((chosenAlternativeType = bindingData.chooseAlternativeSeparatedType(reader)) != null){
+			//read object
+			final Template<?> subTemplate = templateParser.createTemplate(chosenAlternativeType);
+			list.add(templateParser.decode(subTemplate, reader, rootObject));
+		}
 	}
 
 	@Override
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object rootObject, final Object value)
 			throws FieldException{
-		final BindObject binding = extractBinding(annotation);
+		final BindListSeparated binding = extractBinding(annotation);
 
 		final BindingData bindingData = BindingDataBuilder.create(binding, rootObject, evaluator);
 		bindingData.validate(value);
 
-		Class<?> type = binding.type();
-		if(bindingData.hasSelectAlternatives()){
-			final ObjectChoices selectFrom = binding.selectFrom();
-			type = value.getClass();
-
-			final ObjectChoices.ObjectChoice chosenAlternative = CodecHelper.chooseAlternative(selectFrom.alternatives(), type);
-
-			CodecHelper.writeHeader(writer, chosenAlternative, selectFrom);
-		}
-
-		bindingData.addToContext(value);
-
-		final Template<?> template = templateParser.createTemplate(type);
-
 		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();
-		final Object obj = CodecHelper.converterEncode(chosenConverter, value);
+		final List<Object> list = CodecHelper.converterEncode(chosenConverter, value);
 
-		templateParser.encode(template, writer, rootObject, obj);
+		encodeWithAlternatives(writer, list, binding.selectFrom());
+	}
+
+	private void encodeWithAlternatives(final BitWriterInterface writer, final List<Object> list, final ObjectSeparatedChoices selectFrom)
+			throws FieldException{
+		final ObjectSeparatedChoices.ObjectSeparatedChoice[] alternatives = selectFrom.alternatives();
+		for(int i = 0; i < list.size(); i ++){
+			final Object elem = list.get(i);
+			final Class<?> type = elem.getClass();
+
+			final Template<?> template = templateParser.createTemplate(type);
+
+			templateParser.encode(template, writer, null, elem);
+		}
 	}
 
 }

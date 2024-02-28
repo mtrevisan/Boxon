@@ -26,11 +26,11 @@ package io.github.mtrevisan.boxon.core.helpers.configurations;
 
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
-import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
-import io.github.mtrevisan.boxon.semanticversioning.Version;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
+import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
+import io.github.mtrevisan.boxon.semanticversioning.Version;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;

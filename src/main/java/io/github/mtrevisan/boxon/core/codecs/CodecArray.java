@@ -27,11 +27,11 @@ package io.github.mtrevisan.boxon.core.codecs;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArray;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
-import io.github.mtrevisan.boxon.helpers.Evaluator;
-import io.github.mtrevisan.boxon.helpers.Injected;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
+import io.github.mtrevisan.boxon.helpers.Evaluator;
+import io.github.mtrevisan.boxon.helpers.Injected;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.io.CodecInterface;
@@ -126,7 +126,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 
 			final ObjectChoices.ObjectChoice chosenAlternative = CodecHelper.chooseAlternative(alternatives, type);
 
-			CodecHelper.writePrefix(writer, chosenAlternative, selectFrom);
+			CodecHelper.writeHeader(writer, chosenAlternative, selectFrom);
 
 			final Template<?> template = templateParser.createTemplate(type);
 

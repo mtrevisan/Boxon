@@ -32,18 +32,18 @@ import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.core.codecs.LoaderCodec;
 import io.github.mtrevisan.boxon.core.codecs.TemplateParserInterface;
-import io.github.mtrevisan.boxon.helpers.Evaluator;
-import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageASCII;
 import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageHex;
 import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageHexByteChecksum;
 import io.github.mtrevisan.boxon.core.codecs.queclink.DeviceTypes;
+import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
+import io.github.mtrevisan.boxon.helpers.Evaluator;
+import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.BitReader;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriter;
-import io.github.mtrevisan.boxon.helpers.StringHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.expression.spel.SpelEvaluationException;
@@ -73,7 +73,7 @@ class TemplateParserTest{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with("QUECLINK_GB200S", (byte)0x46);
 		evaluator.addToContext("deviceTypes", deviceTypes);
-		evaluator.addToContext(TemplateParserTest.class.getDeclaredMethod("headerSize"));
+		evaluator.addToContext(TemplateParserTest.class.getDeclaredMethod("headerLength"));
 		ACKMessageHex message = templateParser.decode(template, reader, null);
 		evaluator.addToContext("deviceTypes", null);
 
@@ -103,7 +103,7 @@ class TemplateParserTest{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with("QUECLINK_GB200S", (byte)0x46);
 		evaluator.addToContext("deviceTypes", deviceTypes);
-		evaluator.addToContext(TemplateParserTest.class.getDeclaredMethod("headerSize"));
+		evaluator.addToContext(TemplateParserTest.class.getDeclaredMethod("headerLength"));
 		ACKMessageHexByteChecksum message = templateParser.decode(template, reader, null);
 		evaluator.addToContext("deviceTypes", null);
 
@@ -114,7 +114,7 @@ class TemplateParserTest{
 		Assertions.assertEquals(new String(payload), new String(reconstructedMessage));
 	}
 
-	private static int headerSize(){
+	private static int headerLength(){
 		return 4;
 	}
 

@@ -106,7 +106,7 @@ class CodecObjectTest{
 					}
 
 					@Override
-					public int prefixSize(){
+					public int prefixLength(){
 						return 0;
 					}
 
@@ -190,7 +190,7 @@ class CodecObjectTest{
 	static class TestChoice1{
 		@BindString(size = "3")
 		String header;
-		@BindObject(type = TestType0.class, selectFrom = @ObjectChoices(prefixSize = 8,
+		@BindObject(type = TestType0.class, selectFrom = @ObjectChoices(prefixLength = 8,
 			alternatives = {
 				@ObjectChoices.ObjectChoice(condition = "#prefix == 1", prefix = 1, type = TestType1.class),
 				@ObjectChoices.ObjectChoice(condition = "#prefix == 2", prefix = 2, type = TestType2.class)
@@ -204,7 +204,7 @@ class CodecObjectTest{
 		String header;
 		@BindArrayPrimitive(size = "2", type = byte.class)
 		byte[] index;
-		@BindObject(type = TestType0.class, selectFrom = @ObjectChoices(prefixSize = 8,
+		@BindObject(type = TestType0.class, selectFrom = @ObjectChoices(prefixLength = 8,
 			alternatives = {
 				@ObjectChoices.ObjectChoice(condition = "index[#prefix] == 5", prefix = 0, type = TestType1.class),
 				@ObjectChoices.ObjectChoice(condition = "index[#prefix] == 6", prefix = 1, type = TestType2.class)
