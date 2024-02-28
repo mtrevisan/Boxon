@@ -42,7 +42,7 @@ public @interface MessageHeader{
 
 	/**
 	 * The initial bytes that determines the type of message.
-	 * <p>This SHOULD be read by the protocol of a single message.</p>
+	 * <p>This SHOULD be read by the template of a message.</p>
 	 *
 	 * @return	The header bytes of this message.
 	 */
@@ -50,7 +50,7 @@ public @interface MessageHeader{
 
 	/**
 	 * The final bytes that determines the type of message.
-	 * <p>This SHOULD NOT be read by the protocol of a single message.</p>
+	 * <p>This SHOULD NOT be read by the template of a message.</p>
 	 *
 	 * @return	The tail bytes of this message (defaults to empty string).
 	 */
