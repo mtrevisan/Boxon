@@ -87,7 +87,7 @@ class ComposerTest{
 		Composer composer = Composer.create(core);
 
 		//parse:
-		byte[] payload = toByteArray("+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$");
+		byte[] payload = toByteArray("+ACK:GTIOB,CF8002,359464038116666,45.5,2,0020,20170101123542,11F0$");
 		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);

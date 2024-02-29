@@ -28,12 +28,12 @@ import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
 import io.github.mtrevisan.boxon.annotations.bindings.BindBitSet;
-import io.github.mtrevisan.boxon.annotations.bindings.BindListSeparated;
+import io.github.mtrevisan.boxon.annotations.bindings.BindList;
 import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
-import io.github.mtrevisan.boxon.annotations.bindings.ObjectSeparatedChoices;
+import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoicesList;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.core.helpers.ValueOf;
@@ -105,20 +105,19 @@ enum TemplateAnnotationValidator{
 		}
 	},
 
-	LIST_SEPARATED(BindListSeparated.class){
-		@SuppressWarnings("DuplicatedCode")
+	LIST_SEPARATED(BindList.class){
 		@Override
 		void validate(final Field field, final Annotation annotation) throws AnnotationException{
-			final BindListSeparated binding = (BindListSeparated)annotation;
+			final BindList binding = (BindList)annotation;
 			final Class<?> type = binding.type();
 			final Class<?> fieldType = field.getType();
 			if(!List.class.isAssignableFrom(fieldType))
 				throw AnnotationException.create("Bad annotation used for {}, should have been used the type `List<{}>.class`",
-					BindListSeparated.class.getSimpleName(), type.getName());
+					BindList.class.getSimpleName(), type.getName());
 
 			final Class<? extends Converter<?, ?>> converter = binding.converter();
-			final ObjectSeparatedChoices selectFrom = binding.selectFrom();
-			validateObjectSeparatedChoice(field, converter, selectFrom, type);
+			final ObjectChoicesList selectFrom = binding.selectFrom();
+			validateObjectChoiceList(field, converter, selectFrom, type);
 		}
 	},
 
@@ -266,9 +265,9 @@ enum TemplateAnnotationValidator{
 	}
 
 
-	private static void validateObjectSeparatedChoice(final Field field, final Class<? extends Converter<?, ?>> converter,
-			final ObjectSeparatedChoices selectFrom, final Class<?> type) throws AnnotationException{
-		final ObjectSeparatedChoices.ObjectSeparatedChoice[] alternatives = selectFrom.alternatives();
+	private static void validateObjectChoiceList(final Field field, final Class<? extends Converter<?, ?>> converter,
+			final ObjectChoicesList selectFrom, final Class<?> type) throws AnnotationException{
+		final ObjectChoicesList.ObjectChoiceList[] alternatives = selectFrom.alternatives();
 		if(alternatives.length == 0)
 			throw AnnotationException.create("All alternatives must be non-empty");
 
@@ -278,20 +277,20 @@ enum TemplateAnnotationValidator{
 			if(headerLength < minHeaderLength)
 				minHeaderLength = headerLength;
 		}
-		validateObjectSeparatedAlternatives(field, converter, alternatives, type, minHeaderLength);
+		validateObjectListAlternatives(field, converter, alternatives, type, minHeaderLength);
 
 
 		validateConverterToList(field, type, converter, type);
 	}
 
-	private static void validateObjectSeparatedAlternatives(final Field field, final Class<? extends Converter<?, ?>> converter,
-			final ObjectSeparatedChoices.ObjectSeparatedChoice[] alternatives, final Class<?> type, final int prefixLength)
+	private static void validateObjectListAlternatives(final Field field, final Class<? extends Converter<?, ?>> converter,
+			final ObjectChoicesList.ObjectChoiceList[] alternatives, final Class<?> type, final int prefixLength)
 			throws AnnotationException{
 		final boolean hasPrefix = (prefixLength > 0);
 		if(hasPrefix && alternatives.length == 0)
 			throw AnnotationException.create("No alternatives present");
 		for(int i = 0; i < alternatives.length; i ++){
-			final ObjectSeparatedChoices.ObjectSeparatedChoice alternative = alternatives[i];
+			final ObjectChoicesList.ObjectChoiceList alternative = alternatives[i];
 			validateAlternative(alternative.type(), alternative.condition(), type, hasPrefix);
 
 			validateConverterToList(field, alternative.type(), converter, type);

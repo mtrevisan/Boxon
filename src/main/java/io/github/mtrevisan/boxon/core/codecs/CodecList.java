@@ -24,8 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core.codecs;
 
-import io.github.mtrevisan.boxon.annotations.bindings.BindListSeparated;
-import io.github.mtrevisan.boxon.annotations.bindings.ObjectSeparatedChoices;
+import io.github.mtrevisan.boxon.annotations.bindings.BindList;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
@@ -42,7 +41,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-final class CodecListSeparated implements CodecInterface<BindListSeparated>{
+final class CodecList implements CodecInterface<BindList>{
 
 	@SuppressWarnings("unused")
 	@Injected
@@ -54,7 +53,7 @@ final class CodecListSeparated implements CodecInterface<BindListSeparated>{
 
 	@Override
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject) throws FieldException{
-		final BindListSeparated binding = extractBinding(annotation);
+		final BindList binding = extractBinding(annotation);
 
 		final BindingData bindingData = BindingDataBuilder.create(binding, rootObject, evaluator);
 
@@ -78,14 +77,15 @@ final class CodecListSeparated implements CodecInterface<BindListSeparated>{
 		while((chosenAlternativeType = bindingData.chooseAlternativeSeparatedType(reader)) != null){
 			//read object
 			final Template<?> subTemplate = templateParser.createTemplate(chosenAlternativeType);
-			list.add(templateParser.decode(subTemplate, reader, rootObject));
+			final Object element = templateParser.decode(subTemplate, reader, rootObject);
+			list.add(element);
 		}
 	}
 
 	@Override
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object rootObject, final Object value)
 			throws FieldException{
-		final BindListSeparated binding = extractBinding(annotation);
+		final BindList binding = extractBinding(annotation);
 
 		final BindingData bindingData = BindingDataBuilder.create(binding, rootObject, evaluator);
 		bindingData.validate(value);
@@ -93,12 +93,10 @@ final class CodecListSeparated implements CodecInterface<BindListSeparated>{
 		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();
 		final List<Object> list = CodecHelper.converterEncode(chosenConverter, value);
 
-		encodeWithAlternatives(writer, list, binding.selectFrom());
+		encodeWithAlternatives(writer, list);
 	}
 
-	private void encodeWithAlternatives(final BitWriterInterface writer, final List<Object> list, final ObjectSeparatedChoices selectFrom)
-			throws FieldException{
-		final ObjectSeparatedChoices.ObjectSeparatedChoice[] alternatives = selectFrom.alternatives();
+	private void encodeWithAlternatives(final BitWriterInterface writer, final List<Object> list) throws FieldException{
 		for(int i = 0; i < list.size(); i ++){
 			final Object elem = list.get(i);
 			final Class<?> type = elem.getClass();

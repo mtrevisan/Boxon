@@ -187,14 +187,14 @@ public final class JSONPath{
 	}
 
 	private static Object extractPath(final Object data, final Integer idx){
-		return (List.class.isInstance(data)
+		return (data instanceof List
 			? ((List<?>)data).get(idx)
 			: Array.get(data, idx));
 	}
 
 	private static Object extractPath(final Object data, final String currentPath) throws NoSuchFieldException{
 		final Object nextData;
-		if(Map.class.isInstance(data))
+		if(data instanceof Map)
 			nextData = ((Map<?, ?>)data).get(currentPath);
 		else{
 			final Field currentField = data.getClass().getDeclaredField(currentPath);

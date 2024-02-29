@@ -25,7 +25,7 @@
 package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
-import io.github.mtrevisan.boxon.annotations.bindings.ObjectSeparatedChoices;
+import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoicesList;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
@@ -85,10 +85,10 @@ final class CodecHelper{
 		}
 	}
 
-	static ObjectSeparatedChoices.ObjectSeparatedChoice chooseAlternative(final ObjectSeparatedChoices.ObjectSeparatedChoice[] alternatives,
+	static ObjectChoicesList.ObjectChoiceList chooseAlternative(final ObjectChoicesList.ObjectChoiceList[] alternatives,
 			final Class<?> type){
 		for(int i = 0; i < alternatives.length; i ++){
-			final ObjectSeparatedChoices.ObjectSeparatedChoice alternative = alternatives[i];
+			final ObjectChoicesList.ObjectChoiceList alternative = alternatives[i];
 			if(alternative.type().isAssignableFrom(type))
 				return alternative;
 		}
@@ -96,9 +96,9 @@ final class CodecHelper{
 		throw new IllegalArgumentException("Cannot find a valid codec for type " + type.getSimpleName());
 	}
 
-	static void writeHeader(final BitWriterInterface writer, final ObjectSeparatedChoices.ObjectSeparatedChoice chosenAlternative,
-			final ObjectSeparatedChoices selectFrom){
-		//if chosenAlternative.condition() contains '#prefix', then write @ObjectSeparatedChoice.prefix()
+	static void writeHeader(final BitWriterInterface writer, final ObjectChoicesList.ObjectChoiceList chosenAlternative,
+			final ObjectChoicesList selectFrom){
+		//if chosenAlternative.condition() contains '#prefix', then write @ObjectChoiceList.prefix()
 		if(ContextHelper.containsHeaderReference(chosenAlternative.condition())){
 			final String prefix = chosenAlternative.prefix();
 			final Charset charset = CharsetHelper.lookup(selectFrom.charset());

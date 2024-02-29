@@ -24,23 +24,21 @@
  */
 package io.github.mtrevisan.boxon.annotations.converters;
 
-
-/**
- * Convert an unsigned byte to a short.
- */
-public final class UnsignedByteConverter implements Converter<Byte, Short>{
-
-	UnsignedByteConverter(){}
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 
-	@Override
-	public Short decode(final Byte value){
-		return (short)(value & 0x0000_00FF);
-	}
+@SuppressWarnings("ALL")
+class UnsignedIntegerToLongConverterTest{
 
-	@Override
-	public Byte encode(final Short value){
-		return value.byteValue();
+	@Test
+	void valid(){
+		UnsignedIntegerToLongConverter converter = new UnsignedIntegerToLongConverter();
+		Assertions.assertEquals(Long.valueOf(0x0000_0000_2300_0000l), converter.decode(Integer.valueOf(0x2300_0000)));
+		Assertions.assertEquals(Integer.valueOf(0x2300_0000), converter.encode(Long.valueOf(0x0000_0000_2300_0000l)));
+
+		Assertions.assertEquals(Long.valueOf(0x0000_0000_CA00_0000l), converter.decode(Integer.valueOf(0xCA00_0000)));
+		Assertions.assertEquals(Integer.valueOf(0xCA00_0000), converter.encode(Long.valueOf(0x0000_0000_CA00_0000l)));
 	}
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2024 Mauro Trevisan
+ * Copyright (c) 2021-2024 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -22,25 +22,35 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.annotations.converters;
+package io.github.mtrevisan.boxon.core.codecs;
+
+import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoicesList;
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
+
+import java.lang.annotation.Annotation;
 
 
-/**
- * Convert an unsigned short to an integer.
- */
-public final class UnsignedShortConverter implements Converter<Short, Integer>{
-
-	UnsignedShortConverter(){}
-
+@SuppressWarnings("ClassExplicitlyAnnotation")
+final class NullObjectChoiceList implements ObjectChoicesList.ObjectChoiceList{
 
 	@Override
-	public Integer decode(final Short value){
-		return (value & 0x0000_FFFF);
+	public Class<? extends Annotation> annotationType(){
+		return Annotation.class;
 	}
 
 	@Override
-	public Short encode(final Integer value){
-		return value.shortValue();
+	public String condition(){
+		return JavaHelper.EMPTY_STRING;
+	}
+
+	@Override
+	public String prefix(){
+		return null;
+	}
+
+	@Override
+	public Class<?> type(){
+		return Object.class;
 	}
 
 }

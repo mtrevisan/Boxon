@@ -116,7 +116,7 @@ class ParserTest{
 			.create();
 		Parser parser = Parser.create(core);
 
-		byte[] payload = toByteArray("+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$");
+		byte[] payload = toByteArray("+ACK:GTIOB,CF8002,359464038116666,45.5,2,0020,20170101123542,11F0$+ACK:GTIOB,CF8002,359464038116666,40.5,2,0020,20170101123542,11F0$");
 		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertEquals(2, result.size());
@@ -139,7 +139,7 @@ class ParserTest{
 		Parser parser = Parser.create(core);
 
 		byte[] payload1 = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
-		byte[] payload2 = toByteArray("+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$");
+		byte[] payload2 = toByteArray("+ACK:GTIOB,CF8002,359464038116666,45.5,2,0020,20170101123542,11F0$");
 		byte[] payload = addAll(payload1, payload2);
 		List<Response<byte[], Object>> result = parser.parse(payload);
 
@@ -163,7 +163,7 @@ class ParserTest{
 		Parser parser = Parser.create(core);
 
 		byte[] payload1 = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
-		byte[] payload2 = toByteArray("+ACK:GTIOB,CF8002,359464038116666,GV350MG,2,0020,20170101123542,11F0$");
+		byte[] payload2 = toByteArray("+ACK:GTIOB,CF8002,359464038116666,45.5,2,0020,20170101123542,11F0$");
 		byte[] payload = addAll(payload2, payload1);
 		List<Response<byte[], Object>> result = parser.parse(payload);
 

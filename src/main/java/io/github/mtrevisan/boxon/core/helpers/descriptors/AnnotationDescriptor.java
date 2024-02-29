@@ -35,7 +35,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindDouble;
 import io.github.mtrevisan.boxon.annotations.bindings.BindFloat;
 import io.github.mtrevisan.boxon.annotations.bindings.BindInt;
 import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
-import io.github.mtrevisan.boxon.annotations.bindings.BindListSeparated;
+import io.github.mtrevisan.boxon.annotations.bindings.BindList;
 import io.github.mtrevisan.boxon.annotations.bindings.BindLong;
 import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
 import io.github.mtrevisan.boxon.annotations.bindings.BindShort;
@@ -43,7 +43,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
-import io.github.mtrevisan.boxon.annotations.bindings.ObjectSeparatedChoices;
+import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoicesList;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
@@ -117,12 +117,12 @@ public enum AnnotationDescriptor{
 	},
 
 	/**
-	 * Descriptor of the {@link BindListSeparated} annotation.
+	 * Descriptor of the {@link BindList} annotation.
 	 */
-	LIST_SEPARATED(BindListSeparated.class){
+	LIST_SEPARATED(BindList.class){
 		@Override
 		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
-			final BindListSeparated binding = (BindListSeparated)annotation;
+			final BindList binding = (BindList)annotation;
 			putIfNotEmpty(DescriberKey.BIND_CONDITION, binding.condition(), rootDescription);
 			putIfNotEmpty(DescriberKey.BIND_TYPE, binding.type(), rootDescription);
 			describeChoices(binding.selectFrom(), rootDescription);
@@ -378,36 +378,37 @@ public enum AnnotationDescriptor{
 			final Collection<Map<String, Object>> alternativesDescription = new ArrayList<>(alternatives.length);
 			for(int j = 0; j < alternatives.length; j ++){
 				final ObjectChoices.ObjectChoice alternative = alternatives[j];
-				final Map<String, Object> alternativeDescription = new HashMap<>(3);
-				putIfNotEmpty(DescriberKey.BIND_CONDITION, alternative.condition(), alternativeDescription);
-				putIfNotEmpty(DescriberKey.BIND_PREFIX, alternative.prefix(), alternativeDescription);
-				putIfNotEmpty(DescriberKey.BIND_TYPE, alternative.type(), alternativeDescription);
-				alternativesDescription.add(alternativeDescription);
+				describeObjectChoicesAlternatives(alternative.condition(), alternative.prefix(), alternative.type(), alternativesDescription);
 			}
 			rootDescription.put(DescriberKey.BIND_SELECT_CONVERTER_FROM.toString(), alternativesDescription);
 		}
 	}
 
-	private static void describeChoices(final ObjectSeparatedChoices choices, final Map<String, Object> rootDescription){
+	private static void describeChoices(final ObjectChoicesList choices, final Map<String, Object> rootDescription){
 		putIfNotEmpty(DescriberKey.BIND_CHARSET, choices.charset(), rootDescription);
 		putIfNotEmpty(DescriberKey.BIND_TERMINATOR, choices.terminator(), rootDescription);
 		describeAlternatives(choices.alternatives(), rootDescription);
 	}
 
-	private static void describeAlternatives(final ObjectSeparatedChoices.ObjectSeparatedChoice[] alternatives,
+	private static void describeAlternatives(final ObjectChoicesList.ObjectChoiceList[] alternatives,
 		final Map<String, Object> rootDescription){
 		if(alternatives.length > 0){
 			final Collection<Map<String, Object>> alternativesDescription = new ArrayList<>(alternatives.length);
 			for(int j = 0; j < alternatives.length; j ++){
-				final ObjectSeparatedChoices.ObjectSeparatedChoice alternative = alternatives[j];
-				final Map<String, Object> alternativeDescription = new HashMap<>(3);
-				putIfNotEmpty(DescriberKey.BIND_CONDITION, alternative.condition(), alternativeDescription);
-				putIfNotEmpty(DescriberKey.BIND_PREFIX, alternative.prefix(), alternativeDescription);
-				putIfNotEmpty(DescriberKey.BIND_TYPE, alternative.type(), alternativeDescription);
-				alternativesDescription.add(alternativeDescription);
+				final ObjectChoicesList.ObjectChoiceList alternative = alternatives[j];
+				describeObjectChoicesAlternatives(alternative.condition(), alternative.prefix(), alternative.type(), alternativesDescription);
 			}
 			rootDescription.put(DescriberKey.BIND_SELECT_CONVERTER_FROM.toString(), alternativesDescription);
 		}
+	}
+
+	private static <T> void describeObjectChoicesAlternatives(final String condition, final T prefix, final Class<?> type,
+			final Collection<Map<String, Object>> alternativesDescription){
+		final Map<String, Object> alternativeDescription = new HashMap<>(3);
+		putIfNotEmpty(DescriberKey.BIND_CONDITION, condition, alternativeDescription);
+		putIfNotEmpty(DescriberKey.BIND_PREFIX, prefix, alternativeDescription);
+		putIfNotEmpty(DescriberKey.BIND_TYPE, type, alternativeDescription);
+		alternativesDescription.add(alternativeDescription);
 	}
 
 	private static void describeValidator(final Class<? extends Validator<?>> validator, final Map<String, Object> rootDescription){

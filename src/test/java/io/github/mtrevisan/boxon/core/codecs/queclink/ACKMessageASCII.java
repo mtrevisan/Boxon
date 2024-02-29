@@ -28,9 +28,11 @@ import io.github.mtrevisan.boxon.annotations.Evaluate;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
+import io.github.mtrevisan.boxon.annotations.converters.StringToBigDecimalConverter;
 import io.github.mtrevisan.boxon.annotations.validators.IMEIValidator;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
 
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 
 
@@ -47,8 +49,8 @@ public class ACKMessageASCII{
 	private Version protocolVersion;
 	@BindStringTerminated(terminator = ',', validator = IMEIValidator.class)
 	private String imei;
-	@BindStringTerminated(terminator = ',')
-	private String deviceName;
+	@BindStringTerminated(terminator = ',', converter = StringToBigDecimalConverter.class)
+	private BigDecimal latitude;
 	@BindStringTerminated(terminator = ',')
 	private String id;
 	@BindStringTerminated(terminator = ',', converter = QueclinkHelper.HexStringToShortConverter.class)

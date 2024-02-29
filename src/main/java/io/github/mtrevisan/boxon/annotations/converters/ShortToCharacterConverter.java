@@ -26,21 +26,21 @@ package io.github.mtrevisan.boxon.annotations.converters;
 
 
 /**
- * Convert an unsigned integer to a long.
+ * Convert a short to a char.
  */
-public final class UnsignedIntConverter implements Converter<Integer, Long>{
+public final class ShortToCharacterConverter implements Converter<Short, Character>{
 
-	UnsignedIntConverter(){}
+	ShortToCharacterConverter(){}
 
 
 	@Override
-	public Long decode(final Integer value){
-		return (value & 0x0000_0000_FFFF_FFFFl);
+	public Character decode(final Short value){
+		return Character.toChars(value)[0];
 	}
 
 	@Override
-	public Integer encode(final Long value){
-		return value.intValue();
+	public Short encode(final Character value){
+		return (short)Character.codePointAt(new char[]{value}, 0);
 	}
 
 }

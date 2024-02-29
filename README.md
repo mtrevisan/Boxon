@@ -109,7 +109,7 @@ You can get pre-built JARs (usable on JRE 11 or newer) from [Sonatype](https://o
     2. [BindObject](#annotation-bindobject)
     3. [BindArray](#annotation-bindarray)
     4. [BindArrayPrimitive](#annotation-bindarrayprimitive)
-    5. [BindListSeparated](#annotation-bindlistseparated)
+    5. [BindList](#annotation-bindlist)
     6. [BindBitSet](#annotation-bindbitset)
     7. [BindByte](#annotation-bindbyte)
     8. [BindShort](#annotation-bindshort)
@@ -179,7 +179,7 @@ Note that [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_inject
 | BindObject           |  &#9745;  | &#9745; |         |            |                   |         |                    |  &#9745;   |    &#9745;    |  &#9745;  |  &#9745;  |       &#9745;       |           BindObject |
 | BindArray            |  &#9745;  | &#9745; |         |            |                   | &#9745; |                    |  &#9745;   |    &#9745;    |  &#9745;  |  &#9745;  |       &#9745;       |            BindArray |
 | BindArrayPrimitive   |  &#9745;  | &#9745; |         |            |                   | &#9745; |      &#9745;       |            |               |  &#9745;  |  &#9745;  |       &#9745;       |   BindArrayPrimitive |
-| BindListSeparated    |  &#9745;  | &#9745; |         |            |                   |         |                    |  &#9745;   |               |  &#9745;  |  &#9745;  |       &#9745;       |    BindListSeparated |
+| BindList             |  &#9745;  | &#9745; |         |            |                   |         |                    |  &#9745;   |               |  &#9745;  |  &#9745;  |       &#9745;       |             BindList |
 | BindBitSet           |  &#9745;  |         |         |            |                   | &#9745; | &#9745; (bitOrder) |            |               |  &#9745;  |  &#9745;  |       &#9745;       |           BindBitSet |
 | BindByte             |  &#9745;  |         |         |            |                   |         |                    |            |               |  &#9745;  |  &#9745;  |       &#9745;       |             BindByte |
 | BindShort            |  &#9745;  |         |         |            |                   |         |      &#9745;       |            |               |  &#9745;  |  &#9745;  |       &#9745;       |            BindShort |
@@ -344,8 +344,8 @@ private BigDecimal[][] crashData;
 ```
 
 
-<a name="annotation-bindlistseparated"></a>
-### BindListSeparated
+<a name="annotation-bindlist"></a>
+### BindList
 
 #### parameters
 
@@ -367,10 +367,10 @@ This annotation is bounded to a variable.
 #### example
 
 ```java
-@BindListSeparated(type = TestType3.class, selectFrom = @ObjectSeparatedChoices(terminator = ',',
+@BindList(type = TestType3.class, selectFrom = @ObjectChoicesList(terminator = ',',
     alternatives = {
-        @ObjectSeparatedChoices.ObjectSeparatedChoice(condition = "#prefix == '1'", prefix = "1", type = TestType4.class),
-        @ObjectSeparatedChoices.ObjectSeparatedChoice(condition = "#prefix == '2'", prefix = "2", type = TestType5.class)
+        @ObjectChoicesList.ObjectChoiceList(condition = "#prefix == '1'", prefix = "1", type = TestType4.class),
+        @ObjectChoicesList.ObjectChoiceList(condition = "#prefix == '2'", prefix = "2", type = TestType5.class)
     }))
 private List<TestType3> value;
 ```
@@ -1531,10 +1531,15 @@ Pull requests are welcomed.
 <a name="changelog"></a>
 ## Changelog
 
+<a name="changelog-3.1.1"></a>
+### version 3.1.1 - 20240229
+
+- fix error on annotating with @Skip at the end of the POJO
+
 <a name="changelog-3.1.0"></a>
 ### version 3.1.0 - 20240228
 
-- Added `BindListSeparated`, the equivalent of `BindArray` for separated messages.
+- Added `BindList`, the equivalent of `BindArray` for messages with separators.
 
 <a name="changelog-3.0.2"></a>
 ### version 3.0.2 - 20240223

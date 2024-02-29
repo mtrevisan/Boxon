@@ -134,7 +134,7 @@ public final class Template<T>{
 			try{
 				final Annotation validAnnotation = validateField(field, boundedAnnotations);
 
-				if(validAnnotation != null)
+				if(validAnnotation != null || skips.length > 0)
 					boundedFields.add(BoundedField.create(field, validAnnotation, skips));
 			}
 			catch(final AnnotationException e){
