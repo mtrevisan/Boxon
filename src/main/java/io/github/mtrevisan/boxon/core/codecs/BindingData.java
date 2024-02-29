@@ -197,9 +197,8 @@ final class BindingData{
 	 *
 	 * @param reader	The reader from which to read the data from.
 	 * @return	The class type of the chosen alternative.
-	 * @throws CodecException	If a codec cannot be found for the chosen alternative.
 	 */
-	Class<?> chooseAlternativeSeparatedType(final BitReaderInterface reader) throws CodecException{
+	Class<?> chooseAlternativeSeparatedType(final BitReaderInterface reader){
 		if(!hasSelectSeparatedAlternatives())
 			return type;
 
@@ -213,11 +212,7 @@ final class BindingData{
 			? chosenAlternative.type()
 			: selectDefault);
 
-		if(chosenAlternativeType == void.class)
-			throw CodecException.create("Cannot find a valid codec from given alternatives for {}",
-				rootObject.getClass().getSimpleName());
-
-		return chosenAlternativeType;
+		return (chosenAlternativeType != void.class? chosenAlternativeType: null);
 	}
 
 	/**

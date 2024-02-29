@@ -48,7 +48,7 @@ public final class BoundedField{
 	private final Skip[] skips;
 	private final Annotation binding;
 
-	private final String condition;
+	private String condition;
 
 
 	static BoundedField create(final Field field, final Annotation binding){
@@ -67,9 +67,11 @@ public final class BoundedField{
 		this.binding = binding;
 		this.skips = (skips.length > 0? skips.clone(): EMPTY_ARRAY);
 
-		//pre-fetch condition method
-		final Method conditionMethod = ReflectionHelper.getAccessibleMethod(binding.annotationType(), CONDITION, String.class);
-		condition = ReflectionHelper.invokeMethodOrDefault(binding, conditionMethod, JavaHelper.EMPTY_STRING);
+		if(binding != null){
+			//pre-fetch condition method
+			final Method conditionMethod = ReflectionHelper.getAccessibleMethod(binding.annotationType(), CONDITION, String.class);
+			condition = ReflectionHelper.invokeMethodOrDefault(binding, conditionMethod, JavaHelper.EMPTY_STRING);
+		}
 	}
 
 

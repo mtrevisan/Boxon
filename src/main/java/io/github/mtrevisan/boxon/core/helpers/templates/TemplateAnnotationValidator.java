@@ -106,7 +106,6 @@ enum TemplateAnnotationValidator{
 	},
 
 	LIST_SEPARATED(BindList.class){
-		@SuppressWarnings("DuplicatedCode")
 		@Override
 		void validate(final Field field, final Annotation annotation) throws AnnotationException{
 			final BindList binding = (BindList)annotation;

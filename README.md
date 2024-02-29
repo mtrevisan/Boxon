@@ -179,7 +179,7 @@ Note that [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_inject
 | BindObject           |  &#9745;  | &#9745; |         |            |                   |         |                    |  &#9745;   |    &#9745;    |  &#9745;  |  &#9745;  |       &#9745;       |           BindObject |
 | BindArray            |  &#9745;  | &#9745; |         |            |                   | &#9745; |                    |  &#9745;   |    &#9745;    |  &#9745;  |  &#9745;  |       &#9745;       |            BindArray |
 | BindArrayPrimitive   |  &#9745;  | &#9745; |         |            |                   | &#9745; |      &#9745;       |            |               |  &#9745;  |  &#9745;  |       &#9745;       |   BindArrayPrimitive |
-| BindList             |  &#9745;  | &#9745; |         |            |                   |         |                    |  &#9745;   |               |  &#9745;  |  &#9745;  |       &#9745;       |            BindList  |
+| BindList             |  &#9745;  | &#9745; |         |            |                   |         |                    |  &#9745;   |               |  &#9745;  |  &#9745;  |       &#9745;       |             BindList |
 | BindBitSet           |  &#9745;  |         |         |            |                   | &#9745; | &#9745; (bitOrder) |            |               |  &#9745;  |  &#9745;  |       &#9745;       |           BindBitSet |
 | BindByte             |  &#9745;  |         |         |            |                   |         |                    |            |               |  &#9745;  |  &#9745;  |       &#9745;       |             BindByte |
 | BindShort            |  &#9745;  |         |         |            |                   |         |      &#9745;       |            |               |  &#9745;  |  &#9745;  |       &#9745;       |            BindShort |
@@ -1530,6 +1530,11 @@ Pull requests are welcomed.
 
 <a name="changelog"></a>
 ## Changelog
+
+<a name="changelog-3.1.1"></a>
+### version 3.1.1 - 20240229
+
+- fix error on annotating with @Skip at the end of the POJO
 
 <a name="changelog-3.1.0"></a>
 ### version 3.1.0 - 20240228

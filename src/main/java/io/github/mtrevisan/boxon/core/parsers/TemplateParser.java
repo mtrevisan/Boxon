@@ -369,7 +369,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 	private boolean shouldProcessField(final String condition, final Object rootObject){
-		return (condition.isEmpty() || core.getEvaluator().evaluateBoolean(condition, rootObject));
+		return (condition != null && (condition.isEmpty() || core.getEvaluator().evaluateBoolean(condition, rootObject)));
 	}
 
 	private <T> void writeSkips(final Skip[] skips, final BitWriterInterface writer, final ParserContext<T> parserContext){

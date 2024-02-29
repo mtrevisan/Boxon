@@ -378,11 +378,7 @@ public enum AnnotationDescriptor{
 			final Collection<Map<String, Object>> alternativesDescription = new ArrayList<>(alternatives.length);
 			for(int j = 0; j < alternatives.length; j ++){
 				final ObjectChoices.ObjectChoice alternative = alternatives[j];
-				final Map<String, Object> alternativeDescription = new HashMap<>(3);
-				putIfNotEmpty(DescriberKey.BIND_CONDITION, alternative.condition(), alternativeDescription);
-				putIfNotEmpty(DescriberKey.BIND_PREFIX, alternative.prefix(), alternativeDescription);
-				putIfNotEmpty(DescriberKey.BIND_TYPE, alternative.type(), alternativeDescription);
-				alternativesDescription.add(alternativeDescription);
+				describeObjectChoicesAlternatives(alternative.condition(), alternative.prefix(), alternative.type(), alternativesDescription);
 			}
 			rootDescription.put(DescriberKey.BIND_SELECT_CONVERTER_FROM.toString(), alternativesDescription);
 		}
@@ -400,14 +396,19 @@ public enum AnnotationDescriptor{
 			final Collection<Map<String, Object>> alternativesDescription = new ArrayList<>(alternatives.length);
 			for(int j = 0; j < alternatives.length; j ++){
 				final ObjectChoicesList.ObjectChoiceList alternative = alternatives[j];
-				final Map<String, Object> alternativeDescription = new HashMap<>(3);
-				putIfNotEmpty(DescriberKey.BIND_CONDITION, alternative.condition(), alternativeDescription);
-				putIfNotEmpty(DescriberKey.BIND_PREFIX, alternative.prefix(), alternativeDescription);
-				putIfNotEmpty(DescriberKey.BIND_TYPE, alternative.type(), alternativeDescription);
-				alternativesDescription.add(alternativeDescription);
+				describeObjectChoicesAlternatives(alternative.condition(), alternative.prefix(), alternative.type(), alternativesDescription);
 			}
 			rootDescription.put(DescriberKey.BIND_SELECT_CONVERTER_FROM.toString(), alternativesDescription);
 		}
+	}
+
+	private static <T> void describeObjectChoicesAlternatives(final String condition, final T prefix, final Class<?> type,
+			final Collection<Map<String, Object>> alternativesDescription){
+		final Map<String, Object> alternativeDescription = new HashMap<>(3);
+		putIfNotEmpty(DescriberKey.BIND_CONDITION, condition, alternativeDescription);
+		putIfNotEmpty(DescriberKey.BIND_PREFIX, prefix, alternativeDescription);
+		putIfNotEmpty(DescriberKey.BIND_TYPE, type, alternativeDescription);
+		alternativesDescription.add(alternativeDescription);
 	}
 
 	private static void describeValidator(final Class<? extends Validator<?>> validator, final Map<String, Object> rootDescription){
