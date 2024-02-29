@@ -26,21 +26,21 @@ package io.github.mtrevisan.boxon.annotations.converters;
 
 
 /**
- * Convert an unsigned byte to a short.
+ * Convert an unsigned integer to a long.
  */
-public final class UnsignedByteConverter implements Converter<Byte, Short>{
+public final class UnsignedIntegerToLongConverter implements Converter<Integer, Long>{
 
-	UnsignedByteConverter(){}
+	UnsignedIntegerToLongConverter(){}
 
 
 	@Override
-	public Short decode(final Byte value){
-		return (short)(value & 0x0000_00FF);
+	public Long decode(final Integer value){
+		return (value & 0x0000_0000_FFFF_FFFFl);
 	}
 
 	@Override
-	public Byte encode(final Short value){
-		return value.byteValue();
+	public Integer encode(final Long value){
+		return value.intValue();
 	}
 
 }
