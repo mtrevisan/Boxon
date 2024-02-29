@@ -1534,7 +1534,7 @@ Pull requests are welcomed.
 <a name="changelog-3.1.1"></a>
 ### version 3.1.1 - 20240229
 
-- fix error on annotating with @Skip at the end of the POJO
+- Fixed an error if annotating with @Skip as the last a of the POJO
 
 <a name="changelog-3.1.0"></a>
 ### version 3.1.0 - 20240228
