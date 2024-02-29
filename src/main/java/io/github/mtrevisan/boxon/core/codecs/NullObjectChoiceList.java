@@ -24,14 +24,14 @@
  */
 package io.github.mtrevisan.boxon.core.codecs;
 
-import io.github.mtrevisan.boxon.annotations.bindings.ObjectSeparatedChoices;
+import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoicesList;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 
 import java.lang.annotation.Annotation;
 
 
 @SuppressWarnings("ClassExplicitlyAnnotation")
-final class NullObjectSeparatedChoice implements ObjectSeparatedChoices.ObjectSeparatedChoice{
+final class NullObjectChoiceList implements ObjectChoicesList.ObjectChoiceList{
 
 	@Override
 	public Class<? extends Annotation> annotationType(){

@@ -32,7 +32,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindDouble;
 import io.github.mtrevisan.boxon.annotations.bindings.BindFloat;
 import io.github.mtrevisan.boxon.annotations.bindings.BindInt;
 import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
-import io.github.mtrevisan.boxon.annotations.bindings.BindListSeparated;
+import io.github.mtrevisan.boxon.annotations.bindings.BindList;
 import io.github.mtrevisan.boxon.annotations.bindings.BindLong;
 import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
 import io.github.mtrevisan.boxon.annotations.bindings.BindShort;
@@ -74,20 +74,20 @@ final class BindingDataBuilder{
 	}
 
 	/**
-	 * Create a binding data structure for the {@link BindListSeparated} annotation.
+	 * Create a binding data structure for the {@link BindList} annotation.
 	 *
 	 * @param annotation	The annotation.
 	 * @param rootObject	The root object.
 	 * @param evaluator	The evaluator.
 	 * @return	The instance.
 	 */
-	static BindingData create(final BindListSeparated annotation, final Object rootObject, final Evaluator evaluator){
+	static BindingData create(final BindList annotation, final Object rootObject, final Evaluator evaluator){
 		final ConverterChoices selectConverterFrom = annotation.selectConverterFrom();
 		final Class<? extends Validator<?>> validator = annotation.validator();
 		final Class<? extends Converter<?, ?>> converter = annotation.converter();
 		final BindingData data = new BindingData(selectConverterFrom, validator, converter, rootObject, evaluator);
 		data.setType(annotation.type());
-		data.setSelectObjectSeparatedFrom(annotation.selectFrom());
+		data.setSelectObjectListFrom(annotation.selectFrom());
 		return data;
 	}
 

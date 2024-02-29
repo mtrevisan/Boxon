@@ -24,8 +24,8 @@
  */
 package io.github.mtrevisan.boxon.core.codecs;
 
-import io.github.mtrevisan.boxon.annotations.bindings.BindListSeparated;
-import io.github.mtrevisan.boxon.annotations.bindings.ObjectSeparatedChoices;
+import io.github.mtrevisan.boxon.annotations.bindings.BindList;
+import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoicesList;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
@@ -42,7 +42,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-final class CodecListSeparated implements CodecInterface<BindListSeparated>{
+final class CodecList implements CodecInterface<BindList>{
 
 	@SuppressWarnings("unused")
 	@Injected
@@ -54,7 +54,7 @@ final class CodecListSeparated implements CodecInterface<BindListSeparated>{
 
 	@Override
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject) throws FieldException{
-		final BindListSeparated binding = extractBinding(annotation);
+		final BindList binding = extractBinding(annotation);
 
 		final BindingData bindingData = BindingDataBuilder.create(binding, rootObject, evaluator);
 
@@ -85,7 +85,7 @@ final class CodecListSeparated implements CodecInterface<BindListSeparated>{
 	@Override
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object rootObject, final Object value)
 			throws FieldException{
-		final BindListSeparated binding = extractBinding(annotation);
+		final BindList binding = extractBinding(annotation);
 
 		final BindingData bindingData = BindingDataBuilder.create(binding, rootObject, evaluator);
 		bindingData.validate(value);
@@ -96,9 +96,9 @@ final class CodecListSeparated implements CodecInterface<BindListSeparated>{
 		encodeWithAlternatives(writer, list, binding.selectFrom());
 	}
 
-	private void encodeWithAlternatives(final BitWriterInterface writer, final List<Object> list, final ObjectSeparatedChoices selectFrom)
+	private void encodeWithAlternatives(final BitWriterInterface writer, final List<Object> list, final ObjectChoicesList selectFrom)
 			throws FieldException{
-		final ObjectSeparatedChoices.ObjectSeparatedChoice[] alternatives = selectFrom.alternatives();
+		final ObjectChoicesList.ObjectChoiceList[] alternatives = selectFrom.alternatives();
 		for(int i = 0; i < list.size(); i ++){
 			final Object elem = list.get(i);
 			final Class<?> type = elem.getClass();

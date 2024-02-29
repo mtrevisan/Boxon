@@ -37,7 +37,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.ANNOTATION_TYPE)
 @Documented
-public @interface ObjectSeparatedChoices{
+public @interface ObjectChoicesList{
 
 	/**
 	 * The type of encoding used for the {@link String}.
@@ -58,14 +58,14 @@ public @interface ObjectSeparatedChoices{
 	 *
 	 * @return	The choices to select from (defaults to no alternatives).
 	 */
-	ObjectSeparatedChoice[] alternatives() default {};
+	ObjectChoiceList[] alternatives() default {};
 
 
 	/** The annotation holding a single choice. */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.ANNOTATION_TYPE)
 	@Documented
-	@interface ObjectSeparatedChoice{
+	@interface ObjectChoiceList{
 
 		/**
 		 * The condition that needs to hold, if an instance of {@link #type() type} is to be decoded.

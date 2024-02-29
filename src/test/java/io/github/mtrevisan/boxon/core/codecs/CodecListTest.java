@@ -25,10 +25,10 @@
 package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
-import io.github.mtrevisan.boxon.annotations.bindings.BindListSeparated;
+import io.github.mtrevisan.boxon.annotations.bindings.BindList;
 import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
-import io.github.mtrevisan.boxon.annotations.bindings.ObjectSeparatedChoices;
+import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoicesList;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
@@ -58,7 +58,7 @@ import java.util.List;
 
 
 @SuppressWarnings("ALL")
-class CodecListSeparatedTest{
+class CodecListTest{
 
 	private static class Version{
 		@BindStringTerminated(terminator = ',')
@@ -100,10 +100,10 @@ class CodecListSeparatedTest{
 	static class TestChoice6{
 		@BindStringTerminated(terminator = ',')
 		String type;
-		@BindListSeparated(type = TestType3.class, selectFrom = @ObjectSeparatedChoices(terminator = ',',
+		@BindList(type = TestType3.class, selectFrom = @ObjectChoicesList(terminator = ',',
 			alternatives = {
-				@ObjectSeparatedChoices.ObjectSeparatedChoice(condition = "#prefix == '1'", prefix = "1", type = TestType4.class),
-				@ObjectSeparatedChoices.ObjectSeparatedChoice(condition = "#prefix == '2'", prefix = "2", type = TestType5.class)
+				@ObjectChoicesList.ObjectChoiceList(condition = "#prefix == '1'", prefix = "1", type = TestType4.class),
+				@ObjectChoicesList.ObjectChoiceList(condition = "#prefix == '2'", prefix = "2", type = TestType5.class)
 			}))
 		List<TestType3> value;
 	}
@@ -111,13 +111,13 @@ class CodecListSeparatedTest{
 
 	@Test
 	void listOfSameObject() throws FieldException{
-		CodecListSeparated codec = new CodecListSeparated();
+		CodecList codec = new CodecList();
 		List<Version> encodedValue = new ArrayList<>(
 			Arrays.asList(new Version("2", "0", "1", "12"), new Version("2", "1", "2", "0")));
-		BindListSeparated annotation = new BindListSeparated(){
+		BindList annotation = new BindList(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
-				return BindListSeparated.class;
+				return BindList.class;
 			}
 
 			@Override
@@ -127,12 +127,12 @@ class CodecListSeparatedTest{
 
 			@Override
 			public Class<?> type(){
-				return CodecListSeparatedTest.Version.class;
+				return CodecListTest.Version.class;
 			}
 
 			@Override
-			public ObjectSeparatedChoices selectFrom(){
-				return new ObjectSeparatedChoices(){
+			public ObjectChoicesList selectFrom(){
+				return new ObjectChoicesList(){
 					@Override
 					public String charset(){
 						return StandardCharsets.US_ASCII.name();
@@ -149,12 +149,12 @@ class CodecListSeparatedTest{
 					}
 
 					@Override
-					public ObjectSeparatedChoice[] alternatives(){
-						return new ObjectSeparatedChoice[]{
-							new ObjectSeparatedChoice(){
+					public ObjectChoiceList[] alternatives(){
+						return new ObjectChoiceList[]{
+							new ObjectChoiceList(){
 								@Override
 								public Class<? extends Annotation> annotationType(){
-									return ObjectSeparatedChoice.class;
+									return ObjectChoiceList.class;
 								}
 
 								@Override

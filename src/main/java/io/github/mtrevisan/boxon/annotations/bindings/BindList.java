@@ -42,7 +42,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 @Documented
-public @interface BindListSeparated{
+public @interface BindList{
 
 	/**
 	 * The SpEL expression that determines if an evaluation has to be made.
@@ -74,9 +74,9 @@ public @interface BindListSeparated{
 	/**
 	 * The choices to select from, based on a prefix of a certain size, if any.
 	 *
-	 * @return The choices to select from, based on a prefix of a certain size (defaults to empty {@link ObjectSeparatedChoices}).
+	 * @return The choices to select from, based on a prefix of a certain size (defaults to empty {@link ObjectChoicesList}).
 	 */
-	ObjectSeparatedChoices selectFrom() default @ObjectSeparatedChoices;
+	ObjectChoicesList selectFrom() default @ObjectChoicesList;
 
 	/**
 	 * The validator to be applied <i>after</i> applying the converter, in the decoding phase (<i>before</i> if in the encoding one), if any.
