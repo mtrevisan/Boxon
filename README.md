@@ -146,16 +146,20 @@ You can get pre-built JARs (usable on JRE 11 or newer) from [Sonatype](https://o
      2. [Message composer](#example-composer)
 11. [Contributing](#contributing)
 12. [Changelog](#changelog)
-     1. [version 3.0.0](#changelog-3.0.0)
-     2. [version 2.1.2](#changelog-2.1.2)
-     3. [version 2.1.1](#changelog-2.1.1)
-     4. [version 2.1.0](#changelog-2.1.0)
-     5. [version 2.0.0](#changelog-2.0.0)
-     6. [version 1.1.0](#changelog-1.1.0)
-     7. [version 1.0.0](#changelog-1.0.0)
-     8. [version 0.0.2](#changelog-0.0.2)
-     9. [version 0.0.1](#changelog-0.0.1)
-     10. [version 0.0.0](#changelog-0.0.0)
+     1. [version 3.1.1](#changelog-3.1.1)
+     2. [version 3.1.0](#changelog-3.1.0)
+     3. [version 3.0.2](#changelog-3.0.2)
+     4. [version 3.0.1](#changelog-3.0.1)
+     5. [version 3.0.0](#changelog-3.0.0)
+     6. [version 2.1.2](#changelog-2.1.2)
+     7. [version 2.1.1](#changelog-2.1.1)
+     8. [version 2.1.0](#changelog-2.1.0)
+     9. [version 2.0.0](#changelog-2.0.0)
+     10. [version 1.1.0](#changelog-1.1.0)
+     11. [version 1.0.0](#changelog-1.0.0)
+     12. [version 0.0.2](#changelog-0.0.2)
+     13. [version 0.0.1](#changelog-0.0.1)
+     14. [version 0.0.0](#changelog-0.0.0)
 13. [License](#license)
 
 <br/>
@@ -1534,7 +1538,7 @@ Pull requests are welcomed.
 <a name="changelog-3.1.1"></a>
 ### version 3.1.1 - 20240229
 
-- fix error on annotating with @Skip at the end of the POJO
+- Fixed an error if annotating with @Skip as the last a of the POJO
 
 <a name="changelog-3.1.0"></a>
 ### version 3.1.0 - 20240228
