@@ -65,29 +65,29 @@ class DescriptorTest{
 		Map<String, Object> description = descriptions.get(0);
 
 		String jsonDescription = PrettyPrintMap.toString(description);
-		Assertions.assertEquals("{fields:[{charset:UTF-8,size:#headerLength(),name:messageHeader,annotationType:BindString,fieldType:java.lang.String},{converter:"
+		Assertions.assertEquals("{fields:[{charset:UTF-8,size:#headerLength(),name:messageHeader,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindString,fieldType:java.lang.String},{converter:"
 			+ ACKMessageHex.MessageTypeConverter.class.getName()
-			+ ",name:messageType,annotationType:BindByte,fieldType:java.lang.String},{converter:"
+			+ ",name:messageType,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindByte,fieldType:java.lang.String},{converter:"
 			+ ACKMaskHex.ACKMaskConverter.class.getName()
-			+ ",name:mask,annotationType:BindByte,fieldType:"
+			+ ",name:mask,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindByte,fieldType:"
 			+ ACKMaskHex.class.getName()
-			+ "},{condition:mask.hasLength(),name:messageLength,annotationType:BindByte,fieldType:byte},{condition:mask.hasDeviceType(),name:deviceTypeCode,annotationType:BindByte,fieldType:byte},{condition:mask.hasProtocolVersion(),size:2,converter:"
+			+ "},{condition:mask.hasLength(),name:messageLength,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindByte,fieldType:byte},{condition:mask.hasDeviceType(),name:deviceTypeCode,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindByte,fieldType:byte},{condition:mask.hasProtocolVersion(),size:2,converter:"
 			+ QueclinkHelper.VersionConverter.class.getName()
-			+ ",name:protocolVersion,annotationType:BindArrayPrimitive,type:byte,fieldType:"
+			+ ",name:protocolVersion,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive,type:byte,fieldType:"
 			+ Version.class.getName()
 			+ ",byteOrder:BIG_ENDIAN},{condition:mask.hasFirmwareVersion(),size:2,converter:"
 			+ QueclinkHelper.VersionConverter.class.getName()
-			+ ",name:firmwareVersion,annotationType:BindArrayPrimitive,type:byte,fieldType:"
+			+ ",name:firmwareVersion,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive,type:byte,fieldType:"
 			+ Version.class.getName()
 			+ ",byteOrder:BIG_ENDIAN},{condition:mask.hasIMEI(),size:8,converter:"
 			+ QueclinkHelper.IMEIConverter.class.getName()
 			+ ",name:imei,validator:"
 			+ IMEIValidator.class.getName()
-			+ ",annotationType:BindArrayPrimitive,type:byte,fieldType:java.lang.String,byteOrder:BIG_ENDIAN},{charset:UTF-8,condition:!mask.hasIMEI(),size:8,name:deviceName,annotationType:BindString,fieldType:java.lang.String},{name:id,annotationType:BindByte,fieldType:byte},{name:correlationId,annotationType:BindShort,fieldType:short,byteOrder:BIG_ENDIAN},{condition:mask.hasEventTime(),size:7,converter:"
+			+ ",annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive,type:byte,fieldType:java.lang.String,byteOrder:BIG_ENDIAN},{charset:UTF-8,condition:!mask.hasIMEI(),size:8,name:deviceName,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindString,fieldType:java.lang.String},{name:id,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindByte,fieldType:byte},{name:correlationId,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindShort,fieldType:short,byteOrder:BIG_ENDIAN},{condition:mask.hasEventTime(),size:7,converter:"
 			+ QueclinkHelper.DateTimeYYYYMMDDHHMMSSConverter.class.getName()
-			+ ",name:eventTime,annotationType:BindArrayPrimitive,type:byte,fieldType:"
+			+ ",name:eventTime,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive,type:byte,fieldType:"
 			+ ZonedDateTime.class.getName()
-			+ ",byteOrder:BIG_ENDIAN},{condition:mask.hasMessageId(),name:messageId,annotationType:BindShort,fieldType:short,byteOrder:BIG_ENDIAN},{skipEnd:4,skipStart:4,name:checksum,annotationType:Checksum,startValue:-1,type:short,fieldType:short,byteOrder:BIG_ENDIAN,algorithm:"
+			+ ",byteOrder:BIG_ENDIAN},{condition:mask.hasMessageId(),name:messageId,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindShort,fieldType:short,byteOrder:BIG_ENDIAN},{skipEnd:4,skipStart:4,name:checksum,annotationType:io.github.mtrevisan.boxon.annotations.Checksum,startValue:-1,type:short,fieldType:short,byteOrder:BIG_ENDIAN,algorithm:"
 			+ CRC16CCITT.class.getName()
 			+ "}],context:{headerLength:"
 			+ ParserTest.class.getDeclaredMethod("headerLength")

@@ -146,20 +146,21 @@ You can get pre-built JARs (usable on JRE 11 or newer) from [Sonatype](https://o
      2. [Message composer](#example-composer)
 11. [Contributing](#contributing)
 12. [Changelog](#changelog)
-     1. [version 3.1.1](#changelog-3.1.1)
-     2. [version 3.1.0](#changelog-3.1.0)
-     3. [version 3.0.2](#changelog-3.0.2)
-     4. [version 3.0.1](#changelog-3.0.1)
-     5. [version 3.0.0](#changelog-3.0.0)
-     6. [version 2.1.2](#changelog-2.1.2)
-     7. [version 2.1.1](#changelog-2.1.1)
-     8. [version 2.1.0](#changelog-2.1.0)
-     9. [version 2.0.0](#changelog-2.0.0)
-     10. [version 1.1.0](#changelog-1.1.0)
-     11. [version 1.0.0](#changelog-1.0.0)
-     12. [version 0.0.2](#changelog-0.0.2)
-     13. [version 0.0.1](#changelog-0.0.1)
-     14. [version 0.0.0](#changelog-0.0.0)
+     1. [version 3.1.2](#changelog-3.1.2)
+     2. [version 3.1.1](#changelog-3.1.1)
+     3. [version 3.1.0](#changelog-3.1.0)
+     4. [version 3.0.2](#changelog-3.0.2)
+     5. [version 3.0.1](#changelog-3.0.1)
+     6. [version 3.0.0](#changelog-3.0.0)
+     7. [version 2.1.2](#changelog-2.1.2)
+     8. [version 2.1.1](#changelog-2.1.1)
+     9. [version 2.1.0](#changelog-2.1.0)
+     10. [version 2.0.0](#changelog-2.0.0)
+     11. [version 1.1.0](#changelog-1.1.0)
+     12. [version 1.0.0](#changelog-1.0.0)
+     13. [version 0.0.2](#changelog-0.0.2)
+     14. [version 0.0.1](#changelog-0.0.1)
+     15. [version 0.0.0](#changelog-0.0.0)
 13. [License](#license)
 
 <br/>
@@ -832,13 +833,13 @@ gives as output the following
          "charset": "UTF-8",
          "size": "#headerLength()",
          "name": "messageHeader",
-         "annotationType": "BindString",
+         "annotationType": "io.github.mtrevisan.boxon.annotations.bindings.BindString",
          "fieldType": "java.lang.String"
       },
       {
          "converter": "MessageTypeConverter",
          "name": "messageType",
-         "annotationType": "BindByte",
+         "annotationType": "io.github.mtrevisan.boxon.annotations.bindings.BindByte",
          "fieldType": "java.lang.String"
       },
       {
@@ -846,7 +847,7 @@ gives as output the following
          "size": "2",
          "converter": "io.github.mtrevisan.boxon.core.codecs.queclink.QueclinkHelper$VersionConverter",
          "name": "protocolVersion",
-         "annotationType": "BindArrayPrimitive",
+         "annotationType": "io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive",
          "type": "byte",
          "fieldType": "java.lang.String",
          "byteOrder": "BIG_ENDIAN"
@@ -854,7 +855,7 @@ gives as output the following
    ],
    "context": {
       "headerLength": "private static int io.github.mtrevisan.boxon.core.ParserTest.headerLength()",
-      "deviceTypes": "[QUECLINK_GB200S (0x46)]"
+      "deviceTypes": "[QUECLINK_GB200S(0x46)]"
    }
 }
 ```
@@ -1535,10 +1536,18 @@ Pull requests are welcomed.
 <a name="changelog"></a>
 ## Changelog
 
+<a name="changelog-3.1.2"></a>
+### version 3.1.2 - 202403??
+
+- improvement on handling values inside big decimal converter.
+- improvement on error reporting.
+- renamed `Composer.composeMessage` into compose.
+- corrected error while showing the start array of message header in the description.
+
 <a name="changelog-3.1.1"></a>
 ### version 3.1.1 - 20240229
 
-- Fixed an error if annotating with @Skip as the last a of the POJO
+- Fixed an error if annotating with @Skip as the last a of the POJO.
 
 <a name="changelog-3.1.0"></a>
 ### version 3.1.0 - 20240228
