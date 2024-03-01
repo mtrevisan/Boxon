@@ -1501,9 +1501,9 @@ for(int index = 0; index < result.size(); index ++){
 The inverse of parsing is composing, and it's simply done as follows.
 
 ```java
-//compose the message
+//compose the message (`Message` could be any POJO, even a `Map<String, Object>`)
 Message data = ...;
-Response<Message, byte[]> composeResult = composer.composeMessage(data);
+Response<Message, byte[]> composeResult = composer.compose(data);
 
 //process the composed messages
 byte[] composedMessage = response.getMessage();
