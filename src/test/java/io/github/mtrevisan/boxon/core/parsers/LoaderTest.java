@@ -79,7 +79,7 @@ class LoaderTest{
 		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);
 		loaderTemplate.loadTemplate(ACKMessageHex.class);
 
-		byte[] payload = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
+		byte[] payload = StringHelper.hexToByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		BitReaderInterface reader = BitReader.wrap(payload);
 		Template<?> template = loaderTemplate.getTemplate(reader);
 
@@ -94,7 +94,7 @@ class LoaderTest{
 		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);
 		loaderTemplate.loadTemplatesFrom(LoaderTest.class);
 
-		byte[] payload = StringHelper.toByteArray("3b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
+		byte[] payload = StringHelper.hexToByteArray("3b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		BitReaderInterface reader = BitReader.wrap(payload);
 		Assertions.assertThrows(TemplateException.class, () -> loaderTemplate.getTemplate(reader));
 	}
@@ -106,7 +106,7 @@ class LoaderTest{
 		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);
 		loaderTemplate.loadTemplatesFrom(LoaderTest.class);
 
-		byte[] payload = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
+		byte[] payload = StringHelper.hexToByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		BitReaderInterface reader = BitReader.wrap(payload);
 		int position = loaderTemplate.findNextMessageIndex(reader);
 
@@ -120,7 +120,7 @@ class LoaderTest{
 		LoaderTemplate loaderTemplate = LoaderTemplate.create(loaderCodec);
 		loaderTemplate.loadTemplatesFrom(LoaderTest.class);
 
-		byte[] payload = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
+		byte[] payload = StringHelper.hexToByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		BitReaderInterface reader = BitReader.wrap(payload);
 		int position = loaderTemplate.findNextMessageIndex(reader);
 

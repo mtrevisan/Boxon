@@ -123,8 +123,8 @@ final class CodecHelper{
 			return converter.decode(data);
 		}
 		catch(final Exception e){
-			throw new IllegalArgumentException("Can not input " + data.getClass().getSimpleName() + " to decode method of converter "
-				+ converterType.getSimpleName(), e);
+			throw new IllegalArgumentException("Can not input " + data.getClass().getSimpleName() + " (" + data
+				+ ") to decode method of converter " + converterType.getSimpleName(), e);
 		}
 	}
 

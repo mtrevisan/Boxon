@@ -176,22 +176,22 @@ public final class EventLogger extends EventListener{
 
 
 	private static void trace(final String message, final Exception exception){
-		LOGGER.trace(composeMessage(message), exception);
+		LOGGER.trace(compose(message), exception);
 	}
 
 	private static void trace(final String message, final Object... parameters){
-		LOGGER.trace(composeMessage(message, parameters));
+		LOGGER.trace(compose(message, parameters));
 	}
 
 	private static void warn(final String message, final Object... parameters){
-		LOGGER.warn(composeMessage(message, parameters));
+		LOGGER.warn(compose(message, parameters));
 	}
 
 	private static void info(final String message, final Object... parameters){
-		LOGGER.info(composeMessage(message, parameters));
+		LOGGER.info(compose(message, parameters));
 	}
 
-	private static String composeMessage(final String message, final Object... parameters){
+	private static String compose(final String message, final Object... parameters){
 		String outputMessage = JavaHelper.EMPTY_STRING;
 		try{
 			final StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();

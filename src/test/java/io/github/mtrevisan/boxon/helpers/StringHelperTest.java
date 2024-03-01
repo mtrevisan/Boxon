@@ -46,11 +46,11 @@ class StringHelperTest{
 	@Test
 	void hexStringToByteArray(){
 		Assertions.assertArrayEquals(new byte[]{0x23, 0x5e, 0x40, 0x03, 0x51, 0x10, 0x42, 0x06},
-			StringHelper.toByteArray("235e400351104206"));
+			StringHelper.hexToByteArray("235e400351104206"));
 
 		Throwable exception = Assertions.assertThrows(IllegalArgumentException.class,
 			() -> Assertions.assertArrayEquals(new byte[]{0x23, 0x5e, 0x40, 0x03, 0x51, 0x10, 0x42, 0x06},
-				StringHelper.toByteArray("235e40035110420")));
+				StringHelper.hexToByteArray("235e40035110420")));
 		Assertions.assertEquals("Input should be of even length, was 15", exception.getMessage());
 	}
 

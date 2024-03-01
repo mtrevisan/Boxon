@@ -149,17 +149,46 @@ public final class StringHelper{
 	 * @param hexString	The hexadecimal string.
 	 * @return	Array of converted hexadecimal characters.
 	 */
-	public static byte[] toByteArray(final CharSequence hexString){
-		final int len = JavaHelper.lengthOrZero(hexString);
-		if(len % 2 != 0)
-			throw new IllegalArgumentException("Input should be of even length, was " + len);
+	public static byte[] hexToByteArray(final CharSequence hexString){
+		final int length = JavaHelper.lengthOrZero(hexString);
+		if(length % 2 != 0)
+			throw new IllegalArgumentException("Input should be of even length, was " + length);
 
-		final byte[] data = new byte[len >>> 1];
-		for(int i = 0; i < len; i += 2){
+		final byte[] data = new byte[length >>> 1];
+		for(int i = 0; i < length; i += 2){
 			final int highDigit = Character.digit(hexString.charAt(i), 16);
 			final int lowDigit = Character.digit(hexString.charAt(i + 1), 16);
 			data[i >>> 1] = (byte)((highDigit << 4) + lowDigit);
 		}
+		return data;
+	}
+
+
+	/**
+	 * Converts an array of bytes into a string.
+	 *
+	 * @param array	Array to be converted to characters.
+	 * @return	The characters.
+	 */
+	public static String toASCIIString(final byte[] array){
+		final int length = JavaHelper.lengthOrZero(array);
+		final StringBuilder sb = new StringBuilder(length);
+		for(int i = 0; i < length; i ++)
+			sb.append((char)(array[i] & 0xFF));
+		return sb.toString();
+	}
+
+	/**
+	 * Converts a string representing the values of each byte to an array of bytes in order.
+	 *
+	 * @param asciiString	The string.
+	 * @return	Array of converted characters.
+	 */
+	public static byte[] asciiToByteArray(final CharSequence asciiString){
+		final int length = JavaHelper.lengthOrZero(asciiString);
+		final byte[] data = new byte[length];
+		for(int i = 0; i < length; i ++)
+			data[i] = (byte)asciiString.charAt(i);
 		return data;
 	}
 

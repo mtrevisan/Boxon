@@ -24,6 +24,9 @@
  */
 package io.github.mtrevisan.boxon.annotations.converters;
 
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
+import io.github.mtrevisan.boxon.helpers.StringHelper;
+
 import java.math.BigDecimal;
 
 
@@ -37,12 +40,12 @@ public final class StringToBigDecimalConverter implements Converter<String, BigD
 
 	@Override
 	public BigDecimal decode(final String value){
-		return new BigDecimal(value);
+		return (!StringHelper.isBlank(value)? new BigDecimal(value.trim()): null);
 	}
 
 	@Override
 	public String encode(final BigDecimal value){
-		return value.toString();
+		return (value != null? value.toString(): JavaHelper.EMPTY_STRING);
 	}
 
 }
