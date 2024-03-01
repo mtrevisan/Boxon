@@ -20,10 +20,10 @@ public class DamerauLevenshteinDistance{
 	/**
 	 * Finds the similarity between two Strings.
 	 *
-	 * @param str1	The first string, must not be <code>null</code>.
-	 * @param str2	The second string, must not be <code>null</code>.
-	 * @return	Result similarity, a number between <code>0</code> (not similar) and <code>1</code> (equals).
-	 * @throws IllegalArgumentException	If either String input <code>null</code>.
+	 * @param str1	The first string, must not be {@code null}.
+	 * @param str2	The second string, must not be {@code null}.
+	 * @return	Result similarity, a number between {@code 0} (not similar) and {@code 1} (equals).
+	 * @throws IllegalArgumentException	If either String input {@code null}.
 	 */
 	public static double similarity(final CharSequence str1, final CharSequence str2){
 		if(str1.equals(str2))
@@ -37,10 +37,10 @@ public class DamerauLevenshteinDistance{
 	 * Compute the distance between strings: the minimum number of operations needed to transform one string into the other (insertion,
 	 * deletion, substitution of a single character, or a transposition of two adjacent characters).
 	 *
-	 * @param str1	The first string, must not be <code>null</code>.
-	 * @param str2	The second string, must not be <code>null</code>.
+	 * @param str1	The first string, must not be {@code null}.
+	 * @param str2	The second string, must not be {@code null}.
 	 * @return	The computed distance.
-	 * @throws IllegalArgumentException	If either String input <code>null</code>.
+	 * @throws IllegalArgumentException	If either String input {@code null}.
 	 */
 	public static int distance(final CharSequence str1, final CharSequence str2){
 		if(str1 == null || str2 == null)

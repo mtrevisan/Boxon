@@ -1,59 +1,112 @@
 package io.github.mtrevisan.boxon.core.similarity;
 
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
 
 /**
- * also @see <a href="https://github.com/conndots/KMeansCluster/tree/master">KMeansCluster</a>
- * also @see <a href="https://github.com/DatabaseGroup/tree-similarity/blob/master/src/json/quickjedi_index_impl.h">tree-similarity</a>
- * https://github.com/servbaset/K-medoids
+ * @see <a href="https://github.com/servbaset/K-medoids">K-medoids</a>
+ * @see <a href="https://www.geeksforgeeks.org/ml-k-medoids-clustering-with-example/">K-Medoids clustering</a>
  */
-public class KMedoid{
+public final class KMedoid{
 
 	private static final Random RANDOM = new Random(System.currentTimeMillis());
 
 
-	public void cluster(final List<String> dataset, final int k, final int maxIterations){
-		//select `k` random points out of the `n` data points as the medoids
-		final Set<Integer> medoidsRandom = new HashSet<>();
-		final int m = dataset.size();
-		while(medoidsRandom.size() < k)
-			medoidsRandom.add(RANDOM.nextInt(m));
-		final Iterator<Integer> itr = medoidsRandom.iterator();
-		final int[] medoids = new int[k];
-		for(int i = 0; i < k; i ++)
-			medoids[i] = itr.next();
+	private KMedoid(){}
 
-		//associate each data point to the closest medoid
-		final Map<Integer, List<Integer>> clusters = new HashMap<>(k);
+
+	/**
+	 * Cluster the input.
+	 *
+	 * @param dataset	The list of strings to be clustered.
+	 * @param numberOfClusters	Number of clusters to generate.
+	 * @param maxIterations	The maximum number of iterations the algorithm is allowed to run.
+	 * @return	The association for each data to the corresponding centroid.
+	 */
+	public static int[] cluster(final List<String> dataset, final int numberOfClusters, final int maxIterations){
+		if(dataset == null || dataset.isEmpty())
+			throw new IllegalArgumentException("Dataset cannot be empty");
+		if(numberOfClusters < 1)
+			throw new IllegalArgumentException("Number of clusters cannot be less than 1");
+		if(maxIterations < 1)
+			throw new IllegalArgumentException("Maximum number of iterations cannot be less than 1");
+
+		final int m = dataset.size();
+		final int k = Math.min(numberOfClusters, m);
+
+		//initialize the medoids: select `k` random points out of the `n` data points
+		final Set<Integer> medoidsRandom = new HashSet<>(k);
+		selectMedoids(medoidsRandom, m, k);
+		final int[] medoids = extractMedoids(medoidsRandom, k);
+
 		final int[] assignment = new int[m];
+		final int[] newAssignment = new int[m];
+		final Set<Integer> newMedoidsRandom = new HashSet<>(k << 1);
+
+		//partitioning: assign each data object to the closest medoid
+		double score = assign(assignment, medoids, dataset);
+
 		int count = 0;
-		boolean changed = true;
-		//while the cost decreases...
-		while(changed && count < maxIterations){
-			changed = false;
+		while(count < maxIterations){
 			count ++;
 
-			assign(assignment, medoids, dataset);
+			//randomly select one non-medoid point
+			selectNewMedoids(newMedoidsRandom, medoidsRandom, m, k);
+			final int[] newMedoids = extractMedoids(medoidsRandom, k);
+			//recalculate the cost
+			final double newScore = assign(newAssignment, newMedoids, dataset);
 
-			changed = recalculateMedoids(assignment, medoids, clusters, dataset);
+			//update: if the cost decreases, accept the new solution
+			if(newScore < score){
+				replaceMedoids(medoidsRandom, newMedoidsRandom);
+				replaceArray(medoids, newMedoids);
+				replaceArray(assignment, newAssignment);
+				score = newScore;
+			}
 		}
+		return assignment;
+	}
+
+	private static Set<Integer> selectMedoids(final Set<Integer> medoidsRandom, final int m, final int max){
+		while(medoidsRandom.size() < Math.min(max, m))
+			medoidsRandom.add(RANDOM.nextInt(m));
+		return medoidsRandom;
+	}
+
+	private static void selectNewMedoids(final Set<Integer> newMedoidsRandom, final Collection<Integer> medoidsRandom, final int m, final int k){
+		newMedoidsRandom.addAll(medoidsRandom);
+		selectMedoids(newMedoidsRandom, m, k << 1);
+		newMedoidsRandom.removeAll(medoidsRandom);
+		final int newMedoidsRandomSize = newMedoidsRandom.size();
+		if(newMedoidsRandomSize < k){
+			final Iterator<Integer> itr = medoidsRandom.iterator();
+			for(int i = newMedoidsRandomSize; i < k; i ++)
+				newMedoidsRandom.add(itr.next());
+		}
+	}
+
+	private static int[] extractMedoids(final Iterable<Integer> medoidsRandom, final int k){
+		final int[] medoids = new int[k];
+		final Iterator<Integer> itr = medoidsRandom.iterator();
+		for(int i = 0; i < k; i ++)
+			medoids[i] = itr.next();
+		return medoids;
 	}
 
 	/**
 	 * Assign all instances from the data set to the medoids.
 	 *
-	 * @param out	Best cluster indices for each instance in the data set.
+	 * @param assignment	Best cluster indices for each instance in the data set.
 	 * @param medoids	Candidate medoids.
 	 * @param dataset	The data to assign to the medoids.
 	 */
-	private void assign(final int[] out, final int[] medoids, final List<String> dataset){
+	private static double assign(final int[] assignment, final int[] medoids, final List<String> dataset){
+		double score = 0.;
 		final int n = dataset.size();
 		for(int j = 0; j < n; j ++){
 			final String data = dataset.get(j);
@@ -63,7 +116,8 @@ public class KMedoid{
 			for(int i = 0; i < medoids.length; i ++){
 				final int k = medoids[i];
 				if(k == j){
-					minIndex = i;
+					minDistance = 0;
+					minIndex = k;
 					break;
 				}
 
@@ -74,65 +128,19 @@ public class KMedoid{
 				}
 			}
 
-			out[j] = minIndex;
+			assignment[j] = minIndex;
+			score += minDistance;
 		}
+		return score;
 	}
 
-	/**
-	 * Return a array with on each position the clusterIndex to which the Instance on that position in the dataset belongs.
-	 *
-	 * @param assignment	The new assignment of all instances to the different medoids.
-	 * @param medoids	The current set of cluster medoids, will be modified to fit the new assignment.
-	 * @param clusters	The cluster output, this will be modified at the end of the method.
-	 * @return	Whether the clusters changed.
-	 */
-	private boolean recalculateMedoids(final int[] assignment, final int[] medoids, final Map<Integer, List<Integer>> clusters,
-			final List<String> dataset){
-		final int m = dataset.size();
-		final int k = medoids.length;
-		boolean changed = false;
-		for(int i = 0; i < k; i ++){
-			clusters.get(i)
-				.clear();
-			for(int j = 0; j < assignment.length; j ++)
-				if(assignment[j] == i)
-					clusters.get(i)
-						.add(j);
-
-			//new random, empty medoid
-			if(clusters.get(i).isEmpty()){
-				clusters.get(medoids[i])
-					.add(RANDOM.nextInt(m));
-
-				changed = true;
-			}
-			else{
-				final List<Integer> oldMedoid = clusters.get(medoids[i]);
-				final double[] centroid = average(dataset, clusters[i]);
-				clusters.put(medoids[i], data.kNearest(1, centroid).iterator().next());
-				if(!clusters.get(medoids[i]).equals(oldMedoid))
-					changed = true;
-			}
-		}
-		return changed;
+	private static void replaceArray(final int[] array, final int[] newArray){
+		System.arraycopy(newArray, 0, array, 0, array.length);
 	}
 
-	/**
-	 * Creates an instance that contains the average values for the attributes.
-	 *
-	 * @param data	Data set to calculate average attribute values for
-	 * @return	Instance representing the average attribute values
-	 */
-	public static double[] average(final List<String> dataset, final String data){
-		double[] tmpOut = new double[data.noAttributes()];
-		for(int i = 0; i < data.noAttributes(); i ++){
-			double sum = 0.;
-			for(int j = 0; j < data.size(); j ++)
-				sum += data.get(j)
-					.value(i);
-			tmpOut[i] = sum / data.size();
-		}
-		return tmpOut;
+	private static void replaceMedoids(final Collection<Integer> set, final Collection<Integer> newSet){
+		set.clear();
+		set.addAll(newSet);
 	}
 
 }
