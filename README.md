@@ -1349,7 +1349,7 @@ public class RSSIConverter implements Converter<Byte, Short>{
         if(value == 99)
             return RSSI_UNKNOWN;
         //31 is > -51 dBm
-        return (short)(value * 2 - 113);
+        return (short)(value * 2 - 133);
     }
 
     @Override
@@ -1501,9 +1501,9 @@ for(int index = 0; index < result.size(); index ++){
 The inverse of parsing is composing, and it's simply done as follows.
 
 ```java
-//compose the message (`Message` could be any POJO, even a `Map<String, Object>`)
-Message data = ...;
-Response<Message, byte[]> composeResult = composer.compose(data);
+//compose the message (`Template` should be a recognized template)
+Template data = ...;
+Response<Template, byte[]> composeResult = composer.compose(data);
 
 //process the composed messages
 byte[] composedMessage = response.getMessage();
