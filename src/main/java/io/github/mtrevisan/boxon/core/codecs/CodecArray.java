@@ -57,7 +57,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 
 		final BindingData bindingData = BindingDataBuilder.create(binding, rootObject, evaluator);
 		final int size = bindingData.evaluateSize();
-		CodecHelper.assertSizePositive(size);
+		CodecHelper.assertSizeNonNegative(size);
 
 		final Class<?> bindingType = binding.type();
 		final Object[] array = createArray(bindingType, size);
@@ -108,7 +108,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 		final Object[] array = CodecHelper.converterEncode(chosenConverter, value);
 
 		final int size = bindingData.evaluateSize();
-		CodecHelper.assertSizePositive(size);
+		CodecHelper.assertSizeNonNegative(size);
 		CodecHelper.assertSizeEquals(size, Array.getLength(array));
 
 		if(bindingData.hasSelectAlternatives())
