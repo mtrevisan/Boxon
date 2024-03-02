@@ -1543,6 +1543,7 @@ Pull requests are welcomed.
 - improvement on error reporting.
 - renamed `Composer.composeMessage` into compose.
 - corrected error while showing the start array of message header in the description.
+- fix size validation of array and list (can be zero)
 
 <a name="changelog-3.1.1"></a>
 ### version 3.1.1 - 20240229
