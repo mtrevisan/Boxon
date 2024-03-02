@@ -1,5 +1,8 @@
 package io.github.mtrevisan.boxon.core.similarity;
 
+import io.github.mtrevisan.boxon.core.similarity.evolutionarytree.distances.CharSequenceDistanceData;
+import io.github.mtrevisan.boxon.core.similarity.evolutionarytree.distances.LevenshteinDistance;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -121,7 +124,8 @@ public final class KMedoid{
 					break;
 				}
 
-				final int distance = DamerauLevenshteinDistance.distance(data, dataset.get(k));
+				final int distance = LevenshteinDistance.distance(CharSequenceDistanceData.of(data),
+					CharSequenceDistanceData.of(dataset.get(k)));
 				if(distance < minDistance){
 					minDistance = distance;
 					minIndex = k;

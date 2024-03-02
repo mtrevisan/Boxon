@@ -22,59 +22,45 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.keys;
+package io.github.mtrevisan.boxon.core.similarity;
+
+import io.github.mtrevisan.boxon.core.similarity.evolutionarytree.distances.DistanceDataInterface;
 
 
-/**
- * Holds the constants used as a key in the {@link io.github.mtrevisan.boxon.core.Descriptor Descriptor}.
- */
-public enum DescriberKey{
-	TEMPLATE("template"),
+public final class TemplateDistanceData implements DistanceDataInterface<TemplateDistanceData>{
 
-	CONTEXT("context"),
-
-	HEADER("header"),
-	HEADER_START("start"),
-	HEADER_END("end"),
-	HEADER_CHARSET("charset"),
-
-	FIELDS("fields"),
-	FIELD_NAME("name"),
-	FIELD_TYPE("fieldType"),
-	ANNOTATION_TYPE("annotationType"),
-
-	BIND_CONDITION("condition"),
-	BIND_TYPE("type"),
-	BIND_SELECT_DEFAULT("selectDefault"),
-	BIND_CONVERTER("converter"),
-	BIND_SELECT_CONVERTER_FROM("selectConverterFrom"),
-	BIND_SIZE("size"),
-	BIND_BIT_ORDER("bitOrder"),
-	BIND_BYTE_ORDER("byteOrder"),
-	BIND_CHARSET("charset"),
-	BIND_TERMINATOR("terminator"),
-	BIND_CONSUME_TERMINATOR("consumeTerminator"),
-	BIND_PREFIX("prefix"),
-	BIND_PREFIX_LENGTH("prefixLength"),
-	BIND_SKIP_START("skipStart"),
-	BIND_SKIP_END("skipEnd"),
-	BIND_ALGORITHM("algorithm"),
-	BIND_START_VALUE("startValue"),
-	BIND_VALUE("value"),
-	BIND_VALIDATOR("validator");
+	private final Class<?> template;
+	private final String data;
 
 
-	private final String name;
-
-
-	DescriberKey(final String name){
-		this.name = name;
+	public static TemplateDistanceData of(final Class<?> template, final String json){
+		return new TemplateDistanceData(template, json);
 	}
 
 
+	private TemplateDistanceData(final Class<?> template, final String json){
+		this.template = template;
+		data = json;
+	}
+
+
+	public Class<?> getTemplate(){
+		return template;
+	}
+
 	@Override
-	public String toString(){
-		return name;
+	public int length(){
+		return data.length();
+	}
+
+	@Override
+	public boolean equals(final TemplateDistanceData other){
+		return data.equals(other.data);
+	}
+
+	@Override
+	public boolean equalsAtIndex(final int index, final TemplateDistanceData other, final int otherIndex){
+		return (data.charAt(index) == other.data.charAt(otherIndex));
 	}
 
 }

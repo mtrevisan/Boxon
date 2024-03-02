@@ -22,83 +22,101 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.similarity;
+package io.github.mtrevisan.boxon.core.similarity.evolutionarytree.distances;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 
-class DamerauLevenshteinDistanceTest{
+class LevenshteinDistanceTest{
 
 	@Test
-	public void testNullThrows(){
+	void testNullThrows(){
 		Assertions.assertThrows(
-			NullPointerException.class,
+			IllegalArgumentException.class,
 			() -> {
-				DamerauLevenshteinDistance.similarity(null, "kEvIn");
+				LevenshteinDistance.similarity(null, CharSequenceDistanceData.of("kEvIn"));
 			}
 		);
 	}
 
 	@Test
-	public void emptyStringTest(){
-		double response = DamerauLevenshteinDistance.similarity("", "");
+	void emptyStringTest(){
+		double response = LevenshteinDistance.similarity(
+			CharSequenceDistanceData.of(""),
+			CharSequenceDistanceData.of(""));
 
 		Assertions.assertEquals(1., response, 0.);
 	}
 
 	@Test
-	public void testExactMatchSameCase(){
-		double response = DamerauLevenshteinDistance.similarity("java", "java");
+	void testExactMatchSameCase(){
+		double response = LevenshteinDistance.similarity(
+			CharSequenceDistanceData.of("java"),
+			CharSequenceDistanceData.of("java"));
 
 		Assertions.assertEquals(1., response, 0.);
 	}
 
 	@Test
-	public void testNoSimilarity(){
-		double response = DamerauLevenshteinDistance.similarity("abc", "def");
+	void testNoSimilarity(){
+		double response = LevenshteinDistance.similarity(
+			CharSequenceDistanceData.of("abc"),
+			CharSequenceDistanceData.of("def"));
 
 		Assertions.assertEquals(0., response, 0.);
 	}
 
 	@Test
-	public void score1(){
-		double response = DamerauLevenshteinDistance.similarity("he", "head");
+	void score1(){
+		double response = LevenshteinDistance.similarity(
+			CharSequenceDistanceData.of("he"),
+			CharSequenceDistanceData.of("head"));
 
 		Assertions.assertEquals(0.5, response, 0.0001);
 	}
 
 	@Test
-	public void score2(){
-		double response = DamerauLevenshteinDistance.similarity("hd", "head");
+	void score2(){
+		double response = LevenshteinDistance.similarity(
+			CharSequenceDistanceData.of("hd"),
+			CharSequenceDistanceData.of("head"));
 
 		Assertions.assertEquals(0.5, response, 0.0001);
 	}
 
 	@Test
-	public void score3(){
-		double response = DamerauLevenshteinDistance.similarity("d", "head");
+	void score3(){
+		double response = LevenshteinDistance.similarity(
+			CharSequenceDistanceData.of("d"),
+			CharSequenceDistanceData.of("head"));
 
 		Assertions.assertEquals(0.25, response, 0.0001);
 	}
 
 	@Test
-	public void score4(){
-		double response = DamerauLevenshteinDistance.similarity("head", "he");
+	void score4(){
+		double response = LevenshteinDistance.similarity(
+			CharSequenceDistanceData.of("head"),
+			CharSequenceDistanceData.of("he"));
 
 		Assertions.assertEquals(0.5, response, 0.0001);
 	}
 
 	@Test
-	public void score5(){
-		double response = DamerauLevenshteinDistance.similarity("kitten", "sitting");
+	void score5(){
+		double response = LevenshteinDistance.similarity(
+			CharSequenceDistanceData.of("kitten"),
+			CharSequenceDistanceData.of("sitting"));
 
 		Assertions.assertEquals(0.5714, response, 0.0001);
 	}
 
 	@Test
-	public void score6(){
-		double response = DamerauLevenshteinDistance.similarity("Saturday", "Sunday");
+	void score6(){
+		double response = LevenshteinDistance.similarity(
+			CharSequenceDistanceData.of("Saturday"),
+			CharSequenceDistanceData.of("Sunday"));
 
 		Assertions.assertEquals(0.625, response, 0.0001);
 	}

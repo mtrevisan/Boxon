@@ -1,4 +1,29 @@
-package io.github.mtrevisan.boxon.core.similarity;
+/*
+ * Copyright (c) 2024 Mauro Trevisan
+ *
+ * Permission is hereby granted, free of charge, to any person
+ * obtaining a copy of this software and associated documentation
+ * files (the "Software"), to deal in the Software without
+ * restriction, including without limitation the rights to use,
+ * copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following
+ * conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ * OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+package io.github.mtrevisan.boxon.core.similarity.evolutionarytree.distances;
 
 
 /**
@@ -11,7 +36,7 @@ package io.github.mtrevisan.boxon.core.similarity;
  * @see <a href="https://en.wikipedia.org/wiki/Levenshtein_distance">Levenshtein distance</a>
  * @see <a href="https://github.com/tdebatty/java-string-similarity/blob/master/src/main/java/info/debatty/java/stringsimilarity/Levenshtein.java">Levenstein.java</a>
  */
-public class LevenshteinDistance{
+public final class LevenshteinDistance{
 
 	private LevenshteinDistance(){}
 
@@ -19,17 +44,17 @@ public class LevenshteinDistance{
 	/**
 	 * Finds the similarity between two Strings.
 	 *
-	 * @param str1	The first string, must not be {@code null}.
-	 * @param str2	The second string, must not be {@code null}.
+	 * @param str1	The first object, must not be {@code null}.
+	 * @param str2	The second object, must not be {@code null}.
 	 * @return	Result similarity, a number between {@code 0} (not similar) and {@code 1} (equals).
 	 * @throws IllegalArgumentException	If either input is {@code null}.
 	 */
-	public static double similarity(final CharSequence str1, final CharSequence str2){
+	public static double similarity(final DistanceDataInterface str1, final DistanceDataInterface str2){
 		if(str1 == null || str2 == null)
 			throw new IllegalArgumentException("Strings must not be null");
 
 		final int maxLength = Math.max(str1.length(), str2.length());
-		return 1. - (double)distance(str1, str2) / maxLength;
+		return 1. - (maxLength > 0? (double)distance(str1, str2) / maxLength: 0.);
 	}
 
 	/**
@@ -44,12 +69,12 @@ public class LevenshteinDistance{
 	 * <p>Implementation uses dynamic programming (Wagner–Fischer algorithm), with only 2 rows of data. The space requirement is thus `O(m)`
 	 * and the algorithm runs in `O(m·n)`.</p>
 	 *
-	 * @param str1	The first string, must not be {@code null}.
-	 * @param str2	The second string, must not be {@code null}.
+	 * @param str1	The first object, must not be {@code null}.
+	 * @param str2	The second object, must not be {@code null}.
 	 * @return	The computed distance.
 	 * @throws IllegalArgumentException	If either input is {@code null}.
 	 */
-	public static int distance(final CharSequence str1, final CharSequence str2){
+	public static int distance(final DistanceDataInterface str1, final DistanceDataInterface str2){
 		if(str1 == null || str2 == null)
 			throw new IllegalArgumentException("Strings must not be null");
 
@@ -70,13 +95,21 @@ public class LevenshteinDistance{
 		//initialize `v0` (the previous row of distances)
 		//this row is `A[0][i]`: edit distance for an empty `str1`
 		//the distance is just the number of characters to delete from `str2`
-		for(int i = 0; i < v0.length; i ++){
+		for(int i = 0; i < v0.length; i ++)
 			v0[i] = i;
 
-			//fill in the rest of the rows
+		//fill in the rest of the rows
+		for(int i = 0; i < length1; i ++){
+			//calculate `v1` (current row distances) from the previous row `v0`
+			//first element of `v1` is `A[i+1][0]`
+			//edit distance is `delete (i+1)` chars from `s` to match empty `t`
+			v1[0] = i + 1;
+
+			//int minv1 = v1[0];
+
 			for(int j = 0; j < length2; j ++){
 				int cost = 1;
-				if(str1.charAt(i) == str2.charAt(j))
+				if(str1.equalsAtIndex(i, str2, j))
 					cost = 0;
 				v1[j + 1] = Math.min(v1[j] + 1,   //cost of insertion
 					Math.min(v0[j + 1] + 1,   //cost of deletion
