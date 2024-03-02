@@ -17,6 +17,7 @@ public class DamerauLevenshteinDistance{
 
 	private DamerauLevenshteinDistance(){}
 
+
 	/**
 	 * Finds the similarity between two Strings.
 	 *
@@ -76,7 +77,7 @@ public class DamerauLevenshteinDistance{
 		for(int i = 1; i <= str1.length(); i ++){
 			int db = 0;
 
-			//look at each character in `b`
+			//look at each character in `str2`
 			for(int j = 1; j <= str2.length(); j ++){
 				final int i1 = da.get(str2.charAt(j - 1));
 				final int j1 = db;
