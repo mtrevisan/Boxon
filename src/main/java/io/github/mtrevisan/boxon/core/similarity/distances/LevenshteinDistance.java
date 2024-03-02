@@ -23,7 +23,7 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package io.github.mtrevisan.boxon.core.similarity.evolutionarytree.distances;
+package io.github.mtrevisan.boxon.core.similarity.distances;
 
 
 /**

@@ -24,14 +24,14 @@
  */
 package io.github.mtrevisan.boxon.core.similarity.evolutionarytree;
 
-import io.github.mtrevisan.boxon.core.similarity.evolutionarytree.distances.DistanceDataInterface;
+import io.github.mtrevisan.boxon.core.similarity.distances.DistanceDataInterface;
 
 
 public interface SpeciesInterface{
 
 	String getName();
 
-	DistanceDataInterface getSequence();
+	DistanceDataInterface<?> getSequence();
 
 	double distance(SpeciesInterface other);
 

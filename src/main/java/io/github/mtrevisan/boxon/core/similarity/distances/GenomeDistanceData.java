@@ -22,37 +22,39 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.similarity.evolutionarytree.distances;
+package io.github.mtrevisan.boxon.core.similarity.distances;
+
+import java.util.Arrays;
 
 
-public final class CharSequenceDistanceData implements DistanceDataInterface<CharSequenceDistanceData>{
+public final class GenomeDistanceData implements DistanceDataInterface<GenomeDistanceData>{
 
-	private final String data;
+	private final String[] data;
 
 
-	public static CharSequenceDistanceData of(final String str){
-		return new CharSequenceDistanceData(str);
+	public static GenomeDistanceData of(final String[] genome){
+		return new GenomeDistanceData(genome);
 	}
 
 
-	private CharSequenceDistanceData(final String str){
-		data = str;
+	private GenomeDistanceData(final String[] genome){
+		data = genome;
 	}
 
 
 	@Override
 	public int length(){
-		return data.length();
+		return data.length;
 	}
 
 	@Override
-	public boolean equals(final CharSequenceDistanceData other){
-		return data.equals(other.data);
+	public boolean equals(final GenomeDistanceData other){
+		return Arrays.equals(data, other.data);
 	}
 
 	@Override
-	public boolean equalsAtIndex(final int index, final CharSequenceDistanceData other, final int otherIndex){
-		return (data.charAt(index) == other.data.charAt(otherIndex));
+	public boolean equalsAtIndex(final int index, final GenomeDistanceData other, final int otherIndex){
+		return (data[index].equals(other.data[otherIndex]));
 	}
 
 }

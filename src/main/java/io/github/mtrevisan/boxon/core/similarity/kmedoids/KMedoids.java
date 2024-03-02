@@ -1,12 +1,35 @@
-package io.github.mtrevisan.boxon.core.similarity;
+/*
+ * Copyright (c) 2024 Mauro Trevisan
+ *
+ * Permission is hereby granted, free of charge, to any person
+ * obtaining a copy of this software and associated documentation
+ * files (the "Software"), to deal in the Software without
+ * restriction, including without limitation the rights to use,
+ * copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following
+ * conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ * OTHER DEALINGS IN THE SOFTWARE.
+ */
 
-import io.github.mtrevisan.boxon.core.similarity.evolutionarytree.distances.CharSequenceDistanceData;
-import io.github.mtrevisan.boxon.core.similarity.evolutionarytree.distances.LevenshteinDistance;
+package io.github.mtrevisan.boxon.core.similarity.kmedoids;
+
+import io.github.mtrevisan.boxon.core.similarity.evolutionarytree.SpeciesInterface;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
@@ -15,12 +38,12 @@ import java.util.Set;
  * @see <a href="https://github.com/servbaset/K-medoids">K-medoids</a>
  * @see <a href="https://www.geeksforgeeks.org/ml-k-medoids-clustering-with-example/">K-Medoids clustering</a>
  */
-public final class KMedoid{
+public final class KMedoids{
 
 	private static final Random RANDOM = new Random(System.currentTimeMillis());
 
 
-	private KMedoid(){}
+	private KMedoids(){}
 
 
 	/**
@@ -31,15 +54,15 @@ public final class KMedoid{
 	 * @param maxIterations	The maximum number of iterations the algorithm is allowed to run.
 	 * @return	The association for each data to the corresponding centroid.
 	 */
-	public static int[] cluster(final List<String> dataset, final int numberOfClusters, final int maxIterations){
-		if(dataset == null || dataset.isEmpty())
+	public static int[] cluster(final SpeciesInterface[] dataset, final int numberOfClusters, final int maxIterations){
+		if(dataset == null || dataset.length == 0)
 			throw new IllegalArgumentException("Dataset cannot be empty");
 		if(numberOfClusters < 1)
 			throw new IllegalArgumentException("Number of clusters cannot be less than 1");
 		if(maxIterations < 1)
 			throw new IllegalArgumentException("Maximum number of iterations cannot be less than 1");
 
-		final int m = dataset.size();
+		final int m = dataset.length;
 		final int k = Math.min(numberOfClusters, m);
 
 		//initialize the medoids: select `k` random points out of the `n` data points
@@ -108,13 +131,13 @@ public final class KMedoid{
 	 * @param medoids	Candidate medoids.
 	 * @param dataset	The data to assign to the medoids.
 	 */
-	private static double assign(final int[] assignment, final int[] medoids, final List<String> dataset){
+	private static double assign(final int[] assignment, final int[] medoids, final SpeciesInterface[] dataset){
 		double score = 0.;
-		final int n = dataset.size();
+		final int n = dataset.length;
 		for(int j = 0; j < n; j ++){
-			final String data = dataset.get(j);
+			final SpeciesInterface data = dataset[j];
 
-			int minDistance = Integer.MAX_VALUE;
+			double minDistance = Double.MAX_VALUE;
 			int minIndex = Integer.MAX_VALUE;
 			for(int i = 0; i < medoids.length; i ++){
 				final int k = medoids[i];
@@ -124,8 +147,7 @@ public final class KMedoid{
 					break;
 				}
 
-				final int distance = LevenshteinDistance.distance(CharSequenceDistanceData.of(data),
-					CharSequenceDistanceData.of(dataset.get(k)));
+				final double distance = data.distance(dataset[k]);
 				if(distance < minDistance){
 					minDistance = distance;
 					minIndex = k;

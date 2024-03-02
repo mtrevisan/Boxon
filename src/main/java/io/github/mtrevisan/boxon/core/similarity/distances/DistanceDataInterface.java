@@ -22,45 +22,15 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.similarity;
-
-import io.github.mtrevisan.boxon.core.similarity.evolutionarytree.distances.DistanceDataInterface;
+package io.github.mtrevisan.boxon.core.similarity.distances;
 
 
-public final class TemplateDistanceData implements DistanceDataInterface<TemplateDistanceData>{
+public interface DistanceDataInterface<D extends DistanceDataInterface<?>>{
 
-	private final Class<?> template;
-	private final String data;
+	int length();
 
+	boolean equals(D other);
 
-	public static TemplateDistanceData of(final Class<?> template, final String json){
-		return new TemplateDistanceData(template, json);
-	}
-
-
-	private TemplateDistanceData(final Class<?> template, final String json){
-		this.template = template;
-		data = json;
-	}
-
-
-	public Class<?> getTemplate(){
-		return template;
-	}
-
-	@Override
-	public int length(){
-		return data.length();
-	}
-
-	@Override
-	public boolean equals(final TemplateDistanceData other){
-		return data.equals(other.data);
-	}
-
-	@Override
-	public boolean equalsAtIndex(final int index, final TemplateDistanceData other, final int otherIndex){
-		return (data.charAt(index) == other.data.charAt(otherIndex));
-	}
+	boolean equalsAtIndex(int index, D other, int otherIndex);
 
 }

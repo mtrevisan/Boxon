@@ -22,8 +22,10 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.similarity.evolutionarytree.distances;
+package io.github.mtrevisan.boxon.core.similarity.distances;
 
+import io.github.mtrevisan.boxon.core.similarity.distances.CharSequenceDistanceData;
+import io.github.mtrevisan.boxon.core.similarity.distances.LevenshteinDistance;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

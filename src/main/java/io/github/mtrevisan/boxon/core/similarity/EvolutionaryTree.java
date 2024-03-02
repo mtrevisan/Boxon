@@ -24,12 +24,6 @@
  */
 package io.github.mtrevisan.boxon.core.similarity;
 
-//https://github.com/Dhananjaya07/BioinformaticsPhylo/blob/master/src/Driver.java
-//https://github.com/audreyclark/phylotree/blob/master/PhyloTree.java
-//https://github.com/ccarter11/phytree/blob/main/phytree.java
-//https://github.com/rngSwoop/EvolutionaryTree/blob/main/PhyloTree.java
-//https://github.com/ajaykc7/Evolutionary-Tree/blob/master/BinaryTree.java
-//
 //https://guava.physics.uiuc.edu/~nigel/courses/598BIO/498BIOonline-essays/hw2/files/hw2_li.pdf
 
 /*
