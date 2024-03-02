@@ -98,7 +98,7 @@ class ConverterTest{
 			.create();
 		Parser parser = Parser.create(core);
 
-		byte[] payload = StringHelper.toByteArray("77633101");
+		byte[] payload = StringHelper.hexToByteArray("77633101");
 		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
@@ -106,7 +106,7 @@ class ConverterTest{
 		Response<byte[], Object> response = result.get(0);
 		Assertions.assertArrayEquals(payload, response.getSource());
 		Assertions.assertTrue(response.hasError());
-		Assertions.assertEquals("java.lang.IllegalArgumentException: Can not input Byte to decode method of converter WrongConverterInput in field io.github.mtrevisan.boxon.core" +
+		Assertions.assertEquals("java.lang.IllegalArgumentException: Can not input Byte (1) to decode method of converter WrongConverterInput in field io.github.mtrevisan.boxon.core" +
 			".ConverterTest$TestConverter1.value" + System.lineSeparator() + "   at index 4", response.getError().getMessage());
 	}
 
@@ -118,7 +118,7 @@ class ConverterTest{
 			.create();
 		Parser parser = Parser.create(core);
 
-		byte[] payload = StringHelper.toByteArray("77633201");
+		byte[] payload = StringHelper.hexToByteArray("77633201");
 		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
@@ -138,7 +138,7 @@ class ConverterTest{
 			.create();
 		Parser parser = Parser.create(core);
 
-		byte[] payload = StringHelper.toByteArray("77633301");
+		byte[] payload = StringHelper.hexToByteArray("77633301");
 		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);

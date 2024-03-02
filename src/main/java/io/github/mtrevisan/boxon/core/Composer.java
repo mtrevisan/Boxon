@@ -64,9 +64,9 @@ public final class Composer{
 	 * @param <T>	The class of the source data.
 	 * @return	The composition response.
 	 */
-	public <T> Response<T, byte[]> composeMessage(final T data){
+	public <T> Response<T, byte[]> compose(final T data){
 		final BitWriter writer = BitWriter.create();
-		final EncodeException error = composeMessage(writer, data);
+		final EncodeException error = compose(writer, data);
 
 		return Response.create(data, writer, error);
 	}
@@ -77,7 +77,7 @@ public final class Composer{
 	 * @param data	The message to be composed.
 	 * @return	The error, if any.
 	 */
-	private EncodeException composeMessage(final BitWriterInterface writer, final Object data){
+	private EncodeException compose(final BitWriterInterface writer, final Object data){
 		try{
 			final Template<?> template = templateParser.getTemplate(data.getClass());
 

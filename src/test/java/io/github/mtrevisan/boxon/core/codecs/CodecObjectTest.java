@@ -233,7 +233,7 @@ class CodecObjectTest{
 			.create();
 		Parser parser = Parser.create(core);
 
-		byte[] payload = StringHelper.toByteArray("746331011234");
+		byte[] payload = StringHelper.hexToByteArray("746331011234");
 		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
@@ -246,7 +246,7 @@ class CodecObjectTest{
 		Assertions.assertEquals(0x1234, value1.value);
 
 
-		payload = StringHelper.toByteArray("7463310211223344");
+		payload = StringHelper.hexToByteArray("7463310211223344");
 		result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
@@ -267,7 +267,7 @@ class CodecObjectTest{
 			.create();
 		Parser parser = Parser.create(core);
 
-		byte[] payload = StringHelper.toByteArray("7463320506001234");
+		byte[] payload = StringHelper.hexToByteArray("7463320506001234");
 		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
@@ -280,7 +280,7 @@ class CodecObjectTest{
 		Assertions.assertEquals(0x1234, value1.value);
 
 
-		payload = StringHelper.toByteArray("74633205060111223344");
+		payload = StringHelper.hexToByteArray("74633205060111223344");
 		result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
@@ -301,7 +301,7 @@ class CodecObjectTest{
 			.create();
 		Parser parser = Parser.create(core);
 
-		byte[] payload = StringHelper.toByteArray("74633361611234");
+		byte[] payload = StringHelper.hexToByteArray("74633361611234");
 		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
@@ -314,7 +314,7 @@ class CodecObjectTest{
 		Assertions.assertEquals(0x1234, value1.value);
 
 
-		payload = StringHelper.toByteArray("746333626211223344");
+		payload = StringHelper.hexToByteArray("746333626211223344");
 		result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);

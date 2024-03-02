@@ -57,7 +57,7 @@ class ComposerTest{
 		Composer composer = Composer.create(core);
 
 		//parse:
-		byte[] payload = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
+		byte[] payload = StringHelper.hexToByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
@@ -67,7 +67,7 @@ class ComposerTest{
 		Assertions.assertFalse(response.hasError());
 
 		//compose:
-		Response<ACKMessageHex, byte[]> composeResult = composer.composeMessage((ACKMessageHex)response.getMessage());
+		Response<ACKMessageHex, byte[]> composeResult = composer.compose((ACKMessageHex)response.getMessage());
 
 		Assertions.assertFalse(composeResult.hasError());
 		Assertions.assertArrayEquals(payload, composeResult.getMessage());
@@ -97,7 +97,7 @@ class ComposerTest{
 		Assertions.assertFalse(response.hasError());
 
 		//compose:
-		Response<ACKMessageASCII, byte[]> composeResult = composer.composeMessage((ACKMessageASCII)response.getMessage());
+		Response<ACKMessageASCII, byte[]> composeResult = composer.compose((ACKMessageASCII)response.getMessage());
 
 		Assertions.assertFalse(composeResult.hasError());
 		Assertions.assertArrayEquals(payload, composeResult.getMessage());

@@ -41,7 +41,7 @@ import java.util.concurrent.ExecutionException;
 @SuppressWarnings("ALL")
 class ComposerThreadedTest{
 
-	private static final byte[] PAYLOAD = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
+	private static final byte[] PAYLOAD = StringHelper.hexToByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 
 
 	@Test
@@ -64,7 +64,7 @@ class ComposerThreadedTest{
 		//compose:
 		int threadCount = 10;
 		MultithreadingHelper.testMultithreading(
-			() -> composer.composeMessage(parseResult.get(0).getMessage()),
+			() -> composer.compose(parseResult.get(0).getMessage()),
 			composeResult -> Assertions.assertArrayEquals(PAYLOAD, composeResult.getMessage()),
 			threadCount
 		);
@@ -91,7 +91,7 @@ class ComposerThreadedTest{
 		MultithreadingHelper.testMultithreading(
 			() -> {
 				Composer composer = Composer.create(core);
-				return composer.composeMessage(parseResult.get(0).getMessage());
+				return composer.compose(parseResult.get(0).getMessage());
 			},
 			composeResult -> Assertions.assertArrayEquals(PAYLOAD, composeResult.getMessage()),
 			threadCount
@@ -120,7 +120,7 @@ class ComposerThreadedTest{
 				List<Response<byte[], Object>> parseResult = parser.parse(PAYLOAD);
 
 				Composer composer = Composer.create(core);
-				return composer.composeMessage(parseResult.get(0).getMessage());
+				return composer.compose(parseResult.get(0).getMessage());
 			},
 			composeResult -> Assertions.assertArrayEquals(PAYLOAD, composeResult.getMessage()),
 			threadCount

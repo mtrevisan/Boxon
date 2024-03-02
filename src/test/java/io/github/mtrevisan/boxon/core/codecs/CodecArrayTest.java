@@ -284,7 +284,7 @@ class CodecArrayTest{
 			.create();
 		Parser parser = Parser.create(core);
 
-		byte[] payload = StringHelper.toByteArray("7463340112340211223344010666");
+		byte[] payload = StringHelper.hexToByteArray("7463340112340211223344010666");
 		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
@@ -310,7 +310,7 @@ class CodecArrayTest{
 			.create();
 		Parser parser = Parser.create(core);
 
-		byte[] payload = StringHelper.toByteArray("746335011234");
+		byte[] payload = StringHelper.hexToByteArray("746335011234");
 		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);

@@ -33,9 +33,11 @@ import io.github.mtrevisan.boxon.core.parsers.LoaderTemplate;
 import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
+import io.github.mtrevisan.boxon.helpers.ContextHelper;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -116,7 +118,7 @@ public final class Descriptor{
 
 	private static void describeHeader(final MessageHeader header, final Map<String, Object> description){
 		final Map<String, Object> headerDescription = new HashMap<>(3);
-		AnnotationDescriptor.putIfNotEmpty(DescriberKey.HEADER_START, header.start(), headerDescription);
+		AnnotationDescriptor.putIfNotEmpty(DescriberKey.HEADER_START, Arrays.toString(header.start()), headerDescription);
 		AnnotationDescriptor.putIfNotEmpty(DescriberKey.HEADER_END, header.end(), headerDescription);
 		AnnotationDescriptor.putIfNotEmpty(DescriberKey.HEADER_CHARSET, header.charset(), headerDescription);
 		description.put(DescriberKey.HEADER.toString(), headerDescription);
@@ -139,7 +141,7 @@ public final class Descriptor{
 		AnnotationDescriptor.putIfNotEmpty(DescriberKey.FIELD_TYPE, field.getFieldType().getName(), fieldDescription);
 		final Annotation binding = field.getBinding();
 		final Class<? extends Annotation> annotationType = binding.annotationType();
-		AnnotationDescriptor.putIfNotEmpty(DescriberKey.ANNOTATION_TYPE, binding.annotationType().getSimpleName(), fieldDescription);
+		AnnotationDescriptor.putIfNotEmpty(DescriberKey.ANNOTATION_TYPE, binding.annotationType().getName(), fieldDescription);
 
 		//extract binding descriptor
 		final AnnotationDescriptor descriptor = AnnotationDescriptor.fromAnnotation(binding);
@@ -152,7 +154,10 @@ public final class Descriptor{
 	}
 
 	private void describeContext(final Map<String, Object> description){
-		description.put(DescriberKey.CONTEXT.toString(), core.getContext());
+		final Map<String, Object> ctx = new HashMap<>(core.getContext());
+		ctx.remove(ContextHelper.CONTEXT_SELF);
+		ctx.remove(ContextHelper.CONTEXT_CHOICE_PREFIX);
+		description.put(DescriberKey.CONTEXT.toString(), ctx);
 	}
 
 }

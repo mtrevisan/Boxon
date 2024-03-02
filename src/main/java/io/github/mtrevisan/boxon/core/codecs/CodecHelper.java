@@ -56,6 +56,11 @@ final class CodecHelper{
 			throw AnnotationException.create("Size must be a positive integer, was {}", size);
 	}
 
+	static void assertSizeNonNegative(final int size) throws AnnotationException{
+		if(size < 0)
+			throw AnnotationException.create("Size must be a non-negative integer, was {}", size);
+	}
+
 	static void assertSizeEquals(final int expectedSize, final int size){
 		if(expectedSize != size)
 			throw new IllegalArgumentException("Size mismatch, expected " + expectedSize + ", got " + size);
@@ -123,8 +128,8 @@ final class CodecHelper{
 			return converter.decode(data);
 		}
 		catch(final Exception e){
-			throw new IllegalArgumentException("Can not input " + data.getClass().getSimpleName() + " to decode method of converter "
-				+ converterType.getSimpleName(), e);
+			throw new IllegalArgumentException("Can not input " + data.getClass().getSimpleName() + " (" + data
+				+ ") to decode method of converter " + converterType.getSimpleName(), e);
 		}
 	}
 

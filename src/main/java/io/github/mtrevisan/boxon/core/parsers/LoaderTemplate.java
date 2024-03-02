@@ -245,7 +245,7 @@ public final class LoaderTemplate{
 		final byte[] array = reader.array();
 		for(final Map.Entry<String, Template<?>> entry : templates.entrySet()){
 			final String header = entry.getKey();
-			final byte[] templateHeader = StringHelper.toByteArray(header);
+			final byte[] templateHeader = StringHelper.hexToByteArray(header);
 
 			//verify if it's a valid message header
 			final int lastIndex = index + templateHeader.length;

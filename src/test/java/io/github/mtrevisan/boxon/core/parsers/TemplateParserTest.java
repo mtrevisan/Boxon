@@ -56,7 +56,7 @@ class TemplateParserTest{
 
 	@Test
 	void parseSingleMessageHex() throws NoSuchMethodException, FieldException{
-		byte[] payload = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600abcd07e30405083639001256080d0a");
+		byte[] payload = StringHelper.hexToByteArray("2b41434b066f2446010a0311235e40035110420600abcd07e30405083639001256080d0a");
 		BitReaderInterface reader = BitReader.wrap(payload);
 
 		LoaderCodec loaderCodec = LoaderCodec.create();
@@ -86,7 +86,7 @@ class TemplateParserTest{
 
 	@Test
 	void parseSingleMessageHexByteChecksum() throws NoSuchMethodException, FieldException{
-		byte[] payload = StringHelper.toByteArray("2d41434b066f2446010a0311235e40035110420600ffff07e304050836390012b80d0a");
+		byte[] payload = StringHelper.hexToByteArray("2d41434b066f2446010a0311235e40035110420600ffff07e304050836390012b80d0a");
 		BitReaderInterface reader = BitReader.wrap(payload);
 
 		LoaderCodec loaderCodec = LoaderCodec.create();
@@ -166,7 +166,7 @@ class TemplateParserTest{
 
 	@Test
 	void parseWithConditionError() throws AnnotationException{
-		byte[] payload = StringHelper.toByteArray("746335011234");
+		byte[] payload = StringHelper.hexToByteArray("746335011234");
 		BitReaderInterface reader = BitReader.wrap(payload);
 
 		LoaderCodec loaderCodec = LoaderCodec.create();
@@ -206,7 +206,7 @@ class TemplateParserTest{
 
 	@Test
 	void parseWithConverterOutputError() throws AnnotationException{
-		byte[] payload = StringHelper.toByteArray("74633501");
+		byte[] payload = StringHelper.hexToByteArray("74633501");
 		BitReaderInterface reader = BitReader.wrap(payload);
 
 		LoaderCodec loaderCodec = LoaderCodec.create();
@@ -246,7 +246,7 @@ class TemplateParserTest{
 
 	@Test
 	void parseWithConverterInputError() throws AnnotationException{
-		byte[] payload = StringHelper.toByteArray("74633501");
+		byte[] payload = StringHelper.hexToByteArray("74633501");
 		BitReaderInterface reader = BitReader.wrap(payload);
 
 		LoaderCodec loaderCodec = LoaderCodec.create();
@@ -258,7 +258,7 @@ class TemplateParserTest{
 		postProcessCodecs(loaderCodec, templateParser, evaluator);
 
 		Exception exc = Assertions.assertThrows(FieldException.class, () -> templateParser.decode(template, reader, null));
-		Assertions.assertEquals("java.lang.IllegalArgumentException: Can not input Byte to decode method of converter WrongInputConverter in field "
+		Assertions.assertEquals("java.lang.IllegalArgumentException: Can not input Byte (1) to decode method of converter WrongInputConverter in field "
 			+ TemplateParserTest.TestError4.class.getName() + ".type", exc.getMessage());
 	}
 
@@ -285,7 +285,7 @@ class TemplateParserTest{
 
 	@Test
 	void parseCompositeMessage1() throws FieldException{
-		byte[] payload = StringHelper.toByteArray("746D310102016162");
+		byte[] payload = StringHelper.hexToByteArray("746D310102016162");
 		BitReaderInterface reader = BitReader.wrap(payload);
 
 		LoaderCodec loaderCodec = LoaderCodec.create();
@@ -348,7 +348,7 @@ class TemplateParserTest{
 
 	@Test
 	void parseCompositeMessage21() throws FieldException{
-		byte[] payload = StringHelper.toByteArray("746D3201016162");
+		byte[] payload = StringHelper.hexToByteArray("746D3201016162");
 		BitReaderInterface reader = BitReader.wrap(payload);
 
 		LoaderCodec loaderCodec = LoaderCodec.create();
@@ -376,7 +376,7 @@ class TemplateParserTest{
 
 	@Test
 	void parseCompositeMessage22() throws FieldException{
-		byte[] payload = StringHelper.toByteArray("7463320202616263");
+		byte[] payload = StringHelper.hexToByteArray("7463320202616263");
 		BitReaderInterface reader = BitReader.wrap(payload);
 
 		LoaderCodec loaderCodec = LoaderCodec.create();

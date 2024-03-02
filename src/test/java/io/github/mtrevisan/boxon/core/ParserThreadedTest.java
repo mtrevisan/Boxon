@@ -43,7 +43,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @SuppressWarnings("ALL")
 class ParserThreadedTest{
 
-	private static final byte[] PAYLOAD = StringHelper.toByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
+	private static final byte[] PAYLOAD = StringHelper.hexToByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 
 
 	@Test
