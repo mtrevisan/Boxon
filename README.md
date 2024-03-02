@@ -1537,7 +1537,7 @@ Pull requests are welcomed.
 ## Changelog
 
 <a name="changelog-3.1.2"></a>
-### version 3.1.2 - 202403??
+### version 3.1.2 - 20240302
 
 - improvement on handling values inside big decimal converter.
 - improvement on error reporting.
