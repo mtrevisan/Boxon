@@ -58,14 +58,17 @@ class DescriptorTest{
 			.create();
 		Descriptor descriptor = Descriptor.create(core);
 
-		List<Map<String, Object>> descriptions = descriptor.describeTemplates();
+		List<Map<String, Object>> descriptions = descriptor.describe();
 
 		Assertions.assertEquals(1, descriptions.size());
 
 		Map<String, Object> description = descriptions.get(0);
 
 		String jsonDescription = PrettyPrintMap.toString(description);
-		Assertions.assertEquals("{fields:[{charset:UTF-8,size:#headerLength(),name:messageHeader,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindString,fieldType:java.lang.String},{converter:"
+		Assertions.assertEquals("{template:io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageHex," +
+			"context:{headerLength:" + ParserTest.class.getDeclaredMethod("headerLength")
+			+ ",deviceTypes:[QUECLINK_GB200S (0x46)]},header:{start:[+ACK],charset:UTF-8}"
+			+ ",fields:[{charset:UTF-8,size:#headerLength(),name:messageHeader,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindString,fieldType:java.lang.String},{converter:"
 			+ ACKMessageHex.MessageTypeConverter.class.getName()
 			+ ",name:messageType,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindByte,fieldType:java.lang.String},{converter:"
 			+ ACKMaskHex.ACKMaskConverter.class.getName()
@@ -89,9 +92,7 @@ class DescriptorTest{
 			+ ZonedDateTime.class.getName()
 			+ ",byteOrder:BIG_ENDIAN},{condition:mask.hasMessageId(),name:messageId,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindShort,fieldType:short,byteOrder:BIG_ENDIAN},{skipEnd:4,skipStart:4,name:checksum,annotationType:io.github.mtrevisan.boxon.annotations.Checksum,startValue:-1,type:short,fieldType:short,byteOrder:BIG_ENDIAN,algorithm:"
 			+ CRC16CCITT.class.getName()
-			+ "}],context:{headerLength:"
-			+ ParserTest.class.getDeclaredMethod("headerLength")
-			+ ",deviceTypes:[QUECLINK_GB200S (0x46)]},header:{start:[+ACK],charset:UTF-8}}", jsonDescription);
+			+ "}]}", jsonDescription);
 	}
 
 }

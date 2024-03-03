@@ -57,7 +57,7 @@ class DescriptorThreadedTest{
 		int threadCount = 10;
 		AtomicInteger counter = new AtomicInteger();
 		MultithreadingHelper.testMultithreading(
-			() -> descriptor.describeTemplates(),
+			() -> descriptor.describe(),
 			descriptions -> counter.addAndGet(descriptions.size()),
 			threadCount
 		);
@@ -82,7 +82,7 @@ class DescriptorThreadedTest{
 		MultithreadingHelper.testMultithreading(
 			() -> {
 				Descriptor descriptor = Descriptor.create(core);
-				return descriptor.describeTemplates();
+				return descriptor.describe();
 			},
 			descriptions -> counter.addAndGet(descriptions.size()),
 			threadCount
@@ -108,7 +108,7 @@ class DescriptorThreadedTest{
 					.withTemplate(ACKMessageHex.class)
 					.create();
 				Descriptor descriptor = Descriptor.create(core);
-				return descriptor.describeTemplates();
+				return descriptor.describe();
 			},
 			descriptions -> counter.addAndGet(descriptions.size()),
 			threadCount
