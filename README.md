@@ -1541,24 +1541,24 @@ Pull requests are welcomed.
 
 - improvement on handling values inside big decimal converter.
 - improvement on error reporting.
-- renamed `Composer.composeMessage` into compose.
+- renamed `Composer.composeMessage` into `compose`.
 - corrected error while showing the start array of message header in the description.
-- fix size validation of array and list (can be zero)
+- fix size validation of array and list (now it can be zero).
 
 <a name="changelog-3.1.1"></a>
 ### version 3.1.1 - 20240229
 
-- Fixed an error if annotating with @Skip as the last a of the POJO.
+- Fixed an error if annotating with `@Skip` as the last annotation of the POJO.
 
 <a name="changelog-3.1.0"></a>
 ### version 3.1.0 - 20240228
 
-- Added `BindList`, the equivalent of `BindArray` for messages with separators.
+- Added `@BindList`, the equivalent of `@BindArray` for messages with separators.
 
 <a name="changelog-3.0.2"></a>
 ### version 3.0.2 - 20240223
 
-- Fixed a bug on `ConfigurationHeader` where the protocol range check was incorrectly done considering the minimum protocol as the maximum.
+- Fixed a bug on `@ConfigurationHeader` where the protocol range check was incorrectly done considering the minimum protocol as the maximum.
 
 <a name="changelog-3.0.1"></a>
 ### version 3.0.1 - 20240220
@@ -1570,13 +1570,12 @@ Pull requests are welcomed.
 
 - Added `CoreBuilder` to facilitate the creation of a `Core`: now it is no longer necessary to remember the order in which the methods should be called.
 - Added missing javadoc. Enhanced existing javadoc.
-- Added `BindBitSet` binding for java `BitSet`.
+- Added `@BindBitSet` binding for java `@BitSet`.
 - Added `Extractor`, used to programmatically extract values from a POJO.
 - Removed `Bits`.
 - Enhanced binding validation.
 - Fixed a concurrency bug on the validation of alternatives.
 - Reordered some packages to better reflect usage.
-
 
 <a name="changelog-2.1.2"></a>
 ### version 2.1.2 - 20210118
@@ -1584,14 +1583,12 @@ Pull requests are welcomed.
 - Added missing javadoc.
 - No more cycles between classes or packages.
 
-
 <a name="changelog-2.1.1"></a>
 ### version 2.1.1 - 20210114
 
-- Bug fix: `Evaluator` class is now exported.
+- Bug fix: `Evaluator` class is now exportable.
 - Removed a package cycle.
 - General cleaning of the code (removed duplicated code, useless templates, etc.).
-
 
 <a name="changelog-2.1.0"></a>
 ### version 2.1.0 - 20211213
@@ -1599,7 +1596,6 @@ Pull requests are welcomed.
 - Made library thread-safe.
 - Added methods to retrieve a description of the protocol (in JSON format).
 - Decomposed and simplified `Parser` class.
-
 
 <a name="changelog-2.0.0"></a>
 ### version 2.0.0 - 20211127
