@@ -56,6 +56,11 @@ final class CodecHelper{
 			throw AnnotationException.create("Size must be a positive integer, was {}", size);
 	}
 
+	static void assertSizeNonNegative(final int size) throws AnnotationException{
+		if(size < 0)
+			throw AnnotationException.create("Size must be a non-negative integer, was {}", size);
+	}
+
 	static void assertSizeEquals(final int expectedSize, final int size){
 		if(expectedSize != size)
 			throw new IllegalArgumentException("Size mismatch, expected " + expectedSize + ", got " + size);
