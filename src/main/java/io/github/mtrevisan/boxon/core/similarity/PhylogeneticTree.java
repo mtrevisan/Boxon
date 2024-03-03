@@ -22,7 +22,10 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.similarity.evolutionarytree;
+package io.github.mtrevisan.boxon.core.similarity;
+
+import io.github.mtrevisan.boxon.core.similarity.tree.PhylogeneticTreeNode;
+import io.github.mtrevisan.boxon.core.similarity.tree.SpeciesInterface;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,7 +56,7 @@ public final class PhylogeneticTree{
 		final List<PhylogeneticTreeNode> forest = initializeForest(species);
 
 		//store distance matrix from each species to every other species
-		final Map<String, Double> nodes = createDistanceMatrix(species, forest);
+		final Map<String, Double> similarityMatrix = createSimilarityMatrix(species);
 		while(forest.size() > 1){
 			final PhylogeneticTreeNode newNode = mergeNodes(species, forest);
 
@@ -65,10 +68,10 @@ public final class PhylogeneticTree{
 			removeChildren(forest, leftChildLabel, rightChildLabel);
 
 			//add new node to map
-			addNewNode(forest, leftChild, rightChild, nodes, newNode);
+			addNewNode(forest, leftChild, rightChild, similarityMatrix, newNode);
 
 			//remove both children from map
-			removeChildren(forest, leftChildLabel, rightChildLabel, nodes);
+			removeChildren(forest, leftChildLabel, rightChildLabel, similarityMatrix);
 
 			//add new tree to forest
 			forest.add(newNode);
@@ -111,17 +114,18 @@ public final class PhylogeneticTree{
 		return forest;
 	}
 
-	private static Map<String, Double> createDistanceMatrix(final SpeciesInterface[] species,
-			final List<PhylogeneticTreeNode> forest){
-		final int forestSize = forest.size();
-		final Map<String, Double> nodes = new HashMap<>(species.length);
-		for(int i = 0; i < forestSize; i ++)
-			for(int j = i + 1; j < forestSize; j ++)
-				if(forest.get(i).isLeaf()){
-					final String key = composeKey(species[i].getName(), species[j].getName());
-					nodes.put(key, species[i].distance(species[j]));
-				}
-		return nodes;
+	private static Map<String, Double> createSimilarityMatrix(final SpeciesInterface[] species){
+		final int speciesSize = species.length;
+		final Map<String, Double> similarityMatrix = new HashMap<>((speciesSize - 1) * speciesSize / 2);
+		for(int i = 0; i < speciesSize; i ++){
+			final SpeciesInterface speciesI = species[i];
+			for(int j = i + 1; j < speciesSize; j ++){
+				final SpeciesInterface speciesJ = species[j];
+				final String key = composeKey(speciesI.getName(), speciesJ.getName());
+				similarityMatrix.put(key, speciesI.similarity(speciesJ));
+			}
+		}
+		return similarityMatrix;
 	}
 
 	private static PhylogeneticTreeNode createNewNode(final PhylogeneticTreeNode leftChild,
@@ -144,7 +148,7 @@ public final class PhylogeneticTree{
 	}
 
 	private static void addNewNode(final List<PhylogeneticTreeNode> forest, final PhylogeneticTreeNode leftChild,
-			final PhylogeneticTreeNode rightChild, final Map<String, Double> nodes, final PhylogeneticTreeNode newNode){
+			final PhylogeneticTreeNode rightChild, final Map<String, Double> similarityMatrix, final PhylogeneticTreeNode newNode){
 		final int forestSize = forest.size();
 		final String leftChildLabel = leftChild.getLabel();
 		final String rightChildLabel = rightChild.getLabel();
@@ -158,23 +162,23 @@ public final class PhylogeneticTree{
 			final PhylogeneticTreeNode tree = forest.get(i);
 			final String leftKey = composeKey(leftChildLabel, tree.getLabel());
 			final String rightKey = composeKey(rightChildLabel, tree.getLabel());
-			if(nodes.get(leftKey) != null && nodes.get(rightKey) != null){
-				t1ToOther = nodes.get(leftKey);
-				t2ToOther = nodes.get(rightKey);
+			if(similarityMatrix.get(leftKey) != null && similarityMatrix.get(rightKey) != null){
+				t1ToOther = similarityMatrix.get(leftKey);
+				t2ToOther = similarityMatrix.get(rightKey);
 				final String newKey = composeKey(newNode.getLabel(), tree.getLabel());
 				distanceToOther = (leftLeafCount * t1ToOther + rightLeafCount * t2ToOther) / denominator;
-				nodes.put(newKey, distanceToOther);
+				similarityMatrix.put(newKey, distanceToOther);
 			}
 		}
 	}
 
 	private static <S> void removeChildren(final List<PhylogeneticTreeNode> forest, final String leftChildLabel,
-			final String rightChildLabel, final Map<String, Double> nodes){
+			final String rightChildLabel, final Map<String, Double> similarityMatrix){
 		final int forestSize = forest.size();
 		for(int i = 0; i < forestSize; i ++){
 			final String treeLabel = forest.get(i).getLabel();
-			nodes.remove(composeKey(leftChildLabel, treeLabel));
-			nodes.remove(composeKey(rightChildLabel, treeLabel));
+			similarityMatrix.remove(composeKey(leftChildLabel, treeLabel));
+			similarityMatrix.remove(composeKey(rightChildLabel, treeLabel));
 		}
 	}
 

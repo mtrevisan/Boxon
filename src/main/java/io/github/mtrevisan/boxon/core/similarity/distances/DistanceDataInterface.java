@@ -29,6 +29,8 @@ public interface DistanceDataInterface<D extends DistanceDataInterface<?>>{
 
 	int length();
 
+	Object elementAt(int index);
+
 	boolean equals(D other);
 
 	boolean equalsAtIndex(int index, D other, int otherIndex);

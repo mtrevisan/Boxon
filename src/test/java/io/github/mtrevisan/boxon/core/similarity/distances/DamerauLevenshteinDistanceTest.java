@@ -28,20 +28,20 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 
-class LevenshteinDistanceTest{
+class DamerauLevenshteinDistanceTest{
 
 	@Test
 	void testNullThrows(){
 		Assertions.assertThrows(
 			IllegalArgumentException.class,
-			() -> LevenshteinDistance.create()
+			() -> DamerauLevenshteinDistance.create()
 				.similarity(null, CharSequenceDistanceData.of("kEvIn"))
 		);
 	}
 
 	@Test
 	void emptyStringTest(){
-		LevenshteinDistance distance = LevenshteinDistance.create();
+		DamerauLevenshteinDistance distance = DamerauLevenshteinDistance.create();
 		double response = distance.similarity(
 			CharSequenceDistanceData.of(""),
 			CharSequenceDistanceData.of(""));
@@ -51,7 +51,7 @@ class LevenshteinDistanceTest{
 
 	@Test
 	void testExactMatchSameCase(){
-		LevenshteinDistance distance = LevenshteinDistance.create();
+		DamerauLevenshteinDistance distance = DamerauLevenshteinDistance.create();
 		double response = distance.similarity(
 			CharSequenceDistanceData.of("java"),
 			CharSequenceDistanceData.of("java"));
@@ -61,7 +61,7 @@ class LevenshteinDistanceTest{
 
 	@Test
 	void testNoSimilarity(){
-		LevenshteinDistance distance = LevenshteinDistance.create();
+		DamerauLevenshteinDistance distance = DamerauLevenshteinDistance.create();
 		double response = distance.similarity(
 			CharSequenceDistanceData.of("abc"),
 			CharSequenceDistanceData.of("def"));
@@ -71,7 +71,7 @@ class LevenshteinDistanceTest{
 
 	@Test
 	void score1(){
-		LevenshteinDistance distance = LevenshteinDistance.create();
+		DamerauLevenshteinDistance distance = DamerauLevenshteinDistance.create();
 		double response = distance.similarity(
 			CharSequenceDistanceData.of("he"),
 			CharSequenceDistanceData.of("head"));
@@ -81,7 +81,7 @@ class LevenshteinDistanceTest{
 
 	@Test
 	void score2(){
-		LevenshteinDistance distance = LevenshteinDistance.create();
+		DamerauLevenshteinDistance distance = DamerauLevenshteinDistance.create();
 		double response = distance.similarity(
 			CharSequenceDistanceData.of("hd"),
 			CharSequenceDistanceData.of("head"));
@@ -91,7 +91,7 @@ class LevenshteinDistanceTest{
 
 	@Test
 	void score3(){
-		LevenshteinDistance distance = LevenshteinDistance.create();
+		DamerauLevenshteinDistance distance = DamerauLevenshteinDistance.create();
 		double response = distance.similarity(
 			CharSequenceDistanceData.of("d"),
 			CharSequenceDistanceData.of("head"));
@@ -101,7 +101,7 @@ class LevenshteinDistanceTest{
 
 	@Test
 	void score4(){
-		LevenshteinDistance distance = LevenshteinDistance.create();
+		DamerauLevenshteinDistance distance = DamerauLevenshteinDistance.create();
 		double response = distance.similarity(
 			CharSequenceDistanceData.of("head"),
 			CharSequenceDistanceData.of("he"));
@@ -111,7 +111,7 @@ class LevenshteinDistanceTest{
 
 	@Test
 	void score5(){
-		LevenshteinDistance distance = LevenshteinDistance.create();
+		DamerauLevenshteinDistance distance = DamerauLevenshteinDistance.create();
 		double response = distance.similarity(
 			CharSequenceDistanceData.of("kitten"),
 			CharSequenceDistanceData.of("sitting"));
@@ -121,12 +121,23 @@ class LevenshteinDistanceTest{
 
 	@Test
 	void score6(){
-		LevenshteinDistance distance = LevenshteinDistance.create();
+		DamerauLevenshteinDistance distance = DamerauLevenshteinDistance.create();
 		double response = distance.similarity(
 			CharSequenceDistanceData.of("Saturday"),
 			CharSequenceDistanceData.of("Sunday"));
 
 		Assertions.assertEquals(0.625, response, 0.0001);
+	}
+
+	@Test
+	void score7(){
+		DamerauLevenshteinDistance distance = DamerauLevenshteinDistance.create(1, 1, 1,
+			2);
+		double response = distance.similarity(
+			CharSequenceDistanceData.of("Saturday"),
+			CharSequenceDistanceData.of("Satudray"));
+
+		Assertions.assertEquals(0.75, response, 0.0001);
 	}
 
 }

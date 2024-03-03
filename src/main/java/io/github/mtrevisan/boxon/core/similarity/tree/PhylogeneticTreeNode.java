@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.similarity.evolutionarytree;
+package io.github.mtrevisan.boxon.core.similarity.tree;
 
 import java.util.Locale;
 
@@ -94,7 +94,7 @@ public final class PhylogeneticTreeNode{
 		return label;
 	}
 
-	int getLeafCount(){
+	public int getLeafCount(){
 		return leafCount;
 	}
 

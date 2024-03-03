@@ -22,10 +22,9 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
+package io.github.mtrevisan.boxon.core.similarity;
 
-package io.github.mtrevisan.boxon.core.similarity.kmedoids;
-
-import io.github.mtrevisan.boxon.core.similarity.evolutionarytree.SpeciesInterface;
+import io.github.mtrevisan.boxon.core.similarity.tree.SpeciesInterface;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -104,7 +103,8 @@ public final class KMedoids{
 		return medoidsRandom;
 	}
 
-	private static void selectNewMedoids(final Set<Integer> newMedoidsRandom, final Collection<Integer> medoidsRandom, final int m, final int k){
+	private static void selectNewMedoids(final Set<Integer> newMedoidsRandom, final Collection<Integer> medoidsRandom, final int m,
+			final int k){
 		newMedoidsRandom.addAll(medoidsRandom);
 		selectMedoids(newMedoidsRandom, m, k << 1);
 		newMedoidsRandom.removeAll(medoidsRandom);
@@ -147,7 +147,7 @@ public final class KMedoids{
 					break;
 				}
 
-				final double distance = data.distance(dataset[k]);
+				final double distance = data.similarity(dataset[k]);
 				if(distance < minDistance){
 					minDistance = distance;
 					minIndex = k;

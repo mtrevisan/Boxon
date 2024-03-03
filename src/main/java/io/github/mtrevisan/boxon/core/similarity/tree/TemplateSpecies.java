@@ -22,14 +22,16 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.similarity.evolutionarytree;
+package io.github.mtrevisan.boxon.core.similarity.tree;
 
+import io.github.mtrevisan.boxon.core.similarity.distances.DamerauLevenshteinDistance;
 import io.github.mtrevisan.boxon.core.similarity.distances.DistanceDataInterface;
 import io.github.mtrevisan.boxon.core.similarity.distances.GenomeDistanceData;
-import io.github.mtrevisan.boxon.core.similarity.distances.LevenshteinDistance;
 
 
 public final class TemplateSpecies implements SpeciesInterface{
+
+	private static final DamerauLevenshteinDistance DISTANCE = DamerauLevenshteinDistance.create(1, 1, 1, 1000);
 
 	//a unique name associated with the species (template class)
 	private final String name;
@@ -62,8 +64,13 @@ public final class TemplateSpecies implements SpeciesInterface{
 	}
 
 	@Override
-	public double distance(final SpeciesInterface other){
-		return LevenshteinDistance.similarity(sequence, other.getSequence());
+	public int distance(final SpeciesInterface other){
+		return DISTANCE.distance(sequence, other.getSequence());
+	}
+
+	@Override
+	public double similarity(final SpeciesInterface other){
+		return DISTANCE.similarity(sequence, other.getSequence());
 	}
 
 }

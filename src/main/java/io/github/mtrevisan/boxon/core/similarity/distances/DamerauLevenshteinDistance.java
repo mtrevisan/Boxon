@@ -24,36 +24,43 @@
  */
 package io.github.mtrevisan.boxon.core.similarity.distances;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 /**
- * Implementation of Levenshtein distance.
+ * Implementation of Damerau-Levenshtein distance.
  * <p>It is the minimum number of operations needed to transform one string into the other, where an operation is defined as an insertion,
- * deletion, or substitution of a single character.</p>
+ * deletion, substitution, or transposition of a single character.</p>
  * <p>It does respect triangle inequality (the distance between two strings is no greater than the sum Levenshtein distances from a third
  * string), and is thus a metric distance.</p>
  *
- * @see <a href="https://en.wikipedia.org/wiki/Levenshtein_distance">Levenshtein distance</a>
- * @see <a href="https://github.com/tdebatty/java-string-similarity/blob/master/src/main/java/info/debatty/java/stringsimilarity/Levenshtein.java">Levenstein.java</a>
+ * @see <a href="https://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance">Damerau-Levenshtein distance</a>
+ * @see <a href="https://github.com/tdebatty/java-string-similarity/blob/master/src/main/java/info/debatty/java/stringsimilarity/Damerau.java">Damerau.java</a>
  */
-public final class LevenshteinDistance{
+public final class DamerauLevenshteinDistance{
 
 	private final int insertionCost;
 	private final int deletionCost;
 	private final int substitutionCost;
+	private final int transpositionCost;
 
 
-	public static LevenshteinDistance create(){
-		return new LevenshteinDistance(1, 1, 1);
+	public static DamerauLevenshteinDistance create(){
+		return new DamerauLevenshteinDistance(1, 1, 1, 1);
 	}
 
-	public static LevenshteinDistance create(final int insertionCost, final int deletionCost, final int substitutionCost){
-		return new LevenshteinDistance(insertionCost, deletionCost, substitutionCost);
+	public static DamerauLevenshteinDistance create(final int insertionCost, final int deletionCost, final int substitutionCost,
+			final int transpositionCost){
+		return new DamerauLevenshteinDistance(insertionCost, deletionCost, substitutionCost, transpositionCost);
 	}
 
-	private LevenshteinDistance(final int insertionCost, final int deletionCost, final int substitutionCost){
+	private DamerauLevenshteinDistance(final int insertionCost, final int deletionCost, final int substitutionCost,
+			final int transpositionCost){
 		this.insertionCost = insertionCost;
 		this.deletionCost = deletionCost;
 		this.substitutionCost = substitutionCost;
+		this.transpositionCost = transpositionCost;
 	}
 
 
@@ -70,20 +77,19 @@ public final class LevenshteinDistance{
 			throw new IllegalArgumentException("Strings must not be null");
 
 		final int maxLength = Math.max(str1.length(), str2.length());
-		return 1. - (maxLength > 0? (double)distance(str1, str2) / maxLength: 0.);
+		final int distance = distance(str1, str2);
+		return 1. - (maxLength > 0? (double)distance / maxLength: 0.);
 	}
 
 	/**
 	 * Compute the distance between strings: the minimum number of operations needed to transform one string into the other (insertion,
-	 * deletion, substitution of a single character).
+	 * deletion, substitution, transposition of a single character).
 	 * <p>
 	 * It is always at least the difference of the sizes of the two strings.
 	 * It is at most the length of the longer string.
 	 * It is zero if and only if the strings are equal.
 	 * If the strings are the same size, the Hamming distance is an upper bound on the Levenshtein distance.
 	 * </p>
-	 * <p>Implementation uses dynamic programming (Wagner–Fischer algorithm), with only 2 rows of data. The space requirement is thus `O(m)`
-	 * and the algorithm runs in `O(m·n)`.</p>
 	 *
 	 * @param str1	The first object, must not be {@code null}.
 	 * @param str2	The second object, must not be {@code null}.
@@ -103,51 +109,59 @@ public final class LevenshteinDistance{
 		if(length2 == 0)
 			return length1;
 
-		//create two work vectors of integer distances
-		int[] v0 = new int[length2 + 1];
-		int[] v1 = new int[length2 + 1];
-		int[] vtemp;
+		//maximum distance is the max possible distance
+		final int maximumDistance = str1.length() + str2.length();
 
-		//initialize `v0` (the previous row of distances)
-		//this row is `A[0][i]`: edit distance for an empty `str1`
-		//the distance is just the number of characters to delete from `str2`
-		for(int i = 0; i < v0.length; i ++)
-			v0[i] = i;
+		//create and initialize the character array indices
+		final Map<Object, Integer> da = new HashMap<>(maximumDistance);
+		for(int d = 0; d < str1.length(); d ++)
+			da.put(str1.elementAt(d), 0);
+		for(int d = 0; d < str2.length(); d ++)
+			da.put(str2.elementAt(d), 0);
 
-		//fill in the rest of the rows
-		for(int i = 0; i < length1; i ++){
-			//calculate `v1` (current row distances) from the previous row `v0`
-			//first element of `v1` is `A[i+1][0]`
-			//edit distance is `delete (i+1)` chars from `s` to match empty `t`
-			v1[0] = i + 1;
-
-			//int minv1 = v1[0];
-
-			for(int j = 0; j < length2; j ++){
-				v1[j + 1] = min(v1[j] + insertionCost,
-					v0[j + 1] + deletionCost,
-					v0[j] + (str1.equalsAtIndex(i, str2, j)? 0: substitutionCost));
-
-				//minv1 = Math.min(minv1, v1[j + 1]);
-			}
-
-			//`limit` is the maximum result to compute before stopping. This means that the calculation can terminate early if you only care
-			//about strings with a certain similarity. Set this to `Integer.MAX_VALUE` if you want to run the calculation to completion in
-			//every case.
-			//if(minv1 >= limit)
-			//	return limit;
-
-			//flip references to current and previous row
-			vtemp = v0;
-			v0 = v1;
-			v1 = vtemp;
+		//create the distance matrix `H[0 .. s1_{length+1}][0 .. s2_{length+1}]`
+		final int[][] h = new int[str1.length() + 2][str2.length() + 2];
+		//initialize the left and top edges of `H`
+		for(int i = 0; i <= str1.length(); i ++){
+			h[i + 1][0] = maximumDistance;
+			h[i + 1][1] = i;
+		}
+		for(int j = 0; j <= str2.length(); j ++){
+			h[0][j + 1] = maximumDistance;
+			h[1][j + 1] = j;
 		}
 
-		return v0[length2];
+		//fill in the rest of the rows
+		for(int i = 1; i <= length1; i ++){
+			int db = 0;
+
+			for(int j = 1; j <= length2; j ++){
+				final int i1 = da.get(str2.elementAt(j - 1));
+				final int j1 = db;
+
+				int subCost = substitutionCost;
+				if(str1.equalsAtIndex(i - 1, str2, j - 1)){
+					subCost = 0;
+					db = j;
+				}
+
+				h[i + 1][j + 1] = min(
+					h[i][j] + subCost,
+					h[i + 1][j] + insertionCost,
+					h[i][j + 1] + deletionCost,
+					h[i1][j1] + (i - i1 - 1) + (j - j1 - 1) + transpositionCost);
+				if(h[i + 1][j + 1] < 0)
+					throw new IllegalArgumentException("Cannot calculate distance: some costs are too high");
+			}
+
+			da.put(str1.elementAt(i - 1), i);
+		}
+
+		return h[str1.length() + 1][str2.length() + 1];
 	}
 
-	private static int min(final int a, final int b, final int c){
-		return Math.min(a, Math.min(b, c));
+	private static int min(final int a, final int b, final int c, final int d){
+		return Math.min(a, Math.min(b, Math.min(c, d)));
 	}
 
 }

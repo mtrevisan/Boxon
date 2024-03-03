@@ -22,18 +22,19 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.similarity;
+package io.github.mtrevisan.boxon.core.similarity.tree;
 
-//https://guava.physics.uiuc.edu/~nigel/courses/598BIO/498BIOonline-essays/hw2/files/hw2_li.pdf
+import io.github.mtrevisan.boxon.core.similarity.distances.DistanceDataInterface;
 
-/*
-characters-based, maximum likelihood (https://en.wikipedia.org/wiki/Computational_phylogenetics#Maximum_likelihood)
-Uses each position in an alignment and evaluates all possible trees. It calculates the likelihood for each tree and seeks the one with the
-maximum likelihood.
-For a given tree, at each site, the likelihood is determined by evaluating the probability that a certain evolutionary model has generated
-the observed data. The likelihood’s for each site are then multiplied to provide likelihood for each tree.
 
-also https://scholarship.claremont.edu/cgi/viewcontent.cgi?article=1047&context=scripps_theses
-*/
-public class EvolutionaryTree{
+public interface SpeciesInterface{
+
+	String getName();
+
+	DistanceDataInterface<?> getSequence();
+
+	int distance(SpeciesInterface other);
+
+	double similarity(SpeciesInterface other);
+
 }

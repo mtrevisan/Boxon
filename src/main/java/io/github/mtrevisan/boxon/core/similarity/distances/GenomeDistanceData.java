@@ -48,6 +48,11 @@ public final class GenomeDistanceData implements DistanceDataInterface<GenomeDis
 	}
 
 	@Override
+	public Object elementAt(final int index){
+		return data[index];
+	}
+
+	@Override
 	public boolean equals(final GenomeDistanceData other){
 		return Arrays.equals(data, other.data);
 	}

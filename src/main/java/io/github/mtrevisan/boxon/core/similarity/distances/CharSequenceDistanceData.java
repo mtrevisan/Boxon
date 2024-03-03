@@ -46,6 +46,11 @@ public final class CharSequenceDistanceData implements DistanceDataInterface<Cha
 	}
 
 	@Override
+	public Object elementAt(final int index){
+		return data.charAt(index);
+	}
+
+	@Override
 	public boolean equals(final CharSequenceDistanceData other){
 		return data.equals(other.data);
 	}

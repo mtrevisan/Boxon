@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.similarity.kmedoids;
+package io.github.mtrevisan.boxon.core.similarity;
 
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
@@ -30,23 +30,21 @@ import io.github.mtrevisan.boxon.core.Core;
 import io.github.mtrevisan.boxon.core.CoreBuilder;
 import io.github.mtrevisan.boxon.core.Descriptor;
 import io.github.mtrevisan.boxon.core.keys.DescriberKey;
-import io.github.mtrevisan.boxon.core.similarity.evolutionarytree.TemplateSpecies;
+import io.github.mtrevisan.boxon.core.similarity.tree.PhylogeneticTreeNode;
+import io.github.mtrevisan.boxon.core.similarity.tree.TemplateSpecies;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 
-class KMedoidsTest{
+class CompleteLinkageClusteringTest{
 
-	@MessageHeader(start = "m0", end = "\r\n")
+	@MessageHeader(start = "clc0", end = "\r\n")
 	private static class Xero{
 		@BindString(size = "2")
 		private String aa;
@@ -56,7 +54,7 @@ class KMedoidsTest{
 		private String c;
 	}
 
-	@MessageHeader(start = "m1", end = "\r\n")
+	@MessageHeader(start = "clc1", end = "\r\n")
 	private static class Un{
 		@BindString(size = "2")
 		private String aa;
@@ -66,7 +64,7 @@ class KMedoidsTest{
 		private String c;
 	}
 
-	@MessageHeader(start = "m2", end = "\r\n")
+	@MessageHeader(start = "clc2", end = "\r\n")
 	private static class Do{
 		@BindString(size = "2")
 		private String aa;
@@ -80,23 +78,18 @@ class KMedoidsTest{
 	@Test
 	void test() throws TemplateException, ConfigurationException, AnnotationException{
 		Core core = CoreBuilder.builder()
-			.withTemplatesFrom(KMedoidsTest.class)
+			.withTemplate(Xero.class)
+			.withTemplate(Un.class)
+			.withTemplate(Do.class)
 			.withDefaultCodecs()
 			.create();
 		TemplateSpecies[] species = extractTemplateGenome(core);
 
-		int[] assignments = KMedoids.cluster(species, 2, 10);
+		PhylogeneticTreeNode root = CompleteLinkageClustering.build(species);
 
-		Assertions.assertEquals(3, assignments.length);
-		Set<Integer> numbers = new HashSet<>(3);
-		for(int i = 0; i < assignments.length; i ++)
-			numbers.add(assignments[i]);
-		Assertions.assertEquals(2, numbers.size());
-		Iterator<Integer> itr = numbers.iterator();
-		int num1 = itr.next();
-		int num2 = itr.next();
-		Assertions.assertTrue(0 <= num1 && num1 <= 2);
-		Assertions.assertTrue(0 <= num2 && num2 <= 2);
+		Assertions.assertEquals(Xero.class.getName(), root.getLeftChild().getLabel());
+		Assertions.assertEquals(Un.class.getName(), root.getRightChild().getLeftChild().getLabel());
+		Assertions.assertEquals(Do.class.getName(), root.getRightChild().getRightChild().getLabel());
 	}
 
 	private static TemplateSpecies[] extractTemplateGenome(final Core core) throws TemplateException{
@@ -117,15 +110,6 @@ class KMedoidsTest{
 			species[s] = TemplateSpecies.create((String)description.get(DescriberKey.TEMPLATE.toString()), genome);
 		}
 		return species;
-	}
-
-	private static int sameNumber(final int[] array){
-		int count = 0;
-		for(int i = 0; i < array.length - 1; i ++)
-			for(int j = i + 1; j < array.length; j ++)
-				if(array[i] == array[j])
-					count ++;
-		return count;
 	}
 
 }
