@@ -32,18 +32,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 //https://en.wikipedia.org/wiki/Complete-linkage_clustering
 //https://en.wikipedia.org/wiki/UPGMA
 //https://en.wikipedia.org/wiki/UPGMA
 public class CompleteLinkageClustering{
-
-	private static final Matcher MATCHER_KEY = Pattern.compile("^\\(([^|]+?)\\|(.+?)\\)$")
-		.matcher("");
-
 
 	private CompleteLinkageClustering(){}
 
@@ -121,6 +115,20 @@ public class CompleteLinkageClustering{
 		return "(" + key1 + "|" + key2 + ")";
 	}
 
+	private static String[] dismantleKey(final String key){
+		int open = 0;
+		for(int i = 1; i < key.length() - 1; i ++){
+			if(key.charAt(i) == '(')
+				open ++;
+			else if(key.charAt(i) == ')')
+				open --;
+			else if(key.charAt(i) == '|' && open == 0)
+				return new String[]{key.substring(1, i), key.substring(i + 1, key.length() - 1)};
+		}
+		//cannot happen
+		return null;
+	}
+
 	private static boolean findMostSimilarSpecies(final List<PhylogeneticTreeNode> forest, final Map<String, Integer> distanceMatrix){
 		//find the most similar pair in the current clustering
 		int minValue = Integer.MAX_VALUE;
@@ -132,9 +140,7 @@ public class CompleteLinkageClustering{
 				minKey = entry.getKey();
 			}
 		}
-		final Matcher matcher = MATCHER_KEY.reset(minKey);
-		matcher.find();
-		final String[] children = {matcher.group(1), matcher.group(2)};
+		final String[] children = dismantleKey(minKey);
 
 		final PhylogeneticTreeNode[] nodeChildren = removeChildren(forest, children[0], children[1], distanceMatrix);
 
