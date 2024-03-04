@@ -77,7 +77,7 @@ class KMedoidsTest{
 
 
 	@Test
-	void test() throws TemplateException, ConfigurationException, AnnotationException{
+	void testRandom() throws TemplateException, ConfigurationException, AnnotationException{
 		Core core = CoreBuilder.builder()
 			.withTemplate(Xero.class)
 			.withTemplate(Un.class)
@@ -87,6 +87,23 @@ class KMedoidsTest{
 		TemplateSpecies[] species = extractTemplateGenome(core);
 
 		Map<String, Set<String>> assignments = KMedoids.cluster(species, 2, 10);
+
+		Assertions.assertEquals(2, assignments.size());
+		for(final Set<String> value : assignments.values())
+			Assertions.assertFalse(value.isEmpty());
+	}
+
+	@Test
+	void testEnumerated() throws TemplateException, ConfigurationException, AnnotationException{
+		Core core = CoreBuilder.builder()
+			.withTemplate(Xero.class)
+			.withTemplate(Un.class)
+			.withTemplate(Do.class)
+			.withDefaultCodecs()
+			.create();
+		TemplateSpecies[] species = extractTemplateGenome(core);
+
+		Map<String, Set<String>> assignments = KMedoids.cluster(species, 2);
 
 		Assertions.assertEquals(2, assignments.size());
 		for(final Set<String> value : assignments.values())

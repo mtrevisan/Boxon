@@ -172,7 +172,7 @@ public class CompleteLinkageClustering{
 				itr.remove();
 				nodeChildren[0] = child;
 			}
-			if(key.equals(rightChildLabel)){
+			else if(key.equals(rightChildLabel)){
 				itr.remove();
 				nodeChildren[1] = child;
 			}

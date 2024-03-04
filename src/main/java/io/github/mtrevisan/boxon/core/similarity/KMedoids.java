@@ -25,6 +25,8 @@
 package io.github.mtrevisan.boxon.core.similarity;
 
 import io.github.mtrevisan.boxon.core.similarity.tree.SpeciesInterface;
+import org.apache.commons.numbers.combinatorics.BinomialCoefficient;
+import org.apache.commons.numbers.combinatorics.Combinations;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -52,6 +54,17 @@ public final class KMedoids{
 	 *
 	 * @param dataset	The list of strings to be clustered.
 	 * @param numberOfClusters	Number of clusters to generate.
+	 * @return	The association for each data to the corresponding centroid.
+	 */
+	public static Map<String, Set<String>> cluster(final SpeciesInterface[] dataset, final int numberOfClusters){
+		return cluster(dataset, numberOfClusters, Integer.MAX_VALUE);
+	}
+
+	/**
+	 * Cluster the input.
+	 *
+	 * @param dataset	The list of strings to be clustered.
+	 * @param numberOfClusters	Number of clusters to generate.
 	 * @param maxIterations	The maximum number of iterations the algorithm is allowed to run.
 	 * @return	The association for each data to the corresponding centroid.
 	 */
@@ -65,6 +78,49 @@ public final class KMedoids{
 
 		final int m = dataset.length;
 		final int k = Math.min(numberOfClusters, m);
+
+		final int[] assignment;
+		final long combinationsCount = BinomialCoefficient.value(m, k);
+		if(maxIterations > combinationsCount || combinationsCount < 50l)
+			assignment = clusterEnumerated(dataset, k);
+		else
+			assignment = clusterRandom(dataset, k, maxIterations);
+
+		final Map<String, Set<String>> clusters = new HashMap<>(1);
+		for(int i = 0; i < assignment.length; i ++){
+			final String clusterValue = dataset[i].getName();
+			final String clusterKey = dataset[assignment[i]].getName();
+			clusters.computeIfAbsent(clusterKey, key -> new HashSet<>(1))
+				.add(clusterValue);
+		}
+		return clusters;
+	}
+
+	private static int[] clusterEnumerated(final SpeciesInterface[] dataset, final int k){
+		final int m = dataset.length;
+
+		double minScore = Double.MAX_VALUE;
+		int[] minMedoids = new int[k];
+		final int[] minAssignment = new int[m];
+		final int[] assignment = new int[m];
+		final Iterator<int[]> itr = Combinations.of(m, k).iterator();
+		while(itr.hasNext()){
+			final int[] combination = itr.next();
+
+			//partitioning: assign each data object to the closest medoid
+			final double score = assign(assignment, combination, dataset);
+			//update: if the cost decreases, accept the new solution
+			if(score < minScore){
+				replaceArray(minMedoids, combination);
+				replaceArray(minAssignment, assignment);
+				minScore = score;
+			}
+		}
+		return minAssignment;
+	}
+
+	private static int[] clusterRandom(final SpeciesInterface[] dataset, final int k, final int maxIterations){
+		final int m = dataset.length;
 
 		//initialize the medoids: select `k` random points out of the `n` data points
 		final Set<Integer> medoidsRandom = new HashSet<>(k);
@@ -97,20 +153,12 @@ public final class KMedoids{
 			}
 		}
 
-		final Map<String, Set<String>> clusters = new HashMap<>(1);
-		for(int i = 0; i < assignment.length; i ++){
-			final String clusterValue = dataset[i].getName();
-			final String clusterKey = dataset[assignment[i]].getName();
-			clusters.computeIfAbsent(clusterKey, key -> new HashSet<>(1))
-				.add(clusterValue);
-		}
-		return clusters;
+		return assignment;
 	}
 
-	private static Set<Integer> selectMedoids(final Set<Integer> medoidsRandom, final int m, final int max){
-		while(medoidsRandom.size() < Math.min(max, m))
+	private static void selectMedoids(final Set<Integer> medoidsRandom, final int m, final int k){
+		while(medoidsRandom.size() < Math.min(m, k))
 			medoidsRandom.add(RANDOM.nextInt(m));
-		return medoidsRandom;
 	}
 
 	private static void selectNewMedoids(final Set<Integer> newMedoidsRandom, final Collection<Integer> medoidsRandom, final int m,
