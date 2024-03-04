@@ -55,7 +55,7 @@ public final class KMedoids{
 	 * @param dataset	The list of strings to be clustered.
 	 * @param numberOfClusters	Number of clusters to generate.
 	 * @param maxIterations	The maximum number of iterations the algorithm is allowed to run.
-	 * @return	The association for each data to the corresponding centroid.
+	 * @return	A set of sets where each data is grouped into.
 	 */
 	public static Collection<Collection<String>> cluster(final SpeciesInterface[] dataset, final int numberOfClusters,
 			final int maxIterations){

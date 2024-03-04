@@ -28,6 +28,7 @@ import io.github.mtrevisan.boxon.core.similarity.tree.PhylogeneticTreeNode;
 import io.github.mtrevisan.boxon.core.similarity.tree.SpeciesInterface;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -79,6 +80,16 @@ public final class PhylogeneticTree{
 		}
 
 		return forest.get(0);
+	}
+
+	/**
+	 * @param species	Set of species from which to infer the phylogenetic tree.
+	 * @return	A set of sets where each data is grouped into.
+	 */
+	public static Collection<Collection<String>> cluster(final SpeciesInterface[] species){
+		final PhylogeneticTreeNode root = build(species);
+
+		return PhylogeneticTreeNode.getSpeciesByLevel(root);
 	}
 
 	private static PhylogeneticTreeNode mergeNodes(final SpeciesInterface[] species, final List<PhylogeneticTreeNode> forest){

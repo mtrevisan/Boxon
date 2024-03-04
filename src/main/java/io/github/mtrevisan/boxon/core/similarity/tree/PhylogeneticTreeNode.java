@@ -93,22 +93,24 @@ public final class PhylogeneticTreeNode{
 		if(root == null)
 			return Collections.emptyList();
 
-		final List<Collection<String>> nodesByLevel = new ArrayList<>();
+		final List<Collection<String>> nodesByLevel = new ArrayList<>(1);
 		final Queue<PhylogeneticTreeNode> queue = new LinkedList<>();
 		queue.offer(root);
 		while(!queue.isEmpty()){
 			final int levelSize = queue.size();
-			final Collection<String> currentLevel = new HashSet<>();
+			final Collection<String> currentLevel = new HashSet<>(levelSize);
 			for(int i = 0; i < levelSize; i ++){
 				final PhylogeneticTreeNode node = queue.poll();
 
-				currentLevel.add(node.label);
+				if(node.isLeaf())
+					currentLevel.add(node.label);
 				if(node.leftChild != null)
 					queue.offer(node.leftChild);
 				if(node.rightChild != null)
 					queue.offer(node.rightChild);
 			}
-			nodesByLevel.add(currentLevel);
+			if(!currentLevel.isEmpty())
+				nodesByLevel.add(currentLevel);
 		}
 
 		//add all the nodes in the previous levels

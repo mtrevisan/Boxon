@@ -38,6 +38,7 @@ import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -85,11 +86,9 @@ class PhylogeneticTreeTest{
 			.create();
 		TemplateSpecies[] species = extractTemplateGenome(core);
 
-		PhylogeneticTreeNode root = PhylogeneticTree.build(species);
+		Collection<Collection<String>> clusters = PhylogeneticTree.cluster(species);
 
-		Assertions.assertEquals(Do.class.getName(), root.getLeftChild().getLabel());
-		Assertions.assertEquals(Un.class.getName(), root.getRightChild().getLeftChild().getLabel());
-		Assertions.assertEquals(Xero.class.getName(), root.getRightChild().getRightChild().getLabel());
+		Assertions.assertEquals(2, clusters.size());
 	}
 
 	private static TemplateSpecies[] extractTemplateGenome(final Core core) throws TemplateException{

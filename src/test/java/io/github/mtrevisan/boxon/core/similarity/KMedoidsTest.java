@@ -87,10 +87,10 @@ class KMedoidsTest{
 			.create();
 		TemplateSpecies[] species = extractTemplateGenome(core);
 
-		Collection<Collection<String>> assignments = KMedoids.cluster(species, 2, 1);
+		Collection<Collection<String>> clusters = KMedoids.cluster(species, 2, 1);
 
-		Assertions.assertEquals(2, assignments.size());
-		for(final Collection<String> value : assignments)
+		Assertions.assertEquals(2, clusters.size());
+		for(final Collection<String> value : clusters)
 			Assertions.assertFalse(value.isEmpty());
 	}
 

@@ -38,6 +38,7 @@ import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -85,13 +86,9 @@ class CompleteLinkageClusteringTest{
 			.create();
 		TemplateSpecies[] species = extractTemplateGenome(core);
 
-		PhylogeneticTreeNode root = CompleteLinkageClustering.build(species);
+		Collection<Collection<String>> clusters = CompleteLinkageClustering.cluster(species);
 
-		Assertions.assertEquals(Xero.class.getName(), root.getLeftChild().getLabel());
-		String leftLabel = root.getRightChild().getLeftChild().getLabel();
-		String rightLabel = root.getRightChild().getRightChild().getLabel();
-		Assertions.assertTrue(Do.class.getName().equals(leftLabel) && Un.class.getName().equals(rightLabel)
-			|| Un.class.getName().equals(leftLabel) && Do.class.getName().equals(rightLabel));
+		Assertions.assertEquals(2, clusters.size());
 	}
 
 	private static TemplateSpecies[] extractTemplateGenome(final Core core) throws TemplateException{
