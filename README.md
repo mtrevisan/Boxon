@@ -1536,6 +1536,11 @@ Pull requests are welcomed.
 <a name="changelog"></a>
 ## Changelog
 
+<a name="changelog-3.1.3"></a>
+### version 3.1.3 - 202403??
+
+- fixed duplicated descriptions
+
 <a name="changelog-3.1.2"></a>
 ### version 3.1.2 - 20240302
 
