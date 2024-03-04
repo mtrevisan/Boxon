@@ -54,17 +54,6 @@ public final class KMedoids{
 	 *
 	 * @param dataset	The list of strings to be clustered.
 	 * @param numberOfClusters	Number of clusters to generate.
-	 * @return	The association for each data to the corresponding centroid.
-	 */
-	public static Map<String, Set<String>> cluster(final SpeciesInterface[] dataset, final int numberOfClusters){
-		return cluster(dataset, numberOfClusters, Integer.MAX_VALUE);
-	}
-
-	/**
-	 * Cluster the input.
-	 *
-	 * @param dataset	The list of strings to be clustered.
-	 * @param numberOfClusters	Number of clusters to generate.
 	 * @param maxIterations	The maximum number of iterations the algorithm is allowed to run.
 	 * @return	The association for each data to the corresponding centroid.
 	 */
@@ -80,8 +69,8 @@ public final class KMedoids{
 		final int k = Math.min(numberOfClusters, m);
 
 		final int[] assignment;
-		final long combinationsCount = BinomialCoefficient.value(m, k);
-		if(maxIterations > combinationsCount || combinationsCount < 50l)
+		final int combinationsCount = (int)BinomialCoefficient.value(m, k);
+		if(combinationsCount > 0 && combinationsCount <= maxIterations)
 			assignment = clusterEnumerated(dataset, k);
 		else
 			assignment = clusterRandom(dataset, k, maxIterations);

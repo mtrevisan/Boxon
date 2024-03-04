@@ -86,7 +86,7 @@ class KMedoidsTest{
 			.create();
 		TemplateSpecies[] species = extractTemplateGenome(core);
 
-		Map<String, Set<String>> assignments = KMedoids.cluster(species, 2, 10);
+		Map<String, Set<String>> assignments = KMedoids.cluster(species, 2, 1);
 
 		Assertions.assertEquals(2, assignments.size());
 		for(final Set<String> value : assignments.values())
@@ -103,7 +103,7 @@ class KMedoidsTest{
 			.create();
 		TemplateSpecies[] species = extractTemplateGenome(core);
 
-		Map<String, Set<String>> assignments = KMedoids.cluster(species, 2);
+		Map<String, Set<String>> assignments = KMedoids.cluster(species, 2, 3);
 
 		Assertions.assertEquals(2, assignments.size());
 		for(final Set<String> value : assignments.values())
