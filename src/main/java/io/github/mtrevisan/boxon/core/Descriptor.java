@@ -41,6 +41,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -81,7 +82,8 @@ public final class Descriptor{
 	 * @throws TemplateException	If a template is not well formatted.
 	 */
 	public List<Map<String, Object>> describe() throws TemplateException{
-		final Collection<Template<?>> templates = loaderTemplate.getTemplates();
+		final Collection<Template<?>> templates = new HashSet<>(loaderTemplate.getTemplates());
+
 		final List<Map<String, Object>> description = new ArrayList<>(templates.size());
 		for(final Template<?> template : templates)
 			description.add(describeTemplate(template));
