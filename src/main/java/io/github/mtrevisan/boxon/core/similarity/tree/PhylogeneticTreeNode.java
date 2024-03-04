@@ -89,30 +89,31 @@ public final class PhylogeneticTreeNode{
 	}
 
 
-	public static Collection<Collection<PhylogeneticTreeNode>> getSpeciesByLevel(final PhylogeneticTreeNode root){
+	public static Collection<Collection<String>> getSpeciesByLevel(final PhylogeneticTreeNode root){
 		if(root == null)
 			return Collections.emptyList();
 
-		final List<Collection<PhylogeneticTreeNode>> nodesByLevel = new ArrayList<>();
+		final List<Collection<String>> nodesByLevel = new ArrayList<>();
 		final Queue<PhylogeneticTreeNode> queue = new LinkedList<>();
 		queue.offer(root);
 		while(!queue.isEmpty()){
 			final int levelSize = queue.size();
-			final Collection<PhylogeneticTreeNode> currentLevel = new HashSet<>();
+			final Collection<String> currentLevel = new HashSet<>();
 			for(int i = 0; i < levelSize; i ++){
 				final PhylogeneticTreeNode node = queue.poll();
-				currentLevel.add(node);
-				if(node.getLeftChild() != null)
-					queue.offer(node.getLeftChild());
-				if(node.getRightChild() != null)
-					queue.offer(node.getRightChild());
+
+				currentLevel.add(node.label);
+				if(node.leftChild != null)
+					queue.offer(node.leftChild);
+				if(node.rightChild != null)
+					queue.offer(node.rightChild);
 			}
 			nodesByLevel.add(currentLevel);
 		}
 
 		//add all the nodes in the previous levels
 		for(int i = 1; i < nodesByLevel.size(); i ++){
-			final Collection<PhylogeneticTreeNode> nextLevel = nodesByLevel.get(i);
+			final Collection<String> nextLevel = nodesByLevel.get(i);
 			for(int j = 0; j < i; j ++)
 				nextLevel.addAll(nodesByLevel.get(j));
 		}
