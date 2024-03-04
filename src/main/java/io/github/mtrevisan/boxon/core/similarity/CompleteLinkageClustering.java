@@ -44,6 +44,7 @@ public class CompleteLinkageClustering{
 
 	/**
 	 * @param species	Set of species from which to infer the phylogenetic tree.
+	 * @return	The root of the tree.
 	 */
 	public static PhylogeneticTreeNode build(final SpeciesInterface[] species){
 		//create a tree for each species

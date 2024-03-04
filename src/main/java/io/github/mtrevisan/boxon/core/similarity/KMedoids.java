@@ -57,7 +57,8 @@ public final class KMedoids{
 	 * @param maxIterations	The maximum number of iterations the algorithm is allowed to run.
 	 * @return	The association for each data to the corresponding centroid.
 	 */
-	public static Map<String, Set<String>> cluster(final SpeciesInterface[] dataset, final int numberOfClusters, final int maxIterations){
+	public static Collection<Collection<String>> cluster(final SpeciesInterface[] dataset, final int numberOfClusters,
+			final int maxIterations){
 		if(dataset == null || dataset.length == 0)
 			throw new IllegalArgumentException("Dataset cannot be empty");
 		if(numberOfClusters < 1)
@@ -75,14 +76,14 @@ public final class KMedoids{
 		else
 			assignment = clusterRandom(dataset, k, maxIterations);
 
-		final Map<String, Set<String>> clusters = new HashMap<>(1);
+		final Map<String, Collection<String>> clusters = new HashMap<>(1);
 		for(int i = 0; i < assignment.length; i ++){
 			final String clusterValue = dataset[i].getName();
 			final String clusterKey = dataset[assignment[i]].getName();
 			clusters.computeIfAbsent(clusterKey, key -> new HashSet<>(1))
 				.add(clusterValue);
 		}
-		return clusters;
+		return clusters.values();
 	}
 
 	private static int[] clusterEnumerated(final SpeciesInterface[] dataset, final int k){

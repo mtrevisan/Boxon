@@ -37,6 +37,7 @@ import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -86,10 +87,10 @@ class KMedoidsTest{
 			.create();
 		TemplateSpecies[] species = extractTemplateGenome(core);
 
-		Map<String, Set<String>> assignments = KMedoids.cluster(species, 2, 1);
+		Collection<Collection<String>> assignments = KMedoids.cluster(species, 2, 1);
 
 		Assertions.assertEquals(2, assignments.size());
-		for(final Set<String> value : assignments.values())
+		for(final Collection<String> value : assignments)
 			Assertions.assertFalse(value.isEmpty());
 	}
 
@@ -103,10 +104,10 @@ class KMedoidsTest{
 			.create();
 		TemplateSpecies[] species = extractTemplateGenome(core);
 
-		Map<String, Set<String>> assignments = KMedoids.cluster(species, 2, 3);
+		Collection<Collection<String>> assignments = KMedoids.cluster(species, 2, 3);
 
 		Assertions.assertEquals(2, assignments.size());
-		for(final Set<String> value : assignments.values())
+		for(final Collection<String> value : assignments)
 			Assertions.assertFalse(value.isEmpty());
 	}
 

@@ -24,7 +24,14 @@
  */
 package io.github.mtrevisan.boxon.core.similarity.tree;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
+import java.util.Queue;
 
 
 /**
@@ -82,6 +89,38 @@ public final class PhylogeneticTreeNode{
 	}
 
 
+	public static Collection<Collection<PhylogeneticTreeNode>> getSpeciesByLevel(final PhylogeneticTreeNode root){
+		if(root == null)
+			return Collections.emptyList();
+
+		final List<Collection<PhylogeneticTreeNode>> nodesByLevel = new ArrayList<>();
+		final Queue<PhylogeneticTreeNode> queue = new LinkedList<>();
+		queue.offer(root);
+		while(!queue.isEmpty()){
+			final int levelSize = queue.size();
+			final Collection<PhylogeneticTreeNode> currentLevel = new HashSet<>();
+			for(int i = 0; i < levelSize; i ++){
+				final PhylogeneticTreeNode node = queue.poll();
+				currentLevel.add(node);
+				if(node.getLeftChild() != null)
+					queue.offer(node.getLeftChild());
+				if(node.getRightChild() != null)
+					queue.offer(node.getRightChild());
+			}
+			nodesByLevel.add(currentLevel);
+		}
+
+		//add all the nodes in the previous levels
+		for(int i = 1; i < nodesByLevel.size(); i ++){
+			final Collection<PhylogeneticTreeNode> nextLevel = nodesByLevel.get(i);
+			for(int j = 0; j < i; j ++)
+				nextLevel.addAll(nodesByLevel.get(j));
+		}
+
+		return nodesByLevel;
+	}
+
+
 	public PhylogeneticTreeNode getLeftChild(){
 		return leftChild;
 	}
@@ -104,7 +143,7 @@ public final class PhylogeneticTreeNode{
 
 	@Override
 	public String toString(){
-		return (isLeaf()? label: String.format(Locale.US, "[NONTERM %.2f]", distanceToChild));
+		return (isLeaf()? label: String.format(Locale.US, "[INODE %.2f]", distanceToChild));
 	}
 
 }
