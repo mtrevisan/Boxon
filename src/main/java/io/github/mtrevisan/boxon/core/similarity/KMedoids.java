@@ -27,8 +27,10 @@ package io.github.mtrevisan.boxon.core.similarity;
 import io.github.mtrevisan.boxon.core.similarity.tree.SpeciesInterface;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -53,7 +55,7 @@ public final class KMedoids{
 	 * @param maxIterations	The maximum number of iterations the algorithm is allowed to run.
 	 * @return	The association for each data to the corresponding centroid.
 	 */
-	public static int[] cluster(final SpeciesInterface[] dataset, final int numberOfClusters, final int maxIterations){
+	public static Map<String, Set<String>> cluster(final SpeciesInterface[] dataset, final int numberOfClusters, final int maxIterations){
 		if(dataset == null || dataset.length == 0)
 			throw new IllegalArgumentException("Dataset cannot be empty");
 		if(numberOfClusters < 1)
@@ -71,7 +73,7 @@ public final class KMedoids{
 
 		final int[] assignment = new int[m];
 		final int[] newAssignment = new int[m];
-		final Set<Integer> newMedoidsRandom = new HashSet<>(k << 1);
+		final Set<Integer> newMedoidsRandom = new HashSet<>(k);
 
 		//partitioning: assign each data object to the closest medoid
 		double score = assign(assignment, medoids, dataset);
@@ -82,19 +84,27 @@ public final class KMedoids{
 
 			//randomly select one non-medoid point
 			selectNewMedoids(newMedoidsRandom, medoidsRandom, m, k);
-			final int[] newMedoids = extractMedoids(medoidsRandom, k);
+			final int[] newMedoids = extractMedoids(newMedoidsRandom, k);
 			//recalculate the cost
 			final double newScore = assign(newAssignment, newMedoids, dataset);
 
 			//update: if the cost decreases, accept the new solution
 			if(newScore < score){
-				replaceMedoids(medoidsRandom, newMedoidsRandom);
+				replaceCollection(medoidsRandom, newMedoidsRandom);
 				replaceArray(medoids, newMedoids);
 				replaceArray(assignment, newAssignment);
 				score = newScore;
 			}
 		}
-		return assignment;
+
+		final Map<String, Set<String>> clusters = new HashMap<>(1);
+		for(int i = 0; i < assignment.length; i ++){
+			final String clusterValue = dataset[i].getName();
+			final String clusterKey = dataset[assignment[i]].getName();
+			clusters.computeIfAbsent(clusterKey, key -> new HashSet<>(1))
+				.add(clusterValue);
+		}
+		return clusters;
 	}
 
 	private static Set<Integer> selectMedoids(final Set<Integer> medoidsRandom, final int m, final int max){
@@ -105,15 +115,10 @@ public final class KMedoids{
 
 	private static void selectNewMedoids(final Set<Integer> newMedoidsRandom, final Collection<Integer> medoidsRandom, final int m,
 			final int k){
-		newMedoidsRandom.addAll(medoidsRandom);
-		selectMedoids(newMedoidsRandom, m, k << 1);
-		newMedoidsRandom.removeAll(medoidsRandom);
-		final int newMedoidsRandomSize = newMedoidsRandom.size();
-		if(newMedoidsRandomSize < k){
-			final Iterator<Integer> itr = medoidsRandom.iterator();
-			for(int i = newMedoidsRandomSize; i < k; i ++)
-				newMedoidsRandom.add(itr.next());
-		}
+		do{
+			newMedoidsRandom.clear();
+			selectMedoids(newMedoidsRandom, m, k);
+		}while(newMedoidsRandom.equals(medoidsRandom));
 	}
 
 	private static int[] extractMedoids(final Iterable<Integer> medoidsRandom, final int k){
@@ -164,9 +169,9 @@ public final class KMedoids{
 		System.arraycopy(newArray, 0, array, 0, array.length);
 	}
 
-	private static void replaceMedoids(final Collection<Integer> set, final Collection<Integer> newSet){
-		set.clear();
-		set.addAll(newSet);
+	private static void replaceCollection(final Collection<Integer> collection, final Collection<Integer> newCollection){
+		collection.clear();
+		collection.addAll(newCollection);
 	}
 
 }

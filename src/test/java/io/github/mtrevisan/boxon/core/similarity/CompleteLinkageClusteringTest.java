@@ -88,8 +88,8 @@ class CompleteLinkageClusteringTest{
 		PhylogeneticTreeNode root = CompleteLinkageClustering.build(species);
 
 		Assertions.assertEquals(Xero.class.getName(), root.getLeftChild().getLabel());
-		Assertions.assertEquals(Un.class.getName(), root.getRightChild().getLeftChild().getLabel());
-		Assertions.assertEquals(Do.class.getName(), root.getRightChild().getRightChild().getLabel());
+		Assertions.assertEquals(Do.class.getName(), root.getRightChild().getLeftChild().getLabel());
+		Assertions.assertEquals(Un.class.getName(), root.getRightChild().getRightChild().getLabel());
 	}
 
 	private static TemplateSpecies[] extractTemplateGenome(final Core core) throws TemplateException{

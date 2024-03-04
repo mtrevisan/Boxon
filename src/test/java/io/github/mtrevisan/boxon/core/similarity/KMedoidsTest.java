@@ -38,7 +38,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -87,18 +86,11 @@ class KMedoidsTest{
 			.create();
 		TemplateSpecies[] species = extractTemplateGenome(core);
 
-		int[] assignments = KMedoids.cluster(species, 2, 10);
+		Map<String, Set<String>> assignments = KMedoids.cluster(species, 2, 10);
 
-		Assertions.assertEquals(3, assignments.length);
-		Set<Integer> numbers = new HashSet<>(3);
-		for(int i = 0; i < assignments.length; i ++)
-			numbers.add(assignments[i]);
-		Assertions.assertEquals(2, numbers.size());
-		Iterator<Integer> itr = numbers.iterator();
-		int num1 = itr.next();
-		int num2 = itr.next();
-		Assertions.assertTrue(0 <= num1 && num1 <= 2);
-		Assertions.assertTrue(0 <= num2 && num2 <= 2);
+		Assertions.assertEquals(2, assignments.size());
+		for(final Set<String> value : assignments.values())
+			Assertions.assertFalse(value.isEmpty());
 	}
 
 	private static TemplateSpecies[] extractTemplateGenome(final Core core) throws TemplateException{
