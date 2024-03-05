@@ -24,7 +24,6 @@
  */
 package io.github.mtrevisan.boxon.core.similarity.tree;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -32,6 +31,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Queue;
+import java.util.Set;
 
 
 /**
@@ -93,34 +93,48 @@ public final class PhylogeneticTreeNode{
 		if(root == null)
 			return Collections.emptyList();
 
-		final List<Collection<String>> nodesByLevel = new ArrayList<>(1);
+		final List<Collection<String>> descendantNodes = new LinkedList<>();
 		final Queue<PhylogeneticTreeNode> queue = new LinkedList<>();
 		queue.offer(root);
 		while(!queue.isEmpty()){
 			final int levelSize = queue.size();
-			final Collection<String> currentLevel = new HashSet<>(levelSize);
-			for(int i = 0; i < levelSize; i ++){
+			final Set<String> currentLevelNodes = new HashSet<>();
+			for(int i = 0; i < levelSize; i++){
 				final PhylogeneticTreeNode node = queue.poll();
 
-				if(node.isLeaf())
-					currentLevel.add(node.label);
+				final Set<String> descendants = new HashSet<>();
+				collectDescendants(node, descendants);
+				currentLevelNodes.addAll(descendants);
+
 				if(node.leftChild != null)
 					queue.offer(node.leftChild);
 				if(node.rightChild != null)
 					queue.offer(node.rightChild);
 			}
-			if(!currentLevel.isEmpty())
-				nodesByLevel.add(currentLevel);
+			descendantNodes.add(currentLevelNodes);
 		}
 
-		//add all the nodes in the previous levels
-		for(int i = 1; i < nodesByLevel.size(); i ++){
-			final Collection<String> nextLevel = nodesByLevel.get(i);
-			for(int j = 0; j < i; j ++)
-				nextLevel.addAll(nodesByLevel.get(j));
-		}
+		//remove duplicated sets
+		return new HashSet<>(descendantNodes);
+	}
 
-		return nodesByLevel;
+	private static void collectDescendants(final PhylogeneticTreeNode parent, final Set<String> descendants){
+		if(parent == null)
+			return;
+
+		final Queue<PhylogeneticTreeNode> queue = new LinkedList<>();
+		queue.offer(parent);
+		while(!queue.isEmpty()){
+			final PhylogeneticTreeNode current = queue.poll();
+
+			if(current.isLeaf())
+				descendants.add(current.label);
+
+			if(current.leftChild != null)
+				queue.offer(current.leftChild);
+			if(current.rightChild != null)
+				queue.offer(current.rightChild);
+		}
 	}
 
 

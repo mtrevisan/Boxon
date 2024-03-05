@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.similarity;
+package io.github.mtrevisan.boxon.core.similarity.hierarchicalclustering;
 
 import io.github.mtrevisan.boxon.core.similarity.tree.PhylogeneticTreeNode;
 import io.github.mtrevisan.boxon.core.similarity.tree.SpeciesInterface;
