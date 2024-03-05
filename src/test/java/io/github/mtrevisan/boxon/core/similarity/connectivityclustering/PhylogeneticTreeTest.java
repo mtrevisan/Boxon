@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.similarity.hierarchicalclustering;
+package io.github.mtrevisan.boxon.core.similarity.connectivityclustering;
 
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
@@ -30,7 +30,6 @@ import io.github.mtrevisan.boxon.core.Core;
 import io.github.mtrevisan.boxon.core.CoreBuilder;
 import io.github.mtrevisan.boxon.core.Descriptor;
 import io.github.mtrevisan.boxon.core.keys.DescriberKey;
-import io.github.mtrevisan.boxon.core.similarity.hierarchicalclustering.CompleteLinkageClustering;
 import io.github.mtrevisan.boxon.core.similarity.tree.TemplateSpecies;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
@@ -43,9 +42,9 @@ import java.util.List;
 import java.util.Map;
 
 
-class CompleteLinkageClusteringTest{
+class PhylogeneticTreeTest{
 
-	@MessageHeader(start = "clc0", end = "\r\n")
+	@MessageHeader(start = "p0", end = "\r\n")
 	private static class Xero{
 		@BindString(size = "2")
 		private String aa;
@@ -55,7 +54,7 @@ class CompleteLinkageClusteringTest{
 		private String c;
 	}
 
-	@MessageHeader(start = "clc1", end = "\r\n")
+	@MessageHeader(start = "p1", end = "\r\n")
 	private static class Un{
 		@BindString(size = "2")
 		private String aa;
@@ -65,7 +64,7 @@ class CompleteLinkageClusteringTest{
 		private String c;
 	}
 
-	@MessageHeader(start = "clc2", end = "\r\n")
+	@MessageHeader(start = "p2", end = "\r\n")
 	private static class Do{
 		@BindString(size = "2")
 		private String aa;
@@ -86,7 +85,7 @@ class CompleteLinkageClusteringTest{
 			.create();
 		TemplateSpecies[] species = extractTemplateGenome(core);
 
-		Collection<Collection<String>> clusters = CompleteLinkageClustering.cluster(species);
+		Collection<Collection<String>> clusters = PhylogeneticTree.cluster(species);
 
 		Assertions.assertEquals(2, clusters.size());
 	}
