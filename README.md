@@ -1488,7 +1488,7 @@ for(int index = 0; index < result.size(); index ++){
    Exception error = response.getError();
 
    if(error != null){
-      LOGGER.error("An error occurred while parsing:\r\n   {}", response.getOriginator());
+      LOGGER.error("An error occurred while parsing:\r\n   {}", response.getSource());
    }
    else if(parsedMessage != null){
       ...
@@ -1511,7 +1511,7 @@ byte[] composedMessage = response.getMessage();
 Exception error = response.getError();
 
 if(error != null){
-   LOGGER.error("An error occurred while composing:\r\n   {}", response.getOriginator());
+   LOGGER.error("An error occurred while composing:\r\n   {}", response.getSource());
 }
 else if(composedMessage != null){
    ...
