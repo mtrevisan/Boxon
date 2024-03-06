@@ -1,3 +1,19 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.github.mtrevisan.boxon.helpers;
 
 
@@ -8,11 +24,12 @@ package io.github.mtrevisan.boxon.helpers;
  *
  * @see <a href="https://github.com/apache/tika/">Apache Tika</a>.
  */
-public class TextStatistics{
+public final class TextStatistics{
 
 	private final int[] counts = new int[256];
 
-	private int total = 0;
+	/** Total number of bytes seen so far. */
+	private int total;
 
 
 	public void addData(final byte[] buffer, final int offset, final int length){
@@ -53,7 +70,7 @@ public class TextStatistics{
 		final int safe = countSafeControl();
 
 		int expectedContinuation = 0;
-		final int[] leading = new int[]{count(0xC0, 0xE0), count(0xE0, 0xF0), count(0xF0, 0xF8)};
+		final int[] leading = {count(0xC0, 0xE0), count(0xE0, 0xF0), count(0xF0, 0xF8)};
 		for(int i = 0; i < leading.length; i ++){
 			utf8 += leading[i];
 			expectedContinuation += (i + 1) * leading[i];
@@ -61,19 +78,9 @@ public class TextStatistics{
 
 		final int continuation = count(0x80, 0xC0);
 		return (utf8 > 0
-			&& continuation <= expectedContinuation
-			&& continuation >= expectedContinuation - 3
+			&& expectedContinuation - 3 <= continuation && continuation <= expectedContinuation
 			&& count(0xF8, 0x100) == 0
 			&& (control - safe) * 100 < utf8 * 2);
-	}
-
-	/**
-	 * Returns the total number of bytes seen so far.
-	 *
-	 * @return	Count of all bytes.
-	 */
-	public int count(){
-		return total;
 	}
 
 	/**
@@ -139,10 +146,10 @@ public class TextStatistics{
 	}
 
 	private int countSafeControl(){
-			// tab, LF, CR
+			//tab, LF, CR
 		return count('\t') + count('\n') + count('\r')
 			//new page, escape
-			+ count(0x0c) + count(0x1b);
+			+ count(0x0C) + count(0x1B);
 	}
 
 }
