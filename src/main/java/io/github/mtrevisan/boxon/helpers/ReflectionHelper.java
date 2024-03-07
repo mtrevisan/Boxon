@@ -124,15 +124,14 @@ public final class ReflectionHelper{
 	 *
 	 * @param template	The object whose fields should be mapped.
 	 * @return	A Map containing the field names as keys and the field values as values.
-	 * @throws IllegalAccessException	If there are any accessibility issues while accessing the fields.
 	 */
-	public static Map<String, Object> mapObject(final Object template) throws IllegalAccessException{
+	public static Map<String, Object> mapObject(final Object template){
 		final List<Field> fields = getAccessibleFields(template.getClass());
-		makeFieldsAccessible(fields);
 		final Map<String, Object> map = new HashMap<>(fields.size());
 		for(int i = 0; i < fields.size(); i ++){
 			final Field field = fields.get(i);
-			map.put(field.getName(), field.get(template));
+
+			map.put(field.getName(), getValue(template, field));
 		}
 		return map;
 	}

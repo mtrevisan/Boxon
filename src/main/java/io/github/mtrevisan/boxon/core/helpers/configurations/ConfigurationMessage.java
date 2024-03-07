@@ -118,6 +118,7 @@ public final class ConfigurationMessage<T>{
 		final List<ConfigField> configFields = new ArrayList<>(size);
 		for(int i = 0; i < size; i ++){
 			final Field field = fields.get(i);
+
 			final ConfigurationSkip[] skips = field.getDeclaredAnnotationsByType(ConfigurationSkip.class);
 
 			final Annotation[] declaredAnnotations = field.getDeclaredAnnotations();

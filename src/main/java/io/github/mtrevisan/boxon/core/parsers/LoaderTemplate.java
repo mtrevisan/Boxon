@@ -148,6 +148,7 @@ public final class LoaderTemplate{
 		final List<Template<?>> templates = new ArrayList<>(size);
 		for(int i = 0; i < size; i ++){
 			final Class<?> type = annotatedClasses.get(i);
+
 			//for each extracted class, try to parse it, extracting all the information needed for the codec of a message
 			final Template<?> from = createTemplate(type);
 			if(from.canBeCoded())
@@ -195,6 +196,7 @@ public final class LoaderTemplate{
 		//load each template into the available templates list
 		for(int i = 0; i < templates.size(); i ++){
 			final Template<?> template = templates.get(i);
+
 			if(template != null && template.canBeCoded())
 				addTemplateInner(template);
 		}
