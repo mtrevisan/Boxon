@@ -122,16 +122,19 @@ public final class ReflectionHelper{
 	/**
 	 * Maps the fields of an object to a Map, where the keys are the field names and the values are the field values.
 	 *
-	 * @param template	The object whose fields should be mapped.
+	 * @param object	The object whose fields should be mapped.
 	 * @return	A Map containing the field names as keys and the field values as values.
 	 */
-	public static Map<String, Object> mapObject(final Object template){
-		final List<Field> fields = getAccessibleFields(template.getClass());
+	public static Map<String, Object> mapObject(final Object object){
+		if(object == null)
+			return null;
+
+		final List<Field> fields = getAccessibleFields(object.getClass());
 		final Map<String, Object> map = new HashMap<>(fields.size());
 		for(int i = 0; i < fields.size(); i ++){
 			final Field field = fields.get(i);
 
-			map.put(field.getName(), getValue(template, field));
+			map.put(field.getName(), getValue(object, field));
 		}
 		return map;
 	}
