@@ -1539,7 +1539,8 @@ Pull requests are welcomed.
 <a name="changelog-3.1.3"></a>
 ### version 3.1.3 - 202403??
 
-- fixed duplicated descriptions
+- fixed duplicated descriptions.
+- added method to map a POJO into a `Map<String, Object>` into `ReflectionHelper`.
 
 <a name="changelog-3.1.2"></a>
 ### version 3.1.2 - 20240302
