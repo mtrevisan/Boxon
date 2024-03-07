@@ -122,6 +122,7 @@ public final class Template<T>{
 		final List<EvaluatedField> evaluatedFields = new ArrayList<>(size);
 		for(int i = 0; i < size; i ++){
 			final Field field = fields.get(i);
+
 			final Skip[] skips = field.getDeclaredAnnotationsByType(Skip.class);
 			final Checksum checksum = field.getDeclaredAnnotation(Checksum.class);
 

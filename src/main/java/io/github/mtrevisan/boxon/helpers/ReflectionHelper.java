@@ -30,7 +30,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
 
 
@@ -114,6 +116,27 @@ public final class ReflectionHelper{
 					.set(obj, value);
 		}
 		catch(final IllegalArgumentException | IllegalAccessException ignored){}
+	}
+
+
+	/**
+	 * Maps the fields of an object to a Map, where the keys are the field names and the values are the field values.
+	 *
+	 * @param object	The object whose fields should be mapped.
+	 * @return	A Map containing the field names as keys and the field values as values.
+	 */
+	public static Map<String, Object> mapObject(final Object object){
+		if(object == null)
+			return null;
+
+		final List<Field> fields = getAccessibleFields(object.getClass());
+		final Map<String, Object> map = new HashMap<>(fields.size());
+		for(int i = 0; i < fields.size(); i ++){
+			final Field field = fields.get(i);
+
+			map.put(field.getName(), getValue(object, field));
+		}
+		return map;
 	}
 
 	/**
