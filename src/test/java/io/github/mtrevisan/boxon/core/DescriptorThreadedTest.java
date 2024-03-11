@@ -45,7 +45,7 @@ class DescriptorThreadedTest{
 	void concurrencySingleParserSingleCore() throws AnnotationException, ConfigurationException, CodecException, TemplateException,
 			NoSuchMethodException, ExecutionException, InterruptedException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
-			.with("QUECLINK_GB200S", (byte)0x46);
+			.with((byte)0x46, "QUECLINK_GB200S");
 		Core core = CoreBuilder.builder()
 			.withContextPair("deviceTypes", deviceTypes)
 			.withContextFunction(ParserTest.class.getDeclaredMethod("headerLength"))
@@ -57,7 +57,7 @@ class DescriptorThreadedTest{
 		int threadCount = 10;
 		AtomicInteger counter = new AtomicInteger();
 		MultithreadingHelper.testMultithreading(
-			() -> descriptor.describeTemplates(),
+			() -> descriptor.describe(),
 			descriptions -> counter.addAndGet(descriptions.size()),
 			threadCount
 		);
@@ -69,7 +69,7 @@ class DescriptorThreadedTest{
 	void concurrencyMultipleParserSingleCore() throws NoSuchMethodException, TemplateException, ConfigurationException, AnnotationException,
 			ExecutionException, InterruptedException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
-			.with("QUECLINK_GB200S", (byte)0x46);
+			.with((byte)0x46, "QUECLINK_GB200S");
 		Core core = CoreBuilder.builder()
 			.withContextPair("deviceTypes", deviceTypes)
 			.withContextFunction(ParserTest.class.getDeclaredMethod("headerLength"))
@@ -82,7 +82,7 @@ class DescriptorThreadedTest{
 		MultithreadingHelper.testMultithreading(
 			() -> {
 				Descriptor descriptor = Descriptor.create(core);
-				return descriptor.describeTemplates();
+				return descriptor.describe();
 			},
 			descriptions -> counter.addAndGet(descriptions.size()),
 			threadCount
@@ -95,7 +95,7 @@ class DescriptorThreadedTest{
 	void concurrencyMultipleParserMultipleCore() throws NoSuchMethodException, TemplateException, ConfigurationException,
 			AnnotationException, ExecutionException, InterruptedException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
-			.with("QUECLINK_GB200S", (byte)0x46);
+			.with((byte)0x46, "QUECLINK_GB200S");
 
 		int threadCount = 10;
 		AtomicInteger counter = new AtomicInteger();
@@ -108,7 +108,7 @@ class DescriptorThreadedTest{
 					.withTemplate(ACKMessageHex.class)
 					.create();
 				Descriptor descriptor = Descriptor.create(core);
-				return descriptor.describeTemplates();
+				return descriptor.describe();
 			},
 			descriptions -> counter.addAndGet(descriptions.size()),
 			threadCount

@@ -254,9 +254,11 @@ enum TemplateAnnotationValidator{
 	private static void validateObjectAlternatives(final Field field, final Class<? extends Converter<?, ?>> converter,
 			final ObjectChoices.ObjectChoice[] alternatives, final Class<?> type, final int prefixLength) throws AnnotationException{
 		final boolean hasPrefix = (prefixLength > 0);
-		if(hasPrefix && alternatives.length == 0)
+		final int length = alternatives.length;
+		if(hasPrefix && length == 0)
 			throw AnnotationException.create("No alternatives present");
-		for(int i = 0; i < alternatives.length; i ++){
+
+		for(int i = 0; i < length; i ++){
 			final ObjectChoices.ObjectChoice alternative = alternatives[i];
 			validateAlternative(alternative.type(), alternative.condition(), type, hasPrefix);
 
@@ -268,11 +270,12 @@ enum TemplateAnnotationValidator{
 	private static void validateObjectChoiceList(final Field field, final Class<? extends Converter<?, ?>> converter,
 			final ObjectChoicesList selectFrom, final Class<?> type) throws AnnotationException{
 		final ObjectChoicesList.ObjectChoiceList[] alternatives = selectFrom.alternatives();
-		if(alternatives.length == 0)
+		final int length = alternatives.length;
+		if(length == 0)
 			throw AnnotationException.create("All alternatives must be non-empty");
 
 		int minHeaderLength = Integer.MAX_VALUE;
-		for(int i = 0; i < alternatives.length; i ++){
+		for(int i = 0; i < length; i ++){
 			final int headerLength = alternatives[i].prefix().length();
 			if(headerLength < minHeaderLength)
 				minHeaderLength = headerLength;
@@ -287,9 +290,11 @@ enum TemplateAnnotationValidator{
 			final ObjectChoicesList.ObjectChoiceList[] alternatives, final Class<?> type, final int prefixLength)
 			throws AnnotationException{
 		final boolean hasPrefix = (prefixLength > 0);
-		if(hasPrefix && alternatives.length == 0)
+		final int length = alternatives.length;
+		if(hasPrefix && length == 0)
 			throw AnnotationException.create("No alternatives present");
-		for(int i = 0; i < alternatives.length; i ++){
+
+		for(int i = 0; i < length; i ++){
 			final ObjectChoicesList.ObjectChoiceList alternative = alternatives[i];
 			validateAlternative(alternative.type(), alternative.condition(), type, hasPrefix);
 

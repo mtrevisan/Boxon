@@ -171,7 +171,7 @@ final class BindingData{
 	}
 
 	private ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives){
-		for(int i = 0; i < alternatives.length; i ++){
+		for(int i = 0, length = alternatives.length; i < length; i ++){
 			final ObjectChoices.ObjectChoice alternative = alternatives[i];
 			if(evaluator.evaluateBoolean(alternative.condition(), rootObject))
 				return alternative;
@@ -239,7 +239,7 @@ final class BindingData{
 	}
 
 	private ObjectChoicesList.ObjectChoiceList chooseAlternative(final ObjectChoicesList.ObjectChoiceList[] alternatives){
-		for(int i = 0; i < alternatives.length; i ++){
+		for(int i = 0, length = alternatives.length; i < length; i ++){
 			final ObjectChoicesList.ObjectChoiceList alternative = alternatives[i];
 			if(evaluator.evaluateBoolean(alternative.condition(), rootObject))
 				return alternative;
@@ -258,7 +258,7 @@ final class BindingData{
 	 */
 	Class<? extends Converter<?, ?>> getChosenConverter(){
 		final ConverterChoices.ConverterChoice[] alternatives = selectConverterFrom.alternatives();
-		for(int i = 0; i < alternatives.length; i ++){
+		for(int i = 0, length = alternatives.length; i < length; i ++){
 			final ConverterChoices.ConverterChoice alternative = alternatives[i];
 			if(evaluator.evaluateBoolean(alternative.condition(), rootObject))
 				return alternative.converter();

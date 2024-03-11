@@ -45,7 +45,7 @@ class ConfiguratorTest{
 	@Test
 	void getConfigurations() throws AnnotationException, ConfigurationException, CodecException, TemplateException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
-			.with("QUECLINK_GB200S", (byte)0x46);
+			.with((byte)0x46, "QUECLINK_GB200S");
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withConfiguration(REGConfigurationASCII.class)
@@ -63,14 +63,14 @@ class ConfiguratorTest{
 			ConfigurationKey.CONFIGURATION_PROTOCOL_VERSION_BOUNDARIES.toString()));
 
 		Assertions.assertEquals("{longDescription:The command AT+GTREG is used to do things.,maxProtocol:2.8,shortDescription:AT+GTREG}", jsonHeader);
-		Assertions.assertEquals("{Operation mode report interval:{minValue:3600,unitOfMeasure:s,maxValue:86400,defaultValue:3600,minProtocol:1.21,fieldType:int},Maximum download retry count:{alternatives:[{maxProtocol:1.20,minValue:0,fieldType:int,maxValue:3,defaultValue:0},{minValue:0,fieldType:int,maxValue:3,minProtocol:1.21,defaultValue:1}]},Download timeout:{alternatives:[{maxProtocol:1.18,minValue:5,unitOfMeasure:min,fieldType:int,maxValue:30,defaultValue:10},{minValue:5,unitOfMeasure:min,fieldType:int,maxValue:30,minProtocol:1.19,defaultValue:20}]},Weekday:{defaultValue:[MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY],enumeration:[MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY]},Update Over-The-Air:{defaultValue:FALSE,mutuallyExclusive:true,enumeration:[TRUE, FALSE]},Header:{charset:UTF-8,defaultValue:GTREG,fieldType:String},Download protocol:{alternatives:[{maxProtocol:1.35,enumeration:[HTTP, HTTPS],defaultValue:HTTP,mutuallyExclusive:true},{enumeration:[HTTP, HTTPS],minProtocol:1.36,defaultValue:HTTP,mutuallyExclusive:true}]},Download URL:{pattern:.{0,100},charset:UTF-8,fields:{URL:{pattern:https?://.{0,92},fieldType:String},password:{pattern:.{1,32},fieldType:String},username:{pattern:.{1,32},fieldType:String}}},Update mode:{minValue:0,maxValue:1,defaultValue:1,fieldType:int},Message counter:{minValue:0,maxValue:65535,fieldType:int},Operation mode:{minValue:0,maxValue:3,defaultValue:0,fieldType:int},Motion report interval:{maxProtocol:1.20,minValue:90,unitOfMeasure:s,maxValue:86400,defaultValue:3600,minProtocol:1.19,fieldType:int},Password:{charset:UTF-8,defaultValue:gb200s,pattern:[0-9a-zA-Z]{4,20},fieldType:String},Motionless report interval:{maxProtocol:1.20,minValue:90,unitOfMeasure:s,maxValue:86400,defaultValue:3600,minProtocol:1.19,fieldType:int}}", jsonFields);
+		Assertions.assertEquals("{Operation mode report interval:{minValue:3600,unitOfMeasure:s,maxValue:86400,defaultValue:3600,minProtocol:1.21,fieldType:int},Maximum download retry count:{alternatives:[{maxProtocol:1.20,minValue:0,fieldType:int,maxValue:3,defaultValue:0},{minValue:0,fieldType:int,maxValue:3,minProtocol:1.21,defaultValue:1}]},Download timeout:{alternatives:[{maxProtocol:1.18,minValue:5,unitOfMeasure:min,fieldType:int,maxValue:30,defaultValue:10},{minValue:5,unitOfMeasure:min,fieldType:int,maxValue:30,minProtocol:1.19,defaultValue:20}]},Weekday:{defaultValue:[MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY],enumeration:[MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY]},Update Over-The-Air:{defaultValue:FALSE,mutuallyExclusive:true,enumeration:[TRUE, FALSE]},Header:{charset:UTF-8,defaultValue:GTREG,fieldType:String},Download protocol:{alternatives:[{maxProtocol:1.35,enumeration:[HTTP, HTTPS],defaultValue:HTTP,mutuallyExclusive:true},{enumeration:[HTTP, HTTPS],minProtocol:1.36,defaultValue:HTTPS,mutuallyExclusive:true}]},Download URL:{pattern:.{0,100},charset:UTF-8,fields:{URL:{pattern:https?://.{0,92},fieldType:String},password:{pattern:.{1,32},fieldType:String},username:{pattern:.{1,32},fieldType:String}}},Update mode:{minValue:0,maxValue:1,defaultValue:1,fieldType:int},Message counter:{minValue:0,maxValue:65535,fieldType:short},Operation mode:{minValue:0,maxValue:3,defaultValue:0,fieldType:int},Motion report interval:{maxProtocol:1.20,minValue:90,unitOfMeasure:s,maxValue:86400,defaultValue:3600,minProtocol:1.19,fieldType:int},Password:{charset:UTF-8,defaultValue:gb200s,pattern:[0-9a-zA-Z]{4,20},fieldType:String},Motionless report interval:{maxProtocol:1.20,minValue:90,unitOfMeasure:s,maxValue:86400,defaultValue:3600,minProtocol:1.19,fieldType:int}}", jsonFields);
 		Assertions.assertEquals("[1.18,1.19,1.20,1.21,1.35,1.36,2.8]", jsonProtocolVersionBoundaries);
 	}
 
 	@Test
 	void getProtocolVersionBoundaries() throws AnnotationException, ConfigurationException, TemplateException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
-			.with("QUECLINK_GB200S", (byte)0x46);
+			.with((byte)0x46, "QUECLINK_GB200S");
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withConfigurationsFrom(REGConfigurationASCII.class)
@@ -87,7 +87,7 @@ class ConfiguratorTest{
 	@Test
 	void getConfigurationsByProtocol() throws AnnotationException, ConfigurationException, CodecException, TemplateException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
-			.with("QUECLINK_GB200S", (byte)0x46);
+			.with((byte)0x46, "QUECLINK_GB200S");
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withConfigurationsFrom(REGConfigurationASCII.class)
@@ -103,13 +103,13 @@ class ConfiguratorTest{
 		String jsonFields = PrettyPrintMap.toString(configuration.get(ConfigurationKey.CONFIGURATION_FIELDS.toString()));
 
 		Assertions.assertEquals("{longDescription:The command AT+GTREG is used to do things.,shortDescription:AT+GTREG}", jsonHeader);
-		Assertions.assertEquals("{Maximum download retry count:{minValue:0,fieldType:int,maxValue:3,defaultValue:0},Download timeout:{minValue:5,unitOfMeasure:min,fieldType:int,maxValue:30,defaultValue:20},Weekday:{defaultValue:[MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY],enumeration:[MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY]},Update Over-The-Air:{defaultValue:FALSE,mutuallyExclusive:true,enumeration:[TRUE, FALSE]},Header:{charset:UTF-8,defaultValue:GTREG,fieldType:String},Download protocol:{enumeration:[HTTP, HTTPS],defaultValue:HTTP,mutuallyExclusive:true},Download URL:{pattern:.{0,100},charset:UTF-8,fields:{URL:{pattern:https?://.{0,92},fieldType:String},password:{pattern:.{1,32},fieldType:String},username:{pattern:.{1,32},fieldType:String}}},Update mode:{minValue:0,maxValue:1,defaultValue:1,fieldType:int},Message counter:{minValue:0,maxValue:65535,fieldType:int},Operation mode:{minValue:0,maxValue:3,defaultValue:0,fieldType:int},Motion report interval:{minValue:90,unitOfMeasure:s,maxValue:86400,defaultValue:3600,fieldType:int},Password:{charset:UTF-8,defaultValue:gb200s,pattern:[0-9a-zA-Z]{4,20},fieldType:String},Motionless report interval:{minValue:90,unitOfMeasure:s,maxValue:86400,defaultValue:3600,fieldType:int}}", jsonFields);
+		Assertions.assertEquals("{Maximum download retry count:{minValue:0,fieldType:int,maxValue:3,defaultValue:0},Download timeout:{minValue:5,unitOfMeasure:min,fieldType:int,maxValue:30,defaultValue:20},Weekday:{defaultValue:[MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY],enumeration:[MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY]},Update Over-The-Air:{defaultValue:FALSE,mutuallyExclusive:true,enumeration:[TRUE, FALSE]},Header:{charset:UTF-8,defaultValue:GTREG,fieldType:String},Download protocol:{enumeration:[HTTP, HTTPS],defaultValue:HTTP,mutuallyExclusive:true},Download URL:{pattern:.{0,100},charset:UTF-8,fields:{URL:{pattern:https?://.{0,92},fieldType:String},password:{pattern:.{1,32},fieldType:String},username:{pattern:.{1,32},fieldType:String}}},Update mode:{minValue:0,maxValue:1,defaultValue:1,fieldType:int},Message counter:{minValue:0,maxValue:65535,fieldType:short},Operation mode:{minValue:0,maxValue:3,defaultValue:0,fieldType:int},Motion report interval:{minValue:90,unitOfMeasure:s,maxValue:86400,defaultValue:3600,fieldType:int},Password:{charset:UTF-8,defaultValue:gb200s,pattern:[0-9a-zA-Z]{4,20},fieldType:String},Motionless report interval:{minValue:90,unitOfMeasure:s,maxValue:86400,defaultValue:3600,fieldType:int}}", jsonFields);
 	}
 
 	@Test
 	void composeSingleConfigurationMessage() throws NoSuchMethodException, AnnotationException, TemplateException, ConfigurationException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
-			.with("QUECLINK_GB200S", (byte)0x46);
+			.with((byte)0x46, "QUECLINK_GB200S");
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withConfigurationsFrom(REGConfigurationASCII.class)
@@ -129,7 +129,7 @@ class ConfiguratorTest{
 		));
 		configurationData.put("Update mode", 0);
 		configurationData.put("Maximum download retry count", 2);
-		configurationData.put("Message counter", 123);
+		configurationData.put("Message counter", (short)123);
 		configurationData.put("Operation mode", 1);
 		configurationData.put("Password", "pass");
 		configurationData.put("Download timeout", 25);
@@ -139,7 +139,7 @@ class ConfiguratorTest{
 			configurationData);
 
 		Assertions.assertFalse(composeResult.hasError());
-		Assertions.assertEquals("AT+GTREG=pass,1,1,0,2,25,0,http://url.com@username@password,3600,3600,6,,7b$",
+		Assertions.assertEquals("AT+GTREG=pass,1,1,0,2,25,0,http://url.com@username@password,3600,3600,06,,7B$",
 			new String(composeResult.getMessage()));
 	}
 

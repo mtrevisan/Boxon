@@ -81,7 +81,7 @@ public final class ValueOf<T extends Enum<T>, K>{
 
 		final T[] enumConstants = type.getEnumConstants();
 		final Map<K, T> map = createMap(comparator, enumConstants);
-		for(int i = 0; i < enumConstants.length; i ++){
+		for(int i = 0, length = enumConstants.length; i < length; i ++){
 			final K key = fieldAccessor.apply(enumConstants[i]);
 			if(map.put(key, enumConstants[i]) != null)
 				throw new IllegalStateException("Duplicate key in enum " + type.getSimpleName() + ": " + key);

@@ -54,7 +54,7 @@ public @interface CompositeConfigurationField{
 	 *
 	 * @return	A short description of the field.
 	 */
-	String shortDescription() default "";
+	String shortDescription();
 
 	/**
 	 * A long description of the field.

@@ -44,7 +44,7 @@ class ParserTest{
 
 	public static void main(String[] args) throws NoSuchMethodException, AnnotationException, TemplateException, ConfigurationException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
-			.with("QUECLINK_GB200S", (byte)0x46);
+			.with((byte)0x46, "QUECLINK_GB200S");
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 		//if it is wanted `headerLength` to be a variable and not a method:
 		//- remove Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes); above
@@ -86,7 +86,7 @@ class ParserTest{
 	@Test
 	void parseMultipleMessagesHex() throws NoSuchMethodException, AnnotationException, TemplateException, ConfigurationException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
-			.with("QUECLINK_GB200S", (byte)0x46);
+			.with((byte)0x46, "QUECLINK_GB200S");
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 		Core core = CoreBuilder.builder()
 			.withContext(context)
@@ -107,7 +107,7 @@ class ParserTest{
 	@Test
 	void parseMultipleMessagesASCII() throws AnnotationException, TemplateException, ConfigurationException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
-			.with("QUECLINK_GV350M", (byte)0xCF);
+			.with((byte)0xCF, "QUECLINK_GV350M");
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 		Core core = CoreBuilder.builder()
 			.withContext(context)
@@ -127,8 +127,8 @@ class ParserTest{
 	@Test
 	void parseMultipleMessagesHexASCII() throws NoSuchMethodException, AnnotationException, TemplateException, ConfigurationException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
-			.with("QUECLINK_GB200S", (byte)0x46)
-			.with("QUECLINK_GV350M", (byte)0xCF);
+			.with((byte)0x46, "QUECLINK_GB200S")
+			.with((byte)0xCF, "QUECLINK_GV350M");
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 		Core core = CoreBuilder.builder()
 			.withContext(context)
@@ -151,8 +151,8 @@ class ParserTest{
 	@Test
 	void parseMultipleMessagesASCIIHex() throws AnnotationException, TemplateException, NoSuchMethodException, ConfigurationException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
-			.with("QUECLINK_GB200S", (byte)0x46)
-			.with("QUECLINK_GV350M", (byte)0xCF);
+			.with((byte)0x46, "QUECLINK_GB200S")
+			.with((byte)0xCF, "QUECLINK_GV350M");
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 		Core core = CoreBuilder.builder()
 			.withContext(context)

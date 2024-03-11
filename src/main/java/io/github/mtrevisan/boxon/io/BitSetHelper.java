@@ -75,7 +75,7 @@ public final class BitSetHelper{
 	 * @param array	The array to be reversed.
 	 */
 	private static void bitReverse(final byte[] array){
-		for(int i = 0; i < array.length; i ++)
+		for(int i = 0, length = array.length; i < length; i ++)
 			array[i] = reverseBits(array[i]);
 		byteReverse(array);
 	}

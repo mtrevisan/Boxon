@@ -194,7 +194,7 @@ public final class TemplateParser implements TemplateParserInterface{
 
 		//decode message fields:
 		final List<BoundedField> fields = template.getBoundedFields();
-		for(int i = 0; i < fields.size(); i ++){
+		for(int i = 0, length = fields.size(); i < length; i ++){
 			final BoundedField field = fields.get(i);
 
 			//process skip annotations:
@@ -249,7 +249,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 	private <T> void readSkips(final Skip[] skips, final BitReaderInterface reader, final ParserContext<T> parserContext){
-		for(int i = 0; i < skips.length; i ++)
+		for(int i = 0, length = skips.length; i < length; i ++)
 			readSkip(skips[i], reader, parserContext.getRootObject());
 	}
 
@@ -320,8 +320,9 @@ public final class TemplateParser implements TemplateParserInterface{
 
 	private void processEvaluatedFields(final Template<?> template, final ParserContext<?> parserContext){
 		final List<EvaluatedField> evaluatedFields = template.getEvaluatedFields();
-		for(int i = 0; i < evaluatedFields.size(); i ++){
+		for(int i = 0, length = evaluatedFields.size(); i < length; i ++){
 			final EvaluatedField field = evaluatedFields.get(i);
+
 			final Evaluator evaluator = core.getEvaluator();
 			final boolean process = evaluator.evaluateBoolean(field.getBinding().condition(), parserContext.getRootObject());
 			if(!process)
@@ -346,7 +347,7 @@ public final class TemplateParser implements TemplateParserInterface{
 		//encode message fields:
 		final LoaderCodecInterface loaderCodec = core.getLoaderCodec();
 		final List<BoundedField> fields = template.getBoundedFields();
-		for(int i = 0; i < fields.size(); i ++){
+		for(int i = 0, length = fields.size(); i < length; i ++){
 			final BoundedField field = fields.get(i);
 
 			//process skip annotations:
@@ -373,7 +374,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 	private <T> void writeSkips(final Skip[] skips, final BitWriterInterface writer, final ParserContext<T> parserContext){
-		for(int i = 0; i < skips.length; i ++)
+		for(int i = 0, length = skips.length; i < length; i ++)
 			writeSkip(skips[i], writer, parserContext.getRootObject());
 	}
 

@@ -83,7 +83,7 @@ Get them [here](https://github.com/mtrevisan/Boxon/releases/).
 
 ### Maven dependency
 
-In order to include Boxon in a Maven project add the following dependency to your pom.xml (<b>Java 11 required</b>).
+In order to include Boxon in a Maven project add the following dependency to your pom.xml (<b>Java 21 required</b>).
 
 Replace `x.y.z` below int the version tag with the latest [release number](https://github.com/mtrevisan/Boxon/releases).
 
@@ -146,21 +146,22 @@ You can get pre-built JARs (usable on JRE 11 or newer) from [Sonatype](https://o
      2. [Message composer](#example-composer)
 11. [Contributing](#contributing)
 12. [Changelog](#changelog)
-     1. [version 3.1.2](#changelog-3.1.2)
-     2. [version 3.1.1](#changelog-3.1.1)
-     3. [version 3.1.0](#changelog-3.1.0)
-     4. [version 3.0.2](#changelog-3.0.2)
-     5. [version 3.0.1](#changelog-3.0.1)
-     6. [version 3.0.0](#changelog-3.0.0)
-     7. [version 2.1.2](#changelog-2.1.2)
-     8. [version 2.1.1](#changelog-2.1.1)
-     9. [version 2.1.0](#changelog-2.1.0)
-     10. [version 2.0.0](#changelog-2.0.0)
-     11. [version 1.1.0](#changelog-1.1.0)
-     12. [version 1.0.0](#changelog-1.0.0)
-     13. [version 0.0.2](#changelog-0.0.2)
-     14. [version 0.0.1](#changelog-0.0.1)
-     15. [version 0.0.0](#changelog-0.0.0)
+     1. [version 3.1.3](#changelog-3.1.3)
+     2. [version 3.1.2](#changelog-3.1.2)
+     3. [version 3.1.1](#changelog-3.1.1)
+     4. [version 3.1.0](#changelog-3.1.0)
+     5. [version 3.0.2](#changelog-3.0.2)
+     6. [version 3.0.1](#changelog-3.0.1)
+     7. [version 3.0.0](#changelog-3.0.0)
+     8. [version 2.1.2](#changelog-2.1.2)
+     9. [version 2.1.1](#changelog-2.1.1)
+     10. [version 2.1.0](#changelog-2.1.0)
+     11. [version 2.0.0](#changelog-2.0.0)
+     12. [version 1.1.0](#changelog-1.1.0)
+     13. [version 1.0.0](#changelog-1.0.0)
+     14. [version 0.0.2](#changelog-0.0.2)
+     15. [version 0.0.1](#changelog-0.0.1)
+     16. [version 0.0.0](#changelog-0.0.0)
 13. [License](#license)
 
 <br/>
@@ -808,7 +809,7 @@ Example:
 
 ```java
 DeviceTypes deviceTypes = DeviceTypes.create()
-    .with("QUECLINK_GB200S", (byte)0x46);
+	.with((byte)0x46, "QUECLINK_GB200S");
 Core core = CoreBuilder.builder()
     .withContextPair("deviceTypes", deviceTypes)
     .withContextFunction(ParserTest.class.getDeclaredMethod("headerLength"))
@@ -899,7 +900,7 @@ configurationData.put(Parser.CONFIGURATION_FIELD_TYPE, "AT+");
 configurationData.put("Weekday", "TUESDAY|WEDNESDAY");
 ...
 
-ComposerResponse<String> composedMessage = configurator.composeConfiguration("1.20", Collections.singletonMap("AT+", configurationData));
+Response<String, byte[]> composedMessage = configurator.composeConfiguration("1.20", "AT+", configurationData);
 ```
 
 
@@ -914,7 +915,7 @@ ComposerResponse<String> composedMessage = configurator.composeConfiguration("1.
  - `longDescription`: a more expressive description, optional.
  - `minProtocol`: minimum protocol for which this configuration message is valid, optional (should follow [Semantic Versioning](https://semver.org/)).
  - `maxProtocol`: maximum protocol for which this configuration message is valid, optional (should follow [Semantic Versioning](https://semver.org/)).
- - `start`: starting text of the message, optional.
+ - `start`: starting text of the message, mandatory, used as an identifier (and thus must be unique for every configuration message).
  - `end`: ending text of the message, optional.
  - `charset`: charset of the message, optional.
 
@@ -929,7 +930,7 @@ This annotation is bounded to a class.
 #### example
 
 ```java
-@ConfigurationHeader(start = "+", end = "-")
+@ConfigurationHeader(shortDescription = "A configuration message", start = "+", end = "-")
 private class ConfigurationMessage{
     ...
 }
@@ -1116,7 +1117,7 @@ This annotation is bounded to a variable.
    shortDescription = "Download protocol", terminator = ",", enumeration = DownloadProtocol.class,
    value = {
       @AlternativeSubField(maxProtocol = "1.35", defaultValue = "HTTP"),
-      @AlternativeSubField(minProtocol = "1.36", defaultValue = "HTTP")
+      @AlternativeSubField(minProtocol = "1.36", defaultValue = "HTTPS")
    }
 )
 private DownloadProtocol downloadProtocol;
@@ -1488,7 +1489,7 @@ for(int index = 0; index < result.size(); index ++){
    Exception error = response.getError();
 
    if(error != null){
-      LOGGER.error("An error occurred while parsing:\r\n   {}", response.getOriginator());
+      LOGGER.error("An error occurred while parsing:\r\n   {}", response.getSource());
    }
    else if(parsedMessage != null){
       ...
@@ -1511,14 +1512,12 @@ byte[] composedMessage = response.getMessage();
 Exception error = response.getError();
 
 if(error != null){
-   LOGGER.error("An error occurred while composing:\r\n   {}", response.getOriginator());
+   LOGGER.error("An error occurred while composing:\r\n   {}", response.getSource());
 }
 else if(composedMessage != null){
    ...
 }
 ```
-
-Remember that the header that will be written is the first in `@MessageHeader`.
 
 
 <br/>
@@ -1536,29 +1535,40 @@ Pull requests are welcomed.
 <a name="changelog"></a>
 ## Changelog
 
+<a name="changelog-3.1.3"></a>
+### version 3.1.3 - 20240311
+- fixed duplicated descriptions.
+- fixed validation on max value while composing a message.
+- fixed number not written with the correct radix.
+- made `shortDescription` mandatory in the annotation, as it should have been.
+- added method to map a POJO into a `Map<String, Object>` in `ReflectionHelper`.
+- added method `Configurator.composeConfiguration` accepting a POJO.
+- corrected errors in the documentation.
+- migrated from java 11 to java 21 for performance.
+
 <a name="changelog-3.1.2"></a>
 ### version 3.1.2 - 20240302
 
 - improvement on handling values inside big decimal converter.
 - improvement on error reporting.
-- renamed `Composer.composeMessage` into compose.
+- renamed `Composer.composeMessage` into `compose`.
 - corrected error while showing the start array of message header in the description.
-- fix size validation of array and list (can be zero)
+- fix size validation of array and list (now it can be zero).
 
 <a name="changelog-3.1.1"></a>
 ### version 3.1.1 - 20240229
 
-- Fixed an error if annotating with @Skip as the last a of the POJO.
+- Fixed an error if annotating with `@Skip` as the last annotation of the POJO.
 
 <a name="changelog-3.1.0"></a>
 ### version 3.1.0 - 20240228
 
-- Added `BindList`, the equivalent of `BindArray` for messages with separators.
+- Added `@BindList`, the equivalent of `@BindArray` for messages with separators.
 
 <a name="changelog-3.0.2"></a>
 ### version 3.0.2 - 20240223
 
-- Fixed a bug on `ConfigurationHeader` where the protocol range check was incorrectly done considering the minimum protocol as the maximum.
+- Fixed a bug on `@ConfigurationHeader` where the protocol range check was incorrectly done considering the minimum protocol as the maximum.
 
 <a name="changelog-3.0.1"></a>
 ### version 3.0.1 - 20240220
@@ -1570,13 +1580,12 @@ Pull requests are welcomed.
 
 - Added `CoreBuilder` to facilitate the creation of a `Core`: now it is no longer necessary to remember the order in which the methods should be called.
 - Added missing javadoc. Enhanced existing javadoc.
-- Added `BindBitSet` binding for java `BitSet`.
+- Added `@BindBitSet` binding for java `@BitSet`.
 - Added `Extractor`, used to programmatically extract values from a POJO.
 - Removed `Bits`.
 - Enhanced binding validation.
 - Fixed a concurrency bug on the validation of alternatives.
 - Reordered some packages to better reflect usage.
-
 
 <a name="changelog-2.1.2"></a>
 ### version 2.1.2 - 20210118
@@ -1584,14 +1593,12 @@ Pull requests are welcomed.
 - Added missing javadoc.
 - No more cycles between classes or packages.
 
-
 <a name="changelog-2.1.1"></a>
 ### version 2.1.1 - 20210114
 
-- Bug fix: `Evaluator` class is now exported.
+- Bug fix: `Evaluator` class is now exportable.
 - Removed a package cycle.
 - General cleaning of the code (removed duplicated code, useless templates, etc.).
-
 
 <a name="changelog-2.1.0"></a>
 ### version 2.1.0 - 20211213
@@ -1599,7 +1606,6 @@ Pull requests are welcomed.
 - Made library thread-safe.
 - Added methods to retrieve a description of the protocol (in JSON format).
 - Decomposed and simplified `Parser` class.
-
 
 <a name="changelog-2.0.0"></a>
 ### version 2.0.0 - 20211127

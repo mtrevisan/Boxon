@@ -85,8 +85,9 @@ final class CompositeManager implements ConfigurationManagerInterface{
 		//compose field value
 		final String composition = annotation.composition();
 		final CompositeSubField[] fields = annotation.value();
-		final Map<String, Object> dataValue = new HashMap<>(fields.length);
-		for(int i = 0; i < fields.length; i ++)
+		final int length = fields.length;
+		final Map<String, Object> dataValue = new HashMap<>(length);
+		for(int i = 0; i < length; i ++)
 			dataValue.put(fields[i].shortDescription(), fields[i].defaultValue());
 		return replace(composition, dataValue, fields);
 	}
@@ -108,7 +109,7 @@ final class CompositeManager implements ConfigurationManagerInterface{
 	public boolean isMandatory(final Annotation annotation){
 		boolean mandatory = false;
 		final CompositeSubField[] compositeFields = this.annotation.value();
-		for(int j = 0; !mandatory && j < compositeFields.length; j ++)
+		for(int j = 0, length = compositeFields.length; !mandatory && j < length; j ++)
 			mandatory = StringHelper.isBlank(compositeFields[j].defaultValue());
 		return mandatory;
 	}
@@ -121,8 +122,9 @@ final class CompositeManager implements ConfigurationManagerInterface{
 
 		final Map<String, Object> compositeMap = extractMap();
 		final CompositeSubField[] bindings = annotation.value();
-		final Map<String, Object> compositeFieldsMap = new HashMap<>(bindings.length);
-		for(int j = 0; j < bindings.length; j ++){
+		final int length = bindings.length;
+		final Map<String, Object> compositeFieldsMap = new HashMap<>(length);
+		for(int j = 0; j < length; j ++){
 			final Map<String, Object> fieldMap = extractMap(bindings[j], fieldType);
 
 			compositeFieldsMap.put(bindings[j].shortDescription(), fieldMap);
@@ -196,8 +198,9 @@ final class CompositeManager implements ConfigurationManagerInterface{
 
 	private static String replace(final String text, final Map<String, Object> replacements, final CompositeSubField[] fields)
 			throws EncodeException{
-		final Map<String, Object> trueReplacements = new HashMap<>(fields.length);
-		for(int i = 0; i < fields.length; i ++){
+		final int length = fields.length;
+		final Map<String, Object> trueReplacements = new HashMap<>(length);
+		for(int i = 0; i < length; i ++){
 			final String key = fields[i].shortDescription();
 			trueReplacements.put(key, replacements.get(key));
 		}

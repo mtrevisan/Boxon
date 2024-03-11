@@ -29,6 +29,8 @@ package io.github.mtrevisan.boxon.core.keys;
  * Holds the constants used as a key in the {@link io.github.mtrevisan.boxon.core.Descriptor Descriptor}.
  */
 public enum DescriberKey{
+	TEMPLATE("template"),
+
 	CONTEXT("context"),
 
 	HEADER("header"),

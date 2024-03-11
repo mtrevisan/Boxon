@@ -199,16 +199,16 @@ public final class Evaluator{
 	}
 
 	private static boolean isPositiveInteger(final CharSequence text){
-		for(int i = 0; i < text.length(); i ++)
+		for(int i = 0, length = text.length(); i < length; i ++)
 			if(!Character.isDigit(text.charAt(i)))
 				return false;
 		return true;
 	}
 
 
-	private static class ReflectiveProperty extends ReflectivePropertyAccessor{
+	private static final class ReflectiveProperty extends ReflectivePropertyAccessor{
 		@Override
-		protected final Field findField(final String name, Class<?> cls, final boolean mustBeStatic){
+		protected Field findField(final String name, Class<?> cls, final boolean mustBeStatic){
 			Field field = null;
 			while(field == null && cls != null && cls != Object.class){
 				field = findFieldInClass(name, cls, mustBeStatic);
@@ -219,11 +219,11 @@ public final class Evaluator{
 			return field;
 		}
 
-		@SuppressWarnings("ReturnOfNull")
 		private static Field findFieldInClass(final String name, final Class<?> cls, final boolean mustBeStatic){
 			final Field[] declaredFields = cls.getDeclaredFields();
-			for(int i = 0; i < declaredFields.length; i ++){
+			for(int i = 0, length = declaredFields.length; i < length; i ++){
 				final Field field = declaredFields[i];
+
 				if(field.getName().equals(name) && (!mustBeStatic || Modifier.isStatic(field.getModifiers())))
 					return field;
 			}

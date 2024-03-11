@@ -30,7 +30,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
 
 
@@ -109,11 +111,33 @@ public final class ReflectionHelper{
 	private static <T> void injectValue(final Class<?> objType, final Object obj, final Class<T> fieldType, final T value){
 		try{
 			final List<Field> fields = getAccessibleFields(objType, fieldType);
-			for(int i = 0; i < fields.size(); i ++)
+			for(int i = 0, length = fields.size(); i < length; i ++)
 				fields.get(i)
 					.set(obj, value);
 		}
 		catch(final IllegalArgumentException | IllegalAccessException ignored){}
+	}
+
+
+	/**
+	 * Maps the fields of an object to a Map, where the keys are the field names and the values are the field values.
+	 *
+	 * @param object	The object whose fields should be mapped.
+	 * @return	A Map containing the field names as keys and the field values as values.
+	 */
+	public static Map<String, Object> mapObject(final Object object){
+		if(object == null)
+			return null;
+
+		final List<Field> fields = getAccessibleFields(object.getClass());
+		final int size = fields.size();
+		final Map<String, Object> map = new HashMap<>(size);
+		for(int i = 0; i < size; i ++){
+			final Field field = fields.get(i);
+
+			map.put(field.getName(), getValue(object, field));
+		}
+		return map;
 	}
 
 	/**
@@ -165,22 +189,24 @@ public final class ReflectionHelper{
 	}
 
 	private static void extractChildFields(final Collection<Field> fields, final Field[] rawFields){
-		for(int i = 0; i < rawFields.length; i ++)
+		for(int i = 0, length = rawFields.length; i < length; i ++)
 			fields.add(rawFields[i]);
 	}
 
 	//an injection must be performed
 	private static void extractChildFields(final Collection<Field> fields, final Field[] rawFields, final Class<?> fieldType){
-		for(int i = 0; i < rawFields.length; i ++){
+		for(int i = 0, length = rawFields.length; i < length; i ++){
 			final Field rawSubField = rawFields[i];
+
 			if(rawSubField.isAnnotationPresent(Injected.class) && fieldType.isAssignableFrom(rawSubField.getType()))
 				fields.add(rawSubField);
 		}
 	}
 
 	private static void makeFieldsAccessible(final List<Field> fields){
-		for(int i = 0; i < fields.size(); i ++)
-			fields.get(i).setAccessible(true);
+		for(int i = 0, length = fields.size(); i < length; i ++)
+			fields.get(i)
+				.setAccessible(true);
 	}
 
 

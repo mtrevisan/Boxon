@@ -86,7 +86,7 @@ public final class JSONPath{
 			throw JSONPathException.create("invalid path '{}'", path);
 
 		final String[] components = StringHelper.split(path, DECODED_SLASH);
-		for(int i = 0; i < components.length; i ++)
+		for(int i = 0, length = components.length; i < length; i ++)
 			if(!StringHelper.isBlank(components[i])){
 				//NOTE: the order here is important!
 				components[i] = replace(components[i], TILDE_ONE, DECODED_SLASH);
@@ -153,7 +153,7 @@ public final class JSONPath{
 
 	@SuppressWarnings("unchecked")
 	private static <T> T extract(final String[] path, Object data) throws JSONPathException, NoSuchFieldException{
-		for(int i = 0; i < path.length; i ++){
+		for(int i = 0, length = path.length; i < length; i ++){
 			final String currentPath = path[i];
 
 			final Integer idx = extractIndex(currentPath);
@@ -168,7 +168,6 @@ public final class JSONPath{
 		return (T)data;
 	}
 
-	@SuppressWarnings("ReturnOfNull")
 	private static Integer extractIndex(final String currentPath){
 		return (ParserDataType.isDecimalNumber(currentPath) && (currentPath.charAt(0) != '0' || currentPath.length() == 1)
 			? Integer.valueOf(currentPath)
@@ -187,15 +186,15 @@ public final class JSONPath{
 	}
 
 	private static Object extractPath(final Object data, final Integer idx){
-		return (data instanceof List
-			? ((List<?>)data).get(idx)
+		return (data instanceof List<?> lst
+			? lst.get(idx)
 			: Array.get(data, idx));
 	}
 
 	private static Object extractPath(final Object data, final String currentPath) throws NoSuchFieldException{
 		final Object nextData;
-		if(data instanceof Map)
-			nextData = ((Map<?, ?>)data).get(currentPath);
+		if(data instanceof Map<?, ?> m)
+			nextData = m.get(currentPath);
 		else{
 			final Field currentField = data.getClass().getDeclaredField(currentPath);
 			currentField.setAccessible(true);

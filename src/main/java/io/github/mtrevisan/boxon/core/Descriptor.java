@@ -41,6 +41,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -80,12 +81,31 @@ public final class Descriptor{
 	 * @return	The list of descriptions.
 	 * @throws TemplateException	If a template is not well formatted.
 	 */
-	public List<Map<String, Object>> describeTemplates() throws TemplateException{
-		final Collection<Template<?>> templates = loaderTemplate.getTemplates();
+	public List<Map<String, Object>> describe() throws TemplateException{
+		final Collection<Template<?>> templates = new HashSet<>(loaderTemplate.getTemplates());
+
 		final List<Map<String, Object>> description = new ArrayList<>(templates.size());
 		for(final Template<?> template : templates)
 			description.add(describeTemplate(template));
 		return Collections.unmodifiableList(description);
+	}
+
+	/**
+	 * Description of a single template annotated with {@link MessageHeader}.
+	 *
+	 * @param templateClass	Template class to be described.
+	 * @return	The list of descriptions.
+	 * @throws AnnotationException	If an annotation is not well formatted.
+	 * @throws TemplateException	If a template is not well formatted.
+	 */
+	public Map<String, Object> describe(final Class<?> templateClass) throws AnnotationException, TemplateException{
+		if(templateClass.isAnnotationPresent(MessageHeader.class)){
+			final Template<?> template = loaderTemplate.extractTemplate(templateClass);
+			return describeTemplate(template);
+		}
+
+		throw AnnotationException.create("Template {} didn't have the `MessageHeader` annotation",
+			templateClass.getSimpleName());
 	}
 
 	/**
@@ -96,20 +116,25 @@ public final class Descriptor{
 	 * @throws AnnotationException	If an annotation is not well formatted.
 	 * @throws TemplateException	If a template is not well formatted.
 	 */
-	public List<Map<String, Object>> describeTemplates(final Class<?>... templateClasses) throws AnnotationException, TemplateException{
-		final List<Map<String, Object>> description = new ArrayList<>(templateClasses.length);
-		for(int i = 0; i < templateClasses.length; i ++){
+	public List<Map<String, Object>> describe(final Class<?>... templateClasses) throws AnnotationException, TemplateException{
+		final int length = templateClasses.length;
+		final List<Map<String, Object>> description = new ArrayList<>(length);
+		for(int i = 0; i < length; i ++){
 			final Class<?> templateClass = templateClasses[i];
 			if(templateClass.isAnnotationPresent(MessageHeader.class)){
 				final Template<?> template = loaderTemplate.extractTemplate(templateClass);
 				description.add(describeTemplate(template));
 			}
+			else
+				throw AnnotationException.create("Template {} didn't have the `MessageHeader` annotation",
+					templateClass.getSimpleName());
 		}
 		return Collections.unmodifiableList(description);
 	}
 
 	private Map<String, Object> describeTemplate(final Template<?> template) throws TemplateException{
 		final Map<String, Object> description = new HashMap<>(3);
+		description.put(DescriberKey.TEMPLATE.toString(), template.getType().getName());
 		describeHeader(template.getHeader(), description);
 		describeFields(template.getBoundedFields(), description);
 		describeContext(description);
@@ -125,9 +150,9 @@ public final class Descriptor{
 	}
 
 	private static void describeFields(final List<BoundedField> fields, final Map<String, Object> description) throws TemplateException{
-		final int size = fields.size();
-		final Collection<Map<String, Object>> fieldsDescription = new ArrayList<>(size);
-		for(int i = 0; i < size; i ++)
+		final int length = fields.size();
+		final Collection<Map<String, Object>> fieldsDescription = new ArrayList<>(length);
+		for(int i = 0; i < length; i ++)
 			describeField(fields.get(i), fieldsDescription);
 		description.put(DescriberKey.FIELDS.toString(), fieldsDescription);
 	}
@@ -157,7 +182,8 @@ public final class Descriptor{
 		final Map<String, Object> ctx = new HashMap<>(core.getContext());
 		ctx.remove(ContextHelper.CONTEXT_SELF);
 		ctx.remove(ContextHelper.CONTEXT_CHOICE_PREFIX);
-		description.put(DescriberKey.CONTEXT.toString(), ctx);
+		if(!ctx.isEmpty())
+			description.put(DescriberKey.CONTEXT.toString(), ctx);
 	}
 
 }

@@ -28,6 +28,8 @@ import io.github.mtrevisan.boxon.exceptions.CodecException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -119,11 +121,13 @@ public enum ParserDataType{
 	private static final Map<Class<?>, ParserDataType> TYPE_MAP;
 	static{
 		final ParserDataType[] values = values();
-		final Map<Class<?>, Class<?>> primitiveWrapperMap = new HashMap<>(values.length);
-		final Map<Class<?>, Class<?>> wrapperPrimitiveMap = new HashMap<>(values.length);
-		final Map<Class<?>, ParserDataType> typeMap = new HashMap<>(values.length * 2);
-		for(int i = 0; i < values.length; i ++){
+		final int length = values.length;
+		final Map<Class<?>, Class<?>> primitiveWrapperMap = new HashMap<>(length);
+		final Map<Class<?>, Class<?>> wrapperPrimitiveMap = new HashMap<>(length);
+		final Map<Class<?>, ParserDataType> typeMap = new HashMap<>(length << 1);
+		for(int i = 0; i < length; i ++){
 			final ParserDataType dt = values[i];
+
 			primitiveWrapperMap.put(dt.primitiveType, dt.objectiveType);
 			wrapperPrimitiveMap.put(dt.objectiveType, dt.primitiveType);
 			typeMap.put(dt.primitiveType, dt);
@@ -263,8 +267,8 @@ public enum ParserDataType{
 	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
 	 */
 	public static Object getValueOrSelf(final Class<?> fieldType, final Object value) throws CodecException{
-		return (value instanceof String
-			? getValue(fieldType, (String)value)
+		return (value instanceof String v
+			? getValue(fieldType, v)
 			: value);
 	}
 
@@ -276,7 +280,6 @@ public enum ParserDataType{
 	 * @return	The primitive or objective value.
 	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
 	 */
-	@SuppressWarnings("ReturnOfNull")
 	public static Object getValue(final Class<?> fieldType, final String value) throws CodecException{
 		if(fieldType == String.class)
 			return value;
@@ -292,22 +295,56 @@ public enum ParserDataType{
 			: val);
 	}
 
-
 	private static Object toNumber(final String text, final Class<?> objectiveType){
-		Object response = null;
+		Object result = null;
 		if(isNumeric(text)){
 			try{
-				final Method method = objectiveType.getDeclaredMethod(METHOD_VALUE_OF, String.class, int.class);
-				final boolean hexadecimal = text.startsWith("0x");
-				response = method.invoke(null, (hexadecimal? text.substring(2): text), (hexadecimal? 16: 10));
+				final BigInteger decValue = (text.startsWith("0x")
+					? new BigInteger(text.substring(2), 16)
+					: new BigInteger(text));
+				final int maxBytes = (int)objectiveType.getDeclaredField("BYTES")
+					.get(null);
+				if(decValue.bitCount() <= maxBytes << 3){
+					//extract decimal value as object
+					final byte[] byteArray = decValue.toByteArray();
+					if(maxBytes == Byte.BYTES)
+						result = byteArray[0];
+					else{
+						long value = 0l;
+						for(int i = 0, length = byteArray.length; i < length; i ++)
+							value |= (byteArray[i] & 0xFFl) << (Byte.SIZE * (length - 1 - i));
+
+						if(maxBytes == Short.BYTES)
+							result = (short)value;
+						else if(maxBytes == Integer.BYTES)
+							result = (int)value;
+						else if(maxBytes == Long.BYTES)
+							result = value;
+					}
+				}
 			}
-			catch(final NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored){}
+			catch(final NoSuchFieldException | IllegalAccessException ignored){}
 		}
-		return response;
+		return result;
 	}
 
 	private static boolean isNumeric(final String text){
 		return (isHexadecimalNumber(text) || isDecimalNumber(text));
+	}
+
+	/**
+	 * Returns the primitive or objective type (depending on the field type) data stored as a string value.
+	 *
+	 * @param value	The string value to be interpreted.
+	 * @return	The primitive or objective value as an unsigned number (e.g. `(byte)0xFF` is 255 rather than -1).
+	 */
+	public static Number getBigNumber(final String value){
+		if(value == null || value.isEmpty())
+			return null;
+
+		return (value.startsWith("0x")
+			? new BigInteger(value.substring(2), 16)
+			: new BigDecimal(value));
 	}
 
 
@@ -349,8 +386,9 @@ public enum ParserDataType{
 	}
 
 	private static boolean isBaseNumber(final CharSequence text, final int offset, final int radix){
-		for(int i = offset; i < text.length(); i ++){
+		for(int i = offset, length = text.length(); i < length; i ++){
 			final char chr = text.charAt(i);
+
 			if(Character.digit(chr, radix) < 0)
 				return true;
 		}

@@ -24,7 +24,11 @@
  */
 package io.github.mtrevisan.boxon.core.helpers.codecs;
 
+import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
 
 
 final class NumberWriterManager implements WriterManagerInterface{
@@ -47,8 +51,21 @@ final class NumberWriterManager implements WriterManagerInterface{
 
 	@Override
 	public void put(final Object value){
-		final String val = Long.toString(((Number)value).longValue(), radix);
-		writer.putText(val);
+		if(value instanceof Byte || value instanceof Short || value instanceof Integer || value instanceof Long){
+			final String text = String.valueOf(value);
+			if(radix == 10)
+				writer.putText(text);
+			else{
+				final BigInteger bi = new BigInteger(text);
+				writer.putText(radix == 16
+					? StringHelper.toHexString(bi.toByteArray())
+					: bi.toString(radix));
+			}
+		}
+		else if(value instanceof BigDecimal v)
+			writer.putText(v.toPlainString());
+		else if(value instanceof BigInteger v)
+			writer.putText(v.toString(radix));
 	}
 
 }

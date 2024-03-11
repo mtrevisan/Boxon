@@ -64,7 +64,7 @@ public final class ConfigurationHelper{
 	}
 
 	private static boolean isValidValue(final Object value){
-		return (value != null && (!(value instanceof CharSequence) || !StringHelper.isBlank((CharSequence)value)));
+		return (value != null && (!(value instanceof CharSequence v) || !StringHelper.isBlank(v)));
 	}
 
 
@@ -87,8 +87,9 @@ public final class ConfigurationHelper{
 	private static <T extends ConfigurationEnum> T[] extractEnumerationArrayValue(final CharSequence value, final Class<T> enumeration){
 		final ConfigurationEnum[] enumConstants = enumeration.getEnumConstants();
 		final String[] defaultValues = splitMultipleEnumerations(value);
-		final T[] valEnum = (T[])Array.newInstance(enumeration, defaultValues.length);
-		for(int i = 0; i < defaultValues.length; i ++)
+		final int length = defaultValues.length;
+		final T[] valEnum = (T[])Array.newInstance(enumeration, length);
+		for(int i = 0; i < length; i ++)
 			valEnum[i] = (T)ConfigurationEnum.extractEnum(enumConstants, defaultValues[i]);
 		return valEnum;
 	}
@@ -128,8 +129,9 @@ public final class ConfigurationHelper{
 			final Map<String, Object> map) throws ConfigurationException{
 		if(enumeration != NullEnum.class){
 			final ConfigurationEnum[] enumConstants = enumeration.getEnumConstants();
-			final String[] enumValues = new String[enumConstants.length];
-			for(int j = 0; j < enumConstants.length; j ++)
+			final int length = enumConstants.length;
+			final String[] enumValues = new String[length];
+			for(int j = 0; j < length; j ++)
 				enumValues[j] = enumConstants[j].name();
 			putIfNotEmpty(ConfigurationKey.ENUMERATION, enumValues, map);
 			if(fieldType.isEnum())

@@ -37,6 +37,7 @@ import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
+import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.BitWriter;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
@@ -76,6 +77,7 @@ public final class Configurator{
 		evaluator = core.getEvaluator();
 	}
 
+
 	/**
 	 * Retrieve all the configuration regardless the protocol version.
 	 *
@@ -88,6 +90,7 @@ public final class Configurator{
 		return extractConfigurations(configurationValues, Version.EMPTY);
 	}
 
+
 	/**
 	 * Retrieve all the protocol version boundaries.
 	 *
@@ -95,11 +98,16 @@ public final class Configurator{
 	 */
 	public List<String> getProtocolVersionBoundaries(){
 		final List<ConfigurationMessage<?>> configurationValues = configurationParser.getConfigurations();
-		final List<String> protocolVersionBoundaries = new ArrayList<>(configurationValues.size());
-		for(int i = 0; i < configurationValues.size(); i ++)
-			protocolVersionBoundaries.addAll(configurationValues.get(i).getProtocolVersionBoundaries());
+		final int length = configurationValues.size();
+		final List<String> protocolVersionBoundaries = new ArrayList<>(length);
+		for(int i = 0; i < length; i ++){
+			final ConfigurationMessage<?> configuration = configurationValues.get(i);
+
+			protocolVersionBoundaries.addAll(configuration.getProtocolVersionBoundaries());
+		}
 		return Collections.unmodifiableList(protocolVersionBoundaries);
 	}
+
 
 	/**
 	 * Retrieve all the configuration given a protocol version.
@@ -120,9 +128,11 @@ public final class Configurator{
 
 	private static List<Map<String, Object>> extractConfigurations(final List<ConfigurationMessage<?>> configurationValues,
 			final Version protocol) throws ConfigurationException, CodecException{
-		final List<Map<String, Object>> response = new ArrayList<>(configurationValues.size());
-		for(int i = 0; i < configurationValues.size(); i ++){
+		final int length = configurationValues.size();
+		final List<Map<String, Object>> response = new ArrayList<>(length);
+		for(int i = 0; i < length; i ++){
 			final ConfigurationMessage<?> configuration = configurationValues.get(i);
+
 			final ConfigurationHeader header = configuration.getHeader();
 			if(!ConfigurationHelper.shouldBeExtracted(protocol, header.minProtocol(), header.maxProtocol()))
 				continue;
@@ -155,10 +165,11 @@ public final class Configurator{
 	private static Map<String, Object> extractFieldsMap(final Version protocol, final ConfigurationMessage<?> configuration)
 			throws ConfigurationException, CodecException{
 		final List<ConfigField> fields = configuration.getConfigurationFields();
-		final int size = fields.size();
-		final Map<String, Object> fieldsMap = new HashMap<>(size);
-		for(int i = 0; i < size; i ++){
+		final int length = fields.size();
+		final Map<String, Object> fieldsMap = new HashMap<>(length);
+		for(int i = 0; i < length; i ++){
 			final ConfigField field = fields.get(i);
+
 			final Annotation annotation = field.getBinding();
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(annotation);
 			final Map<String, Object> fieldMap = manager.extractConfigurationMap(field.getFieldType(), protocol);
@@ -166,6 +177,21 @@ public final class Configurator{
 				fieldsMap.put(manager.getShortDescription(), fieldMap);
 		}
 		return fieldsMap;
+	}
+
+
+	/**
+	 * Compose a configuration message.
+	 *
+	 * @param protocolVersion	The protocol version (should follow <a href="https://semver.org/">Semantic Versioning</a>).
+	 * @param messageStart	The initial bytes of the message, see {@link ConfigurationHeader#start()}.
+	 * @param template	The template, or a POJO, containing the data to be composed.
+	 * @return	The composition response.
+	 */
+	public Response<String, byte[]> composeConfiguration(final String protocolVersion, final String messageStart,
+			final Object template){
+		final Map<String, Object> data = ReflectionHelper.mapObject(template);
+		return composeConfiguration(protocolVersion, messageStart, data);
 	}
 
 	/**

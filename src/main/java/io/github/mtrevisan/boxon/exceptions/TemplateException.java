@@ -26,12 +26,15 @@ package io.github.mtrevisan.boxon.exceptions;
 
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 
+import java.io.Serial;
+
 
 /**
  * Thrown if a template is not well formatted.
  */
 public final class TemplateException extends FieldException{
 
+	@Serial
 	private static final long serialVersionUID = 7585594459004613305L;
 
 

@@ -221,8 +221,6 @@ public final class Version implements Comparable<Version>{
 	}
 
 	private static void validateToken(final String type, final String token) throws VersionException{
-		if(hasLeadingZeros(token))
-			throw VersionException.create("The {} identifier MUST NOT contain leading zeros", type);
 		try{
 			final int number = Integer.parseInt(token);
 			if(number < 0)
@@ -234,7 +232,7 @@ public final class Version implements Comparable<Version>{
 	}
 
 	private static void validatePreRelease(final String[] preRelease) throws VersionException{
-		for(int i = 0; i < preRelease.length; i ++)
+		for(int i = 0, length = preRelease.length; i < length; i ++)
 			validatePreRelease(preRelease[i]);
 	}
 
@@ -247,7 +245,7 @@ public final class Version implements Comparable<Version>{
 	}
 
 	private static void validateBuild(final String[] build) throws VersionException{
-		for(int i = 0; i < build.length; i ++)
+		for(int i = 0, length = build.length; i < length; i ++)
 			validateBuild(build[i]);
 	}
 
@@ -404,7 +402,7 @@ public final class Version implements Comparable<Version>{
 
 	private static int compareIdentifierArrays(final String[] preRelease, final String[] otherPreRelease){
 		int result = (otherPreRelease.length - preRelease.length);
-		for(int i = 0; i < getLeastCommonArrayLength(preRelease, otherPreRelease); i ++){
+		for(int i = 0, length = getLeastCommonArrayLength(preRelease, otherPreRelease); i < length; i ++){
 			result = compareIdentifiers(preRelease[i], otherPreRelease[i]);
 			if(result != 0)
 				break;
@@ -440,8 +438,9 @@ public final class Version implements Comparable<Version>{
 	 */
 	private static boolean containsOnlyValidChars(String text){
 		text = text.toUpperCase(Locale.ROOT);
-		for(int i = 0; i < text.length(); i ++){
+		for(int i = 0, length = text.length(); i < length; i ++){
 			final char chr = text.charAt(i);
+
 			if(chr != '-' && (chr < 'A' || chr > 'Z'))
 				return false;
 		}
@@ -628,13 +627,10 @@ public final class Version implements Comparable<Version>{
 	}
 
 
-	private static boolean hasLeadingZeros(final CharSequence token){
-		return (token.length() > 1 && token.charAt(0) == '0');
-	}
-
 	private static int getLeastCommonArrayLength(final String[] array1, final String[] array2){
 		return Math.min(array1.length, array2.length);
 	}
+
 
 	@Override
 	public String toString(){

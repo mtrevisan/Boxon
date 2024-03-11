@@ -38,7 +38,7 @@ package io.github.mtrevisan.boxon.core.parsers.matchers;
  */
 public final class KRPatternMatcher implements PatternMatcher{
 
-	private static class SingletonHelper{
+	private static final class SingletonHelper{
 		private static final PatternMatcher INSTANCE = new KRPatternMatcher();
 	}
 
@@ -126,10 +126,11 @@ public final class KRPatternMatcher implements PatternMatcher{
 
 	private static boolean equals(final byte[] array1, final int offset, final byte[] array2){
 		int i = 0;
-		for( ; i < array2.length; i ++)
+		final int length = array2.length;
+		for(; i < length; i ++)
 			if(array1[i + offset] != array2[i])
 				break;
-		return (i == array2.length);
+		return (i == length);
 	}
 
 }

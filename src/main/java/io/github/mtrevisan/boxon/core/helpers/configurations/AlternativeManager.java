@@ -80,7 +80,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 		protocolVersionBoundaries.add(annotation.maxProtocol());
 
 		final AlternativeSubField[] alternativeFields = annotation.value();
-		for(int i = 0; i < alternativeFields.length; i ++){
+		for(int i = 0, length = alternativeFields.length; i < length; i ++){
 			final AlternativeSubField fieldBinding = alternativeFields[i];
 			protocolVersionBoundaries.add(fieldBinding.minProtocol());
 			protocolVersionBoundaries.add(fieldBinding.maxProtocol());
@@ -98,7 +98,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 	private Annotation findAlternative(final Version protocol){
 		Annotation match = null;
 		final AlternativeSubField[] alternativeFields = annotation.value();
-		for(int j = 0; match == null && j < alternativeFields.length; j ++){
+		for(int j = 0, length = alternativeFields.length; match == null && j < length; j ++){
 			final AlternativeSubField fieldBinding = alternativeFields[j];
 			if(ConfigurationHelper.shouldBeExtracted(protocol, fieldBinding.minProtocol(), fieldBinding.maxProtocol()))
 				match = fieldBinding;
@@ -136,8 +136,9 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 	private Map<String, Object> extractConfigurationMapWithoutProtocol(final Class<?> fieldType, final Map<String, Object> alternativeMap)
 			throws ConfigurationException, CodecException{
 		final AlternativeSubField[] alternativeFields = annotation.value();
-		final Collection<Map<String, Object>> alternatives = new ArrayList<>(alternativeFields.length);
-		for(int j = 0; j < alternativeFields.length; j ++){
+		final int length = alternativeFields.length;
+		final Collection<Map<String, Object>> alternatives = new ArrayList<>(length);
+		for(int j = 0; j < length; j ++){
 			final AlternativeSubField alternativeField = alternativeFields[j];
 
 			final Map<String, Object> fieldMap = extractMap(alternativeField, fieldType);
@@ -192,8 +193,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 	}
 
 	@SuppressWarnings("DuplicatedCode")
-	private static Map<String, Object> extractMap(final AlternativeSubField binding, final Class<?> fieldType) throws ConfigurationException,
-			CodecException{
+	private static Map<String, Object> extractMap(final AlternativeSubField binding, final Class<?> fieldType) throws ConfigurationException{
 		final Map<String, Object> map = new HashMap<>(7);
 
 		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, binding.longDescription(), map);
@@ -202,8 +202,8 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 		if(!fieldType.isEnum() && !fieldType.isArray())
 			ConfigurationHelper.putIfNotEmpty(ConfigurationKey.FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName(),
 				map);
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.MIN_VALUE, ParserDataType.getValue(fieldType, binding.minValue()), map);
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.MAX_VALUE, ParserDataType.getValue(fieldType, binding.maxValue()), map);
+		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.MIN_VALUE, ParserDataType.getBigNumber(binding.minValue()), map);
+		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.MAX_VALUE, ParserDataType.getBigNumber(binding.maxValue()), map);
 		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.PATTERN, binding.pattern(), map);
 
 		if(String.class.isAssignableFrom(fieldType))
@@ -214,7 +214,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 
 	private AlternativeSubField extractField(final Version protocol){
 		final AlternativeSubField[] alternativeFields = annotation.value();
-		for(int i = 0; i < alternativeFields.length; i ++){
+		for(int i = 0, length = alternativeFields.length; i < length; i ++){
 			final AlternativeSubField fieldBinding = alternativeFields[i];
 			if(ConfigurationHelper.shouldBeExtracted(protocol, fieldBinding.minProtocol(), fieldBinding.maxProtocol()))
 				return fieldBinding;
@@ -231,8 +231,8 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 		final AlternativeSubField fieldBinding = extractField(protocol);
 		if(fieldBinding != null){
 			final Class<?> fieldType = field.getType();
-			if(dataValue instanceof String)
-				dataValue = ParserDataType.getValue(fieldType, (String)dataValue);
+			if(dataValue instanceof String v)
+				dataValue = ParserDataType.getValue(fieldType, v);
 
 			final ConfigFieldData configData = ConfigFieldDataBuilder.create(field, annotation);
 			ValidationHelper.validatePattern(configData, dataValue);

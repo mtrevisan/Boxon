@@ -210,7 +210,7 @@ class CodecListTest{
 		ReflectionHelper.injectValue(codec, TemplateParserInterface.class, templateParser);
 		ReflectionHelper.injectValue(codec, Evaluator.class, Evaluator.create());
 		BitWriter writer = BitWriter.create();
- 		codec.encode(writer, annotation, null, encodedValue);
+		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
 		Assertions.assertEquals("2,0,1,12,2,1,2,0,", new String(writer.array(), StandardCharsets.UTF_8));

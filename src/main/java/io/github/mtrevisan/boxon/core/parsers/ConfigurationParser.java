@@ -171,7 +171,7 @@ public final class ConfigurationParser{
 
 		//encode message fields:
 		final List<ConfigField> fields = configuration.getConfigurationFields();
-		for(int i = 0; i < fields.size(); i ++){
+		for(int i = 0, length = fields.size(); i < length; i ++){
 			final ConfigField field = fields.get(i);
 
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(field.getBinding());
@@ -200,7 +200,7 @@ public final class ConfigurationParser{
 	}
 
 	private static void writeSkips(final ConfigurationSkip[] skips, final BitWriterInterface writer, final Version protocol){
-		for(int i = 0; i < skips.length; i ++)
+		for(int i = 0, length = skips.length; i < length; i ++)
 			writeSkip(skips[i], writer, protocol);
 	}
 

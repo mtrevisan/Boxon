@@ -48,7 +48,7 @@ import java.util.Arrays;
  */
 public final class BNDMPatternMatcher implements PatternMatcher{
 
-	private static class SingletonHelper{
+	private static final class SingletonHelper{
 		private static final PatternMatcher INSTANCE = new BNDMPatternMatcher();
 	}
 
@@ -75,12 +75,13 @@ public final class BNDMPatternMatcher implements PatternMatcher{
 	 * @return	an array of pre-processed pattern.
 	 */
 	public static int[] preProcessPatternWithWildcard(final byte[] pattern, final byte wildcard){
-		assertLength(pattern.length);
+		final int length = pattern.length;
+		assertLength(length);
 
 		int j = 0;
-		for(int i = 0; i < pattern.length; i ++)
+		for(int i = 0; i < length; i ++)
 			if(pattern[i] == wildcard)
-				j |= 1 << (pattern.length - i - 1);
+				j |= 1 << (length - i - 1);
 
 		final int[] preprocessedPattern = new int[Integer.SIZE << 3];
 		if(j != 0)

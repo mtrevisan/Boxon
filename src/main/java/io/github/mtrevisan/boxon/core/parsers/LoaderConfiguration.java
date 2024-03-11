@@ -135,6 +135,7 @@ final class LoaderConfiguration{
 		final Map<String, ConfigurationMessage<?>> configurations = new ConcurrentHashMap<>(size);
 		for(int i = 0; i < size; i ++){
 			final Class<?> type = annotatedClasses.get(i);
+
 			//for each extracted class, try to parse it, extracting all the information needed for the configuration of a message
 			final ConfigurationMessage<?> from = createConfiguration(type);
 			if(from.canBeCoded()){
@@ -240,7 +241,7 @@ final class LoaderConfiguration{
 			dataValue = manager.convertValue(foundField.getField(), dataKey, dataValue, protocol);
 			ReflectionHelper.setValue(configurationObject, foundField.getField(), dataValue);
 
-			if(dataValue instanceof String && !((String)dataValue).isEmpty() || dataValue != null)
+			if(dataValue != null)
 				mandatoryFields.remove(foundField);
 		}
 
@@ -267,8 +268,9 @@ final class LoaderConfiguration{
 
 	private static void fillDefaultValues(final Object configurationObject, final List<ConfigField> fields, final Version protocol)
 			throws EncodeException, CodecException, AnnotationException{
-		for(int i = 0; i < fields.size(); i ++){
+		for(int i = 0, length = fields.size(); i < length; i ++){
 			final ConfigField field = fields.get(i);
+
 			final Annotation annotation = field.getBinding();
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(annotation);
 			Object dataValue = manager.getDefaultValue(field.getField(), protocol);
@@ -278,10 +280,11 @@ final class LoaderConfiguration{
 	}
 
 	private static Collection<ConfigField> extractMandatoryFields(final List<ConfigField> fields, final Version protocol){
-		final int size = fields.size();
-		final Collection<ConfigField> mandatoryFields = new HashSet<>(size);
-		for(int i = 0; i < size; i ++){
+		final int length = fields.size();
+		final Collection<ConfigField> mandatoryFields = new HashSet<>(length);
+		for(int i = 0; i < length; i ++){
 			final ConfigField field = fields.get(i);
+
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(field.getBinding());
 			final Annotation annotation = manager.annotationToBeProcessed(protocol);
 			if(manager.isMandatory(annotation))
@@ -291,8 +294,9 @@ final class LoaderConfiguration{
 	}
 
 	private static ConfigField findField(final List<ConfigField> fields, final String key, final Version protocol) throws EncodeException{
-		for(int i = 0; i < fields.size(); i ++){
+		for(int i = 0, length = fields.size(); i < length; i ++){
 			final ConfigField field = fields.get(i);
+
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(field.getBinding());
 			final Annotation annotation = manager.annotationToBeProcessed(protocol);
 			if(annotation.annotationType() != Annotation.class && manager.getShortDescription().equals(key))

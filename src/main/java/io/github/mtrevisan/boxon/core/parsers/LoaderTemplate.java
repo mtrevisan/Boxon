@@ -148,6 +148,7 @@ public final class LoaderTemplate{
 		final List<Template<?>> templates = new ArrayList<>(size);
 		for(int i = 0; i < size; i ++){
 			final Class<?> type = annotatedClasses.get(i);
+
 			//for each extracted class, try to parse it, extracting all the information needed for the codec of a message
 			final Template<?> from = createTemplate(type);
 			if(from.canBeCoded())
@@ -193,8 +194,9 @@ public final class LoaderTemplate{
 
 	private void addTemplatesInner(final List<Template<?>> templates) throws TemplateException{
 		//load each template into the available templates list
-		for(int i = 0; i < templates.size(); i ++){
+		for(int i = 0, length = templates.size(); i < length; i ++){
 			final Template<?> template = templates.get(i);
+
 			if(template != null && template.canBeCoded())
 				addTemplateInner(template);
 		}
@@ -211,7 +213,7 @@ public final class LoaderTemplate{
 			final MessageHeader header = template.getHeader();
 			final Charset charset = CharsetHelper.lookup(header.charset());
 			final String[] starts = header.start();
-			for(int i = 0; i < starts.length; i ++)
+			for(int i = 0, length = starts.length; i < length; i ++)
 				loadTemplateInner(template, starts[i], charset);
 		}
 		catch(final TemplateException e){
@@ -290,8 +292,9 @@ public final class LoaderTemplate{
 	}
 
 	private List<Annotation> filterAnnotationsWithCodec(final Annotation[] declaredAnnotations){
-		final List<Annotation> annotations = new ArrayList<>(declaredAnnotations.length);
-		for(int i = 0; i < declaredAnnotations.length; i ++)
+		final int length = declaredAnnotations.length;
+		final List<Annotation> annotations = new ArrayList<>(length);
+		for(int i = 0; i < length; i ++)
 			if(loaderCodec.hasCodec(declaredAnnotations[i].annotationType()))
 				annotations.add(declaredAnnotations[i]);
 		return annotations;
@@ -317,9 +320,9 @@ public final class LoaderTemplate{
 		final Charset charset = CharsetHelper.lookup(header.charset());
 		final String[] messageStarts = header.start();
 		//select the minimum index with a valid template
-		for(int i = 0; i < messageStarts.length; i ++){
+		for(int i = 0, length = messageStarts.length; i < length; i ++){
 			final int offset = searchNextSequence(reader, messageStarts[i].getBytes(charset));
-			if(offset >= 0 && (minOffset < 0 || offset < minOffset))
+			if(offset >= 0 && !(0 <= minOffset && minOffset <= offset))
 				minOffset = offset;
 		}
 		return minOffset;

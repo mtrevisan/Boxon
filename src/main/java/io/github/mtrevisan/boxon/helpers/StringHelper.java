@@ -27,7 +27,6 @@ package io.github.mtrevisan.boxon.helpers;
 import org.slf4j.helpers.MessageFormatter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Locale;
 
@@ -66,20 +65,10 @@ public final class StringHelper{
 		if(pads <= 0)
 			return text;
 
-		return repeat(padChar, pads) + text;
-	}
-
-	/**
-	 * Returns padding using the specified delimiter repeated to a given length.
-	 *
-	 * @param chr	Character to repeat.
-	 * @param count	Number of times to repeat char.
-	 * @return	String with repeated character.
-	 */
-	public static String repeat(final char chr, final int count){
-		final char[] buf = new char[count];
-		Arrays.fill(buf, chr);
-		return new String(buf);
+		return new StringBuilder()
+			.repeat(padChar, pads)
+			.append(text)
+			.toString();
 	}
 
 
@@ -111,11 +100,11 @@ public final class StringHelper{
 				}
 
 				start = ++ i;
-				continue;
 			}
-
-			match = true;
-			i ++;
+			else{
+				match = true;
+				i ++;
+			}
 		}
 		if(match)
 			list.add(str.substring(start, i));
@@ -131,15 +120,16 @@ public final class StringHelper{
 	 */
 	public static String toHexString(final byte[] array){
 		final int length = JavaHelper.lengthOrZero(array);
-		final StringBuilder sb = new StringBuilder(length << 1);
+		final char[] hexChars = new char[length << 1];
 		for(int i = 0; i < length; i ++){
-			final byte elem = array[i];
+			final int elem = array[i] & 0xFF;
+
 			final char highDigit = Character.forDigit((elem >>> 4) & 0x0F, 16);
 			final char lowDigit = Character.forDigit(elem & 0x0F, 16);
-			sb.append(highDigit);
-			sb.append(lowDigit);
+			hexChars[i << 1] = highDigit;
+			hexChars[(i << 1) + 1] = lowDigit;
 		}
-		return sb.toString()
+		return new String(hexChars)
 			.toUpperCase(Locale.ROOT);
 	}
 
@@ -158,6 +148,7 @@ public final class StringHelper{
 		for(int i = 0; i < length; i += 2){
 			final int highDigit = Character.digit(hexString.charAt(i), 16);
 			final int lowDigit = Character.digit(hexString.charAt(i + 1), 16);
+
 			data[i >>> 1] = (byte)((highDigit << 4) + lowDigit);
 		}
 		return data;
@@ -172,10 +163,10 @@ public final class StringHelper{
 	 */
 	public static String toASCIIString(final byte[] array){
 		final int length = JavaHelper.lengthOrZero(array);
-		final StringBuilder sb = new StringBuilder(length);
+		final char[] chars = new char[length];
 		for(int i = 0; i < length; i ++)
-			sb.append((char)(array[i] & 0xFF));
-		return sb.toString();
+			chars[i] = (char)(array[i] & 0xFF);
+		return new String(chars);
 	}
 
 	/**
@@ -210,7 +201,7 @@ public final class StringHelper{
 	 * @return	Whether the given text is {@code null}, empty or whitespace only.
 	 */
 	public static boolean isBlank(final CharSequence text){
-		for(int i = 0; i < JavaHelper.lengthOrZero(text); i ++)
+		for(int i = 0, length = JavaHelper.lengthOrZero(text); i < length; i ++)
 			if(!Character.isWhitespace(text.charAt(i)))
 				return false;
 		return true;

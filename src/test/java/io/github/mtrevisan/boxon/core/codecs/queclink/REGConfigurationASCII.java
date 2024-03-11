@@ -77,7 +77,7 @@ public class REGConfigurationASCII{
 		shortDescription = "Download protocol", enumeration = DownloadProtocol.class,
 		value = {
 			@AlternativeSubField(maxProtocol = "1.35", defaultValue = "HTTP"),
-			@AlternativeSubField(minProtocol = "1.36", defaultValue = "HTTP")
+			@AlternativeSubField(minProtocol = "1.36", defaultValue = "HTTPS")
 		},
 		terminator = ","
 	)
@@ -116,6 +116,6 @@ public class REGConfigurationASCII{
 
 	@ConfigurationSkip(terminator = ",")
 	@ConfigurationField(shortDescription = "Message counter", minValue = "0x0000", maxValue = "0xFFFF", radix = 16)
-	private Integer messageCounter;
+	private Short messageCounter;
 
 }

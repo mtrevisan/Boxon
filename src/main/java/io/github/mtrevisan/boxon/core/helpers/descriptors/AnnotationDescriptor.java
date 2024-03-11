@@ -354,7 +354,7 @@ public enum AnnotationDescriptor{
 	 * @param rootDescription	The map in which to load the descriptions.
 	 */
 	public static void describeSkips(final Skip[] skips, final Collection<Map<String, Object>> rootDescription){
-		for(int j = 0; j < skips.length; j ++){
+		for(int j = 0, length = skips.length; j < length; j ++){
 			final Skip skip = skips[j];
 			final Map<String, Object> skipDescription = new HashMap<>(5);
 			putIfNotEmpty(DescriberKey.ANNOTATION_TYPE, Skip.class, skipDescription);
@@ -374,9 +374,10 @@ public enum AnnotationDescriptor{
 
 	private static void describeAlternatives(final ObjectChoices.ObjectChoice[] alternatives,
 			final Map<String, Object> rootDescription){
-		if(alternatives.length > 0){
-			final Collection<Map<String, Object>> alternativesDescription = new ArrayList<>(alternatives.length);
-			for(int j = 0; j < alternatives.length; j ++){
+		final int length = alternatives.length;
+		if(length > 0){
+			final Collection<Map<String, Object>> alternativesDescription = new ArrayList<>(length);
+			for(int j = 0; j < length; j ++){
 				final ObjectChoices.ObjectChoice alternative = alternatives[j];
 				describeObjectChoicesAlternatives(alternative.condition(), alternative.prefix(), alternative.type(), alternativesDescription);
 			}
@@ -392,9 +393,10 @@ public enum AnnotationDescriptor{
 
 	private static void describeAlternatives(final ObjectChoicesList.ObjectChoiceList[] alternatives,
 		final Map<String, Object> rootDescription){
-		if(alternatives.length > 0){
-			final Collection<Map<String, Object>> alternativesDescription = new ArrayList<>(alternatives.length);
-			for(int j = 0; j < alternatives.length; j ++){
+		final int length = alternatives.length;
+		if(length > 0){
+			final Collection<Map<String, Object>> alternativesDescription = new ArrayList<>(length);
+			for(int j = 0; j < length; j ++){
 				final ObjectChoicesList.ObjectChoiceList alternative = alternatives[j];
 				describeObjectChoicesAlternatives(alternative.condition(), alternative.prefix(), alternative.type(), alternativesDescription);
 			}
@@ -423,9 +425,10 @@ public enum AnnotationDescriptor{
 
 	private static void describeAlternatives(final ConverterChoices.ConverterChoice[] alternatives,
 			final Map<String, Object> rootDescription){
-		if(alternatives.length > 0){
-			final Collection<Map<String, Object>> alternativesDescription = new ArrayList<>(alternatives.length);
-			for(int j = 0; j < alternatives.length; j ++){
+		final int length = alternatives.length;
+		if(length > 0){
+			final Collection<Map<String, Object>> alternativesDescription = new ArrayList<>(length);
+			for(int j = 0; j < length; j ++){
 				final ConverterChoices.ConverterChoice alternative = alternatives[j];
 				final Map<String, Object> alternativeDescription = new HashMap<>(2);
 				putIfNotEmpty(DescriberKey.BIND_CONDITION, alternative.condition(), alternativeDescription);
@@ -444,7 +447,7 @@ public enum AnnotationDescriptor{
 	 * @param map	The map in which to load the key-value pair.
 	 */
 	public static void putIfNotEmpty(final DescriberKey key, final Object value, @SuppressWarnings("BoundedWildcard") final Map<String, Object> map){
-		if(value != null && (!(value instanceof String) || !StringHelper.isBlank((CharSequence)value)))
+		if(value != null && (!(value instanceof String v) || !StringHelper.isBlank(v)))
 			map.put(key.toString(), value);
 	}
 

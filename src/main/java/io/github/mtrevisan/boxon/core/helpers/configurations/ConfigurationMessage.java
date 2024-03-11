@@ -102,6 +102,7 @@ public final class ConfigurationMessage<T>{
 		final Iterator<String> itr = protocolVersions.iterator();
 		while(itr.hasNext()){
 			final String current = itr.next();
+
 			if(current.equals(previous))
 				itr.remove();
 
@@ -118,6 +119,7 @@ public final class ConfigurationMessage<T>{
 		final List<ConfigField> configFields = new ArrayList<>(size);
 		for(int i = 0; i < size; i ++){
 			final Field field = fields.get(i);
+
 			final ConfigurationSkip[] skips = field.getDeclaredAnnotationsByType(ConfigurationSkip.class);
 
 			final Annotation[] declaredAnnotations = field.getDeclaredAnnotations();
@@ -150,7 +152,7 @@ public final class ConfigurationMessage<T>{
 			final Version maxProtocolVersion) throws AnnotationException, CodecException{
 		/** filter out {@link ConfigurationSkip} annotations */
 		Annotation foundAnnotation = null;
-		for(int i = 0; foundAnnotation == null && i < annotations.length; i ++){
+		for(int i = 0, length = annotations.length; foundAnnotation == null && i < length; i ++){
 			final Class<? extends Annotation> annotationType = annotations[i].annotationType();
 			if(ConfigurationSkip.class.isAssignableFrom(annotationType)
 					|| ConfigurationSkip.ConfigurationSkips.class.isAssignableFrom(annotationType))
@@ -170,11 +172,12 @@ public final class ConfigurationMessage<T>{
 	}
 
 	private List<String> extractProtocolVersionBoundaries(final List<ConfigField> configFields){
-		final List<String> boundaries = new ArrayList<>(configFields.size() * 2 + 2);
+		final int length = configFields.size();
+		final List<String> boundaries = new ArrayList<>(length * 2 + 2);
 		boundaries.add(header.minProtocol());
 		boundaries.add(header.maxProtocol());
 
-		for(int i = 0; i < configFields.size(); i ++){
+		for(int i = 0; i < length; i ++){
 			final ConfigField configField = configFields.get(i);
 
 			final Annotation annotation = configField.getBinding();
@@ -192,7 +195,7 @@ public final class ConfigurationMessage<T>{
 	}
 
 	private static void extractProtocolVersionBoundaries(final ConfigurationSkip[] skips, final Collection<String> boundaries){
-		for(int j = 0; j < skips.length; j ++){
+		for(int j = 0, length = skips.length; j < length; j ++){
 			boundaries.add(skips[j].minProtocol());
 			boundaries.add(skips[j].maxProtocol());
 		}

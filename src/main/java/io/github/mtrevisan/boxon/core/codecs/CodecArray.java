@@ -79,7 +79,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 
 	private void decodeWithAlternatives(final BitReaderInterface reader, final Object[] array, final BindingData bindingData,
 			final Object rootObject) throws FieldException{
-		for(int i = 0; i < array.length; i ++){
+		for(int i = 0, length = array.length; i < length; i ++){
 			final Class<?> chosenAlternativeType = bindingData.chooseAlternativeType(reader);
 
 			//read object
@@ -92,7 +92,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 			throws FieldException{
 		final Template<?> template = templateParser.createTemplate(type);
 
-		for(int i = 0; i < array.length; i ++)
+		for(int i = 0, length = array.length; i < length; i ++)
 			array[i] = templateParser.decode(template, reader, null);
 	}
 
@@ -120,7 +120,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 	private void encodeWithAlternatives(final BitWriterInterface writer, final Object[] array, final ObjectChoices selectFrom)
 			throws FieldException{
 		final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
-		for(int i = 0; i < array.length; i ++){
+		for(int i = 0, length = array.length; i < length; i ++){
 			final Object elem = array[i];
 			final Class<?> type = elem.getClass();
 
@@ -137,7 +137,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 	private void encodeWithoutAlternatives(final BitWriterInterface writer, final Object[] array, final Class<?> type) throws FieldException{
 		final Template<?> template = templateParser.createTemplate(type);
 
-		for(int i = 0; i < array.length; i ++)
+		for(int i = 0, length = array.length; i < length; i ++)
 			templateParser.encode(template, writer, null, array[i]);
 	}
 

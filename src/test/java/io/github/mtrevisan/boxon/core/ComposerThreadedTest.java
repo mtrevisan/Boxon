@@ -48,7 +48,7 @@ class ComposerThreadedTest{
 	void concurrencySingleParserSingleCore() throws NoSuchMethodException, AnnotationException, TemplateException, ConfigurationException,
 			ExecutionException, InterruptedException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
-			.with("QUECLINK_GB200S", (byte)0x46);
+			.with((byte)0x46, "QUECLINK_GB200S");
 		Core core = CoreBuilder.builder()
 			.withContextPair("deviceTypes", deviceTypes)
 			.withContextFunction(ParserTest.class, "headerLength")
@@ -74,7 +74,7 @@ class ComposerThreadedTest{
 	void concurrencyMultipleParserSingleCore() throws NoSuchMethodException, AnnotationException, TemplateException, ConfigurationException,
 			ExecutionException, InterruptedException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
-			.with("QUECLINK_GB200S", (byte)0x46);
+			.with((byte)0x46, "QUECLINK_GB200S");
 		Core core = CoreBuilder.builder()
 			.withContextPair("deviceTypes", deviceTypes)
 			.withContextFunction(ParserTest.class, "headerLength")
@@ -102,7 +102,7 @@ class ComposerThreadedTest{
 	void concurrencyMultipleParserMultipleCore() throws NoSuchMethodException, AnnotationException, TemplateException,
 			ConfigurationException, ExecutionException, InterruptedException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
-			.with("QUECLINK_GB200S", (byte)0x46);
+			.with((byte)0x46, "QUECLINK_GB200S");
 
 		//compose:
 		int threadCount = 10;

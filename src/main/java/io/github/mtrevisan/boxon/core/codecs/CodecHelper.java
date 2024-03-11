@@ -67,7 +67,7 @@ final class CodecHelper{
 	}
 
 	static ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> type){
-		for(int i = 0; i < alternatives.length; i ++){
+		for(int i = 0, length = alternatives.length; i < length; i ++){
 			final ObjectChoices.ObjectChoice alternative = alternatives[i];
 			if(alternative.type().isAssignableFrom(type))
 				return alternative;
@@ -92,7 +92,7 @@ final class CodecHelper{
 
 	static ObjectChoicesList.ObjectChoiceList chooseAlternative(final ObjectChoicesList.ObjectChoiceList[] alternatives,
 			final Class<?> type){
-		for(int i = 0; i < alternatives.length; i ++){
+		for(int i = 0, length = alternatives.length; i < length; i ++){
 			final ObjectChoicesList.ObjectChoiceList alternative = alternatives[i];
 			if(alternative.type().isAssignableFrom(type))
 				return alternative;
@@ -154,7 +154,7 @@ final class CodecHelper{
 
 	private static int calculateCompositeValue(final Object value){
 		int compositeEnumValue = 0;
-		for(int i = 0; i < Array.getLength(value); i ++)
+		for(int i = 0, length = Array.getLength(value); i < length; i ++)
 			compositeEnumValue |= ((ConfigurationEnum)Array.get(value, i)).getCode();
 		return compositeEnumValue;
 	}
