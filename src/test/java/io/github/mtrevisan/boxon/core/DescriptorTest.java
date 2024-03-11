@@ -49,7 +49,7 @@ class DescriptorTest{
 	@Test
 	void description() throws AnnotationException, ConfigurationException, CodecException, TemplateException, NoSuchMethodException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
-			.with("QUECLINK_GB200S", (byte)0x46);
+			.with((byte)0x46, "QUECLINK_GB200S");
 		Core core = CoreBuilder.builder()
 			.withContextPair("deviceTypes", deviceTypes)
 			.withContextFunction(ParserTest.class.getDeclaredMethod("headerLength"))

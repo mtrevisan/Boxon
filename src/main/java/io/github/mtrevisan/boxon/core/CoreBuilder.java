@@ -274,7 +274,7 @@ public final class CoreBuilder{
 	 */
 	public Core create() throws AnnotationException, TemplateException, ConfigurationException{
 		final ConfigurationStep[] values = ConfigurationStep.values();
-		for(int i = 0; i < values.length; i ++){
+		for(int i = 0, length = values.length; i < length; i ++){
 			final List<RunnableThrowable> executors = calls.get(values[i]);
 			executeCommands(executors);
 		}
@@ -284,7 +284,7 @@ public final class CoreBuilder{
 
 	private static void executeCommands(final List<RunnableThrowable> executors) throws AnnotationException, TemplateException,
 			ConfigurationException{
-		for(int i = 0; i < JavaHelper.lengthOrZero(executors); i ++){
+		for(int i = 0, length = JavaHelper.lengthOrZero(executors); i < length; i ++){
 			final RunnableThrowable executor = executors.get(i);
 
 			executor.execute();

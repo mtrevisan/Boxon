@@ -117,8 +117,9 @@ public final class Descriptor{
 	 * @throws TemplateException	If a template is not well formatted.
 	 */
 	public List<Map<String, Object>> describe(final Class<?>... templateClasses) throws AnnotationException, TemplateException{
-		final List<Map<String, Object>> description = new ArrayList<>(templateClasses.length);
-		for(int i = 0; i < templateClasses.length; i ++){
+		final int length = templateClasses.length;
+		final List<Map<String, Object>> description = new ArrayList<>(length);
+		for(int i = 0; i < length; i ++){
 			final Class<?> templateClass = templateClasses[i];
 			if(templateClass.isAnnotationPresent(MessageHeader.class)){
 				final Template<?> template = loaderTemplate.extractTemplate(templateClass);
@@ -149,9 +150,9 @@ public final class Descriptor{
 	}
 
 	private static void describeFields(final List<BoundedField> fields, final Map<String, Object> description) throws TemplateException{
-		final int size = fields.size();
-		final Collection<Map<String, Object>> fieldsDescription = new ArrayList<>(size);
-		for(int i = 0; i < size; i ++)
+		final int length = fields.size();
+		final Collection<Map<String, Object>> fieldsDescription = new ArrayList<>(length);
+		for(int i = 0; i < length; i ++)
 			describeField(fields.get(i), fieldsDescription);
 		description.put(DescriberKey.FIELDS.toString(), fieldsDescription);
 	}

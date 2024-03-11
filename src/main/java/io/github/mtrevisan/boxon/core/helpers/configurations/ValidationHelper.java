@@ -113,10 +113,10 @@ final class ValidationHelper{
 
 		final String defaultValue = field.getDefaultValue();
 		final Object def = ParserDataType.getValue(fieldType, defaultValue);
-		final Object min = validateMinValue(field, def);
-		final Object max = validateMaxValue(field, def);
+		final Number min = validateMinValue(field, def);
+		final Number max = validateMaxValue(field, def);
 
-		if(min != null && max != null && ((Number)min).doubleValue() > ((Number)max).doubleValue())
+		if(min != null && max != null && min.doubleValue() > max.doubleValue())
 			//maxValue after or equal to minValue
 			throw AnnotationException.create("Minimum value should be less than or equal to maximum value in {}; expected {} <= {}",
 				field.getAnnotationName(), field.getMinValue(), field.getMaxValue());
@@ -129,17 +129,17 @@ final class ValidationHelper{
 		}
 	}
 
-	private static Object validateMinValue(final ConfigFieldData field, final Object def) throws AnnotationException, CodecException{
-		Object min = null;
+	private static Number validateMinValue(final ConfigFieldData field, final Object def) throws AnnotationException, CodecException{
+		Number min = null;
 		final String minValue = field.getMinValue();
 		if(!StringHelper.isBlank(minValue)){
-			min = ParserDataType.getValue(field.getFieldType(), minValue);
+			min = ParserDataType.getBigNumber(minValue);
 			//minValue compatible with variable type
 			if(min == null)
 				throw AnnotationException.create("Incompatible minimum value in {}; found {}, expected {}",
 					field.getAnnotationName(), minValue.getClass().getSimpleName(), field.getFieldType().toString());
 
-			if(def != null && ((Number)def).doubleValue() < ((Number)min).doubleValue())
+			if(def != null && ((Number)def).doubleValue() < min.doubleValue())
 				//defaultValue compatible with minValue
 				throw AnnotationException.create("Default value incompatible with minimum value in {}; expected {} >= {}",
 					field.getAnnotationName(), field.getDefaultValue(), minValue.getClass().getSimpleName());
@@ -147,17 +147,17 @@ final class ValidationHelper{
 		return min;
 	}
 
-	private static Object validateMaxValue(final ConfigFieldData field, final Object def) throws AnnotationException, CodecException{
-		Object max = null;
+	private static Number validateMaxValue(final ConfigFieldData field, final Object def) throws AnnotationException, CodecException{
+		Number max = null;
 		final String maxValue = field.getMaxValue();
 		if(!StringHelper.isBlank(maxValue)){
-			max = ParserDataType.getValue(field.getFieldType(), maxValue);
+			max = ParserDataType.getBigNumber(maxValue);
 			//maxValue compatible with variable type
 			if(max == null)
 				throw AnnotationException.create("Incompatible maximum value in {}; found {}, expected {}",
 					field.getAnnotationName(), maxValue.getClass().getSimpleName(), field.getFieldType().toString());
 
-			if(def != null && ((Number)def).doubleValue() > ((Number)max).doubleValue())
+			if(def != null && ((Number)def).doubleValue() > max.doubleValue())
 				//defaultValue compatible with maxValue
 				throw AnnotationException.create("Default value incompatible with maximum value in {}; expected {} <= {}",
 					field.getAnnotationName(), field.getDefaultValue(), maxValue.getClass().getSimpleName());
@@ -285,7 +285,7 @@ final class ValidationHelper{
 				throw AnnotationException.create("Default value for mutually exclusive enumeration field in {} should be a value; found {}, expected one of {}",
 					field.getAnnotationName(), defaultValue, Arrays.toString(enumConstants));
 
-			for(int i = 0; i < JavaHelper.lengthOrZero(defaultValues); i ++){
+			for(int i = 0, length = JavaHelper.lengthOrZero(defaultValues); i < length; i ++){
 				final ConfigurationEnum enumValue = ConfigurationEnum.extractEnum(enumConstants, defaultValues[i]);
 				if(enumValue == null)
 					throw AnnotationException.create("Default value not compatible with `enumeration` in {}; found {}, expected one of {}",

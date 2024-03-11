@@ -808,7 +808,7 @@ Example:
 
 ```java
 DeviceTypes deviceTypes = DeviceTypes.create()
-    .with("QUECLINK_GB200S", (byte)0x46);
+	.with((byte)0x46, "QUECLINK_GB200S");
 Core core = CoreBuilder.builder()
     .withContextPair("deviceTypes", deviceTypes)
     .withContextFunction(ParserTest.class.getDeclaredMethod("headerLength"))
@@ -899,7 +899,7 @@ configurationData.put(Parser.CONFIGURATION_FIELD_TYPE, "AT+");
 configurationData.put("Weekday", "TUESDAY|WEDNESDAY");
 ...
 
-ComposerResponse<String> composedMessage = configurator.composeConfiguration("1.20", Collections.singletonMap("AT+", configurationData));
+Response<String, byte[]> composedMessage = configurator.composeConfiguration("1.20", "AT+", configurationData);
 ```
 
 
@@ -914,7 +914,7 @@ ComposerResponse<String> composedMessage = configurator.composeConfiguration("1.
  - `longDescription`: a more expressive description, optional.
  - `minProtocol`: minimum protocol for which this configuration message is valid, optional (should follow [Semantic Versioning](https://semver.org/)).
  - `maxProtocol`: maximum protocol for which this configuration message is valid, optional (should follow [Semantic Versioning](https://semver.org/)).
- - `start`: starting text of the message, optional.
+ - `start`: starting text of the message, mandatory, used as an identifier (and thus must be unique for every configuration message).
  - `end`: ending text of the message, optional.
  - `charset`: charset of the message, optional.
 
@@ -929,7 +929,7 @@ This annotation is bounded to a class.
 #### example
 
 ```java
-@ConfigurationHeader(start = "+", end = "-")
+@ConfigurationHeader(shortDescription = "A configuration message", start = "+", end = "-")
 private class ConfigurationMessage{
     ...
 }
@@ -1116,7 +1116,7 @@ This annotation is bounded to a variable.
    shortDescription = "Download protocol", terminator = ",", enumeration = DownloadProtocol.class,
    value = {
       @AlternativeSubField(maxProtocol = "1.35", defaultValue = "HTTP"),
-      @AlternativeSubField(minProtocol = "1.36", defaultValue = "HTTP")
+      @AlternativeSubField(minProtocol = "1.36", defaultValue = "HTTPS")
    }
 )
 private DownloadProtocol downloadProtocol;
@@ -1518,8 +1518,6 @@ else if(composedMessage != null){
 }
 ```
 
-Remember that the header that will be written is the first in `@MessageHeader`.
-
 
 <br/>
 
@@ -1538,9 +1536,13 @@ Pull requests are welcomed.
 
 <a name="changelog-3.1.3"></a>
 ### version 3.1.3 - 202403??
-
 - fixed duplicated descriptions.
+- fixed validation on max value while composing a message.
+- fixed number not written with the correct radix.
+- made `shortDescription` mandatory in the annotation, as it should have been.
 - added method to map a POJO into a `Map<String, Object>` into `ReflectionHelper`.
+- added method `Configurator.composeConfiguration` accepting a POJO.
+- corrected errors in the documentation.
 
 <a name="changelog-3.1.2"></a>
 ### version 3.1.2 - 20240302

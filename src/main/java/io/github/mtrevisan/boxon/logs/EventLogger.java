@@ -33,6 +33,7 @@ import org.slf4j.helpers.NOPLoggerFactory;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.StringJoiner;
 
 
@@ -79,7 +80,7 @@ public final class EventLogger extends EventListener{
 	public void loadingCodec(final Class<?>[] codecClasses){
 		if(LOGGER.isInfoEnabled()){
 			final StringJoiner sj = new StringJoiner(", ", "[", "]");
-			for(int i = 0; i < codecClasses.length; i ++)
+			for(int i = 0, length = codecClasses.length; i < length; i ++)
 				sj.add(codecClasses[i].getSimpleName());
 
 			info("Loading codecs: {}", sj.toString());
@@ -105,7 +106,7 @@ public final class EventLogger extends EventListener{
 
 	private static StringJoiner joinPackageNames(final Class<?>[] basePackageClasses){
 		final StringJoiner sj = new StringJoiner(", ", "[", "]");
-		for(int i = 0; i < basePackageClasses.length; i ++)
+		for(int i = 0, length = basePackageClasses.length; i < length; i ++)
 			sj.add(basePackageClasses[i].getPackageName());
 		return sj;
 	}
@@ -225,8 +226,9 @@ public final class EventLogger extends EventListener{
 	}
 
 	private static Collection<String> collectPackages(final Object[] parameters){
-		final Collection<String> packages = new HashSet<>(parameters.length);
-		for(int i = 0; i < parameters.length; i ++)
+		final int length = parameters.length;
+		final Collection<String> packages = new HashSet<>(length);
+		for(int i = 0; i < length; i ++)
 			packages.add(((Class<?>)parameters[i]).getPackageName());
 		return packages;
 	}

@@ -234,7 +234,7 @@ public final class Version implements Comparable<Version>{
 	}
 
 	private static void validatePreRelease(final String[] preRelease) throws VersionException{
-		for(int i = 0; i < preRelease.length; i ++)
+		for(int i = 0, length = preRelease.length; i < length; i ++)
 			validatePreRelease(preRelease[i]);
 	}
 
@@ -247,7 +247,7 @@ public final class Version implements Comparable<Version>{
 	}
 
 	private static void validateBuild(final String[] build) throws VersionException{
-		for(int i = 0; i < build.length; i ++)
+		for(int i = 0, length = build.length; i < length; i ++)
 			validateBuild(build[i]);
 	}
 
@@ -404,7 +404,7 @@ public final class Version implements Comparable<Version>{
 
 	private static int compareIdentifierArrays(final String[] preRelease, final String[] otherPreRelease){
 		int result = (otherPreRelease.length - preRelease.length);
-		for(int i = 0; i < getLeastCommonArrayLength(preRelease, otherPreRelease); i ++){
+		for(int i = 0, length = getLeastCommonArrayLength(preRelease, otherPreRelease); i < length; i ++){
 			result = compareIdentifiers(preRelease[i], otherPreRelease[i]);
 			if(result != 0)
 				break;
@@ -440,8 +440,9 @@ public final class Version implements Comparable<Version>{
 	 */
 	private static boolean containsOnlyValidChars(String text){
 		text = text.toUpperCase(Locale.ROOT);
-		for(int i = 0; i < text.length(); i ++){
+		for(int i = 0, length = text.length(); i < length; i ++){
 			final char chr = text.charAt(i);
+
 			if(chr != '-' && (chr < 'A' || chr > 'Z'))
 				return false;
 		}

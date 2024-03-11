@@ -114,8 +114,9 @@ public final class GenericHelper{
 
 	private static <T> List<Class<?>> processBase(final Type[] actualArgs){
 		//there is a result if the base class is reached
-		final List<Class<?>> types = new ArrayList<>(actualArgs.length);
-		for(int i = 0; i < actualArgs.length; i ++){
+		final int length = actualArgs.length;
+		final List<Class<?>> types = new ArrayList<>(length);
+		for(int i = 0; i < length; i ++){
 			final Class<?> cls = toClass(actualArgs[i].getTypeName());
 			if(cls != null)
 				types.add(cls);
@@ -138,10 +139,13 @@ public final class GenericHelper{
 
 	private static Class<?>[] populateResolvedTypes(final ParameterizedType ancestorType, final Map<String, Type> typeVariables){
 		final Type[] types = ancestorType.getActualTypeArguments();
-		final Collection<Class<?>> resolvedTypes = new ArrayList<>(types.length);
+		final int length = types.length;
+		final Collection<Class<?>> resolvedTypes = new ArrayList<>(length);
 		//loop through all type arguments and replace type variables with the actually known types
-		for(int i = 0; i < types.length; i ++){
-			final String typeName = resolveArgumentType(typeVariables, types[i]).getTypeName();
+		for(int i = 0; i < length; i ++){
+			final String typeName = resolveArgumentType(typeVariables, types[i])
+				.getTypeName();
+
 			final Class<?> cls = toClass(typeName);
 			if(cls != null)
 				resolvedTypes.add(cls);
@@ -150,9 +154,12 @@ public final class GenericHelper{
 	}
 
 	private static <T> Map<String, Type> mapParameterTypes(final Class<? extends T> offspring, final Type[] actualArgs){
-		final Map<String, Type> typeVariables = new HashMap<>(actualArgs.length);
-		for(int i = 0; i < actualArgs.length; i ++){
-			final String key = offspring.getTypeParameters()[i].getName();
+		final int length = actualArgs.length;
+		final Map<String, Type> typeVariables = new HashMap<>(length);
+		final TypeVariable<? extends Class<? extends T>>[] typeParameters = offspring.getTypeParameters();
+		for(int i = 0; i < length; i ++){
+			final String key = typeParameters[i].getName();
+
 			typeVariables.put(key, actualArgs[i]);
 		}
 		return typeVariables;

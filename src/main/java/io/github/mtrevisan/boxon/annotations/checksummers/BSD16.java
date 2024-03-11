@@ -42,9 +42,12 @@ public final class BSD16 implements Checksummer{
 	@Override
 	public short calculateChecksum(final byte[] data, final int start, final int end, final int startValue){
 		short value = (short)startValue;
-		for(int i = Math.max(start, 0); i < Math.min(end, data.length); i ++)
+		for(int i = Math.max(start, 0), length = Math.min(end, data.length); i < length; i ++){
+			final byte datum = data[i];
+
 			//apply circular right shift and add new value
-			value = (short)((value >>> 1) + ((value & 0x01) << 15) + data[i]);
+			value = (short)((value >>> 1) + ((value & 0x01) << 15) + datum);
+		}
 		return value;
 	}
 

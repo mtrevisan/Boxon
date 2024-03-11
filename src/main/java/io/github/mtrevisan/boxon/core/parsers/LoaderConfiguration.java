@@ -268,7 +268,7 @@ final class LoaderConfiguration{
 
 	private static void fillDefaultValues(final Object configurationObject, final List<ConfigField> fields, final Version protocol)
 			throws EncodeException, CodecException, AnnotationException{
-		for(int i = 0; i < fields.size(); i ++){
+		for(int i = 0, length = fields.size(); i < length; i ++){
 			final ConfigField field = fields.get(i);
 
 			final Annotation annotation = field.getBinding();
@@ -280,9 +280,9 @@ final class LoaderConfiguration{
 	}
 
 	private static Collection<ConfigField> extractMandatoryFields(final List<ConfigField> fields, final Version protocol){
-		final int size = fields.size();
-		final Collection<ConfigField> mandatoryFields = new HashSet<>(size);
-		for(int i = 0; i < size; i ++){
+		final int length = fields.size();
+		final Collection<ConfigField> mandatoryFields = new HashSet<>(length);
+		for(int i = 0; i < length; i ++){
 			final ConfigField field = fields.get(i);
 
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(field.getBinding());
@@ -294,7 +294,7 @@ final class LoaderConfiguration{
 	}
 
 	private static ConfigField findField(final List<ConfigField> fields, final String key, final Version protocol) throws EncodeException{
-		for(int i = 0; i < fields.size(); i ++){
+		for(int i = 0, length = fields.size(); i < length; i ++){
 			final ConfigField field = fields.get(i);
 
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(field.getBinding());

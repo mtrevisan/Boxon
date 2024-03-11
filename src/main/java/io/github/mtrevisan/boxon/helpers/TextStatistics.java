@@ -34,7 +34,7 @@ public final class TextStatistics{
 
 	public void addData(final byte[] buffer, final int offset, final int length){
 		for(int i = 0; i < length; i ++){
-			counts[buffer[offset + i] & 0xff] ++;
+			counts[buffer[offset + i] & 0xFF] ++;
 			total ++;
 		}
 	}
@@ -71,9 +71,11 @@ public final class TextStatistics{
 
 		int expectedContinuation = 0;
 		final int[] leading = {count(0xC0, 0xE0), count(0xE0, 0xF0), count(0xF0, 0xF8)};
-		for(int i = 0; i < leading.length; i ++){
-			utf8 += leading[i];
-			expectedContinuation += (i + 1) * leading[i];
+		for(int i = 0, length = leading.length; i < length; i ++){
+			final int chr = leading[i];
+
+			utf8 += chr;
+			expectedContinuation += (i + 1) * chr;
 		}
 
 		final int continuation = count(0x80, 0xC0);

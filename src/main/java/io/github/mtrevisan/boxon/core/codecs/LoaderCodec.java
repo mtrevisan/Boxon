@@ -102,9 +102,11 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	}
 
 	private List<CodecInterface<?>> extractCodecs(final List<Class<?>> derivedClasses){
-		final List<CodecInterface<?>> codecs = new ArrayList<>(derivedClasses.size());
-		for(int i = 0; i < derivedClasses.size(); i ++){
+		final int length = derivedClasses.size();
+		final List<CodecInterface<?>> codecs = new ArrayList<>(length);
+		for(int i = 0; i < length; i ++){
 			final Class<?> type = derivedClasses.get(i);
+
 			//for each extracted class, try to create an instance
 			final CodecInterface<?> codec = (CodecInterface<?>)ConstructorHelper.getCreator(type)
 				.get();
@@ -144,28 +146,35 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	public void addCodecs(final CodecInterface<?>... codecs){
 		Objects.requireNonNull(codecs, "Codecs cannot be null");
 
-		final Class<?>[] codecClasses = new Class<?>[codecs.length];
-		for(int i = 0; i < codecs.length; i ++)
+		final int length = codecs.length;
+		final Class<?>[] codecClasses = new Class<?>[length];
+		for(int i = 0; i < length; i ++)
 			codecClasses[i] = codecs[i].getClass();
 		eventListener.loadingCodec(codecClasses);
 
 		addCodecsInner(codecs);
 
-		eventListener.loadedCodecs(codecs.length);
+		eventListener.loadedCodecs(length);
 	}
 
 	private void addCodecsInner(@SuppressWarnings("BoundedWildcard") final List<CodecInterface<?>> codecs){
 		//load each codec into the available codec list
-		for(int i = 0; i < codecs.size(); i ++)
-			if(codecs.get(i) != null)
-				addCodecInner(codecs.get(i));
+		for(int i = 0, length = codecs.size(); i < length; i ++){
+			final CodecInterface<?> codec = codecs.get(i);
+
+			if(codec != null)
+				addCodecInner(codec);
+		}
 	}
 
 	private void addCodecsInner(final CodecInterface<?>... codecs){
 		//load each codec into the available codec list
-		for(int i = 0; i < codecs.length; i ++)
-			if(codecs[i] != null)
-				addCodecInner(codecs[i]);
+		for(int i = 0, length = codecs.length; i < length; i ++){
+			final CodecInterface<?> codec = codecs[i];
+
+			if(codec != null)
+				addCodecInner(codec);
+		}
 	}
 
 	private void addCodecInner(final CodecInterface<?> codec){

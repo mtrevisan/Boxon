@@ -45,7 +45,7 @@ public @interface ConfigurationHeader{
 	 *
 	 * @return	A short description of the message.
 	 */
-	String shortDescription() default "";
+	String shortDescription();
 
 	/**
 	 * A long description of the message.
@@ -71,7 +71,7 @@ public @interface ConfigurationHeader{
 
 	/**
 	 * The initial bytes that determines the type of message.
-	 * <p>This SHOULD be read by the protocol of a single message.</p>
+	 * <p>This SHOULD be written by the composer.</p>
 	 *
 	 * @return	The header bytes of this message.
 	 */
@@ -79,7 +79,7 @@ public @interface ConfigurationHeader{
 
 	/**
 	 * The final bytes that determines the type of message.
-	 * <p>This SHOULD NOT be read by the protocol of a single message.</p>
+	 * <p>This SHOULD NOT be written by the composer.</p>
 	 *
 	 * @return	The tail bytes of this message (defaults to empty string).
 	 */

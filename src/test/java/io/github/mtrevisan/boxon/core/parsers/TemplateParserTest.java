@@ -71,7 +71,7 @@ class TemplateParserTest{
 			Assertions.fail("Cannot decode message");
 
 		DeviceTypes deviceTypes = DeviceTypes.create()
-			.with("QUECLINK_GB200S", (byte)0x46);
+			.with((byte)0x46, "QUECLINK_GB200S");
 		evaluator.addToContext("deviceTypes", deviceTypes);
 		evaluator.addToContext(TemplateParserTest.class.getDeclaredMethod("headerLength"));
 		ACKMessageHex message = templateParser.decode(template, reader, null);
@@ -101,7 +101,7 @@ class TemplateParserTest{
 			Assertions.fail("Cannot decode message");
 
 		DeviceTypes deviceTypes = DeviceTypes.create()
-			.with("QUECLINK_GB200S", (byte)0x46);
+			.with((byte)0x46, "QUECLINK_GB200S");
 		evaluator.addToContext("deviceTypes", deviceTypes);
 		evaluator.addToContext(TemplateParserTest.class.getDeclaredMethod("headerLength"));
 		ACKMessageHexByteChecksum message = templateParser.decode(template, reader, null);
@@ -135,7 +135,7 @@ class TemplateParserTest{
 			Assertions.fail("Cannot decode message");
 
 		DeviceTypes deviceTypes = DeviceTypes.create()
-			.with("QUECLINK_GV350M", (byte)0xCF);
+			.with((byte)0xCF, "QUECLINK_GV350M");
 		evaluator.addToContext("deviceTypes", deviceTypes);
 		ACKMessageASCII message = templateParser.decode(template, reader, null);
 		evaluator.addToContext("deviceTypes", null);

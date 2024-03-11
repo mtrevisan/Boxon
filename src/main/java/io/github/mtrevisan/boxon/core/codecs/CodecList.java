@@ -97,8 +97,9 @@ final class CodecList implements CodecInterface<BindList>{
 	}
 
 	private void encodeWithAlternatives(final BitWriterInterface writer, final List<Object> list) throws FieldException{
-		for(int i = 0; i < list.size(); i ++){
+		for(int i = 0, length = list.size(); i < length; i ++){
 			final Object elem = list.get(i);
+
 			final Class<?> type = elem.getClass();
 
 			final Template<?> template = templateParser.createTemplate(type);

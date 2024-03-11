@@ -49,10 +49,11 @@ public final class CRC16CCITT implements Checksummer{
 	@Override
 	public short calculateChecksum(final byte[] data, final int start, final int end, final int startValue){
 		short value = (short)startValue;
-		for(int i = Math.max(start, 0); i < Math.min(end, data.length); i ++){
+		for(int i = Math.max(start, 0), length = Math.min(end, data.length); i < length; i ++){
 			final byte datum = data[i];
-			for(int j = 0; j < Byte.SIZE; j ++){
-				final boolean bit = (((datum >> (7 - j)) & 1) != 0);
+
+			for(int j = Byte.SIZE - 1; j >= 0; j --){
+				final boolean bit = (((datum >> j) & 1) != 0);
 				final boolean c15 = ((value & 0x8000) != 0);
 				value <<= 1;
 				if(c15 ^ bit)

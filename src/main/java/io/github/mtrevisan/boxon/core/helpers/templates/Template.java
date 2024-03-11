@@ -117,10 +117,10 @@ public final class Template<T>{
 	private Pair loadAnnotatedFields(final Class<T> type, final Function<Annotation[], List<Annotation>> filterAnnotationsWithCodec)
 			throws AnnotationException{
 		final List<Field> fields = ReflectionHelper.getAccessibleFields(type);
-		final int size = fields.size();
-		final List<BoundedField> boundedFields = new ArrayList<>(size);
-		final List<EvaluatedField> evaluatedFields = new ArrayList<>(size);
-		for(int i = 0; i < size; i ++){
+		final int length = fields.size();
+		final List<BoundedField> boundedFields = new ArrayList<>(length);
+		final List<EvaluatedField> evaluatedFields = new ArrayList<>(length);
+		for(int i = 0; i < length; i ++){
 			final Field field = fields.get(i);
 
 			final Skip[] skips = field.getDeclaredAnnotationsByType(Skip.class);
@@ -160,8 +160,9 @@ public final class Template<T>{
 
 	@SuppressWarnings("ObjectAllocationInLoop")
 	private static List<EvaluatedField> extractEvaluations(final Annotation[] declaredAnnotations, final Field field){
-		final List<EvaluatedField> evaluations = new ArrayList<>(declaredAnnotations.length);
-		for(int i = 0; i < declaredAnnotations.length; i ++){
+		final int length = declaredAnnotations.length;
+		final List<EvaluatedField> evaluations = new ArrayList<>(length);
+		for(int i = 0; i < length; i ++){
 			final Annotation annotation = declaredAnnotations[i];
 			if(annotation.annotationType() == Evaluate.class)
 				evaluations.add(EvaluatedField.create(field, (Evaluate)annotation));
@@ -172,14 +173,16 @@ public final class Template<T>{
 	private static Annotation validateField(final Field field, final List<? extends Annotation> annotations) throws AnnotationException{
 		/** filter out {@link Skip} annotations and return the (first) valid binding annotation */
 		Annotation foundAnnotation = null;
-		for(int i = 0; foundAnnotation == null && i < annotations.size(); i ++){
-			final Class<? extends Annotation> annotationType = annotations.get(i).annotationType();
+		for(int i = 0, length = annotations.size(); foundAnnotation == null && i < length; i ++){
+			final Annotation annotation = annotations.get(i);
+
+			final Class<? extends Annotation> annotationType = annotation.annotationType();
 			if(annotationType == Skip.class || annotationType == Skip.Skips.class)
 				continue;
 
-			validateAnnotation(field, annotations.get(i));
+			validateAnnotation(field, annotation);
 
-			foundAnnotation = annotations.get(i);
+			foundAnnotation = annotation;
 		}
 		return foundAnnotation;
 	}
