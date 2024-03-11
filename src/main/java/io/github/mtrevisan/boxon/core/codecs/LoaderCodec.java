@@ -178,7 +178,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	}
 
 	private void addCodecInner(final CodecInterface<?> codec){
-		final Class<?> codecType = GenericHelper.resolveGenericTypes(codec.getClass(), CodecInterface.class).get(0);
+		final Class<?> codecType = GenericHelper.resolveGenericTypes(codec.getClass(), CodecInterface.class).getFirst();
 		codecs.put(codecType, codec);
 	}
 

@@ -102,10 +102,10 @@ public final class GenericHelper{
 		final List<Class<?>> types = new ArrayList<>(0);
 		while(!ancestorsQueue.isEmpty()){
 			final Type ancestorType = ancestorsQueue.poll();
-			if(ancestorType instanceof ParameterizedType)
+			if(ancestorType instanceof ParameterizedType t)
 				//ancestor is parameterized: process only if the raw type matches the base class
-				types.addAll(manageParameterizedAncestor((ParameterizedType)ancestorType, base, typeVariables));
-			else if(ancestorType instanceof Class && base.isAssignableFrom((Class<?>)ancestorType))
+				types.addAll(manageParameterizedAncestor(t, base, typeVariables));
+			else if(ancestorType instanceof Class<?> c && base.isAssignableFrom(c))
 				//ancestor is non-parameterized: process only if it matches the base class
 				ancestorsQueue.add(ancestorType);
 		}
@@ -129,7 +129,7 @@ public final class GenericHelper{
 			final Map<String, Type> typeVariables){
 		final List<Class<?>> types = new ArrayList<>(0);
 		final Type rawType = ancestorType.getRawType();
-		if(rawType instanceof Class && base.isAssignableFrom((Class<?>)rawType)){
+		if(rawType instanceof Class<?> c && base.isAssignableFrom(c)){
 			final Class<?>[] resolvedTypes = populateResolvedTypes(ancestorType, typeVariables);
 			final List<Class<?>> result = resolveGenericTypes((Class<? extends T>)rawType, base, resolvedTypes);
 			types.addAll(result);
@@ -176,8 +176,8 @@ public final class GenericHelper{
 	}
 
 	private static Type resolveArgumentType(final Map<String, Type> typeVariables, final Type actualTypeArgument){
-		final String key = (actualTypeArgument instanceof TypeVariable
-			? ((TypeVariable<?>)actualTypeArgument).getName()
+		final String key = (actualTypeArgument instanceof TypeVariable<?> v
+			? v.getName()
 			: null);
 		return typeVariables.getOrDefault(key, actualTypeArgument);
 	}

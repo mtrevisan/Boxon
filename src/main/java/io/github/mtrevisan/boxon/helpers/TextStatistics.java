@@ -26,18 +26,28 @@ package io.github.mtrevisan.boxon.helpers;
  */
 public final class TextStatistics{
 
-	private final int[] counts = new int[256];
+	private final int[] counts = new int[1 << Byte.SIZE];
 
 	/** Total number of bytes seen so far. */
 	private int total;
 
 
-	public void addData(final byte[] buffer, final int offset, final int length){
+	public static TextStatistics create(final byte[] buffer){
+		return new TextStatistics(buffer, 0, buffer.length);
+	}
+
+	public static TextStatistics create(final byte[] buffer, final int offset, final int length){
+		return new TextStatistics(buffer, offset, length);
+	}
+
+
+	private TextStatistics(final byte[] buffer, final int offset, final int length){
 		for(int i = 0; i < length; i ++){
 			counts[buffer[offset + i] & 0xFF] ++;
 			total ++;
 		}
 	}
+
 
 	/**
 	 * Checks whether at least one byte was seen and that the bytes that were seen were mostly plain text (i.e. < 2% control, > 90% ASCII

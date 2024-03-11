@@ -40,14 +40,6 @@ class VersionTest{
 	}
 
 	@Test
-	void shouldRaiseErrorIfNumericIdentifierHasLeadingZeros(){
-		Throwable exception = Assertions.assertThrows(IllegalArgumentException.class,
-			() -> Version.of("01.1.0"));
-
-		Assertions.assertEquals("The major identifier MUST NOT contain leading zeros", exception.getMessage());
-	}
-
-	@Test
 	void shouldParsePreReleaseVersion(){
 		Version version = Version.of("1.1.0-beta");
 

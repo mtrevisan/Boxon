@@ -38,10 +38,8 @@ import io.github.mtrevisan.boxon.io.CodecInterface;
 import io.github.mtrevisan.boxon.logs.EventListener;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Random;
 
 
 /**

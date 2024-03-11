@@ -83,7 +83,7 @@ Get them [here](https://github.com/mtrevisan/Boxon/releases/).
 
 ### Maven dependency
 
-In order to include Boxon in a Maven project add the following dependency to your pom.xml (<b>Java 11 required</b>).
+In order to include Boxon in a Maven project add the following dependency to your pom.xml (<b>Java 21 required</b>).
 
 Replace `x.y.z` below int the version tag with the latest [release number](https://github.com/mtrevisan/Boxon/releases).
 
@@ -1543,6 +1543,7 @@ Pull requests are welcomed.
 - added method to map a POJO into a `Map<String, Object>` into `ReflectionHelper`.
 - added method `Configurator.composeConfiguration` accepting a POJO.
 - corrected errors in the documentation.
+- migrated from java 11 to java 21 for performance.
 
 <a name="changelog-3.1.2"></a>
 ### version 3.1.2 - 20240302

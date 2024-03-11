@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.utils;
 
+import java.lang.reflect.Array;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
@@ -42,37 +43,38 @@ public final class MultithreadingHelper{
 
 	public static <T> void testMultithreading(final Callable<T> fun, final Consumer<T> combiner, final int threadCount)
 			throws ExecutionException, InterruptedException{
-		final ExecutorService service = Executors.newFixedThreadPool(threadCount);
+		try(ExecutorService service = Executors.newFixedThreadPool(threadCount)){
 
-		final CountDownLatch latch = new CountDownLatch(1);
-		final AtomicBoolean running = new AtomicBoolean();
-		final AtomicInteger overlaps = new AtomicInteger();
-		@SuppressWarnings("unchecked")
-		final Future<T>[] futures = new Future[threadCount];
-		//assure overlaps happens (cycle until some overlaps happens)
-		while(overlaps.get() == 0){
+			final CountDownLatch latch = new CountDownLatch(1);
+			final AtomicBoolean running = new AtomicBoolean();
+			final AtomicInteger overlaps = new AtomicInteger();
+			@SuppressWarnings("unchecked")
+			final Future<T>[] futures = (Future<T>[])Array.newInstance(Future.class, threadCount);
+			//assure overlaps happens (cycle until some overlaps happens)
+			while(overlaps.get() == 0){
+				for(int t = 0; t < threadCount; t++)
+					futures[t] = service.submit(() -> {
+						latch.await();
+
+						if(! running.compareAndSet(false, true))
+							overlaps.incrementAndGet();
+
+						final T result = fun.call();
+
+						running.set(false);
+
+						return result;
+					});
+
+				//start all the thread simultaneously
+				latch.countDown();
+				for(int t = 0; t < threadCount; t ++)
+					futures[t].get();
+			}
+
 			for(int t = 0; t < threadCount; t ++)
-				futures[t] = service.submit(() -> {
-					latch.await();
-
-					if(!running.compareAndSet(false, true))
-						overlaps.incrementAndGet();
-
-					final T result = fun.call();
-
-					running.set(false);
-
-					return result;
-				});
-
-			//start all the thread simultaneously
-			latch.countDown();
-			for(int t = 0; t < threadCount; t ++)
-				futures[t].get();
+				combiner.accept(futures[t].get());
 		}
-
-		for(int t = 0; t < threadCount; t ++)
-			combiner.accept(futures[t].get());
 	}
 
 }

@@ -48,17 +48,9 @@ import java.util.function.Function;
  */
 public final class Template<T>{
 
-	private static final class Pair{
-		private final List<BoundedField> boundedFields;
-		private final List<EvaluatedField> evaluatedFields;
-
+	private record Pair(List<BoundedField> boundedFields, List<EvaluatedField> evaluatedFields){
 		private static Pair of(final List<BoundedField> boundedFields, final List<EvaluatedField> evaluatedFields){
 			return new Pair(boundedFields, evaluatedFields);
-		}
-
-		private Pair(final List<BoundedField> boundedFields, final List<EvaluatedField> evaluatedFields){
-			this.boundedFields = boundedFields;
-			this.evaluatedFields = evaluatedFields;
 		}
 	}
 

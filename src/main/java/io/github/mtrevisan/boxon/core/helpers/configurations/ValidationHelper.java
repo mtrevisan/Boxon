@@ -129,7 +129,7 @@ final class ValidationHelper{
 		}
 	}
 
-	private static Number validateMinValue(final ConfigFieldData field, final Object def) throws AnnotationException, CodecException{
+	private static Number validateMinValue(final ConfigFieldData field, final Object def) throws AnnotationException{
 		Number min = null;
 		final String minValue = field.getMinValue();
 		if(!StringHelper.isBlank(minValue)){
@@ -147,7 +147,7 @@ final class ValidationHelper{
 		return min;
 	}
 
-	private static Number validateMaxValue(final ConfigFieldData field, final Object def) throws AnnotationException, CodecException{
+	private static Number validateMaxValue(final ConfigFieldData field, final Object def) throws AnnotationException{
 		Number max = null;
 		final String maxValue = field.getMaxValue();
 		if(!StringHelper.isBlank(maxValue)){

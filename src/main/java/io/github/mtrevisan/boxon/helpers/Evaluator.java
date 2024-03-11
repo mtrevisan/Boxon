@@ -206,9 +206,9 @@ public final class Evaluator{
 	}
 
 
-	private static class ReflectiveProperty extends ReflectivePropertyAccessor{
+	private static final class ReflectiveProperty extends ReflectivePropertyAccessor{
 		@Override
-		protected final Field findField(final String name, Class<?> cls, final boolean mustBeStatic){
+		protected Field findField(final String name, Class<?> cls, final boolean mustBeStatic){
 			Field field = null;
 			while(field == null && cls != null && cls != Object.class){
 				field = findFieldInClass(name, cls, mustBeStatic);

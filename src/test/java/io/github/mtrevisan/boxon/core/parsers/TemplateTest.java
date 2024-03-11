@@ -265,7 +265,7 @@ class TemplateTest{
 		List<BoundedField> boundedFields = template.getBoundedFields();
 		Assertions.assertNotNull(boundedFields);
 		Assertions.assertEquals(15, boundedFields.size());
-		BoundedField childField = boundedFields.get(boundedFields.size() - 1);
+		BoundedField childField = boundedFields.getLast();
 		Assertions.assertNotNull(childField);
 		Assertions.assertEquals("anotherNumberInt", childField.getFieldName());
 	}

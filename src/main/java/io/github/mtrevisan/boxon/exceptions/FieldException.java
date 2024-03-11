@@ -26,6 +26,7 @@ package io.github.mtrevisan.boxon.exceptions;
 
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 
+import java.io.Serial;
 import java.lang.reflect.Field;
 
 
@@ -34,6 +35,7 @@ import java.lang.reflect.Field;
  */
 public class FieldException extends Exception{
 
+	@Serial
 	private static final long serialVersionUID = -8863756843240934380L;
 
 

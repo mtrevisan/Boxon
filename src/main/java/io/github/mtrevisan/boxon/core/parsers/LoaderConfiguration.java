@@ -241,7 +241,7 @@ final class LoaderConfiguration{
 			dataValue = manager.convertValue(foundField.getField(), dataKey, dataValue, protocol);
 			ReflectionHelper.setValue(configurationObject, foundField.getField(), dataValue);
 
-			if(dataValue instanceof String && !((String)dataValue).isEmpty() || dataValue != null)
+			if(dataValue != null)
 				mandatoryFields.remove(foundField);
 		}
 

@@ -62,10 +62,10 @@ final class NumberWriterManager implements WriterManagerInterface{
 					: bi.toString(radix));
 			}
 		}
-		else if(value instanceof BigDecimal)
-			writer.putText(((BigDecimal)value).toPlainString());
-		else if(value instanceof BigInteger)
-			writer.putText(((BigInteger)value).toString(radix));
+		else if(value instanceof BigDecimal v)
+			writer.putText(v.toPlainString());
+		else if(value instanceof BigInteger v)
+			writer.putText(v.toString(radix));
 	}
 
 }

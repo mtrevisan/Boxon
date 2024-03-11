@@ -515,7 +515,9 @@ class CodecIntegerTest{
 		if(pads <= 0)
 			return text;
 
-		return text + StringHelper.repeat(padChar, pads);
+		return new StringBuilder(text)
+			.repeat(padChar, pads)
+			.toString();
 	}
 
 	@Test

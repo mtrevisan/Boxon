@@ -27,7 +27,6 @@ package io.github.mtrevisan.boxon.helpers;
 import org.slf4j.helpers.MessageFormatter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Locale;
 
@@ -66,20 +65,10 @@ public final class StringHelper{
 		if(pads <= 0)
 			return text;
 
-		return repeat(padChar, pads) + text;
-	}
-
-	/**
-	 * Returns padding using the specified delimiter repeated to a given length.
-	 *
-	 * @param chr	Character to repeat.
-	 * @param count	Number of times to repeat char.
-	 * @return	String with repeated character.
-	 */
-	public static String repeat(final char chr, final int count){
-		final char[] buf = new char[count];
-		Arrays.fill(buf, chr);
-		return new String(buf);
+		return new StringBuilder()
+			.repeat(padChar, pads)
+			.append(text)
+			.toString();
 	}
 
 

@@ -322,7 +322,7 @@ public final class LoaderTemplate{
 		//select the minimum index with a valid template
 		for(int i = 0, length = messageStarts.length; i < length; i ++){
 			final int offset = searchNextSequence(reader, messageStarts[i].getBytes(charset));
-			if(offset >= 0 && (minOffset < 0 || offset < minOffset))
+			if(offset >= 0 && !(0 <= minOffset && minOffset <= offset))
 				minOffset = offset;
 		}
 		return minOffset;

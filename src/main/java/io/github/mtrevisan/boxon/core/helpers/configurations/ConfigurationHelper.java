@@ -64,7 +64,7 @@ public final class ConfigurationHelper{
 	}
 
 	private static boolean isValidValue(final Object value){
-		return (value != null && (!(value instanceof CharSequence) || !StringHelper.isBlank((CharSequence)value)));
+		return (value != null && (!(value instanceof CharSequence v) || !StringHelper.isBlank(v)));
 	}
 
 

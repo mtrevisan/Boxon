@@ -26,12 +26,15 @@ package io.github.mtrevisan.boxon.semanticversioning;
 
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 
+import java.io.Serial;
+
 
 /**
  * Represents an error in a version.
  */
 public final class VersionException extends IllegalArgumentException{
 
+	@Serial
 	private static final long serialVersionUID = 6010765672515345324L;
 
 

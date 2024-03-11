@@ -102,6 +102,7 @@ public final class ConfigurationMessage<T>{
 		final Iterator<String> itr = protocolVersions.iterator();
 		while(itr.hasNext()){
 			final String current = itr.next();
+
 			if(current.equals(previous))
 				itr.remove();
 

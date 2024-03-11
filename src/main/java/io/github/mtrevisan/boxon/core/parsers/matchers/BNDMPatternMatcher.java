@@ -48,7 +48,7 @@ import java.util.Arrays;
  */
 public final class BNDMPatternMatcher implements PatternMatcher{
 
-	private static class SingletonHelper{
+	private static final class SingletonHelper{
 		private static final PatternMatcher INSTANCE = new BNDMPatternMatcher();
 	}
 

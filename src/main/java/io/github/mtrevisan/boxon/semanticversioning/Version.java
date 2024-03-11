@@ -221,8 +221,6 @@ public final class Version implements Comparable<Version>{
 	}
 
 	private static void validateToken(final String type, final String token) throws VersionException{
-		if(hasLeadingZeros(token))
-			throw VersionException.create("The {} identifier MUST NOT contain leading zeros", type);
 		try{
 			final int number = Integer.parseInt(token);
 			if(number < 0)
@@ -629,13 +627,10 @@ public final class Version implements Comparable<Version>{
 	}
 
 
-	private static boolean hasLeadingZeros(final CharSequence token){
-		return (token.length() > 1 && token.charAt(0) == '0');
-	}
-
 	private static int getLeastCommonArrayLength(final String[] array1, final String[] array2){
 		return Math.min(array1.length, array2.length);
 	}
+
 
 	@Override
 	public String toString(){

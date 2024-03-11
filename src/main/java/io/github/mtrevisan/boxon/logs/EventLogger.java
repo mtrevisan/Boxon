@@ -33,7 +33,6 @@ import org.slf4j.helpers.NOPLoggerFactory;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.StringJoiner;
 
 
@@ -52,7 +51,7 @@ public final class EventLogger extends EventListener{
 	private static final Logger LOGGER = LoggerFactory.getLogger(EventLogger.class);
 
 
-	private static class SingletonHelper{
+	private static final class SingletonHelper{
 		private static final EventLogger INSTANCE = new EventLogger();
 	}
 

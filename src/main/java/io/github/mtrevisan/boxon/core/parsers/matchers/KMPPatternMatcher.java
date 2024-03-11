@@ -39,7 +39,7 @@ package io.github.mtrevisan.boxon.core.parsers.matchers;
  */
 public final class KMPPatternMatcher implements PatternMatcher{
 
-	private static class SingletonHelper{
+	private static final class SingletonHelper{
 		private static final PatternMatcher INSTANCE = new KMPPatternMatcher();
 	}
 

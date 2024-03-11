@@ -193,8 +193,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 	}
 
 	@SuppressWarnings("DuplicatedCode")
-	private static Map<String, Object> extractMap(final AlternativeSubField binding, final Class<?> fieldType) throws ConfigurationException,
-			CodecException{
+	private static Map<String, Object> extractMap(final AlternativeSubField binding, final Class<?> fieldType) throws ConfigurationException{
 		final Map<String, Object> map = new HashMap<>(7);
 
 		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, binding.longDescription(), map);
@@ -232,8 +231,8 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 		final AlternativeSubField fieldBinding = extractField(protocol);
 		if(fieldBinding != null){
 			final Class<?> fieldType = field.getType();
-			if(dataValue instanceof String)
-				dataValue = ParserDataType.getValue(fieldType, (String)dataValue);
+			if(dataValue instanceof String v)
+				dataValue = ParserDataType.getValue(fieldType, v);
 
 			final ConfigFieldData configData = ConfigFieldDataBuilder.create(field, annotation);
 			ValidationHelper.validatePattern(configData, dataValue);
