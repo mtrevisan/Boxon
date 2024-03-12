@@ -436,13 +436,17 @@ public final class Version implements Comparable<Version>{
 	 * @param text	The text to check, may be {@code null}.
 	 * @return	Whether if the given text only contains valid chars and is non-{@code null}.
 	 */
-	private static boolean containsOnlyValidChars(String text){
-		text = text.toUpperCase(Locale.ROOT);
-		for(int i = 0, length = text.length(); i < length; i ++){
-			final char chr = text.charAt(i);
+	private static boolean containsOnlyValidChars(final String text){
+		final int length = JavaHelper.lengthOrZero(text);
+		if(length > 0){
+			final byte[] bytes = text.toUpperCase(Locale.ROOT)
+				.getBytes();
+			for(int i = 0; i < length; i ++){
+				final byte chr = bytes[i];
 
-			if(chr != '-' && (chr < 'A' || chr > 'Z'))
-				return false;
+				if(chr != '-' && (chr < 'A' || chr > 'Z'))
+					return false;
+			}
 		}
 		return true;
 	}

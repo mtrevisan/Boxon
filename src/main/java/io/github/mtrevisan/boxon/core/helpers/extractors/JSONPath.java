@@ -139,7 +139,8 @@ public final class JSONPath{
 			return text;
 
 		final int replacementLength = searchString.length();
-		final StringBuilder sb = new StringBuilder(text.length());
+		final int length = text.length();
+		final StringBuilder sb = new StringBuilder(length);
 		while(end >= 0){
 			sb.append(text, start, end)
 				.append(replacement);
@@ -147,7 +148,7 @@ public final class JSONPath{
 			start = end + replacementLength;
 			end = text.indexOf(searchString, start);
 		}
-		sb.append(text, start, text.length());
+		sb.append(text, start, length);
 		return sb.toString();
 	}
 
