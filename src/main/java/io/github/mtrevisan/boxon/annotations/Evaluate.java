@@ -49,10 +49,18 @@ public @interface Evaluate{
 	/**
 	 * The expression to be evaluated.
 	 *
-	 * @see <a href="https://docs.spring.io/spring-framework/docs/5.3.x/reference/html/core.html#expressions">Spring Expression Language (SpEL)</a>
+	 * @see <a href="https://docs.spring.io/spring-framework/docs/6.1.x/reference/html/core.html#expressions">Spring Expression Language (SpEL)</a>
 	 *
 	 * @return	The expression to be evaluated.
 	 */
 	String value();
+
+	/**
+	 * Whether to run this annotation as the last annotation (that is, after all the other annotations, even non-runLast {@link Evaluate}s
+	 * annotations).
+	 *
+	 * @return	Whether to run as the last annotation of the template (defaults to {@code false}).
+	 */
+	boolean runLast() default false;
 
 }

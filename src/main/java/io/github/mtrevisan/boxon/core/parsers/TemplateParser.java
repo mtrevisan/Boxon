@@ -49,7 +49,9 @@ import io.github.mtrevisan.boxon.logs.EventListener;
 
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -319,7 +321,25 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 	private void processEvaluatedFields(final Template<?> template, final ParserContext<?> parserContext){
-		final List<EvaluatedField> evaluatedFields = template.getEvaluatedFields();
+		final List<EvaluatedField> nonRunLastEvaluatedFields = new ArrayList<>(template.getEvaluatedFields());
+		final List<EvaluatedField> runLastEvaluatedFields = new ArrayList<>(0);
+		final Iterator<EvaluatedField> itr = nonRunLastEvaluatedFields.iterator();
+		while(itr.hasNext()){
+			final EvaluatedField field = itr.next();
+			if(field.getBinding().runLast()){
+				itr.remove();
+
+				runLastEvaluatedFields.add(field);
+			}
+		}
+
+		processEvaluatedFields(template, parserContext, nonRunLastEvaluatedFields);
+
+		processEvaluatedFields(template, parserContext, runLastEvaluatedFields);
+	}
+
+	private void processEvaluatedFields(final Template<?> template, final ParserContext<?> parserContext,
+			final List<EvaluatedField> evaluatedFields){
 		for(int i = 0, length = evaluatedFields.size(); i < length; i ++){
 			final EvaluatedField field = evaluatedFields.get(i);
 

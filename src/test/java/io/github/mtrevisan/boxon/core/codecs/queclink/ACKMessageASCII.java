@@ -36,10 +36,11 @@ import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 
 
-@MessageHeader(start = "+ACK:", end = "$")
+@MessageHeader(start = {"+ACK:", "+BCK"}, end = "$")
 public class ACKMessageASCII{
 
 	@BindStringTerminated(terminator = ':')
+	@Evaluate(value = "'+ACK'", runLast = true)
 	private String messageHeader;
 	@BindStringTerminated(terminator = ',')
 	private String messageType;
