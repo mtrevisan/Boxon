@@ -276,7 +276,8 @@ enum TemplateAnnotationValidator{
 
 		int minHeaderLength = Integer.MAX_VALUE;
 		for(int i = 0; i < length; i ++){
-			final int headerLength = alternatives[i].prefix().length();
+			final int headerLength = alternatives[i].prefix()
+				.length();
 			if(headerLength < minHeaderLength)
 				minHeaderLength = headerLength;
 		}

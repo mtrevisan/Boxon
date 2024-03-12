@@ -28,6 +28,7 @@ import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageHex;
 import io.github.mtrevisan.boxon.core.codecs.queclink.DeviceTypes;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
+import io.github.mtrevisan.boxon.exceptions.JSONPathException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import org.junit.jupiter.api.Assertions;
@@ -125,7 +126,8 @@ class ParserTest{
 	}
 
 	@Test
-	void parseMultipleMessagesHexASCII() throws NoSuchMethodException, AnnotationException, TemplateException, ConfigurationException{
+	void parseMultipleMessagesHexASCII() throws NoSuchMethodException, AnnotationException, TemplateException, ConfigurationException,
+			JSONPathException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with((byte)0x46, "QUECLINK_GB200S")
 			.with((byte)0xCF, "QUECLINK_GV350M");
@@ -139,13 +141,14 @@ class ParserTest{
 		Parser parser = Parser.create(core);
 
 		byte[] payload1 = StringHelper.hexToByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
-		byte[] payload2 = toByteArray("+ACK:GTIOB,CF8002,359464038116666,45.5,2,0020,20170101123542,11F0$");
+		byte[] payload2 = toByteArray("+BCK:GTIOB,CF8002,359464038116666,45.5,2,0020,20170101123542,11F0$");
 		byte[] payload = addAll(payload1, payload2);
 		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertEquals(2, result.size());
 		Assertions.assertFalse(result.get(0).hasError());
 		Assertions.assertFalse(result.get(1).hasError());
+		Assertions.assertEquals("+ACK", (String)Extractor.get("/messageHeader", result.get(1).getMessage()));
 	}
 
 	@Test

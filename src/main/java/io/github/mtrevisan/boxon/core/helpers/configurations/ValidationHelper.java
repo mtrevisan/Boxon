@@ -205,7 +205,7 @@ final class ValidationHelper{
 				field.getAnnotationName(), field.getMaxValue(), formatPattern.pattern());
 	}
 
-	private static boolean matches(final CharSequence text, final Pattern pattern){
+	private static boolean matches(final String text, final Pattern pattern){
 		return (StringHelper.isBlank(text) || pattern.matcher(text).matches());
 	}
 

@@ -26,6 +26,7 @@ package io.github.mtrevisan.boxon.helpers;
 
 import org.slf4j.helpers.MessageFormatter;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Locale;
@@ -51,7 +52,6 @@ public final class StringHelper{
 			.getMessage();
 	}
 
-
 	/**
 	 * Left pad a string with a specified character.
 	 *
@@ -71,7 +71,6 @@ public final class StringHelper{
 			.toString();
 	}
 
-
 	/**
 	 * Split the given text into an array, separator specified.
 	 * <p>
@@ -79,23 +78,24 @@ public final class StringHelper{
 	 * Adjacent separators are treated as one separator.
 	 * </p>
 	 *
-	 * @param str	The text to parse.
+	 * @param text	The text to parse.
 	 * @param separatorChar	The character used as the delimiter.
 	 * @return	An array of parsed strings.
 	 */
-	public static String[] split(final String str, final char separatorChar){
-		final int len = str.length();
-		if(len == 0)
+	public static String[] split(final String text, final char separatorChar){
+		final int length = text.length();
+		if(length == 0)
 			return JavaHelper.EMPTY_STRING_ARRAY;
 
-		final Collection<String> list = new ArrayList<>(str.length() >> 1);
+		final byte[] bytes = text.getBytes();
+		final Collection<String> list = new ArrayList<>(length >> 1);
 		int i = 0;
 		int start = 0;
 		boolean match = false;
-		while(i < len){
-			if(str.charAt(i) == separatorChar){
+		while(i < length){
+			if(bytes[i] == separatorChar){
 				if(match){
-					list.add(str.substring(start, i));
+					list.add(text.substring(start, i));
 					match = false;
 				}
 
@@ -107,8 +107,35 @@ public final class StringHelper{
 			}
 		}
 		if(match)
-			list.add(str.substring(start, i));
+			list.add(text.substring(start, i));
 		return list.toArray(String[]::new);
+	}
+
+	/**
+	 * <p>Checks if a text is empty (""), {@code null} or whitespace only.</p>
+	 *
+	 * <p>Whitespace is defined by {@link Character#isWhitespace(char)}.</p>
+	 *
+	 * <pre>
+	 * isBlank(null)      = true
+	 * isBlank("")        = true
+	 * isBlank(" ")       = true
+	 * isBlank("bob")     = false
+	 * isBlank("  bob  ") = false
+	 * </pre>
+	 *
+	 * @param text	The text to check, may be {@code null}.
+	 * @return	Whether the given text is {@code null}, empty or whitespace only.
+	 */
+	public static boolean isBlank(final String text){
+		final int length = JavaHelper.lengthOrZero(text);
+		if(length > 0){
+			final byte[] bytes = text.getBytes();
+			for(int i = 0; i < length; i ++)
+				if(!Character.isWhitespace(bytes[i]))
+					return false;
+		}
+		return true;
 	}
 
 
@@ -139,17 +166,20 @@ public final class StringHelper{
 	 * @param hexString	The hexadecimal string.
 	 * @return	Array of converted hexadecimal characters.
 	 */
-	public static byte[] hexToByteArray(final CharSequence hexString){
+	public static byte[] hexToByteArray(final String hexString){
 		final int length = JavaHelper.lengthOrZero(hexString);
 		if(length % 2 != 0)
 			throw new IllegalArgumentException("Input should be of even length, was " + length);
 
 		final byte[] data = new byte[length >>> 1];
-		for(int i = 0; i < length; i += 2){
-			final int highDigit = Character.digit(hexString.charAt(i), 16);
-			final int lowDigit = Character.digit(hexString.charAt(i + 1), 16);
+		if(length > 0){
+			final byte[] bytes = hexString.getBytes();
+			for(int i = 0; i < length; i += 2){
+				final int highDigit = Character.digit(bytes[i], 16);
+				final int lowDigit = Character.digit(bytes[i + 1], 16);
 
-			data[i >>> 1] = (byte)((highDigit << 4) + lowDigit);
+				data[i >>> 1] = (byte)((highDigit << 4) + lowDigit);
+			}
 		}
 		return data;
 	}
@@ -175,34 +205,31 @@ public final class StringHelper{
 	 * @param asciiString	The string.
 	 * @return	Array of converted characters.
 	 */
-	public static byte[] asciiToByteArray(final CharSequence asciiString){
+	public static byte[] asciiToByteArray(final String asciiString){
 		final int length = JavaHelper.lengthOrZero(asciiString);
 		final byte[] data = new byte[length];
-		for(int i = 0; i < length; i ++)
-			data[i] = (byte)asciiString.charAt(i);
+		if(length > 0){
+			final byte[] bytes = asciiString.getBytes();
+			for(int i = 0; i < length; i ++)
+				data[i] = bytes[i];
+		}
 		return data;
 	}
 
-
 	/**
-	 * <p>Checks if a text is empty (""), {@code null} or whitespace only.</p>
+	 * Checks if a byte array starts with a given ASCII string.
 	 *
-	 * <p>Whitespace is defined by {@link Character#isWhitespace(char)}.</p>
-	 *
-	 * <pre>
-	 * isBlank(null)      = true
-	 * isBlank("")        = true
-	 * isBlank(" ")       = true
-	 * isBlank("bob")     = false
-	 * isBlank("  bob  ") = false
-	 * </pre>
-	 *
-	 * @param text	The text to check, may be {@code null}.
-	 * @return	Whether the given text is {@code null}, empty or whitespace only.
+	 * @param byteArray	The byte array to check.
+	 * @param asciiString	The ASCII string to check for.
+	 * @return	Whether the byte array starts with the ASCII string.
 	 */
-	public static boolean isBlank(final CharSequence text){
-		for(int i = 0, length = JavaHelper.lengthOrZero(text); i < length; i ++)
-			if(!Character.isWhitespace(text.charAt(i)))
+	public static boolean byteArrayStartsWith(final byte[] byteArray, final String asciiString){
+		if(JavaHelper.lengthOrZero(byteArray) < asciiString.length())
+			return false;
+
+		final byte[] stringBytes = asciiString.getBytes(StandardCharsets.US_ASCII);
+		for(int i = 0, length = stringBytes.length; i < length; i ++)
+			if(byteArray[i] != stringBytes[i])
 				return false;
 		return true;
 	}

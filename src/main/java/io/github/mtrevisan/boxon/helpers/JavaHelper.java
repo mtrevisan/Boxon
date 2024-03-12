@@ -78,7 +78,7 @@ public final class JavaHelper{
 	 * @param text	The text.
 	 * @return	The length of the text, or {@code 0} if {@code null}.
 	 */
-	static int lengthOrZero(final CharSequence text){
+	public static int lengthOrZero(final CharSequence text){
 		return (text != null? text.length(): 0);
 	}
 

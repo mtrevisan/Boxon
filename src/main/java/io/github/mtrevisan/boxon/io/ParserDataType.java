@@ -385,9 +385,10 @@ public enum ParserDataType{
 		return (text != null && text.startsWith("0x") && !isBaseNumber(text, 2, 16));
 	}
 
-	private static boolean isBaseNumber(final CharSequence text, final int offset, final int radix){
-		for(int i = offset, length = text.length(); i < length; i ++){
-			final char chr = text.charAt(i);
+	private static boolean isBaseNumber(final String text, final int offset, final int radix){
+		final byte[] bytes = text.getBytes();
+		for(int i = offset, length = bytes.length; i < length; i ++){
+			final byte chr = bytes[i];
 
 			if(Character.digit(chr, radix) < 0)
 				return true;

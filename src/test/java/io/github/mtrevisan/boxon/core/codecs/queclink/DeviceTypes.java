@@ -26,6 +26,7 @@ package io.github.mtrevisan.boxon.core.codecs.queclink;
 
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentSkipListMap;
 
@@ -58,6 +59,10 @@ public class DeviceTypes{
 		}
 		catch(final IllegalArgumentException ignored){}
 		return false;
+	}
+
+	public Set<Byte> getDeviceTypeCodes(){
+		return deviceTypes.keySet();
 	}
 
 	public byte getDeviceTypeCode(final String deviceTypeName){

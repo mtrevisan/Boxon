@@ -197,12 +197,12 @@ Note that [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_inject
 | BindString           |  &#9745;  |         | &#9745; |            |                   | &#9745; |                    |            |               |  &#9745;  |  &#9745;  |       &#9745;       |           BindString |
 | BindStringTerminated |  &#9745;  |         | &#9745; |  &#9745;   |      &#9745;      |         |                    |            |               |  &#9745;  |  &#9745;  |       &#9745;       | BindStringTerminated |
 
-|                      | condition |  start  |   end   | charset |  size   | terminator | consumeTerminator |  type   | byteOrder | skipStart | skipEnd | algorithm | startValue |  value  |               |
-|----------------------|:---------:|:-------:|:-------:|:-------:|:-------:|:----------:|:-----------------:|:-------:|:---------:|:---------:|:-------:|:---------:|:----------:|:-------:|--------------:|
-| MessageHeader        |           | &#9745; | &#9745; | &#9745; |         |            |                   |         |           |           |         |           |            |         | MessageHeader |
-| Skip                 |  &#9745;  |         |         |         | &#9745; |  &#9745;   |      &#9745;      |         |           |           |         |           |            |         |          Skip |
-| Checksum             |           |         |         |         |         |            |                   | &#9745; |  &#9745;  |  &#9745;  | &#9745; |  &#9745;  |  &#9745;   |         |      Checksum |
-| Evaluate             |  &#9745;  |         |         |         |         |            |                   |         |           |           |         |           |            | &#9745; |      Evaluate |
+|                      | condition |  start  |   end   | charset |  size   | terminator | consumeTerminator |  type   | byteOrder | skipStart | skipEnd | algorithm | startValue |  value  | runLast |               |
+|----------------------|:---------:|:-------:|:-------:|:-------:|:-------:|:----------:|:-----------------:|:-------:|:---------:|:---------:|:-------:|:---------:|:----------:|:-------:|:-------:|--------------:|
+| MessageHeader        |           | &#9745; | &#9745; | &#9745; |         |            |                   |         |           |           |         |           |            |         |         | MessageHeader |
+| Skip                 |  &#9745;  |         |         |         | &#9745; |  &#9745;   |      &#9745;      |         |           |           |         |           |            |         |         |          Skip |
+| Checksum             |           |         |         |         |         |            |                   | &#9745; |  &#9745;  |  &#9745;  | &#9745; |  &#9745;  |  &#9745;   |         |         |      Checksum |
+| Evaluate             |  &#9745;  |         |         |         |         |            |                   |         |           |           |         |           |            | &#9745; | &#9745; |      Evaluate |
 
 |                               | shortDescription | longDescription | minProtocol | maxProtocol |  start  |   end   | charset | terminator | unitOfMeasure | minValue  | maxValue | pattern | enumeration | defaultValue |  radix  | composition |                               |
 |-------------------------------|:----------------:|:---------------:|:-----------:|:-----------:|:-------:|:-------:|:-------:|:----------:|:-------------:|:---------:|:--------:|:-------:|:-----------:|:------------:|:-------:|:-----------:|------------------------------:|
@@ -766,7 +766,8 @@ private short checksum;
 #### parameters
 
  - `condition`: The SpEL expression that determines if this field has to be read.
- - `value`: the value to be assigned, or calculated (can be a SpEL expression).
+ - `value`: The value to be assigned, or calculated (can be a SpEL expression).
+ - `runLast`: Whether to run this annotation as the last annotation, after all other non-runLast `Evaluation`s.
 
 #### description
 
@@ -782,6 +783,9 @@ This annotation is bounded to a variable.
 
 ```java
 @BindString(size = "4")
+//this annotation restores the '+ACK' value after all the fields and evaluations are done (this is because the evaluation of `buffered`
+//requires the read value of `messageHeader`, and '+BCK' means a buffered message)
+@Evaluate(value = "'+ACK'", runLast = true)
 private String messageHeader;
 
 @Evaluate("T(java.time.ZonedDateTime).now()")
@@ -1201,7 +1205,7 @@ int protocolVersionMinor = extractor.get("/protocolVersion/minor");
 <a name="how-to-spel"></a>
 ## How to write SpEL expressions
 
-Care should be taken in writing [SpEL expressions](https://docs.spring.io/spring/docs/4.3.10.RELEASE/spring-framework-reference/html/expressions.html) for the fields `condition`, and `size`.
+Care should be taken in writing [SpEL expressions](https://docs.spring.io/spring-framework/reference/core/expressions.html) for the fields `condition`, and `size`.
 
 The root object is the outermost object. In order to evaluate a variable of a parent object the complete path should be used, as in `object1.variable1`. In order to evaluate a variable of a children object, that is the object currently scanned, the relative path should be used introduced by the special keyword `#self`, as in `#self.variable2`).
 
@@ -1536,24 +1540,30 @@ Pull requests are welcomed.
 ## Changelog
 
 <a name="changelog-3.1.3"></a>
+### version 3.2.0 - 20240312
+
+- Added `runLast` to `Evaluator` to run an evaluation after all other evaluations have been made (used, for example, to restore a default value after being used by another evaluator).
+
+<a name="changelog-3.1.3"></a>
 ### version 3.1.3 - 20240311
-- fixed duplicated descriptions.
-- fixed validation on max value while composing a message.
-- fixed number not written with the correct radix.
-- made `shortDescription` mandatory in the annotation, as it should have been.
-- added method to map a POJO into a `Map<String, Object>` in `ReflectionHelper`.
-- added method `Configurator.composeConfiguration` accepting a POJO.
-- corrected errors in the documentation.
-- migrated from java 11 to java 21 for performance.
+
+- Fixed duplicated descriptions.
+- Fixed validation on max value while composing a message.
+- Fixed number not written with the correct radix.
+- Made `shortDescription` mandatory in the annotation, as it should have been.
+- Added method to map a POJO into a `Map<String, Object>` in `ReflectionHelper`.
+- Added method `Configurator.composeConfiguration` accepting a POJO.
+- Corrected errors in the documentation.
+- Migrated from java 11 to java 21 for performance.
 
 <a name="changelog-3.1.2"></a>
 ### version 3.1.2 - 20240302
 
-- improvement on handling values inside big decimal converter.
-- improvement on error reporting.
-- renamed `Composer.composeMessage` into `compose`.
-- corrected error while showing the start array of message header in the description.
-- fix size validation of array and list (now it can be zero).
+- Improvement on handling values inside big decimal converter.
+- Improvement on error reporting.
+- Renamed `Composer.composeMessage` into `compose`.
+- Corrected error while showing the start array of message header in the description.
+- Fix size validation of array and list (now it can be zero).
 
 <a name="changelog-3.1.1"></a>
 ### version 3.1.1 - 20240229

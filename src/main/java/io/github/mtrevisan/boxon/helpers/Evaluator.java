@@ -198,9 +198,10 @@ public final class Evaluator{
 		return size;
 	}
 
-	private static boolean isPositiveInteger(final CharSequence text){
-		for(int i = 0, length = text.length(); i < length; i ++)
-			if(!Character.isDigit(text.charAt(i)))
+	private static boolean isPositiveInteger(final String text){
+		final byte[] bytes = text.getBytes();
+		for(int i = 0, length = bytes.length; i < length; i ++)
+			if(!Character.isDigit(bytes[i]))
 				return false;
 		return true;
 	}
