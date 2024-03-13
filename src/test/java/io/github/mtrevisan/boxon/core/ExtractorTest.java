@@ -41,7 +41,9 @@ class ExtractorTest{
 		Version version = Version.of(1, 2);
 		Extractor extractor = Extractor.create(version);
 
-		Assertions.assertEquals(2, (int)extractor.get("/minor"));
+		int actual = (int)extractor.get("/minor", null);
+
+		Assertions.assertEquals(2, actual);
 	}
 
 	@Test
@@ -49,7 +51,9 @@ class ExtractorTest{
 		Map<String, Object> map = Map.of("~1/è\\\"  %", "value");
 		Extractor extractor = Extractor.create(map);
 
-		Assertions.assertEquals("value", extractor.get("/~01~1%C3%A8\\%x22+%20%25"));
+		String actual = extractor.get("/~01~1%C3%A8\\%x22+%20%25", null);
+
+		Assertions.assertEquals("value", actual);
 	}
 
 	@Test
@@ -57,14 +61,18 @@ class ExtractorTest{
 		Map<String, Object> map = Map.of("key", "value");
 		Extractor extractor = Extractor.create(map);
 
-		Assertions.assertEquals("value", extractor.get("/key"));
+		String actual = extractor.get("/key", null);
+
+		Assertions.assertEquals("value", actual);
 	}
 
 	@Test
 	void fromList() throws JSONPathException{
 		List<String> list = List.of("un", "do", "trè", "kuatro", "ŧinkue");
 
-		Assertions.assertEquals("trè", Extractor.get("/2", list));
+		String actual = Extractor.get("/2", list, null);
+
+		Assertions.assertEquals("trè", actual);
 	}
 
 	@Test
@@ -72,17 +80,9 @@ class ExtractorTest{
 		int[] array = new int[]{12, 23};
 		Extractor extractor = Extractor.create(array);
 
-		Assertions.assertEquals(23, (int)extractor.get("/1"));
-	}
+		int actual = (int)extractor.get("/1", null);
 
-	@Test
-	void failReference(){
-		Version version = Version.of(1, 2);
-		Extractor extractor = Extractor.create(version);
-
-		Exception e = Assertions.assertThrows(JSONPathException.class,
-			() -> extractor.get("/fake"));
-		Assertions.assertEquals("No field 'fake' found on path '/fake'", e.getMessage());
+		Assertions.assertEquals(23, actual);
 	}
 
 	@Test
@@ -91,8 +91,18 @@ class ExtractorTest{
 		Extractor extractor = Extractor.create(array);
 
 		Exception e = Assertions.assertThrows(JSONPathException.class,
-			() -> extractor.get("/01"));
+			() -> extractor.get("/01", null));
 		Assertions.assertEquals("No array field '01' found on path '/01'", e.getMessage());
+	}
+
+	@Test
+	void defaultValue() throws JSONPathException{
+		Version version = Version.of(1, 2);
+		Extractor extractor = Extractor.create(version);
+
+		int fakeValue = extractor.get("/fake", -1);
+
+		Assertions.assertEquals(-1, fakeValue);
 	}
 
 }

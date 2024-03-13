@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.helpers;
 
+import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
 import java.lang.reflect.InaccessibleObjectException;
 import java.lang.reflect.InvocationTargetException;
@@ -59,9 +60,9 @@ public final class ReflectionHelper{
 		try{
 			return (T)field.get(obj);
 		}
-		catch(final IllegalAccessException e){
+		catch(final IllegalAccessException ignored){
 			//should never happen
-			throw new IllegalArgumentException(e);
+			return null;
 		}
 	}
 
@@ -205,8 +206,11 @@ public final class ReflectionHelper{
 
 	private static void makeFieldsAccessible(final List<Field> fields){
 		for(int i = 0, length = fields.size(); i < length; i ++)
-			fields.get(i)
-				.setAccessible(true);
+			makeAccessible(fields.get(i));
+	}
+
+	public static void makeAccessible(final AccessibleObject obj){
+		obj.setAccessible(true);
 	}
 
 
@@ -256,7 +260,7 @@ public final class ReflectionHelper{
 		try{
 			method = cls.getDeclaredMethod(methodName, parameterTypes);
 			if(returnType == null || method.getReturnType() == returnType)
-				method.setAccessible(true);
+				makeAccessible(method);
 		}
 		catch(final NoSuchMethodException | SecurityException | InaccessibleObjectException ignored){}
 		return method;

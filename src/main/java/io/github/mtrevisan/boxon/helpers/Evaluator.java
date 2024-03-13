@@ -225,10 +225,14 @@ public final class Evaluator{
 			for(int i = 0, length = declaredFields.length; i < length; i ++){
 				final Field field = declaredFields[i];
 
-				if(field.getName().equals(name) && (!mustBeStatic || Modifier.isStatic(field.getModifiers())))
+				if(field.getName().equals(name) && (!mustBeStatic || isStatic(field)))
 					return field;
 			}
 			return null;
+		}
+
+		private static boolean isStatic(final Field field){
+			return Modifier.isStatic(field.getModifiers());
 		}
 	}
 
