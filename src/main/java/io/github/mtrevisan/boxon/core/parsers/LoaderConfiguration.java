@@ -261,7 +261,7 @@ final class LoaderConfiguration{
 	ConfigurationMessage<?> getConfiguration(final String configurationType) throws EncodeException{
 		final ConfigurationMessage<?> configuration = configurations.get(configurationType);
 		if(configuration == null)
-			throw EncodeException.create("Cannot find any configuration for given class type");
+			throw EncodeException.create("No configuration could be found for the specified class type");
 
 		return configuration;
 	}
@@ -302,7 +302,7 @@ final class LoaderConfiguration{
 			if(annotation.annotationType() != Annotation.class && manager.getShortDescription().equals(key))
 				return field;
 		}
-		throw EncodeException.create("Cannot find any field to set for data key {}", key);
+		throw EncodeException.create("Could not find fields to set for data key {}", key);
 	}
 
 	private static void validateMandatoryFields(final Collection<ConfigField> mandatoryFields) throws EncodeException{

@@ -120,9 +120,9 @@ final class CodecHelper{
 	}
 
 	@SuppressWarnings("unchecked")
-	private static <IN> Object converterDecode(final Class<? extends Converter<?, ?>> converterType, final IN data){
+	private static <IN, OUT> Object converterDecode(final Class<? extends Converter<?, ?>> converterType, final IN data){
 		try{
-			final Converter<IN, ?> converter = (Converter<IN, ?>)ConstructorHelper.getCreator(converterType)
+			final Converter<IN, OUT> converter = (Converter<IN, OUT>)ConstructorHelper.getCreator(converterType)
 				.get();
 
 			return converter.decode(data);
@@ -135,9 +135,15 @@ final class CodecHelper{
 
 	@SuppressWarnings("unchecked")
 	static <IN, OUT> IN converterEncode(final Class<? extends Converter<?, ?>> converterType, final Object data){
-		final Converter<IN, OUT> converter = (Converter<IN, OUT>)ConstructorHelper.getCreator(converterType)
-			.get();
-		return converter.encode((OUT)data);
+		try{
+			final Converter<IN, OUT> converter = (Converter<IN, OUT>)ConstructorHelper.getCreator(converterType)
+				.get();
+			return converter.encode((OUT)data);
+		}
+		catch(final Exception e){
+			throw new IllegalArgumentException("Can not input " + data.getClass().getSimpleName() + " (" + data
+				+ ") to encode method of converter " + converterType.getSimpleName(), e);
+		}
 	}
 
 	static Object interpretValue(final Class<?> fieldType, Object value) throws CodecException{
