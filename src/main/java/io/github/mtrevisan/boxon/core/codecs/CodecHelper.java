@@ -112,15 +112,15 @@ final class CodecHelper{
 		}
 	}
 
-	static Object convertValue(final BindingData bindingData, final Object value){
+	static <IN, OUT> OUT convertValue(final BindingData bindingData, final IN value){
 		final Class<? extends Converter<?, ?>> converterType = bindingData.getChosenConverter();
-		final Object convertedValue = converterDecode(converterType, value);
+		final OUT convertedValue = converterDecode(converterType, value);
 		bindingData.validate(convertedValue);
 		return convertedValue;
 	}
 
 	@SuppressWarnings("unchecked")
-	private static <IN, OUT> Object converterDecode(final Class<? extends Converter<?, ?>> converterType, final IN data){
+	private static <IN, OUT> OUT converterDecode(final Class<? extends Converter<?, ?>> converterType, final IN data){
 		try{
 			final Converter<IN, OUT> converter = (Converter<IN, OUT>)ConstructorHelper.getCreator(converterType)
 				.get();
@@ -134,11 +134,11 @@ final class CodecHelper{
 	}
 
 	@SuppressWarnings("unchecked")
-	static <IN, OUT> IN converterEncode(final Class<? extends Converter<?, ?>> converterType, final Object data){
+	static <IN, OUT> IN converterEncode(final Class<? extends Converter<?, ?>> converterType, final OUT data){
 		try{
 			final Converter<IN, OUT> converter = (Converter<IN, OUT>)ConstructorHelper.getCreator(converterType)
 				.get();
-			return converter.encode((OUT)data);
+			return converter.encode(data);
 		}
 		catch(final Exception e){
 			throw new IllegalArgumentException("Can not input " + data.getClass().getSimpleName() + " (" + data
