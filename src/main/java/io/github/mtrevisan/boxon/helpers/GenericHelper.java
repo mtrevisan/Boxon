@@ -112,7 +112,7 @@ public final class GenericHelper{
 		return types;
 	}
 
-	private static <T> List<Class<?>> processBase(final Type[] actualArgs){
+	private static List<Class<?>> processBase(final Type[] actualArgs){
 		//there is a result if the base class is reached
 		final int length = actualArgs.length;
 		final List<Class<?>> types = new ArrayList<>(length);

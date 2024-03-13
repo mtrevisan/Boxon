@@ -54,7 +54,7 @@ public class QueclinkHelper{
 		}
 	}
 
-	static class StringVersionConverter implements Converter<String, Version>{
+	static class HexStringVersionConverter implements Converter<String, Version>{
 		@Override
 		public Version decode(final String value){
 			final int major = Integer.parseInt(value.substring(0, 2), 16);
