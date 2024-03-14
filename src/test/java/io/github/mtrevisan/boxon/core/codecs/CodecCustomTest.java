@@ -44,7 +44,6 @@ import java.lang.annotation.Target;
 import java.lang.reflect.Array;
 
 
-@SuppressWarnings("ALL")
 class CodecCustomTest{
 
 	@Retention(RetentionPolicy.RUNTIME)

@@ -30,6 +30,7 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
+import io.github.mtrevisan.boxon.utils.TestHelper;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.io.BitReader;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
@@ -39,19 +40,14 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.Annotation;
-import java.util.Random;
 
 
-@SuppressWarnings("ALL")
 class CodecByteTest{
-
-	private static final Random RANDOM = new Random();
-
 
 	@Test
 	void testByte() throws FieldException{
 		CodecInterface<BindByte> codec = new CodecByte();
-		byte encodedValue = (byte)(RANDOM.nextInt() & 0x0000_00FF);
+		byte encodedValue = (byte)(TestHelper.RANDOM.nextInt() & 0x0000_00FF);
 		BindByte annotation = new BindByte(){
 			@Override
 			public Class<? extends Annotation> annotationType(){

@@ -31,6 +31,7 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
+import io.github.mtrevisan.boxon.utils.TestHelper;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
@@ -45,7 +46,6 @@ import java.lang.annotation.Annotation;
 import java.nio.charset.StandardCharsets;
 
 
-@SuppressWarnings("ALL")
 class CodecStringTest{
 
 	@Test
@@ -70,7 +70,7 @@ class CodecStringTest{
 
 			@Override
 			public String size(){
-				return Integer.toString(toByteArray(encodedValue).length);
+				return Integer.toString(TestHelper.toByteArray(encodedValue).length);
 			}
 
 			@Override
@@ -237,7 +237,7 @@ class CodecStringTest{
 			}
 		};
 
-		BitReaderInterface reader = BitReader.wrap(toByteArray(encodedValue));
+		BitReaderInterface reader = BitReader.wrap(TestHelper.toByteArray(encodedValue));
 		Evaluator evaluator = Evaluator.create();
 		Object decoded = codec.decode(reader, annotation, null);
 
@@ -306,7 +306,7 @@ class CodecStringTest{
 			}
 		};
 
-		BitReaderInterface reader = BitReader.wrap(toByteArray(encodedValue));
+		BitReaderInterface reader = BitReader.wrap(TestHelper.toByteArray(encodedValue));
 		Evaluator evaluator = Evaluator.create();
 		Object decoded = codec.decode(reader, annotation, null);
 
@@ -318,11 +318,6 @@ class CodecStringTest{
 
 		//this seems strange, but it has to work like this
 		Assertions.assertArrayEquals(new byte[]{49, 50, 51, 65, 66, 67}, writer.array());
-	}
-
-
-	private byte[] toByteArray(final String payload){
-		return payload.getBytes(StandardCharsets.ISO_8859_1);
 	}
 
 }

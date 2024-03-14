@@ -27,7 +27,6 @@ package io.github.mtrevisan.boxon.core.codecs.queclink;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
 
 
-@SuppressWarnings("ALL")
 enum Weekday implements ConfigurationEnum{
 
 	MONDAY(0x01),

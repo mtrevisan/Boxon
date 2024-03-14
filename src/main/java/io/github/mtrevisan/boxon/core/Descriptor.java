@@ -118,16 +118,20 @@ public final class Descriptor{
 	 */
 	public List<Map<String, Object>> describe(final Class<?>... templateClasses) throws AnnotationException, TemplateException{
 		final int length = templateClasses.length;
+		for(int i = 0; i < length; i ++){
+			final Class<?> templateClass = templateClasses[i];
+
+			if(!templateClass.isAnnotationPresent(MessageHeader.class))
+				throw AnnotationException.create("Template {} didn't have the `MessageHeader` annotation",
+					templateClass.getSimpleName());
+		}
+
 		final List<Map<String, Object>> description = new ArrayList<>(length);
 		for(int i = 0; i < length; i ++){
 			final Class<?> templateClass = templateClasses[i];
-			if(templateClass.isAnnotationPresent(MessageHeader.class)){
-				final Template<?> template = loaderTemplate.extractTemplate(templateClass);
-				description.add(describeTemplate(template));
-			}
-			else
-				throw AnnotationException.create("Template {} didn't have the `MessageHeader` annotation",
-					templateClass.getSimpleName());
+
+			final Template<?> template = loaderTemplate.extractTemplate(templateClass);
+			description.add(describeTemplate(template));
 		}
 		return Collections.unmodifiableList(description);
 	}

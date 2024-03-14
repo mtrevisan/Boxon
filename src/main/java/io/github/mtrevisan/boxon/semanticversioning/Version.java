@@ -43,7 +43,7 @@ import java.util.regex.Pattern;
 public final class Version implements Comparable<Version>{
 
 	/** An empty {@code String} array. */
-	private static final String[] EMPTY_ARRAY = new String[0];
+	private static final String[] EMPTY_STRING_ARRAY = new String[0];
 
 	private static final String KEY_MAJOR = "major";
 	private static final String KEY_MINOR = "minor";
@@ -89,7 +89,7 @@ public final class Version implements Comparable<Version>{
 	 * @throws VersionException	If one of the version numbers is a negative integer
 	 */
 	public static Version of(final int major) throws VersionException{
-		return new Version(major, null, null, EMPTY_ARRAY, EMPTY_ARRAY);
+		return new Version(major, null, null, EMPTY_STRING_ARRAY, EMPTY_STRING_ARRAY);
 	}
 
 	/**
@@ -101,7 +101,7 @@ public final class Version implements Comparable<Version>{
 	 * @throws VersionException	If the given version is not valid.
 	 */
 	public static Version of(final int major, final int minor) throws VersionException{
-		return new Version(major, minor, null, EMPTY_ARRAY, EMPTY_ARRAY);
+		return new Version(major, minor, null, EMPTY_STRING_ARRAY, EMPTY_STRING_ARRAY);
 	}
 
 	/**
@@ -114,7 +114,7 @@ public final class Version implements Comparable<Version>{
 	 * @throws VersionException	If the given version is not valid.
 	 */
 	public static Version of(final int major, final int minor, final int patch) throws VersionException{
-		return new Version(major, minor, patch, EMPTY_ARRAY, EMPTY_ARRAY);
+		return new Version(major, minor, patch, EMPTY_STRING_ARRAY, EMPTY_STRING_ARRAY);
 	}
 
 	/**
@@ -130,7 +130,7 @@ public final class Version implements Comparable<Version>{
 	public static Version of(final int major, final int minor, final int patch, final String[] preRelease) throws VersionException{
 		Objects.requireNonNull(preRelease, "Pre-release identifier cannot be null");
 
-		return new Version(major, minor, patch, preRelease, EMPTY_ARRAY);
+		return new Version(major, minor, patch, preRelease, EMPTY_STRING_ARRAY);
 	}
 
 	/**
@@ -168,8 +168,8 @@ public final class Version implements Comparable<Version>{
 		this.major = major;
 		this.minor = minor;
 		this.patch = patch;
-		this.preRelease = JavaHelper.nonNullOrDefault(preRelease, EMPTY_ARRAY);
-		this.build = JavaHelper.nonNullOrDefault(build, EMPTY_ARRAY);
+		this.preRelease = JavaHelper.nonNullOrDefault(preRelease, EMPTY_STRING_ARRAY);
+		this.build = JavaHelper.nonNullOrDefault(build, EMPTY_STRING_ARRAY);
 	}
 
 	private Version(String version) throws VersionException{
@@ -177,8 +177,8 @@ public final class Version implements Comparable<Version>{
 			major = null;
 			minor = null;
 			patch = null;
-			preRelease = EMPTY_ARRAY;
-			build = EMPTY_ARRAY;
+			preRelease = EMPTY_STRING_ARRAY;
+			build = EMPTY_STRING_ARRAY;
 			return;
 		}
 
@@ -192,7 +192,7 @@ public final class Version implements Comparable<Version>{
 			validateBuild(build);
 		}
 		else
-			build = EMPTY_ARRAY;
+			build = EMPTY_STRING_ARRAY;
 
 		if(version.contains(PRE_RELEASE_PREFIX)){
 			final String[] metadata = PATTERN_PRE_RELEASE_PREFIX.split(version, 2);
@@ -202,13 +202,14 @@ public final class Version implements Comparable<Version>{
 			validatePreRelease(preRelease);
 		}
 		else
-			preRelease = EMPTY_ARRAY;
+			preRelease = EMPTY_STRING_ARRAY;
 
 		final String[] tokens = PATTERN_DOT.split(version);
 		major = parseIdentifier(tokens, 0, KEY_MAJOR);
 		minor = parseIdentifier(tokens, 1, KEY_MINOR);
 		patch = parseIdentifier(tokens, 2, KEY_PATCH);
 	}
+
 
 	private static Integer parseIdentifier(final String[] tokens, final int index, final String type) throws VersionException{
 		Integer value = null;

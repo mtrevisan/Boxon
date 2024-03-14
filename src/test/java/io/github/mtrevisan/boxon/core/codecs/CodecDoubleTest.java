@@ -31,6 +31,7 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
+import io.github.mtrevisan.boxon.utils.TestHelper;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.BitReader;
@@ -43,19 +44,14 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.Annotation;
 import java.util.Locale;
-import java.util.Random;
 
 
-@SuppressWarnings("ALL")
 class CodecDoubleTest{
-
-	private static final Random RANDOM = new Random();
-
 
 	@Test
 	void doublePositiveLittleEndian() throws FieldException{
 		CodecInterface<BindDouble> codec = new CodecDouble();
-		double encodedValue = RANDOM.nextDouble();
+		double encodedValue = TestHelper.RANDOM.nextDouble();
 		BindDouble annotation = new BindDouble(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
@@ -113,7 +109,7 @@ class CodecDoubleTest{
 	@Test
 	void doubleNegativeLittleEndian() throws FieldException{
 		CodecInterface<BindDouble> codec = new CodecDouble();
-		double encodedValue = -RANDOM.nextDouble();
+		double encodedValue = -TestHelper.RANDOM.nextDouble();
 		BindDouble annotation = new BindDouble(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
@@ -171,7 +167,7 @@ class CodecDoubleTest{
 	@Test
 	void doublePositiveBigEndian() throws FieldException{
 		CodecInterface<BindDouble> codec = new CodecDouble();
-		double encodedValue = RANDOM.nextDouble();
+		double encodedValue = TestHelper.RANDOM.nextDouble();
 		BindDouble annotation = new BindDouble(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
@@ -229,7 +225,7 @@ class CodecDoubleTest{
 	@Test
 	void doubleNegativeBigEndian() throws FieldException{
 		CodecInterface<BindDouble> codec = new CodecDouble();
-		double encodedValue = -RANDOM.nextDouble();
+		double encodedValue = -TestHelper.RANDOM.nextDouble();
 		BindDouble annotation = new BindDouble(){
 			@Override
 			public Class<? extends Annotation> annotationType(){

@@ -260,6 +260,7 @@ enum TemplateAnnotationValidator{
 
 		for(int i = 0; i < length; i ++){
 			final ObjectChoices.ObjectChoice alternative = alternatives[i];
+
 			validateAlternative(alternative.type(), alternative.condition(), type, hasPrefix);
 
 			validateConverter(field, alternative.type(), converter);
@@ -297,6 +298,7 @@ enum TemplateAnnotationValidator{
 
 		for(int i = 0; i < length; i ++){
 			final ObjectChoicesList.ObjectChoiceList alternative = alternatives[i];
+
 			validateAlternative(alternative.type(), alternative.condition(), type, hasPrefix);
 
 			validateConverterToList(field, alternative.type(), converter, type);

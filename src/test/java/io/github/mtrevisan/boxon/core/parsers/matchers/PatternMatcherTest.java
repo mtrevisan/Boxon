@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core.parsers.matchers;
 
-import io.github.mtrevisan.boxon.core.TimeWatch;
+import io.github.mtrevisan.boxon.utils.TimeWatch;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -32,7 +32,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-@SuppressWarnings("ALL")
 class PatternMatcherTest{
 
 	@Test

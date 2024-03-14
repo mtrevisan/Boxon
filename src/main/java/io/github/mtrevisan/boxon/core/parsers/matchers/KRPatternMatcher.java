@@ -24,6 +24,8 @@
  */
 package io.github.mtrevisan.boxon.core.parsers.matchers;
 
+import java.util.Arrays;
+
 
 /**
  * An implementation of the Karp-Rabin/Rabin-Karb searching algorithm.
@@ -59,7 +61,7 @@ public final class KRPatternMatcher implements PatternMatcher{
 	@Override
 	public int[] preProcessPattern(final byte[] pattern){
 		//calculate the hash value of pattern
-		return new int[]{calculateHash(pattern, pattern.length)};
+		return new int[]{calculateHash(pattern, pattern.length, 0)};
 	}
 
 	/**
@@ -85,7 +87,7 @@ public final class KRPatternMatcher implements PatternMatcher{
 
 		//calculate the hash value of first window of source
 		final int patternHash = hashTable[0];
-		int sourceHash = calculateHash(source, offset, pattern.length);
+		int sourceHash = calculateHash(source, pattern.length, offset);
 
 		final int length = source.length - pattern.length;
 		for(int i = offset; i <= length + offset; i ++){
@@ -101,16 +103,7 @@ public final class KRPatternMatcher implements PatternMatcher{
 		return -1;
 	}
 
-	private static int calculateHash(final byte[] source, final int length){
-		int hash = 0;
-		for(int i = 0; i < length; i ++){
-			hash <<= 1;
-			hash += source[i];
-		}
-		return hash;
-	}
-
-	private static int calculateHash(final byte[] source, final int offset, final int length){
+	private static int calculateHash(final byte[] source, final int length, final int offset){
 		int hash = 0;
 		for(int i = 0; i < length; i ++){
 			hash <<= 1;
@@ -125,12 +118,7 @@ public final class KRPatternMatcher implements PatternMatcher{
 	}
 
 	private static boolean equals(final byte[] array1, final int offset, final byte[] array2){
-		int i = 0;
-		final int length = array2.length;
-		for(; i < length; i ++)
-			if(array1[i + offset] != array2[i])
-				break;
-		return (i == length);
+		return Arrays.equals(array1, offset, offset + array2.length, array2, 0, array2.length);
 	}
 
 }

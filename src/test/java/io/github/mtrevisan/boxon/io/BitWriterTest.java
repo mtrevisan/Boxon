@@ -31,7 +31,6 @@ import org.junit.jupiter.api.Test;
 import java.util.BitSet;
 
 
-@SuppressWarnings("ALL")
 class BitWriterTest{
 
 	private BitWriter writer;

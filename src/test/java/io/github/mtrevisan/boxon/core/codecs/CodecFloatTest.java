@@ -30,6 +30,7 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
+import io.github.mtrevisan.boxon.utils.TestHelper;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.BitReader;
@@ -42,19 +43,14 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.Annotation;
 import java.util.Locale;
-import java.util.Random;
 
 
-@SuppressWarnings("ALL")
 class CodecFloatTest{
-
-	private static final Random RANDOM = new Random();
-
 
 	@Test
 	void floatPositiveLittleEndian() throws FieldException{
 		CodecInterface<BindFloat> codec = new CodecFloat();
-		float encodedValue = RANDOM.nextFloat();
+		float encodedValue = TestHelper.RANDOM.nextFloat();
 		BindFloat annotation = new BindFloat(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
@@ -112,7 +108,7 @@ class CodecFloatTest{
 	@Test
 	void floatNegativeLittleEndian() throws FieldException{
 		CodecInterface<BindFloat> codec = new CodecFloat();
-		float encodedValue = -RANDOM.nextFloat();
+		float encodedValue = -TestHelper.RANDOM.nextFloat();
 		BindFloat annotation = new BindFloat(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
@@ -170,7 +166,7 @@ class CodecFloatTest{
 	@Test
 	void floatPositiveBigEndian() throws FieldException{
 		CodecInterface<BindFloat> codec = new CodecFloat();
-		float encodedValue = RANDOM.nextFloat();
+		float encodedValue = TestHelper.RANDOM.nextFloat();
 		BindFloat annotation = new BindFloat(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
@@ -228,7 +224,7 @@ class CodecFloatTest{
 	@Test
 	void floatNegativeBigEndian() throws FieldException{
 		CodecInterface<BindFloat> codec = new CodecFloat();
-		float encodedValue = -RANDOM.nextFloat();
+		float encodedValue = -TestHelper.RANDOM.nextFloat();
 		BindFloat annotation = new BindFloat(){
 			@Override
 			public Class<? extends Annotation> annotationType(){

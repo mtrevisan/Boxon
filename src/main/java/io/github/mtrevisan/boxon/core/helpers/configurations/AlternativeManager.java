@@ -82,6 +82,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 		final AlternativeSubField[] alternativeFields = annotation.value();
 		for(int i = 0, length = alternativeFields.length; i < length; i ++){
 			final AlternativeSubField fieldBinding = alternativeFields[i];
+
 			protocolVersionBoundaries.add(fieldBinding.minProtocol());
 			protocolVersionBoundaries.add(fieldBinding.maxProtocol());
 		}
@@ -100,6 +101,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 		final AlternativeSubField[] alternativeFields = annotation.value();
 		for(int j = 0, length = alternativeFields.length; match == null && j < length; j ++){
 			final AlternativeSubField fieldBinding = alternativeFields[j];
+
 			if(ConfigurationHelper.shouldBeExtracted(protocol, fieldBinding.minProtocol(), fieldBinding.maxProtocol()))
 				match = fieldBinding;
 		}
@@ -216,6 +218,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 		final AlternativeSubField[] alternativeFields = annotation.value();
 		for(int i = 0, length = alternativeFields.length; i < length; i ++){
 			final AlternativeSubField fieldBinding = alternativeFields[i];
+
 			if(ConfigurationHelper.shouldBeExtracted(protocol, fieldBinding.minProtocol(), fieldBinding.maxProtocol()))
 				return fieldBinding;
 		}

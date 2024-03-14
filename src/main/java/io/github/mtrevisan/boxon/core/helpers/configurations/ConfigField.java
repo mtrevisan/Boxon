@@ -35,7 +35,8 @@ import java.util.Objects;
 /** Data associated to an annotated field. */
 public final class ConfigField{
 
-	private static final ConfigurationSkip[] EMPTY_ARRAY = new ConfigurationSkip[0];
+	/** An empty {@code ConfigurationSkip} array. */
+	private static final ConfigurationSkip[] EMPTY_CONFIGURATION_SKIP_ARRAY = new ConfigurationSkip[0];
 
 
 	private final Field field;
@@ -54,7 +55,7 @@ public final class ConfigField{
 
 		this.field = field;
 		this.binding = binding;
-		this.skips = (skips.length > 0? skips.clone(): EMPTY_ARRAY);
+		this.skips = (skips.length > 0? skips.clone(): EMPTY_CONFIGURATION_SKIP_ARRAY);
 	}
 
 

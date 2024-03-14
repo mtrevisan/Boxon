@@ -38,7 +38,6 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 
-@SuppressWarnings("ALL")
 class ComposerThreadedTest{
 
 	private static final byte[] PAYLOAD = StringHelper.hexToByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");

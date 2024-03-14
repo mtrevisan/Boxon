@@ -59,7 +59,6 @@ import java.lang.annotation.Annotation;
 import java.util.List;
 
 
-@SuppressWarnings("ALL")
 class CodecArrayTest{
 
 	private static class Version{

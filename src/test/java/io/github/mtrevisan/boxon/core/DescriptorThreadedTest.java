@@ -38,7 +38,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
-@SuppressWarnings("ALL")
 class DescriptorThreadedTest{
 
 	@Test

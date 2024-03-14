@@ -48,6 +48,7 @@ import io.github.mtrevisan.boxon.core.helpers.templates.EvaluatedField;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.io.ByteOrder;
+import io.github.mtrevisan.boxon.utils.TestHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -60,7 +61,6 @@ import java.util.List;
 import java.util.Map;
 
 
-@SuppressWarnings("ALL")
 class TemplateTest{
 
 	private static class Mask{
@@ -86,19 +86,7 @@ class TemplateTest{
 		}
 
 		boolean hasProtocolVersion(){
-			return hasBit(mask, 2);
-		}
-
-		/**
-		 * Checks whether the given {@code mask} has the bit at {@code index} set.
-		 *
-		 * @param mask	The value to check the bit into.
-		 * @param index	The index of the bit (rightmost is zero). The value can range between {@code 0} and {@link Byte#SIZE}.
-		 * @return	The state of the bit at a given index in the given byte.
-		 */
-		private static boolean hasBit(final byte mask, final int index){
-			final int bitMask = 1 << (index % Byte.SIZE);
-			return ((mask & bitMask) != 0);
+			return TestHelper.hasBit(mask, 2);
 		}
 
 	}

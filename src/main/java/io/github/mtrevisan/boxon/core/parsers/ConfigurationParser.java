@@ -76,6 +76,7 @@ public final class ConfigurationParser{
 		parserWriterHelper = ParserWriterHelper.create();
 	}
 
+
 	/**
 	 * Assign an event listener.
 	 *

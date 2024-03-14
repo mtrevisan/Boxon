@@ -69,6 +69,7 @@ final class CodecHelper{
 	static ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> type){
 		for(int i = 0, length = alternatives.length; i < length; i ++){
 			final ObjectChoices.ObjectChoice alternative = alternatives[i];
+
 			if(alternative.type().isAssignableFrom(type))
 				return alternative;
 		}
@@ -94,6 +95,7 @@ final class CodecHelper{
 			final Class<?> type){
 		for(int i = 0, length = alternatives.length; i < length; i ++){
 			final ObjectChoicesList.ObjectChoiceList alternative = alternatives[i];
+
 			if(alternative.type().isAssignableFrom(type))
 				return alternative;
 		}

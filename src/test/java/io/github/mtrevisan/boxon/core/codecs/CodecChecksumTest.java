@@ -27,6 +27,7 @@ package io.github.mtrevisan.boxon.core.codecs;
 import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.checksummers.CRC16CCITT;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
+import io.github.mtrevisan.boxon.utils.TestHelper;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.BitReader;
@@ -39,19 +40,14 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.Annotation;
 import java.util.Locale;
-import java.util.Random;
 
 
-@SuppressWarnings("ALL")
 class CodecChecksumTest{
-
-	private static final Random RANDOM = new Random();
-
 
 	@Test
 	void checksumShort() throws FieldException{
 		CodecInterface<Checksum> codec = new CodecChecksum();
-		short encodedValue = (short)RANDOM.nextInt(0x0000_FFFF);
+		short encodedValue = (short)TestHelper.RANDOM.nextInt(0x0000_FFFF);
 		Checksum annotation = new Checksum(){
 			@Override
 			public Class<? extends Annotation> annotationType(){

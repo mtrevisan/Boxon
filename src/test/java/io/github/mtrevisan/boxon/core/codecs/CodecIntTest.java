@@ -30,6 +30,7 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
+import io.github.mtrevisan.boxon.utils.TestHelper;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.BitReader;
@@ -42,14 +43,9 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.Annotation;
 import java.util.Locale;
-import java.util.Random;
 
 
-@SuppressWarnings("ALL")
 class CodecIntTest{
-
-	private static final Random RANDOM = new Random();
-
 
 	@Test
 	void intLittleEndianNegative() throws FieldException{
@@ -228,7 +224,7 @@ class CodecIntTest{
 	@Test
 	void intLittleEndianRandom() throws FieldException{
 		CodecInterface<BindInt> codec = new CodecInt();
-		int encodedValue = RANDOM.nextInt();
+		int encodedValue = TestHelper.RANDOM.nextInt();
 		BindInt annotation = new BindInt(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
@@ -460,7 +456,7 @@ class CodecIntTest{
 	@Test
 	void intBigEndianRandom() throws FieldException{
 		CodecInterface<BindInt> codec = new CodecInt();
-		int encodedValue = RANDOM.nextInt();
+		int encodedValue = TestHelper.RANDOM.nextInt();
 		BindInt annotation = new BindInt(){
 			@Override
 			public Class<? extends Annotation> annotationType(){

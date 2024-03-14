@@ -31,16 +31,15 @@ import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
+import io.github.mtrevisan.boxon.utils.TestHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 
-@SuppressWarnings("ALL")
 class ComposerTest{
 
 	@Test
@@ -87,7 +86,7 @@ class ComposerTest{
 		Composer composer = Composer.create(core);
 
 		//parse:
-		byte[] payload = toByteArray("+ACK:GTIOB,CF8002,359464038116666,45.5,2,0020,20170101123542,11F0$");
+		byte[] payload = TestHelper.toByteArray("+ACK:GTIOB,CF8002,359464038116666,45.5,2,0020,20170101123542,11F0$");
 		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
@@ -101,11 +100,6 @@ class ComposerTest{
 
 		Assertions.assertFalse(composeResult.hasError());
 		Assertions.assertArrayEquals(payload, composeResult.getMessage());
-	}
-
-
-	private byte[] toByteArray(final String payload){
-		return payload.getBytes(StandardCharsets.ISO_8859_1);
 	}
 
 }

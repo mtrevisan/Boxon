@@ -30,6 +30,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
+import io.github.mtrevisan.boxon.utils.TestHelper;
 import io.github.mtrevisan.boxon.core.codecs.LoaderCodec;
 import io.github.mtrevisan.boxon.core.codecs.TemplateParserInterface;
 import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageASCII;
@@ -48,10 +49,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.expression.spel.SpelEvaluationException;
 
-import java.nio.charset.StandardCharsets;
 
-
-@SuppressWarnings("ALL")
 class TemplateParserTest{
 
 	@Test
@@ -120,7 +118,7 @@ class TemplateParserTest{
 
 	@Test
 	void parseSingleMessageASCII() throws FieldException{
-		byte[] payload = toByteArray("+ACK:GTIOB,CF8002,359464038116666,45.5,2,0020,20170101123542,11F0$");
+		byte[] payload = TestHelper.toByteArray("+ACK:GTIOB,CF8002,359464038116666,45.5,2,0020,20170101123542,11F0$");
 		BitReaderInterface reader = BitReader.wrap(payload);
 
 		LoaderCodec loaderCodec = LoaderCodec.create();
@@ -403,10 +401,6 @@ class TemplateParserTest{
 		Assertions.assertArrayEquals(payload, reconstructedMessage);
 	}
 
-
-	private byte[] toByteArray(final String payload){
-		return payload.getBytes(StandardCharsets.ISO_8859_1);
-	}
 
 	private void postProcessCodecs(LoaderCodec loaderCodec, TemplateParserInterface templateParser, Evaluator evaluator){
 		loaderCodec.injectFieldInCodecs(TemplateParserInterface.class, templateParser);

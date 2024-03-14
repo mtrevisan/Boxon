@@ -356,6 +356,7 @@ public enum AnnotationDescriptor{
 	public static void describeSkips(final Skip[] skips, final Collection<Map<String, Object>> rootDescription){
 		for(int j = 0, length = skips.length; j < length; j ++){
 			final Skip skip = skips[j];
+
 			final Map<String, Object> skipDescription = new HashMap<>(5);
 			putIfNotEmpty(DescriberKey.ANNOTATION_TYPE, Skip.class, skipDescription);
 			putIfNotEmpty(DescriberKey.BIND_CONDITION, skip.condition(), skipDescription);
@@ -379,6 +380,7 @@ public enum AnnotationDescriptor{
 			final Collection<Map<String, Object>> alternativesDescription = new ArrayList<>(length);
 			for(int j = 0; j < length; j ++){
 				final ObjectChoices.ObjectChoice alternative = alternatives[j];
+
 				describeObjectChoicesAlternatives(alternative.condition(), alternative.prefix(), alternative.type(), alternativesDescription);
 			}
 			rootDescription.put(DescriberKey.BIND_SELECT_CONVERTER_FROM.toString(), alternativesDescription);
@@ -398,6 +400,7 @@ public enum AnnotationDescriptor{
 			final Collection<Map<String, Object>> alternativesDescription = new ArrayList<>(length);
 			for(int j = 0; j < length; j ++){
 				final ObjectChoicesList.ObjectChoiceList alternative = alternatives[j];
+
 				describeObjectChoicesAlternatives(alternative.condition(), alternative.prefix(), alternative.type(), alternativesDescription);
 			}
 			rootDescription.put(DescriberKey.BIND_SELECT_CONVERTER_FROM.toString(), alternativesDescription);
@@ -430,6 +433,7 @@ public enum AnnotationDescriptor{
 			final Collection<Map<String, Object>> alternativesDescription = new ArrayList<>(length);
 			for(int j = 0; j < length; j ++){
 				final ConverterChoices.ConverterChoice alternative = alternatives[j];
+
 				final Map<String, Object> alternativeDescription = new HashMap<>(2);
 				putIfNotEmpty(DescriberKey.BIND_CONDITION, alternative.condition(), alternativeDescription);
 				describeConverter(alternative.converter(), alternativeDescription);

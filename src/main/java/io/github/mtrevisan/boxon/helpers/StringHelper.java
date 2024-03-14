@@ -28,7 +28,8 @@ import org.slf4j.helpers.MessageFormatter;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 
@@ -88,27 +89,17 @@ public final class StringHelper{
 			return JavaHelper.EMPTY_STRING_ARRAY;
 
 		final byte[] bytes = text.getBytes();
-		final Collection<String> list = new ArrayList<>(length >> 1);
-		int i = 0;
+		final List<String> list = new ArrayList<>(length >> 1);
 		int start = 0;
-		boolean match = false;
-		while(i < length){
+		for(int i = 0; i < length; i ++)
 			if(bytes[i] == separatorChar){
-				if(match){
+				if(start != i)
 					list.add(text.substring(start, i));
-					match = false;
-				}
-
-				start = ++ i;
+				start = i + 1;
 			}
-			else{
-				match = true;
-				i ++;
-			}
-		}
-		if(match)
-			list.add(text.substring(start, i));
-		return list.toArray(String[]::new);
+		if(start != length)
+			list.add(text.substring(start));
+		return list.toArray(JavaHelper.EMPTY_STRING_ARRAY);
 	}
 
 	/**
@@ -227,10 +218,7 @@ public final class StringHelper{
 			return false;
 
 		final byte[] stringBytes = asciiString.getBytes(StandardCharsets.US_ASCII);
-		for(int i = 0, length = stringBytes.length; i < length; i ++)
-			if(byteArray[i] != stringBytes[i])
-				return false;
-		return true;
+		return Arrays.equals(byteArray, 0, stringBytes.length, stringBytes, 0, stringBytes.length);
 	}
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2024 Mauro Trevisan
+ * Copyright (c) 2024 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -22,45 +22,34 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.semanticversioning;
+package io.github.mtrevisan.boxon.utils;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import java.nio.charset.StandardCharsets;
+import java.util.Random;
 
 
-class VersionCompareTest{
+public class TestHelper{
 
-	@Test
-	void shouldReturnFalseIfOtherVersionIsNull(){
-		Version v1 = Version.of("2.3.7");
-		Version v2 = null;
+	public static final Random RANDOM = new Random(System.currentTimeMillis());
 
-		Assertions.assertNotEquals(v1, v2);
+
+	private TestHelper(){}
+
+
+	/**
+	 * Checks whether the given {@code mask} has the bit at {@code index} set.
+	 *
+	 * @param mask	The value to check the bit into.
+	 * @param index	The index of the bit (rightmost is zero). The value can range between {@code 0} and {@link Byte#SIZE}.
+	 * @return	The state of the bit at a given index in the given byte.
+	 */
+	public static boolean hasBit(final byte mask, final int index){
+		final int bitMask = 1 << (index % Byte.SIZE);
+		return ((mask & bitMask) != 0);
 	}
 
-	@Test
-	void preReleaseShouldHaveLowerPrecedenceThanAssociatedNormal(){
-		Version v1 = Version.of("1.3.7");
-		Version v2 = Version.of("1.3.7-alpha");
-
-		Assertions.assertTrue(v1.compareTo(v2) > 0);
-		Assertions.assertTrue(v2.compareTo(v1) < 0);
-	}
-
-	@Test
-	void preRelease1(){
-		Version v1 = Version.of("2.3.7-alpha");
-		Version v2 = Version.of("2.3.7-beta");
-
-		Assertions.assertTrue(v1.isLessThan(v2));
-	}
-
-	@Test
-	void preRelease2(){
-		Version v1 = Version.of("2.3.7-beta.1");
-		Version v2 = Version.of("2.3.7-beta.2");
-
-		Assertions.assertTrue(v1.isLessThan(v2));
+	public static byte[] toByteArray(final String payload){
+		return payload.getBytes(StandardCharsets.ISO_8859_1);
 	}
 
 }

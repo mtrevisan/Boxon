@@ -90,7 +90,7 @@ public @interface BindStringTerminated{
 	/**
 	 * The choices to select from to apply a given converter.
 	 *
-	 * @return The choices to select from to apply a given converter (defaults to empty {@link ConverterChoices}).
+	 * @return	The choices to select from to apply a given converter (defaults to empty {@link ConverterChoices}).
 	 */
 	ConverterChoices selectConverterFrom() default @ConverterChoices;
 

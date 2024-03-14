@@ -27,7 +27,6 @@ package io.github.mtrevisan.boxon.core.codecs.queclink;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
 
 
-@SuppressWarnings("ALL")
 public enum DownloadProtocol implements ConfigurationEnum{
 
 	HTTP(0),

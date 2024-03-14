@@ -96,6 +96,7 @@ public final class ValueOf<T extends Enum<T>, K>{
 			: new ConcurrentHashMap<>(enumConstants.length));
 	}
 
+
 	/**
 	 * Return the enum value corresponding to the given value.
 	 *

@@ -32,6 +32,7 @@ import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.utils.MultithreadingHelper;
+import io.github.mtrevisan.boxon.utils.PrettyPrintMap;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -39,7 +40,6 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 
-@SuppressWarnings("ALL")
 class ConfiguratorThreadedTest{
 
 	@Test

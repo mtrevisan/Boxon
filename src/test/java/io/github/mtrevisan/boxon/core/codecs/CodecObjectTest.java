@@ -60,7 +60,6 @@ import java.lang.annotation.Annotation;
 import java.util.List;
 
 
-@SuppressWarnings("ALL")
 class CodecObjectTest{
 
 	private static class Version{

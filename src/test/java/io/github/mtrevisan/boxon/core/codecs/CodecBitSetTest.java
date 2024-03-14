@@ -30,6 +30,7 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
+import io.github.mtrevisan.boxon.utils.TestHelper;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
@@ -46,21 +47,16 @@ import org.junit.jupiter.api.Test;
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.BitSet;
-import java.util.Random;
 
 
-@SuppressWarnings("ALL")
 class CodecBitSetTest{
-
-	private static final Random RANDOM = new Random();
-
 
 	@Test
 	void bitsLittleEndian() throws FieldException{
 		CodecInterface<BindBitSet> codec = new CodecBitSet();
-//		byte[] randomBytes = new byte[123];
-//		RANDOM.nextBytes(randomBytes);
-byte[] randomBytes = new byte[]{(byte)0xAB, (byte)0xCD};
+		//byte[] randomBytes = new byte[]{(byte)0xAB, (byte)0xCD};
+		byte[] randomBytes = new byte[123];
+		TestHelper.RANDOM.nextBytes(randomBytes);
 		BitSet encodedValue = BitSet.valueOf(randomBytes);
 		BindBitSet annotation = new BindBitSet(){
 			@Override
@@ -126,34 +122,11 @@ byte[] randomBytes = new byte[]{(byte)0xAB, (byte)0xCD};
 		Assertions.assertEquals(encodedValue, decoded);
 	}
 
-	/**
-	 * In-place reverse the endianness bit by bit.
-	 */
-	private static void bitReverse(final byte[] array){
-		for(int i = 0; i < array.length; i ++)
-			array[i] = reverseBits(array[i]);
-		reverse(array);
-	}
-
-	private static byte reverseBits(byte number){
-		byte reverse = 0;
-		for(int i = Byte.SIZE - 1; i >= 0; i --){
-			reverse += ((number & 1) << i);
-			number >>= 1;
-		}
-		return reverse;
-	}
-
-	private static void reverse(final byte[] array){
-		for(int start = 0, end = array.length - 1; start < end; start ++, end --)
-			array[start] ^= array[end] ^ (array[end] = array[start]);
-	}
-
 	@Test
 	void bitsBigEndian() throws FieldException{
 		CodecInterface<BindBitSet> codec = new CodecBitSet();
 		byte[] randomBytes = new byte[123];
-		RANDOM.nextBytes(randomBytes);
+		TestHelper.RANDOM.nextBytes(randomBytes);
 		BitSet encodedValue = BitSet.valueOf(randomBytes);
 		BindBitSet annotation = new BindBitSet(){
 			@Override
