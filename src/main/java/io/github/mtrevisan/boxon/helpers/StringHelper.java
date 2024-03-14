@@ -74,7 +74,7 @@ public final class StringHelper{
 	/**
 	 * Split the given text into an array, separator specified.
 	 * <p>
-	 *    The separator is not included in the returned String array.
+	 * The separator is not included in the returned String array.
 	 * Adjacent separators are treated as one separator.
 	 * </p>
 	 *
@@ -210,8 +210,7 @@ public final class StringHelper{
 		final byte[] data = new byte[length];
 		if(length > 0){
 			final byte[] bytes = asciiString.getBytes();
-			for(int i = 0; i < length; i ++)
-				data[i] = bytes[i];
+			System.arraycopy(bytes, 0, data, 0, length);
 		}
 		return data;
 	}

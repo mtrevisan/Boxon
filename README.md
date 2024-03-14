@@ -776,6 +776,9 @@ Assign a constant, calculated value to a field.
 
 Note that the evaluations are done AFTER parsing the entire message.
 
+This annotation with `runLast` to `true` can be used to force a parameter to have a certain value, after perhaps using it to calculate other parameters.
+Its effect cannot be undone.
+
 #### annotation type
 
 This annotation is bounded to a variable.
