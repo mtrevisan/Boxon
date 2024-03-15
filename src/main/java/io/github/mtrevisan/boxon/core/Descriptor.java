@@ -164,7 +164,8 @@ public final class Descriptor{
 		description.put(DescriberKey.HEADER.toString(), headerDescription);
 	}
 
-	private static void describeBoundedFields(final List<BoundedField> fields, final Map<String, Object> description) throws TemplateException{
+	private static void describeBoundedFields(final List<BoundedField> fields, final Map<String, Object> description)
+			throws TemplateException{
 		final int length = fields.size();
 		final Collection<Map<String, Object>> fieldsDescription = new ArrayList<>(length);
 		for(int i = 0; i < length; i ++)
@@ -270,7 +271,7 @@ public final class Descriptor{
 		return Collections.unmodifiableList(description);
 	}
 
-	private Map<String, Object> describeConfiguration(final ConfigurationMessage<?> configuration) throws ConfigurationException{
+	private static Map<String, Object> describeConfiguration(final ConfigurationMessage<?> configuration) throws ConfigurationException{
 		final Map<String, Object> description = new HashMap<>(3);
 		description.put(ConfigurationKey.CONFIGURATION.toString(), configuration.getType().getName());
 		describeHeader(configuration.getHeader(), description);
@@ -290,7 +291,8 @@ public final class Descriptor{
 		description.put(ConfigurationKey.HEADER.toString(), headerDescription);
 	}
 
-	private static void describeConfigFields(final List<ConfigField> fields, final Map<String, Object> description) throws ConfigurationException{
+	private static void describeConfigFields(final List<ConfigField> fields, final Map<String, Object> description)
+			throws ConfigurationException{
 		final int length = fields.size();
 		final Collection<Map<String, Object>> fieldsDescription = new ArrayList<>(length);
 		for(int i = 0; i < length; i ++)

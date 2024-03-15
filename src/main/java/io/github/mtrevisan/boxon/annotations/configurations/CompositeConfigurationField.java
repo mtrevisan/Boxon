@@ -63,6 +63,7 @@ public @interface CompositeConfigurationField{
 	 */
 	String longDescription() default "";
 
+
 	/**
 	 * The lowest protocol the field is in.
 	 *

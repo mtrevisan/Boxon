@@ -99,7 +99,7 @@ enum ConfigurationAnnotationValidator{
 			ValidationHelper.validateProtocol(configData, minProtocolVersion, maxProtocolVersion);
 		}
 
-		private void validateMinimumParameters(final ConfigFieldData field) throws AnnotationException{
+		private static void validateMinimumParameters(final ConfigFieldData field) throws AnnotationException{
 			//one only of `pattern`, `minValue`/`maxValue`, and `enumeration` should be set:
 			final boolean hasPattern = !field.getPattern().isEmpty();
 			final boolean hasMinMaxValues = (!field.getMinValue().isEmpty() || !field.getMaxValue().isEmpty());
@@ -112,7 +112,7 @@ enum ConfigurationAnnotationValidator{
 				throw AnnotationException.create("Array field should have `enumeration`");
 		}
 
-		private boolean moreThanOneSet(final boolean hasPattern, final boolean hasMinMaxValues, final boolean hasEnumeration){
+		private static boolean moreThanOneSet(final boolean hasPattern, final boolean hasMinMaxValues, final boolean hasEnumeration){
 			return (hasPattern && (hasMinMaxValues || hasEnumeration)
 				|| hasMinMaxValues && hasEnumeration);
 		}
@@ -190,7 +190,7 @@ enum ConfigurationAnnotationValidator{
 			}
 		}
 
-		private void validateMinimumParameters(final Field field, final ConfigFieldData configData) throws AnnotationException{
+		private static void validateMinimumParameters(final Field field, final ConfigFieldData configData) throws AnnotationException{
 			final Class<?> fieldType = field.getType();
 			if(fieldType.isArray() && !configData.hasEnumeration())
 				throw AnnotationException.create("Array field should have `enumeration`");
@@ -218,7 +218,7 @@ enum ConfigurationAnnotationValidator{
 			ValidationHelper.validateProtocol(configData, minProtocolVersion, maxProtocolVersion);
 		}
 
-		private void validateMinimumParameters(final AlternativeSubField binding) throws AnnotationException{
+		private static void validateMinimumParameters(final AlternativeSubField binding) throws AnnotationException{
 			final String pattern = binding.pattern();
 			final String minValue = binding.minValue();
 			final String maxValue = binding.maxValue();

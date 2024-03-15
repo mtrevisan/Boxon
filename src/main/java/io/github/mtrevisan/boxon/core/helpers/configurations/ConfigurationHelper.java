@@ -64,7 +64,7 @@ public final class ConfigurationHelper{
 	}
 
 	private static boolean isValidValue(final Object value){
-		return (value != null && (!(value instanceof String v) || !StringHelper.isBlank(v)));
+		return (value != null && (!(value instanceof final String v) || !StringHelper.isBlank(v)));
 	}
 
 

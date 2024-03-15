@@ -234,7 +234,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 		final AlternativeSubField fieldBinding = extractField(protocol);
 		if(fieldBinding != null){
 			final Class<?> fieldType = field.getType();
-			if(dataValue instanceof String v)
+			if(dataValue instanceof final String v)
 				dataValue = ParserDataType.getValue(fieldType, v);
 
 			final ConfigFieldData configData = ConfigFieldDataBuilder.create(field, annotation);

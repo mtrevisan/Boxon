@@ -44,6 +44,11 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoicesList;
+import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationField;
+import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
+import io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField;
+import io.github.mtrevisan.boxon.annotations.configurations.CompositeSubField;
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
@@ -316,6 +321,68 @@ public enum AnnotationDescriptor{
 			putIfNotEmpty(DescriberKey.BIND_CONDITION, binding.condition(), rootDescription);
 			putIfNotEmpty(DescriberKey.BIND_VALUE, binding.value(), rootDescription);
 		}
+	},
+
+
+	/**
+	 * Descriptor of the {@link ConfigurationField} annotation.
+	 */
+	CONFIG_FIELD(ConfigurationField.class){
+		@Override
+		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
+			final ConfigurationField binding = (ConfigurationField)annotation;
+			putIfNotEmpty(ConfigurationKey.SHORT_DESCRIPTION, binding.shortDescription(), rootDescription);
+			putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, binding.longDescription(), rootDescription);
+			putIfNotEmpty(ConfigurationKey.UNIT_OF_MEASURE, binding.unitOfMeasure(), rootDescription);
+			putIfNotEmpty(ConfigurationKey.MIN_PROTOCOL, binding.minProtocol(), rootDescription);
+			putIfNotEmpty(ConfigurationKey.MAX_PROTOCOL, binding.maxProtocol(), rootDescription);
+			putIfNotEmpty(ConfigurationKey.MIN_VALUE, binding.minValue(), rootDescription);
+			putIfNotEmpty(ConfigurationKey.MAX_VALUE, binding.maxValue(), rootDescription);
+			putIfNotEmpty(ConfigurationKey.PATTERN, binding.pattern(), rootDescription);
+			putIfNotEmpty(ConfigurationKey.ENUMERATION, binding.enumeration(), rootDescription);
+			putIfNotEmpty(ConfigurationKey.DEFAULT_VALUE, binding.defaultValue(), rootDescription);
+			putIfNotEmpty(ConfigurationKey.CHARSET, binding.charset(), rootDescription);
+			putIfNotEmpty(ConfigurationKey.RADIX, binding.radix(), rootDescription);
+			putIfNotEmpty(ConfigurationKey.TERMINATOR, binding.terminator(), rootDescription);
+		}
+	},
+
+	/**
+	 * Descriptor of the {@link CompositeConfigurationField} annotation.
+	 */
+	COMPOSITE_CONFIG_FIELD(CompositeConfigurationField.class){
+		@Override
+		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
+			final CompositeConfigurationField binding = (CompositeConfigurationField)annotation;
+			putIfNotEmpty(ConfigurationKey.SHORT_DESCRIPTION, binding.shortDescription(), rootDescription);
+			putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, binding.longDescription(), rootDescription);
+			putIfNotEmpty(ConfigurationKey.MIN_PROTOCOL, binding.minProtocol(), rootDescription);
+			putIfNotEmpty(ConfigurationKey.MAX_PROTOCOL, binding.maxProtocol(), rootDescription);
+			describeComposite(binding.value(), rootDescription);
+			putIfNotEmpty(ConfigurationKey.PATTERN, binding.pattern(), rootDescription);
+			putIfNotEmpty(ConfigurationKey.COMPOSITION, binding.composition(), rootDescription);
+			putIfNotEmpty(ConfigurationKey.CHARSET, binding.charset(), rootDescription);
+			putIfNotEmpty(ConfigurationKey.TERMINATOR, binding.terminator(), rootDescription);
+		}
+	},
+
+	/**
+	 * Descriptor of the {@link AlternativeConfigurationField} annotation.
+	 */
+	ALTERNATIVE_CONFIG_FIELD(AlternativeConfigurationField.class){
+		@Override
+		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
+			final AlternativeConfigurationField binding = (AlternativeConfigurationField)annotation;
+			putIfNotEmpty(ConfigurationKey.SHORT_DESCRIPTION, binding.shortDescription(), rootDescription);
+			putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, binding.longDescription(), rootDescription);
+			putIfNotEmpty(ConfigurationKey.UNIT_OF_MEASURE, binding.unitOfMeasure(), rootDescription);
+			putIfNotEmpty(ConfigurationKey.MIN_PROTOCOL, binding.minProtocol(), rootDescription);
+			putIfNotEmpty(ConfigurationKey.MAX_PROTOCOL, binding.maxProtocol(), rootDescription);
+			describeAlternatives(binding.value(), rootDescription);
+			putIfNotEmpty(ConfigurationKey.VALUE, binding.value(), rootDescription);
+			putIfNotEmpty(ConfigurationKey.ENUMERATION, binding.enumeration(), rootDescription);
+			putIfNotEmpty(ConfigurationKey.TERMINATOR, binding.terminator(), rootDescription);
+		}
 	};
 
 
@@ -464,6 +531,60 @@ public enum AnnotationDescriptor{
 		}
 	}
 
+	private static void describeAlternatives(final AlternativeSubField[] alternatives,
+		final Map<String, Object> rootDescription){
+		final int length = alternatives.length;
+		if(length > 0){
+			final Collection<Map<String, Object>> alternativesDescription = new ArrayList<>(length);
+			for(int j = 0; j < length; j ++){
+				final AlternativeSubField alternative = alternatives[j];
+
+				describeObjectChoicesAlternatives(alternative, alternativesDescription);
+			}
+			rootDescription.put(DescriberKey.BIND_SELECT_CONVERTER_FROM.toString(), alternativesDescription);
+		}
+	}
+
+	private static void describeObjectChoicesAlternatives(final AlternativeSubField alternative,
+			final Collection<Map<String, Object>> alternativesDescription){
+		final Map<String, Object> alternativeDescription = new HashMap<>(3);
+		putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, alternative.longDescription(), alternativeDescription);
+		putIfNotEmpty(ConfigurationKey.UNIT_OF_MEASURE, alternative.unitOfMeasure(), alternativeDescription);
+		putIfNotEmpty(ConfigurationKey.MIN_PROTOCOL, alternative.minProtocol(), alternativeDescription);
+		putIfNotEmpty(ConfigurationKey.MAX_PROTOCOL, alternative.maxProtocol(), alternativeDescription);
+		putIfNotEmpty(ConfigurationKey.MIN_VALUE, alternative.minValue(), alternativeDescription);
+		putIfNotEmpty(ConfigurationKey.MAX_VALUE, alternative.maxValue(), alternativeDescription);
+		putIfNotEmpty(ConfigurationKey.PATTERN, alternative.pattern(), alternativeDescription);
+		putIfNotEmpty(ConfigurationKey.DEFAULT_VALUE, alternative.defaultValue(), alternativeDescription);
+		putIfNotEmpty(ConfigurationKey.CHARSET, alternative.charset(), alternativeDescription);
+		putIfNotEmpty(ConfigurationKey.RADIX, alternative.radix(), alternativeDescription);
+		alternativesDescription.add(alternativeDescription);
+	}
+
+	private static void describeComposite(final CompositeSubField[] composites, final Map<String, Object> rootDescription){
+		final int length = composites.length;
+		if(length > 0){
+			final Collection<Map<String, Object>> alternativesDescription = new ArrayList<>(length);
+			for(int j = 0; j < length; j ++){
+				final CompositeSubField composite = composites[j];
+
+				describeFieldComposite(composite, alternativesDescription);
+			}
+			rootDescription.put(DescriberKey.BIND_SELECT_CONVERTER_FROM.toString(), alternativesDescription);
+		}
+	}
+
+	private static void describeFieldComposite(final CompositeSubField composite,
+			final Collection<Map<String, Object>> alternativesDescription){
+		final Map<String, Object> alternativeDescription = new HashMap<>(3);
+		putIfNotEmpty(ConfigurationKey.SHORT_DESCRIPTION, composite.shortDescription(), alternativeDescription);
+		putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, composite.longDescription(), alternativeDescription);
+		putIfNotEmpty(ConfigurationKey.UNIT_OF_MEASURE, composite.unitOfMeasure(), alternativeDescription);
+		putIfNotEmpty(ConfigurationKey.PATTERN, composite.pattern(), alternativeDescription);
+		putIfNotEmpty(ConfigurationKey.DEFAULT_VALUE, composite.defaultValue(), alternativeDescription);
+		alternativesDescription.add(alternativeDescription);
+	}
+
 	/**
 	 * Put the pair key-value into the given map.
 	 *
@@ -472,7 +593,7 @@ public enum AnnotationDescriptor{
 	 * @param map	The map in which to load the key-value pair.
 	 */
 	public static void putIfNotEmpty(final DescriberKey key, final Object value, @SuppressWarnings("BoundedWildcard") final Map<String, Object> map){
-		if(value != null && (!(value instanceof String v) || !StringHelper.isBlank(v)))
+		if(value != null && (!(value instanceof final String v) || !StringHelper.isBlank(v)))
 			map.put(key.toString(), value);
 	}
 
@@ -496,7 +617,7 @@ public enum AnnotationDescriptor{
 	 * @param map	The map in which to load the key-value pair.
 	 */
 	public static void putIfNotEmpty(final ConfigurationKey key, final Object value, @SuppressWarnings("BoundedWildcard") final Map<String, Object> map){
-		if(value != null && (!(value instanceof String v) || !StringHelper.isBlank(v)))
+		if(value != null && (!(value instanceof final String v) || !StringHelper.isBlank(v)))
 			map.put(key.toString(), value);
 	}
 

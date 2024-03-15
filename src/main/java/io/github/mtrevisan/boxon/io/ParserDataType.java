@@ -267,7 +267,7 @@ public enum ParserDataType{
 	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
 	 */
 	public static Object getValueOrSelf(final Class<?> fieldType, final Object value) throws CodecException{
-		return (value instanceof String v
+		return (value instanceof final String v
 			? getValue(fieldType, v)
 			: value);
 	}

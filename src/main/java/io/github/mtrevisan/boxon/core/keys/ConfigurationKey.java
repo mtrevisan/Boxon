@@ -48,11 +48,15 @@ public enum ConfigurationKey{
 	MAX_PROTOCOL("maxProtocol"),
 	MIN_VALUE("minValue"),
 	MAX_VALUE("maxValue"),
+	VALUE("value"),
 	PATTERN("pattern"),
 	ENUMERATION("enumeration"),
 	MUTUALLY_EXCLUSIVE("mutuallyExclusive"),
 	DEFAULT_VALUE("defaultValue"),
-	CHARSET("charset");
+	COMPOSITION("composition"),
+	CHARSET("charset"),
+	RADIX("radix"),
+	TERMINATOR("terminator");
 
 
 	private final String name;

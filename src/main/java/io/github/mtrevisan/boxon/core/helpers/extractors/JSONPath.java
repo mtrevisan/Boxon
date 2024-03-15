@@ -183,14 +183,14 @@ public final class JSONPath{
 	}
 
 	private static Object extractPath(final Object data, final Integer idx, final Object defaultValue){
-		return (data instanceof List<?> lst
+		return (data instanceof final List<?> lst
 			? (idx >= 0 && idx < lst.size()? lst.get(idx): defaultValue)
 			: (idx >= 0 && idx < Array.getLength(data)? Array.get(data, idx): defaultValue));
 	}
 
 	private static Object extractPath(final Object data, final String currentPath, final Object defaultValue){
 		Object nextData;
-		if(data instanceof Map<?, ?> m)
+		if(data instanceof final Map<?, ?> m)
 			nextData = (m.containsKey(currentPath)
 				? m.get(currentPath)
 				: defaultValue);
