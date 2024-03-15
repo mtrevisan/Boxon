@@ -25,13 +25,20 @@
 package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
+import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationMessage;
 import io.github.mtrevisan.boxon.core.helpers.descriptors.AnnotationDescriptor;
 import io.github.mtrevisan.boxon.core.helpers.templates.BoundedField;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
+import io.github.mtrevisan.boxon.core.keys.ConfigurationKey;
 import io.github.mtrevisan.boxon.core.keys.DescriberKey;
+import io.github.mtrevisan.boxon.core.parsers.ConfigurationParser;
+import io.github.mtrevisan.boxon.core.parsers.LoaderConfiguration;
 import io.github.mtrevisan.boxon.core.parsers.LoaderTemplate;
 import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
+import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.helpers.ContextHelper;
 
@@ -55,6 +62,7 @@ public final class Descriptor{
 	private final Core core;
 
 	private final LoaderTemplate loaderTemplate;
+	private final LoaderConfiguration loaderConfiguration;
 
 
 	/**
@@ -72,6 +80,8 @@ public final class Descriptor{
 		this.core = core;
 		final TemplateParser templateParser = core.getTemplateParser();
 		loaderTemplate = templateParser.getLoaderTemplate();
+		final ConfigurationParser configurationParser = core.getConfigurationParser();
+		loaderConfiguration = configurationParser.getLoaderConfiguration();
 	}
 
 
@@ -81,7 +91,7 @@ public final class Descriptor{
 	 * @return	The list of descriptions.
 	 * @throws TemplateException	If a template is not well formatted.
 	 */
-	public List<Map<String, Object>> describe() throws TemplateException{
+	public List<Map<String, Object>> describeTemplate() throws TemplateException{
 		final Collection<Template<?>> templates = new HashSet<>(loaderTemplate.getTemplates());
 
 		final List<Map<String, Object>> description = new ArrayList<>(templates.size());
@@ -98,7 +108,7 @@ public final class Descriptor{
 	 * @throws AnnotationException	If an annotation is not well formatted.
 	 * @throws TemplateException	If a template is not well formatted.
 	 */
-	public Map<String, Object> describe(final Class<?> templateClass) throws AnnotationException, TemplateException{
+	public Map<String, Object> describeTemplate(final Class<?> templateClass) throws AnnotationException, TemplateException{
 		if(templateClass.isAnnotationPresent(MessageHeader.class)){
 			final Template<?> template = loaderTemplate.extractTemplate(templateClass);
 			return describeTemplate(template);
@@ -116,7 +126,7 @@ public final class Descriptor{
 	 * @throws AnnotationException	If an annotation is not well formatted.
 	 * @throws TemplateException	If a template is not well formatted.
 	 */
-	public List<Map<String, Object>> describe(final Class<?>... templateClasses) throws AnnotationException, TemplateException{
+	public List<Map<String, Object>> describeTemplate(final Class<?>... templateClasses) throws AnnotationException, TemplateException{
 		final int length = templateClasses.length;
 		for(int i = 0; i < length; i ++){
 			final Class<?> templateClass = templateClasses[i];
@@ -188,6 +198,94 @@ public final class Descriptor{
 		ctx.remove(ContextHelper.CONTEXT_CHOICE_PREFIX);
 		if(!ctx.isEmpty())
 			description.put(DescriberKey.CONTEXT.toString(), ctx);
+	}
+
+
+	/**
+	 * Description of all the loaded configuration.
+	 *
+	 * @return	The list of descriptions.
+	 * @throws ConfigurationException	If a configuration is not well formatted.
+	 */
+	public List<Map<String, Object>> describeConfiguration() throws ConfigurationException{
+		final Collection<ConfigurationMessage<?>> configurations = new HashSet<>(loaderConfiguration.getConfigurations());
+
+		final List<Map<String, Object>> description = new ArrayList<>(configurations.size());
+		for(final ConfigurationMessage<?> configuration : configurations)
+			description.add(describeConfiguration(configuration));
+		return Collections.unmodifiableList(description);
+	}
+
+	/**
+	 * Description of a single configuration annotated with {@link ConfigurationHeader}.
+	 *
+	 * @param configurationClass	configuration class to be described.
+	 * @return	The list of descriptions.
+	 * @throws AnnotationException	If an annotation is not well formatted.
+	 * @throws ConfigurationException	If a configuration is not well formatted.
+	 * @throws EncodeException	If a configuration cannot be retrieved.
+	 */
+	public Map<String, Object> describeConfiguration(final Class<?> configurationClass) throws AnnotationException, ConfigurationException,
+			EncodeException{
+		final ConfigurationHeader header = configurationClass.getAnnotation(ConfigurationHeader.class);
+		if(header != null){
+			final ConfigurationMessage<?> configuration = loaderConfiguration.getConfiguration(header.shortDescription());
+			return describeConfiguration(configuration);
+		}
+
+		throw AnnotationException.create("Configuration {} didn't have the `ConfigurationHeader` annotation",
+			configurationClass.getSimpleName());
+	}
+
+	/**
+	 * Description of all the configurations in the given package annotated with {@link ConfigurationHeader}.
+	 *
+	 * @param configurationClasses	Classes to be used ase starting point from which to load annotated classes.
+	 * @return	The list of descriptions.
+	 * @throws AnnotationException	If an annotation is not well formatted.
+	 * @throws ConfigurationException	If a configuration is not well formatted.
+	 * @throws EncodeException	If a configuration cannot be retrieved.
+	 */
+	public List<Map<String, Object>> describeConfiguration(final Class<?>... configurationClasses) throws AnnotationException,
+			ConfigurationException, EncodeException{
+		final int length = configurationClasses.length;
+		for(int i = 0; i < length; i ++){
+			final Class<?> configurationClass = configurationClasses[i];
+
+			if(!configurationClass.isAnnotationPresent(ConfigurationHeader.class))
+				throw AnnotationException.create("Configuration {} didn't have the `ConfigurationHeader` annotation",
+					configurationClass.getSimpleName());
+		}
+
+		final List<Map<String, Object>> description = new ArrayList<>(length);
+		for(int i = 0; i < length; i ++){
+			final Class<?> configurationClass = configurationClasses[i];
+
+			final ConfigurationHeader header = configurationClass.getAnnotation(ConfigurationHeader.class);
+
+			final ConfigurationMessage<?> configuration = loaderConfiguration.getConfiguration(header.shortDescription());
+			description.add(describeConfiguration(configuration));
+		}
+		return Collections.unmodifiableList(description);
+	}
+
+	private Map<String, Object> describeConfiguration(final ConfigurationMessage<?> configuration) throws ConfigurationException{
+		final Map<String, Object> description = new HashMap<>(3);
+		description.put(ConfigurationKey.CONFIGURATION.toString(), configuration.getType().getName());
+		describeHeader(configuration.getHeader(), description);
+		return Collections.unmodifiableMap(description);
+	}
+
+	private static void describeHeader(final ConfigurationHeader header, final Map<String, Object> description){
+		final Map<String, Object> headerDescription = new HashMap<>(3);
+		AnnotationDescriptor.putIfNotEmpty(ConfigurationKey.SHORT_DESCRIPTION, header.shortDescription(), headerDescription);
+		AnnotationDescriptor.putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, header.longDescription(), headerDescription);
+		AnnotationDescriptor.putIfNotEmpty(ConfigurationKey.MIN_PROTOCOL, header.minProtocol(), headerDescription);
+		AnnotationDescriptor.putIfNotEmpty(ConfigurationKey.MAX_PROTOCOL, header.maxProtocol(), headerDescription);
+		AnnotationDescriptor.putIfNotEmpty(ConfigurationKey.HEADER_START, header.start(), headerDescription);
+		AnnotationDescriptor.putIfNotEmpty(ConfigurationKey.HEADER_END, header.end(), headerDescription);
+		AnnotationDescriptor.putIfNotEmpty(ConfigurationKey.HEADER_CHARSET, header.charset(), headerDescription);
+		description.put(ConfigurationKey.HEADER.toString(), headerDescription);
 	}
 
 }

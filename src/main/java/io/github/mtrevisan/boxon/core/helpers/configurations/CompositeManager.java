@@ -129,7 +129,7 @@ final class CompositeManager implements ConfigurationManagerInterface{
 
 			compositeFieldsMap.put(bindings[j].shortDescription(), fieldMap);
 		}
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.CONFIGURATION_COMPOSITE_FIELDS, compositeFieldsMap, compositeMap);
+		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.COMPOSITE_FIELDS, compositeFieldsMap, compositeMap);
 
 		if(protocol.isEmpty())
 			ConfigurationHelper.extractMinMaxProtocol(annotation.minProtocol(), annotation.maxProtocol(), compositeMap);

@@ -29,10 +29,15 @@ package io.github.mtrevisan.boxon.core.keys;
  * Holds the constants used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}.
  */
 public enum ConfigurationKey{
-	CONFIGURATION_HEADER("header"),
-	CONFIGURATION_FIELDS("fields"),
-	CONFIGURATION_PROTOCOL_VERSION_BOUNDARIES("protocolVersionBoundaries"),
-	CONFIGURATION_COMPOSITE_FIELDS("fields"),
+	CONFIGURATION("configuration"),
+
+	HEADER("header"),
+	HEADER_START("start"),
+	HEADER_END("end"),
+	HEADER_CHARSET("charset"),
+	FIELDS("fields"),
+	PROTOCOL_VERSION_BOUNDARIES("protocolVersionBoundaries"),
+	COMPOSITE_FIELDS("fields"),
 
 	ALTERNATIVES("alternatives"),
 	FIELD_TYPE("fieldType"),

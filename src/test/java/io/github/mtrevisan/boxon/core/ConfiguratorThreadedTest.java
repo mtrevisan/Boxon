@@ -24,11 +24,9 @@
  */
 package io.github.mtrevisan.boxon.core;
 
-import io.github.mtrevisan.boxon.core.codecs.queclink.DeviceTypes;
 import io.github.mtrevisan.boxon.core.codecs.queclink.REGConfigurationASCII;
 import io.github.mtrevisan.boxon.core.keys.ConfigurationKey;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.utils.MultithreadingHelper;
@@ -54,10 +52,10 @@ class ConfiguratorThreadedTest{
 		MultithreadingHelper.testMultithreading(configurator::getConfigurations,
 			configurations -> {
 				Map<String, Object> configuration = configurations.getFirst();
-				String jsonHeader = PrettyPrintMap.toString(configuration.get(ConfigurationKey.CONFIGURATION_HEADER.toString()));
-				String jsonFields = PrettyPrintMap.toString(configuration.get(ConfigurationKey.CONFIGURATION_FIELDS.toString()));
+				String jsonHeader = PrettyPrintMap.toString(configuration.get(ConfigurationKey.HEADER.toString()));
+				String jsonFields = PrettyPrintMap.toString(configuration.get(ConfigurationKey.FIELDS.toString()));
 				String jsonProtocolVersionBoundaries = PrettyPrintMap.toString(configuration.get(
-					ConfigurationKey.CONFIGURATION_PROTOCOL_VERSION_BOUNDARIES.toString()));
+					ConfigurationKey.PROTOCOL_VERSION_BOUNDARIES.toString()));
 
 				Assertions.assertEquals("{longDescription:The command AT+GTREG is used to do things.,maxProtocol:2.8,shortDescription:AT+GTREG}", jsonHeader);
 				Assertions.assertEquals("{Operation mode report interval:{minValue:3600,unitOfMeasure:s,maxValue:86400,defaultValue:3600,minProtocol:1.21,fieldType:int},Maximum download retry count:{alternatives:[{maxProtocol:1.20,minValue:0,fieldType:int,maxValue:3,defaultValue:0},{minValue:0,fieldType:int,maxValue:3,minProtocol:1.21,defaultValue:1}]},Download timeout:{alternatives:[{maxProtocol:1.18,minValue:5,unitOfMeasure:min,fieldType:int,maxValue:30,defaultValue:10},{minValue:5,unitOfMeasure:min,fieldType:int,maxValue:30,minProtocol:1.19,defaultValue:20}]},Weekday:{defaultValue:[MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY],enumeration:[MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY]},Update Over-The-Air:{defaultValue:FALSE,mutuallyExclusive:true,enumeration:[TRUE, FALSE]},Header:{charset:UTF-8,defaultValue:GTREG,fieldType:String},Download protocol:{alternatives:[{maxProtocol:1.35,enumeration:[HTTP, HTTPS],defaultValue:HTTP,mutuallyExclusive:true},{enumeration:[HTTP, HTTPS],minProtocol:1.36,defaultValue:HTTPS,mutuallyExclusive:true}]},Download URL:{pattern:.{0,100},charset:UTF-8,fields:{URL:{pattern:https?://.{0,92},fieldType:String},password:{pattern:.{1,32},fieldType:String},username:{pattern:.{1,32},fieldType:String}}},Update mode:{minValue:0,maxValue:1,defaultValue:1,fieldType:int},Message counter:{charset:UTF-8,pattern:[0-9A-F]{4},fieldType:String},Operation mode:{minValue:0,maxValue:3,defaultValue:0,fieldType:int},Motion report interval:{maxProtocol:1.20,minValue:90,unitOfMeasure:s,maxValue:86400,defaultValue:3600,minProtocol:1.19,fieldType:int},Password:{charset:UTF-8,defaultValue:gb200s,pattern:[0-9a-zA-Z]{4,20},fieldType:String},Motionless report interval:{maxProtocol:1.20,minValue:90,unitOfMeasure:s,maxValue:86400,defaultValue:3600,minProtocol:1.19,fieldType:int}}", jsonFields);
@@ -82,10 +80,10 @@ class ConfiguratorThreadedTest{
 			},
 			configurations -> {
 				Map<String, Object> configuration = configurations.getFirst();
-				String jsonHeader = PrettyPrintMap.toString(configuration.get(ConfigurationKey.CONFIGURATION_HEADER.toString()));
-				String jsonFields = PrettyPrintMap.toString(configuration.get(ConfigurationKey.CONFIGURATION_FIELDS.toString()));
+				String jsonHeader = PrettyPrintMap.toString(configuration.get(ConfigurationKey.HEADER.toString()));
+				String jsonFields = PrettyPrintMap.toString(configuration.get(ConfigurationKey.FIELDS.toString()));
 				String jsonProtocolVersionBoundaries = PrettyPrintMap.toString(configuration.get(
-					ConfigurationKey.CONFIGURATION_PROTOCOL_VERSION_BOUNDARIES.toString()));
+					ConfigurationKey.PROTOCOL_VERSION_BOUNDARIES.toString()));
 
 				Assertions.assertEquals("{longDescription:The command AT+GTREG is used to do things.,maxProtocol:2.8,shortDescription:AT+GTREG}", jsonHeader);
 				Assertions.assertEquals("{Operation mode report interval:{minValue:3600,unitOfMeasure:s,maxValue:86400,defaultValue:3600,minProtocol:1.21,fieldType:int},Maximum download retry count:{alternatives:[{maxProtocol:1.20,minValue:0,fieldType:int,maxValue:3,defaultValue:0},{minValue:0,fieldType:int,maxValue:3,minProtocol:1.21,defaultValue:1}]},Download timeout:{alternatives:[{maxProtocol:1.18,minValue:5,unitOfMeasure:min,fieldType:int,maxValue:30,defaultValue:10},{minValue:5,unitOfMeasure:min,fieldType:int,maxValue:30,minProtocol:1.19,defaultValue:20}]},Weekday:{defaultValue:[MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY],enumeration:[MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY]},Update Over-The-Air:{defaultValue:FALSE,mutuallyExclusive:true,enumeration:[TRUE, FALSE]},Header:{charset:UTF-8,defaultValue:GTREG,fieldType:String},Download protocol:{alternatives:[{maxProtocol:1.35,enumeration:[HTTP, HTTPS],defaultValue:HTTP,mutuallyExclusive:true},{enumeration:[HTTP, HTTPS],minProtocol:1.36,defaultValue:HTTPS,mutuallyExclusive:true}]},Download URL:{pattern:.{0,100},charset:UTF-8,fields:{URL:{pattern:https?://.{0,92},fieldType:String},password:{pattern:.{1,32},fieldType:String},username:{pattern:.{1,32},fieldType:String}}},Update mode:{minValue:0,maxValue:1,defaultValue:1,fieldType:int},Message counter:{charset:UTF-8,pattern:[0-9A-F]{4},fieldType:String},Operation mode:{minValue:0,maxValue:3,defaultValue:0,fieldType:int},Motion report interval:{maxProtocol:1.20,minValue:90,unitOfMeasure:s,maxValue:86400,defaultValue:3600,minProtocol:1.19,fieldType:int},Password:{charset:UTF-8,defaultValue:gb200s,pattern:[0-9a-zA-Z]{4,20},fieldType:String},Motionless report interval:{maxProtocol:1.20,minValue:90,unitOfMeasure:s,maxValue:86400,defaultValue:3600,minProtocol:1.19,fieldType:int}}", jsonFields);
@@ -108,10 +106,10 @@ class ConfiguratorThreadedTest{
 			},
 			configurations -> {
 				Map<String, Object> configuration = configurations.getFirst();
-				String jsonHeader = PrettyPrintMap.toString(configuration.get(ConfigurationKey.CONFIGURATION_HEADER.toString()));
-				String jsonFields = PrettyPrintMap.toString(configuration.get(ConfigurationKey.CONFIGURATION_FIELDS.toString()));
+				String jsonHeader = PrettyPrintMap.toString(configuration.get(ConfigurationKey.HEADER.toString()));
+				String jsonFields = PrettyPrintMap.toString(configuration.get(ConfigurationKey.FIELDS.toString()));
 				String jsonProtocolVersionBoundaries = PrettyPrintMap.toString(configuration.get(
-					ConfigurationKey.CONFIGURATION_PROTOCOL_VERSION_BOUNDARIES.toString()));
+					ConfigurationKey.PROTOCOL_VERSION_BOUNDARIES.toString()));
 
 				Assertions.assertEquals("{longDescription:The command AT+GTREG is used to do things.,maxProtocol:2.8,shortDescription:AT+GTREG}", jsonHeader);
 				Assertions.assertEquals("{Operation mode report interval:{minValue:3600,unitOfMeasure:s,maxValue:86400,defaultValue:3600,minProtocol:1.21,fieldType:int},Maximum download retry count:{alternatives:[{maxProtocol:1.20,minValue:0,fieldType:int,maxValue:3,defaultValue:0},{minValue:0,fieldType:int,maxValue:3,minProtocol:1.21,defaultValue:1}]},Download timeout:{alternatives:[{maxProtocol:1.18,minValue:5,unitOfMeasure:min,fieldType:int,maxValue:30,defaultValue:10},{minValue:5,unitOfMeasure:min,fieldType:int,maxValue:30,minProtocol:1.19,defaultValue:20}]},Weekday:{defaultValue:[MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY],enumeration:[MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY]},Update Over-The-Air:{defaultValue:FALSE,mutuallyExclusive:true,enumeration:[TRUE, FALSE]},Header:{charset:UTF-8,defaultValue:GTREG,fieldType:String},Download protocol:{alternatives:[{maxProtocol:1.35,enumeration:[HTTP, HTTPS],defaultValue:HTTP,mutuallyExclusive:true},{enumeration:[HTTP, HTTPS],minProtocol:1.36,defaultValue:HTTPS,mutuallyExclusive:true}]},Download URL:{pattern:.{0,100},charset:UTF-8,fields:{URL:{pattern:https?://.{0,92},fieldType:String},password:{pattern:.{1,32},fieldType:String},username:{pattern:.{1,32},fieldType:String}}},Update mode:{minValue:0,maxValue:1,defaultValue:1,fieldType:int},Message counter:{charset:UTF-8,pattern:[0-9A-F]{4},fieldType:String},Operation mode:{minValue:0,maxValue:3,defaultValue:0,fieldType:int},Motion report interval:{maxProtocol:1.20,minValue:90,unitOfMeasure:s,maxValue:86400,defaultValue:3600,minProtocol:1.19,fieldType:int},Password:{charset:UTF-8,defaultValue:gb200s,pattern:[0-9a-zA-Z]{4,20},fieldType:String},Motionless report interval:{maxProtocol:1.20,minValue:90,unitOfMeasure:s,maxValue:86400,defaultValue:3600,minProtocol:1.19,fieldType:int}}", jsonFields);
