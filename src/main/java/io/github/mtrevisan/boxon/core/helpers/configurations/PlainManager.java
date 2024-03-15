@@ -140,7 +140,7 @@ final class PlainManager implements ConfigurationManagerInterface{
 			final Class<? extends ConfigurationEnum> enumeration = annotation.enumeration();
 			if(ConfigFieldData.hasEnumeration(enumeration))
 				dataValue = extractEnumerationValue(dataKey, dataValue, field, enumeration);
-			else if(dataValue instanceof String v)
+			else if(dataValue instanceof final String v)
 				dataValue = ParserDataType.getValue(fieldType, v);
 		}
 		return dataValue;
@@ -151,7 +151,7 @@ final class PlainManager implements ConfigurationManagerInterface{
 		final Class<?> fieldType = field.getType();
 
 		//convert `or` between enumerations
-		if(dataValue instanceof String v)
+		if(dataValue instanceof final String v)
 			dataValue = ConfigurationHelper.extractEnumerationValue(fieldType, v, enumeration);
 
 		validateEnumerationValue(dataKey, dataValue, enumeration, fieldType);
@@ -172,7 +172,7 @@ final class PlainManager implements ConfigurationManagerInterface{
 				throw EncodeException.create("Data value incompatible with field type {}; found {}[], expected {}[] for enumeration type",
 					dataKey, componentType, enumeration.getSimpleName());
 		}
-		else if(!enumeration.isInstance(dataValue) || dataValue instanceof String v && !StringHelper.isBlank(v))
+		else if(!enumeration.isInstance(dataValue) || dataValue instanceof final String v && !StringHelper.isBlank(v))
 			throw EncodeException.create("Data value incompatible with field type {}; found {}, expected {} for enumeration type",
 				dataKey, dataValueClass, enumeration.getSimpleName());
 	}

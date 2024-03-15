@@ -211,4 +211,14 @@ public final class ConfigurationParser{
 			writer.putText(skip.terminator());
 	}
 
+
+	/**
+	 * The loader for the configurations.
+	 *
+	 * @return	The loader for the configurations.
+	 */
+	public LoaderConfiguration getLoaderConfiguration(){
+		return loaderConfiguration;
+	}
+
 }

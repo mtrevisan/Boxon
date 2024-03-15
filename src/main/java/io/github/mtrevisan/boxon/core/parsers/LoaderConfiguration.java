@@ -55,7 +55,7 @@ import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 
-final class LoaderConfiguration{
+public final class LoaderConfiguration{
 
 	private final ThrowingFunction<Class<?>, ConfigurationMessage<?>, AnnotationException> configurationStore
 		= Memoizer.throwingMemoize(ConfigurationMessage::create);
@@ -69,7 +69,7 @@ final class LoaderConfiguration{
 	/**
 	 * Create a configuration loader.
 	 *
-	 * @return	A template parser.
+	 * @return	A configuration parser.
 	 */
 	static LoaderConfiguration create(){
 		return new LoaderConfiguration();
@@ -139,7 +139,7 @@ final class LoaderConfiguration{
 			//for each extracted class, try to parse it, extracting all the information needed for the configuration of a message
 			final ConfigurationMessage<?> from = createConfiguration(type);
 			if(from.canBeCoded()){
-				//if the configuration is valid, add it to the list of templates...
+				//if the configuration is valid, add it to the list of configurations...
 				final ConfigurationHeader header = from.getHeader();
 				configurations.put(header.shortDescription(), from);
 			}
@@ -201,7 +201,7 @@ final class LoaderConfiguration{
 	 *
 	 * @return	The list of configuration messages.
 	 */
-	List<ConfigurationMessage<?>> getConfigurations(){
+	public List<ConfigurationMessage<?>> getConfigurations(){
 		return List.copyOf(configurations.values());
 	}
 
@@ -258,7 +258,7 @@ final class LoaderConfiguration{
 	 * @return	The configuration.
 	 * @throws EncodeException	If a configuration cannot be retrieved.
 	 */
-	ConfigurationMessage<?> getConfiguration(final String shortDescription) throws EncodeException{
+	public ConfigurationMessage<?> getConfiguration(final String shortDescription) throws EncodeException{
 		final ConfigurationMessage<?> configuration = configurations.get(shortDescription);
 		if(configuration == null)
 			throw EncodeException.create("No configuration could be found for the specified class type");

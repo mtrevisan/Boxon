@@ -142,27 +142,28 @@ You can get pre-built JARs (usable on JRE 11 or newer) from [Sonatype](https://o
     1. [Converters](#how-to-converters)
     2. [Custom annotations](#how-to-annotations)
 10. [Examples](#examples)
-     1. [Multi-message parser](#example-multi)
-     2. [Message composer](#example-composer)
+    1. [Multi-message parser](#example-multi)
+    2. [Message composer](#example-composer)
 11. [Contributing](#contributing)
 12. [Changelog](#changelog)
-     1. [version 3.2.0](#changelog-3.2.0)
-     2. [version 3.1.3](#changelog-3.1.3)
-     3. [version 3.1.2](#changelog-3.1.2)
-     4. [version 3.1.1](#changelog-3.1.1)
-     5. [version 3.1.0](#changelog-3.1.0)
-     6. [version 3.0.2](#changelog-3.0.2)
-     7. [version 3.0.1](#changelog-3.0.1)
-     8. [version 3.0.0](#changelog-3.0.0)
-     9. [version 2.1.2](#changelog-2.1.2)
-     10. [version 2.1.1](#changelog-2.1.1)
-     11. [version 2.1.0](#changelog-2.1.0)
-     12. [version 2.0.0](#changelog-2.0.0)
-     13. [version 1.1.0](#changelog-1.1.0)
-     14. [version 1.0.0](#changelog-1.0.0)
-     15. [version 0.0.2](#changelog-0.0.2)
-     16. [version 0.0.1](#changelog-0.0.1)
-     17. [version 0.0.0](#changelog-0.0.0)
+    1. [version 3.3.0](#changelog-3.3.0)
+    2. [version 3.2.0](#changelog-3.2.0)
+    3. [version 3.1.3](#changelog-3.1.3)
+    4. [version 3.1.2](#changelog-3.1.2)
+    4. [version 3.1.1](#changelog-3.1.1)
+    5. [version 3.1.0](#changelog-3.1.0)
+    6. [version 3.0.2](#changelog-3.0.2)
+    7. [version 3.0.1](#changelog-3.0.1)
+    8. [version 3.0.0](#changelog-3.0.0)
+    9. [version 2.1.2](#changelog-2.1.2)
+    10. [version 2.1.1](#changelog-2.1.1)
+    11. [version 2.1.0](#changelog-2.1.0)
+    12. [version 2.0.0](#changelog-2.0.0)
+    13. [version 1.1.0](#changelog-1.1.0)
+    14. [version 1.0.0](#changelog-1.0.0)
+    15. [version 0.0.2](#changelog-0.0.2)
+    16. [version 0.0.1](#changelog-0.0.1)
+    17. [version 0.0.0](#changelog-0.0.0)
 13. [License](#license)
 
 <br/>
@@ -1543,9 +1544,10 @@ Pull requests are welcomed.
 <a name="changelog"></a>
 ## Changelog
 
-<a name="changelog-3.2.1"></a>
-### version 3.2.1 - 202403??
+<a name="changelog-3.3.0"></a>
+### version 3.3.0 - 202403??
 
+- Added description of configuration.
 - Changed the key to reference a configuration (from `start` to `shortDescription`).
 - Corrected generation of parameter `MutuallyExclusive` on configuration description.
 - Corrected log text on enumeration error.

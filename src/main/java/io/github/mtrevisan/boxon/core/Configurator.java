@@ -140,11 +140,11 @@ public final class Configurator{
 			final Map<String, Object> map = new HashMap<>(3);
 			final Map<String, Object> headerMap = extractMap(protocol, header);
 			final Map<String, Object> fieldsMap = extractFieldsMap(protocol, configuration);
-			ConfigurationHelper.putIfNotEmpty(ConfigurationKey.CONFIGURATION_HEADER, headerMap, map);
-			ConfigurationHelper.putIfNotEmpty(ConfigurationKey.CONFIGURATION_FIELDS, fieldsMap, map);
+			ConfigurationHelper.putIfNotEmpty(ConfigurationKey.HEADER, headerMap, map);
+			ConfigurationHelper.putIfNotEmpty(ConfigurationKey.FIELDS, fieldsMap, map);
 			if(protocol.isEmpty()){
 				final List<String> protocolVersionBoundaries = configuration.getProtocolVersionBoundaries();
-				ConfigurationHelper.putIfNotEmpty(ConfigurationKey.CONFIGURATION_PROTOCOL_VERSION_BOUNDARIES, protocolVersionBoundaries, map);
+				ConfigurationHelper.putIfNotEmpty(ConfigurationKey.PROTOCOL_VERSION_BOUNDARIES, protocolVersionBoundaries, map);
 			}
 			response.add(map);
 		}
