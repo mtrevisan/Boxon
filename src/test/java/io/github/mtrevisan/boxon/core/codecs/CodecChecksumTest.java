@@ -27,7 +27,6 @@ package io.github.mtrevisan.boxon.core.codecs;
 import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.checksummers.CRC16CCITT;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
-import io.github.mtrevisan.boxon.utils.TestHelper;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.BitReader;
@@ -35,6 +34,7 @@ import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriter;
 import io.github.mtrevisan.boxon.io.ByteOrder;
 import io.github.mtrevisan.boxon.io.CodecInterface;
+import io.github.mtrevisan.boxon.utils.TestHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

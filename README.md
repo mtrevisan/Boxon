@@ -1543,6 +1543,13 @@ Pull requests are welcomed.
 <a name="changelog"></a>
 ## Changelog
 
+<a name="changelog-3.2.1"></a>
+### version 3.2.1 - 202403??
+
+- Corrected generation of parameter `MutuallyExclusive` on configuration description.
+- Corrected log text on enumeration error.
+- Fixed a test that occasionally fails.
+
 <a name="changelog-3.2.0"></a>
 ### version 3.2.0 - 20240312
 

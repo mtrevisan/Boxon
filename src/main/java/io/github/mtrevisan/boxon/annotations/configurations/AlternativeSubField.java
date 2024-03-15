@@ -98,7 +98,7 @@ public @interface AlternativeSubField{
 
 	/**
 	 * The default value of the field.
-	 * <p>For non-mutually exclusive enumeration fields this is an array.</p>
+	 * <p>For non-mutually exclusive enumeration fields this is an array (e.g. 'ONE|TWO|THREE').</p>
 	 * <p>If not present, the field is mandatory.</p>
 	 *
 	 * @return	The default value of the field.

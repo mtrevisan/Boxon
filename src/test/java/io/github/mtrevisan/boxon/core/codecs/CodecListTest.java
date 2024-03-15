@@ -37,7 +37,6 @@ import io.github.mtrevisan.boxon.core.Core;
 import io.github.mtrevisan.boxon.core.CoreBuilder;
 import io.github.mtrevisan.boxon.core.Parser;
 import io.github.mtrevisan.boxon.core.Response;
-import io.github.mtrevisan.boxon.utils.TestHelper;
 import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
@@ -48,6 +47,7 @@ import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
 import io.github.mtrevisan.boxon.io.BitReader;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriter;
+import io.github.mtrevisan.boxon.utils.TestHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

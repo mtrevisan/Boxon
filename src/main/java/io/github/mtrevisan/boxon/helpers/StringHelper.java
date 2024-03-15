@@ -73,6 +73,17 @@ public final class StringHelper{
 	}
 
 	/**
+	 * Checks if the given text contains the specified character.
+	 *
+	 * @param text	The text to search within.
+	 * @param chr	The character to search for.
+	 * @return	Whether the text contains the character.
+	 */
+	public static boolean contains(final String text, final char chr){
+		return (text.indexOf(chr) > 0);
+	}
+
+	/**
 	 * Split the given text into an array, separator specified.
 	 * <p>
 	 * The separator is not included in the returned String array.

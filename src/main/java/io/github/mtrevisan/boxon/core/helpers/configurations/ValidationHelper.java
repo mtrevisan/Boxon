@@ -41,7 +41,7 @@ import java.util.regex.Pattern;
  */
 final class ValidationHelper{
 
-	private static final Pattern PATTERN_PIPE = Pattern.compile("\\|");
+	private static final char MUTUALLY_EXCLUSIVE_ENUMERATION_SEPARATOR = '|';
 
 
 	private ValidationHelper(){}
@@ -140,7 +140,7 @@ final class ValidationHelper{
 					field.getAnnotationName(), minValue.getClass().getSimpleName(), field.getFieldType().toString());
 
 			if(def != null && ((Number)def).doubleValue() < min.doubleValue())
-				//defaultValue compatible with minValue
+				//`defaultValue` compatible with `minValue`
 				throw AnnotationException.create("Default value incompatible with minimum value in {}; expected {} >= {}",
 					field.getAnnotationName(), field.getDefaultValue(), minValue.getClass().getSimpleName());
 		}
@@ -158,7 +158,7 @@ final class ValidationHelper{
 					field.getAnnotationName(), maxValue.getClass().getSimpleName(), field.getFieldType().toString());
 
 			if(def != null && ((Number)def).doubleValue() > max.doubleValue())
-				//defaultValue compatible with maxValue
+				//`defaultValue` compatible with `maxValue`
 				throw AnnotationException.create("Default value incompatible with maximum value in {}; expected {} <= {}",
 					field.getAnnotationName(), field.getDefaultValue(), maxValue.getClass().getSimpleName());
 		}
@@ -178,10 +178,14 @@ final class ValidationHelper{
 
 		final String defaultValue = field.getDefaultValue();
 		if(!StringHelper.isBlank(defaultValue)){
-			//defaultValue compatible with variable type
+			//`defaultValue` compatible with variable type
 			if(!field.hasEnumeration() && ParserDataType.getValue(fieldType, defaultValue) == null)
 				throw AnnotationException.create("Incompatible enum in {}, found {}, expected {}",
 					field.getAnnotationName(), defaultValue.getClass().getSimpleName(), fieldType.toString());
+			else if(field.hasEnumeration() && !fieldType.isArray()
+					&& StringHelper.contains(defaultValue, MUTUALLY_EXCLUSIVE_ENUMERATION_SEPARATOR))
+				throw AnnotationException.create("Incompatible default value in {}, field {}, found '{}', expected mutually exclusive value",
+					field.getAnnotationName(), defaultValue.getClass().getSimpleName(), defaultValue);
 		}
 		//if default value is not present, then field type must be an object
 		else if(ParserDataType.isPrimitive(fieldType))
@@ -191,7 +195,7 @@ final class ValidationHelper{
 
 	private static void validateMinMaxDefaultValuesToPattern(final Pattern formatPattern, final ConfigFieldData field)
 			throws AnnotationException{
-		//defaultValue compatible with pattern
+		//`defaultValue` compatible with `pattern`
 		if(!matches(field.getDefaultValue(), formatPattern))
 			throw AnnotationException.create("Default value not compatible with `pattern` in {}; found {}, expected {}",
 				field.getAnnotationName(), field.getDefaultValue(), formatPattern.pattern());
@@ -232,7 +236,7 @@ final class ValidationHelper{
 				e);
 		}
 
-		//defaultValue compatible with field type
+		//`defaultValue` compatible with field type
 		if(!String.class.isAssignableFrom(field.getFieldType())
 				|| dataValue != null && String.class.isAssignableFrom(dataValue.getClass()) && !formatPattern.matcher((String)dataValue).matches())
 			throw AnnotationException.create("Data type not compatible with `pattern` in {}; found {}.class, expected String.class",
@@ -265,12 +269,12 @@ final class ValidationHelper{
 
 		final Class<?> fieldType = field.getFieldType();
 		if(fieldType.isArray())
-			validateEnumMultipleValues(field, enumConstants);
+			validateEnumerationMultipleValues(field, enumConstants);
 		else
 			validateEnumerationMutuallyExclusive(field, enumConstants);
 	}
 
-	private static void validateEnumMultipleValues(final ConfigFieldData field, final ConfigurationEnum[] enumConstants)
+	private static void validateEnumerationMultipleValues(final ConfigFieldData field, final ConfigurationEnum[] enumConstants)
 			throws AnnotationException{
 		//enumeration compatible with variable type
 		final Class<?> fieldType = field.getFieldType();
@@ -280,11 +284,7 @@ final class ValidationHelper{
 
 		final String defaultValue = field.getDefaultValue();
 		if(!StringHelper.isBlank(defaultValue)){
-			final String[] defaultValues = PATTERN_PIPE.split(defaultValue);
-			if(fieldType.isEnum() && defaultValues.length != 1)
-				throw AnnotationException.create("Default value for mutually exclusive enumeration field in {} should be a value; found {}, expected one of {}",
-					field.getAnnotationName(), defaultValue, Arrays.toString(enumConstants));
-
+			final String[] defaultValues = StringHelper.split(defaultValue, MUTUALLY_EXCLUSIVE_ENUMERATION_SEPARATOR);
 			for(int i = 0, length = JavaHelper.lengthOrZero(defaultValues); i < length; i ++){
 				final ConfigurationEnum enumValue = ConfigurationEnum.extractEnum(enumConstants, defaultValues[i]);
 				if(enumValue == null)

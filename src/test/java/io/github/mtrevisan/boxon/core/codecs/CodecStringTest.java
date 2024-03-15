@@ -31,7 +31,6 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
-import io.github.mtrevisan.boxon.utils.TestHelper;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
@@ -39,6 +38,7 @@ import io.github.mtrevisan.boxon.io.BitReader;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriter;
 import io.github.mtrevisan.boxon.io.CodecInterface;
+import io.github.mtrevisan.boxon.utils.TestHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

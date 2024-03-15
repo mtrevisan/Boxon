@@ -134,7 +134,7 @@ public final class ConfigurationHelper{
 			for(int j = 0; j < length; j ++)
 				enumValues[j] = enumConstants[j].name();
 			putIfNotEmpty(ConfigurationKey.ENUMERATION, enumValues, map);
-			if(fieldType.isEnum())
+			if(!fieldType.isArray())
 				putIfNotEmpty(ConfigurationKey.MUTUALLY_EXCLUSIVE, true, map);
 		}
 	}
