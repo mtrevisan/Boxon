@@ -63,7 +63,7 @@ class ComposerThreadedTest{
 		//compose:
 		int threadCount = 10;
 		MultithreadingHelper.testMultithreading(
-			() -> composer.compose(parseResult.get(0).getMessage()),
+			() -> composer.compose(parseResult.getFirst().getMessage()),
 			composeResult -> Assertions.assertArrayEquals(PAYLOAD, composeResult.getMessage()),
 			threadCount
 		);
@@ -90,7 +90,7 @@ class ComposerThreadedTest{
 		MultithreadingHelper.testMultithreading(
 			() -> {
 				Composer composer = Composer.create(core);
-				return composer.compose(parseResult.get(0).getMessage());
+				return composer.compose(parseResult.getFirst().getMessage());
 			},
 			composeResult -> Assertions.assertArrayEquals(PAYLOAD, composeResult.getMessage()),
 			threadCount
@@ -98,8 +98,7 @@ class ComposerThreadedTest{
 	}
 
 	@Test
-	void concurrencyMultipleParserMultipleCore() throws NoSuchMethodException, AnnotationException, TemplateException,
-			ConfigurationException, ExecutionException, InterruptedException{
+	void concurrencyMultipleParserMultipleCore() throws ExecutionException, InterruptedException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with((byte)0x46, "QUECLINK_GB200S");
 
@@ -119,7 +118,7 @@ class ComposerThreadedTest{
 				List<Response<byte[], Object>> parseResult = parser.parse(PAYLOAD);
 
 				Composer composer = Composer.create(core);
-				return composer.compose(parseResult.get(0).getMessage());
+				return composer.compose(parseResult.getFirst().getMessage());
 			},
 			composeResult -> Assertions.assertArrayEquals(PAYLOAD, composeResult.getMessage()),
 			threadCount

@@ -41,8 +41,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 class DescriptorThreadedTest{
 
 	@Test
-	void concurrencySingleParserSingleCore() throws AnnotationException, ConfigurationException, CodecException, TemplateException,
-			NoSuchMethodException, ExecutionException, InterruptedException{
+	void concurrencySingleParserSingleCore() throws AnnotationException, ConfigurationException, TemplateException, NoSuchMethodException,
+			ExecutionException, InterruptedException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with((byte)0x46, "QUECLINK_GB200S");
 		Core core = CoreBuilder.builder()
@@ -55,8 +55,7 @@ class DescriptorThreadedTest{
 
 		int threadCount = 10;
 		AtomicInteger counter = new AtomicInteger();
-		MultithreadingHelper.testMultithreading(
-			() -> descriptor.describe(),
+		MultithreadingHelper.testMultithreading(descriptor::describe,
 			descriptions -> counter.addAndGet(descriptions.size()),
 			threadCount
 		);
@@ -91,8 +90,7 @@ class DescriptorThreadedTest{
 	}
 
 	@Test
-	void concurrencyMultipleParserMultipleCore() throws NoSuchMethodException, TemplateException, ConfigurationException,
-			AnnotationException, ExecutionException, InterruptedException{
+	void concurrencyMultipleParserMultipleCore() throws ExecutionException, InterruptedException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with((byte)0x46, "QUECLINK_GB200S");
 

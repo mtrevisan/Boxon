@@ -51,8 +51,7 @@ class ConfiguratorThreadedTest{
 			.create();
 		Configurator configurator = Configurator.create(core);
 
-		MultithreadingHelper.testMultithreading(
-			() -> configurator.getConfigurations(),
+		MultithreadingHelper.testMultithreading(configurator::getConfigurations,
 			configurations -> {
 				Map<String, Object> configuration = configurations.getFirst();
 				String jsonHeader = PrettyPrintMap.toString(configuration.get(ConfigurationKey.CONFIGURATION_HEADER.toString()));

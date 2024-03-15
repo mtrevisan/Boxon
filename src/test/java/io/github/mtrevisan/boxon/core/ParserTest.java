@@ -148,7 +148,7 @@ class ParserTest{
 		Assertions.assertEquals(2, result.size());
 		Assertions.assertFalse(result.get(0).hasError());
 		Assertions.assertFalse(result.get(1).hasError());
-		Assertions.assertEquals("+ACK", (String)Extractor.get("/messageHeader", result.get(1).getMessage(), null));
+		Assertions.assertEquals("+ACK", Extractor.get("/messageHeader", result.get(1).getMessage(), null));
 	}
 
 	@Test

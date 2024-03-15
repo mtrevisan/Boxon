@@ -44,8 +44,6 @@ class ConfiguratorTest{
 
 	@Test
 	void getConfigurations() throws AnnotationException, ConfigurationException, CodecException, TemplateException{
-		DeviceTypes deviceTypes = DeviceTypes.create()
-			.with((byte)0x46, "QUECLINK_GB200S");
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withConfiguration(REGConfigurationASCII.class)
@@ -69,8 +67,6 @@ class ConfiguratorTest{
 
 	@Test
 	void getProtocolVersionBoundaries() throws AnnotationException, ConfigurationException, TemplateException{
-		DeviceTypes deviceTypes = DeviceTypes.create()
-			.with((byte)0x46, "QUECLINK_GB200S");
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withConfigurationsFrom(REGConfigurationASCII.class)
@@ -86,8 +82,6 @@ class ConfiguratorTest{
 
 	@Test
 	void getConfigurationsByProtocol() throws AnnotationException, ConfigurationException, CodecException, TemplateException{
-		DeviceTypes deviceTypes = DeviceTypes.create()
-			.with((byte)0x46, "QUECLINK_GB200S");
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withConfigurationsFrom(REGConfigurationASCII.class)
@@ -107,9 +101,7 @@ class ConfiguratorTest{
 	}
 
 	@Test
-	void composeSingleConfigurationMessage() throws NoSuchMethodException, AnnotationException, TemplateException, ConfigurationException{
-		DeviceTypes deviceTypes = DeviceTypes.create()
-			.with((byte)0x46, "QUECLINK_GB200S");
+	void composeSingleConfigurationMessage() throws AnnotationException, TemplateException, ConfigurationException{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withConfigurationsFrom(REGConfigurationASCII.class)
