@@ -239,8 +239,8 @@ final class ValidationHelper{
 		//`defaultValue` compatible with field type
 		if(!String.class.isAssignableFrom(field.getFieldType())
 				|| dataValue != null && String.class.isAssignableFrom(dataValue.getClass()) && !formatPattern.matcher((String)dataValue).matches())
-			throw AnnotationException.create("Data type not compatible with `pattern` in {}; found {}.class, expected String.class",
-				field.getAnnotationName(), field.getFieldType());
+			throw AnnotationException.create("Data type not compatible with `pattern` in {}; found {}.class, expected complying with {}",
+				field.getAnnotationName(), field.getFieldType(), pattern);
 
 		validateMinMaxDefaultValuesToPattern(formatPattern, field);
 	}

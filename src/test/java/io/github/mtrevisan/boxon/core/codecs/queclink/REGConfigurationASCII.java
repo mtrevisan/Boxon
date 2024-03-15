@@ -97,17 +97,17 @@ public class REGConfigurationASCII{
 	private String downloadURL;
 
 	@ConfigurationSkip(maxProtocol = "1.18", terminator = ",")
-	@ConfigurationField(shortDescription = "Motion report interval", unitOfMeasure = "s", minProtocol = "1.19", maxProtocol = "1.20",
-		minValue = "90", maxValue = "86400", defaultValue = "3600", terminator = ",")
+	@ConfigurationField(shortDescription = "Motion report interval", minProtocol = "1.19", maxProtocol = "1.20",
+		minValue = "90", maxValue = "86400", defaultValue = "3600", unitOfMeasure = "s", terminator = ",")
 	private int motionReportInterval;
 	@ConfigurationSkip(minProtocol = "1.21", terminator = ",")
 
 	@ConfigurationSkip(maxProtocol = "1.18", terminator = ",")
-	@ConfigurationField(shortDescription = "Motionless report interval", unitOfMeasure = "s", minProtocol = "1.19", maxProtocol = "1.20",
-		minValue = "90", maxValue = "86400", defaultValue = "3600", terminator = ",")
+	@ConfigurationField(shortDescription = "Motionless report interval", minProtocol = "1.19", maxProtocol = "1.20",
+		minValue = "90", maxValue = "86400", defaultValue = "3600", unitOfMeasure = "s", terminator = ",")
 	private int motionlessReportInterval;
-	@ConfigurationField(shortDescription = "Operation mode report interval", unitOfMeasure = "s", minProtocol = "1.21", minValue = "3600",
-		maxValue = "86400", defaultValue = "3600", terminator = ",")
+	@ConfigurationField(shortDescription = "Operation mode report interval", minProtocol = "1.21",
+		minValue = "3600", maxValue = "86400", defaultValue = "3600", unitOfMeasure = "s", terminator = ",")
 	private int operationModeReportInterval;
 
 	@ConfigurationField(shortDescription = "Weekday", enumeration = Weekday.class, radix = 16,
@@ -115,7 +115,7 @@ public class REGConfigurationASCII{
 	private Weekday[] weekday;
 
 	@ConfigurationSkip(terminator = ",")
-	@ConfigurationField(shortDescription = "Message counter", minValue = "0x0000", maxValue = "0xFFFF", radix = 16)
-	private Short messageCounter;
+	@ConfigurationField(shortDescription = "Message counter", pattern = "[0-9A-F]{4}")
+	private String messageCounter;
 
 }

@@ -60,6 +60,7 @@ public @interface ConfigurationField{
 	 */
 	String unitOfMeasure() default "";
 
+
 	/**
 	 * The lowest protocol the field is in.
 	 *
