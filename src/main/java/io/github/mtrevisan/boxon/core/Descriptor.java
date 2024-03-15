@@ -26,6 +26,7 @@ package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
+import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigField;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationMessage;
 import io.github.mtrevisan.boxon.core.helpers.descriptors.AnnotationDescriptor;
 import io.github.mtrevisan.boxon.core.helpers.templates.BoundedField;
@@ -150,7 +151,7 @@ public final class Descriptor{
 		final Map<String, Object> description = new HashMap<>(3);
 		description.put(DescriberKey.TEMPLATE.toString(), template.getType().getName());
 		describeHeader(template.getHeader(), description);
-		describeFields(template.getBoundedFields(), description);
+		describeBoundedFields(template.getBoundedFields(), description);
 		describeContext(description);
 		return Collections.unmodifiableMap(description);
 	}
@@ -163,7 +164,7 @@ public final class Descriptor{
 		description.put(DescriberKey.HEADER.toString(), headerDescription);
 	}
 
-	private static void describeFields(final List<BoundedField> fields, final Map<String, Object> description) throws TemplateException{
+	private static void describeBoundedFields(final List<BoundedField> fields, final Map<String, Object> description) throws TemplateException{
 		final int length = fields.size();
 		final Collection<Map<String, Object>> fieldsDescription = new ArrayList<>(length);
 		for(int i = 0; i < length; i ++)
@@ -273,6 +274,7 @@ public final class Descriptor{
 		final Map<String, Object> description = new HashMap<>(3);
 		description.put(ConfigurationKey.CONFIGURATION.toString(), configuration.getType().getName());
 		describeHeader(configuration.getHeader(), description);
+		describeConfigFields(configuration.getConfigurationFields(), description);
 		return Collections.unmodifiableMap(description);
 	}
 
@@ -286,6 +288,35 @@ public final class Descriptor{
 		AnnotationDescriptor.putIfNotEmpty(ConfigurationKey.HEADER_END, header.end(), headerDescription);
 		AnnotationDescriptor.putIfNotEmpty(ConfigurationKey.HEADER_CHARSET, header.charset(), headerDescription);
 		description.put(ConfigurationKey.HEADER.toString(), headerDescription);
+	}
+
+	private static void describeConfigFields(final List<ConfigField> fields, final Map<String, Object> description) throws ConfigurationException{
+		final int length = fields.size();
+		final Collection<Map<String, Object>> fieldsDescription = new ArrayList<>(length);
+		for(int i = 0; i < length; i ++)
+			describeField(fields.get(i), fieldsDescription);
+		description.put(DescriberKey.FIELDS.toString(), fieldsDescription);
+	}
+
+	private static void describeField(final ConfigField field, final Collection<Map<String, Object>> fieldsDescription)
+			throws ConfigurationException{
+		AnnotationDescriptor.describeSkips(field.getSkips(), fieldsDescription);
+
+		final Map<String, Object> fieldDescription = new HashMap<>(13);
+		AnnotationDescriptor.putIfNotEmpty(DescriberKey.FIELD_NAME, field.getFieldName(), fieldDescription);
+		AnnotationDescriptor.putIfNotEmpty(DescriberKey.FIELD_TYPE, field.getFieldType().getName(), fieldDescription);
+		final Annotation binding = field.getBinding();
+		final Class<? extends Annotation> annotationType = binding.annotationType();
+		AnnotationDescriptor.putIfNotEmpty(DescriberKey.ANNOTATION_TYPE, binding.annotationType().getName(), fieldDescription);
+
+		//extract binding descriptor
+		final AnnotationDescriptor descriptor = AnnotationDescriptor.fromAnnotation(binding);
+		if(descriptor == null)
+			throw ConfigurationException.create("Cannot extract descriptor for this annotation: {}", annotationType.getSimpleName());
+
+		descriptor.describe(binding, fieldDescription);
+
+		fieldsDescription.add(fieldDescription);
 	}
 
 }

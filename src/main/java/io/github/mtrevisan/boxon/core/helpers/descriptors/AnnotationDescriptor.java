@@ -44,6 +44,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoicesList;
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
@@ -364,6 +365,25 @@ public enum AnnotationDescriptor{
 			putIfNotEmpty(DescriberKey.BIND_SIZE, skip.size(), skipDescription);
 			putIfNotEmpty(DescriberKey.BIND_TERMINATOR, skip.terminator(), skipDescription);
 			putIfNotEmpty(DescriberKey.BIND_CONSUME_TERMINATOR, skip.consumeTerminator(), skipDescription);
+			rootDescription.add(skipDescription);
+		}
+	}
+
+	/**
+	 * Load a description of the given configuration skip annotations in the given map.
+	 *
+	 * @param skips	The configuration skip annotations from which to extract the description.
+	 * @param rootDescription	The map in which to load the descriptions.
+	 */
+	public static void describeSkips(final ConfigurationSkip[] skips, final Collection<Map<String, Object>> rootDescription){
+		for(int j = 0, length = skips.length; j < length; j ++){
+			final ConfigurationSkip skip = skips[j];
+
+			final Map<String, Object> skipDescription = new HashMap<>(5);
+			putIfNotEmpty(DescriberKey.ANNOTATION_TYPE, ConfigurationSkip.class, skipDescription);
+			putIfNotEmpty(DescriberKey.BIND_MIN_PROTOCOL, skip.minProtocol(), skipDescription);
+			putIfNotEmpty(DescriberKey.BIND_MAX_PROTOCOL, skip.maxProtocol(), skipDescription);
+			putIfNotEmpty(DescriberKey.BIND_TERMINATOR, skip.terminator(), skipDescription);
 			rootDescription.add(skipDescription);
 		}
 	}
