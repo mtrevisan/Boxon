@@ -240,7 +240,7 @@ class CodecListTest{
 
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(1, result.size());
-		Response<byte[], Object> response = result.get(0);
+		Response<byte[], Object> response = result.getFirst();
 		Assertions.assertFalse(response.hasError());
 		Assertions.assertEquals(TestChoice6.class, response.getMessage().getClass());
 		TestChoice6 parsedMessage = (TestChoice6)response.getMessage();

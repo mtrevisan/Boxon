@@ -1546,6 +1546,7 @@ Pull requests are welcomed.
 <a name="changelog-3.2.1"></a>
 ### version 3.2.1 - 202403??
 
+- Changed the key to reference a configuration (from `start` to `shortDescription`).
 - Corrected generation of parameter `MutuallyExclusive` on configuration description.
 - Corrected log text on enumeration error.
 - Fixed a test that occasionally fails.

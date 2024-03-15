@@ -54,7 +54,7 @@ class ConfiguratorThreadedTest{
 		MultithreadingHelper.testMultithreading(
 			() -> configurator.getConfigurations(),
 			configurations -> {
-				Map<String, Object> configuration = configurations.get(0);
+				Map<String, Object> configuration = configurations.getFirst();
 				String jsonHeader = PrettyPrintMap.toString(configuration.get(ConfigurationKey.CONFIGURATION_HEADER.toString()));
 				String jsonFields = PrettyPrintMap.toString(configuration.get(ConfigurationKey.CONFIGURATION_FIELDS.toString()));
 				String jsonProtocolVersionBoundaries = PrettyPrintMap.toString(configuration.get(
@@ -82,7 +82,7 @@ class ConfiguratorThreadedTest{
 				return configurator.getConfigurations();
 			},
 			configurations -> {
-				Map<String, Object> configuration = configurations.get(0);
+				Map<String, Object> configuration = configurations.getFirst();
 				String jsonHeader = PrettyPrintMap.toString(configuration.get(ConfigurationKey.CONFIGURATION_HEADER.toString()));
 				String jsonFields = PrettyPrintMap.toString(configuration.get(ConfigurationKey.CONFIGURATION_FIELDS.toString()));
 				String jsonProtocolVersionBoundaries = PrettyPrintMap.toString(configuration.get(
@@ -108,7 +108,7 @@ class ConfiguratorThreadedTest{
 				return configurator.getConfigurations();
 			},
 			configurations -> {
-				Map<String, Object> configuration = configurations.get(0);
+				Map<String, Object> configuration = configurations.getFirst();
 				String jsonHeader = PrettyPrintMap.toString(configuration.get(ConfigurationKey.CONFIGURATION_HEADER.toString()));
 				String jsonFields = PrettyPrintMap.toString(configuration.get(ConfigurationKey.CONFIGURATION_FIELDS.toString()));
 				String jsonProtocolVersionBoundaries = PrettyPrintMap.toString(configuration.get(

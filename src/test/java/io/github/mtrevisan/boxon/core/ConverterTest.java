@@ -102,7 +102,7 @@ class ConverterTest{
 
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(2, result.size());
-		Response<byte[], Object> response = result.get(0);
+		Response<byte[], Object> response = result.getFirst();
 		Assertions.assertArrayEquals(payload, response.getSource());
 		Assertions.assertTrue(response.hasError());
 		Assertions.assertEquals("java.lang.IllegalArgumentException: Can not input Byte (1) to decode method of converter WrongConverterInput in field io.github.mtrevisan.boxon.core" +
@@ -122,7 +122,7 @@ class ConverterTest{
 
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(2, result.size());
-		Response<byte[], Object> response = result.get(0);
+		Response<byte[], Object> response = result.getFirst();
 		Assertions.assertArrayEquals(payload, response.getSource());
 		Assertions.assertTrue(response.hasError());
 		Assertions.assertEquals("java.lang.IllegalArgumentException: Can not set String field to Byte in field io.github.mtrevisan.boxon.core.ConverterTest$TestConverter2.value"
@@ -142,7 +142,7 @@ class ConverterTest{
 
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(1, result.size());
-		Response<byte[], Object> response = result.get(0);
+		Response<byte[], Object> response = result.getFirst();
 		Assertions.assertArrayEquals(payload, response.getSource());
 		Assertions.assertFalse(response.hasError());
 	}

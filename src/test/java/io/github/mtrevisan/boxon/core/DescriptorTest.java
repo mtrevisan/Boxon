@@ -62,7 +62,7 @@ class DescriptorTest{
 
 		Assertions.assertEquals(1, descriptions.size());
 
-		Map<String, Object> description = descriptions.get(0);
+		Map<String, Object> description = descriptions.getFirst();
 
 		String jsonDescription = PrettyPrintMap.toString(description);
 		Assertions.assertEquals("{template:io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageHex," +

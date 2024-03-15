@@ -288,7 +288,7 @@ class CodecArrayTest{
 
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(1, result.size());
-		Response<byte[], Object> response = result.get(0);
+		Response<byte[], Object> response = result.getFirst();
 		Assertions.assertFalse(response.hasError());
 		Assertions.assertEquals(TestChoice4.class, response.getMessage().getClass());
 		TestChoice4 parsedMessage = (TestChoice4)response.getMessage();
@@ -314,7 +314,7 @@ class CodecArrayTest{
 
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(1, result.size());
-		Response<byte[], Object> response = result.get(0);
+		Response<byte[], Object> response = result.getFirst();
 		Assertions.assertFalse(response.hasError());
 		Assertions.assertEquals(TestChoice5.class, response.getMessage().getClass());
 		TestChoice5 parsedMessage = (TestChoice5)response.getMessage();

@@ -56,7 +56,7 @@ class ConfiguratorTest{
 
 		Assertions.assertEquals(1, configurations.size());
 
-		Map<String, Object> configuration = configurations.get(0);
+		Map<String, Object> configuration = configurations.getFirst();
 		String jsonHeader = PrettyPrintMap.toString(configuration.get(ConfigurationKey.CONFIGURATION_HEADER.toString()));
 		String jsonFields = PrettyPrintMap.toString(configuration.get(ConfigurationKey.CONFIGURATION_FIELDS.toString()));
 		String jsonProtocolVersionBoundaries = PrettyPrintMap.toString(configuration.get(
@@ -98,7 +98,7 @@ class ConfiguratorTest{
 
 		Assertions.assertEquals(1, configurations.size());
 
-		Map<String, Object> configuration = configurations.get(0);
+		Map<String, Object> configuration = configurations.getFirst();
 		String jsonHeader = PrettyPrintMap.toString(configuration.get(ConfigurationKey.CONFIGURATION_HEADER.toString()));
 		String jsonFields = PrettyPrintMap.toString(configuration.get(ConfigurationKey.CONFIGURATION_FIELDS.toString()));
 
@@ -135,7 +135,7 @@ class ConfiguratorTest{
 		configurationData.put("Download timeout", 25);
 
 		//compose:
-		Response<String, byte[]> composeResult = configurator.composeConfiguration("1.20", "AT+",
+		Response<String, byte[]> composeResult = configurator.composeConfiguration("1.20", "AT+GTREG",
 			configurationData);
 
 		Assertions.assertFalse(composeResult.hasError());

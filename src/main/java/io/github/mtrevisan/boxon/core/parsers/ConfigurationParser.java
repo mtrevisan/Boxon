@@ -142,12 +142,12 @@ public final class ConfigurationParser{
 	/**
 	 * Retrieve the configuration by class.
 	 *
-	 * @param configurationType	The header start of a configuration.
+	 * @param shortDescription	The short description identifying a message, see {@link ConfigurationHeader#shortDescription()}.
 	 * @return	The configuration.
 	 * @throws EncodeException	If a configuration cannot be retrieved.
 	 */
-	public ConfigurationMessage<?> getConfiguration(final String configurationType) throws EncodeException{
-		return loaderConfiguration.getConfiguration(configurationType);
+	public ConfigurationMessage<?> getConfiguration(final String shortDescription) throws EncodeException{
+		return loaderConfiguration.getConfiguration(shortDescription);
 	}
 
 

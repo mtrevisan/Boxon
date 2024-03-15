@@ -141,7 +141,7 @@ final class LoaderConfiguration{
 			if(from.canBeCoded()){
 				//if the configuration is valid, add it to the list of templates...
 				final ConfigurationHeader header = from.getHeader();
-				configurations.put(header.start(), from);
+				configurations.put(header.shortDescription(), from);
 			}
 			else
 				//... otherwise throw exception
@@ -179,20 +179,20 @@ final class LoaderConfiguration{
 	private void addConfigurationInner(final ConfigurationMessage<?> configuration){
 		try{
 			final ConfigurationHeader header = configuration.getHeader();
-			final String start = header.start();
-			loadConfigurationInner(start, configuration);
+			final String shortDescription = header.shortDescription();
+			loadConfigurationInner(shortDescription, configuration);
 		}
 		catch(final Exception e){
 			eventListener.cannotLoadConfiguration(configuration.getType().getName(), e);
 		}
 	}
 
-	private void loadConfigurationInner(final String headerStart, final ConfigurationMessage<?> configuration) throws ConfigurationException{
-		if(configurations.containsKey(headerStart))
-			throw ConfigurationException.create("Duplicated key `{}` found for class {}", headerStart,
+	private void loadConfigurationInner(final String shortDescription, final ConfigurationMessage<?> configuration) throws ConfigurationException{
+		if(configurations.containsKey(shortDescription))
+			throw ConfigurationException.create("Duplicated key `{}` found for class {}", shortDescription,
 				configuration.getType().getName());
 
-		configurations.put(headerStart, configuration);
+		configurations.put(shortDescription, configuration);
 	}
 
 
@@ -254,12 +254,12 @@ final class LoaderConfiguration{
 	/**
 	 * Retrieve the configuration by header start parameter.
 	 *
-	 * @param configurationType	The header start of a configuration.
+	 * @param shortDescription	The short description identifying a message, see {@link ConfigurationHeader#shortDescription()}.
 	 * @return	The configuration.
 	 * @throws EncodeException	If a configuration cannot be retrieved.
 	 */
-	ConfigurationMessage<?> getConfiguration(final String configurationType) throws EncodeException{
-		final ConfigurationMessage<?> configuration = configurations.get(configurationType);
+	ConfigurationMessage<?> getConfiguration(final String shortDescription) throws EncodeException{
+		final ConfigurationMessage<?> configuration = configurations.get(shortDescription);
 		if(configuration == null)
 			throw EncodeException.create("No configuration could be found for the specified class type");
 

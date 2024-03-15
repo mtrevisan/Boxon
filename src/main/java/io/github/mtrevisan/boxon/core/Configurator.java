@@ -184,34 +184,34 @@ public final class Configurator{
 	 * Compose a configuration message.
 	 *
 	 * @param protocolVersion	The protocol version (should follow <a href="https://semver.org/">Semantic Versioning</a>).
-	 * @param messageStart	The initial bytes of the message, see {@link ConfigurationHeader#start()}.
+	 * @param shortDescription	The short description identifying a message, see {@link ConfigurationHeader#shortDescription()}.
 	 * @param template	The template, or a POJO, containing the data to be composed.
 	 * @return	The composition response.
 	 */
-	public Response<String, byte[]> composeConfiguration(final String protocolVersion, final String messageStart,
+	public Response<String, byte[]> composeConfiguration(final String protocolVersion, final String shortDescription,
 			final Object template){
 		final Map<String, Object> data = ReflectionHelper.mapObject(template);
-		return composeConfiguration(protocolVersion, messageStart, data);
+		return composeConfiguration(protocolVersion, shortDescription, data);
 	}
 
 	/**
 	 * Compose a configuration message.
 	 *
 	 * @param protocolVersion	The protocol version (should follow <a href="https://semver.org/">Semantic Versioning</a>).
-	 * @param messageStart	The initial bytes of the message, see {@link ConfigurationHeader#start()}.
+	 * @param shortDescription	The short description identifying a message, see {@link ConfigurationHeader#shortDescription()}.
 	 * @param data	The configuration message data to be composed.
 	 * @return	The composition response.
 	 */
-	public Response<String, byte[]> composeConfiguration(final String protocolVersion, final String messageStart,
+	public Response<String, byte[]> composeConfiguration(final String protocolVersion, final String shortDescription,
 			final Map<String, Object> data){
 		final Version protocol = Version.of(protocolVersion);
 		if(protocol.isEmpty())
 			throw new IllegalArgumentException("Invalid protocol version: " + protocolVersion);
 
 		final BitWriter writer = BitWriter.create();
-		final EncodeException error = composeConfiguration(writer, messageStart, data, protocol);
+		final EncodeException error = composeConfiguration(writer, shortDescription, data, protocol);
 
-		return Response.create(messageStart, writer, error);
+		return Response.create(shortDescription, writer, error);
 	}
 
 	/**
@@ -219,10 +219,10 @@ public final class Configurator{
 	 *
 	 * @return	The error, if any.
 	 */
-	private EncodeException composeConfiguration(final BitWriterInterface writer, final String messageStart, final Map<String, Object> data,
+	private EncodeException composeConfiguration(final BitWriterInterface writer, final String shortDescription, final Map<String, Object> data,
 			final Version protocol){
 		try{
-			final ConfigurationMessage<?> configuration = configurationParser.getConfiguration(messageStart);
+			final ConfigurationMessage<?> configuration = configurationParser.getConfiguration(shortDescription);
 			final Object configurationData = ConfigurationParser.getConfigurationWithDefaults(configuration, data, protocol);
 			configurationParser.encode(configuration, writer, configurationData, evaluator, protocol);
 
