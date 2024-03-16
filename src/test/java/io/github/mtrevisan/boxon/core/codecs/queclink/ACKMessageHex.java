@@ -44,7 +44,7 @@ import java.util.Map;
 @MessageHeader(start = "+ACK", end = "\r\n")
 public class ACKMessageHex{
 
-	private static final Map<Byte, String> MESSAGE_TYPE_MAP = new HashMap<>();
+	private static final Map<Byte, String> MESSAGE_TYPE_MAP = new HashMap<>(43);
 	static{
 		MESSAGE_TYPE_MAP.put((byte)0, "AT+GTBSI");
 		MESSAGE_TYPE_MAP.put((byte)1, "AT+GTSRI");

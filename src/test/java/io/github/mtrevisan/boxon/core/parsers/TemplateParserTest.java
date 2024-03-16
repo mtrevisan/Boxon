@@ -49,6 +49,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.expression.spel.SpelEvaluationException;
 
+import java.nio.charset.StandardCharsets;
+
 
 class TemplateParserTest{
 
@@ -79,7 +81,7 @@ class TemplateParserTest{
 		templateParser.encode(template, writer, null, message);
 		byte[] reconstructedMessage = writer.array();
 
-		Assertions.assertEquals(new String(payload), new String(reconstructedMessage));
+		Assertions.assertEquals(new String(payload, StandardCharsets.US_ASCII), new String(reconstructedMessage, StandardCharsets.US_ASCII));
 	}
 
 	@Test
@@ -109,7 +111,7 @@ class TemplateParserTest{
 		templateParser.encode(template, writer, null, message);
 		byte[] reconstructedMessage = writer.array();
 
-		Assertions.assertEquals(new String(payload), new String(reconstructedMessage));
+		Assertions.assertEquals(new String(payload, StandardCharsets.US_ASCII), new String(reconstructedMessage, StandardCharsets.US_ASCII));
 	}
 
 	private static int headerLength(){
@@ -142,7 +144,7 @@ class TemplateParserTest{
 		templateParser.encode(template, writer, null, message);
 		byte[] reconstructedMessage = writer.array();
 
-		Assertions.assertEquals(new String(payload), new String(reconstructedMessage));
+		Assertions.assertEquals(new String(payload, StandardCharsets.US_ASCII), new String(reconstructedMessage, StandardCharsets.US_ASCII));
 	}
 
 	@Test
@@ -155,7 +157,7 @@ class TemplateParserTest{
 
 
 	@MessageHeader(start = "te1")
-	static class TestError1{
+	private static class TestError1{
 		@BindString(size = "3")
 		String header;
 		@BindByte(condition = "e")
@@ -402,7 +404,7 @@ class TemplateParserTest{
 	}
 
 
-	private void postProcessCodecs(LoaderCodec loaderCodec, TemplateParserInterface templateParser, Evaluator evaluator){
+	private static void postProcessCodecs(LoaderCodec loaderCodec, TemplateParserInterface templateParser, Evaluator evaluator){
 		loaderCodec.injectFieldInCodecs(TemplateParserInterface.class, templateParser);
 		loaderCodec.injectFieldInCodecs(Evaluator.class, evaluator);
 	}

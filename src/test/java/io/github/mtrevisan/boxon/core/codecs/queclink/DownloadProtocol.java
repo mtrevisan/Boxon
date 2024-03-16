@@ -33,7 +33,7 @@ public enum DownloadProtocol implements ConfigurationEnum{
 	HTTPS(2);
 
 
-	private int code;
+	private final int code;
 
 
 	DownloadProtocol(final int code){

@@ -28,6 +28,7 @@ import io.github.mtrevisan.boxon.utils.TimeWatch;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -65,8 +66,8 @@ class PatternMatcherTest{
 		matchers.put("KMP", kmp);
 		matchers.put("KR", kr);
 
-		byte[] source = "2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a".getBytes();
-		byte[] pattern = "0d0a".getBytes();
+		byte[] source = "2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a".getBytes(StandardCharsets.US_ASCII);
+		byte[] pattern = "0d0a".getBytes(StandardCharsets.US_ASCII);
 		for(Map.Entry<String, PatternMatcher> entry : matchers.entrySet()){
 			String key = entry.getKey();
 			PatternMatcher m = entry.getValue();
@@ -85,63 +86,101 @@ class PatternMatcherTest{
 	}
 
 	private void testIndexOf(PatternMatcher pm){
-		byte[] source = "".getBytes();
-		byte[] pattern = "".getBytes();
+		byte[] source = "".getBytes(StandardCharsets.US_ASCII);
+		byte[] pattern = "".getBytes(StandardCharsets.US_ASCII);
+
 		int index = pm.indexOf(source, 0, pattern, pm.preProcessPattern(pattern));
+
 		Assertions.assertEquals(0, index);
+	}
 
-		source = "ab".getBytes();
-		pattern = "".getBytes();
-		index = pm.indexOf(source, 0, pattern, pm.preProcessPattern(pattern));
+	private void testIndexOf2(PatternMatcher pm){
+		byte[] source = "ab".getBytes(StandardCharsets.US_ASCII);
+		byte[] pattern = "".getBytes(StandardCharsets.US_ASCII);
+
+		int index = pm.indexOf(source, 0, pattern, pm.preProcessPattern(pattern));
+
 		Assertions.assertEquals(0, index);
+	}
 
+	private void testIndexOf3(PatternMatcher pm){
+		byte[] source = "a".getBytes(StandardCharsets.US_ASCII);
+		byte[] pattern = "a".getBytes(StandardCharsets.US_ASCII);
 
-		source = "a".getBytes();
-		pattern = "a".getBytes();
-		index = pm.indexOf(source, 0, pattern, pm.preProcessPattern(pattern));
+		int index = pm.indexOf(source, 0, pattern, pm.preProcessPattern(pattern));
+
 		Assertions.assertEquals(0, index);
+	}
 
-		source = "b".getBytes();
-		pattern = "a".getBytes();
-		index = pm.indexOf(source, 0, pattern, pm.preProcessPattern(pattern));
+	private void testIndexOf4(PatternMatcher pm){
+		byte[] source = "b".getBytes(StandardCharsets.US_ASCII);
+		byte[] pattern = "a".getBytes(StandardCharsets.US_ASCII);
+
+		int index = pm.indexOf(source, 0, pattern, pm.preProcessPattern(pattern));
+
 		Assertions.assertEquals(-1, index);
+	}
 
+	private void testIndexOf5(PatternMatcher pm){
+		byte[] source = "aaaaa".getBytes(StandardCharsets.US_ASCII);
+		byte[] pattern = "aaa".getBytes(StandardCharsets.US_ASCII);
 
-		source = "aaaaa".getBytes();
-		pattern = "aaa".getBytes();
-		index = pm.indexOf(source, 0, pattern, pm.preProcessPattern(pattern));
+		int index = pm.indexOf(source, 0, pattern, pm.preProcessPattern(pattern));
+
 		Assertions.assertEquals(0, index);
+	}
 
-		source = "abaaba".getBytes();
-		pattern = "aaa".getBytes();
-		index = pm.indexOf(source, 0, pattern, pm.preProcessPattern(pattern));
+	private void testIndexOf6(PatternMatcher pm){
+		byte[] source = "abaaba".getBytes(StandardCharsets.US_ASCII);
+		byte[] pattern = "aaa".getBytes(StandardCharsets.US_ASCII);
+
+		int index = pm.indexOf(source, 0, pattern, pm.preProcessPattern(pattern));
+
 		Assertions.assertEquals(-1, index);
+	}
 
-		source = "abacababc".getBytes();
-		pattern = "abab".getBytes();
-		index = pm.indexOf(source, 0, pattern, pm.preProcessPattern(pattern));
+	private void testIndexOf7(PatternMatcher pm){
+		byte[] source = "abacababc".getBytes(StandardCharsets.US_ASCII);
+		byte[] pattern = "abab".getBytes(StandardCharsets.US_ASCII);
+
+		int index = pm.indexOf(source, 0, pattern, pm.preProcessPattern(pattern));
+
 		Assertions.assertEquals(4, index);
+	}
 
-		source = "babacaba".getBytes();
-		pattern = "abab".getBytes();
-		index = pm.indexOf(source, 0, pattern, pm.preProcessPattern(pattern));
+	private void testIndexOf8(PatternMatcher pm){
+		byte[] source = "babacaba".getBytes(StandardCharsets.US_ASCII);
+		byte[] pattern = "abab".getBytes(StandardCharsets.US_ASCII);
+
+		int index = pm.indexOf(source, 0, pattern, pm.preProcessPattern(pattern));
+
 		Assertions.assertEquals(-1, index);
+	}
 
+	private void testIndexOf9(PatternMatcher pm){
+		byte[] source = "aaacacaacaaacaaaacaaaaac".getBytes(StandardCharsets.US_ASCII);
+		byte[] pattern = "aaacaaaaac".getBytes(StandardCharsets.US_ASCII);
 
-		source = "aaacacaacaaacaaaacaaaaac".getBytes();
-		pattern = "aaacaaaaac".getBytes();
-		index = pm.indexOf(source, 0, pattern, pm.preProcessPattern(pattern));
+		int index = pm.indexOf(source, 0, pattern, pm.preProcessPattern(pattern));
+
 		Assertions.assertEquals(14, index);
+	}
 
-		source = "ababcababdabababcababdaba".getBytes();
-		pattern = "ababcababdabababcababdaba".getBytes();
-		index = pm.indexOf(source, 0, pattern, pm.preProcessPattern(pattern));
+	private void testIndexOf10(PatternMatcher pm){
+		byte[] source = "ababcababdabababcababdaba".getBytes(StandardCharsets.US_ASCII);
+		byte[] pattern = "ababcababdabababcababdaba".getBytes(StandardCharsets.US_ASCII);
+
+		int index = pm.indexOf(source, 0, pattern, pm.preProcessPattern(pattern));
+
 		Assertions.assertEquals(0, index);
+	}
 
+	private void testIndexOf11(PatternMatcher pm){
+		byte[] source = "2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a".getBytes(StandardCharsets.US_ASCII);
+		byte[] pattern = "0d0a".getBytes(StandardCharsets.US_ASCII);
 
-		source = "2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a".getBytes();
-		pattern = "0d0a".getBytes();
-		index = pm.indexOf(source, 0, pattern, pm.preProcessPattern(pattern));
+		int index = pm.indexOf(source, 0, pattern, pm.preProcessPattern(pattern));
+
 		Assertions.assertEquals(68, index);
 	}
 

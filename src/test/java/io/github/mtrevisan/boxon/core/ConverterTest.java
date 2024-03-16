@@ -41,7 +41,7 @@ import java.util.List;
 class ConverterTest{
 
 	@MessageHeader(start = "wc1")
-	static class TestConverter1{
+	private static class TestConverter1{
 		@BindString(size = "3")
 		String header;
 		@BindByte(converter = WrongConverterInput.class)
@@ -62,7 +62,7 @@ class ConverterTest{
 	}
 
 	@MessageHeader(start = "wc2")
-	static class TestConverter2{
+	private static class TestConverter2{
 		@BindString(size = "3")
 		String header;
 		@BindByte(converter = WrongConverterOutput.class)
@@ -70,7 +70,7 @@ class ConverterTest{
 	}
 
 	@MessageHeader(start = "wc3")
-	static class TestConverter3{
+	private static class TestConverter3{
 		@BindString(size = "3")
 		String header;
 		@BindByte(converter = WrongConverterOutput.class)

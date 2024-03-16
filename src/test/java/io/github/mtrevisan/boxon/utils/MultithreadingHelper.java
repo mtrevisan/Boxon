@@ -41,9 +41,9 @@ public final class MultithreadingHelper{
 	private MultithreadingHelper(){}
 
 
-	public static <T> void testMultithreading(final Callable<T> fun, final Consumer<T> combiner, final int threadCount)
+	public static <T> void testMultithreading(final Callable<? extends T> fun, final Consumer<? super T> combiner, final int threadCount)
 			throws ExecutionException, InterruptedException{
-		try(ExecutorService service = Executors.newFixedThreadPool(threadCount)){
+		try(final ExecutorService service = Executors.newFixedThreadPool(threadCount)){
 
 			final CountDownLatch latch = new CountDownLatch(1);
 			final AtomicBoolean running = new AtomicBoolean();
@@ -56,7 +56,7 @@ public final class MultithreadingHelper{
 					futures[t] = service.submit(() -> {
 						latch.await();
 
-						if(! running.compareAndSet(false, true))
+						if(!running.compareAndSet(false, true))
 							overlaps.incrementAndGet();
 
 						final T result = fun.call();

@@ -52,8 +52,8 @@ public @interface ObjectChoices{
 	/**
 	 * The bit order to be considered when returning a representation of the first {@link #prefixLength() length} bits read as a header.
 	 *
-	 * @return	The byte order to be considered when returning a representation of the first {@link #prefixLength() length} bits read as a header
-	 * 	(defaults to {@link ByteOrder#BIG_ENDIAN}).
+	 * @return	The byte order to be considered when returning a representation of the first {@link #prefixLength() length} bits read as a
+	 * 	header (defaults to {@link ByteOrder#BIG_ENDIAN}).
 	 */
 	ByteOrder bitOrder() default ByteOrder.BIG_ENDIAN;
 

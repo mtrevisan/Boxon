@@ -102,17 +102,17 @@ class TemplateTest{
 	@MessageHeader(start = "+", end = "-")
 	private static class Message{
 
-		private final Map<Byte, String> MESSAGE_TYPE_MAP = new HashMap<>();
+		private final Map<Byte, String> messageTypeMap = new HashMap<>(2);
 
 		class MessageTypeConverter implements Converter<Byte, String>{
 			@Override
 			public String decode(final Byte value){
-				return MESSAGE_TYPE_MAP.get(value);
+				return messageTypeMap.get(value);
 			}
 
 			@Override
 			public Byte encode(final String value){
-				for(final Map.Entry<Byte, String> elem : MESSAGE_TYPE_MAP.entrySet()){
+				for(final Map.Entry<Byte, String> elem : messageTypeMap.entrySet()){
 					if(elem.getValue().equals(value))
 						return elem.getKey();
 				}
@@ -121,8 +121,8 @@ class TemplateTest{
 		}
 
 		Message(){
-			MESSAGE_TYPE_MAP.put((byte)0, "AT+GTBSI");
-			MESSAGE_TYPE_MAP.put((byte)1, "AT+GTSRI");
+			messageTypeMap.put((byte)0, "AT+GTBSI");
+			messageTypeMap.put((byte)1, "AT+GTSRI");
 		}
 
 		@BindByte(converter = Mask.MaskConverter.class)

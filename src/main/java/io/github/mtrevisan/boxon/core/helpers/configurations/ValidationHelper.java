@@ -196,21 +196,26 @@ final class ValidationHelper{
 	private static void validateMinMaxDefaultValuesToPattern(final Pattern formatPattern, final ConfigFieldData field)
 			throws AnnotationException{
 		//`defaultValue` compatible with `pattern`
-		if(!matches(field.getDefaultValue(), formatPattern))
+		if(!matchesOrBlank(field.getDefaultValue(), formatPattern))
 			throw AnnotationException.create("Default value not compatible with `pattern` in {}; found {}, expected {}",
 				field.getAnnotationName(), field.getDefaultValue(), formatPattern.pattern());
 		//minValue compatible with pattern
-		if(!matches(field.getMinValue(), formatPattern))
+		if(!matchesOrBlank(field.getMinValue(), formatPattern))
 			throw AnnotationException.create("Minimum value not compatible with `pattern` in {}; found {}, expected {}",
 				field.getAnnotationName(), field.getMinValue(), formatPattern.pattern());
 		//maxValue compatible with pattern
-		if(!matches(field.getMaxValue(), formatPattern))
+		if(!matchesOrBlank(field.getMaxValue(), formatPattern))
 			throw AnnotationException.create("Maximum value not compatible with `pattern` in {}; found {}, expected {}",
 				field.getAnnotationName(), field.getMaxValue(), formatPattern.pattern());
 	}
 
-	private static boolean matches(final String text, final Pattern pattern){
-		return (StringHelper.isBlank(text) || pattern.matcher(text).matches());
+	private static boolean matchesOrBlank(final String text, final Pattern pattern){
+		return (StringHelper.isBlank(text) || matches(text, pattern));
+	}
+
+	static boolean matches(final CharSequence text, final Pattern pattern){
+		return pattern.matcher(text)
+			.matches();
 	}
 
 
@@ -238,7 +243,7 @@ final class ValidationHelper{
 
 		//`defaultValue` compatible with field type
 		if(!String.class.isAssignableFrom(field.getFieldType())
-				|| dataValue != null && String.class.isAssignableFrom(dataValue.getClass()) && !formatPattern.matcher((String)dataValue).matches())
+				|| dataValue != null && String.class.isAssignableFrom(dataValue.getClass()) && !matches((String)dataValue, formatPattern))
 			throw AnnotationException.create("Data type not compatible with `pattern` in {}; found {}.class, expected complying with {}",
 				field.getAnnotationName(), field.getFieldType(), pattern);
 

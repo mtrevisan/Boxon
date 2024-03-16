@@ -28,6 +28,7 @@ import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.ParserDataType;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Objects;
@@ -441,7 +442,7 @@ public final class Version implements Comparable<Version>{
 		final int length = JavaHelper.lengthOrZero(text);
 		if(length > 0){
 			final byte[] bytes = text.toUpperCase(Locale.ROOT)
-				.getBytes();
+				.getBytes(StandardCharsets.US_ASCII);
 			for(int i = 0; i < length; i ++){
 				final byte chr = bytes[i];
 

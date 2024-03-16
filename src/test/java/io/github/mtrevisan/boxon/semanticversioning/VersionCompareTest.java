@@ -33,9 +33,8 @@ class VersionCompareTest{
 	@Test
 	void shouldReturnFalseIfOtherVersionIsNull(){
 		Version v1 = Version.of("2.3.7");
-		Version v2 = null;
 
-		Assertions.assertNotEquals(v1, v2);
+		Assertions.assertNotEquals(v1, null);
 	}
 
 	@Test

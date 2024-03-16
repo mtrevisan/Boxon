@@ -179,10 +179,6 @@ final class BindingData{
 		return EMPTY_CHOICE;
 	}
 
-	private static boolean isEmptyChoice(final ObjectChoices.ObjectChoice choice){
-		return (choice.annotationType() == Annotation.class);
-	}
-
 	/**
 	 * Whether the select-object-from binding has any alternatives.
 	 *
@@ -234,7 +230,7 @@ final class BindingData{
 	 *
 	 * @return	Whether the select-object-separated-from binding has any alternatives.
 	 */
-	boolean hasSelectSeparatedAlternatives(){
+	private boolean hasSelectSeparatedAlternatives(){
 		return (selectObjectListFrom.alternatives().length > 0);
 	}
 
@@ -248,7 +244,7 @@ final class BindingData{
 		return EMPTY_CHOICE_SEPARATED;
 	}
 
-	private static boolean isEmptyChoice(final ObjectChoicesList.ObjectChoiceList choice){
+	private static boolean isEmptyChoice(final Annotation choice){
 		return (choice.annotationType() == Annotation.class);
 	}
 

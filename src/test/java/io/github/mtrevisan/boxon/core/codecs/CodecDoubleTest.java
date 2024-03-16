@@ -98,7 +98,9 @@ class CodecDoubleTest{
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		Assertions.assertEquals(StringHelper.leftPad(Long.toHexString(Long.reverseBytes(Double.doubleToRawLongBits(encodedValue))).toUpperCase(Locale.ROOT), 16, '0'), writer.toString());
+		String expected = StringHelper.leftPad(Long.toHexString(Long.reverseBytes(Double.doubleToRawLongBits(encodedValue)))
+			.toUpperCase(Locale.ROOT), 16, '0');
+		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
 		double decoded = (double)codec.decode(reader, annotation, null);
@@ -156,7 +158,9 @@ class CodecDoubleTest{
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		Assertions.assertEquals(StringHelper.leftPad(Long.toHexString(Long.reverseBytes(Double.doubleToRawLongBits(encodedValue))).toUpperCase(Locale.ROOT), 16, '0'), writer.toString());
+		String expected = StringHelper.leftPad(Long.toHexString(Long.reverseBytes(Double.doubleToRawLongBits(encodedValue)))
+			.toUpperCase(Locale.ROOT), 16, '0');
+		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
 		double decoded = (double)codec.decode(reader, annotation, null);
@@ -214,7 +218,9 @@ class CodecDoubleTest{
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		Assertions.assertEquals(StringHelper.leftPad(Long.toHexString(Double.doubleToRawLongBits(encodedValue)).toUpperCase(Locale.ROOT), 8, '0'), writer.toString());
+		String expected = StringHelper.leftPad(Long.toHexString(Double.doubleToRawLongBits(encodedValue)).toUpperCase(Locale.ROOT), 8,
+			'0');
+		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
 		double decoded = (double)codec.decode(reader, annotation, null);
@@ -272,7 +278,9 @@ class CodecDoubleTest{
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		Assertions.assertEquals(StringHelper.leftPad(Long.toHexString(Double.doubleToRawLongBits(encodedValue)).toUpperCase(Locale.ROOT), 8, '0'), writer.toString());
+		String expected = StringHelper.leftPad(Long.toHexString(Double.doubleToRawLongBits(encodedValue)).toUpperCase(Locale.ROOT), 8,
+			'0');
+		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
 		double decoded = (double)codec.decode(reader, annotation, null);

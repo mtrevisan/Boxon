@@ -219,8 +219,8 @@ public final class Configurator{
 	 *
 	 * @return	The error, if any.
 	 */
-	private EncodeException composeConfiguration(final BitWriterInterface writer, final String shortDescription, final Map<String, Object> data,
-			final Version protocol){
+	private EncodeException composeConfiguration(final BitWriterInterface writer, final String shortDescription,
+			final Map<String, Object> data, final Version protocol){
 		try{
 			final ConfigurationMessage<?> configuration = configurationParser.getConfiguration(shortDescription);
 			final Object configurationData = ConfigurationParser.getConfigurationWithDefaults(configuration, data, protocol);

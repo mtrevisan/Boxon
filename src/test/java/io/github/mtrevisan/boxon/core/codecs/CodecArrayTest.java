@@ -106,7 +106,7 @@ class CodecArrayTest{
 	@Test
 	void arrayPrimitive() throws FieldException{
 		CodecInterface<BindArrayPrimitive> codec = new CodecArrayPrimitive();
-		int[] encodedValue = new int[]{0x0000_0123, 0x0000_0456};
+		int[] encodedValue = {0x0000_0123, 0x0000_0456};
 		BindArrayPrimitive annotation = new BindArrayPrimitive(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
@@ -175,7 +175,7 @@ class CodecArrayTest{
 	@Test
 	void arrayOfSameObject() throws FieldException{
 		CodecArray codec = new CodecArray();
-		Version[] encodedValue = new Version[]{new Version((byte) 0, (byte) 1, (byte) 12), new Version((byte) 1, (byte) 2, (byte) 0)};
+		Version[] encodedValue = {new Version((byte) 0, (byte) 1, (byte) 12), new Version((byte) 1, (byte) 2, (byte) 0)};
 		BindArray annotation = new BindArray(){
 			@Override
 			public Class<? extends Annotation> annotationType(){

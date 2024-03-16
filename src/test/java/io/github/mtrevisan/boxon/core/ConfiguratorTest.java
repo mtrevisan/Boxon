@@ -34,6 +34,7 @@ import io.github.mtrevisan.boxon.utils.PrettyPrintMap;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -108,7 +109,7 @@ class ConfiguratorTest{
 		Configurator configurator = Configurator.create(core);
 
 		//data:
-		Map<String, Object> configurationData = new HashMap<>();
+		Map<String, Object> configurationData = new HashMap<>(10);
 		configurationData.put("Weekday", "TUESDAY|WEDNESDAY");
 		configurationData.put("Update Over-The-Air", "TRUE");
 		configurationData.put("Header", "GTREG");
@@ -131,7 +132,7 @@ class ConfiguratorTest{
 
 		Assertions.assertFalse(composeResult.hasError());
 		Assertions.assertEquals("AT+GTREG=pass,1,1,0,2,25,0,http://url.com@username@password,3600,3600,06,,007B$",
-			new String(composeResult.getMessage()));
+			new String(composeResult.getMessage(), StandardCharsets.US_ASCII));
 	}
 
 }

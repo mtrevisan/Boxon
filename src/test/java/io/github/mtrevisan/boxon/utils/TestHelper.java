@@ -28,7 +28,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Random;
 
 
-public class TestHelper{
+public final class TestHelper{
 
 	public static final Random RANDOM = new Random(System.currentTimeMillis());
 

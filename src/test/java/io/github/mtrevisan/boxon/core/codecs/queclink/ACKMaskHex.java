@@ -46,7 +46,7 @@ public class ACKMaskHex{
 	private final byte mask;
 
 
-	ACKMaskHex(byte mask){
+	private ACKMaskHex(final byte mask){
 		this.mask = mask;
 	}
 

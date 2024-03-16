@@ -36,6 +36,7 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -199,7 +200,7 @@ public final class Evaluator{
 	}
 
 	private static boolean isPositiveInteger(final String text){
-		final byte[] bytes = text.getBytes();
+		final byte[] bytes = text.getBytes(StandardCharsets.US_ASCII);
 		for(int i = 0, length = bytes.length; i < length; i ++)
 			if(!Character.isDigit(bytes[i]))
 				return false;

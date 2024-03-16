@@ -163,7 +163,7 @@ class CodecStringTest{
 			}
 
 
-			private byte[] toByteArray(final String payload){
+			private static byte[] toByteArray(final String payload){
 				return payload.getBytes(StandardCharsets.UTF_8);
 			}
 		};

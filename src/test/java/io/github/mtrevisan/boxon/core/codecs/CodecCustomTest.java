@@ -83,7 +83,7 @@ class CodecCustomTest{
 		loaderCodec.addCodecs(new VariableLengthByteArray());
 
 		CodecInterface<?> codec = loaderCodec.getCodec(VarLengthEncoded.class);
-		byte[] encodedValue = new byte[]{0x01, 0x02, 0x03};
+		byte[] encodedValue = {0x01, 0x02, 0x03};
 		VarLengthEncoded annotation = new VarLengthEncoded(){
 			@Override
 			public Class<? extends Annotation> annotationType(){

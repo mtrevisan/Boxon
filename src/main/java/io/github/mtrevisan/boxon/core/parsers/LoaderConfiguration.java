@@ -204,7 +204,8 @@ public final class LoaderConfiguration{
 		}
 	}
 
-	private void loadConfigurationInner(final String shortDescription, final ConfigurationMessage<?> configuration) throws ConfigurationException{
+	private void loadConfigurationInner(final String shortDescription, final ConfigurationMessage<?> configuration)
+			throws ConfigurationException{
 		if(configurations.containsKey(shortDescription))
 			throw ConfigurationException.create("Duplicated key `{}` found for class {}", shortDescription,
 				configuration.getType().getName());

@@ -38,7 +38,7 @@ enum Weekday implements ConfigurationEnum{
 	SUNDAY(0x40);
 
 
-	private int code;
+	private final int code;
 
 
 	Weekday(final int code){

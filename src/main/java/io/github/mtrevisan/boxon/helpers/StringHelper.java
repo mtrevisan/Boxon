@@ -99,7 +99,7 @@ public final class StringHelper{
 		if(length == 0)
 			return JavaHelper.EMPTY_STRING_ARRAY;
 
-		final byte[] bytes = text.getBytes();
+		final byte[] bytes = text.getBytes(StandardCharsets.UTF_8);
 		final List<String> list = new ArrayList<>(length >> 1);
 		int start = 0;
 		for(int i = 0; i < length; i ++)
@@ -132,7 +132,7 @@ public final class StringHelper{
 	public static boolean isBlank(final String text){
 		final int length = JavaHelper.lengthOrZero(text);
 		if(length > 0){
-			final byte[] bytes = text.getBytes();
+			final byte[] bytes = text.getBytes(StandardCharsets.UTF_8);
 			for(int i = 0; i < length; i ++)
 				if(!Character.isWhitespace(bytes[i]))
 					return false;
@@ -175,7 +175,7 @@ public final class StringHelper{
 
 		final byte[] data = new byte[length >>> 1];
 		if(length > 0){
-			final byte[] bytes = hexString.getBytes();
+			final byte[] bytes = hexString.getBytes(StandardCharsets.US_ASCII);
 			for(int i = 0; i < length; i += 2){
 				final int highDigit = Character.digit(bytes[i], 16);
 				final int lowDigit = Character.digit(bytes[i + 1], 16);
@@ -211,7 +211,7 @@ public final class StringHelper{
 		final int length = JavaHelper.lengthOrZero(asciiString);
 		final byte[] data = new byte[length];
 		if(length > 0){
-			final byte[] bytes = asciiString.getBytes();
+			final byte[] bytes = asciiString.getBytes(StandardCharsets.US_ASCII);
 			System.arraycopy(bytes, 0, data, 0, length);
 		}
 		return data;

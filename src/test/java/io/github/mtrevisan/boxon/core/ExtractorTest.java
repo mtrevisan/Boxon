@@ -40,7 +40,7 @@ class ExtractorTest{
 		Version version = Version.of(1, 2);
 		Extractor extractor = Extractor.create(version);
 
-		int actual = (int)extractor.get("/minor", null);
+		int actual = extractor.get("/minor", null);
 
 		Assertions.assertEquals(2, actual);
 	}
@@ -76,17 +76,17 @@ class ExtractorTest{
 
 	@Test
 	void fromArray() throws JSONPathException{
-		int[] array = new int[]{12, 23};
+		int[] array = {12, 23};
 		Extractor extractor = Extractor.create(array);
 
-		int actual = (int)extractor.get("/1", null);
+		int actual = extractor.get("/1", null);
 
 		Assertions.assertEquals(23, actual);
 	}
 
 	@Test
 	void failIndex(){
-		int[] array = new int[]{12, 23};
+		int[] array = {12, 23};
 		Extractor extractor = Extractor.create(array);
 
 		Exception e = Assertions.assertThrows(JSONPathException.class,

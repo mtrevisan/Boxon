@@ -114,17 +114,18 @@ public final class BNDMPatternMatcher implements PatternMatcher{
 
 	@Override
 	public int indexOf(final byte[] source, int offset, final byte[] pattern, final int[] processedPattern){
-		if(pattern.length == 0)
+		final int patternLength = pattern.length;
+		if(patternLength == 0)
 			return 0;
-		if(source.length < pattern.length + offset)
+		final int sourceLength = source.length;
+		if(sourceLength < patternLength + offset)
 			return -1;
 
-		assertLength(pattern.length);
+		assertLength(patternLength);
 
-		final int length = pattern.length;
-		while(offset <= source.length - length){
-			int j = length - 1;
-			int last = length;
+		while(offset <= sourceLength - patternLength){
+			int j = patternLength - 1;
+			int last = patternLength;
 			int pp = -1;
 			while(pp != 0){
 				pp &= processedPattern[source[offset + j] & 0xFF];

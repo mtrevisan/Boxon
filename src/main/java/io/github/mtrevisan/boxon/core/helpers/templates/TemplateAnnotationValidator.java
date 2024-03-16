@@ -305,7 +305,7 @@ enum TemplateAnnotationValidator{
 		}
 	}
 
-	private static void validateAlternative(final Class<?> alternativeType, final String alternativeCondition, final Class<?> type,
+	private static void validateAlternative(final Class<?> alternativeType, final CharSequence alternativeCondition, final Class<?> type,
 			final boolean hasPrefixLength) throws AnnotationException{
 		if(!type.isAssignableFrom(alternativeType))
 			throw AnnotationException.create("Type of alternative cannot be assigned to (super) type of annotation");

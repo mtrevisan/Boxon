@@ -65,11 +65,12 @@ public final class KMPPatternMatcher implements PatternMatcher{
 	 */
 	@Override
 	public int[] preProcessPattern(final byte[] pattern){
-		final int[] lps = new int[pattern.length];
+		final int length = pattern.length;
+		final int[] lps = new int[length];
 
 		int i = 1;
 		int lengthPreviousLPS = 0;
-		while(i < lps.length){
+		while(i < length){
 			if(pattern[i] == pattern[lengthPreviousLPS])
 				//when both chars before `lengthPreviousLPS` and `i` are equal, link both and move both forward
 				lps[i ++] = ++ lengthPreviousLPS;
@@ -102,9 +103,11 @@ public final class KMPPatternMatcher implements PatternMatcher{
 	 */
 	@Override
 	public int indexOf(final byte[] source, final int offset, final byte[] pattern, final int[] failureTable){
-		if(pattern.length == 0)
+		final int patternLength = pattern.length;
+		if(patternLength == 0)
 			return 0;
-		if(source.length < pattern.length + offset)
+		final int sourceLength = source.length;
+		if(sourceLength < patternLength + offset)
 			return -1;
 
 		//no candidate matched the pattern
@@ -115,11 +118,11 @@ public final class KMPPatternMatcher implements PatternMatcher{
 		//current byte index in search array
 		int searchPointer = offset;
 		//while there is more to search with, keep searching
-		while(searchPointer < source.length){
+		while(searchPointer < sourceLength){
 			if(source[searchPointer] == pattern[targetPointer]){
 				//found current byte in `targetPointer` in search array
 				targetPointer ++;
-				if(targetPointer == pattern.length){
+				if(targetPointer == patternLength){
 					//return starting index of found target inside searched array
 					index = searchPointer - targetPointer + 1;
 					break;

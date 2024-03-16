@@ -592,7 +592,8 @@ public enum AnnotationDescriptor{
 	 * @param value	The value.
 	 * @param map	The map in which to load the key-value pair.
 	 */
-	public static void putIfNotEmpty(final DescriberKey key, final Object value, @SuppressWarnings("BoundedWildcard") final Map<String, Object> map){
+	public static void putIfNotEmpty(final DescriberKey key, final Object value,
+			@SuppressWarnings("BoundedWildcard") final Map<String, Object> map){
 		if(value != null && (!(value instanceof final String v) || !StringHelper.isBlank(v)))
 			map.put(key.toString(), value);
 	}
@@ -604,7 +605,8 @@ public enum AnnotationDescriptor{
 	 * @param type	The class whose simple name will be the value.
 	 * @param map	The map in which to load the key-value pair.
 	 */
-	private static void putIfNotEmpty(final DescriberKey key, final Class<?> type, @SuppressWarnings("BoundedWildcard") final Map<String, Object> map){
+	private static void putIfNotEmpty(final DescriberKey key, final Class<?> type,
+			@SuppressWarnings("BoundedWildcard") final Map<String, Object> map){
 		if(type != null)
 			map.put(key.toString(), type.getSimpleName());
 	}
@@ -616,7 +618,8 @@ public enum AnnotationDescriptor{
 	 * @param value	The value.
 	 * @param map	The map in which to load the key-value pair.
 	 */
-	public static void putIfNotEmpty(final ConfigurationKey key, final Object value, @SuppressWarnings("BoundedWildcard") final Map<String, Object> map){
+	public static void putIfNotEmpty(final ConfigurationKey key, final Object value,
+			@SuppressWarnings("BoundedWildcard") final Map<String, Object> map){
 		if(value != null && (!(value instanceof final String v) || !StringHelper.isBlank(v)))
 			map.put(key.toString(), value);
 	}
@@ -628,7 +631,8 @@ public enum AnnotationDescriptor{
 	 * @param type	The class whose simple name will be the value.
 	 * @param map	The map in which to load the key-value pair.
 	 */
-	private static void putIfNotEmpty(final ConfigurationKey key, final Class<?> type, @SuppressWarnings("BoundedWildcard") final Map<String, Object> map){
+	private static void putIfNotEmpty(final ConfigurationKey key, final Class<?> type,
+			@SuppressWarnings("BoundedWildcard") final Map<String, Object> map){
 		if(type != null)
 			map.put(key.toString(), type.getSimpleName());
 	}
