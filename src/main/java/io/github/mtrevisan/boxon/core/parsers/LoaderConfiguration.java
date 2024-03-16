@@ -145,10 +145,27 @@ public final class LoaderConfiguration{
 			}
 			else
 				//... otherwise throw exception
-				throw ConfigurationException.create("Cannot create a raw message from data: cannot scan configuration for {}",
+				throw ConfigurationException.create("Cannot create a configuration message from data: cannot scan configuration for {}",
 					type.getSimpleName());
 		}
 		return configurations;
+	}
+
+	/**
+	 * Extract a configuration for the given class.
+	 *
+	 * @param type	The class type.
+	 * @return	A configuration.
+	 * @throws AnnotationException	If an annotation has validation problems.
+	 * @throws ConfigurationException   If a configuration is not well formatted.
+	 */
+	public ConfigurationMessage<?> extractConfiguration(final Class<?> type) throws AnnotationException, ConfigurationException{
+		final ConfigurationMessage<?> from = createConfiguration(type);
+		if(!from.canBeCoded())
+			throw ConfigurationException.create("Cannot create a configuration message from data: cannot scan configuration for {}",
+				type.getSimpleName());
+
+		return from;
 	}
 
 	/**

@@ -129,20 +129,14 @@ public final class Descriptor{
 	 */
 	public List<Map<String, Object>> describeTemplate(final Class<?>... templateClasses) throws AnnotationException, TemplateException{
 		final int length = templateClasses.length;
-		for(int i = 0; i < length; i ++){
-			final Class<?> templateClass = templateClasses[i];
-
-			if(!templateClass.isAnnotationPresent(MessageHeader.class))
-				throw AnnotationException.create("Template {} didn't have the `MessageHeader` annotation",
-					templateClass.getSimpleName());
-		}
-
 		final List<Map<String, Object>> description = new ArrayList<>(length);
 		for(int i = 0; i < length; i ++){
 			final Class<?> templateClass = templateClasses[i];
 
-			final Template<?> template = loaderTemplate.extractTemplate(templateClass);
-			description.add(describeTemplate(template));
+			if(templateClass.isAnnotationPresent(MessageHeader.class)){
+				final Template<?> template = loaderTemplate.extractTemplate(templateClass);
+				description.add(describeTemplate(template));
+			}
 		}
 		return Collections.unmodifiableList(description);
 	}
@@ -246,27 +240,18 @@ public final class Descriptor{
 	 * @return	The list of descriptions.
 	 * @throws AnnotationException	If an annotation is not well formatted.
 	 * @throws ConfigurationException	If a configuration is not well formatted.
-	 * @throws EncodeException	If a configuration cannot be retrieved.
 	 */
 	public List<Map<String, Object>> describeConfiguration(final Class<?>... configurationClasses) throws AnnotationException,
-			ConfigurationException, EncodeException{
+			ConfigurationException{
 		final int length = configurationClasses.length;
-		for(int i = 0; i < length; i ++){
-			final Class<?> configurationClass = configurationClasses[i];
-
-			if(!configurationClass.isAnnotationPresent(ConfigurationHeader.class))
-				throw AnnotationException.create("Configuration {} didn't have the `ConfigurationHeader` annotation",
-					configurationClass.getSimpleName());
-		}
-
 		final List<Map<String, Object>> description = new ArrayList<>(length);
 		for(int i = 0; i < length; i ++){
 			final Class<?> configurationClass = configurationClasses[i];
 
-			final ConfigurationHeader header = configurationClass.getAnnotation(ConfigurationHeader.class);
-
-			final ConfigurationMessage<?> configuration = loaderConfiguration.getConfiguration(header.shortDescription());
-			description.add(describeConfiguration(configuration));
+			if(configurationClass.isAnnotationPresent(ConfigurationHeader.class)){
+				final ConfigurationMessage<?> configuration = loaderConfiguration.extractConfiguration(configurationClass);
+				description.add(describeConfiguration(configuration));
+			}
 		}
 		return Collections.unmodifiableList(description);
 	}

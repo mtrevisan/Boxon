@@ -1178,12 +1178,14 @@ private int downloadTimeout;
 <a name="descriptor"></a>
 ## Descriptor
 
-Return a description of the loaded templates.
+Return a description of the loaded templates and configuration.
+It basically provides a description of the annotations in JSON format.
 
 ```java
 Descriptor descriptor = Descriptor.create(core);
 
-List<Map<String, Object>> descriptions = descriptor.describeTemplates();
+List<Map<String, Object>> templateDescriptions = descriptor.describeTemplates();
+List<Map<String, Object>> configurationDescriptions = descriptor.describeConfiguration();
 ```
 
 
