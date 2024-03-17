@@ -15,7 +15,7 @@
 
 ## Forewords
 
-This is a declarative, bit-level, message parser. All you have to do is write a [POJO](https://en.wikipedia.org/wiki/Plain_old_Java_object) that represents your message and annotate it. That's all. [Boxon](https://en.wikipedia.org/wiki/Boson) will take care of the rest for you.
+This is a declarative, bit-level, message parser. All you have to do is write a [DTO](https://en.wikipedia.org/wiki/Data_transfer_object) that represents your message and annotate it. That's all. [Boxon](https://en.wikipedia.org/wiki/Boson) will take care of the rest for you.
 
 If you want to use the parser straight away, just go [here](#examples).
 
@@ -46,7 +46,7 @@ Boxon...
    - Bit fields: bit fields with length from 1 to 2,147,483,647 bits.
    - Strings: fixed-length, variable-length and zero terminated strings with various encodings.
    - Arrays: fixed-length and variable-length arrays of built-in or user-defined element types.
-   - Objects: custom-type POJOs.
+   - Objects: custom-type DTOs.
    - Choices: supports integer keys.
  - User defined types (arbitrary combination of built-in types)
  - Has templates (annotated classes) that are not complex: they do not call each other uselessly complicating the structure (apart, necessarily, for `@BindArray`), no complicated chains of factories: it's just a parser that works.
@@ -678,7 +678,7 @@ Here are described the build-in special annotations.
 
 #### description
 
-Marks a POJO as an annotated message.
+Marks a DTO as an annotated message.
 
 #### annotation type
 
@@ -930,7 +930,7 @@ Response<String, byte[]> composedMessage = configurator.composeConfiguration("1.
 
 #### description
 
-Marks a POJO as an annotated configuration message.
+Marks a DTO as an annotated configuration message.
 
 #### annotation type
 
@@ -1194,7 +1194,7 @@ List<Map<String, Object>> configurationDescriptions = descriptor.describeConfigu
 <a name="extractor"></a>
 ## Extractor
 
-Extract values from a POJO using <a href="https://tools.ietf.org/html/rfc6901">RFC6901</a> syntax.
+Extract values from a DTO using <a href="https://tools.ietf.org/html/rfc6901">RFC6901</a> syntax.
 
 ```java
 Parser parser = Parser.create(core);
@@ -1547,7 +1547,7 @@ Pull requests are welcomed.
 ## Changelog
 
 <a name="changelog-3.3.0"></a>
-### version 3.3.0 - 202403??
+### version 3.3.0 - 20240317
 
 - Added description of configuration.
 - Changed the key to reference a configuration (from `start` to `shortDescription`).
@@ -1567,8 +1567,8 @@ Pull requests are welcomed.
 - Fixed validation on max value while composing a message.
 - Fixed number not written with the correct radix.
 - Made `shortDescription` mandatory in the annotation, as it should have been.
-- Added method to map a POJO into a `Map<String, Object>` in `ReflectionHelper`.
-- Added method `Configurator.composeConfiguration` accepting a POJO.
+- Added method to map a DTO into a `Map<String, Object>` in `ReflectionHelper`.
+- Added method `Configurator.composeConfiguration` accepting a DTO.
 - Corrected errors in the documentation.
 - Migrated from java 11 to java 21 for performance.
 
@@ -1584,7 +1584,7 @@ Pull requests are welcomed.
 <a name="changelog-3.1.1"></a>
 ### version 3.1.1 - 20240229
 
-- Fixed an error if annotating with `@Skip` as the last annotation of the POJO.
+- Fixed an error if annotating with `@Skip` as the last annotation of the DTO.
 
 <a name="changelog-3.1.0"></a>
 ### version 3.1.0 - 20240228
@@ -1607,7 +1607,7 @@ Pull requests are welcomed.
 - Added `CoreBuilder` to facilitate the creation of a `Core`: now it is no longer necessary to remember the order in which the methods should be called.
 - Added missing javadoc. Enhanced existing javadoc.
 - Added `@BindBitSet` binding for java `@BitSet`.
-- Added `Extractor`, used to programmatically extract values from a POJO.
+- Added `Extractor`, used to programmatically extract values from a DTO.
 - Removed `Bits`.
 - Enhanced binding validation.
 - Fixed a concurrency bug on the validation of alternatives.
