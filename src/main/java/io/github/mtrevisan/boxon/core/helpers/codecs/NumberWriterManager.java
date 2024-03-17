@@ -62,9 +62,9 @@ final class NumberWriterManager implements WriterManagerInterface{
 					: bi.toString(radix));
 			}
 		}
-		else if(value instanceof BigDecimal v)
+		else if(value instanceof final BigDecimal v)
 			writer.putText(v.toPlainString());
-		else if(value instanceof BigInteger v)
+		else if(value instanceof final BigInteger v)
 			writer.putText(v.toString(radix));
 	}
 

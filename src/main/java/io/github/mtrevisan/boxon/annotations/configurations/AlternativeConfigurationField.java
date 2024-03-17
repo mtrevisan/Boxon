@@ -62,11 +62,14 @@ public @interface AlternativeConfigurationField{
 	String longDescription() default "";
 
 	/**
-	 * The unit of measure of the value (the format should follow <a href="https://ucum.org/ucum.html">UCUM</a>/<a href="https://en.wikipedia.org/wiki/Unified_Code_for_Units_of_Measure">ISO 80000</a> standard).
+	 * The unit of measure of the value (the format should follow
+	 * <a href="https://ucum.org/ucum.html">UCUM</a>/<a href="https://en.wikipedia.org/wiki/Unified_Code_for_Units_of_Measure">ISO 80000</a>
+	 * standard).
 	 *
 	 * @return	The unit of measure of the value.
 	 */
 	String unitOfMeasure() default "";
+
 
 	/**
 	 * The lowest protocol the field is in.

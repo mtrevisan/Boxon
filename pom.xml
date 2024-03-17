@@ -5,7 +5,7 @@
 
 	<groupId>io.github.mtrevisan</groupId>
 	<artifactId>boxon</artifactId>
-	<version>3.2.0</version>
+	<version>3.3.0</version>
 
 	<packaging>jar</packaging>
 
@@ -80,7 +80,7 @@
 
 		<!-- Spring Expression -->
 		<!-- https://mvnrepository.com/artifact/org.springframework/spring-expression -->
-		<springframework.spring-expression.version>6.1.4</springframework.spring-expression.version>
+		<springframework.spring-expression.version>6.1.5</springframework.spring-expression.version>
 
 		<!-- FreeMarker -->
 		<!-- https://mvnrepository.com/artifact/org.freemarker/freemarker -->

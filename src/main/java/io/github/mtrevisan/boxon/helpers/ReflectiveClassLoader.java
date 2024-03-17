@@ -61,11 +61,13 @@ public final class ReflectiveClassLoader{
 
 	private ReflectiveClassLoader(final Class<?>... packageClasses){
 		Objects.requireNonNull(packageClasses, "Packages list cannot be null");
-		if(packageClasses.length == 0)
+
+		final int length = packageClasses.length;
+		if(length == 0)
 			throw new IllegalArgumentException("Packages list cannot be empty");
 
-		final String[] packageNames = new String[packageClasses.length];
-		for(int i = 0; i < packageClasses.length; i ++)
+		final String[] packageNames = new String[length];
+		for(int i = 0; i < length; i ++)
 			packageNames[i] = packageClasses[i].getPackageName();
 		classGraph = new ClassGraph()
 			.ignoreClassVisibility()

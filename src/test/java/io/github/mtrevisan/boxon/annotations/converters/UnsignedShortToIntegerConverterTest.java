@@ -28,17 +28,16 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 
-@SuppressWarnings("ALL")
 class UnsignedShortToIntegerConverterTest{
 
 	@Test
 	void valid(){
 		UnsignedShortToIntegerConverter converter = new UnsignedShortToIntegerConverter();
-		Assertions.assertEquals(Integer.valueOf(0x0000_2300), converter.decode(Short.valueOf((short)0x2300)));
-		Assertions.assertEquals(Short.valueOf((short)0x2300_0000), converter.encode(Integer.valueOf(0x2300_0000)));
+		Assertions.assertEquals(Integer.valueOf(0x0000_2300), converter.decode((short)0x2300));
+		Assertions.assertEquals(Short.valueOf((short)0x2300_0000), converter.encode(0x2300_0000));
 
-		Assertions.assertEquals(Integer.valueOf(0x0000_CA00), converter.decode(Short.valueOf((short)0xCA00)));
-		Assertions.assertEquals(Short.valueOf((short)0xCA00_0000), converter.encode(Integer.valueOf(0x00CA_0000)));
+		Assertions.assertEquals(Integer.valueOf(0x0000_CA00), converter.decode((short)0xCA00));
+		Assertions.assertEquals(Short.valueOf((short)0xCA00_0000), converter.encode(0x00CA_0000));
 	}
 
 }

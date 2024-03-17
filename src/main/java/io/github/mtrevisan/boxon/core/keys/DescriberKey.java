@@ -61,7 +61,10 @@ public enum DescriberKey{
 	BIND_ALGORITHM("algorithm"),
 	BIND_START_VALUE("startValue"),
 	BIND_VALUE("value"),
-	BIND_VALIDATOR("validator");
+	BIND_VALIDATOR("validator"),
+
+	BIND_MIN_PROTOCOL("minProtocol"),
+	BIND_MAX_PROTOCOL("maxProtocol");
 
 
 	private final String name;

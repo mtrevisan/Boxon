@@ -40,7 +40,8 @@ public final class BoundedField{
 	/** NOTE: MUST match the name of the method in all the annotations that defines a condition! */
 	private static final String CONDITION = "condition";
 
-	private static final Skip[] EMPTY_ARRAY = new Skip[0];
+	/** An empty {@code Skip} array. */
+	private static final Skip[] EMPTY_SKIP_ARRAY = new Skip[0];
 
 
 	private final Field field;
@@ -52,7 +53,7 @@ public final class BoundedField{
 
 
 	static BoundedField create(final Field field, final Annotation binding){
-		return new BoundedField(field, binding, EMPTY_ARRAY);
+		return new BoundedField(field, binding, EMPTY_SKIP_ARRAY);
 	}
 
 	static BoundedField create(final Field field, final Annotation binding, final Skip[] skips){
@@ -65,7 +66,7 @@ public final class BoundedField{
 
 		this.field = field;
 		this.binding = binding;
-		this.skips = (skips.length > 0? skips.clone(): EMPTY_ARRAY);
+		this.skips = (skips.length > 0? skips.clone(): EMPTY_SKIP_ARRAY);
 
 		if(binding != null){
 			//pre-fetch condition method

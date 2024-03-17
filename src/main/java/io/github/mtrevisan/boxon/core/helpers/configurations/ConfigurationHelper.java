@@ -57,14 +57,14 @@ public final class ConfigurationHelper{
 	 * @param map	The map in which to load the key-value pair.
 	 * @throws ConfigurationException	If a duplicate is found.
 	 */
-	public static void putIfNotEmpty(final ConfigurationKey key, final Object value, @SuppressWarnings("BoundedWildcard") final Map<String, Object> map)
-			throws ConfigurationException{
+	public static void putIfNotEmpty(final ConfigurationKey key, final Object value,
+			@SuppressWarnings("BoundedWildcard") final Map<String, Object> map) throws ConfigurationException{
 		if(isValidValue(value) && map.put(key.toString(), value) != null)
 			throw ConfigurationException.create("Duplicated short description: {}", key.toString());
 	}
 
 	private static boolean isValidValue(final Object value){
-		return (value != null && (!(value instanceof String v) || !StringHelper.isBlank(v)));
+		return (value != null && (!(value instanceof final String v) || !StringHelper.isBlank(v)));
 	}
 
 
@@ -134,7 +134,7 @@ public final class ConfigurationHelper{
 			for(int j = 0; j < length; j ++)
 				enumValues[j] = enumConstants[j].name();
 			putIfNotEmpty(ConfigurationKey.ENUMERATION, enumValues, map);
-			if(fieldType.isEnum())
+			if(!fieldType.isArray())
 				putIfNotEmpty(ConfigurationKey.MUTUALLY_EXCLUSIVE, true, map);
 		}
 	}

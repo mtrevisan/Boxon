@@ -37,19 +37,15 @@ import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriter;
 import io.github.mtrevisan.boxon.io.ByteOrder;
 import io.github.mtrevisan.boxon.io.CodecInterface;
+import io.github.mtrevisan.boxon.utils.TestHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.Annotation;
 import java.util.Locale;
-import java.util.Random;
 
 
-@SuppressWarnings("ALL")
 class CodecIntTest{
-
-	private static final Random RANDOM = new Random();
-
 
 	@Test
 	void intLittleEndianNegative() throws FieldException{
@@ -228,7 +224,7 @@ class CodecIntTest{
 	@Test
 	void intLittleEndianRandom() throws FieldException{
 		CodecInterface<BindInt> codec = new CodecInt();
-		int encodedValue = RANDOM.nextInt();
+		int encodedValue = TestHelper.RANDOM.nextInt();
 		BindInt annotation = new BindInt(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
@@ -275,7 +271,9 @@ class CodecIntTest{
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		Assertions.assertEquals(StringHelper.leftPad(Integer.toHexString(Integer.reverseBytes(encodedValue)).toUpperCase(Locale.ROOT), 8, '0'), writer.toString());
+		String expected = StringHelper.leftPad(Integer.toHexString(Integer.reverseBytes(encodedValue)).toUpperCase(Locale.ROOT), 8,
+			'0');
+		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
 		int decoded = (int)codec.decode(reader, annotation, null);
@@ -460,7 +458,7 @@ class CodecIntTest{
 	@Test
 	void intBigEndianRandom() throws FieldException{
 		CodecInterface<BindInt> codec = new CodecInt();
-		int encodedValue = RANDOM.nextInt();
+		int encodedValue = TestHelper.RANDOM.nextInt();
 		BindInt annotation = new BindInt(){
 			@Override
 			public Class<? extends Annotation> annotationType(){

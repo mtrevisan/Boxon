@@ -28,17 +28,16 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 
-@SuppressWarnings("ALL")
 class UnsignedIntegerToLongConverterTest{
 
 	@Test
 	void valid(){
 		UnsignedIntegerToLongConverter converter = new UnsignedIntegerToLongConverter();
-		Assertions.assertEquals(Long.valueOf(0x0000_0000_2300_0000l), converter.decode(Integer.valueOf(0x2300_0000)));
-		Assertions.assertEquals(Integer.valueOf(0x2300_0000), converter.encode(Long.valueOf(0x0000_0000_2300_0000l)));
+		Assertions.assertEquals(Long.valueOf(0x0000_0000_2300_0000l), converter.decode(0x2300_0000));
+		Assertions.assertEquals(Integer.valueOf(0x2300_0000), converter.encode(0x0000_0000_2300_0000l));
 
-		Assertions.assertEquals(Long.valueOf(0x0000_0000_CA00_0000l), converter.decode(Integer.valueOf(0xCA00_0000)));
-		Assertions.assertEquals(Integer.valueOf(0xCA00_0000), converter.encode(Long.valueOf(0x0000_0000_CA00_0000l)));
+		Assertions.assertEquals(Long.valueOf(0x0000_0000_CA00_0000l), converter.decode(0xCA00_0000));
+		Assertions.assertEquals(Integer.valueOf(0xCA00_0000), converter.encode(0x0000_0000_CA00_0000l));
 	}
 
 }

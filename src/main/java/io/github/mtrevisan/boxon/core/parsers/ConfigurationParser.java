@@ -76,6 +76,7 @@ public final class ConfigurationParser{
 		parserWriterHelper = ParserWriterHelper.create();
 	}
 
+
 	/**
 	 * Assign an event listener.
 	 *
@@ -141,12 +142,12 @@ public final class ConfigurationParser{
 	/**
 	 * Retrieve the configuration by class.
 	 *
-	 * @param configurationType	The header start of a configuration.
+	 * @param shortDescription	The short description identifying a message, see {@link ConfigurationHeader#shortDescription()}.
 	 * @return	The configuration.
 	 * @throws EncodeException	If a configuration cannot be retrieved.
 	 */
-	public ConfigurationMessage<?> getConfiguration(final String configurationType) throws EncodeException{
-		return loaderConfiguration.getConfiguration(configurationType);
+	public ConfigurationMessage<?> getConfiguration(final String shortDescription) throws EncodeException{
+		return loaderConfiguration.getConfiguration(shortDescription);
 	}
 
 
@@ -208,6 +209,16 @@ public final class ConfigurationParser{
 		final boolean process = ConfigurationHelper.shouldBeExtracted(protocol, skip.minProtocol(), skip.maxProtocol());
 		if(process)
 			writer.putText(skip.terminator());
+	}
+
+
+	/**
+	 * The loader for the configurations.
+	 *
+	 * @return	The loader for the configurations.
+	 */
+	public LoaderConfiguration getLoaderConfiguration(){
+		return loaderConfiguration;
 	}
 
 }

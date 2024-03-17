@@ -87,6 +87,7 @@ public final class EncodeException extends Exception{
 		super(cause);
 	}
 
+
 	@Override
 	public String getMessage(){
 		String message = JavaHelper.EMPTY_STRING;

@@ -40,7 +40,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
-@SuppressWarnings("ALL")
 class ParserThreadedTest{
 
 	private static final byte[] PAYLOAD = StringHelper.hexToByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
@@ -109,8 +108,7 @@ class ParserThreadedTest{
 	}
 
 	@Test
-	void concurrencyMultipleParserMultipleCore() throws NoSuchMethodException, TemplateException, ConfigurationException,
-			AnnotationException, ExecutionException, InterruptedException{
+	void concurrencyMultipleParserMultipleCore() throws ExecutionException, InterruptedException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with((byte)0x46, "QUECLINK_GB200S");
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);

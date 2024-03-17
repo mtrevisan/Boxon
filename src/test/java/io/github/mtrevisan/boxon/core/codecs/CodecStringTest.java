@@ -38,6 +38,7 @@ import io.github.mtrevisan.boxon.io.BitReader;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriter;
 import io.github.mtrevisan.boxon.io.CodecInterface;
+import io.github.mtrevisan.boxon.utils.TestHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -45,7 +46,6 @@ import java.lang.annotation.Annotation;
 import java.nio.charset.StandardCharsets;
 
 
-@SuppressWarnings("ALL")
 class CodecStringTest{
 
 	@Test
@@ -70,7 +70,7 @@ class CodecStringTest{
 
 			@Override
 			public String size(){
-				return Integer.toString(toByteArray(encodedValue).length);
+				return Integer.toString(TestHelper.toByteArray(encodedValue).length);
 			}
 
 			@Override
@@ -163,7 +163,7 @@ class CodecStringTest{
 			}
 
 
-			private byte[] toByteArray(final String payload){
+			private static byte[] toByteArray(final String payload){
 				return payload.getBytes(StandardCharsets.UTF_8);
 			}
 		};
@@ -237,7 +237,7 @@ class CodecStringTest{
 			}
 		};
 
-		BitReaderInterface reader = BitReader.wrap(toByteArray(encodedValue));
+		BitReaderInterface reader = BitReader.wrap(TestHelper.toByteArray(encodedValue));
 		Evaluator evaluator = Evaluator.create();
 		Object decoded = codec.decode(reader, annotation, null);
 
@@ -306,7 +306,7 @@ class CodecStringTest{
 			}
 		};
 
-		BitReaderInterface reader = BitReader.wrap(toByteArray(encodedValue));
+		BitReaderInterface reader = BitReader.wrap(TestHelper.toByteArray(encodedValue));
 		Evaluator evaluator = Evaluator.create();
 		Object decoded = codec.decode(reader, annotation, null);
 
@@ -318,11 +318,6 @@ class CodecStringTest{
 
 		//this seems strange, but it has to work like this
 		Assertions.assertArrayEquals(new byte[]{49, 50, 51, 65, 66, 67}, writer.array());
-	}
-
-
-	private byte[] toByteArray(final String payload){
-		return payload.getBytes(StandardCharsets.ISO_8859_1);
 	}
 
 }

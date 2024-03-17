@@ -24,30 +24,24 @@
  */
 package io.github.mtrevisan.boxon.core;
 
-import io.github.mtrevisan.boxon.annotations.checksummers.CRC16CCITT;
-import io.github.mtrevisan.boxon.annotations.validators.IMEIValidator;
-import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMaskHex;
 import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageHex;
 import io.github.mtrevisan.boxon.core.codecs.queclink.DeviceTypes;
-import io.github.mtrevisan.boxon.core.codecs.queclink.QueclinkHelper;
+import io.github.mtrevisan.boxon.core.codecs.queclink.REGConfigurationASCII;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
-import io.github.mtrevisan.boxon.semanticversioning.Version;
+import io.github.mtrevisan.boxon.utils.PrettyPrintMap;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 
 
-@SuppressWarnings("ALL")
 class DescriptorTest{
 
 	@Test
-	void description() throws AnnotationException, ConfigurationException, CodecException, TemplateException, NoSuchMethodException{
+	void describeTemplates() throws AnnotationException, ConfigurationException, TemplateException, NoSuchMethodException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with((byte)0x46, "QUECLINK_GB200S");
 		Core core = CoreBuilder.builder()
@@ -58,41 +52,36 @@ class DescriptorTest{
 			.create();
 		Descriptor descriptor = Descriptor.create(core);
 
-		List<Map<String, Object>> descriptions = descriptor.describe();
+		List<Map<String, Object>> descriptions = descriptor.describeTemplate();
 
 		Assertions.assertEquals(1, descriptions.size());
 
-		Map<String, Object> description = descriptions.get(0);
+		Map<String, Object> description = descriptions.getFirst();
 
 		String jsonDescription = PrettyPrintMap.toString(description);
-		Assertions.assertEquals("{template:io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageHex," +
-			"context:{headerLength:" + ParserTest.class.getDeclaredMethod("headerLength")
-			+ ",deviceTypes:[QUECLINK_GB200S (0x46)]},header:{start:[+ACK],charset:UTF-8}"
-			+ ",fields:[{charset:UTF-8,size:#headerLength(),name:messageHeader,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindString,fieldType:java.lang.String},{converter:"
-			+ ACKMessageHex.MessageTypeConverter.class.getName()
-			+ ",name:messageType,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindByte,fieldType:java.lang.String},{converter:"
-			+ ACKMaskHex.ACKMaskConverter.class.getName()
-			+ ",name:mask,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindByte,fieldType:"
-			+ ACKMaskHex.class.getName()
-			+ "},{condition:mask.hasLength(),name:messageLength,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindByte,fieldType:byte},{condition:mask.hasDeviceType(),name:deviceTypeCode,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindByte,fieldType:byte},{condition:mask.hasProtocolVersion(),size:2,converter:"
-			+ QueclinkHelper.VersionConverter.class.getName()
-			+ ",name:protocolVersion,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive,type:byte,fieldType:"
-			+ Version.class.getName()
-			+ ",byteOrder:BIG_ENDIAN},{condition:mask.hasFirmwareVersion(),size:2,converter:"
-			+ QueclinkHelper.VersionConverter.class.getName()
-			+ ",name:firmwareVersion,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive,type:byte,fieldType:"
-			+ Version.class.getName()
-			+ ",byteOrder:BIG_ENDIAN},{condition:mask.hasIMEI(),size:8,converter:"
-			+ QueclinkHelper.IMEIConverter.class.getName()
-			+ ",name:imei,validator:"
-			+ IMEIValidator.class.getName()
-			+ ",annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive,type:byte,fieldType:java.lang.String,byteOrder:BIG_ENDIAN},{charset:UTF-8,condition:!mask.hasIMEI(),size:8,name:deviceName,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindString,fieldType:java.lang.String},{name:id,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindByte,fieldType:byte},{name:correlationId,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindShort,fieldType:short,byteOrder:BIG_ENDIAN},{condition:mask.hasEventTime(),size:7,converter:"
-			+ QueclinkHelper.DateTimeYYYYMMDDHHMMSSConverter.class.getName()
-			+ ",name:eventTime,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive,type:byte,fieldType:"
-			+ ZonedDateTime.class.getName()
-			+ ",byteOrder:BIG_ENDIAN},{condition:mask.hasMessageId(),name:messageId,annotationType:io.github.mtrevisan.boxon.annotations.bindings.BindShort,fieldType:short,byteOrder:BIG_ENDIAN},{skipEnd:4,skipStart:4,name:checksum,annotationType:io.github.mtrevisan.boxon.annotations.Checksum,startValue:-1,type:short,fieldType:short,byteOrder:BIG_ENDIAN,algorithm:"
-			+ CRC16CCITT.class.getName()
-			+ "}]}", jsonDescription);
+		Assertions.assertEquals(3213, jsonDescription.length());
+	}
+
+	@Test
+	void describeConfigurations() throws AnnotationException, TemplateException, ConfigurationException, NoSuchMethodException{
+		DeviceTypes deviceTypes = DeviceTypes.create()
+			.with((byte)0x46, "QUECLINK_GB200S");
+		Core core = CoreBuilder.builder()
+			.withContextPair("deviceTypes", deviceTypes)
+			.withContextFunction(ParserTest.class.getDeclaredMethod("headerLength"))
+			.withDefaultCodecs()
+			.withConfigurationsFrom(REGConfigurationASCII.class)
+			.create();
+		Descriptor descriptor = Descriptor.create(core);
+
+		List<Map<String, Object>> descriptions = descriptor.describeConfiguration();
+
+		Assertions.assertEquals(1, descriptions.size());
+
+		Map<String, Object> description = descriptions.getFirst();
+
+		String jsonDescription = PrettyPrintMap.toString(description);
+		Assertions.assertEquals(7183, jsonDescription.length());
 	}
 
 }

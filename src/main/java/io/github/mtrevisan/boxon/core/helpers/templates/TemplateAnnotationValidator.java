@@ -260,6 +260,7 @@ enum TemplateAnnotationValidator{
 
 		for(int i = 0; i < length; i ++){
 			final ObjectChoices.ObjectChoice alternative = alternatives[i];
+
 			validateAlternative(alternative.type(), alternative.condition(), type, hasPrefix);
 
 			validateConverter(field, alternative.type(), converter);
@@ -297,13 +298,14 @@ enum TemplateAnnotationValidator{
 
 		for(int i = 0; i < length; i ++){
 			final ObjectChoicesList.ObjectChoiceList alternative = alternatives[i];
+
 			validateAlternative(alternative.type(), alternative.condition(), type, hasPrefix);
 
 			validateConverterToList(field, alternative.type(), converter, type);
 		}
 	}
 
-	private static void validateAlternative(final Class<?> alternativeType, final String alternativeCondition, final Class<?> type,
+	private static void validateAlternative(final Class<?> alternativeType, final CharSequence alternativeCondition, final Class<?> type,
 			final boolean hasPrefixLength) throws AnnotationException{
 		if(!type.isAssignableFrom(alternativeType))
 			throw AnnotationException.create("Type of alternative cannot be assigned to (super) type of annotation");

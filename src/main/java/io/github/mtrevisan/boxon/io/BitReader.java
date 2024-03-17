@@ -112,6 +112,7 @@ public final class BitReader extends BitReaderData implements BitReaderInterface
 		super(buffer);
 	}
 
+
 	@Override
 	public void skip(final int length){
 		getBitSet(length, ByteOrder.BIG_ENDIAN);

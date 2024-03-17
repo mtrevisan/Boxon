@@ -28,7 +28,8 @@ import org.slf4j.helpers.MessageFormatter;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 
@@ -72,9 +73,20 @@ public final class StringHelper{
 	}
 
 	/**
+	 * Checks if the given text contains the specified character.
+	 *
+	 * @param text	The text to search within.
+	 * @param chr	The character to search for.
+	 * @return	Whether the text contains the character.
+	 */
+	public static boolean contains(final String text, final char chr){
+		return (text.indexOf(chr) > 0);
+	}
+
+	/**
 	 * Split the given text into an array, separator specified.
 	 * <p>
-	 *    The separator is not included in the returned String array.
+	 * The separator is not included in the returned String array.
 	 * Adjacent separators are treated as one separator.
 	 * </p>
 	 *
@@ -87,28 +99,18 @@ public final class StringHelper{
 		if(length == 0)
 			return JavaHelper.EMPTY_STRING_ARRAY;
 
-		final byte[] bytes = text.getBytes();
-		final Collection<String> list = new ArrayList<>(length >> 1);
-		int i = 0;
+		final byte[] bytes = text.getBytes(StandardCharsets.UTF_8);
+		final List<String> list = new ArrayList<>(length >> 1);
 		int start = 0;
-		boolean match = false;
-		while(i < length){
+		for(int i = 0; i < length; i ++)
 			if(bytes[i] == separatorChar){
-				if(match){
+				if(start != i)
 					list.add(text.substring(start, i));
-					match = false;
-				}
-
-				start = ++ i;
+				start = i + 1;
 			}
-			else{
-				match = true;
-				i ++;
-			}
-		}
-		if(match)
-			list.add(text.substring(start, i));
-		return list.toArray(String[]::new);
+		if(start != length)
+			list.add(text.substring(start));
+		return list.toArray(JavaHelper.EMPTY_STRING_ARRAY);
 	}
 
 	/**
@@ -130,7 +132,7 @@ public final class StringHelper{
 	public static boolean isBlank(final String text){
 		final int length = JavaHelper.lengthOrZero(text);
 		if(length > 0){
-			final byte[] bytes = text.getBytes();
+			final byte[] bytes = text.getBytes(StandardCharsets.UTF_8);
 			for(int i = 0; i < length; i ++)
 				if(!Character.isWhitespace(bytes[i]))
 					return false;
@@ -173,7 +175,7 @@ public final class StringHelper{
 
 		final byte[] data = new byte[length >>> 1];
 		if(length > 0){
-			final byte[] bytes = hexString.getBytes();
+			final byte[] bytes = hexString.getBytes(StandardCharsets.US_ASCII);
 			for(int i = 0; i < length; i += 2){
 				final int highDigit = Character.digit(bytes[i], 16);
 				final int lowDigit = Character.digit(bytes[i + 1], 16);
@@ -209,9 +211,8 @@ public final class StringHelper{
 		final int length = JavaHelper.lengthOrZero(asciiString);
 		final byte[] data = new byte[length];
 		if(length > 0){
-			final byte[] bytes = asciiString.getBytes();
-			for(int i = 0; i < length; i ++)
-				data[i] = bytes[i];
+			final byte[] bytes = asciiString.getBytes(StandardCharsets.US_ASCII);
+			System.arraycopy(bytes, 0, data, 0, length);
 		}
 		return data;
 	}
@@ -228,10 +229,7 @@ public final class StringHelper{
 			return false;
 
 		final byte[] stringBytes = asciiString.getBytes(StandardCharsets.US_ASCII);
-		for(int i = 0, length = stringBytes.length; i < length; i ++)
-			if(byteArray[i] != stringBytes[i])
-				return false;
-		return true;
+		return Arrays.equals(byteArray, 0, stringBytes.length, stringBytes, 0, stringBytes.length);
 	}
 
 }

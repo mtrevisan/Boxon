@@ -27,14 +27,15 @@ package io.github.mtrevisan.boxon.annotations.checksummers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.nio.charset.StandardCharsets;
 
-@SuppressWarnings("ALL")
+
 class CRC16CCITTTest{
 
 	@Test
 	void test(){
 		CRC16CCITT crc = new CRC16CCITT();
-		Number crc16 = crc.calculateChecksum("9142656".getBytes(), 0, 7, CRC16CCITT.START_VALUE_0xFFFF);
+		Number crc16 = crc.calculateChecksum("9142656".getBytes(StandardCharsets.US_ASCII), 0, 7, CRC16CCITT.START_VALUE_0xFFFF);
 
 		Assertions.assertEquals((short)0x763A, crc16.shortValue());
 	}

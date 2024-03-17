@@ -62,6 +62,7 @@ public final class DecodeException extends Exception{
 		this.errorIndex = errorIndex;
 	}
 
+
 	/**
 	 * Get the index of the decoded message this error is referring to.
 	 *

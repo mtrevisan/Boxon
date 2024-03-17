@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2024 Mauro Trevisan
+ * Copyright (c) 2024 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -22,30 +22,34 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.annotations.checksummers;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+package io.github.mtrevisan.boxon.utils;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Random;
 
 
-class BSD16Test{
+public final class TestHelper{
 
-	@Test
-	void test(){
-		BSD16 crc = new BSD16();
-		Number crc16 = crc.calculateChecksum("9142656".getBytes(StandardCharsets.US_ASCII), 0, 7, BSD16.START_VALUE_0x0000);
+	public static final Random RANDOM = new Random(System.currentTimeMillis());
 
-		Assertions.assertEquals((short)0xA469, crc16.shortValue());
+
+	private TestHelper(){}
+
+
+	/**
+	 * Checks whether the given {@code mask} has the bit at {@code index} set.
+	 *
+	 * @param mask	The value to check the bit into.
+	 * @param index	The index of the bit (rightmost is zero). The value can range between {@code 0} and {@link Byte#SIZE}.
+	 * @return	The state of the bit at a given index in the given byte.
+	 */
+	public static boolean hasBit(final byte mask, final int index){
+		final int bitMask = 1 << (index % Byte.SIZE);
+		return ((mask & bitMask) != 0);
 	}
 
-	@Test
-	void oneToFour(){
-		BSD16 crc = new BSD16();
-		Number crc16 = crc.calculateChecksum(new byte[]{0x01, 0x02, 0x03, 0x04}, 0, 4, BSD16.START_VALUE_0x0000);
-
-		Assertions.assertEquals((short)0xE006, crc16.shortValue());
+	public static byte[] toByteArray(final String payload){
+		return payload.getBytes(StandardCharsets.ISO_8859_1);
 	}
 
 }

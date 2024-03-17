@@ -44,7 +44,7 @@ public interface PatternMatcher{
 	 * @param offset	At which position in the text the comparing should start.
 	 * @param pattern	The pattern to search for, may not be {@code null}.
 	 * @param processedPattern	Processed pattern, see {@link #preProcessPattern(byte[])}.
-	 * @return the position in the text or {@code -1} if the pattern was not found.
+	 * @return	The position in the text or {@code -1} if the pattern was not found.
 	 */
 	int indexOf(byte[] source, int offset, byte[] pattern, int[] processedPattern);
 

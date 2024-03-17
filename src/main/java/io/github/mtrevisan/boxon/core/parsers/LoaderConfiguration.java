@@ -55,7 +55,7 @@ import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 
-final class LoaderConfiguration{
+public final class LoaderConfiguration{
 
 	private final ThrowingFunction<Class<?>, ConfigurationMessage<?>, AnnotationException> configurationStore
 		= Memoizer.throwingMemoize(ConfigurationMessage::create);
@@ -69,7 +69,7 @@ final class LoaderConfiguration{
 	/**
 	 * Create a configuration loader.
 	 *
-	 * @return	A template parser.
+	 * @return	A configuration parser.
 	 */
 	static LoaderConfiguration create(){
 		return new LoaderConfiguration();
@@ -139,16 +139,33 @@ final class LoaderConfiguration{
 			//for each extracted class, try to parse it, extracting all the information needed for the configuration of a message
 			final ConfigurationMessage<?> from = createConfiguration(type);
 			if(from.canBeCoded()){
-				//if the configuration is valid, add it to the list of templates...
+				//if the configuration is valid, add it to the list of configurations...
 				final ConfigurationHeader header = from.getHeader();
-				configurations.put(header.start(), from);
+				configurations.put(header.shortDescription(), from);
 			}
 			else
 				//... otherwise throw exception
-				throw ConfigurationException.create("Cannot create a raw message from data: cannot scan configuration for {}",
+				throw ConfigurationException.create("Cannot create a configuration message from data: cannot scan configuration for {}",
 					type.getSimpleName());
 		}
 		return configurations;
+	}
+
+	/**
+	 * Extract a configuration for the given class.
+	 *
+	 * @param type	The class type.
+	 * @return	A configuration.
+	 * @throws AnnotationException	If an annotation has validation problems.
+	 * @throws ConfigurationException   If a configuration is not well formatted.
+	 */
+	public ConfigurationMessage<?> extractConfiguration(final Class<?> type) throws AnnotationException, ConfigurationException{
+		final ConfigurationMessage<?> from = createConfiguration(type);
+		if(!from.canBeCoded())
+			throw ConfigurationException.create("Cannot create a configuration message from data: cannot scan configuration for {}",
+				type.getSimpleName());
+
+		return from;
 	}
 
 	/**
@@ -179,20 +196,21 @@ final class LoaderConfiguration{
 	private void addConfigurationInner(final ConfigurationMessage<?> configuration){
 		try{
 			final ConfigurationHeader header = configuration.getHeader();
-			final String start = header.start();
-			loadConfigurationInner(start, configuration);
+			final String shortDescription = header.shortDescription();
+			loadConfigurationInner(shortDescription, configuration);
 		}
 		catch(final Exception e){
 			eventListener.cannotLoadConfiguration(configuration.getType().getName(), e);
 		}
 	}
 
-	private void loadConfigurationInner(final String headerStart, final ConfigurationMessage<?> configuration) throws ConfigurationException{
-		if(configurations.containsKey(headerStart))
-			throw ConfigurationException.create("Duplicated key `{}` found for class {}", headerStart,
+	private void loadConfigurationInner(final String shortDescription, final ConfigurationMessage<?> configuration)
+			throws ConfigurationException{
+		if(configurations.containsKey(shortDescription))
+			throw ConfigurationException.create("Duplicated key `{}` found for class {}", shortDescription,
 				configuration.getType().getName());
 
-		configurations.put(headerStart, configuration);
+		configurations.put(shortDescription, configuration);
 	}
 
 
@@ -201,7 +219,7 @@ final class LoaderConfiguration{
 	 *
 	 * @return	The list of configuration messages.
 	 */
-	List<ConfigurationMessage<?>> getConfigurations(){
+	public List<ConfigurationMessage<?>> getConfigurations(){
 		return List.copyOf(configurations.values());
 	}
 
@@ -254,14 +272,14 @@ final class LoaderConfiguration{
 	/**
 	 * Retrieve the configuration by header start parameter.
 	 *
-	 * @param configurationType	The header start of a configuration.
+	 * @param shortDescription	The short description identifying a message, see {@link ConfigurationHeader#shortDescription()}.
 	 * @return	The configuration.
 	 * @throws EncodeException	If a configuration cannot be retrieved.
 	 */
-	ConfigurationMessage<?> getConfiguration(final String configurationType) throws EncodeException{
-		final ConfigurationMessage<?> configuration = configurations.get(configurationType);
+	public ConfigurationMessage<?> getConfiguration(final String shortDescription) throws EncodeException{
+		final ConfigurationMessage<?> configuration = configurations.get(shortDescription);
 		if(configuration == null)
-			throw EncodeException.create("Cannot find any configuration for given class type");
+			throw EncodeException.create("No configuration could be found for the specified class type");
 
 		return configuration;
 	}
@@ -302,7 +320,7 @@ final class LoaderConfiguration{
 			if(annotation.annotationType() != Annotation.class && manager.getShortDescription().equals(key))
 				return field;
 		}
-		throw EncodeException.create("Cannot find any field to set for data key {}", key);
+		throw EncodeException.create("Could not find fields to set for data key {}", key);
 	}
 
 	private static void validateMandatoryFields(final Collection<ConfigField> mandatoryFields) throws EncodeException{

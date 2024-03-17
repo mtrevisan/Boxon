@@ -97,6 +97,7 @@ public final class ConfigurationMessage<T>{
 		}
 	}
 
+
 	private static void removeDuplicates(final Iterable<String> protocolVersions){
 		String previous = null;
 		final Iterator<String> itr = protocolVersions.iterator();

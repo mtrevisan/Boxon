@@ -30,6 +30,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -267,7 +268,7 @@ public enum ParserDataType{
 	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
 	 */
 	public static Object getValueOrSelf(final Class<?> fieldType, final Object value) throws CodecException{
-		return (value instanceof String v
+		return (value instanceof final String v
 			? getValue(fieldType, v)
 			: value);
 	}
@@ -386,7 +387,7 @@ public enum ParserDataType{
 	}
 
 	private static boolean isBaseNumber(final String text, final int offset, final int radix){
-		final byte[] bytes = text.getBytes();
+		final byte[] bytes = text.getBytes(StandardCharsets.US_ASCII);
 		for(int i = offset, length = bytes.length; i < length; i ++){
 			final byte chr = bytes[i];
 

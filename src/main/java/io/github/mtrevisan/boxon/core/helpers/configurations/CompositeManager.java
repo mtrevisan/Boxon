@@ -129,7 +129,7 @@ final class CompositeManager implements ConfigurationManagerInterface{
 
 			compositeFieldsMap.put(bindings[j].shortDescription(), fieldMap);
 		}
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.CONFIGURATION_COMPOSITE_FIELDS, compositeFieldsMap, compositeMap);
+		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.COMPOSITE_FIELDS, compositeFieldsMap, compositeMap);
 
 		if(protocol.isEmpty())
 			ConfigurationHelper.extractMinMaxProtocol(annotation.minProtocol(), annotation.maxProtocol(), compositeMap);
@@ -179,7 +179,7 @@ final class CompositeManager implements ConfigurationManagerInterface{
 			final String outerValue = replace(composition, (Map<String, Object>)dataValue, fields);
 
 			//value compatible with data type and format
-			if(!formatPattern.matcher(outerValue).matches())
+			if(!ValidationHelper.matches(outerValue, formatPattern))
 				throw EncodeException.create("Data value not compatible with `pattern` for data key {}; found {}, expected {}",
 					dataKey, outerValue, pattern);
 		}

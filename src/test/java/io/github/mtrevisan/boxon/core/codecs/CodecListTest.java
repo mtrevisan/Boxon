@@ -47,6 +47,7 @@ import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
 import io.github.mtrevisan.boxon.io.BitReader;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriter;
+import io.github.mtrevisan.boxon.utils.TestHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -57,7 +58,6 @@ import java.util.Arrays;
 import java.util.List;
 
 
-@SuppressWarnings("ALL")
 class CodecListTest{
 
 	private static class Version{
@@ -216,6 +216,7 @@ class CodecListTest{
 		Assertions.assertEquals("2,0,1,12,2,1,2,0,", new String(writer.array(), StandardCharsets.UTF_8));
 
 		BitReaderInterface reader = BitReader.wrap(writer);
+		@SuppressWarnings("unchecked")
 		List<Version> decoded = (List<Version>)codec.decode(reader, annotation, null);
 
 		Assertions.assertEquals(encodedValue.size(), decoded.size());
@@ -235,12 +236,12 @@ class CodecListTest{
 			.create();
 		Parser parser = Parser.create(core);
 
-		byte[] payload = toByteArray("tc6,1,1.2,v1.v2.1,2.");
+		byte[] payload = TestHelper.toByteArray("tc6,1,1.2,v1.v2.1,2.");
 		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(1, result.size());
-		Response<byte[], Object> response = result.get(0);
+		Response<byte[], Object> response = result.getFirst();
 		Assertions.assertFalse(response.hasError());
 		Assertions.assertEquals(TestChoice6.class, response.getMessage().getClass());
 		TestChoice6 parsedMessage = (TestChoice6)response.getMessage();
@@ -252,11 +253,6 @@ class CodecListTest{
 		Assertions.assertEquals("v2", ((TestType5)values.get(1)).value2);
 		Assertions.assertEquals(TestType4.class, values.get(2).getClass());
 		Assertions.assertEquals("2", ((TestType4)values.get(2)).value);
-	}
-
-
-	private byte[] toByteArray(final String payload){
-		return payload.getBytes(StandardCharsets.ISO_8859_1);
 	}
 
 }

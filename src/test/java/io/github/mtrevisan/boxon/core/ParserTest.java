@@ -31,16 +31,16 @@ import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.JSONPathException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
+import io.github.mtrevisan.boxon.utils.TestHelper;
+import io.github.mtrevisan.boxon.utils.TimeWatch;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 
-@SuppressWarnings("ALL")
 class ParserTest{
 
 	public static void main(String[] args) throws NoSuchMethodException, AnnotationException, TemplateException, ConfigurationException{
@@ -117,7 +117,7 @@ class ParserTest{
 			.create();
 		Parser parser = Parser.create(core);
 
-		byte[] payload = toByteArray("+ACK:GTIOB,CF8002,359464038116666,45.5,2,0020,20170101123542,11F0$+ACK:GTIOB,CF8002,359464038116666,40.5,2,0020,20170101123542,11F0$");
+		byte[] payload = TestHelper.toByteArray("+ACK:GTIOB,CF8002,359464038116666,45.5,2,0020,20170101123542,11F0$+ACK:GTIOB,CF8002,359464038116666,40.5,2,0020,20170101123542,11F0$");
 		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertEquals(2, result.size());
@@ -141,14 +141,14 @@ class ParserTest{
 		Parser parser = Parser.create(core);
 
 		byte[] payload1 = StringHelper.hexToByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
-		byte[] payload2 = toByteArray("+BCK:GTIOB,CF8002,359464038116666,45.5,2,0020,20170101123542,11F0$");
+		byte[] payload2 = TestHelper.toByteArray("+BCK:GTIOB,CF8002,359464038116666,45.5,2,0020,20170101123542,11F0$");
 		byte[] payload = addAll(payload1, payload2);
 		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertEquals(2, result.size());
 		Assertions.assertFalse(result.get(0).hasError());
 		Assertions.assertFalse(result.get(1).hasError());
-		Assertions.assertEquals("+ACK", (String)Extractor.get("/messageHeader", result.get(1).getMessage()));
+		Assertions.assertEquals("+ACK", Extractor.get("/messageHeader", result.get(1).getMessage(), null));
 	}
 
 	@Test
@@ -166,7 +166,7 @@ class ParserTest{
 		Parser parser = Parser.create(core);
 
 		byte[] payload1 = StringHelper.hexToByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
-		byte[] payload2 = toByteArray("+ACK:GTIOB,CF8002,359464038116666,45.5,2,0020,20170101123542,11F0$");
+		byte[] payload2 = TestHelper.toByteArray("+ACK:GTIOB,CF8002,359464038116666,45.5,2,0020,20170101123542,11F0$");
 		byte[] payload = addAll(payload2, payload1);
 		List<Response<byte[], Object>> result = parser.parse(payload);
 
@@ -175,10 +175,6 @@ class ParserTest{
 		Assertions.assertFalse(result.get(1).hasError());
 	}
 
-
-	private byte[] toByteArray(final String payload){
-		return payload.getBytes(StandardCharsets.ISO_8859_1);
-	}
 
 	private static byte[] addAll(final byte[] array1, final byte[] array2){
 		byte[] joinedArray = new byte[array1.length + array2.length];

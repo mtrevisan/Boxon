@@ -46,7 +46,11 @@ import java.util.Queue;
 public final class GenericHelper{
 
 	private static final ClassLoader CLASS_LOADER = GenericHelper.class.getClassLoader();
+
 	private static final String ARRAY_VARIABLE = "[]";
+
+	/** An empty {@code Class} array. */
+	private static final Class<?>[] EMPTY_CLASS_ARRAY = new Class[0];
 
 	/**
 	 * Primitive type name to class map.
@@ -102,17 +106,17 @@ public final class GenericHelper{
 		final List<Class<?>> types = new ArrayList<>(0);
 		while(!ancestorsQueue.isEmpty()){
 			final Type ancestorType = ancestorsQueue.poll();
-			if(ancestorType instanceof ParameterizedType t)
+			if(ancestorType instanceof final ParameterizedType t)
 				//ancestor is parameterized: process only if the raw type matches the base class
 				types.addAll(manageParameterizedAncestor(t, base, typeVariables));
-			else if(ancestorType instanceof Class<?> c && base.isAssignableFrom(c))
+			else if(ancestorType instanceof final Class<?> c && base.isAssignableFrom(c))
 				//ancestor is non-parameterized: process only if it matches the base class
 				ancestorsQueue.add(ancestorType);
 		}
 		return types;
 	}
 
-	private static <T> List<Class<?>> processBase(final Type[] actualArgs){
+	private static List<Class<?>> processBase(final Type[] actualArgs){
 		//there is a result if the base class is reached
 		final int length = actualArgs.length;
 		final List<Class<?>> types = new ArrayList<>(length);
@@ -129,7 +133,7 @@ public final class GenericHelper{
 			final Map<String, Type> typeVariables){
 		final List<Class<?>> types = new ArrayList<>(0);
 		final Type rawType = ancestorType.getRawType();
-		if(rawType instanceof Class<?> c && base.isAssignableFrom(c)){
+		if(rawType instanceof final Class<?> c && base.isAssignableFrom(c)){
 			final Class<?>[] resolvedTypes = populateResolvedTypes(ancestorType, typeVariables);
 			final List<Class<?>> result = resolveGenericTypes((Class<? extends T>)rawType, base, resolvedTypes);
 			types.addAll(result);
@@ -150,7 +154,7 @@ public final class GenericHelper{
 			if(cls != null)
 				resolvedTypes.add(cls);
 		}
-		return resolvedTypes.toArray(Class[]::new);
+		return resolvedTypes.toArray(EMPTY_CLASS_ARRAY);
 	}
 
 	private static <T> Map<String, Type> mapParameterTypes(final Class<? extends T> offspring, final Type[] actualArgs){
@@ -176,7 +180,7 @@ public final class GenericHelper{
 	}
 
 	private static Type resolveArgumentType(final Map<String, Type> typeVariables, final Type actualTypeArgument){
-		final String key = (actualTypeArgument instanceof TypeVariable<?> v
+		final String key = (actualTypeArgument instanceof final TypeVariable<?> v
 			? v.getName()
 			: null);
 		return typeVariables.getOrDefault(key, actualTypeArgument);
@@ -186,7 +190,7 @@ public final class GenericHelper{
 	 * Convert a given String into the appropriate Class.
 	 *
 	 * @param name Name of class.
-	 * @return The class for the given name, {@code null} if some error happens.
+	 * @return	The class for the given name, {@code null} if some error happens.
 	 */
 	private static Class<?> toClass(final String name){
 		final int arraysCount = StringUtils.countOccurrencesOf(name, ARRAY_VARIABLE);

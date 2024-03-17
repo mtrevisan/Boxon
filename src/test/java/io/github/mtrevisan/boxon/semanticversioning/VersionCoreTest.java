@@ -28,7 +28,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 
-@SuppressWarnings("ALL")
 class VersionCoreTest{
 
 	@Test
@@ -88,15 +87,15 @@ class VersionCoreTest{
 		Version v2 = Version.of("2.3.7");
 		Version v3 = Version.of("1.3.7");
 
-		Assertions.assertEquals(v1, v1);
 		Assertions.assertEquals(v1, v2);
 		Assertions.assertNotEquals(v1, v3);
 	}
 
 	@Test
 	void shouldCorrectlyCompareAllVersionsFromSpecification(){
-		String[] versions = {"1.0.0-alpha", "1.0.0-alpha.1", "1.0.0-alpha.beta", "1.0.0-beta", "1.0.0-beta.2", "1.0.0-beta.11", "1.0.0-rc.1", "1.0.0", "2.0.0", "2.1.0", "2.1.1"};
-		for(int i = 1; i < versions.length; i ++){
+		String[] versions = {"1.0.0-alpha", "1.0.0-alpha.1", "1.0.0-alpha.beta", "1.0.0-beta", "1.0.0-beta.2", "1.0.0-beta.11", "1.0.0-rc.1",
+			"1.0.0", "2.0.0", "2.1.0", "2.1.1"};
+		for(int i = 1, length = versions.length; i < length; i ++){
 			Version v1 = Version.of(versions[i - 1]);
 			Version v2 = Version.of(versions[i]);
 
@@ -108,7 +107,7 @@ class VersionCoreTest{
 	void shouldBeAbleToCompareWithoutIgnoringBuildMetadata(){
 		Version v1 = Version.of("1.3.7-beta+build.1");
 		Version v2 = Version.of("1.3.7-beta+build.2");
-		Assertions.assertTrue(0 == v1.compareTo(v2));
+		Assertions.assertEquals(0, v1.compareTo(v2));
 		Assertions.assertTrue(0 > v1.compareToWithBuilds(v2));
 	}
 

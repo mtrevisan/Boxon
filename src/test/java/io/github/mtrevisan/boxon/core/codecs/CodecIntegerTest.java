@@ -48,7 +48,6 @@ import java.util.BitSet;
 import java.util.Locale;
 
 
-@SuppressWarnings("ALL")
 class CodecIntegerTest{
 
 	@Test

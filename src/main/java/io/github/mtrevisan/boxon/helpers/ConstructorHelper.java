@@ -63,7 +63,7 @@ public final class ConstructorHelper{
 		ObjectInstantiator<T> instantiator;
 		try{
 			final Constructor<T> constructor = type.getDeclaredConstructor();
-			constructor.setAccessible(true);
+			ReflectionHelper.makeAccessible(constructor);
 
 			//try creating an instance
 			constructor.newInstance();

@@ -28,17 +28,16 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 
-@SuppressWarnings("ALL")
 class UnsignedByteToShortConverterTest{
 
 	@Test
 	void valid(){
 		UnsignedByteToShortConverter converter = new UnsignedByteToShortConverter();
-		Assertions.assertEquals(Short.valueOf((short)0x0023), converter.decode(Byte.valueOf((byte)0x23)));
-		Assertions.assertEquals(Byte.valueOf((byte)0x23), converter.encode(Short.valueOf((short)0x0023)));
+		Assertions.assertEquals(Short.valueOf((short)0x0023), converter.decode((byte)0x23));
+		Assertions.assertEquals(Byte.valueOf((byte)0x23), converter.encode((short)0x0023));
 
-		Assertions.assertEquals(Short.valueOf((short)0x00CA), converter.decode(Byte.valueOf((byte)0xCA)));
-		Assertions.assertEquals(Byte.valueOf((byte)0xCA), converter.encode(Short.valueOf((short)0x00CA)));
+		Assertions.assertEquals(Short.valueOf((short)0x00CA), converter.decode((byte)0xCA));
+		Assertions.assertEquals(Byte.valueOf((byte)0xCA), converter.encode((short)0x00CA));
 	}
 
 }

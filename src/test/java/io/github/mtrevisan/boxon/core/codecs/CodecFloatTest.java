@@ -37,24 +37,20 @@ import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriter;
 import io.github.mtrevisan.boxon.io.ByteOrder;
 import io.github.mtrevisan.boxon.io.CodecInterface;
+import io.github.mtrevisan.boxon.utils.TestHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.Annotation;
 import java.util.Locale;
-import java.util.Random;
 
 
-@SuppressWarnings("ALL")
 class CodecFloatTest{
-
-	private static final Random RANDOM = new Random();
-
 
 	@Test
 	void floatPositiveLittleEndian() throws FieldException{
 		CodecInterface<BindFloat> codec = new CodecFloat();
-		float encodedValue = RANDOM.nextFloat();
+		float encodedValue = TestHelper.RANDOM.nextFloat();
 		BindFloat annotation = new BindFloat(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
@@ -101,7 +97,9 @@ class CodecFloatTest{
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		Assertions.assertEquals(StringHelper.leftPad(Integer.toHexString(Integer.reverseBytes(Float.floatToRawIntBits(encodedValue))).toUpperCase(Locale.ROOT), 8, '0'), writer.toString());
+		String expected = StringHelper.leftPad(Integer.toHexString(Integer.reverseBytes(Float.floatToRawIntBits(encodedValue)))
+			.toUpperCase(Locale.ROOT), 8, '0');
+		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
 		float decoded = (float)codec.decode(reader, annotation, null);
@@ -112,7 +110,7 @@ class CodecFloatTest{
 	@Test
 	void floatNegativeLittleEndian() throws FieldException{
 		CodecInterface<BindFloat> codec = new CodecFloat();
-		float encodedValue = -RANDOM.nextFloat();
+		float encodedValue = -TestHelper.RANDOM.nextFloat();
 		BindFloat annotation = new BindFloat(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
@@ -159,7 +157,9 @@ class CodecFloatTest{
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		Assertions.assertEquals(StringHelper.leftPad(Integer.toHexString(Integer.reverseBytes(Float.floatToRawIntBits(encodedValue))).toUpperCase(Locale.ROOT), 8, '0'), writer.toString());
+		String expected = StringHelper.leftPad(Integer.toHexString(Integer.reverseBytes(Float.floatToRawIntBits(encodedValue)))
+			.toUpperCase(Locale.ROOT), 8, '0');
+		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
 		float decoded = (float)codec.decode(reader, annotation, null);
@@ -170,7 +170,7 @@ class CodecFloatTest{
 	@Test
 	void floatPositiveBigEndian() throws FieldException{
 		CodecInterface<BindFloat> codec = new CodecFloat();
-		float encodedValue = RANDOM.nextFloat();
+		float encodedValue = TestHelper.RANDOM.nextFloat();
 		BindFloat annotation = new BindFloat(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
@@ -217,7 +217,9 @@ class CodecFloatTest{
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		Assertions.assertEquals(StringHelper.leftPad(Integer.toHexString(Float.floatToRawIntBits(encodedValue)).toUpperCase(Locale.ROOT), 8, '0'), writer.toString());
+		String expected = StringHelper.leftPad(Integer.toHexString(Float.floatToRawIntBits(encodedValue)).toUpperCase(Locale.ROOT), 8,
+			'0');
+		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
 		float decoded = (float)codec.decode(reader, annotation, null);
@@ -228,7 +230,7 @@ class CodecFloatTest{
 	@Test
 	void floatNegativeBigEndian() throws FieldException{
 		CodecInterface<BindFloat> codec = new CodecFloat();
-		float encodedValue = -RANDOM.nextFloat();
+		float encodedValue = -TestHelper.RANDOM.nextFloat();
 		BindFloat annotation = new BindFloat(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
@@ -275,7 +277,9 @@ class CodecFloatTest{
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		Assertions.assertEquals(StringHelper.leftPad(Integer.toHexString(Float.floatToRawIntBits(encodedValue)).toUpperCase(Locale.ROOT), 8, '0'), writer.toString());
+		String expected = StringHelper.leftPad(Integer.toHexString(Float.floatToRawIntBits(encodedValue)).toUpperCase(Locale.ROOT), 8,
+			'0');
+		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
 		float decoded = (float)codec.decode(reader, annotation, null);

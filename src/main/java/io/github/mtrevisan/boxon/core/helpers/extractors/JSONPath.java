@@ -63,20 +63,16 @@ public final class JSONPath{
 	 *
 	 * @param path	The path used to reference the value in the data object.
 	 * @param data	The data from which to extract the value.
+	 * @param defaultValue	Default value if the path is not found.
 	 * @param <T>	The value class type.
 	 * @return	The value.
 	 * @throws JSONPathException	If the path is not well formatted.
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> T extract(final String path, final Object data) throws JSONPathException{
+	public static <T> T extract(final String path, final Object data, final T defaultValue) throws JSONPathException{
 		if(path == null || !path.isEmpty()){
-			try{
-				final String[] pathComponents = parsePath(path);
-				return extract(pathComponents, data);
-			}
-			catch(final NoSuchFieldException nsfe){
-				throw JSONPathException.create("No field '{}' found on path '{}'", nsfe.getMessage(), path);
-			}
+			final String[] pathComponents = parsePath(path);
+			return extract(pathComponents, data, defaultValue);
 		}
 		return (T)data;
 	}
@@ -153,7 +149,7 @@ public final class JSONPath{
 	}
 
 	@SuppressWarnings("unchecked")
-	private static <T> T extract(final String[] path, Object data) throws JSONPathException, NoSuchFieldException{
+	private static <T> T extract(final String[] path, Object data, final T defaultValue) throws JSONPathException{
 		for(int i = 0, length = path.length; i < length; i ++){
 			final String currentPath = path[i];
 
@@ -162,9 +158,9 @@ public final class JSONPath{
 			validatePath(data, currentPath, idx, path);
 
 			if(idx != null)
-				data = extractPath(data, idx);
+				data = extractPath(data, idx, defaultValue);
 			else
-				data = extractPath(data, currentPath);
+				data = extractPath(data, currentPath, defaultValue);
 		}
 		return (T)data;
 	}
@@ -186,20 +182,28 @@ public final class JSONPath{
 		return SLASH + String.join(SLASH, path);
 	}
 
-	private static Object extractPath(final Object data, final Integer idx){
-		return (data instanceof List<?> lst
-			? lst.get(idx)
-			: Array.get(data, idx));
+	private static Object extractPath(final Object data, final Integer idx, final Object defaultValue){
+		return (data instanceof final List<?> lst
+			? (idx >= 0 && idx < lst.size()? lst.get(idx): defaultValue)
+			: (idx >= 0 && idx < Array.getLength(data)? Array.get(data, idx): defaultValue));
 	}
 
-	private static Object extractPath(final Object data, final String currentPath) throws NoSuchFieldException{
-		final Object nextData;
-		if(data instanceof Map<?, ?> m)
-			nextData = m.get(currentPath);
+	private static Object extractPath(final Object data, final String currentPath, final Object defaultValue){
+		Object nextData;
+		if(data instanceof final Map<?, ?> m)
+			nextData = (m.containsKey(currentPath)
+				? m.get(currentPath)
+				: defaultValue);
 		else{
-			final Field currentField = data.getClass().getDeclaredField(currentPath);
-			currentField.setAccessible(true);
-			nextData = ReflectionHelper.getValue(data, currentField);
+			final Class<?> cls = data.getClass();
+			try{
+				final Field currentField = cls.getDeclaredField(currentPath);
+				ReflectionHelper.makeAccessible(currentField);
+				nextData = ReflectionHelper.getValue(data, currentField);
+			}
+			catch(final NoSuchFieldException nsfe){
+				nextData = defaultValue;
+			}
 		}
 		return nextData;
 	}

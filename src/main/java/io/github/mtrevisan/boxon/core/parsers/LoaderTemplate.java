@@ -270,7 +270,9 @@ public final class LoaderTemplate{
 		if(header == null)
 			throw TemplateException.create("The given class type is not a valid template");
 
-		final String key = calculateKey(header.start()[0], CharsetHelper.lookup(header.charset()));
+		//NOTE: we want only a template, so we pick the first `start`
+		final String headerFirstStart = header.start()[0];
+		final String key = calculateKey(headerFirstStart, CharsetHelper.lookup(header.charset()));
 		final Template<?> template = templates.get(key);
 		if(template == null)
 			throw TemplateException.create("Cannot find any template for given class type");

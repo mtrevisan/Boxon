@@ -48,6 +48,7 @@ import io.github.mtrevisan.boxon.core.helpers.templates.EvaluatedField;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.io.ByteOrder;
+import io.github.mtrevisan.boxon.utils.TestHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -60,7 +61,6 @@ import java.util.List;
 import java.util.Map;
 
 
-@SuppressWarnings("ALL")
 class TemplateTest{
 
 	private static class Mask{
@@ -86,19 +86,7 @@ class TemplateTest{
 		}
 
 		boolean hasProtocolVersion(){
-			return hasBit(mask, 2);
-		}
-
-		/**
-		 * Checks whether the given {@code mask} has the bit at {@code index} set.
-		 *
-		 * @param mask	The value to check the bit into.
-		 * @param index	The index of the bit (rightmost is zero). The value can range between {@code 0} and {@link Byte#SIZE}.
-		 * @return	The state of the bit at a given index in the given byte.
-		 */
-		private static boolean hasBit(final byte mask, final int index){
-			final int bitMask = 1 << (index % Byte.SIZE);
-			return ((mask & bitMask) != 0);
+			return TestHelper.hasBit(mask, 2);
 		}
 
 	}
@@ -114,17 +102,17 @@ class TemplateTest{
 	@MessageHeader(start = "+", end = "-")
 	private static class Message{
 
-		private final Map<Byte, String> MESSAGE_TYPE_MAP = new HashMap<>();
+		private final Map<Byte, String> messageTypeMap = new HashMap<>(2);
 
 		class MessageTypeConverter implements Converter<Byte, String>{
 			@Override
 			public String decode(final Byte value){
-				return MESSAGE_TYPE_MAP.get(value);
+				return messageTypeMap.get(value);
 			}
 
 			@Override
 			public Byte encode(final String value){
-				for(final Map.Entry<Byte, String> elem : MESSAGE_TYPE_MAP.entrySet()){
+				for(final Map.Entry<Byte, String> elem : messageTypeMap.entrySet()){
 					if(elem.getValue().equals(value))
 						return elem.getKey();
 				}
@@ -133,8 +121,8 @@ class TemplateTest{
 		}
 
 		Message(){
-			MESSAGE_TYPE_MAP.put((byte)0, "AT+GTBSI");
-			MESSAGE_TYPE_MAP.put((byte)1, "AT+GTSRI");
+			messageTypeMap.put((byte)0, "AT+GTBSI");
+			messageTypeMap.put((byte)1, "AT+GTSRI");
 		}
 
 		@BindByte(converter = Mask.MaskConverter.class)
@@ -199,7 +187,7 @@ class TemplateTest{
 		List<EvaluatedField> evaluatedFields = template.getEvaluatedFields();
 		Assertions.assertNotNull(evaluatedFields);
 		Assertions.assertEquals(1, evaluatedFields.size());
-		EvaluatedField evaluatedField = evaluatedFields.get(0);
+		EvaluatedField evaluatedField = evaluatedFields.getFirst();
 		Assertions.assertEquals("receptionTime", evaluatedField.getFieldName());
 		Assertions.assertEquals(ZonedDateTime.class, evaluatedField.getFieldType());
 		Evaluate evaluate = evaluatedField.getBinding();
