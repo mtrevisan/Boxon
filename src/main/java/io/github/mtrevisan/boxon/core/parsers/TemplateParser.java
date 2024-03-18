@@ -342,7 +342,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 	private void postProcessFields(final Template<?> template, final ParserContext<?> parserContext){
-		final List<PostProcessedField> postProcessedFields = template.getProcessedFields();
+		final List<PostProcessedField> postProcessedFields = template.getPostProcessedFields();
 		for(int i = 0, length = postProcessedFields.size(); i < length; i ++){
 			final PostProcessedField field = postProcessedFields.get(i);
 
@@ -389,7 +389,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 	private void preProcessFields(final Template<?> template, final ParserContext<?> parserContext){
-		final List<PostProcessedField> postProcessedFields = template.getProcessedFields();
+		final List<PostProcessedField> postProcessedFields = template.getPostProcessedFields();
 		for(int i = 0, length = postProcessedFields.size(); i < length; i ++){
 			final PostProcessedField field = postProcessedFields.get(i);
 

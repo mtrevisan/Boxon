@@ -248,7 +248,7 @@ public final class Template<T>{
 	 *
 	 * @return	List of processed fields.
 	 */
-	public List<PostProcessedField> getProcessedFields(){
+	public List<PostProcessedField> getPostProcessedFields(){
 		return postProcessedFields;
 	}
 

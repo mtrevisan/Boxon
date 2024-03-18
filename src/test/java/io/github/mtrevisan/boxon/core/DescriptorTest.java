@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core;
 
+import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageASCII;
 import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageHex;
 import io.github.mtrevisan.boxon.core.codecs.queclink.DeviceTypes;
 import io.github.mtrevisan.boxon.core.codecs.queclink.REGConfigurationASCII;
@@ -37,6 +38,28 @@ import java.util.Map;
 
 
 class DescriptorTest{
+
+	@Test
+	void describeParsing() throws FieldException, NoSuchMethodException{
+		DeviceTypes deviceTypes = DeviceTypes.create()
+			.with((byte)0x46, "QUECLINK_GB200S");
+		Core core = CoreBuilder.builder()
+			.withContextPair("deviceTypes", deviceTypes)
+			.withContextFunction(ParserTest.class.getDeclaredMethod("headerLength"))
+			.withDefaultCodecs()
+			.withTemplate(ACKMessageASCII.class)
+			.create();
+		Descriptor descriptor = Descriptor.create(core);
+
+		List<Map<String, Object>> descriptions = descriptor.describeParsing();
+
+		Assertions.assertEquals(1, descriptions.size());
+
+		Map<String, Object> description = descriptions.getFirst();
+
+		String jsonDescription = PrettyPrintMap.toString(description);
+		Assertions.assertEquals(3359, jsonDescription.length());
+	}
 
 	@Test
 	void describeTemplates() throws FieldException, NoSuchMethodException{

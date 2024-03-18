@@ -26,6 +26,7 @@ package io.github.mtrevisan.boxon.core.helpers.descriptors;
 
 import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.Evaluate;
+import io.github.mtrevisan.boxon.annotations.PostProcessField;
 import io.github.mtrevisan.boxon.annotations.Skip;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
@@ -320,6 +321,19 @@ public enum AnnotationDescriptor{
 			final Evaluate binding = (Evaluate)annotation;
 			putIfNotEmpty(DescriberKey.BIND_CONDITION, binding.condition(), rootDescription);
 			putIfNotEmpty(DescriberKey.BIND_VALUE, binding.value(), rootDescription);
+		}
+	},
+
+	/**
+	 * Descriptor of the {@link PostProcessField} annotation.
+	 */
+	POST_PROCESS_FIELD(PostProcessField.class){
+		@Override
+		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
+			final PostProcessField binding = (PostProcessField)annotation;
+			putIfNotEmpty(DescriberKey.BIND_CONDITION, binding.condition(), rootDescription);
+			putIfNotEmpty(DescriberKey.BIND_VALUE_DECODE, binding.valueDecode(), rootDescription);
+			putIfNotEmpty(DescriberKey.BIND_VALUE_ENCODE, binding.valueEncode(), rootDescription);
 		}
 	},
 

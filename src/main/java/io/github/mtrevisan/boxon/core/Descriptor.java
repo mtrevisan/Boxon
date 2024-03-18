@@ -24,12 +24,16 @@
  */
 package io.github.mtrevisan.boxon.core;
 
+import io.github.mtrevisan.boxon.annotations.Evaluate;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
+import io.github.mtrevisan.boxon.annotations.PostProcessField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigField;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationMessage;
 import io.github.mtrevisan.boxon.core.helpers.descriptors.AnnotationDescriptor;
 import io.github.mtrevisan.boxon.core.helpers.templates.BoundedField;
+import io.github.mtrevisan.boxon.core.helpers.templates.EvaluatedField;
+import io.github.mtrevisan.boxon.core.helpers.templates.PostProcessedField;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.core.keys.ConfigurationKey;
 import io.github.mtrevisan.boxon.core.keys.DescriberKey;
@@ -82,6 +86,73 @@ public final class Descriptor{
 		loaderTemplate = templateParser.getLoaderTemplate();
 		final ConfigurationParser configurationParser = core.getConfigurationParser();
 		loaderConfiguration = configurationParser.getLoaderConfiguration();
+	}
+
+
+	/**
+	 * Description of all the loaded templates.
+	 *
+	 * @return	The list of descriptions.
+	 * @throws FieldException	If a template is not well formatted.
+	 */
+	public List<Map<String, Object>> describeParsing() throws FieldException{
+		final Collection<Template<?>> templates = new HashSet<>(loaderTemplate.getTemplates());
+
+		final List<Map<String, Object>> description = new ArrayList<>(templates.size());
+		for(final Template<?> template : templates)
+			description.add(describeParsing(template));
+		return Collections.unmodifiableList(description);
+	}
+
+	/**
+	 * Description of a single template annotated with {@link MessageHeader}.
+	 *
+	 * @param templateClass	Template class to be described.
+	 * @return	The list of descriptions.
+	 * @throws AnnotationException	If an annotation is not well formatted.
+	 * @throws FieldException	If a template is not well formatted.
+	 */
+	public Map<String, Object> describeParsing(final Class<?> templateClass) throws AnnotationException, FieldException{
+		if(templateClass.isAnnotationPresent(MessageHeader.class)){
+			final Template<?> template = loaderTemplate.extractTemplate(templateClass);
+			return describeParsing(template);
+		}
+
+		throw AnnotationException.create("Template {} didn't have the `MessageHeader` annotation",
+			templateClass.getSimpleName());
+	}
+
+	/**
+	 * Description of all the templates in the given package annotated with {@link MessageHeader}.
+	 *
+	 * @param templateClasses	Classes to be used ase starting point from which to load annotated classes.
+	 * @return	The list of descriptions.
+	 * @throws AnnotationException	If an annotation is not well formatted.
+	 * @throws FieldException	If a template is not well formatted.
+	 */
+	public List<Map<String, Object>> describeParsing(final Class<?>... templateClasses) throws FieldException{
+		final int length = templateClasses.length;
+		final List<Map<String, Object>> description = new ArrayList<>(length);
+		for(int i = 0; i < length; i ++){
+			final Class<?> templateClass = templateClasses[i];
+
+			if(templateClass.isAnnotationPresent(MessageHeader.class)){
+				final Template<?> template = loaderTemplate.extractTemplate(templateClass);
+				description.add(describeParsing(template));
+			}
+		}
+		return Collections.unmodifiableList(description);
+	}
+
+	private Map<String, Object> describeParsing(final Template<?> template) throws FieldException{
+		final Map<String, Object> description = new HashMap<>(3);
+		description.put(DescriberKey.TEMPLATE.toString(), template.getType().getName());
+		describeHeader(template.getHeader(), description);
+		describeBoundedFields(template.getBoundedFields(), description);
+		describeEvaluatedFields(template.getEvaluatedFields(), description);
+		describePostProcessedFields(template.getPostProcessedFields(), description);
+		describeContext(description);
+		return Collections.unmodifiableMap(description);
 	}
 
 
@@ -168,6 +239,30 @@ public final class Descriptor{
 			describeField(field.getBinding(), field.getFieldName(), field.getFieldType(), fieldsDescription);
 		}
 		description.put(DescriberKey.FIELDS.toString(), fieldsDescription);
+	}
+
+	private static void describeEvaluatedFields(final List<EvaluatedField> fields, final Map<String, Object> description)
+			throws FieldException{
+		final int length = fields.size();
+		final Collection<Map<String, Object>> fieldsDescription = new ArrayList<>(length);
+		for(int i = 0; i < length; i ++){
+			final EvaluatedField field = fields.get(i);
+
+			describeField(field.getBinding(), field.getFieldName(), field.getFieldType(), fieldsDescription);
+		}
+		description.put(DescriberKey.EVALUATED_FIELDS.toString(), fieldsDescription);
+	}
+
+	private static void describePostProcessedFields(final List<PostProcessedField> fields, final Map<String, Object> description)
+			throws FieldException{
+		final int length = fields.size();
+		final Collection<Map<String, Object>> fieldsDescription = new ArrayList<>(length);
+		for(int i = 0; i < length; i ++){
+			final PostProcessedField field = fields.get(i);
+
+			describeField(field.getBinding(), field.getFieldName(), field.getFieldType(), fieldsDescription);
+		}
+		description.put(DescriberKey.POST_PROCESSED_FIELDS.toString(), fieldsDescription);
 	}
 
 	private void describeContext(final Map<String, Object> description){
