@@ -37,7 +37,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 @Documented
-public @interface Evaluate{
+public @interface PostProcessField{
 
 	/**
 	 * The SpEL expression that determines if an evaluation has to be made.
@@ -47,12 +47,21 @@ public @interface Evaluate{
 	String condition() default "";
 
 	/**
-	 * The expression to be evaluated.
+	 * The expression to be evaluated in the decode phase.
 	 *
 	 * @see <a href="https://docs.spring.io/spring-framework/docs/6.1.x/reference/html/core.html#expressions">Spring Expression Language (SpEL)</a>
 	 *
 	 * @return	The expression to be evaluated.
 	 */
-	String value();
+	String valueDecode();
+
+	/**
+	 * The expression to be evaluated in the encode phase.
+	 *
+	 * @see <a href="https://docs.spring.io/spring-framework/docs/6.1.x/reference/html/core.html#expressions">Spring Expression Language (SpEL)</a>
+	 *
+	 * @return	The expression to be evaluated.
+	 */
+	String valueEncode();
 
 }

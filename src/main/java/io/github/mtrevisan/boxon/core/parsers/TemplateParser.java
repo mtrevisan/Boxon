@@ -26,12 +26,14 @@ package io.github.mtrevisan.boxon.core.parsers;
 
 import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
+import io.github.mtrevisan.boxon.annotations.PostProcessField;
 import io.github.mtrevisan.boxon.annotations.Skip;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
 import io.github.mtrevisan.boxon.core.codecs.LoaderCodecInterface;
 import io.github.mtrevisan.boxon.core.codecs.TemplateParserInterface;
 import io.github.mtrevisan.boxon.core.helpers.templates.BoundedField;
 import io.github.mtrevisan.boxon.core.helpers.templates.EvaluatedField;
+import io.github.mtrevisan.boxon.core.helpers.templates.PostProcessedField;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
@@ -49,9 +51,7 @@ import io.github.mtrevisan.boxon.logs.EventListener;
 
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -211,6 +211,8 @@ public final class TemplateParser implements TemplateParserInterface{
 
 		processEvaluatedFields(template, parserContext);
 
+		postProcessFields(template, parserContext);
+
 		readMessageTerminator(template, reader);
 
 		verifyChecksum(template, currentObject, startPosition, reader);
@@ -321,25 +323,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 	private void processEvaluatedFields(final Template<?> template, final ParserContext<?> parserContext){
-		final List<EvaluatedField> nonRunLastEvaluatedFields = new ArrayList<>(template.getEvaluatedFields());
-		final List<EvaluatedField> runLastEvaluatedFields = new ArrayList<>(0);
-		final Iterator<EvaluatedField> itr = nonRunLastEvaluatedFields.iterator();
-		while(itr.hasNext()){
-			final EvaluatedField field = itr.next();
-			if(field.getBinding().runLast()){
-				itr.remove();
-
-				runLastEvaluatedFields.add(field);
-			}
-		}
-
-		processEvaluatedFields(template, parserContext, nonRunLastEvaluatedFields);
-
-		processEvaluatedFields(template, parserContext, runLastEvaluatedFields);
-	}
-
-	private void processEvaluatedFields(final Template<?> template, final ParserContext<?> parserContext,
-			final List<EvaluatedField> evaluatedFields){
+		final List<EvaluatedField> evaluatedFields = template.getEvaluatedFields();
 		for(int i = 0, length = evaluatedFields.size(); i < length; i ++){
 			final EvaluatedField field = evaluatedFields.get(i);
 
@@ -357,12 +341,27 @@ public final class TemplateParser implements TemplateParserInterface{
 		}
 	}
 
+	private void postProcessFields(final Template<?> template, final ParserContext<?> parserContext){
+		final List<PostProcessedField> postProcessedFields = template.getProcessedFields();
+		for(int i = 0, length = postProcessedFields.size(); i < length; i ++){
+			final PostProcessedField field = postProcessedFields.get(i);
+
+			final PostProcessField binding = field.getBinding();
+			final String condition = binding.condition();
+			final String expression = binding.valueDecode();
+
+			processField(condition, expression, parserContext, field, template.getType().getName());
+		}
+	}
+
 	@Override
 	public <T> void encode(final Template<?> template, final BitWriterInterface writer, final Object parentObject, final T currentObject)
 			throws FieldException{
 		final ParserContext<T> parserContext = new ParserContext<>(core.getEvaluator(), currentObject, parentObject);
 		parserContext.addCurrentObjectToEvaluatorContext();
 		parserContext.setClassName(template.getType().getName());
+
+		preProcessFields(template, parserContext);
 
 		//encode message fields:
 		final LoaderCodecInterface loaderCodec = core.getLoaderCodec();
@@ -387,6 +386,36 @@ public final class TemplateParser implements TemplateParserInterface{
 		final MessageHeader header = template.getHeader();
 		if(header != null)
 			ParserWriterHelper.writeAffix(header.end(), header.charset(), writer);
+	}
+
+	private void preProcessFields(final Template<?> template, final ParserContext<?> parserContext){
+		final List<PostProcessedField> postProcessedFields = template.getProcessedFields();
+		for(int i = 0, length = postProcessedFields.size(); i < length; i ++){
+			final PostProcessedField field = postProcessedFields.get(i);
+
+			final PostProcessField binding = field.getBinding();
+			final String condition = binding.condition();
+			final String expression = binding.valueEncode();
+
+			processField(condition, expression, parserContext, field, template.getType().getName());
+		}
+	}
+
+	private void processField(final String condition, final String expression, final ParserContext<?> parserContext, final PostProcessedField field,
+			final String templateName){
+		final Evaluator evaluator = core.getEvaluator();
+		final Object rootObject = parserContext.getRootObject();
+		final boolean process = evaluator.evaluateBoolean(condition, rootObject);
+		if(!process)
+			return;
+
+		final String fieldName = field.getFieldName();
+		eventListener.evaluatingField(templateName, fieldName);
+
+		final Object value = evaluator.evaluate(expression, rootObject, field.getFieldType());
+		field.setFieldValue(parserContext.getCurrentObject(), value);
+
+		eventListener.evaluatedField(templateName, fieldName, value);
 	}
 
 	private boolean shouldProcessField(final String condition, final Object rootObject){

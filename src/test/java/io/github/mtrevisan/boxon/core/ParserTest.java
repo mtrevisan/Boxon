@@ -139,6 +139,7 @@ class ParserTest{
 			.withTemplatesFrom(ACKMessageHex.class)
 			.create();
 		Parser parser = Parser.create(core);
+		Composer composer = Composer.create(core);
 
 		byte[] payload1 = StringHelper.hexToByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		byte[] payload2 = TestHelper.toByteArray("+BCK:GTIOB,CF8002,359464038116666,45.5,2,0020,20170101123542,11F0$");
@@ -149,6 +150,10 @@ class ParserTest{
 		Assertions.assertFalse(result.get(0).hasError());
 		Assertions.assertFalse(result.get(1).hasError());
 		Assertions.assertEquals("+ACK", Extractor.get("/messageHeader", result.get(1).getMessage(), null));
+
+		Response<Object, byte[]> compose = composer.compose(result.get(1).getMessage());
+		Assertions.assertFalse(compose.hasError());
+		Assertions.assertEquals("+BCK:GTIOB,CF8002,359464038116666,45.5,2,0020,20170101123542,11F0$", StringHelper.toASCIIString(compose.getMessage()));
 	}
 
 	@Test

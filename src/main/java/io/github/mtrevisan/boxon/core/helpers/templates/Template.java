@@ -27,6 +27,7 @@ package io.github.mtrevisan.boxon.core.helpers.templates;
 import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.Evaluate;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
+import io.github.mtrevisan.boxon.annotations.PostProcessField;
 import io.github.mtrevisan.boxon.annotations.Skip;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.helpers.CharsetHelper;
@@ -48,9 +49,10 @@ import java.util.function.Function;
  */
 public final class Template<T>{
 
-	private record Pair(List<BoundedField> boundedFields, List<EvaluatedField> evaluatedFields){
-		private static Pair of(final List<BoundedField> boundedFields, final List<EvaluatedField> evaluatedFields){
-			return new Pair(boundedFields, evaluatedFields);
+	private record Triplet(List<BoundedField> boundedFields, List<EvaluatedField> evaluatedFields, List<PostProcessedField> postProcessedFields){
+		private static Triplet of(final List<BoundedField> boundedFields, final List<EvaluatedField> evaluatedFields,
+				final List<PostProcessedField> postProcessedFields){
+			return new Triplet(boundedFields, evaluatedFields, postProcessedFields);
 		}
 	}
 
@@ -60,6 +62,7 @@ public final class Template<T>{
 	private final MessageHeader header;
 	private final List<BoundedField> boundedFields;
 	private final List<EvaluatedField> evaluatedFields;
+	private final List<PostProcessedField> postProcessedFields;
 	/**
 	 * Necessary to speed up the creation of a {@link Template} (technically not needed because it's already present
 	 * somewhere inside {@link #boundedFields}).
@@ -97,9 +100,10 @@ public final class Template<T>{
 			}
 		}
 
-		final Pair fields = loadAnnotatedFields(type, filterAnnotationsWithCodec);
+		final Triplet fields = loadAnnotatedFields(type, filterAnnotationsWithCodec);
 		boundedFields = Collections.unmodifiableList(fields.boundedFields);
 		evaluatedFields = Collections.unmodifiableList(fields.evaluatedFields);
+		postProcessedFields = Collections.unmodifiableList(fields.postProcessedFields);
 
 		if(boundedFields.isEmpty())
 			throw AnnotationException.create("No data can be extracted from this class: {}", type.getName());
@@ -107,12 +111,13 @@ public final class Template<T>{
 
 
 	@SuppressWarnings("ObjectAllocationInLoop")
-	private Pair loadAnnotatedFields(final Class<T> type, final Function<Annotation[], List<Annotation>> filterAnnotationsWithCodec)
+	private Triplet loadAnnotatedFields(final Class<T> type, final Function<Annotation[], List<Annotation>> filterAnnotationsWithCodec)
 			throws AnnotationException{
 		final List<Field> fields = ReflectionHelper.getAccessibleFields(type);
 		final int length = fields.size();
 		final List<BoundedField> boundedFields = new ArrayList<>(length);
 		final List<EvaluatedField> evaluatedFields = new ArrayList<>(length);
+		final List<PostProcessedField> postProcessedFields = new ArrayList<>(length);
 		for(int i = 0; i < length; i ++){
 			final Field field = fields.get(i);
 
@@ -125,6 +130,8 @@ public final class Template<T>{
 			final List<Annotation> boundedAnnotations = filterAnnotationsWithCodec.apply(declaredAnnotations);
 			evaluatedFields.addAll(extractEvaluations(declaredAnnotations, field));
 
+			postProcessedFields.addAll(extractProcessed(declaredAnnotations, field));
+
 			try{
 				final Annotation validAnnotation = validateField(field, boundedAnnotations);
 
@@ -136,7 +143,7 @@ public final class Template<T>{
 				throw e;
 			}
 		}
-		return Pair.of(boundedFields, evaluatedFields);
+		return Triplet.of(boundedFields, evaluatedFields, postProcessedFields);
 	}
 
 	private void loadChecksumField(final Checksum checksum, final Class<T> type, final Field field) throws AnnotationException{
@@ -162,6 +169,19 @@ public final class Template<T>{
 				evaluations.add(EvaluatedField.create(field, (Evaluate)annotation));
 		}
 		return evaluations;
+	}
+
+	@SuppressWarnings("ObjectAllocationInLoop")
+	private static List<PostProcessedField> extractProcessed(final Annotation[] declaredAnnotations, final Field field){
+		final int length = declaredAnnotations.length;
+		final List<PostProcessedField> processed = new ArrayList<>(length);
+		for(int i = 0; i < length; i ++){
+			final Annotation annotation = declaredAnnotations[i];
+
+			if(annotation.annotationType() == PostProcessField.class)
+				processed.add(PostProcessedField.create(field, (PostProcessField)annotation));
+		}
+		return processed;
 	}
 
 	private static Annotation validateField(final Field field, final List<? extends Annotation> annotations) throws AnnotationException{
@@ -221,6 +241,15 @@ public final class Template<T>{
 	 */
 	public List<EvaluatedField> getEvaluatedFields(){
 		return evaluatedFields;
+	}
+
+	/**
+	 * List of {@link PostProcessedField processed fields}.
+	 *
+	 * @return	List of processed fields.
+	 */
+	public List<PostProcessedField> getProcessedFields(){
+		return postProcessedFields;
 	}
 
 	/**
