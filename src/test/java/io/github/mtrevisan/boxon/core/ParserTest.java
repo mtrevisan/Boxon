@@ -50,7 +50,7 @@ class ParserTest{
 		//if it is wanted `headerLength` to be a variable and not a method:
 		//- remove Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes); above
 		//- change @BindString(size = "#prefixLength()") into @BindString(size = "#headerLength") in ACKMessageHex.messageHeader
-		//- remove .withContextFunction(ParserTest.class, "headerLength") below
+		//- remove .withContext(ParserTest.class, "headerLength") below
 		//- uncomment the below context map
 //		Map<String, Object> context = Map.of(
 //			"deviceTypes", deviceTypes,
@@ -60,7 +60,7 @@ class ParserTest{
 			.withDefaultCodecs()
 			.withTemplate(ACKMessageHex.class)
 			.withContext(context)
-			.withContextFunction(ParserTest.class, "headerLength")
+			.withContext(ParserTest.class, "headerLength")
 			.create();
 		Parser parser = Parser.create(core);
 
@@ -91,7 +91,7 @@ class ParserTest{
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 		Core core = CoreBuilder.builder()
 			.withContext(context)
-			.withContextFunction(ParserTest.class.getDeclaredMethod("headerLength"))
+			.withContext(ParserTest.class.getDeclaredMethod("headerLength"))
 			.withDefaultCodecs()
 			.withTemplatesFrom(ACKMessageHex.class)
 			.create();
@@ -134,11 +134,12 @@ class ParserTest{
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 		Core core = CoreBuilder.builder()
 			.withContext(context)
-			.withContextFunction(ParserTest.class.getDeclaredMethod("headerLength"))
+			.withContext(ParserTest.class.getDeclaredMethod("headerLength"))
 			.withDefaultCodecs()
 			.withTemplatesFrom(ACKMessageHex.class)
 			.create();
 		Parser parser = Parser.create(core);
+		Composer composer = Composer.create(core);
 
 		byte[] payload1 = StringHelper.hexToByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
 		byte[] payload2 = TestHelper.toByteArray("+BCK:GTIOB,CF8002,359464038116666,45.5,2,0020,20170101123542,11F0$");
@@ -149,6 +150,10 @@ class ParserTest{
 		Assertions.assertFalse(result.get(0).hasError());
 		Assertions.assertFalse(result.get(1).hasError());
 		Assertions.assertEquals("+ACK", Extractor.get("/messageHeader", result.get(1).getMessage(), null));
+
+		Response<Object, byte[]> compose = composer.compose(result.get(1).getMessage());
+		Assertions.assertFalse(compose.hasError());
+		Assertions.assertEquals("+BCK:GTIOB,CF8002,359464038116666,45.5,2,0020,20170101123542,11F0$", StringHelper.toASCIIString(compose.getMessage()));
 	}
 
 	@Test
@@ -159,7 +164,7 @@ class ParserTest{
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 		Core core = CoreBuilder.builder()
 			.withContext(context)
-			.withContextFunction(ParserTest.class.getDeclaredMethod("headerLength"))
+			.withContext(ParserTest.class.getDeclaredMethod("headerLength"))
 			.withDefaultCodecs()
 			.withTemplatesFrom(ACKMessageHex.class)
 			.create();

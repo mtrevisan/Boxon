@@ -85,7 +85,7 @@ public final class LoaderConfiguration{
 	 * Assign an event listener.
 	 *
 	 * @param eventListener	The event listener.
-	 * @return	The current instance.
+	 * @return	This instance, used for chaining.
 	 */
 	LoaderConfiguration withEventListener(final EventListener eventListener){
 		this.eventListener = JavaHelper.nonNullOrDefault(eventListener, EventListener.getNoOpInstance());
@@ -157,7 +157,7 @@ public final class LoaderConfiguration{
 	 * @param type	The class type.
 	 * @return	A configuration.
 	 * @throws AnnotationException	If an annotation has validation problems.
-	 * @throws ConfigurationException   If a configuration is not well formatted.
+	 * @throws ConfigurationException	If a configuration is not well formatted.
 	 */
 	public ConfigurationMessage<?> extractConfiguration(final Class<?> type) throws AnnotationException, ConfigurationException{
 		final ConfigurationMessage<?> from = createConfiguration(type);

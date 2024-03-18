@@ -24,12 +24,11 @@
  */
 package io.github.mtrevisan.boxon.core;
 
+import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageASCII;
 import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageHex;
 import io.github.mtrevisan.boxon.core.codecs.queclink.DeviceTypes;
 import io.github.mtrevisan.boxon.core.codecs.queclink.REGConfigurationASCII;
-import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
-import io.github.mtrevisan.boxon.exceptions.TemplateException;
+import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.utils.PrettyPrintMap;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -41,12 +40,34 @@ import java.util.Map;
 class DescriptorTest{
 
 	@Test
-	void describeTemplates() throws AnnotationException, ConfigurationException, TemplateException, NoSuchMethodException{
+	void describeParsing() throws FieldException, NoSuchMethodException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with((byte)0x46, "QUECLINK_GB200S");
 		Core core = CoreBuilder.builder()
-			.withContextPair("deviceTypes", deviceTypes)
-			.withContextFunction(ParserTest.class.getDeclaredMethod("headerLength"))
+			.withContext("deviceTypes", deviceTypes)
+			.withContext(ParserTest.class.getDeclaredMethod("headerLength"))
+			.withDefaultCodecs()
+			.withTemplate(ACKMessageASCII.class)
+			.create();
+		Descriptor descriptor = Descriptor.create(core);
+
+		List<Map<String, Object>> descriptions = descriptor.describeParsing();
+
+		Assertions.assertEquals(1, descriptions.size());
+
+		Map<String, Object> description = descriptions.getFirst();
+
+		String jsonDescription = PrettyPrintMap.toString(description);
+		Assertions.assertEquals(3359, jsonDescription.length());
+	}
+
+	@Test
+	void describeTemplates() throws FieldException, NoSuchMethodException{
+		DeviceTypes deviceTypes = DeviceTypes.create()
+			.with((byte)0x46, "QUECLINK_GB200S");
+		Core core = CoreBuilder.builder()
+			.withContext("deviceTypes", deviceTypes)
+			.withContext(ParserTest.class.getDeclaredMethod("headerLength"))
 			.withDefaultCodecs()
 			.withTemplate(ACKMessageHex.class)
 			.create();
@@ -63,12 +84,12 @@ class DescriptorTest{
 	}
 
 	@Test
-	void describeConfigurations() throws AnnotationException, TemplateException, ConfigurationException, NoSuchMethodException{
+	void describeConfigurations() throws FieldException, NoSuchMethodException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with((byte)0x46, "QUECLINK_GB200S");
 		Core core = CoreBuilder.builder()
-			.withContextPair("deviceTypes", deviceTypes)
-			.withContextFunction(ParserTest.class.getDeclaredMethod("headerLength"))
+			.withContext("deviceTypes", deviceTypes)
+			.withContext(ParserTest.class.getDeclaredMethod("headerLength"))
 			.withDefaultCodecs()
 			.withConfigurationsFrom(REGConfigurationASCII.class)
 			.create();
@@ -81,7 +102,7 @@ class DescriptorTest{
 		Map<String, Object> description = descriptions.getFirst();
 
 		String jsonDescription = PrettyPrintMap.toString(description);
-		Assertions.assertEquals(7183, jsonDescription.length());
+		Assertions.assertEquals(7319, jsonDescription.length());
 	}
 
 }

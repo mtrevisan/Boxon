@@ -185,7 +185,7 @@ public final class Configurator{
 	 *
 	 * @param protocolVersion	The protocol version (should follow <a href="https://semver.org/">Semantic Versioning</a>).
 	 * @param shortDescription	The short description identifying a message, see {@link ConfigurationHeader#shortDescription()}.
-	 * @param template	The template, or a POJO, containing the data to be composed.
+	 * @param template	The template, or a <a href="https://en.wikipedia.org/wiki/Data_transfer_object">DTO</a>, containing the data to be composed.
 	 * @return	The composition response.
 	 */
 	public Response<String, byte[]> composeConfiguration(final String protocolVersion, final String shortDescription,

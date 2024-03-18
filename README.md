@@ -125,6 +125,7 @@ You can get pre-built JARs (usable on JRE 11 or newer) from [Sonatype](https://o
     2. [Skip](#annotation-skip)
     3. [Checksum](#annotation-checksum)
     4. [Evaluate](#annotation-evaluate)
+    5. [PostProcessField](#annotation-post-process-field)
 3. [Protocol description](#protocol-description)
 4. [Configuration annotations](#annotation-configuration)
     1. [ConfigurationHeader](#annotation-configurationheader)
@@ -146,24 +147,25 @@ You can get pre-built JARs (usable on JRE 11 or newer) from [Sonatype](https://o
     2. [Message composer](#example-composer)
 11. [Contributing](#contributing)
 12. [Changelog](#changelog)
-    1. [version 3.3.0](#changelog-3.3.0)
-    2. [version 3.2.0](#changelog-3.2.0)
-    3. [version 3.1.3](#changelog-3.1.3)
-    4. [version 3.1.2](#changelog-3.1.2)
-    5. [version 3.1.1](#changelog-3.1.1)
-    6. [version 3.1.0](#changelog-3.1.0)
-    7. [version 3.0.2](#changelog-3.0.2)
-    8. [version 3.0.1](#changelog-3.0.1)
-    9. [version 3.0.0](#changelog-3.0.0)
-    10. [version 2.1.2](#changelog-2.1.2)
-    11. [version 2.1.1](#changelog-2.1.1)
-    12. [version 2.1.0](#changelog-2.1.0)
-    13. [version 2.0.0](#changelog-2.0.0)
-    14. [version 1.1.0](#changelog-1.1.0)
-    15. [version 1.0.0](#changelog-1.0.0)
-    16. [version 0.0.2](#changelog-0.0.2)
-    17. [version 0.0.1](#changelog-0.0.1)
-    18. [version 0.0.0](#changelog-0.0.0)
+    1. [version 3.4.0](#changelog-3.4.0)
+    2. [version 3.3.0](#changelog-3.3.0)
+    3. [version 3.2.0](#changelog-3.2.0)
+    4. [version 3.1.3](#changelog-3.1.3)
+    5. [version 3.1.2](#changelog-3.1.2)
+    6. [version 3.1.1](#changelog-3.1.1)
+    7. [version 3.1.0](#changelog-3.1.0)
+    8. [version 3.0.2](#changelog-3.0.2)
+    9. [version 3.0.1](#changelog-3.0.1)
+    10. [version 3.0.0](#changelog-3.0.0)
+    11. [version 2.1.2](#changelog-2.1.2)
+    12. [version 2.1.1](#changelog-2.1.1)
+    13. [version 2.1.0](#changelog-2.1.0)
+    14. [version 2.0.0](#changelog-2.0.0)
+    15. [version 1.1.0](#changelog-1.1.0)
+    16. [version 1.0.0](#changelog-1.0.0)
+    17. [version 0.0.2](#changelog-0.0.2)
+    18. [version 0.0.1](#changelog-0.0.1)
+    19. [version 0.0.0](#changelog-0.0.0)
 13. [License](#license)
 
 <br/>
@@ -199,12 +201,13 @@ Note that [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_inject
 | BindString           |  &#9745;  |         | &#9745; |            |                   | &#9745; |                    |            |               |  &#9745;  |  &#9745;  |       &#9745;       |           BindString |
 | BindStringTerminated |  &#9745;  |         | &#9745; |  &#9745;   |      &#9745;      |         |                    |            |               |  &#9745;  |  &#9745;  |       &#9745;       | BindStringTerminated |
 
-|                      | condition |  start  |   end   | charset |  size   | terminator | consumeTerminator |  type   | byteOrder | skipStart | skipEnd | algorithm | startValue |  value  | runLast |               |
-|----------------------|:---------:|:-------:|:-------:|:-------:|:-------:|:----------:|:-----------------:|:-------:|:---------:|:---------:|:-------:|:---------:|:----------:|:-------:|:-------:|--------------:|
-| MessageHeader        |           | &#9745; | &#9745; | &#9745; |         |            |                   |         |           |           |         |           |            |         |         | MessageHeader |
-| Skip                 |  &#9745;  |         |         |         | &#9745; |  &#9745;   |      &#9745;      |         |           |           |         |           |            |         |         |          Skip |
-| Checksum             |           |         |         |         |         |            |                   | &#9745; |  &#9745;  |  &#9745;  | &#9745; |  &#9745;  |  &#9745;   |         |         |      Checksum |
-| Evaluate             |  &#9745;  |         |         |         |         |            |                   |         |           |           |         |           |            | &#9745; | &#9745; |      Evaluate |
+|                  | condition |  start  |   end   | charset |  size   | terminator | consumeTerminator |  type   | byteOrder | skipStart | skipEnd | algorithm | startValue |  value  | valueDecode | valueEncode |               |
+|------------------|:---------:|:-------:|:-------:|:-------:|:-------:|:----------:|:-----------------:|:-------:|:---------:|:---------:|:-------:|:---------:|:----------:|:-------:|:-----------:|:-----------:|--------------:|
+| MessageHeader    |           | &#9745; | &#9745; | &#9745; |         |            |                   |         |           |           |         |           |            |         |             |             | MessageHeader |
+| Skip             |  &#9745;  |         |         |         | &#9745; |  &#9745;   |      &#9745;      |         |           |           |         |           |            |         |             |             |          Skip |
+| Checksum         |           |         |         |         |         |            |                   | &#9745; |  &#9745;  |  &#9745;  | &#9745; |  &#9745;  |  &#9745;   |         |             |             |      Checksum |
+| Evaluate         |  &#9745;  |         |         |         |         |            |                   |         |           |           |         |           |            | &#9745; |             |             |      Evaluate |
+| PostProcessField |  &#9745;  |         |         |         |         |            |                   |         |           |           |         |           |            |         |   &#9745;   |   &#9745;   |  ProcessField |
 
 |                               | shortDescription | longDescription | minProtocol | maxProtocol |  start  |   end   | charset | terminator | unitOfMeasure | minValue  | maxValue | pattern | enumeration | defaultValue |  radix  | composition |                               |
 |-------------------------------|:----------------:|:---------------:|:-----------:|:-----------:|:-------:|:-------:|:-------:|:----------:|:-------------:|:---------:|:--------:|:-------:|:-----------:|:------------:|:-------:|:-----------:|------------------------------:|
@@ -769,7 +772,6 @@ private short checksum;
 
  - `condition`: The SpEL expression that determines if this field has to be read.
  - `value`: The value to be assigned, or calculated (can be a SpEL expression).
- - `runLast`: Whether to run this annotation as the last annotation, after all other non-runLast `Evaluation`s.
 
 #### description
 
@@ -788,9 +790,6 @@ This annotation is bounded to a variable.
 
 ```java
 @BindString(size = "4")
-//this annotation restores the '+ACK' value after all the fields and evaluations are done (this is because the evaluation of `buffered`
-//requires the read value of `messageHeader`, and '+BCK' means a buffered message)
-@Evaluate(value = "'+ACK'", runLast = true)
 private String messageHeader;
 
 @Evaluate("T(java.time.ZonedDateTime).now()")
@@ -802,6 +801,36 @@ private boolean buffered;
 //from the variable `deviceTypes` passed in the context
 @Evaluate("#deviceTypes.getDeviceTypeName(deviceTypeCode)")
 private String deviceTypeName;
+```
+
+
+<a name="annotation-post-process-field"></a>
+### PostProcessField
+
+#### parameters
+
+- `condition`: The SpEL expression that determines if this field has to be processed (both in the decode and encode phases).
+- `valueDecode`: The value to be assigned, or calculated, at the decode phase (can be a SpEL expression).
+- `valueEncode`: The value to be assigned, or calculated, at the encode phase (can be a SpEL expression).
+
+#### description
+
+Assign a constant, or calculated value, to a field after all the other annotations are processed.
+
+Note that the evaluations are done AFTER parsing the entire message in the decode phase, or BEFORE in the encode phase.
+
+#### annotation type
+
+This annotation is bounded to a variable.
+
+#### example
+
+```java
+@BindString(size = "4")
+//this annotation restores the '+ACK' value after all the fields and evaluations are done (this is because the evaluation of `buffered`
+//requires the read value of `messageHeader`, and '+BCK' means a buffered message)
+@PostProcessField(condition = "buffered", valueDecode = "'+ACK'", valueEncode = "'+BCK'")
+private String messageHeader;
 ```
 
 
@@ -821,7 +850,7 @@ DeviceTypes deviceTypes = DeviceTypes.create()
 	.with((byte)0x46, "QUECLINK_GB200S");
 Core core = CoreBuilder.builder()
     .withContextPair("deviceTypes", deviceTypes)
-    .withContextFunction(ParserTest.class.getDeclaredMethod("headerLength"))
+    .withContext(ParserTest.class.getDeclaredMethod("headerLength"))
     .withDefaultCodecs()
     .withTemplate(ACKMessageHex.class)
    .create();
@@ -1482,8 +1511,8 @@ All you have to care about, for a simple example on multi-message automatically-
 Map<String, Object> context = ...
 Core core = CoreBuilder.builder()
    .withContext(context)
-   .withContextFunction(VersionHelper.class, "compareVersion", String.class, String.class)
-   .withContextFunction(VersionHelper.class.getDeclaredMethod("compareVersion", new Class[]{String.class, String.class}))
+   .withContext(VersionHelper.class, "compareVersion", String.class, String.class)
+   .withContext(VersionHelper.class.getDeclaredMethod("compareVersion", new Class[]{String.class, String.class}))
    .withDefaultCodecs()
    .withTemplate(...)
    .create();
@@ -1545,6 +1574,12 @@ Pull requests are welcomed.
 
 <a name="changelog"></a>
 ## Changelog
+
+<a name="changelog-3.4.0"></a>
+### version 3.4.0 - 202403??
+
+- Removed `runLast` from `Evaluator`, added a specialized annotation that can work in both decoding and encoding phases.
+- Added method `describeParser` to `Descriptor` to also include the description of evaluation and post-processing fields.
 
 <a name="changelog-3.3.0"></a>
 ### version 3.3.0 - 20240317

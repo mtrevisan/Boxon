@@ -84,7 +84,7 @@ public final class CoreBuilder{
 	 * Assign an event listener.
 	 *
 	 * @param eventListener	The event listener.
-	 * @return	The current instance.
+	 * @return	This instance, used for chaining.
 	 */
 	public CoreBuilder withEventListener(final EventListener eventListener){
 		addMethod(ConfigurationStep.EVENT_LISTENER, () -> core.setEventListener(eventListener));
@@ -100,7 +100,7 @@ public final class CoreBuilder{
 	 * @param value	The value.
 	 * @return	This instance, used for chaining.
 	 */
-	public CoreBuilder withContextPair(final String key, final Object value){
+	public CoreBuilder withContext(final String key, final Object value){
 		addMethod(ConfigurationStep.CONTEXT, () -> core.addToContext(key, value));
 
 		return this;
@@ -113,7 +113,7 @@ public final class CoreBuilder{
 	 * @return	This instance, used for chaining.
 	 */
 	public CoreBuilder withContext(final Map<String, Object> context){
-		addMethod(ConfigurationStep.CONTEXT, () -> core.addContext(context));
+		addMethod(ConfigurationStep.CONTEXT, () -> core.addToContext(context));
 
 		return this;
 	}
@@ -127,8 +127,8 @@ public final class CoreBuilder{
 	 * @throws NoSuchMethodException	If a matching method is not found.
 	 * @throws NullPointerException	If {@code methodName} is {@code null}.
 	 */
-	public CoreBuilder withContextFunction(final Class<?> type, final String methodName) throws NoSuchMethodException{
-		return withContextFunction(type.getDeclaredMethod(methodName));
+	public CoreBuilder withContext(final Class<?> type, final String methodName) throws NoSuchMethodException{
+		return withContext(type.getDeclaredMethod(methodName));
 	}
 
 	/**
@@ -140,10 +140,10 @@ public final class CoreBuilder{
 	 * @return	This instance, used for chaining.
 	 * @throws NoSuchMethodException	If a matching method is not found.
 	 */
-	public CoreBuilder withContextFunction(final Class<?> type, final String methodName, final Class<?>... parameterTypes)
+	public CoreBuilder withContext(final Class<?> type, final String methodName, final Class<?>... parameterTypes)
 			throws NoSuchMethodException{
 		final Method method = type.getDeclaredMethod(methodName, parameterTypes);
-		return withContextFunction(method);
+		return withContext(method);
 	}
 
 	/**
@@ -152,8 +152,8 @@ public final class CoreBuilder{
 	 * @param method	The method.
 	 * @return	This instance, used for chaining.
 	 */
-	public CoreBuilder withContextFunction(final Method method){
-		addMethod(ConfigurationStep.CONTEXT, () -> core.addContextFunction(method));
+	public CoreBuilder withContext(final Method method){
+		addMethod(ConfigurationStep.CONTEXT, () -> core.addToContext(method));
 
 		return this;
 	}

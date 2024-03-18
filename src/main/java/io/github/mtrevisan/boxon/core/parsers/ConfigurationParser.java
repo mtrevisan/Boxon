@@ -81,7 +81,7 @@ public final class ConfigurationParser{
 	 * Assign an event listener.
 	 *
 	 * @param eventListener	The event listener.
-	 * @return	The current instance.
+	 * @return	This instance, used for chaining.
 	 */
 	public ConfigurationParser withEventListener(final EventListener eventListener){
 		loaderConfiguration.withEventListener(eventListener);

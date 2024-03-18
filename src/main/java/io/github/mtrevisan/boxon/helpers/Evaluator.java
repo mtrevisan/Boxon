@@ -44,7 +44,7 @@ import java.util.Objects;
 
 
 /**
- * SpEL evaluator.
+ * SpEL expression evaluator.
  */
 public final class Evaluator{
 
@@ -74,6 +74,10 @@ public final class Evaluator{
 
 		Map<String, Object> getContext(){
 			return Collections.unmodifiableMap(backupContext);
+		}
+
+		void clearContext(){
+			backupContext.clear();
 		}
 	}
 
@@ -144,6 +148,13 @@ public final class Evaluator{
 	 */
 	public void removeFromContext(final Method method){
 		addToContext(method.getName(), null);
+	}
+
+	/**
+	 * Clear the context of this evaluator.
+	 */
+	public void clearContext(){
+		context.clearContext();
 	}
 
 	/**

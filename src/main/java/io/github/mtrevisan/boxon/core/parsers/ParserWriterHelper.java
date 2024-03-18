@@ -56,7 +56,7 @@ final class ParserWriterHelper{
 	 * Assign an event listener.
 	 *
 	 * @param eventListener	The event listener.
-	 * @return	The current instance.
+	 * @return	This instance, used for chaining.
 	 */
 	ParserWriterHelper withEventListener(final EventListener eventListener){
 		this.eventListener = JavaHelper.nonNullOrDefault(eventListener, EventListener.getNoOpInstance());

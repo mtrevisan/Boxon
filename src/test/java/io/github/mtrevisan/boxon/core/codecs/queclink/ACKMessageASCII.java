@@ -26,6 +26,7 @@ package io.github.mtrevisan.boxon.core.codecs.queclink;
 
 import io.github.mtrevisan.boxon.annotations.Evaluate;
 import io.github.mtrevisan.boxon.annotations.MessageHeader;
+import io.github.mtrevisan.boxon.annotations.PostProcessField;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.annotations.converters.StringToBigDecimalConverter;
@@ -40,7 +41,7 @@ import java.time.ZonedDateTime;
 public class ACKMessageASCII{
 
 	@BindStringTerminated(terminator = ':')
-	@Evaluate(value = "'+ACK'", runLast = true)
+	@PostProcessField(condition = "buffered", valueDecode = "'+ACK'", valueEncode = "'+BCK'")
 	private String messageHeader;
 	@BindStringTerminated(terminator = ',')
 	private String messageType;
