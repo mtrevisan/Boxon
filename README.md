@@ -1576,7 +1576,7 @@ Pull requests are welcomed.
 ## Changelog
 
 <a name="changelog-3.4.0"></a>
-### version 3.4.0 - 202403??
+### version 3.4.0 - 20240318
 
 - Removed `runLast` from `Evaluator`, added a specialized annotation that can work in both decoding and encoding phases.
 - Added method `describeParser` to `Descriptor` to also include the description of evaluation and post-processing fields.
