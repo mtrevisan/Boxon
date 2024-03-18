@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.exceptions;
 
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
+import io.github.mtrevisan.boxon.helpers.StringHelper;
 
 import java.io.Serial;
 import java.lang.reflect.Field;
@@ -54,6 +55,17 @@ public class FieldException extends Exception{
 	 */
 	public static FieldException create(final Throwable cause){
 		return new FieldException(cause);
+	}
+
+	/**
+	 * Constructs a new exception with the specified message, possibly with parameters.
+	 *
+	 * @param message	The message to be formatted (see {@link StringHelper#format(String, Object...)}).
+	 * @param parameters	The parameters of the message.
+	 * @return	An instance of this exception.
+	 */
+	public static FieldException create(final String message, final Object... parameters){
+		return new FieldException(StringHelper.format(message, parameters));
 	}
 
 

@@ -27,9 +27,7 @@ package io.github.mtrevisan.boxon.core;
 import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageHex;
 import io.github.mtrevisan.boxon.core.codecs.queclink.DeviceTypes;
 import io.github.mtrevisan.boxon.core.codecs.queclink.REGConfigurationASCII;
-import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
-import io.github.mtrevisan.boxon.exceptions.TemplateException;
+import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.utils.PrettyPrintMap;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -41,7 +39,7 @@ import java.util.Map;
 class DescriptorTest{
 
 	@Test
-	void describeTemplates() throws AnnotationException, ConfigurationException, TemplateException, NoSuchMethodException{
+	void describeTemplates() throws FieldException, NoSuchMethodException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with((byte)0x46, "QUECLINK_GB200S");
 		Core core = CoreBuilder.builder()
@@ -63,7 +61,7 @@ class DescriptorTest{
 	}
 
 	@Test
-	void describeConfigurations() throws AnnotationException, TemplateException, ConfigurationException, NoSuchMethodException{
+	void describeConfigurations() throws FieldException, NoSuchMethodException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with((byte)0x46, "QUECLINK_GB200S");
 		Core core = CoreBuilder.builder()

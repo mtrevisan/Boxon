@@ -38,9 +38,8 @@ import io.github.mtrevisan.boxon.core.parsers.LoaderConfiguration;
 import io.github.mtrevisan.boxon.core.parsers.LoaderTemplate;
 import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
-import io.github.mtrevisan.boxon.exceptions.TemplateException;
+import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.helpers.ContextHelper;
 
 import java.lang.annotation.Annotation;
@@ -90,9 +89,9 @@ public final class Descriptor{
 	 * Description of all the loaded templates.
 	 *
 	 * @return	The list of descriptions.
-	 * @throws TemplateException	If a template is not well formatted.
+	 * @throws FieldException	If a template is not well formatted.
 	 */
-	public List<Map<String, Object>> describeTemplate() throws TemplateException{
+	public List<Map<String, Object>> describeTemplate() throws FieldException{
 		final Collection<Template<?>> templates = new HashSet<>(loaderTemplate.getTemplates());
 
 		final List<Map<String, Object>> description = new ArrayList<>(templates.size());
@@ -107,9 +106,9 @@ public final class Descriptor{
 	 * @param templateClass	Template class to be described.
 	 * @return	The list of descriptions.
 	 * @throws AnnotationException	If an annotation is not well formatted.
-	 * @throws TemplateException	If a template is not well formatted.
+	 * @throws FieldException	If a template is not well formatted.
 	 */
-	public Map<String, Object> describeTemplate(final Class<?> templateClass) throws AnnotationException, TemplateException{
+	public Map<String, Object> describeTemplate(final Class<?> templateClass) throws AnnotationException, FieldException{
 		if(templateClass.isAnnotationPresent(MessageHeader.class)){
 			final Template<?> template = loaderTemplate.extractTemplate(templateClass);
 			return describeTemplate(template);
@@ -125,9 +124,9 @@ public final class Descriptor{
 	 * @param templateClasses	Classes to be used ase starting point from which to load annotated classes.
 	 * @return	The list of descriptions.
 	 * @throws AnnotationException	If an annotation is not well formatted.
-	 * @throws TemplateException	If a template is not well formatted.
+	 * @throws FieldException	If a template is not well formatted.
 	 */
-	public List<Map<String, Object>> describeTemplate(final Class<?>... templateClasses) throws AnnotationException, TemplateException{
+	public List<Map<String, Object>> describeTemplate(final Class<?>... templateClasses) throws FieldException{
 		final int length = templateClasses.length;
 		final List<Map<String, Object>> description = new ArrayList<>(length);
 		for(int i = 0; i < length; i ++){
@@ -141,7 +140,7 @@ public final class Descriptor{
 		return Collections.unmodifiableList(description);
 	}
 
-	private Map<String, Object> describeTemplate(final Template<?> template) throws TemplateException{
+	private Map<String, Object> describeTemplate(final Template<?> template) throws FieldException{
 		final Map<String, Object> description = new HashMap<>(3);
 		description.put(DescriberKey.TEMPLATE.toString(), template.getType().getName());
 		describeHeader(template.getHeader(), description);
@@ -158,34 +157,17 @@ public final class Descriptor{
 		description.put(DescriberKey.HEADER.toString(), headerDescription);
 	}
 
-	private static void describeBoundedFields(final List<BoundedField> fields, final Map<String, Object> description)
-			throws TemplateException{
+	private static void describeBoundedFields(final List<BoundedField> fields, final Map<String, Object> description) throws FieldException{
 		final int length = fields.size();
 		final Collection<Map<String, Object>> fieldsDescription = new ArrayList<>(length);
-		for(int i = 0; i < length; i ++)
-			describeField(fields.get(i), fieldsDescription);
+		for(int i = 0; i < length; i ++){
+			final BoundedField field = fields.get(i);
+
+			AnnotationDescriptor.describeSkips(field.getSkips(), fieldsDescription);
+
+			describeField(field.getBinding(), field.getFieldName(), field.getFieldType(), fieldsDescription);
+		}
 		description.put(DescriberKey.FIELDS.toString(), fieldsDescription);
-	}
-
-	private static void describeField(final BoundedField field, final Collection<Map<String, Object>> fieldsDescription)
-			throws TemplateException{
-		AnnotationDescriptor.describeSkips(field.getSkips(), fieldsDescription);
-
-		final Map<String, Object> fieldDescription = new HashMap<>(13);
-		AnnotationDescriptor.putIfNotEmpty(DescriberKey.FIELD_NAME, field.getFieldName(), fieldDescription);
-		AnnotationDescriptor.putIfNotEmpty(DescriberKey.FIELD_TYPE, field.getFieldType().getName(), fieldDescription);
-		final Annotation binding = field.getBinding();
-		final Class<? extends Annotation> annotationType = binding.annotationType();
-		AnnotationDescriptor.putIfNotEmpty(DescriberKey.ANNOTATION_TYPE, binding.annotationType().getName(), fieldDescription);
-
-		//extract binding descriptor
-		final AnnotationDescriptor descriptor = AnnotationDescriptor.fromAnnotation(binding);
-		if(descriptor == null)
-			throw TemplateException.create("Cannot extract descriptor for this annotation: {}", annotationType.getSimpleName());
-
-		descriptor.describe(binding, fieldDescription);
-
-		fieldsDescription.add(fieldDescription);
 	}
 
 	private void describeContext(final Map<String, Object> description){
@@ -201,9 +183,9 @@ public final class Descriptor{
 	 * Description of all the loaded configuration.
 	 *
 	 * @return	The list of descriptions.
-	 * @throws ConfigurationException	If a configuration is not well formatted.
+	 * @throws FieldException	If a configuration is not well formatted.
 	 */
-	public List<Map<String, Object>> describeConfiguration() throws ConfigurationException{
+	public List<Map<String, Object>> describeConfiguration() throws FieldException{
 		final Collection<ConfigurationMessage<?>> configurations = new HashSet<>(loaderConfiguration.getConfigurations());
 
 		final List<Map<String, Object>> description = new ArrayList<>(configurations.size());
@@ -218,11 +200,10 @@ public final class Descriptor{
 	 * @param configurationClass	configuration class to be described.
 	 * @return	The list of descriptions.
 	 * @throws AnnotationException	If an annotation is not well formatted.
-	 * @throws ConfigurationException	If a configuration is not well formatted.
+	 * @throws FieldException	If a configuration is not well formatted.
 	 * @throws EncodeException	If a configuration cannot be retrieved.
 	 */
-	public Map<String, Object> describeConfiguration(final Class<?> configurationClass) throws AnnotationException, ConfigurationException,
-			EncodeException{
+	public Map<String, Object> describeConfiguration(final Class<?> configurationClass) throws FieldException, EncodeException{
 		final ConfigurationHeader header = configurationClass.getAnnotation(ConfigurationHeader.class);
 		if(header != null){
 			final ConfigurationMessage<?> configuration = loaderConfiguration.getConfiguration(header.shortDescription());
@@ -239,10 +220,9 @@ public final class Descriptor{
 	 * @param configurationClasses	Classes to be used ase starting point from which to load annotated classes.
 	 * @return	The list of descriptions.
 	 * @throws AnnotationException	If an annotation is not well formatted.
-	 * @throws ConfigurationException	If a configuration is not well formatted.
+	 * @throws FieldException	If a configuration is not well formatted.
 	 */
-	public List<Map<String, Object>> describeConfiguration(final Class<?>... configurationClasses) throws AnnotationException,
-			ConfigurationException{
+	public List<Map<String, Object>> describeConfiguration(final Class<?>... configurationClasses) throws FieldException{
 		final int length = configurationClasses.length;
 		final List<Map<String, Object>> description = new ArrayList<>(length);
 		for(int i = 0; i < length; i ++){
@@ -256,7 +236,7 @@ public final class Descriptor{
 		return Collections.unmodifiableList(description);
 	}
 
-	private static Map<String, Object> describeConfiguration(final ConfigurationMessage<?> configuration) throws ConfigurationException{
+	private static Map<String, Object> describeConfiguration(final ConfigurationMessage<?> configuration) throws FieldException{
 		final Map<String, Object> description = new HashMap<>(3);
 		description.put(ConfigurationKey.CONFIGURATION.toString(), configuration.getType().getName());
 		describeHeader(configuration.getHeader(), description);
@@ -276,34 +256,48 @@ public final class Descriptor{
 		description.put(ConfigurationKey.HEADER.toString(), headerDescription);
 	}
 
-	private static void describeConfigFields(final List<ConfigField> fields, final Map<String, Object> description)
-			throws ConfigurationException{
+	private static void describeConfigFields(final List<ConfigField> fields, final Map<String, Object> description) throws FieldException{
 		final int length = fields.size();
 		final Collection<Map<String, Object>> fieldsDescription = new ArrayList<>(length);
-		for(int i = 0; i < length; i ++)
-			describeField(fields.get(i), fieldsDescription);
+		for(int i = 0; i < length; i ++){
+			final ConfigField field = fields.get(i);
+
+			AnnotationDescriptor.describeSkips(field.getSkips(), fieldsDescription);
+
+			describeField(field.getBinding(), field.getFieldName(), field.getFieldType(), fieldsDescription);
+		}
 		description.put(DescriberKey.FIELDS.toString(), fieldsDescription);
 	}
 
-	private static void describeField(final ConfigField field, final Collection<Map<String, Object>> fieldsDescription)
-			throws ConfigurationException{
-		AnnotationDescriptor.describeSkips(field.getSkips(), fieldsDescription);
 
-		final Map<String, Object> fieldDescription = new HashMap<>(13);
-		AnnotationDescriptor.putIfNotEmpty(DescriberKey.FIELD_NAME, field.getFieldName(), fieldDescription);
-		AnnotationDescriptor.putIfNotEmpty(DescriberKey.FIELD_TYPE, field.getFieldType().getName(), fieldDescription);
-		final Annotation binding = field.getBinding();
-		final Class<? extends Annotation> annotationType = binding.annotationType();
-		AnnotationDescriptor.putIfNotEmpty(DescriberKey.ANNOTATION_TYPE, binding.annotationType().getName(), fieldDescription);
+	private static void describeField(final Annotation binding, final String fieldName, final Class<?> fieldType,
+			final Collection<Map<String, Object>> fieldsDescription) throws FieldException{
+		final Map<String, Object> fieldDescription = createFieldDescription(fieldName, fieldType.getName(),
+			binding.annotationType());
 
 		//extract binding descriptor
-		final AnnotationDescriptor descriptor = AnnotationDescriptor.fromAnnotation(binding);
-		if(descriptor == null)
-			throw ConfigurationException.create("Cannot extract descriptor for this annotation: {}", annotationType.getSimpleName());
-
+		final AnnotationDescriptor descriptor = checkAndGetDescriptor(binding);
 		descriptor.describe(binding, fieldDescription);
 
 		fieldsDescription.add(fieldDescription);
+	}
+
+	private static Map<String, Object> createFieldDescription(final String fieldName, final String name,
+			final Class<? extends Annotation> annotationType){
+		final Map<String, Object> fieldDescription = new HashMap<>(13);
+		AnnotationDescriptor.putIfNotEmpty(DescriberKey.FIELD_NAME, fieldName, fieldDescription);
+		AnnotationDescriptor.putIfNotEmpty(DescriberKey.FIELD_TYPE, name, fieldDescription);
+		AnnotationDescriptor.putIfNotEmpty(DescriberKey.ANNOTATION_TYPE, annotationType.getName(), fieldDescription);
+		return fieldDescription;
+	}
+
+	private static AnnotationDescriptor checkAndGetDescriptor(final Annotation binding) throws FieldException{
+		final AnnotationDescriptor descriptor = AnnotationDescriptor.fromAnnotation(binding);
+		if(descriptor == null)
+			throw FieldException.create("Cannot extract descriptor for this annotation: {}",
+				binding.annotationType().getSimpleName());
+
+		return descriptor;
 	}
 
 }
