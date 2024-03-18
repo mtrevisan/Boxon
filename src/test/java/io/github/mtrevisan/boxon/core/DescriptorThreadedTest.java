@@ -45,8 +45,8 @@ class DescriptorThreadedTest{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with((byte)0x46, "QUECLINK_GB200S");
 		Core core = CoreBuilder.builder()
-			.withContextPair("deviceTypes", deviceTypes)
-			.withContextFunction(ParserTest.class.getDeclaredMethod("headerLength"))
+			.withContext("deviceTypes", deviceTypes)
+			.withContext(ParserTest.class.getDeclaredMethod("headerLength"))
 			.withDefaultCodecs()
 			.withTemplate(ACKMessageHex.class)
 			.create();
@@ -68,8 +68,8 @@ class DescriptorThreadedTest{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with((byte)0x46, "QUECLINK_GB200S");
 		Core core = CoreBuilder.builder()
-			.withContextPair("deviceTypes", deviceTypes)
-			.withContextFunction(ParserTest.class.getDeclaredMethod("headerLength"))
+			.withContext("deviceTypes", deviceTypes)
+			.withContext(ParserTest.class.getDeclaredMethod("headerLength"))
 			.withDefaultCodecs()
 			.withTemplate(ACKMessageHex.class)
 			.create();
@@ -98,8 +98,8 @@ class DescriptorThreadedTest{
 		MultithreadingHelper.testMultithreading(
 			() -> {
 				Core core = CoreBuilder.builder()
-					.withContextPair("deviceTypes", deviceTypes)
-					.withContextFunction(ParserTest.class.getDeclaredMethod("headerLength"))
+					.withContext("deviceTypes", deviceTypes)
+					.withContext(ParserTest.class.getDeclaredMethod("headerLength"))
 					.withDefaultCodecs()
 					.withTemplate(ACKMessageHex.class)
 					.create();

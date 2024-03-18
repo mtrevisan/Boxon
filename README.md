@@ -847,7 +847,7 @@ DeviceTypes deviceTypes = DeviceTypes.create()
 	.with((byte)0x46, "QUECLINK_GB200S");
 Core core = CoreBuilder.builder()
     .withContextPair("deviceTypes", deviceTypes)
-    .withContextFunction(ParserTest.class.getDeclaredMethod("headerLength"))
+    .withContext(ParserTest.class.getDeclaredMethod("headerLength"))
     .withDefaultCodecs()
     .withTemplate(ACKMessageHex.class)
    .create();
@@ -1508,8 +1508,8 @@ All you have to care about, for a simple example on multi-message automatically-
 Map<String, Object> context = ...
 Core core = CoreBuilder.builder()
    .withContext(context)
-   .withContextFunction(VersionHelper.class, "compareVersion", String.class, String.class)
-   .withContextFunction(VersionHelper.class.getDeclaredMethod("compareVersion", new Class[]{String.class, String.class}))
+   .withContext(VersionHelper.class, "compareVersion", String.class, String.class)
+   .withContext(VersionHelper.class.getDeclaredMethod("compareVersion", new Class[]{String.class, String.class}))
    .withDefaultCodecs()
    .withTemplate(...)
    .create();

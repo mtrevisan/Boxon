@@ -44,8 +44,8 @@ class DescriptorTest{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with((byte)0x46, "QUECLINK_GB200S");
 		Core core = CoreBuilder.builder()
-			.withContextPair("deviceTypes", deviceTypes)
-			.withContextFunction(ParserTest.class.getDeclaredMethod("headerLength"))
+			.withContext("deviceTypes", deviceTypes)
+			.withContext(ParserTest.class.getDeclaredMethod("headerLength"))
 			.withDefaultCodecs()
 			.withTemplate(ACKMessageASCII.class)
 			.create();
@@ -66,8 +66,8 @@ class DescriptorTest{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with((byte)0x46, "QUECLINK_GB200S");
 		Core core = CoreBuilder.builder()
-			.withContextPair("deviceTypes", deviceTypes)
-			.withContextFunction(ParserTest.class.getDeclaredMethod("headerLength"))
+			.withContext("deviceTypes", deviceTypes)
+			.withContext(ParserTest.class.getDeclaredMethod("headerLength"))
 			.withDefaultCodecs()
 			.withTemplate(ACKMessageHex.class)
 			.create();
@@ -88,8 +88,8 @@ class DescriptorTest{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with((byte)0x46, "QUECLINK_GB200S");
 		Core core = CoreBuilder.builder()
-			.withContextPair("deviceTypes", deviceTypes)
-			.withContextFunction(ParserTest.class.getDeclaredMethod("headerLength"))
+			.withContext("deviceTypes", deviceTypes)
+			.withContext(ParserTest.class.getDeclaredMethod("headerLength"))
 			.withDefaultCodecs()
 			.withConfigurationsFrom(REGConfigurationASCII.class)
 			.create();
@@ -102,7 +102,7 @@ class DescriptorTest{
 		Map<String, Object> description = descriptions.getFirst();
 
 		String jsonDescription = PrettyPrintMap.toString(description);
-		Assertions.assertEquals(7183, jsonDescription.length());
+		Assertions.assertEquals(7319, jsonDescription.length());
 	}
 
 }

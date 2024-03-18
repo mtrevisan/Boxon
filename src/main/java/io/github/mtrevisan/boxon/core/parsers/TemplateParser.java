@@ -93,7 +93,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	 * Assign an event listener.
 	 *
 	 * @param eventListener	The event listener.
-	 * @return	The current instance.
+	 * @return	This instance, used for chaining.
 	 */
 	public TemplateParser withEventListener(final EventListener eventListener){
 		this.eventListener = eventListener;

@@ -80,22 +80,24 @@ public final class KRPatternMatcher implements PatternMatcher{
 	 */
 	@Override
 	public int indexOf(final byte[] source, final int offset, final byte[] pattern, final int[] hashTable){
-		if(pattern.length == 0)
+		final int patternLength = pattern.length;
+		if(patternLength == 0)
 			return 0;
-		if(source.length < pattern.length + offset)
+		final int sourceLength = source.length;
+		if(sourceLength < patternLength + offset)
 			return -1;
 
 		//calculate the hash value of first window of source
 		final int patternHash = hashTable[0];
-		int sourceHash = calculateHash(source, pattern.length, offset);
+		int sourceHash = calculateHash(source, patternLength, offset);
 
-		final int length = source.length - pattern.length;
-		for(int i = offset; i <= length + offset; i ++){
+		final int maxLength = sourceLength - patternLength;
+		for(int i = offset; i <= maxLength + offset; i ++){
 			//check the hash values of current window of source and pattern
 			if(patternHash == sourceHash && equals(source, i, pattern))
 				return i;
 
-			if(i < length)
+			if(i < maxLength)
 				//calculate hash value for next window of text by removing leading digit add trailing digit
 				sourceHash = updateHashForNextWindow(source, pattern, sourceHash, i);
 		}

@@ -50,7 +50,7 @@ class ParserTest{
 		//if it is wanted `headerLength` to be a variable and not a method:
 		//- remove Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes); above
 		//- change @BindString(size = "#prefixLength()") into @BindString(size = "#headerLength") in ACKMessageHex.messageHeader
-		//- remove .withContextFunction(ParserTest.class, "headerLength") below
+		//- remove .withContext(ParserTest.class, "headerLength") below
 		//- uncomment the below context map
 //		Map<String, Object> context = Map.of(
 //			"deviceTypes", deviceTypes,
@@ -60,7 +60,7 @@ class ParserTest{
 			.withDefaultCodecs()
 			.withTemplate(ACKMessageHex.class)
 			.withContext(context)
-			.withContextFunction(ParserTest.class, "headerLength")
+			.withContext(ParserTest.class, "headerLength")
 			.create();
 		Parser parser = Parser.create(core);
 
@@ -91,7 +91,7 @@ class ParserTest{
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 		Core core = CoreBuilder.builder()
 			.withContext(context)
-			.withContextFunction(ParserTest.class.getDeclaredMethod("headerLength"))
+			.withContext(ParserTest.class.getDeclaredMethod("headerLength"))
 			.withDefaultCodecs()
 			.withTemplatesFrom(ACKMessageHex.class)
 			.create();
@@ -134,7 +134,7 @@ class ParserTest{
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 		Core core = CoreBuilder.builder()
 			.withContext(context)
-			.withContextFunction(ParserTest.class.getDeclaredMethod("headerLength"))
+			.withContext(ParserTest.class.getDeclaredMethod("headerLength"))
 			.withDefaultCodecs()
 			.withTemplatesFrom(ACKMessageHex.class)
 			.create();
@@ -164,7 +164,7 @@ class ParserTest{
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 		Core core = CoreBuilder.builder()
 			.withContext(context)
-			.withContextFunction(ParserTest.class.getDeclaredMethod("headerLength"))
+			.withContext(ParserTest.class.getDeclaredMethod("headerLength"))
 			.withDefaultCodecs()
 			.withTemplatesFrom(ACKMessageHex.class)
 			.create();
