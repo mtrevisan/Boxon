@@ -779,6 +779,9 @@ Assign a constant, calculated value to a field.
 
 Note that the evaluations are done AFTER parsing the entire message.
 
+This annotation with `runLast` to `true` can be used to force a parameter to have a certain value, after perhaps using it to calculate other parameters.
+Its effect cannot be undone.
+
 #### annotation type
 
 This annotation is bounded to a variable.
@@ -1573,7 +1576,7 @@ Pull requests are welcomed.
 ## Changelog
 
 <a name="changelog-3.4.0"></a>
-### version 3.4.0 - 202403??
+### version 3.4.0 - 20240318
 
 - Removed `runLast` from `Evaluator`, added a specialized annotation that can work in both decoding and encoding phases.
 - Added method `describeParser` to `Descriptor` to also include the description of evaluation and post-processing fields.
