@@ -232,14 +232,7 @@ final class ValidationHelper{
 		if(StringHelper.isBlank(pattern))
 			return;
 
-		final Pattern formatPattern;
-		try{
-			formatPattern = Pattern.compile(pattern);
-		}
-		catch(final Exception e){
-			throw AnnotationException.create("Invalid pattern in {} in field {}", field.getAnnotationName(), field.getFieldName(),
-				e);
-		}
+		final Pattern formatPattern = extractPattern(pattern, field);
 
 		//`defaultValue` compatible with field type
 		if(!String.class.isAssignableFrom(field.getFieldType())
@@ -248,6 +241,16 @@ final class ValidationHelper{
 				field.getAnnotationName(), field.getFieldType(), pattern);
 
 		validateMinMaxDefaultValuesToPattern(formatPattern, field);
+	}
+
+	private static Pattern extractPattern(final String pattern, final ConfigFieldData field) throws AnnotationException{
+		try{
+			return Pattern.compile(pattern);
+		}
+		catch(final Exception e){
+			throw AnnotationException.create("Invalid pattern in {} in field {}", field.getAnnotationName(), field.getFieldName(),
+				e);
+		}
 	}
 
 
