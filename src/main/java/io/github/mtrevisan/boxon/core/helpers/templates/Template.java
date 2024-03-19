@@ -26,9 +26,9 @@ package io.github.mtrevisan.boxon.core.helpers.templates;
 
 import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.Evaluate;
-import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.PostProcessField;
 import io.github.mtrevisan.boxon.annotations.Skip;
+import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.helpers.CharsetHelper;
 import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
@@ -49,25 +49,25 @@ import java.util.function.Function;
  */
 public final class Template<T>{
 
-	private record Triplet(List<BoundedField> boundedFields, List<EvaluatedField> evaluatedFields, List<PostProcessedField> postProcessedFields){
-		private static Triplet of(final List<BoundedField> boundedFields, final List<EvaluatedField> evaluatedFields,
+	private record Triplet(List<TemplateField> templateFields, List<EvaluatedField> evaluatedFields, List<PostProcessedField> postProcessedFields){
+		private static Triplet of(final List<TemplateField> templateFields, final List<EvaluatedField> evaluatedFields,
 				final List<PostProcessedField> postProcessedFields){
-			return new Triplet(boundedFields, evaluatedFields, postProcessedFields);
+			return new Triplet(templateFields, evaluatedFields, postProcessedFields);
 		}
 	}
 
 
 	private final Class<T> type;
 
-	private final MessageHeader header;
-	private final List<BoundedField> boundedFields;
+	private final TemplateHeader header;
+	private final List<TemplateField> templateFields;
 	private final List<EvaluatedField> evaluatedFields;
 	private final List<PostProcessedField> postProcessedFields;
 	/**
 	 * Necessary to speed up the creation of a {@link Template} (technically not needed because it's already present
-	 * somewhere inside {@link #boundedFields}).
+	 * somewhere inside {@link #templateFields}).
 	 */
-	private BoundedField checksum;
+	private TemplateField checksum;
 
 
 	/**
@@ -90,7 +90,7 @@ public final class Template<T>{
 			throws AnnotationException{
 		this.type = type;
 
-		header = type.getAnnotation(MessageHeader.class);
+		header = type.getAnnotation(TemplateHeader.class);
 		if(header != null){
 			try{
 				CharsetHelper.lookup(header.charset());
@@ -101,11 +101,11 @@ public final class Template<T>{
 		}
 
 		final Triplet fields = loadAnnotatedFields(type, filterAnnotationsWithCodec);
-		boundedFields = Collections.unmodifiableList(fields.boundedFields);
+		templateFields = Collections.unmodifiableList(fields.templateFields);
 		evaluatedFields = Collections.unmodifiableList(fields.evaluatedFields);
 		postProcessedFields = Collections.unmodifiableList(fields.postProcessedFields);
 
-		if(boundedFields.isEmpty())
+		if(templateFields.isEmpty())
 			throw AnnotationException.create("No data can be extracted from this class: {}", type.getName());
 	}
 
@@ -115,7 +115,7 @@ public final class Template<T>{
 			throws AnnotationException{
 		final List<Field> fields = ReflectionHelper.getAccessibleFields(type);
 		final int length = fields.size();
-		final List<BoundedField> boundedFields = new ArrayList<>(length);
+		final List<TemplateField> templateFields = new ArrayList<>(length);
 		final List<EvaluatedField> evaluatedFields = new ArrayList<>(length);
 		final List<PostProcessedField> postProcessedFields = new ArrayList<>(length);
 		for(int i = 0; i < length; i ++){
@@ -136,14 +136,14 @@ public final class Template<T>{
 				final Annotation validAnnotation = validateField(field, boundedAnnotations);
 
 				if(validAnnotation != null || skips.length > 0)
-					boundedFields.add(BoundedField.create(field, validAnnotation, skips));
+					templateFields.add(TemplateField.create(field, validAnnotation, skips));
 			}
 			catch(final AnnotationException e){
 				e.withClassAndField(type, field);
 				throw e;
 			}
 		}
-		return Triplet.of(boundedFields, evaluatedFields, postProcessedFields);
+		return Triplet.of(templateFields, evaluatedFields, postProcessedFields);
 	}
 
 	private void loadChecksumField(final Checksum checksum, final Class<T> type, final Field field) throws AnnotationException{
@@ -154,7 +154,7 @@ public final class Template<T>{
 				throw (AnnotationException)exception.withClassAndField(type, field);
 			}
 
-			this.checksum = BoundedField.create(field, checksum);
+			this.checksum = TemplateField.create(field, checksum);
 		}
 	}
 
@@ -221,17 +221,17 @@ public final class Template<T>{
 	 *
 	 * @return	The header annotation.
 	 */
-	public MessageHeader getHeader(){
+	public TemplateHeader getHeader(){
 		return header;
 	}
 
 	/**
-	 * List of {@link BoundedField bounded fields}.
+	 * List of {@link TemplateField template fields}.
 	 *
-	 * @return	List of bounded fields.
+	 * @return	List of template fields.
 	 */
-	public List<BoundedField> getBoundedFields(){
-		return boundedFields;
+	public List<TemplateField> getTemplateFields(){
+		return templateFields;
 	}
 
 	/**
@@ -266,17 +266,17 @@ public final class Template<T>{
 	 *
 	 * @return	Checksum bound data.
 	 */
-	public BoundedField getChecksum(){
+	public TemplateField getChecksum(){
 		return checksum;
 	}
 
 	/**
-	 * Whether this template is well formatted, that it has a header annotation and has some bounded fields.
+	 * Whether this template is well formatted, that it has a header annotation and has some template fields.
 	 *
 	 * @return	Whether this template is well formatted.
 	 */
 	public boolean canBeCoded(){
-		return (header != null && !boundedFields.isEmpty());
+		return (header != null && ! templateFields.isEmpty());
 	}
 
 	@Override

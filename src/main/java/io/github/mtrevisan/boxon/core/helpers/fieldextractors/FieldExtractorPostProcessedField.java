@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Mauro Trevisan
+ * Copyright (c) 2024 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -22,52 +22,33 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.keys;
+package io.github.mtrevisan.boxon.core.helpers.fieldextractors;
+
+import io.github.mtrevisan.boxon.core.helpers.templates.PostProcessedField;
+
+import java.lang.annotation.Annotation;
 
 
-/**
- * Holds the constants used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}.
- */
-public enum ConfigurationKey{
-	HEADER("header"),
-	HEADER_START("start"),
-	HEADER_END("end"),
-	HEADER_CHARSET("charset"),
-	FIELDS("fields"),
-	PROTOCOL_VERSION_BOUNDARIES("protocolVersionBoundaries"),
-	COMPOSITE_FIELDS("fields"),
-
-	ALTERNATIVES("alternatives"),
-	FIELD_TYPE("fieldType"),
-	SHORT_DESCRIPTION("shortDescription"),
-	LONG_DESCRIPTION("longDescription"),
-	UNIT_OF_MEASURE("unitOfMeasure"),
-	MIN_PROTOCOL("minProtocol"),
-	MAX_PROTOCOL("maxProtocol"),
-	MIN_VALUE("minValue"),
-	MAX_VALUE("maxValue"),
-	VALUE("value"),
-	PATTERN("pattern"),
-	ENUMERATION("enumeration"),
-	MUTUALLY_EXCLUSIVE("mutuallyExclusive"),
-	DEFAULT_VALUE("defaultValue"),
-	COMPOSITION("composition"),
-	CHARSET("charset"),
-	RADIX("radix"),
-	TERMINATOR("terminator");
-
-
-	private final String name;
-
-
-	ConfigurationKey(final String name){
-		this.name = name;
-	}
-
+public class FieldExtractorPostProcessedField implements FieldExtractor<PostProcessedField, Annotation>{
 
 	@Override
-	public String toString(){
-		return name;
+	public Annotation[] getSkips(final PostProcessedField field){
+		return null;
+	}
+
+	@Override
+	public Annotation getBinding(final PostProcessedField field){
+		return field.getBinding();
+	}
+
+	@Override
+	public String getFieldName(final PostProcessedField field){
+		return field.getFieldName();
+	}
+
+	@Override
+	public Class<?> getFieldType(final PostProcessedField field){
+		return field.getFieldType();
 	}
 
 }

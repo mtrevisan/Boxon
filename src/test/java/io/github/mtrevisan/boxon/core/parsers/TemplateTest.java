@@ -26,7 +26,7 @@ package io.github.mtrevisan.boxon.core.parsers;
 
 import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.Evaluate;
-import io.github.mtrevisan.boxon.annotations.MessageHeader;
+import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
 import io.github.mtrevisan.boxon.annotations.bindings.BindBitSet;
@@ -43,9 +43,9 @@ import io.github.mtrevisan.boxon.annotations.checksummers.CRC16CCITT;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.core.codecs.LoaderCodec;
-import io.github.mtrevisan.boxon.core.helpers.templates.BoundedField;
 import io.github.mtrevisan.boxon.core.helpers.templates.EvaluatedField;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
+import io.github.mtrevisan.boxon.core.helpers.templates.TemplateField;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.io.ByteOrder;
 import io.github.mtrevisan.boxon.utils.TestHelper;
@@ -99,7 +99,7 @@ class TemplateTest{
 		byte build;
 	}
 
-	@MessageHeader(start = "+", end = "-")
+	@TemplateHeader(start = "+", end = "-")
 	private static class Message{
 
 		private final Map<Byte, String> messageTypeMap = new HashMap<>(2);
@@ -160,7 +160,7 @@ class TemplateTest{
 
 	}
 
-	@MessageHeader(start = "++", end = "--")
+	@TemplateHeader(start = "++", end = "--")
 	private static class MessageChild extends Message{
 		@BindInt
 		private int anotherNumberInt;
@@ -176,14 +176,14 @@ class TemplateTest{
 
 		Assertions.assertNotNull(template);
 		Assertions.assertEquals(Message.class, template.getType());
-		MessageHeader header = template.getHeader();
+		TemplateHeader header = template.getHeader();
 		Assertions.assertNotNull(header);
 		Assertions.assertArrayEquals(new String[]{"+"}, header.start());
 		Assertions.assertEquals("-", header.end());
 		Assertions.assertTrue(template.canBeCoded());
-		List<BoundedField> boundedFields = template.getBoundedFields();
-		Assertions.assertNotNull(boundedFields);
-		Assertions.assertEquals(14, boundedFields.size());
+		List<TemplateField> templateFields = template.getTemplateFields();
+		Assertions.assertNotNull(templateFields);
+		Assertions.assertEquals(14, templateFields.size());
 		List<EvaluatedField> evaluatedFields = template.getEvaluatedFields();
 		Assertions.assertNotNull(evaluatedFields);
 		Assertions.assertEquals(1, evaluatedFields.size());
@@ -192,7 +192,7 @@ class TemplateTest{
 		Assertions.assertEquals(ZonedDateTime.class, evaluatedField.getFieldType());
 		Evaluate evaluate = evaluatedField.getBinding();
 		Assertions.assertEquals("T(java.time.ZonedDateTime).now()", evaluate.value());
-		BoundedField checksumField = template.getChecksum();
+		TemplateField checksumField = template.getChecksum();
 		Assertions.assertNotNull(checksumField);
 		Assertions.assertEquals("checksum", checksumField.getFieldName());
 		Annotation checksum = checksumField.getBinding();
@@ -245,15 +245,15 @@ class TemplateTest{
 
 		Assertions.assertNotNull(template);
 		Assertions.assertEquals(MessageChild.class, template.getType());
-		MessageHeader header = template.getHeader();
+		TemplateHeader header = template.getHeader();
 		Assertions.assertNotNull(header);
 		Assertions.assertArrayEquals(new String[]{"++"}, header.start());
 		Assertions.assertEquals("--", header.end());
 		Assertions.assertTrue(template.canBeCoded());
-		List<BoundedField> boundedFields = template.getBoundedFields();
-		Assertions.assertNotNull(boundedFields);
-		Assertions.assertEquals(15, boundedFields.size());
-		BoundedField childField = boundedFields.getLast();
+		List<TemplateField> templateFields = template.getTemplateFields();
+		Assertions.assertNotNull(templateFields);
+		Assertions.assertEquals(15, templateFields.size());
+		TemplateField childField = templateFields.getLast();
 		Assertions.assertNotNull(childField);
 		Assertions.assertEquals("anotherNumberInt", childField.getFieldName());
 	}

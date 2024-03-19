@@ -26,7 +26,7 @@ package io.github.mtrevisan.boxon.core.codecs.queclink;
 
 import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.Evaluate;
-import io.github.mtrevisan.boxon.annotations.MessageHeader;
+import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
 import io.github.mtrevisan.boxon.annotations.bindings.BindByte;
 import io.github.mtrevisan.boxon.annotations.bindings.BindShort;
@@ -41,7 +41,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-@MessageHeader(start = "+ACK", end = "\r\n")
+@TemplateHeader(start = "+ACK", end = "\r\n")
 public class ACKMessageHex{
 
 	private static final Map<Byte, String> MESSAGE_TYPE_MAP = new HashMap<>(43);

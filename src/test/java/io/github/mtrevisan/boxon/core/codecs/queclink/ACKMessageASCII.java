@@ -25,8 +25,8 @@
 package io.github.mtrevisan.boxon.core.codecs.queclink;
 
 import io.github.mtrevisan.boxon.annotations.Evaluate;
-import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.PostProcessField;
+import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.annotations.converters.StringToBigDecimalConverter;
@@ -37,7 +37,7 @@ import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 
 
-@MessageHeader(start = {"+ACK:", "+BCK:"}, end = "$")
+@TemplateHeader(start = {"+ACK:", "+BCK:"}, end = "$")
 public class ACKMessageASCII{
 
 	@BindStringTerminated(terminator = ':')

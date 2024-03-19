@@ -26,7 +26,7 @@ package io.github.mtrevisan.boxon.core.codecs.queclink;
 
 import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.Evaluate;
-import io.github.mtrevisan.boxon.annotations.MessageHeader;
+import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
 import io.github.mtrevisan.boxon.annotations.bindings.BindByte;
 import io.github.mtrevisan.boxon.annotations.bindings.BindShort;
@@ -38,7 +38,7 @@ import io.github.mtrevisan.boxon.semanticversioning.Version;
 import java.time.ZonedDateTime;
 
 
-@MessageHeader(start = "-ACK", end = "\r\n")
+@TemplateHeader(start = "-ACK", end = "\r\n")
 public class ACKMessageHexByteChecksum{
 
 	@BindString(size = "#headerLength()")

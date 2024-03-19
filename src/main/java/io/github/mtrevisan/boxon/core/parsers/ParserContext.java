@@ -24,8 +24,8 @@
  */
 package io.github.mtrevisan.boxon.core.parsers;
 
-import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigField;
-import io.github.mtrevisan.boxon.core.helpers.templates.BoundedField;
+import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationField;
+import io.github.mtrevisan.boxon.core.helpers.templates.TemplateField;
 import io.github.mtrevisan.boxon.helpers.ContextHelper;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
@@ -95,13 +95,13 @@ final class ParserContext<T>{
 	}
 
 	Object getFieldValue(){
-		if(field instanceof final BoundedField f)
+		if(field instanceof final TemplateField f)
 			return f.getFieldValue(currentObject);
-		if(field instanceof final ConfigField f)
+		if(field instanceof final ConfigurationField f)
 			return f.getFieldValue(currentObject);
 
-		throw new IllegalArgumentException("Field not of type " + BoundedField.class.getSimpleName() + " or "
-			+ ConfigField.class.getSimpleName());
+		throw new IllegalArgumentException("Field not of type " + TemplateField.class.getSimpleName() + " or "
+			+ ConfigurationField.class.getSimpleName());
 	}
 
 	/**

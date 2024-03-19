@@ -27,7 +27,7 @@ package io.github.mtrevisan.boxon.core.parsers;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
 import io.github.mtrevisan.boxon.core.codecs.LoaderCodecInterface;
-import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigField;
+import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationHelper;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationManagerFactory;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationManagerInterface;
@@ -171,9 +171,9 @@ public final class ConfigurationParser{
 		ParserWriterHelper.writeAffix(header.start(), header.charset(), writer);
 
 		//encode message fields:
-		final List<ConfigField> fields = configuration.getConfigurationFields();
+		final List<ConfigurationField> fields = configuration.getConfigurationFields();
 		for(int i = 0, length = fields.size(); i < length; i ++){
-			final ConfigField field = fields.get(i);
+			final ConfigurationField field = fields.get(i);
 
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(field.getBinding());
 			final Annotation annotation = manager.annotationToBeProcessed(protocol);

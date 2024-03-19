@@ -53,7 +53,7 @@ public final class ConfigurationMessage<T>{
 	private final Class<T> type;
 
 	private final ConfigurationHeader header;
-	private final List<ConfigField> configFields;
+	private final List<ConfigurationField> configurationFields;
 
 	private final List<String> protocolVersionBoundaries;
 
@@ -83,13 +83,13 @@ public final class ConfigurationMessage<T>{
 			final ConfigurationAnnotationValidator validator = ConfigurationAnnotationValidator.fromAnnotationType(header.annotationType());
 			validator.validate(null, header, minProtocolVersion, maxProtocolVersion);
 
-			final List<ConfigField> configFields = loadAnnotatedFields(type, minProtocolVersion, maxProtocolVersion);
-			this.configFields = Collections.unmodifiableList(configFields);
+			final List<ConfigurationField> configurationFields = loadAnnotatedFields(type, minProtocolVersion, maxProtocolVersion);
+			this.configurationFields = Collections.unmodifiableList(configurationFields);
 
-			final List<String> boundaries = extractProtocolVersionBoundaries(configFields);
+			final List<String> boundaries = extractProtocolVersionBoundaries(configurationFields);
 			protocolVersionBoundaries = Collections.unmodifiableList(boundaries);
 
-			if(configFields.isEmpty())
+			if(configurationFields.isEmpty())
 				throw AnnotationException.create("No data can be extracted from this class: {}", type.getName());
 		}
 		catch(final CodecException ce){
@@ -112,12 +112,12 @@ public final class ConfigurationMessage<T>{
 	}
 
 	@SuppressWarnings("ObjectAllocationInLoop")
-	private List<ConfigField> loadAnnotatedFields(final Class<T> type, final Version minProtocolVersion, final Version maxProtocolVersion)
+	private List<ConfigurationField> loadAnnotatedFields(final Class<T> type, final Version minProtocolVersion, final Version maxProtocolVersion)
 			throws AnnotationException, CodecException{
 		final List<Field> fields = ReflectionHelper.getAccessibleFields(type);
 		final int size = fields.size();
 		final Collection<String> uniqueShortDescription = new HashSet<>(size);
-		final List<ConfigField> configFields = new ArrayList<>(size);
+		final List<ConfigurationField> configurationFields = new ArrayList<>(size);
 		for(int i = 0; i < size; i ++){
 			final Field field = fields.get(i);
 
@@ -131,14 +131,14 @@ public final class ConfigurationMessage<T>{
 				validateShortDescriptionUniqueness(validAnnotation, uniqueShortDescription, type);
 
 				if(validAnnotation != null)
-					configFields.add(ConfigField.create(field, validAnnotation, skips));
+					configurationFields.add(ConfigurationField.create(field, validAnnotation, skips));
 			}
 			catch(final AnnotationException | CodecException e){
 				e.withClassAndField(type, field);
 				throw e;
 			}
 		}
-		return configFields;
+		return configurationFields;
 	}
 
 	private void validateShortDescriptionUniqueness(final Annotation annotation, final Collection<String> uniqueShortDescription,
@@ -172,20 +172,20 @@ public final class ConfigurationMessage<T>{
 		validator.validate(field, annotation, minProtocolVersion, maxProtocolVersion);
 	}
 
-	private List<String> extractProtocolVersionBoundaries(final List<ConfigField> configFields){
-		final int length = configFields.size();
+	private List<String> extractProtocolVersionBoundaries(final List<ConfigurationField> configurationFields){
+		final int length = configurationFields.size();
 		final List<String> boundaries = new ArrayList<>(length * 2 + 2);
 		boundaries.add(header.minProtocol());
 		boundaries.add(header.maxProtocol());
 
 		for(int i = 0; i < length; i ++){
-			final ConfigField configField = configFields.get(i);
+			final ConfigurationField configurationField = configurationFields.get(i);
 
-			final Annotation annotation = configField.getBinding();
+			final Annotation annotation = configurationField.getBinding();
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(annotation);
 			manager.addProtocolVersionBoundaries(boundaries);
 
-			final ConfigurationSkip[] skips = configField.getSkips();
+			final ConfigurationSkip[] skips = configurationField.getSkips();
 			extractProtocolVersionBoundaries(skips, boundaries);
 		}
 
@@ -225,8 +225,8 @@ public final class ConfigurationMessage<T>{
 	 *
 	 * @return	List of configuration fields data.
 	 */
-	public List<ConfigField> getConfigurationFields(){
-		return configFields;
+	public List<ConfigurationField> getConfigurationFields(){
+		return configurationFields;
 	}
 
 	/**

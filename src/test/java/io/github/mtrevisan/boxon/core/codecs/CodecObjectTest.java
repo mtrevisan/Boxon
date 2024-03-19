@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core.codecs;
 
-import io.github.mtrevisan.boxon.annotations.MessageHeader;
+import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
 import io.github.mtrevisan.boxon.annotations.bindings.BindByte;
 import io.github.mtrevisan.boxon.annotations.bindings.BindInt;
@@ -185,7 +185,7 @@ class CodecObjectTest{
 		int value;
 	}
 
-	@MessageHeader(start = "tc1")
+	@TemplateHeader(start = "tc1")
 	static class TestChoice1{
 		@BindString(size = "3")
 		String header;
@@ -197,7 +197,7 @@ class CodecObjectTest{
 		TestType0 value;
 	}
 
-	@MessageHeader(start = "tc2")
+	@TemplateHeader(start = "tc2")
 	static class TestChoice2{
 		@BindString(size = "3")
 		String header;
@@ -211,7 +211,7 @@ class CodecObjectTest{
 		TestType0 value;
 	}
 
-	@MessageHeader(start = "tc3")
+	@TemplateHeader(start = "tc3")
 	static class TestChoice3{
 		@BindString(size = "3")
 		String header;

@@ -28,6 +28,7 @@ import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.Evaluate;
 import io.github.mtrevisan.boxon.annotations.PostProcessField;
 import io.github.mtrevisan.boxon.annotations.Skip;
+import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
 import io.github.mtrevisan.boxon.annotations.bindings.BindBitSet;
@@ -50,18 +51,22 @@ import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
 import io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.CompositeSubField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.core.helpers.ValueOf;
+import io.github.mtrevisan.boxon.core.helpers.fieldextractors.FieldExtractor;
 import io.github.mtrevisan.boxon.core.keys.ConfigurationKey;
 import io.github.mtrevisan.boxon.core.keys.DescriberKey;
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -71,6 +76,19 @@ import java.util.Map;
  * Descriptors of the various binding annotations.
  */
 public enum AnnotationDescriptor{
+
+	/**
+	 * Descriptor of the {@link TemplateHeader} annotation.
+	 */
+	TEMPLATE_HEADER(TemplateHeader.class){
+		@Override
+		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
+			final TemplateHeader binding = (TemplateHeader)annotation;
+			putIfNotEmpty(DescriberKey.HEADER_START, Arrays.toString(binding.start()), rootDescription);
+			putIfNotEmpty(DescriberKey.HEADER_END, binding.end(), rootDescription);
+			putIfNotEmpty(DescriberKey.HEADER_CHARSET, binding.charset(), rootDescription);
+		}
+	},
 
 	/**
 	 * Descriptor of the {@link BindObject} annotation.
@@ -294,6 +312,21 @@ public enum AnnotationDescriptor{
 		}
 	},
 
+	/**
+	 * Descriptor of the {@link Skip} annotation.
+	 */
+	SKIP(Skip.class){
+		@Override
+		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
+			final Skip binding = (Skip)annotation;
+			putIfNotEmpty(DescriberKey.ANNOTATION_TYPE, Skip.class, rootDescription);
+			putIfNotEmpty(DescriberKey.BIND_CONDITION, binding.condition(), rootDescription);
+			putIfNotEmpty(DescriberKey.BIND_SIZE, binding.size(), rootDescription);
+			putIfNotEmpty(DescriberKey.BIND_TERMINATOR, binding.terminator(), rootDescription);
+			putIfNotEmpty(DescriberKey.BIND_CONSUME_TERMINATOR, binding.consumeTerminator(), rootDescription);
+		}
+	},
+
 
 	/**
 	 * Descriptor of the {@link Checksum} annotation.
@@ -337,6 +370,23 @@ public enum AnnotationDescriptor{
 		}
 	},
 
+
+	/**
+	 * Descriptor of the {@link ConfigurationHeader} annotation.
+	 */
+	CONFIG_HEADER(ConfigurationHeader.class){
+		@Override
+		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
+			final ConfigurationHeader binding = (ConfigurationHeader)annotation;
+			putIfNotEmpty(ConfigurationKey.SHORT_DESCRIPTION, binding.shortDescription(), rootDescription);
+			putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, binding.longDescription(), rootDescription);
+			putIfNotEmpty(ConfigurationKey.MIN_PROTOCOL, binding.minProtocol(), rootDescription);
+			putIfNotEmpty(ConfigurationKey.MAX_PROTOCOL, binding.maxProtocol(), rootDescription);
+			putIfNotEmpty(ConfigurationKey.HEADER_START, binding.start(), rootDescription);
+			putIfNotEmpty(ConfigurationKey.HEADER_END, binding.end(), rootDescription);
+			putIfNotEmpty(ConfigurationKey.HEADER_CHARSET, binding.charset(), rootDescription);
+		}
+	},
 
 	/**
 	 * Descriptor of the {@link ConfigurationField} annotation.
@@ -397,6 +447,20 @@ public enum AnnotationDescriptor{
 			putIfNotEmpty(ConfigurationKey.ENUMERATION, binding.enumeration(), rootDescription);
 			putIfNotEmpty(ConfigurationKey.TERMINATOR, binding.terminator(), rootDescription);
 		}
+	},
+
+	/**
+	 * Descriptor of the {@link Skip} annotation.
+	 */
+	CONFIG_SKIP(ConfigurationSkip.class){
+		@Override
+		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
+			final ConfigurationSkip binding = (ConfigurationSkip)annotation;
+			putIfNotEmpty(DescriberKey.ANNOTATION_TYPE, ConfigurationSkip.class, rootDescription);
+			putIfNotEmpty(DescriberKey.BIND_MIN_PROTOCOL, binding.minProtocol(), rootDescription);
+			putIfNotEmpty(DescriberKey.BIND_MAX_PROTOCOL, binding.maxProtocol(), rootDescription);
+			putIfNotEmpty(DescriberKey.BIND_TERMINATOR, binding.terminator(), rootDescription);
+		}
 	};
 
 
@@ -422,6 +486,7 @@ public enum AnnotationDescriptor{
 		annotationType = type;
 	}
 
+
 	/**
 	 * Load a description of the given annotation in the given map.
 	 *
@@ -431,40 +496,20 @@ public enum AnnotationDescriptor{
 	public abstract void describe(final Annotation annotation, final Map<String, Object> rootDescription);
 
 	/**
-	 * Load a description of the given skip annotations in the given map.
+	 * Load a description of the given skip/configuration skip annotations in the given map.
 	 *
-	 * @param skips	The skip annotations from which to extract the description.
+	 * @param field	The field.
 	 * @param rootDescription	The map in which to load the descriptions.
 	 */
-	public static void describeSkips(final Skip[] skips, final Collection<Map<String, Object>> rootDescription){
-		for(int j = 0, length = skips.length; j < length; j ++){
-			final Skip skip = skips[j];
+	public static <F, S extends Annotation> void describeSkips(final F field, final FieldExtractor<F, S> extractor,
+			final Collection<Map<String, Object>> rootDescription){
+		final S[] skips = extractor.getSkips(field);
+		for(int j = 0, length = JavaHelper.lengthOrZero(skips); j < length; j ++){
+			final S skip = skips[j];
 
 			final Map<String, Object> skipDescription = new HashMap<>(5);
-			putIfNotEmpty(DescriberKey.ANNOTATION_TYPE, Skip.class, skipDescription);
-			putIfNotEmpty(DescriberKey.BIND_CONDITION, skip.condition(), skipDescription);
-			putIfNotEmpty(DescriberKey.BIND_SIZE, skip.size(), skipDescription);
-			putIfNotEmpty(DescriberKey.BIND_TERMINATOR, skip.terminator(), skipDescription);
-			putIfNotEmpty(DescriberKey.BIND_CONSUME_TERMINATOR, skip.consumeTerminator(), skipDescription);
-			rootDescription.add(skipDescription);
-		}
-	}
-
-	/**
-	 * Load a description of the given configuration skip annotations in the given map.
-	 *
-	 * @param skips	The configuration skip annotations from which to extract the description.
-	 * @param rootDescription	The map in which to load the descriptions.
-	 */
-	public static void describeSkips(final ConfigurationSkip[] skips, final Collection<Map<String, Object>> rootDescription){
-		for(int j = 0, length = skips.length; j < length; j ++){
-			final ConfigurationSkip skip = skips[j];
-
-			final Map<String, Object> skipDescription = new HashMap<>(5);
-			putIfNotEmpty(DescriberKey.ANNOTATION_TYPE, ConfigurationSkip.class, skipDescription);
-			putIfNotEmpty(DescriberKey.BIND_MIN_PROTOCOL, skip.minProtocol(), skipDescription);
-			putIfNotEmpty(DescriberKey.BIND_MAX_PROTOCOL, skip.maxProtocol(), skipDescription);
-			putIfNotEmpty(DescriberKey.BIND_TERMINATOR, skip.terminator(), skipDescription);
+			fromAnnotation(skip)
+				.describe(skip, skipDescription);
 			rootDescription.add(skipDescription);
 		}
 	}
@@ -600,53 +645,25 @@ public enum AnnotationDescriptor{
 	}
 
 	/**
-	 * Put the pair key-value into the given map.
+	 * Put the pair key-value into the given map if the value is not {@code null} or empty string.
 	 *
 	 * @param key	The key.
 	 * @param value	The value.
 	 * @param map	The map in which to load the key-value pair.
 	 */
-	public static void putIfNotEmpty(final DescriberKey key, final Object value,
-			@SuppressWarnings("BoundedWildcard") final Map<String, Object> map){
-		if(value != null && (!(value instanceof final String v) || !StringHelper.isBlank(v)))
+	public static void putIfNotEmpty(final Enum<?> key, final Object value, final Map<String, Object> map){
+		if(value != null && !(value instanceof final String v && StringHelper.isBlank(v)))
 			map.put(key.toString(), value);
 	}
 
 	/**
-	 * Put the pair key-value into the given map.
+	 * Put the pair key-value into the given map if the value is not {@code null}.
 	 *
 	 * @param key	The key.
 	 * @param type	The class whose simple name will be the value.
 	 * @param map	The map in which to load the key-value pair.
 	 */
-	private static void putIfNotEmpty(final DescriberKey key, final Class<?> type,
-			@SuppressWarnings("BoundedWildcard") final Map<String, Object> map){
-		if(type != null)
-			map.put(key.toString(), type.getSimpleName());
-	}
-
-	/**
-	 * Put the pair key-value into the given map.
-	 *
-	 * @param key	The key.
-	 * @param value	The value.
-	 * @param map	The map in which to load the key-value pair.
-	 */
-	public static void putIfNotEmpty(final ConfigurationKey key, final Object value,
-			@SuppressWarnings("BoundedWildcard") final Map<String, Object> map){
-		if(value != null && (!(value instanceof final String v) || !StringHelper.isBlank(v)))
-			map.put(key.toString(), value);
-	}
-
-	/**
-	 * Put the pair key-value into the given map.
-	 *
-	 * @param key	The key.
-	 * @param type	The class whose simple name will be the value.
-	 * @param map	The map in which to load the key-value pair.
-	 */
-	private static void putIfNotEmpty(final ConfigurationKey key, final Class<?> type,
-			@SuppressWarnings("BoundedWildcard") final Map<String, Object> map){
+	private static void putIfNotEmpty(final Enum<?> key, final Class<?> type, final Map<String, Object> map){
 		if(type != null)
 			map.put(key.toString(), type.getSimpleName());
 	}
