@@ -1385,6 +1385,8 @@ public class RSSIConverter implements Converter<Byte, Short>{
 
     @Override
     public Short decode(final Byte value){
+        if(value == null)
+            return null;
         if(value == 0)
             //< -133 dBm
             return (byte)-133;
@@ -1396,6 +1398,8 @@ public class RSSIConverter implements Converter<Byte, Short>{
 
     @Override
     public Byte encode(final Short value){
+        if(value == null)
+            return null;
         if(value == -133)
             return 0;
         if(value == RSSI_UNKNOWN)
