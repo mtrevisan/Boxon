@@ -25,16 +25,16 @@
 package io.github.mtrevisan.boxon.core.parsers;
 
 import io.github.mtrevisan.boxon.annotations.Checksum;
-import io.github.mtrevisan.boxon.annotations.MessageHeader;
 import io.github.mtrevisan.boxon.annotations.PostProcessField;
 import io.github.mtrevisan.boxon.annotations.Skip;
+import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
 import io.github.mtrevisan.boxon.core.codecs.LoaderCodecInterface;
 import io.github.mtrevisan.boxon.core.codecs.TemplateParserInterface;
-import io.github.mtrevisan.boxon.core.helpers.templates.BoundedField;
 import io.github.mtrevisan.boxon.core.helpers.templates.EvaluatedField;
 import io.github.mtrevisan.boxon.core.helpers.templates.PostProcessedField;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
+import io.github.mtrevisan.boxon.core.helpers.templates.TemplateField;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
@@ -107,7 +107,7 @@ public final class TemplateParser implements TemplateParserInterface{
 
 
 	/**
-	 * Loads all the protocol classes annotated with {@link MessageHeader}.
+	 * Loads all the protocol classes annotated with {@link TemplateHeader}.
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
 	 * @return	This instance, used for chaining.
@@ -121,7 +121,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 	/**
-	 * Load the specified protocol class annotated with {@link MessageHeader}.
+	 * Load the specified protocol class annotated with {@link TemplateHeader}.
 	 *
 	 * @param templateClass	Template class.
 	 * @return	This instance, used for chaining.
@@ -196,9 +196,9 @@ public final class TemplateParser implements TemplateParserInterface{
 		parserContext.addCurrentObjectToEvaluatorContext();
 
 		//decode message fields:
-		final List<BoundedField> fields = template.getBoundedFields();
+		final List<TemplateField> fields = template.getTemplateFields();
 		for(int i = 0, length = fields.size(); i < length; i ++){
-			final BoundedField field = fields.get(i);
+			final TemplateField field = fields.get(i);
 
 			//process skip annotations:
 			final Skip[] skips = field.getSkips();
@@ -222,7 +222,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 	private <T> void decodeField(final Template<T> template, final BitReaderInterface reader, final ParserContext<T> parserContext,
-			final BoundedField field) throws FieldException{
+			final TemplateField field) throws FieldException{
 		final Annotation binding = field.getBinding();
 		final Class<? extends Annotation> annotationType = binding.annotationType();
 		final LoaderCodecInterface loaderCodec = core.getLoaderCodec();
@@ -278,7 +278,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 	private static void readMessageTerminator(final Template<?> template, final BitReaderInterface reader) throws TemplateException{
-		final MessageHeader header = template.getHeader();
+		final TemplateHeader header = template.getHeader();
 		if(header != null && !header.end().isEmpty()){
 			final Charset charset = CharsetHelper.lookup(header.charset());
 			final byte[] messageTerminator = header.end().getBytes(charset);
@@ -292,7 +292,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	private static <T> void verifyChecksum(final Template<T> template, final T data, final int startPosition,
 			final BitReaderInterface reader){
 		if(template.isChecksumPresent()){
-			final BoundedField checksumData = template.getChecksum();
+			final TemplateField checksumData = template.getChecksum();
 			final Checksum checksum = (Checksum)checksumData.getBinding();
 
 			final short calculatedChecksum = calculateChecksum(startPosition, reader, checksum);
@@ -353,9 +353,9 @@ public final class TemplateParser implements TemplateParserInterface{
 
 		//encode message fields:
 		final LoaderCodecInterface loaderCodec = core.getLoaderCodec();
-		final List<BoundedField> fields = template.getBoundedFields();
+		final List<TemplateField> fields = template.getTemplateFields();
 		for(int i = 0, length = fields.size(); i < length; i ++){
-			final BoundedField field = fields.get(i);
+			final TemplateField field = fields.get(i);
 
 			//process skip annotations:
 			final Skip[] skips = field.getSkips();
@@ -371,7 +371,7 @@ public final class TemplateParser implements TemplateParserInterface{
 			}
 		}
 
-		final MessageHeader header = template.getHeader();
+		final TemplateHeader header = template.getHeader();
 		if(header != null)
 			ParserWriterHelper.writeAffix(header.end(), header.charset(), writer);
 	}

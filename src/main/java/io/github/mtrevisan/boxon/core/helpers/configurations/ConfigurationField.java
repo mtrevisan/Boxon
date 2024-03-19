@@ -33,7 +33,7 @@ import java.util.Objects;
 
 
 /** Data associated to an annotated field. */
-public final class ConfigField{
+public final class ConfigurationField{
 
 	/** An empty {@code ConfigurationSkip} array. */
 	private static final ConfigurationSkip[] EMPTY_CONFIGURATION_SKIP_ARRAY = new ConfigurationSkip[0];
@@ -45,12 +45,12 @@ public final class ConfigField{
 	private final Annotation binding;
 
 
-	static ConfigField create(final Field field, final Annotation binding, final ConfigurationSkip[] skips){
-		return new ConfigField(field, binding, skips);
+	static ConfigurationField create(final Field field, final Annotation binding, final ConfigurationSkip[] skips){
+		return new ConfigurationField(field, binding, skips);
 	}
 
 
-	private ConfigField(final Field field, final Annotation binding, final ConfigurationSkip[] skips){
+	private ConfigurationField(final Field field, final Annotation binding, final ConfigurationSkip[] skips){
 		Objects.requireNonNull(skips, "Configuration skips must not be null");
 
 		this.field = field;

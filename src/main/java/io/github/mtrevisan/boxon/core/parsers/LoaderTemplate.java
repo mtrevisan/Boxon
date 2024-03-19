@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core.parsers;
 
-import io.github.mtrevisan.boxon.annotations.MessageHeader;
+import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.core.codecs.LoaderCodecInterface;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.core.parsers.matchers.KMPPatternMatcher;
@@ -104,7 +104,7 @@ public final class LoaderTemplate{
 	}
 
 	/**
-	 * Loads all the protocol classes annotated with {@link MessageHeader}.
+	 * Loads all the protocol classes annotated with {@link TemplateHeader}.
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
 	 * @throws AnnotationException	If an annotation has validation problems.
@@ -114,8 +114,8 @@ public final class LoaderTemplate{
 		eventListener.loadingTemplatesFrom(basePackageClasses);
 
 		final ReflectiveClassLoader reflectiveClassLoader = ReflectiveClassLoader.createFrom(basePackageClasses);
-		/** extract all classes annotated with {@link MessageHeader}. */
-		final List<Class<?>> annotatedClasses = reflectiveClassLoader.extractClassesWithAnnotation(MessageHeader.class);
+		/** extract all classes annotated with {@link TemplateHeader}. */
+		final List<Class<?>> annotatedClasses = reflectiveClassLoader.extractClassesWithAnnotation(TemplateHeader.class);
 		final List<Template<?>> templates = extractTemplates(annotatedClasses);
 		addTemplatesInner(templates);
 
@@ -123,7 +123,7 @@ public final class LoaderTemplate{
 	}
 
 	/**
-	 * Load the specified protocol class annotated with {@link MessageHeader}.
+	 * Load the specified protocol class annotated with {@link TemplateHeader}.
 	 *
 	 * @param templateClass	Template class.
 	 * @throws AnnotationException	If an annotation has validation problems.
@@ -132,8 +132,8 @@ public final class LoaderTemplate{
 	public void loadTemplate(final Class<?> templateClass) throws AnnotationException, TemplateException{
 		eventListener.loadingTemplate(templateClass);
 
-		if(templateClass.isAnnotationPresent(MessageHeader.class)){
-			/** extract all classes annotated with {@link MessageHeader}. */
+		if(templateClass.isAnnotationPresent(TemplateHeader.class)){
+			/** extract all classes annotated with {@link TemplateHeader}. */
 			final Template<?> template = extractTemplate(templateClass);
 			if(template.canBeCoded()){
 				addTemplateInner(template);
@@ -210,7 +210,7 @@ public final class LoaderTemplate{
 	 */
 	private void addTemplateInner(final Template<?> template) throws TemplateException{
 		try{
-			final MessageHeader header = template.getHeader();
+			final TemplateHeader header = template.getHeader();
 			final Charset charset = CharsetHelper.lookup(header.charset());
 			final String[] starts = header.start();
 			for(int i = 0, length = starts.length; i < length; i ++)
@@ -266,7 +266,7 @@ public final class LoaderTemplate{
 	 * @throws TemplateException	Whether the template is not valid.
 	 */
 	Template<?> getTemplate(final Class<?> type) throws TemplateException{
-		final MessageHeader header = type.getAnnotation(MessageHeader.class);
+		final TemplateHeader header = type.getAnnotation(TemplateHeader.class);
 		if(header == null)
 			throw TemplateException.create("The given class type is not a valid template");
 
@@ -311,14 +311,14 @@ public final class LoaderTemplate{
 	int findNextMessageIndex(final BitReaderInterface reader){
 		int minOffset = -1;
 		for(final Template<?> template : templates.values()){
-			final MessageHeader header = template.getHeader();
+			final TemplateHeader header = template.getHeader();
 
 			minOffset = findNextMessageIndex(reader, header, minOffset);
 		}
 		return minOffset;
 	}
 
-	private static int findNextMessageIndex(final BitReaderInterface reader, final MessageHeader header, int minOffset){
+	private static int findNextMessageIndex(final BitReaderInterface reader, final TemplateHeader header, int minOffset){
 		final Charset charset = CharsetHelper.lookup(header.charset());
 		final String[] messageStarts = header.start();
 		//select the minimum index with a valid template

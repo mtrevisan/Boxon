@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core;
 
-import io.github.mtrevisan.boxon.annotations.MessageHeader;
+import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.bindings.BindByte;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
@@ -40,7 +40,7 @@ import java.util.List;
 
 class ConverterTest{
 
-	@MessageHeader(start = "wc1")
+	@TemplateHeader(start = "wc1")
 	private static class TestConverter1{
 		@BindString(size = "3")
 		String header;
@@ -61,7 +61,7 @@ class ConverterTest{
 		}
 	}
 
-	@MessageHeader(start = "wc2")
+	@TemplateHeader(start = "wc2")
 	private static class TestConverter2{
 		@BindString(size = "3")
 		String header;
@@ -69,7 +69,7 @@ class ConverterTest{
 		String value;
 	}
 
-	@MessageHeader(start = "wc3")
+	@TemplateHeader(start = "wc3")
 	private static class TestConverter3{
 		@BindString(size = "3")
 		String header;

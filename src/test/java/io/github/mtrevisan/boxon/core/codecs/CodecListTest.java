@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core.codecs;
 
-import io.github.mtrevisan.boxon.annotations.MessageHeader;
+import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.bindings.BindList;
 import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
@@ -96,7 +96,7 @@ class CodecListTest{
 		String value2;
 	}
 
-	@MessageHeader(start = "tc6")
+	@TemplateHeader(start = "tc6")
 	static class TestChoice6{
 		@BindStringTerminated(terminator = ',')
 		String type;

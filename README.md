@@ -121,7 +121,7 @@ You can get pre-built JARs (usable on JRE 11 or newer) from [Sonatype](https://o
     14. [BindString](#annotation-bindstring)
     15. [BindStringTerminated](#annotation-bindstringterminated)
 2. [Special annotations](#annotation-special)
-    1. [MessageHeader](#annotation-messageheader)
+    1. [TemplateHeader](#annotation-templateheader)
     2. [Skip](#annotation-skip)
     3. [Checksum](#annotation-checksum)
     4. [Evaluate](#annotation-evaluate)
@@ -201,13 +201,13 @@ Note that [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_inject
 | BindString           |  &#9745;  |         | &#9745; |            |                   | &#9745; |                    |            |               |  &#9745;  |  &#9745;  |       &#9745;       |           BindString |
 | BindStringTerminated |  &#9745;  |         | &#9745; |  &#9745;   |      &#9745;      |         |                    |            |               |  &#9745;  |  &#9745;  |       &#9745;       | BindStringTerminated |
 
-|                  | condition |  start  |   end   | charset |  size   | terminator | consumeTerminator |  type   | byteOrder | skipStart | skipEnd | algorithm | startValue |  value  | valueDecode | valueEncode |               |
-|------------------|:---------:|:-------:|:-------:|:-------:|:-------:|:----------:|:-----------------:|:-------:|:---------:|:---------:|:-------:|:---------:|:----------:|:-------:|:-----------:|:-----------:|--------------:|
-| MessageHeader    |           | &#9745; | &#9745; | &#9745; |         |            |                   |         |           |           |         |           |            |         |             |             | MessageHeader |
-| Skip             |  &#9745;  |         |         |         | &#9745; |  &#9745;   |      &#9745;      |         |           |           |         |           |            |         |             |             |          Skip |
-| Checksum         |           |         |         |         |         |            |                   | &#9745; |  &#9745;  |  &#9745;  | &#9745; |  &#9745;  |  &#9745;   |         |             |             |      Checksum |
-| Evaluate         |  &#9745;  |         |         |         |         |            |                   |         |           |           |         |           |            | &#9745; |             |             |      Evaluate |
-| PostProcessField |  &#9745;  |         |         |         |         |            |                   |         |           |           |         |           |            |         |   &#9745;   |   &#9745;   |  ProcessField |
+|                  | condition |  start  |   end   | charset |  size   | terminator | consumeTerminator |  type   | byteOrder | skipStart | skipEnd | algorithm | startValue |  value  | valueDecode | valueEncode |                |
+|------------------|:---------:|:-------:|:-------:|:-------:|:-------:|:----------:|:-----------------:|:-------:|:---------:|:---------:|:-------:|:---------:|:----------:|:-------:|:-----------:|:-----------:|---------------:|
+| TemplateHeader   |           | &#9745; | &#9745; | &#9745; |         |            |                   |         |           |           |         |           |            |         |             |             | TemplateHeader |
+| Skip             |  &#9745;  |         |         |         | &#9745; |  &#9745;   |      &#9745;      |         |           |           |         |           |            |         |             |             |           Skip |
+| Checksum         |           |         |         |         |         |            |                   | &#9745; |  &#9745;  |  &#9745;  | &#9745; |  &#9745;  |  &#9745;   |         |             |             |       Checksum |
+| Evaluate         |  &#9745;  |         |         |         |         |            |                   |         |           |           |         |           |            | &#9745; |             |             |       Evaluate |
+| PostProcessField |  &#9745;  |         |         |         |         |            |                   |         |           |           |         |           |            |         |   &#9745;   |   &#9745;   |   ProcessField |
 
 |                               | shortDescription | longDescription | minProtocol | maxProtocol |  start  |   end   | charset | terminator | unitOfMeasure | minValue  | maxValue | pattern | enumeration | defaultValue |  radix  | composition |                               |
 |-------------------------------|:----------------:|:---------------:|:-----------:|:-----------:|:-------:|:-------:|:-------:|:----------:|:-------------:|:---------:|:--------:|:-------:|:-----------:|:------------:|:-------:|:-----------:|------------------------------:|
@@ -670,8 +670,8 @@ public String text;
 
 Here are described the build-in special annotations.
 
-<a name="annotation-messageheader"></a>
-### MessageHeader
+<a name="annotation-templateheader"></a>
+### TemplateHeader
 
 #### parameters
 
@@ -690,7 +690,7 @@ This annotation is bounded to a class.
 #### example
 
 ```java
-@MessageHeader(start = "+", end = "-")
+@TemplateHeader(start = "+", end = "-")
 private class Message{
     ...
 }
@@ -1473,7 +1473,7 @@ Messages can be concatenated, and the `Parser.java` class manages them, returnin
 <br/>
 
 Each annotated class is processed by `Template.class`, that is later retrieved by `Parser.java` depending on the starting header.
-For that reason each starting header defined into `MessageHeader` annotation MUST BE unique. This class can also accept a context.
+For that reason each starting header defined into `TemplateHeader` annotation MUST BE unique. This class can also accept a context.
 
 All the SpEL expressions are evaluated by `Evaluator.java`.
 

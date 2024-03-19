@@ -25,7 +25,7 @@
 package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
-import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigField;
+import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationHelper;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationManagerFactory;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationManagerInterface;
@@ -164,11 +164,11 @@ public final class Configurator{
 
 	private static Map<String, Object> extractFieldsMap(final Version protocol, final ConfigurationMessage<?> configuration)
 			throws ConfigurationException, CodecException{
-		final List<ConfigField> fields = configuration.getConfigurationFields();
+		final List<ConfigurationField> fields = configuration.getConfigurationFields();
 		final int length = fields.size();
 		final Map<String, Object> fieldsMap = new HashMap<>(length);
 		for(int i = 0; i < length; i ++){
-			final ConfigField field = fields.get(i);
+			final ConfigurationField field = fields.get(i);
 
 			final Annotation annotation = field.getBinding();
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(annotation);

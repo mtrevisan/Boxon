@@ -30,6 +30,7 @@ package io.github.mtrevisan.boxon.core.keys;
  */
 public enum DescriberKey{
 	TEMPLATE("template"),
+	CONFIGURATION("configuration"),
 
 	CONTEXT("context"),
 

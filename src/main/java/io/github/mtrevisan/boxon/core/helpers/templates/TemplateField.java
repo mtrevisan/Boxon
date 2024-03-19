@@ -35,7 +35,7 @@ import java.util.Objects;
 
 
 /** Data associated to an annotated field. */
-public final class BoundedField{
+public final class TemplateField{
 
 	/** NOTE: MUST match the name of the method in all the annotations that defines a condition! */
 	private static final String CONDITION = "condition";
@@ -52,16 +52,16 @@ public final class BoundedField{
 	private String condition;
 
 
-	static BoundedField create(final Field field, final Annotation binding){
-		return new BoundedField(field, binding, EMPTY_SKIP_ARRAY);
+	static TemplateField create(final Field field, final Annotation binding){
+		return new TemplateField(field, binding, EMPTY_SKIP_ARRAY);
 	}
 
-	static BoundedField create(final Field field, final Annotation binding, final Skip[] skips){
-		return new BoundedField(field, binding, skips);
+	static TemplateField create(final Field field, final Annotation binding, final Skip[] skips){
+		return new TemplateField(field, binding, skips);
 	}
 
 
-	private BoundedField(final Field field, final Annotation binding, final Skip[] skips){
+	private TemplateField(final Field field, final Annotation binding, final Skip[] skips){
 		Objects.requireNonNull(skips, "Skips must not be null");
 
 		this.field = field;

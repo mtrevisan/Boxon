@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core;
 
-import io.github.mtrevisan.boxon.annotations.MessageHeader;
+import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
@@ -209,7 +209,7 @@ public final class CoreBuilder{
 
 
 	/**
-	 * Loads all the protocol classes annotated with {@link MessageHeader}.
+	 * Loads all the protocol classes annotated with {@link TemplateHeader}.
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
 	 * @return	This instance, used for chaining.
@@ -221,7 +221,7 @@ public final class CoreBuilder{
 	}
 
 	/**
-	 * Load the specified protocol class annotated with {@link MessageHeader}.
+	 * Load the specified protocol class annotated with {@link TemplateHeader}.
 	 *
 	 * @param templateClass	Template class.
 	 * @return	This instance, used for chaining.

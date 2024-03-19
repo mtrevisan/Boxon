@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core;
 
-import io.github.mtrevisan.boxon.annotations.MessageHeader;
+import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.core.codecs.LoaderCodec;
 import io.github.mtrevisan.boxon.core.codecs.TemplateParserInterface;
@@ -203,7 +203,7 @@ public final class Core{
 
 
 	/**
-	 * Loads all the protocol classes annotated with {@link MessageHeader}.
+	 * Loads all the protocol classes annotated with {@link TemplateHeader}.
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
 	 * @throws AnnotationException	If an annotation is not well formatted.
@@ -214,7 +214,7 @@ public final class Core{
 	}
 
 	/**
-	 * Load the specified protocol class annotated with {@link MessageHeader}.
+	 * Load the specified protocol class annotated with {@link TemplateHeader}.
 	 *
 	 * @param templateClass	Template class.
 	 * @throws AnnotationException	If the annotation is not well formatted.

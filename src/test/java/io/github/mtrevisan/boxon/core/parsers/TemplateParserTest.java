@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core.parsers;
 
-import io.github.mtrevisan.boxon.annotations.MessageHeader;
+import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.bindings.BindByte;
 import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
@@ -156,7 +156,7 @@ class TemplateParserTest{
 	}
 
 
-	@MessageHeader(start = "te1")
+	@TemplateHeader(start = "te1")
 	private static class TestError1{
 		@BindString(size = "3")
 		String header;
@@ -183,7 +183,7 @@ class TemplateParserTest{
 	}
 
 
-	@MessageHeader(start = "te3")
+	@TemplateHeader(start = "te3")
 	static class TestError3{
 		static class WrongOutputConverter implements Converter<Byte, String>{
 
@@ -223,7 +223,7 @@ class TemplateParserTest{
 	}
 
 
-	@MessageHeader(start = "te4")
+	@TemplateHeader(start = "te4")
 	static class TestError4{
 		static class WrongInputConverter implements Converter<String, Byte>{
 
@@ -263,7 +263,7 @@ class TemplateParserTest{
 	}
 
 
-	@MessageHeader(start = "tm1")
+	@TemplateHeader(start = "tm1")
 	static class TestComposition1{
 		static class TestSubComposition{
 			@BindByte
@@ -312,7 +312,7 @@ class TemplateParserTest{
 		Assertions.assertArrayEquals(payload, reconstructedMessage);
 	}
 
-	@MessageHeader(start = "tm2")
+	@TemplateHeader(start = "tm2")
 	static class TestComposition2{
 		static class TestSubCompositionBase{
 			@BindByte

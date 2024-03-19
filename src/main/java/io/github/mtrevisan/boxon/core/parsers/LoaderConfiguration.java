@@ -24,9 +24,9 @@
  */
 package io.github.mtrevisan.boxon.core.parsers;
 
-import io.github.mtrevisan.boxon.annotations.MessageHeader;
+import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
-import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigField;
+import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationManagerFactory;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationManagerInterface;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationMessage;
@@ -104,7 +104,7 @@ public final class LoaderConfiguration{
 		eventListener.loadingConfigurationsFrom(basePackageClasses);
 
 		final ReflectiveClassLoader reflectiveClassLoader = ReflectiveClassLoader.createFrom(basePackageClasses);
-		/** extract all classes annotated with {@link MessageHeader}. */
+		/** extract all classes annotated with {@link TemplateHeader}. */
 		final List<Class<?>> annotatedClasses = reflectiveClassLoader.extractClassesWithAnnotation(ConfigurationHeader.class);
 		final Map<String, ConfigurationMessage<?>> configurations = extractConfigurations(annotatedClasses);
 		addConfigurationsInner(configurations);
@@ -239,12 +239,12 @@ public final class LoaderConfiguration{
 			.get();
 
 		//fill in default values
-		final List<ConfigField> configurableFields = configuration.getConfigurationFields();
+		final List<ConfigurationField> configurableFields = configuration.getConfigurationFields();
 		fillDefaultValues(configurationObject, configurableFields, protocol);
 
 
 		//collect mandatory fields:
-		final Collection<ConfigField> mandatoryFields = extractMandatoryFields(configurableFields, protocol);
+		final Collection<ConfigurationField> mandatoryFields = extractMandatoryFields(configurableFields, protocol);
 
 		//load data into configuration based on protocol version:
 		for(final Map.Entry<String, Object> entry : data.entrySet()){
@@ -252,7 +252,7 @@ public final class LoaderConfiguration{
 			Object dataValue = entry.getValue();
 
 			//find field in `configuration` that matches `dataKey` and `protocol`
-			final ConfigField foundField = findField(configurableFields, dataKey, protocol);
+			final ConfigurationField foundField = findField(configurableFields, dataKey, protocol);
 			final Annotation foundFieldAnnotation = foundField.getBinding();
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(foundFieldAnnotation);
 			manager.validateValue(foundField.getField(), dataKey, dataValue);
@@ -284,10 +284,10 @@ public final class LoaderConfiguration{
 		return configuration;
 	}
 
-	private static void fillDefaultValues(final Object configurationObject, final List<ConfigField> fields, final Version protocol)
+	private static void fillDefaultValues(final Object configurationObject, final List<ConfigurationField> fields, final Version protocol)
 			throws EncodeException, CodecException, AnnotationException{
 		for(int i = 0, length = fields.size(); i < length; i ++){
-			final ConfigField field = fields.get(i);
+			final ConfigurationField field = fields.get(i);
 
 			final Annotation annotation = field.getBinding();
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(annotation);
@@ -297,11 +297,11 @@ public final class LoaderConfiguration{
 		}
 	}
 
-	private static Collection<ConfigField> extractMandatoryFields(final List<ConfigField> fields, final Version protocol){
+	private static Collection<ConfigurationField> extractMandatoryFields(final List<ConfigurationField> fields, final Version protocol){
 		final int length = fields.size();
-		final Collection<ConfigField> mandatoryFields = new HashSet<>(length);
+		final Collection<ConfigurationField> mandatoryFields = new HashSet<>(length);
 		for(int i = 0; i < length; i ++){
-			final ConfigField field = fields.get(i);
+			final ConfigurationField field = fields.get(i);
 
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(field.getBinding());
 			final Annotation annotation = manager.annotationToBeProcessed(protocol);
@@ -311,9 +311,9 @@ public final class LoaderConfiguration{
 		return mandatoryFields;
 	}
 
-	private static ConfigField findField(final List<ConfigField> fields, final String key, final Version protocol) throws EncodeException{
+	private static ConfigurationField findField(final List<ConfigurationField> fields, final String key, final Version protocol) throws EncodeException{
 		for(int i = 0, length = fields.size(); i < length; i ++){
-			final ConfigField field = fields.get(i);
+			final ConfigurationField field = fields.get(i);
 
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(field.getBinding());
 			final Annotation annotation = manager.annotationToBeProcessed(protocol);
@@ -323,10 +323,10 @@ public final class LoaderConfiguration{
 		throw EncodeException.create("Could not find fields to set for data key {}", key);
 	}
 
-	private static void validateMandatoryFields(final Collection<ConfigField> mandatoryFields) throws EncodeException{
+	private static void validateMandatoryFields(final Collection<ConfigurationField> mandatoryFields) throws EncodeException{
 		if(!mandatoryFields.isEmpty()){
 			final StringJoiner sj = new StringJoiner(", ", "[", "]");
-			for(final ConfigField mandatoryField : mandatoryFields){
+			for(final ConfigurationField mandatoryField : mandatoryFields){
 				final Annotation annotation = mandatoryField.getBinding();
 				final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(annotation);
 				final String shortDescription = manager.getShortDescription();
