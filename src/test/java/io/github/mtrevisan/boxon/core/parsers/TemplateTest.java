@@ -184,10 +184,10 @@ class TemplateTest{
 		List<TemplateField> templateFields = template.getTemplateFields();
 		Assertions.assertNotNull(templateFields);
 		Assertions.assertEquals(14, templateFields.size());
-		List<EvaluatedField> evaluatedFields = template.getEvaluatedFields();
+		List<EvaluatedField<Evaluate>> evaluatedFields = template.getEvaluatedFields();
 		Assertions.assertNotNull(evaluatedFields);
 		Assertions.assertEquals(1, evaluatedFields.size());
-		EvaluatedField evaluatedField = evaluatedFields.getFirst();
+		EvaluatedField<Evaluate> evaluatedField = evaluatedFields.getFirst();
 		Assertions.assertEquals("receptionTime", evaluatedField.getFieldName());
 		Assertions.assertEquals(ZonedDateTime.class, evaluatedField.getFieldType());
 		Evaluate evaluate = evaluatedField.getBinding();

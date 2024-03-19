@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.core.parsers;
 
 import io.github.mtrevisan.boxon.annotations.Checksum;
+import io.github.mtrevisan.boxon.annotations.Evaluate;
 import io.github.mtrevisan.boxon.annotations.PostProcessField;
 import io.github.mtrevisan.boxon.annotations.Skip;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
@@ -32,7 +33,6 @@ import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
 import io.github.mtrevisan.boxon.core.codecs.LoaderCodecInterface;
 import io.github.mtrevisan.boxon.core.codecs.TemplateParserInterface;
 import io.github.mtrevisan.boxon.core.helpers.templates.EvaluatedField;
-import io.github.mtrevisan.boxon.core.helpers.templates.PostProcessedField;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.core.helpers.templates.TemplateField;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
@@ -324,9 +324,9 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 	private void processEvaluatedFields(final Template<?> template, final ParserContext<?> parserContext){
-		final List<EvaluatedField> evaluatedFields = template.getEvaluatedFields();
+		final List<EvaluatedField<Evaluate>> evaluatedFields = template.getEvaluatedFields();
 		for(int i = 0, length = evaluatedFields.size(); i < length; i ++){
-			final EvaluatedField field = evaluatedFields.get(i);
+			final EvaluatedField<Evaluate> field = evaluatedFields.get(i);
 
 			final Evaluator evaluator = core.getEvaluator();
 			final boolean process = evaluator.evaluateBoolean(field.getBinding().condition(), parserContext.getRootObject());
@@ -387,9 +387,9 @@ public final class TemplateParser implements TemplateParserInterface{
 	private void processFields(final Template<?> template, final ParserContext<?> parserContext,
 			final Function<PostProcessField, String> valueExtractor){
 		final String templateName = template.getType().getName();
-		final List<PostProcessedField> postProcessedFields = template.getPostProcessedFields();
+		final List<EvaluatedField<PostProcessField>> postProcessedFields = template.getPostProcessedFields();
 		for(int i = 0, length = postProcessedFields.size(); i < length; i ++){
-			final PostProcessedField field = postProcessedFields.get(i);
+			final EvaluatedField<PostProcessField> field = postProcessedFields.get(i);
 
 			final PostProcessField binding = field.getBinding();
 			final String condition = binding.condition();
@@ -400,7 +400,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 	private void processField(final String condition, final String expression, final ParserContext<?> parserContext,
-			final PostProcessedField field, final String templateName){
+			final EvaluatedField<PostProcessField> field, final String templateName){
 		final Evaluator evaluator = core.getEvaluator();
 		final Object rootObject = parserContext.getRootObject();
 		final boolean process = evaluator.evaluateBoolean(condition, rootObject);

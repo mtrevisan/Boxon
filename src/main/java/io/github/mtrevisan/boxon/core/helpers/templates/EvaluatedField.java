@@ -25,24 +25,29 @@
 package io.github.mtrevisan.boxon.core.helpers.templates;
 
 import io.github.mtrevisan.boxon.annotations.Evaluate;
+import io.github.mtrevisan.boxon.annotations.PostProcessField;
 import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
 
 import java.lang.reflect.Field;
 
 
-/** Data associated to a directly evaluable field. */
-public final class EvaluatedField{
+/**
+ * Data associated to a directly evaluable field.
+ *
+ * @param <B>	One of {@link Evaluate} or {@link PostProcessField}.
+ */
+public final class EvaluatedField<B>{
 
 	private final Field field;
-	private final Evaluate binding;
+	private final B binding;
 
 
-	static EvaluatedField create(final Field field, final Evaluate binding){
-		return new EvaluatedField(field, binding);
+	static <B> EvaluatedField<B> create(final Field field, final B binding){
+		return new EvaluatedField<>(field, binding);
 	}
 
 
-	private EvaluatedField(final Field field, final Evaluate binding){
+	private EvaluatedField(final Field field, final B binding){
 		this.field = field;
 		this.binding = binding;
 	}
@@ -81,7 +86,7 @@ public final class EvaluatedField{
 	 *
 	 * @return	The annotation bound to the field.
 	 */
-	public Evaluate getBinding(){
+	public B getBinding(){
 		return binding;
 	}
 

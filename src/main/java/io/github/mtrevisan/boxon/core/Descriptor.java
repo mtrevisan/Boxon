@@ -24,7 +24,6 @@
  */
 package io.github.mtrevisan.boxon.core;
 
-import io.github.mtrevisan.boxon.annotations.Skip;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationMessage;
@@ -35,11 +34,10 @@ import io.github.mtrevisan.boxon.core.helpers.extractors.FieldExtractorEvaluated
 import io.github.mtrevisan.boxon.core.helpers.extractors.FieldExtractorPostProcessedField;
 import io.github.mtrevisan.boxon.core.helpers.extractors.FieldExtractorTemplate;
 import io.github.mtrevisan.boxon.core.helpers.extractors.MessageExtractor;
-import io.github.mtrevisan.boxon.core.helpers.extractors.MessageExtractorFullTemplate;
-import io.github.mtrevisan.boxon.core.helpers.extractors.MessageExtractorConfiguration;
 import io.github.mtrevisan.boxon.core.helpers.extractors.MessageExtractorBasicTemplate;
+import io.github.mtrevisan.boxon.core.helpers.extractors.MessageExtractorConfiguration;
+import io.github.mtrevisan.boxon.core.helpers.extractors.MessageExtractorFullTemplate;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
-import io.github.mtrevisan.boxon.core.helpers.templates.TemplateField;
 import io.github.mtrevisan.boxon.core.keys.DescriberKey;
 import io.github.mtrevisan.boxon.core.parsers.ConfigurationParser;
 import io.github.mtrevisan.boxon.core.parsers.LoaderConfiguration;
@@ -74,7 +72,7 @@ public final class Descriptor{
 	private static final MessageExtractorBasicTemplate MESSAGE_EXTRACTOR_BASIC_TEMPLATE = new MessageExtractorBasicTemplate();
 	private static final MessageExtractorBasicTemplate MESSAGE_EXTRACTOR_FULL_TEMPLATE = new MessageExtractorFullTemplate();
 	private static final MessageExtractorConfiguration MESSAGE_EXTRACTOR_CONFIGURATION = new MessageExtractorConfiguration();
-	private static final FieldExtractor<TemplateField, Skip> FIELD_EXTRACTOR_TEMPLATE = new FieldExtractorTemplate();
+	private static final FieldExtractorTemplate FIELD_EXTRACTOR_TEMPLATE = new FieldExtractorTemplate();
 	private static final FieldExtractorEvaluatedField FIELD_EXTRACTOR_EVALUATED_FIELD = new FieldExtractorEvaluatedField();
 	private static final FieldExtractorPostProcessedField FIELD_EXTRACTOR_POST_PROCESSED_FIELD = new FieldExtractorPostProcessedField();
 	private static final FieldExtractorConfiguration FIELD_EXTRACTOR_CONFIGURATION = new FieldExtractorConfiguration();

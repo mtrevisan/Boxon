@@ -97,12 +97,12 @@ final class CodecList implements CodecInterface<BindList>{
 		encodeWithAlternatives(writer, list);
 	}
 
-	private void encodeWithAlternatives(final BitWriterInterface writer, final List<Object> list) throws FieldException{
+	private void encodeWithAlternatives(final BitWriterInterface writer, final List<Object> list)
+			throws FieldException{
 		for(int i = 0, length = list.size(); i < length; i ++){
 			final Object elem = list.get(i);
 
 			final Class<?> type = elem.getClass();
-
 			final Template<?> template = templateParser.createTemplate(type);
 
 			templateParser.encode(template, writer, null, elem);

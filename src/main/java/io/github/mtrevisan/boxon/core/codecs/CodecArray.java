@@ -122,8 +122,8 @@ final class CodecArray implements CodecInterface<BindArray>{
 		final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
 		for(int i = 0, length = array.length; i < length; i ++){
 			final Object elem = array[i];
-			final Class<?> type = elem.getClass();
 
+			final Class<?> type = elem.getClass();
 			final ObjectChoices.ObjectChoice chosenAlternative = CodecHelper.chooseAlternative(alternatives, type);
 
 			CodecHelper.writeHeader(writer, chosenAlternative, selectFrom);

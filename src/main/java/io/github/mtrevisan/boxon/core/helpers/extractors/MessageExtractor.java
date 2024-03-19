@@ -24,8 +24,9 @@
  */
 package io.github.mtrevisan.boxon.core.helpers.extractors;
 
+import io.github.mtrevisan.boxon.annotations.Evaluate;
+import io.github.mtrevisan.boxon.annotations.PostProcessField;
 import io.github.mtrevisan.boxon.core.helpers.templates.EvaluatedField;
-import io.github.mtrevisan.boxon.core.helpers.templates.PostProcessedField;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
@@ -39,8 +40,8 @@ public interface MessageExtractor<M, H extends Annotation, F>{
 
 	List<F> getFields(M message);
 
-	List<EvaluatedField> getEvaluatedFields(M message);
+	List<EvaluatedField<Evaluate>> getEvaluatedFields(M message);
 
-	List<PostProcessedField> getPostProcessedFields(M message);
+	List<EvaluatedField<PostProcessField>> getPostProcessedFields(M message);
 
 }

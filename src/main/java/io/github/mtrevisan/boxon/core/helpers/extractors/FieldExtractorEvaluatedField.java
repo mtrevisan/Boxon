@@ -24,30 +24,31 @@
  */
 package io.github.mtrevisan.boxon.core.helpers.extractors;
 
+import io.github.mtrevisan.boxon.annotations.Evaluate;
 import io.github.mtrevisan.boxon.core.helpers.templates.EvaluatedField;
 
 import java.lang.annotation.Annotation;
 
 
-public class FieldExtractorEvaluatedField implements FieldExtractor<EvaluatedField, Annotation>{
+public class FieldExtractorEvaluatedField implements FieldExtractor<EvaluatedField<Evaluate>, Annotation>{
 
 	@Override
-	public Annotation[] getSkips(final EvaluatedField field){
+	public Annotation[] getSkips(final EvaluatedField<Evaluate> field){
 		return null;
 	}
 
 	@Override
-	public Annotation getBinding(final EvaluatedField field){
+	public Annotation getBinding(final EvaluatedField<Evaluate> field){
 		return field.getBinding();
 	}
 
 	@Override
-	public String getFieldName(final EvaluatedField field){
+	public String getFieldName(final EvaluatedField<Evaluate> field){
 		return field.getFieldName();
 	}
 
 	@Override
-	public Class<?> getFieldType(final EvaluatedField field){
+	public Class<?> getFieldType(final EvaluatedField<Evaluate> field){
 		return field.getFieldType();
 	}
 

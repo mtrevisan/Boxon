@@ -49,9 +49,10 @@ import java.util.function.Function;
  */
 public final class Template<T>{
 
-	private record Triplet(List<TemplateField> templateFields, List<EvaluatedField> evaluatedFields, List<PostProcessedField> postProcessedFields){
-		private static Triplet of(final List<TemplateField> templateFields, final List<EvaluatedField> evaluatedFields,
-				final List<PostProcessedField> postProcessedFields){
+	private record Triplet(List<TemplateField> templateFields, List<EvaluatedField<Evaluate>> evaluatedFields,
+			List<EvaluatedField<PostProcessField>> postProcessedFields){
+		private static Triplet of(final List<TemplateField> templateFields, final List<EvaluatedField<Evaluate>> evaluatedFields,
+				final List<EvaluatedField<PostProcessField>> postProcessedFields){
 			return new Triplet(templateFields, evaluatedFields, postProcessedFields);
 		}
 	}
@@ -61,8 +62,8 @@ public final class Template<T>{
 
 	private final TemplateHeader header;
 	private final List<TemplateField> templateFields;
-	private final List<EvaluatedField> evaluatedFields;
-	private final List<PostProcessedField> postProcessedFields;
+	private final List<EvaluatedField<Evaluate>> evaluatedFields;
+	private final List<EvaluatedField<PostProcessField>> postProcessedFields;
 	/**
 	 * Necessary to speed up the creation of a {@link Template} (technically not needed because it's already present
 	 * somewhere inside {@link #templateFields}).
@@ -116,8 +117,8 @@ public final class Template<T>{
 		final List<Field> fields = ReflectionHelper.getAccessibleFields(type);
 		final int length = fields.size();
 		final List<TemplateField> templateFields = new ArrayList<>(length);
-		final List<EvaluatedField> evaluatedFields = new ArrayList<>(length);
-		final List<PostProcessedField> postProcessedFields = new ArrayList<>(length);
+		final List<EvaluatedField<Evaluate>> evaluatedFields = new ArrayList<>(length);
+		final List<EvaluatedField<PostProcessField>> postProcessedFields = new ArrayList<>(length);
 		for(int i = 0; i < length; i ++){
 			final Field field = fields.get(i);
 
@@ -159,9 +160,9 @@ public final class Template<T>{
 	}
 
 	@SuppressWarnings("ObjectAllocationInLoop")
-	private static List<EvaluatedField> extractEvaluations(final Annotation[] declaredAnnotations, final Field field){
+	private static List<EvaluatedField<Evaluate>> extractEvaluations(final Annotation[] declaredAnnotations, final Field field){
 		final int length = declaredAnnotations.length;
-		final List<EvaluatedField> evaluations = new ArrayList<>(length);
+		final List<EvaluatedField<Evaluate>> evaluations = new ArrayList<>(length);
 		for(int i = 0; i < length; i ++){
 			final Annotation annotation = declaredAnnotations[i];
 
@@ -172,14 +173,14 @@ public final class Template<T>{
 	}
 
 	@SuppressWarnings("ObjectAllocationInLoop")
-	private static List<PostProcessedField> extractProcessed(final Annotation[] declaredAnnotations, final Field field){
+	private static List<EvaluatedField<PostProcessField>> extractProcessed(final Annotation[] declaredAnnotations, final Field field){
 		final int length = declaredAnnotations.length;
-		final List<PostProcessedField> processed = new ArrayList<>(length);
+		final List<EvaluatedField<PostProcessField>> processed = new ArrayList<>(length);
 		for(int i = 0; i < length; i ++){
 			final Annotation annotation = declaredAnnotations[i];
 
 			if(annotation.annotationType() == PostProcessField.class)
-				processed.add(PostProcessedField.create(field, (PostProcessField)annotation));
+				processed.add(EvaluatedField.create(field, (PostProcessField)annotation));
 		}
 		return processed;
 	}
@@ -239,16 +240,16 @@ public final class Template<T>{
 	 *
 	 * @return	List of evaluated fields.
 	 */
-	public List<EvaluatedField> getEvaluatedFields(){
+	public List<EvaluatedField<Evaluate>> getEvaluatedFields(){
 		return evaluatedFields;
 	}
 
 	/**
-	 * List of {@link PostProcessedField processed fields}.
+	 * List of {@link EvaluatedField processed fields}.
 	 *
 	 * @return	List of processed fields.
 	 */
-	public List<PostProcessedField> getPostProcessedFields(){
+	public List<EvaluatedField<PostProcessField>> getPostProcessedFields(){
 		return postProcessedFields;
 	}
 

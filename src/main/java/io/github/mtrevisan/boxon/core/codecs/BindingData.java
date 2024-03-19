@@ -173,6 +173,7 @@ final class BindingData{
 	private ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives){
 		for(int i = 0, length = alternatives.length; i < length; i ++){
 			final ObjectChoices.ObjectChoice alternative = alternatives[i];
+
 			if(evaluator.evaluateBoolean(alternative.condition(), rootObject))
 				return alternative;
 		}
