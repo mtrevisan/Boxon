@@ -82,14 +82,16 @@ public final class JSONPath{
 			throw JSONPathException.create("invalid path '{}'", path);
 
 		final String[] components = StringHelper.split(path, DECODED_SLASH);
-		for(int i = 0, length = components.length; i < length; i ++)
-			if(!StringHelper.isBlank(components[i])){
+		for(int i = 0, length = components.length; i < length; i ++){
+			String component = components[i];
+			if(!StringHelper.isBlank(component)){
 				//NOTE: the order here is important!
-				components[i] = replace(components[i], TILDE_ONE, DECODED_SLASH);
-				components[i] = replace(components[i], TILDE_ZERO, DECODED_TILDE);
+				component = replace(component, TILDE_ONE, DECODED_SLASH);
+				component = replace(component, TILDE_ZERO, DECODED_TILDE);
 
-				components[i] = urlDecode(components[i]);
+				components[i] = urlDecode(component);
 			}
+		}
 		return components;
 	}
 

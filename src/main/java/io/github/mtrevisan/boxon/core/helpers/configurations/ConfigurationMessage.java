@@ -154,14 +154,16 @@ public final class ConfigurationMessage<T>{
 		/** filter out {@link ConfigurationSkip} annotations */
 		Annotation foundAnnotation = null;
 		for(int i = 0, length = annotations.length; foundAnnotation == null && i < length; i ++){
-			final Class<? extends Annotation> annotationType = annotations[i].annotationType();
+			final Annotation annotation = annotations[i];
+
+			final Class<? extends Annotation> annotationType = annotation.annotationType();
 			if(ConfigurationSkip.class.isAssignableFrom(annotationType)
 					|| ConfigurationSkip.ConfigurationSkips.class.isAssignableFrom(annotationType))
 				continue;
 
-			validateAnnotation(field, annotations[i], minProtocolVersion, maxProtocolVersion);
+			validateAnnotation(field, annotation, minProtocolVersion, maxProtocolVersion);
 
-			foundAnnotation = annotations[i];
+			foundAnnotation = annotation;
 		}
 		return foundAnnotation;
 	}
@@ -196,9 +198,11 @@ public final class ConfigurationMessage<T>{
 	}
 
 	private static void extractProtocolVersionBoundaries(final ConfigurationSkip[] skips, final Collection<String> boundaries){
-		for(int j = 0, length = skips.length; j < length; j ++){
-			boundaries.add(skips[j].minProtocol());
-			boundaries.add(skips[j].maxProtocol());
+		for(int i = 0, length = skips.length; i < length; i ++){
+			final ConfigurationSkip skip = skips[i];
+
+			boundaries.add(skip.minProtocol());
+			boundaries.add(skip.maxProtocol());
 		}
 	}
 

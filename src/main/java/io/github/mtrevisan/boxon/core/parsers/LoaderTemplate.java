@@ -247,6 +247,7 @@ public final class LoaderTemplate{
 		final byte[] array = reader.array();
 		for(final Map.Entry<String, Template<?>> entry : templates.entrySet()){
 			final String header = entry.getKey();
+
 			final byte[] templateHeader = StringHelper.hexToByteArray(header);
 
 			//verify if it's a valid message header
@@ -296,9 +297,11 @@ public final class LoaderTemplate{
 	private List<Annotation> filterAnnotationsWithCodec(final Annotation[] declaredAnnotations){
 		final int length = declaredAnnotations.length;
 		final List<Annotation> annotations = new ArrayList<>(length);
-		for(int i = 0; i < length; i ++)
-			if(loaderCodec.hasCodec(declaredAnnotations[i].annotationType()))
-				annotations.add(declaredAnnotations[i]);
+		for(int i = 0; i < length; i ++){
+			final Annotation declaredAnnotation = declaredAnnotations[i];
+			if(loaderCodec.hasCodec(declaredAnnotation.annotationType()))
+				annotations.add(declaredAnnotation);
+		}
 		return annotations;
 	}
 

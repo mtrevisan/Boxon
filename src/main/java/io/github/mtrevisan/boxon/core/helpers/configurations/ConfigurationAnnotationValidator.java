@@ -131,8 +131,8 @@ enum ConfigurationAnnotationValidator{
 			if(!String.class.isAssignableFrom(field.getType()))
 				throw AnnotationException.create("Composite fields must have a string variable to be bounded to");
 
-			final CompositeSubField[] fields = binding.value();
-			final int length = fields.length;
+			final CompositeSubField[] subfields = binding.value();
+			final int length = subfields.length;
 			if(length == 0)
 				throw AnnotationException.create("Composite fields must have at least one sub-field");
 			validateCharset(configData.getCharset());
@@ -143,7 +143,7 @@ enum ConfigurationAnnotationValidator{
 
 
 			for(int i = 0; i < length; i ++)
-				SUB_FIELD.validate(field, fields[i], minProtocolVersion, maxProtocolVersion);
+				SUB_FIELD.validate(field, subfields[i], minProtocolVersion, maxProtocolVersion);
 		}
 	},
 

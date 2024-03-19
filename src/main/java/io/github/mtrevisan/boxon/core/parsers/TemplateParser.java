@@ -254,8 +254,9 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 	private <T> void readSkips(final Skip[] skips, final BitReaderInterface reader, final ParserContext<T> parserContext){
+		final Object rootObject = parserContext.getRootObject();
 		for(int i = 0, length = skips.length; i < length; i ++)
-			readSkip(skips[i], reader, parserContext.getRootObject());
+			readSkip(skips[i], reader, rootObject);
 	}
 
 	private void readSkip(final Skip skip, final BitReaderInterface reader, final Object rootObject){
@@ -421,8 +422,9 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 	private <T> void writeSkips(final Skip[] skips, final BitWriterInterface writer, final ParserContext<T> parserContext){
+		final Object rootObject = parserContext.getRootObject();
 		for(int i = 0, length = skips.length; i < length; i ++)
-			writeSkip(skips[i], writer, parserContext.getRootObject());
+			writeSkip(skips[i], writer, rootObject);
 	}
 
 	private void writeSkip(final Skip skip, final BitWriterInterface writer, final Object rootObject){

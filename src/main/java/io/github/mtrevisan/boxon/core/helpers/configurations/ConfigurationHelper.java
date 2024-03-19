@@ -131,8 +131,8 @@ public final class ConfigurationHelper{
 			final ConfigurationEnum[] enumConstants = enumeration.getEnumConstants();
 			final int length = enumConstants.length;
 			final String[] enumValues = new String[length];
-			for(int j = 0; j < length; j ++)
-				enumValues[j] = enumConstants[j].name();
+			for(int i = 0; i < length; i ++)
+				enumValues[i] = enumConstants[i].name();
 			putIfNotEmpty(ConfigurationKey.ENUMERATION, enumValues, map);
 			if(!fieldType.isArray())
 				putIfNotEmpty(ConfigurationKey.MUTUALLY_EXCLUSIVE, true, map);

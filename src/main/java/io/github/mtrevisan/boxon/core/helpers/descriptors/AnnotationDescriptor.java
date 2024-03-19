@@ -504,8 +504,8 @@ public enum AnnotationDescriptor{
 	public static <F, S extends Annotation> void describeSkips(final F field, final FieldExtractor<F, S> extractor,
 			final Collection<Map<String, Object>> rootDescription){
 		final S[] skips = extractor.getSkips(field);
-		for(int j = 0, length = JavaHelper.lengthOrZero(skips); j < length; j ++){
-			final S skip = skips[j];
+		for(int i = 0, length = JavaHelper.lengthOrZero(skips); i < length; i ++){
+			final S skip = skips[i];
 
 			final Map<String, Object> skipDescription = new HashMap<>(5);
 			fromAnnotation(skip)
@@ -525,8 +525,8 @@ public enum AnnotationDescriptor{
 		final int length = alternatives.length;
 		if(length > 0){
 			final Collection<Map<String, Object>> alternativesDescription = new ArrayList<>(length);
-			for(int j = 0; j < length; j ++){
-				final ObjectChoices.ObjectChoice alternative = alternatives[j];
+			for(int i = 0; i < length; i ++){
+				final ObjectChoices.ObjectChoice alternative = alternatives[i];
 
 				describeObjectChoicesAlternatives(alternative.condition(), alternative.prefix(), alternative.type(), alternativesDescription);
 			}
@@ -545,8 +545,8 @@ public enum AnnotationDescriptor{
 		final int length = alternatives.length;
 		if(length > 0){
 			final Collection<Map<String, Object>> alternativesDescription = new ArrayList<>(length);
-			for(int j = 0; j < length; j ++){
-				final ObjectChoicesList.ObjectChoiceList alternative = alternatives[j];
+			for(int i = 0; i < length; i ++){
+				final ObjectChoicesList.ObjectChoiceList alternative = alternatives[i];
 
 				describeObjectChoicesAlternatives(alternative.condition(), alternative.prefix(), alternative.type(), alternativesDescription);
 			}
@@ -578,8 +578,8 @@ public enum AnnotationDescriptor{
 		final int length = alternatives.length;
 		if(length > 0){
 			final Collection<Map<String, Object>> alternativesDescription = new ArrayList<>(length);
-			for(int j = 0; j < length; j ++){
-				final ConverterChoices.ConverterChoice alternative = alternatives[j];
+			for(int i = 0; i < length; i ++){
+				final ConverterChoices.ConverterChoice alternative = alternatives[i];
 
 				final Map<String, Object> alternativeDescription = new HashMap<>(2);
 				putIfNotEmpty(DescriberKey.BIND_CONDITION, alternative.condition(), alternativeDescription);
@@ -595,8 +595,8 @@ public enum AnnotationDescriptor{
 		final int length = alternatives.length;
 		if(length > 0){
 			final Collection<Map<String, Object>> alternativesDescription = new ArrayList<>(length);
-			for(int j = 0; j < length; j ++){
-				final AlternativeSubField alternative = alternatives[j];
+			for(int i = 0; i < length; i ++){
+				final AlternativeSubField alternative = alternatives[i];
 
 				describeObjectChoicesAlternatives(alternative, alternativesDescription);
 			}
@@ -624,8 +624,8 @@ public enum AnnotationDescriptor{
 		final int length = composites.length;
 		if(length > 0){
 			final Collection<Map<String, Object>> alternativesDescription = new ArrayList<>(length);
-			for(int j = 0; j < length; j ++){
-				final CompositeSubField composite = composites[j];
+			for(int i = 0; i < length; i ++){
+				final CompositeSubField composite = composites[i];
 
 				describeFieldComposite(composite, alternativesDescription);
 			}

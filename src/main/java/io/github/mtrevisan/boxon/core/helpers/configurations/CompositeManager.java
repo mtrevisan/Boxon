@@ -87,8 +87,11 @@ final class CompositeManager implements ConfigurationManagerInterface{
 		final CompositeSubField[] fields = annotation.value();
 		final int length = fields.length;
 		final Map<String, Object> dataValue = new HashMap<>(length);
-		for(int i = 0; i < length; i ++)
-			dataValue.put(fields[i].shortDescription(), fields[i].defaultValue());
+		for(int i = 0; i < length; i ++){
+			final CompositeSubField f = fields[i];
+
+			dataValue.put(f.shortDescription(), f.defaultValue());
+		}
 		return replace(composition, dataValue, fields);
 	}
 
@@ -109,8 +112,8 @@ final class CompositeManager implements ConfigurationManagerInterface{
 	public boolean isMandatory(final Annotation annotation){
 		boolean mandatory = false;
 		final CompositeSubField[] compositeFields = this.annotation.value();
-		for(int j = 0, length = compositeFields.length; !mandatory && j < length; j ++)
-			mandatory = StringHelper.isBlank(compositeFields[j].defaultValue());
+		for(int i = 0, length = compositeFields.length; !mandatory && i < length; i ++)
+			mandatory = StringHelper.isBlank(compositeFields[i].defaultValue());
 		return mandatory;
 	}
 
@@ -124,10 +127,12 @@ final class CompositeManager implements ConfigurationManagerInterface{
 		final CompositeSubField[] bindings = annotation.value();
 		final int length = bindings.length;
 		final Map<String, Object> compositeFieldsMap = new HashMap<>(length);
-		for(int j = 0; j < length; j ++){
-			final Map<String, Object> fieldMap = extractMap(bindings[j], fieldType);
+		for(int i = 0; i < length; i ++){
+			final CompositeSubField binding = bindings[i];
 
-			compositeFieldsMap.put(bindings[j].shortDescription(), fieldMap);
+			final Map<String, Object> fieldMap = extractMap(binding, fieldType);
+
+			compositeFieldsMap.put(binding.shortDescription(), fieldMap);
 		}
 		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.COMPOSITE_FIELDS, compositeFieldsMap, compositeMap);
 
