@@ -37,7 +37,7 @@ class BSD16Test{
 		BSD16 crc = new BSD16();
 		Number crc16 = crc.calculateChecksum("9142656".getBytes(StandardCharsets.US_ASCII), 0, 7, BSD16.START_VALUE_0x0000);
 
-		Assertions.assertEquals((short)0xA469, crc16.shortValue());
+		Assertions.assertEquals((short)0xEC69, crc16.shortValue());
 	}
 
 	@Test
@@ -45,7 +45,7 @@ class BSD16Test{
 		BSD16 crc = new BSD16();
 		Number crc16 = crc.calculateChecksum(new byte[]{0x01, 0x02, 0x03, 0x04}, 0, 4, BSD16.START_VALUE_0x0000);
 
-		Assertions.assertEquals((short)0xE006, crc16.shortValue());
+		Assertions.assertEquals((short)0x2006, crc16.shortValue());
 	}
 
 }
