@@ -58,7 +58,7 @@ import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.core.helpers.ValueOf;
-import io.github.mtrevisan.boxon.core.helpers.fieldextractors.FieldExtractor;
+import io.github.mtrevisan.boxon.core.helpers.extractors.FieldExtractor;
 import io.github.mtrevisan.boxon.core.keys.ConfigurationKey;
 import io.github.mtrevisan.boxon.core.keys.DescriberKey;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
@@ -68,6 +68,7 @@ import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -652,7 +653,10 @@ public enum AnnotationDescriptor{
 	 * @param map	The map in which to load the key-value pair.
 	 */
 	public static void putIfNotEmpty(final Enum<?> key, final Object value, final Map<String, Object> map){
-		if(value != null && !(value instanceof final String v && StringHelper.isBlank(v)))
+		if(value != null
+				&& !(value instanceof final String v && StringHelper.isBlank(v))
+				&& !(value instanceof final Collection<?> c && c.isEmpty())
+			)
 			map.put(key.toString(), value);
 	}
 

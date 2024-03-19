@@ -22,33 +22,43 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.helpers.fieldextractors;
+package io.github.mtrevisan.boxon.core.helpers.extractors;
 
+import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.core.helpers.templates.EvaluatedField;
+import io.github.mtrevisan.boxon.core.helpers.templates.PostProcessedField;
+import io.github.mtrevisan.boxon.core.helpers.templates.Template;
+import io.github.mtrevisan.boxon.core.helpers.templates.TemplateField;
 
-import java.lang.annotation.Annotation;
+import java.util.List;
 
 
-public class FieldExtractorEvaluatedField implements FieldExtractor<EvaluatedField, Annotation>{
+public class MessageExtractorBasicTemplate implements MessageExtractor<Template<?>, TemplateHeader, TemplateField>{
 
 	@Override
-	public Annotation[] getSkips(final EvaluatedField field){
+	public String getTypeName(final Template<?> message){
+		return message.getType()
+			.getName();
+	}
+
+	@Override
+	public TemplateHeader getHeader(final Template<?> message){
+		return message.getHeader();
+	}
+
+	@Override
+	public List<TemplateField> getFields(final Template<?> message){
+		return message.getTemplateFields();
+	}
+
+	@Override
+	public List<EvaluatedField> getEvaluatedFields(final Template<?> message){
 		return null;
 	}
 
 	@Override
-	public Annotation getBinding(final EvaluatedField field){
-		return field.getBinding();
-	}
-
-	@Override
-	public String getFieldName(final EvaluatedField field){
-		return field.getFieldName();
-	}
-
-	@Override
-	public Class<?> getFieldType(final EvaluatedField field){
-		return field.getFieldType();
+	public List<PostProcessedField> getPostProcessedFields(final Template<?> message){
+		return null;
 	}
 
 }

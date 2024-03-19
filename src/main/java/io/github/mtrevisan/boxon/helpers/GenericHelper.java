@@ -171,7 +171,7 @@ public final class GenericHelper{
 
 	private static <T> Queue<Type> extractAncestors(final Class<? extends T> offspring){
 		final Type[] genericInterfaces = offspring.getGenericInterfaces();
-		final Queue<Type> ancestorsQueue = new ArrayDeque<>(genericInterfaces.length + 1);
+		final Queue<Type> ancestorsQueue = new ArrayDeque<>(genericInterfaces.length);
 		ancestorsQueue.addAll(Arrays.asList(genericInterfaces));
 		final Type genericSuperclass = offspring.getGenericSuperclass();
 		if(genericSuperclass != null)

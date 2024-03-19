@@ -24,16 +24,22 @@
  */
 package io.github.mtrevisan.boxon.core;
 
+import io.github.mtrevisan.boxon.annotations.Skip;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationMessage;
 import io.github.mtrevisan.boxon.core.helpers.descriptors.AnnotationDescriptor;
-import io.github.mtrevisan.boxon.core.helpers.fieldextractors.FieldExtractor;
-import io.github.mtrevisan.boxon.core.helpers.fieldextractors.FieldExtractorConfiguration;
-import io.github.mtrevisan.boxon.core.helpers.fieldextractors.FieldExtractorEvaluatedField;
-import io.github.mtrevisan.boxon.core.helpers.fieldextractors.FieldExtractorPostProcessedField;
-import io.github.mtrevisan.boxon.core.helpers.fieldextractors.FieldExtractorTemplate;
+import io.github.mtrevisan.boxon.core.helpers.extractors.FieldExtractor;
+import io.github.mtrevisan.boxon.core.helpers.extractors.FieldExtractorConfiguration;
+import io.github.mtrevisan.boxon.core.helpers.extractors.FieldExtractorEvaluatedField;
+import io.github.mtrevisan.boxon.core.helpers.extractors.FieldExtractorPostProcessedField;
+import io.github.mtrevisan.boxon.core.helpers.extractors.FieldExtractorTemplate;
+import io.github.mtrevisan.boxon.core.helpers.extractors.MessageExtractor;
+import io.github.mtrevisan.boxon.core.helpers.extractors.MessageExtractorFullTemplate;
+import io.github.mtrevisan.boxon.core.helpers.extractors.MessageExtractorConfiguration;
+import io.github.mtrevisan.boxon.core.helpers.extractors.MessageExtractorBasicTemplate;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
+import io.github.mtrevisan.boxon.core.helpers.templates.TemplateField;
 import io.github.mtrevisan.boxon.core.keys.DescriberKey;
 import io.github.mtrevisan.boxon.core.parsers.ConfigurationParser;
 import io.github.mtrevisan.boxon.core.parsers.LoaderConfiguration;
@@ -45,6 +51,7 @@ import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.helpers.ContextHelper;
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -64,10 +71,13 @@ import static io.github.mtrevisan.boxon.core.helpers.descriptors.AnnotationDescr
 @SuppressWarnings({"WeakerAccess", "unused"})
 public final class Descriptor{
 
-	private static final FieldExtractorTemplate EXTRACTOR_TEMPLATE = new FieldExtractorTemplate();
-	private static final FieldExtractorEvaluatedField EXTRACTOR_EVALUATED_FIELD = new FieldExtractorEvaluatedField();
-	private static final FieldExtractorPostProcessedField EXTRACTOR_POST_PROCESSED_FIELD = new FieldExtractorPostProcessedField();
-	private static final FieldExtractorConfiguration EXTRACTOR_CONFIGURATION = new FieldExtractorConfiguration();
+	private static final MessageExtractorBasicTemplate MESSAGE_EXTRACTOR_BASIC_TEMPLATE = new MessageExtractorBasicTemplate();
+	private static final MessageExtractorBasicTemplate MESSAGE_EXTRACTOR_FULL_TEMPLATE = new MessageExtractorFullTemplate();
+	private static final MessageExtractorConfiguration MESSAGE_EXTRACTOR_CONFIGURATION = new MessageExtractorConfiguration();
+	private static final FieldExtractor<TemplateField, Skip> FIELD_EXTRACTOR_TEMPLATE = new FieldExtractorTemplate();
+	private static final FieldExtractorEvaluatedField FIELD_EXTRACTOR_EVALUATED_FIELD = new FieldExtractorEvaluatedField();
+	private static final FieldExtractorPostProcessedField FIELD_EXTRACTOR_POST_PROCESSED_FIELD = new FieldExtractorPostProcessedField();
+	private static final FieldExtractorConfiguration FIELD_EXTRACTOR_CONFIGURATION = new FieldExtractorConfiguration();
 
 	private final Core core;
 
@@ -104,7 +114,7 @@ public final class Descriptor{
 	 */
 	public List<Map<String, Object>> describeParsing() throws FieldException{
 		final Collection<Template<?>> templates = new HashSet<>(loaderTemplate.getTemplates());
-		return describeEntities(templates, this::describeParsing);
+		return describeEntities(templates, template -> describeMessage(template, MESSAGE_EXTRACTOR_FULL_TEMPLATE, FIELD_EXTRACTOR_TEMPLATE));
 	}
 
 	/**
@@ -116,7 +126,8 @@ public final class Descriptor{
 	 * @throws TemplateException	If a template is not well formatted.
 	 */
 	public Map<String, Object> describeParsing(final Class<?> templateClass) throws FieldException{
-		return describeEntity(TemplateHeader.class, templateClass, loaderTemplate::extractTemplate, this::describeTemplate);
+		return describeEntity(TemplateHeader.class, templateClass, loaderTemplate::extractTemplate,
+			template -> describeMessage(template, MESSAGE_EXTRACTOR_FULL_TEMPLATE, FIELD_EXTRACTOR_TEMPLATE));
 	}
 
 	/**
@@ -128,19 +139,8 @@ public final class Descriptor{
 	 * @throws TemplateException	If a template is not well formatted.
 	 */
 	public List<Map<String, Object>> describeParsing(final Class<?>... templateClasses) throws FieldException{
-		return describeEntities(TemplateHeader.class, templateClasses, loaderTemplate::extractTemplate, this::describeParsing);
-	}
-
-	private Map<String, Object> describeParsing(final Template<?> template) throws FieldException{
-		final Map<String, Object> description = new HashMap<>(5);
-		putIfNotEmpty(DescriberKey.TEMPLATE, template.getType().getName(), description);
-		putIfNotEmpty(DescriberKey.HEADER, describeHeader(template.getHeader()), description);
-		putIfNotEmpty(DescriberKey.FIELDS, describeFields(template.getTemplateFields(), EXTRACTOR_TEMPLATE), description);
-		putIfNotEmpty(DescriberKey.EVALUATED_FIELDS, describeFields(template.getEvaluatedFields(), EXTRACTOR_EVALUATED_FIELD), description);
-		putIfNotEmpty(DescriberKey.POST_PROCESSED_FIELDS, describeFields(template.getPostProcessedFields(), EXTRACTOR_POST_PROCESSED_FIELD),
-			description);
-		describeContext(description);
-		return Collections.unmodifiableMap(description);
+		return describeEntities(TemplateHeader.class, templateClasses, loaderTemplate::extractTemplate,
+			template -> describeMessage(template, MESSAGE_EXTRACTOR_FULL_TEMPLATE, FIELD_EXTRACTOR_TEMPLATE));
 	}
 
 
@@ -152,7 +152,7 @@ public final class Descriptor{
 	 */
 	public List<Map<String, Object>> describeTemplate() throws FieldException{
 		final Collection<Template<?>> configurations = new HashSet<>(loaderTemplate.getTemplates());
-		return describeEntities(configurations, this::describeTemplate);
+		return describeEntities(configurations, template -> describeMessage(template, MESSAGE_EXTRACTOR_BASIC_TEMPLATE, FIELD_EXTRACTOR_TEMPLATE));
 	}
 
 	/**
@@ -164,7 +164,8 @@ public final class Descriptor{
 	 * @throws TemplateException	If a template is not well formatted.
 	 */
 	public Map<String, Object> describeTemplate(final Class<?> templateClass) throws FieldException{
-		return describeEntity(TemplateHeader.class, templateClass, loaderTemplate::extractTemplate, this::describeTemplate);
+		return describeEntity(TemplateHeader.class, templateClass, loaderTemplate::extractTemplate,
+			template -> describeMessage(template, MESSAGE_EXTRACTOR_BASIC_TEMPLATE, FIELD_EXTRACTOR_TEMPLATE));
 	}
 
 	/**
@@ -176,16 +177,8 @@ public final class Descriptor{
 	 * @throws TemplateException	If a template is not well formatted.
 	 */
 	public List<Map<String, Object>> describeTemplate(final Class<?>... templateClasses) throws FieldException{
-		return describeEntities(TemplateHeader.class, templateClasses, loaderTemplate::extractTemplate, this::describeTemplate);
-	}
-
-	private Map<String, Object> describeTemplate(final Template<?> template) throws FieldException{
-		final Map<String, Object> description = new HashMap<>(3);
-		putIfNotEmpty(DescriberKey.TEMPLATE, template.getType().getName(), description);
-		putIfNotEmpty(DescriberKey.HEADER, describeHeader(template.getHeader()), description);
-		putIfNotEmpty(DescriberKey.FIELDS, describeFields(template.getTemplateFields(), EXTRACTOR_TEMPLATE), description);
-		describeContext(description);
-		return Collections.unmodifiableMap(description);
+		return describeEntities(TemplateHeader.class, templateClasses, loaderTemplate::extractTemplate,
+			template -> describeMessage(template, MESSAGE_EXTRACTOR_BASIC_TEMPLATE, FIELD_EXTRACTOR_TEMPLATE));
 	}
 
 
@@ -197,7 +190,8 @@ public final class Descriptor{
 	 */
 	public List<Map<String, Object>> describeConfiguration() throws FieldException{
 		final Collection<ConfigurationMessage<?>> configurations = new HashSet<>(loaderConfiguration.getConfigurations());
-		return describeEntities(configurations, this::describeConfiguration);
+		return describeEntities(configurations, template -> describeMessage(template, MESSAGE_EXTRACTOR_CONFIGURATION,
+			FIELD_EXTRACTOR_CONFIGURATION));
 	}
 
 	/**
@@ -214,7 +208,8 @@ public final class Descriptor{
 			final ConfigurationHeader header = configurationClass.getAnnotation(ConfigurationHeader.class);
 			return loaderConfiguration.getConfiguration(header.shortDescription());
 		};
-		return describeEntity(ConfigurationHeader.class, configurationClass, extractor, this::describeConfiguration);
+		return describeEntity(ConfigurationHeader.class, configurationClass, extractor,
+			template -> describeMessage(template, MESSAGE_EXTRACTOR_CONFIGURATION, FIELD_EXTRACTOR_CONFIGURATION));
 	}
 
 	/**
@@ -227,28 +222,30 @@ public final class Descriptor{
 	 */
 	public List<Map<String, Object>> describeConfiguration(final Class<?>... configurationClasses) throws FieldException{
 		return describeEntities(ConfigurationHeader.class, configurationClasses, loaderConfiguration::extractConfiguration,
-			this::describeConfiguration);
+			template -> describeMessage(template, MESSAGE_EXTRACTOR_CONFIGURATION, FIELD_EXTRACTOR_CONFIGURATION));
 	}
 
-	private Map<String, Object> describeConfiguration(final ConfigurationMessage<?> configuration) throws FieldException{
+
+	private <M, F> Map<String, Object> describeMessage(final M message,
+			final MessageExtractor<M, ? extends Annotation, F> messageExtractor, final FieldExtractor<F, ? extends Annotation> fieldExtractor)
+			throws FieldException{
 		final Map<String, Object> description = new HashMap<>(3);
-		putIfNotEmpty(DescriberKey.CONFIGURATION, configuration.getType().getName(), description);
-		putIfNotEmpty(DescriberKey.HEADER, describeHeader(configuration.getHeader()), description);
-		putIfNotEmpty(DescriberKey.FIELDS, describeFields(configuration.getConfigurationFields(), EXTRACTOR_CONFIGURATION), description);
+		final DescriberKey messageKey = (messageExtractor instanceof MessageExtractorBasicTemplate
+			? DescriberKey.TEMPLATE
+			: DescriberKey.CONFIGURATION);
+		putIfNotEmpty(messageKey, messageExtractor.getTypeName(message), description);
+		putIfNotEmpty(DescriberKey.HEADER, describeHeader(messageExtractor.getHeader(message)), description);
+		putIfNotEmpty(DescriberKey.FIELDS, describeFields(messageExtractor.getFields(message), fieldExtractor), description);
+		putIfNotEmpty(DescriberKey.EVALUATED_FIELDS, describeFields(messageExtractor.getEvaluatedFields(message),
+			FIELD_EXTRACTOR_EVALUATED_FIELD), description);
+		putIfNotEmpty(DescriberKey.POST_PROCESSED_FIELDS, describeFields(messageExtractor.getPostProcessedFields(message),
+			FIELD_EXTRACTOR_POST_PROCESSED_FIELD), description);
 		describeContext(description);
 		return Collections.unmodifiableMap(description);
 	}
 
-
-	private static Map<String, Object> describeHeader(final TemplateHeader template){
+	private static Map<String, Object> describeHeader(final Annotation header){
 		final Map<String, Object> headerDescription = new HashMap<>(3);
-		AnnotationDescriptor.fromAnnotation(template)
-			.describe(template, headerDescription);
-		return Collections.unmodifiableMap(headerDescription);
-	}
-
-	private static Map<String, Object> describeHeader(final ConfigurationHeader header){
-		final Map<String, Object> headerDescription = new HashMap<>(7);
 		AnnotationDescriptor.fromAnnotation(header)
 			.describe(header, headerDescription);
 		return Collections.unmodifiableMap(headerDescription);
@@ -296,18 +293,18 @@ public final class Descriptor{
 		putIfNotEmpty(DescriberKey.CONTEXT, Collections.unmodifiableMap(ctx), description);
 	}
 
-	private static <F, S extends Annotation> Collection<Map<String, Object>> describeFields(final List<F> fields,
-			final FieldExtractor<F, S> extractor) throws FieldException{
-		final int length = fields.size();
-		final Collection<Map<String, Object>> fieldsDescription = new ArrayList<>(length + 1);
+	private static <F> Collection<Map<String, Object>> describeFields(final List<F> fields,
+			final FieldExtractor<F, ? extends Annotation> fieldExtractor) throws FieldException{
+		final int length = JavaHelper.lengthOrZero(fields);
+		final Collection<Map<String, Object>> fieldsDescription = new ArrayList<>(length);
 		for(int i = 0; i < length; i ++){
 			final F field = fields.get(i);
 
-			AnnotationDescriptor.describeSkips(field, extractor, fieldsDescription);
+			AnnotationDescriptor.describeSkips(field, fieldExtractor, fieldsDescription);
 
-			final Annotation binding = extractor.getBinding(field);
-			final String fieldName = extractor.getFieldName(field);
-			final Class<?> fieldType = extractor.getFieldType(field);
+			final Annotation binding = fieldExtractor.getBinding(field);
+			final String fieldName = fieldExtractor.getFieldName(field);
+			final Class<?> fieldType = fieldExtractor.getFieldType(field);
 			describeField(binding, fieldName, fieldType, fieldsDescription);
 		}
 		return Collections.unmodifiableCollection(fieldsDescription);

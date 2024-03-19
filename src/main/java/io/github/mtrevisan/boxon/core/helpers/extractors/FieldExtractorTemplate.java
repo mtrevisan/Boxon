@@ -22,32 +22,33 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.helpers.fieldextractors;
+package io.github.mtrevisan.boxon.core.helpers.extractors;
 
-import io.github.mtrevisan.boxon.core.helpers.templates.PostProcessedField;
+import io.github.mtrevisan.boxon.annotations.Skip;
+import io.github.mtrevisan.boxon.core.helpers.templates.TemplateField;
 
 import java.lang.annotation.Annotation;
 
 
-public class FieldExtractorPostProcessedField implements FieldExtractor<PostProcessedField, Annotation>{
+public class FieldExtractorTemplate implements FieldExtractor<TemplateField, Skip>{
 
 	@Override
-	public Annotation[] getSkips(final PostProcessedField field){
-		return null;
+	public Skip[] getSkips(final TemplateField field){
+		return field.getSkips();
 	}
 
 	@Override
-	public Annotation getBinding(final PostProcessedField field){
+	public Annotation getBinding(final TemplateField field){
 		return field.getBinding();
 	}
 
 	@Override
-	public String getFieldName(final PostProcessedField field){
+	public String getFieldName(final TemplateField field){
 		return field.getFieldName();
 	}
 
 	@Override
-	public Class<?> getFieldType(final PostProcessedField field){
+	public Class<?> getFieldType(final TemplateField field){
 		return field.getFieldType();
 	}
 
