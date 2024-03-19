@@ -54,6 +54,7 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Function;
 
 
 /**
@@ -341,19 +342,6 @@ public final class TemplateParser implements TemplateParserInterface{
 		}
 	}
 
-	private void postProcessFields(final Template<?> template, final ParserContext<?> parserContext){
-		final List<PostProcessedField> postProcessedFields = template.getPostProcessedFields();
-		for(int i = 0, length = postProcessedFields.size(); i < length; i ++){
-			final PostProcessedField field = postProcessedFields.get(i);
-
-			final PostProcessField binding = field.getBinding();
-			final String condition = binding.condition();
-			final String expression = binding.valueDecode();
-
-			processField(condition, expression, parserContext, field, template.getType().getName());
-		}
-	}
-
 	@Override
 	public <T> void encode(final Template<?> template, final BitWriterInterface writer, final Object parentObject, final T currentObject)
 			throws FieldException{
@@ -388,21 +376,31 @@ public final class TemplateParser implements TemplateParserInterface{
 			ParserWriterHelper.writeAffix(header.end(), header.charset(), writer);
 	}
 
+	private void postProcessFields(final Template<?> template, final ParserContext<?> parserContext){
+		processFields(template, parserContext, PostProcessField::valueDecode);
+	}
+
 	private void preProcessFields(final Template<?> template, final ParserContext<?> parserContext){
+		processFields(template, parserContext, PostProcessField::valueEncode);
+	}
+
+	private void processFields(final Template<?> template, final ParserContext<?> parserContext,
+			final Function<PostProcessField, String> valueExtractor){
+		final String templateName = template.getType().getName();
 		final List<PostProcessedField> postProcessedFields = template.getPostProcessedFields();
 		for(int i = 0, length = postProcessedFields.size(); i < length; i ++){
 			final PostProcessedField field = postProcessedFields.get(i);
 
 			final PostProcessField binding = field.getBinding();
 			final String condition = binding.condition();
-			final String expression = binding.valueEncode();
+			final String expression = valueExtractor.apply(binding);
 
-			processField(condition, expression, parserContext, field, template.getType().getName());
+			processField(condition, expression, parserContext, field, templateName);
 		}
 	}
 
-	private void processField(final String condition, final String expression, final ParserContext<?> parserContext, final PostProcessedField field,
-			final String templateName){
+	private void processField(final String condition, final String expression, final ParserContext<?> parserContext,
+			final PostProcessedField field, final String templateName){
 		final Evaluator evaluator = core.getEvaluator();
 		final Object rootObject = parserContext.getRootObject();
 		final boolean process = evaluator.evaluateBoolean(condition, rootObject);

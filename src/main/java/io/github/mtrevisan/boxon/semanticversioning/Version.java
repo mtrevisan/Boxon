@@ -440,15 +440,16 @@ public final class Version implements Comparable<Version>{
 	 */
 	private static boolean containsOnlyValidChars(final String text){
 		final int length = JavaHelper.lengthOrZero(text);
-		if(length > 0){
-			final byte[] bytes = text.toUpperCase(Locale.ROOT)
-				.getBytes(StandardCharsets.US_ASCII);
-			for(int i = 0; i < length; i ++){
-				final byte chr = bytes[i];
+		if(length == 0)
+			return true;
 
-				if(chr != '-' && (chr < 'A' || chr > 'Z'))
-					return false;
-			}
+		final byte[] bytes = text.toUpperCase(Locale.ROOT)
+			.getBytes(StandardCharsets.US_ASCII);
+		for(int i = 0; i < length; i ++){
+			final byte chr = bytes[i];
+
+			if(chr != '-' && (chr < 'A' || chr > 'Z'))
+				return false;
 		}
 		return true;
 	}
