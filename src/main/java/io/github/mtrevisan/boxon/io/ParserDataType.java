@@ -44,8 +44,8 @@ public enum ParserDataType{
 
 	BYTE(Byte.TYPE, Byte.class, Byte.SIZE){
 		@Override
-		Object cast(final long value){
-			return (byte)value;
+		Object cast(final BigInteger value){
+			return value.byteValue();
 		}
 
 		@Override
@@ -61,8 +61,8 @@ public enum ParserDataType{
 
 	SHORT(Short.TYPE, Short.class, Short.SIZE){
 		@Override
-		Object cast(final long value){
-			return (short)value;
+		Object cast(final BigInteger value){
+			return value.shortValue();
 		}
 
 		@Override
@@ -78,8 +78,8 @@ public enum ParserDataType{
 
 	INTEGER(Integer.TYPE, Integer.class, Integer.SIZE){
 		@Override
-		Object cast(final long value){
-			return (int)value;
+		Object cast(final BigInteger value){
+			return value.intValue();
 		}
 
 		@Override
@@ -95,8 +95,8 @@ public enum ParserDataType{
 
 	LONG(Long.TYPE, Long.class, Long.SIZE){
 		@Override
-		Object cast(final long value){
-			return value;
+		Object cast(final BigInteger value){
+			return value.longValue();
 		}
 
 		@Override
@@ -112,8 +112,8 @@ public enum ParserDataType{
 
 	FLOAT(Float.TYPE, Float.class, Float.SIZE){
 		@Override
-		Object cast(final long value){
-			return (float)value;
+		Object cast(final BigInteger value){
+			return value.floatValue();
 		}
 
 		@Override
@@ -129,8 +129,8 @@ public enum ParserDataType{
 
 	DOUBLE(Double.TYPE, Double.class, Double.SIZE){
 		@Override
-		Object cast(final long value){
-			return (double)value;
+		Object cast(final BigInteger value){
+			return value.doubleValue();
 		}
 
 		@Override
@@ -272,7 +272,7 @@ public enum ParserDataType{
 	}
 
 
-	abstract Object cast(long value);
+	abstract Object cast(BigInteger value);
 
 	/**
 	 * Read a specific data type from the reader, using the given byte order.
@@ -337,16 +337,9 @@ public enum ParserDataType{
 				? new BigInteger(text.substring(2), 16)
 				: new BigInteger(text));
 			final ParserDataType objectiveDataType = fromType(objectiveType);
-			if(decValue.bitCount() <= objectiveDataType.size){
-				//extract value as long
-				final byte[] byteArray = decValue.toByteArray();
-				long value = 0l;
-				for(int i = 0, length = byteArray.length; i < length; i ++)
-					value = (value << Byte.SIZE) | (byteArray[i] & 0xFFl);
-
+			if(decValue.bitCount() <= objectiveDataType.size)
 				//convert value to `objectiveType` class
-				result = objectiveDataType.cast(value);
-			}
+				result = objectiveDataType.cast(decValue);
 		}
 		return result;
 	}
