@@ -330,7 +330,7 @@ public enum ParserDataType{
 			: val);
 	}
 
-	private static Object toNumber(final String text, final Class<?> objectiveType){
+	public static Object toNumber(final String text, final Class<?> objectiveType){
 		Object result = null;
 		if(isNumeric(text)){
 			final BigInteger decValue = (text.startsWith("0x")
@@ -339,10 +339,10 @@ public enum ParserDataType{
 			final ParserDataType objectiveDataType = fromType(objectiveType);
 			if(decValue.bitCount() <= objectiveDataType.size){
 				//extract value as long
-				long value = 0l;
 				final byte[] byteArray = decValue.toByteArray();
-				for(int i = 0, length = byteArray.length, shift = (length - 1) << 3; i < length; i ++, shift -= Byte.SIZE)
-					value |= (byteArray[i] & 0xFFl) << shift;
+				long value = 0l;
+				for(int i = 0, length = byteArray.length; i < length; i ++)
+					value = (value << Byte.SIZE) | (byteArray[i] & 0xFFl);
 
 				//convert value to `objectiveType` class
 				result = objectiveDataType.cast(value);
