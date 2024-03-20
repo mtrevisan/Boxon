@@ -44,6 +44,11 @@ public enum ParserDataType{
 
 	BYTE(Byte.TYPE, Byte.class, Byte.SIZE){
 		@Override
+		Object cast(final long value){
+			return (byte)value;
+		}
+
+		@Override
 		Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
 			return reader.getByte();
 		}
@@ -55,6 +60,11 @@ public enum ParserDataType{
 	},
 
 	SHORT(Short.TYPE, Short.class, Short.SIZE){
+		@Override
+		Object cast(final long value){
+			return (short)value;
+		}
+
 		@Override
 		Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
 			return reader.getShort(byteOrder);
@@ -68,6 +78,11 @@ public enum ParserDataType{
 
 	INTEGER(Integer.TYPE, Integer.class, Integer.SIZE){
 		@Override
+		Object cast(final long value){
+			return (int)value;
+		}
+
+		@Override
 		Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
 			return reader.getInt(byteOrder);
 		}
@@ -79,6 +94,11 @@ public enum ParserDataType{
 	},
 
 	LONG(Long.TYPE, Long.class, Long.SIZE){
+		@Override
+		Object cast(final long value){
+			return value;
+		}
+
 		@Override
 		Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
 			return reader.getLong(byteOrder);
@@ -92,6 +112,11 @@ public enum ParserDataType{
 
 	FLOAT(Float.TYPE, Float.class, Float.SIZE){
 		@Override
+		Object cast(final long value){
+			return (float)value;
+		}
+
+		@Override
 		Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
 			return reader.getFloat(byteOrder);
 		}
@@ -103,6 +128,11 @@ public enum ParserDataType{
 	},
 
 	DOUBLE(Double.TYPE, Double.class, Double.SIZE){
+		@Override
+		Object cast(final long value){
+			return (double)value;
+		}
+
 		@Override
 		Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
 			return reader.getDouble(byteOrder);
@@ -144,6 +174,7 @@ public enum ParserDataType{
 
 	private final Class<?> primitiveType;
 	private final Class<?> objectiveType;
+	//the number of bits used to represent the value
 	private final int size;
 
 
@@ -240,6 +271,9 @@ public enum ParserDataType{
 			long.class.getSimpleName(), float.class.getSimpleName(), double.class.getSimpleName()});
 	}
 
+
+	abstract Object cast(long value);
+
 	/**
 	 * Read a specific data type from the reader, using the given byte order.
 	 *
@@ -247,7 +281,7 @@ public enum ParserDataType{
 	 * @param byteOrder	The byte order.
 	 * @return	The read value.
 	 */
-	abstract Object read(final BitReaderInterface reader, final ByteOrder byteOrder);
+	abstract Object read(BitReaderInterface reader, ByteOrder byteOrder);
 
 	/**
 	 * Write a specific data to the writer, using the given byte order.
@@ -255,7 +289,7 @@ public enum ParserDataType{
 	 * @param value	The value to be written.
 	 * @param byteOrder	The byte order.
 	 */
-	abstract void write(final BitWriterInterface writer, final Object value, final ByteOrder byteOrder);
+	abstract void write(BitWriterInterface writer, Object value, ByteOrder byteOrder);
 
 
 	/**
@@ -299,32 +333,20 @@ public enum ParserDataType{
 	private static Object toNumber(final String text, final Class<?> objectiveType){
 		Object result = null;
 		if(isNumeric(text)){
-			try{
-				final BigInteger decValue = (text.startsWith("0x")
-					? new BigInteger(text.substring(2), 16)
-					: new BigInteger(text));
-				final int maxBytes = (int)objectiveType.getDeclaredField("BYTES")
-					.get(null);
-				if(decValue.bitCount() <= maxBytes << 3){
-					//extract decimal value as object
-					final byte[] byteArray = decValue.toByteArray();
-					if(maxBytes == Byte.BYTES)
-						result = byteArray[0];
-					else{
-						long value = 0l;
-						for(int i = 0, length = byteArray.length; i < length; i ++)
-							value |= (byteArray[i] & 0xFFl) << (Byte.SIZE * (length - 1 - i));
+			final BigInteger decValue = (text.startsWith("0x")
+				? new BigInteger(text.substring(2), 16)
+				: new BigInteger(text));
+			final ParserDataType objectiveDataType = fromType(objectiveType);
+			if(decValue.bitCount() <= objectiveDataType.size){
+				//extract value as long
+				long value = 0l;
+				final byte[] byteArray = decValue.toByteArray();
+				for(int i = 0, length = byteArray.length, shift = (length - 1) << 3; i < length; i ++, shift -= Byte.SIZE)
+					value |= (byteArray[i] & 0xFFl) << shift;
 
-						if(maxBytes == Short.BYTES)
-							result = (short)value;
-						else if(maxBytes == Integer.BYTES)
-							result = (int)value;
-						else if(maxBytes == Long.BYTES)
-							result = value;
-					}
-				}
+				//convert value to `objectiveType` class
+				result = objectiveDataType.cast(value);
 			}
-			catch(final NoSuchFieldException | IllegalAccessException ignored){}
 		}
 		return result;
 	}

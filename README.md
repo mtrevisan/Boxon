@@ -147,25 +147,26 @@ You can get pre-built JARs (usable on JRE 11 or newer) from [Sonatype](https://o
     2. [Message composer](#example-composer)
 11. [Contributing](#contributing)
 12. [Changelog](#changelog)
-    1. [version 3.4.0](#changelog-3.4.0)
-    2. [version 3.3.0](#changelog-3.3.0)
-    3. [version 3.2.0](#changelog-3.2.0)
-    4. [version 3.1.3](#changelog-3.1.3)
-    5. [version 3.1.2](#changelog-3.1.2)
-    6. [version 3.1.1](#changelog-3.1.1)
-    7. [version 3.1.0](#changelog-3.1.0)
-    8. [version 3.0.2](#changelog-3.0.2)
-    9. [version 3.0.1](#changelog-3.0.1)
-    10. [version 3.0.0](#changelog-3.0.0)
-    11. [version 2.1.2](#changelog-2.1.2)
-    12. [version 2.1.1](#changelog-2.1.1)
-    13. [version 2.1.0](#changelog-2.1.0)
-    14. [version 2.0.0](#changelog-2.0.0)
-    15. [version 1.1.0](#changelog-1.1.0)
-    16. [version 1.0.0](#changelog-1.0.0)
-    17. [version 0.0.2](#changelog-0.0.2)
-    18. [version 0.0.1](#changelog-0.0.1)
-    19. [version 0.0.0](#changelog-0.0.0)
+    1. [version 3.4.1](#changelog-3.4.1)
+    2. [version 3.4.0](#changelog-3.4.0)
+    3. [version 3.3.0](#changelog-3.3.0)
+    4. [version 3.2.0](#changelog-3.2.0)
+    5. [version 3.1.3](#changelog-3.1.3)
+    6. [version 3.1.2](#changelog-3.1.2)
+    7. [version 3.1.1](#changelog-3.1.1)
+    8. [version 3.1.0](#changelog-3.1.0)
+    9. [version 3.0.2](#changelog-3.0.2)
+    10. [version 3.0.1](#changelog-3.0.1)
+    11. [version 3.0.0](#changelog-3.0.0)
+    12. [version 2.1.2](#changelog-2.1.2)
+    13. [version 2.1.1](#changelog-2.1.1)
+    14. [version 2.1.0](#changelog-2.1.0)
+    15. [version 2.0.0](#changelog-2.0.0)
+    16. [version 1.1.0](#changelog-1.1.0)
+    17. [version 1.0.0](#changelog-1.0.0)
+    18. [version 0.0.2](#changelog-0.0.2)
+    19. [version 0.0.1](#changelog-0.0.1)
+    20. [version 0.0.0](#changelog-0.0.0)
 13. [License](#license)
 
 <br/>
@@ -1578,6 +1579,11 @@ Pull requests are welcomed.
 
 <a name="changelog"></a>
 ## Changelog
+
+<a name="changelog-3.4.1"></a>
+### version 3.4.1 - 20240320
+
+- Fixed a problem while converting a numeric string to number.
 
 <a name="changelog-3.4.0"></a>
 ### version 3.4.0 - 20240318

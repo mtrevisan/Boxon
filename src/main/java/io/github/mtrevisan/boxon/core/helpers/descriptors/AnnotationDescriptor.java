@@ -493,7 +493,7 @@ public enum AnnotationDescriptor{
 	 * @param annotation	The annotation from which to extract the description.
 	 * @param rootDescription	The map in which to load the description.
 	 */
-	public abstract void describe(final Annotation annotation, final Map<String, Object> rootDescription);
+	public abstract void describe(Annotation annotation, Map<String, Object> rootDescription);
 
 	/**
 	 * Load a description of the given skip/configuration skip annotations in the given map.

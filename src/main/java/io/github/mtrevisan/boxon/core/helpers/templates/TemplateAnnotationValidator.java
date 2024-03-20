@@ -196,7 +196,7 @@ enum TemplateAnnotationValidator{
 	 * @param annotation	The annotation.
 	 * @throws AnnotationException	If an error is detected.
 	 */
-	abstract void validate(final Field field, final Annotation annotation) throws AnnotationException;
+	abstract void validate(Field field, Annotation annotation) throws AnnotationException;
 
 
 	private static void validateType(final Class<?> bindingType, final Class<? extends Annotation> annotation) throws AnnotationException{

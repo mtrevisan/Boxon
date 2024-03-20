@@ -79,9 +79,9 @@ public final class BNDMPatternMatcher implements PatternMatcher{
 		assertLength(length);
 
 		int j = 0;
-		for(int i = 0; i < length; i ++)
+		for(int i = 0, shift = length - 1; i < length; i ++, shift --)
 			if(pattern[i] == wildcard)
-				j |= 1 << (length - i - 1);
+				j |= 1 << shift;
 
 		final int[] preprocessedPattern = new int[Integer.SIZE << 3];
 		if(j != 0)

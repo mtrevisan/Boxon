@@ -75,7 +75,7 @@ class CodecBitSetTest{
 
 			@Override
 			public String size(){
-				return Integer.toString(randomBytes.length * Byte.SIZE);
+				return Integer.toString(randomBytes.length << 3);
 			}
 
 			@Override
@@ -145,7 +145,7 @@ class CodecBitSetTest{
 
 			@Override
 			public String size(){
-				return Integer.toString(randomBytes.length * Byte.SIZE);
+				return Integer.toString(randomBytes.length << 3);
 			}
 
 			@Override
