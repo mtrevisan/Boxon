@@ -308,10 +308,11 @@ public final class ReflectionHelper{
 	 * @return	The value returned by the given method, or the default value if an exception occurs.
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> T invokeMethodOrDefault(final Object obj, final Method method, final T defaultValue){
+	public static <T> T invokeMethod(final Object obj, final Method method, final T defaultValue){
 		T result = defaultValue;
 		try{
-			result = (method != null? (T)method.invoke(obj): defaultValue);
+			if(method != null)
+				result = (T)method.invoke(obj);
 		}
 		catch(final IllegalAccessException | InvocationTargetException ignored){}
 		return result;

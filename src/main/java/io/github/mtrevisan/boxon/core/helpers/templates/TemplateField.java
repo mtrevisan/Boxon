@@ -71,7 +71,7 @@ public final class TemplateField{
 		if(binding != null){
 			//pre-fetch condition method
 			final Method conditionMethod = ReflectionHelper.getAccessibleMethod(binding.annotationType(), CONDITION, String.class);
-			condition = ReflectionHelper.invokeMethodOrDefault(binding, conditionMethod, JavaHelper.EMPTY_STRING);
+			condition = ReflectionHelper.invokeMethod(binding, conditionMethod, JavaHelper.EMPTY_STRING);
 		}
 	}
 
