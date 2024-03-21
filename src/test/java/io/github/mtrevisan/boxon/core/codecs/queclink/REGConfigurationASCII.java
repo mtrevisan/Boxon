@@ -33,6 +33,8 @@ import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
 
+import java.math.BigInteger;
+
 
 @ConfigurationHeader(longDescription = "The command AT+GTREG is used to do things.", shortDescription = "AT+GTREG", maxProtocol = "2.8",
 	start = "AT+", end = "$")
@@ -46,6 +48,9 @@ public class REGConfigurationASCII{
 
 	@ConfigurationField(shortDescription = "Operation mode", minValue = "0", maxValue = "3", defaultValue = "0", terminator = ",")
 	private Integer operationMode;
+
+	@ConfigurationField(shortDescription = "Random field", defaultValue = "27", terminator = ",")
+	private BigInteger randomField;
 
 	@ConfigurationField(shortDescription = "Update Over-The-Air", enumeration = BooleanType.class, defaultValue = "FALSE", terminator = ",")
 	private BooleanType updateOverTheAir;

@@ -338,7 +338,7 @@ public enum ParserDataType{
 				? new BigInteger(text.substring(2), 16)
 				: new BigInteger(text));
 			final ParserDataType objectiveDataType = fromType(objectiveType);
-			if(decValue.bitCount() <= objectiveDataType.size)
+			if(objectiveDataType != null && decValue.bitCount() <= objectiveDataType.size)
 				//convert value to `objectiveType` class
 				result = objectiveDataType.cast(decValue);
 		}
@@ -414,13 +414,21 @@ public enum ParserDataType{
 	}
 
 	private static Object toObjectValue(final String value, final Class<?> objectiveType) throws CodecException{
-		try{
-			final Method method = objectiveType.getDeclaredMethod(METHOD_VALUE_OF, String.class);
-			return method.invoke(null, value);
+		Object result;
+		if(BigDecimal.class.isAssignableFrom(objectiveType))
+			result = new BigDecimal(value);
+		else if(BigInteger.class.isAssignableFrom(objectiveType))
+			result = new BigInteger(value);
+		else{
+			try{
+				final Method method = objectiveType.getDeclaredMethod(METHOD_VALUE_OF, String.class);
+				result = method.invoke(null, value);
+			}
+			catch(final NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored){
+				throw CodecException.create("Cannot interpret {} as {}", value, objectiveType.getSimpleName());
+			}
 		}
-		catch(final NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored){
-			throw CodecException.create("Cannot interpret {} as {}", value, objectiveType.getSimpleName());
-		}
+		return result;
 	}
 
 }

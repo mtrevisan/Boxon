@@ -53,6 +53,7 @@ import io.github.mtrevisan.boxon.annotations.configurations.CompositeSubField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
+import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.converters.NullConverter;
 import io.github.mtrevisan.boxon.annotations.validators.NullValidator;
@@ -403,7 +404,8 @@ public enum AnnotationDescriptor{
 			putIfNotEmpty(ConfigurationKey.MIN_VALUE, binding.minValue(), rootDescription);
 			putIfNotEmpty(ConfigurationKey.MAX_VALUE, binding.maxValue(), rootDescription);
 			putIfNotEmpty(ConfigurationKey.PATTERN, binding.pattern(), rootDescription);
-			putIfNotEmpty(ConfigurationKey.ENUMERATION, binding.enumeration(), rootDescription);
+			if(binding.enumeration() != NullEnum.class)
+				putIfNotEmpty(ConfigurationKey.ENUMERATION, binding.enumeration(), rootDescription);
 			putIfNotEmpty(ConfigurationKey.DEFAULT_VALUE, binding.defaultValue(), rootDescription);
 			putIfNotEmpty(ConfigurationKey.CHARSET, binding.charset(), rootDescription);
 			putIfNotEmpty(ConfigurationKey.RADIX, binding.radix(), rootDescription);
@@ -444,7 +446,8 @@ public enum AnnotationDescriptor{
 			putIfNotEmpty(ConfigurationKey.MAX_PROTOCOL, binding.maxProtocol(), rootDescription);
 			describeAlternatives(binding.value(), rootDescription);
 			putIfNotEmpty(ConfigurationKey.VALUE, binding.value(), rootDescription);
-			putIfNotEmpty(ConfigurationKey.ENUMERATION, binding.enumeration(), rootDescription);
+			if(binding.enumeration() != NullEnum.class)
+				putIfNotEmpty(ConfigurationKey.ENUMERATION, binding.enumeration(), rootDescription);
 			putIfNotEmpty(ConfigurationKey.TERMINATOR, binding.terminator(), rootDescription);
 		}
 	},

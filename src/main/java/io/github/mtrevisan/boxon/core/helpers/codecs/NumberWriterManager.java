@@ -51,7 +51,11 @@ final class NumberWriterManager implements WriterManagerInterface{
 
 	@Override
 	public void put(final Object value){
-		if(value instanceof Byte || value instanceof Short || value instanceof Integer || value instanceof Long){
+		if(value instanceof final BigDecimal v)
+			writer.putText(v.toPlainString());
+		else if(value instanceof final BigInteger v)
+			writer.putText(v.toString(radix));
+		else if(value instanceof Number){
 			final String text = String.valueOf(value);
 			if(radix == 10)
 				writer.putText(text);
@@ -62,10 +66,6 @@ final class NumberWriterManager implements WriterManagerInterface{
 					: bi.toString(radix));
 			}
 		}
-		else if(value instanceof final BigDecimal v)
-			writer.putText(v.toPlainString());
-		else if(value instanceof final BigInteger v)
-			writer.putText(v.toString(radix));
 	}
 
 }
