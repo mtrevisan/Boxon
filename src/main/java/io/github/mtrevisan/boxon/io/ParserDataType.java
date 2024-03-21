@@ -170,6 +170,8 @@ public enum ParserDataType{
 	}
 
 	private static final String METHOD_VALUE_OF = "valueOf";
+	private static final String CLASS_DESCRIPTOR = Arrays.toString(new String[]{byte.class.getSimpleName(), short.class.getSimpleName(),
+		int.class.getSimpleName(), long.class.getSimpleName(), float.class.getSimpleName(), double.class.getSimpleName()});
 
 
 	private final Class<?> primitiveType;
@@ -267,8 +269,7 @@ public enum ParserDataType{
 	 * @return	A list of data types.
 	 */
 	static String describe(){
-		return Arrays.toString(new String[]{byte.class.getSimpleName(), short.class.getSimpleName(), int.class.getSimpleName(),
-			long.class.getSimpleName(), float.class.getSimpleName(), double.class.getSimpleName()});
+		return CLASS_DESCRIPTOR;
 	}
 
 
