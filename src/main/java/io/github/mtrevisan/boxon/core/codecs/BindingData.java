@@ -30,6 +30,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoicesList;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
+import io.github.mtrevisan.boxon.exceptions.DataException;
 import io.github.mtrevisan.boxon.helpers.CharsetHelper;
 import io.github.mtrevisan.boxon.helpers.ConstructorHelper;
 import io.github.mtrevisan.boxon.helpers.ContextHelper;
@@ -104,7 +105,7 @@ final class BindingData{
 		final Validator<T> validatorCreator = (Validator<T>)ConstructorHelper.getCreator(validator)
 			.get();
 		if(!validatorCreator.isValid(value))
-			throw new IllegalArgumentException("Validation of " + validator.getSimpleName() + " didn't passed (value is " + value + ")");
+			throw DataException.create("Validation of {} didn't passed (value is {})", validator.getSimpleName(), value);
 	}
 
 	/**
@@ -132,7 +133,7 @@ final class BindingData{
 	 *
 	 * @param reader	The reader from which to read the data from.
 	 * @return	The class type of the chosen alternative.
-	 * @throws CodecException	If a codec cannot be found for the chosen alternative.
+	 * @throws CodecException   If a codec cannot be found for the chosen alternative.
 	 */
 	Class<?> chooseAlternativeType(final BitReaderInterface reader) throws CodecException{
 		if(!hasSelectAlternatives())

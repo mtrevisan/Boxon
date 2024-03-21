@@ -43,7 +43,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.Annotation;
-import java.util.Locale;
 
 
 class CodecDoubleTest{
@@ -98,8 +97,8 @@ class CodecDoubleTest{
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		String expected = StringHelper.leftPad(Long.toHexString(Long.reverseBytes(Double.doubleToRawLongBits(encodedValue)))
-			.toUpperCase(Locale.ROOT), 16, '0');
+		String expected = StringHelper.leftPad(StringHelper.toHexString(Long.reverseBytes(Double.doubleToRawLongBits(encodedValue))),
+			16, '0');
 		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
@@ -158,8 +157,8 @@ class CodecDoubleTest{
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		String expected = StringHelper.leftPad(Long.toHexString(Long.reverseBytes(Double.doubleToRawLongBits(encodedValue)))
-			.toUpperCase(Locale.ROOT), 16, '0');
+		String expected = StringHelper.leftPad(StringHelper.toHexString(Long.reverseBytes(Double.doubleToRawLongBits(encodedValue))),
+			16, '0');
 		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
@@ -218,8 +217,7 @@ class CodecDoubleTest{
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		String expected = StringHelper.leftPad(Long.toHexString(Double.doubleToRawLongBits(encodedValue)).toUpperCase(Locale.ROOT), 8,
-			'0');
+		String expected = StringHelper.leftPad(StringHelper.toHexString(Double.doubleToRawLongBits(encodedValue)), 8, '0');
 		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
@@ -278,8 +276,7 @@ class CodecDoubleTest{
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		String expected = StringHelper.leftPad(Long.toHexString(Double.doubleToRawLongBits(encodedValue)).toUpperCase(Locale.ROOT), 8,
-			'0');
+		String expected = StringHelper.leftPad(StringHelper.toHexString(Double.doubleToRawLongBits(encodedValue)), 8, '0');
 		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);

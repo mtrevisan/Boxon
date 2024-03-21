@@ -31,6 +31,7 @@ import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.ParserDataType;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
+import io.github.mtrevisan.boxon.semanticversioning.VersionException;
 
 import java.util.Arrays;
 import java.util.regex.Pattern;
@@ -87,8 +88,8 @@ final class ValidationHelper{
 			try{
 				protocol = Version.of(protocolVersion);
 			}
-			catch(final IllegalArgumentException iae){
-				throw AnnotationException.create(iae, errorMessage, bindingName, protocolVersion);
+			catch(final VersionException ve){
+				throw AnnotationException.create(ve, errorMessage, bindingName, protocolVersion);
 			}
 		}
 		return protocol;
@@ -101,7 +102,7 @@ final class ValidationHelper{
 	 * @param field	The configuration field data.
 	 * @param dataValue	The value to check against.
 	 * @throws AnnotationException	If a validation error occurs.
-	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
+	 * @throws CodecException   If the value cannot be interpreted as primitive or objective.
 	 */
 	static void validateMinMaxValues(final ConfigFieldData field, final Object dataValue) throws AnnotationException, CodecException{
 		if(StringHelper.isBlank(field.getMinValue()) && StringHelper.isBlank(field.getMaxValue()))
@@ -171,7 +172,7 @@ final class ValidationHelper{
 	 *
 	 * @param field	The configuration field data.
 	 * @throws AnnotationException	If a validation error occurs.
-	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
+	 * @throws CodecException   If the value cannot be interpreted as primitive or objective.
 	 */
 	static void validateDefaultValue(final ConfigFieldData field) throws AnnotationException, CodecException{
 		final Class<?> fieldType = field.getFieldType();

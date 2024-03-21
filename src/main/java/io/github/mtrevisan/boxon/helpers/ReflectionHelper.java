@@ -24,6 +24,8 @@
  */
 package io.github.mtrevisan.boxon.helpers;
 
+import io.github.mtrevisan.boxon.exceptions.DataException;
+
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
 import java.lang.reflect.InaccessibleObjectException;
@@ -78,8 +80,8 @@ public final class ReflectionHelper{
 			field.set(obj, value);
 		}
 		catch(final IllegalArgumentException | IllegalAccessException e){
-			throw new IllegalArgumentException("Can not set " + field.getType().getSimpleName() + " field to "
-				+ value.getClass().getSimpleName(), e);
+			throw DataException.create("Can not set {} field to {}",
+				field.getType().getSimpleName(), value.getClass().getSimpleName(), e);
 		}
 	}
 

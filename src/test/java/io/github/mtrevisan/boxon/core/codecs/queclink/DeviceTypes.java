@@ -24,7 +24,9 @@
  */
 package io.github.mtrevisan.boxon.core.codecs.queclink;
 
-import java.util.Locale;
+import io.github.mtrevisan.boxon.exceptions.DataException;
+import io.github.mtrevisan.boxon.helpers.StringHelper;
+
 import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
@@ -70,19 +72,19 @@ public class DeviceTypes{
 			if(deviceType.getValue().equals(deviceTypeName))
 				return deviceType.getKey();
 
-		throw new IllegalArgumentException("Given device name is not recognized: " + deviceTypeName);
+		throw DataException.create("Given device name is not recognized: {}", deviceTypeName);
 	}
 
 	public String getDeviceTypeName(final byte deviceTypeCode){
 		final String deviceTypeName = deviceTypes.get(deviceTypeCode);
 
 		if(deviceTypeName == null){
-			final String actualCode = Integer.toHexString(deviceTypeCode & 0x0000_00FF);
+			final String actualCode = StringHelper.toHexString(deviceTypeCode & 0x0000_00FF);
 			final StringJoiner sj = new StringJoiner(", 0x", "[0x", "]");
 			for(final Map.Entry<Byte, String> deviceType : deviceTypes.entrySet())
-				sj.add(Integer.toHexString(deviceType.getKey() & 0x0000_00FF));
-			throw new IllegalArgumentException("Cannot parse message from another device, device type is 0x"
-				+ actualCode.toUpperCase(Locale.ROOT) + ", should be one of " + sj);
+				sj.add(StringHelper.toHexString(deviceType.getKey() & 0x0000_00FF));
+			throw DataException.create("Cannot decode message from another device, device type is 0x{}, should be one of {}",
+				actualCode, sj);
 		}
 		return deviceTypeName;
 	}
@@ -91,7 +93,7 @@ public class DeviceTypes{
 	public String toString(){
 		final StringJoiner sj = new StringJoiner(", ", "[", "]");
 		for(final Map.Entry<Byte, String> deviceType : deviceTypes.entrySet())
-			sj.add(deviceType.getValue() + " (0x" + Integer.toHexString(deviceType.getKey() & 0x0000_00FF).toUpperCase(Locale.ROOT) + ")");
+			sj.add(deviceType.getValue() + " (0x" + StringHelper.toHexString(deviceType.getKey() & 0x0000_00FF) + ")");
 		return sj.toString();
 	}
 

@@ -39,7 +39,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.Annotation;
-import java.util.Locale;
 
 
 class CodecChecksumTest{
@@ -89,8 +88,7 @@ class CodecChecksumTest{
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		String expected = StringHelper.leftPad(Integer.toHexString(encodedValue & 0x0000_FFFF).toUpperCase(Locale.ROOT), 4,
-			'0');
+		String expected = StringHelper.leftPad(StringHelper.toHexString(encodedValue & 0x0000_FFFF), 4, '0');
 		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);

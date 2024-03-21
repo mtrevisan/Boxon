@@ -24,6 +24,8 @@
  */
 package io.github.mtrevisan.boxon.helpers;
 
+import io.github.mtrevisan.boxon.exceptions.DataException;
+
 import java.util.Collection;
 
 
@@ -52,7 +54,7 @@ public final class JavaHelper{
 	@SuppressWarnings("ShiftOutOfRange")
 	public static long extendSign(final long value, final int size){
 		if(size <= 0)
-			throw new IllegalArgumentException("Size must be a positive value, was " + size);
+			throw DataException.create("Size must be a positive value, was {}", size);
 
 		final int shift = -size;
 		return (value << shift) >> shift;

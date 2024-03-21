@@ -29,6 +29,7 @@ import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
+import io.github.mtrevisan.boxon.exceptions.DataException;
 import io.github.mtrevisan.boxon.helpers.ConstructorHelper;
 import io.github.mtrevisan.boxon.helpers.ContextHelper;
 import io.github.mtrevisan.boxon.io.BitSetHelper;
@@ -60,10 +61,11 @@ final class CodecHelper{
 
 	static void assertSizeEquals(final int expectedSize, final int size){
 		if(expectedSize != size)
-			throw new IllegalArgumentException("Size mismatch, expected " + expectedSize + ", got " + size);
+			throw DataException.create("Size mismatch, expected {}, got {}", expectedSize, size);
 	}
 
-	static ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> type){
+	static ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> type)
+			throws CodecException{
 		for(int i = 0, length = alternatives.length; i < length; i ++){
 			final ObjectChoices.ObjectChoice alternative = alternatives[i];
 
@@ -71,7 +73,7 @@ final class CodecHelper{
 				return alternative;
 		}
 
-		throw new IllegalArgumentException("Cannot find a valid codec for type " + type.getSimpleName());
+		throw CodecException.create("Cannot find a valid codec for type {}", type.getSimpleName());
 	}
 
 	static void writeHeader(final BitWriterInterface writer, final ObjectChoices.ObjectChoice chosenAlternative,
@@ -104,8 +106,8 @@ final class CodecHelper{
 			return converter.decode(data);
 		}
 		catch(final Exception e){
-			throw new IllegalArgumentException("Can not input " + data.getClass().getSimpleName() + " (" + data
-				+ ") to decode method of converter " + converterType.getSimpleName(), e);
+			throw DataException.create("Can not input {} ({}) to decode method of converter {}",
+				data.getClass().getSimpleName(), data, converterType.getSimpleName(), e);
 		}
 	}
 
@@ -117,8 +119,8 @@ final class CodecHelper{
 			return converter.encode(data);
 		}
 		catch(final Exception e){
-			throw new IllegalArgumentException("Can not input " + data.getClass().getSimpleName() + " (" + data
-				+ ") to encode method of converter " + converterType.getSimpleName(), e);
+			throw DataException.create("Can not input {} ({}) to encode method of converter {}",
+				data.getClass().getSimpleName(), data, converterType.getSimpleName(), e);
 		}
 	}
 

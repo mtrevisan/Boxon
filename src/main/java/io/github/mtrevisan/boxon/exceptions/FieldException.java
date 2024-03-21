@@ -127,7 +127,9 @@ public class FieldException extends Exception{
 	@Override
 	public final String getMessage(){
 		return super.getMessage()
-			+ (className != null && fieldName != null? " in field " + className + "." + fieldName: JavaHelper.EMPTY_STRING);
+			+ (className != null && fieldName != null
+				? " in field " + className + "." + fieldName
+				: JavaHelper.EMPTY_STRING);
 	}
 
 }

@@ -105,8 +105,8 @@ class ConverterTest{
 		Response<byte[], Object> response = result.getFirst();
 		Assertions.assertArrayEquals(payload, response.getSource());
 		Assertions.assertTrue(response.hasError());
-		Assertions.assertEquals("java.lang.IllegalArgumentException: Can not input Byte (1) to decode method of converter WrongConverterInput in field io.github.mtrevisan.boxon.core" +
-			".ConverterTest$TestConverter1.value" + System.lineSeparator() + "   at index 4", response.getError().getMessage());
+		Assertions.assertEquals("io.github.mtrevisan.boxon.exceptions.DataException: Can not input Byte (1) to decode method of converter WrongConverterInput in field io.github.mtrevisan.boxon.core.ConverterTest$TestConverter1.value"
+			+ System.lineSeparator() + "   at index 4", response.getError().getMessage());
 	}
 
 	@Test
@@ -125,7 +125,7 @@ class ConverterTest{
 		Response<byte[], Object> response = result.getFirst();
 		Assertions.assertArrayEquals(payload, response.getSource());
 		Assertions.assertTrue(response.hasError());
-		Assertions.assertEquals("java.lang.IllegalArgumentException: Can not set String field to Byte in field io.github.mtrevisan.boxon.core.ConverterTest$TestConverter2.value"
+		Assertions.assertEquals("io.github.mtrevisan.boxon.exceptions.DataException: Can not set String field to Byte in field io.github.mtrevisan.boxon.core.ConverterTest$TestConverter2.value"
 			+ System.lineSeparator() + "   at index 4", response.getError().getMessage());
 	}
 

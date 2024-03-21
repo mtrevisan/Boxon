@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.helpers;
 
+import io.github.mtrevisan.boxon.exceptions.DataException;
 import org.slf4j.helpers.MessageFormatter;
 
 import java.nio.charset.StandardCharsets;
@@ -142,6 +143,28 @@ public final class StringHelper{
 
 
 	/**
+	 * Converts a decimal value into the corresponding hexadecimal string.
+	 *
+	 * @param value	Value to be converted to hexadecimal characters.
+	 * @return	The hexadecimal characters.
+	 */
+	public static String toHexString(final int value){
+		return Integer.toHexString(value)
+			.toUpperCase(Locale.ROOT);
+	}
+
+	/**
+	 * Converts a decimal value into the corresponding hexadecimal string.
+	 *
+	 * @param value	Value to be converted to hexadecimal characters.
+	 * @return	The hexadecimal characters.
+	 */
+	public static String toHexString(final long value){
+		return Long.toHexString(value)
+			.toUpperCase(Locale.ROOT);
+	}
+
+	/**
 	 * Converts an array of bytes into a string representing the hexadecimal values of each byte in order.
 	 *
 	 * @param array	Array to be converted to hexadecimal characters.
@@ -171,7 +194,7 @@ public final class StringHelper{
 	public static byte[] hexToByteArray(final String hexString){
 		final int length = JavaHelper.lengthOrZero(hexString);
 		if(length % 2 != 0)
-			throw new IllegalArgumentException("Input should be of even length, was " + length);
+			throw DataException.create("Input should be of even length, was {}", length);
 
 		final byte[] data = new byte[length >>> 1];
 		if(length > 0){

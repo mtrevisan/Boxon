@@ -218,7 +218,7 @@ class TemplateParserTest{
 		postProcessCodecs(loaderCodec, templateParser, evaluator);
 
 		Exception exc = Assertions.assertThrows(FieldException.class, () -> templateParser.decode(template, reader, null));
-		Assertions.assertEquals("java.lang.IllegalArgumentException: Can not set byte field to String in field "
+		Assertions.assertEquals("io.github.mtrevisan.boxon.exceptions.DataException: Can not set byte field to String in field "
 			+ TemplateParserTest.TestError3.class.getName() + ".type", exc.getMessage());
 	}
 
@@ -258,7 +258,7 @@ class TemplateParserTest{
 		postProcessCodecs(loaderCodec, templateParser, evaluator);
 
 		Exception exc = Assertions.assertThrows(FieldException.class, () -> templateParser.decode(template, reader, null));
-		Assertions.assertEquals("java.lang.IllegalArgumentException: Can not input Byte (1) to decode method of converter WrongInputConverter in field "
+		Assertions.assertEquals("io.github.mtrevisan.boxon.exceptions.DataException: Can not input Byte (1) to decode method of converter WrongInputConverter in field "
 			+ TemplateParserTest.TestError4.class.getName() + ".type", exc.getMessage());
 	}
 

@@ -24,6 +24,8 @@
  */
 package io.github.mtrevisan.boxon.core.parsers.matchers;
 
+import io.github.mtrevisan.boxon.exceptions.DataException;
+
 import java.util.Arrays;
 
 
@@ -145,7 +147,7 @@ public final class BNDMPatternMatcher implements PatternMatcher{
 
 	private static void assertLength(final int length){
 		if(length >= Integer.SIZE)
-			throw new IllegalArgumentException("Cannot process a pattern whose length exceeds " + (Integer.SIZE - 1) + " bytes");
+			throw DataException.create("Cannot process a pattern whose length exceeds {} bytes", Integer.SIZE - 1);
 	}
 
 }

@@ -53,7 +53,6 @@ import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.function.Function;
 
 
@@ -304,9 +303,9 @@ public final class TemplateParser implements TemplateParserInterface{
 				final int mask = ParserDataType.fromType(givenChecksum.getClass())
 					.getMask();
 				throw new IllegalArgumentException("Calculated checksum (0x"
-					+ Integer.toHexString(calculatedChecksum & mask).toUpperCase(Locale.ROOT)
+					+ StringHelper.toHexString(calculatedChecksum & mask)
 					+ ") does NOT match given checksum (0x"
-					+ Integer.toHexString(givenChecksum.shortValue() & mask).toUpperCase(Locale.ROOT) + ")");
+					+ StringHelper.toHexString(givenChecksum.shortValue() & mask) + ")");
 			}
 		}
 	}

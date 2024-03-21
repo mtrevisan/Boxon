@@ -45,7 +45,6 @@ import org.junit.jupiter.api.Test;
 import java.lang.annotation.Annotation;
 import java.math.BigInteger;
 import java.util.BitSet;
-import java.util.Locale;
 
 
 class CodecIntegerTest{
@@ -493,7 +492,7 @@ class CodecIntegerTest{
 		writer.flush();
 
 		BitSet bits = CodecInteger.toBitSet(encodedValue, 128, ByteOrder.LITTLE_ENDIAN);
-		Assertions.assertEquals(rightPad(StringHelper.toHexString(bits.toByteArray()).toUpperCase(Locale.ROOT), 32, '0'), writer.toString());
+		Assertions.assertEquals(rightPad(StringHelper.toHexString(bits.toByteArray()), 32, '0'), writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
 		BigInteger decoded = (BigInteger)codec.decode(reader, annotation, null);

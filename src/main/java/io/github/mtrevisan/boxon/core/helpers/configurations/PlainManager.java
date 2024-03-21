@@ -88,8 +88,7 @@ final class PlainManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	public Map<String, Object> extractConfigurationMap(final Class<?> fieldType, final Version protocol) throws ConfigurationException,
-			CodecException{
+	public Map<String, Object> extractConfigurationMap(final Class<?> fieldType, final Version protocol) throws ConfigurationException, CodecException{
 		if(!ConfigurationHelper.shouldBeExtracted(protocol, annotation.minProtocol(), annotation.maxProtocol()))
 			return Collections.emptyMap();
 
@@ -133,8 +132,7 @@ final class PlainManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	public Object convertValue(final Field field, final String dataKey, Object dataValue, final Version protocol) throws EncodeException,
-			CodecException{
+	public Object convertValue(final Field field, final String dataKey, Object dataValue, final Version protocol) throws EncodeException, CodecException{
 		if(dataValue != null){
 			final Class<?> fieldType = field.getType();
 			final Class<? extends ConfigurationEnum> enumeration = annotation.enumeration();

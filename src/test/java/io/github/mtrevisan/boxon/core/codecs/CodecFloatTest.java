@@ -42,7 +42,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.Annotation;
-import java.util.Locale;
 
 
 class CodecFloatTest{
@@ -97,8 +96,8 @@ class CodecFloatTest{
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		String expected = StringHelper.leftPad(Integer.toHexString(Integer.reverseBytes(Float.floatToRawIntBits(encodedValue)))
-			.toUpperCase(Locale.ROOT), 8, '0');
+		String expected = StringHelper.leftPad(StringHelper.toHexString(Integer.reverseBytes(Float.floatToRawIntBits(encodedValue))),
+			8, '0');
 		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
@@ -157,8 +156,8 @@ class CodecFloatTest{
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		String expected = StringHelper.leftPad(Integer.toHexString(Integer.reverseBytes(Float.floatToRawIntBits(encodedValue)))
-			.toUpperCase(Locale.ROOT), 8, '0');
+		String expected = StringHelper.leftPad(StringHelper.toHexString(Integer.reverseBytes(Float.floatToRawIntBits(encodedValue))),
+			8, '0');
 		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
@@ -217,8 +216,7 @@ class CodecFloatTest{
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		String expected = StringHelper.leftPad(Integer.toHexString(Float.floatToRawIntBits(encodedValue)).toUpperCase(Locale.ROOT), 8,
-			'0');
+		String expected = StringHelper.leftPad(StringHelper.toHexString(Float.floatToRawIntBits(encodedValue)), 8, '0');
 		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
@@ -277,8 +275,7 @@ class CodecFloatTest{
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		String expected = StringHelper.leftPad(Integer.toHexString(Float.floatToRawIntBits(encodedValue)).toUpperCase(Locale.ROOT), 8,
-			'0');
+		String expected = StringHelper.leftPad(StringHelper.toHexString(Float.floatToRawIntBits(encodedValue)), 8, '0');
 		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);

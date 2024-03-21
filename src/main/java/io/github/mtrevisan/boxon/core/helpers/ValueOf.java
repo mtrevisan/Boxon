@@ -24,6 +24,8 @@
  */
 package io.github.mtrevisan.boxon.core.helpers;
 
+import io.github.mtrevisan.boxon.exceptions.DataException;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Map;
@@ -86,7 +88,7 @@ public final class ValueOf<T extends Enum<T>, K>{
 
 			final K key = fieldAccessor.apply(enumConstant);
 			if(map.put(key, enumConstant) != null)
-				throw new IllegalStateException("Duplicate key in enum " + type.getSimpleName() + ": " + key);
+				throw DataException.create("Duplicate key in enum {}: {}", type.getSimpleName(), key);
 		}
 
 		values = Collections.unmodifiableMap(map);
@@ -119,7 +121,7 @@ public final class ValueOf<T extends Enum<T>, K>{
 	public T getOrElseThrow(final K key){
 		final T value = values.get(key);
 		if(value == null)
-			throw new IllegalArgumentException("No enum constant " + type.getName() + "." + key);
+			throw DataException.create("No enum constant {}.{}", type.getName(), key);
 
 		return value;
 	}

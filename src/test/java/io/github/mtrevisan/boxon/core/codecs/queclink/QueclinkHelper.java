@@ -31,7 +31,6 @@ import io.github.mtrevisan.boxon.semanticversioning.Version;
 import java.nio.ByteBuffer;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.Locale;
 import java.util.regex.Pattern;
 
 
@@ -70,8 +69,8 @@ public class QueclinkHelper{
 
 			final Integer major = value.getMajor();
 			final Integer minor = value.getMinor();
-			final String maj = Integer.toHexString(major);
-			final String min = Integer.toHexString(minor);
+			final String maj = StringHelper.toHexString(major);
+			final String min = StringHelper.toHexString(minor);
 			return (major < 10? "0": "") + maj + (minor < 10? "0": "") + min;
 		}
 	}
@@ -164,8 +163,7 @@ public class QueclinkHelper{
 
 		@Override
 		public String encode(final Byte value){
-			return StringHelper.leftPad(Integer.toString(value & 0xFF, 16)
-				.toUpperCase(Locale.ROOT), 2, '0');
+			return StringHelper.leftPad(StringHelper.toHexString(value & 0xFF), 2, '0');
 		}
 	}
 
@@ -178,8 +176,7 @@ public class QueclinkHelper{
 
 		@Override
 		public String encode(final Short value){
-			return StringHelper.leftPad(Integer.toString(value & 0xFFFF, 16)
-				.toUpperCase(Locale.ROOT), 4, '0');
+			return StringHelper.leftPad(StringHelper.toHexString(value & 0xFFFF), 4, '0');
 		}
 	}
 

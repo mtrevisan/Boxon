@@ -66,11 +66,5 @@ public final class BSD8 implements Checksummer{
 			checksum = MASK & ((checksum >> 1) + ((checksum & 1) << LEFT_SHIFT) + (data[i] & 0xFF));
 		return (short)checksum;
 	}
-	public static void main(String[] args) {
-		byte[] data = { (byte) 57, (byte) 49, (byte) 52, (byte) 50, (byte) 54, (byte) 53, (byte) 54 };
-
-		System.out.println("Checksum BSD8: " + csum1(data));
-		System.out.println("Checksum BSD8: " + bsdChecksumFromByteArray(data));
-	}
 
 }
