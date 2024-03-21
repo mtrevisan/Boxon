@@ -190,6 +190,7 @@ public final class StringHelper{
 	 *
 	 * @param hexString	The hexadecimal string.
 	 * @return	Array of converted hexadecimal characters.
+	 * @throws DataException	If the input has an odd length.
 	 */
 	public static byte[] hexToByteArray(final String hexString){
 		final int length = JavaHelper.lengthOrZero(hexString);

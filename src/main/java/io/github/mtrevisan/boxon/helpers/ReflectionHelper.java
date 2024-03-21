@@ -27,7 +27,6 @@ package io.github.mtrevisan.boxon.helpers;
 import io.github.mtrevisan.boxon.exceptions.DataException;
 
 import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InaccessibleObjectException;
 import java.lang.reflect.InvocationTargetException;
@@ -77,6 +76,7 @@ public final class ReflectionHelper{
 	 * @param field	The field.
 	 * @param value	The value for the field being modified.
 	 * @return	The (possibly new) object on witch the value was set.
+	 * @throws DataException	If the value cannot be set to the field.
 	 */
 	public static Object withValue(final Object obj, final Field field, final Object value){
 		try{
@@ -85,8 +85,7 @@ public final class ReflectionHelper{
 				: updateField(obj, field, value)
 			);
 		}
-		catch(final IllegalArgumentException | IllegalAccessException | InvocationTargetException | NoSuchMethodException |
-				InstantiationException e){
+		catch(final IllegalArgumentException | ReflectiveOperationException e){
 			throw DataException.create("Can not set {} field to {}",
 				field.getType().getSimpleName(), value.getClass().getSimpleName(), e);
 		}
@@ -98,7 +97,7 @@ public final class ReflectionHelper{
 	}
 
 	private static <T> T constructRecordWithUpdatedField(final T obj, final String fieldName, final Object value)
-			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, InstantiationException{
+			throws ReflectiveOperationException{
 		@SuppressWarnings("unchecked")
 		final Class<T> objClass = (Class<T>)obj.getClass();
 		final RecordComponent[] recordComponents = objClass.getRecordComponents();
@@ -136,22 +135,14 @@ public final class ReflectionHelper{
 		return recordValues;
 	}
 
-	private static <T> T createRecordInstance(final RecordComponent[] recordComponents, final Class<T> objClass, final Object[] recordValues)
-			throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException{
+	private static <T> T createRecordInstance(final RecordComponent[] recordComponents, final Class<T> objClass,
+			final Object[] recordValues){
 		//extract the field types from the record class
 		final Class<?>[] constructorClasses = extractFieldTypes(recordComponents);
 
 		//creates a new instance of the record class with the updated values
-		final Constructor<T> constructor = getRecordConstructor(objClass, constructorClasses);
-
-		return constructor.newInstance(recordValues);
-	}
-
-	private static <T> Constructor<T> getRecordConstructor(final Class<T> objClass, final Class<?>[] constructorClasses)
-			throws NoSuchMethodException{
-		final Constructor<T> constructor = objClass.getDeclaredConstructor(constructorClasses);
-		makeAccessible(constructor);
-		return constructor;
+		return ConstructorHelper.getNonEmptyCreator(objClass, constructorClasses)
+			.apply(recordValues);
 	}
 
 	private static Class<?>[] extractFieldTypes(final RecordComponent[] components){

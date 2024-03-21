@@ -187,7 +187,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	public <T> T decode(final Template<T> template, final BitReaderInterface reader, final Object parentObject) throws FieldException{
 		final int startPosition = reader.position();
 
-		T currentObject = ConstructorHelper.getCreator(template.getType())
+		T currentObject = ConstructorHelper.getEmptyCreator(template.getType())
 			.get();
 
 		final ParserContext<T> parserContext = new ParserContext<>(core.getEvaluator(), currentObject, parentObject);
@@ -319,7 +319,7 @@ public final class TemplateParser implements TemplateParserInterface{
 
 		final int endPosition = reader.position();
 
-		final Checksummer checksummer = ConstructorHelper.getCreator(algorithm)
+		final Checksummer checksummer = ConstructorHelper.getEmptyCreator(algorithm)
 			.get();
 		return checksummer.calculateChecksum(reader.array(), startPosition + skipStart, endPosition - skipEnd, startValue);
 	}

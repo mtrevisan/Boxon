@@ -116,7 +116,7 @@ public final class ValueOf<T extends Enum<T>, K>{
 	 *
 	 * @param key	The value.
 	 * @return	The enum.
-	 * @throws IllegalArgumentException	If no enum exists.
+	 * @throws DataException	If no enum exists.
 	 */
 	public T getOrElseThrow(final K key){
 		final T value = values.get(key);

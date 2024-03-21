@@ -50,6 +50,7 @@ public final class JavaHelper{
 	 * @param value	Field value.
 	 * @param size	Length in bits of the field.
 	 * @return	The 2-complement expressed as int.
+	 * @throws DataException	If the value is non-positive.
 	 */
 	@SuppressWarnings("ShiftOutOfRange")
 	public static long extendSign(final long value, final int size){

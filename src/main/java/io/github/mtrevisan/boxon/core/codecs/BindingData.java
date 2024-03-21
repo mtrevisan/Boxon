@@ -99,10 +99,11 @@ final class BindingData{
 	 *
 	 * @param value	The value.
 	 * @param <T>	The class type of the value.
+	 * @throws DataException	If the value does not pass validation.
 	 */
 	@SuppressWarnings("unchecked")
 	<T> void validate(final T value){
-		final Validator<T> validatorCreator = (Validator<T>)ConstructorHelper.getCreator(validator)
+		final Validator<T> validatorCreator = (Validator<T>)ConstructorHelper.getEmptyCreator(validator)
 			.get();
 		if(!validatorCreator.isValid(value))
 			throw DataException.create("Validation of {} didn't passed (value is {})", validator.getSimpleName(), value);

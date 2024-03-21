@@ -108,7 +108,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 			final Class<?> type = derivedClasses.get(i);
 
 			//for each extracted class, try to create an instance
-			final CodecInterface<?> codec = (CodecInterface<?>)ConstructorHelper.getCreator(type)
+			final CodecInterface<?> codec = (CodecInterface<?>)ConstructorHelper.getEmptyCreator(type)
 				.get();
 			if(codec != null)
 				//if the codec was created successfully instanced, add it to the list of codecs...
