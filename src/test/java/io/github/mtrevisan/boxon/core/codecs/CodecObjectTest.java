@@ -62,18 +62,7 @@ import java.util.List;
 
 class CodecObjectTest{
 
-	private static class Version{
-		@BindByte
-		private final byte major;
-		@BindByte
-		private final byte minor;
-
-		private Version(final byte major, final byte minor){
-			this.major = major;
-			this.minor = minor;
-		}
-
-	}
+	private record Version(@BindByte byte major, @BindByte byte minor){ }
 
 
 	@Test

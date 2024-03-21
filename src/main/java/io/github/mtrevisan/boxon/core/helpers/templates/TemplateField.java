@@ -76,6 +76,10 @@ public final class TemplateField{
 	}
 
 
+	public Field getField(){
+		return field;
+	}
+
 	/**
 	 * The name of the field.
 	 *
@@ -103,16 +107,6 @@ public final class TemplateField{
 	 */
 	public <T> T getFieldValue(final Object obj){
 		return ReflectionHelper.getValue(obj, field);
-	}
-
-	/**
-	 * Set the field value.
-	 *
-	 * @param obj	The object in which the value is to be loaded.
-	 * @param value	The value.
-	 */
-	public void setFieldValue(final Object obj, final Object value){
-		ReflectionHelper.setValue(obj, field, value);
 	}
 
 	/**

@@ -26,7 +26,6 @@ package io.github.mtrevisan.boxon.core.helpers.templates;
 
 import io.github.mtrevisan.boxon.annotations.Evaluate;
 import io.github.mtrevisan.boxon.annotations.PostProcessField;
-import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
 
 import java.lang.reflect.Field;
 
@@ -53,6 +52,10 @@ public final class EvaluatedField<B>{
 	}
 
 
+	public Field getField(){
+		return field;
+	}
+
 	/**
 	 * The name of the field.
 	 *
@@ -69,16 +72,6 @@ public final class EvaluatedField<B>{
 	 */
 	public Class<?> getFieldType(){
 		return field.getType();
-	}
-
-	/**
-	 * Set the field value.
-	 *
-	 * @param obj	The object in which the value is to be loaded.
-	 * @param value	The value.
-	 */
-	public void setFieldValue(final Object obj, final Object value){
-		ReflectionHelper.setValue(obj, field, value);
 	}
 
 	/**

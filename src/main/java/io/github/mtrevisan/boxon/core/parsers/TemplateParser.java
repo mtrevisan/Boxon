@@ -187,7 +187,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	public <T> T decode(final Template<T> template, final BitReaderInterface reader, final Object parentObject) throws FieldException{
 		final int startPosition = reader.position();
 
-		final T currentObject = ConstructorHelper.getCreator(template.getType())
+		T currentObject = ConstructorHelper.getCreator(template.getType())
 			.get();
 
 		final ParserContext<T> parserContext = new ParserContext<>(core.getEvaluator(), currentObject, parentObject);
@@ -215,6 +215,7 @@ public final class TemplateParser implements TemplateParserInterface{
 
 		readMessageTerminator(template, reader);
 
+		currentObject = parserContext.getCurrentObject();
 		verifyChecksum(template, currentObject, startPosition, reader);
 
 		return currentObject;
@@ -238,7 +239,7 @@ public final class TemplateParser implements TemplateParserInterface{
 			//decode value from raw message
 			final Object value = codec.decode(reader, binding, parserContext.getRootObject());
 			//store value in the current object
-			field.setFieldValue(parserContext.getCurrentObject(), value);
+			parserContext.setFieldValue(field.getField(), value);
 
 			eventListener.readField(template.toString(), field.getFieldName(), value);
 		}
@@ -336,7 +337,7 @@ public final class TemplateParser implements TemplateParserInterface{
 			eventListener.evaluatingField(template.getType().getName(), field.getFieldName());
 
 			final Object value = evaluator.evaluate(field.getBinding().value(), parserContext.getRootObject(), field.getFieldType());
-			field.setFieldValue(parserContext.getCurrentObject(), value);
+			parserContext.setFieldValue(field.getField(), value);
 
 			eventListener.evaluatedField(template.getType().getName(), field.getFieldName(), value);
 		}
@@ -411,7 +412,7 @@ public final class TemplateParser implements TemplateParserInterface{
 		eventListener.evaluatingField(templateName, fieldName);
 
 		final Object value = evaluator.evaluate(expression, rootObject, field.getFieldType());
-		field.setFieldValue(parserContext.getCurrentObject(), value);
+		parserContext.setFieldValue(field.getField(), value);
 
 		eventListener.evaluatedField(templateName, fieldName, value);
 	}

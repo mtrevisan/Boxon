@@ -235,12 +235,12 @@ public final class LoaderConfiguration{
 	 */
 	static Object getConfigurationWithDefaults(final ConfigurationMessage<?> configuration, final Map<String, Object> data,
 			final Version protocol) throws EncodeException, CodecException, AnnotationException{
-		final Object configurationObject = ConstructorHelper.getCreator(configuration.getType())
+		Object configurationObject = ConstructorHelper.getCreator(configuration.getType())
 			.get();
 
 		//fill in default values
 		final List<ConfigurationField> configurableFields = configuration.getConfigurationFields();
-		fillDefaultValues(configurationObject, configurableFields, protocol);
+		configurationObject = fillDefaultValues(configurationObject, configurableFields, protocol);
 
 
 		//collect mandatory fields:
@@ -257,7 +257,7 @@ public final class LoaderConfiguration{
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(foundFieldAnnotation);
 			manager.validateValue(foundField.getField(), dataKey, dataValue);
 			dataValue = manager.convertValue(foundField.getField(), dataKey, dataValue, protocol);
-			ReflectionHelper.setValue(configurationObject, foundField.getField(), dataValue);
+			configurationObject = ReflectionHelper.withValue(configurationObject, foundField.getField(), dataValue);
 
 			if(dataValue != null)
 				mandatoryFields.remove(foundField);
@@ -284,7 +284,7 @@ public final class LoaderConfiguration{
 		return configuration;
 	}
 
-	private static void fillDefaultValues(final Object configurationObject, final List<ConfigurationField> fields, final Version protocol)
+	private static Object fillDefaultValues(Object configurationObject, final List<ConfigurationField> fields, final Version protocol)
 			throws EncodeException, CodecException, AnnotationException{
 		for(int i = 0, length = fields.size(); i < length; i ++){
 			final ConfigurationField field = fields.get(i);
@@ -293,8 +293,9 @@ public final class LoaderConfiguration{
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(annotation);
 			Object dataValue = manager.getDefaultValue(field.getField(), protocol);
 			dataValue = manager.convertValue(field.getField(), manager.getShortDescription(), dataValue, protocol);
-			ReflectionHelper.setValue(configurationObject, field.getField(), dataValue);
+			configurationObject = ReflectionHelper.withValue(configurationObject, field.getField(), dataValue);
 		}
+		return configurationObject;
 	}
 
 	private static Collection<ConfigurationField> extractMandatoryFields(final List<ConfigurationField> fields, final Version protocol){

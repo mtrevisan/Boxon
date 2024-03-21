@@ -60,23 +60,8 @@ import java.util.List;
 
 class CodecListTest{
 
-	private static class Version{
-		@BindStringTerminated(terminator = ',')
-		private final String type;
-		@BindStringTerminated(terminator = ',')
-		private final String major;
-		@BindStringTerminated(terminator = ',')
-		private final String minor;
-		@BindStringTerminated(terminator = ',')
-		private final String build;
-
-		private Version(final String type, final String major, final String minor, final String build){
-			this.type = type;
-			this.major = major;
-			this.minor = minor;
-			this.build = build;
-		}
-	}
+	private record Version(@BindStringTerminated(terminator = ',') String type, @BindStringTerminated(terminator = ',') String major,
+		@BindStringTerminated(terminator = ',') String minor, @BindStringTerminated(terminator = ',') String build){ }
 
 	static class TestType3{}
 

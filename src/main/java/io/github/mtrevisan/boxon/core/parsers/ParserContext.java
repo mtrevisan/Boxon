@@ -30,8 +30,10 @@ import io.github.mtrevisan.boxon.exceptions.DataException;
 import io.github.mtrevisan.boxon.helpers.ContextHelper;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
+import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 
 
 final class ParserContext<T>{
@@ -39,7 +41,7 @@ final class ParserContext<T>{
 	private final Evaluator evaluator;
 
 	private Object rootObject;
-	private final T currentObject;
+	private T currentObject;
 
 	private String className;
 	private String fieldName;
@@ -69,6 +71,17 @@ final class ParserContext<T>{
 
 	T getCurrentObject(){
 		return currentObject;
+	}
+
+	/**
+	 * Set the field value on the current object.
+	 *
+	 * @param field	The field.
+	 * @param value	The value.
+	 */
+	@SuppressWarnings("unchecked")
+	public void setFieldValue(final Field field, final Object value){
+		currentObject = (T)ReflectionHelper.withValue(currentObject, field, value);
 	}
 
 	void addCurrentObjectToEvaluatorContext(){

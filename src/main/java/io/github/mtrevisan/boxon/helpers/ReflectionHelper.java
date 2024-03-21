@@ -27,10 +27,12 @@ package io.github.mtrevisan.boxon.helpers;
 import io.github.mtrevisan.boxon.exceptions.DataException;
 
 import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InaccessibleObjectException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.RecordComponent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -74,15 +76,95 @@ public final class ReflectionHelper{
 	 * @param obj	The object whose field should be modified.
 	 * @param field	The field.
 	 * @param value	The value for the field being modified.
+	 * @return	The (possibly new) object on witch the value was set.
 	 */
-	public static void setValue(final Object obj, final Field field, final Object value){
+	public static Object withValue(final Object obj, final Field field, final Object value){
 		try{
-			field.set(obj, value);
+			return (isRecordClass(obj)
+				? constructRecordWithUpdatedField(obj, field.getName(), value)
+				: updateField(obj, field, value)
+			);
 		}
-		catch(final IllegalArgumentException | IllegalAccessException e){
+		catch(final IllegalArgumentException | IllegalAccessException | InvocationTargetException | NoSuchMethodException |
+				InstantiationException e){
 			throw DataException.create("Can not set {} field to {}",
 				field.getType().getSimpleName(), value.getClass().getSimpleName(), e);
 		}
+	}
+
+	private static boolean isRecordClass(final Object obj){
+		return obj.getClass()
+			.isRecord();
+	}
+
+	private static <T> T constructRecordWithUpdatedField(final T obj, final String fieldName, final Object value)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, InstantiationException{
+		@SuppressWarnings("unchecked")
+		final Class<T> objClass = (Class<T>)obj.getClass();
+		final RecordComponent[] recordComponents = objClass.getRecordComponents();
+
+		//extract the current field values from the record class
+		final Object[] recordValues = extractCurrentFieldValues(obj, recordComponents);
+
+		//find the index of the field to update
+		setFieldValue(fieldName, value, recordComponents, recordValues);
+
+		return createRecordInstance(recordComponents, objClass, recordValues);
+	}
+
+	private static <T> Object[] extractCurrentFieldValues(final T obj, final RecordComponent[] components)
+			throws IllegalAccessException, InvocationTargetException{
+		final int length = components.length;
+		final Object[] recordValues = new Object[length];
+		for(int i = 0; i < length; i ++){
+			final RecordComponent recordComponent = components[i];
+
+			final Method accessor = recordComponent.getAccessor();
+			makeAccessible(accessor);
+			recordValues[i] = accessor.invoke(obj);
+		}
+		return recordValues;
+	}
+
+	private static Object[] setFieldValue(final String fieldName, final Object value, final RecordComponent[] recordComponents,
+			final Object[] recordValues){
+		for(int i = 0, length = recordComponents.length; i < length; i ++)
+			if(fieldName.equals(recordComponents[i].getName())){
+				recordValues[i] = value;
+				break;
+			}
+		return recordValues;
+	}
+
+	private static <T> T createRecordInstance(final RecordComponent[] recordComponents, final Class<T> objClass, final Object[] recordValues)
+			throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException{
+		//extract the field types from the record class
+		final Class<?>[] constructorClasses = extractFieldTypes(recordComponents);
+
+		//creates a new instance of the record class with the updated values
+		final Constructor<T> constructor = getRecordConstructor(objClass, constructorClasses);
+
+		return constructor.newInstance(recordValues);
+	}
+
+	private static <T> Constructor<T> getRecordConstructor(final Class<T> objClass, final Class<?>[] constructorClasses)
+			throws NoSuchMethodException{
+		final Constructor<T> constructor = objClass.getDeclaredConstructor(constructorClasses);
+		makeAccessible(constructor);
+		return constructor;
+	}
+
+	private static Class<?>[] extractFieldTypes(final RecordComponent[] components){
+		final int length = components.length;
+		final Class<?>[] constructorClasses = new Class<?>[length];
+		for(int i = 0; i < length; i ++)
+			constructorClasses[i] = components[i].getType();
+		return constructorClasses;
+	}
+
+	private static Object updateField(final Object obj, final Field field, final Object value) throws IllegalAccessException{
+		field.set(obj, value);
+		return obj;
 	}
 
 

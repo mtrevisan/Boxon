@@ -61,20 +61,7 @@ import java.util.List;
 
 class CodecArrayTest{
 
-	private static class Version{
-		@BindByte
-		private final byte major;
-		@BindByte
-		private final byte minor;
-		@BindByte
-		private final byte build;
-
-		private Version(final byte major, final byte minor, final byte build){
-			this.major = major;
-			this.minor = minor;
-			this.build = build;
-		}
-	}
+	private record Version(@BindByte byte major, @BindByte byte minor, @BindByte byte build){ }
 
 	@TemplateHeader(start = "tc4")
 	static class TestChoice4{

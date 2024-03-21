@@ -97,10 +97,6 @@ public final class ConfigurationField{
 		return ReflectionHelper.getValue(obj, field);
 	}
 
-	void setFieldValue(final Object obj, final Object value){
-		ReflectionHelper.setValue(obj, field, value);
-	}
-
 	/**
 	 * The skips that must be made before the field value.
 	 *

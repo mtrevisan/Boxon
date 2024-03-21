@@ -63,31 +63,24 @@ import java.util.Map;
 
 class TemplateTest{
 
-	private static class Mask{
+	private record Mask(byte mask){
 
-		static class MaskConverter implements Converter<Byte, Mask>{
-			@Override
-			public Mask decode(final Byte value){
-				return new Mask(value);
+			static class MaskConverter implements Converter<Byte, Mask>{
+				@Override
+				public Mask decode(final Byte value){
+					return new Mask(value);
+				}
+
+				@Override
+				public Byte encode(final Mask value){
+					return value.mask;
+				}
 			}
 
-			@Override
-			public Byte encode(final Mask value){
-				return value.mask;
-			}
-		}
-
-
-		private final byte mask;
-
-
-		Mask(byte mask){
-			this.mask = mask;
-		}
 
 		boolean hasProtocolVersion(){
-			return TestHelper.hasBit(mask, 2);
-		}
+				return TestHelper.hasBit(mask, 2);
+			}
 
 	}
 
