@@ -58,29 +58,28 @@ final class ValidationHelper{
 	 */
 	static void validateProtocol(final ConfigFieldData field, final Version minProtocolVersion, final Version maxProtocolVersion)
 			throws AnnotationException{
-		final Version minimum = validateProtocol(field.getMinProtocol(), field.getAnnotationName(),
+		final Version minimum = validateProtocol(field.getMinProtocol(), field,
 			"Invalid minimum protocol version in {}; found {}");
-		final Version maximum = validateProtocol(field.getMaxProtocol(), field.getAnnotationName(),
+		final Version maximum = validateProtocol(field.getMaxProtocol(), field,
 			"Invalid maximum protocol version in {}; found {}");
 
-		if(minimum != null){
-			//`maxProtocol` must be after or equal to `minProtocol`
-			if(maximum != null && maximum.isLessThan(minimum))
-				throw AnnotationException.create("Minimum protocol version is greater than maximum protocol version in {}; found {}",
-					field.getAnnotationName(), field.getMaxProtocol());
+		//`maxProtocol` must be after or equal to `minProtocol`
+		if(minimum != null && maximum != null && maximum.isLessThan(minimum))
+			throw AnnotationException.create("Minimum protocol version is greater than maximum protocol version in {}; found {} >= {}",
+				field.getAnnotationName(), field.getMinProtocol(), field.getMaxProtocol());
 
-			//`minProtocol` must be after or equal to `minProtocolVersion`
-			if(!minProtocolVersion.isEmpty() && minimum.isLessThan(minProtocolVersion))
-				throw AnnotationException.create("Minimum protocol version is less than whole message minimum protocol version in {}; expected {} >= {}",
-					field.getAnnotationName(), minimum, minProtocolVersion);
-		}
+		//`minProtocol` must be after or equal to `minProtocolVersion`
+		//NOTE: `minimum.isLessThan(minProtocolVersion)` return false if `minProtocolVersion` is empty
+		if(minimum != null && minimum.isLessThan(minProtocolVersion))
+			throw AnnotationException.create("Minimum protocol version is less than whole message minimum protocol version in {}; expected {} >= {}",
+				field.getAnnotationName(), minimum, minProtocolVersion);
 		//`maxProtocol` must be before or equal to `maxProtocolVersion`
 		if(maximum != null && !maxProtocolVersion.isEmpty() && maxProtocolVersion.isLessThan(maximum))
 			throw AnnotationException.create("Maximum protocol version is greater than whole message maximum protocol version in {}; expected {} <= {}",
 				field.getAnnotationName(), maximum, maxProtocolVersion);
 	}
 
-	private static Version validateProtocol(final String protocolVersion, final String bindingName, final String errorMessage)
+	private static Version validateProtocol(final String protocolVersion, final ConfigFieldData field, final String errorMessage)
 			throws AnnotationException{
 		Version protocol = null;
 		if(!StringHelper.isBlank(protocolVersion)){
@@ -88,7 +87,7 @@ final class ValidationHelper{
 				protocol = Version.of(protocolVersion);
 			}
 			catch(final VersionException ve){
-				throw AnnotationException.create(ve, errorMessage, bindingName, protocolVersion);
+				throw AnnotationException.create(ve, errorMessage, field.getAnnotationName(), protocolVersion);
 			}
 		}
 		return protocol;
