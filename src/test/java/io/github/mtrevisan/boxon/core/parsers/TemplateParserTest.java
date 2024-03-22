@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core.parsers;
 
-import io.github.mtrevisan.boxon.annotations.MessageHeader;
+import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.bindings.BindByte;
 import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
@@ -44,6 +44,7 @@ import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.BitReader;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriter;
+import io.github.mtrevisan.boxon.utils.TestHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.expression.spel.SpelEvaluationException;
@@ -51,7 +52,6 @@ import org.springframework.expression.spel.SpelEvaluationException;
 import java.nio.charset.StandardCharsets;
 
 
-@SuppressWarnings("ALL")
 class TemplateParserTest{
 
 	@Test
@@ -71,7 +71,7 @@ class TemplateParserTest{
 			Assertions.fail("Cannot decode message");
 
 		DeviceTypes deviceTypes = DeviceTypes.create()
-			.with("QUECLINK_GB200S", (byte)0x46);
+			.with((byte)0x46, "QUECLINK_GB200S");
 		evaluator.addToContext("deviceTypes", deviceTypes);
 		evaluator.addToContext(TemplateParserTest.class.getDeclaredMethod("headerLength"));
 		ACKMessageHex message = templateParser.decode(template, reader, null);
@@ -81,12 +81,12 @@ class TemplateParserTest{
 		templateParser.encode(template, writer, null, message);
 		byte[] reconstructedMessage = writer.array();
 
-		Assertions.assertEquals(new String(payload), new String(reconstructedMessage));
+		Assertions.assertEquals(new String(payload, StandardCharsets.US_ASCII), new String(reconstructedMessage, StandardCharsets.US_ASCII));
 	}
 
 	@Test
 	void parseSingleMessageHexByteChecksum() throws NoSuchMethodException, FieldException{
-		byte[] payload = StringHelper.hexToByteArray("2d41434b066f2446010a0311235e40035110420600ffff07e304050836390012b80d0a");
+		byte[] payload = StringHelper.hexToByteArray("2d41434b066f2446010a0311235e40035110420600ffff07e304050836390012680d0a");
 		BitReaderInterface reader = BitReader.wrap(payload);
 
 		LoaderCodec loaderCodec = LoaderCodec.create();
@@ -101,7 +101,7 @@ class TemplateParserTest{
 			Assertions.fail("Cannot decode message");
 
 		DeviceTypes deviceTypes = DeviceTypes.create()
-			.with("QUECLINK_GB200S", (byte)0x46);
+			.with((byte)0x46, "QUECLINK_GB200S");
 		evaluator.addToContext("deviceTypes", deviceTypes);
 		evaluator.addToContext(TemplateParserTest.class.getDeclaredMethod("headerLength"));
 		ACKMessageHexByteChecksum message = templateParser.decode(template, reader, null);
@@ -111,7 +111,7 @@ class TemplateParserTest{
 		templateParser.encode(template, writer, null, message);
 		byte[] reconstructedMessage = writer.array();
 
-		Assertions.assertEquals(new String(payload), new String(reconstructedMessage));
+		Assertions.assertEquals(new String(payload, StandardCharsets.US_ASCII), new String(reconstructedMessage, StandardCharsets.US_ASCII));
 	}
 
 	private static int headerLength(){
@@ -120,7 +120,7 @@ class TemplateParserTest{
 
 	@Test
 	void parseSingleMessageASCII() throws FieldException{
-		byte[] payload = toByteArray("+ACK:GTIOB,CF8002,359464038116666,45.5,2,0020,20170101123542,11F0$");
+		byte[] payload = TestHelper.toByteArray("+ACK:GTIOB,CF8002,359464038116666,45.5,2,0020,20170101123542,11F0$");
 		BitReaderInterface reader = BitReader.wrap(payload);
 
 		LoaderCodec loaderCodec = LoaderCodec.create();
@@ -135,7 +135,7 @@ class TemplateParserTest{
 			Assertions.fail("Cannot decode message");
 
 		DeviceTypes deviceTypes = DeviceTypes.create()
-			.with("QUECLINK_GV350M", (byte)0xCF);
+			.with((byte)0xCF, "QUECLINK_GV350M");
 		evaluator.addToContext("deviceTypes", deviceTypes);
 		ACKMessageASCII message = templateParser.decode(template, reader, null);
 		evaluator.addToContext("deviceTypes", null);
@@ -144,7 +144,7 @@ class TemplateParserTest{
 		templateParser.encode(template, writer, null, message);
 		byte[] reconstructedMessage = writer.array();
 
-		Assertions.assertEquals(new String(payload), new String(reconstructedMessage));
+		Assertions.assertEquals(new String(payload, StandardCharsets.US_ASCII), new String(reconstructedMessage, StandardCharsets.US_ASCII));
 	}
 
 	@Test
@@ -156,8 +156,8 @@ class TemplateParserTest{
 	}
 
 
-	@MessageHeader(start = "te1")
-	static class TestError1{
+	@TemplateHeader(start = "te1")
+	private static class TestError1{
 		@BindString(size = "3")
 		String header;
 		@BindByte(condition = "e")
@@ -183,7 +183,7 @@ class TemplateParserTest{
 	}
 
 
-	@MessageHeader(start = "te3")
+	@TemplateHeader(start = "te3")
 	static class TestError3{
 		static class WrongOutputConverter implements Converter<Byte, String>{
 
@@ -218,12 +218,12 @@ class TemplateParserTest{
 		postProcessCodecs(loaderCodec, templateParser, evaluator);
 
 		Exception exc = Assertions.assertThrows(FieldException.class, () -> templateParser.decode(template, reader, null));
-		Assertions.assertEquals("java.lang.IllegalArgumentException: Can not set byte field to String in field "
+		Assertions.assertEquals("io.github.mtrevisan.boxon.exceptions.DataException: Can not set byte field to String in field "
 			+ TemplateParserTest.TestError3.class.getName() + ".type", exc.getMessage());
 	}
 
 
-	@MessageHeader(start = "te4")
+	@TemplateHeader(start = "te4")
 	static class TestError4{
 		static class WrongInputConverter implements Converter<String, Byte>{
 
@@ -258,12 +258,12 @@ class TemplateParserTest{
 		postProcessCodecs(loaderCodec, templateParser, evaluator);
 
 		Exception exc = Assertions.assertThrows(FieldException.class, () -> templateParser.decode(template, reader, null));
-		Assertions.assertEquals("java.lang.IllegalArgumentException: Can not input Byte (1) to decode method of converter WrongInputConverter in field "
+		Assertions.assertEquals("io.github.mtrevisan.boxon.exceptions.DataException: Can not input Byte (1) to decode method of converter WrongInputConverter in field "
 			+ TemplateParserTest.TestError4.class.getName() + ".type", exc.getMessage());
 	}
 
 
-	@MessageHeader(start = "tm1")
+	@TemplateHeader(start = "tm1")
 	static class TestComposition1{
 		static class TestSubComposition{
 			@BindByte
@@ -312,7 +312,7 @@ class TemplateParserTest{
 		Assertions.assertArrayEquals(payload, reconstructedMessage);
 	}
 
-	@MessageHeader(start = "tm2")
+	@TemplateHeader(start = "tm2")
 	static class TestComposition2{
 		static class TestSubCompositionBase{
 			@BindByte
@@ -404,11 +404,7 @@ class TemplateParserTest{
 	}
 
 
-	private byte[] toByteArray(final String payload){
-		return payload.getBytes(StandardCharsets.ISO_8859_1);
-	}
-
-	private void postProcessCodecs(LoaderCodec loaderCodec, TemplateParserInterface templateParser, Evaluator evaluator){
+	private static void postProcessCodecs(LoaderCodec loaderCodec, TemplateParserInterface templateParser, Evaluator evaluator){
 		loaderCodec.injectFieldInCodecs(TemplateParserInterface.class, templateParser);
 		loaderCodec.injectFieldInCodecs(Evaluator.class, evaluator);
 	}

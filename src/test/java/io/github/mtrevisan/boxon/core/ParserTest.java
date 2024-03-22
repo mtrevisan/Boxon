@@ -28,28 +28,29 @@ import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageHex;
 import io.github.mtrevisan.boxon.core.codecs.queclink.DeviceTypes;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
+import io.github.mtrevisan.boxon.exceptions.JSONPathException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
+import io.github.mtrevisan.boxon.utils.TestHelper;
+import io.github.mtrevisan.boxon.utils.TimeWatch;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 
-@SuppressWarnings("ALL")
 class ParserTest{
 
 	public static void main(String[] args) throws NoSuchMethodException, AnnotationException, TemplateException, ConfigurationException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
-			.with("QUECLINK_GB200S", (byte)0x46);
+			.with((byte)0x46, "QUECLINK_GB200S");
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 		//if it is wanted `headerLength` to be a variable and not a method:
 		//- remove Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes); above
 		//- change @BindString(size = "#prefixLength()") into @BindString(size = "#headerLength") in ACKMessageHex.messageHeader
-		//- remove .withContextFunction(ParserTest.class, "headerLength") below
+		//- remove .withContext(ParserTest.class, "headerLength") below
 		//- uncomment the below context map
 //		Map<String, Object> context = Map.of(
 //			"deviceTypes", deviceTypes,
@@ -59,7 +60,7 @@ class ParserTest{
 			.withDefaultCodecs()
 			.withTemplate(ACKMessageHex.class)
 			.withContext(context)
-			.withContextFunction(ParserTest.class, "headerLength")
+			.withContext(ParserTest.class, "headerLength")
 			.create();
 		Parser parser = Parser.create(core);
 
@@ -86,11 +87,11 @@ class ParserTest{
 	@Test
 	void parseMultipleMessagesHex() throws NoSuchMethodException, AnnotationException, TemplateException, ConfigurationException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
-			.with("QUECLINK_GB200S", (byte)0x46);
+			.with((byte)0x46, "QUECLINK_GB200S");
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 		Core core = CoreBuilder.builder()
 			.withContext(context)
-			.withContextFunction(ParserTest.class.getDeclaredMethod("headerLength"))
+			.withContext(ParserTest.class.getDeclaredMethod("headerLength"))
 			.withDefaultCodecs()
 			.withTemplatesFrom(ACKMessageHex.class)
 			.create();
@@ -107,7 +108,7 @@ class ParserTest{
 	@Test
 	void parseMultipleMessagesASCII() throws AnnotationException, TemplateException, ConfigurationException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
-			.with("QUECLINK_GV350M", (byte)0xCF);
+			.with((byte)0xCF, "QUECLINK_GV350M");
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 		Core core = CoreBuilder.builder()
 			.withContext(context)
@@ -116,7 +117,7 @@ class ParserTest{
 			.create();
 		Parser parser = Parser.create(core);
 
-		byte[] payload = toByteArray("+ACK:GTIOB,CF8002,359464038116666,45.5,2,0020,20170101123542,11F0$+ACK:GTIOB,CF8002,359464038116666,40.5,2,0020,20170101123542,11F0$");
+		byte[] payload = TestHelper.toByteArray("+ACK:GTIOB,CF8002,359464038116666,45.5,2,0020,20170101123542,11F0$+ACK:GTIOB,CF8002,359464038116666,40.5,2,0020,20170101123542,11F0$");
 		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertEquals(2, result.size());
@@ -125,45 +126,52 @@ class ParserTest{
 	}
 
 	@Test
-	void parseMultipleMessagesHexASCII() throws NoSuchMethodException, AnnotationException, TemplateException, ConfigurationException{
+	void parseMultipleMessagesHexASCII() throws NoSuchMethodException, AnnotationException, TemplateException, ConfigurationException,
+			JSONPathException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
-			.with("QUECLINK_GB200S", (byte)0x46)
-			.with("QUECLINK_GV350M", (byte)0xCF);
+			.with((byte)0x46, "QUECLINK_GB200S")
+			.with((byte)0xCF, "QUECLINK_GV350M");
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 		Core core = CoreBuilder.builder()
 			.withContext(context)
-			.withContextFunction(ParserTest.class.getDeclaredMethod("headerLength"))
+			.withContext(ParserTest.class.getDeclaredMethod("headerLength"))
 			.withDefaultCodecs()
 			.withTemplatesFrom(ACKMessageHex.class)
 			.create();
 		Parser parser = Parser.create(core);
+		Composer composer = Composer.create(core);
 
 		byte[] payload1 = StringHelper.hexToByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
-		byte[] payload2 = toByteArray("+ACK:GTIOB,CF8002,359464038116666,45.5,2,0020,20170101123542,11F0$");
+		byte[] payload2 = TestHelper.toByteArray("+BCK:GTIOB,CF8002,359464038116666,45.5,2,0020,20170101123542,11F0$");
 		byte[] payload = addAll(payload1, payload2);
 		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertEquals(2, result.size());
 		Assertions.assertFalse(result.get(0).hasError());
 		Assertions.assertFalse(result.get(1).hasError());
+		Assertions.assertEquals("+ACK", Extractor.get("/messageHeader", result.get(1).getMessage(), null));
+
+		Response<Object, byte[]> compose = composer.compose(result.get(1).getMessage());
+		Assertions.assertFalse(compose.hasError());
+		Assertions.assertEquals("+BCK:GTIOB,CF8002,359464038116666,45.5,2,0020,20170101123542,11F0$", StringHelper.toASCIIString(compose.getMessage()));
 	}
 
 	@Test
 	void parseMultipleMessagesASCIIHex() throws AnnotationException, TemplateException, NoSuchMethodException, ConfigurationException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
-			.with("QUECLINK_GB200S", (byte)0x46)
-			.with("QUECLINK_GV350M", (byte)0xCF);
+			.with((byte)0x46, "QUECLINK_GB200S")
+			.with((byte)0xCF, "QUECLINK_GV350M");
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 		Core core = CoreBuilder.builder()
 			.withContext(context)
-			.withContextFunction(ParserTest.class.getDeclaredMethod("headerLength"))
+			.withContext(ParserTest.class.getDeclaredMethod("headerLength"))
 			.withDefaultCodecs()
 			.withTemplatesFrom(ACKMessageHex.class)
 			.create();
 		Parser parser = Parser.create(core);
 
 		byte[] payload1 = StringHelper.hexToByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
-		byte[] payload2 = toByteArray("+ACK:GTIOB,CF8002,359464038116666,45.5,2,0020,20170101123542,11F0$");
+		byte[] payload2 = TestHelper.toByteArray("+ACK:GTIOB,CF8002,359464038116666,45.5,2,0020,20170101123542,11F0$");
 		byte[] payload = addAll(payload2, payload1);
 		List<Response<byte[], Object>> result = parser.parse(payload);
 
@@ -172,10 +180,6 @@ class ParserTest{
 		Assertions.assertFalse(result.get(1).hasError());
 	}
 
-
-	private byte[] toByteArray(final String payload){
-		return payload.getBytes(StandardCharsets.ISO_8859_1);
-	}
 
 	private static byte[] addAll(final byte[] array1, final byte[] array2){
 		byte[] joinedArray = new byte[array1.length + array2.length];

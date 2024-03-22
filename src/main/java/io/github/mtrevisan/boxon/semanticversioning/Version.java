@@ -28,6 +28,7 @@ import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.ParserDataType;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Objects;
@@ -43,7 +44,7 @@ import java.util.regex.Pattern;
 public final class Version implements Comparable<Version>{
 
 	/** An empty {@code String} array. */
-	private static final String[] EMPTY_ARRAY = new String[0];
+	private static final String[] EMPTY_STRING_ARRAY = new String[0];
 
 	private static final String KEY_MAJOR = "major";
 	private static final String KEY_MINOR = "minor";
@@ -89,7 +90,7 @@ public final class Version implements Comparable<Version>{
 	 * @throws VersionException	If one of the version numbers is a negative integer
 	 */
 	public static Version of(final int major) throws VersionException{
-		return new Version(major, null, null, EMPTY_ARRAY, EMPTY_ARRAY);
+		return new Version(major, null, null, EMPTY_STRING_ARRAY, EMPTY_STRING_ARRAY);
 	}
 
 	/**
@@ -101,7 +102,7 @@ public final class Version implements Comparable<Version>{
 	 * @throws VersionException	If the given version is not valid.
 	 */
 	public static Version of(final int major, final int minor) throws VersionException{
-		return new Version(major, minor, null, EMPTY_ARRAY, EMPTY_ARRAY);
+		return new Version(major, minor, null, EMPTY_STRING_ARRAY, EMPTY_STRING_ARRAY);
 	}
 
 	/**
@@ -114,7 +115,7 @@ public final class Version implements Comparable<Version>{
 	 * @throws VersionException	If the given version is not valid.
 	 */
 	public static Version of(final int major, final int minor, final int patch) throws VersionException{
-		return new Version(major, minor, patch, EMPTY_ARRAY, EMPTY_ARRAY);
+		return new Version(major, minor, patch, EMPTY_STRING_ARRAY, EMPTY_STRING_ARRAY);
 	}
 
 	/**
@@ -130,7 +131,7 @@ public final class Version implements Comparable<Version>{
 	public static Version of(final int major, final int minor, final int patch, final String[] preRelease) throws VersionException{
 		Objects.requireNonNull(preRelease, "Pre-release identifier cannot be null");
 
-		return new Version(major, minor, patch, preRelease, EMPTY_ARRAY);
+		return new Version(major, minor, patch, preRelease, EMPTY_STRING_ARRAY);
 	}
 
 	/**
@@ -168,8 +169,8 @@ public final class Version implements Comparable<Version>{
 		this.major = major;
 		this.minor = minor;
 		this.patch = patch;
-		this.preRelease = JavaHelper.nonNullOrDefault(preRelease, EMPTY_ARRAY);
-		this.build = JavaHelper.nonNullOrDefault(build, EMPTY_ARRAY);
+		this.preRelease = JavaHelper.nonNullOrDefault(preRelease, EMPTY_STRING_ARRAY);
+		this.build = JavaHelper.nonNullOrDefault(build, EMPTY_STRING_ARRAY);
 	}
 
 	private Version(String version) throws VersionException{
@@ -177,8 +178,8 @@ public final class Version implements Comparable<Version>{
 			major = null;
 			minor = null;
 			patch = null;
-			preRelease = EMPTY_ARRAY;
-			build = EMPTY_ARRAY;
+			preRelease = EMPTY_STRING_ARRAY;
+			build = EMPTY_STRING_ARRAY;
 			return;
 		}
 
@@ -192,7 +193,7 @@ public final class Version implements Comparable<Version>{
 			validateBuild(build);
 		}
 		else
-			build = EMPTY_ARRAY;
+			build = EMPTY_STRING_ARRAY;
 
 		if(version.contains(PRE_RELEASE_PREFIX)){
 			final String[] metadata = PATTERN_PRE_RELEASE_PREFIX.split(version, 2);
@@ -202,13 +203,14 @@ public final class Version implements Comparable<Version>{
 			validatePreRelease(preRelease);
 		}
 		else
-			preRelease = EMPTY_ARRAY;
+			preRelease = EMPTY_STRING_ARRAY;
 
 		final String[] tokens = PATTERN_DOT.split(version);
 		major = parseIdentifier(tokens, 0, KEY_MAJOR);
 		minor = parseIdentifier(tokens, 1, KEY_MINOR);
 		patch = parseIdentifier(tokens, 2, KEY_PATCH);
 	}
+
 
 	private static Integer parseIdentifier(final String[] tokens, final int index, final String type) throws VersionException{
 		Integer value = null;
@@ -221,8 +223,6 @@ public final class Version implements Comparable<Version>{
 	}
 
 	private static void validateToken(final String type, final String token) throws VersionException{
-		if(hasLeadingZeros(token))
-			throw VersionException.create("The {} identifier MUST NOT contain leading zeros", type);
 		try{
 			final int number = Integer.parseInt(token);
 			if(number < 0)
@@ -234,7 +234,7 @@ public final class Version implements Comparable<Version>{
 	}
 
 	private static void validatePreRelease(final String[] preRelease) throws VersionException{
-		for(int i = 0; i < preRelease.length; i ++)
+		for(int i = 0, length = preRelease.length; i < length; i ++)
 			validatePreRelease(preRelease[i]);
 	}
 
@@ -247,7 +247,7 @@ public final class Version implements Comparable<Version>{
 	}
 
 	private static void validateBuild(final String[] build) throws VersionException{
-		for(int i = 0; i < build.length; i ++)
+		for(int i = 0, length = build.length; i < length; i ++)
 			validateBuild(build[i]);
 	}
 
@@ -260,8 +260,8 @@ public final class Version implements Comparable<Version>{
 	/**
 	 * Checks if this version is greater than the other version.
 	 *
-	 * @param other	The other version to compare to
-	 * @return	{@code true} if this version is greater than the other version
+	 * @param other	The other version to compare to.
+	 * @return	Whether this version is greater than the other version.
 	 * @see #compareTo(Version other)
 	 */
 	public boolean isGreaterThan(final Version other){
@@ -271,8 +271,8 @@ public final class Version implements Comparable<Version>{
 	/**
 	 * Checks if this version is greater than or equal to the other version.
 	 *
-	 * @param other	The other version to compare to
-	 * @return	{@code true} if this version is greater than or equal to the other version
+	 * @param other	The other version to compare to.
+	 * @return	Whether this version is greater than or equal to the other version.
 	 * @see #compareTo(Version other)
 	 */
 	public boolean isGreaterThanOrEqualTo(final Version other){
@@ -282,8 +282,8 @@ public final class Version implements Comparable<Version>{
 	/**
 	 * Checks if this version is less than the other version.
 	 *
-	 * @param other	The other version to compare to
-	 * @return	{@code true} if this version is less than the other version
+	 * @param other	The other version to compare to.
+	 * @return	Whether this version is less than the other version.
 	 * @see #compareTo(Version other)
 	 */
 	public boolean isLessThan(final Version other){
@@ -293,8 +293,8 @@ public final class Version implements Comparable<Version>{
 	/**
 	 * Checks if this version is less than or equal to the other version.
 	 *
-	 * @param other	The other version to compare to
-	 * @return	{@code true} if this version is less than or equal to the other version
+	 * @param other	The other version to compare to.
+	 * @return	Whether this version is less than or equal to the other version.
 	 * @see #compareTo(Version other)
 	 */
 	public boolean isLessThanOrEqualTo(final Version other){
@@ -404,7 +404,7 @@ public final class Version implements Comparable<Version>{
 
 	private static int compareIdentifierArrays(final String[] preRelease, final String[] otherPreRelease){
 		int result = (otherPreRelease.length - preRelease.length);
-		for(int i = 0; i < getLeastCommonArrayLength(preRelease, otherPreRelease); i ++){
+		for(int i = 0, length = getLeastCommonArrayLength(preRelease, otherPreRelease); i < length; i ++){
 			result = compareIdentifiers(preRelease[i], otherPreRelease[i]);
 			if(result != 0)
 				break;
@@ -438,10 +438,16 @@ public final class Version implements Comparable<Version>{
 	 * @param text	The text to check, may be {@code null}.
 	 * @return	Whether if the given text only contains valid chars and is non-{@code null}.
 	 */
-	private static boolean containsOnlyValidChars(String text){
-		text = text.toUpperCase(Locale.ROOT);
-		for(int i = 0; i < text.length(); i ++){
-			final char chr = text.charAt(i);
+	private static boolean containsOnlyValidChars(final String text){
+		final int length = JavaHelper.lengthOrZero(text);
+		if(length == 0)
+			return true;
+
+		final byte[] bytes = text.toUpperCase(Locale.ROOT)
+			.getBytes(StandardCharsets.US_ASCII);
+		for(int i = 0; i < length; i ++){
+			final byte chr = bytes[i];
+
 			if(chr != '-' && (chr < 'A' || chr > 'Z'))
 				return false;
 		}
@@ -628,13 +634,10 @@ public final class Version implements Comparable<Version>{
 	}
 
 
-	private static boolean hasLeadingZeros(final CharSequence token){
-		return (token.length() > 1 && token.charAt(0) == '0');
-	}
-
 	private static int getLeastCommonArrayLength(final String[] array1, final String[] array2){
 		return Math.min(array1.length, array2.length);
 	}
+
 
 	@Override
 	public String toString(){

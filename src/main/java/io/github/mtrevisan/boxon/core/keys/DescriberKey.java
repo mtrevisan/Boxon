@@ -30,6 +30,7 @@ package io.github.mtrevisan.boxon.core.keys;
  */
 public enum DescriberKey{
 	TEMPLATE("template"),
+	CONFIGURATION("configuration"),
 
 	CONTEXT("context"),
 
@@ -39,6 +40,8 @@ public enum DescriberKey{
 	HEADER_CHARSET("charset"),
 
 	FIELDS("fields"),
+	EVALUATED_FIELDS("evaluatedFields"),
+	POST_PROCESSED_FIELDS("postProcessedFields"),
 	FIELD_NAME("name"),
 	FIELD_TYPE("fieldType"),
 	ANNOTATION_TYPE("annotationType"),
@@ -61,7 +64,12 @@ public enum DescriberKey{
 	BIND_ALGORITHM("algorithm"),
 	BIND_START_VALUE("startValue"),
 	BIND_VALUE("value"),
-	BIND_VALIDATOR("validator");
+	BIND_VALUE_DECODE("valueDecode"),
+	BIND_VALUE_ENCODE("valueEncode"),
+	BIND_VALIDATOR("validator"),
+
+	BIND_MIN_PROTOCOL("minProtocol"),
+	BIND_MAX_PROTOCOL("maxProtocol");
 
 
 	private final String name;

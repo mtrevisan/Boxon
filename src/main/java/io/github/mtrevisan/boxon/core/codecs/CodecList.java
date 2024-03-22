@@ -38,6 +38,7 @@ import io.github.mtrevisan.boxon.io.ParserDataType;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 
@@ -71,7 +72,7 @@ final class CodecList implements CodecInterface<BindList>{
 		return new ArrayList<>(0);
 	}
 
-	private void decodeWithAlternatives(final BitReaderInterface reader, final List<Object> list, final BindingData bindingData,
+	private void decodeWithAlternatives(final BitReaderInterface reader, final Collection<Object> list, final BindingData bindingData,
 			final Object rootObject) throws FieldException{
 		Class<?> chosenAlternativeType;
 		while((chosenAlternativeType = bindingData.chooseAlternativeSeparatedType(reader)) != null){
@@ -96,11 +97,12 @@ final class CodecList implements CodecInterface<BindList>{
 		encodeWithAlternatives(writer, list);
 	}
 
-	private void encodeWithAlternatives(final BitWriterInterface writer, final List<Object> list) throws FieldException{
-		for(int i = 0; i < list.size(); i ++){
+	private void encodeWithAlternatives(final BitWriterInterface writer, final List<Object> list)
+			throws FieldException{
+		for(int i = 0, length = list.size(); i < length; i ++){
 			final Object elem = list.get(i);
-			final Class<?> type = elem.getClass();
 
+			final Class<?> type = elem.getClass();
 			final Template<?> template = templateParser.createTemplate(type);
 
 			templateParser.encode(template, writer, null, elem);

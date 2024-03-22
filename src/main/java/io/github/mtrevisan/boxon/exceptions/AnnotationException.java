@@ -26,12 +26,15 @@ package io.github.mtrevisan.boxon.exceptions;
 
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 
+import java.io.Serial;
+
 
 /**
  * Thrown if an annotation is not well formatted.
  */
 public final class AnnotationException extends FieldException{
 
+	@Serial
 	private static final long serialVersionUID = 6429044852678473069L;
 
 

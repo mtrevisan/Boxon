@@ -24,9 +24,9 @@
  */
 package io.github.mtrevisan.boxon.core.parsers;
 
-import io.github.mtrevisan.boxon.annotations.MessageHeader;
+import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
-import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigField;
+import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationManagerFactory;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationManagerInterface;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationMessage;
@@ -55,7 +55,7 @@ import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 
-final class LoaderConfiguration{
+public final class LoaderConfiguration{
 
 	private final ThrowingFunction<Class<?>, ConfigurationMessage<?>, AnnotationException> configurationStore
 		= Memoizer.throwingMemoize(ConfigurationMessage::create);
@@ -69,7 +69,7 @@ final class LoaderConfiguration{
 	/**
 	 * Create a configuration loader.
 	 *
-	 * @return	A template parser.
+	 * @return	A configuration parser.
 	 */
 	static LoaderConfiguration create(){
 		return new LoaderConfiguration();
@@ -85,7 +85,7 @@ final class LoaderConfiguration{
 	 * Assign an event listener.
 	 *
 	 * @param eventListener	The event listener.
-	 * @return	The current instance.
+	 * @return	This instance, used for chaining.
 	 */
 	LoaderConfiguration withEventListener(final EventListener eventListener){
 		this.eventListener = JavaHelper.nonNullOrDefault(eventListener, EventListener.getNoOpInstance());
@@ -104,7 +104,7 @@ final class LoaderConfiguration{
 		eventListener.loadingConfigurationsFrom(basePackageClasses);
 
 		final ReflectiveClassLoader reflectiveClassLoader = ReflectiveClassLoader.createFrom(basePackageClasses);
-		/** extract all classes annotated with {@link MessageHeader}. */
+		/** extract all classes annotated with {@link TemplateHeader}. */
 		final List<Class<?>> annotatedClasses = reflectiveClassLoader.extractClassesWithAnnotation(ConfigurationHeader.class);
 		final Map<String, ConfigurationMessage<?>> configurations = extractConfigurations(annotatedClasses);
 		addConfigurationsInner(configurations);
@@ -135,19 +135,37 @@ final class LoaderConfiguration{
 		final Map<String, ConfigurationMessage<?>> configurations = new ConcurrentHashMap<>(size);
 		for(int i = 0; i < size; i ++){
 			final Class<?> type = annotatedClasses.get(i);
+
 			//for each extracted class, try to parse it, extracting all the information needed for the configuration of a message
 			final ConfigurationMessage<?> from = createConfiguration(type);
 			if(from.canBeCoded()){
-				//if the configuration is valid, add it to the list of templates...
+				//if the configuration is valid, add it to the list of configurations...
 				final ConfigurationHeader header = from.getHeader();
-				configurations.put(header.start(), from);
+				configurations.put(header.shortDescription(), from);
 			}
 			else
 				//... otherwise throw exception
-				throw ConfigurationException.create("Cannot create a raw message from data: cannot scan configuration for {}",
+				throw ConfigurationException.create("Cannot create a configuration message from data: cannot scan configuration for {}",
 					type.getSimpleName());
 		}
 		return configurations;
+	}
+
+	/**
+	 * Extract a configuration for the given class.
+	 *
+	 * @param type	The class type.
+	 * @return	A configuration.
+	 * @throws AnnotationException	If an annotation has validation problems.
+	 * @throws ConfigurationException	If a configuration is not well formatted.
+	 */
+	public ConfigurationMessage<?> extractConfiguration(final Class<?> type) throws AnnotationException, ConfigurationException{
+		final ConfigurationMessage<?> from = createConfiguration(type);
+		if(!from.canBeCoded())
+			throw ConfigurationException.create("Cannot create a configuration message from data: cannot scan configuration for {}",
+				type.getSimpleName());
+
+		return from;
 	}
 
 	/**
@@ -178,20 +196,21 @@ final class LoaderConfiguration{
 	private void addConfigurationInner(final ConfigurationMessage<?> configuration){
 		try{
 			final ConfigurationHeader header = configuration.getHeader();
-			final String start = header.start();
-			loadConfigurationInner(start, configuration);
+			final String shortDescription = header.shortDescription();
+			loadConfigurationInner(shortDescription, configuration);
 		}
 		catch(final Exception e){
 			eventListener.cannotLoadConfiguration(configuration.getType().getName(), e);
 		}
 	}
 
-	private void loadConfigurationInner(final String headerStart, final ConfigurationMessage<?> configuration) throws ConfigurationException{
-		if(configurations.containsKey(headerStart))
-			throw ConfigurationException.create("Duplicated key `{}` found for class {}", headerStart,
+	private void loadConfigurationInner(final String shortDescription, final ConfigurationMessage<?> configuration)
+			throws ConfigurationException{
+		if(configurations.containsKey(shortDescription))
+			throw ConfigurationException.create("Duplicated key `{}` found for class {}", shortDescription,
 				configuration.getType().getName());
 
-		configurations.put(headerStart, configuration);
+		configurations.put(shortDescription, configuration);
 	}
 
 
@@ -200,7 +219,7 @@ final class LoaderConfiguration{
 	 *
 	 * @return	The list of configuration messages.
 	 */
-	List<ConfigurationMessage<?>> getConfigurations(){
+	public List<ConfigurationMessage<?>> getConfigurations(){
 		return List.copyOf(configurations.values());
 	}
 
@@ -216,16 +235,16 @@ final class LoaderConfiguration{
 	 */
 	static Object getConfigurationWithDefaults(final ConfigurationMessage<?> configuration, final Map<String, Object> data,
 			final Version protocol) throws EncodeException, CodecException, AnnotationException{
-		final Object configurationObject = ConstructorHelper.getCreator(configuration.getType())
+		Object configurationObject = ConstructorHelper.getEmptyCreator(configuration.getType())
 			.get();
 
 		//fill in default values
-		final List<ConfigField> configurableFields = configuration.getConfigurationFields();
-		fillDefaultValues(configurationObject, configurableFields, protocol);
+		final List<ConfigurationField> configurableFields = configuration.getConfigurationFields();
+		configurationObject = fillDefaultValues(configurationObject, configurableFields, protocol);
 
 
 		//collect mandatory fields:
-		final Collection<ConfigField> mandatoryFields = extractMandatoryFields(configurableFields, protocol);
+		final Collection<ConfigurationField> mandatoryFields = extractMandatoryFields(configurableFields, protocol);
 
 		//load data into configuration based on protocol version:
 		for(final Map.Entry<String, Object> entry : data.entrySet()){
@@ -233,14 +252,14 @@ final class LoaderConfiguration{
 			Object dataValue = entry.getValue();
 
 			//find field in `configuration` that matches `dataKey` and `protocol`
-			final ConfigField foundField = findField(configurableFields, dataKey, protocol);
+			final ConfigurationField foundField = findField(configurableFields, dataKey, protocol);
 			final Annotation foundFieldAnnotation = foundField.getBinding();
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(foundFieldAnnotation);
 			manager.validateValue(foundField.getField(), dataKey, dataValue);
 			dataValue = manager.convertValue(foundField.getField(), dataKey, dataValue, protocol);
-			ReflectionHelper.setValue(configurationObject, foundField.getField(), dataValue);
+			configurationObject = ReflectionHelper.withValue(configurationObject, foundField.getField(), dataValue);
 
-			if(dataValue instanceof String && !((String)dataValue).isEmpty() || dataValue != null)
+			if(dataValue != null)
 				mandatoryFields.remove(foundField);
 		}
 
@@ -253,35 +272,38 @@ final class LoaderConfiguration{
 	/**
 	 * Retrieve the configuration by header start parameter.
 	 *
-	 * @param configurationType	The header start of a configuration.
+	 * @param shortDescription	The short description identifying a message, see {@link ConfigurationHeader#shortDescription()}.
 	 * @return	The configuration.
 	 * @throws EncodeException	If a configuration cannot be retrieved.
 	 */
-	ConfigurationMessage<?> getConfiguration(final String configurationType) throws EncodeException{
-		final ConfigurationMessage<?> configuration = configurations.get(configurationType);
+	public ConfigurationMessage<?> getConfiguration(final String shortDescription) throws EncodeException{
+		final ConfigurationMessage<?> configuration = configurations.get(shortDescription);
 		if(configuration == null)
-			throw EncodeException.create("Cannot find any configuration for given class type");
+			throw EncodeException.create("No configuration could be found for the specified class type");
 
 		return configuration;
 	}
 
-	private static void fillDefaultValues(final Object configurationObject, final List<ConfigField> fields, final Version protocol)
+	private static Object fillDefaultValues(Object configurationObject, final List<ConfigurationField> fields, final Version protocol)
 			throws EncodeException, CodecException, AnnotationException{
-		for(int i = 0; i < fields.size(); i ++){
-			final ConfigField field = fields.get(i);
+		for(int i = 0, length = fields.size(); i < length; i ++){
+			final ConfigurationField field = fields.get(i);
+
 			final Annotation annotation = field.getBinding();
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(annotation);
 			Object dataValue = manager.getDefaultValue(field.getField(), protocol);
 			dataValue = manager.convertValue(field.getField(), manager.getShortDescription(), dataValue, protocol);
-			ReflectionHelper.setValue(configurationObject, field.getField(), dataValue);
+			configurationObject = ReflectionHelper.withValue(configurationObject, field.getField(), dataValue);
 		}
+		return configurationObject;
 	}
 
-	private static Collection<ConfigField> extractMandatoryFields(final List<ConfigField> fields, final Version protocol){
-		final int size = fields.size();
-		final Collection<ConfigField> mandatoryFields = new HashSet<>(size);
-		for(int i = 0; i < size; i ++){
-			final ConfigField field = fields.get(i);
+	private static Collection<ConfigurationField> extractMandatoryFields(final List<ConfigurationField> fields, final Version protocol){
+		final int length = fields.size();
+		final Collection<ConfigurationField> mandatoryFields = new HashSet<>(length);
+		for(int i = 0; i < length; i ++){
+			final ConfigurationField field = fields.get(i);
+
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(field.getBinding());
 			final Annotation annotation = manager.annotationToBeProcessed(protocol);
 			if(manager.isMandatory(annotation))
@@ -290,21 +312,23 @@ final class LoaderConfiguration{
 		return mandatoryFields;
 	}
 
-	private static ConfigField findField(final List<ConfigField> fields, final String key, final Version protocol) throws EncodeException{
-		for(int i = 0; i < fields.size(); i ++){
-			final ConfigField field = fields.get(i);
+	private static ConfigurationField findField(final List<ConfigurationField> fields, final String key, final Version protocol)
+			throws EncodeException{
+		for(int i = 0, length = fields.size(); i < length; i ++){
+			final ConfigurationField field = fields.get(i);
+
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(field.getBinding());
 			final Annotation annotation = manager.annotationToBeProcessed(protocol);
 			if(annotation.annotationType() != Annotation.class && manager.getShortDescription().equals(key))
 				return field;
 		}
-		throw EncodeException.create("Cannot find any field to set for data key {}", key);
+		throw EncodeException.create("Could not find fields to set for data key {}", key);
 	}
 
-	private static void validateMandatoryFields(final Collection<ConfigField> mandatoryFields) throws EncodeException{
+	private static void validateMandatoryFields(final Collection<ConfigurationField> mandatoryFields) throws EncodeException{
 		if(!mandatoryFields.isEmpty()){
 			final StringJoiner sj = new StringJoiner(", ", "[", "]");
-			for(final ConfigField mandatoryField : mandatoryFields){
+			for(final ConfigurationField mandatoryField : mandatoryFields){
 				final Annotation annotation = mandatoryField.getBinding();
 				final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(annotation);
 				final String shortDescription = manager.getShortDescription();

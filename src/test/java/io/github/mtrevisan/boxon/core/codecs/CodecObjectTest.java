@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core.codecs;
 
-import io.github.mtrevisan.boxon.annotations.MessageHeader;
+import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
 import io.github.mtrevisan.boxon.annotations.bindings.BindByte;
 import io.github.mtrevisan.boxon.annotations.bindings.BindInt;
@@ -60,21 +60,9 @@ import java.lang.annotation.Annotation;
 import java.util.List;
 
 
-@SuppressWarnings("ALL")
 class CodecObjectTest{
 
-	private static class Version{
-		@BindByte
-		private final byte major;
-		@BindByte
-		private final byte minor;
-
-		private Version(final byte major, final byte minor){
-			this.major = major;
-			this.minor = minor;
-		}
-
-	}
+	private record Version(@BindByte byte major, @BindByte byte minor){ }
 
 
 	@Test
@@ -186,7 +174,7 @@ class CodecObjectTest{
 		int value;
 	}
 
-	@MessageHeader(start = "tc1")
+	@TemplateHeader(start = "tc1")
 	static class TestChoice1{
 		@BindString(size = "3")
 		String header;
@@ -198,7 +186,7 @@ class CodecObjectTest{
 		TestType0 value;
 	}
 
-	@MessageHeader(start = "tc2")
+	@TemplateHeader(start = "tc2")
 	static class TestChoice2{
 		@BindString(size = "3")
 		String header;
@@ -212,7 +200,7 @@ class CodecObjectTest{
 		TestType0 value;
 	}
 
-	@MessageHeader(start = "tc3")
+	@TemplateHeader(start = "tc3")
 	static class TestChoice3{
 		@BindString(size = "3")
 		String header;
@@ -238,7 +226,7 @@ class CodecObjectTest{
 
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(1, result.size());
-		Response<byte[], Object> response = result.get(0);
+		Response<byte[], Object> response = result.getFirst();
 		Assertions.assertFalse(response.hasError());
 		Assertions.assertEquals(TestChoice1.class, response.getMessage().getClass());
 		TestChoice1 parsedMessage = (TestChoice1)response.getMessage();
@@ -251,7 +239,7 @@ class CodecObjectTest{
 
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(1, result.size());
-		response = result.get(0);
+		response = result.getFirst();
 		Assertions.assertFalse(response.hasError());
 		Assertions.assertEquals(TestChoice1.class, response.getMessage().getClass());
 		parsedMessage = (TestChoice1)response.getMessage();
@@ -272,7 +260,7 @@ class CodecObjectTest{
 
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(1, result.size());
-		Response<byte[], Object> response = result.get(0);
+		Response<byte[], Object> response = result.getFirst();
 		Assertions.assertFalse(response.hasError());
 		Assertions.assertEquals(TestChoice2.class, response.getMessage().getClass());
 		TestChoice2 parsedMessage = (TestChoice2)response.getMessage();
@@ -285,7 +273,7 @@ class CodecObjectTest{
 
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(1, result.size());
-		response = result.get(0);
+		response = result.getFirst();
 		Assertions.assertFalse(response.hasError());
 		Assertions.assertEquals(TestChoice2.class, response.getMessage().getClass());
 		parsedMessage = (TestChoice2)response.getMessage();
@@ -306,7 +294,7 @@ class CodecObjectTest{
 
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(1, result.size());
-		Response<byte[], Object> response = result.get(0);
+		Response<byte[], Object> response = result.getFirst();
 		Assertions.assertFalse(response.hasError());
 		Assertions.assertEquals(TestChoice3.class, response.getMessage().getClass());
 		TestChoice3 parsedMessage = (TestChoice3)response.getMessage();
@@ -319,7 +307,7 @@ class CodecObjectTest{
 
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(1, result.size());
-		response = result.get(0);
+		response = result.getFirst();
 		Assertions.assertFalse(response.hasError());
 		Assertions.assertEquals(TestChoice3.class, response.getMessage().getClass());
 		parsedMessage = (TestChoice3)response.getMessage();

@@ -196,7 +196,7 @@ enum TemplateAnnotationValidator{
 	 * @param annotation	The annotation.
 	 * @throws AnnotationException	If an error is detected.
 	 */
-	abstract void validate(final Field field, final Annotation annotation) throws AnnotationException;
+	abstract void validate(Field field, Annotation annotation) throws AnnotationException;
 
 
 	private static void validateType(final Class<?> bindingType, final Class<? extends Annotation> annotation) throws AnnotationException{
@@ -254,10 +254,13 @@ enum TemplateAnnotationValidator{
 	private static void validateObjectAlternatives(final Field field, final Class<? extends Converter<?, ?>> converter,
 			final ObjectChoices.ObjectChoice[] alternatives, final Class<?> type, final int prefixLength) throws AnnotationException{
 		final boolean hasPrefix = (prefixLength > 0);
-		if(hasPrefix && alternatives.length == 0)
+		final int length = alternatives.length;
+		if(hasPrefix && length == 0)
 			throw AnnotationException.create("No alternatives present");
-		for(int i = 0; i < alternatives.length; i ++){
+
+		for(int i = 0; i < length; i ++){
 			final ObjectChoices.ObjectChoice alternative = alternatives[i];
+
 			validateAlternative(alternative.type(), alternative.condition(), type, hasPrefix);
 
 			validateConverter(field, alternative.type(), converter);
@@ -268,12 +271,14 @@ enum TemplateAnnotationValidator{
 	private static void validateObjectChoiceList(final Field field, final Class<? extends Converter<?, ?>> converter,
 			final ObjectChoicesList selectFrom, final Class<?> type) throws AnnotationException{
 		final ObjectChoicesList.ObjectChoiceList[] alternatives = selectFrom.alternatives();
-		if(alternatives.length == 0)
+		final int length = alternatives.length;
+		if(length == 0)
 			throw AnnotationException.create("All alternatives must be non-empty");
 
 		int minHeaderLength = Integer.MAX_VALUE;
-		for(int i = 0; i < alternatives.length; i ++){
-			final int headerLength = alternatives[i].prefix().length();
+		for(int i = 0; i < length; i ++){
+			final int headerLength = alternatives[i].prefix()
+				.length();
 			if(headerLength < minHeaderLength)
 				minHeaderLength = headerLength;
 		}
@@ -287,17 +292,20 @@ enum TemplateAnnotationValidator{
 			final ObjectChoicesList.ObjectChoiceList[] alternatives, final Class<?> type, final int prefixLength)
 			throws AnnotationException{
 		final boolean hasPrefix = (prefixLength > 0);
-		if(hasPrefix && alternatives.length == 0)
+		final int length = alternatives.length;
+		if(hasPrefix && length == 0)
 			throw AnnotationException.create("No alternatives present");
-		for(int i = 0; i < alternatives.length; i ++){
+
+		for(int i = 0; i < length; i ++){
 			final ObjectChoicesList.ObjectChoiceList alternative = alternatives[i];
+
 			validateAlternative(alternative.type(), alternative.condition(), type, hasPrefix);
 
 			validateConverterToList(field, alternative.type(), converter, type);
 		}
 	}
 
-	private static void validateAlternative(final Class<?> alternativeType, final String alternativeCondition, final Class<?> type,
+	private static void validateAlternative(final Class<?> alternativeType, final CharSequence alternativeCondition, final Class<?> type,
 			final boolean hasPrefixLength) throws AnnotationException{
 		if(!type.isAssignableFrom(alternativeType))
 			throw AnnotationException.create("Type of alternative cannot be assigned to (super) type of annotation");

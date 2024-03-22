@@ -40,7 +40,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
-@SuppressWarnings("ALL")
 class ParserThreadedTest{
 
 	private static final byte[] PAYLOAD = StringHelper.hexToByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
@@ -50,11 +49,11 @@ class ParserThreadedTest{
 	void concurrencySingleParserSingleCore() throws NoSuchMethodException, TemplateException, ConfigurationException, AnnotationException,
 			ExecutionException, InterruptedException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
-			.with("QUECLINK_GB200S", (byte)0x46);
+			.with((byte)0x46, "QUECLINK_GB200S");
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 		Core core = CoreBuilder.builder()
 			.withContext(context)
-			.withContextFunction(ParserTest.class.getDeclaredMethod("headerLength"))
+			.withContext(ParserTest.class.getDeclaredMethod("headerLength"))
 			.withDefaultCodecs()
 			.withTemplate(ACKMessageHex.class)
 			.create();
@@ -80,11 +79,11 @@ class ParserThreadedTest{
 	void concurrencyMultipleParserSingleCore() throws NoSuchMethodException, TemplateException, ConfigurationException, AnnotationException,
 			ExecutionException, InterruptedException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
-			.with("QUECLINK_GB200S", (byte)0x46);
+			.with((byte)0x46, "QUECLINK_GB200S");
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 		Core core = CoreBuilder.builder()
 			.withContext(context)
-			.withContextFunction(ParserTest.class.getDeclaredMethod("headerLength"))
+			.withContext(ParserTest.class.getDeclaredMethod("headerLength"))
 			.withDefaultCodecs()
 			.withTemplate(ACKMessageHex.class)
 			.create();
@@ -109,10 +108,9 @@ class ParserThreadedTest{
 	}
 
 	@Test
-	void concurrencyMultipleParserMultipleCore() throws NoSuchMethodException, TemplateException, ConfigurationException,
-			AnnotationException, ExecutionException, InterruptedException{
+	void concurrencyMultipleParserMultipleCore() throws ExecutionException, InterruptedException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
-			.with("QUECLINK_GB200S", (byte)0x46);
+			.with((byte)0x46, "QUECLINK_GB200S");
 		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
 
 		AtomicInteger errors = new AtomicInteger();
@@ -120,7 +118,7 @@ class ParserThreadedTest{
 			() -> {
 				Core core = CoreBuilder.builder()
 					.withContext(context)
-					.withContextFunction(ParserTest.class.getDeclaredMethod("headerLength"))
+					.withContext(ParserTest.class.getDeclaredMethod("headerLength"))
 					.withDefaultCodecs()
 					.withTemplate(ACKMessageHex.class)
 					.create();

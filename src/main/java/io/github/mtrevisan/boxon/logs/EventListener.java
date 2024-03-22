@@ -33,7 +33,7 @@ package io.github.mtrevisan.boxon.logs;
  */
 public class EventListener{
 
-	private static class SingletonHelper{
+	private static final class SingletonHelper{
 		private static final EventListener INSTANCE = new EventListener();
 	}
 

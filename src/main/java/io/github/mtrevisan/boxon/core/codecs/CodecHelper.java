@@ -25,12 +25,11 @@
 package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
-import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoicesList;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
-import io.github.mtrevisan.boxon.helpers.CharsetHelper;
+import io.github.mtrevisan.boxon.exceptions.DataException;
 import io.github.mtrevisan.boxon.helpers.ConstructorHelper;
 import io.github.mtrevisan.boxon.helpers.ContextHelper;
 import io.github.mtrevisan.boxon.io.BitSetHelper;
@@ -39,7 +38,6 @@ import io.github.mtrevisan.boxon.io.ByteOrder;
 import io.github.mtrevisan.boxon.io.ParserDataType;
 
 import java.lang.reflect.Array;
-import java.nio.charset.Charset;
 import java.util.BitSet;
 
 
@@ -63,17 +61,19 @@ final class CodecHelper{
 
 	static void assertSizeEquals(final int expectedSize, final int size){
 		if(expectedSize != size)
-			throw new IllegalArgumentException("Size mismatch, expected " + expectedSize + ", got " + size);
+			throw DataException.create("Size mismatch, expected {}, got {}", expectedSize, size);
 	}
 
-	static ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> type){
-		for(int i = 0; i < alternatives.length; i ++){
+	static ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> type)
+			throws CodecException{
+		for(int i = 0, length = alternatives.length; i < length; i ++){
 			final ObjectChoices.ObjectChoice alternative = alternatives[i];
+
 			if(alternative.type().isAssignableFrom(type))
 				return alternative;
 		}
 
-		throw new IllegalArgumentException("Cannot find a valid codec for type " + type.getSimpleName());
+		throw CodecException.create("Cannot find a valid codec for type {}", type.getSimpleName());
 	}
 
 	static void writeHeader(final BitWriterInterface writer, final ObjectChoices.ObjectChoice chosenAlternative,
@@ -90,63 +90,46 @@ final class CodecHelper{
 		}
 	}
 
-	static ObjectChoicesList.ObjectChoiceList chooseAlternative(final ObjectChoicesList.ObjectChoiceList[] alternatives,
-			final Class<?> type){
-		for(int i = 0; i < alternatives.length; i ++){
-			final ObjectChoicesList.ObjectChoiceList alternative = alternatives[i];
-			if(alternative.type().isAssignableFrom(type))
-				return alternative;
-		}
-
-		throw new IllegalArgumentException("Cannot find a valid codec for type " + type.getSimpleName());
-	}
-
-	static void writeHeader(final BitWriterInterface writer, final ObjectChoicesList.ObjectChoiceList chosenAlternative,
-			final ObjectChoicesList selectFrom){
-		//if chosenAlternative.condition() contains '#prefix', then write @ObjectChoiceList.prefix()
-		if(ContextHelper.containsHeaderReference(chosenAlternative.condition())){
-			final String prefix = chosenAlternative.prefix();
-			final Charset charset = CharsetHelper.lookup(selectFrom.charset());
-
-			writer.putText(prefix, charset);
-		}
-	}
-
-	static Object convertValue(final BindingData bindingData, final Object value){
+	static <IN, OUT> OUT convertValue(final BindingData bindingData, final IN value){
 		final Class<? extends Converter<?, ?>> converterType = bindingData.getChosenConverter();
-		final Object convertedValue = converterDecode(converterType, value);
+		final OUT convertedValue = converterDecode(converterType, value);
 		bindingData.validate(convertedValue);
 		return convertedValue;
 	}
 
 	@SuppressWarnings("unchecked")
-	private static <IN> Object converterDecode(final Class<? extends Converter<?, ?>> converterType, final IN data){
+	private static <IN, OUT> OUT converterDecode(final Class<? extends Converter<?, ?>> converterType, final IN data){
 		try{
-			final Converter<IN, ?> converter = (Converter<IN, ?>)ConstructorHelper.getCreator(converterType)
+			final Converter<IN, OUT> converter = (Converter<IN, OUT>)ConstructorHelper.getEmptyCreator(converterType)
 				.get();
 
 			return converter.decode(data);
 		}
 		catch(final Exception e){
-			throw new IllegalArgumentException("Can not input " + data.getClass().getSimpleName() + " (" + data
-				+ ") to decode method of converter " + converterType.getSimpleName(), e);
+			throw DataException.create("Can not input {} ({}) to decode method of converter {}",
+				data.getClass().getSimpleName(), data, converterType.getSimpleName(), e);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	static <IN, OUT> IN converterEncode(final Class<? extends Converter<?, ?>> converterType, final Object data){
-		final Converter<IN, OUT> converter = (Converter<IN, OUT>)ConstructorHelper.getCreator(converterType)
-			.get();
-		return converter.encode((OUT)data);
+	static <IN, OUT> IN converterEncode(final Class<? extends Converter<?, ?>> converterType, final OUT data){
+		try{
+			final Converter<IN, OUT> converter = (Converter<IN, OUT>)ConstructorHelper.getEmptyCreator(converterType)
+				.get();
+			return converter.encode(data);
+		}
+		catch(final Exception e){
+			throw DataException.create("Can not input {} ({}) to encode method of converter {}",
+				data.getClass().getSimpleName(), data, converterType.getSimpleName(), e);
+		}
 	}
 
 	static Object interpretValue(final Class<?> fieldType, Object value) throws CodecException{
 		value = ParserDataType.getValueOrSelf(fieldType, value);
 		if(value != null){
-			final Class<?> valueClass = value.getClass();
-			if(valueClass.isEnum())
-				value = ((ConfigurationEnum)value).getCode();
-			else if(valueClass.isArray())
+			if(value instanceof ConfigurationEnum v)
+				value = v.getCode();
+			else if(value.getClass().isArray())
 				value = calculateCompositeValue(value);
 		}
 		return value;
@@ -154,7 +137,7 @@ final class CodecHelper{
 
 	private static int calculateCompositeValue(final Object value){
 		int compositeEnumValue = 0;
-		for(int i = 0; i < Array.getLength(value); i ++)
+		for(int i = 0, length = Array.getLength(value); i < length; i ++)
 			compositeEnumValue |= ((ConfigurationEnum)Array.get(value, i)).getCode();
 		return compositeEnumValue;
 	}

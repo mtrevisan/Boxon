@@ -27,16 +27,17 @@ package io.github.mtrevisan.boxon.annotations.checksummers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.nio.charset.StandardCharsets;
 
-@SuppressWarnings("ALL")
+
 class BSD8Test{
 
 	@Test
 	void test(){
 		BSD8 crc = new BSD8();
-		Number crc8 = crc.calculateChecksum("9142656".getBytes(), 0, 7, BSD8.START_VALUE_0x00);
+		Number crc8 = crc.calculateChecksum("9142656".getBytes(StandardCharsets.US_ASCII), 0, 7, BSD8.START_VALUE_0x00);
 
-		Assertions.assertEquals((byte)0x7D, crc8.byteValue());
+		Assertions.assertEquals((byte)0xC5, crc8.byteValue());
 	}
 
 	@Test
@@ -44,7 +45,7 @@ class BSD8Test{
 		BSD8 crc = new BSD8();
 		Number crc8 = crc.calculateChecksum(new byte[]{0x01, 0x02, 0x03, 0x04}, 0, 4, BSD8.START_VALUE_0x00);
 
-		Assertions.assertEquals((byte)0xE6, crc8.byteValue());
+		Assertions.assertEquals((byte)0x26, crc8.byteValue());
 	}
 
 }

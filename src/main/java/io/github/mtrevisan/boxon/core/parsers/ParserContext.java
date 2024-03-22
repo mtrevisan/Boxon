@@ -24,13 +24,16 @@
  */
 package io.github.mtrevisan.boxon.core.parsers;
 
-import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigField;
-import io.github.mtrevisan.boxon.core.helpers.templates.BoundedField;
+import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationField;
+import io.github.mtrevisan.boxon.core.helpers.templates.TemplateField;
+import io.github.mtrevisan.boxon.exceptions.DataException;
 import io.github.mtrevisan.boxon.helpers.ContextHelper;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
+import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 
 
 final class ParserContext<T>{
@@ -38,7 +41,7 @@ final class ParserContext<T>{
 	private final Evaluator evaluator;
 
 	private Object rootObject;
-	private final T currentObject;
+	private T currentObject;
 
 	private String className;
 	private String fieldName;
@@ -70,6 +73,18 @@ final class ParserContext<T>{
 		return currentObject;
 	}
 
+	/**
+	 * Set the field value on the current object.
+	 *
+	 * @param field	The field.
+	 * @param value	The value.
+	 */
+	@SuppressWarnings("unchecked")
+	public void setFieldValue(final Field field, final Object value){
+		//NOTE: record classes must be created anew, therefore `currentObject` must be updated
+		currentObject = (T)ReflectionHelper.withValue(currentObject, field, value);
+	}
+
 	void addCurrentObjectToEvaluatorContext(){
 		evaluator.addToContext(ContextHelper.CONTEXT_SELF, currentObject);
 	}
@@ -95,13 +110,13 @@ final class ParserContext<T>{
 	}
 
 	Object getFieldValue(){
-		if(field instanceof BoundedField)
-			return ((BoundedField)field).getFieldValue(currentObject);
-		if(field instanceof ConfigField)
-			return ((ConfigField)field).getFieldValue(currentObject);
+		if(field instanceof final TemplateField f)
+			return f.getFieldValue(currentObject);
+		if(field instanceof final ConfigurationField f)
+			return f.getFieldValue(currentObject);
 
-		throw new IllegalArgumentException("Field not of type " + BoundedField.class.getSimpleName() + " or "
-			+ ConfigField.class.getSimpleName());
+		throw DataException.create("Field not of type {} or {}",
+			TemplateField.class.getSimpleName(), ConfigurationField.class.getSimpleName());
 	}
 
 	/**

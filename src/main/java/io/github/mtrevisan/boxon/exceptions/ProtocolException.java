@@ -22,45 +22,36 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.annotations;
+package io.github.mtrevisan.boxon.exceptions;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import io.github.mtrevisan.boxon.helpers.StringHelper;
+
+import java.io.Serial;
 
 
 /**
- * Defines a message with a given header and footer (optional).
- * <p>This will enable automatic loading through the {@code Loader}.</p>
+ * Thrown if an invalid protocol is found.
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-@Documented
-public @interface MessageHeader{
+public final class ProtocolException extends IllegalArgumentException{
+
+	@Serial
+	private static final long serialVersionUID = 6566811782511878387L;
+
 
 	/**
-	 * The initial bytes that determines the type of message.
-	 * <p>This SHOULD be read by the template of a message.</p>
+	 * Constructs a new exception with the specified message, possibly with parameters.
 	 *
-	 * @return	The header bytes of this message.
+	 * @param message	The message to be formatted (see {@link StringHelper#format(String, Object...)}).
+	 * @param parameters	The parameters of the message.
+	 * @return	An instance of this exception.
 	 */
-	String[] start();
+	public static ProtocolException create(final String message, final Object... parameters){
+		return new ProtocolException(StringHelper.format(message, parameters));
+	}
 
-	/**
-	 * The final bytes that closes the message.
-	 * <p>This SHOULD NOT be read by the template of a message.</p>
-	 *
-	 * @return	The tail bytes of this message (defaults to empty string).
-	 */
-	String end() default "";
 
-	/**
-	 * The type of encoding used for the {@link #start()} and {@link #end()} fields.
-	 *
-	 * @return	The type of encoding used (defaults to {@value io.github.mtrevisan.boxon.helpers.CharsetHelper#DEFAULT_CHARSET}).
-	 */
-	String charset() default "UTF-8";
+	private ProtocolException(final String message){
+		super(message);
+	}
 
 }

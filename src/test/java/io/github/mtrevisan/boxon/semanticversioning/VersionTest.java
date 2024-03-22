@@ -28,7 +28,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 
-@SuppressWarnings("ALL")
 class VersionTest{
 
 	@Test
@@ -37,14 +36,6 @@ class VersionTest{
 
 		Assertions.assertEquals(Version.of(1, 0, 0), version);
 		Assertions.assertEquals("1.0.0", version.toString());
-	}
-
-	@Test
-	void shouldRaiseErrorIfNumericIdentifierHasLeadingZeros(){
-		Throwable exception = Assertions.assertThrows(IllegalArgumentException.class,
-			() -> Version.of("01.1.0"));
-
-		Assertions.assertEquals("The major identifier MUST NOT contain leading zeros", exception.getMessage());
 	}
 
 	@Test

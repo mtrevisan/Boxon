@@ -54,7 +54,7 @@ public @interface CompositeConfigurationField{
 	 *
 	 * @return	A short description of the field.
 	 */
-	String shortDescription() default "";
+	String shortDescription();
 
 	/**
 	 * A long description of the field.
@@ -62,6 +62,7 @@ public @interface CompositeConfigurationField{
 	 * @return	A long description of the field.
 	 */
 	String longDescription() default "";
+
 
 	/**
 	 * The lowest protocol the field is in.

@@ -24,6 +24,8 @@
  */
 package io.github.mtrevisan.boxon.core.parsers.matchers;
 
+import java.util.Arrays;
+
 
 /**
  * An implementation of the Karp-Rabin/Rabin-Karb searching algorithm.
@@ -38,7 +40,7 @@ package io.github.mtrevisan.boxon.core.parsers.matchers;
  */
 public final class KRPatternMatcher implements PatternMatcher{
 
-	private static class SingletonHelper{
+	private static final class SingletonHelper{
 		private static final PatternMatcher INSTANCE = new KRPatternMatcher();
 	}
 
@@ -59,7 +61,7 @@ public final class KRPatternMatcher implements PatternMatcher{
 	@Override
 	public int[] preProcessPattern(final byte[] pattern){
 		//calculate the hash value of pattern
-		return new int[]{calculateHash(pattern, pattern.length)};
+		return new int[]{calculateHash(pattern, pattern.length, 0)};
 	}
 
 	/**
@@ -78,22 +80,24 @@ public final class KRPatternMatcher implements PatternMatcher{
 	 */
 	@Override
 	public int indexOf(final byte[] source, final int offset, final byte[] pattern, final int[] hashTable){
-		if(pattern.length == 0)
+		final int patternLength = pattern.length;
+		if(patternLength == 0)
 			return 0;
-		if(source.length < pattern.length + offset)
+		final int sourceLength = source.length;
+		if(sourceLength < patternLength + offset)
 			return -1;
 
 		//calculate the hash value of first window of source
 		final int patternHash = hashTable[0];
-		int sourceHash = calculateHash(source, offset, pattern.length);
+		int sourceHash = calculateHash(source, patternLength, offset);
 
-		final int length = source.length - pattern.length;
-		for(int i = offset; i <= length + offset; i ++){
+		final int maxLength = sourceLength - patternLength;
+		for(int i = offset; i <= maxLength + offset; i ++){
 			//check the hash values of current window of source and pattern
 			if(patternHash == sourceHash && equals(source, i, pattern))
 				return i;
 
-			if(i < length)
+			if(i < maxLength)
 				//calculate hash value for next window of text by removing leading digit add trailing digit
 				sourceHash = updateHashForNextWindow(source, pattern, sourceHash, i);
 		}
@@ -101,16 +105,7 @@ public final class KRPatternMatcher implements PatternMatcher{
 		return -1;
 	}
 
-	private static int calculateHash(final byte[] source, final int length){
-		int hash = 0;
-		for(int i = 0; i < length; i ++){
-			hash <<= 1;
-			hash += source[i];
-		}
-		return hash;
-	}
-
-	private static int calculateHash(final byte[] source, final int offset, final int length){
+	private static int calculateHash(final byte[] source, final int length, final int offset){
 		int hash = 0;
 		for(int i = 0; i < length; i ++){
 			hash <<= 1;
@@ -125,11 +120,7 @@ public final class KRPatternMatcher implements PatternMatcher{
 	}
 
 	private static boolean equals(final byte[] array1, final int offset, final byte[] array2){
-		int i = 0;
-		for( ; i < array2.length; i ++)
-			if(array1[i + offset] != array2[i])
-				break;
-		return (i == array2.length);
+		return Arrays.equals(array1, offset, offset + array2.length, array2, 0, array2.length);
 	}
 
 }

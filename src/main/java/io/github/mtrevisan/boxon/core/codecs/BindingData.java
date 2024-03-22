@@ -30,6 +30,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoicesList;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
+import io.github.mtrevisan.boxon.exceptions.DataException;
 import io.github.mtrevisan.boxon.helpers.CharsetHelper;
 import io.github.mtrevisan.boxon.helpers.ConstructorHelper;
 import io.github.mtrevisan.boxon.helpers.ContextHelper;
@@ -98,13 +99,14 @@ final class BindingData{
 	 *
 	 * @param value	The value.
 	 * @param <T>	The class type of the value.
+	 * @throws DataException	If the value does not pass validation.
 	 */
 	@SuppressWarnings("unchecked")
 	<T> void validate(final T value){
-		final Validator<T> validatorCreator = (Validator<T>)ConstructorHelper.getCreator(validator)
+		final Validator<T> validatorCreator = (Validator<T>)ConstructorHelper.getEmptyCreator(validator)
 			.get();
 		if(!validatorCreator.isValid(value))
-			throw new IllegalArgumentException("Validation of " + validator.getSimpleName() + " didn't passed (value is " + value + ")");
+			throw DataException.create("Validation of {} didn't passed (value is {})", validator.getSimpleName(), value);
 	}
 
 	/**
@@ -171,16 +173,13 @@ final class BindingData{
 	}
 
 	private ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives){
-		for(int i = 0; i < alternatives.length; i ++){
+		for(int i = 0, length = alternatives.length; i < length; i ++){
 			final ObjectChoices.ObjectChoice alternative = alternatives[i];
+
 			if(evaluator.evaluateBoolean(alternative.condition(), rootObject))
 				return alternative;
 		}
 		return EMPTY_CHOICE;
-	}
-
-	private static boolean isEmptyChoice(final ObjectChoices.ObjectChoice choice){
-		return (choice.annotationType() == Annotation.class);
 	}
 
 	/**
@@ -234,20 +233,21 @@ final class BindingData{
 	 *
 	 * @return	Whether the select-object-separated-from binding has any alternatives.
 	 */
-	boolean hasSelectSeparatedAlternatives(){
+	private boolean hasSelectSeparatedAlternatives(){
 		return (selectObjectListFrom.alternatives().length > 0);
 	}
 
 	private ObjectChoicesList.ObjectChoiceList chooseAlternative(final ObjectChoicesList.ObjectChoiceList[] alternatives){
-		for(int i = 0; i < alternatives.length; i ++){
+		for(int i = 0, length = alternatives.length; i < length; i ++){
 			final ObjectChoicesList.ObjectChoiceList alternative = alternatives[i];
+
 			if(evaluator.evaluateBoolean(alternative.condition(), rootObject))
 				return alternative;
 		}
 		return EMPTY_CHOICE_SEPARATED;
 	}
 
-	private static boolean isEmptyChoice(final ObjectChoicesList.ObjectChoiceList choice){
+	private static boolean isEmptyChoice(final Annotation choice){
 		return (choice.annotationType() == Annotation.class);
 	}
 
@@ -258,8 +258,9 @@ final class BindingData{
 	 */
 	Class<? extends Converter<?, ?>> getChosenConverter(){
 		final ConverterChoices.ConverterChoice[] alternatives = selectConverterFrom.alternatives();
-		for(int i = 0; i < alternatives.length; i ++){
+		for(int i = 0, length = alternatives.length; i < length; i ++){
 			final ConverterChoices.ConverterChoice alternative = alternatives[i];
+
 			if(evaluator.evaluateBoolean(alternative.condition(), rootObject))
 				return alternative.converter();
 		}

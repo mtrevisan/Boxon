@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core.parsers;
 
-import io.github.mtrevisan.boxon.annotations.MessageHeader;
+import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.core.codecs.LoaderCodecInterface;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.core.parsers.matchers.KMPPatternMatcher;
@@ -95,7 +95,7 @@ public final class LoaderTemplate{
 	 * Assign an event listener.
 	 *
 	 * @param eventListener	The event listener.
-	 * @return	The current instance.
+	 * @return	This instance, used for chaining.
 	 */
 	LoaderTemplate withEventListener(final EventListener eventListener){
 		this.eventListener = JavaHelper.nonNullOrDefault(eventListener, EventListener.getNoOpInstance());
@@ -104,7 +104,7 @@ public final class LoaderTemplate{
 	}
 
 	/**
-	 * Loads all the protocol classes annotated with {@link MessageHeader}.
+	 * Loads all the protocol classes annotated with {@link TemplateHeader}.
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
 	 * @throws AnnotationException	If an annotation has validation problems.
@@ -114,8 +114,8 @@ public final class LoaderTemplate{
 		eventListener.loadingTemplatesFrom(basePackageClasses);
 
 		final ReflectiveClassLoader reflectiveClassLoader = ReflectiveClassLoader.createFrom(basePackageClasses);
-		/** extract all classes annotated with {@link MessageHeader}. */
-		final List<Class<?>> annotatedClasses = reflectiveClassLoader.extractClassesWithAnnotation(MessageHeader.class);
+		/** extract all classes annotated with {@link TemplateHeader}. */
+		final List<Class<?>> annotatedClasses = reflectiveClassLoader.extractClassesWithAnnotation(TemplateHeader.class);
 		final List<Template<?>> templates = extractTemplates(annotatedClasses);
 		addTemplatesInner(templates);
 
@@ -123,7 +123,7 @@ public final class LoaderTemplate{
 	}
 
 	/**
-	 * Load the specified protocol class annotated with {@link MessageHeader}.
+	 * Load the specified protocol class annotated with {@link TemplateHeader}.
 	 *
 	 * @param templateClass	Template class.
 	 * @throws AnnotationException	If an annotation has validation problems.
@@ -132,8 +132,8 @@ public final class LoaderTemplate{
 	public void loadTemplate(final Class<?> templateClass) throws AnnotationException, TemplateException{
 		eventListener.loadingTemplate(templateClass);
 
-		if(templateClass.isAnnotationPresent(MessageHeader.class)){
-			/** extract all classes annotated with {@link MessageHeader}. */
+		if(templateClass.isAnnotationPresent(TemplateHeader.class)){
+			/** extract all classes annotated with {@link TemplateHeader}. */
 			final Template<?> template = extractTemplate(templateClass);
 			if(template.canBeCoded()){
 				addTemplateInner(template);
@@ -148,6 +148,7 @@ public final class LoaderTemplate{
 		final List<Template<?>> templates = new ArrayList<>(size);
 		for(int i = 0; i < size; i ++){
 			final Class<?> type = annotatedClasses.get(i);
+
 			//for each extracted class, try to parse it, extracting all the information needed for the codec of a message
 			final Template<?> from = createTemplate(type);
 			if(from.canBeCoded())
@@ -193,8 +194,9 @@ public final class LoaderTemplate{
 
 	private void addTemplatesInner(final List<Template<?>> templates) throws TemplateException{
 		//load each template into the available templates list
-		for(int i = 0; i < templates.size(); i ++){
+		for(int i = 0, length = templates.size(); i < length; i ++){
 			final Template<?> template = templates.get(i);
+
 			if(template != null && template.canBeCoded())
 				addTemplateInner(template);
 		}
@@ -208,10 +210,10 @@ public final class LoaderTemplate{
 	 */
 	private void addTemplateInner(final Template<?> template) throws TemplateException{
 		try{
-			final MessageHeader header = template.getHeader();
+			final TemplateHeader header = template.getHeader();
 			final Charset charset = CharsetHelper.lookup(header.charset());
 			final String[] starts = header.start();
-			for(int i = 0; i < starts.length; i ++)
+			for(int i = 0, length = starts.length; i < length; i ++)
 				loadTemplateInner(template, starts[i], charset);
 		}
 		catch(final TemplateException e){
@@ -245,6 +247,7 @@ public final class LoaderTemplate{
 		final byte[] array = reader.array();
 		for(final Map.Entry<String, Template<?>> entry : templates.entrySet()){
 			final String header = entry.getKey();
+
 			final byte[] templateHeader = StringHelper.hexToByteArray(header);
 
 			//verify if it's a valid message header
@@ -264,11 +267,13 @@ public final class LoaderTemplate{
 	 * @throws TemplateException	Whether the template is not valid.
 	 */
 	Template<?> getTemplate(final Class<?> type) throws TemplateException{
-		final MessageHeader header = type.getAnnotation(MessageHeader.class);
+		final TemplateHeader header = type.getAnnotation(TemplateHeader.class);
 		if(header == null)
 			throw TemplateException.create("The given class type is not a valid template");
 
-		final String key = calculateKey(header.start()[0], CharsetHelper.lookup(header.charset()));
+		//NOTE: we want only a template, so we pick the first `start`
+		final String headerFirstStart = header.start()[0];
+		final String key = calculateKey(headerFirstStart, CharsetHelper.lookup(header.charset()));
 		final Template<?> template = templates.get(key);
 		if(template == null)
 			throw TemplateException.create("Cannot find any template for given class type");
@@ -290,10 +295,13 @@ public final class LoaderTemplate{
 	}
 
 	private List<Annotation> filterAnnotationsWithCodec(final Annotation[] declaredAnnotations){
-		final List<Annotation> annotations = new ArrayList<>(declaredAnnotations.length);
-		for(int i = 0; i < declaredAnnotations.length; i ++)
-			if(loaderCodec.hasCodec(declaredAnnotations[i].annotationType()))
-				annotations.add(declaredAnnotations[i]);
+		final int length = declaredAnnotations.length;
+		final List<Annotation> annotations = new ArrayList<>(length);
+		for(int i = 0; i < length; i ++){
+			final Annotation declaredAnnotation = declaredAnnotations[i];
+			if(loaderCodec.hasCodec(declaredAnnotation.annotationType()))
+				annotations.add(declaredAnnotation);
+		}
 		return annotations;
 	}
 
@@ -306,20 +314,20 @@ public final class LoaderTemplate{
 	int findNextMessageIndex(final BitReaderInterface reader){
 		int minOffset = -1;
 		for(final Template<?> template : templates.values()){
-			final MessageHeader header = template.getHeader();
+			final TemplateHeader header = template.getHeader();
 
 			minOffset = findNextMessageIndex(reader, header, minOffset);
 		}
 		return minOffset;
 	}
 
-	private static int findNextMessageIndex(final BitReaderInterface reader, final MessageHeader header, int minOffset){
+	private static int findNextMessageIndex(final BitReaderInterface reader, final TemplateHeader header, int minOffset){
 		final Charset charset = CharsetHelper.lookup(header.charset());
 		final String[] messageStarts = header.start();
 		//select the minimum index with a valid template
-		for(int i = 0; i < messageStarts.length; i ++){
+		for(int i = 0, length = messageStarts.length; i < length; i ++){
 			final int offset = searchNextSequence(reader, messageStarts[i].getBytes(charset));
-			if(offset >= 0 && (minOffset < 0 || offset < minOffset))
+			if(offset >= 0 && !(0 <= minOffset && minOffset <= offset))
 				minOffset = offset;
 		}
 		return minOffset;

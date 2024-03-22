@@ -99,7 +99,7 @@ enum ConfigurationAnnotationValidator{
 			ValidationHelper.validateProtocol(configData, minProtocolVersion, maxProtocolVersion);
 		}
 
-		private void validateMinimumParameters(final ConfigFieldData field) throws AnnotationException{
+		private static void validateMinimumParameters(final ConfigFieldData field) throws AnnotationException{
 			//one only of `pattern`, `minValue`/`maxValue`, and `enumeration` should be set:
 			final boolean hasPattern = !field.getPattern().isEmpty();
 			final boolean hasMinMaxValues = (!field.getMinValue().isEmpty() || !field.getMaxValue().isEmpty());
@@ -112,7 +112,7 @@ enum ConfigurationAnnotationValidator{
 				throw AnnotationException.create("Array field should have `enumeration`");
 		}
 
-		private boolean moreThanOneSet(final boolean hasPattern, final boolean hasMinMaxValues, final boolean hasEnumeration){
+		private static boolean moreThanOneSet(final boolean hasPattern, final boolean hasMinMaxValues, final boolean hasEnumeration){
 			return (hasPattern && (hasMinMaxValues || hasEnumeration)
 				|| hasMinMaxValues && hasEnumeration);
 		}
@@ -131,8 +131,9 @@ enum ConfigurationAnnotationValidator{
 			if(!String.class.isAssignableFrom(field.getType()))
 				throw AnnotationException.create("Composite fields must have a string variable to be bounded to");
 
-			final CompositeSubField[] fields = binding.value();
-			if(fields.length == 0)
+			final CompositeSubField[] subfields = binding.value();
+			final int length = subfields.length;
+			if(length == 0)
 				throw AnnotationException.create("Composite fields must have at least one sub-field");
 			validateCharset(configData.getCharset());
 
@@ -141,8 +142,8 @@ enum ConfigurationAnnotationValidator{
 			ValidationHelper.validateProtocol(configData, minProtocolVersion, maxProtocolVersion);
 
 
-			for(int i = 0; i < fields.length; i ++)
-				SUB_FIELD.validate(field, fields[i], minProtocolVersion, maxProtocolVersion);
+			for(int i = 0; i < length; i ++)
+				SUB_FIELD.validate(field, subfields[i], minProtocolVersion, maxProtocolVersion);
 		}
 	},
 
@@ -183,13 +184,13 @@ enum ConfigurationAnnotationValidator{
 			ValidationHelper.validateProtocol(configData, minProtocolVersion, maxProtocolVersion);
 
 			final AlternativeSubField[] alternatives = binding.value();
-			for(int i = 0; i < JavaHelper.lengthOrZero(alternatives); i ++){
+			for(int i = 0, length = JavaHelper.lengthOrZero(alternatives); i < length; i ++){
 				final ConfigFieldData alternativeConfigData = ConfigFieldDataBuilder.create(field, alternatives[i]);
 				ValidationHelper.validateProtocol(alternativeConfigData, minProtocolVersion, maxProtocolVersion);
 			}
 		}
 
-		private void validateMinimumParameters(final Field field, final ConfigFieldData configData) throws AnnotationException{
+		private static void validateMinimumParameters(final Field field, final ConfigFieldData configData) throws AnnotationException{
 			final Class<?> fieldType = field.getType();
 			if(fieldType.isArray() && !configData.hasEnumeration())
 				throw AnnotationException.create("Array field should have `enumeration`");
@@ -217,7 +218,7 @@ enum ConfigurationAnnotationValidator{
 			ValidationHelper.validateProtocol(configData, minProtocolVersion, maxProtocolVersion);
 		}
 
-		private void validateMinimumParameters(final AlternativeSubField binding) throws AnnotationException{
+		private static void validateMinimumParameters(final AlternativeSubField binding) throws AnnotationException{
 			final String pattern = binding.pattern();
 			final String minValue = binding.minValue();
 			final String maxValue = binding.maxValue();
@@ -266,7 +267,8 @@ enum ConfigurationAnnotationValidator{
 	 * @throws AnnotationException	If an error is detected.
 	 * @throws CodecException	If an error was raised reading of interpreting the field value.
 	 */
-	abstract void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion) throws AnnotationException, CodecException;
+	abstract void validate(Field field, Annotation annotation, Version minProtocolVersion, Version maxProtocolVersion)
+		throws AnnotationException, CodecException;
 
 	private static void validateCharset(final String charsetName) throws AnnotationException{
 		try{

@@ -68,7 +68,7 @@ public final class BitWriter extends BitWriterData implements BitWriterInterface
 
 	@Override
 	public void putBytes(final byte[] array){
-		for(int i = 0; i < array.length; i ++)
+		for(int i = 0, length = array.length; i < length; i ++)
 			putByte(array[i]);
 	}
 

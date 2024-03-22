@@ -57,14 +57,14 @@ public final class ConfigurationHelper{
 	 * @param map	The map in which to load the key-value pair.
 	 * @throws ConfigurationException	If a duplicate is found.
 	 */
-	public static void putIfNotEmpty(final ConfigurationKey key, final Object value, @SuppressWarnings("BoundedWildcard") final Map<String, Object> map)
-			throws ConfigurationException{
+	public static void putIfNotEmpty(final ConfigurationKey key, final Object value,
+			@SuppressWarnings("BoundedWildcard") final Map<String, Object> map) throws ConfigurationException{
 		if(isValidValue(value) && map.put(key.toString(), value) != null)
 			throw ConfigurationException.create("Duplicated short description: {}", key.toString());
 	}
 
 	private static boolean isValidValue(final Object value){
-		return (value != null && (!(value instanceof CharSequence) || !StringHelper.isBlank((CharSequence)value)));
+		return (value != null && (!(value instanceof final String v) || !StringHelper.isBlank(v)));
 	}
 
 
@@ -87,8 +87,9 @@ public final class ConfigurationHelper{
 	private static <T extends ConfigurationEnum> T[] extractEnumerationArrayValue(final CharSequence value, final Class<T> enumeration){
 		final ConfigurationEnum[] enumConstants = enumeration.getEnumConstants();
 		final String[] defaultValues = splitMultipleEnumerations(value);
-		final T[] valEnum = (T[])Array.newInstance(enumeration, defaultValues.length);
-		for(int i = 0; i < defaultValues.length; i ++)
+		final int length = defaultValues.length;
+		final T[] valEnum = (T[])Array.newInstance(enumeration, length);
+		for(int i = 0; i < length; i ++)
 			valEnum[i] = (T)ConfigurationEnum.extractEnum(enumConstants, defaultValues[i]);
 		return valEnum;
 	}
@@ -128,11 +129,12 @@ public final class ConfigurationHelper{
 			final Map<String, Object> map) throws ConfigurationException{
 		if(enumeration != NullEnum.class){
 			final ConfigurationEnum[] enumConstants = enumeration.getEnumConstants();
-			final String[] enumValues = new String[enumConstants.length];
-			for(int j = 0; j < enumConstants.length; j ++)
-				enumValues[j] = enumConstants[j].name();
+			final int length = enumConstants.length;
+			final String[] enumValues = new String[length];
+			for(int i = 0; i < length; i ++)
+				enumValues[i] = enumConstants[i].name();
 			putIfNotEmpty(ConfigurationKey.ENUMERATION, enumValues, map);
-			if(fieldType.isEnum())
+			if(!fieldType.isArray())
 				putIfNotEmpty(ConfigurationKey.MUTUALLY_EXCLUSIVE, true, map);
 		}
 	}

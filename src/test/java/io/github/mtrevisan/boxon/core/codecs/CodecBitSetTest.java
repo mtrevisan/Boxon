@@ -40,27 +40,27 @@ import io.github.mtrevisan.boxon.io.BitSetHelper;
 import io.github.mtrevisan.boxon.io.BitWriter;
 import io.github.mtrevisan.boxon.io.ByteOrder;
 import io.github.mtrevisan.boxon.io.CodecInterface;
+import io.github.mtrevisan.boxon.utils.TestHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.BitSet;
-import java.util.Random;
 
 
-@SuppressWarnings("ALL")
 class CodecBitSetTest{
-
-	private static final Random RANDOM = new Random();
-
 
 	@Test
 	void bitsLittleEndian() throws FieldException{
 		CodecInterface<BindBitSet> codec = new CodecBitSet();
-//		byte[] randomBytes = new byte[123];
-//		RANDOM.nextBytes(randomBytes);
-byte[] randomBytes = new byte[]{(byte)0xAB, (byte)0xCD};
+		//byte[] randomBytes = new byte[]{(byte)0xAB, (byte)0xCD};
+		byte[] randomBytes = new byte[123];
+		TestHelper.RANDOM.nextBytes(randomBytes);
+		//prevent adding of zeroes while changing endianness
+		randomBytes[0] = (byte)0xFF;
+		//prevent adding of zeroes while changing endianness
+		randomBytes[randomBytes.length - 1] = (byte)0xFF;
 		BitSet encodedValue = BitSet.valueOf(randomBytes);
 		BindBitSet annotation = new BindBitSet(){
 			@Override
@@ -75,7 +75,7 @@ byte[] randomBytes = new byte[]{(byte)0xAB, (byte)0xCD};
 
 			@Override
 			public String size(){
-				return Integer.toString(randomBytes.length * Byte.SIZE);
+				return Integer.toString(randomBytes.length << 3);
 			}
 
 			@Override
@@ -126,34 +126,11 @@ byte[] randomBytes = new byte[]{(byte)0xAB, (byte)0xCD};
 		Assertions.assertEquals(encodedValue, decoded);
 	}
 
-	/**
-	 * In-place reverse the endianness bit by bit.
-	 */
-	private static void bitReverse(final byte[] array){
-		for(int i = 0; i < array.length; i ++)
-			array[i] = reverseBits(array[i]);
-		reverse(array);
-	}
-
-	private static byte reverseBits(byte number){
-		byte reverse = 0;
-		for(int i = Byte.SIZE - 1; i >= 0; i --){
-			reverse += ((number & 1) << i);
-			number >>= 1;
-		}
-		return reverse;
-	}
-
-	private static void reverse(final byte[] array){
-		for(int start = 0, end = array.length - 1; start < end; start ++, end --)
-			array[start] ^= array[end] ^ (array[end] = array[start]);
-	}
-
 	@Test
 	void bitsBigEndian() throws FieldException{
 		CodecInterface<BindBitSet> codec = new CodecBitSet();
 		byte[] randomBytes = new byte[123];
-		RANDOM.nextBytes(randomBytes);
+		TestHelper.RANDOM.nextBytes(randomBytes);
 		BitSet encodedValue = BitSet.valueOf(randomBytes);
 		BindBitSet annotation = new BindBitSet(){
 			@Override
@@ -168,7 +145,7 @@ byte[] randomBytes = new byte[]{(byte)0xAB, (byte)0xCD};
 
 			@Override
 			public String size(){
-				return Integer.toString(randomBytes.length * Byte.SIZE);
+				return Integer.toString(randomBytes.length << 3);
 			}
 
 			@Override

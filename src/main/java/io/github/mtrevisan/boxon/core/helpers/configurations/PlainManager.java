@@ -47,6 +47,8 @@ final class PlainManager implements ConfigurationManagerInterface{
 
 	static final Annotation EMPTY_ANNOTATION = () -> Annotation.class;
 
+	private static final String ARRAY_VARIABLE = "[]";
+
 
 	private final ConfigurationField annotation;
 
@@ -86,8 +88,7 @@ final class PlainManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	public Map<String, Object> extractConfigurationMap(final Class<?> fieldType, final Version protocol) throws ConfigurationException,
-			CodecException{
+	public Map<String, Object> extractConfigurationMap(final Class<?> fieldType, final Version protocol) throws ConfigurationException, CodecException{
 		if(!ConfigurationHelper.shouldBeExtracted(protocol, annotation.minProtocol(), annotation.maxProtocol()))
 			return Collections.emptyMap();
 
@@ -109,8 +110,8 @@ final class PlainManager implements ConfigurationManagerInterface{
 		if(!fieldType.isEnum() && !fieldType.isArray())
 			ConfigurationHelper.putIfNotEmpty(ConfigurationKey.FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName(),
 				map);
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.MIN_VALUE, ParserDataType.getValue(fieldType, annotation.minValue()), map);
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.MAX_VALUE, ParserDataType.getValue(fieldType, annotation.maxValue()), map);
+		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.MIN_VALUE, ParserDataType.getBigNumber(annotation.minValue()), map);
+		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.MAX_VALUE, ParserDataType.getBigNumber(annotation.maxValue()), map);
 		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.PATTERN, annotation.pattern(), map);
 		ConfigurationHelper.extractEnumeration(fieldType, annotation.enumeration(), map);
 
@@ -131,15 +132,14 @@ final class PlainManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	public Object convertValue(final Field field, final String dataKey, Object dataValue, final Version protocol) throws EncodeException,
-			CodecException{
+	public Object convertValue(final Field field, final String dataKey, Object dataValue, final Version protocol) throws EncodeException, CodecException{
 		if(dataValue != null){
 			final Class<?> fieldType = field.getType();
 			final Class<? extends ConfigurationEnum> enumeration = annotation.enumeration();
 			if(ConfigFieldData.hasEnumeration(enumeration))
 				dataValue = extractEnumerationValue(dataKey, dataValue, field, enumeration);
-			else if(dataValue instanceof String)
-				dataValue = ParserDataType.getValue(fieldType, (String)dataValue);
+			else if(dataValue instanceof final String v)
+				dataValue = ParserDataType.getValue(fieldType, v);
 		}
 		return dataValue;
 	}
@@ -149,8 +149,8 @@ final class PlainManager implements ConfigurationManagerInterface{
 		final Class<?> fieldType = field.getType();
 
 		//convert `or` between enumerations
-		if(dataValue instanceof String)
-			dataValue = ConfigurationHelper.extractEnumerationValue(fieldType, (String)dataValue, enumeration);
+		if(dataValue instanceof final String v)
+			dataValue = ConfigurationHelper.extractEnumerationValue(fieldType, v, enumeration);
 
 		validateEnumerationValue(dataKey, dataValue, enumeration, fieldType);
 
@@ -170,13 +170,15 @@ final class PlainManager implements ConfigurationManagerInterface{
 				throw EncodeException.create("Data value incompatible with field type {}; found {}[], expected {}[] for enumeration type",
 					dataKey, componentType, enumeration.getSimpleName());
 		}
-		else if(!enumeration.isInstance(dataValue) || dataValue instanceof String && !StringHelper.isBlank((CharSequence)dataValue))
+		else if(!enumeration.isInstance(dataValue) || dataValue instanceof final String v && !StringHelper.isBlank(v))
 			throw EncodeException.create("Data value incompatible with field type {}; found {}, expected {} for enumeration type",
 				dataKey, dataValueClass, enumeration.getSimpleName());
 	}
 
 	private static String getFieldBaseType(final Class<?> fieldType){
-		return (fieldType.isArray()? fieldType.getComponentType() + "[]": fieldType.toString());
+		return (fieldType.isArray()
+			? fieldType.getComponentType() + ARRAY_VARIABLE
+			: fieldType.toString());
 	}
 
 }

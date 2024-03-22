@@ -31,7 +31,7 @@ import io.github.mtrevisan.boxon.semanticversioning.Version;
 import java.nio.ByteBuffer;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.Locale;
+import java.util.regex.Pattern;
 
 
 public class QueclinkHelper{
@@ -54,7 +54,7 @@ public class QueclinkHelper{
 		}
 	}
 
-	static class StringVersionConverter implements Converter<String, Version>{
+	static class HexStringVersionConverter implements Converter<String, Version>{
 		@Override
 		public Version decode(final String value){
 			final int major = Integer.parseInt(value.substring(0, 2), 16);
@@ -69,14 +69,18 @@ public class QueclinkHelper{
 
 			final Integer major = value.getMajor();
 			final Integer minor = value.getMinor();
-			final String maj = Integer.toHexString(major);
-			final String min = Integer.toHexString(minor);
+			final String maj = StringHelper.toHexString(major);
+			final String min = StringHelper.toHexString(minor);
 			return (major < 10? "0": "") + maj + (minor < 10? "0": "") + min;
 		}
 	}
 
 
 	public static class IMEIConverter implements Converter<byte[], String>{
+
+		private static final Pattern PATTERN = Pattern.compile("(?<=\\G\\d{2})");
+
+
 		@Override
 		public String decode(final byte[] value){
 			final StringBuilder sb = new StringBuilder(15);
@@ -93,7 +97,7 @@ public class QueclinkHelper{
 		@Override
 		public byte[] encode(final String value){
 			final byte[] imei = new byte[8];
-			final String[] components = value.split("(?<=\\G\\d{2})", 8);
+			final String[] components = PATTERN.split(value, 8);
 			for(int i = 0; i < 8; i ++)
 				imei[i] = Integer.valueOf(components[i]).byteValue();
 			return imei;
@@ -159,8 +163,7 @@ public class QueclinkHelper{
 
 		@Override
 		public String encode(final Byte value){
-			return StringHelper.leftPad(Integer.toString(value & 0xFF, 16)
-				.toUpperCase(Locale.ROOT), 2, '0');
+			return StringHelper.leftPad(StringHelper.toHexString(value & 0xFF), 2, '0');
 		}
 	}
 
@@ -173,8 +176,7 @@ public class QueclinkHelper{
 
 		@Override
 		public String encode(final Short value){
-			return StringHelper.leftPad(Integer.toString(value & 0xFFFF, 16)
-				.toUpperCase(Locale.ROOT), 4, '0');
+			return StringHelper.leftPad(StringHelper.toHexString(value & 0xFFFF), 4, '0');
 		}
 	}
 
@@ -186,7 +188,7 @@ public class QueclinkHelper{
 	 * @param mask	The mask.
 	 * @return	The masked and shifter value.
 	 */
-	static long applyMaskAndShift(final long value, long mask){
+	private static long applyMaskAndShift(final long value, final long mask){
 		final int ctz = Long.numberOfTrailingZeros(mask);
 		return ((value & mask) >>> ctz);
 	}

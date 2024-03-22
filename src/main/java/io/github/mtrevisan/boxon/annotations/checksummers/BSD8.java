@@ -33,7 +33,10 @@ package io.github.mtrevisan.boxon.annotations.checksummers;
 public final class BSD8 implements Checksummer{
 
 	/** Starting value 0x00. */
-	public static final byte START_VALUE_0x00 = 0x00;
+	public static final int START_VALUE_0x00 = 0x00;
+
+	private static final int LEFT_SHIFT = Byte.SIZE - 1;
+	private static final int MASK = (1 << Byte.SIZE) - 1;
 
 
 	BSD8(){}
@@ -41,11 +44,27 @@ public final class BSD8 implements Checksummer{
 
 	@Override
 	public short calculateChecksum(final byte[] data, final int start, final int end, final int startValue){
-		byte value = (byte)startValue;
-		for(int i = Math.max(start, 0); i < Math.min(end, data.length); i ++)
+		int checksum = startValue;
+		for(int i = Math.max(start, 0), length = Math.min(end, data.length); i < length; i ++)
 			//apply circular right shift and add new value
-			value = (byte)((value >>> 1) + ((value & 0x01) << 7) + data[i]);
-		return value;
+			checksum = MASK & ((checksum >> 1) + ((checksum & 1) << LEFT_SHIFT) + (data[i] & 0xFF));
+		return (short)checksum;
+	}
+
+	public static short csum1(byte[] data){
+		int lcrc = 0;
+		for(int i = 0; i < data.length; i++){
+			if((lcrc & 1) != 0)
+				lcrc |= 0x100;
+			lcrc = ((lcrc >> 1) + (data[i] & 0xFF)) & 0xFF;
+		}
+		return (short)lcrc;
+	}
+	public static short bsdChecksumFromByteArray(byte[] data) {
+		int checksum = 0;
+		for(int i = 0, length = data.length; i < length; i ++)
+			checksum = MASK & ((checksum >> 1) + ((checksum & 1) << LEFT_SHIFT) + (data[i] & 0xFF));
+		return (short)checksum;
 	}
 
 }

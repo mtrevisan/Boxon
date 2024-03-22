@@ -24,6 +24,8 @@
  */
 package io.github.mtrevisan.boxon.helpers;
 
+import io.github.mtrevisan.boxon.exceptions.DataException;
+
 import java.util.Collection;
 
 
@@ -48,11 +50,12 @@ public final class JavaHelper{
 	 * @param value	Field value.
 	 * @param size	Length in bits of the field.
 	 * @return	The 2-complement expressed as int.
+	 * @throws DataException	If the value is non-positive.
 	 */
 	@SuppressWarnings("ShiftOutOfRange")
 	public static long extendSign(final long value, final int size){
 		if(size <= 0)
-			throw new IllegalArgumentException("Size must be a positive value, was " + size);
+			throw DataException.create("Size must be a positive value, was {}", size);
 
 		final int shift = -size;
 		return (value << shift) >> shift;
@@ -78,7 +81,7 @@ public final class JavaHelper{
 	 * @param text	The text.
 	 * @return	The length of the text, or {@code 0} if {@code null}.
 	 */
-	static int lengthOrZero(final CharSequence text){
+	public static int lengthOrZero(final CharSequence text){
 		return (text != null? text.length(): 0);
 	}
 

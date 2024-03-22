@@ -22,15 +22,16 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core;
+package io.github.mtrevisan.boxon.utils;
 
 import java.util.Arrays;
 import java.util.Map;
 
 
-final class PrettyPrintMap{
+public final class PrettyPrintMap{
 
 	private PrettyPrintMap(){}
+
 
 	@SuppressWarnings("unchecked")
 	public static String toString(final Object obj){

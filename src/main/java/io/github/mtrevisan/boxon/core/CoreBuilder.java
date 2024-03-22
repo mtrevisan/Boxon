@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core;
 
-import io.github.mtrevisan.boxon.annotations.MessageHeader;
+import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
@@ -84,7 +84,7 @@ public final class CoreBuilder{
 	 * Assign an event listener.
 	 *
 	 * @param eventListener	The event listener.
-	 * @return	The current instance.
+	 * @return	This instance, used for chaining.
 	 */
 	public CoreBuilder withEventListener(final EventListener eventListener){
 		addMethod(ConfigurationStep.EVENT_LISTENER, () -> core.setEventListener(eventListener));
@@ -100,7 +100,7 @@ public final class CoreBuilder{
 	 * @param value	The value.
 	 * @return	This instance, used for chaining.
 	 */
-	public CoreBuilder withContextPair(final String key, final Object value){
+	public CoreBuilder withContext(final String key, final Object value){
 		addMethod(ConfigurationStep.CONTEXT, () -> core.addToContext(key, value));
 
 		return this;
@@ -113,7 +113,7 @@ public final class CoreBuilder{
 	 * @return	This instance, used for chaining.
 	 */
 	public CoreBuilder withContext(final Map<String, Object> context){
-		addMethod(ConfigurationStep.CONTEXT, () -> core.addContext(context));
+		addMethod(ConfigurationStep.CONTEXT, () -> core.addToContext(context));
 
 		return this;
 	}
@@ -127,8 +127,8 @@ public final class CoreBuilder{
 	 * @throws NoSuchMethodException	If a matching method is not found.
 	 * @throws NullPointerException	If {@code methodName} is {@code null}.
 	 */
-	public CoreBuilder withContextFunction(final Class<?> type, final String methodName) throws NoSuchMethodException{
-		return withContextFunction(type.getDeclaredMethod(methodName));
+	public CoreBuilder withContext(final Class<?> type, final String methodName) throws NoSuchMethodException{
+		return withContext(type.getDeclaredMethod(methodName));
 	}
 
 	/**
@@ -140,10 +140,10 @@ public final class CoreBuilder{
 	 * @return	This instance, used for chaining.
 	 * @throws NoSuchMethodException	If a matching method is not found.
 	 */
-	public CoreBuilder withContextFunction(final Class<?> type, final String methodName, final Class<?>... parameterTypes)
+	public CoreBuilder withContext(final Class<?> type, final String methodName, final Class<?>... parameterTypes)
 			throws NoSuchMethodException{
 		final Method method = type.getDeclaredMethod(methodName, parameterTypes);
-		return withContextFunction(method);
+		return withContext(method);
 	}
 
 	/**
@@ -152,8 +152,8 @@ public final class CoreBuilder{
 	 * @param method	The method.
 	 * @return	This instance, used for chaining.
 	 */
-	public CoreBuilder withContextFunction(final Method method){
-		addMethod(ConfigurationStep.CONTEXT, () -> core.addContextFunction(method));
+	public CoreBuilder withContext(final Method method){
+		addMethod(ConfigurationStep.CONTEXT, () -> core.addToContext(method));
 
 		return this;
 	}
@@ -209,7 +209,7 @@ public final class CoreBuilder{
 
 
 	/**
-	 * Loads all the protocol classes annotated with {@link MessageHeader}.
+	 * Loads all the protocol classes annotated with {@link TemplateHeader}.
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
 	 * @return	This instance, used for chaining.
@@ -221,7 +221,7 @@ public final class CoreBuilder{
 	}
 
 	/**
-	 * Load the specified protocol class annotated with {@link MessageHeader}.
+	 * Load the specified protocol class annotated with {@link TemplateHeader}.
 	 *
 	 * @param templateClass	Template class.
 	 * @return	This instance, used for chaining.
@@ -274,7 +274,7 @@ public final class CoreBuilder{
 	 */
 	public Core create() throws AnnotationException, TemplateException, ConfigurationException{
 		final ConfigurationStep[] values = ConfigurationStep.values();
-		for(int i = 0; i < values.length; i ++){
+		for(int i = 0, length = values.length; i < length; i ++){
 			final List<RunnableThrowable> executors = calls.get(values[i]);
 			executeCommands(executors);
 		}
@@ -284,8 +284,9 @@ public final class CoreBuilder{
 
 	private static void executeCommands(final List<RunnableThrowable> executors) throws AnnotationException, TemplateException,
 			ConfigurationException{
-		for(int i = 0; i < JavaHelper.lengthOrZero(executors); i ++){
+		for(int i = 0, length = JavaHelper.lengthOrZero(executors); i < length; i ++){
 			final RunnableThrowable executor = executors.get(i);
+
 			executor.execute();
 		}
 	}

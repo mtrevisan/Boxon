@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core.codecs;
 
-import io.github.mtrevisan.boxon.annotations.MessageHeader;
+import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArray;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
 import io.github.mtrevisan.boxon.annotations.bindings.BindByte;
@@ -59,25 +59,11 @@ import java.lang.annotation.Annotation;
 import java.util.List;
 
 
-@SuppressWarnings("ALL")
 class CodecArrayTest{
 
-	private static class Version{
-		@BindByte
-		private final byte major;
-		@BindByte
-		private final byte minor;
-		@BindByte
-		private final byte build;
+	private record Version(@BindByte byte major, @BindByte byte minor, @BindByte byte build){ }
 
-		private Version(final byte major, final byte minor, final byte build){
-			this.major = major;
-			this.minor = minor;
-			this.build = build;
-		}
-	}
-
-	@MessageHeader(start = "tc4")
+	@TemplateHeader(start = "tc4")
 	static class TestChoice4{
 		@BindString(size = "3")
 		String header;
@@ -89,7 +75,7 @@ class CodecArrayTest{
 		CodecObjectTest.TestType0[] value;
 	}
 
-	@MessageHeader(start = "tc5")
+	@TemplateHeader(start = "tc5")
 	static class TestChoice5{
 		@BindString(size = "3")
 		String header;
@@ -107,7 +93,7 @@ class CodecArrayTest{
 	@Test
 	void arrayPrimitive() throws FieldException{
 		CodecInterface<BindArrayPrimitive> codec = new CodecArrayPrimitive();
-		int[] encodedValue = new int[]{0x0000_0123, 0x0000_0456};
+		int[] encodedValue = {0x0000_0123, 0x0000_0456};
 		BindArrayPrimitive annotation = new BindArrayPrimitive(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
@@ -176,7 +162,7 @@ class CodecArrayTest{
 	@Test
 	void arrayOfSameObject() throws FieldException{
 		CodecArray codec = new CodecArray();
-		Version[] encodedValue = new Version[]{new Version((byte) 0, (byte) 1, (byte) 12), new Version((byte) 1, (byte) 2, (byte) 0)};
+		Version[] encodedValue = {new Version((byte) 0, (byte) 1, (byte) 12), new Version((byte) 1, (byte) 2, (byte) 0)};
 		BindArray annotation = new BindArray(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
@@ -289,7 +275,7 @@ class CodecArrayTest{
 
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(1, result.size());
-		Response<byte[], Object> response = result.get(0);
+		Response<byte[], Object> response = result.getFirst();
 		Assertions.assertFalse(response.hasError());
 		Assertions.assertEquals(TestChoice4.class, response.getMessage().getClass());
 		TestChoice4 parsedMessage = (TestChoice4)response.getMessage();
@@ -315,7 +301,7 @@ class CodecArrayTest{
 
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(1, result.size());
-		Response<byte[], Object> response = result.get(0);
+		Response<byte[], Object> response = result.getFirst();
 		Assertions.assertFalse(response.hasError());
 		Assertions.assertEquals(TestChoice5.class, response.getMessage().getClass());
 		TestChoice5 parsedMessage = (TestChoice5)response.getMessage();

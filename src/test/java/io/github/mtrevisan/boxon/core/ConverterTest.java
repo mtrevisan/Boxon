@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core;
 
-import io.github.mtrevisan.boxon.annotations.MessageHeader;
+import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.bindings.BindByte;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
@@ -38,11 +38,10 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 
-@SuppressWarnings("ALL")
 class ConverterTest{
 
-	@MessageHeader(start = "wc1")
-	static class TestConverter1{
+	@TemplateHeader(start = "wc1")
+	private static class TestConverter1{
 		@BindString(size = "3")
 		String header;
 		@BindByte(converter = WrongConverterInput.class)
@@ -62,16 +61,16 @@ class ConverterTest{
 		}
 	}
 
-	@MessageHeader(start = "wc2")
-	static class TestConverter2{
+	@TemplateHeader(start = "wc2")
+	private static class TestConverter2{
 		@BindString(size = "3")
 		String header;
 		@BindByte(converter = WrongConverterOutput.class)
 		String value;
 	}
 
-	@MessageHeader(start = "wc3")
-	static class TestConverter3{
+	@TemplateHeader(start = "wc3")
+	private static class TestConverter3{
 		@BindString(size = "3")
 		String header;
 		@BindByte(converter = WrongConverterOutput.class)
@@ -103,11 +102,11 @@ class ConverterTest{
 
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(2, result.size());
-		Response<byte[], Object> response = result.get(0);
+		Response<byte[], Object> response = result.getFirst();
 		Assertions.assertArrayEquals(payload, response.getSource());
 		Assertions.assertTrue(response.hasError());
-		Assertions.assertEquals("java.lang.IllegalArgumentException: Can not input Byte (1) to decode method of converter WrongConverterInput in field io.github.mtrevisan.boxon.core" +
-			".ConverterTest$TestConverter1.value" + System.lineSeparator() + "   at index 4", response.getError().getMessage());
+		Assertions.assertEquals("io.github.mtrevisan.boxon.exceptions.DataException: Can not input Byte (1) to decode method of converter WrongConverterInput in field io.github.mtrevisan.boxon.core.ConverterTest$TestConverter1.value"
+			+ System.lineSeparator() + "   at index 4", response.getError().getMessage());
 	}
 
 	@Test
@@ -123,10 +122,10 @@ class ConverterTest{
 
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(2, result.size());
-		Response<byte[], Object> response = result.get(0);
+		Response<byte[], Object> response = result.getFirst();
 		Assertions.assertArrayEquals(payload, response.getSource());
 		Assertions.assertTrue(response.hasError());
-		Assertions.assertEquals("java.lang.IllegalArgumentException: Can not set String field to Byte in field io.github.mtrevisan.boxon.core.ConverterTest$TestConverter2.value"
+		Assertions.assertEquals("io.github.mtrevisan.boxon.exceptions.DataException: Can not set String field to Byte in field io.github.mtrevisan.boxon.core.ConverterTest$TestConverter2.value"
 			+ System.lineSeparator() + "   at index 4", response.getError().getMessage());
 	}
 
@@ -143,7 +142,7 @@ class ConverterTest{
 
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(1, result.size());
-		Response<byte[], Object> response = result.get(0);
+		Response<byte[], Object> response = result.getFirst();
 		Assertions.assertArrayEquals(payload, response.getSource());
 		Assertions.assertFalse(response.hasError());
 	}

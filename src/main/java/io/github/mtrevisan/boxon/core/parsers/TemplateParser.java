@@ -25,14 +25,16 @@
 package io.github.mtrevisan.boxon.core.parsers;
 
 import io.github.mtrevisan.boxon.annotations.Checksum;
-import io.github.mtrevisan.boxon.annotations.MessageHeader;
+import io.github.mtrevisan.boxon.annotations.Evaluate;
+import io.github.mtrevisan.boxon.annotations.PostProcessField;
 import io.github.mtrevisan.boxon.annotations.Skip;
+import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
 import io.github.mtrevisan.boxon.core.codecs.LoaderCodecInterface;
 import io.github.mtrevisan.boxon.core.codecs.TemplateParserInterface;
-import io.github.mtrevisan.boxon.core.helpers.templates.BoundedField;
 import io.github.mtrevisan.boxon.core.helpers.templates.EvaluatedField;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
+import io.github.mtrevisan.boxon.core.helpers.templates.TemplateField;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
@@ -51,7 +53,7 @@ import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
+import java.util.function.Function;
 
 
 /**
@@ -91,7 +93,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	 * Assign an event listener.
 	 *
 	 * @param eventListener	The event listener.
-	 * @return	The current instance.
+	 * @return	This instance, used for chaining.
 	 */
 	public TemplateParser withEventListener(final EventListener eventListener){
 		this.eventListener = eventListener;
@@ -104,7 +106,7 @@ public final class TemplateParser implements TemplateParserInterface{
 
 
 	/**
-	 * Loads all the protocol classes annotated with {@link MessageHeader}.
+	 * Loads all the protocol classes annotated with {@link TemplateHeader}.
 	 *
 	 * @param basePackageClasses	Classes to be used ase starting point from which to load annotated classes.
 	 * @return	This instance, used for chaining.
@@ -118,7 +120,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 	/**
-	 * Load the specified protocol class annotated with {@link MessageHeader}.
+	 * Load the specified protocol class annotated with {@link TemplateHeader}.
 	 *
 	 * @param templateClass	Template class.
 	 * @return	This instance, used for chaining.
@@ -185,7 +187,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	public <T> T decode(final Template<T> template, final BitReaderInterface reader, final Object parentObject) throws FieldException{
 		final int startPosition = reader.position();
 
-		final T currentObject = ConstructorHelper.getCreator(template.getType())
+		T currentObject = ConstructorHelper.getEmptyCreator(template.getType())
 			.get();
 
 		final ParserContext<T> parserContext = new ParserContext<>(core.getEvaluator(), currentObject, parentObject);
@@ -193,9 +195,9 @@ public final class TemplateParser implements TemplateParserInterface{
 		parserContext.addCurrentObjectToEvaluatorContext();
 
 		//decode message fields:
-		final List<BoundedField> fields = template.getBoundedFields();
-		for(int i = 0; i < fields.size(); i ++){
-			final BoundedField field = fields.get(i);
+		final List<TemplateField> fields = template.getTemplateFields();
+		for(int i = 0, length = fields.size(); i < length; i ++){
+			final TemplateField field = fields.get(i);
 
 			//process skip annotations:
 			final Skip[] skips = field.getSkips();
@@ -209,15 +211,18 @@ public final class TemplateParser implements TemplateParserInterface{
 
 		processEvaluatedFields(template, parserContext);
 
+		postProcessFields(template, parserContext);
+
 		readMessageTerminator(template, reader);
 
+		currentObject = parserContext.getCurrentObject();
 		verifyChecksum(template, currentObject, startPosition, reader);
 
 		return currentObject;
 	}
 
 	private <T> void decodeField(final Template<T> template, final BitReaderInterface reader, final ParserContext<T> parserContext,
-			final BoundedField field) throws FieldException{
+			final TemplateField field) throws FieldException{
 		final Annotation binding = field.getBinding();
 		final Class<? extends Annotation> annotationType = binding.annotationType();
 		final LoaderCodecInterface loaderCodec = core.getLoaderCodec();
@@ -234,7 +239,7 @@ public final class TemplateParser implements TemplateParserInterface{
 			//decode value from raw message
 			final Object value = codec.decode(reader, binding, parserContext.getRootObject());
 			//store value in the current object
-			field.setFieldValue(parserContext.getCurrentObject(), value);
+			parserContext.setFieldValue(field.getField(), value);
 
 			eventListener.readField(template.toString(), field.getFieldName(), value);
 		}
@@ -249,8 +254,9 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 	private <T> void readSkips(final Skip[] skips, final BitReaderInterface reader, final ParserContext<T> parserContext){
-		for(int i = 0; i < skips.length; i ++)
-			readSkip(skips[i], reader, parserContext.getRootObject());
+		final Object rootObject = parserContext.getRootObject();
+		for(int i = 0, length = skips.length; i < length; i ++)
+			readSkip(skips[i], reader, rootObject);
 	}
 
 	private void readSkip(final Skip skip, final BitReaderInterface reader, final Object rootObject){
@@ -273,7 +279,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 	private static void readMessageTerminator(final Template<?> template, final BitReaderInterface reader) throws TemplateException{
-		final MessageHeader header = template.getHeader();
+		final TemplateHeader header = template.getHeader();
 		if(header != null && !header.end().isEmpty()){
 			final Charset charset = CharsetHelper.lookup(header.charset());
 			final byte[] messageTerminator = header.end().getBytes(charset);
@@ -287,7 +293,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	private static <T> void verifyChecksum(final Template<T> template, final T data, final int startPosition,
 			final BitReaderInterface reader){
 		if(template.isChecksumPresent()){
-			final BoundedField checksumData = template.getChecksum();
+			final TemplateField checksumData = template.getChecksum();
 			final Checksum checksum = (Checksum)checksumData.getBinding();
 
 			final short calculatedChecksum = calculateChecksum(startPosition, reader, checksum);
@@ -298,9 +304,9 @@ public final class TemplateParser implements TemplateParserInterface{
 				final int mask = ParserDataType.fromType(givenChecksum.getClass())
 					.getMask();
 				throw new IllegalArgumentException("Calculated checksum (0x"
-					+ Integer.toHexString(calculatedChecksum & mask).toUpperCase(Locale.ROOT)
+					+ StringHelper.toHexString(calculatedChecksum & mask)
 					+ ") does NOT match given checksum (0x"
-					+ Integer.toHexString(givenChecksum.shortValue() & mask).toUpperCase(Locale.ROOT) + ")");
+					+ StringHelper.toHexString(givenChecksum.shortValue() & mask) + ")");
 			}
 		}
 	}
@@ -313,15 +319,16 @@ public final class TemplateParser implements TemplateParserInterface{
 
 		final int endPosition = reader.position();
 
-		final Checksummer checksummer = ConstructorHelper.getCreator(algorithm)
+		final Checksummer checksummer = ConstructorHelper.getEmptyCreator(algorithm)
 			.get();
 		return checksummer.calculateChecksum(reader.array(), startPosition + skipStart, endPosition - skipEnd, startValue);
 	}
 
 	private void processEvaluatedFields(final Template<?> template, final ParserContext<?> parserContext){
-		final List<EvaluatedField> evaluatedFields = template.getEvaluatedFields();
-		for(int i = 0; i < evaluatedFields.size(); i ++){
-			final EvaluatedField field = evaluatedFields.get(i);
+		final List<EvaluatedField<Evaluate>> evaluatedFields = template.getEvaluatedFields();
+		for(int i = 0, length = evaluatedFields.size(); i < length; i ++){
+			final EvaluatedField<Evaluate> field = evaluatedFields.get(i);
+
 			final Evaluator evaluator = core.getEvaluator();
 			final boolean process = evaluator.evaluateBoolean(field.getBinding().condition(), parserContext.getRootObject());
 			if(!process)
@@ -330,7 +337,7 @@ public final class TemplateParser implements TemplateParserInterface{
 			eventListener.evaluatingField(template.getType().getName(), field.getFieldName());
 
 			final Object value = evaluator.evaluate(field.getBinding().value(), parserContext.getRootObject(), field.getFieldType());
-			field.setFieldValue(parserContext.getCurrentObject(), value);
+			parserContext.setFieldValue(field.getField(), value);
 
 			eventListener.evaluatedField(template.getType().getName(), field.getFieldName(), value);
 		}
@@ -343,11 +350,13 @@ public final class TemplateParser implements TemplateParserInterface{
 		parserContext.addCurrentObjectToEvaluatorContext();
 		parserContext.setClassName(template.getType().getName());
 
+		preProcessFields(template, parserContext);
+
 		//encode message fields:
 		final LoaderCodecInterface loaderCodec = core.getLoaderCodec();
-		final List<BoundedField> fields = template.getBoundedFields();
-		for(int i = 0; i < fields.size(); i ++){
-			final BoundedField field = fields.get(i);
+		final List<TemplateField> fields = template.getTemplateFields();
+		for(int i = 0, length = fields.size(); i < length; i ++){
+			final TemplateField field = fields.get(i);
 
 			//process skip annotations:
 			final Skip[] skips = field.getSkips();
@@ -363,9 +372,49 @@ public final class TemplateParser implements TemplateParserInterface{
 			}
 		}
 
-		final MessageHeader header = template.getHeader();
+		final TemplateHeader header = template.getHeader();
 		if(header != null)
 			ParserWriterHelper.writeAffix(header.end(), header.charset(), writer);
+	}
+
+	private void postProcessFields(final Template<?> template, final ParserContext<?> parserContext){
+		processFields(template, parserContext, PostProcessField::valueDecode);
+	}
+
+	private void preProcessFields(final Template<?> template, final ParserContext<?> parserContext){
+		processFields(template, parserContext, PostProcessField::valueEncode);
+	}
+
+	private void processFields(final Template<?> template, final ParserContext<?> parserContext,
+			final Function<PostProcessField, String> valueExtractor){
+		final String templateName = template.getType().getName();
+		final List<EvaluatedField<PostProcessField>> postProcessedFields = template.getPostProcessedFields();
+		for(int i = 0, length = postProcessedFields.size(); i < length; i ++){
+			final EvaluatedField<PostProcessField> field = postProcessedFields.get(i);
+
+			final PostProcessField binding = field.getBinding();
+			final String condition = binding.condition();
+			final String expression = valueExtractor.apply(binding);
+
+			processField(condition, expression, parserContext, field, templateName);
+		}
+	}
+
+	private void processField(final String condition, final String expression, final ParserContext<?> parserContext,
+			final EvaluatedField<PostProcessField> field, final String templateName){
+		final Evaluator evaluator = core.getEvaluator();
+		final Object rootObject = parserContext.getRootObject();
+		final boolean process = evaluator.evaluateBoolean(condition, rootObject);
+		if(!process)
+			return;
+
+		final String fieldName = field.getFieldName();
+		eventListener.evaluatingField(templateName, fieldName);
+
+		final Object value = evaluator.evaluate(expression, rootObject, field.getFieldType());
+		parserContext.setFieldValue(field.getField(), value);
+
+		eventListener.evaluatedField(templateName, fieldName, value);
 	}
 
 	private boolean shouldProcessField(final String condition, final Object rootObject){
@@ -373,8 +422,9 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 	private <T> void writeSkips(final Skip[] skips, final BitWriterInterface writer, final ParserContext<T> parserContext){
-		for(int i = 0; i < skips.length; i ++)
-			writeSkip(skips[i], writer, parserContext.getRootObject());
+		final Object rootObject = parserContext.getRootObject();
+		for(int i = 0, length = skips.length; i < length; i ++)
+			writeSkip(skips[i], writer, rootObject);
 	}
 
 	private void writeSkip(final Skip skip, final BitWriterInterface writer, final Object rootObject){

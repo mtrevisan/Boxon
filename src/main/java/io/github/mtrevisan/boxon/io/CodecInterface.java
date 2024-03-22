@@ -40,7 +40,7 @@ public interface CodecInterface<B extends Annotation>{
 	 * Decode the next field of a message.
 	 *
 	 * @param reader	The reader that holds the raw data of the message (to be interpreted), positioned at a certain index.
-	 * @param annotation	The annotation that links what have to be read and the variable of the POJO.
+	 * @param annotation	The annotation that links what have to be read and the variable of the <a href="https://en.wikipedia.org/wiki/Data_transfer_object">DTO</a>.
 	 * @param rootObject	The parent object that holds what have been read so far.
 	 * @return	The object with the new value read and interpreted.
 	 * @throws FieldException	If something bad happened while reading, validating, or converting the raw value.
@@ -51,7 +51,7 @@ public interface CodecInterface<B extends Annotation>{
 	 * Encode the next field of a message.
 	 *
 	 * @param writer	The writer, positioned at a certain index, in which the value will be put.
-	 * @param annotation	The annotation that links what have to be read and the variable of the POJO.
+	 * @param annotation	The annotation that links what have to be read and the variable of the <a href="https://en.wikipedia.org/wiki/Data_transfer_object">DTO</a>.
 	 * @param rootObject	The parent object that holds what have been read so far.
 	 * @param value	The value that have to be encoded.
 	 * @throws FieldException	If something bad happened while converting, validating, or writing the value.

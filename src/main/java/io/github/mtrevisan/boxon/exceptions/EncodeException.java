@@ -27,12 +27,15 @@ package io.github.mtrevisan.boxon.exceptions;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 
+import java.io.Serial;
+
 
 /**
  * Thrown if a composition (encoding) went bad.
  */
 public final class EncodeException extends Exception{
 
+	@Serial
 	private static final long serialVersionUID = 4385865753761318892L;
 
 
@@ -83,6 +86,7 @@ public final class EncodeException extends Exception{
 	private EncodeException(final Throwable cause){
 		super(cause);
 	}
+
 
 	@Override
 	public String getMessage(){

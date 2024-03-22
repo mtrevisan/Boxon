@@ -36,6 +36,7 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,7 +44,7 @@ import java.util.Objects;
 
 
 /**
- * SpEL evaluator.
+ * SpEL expression evaluator.
  */
 public final class Evaluator{
 
@@ -73,6 +74,10 @@ public final class Evaluator{
 
 		Map<String, Object> getContext(){
 			return Collections.unmodifiableMap(backupContext);
+		}
+
+		void clearContext(){
+			backupContext.clear();
 		}
 	}
 
@@ -146,6 +151,13 @@ public final class Evaluator{
 	}
 
 	/**
+	 * Clear the context of this evaluator.
+	 */
+	public void clearContext(){
+		context.clearContext();
+	}
+
+	/**
 	 * Return the context of the evaluator.
 	 *
 	 * @return	The context.
@@ -198,17 +210,18 @@ public final class Evaluator{
 		return size;
 	}
 
-	private static boolean isPositiveInteger(final CharSequence text){
-		for(int i = 0; i < text.length(); i ++)
-			if(!Character.isDigit(text.charAt(i)))
+	private static boolean isPositiveInteger(final String text){
+		final byte[] bytes = text.getBytes(StandardCharsets.US_ASCII);
+		for(int i = 0, length = bytes.length; i < length; i ++)
+			if(!Character.isDigit(bytes[i]))
 				return false;
 		return true;
 	}
 
 
-	private static class ReflectiveProperty extends ReflectivePropertyAccessor{
+	private static final class ReflectiveProperty extends ReflectivePropertyAccessor{
 		@Override
-		protected final Field findField(final String name, Class<?> cls, final boolean mustBeStatic){
+		protected Field findField(final String name, Class<?> cls, final boolean mustBeStatic){
 			Field field = null;
 			while(field == null && cls != null && cls != Object.class){
 				field = findFieldInClass(name, cls, mustBeStatic);
@@ -219,15 +232,19 @@ public final class Evaluator{
 			return field;
 		}
 
-		@SuppressWarnings("ReturnOfNull")
 		private static Field findFieldInClass(final String name, final Class<?> cls, final boolean mustBeStatic){
 			final Field[] declaredFields = cls.getDeclaredFields();
-			for(int i = 0; i < declaredFields.length; i ++){
+			for(int i = 0, length = declaredFields.length; i < length; i ++){
 				final Field field = declaredFields[i];
-				if(field.getName().equals(name) && (!mustBeStatic || Modifier.isStatic(field.getModifiers())))
+
+				if(field.getName().equals(name) && (!mustBeStatic || isStatic(field)))
 					return field;
 			}
 			return null;
+		}
+
+		private static boolean isStatic(final Field field){
+			return Modifier.isStatic(field.getModifiers());
 		}
 	}
 

@@ -24,11 +24,13 @@
  */
 package io.github.mtrevisan.boxon.helpers;
 
+import io.github.mtrevisan.boxon.exceptions.DataException;
 import org.slf4j.helpers.MessageFormatter;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 
 
@@ -52,7 +54,6 @@ public final class StringHelper{
 			.getMessage();
 	}
 
-
 	/**
 	 * Left pad a string with a specified character.
 	 *
@@ -66,132 +67,52 @@ public final class StringHelper{
 		if(pads <= 0)
 			return text;
 
-		return repeat(padChar, pads) + text;
+		return new StringBuilder()
+			.repeat(padChar, pads)
+			.append(text)
+			.toString();
 	}
 
 	/**
-	 * Returns padding using the specified delimiter repeated to a given length.
+	 * Checks if the given text contains the specified character.
 	 *
-	 * @param chr	Character to repeat.
-	 * @param count	Number of times to repeat char.
-	 * @return	String with repeated character.
+	 * @param text	The text to search within.
+	 * @param chr	The character to search for.
+	 * @return	Whether the text contains the character.
 	 */
-	public static String repeat(final char chr, final int count){
-		final char[] buf = new char[count];
-		Arrays.fill(buf, chr);
-		return new String(buf);
+	public static boolean contains(final String text, final char chr){
+		return (text.indexOf(chr) > 0);
 	}
-
 
 	/**
 	 * Split the given text into an array, separator specified.
 	 * <p>
-	 *    The separator is not included in the returned String array.
+	 * The separator is not included in the returned String array.
 	 * Adjacent separators are treated as one separator.
 	 * </p>
 	 *
-	 * @param str	The text to parse.
+	 * @param text	The text to parse.
 	 * @param separatorChar	The character used as the delimiter.
 	 * @return	An array of parsed strings.
 	 */
-	public static String[] split(final String str, final char separatorChar){
-		final int len = str.length();
-		if(len == 0)
+	public static String[] split(final String text, final char separatorChar){
+		final int length = text.length();
+		if(length == 0)
 			return JavaHelper.EMPTY_STRING_ARRAY;
 
-		final Collection<String> list = new ArrayList<>(str.length() >> 1);
-		int i = 0;
+		final byte[] bytes = text.getBytes(StandardCharsets.UTF_8);
+		final List<String> list = new ArrayList<>(length >> 1);
 		int start = 0;
-		boolean match = false;
-		while(i < len){
-			if(str.charAt(i) == separatorChar){
-				if(match){
-					list.add(str.substring(start, i));
-					match = false;
-				}
-
-				start = ++ i;
-				continue;
+		for(int i = 0; i < length; i ++)
+			if(bytes[i] == separatorChar){
+				if(start != i)
+					list.add(text.substring(start, i));
+				start = i + 1;
 			}
-
-			match = true;
-			i ++;
-		}
-		if(match)
-			list.add(str.substring(start, i));
-		return list.toArray(String[]::new);
+		if(start != length)
+			list.add(text.substring(start));
+		return list.toArray(JavaHelper.EMPTY_STRING_ARRAY);
 	}
-
-
-	/**
-	 * Converts an array of bytes into a string representing the hexadecimal values of each byte in order.
-	 *
-	 * @param array	Array to be converted to hexadecimal characters.
-	 * @return	The hexadecimal characters.
-	 */
-	public static String toHexString(final byte[] array){
-		final int length = JavaHelper.lengthOrZero(array);
-		final StringBuilder sb = new StringBuilder(length << 1);
-		for(int i = 0; i < length; i ++){
-			final byte elem = array[i];
-			final char highDigit = Character.forDigit((elem >>> 4) & 0x0F, 16);
-			final char lowDigit = Character.forDigit(elem & 0x0F, 16);
-			sb.append(highDigit);
-			sb.append(lowDigit);
-		}
-		return sb.toString()
-			.toUpperCase(Locale.ROOT);
-	}
-
-	/**
-	 * Converts a string representing the hexadecimal values of each byte to an array of bytes in order.
-	 *
-	 * @param hexString	The hexadecimal string.
-	 * @return	Array of converted hexadecimal characters.
-	 */
-	public static byte[] hexToByteArray(final CharSequence hexString){
-		final int length = JavaHelper.lengthOrZero(hexString);
-		if(length % 2 != 0)
-			throw new IllegalArgumentException("Input should be of even length, was " + length);
-
-		final byte[] data = new byte[length >>> 1];
-		for(int i = 0; i < length; i += 2){
-			final int highDigit = Character.digit(hexString.charAt(i), 16);
-			final int lowDigit = Character.digit(hexString.charAt(i + 1), 16);
-			data[i >>> 1] = (byte)((highDigit << 4) + lowDigit);
-		}
-		return data;
-	}
-
-
-	/**
-	 * Converts an array of bytes into a string.
-	 *
-	 * @param array	Array to be converted to characters.
-	 * @return	The characters.
-	 */
-	public static String toASCIIString(final byte[] array){
-		final int length = JavaHelper.lengthOrZero(array);
-		final StringBuilder sb = new StringBuilder(length);
-		for(int i = 0; i < length; i ++)
-			sb.append((char)(array[i] & 0xFF));
-		return sb.toString();
-	}
-
-	/**
-	 * Converts a string representing the values of each byte to an array of bytes in order.
-	 *
-	 * @param asciiString	The string.
-	 * @return	Array of converted characters.
-	 */
-	public static byte[] asciiToByteArray(final CharSequence asciiString){
-		final int length = JavaHelper.lengthOrZero(asciiString);
-		final byte[] data = new byte[length];
-		for(int i = 0; i < length; i ++)
-			data[i] = (byte)asciiString.charAt(i);
-		return data;
-	}
-
 
 	/**
 	 * <p>Checks if a text is empty (""), {@code null} or whitespace only.</p>
@@ -209,11 +130,130 @@ public final class StringHelper{
 	 * @param text	The text to check, may be {@code null}.
 	 * @return	Whether the given text is {@code null}, empty or whitespace only.
 	 */
-	public static boolean isBlank(final CharSequence text){
-		for(int i = 0; i < JavaHelper.lengthOrZero(text); i ++)
-			if(!Character.isWhitespace(text.charAt(i)))
-				return false;
+	public static boolean isBlank(final String text){
+		final int length = JavaHelper.lengthOrZero(text);
+		if(length > 0){
+			final byte[] bytes = text.getBytes(StandardCharsets.UTF_8);
+			for(int i = 0; i < length; i ++)
+				if(!Character.isWhitespace(bytes[i]))
+					return false;
+		}
 		return true;
+	}
+
+
+	/**
+	 * Converts a decimal value into the corresponding hexadecimal string.
+	 *
+	 * @param value	Value to be converted to hexadecimal characters.
+	 * @return	The hexadecimal characters.
+	 */
+	public static String toHexString(final int value){
+		return Integer.toHexString(value)
+			.toUpperCase(Locale.ROOT);
+	}
+
+	/**
+	 * Converts a decimal value into the corresponding hexadecimal string.
+	 *
+	 * @param value	Value to be converted to hexadecimal characters.
+	 * @return	The hexadecimal characters.
+	 */
+	public static String toHexString(final long value){
+		return Long.toHexString(value)
+			.toUpperCase(Locale.ROOT);
+	}
+
+	/**
+	 * Converts an array of bytes into a string representing the hexadecimal values of each byte in order.
+	 *
+	 * @param array	Array to be converted to hexadecimal characters.
+	 * @return	The hexadecimal characters.
+	 */
+	public static String toHexString(final byte[] array){
+		final int length = JavaHelper.lengthOrZero(array);
+		final char[] hexChars = new char[length << 1];
+		for(int i = 0; i < length; i ++){
+			final int elem = array[i] & 0xFF;
+
+			final char highDigit = Character.forDigit((elem >>> 4) & 0x0F, 16);
+			final char lowDigit = Character.forDigit(elem & 0x0F, 16);
+			hexChars[i << 1] = highDigit;
+			hexChars[(i << 1) + 1] = lowDigit;
+		}
+		return new String(hexChars)
+			.toUpperCase(Locale.ROOT);
+	}
+
+	/**
+	 * Converts a string representing the hexadecimal values of each byte to an array of bytes in order.
+	 *
+	 * @param hexString	The hexadecimal string.
+	 * @return	Array of converted hexadecimal characters.
+	 * @throws DataException	If the input has an odd length.
+	 */
+	public static byte[] hexToByteArray(final String hexString){
+		final int length = JavaHelper.lengthOrZero(hexString);
+		if(length % 2 != 0)
+			throw DataException.create("Input should be of even length, was {}", length);
+
+		final byte[] data = new byte[length >>> 1];
+		if(length > 0){
+			final byte[] bytes = hexString.getBytes(StandardCharsets.US_ASCII);
+			for(int i = 0; i < length; i += 2){
+				final int highDigit = Character.digit(bytes[i], 16);
+				final int lowDigit = Character.digit(bytes[i + 1], 16);
+
+				data[i >>> 1] = (byte)((highDigit << 4) + lowDigit);
+			}
+		}
+		return data;
+	}
+
+
+	/**
+	 * Converts an array of bytes into a string.
+	 *
+	 * @param array	Array to be converted to characters.
+	 * @return	The characters.
+	 */
+	public static String toASCIIString(final byte[] array){
+		final int length = JavaHelper.lengthOrZero(array);
+		final char[] chars = new char[length];
+		for(int i = 0; i < length; i ++)
+			chars[i] = (char)(array[i] & 0xFF);
+		return new String(chars);
+	}
+
+	/**
+	 * Converts a string representing the values of each byte to an array of bytes in order.
+	 *
+	 * @param asciiString	The string.
+	 * @return	Array of converted characters.
+	 */
+	public static byte[] asciiToByteArray(final String asciiString){
+		final int length = JavaHelper.lengthOrZero(asciiString);
+		final byte[] data = new byte[length];
+		if(length > 0){
+			final byte[] bytes = asciiString.getBytes(StandardCharsets.US_ASCII);
+			System.arraycopy(bytes, 0, data, 0, length);
+		}
+		return data;
+	}
+
+	/**
+	 * Checks if a byte array starts with a given ASCII string.
+	 *
+	 * @param byteArray	The byte array to check.
+	 * @param asciiString	The ASCII string to check for.
+	 * @return	Whether the byte array starts with the ASCII string.
+	 */
+	public static boolean byteArrayStartsWith(final byte[] byteArray, final String asciiString){
+		if(JavaHelper.lengthOrZero(byteArray) < asciiString.length())
+			return false;
+
+		final byte[] stringBytes = asciiString.getBytes(StandardCharsets.US_ASCII);
+		return Arrays.equals(byteArray, 0, stringBytes.length, stringBytes, 0, stringBytes.length);
 	}
 
 }

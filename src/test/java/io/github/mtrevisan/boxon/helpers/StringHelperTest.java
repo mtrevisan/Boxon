@@ -28,7 +28,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 
-@SuppressWarnings("ALL")
 class StringHelperTest{
 
 	private StringHelperTest(){}
@@ -36,7 +35,7 @@ class StringHelperTest{
 
 	@Test
 	void byteArrayToHexString(){
-		byte[] array = {0x23, 0x5e, 0x40, 0x03, 0x51, 0x10, 0x42, 0x06};
+		byte[] array = {0x23, 0x5E, 0x40, 0x03, 0x51, 0x10, 0x42, 0x06};
 
 		String hex = StringHelper.toHexString(array);
 
@@ -45,11 +44,11 @@ class StringHelperTest{
 
 	@Test
 	void hexStringToByteArray(){
-		Assertions.assertArrayEquals(new byte[]{0x23, 0x5e, 0x40, 0x03, 0x51, 0x10, 0x42, 0x06},
+		Assertions.assertArrayEquals(new byte[]{0x23, 0x5E, 0x40, 0x03, 0x51, 0x10, 0x42, 0x06},
 			StringHelper.hexToByteArray("235e400351104206"));
 
 		Throwable exception = Assertions.assertThrows(IllegalArgumentException.class,
-			() -> Assertions.assertArrayEquals(new byte[]{0x23, 0x5e, 0x40, 0x03, 0x51, 0x10, 0x42, 0x06},
+			() -> Assertions.assertArrayEquals(new byte[]{0x23, 0x5E, 0x40, 0x03, 0x51, 0x10, 0x42, 0x06},
 				StringHelper.hexToByteArray("235e40035110420")));
 		Assertions.assertEquals("Input should be of even length, was 15", exception.getMessage());
 	}

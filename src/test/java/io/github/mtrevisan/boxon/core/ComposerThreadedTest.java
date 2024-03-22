@@ -38,7 +38,6 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 
-@SuppressWarnings("ALL")
 class ComposerThreadedTest{
 
 	private static final byte[] PAYLOAD = StringHelper.hexToByteArray("2b41434b066f2446010a0311235e40035110420600ffff07e30405083639001265b60d0a");
@@ -48,10 +47,10 @@ class ComposerThreadedTest{
 	void concurrencySingleParserSingleCore() throws NoSuchMethodException, AnnotationException, TemplateException, ConfigurationException,
 			ExecutionException, InterruptedException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
-			.with("QUECLINK_GB200S", (byte)0x46);
+			.with((byte)0x46, "QUECLINK_GB200S");
 		Core core = CoreBuilder.builder()
-			.withContextPair("deviceTypes", deviceTypes)
-			.withContextFunction(ParserTest.class, "headerLength")
+			.withContext("deviceTypes", deviceTypes)
+			.withContext(ParserTest.class, "headerLength")
 			.withDefaultCodecs()
 			.withTemplatesFrom(ACKMessageHex.class)
 			.create();
@@ -64,7 +63,7 @@ class ComposerThreadedTest{
 		//compose:
 		int threadCount = 10;
 		MultithreadingHelper.testMultithreading(
-			() -> composer.compose(parseResult.get(0).getMessage()),
+			() -> composer.compose(parseResult.getFirst().getMessage()),
 			composeResult -> Assertions.assertArrayEquals(PAYLOAD, composeResult.getMessage()),
 			threadCount
 		);
@@ -74,10 +73,10 @@ class ComposerThreadedTest{
 	void concurrencyMultipleParserSingleCore() throws NoSuchMethodException, AnnotationException, TemplateException, ConfigurationException,
 			ExecutionException, InterruptedException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
-			.with("QUECLINK_GB200S", (byte)0x46);
+			.with((byte)0x46, "QUECLINK_GB200S");
 		Core core = CoreBuilder.builder()
-			.withContextPair("deviceTypes", deviceTypes)
-			.withContextFunction(ParserTest.class, "headerLength")
+			.withContext("deviceTypes", deviceTypes)
+			.withContext(ParserTest.class, "headerLength")
 			.withDefaultCodecs()
 			.withTemplatesFrom(ACKMessageHex.class)
 			.create();
@@ -91,7 +90,7 @@ class ComposerThreadedTest{
 		MultithreadingHelper.testMultithreading(
 			() -> {
 				Composer composer = Composer.create(core);
-				return composer.compose(parseResult.get(0).getMessage());
+				return composer.compose(parseResult.getFirst().getMessage());
 			},
 			composeResult -> Assertions.assertArrayEquals(PAYLOAD, composeResult.getMessage()),
 			threadCount
@@ -99,18 +98,17 @@ class ComposerThreadedTest{
 	}
 
 	@Test
-	void concurrencyMultipleParserMultipleCore() throws NoSuchMethodException, AnnotationException, TemplateException,
-			ConfigurationException, ExecutionException, InterruptedException{
+	void concurrencyMultipleParserMultipleCore() throws ExecutionException, InterruptedException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
-			.with("QUECLINK_GB200S", (byte)0x46);
+			.with((byte)0x46, "QUECLINK_GB200S");
 
 		//compose:
 		int threadCount = 10;
 		MultithreadingHelper.testMultithreading(
 			() -> {
 				Core core = CoreBuilder.builder()
-					.withContextPair("deviceTypes", deviceTypes)
-					.withContextFunction(ParserTest.class, "headerLength")
+					.withContext("deviceTypes", deviceTypes)
+					.withContext(ParserTest.class, "headerLength")
 					.withDefaultCodecs()
 					.withTemplatesFrom(ACKMessageHex.class)
 					.create();
@@ -120,7 +118,7 @@ class ComposerThreadedTest{
 				List<Response<byte[], Object>> parseResult = parser.parse(PAYLOAD);
 
 				Composer composer = Composer.create(core);
-				return composer.compose(parseResult.get(0).getMessage());
+				return composer.compose(parseResult.getFirst().getMessage());
 			},
 			composeResult -> Assertions.assertArrayEquals(PAYLOAD, composeResult.getMessage()),
 			threadCount

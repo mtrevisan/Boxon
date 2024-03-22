@@ -27,7 +27,7 @@ package io.github.mtrevisan.boxon.core.parsers;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
 import io.github.mtrevisan.boxon.core.codecs.LoaderCodecInterface;
-import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigField;
+import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationHelper;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationManagerFactory;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationManagerInterface;
@@ -76,11 +76,12 @@ public final class ConfigurationParser{
 		parserWriterHelper = ParserWriterHelper.create();
 	}
 
+
 	/**
 	 * Assign an event listener.
 	 *
 	 * @param eventListener	The event listener.
-	 * @return	The current instance.
+	 * @return	This instance, used for chaining.
 	 */
 	public ConfigurationParser withEventListener(final EventListener eventListener){
 		loaderConfiguration.withEventListener(eventListener);
@@ -141,12 +142,12 @@ public final class ConfigurationParser{
 	/**
 	 * Retrieve the configuration by class.
 	 *
-	 * @param configurationType	The header start of a configuration.
+	 * @param shortDescription	The short description identifying a message, see {@link ConfigurationHeader#shortDescription()}.
 	 * @return	The configuration.
 	 * @throws EncodeException	If a configuration cannot be retrieved.
 	 */
-	public ConfigurationMessage<?> getConfiguration(final String configurationType) throws EncodeException{
-		return loaderConfiguration.getConfiguration(configurationType);
+	public ConfigurationMessage<?> getConfiguration(final String shortDescription) throws EncodeException{
+		return loaderConfiguration.getConfiguration(shortDescription);
 	}
 
 
@@ -170,9 +171,9 @@ public final class ConfigurationParser{
 		ParserWriterHelper.writeAffix(header.start(), header.charset(), writer);
 
 		//encode message fields:
-		final List<ConfigField> fields = configuration.getConfigurationFields();
-		for(int i = 0; i < fields.size(); i ++){
-			final ConfigField field = fields.get(i);
+		final List<ConfigurationField> fields = configuration.getConfigurationFields();
+		for(int i = 0, length = fields.size(); i < length; i ++){
+			final ConfigurationField field = fields.get(i);
 
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(field.getBinding());
 			final Annotation annotation = manager.annotationToBeProcessed(protocol);
@@ -200,7 +201,7 @@ public final class ConfigurationParser{
 	}
 
 	private static void writeSkips(final ConfigurationSkip[] skips, final BitWriterInterface writer, final Version protocol){
-		for(int i = 0; i < skips.length; i ++)
+		for(int i = 0, length = skips.length; i < length; i ++)
 			writeSkip(skips[i], writer, protocol);
 	}
 
@@ -208,6 +209,16 @@ public final class ConfigurationParser{
 		final boolean process = ConfigurationHelper.shouldBeExtracted(protocol, skip.minProtocol(), skip.maxProtocol());
 		if(process)
 			writer.putText(skip.terminator());
+	}
+
+
+	/**
+	 * The loader for the configurations.
+	 *
+	 * @return	The loader for the configurations.
+	 */
+	public LoaderConfiguration getLoaderConfiguration(){
+		return loaderConfiguration;
 	}
 
 }

@@ -29,10 +29,13 @@ package io.github.mtrevisan.boxon.core.keys;
  * Holds the constants used as a key in the {@link io.github.mtrevisan.boxon.core.Configurator Configurator}.
  */
 public enum ConfigurationKey{
-	CONFIGURATION_HEADER("header"),
-	CONFIGURATION_FIELDS("fields"),
-	CONFIGURATION_PROTOCOL_VERSION_BOUNDARIES("protocolVersionBoundaries"),
-	CONFIGURATION_COMPOSITE_FIELDS("fields"),
+	HEADER("header"),
+	HEADER_START("start"),
+	HEADER_END("end"),
+	HEADER_CHARSET("charset"),
+	FIELDS("fields"),
+	PROTOCOL_VERSION_BOUNDARIES("protocolVersionBoundaries"),
+	COMPOSITE_FIELDS("fields"),
 
 	ALTERNATIVES("alternatives"),
 	FIELD_TYPE("fieldType"),
@@ -43,11 +46,15 @@ public enum ConfigurationKey{
 	MAX_PROTOCOL("maxProtocol"),
 	MIN_VALUE("minValue"),
 	MAX_VALUE("maxValue"),
+	VALUE("value"),
 	PATTERN("pattern"),
 	ENUMERATION("enumeration"),
 	MUTUALLY_EXCLUSIVE("mutuallyExclusive"),
 	DEFAULT_VALUE("defaultValue"),
-	CHARSET("charset");
+	COMPOSITION("composition"),
+	CHARSET("charset"),
+	RADIX("radix"),
+	TERMINATOR("terminator");
 
 
 	private final String name;

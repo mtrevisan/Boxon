@@ -54,8 +54,8 @@ final class CodecCompositeConfigurationField implements CodecInterface<Composite
 		value = ParserDataType.getValueOrSelf((Class<?>)fieldType, value);
 
 		if(value != null){
-			if(value instanceof String)
-				writer.putText((String)value, charset);
+			if(value instanceof final String v)
+				writer.putText(v, charset);
 			else
 				throw ConfigurationException.create("Cannot handle this type of field: {}, please report to the developer",
 					value.getClass().getSimpleName());

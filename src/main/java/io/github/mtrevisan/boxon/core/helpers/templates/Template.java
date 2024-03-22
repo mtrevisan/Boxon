@@ -26,8 +26,9 @@ package io.github.mtrevisan.boxon.core.helpers.templates;
 
 import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.Evaluate;
-import io.github.mtrevisan.boxon.annotations.MessageHeader;
+import io.github.mtrevisan.boxon.annotations.PostProcessField;
 import io.github.mtrevisan.boxon.annotations.Skip;
+import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.helpers.CharsetHelper;
 import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
@@ -44,35 +45,30 @@ import java.util.function.Function;
 /**
  * The class containing the information that are used to decode/encode objects.
  *
- * @param <T> The type of object the codec is able to decode/encode.
+ * @param <T>	The type of object the codec is able to decode/encode.
  */
 public final class Template<T>{
 
-	private static final class Pair{
-		private final List<BoundedField> boundedFields;
-		private final List<EvaluatedField> evaluatedFields;
-
-		private static Pair of(final List<BoundedField> boundedFields, final List<EvaluatedField> evaluatedFields){
-			return new Pair(boundedFields, evaluatedFields);
-		}
-
-		private Pair(final List<BoundedField> boundedFields, final List<EvaluatedField> evaluatedFields){
-			this.boundedFields = boundedFields;
-			this.evaluatedFields = evaluatedFields;
+	private record Triplet(List<TemplateField> templateFields, List<EvaluatedField<Evaluate>> evaluatedFields,
+			List<EvaluatedField<PostProcessField>> postProcessedFields){
+		private static Triplet of(final List<TemplateField> templateFields, final List<EvaluatedField<Evaluate>> evaluatedFields,
+				final List<EvaluatedField<PostProcessField>> postProcessedFields){
+			return new Triplet(templateFields, evaluatedFields, postProcessedFields);
 		}
 	}
 
 
 	private final Class<T> type;
 
-	private final MessageHeader header;
-	private final List<BoundedField> boundedFields;
-	private final List<EvaluatedField> evaluatedFields;
+	private final TemplateHeader header;
+	private final List<TemplateField> templateFields;
+	private final List<EvaluatedField<Evaluate>> evaluatedFields;
+	private final List<EvaluatedField<PostProcessField>> postProcessedFields;
 	/**
 	 * Necessary to speed up the creation of a {@link Template} (technically not needed because it's already present
-	 * somewhere inside {@link #boundedFields}).
+	 * somewhere inside {@link #templateFields}).
 	 */
-	private BoundedField checksum;
+	private TemplateField checksum;
 
 
 	/**
@@ -95,7 +91,7 @@ public final class Template<T>{
 			throws AnnotationException{
 		this.type = type;
 
-		header = type.getAnnotation(MessageHeader.class);
+		header = type.getAnnotation(TemplateHeader.class);
 		if(header != null){
 			try{
 				CharsetHelper.lookup(header.charset());
@@ -105,23 +101,27 @@ public final class Template<T>{
 			}
 		}
 
-		final Pair fields = loadAnnotatedFields(type, filterAnnotationsWithCodec);
-		boundedFields = Collections.unmodifiableList(fields.boundedFields);
+		final Triplet fields = loadAnnotatedFields(type, filterAnnotationsWithCodec);
+		templateFields = Collections.unmodifiableList(fields.templateFields);
 		evaluatedFields = Collections.unmodifiableList(fields.evaluatedFields);
+		postProcessedFields = Collections.unmodifiableList(fields.postProcessedFields);
 
-		if(boundedFields.isEmpty())
+		if(templateFields.isEmpty())
 			throw AnnotationException.create("No data can be extracted from this class: {}", type.getName());
 	}
 
+
 	@SuppressWarnings("ObjectAllocationInLoop")
-	private Pair loadAnnotatedFields(final Class<T> type, final Function<Annotation[], List<Annotation>> filterAnnotationsWithCodec)
+	private Triplet loadAnnotatedFields(final Class<T> type, final Function<Annotation[], List<Annotation>> filterAnnotationsWithCodec)
 			throws AnnotationException{
 		final List<Field> fields = ReflectionHelper.getAccessibleFields(type);
-		final int size = fields.size();
-		final List<BoundedField> boundedFields = new ArrayList<>(size);
-		final List<EvaluatedField> evaluatedFields = new ArrayList<>(size);
-		for(int i = 0; i < size; i ++){
+		final int length = fields.size();
+		final List<TemplateField> templateFields = new ArrayList<>(length);
+		final List<EvaluatedField<Evaluate>> evaluatedFields = new ArrayList<>(length);
+		final List<EvaluatedField<PostProcessField>> postProcessedFields = new ArrayList<>(length);
+		for(int i = 0; i < length; i ++){
 			final Field field = fields.get(i);
+
 			final Skip[] skips = field.getDeclaredAnnotationsByType(Skip.class);
 			final Checksum checksum = field.getDeclaredAnnotation(Checksum.class);
 
@@ -131,18 +131,20 @@ public final class Template<T>{
 			final List<Annotation> boundedAnnotations = filterAnnotationsWithCodec.apply(declaredAnnotations);
 			evaluatedFields.addAll(extractEvaluations(declaredAnnotations, field));
 
+			postProcessedFields.addAll(extractProcessed(declaredAnnotations, field));
+
 			try{
 				final Annotation validAnnotation = validateField(field, boundedAnnotations);
 
 				if(validAnnotation != null || skips.length > 0)
-					boundedFields.add(BoundedField.create(field, validAnnotation, skips));
+					templateFields.add(TemplateField.create(field, validAnnotation, skips));
 			}
 			catch(final AnnotationException e){
 				e.withClassAndField(type, field);
 				throw e;
 			}
 		}
-		return Pair.of(boundedFields, evaluatedFields);
+		return Triplet.of(templateFields, evaluatedFields, postProcessedFields);
 	}
 
 	private void loadChecksumField(final Checksum checksum, final Class<T> type, final Field field) throws AnnotationException{
@@ -153,32 +155,49 @@ public final class Template<T>{
 				throw (AnnotationException)exception.withClassAndField(type, field);
 			}
 
-			this.checksum = BoundedField.create(field, checksum);
+			this.checksum = TemplateField.create(field, checksum);
 		}
 	}
 
 	@SuppressWarnings("ObjectAllocationInLoop")
-	private static List<EvaluatedField> extractEvaluations(final Annotation[] declaredAnnotations, final Field field){
-		final List<EvaluatedField> evaluations = new ArrayList<>(declaredAnnotations.length);
-		for(int i = 0; i < declaredAnnotations.length; i ++){
+	private static List<EvaluatedField<Evaluate>> extractEvaluations(final Annotation[] declaredAnnotations, final Field field){
+		final int length = declaredAnnotations.length;
+		final List<EvaluatedField<Evaluate>> evaluations = new ArrayList<>(length);
+		for(int i = 0; i < length; i ++){
 			final Annotation annotation = declaredAnnotations[i];
+
 			if(annotation.annotationType() == Evaluate.class)
 				evaluations.add(EvaluatedField.create(field, (Evaluate)annotation));
 		}
 		return evaluations;
 	}
 
+	@SuppressWarnings("ObjectAllocationInLoop")
+	private static List<EvaluatedField<PostProcessField>> extractProcessed(final Annotation[] declaredAnnotations, final Field field){
+		final int length = declaredAnnotations.length;
+		final List<EvaluatedField<PostProcessField>> processed = new ArrayList<>(length);
+		for(int i = 0; i < length; i ++){
+			final Annotation annotation = declaredAnnotations[i];
+
+			if(annotation.annotationType() == PostProcessField.class)
+				processed.add(EvaluatedField.create(field, (PostProcessField)annotation));
+		}
+		return processed;
+	}
+
 	private static Annotation validateField(final Field field, final List<? extends Annotation> annotations) throws AnnotationException{
 		/** filter out {@link Skip} annotations and return the (first) valid binding annotation */
 		Annotation foundAnnotation = null;
-		for(int i = 0; foundAnnotation == null && i < annotations.size(); i ++){
-			final Class<? extends Annotation> annotationType = annotations.get(i).annotationType();
+		for(int i = 0, length = annotations.size(); foundAnnotation == null && i < length; i ++){
+			final Annotation annotation = annotations.get(i);
+
+			final Class<? extends Annotation> annotationType = annotation.annotationType();
 			if(annotationType == Skip.class || annotationType == Skip.Skips.class)
 				continue;
 
-			validateAnnotation(field, annotations.get(i));
+			validateAnnotation(field, annotation);
 
-			foundAnnotation = annotations.get(i);
+			foundAnnotation = annotation;
 		}
 		return foundAnnotation;
 	}
@@ -203,17 +222,17 @@ public final class Template<T>{
 	 *
 	 * @return	The header annotation.
 	 */
-	public MessageHeader getHeader(){
+	public TemplateHeader getHeader(){
 		return header;
 	}
 
 	/**
-	 * List of {@link BoundedField bounded fields}.
+	 * List of {@link TemplateField template fields}.
 	 *
-	 * @return	List of bounded fields.
+	 * @return	List of template fields.
 	 */
-	public List<BoundedField> getBoundedFields(){
-		return boundedFields;
+	public List<TemplateField> getTemplateFields(){
+		return templateFields;
 	}
 
 	/**
@@ -221,8 +240,17 @@ public final class Template<T>{
 	 *
 	 * @return	List of evaluated fields.
 	 */
-	public List<EvaluatedField> getEvaluatedFields(){
+	public List<EvaluatedField<Evaluate>> getEvaluatedFields(){
 		return evaluatedFields;
+	}
+
+	/**
+	 * List of {@link EvaluatedField processed fields}.
+	 *
+	 * @return	List of processed fields.
+	 */
+	public List<EvaluatedField<PostProcessField>> getPostProcessedFields(){
+		return postProcessedFields;
 	}
 
 	/**
@@ -239,17 +267,17 @@ public final class Template<T>{
 	 *
 	 * @return	Checksum bound data.
 	 */
-	public BoundedField getChecksum(){
+	public TemplateField getChecksum(){
 		return checksum;
 	}
 
 	/**
-	 * Whether this template is well formatted, that it has a header annotation and has some bounded fields.
+	 * Whether this template is well formatted, that it has a header annotation and has some template fields.
 	 *
 	 * @return	Whether this template is well formatted.
 	 */
 	public boolean canBeCoded(){
-		return (header != null && !boundedFields.isEmpty());
+		return (header != null && ! templateFields.isEmpty());
 	}
 
 	@Override

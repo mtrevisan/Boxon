@@ -24,15 +24,18 @@
  */
 package io.github.mtrevisan.boxon.core.codecs.queclink;
 
-import java.util.Locale;
+import io.github.mtrevisan.boxon.exceptions.DataException;
+import io.github.mtrevisan.boxon.helpers.StringHelper;
+
 import java.util.Map;
+import java.util.Set;
 import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentSkipListMap;
 
 
 public class DeviceTypes{
 
-	private final Map<String, Byte> deviceTypes;
+	private final Map<Byte, String> deviceTypes;
 
 
 	public static DeviceTypes create(){
@@ -45,8 +48,8 @@ public class DeviceTypes{
 	}
 
 
-	public DeviceTypes with(final String deviceTypeName, final byte deviceTypeCode){
-		deviceTypes.put(deviceTypeName, deviceTypeCode);
+	public DeviceTypes with(final byte deviceTypeCode, final String deviceTypeName){
+		deviceTypes.put(deviceTypeCode, deviceTypeName);
 
 		return this;
 	}
@@ -60,24 +63,37 @@ public class DeviceTypes{
 		return false;
 	}
 
-	public String getDeviceTypeName(final byte deviceTypeCode){
-		for(final Map.Entry<String, Byte> deviceType : deviceTypes.entrySet())
-			if(deviceType.getValue().equals(deviceTypeCode))
+	public Set<Byte> getDeviceTypeCodes(){
+		return deviceTypes.keySet();
+	}
+
+	public byte getDeviceTypeCode(final String deviceTypeName){
+		for(final Map.Entry<Byte, String> deviceType : deviceTypes.entrySet())
+			if(deviceType.getValue().equals(deviceTypeName))
 				return deviceType.getKey();
 
-		final String actualCode = Integer.toHexString(deviceTypeCode & 0x0000_00FF);
-		final StringJoiner sj = new StringJoiner(", 0x", "[0x", "]");
-		for(final Map.Entry<String, Byte> deviceType : deviceTypes.entrySet())
-			sj.add(Integer.toHexString(deviceType.getValue() & 0x0000_00FF));
-		throw new IllegalArgumentException("Cannot parse message from another device, device type is 0x" + actualCode.toUpperCase(Locale.ROOT)
-			+ ", should be one of " + sj);
+		throw DataException.create("Given device name is not recognized: {}", deviceTypeName);
+	}
+
+	public String getDeviceTypeName(final byte deviceTypeCode){
+		final String deviceTypeName = deviceTypes.get(deviceTypeCode);
+
+		if(deviceTypeName == null){
+			final String actualCode = StringHelper.toHexString(deviceTypeCode & 0x0000_00FF);
+			final StringJoiner sj = new StringJoiner(", 0x", "[0x", "]");
+			for(final Map.Entry<Byte, String> deviceType : deviceTypes.entrySet())
+				sj.add(StringHelper.toHexString(deviceType.getKey() & 0x0000_00FF));
+			throw DataException.create("Cannot decode message from another device, device type is 0x{}, should be one of {}",
+				actualCode, sj);
+		}
+		return deviceTypeName;
 	}
 
 	@Override
 	public String toString(){
 		final StringJoiner sj = new StringJoiner(", ", "[", "]");
-		for(final Map.Entry<String, Byte> deviceType : deviceTypes.entrySet())
-			sj.add(deviceType.getKey() + " (0x" + Integer.toHexString(deviceType.getValue() & 0x0000_00FF).toUpperCase(Locale.ROOT) + ")");
+		for(final Map.Entry<Byte, String> deviceType : deviceTypes.entrySet())
+			sj.add(deviceType.getValue() + " (0x" + StringHelper.toHexString(deviceType.getKey() & 0x0000_00FF) + ")");
 		return sj.toString();
 	}
 

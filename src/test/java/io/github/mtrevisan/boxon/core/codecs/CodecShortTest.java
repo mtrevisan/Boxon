@@ -37,19 +37,14 @@ import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriter;
 import io.github.mtrevisan.boxon.io.ByteOrder;
 import io.github.mtrevisan.boxon.io.CodecInterface;
+import io.github.mtrevisan.boxon.utils.TestHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.Annotation;
-import java.util.Locale;
-import java.util.Random;
 
 
-@SuppressWarnings("ALL")
 class CodecShortTest{
-
-	private static final Random RANDOM = new Random();
-
 
 	@Test
 	void shortLittleEndianPositive1() throws FieldException{
@@ -228,7 +223,7 @@ class CodecShortTest{
 	@Test
 	void shortLittleEndianRandom() throws FieldException{
 		CodecInterface<BindShort> codec = new CodecShort();
-		short encodedValue = (short)RANDOM.nextInt(0x0000_FFFF);
+		short encodedValue = (short)TestHelper.RANDOM.nextInt(0x0000_FFFF);
 		Annotation annotation = new BindShort(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
@@ -275,7 +270,8 @@ class CodecShortTest{
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		Assertions.assertEquals(StringHelper.leftPad(Integer.toHexString(Short.reverseBytes(encodedValue) & 0x0000_FFFF).toUpperCase(Locale.ROOT), 4, '0'), writer.toString());
+		String expected = StringHelper.leftPad(StringHelper.toHexString(Short.reverseBytes(encodedValue) & 0x0000_FFFF), 4, '0');
+		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
 		short decoded = (short)codec.decode(reader, annotation, null);
@@ -460,7 +456,7 @@ class CodecShortTest{
 	@Test
 	void shortBigEndianRandom() throws FieldException{
 		CodecInterface<BindShort> codec = new CodecShort();
-		short encodedValue = (short)RANDOM.nextInt(0x0000_FFFF);
+		short encodedValue = (short)TestHelper.RANDOM.nextInt(0x0000_FFFF);
 		Annotation annotation = new BindShort(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
@@ -507,7 +503,8 @@ class CodecShortTest{
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		Assertions.assertEquals(StringHelper.leftPad(Integer.toHexString(encodedValue & 0x0000_FFFF).toUpperCase(Locale.ROOT), 4, '0'), writer.toString());
+		String expected = StringHelper.leftPad(StringHelper.toHexString(encodedValue & 0x0000_FFFF), 4, '0');
+		Assertions.assertEquals(expected, writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
 		short decoded = (short)codec.decode(reader, annotation, null);

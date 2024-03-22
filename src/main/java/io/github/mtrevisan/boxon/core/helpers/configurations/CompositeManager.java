@@ -85,9 +85,13 @@ final class CompositeManager implements ConfigurationManagerInterface{
 		//compose field value
 		final String composition = annotation.composition();
 		final CompositeSubField[] fields = annotation.value();
-		final Map<String, Object> dataValue = new HashMap<>(fields.length);
-		for(int i = 0; i < fields.length; i ++)
-			dataValue.put(fields[i].shortDescription(), fields[i].defaultValue());
+		final int length = fields.length;
+		final Map<String, Object> dataValue = new HashMap<>(length);
+		for(int i = 0; i < length; i ++){
+			final CompositeSubField f = fields[i];
+
+			dataValue.put(f.shortDescription(), f.defaultValue());
+		}
 		return replace(composition, dataValue, fields);
 	}
 
@@ -108,8 +112,8 @@ final class CompositeManager implements ConfigurationManagerInterface{
 	public boolean isMandatory(final Annotation annotation){
 		boolean mandatory = false;
 		final CompositeSubField[] compositeFields = this.annotation.value();
-		for(int j = 0; !mandatory && j < compositeFields.length; j ++)
-			mandatory = StringHelper.isBlank(compositeFields[j].defaultValue());
+		for(int i = 0, length = compositeFields.length; !mandatory && i < length; i ++)
+			mandatory = StringHelper.isBlank(compositeFields[i].defaultValue());
 		return mandatory;
 	}
 
@@ -121,13 +125,16 @@ final class CompositeManager implements ConfigurationManagerInterface{
 
 		final Map<String, Object> compositeMap = extractMap();
 		final CompositeSubField[] bindings = annotation.value();
-		final Map<String, Object> compositeFieldsMap = new HashMap<>(bindings.length);
-		for(int j = 0; j < bindings.length; j ++){
-			final Map<String, Object> fieldMap = extractMap(bindings[j], fieldType);
+		final int length = bindings.length;
+		final Map<String, Object> compositeFieldsMap = new HashMap<>(length);
+		for(int i = 0; i < length; i ++){
+			final CompositeSubField binding = bindings[i];
 
-			compositeFieldsMap.put(bindings[j].shortDescription(), fieldMap);
+			final Map<String, Object> fieldMap = extractMap(binding, fieldType);
+
+			compositeFieldsMap.put(binding.shortDescription(), fieldMap);
 		}
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.CONFIGURATION_COMPOSITE_FIELDS, compositeFieldsMap, compositeMap);
+		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.COMPOSITE_FIELDS, compositeFieldsMap, compositeMap);
 
 		if(protocol.isEmpty())
 			ConfigurationHelper.extractMinMaxProtocol(annotation.minProtocol(), annotation.maxProtocol(), compositeMap);
@@ -177,7 +184,7 @@ final class CompositeManager implements ConfigurationManagerInterface{
 			final String outerValue = replace(composition, (Map<String, Object>)dataValue, fields);
 
 			//value compatible with data type and format
-			if(!formatPattern.matcher(outerValue).matches())
+			if(!ValidationHelper.matches(outerValue, formatPattern))
 				throw EncodeException.create("Data value not compatible with `pattern` for data key {}; found {}, expected {}",
 					dataKey, outerValue, pattern);
 		}
@@ -196,8 +203,9 @@ final class CompositeManager implements ConfigurationManagerInterface{
 
 	private static String replace(final String text, final Map<String, Object> replacements, final CompositeSubField[] fields)
 			throws EncodeException{
-		final Map<String, Object> trueReplacements = new HashMap<>(fields.length);
-		for(int i = 0; i < fields.length; i ++){
+		final int length = fields.length;
+		final Map<String, Object> trueReplacements = new HashMap<>(length);
+		for(int i = 0; i < length; i ++){
 			final String key = fields[i].shortDescription();
 			trueReplacements.put(key, replacements.get(key));
 		}

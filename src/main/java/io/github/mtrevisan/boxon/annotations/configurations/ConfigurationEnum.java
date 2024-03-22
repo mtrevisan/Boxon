@@ -55,11 +55,12 @@ public interface ConfigurationEnum{
 	 * @param value	The value to be converted.
 	 * @return	The enumeration constant that matches the value.
 	 */
-	@SuppressWarnings("ReturnOfNull")
 	static ConfigurationEnum extractEnum(final ConfigurationEnum[] enumConstants, final String value){
-		for(int i = 0; i < enumConstants.length; i ++)
-			if(enumConstants[i].name().equals(value))
-				return enumConstants[i];
+		for(int i = 0, length = enumConstants.length; i < length; i ++){
+			final ConfigurationEnum enumConstant = enumConstants[i];
+			if(enumConstant.name().equals(value))
+				return enumConstant;
+		}
 		return null;
 	}
 

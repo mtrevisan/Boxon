@@ -26,12 +26,15 @@ package io.github.mtrevisan.boxon.exceptions;
 
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 
+import java.io.Serial;
+
 
 /**
  * Thrown if no codec is found.
  */
 public final class CodecException extends FieldException{
 
+	@Serial
 	private static final long serialVersionUID = 2879230296103139872L;
 
 

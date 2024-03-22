@@ -31,6 +31,7 @@ import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.ParserDataType;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
+import io.github.mtrevisan.boxon.semanticversioning.VersionException;
 
 import java.util.Arrays;
 import java.util.regex.Pattern;
@@ -41,7 +42,7 @@ import java.util.regex.Pattern;
  */
 final class ValidationHelper{
 
-	private static final Pattern PATTERN_PIPE = Pattern.compile("\\|");
+	private static final char MUTUALLY_EXCLUSIVE_ENUMERATION_SEPARATOR = '|';
 
 
 	private ValidationHelper(){}
@@ -57,21 +58,19 @@ final class ValidationHelper{
 	 */
 	static void validateProtocol(final ConfigFieldData field, final Version minProtocolVersion, final Version maxProtocolVersion)
 			throws AnnotationException{
-		if(StringHelper.isBlank(field.getMinProtocol()) && StringHelper.isBlank(field.getMaxProtocol()))
-			return;
-
-		final Version minimum = validateProtocol(field.getMinProtocol(), field.getAnnotationName(),
+		final Version minimum = validateProtocol(field.getMinProtocol(), field,
 			"Invalid minimum protocol version in {}; found {}");
-		final Version maximum = validateProtocol(field.getMaxProtocol(), field.getAnnotationName(),
+		final Version maximum = validateProtocol(field.getMaxProtocol(), field,
 			"Invalid maximum protocol version in {}; found {}");
 
 		//`maxProtocol` must be after or equal to `minProtocol`
 		if(minimum != null && maximum != null && maximum.isLessThan(minimum))
-			throw AnnotationException.create("Minimum protocol version is greater than maximum protocol version in {}; found {}",
-				field.getAnnotationName(), field.getMaxProtocol());
+			throw AnnotationException.create("Minimum protocol version is greater than maximum protocol version in {}; found {} >= {}",
+				field.getAnnotationName(), field.getMinProtocol(), field.getMaxProtocol());
 
 		//`minProtocol` must be after or equal to `minProtocolVersion`
-		if(minimum != null && !minProtocolVersion.isEmpty() && minimum.isLessThan(minProtocolVersion))
+		//NOTE: `minimum.isLessThan(minProtocolVersion)` return false if `minProtocolVersion` is empty
+		if(minimum != null && minimum.isLessThan(minProtocolVersion))
 			throw AnnotationException.create("Minimum protocol version is less than whole message minimum protocol version in {}; expected {} >= {}",
 				field.getAnnotationName(), minimum, minProtocolVersion);
 		//`maxProtocol` must be before or equal to `maxProtocolVersion`
@@ -80,15 +79,15 @@ final class ValidationHelper{
 				field.getAnnotationName(), maximum, maxProtocolVersion);
 	}
 
-	private static Version validateProtocol(final String protocolVersion, final String bindingName, final String errorMessage)
+	private static Version validateProtocol(final String protocolVersion, final ConfigFieldData field, final String errorMessage)
 			throws AnnotationException{
 		Version protocol = null;
 		if(!StringHelper.isBlank(protocolVersion)){
 			try{
 				protocol = Version.of(protocolVersion);
 			}
-			catch(final IllegalArgumentException iae){
-				throw AnnotationException.create(iae, errorMessage, bindingName, protocolVersion);
+			catch(final VersionException ve){
+				throw AnnotationException.create(ve, errorMessage, field.getAnnotationName(), protocolVersion);
 			}
 		}
 		return protocol;
@@ -113,11 +112,11 @@ final class ValidationHelper{
 
 		final String defaultValue = field.getDefaultValue();
 		final Object def = ParserDataType.getValue(fieldType, defaultValue);
-		final Object min = validateMinValue(field, def);
-		final Object max = validateMaxValue(field, def);
+		final Number min = validateMinValue(field, def);
+		final Number max = validateMaxValue(field, def);
 
-		if(min != null && max != null && ((Number)min).doubleValue() > ((Number)max).doubleValue())
-			//maxValue after or equal to minValue
+		if(min != null && max != null && min.doubleValue() > max.doubleValue())
+			//`maxValue` after or equal to `minValue`
 			throw AnnotationException.create("Minimum value should be less than or equal to maximum value in {}; expected {} <= {}",
 				field.getAnnotationName(), field.getMinValue(), field.getMaxValue());
 
@@ -129,36 +128,36 @@ final class ValidationHelper{
 		}
 	}
 
-	private static Object validateMinValue(final ConfigFieldData field, final Object def) throws AnnotationException, CodecException{
-		Object min = null;
+	private static Number validateMinValue(final ConfigFieldData field, final Object def) throws AnnotationException{
+		Number min = null;
 		final String minValue = field.getMinValue();
 		if(!StringHelper.isBlank(minValue)){
-			min = ParserDataType.getValue(field.getFieldType(), minValue);
-			//minValue compatible with variable type
+			min = ParserDataType.getBigNumber(minValue);
+			//`minValue` compatible with variable type
 			if(min == null)
-				throw AnnotationException.create("Incompatible minimum value in {}; found {}, expected {}",
-					field.getAnnotationName(), minValue.getClass().getSimpleName(), field.getFieldType().toString());
+				throw AnnotationException.create("Incompatible minimum value in {}; found {}, expected a valid number",
+					field.getAnnotationName(), minValue);
 
-			if(def != null && ((Number)def).doubleValue() < ((Number)min).doubleValue())
-				//defaultValue compatible with minValue
+			if(def != null && ((Number)def).doubleValue() < min.doubleValue())
+				//`defaultValue` compatible with `minValue`
 				throw AnnotationException.create("Default value incompatible with minimum value in {}; expected {} >= {}",
 					field.getAnnotationName(), field.getDefaultValue(), minValue.getClass().getSimpleName());
 		}
 		return min;
 	}
 
-	private static Object validateMaxValue(final ConfigFieldData field, final Object def) throws AnnotationException, CodecException{
-		Object max = null;
+	private static Number validateMaxValue(final ConfigFieldData field, final Object def) throws AnnotationException{
+		Number max = null;
 		final String maxValue = field.getMaxValue();
 		if(!StringHelper.isBlank(maxValue)){
-			max = ParserDataType.getValue(field.getFieldType(), maxValue);
-			//maxValue compatible with variable type
+			max = ParserDataType.getBigNumber(maxValue);
+			//`maxValue` compatible with variable type
 			if(max == null)
-				throw AnnotationException.create("Incompatible maximum value in {}; found {}, expected {}",
-					field.getAnnotationName(), maxValue.getClass().getSimpleName(), field.getFieldType().toString());
+				throw AnnotationException.create("Incompatible maximum value in {}; found {}, expected a valid number",
+					field.getAnnotationName(), maxValue);
 
-			if(def != null && ((Number)def).doubleValue() > ((Number)max).doubleValue())
-				//defaultValue compatible with maxValue
+			if(def != null && ((Number)def).doubleValue() > max.doubleValue())
+				//`defaultValue` compatible with `maxValue`
 				throw AnnotationException.create("Default value incompatible with maximum value in {}; expected {} <= {}",
 					field.getAnnotationName(), field.getDefaultValue(), maxValue.getClass().getSimpleName());
 		}
@@ -178,12 +177,17 @@ final class ValidationHelper{
 
 		final String defaultValue = field.getDefaultValue();
 		if(!StringHelper.isBlank(defaultValue)){
-			//defaultValue compatible with variable type
-			if(!field.hasEnumeration() && ParserDataType.getValue(fieldType, defaultValue) == null)
+			//`defaultValue` compatible with variable type
+			final boolean hasEnumeration = field.hasEnumeration();
+			if(!hasEnumeration && ParserDataType.getValue(fieldType, defaultValue) == null)
 				throw AnnotationException.create("Incompatible enum in {}, found {}, expected {}",
 					field.getAnnotationName(), defaultValue.getClass().getSimpleName(), fieldType.toString());
+			if(hasEnumeration && !fieldType.isArray()
+					&& StringHelper.contains(defaultValue, MUTUALLY_EXCLUSIVE_ENUMERATION_SEPARATOR))
+				throw AnnotationException.create("Incompatible default value in {}, field {}, found '{}', expected mutually exclusive value",
+					field.getAnnotationName(), defaultValue.getClass().getSimpleName(), defaultValue);
 		}
-		//if default value is not present, then field type must be an object
+		//if `defaultValue` is not present, then field type must be an object
 		else if(ParserDataType.isPrimitive(fieldType))
 			throw AnnotationException.create("Default must be present for primitive type in {}, found {}, expected {}",
 				field.getAnnotationName(), fieldType.getSimpleName(), fieldType.getSimpleName());
@@ -191,22 +195,27 @@ final class ValidationHelper{
 
 	private static void validateMinMaxDefaultValuesToPattern(final Pattern formatPattern, final ConfigFieldData field)
 			throws AnnotationException{
-		//defaultValue compatible with pattern
-		if(!matches(field.getDefaultValue(), formatPattern))
+		//`defaultValue` compatible with `pattern`
+		if(!matchesOrBlank(field.getDefaultValue(), formatPattern))
 			throw AnnotationException.create("Default value not compatible with `pattern` in {}; found {}, expected {}",
 				field.getAnnotationName(), field.getDefaultValue(), formatPattern.pattern());
-		//minValue compatible with pattern
-		if(!matches(field.getMinValue(), formatPattern))
+		//`minValue` compatible with `pattern`
+		if(!matchesOrBlank(field.getMinValue(), formatPattern))
 			throw AnnotationException.create("Minimum value not compatible with `pattern` in {}; found {}, expected {}",
 				field.getAnnotationName(), field.getMinValue(), formatPattern.pattern());
-		//maxValue compatible with pattern
-		if(!matches(field.getMaxValue(), formatPattern))
+		//`maxValue` compatible with `pattern`
+		if(!matchesOrBlank(field.getMaxValue(), formatPattern))
 			throw AnnotationException.create("Maximum value not compatible with `pattern` in {}; found {}, expected {}",
 				field.getAnnotationName(), field.getMaxValue(), formatPattern.pattern());
 	}
 
-	private static boolean matches(final CharSequence text, final Pattern pattern){
-		return (StringHelper.isBlank(text) || pattern.matcher(text).matches());
+	private static boolean matchesOrBlank(final String text, final Pattern pattern){
+		return (StringHelper.isBlank(text) || matches(text, pattern));
+	}
+
+	static boolean matches(final CharSequence text, final Pattern pattern){
+		return pattern.matcher(text)
+			.matches();
 	}
 
 
@@ -223,22 +232,25 @@ final class ValidationHelper{
 		if(StringHelper.isBlank(pattern))
 			return;
 
-		final Pattern formatPattern;
+		final Pattern formatPattern = extractPattern(pattern, field);
+
+		//`defaultValue` compatible with field type
+		if(!String.class.isAssignableFrom(field.getFieldType())
+				|| dataValue != null && String.class.isAssignableFrom(dataValue.getClass()) && !matches((String)dataValue, formatPattern))
+			throw AnnotationException.create("Data type not compatible with `pattern` in {}; found {}.class, expected complying with {}",
+				field.getAnnotationName(), field.getFieldType(), pattern);
+
+		validateMinMaxDefaultValuesToPattern(formatPattern, field);
+	}
+
+	private static Pattern extractPattern(final String pattern, final ConfigFieldData field) throws AnnotationException{
 		try{
-			formatPattern = Pattern.compile(pattern);
+			return Pattern.compile(pattern);
 		}
 		catch(final Exception e){
 			throw AnnotationException.create("Invalid pattern in {} in field {}", field.getAnnotationName(), field.getFieldName(),
 				e);
 		}
-
-		//defaultValue compatible with field type
-		if(!String.class.isAssignableFrom(field.getFieldType())
-				|| dataValue != null && String.class.isAssignableFrom(dataValue.getClass()) && !formatPattern.matcher((String)dataValue).matches())
-			throw AnnotationException.create("Data type not compatible with `pattern` in {}; found {}.class, expected String.class",
-				field.getAnnotationName(), field.getFieldType());
-
-		validateMinMaxDefaultValuesToPattern(formatPattern, field);
 	}
 
 
@@ -265,12 +277,12 @@ final class ValidationHelper{
 
 		final Class<?> fieldType = field.getFieldType();
 		if(fieldType.isArray())
-			validateEnumMultipleValues(field, enumConstants);
+			validateEnumerationMultipleValues(field, enumConstants);
 		else
 			validateEnumerationMutuallyExclusive(field, enumConstants);
 	}
 
-	private static void validateEnumMultipleValues(final ConfigFieldData field, final ConfigurationEnum[] enumConstants)
+	private static void validateEnumerationMultipleValues(final ConfigFieldData field, final ConfigurationEnum[] enumConstants)
 			throws AnnotationException{
 		//enumeration compatible with variable type
 		final Class<?> fieldType = field.getFieldType();
@@ -278,19 +290,18 @@ final class ValidationHelper{
 			throw AnnotationException.create("Incompatible enum in {}; found {}, expected {}",
 				field.getAnnotationName(), field.getEnumeration().getSimpleName(), fieldType.toString());
 
-		final String defaultValue = field.getDefaultValue();
-		if(!StringHelper.isBlank(defaultValue)){
-			final String[] defaultValues = PATTERN_PIPE.split(defaultValue);
-			if(fieldType.isEnum() && defaultValues.length != 1)
-				throw AnnotationException.create("Default value for mutually exclusive enumeration field in {} should be a value; found {}, expected one of {}",
-					field.getAnnotationName(), defaultValue, Arrays.toString(enumConstants));
+		//default value(s) compatible with enumeration
+		validateEnumerationCompatibility(field, enumConstants);
+	}
 
-			for(int i = 0; i < JavaHelper.lengthOrZero(defaultValues); i ++){
-				final ConfigurationEnum enumValue = ConfigurationEnum.extractEnum(enumConstants, defaultValues[i]);
-				if(enumValue == null)
-					throw AnnotationException.create("Default value not compatible with `enumeration` in {}; found {}, expected one of {}",
-						field.getAnnotationName(), defaultValues[i], Arrays.toString(enumConstants));
-			}
+	private static void validateEnumerationCompatibility(final ConfigFieldData field, final ConfigurationEnum[] enumConstants)
+			throws AnnotationException{
+		final String[] defaultValues = StringHelper.split(field.getDefaultValue(), MUTUALLY_EXCLUSIVE_ENUMERATION_SEPARATOR);
+		for(int i = 0, length = JavaHelper.lengthOrZero(defaultValues); i < length; i ++){
+			final ConfigurationEnum enumValue = ConfigurationEnum.extractEnum(enumConstants, defaultValues[i]);
+			if(enumValue == null)
+				throw AnnotationException.create("Default value not compatible with `enumeration` in {}; found {}, expected one of {}",
+					field.getAnnotationName(), defaultValues[i], Arrays.toString(enumConstants));
 		}
 	}
 

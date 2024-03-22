@@ -32,7 +32,7 @@ public interface PatternMatcher{
 	 * Pre-processes the pattern.
 	 *
 	 * @param pattern	The {@code byte} array containing the pattern, may not be {@code null}.
-	 * @return	an array of pre-processed pattern.
+	 * @return	An array of pre-processed pattern.
 	 */
 	int[] preProcessPattern(byte[] pattern);
 
@@ -44,7 +44,7 @@ public interface PatternMatcher{
 	 * @param offset	At which position in the text the comparing should start.
 	 * @param pattern	The pattern to search for, may not be {@code null}.
 	 * @param processedPattern	Processed pattern, see {@link #preProcessPattern(byte[])}.
-	 * @return the position in the text or {@code -1} if the pattern was not found.
+	 * @return	The position in the text or {@code -1} if the pattern was not found.
 	 */
 	int indexOf(byte[] source, int offset, byte[] pattern, int[] processedPattern);
 

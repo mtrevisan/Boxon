@@ -25,9 +25,13 @@
 package io.github.mtrevisan.boxon.io;
 
 import io.github.mtrevisan.boxon.exceptions.CodecException;
+import io.github.mtrevisan.boxon.helpers.StringHelper;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -41,6 +45,11 @@ public enum ParserDataType{
 
 	BYTE(Byte.TYPE, Byte.class, Byte.SIZE){
 		@Override
+		Object cast(final BigInteger value){
+			return value.byteValue();
+		}
+
+		@Override
 		Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
 			return reader.getByte();
 		}
@@ -52,6 +61,11 @@ public enum ParserDataType{
 	},
 
 	SHORT(Short.TYPE, Short.class, Short.SIZE){
+		@Override
+		Object cast(final BigInteger value){
+			return value.shortValue();
+		}
+
 		@Override
 		Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
 			return reader.getShort(byteOrder);
@@ -65,6 +79,11 @@ public enum ParserDataType{
 
 	INTEGER(Integer.TYPE, Integer.class, Integer.SIZE){
 		@Override
+		Object cast(final BigInteger value){
+			return value.intValue();
+		}
+
+		@Override
 		Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
 			return reader.getInt(byteOrder);
 		}
@@ -76,6 +95,11 @@ public enum ParserDataType{
 	},
 
 	LONG(Long.TYPE, Long.class, Long.SIZE){
+		@Override
+		Object cast(final BigInteger value){
+			return value.longValue();
+		}
+
 		@Override
 		Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
 			return reader.getLong(byteOrder);
@@ -89,6 +113,11 @@ public enum ParserDataType{
 
 	FLOAT(Float.TYPE, Float.class, Float.SIZE){
 		@Override
+		Object cast(final BigInteger value){
+			return value.floatValue();
+		}
+
+		@Override
 		Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
 			return reader.getFloat(byteOrder);
 		}
@@ -100,6 +129,11 @@ public enum ParserDataType{
 	},
 
 	DOUBLE(Double.TYPE, Double.class, Double.SIZE){
+		@Override
+		Object cast(final BigInteger value){
+			return value.doubleValue();
+		}
+
 		@Override
 		Object read(final BitReaderInterface reader, final ByteOrder byteOrder){
 			return reader.getDouble(byteOrder);
@@ -119,11 +153,13 @@ public enum ParserDataType{
 	private static final Map<Class<?>, ParserDataType> TYPE_MAP;
 	static{
 		final ParserDataType[] values = values();
-		final Map<Class<?>, Class<?>> primitiveWrapperMap = new HashMap<>(values.length);
-		final Map<Class<?>, Class<?>> wrapperPrimitiveMap = new HashMap<>(values.length);
-		final Map<Class<?>, ParserDataType> typeMap = new HashMap<>(values.length * 2);
-		for(int i = 0; i < values.length; i ++){
+		final int length = values.length;
+		final Map<Class<?>, Class<?>> primitiveWrapperMap = new HashMap<>(length);
+		final Map<Class<?>, Class<?>> wrapperPrimitiveMap = new HashMap<>(length);
+		final Map<Class<?>, ParserDataType> typeMap = new HashMap<>(length << 1);
+		for(int i = 0; i < length; i ++){
 			final ParserDataType dt = values[i];
+
 			primitiveWrapperMap.put(dt.primitiveType, dt.objectiveType);
 			wrapperPrimitiveMap.put(dt.objectiveType, dt.primitiveType);
 			typeMap.put(dt.primitiveType, dt);
@@ -135,10 +171,13 @@ public enum ParserDataType{
 	}
 
 	private static final String METHOD_VALUE_OF = "valueOf";
+	private static final String CLASS_DESCRIPTOR = Arrays.toString(new String[]{byte.class.getSimpleName(), short.class.getSimpleName(),
+		int.class.getSimpleName(), long.class.getSimpleName(), float.class.getSimpleName(), double.class.getSimpleName()});
 
 
 	private final Class<?> primitiveType;
 	private final Class<?> objectiveType;
+	//the number of bits used to represent the value
 	private final int size;
 
 
@@ -231,9 +270,11 @@ public enum ParserDataType{
 	 * @return	A list of data types.
 	 */
 	static String describe(){
-		return Arrays.toString(new String[]{byte.class.getSimpleName(), short.class.getSimpleName(), int.class.getSimpleName(),
-			long.class.getSimpleName(), float.class.getSimpleName(), double.class.getSimpleName()});
+		return CLASS_DESCRIPTOR;
 	}
+
+
+	abstract Object cast(BigInteger value);
 
 	/**
 	 * Read a specific data type from the reader, using the given byte order.
@@ -242,7 +283,7 @@ public enum ParserDataType{
 	 * @param byteOrder	The byte order.
 	 * @return	The read value.
 	 */
-	abstract Object read(final BitReaderInterface reader, final ByteOrder byteOrder);
+	abstract Object read(BitReaderInterface reader, ByteOrder byteOrder);
 
 	/**
 	 * Write a specific data to the writer, using the given byte order.
@@ -250,7 +291,7 @@ public enum ParserDataType{
 	 * @param value	The value to be written.
 	 * @param byteOrder	The byte order.
 	 */
-	abstract void write(final BitWriterInterface writer, final Object value, final ByteOrder byteOrder);
+	abstract void write(BitWriterInterface writer, Object value, ByteOrder byteOrder);
 
 
 	/**
@@ -263,8 +304,8 @@ public enum ParserDataType{
 	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
 	 */
 	public static Object getValueOrSelf(final Class<?> fieldType, final Object value) throws CodecException{
-		return (value instanceof String
-			? getValue(fieldType, (String)value)
+		return (value instanceof final String v
+			? getValue(fieldType, v)
 			: value);
 	}
 
@@ -276,11 +317,10 @@ public enum ParserDataType{
 	 * @return	The primitive or objective value.
 	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
 	 */
-	@SuppressWarnings("ReturnOfNull")
 	public static Object getValue(final Class<?> fieldType, final String value) throws CodecException{
 		if(fieldType == String.class)
 			return value;
-		if(value == null || value.isEmpty())
+		if(StringHelper.isBlank(value))
 			return null;
 
 		final Class<?> objectiveType = toObjectiveTypeOrSelf(fieldType);
@@ -292,22 +332,43 @@ public enum ParserDataType{
 			: val);
 	}
 
-
-	private static Object toNumber(final String text, final Class<?> objectiveType){
-		Object response = null;
+	public static Object toNumber(final String text, final Class<?> objectiveType){
+		Object result = null;
 		if(isNumeric(text)){
-			try{
-				final Method method = objectiveType.getDeclaredMethod(METHOD_VALUE_OF, String.class, int.class);
-				final boolean hexadecimal = text.startsWith("0x");
-				response = method.invoke(null, (hexadecimal? text.substring(2): text), (hexadecimal? 16: 10));
-			}
-			catch(final NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored){}
+			final BigInteger decValue = (text.startsWith("0x")
+				? new BigInteger(text.substring(2), 16)
+				: new BigInteger(text));
+			final ParserDataType objectiveDataType = fromType(objectiveType);
+			if(objectiveDataType != null && decValue.bitCount() <= objectiveDataType.size)
+				//convert value to `objectiveType` class
+				result = objectiveDataType.cast(decValue);
 		}
-		return response;
+		return result;
 	}
 
 	private static boolean isNumeric(final String text){
 		return (isHexadecimalNumber(text) || isDecimalNumber(text));
+	}
+
+	/**
+	 * Returns the primitive or objective type (depending on the field type) data stored as a string value.
+	 *
+	 * @param value	The string value to be interpreted.
+	 * @return	The primitive or objective value as an unsigned number (e.g. `(byte)0xFF` is 255 rather than -1).
+	 * @throws NumberFormatException	If the given value is not a valid representation of a {@link Number}.
+	 */
+	public static Number getBigNumber(final String value){
+		if(StringHelper.isBlank(value))
+			return null;
+
+		try{
+			return (value.startsWith("0x")
+				? new BigInteger(value.substring(2), 16)
+				: new BigDecimal(value));
+		}
+		catch(final NumberFormatException ignored){
+			return null;
+		}
 	}
 
 
@@ -348,9 +409,11 @@ public enum ParserDataType{
 		return (text != null && text.startsWith("0x") && !isBaseNumber(text, 2, 16));
 	}
 
-	private static boolean isBaseNumber(final CharSequence text, final int offset, final int radix){
-		for(int i = offset; i < text.length(); i ++){
-			final char chr = text.charAt(i);
+	private static boolean isBaseNumber(final String text, final int offset, final int radix){
+		final byte[] bytes = text.getBytes(StandardCharsets.US_ASCII);
+		for(int i = offset, length = bytes.length; i < length; i ++){
+			final byte chr = bytes[i];
+
 			if(Character.digit(chr, radix) < 0)
 				return true;
 		}
@@ -358,13 +421,21 @@ public enum ParserDataType{
 	}
 
 	private static Object toObjectValue(final String value, final Class<?> objectiveType) throws CodecException{
-		try{
-			final Method method = objectiveType.getDeclaredMethod(METHOD_VALUE_OF, String.class);
-			return method.invoke(null, value);
+		Object result;
+		if(BigDecimal.class.isAssignableFrom(objectiveType))
+			result = new BigDecimal(value);
+		else if(BigInteger.class.isAssignableFrom(objectiveType))
+			result = new BigInteger(value);
+		else{
+			try{
+				final Method method = objectiveType.getDeclaredMethod(METHOD_VALUE_OF, String.class);
+				result = method.invoke(null, value);
+			}
+			catch(final NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored){
+				throw CodecException.create("Cannot interpret {} as {}", value, objectiveType.getSimpleName());
+			}
 		}
-		catch(final NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored){
-			throw CodecException.create("Cannot interpret {} as {}", value, objectiveType.getSimpleName());
-		}
+		return result;
 	}
 
 }

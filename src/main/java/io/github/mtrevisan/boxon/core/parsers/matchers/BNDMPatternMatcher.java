@@ -24,6 +24,8 @@
  */
 package io.github.mtrevisan.boxon.core.parsers.matchers;
 
+import io.github.mtrevisan.boxon.exceptions.DataException;
+
 import java.util.Arrays;
 
 
@@ -48,7 +50,7 @@ import java.util.Arrays;
  */
 public final class BNDMPatternMatcher implements PatternMatcher{
 
-	private static class SingletonHelper{
+	private static final class SingletonHelper{
 		private static final PatternMatcher INSTANCE = new BNDMPatternMatcher();
 	}
 
@@ -71,16 +73,17 @@ public final class BNDMPatternMatcher implements PatternMatcher{
 	 * <p>The pattern SHOULD NOT exceed 32 bytes in length.</p>
 	 *
 	 * @param pattern	The {@code byte} array containing the pattern, may not be {@code null}.
-	 * @param wildcard the wildcard {@code byte} character.
-	 * @return	an array of pre-processed pattern.
+	 * @param wildcard	The wildcard {@code byte} character.
+	 * @return	An array of pre-processed pattern.
 	 */
 	public static int[] preProcessPatternWithWildcard(final byte[] pattern, final byte wildcard){
-		assertLength(pattern.length);
+		final int length = pattern.length;
+		assertLength(length);
 
 		int j = 0;
-		for(int i = 0; i < pattern.length; i ++)
+		for(int i = 0, shift = length - 1; i < length; i ++, shift --)
 			if(pattern[i] == wildcard)
-				j |= 1 << (pattern.length - i - 1);
+				j |= 1 << shift;
 
 		final int[] preprocessedPattern = new int[Integer.SIZE << 3];
 		if(j != 0)
@@ -94,7 +97,8 @@ public final class BNDMPatternMatcher implements PatternMatcher{
 	 * <p>The pattern SHOULD NOT exceed 32 bytes in length.</p>
 	 *
 	 * @param pattern	The {@code byte} array containing the pattern, may not be {@code null}.
-	 * @return	an array of pre-processed pattern.
+	 * @return	An array of pre-processed pattern.
+	 * @throws DataException	If the pattern is too long.
 	 */
 	@Override
 	public int[] preProcessPattern(final byte[] pattern){
@@ -113,17 +117,18 @@ public final class BNDMPatternMatcher implements PatternMatcher{
 
 	@Override
 	public int indexOf(final byte[] source, int offset, final byte[] pattern, final int[] processedPattern){
-		if(pattern.length == 0)
+		final int patternLength = pattern.length;
+		if(patternLength == 0)
 			return 0;
-		if(source.length < pattern.length + offset)
+		final int sourceLength = source.length;
+		if(sourceLength < patternLength + offset)
 			return -1;
 
-		assertLength(pattern.length);
+		assertLength(patternLength);
 
-		final int length = pattern.length;
-		while(offset <= source.length - length){
-			int j = length - 1;
-			int last = length;
+		while(offset <= sourceLength - patternLength){
+			int j = patternLength - 1;
+			int last = patternLength;
 			int pp = -1;
 			while(pp != 0){
 				pp &= processedPattern[source[offset + j] & 0xFF];
@@ -143,7 +148,7 @@ public final class BNDMPatternMatcher implements PatternMatcher{
 
 	private static void assertLength(final int length){
 		if(length >= Integer.SIZE)
-			throw new IllegalArgumentException("Cannot process a pattern whose length exceeds " + (Integer.SIZE - 1) + " bytes");
+			throw DataException.create("Cannot process a pattern whose length exceeds {} bytes", Integer.SIZE - 1);
 	}
 
 }

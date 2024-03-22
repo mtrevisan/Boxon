@@ -27,7 +27,6 @@ package io.github.mtrevisan.boxon.core;
 import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageHex;
 import io.github.mtrevisan.boxon.core.codecs.queclink.DeviceTypes;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.utils.MultithreadingHelper;
@@ -38,17 +37,16 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
-@SuppressWarnings("ALL")
 class DescriptorThreadedTest{
 
 	@Test
-	void concurrencySingleParserSingleCore() throws AnnotationException, ConfigurationException, CodecException, TemplateException,
-			NoSuchMethodException, ExecutionException, InterruptedException{
+	void concurrencySingleParserSingleCore() throws AnnotationException, ConfigurationException, TemplateException, NoSuchMethodException,
+			ExecutionException, InterruptedException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
-			.with("QUECLINK_GB200S", (byte)0x46);
+			.with((byte)0x46, "QUECLINK_GB200S");
 		Core core = CoreBuilder.builder()
-			.withContextPair("deviceTypes", deviceTypes)
-			.withContextFunction(ParserTest.class.getDeclaredMethod("headerLength"))
+			.withContext("deviceTypes", deviceTypes)
+			.withContext(ParserTest.class.getDeclaredMethod("headerLength"))
 			.withDefaultCodecs()
 			.withTemplate(ACKMessageHex.class)
 			.create();
@@ -56,8 +54,7 @@ class DescriptorThreadedTest{
 
 		int threadCount = 10;
 		AtomicInteger counter = new AtomicInteger();
-		MultithreadingHelper.testMultithreading(
-			() -> descriptor.describe(),
+		MultithreadingHelper.testMultithreading(descriptor::describeTemplate,
 			descriptions -> counter.addAndGet(descriptions.size()),
 			threadCount
 		);
@@ -69,10 +66,10 @@ class DescriptorThreadedTest{
 	void concurrencyMultipleParserSingleCore() throws NoSuchMethodException, TemplateException, ConfigurationException, AnnotationException,
 			ExecutionException, InterruptedException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
-			.with("QUECLINK_GB200S", (byte)0x46);
+			.with((byte)0x46, "QUECLINK_GB200S");
 		Core core = CoreBuilder.builder()
-			.withContextPair("deviceTypes", deviceTypes)
-			.withContextFunction(ParserTest.class.getDeclaredMethod("headerLength"))
+			.withContext("deviceTypes", deviceTypes)
+			.withContext(ParserTest.class.getDeclaredMethod("headerLength"))
 			.withDefaultCodecs()
 			.withTemplate(ACKMessageHex.class)
 			.create();
@@ -82,7 +79,7 @@ class DescriptorThreadedTest{
 		MultithreadingHelper.testMultithreading(
 			() -> {
 				Descriptor descriptor = Descriptor.create(core);
-				return descriptor.describe();
+				return descriptor.describeTemplate();
 			},
 			descriptions -> counter.addAndGet(descriptions.size()),
 			threadCount
@@ -92,23 +89,22 @@ class DescriptorThreadedTest{
 	}
 
 	@Test
-	void concurrencyMultipleParserMultipleCore() throws NoSuchMethodException, TemplateException, ConfigurationException,
-			AnnotationException, ExecutionException, InterruptedException{
+	void concurrencyMultipleParserMultipleCore() throws ExecutionException, InterruptedException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
-			.with("QUECLINK_GB200S", (byte)0x46);
+			.with((byte)0x46, "QUECLINK_GB200S");
 
 		int threadCount = 10;
 		AtomicInteger counter = new AtomicInteger();
 		MultithreadingHelper.testMultithreading(
 			() -> {
 				Core core = CoreBuilder.builder()
-					.withContextPair("deviceTypes", deviceTypes)
-					.withContextFunction(ParserTest.class.getDeclaredMethod("headerLength"))
+					.withContext("deviceTypes", deviceTypes)
+					.withContext(ParserTest.class.getDeclaredMethod("headerLength"))
 					.withDefaultCodecs()
 					.withTemplate(ACKMessageHex.class)
 					.create();
 				Descriptor descriptor = Descriptor.create(core);
-				return descriptor.describe();
+				return descriptor.describeTemplate();
 			},
 			descriptions -> counter.addAndGet(descriptions.size()),
 			threadCount

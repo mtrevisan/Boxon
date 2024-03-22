@@ -26,6 +26,8 @@ package io.github.mtrevisan.boxon.exceptions;
 
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 
+import java.io.Serial;
+
 
 /**
  * Thrown if a parsing (decoding) went bad.
@@ -33,6 +35,7 @@ import io.github.mtrevisan.boxon.helpers.JavaHelper;
 @SuppressWarnings("unused")
 public final class DecodeException extends Exception{
 
+	@Serial
 	private static final long serialVersionUID = 5375434179637246605L;
 
 
@@ -58,6 +61,7 @@ public final class DecodeException extends Exception{
 
 		this.errorIndex = errorIndex;
 	}
+
 
 	/**
 	 * Get the index of the decoded message this error is referring to.

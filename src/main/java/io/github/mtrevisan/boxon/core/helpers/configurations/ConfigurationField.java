@@ -22,75 +22,68 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.helpers.templates;
+package io.github.mtrevisan.boxon.core.helpers.configurations;
 
-import io.github.mtrevisan.boxon.annotations.Skip;
-import io.github.mtrevisan.boxon.helpers.JavaHelper;
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
 import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.Objects;
 
 
 /** Data associated to an annotated field. */
-public final class BoundedField{
+public final class ConfigurationField{
 
-	/** NOTE: MUST match the name of the method in all the annotations that defines a condition! */
-	private static final String CONDITION = "condition";
-
-	private static final Skip[] EMPTY_ARRAY = new Skip[0];
+	/** An empty {@code ConfigurationSkip} array. */
+	private static final ConfigurationSkip[] EMPTY_CONFIGURATION_SKIP_ARRAY = new ConfigurationSkip[0];
 
 
 	private final Field field;
 	/** List of skips that happen BEFORE the reading/writing of this variable. */
-	private final Skip[] skips;
+	private final ConfigurationSkip[] skips;
 	private final Annotation binding;
 
-	private String condition;
 
-
-	static BoundedField create(final Field field, final Annotation binding){
-		return new BoundedField(field, binding, EMPTY_ARRAY);
-	}
-
-	static BoundedField create(final Field field, final Annotation binding, final Skip[] skips){
-		return new BoundedField(field, binding, skips);
+	static ConfigurationField create(final Field field, final Annotation binding, final ConfigurationSkip[] skips){
+		return new ConfigurationField(field, binding, skips);
 	}
 
 
-	private BoundedField(final Field field, final Annotation binding, final Skip[] skips){
-		Objects.requireNonNull(skips, "Skips must not be null");
+	private ConfigurationField(final Field field, final Annotation binding, final ConfigurationSkip[] skips){
+		Objects.requireNonNull(skips, "Configuration skips must not be null");
 
 		this.field = field;
 		this.binding = binding;
-		this.skips = (skips.length > 0? skips.clone(): EMPTY_ARRAY);
-
-		if(binding != null){
-			//pre-fetch condition method
-			final Method conditionMethod = ReflectionHelper.getAccessibleMethod(binding.annotationType(), CONDITION, String.class);
-			condition = ReflectionHelper.invokeMethodOrDefault(binding, conditionMethod, JavaHelper.EMPTY_STRING);
-		}
+		this.skips = (skips.length > 0? skips.clone(): EMPTY_CONFIGURATION_SKIP_ARRAY);
 	}
 
 
 	/**
-	 * The name of the field.
+	 * The configuration field.
 	 *
-	 * @return	The name of the field.
+	 * @return	The configuration field.
 	 */
-	public String getFieldName(){
-		return field.getName();
+	public Field getField(){
+		return field;
 	}
 
 	/**
-	 * The type of the field.
+	 * The type of the configuration field.
 	 *
-	 * @return	The type of the field.
+	 * @return	The type of the configuration field.
 	 */
 	public Class<?> getFieldType(){
 		return field.getType();
+	}
+
+	/**
+	 * The name of the configuration field.
+	 *
+	 * @return	The name of the configuration field.
+	 */
+	public String getFieldName(){
+		return field.getName();
 	}
 
 	/**
@@ -105,21 +98,11 @@ public final class BoundedField{
 	}
 
 	/**
-	 * Set the field value.
+	 * The skips that must be made before the field value.
 	 *
-	 * @param obj	The object in which the value is to be loaded.
-	 * @param value	The value.
+	 * @return	The annotations of the skips that must be made before the field value.
 	 */
-	public void setFieldValue(final Object obj, final Object value){
-		ReflectionHelper.setValue(obj, field, value);
-	}
-
-	/**
-	 * The skips that must be made before reading the field value.
-	 *
-	 * @return	The annotations of the skips that must be made before reading the field value.
-	 */
-	public Skip[] getSkips(){
+	public ConfigurationSkip[] getSkips(){
 		return skips.clone();
 	}
 
@@ -130,15 +113,6 @@ public final class BoundedField{
 	 */
 	public Annotation getBinding(){
 		return binding;
-	}
-
-	/**
-	 * The condition under which this field should be read.
-	 *
-	 * @return	The condition under which this field should be read.
-	 */
-	public String getCondition(){
-		return condition;
 	}
 
 }

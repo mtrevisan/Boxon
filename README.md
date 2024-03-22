@@ -1,6 +1,6 @@
 # Boxon _[boˈzoŋ]_
 
-![Java-11+](https://img.shields.io/badge/java-11%2B-orange.svg) [![License: GPL v3](https://img.shields.io/badge/License-MIT-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+![Java-21+](https://img.shields.io/badge/java-21%2B-orange.svg) [![License: GPL v3](https://img.shields.io/badge/License-MIT-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 <a href="https://codeclimate.com/github/mtrevisan/Boxon/maintainability"><img src="https://api.codeclimate.com/v1/badges/bff8577200d792e1e197/maintainability" /></a>
 
@@ -15,7 +15,7 @@
 
 ## Forewords
 
-This is a declarative, bit-level, message parser. All you have to do is write a [POJO](https://en.wikipedia.org/wiki/Plain_old_Java_object) that represents your message and annotate it. That's all. [Boxon](https://en.wikipedia.org/wiki/Boson) will take care of the rest for you.
+This is a declarative, bit-level, message parser. All you have to do is write a [DTO](https://en.wikipedia.org/wiki/Data_transfer_object) that represents your message and annotate it. That's all. [Boxon](https://en.wikipedia.org/wiki/Boson) will take care of the rest for you.
 
 If you want to use the parser straight away, just go [here](#examples).
 
@@ -46,7 +46,7 @@ Boxon...
    - Bit fields: bit fields with length from 1 to 2,147,483,647 bits.
    - Strings: fixed-length, variable-length and zero terminated strings with various encodings.
    - Arrays: fixed-length and variable-length arrays of built-in or user-defined element types.
-   - Objects: custom-type POJOs.
+   - Objects: custom-type DTOs.
    - Choices: supports integer keys.
  - User defined types (arbitrary combination of built-in types)
  - Has templates (annotated classes) that are not complex: they do not call each other uselessly complicating the structure (apart, necessarily, for `@BindArray`), no complicated chains of factories: it's just a parser that works.
@@ -83,7 +83,7 @@ Get them [here](https://github.com/mtrevisan/Boxon/releases/).
 
 ### Maven dependency
 
-In order to include Boxon in a Maven project add the following dependency to your pom.xml (<b>Java 11 required</b>).
+In order to include Boxon in a Maven project add the following dependency to your pom.xml (<b>Java 21 required</b>).
 
 Replace `x.y.z` below int the version tag with the latest [release number](https://github.com/mtrevisan/Boxon/releases).
 
@@ -121,10 +121,11 @@ You can get pre-built JARs (usable on JRE 11 or newer) from [Sonatype](https://o
     14. [BindString](#annotation-bindstring)
     15. [BindStringTerminated](#annotation-bindstringterminated)
 2. [Special annotations](#annotation-special)
-    1. [MessageHeader](#annotation-messageheader)
+    1. [TemplateHeader](#annotation-templateheader)
     2. [Skip](#annotation-skip)
     3. [Checksum](#annotation-checksum)
     4. [Evaluate](#annotation-evaluate)
+    5. [PostProcessField](#annotation-post-process-field)
 3. [Protocol description](#protocol-description)
 4. [Configuration annotations](#annotation-configuration)
     1. [ConfigurationHeader](#annotation-configurationheader)
@@ -142,25 +143,30 @@ You can get pre-built JARs (usable on JRE 11 or newer) from [Sonatype](https://o
     1. [Converters](#how-to-converters)
     2. [Custom annotations](#how-to-annotations)
 10. [Examples](#examples)
-     1. [Multi-message parser](#example-multi)
-     2. [Message composer](#example-composer)
+    1. [Multi-message parser](#example-multi)
+    2. [Message composer](#example-composer)
 11. [Contributing](#contributing)
 12. [Changelog](#changelog)
-     1. [version 3.1.2](#changelog-3.1.2)
-     2. [version 3.1.1](#changelog-3.1.1)
-     3. [version 3.1.0](#changelog-3.1.0)
-     4. [version 3.0.2](#changelog-3.0.2)
-     5. [version 3.0.1](#changelog-3.0.1)
-     6. [version 3.0.0](#changelog-3.0.0)
-     7. [version 2.1.2](#changelog-2.1.2)
-     8. [version 2.1.1](#changelog-2.1.1)
-     9. [version 2.1.0](#changelog-2.1.0)
-     10. [version 2.0.0](#changelog-2.0.0)
-     11. [version 1.1.0](#changelog-1.1.0)
-     12. [version 1.0.0](#changelog-1.0.0)
-     13. [version 0.0.2](#changelog-0.0.2)
-     14. [version 0.0.1](#changelog-0.0.1)
-     15. [version 0.0.0](#changelog-0.0.0)
+    1. [version 3.4.1](#changelog-3.4.1)
+    2. [version 3.4.0](#changelog-3.4.0)
+    3. [version 3.3.0](#changelog-3.3.0)
+    4. [version 3.2.0](#changelog-3.2.0)
+    5. [version 3.1.3](#changelog-3.1.3)
+    6. [version 3.1.2](#changelog-3.1.2)
+    7. [version 3.1.1](#changelog-3.1.1)
+    8. [version 3.1.0](#changelog-3.1.0)
+    9. [version 3.0.2](#changelog-3.0.2)
+    10. [version 3.0.1](#changelog-3.0.1)
+    11. [version 3.0.0](#changelog-3.0.0)
+    12. [version 2.1.2](#changelog-2.1.2)
+    13. [version 2.1.1](#changelog-2.1.1)
+    14. [version 2.1.0](#changelog-2.1.0)
+    15. [version 2.0.0](#changelog-2.0.0)
+    16. [version 1.1.0](#changelog-1.1.0)
+    17. [version 1.0.0](#changelog-1.0.0)
+    18. [version 0.0.2](#changelog-0.0.2)
+    19. [version 0.0.1](#changelog-0.0.1)
+    20. [version 0.0.0](#changelog-0.0.0)
 13. [License](#license)
 
 <br/>
@@ -196,12 +202,13 @@ Note that [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_inject
 | BindString           |  &#9745;  |         | &#9745; |            |                   | &#9745; |                    |            |               |  &#9745;  |  &#9745;  |       &#9745;       |           BindString |
 | BindStringTerminated |  &#9745;  |         | &#9745; |  &#9745;   |      &#9745;      |         |                    |            |               |  &#9745;  |  &#9745;  |       &#9745;       | BindStringTerminated |
 
-|                      | condition |  start  |   end   | charset |  size   | terminator | consumeTerminator |  type   | byteOrder | skipStart | skipEnd | algorithm | startValue |  value  |               |
-|----------------------|:---------:|:-------:|:-------:|:-------:|:-------:|:----------:|:-----------------:|:-------:|:---------:|:---------:|:-------:|:---------:|:----------:|:-------:|--------------:|
-| MessageHeader        |           | &#9745; | &#9745; | &#9745; |         |            |                   |         |           |           |         |           |            |         | MessageHeader |
-| Skip                 |  &#9745;  |         |         |         | &#9745; |  &#9745;   |      &#9745;      |         |           |           |         |           |            |         |          Skip |
-| Checksum             |           |         |         |         |         |            |                   | &#9745; |  &#9745;  |  &#9745;  | &#9745; |  &#9745;  |  &#9745;   |         |      Checksum |
-| Evaluate             |  &#9745;  |         |         |         |         |            |                   |         |           |           |         |           |            | &#9745; |      Evaluate |
+|                  | condition |  start  |   end   | charset |  size   | terminator | consumeTerminator |  type   | byteOrder | skipStart | skipEnd | algorithm | startValue |  value  | valueDecode | valueEncode |                |
+|------------------|:---------:|:-------:|:-------:|:-------:|:-------:|:----------:|:-----------------:|:-------:|:---------:|:---------:|:-------:|:---------:|:----------:|:-------:|:-----------:|:-----------:|---------------:|
+| TemplateHeader   |           | &#9745; | &#9745; | &#9745; |         |            |                   |         |           |           |         |           |            |         |             |             | TemplateHeader |
+| Skip             |  &#9745;  |         |         |         | &#9745; |  &#9745;   |      &#9745;      |         |           |           |         |           |            |         |             |             |           Skip |
+| Checksum         |           |         |         |         |         |            |                   | &#9745; |  &#9745;  |  &#9745;  | &#9745; |  &#9745;  |  &#9745;   |         |             |             |       Checksum |
+| Evaluate         |  &#9745;  |         |         |         |         |            |                   |         |           |           |         |           |            | &#9745; |             |             |       Evaluate |
+| PostProcessField |  &#9745;  |         |         |         |         |            |                   |         |           |           |         |           |            |         |   &#9745;   |   &#9745;   |   ProcessField |
 
 |                               | shortDescription | longDescription | minProtocol | maxProtocol |  start  |   end   | charset | terminator | unitOfMeasure | minValue  | maxValue | pattern | enumeration | defaultValue |  radix  | composition |                               |
 |-------------------------------|:----------------:|:---------------:|:-----------:|:-----------:|:-------:|:-------:|:-------:|:----------:|:-------------:|:---------:|:--------:|:-------:|:-----------:|:------------:|:-------:|:-----------:|------------------------------:|
@@ -664,8 +671,8 @@ public String text;
 
 Here are described the build-in special annotations.
 
-<a name="annotation-messageheader"></a>
-### MessageHeader
+<a name="annotation-templateheader"></a>
+### TemplateHeader
 
 #### parameters
 
@@ -675,7 +682,7 @@ Here are described the build-in special annotations.
 
 #### description
 
-Marks a POJO as an annotated message.
+Marks a DTO as an annotated message.
 
 #### annotation type
 
@@ -684,7 +691,7 @@ This annotation is bounded to a class.
 #### example
 
 ```java
-@MessageHeader(start = "+", end = "-")
+@TemplateHeader(start = "+", end = "-")
 private class Message{
     ...
 }
@@ -765,13 +772,16 @@ private short checksum;
 #### parameters
 
  - `condition`: The SpEL expression that determines if this field has to be read.
- - `value`: the value to be assigned, or calculated (can be a SpEL expression).
+ - `value`: The value to be assigned, or calculated (can be a SpEL expression).
 
 #### description
 
 Assign a constant, calculated value to a field.
 
 Note that the evaluations are done AFTER parsing the entire message.
+
+This annotation with `runLast` to `true` can be used to force a parameter to have a certain value, after perhaps using it to calculate other parameters.
+Its effect cannot be undone.
 
 #### annotation type
 
@@ -795,6 +805,36 @@ private String deviceTypeName;
 ```
 
 
+<a name="annotation-post-process-field"></a>
+### PostProcessField
+
+#### parameters
+
+- `condition`: The SpEL expression that determines if this field has to be processed (both in the decode and encode phases).
+- `valueDecode`: The value to be assigned, or calculated, at the decode phase (can be a SpEL expression).
+- `valueEncode`: The value to be assigned, or calculated, at the encode phase (can be a SpEL expression).
+
+#### description
+
+Assign a constant, or calculated value, to a field after all the other annotations are processed.
+
+Note that the evaluations are done AFTER parsing the entire message in the decode phase, or BEFORE in the encode phase.
+
+#### annotation type
+
+This annotation is bounded to a variable.
+
+#### example
+
+```java
+@BindString(size = "4")
+//this annotation restores the '+ACK' value after all the fields and evaluations are done (this is because the evaluation of `buffered`
+//requires the read value of `messageHeader`, and '+BCK' means a buffered message)
+@PostProcessField(condition = "buffered", valueDecode = "'+ACK'", valueEncode = "'+BCK'")
+private String messageHeader;
+```
+
+
 <br/>
 
 <a name="protocol-description"></a>
@@ -808,10 +848,10 @@ Example:
 
 ```java
 DeviceTypes deviceTypes = DeviceTypes.create()
-    .with("QUECLINK_GB200S", (byte)0x46);
+	.with((byte)0x46, "QUECLINK_GB200S");
 Core core = CoreBuilder.builder()
     .withContextPair("deviceTypes", deviceTypes)
-    .withContextFunction(ParserTest.class.getDeclaredMethod("headerLength"))
+    .withContext(ParserTest.class.getDeclaredMethod("headerLength"))
     .withDefaultCodecs()
     .withTemplate(ACKMessageHex.class)
    .create();
@@ -899,7 +939,7 @@ configurationData.put(Parser.CONFIGURATION_FIELD_TYPE, "AT+");
 configurationData.put("Weekday", "TUESDAY|WEDNESDAY");
 ...
 
-ComposerResponse<String> composedMessage = configurator.composeConfiguration("1.20", Collections.singletonMap("AT+", configurationData));
+Response<String, byte[]> composedMessage = configurator.composeConfiguration("1.20", "AT+", configurationData);
 ```
 
 
@@ -914,13 +954,13 @@ ComposerResponse<String> composedMessage = configurator.composeConfiguration("1.
  - `longDescription`: a more expressive description, optional.
  - `minProtocol`: minimum protocol for which this configuration message is valid, optional (should follow [Semantic Versioning](https://semver.org/)).
  - `maxProtocol`: maximum protocol for which this configuration message is valid, optional (should follow [Semantic Versioning](https://semver.org/)).
- - `start`: starting text of the message, optional.
+ - `start`: starting text of the message, mandatory, used as an identifier (and thus must be unique for every configuration message).
  - `end`: ending text of the message, optional.
  - `charset`: charset of the message, optional.
 
 #### description
 
-Marks a POJO as an annotated configuration message.
+Marks a DTO as an annotated configuration message.
 
 #### annotation type
 
@@ -929,7 +969,7 @@ This annotation is bounded to a class.
 #### example
 
 ```java
-@ConfigurationHeader(start = "+", end = "-")
+@ConfigurationHeader(shortDescription = "A configuration message", start = "+", end = "-")
 private class ConfigurationMessage{
     ...
 }
@@ -1116,7 +1156,7 @@ This annotation is bounded to a variable.
    shortDescription = "Download protocol", terminator = ",", enumeration = DownloadProtocol.class,
    value = {
       @AlternativeSubField(maxProtocol = "1.35", defaultValue = "HTTP"),
-      @AlternativeSubField(minProtocol = "1.36", defaultValue = "HTTP")
+      @AlternativeSubField(minProtocol = "1.36", defaultValue = "HTTPS")
    }
 )
 private DownloadProtocol downloadProtocol;
@@ -1168,12 +1208,14 @@ private int downloadTimeout;
 <a name="descriptor"></a>
 ## Descriptor
 
-Return a description of the loaded templates.
+Return a description of the loaded templates and configuration.
+It basically provides a description of the annotations in JSON format.
 
 ```java
 Descriptor descriptor = Descriptor.create(core);
 
-List<Map<String, Object>> descriptions = descriptor.describeTemplates();
+List<Map<String, Object>> templateDescriptions = descriptor.describeTemplates();
+List<Map<String, Object>> configurationDescriptions = descriptor.describeConfiguration();
 ```
 
 
@@ -1182,7 +1224,7 @@ List<Map<String, Object>> descriptions = descriptor.describeTemplates();
 <a name="extractor"></a>
 ## Extractor
 
-Extract values from a POJO using <a href="https://tools.ietf.org/html/rfc6901">RFC6901</a> syntax.
+Extract values from a DTO using <a href="https://tools.ietf.org/html/rfc6901">RFC6901</a> syntax.
 
 ```java
 Parser parser = Parser.create(core);
@@ -1200,7 +1242,7 @@ int protocolVersionMinor = extractor.get("/protocolVersion/minor");
 <a name="how-to-spel"></a>
 ## How to write SpEL expressions
 
-Care should be taken in writing [SpEL expressions](https://docs.spring.io/spring/docs/4.3.10.RELEASE/spring-framework-reference/html/expressions.html) for the fields `condition`, and `size`.
+Care should be taken in writing [SpEL expressions](https://docs.spring.io/spring-framework/reference/core/expressions.html) for the fields `condition`, and `size`.
 
 The root object is the outermost object. In order to evaluate a variable of a parent object the complete path should be used, as in `object1.variable1`. In order to evaluate a variable of a children object, that is the object currently scanned, the relative path should be used introduced by the special keyword `#self`, as in `#self.variable2`).
 
@@ -1344,6 +1386,8 @@ public class RSSIConverter implements Converter<Byte, Short>{
 
     @Override
     public Short decode(final Byte value){
+        if(value == null)
+            return null;
         if(value == 0)
             //< -133 dBm
             return (byte)-133;
@@ -1355,6 +1399,8 @@ public class RSSIConverter implements Converter<Byte, Short>{
 
     @Override
     public Byte encode(final Short value){
+        if(value == null)
+            return null;
         if(value == -133)
             return 0;
         if(value == RSSI_UNKNOWN)
@@ -1428,7 +1474,7 @@ Messages can be concatenated, and the `Parser.java` class manages them, returnin
 <br/>
 
 Each annotated class is processed by `Template.class`, that is later retrieved by `Parser.java` depending on the starting header.
-For that reason each starting header defined into `MessageHeader` annotation MUST BE unique. This class can also accept a context.
+For that reason each starting header defined into `TemplateHeader` annotation MUST BE unique. This class can also accept a context.
 
 All the SpEL expressions are evaluated by `Evaluator.java`.
 
@@ -1470,8 +1516,8 @@ All you have to care about, for a simple example on multi-message automatically-
 Map<String, Object> context = ...
 Core core = CoreBuilder.builder()
    .withContext(context)
-   .withContextFunction(VersionHelper.class, "compareVersion", String.class, String.class)
-   .withContextFunction(VersionHelper.class.getDeclaredMethod("compareVersion", new Class[]{String.class, String.class}))
+   .withContext(VersionHelper.class, "compareVersion", String.class, String.class)
+   .withContext(VersionHelper.class.getDeclaredMethod("compareVersion", new Class[]{String.class, String.class}))
    .withDefaultCodecs()
    .withTemplate(...)
    .create();
@@ -1488,7 +1534,7 @@ for(int index = 0; index < result.size(); index ++){
    Exception error = response.getError();
 
    if(error != null){
-      LOGGER.error("An error occurred while parsing:\r\n   {}", response.getOriginator());
+      LOGGER.error("An error occurred while parsing:\r\n   {}", response.getSource());
    }
    else if(parsedMessage != null){
       ...
@@ -1511,14 +1557,12 @@ byte[] composedMessage = response.getMessage();
 Exception error = response.getError();
 
 if(error != null){
-   LOGGER.error("An error occurred while composing:\r\n   {}", response.getOriginator());
+   LOGGER.error("An error occurred while composing:\r\n   {}", response.getSource());
 }
 else if(composedMessage != null){
    ...
 }
 ```
-
-Remember that the header that will be written is the first in `@MessageHeader`.
 
 
 <br/>
@@ -1536,24 +1580,57 @@ Pull requests are welcomed.
 <a name="changelog"></a>
 ## Changelog
 
-<a name="changelog-3.1.3"></a>
-### version 3.1.3 - 202403??
+<a name="changelog-3.4.1"></a>
+### version 3.4.1 - 20240321
 
-- fixed duplicated descriptions
+- Fixed a problem while converting a numeric string to number.
+- Make record classes work with annotations.
+
+<a name="changelog-3.4.0"></a>
+### version 3.4.0 - 20240318
+
+- Removed `runLast` from `Evaluator`, added a specialized annotation that can work in both decoding and encoding phases.
+- Added method `describeParser` to `Descriptor` to also include the description of evaluation and post-processing fields.
+
+<a name="changelog-3.3.0"></a>
+### version 3.3.0 - 20240317
+
+- Added description of configuration.
+- Changed the key to reference a configuration (from `start` to `shortDescription`).
+- Corrected generation of parameter `MutuallyExclusive` on configuration description.
+- Corrected log text on enumeration error.
+- Fixed a test that occasionally fails.
+
+<a name="changelog-3.2.0"></a>
+### version 3.2.0 - 20240312
+
+- Added `runLast` to `Evaluator` to run an evaluation after all other evaluations have been made (used, for example, to restore a default value after being used by another evaluator).
+
+<a name="changelog-3.1.3"></a>
+### version 3.1.3 - 20240311
+
+- Fixed duplicated descriptions.
+- Fixed validation on max value while composing a message.
+- Fixed number not written with the correct radix.
+- Made `shortDescription` mandatory in the annotation, as it should have been.
+- Added method to map a DTO into a `Map<String, Object>` in `ReflectionHelper`.
+- Added method `Configurator.composeConfiguration` accepting a DTO.
+- Corrected errors in the documentation.
+- Migrated from java 11 to java 21 for performance.
 
 <a name="changelog-3.1.2"></a>
 ### version 3.1.2 - 20240302
 
-- improvement on handling values inside big decimal converter.
-- improvement on error reporting.
-- renamed `Composer.composeMessage` into `compose`.
-- corrected error while showing the start array of message header in the description.
-- fix size validation of array and list (now it can be zero).
+- Improvement on handling values inside big decimal converter.
+- Improvement on error reporting.
+- Renamed `Composer.composeMessage` into `compose`.
+- Corrected error while showing the start array of message header in the description.
+- Fix size validation of array and list (now it can be zero).
 
 <a name="changelog-3.1.1"></a>
 ### version 3.1.1 - 20240229
 
-- Fixed an error if annotating with `@Skip` as the last annotation of the POJO.
+- Fixed an error if annotating with `@Skip` as the last annotation of the DTO.
 
 <a name="changelog-3.1.0"></a>
 ### version 3.1.0 - 20240228
@@ -1576,7 +1653,7 @@ Pull requests are welcomed.
 - Added `CoreBuilder` to facilitate the creation of a `Core`: now it is no longer necessary to remember the order in which the methods should be called.
 - Added missing javadoc. Enhanced existing javadoc.
 - Added `@BindBitSet` binding for java `@BitSet`.
-- Added `Extractor`, used to programmatically extract values from a POJO.
+- Added `Extractor`, used to programmatically extract values from a DTO.
 - Removed `Bits`.
 - Enhanced binding validation.
 - Fixed a concurrency bug on the validation of alternatives.

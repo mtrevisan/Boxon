@@ -24,6 +24,8 @@
  */
 package io.github.mtrevisan.boxon.core.helpers;
 
+import io.github.mtrevisan.boxon.exceptions.DataException;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Map;
@@ -81,10 +83,12 @@ public final class ValueOf<T extends Enum<T>, K>{
 
 		final T[] enumConstants = type.getEnumConstants();
 		final Map<K, T> map = createMap(comparator, enumConstants);
-		for(int i = 0; i < enumConstants.length; i ++){
-			final K key = fieldAccessor.apply(enumConstants[i]);
-			if(map.put(key, enumConstants[i]) != null)
-				throw new IllegalStateException("Duplicate key in enum " + type.getSimpleName() + ": " + key);
+		for(int i = 0, length = enumConstants.length; i < length; i ++){
+			final T enumConstant = enumConstants[i];
+
+			final K key = fieldAccessor.apply(enumConstant);
+			if(map.put(key, enumConstant) != null)
+				throw DataException.create("Duplicate key in enum {}: {}", type.getSimpleName(), key);
 		}
 
 		values = Collections.unmodifiableMap(map);
@@ -95,6 +99,7 @@ public final class ValueOf<T extends Enum<T>, K>{
 			? new ConcurrentSkipListMap<>(comparator)
 			: new ConcurrentHashMap<>(enumConstants.length));
 	}
+
 
 	/**
 	 * Return the enum value corresponding to the given value.
@@ -111,12 +116,12 @@ public final class ValueOf<T extends Enum<T>, K>{
 	 *
 	 * @param key	The value.
 	 * @return	The enum.
-	 * @throws IllegalArgumentException	If no enum exists.
+	 * @throws DataException	If no enum exists.
 	 */
 	public T getOrElseThrow(final K key){
 		final T value = values.get(key);
 		if(value == null)
-			throw new IllegalArgumentException("No enum constant " + type.getName() + "." + key);
+			throw DataException.create("No enum constant {}.{}", type.getName(), key);
 
 		return value;
 	}

@@ -74,7 +74,7 @@ public @interface BindObject{
 	/**
 	 * The choices to select from, based on a prefix of a certain size.
 	 *
-	 * @return The choices to select from, based on a prefix of a certain size (defaults to empty {@link ObjectChoices}).
+	 * @return	The choices to select from, based on a prefix of a certain size (defaults to empty {@link ObjectChoices}).
 	 */
 	ObjectChoices selectFrom() default @ObjectChoices;
 
@@ -103,7 +103,7 @@ public @interface BindObject{
 	/**
 	 * The choices to select from to apply a given converter.
 	 *
-	 * @return The choices to select from to apply a given converter (defaults to empty {@link ConverterChoices}).
+	 * @return	The choices to select from to apply a given converter (defaults to empty {@link ConverterChoices}).
 	 */
 	ConverterChoices selectConverterFrom() default @ConverterChoices;
 

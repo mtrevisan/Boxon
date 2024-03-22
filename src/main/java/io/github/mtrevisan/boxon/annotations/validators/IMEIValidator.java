@@ -25,10 +25,13 @@
 package io.github.mtrevisan.boxon.annotations.validators;
 
 
+import java.nio.charset.StandardCharsets;
+
+
 /**
  * Validator for <a href="https://en.wikipedia.org/wiki/International_Mobile_Equipment_Identity">IMEI</a> codes.
  */
-public final class IMEIValidator implements Validator<CharSequence>{
+public final class IMEIValidator implements Validator<String>{
 
 	IMEIValidator(){}
 
@@ -41,14 +44,16 @@ public final class IMEIValidator implements Validator<CharSequence>{
 	 * @see <a href="https://en.wikipedia.org/wiki/Luhn_algorithm">Luhn algorithm</a>
 	 */
 	@Override
-	public boolean isValid(final CharSequence imei){
+	public boolean isValid(final String imei){
 		if(imei == null)
 			return false;
 
 		int sum = 0;
-		final int parity = imei.length() % 2;
-		for(int i = imei.length() - 1; i >= 0; i --){
-			int k = Character.getNumericValue(imei.charAt(i));
+		final byte[] bytes = imei.getBytes(StandardCharsets.US_ASCII);
+		final int length = bytes.length;
+		final int parity = length % 2;
+		for(int i = length - 1; i >= 0; i --){
+			int k = Character.getNumericValue(bytes[i]);
 			if(i % 2 == parity)
 				k <<= 1;
 
