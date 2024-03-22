@@ -24,40 +24,42 @@
  */
 package io.github.mtrevisan.boxon.core.similarity.distances;
 
-
-public final class CharSequenceDistanceData implements DistanceDataInterface<CharSequenceDistanceData>{
-
-	private final String data;
+import java.util.Arrays;
 
 
-	public static CharSequenceDistanceData of(final String str){
-		return new CharSequenceDistanceData(str);
+public final class StringArrayDistanceData implements DistanceDataInterface<StringArrayDistanceData>{
+
+	private final String[] data;
+
+
+	public static StringArrayDistanceData of(final String[] genome){
+		return new StringArrayDistanceData(genome);
 	}
 
 
-	private CharSequenceDistanceData(final String str){
-		data = str;
+	private StringArrayDistanceData(final String[] genome){
+		data = genome;
 	}
 
 
 	@Override
 	public int length(){
-		return data.length();
+		return data.length;
 	}
 
 	@Override
 	public Object elementAt(final int index){
-		return data.charAt(index);
+		return data[index];
 	}
 
 	@Override
-	public boolean equals(final CharSequenceDistanceData other){
-		return data.equals(other.data);
+	public boolean equals(final StringArrayDistanceData other){
+		return Arrays.equals(data, other.data);
 	}
 
 	@Override
-	public boolean equalsAtIndex(final int index, final CharSequenceDistanceData other, final int otherIndex){
-		return (data.charAt(index) == other.data.charAt(otherIndex));
+	public boolean equalsAtIndex(final int index, final StringArrayDistanceData other, final int otherIndex){
+		return (data[index].equals(other.data[otherIndex]));
 	}
 
 }

@@ -30,7 +30,7 @@ import io.github.mtrevisan.boxon.core.Core;
 import io.github.mtrevisan.boxon.core.CoreBuilder;
 import io.github.mtrevisan.boxon.core.Descriptor;
 import io.github.mtrevisan.boxon.core.keys.DescriberKey;
-import io.github.mtrevisan.boxon.core.similarity.distances.GenomeDistanceData;
+import io.github.mtrevisan.boxon.core.similarity.distances.StringArrayDistanceData;
 import io.github.mtrevisan.boxon.core.similarity.tree.TemplateSpecies;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import org.junit.jupiter.api.Assertions;
@@ -125,7 +125,7 @@ class KMedoidsTest{
 				parameter.remove(DescriberKey.BIND_VALIDATOR.toString());
 				genome[g] = parameter.toString();
 			}
-			species[s] = TemplateSpecies.create((String)description.get(DescriberKey.TEMPLATE.toString()), GenomeDistanceData.of(genome));
+			species[s] = TemplateSpecies.create((String)description.get(DescriberKey.TEMPLATE.toString()), StringArrayDistanceData.of(genome));
 		}
 		return species;
 	}

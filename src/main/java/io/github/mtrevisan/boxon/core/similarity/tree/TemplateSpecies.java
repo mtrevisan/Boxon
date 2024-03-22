@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core.similarity.tree;
 
-import io.github.mtrevisan.boxon.core.similarity.distances.DamerauLevenshteinMetric;
+import io.github.mtrevisan.boxon.core.similarity.distances.metrics.DamerauLevenshteinMetric;
 import io.github.mtrevisan.boxon.core.similarity.distances.DistanceDataInterface;
 
 

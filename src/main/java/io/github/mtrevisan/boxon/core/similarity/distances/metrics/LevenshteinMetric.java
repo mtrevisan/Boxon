@@ -22,7 +22,10 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.similarity.distances;
+package io.github.mtrevisan.boxon.core.similarity.distances.metrics;
+
+
+import io.github.mtrevisan.boxon.core.similarity.distances.DistanceDataInterface;
 
 
 /**
@@ -40,6 +43,8 @@ public final class LevenshteinMetric<D extends DistanceDataInterface<D>>{
 	private final int insertionCost;
 	private final int deletionCost;
 	private final int substitutionCost;
+
+	private final int maxCost;
 
 
 	public static <D extends DistanceDataInterface<D>> LevenshteinMetric<D> create(){
@@ -62,6 +67,8 @@ public final class LevenshteinMetric<D extends DistanceDataInterface<D>>{
 		this.insertionCost = insertionCost;
 		this.deletionCost = deletionCost;
 		this.substitutionCost = substitutionCost;
+
+		maxCost = -min(-insertionCost, -deletionCost, -substitutionCost);
 	}
 
 
@@ -70,7 +77,7 @@ public final class LevenshteinMetric<D extends DistanceDataInterface<D>>{
 	 *
 	 * @param input1	The first object, must not be {@code null}.
 	 * @param input2	The second object, must not be {@code null}.
-	 * @return	Result similarity, a number between {@code 0} (not similar) and {@code 1} (equals).
+	 * @return	Result similarity, a number between {@code 0} (not similar) and {@code 1} (equals) inclusive.
 	 * @throws IllegalArgumentException	If either input is {@code null}.
 	 */
 	public double similarity(final D input1, final D input2){
@@ -80,7 +87,7 @@ public final class LevenshteinMetric<D extends DistanceDataInterface<D>>{
 			throw new IllegalArgumentException("Cannot calculate similarity if all the costs are not 1");
 
 		final int maxLength = Math.max(input1.length(), input2.length());
-		return 1. - (maxLength > 0? (double)distance(input1, input2) / maxLength: 0.);
+		return 1. - (maxLength > 0? (double)distance(input1, input2) / (maxLength * maxCost): 0.);
 	}
 
 	/**
@@ -159,58 +166,6 @@ public final class LevenshteinMetric<D extends DistanceDataInterface<D>>{
 
 	private static int min(final int a, final int b, final int c){
 		return Math.min(a, Math.min(b, c));
-	}
-
-
-	//Hirschberg’s algorithm
-	public int distance2(final D input1, final D input2){
-		if(input1 == null || input2 == null)
-			throw new IllegalArgumentException("Inputs must not be null");
-
-		if(input1.equals(input2))
-			return 0;
-		final int length1 = input1.length();
-		final int length2 = input2.length();
-		if(length1 == 0)
-			return length2;
-		if(length2 == 0)
-			return length1;
-
-		//create two work vectors of integer distances
-		final int[] previousDistances = new int[length2 + 1];
-		final int[] currentDistances = new int[length2 + 1];
-
-		//initialize `previousDistances` (the previous row of distances)
-		//this row is `A[0][i]`: edit distance for an empty `input1`
-		//the distance is just the number of elements to delete from `input2`
-		for(int i = 0; i < previousDistances.length; i ++)
-			previousDistances[i] = i * deletionCost;
-
-		//fill in the rest of the rows
-		for(int i = 0; i < length1; i ++){
-			//calculate `currentDistances` (current row distances) from the previous row `previousDistances`
-			//first element of `currentDistances` is `A[i+1][0]`
-			//edit distance is `delete (i+1)` elements from `s` to match empty `t`
-			currentDistances[0] = i + deletionCost;
-
-			for(int j = 0; j < length2; j ++)
-				currentDistances[j + 1] = min(currentDistances[j] + insertionCost,
-					previousDistances[j + 1] + deletionCost,
-					previousDistances[j] + (input1.equalsAtIndex(i, input2, j)? 0: substitutionCost));
-
-			//flip references to current and previous row
-			swapArrays(previousDistances, currentDistances);
-		}
-
-		return previousDistances[length2];
-	}
-
-	private void swapArrays(final int[] array1, final int[] array2){
-		for(int i = 0, length = array1.length; i < length; i ++){
-			array1[i] = array1[i] ^ array2[i];
-			array2[i] = array1[i] ^ array2[i];
-			array1[i] = array1[i] ^ array2[i];
-		}
 	}
 
 }

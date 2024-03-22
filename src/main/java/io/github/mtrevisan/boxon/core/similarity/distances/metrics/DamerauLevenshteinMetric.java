@@ -22,7 +22,9 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.similarity.distances;
+package io.github.mtrevisan.boxon.core.similarity.distances.metrics;
+
+import io.github.mtrevisan.boxon.core.similarity.distances.DistanceDataInterface;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -44,6 +46,8 @@ public final class DamerauLevenshteinMetric<D extends DistanceDataInterface<D>>{
 	private final int deletionCost;
 	private final int substitutionCost;
 	private final int transpositionCost;
+
+	private final int maxCost;
 
 
 	public static <D extends DistanceDataInterface<D>> DamerauLevenshteinMetric<D> create(){
@@ -70,6 +74,8 @@ public final class DamerauLevenshteinMetric<D extends DistanceDataInterface<D>>{
 		this.deletionCost = deletionCost;
 		this.substitutionCost = substitutionCost;
 		this.transpositionCost = transpositionCost;
+
+		maxCost = -min(-insertionCost, -deletionCost, -substitutionCost, 0);
 	}
 
 
@@ -78,7 +84,7 @@ public final class DamerauLevenshteinMetric<D extends DistanceDataInterface<D>>{
 	 *
 	 * @param input1	The first object, must not be {@code null}.
 	 * @param input2	The second object, must not be {@code null}.
-	 * @return	Result similarity, a number between {@code 0} (not similar) and {@code 1} (equals).
+	 * @return	Result similarity, a number between {@code 0} (not similar) and {@code 1} (equals) inclusive.
 	 * @throws IllegalArgumentException	If either input is {@code null}.
 	 */
 	public double similarity(final D input1, final D input2){
@@ -86,8 +92,10 @@ public final class DamerauLevenshteinMetric<D extends DistanceDataInterface<D>>{
 			throw new IllegalArgumentException("Inputs must not be null");
 
 		final int maxLength = Math.max(input1.length(), input2.length());
-		final int distance = distance(input1, input2);
-		return 1. - (maxLength > 0? (double)distance / maxLength: 0.);
+		final int maxDistance = (maxLength > 1
+			? Math.max(maxLength * maxCost, (maxLength - 1) * transpositionCost)
+			: maxLength * maxCost);
+		return 1. - (maxLength > 0? (double)distance(input1, input2) / maxDistance: 0.);
 	}
 
 	/**
@@ -95,6 +103,7 @@ public final class DamerauLevenshteinMetric<D extends DistanceDataInterface<D>>{
 	 * deletion, substitution, transposition of a single element).
 	 * <p>
 	 * It is always at least the difference of the sizes of the two inputs.
+	 * It is at most the length of the longer input (if all the costs are 1).
 	 * It is zero if and only if the inputs are equal.
 	 * If the inputs are the same size, the Hamming distance is an upper bound on the Levenshtein distance.
 	 * </p>
@@ -169,7 +178,7 @@ public final class DamerauLevenshteinMetric<D extends DistanceDataInterface<D>>{
 	}
 
 	private static int min(final int a, final int b, final int c, final int d){
-		return Math.min(a, Math.min(b, Math.min(c, d)));
+		return Math.min(Math.min(a, b), Math.min(c, d));
 	}
 
 }
