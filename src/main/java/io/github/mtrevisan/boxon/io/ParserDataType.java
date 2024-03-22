@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.io;
 
 import io.github.mtrevisan.boxon.exceptions.CodecException;
+import io.github.mtrevisan.boxon.helpers.StringHelper;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -319,7 +320,7 @@ public enum ParserDataType{
 	public static Object getValue(final Class<?> fieldType, final String value) throws CodecException{
 		if(fieldType == String.class)
 			return value;
-		if(value == null || value.isEmpty())
+		if(StringHelper.isBlank(value))
 			return null;
 
 		final Class<?> objectiveType = toObjectiveTypeOrSelf(fieldType);
@@ -354,14 +355,20 @@ public enum ParserDataType{
 	 *
 	 * @param value	The string value to be interpreted.
 	 * @return	The primitive or objective value as an unsigned number (e.g. `(byte)0xFF` is 255 rather than -1).
+	 * @throws NumberFormatException	If the given value is not a valid representation of a {@link Number}.
 	 */
 	public static Number getBigNumber(final String value){
-		if(value == null || value.isEmpty())
+		if(StringHelper.isBlank(value))
 			return null;
 
-		return (value.startsWith("0x")
-			? new BigInteger(value.substring(2), 16)
-			: new BigDecimal(value));
+		try{
+			return (value.startsWith("0x")
+				? new BigInteger(value.substring(2), 16)
+				: new BigDecimal(value));
+		}
+		catch(final NumberFormatException ignored){
+			return null;
+		}
 	}
 
 

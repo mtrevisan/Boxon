@@ -135,8 +135,8 @@ final class ValidationHelper{
 			min = ParserDataType.getBigNumber(minValue);
 			//`minValue` compatible with variable type
 			if(min == null)
-				throw AnnotationException.create("Incompatible minimum value in {}; found {}, expected {}",
-					field.getAnnotationName(), minValue.getClass().getSimpleName(), field.getFieldType().toString());
+				throw AnnotationException.create("Incompatible minimum value in {}; found {}, expected a valid number",
+					field.getAnnotationName(), minValue);
 
 			if(def != null && ((Number)def).doubleValue() < min.doubleValue())
 				//`defaultValue` compatible with `minValue`
@@ -153,8 +153,8 @@ final class ValidationHelper{
 			max = ParserDataType.getBigNumber(maxValue);
 			//`maxValue` compatible with variable type
 			if(max == null)
-				throw AnnotationException.create("Incompatible maximum value in {}; found {}, expected {}",
-					field.getAnnotationName(), maxValue.getClass().getSimpleName(), field.getFieldType().toString());
+				throw AnnotationException.create("Incompatible maximum value in {}; found {}, expected a valid number",
+					field.getAnnotationName(), maxValue);
 
 			if(def != null && ((Number)def).doubleValue() > max.doubleValue())
 				//`defaultValue` compatible with `maxValue`
@@ -178,10 +178,11 @@ final class ValidationHelper{
 		final String defaultValue = field.getDefaultValue();
 		if(!StringHelper.isBlank(defaultValue)){
 			//`defaultValue` compatible with variable type
-			if(!field.hasEnumeration() && ParserDataType.getValue(fieldType, defaultValue) == null)
+			final boolean hasEnumeration = field.hasEnumeration();
+			if(!hasEnumeration && ParserDataType.getValue(fieldType, defaultValue) == null)
 				throw AnnotationException.create("Incompatible enum in {}, found {}, expected {}",
 					field.getAnnotationName(), defaultValue.getClass().getSimpleName(), fieldType.toString());
-			if(field.hasEnumeration() && !fieldType.isArray()
+			if(hasEnumeration && !fieldType.isArray()
 					&& StringHelper.contains(defaultValue, MUTUALLY_EXCLUSIVE_ENUMERATION_SEPARATOR))
 				throw AnnotationException.create("Incompatible default value in {}, field {}, found '{}', expected mutually exclusive value",
 					field.getAnnotationName(), defaultValue.getClass().getSimpleName(), defaultValue);
@@ -289,15 +290,18 @@ final class ValidationHelper{
 			throw AnnotationException.create("Incompatible enum in {}; found {}, expected {}",
 				field.getAnnotationName(), field.getEnumeration().getSimpleName(), fieldType.toString());
 
-		final String defaultValue = field.getDefaultValue();
-		if(!StringHelper.isBlank(defaultValue)){
-			final String[] defaultValues = StringHelper.split(defaultValue, MUTUALLY_EXCLUSIVE_ENUMERATION_SEPARATOR);
-			for(int i = 0, length = JavaHelper.lengthOrZero(defaultValues); i < length; i ++){
-				final ConfigurationEnum enumValue = ConfigurationEnum.extractEnum(enumConstants, defaultValues[i]);
-				if(enumValue == null)
-					throw AnnotationException.create("Default value not compatible with `enumeration` in {}; found {}, expected one of {}",
-						field.getAnnotationName(), defaultValues[i], Arrays.toString(enumConstants));
-			}
+		//default value(s) compatible with enumeration
+		validateEnumerationCompatibility(field, enumConstants);
+	}
+
+	private static void validateEnumerationCompatibility(final ConfigFieldData field, final ConfigurationEnum[] enumConstants)
+			throws AnnotationException{
+		final String[] defaultValues = StringHelper.split(field.getDefaultValue(), MUTUALLY_EXCLUSIVE_ENUMERATION_SEPARATOR);
+		for(int i = 0, length = JavaHelper.lengthOrZero(defaultValues); i < length; i ++){
+			final ConfigurationEnum enumValue = ConfigurationEnum.extractEnum(enumConstants, defaultValues[i]);
+			if(enumValue == null)
+				throw AnnotationException.create("Default value not compatible with `enumeration` in {}; found {}, expected one of {}",
+					field.getAnnotationName(), defaultValues[i], Arrays.toString(enumConstants));
 		}
 	}
 
