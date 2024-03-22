@@ -24,28 +24,28 @@
  */
 package io.github.mtrevisan.boxon.core.similarity.centroidclustering;
 
-import io.github.mtrevisan.boxon.annotations.MessageHeader;
+import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.core.Core;
 import io.github.mtrevisan.boxon.core.CoreBuilder;
 import io.github.mtrevisan.boxon.core.Descriptor;
 import io.github.mtrevisan.boxon.core.keys.DescriberKey;
-import io.github.mtrevisan.boxon.core.similarity.centroidclustering.KMedoids;
+import io.github.mtrevisan.boxon.core.similarity.distances.GenomeDistanceData;
 import io.github.mtrevisan.boxon.core.similarity.tree.TemplateSpecies;
-import io.github.mtrevisan.boxon.exceptions.AnnotationException;
-import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
-import io.github.mtrevisan.boxon.exceptions.TemplateException;
+import io.github.mtrevisan.boxon.exceptions.FieldException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 
 class KMedoidsTest{
 
-	@MessageHeader(start = "m0", end = "\r\n")
+	@TemplateHeader(start = "m0", end = "\r\n")
 	private static class Xero{
 		@BindString(size = "2")
 		private String aa;
@@ -55,7 +55,7 @@ class KMedoidsTest{
 		private String c;
 	}
 
-	@MessageHeader(start = "m1", end = "\r\n")
+	@TemplateHeader(start = "m1", end = "\r\n")
 	private static class Un{
 		@BindString(size = "2")
 		private String aa;
@@ -65,7 +65,7 @@ class KMedoidsTest{
 		private String c;
 	}
 
-	@MessageHeader(start = "m2", end = "\r\n")
+	@TemplateHeader(start = "m2", end = "\r\n")
 	private static class Do{
 		@BindString(size = "2")
 		private String aa;
@@ -77,7 +77,7 @@ class KMedoidsTest{
 
 
 	@Test
-	void testRandom() throws TemplateException, ConfigurationException, AnnotationException{
+	void testRandom() throws FieldException{
 		Core core = CoreBuilder.builder()
 			.withTemplate(Xero.class)
 			.withTemplate(Un.class)
@@ -94,7 +94,7 @@ class KMedoidsTest{
 	}
 
 	@Test
-	void testEnumerated() throws TemplateException, ConfigurationException, AnnotationException{
+	void testEnumerated() throws FieldException{
 		Core core = CoreBuilder.builder()
 			.withTemplate(Xero.class)
 			.withTemplate(Un.class)
@@ -110,22 +110,22 @@ class KMedoidsTest{
 			Assertions.assertFalse(value.isEmpty());
 	}
 
-	private static TemplateSpecies[] extractTemplateGenome(final Core core) throws TemplateException{
+	private static TemplateSpecies[] extractTemplateGenome(final Core core) throws FieldException{
 		final Descriptor descriptor = Descriptor.create(core);
-		final List<Map<String, Object>> descriptions = descriptor.describe();
+		final List<Map<String, Object>> descriptions = descriptor.describeTemplate();
 		final TemplateSpecies[] species = new TemplateSpecies[descriptions.size()];
 		for(int s = 0; s < species.length; s ++){
 			final Map<String, Object> description = descriptions.get(s);
-			final List<Map<String, Object>> parameters = (List<Map<String, Object>>)description.get(DescriberKey.FIELDS.toString());
+			final List<Map<String, Object>> parameters = new ArrayList<>((Collection<Map<String, Object>>)description.get(DescriberKey.FIELDS.toString()));
 			final String[] genome = new String[parameters.size()];
 			for(int g = 0; g < parameters.size(); g ++){
-				final Map<String, Object> parameter = parameters.get(g);
+				final Map<String, Object> parameter = new HashMap<>(parameters.get(g));
 				parameter.remove(DescriberKey.FIELD_NAME.toString());
 				parameter.remove(DescriberKey.BIND_CONDITION.toString());
 				parameter.remove(DescriberKey.BIND_VALIDATOR.toString());
 				genome[g] = parameter.toString();
 			}
-			species[s] = TemplateSpecies.create((String)description.get(DescriberKey.TEMPLATE.toString()), genome);
+			species[s] = TemplateSpecies.create((String)description.get(DescriberKey.TEMPLATE.toString()), GenomeDistanceData.of(genome));
 		}
 		return species;
 	}

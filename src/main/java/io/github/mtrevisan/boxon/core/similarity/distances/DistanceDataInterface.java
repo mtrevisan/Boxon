@@ -25,7 +25,7 @@
 package io.github.mtrevisan.boxon.core.similarity.distances;
 
 
-public interface DistanceDataInterface<D extends DistanceDataInterface<?>>{
+public interface DistanceDataInterface<D extends DistanceDataInterface<D>>{
 
 	int length();
 

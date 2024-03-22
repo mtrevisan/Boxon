@@ -24,27 +24,31 @@
  */
 package io.github.mtrevisan.boxon.core.similarity.connectivityclustering;
 
-import io.github.mtrevisan.boxon.annotations.MessageHeader;
+import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.core.Core;
 import io.github.mtrevisan.boxon.core.CoreBuilder;
 import io.github.mtrevisan.boxon.core.Descriptor;
 import io.github.mtrevisan.boxon.core.keys.DescriberKey;
+import io.github.mtrevisan.boxon.core.similarity.distances.GenomeDistanceData;
 import io.github.mtrevisan.boxon.core.similarity.tree.TemplateSpecies;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
+import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 
 class CompleteLinkageClusteringTest{
 
-	@MessageHeader(start = "clc0", end = "\r\n")
+	@TemplateHeader(start = "clc0", end = "\r\n")
 	private static class Xero{
 		@BindString(size = "2")
 		private String aa;
@@ -54,7 +58,7 @@ class CompleteLinkageClusteringTest{
 		private String c;
 	}
 
-	@MessageHeader(start = "clc1", end = "\r\n")
+	@TemplateHeader(start = "clc1", end = "\r\n")
 	private static class Un{
 		@BindString(size = "2")
 		private String aa;
@@ -64,7 +68,7 @@ class CompleteLinkageClusteringTest{
 		private String c;
 	}
 
-	@MessageHeader(start = "clc2", end = "\r\n")
+	@TemplateHeader(start = "clc2", end = "\r\n")
 	private static class Do{
 		@BindString(size = "2")
 		private String aa;
@@ -76,7 +80,7 @@ class CompleteLinkageClusteringTest{
 
 
 	@Test
-	void test() throws TemplateException, ConfigurationException, AnnotationException{
+	void test() throws FieldException{
 		Core core = CoreBuilder.builder()
 			.withTemplate(Xero.class)
 			.withTemplate(Un.class)
@@ -90,22 +94,22 @@ class CompleteLinkageClusteringTest{
 		Assertions.assertEquals(2, clusters.size());
 	}
 
-	private static TemplateSpecies[] extractTemplateGenome(final Core core) throws TemplateException{
+	private static TemplateSpecies[] extractTemplateGenome(final Core core) throws FieldException{
 		final Descriptor descriptor = Descriptor.create(core);
-		final List<Map<String, Object>> descriptions = descriptor.describe();
+		final List<Map<String, Object>> descriptions = descriptor.describeTemplate();
 		final TemplateSpecies[] species = new TemplateSpecies[descriptions.size()];
 		for(int s = 0; s < species.length; s ++){
 			final Map<String, Object> description = descriptions.get(s);
-			final List<Map<String, Object>> parameters = (List<Map<String, Object>>)description.get(DescriberKey.FIELDS.toString());
+			final List<Map<String, Object>> parameters = new ArrayList<>((Collection<Map<String, Object>>)description.get(DescriberKey.FIELDS.toString()));
 			final String[] genome = new String[parameters.size()];
 			for(int g = 0; g < parameters.size(); g ++){
-				final Map<String, Object> parameter = parameters.get(g);
+				final Map<String, Object> parameter = new HashMap<>(parameters.get(g));
 				parameter.remove(DescriberKey.FIELD_NAME.toString());
 				parameter.remove(DescriberKey.BIND_CONDITION.toString());
 				parameter.remove(DescriberKey.BIND_VALIDATOR.toString());
 				genome[g] = parameter.toString();
 			}
-			species[s] = TemplateSpecies.create((String)description.get(DescriberKey.TEMPLATE.toString()), genome);
+			species[s] = TemplateSpecies.create((String)description.get(DescriberKey.TEMPLATE.toString()), GenomeDistanceData.of(genome));
 		}
 		return species;
 	}
