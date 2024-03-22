@@ -260,8 +260,8 @@ public final class Version implements Comparable<Version>{
 	/**
 	 * Checks if this version is greater than the other version.
 	 *
-	 * @param other	The other version to compare to
-	 * @return	{@code true} if this version is greater than the other version
+	 * @param other	The other version to compare to.
+	 * @return	Whether this version is greater than the other version.
 	 * @see #compareTo(Version other)
 	 */
 	public boolean isGreaterThan(final Version other){
@@ -271,8 +271,8 @@ public final class Version implements Comparable<Version>{
 	/**
 	 * Checks if this version is greater than or equal to the other version.
 	 *
-	 * @param other	The other version to compare to
-	 * @return	{@code true} if this version is greater than or equal to the other version
+	 * @param other	The other version to compare to.
+	 * @return	Whether this version is greater than or equal to the other version.
 	 * @see #compareTo(Version other)
 	 */
 	public boolean isGreaterThanOrEqualTo(final Version other){
@@ -282,8 +282,8 @@ public final class Version implements Comparable<Version>{
 	/**
 	 * Checks if this version is less than the other version.
 	 *
-	 * @param other	The other version to compare to
-	 * @return	{@code true} if this version is less than the other version
+	 * @param other	The other version to compare to.
+	 * @return	Whether this version is less than the other version.
 	 * @see #compareTo(Version other)
 	 */
 	public boolean isLessThan(final Version other){
@@ -293,8 +293,8 @@ public final class Version implements Comparable<Version>{
 	/**
 	 * Checks if this version is less than or equal to the other version.
 	 *
-	 * @param other	The other version to compare to
-	 * @return	{@code true} if this version is less than or equal to the other version
+	 * @param other	The other version to compare to.
+	 * @return	Whether this version is less than or equal to the other version.
 	 * @see #compareTo(Version other)
 	 */
 	public boolean isLessThanOrEqualTo(final Version other){

@@ -100,7 +100,7 @@ final class ValidationHelper{
 	 * @param field	The configuration field data.
 	 * @param dataValue	The value to check against.
 	 * @throws AnnotationException	If a validation error occurs.
-	 * @throws CodecException   If the value cannot be interpreted as primitive or objective.
+	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
 	 */
 	static void validateMinMaxValues(final ConfigFieldData field, final Object dataValue) throws AnnotationException, CodecException{
 		if(StringHelper.isBlank(field.getMinValue()) && StringHelper.isBlank(field.getMaxValue()))
@@ -170,7 +170,7 @@ final class ValidationHelper{
 	 *
 	 * @param field	The configuration field data.
 	 * @throws AnnotationException	If a validation error occurs.
-	 * @throws CodecException   If the value cannot be interpreted as primitive or objective.
+	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
 	 */
 	static void validateDefaultValue(final ConfigFieldData field) throws AnnotationException, CodecException{
 		final Class<?> fieldType = field.getFieldType();

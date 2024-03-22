@@ -53,7 +53,7 @@ public interface ConfigurationManagerInterface{
 	 * @param protocol	The protocol number, used to select the right {@link AlternativeSubField}.
 	 * @return	The default value.
 	 * @throws EncodeException	If a placeholder cannot be substituted.
-	 * @throws CodecException   If the value cannot be interpreted as primitive or objective.
+	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
 	 */
 	Object getDefaultValue(Field field, Version protocol) throws EncodeException, CodecException;
 
@@ -87,7 +87,7 @@ public interface ConfigurationManagerInterface{
 	 * @param protocol	The protocol version (should follow <a href="https://semver.org/">Semantic Versioning</a>).
 	 * @return	The configuration map.
 	 * @throws ConfigurationException	If a duplicate is found.
-	 * @throws CodecException   If the value cannot be interpreted as primitive or objective.
+	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
 	 */
 	Map<String, Object> extractConfigurationMap(Class<?> fieldType, Version protocol) throws ConfigurationException, CodecException;
 
@@ -98,7 +98,7 @@ public interface ConfigurationManagerInterface{
 	 * @param dataKey	The short description of the field.
 	 * @param dataValue	The value to check against.
 	 * @throws EncodeException	If a placeholder cannot be substituted.
-	 * @throws CodecException   If the value cannot be interpreted as primitive or objective.
+	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
 	 * @throws AnnotationException	If an annotation is not well formatted.
 	 */
 	void validateValue(Field field, String dataKey, Object dataValue) throws EncodeException, CodecException, AnnotationException;
@@ -112,7 +112,7 @@ public interface ConfigurationManagerInterface{
 	 * @param protocol	The protocol version (should follow <a href="https://semver.org/">Semantic Versioning</a>).
 	 * @return	The converted value.
 	 * @throws EncodeException	If a placeholder cannot be substituted.
-	 * @throws CodecException   If the value cannot be interpreted as primitive or objective.
+	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
 	 * @throws AnnotationException	If an annotation is not well formatted.
 	 */
 	Object convertValue(Field field, String dataKey, Object dataValue, Version protocol) throws EncodeException, CodecException,

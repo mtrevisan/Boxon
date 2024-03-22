@@ -301,7 +301,7 @@ public enum ParserDataType{
 	 * @param fieldType	The type of the field that will hold the value represented as a string.
 	 * @param value	The string value to be interpreted.
 	 * @return	The primitive or objective value, if the field type is not string, the given value otherwise.
-	 * @throws CodecException   If the value cannot be interpreted as primitive or objective.
+	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
 	 */
 	public static Object getValueOrSelf(final Class<?> fieldType, final Object value) throws CodecException{
 		return (value instanceof final String v
@@ -315,7 +315,7 @@ public enum ParserDataType{
 	 * @param fieldType	The type of the field that will hold the value represented as a string.
 	 * @param value	The string value to be interpreted.
 	 * @return	The primitive or objective value.
-	 * @throws CodecException   If the value cannot be interpreted as primitive or objective.
+	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
 	 */
 	public static Object getValue(final Class<?> fieldType, final String value) throws CodecException{
 		if(fieldType == String.class)

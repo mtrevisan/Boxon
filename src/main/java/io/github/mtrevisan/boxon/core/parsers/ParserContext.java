@@ -81,6 +81,7 @@ final class ParserContext<T>{
 	 */
 	@SuppressWarnings("unchecked")
 	public void setFieldValue(final Field field, final Object value){
+		//NOTE: record classes must be created anew, therefore `currentObject` must be updated
 		currentObject = (T)ReflectionHelper.withValue(currentObject, field, value);
 	}
 

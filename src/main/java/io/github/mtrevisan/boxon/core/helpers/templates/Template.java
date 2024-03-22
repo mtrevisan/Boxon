@@ -45,7 +45,7 @@ import java.util.function.Function;
 /**
  * The class containing the information that are used to decode/encode objects.
  *
- * @param <T> The type of object the codec is able to decode/encode.
+ * @param <T>	The type of object the codec is able to decode/encode.
  */
 public final class Template<T>{
 

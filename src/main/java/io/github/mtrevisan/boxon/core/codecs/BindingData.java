@@ -134,7 +134,7 @@ final class BindingData{
 	 *
 	 * @param reader	The reader from which to read the data from.
 	 * @return	The class type of the chosen alternative.
-	 * @throws CodecException   If a codec cannot be found for the chosen alternative.
+	 * @throws CodecException	If a codec cannot be found for the chosen alternative.
 	 */
 	Class<?> chooseAlternativeType(final BitReaderInterface reader) throws CodecException{
 		if(!hasSelectAlternatives())

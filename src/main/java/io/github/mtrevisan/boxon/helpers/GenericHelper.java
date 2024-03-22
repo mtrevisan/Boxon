@@ -189,7 +189,7 @@ public final class GenericHelper{
 	/**
 	 * Convert a given String into the appropriate Class.
 	 *
-	 * @param name Name of class.
+	 * @param name	Name of class.
 	 * @return	The class for the given name, {@code null} if some error happens.
 	 */
 	private static Class<?> toClass(final String name){

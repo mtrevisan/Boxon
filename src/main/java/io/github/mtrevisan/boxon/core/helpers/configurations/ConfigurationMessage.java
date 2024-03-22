@@ -46,7 +46,7 @@ import java.util.List;
 /**
  * The class containing the information that are used to construct configuration messages.
  *
- * @param <T> The type of object the configuration is able to construct configuration messages.
+ * @param <T>	The type of object the configuration is able to construct configuration messages.
  */
 public final class ConfigurationMessage<T>{
 

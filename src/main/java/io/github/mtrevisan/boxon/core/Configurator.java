@@ -84,7 +84,7 @@ public final class Configurator{
 	 *
 	 * @return	The configuration messages regardless the protocol version.
 	 * @throws ConfigurationException	Thrown when a duplicated short description is found.
-	 * @throws CodecException   Thrown when the value as a string cannot be interpreted as a basic type.
+	 * @throws CodecException	Thrown when the value as a string cannot be interpreted as a basic type.
 	 */
 	public List<Map<String, Object>> getConfigurations() throws ConfigurationException, CodecException{
 		final List<ConfigurationMessage<?>> configurationValues = configurationParser.getConfigurations();
@@ -116,7 +116,7 @@ public final class Configurator{
 	 * @param protocol	The protocol used to extract the configurations.
 	 * @return	The configuration messages for a given protocol version.
 	 * @throws ConfigurationException	Thrown when a duplicated short description is found.
-	 * @throws CodecException   Thrown when the value as a string cannot be interpreted as a basic type.
+	 * @throws CodecException	Thrown when the value as a string cannot be interpreted as a basic type.
 	 */
 	public List<Map<String, Object>> getConfigurations(final String protocol) throws ConfigurationException, CodecException{
 		if(StringHelper.isBlank(protocol))

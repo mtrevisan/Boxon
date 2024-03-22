@@ -73,8 +73,8 @@ public final class BNDMPatternMatcher implements PatternMatcher{
 	 * <p>The pattern SHOULD NOT exceed 32 bytes in length.</p>
 	 *
 	 * @param pattern	The {@code byte} array containing the pattern, may not be {@code null}.
-	 * @param wildcard the wildcard {@code byte} character.
-	 * @return	an array of pre-processed pattern.
+	 * @param wildcard	The wildcard {@code byte} character.
+	 * @return	An array of pre-processed pattern.
 	 */
 	public static int[] preProcessPatternWithWildcard(final byte[] pattern, final byte wildcard){
 		final int length = pattern.length;

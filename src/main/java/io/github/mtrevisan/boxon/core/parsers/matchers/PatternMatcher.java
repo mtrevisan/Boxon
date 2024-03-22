@@ -32,7 +32,7 @@ public interface PatternMatcher{
 	 * Pre-processes the pattern.
 	 *
 	 * @param pattern	The {@code byte} array containing the pattern, may not be {@code null}.
-	 * @return	an array of pre-processed pattern.
+	 * @return	An array of pre-processed pattern.
 	 */
 	int[] preProcessPattern(byte[] pattern);
 
