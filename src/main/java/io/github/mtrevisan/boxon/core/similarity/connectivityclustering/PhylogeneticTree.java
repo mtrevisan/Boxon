@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core.similarity.connectivityclustering;
 
+import io.github.mtrevisan.boxon.core.similarity.distances.DistanceDataInterface;
 import io.github.mtrevisan.boxon.core.similarity.tree.PhylogeneticTreeNode;
 import io.github.mtrevisan.boxon.core.similarity.tree.SpeciesInterface;
 
@@ -53,7 +54,8 @@ public final class PhylogeneticTree{
 	 * @param species	Set of species from which to infer the phylogenetic tree.
 	 * @return	The root of the tree.
 	 */
-	public static PhylogeneticTreeNode build(final SpeciesInterface[] species){
+	public static <S extends SpeciesInterface<S, D>, D extends DistanceDataInterface<D>> PhylogeneticTreeNode build(
+			final SpeciesInterface<S, D>[] species){
 		//create a tree for each species
 		final List<PhylogeneticTreeNode> forest = initializeForest(species);
 
@@ -79,20 +81,22 @@ public final class PhylogeneticTree{
 			forest.add(newNode);
 		}
 
-		return forest.get(0);
+		return forest.getFirst();
 	}
 
 	/**
 	 * @param species	Set of species from which to infer the phylogenetic tree.
 	 * @return	A set of sets where each data is grouped into.
 	 */
-	public static Collection<Collection<String>> cluster(final SpeciesInterface[] species){
+	public static <S extends SpeciesInterface<S, D>, D extends DistanceDataInterface<D>> Collection<Collection<String>> cluster(
+			final SpeciesInterface<S, D>[] species){
 		final PhylogeneticTreeNode root = build(species);
 
 		return PhylogeneticTreeNode.getSpeciesByLevel(root);
 	}
 
-	private static PhylogeneticTreeNode mergeNodes(final SpeciesInterface[] species, final List<PhylogeneticTreeNode> forest){
+	private static <S extends SpeciesInterface<S, D>, D extends DistanceDataInterface<D>> PhylogeneticTreeNode mergeNodes(
+			final SpeciesInterface<S, D>[] species, final List<PhylogeneticTreeNode> forest){
 		//find the smallest distance in forest
 		final int forestSize = forest.size();
 		double minDistance = Double.MAX_VALUE;
@@ -119,20 +123,21 @@ public final class PhylogeneticTree{
 		return createNewNode(child1, child2, minDistance);
 	}
 
-	private static <S> List<PhylogeneticTreeNode> initializeForest(final SpeciesInterface[] species){
+	private static <S> List<PhylogeneticTreeNode> initializeForest(final SpeciesInterface<?, ?>[] species){
 		final List<PhylogeneticTreeNode> forest = new ArrayList<>(0);
-		for(int i = 0; i < species.length; i ++)
+		for(int i = 0, length = species.length; i < length; i ++)
 			forest.add(PhylogeneticTreeNode.create(species[i].getName()));
 		return forest;
 	}
 
-	private static Map<String, Double> createSimilarityMatrix(final SpeciesInterface[] species){
+	private static <S extends SpeciesInterface<S, D>, D extends DistanceDataInterface<D>> Map<String, Double> createSimilarityMatrix(
+			final SpeciesInterface<S, D>[] species){
 		final int speciesSize = species.length;
 		final Map<String, Double> similarityMatrix = new HashMap<>((speciesSize - 1) * speciesSize / 2);
 		for(int i = 0; i < speciesSize; i ++){
-			final SpeciesInterface speciesI = species[i];
+			final SpeciesInterface<S, D> speciesI = species[i];
 			for(int j = i + 1; j < speciesSize; j ++){
-				final SpeciesInterface speciesJ = species[j];
+				final SpeciesInterface<S, D> speciesJ = species[j];
 				final String key = composeKey(speciesI.getName(), speciesJ.getName());
 				similarityMatrix.put(key, speciesI.similarity(speciesJ));
 			}

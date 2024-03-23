@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core.similarity.centroidclustering;
 
+import io.github.mtrevisan.boxon.core.similarity.distances.DistanceDataInterface;
 import io.github.mtrevisan.boxon.core.similarity.tree.SpeciesInterface;
 import org.apache.commons.numbers.combinatorics.BinomialCoefficient;
 import org.apache.commons.numbers.combinatorics.Combinations;
@@ -57,8 +58,8 @@ public final class KMedoids{
 	 * @param maxIterations	The maximum number of iterations the algorithm is allowed to run.
 	 * @return	A set of sets where each data is grouped into.
 	 */
-	public static Collection<Collection<String>> cluster(final SpeciesInterface[] dataset, final int numberOfClusters,
-			final int maxIterations){
+	public static <S extends SpeciesInterface<S, D>, D extends DistanceDataInterface<D>> Collection<Collection<String>> cluster(
+			final SpeciesInterface<S, D>[] dataset, final int numberOfClusters, final int maxIterations){
 		if(dataset == null || dataset.length == 0)
 			throw new IllegalArgumentException("Dataset cannot be empty");
 		if(numberOfClusters < 1)
@@ -77,7 +78,7 @@ public final class KMedoids{
 			assignment = clusterRandom(dataset, k, maxIterations);
 
 		final Map<String, Collection<String>> clusters = new HashMap<>(1);
-		for(int i = 0; i < assignment.length; i ++){
+		for(int i = 0, length = assignment.length; i < length; i ++){
 			final String clusterValue = dataset[i].getName();
 			final String clusterKey = dataset[assignment[i]].getName();
 			clusters.computeIfAbsent(clusterKey, key -> new HashSet<>(1))
@@ -86,17 +87,15 @@ public final class KMedoids{
 		return clusters.values();
 	}
 
-	private static int[] clusterEnumerated(final SpeciesInterface[] dataset, final int k){
+	private static <S extends SpeciesInterface<S, D>, D extends DistanceDataInterface<D>> int[] clusterEnumerated(
+			final SpeciesInterface<S, D>[] dataset, final int k){
 		final int m = dataset.length;
 
 		double minScore = Double.MAX_VALUE;
-		int[] minMedoids = new int[k];
+		final int[] minMedoids = new int[k];
 		final int[] minAssignment = new int[m];
 		final int[] assignment = new int[m];
-		final Iterator<int[]> itr = Combinations.of(m, k).iterator();
-		while(itr.hasNext()){
-			final int[] combination = itr.next();
-
+		for(final int[] combination : Combinations.of(m, k)){
 			//partitioning: assign each data object to the closest medoid
 			final double score = assign(assignment, combination, dataset);
 			//update: if the cost decreases, accept the new solution
@@ -109,7 +108,8 @@ public final class KMedoids{
 		return minAssignment;
 	}
 
-	private static int[] clusterRandom(final SpeciesInterface[] dataset, final int k, final int maxIterations){
+	private static <S extends SpeciesInterface<S, D>, D extends DistanceDataInterface<D>> int[] clusterRandom(
+			final SpeciesInterface<S, D>[] dataset, final int k, final int maxIterations){
 		final int m = dataset.length;
 
 		//initialize the medoids: select `k` random points out of the `n` data points
@@ -146,7 +146,7 @@ public final class KMedoids{
 		return assignment;
 	}
 
-	private static void selectMedoids(final Set<Integer> medoidsRandom, final int m, final int k){
+	private static void selectMedoids(final Collection<Integer> medoidsRandom, final int m, final int k){
 		while(medoidsRandom.size() < Math.min(m, k))
 			medoidsRandom.add(RANDOM.nextInt(m));
 	}
@@ -174,15 +174,16 @@ public final class KMedoids{
 	 * @param medoids	Candidate medoids.
 	 * @param dataset	The data to assign to the medoids.
 	 */
-	private static double assign(final int[] assignment, final int[] medoids, final SpeciesInterface[] dataset){
+	private static <S extends SpeciesInterface<S, D>, D extends DistanceDataInterface<D>> double assign(final int[] assignment,
+			final int[] medoids, final SpeciesInterface<S, D>[] dataset){
 		double score = 0.;
 		final int n = dataset.length;
 		for(int j = 0; j < n; j ++){
-			final SpeciesInterface data = dataset[j];
+			final SpeciesInterface<S, D> data = dataset[j];
 
 			double minDistance = Double.MAX_VALUE;
 			int minIndex = Integer.MAX_VALUE;
-			for(int i = 0; i < medoids.length; i ++){
+			for(int i = 0, length = medoids.length; i < length; i ++){
 				final int k = medoids[i];
 				if(k == j){
 					minDistance = 0;

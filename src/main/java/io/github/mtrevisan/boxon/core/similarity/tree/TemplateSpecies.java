@@ -30,7 +30,7 @@ import io.github.mtrevisan.boxon.core.similarity.distances.DistanceDataInterface
 
 public final class TemplateSpecies<S extends SpeciesInterface<S, D>, D extends DistanceDataInterface<D>> implements SpeciesInterface<S, D>{
 
-	private final DamerauLevenshteinMetric<D> DISTANCE = DamerauLevenshteinMetric.create(1, 1, 1, 1000);
+	private final DamerauLevenshteinMetric<D> distance = DamerauLevenshteinMetric.create(1, 1, 1, 1000);
 
 	//a unique name associated with the species (template class)
 	private final String name;
@@ -42,7 +42,8 @@ public final class TemplateSpecies<S extends SpeciesInterface<S, D>, D extends D
 	 * @param name	Intended name of the species.
 	 * @param sequence	A list of single character in the genetic sequence.
 	 */
-	public static <S extends SpeciesInterface<S, D>, D extends DistanceDataInterface<D>> TemplateSpecies<S, D> create(final String name, final D sequence){
+	public static <S extends SpeciesInterface<S, D>, D extends DistanceDataInterface<D>> TemplateSpecies<S, D> create(final String name,
+			final D sequence){
 		return new TemplateSpecies<>(name, sequence);
 	}
 
@@ -64,12 +65,12 @@ public final class TemplateSpecies<S extends SpeciesInterface<S, D>, D extends D
 
 	@Override
 	public int distance(final SpeciesInterface<S, D> other){
-		return DISTANCE.distance(sequence, other.getSequence());
+		return distance.distance(sequence, other.getSequence());
 	}
 
 	@Override
 	public double similarity(final SpeciesInterface<S, D> other){
-		return DISTANCE.similarity(sequence, other.getSequence());
+		return distance.similarity(sequence, other.getSequence());
 	}
 
 }

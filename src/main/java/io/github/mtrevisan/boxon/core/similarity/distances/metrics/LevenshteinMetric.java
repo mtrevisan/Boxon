@@ -107,7 +107,7 @@ public final class LevenshteinMetric<D extends DistanceDataInterface<D>>{
 	 * @return	The computed distance.
 	 * @throws IllegalArgumentException	If either input is {@code null}.
 	 */
-	public int distance(D input1, D input2){
+	public int distance(final D input1, final D input2){
 		if(input1 == null || input2 == null)
 			throw new IllegalArgumentException("Inputs must not be null");
 

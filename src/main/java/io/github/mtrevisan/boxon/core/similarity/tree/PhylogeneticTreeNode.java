@@ -98,11 +98,11 @@ public final class PhylogeneticTreeNode{
 		queue.offer(root);
 		while(!queue.isEmpty()){
 			final int levelSize = queue.size();
-			final Set<String> currentLevelNodes = new HashSet<>();
+			final Collection<String> currentLevelNodes = new HashSet<>(levelSize);
 			for(int i = 0; i < levelSize; i++){
 				final PhylogeneticTreeNode node = queue.poll();
 
-				final Set<String> descendants = new HashSet<>();
+				final Set<String> descendants = new HashSet<>(1);
 				collectDescendants(node, descendants);
 				currentLevelNodes.addAll(descendants);
 
@@ -118,7 +118,7 @@ public final class PhylogeneticTreeNode{
 		return new HashSet<>(descendantNodes);
 	}
 
-	private static void collectDescendants(final PhylogeneticTreeNode parent, final Set<String> descendants){
+	private static void collectDescendants(final PhylogeneticTreeNode parent, final Collection<String> descendants){
 		if(parent == null)
 			return;
 
