@@ -73,7 +73,7 @@ enum ConfigurationAnnotationValidator{
 	FIELD(ConfigurationField.class){
 		@Override
 		void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
-				throws AnnotationException, CodecException{
+				throws CodecException, AnnotationException{
 			final ConfigFieldData configData = ConfigFieldDataBuilder.create(field, (ConfigurationField)annotation);
 
 			final ConfigurationField binding = (ConfigurationField)annotation;
@@ -268,7 +268,7 @@ enum ConfigurationAnnotationValidator{
 	 * @throws CodecException	If an error was raised reading of interpreting the field value.
 	 */
 	abstract void validate(Field field, Annotation annotation, Version minProtocolVersion, Version maxProtocolVersion)
-		throws AnnotationException, CodecException;
+		throws CodecException, AnnotationException;
 
 	private static void validateCharset(final String charsetName) throws AnnotationException{
 		try{

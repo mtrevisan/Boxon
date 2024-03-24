@@ -52,10 +52,10 @@ public interface ConfigurationManagerInterface{
 	 * @param field	The field from which to extract the default value.
 	 * @param protocol	The protocol number, used to select the right {@link AlternativeSubField}.
 	 * @return	The default value.
-	 * @throws EncodeException	If a placeholder cannot be substituted.
 	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
+	 * @throws EncodeException	If a placeholder cannot be substituted.
 	 */
-	Object getDefaultValue(Field field, Version protocol) throws EncodeException, CodecException;
+	Object getDefaultValue(Field field, Version protocol) throws CodecException, EncodeException;
 
 	/**
 	 * Add the minimum and maximum protocol versions to the collection.
@@ -86,10 +86,10 @@ public interface ConfigurationManagerInterface{
 	 * @param fieldType	The field from which to extract the configuration.
 	 * @param protocol	The protocol version (should follow <a href="https://semver.org/">Semantic Versioning</a>).
 	 * @return	The configuration map.
-	 * @throws ConfigurationException	If a duplicate is found.
 	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
+	 * @throws ConfigurationException	If a duplicate is found.
 	 */
-	Map<String, Object> extractConfigurationMap(Class<?> fieldType, Version protocol) throws ConfigurationException, CodecException;
+	Map<String, Object> extractConfigurationMap(Class<?> fieldType, Version protocol) throws CodecException, ConfigurationException;
 
 	/**
 	 * Check if the given value can be assigned and is valid for the given field type.
@@ -97,11 +97,11 @@ public interface ConfigurationManagerInterface{
 	 * @param field	The field.
 	 * @param dataKey	The short description of the field.
 	 * @param dataValue	The value to check against.
-	 * @throws EncodeException	If a placeholder cannot be substituted.
-	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
 	 * @throws AnnotationException	If an annotation is not well formatted.
+	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
+	 * @throws EncodeException	If a placeholder cannot be substituted.
 	 */
-	void validateValue(Field field, String dataKey, Object dataValue) throws EncodeException, CodecException, AnnotationException;
+	void validateValue(Field field, String dataKey, Object dataValue) throws AnnotationException, CodecException, EncodeException;
 
 	/**
 	 * Convert the given value to the type accepted by the field.
@@ -111,11 +111,11 @@ public interface ConfigurationManagerInterface{
 	 * @param dataValue	The value to check against.
 	 * @param protocol	The protocol version (should follow <a href="https://semver.org/">Semantic Versioning</a>).
 	 * @return	The converted value.
-	 * @throws EncodeException	If a placeholder cannot be substituted.
-	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
 	 * @throws AnnotationException	If an annotation is not well formatted.
+	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
+	 * @throws EncodeException	If a placeholder cannot be substituted.
 	 */
-	Object convertValue(Field field, String dataKey, Object dataValue, Version protocol) throws EncodeException, CodecException,
-		AnnotationException;
+	Object convertValue(Field field, String dataKey, Object dataValue, Version protocol) throws AnnotationException, CodecException,
+		EncodeException;
 
 }

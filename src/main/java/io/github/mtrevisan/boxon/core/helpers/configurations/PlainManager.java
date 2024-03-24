@@ -88,7 +88,8 @@ final class PlainManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	public Map<String, Object> extractConfigurationMap(final Class<?> fieldType, final Version protocol) throws ConfigurationException, CodecException{
+	public Map<String, Object> extractConfigurationMap(final Class<?> fieldType, final Version protocol) throws CodecException,
+			ConfigurationException{
 		if(!ConfigurationHelper.shouldBeExtracted(protocol, annotation.minProtocol(), annotation.maxProtocol()))
 			return Collections.emptyMap();
 
@@ -101,7 +102,7 @@ final class PlainManager implements ConfigurationManagerInterface{
 	}
 
 	@SuppressWarnings("DuplicatedCode")
-	private Map<String, Object> extractMap(final Class<?> fieldType) throws ConfigurationException, CodecException{
+	private Map<String, Object> extractMap(final Class<?> fieldType) throws CodecException, ConfigurationException{
 		final Map<String, Object> map = new HashMap<>(10);
 
 		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, annotation.longDescription(), map);
@@ -132,7 +133,8 @@ final class PlainManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	public Object convertValue(final Field field, final String dataKey, Object dataValue, final Version protocol) throws EncodeException, CodecException{
+	public Object convertValue(final Field field, final String dataKey, Object dataValue, final Version protocol) throws CodecException,
+			EncodeException{
 		if(dataValue != null){
 			final Class<?> fieldType = field.getType();
 			final Class<? extends ConfigurationEnum> enumeration = annotation.enumeration();

@@ -118,8 +118,8 @@ final class CompositeManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	public Map<String, Object> extractConfigurationMap(final Class<?> fieldType, final Version protocol) throws ConfigurationException,
-			CodecException{
+	public Map<String, Object> extractConfigurationMap(final Class<?> fieldType, final Version protocol) throws CodecException,
+			ConfigurationException{
 		if(!ConfigurationHelper.shouldBeExtracted(protocol, annotation.minProtocol(), annotation.maxProtocol()))
 			return Collections.emptyMap();
 
@@ -152,8 +152,8 @@ final class CompositeManager implements ConfigurationManagerInterface{
 		return map;
 	}
 
-	private static Map<String, Object> extractMap(final CompositeSubField binding, final Class<?> fieldType) throws ConfigurationException,
-			CodecException{
+	private static Map<String, Object> extractMap(final CompositeSubField binding, final Class<?> fieldType) throws CodecException,
+			ConfigurationException{
 		final Map<String, Object> map = new HashMap<>(10);
 
 		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, binding.longDescription(), map);

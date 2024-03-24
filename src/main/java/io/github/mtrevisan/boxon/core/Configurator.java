@@ -83,10 +83,10 @@ public final class Configurator{
 	 * Retrieve all the configuration regardless the protocol version.
 	 *
 	 * @return	The configuration messages regardless the protocol version.
-	 * @throws ConfigurationException	Thrown when a duplicated short description is found.
 	 * @throws CodecException	Thrown when the value as a string cannot be interpreted as a basic type.
+	 * @throws ConfigurationException	Thrown when a duplicated short description is found.
 	 */
-	public List<Map<String, Object>> getConfigurations() throws ConfigurationException, CodecException{
+	public List<Map<String, Object>> getConfigurations() throws CodecException, ConfigurationException{
 		final List<ConfigurationMessage<?>> configurationValues = configurationParser.getConfigurations();
 		return extractConfigurations(configurationValues, Version.EMPTY);
 	}
@@ -115,10 +115,10 @@ public final class Configurator{
 	 *
 	 * @param protocol	The protocol used to extract the configurations.
 	 * @return	The configuration messages for a given protocol version.
-	 * @throws ConfigurationException	Thrown when a duplicated short description is found.
 	 * @throws CodecException	Thrown when the value as a string cannot be interpreted as a basic type.
+	 * @throws ConfigurationException	Thrown when a duplicated short description is found.
 	 */
-	public List<Map<String, Object>> getConfigurations(final String protocol) throws ConfigurationException, CodecException{
+	public List<Map<String, Object>> getConfigurations(final String protocol) throws CodecException, ConfigurationException{
 		if(StringHelper.isBlank(protocol))
 			throw new IllegalArgumentException(StringHelper.format("Invalid protocol: {}", protocol));
 
@@ -128,7 +128,7 @@ public final class Configurator{
 	}
 
 	private static List<Map<String, Object>> extractConfigurations(final List<ConfigurationMessage<?>> configurationValues,
-			final Version protocol) throws ConfigurationException, CodecException{
+			final Version protocol) throws CodecException, ConfigurationException{
 		final int length = configurationValues.size();
 		final List<Map<String, Object>> response = new ArrayList<>(length);
 		for(int i = 0; i < length; i ++){
@@ -164,7 +164,7 @@ public final class Configurator{
 	}
 
 	private static Map<String, Object> extractFieldsMap(final Version protocol, final ConfigurationMessage<?> configuration)
-			throws ConfigurationException, CodecException{
+			throws CodecException, ConfigurationException{
 		final List<ConfigurationField> fields = configuration.getConfigurationFields();
 		final int length = fields.size();
 		final Map<String, Object> fieldsMap = new HashMap<>(length);

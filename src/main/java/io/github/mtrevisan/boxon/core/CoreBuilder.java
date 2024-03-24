@@ -124,8 +124,8 @@ public final class CoreBuilder{
 	 * @param type	The class containing the method.
 	 * @param methodName	The method name.
 	 * @return	This instance, used for chaining.
-	 * @throws NoSuchMethodException	If a matching method is not found.
 	 * @throws NullPointerException	If {@code methodName} is {@code null}.
+	 * @throws NoSuchMethodException	If a matching method is not found.
 	 */
 	public CoreBuilder withContext(final Class<?> type, final String methodName) throws NoSuchMethodException{
 		return withContext(type.getDeclaredMethod(methodName));

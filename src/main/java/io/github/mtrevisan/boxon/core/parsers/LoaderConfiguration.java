@@ -230,11 +230,12 @@ public final class LoaderConfiguration{
 	 * @param data	The data to load into the configuration.
 	 * @param protocol	The protocol the data refers to.
 	 * @return	The configuration data.
-	 * @throws EncodeException	If a placeholder cannot be substituted.
+	 * @throws AnnotationException	If a configuration annotation is invalid, or no annotation was found.
 	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
+	 * @throws EncodeException	If a placeholder cannot be substituted.
 	 */
 	static Object getConfigurationWithDefaults(final ConfigurationMessage<?> configuration, final Map<String, Object> data,
-			final Version protocol) throws EncodeException, CodecException, AnnotationException{
+			final Version protocol) throws AnnotationException, CodecException, EncodeException{
 		Object configurationObject = ConstructorHelper.getEmptyCreator(configuration.getType())
 			.get();
 
@@ -285,7 +286,7 @@ public final class LoaderConfiguration{
 	}
 
 	private static Object fillDefaultValues(Object configurationObject, final List<ConfigurationField> fields, final Version protocol)
-			throws EncodeException, CodecException, AnnotationException{
+			throws AnnotationException, CodecException, EncodeException{
 		for(int i = 0, length = fields.size(); i < length; i ++){
 			final ConfigurationField field = fields.get(i);
 

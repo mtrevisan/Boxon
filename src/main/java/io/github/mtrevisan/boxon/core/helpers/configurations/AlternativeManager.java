@@ -118,7 +118,8 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	public Map<String, Object> extractConfigurationMap(final Class<?> fieldType, final Version protocol) throws ConfigurationException, CodecException{
+	public Map<String, Object> extractConfigurationMap(final Class<?> fieldType, final Version protocol) throws CodecException,
+			ConfigurationException{
 		if(!ConfigurationHelper.shouldBeExtracted(protocol, annotation.minProtocol(), annotation.maxProtocol()))
 			return Collections.emptyMap();
 
@@ -135,7 +136,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 	}
 
 	private Map<String, Object> extractConfigurationMapWithoutProtocol(final Class<?> fieldType, final Map<String, Object> alternativeMap)
-			throws ConfigurationException, CodecException{
+			throws CodecException, ConfigurationException{
 		final AlternativeSubField[] alternativeFields = annotation.value();
 		final int length = alternativeFields.length;
 		final Collection<Map<String, Object>> alternatives = new ArrayList<>(length);
@@ -161,7 +162,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 	}
 
 	private Map<String, Object> extractConfigurationMapWithProtocol(final Class<?> fieldType, final Map<String, Object> alternativeMap,
-			final Version protocol) throws ConfigurationException, CodecException{
+			final Version protocol) throws CodecException, ConfigurationException{
 		final Map<String, Object> alternativesMap;
 		final AlternativeSubField fieldBinding = extractField(protocol);
 		if(fieldBinding != null){
@@ -228,8 +229,8 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 	public void validateValue(final Field field, final String dataKey, final Object dataValue){}
 
 	@Override
-	public Object convertValue(final Field field, final String dataKey, Object dataValue, final Version protocol) throws CodecException,
-			AnnotationException{
+	public Object convertValue(final Field field, final String dataKey, Object dataValue, final Version protocol) throws AnnotationException,
+			CodecException{
 		final AlternativeSubField fieldBinding = extractField(protocol);
 		if(fieldBinding != null){
 			final Class<?> fieldType = field.getType();
