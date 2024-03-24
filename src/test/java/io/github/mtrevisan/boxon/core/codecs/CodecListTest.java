@@ -214,7 +214,7 @@ class CodecListTest{
 	}
 
 	@Test
-	void listOfDifferentObjects() throws AnnotationException, TemplateException, ConfigurationException{
+	void listOfDifferentObjects() throws FieldException{
 		Core core = CoreBuilder.builder()
 			.withCodecsFrom(CodecChecksum.class, CodecCustomTest.VariableLengthByteArray.class)
 			.withTemplatesFrom(TestChoice6.class)

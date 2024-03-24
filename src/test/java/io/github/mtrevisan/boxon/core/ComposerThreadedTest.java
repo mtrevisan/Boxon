@@ -28,6 +28,7 @@ import io.github.mtrevisan.boxon.core.codecs.queclink.ACKMessageHex;
 import io.github.mtrevisan.boxon.core.codecs.queclink.DeviceTypes;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
+import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.utils.MultithreadingHelper;
@@ -44,8 +45,7 @@ class ComposerThreadedTest{
 
 
 	@Test
-	void concurrencySingleParserSingleCore() throws NoSuchMethodException, AnnotationException, TemplateException, ConfigurationException,
-			ExecutionException, InterruptedException{
+	void concurrencySingleParserSingleCore() throws NoSuchMethodException, FieldException, ExecutionException, InterruptedException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with((byte)0x46, "QUECLINK_GB200S");
 		Core core = CoreBuilder.builder()
@@ -70,8 +70,7 @@ class ComposerThreadedTest{
 	}
 
 	@Test
-	void concurrencyMultipleParserSingleCore() throws NoSuchMethodException, AnnotationException, TemplateException, ConfigurationException,
-			ExecutionException, InterruptedException{
+	void concurrencyMultipleParserSingleCore() throws NoSuchMethodException, FieldException, ExecutionException, InterruptedException{
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with((byte)0x46, "QUECLINK_GB200S");
 		Core core = CoreBuilder.builder()

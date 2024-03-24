@@ -28,6 +28,7 @@ import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
+import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
@@ -56,7 +57,7 @@ public final class CoreBuilder{
 
 	@FunctionalInterface
 	private interface RunnableThrowable{
-		void execute() throws AnnotationException, TemplateException, ConfigurationException;
+		void execute() throws FieldException;
 	}
 
 
@@ -272,7 +273,7 @@ public final class CoreBuilder{
 	 * @throws TemplateException	If a template is not well formatted.
 	 * @throws ConfigurationException	If a configuration is not well formatted.
 	 */
-	public Core create() throws AnnotationException, TemplateException, ConfigurationException{
+	public Core create() throws FieldException{
 		final ConfigurationStep[] values = ConfigurationStep.values();
 		for(int i = 0, length = values.length; i < length; i ++){
 			final List<RunnableThrowable> executors = calls.get(values[i]);
@@ -282,8 +283,7 @@ public final class CoreBuilder{
 		return core;
 	}
 
-	private static void executeCommands(final List<RunnableThrowable> executors) throws AnnotationException, TemplateException,
-			ConfigurationException{
+	private static void executeCommands(final List<RunnableThrowable> executors) throws FieldException{
 		for(int i = 0, length = JavaHelper.lengthOrZero(executors); i < length; i ++){
 			final RunnableThrowable executor = executors.get(i);
 

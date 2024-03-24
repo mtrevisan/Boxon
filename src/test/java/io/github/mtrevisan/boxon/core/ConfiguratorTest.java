@@ -29,6 +29,7 @@ import io.github.mtrevisan.boxon.core.keys.ConfigurationKey;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
+import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.utils.PrettyPrintMap;
 import org.junit.jupiter.api.Assertions;
@@ -43,7 +44,7 @@ import java.util.Map;
 class ConfiguratorTest{
 
 	@Test
-	void getConfigurations() throws AnnotationException, ConfigurationException, CodecException, TemplateException{
+	void getConfigurations() throws FieldException{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withConfiguration(REGConfigurationASCII.class)
@@ -66,7 +67,7 @@ class ConfiguratorTest{
 	}
 
 	@Test
-	void getProtocolVersionBoundaries() throws AnnotationException, ConfigurationException, TemplateException{
+	void getProtocolVersionBoundaries() throws FieldException{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withConfigurationsFrom(REGConfigurationASCII.class)
@@ -81,7 +82,7 @@ class ConfiguratorTest{
 	}
 
 	@Test
-	void getConfigurationsByProtocol() throws AnnotationException, ConfigurationException, CodecException, TemplateException{
+	void getConfigurationsByProtocol() throws FieldException{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withConfigurationsFrom(REGConfigurationASCII.class)
@@ -101,7 +102,7 @@ class ConfiguratorTest{
 	}
 
 	@Test
-	void composeSingleConfigurationMessage() throws AnnotationException, TemplateException, ConfigurationException{
+	void composeSingleConfigurationMessage() throws FieldException{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withConfigurationsFrom(REGConfigurationASCII.class)

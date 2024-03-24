@@ -28,6 +28,7 @@ import io.github.mtrevisan.boxon.core.codecs.queclink.REGConfigurationASCII;
 import io.github.mtrevisan.boxon.core.keys.ConfigurationKey;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
+import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.utils.MultithreadingHelper;
 import io.github.mtrevisan.boxon.utils.PrettyPrintMap;
@@ -41,8 +42,7 @@ import java.util.concurrent.ExecutionException;
 class ConfiguratorThreadedTest{
 
 	@Test
-	void concurrencySingleParserSingleCore() throws AnnotationException, ConfigurationException, TemplateException,
-			ExecutionException, InterruptedException{
+	void concurrencySingleParserSingleCore() throws FieldException, ExecutionException, InterruptedException{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withConfiguration(REGConfigurationASCII.class)
@@ -66,8 +66,7 @@ class ConfiguratorThreadedTest{
 	}
 
 	@Test
-	void concurrencyMultipleParserSingleCore() throws AnnotationException, ConfigurationException, TemplateException,
-			ExecutionException, InterruptedException{
+	void concurrencyMultipleParserSingleCore() throws FieldException, ExecutionException, InterruptedException{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withConfiguration(REGConfigurationASCII.class)

@@ -214,7 +214,7 @@ class CodecObjectTest{
 	}
 
 	@Test
-	void choice1() throws AnnotationException, TemplateException, ConfigurationException{
+	void choice1() throws FieldException{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withTemplatesFrom(TestChoice1.class)
@@ -248,7 +248,7 @@ class CodecObjectTest{
 	}
 
 	@Test
-	void choice2() throws AnnotationException, TemplateException, ConfigurationException{
+	void choice2() throws FieldException{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withTemplatesFrom(TestChoice2.class)
@@ -282,7 +282,7 @@ class CodecObjectTest{
 	}
 
 	@Test
-	void choice3() throws AnnotationException, TemplateException, ConfigurationException{
+	void choice3() throws FieldException{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withTemplatesFrom(TestChoice3.class)

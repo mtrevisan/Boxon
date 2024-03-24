@@ -263,7 +263,7 @@ class CodecArrayTest{
 	}
 
 	@Test
-	void arrayOfDifferentObjects() throws AnnotationException, TemplateException, ConfigurationException{
+	void arrayOfDifferentObjects() throws FieldException{
 		Core core = CoreBuilder.builder()
 			.withCodecsFrom(CodecChecksum.class, CodecCustomTest.VariableLengthByteArray.class)
 			.withTemplatesFrom(TestChoice4.class)
@@ -289,7 +289,7 @@ class CodecArrayTest{
 	}
 
 	@Test
-	void arrayOfDifferentObjectsWithNoPrefix() throws AnnotationException, TemplateException, ConfigurationException{
+	void arrayOfDifferentObjectsWithNoPrefix() throws FieldException{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
 			.withTemplatesFrom(TestChoice5.class)
