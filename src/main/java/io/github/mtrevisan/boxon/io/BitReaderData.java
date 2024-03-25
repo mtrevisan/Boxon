@@ -36,7 +36,6 @@ import java.util.BitSet;
 /**
  * Provide bit-level tools for reading bits, skipping bits, and performing fallback after a reading on a {@link ByteBuffer}.
  */
-@SuppressWarnings("WeakerAccess")
 abstract class BitReaderData{
 
 	private static final class State{

@@ -83,7 +83,7 @@ final class CodecHelper{
 			final int prefixSize = selectFrom.prefixLength();
 			final ByteOrder prefixBitOrder = selectFrom.bitOrder();
 
-			BitSet bits = BitSet.valueOf(new long[]{chosenAlternative.prefix()});
+			BitSet bits = BitSetHelper.createBitSet(chosenAlternative.prefix(), Integer.SIZE);
 			bits = BitSetHelper.changeBitOrder(bits, prefixBitOrder);
 
 			writer.putBitSet(bits, prefixSize, ByteOrder.BIG_ENDIAN);

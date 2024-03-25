@@ -35,6 +35,21 @@ public final class BitSetHelper{
 	private BitSetHelper(){}
 
 
+	public static BitSet createBitSet(long value, final int size){
+		final BitSet bits = new BitSet(size);
+		while(value != 0){
+			final int nextSetBitIndex = Long.numberOfTrailingZeros(value);
+			if(nextSetBitIndex == Long.SIZE)
+				break;
+
+			bits.set(nextSetBitIndex);
+
+			//reset bit
+			value &= ~(1l << nextSetBitIndex);
+		}
+		return bits;
+	}
+
 	/**
 	 * In-place reverse the order of the given array byte-by-byte.
 	 *

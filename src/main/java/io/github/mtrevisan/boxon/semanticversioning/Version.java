@@ -40,7 +40,6 @@ import java.util.regex.Pattern;
  *
  * @see <a href="https://semver.org/">Semantic Versioning</a>
  */
-@SuppressWarnings("WeakerAccess")
 public final class Version implements Comparable<Version>{
 
 	/** An empty {@code String} array. */
