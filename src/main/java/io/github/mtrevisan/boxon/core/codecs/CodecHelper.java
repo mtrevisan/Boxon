@@ -34,7 +34,6 @@ import io.github.mtrevisan.boxon.helpers.ConstructorHelper;
 import io.github.mtrevisan.boxon.helpers.ContextHelper;
 import io.github.mtrevisan.boxon.io.BitSetHelper;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
-import io.github.mtrevisan.boxon.io.ByteOrder;
 import io.github.mtrevisan.boxon.io.ParserDataType;
 
 import java.lang.reflect.Array;

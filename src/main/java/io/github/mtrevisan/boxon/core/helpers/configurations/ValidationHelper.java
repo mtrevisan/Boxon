@@ -27,13 +27,15 @@ package io.github.mtrevisan.boxon.core.helpers.configurations;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
-import io.github.mtrevisan.boxon.helpers.JavaHelper;
+import io.github.mtrevisan.boxon.helpers.Memoizer;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
+import io.github.mtrevisan.boxon.helpers.ThrowingFunction;
 import io.github.mtrevisan.boxon.io.ParserDataType;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
 import io.github.mtrevisan.boxon.semanticversioning.VersionException;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Pattern;
 
 
@@ -43,6 +45,8 @@ import java.util.regex.Pattern;
 final class ValidationHelper{
 
 	private static final char MUTUALLY_EXCLUSIVE_ENUMERATION_SEPARATOR = '|';
+
+	private static final ThrowingFunction<String, Pattern, Exception> PATTERN_STORE = Memoizer.throwingMemoize(Pattern::compile);
 
 
 	private ValidationHelper(){}
@@ -245,7 +249,7 @@ final class ValidationHelper{
 
 	private static Pattern extractPattern(final String pattern, final ConfigFieldData field) throws AnnotationException{
 		try{
-			return Pattern.compile(pattern);
+			return PATTERN_STORE.apply(pattern);
 		}
 		catch(final Exception e){
 			throw AnnotationException.create("Invalid pattern in {} in field {}", field.getAnnotationName(), field.getFieldName(),
@@ -296,12 +300,12 @@ final class ValidationHelper{
 
 	private static void validateEnumerationCompatibility(final ConfigFieldData field, final ConfigurationEnum[] enumConstants)
 			throws AnnotationException{
-		final String[] defaultValues = StringHelper.split(field.getDefaultValue(), MUTUALLY_EXCLUSIVE_ENUMERATION_SEPARATOR);
-		for(int i = 0, length = JavaHelper.lengthOrZero(defaultValues); i < length; i ++){
-			final ConfigurationEnum enumValue = ConfigurationEnum.extractEnum(enumConstants, defaultValues[i]);
+		final List<String> defaultValues = StringHelper.split(field.getDefaultValue(), MUTUALLY_EXCLUSIVE_ENUMERATION_SEPARATOR);
+		for(int i = 0, length = defaultValues.size(); i < length; i ++){
+			final ConfigurationEnum enumValue = ConfigurationEnum.extractEnum(enumConstants, defaultValues.get(i));
 			if(enumValue == null)
 				throw AnnotationException.create("Default value not compatible with `enumeration` in {}; found {}, expected one of {}",
-					field.getAnnotationName(), defaultValues[i], Arrays.toString(enumConstants));
+					field.getAnnotationName(), defaultValues.get(i), Arrays.toString(enumConstants));
 		}
 	}
 

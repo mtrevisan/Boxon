@@ -61,9 +61,8 @@ final class NumberWriterManager implements WriterManagerInterface{
 				writer.putText(text);
 			else{
 				final BigInteger bi = new BigInteger(text);
-				//FIXME avoid array creation
 				writer.putText(radix == 16
-					? StringHelper.toHexString(bi.toByteArray())
+					? StringHelper.toHexString(bi)
 					: bi.toString(radix));
 			}
 		}

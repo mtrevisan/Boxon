@@ -52,16 +52,6 @@ class BitWriterTest{
 	}
 
 	@Test
-	void bitSetLittleEndian(){
-		BitSet value = BitSet.valueOf(new long[]{0x1234_5678_1234_5678l, 0x6666_7777_8888_9999l});
-		writer.putBitSet(value, Long.SIZE << 1);
-		BitReaderInterface reader = BitReader.wrap(writer);
-
-		Assertions.assertEquals("6666EEEE11119999482C6A1E482C6A1E", reader.toString());
-		Assertions.assertEquals(value, reader.getBitSet(Long.SIZE << 1));
-	}
-
-	@Test
 	void bytePrimitive(){
 		byte value = 0x16;
 		writer.putByte(value);

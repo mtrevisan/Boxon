@@ -30,9 +30,9 @@ import io.github.mtrevisan.boxon.io.ParserDataType;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.regex.Pattern;
 
 
 /**
@@ -52,15 +52,11 @@ public final class Version implements Comparable<Version>{
 	/** An empty instance (see {@link #isEmpty()}). */
 	public static final Version EMPTY = of("");
 
-	private static final String DOT = ".";
+	private static final char DOT = '.';
 	/** A separator that separates the pre-release version from the normal version. */
 	private static final String PRE_RELEASE_PREFIX = "-";
 	/** A separator that separates the build metadata from the normal version or the pre-release version. */
 	private static final String BUILD_PREFIX = "+";
-
-	private static final Pattern PATTERN_DOT = Pattern.compile("\\.");
-	private static final Pattern PATTERN_PRE_RELEASE_PREFIX = Pattern.compile("-");
-	private static final Pattern PATTERN_BUILD_PREFIX = Pattern.compile("\\+");
 
 
 	private final Integer major;
@@ -184,37 +180,40 @@ public final class Version implements Comparable<Version>{
 
 		version = version.trim();
 
-		if(version.contains(BUILD_PREFIX)){
-			final String[] metadata = PATTERN_BUILD_PREFIX.split(version, 2);
-			version = metadata[0];
-			build = PATTERN_DOT.split(metadata[1]);
+		final int buildIndex = version.indexOf(BUILD_PREFIX);
+		if(buildIndex >= 0){
+			build = StringHelper.split(version, buildIndex + 1, DOT)
+				.toArray(EMPTY_STRING_ARRAY);
+			version = version.substring(0, buildIndex);
 
 			validateBuild(build);
 		}
 		else
 			build = EMPTY_STRING_ARRAY;
 
-		if(version.contains(PRE_RELEASE_PREFIX)){
-			final String[] metadata = PATTERN_PRE_RELEASE_PREFIX.split(version, 2);
-			version = metadata[0];
-			preRelease = PATTERN_DOT.split(metadata[1]);
+		final int preReleaseIndex = version.indexOf(PRE_RELEASE_PREFIX);
+		if(preReleaseIndex >= 0){
+			preRelease = StringHelper.split(version, preReleaseIndex + 1, DOT)
+				.toArray(EMPTY_STRING_ARRAY);
+			version = version.substring(0, preReleaseIndex);
 
 			validatePreRelease(preRelease);
 		}
 		else
 			preRelease = EMPTY_STRING_ARRAY;
 
-		final String[] tokens = PATTERN_DOT.split(version);
+		final List<String> tokens = StringHelper.split(version, DOT);
 		major = parseIdentifier(tokens, 0, KEY_MAJOR);
 		minor = parseIdentifier(tokens, 1, KEY_MINOR);
 		patch = parseIdentifier(tokens, 2, KEY_PATCH);
 	}
 
 
-	private static Integer parseIdentifier(final String[] tokens, final int index, final String type) throws VersionException{
+	private static Integer parseIdentifier(final List<String> tokens, final int index, final String type) throws VersionException{
 		Integer value = null;
-		if(tokens.length > index){
-			final String token = tokens[index];
+		if(tokens.size() > index){
+			final String token = tokens.get(index);
+
 			validateToken(type, token);
 			value = Integer.valueOf(token);
 		}
@@ -643,14 +642,15 @@ public final class Version implements Comparable<Version>{
 		String message = JavaHelper.EMPTY_STRING;
 		if(major != null)
 			message += major;
+		final String dot = String.valueOf(DOT);
 		if(minor != null)
-			message += DOT + minor;
+			message += dot + minor;
 		if(patch != null)
-			message += DOT + patch;
+			message += dot + patch;
 		if(preRelease != null && preRelease.length > 0)
-			message += PRE_RELEASE_PREFIX + String.join(DOT, preRelease);
+			message += PRE_RELEASE_PREFIX + String.join(dot, preRelease);
 		if(build != null && build.length > 0)
-			message += BUILD_PREFIX + String.join(DOT, build);
+			message += BUILD_PREFIX + String.join(dot, build);
 		return message;
 	}
 
