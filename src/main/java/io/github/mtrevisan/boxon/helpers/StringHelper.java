@@ -197,6 +197,7 @@ public final class StringHelper{
 		if(length % 2 != 0)
 			throw DataException.create("Input should be of even length, was {}", length);
 
+		//FIXME find a way to remove this array creation
 		final byte[] data = new byte[length >>> 1];
 		if(length > 0){
 			final byte[] bytes = hexString.getBytes(StandardCharsets.US_ASCII);

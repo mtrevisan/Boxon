@@ -25,7 +25,6 @@
 package io.github.mtrevisan.boxon.io;
 
 import java.math.BigInteger;
-import java.util.Arrays;
 import java.util.BitSet;
 
 
@@ -61,6 +60,7 @@ public final class BitSetHelper{
 	 * @return	The bit set representing the given value.
 	 */
 	public static BitSet createBitSet(final BigInteger value, final int size, final ByteOrder byteOrder){
+		//FIXME avoid array creation
 		final byte[] array = value.toByteArray();
 
 		if(byteOrder == ByteOrder.LITTLE_ENDIAN)
@@ -98,41 +98,34 @@ public final class BitSetHelper{
 	 * @return	The converted {@link BigInteger}.
 	 */
 	static BigInteger toBigInteger(final BitSet bits, final int size, final ByteOrder byteOrder){
-		byte[] array = bits.toByteArray();
-		final int expectedLength = size >>> 3;
-		if(array.length < expectedLength)
-			array = Arrays.copyOf(array, expectedLength);
-
-		//NOTE: need to reverse the bytes because `BigInteger` is big-endian and `BitSet` is little-endian
-		BitSetHelper.changeByteOrder(array, byteOrder);
-
-		return new BigInteger(extendSign(array));
-	}
-
-	/**
-	 * Convert the value to signed primitive.
-	 *
-	 * @param array	Field value.
-	 * @return	The 2-complement expressed as int.
-	 */
-	private static byte[] extendSign(byte[] array){
-		if((array[0] & 0x80) != 0x00){
-			array = leftExtendArray(array);
-			array[0] = -1;
+		boolean negative;
+		BigInteger result = BigInteger.ZERO;
+		if(byteOrder == ByteOrder.BIG_ENDIAN){
+			negative = bits.get(7);
+			for(int i = bits.nextSetBit(0); i >= 0; i = bits.nextSetBit(i + 1)){
+				final int index = size - 1 - i;
+				final int byteIndex = index / Byte.SIZE + 1;
+				final int bitIndex = index % Byte.SIZE + 1;
+				result = result.setBit(byteIndex * Byte.SIZE - bitIndex);
+			}
 		}
-		return array;
-	}
+		else{
+			negative = bits.get(size - 1);
+			for(int i = bits.nextSetBit(0); i >= 0; i = bits.nextSetBit(i + 1))
+				result = result.setBit(i);
+		}
 
-	/**
-	 * Extends an array leaving room for one more byte at the leftmost index.
-	 *
-	 * @param array	The array to extend.
-	 * @return	The extended array.
-	 */
-	private static byte[] leftExtendArray(final byte[] array){
-		final byte[] extendedArray = new byte[array.length + 1];
-		System.arraycopy(array, 0, extendedArray, 1, array.length);
-		return extendedArray;
+		if(negative){
+			final BigInteger mask = BigInteger.ONE
+				.shiftLeft(size)
+				.subtract(BigInteger.ONE);
+			result = result.not()
+				.add(BigInteger.ONE)
+				.and(mask)
+				.negate();
+		}
+
+		return result;
 	}
 
 
@@ -151,11 +144,11 @@ public final class BitSetHelper{
 	 * Change the byte order appropriately.
 	 *
 	 * @param bits	The bit set.
-	 * @param bitOrder	The bit order.
-	 * @return	The bit set with the bits reversed if the bit order is little-endian.
+	 * @param byteOrder	The byte order.
+	 * @return	The bit set with the bytes reversed if the byte order is little-endian.
 	 */
-	public static BitSet changeBitOrder(final BitSet bits, final ByteOrder bitOrder){
-		return (bitOrder == ByteOrder.LITTLE_ENDIAN? bitReverse(bits): bits);
+	public static BitSet changeBitOrder(final BitSet bits, final ByteOrder byteOrder){
+		return (byteOrder == ByteOrder.LITTLE_ENDIAN? bitReverseEndianness(bits): bits);
 	}
 
 	/**
@@ -164,9 +157,10 @@ public final class BitSetHelper{
 	 * @param bits	The bit set.
 	 * @return	The {@link BitSet} with the bits reversed.
 	 */
-	private static BitSet bitReverse(final BitSet bits){
+	private static BitSet bitReverseEndianness(final BitSet bits){
+		//FIXME avoid array creation
 		final byte[] array = bits.toByteArray();
-		bitReverse(array);
+		bitReverseEndianness(array);
 		return BitSet.valueOf(array);
 	}
 
@@ -175,9 +169,9 @@ public final class BitSetHelper{
 	 *
 	 * @param array	The array to be reversed.
 	 */
-	private static void bitReverse(final byte[] array){
+	private static void bitReverseEndianness(final byte[] array){
 		for(int i = 0, length = array.length; i < length; i ++)
-			array[i] = reverseBits(array[i]);
+			array[i] = reverseBitsEndianness(array[i]);
 		byteReverse(array);
 	}
 
@@ -187,7 +181,7 @@ public final class BitSetHelper{
 	 * @param number	The byte to be reversed.
 	 * @return	The given number with the bits reversed.
 	 */
-	private static byte reverseBits(byte number){
+	private static byte reverseBitsEndianness(byte number){
 		byte reverse = 0;
 		for(int i = Byte.SIZE - 1; i >= 0; i --){
 			reverse += (byte)((number & 1) << i);
