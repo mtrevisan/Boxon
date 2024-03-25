@@ -50,7 +50,7 @@ class BitWriterData{
 	 * @param length	The amount of bits to skip.
 	 */
 	public final void skipBits(final int length){
-		putBitSet(new BitSet(0), length, ByteOrder.BIG_ENDIAN);
+		putBitSet(new BitSet(0), length);
 	}
 
 	/**
@@ -58,11 +58,8 @@ class BitWriterData{
 	 *
 	 * @param bits	The value to write.
 	 * @param size	The amount of bits to use when writing {@code value}.
-	 * @param bitOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 */
-	public final void putBitSet(BitSet bits, final int size, final ByteOrder bitOrder){
-		bits = BitSetHelper.changeBitOrder(bits, bitOrder);
-
+	public final void putBitSet(final BitSet bits, final int size){
 		//if the value that we're writing is too large to be placed entirely in the cache, then we need to place as
 		//much as we can in the cache (the least significant bits), flush the cache to the backing ByteBuffer, and
 		//place the rest in the cache
@@ -111,7 +108,7 @@ class BitWriterData{
 	 */
 	public final void putValue(final long value, final int size){
 		final BitSet bits = BitSetHelper.createBitSet(value, size);
-		putBitSet(bits, size, ByteOrder.BIG_ENDIAN);
+		putBitSet(bits, size);
 	}
 
 

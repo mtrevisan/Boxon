@@ -122,10 +122,9 @@ abstract class BitReaderData{
 	 * Reads the next {@code length} bits and composes a {@link BitSet} in big-endian notation.
 	 *
 	 * @param length	The amount of bits to read.
-	 * @param bitOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	A {@link BitSet} value at the {@link BitReader}'s current position.
 	 */
-	public final BitSet getBitSet(final int length, final ByteOrder bitOrder){
+	public final BitSet getBitSet(final int length){
 		final BitSet bits = new BitSet(length);
 		int offset = 0;
 		while(offset < length){
@@ -144,7 +143,7 @@ abstract class BitReaderData{
 				remaining = Byte.SIZE;
 			}
 		}
-		return BitSetHelper.changeBitOrder(bits, bitOrder);
+		return bits;
 	}
 
 	private Byte peekByte(){

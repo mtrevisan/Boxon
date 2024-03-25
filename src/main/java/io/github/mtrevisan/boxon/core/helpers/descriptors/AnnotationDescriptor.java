@@ -168,7 +168,6 @@ public enum AnnotationDescriptor{
 			final BindBitSet binding = (BindBitSet)annotation;
 			putIfNotEmpty(DescriberKey.BIND_CONDITION, binding.condition(), rootDescription);
 			putIfNotEmpty(DescriberKey.BIND_SIZE, binding.size(), rootDescription);
-			putIfNotEmpty(DescriberKey.BIND_BIT_ORDER, binding.bitOrder(), rootDescription);
 			describeValidator(binding.validator(), rootDescription);
 			describeConverter(binding.converter(), rootDescription);
 			describeAlternatives(binding.selectConverterFrom().alternatives(), rootDescription);
@@ -519,7 +518,6 @@ public enum AnnotationDescriptor{
 
 	private static void describeChoices(final ObjectChoices choices, final Map<String, Object> rootDescription){
 		putIfNotEmpty(DescriberKey.BIND_PREFIX_LENGTH, choices.prefixLength(), rootDescription);
-		putIfNotEmpty(DescriberKey.BIND_BIT_ORDER, choices.bitOrder(), rootDescription);
 		describeAlternatives(choices.alternatives(), rootDescription);
 	}
 

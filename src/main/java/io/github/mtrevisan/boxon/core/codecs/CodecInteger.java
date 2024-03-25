@@ -78,7 +78,7 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 		final ByteOrder byteOrder = binding.byteOrder();
 		final BitSet bits = BitSetHelper.createBitSet(v, size, byteOrder);
 
-		writer.putBitSet(bits, size, ByteOrder.BIG_ENDIAN);
+		writer.putBitSet(bits, size);
 	}
 
 }

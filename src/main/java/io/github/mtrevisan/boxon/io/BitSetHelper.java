@@ -144,44 +144,74 @@ public final class BitSetHelper{
 	 * Change the byte order appropriately.
 	 *
 	 * @param bits	The bit set.
+	 * @param size	Length in bytes of the entire bit set.
 	 * @param byteOrder	The byte order.
 	 * @return	The bit set with the bytes reversed if the byte order is little-endian.
 	 */
-	public static BitSet changeBitOrder(final BitSet bits, final ByteOrder byteOrder){
-		return (byteOrder == ByteOrder.LITTLE_ENDIAN? bitReverseEndianness(bits): bits);
+	public static BitSet changeBitOrder(final BitSet bits, final int size, final ByteOrder byteOrder){
+		return (byteOrder == ByteOrder.LITTLE_ENDIAN? bitReverseEndianness(bits, size): bits);
 	}
 
 	/**
 	 * Reverse the endianness bit by bit.
 	 *
 	 * @param bits	The bit set.
+	 * @param size	Length in bytes of the entire bit set.
 	 * @return	The {@link BitSet} with the bits reversed.
 	 */
-	private static BitSet bitReverseEndianness(final BitSet bits){
+	private static BitSet bitReverseEndianness(final BitSet bits, final int size){
 		//FIXME avoid array creation
 		final byte[] array = bits.toByteArray();
-		bitReverseEndianness(array);
+		reverseEndianness(array, size);
 		return BitSet.valueOf(array);
 	}
 
+	private static BitSet bitReverseEndianness2(final BitSet bits, final int size){
+		final BitSet reversedBits = new BitSet(size);
+		for(int i = bits.nextSetBit(0); i >= 0; i = bits.nextSetBit(i + 1)){
+			if(bits.get(i)){
+				final int index = size - 1 - i;
+				final int byteIndex = index / Byte.SIZE + 1;
+				final int bitIndex = index % Byte.SIZE + 1;
+				reversedBits.set(byteIndex * Byte.SIZE - bitIndex);
+			}
+//			reversedBits.set(length - 1 - i);
+		}
+		return reversedBits;
+	}
+
 	/**
-	 * Reverse the endianness bit by bit.
+	 * Reverse the endianness byte by byte.
 	 *
 	 * @param array	The array to be reversed.
 	 */
-	private static void bitReverseEndianness(final byte[] array){
+	private static void reverseEndianness(final byte[] array, final int size){
+		byte temp;
+		for(int i = 0, length = Math.min(array.length, size) >> 1; i < length; i ++){
+			temp = array[i];
+			array[i] = array[length - 1 - i];
+			array[length - 1 - i] = temp;
+		}
+	}
+
+	/**
+	 * Reverse bit by bit.
+	 *
+	 * @param array	The array to be reversed.
+	 */
+	private static void bitReverse(final byte[] array){
 		for(int i = 0, length = array.length; i < length; i ++)
-			array[i] = reverseBitsEndianness(array[i]);
+			array[i] = reverseBits(array[i]);
 		byteReverse(array);
 	}
 
 	/**
-	 * Reverse the endianness bit by bit.
+	 * Reverse the number bit by bit.
 	 *
 	 * @param number	The byte to be reversed.
 	 * @return	The given number with the bits reversed.
 	 */
-	private static byte reverseBitsEndianness(byte number){
+	private static byte reverseBits(byte number){
 		byte reverse = 0;
 		for(int i = Byte.SIZE - 1; i >= 0; i --){
 			reverse += (byte)((number & 1) << i);

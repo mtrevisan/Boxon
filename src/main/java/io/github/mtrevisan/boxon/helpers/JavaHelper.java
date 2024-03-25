@@ -62,6 +62,15 @@ public final class JavaHelper{
 	}
 
 
+	public static int roundBitsToByte(final int bits){
+		return roundTo(bits, Byte.SIZE) >>> 3;
+	}
+
+	private static int roundTo(final int value, final int roundTo){
+		return (value + roundTo - 1) & -roundTo;
+	}
+
+
 	/**
 	 * Return the given object if non-null, the default object otherwise.
 	 *
