@@ -24,6 +24,8 @@
  */
 package io.github.mtrevisan.boxon.io;
 
+import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.BitSet;
 
 
@@ -49,6 +51,90 @@ public final class BitSetHelper{
 		}
 		return bits;
 	}
+
+	/**
+	 * Converts a {@link BigInteger} into a bit set ignoring the sign of the {@link BigInteger}, according to SRP specification.
+	 *
+	 * @param value	The value, must not be {@code null}.
+	 * @param size	The size in bits of the value.
+	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
+	 * @return	The bit set representing the given value.
+	 */
+	public static BitSet createBitSet(final BigInteger value, final int size, final ByteOrder byteOrder){
+		final byte[] array = value.toByteArray();
+
+		if(byteOrder == ByteOrder.LITTLE_ENDIAN)
+			//NOTE: need to reverse the bytes because {@link BigInteger} is big-endian and {@link BitSet} is little-endian
+			BitSetHelper.changeByteOrder(array, byteOrder);
+		else if((size + Byte.SIZE - 1) >>> 3 != array.length)
+			return createBitSet(array, size);
+
+		return BitSet.valueOf(array);
+	}
+
+	private static BitSet createBitSet(final byte[] array, final int size){
+		final BitSet bits = new BitSet(size);
+		int bitIndex = 0;
+		int bitSetIndex = Byte.SIZE;
+		//transfer bits one by one from the most significant byte to the {@link BitSet}
+		for(int i = 0, length = array.length; i < length && bitIndex < size; i ++){
+			final byte currentByte = array[i];
+
+			//iterate over the bits from left to right in the byte (most significant to least significant)
+			for(int j = 0; j < Byte.SIZE && bitIndex < size; j ++, bitIndex ++){
+				final boolean bitValue = (((currentByte >> j) & 1) == 1);
+				bits.set(bitSetIndex ++, bitValue);
+			}
+		}
+		return bits;
+	}
+
+	/**
+	 * Convert this bit set to {@link BigInteger}.
+	 *
+	 * @param bits	The bit set.
+	 * @param size	The number of bits.
+	 * @param byteOrder	The byte order.
+	 * @return	The converted {@link BigInteger}.
+	 */
+	static BigInteger toBigInteger(final BitSet bits, final int size, final ByteOrder byteOrder){
+		byte[] array = bits.toByteArray();
+		final int expectedLength = size >>> 3;
+		if(array.length < expectedLength)
+			array = Arrays.copyOf(array, expectedLength);
+
+		//NOTE: need to reverse the bytes because `BigInteger` is big-endian and `BitSet` is little-endian
+		BitSetHelper.changeByteOrder(array, byteOrder);
+
+		return new BigInteger(extendSign(array));
+	}
+
+	/**
+	 * Convert the value to signed primitive.
+	 *
+	 * @param array	Field value.
+	 * @return	The 2-complement expressed as int.
+	 */
+	private static byte[] extendSign(byte[] array){
+		if((array[0] & 0x80) != 0x00){
+			array = leftExtendArray(array);
+			array[0] = -1;
+		}
+		return array;
+	}
+
+	/**
+	 * Extends an array leaving room for one more byte at the leftmost index.
+	 *
+	 * @param array	The array to extend.
+	 * @return	The extended array.
+	 */
+	private static byte[] leftExtendArray(final byte[] array){
+		final byte[] extendedArray = new byte[array.length + 1];
+		System.arraycopy(array, 0, extendedArray, 1, array.length);
+		return extendedArray;
+	}
+
 
 	/**
 	 * In-place reverse the order of the given array byte-by-byte.

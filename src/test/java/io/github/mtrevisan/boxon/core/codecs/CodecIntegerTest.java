@@ -36,6 +36,7 @@ import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.BitReader;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
+import io.github.mtrevisan.boxon.io.BitSetHelper;
 import io.github.mtrevisan.boxon.io.BitWriter;
 import io.github.mtrevisan.boxon.io.ByteOrder;
 import io.github.mtrevisan.boxon.io.CodecInterface;
@@ -491,7 +492,7 @@ class CodecIntegerTest{
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		BitSet bits = CodecInteger.toBitSet(encodedValue, 128, ByteOrder.LITTLE_ENDIAN);
+		BitSet bits = BitSetHelper.createBitSet(encodedValue, 128, ByteOrder.LITTLE_ENDIAN);
 		Assertions.assertEquals(rightPad(StringHelper.toHexString(bits.toByteArray()), 32, '0'), writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
