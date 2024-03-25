@@ -80,8 +80,7 @@ public final class GenericHelper{
 	 *
 	 * @see <a href="https://stackoverflow.com/questions/17297308/how-do-i-resolve-the-actual-type-for-a-generic-return-type-using-reflection">How do I resolve the actual type for a generic return type using reflection?</a>
 	 */
-	public static <T> List<Class<?>> resolveGenericTypes(final Class<? extends T> offspring, final Class<T> base,
-			final Type... actualArgs){
+	public static <T> List<Class<?>> resolveGenericTypes(final Class<? extends T> offspring, final Class<T> base, final Type... actualArgs){
 		//initialize list to store resolved types
 		final List<Class<?>> types = new ArrayList<>(0);
 
@@ -91,29 +90,15 @@ public final class GenericHelper{
 			final Type[] currentTypes = stack.poll();
 			final Class<?> currentOffspring = (Class<?>)currentTypes[0];
 
+			//find direct ancestors (superclass and interfaces)
+			final Queue<Type> ancestorsQueue = extractAncestors(currentOffspring);
+
 			//map type parameters into the actual types
 			final TypeVariable<? extends Class<?>>[] typeParameters = currentOffspring.getTypeParameters();
 			final Map<String, Type> typeVariables = mapParameterTypes(typeParameters);
 
-			//find direct ancestors (superclass and interfaces)
-			final Queue<Type> ancestorsQueue = extractAncestors(currentOffspring);
-
 			//process ancestors
-			while(!ancestorsQueue.isEmpty()){
-				final Type ancestorType = ancestorsQueue.poll();
-
-				if(ancestorType instanceof final ParameterizedType pt){
-					//ancestor is parameterized: process only if the raw type matches the base class
-					final Type rawType = pt.getRawType();
-					if(rawType instanceof final Class<?> c && base.isAssignableFrom(c)){
-						final Type[] resolvedTypes = populateResolvedTypes(pt, typeVariables);
-						stack.add(concat(rawType, resolvedTypes));
-					}
-				}
-				else if(ancestorType instanceof final Class<?> c && base.isAssignableFrom(c))
-					//ancestor is non-parameterized: process only if it matches the base class
-					stack.add(new Type[]{ancestorType});
-			}
+			processAncestors(ancestorsQueue, typeVariables, base, stack);
 
 			//if there are no resolved types and offspring is equal to base, process the base
 			if(types.isEmpty() && currentOffspring.equals(base))
@@ -134,25 +119,6 @@ public final class GenericHelper{
 		return result;
 	}
 
-	private static Collection<Class<?>> processBase(final Type[] actualArgs){
-		//there is a result if the base class is reached
-		final int length = actualArgs.length;
-		final Collection<Class<?>> types = new ArrayList<>(length);
-		for(int i = 1; i < length; i ++)
-			types.add((Class<?>)actualArgs[i]);
-		return types;
-	}
-
-	private static Type[] populateResolvedTypes(final ParameterizedType ancestorType, final Map<String, Type> typeVariables){
-		final Type[] actualTypeArguments = ancestorType.getActualTypeArguments();
-		final int length = actualTypeArguments.length;
-		final Type[] resolvedTypes = new Type[length];
-		//loop through all type arguments and replace type variables with the actually known types
-		for(int i = 0; i < length; i ++)
-			resolvedTypes[i] = resolveArgumentType(typeVariables, actualTypeArguments[i]);
-		return resolvedTypes;
-	}
-
 	private static Map<String, Type> mapParameterTypes(final Type[] actualTypes){
 		final int length = actualTypes.length;
 		final Map<String, Type> typeVariables = new HashMap<>(length);
@@ -165,12 +131,41 @@ public final class GenericHelper{
 
 	private static Queue<Type> extractAncestors(final Class<?> offspring){
 		final Type[] genericInterfaces = offspring.getGenericInterfaces();
-		final Queue<Type> ancestorsQueue = new ArrayDeque<>(genericInterfaces.length);
+		final Queue<Type> ancestorsQueue = new ArrayDeque<>(genericInterfaces.length + 1);
 		ancestorsQueue.addAll(Arrays.asList(genericInterfaces));
 		final Type genericSuperclass = offspring.getGenericSuperclass();
 		if(genericSuperclass != null)
 			ancestorsQueue.add(genericSuperclass);
 		return ancestorsQueue;
+	}
+
+	private static <T> void processAncestors(final Queue<Type> ancestorsQueue, final Map<String, Type> typeVariables, final Class<T> base,
+			final Queue<Type[]> stack){
+		while(!ancestorsQueue.isEmpty()){
+			final Type ancestorType = ancestorsQueue.poll();
+
+			if(ancestorType instanceof final ParameterizedType pt){
+				//ancestor is parameterized: process only if the raw type matches the base class
+				final Type rawType = pt.getRawType();
+				if(rawType instanceof final Class<?> c && base.isAssignableFrom(c)){
+					final Type[] resolvedTypes = populateResolvedTypes(pt, typeVariables);
+					stack.add(concat(rawType, resolvedTypes));
+				}
+			}
+			else if(ancestorType instanceof final Class<?> c && base.isAssignableFrom(c))
+				//ancestor is non-parameterized: process only if it matches the base class
+				stack.add(new Type[]{ancestorType});
+		}
+	}
+
+	private static Type[] populateResolvedTypes(final ParameterizedType ancestorType, final Map<String, Type> typeVariables){
+		final Type[] actualTypeArguments = ancestorType.getActualTypeArguments();
+		final int length = actualTypeArguments.length;
+		final Type[] resolvedTypes = new Type[length];
+		//loop through all type arguments and replace type variables with the actually known types
+		for(int i = 0; i < length; i ++)
+			resolvedTypes[i] = resolveArgumentType(typeVariables, actualTypeArguments[i]);
+		return resolvedTypes;
 	}
 
 	private static Type resolveArgumentType(final Map<String, Type> typeVariables, final Type actualTypeArgument){
@@ -180,14 +175,23 @@ public final class GenericHelper{
 		return typeVariables.getOrDefault(key, actualTypeArgument);
 	}
 
+	private static Collection<Class<?>> processBase(final Type[] actualArgs){
+		//there is a result if the base class is reached
+		final int length = actualArgs.length;
+		final Collection<Class<?>> types = new ArrayList<>(length);
+		for(int i = 1; i < length; i ++)
+			types.add((Class<?>)actualArgs[i]);
+		return types;
+	}
+
 
 	/**
-	 * Convert a given String into the appropriate Class.
+	 * Convert a given string into the appropriate class.
 	 *
 	 * @param name	Name of class.
 	 * @return	The class for the given name, {@code null} if some error happens.
 	 */
-	private static Class<?> toClass(final String name){
+	public static Class<?> toClass(final String name){
 		final int arraysCount = StringUtils.countOccurrencesOf(name, ARRAY_VARIABLE);
 		final String baseName = name.substring(0, name.length() - arraysCount * ARRAY_VARIABLE.length());
 
