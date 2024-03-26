@@ -33,7 +33,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -154,20 +153,17 @@ public enum ParserDataType{
 	static{
 		final ParserDataType[] values = values();
 		final int length = values.length;
-		final Map<Class<?>, Class<?>> primitiveWrapperMap = new HashMap<>(length);
-		final Map<Class<?>, Class<?>> wrapperPrimitiveMap = new HashMap<>(length);
-		final Map<Class<?>, ParserDataType> typeMap = new HashMap<>(length << 1);
+		PRIMITIVE_WRAPPER_MAP = new HashMap<>(length);
+		WRAPPER_PRIMITIVE_MAP = new HashMap<>(length);
+		TYPE_MAP = new HashMap<>(length << 1);
 		for(int i = 0; i < length; i ++){
 			final ParserDataType dt = values[i];
 
-			primitiveWrapperMap.put(dt.primitiveType, dt.objectiveType);
-			wrapperPrimitiveMap.put(dt.objectiveType, dt.primitiveType);
-			typeMap.put(dt.primitiveType, dt);
-			typeMap.put(dt.objectiveType, dt);
+			PRIMITIVE_WRAPPER_MAP.put(dt.primitiveType, dt.objectiveType);
+			WRAPPER_PRIMITIVE_MAP.put(dt.objectiveType, dt.primitiveType);
+			TYPE_MAP.put(dt.primitiveType, dt);
+			TYPE_MAP.put(dt.objectiveType, dt);
 		}
-		PRIMITIVE_WRAPPER_MAP = Collections.unmodifiableMap(primitiveWrapperMap);
-		WRAPPER_PRIMITIVE_MAP = Collections.unmodifiableMap(wrapperPrimitiveMap);
-		TYPE_MAP = Collections.unmodifiableMap(typeMap);
 	}
 
 	private static final String METHOD_VALUE_OF = "valueOf";

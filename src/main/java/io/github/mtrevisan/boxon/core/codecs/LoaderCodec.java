@@ -129,8 +129,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	public void addCodec(final CodecInterface<?> codec){
 		Objects.requireNonNull(codec, "Codec cannot be null");
 
-		final Class<?>[] codecClasses = new Class<?>[]{codec.getClass()};
-		eventListener.loadingCodec(codecClasses);
+		eventListener.loadingCodec(codec.getClass());
 
 		addCodecInner(codec);
 

@@ -56,7 +56,7 @@ final class NumberWriterManager implements WriterManagerInterface{
 		else if(value instanceof final BigInteger v)
 			writer.putText(v.toString(radix));
 		else if(value instanceof Number){
-			final String text = String.valueOf(value);
+			final String text = value.toString();
 			if(radix == 10)
 				writer.putText(text);
 			else{

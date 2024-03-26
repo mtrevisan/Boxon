@@ -103,7 +103,7 @@ final class PlainManager implements ConfigurationManagerInterface{
 
 	@SuppressWarnings("DuplicatedCode")
 	private Map<String, Object> extractMap(final Class<?> fieldType) throws CodecException, ConfigurationException{
-		final Map<String, Object> map = new HashMap<>(10);
+		final Map<String, Object> map = new HashMap<>(9);
 
 		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, annotation.longDescription(), map);
 		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.UNIT_OF_MEASURE, annotation.unitOfMeasure(), map);

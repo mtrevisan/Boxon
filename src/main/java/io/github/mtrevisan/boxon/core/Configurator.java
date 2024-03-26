@@ -34,6 +34,7 @@ import io.github.mtrevisan.boxon.core.keys.ConfigurationKey;
 import io.github.mtrevisan.boxon.core.parsers.ConfigurationParser;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
+import io.github.mtrevisan.boxon.exceptions.DataException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.exceptions.ProtocolException;
@@ -120,7 +121,7 @@ public final class Configurator{
 	 */
 	public List<Map<String, Object>> getConfigurations(final String protocol) throws CodecException, ConfigurationException{
 		if(StringHelper.isBlank(protocol))
-			throw new IllegalArgumentException(StringHelper.format("Invalid protocol: {}", protocol));
+			throw DataException.create("Invalid protocol: {}", protocol);
 
 		final List<ConfigurationMessage<?>> configurationValues = configurationParser.getConfigurations();
 		final Version currentProtocol = Version.of(protocol);
@@ -153,7 +154,7 @@ public final class Configurator{
 	}
 
 	private static Map<String, Object> extractMap(final Version protocol, final ConfigurationHeader header) throws ConfigurationException{
-		final Map<String, Object> map = new HashMap<>(3);
+		final Map<String, Object> map = new HashMap<>(4);
 		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.SHORT_DESCRIPTION, header.shortDescription(), map);
 		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, header.longDescription(), map);
 		if(protocol.isEmpty()){

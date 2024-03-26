@@ -153,9 +153,9 @@ public final class Version implements Comparable<Version>{
 			throws VersionException{
 		validateToken(KEY_MAJOR, String.valueOf(major));
 		if(minor != null)
-			validateToken(KEY_MINOR, String.valueOf(minor));
+			validateToken(KEY_MINOR, minor.toString());
 		if(patch != null)
-			validateToken(KEY_PATCH, String.valueOf(patch));
+			validateToken(KEY_PATCH, patch.toString());
 		if(preRelease != null)
 			validatePreRelease(preRelease);
 		if(build != null)
@@ -639,19 +639,23 @@ public final class Version implements Comparable<Version>{
 
 	@Override
 	public String toString(){
-		String message = JavaHelper.EMPTY_STRING;
+		final StringBuilder sb = new StringBuilder();
 		if(major != null)
-			message += major;
-		final String dot = String.valueOf(DOT);
+			sb.append(major);
 		if(minor != null)
-			message += dot + minor;
+			sb.append(DOT)
+				.append(minor);
 		if(patch != null)
-			message += dot + patch;
+			sb.append(DOT)
+				.append(patch);
+		final String dot = String.valueOf(DOT);
 		if(preRelease != null && preRelease.length > 0)
-			message += PRE_RELEASE_PREFIX + String.join(dot, preRelease);
+			sb.append(PRE_RELEASE_PREFIX)
+				.append(String.join(dot, preRelease));
 		if(build != null && build.length > 0)
-			message += BUILD_PREFIX + String.join(dot, build);
-		return message;
+			sb.append(BUILD_PREFIX)
+				.append(String.join(dot, build));
+		return sb.toString();
 	}
 
 }

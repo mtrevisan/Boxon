@@ -40,7 +40,7 @@ public final class ShortToCharacterConverter implements Converter<Short, Charact
 
 	@Override
 	public Short encode(final Character value){
-		return (short)Character.codePointAt(new char[]{value}, 0);
+		return (short)Character.codePointAt(String.valueOf(value), 0);
 	}
 
 }
