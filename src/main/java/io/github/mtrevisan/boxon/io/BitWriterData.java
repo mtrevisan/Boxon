@@ -35,6 +35,9 @@ import java.util.BitSet;
  */
 class BitWriterData{
 
+	private static final BitSet EMPTY_BIT_SET = BitSetHelper.createBitSet(0);
+
+
 	/** The backing {@link ByteArrayOutputStream}. */
 	private final ByteArrayOutputStream os = new ByteArrayOutputStream(0);
 
@@ -50,7 +53,7 @@ class BitWriterData{
 	 * @param length	The amount of bits to skip.
 	 */
 	public final void skipBits(final int length){
-		putBitSet(new BitSet(0), length);
+		putBitSet(EMPTY_BIT_SET, length);
 	}
 
 	/**

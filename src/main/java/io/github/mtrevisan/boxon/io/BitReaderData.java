@@ -125,7 +125,7 @@ abstract class BitReaderData{
 	 * @return	A {@link BitSet} value at the {@link BitReader}'s current position.
 	 */
 	public final BitSet getBitSet(final int length){
-		final BitSet bits = new BitSet(length);
+		final BitSet bits = BitSetHelper.createBitSet(length);
 		int offset = 0;
 		while(offset < length){
 			//transfer the cache values

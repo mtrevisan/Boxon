@@ -24,6 +24,8 @@
  */
 package io.github.mtrevisan.boxon.annotations.bindings;
 
+import io.github.mtrevisan.boxon.io.ByteOrder;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -46,6 +48,13 @@ public @interface ObjectChoices{
 	 * @return	The number of bits to be read for determining the header (defaults to {@code 0}).
 	 */
 	int prefixLength() default 0;
+
+	/**
+	 * The type of endianness of the prefix: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
+	 *
+	 * @return	The type of endianness of the prefix (defaults to {@link ByteOrder#BIG_ENDIAN}).
+	 */
+	ByteOrder byteOrder() default ByteOrder.BIG_ENDIAN;
 
 	/**
 	 * The choices to select from.

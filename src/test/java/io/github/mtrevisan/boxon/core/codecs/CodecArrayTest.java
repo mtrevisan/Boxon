@@ -198,6 +198,11 @@ class CodecArrayTest{
 					}
 
 					@Override
+					public ByteOrder byteOrder(){
+						return ByteOrder.BIG_ENDIAN;
+					}
+
+					@Override
 					public ObjectChoice[] alternatives(){
 						return new ObjectChoice[0];
 					}

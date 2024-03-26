@@ -81,7 +81,7 @@ final class CodecHelper{
 		if(ContextHelper.containsHeaderReference(chosenAlternative.condition())){
 			final int prefixSize = selectFrom.prefixLength();
 
-			final BitSet bits = BitSetHelper.createBitSet(chosenAlternative.prefix(), Integer.SIZE);
+			final BitSet bits = BitSetHelper.createBitSet(chosenAlternative.prefix(), prefixSize);
 
 			writer.putBitSet(bits, prefixSize);
 		}

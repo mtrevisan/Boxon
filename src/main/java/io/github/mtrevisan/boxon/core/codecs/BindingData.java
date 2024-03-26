@@ -36,10 +36,14 @@ import io.github.mtrevisan.boxon.helpers.ConstructorHelper;
 import io.github.mtrevisan.boxon.helpers.ContextHelper;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
+import io.github.mtrevisan.boxon.io.BitSetHelper;
+import io.github.mtrevisan.boxon.io.ByteOrder;
 import org.springframework.expression.EvaluationException;
 
 import java.lang.annotation.Annotation;
+import java.math.BigInteger;
 import java.nio.charset.Charset;
+import java.util.BitSet;
 
 
 /** Data associated to an annotation. */
@@ -162,9 +166,9 @@ final class BindingData{
 	private void addPrefixToContext(final BitReaderInterface reader){
 		final int prefixSize = selectObjectFrom.prefixLength();
 		if(prefixSize > 0){
-			final long[] array = reader.getBitSet(prefixSize)
-				.toLongArray();
-			final int prefix = (array.length > 0? (int)array[0]: 0);
+			final BitSet bits = reader.getBitSet(prefixSize);
+			final ByteOrder byteOrder = selectObjectFrom.byteOrder();
+			final BigInteger prefix = BitSetHelper.toBigInteger(bits, prefixSize, byteOrder);
 
 			evaluator.addToContext(ContextHelper.CONTEXT_CHOICE_PREFIX, prefix);
 		}

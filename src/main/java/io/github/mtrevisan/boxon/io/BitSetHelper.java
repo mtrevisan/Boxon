@@ -36,8 +36,12 @@ public final class BitSetHelper{
 	private BitSetHelper(){}
 
 
+	public static BitSet createBitSet(final int size){
+		return new BitSet(size);
+	}
+
 	public static BitSet createBitSet(long value, final int size){
-		final BitSet bits = new BitSet(size);
+		final BitSet bits = createBitSet(size);
 		while(value != 0){
 			final int nextSetBitIndex = Long.numberOfTrailingZeros(value);
 			if(nextSetBitIndex == Long.SIZE)
@@ -61,7 +65,7 @@ public final class BitSetHelper{
 	 */
 	public static BitSet createBitSet(final BigInteger value, final int size, final ByteOrder byteOrder){
 		final boolean littleEndian = (byteOrder == ByteOrder.LITTLE_ENDIAN);
-		final BitSet bits = new BitSet(size);
+		final BitSet bits = createBitSet(size);
 		//transfer bits one by one from the most significant byte to the {@link BitSet}
 		for(int i = 0, length = (size + Byte.SIZE - 1) / Byte.SIZE; i < length; i ++){
 			final int byteIndex = (littleEndian? i: length - 1 - i);
@@ -76,6 +80,7 @@ public final class BitSetHelper{
 		return bits;
 	}
 
+
 	/**
 	 * Convert this bit set to {@link BigInteger}.
 	 *
@@ -84,7 +89,7 @@ public final class BitSetHelper{
 	 * @param byteOrder	The byte order.
 	 * @return	The converted {@link BigInteger}.
 	 */
-	static BigInteger toBigInteger(final BitSet bits, final int bitSize, final ByteOrder byteOrder){
+	public static BigInteger toBigInteger(final BitSet bits, final int bitSize, final ByteOrder byteOrder){
 		final boolean negative;
 		BigInteger result;
 		if(byteOrder == ByteOrder.BIG_ENDIAN){
