@@ -106,9 +106,8 @@ final class ValidationHelper{
 	 * @param field	The configuration field data.
 	 * @param dataValue	The value to check against.
 	 * @throws AnnotationException	If a validation error occurs.
-	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
 	 */
-	static void validateMinMaxValues(final ConfigFieldData field, final Object dataValue) throws AnnotationException, CodecException{
+	static void validateMinMaxDataValues(final ConfigFieldData field, final Object dataValue) throws AnnotationException{
 		if(StringHelper.isBlank(field.getMinValue()) && StringHelper.isBlank(field.getMaxValue()))
 			return;
 
@@ -116,26 +115,24 @@ final class ValidationHelper{
 		if(fieldType.isArray())
 			throw AnnotationException.create("Array field should not have `minValue` or `maxValue`");
 
-		final String defaultValue = field.getDefaultValue();
-		final BigDecimal def = JavaHelper.toBigDecimal(defaultValue);
-		if(def != null){
-			final BigDecimal min = validateMinValue(field, def);
-			final BigDecimal max = validateMaxValue(field, def);
-
-			if(min != null && max != null && min.compareTo(max) > 0)
-				//`maxValue` after or equal to `minValue`
-				throw AnnotationException.create("Minimum value should be less than or equal to maximum value in {}; expected {} <= {}",
-					field.getAnnotationName(), field.getMinValue(), field.getMaxValue());
-		}
-
+		final BigDecimal def = JavaHelper.toBigDecimal(field.getDefaultValue());
+		validateMinMaxValues(field, def);
 
 		if(dataValue != null && String.class.isAssignableFrom(dataValue.getClass())){
 			final BigDecimal val = JavaHelper.toBigDecimal((String)dataValue);
-			if(val != null){
-				validateMinValue(field, val);
-				validateMaxValue(field, val);
-			}
+			validateMinValue(field, val);
+			validateMaxValue(field, val);
 		}
+	}
+
+	private static void validateMinMaxValues(final ConfigFieldData field, final BigDecimal def) throws AnnotationException{
+		final BigDecimal min = validateMinValue(field, def);
+		final BigDecimal max = validateMaxValue(field, def);
+
+		if(min != null && max != null && min.compareTo(max) > 0)
+			//`maxValue` after or equal to `minValue`
+			throw AnnotationException.create("Minimum value should be less than or equal to maximum value in {}; expected {} <= {}",
+				field.getAnnotationName(), field.getMinValue(), field.getMaxValue());
 	}
 
 	private static BigDecimal validateMinValue(final ConfigFieldData field, final BigDecimal def) throws AnnotationException{

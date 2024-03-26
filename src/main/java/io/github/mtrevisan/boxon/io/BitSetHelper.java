@@ -86,20 +86,14 @@ public final class BitSetHelper{
 	 */
 	static BigInteger toBigInteger(final BitSet bits, final int bitSize, final ByteOrder byteOrder){
 		final boolean negative;
-		BigInteger result = BigInteger.ZERO;
+		BigInteger result;
 		if(byteOrder == ByteOrder.BIG_ENDIAN){
 			negative = bits.get(7);
-			for(int i = bits.nextSetBit(0); i >= 0; i = bits.nextSetBit(i + 1)){
-				final int index = bitSize - 1 - i;
-				final int byteIndex = index / Byte.SIZE + 1;
-				final int bitIndex = index % Byte.SIZE + 1;
-				result = result.setBit(byteIndex * Byte.SIZE - bitIndex);
-			}
+			result = toBigIntegerBigEndian(bits, bitSize);
 		}
 		else{
 			negative = bits.get(bitSize - 1);
-			for(int i = bits.nextSetBit(0); i >= 0; i = bits.nextSetBit(i + 1))
-				result = result.setBit(i);
+			result = toBigIntegerLittleEndian(bits);
 		}
 
 		if(negative){
@@ -112,6 +106,24 @@ public final class BitSetHelper{
 				.negate();
 		}
 
+		return result;
+	}
+
+	private static BigInteger toBigIntegerBigEndian(final BitSet bits, final int bitSize){
+		BigInteger result = BigInteger.ZERO;
+		for(int i = bits.nextSetBit(0); i >= 0; i = bits.nextSetBit(i + 1)){
+			final int index = bitSize - 1 - i;
+			final int byteIndex = index / Byte.SIZE + 1;
+			final int bitIndex = index % Byte.SIZE + 1;
+			result = result.setBit(byteIndex * Byte.SIZE - bitIndex);
+		}
+		return result;
+	}
+
+	private static BigInteger toBigIntegerLittleEndian(final BitSet bits){
+		BigInteger result = BigInteger.ZERO;
+		for(int i = bits.nextSetBit(0); i >= 0; i = bits.nextSetBit(i + 1))
+			result = result.setBit(i);
 		return result;
 	}
 

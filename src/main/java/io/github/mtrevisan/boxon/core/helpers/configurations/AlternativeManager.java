@@ -239,7 +239,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 
 			final ConfigFieldData configData = ConfigFieldDataBuilder.create(field, annotation);
 			ValidationHelper.validatePattern(configData, dataValue);
-			ValidationHelper.validateMinMaxValues(configData, dataValue);
+			ValidationHelper.validateMinMaxDataValues(configData, dataValue);
 		}
 		return dataValue;
 	}

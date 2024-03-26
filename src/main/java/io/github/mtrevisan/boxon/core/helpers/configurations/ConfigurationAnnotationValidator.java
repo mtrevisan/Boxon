@@ -94,7 +94,7 @@ enum ConfigurationAnnotationValidator{
 
 			ValidationHelper.validateEnumeration(configData);
 
-			ValidationHelper.validateMinMaxValues(configData, null);
+			ValidationHelper.validateMinMaxDataValues(configData, null);
 
 			ValidationHelper.validateProtocol(configData, minProtocolVersion, maxProtocolVersion);
 		}
@@ -200,7 +200,7 @@ enum ConfigurationAnnotationValidator{
 	ALTERNATIVE_FIELD(AlternativeSubField.class){
 		@Override
 		void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
-				throws AnnotationException, CodecException{
+				throws AnnotationException{
 			final ConfigFieldData configData = ConfigFieldDataBuilder.create(field, (AlternativeSubField)annotation);
 
 			final AlternativeSubField binding = (AlternativeSubField)annotation;
@@ -213,7 +213,7 @@ enum ConfigurationAnnotationValidator{
 
 			ValidationHelper.validatePattern(configData, null);
 
-			ValidationHelper.validateMinMaxValues(configData, null);
+			ValidationHelper.validateMinMaxDataValues(configData, null);
 
 			ValidationHelper.validateProtocol(configData, minProtocolVersion, maxProtocolVersion);
 		}

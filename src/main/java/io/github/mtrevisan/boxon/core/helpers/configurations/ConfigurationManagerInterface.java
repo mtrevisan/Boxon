@@ -98,10 +98,9 @@ public interface ConfigurationManagerInterface{
 	 * @param dataKey	The short description of the field.
 	 * @param dataValue	The value to check against.
 	 * @throws AnnotationException	If an annotation is not well formatted.
-	 * @throws CodecException	If the value cannot be interpreted as primitive or objective.
 	 * @throws EncodeException	If a placeholder cannot be substituted.
 	 */
-	void validateValue(Field field, String dataKey, Object dataValue) throws AnnotationException, CodecException, EncodeException;
+	void validateValue(Field field, String dataKey, Object dataValue) throws AnnotationException, EncodeException;
 
 	/**
 	 * Convert the given value to the type accepted by the field.

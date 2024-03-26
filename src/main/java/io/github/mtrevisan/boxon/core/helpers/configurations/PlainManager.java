@@ -126,11 +126,10 @@ final class PlainManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	public void validateValue(final Field field, final String dataKey, final Object dataValue) throws CodecException,
-			AnnotationException{
+	public void validateValue(final Field field, final String dataKey, final Object dataValue) throws AnnotationException{
 		final ConfigFieldData configData = ConfigFieldDataBuilder.create(field, annotation);
 		ValidationHelper.validatePattern(configData, dataValue);
-		ValidationHelper.validateMinMaxValues(configData, dataValue);
+		ValidationHelper.validateMinMaxDataValues(configData, dataValue);
 	}
 
 	@Override
