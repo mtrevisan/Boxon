@@ -27,6 +27,7 @@ package io.github.mtrevisan.boxon.core.helpers.configurations;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.Memoizer;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.helpers.ThrowingFunction;
@@ -34,6 +35,7 @@ import io.github.mtrevisan.boxon.io.ParserDataType;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
 import io.github.mtrevisan.boxon.semanticversioning.VersionException;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -115,34 +117,38 @@ final class ValidationHelper{
 			throw AnnotationException.create("Array field should not have `minValue` or `maxValue`");
 
 		final String defaultValue = field.getDefaultValue();
-		final Object def = ParserDataType.getValue(fieldType, defaultValue);
-		final Number min = validateMinValue(field, def);
-		final Number max = validateMaxValue(field, def);
+		final BigDecimal def = JavaHelper.toBigDecimal(defaultValue);
+		if(def != null){
+			final BigDecimal min = validateMinValue(field, def);
+			final BigDecimal max = validateMaxValue(field, def);
 
-		if(min != null && max != null && min.doubleValue() > max.doubleValue())
-			//`maxValue` after or equal to `minValue`
-			throw AnnotationException.create("Minimum value should be less than or equal to maximum value in {}; expected {} <= {}",
-				field.getAnnotationName(), field.getMinValue(), field.getMaxValue());
+			if(min != null && max != null && min.compareTo(max) > 0)
+				//`maxValue` after or equal to `minValue`
+				throw AnnotationException.create("Minimum value should be less than or equal to maximum value in {}; expected {} <= {}",
+					field.getAnnotationName(), field.getMinValue(), field.getMaxValue());
+		}
 
 
 		if(dataValue != null && String.class.isAssignableFrom(dataValue.getClass())){
-			final Object val = ParserDataType.getValue(fieldType, (String)dataValue);
-			validateMinValue(field, val);
-			validateMaxValue(field, val);
+			final BigDecimal val = JavaHelper.toBigDecimal((String)dataValue);
+			if(val != null){
+				validateMinValue(field, val);
+				validateMaxValue(field, val);
+			}
 		}
 	}
 
-	private static Number validateMinValue(final ConfigFieldData field, final Object def) throws AnnotationException{
-		Number min = null;
+	private static BigDecimal validateMinValue(final ConfigFieldData field, final BigDecimal def) throws AnnotationException{
+		BigDecimal min = null;
 		final String minValue = field.getMinValue();
 		if(!StringHelper.isBlank(minValue)){
-			min = ParserDataType.getBigNumber(minValue);
+			min = JavaHelper.toBigDecimal(minValue);
 			//`minValue` compatible with variable type
 			if(min == null)
 				throw AnnotationException.create("Incompatible minimum value in {}; found {}, expected a valid number",
 					field.getAnnotationName(), minValue);
 
-			if(def != null && ((Number)def).doubleValue() < min.doubleValue())
+			if(def != null && def.compareTo(min) < 0)
 				//`defaultValue` compatible with `minValue`
 				throw AnnotationException.create("Default value incompatible with minimum value in {}; expected {} >= {}",
 					field.getAnnotationName(), field.getDefaultValue(), minValue.getClass().getSimpleName());
@@ -150,17 +156,17 @@ final class ValidationHelper{
 		return min;
 	}
 
-	private static Number validateMaxValue(final ConfigFieldData field, final Object def) throws AnnotationException{
-		Number max = null;
+	private static BigDecimal validateMaxValue(final ConfigFieldData field, final BigDecimal def) throws AnnotationException{
+		BigDecimal max = null;
 		final String maxValue = field.getMaxValue();
 		if(!StringHelper.isBlank(maxValue)){
-			max = ParserDataType.getBigNumber(maxValue);
+			max = JavaHelper.toBigDecimal(maxValue);
 			//`maxValue` compatible with variable type
 			if(max == null)
 				throw AnnotationException.create("Incompatible maximum value in {}; found {}, expected a valid number",
 					field.getAnnotationName(), maxValue);
 
-			if(def != null && ((Number)def).doubleValue() > max.doubleValue())
+			if(def != null && def.compareTo(max) > 0)
 				//`defaultValue` compatible with `maxValue`
 				throw AnnotationException.create("Default value incompatible with maximum value in {}; expected {} <= {}",
 					field.getAnnotationName(), field.getDefaultValue(), maxValue.getClass().getSimpleName());

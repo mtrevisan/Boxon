@@ -25,9 +25,9 @@
 package io.github.mtrevisan.boxon.core.helpers.extractors;
 
 import io.github.mtrevisan.boxon.exceptions.JSONPathException;
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
-import io.github.mtrevisan.boxon.io.ParserDataType;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -169,7 +169,7 @@ public final class JSONPath{
 	}
 
 	private static Integer extractIndex(final String currentPath){
-		return (ParserDataType.isDecimalNumber(currentPath) && (currentPath.charAt(0) != '0' || currentPath.length() == 1)
+		return (JavaHelper.isDecimalIntegerNumber(currentPath) && (currentPath.charAt(0) != '0' || currentPath.length() == 1)
 			? Integer.valueOf(currentPath)
 			: null);
 	}

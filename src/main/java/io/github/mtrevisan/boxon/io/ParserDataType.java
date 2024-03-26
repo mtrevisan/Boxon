@@ -25,13 +25,13 @@
 package io.github.mtrevisan.boxon.io;
 
 import io.github.mtrevisan.boxon.exceptions.CodecException;
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,6 +43,11 @@ import java.util.Map;
 public enum ParserDataType{
 
 	BYTE(Byte.TYPE, Byte.class, Byte.SIZE){
+		@Override
+		Object value(final String value){
+			return Byte.valueOf(value);
+		}
+
 		@Override
 		Object cast(final BigInteger value){
 			return value.byteValue();
@@ -61,6 +66,11 @@ public enum ParserDataType{
 
 	SHORT(Short.TYPE, Short.class, Short.SIZE){
 		@Override
+		Object value(final String value){
+			return Short.valueOf(value);
+		}
+
+		@Override
 		Object cast(final BigInteger value){
 			return value.shortValue();
 		}
@@ -77,6 +87,11 @@ public enum ParserDataType{
 	},
 
 	INTEGER(Integer.TYPE, Integer.class, Integer.SIZE){
+		@Override
+		Object value(final String value){
+			return Integer.valueOf(value);
+		}
+
 		@Override
 		Object cast(final BigInteger value){
 			return value.intValue();
@@ -95,6 +110,11 @@ public enum ParserDataType{
 
 	LONG(Long.TYPE, Long.class, Long.SIZE){
 		@Override
+		Object value(final String value){
+			return Long.valueOf(value);
+		}
+
+		@Override
 		Object cast(final BigInteger value){
 			return value.longValue();
 		}
@@ -112,6 +132,11 @@ public enum ParserDataType{
 
 	FLOAT(Float.TYPE, Float.class, Float.SIZE){
 		@Override
+		Object value(final String value){
+			return Float.valueOf(value);
+		}
+
+		@Override
 		Object cast(final BigInteger value){
 			return value.floatValue();
 		}
@@ -128,6 +153,11 @@ public enum ParserDataType{
 	},
 
 	DOUBLE(Double.TYPE, Double.class, Double.SIZE){
+		@Override
+		Object value(final String value){
+			return Double.valueOf(value);
+		}
+
 		@Override
 		Object cast(final BigInteger value){
 			return value.doubleValue();
@@ -270,6 +300,9 @@ public enum ParserDataType{
 	}
 
 
+	abstract Object value(String value);
+
+
 	abstract Object cast(BigInteger value);
 
 	/**
@@ -328,107 +361,37 @@ public enum ParserDataType{
 			: val);
 	}
 
-	public static Object toNumber(final String text, final Class<?> objectiveType){
+	private static Object toNumber(final String text, final Class<?> objectiveType){
 		Object result = null;
-		if(isNumeric(text)){
-			final BigInteger decValue = (text.startsWith("0x")
-				? new BigInteger(text.substring(2), 16)
-				: new BigInteger(text));
+		final BigInteger value = JavaHelper.toBigInteger(text);
+		if(value != null){
 			final ParserDataType objectiveDataType = fromType(objectiveType);
-			if(objectiveDataType != null && decValue.bitCount() <= objectiveDataType.size)
+			if(objectiveDataType != null && value.bitCount() <= objectiveDataType.size)
 				//convert value to `objectiveType` class
-				result = objectiveDataType.cast(decValue);
+				result = objectiveDataType.cast(value);
 		}
 		return result;
 	}
 
-	private static boolean isNumeric(final String text){
-		return (isHexadecimalNumber(text) || isDecimalNumber(text));
-	}
-
-	/**
-	 * Returns the primitive or objective type (depending on the field type) data stored as a string value.
-	 *
-	 * @param value	The string value to be interpreted.
-	 * @return	The primitive or objective value as an unsigned number (e.g. `(byte)0xFF` is 255 rather than -1).
-	 * @throws NumberFormatException	If the given value is not a valid representation of a {@link Number}.
-	 */
-	public static Number getBigNumber(final String value){
-		if(StringHelper.isBlank(value))
-			return null;
-
-		try{
-			return (value.startsWith("0x")
-				? new BigInteger(value.substring(2), 16)
-				: new BigDecimal(value));
-		}
-		catch(final NumberFormatException ignored){
-			return null;
-		}
-	}
-
-
-	/**
-	 * <p>Checks if the text contains only Unicode digits.
-	 * A decimal point is not a Unicode digit and returns false.</p>
-	 *
-	 * <p>{@code null} will return {@code false}.
-	 * An empty text ({@code length() = 0}) will return {@code false}.</p>
-	 *
-	 * <p>Note that the method does not allow for a leading sign, either positive or negative.
-	 * Also, if a String passes the numeric test, it may still generate a NumberFormatException
-	 * when parsed by Integer.parseInt or Long.parseLong, e.g. if the value is outside the range
-	 * for int or long respectively.</p>
-	 *
-	 * <pre>
-	 * isNumeric(null)   = false
-	 * isNumeric("")     = false
-	 * isNumeric("  ")   = false
-	 * isNumeric("123")  = true
-	 * isNumeric("\u0967\u0968\u0969") = true
-	 * isNumeric("12 3") = false
-	 * isNumeric("ab2c") = false
-	 * isNumeric("12-3") = false
-	 * isNumeric("12.3") = false
-	 * isNumeric("-123") = false
-	 * isNumeric("+123") = false
-	 * </pre>
-	 *
-	 * @param text	The text to check, may be {@code null}.
-	 * @return	Whether the given text contains only digits and is non-{@code null}.
-	 */
-	public static boolean isDecimalNumber(final String text){
-		return (text != null && !text.isEmpty() && !isBaseNumber(text, 0, 10));
-	}
-
-	private static boolean isHexadecimalNumber(final String text){
-		return (text != null && text.startsWith("0x") && !isBaseNumber(text, 2, 16));
-	}
-
-	private static boolean isBaseNumber(final String text, final int offset, final int radix){
-		final byte[] bytes = text.getBytes(StandardCharsets.US_ASCII);
-		for(int i = offset, length = bytes.length; i < length; i ++){
-			final byte chr = bytes[i];
-
-			if(Character.digit(chr, radix) < 0)
-				return true;
-		}
-		return false;
-	}
 
 	private static Object toObjectValue(final String value, final Class<?> objectiveType) throws CodecException{
 		Object result;
 		if(BigDecimal.class.isAssignableFrom(objectiveType))
 			result = new BigDecimal(value);
 		else if(BigInteger.class.isAssignableFrom(objectiveType))
-			result = new BigInteger(value);
+			result = JavaHelper.toBigInteger(value);
 		else{
-			try{
-				final Method method = objectiveType.getDeclaredMethod(METHOD_VALUE_OF, String.class);
-				result = method.invoke(null, value);
-			}
-			catch(final NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored){
-				throw CodecException.create("Cannot interpret {} as {}", value, objectiveType.getSimpleName());
+			final ParserDataType objectiveDataType = fromType(objectiveType);
+			if(objectiveDataType != null)
+				result = objectiveDataType.value(value);
+			else{
+				try{
+					final Method method = objectiveType.getDeclaredMethod(METHOD_VALUE_OF, String.class);
+					result = method.invoke(null, value);
+				}
+				catch(final NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored){
+					throw CodecException.create("Cannot interpret {} as {}", value, objectiveType.getSimpleName());
+				}
 			}
 		}
 		return result;

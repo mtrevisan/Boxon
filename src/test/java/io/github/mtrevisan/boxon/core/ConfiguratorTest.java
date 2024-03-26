@@ -134,7 +134,8 @@ class ConfiguratorTest{
 		Response<String, byte[]> composeResult = configurator.composeConfiguration("1.20", "AT+GTREG",
 			configurationData);
 
-		Assertions.assertFalse(composeResult.hasError());
+		if(composeResult.hasError())
+			Assertions.fail(composeResult.getError());
 		Assertions.assertEquals("AT+GTREG=pass,1,27,1,0,2,25,0,http://url.com@username@password,3600,3600,6,,007B$",
 			new String(composeResult.getMessage(), StandardCharsets.US_ASCII));
 	}

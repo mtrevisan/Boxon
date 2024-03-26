@@ -63,12 +63,14 @@ class ComposerTest{
 		Assertions.assertEquals(1, result.size());
 		Response<byte[], Object> response = result.getFirst();
 		Assertions.assertArrayEquals(payload, response.getSource());
-		Assertions.assertFalse(response.hasError());
+		if(response.hasError())
+			Assertions.fail(response.getError());
 
 		//compose:
 		Response<ACKMessageHex, byte[]> composeResult = composer.compose((ACKMessageHex)response.getMessage());
 
-		Assertions.assertFalse(composeResult.hasError());
+		if(composeResult.hasError())
+			Assertions.fail(composeResult.getError());
 		Assertions.assertArrayEquals(payload, composeResult.getMessage());
 	}
 
@@ -93,12 +95,14 @@ class ComposerTest{
 		Assertions.assertEquals(1, result.size());
 		Response<byte[], Object> response = result.getFirst();
 		Assertions.assertArrayEquals(payload, response.getSource());
-		Assertions.assertFalse(response.hasError());
+		if(response.hasError())
+			Assertions.fail(response.getError());
 
 		//compose:
 		Response<ACKMessageASCII, byte[]> composeResult = composer.compose((ACKMessageASCII)response.getMessage());
 
-		Assertions.assertFalse(composeResult.hasError());
+		if(composeResult.hasError())
+			Assertions.fail(composeResult.getError());
 		Assertions.assertArrayEquals(payload, composeResult.getMessage());
 	}
 

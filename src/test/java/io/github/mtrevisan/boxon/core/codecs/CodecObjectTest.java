@@ -221,7 +221,8 @@ class CodecObjectTest{
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(1, result.size());
 		Response<byte[], Object> response = result.getFirst();
-		Assertions.assertFalse(response.hasError());
+		if(response.hasError())
+			Assertions.fail(response.getError());
 		Assertions.assertEquals(TestChoice1.class, response.getMessage().getClass());
 		TestChoice1 parsedMessage = (TestChoice1)response.getMessage();
 		TestType1 value1 = (TestType1)parsedMessage.value;
@@ -234,7 +235,8 @@ class CodecObjectTest{
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(1, result.size());
 		response = result.getFirst();
-		Assertions.assertFalse(response.hasError());
+		if(response.hasError())
+			Assertions.fail(response.getError());
 		Assertions.assertEquals(TestChoice1.class, response.getMessage().getClass());
 		parsedMessage = (TestChoice1)response.getMessage();
 		TestType2 value2 = (TestType2)parsedMessage.value;
@@ -255,7 +257,8 @@ class CodecObjectTest{
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(1, result.size());
 		Response<byte[], Object> response = result.getFirst();
-		Assertions.assertFalse(response.hasError());
+		if(response.hasError())
+			Assertions.fail(response.getError());
 		Assertions.assertEquals(TestChoice2.class, response.getMessage().getClass());
 		TestChoice2 parsedMessage = (TestChoice2)response.getMessage();
 		TestType1 value1 = (TestType1)parsedMessage.value;
@@ -268,7 +271,8 @@ class CodecObjectTest{
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(1, result.size());
 		response = result.getFirst();
-		Assertions.assertFalse(response.hasError());
+		if(response.hasError())
+			Assertions.fail(response.getError());
 		Assertions.assertEquals(TestChoice2.class, response.getMessage().getClass());
 		parsedMessage = (TestChoice2)response.getMessage();
 		TestType2 value2 = (TestType2)parsedMessage.value;
@@ -289,7 +293,8 @@ class CodecObjectTest{
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(1, result.size());
 		Response<byte[], Object> response = result.getFirst();
-		Assertions.assertFalse(response.hasError());
+		if(response.hasError())
+			Assertions.fail(response.getError());
 		Assertions.assertEquals(TestChoice3.class, response.getMessage().getClass());
 		TestChoice3 parsedMessage = (TestChoice3)response.getMessage();
 		TestType1 value1 = (TestType1)parsedMessage.value;
@@ -302,7 +307,8 @@ class CodecObjectTest{
 		Assertions.assertNotNull(result);
 		Assertions.assertEquals(1, result.size());
 		response = result.getFirst();
-		Assertions.assertFalse(response.hasError());
+		if(response.hasError())
+			Assertions.fail(response.getError());
 		Assertions.assertEquals(TestChoice3.class, response.getMessage().getClass());
 		parsedMessage = (TestChoice3)response.getMessage();
 		TestType2 value2 = (TestType2)parsedMessage.value;

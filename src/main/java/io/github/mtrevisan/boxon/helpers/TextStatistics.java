@@ -92,7 +92,7 @@ public final class TextStatistics{
 		return (utf8 > 0
 			&& expectedContinuation - 3 <= continuation && continuation <= expectedContinuation
 			&& count(0xF8, 0x100) == 0
-			&& (control - safe) * 100 < utf8 * 2);
+			&& (control - safe) * 50 < utf8);
 	}
 
 	/**

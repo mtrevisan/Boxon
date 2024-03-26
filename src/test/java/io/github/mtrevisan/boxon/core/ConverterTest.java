@@ -144,7 +144,8 @@ class ConverterTest{
 		Assertions.assertEquals(1, result.size());
 		Response<byte[], Object> response = result.getFirst();
 		Assertions.assertArrayEquals(payload, response.getSource());
-		Assertions.assertFalse(response.hasError());
+		if(response.hasError())
+			Assertions.fail(response.getError());
 	}
 
 }

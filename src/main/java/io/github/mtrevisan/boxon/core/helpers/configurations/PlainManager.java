@@ -31,6 +31,7 @@ import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.ParserDataType;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
@@ -111,8 +112,8 @@ final class PlainManager implements ConfigurationManagerInterface{
 		if(!fieldType.isEnum() && !fieldType.isArray())
 			ConfigurationHelper.putIfNotEmpty(ConfigurationKey.FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName(),
 				map);
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.MIN_VALUE, ParserDataType.getBigNumber(annotation.minValue()), map);
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.MAX_VALUE, ParserDataType.getBigNumber(annotation.maxValue()), map);
+		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.MIN_VALUE, JavaHelper.toBigDecimal(annotation.minValue()), map);
+		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.MAX_VALUE, JavaHelper.toBigDecimal(annotation.maxValue()), map);
 		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.PATTERN, annotation.pattern(), map);
 		ConfigurationHelper.extractEnumeration(fieldType, annotation.enumeration(), map);
 

@@ -277,7 +277,7 @@ public final class Template<T>{
 	 * @return	Whether this template is well formatted.
 	 */
 	public boolean canBeCoded(){
-		return (header != null && ! templateFields.isEmpty());
+		return (header != null && !templateFields.isEmpty());
 	}
 
 	@Override

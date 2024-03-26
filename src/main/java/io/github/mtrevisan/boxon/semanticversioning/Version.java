@@ -26,7 +26,6 @@ package io.github.mtrevisan.boxon.semanticversioning;
 
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
-import io.github.mtrevisan.boxon.io.ParserDataType;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -237,7 +236,7 @@ public final class Version implements Comparable<Version>{
 	}
 
 	private static void validatePreRelease(final String pr){
-		final boolean numeric = ParserDataType.isDecimalNumber(pr);
+		final boolean numeric = JavaHelper.isDecimalIntegerNumber(pr);
 		if(numeric && pr.charAt(0) == '0')
 			throw VersionException.create("The pre-release identifier MUST NOT contain leading zeros");
 		if(!numeric && !containsOnlyValidChars(pr))
@@ -250,7 +249,7 @@ public final class Version implements Comparable<Version>{
 	}
 
 	private static void validateBuild(final String b){
-		if(!ParserDataType.isDecimalNumber(b) && !containsOnlyValidChars(b))
+		if(!JavaHelper.isDecimalIntegerNumber(b) && !containsOnlyValidChars(b))
 			throw VersionException.create("Argument is not a valid build identifier");
 	}
 
@@ -411,7 +410,7 @@ public final class Version implements Comparable<Version>{
 	}
 
 	private static int compareIdentifiers(final String identifier1, final String identifier2){
-		return (ParserDataType.isDecimalNumber(identifier1) && ParserDataType.isDecimalNumber(identifier2)
+		return (JavaHelper.isDecimalIntegerNumber(identifier1) && JavaHelper.isDecimalIntegerNumber(identifier2)
 			? Integer.parseInt(identifier1) - Integer.parseInt(identifier2)
 			: identifier1.compareTo(identifier2));
 	}

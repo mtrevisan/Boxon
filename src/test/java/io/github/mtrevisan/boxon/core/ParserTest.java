@@ -101,8 +101,10 @@ class ParserTest{
 		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertEquals(2, result.size());
-		Assertions.assertFalse(result.get(0).hasError());
-		Assertions.assertFalse(result.get(1).hasError());
+		if(result.get(0).hasError())
+			Assertions.fail(result.get(0).getError());
+		if(result.get(1).hasError())
+			Assertions.fail(result.get(1).getError());
 	}
 
 	@Test
@@ -121,8 +123,10 @@ class ParserTest{
 		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertEquals(2, result.size());
-		Assertions.assertFalse(result.get(0).hasError());
-		Assertions.assertFalse(result.get(1).hasError());
+		if(result.get(0).hasError())
+			Assertions.fail(result.get(0).getError());
+		if(result.get(1).hasError())
+			Assertions.fail(result.get(1).getError());
 	}
 
 	@Test
@@ -147,12 +151,15 @@ class ParserTest{
 		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertEquals(2, result.size());
-		Assertions.assertFalse(result.get(0).hasError());
-		Assertions.assertFalse(result.get(1).hasError());
+		if(result.get(0).hasError())
+			Assertions.fail(result.get(0).getError());
+		if(result.get(1).hasError())
+			Assertions.fail(result.get(1).getError());
 		Assertions.assertEquals("+ACK", Extractor.get("/messageHeader", result.get(1).getMessage(), null));
 
 		Response<Object, byte[]> compose = composer.compose(result.get(1).getMessage());
-		Assertions.assertFalse(compose.hasError());
+		if(compose.hasError())
+			Assertions.fail(compose.getError());
 		Assertions.assertEquals("+BCK:GTIOB,CF8002,359464038116666,45.5,2,0020,20170101123542,11F0$", StringHelper.toASCIIString(compose.getMessage()));
 	}
 
@@ -176,8 +183,10 @@ class ParserTest{
 		List<Response<byte[], Object>> result = parser.parse(payload);
 
 		Assertions.assertEquals(2, result.size());
-		Assertions.assertFalse(result.get(0).hasError());
-		Assertions.assertFalse(result.get(1).hasError());
+		if(result.get(0).hasError())
+			Assertions.fail(result.get(0).getError());
+		if(result.get(1).hasError())
+			Assertions.fail(result.get(1).getError());
 	}
 
 

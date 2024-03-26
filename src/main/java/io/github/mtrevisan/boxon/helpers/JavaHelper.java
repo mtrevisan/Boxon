@@ -24,6 +24,9 @@
  */
 package io.github.mtrevisan.boxon.helpers;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 
 
@@ -34,6 +37,8 @@ public final class JavaHelper{
 
 	/** An empty {@code String}. */
 	public static final String EMPTY_STRING = "";
+
+	private static final String HEXADECIMAL_PREFIX = "0x";
 
 
 	private JavaHelper(){}
@@ -92,6 +97,98 @@ public final class JavaHelper{
 	 */
 	public static <T> int lengthOrZero(final Collection<T> array){
 		return (array != null? array.size(): 0);
+	}
+
+
+	public static boolean isIntegerNumber(final String text){
+		return (isDecimalIntegerNumber(text) || isHexadecimalNumber(text));
+	}
+
+	/**
+	 * <p>Checks if the text contains only Unicode digits.
+	 * A decimal point is not a Unicode digit and returns false.</p>
+	 *
+	 * <p>{@code null} will return {@code false}.
+	 * An empty text ({@code length() = 0}) will return {@code false}.</p>
+	 *
+	 * <p>Note that the method does not allow for a leading sign, either positive or negative.
+	 * Also, if a String passes the numeric test, it may still generate a NumberFormatException
+	 * when parsed by Integer.parseInt or Long.parseLong, e.g. if the value is outside the range
+	 * for int or long respectively.</p>
+	 *
+	 * <pre>
+	 * isNumeric(null)   = false
+	 * isNumeric("")     = false
+	 * isNumeric("  ")   = false
+	 * isNumeric("123")  = true
+	 * isNumeric("\u0967\u0968\u0969") = true
+	 * isNumeric("12 3") = false
+	 * isNumeric("ab2c") = false
+	 * isNumeric("12-3") = false
+	 * isNumeric("12.3") = false
+	 * isNumeric("-123") = false
+	 * isNumeric("+123") = false
+	 * </pre>
+	 *
+	 * @param text	The text to check, may be {@code null}.
+	 * @return	Whether the given text contains only digits and is non-{@code null}.
+	 */
+	public static boolean isDecimalIntegerNumber(final String text){
+		return isDecimalIntegerNumber(text, 0, 10);
+	}
+
+	private static boolean isDecimalIntegerNumber(final String text, final int offset, final int radix){
+		if(StringHelper.isBlank(text))
+			return false;
+
+		final byte[] bytes = text.getBytes(StandardCharsets.US_ASCII);
+		for(int i = offset, length = bytes.length; i < length; i ++){
+			final byte chr = bytes[i];
+
+			if(Character.digit(chr, radix) < 0)
+				return false;
+		}
+		return true;
+	}
+
+	private static boolean isHexadecimalNumber(final String text){
+		return (!StringHelper.isBlank(text) && text.startsWith(HEXADECIMAL_PREFIX) && isDecimalIntegerNumber(text, 2, 16));
+	}
+
+	/**
+	 * Convert a string value (decimal or hexadecimal) to {@link BigInteger}.
+	 *
+	 * @param value	The value.
+	 * @return	The converted {@link BigInteger}.
+	 */
+	public static BigInteger toBigInteger(final String value){
+		try{
+			if(isHexadecimalNumber(value))
+				return new BigInteger(value.substring(2), 16);
+
+			return new BigInteger(value);
+		}
+		catch(final NumberFormatException ignored){
+			return null;
+		}
+	}
+
+	/**
+	 * Convert a string value (decimal or hexadecimal if integer) to {@link BigDecimal}.
+	 *
+	 * @param value	The value.
+	 * @return	The converted {@link BigDecimal}.
+	 */
+	public static BigDecimal toBigDecimal(final String value){
+		try{
+			if(isHexadecimalNumber(value))
+				return new BigDecimal(new BigInteger(value.substring(2), 16).toString());
+
+			return new BigDecimal(value);
+		}
+		catch(final NumberFormatException ignored){
+			return null;
+		}
 	}
 
 }
