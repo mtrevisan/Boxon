@@ -234,7 +234,7 @@ public final class StringHelper{
 				final int highDigit = Character.digit(bytes[i], 16);
 				final int lowDigit = Character.digit(bytes[i + 1], 16);
 
-				data[i >>> 1] = (byte)((highDigit << 4) + lowDigit);
+				data[i >>> 1] = (byte)((highDigit << 4) | lowDigit);
 			}
 		}
 		return data;

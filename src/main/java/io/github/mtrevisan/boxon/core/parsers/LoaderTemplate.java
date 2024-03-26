@@ -43,7 +43,6 @@ import io.github.mtrevisan.boxon.logs.EventListener;
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -248,16 +247,26 @@ public final class LoaderTemplate{
 		for(final Map.Entry<String, Template<?>> entry : templates.entrySet()){
 			final String header = entry.getKey();
 
-			//FIXME can this (newly created) array be substituted with something else?
-			final byte[] templateHeader = StringHelper.hexToByteArray(header);
-
 			//verify if it's a valid message header
-			final int lastIndex = index + templateHeader.length;
-			if(lastIndex <= array.length && Arrays.equals(array, index, lastIndex, templateHeader, 0, templateHeader.length))
+			final int length = header.length() >> 1;
+			if(index + length <= array.length && byteArrayHexStringEquals(array, index, header, length))
 				return entry.getValue();
 		}
 
 		throw TemplateException.create("Cannot find any template for given raw message");
+	}
+
+	private static boolean byteArrayHexStringEquals(final byte[] byteArray, final int arrayFromIndex, final CharSequence hexString,
+			final int length){
+		for(int i = 0, j = arrayFromIndex, k = 0; i < length; i ++, j ++, k += 2){
+			final int byteValue = byteArray[j] & 0xFF;
+			final int highDigit = Character.digit(hexString.charAt(k), 16);
+			final int lowDigit = Character.digit(hexString.charAt(k + 1), 16);
+			final int hexValue = (highDigit << 4) | lowDigit;
+			if(byteValue != hexValue)
+				return false;
+		}
+		return true;
 	}
 
 	/**

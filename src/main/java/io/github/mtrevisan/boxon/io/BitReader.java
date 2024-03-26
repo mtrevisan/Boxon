@@ -139,7 +139,6 @@ public final class BitReader extends BitReaderData implements BitReaderInterface
 
 	@Override
 	public byte[] getBytes(final int length){
-		//FIXME remove array creation?
 		final byte[] array = new byte[length];
 		for(int i = 0; i < length; i ++)
 			array[i] = getByte();
