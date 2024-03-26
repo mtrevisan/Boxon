@@ -34,8 +34,8 @@ import io.github.mtrevisan.boxon.io.ParserDataType;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
 
 import java.lang.reflect.Array;
+import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 
 /**
@@ -43,7 +43,7 @@ import java.util.regex.Pattern;
  */
 public final class ConfigurationHelper{
 
-	private static final Pattern PATTERN_PIPE = Pattern.compile("\\|");
+	private static final char PIPE = '|';
 
 
 	private ConfigurationHelper(){}
@@ -84,13 +84,13 @@ public final class ConfigurationHelper{
 	}
 
 	@SuppressWarnings("unchecked")
-	private static <T extends ConfigurationEnum> T[] extractEnumerationArrayValue(final CharSequence value, final Class<T> enumeration){
+	private static <T extends ConfigurationEnum> T[] extractEnumerationArrayValue(final String value, final Class<T> enumeration){
 		final ConfigurationEnum[] enumConstants = enumeration.getEnumConstants();
-		final String[] defaultValues = splitMultipleEnumerations(value);
-		final int length = defaultValues.length;
+		final List<String> defaultValues = StringHelper.split(value, PIPE);
+		final int length = defaultValues.size();
 		final T[] valEnum = (T[])Array.newInstance(enumeration, length);
 		for(int i = 0; i < length; i ++)
-			valEnum[i] = (T)ConfigurationEnum.extractEnum(enumConstants, defaultValues[i]);
+			valEnum[i] = (T)ConfigurationEnum.extractEnum(enumConstants, defaultValues.get(i));
 		return valEnum;
 	}
 
@@ -98,10 +98,6 @@ public final class ConfigurationHelper{
 	private static <T extends ConfigurationEnum> T extractEnumerationSingleValue(final String value, final Class<T> enumeration){
 		final ConfigurationEnum[] enumConstants = enumeration.getEnumConstants();
 		return (T)ConfigurationEnum.extractEnum(enumConstants, value);
-	}
-
-	private static String[] splitMultipleEnumerations(final CharSequence value){
-		return PATTERN_PIPE.split(value);
 	}
 
 

@@ -83,10 +83,9 @@ public interface BitReaderInterface{
 	 * Reads the next {@code length} bits and composes a {@link BitSet}.
 	 *
 	 * @param length	The amount of bits to read.
-	 * @param bitOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 * @return	A {@link BitSet} value at the {@link BitReader}'s current position.
 	 */
-	BitSet getBitSet(int length, ByteOrder bitOrder);
+	BitSet getBitSet(int length);
 
 	/**
 	 * Reads {@link Byte#SIZE} bits and composes a {@code byte}.

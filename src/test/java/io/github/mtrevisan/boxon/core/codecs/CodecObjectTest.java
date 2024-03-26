@@ -52,7 +52,6 @@ import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.BitReader;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriter;
-import io.github.mtrevisan.boxon.io.ByteOrder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -96,11 +95,6 @@ class CodecObjectTest{
 					@Override
 					public int prefixLength(){
 						return 0;
-					}
-
-					@Override
-					public ByteOrder bitOrder(){
-						return ByteOrder.BIG_ENDIAN;
 					}
 
 					@Override

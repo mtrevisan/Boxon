@@ -166,7 +166,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 		final Map<String, Object> alternativesMap;
 		final AlternativeSubField fieldBinding = extractField(protocol);
 		if(fieldBinding != null){
-			alternativesMap = new HashMap<>(alternativeMap.size() + 6);
+			alternativesMap = new HashMap<>(alternativeMap.size() + 2);
 
 			alternativesMap.putAll(extractMap(fieldBinding, fieldType));
 

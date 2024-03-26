@@ -168,7 +168,6 @@ public enum AnnotationDescriptor{
 			final BindBitSet binding = (BindBitSet)annotation;
 			putIfNotEmpty(DescriberKey.BIND_CONDITION, binding.condition(), rootDescription);
 			putIfNotEmpty(DescriberKey.BIND_SIZE, binding.size(), rootDescription);
-			putIfNotEmpty(DescriberKey.BIND_BIT_ORDER, binding.bitOrder(), rootDescription);
 			describeValidator(binding.validator(), rootDescription);
 			describeConverter(binding.converter(), rootDescription);
 			describeAlternatives(binding.selectConverterFrom().alternatives(), rootDescription);
@@ -510,7 +509,7 @@ public enum AnnotationDescriptor{
 		for(int i = 0, length = JavaHelper.lengthOrZero(skips); i < length; i ++){
 			final S skip = skips[i];
 
-			final Map<String, Object> skipDescription = new HashMap<>(5);
+			final Map<String, Object> skipDescription = new HashMap<>(1);
 			fromAnnotation(skip)
 				.describe(skip, skipDescription);
 			rootDescription.add(skipDescription);
@@ -519,7 +518,6 @@ public enum AnnotationDescriptor{
 
 	private static void describeChoices(final ObjectChoices choices, final Map<String, Object> rootDescription){
 		putIfNotEmpty(DescriberKey.BIND_PREFIX_LENGTH, choices.prefixLength(), rootDescription);
-		putIfNotEmpty(DescriberKey.BIND_BIT_ORDER, choices.bitOrder(), rootDescription);
 		describeAlternatives(choices.alternatives(), rootDescription);
 	}
 
@@ -609,7 +607,7 @@ public enum AnnotationDescriptor{
 
 	private static void describeObjectChoicesAlternatives(final AlternativeSubField alternative,
 			final Collection<Map<String, Object>> alternativesDescription){
-		final Map<String, Object> alternativeDescription = new HashMap<>(3);
+		final Map<String, Object> alternativeDescription = new HashMap<>(10);
 		putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, alternative.longDescription(), alternativeDescription);
 		putIfNotEmpty(ConfigurationKey.UNIT_OF_MEASURE, alternative.unitOfMeasure(), alternativeDescription);
 		putIfNotEmpty(ConfigurationKey.MIN_PROTOCOL, alternative.minProtocol(), alternativeDescription);
@@ -638,7 +636,7 @@ public enum AnnotationDescriptor{
 
 	private static void describeFieldComposite(final CompositeSubField composite,
 			final Collection<Map<String, Object>> alternativesDescription){
-		final Map<String, Object> alternativeDescription = new HashMap<>(3);
+		final Map<String, Object> alternativeDescription = new HashMap<>(5);
 		putIfNotEmpty(ConfigurationKey.SHORT_DESCRIPTION, composite.shortDescription(), alternativeDescription);
 		putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, composite.longDescription(), alternativeDescription);
 		putIfNotEmpty(ConfigurationKey.UNIT_OF_MEASURE, composite.unitOfMeasure(), alternativeDescription);

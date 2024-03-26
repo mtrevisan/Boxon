@@ -24,8 +24,6 @@
  */
 package io.github.mtrevisan.boxon.helpers;
 
-import io.github.mtrevisan.boxon.exceptions.DataException;
-
 import java.util.Collection;
 
 
@@ -37,29 +35,8 @@ public final class JavaHelper{
 	/** An empty {@code String}. */
 	public static final String EMPTY_STRING = "";
 
-	/** An empty {@code String} array. */
-	static final String[] EMPTY_STRING_ARRAY = new String[0];
-
 
 	private JavaHelper(){}
-
-
-	/**
-	 * Convert the value to signed primitive.
-	 *
-	 * @param value	Field value.
-	 * @param size	Length in bits of the field.
-	 * @return	The 2-complement expressed as int.
-	 * @throws DataException	If the value is non-positive.
-	 */
-	@SuppressWarnings("ShiftOutOfRange")
-	public static long extendSign(final long value, final int size){
-		if(size <= 0)
-			throw DataException.create("Size must be a positive value, was {}", size);
-
-		final int shift = -size;
-		return (value << shift) >> shift;
-	}
 
 
 	/**

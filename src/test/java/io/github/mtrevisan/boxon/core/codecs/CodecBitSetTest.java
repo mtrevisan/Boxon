@@ -36,9 +36,7 @@ import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.BitReader;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
-import io.github.mtrevisan.boxon.io.BitSetHelper;
 import io.github.mtrevisan.boxon.io.BitWriter;
-import io.github.mtrevisan.boxon.io.ByteOrder;
 import io.github.mtrevisan.boxon.io.CodecInterface;
 import io.github.mtrevisan.boxon.utils.TestHelper;
 import org.junit.jupiter.api.Assertions;
@@ -79,11 +77,6 @@ class CodecBitSetTest{
 			}
 
 			@Override
-			public ByteOrder bitOrder(){
-				return ByteOrder.LITTLE_ENDIAN;
-			}
-
-			@Override
 			public Class<? extends Validator<?>> validator(){
 				return NullValidator.class;
 			}
@@ -114,8 +107,7 @@ class CodecBitSetTest{
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		BitSet bbb = BitSetHelper.changeBitOrder(encodedValue, ByteOrder.LITTLE_ENDIAN);
-		byte[] bb = bbb.toByteArray();
+		byte[] bb = encodedValue.toByteArray();
 		if(bb.length > randomBytes.length)
 			bb = Arrays.copyOf(bb, randomBytes.length);
 		Assertions.assertEquals(StringHelper.toHexString(bb), writer.toString());
@@ -146,11 +138,6 @@ class CodecBitSetTest{
 			@Override
 			public String size(){
 				return Integer.toString(randomBytes.length << 3);
-			}
-
-			@Override
-			public ByteOrder bitOrder(){
-				return ByteOrder.BIG_ENDIAN;
 			}
 
 			@Override

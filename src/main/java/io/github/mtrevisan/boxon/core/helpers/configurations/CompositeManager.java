@@ -143,7 +143,7 @@ final class CompositeManager implements ConfigurationManagerInterface{
 	}
 
 	private Map<String, Object> extractMap() throws ConfigurationException{
-		final Map<String, Object> map = new HashMap<>(6);
+		final Map<String, Object> map = new HashMap<>(3);
 
 		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, annotation.longDescription(), map);
 		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.PATTERN, annotation.pattern(), map);
@@ -154,7 +154,7 @@ final class CompositeManager implements ConfigurationManagerInterface{
 
 	private static Map<String, Object> extractMap(final CompositeSubField binding, final Class<?> fieldType) throws CodecException,
 			ConfigurationException{
-		final Map<String, Object> map = new HashMap<>(10);
+		final Map<String, Object> map = new HashMap<>(5);
 
 		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, binding.longDescription(), map);
 		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.UNIT_OF_MEASURE, binding.unitOfMeasure(), map);

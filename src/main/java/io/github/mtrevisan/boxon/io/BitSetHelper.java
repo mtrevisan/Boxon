@@ -60,31 +60,18 @@ public final class BitSetHelper{
 	 * @return	The bit set representing the given value.
 	 */
 	public static BitSet createBitSet(final BigInteger value, final int size, final ByteOrder byteOrder){
-		//FIXME avoid array creation
-		final byte[] array = value.toByteArray();
-
-		if(byteOrder == ByteOrder.LITTLE_ENDIAN)
-			//NOTE: need to reverse the bytes because {@link BigInteger} is big-endian and {@link BitSet} is little-endian
-			BitSetHelper.changeByteOrder(array, byteOrder);
-		else if((size + Byte.SIZE - 1) >>> 3 != array.length)
-			return createBitSet(array, size);
-
-		return BitSet.valueOf(array);
-	}
-
-	private static BitSet createBitSet(final byte[] array, final int size){
+		final boolean littleEndian = (byteOrder == ByteOrder.LITTLE_ENDIAN);
 		final BitSet bits = new BitSet(size);
-		int bitIndex = 0;
-		int bitSetIndex = Byte.SIZE;
 		//transfer bits one by one from the most significant byte to the {@link BitSet}
-		for(int i = 0, length = array.length; i < length && bitIndex < size; i ++){
-			final byte currentByte = array[i];
+		for(int i = 0, length = (size + Byte.SIZE - 1) / Byte.SIZE; i < length; i ++){
+			final int byteIndex = (littleEndian? i: length - 1 - i);
+			final byte currentByte = value.shiftRight(byteIndex << 3)
+				.byteValue();
 
 			//iterate over the bits from left to right in the byte (most significant to least significant)
-			for(int j = 0; j < Byte.SIZE && bitIndex < size; j ++, bitIndex ++){
-				final boolean bitValue = (((currentByte >> j) & 1) == 1);
-				bits.set(bitSetIndex ++, bitValue);
-			}
+			for(int j = 0, k = i << 3; j < Byte.SIZE && k < size; j ++, k ++)
+				if(((currentByte >> j) & 1) == 1)
+					bits.set(k);
 		}
 		return bits;
 	}
@@ -93,31 +80,31 @@ public final class BitSetHelper{
 	 * Convert this bit set to {@link BigInteger}.
 	 *
 	 * @param bits	The bit set.
-	 * @param size	The number of bits.
+	 * @param bitSize	The number of bits.
 	 * @param byteOrder	The byte order.
 	 * @return	The converted {@link BigInteger}.
 	 */
-	static BigInteger toBigInteger(final BitSet bits, final int size, final ByteOrder byteOrder){
-		boolean negative;
+	static BigInteger toBigInteger(final BitSet bits, final int bitSize, final ByteOrder byteOrder){
+		final boolean negative;
 		BigInteger result = BigInteger.ZERO;
 		if(byteOrder == ByteOrder.BIG_ENDIAN){
 			negative = bits.get(7);
 			for(int i = bits.nextSetBit(0); i >= 0; i = bits.nextSetBit(i + 1)){
-				final int index = size - 1 - i;
+				final int index = bitSize - 1 - i;
 				final int byteIndex = index / Byte.SIZE + 1;
 				final int bitIndex = index % Byte.SIZE + 1;
 				result = result.setBit(byteIndex * Byte.SIZE - bitIndex);
 			}
 		}
 		else{
-			negative = bits.get(size - 1);
+			negative = bits.get(bitSize - 1);
 			for(int i = bits.nextSetBit(0); i >= 0; i = bits.nextSetBit(i + 1))
 				result = result.setBit(i);
 		}
 
 		if(negative){
 			final BigInteger mask = BigInteger.ONE
-				.shiftLeft(size)
+				.shiftLeft(bitSize)
 				.subtract(BigInteger.ONE);
 			result = result.not()
 				.add(BigInteger.ONE)
@@ -126,79 +113,6 @@ public final class BitSetHelper{
 		}
 
 		return result;
-	}
-
-
-	/**
-	 * In-place reverse the order of the given array byte-by-byte.
-	 *
-	 * @param array	The array to be reversed.
-	 * @param byteOrder	The byte order.
-	 */
-	public static void changeByteOrder(final byte[] array, final ByteOrder byteOrder){
-		if(byteOrder == ByteOrder.LITTLE_ENDIAN)
-			byteReverse(array);
-	}
-
-	/**
-	 * Change the byte order appropriately.
-	 *
-	 * @param bits	The bit set.
-	 * @param byteOrder	The byte order.
-	 * @return	The bit set with the bytes reversed if the byte order is little-endian.
-	 */
-	public static BitSet changeBitOrder(final BitSet bits, final ByteOrder byteOrder){
-		return (byteOrder == ByteOrder.LITTLE_ENDIAN? bitReverseEndianness(bits): bits);
-	}
-
-	/**
-	 * Reverse the endianness bit by bit.
-	 *
-	 * @param bits	The bit set.
-	 * @return	The {@link BitSet} with the bits reversed.
-	 */
-	private static BitSet bitReverseEndianness(final BitSet bits){
-		//FIXME avoid array creation
-		final byte[] array = bits.toByteArray();
-		bitReverseEndianness(array);
-		return BitSet.valueOf(array);
-	}
-
-	/**
-	 * Reverse the endianness bit by bit.
-	 *
-	 * @param array	The array to be reversed.
-	 */
-	private static void bitReverseEndianness(final byte[] array){
-		for(int i = 0, length = array.length; i < length; i ++)
-			array[i] = reverseBitsEndianness(array[i]);
-		byteReverse(array);
-	}
-
-	/**
-	 * Reverse the endianness bit by bit.
-	 *
-	 * @param number	The byte to be reversed.
-	 * @return	The given number with the bits reversed.
-	 */
-	private static byte reverseBitsEndianness(byte number){
-		byte reverse = 0;
-		for(int i = Byte.SIZE - 1; i >= 0; i --){
-			reverse += (byte)((number & 1) << i);
-			number >>= 1;
-		}
-		return reverse;
-	}
-
-	/**
-	 * In-place reverse the order of the given array.
-	 *
-	 * @param array	The array to be reversed.
-	 */
-	private static void byteReverse(final byte[] array){
-		for(int start = 0, end = array.length - 1; start < end; start ++, end --)
-			//swap `array[start]` with `array[end]`
-			array[start] ^= (byte)(array[end] ^ (array[end] = array[start]));
 	}
 
 }

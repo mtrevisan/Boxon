@@ -44,21 +44,11 @@ class BitWriterTest{
 	@Test
 	void bitSetBigEndian(){
 		BitSet value = BitSet.valueOf(new long[]{0x1234_5678_1234_5678l, 0x6666_7777_8888_9999l});
-		writer.putBitSet(value, Long.SIZE << 1, ByteOrder.BIG_ENDIAN);
+		writer.putBitSet(value, Long.SIZE << 1);
 		BitReaderInterface reader = BitReader.wrap(writer);
 
 		Assertions.assertEquals("78563412785634129999888877776666", reader.toString());
-		Assertions.assertEquals(value, reader.getBitSet(Long.SIZE << 1, ByteOrder.BIG_ENDIAN));
-	}
-
-	@Test
-	void bitSetLittleEndian(){
-		BitSet value = BitSet.valueOf(new long[]{0x1234_5678_1234_5678l, 0x6666_7777_8888_9999l});
-		writer.putBitSet(value, Long.SIZE << 1, ByteOrder.LITTLE_ENDIAN);
-		BitReaderInterface reader = BitReader.wrap(writer);
-
-		Assertions.assertEquals("6666EEEE11119999482C6A1E482C6A1E", reader.toString());
-		Assertions.assertEquals(value, reader.getBitSet(Long.SIZE << 1, ByteOrder.LITTLE_ENDIAN));
+		Assertions.assertEquals(value, reader.getBitSet(Long.SIZE << 1));
 	}
 
 	@Test

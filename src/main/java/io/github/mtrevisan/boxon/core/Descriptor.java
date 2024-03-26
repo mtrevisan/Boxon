@@ -227,7 +227,7 @@ public final class Descriptor{
 	private <M, F> Map<String, Object> describeMessage(final M message,
 			final MessageExtractor<M, ? extends Annotation, F> messageExtractor, final FieldExtractor<F, ? extends Annotation> fieldExtractor)
 			throws FieldException{
-		final Map<String, Object> description = new HashMap<>(3);
+		final Map<String, Object> description = new HashMap<>(6);
 		final DescriberKey messageKey = (messageExtractor instanceof MessageExtractorBasicTemplate
 			? DescriberKey.TEMPLATE
 			: DescriberKey.CONFIGURATION);
@@ -243,7 +243,7 @@ public final class Descriptor{
 	}
 
 	private static Map<String, Object> describeHeader(final Annotation header){
-		final Map<String, Object> headerDescription = new HashMap<>(3);
+		final Map<String, Object> headerDescription = new HashMap<>(1);
 		AnnotationDescriptor.fromAnnotation(header)
 			.describe(header, headerDescription);
 		return Collections.unmodifiableMap(headerDescription);

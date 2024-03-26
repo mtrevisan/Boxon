@@ -36,7 +36,6 @@ import io.github.mtrevisan.boxon.helpers.ConstructorHelper;
 import io.github.mtrevisan.boxon.helpers.ContextHelper;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
-import io.github.mtrevisan.boxon.io.ByteOrder;
 import org.springframework.expression.EvaluationException;
 
 import java.lang.annotation.Annotation;
@@ -163,8 +162,7 @@ final class BindingData{
 	private void addPrefixToContext(final BitReaderInterface reader){
 		final int prefixSize = selectObjectFrom.prefixLength();
 		if(prefixSize > 0){
-			final ByteOrder prefixBitOrder = selectObjectFrom.bitOrder();
-			final long[] array = reader.getBitSet(prefixSize, prefixBitOrder)
+			final long[] array = reader.getBitSet(prefixSize)
 				.toLongArray();
 			final int prefix = (array.length > 0? (int)array[0]: 0);
 

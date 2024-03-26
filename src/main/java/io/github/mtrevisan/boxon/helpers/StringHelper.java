@@ -27,9 +27,11 @@ package io.github.mtrevisan.boxon.helpers;
 import io.github.mtrevisan.boxon.exceptions.DataException;
 import org.slf4j.helpers.MessageFormatter;
 
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -93,17 +95,33 @@ public final class StringHelper{
 	 *
 	 * @param text	The text to parse.
 	 * @param separatorChar	The character used as the delimiter.
-	 * @return	An array of parsed strings.
+	 * @return	A list of parsed strings.
 	 */
-	public static String[] split(final String text, final char separatorChar){
+	public static List<String> split(final String text, final char separatorChar){
+		return split(text, 0, separatorChar);
+	}
+
+	/**
+	 * Split the given text into an array, separator specified.
+	 * <p>
+	 * The separator is not included in the returned String array.
+	 * Adjacent separators are treated as one separator.
+	 * </p>
+	 *
+	 * @param text	The text to parse.
+	 * @param fromIndex	Index in text to start from.
+	 * @param separatorChar	The character used as the delimiter.
+	 * @return	A list of parsed strings.
+	 */
+	public static List<String> split(final String text, final int fromIndex, final char separatorChar){
 		final int length = text.length();
 		if(length == 0)
-			return JavaHelper.EMPTY_STRING_ARRAY;
+			return Collections.emptyList();
 
 		final byte[] bytes = text.getBytes(StandardCharsets.UTF_8);
 		final List<String> list = new ArrayList<>(length >> 1);
-		int start = 0;
-		for(int i = 0; i < length; i ++)
+		int start = fromIndex;
+		for(int i = fromIndex; i < length; i ++)
 			if(bytes[i] == separatorChar){
 				if(start != i)
 					list.add(text.substring(start, i));
@@ -111,8 +129,9 @@ public final class StringHelper{
 			}
 		if(start != length)
 			list.add(text.substring(start));
-		return list.toArray(JavaHelper.EMPTY_STRING_ARRAY);
+		return list;
 	}
+
 
 	/**
 	 * <p>Checks if a text is empty (""), {@code null} or whitespace only.</p>
@@ -165,6 +184,17 @@ public final class StringHelper{
 	}
 
 	/**
+	 * Converts a decimal value into the corresponding hexadecimal string.
+	 *
+	 * @param value	Value to be converted to hexadecimal characters.
+	 * @return	The hexadecimal characters.
+	 */
+	public static String toHexString(final BigInteger value){
+		return value.toString(16)
+			.toUpperCase(Locale.ROOT);
+	}
+
+	/**
 	 * Converts an array of bytes into a string representing the hexadecimal values of each byte in order.
 	 *
 	 * @param array	Array to be converted to hexadecimal characters.
@@ -197,7 +227,6 @@ public final class StringHelper{
 		if(length % 2 != 0)
 			throw DataException.create("Input should be of even length, was {}", length);
 
-		//FIXME find a way to remove this array creation
 		final byte[] data = new byte[length >>> 1];
 		if(length > 0){
 			final byte[] bytes = hexString.getBytes(StandardCharsets.US_ASCII);

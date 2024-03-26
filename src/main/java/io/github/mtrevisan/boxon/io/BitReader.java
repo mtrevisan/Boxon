@@ -113,7 +113,7 @@ public final class BitReader extends BitReaderData implements BitReaderInterface
 
 	@Override
 	public void skip(final int length){
-		getBitSet(length, ByteOrder.BIG_ENDIAN);
+		getBitSet(length);
 	}
 
 	@Override
@@ -139,6 +139,7 @@ public final class BitReader extends BitReaderData implements BitReaderInterface
 
 	@Override
 	public byte[] getBytes(final int length){
+		//FIXME remove array creation?
 		final byte[] array = new byte[length];
 		for(int i = 0; i < length; i ++)
 			array[i] = getByte();
@@ -165,7 +166,7 @@ public final class BitReader extends BitReaderData implements BitReaderInterface
 
 	@Override
 	public BigInteger getBigInteger(final int size, final ByteOrder byteOrder){
-		final BitSet bits = getBitSet(size, ByteOrder.BIG_ENDIAN);
+		final BitSet bits = getBitSet(size);
 		return BitSetHelper.toBigInteger(bits, size, byteOrder);
 	}
 

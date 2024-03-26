@@ -248,6 +248,7 @@ public final class LoaderTemplate{
 		for(final Map.Entry<String, Template<?>> entry : templates.entrySet()){
 			final String header = entry.getKey();
 
+			//FIXME can this (newly created) array be substituted with something else?
 			final byte[] templateHeader = StringHelper.hexToByteArray(header);
 
 			//verify if it's a valid message header
