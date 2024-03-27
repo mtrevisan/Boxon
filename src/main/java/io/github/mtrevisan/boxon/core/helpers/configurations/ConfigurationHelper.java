@@ -34,7 +34,6 @@ import io.github.mtrevisan.boxon.io.ParserDataType;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
 
 import java.lang.reflect.Array;
-import java.util.List;
 import java.util.Map;
 
 
@@ -86,11 +85,11 @@ public final class ConfigurationHelper{
 	@SuppressWarnings("unchecked")
 	private static <T extends ConfigurationEnum> T[] extractEnumerationArrayValue(final String value, final Class<T> enumeration){
 		final ConfigurationEnum[] enumConstants = enumeration.getEnumConstants();
-		final List<String> defaultValues = StringHelper.split(value, PIPE);
-		final int length = defaultValues.size();
+		final String[] defaultValues = StringHelper.split(value, PIPE);
+		final int length = defaultValues.length;
 		final T[] valEnum = (T[])Array.newInstance(enumeration, length);
 		for(int i = 0; i < length; i ++)
-			valEnum[i] = (T)ConfigurationEnum.extractEnum(enumConstants, defaultValues.get(i));
+			valEnum[i] = (T)ConfigurationEnum.extractEnum(enumConstants, defaultValues[i]);
 		return valEnum;
 	}
 

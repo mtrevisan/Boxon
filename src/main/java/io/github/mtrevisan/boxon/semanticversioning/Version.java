@@ -29,7 +29,6 @@ import io.github.mtrevisan.boxon.helpers.StringHelper;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -181,8 +180,7 @@ public final class Version implements Comparable<Version>{
 
 		final int buildIndex = version.indexOf(BUILD_PREFIX);
 		if(buildIndex >= 0){
-			build = StringHelper.split(version, buildIndex + 1, DOT)
-				.toArray(EMPTY_STRING_ARRAY);
+			build = StringHelper.split(version, buildIndex + 1, DOT);
 			version = version.substring(0, buildIndex);
 
 			validateBuild(build);
@@ -192,8 +190,7 @@ public final class Version implements Comparable<Version>{
 
 		final int preReleaseIndex = version.indexOf(PRE_RELEASE_PREFIX);
 		if(preReleaseIndex >= 0){
-			preRelease = StringHelper.split(version, preReleaseIndex + 1, DOT)
-				.toArray(EMPTY_STRING_ARRAY);
+			preRelease = StringHelper.split(version, preReleaseIndex + 1, DOT);
 			version = version.substring(0, preReleaseIndex);
 
 			validatePreRelease(preRelease);
@@ -201,17 +198,17 @@ public final class Version implements Comparable<Version>{
 		else
 			preRelease = EMPTY_STRING_ARRAY;
 
-		final List<String> tokens = StringHelper.split(version, DOT);
+		final String[] tokens = StringHelper.split(version, DOT);
 		major = parseIdentifier(tokens, 0, KEY_MAJOR);
 		minor = parseIdentifier(tokens, 1, KEY_MINOR);
 		patch = parseIdentifier(tokens, 2, KEY_PATCH);
 	}
 
 
-	private static Integer parseIdentifier(final List<String> tokens, final int index, final String type) throws VersionException{
+	private static Integer parseIdentifier(final String[] tokens, final int index, final String type) throws VersionException{
 		Integer value = null;
-		if(tokens.size() > index){
-			final String token = tokens.get(index);
+		if(tokens.length > index){
+			final String token = tokens[index];
 
 			validateToken(type, token);
 			value = Integer.valueOf(token);

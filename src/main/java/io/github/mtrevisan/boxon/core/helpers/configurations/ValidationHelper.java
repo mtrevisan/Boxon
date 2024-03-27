@@ -37,7 +37,6 @@ import io.github.mtrevisan.boxon.semanticversioning.VersionException;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
-import java.util.List;
 import java.util.regex.Pattern;
 
 
@@ -303,12 +302,12 @@ final class ValidationHelper{
 
 	private static void validateEnumerationCompatibility(final ConfigFieldData field, final ConfigurationEnum[] enumConstants)
 			throws AnnotationException{
-		final List<String> defaultValues = StringHelper.split(field.getDefaultValue(), MUTUALLY_EXCLUSIVE_ENUMERATION_SEPARATOR);
-		for(int i = 0, length = defaultValues.size(); i < length; i ++){
-			final ConfigurationEnum enumValue = ConfigurationEnum.extractEnum(enumConstants, defaultValues.get(i));
+		final String[] defaultValues = StringHelper.split(field.getDefaultValue(), MUTUALLY_EXCLUSIVE_ENUMERATION_SEPARATOR);
+		for(int i = 0, length = defaultValues.length; i < length; i ++){
+			final ConfigurationEnum enumValue = ConfigurationEnum.extractEnum(enumConstants, defaultValues[i]);
 			if(enumValue == null)
 				throw AnnotationException.create("Default value not compatible with `enumeration` in {}; found {}, expected one of {}",
-					field.getAnnotationName(), defaultValues.get(i), Arrays.toString(enumConstants));
+					field.getAnnotationName(), defaultValues[i], Arrays.toString(enumConstants));
 		}
 	}
 

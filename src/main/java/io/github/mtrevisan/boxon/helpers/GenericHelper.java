@@ -79,9 +79,9 @@ public final class GenericHelper{
 	 *
 	 * @see <a href="https://stackoverflow.com/questions/17297308/how-do-i-resolve-the-actual-type-for-a-generic-return-type-using-reflection">How do I resolve the actual type for a generic return type using reflection?</a>
 	 */
-	public static <T> List<Class<?>> resolveGenericTypes(final Class<? extends T> offspring, final Class<T> base, final Type... actualArgs){
+	public static <T> List<Type> resolveGenericTypes(final Class<? extends T> offspring, final Class<T> base, final Type... actualArgs){
 		//initialize list to store resolved types
-		final List<Class<?>> types = new ArrayList<>(0);
+		final List<Type> types = new ArrayList<>(0);
 
 		final Queue<Class<?>> classStack = new ArrayDeque<>(1);
 		final Queue<Type[]> typesStack = new ArrayDeque<>(1);
@@ -169,12 +169,12 @@ public final class GenericHelper{
 		return typeVariables.getOrDefault(key, actualTypeArgument);
 	}
 
-	private static Collection<Class<?>> processBase(final Type[] actualArgs){
+	private static Collection<Type> processBase(final Type[] actualArgs){
 		//there is a result if the base class is reached
 		final int length = actualArgs.length;
-		final Collection<Class<?>> types = new ArrayList<>(length);
+		final Collection<Type> types = new ArrayList<>(length);
 		for(int i = 0; i < length; i ++)
-			types.add((Class<?>)actualArgs[i]);
+			types.add(actualArgs[i]);
 		return types;
 	}
 

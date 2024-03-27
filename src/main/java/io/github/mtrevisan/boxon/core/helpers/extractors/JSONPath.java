@@ -74,21 +74,22 @@ public final class JSONPath{
 	@SuppressWarnings("unchecked")
 	public static <T> T extract(final String path, final Object data, final T defaultValue) throws JSONPathException{
 		if(path == null || !path.isEmpty()){
-			final List<String> pathComponents = parsePath(path);
+			final String[] pathComponents = parsePath(path);
 			return extract(pathComponents, data, defaultValue);
 		}
 		return (T)data;
 	}
 
-	private static List<String> parsePath(final String path) throws JSONPathException{
+	private static String[] parsePath(final String path) throws JSONPathException{
 		if(path == null || path.charAt(0) != DECODED_SLASH)
 			throw JSONPathException.create("invalid path '{}'", path);
 
-		final List<String> components = StringHelper.split(path, DECODED_SLASH);
-		for(int i = 0, length = components.size(); i < length; i ++){
-			final String component = components.get(i);
+		final String[] components = StringHelper.split(path, DECODED_SLASH);
+		for(int i = 0, length = components.length; i < length; i ++){
+			final String component = components[i];
+
 			if(!StringHelper.isBlank(component))
-				components.set(i, urlDecode(rfc6901Replace(component)));
+				components[i] = urlDecode(rfc6901Replace(component));
 		}
 		return components;
 	}
@@ -129,9 +130,9 @@ public final class JSONPath{
 	}
 
 	@SuppressWarnings("unchecked")
-	private static <T> T extract(final List<String> path, Object data, final T defaultValue) throws JSONPathException{
-		for(int i = 0, length = path.size(); i < length; i ++){
-			final String currentPath = path.get(i);
+	private static <T> T extract(final String[] path, Object data, final T defaultValue) throws JSONPathException{
+		for(int i = 0, length = path.length; i < length; i ++){
+			final String currentPath = path[i];
 
 			final Integer idx = extractIndex(currentPath);
 
@@ -151,14 +152,14 @@ public final class JSONPath{
 			: null);
 	}
 
-	private static void validatePath(final Object data, final String currentPath, final Integer idx, final List<String> path)
+	private static void validatePath(final Object data, final String currentPath, final Integer idx, final String[] path)
 			throws JSONPathException{
 		final Class<?> dataClass = data.getClass();
 		if(idx != null ^ (dataClass.isArray() || List.class.isAssignableFrom(dataClass)))
 			throw JSONPathException.create("No array field '{}' found on path '{}'", currentPath, toJSONPath(path));
 	}
 
-	private static String toJSONPath(final List<String> path){
+	private static String toJSONPath(final String[] path){
 		return SLASH + String.join(SLASH, path);
 	}
 

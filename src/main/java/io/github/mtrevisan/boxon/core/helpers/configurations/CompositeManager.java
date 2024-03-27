@@ -54,6 +54,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import static io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationHelper.putIfNotEmpty;
+
 
 final class CompositeManager implements ConfigurationManagerInterface{
 
@@ -134,7 +136,7 @@ final class CompositeManager implements ConfigurationManagerInterface{
 
 			compositeFieldsMap.put(binding.shortDescription(), fieldMap);
 		}
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.COMPOSITE_FIELDS, compositeFieldsMap, compositeMap);
+		putIfNotEmpty(ConfigurationKey.COMPOSITE_FIELDS, compositeFieldsMap, compositeMap);
 
 		if(protocol.isEmpty())
 			ConfigurationHelper.extractMinMaxProtocol(annotation.minProtocol(), annotation.maxProtocol(), compositeMap);
@@ -145,9 +147,9 @@ final class CompositeManager implements ConfigurationManagerInterface{
 	private Map<String, Object> extractMap() throws ConfigurationException{
 		final Map<String, Object> map = new HashMap<>(3);
 
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, annotation.longDescription(), map);
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.PATTERN, annotation.pattern(), map);
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.CHARSET, annotation.charset(), map);
+		putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, annotation.longDescription(), map);
+		putIfNotEmpty(ConfigurationKey.PATTERN, annotation.pattern(), map);
+		putIfNotEmpty(ConfigurationKey.CHARSET, annotation.charset(), map);
 
 		return map;
 	}
@@ -156,16 +158,15 @@ final class CompositeManager implements ConfigurationManagerInterface{
 			ConfigurationException{
 		final Map<String, Object> map = new HashMap<>(5);
 
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, binding.longDescription(), map);
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.UNIT_OF_MEASURE, binding.unitOfMeasure(), map);
+		putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, binding.longDescription(), map);
+		putIfNotEmpty(ConfigurationKey.UNIT_OF_MEASURE, binding.unitOfMeasure(), map);
 
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.PATTERN, binding.pattern(), map);
+		putIfNotEmpty(ConfigurationKey.PATTERN, binding.pattern(), map);
 		if(!fieldType.isEnum() && !fieldType.isArray())
-			ConfigurationHelper.putIfNotEmpty(ConfigurationKey.FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName(),
-				map);
+			putIfNotEmpty(ConfigurationKey.FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName(), map);
 
 		final Object defaultValue = ConfigurationHelper.convertValue(binding.defaultValue(), fieldType, NullEnum.class);
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.DEFAULT_VALUE, defaultValue, map);
+		putIfNotEmpty(ConfigurationKey.DEFAULT_VALUE, defaultValue, map);
 
 		return map;
 	}

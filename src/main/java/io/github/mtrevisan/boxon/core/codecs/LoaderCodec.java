@@ -32,6 +32,7 @@ import io.github.mtrevisan.boxon.helpers.ReflectiveClassLoader;
 import io.github.mtrevisan.boxon.io.CodecInterface;
 import io.github.mtrevisan.boxon.logs.EventListener;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +45,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class LoaderCodec implements LoaderCodecInterface{
 
-	private final Map<Class<?>, CodecInterface<?>> codecs = new ConcurrentHashMap<>(0);
+	private final Map<Type, CodecInterface<?>> codecs = new ConcurrentHashMap<>(0);
 
 	private EventListener eventListener;
 
@@ -177,7 +178,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	}
 
 	private void addCodecInner(final CodecInterface<?> codec){
-		final Class<?> codecType = GenericHelper.resolveGenericTypes(codec.getClass(), CodecInterface.class)
+		final Type codecType = GenericHelper.resolveGenericTypes(codec.getClass(), CodecInterface.class)
 			.getFirst();
 		codecs.put(codecType, codec);
 	}
@@ -196,12 +197,12 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	}
 
 	@Override
-	public boolean hasCodec(final Class<?> type){
+	public boolean hasCodec(final Type type){
 		return codecs.containsKey(type);
 	}
 
 	@Override
-	public CodecInterface<?> getCodec(final Class<?> type){
+	public CodecInterface<?> getCodec(final Type type){
 		return codecs.get(type);
 	}
 

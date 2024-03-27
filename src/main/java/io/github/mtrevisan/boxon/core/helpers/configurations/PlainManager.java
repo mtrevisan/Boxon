@@ -43,6 +43,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import static io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationHelper.putIfNotEmpty;
+
 
 final class PlainManager implements ConfigurationManagerInterface{
 
@@ -106,21 +108,20 @@ final class PlainManager implements ConfigurationManagerInterface{
 	private Map<String, Object> extractMap(final Class<?> fieldType) throws CodecException, ConfigurationException{
 		final Map<String, Object> map = new HashMap<>(9);
 
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, annotation.longDescription(), map);
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.UNIT_OF_MEASURE, annotation.unitOfMeasure(), map);
+		putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, annotation.longDescription(), map);
+		putIfNotEmpty(ConfigurationKey.UNIT_OF_MEASURE, annotation.unitOfMeasure(), map);
 
 		if(!fieldType.isEnum() && !fieldType.isArray())
-			ConfigurationHelper.putIfNotEmpty(ConfigurationKey.FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName(),
-				map);
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.MIN_VALUE, JavaHelper.toBigDecimal(annotation.minValue()), map);
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.MAX_VALUE, JavaHelper.toBigDecimal(annotation.maxValue()), map);
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.PATTERN, annotation.pattern(), map);
+			putIfNotEmpty(ConfigurationKey.FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName(), map);
+		putIfNotEmpty(ConfigurationKey.MIN_VALUE, JavaHelper.toBigDecimal(annotation.minValue()), map);
+		putIfNotEmpty(ConfigurationKey.MAX_VALUE, JavaHelper.toBigDecimal(annotation.maxValue()), map);
+		putIfNotEmpty(ConfigurationKey.PATTERN, annotation.pattern(), map);
 		ConfigurationHelper.extractEnumeration(fieldType, annotation.enumeration(), map);
 
 		final Object defaultValue = ConfigurationHelper.convertValue(annotation.defaultValue(), fieldType, annotation.enumeration());
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.DEFAULT_VALUE, defaultValue, map);
+		putIfNotEmpty(ConfigurationKey.DEFAULT_VALUE, defaultValue, map);
 		if(String.class.isAssignableFrom(fieldType))
-			ConfigurationHelper.putIfNotEmpty(ConfigurationKey.CHARSET, annotation.charset(), map);
+			putIfNotEmpty(ConfigurationKey.CHARSET, annotation.charset(), map);
 
 		return map;
 	}

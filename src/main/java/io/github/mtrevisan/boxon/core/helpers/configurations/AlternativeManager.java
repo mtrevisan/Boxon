@@ -44,6 +44,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import static io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationHelper.putIfNotEmpty;
+
 
 final class AlternativeManager implements ConfigurationManagerInterface{
 
@@ -145,19 +147,19 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 
 			final Map<String, Object> fieldMap = extractMap(alternativeField, fieldType);
 
-			ConfigurationHelper.putIfNotEmpty(ConfigurationKey.MIN_PROTOCOL, alternativeField.minProtocol(), fieldMap);
-			ConfigurationHelper.putIfNotEmpty(ConfigurationKey.MAX_PROTOCOL, alternativeField.maxProtocol(), fieldMap);
+			putIfNotEmpty(ConfigurationKey.MIN_PROTOCOL, alternativeField.minProtocol(), fieldMap);
+			putIfNotEmpty(ConfigurationKey.MAX_PROTOCOL, alternativeField.maxProtocol(), fieldMap);
 			final Object defaultValue = ConfigurationHelper.convertValue(alternativeField.defaultValue(), fieldType, annotation.enumeration());
-			ConfigurationHelper.putIfNotEmpty(ConfigurationKey.DEFAULT_VALUE, defaultValue, fieldMap);
+			putIfNotEmpty(ConfigurationKey.DEFAULT_VALUE, defaultValue, fieldMap);
 
 			fieldMap.putAll(alternativeMap);
 
 			alternatives.add(fieldMap);
 		}
 		final Map<String, Object> alternativesMap = new HashMap<>(3);
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.ALTERNATIVES, alternatives, alternativesMap);
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.MIN_PROTOCOL, annotation.minProtocol(), alternativesMap);
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.MAX_PROTOCOL, annotation.maxProtocol(), alternativesMap);
+		putIfNotEmpty(ConfigurationKey.ALTERNATIVES, alternatives, alternativesMap);
+		putIfNotEmpty(ConfigurationKey.MIN_PROTOCOL, annotation.minProtocol(), alternativesMap);
+		putIfNotEmpty(ConfigurationKey.MAX_PROTOCOL, annotation.maxProtocol(), alternativesMap);
 		return alternativesMap;
 	}
 
@@ -171,7 +173,7 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 			alternativesMap.putAll(extractMap(fieldBinding, fieldType));
 
 			final Object defaultValue = ConfigurationHelper.convertValue(fieldBinding.defaultValue(), fieldType, annotation.enumeration());
-			ConfigurationHelper.putIfNotEmpty(ConfigurationKey.DEFAULT_VALUE, defaultValue, alternativesMap);
+			putIfNotEmpty(ConfigurationKey.DEFAULT_VALUE, defaultValue, alternativesMap);
 
 			alternativesMap.putAll(alternativeMap);
 		}
@@ -183,12 +185,11 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 	private Map<String, Object> extractMap(final Class<?> fieldType) throws ConfigurationException{
 		final Map<String, Object> map = new HashMap<>(4);
 
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, annotation.longDescription(), map);
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.UNIT_OF_MEASURE, annotation.unitOfMeasure(), map);
+		putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, annotation.longDescription(), map);
+		putIfNotEmpty(ConfigurationKey.UNIT_OF_MEASURE, annotation.unitOfMeasure(), map);
 
 		if(!fieldType.isEnum() && !fieldType.isArray())
-			ConfigurationHelper.putIfNotEmpty(ConfigurationKey.FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName(),
-				map);
+			putIfNotEmpty(ConfigurationKey.FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName(), map);
 		ConfigurationHelper.extractEnumeration(fieldType, annotation.enumeration(), map);
 
 		return map;
@@ -198,18 +199,17 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 	private static Map<String, Object> extractMap(final AlternativeSubField binding, final Class<?> fieldType) throws ConfigurationException{
 		final Map<String, Object> map = new HashMap<>(7);
 
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, binding.longDescription(), map);
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.UNIT_OF_MEASURE, binding.unitOfMeasure(), map);
+		putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, binding.longDescription(), map);
+		putIfNotEmpty(ConfigurationKey.UNIT_OF_MEASURE, binding.unitOfMeasure(), map);
 
 		if(!fieldType.isEnum() && !fieldType.isArray())
-			ConfigurationHelper.putIfNotEmpty(ConfigurationKey.FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName(),
-				map);
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.MIN_VALUE, JavaHelper.toBigDecimal(binding.minValue()), map);
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.MAX_VALUE, JavaHelper.toBigDecimal(binding.maxValue()), map);
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.PATTERN, binding.pattern(), map);
+			putIfNotEmpty(ConfigurationKey.FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName(), map);
+		putIfNotEmpty(ConfigurationKey.MIN_VALUE, JavaHelper.toBigDecimal(binding.minValue()), map);
+		putIfNotEmpty(ConfigurationKey.MAX_VALUE, JavaHelper.toBigDecimal(binding.maxValue()), map);
+		putIfNotEmpty(ConfigurationKey.PATTERN, binding.pattern(), map);
 
 		if(String.class.isAssignableFrom(fieldType))
-			ConfigurationHelper.putIfNotEmpty(ConfigurationKey.CHARSET, binding.charset(), map);
+			putIfNotEmpty(ConfigurationKey.CHARSET, binding.charset(), map);
 
 		return map;
 	}

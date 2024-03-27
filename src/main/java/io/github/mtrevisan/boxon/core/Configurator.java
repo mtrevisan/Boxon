@@ -52,6 +52,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationHelper.putIfNotEmpty;
+
 
 /**
  * Declarative configurator for binary encoded configuration data.
@@ -142,11 +144,11 @@ public final class Configurator{
 			final Map<String, Object> map = new HashMap<>(3);
 			final Map<String, Object> headerMap = extractMap(protocol, header);
 			final Map<String, Object> fieldsMap = extractFieldsMap(protocol, configuration);
-			ConfigurationHelper.putIfNotEmpty(ConfigurationKey.HEADER, headerMap, map);
-			ConfigurationHelper.putIfNotEmpty(ConfigurationKey.FIELDS, fieldsMap, map);
+			putIfNotEmpty(ConfigurationKey.HEADER, headerMap, map);
+			putIfNotEmpty(ConfigurationKey.FIELDS, fieldsMap, map);
 			if(protocol.isEmpty()){
 				final List<String> protocolVersionBoundaries = configuration.getProtocolVersionBoundaries();
-				ConfigurationHelper.putIfNotEmpty(ConfigurationKey.PROTOCOL_VERSION_BOUNDARIES, protocolVersionBoundaries, map);
+				putIfNotEmpty(ConfigurationKey.PROTOCOL_VERSION_BOUNDARIES, protocolVersionBoundaries, map);
 			}
 			response.add(map);
 		}
@@ -155,11 +157,11 @@ public final class Configurator{
 
 	private static Map<String, Object> extractMap(final Version protocol, final ConfigurationHeader header) throws ConfigurationException{
 		final Map<String, Object> map = new HashMap<>(4);
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.SHORT_DESCRIPTION, header.shortDescription(), map);
-		ConfigurationHelper.putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, header.longDescription(), map);
+		putIfNotEmpty(ConfigurationKey.SHORT_DESCRIPTION, header.shortDescription(), map);
+		putIfNotEmpty(ConfigurationKey.LONG_DESCRIPTION, header.longDescription(), map);
 		if(protocol.isEmpty()){
-			ConfigurationHelper.putIfNotEmpty(ConfigurationKey.MIN_PROTOCOL, header.minProtocol(), map);
-			ConfigurationHelper.putIfNotEmpty(ConfigurationKey.MAX_PROTOCOL, header.maxProtocol(), map);
+			putIfNotEmpty(ConfigurationKey.MIN_PROTOCOL, header.minProtocol(), map);
+			putIfNotEmpty(ConfigurationKey.MAX_PROTOCOL, header.maxProtocol(), map);
 		}
 		return map;
 	}
@@ -173,8 +175,9 @@ public final class Configurator{
 			final ConfigurationField field = fields.get(i);
 
 			final Annotation annotation = field.getBinding();
+			final Class<?> fieldType = field.getFieldType();
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(annotation);
-			final Map<String, Object> fieldMap = manager.extractConfigurationMap(field.getFieldType(), protocol);
+			final Map<String, Object> fieldMap = manager.extractConfigurationMap(fieldType, protocol);
 			if(!fieldMap.isEmpty())
 				fieldsMap.put(manager.getShortDescription(), fieldMap);
 		}

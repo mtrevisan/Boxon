@@ -211,7 +211,9 @@ public final class ReflectionHelper{
 		for(int i = 0; i < size; i ++){
 			final Field field = fields.get(i);
 
-			map.put(field.getName(), getValue(object, field));
+			final String key = field.getName();
+			final Object value = getValue(object, field);
+			map.put(key, value);
 		}
 		return map;
 	}

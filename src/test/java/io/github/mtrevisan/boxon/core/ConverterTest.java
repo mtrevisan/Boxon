@@ -56,8 +56,8 @@ class ConverterTest{
 
 		@Override
 		public byte[] encode(final String value){
-			final List<String> components = StringHelper.split(value, '.');
-			return new byte[]{Byte.parseByte(components.get(0)), Byte.parseByte(components.get(1))};
+			final String[] components = StringHelper.split(value, '.');
+			return new byte[]{Byte.parseByte(components[0]), Byte.parseByte(components[1])};
 		}
 	}
 

@@ -29,10 +29,7 @@ import org.slf4j.helpers.MessageFormatter;
 
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.Locale;
 
 
@@ -40,6 +37,10 @@ import java.util.Locale;
  * A collection of convenience methods for working with {@link String} objects.
  */
 public final class StringHelper{
+
+	/** An empty {@code String} array. */
+	private static final String[] EMPTY_STRING_ARRAY = new String[0];
+
 
 	private StringHelper(){}
 
@@ -97,7 +98,7 @@ public final class StringHelper{
 	 * @param separatorChar	The character used as the delimiter.
 	 * @return	A list of parsed strings.
 	 */
-	public static List<String> split(final String text, final char separatorChar){
+	public static String[] split(final String text, final char separatorChar){
 		return split(text, 0, separatorChar);
 	}
 
@@ -113,23 +114,36 @@ public final class StringHelper{
 	 * @param separatorChar	The character used as the delimiter.
 	 * @return	A list of parsed strings.
 	 */
-	public static List<String> split(final String text, final int fromIndex, final char separatorChar){
+	public static String[] split(final String text, final int fromIndex, final char separatorChar){
 		final int length = text.length();
 		if(length == 0)
-			return Collections.emptyList();
+			return EMPTY_STRING_ARRAY;
 
 		final byte[] bytes = text.getBytes(StandardCharsets.UTF_8);
-		final List<String> list = new ArrayList<>(length >> 1);
+		final String[] result = createSplitResult(bytes, fromIndex, separatorChar);
+
+		int currentIndex = 0;
 		int start = fromIndex;
 		for(int i = fromIndex; i < length; i ++)
 			if(bytes[i] == separatorChar){
 				if(start != i)
-					list.add(text.substring(start, i));
+					result[currentIndex ++] = text.substring(start, i);
+
 				start = i + 1;
 			}
 		if(start != length)
-			list.add(text.substring(start));
-		return list;
+			result[currentIndex] = text.substring(start);
+
+		return result;
+	}
+
+	private static String[] createSplitResult(final byte[] bytes, final int fromIndex, final char separatorChar){
+		final int length = bytes.length;
+		int count = (bytes[fromIndex] == separatorChar? 0: 1);
+		for(int i = fromIndex; i < length; i ++)
+			if(bytes[i] == separatorChar)
+				count ++;
+		return new String[count];
 	}
 
 

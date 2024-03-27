@@ -244,8 +244,8 @@ public final class Descriptor{
 
 	private static Map<String, Object> describeHeader(final Annotation header){
 		final Map<String, Object> headerDescription = new HashMap<>(1);
-		AnnotationDescriptor.fromAnnotation(header)
-			.describe(header, headerDescription);
+		final AnnotationDescriptor annotationDescriptor = AnnotationDescriptor.fromAnnotation(header);
+		annotationDescriptor.describe(header, headerDescription);
 		return Collections.unmodifiableMap(headerDescription);
 	}
 

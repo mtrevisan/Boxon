@@ -510,8 +510,8 @@ public enum AnnotationDescriptor{
 			final S skip = skips[i];
 
 			final Map<String, Object> skipDescription = new HashMap<>(1);
-			fromAnnotation(skip)
-				.describe(skip, skipDescription);
+			final AnnotationDescriptor annotationDescriptor = fromAnnotation(skip);
+			annotationDescriptor.describe(skip, skipDescription);
 			rootDescription.add(skipDescription);
 		}
 	}

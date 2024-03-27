@@ -26,6 +26,8 @@ package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.io.CodecInterface;
 
+import java.lang.reflect.Type;
+
 
 public interface LoaderCodecInterface{
 
@@ -35,7 +37,7 @@ public interface LoaderCodecInterface{
 	 * @param type	The class type.
 	 * @return	Whether there is a codec for the given class type.
 	 */
-	boolean hasCodec(final Class<?> type);
+	boolean hasCodec(final Type type);
 
 	/**
 	 * Get the codec for the given class type.
@@ -43,6 +45,6 @@ public interface LoaderCodecInterface{
 	 * @param type	The class type.
 	 * @return	The codec for the given class type.
 	 */
-	CodecInterface<?> getCodec(final Class<?> type);
+	CodecInterface<?> getCodec(final Type type);
 
 }
