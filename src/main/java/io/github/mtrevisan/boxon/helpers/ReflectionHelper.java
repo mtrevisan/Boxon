@@ -37,7 +37,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiConsumer;
 
 
 /**
@@ -238,14 +237,12 @@ public final class ReflectionHelper{
 	private static List<Field> getAccessibleFields(Class<?> cls, final Class<?> fieldType){
 		final List<Field> allFields = new ArrayList<>(0);
 
-		//recurse classes:
-		final BiConsumer<Collection<Field>, Field[]> extractChildFields = getExtractChildFieldsMethod(fieldType);
 		final ArrayList<Field> childFields = new ArrayList<>(0);
 		while(cls != null && cls != Object.class){
 			final Field[] rawChildFields = cls.getDeclaredFields();
 			childFields.clear();
 			childFields.ensureCapacity(rawChildFields.length);
-			extractChildFields.accept(childFields, rawChildFields);
+			extractChildFields(childFields, rawChildFields, fieldType);
 
 			//place parent's fields before all the child's fields
 			allFields.addAll(0, childFields);
@@ -259,26 +256,19 @@ public final class ReflectionHelper{
 		return allFields;
 	}
 
-	private static BiConsumer<Collection<Field>, Field[]> getExtractChildFieldsMethod(final Class<?> fieldType){
-		return (fieldType == null
-			? ReflectionHelper::extractChildFields
-			: (fields, rawFields) -> extractChildFields(fields, rawFields, fieldType)
-		);
-	}
-
-	private static void extractChildFields(final Collection<Field> fields, final Field[] rawFields){
-		for(int i = 0, length = rawFields.length; i < length; i ++)
-			fields.add(rawFields[i]);
-	}
-
 	//an injection must be performed
 	private static void extractChildFields(final Collection<Field> fields, final Field[] rawFields, final Class<?> fieldType){
-		for(int i = 0, length = rawFields.length; i < length; i ++){
-			final Field rawSubField = rawFields[i];
-
-			if(rawSubField.isAnnotationPresent(Injected.class) && fieldType.isAssignableFrom(rawSubField.getType()))
-				fields.add(rawSubField);
+		if(fieldType == null){
+			for(int i = 0, length = rawFields.length; i < length; i ++)
+				fields.add(rawFields[i]);
 		}
+		else
+			for(int i = 0, length = rawFields.length; i < length; i ++){
+				final Field rawSubField = rawFields[i];
+
+				if(rawSubField.isAnnotationPresent(Injected.class) && fieldType.isAssignableFrom(rawSubField.getType()))
+					fields.add(rawSubField);
+			}
 	}
 
 	private static void makeFieldsAccessible(final List<Field> fields){

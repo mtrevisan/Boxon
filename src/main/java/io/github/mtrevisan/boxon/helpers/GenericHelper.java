@@ -33,7 +33,6 @@ import java.lang.reflect.TypeVariable;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -92,18 +91,18 @@ public final class GenericHelper{
 			final Type[] currentTypes = typesStack.poll();
 
 			//find direct ancestors (superclass and interfaces)
-			final List<Type> ancestorsQueue = extractAncestors(currentOffspring);
+			final List<Type> ancestors = extractAncestors(currentOffspring);
 
 			//map type parameters into the actual types
 			final TypeVariable<? extends Class<?>>[] typeParameters = currentOffspring.getTypeParameters();
 			final Map<String, Type> typeVariables = mapParameterTypes(typeParameters);
 
 			//process ancestors
-			processAncestors(ancestorsQueue, typeVariables, base, classStack, typesStack);
+			processAncestors(ancestors, typeVariables, base, classStack, typesStack);
 
 			//if there are no resolved types and offspring is equal to base, process the base
 			if(currentTypes != null && types.isEmpty() && currentOffspring.equals(base))
-				types.addAll(processBase(currentTypes));
+				processBase(currentTypes, types);
 		}
 
 		return types;
@@ -121,13 +120,13 @@ public final class GenericHelper{
 
 	private static List<Type> extractAncestors(final Class<?> offspring){
 		final Type[] genericInterfaces = offspring.getGenericInterfaces();
-		final List<Type> ancestorsQueue = new ArrayList<>(genericInterfaces.length + 1);
+		final List<Type> ancestors = new ArrayList<>(genericInterfaces.length + 1);
 		for(int i = 0, genericInterfacesLength = genericInterfaces.length; i < genericInterfacesLength; i ++)
-			ancestorsQueue.add(genericInterfaces[i]);
+			ancestors.add(genericInterfaces[i]);
 		final Type genericSuperclass = offspring.getGenericSuperclass();
 		if(genericSuperclass != null)
-			ancestorsQueue.add(genericSuperclass);
-		return ancestorsQueue;
+			ancestors.add(genericSuperclass);
+		return ancestors;
 	}
 
 	private static <T> void processAncestors(final List<Type> ancestors, final Map<String, Type> typeVariables, final Class<T> base,
@@ -169,13 +168,10 @@ public final class GenericHelper{
 		return typeVariables.getOrDefault(key, actualTypeArgument);
 	}
 
-	private static Collection<Type> processBase(final Type[] actualArgs){
+	private static void processBase(final Type[] actualArgs, final List<Type> types){
 		//there is a result if the base class is reached
-		final int length = actualArgs.length;
-		final Collection<Type> types = new ArrayList<>(length);
-		for(int i = 0; i < length; i ++)
+		for(int i = 0, length = actualArgs.length; i < length; i ++)
 			types.add(actualArgs[i]);
-		return types;
 	}
 
 
