@@ -242,7 +242,10 @@ public final class ReflectionHelper{
 			final Field[] rawChildFields = cls.getDeclaredFields();
 			childFields.clear();
 			childFields.ensureCapacity(rawChildFields.length);
-			extractChildFields(childFields, rawChildFields, fieldType);
+			if(fieldType == null)
+				extractChildFields(rawChildFields, childFields);
+			else
+				extractChildFields2(rawChildFields, fieldType, childFields);
 
 			//place parent's fields before all the child's fields
 			allFields.addAll(0, childFields);
@@ -256,19 +259,19 @@ public final class ReflectionHelper{
 		return allFields;
 	}
 
-	//an injection must be performed
-	private static void extractChildFields(final Collection<Field> fields, final Field[] rawFields, final Class<?> fieldType){
-		if(fieldType == null){
-			for(int i = 0, length = rawFields.length; i < length; i ++)
-				fields.add(rawFields[i]);
-		}
-		else
-			for(int i = 0, length = rawFields.length; i < length; i ++){
-				final Field rawSubField = rawFields[i];
+	private static void extractChildFields2(final Field[] rawFields, final Class<?> fieldType, final Collection<Field> fields){
+		for(int i = 0, length = rawFields.length; i < length; i ++){
+			final Field rawSubField = rawFields[i];
 
-				if(rawSubField.isAnnotationPresent(Injected.class) && fieldType.isAssignableFrom(rawSubField.getType()))
-					fields.add(rawSubField);
-			}
+			//an injection must be performed
+			if(rawSubField.isAnnotationPresent(Injected.class) && fieldType.isAssignableFrom(rawSubField.getType()))
+				fields.add(rawSubField);
+		}
+	}
+
+	private static void extractChildFields(final Field[] rawFields, final Collection<Field> fields){
+		for(int i = 0, length = rawFields.length; i < length; i ++)
+			fields.add(rawFields[i]);
 	}
 
 	private static void makeFieldsAccessible(final List<Field> fields){
