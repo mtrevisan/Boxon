@@ -1580,10 +1580,11 @@ Pull requests are welcomed.
 ## Changelog
 
 <a name="changelog-3.4.1"></a>
-### version 3.4.1 - 20240321
+### version 3.4.1 - 202403??
 
 - Fixed a problem while converting a numeric string to number.
 - Make record classes work with annotations.
+- Slightly reduced memory footprint.
 
 <a name="changelog-3.4.0"></a>
 ### version 3.4.0 - 20240318
