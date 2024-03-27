@@ -31,7 +31,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
@@ -197,10 +196,8 @@ public final class BitReader extends BitReaderData implements BitReaderInterface
 	@Override
 	public String getTextUntilTerminator(final byte terminator, final Charset charset){
 		String text = null;
-		try(
-				final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				final OutputStreamWriter osw = new OutputStreamWriter(baos, charset)){
-			getTextUntilTerminator(osw, terminator);
+		try(final ByteArrayOutputStream baos = new ByteArrayOutputStream()){
+			getTextUntilTerminator(baos, terminator);
 
 			text = baos.toString(charset);
 		}
@@ -211,10 +208,8 @@ public final class BitReader extends BitReaderData implements BitReaderInterface
 	@Override
 	public String getTextUntilTerminatorWithoutConsuming(final byte terminator, final Charset charset){
 		String text = null;
-		try(
-			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			final OutputStreamWriter osw = new OutputStreamWriter(baos, charset)){
-			getTextUntilTerminatorWithoutConsuming(osw, terminator);
+		try(final ByteArrayOutputStream baos = new ByteArrayOutputStream()){
+			getTextUntilTerminatorWithoutConsuming(baos, terminator);
 
 			text = baos.toString(charset);
 		}

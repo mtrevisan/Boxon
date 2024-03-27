@@ -26,8 +26,8 @@ package io.github.mtrevisan.boxon.io;
 
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.util.BitSet;
@@ -194,29 +194,29 @@ abstract class BitReaderData{
 	/**
 	 * Retrieve text until a terminator (NOT consumed!) is found.
 	 *
-	 * @param os	The stream to write to.
+	 * @param baos	The stream to write to.
 	 * @param terminator	The terminator.
 	 * @throws IOException	If an I/O error occurs.
 	 */
-	protected final void getTextUntilTerminator(final OutputStreamWriter os, final byte terminator) throws IOException{
+	protected final void getTextUntilTerminator(final ByteArrayOutputStream baos, final byte terminator) throws IOException{
 		for(Byte byteRead = peekByte(); byteRead != null && byteRead != terminator; byteRead = peekByte())
-			os.write(getByte());
-		os.flush();
+			baos.write(getByte());
+		baos.flush();
 	}
 
 	/**
 	 * Retrieve text until a terminator is found. Not bytes are consumed.
 	 *
-	 * @param os	The stream to write to.
+	 * @param baos	The stream to write to.
 	 * @param terminator	The terminator.
 	 * @throws IOException	If an I/O error occurs.
 	 */
-	protected final void getTextUntilTerminatorWithoutConsuming(final OutputStreamWriter os, final byte terminator) throws IOException{
+	protected final void getTextUntilTerminatorWithoutConsuming(final ByteArrayOutputStream baos, final byte terminator) throws IOException{
 		//make a copy of internal variables
 		final State originalState = createState();
 
 		try{
-			getTextUntilTerminator(os, terminator);
+			getTextUntilTerminator(baos, terminator);
 		}
 		catch(final BufferUnderflowException ignored){
 			//trap end-of-buffer
