@@ -191,6 +191,7 @@ public final class TemplateParser implements TemplateParserInterface{
 		T currentObject = ConstructorHelper.getEmptyCreator(template.getType())
 			.get();
 
+		//FIXME is there a way to reduce the number of ParserContext objects?
 		final ParserContext<T> parserContext = new ParserContext<>(core.getEvaluator(), currentObject, parentObject);
 		//add current object in the context
 		parserContext.addCurrentObjectToEvaluatorContext();
@@ -346,6 +347,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	@Override
 	public <T> void encode(final Template<?> template, final BitWriterInterface writer, final Object parentObject, final T currentObject)
 			throws FieldException{
+		//FIXME is there a way to reduce the number of ParserContext objects?
 		final ParserContext<T> parserContext = new ParserContext<>(core.getEvaluator(), currentObject, parentObject);
 		parserContext.addCurrentObjectToEvaluatorContext();
 		parserContext.setClassName(template.getType().getName());

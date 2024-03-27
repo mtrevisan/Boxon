@@ -92,7 +92,7 @@ public final class GenericHelper{
 			final Type[] currentTypes = typesStack.poll();
 
 			//find direct ancestors (superclass and interfaces)
-			final Queue<Type> ancestorsQueue = extractAncestors(currentOffspring);
+			final List<Type> ancestorsQueue = extractAncestors(currentOffspring);
 
 			//map type parameters into the actual types
 			final TypeVariable<? extends Class<?>>[] typeParameters = currentOffspring.getTypeParameters();
@@ -119,20 +119,21 @@ public final class GenericHelper{
 		return typeVariables;
 	}
 
-	private static Queue<Type> extractAncestors(final Class<?> offspring){
+	private static List<Type> extractAncestors(final Class<?> offspring){
 		final Type[] genericInterfaces = offspring.getGenericInterfaces();
-		final Queue<Type> ancestorsQueue = new ArrayDeque<>(genericInterfaces.length + 1);
-		ancestorsQueue.addAll(Arrays.asList(genericInterfaces));
+		final List<Type> ancestorsQueue = new ArrayList<>(genericInterfaces.length + 1);
+		for(int i = 0, genericInterfacesLength = genericInterfaces.length; i < genericInterfacesLength; i ++)
+			ancestorsQueue.add(genericInterfaces[i]);
 		final Type genericSuperclass = offspring.getGenericSuperclass();
 		if(genericSuperclass != null)
 			ancestorsQueue.add(genericSuperclass);
 		return ancestorsQueue;
 	}
 
-	private static <T> void processAncestors(final Queue<Type> ancestorsQueue, final Map<String, Type> typeVariables, final Class<T> base,
+	private static <T> void processAncestors(final List<Type> ancestors, final Map<String, Type> typeVariables, final Class<T> base,
 			final Queue<Class<?>> classStack, final Queue<Type[]> typesStack){
-		while(!ancestorsQueue.isEmpty()){
-			final Type ancestorType = ancestorsQueue.poll();
+		for(int i = 0, length = ancestors.size(); i < length; i ++){
+			final Type ancestorType = ancestors.get(i);
 
 			if(ancestorType instanceof final ParameterizedType pt){
 				//ancestor is parameterized: process only if the raw type matches the base class

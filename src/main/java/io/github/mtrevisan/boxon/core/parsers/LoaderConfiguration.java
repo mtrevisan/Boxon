@@ -44,10 +44,10 @@ import io.github.mtrevisan.boxon.logs.EventListener;
 import io.github.mtrevisan.boxon.semanticversioning.Version;
 
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
@@ -301,7 +301,7 @@ public final class LoaderConfiguration{
 
 	private static Collection<ConfigurationField> extractMandatoryFields(final List<ConfigurationField> fields, final Version protocol){
 		final int length = fields.size();
-		final Collection<ConfigurationField> mandatoryFields = new HashSet<>(length);
+		final Collection<ConfigurationField> mandatoryFields = new ArrayList<>(length);
 		for(int i = 0; i < length; i ++){
 			final ConfigurationField field = fields.get(i);
 

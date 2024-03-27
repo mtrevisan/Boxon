@@ -156,7 +156,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 		eventListener.loadedCodecs(length);
 	}
 
-	private void addCodecsInner(@SuppressWarnings("BoundedWildcard") final List<CodecInterface<?>> codecs){
+	private void addCodecsInner(final List<CodecInterface<?>> codecs){
 		//load each codec into the available codec list
 		for(int i = 0, length = codecs.size(); i < length; i ++){
 			final CodecInterface<?> codec = codecs.get(i);
