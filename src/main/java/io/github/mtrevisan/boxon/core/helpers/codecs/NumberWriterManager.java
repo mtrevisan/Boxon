@@ -24,7 +24,6 @@
  */
 package io.github.mtrevisan.boxon.core.helpers.codecs;
 
-import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 
 import java.math.BigDecimal;
@@ -61,9 +60,7 @@ final class NumberWriterManager implements WriterManagerInterface{
 				writer.putText(text);
 			else{
 				final BigInteger bi = new BigInteger(text);
-				writer.putText(radix == 16
-					? StringHelper.toHexString(bi)
-					: bi.toString(radix));
+				writer.putText(bi.toString(radix));
 			}
 		}
 	}

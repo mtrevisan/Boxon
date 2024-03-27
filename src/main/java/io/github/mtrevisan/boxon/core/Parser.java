@@ -26,6 +26,7 @@ package io.github.mtrevisan.boxon.core;
 
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
+import io.github.mtrevisan.boxon.exceptions.DataException;
 import io.github.mtrevisan.boxon.exceptions.DecodeException;
 import io.github.mtrevisan.boxon.io.BitReader;
 
@@ -156,7 +157,7 @@ public final class Parser{
 	private static void assertNoLeftBytes(final BitReader reader, final int start, final Collection<Response<byte[], Object>> response){
 		if(reader.hasRemaining()){
 			final int position = reader.position();
-			final IllegalArgumentException error = new IllegalArgumentException("There are remaining unread bytes");
+			final Exception error = DataException.create("There are remaining unread bytes");
 			final DecodeException pe = DecodeException.create(position, error);
 			response.add(Response.create(pe));
 		}

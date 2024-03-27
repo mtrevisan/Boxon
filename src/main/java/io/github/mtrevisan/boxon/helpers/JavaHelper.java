@@ -182,7 +182,7 @@ public final class JavaHelper{
 	public static BigDecimal toBigDecimal(final String value){
 		try{
 			if(isHexadecimalNumber(value))
-				return new BigDecimal(new BigInteger(value.substring(2), 16).toString());
+				return new BigDecimal(new BigInteger(value.substring(2), 16));
 
 			return new BigDecimal(value);
 		}

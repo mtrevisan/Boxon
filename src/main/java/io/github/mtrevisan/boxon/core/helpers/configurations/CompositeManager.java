@@ -191,17 +191,14 @@ final class CompositeManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
-	public Object convertValue(final Field field, final String dataKey, Object dataValue, final Version protocol) throws EncodeException{
-		//compose field value
-		final String composition = annotation.composition();
-		final CompositeSubField[] fields = annotation.value();
-		if(dataValue instanceof Map)
-			dataValue = replace(composition, (Map<String, Object>)dataValue, fields);
-		return dataValue;
+	public Object convertValue(final Field field, final String dataKey, final Object dataValue, final Version protocol)
+			throws EncodeException{
+		return (dataValue instanceof final Map<?, ?> dv
+			? replace(annotation.composition(), dv, annotation.value())
+			: dataValue);
 	}
 
-	private static String replace(final String text, final Map<String, Object> replacements, final CompositeSubField[] fields)
+	private static String replace(final String text, final Map<?, ?> replacements, final CompositeSubField[] fields)
 			throws EncodeException{
 		final int length = fields.length;
 		final Map<String, Object> trueReplacements = new HashMap<>(length);
@@ -214,8 +211,7 @@ final class CompositeManager implements ConfigurationManagerInterface{
 
 	private static String substitutePlaceholders(final String text, final Map<String, Object> dataModel) throws EncodeException{
 		if(dataModel != null){
-			try{
-				final Writer writer = new StringWriter();
+			try(final Writer writer = new StringWriter()){
 				final Template template = new Template(NOTIFICATION_TEMPLATE, new StringReader(text), FREEMARKER_CONFIGURATION);
 
 				//create a processing environment

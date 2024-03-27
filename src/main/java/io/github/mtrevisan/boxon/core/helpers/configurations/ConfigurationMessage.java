@@ -111,7 +111,6 @@ public final class ConfigurationMessage<T>{
 		}
 	}
 
-	@SuppressWarnings("ObjectAllocationInLoop")
 	private List<ConfigurationField> loadAnnotatedFields(final Class<T> type, final Version minProtocolVersion, final Version maxProtocolVersion)
 			throws AnnotationException, CodecException{
 		final List<Field> fields = ReflectionHelper.getAccessibleFields(type);

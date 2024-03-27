@@ -37,6 +37,7 @@ import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.core.helpers.templates.TemplateField;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
+import io.github.mtrevisan.boxon.exceptions.DataException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.helpers.CharsetHelper;
@@ -299,14 +300,13 @@ public final class TemplateParser implements TemplateParserInterface{
 			final short calculatedChecksum = calculateChecksum(startPosition, reader, checksum);
 			final Number givenChecksum = checksumData.getFieldValue(data);
 			if(givenChecksum == null)
-				throw new IllegalArgumentException("Something bad happened, cannot read message checksum");
+				throw DataException.create("Something bad happened, cannot read message checksum");
 			if(calculatedChecksum != givenChecksum.shortValue()){
 				final int mask = ParserDataType.fromType(givenChecksum.getClass())
 					.getMask();
-				throw new IllegalArgumentException("Calculated checksum (0x"
-					+ StringHelper.toHexString(calculatedChecksum & mask)
-					+ ") does NOT match given checksum (0x"
-					+ StringHelper.toHexString(givenChecksum.shortValue() & mask) + ")");
+				throw DataException.create("Calculated checksum (0x{}) does NOT match given checksum (0x{})",
+					StringHelper.toHexString(calculatedChecksum & mask),
+					StringHelper.toHexString(givenChecksum.shortValue() & mask));
 			}
 		}
 	}

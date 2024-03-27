@@ -111,7 +111,6 @@ public final class Template<T>{
 	}
 
 
-	@SuppressWarnings("ObjectAllocationInLoop")
 	private Triplet loadAnnotatedFields(final Class<T> type, final Function<Annotation[], List<Annotation>> filterAnnotationsWithCodec)
 			throws AnnotationException{
 		final List<Field> fields = ReflectionHelper.getAccessibleFields(type);
@@ -159,7 +158,6 @@ public final class Template<T>{
 		}
 	}
 
-	@SuppressWarnings("ObjectAllocationInLoop")
 	private static List<EvaluatedField<Evaluate>> extractEvaluations(final Annotation[] declaredAnnotations, final Field field){
 		final int length = declaredAnnotations.length;
 		final List<EvaluatedField<Evaluate>> evaluations = new ArrayList<>(length);
@@ -172,7 +170,6 @@ public final class Template<T>{
 		return evaluations;
 	}
 
-	@SuppressWarnings("ObjectAllocationInLoop")
 	private static List<EvaluatedField<PostProcessField>> extractProcessed(final Annotation[] declaredAnnotations, final Field field){
 		final int length = declaredAnnotations.length;
 		final List<EvaluatedField<PostProcessField>> processed = new ArrayList<>(length);
