@@ -84,11 +84,13 @@ public final class GenericHelper{
 		//initialize list to store resolved types
 		final List<Class<?>> types = new ArrayList<>(0);
 
-		final Queue<Type[]> stack = new ArrayDeque<>(1);
-		stack.add(concat(offspring, actualArgs));
-		while(!stack.isEmpty()){
-			final Type[] currentTypes = stack.poll();
-			final Class<?> currentOffspring = (Class<?>)currentTypes[0];
+		final Queue<Class<?>> classStack = new ArrayDeque<>(1);
+		final Queue<Type[]> typesStack = new ArrayDeque<>(1);
+		classStack.add(offspring);
+		typesStack.add(actualArgs);
+		while(!classStack.isEmpty()){
+			final Class<?> currentOffspring = classStack.poll();
+			final Type[] currentTypes = typesStack.poll();
 
 			//find direct ancestors (superclass and interfaces)
 			final Queue<Type> ancestorsQueue = extractAncestors(currentOffspring);
@@ -98,25 +100,14 @@ public final class GenericHelper{
 			final Map<String, Type> typeVariables = mapParameterTypes(typeParameters);
 
 			//process ancestors
-			processAncestors(ancestorsQueue, typeVariables, base, stack);
+			processAncestors(ancestorsQueue, typeVariables, base, classStack, typesStack);
 
 			//if there are no resolved types and offspring is equal to base, process the base
-			if(types.isEmpty() && currentOffspring.equals(base))
+			if(currentTypes != null && types.isEmpty() && currentOffspring.equals(base))
 				types.addAll(processBase(currentTypes));
 		}
 
 		return types;
-	}
-
-	private static Type[] concat(final Type obj1, Type[] array){
-		if(array.length == 0)
-			//if actual types are omitted, the type parameters will be used instead
-			array = ((GenericDeclaration)obj1).getTypeParameters();
-
-		final Type[] result = new Type[array.length + 1];
-		result[0] = obj1;
-		System.arraycopy(array, 0, result, 1, array.length);
-		return result;
 	}
 
 	private static Map<String, Type> mapParameterTypes(final Type[] actualTypes){
@@ -140,7 +131,7 @@ public final class GenericHelper{
 	}
 
 	private static <T> void processAncestors(final Queue<Type> ancestorsQueue, final Map<String, Type> typeVariables, final Class<T> base,
-			final Queue<Type[]> stack){
+			final Queue<Class<?>> classStack, final Queue<Type[]> typesStack){
 		while(!ancestorsQueue.isEmpty()){
 			final Type ancestorType = ancestorsQueue.poll();
 
@@ -149,12 +140,15 @@ public final class GenericHelper{
 				final Type rawType = pt.getRawType();
 				if(rawType instanceof final Class<?> c && base.isAssignableFrom(c)){
 					final Type[] resolvedTypes = populateResolvedTypes(pt, typeVariables);
-					stack.add(concat(rawType, resolvedTypes));
+					classStack.add(c);
+					typesStack.add(resolvedTypes);
 				}
 			}
-			else if(ancestorType instanceof final Class<?> c && base.isAssignableFrom(c))
+			else if(ancestorType instanceof final Class<?> c && base.isAssignableFrom(c)){
 				//ancestor is non-parameterized: process only if it matches the base class
-				stack.add(new Type[]{ancestorType});
+				classStack.add(c);
+				typesStack.add(null);
+			}
 		}
 	}
 
@@ -179,7 +173,7 @@ public final class GenericHelper{
 		//there is a result if the base class is reached
 		final int length = actualArgs.length;
 		final Collection<Class<?>> types = new ArrayList<>(length);
-		for(int i = 1; i < length; i ++)
+		for(int i = 0; i < length; i ++)
 			types.add((Class<?>)actualArgs[i]);
 		return types;
 	}
