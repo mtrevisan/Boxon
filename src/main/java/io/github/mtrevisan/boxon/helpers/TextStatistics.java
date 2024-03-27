@@ -32,10 +32,24 @@ public final class TextStatistics{
 	private int total;
 
 
+	/**
+	 * Creates a new instance using the given byte array buffer.
+	 *
+	 * @param buffer	The byte array buffer.
+	 * @return	The created TextStatistics instance.
+	 */
 	public static TextStatistics create(final byte[] buffer){
 		return new TextStatistics(buffer, 0, buffer.length);
 	}
 
+	/**
+	 * Creates a new instance using the given byte array buffer, offset, and length values.
+	 *
+	 * @param buffer	The byte array buffer.
+	 * @param offset	The offset in the byte array.
+	 * @param length	The length of the bytes to be considered.
+	 * @return	The created TextStatistics instance.
+	 */
 	public static TextStatistics create(final byte[] buffer, final int offset, final int length){
 		return new TextStatistics(buffer, offset, length);
 	}

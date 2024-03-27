@@ -100,6 +100,12 @@ public final class JavaHelper{
 	}
 
 
+	/**
+	 * Checks if the given text is an integer number, either in decimal or hexadecimal format.
+	 *
+	 * @param text	The text to check, may be {@code null}.
+	 * @return	Whether the text is an integer number.
+	 */
 	public static boolean isIntegerNumber(final String text){
 		return (isDecimalIntegerNumber(text) || isHexadecimalNumber(text));
 	}

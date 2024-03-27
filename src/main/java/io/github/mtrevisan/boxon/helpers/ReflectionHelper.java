@@ -366,6 +366,12 @@ public final class ReflectionHelper{
 			makeAccessible(fields.get(i));
 	}
 
+	/**
+	 * Makes the given {@code AccessibleObject} accessible, allowing it to be accessed or invoked regardless of the usual access
+	 * restrictions.
+	 *
+	 * @param obj	The {@code AccessibleObject} to make accessible.
+	 */
 	public static void makeAccessible(final AccessibleObject obj){
 		obj.setAccessible(true);
 	}

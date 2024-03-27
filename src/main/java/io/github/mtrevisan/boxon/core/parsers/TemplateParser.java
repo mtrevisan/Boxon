@@ -184,6 +184,16 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 
+	/**
+	 * Decodes a message using the provided template and reader.
+	 *
+	 * @param <T>	The type of the object to be returned as a result of decoding.
+	 * @param template	The template used for decoding the message.
+	 * @param reader	The reader used for reading the message.
+	 * @param parentObject	The parent object of the message being decoded.
+	 * @return	The decoded object.
+	 * @throws FieldException	If there is an error decoding a field.
+	 */
 	@Override
 	public <T> T decode(final Template<T> template, final BitReaderInterface reader, final Object parentObject) throws FieldException{
 		final int startPosition = reader.position();
@@ -344,6 +354,15 @@ public final class TemplateParser implements TemplateParserInterface{
 		}
 	}
 
+	/**
+	 * Encodes a message using the provided template and writer.
+	 *
+	 * @param template	The template used for encoding the message.
+	 * @param writer	The writer used for writing the encoded message.
+	 * @param parentObject	The parent object of the message being encoded.
+	 * @param currentObject	The object to be encoded.
+	 * @throws FieldException	If there is an error encoding a field.
+	 */
 	@Override
 	public <T> void encode(final Template<?> template, final BitWriterInterface writer, final Object parentObject, final T currentObject)
 			throws FieldException{

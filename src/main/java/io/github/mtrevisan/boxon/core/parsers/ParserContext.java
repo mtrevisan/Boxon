@@ -85,6 +85,11 @@ final class ParserContext<T>{
 		currentObject = (T)ReflectionHelper.withValue(currentObject, field, value);
 	}
 
+	/**
+	 * Adds the current object to the evaluator context.
+	 * <p>The current object is added with the key "self" in the context.</p>
+	 * <p>It allows referencing the current object using SpEL expressions.</p>
+	 */
 	void addCurrentObjectToEvaluatorContext(){
 		evaluator.addToContext(ContextHelper.CONTEXT_SELF, currentObject);
 	}

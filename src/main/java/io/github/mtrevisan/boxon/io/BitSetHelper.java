@@ -36,10 +36,23 @@ public final class BitSetHelper{
 	private BitSetHelper(){}
 
 
+	/**
+	 * Creates a new {@link BitSet} with the specified size.
+	 *
+	 * @param size	The size of the resulting {@link BitSet}.
+	 * @return	The created {@link BitSet}.
+	 */
 	public static BitSet createBitSet(final int size){
 		return new BitSet(size);
 	}
 
+	/**
+	 * Creates a {@link BitSet} from a long value.
+	 *
+	 * @param value	The value to convert to {@link BitSet}.
+	 * @param size	The size in bits of the resulting {@link BitSet}.
+	 * @return	The created {@link BitSet}.
+	 */
 	public static BitSet createBitSet(long value, final int size){
 		final BitSet bits = createBitSet(size);
 		while(value != 0){
@@ -56,12 +69,12 @@ public final class BitSetHelper{
 	}
 
 	/**
-	 * Converts a {@link BigInteger} into a bit set ignoring the sign of the {@link BigInteger}, according to SRP specification.
+	 * Converts a {@link BigInteger} into a {@link BitSet} ignoring the sign of the {@link BigInteger}, according to SRP specification.
 	 *
 	 * @param value	The value, must not be {@code null}.
 	 * @param size	The size in bits of the value.
 	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
-	 * @return	The bit set representing the given value.
+	 * @return	The {@link BitSet} representing the given value.
 	 */
 	public static BitSet createBitSet(final BigInteger value, final int size, final ByteOrder byteOrder){
 		final boolean littleEndian = (byteOrder == ByteOrder.LITTLE_ENDIAN);
@@ -82,9 +95,9 @@ public final class BitSetHelper{
 
 
 	/**
-	 * Convert this bit set to {@link BigInteger}.
+	 * Convert this {@link BitSet} to {@link BigInteger}.
 	 *
-	 * @param bits	The bit set.
+	 * @param bits	The {@link BitSet}.
 	 * @param bitSize	The number of bits.
 	 * @param byteOrder	The byte order.
 	 * @return	The converted {@link BigInteger}.

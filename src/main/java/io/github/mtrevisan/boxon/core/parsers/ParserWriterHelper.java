@@ -35,6 +35,7 @@ import io.github.mtrevisan.boxon.logs.EventListener;
 
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
+import java.nio.charset.UnsupportedCharsetException;
 
 
 final class ParserWriterHelper{
@@ -64,13 +65,29 @@ final class ParserWriterHelper{
 		return this;
 	}
 
-	static void writeAffix(final String affix, final String charsetName, final BitWriterInterface writer){
+	/**
+	 * Writes the given affix to the writer using the specified charset.
+	 *
+	 * @param affix	The affix to be written.
+	 * @param charsetName	The name of the charset to be used.
+	 * @param writer	The BitWriterInterface where the affix is written.
+	 * @throws UnsupportedCharsetException	If the specified charset name is not supported.
+	 */
+	static void writeAffix(final String affix, final String charsetName, final BitWriterInterface writer) throws UnsupportedCharsetException{
 		if(!affix.isEmpty()){
 			final Charset charset = CharsetHelper.lookup(charsetName);
 			writer.putText(affix, charset);
 		}
 	}
 
+	/**
+	 * Encodes a field using the provided parser context, bit writer, and loader codec.
+	 *
+	 * @param parserContext	The parser context containing information about the field to encode.
+	 * @param writer	The bit writer to write the encoded field to.
+	 * @param loaderCodec	The loader codec used for encoding the field.
+	 * @throws FieldException	If an error occurs during field encoding.
+	 */
 	void encodeField(final ParserContext<?> parserContext, final BitWriterInterface writer, final LoaderCodecInterface loaderCodec)
 			throws FieldException{
 		final Class<? extends Annotation> annotationType = parserContext.getBinding().annotationType();
