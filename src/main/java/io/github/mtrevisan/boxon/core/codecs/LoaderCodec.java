@@ -24,7 +24,6 @@
  */
 package io.github.mtrevisan.boxon.core.codecs;
 
-import io.github.mtrevisan.boxon.helpers.ConstructorHelper;
 import io.github.mtrevisan.boxon.helpers.GenericHelper;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
@@ -109,7 +108,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 			final Class<?> type = derivedClasses.get(i);
 
 			//for each extracted class, try to create an instance
-			final CodecInterface<?> codec = (CodecInterface<?>)ConstructorHelper.getEmptyCreator(type)
+			final CodecInterface<?> codec = (CodecInterface<?>)ReflectionHelper.getEmptyCreator(type)
 				.get();
 			if(codec != null)
 				//if the codec was created successfully instanced, add it to the list of codecs...

@@ -32,9 +32,9 @@ import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.DataException;
 import io.github.mtrevisan.boxon.helpers.CharsetHelper;
-import io.github.mtrevisan.boxon.helpers.ConstructorHelper;
 import io.github.mtrevisan.boxon.helpers.ContextHelper;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
+import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitSetHelper;
 import io.github.mtrevisan.boxon.io.ByteOrder;
@@ -106,7 +106,7 @@ final class BindingData{
 	 */
 	@SuppressWarnings("unchecked")
 	<T> void validate(final T value){
-		final Validator<T> validatorCreator = (Validator<T>)ConstructorHelper.getEmptyCreator(validator)
+		final Validator<T> validatorCreator = (Validator<T>)ReflectionHelper.getEmptyCreator(validator)
 			.get();
 		if(!validatorCreator.isValid(value))
 			throw DataException.create("Validation of {} didn't passed (value is {})", validator.getSimpleName(), value);

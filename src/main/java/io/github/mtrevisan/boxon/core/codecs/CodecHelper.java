@@ -30,8 +30,8 @@ import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.DataException;
-import io.github.mtrevisan.boxon.helpers.ConstructorHelper;
 import io.github.mtrevisan.boxon.helpers.ContextHelper;
+import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
 import io.github.mtrevisan.boxon.io.BitSetHelper;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.io.ParserDataType;
@@ -97,7 +97,7 @@ final class CodecHelper{
 	@SuppressWarnings("unchecked")
 	private static <IN, OUT> OUT converterDecode(final Class<? extends Converter<?, ?>> converterType, final IN data){
 		try{
-			final Converter<IN, OUT> converter = (Converter<IN, OUT>)ConstructorHelper.getEmptyCreator(converterType)
+			final Converter<IN, OUT> converter = (Converter<IN, OUT>)ReflectionHelper.getEmptyCreator(converterType)
 				.get();
 
 			return converter.decode(data);
@@ -111,7 +111,7 @@ final class CodecHelper{
 	@SuppressWarnings("unchecked")
 	static <IN, OUT> IN converterEncode(final Class<? extends Converter<?, ?>> converterType, final OUT data){
 		try{
-			final Converter<IN, OUT> converter = (Converter<IN, OUT>)ConstructorHelper.getEmptyCreator(converterType)
+			final Converter<IN, OUT> converter = (Converter<IN, OUT>)ReflectionHelper.getEmptyCreator(converterType)
 				.get();
 			return converter.encode(data);
 		}

@@ -138,9 +138,6 @@ public final class JavaHelper{
 	}
 
 	private static boolean isDecimalIntegerNumber(final String text, final int offset, final int radix){
-		if(StringHelper.isBlank(text))
-			return false;
-
 		final byte[] bytes = text.getBytes(StandardCharsets.US_ASCII);
 		for(int i = offset, length = bytes.length; i < length; i ++){
 			final byte chr = bytes[i];
@@ -152,7 +149,7 @@ public final class JavaHelper{
 	}
 
 	private static boolean isHexadecimalNumber(final String text){
-		return (!StringHelper.isBlank(text) && text.startsWith(HEXADECIMAL_PREFIX) && isDecimalIntegerNumber(text, 2, 16));
+		return (text.startsWith(HEXADECIMAL_PREFIX) && isDecimalIntegerNumber(text, 2, 16));
 	}
 
 	/**
