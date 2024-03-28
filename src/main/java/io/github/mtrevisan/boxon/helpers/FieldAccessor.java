@@ -219,17 +219,10 @@ public final class FieldAccessor{
 	 * @return	An array of all the fields of the given class.
 	 */
 	private static List<Field> getAccessibleFields(Class<?> cls, final Class<?> fieldType){
-		final List<Field> allFields = new ArrayList<>(0);
-
-		final ArrayList<Field> childFields = new ArrayList<>(0);
+		final List<Field> allFields = new ArrayList<>();
 		while(cls != null && cls != PARENT_CLASS_LIMIT){
 			final Field[] rawChildFields = cls.getDeclaredFields();
-			childFields.clear();
-			childFields.ensureCapacity(rawChildFields.length);
-			if(fieldType == null)
-				extractChildFields(rawChildFields, childFields);
-			else
-				extractInjectableChildFields(rawChildFields, fieldType, childFields);
+			final List<Field> childFields = extractChildFields(rawChildFields, fieldType);
 
 			if(!childFields.isEmpty())
 				//place parent's fields before all the child's fields
@@ -238,10 +231,17 @@ public final class FieldAccessor{
 			//go up to parent class
 			cls = cls.getSuperclass();
 		}
-
 		makeFieldsAccessible(allFields);
-
 		return allFields;
+	}
+
+	private static List<Field> extractChildFields(final Field[] rawChildFields, final Class<?> fieldType){
+		final List<Field> childFields = new ArrayList<>();
+		if(fieldType != null)
+			extractInjectableChildFields(rawChildFields, fieldType, childFields);
+		else
+			extractChildFields(rawChildFields, childFields);
+		return childFields;
 	}
 
 	/**
