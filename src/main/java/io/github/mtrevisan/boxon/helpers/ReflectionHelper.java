@@ -411,11 +411,26 @@ public final class ReflectionHelper{
 	public static <T> T invokeMethod(final Object obj, final Method method, final T defaultValue){
 		T result = defaultValue;
 		try{
-			if(method != null)
-				result = (T)method.invoke(obj);
+			result = (T)method.invoke(obj);
 		}
-		catch(final IllegalAccessException | InvocationTargetException ignored){}
+		catch(final Exception ignored){}
 		return result;
+	}
+
+	/**
+	 * Invokes the underlying static method represented by the given {@code Method} object.
+	 *
+	 * @param type	The class containing the method.
+	 * @param methodName	The method name.
+	 * @param value	The value.
+	 * @param <T>	The class type of the value.
+	 * @return	The value returned by the given method.
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T, R> R invokeStaticMethod(final Class<?> type, final String methodName, final T value) throws NoSuchMethodException,
+			InvocationTargetException, IllegalAccessException{
+		final Method method = type.getDeclaredMethod(methodName, value.getClass());
+		return (R)method.invoke(null, value);
 	}
 
 	/**
@@ -439,8 +454,16 @@ public final class ReflectionHelper{
 		return method;
 	}
 
-	private static Method getMethod(final Class<?> cls, final String methodName, final Class<?> returnType,
-			final Class<?>... parameterTypes){
+	/**
+	 * Get a method defined in the given class, with the given name, return type, and parameters' types.
+	 *
+	 * @param cls	The class from which to extract the method.
+	 * @param methodName	The method name.
+	 * @param returnType	The method return type (if {@code null} then no check on the return type is performed).
+	 * @param parameterTypes	The method parameters' types.
+	 * @return	The method, or null if not found.
+	 */
+	public static Method getMethod(final Class<?> cls, final String methodName, final Class<?> returnType, final Class<?>... parameterTypes){
 		Method method = null;
 		try{
 			method = cls.getDeclaredMethod(methodName, parameterTypes);

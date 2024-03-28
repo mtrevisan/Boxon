@@ -129,8 +129,10 @@ public final class CoreBuilder{
 	 * @throws NoSuchMethodException	If a matching method is not found.
 	 */
 	public CoreBuilder withContext(final Class<?> type, final String methodName) throws NoSuchMethodException{
-		final Method method = type.getDeclaredMethod(methodName);
-		ReflectionHelper.makeAccessible(method);
+		final Method method = ReflectionHelper.getMethod(type, methodName, null);
+		if(method == null)
+			throw new NoSuchMethodException();
+
 		return withContext(method);
 	}
 
@@ -145,8 +147,10 @@ public final class CoreBuilder{
 	 */
 	public CoreBuilder withContext(final Class<?> type, final String methodName, final Class<?>... parameterTypes)
 			throws NoSuchMethodException{
-		final Method method = type.getDeclaredMethod(methodName, parameterTypes);
-		ReflectionHelper.makeAccessible(method);
+		final Method method = ReflectionHelper.getMethod(type, methodName, null, parameterTypes);
+		if(method == null)
+			throw new NoSuchMethodException();
+
 		return withContext(method);
 	}
 

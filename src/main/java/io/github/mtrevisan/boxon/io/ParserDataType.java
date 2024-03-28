@@ -26,10 +26,9 @@ package io.github.mtrevisan.boxon.io;
 
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
+import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -387,10 +386,9 @@ public enum ParserDataType{
 			else{
 				//try with `.valueOf()`
 				try{
-					final Method method = objectiveType.getDeclaredMethod(METHOD_VALUE_OF, String.class);
-					result = method.invoke(null, value);
+					result = ReflectionHelper.invokeStaticMethod(objectiveType, METHOD_VALUE_OF, value);
 				}
-				catch(final NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored){
+				catch(final Exception ignored){
 					throw CodecException.create("Cannot interpret {} as {}", value, objectiveType.getSimpleName());
 				}
 			}
