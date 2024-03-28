@@ -63,7 +63,7 @@ public final class JavaHelper{
 	 * @param text	The text.
 	 * @return	The length of the text, or {@code 0} if {@code null}.
 	 */
-	public static int lengthOrZero(final CharSequence text){
+	public static int sizeOrZero(final CharSequence text){
 		return (text != null? text.length(): 0);
 	}
 
@@ -73,7 +73,7 @@ public final class JavaHelper{
 	 * @param array	The array.
 	 * @return	The length of the array, or {@code 0} if {@code null}.
 	 */
-	static int lengthOrZero(final byte[] array){
+	static int sizeOrZero(final byte[] array){
 		return (array != null? array.length: 0);
 	}
 
@@ -84,7 +84,7 @@ public final class JavaHelper{
 	 * @param <T>	The class type of the array.
 	 * @return	The length of the array, or {@code 0} if {@code null}.
 	 */
-	public static <T> int lengthOrZero(final T[] array){
+	public static <T> int sizeOrZero(final T[] array){
 		return (array != null? array.length: 0);
 	}
 
@@ -95,7 +95,7 @@ public final class JavaHelper{
 	 * @param <T>	The class type of the list.
 	 * @return	The length of the list, or {@code 0} if {@code null}.
 	 */
-	public static <T> int lengthOrZero(final Collection<T> array){
+	public static <T> int sizeOrZero(final Collection<T> array){
 		return (array != null? array.size(): 0);
 	}
 
@@ -164,7 +164,7 @@ public final class JavaHelper{
 	 * @param value	The value.
 	 * @return	The converted {@link BigInteger}.
 	 */
-	public static BigInteger toBigInteger(final String value){
+	public static BigInteger convertToBigInteger(final String value){
 		try{
 			if(isHexadecimalNumber(value))
 				return new BigInteger(value.substring(2), 16);
@@ -182,7 +182,7 @@ public final class JavaHelper{
 	 * @param value	The value.
 	 * @return	The converted {@link BigDecimal}.
 	 */
-	public static BigDecimal toBigDecimal(final String value){
+	public static BigDecimal convertToBigDecimal(final String value){
 		try{
 			if(isHexadecimalNumber(value))
 				return new BigDecimal(new BigInteger(value.substring(2), 16));

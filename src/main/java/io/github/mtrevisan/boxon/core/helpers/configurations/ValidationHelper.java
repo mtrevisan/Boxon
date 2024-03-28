@@ -114,11 +114,11 @@ final class ValidationHelper{
 		if(fieldType.isArray())
 			throw AnnotationException.create("Array field should not have `minValue` or `maxValue`");
 
-		final BigDecimal def = JavaHelper.toBigDecimal(field.getDefaultValue());
+		final BigDecimal def = JavaHelper.convertToBigDecimal(field.getDefaultValue());
 		validateMinMaxValues(field, def);
 
 		if(dataValue != null && String.class.isAssignableFrom(dataValue.getClass())){
-			final BigDecimal val = JavaHelper.toBigDecimal((String)dataValue);
+			final BigDecimal val = JavaHelper.convertToBigDecimal((String)dataValue);
 			validateMinValue(field, val);
 			validateMaxValue(field, val);
 		}
@@ -138,7 +138,7 @@ final class ValidationHelper{
 		BigDecimal min = null;
 		final String minValue = field.getMinValue();
 		if(!StringHelper.isBlank(minValue)){
-			min = JavaHelper.toBigDecimal(minValue);
+			min = JavaHelper.convertToBigDecimal(minValue);
 			//`minValue` compatible with variable type
 			if(min == null)
 				throw AnnotationException.create("Incompatible minimum value in {}; found {}, expected a valid number",
@@ -156,7 +156,7 @@ final class ValidationHelper{
 		BigDecimal max = null;
 		final String maxValue = field.getMaxValue();
 		if(!StringHelper.isBlank(maxValue)){
-			max = JavaHelper.toBigDecimal(maxValue);
+			max = JavaHelper.convertToBigDecimal(maxValue);
 			//`maxValue` compatible with variable type
 			if(max == null)
 				throw AnnotationException.create("Incompatible maximum value in {}; found {}, expected a valid number",

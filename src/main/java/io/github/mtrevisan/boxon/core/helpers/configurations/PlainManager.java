@@ -113,8 +113,8 @@ final class PlainManager implements ConfigurationManagerInterface{
 
 		if(!fieldType.isEnum() && !fieldType.isArray())
 			putIfNotEmpty(ConfigurationKey.FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName(), map);
-		putIfNotEmpty(ConfigurationKey.MIN_VALUE, JavaHelper.toBigDecimal(annotation.minValue()), map);
-		putIfNotEmpty(ConfigurationKey.MAX_VALUE, JavaHelper.toBigDecimal(annotation.maxValue()), map);
+		putIfNotEmpty(ConfigurationKey.MIN_VALUE, JavaHelper.convertToBigDecimal(annotation.minValue()), map);
+		putIfNotEmpty(ConfigurationKey.MAX_VALUE, JavaHelper.convertToBigDecimal(annotation.maxValue()), map);
 		putIfNotEmpty(ConfigurationKey.PATTERN, annotation.pattern(), map);
 		ConfigurationHelper.extractEnumeration(fieldType, annotation.enumeration(), map);
 

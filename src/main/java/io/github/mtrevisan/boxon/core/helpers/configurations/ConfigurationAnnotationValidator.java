@@ -184,7 +184,7 @@ enum ConfigurationAnnotationValidator{
 			ValidationHelper.validateProtocol(configData, minProtocolVersion, maxProtocolVersion);
 
 			final AlternativeSubField[] alternatives = binding.value();
-			for(int i = 0, length = JavaHelper.lengthOrZero(alternatives); i < length; i ++){
+			for(int i = 0, length = JavaHelper.sizeOrZero(alternatives); i < length; i ++){
 				final ConfigFieldData alternativeConfigData = ConfigFieldDataBuilder.create(field, alternatives[i]);
 				ValidationHelper.validateProtocol(alternativeConfigData, minProtocolVersion, maxProtocolVersion);
 			}

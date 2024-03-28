@@ -433,7 +433,7 @@ public final class Version implements Comparable<Version>{
 	 * @return	Whether if the given text only contains valid chars and is non-{@code null}.
 	 */
 	private static boolean containsOnlyValidChars(final String text){
-		final int length = JavaHelper.lengthOrZero(text);
+		final int length = JavaHelper.sizeOrZero(text);
 		if(length == 0)
 			return true;
 

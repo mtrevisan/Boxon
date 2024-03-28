@@ -112,8 +112,9 @@ public final class GenericHelper{
 		final int length = actualTypes.length;
 		final Map<String, Type> typeVariables = new HashMap<>(length);
 		for(int i = 0; i < length; i ++){
-			final String key = ((TypeVariable<?>)actualTypes[i]).getName();
-			typeVariables.put(key, actualTypes[i]);
+			final Type actualType = actualTypes[i];
+			final String key = ((TypeVariable<?>)actualType).getName();
+			typeVariables.put(key, actualType);
 		}
 		return typeVariables;
 	}
@@ -121,7 +122,7 @@ public final class GenericHelper{
 	private static List<Type> extractAncestors(final Class<?> offspring){
 		final Type[] genericInterfaces = offspring.getGenericInterfaces();
 		final List<Type> ancestors = new ArrayList<>(genericInterfaces.length + 1);
-		for(int i = 0, genericInterfacesLength = genericInterfaces.length; i < genericInterfacesLength; i ++)
+		for(int i = 0, length = genericInterfaces.length; i < length; i ++)
 			ancestors.add(genericInterfaces[i]);
 		final Type genericSuperclass = offspring.getGenericSuperclass();
 		if(genericSuperclass != null)

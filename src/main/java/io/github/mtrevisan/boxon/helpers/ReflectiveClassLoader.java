@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 
@@ -76,6 +77,7 @@ public final class ReflectiveClassLoader{
 	}
 
 
+
 	/**
 	 * Get types annotated with a given annotation, both classes and annotations.
 	 * <p>{@link Inherited} is not honored by default.</p>
@@ -88,16 +90,7 @@ public final class ReflectiveClassLoader{
 	 * @return	The collection of classes.
 	 */
 	public List<Class<?>> extractClassesWithAnnotation(final Class<? extends Annotation> annotation){
-		final List<Class<?>> loadedClasses = getStoredClasses(annotation);
-		if(loadedClasses.isEmpty())
-			try(final ScanResult scanResult = classGraph.scan()){
-				final ClassInfoList classInfo = scanResult.getClassesWithAnnotation(annotation.getName());
-				final List<Class<?>> list = classInfo.loadClasses();
-				addStoredClasses(annotation, list);
-
-				loadedClasses.addAll(list);
-			}
-		return Collections.unmodifiableList(loadedClasses);
+		return extractClassesWithInfo(annotation, scanResult -> scanResult.getClassesWithAnnotation(annotation));
 	}
 
 	/**
@@ -107,16 +100,7 @@ public final class ReflectiveClassLoader{
 	 * @return	The collection of classes implementing the given interface.
 	 */
 	public List<Class<?>> extractClassesImplementing(final Class<?> type){
-		final List<Class<?>> loadedClasses = getStoredClasses(type);
-		if(loadedClasses.isEmpty())
-			try(final ScanResult scanResult = classGraph.scan()){
-				final ClassInfoList classInfo = scanResult.getClassesImplementing(type.getName());
-				final List<Class<?>> list = classInfo.loadClasses();
-				addStoredClasses(type, list);
-
-				loadedClasses.addAll(list);
-			}
-		return Collections.unmodifiableList(loadedClasses);
+		return extractClassesWithInfo(type, scanResult -> scanResult.getClassesImplementing(type));
 	}
 
 	/**
@@ -126,15 +110,20 @@ public final class ReflectiveClassLoader{
 	 * @return	The classes.
 	 */
 	public List<Class<?>> extractClassesWithFieldAnnotation(final Class<? extends Annotation> type){
-		final List<Class<?>> loadedClasses = getStoredClasses(type);
-		if(loadedClasses.isEmpty())
-			try(final ScanResult scanResult = classGraph.scan()){
-				final ClassInfoList classInfo = scanResult.getClassesWithFieldAnnotation(type.getName());
-				final List<Class<?>> list = classInfo.loadClasses();
-				addStoredClasses(type, list);
+		return extractClassesWithInfo(type, scanResult -> scanResult.getClassesWithFieldAnnotation(type));
+	}
 
+	private List<Class<?>> extractClassesWithInfo(final Class<?> type, final Function<ScanResult, ClassInfoList> filter){
+		final List<Class<?>> loadedClasses = getStoredClasses(type);
+
+		if(loadedClasses.isEmpty()){
+			try(final ScanResult scanResult = classGraph.scan()){
+				final ClassInfoList classInfo = filter.apply(scanResult);
+				final List<Class<?>> list = classInfo.loadClasses();
+				storeClasses(type, list);
 				loadedClasses.addAll(list);
 			}
+		}
 		return Collections.unmodifiableList(loadedClasses);
 	}
 
@@ -142,7 +131,7 @@ public final class ReflectiveClassLoader{
 		return (List<Class<?>>)metadataStore.getOrDefault(type, new ArrayList<>(0));
 	}
 
-	private void addStoredClasses(final Class<?> type, final Collection<Class<?>> list){
+	private void storeClasses(final Class<?> type, final Collection<Class<?>> list){
 		metadataStore.put(type, list);
 	}
 

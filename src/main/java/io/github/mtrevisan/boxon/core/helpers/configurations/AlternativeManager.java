@@ -204,8 +204,8 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 
 		if(!fieldType.isEnum() && !fieldType.isArray())
 			putIfNotEmpty(ConfigurationKey.FIELD_TYPE, ParserDataType.toPrimitiveTypeOrSelf(fieldType).getSimpleName(), map);
-		putIfNotEmpty(ConfigurationKey.MIN_VALUE, JavaHelper.toBigDecimal(binding.minValue()), map);
-		putIfNotEmpty(ConfigurationKey.MAX_VALUE, JavaHelper.toBigDecimal(binding.maxValue()), map);
+		putIfNotEmpty(ConfigurationKey.MIN_VALUE, JavaHelper.convertToBigDecimal(binding.minValue()), map);
+		putIfNotEmpty(ConfigurationKey.MAX_VALUE, JavaHelper.convertToBigDecimal(binding.maxValue()), map);
 		putIfNotEmpty(ConfigurationKey.PATTERN, binding.pattern(), map);
 
 		if(String.class.isAssignableFrom(fieldType))

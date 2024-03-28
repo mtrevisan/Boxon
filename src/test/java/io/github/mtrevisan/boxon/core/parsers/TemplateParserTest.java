@@ -72,10 +72,10 @@ class TemplateParserTest{
 
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with((byte)0x46, "QUECLINK_GB200S");
-		evaluator.addToContext("deviceTypes", deviceTypes);
-		evaluator.addToContext(TemplateParserTest.class.getDeclaredMethod("headerLength"));
+		evaluator.putToContext("deviceTypes", deviceTypes);
+		evaluator.putToContext(TemplateParserTest.class.getDeclaredMethod("headerLength"));
 		ACKMessageHex message = templateParser.decode(template, reader, null);
-		evaluator.addToContext("deviceTypes", null);
+		evaluator.removeFromContext("deviceTypes");
 
 		BitWriter writer = BitWriter.create();
 		templateParser.encode(template, writer, null, message);
@@ -102,10 +102,10 @@ class TemplateParserTest{
 
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with((byte)0x46, "QUECLINK_GB200S");
-		evaluator.addToContext("deviceTypes", deviceTypes);
-		evaluator.addToContext(TemplateParserTest.class.getDeclaredMethod("headerLength"));
+		evaluator.putToContext("deviceTypes", deviceTypes);
+		evaluator.putToContext(TemplateParserTest.class.getDeclaredMethod("headerLength"));
 		ACKMessageHexByteChecksum message = templateParser.decode(template, reader, null);
-		evaluator.addToContext("deviceTypes", null);
+		evaluator.removeFromContext("deviceTypes");
 
 		BitWriter writer = BitWriter.create();
 		templateParser.encode(template, writer, null, message);
@@ -136,9 +136,9 @@ class TemplateParserTest{
 
 		DeviceTypes deviceTypes = DeviceTypes.create()
 			.with((byte)0xCF, "QUECLINK_GV350M");
-		evaluator.addToContext("deviceTypes", deviceTypes);
+		evaluator.putToContext("deviceTypes", deviceTypes);
 		ACKMessageASCII message = templateParser.decode(template, reader, null);
-		evaluator.addToContext("deviceTypes", null);
+		evaluator.removeFromContext("deviceTypes");
 
 		BitWriter writer = BitWriter.create();
 		templateParser.encode(template, writer, null, message);

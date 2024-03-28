@@ -102,7 +102,7 @@ public final class CoreBuilder{
 	 * @return	This instance, used for chaining.
 	 */
 	public CoreBuilder withContext(final String key, final Object value){
-		addMethod(ConfigurationStep.CONTEXT, () -> core.addToContext(key, value));
+		addMethod(ConfigurationStep.CONTEXT, () -> core.putToContext(key, value));
 
 		return this;
 	}
@@ -114,7 +114,7 @@ public final class CoreBuilder{
 	 * @return	This instance, used for chaining.
 	 */
 	public CoreBuilder withContext(final Map<String, Object> context){
-		addMethod(ConfigurationStep.CONTEXT, () -> core.addToContext(context));
+		addMethod(ConfigurationStep.CONTEXT, () -> core.putToContext(context));
 
 		return this;
 	}
@@ -161,7 +161,7 @@ public final class CoreBuilder{
 	 * @return	This instance, used for chaining.
 	 */
 	public CoreBuilder withContext(final Method method){
-		addMethod(ConfigurationStep.CONTEXT, () -> core.addToContext(method));
+		addMethod(ConfigurationStep.CONTEXT, () -> core.putToContext(method));
 
 		return this;
 	}
@@ -292,7 +292,7 @@ public final class CoreBuilder{
 
 	private static void executeCommands(final List<RunnableThrowable> executors) throws AnnotationException, TemplateException,
 			ConfigurationException{
-		for(int i = 0, length = JavaHelper.lengthOrZero(executors); i < length; i ++){
+		for(int i = 0, length = JavaHelper.sizeOrZero(executors); i < length; i ++){
 			final RunnableThrowable executor = executors.get(i);
 
 			executor.execute();

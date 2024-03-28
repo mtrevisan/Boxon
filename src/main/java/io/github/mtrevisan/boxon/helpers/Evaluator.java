@@ -54,14 +54,21 @@ public final class Evaluator{
 
 		@Override
 		public void setVariable(final String name, final Object value){
+			handleVariableUpdate(name, value);
+		}
+
+
+		public void removeVariable(final String name){
+			handleVariableUpdate(name, null);
+		}
+
+		private void handleVariableUpdate(final String name, final Object value){
 			super.setVariable(name, value);
 
-			if(name != null){
-				if(value != null)
-					backupContext.put(name, value);
-				else
-					backupContext.remove(name);
-			}
+			if(value != null)
+				backupContext.put(name, value);
+			else
+				backupContext.remove(name);
 		}
 
 		@Override
@@ -116,8 +123,9 @@ public final class Evaluator{
 	 * @param key	The key used to reference the value.
 	 * @param value	The value (pass {@code null} to remove the {@code key} from the context).
 	 */
-	public void addToContext(final String key, final Object value){
+	public void putToContext(final String key, final Object value){
 		Objects.requireNonNull(key, "Key cannot be null");
+		Objects.requireNonNull(value, "Value cannot be null");
 
 		context.setVariable(key, value);
 	}
@@ -127,7 +135,9 @@ public final class Evaluator{
 	 *
 	 * @param method	The method.
 	 */
-	public void addToContext(final Method method){
+	public void putToContext(final Method method){
+		Objects.requireNonNull(method, "Method cannot be null");
+
 		context.registerFunction(method.getName(), method);
 	}
 
@@ -137,7 +147,9 @@ public final class Evaluator{
 	 * @param key	The key used to reference the value.
 	 */
 	public void removeFromContext(final String key){
-		addToContext(key, null);
+		Objects.requireNonNull(key, "Key cannot be null");
+
+		context.removeVariable(key);
 	}
 
 	/**
@@ -146,7 +158,9 @@ public final class Evaluator{
 	 * @param method	The method.
 	 */
 	public void removeFromContext(final Method method){
-		addToContext(method.getName(), null);
+		Objects.requireNonNull(method, "Method cannot be null");
+
+		removeFromContext(method.getName());
 	}
 
 	/**

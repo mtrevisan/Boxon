@@ -164,7 +164,7 @@ public final class StringHelper{
 	 * @return	Whether the given text is {@code null}, empty or whitespace only.
 	 */
 	public static boolean isBlank(final String text){
-		final int length = JavaHelper.lengthOrZero(text);
+		final int length = JavaHelper.sizeOrZero(text);
 		if(length > 0){
 			final byte[] bytes = text.getBytes(StandardCharsets.UTF_8);
 			for(int i = 0; i < length; i ++)
@@ -215,7 +215,7 @@ public final class StringHelper{
 	 * @return	The hexadecimal characters.
 	 */
 	public static String toHexString(final byte[] array){
-		final int length = JavaHelper.lengthOrZero(array);
+		final int length = JavaHelper.sizeOrZero(array);
 		final char[] hexChars = new char[length << 1];
 		for(int i = 0; i < length; i ++){
 			final int elem = array[i] & 0xFF;
@@ -237,7 +237,7 @@ public final class StringHelper{
 	 * @throws DataException	If the input has an odd length.
 	 */
 	public static byte[] hexToByteArray(final String hexString){
-		final int length = JavaHelper.lengthOrZero(hexString);
+		final int length = JavaHelper.sizeOrZero(hexString);
 		if(length % 2 != 0)
 			throw DataException.create("Input should be of even length, was {}", length);
 
@@ -262,7 +262,7 @@ public final class StringHelper{
 	 * @return	The characters.
 	 */
 	public static String toASCIIString(final byte[] array){
-		final int length = JavaHelper.lengthOrZero(array);
+		final int length = JavaHelper.sizeOrZero(array);
 		final char[] chars = new char[length];
 		for(int i = 0; i < length; i ++)
 			chars[i] = (char)(array[i] & 0xFF);
@@ -276,7 +276,7 @@ public final class StringHelper{
 	 * @return	Array of converted characters.
 	 */
 	public static byte[] asciiToByteArray(final String asciiString){
-		final int length = JavaHelper.lengthOrZero(asciiString);
+		final int length = JavaHelper.sizeOrZero(asciiString);
 		final byte[] data = new byte[length];
 		if(length > 0){
 			final byte[] bytes = asciiString.getBytes(StandardCharsets.US_ASCII);
@@ -293,7 +293,7 @@ public final class StringHelper{
 	 * @return	Whether the byte array starts with the ASCII string.
 	 */
 	public static boolean byteArrayStartsWith(final byte[] byteArray, final String asciiString){
-		if(JavaHelper.lengthOrZero(byteArray) < asciiString.length())
+		if(JavaHelper.sizeOrZero(byteArray) < asciiString.length())
 			return false;
 
 		final byte[] stringBytes = asciiString.getBytes(StandardCharsets.US_ASCII);

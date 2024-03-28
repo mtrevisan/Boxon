@@ -91,7 +91,7 @@ final class ParserContext<T>{
 	 * <p>It allows referencing the current object using SpEL expressions.</p>
 	 */
 	void addCurrentObjectToEvaluatorContext(){
-		evaluator.addToContext(ContextHelper.CONTEXT_SELF, currentObject);
+		evaluator.putToContext(ContextHelper.CONTEXT_SELF, currentObject);
 	}
 
 	String getClassName(){

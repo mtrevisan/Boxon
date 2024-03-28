@@ -293,7 +293,7 @@ public final class Descriptor{
 
 	private static <F> Collection<Map<String, Object>> describeFields(final List<F> fields,
 			final FieldExtractor<F, ? extends Annotation> fieldExtractor) throws FieldException{
-		final int length = JavaHelper.lengthOrZero(fields);
+		final int length = JavaHelper.sizeOrZero(fields);
 		final Collection<Map<String, Object>> fieldsDescription = new ArrayList<>(length);
 		for(int i = 0; i < length; i ++){
 			final F field = fields.get(i);

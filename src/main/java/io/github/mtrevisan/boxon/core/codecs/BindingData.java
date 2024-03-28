@@ -119,7 +119,7 @@ final class BindingData{
 	 * @param instance	The object (pass {@code null} to remove the `self` key from the context).
 	 */
 	void addToContext(final Object instance){
-		evaluator.addToContext(ContextHelper.CONTEXT_SELF, instance);
+		evaluator.putToContext(ContextHelper.CONTEXT_SELF, instance);
 	}
 
 	/**
@@ -170,7 +170,7 @@ final class BindingData{
 			final ByteOrder byteOrder = selectObjectFrom.byteOrder();
 			final BigInteger prefix = BitSetHelper.toBigInteger(bits, prefixSize, byteOrder);
 
-			evaluator.addToContext(ContextHelper.CONTEXT_CHOICE_PREFIX, prefix);
+			evaluator.putToContext(ContextHelper.CONTEXT_CHOICE_PREFIX, prefix);
 		}
 	}
 
@@ -226,7 +226,7 @@ final class BindingData{
 		final byte terminator = selectObjectListFrom.terminator();
 		final Charset charset = CharsetHelper.lookup(selectObjectListFrom.charset());
 		final String prefix = reader.getTextUntilTerminatorWithoutConsuming(terminator, charset);
-		evaluator.addToContext(ContextHelper.CONTEXT_CHOICE_PREFIX, prefix);
+		evaluator.putToContext(ContextHelper.CONTEXT_CHOICE_PREFIX, prefix);
 		return !prefix.isEmpty();
 	}
 

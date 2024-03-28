@@ -362,7 +362,7 @@ public enum ParserDataType{
 
 	private static Object toNumber(final String text, final Class<?> objectiveType){
 		Object result = null;
-		final BigInteger value = JavaHelper.toBigInteger(text);
+		final BigInteger value = JavaHelper.convertToBigInteger(text);
 		if(value != null){
 			final ParserDataType objectiveDataType = fromType(objectiveType);
 			if(objectiveDataType != null && value.bitCount() <= objectiveDataType.size)
@@ -378,7 +378,7 @@ public enum ParserDataType{
 		if(BigDecimal.class.isAssignableFrom(objectiveType))
 			result = new BigDecimal(value);
 		else if(BigInteger.class.isAssignableFrom(objectiveType))
-			result = JavaHelper.toBigInteger(value);
+			result = JavaHelper.convertToBigInteger(value);
 		else{
 			final ParserDataType objectiveDataType = fromType(objectiveType);
 			if(objectiveDataType != null)

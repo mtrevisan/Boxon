@@ -506,7 +506,7 @@ public enum AnnotationDescriptor{
 	public static <F, S extends Annotation> void describeSkips(final F field, final FieldExtractor<F, S> extractor,
 			final Collection<Map<String, Object>> rootDescription){
 		final S[] skips = extractor.getSkips(field);
-		for(int i = 0, length = JavaHelper.lengthOrZero(skips); i < length; i ++){
+		for(int i = 0, length = JavaHelper.sizeOrZero(skips); i < length; i ++){
 			final S skip = skips[i];
 
 			final Map<String, Object> skipDescription = new HashMap<>(1);
