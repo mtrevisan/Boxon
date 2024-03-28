@@ -73,6 +73,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
+//FIXME class too long, too cluttered, have too duplications... too anything
 /**
  * Descriptors of the various binding annotations.
  */
