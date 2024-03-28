@@ -189,7 +189,7 @@ class CodecArrayTest{
 				return new ObjectChoices(){
 					@Override
 					public Class<? extends Annotation> annotationType(){
-						return null;
+						return ObjectChoices.class;
 					}
 
 					@Override

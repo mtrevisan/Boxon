@@ -36,6 +36,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InaccessibleObjectException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.RecordComponent;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -318,7 +319,7 @@ public final class ReflectionHelper{
 	 * Retrieve all declared fields in the current class AND in the parent classes.
 	 *
 	 * @param cls	The class from which to extract the declared fields.
-	 * @param fieldType	The class of the fields to be extracted.
+	 * @param fieldType	The class of the fields to be extracted (for injection purposes).
 	 * @return	An array of all the fields of the given class.
 	 */
 	private static List<Field> getAccessibleFields(Class<?> cls, final Class<?> fieldType){
@@ -332,10 +333,11 @@ public final class ReflectionHelper{
 			if(fieldType == null)
 				extractChildFields(rawChildFields, childFields);
 			else
-				extractChildFields2(rawChildFields, fieldType, childFields);
+				extractInjectableChildFields(rawChildFields, fieldType, childFields);
 
-			//place parent's fields before all the child's fields
-			allFields.addAll(0, childFields);
+			if(!childFields.isEmpty())
+				//place parent's fields before all the child's fields
+				allFields.addAll(0, childFields);
 
 			//go up to parent class
 			cls = cls.getSuperclass();
@@ -346,19 +348,22 @@ public final class ReflectionHelper{
 		return allFields;
 	}
 
-	private static void extractChildFields2(final Field[] rawFields, final Class<?> fieldType, final Collection<Field> fields){
+	private static void extractInjectableChildFields(final Field[] rawFields, final Class<?> fieldType, final Collection<Field> fields){
 		for(int i = 0, length = rawFields.length; i < length; i ++){
-			final Field rawSubField = rawFields[i];
+			final Field rawField = rawFields[i];
 
 			//an injection must be performed
-			if(rawSubField.isAnnotationPresent(Injected.class) && fieldType.isAssignableFrom(rawSubField.getType()))
-				fields.add(rawSubField);
+			if(rawField.isAnnotationPresent(Injected.class) && fieldType.isAssignableFrom(rawField.getType()))
+				fields.add(rawField);
 		}
 	}
 
 	private static void extractChildFields(final Field[] rawFields, final Collection<Field> fields){
-		for(int i = 0, length = rawFields.length; i < length; i ++)
-			fields.add(rawFields[i]);
+		for(int i = 0, length = rawFields.length; i < length; i ++){
+			final Field rawField = rawFields[i];
+			if(!Modifier.isStatic(rawField.getModifiers()))
+				fields.add(rawField);
+		}
 	}
 
 	private static void makeFieldsAccessible(final List<Field> fields){
