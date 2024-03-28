@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2024 Mauro Trevisan
+ * Copyright (c) 2024 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -26,30 +26,24 @@ package io.github.mtrevisan.boxon.annotations.checksummers;
 
 
 /**
- * Calculates a 16 bit BSD checksum from a sequence of bytes.
- *
- * @see <a href="https://en.wikipedia.org/wiki/BSD_checksum">BSD checksum</a>
+ * Abstract class that calculates a 8- or 16-bit BSD checksum from a sequence of bytes.
  */
-public final class BSD16 extends BSD{
+public abstract class BSD implements Checksummer{
 
-	/** Starting value 0x0000. */
-	public static final int START_VALUE_0x0000 = 0x0000;
+	protected abstract int getMask();
 
-	private static final int LEFT_SHIFT = Short.SIZE - 1;
-	private static final int MASK = (1 << Short.SIZE) - 1;
-
-
-	BSD16(){}
-
+	protected abstract int getLeftShift();
 
 	@Override
-	protected int getMask(){
-		return MASK;
-	}
+	public short calculateChecksum(final byte[] data, final int start, final int end, final int startValue){
+		final int mask = getMask();
+		final int leftShift = getLeftShift();
 
-	@Override
-	protected int getLeftShift(){
-		return LEFT_SHIFT;
+		int checksum = startValue;
+		for(int i = Math.max(start, 0), length = Math.min(end, data.length); i < length; i ++)
+			//apply circular right shift and add new value
+			checksum = mask & ((checksum >> 1) + ((checksum & 1) << leftShift) + (data[i] & 0xFF));
+		return (short)checksum;
 	}
 
 }
