@@ -385,6 +385,7 @@ public enum ParserDataType{
 			if(objectiveDataType != null)
 				result = objectiveDataType.value(value);
 			else{
+				//try with `.valueOf()`
 				try{
 					final Method method = objectiveType.getDeclaredMethod(METHOD_VALUE_OF, String.class);
 					result = method.invoke(null, value);
