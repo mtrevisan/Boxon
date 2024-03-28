@@ -361,7 +361,7 @@ public final class ReflectionHelper{
 	private static void extractChildFields(final Field[] rawFields, final Collection<Field> fields){
 		for(int i = 0, length = rawFields.length; i < length; i ++){
 			final Field rawField = rawFields[i];
-			if(!Modifier.isStatic(rawField.getModifiers()))
+			if(rawField.getAnnotations().length > 0 && !Modifier.isStatic(rawField.getModifiers()))
 				fields.add(rawField);
 		}
 	}
