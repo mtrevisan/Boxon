@@ -26,7 +26,7 @@ package io.github.mtrevisan.boxon.io;
 
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
-import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
+import io.github.mtrevisan.boxon.helpers.MethodHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 
 import java.math.BigDecimal;
@@ -386,7 +386,7 @@ public enum ParserDataType{
 			else{
 				//try with `.valueOf()`
 				try{
-					result = ReflectionHelper.invokeStaticMethod(objectiveType, METHOD_VALUE_OF, value);
+					result = MethodHelper.invokeStaticMethod(objectiveType, METHOD_VALUE_OF, value);
 				}
 				catch(final Exception ignored){
 					throw CodecException.create("Cannot interpret {} as {}", value, objectiveType.getSimpleName());

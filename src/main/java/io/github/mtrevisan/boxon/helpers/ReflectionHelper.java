@@ -25,28 +25,18 @@
 package io.github.mtrevisan.boxon.helpers;
 
 import io.github.mtrevisan.boxon.exceptions.DataException;
-import org.springframework.objenesis.Objenesis;
-import org.springframework.objenesis.ObjenesisException;
-import org.springframework.objenesis.ObjenesisStd;
-import org.springframework.objenesis.instantiator.ObjectInstantiator;
 
 import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InaccessibleObjectException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.RecordComponent;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 
 /**
@@ -56,85 +46,10 @@ import java.util.function.Supplier;
  */
 public final class ReflectionHelper{
 
-	private static final Function<Class<?>, Supplier<?>> EMPTY_CREATORS = Memoizer.memoize(ReflectionHelper::getEmptyCreatorInner);
-	private static final Function<NonEmptyConstructorTuple<?>, Function<Object[], ?>> NON_EMPTY_CREATORS
-		= Memoizer.memoize(ReflectionHelper::getNonEmptyCreatorInner);
-
-	private static final Objenesis OBJENESIS = new ObjenesisStd();
+	private static final Class<?> PARENT_CLASS_LIMIT = Object.class;
 
 
 	private ReflectionHelper(){}
-
-
-	/**
-	 * Gets the creator function for the given class.
-	 *
-	 * @param type	The class to extract the creator for.
-	 * @param <T>	The parameter identifying the class.
-	 * @return	A method that construct the given class.
-	 */
-	@SuppressWarnings("unchecked")
-	public static <T> Supplier<T> getEmptyCreator(final Class<T> type){
-		return (Supplier<T>)EMPTY_CREATORS.apply(type);
-	}
-
-	/**
-	 * Gets the creator function for the given class.
-	 *
-	 * @param type	The class to extract the creator for.
-	 * @param constructorClasses	Array of types of constructor parameters.
-	 * @param <T>	The parameter identifying the class.
-	 * @return	A method that construct the given class.
-	 */
-	@SuppressWarnings("unchecked")
-	public static <T> Function<Object[], T> getNonEmptyCreator(final Class<T> type, final Class<?>[] constructorClasses){
-		return (Function<Object[], T>)NON_EMPTY_CREATORS.apply(new NonEmptyConstructorTuple<>(type, constructorClasses));
-	}
-
-	private static <T> Supplier<T> getEmptyCreatorInner(final Class<T> type){
-		ObjectInstantiator<T> instantiator;
-		try{
-			final Constructor<T> constructor = type.getDeclaredConstructor();
-			ReflectionHelper.makeAccessible(constructor);
-
-			//try creating an instance
-			constructor.newInstance();
-
-			instantiator = () -> {
-				try{
-					return constructor.newInstance();
-				}
-				catch(final Exception e){
-					throw new ObjenesisException(e);
-				}
-			};
-		}
-		catch(final Exception ignored){
-			instantiator = OBJENESIS.getInstantiatorOf(type);
-		}
-		return instantiator::newInstance;
-	}
-
-	private static <T> Function<Object[], T> getNonEmptyCreatorInner(final NonEmptyConstructorTuple<T> tuple){
-		Function<Object[], T> instantiator = null;
-		try{
-			final Class<T> type = tuple.type;
-			final Class<?>[] constructorClasses = tuple.constructorClasses;
-			final Constructor<T> constructor = type.getDeclaredConstructor(constructorClasses);
-			ReflectionHelper.makeAccessible(constructor);
-
-			instantiator = (final Object[] constructorValues) -> {
-				try{
-					return constructor.newInstance(constructorValues);
-				}
-				catch(final Exception e){
-					throw new ObjenesisException(e);
-				}
-			};
-		}
-		catch(final Exception ignored){}
-		return instantiator;
-	}
 
 
 	/**
@@ -195,7 +110,7 @@ public final class ReflectionHelper{
 		//find the index of the field to update
 		setFieldValue(fieldName, value, recordComponents, recordValues);
 
-		return createRecordInstance(recordComponents, objClass, recordValues);
+		return ConstructorHelper.createRecordInstance(recordComponents, objClass, recordValues);
 	}
 
 	private static <T> Object[] extractCurrentFieldValues(final T obj, final RecordComponent[] components)
@@ -212,32 +127,13 @@ public final class ReflectionHelper{
 		return recordValues;
 	}
 
-	private static Object[] setFieldValue(final String fieldName, final Object value, final RecordComponent[] recordComponents,
+	private static void setFieldValue(final String fieldName, final Object value, final RecordComponent[] recordComponents,
 			final Object[] recordValues){
 		for(int i = 0, length = recordComponents.length; i < length; i ++)
 			if(fieldName.equals(recordComponents[i].getName())){
 				recordValues[i] = value;
 				break;
 			}
-		return recordValues;
-	}
-
-	private static <T> T createRecordInstance(final RecordComponent[] recordComponents, final Class<T> objClass,
-			final Object[] recordValues){
-		//extract the field types from the record class
-		final Class<?>[] constructorClasses = extractFieldTypes(recordComponents);
-
-		//creates a new instance of the record class with the updated values
-		return getNonEmptyCreator(objClass, constructorClasses)
-			.apply(recordValues);
-	}
-
-	private static Class<?>[] extractFieldTypes(final RecordComponent[] components){
-		final int length = components.length;
-		final Class<?>[] constructorClasses = new Class<?>[length];
-		for(int i = 0; i < length; i ++)
-			constructorClasses[i] = components[i].getType();
-		return constructorClasses;
 	}
 
 	private static Object updateField(final Object obj, final Field field, final Object value) throws IllegalAccessException{
@@ -326,7 +222,7 @@ public final class ReflectionHelper{
 		final List<Field> allFields = new ArrayList<>(0);
 
 		final ArrayList<Field> childFields = new ArrayList<>(0);
-		while(cls != null && cls != Object.class){
+		while(cls != null && cls != PARENT_CLASS_LIMIT){
 			final Field[] rawChildFields = cls.getDeclaredFields();
 			childFields.clear();
 			childFields.ensureCapacity(rawChildFields.length);
@@ -399,101 +295,6 @@ public final class ReflectionHelper{
 	 */
 	public static void makeAccessible(final AccessibleObject obj){
 		obj.setAccessible(true);
-	}
-
-
-	/**
-	 * Invokes the underlying method represented by the given {@code Method} object, on the specified object.
-	 *
-	 * @param obj	The object the underlying method is invoked from.
-	 * @param method	The method to be called on the given object.
-	 * @param defaultValue	The default value should the method not exists, or returns an error.
-	 * @param <T>	The class type of the default value and the returned value.
-	 * @return	The value returned by the given method, or the default value if an exception occurs.
-	 */
-	@SuppressWarnings("unchecked")
-	public static <T> T invokeMethod(final Object obj, final Method method, final T defaultValue){
-		T result = defaultValue;
-		try{
-			result = (T)method.invoke(obj);
-		}
-		catch(final Exception ignored){}
-		return result;
-	}
-
-	/**
-	 * Invokes the underlying static method represented by the given {@code Method} object.
-	 *
-	 * @param type	The class containing the method.
-	 * @param methodName	The method name.
-	 * @param value	The value.
-	 * @param <T>	The class type of the value.
-	 * @return	The value returned by the given method.
-	 */
-	@SuppressWarnings("unchecked")
-	public static <T, R> R invokeStaticMethod(final Class<?> type, final String methodName, final T value) throws NoSuchMethodException,
-			InvocationTargetException, IllegalAccessException{
-		final Method method = type.getDeclaredMethod(methodName, value.getClass());
-		return (R)method.invoke(null, value);
-	}
-
-	/**
-	 * Get an accessible method defined in the given class (or one of its parents), with the given name, return type, and parameters' types.
-	 *
-	 * @param cls	The class from which to extract the method.
-	 * @param methodName	The method name.
-	 * @param returnType	The method return type.
-	 * @param parameterTypes	The method parameters' types.
-	 * @return	The method, or {@code null} if not found.
-	 */
-	public static Method getAccessibleMethod(Class<?> cls, final String methodName, final Class<?> returnType,
-			final Class<?>... parameterTypes){
-		Method method = null;
-		while(method == null && cls != null && cls != Object.class){
-			method = getMethod(cls, methodName, returnType, parameterTypes);
-
-			//go up to parent class
-			cls = cls.getSuperclass();
-		}
-		return method;
-	}
-
-	/**
-	 * Get a method defined in the given class, with the given name, return type, and parameters' types.
-	 *
-	 * @param cls	The class from which to extract the method.
-	 * @param methodName	The method name.
-	 * @param returnType	The method return type (if {@code null} then no check on the return type is performed).
-	 * @param parameterTypes	The method parameters' types.
-	 * @return	The method, or null if not found.
-	 */
-	public static Method getMethod(final Class<?> cls, final String methodName, final Class<?> returnType, final Class<?>... parameterTypes){
-		Method method = null;
-		try{
-			method = cls.getDeclaredMethod(methodName, parameterTypes);
-			if(returnType == null || method.getReturnType() == returnType)
-				makeAccessible(method);
-		}
-		catch(final NoSuchMethodException | SecurityException | InaccessibleObjectException ignored){}
-		return method;
-	}
-
-
-	private record NonEmptyConstructorTuple<T>(Class<T> type, Class<?>[] constructorClasses){
-		@Override
-		public boolean equals(final Object obj){
-			if(this == obj)
-				return true;
-			if(obj == null || getClass() != obj.getClass())
-				return false;
-			final NonEmptyConstructorTuple<?> other = (NonEmptyConstructorTuple<?>)obj;
-			return (Objects.equals(type, other.type) && Arrays.equals(constructorClasses, other.constructorClasses));
-		}
-
-		@Override
-		public int hashCode(){
-			return 31 * Objects.hash(type) + Arrays.hashCode(constructorClasses);
-		}
 	}
 
 }

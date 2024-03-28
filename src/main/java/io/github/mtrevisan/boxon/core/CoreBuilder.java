@@ -31,7 +31,7 @@ import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
-import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
+import io.github.mtrevisan.boxon.helpers.MethodHelper;
 import io.github.mtrevisan.boxon.io.CodecInterface;
 import io.github.mtrevisan.boxon.logs.EventListener;
 
@@ -129,7 +129,7 @@ public final class CoreBuilder{
 	 * @throws NoSuchMethodException	If a matching method is not found.
 	 */
 	public CoreBuilder withContext(final Class<?> type, final String methodName) throws NoSuchMethodException{
-		final Method method = ReflectionHelper.getMethod(type, methodName, null);
+		final Method method = MethodHelper.getMethod(type, methodName, null);
 		if(method == null)
 			throw new NoSuchMethodException();
 
@@ -147,7 +147,7 @@ public final class CoreBuilder{
 	 */
 	public CoreBuilder withContext(final Class<?> type, final String methodName, final Class<?>... parameterTypes)
 			throws NoSuchMethodException{
-		final Method method = ReflectionHelper.getMethod(type, methodName, null, parameterTypes);
+		final Method method = MethodHelper.getMethod(type, methodName, null, parameterTypes);
 		if(method == null)
 			throw new NoSuchMethodException();
 

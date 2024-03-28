@@ -41,8 +41,8 @@ import io.github.mtrevisan.boxon.exceptions.DataException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.helpers.CharsetHelper;
+import io.github.mtrevisan.boxon.helpers.ConstructorHelper;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
-import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
@@ -198,7 +198,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	public <T> T decode(final Template<T> template, final BitReaderInterface reader, final Object parentObject) throws FieldException{
 		final int startPosition = reader.position();
 
-		T currentObject = ReflectionHelper.getEmptyCreator(template.getType())
+		T currentObject = ConstructorHelper.getEmptyCreator(template.getType())
 			.get();
 
 		//FIXME is there a way to reduce the number of ParserContext objects?
@@ -330,7 +330,7 @@ public final class TemplateParser implements TemplateParserInterface{
 
 		final int endPosition = reader.position();
 
-		final Checksummer checksummer = ReflectionHelper.getEmptyCreator(algorithm)
+		final Checksummer checksummer = ConstructorHelper.getEmptyCreator(algorithm)
 			.get();
 		return checksummer.calculateChecksum(reader.array(), startPosition + skipStart, endPosition - skipEnd, startValue);
 	}

@@ -34,6 +34,7 @@ import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
+import io.github.mtrevisan.boxon.helpers.ConstructorHelper;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.Memoizer;
 import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
@@ -235,7 +236,7 @@ public final class LoaderConfiguration{
 	 */
 	static Object getConfigurationWithDefaults(final ConfigurationMessage<?> configuration, final Map<String, Object> data,
 			final Version protocol) throws AnnotationException, CodecException, EncodeException{
-		Object configurationObject = ReflectionHelper.getEmptyCreator(configuration.getType())
+		Object configurationObject = ConstructorHelper.getEmptyCreator(configuration.getType())
 			.get();
 
 		//fill in default values
