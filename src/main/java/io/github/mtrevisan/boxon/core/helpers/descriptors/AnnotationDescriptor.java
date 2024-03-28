@@ -452,7 +452,7 @@ public enum AnnotationDescriptor{
 	},
 
 	/**
-	 * Descriptor of the {@link Skip} annotation.
+	 * Descriptor of the {@link ConfigurationSkip} annotation.
 	 */
 	CONFIG_SKIP(ConfigurationSkip.class){
 		@Override
