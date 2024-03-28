@@ -31,7 +31,7 @@ import io.github.mtrevisan.boxon.annotations.Skip;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.helpers.CharsetHelper;
-import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
+import io.github.mtrevisan.boxon.helpers.FieldAccessor;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -113,7 +113,7 @@ public final class Template<T>{
 
 	private Triplet loadAnnotatedFields(final Class<T> type, final Function<Annotation[], List<Annotation>> filterAnnotationsWithCodec)
 			throws AnnotationException{
-		final List<Field> fields = ReflectionHelper.getAccessibleFields(type);
+		final List<Field> fields = FieldAccessor.getAccessibleFields(type);
 		final int length = fields.size();
 		final List<TemplateField> templateFields = new ArrayList<>(length);
 		final List<EvaluatedField<Evaluate>> evaluatedFields = new ArrayList<>(length);

@@ -35,9 +35,9 @@ import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.helpers.ConstructorHelper;
+import io.github.mtrevisan.boxon.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.Memoizer;
-import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
 import io.github.mtrevisan.boxon.helpers.ReflectiveClassLoader;
 import io.github.mtrevisan.boxon.helpers.ThrowingFunction;
 import io.github.mtrevisan.boxon.logs.EventListener;
@@ -258,7 +258,7 @@ public final class LoaderConfiguration{
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(foundFieldAnnotation);
 			manager.validateValue(foundField.getField(), dataKey, dataValue);
 			dataValue = manager.convertValue(foundField.getField(), dataKey, dataValue, protocol);
-			configurationObject = ReflectionHelper.withValue(configurationObject, foundField.getField(), dataValue);
+			configurationObject = FieldAccessor.setFieldValue(configurationObject, foundField.getField(), dataValue);
 
 			if(dataValue != null)
 				mandatoryFields.remove(foundField);
@@ -294,7 +294,7 @@ public final class LoaderConfiguration{
 			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(annotation);
 			Object dataValue = manager.getDefaultValue(field.getField(), protocol);
 			dataValue = manager.convertValue(field.getField(), manager.getShortDescription(), dataValue, protocol);
-			configurationObject = ReflectionHelper.withValue(configurationObject, field.getField(), dataValue);
+			configurationObject = FieldAccessor.setFieldValue(configurationObject, field.getField(), dataValue);
 		}
 		return configurationObject;
 	}

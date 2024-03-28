@@ -91,7 +91,7 @@ public class ConstructorHelper{
 	private static <T> ObjectInstantiator<T> getConstructor(final Class<T> type) throws NoSuchMethodException, InstantiationException,
 			IllegalAccessException, InvocationTargetException{
 		final Constructor<T> constructor = type.getDeclaredConstructor();
-		ReflectionHelper.makeAccessible(constructor);
+		FieldAccessor.makeAccessible(constructor);
 
 		//try creating an instance
 		constructor.newInstance();
@@ -112,7 +112,7 @@ public class ConstructorHelper{
 			final Class<?> type = tuple.getKey();
 			final Class<?>[] constructorClasses = tuple.getValue();
 			final Constructor<?> constructor = type.getDeclaredConstructor(constructorClasses);
-			ReflectionHelper.makeAccessible(constructor);
+			FieldAccessor.makeAccessible(constructor);
 
 			instantiator = (final Object[] constructorValues) -> {
 				try{

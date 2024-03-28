@@ -25,7 +25,7 @@
 package io.github.mtrevisan.boxon.core.helpers.configurations;
 
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
-import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
+import io.github.mtrevisan.boxon.helpers.FieldAccessor;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -94,7 +94,7 @@ public final class ConfigurationField{
 	 * @return	The value of the field.
 	 */
 	public <T> T getFieldValue(final Object obj){
-		return ReflectionHelper.getValue(obj, field);
+		return FieldAccessor.getFieldValue(obj, field);
 	}
 
 	/**

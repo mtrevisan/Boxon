@@ -25,9 +25,9 @@
 package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.helpers.ConstructorHelper;
+import io.github.mtrevisan.boxon.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.helpers.GenericHelper;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
-import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
 import io.github.mtrevisan.boxon.helpers.ReflectiveClassLoader;
 import io.github.mtrevisan.boxon.io.CodecInterface;
 import io.github.mtrevisan.boxon.logs.EventListener;
@@ -193,7 +193,7 @@ public final class LoaderCodec implements LoaderCodecInterface{
 	//FIXME is injection an ugliness?
 	public <T> void injectFieldInCodecs(final Class<T> type, final T object){
 		for(final CodecInterface<?> codec : codecs.values())
-			ReflectionHelper.injectValue(codec, type, object);
+			FieldAccessor.injectValue(codec, type, object);
 	}
 
 	@Override

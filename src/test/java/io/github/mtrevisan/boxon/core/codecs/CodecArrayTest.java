@@ -45,7 +45,7 @@ import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
-import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
+import io.github.mtrevisan.boxon.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.BitReader;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
@@ -147,7 +147,7 @@ class CodecArrayTest{
 		};
 
 		BitWriter writer = BitWriter.create();
-		ReflectionHelper.injectValue(codec, Evaluator.class, Evaluator.create());
+		FieldAccessor.injectValue(codec, Evaluator.class, Evaluator.create());
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
@@ -244,8 +244,8 @@ class CodecArrayTest{
 		Evaluator evaluator = Evaluator.create();
 		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator);
 		loaderCodec.loadDefaultCodecs();
-		ReflectionHelper.injectValue(codec, TemplateParserInterface.class, templateParser);
-		ReflectionHelper.injectValue(codec, Evaluator.class, Evaluator.create());
+		FieldAccessor.injectValue(codec, TemplateParserInterface.class, templateParser);
+		FieldAccessor.injectValue(codec, Evaluator.class, Evaluator.create());
 		BitWriter writer = BitWriter.create();
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();

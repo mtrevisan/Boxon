@@ -236,7 +236,7 @@ public final class Evaluator{
 			for(int i = 0, length = declaredFields.length; i < length; i ++){
 				final Field field = declaredFields[i];
 
-				if(field.getName().equals(name) && (!mustBeStatic || ReflectionHelper.isStatic(field)))
+				if(field.getName().equals(name) && (!mustBeStatic || FieldAccessor.isStatic(field)))
 					return field;
 			}
 			return null;

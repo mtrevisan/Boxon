@@ -25,8 +25,8 @@
 package io.github.mtrevisan.boxon.core.helpers.extractors;
 
 import io.github.mtrevisan.boxon.exceptions.JSONPathException;
+import io.github.mtrevisan.boxon.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
-import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 
 import java.lang.reflect.Array;
@@ -179,8 +179,8 @@ public final class JSONPath{
 			final Class<?> cls = data.getClass();
 			try{
 				final Field currentField = cls.getDeclaredField(currentPath);
-				ReflectionHelper.makeAccessible(currentField);
-				nextData = ReflectionHelper.getValue(data, currentField);
+				FieldAccessor.makeAccessible(currentField);
+				nextData = FieldAccessor.getFieldValue(data, currentField);
 			}
 			catch(final NoSuchFieldException nsfe){
 				nextData = defaultValue;

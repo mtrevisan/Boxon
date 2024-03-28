@@ -105,7 +105,7 @@ public final class MethodHelper{
 			method = cls.getDeclaredMethod(methodName, parameterTypes);
 
 			if(isReturnTypeCompatible(method, returnType))
-				ReflectionHelper.makeAccessible(method);
+				FieldAccessor.makeAccessible(method);
 			else
 				method = null;
 		}

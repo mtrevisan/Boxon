@@ -44,12 +44,12 @@ import java.util.Map;
  *
  * @see <a href="https://bill.burkecentral.com/2008/01/14/scanning-java-annotations-at-runtime/">Scanning Java Annotations at Runtime</a>
  */
-public final class ReflectionHelper{
+public final class FieldAccessor{
 
 	private static final Class<?> PARENT_CLASS_LIMIT = Object.class;
 
 
-	private ReflectionHelper(){}
+	private FieldAccessor(){}
 
 
 	/**
@@ -61,7 +61,7 @@ public final class ReflectionHelper{
 	 * @return	The value.
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> T getValue(final Object obj, final Field field){
+	public static <T> T getFieldValue(final Object obj, final Field field){
 		try{
 			return (T)field.get(obj);
 		}
@@ -80,7 +80,7 @@ public final class ReflectionHelper{
 	 * @return	The (possibly new) object on witch the value was set.
 	 * @throws DataException	If the value cannot be set to the field.
 	 */
-	public static Object withValue(final Object obj, final Field field, final Object value){
+	public static Object setFieldValue(final Object obj, final Field field, final Object value){
 		try{
 			return (isRecordClass(obj)
 				? constructRecordWithUpdatedField(obj, field.getName(), value)
@@ -195,7 +195,7 @@ public final class ReflectionHelper{
 			final Field field = fields.get(i);
 
 			final String key = field.getName();
-			final Object value = getValue(object, field);
+			final Object value = getFieldValue(object, field);
 			map.put(key, value);
 		}
 		return map;

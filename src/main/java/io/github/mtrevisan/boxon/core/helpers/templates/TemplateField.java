@@ -25,9 +25,9 @@
 package io.github.mtrevisan.boxon.core.helpers.templates;
 
 import io.github.mtrevisan.boxon.annotations.Skip;
+import io.github.mtrevisan.boxon.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.MethodHelper;
-import io.github.mtrevisan.boxon.helpers.ReflectionHelper;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -107,7 +107,7 @@ public final class TemplateField{
 	 * @return	The value of the field.
 	 */
 	public <T> T getFieldValue(final Object obj){
-		return ReflectionHelper.getValue(obj, field);
+		return FieldAccessor.getFieldValue(obj, field);
 	}
 
 	/**
