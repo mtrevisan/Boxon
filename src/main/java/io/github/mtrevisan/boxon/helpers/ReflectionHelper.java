@@ -377,9 +377,13 @@ public final class ReflectionHelper{
 		for(int i = 0, length = rawFields.length; i < length; i ++){
 			final Field rawField = rawFields[i];
 
-			if(rawField.getAnnotations().length > 0 && !Modifier.isStatic(rawField.getModifiers()))
+			if(rawField.getAnnotations().length > 0 && !isStatic(rawField))
 				fields.add(rawField);
 		}
+	}
+
+	static boolean isStatic(final Field field){
+		return Modifier.isStatic(field.getModifiers());
 	}
 
 	private static void makeFieldsAccessible(final List<Field> fields){
