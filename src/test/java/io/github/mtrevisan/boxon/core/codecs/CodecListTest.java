@@ -53,8 +53,6 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.Annotation;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -97,8 +95,9 @@ class CodecListTest{
 	@Test
 	void listOfSameObject() throws FieldException{
 		CodecList codec = new CodecList();
-		List<Version> encodedValue = new ArrayList<>(
-			Arrays.asList(new Version("2", "0", "1", "12"), new Version("2", "1", "2", "0")));
+		List<Version> encodedValue = List.of(
+			new Version("2", "0", "1", "12"),
+			new Version("2", "1", "2", "0"));
 		BindList annotation = new BindList(){
 			@Override
 			public Class<? extends Annotation> annotationType(){

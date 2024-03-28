@@ -36,7 +36,12 @@ final class NumberWriterManager implements WriterManagerInterface{
 	private int radix;
 
 
-	NumberWriterManager(final BitWriterInterface writer){
+	static NumberWriterManager create(final BitWriterInterface writer){
+		return new NumberWriterManager(writer);
+	}
+
+
+	private NumberWriterManager(final BitWriterInterface writer){
 		this.writer = writer;
 		radix = 10;
 	}

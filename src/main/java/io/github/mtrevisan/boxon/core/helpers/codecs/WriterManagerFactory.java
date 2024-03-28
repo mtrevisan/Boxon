@@ -66,11 +66,11 @@ public final class WriterManagerFactory{
 		if(builder != null)
 			manager = builder.apply(writer);
 		else if(Number.class.isAssignableFrom(fieldClass))
-			manager = new NumberWriterManager(writer)
+			manager = NumberWriterManager.create(writer)
 				.withRadix(radix);
 		else if(String.class.isAssignableFrom(fieldClass)){
 			final Charset charset = CharsetHelper.lookup(charsetName);
-			manager = new StringWriterManager(writer)
+			manager = StringWriterManager.create(writer)
 				.withCharset(charset);
 		}
 		return manager;

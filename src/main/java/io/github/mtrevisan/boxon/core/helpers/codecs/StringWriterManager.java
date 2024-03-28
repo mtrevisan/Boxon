@@ -36,7 +36,12 @@ final class StringWriterManager implements WriterManagerInterface{
 	private Charset charset;
 
 
-	StringWriterManager(final BitWriterInterface writer){
+	static StringWriterManager create(final BitWriterInterface writer){
+		return new StringWriterManager(writer);
+	}
+
+
+	private StringWriterManager(final BitWriterInterface writer){
 		this.writer = writer;
 		charset = StandardCharsets.UTF_8;
 	}
