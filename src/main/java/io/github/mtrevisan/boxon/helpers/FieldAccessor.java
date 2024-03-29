@@ -34,9 +34,7 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.RecordComponent;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -53,25 +51,6 @@ public final class FieldAccessor{
 
 
 	/**
-	 * Returns the value of the field represented by this {@code Field}, on the specified object.
-	 *
-	 * @param obj	Object from which the represented field's value is to be extracted.
-	 * @param field	The field whose value is to be extracted.
-	 * @param <T>	The value class type.
-	 * @return	The value.
-	 */
-	@SuppressWarnings("unchecked")
-	public static <T> T getFieldValue(final Object obj, final Field field){
-		try{
-			return (T)field.get(obj);
-		}
-		catch(final IllegalAccessException ignored){
-			//should never happen
-			return null;
-		}
-	}
-
-	/**
 	 * Sets the field represented by this {@code Field} object on the specified object argument to the specified value.
 	 * <p>The new value is automatically unwrapped if the underlying field has a primitive type.</p>
 	 * @param obj	The object whose field should be modified.
@@ -83,7 +62,7 @@ public final class FieldAccessor{
 	public static Object setFieldValue(final Object obj, final Field field, final Object value){
 		try{
 			return (isRecordClass(obj)
-				? constructRecordWithUpdatedField(obj, field.getName(), value)
+				? ConstructorHelper.constructRecordWithUpdatedField(obj, field.getName(), value)
 				: updateField(obj, field, value)
 			);
 		}
@@ -98,22 +77,7 @@ public final class FieldAccessor{
 			.isRecord();
 	}
 
-	private static <T> T constructRecordWithUpdatedField(final T obj, final String fieldName, final Object value)
-			throws ReflectiveOperationException{
-		@SuppressWarnings("unchecked")
-		final Class<T> objClass = (Class<T>)obj.getClass();
-		final RecordComponent[] recordComponents = objClass.getRecordComponents();
-
-		//extract the current field values from the record class
-		final Object[] recordValues = extractCurrentFieldValues(obj, recordComponents);
-
-		//find the index of the field to update
-		setFieldValue(fieldName, value, recordComponents, recordValues);
-
-		return ConstructorHelper.createRecordInstance(recordComponents, objClass, recordValues);
-	}
-
-	private static <T> Object[] extractCurrentFieldValues(final T obj, final RecordComponent[] components)
+	static <T> Object[] retrieveCurrentFieldValues(final T obj, final RecordComponent[] components)
 			throws IllegalAccessException, InvocationTargetException{
 		final int length = components.length;
 		final Object[] recordValues = new Object[length];
@@ -127,8 +91,7 @@ public final class FieldAccessor{
 		return recordValues;
 	}
 
-	private static void setFieldValue(final String fieldName, final Object value, final RecordComponent[] recordComponents,
-			final Object[] recordValues){
+	static void updateFieldValue(final String fieldName, final Object value, final RecordComponent[] recordComponents, final Object[] recordValues){
 		for(int i = 0, length = recordComponents.length; i < length; i ++)
 			if(fieldName.equals(recordComponents[i].getName())){
 				recordValues[i] = value;
@@ -177,29 +140,6 @@ public final class FieldAccessor{
 		catch(final IllegalArgumentException | IllegalAccessException ignored){}
 	}
 
-
-	/**
-	 * Maps the fields of an object to a Map, where the keys are the field names and the values are the field values.
-	 *
-	 * @param object	The object whose fields should be mapped.
-	 * @return	A Map containing the field names as keys and the field values as values.
-	 */
-	public static Map<String, Object> mapObject(final Object object){
-		if(object == null)
-			return null;
-
-		final List<Field> fields = getAccessibleFields(object.getClass());
-		final int size = fields.size();
-		final Map<String, Object> map = new HashMap<>(size);
-		for(int i = 0; i < size; i ++){
-			final Field field = fields.get(i);
-
-			final String key = field.getName();
-			final Object value = getFieldValue(object, field);
-			map.put(key, value);
-		}
-		return map;
-	}
 
 	/**
 	 * Retrieve all declared fields in the current class AND in the parent classes.

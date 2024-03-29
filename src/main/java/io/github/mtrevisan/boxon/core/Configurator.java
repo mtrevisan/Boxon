@@ -39,7 +39,7 @@ import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.exceptions.ProtocolException;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
-import io.github.mtrevisan.boxon.helpers.FieldAccessor;
+import io.github.mtrevisan.boxon.helpers.FieldMapper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.BitWriter;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
@@ -195,7 +195,7 @@ public final class Configurator{
 	 */
 	public Response<String, byte[]> composeConfiguration(final String protocolVersion, final String shortDescription,
 			final Object template){
-		final Map<String, Object> data = FieldAccessor.mapObject(template);
+		final Map<String, Object> data = FieldMapper.mapObject(template);
 		return composeConfiguration(protocolVersion, shortDescription, data);
 	}
 

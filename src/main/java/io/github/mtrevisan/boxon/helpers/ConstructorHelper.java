@@ -128,6 +128,21 @@ public class ConstructorHelper{
 	}
 
 
+	static <T> T constructRecordWithUpdatedField(final T obj, final String fieldName, final Object value)
+		throws ReflectiveOperationException{
+		@SuppressWarnings("unchecked")
+		final Class<T> objClass = (Class<T>)obj.getClass();
+		final RecordComponent[] recordComponents = objClass.getRecordComponents();
+
+		//extract the current field values from the record class
+		final Object[] recordValues = FieldAccessor.retrieveCurrentFieldValues(obj, recordComponents);
+
+		//find the index of the field to update
+		FieldAccessor.updateFieldValue(fieldName, value, recordComponents, recordValues);
+
+		return ConstructorHelper.createRecordInstance(recordComponents, objClass, recordValues);
+	}
+
 	static <T> T createRecordInstance(final RecordComponent[] recordComponents, final Class<T> objClass, final Object[] recordValues){
 		//extract the field types from the record class
 		final Class<?>[] constructorClasses = extractFieldTypes(recordComponents);

@@ -309,7 +309,7 @@ public final class TemplateParser implements TemplateParserInterface{
 			final Checksum checksum = (Checksum)checksumData.getBinding();
 
 			final short calculatedChecksum = calculateChecksum(startPosition, reader, checksum);
-			final Number givenChecksum = checksumData.getFieldValue(data);
+			final Number givenChecksum = (Number)checksumData.getFieldValue(data);
 			if(givenChecksum == null)
 				throw DataException.create("Something bad happened, cannot read message checksum");
 			if(calculatedChecksum != givenChecksum.shortValue()){
