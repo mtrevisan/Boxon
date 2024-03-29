@@ -129,7 +129,7 @@ public class ConstructorHelper{
 
 
 	static <T> T constructRecordWithUpdatedField(final T obj, final String fieldName, final Object value)
-		throws ReflectiveOperationException{
+			throws ReflectiveOperationException{
 		@SuppressWarnings("unchecked")
 		final Class<T> objClass = (Class<T>)obj.getClass();
 		final RecordComponent[] recordComponents = objClass.getRecordComponents();

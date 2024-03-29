@@ -136,7 +136,7 @@ final class ValidationHelper{
 	}
 
 	private static void validateMinMaxDefaultValuesToPattern(final Pattern formatPattern, final ConfigFieldData configData)
-		throws AnnotationException{
+			throws AnnotationException{
 		//`defaultValue` compatible with `pattern`
 		if(!matchesOrBlank(configData.getDefaultValue(), formatPattern))
 			throw AnnotationException.create("Default value not compatible with `pattern` in {}; found {}, expected {}",
