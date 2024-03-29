@@ -112,13 +112,17 @@ public final class LoaderTemplate{
 	void loadTemplatesFrom(final Class<?>... basePackageClasses) throws AnnotationException, TemplateException{
 		eventListener.loadingTemplatesFrom(basePackageClasses);
 
-		final ReflectiveClassLoader reflectiveClassLoader = ReflectiveClassLoader.createFrom(basePackageClasses);
-		/** extract all classes annotated with {@link TemplateHeader}. */
-		final List<Class<?>> annotatedClasses = reflectiveClassLoader.extractClassesWithAnnotation(TemplateHeader.class);
-		final List<Template<?>> templates = extractTemplates(annotatedClasses);
-		addTemplatesInner(templates);
+		final List<Class<?>> annotatedClasses = getAnnotatedClasses(basePackageClasses);
+		final List<Template<?>> templates = extractValidTemplates(annotatedClasses);
+		addTemplatesToMap(templates);
 
 		eventListener.loadedTemplates(templates.size());
+	}
+
+	/** Extract all classes annotated with {@link TemplateHeader}. */
+	private static List<Class<?>> getAnnotatedClasses(final Class<?>[] basePackageClasses){
+		final ReflectiveClassLoader reflectiveClassLoader = ReflectiveClassLoader.createFrom(basePackageClasses);
+		return reflectiveClassLoader.extractClassesWithAnnotation(TemplateHeader.class);
 	}
 
 	/**
@@ -135,30 +139,33 @@ public final class LoaderTemplate{
 			/** extract all classes annotated with {@link TemplateHeader}. */
 			final Template<?> template = extractTemplate(templateClass);
 			if(template.canBeCoded()){
-				addTemplateInner(template);
+				addTemplateToMap(template);
 
 				eventListener.loadedTemplates(templates.size());
 			}
 		}
 	}
 
-	private List<Template<?>> extractTemplates(final List<Class<?>> annotatedClasses) throws AnnotationException, TemplateException{
+	private List<Template<?>> extractValidTemplates(final List<Class<?>> annotatedClasses) throws AnnotationException, TemplateException{
 		final int size = annotatedClasses.size();
 		final List<Template<?>> templates = new ArrayList<>(size);
 		for(int i = 0; i < size; i ++){
 			final Class<?> type = annotatedClasses.get(i);
 
-			//for each extracted class, try to parse it, extracting all the information needed for the codec of a message
-			final Template<?> from = createTemplate(type);
-			if(from.canBeCoded())
-				//if the template is valid, add it to the list of templates...
-				templates.add(from);
-			else
-				//... otherwise throw exception
-				throw TemplateException.create("Cannot create a raw message from data: cannot scan template for {}",
-					type.getSimpleName());
+			createAndAddTemplate(type, templates);
 		}
 		return templates;
+	}
+
+	private void createAndAddTemplate(final Class<?> type, final List<Template<?>> templates) throws AnnotationException, TemplateException{
+		final Template<?> from = createTemplate(type);
+		if(from.canBeCoded())
+			//if the template is valid, add it to the list of templates...
+			templates.add(from);
+		else
+			//... otherwise throw exception
+			throw TemplateException.create("Cannot create a raw message from data: cannot scan template for {}",
+				type.getSimpleName());
 	}
 
 	/**
@@ -191,13 +198,13 @@ public final class LoaderTemplate{
 		return (Template<T>)templateStore.apply(type);
 	}
 
-	private void addTemplatesInner(final List<Template<?>> templates) throws TemplateException{
+	private void addTemplatesToMap(final List<Template<?>> templates) throws TemplateException{
 		//load each template into the available templates list
 		for(int i = 0, length = templates.size(); i < length; i ++){
 			final Template<?> template = templates.get(i);
 
 			if(template != null && template.canBeCoded())
-				addTemplateInner(template);
+				addTemplateToMap(template);
 		}
 	}
 
@@ -207,13 +214,13 @@ public final class LoaderTemplate{
 	 * @param template	The template to add to the list of available templates.
 	 * @throws TemplateException	If the template was already added (defined by `start` parameter in the header definition).
 	 */
-	private void addTemplateInner(final Template<?> template) throws TemplateException{
+	private void addTemplateToMap(final Template<?> template) throws TemplateException{
 		try{
 			final TemplateHeader header = template.getHeader();
 			final Charset charset = CharsetHelper.lookup(header.charset());
 			final String[] starts = header.start();
 			for(int i = 0, length = starts.length; i < length; i ++)
-				loadTemplateInner(template, starts[i], charset);
+				processTemplate(template, starts[i], charset);
 		}
 		catch(final TemplateException e){
 			eventListener.cannotLoadTemplate(template.getType().getName(), e);
@@ -222,7 +229,7 @@ public final class LoaderTemplate{
 		}
 	}
 
-	private void loadTemplateInner(final Template<?> template, final String headerStart, final Charset charset) throws TemplateException{
+	private void processTemplate(final Template<?> template, final String headerStart, final Charset charset) throws TemplateException{
 		final String key = calculateKey(headerStart, charset);
 		if(templates.containsKey(key))
 			throw TemplateException.create("Duplicated key `{}` found for class {}", headerStart, template.getType().getName());
