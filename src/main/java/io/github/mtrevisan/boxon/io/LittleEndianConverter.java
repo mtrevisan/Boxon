@@ -55,7 +55,7 @@ class LittleEndianConverter implements BitSetConverter{
 	public BigInteger toObjectiveType(final BitSet bits, final int bitSize){
 		final boolean negative = bits.get(bitSize - 1);
 		final BigInteger result = toBigInteger(bits);
-		return (negative? negateValue(result, bitSize): result);
+		return (negative? BitSetConverter.negateValue(result, bitSize): result);
 	}
 
 	private static BigInteger toBigInteger(final BitSet bits){
@@ -63,16 +63,6 @@ class LittleEndianConverter implements BitSetConverter{
 		for(int i = bits.nextSetBit(0); i >= 0; i = bits.nextSetBit(i + 1))
 			result = result.setBit(i);
 		return result;
-	}
-
-	private static BigInteger negateValue(final BigInteger result, final int bitSize){
-		final BigInteger mask = BigInteger.ONE
-			.shiftLeft(bitSize)
-			.subtract(BigInteger.ONE);
-		return result.not()
-			.add(BigInteger.ONE)
-			.and(mask)
-			.negate();
 	}
 
 }

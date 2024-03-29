@@ -68,4 +68,14 @@ interface BitSetConverter{
 				bits.set(k);
 	}
 
+	static BigInteger negateValue(final BigInteger result, final int bitSize){
+		final BigInteger mask = BigInteger.ONE
+			.shiftLeft(bitSize)
+			.subtract(BigInteger.ONE);
+		return result.not()
+			.add(BigInteger.ONE)
+			.and(mask)
+			.negate();
+	}
+
 }
