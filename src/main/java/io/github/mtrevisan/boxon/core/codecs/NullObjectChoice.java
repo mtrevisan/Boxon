@@ -35,7 +35,7 @@ final class NullObjectChoice implements ObjectChoices.ObjectChoice{
 
 	@Override
 	public Class<? extends Annotation> annotationType(){
-		return Annotation.class;
+		return NullObjectChoice.class;
 	}
 
 	@Override

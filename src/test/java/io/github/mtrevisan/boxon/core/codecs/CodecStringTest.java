@@ -52,7 +52,7 @@ class CodecStringTest{
 	void stringUS_ASCII() throws FieldException{
 		CodecInterface<BindString> codec = new CodecString();
 		String encodedValue = "123ABC";
-		Annotation annotation = new BindString(){
+		BindString annotation = new BindString(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindString.class;
@@ -116,7 +116,7 @@ class CodecStringTest{
 	void stringUTF_8() throws FieldException{
 		CodecInterface<BindString> codec = new CodecString();
 		String encodedValue = "123ABCíïóúüđɉƚñŧ";
-		Annotation annotation = new BindString(){
+		BindString annotation = new BindString(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindString.class;
@@ -185,7 +185,7 @@ class CodecStringTest{
 	void stringTerminated() throws FieldException{
 		CodecInterface<BindStringTerminated> codec = new CodecStringTerminated();
 		String encodedValue = "123ABC";
-		Annotation annotation = new BindStringTerminated(){
+		BindStringTerminated annotation = new BindStringTerminated(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindStringTerminated.class;
@@ -254,7 +254,7 @@ class CodecStringTest{
 	void stringTerminatedButEndOfStream() throws FieldException{
 		CodecInterface<BindStringTerminated> codec = new CodecStringTerminated();
 		String encodedValue = "123ABC";
-		Annotation annotation = new BindStringTerminated(){
+		BindStringTerminated annotation = new BindStringTerminated(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindStringTerminated.class;

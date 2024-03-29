@@ -90,7 +90,7 @@ class CodecObjectTest{
 				return new ObjectChoices(){
 					@Override
 					public Class<? extends Annotation> annotationType(){
-						return null;
+						return ObjectChoices.class;
 					}
 
 					@Override

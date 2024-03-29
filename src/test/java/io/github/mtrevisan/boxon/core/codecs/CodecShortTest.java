@@ -50,7 +50,7 @@ class CodecShortTest{
 	void shortLittleEndianPositive1() throws FieldException{
 		CodecInterface<BindShort> codec = new CodecShort();
 		short encodedValue = 0x0010;
-		Annotation annotation = new BindShort(){
+		BindShort annotation = new BindShort(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindShort.class;
@@ -108,7 +108,7 @@ class CodecShortTest{
 	void shortLittleEndianPositive2() throws FieldException{
 		CodecInterface<BindShort> codec = new CodecShort();
 		short encodedValue = 0x1000;
-		Annotation annotation = new BindShort(){
+		BindShort annotation = new BindShort(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindShort.class;
@@ -166,7 +166,7 @@ class CodecShortTest{
 	void shortLittleEndianNegative() throws FieldException{
 		CodecInterface<BindShort> codec = new CodecShort();
 		short encodedValue = (short)0x8010;
-		Annotation annotation = new BindShort(){
+		BindShort annotation = new BindShort(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindShort.class;
@@ -224,7 +224,7 @@ class CodecShortTest{
 	void shortLittleEndianRandom() throws FieldException{
 		CodecInterface<BindShort> codec = new CodecShort();
 		short encodedValue = (short)TestHelper.RANDOM.nextInt(0x0000_FFFF);
-		Annotation annotation = new BindShort(){
+		BindShort annotation = new BindShort(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindShort.class;
@@ -283,7 +283,7 @@ class CodecShortTest{
 	void shortBigEndianNegative() throws FieldException{
 		CodecInterface<BindShort> codec = new CodecShort();
 		short encodedValue = (short)0x8F00;
-		Annotation annotation = new BindShort(){
+		BindShort annotation = new BindShort(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindShort.class;
@@ -341,7 +341,7 @@ class CodecShortTest{
 	void shortBigEndianSmall() throws FieldException{
 		CodecInterface<BindShort> codec = new CodecShort();
 		short encodedValue = 0x007F;
-		Annotation annotation = new BindShort(){
+		BindShort annotation = new BindShort(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindShort.class;
@@ -399,7 +399,7 @@ class CodecShortTest{
 	void shortBigEndianPositive() throws FieldException{
 		CodecInterface<BindShort> codec = new CodecShort();
 		short encodedValue = 0x7F00;
-		Annotation annotation = new BindShort(){
+		BindShort annotation = new BindShort(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindShort.class;
@@ -457,7 +457,7 @@ class CodecShortTest{
 	void shortBigEndianRandom() throws FieldException{
 		CodecInterface<BindShort> codec = new CodecShort();
 		short encodedValue = (short)TestHelper.RANDOM.nextInt(0x0000_FFFF);
-		Annotation annotation = new BindShort(){
+		BindShort annotation = new BindShort(){
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return BindShort.class;

@@ -118,13 +118,13 @@ class CodecListTest{
 			public ObjectChoicesList selectFrom(){
 				return new ObjectChoicesList(){
 					@Override
-					public String charset(){
-						return StandardCharsets.US_ASCII.name();
+					public Class<? extends Annotation> annotationType(){
+						return ObjectChoicesList.class;
 					}
 
 					@Override
-					public Class<? extends Annotation> annotationType(){
-						return null;
+					public String charset(){
+						return StandardCharsets.US_ASCII.name();
 					}
 
 					@Override

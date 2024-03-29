@@ -35,7 +35,7 @@ final class NullAlternativeSubField implements AlternativeSubField{
 
 	@Override
 	public Class<? extends Annotation> annotationType(){
-		return Annotation.class;
+		return NullAlternativeSubField.class;
 	}
 
 	@Override
