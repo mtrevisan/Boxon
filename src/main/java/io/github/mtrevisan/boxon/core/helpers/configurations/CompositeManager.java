@@ -32,7 +32,6 @@ import freemarker.template.TemplateExceptionHandler;
 import io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.CompositeSubField;
 import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
-import io.github.mtrevisan.boxon.core.helpers.configurations.validators.ValidationHelper;
 import io.github.mtrevisan.boxon.core.keys.ConfigurationKey;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
@@ -186,10 +185,15 @@ final class CompositeManager implements ConfigurationManagerInterface{
 			final String outerValue = replace(composition, (Map<String, Object>)dataValue, fields);
 
 			//value compatible with data type and format
-			if(!ValidationHelper.matches(outerValue, formatPattern))
+			if(!matches(outerValue, formatPattern))
 				throw EncodeException.create("Data value not compatible with `pattern` for data key {}; found {}, expected {}",
 					dataKey, outerValue, pattern);
 		}
+	}
+
+	private static boolean matches(final CharSequence text, final Pattern pattern){
+		return pattern.matcher(text)
+			.matches();
 	}
 
 	@Override

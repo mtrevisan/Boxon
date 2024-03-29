@@ -54,12 +54,12 @@ final class ProtocolValidator{
 			"Invalid maximum protocol version in {}; found {}");
 
 		//`maxProtocol` must be after or equal to `minProtocol`
-		isMaxLessThanMin(minimum, maximum, configData);
+		validateMaxLessThanMin(minimum, maximum, configData);
 
 		//`minProtocol` must be after or equal to `minProtocolVersion`
-		isMinLessThanMinProtocol(minimum, minProtocolVersion, configData);
+		validateMinLessThanMinProtocol(minimum, minProtocolVersion, configData);
 		//`maxProtocol` must be before or equal to `maxProtocolVersion`
-		isMaxProtocolLessThanMax(maximum, maxProtocolVersion, configData);
+		validateMaxProtocolLessThanMax(maximum, maxProtocolVersion, configData);
 	}
 
 	private static Version validateProtocol(final String protocolVersion, final ConfigFieldData configData, final String errorMessage)
@@ -76,14 +76,14 @@ final class ProtocolValidator{
 		return protocol;
 	}
 
-	private static void isMaxLessThanMin(final Version minimum, final Version maximum, final ConfigFieldData configData)
+	private static void validateMaxLessThanMin(final Version minimum, final Version maximum, final ConfigFieldData configData)
 			throws AnnotationException{
 		if(minimum != null && maximum != null && maximum.isLessThan(minimum))
 			throw AnnotationException.create("Minimum protocol version is greater than maximum protocol version in {}; found {} >= {}",
 				configData.getAnnotationName(), configData.getMinProtocol(), configData.getMaxProtocol());
 	}
 
-	private static void isMinLessThanMinProtocol(final Version minimum, final Version minProtocolVersion, final ConfigFieldData configData)
+	private static void validateMinLessThanMinProtocol(final Version minimum, final Version minProtocolVersion, final ConfigFieldData configData)
 			throws AnnotationException{
 		//NOTE: `minimum.isLessThan(minProtocolVersion)` return false if `minProtocolVersion` is empty
 		if(minimum != null && minimum.isLessThan(minProtocolVersion))
@@ -91,7 +91,7 @@ final class ProtocolValidator{
 				configData.getAnnotationName(), minimum, minProtocolVersion);
 	}
 
-	private static void isMaxProtocolLessThanMax(final Version maximum, final Version maxProtocolVersion, final ConfigFieldData configData)
+	private static void validateMaxProtocolLessThanMax(final Version maximum, final Version maxProtocolVersion, final ConfigFieldData configData)
 			throws AnnotationException{
 		if(maximum != null && !maxProtocolVersion.isEmpty() && maxProtocolVersion.isLessThan(maximum))
 			throw AnnotationException.create("Maximum protocol version is greater than whole message maximum protocol version in {}; expected {} <= {}",
