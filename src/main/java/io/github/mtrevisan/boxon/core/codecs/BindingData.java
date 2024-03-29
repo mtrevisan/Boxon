@@ -168,7 +168,7 @@ final class BindingData{
 		if(prefixSize > 0){
 			final BitSet bits = reader.getBitSet(prefixSize);
 			final ByteOrder byteOrder = selectObjectFrom.byteOrder();
-			final BigInteger prefix = BitSetHelper.toBigInteger(bits, prefixSize, byteOrder);
+			final BigInteger prefix = BitSetHelper.toObjectiveType(bits, prefixSize, byteOrder);
 
 			evaluator.putToContext(ContextHelper.CONTEXT_CHOICE_PREFIX, prefix);
 		}

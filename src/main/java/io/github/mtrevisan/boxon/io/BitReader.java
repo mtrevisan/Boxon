@@ -165,7 +165,7 @@ public final class BitReader extends BitReaderData implements BitReaderInterface
 	@Override
 	public BigInteger getBigInteger(final int size, final ByteOrder byteOrder){
 		final BitSet bits = getBitSet(size);
-		return BitSetHelper.toBigInteger(bits, size, byteOrder);
+		return BitSetHelper.toObjectiveType(bits, size, byteOrder);
 	}
 
 	@Override

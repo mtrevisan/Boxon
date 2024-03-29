@@ -26,12 +26,21 @@ package io.github.mtrevisan.boxon.io;
 
 import java.math.BigInteger;
 import java.util.BitSet;
+import java.util.EnumMap;
+import java.util.Map;
 
 
 /**
  * A collection of convenience methods for working with {@link BitSet} objects.
  */
 public final class BitSetHelper{
+
+	private static final Map<ByteOrder, BitSetConverter> CONVERTER = new EnumMap<>(ByteOrder.class);
+	static{
+		CONVERTER.put(ByteOrder.BIG_ENDIAN, new BigEndianConverter());
+		CONVERTER.put(ByteOrder.LITTLE_ENDIAN, new LittleEndianConverter());
+	}
+
 
 	private BitSetHelper(){}
 
@@ -55,16 +64,15 @@ public final class BitSetHelper{
 	 */
 	public static BitSet createBitSet(long value, final int size){
 		final BitSet bits = createBitSet(size);
+
 		while(value != 0){
 			final int nextSetBitIndex = Long.numberOfTrailingZeros(value);
-			if(nextSetBitIndex == Long.SIZE)
-				break;
-
 			bits.set(nextSetBitIndex);
 
 			//reset bit
 			value &= ~(1l << nextSetBitIndex);
 		}
+
 		return bits;
 	}
 
@@ -77,20 +85,26 @@ public final class BitSetHelper{
 	 * @return	The {@link BitSet} representing the given value.
 	 */
 	public static BitSet createBitSet(final BigInteger value, final int size, final ByteOrder byteOrder){
-		final boolean littleEndian = (byteOrder == ByteOrder.LITTLE_ENDIAN);
 		final BitSet bits = createBitSet(size);
+
+		final boolean littleEndian = (byteOrder == ByteOrder.LITTLE_ENDIAN);
 		//transfer bits one by one from the most significant byte to the {@link BitSet}
 		for(int i = 0, length = (size + Byte.SIZE - 1) / Byte.SIZE; i < length; i ++){
 			final int byteIndex = (littleEndian? i: length - 1 - i);
 			final byte currentByte = value.shiftRight(byteIndex << 3)
 				.byteValue();
 
-			//iterate over the bits from left to right in the byte (most significant to least significant)
-			for(int j = 0, k = i << 3; j < Byte.SIZE && k < size; j ++, k ++)
-				if(((currentByte >> j) & 1) == 1)
-					bits.set(k);
+			fillBits(bits, currentByte, i, size);
 		}
+
 		return bits;
+	}
+
+	private static void fillBits(final BitSet bits, final byte currentByte, final int index, final int size){
+		//iterate over the bits from left to right in the byte (most significant to least significant)
+		for(int j = 0, k = index << 3; j < Byte.SIZE && k < size; j ++, k ++)
+			if(((currentByte >> j) & 1) != 0)
+				bits.set(k);
 	}
 
 
@@ -104,26 +118,8 @@ public final class BitSetHelper{
 	 * @return	The converted short.
 	 */
 	static long toPrimitiveType(final BitSet bits, final int bitSize, final ByteOrder byteOrder){
-		long result;
-		if(byteOrder == ByteOrder.BIG_ENDIAN)
-			result = toPrimitiveTypeBigEndian(bits, bitSize);
-		else
-			result = toPrimitiveTypeLittleEndian(bits);
-		return result;
-	}
-
-	private static long toPrimitiveTypeBigEndian(final BitSet bits, final int bitSize){
-		long result = 0l;
-		for(int i = bits.nextSetBit(0); i >= 0; i = bits.nextSetBit(i + 1))
-			result |= (1l << calculateBigEndianTrueIndex(i, bitSize));
-		return result;
-	}
-
-	private static long toPrimitiveTypeLittleEndian(final BitSet bits){
-		long result = 0l;
-		for(int i = bits.nextSetBit(0); i >= 0; i = bits.nextSetBit(i + 1))
-			result |= (1l << i);
-		return result;
+		return getConverter(byteOrder)
+			.toPrimitiveType(bits, bitSize);
 	}
 
 	/**
@@ -134,50 +130,13 @@ public final class BitSetHelper{
 	 * @param byteOrder	The byte order.
 	 * @return	The converted {@link BigInteger}.
 	 */
-	public static BigInteger toBigInteger(final BitSet bits, final int bitSize, final ByteOrder byteOrder){
-		final boolean negative;
-		BigInteger result;
-		if(byteOrder == ByteOrder.BIG_ENDIAN){
-			negative = bits.get(7);
-			result = toBigIntegerBigEndian(bits, bitSize);
-		}
-		else{
-			negative = bits.get(bitSize - 1);
-			result = toBigIntegerLittleEndian(bits);
-		}
-
-		if(negative){
-			final BigInteger mask = BigInteger.ONE
-				.shiftLeft(bitSize)
-				.subtract(BigInteger.ONE);
-			result = result.not()
-				.add(BigInteger.ONE)
-				.and(mask)
-				.negate();
-		}
-
-		return result;
+	public static BigInteger toObjectiveType(final BitSet bits, final int bitSize, final ByteOrder byteOrder){
+		return getConverter(byteOrder)
+			.toObjectiveType(bits, bitSize);
 	}
 
-	private static BigInteger toBigIntegerBigEndian(final BitSet bits, final int bitSize){
-		BigInteger result = BigInteger.ZERO;
-		for(int i = bits.nextSetBit(0); i >= 0; i = bits.nextSetBit(i + 1))
-			result = result.setBit(calculateBigEndianTrueIndex(i, bitSize));
-		return result;
-	}
-
-	private static int calculateBigEndianTrueIndex(final int i, final int bitSize){
-		final int index = bitSize - 1 - i;
-		final int byteIndex = index / Byte.SIZE + 1;
-		final int bitIndex = index % Byte.SIZE + 1;
-		return byteIndex * Byte.SIZE - bitIndex;
-	}
-
-	private static BigInteger toBigIntegerLittleEndian(final BitSet bits){
-		BigInteger result = BigInteger.ZERO;
-		for(int i = bits.nextSetBit(0); i >= 0; i = bits.nextSetBit(i + 1))
-			result = result.setBit(i);
-		return result;
+	private static BitSetConverter getConverter(final ByteOrder byteOrder){
+		return CONVERTER.get(byteOrder);
 	}
 
 }
