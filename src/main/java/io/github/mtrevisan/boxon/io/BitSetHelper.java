@@ -95,6 +95,38 @@ public final class BitSetHelper{
 
 
 	/**
+	 * Convert this {@link BitSet} to a short.
+	 * <p>This method assumes the higher bit set in the bit set is at most at index `bitSize - 1`.</p>
+	 *
+	 * @param bits	The {@link BitSet}.
+	 * @param bitSize	The number of bits.
+	 * @param byteOrder	The byte order.
+	 * @return	The converted short.
+	 */
+	static long toPrimitiveType(final BitSet bits, final int bitSize, final ByteOrder byteOrder){
+		long result;
+		if(byteOrder == ByteOrder.BIG_ENDIAN)
+			result = toPrimitiveTypeBigEndian(bits, bitSize);
+		else
+			result = toPrimitiveTypeLittleEndian(bits);
+		return result;
+	}
+
+	private static long toPrimitiveTypeBigEndian(final BitSet bits, final int bitSize){
+		long result = 0l;
+		for(int i = bits.nextSetBit(0); i >= 0; i = bits.nextSetBit(i + 1))
+			result |= (1l << calculateBigEndianTrueIndex(i, bitSize));
+		return result;
+	}
+
+	private static long toPrimitiveTypeLittleEndian(final BitSet bits){
+		long result = 0l;
+		for(int i = bits.nextSetBit(0); i >= 0; i = bits.nextSetBit(i + 1))
+			result |= (1l << i);
+		return result;
+	}
+
+	/**
 	 * Convert this {@link BitSet} to {@link BigInteger}.
 	 *
 	 * @param bits	The {@link BitSet}.
@@ -129,13 +161,16 @@ public final class BitSetHelper{
 
 	private static BigInteger toBigIntegerBigEndian(final BitSet bits, final int bitSize){
 		BigInteger result = BigInteger.ZERO;
-		for(int i = bits.nextSetBit(0); i >= 0; i = bits.nextSetBit(i + 1)){
-			final int index = bitSize - 1 - i;
-			final int byteIndex = index / Byte.SIZE + 1;
-			final int bitIndex = index % Byte.SIZE + 1;
-			result = result.setBit(byteIndex * Byte.SIZE - bitIndex);
-		}
+		for(int i = bits.nextSetBit(0); i >= 0; i = bits.nextSetBit(i + 1))
+			result = result.setBit(calculateBigEndianTrueIndex(i, bitSize));
 		return result;
+	}
+
+	private static int calculateBigEndianTrueIndex(final int i, final int bitSize){
+		final int index = bitSize - 1 - i;
+		final int byteIndex = index / Byte.SIZE + 1;
+		final int bitIndex = index % Byte.SIZE + 1;
+		return byteIndex * Byte.SIZE - bitIndex;
 	}
 
 	private static BigInteger toBigIntegerLittleEndian(final BitSet bits){

@@ -132,8 +132,8 @@ public final class BitReader extends BitReaderData implements BitReaderInterface
 
 	@Override
 	public byte getByte(){
-		return getBigInteger(Byte.SIZE, ByteOrder.LITTLE_ENDIAN)
-			.byteValue();
+		final BitSet bits = getBitSet(Byte.SIZE);
+		return (byte)BitSetHelper.toPrimitiveType(bits, Byte.SIZE, ByteOrder.LITTLE_ENDIAN);
 	}
 
 	@Override
@@ -146,20 +146,20 @@ public final class BitReader extends BitReaderData implements BitReaderInterface
 
 	@Override
 	public short getShort(final ByteOrder byteOrder){
-		return getBigInteger(Short.SIZE, byteOrder)
-			.shortValue();
+		final BitSet bits = getBitSet(Short.SIZE);
+		return (short)BitSetHelper.toPrimitiveType(bits, Short.SIZE, byteOrder);
 	}
 
 	@Override
 	public int getInt(final ByteOrder byteOrder){
-		return getBigInteger(Integer.SIZE, byteOrder)
-			.intValue();
+		final BitSet bits = getBitSet(Integer.SIZE);
+		return (int)BitSetHelper.toPrimitiveType(bits, Integer.SIZE, byteOrder);
 	}
 
 	@Override
 	public long getLong(final ByteOrder byteOrder){
-		return getBigInteger(Long.SIZE, byteOrder)
-			.longValue();
+		final BitSet bits = getBitSet(Long.SIZE);
+		return BitSetHelper.toPrimitiveType(bits, Long.SIZE, byteOrder);
 	}
 
 	@Override
