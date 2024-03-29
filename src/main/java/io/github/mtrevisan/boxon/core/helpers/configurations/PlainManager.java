@@ -26,6 +26,8 @@ package io.github.mtrevisan.boxon.core.helpers.configurations;
 
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
+import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
+import io.github.mtrevisan.boxon.core.helpers.configurations.validators.ConfigurationAnnotationValidator;
 import io.github.mtrevisan.boxon.core.keys.ConfigurationKey;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
@@ -127,24 +129,34 @@ final class PlainManager implements ConfigurationManagerInterface{
 	}
 
 	@Override
-	public void validateValue(final Field field, final String dataKey, final Object dataValue) throws AnnotationException{
-		final ConfigFieldData configData = ConfigFieldDataBuilder.create(field, annotation);
-		ValidationHelper.validatePattern(configData, dataValue);
-		ValidationHelper.validateMinMaxDataValues(configData, dataValue);
+	public void validateValue(final Field field, final String dataKey, final Object dataValue) throws CodecException, AnnotationException{
+		final Version minProtocolVersion = Version.of(annotation.minProtocol());
+		final Version maxProtocolVersion = Version.of(annotation.maxProtocol());
+		final ConfigurationAnnotationValidator validator = ConfigurationAnnotationValidator.fromAnnotationType(annotation.annotationType());
+		validator.validate(field, annotation, minProtocolVersion, maxProtocolVersion);
 	}
 
 	@Override
 	public Object convertValue(final Field field, final String dataKey, Object dataValue, final Version protocol) throws CodecException,
 			EncodeException{
 		if(dataValue != null){
-			final Class<?> fieldType = field.getType();
 			final Class<? extends ConfigurationEnum> enumeration = annotation.enumeration();
-			if(ConfigFieldData.hasEnumeration(enumeration))
+			if(hasEnumeration(enumeration))
 				dataValue = extractEnumerationValue(dataKey, dataValue, field, enumeration);
 			else if(dataValue instanceof final String v)
-				dataValue = ParserDataType.getValue(fieldType, v);
+				dataValue = ParserDataType.getValue(field.getType(), v);
 		}
 		return dataValue;
+	}
+
+	/**
+	 * Whether the given class is a true enumeration.
+	 *
+	 * @param enumeration	The class to check.
+	 * @return	Whether the given class is a true enumeration.
+	 */
+	private static boolean hasEnumeration(final Class<? extends ConfigurationEnum> enumeration){
+		return (enumeration != null && enumeration != NullEnum.class);
 	}
 
 	private static Object extractEnumerationValue(final String dataKey, Object dataValue, final Field field,

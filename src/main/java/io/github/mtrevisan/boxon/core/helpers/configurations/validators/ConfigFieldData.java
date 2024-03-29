@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.helpers.configurations;
+package io.github.mtrevisan.boxon.core.helpers.configurations.validators;
 
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
@@ -231,13 +231,13 @@ final class ConfigFieldData{
 	}
 
 	/**
-	 * Whether the given class is an enumeration.
+	 * Whether the given class is a true enumeration.
 	 *
 	 * @param enumeration	The class to check.
-	 * @return	Whether the given class is an enumeration.
+	 * @return	Whether the given class is a true enumeration.
 	 */
 	static boolean hasEnumeration(final Class<? extends ConfigurationEnum> enumeration){
-		return (enumeration != NullEnum.class);
+		return (enumeration != null && enumeration != NullEnum.class);
 	}
 
 }

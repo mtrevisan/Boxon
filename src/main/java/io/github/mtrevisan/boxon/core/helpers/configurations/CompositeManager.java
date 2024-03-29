@@ -32,6 +32,7 @@ import freemarker.template.TemplateExceptionHandler;
 import io.github.mtrevisan.boxon.annotations.configurations.CompositeConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.CompositeSubField;
 import io.github.mtrevisan.boxon.annotations.configurations.NullEnum;
+import io.github.mtrevisan.boxon.core.helpers.configurations.validators.ValidationHelper;
 import io.github.mtrevisan.boxon.core.keys.ConfigurationKey;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;

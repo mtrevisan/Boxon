@@ -27,6 +27,7 @@ package io.github.mtrevisan.boxon.core.helpers.configurations;
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeConfigurationField;
 import io.github.mtrevisan.boxon.annotations.configurations.AlternativeSubField;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
+import io.github.mtrevisan.boxon.core.helpers.configurations.validators.ConfigurationAnnotationValidator;
 import io.github.mtrevisan.boxon.core.keys.ConfigurationKey;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
@@ -233,13 +234,14 @@ final class AlternativeManager implements ConfigurationManagerInterface{
 			CodecException{
 		final AlternativeSubField fieldBinding = extractField(protocol);
 		if(fieldBinding != null){
-			final Class<?> fieldType = field.getType();
 			if(dataValue instanceof final String v)
-				dataValue = ParserDataType.getValue(fieldType, v);
+				dataValue = ParserDataType.getValue(field.getType(), v);
 
-			final ConfigFieldData configData = ConfigFieldDataBuilder.create(field, annotation);
-			ValidationHelper.validatePattern(configData, dataValue);
-			ValidationHelper.validateMinMaxDataValues(configData, dataValue);
+			final Version minProtocolVersion = Version.of(fieldBinding.minProtocol());
+			final Version maxProtocolVersion = Version.of(fieldBinding.maxProtocol());
+			final ConfigurationAnnotationValidator validator = ConfigurationAnnotationValidator.fromAnnotationType(
+				annotation.annotationType());
+			validator.validate(field, annotation, minProtocolVersion, maxProtocolVersion);
 		}
 		return dataValue;
 	}
