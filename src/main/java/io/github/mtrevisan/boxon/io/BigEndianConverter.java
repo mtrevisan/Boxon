@@ -31,6 +31,20 @@ import java.util.BitSet;
 class BigEndianConverter implements BitSetConverter{
 
 	@Override
+	public BitSet createBitSet(final BigInteger value, final int bitSize){
+		final BitSet bits = BitSetHelper.createBitSet(bitSize);
+		//transfer bits one by one from the most significant byte to the {@link BitSet}
+		for(int i = 0, length = (bitSize + Byte.SIZE - 1) / Byte.SIZE; i < length; i ++){
+			final int byteIndex = length - 1 - i;
+			final byte currentByte = value.shiftRight(byteIndex << 3)
+				.byteValue();
+
+			BitSetConverter.fillBits(bits, currentByte, i, bitSize);
+		}
+		return bits;
+	}
+
+	@Override
 	public long toPrimitiveType(final BitSet bits, final int bitSize){
 		long result = 0l;
 		for(int i = bits.nextSetBit(0); i >= 0; i = bits.nextSetBit(i + 1))

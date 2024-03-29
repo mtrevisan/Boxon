@@ -85,26 +85,8 @@ public final class BitSetHelper{
 	 * @return	The {@link BitSet} representing the given value.
 	 */
 	public static BitSet createBitSet(final BigInteger value, final int size, final ByteOrder byteOrder){
-		final BitSet bits = createBitSet(size);
-
-		final boolean littleEndian = (byteOrder == ByteOrder.LITTLE_ENDIAN);
-		//transfer bits one by one from the most significant byte to the {@link BitSet}
-		for(int i = 0, length = (size + Byte.SIZE - 1) / Byte.SIZE; i < length; i ++){
-			final int byteIndex = (littleEndian? i: length - 1 - i);
-			final byte currentByte = value.shiftRight(byteIndex << 3)
-				.byteValue();
-
-			fillBits(bits, currentByte, i, size);
-		}
-
-		return bits;
-	}
-
-	private static void fillBits(final BitSet bits, final byte currentByte, final int index, final int size){
-		//iterate over the bits from left to right in the byte (most significant to least significant)
-		for(int j = 0, k = index << 3; j < Byte.SIZE && k < size; j ++, k ++)
-			if(((currentByte >> j) & 1) != 0)
-				bits.set(k);
+		return getConverter(byteOrder)
+			.createBitSet(value, size);
 	}
 
 
@@ -134,6 +116,7 @@ public final class BitSetHelper{
 		return getConverter(byteOrder)
 			.toObjectiveType(bits, bitSize);
 	}
+
 
 	private static BitSetConverter getConverter(final ByteOrder byteOrder){
 		return CONVERTER.get(byteOrder);

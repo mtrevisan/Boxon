@@ -34,6 +34,15 @@ import java.util.BitSet;
 interface BitSetConverter{
 
 	/**
+	 * Creates a {@link BitSet} with the given {@link BigInteger} value and `bitSize`.
+	 *
+	 * @param value	The {@link BigInteger} value used to initialize the {@link BitSet}.
+	 * @param bitSize	The number of bits in the {@link BitSet}.
+	 * @return	A new {@link BitSet} initialized with the given value and `bitSize`.
+	 */
+	BitSet createBitSet(BigInteger value, int bitSize);
+
+	/**
 	 * Converts a {@link BitSet} to a primitive value of type long.
 	 *
 	 * @param bits	The {@link BitSet} to convert.
@@ -50,5 +59,13 @@ interface BitSetConverter{
 	 * @return	The converted {@link BigInteger}.
 	 */
 	BigInteger toObjectiveType(BitSet bits, int bitSize);
+
+
+	static void fillBits(final BitSet bits, final byte currentByte, final int index, final int size){
+		//iterate over the bits from left to right in the byte (most significant to least significant)
+		for(int j = 0, k = index << 3; j < Byte.SIZE && k < size; j ++, k ++)
+			if(((currentByte >> j) & 1) != 0)
+				bits.set(k);
+	}
 
 }
