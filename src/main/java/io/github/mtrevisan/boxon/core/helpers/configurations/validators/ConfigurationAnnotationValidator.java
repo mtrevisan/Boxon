@@ -93,7 +93,7 @@ public enum ConfigurationAnnotationValidator{
 
 			EnumerationValidator.validateEnumeration(configData);
 
-			ValidationHelper.validateMinMaxDataValues(defaultValue, configData);
+			MinMaxDataValidator.validateMinMaxDataValues(defaultValue, configData);
 
 			ProtocolValidator.validateProtocol(minProtocolVersion, maxProtocolVersion, configData);
 		}
@@ -210,7 +210,7 @@ public enum ConfigurationAnnotationValidator{
 			final String defaultValue = binding.defaultValue();
 			ValidationHelper.validatePattern(defaultValue, configData);
 
-			ValidationHelper.validateMinMaxDataValues(defaultValue, configData);
+			MinMaxDataValidator.validateMinMaxDataValues(defaultValue, configData);
 
 			ProtocolValidator.validateProtocol(minProtocolVersion, maxProtocolVersion, configData);
 		}

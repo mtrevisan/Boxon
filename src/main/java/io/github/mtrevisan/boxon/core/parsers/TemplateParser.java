@@ -134,6 +134,7 @@ public final class TemplateParser implements TemplateParserInterface{
 		return this;
 	}
 
+
 	/**
 	 * Constructs a new {@link Template}.
 	 *
@@ -146,7 +147,6 @@ public final class TemplateParser implements TemplateParserInterface{
 	public <T> Template<T> createTemplate(final Class<T> type) throws AnnotationException{
 		return core.createTemplate(type);
 	}
-
 
 	/**
 	 * Retrieve the next template.
@@ -216,7 +216,8 @@ public final class TemplateParser implements TemplateParserInterface{
 			readSkips(skips, reader, parserContext);
 
 			//check if field has to be processed...
-			if(shouldProcessField(field.getCondition(), parserContext.getRootObject()))
+			final boolean shouldProcessField = shouldProcessField(field.getCondition(), parserContext.getRootObject());
+			if(shouldProcessField)
 				//... and if so, process it
 				decodeField(template, reader, parserContext, field);
 		}
@@ -354,6 +355,7 @@ public final class TemplateParser implements TemplateParserInterface{
 		}
 	}
 
+
 	/**
 	 * Encodes a message using the provided template and writer.
 	 *
@@ -384,7 +386,8 @@ public final class TemplateParser implements TemplateParserInterface{
 			writeSkips(skips, writer, parserContext);
 
 			//check if field has to be processed...
-			if(shouldProcessField(field.getCondition(), parserContext.getRootObject())){
+			final boolean shouldProcessField = shouldProcessField(field.getCondition(), parserContext.getRootObject());
+			if(shouldProcessField){
 				//... and if so, process it
 				parserContext.setField(field);
 				parserContext.setBinding(field.getBinding());

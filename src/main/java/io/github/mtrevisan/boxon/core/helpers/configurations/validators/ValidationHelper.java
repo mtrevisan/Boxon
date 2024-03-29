@@ -26,129 +26,23 @@ package io.github.mtrevisan.boxon.core.helpers.configurations.validators;
 
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
-import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.Memoizer;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.helpers.ThrowingFunction;
 import io.github.mtrevisan.boxon.io.ParserDataType;
 
-import java.math.BigDecimal;
 import java.util.regex.Pattern;
 
 
 /**
  * A collection of convenience methods for working with validations.
  */
-public final class ValidationHelper{
+final class ValidationHelper{
 
 	private static final ThrowingFunction<String, Pattern, Exception> PATTERN_STORE = Memoizer.throwingMemoize(Pattern::compile);
 
 
 	private ValidationHelper(){}
-
-
-	/**
-	 * Validate the minimum and maximum values.
-	 *
-	 * @param dataValue  The value to check against.
-	 * @param configData The configuration field data.
-	 * @throws AnnotationException If a validation error occurs.
-	 */
-	static void validateMinMaxDataValues(final Object dataValue, final ConfigFieldData configData) throws AnnotationException{
-		if(StringHelper.isBlank(configData.getMinValue()) && StringHelper.isBlank(configData.getMaxValue()))
-			return;
-
-		validateArrayFieldType(configData);
-
-		final BigDecimal min = validateMinValue(configData);
-		final BigDecimal max = validateMaxValue(configData);
-		validateDefaultAgainstMinAndMax(min, max, configData);
-
-		validateDataAgainstMinAndMax(min, max, dataValue, configData);
-	}
-
-	private static void validateArrayFieldType(final ConfigFieldData configData) throws AnnotationException{
-		final Class<?> fieldType = configData.getFieldType();
-		if(fieldType.isArray())
-			throw AnnotationException.create("Array field should not have `minValue` or `maxValue`");
-	}
-
-	private static void validateDefaultAgainstMinAndMax(final BigDecimal min, final BigDecimal max, final ConfigFieldData configData)
-			throws AnnotationException{
-		final BigDecimal def = JavaHelper.convertToBigDecimal(configData.getDefaultValue());
-		validateMinMaxValues(min, max, configData);
-
-		if(min != null && isDefaultLessThanMinimum(def, min))
-			//`defaultValue` compatible with `minValue`
-			throw AnnotationException.create("Default value incompatible with minimum value in {}; expected {} >= {}",
-				configData.getAnnotationName(), configData.getDefaultValue(), configData.getMinValue().getClass().getSimpleName());
-		if(max != null && isDefaultGreaterThanMaximum(def, max))
-			//`defaultValue` compatible with `maxValue`
-			throw AnnotationException.create("Default value incompatible with maximum value in {}; expected {} <= {}",
-				configData.getAnnotationName(), configData.getDefaultValue(), configData.getMaxValue().getClass().getSimpleName());
-	}
-
-	private static void validateDataAgainstMinAndMax(final BigDecimal min, final BigDecimal max, final Object dataValue,
-			final ConfigFieldData configData) throws AnnotationException{
-		if(isStringAssignableFrom(dataValue.getClass()) && !StringHelper.isBlank((String)dataValue)){
-			final BigDecimal val = JavaHelper.convertToBigDecimal((String)dataValue);
-
-			if(min != null && isDefaultLessThanMinimum(val, min))
-				//`dataValue` compatible with `minValue`
-				throw AnnotationException.create("Data value incompatible with minimum value in {}; expected {} >= {}",
-					configData.getAnnotationName(), configData.getDefaultValue(), configData.getMinValue().getClass().getSimpleName());
-			if(max != null && isDefaultGreaterThanMaximum(val, max))
-				//`dataValue` compatible with `maxValue`
-				throw AnnotationException.create("Data value incompatible with maximum value in {}; expected {} <= {}",
-					configData.getAnnotationName(), configData.getDefaultValue(), configData.getMaxValue().getClass().getSimpleName());
-		}
-	}
-
-	private static void validateMinMaxValues(final BigDecimal min, final BigDecimal max, final ConfigFieldData configData)
-			throws AnnotationException{
-		if(isMinimumGraterThanMaximum(min, max))
-			//`maxValue` after or equal to `minValue`
-			throw AnnotationException.create("Minimum value should be less than or equal to maximum value in {}; expected {} <= {}",
-				configData.getAnnotationName(), configData.getMinValue(), configData.getMaxValue());
-	}
-
-	private static BigDecimal validateMinValue(final ConfigFieldData configData) throws AnnotationException{
-		BigDecimal min = null;
-		final String minValue = configData.getMinValue();
-		if(!StringHelper.isBlank(minValue)){
-			min = JavaHelper.convertToBigDecimal(minValue);
-			//`minValue` compatible with variable type
-			if(min == null)
-				throw AnnotationException.create("Incompatible minimum value in {}; found {}, expected a valid number",
-					configData.getAnnotationName(), minValue);
-		}
-		return min;
-	}
-
-	private static BigDecimal validateMaxValue(final ConfigFieldData configData) throws AnnotationException{
-		BigDecimal max = null;
-		final String maxValue = configData.getMaxValue();
-		if(!StringHelper.isBlank(maxValue)){
-			max = JavaHelper.convertToBigDecimal(maxValue);
-			//`maxValue` compatible with variable type
-			if(max == null)
-				throw AnnotationException.create("Incompatible maximum value in {}; found {}, expected a valid number",
-					configData.getAnnotationName(), maxValue);
-		}
-		return max;
-	}
-
-	private static boolean isMinimumGraterThanMaximum(final BigDecimal min, final BigDecimal max){
-		return (min != null && max != null && min.compareTo(max) > 0);
-	}
-
-	private static boolean isDefaultLessThanMinimum(final BigDecimal def, final BigDecimal min){
-		return (def != null && def.compareTo(min) < 0);
-	}
-
-	private static boolean isDefaultGreaterThanMaximum(final BigDecimal def, final BigDecimal max){
-		return (def != null && def.compareTo(max) > 0);
-	}
 
 
 	/**
@@ -162,41 +56,38 @@ public final class ValidationHelper{
 		final Class<?> fieldType = configData.getFieldType();
 
 		final String defaultValue = configData.getDefaultValue();
-		if(!StringHelper.isBlank(defaultValue)){
+		if(StringHelper.isBlank(defaultValue))
+			//if `defaultValue` is not present, then field type must be an object
+			validateObjectiveType(fieldType, configData);
+		else{
 			//`defaultValue` compatible with variable type
 			final boolean hasEnumeration = configData.hasEnumeration();
-			if(!hasEnumeration && ParserDataType.getValue(fieldType, defaultValue) == null)
-				throw AnnotationException.create("Incompatible enum in {}, found {}, expected {}",
-					configData.getAnnotationName(), defaultValue.getClass().getSimpleName(), fieldType.toString());
-			if(hasEnumeration && !fieldType.isArray()
-					&& StringHelper.contains(defaultValue, EnumerationValidator.MUTUALLY_EXCLUSIVE_ENUMERATION_SEPARATOR))
-				throw AnnotationException.create("Incompatible default value in {}, field {}, found '{}', expected mutually exclusive value",
-					configData.getAnnotationName(), defaultValue.getClass().getSimpleName(), defaultValue);
+			if(hasEnumeration)
+				validateEnumerationType(fieldType, defaultValue, configData);
+			else
+				validateNonEnumerationType(fieldType, defaultValue, configData);
 		}
-		//if `defaultValue` is not present, then field type must be an object
-		else if(ParserDataType.isPrimitive(fieldType))
+
+	}
+
+	private static void validateNonEnumerationType(final Class<?> fieldType, final String defaultValue, final ConfigFieldData configData)
+			throws CodecException, AnnotationException{
+		if(ParserDataType.getValue(fieldType, defaultValue) == null)
+			throw AnnotationException.create("Incompatible enum in {}, found {}, expected {}",
+				configData.getAnnotationName(), defaultValue.getClass().getSimpleName(), fieldType.toString());
+	}
+
+	private static void validateEnumerationType(final Class<?> fieldType, final String defaultValue, final ConfigFieldData configData)
+			throws AnnotationException{
+		if(!fieldType.isArray() && StringHelper.contains(defaultValue, EnumerationValidator.MUTUALLY_EXCLUSIVE_ENUMERATION_SEPARATOR))
+			throw AnnotationException.create("Incompatible default value in {}, field {}, found '{}', expected mutually exclusive value",
+				configData.getAnnotationName(), defaultValue.getClass().getSimpleName(), defaultValue);
+	}
+
+	private static void validateObjectiveType(final Class<?> fieldType, final ConfigFieldData configData) throws AnnotationException{
+		if(ParserDataType.isPrimitive(fieldType))
 			throw AnnotationException.create("Default must be present for primitive type in {}, found {}, expected {}",
 				configData.getAnnotationName(), fieldType.getSimpleName(), fieldType.getSimpleName());
-	}
-
-	private static void validateMinMaxDefaultValuesToPattern(final Pattern formatPattern, final ConfigFieldData configData)
-			throws AnnotationException{
-		//`defaultValue` compatible with `pattern`
-		if(!matchesOrBlank(configData.getDefaultValue(), formatPattern))
-			throw AnnotationException.create("Default value not compatible with `pattern` in {}; found {}, expected {}",
-				configData.getAnnotationName(), configData.getDefaultValue(), formatPattern.pattern());
-		//`minValue` compatible with `pattern`
-		if(!matchesOrBlank(configData.getMinValue(), formatPattern))
-			throw AnnotationException.create("Minimum value not compatible with `pattern` in {}; found {}, expected {}",
-				configData.getAnnotationName(), configData.getMinValue(), formatPattern.pattern());
-		//`maxValue` compatible with `pattern`
-		if(!matchesOrBlank(configData.getMaxValue(), formatPattern))
-			throw AnnotationException.create("Maximum value not compatible with `pattern` in {}; found {}, expected {}",
-				configData.getAnnotationName(), configData.getMaxValue(), formatPattern.pattern());
-	}
-
-	private static boolean matchesOrBlank(final String text, final Pattern pattern){
-		return (StringHelper.isBlank(text) || matches(text, pattern));
 	}
 
 
@@ -239,9 +130,29 @@ public final class ValidationHelper{
 		return String.class.isAssignableFrom(cls);
 	}
 
-	public static boolean matches(final CharSequence text, final Pattern pattern){
+	private static boolean matches(final CharSequence text, final Pattern pattern){
 		return pattern.matcher(text)
 			.matches();
+	}
+
+	private static void validateMinMaxDefaultValuesToPattern(final Pattern formatPattern, final ConfigFieldData configData)
+		throws AnnotationException{
+		//`defaultValue` compatible with `pattern`
+		if(!matchesOrBlank(configData.getDefaultValue(), formatPattern))
+			throw AnnotationException.create("Default value not compatible with `pattern` in {}; found {}, expected {}",
+				configData.getAnnotationName(), configData.getDefaultValue(), formatPattern.pattern());
+		//`minValue` compatible with `pattern`
+		if(!matchesOrBlank(configData.getMinValue(), formatPattern))
+			throw AnnotationException.create("Minimum value not compatible with `pattern` in {}; found {}, expected {}",
+				configData.getAnnotationName(), configData.getMinValue(), formatPattern.pattern());
+		//`maxValue` compatible with `pattern`
+		if(!matchesOrBlank(configData.getMaxValue(), formatPattern))
+			throw AnnotationException.create("Maximum value not compatible with `pattern` in {}; found {}, expected {}",
+				configData.getAnnotationName(), configData.getMaxValue(), formatPattern.pattern());
+	}
+
+	private static boolean matchesOrBlank(final String text, final Pattern pattern){
+		return (StringHelper.isBlank(text) || matches(text, pattern));
 	}
 
 
