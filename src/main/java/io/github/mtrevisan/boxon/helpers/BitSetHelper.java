@@ -22,7 +22,9 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.io;
+package io.github.mtrevisan.boxon.helpers;
+
+import io.github.mtrevisan.boxon.io.ByteOrder;
 
 import java.math.BigInteger;
 import java.util.BitSet;
@@ -99,7 +101,7 @@ public final class BitSetHelper{
 	 * @param byteOrder	The byte order.
 	 * @return	The converted short.
 	 */
-	static long toPrimitiveType(final BitSet bits, final int bitSize, final ByteOrder byteOrder){
+	public static long toPrimitiveType(final BitSet bits, final int bitSize, final ByteOrder byteOrder){
 		return getConverter(byteOrder)
 			.toPrimitiveType(bits, bitSize);
 	}

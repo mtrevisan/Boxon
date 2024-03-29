@@ -24,7 +24,7 @@
  */
 package io.github.mtrevisan.boxon.annotations.converters;
 
-import io.github.mtrevisan.boxon.io.BitSetHelper;
+import io.github.mtrevisan.boxon.helpers.BitSetHelper;
 
 import java.util.BitSet;
 
