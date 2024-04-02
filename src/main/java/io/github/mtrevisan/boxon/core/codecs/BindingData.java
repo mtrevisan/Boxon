@@ -32,7 +32,6 @@ import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.DataException;
 import io.github.mtrevisan.boxon.helpers.BitSetHelper;
-import io.github.mtrevisan.boxon.helpers.BitSetPool;
 import io.github.mtrevisan.boxon.helpers.CharsetHelper;
 import io.github.mtrevisan.boxon.helpers.ConstructorHelper;
 import io.github.mtrevisan.boxon.helpers.ContextHelper;
@@ -170,7 +169,6 @@ final class BindingData{
 			final BitSet bitmap = reader.getBitSet(prefixSize);
 			final ByteOrder byteOrder = selectObjectFrom.byteOrder();
 			final BigInteger prefix = BitSetHelper.toObjectiveType(bitmap, prefixSize, byteOrder);
-			BitSetPool.release(bitmap);
 
 			evaluator.putToContext(ContextHelper.CONTEXT_CHOICE_PREFIX, prefix);
 		}

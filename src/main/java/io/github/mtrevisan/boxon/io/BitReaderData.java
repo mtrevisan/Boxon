@@ -134,7 +134,7 @@ abstract class BitReaderData{
 			//transfer the cache values
 			final int size = Math.min(length, remaining);
 			if(size > 0){
-				addCacheToBitSet(bitmap, offset, size);
+				readFromCache(bitmap, offset, size);
 
 				offset += size;
 			}
@@ -149,24 +149,6 @@ abstract class BitReaderData{
 		return bitmap;
 	}
 
-	private Byte peekByte(){
-		//make a copy of internal variables
-		final State originalState = createState();
-
-		Byte b = null;
-		try{
-			b = getByte();
-		}
-		catch(final BufferUnderflowException ignored){
-			//trap end-of-buffer
-		}
-		finally{
-			//restore original variables
-			restoreState(originalState);
-		}
-		return b;
-	}
-
 	/**
 	 * Add {@code size} bits from the cache starting from <a href="https://en.wikipedia.org/wiki/Bit_numbering#Bit_significance_and_indexing">LSB</a>
 	 * with a given offset.
@@ -175,15 +157,44 @@ abstract class BitReaderData{
 	 * @param offset	The offset for the indexes.
 	 * @param size	The amount of bits to read from the <a href="https://en.wikipedia.org/wiki/Bit_numbering#Bit_significance_and_indexing">LSB</a> of the cache.
 	 */
-	private void addCacheToBitSet(final BitSet bitmap, final int offset, final int size){
+	private void readFromCache(final BitSet bitmap, final int offset, final int size){
 		int skip;
 		while(cache != 0 && (skip = Integer.numberOfTrailingZeros(cache & 0xFF)) < size){
 			bitmap.set(skip + offset);
 			cache ^= (byte)(1 << skip);
 		}
+
+		consumeCache(size);
+	}
+
+	/**
+	 * Skips the next {@code length} bits.
+	 *
+	 * @param length	The amount of bits to skip.
+	 */
+	public final synchronized void skipBits(final int length){
+		int bitsSkipped = 0;
+		while(bitsSkipped < length){
+			final int bitsToSkip = Math.min(length - bitsSkipped, remaining);
+			bitsSkipped += bitsToSkip;
+
+			consumeCache(bitsToSkip);
+
+			//if cache is empty and there are more bits to be skipped, fill it
+			if(bitsSkipped < length)
+				fillCache();
+		}
+	}
+
+	private void consumeCache(final int size){
 		//remove read bits from the cache
 		cache >>= size;
 		remaining -= size;
+	}
+
+	private void fillCache(){
+		cache = buffer.get();
+		remaining = Byte.SIZE;
 	}
 
 	/**
@@ -205,6 +216,24 @@ abstract class BitReaderData{
 		while((byteRead = peekByte()) != null && byteRead != terminator)
 			baos.write(getByte());
 		baos.flush();
+	}
+
+	private Byte peekByte(){
+		//make a copy of internal variables
+		final State originalState = createState();
+
+		Byte b = null;
+		try{
+			b = getByte();
+		}
+		catch(final BufferUnderflowException ignored){
+			//trap end-of-buffer
+		}
+		finally{
+			//restore original variables
+			restoreState(originalState);
+		}
+		return b;
 	}
 
 	/**

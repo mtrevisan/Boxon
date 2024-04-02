@@ -113,7 +113,7 @@ public final class BitReader extends BitReaderData implements BitReaderInterface
 
 	@Override
 	public void skip(final int length){
-		getBitSet(length);
+		skipBits(length);
 	}
 
 	@Override

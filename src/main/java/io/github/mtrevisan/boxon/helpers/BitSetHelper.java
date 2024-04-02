@@ -54,7 +54,7 @@ public final class BitSetHelper{
 	 * @return	The created {@link BitSet}.
 	 */
 	public static BitSet createBitSet(final int size){
-		return BitSetPool.require(size);
+		return new BitSet(size);
 	}
 
 	/**
