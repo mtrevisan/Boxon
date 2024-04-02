@@ -65,6 +65,9 @@ abstract class BitReaderData{
 	/** The backing {@link ByteBuffer}. */
 	private final ByteBuffer buffer;
 
+	/** NOTE: use a memoizer to speed up execution and not create a new {@link BitSet} with each call of {@link #getBitSet(int)} method. */
+	private final Function<Integer, BitSet> bitSetStore = Memoizer.memoize(BitSetHelper::createBitSet);
+
 	/** The cache used when reading bits. */
 	private byte cache;
 	/** The number of bits available (to read) within the cache. */
@@ -77,15 +80,11 @@ abstract class BitReaderData{
 		this.buffer = buffer;
 	}
 
-	//5.5 s
-	/** NOTE: use a memoizer to speed up execution and not create a new {@link BitSet} with each call of {@link #getBitSet(int)} method. */
-	private final Function<Integer, BitSet> bitSetStore = Memoizer.memoize(BitSetHelper::createBitSet);
-
 
 	/**
 	 * Create a fallback point that can later be restored (see {@link #restoreFallbackPoint()}).
 	 */
-	public final void createFallbackPoint(){
+	public final synchronized void createFallbackPoint(){
 		if(fallbackPoint != null)
 			//update current mark:
 			fallbackPoint.set(buffer.position(), cache, remaining);
@@ -97,7 +96,7 @@ abstract class BitReaderData{
 	/**
 	 * Restore a fallback point created with {@link #createFallbackPoint()}.
 	 */
-	public final void restoreFallbackPoint(){
+	public final synchronized void restoreFallbackPoint(){
 		if(fallbackPoint != null){
 			//a fallback point has been marked before
 			restoreState(fallbackPoint);
@@ -110,7 +109,7 @@ abstract class BitReaderData{
 	 * Clear fallback point data.
 	 * <p>After calling this method, no restoring is possible (see {@link #restoreFallbackPoint()}).</p>
 	 */
-	public final void clearFallbackPoint(){
+	public final synchronized void clearFallbackPoint(){
 		fallbackPoint = null;
 	}
 
@@ -126,14 +125,13 @@ abstract class BitReaderData{
 	}
 
 
-	//FIXME to speed things up, find a way not to create a BitSet with each call of this method
 	/**
 	 * Reads the next {@code length} bits and composes a {@link BitSet} in big-endian notation.
 	 *
 	 * @param length	The amount of bits to read.
 	 * @return	A {@link BitSet} value at the {@link BitReader}'s current position.
 	 */
-	public final BitSet getBitSet(final int length){
+	public final synchronized BitSet getBitSet(final int length){
 		final BitSet bits = bitSetStore.apply(length);
 		bits.clear();
 
@@ -208,7 +206,7 @@ abstract class BitReaderData{
 	 * @param terminator	The terminator.
 	 * @throws IOException	If an I/O error occurs.
 	 */
-	protected final void getTextUntilTerminator(final ByteArrayOutputStream baos, final byte terminator) throws IOException{
+	protected final synchronized void getTextUntilTerminator(final ByteArrayOutputStream baos, final byte terminator) throws IOException{
 		Byte byteRead;
 		while((byteRead = peekByte()) != null && byteRead != terminator)
 			baos.write(getByte());
@@ -222,7 +220,7 @@ abstract class BitReaderData{
 	 * @param terminator	The terminator.
 	 * @throws IOException	If an I/O error occurs.
 	 */
-	protected final void getTextUntilTerminatorWithoutConsuming(final ByteArrayOutputStream baos, final byte terminator) throws IOException{
+	protected final synchronized void getTextUntilTerminatorWithoutConsuming(final ByteArrayOutputStream baos, final byte terminator) throws IOException{
 		//make a copy of internal variables
 		final State originalState = createState();
 
@@ -244,7 +242,7 @@ abstract class BitReaderData{
 	 *
 	 * @return	The array that backs this reader.
 	 */
-	public final byte[] array(){
+	public final synchronized byte[] array(){
 		return buffer.array();
 	}
 
@@ -253,7 +251,7 @@ abstract class BitReaderData{
 	 *
 	 * @return	The position of the backing buffer in {@code byte}s.
 	 */
-	public final int position(){
+	public final synchronized int position(){
 		return buffer.position() - ((remaining + Byte.SIZE - 1) >>> 3);
 	}
 
@@ -262,7 +260,7 @@ abstract class BitReaderData{
 	 *
 	 * @param newPosition	The position of the backing buffer in {@code byte}s.
 	 */
-	public final void position(final int newPosition){
+	public final synchronized void position(final int newPosition){
 		buffer.position(newPosition);
 
 		resetInnerVariables();
@@ -278,7 +276,7 @@ abstract class BitReaderData{
 	 *
 	 * @return	Whether there is at least one element remaining in the underlying {@link ByteBuffer}.
 	 */
-	public final boolean hasRemaining(){
+	public final synchronized boolean hasRemaining(){
 		return buffer.hasRemaining();
 	}
 

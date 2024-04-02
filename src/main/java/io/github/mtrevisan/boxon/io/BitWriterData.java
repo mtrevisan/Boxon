@@ -63,7 +63,7 @@ class BitWriterData{
 	 * @param bits	The value to write.
 	 * @param size	The amount of bits to use when writing {@code value}.
 	 */
-	public final void putBitSet(final BitSet bits, final int size){
+	public final synchronized void putBitSet(final BitSet bits, final int size){
 		//if the value that we're writing is too large to be placed entirely in the cache, then we need to place as
 		//much as we can in the cache (the least significant bits), flush the cache to the backing ByteBuffer, and
 		//place the rest in the cache
@@ -110,14 +110,14 @@ class BitWriterData{
 	 * @param value	The value to write.
 	 * @param size	The amount of bits to use when writing {@code value} (MUST BE less than or equals to {@link Long#SIZE}).
 	 */
-	public final void putValue(final long value, final int size){
+	public final synchronized void putValue(final long value, final int size){
 		final BitSet bits = BitSetHelper.createBitSet(value, size);
 		putBitSet(bits, size);
 	}
 
 
 	/** Flush a minimum integral number of bytes to the output stream, padding any non-completed byte with zeros. */
-	public final void flush(){
+	public final synchronized void flush(){
 		//put the cache into the buffer
 		if(remaining > 0)
 			os.write(cache);
@@ -135,7 +135,7 @@ class BitWriterData{
 	 *
 	 * @return	The copy of the array that backs this buffer.
 	 */
-	public final byte[] array(){
+	public final synchronized byte[] array(){
 		return os.toByteArray();
 	}
 
