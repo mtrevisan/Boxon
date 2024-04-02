@@ -125,7 +125,7 @@ class TemplateTest{
 		@BindArrayPrimitive(condition = "mask.hasProtocolVersion()", size = "2", type = byte.class)
 		private byte[] protocolVersion;
 		@BindBitSet(size = "2")
-		private BitSet bits;
+		private BitSet bitmap;
 		@BindDouble
 		private double numberDouble;
 		@BindFloat

@@ -60,10 +60,10 @@ class BitWriterData{
 	/**
 	 * Writes {@code value} to this {@link BitWriter} using {@code length} bits in big-endian notation.
 	 *
-	 * @param bits	The value to write.
+	 * @param bitmap	The value to write.
 	 * @param size	The amount of bits to use when writing {@code value}.
 	 */
-	public final synchronized void putBitSet(final BitSet bits, final int size){
+	public final synchronized void putBitSet(final BitSet bitmap, final int size){
 		//if the value that we're writing is too large to be placed entirely in the cache, then we need to place as
 		//much as we can in the cache (the least significant bits), flush the cache to the backing ByteBuffer, and
 		//place the rest in the cache
@@ -71,7 +71,7 @@ class BitWriterData{
 		while(offset < size){
 			//fill the cache one chunk of bits at a time
 			final int length = Math.min(size - offset, Byte.SIZE - remaining);
-			final byte nextCache = readNextByte(bits, offset, length);
+			final byte nextCache = readNextByte(bitmap, offset, length);
 			cache = (byte)((cache << length) | nextCache);
 			remaining += length;
 			offset += length;
@@ -88,18 +88,18 @@ class BitWriterData{
 	/**
 	 * Returns a long of given length and starting at a given offset.
 	 *
-	 * @param bits	The bit set.
+	 * @param bitmap	The bit set.
 	 * @param offset	The bit offset to start the extraction.
 	 * @param size	The length in bits of the extraction (MUST BE less than {@link Long#SIZE}!).
 	 * @return	A long starting at a given offset and of a given length.
 	 */
-	private static byte readNextByte(final BitSet bits, final int offset, final int size){
+	private static byte readNextByte(final BitSet bitmap, final int offset, final int size){
 		byte value = 0;
-		int index = bits.nextSetBit(offset);
+		int index = bitmap.nextSetBit(offset);
 		while(index >= 0 && index <= offset + size){
 			value |= (byte)(1 << (index - offset));
 
-			index = bits.nextSetBit(index + 1);
+			index = bitmap.nextSetBit(index + 1);
 		}
 		return value;
 	}
@@ -111,8 +111,8 @@ class BitWriterData{
 	 * @param size	The amount of bits to use when writing {@code value} (MUST BE less than or equals to {@link Long#SIZE}).
 	 */
 	public final synchronized void putValue(final long value, final int size){
-		final BitSet bits = BitSetHelper.createBitSet(value, size);
-		putBitSet(bits, size);
+		final BitSet bitmap = BitSetHelper.createBitSet(value, size);
+		putBitSet(bitmap, size);
 	}
 
 

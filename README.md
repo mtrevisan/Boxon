@@ -411,7 +411,7 @@ This annotation is bounded to a variable.
 
 ```java
 @BindBitSet(size = "2")
-private BitSet bits;
+private BitSet bitmap;
 ```
 
 

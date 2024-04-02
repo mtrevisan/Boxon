@@ -25,7 +25,6 @@
 package io.github.mtrevisan.boxon.io;
 
 import io.github.mtrevisan.boxon.helpers.BitSetHelper;
-import io.github.mtrevisan.boxon.helpers.Memoizer;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 
 import java.io.ByteArrayOutputStream;
@@ -33,7 +32,6 @@ import java.io.IOException;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.util.BitSet;
-import java.util.function.Function;
 
 
 /**
@@ -64,9 +62,6 @@ abstract class BitReaderData{
 
 	/** The backing {@link ByteBuffer}. */
 	private final ByteBuffer buffer;
-
-	/** NOTE: use a memoizer to speed up execution and not create a new {@link BitSet} with each call of {@link #getBitSet(int)} method. */
-	private final Function<Integer, BitSet> bitSetStore = Memoizer.memoize(BitSetHelper::createBitSet);
 
 	/** The cache used when reading bits. */
 	private byte cache;
@@ -132,15 +127,14 @@ abstract class BitReaderData{
 	 * @return	A {@link BitSet} value at the {@link BitReader}'s current position.
 	 */
 	public final synchronized BitSet getBitSet(final int length){
-		final BitSet bits = bitSetStore.apply(length);
-		bits.clear();
+		final BitSet bitmap = BitSetHelper.createBitSet(length);
 
 		int offset = 0;
 		while(offset < length){
 			//transfer the cache values
 			final int size = Math.min(length, remaining);
 			if(size > 0){
-				addCacheToBitSet(bits, offset, size);
+				addCacheToBitSet(bitmap, offset, size);
 
 				offset += size;
 			}
@@ -152,7 +146,7 @@ abstract class BitReaderData{
 				remaining = Byte.SIZE;
 			}
 		}
-		return bits;
+		return bitmap;
 	}
 
 	private Byte peekByte(){
@@ -177,14 +171,14 @@ abstract class BitReaderData{
 	 * Add {@code size} bits from the cache starting from <a href="https://en.wikipedia.org/wiki/Bit_numbering#Bit_significance_and_indexing">LSB</a>
 	 * with a given offset.
 	 *
-	 * @param bits	The bit set into which to transfer {@code size} bits from the cache.
+	 * @param bitmap	The bit set into which to transfer {@code size} bits from the cache.
 	 * @param offset	The offset for the indexes.
 	 * @param size	The amount of bits to read from the <a href="https://en.wikipedia.org/wiki/Bit_numbering#Bit_significance_and_indexing">LSB</a> of the cache.
 	 */
-	private void addCacheToBitSet(final BitSet bits, final int offset, final int size){
+	private void addCacheToBitSet(final BitSet bitmap, final int offset, final int size){
 		int skip;
 		while(cache != 0 && (skip = Integer.numberOfTrailingZeros(cache & 0xFF)) < size){
-			bits.set(skip + offset);
+			bitmap.set(skip + offset);
 			cache ^= (byte)(1 << skip);
 		}
 		//remove read bits from the cache

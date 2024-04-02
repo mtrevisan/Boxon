@@ -54,10 +54,10 @@ public interface BitWriterInterface{
 	/**
 	 * Writes {@code value} to this {@link BitWriter} using {@code length} bits.
 	 *
-	 * @param bits	The value to write.
+	 * @param bitmap	The value to write.
 	 * @param length	The amount of bits to use when writing {@code value}.
 	 */
-	void putBitSet(BitSet bits, int length);
+	void putBitSet(BitSet bitmap, int length);
 
 	/**
 	 * Writes a value using {@link Byte#SIZE} bits.

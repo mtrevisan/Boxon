@@ -133,8 +133,8 @@ public final class BitReader extends BitReaderData implements BitReaderInterface
 
 	@Override
 	public byte getByte(){
-		final BitSet bits = getBitSet(Byte.SIZE);
-		return (byte)BitSetHelper.toPrimitiveType(bits, Byte.SIZE, ByteOrder.LITTLE_ENDIAN);
+		final BitSet bitmap = getBitSet(Byte.SIZE);
+		return (byte)BitSetHelper.toPrimitiveType(bitmap, Byte.SIZE, ByteOrder.LITTLE_ENDIAN);
 	}
 
 	@Override
@@ -147,26 +147,26 @@ public final class BitReader extends BitReaderData implements BitReaderInterface
 
 	@Override
 	public short getShort(final ByteOrder byteOrder){
-		final BitSet bits = getBitSet(Short.SIZE);
-		return (short)BitSetHelper.toPrimitiveType(bits, Short.SIZE, byteOrder);
+		final BitSet bitmap = getBitSet(Short.SIZE);
+		return (short)BitSetHelper.toPrimitiveType(bitmap, Short.SIZE, byteOrder);
 	}
 
 	@Override
 	public int getInt(final ByteOrder byteOrder){
-		final BitSet bits = getBitSet(Integer.SIZE);
-		return (int)BitSetHelper.toPrimitiveType(bits, Integer.SIZE, byteOrder);
+		final BitSet bitmap = getBitSet(Integer.SIZE);
+		return (int)BitSetHelper.toPrimitiveType(bitmap, Integer.SIZE, byteOrder);
 	}
 
 	@Override
 	public long getLong(final ByteOrder byteOrder){
-		final BitSet bits = getBitSet(Long.SIZE);
-		return BitSetHelper.toPrimitiveType(bits, Long.SIZE, byteOrder);
+		final BitSet bitmap = getBitSet(Long.SIZE);
+		return BitSetHelper.toPrimitiveType(bitmap, Long.SIZE, byteOrder);
 	}
 
 	@Override
 	public BigInteger getBigInteger(final int size, final ByteOrder byteOrder){
-		final BitSet bits = getBitSet(size);
-		return BitSetHelper.toObjectiveType(bits, size, byteOrder);
+		final BitSet bitmap = getBitSet(size);
+		return BitSetHelper.toObjectiveType(bitmap, size, byteOrder);
 	}
 
 	@Override

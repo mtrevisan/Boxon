@@ -27,6 +27,7 @@ package io.github.mtrevisan.boxon.core.codecs;
 import io.github.mtrevisan.boxon.annotations.bindings.BindBitSet;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.helpers.BitSetPool;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.Injected;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
@@ -52,9 +53,11 @@ final class CodecBitSet implements CodecInterface<BindBitSet>{
 		final int size = bindingData.evaluateSize();
 		CodecHelper.assertSizePositive(size);
 
-		final BitSet bits = reader.getBitSet(size);
+		final BitSet bitmap = reader.getBitSet(size);
 
-		return CodecHelper.convertValue(bindingData, bits);
+		final Object convertedValue = CodecHelper.convertValue(bindingData, bitmap);
+		BitSetPool.release(bitmap);
+		return convertedValue;
 	}
 
 	@Override
@@ -68,9 +71,9 @@ final class CodecBitSet implements CodecInterface<BindBitSet>{
 		CodecHelper.assertSizePositive(size);
 
 		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();
-		final BitSet bits = CodecHelper.converterEncode(chosenConverter, value);
+		final BitSet bitmap = CodecHelper.converterEncode(chosenConverter, value);
 
-		writer.putBitSet(bits, size);
+		writer.putBitSet(bitmap, size);
 	}
 
 }

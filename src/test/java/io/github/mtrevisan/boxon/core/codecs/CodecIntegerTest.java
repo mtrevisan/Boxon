@@ -492,8 +492,8 @@ class CodecIntegerTest{
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		BitSet bits = BitSetHelper.createBitSet(encodedValue, 128, ByteOrder.LITTLE_ENDIAN);
-		Assertions.assertEquals(rightPad(StringHelper.toHexString(bits.toByteArray()), 32, '0'), writer.toString());
+		BitSet bitmap = BitSetHelper.createBitSet(encodedValue, 128, ByteOrder.LITTLE_ENDIAN);
+		Assertions.assertEquals(rightPad(StringHelper.toHexString(bitmap.toByteArray()), 32, '0'), writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);
 		BigInteger decoded = (BigInteger)codec.decode(reader, annotation, null);

@@ -54,7 +54,7 @@ public final class BitSetHelper{
 	 * @return	The created {@link BitSet}.
 	 */
 	public static BitSet createBitSet(final int size){
-		return new BitSet(size);
+		return BitSetPool.require(size);
 	}
 
 	/**
@@ -65,17 +65,17 @@ public final class BitSetHelper{
 	 * @return	The created {@link BitSet}.
 	 */
 	public static BitSet createBitSet(long value, final int size){
-		final BitSet bits = createBitSet(size);
+		final BitSet bitmap = createBitSet(size);
 
 		while(value != 0){
 			final int nextSetBitIndex = Long.numberOfTrailingZeros(value);
-			bits.set(nextSetBitIndex);
+			bitmap.set(nextSetBitIndex);
 
 			//reset bit
 			value &= ~(1l << nextSetBitIndex);
 		}
 
-		return bits;
+		return bitmap;
 	}
 
 	/**
@@ -94,29 +94,29 @@ public final class BitSetHelper{
 
 	/**
 	 * Convert this {@link BitSet} to a short.
-	 * <p>This method assumes the higher bit set in the bit set is at most at index `bitSize - 1`.</p>
+	 * <p>This method assumes the higher bit set in the bit set is at most at index `bitmapSize - 1`.</p>
 	 *
-	 * @param bits	The {@link BitSet}.
-	 * @param bitSize	The number of bits.
+	 * @param bitmap	The {@link BitSet}.
+	 * @param bitmapSize	The number of bits.
 	 * @param byteOrder	The byte order.
 	 * @return	The converted short.
 	 */
-	public static long toPrimitiveType(final BitSet bits, final int bitSize, final ByteOrder byteOrder){
+	public static long toPrimitiveType(final BitSet bitmap, final int bitmapSize, final ByteOrder byteOrder){
 		return getConverter(byteOrder)
-			.toPrimitiveType(bits, bitSize);
+			.toPrimitiveType(bitmap, bitmapSize);
 	}
 
 	/**
 	 * Convert this {@link BitSet} to {@link BigInteger}.
 	 *
-	 * @param bits	The {@link BitSet}.
-	 * @param bitSize	The number of bits.
+	 * @param bitmap	The {@link BitSet}.
+	 * @param bitmapSize	The number of bits.
 	 * @param byteOrder	The byte order.
 	 * @return	The converted {@link BigInteger}.
 	 */
-	public static BigInteger toObjectiveType(final BitSet bits, final int bitSize, final ByteOrder byteOrder){
+	public static BigInteger toObjectiveType(final BitSet bitmap, final int bitmapSize, final ByteOrder byteOrder){
 		return getConverter(byteOrder)
-			.toObjectiveType(bits, bitSize);
+			.toObjectiveType(bitmap, bitmapSize);
 	}
 
 
