@@ -43,9 +43,9 @@ abstract class BitReaderData{
 	private static final class State{
 		/** The position in the byte buffer of the cached value. */
 		private int position;
-		/** The <i>cache</i> used when reading bits. */
+		/** The cache used when reading bits. */
 		private byte cache;
-		/** The number of bits available (to read) within {@code cache}. */
+		/** The number of bits available (to read) within the cache. */
 		private int remaining;
 
 		State(final int position, final byte cache, final int remaining){
@@ -63,9 +63,9 @@ abstract class BitReaderData{
 	/** The backing {@link ByteBuffer}. */
 	private final ByteBuffer buffer;
 
-	/** The <i>cache</i> used when reading bits. */
+	/** The cache used when reading bits. */
 	private byte cache;
-	/** The number of bits available (to read) within {@code cache}. */
+	/** The number of bits available (to read) within the cache. */
 	private int remaining;
 
 	private State fallbackPoint;
@@ -120,6 +120,7 @@ abstract class BitReaderData{
 	}
 
 
+	//FIXME to speed things up, find a way not to create a BitSet with each call of this method
 	/**
 	 * Reads the next {@code length} bits and composes a {@link BitSet} in big-endian notation.
 	 *
