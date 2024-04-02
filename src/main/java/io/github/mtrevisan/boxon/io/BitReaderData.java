@@ -201,7 +201,8 @@ abstract class BitReaderData{
 	 * @throws IOException	If an I/O error occurs.
 	 */
 	protected final void getTextUntilTerminator(final ByteArrayOutputStream baos, final byte terminator) throws IOException{
-		for(Byte byteRead = peekByte(); byteRead != null && byteRead != terminator; byteRead = peekByte())
+		Byte byteRead;
+		while((byteRead = peekByte()) != null && byteRead != terminator)
 			baos.write(getByte());
 		baos.flush();
 	}
