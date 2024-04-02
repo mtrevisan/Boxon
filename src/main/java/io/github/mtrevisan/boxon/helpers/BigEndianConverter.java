@@ -47,7 +47,8 @@ class BigEndianConverter implements BitSetConverter{
 	@Override
 	public long toPrimitiveType(final BitSet bits, final int bitSize){
 		long result = 0l;
-		for(int i = bits.nextSetBit(0); i >= 0; i = bits.nextSetBit(i + 1))
+		int i = -1;
+		while((i = bits.nextSetBit(i + 1)) >= 0)
 			result |= (1l << calculateTrueIndex(i, bitSize));
 		return result;
 	}
@@ -61,7 +62,8 @@ class BigEndianConverter implements BitSetConverter{
 
 	private static BigInteger toBigInteger(final BitSet bits, final int bitSize){
 		BigInteger result = BigInteger.ZERO;
-		for(int i = bits.nextSetBit(0); i >= 0; i = bits.nextSetBit(i + 1))
+		int i = -1;
+		while((i = bits.nextSetBit(i + 1)) >= 0)
 			result = result.setBit(calculateTrueIndex(i, bitSize));
 		return result;
 	}

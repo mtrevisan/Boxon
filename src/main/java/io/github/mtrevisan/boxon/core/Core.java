@@ -27,7 +27,6 @@ package io.github.mtrevisan.boxon.core;
 import io.github.mtrevisan.boxon.annotations.TemplateHeader;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
 import io.github.mtrevisan.boxon.core.codecs.LoaderCodec;
-import io.github.mtrevisan.boxon.core.codecs.TemplateParserInterface;
 import io.github.mtrevisan.boxon.core.parsers.ConfigurationParser;
 import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
@@ -197,8 +196,8 @@ public final class Core{
 	}
 
 	private void postProcessCodecs(){
-		loaderCodec.injectFieldInCodecs(TemplateParserInterface.class, templateParser);
-		loaderCodec.injectFieldInCodecs(Evaluator.class, evaluator);
+		loaderCodec.injectFieldInCodecs(templateParser);
+		loaderCodec.injectFieldInCodecs(evaluator);
 	}
 
 

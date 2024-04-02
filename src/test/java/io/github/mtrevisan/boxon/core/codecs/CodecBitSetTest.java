@@ -103,7 +103,7 @@ class CodecBitSetTest{
 		};
 
 		BitWriter writer = BitWriter.create();
-		FieldAccessor.injectValue(codec, Evaluator.class, Evaluator.create());
+		FieldAccessor.injectValue(codec, Evaluator.create());
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
@@ -168,7 +168,7 @@ class CodecBitSetTest{
 		};
 
 		BitWriter writer = BitWriter.create();
-		FieldAccessor.injectValue(codec, Evaluator.class, Evaluator.create());
+		FieldAccessor.injectValue(codec, Evaluator.create());
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 

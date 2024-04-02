@@ -46,7 +46,8 @@ class LittleEndianConverter implements BitSetConverter{
 	@Override
 	public long toPrimitiveType(final BitSet bits, final int bitSize){
 		long result = 0l;
-		for(int i = bits.nextSetBit(0); i >= 0; i = bits.nextSetBit(i + 1))
+		int i = -1;
+		while((i = bits.nextSetBit(i + 1)) >= 0)
 			result |= (1l << i);
 		return result;
 	}
@@ -60,7 +61,8 @@ class LittleEndianConverter implements BitSetConverter{
 
 	private static BigInteger toBigInteger(final BitSet bits){
 		BigInteger result = BigInteger.ZERO;
-		for(int i = bits.nextSetBit(0); i >= 0; i = bits.nextSetBit(i + 1))
+		int i = -1;
+		while((i = bits.nextSetBit(i + 1)) >= 0)
 			result = result.setBit(i);
 		return result;
 	}

@@ -32,6 +32,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.RecordComponent;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -109,13 +110,47 @@ public final class FieldAccessor{
 	 * Injects the given value of given field type in the given object.
 	 *
 	 * @param obj	The object whose field should be modified.
+	 * @param value	The value for the field being modified.
+	 * @param <T>	The value class type.
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> void injectValue(final Object obj, final T value){
+		final Type fieldType = GenericHelper.resolveGenericTypes(value.getClass(), Object.class)
+			.getFirst();
+
+		if(fieldType instanceof final Class<?> c && c.isAssignableFrom(value.getClass())){
+			final Class<?> type = obj.getClass();
+			injectValue(type, obj, (Class<? super T>)fieldType, value);
+		}
+	}
+
+	/**
+	 * Injects the given value of given field type in the given object.
+	 *
+	 * @param obj	The object whose field should be modified.
 	 * @param fieldType	The field class.
 	 * @param value	The value for the field being modified.
 	 * @param <T>	The value class type.
 	 */
-	public static <T> void injectValue(final Object obj, final Class<T> fieldType, final T value){
+	public static <T> void injectValue(final Object obj, final Class<? super T> fieldType, final T value){
 		final Class<?> type = obj.getClass();
 		injectValue(type, obj, fieldType, value);
+	}
+
+	/**
+	 * Static injects the given value of given field type in the given class.
+	 *
+	 * @param type	The object class whose static field should be modified.
+	 * @param value	The value for the field being modified.
+	 * @param <T>	The value class type.
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> void injectStaticValue(final Class<?> type, final T value){
+		final Type fieldType = GenericHelper.resolveGenericTypes(value.getClass(), Object.class)
+			.getFirst();
+
+		if(fieldType instanceof final Class<?> c && c.isAssignableFrom(value.getClass()))
+			injectStaticValue(type, (Class<? super T>)fieldType, value);
 	}
 
 	/**

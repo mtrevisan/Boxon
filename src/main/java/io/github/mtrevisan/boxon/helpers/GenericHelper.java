@@ -47,6 +47,7 @@ public final class GenericHelper{
 	private static final ClassLoader CLASS_LOADER = GenericHelper.class.getClassLoader();
 
 	private static final String ARRAY_VARIABLE = "[]";
+	private static final Type[] EMPTY_TYPE_ARRAY = new Type[0];
 
 	/**
 	 * Primitive type name to class map.
@@ -100,9 +101,14 @@ public final class GenericHelper{
 			//process ancestors
 			processAncestors(ancestors, typeVariables, base, classStack, typesStack);
 
-			//if there are no resolved types and offspring is equal to base, process the base
-			if(currentTypes != null && types.isEmpty() && currentOffspring.equals(base))
-				processBase(currentTypes, types);
+			//if there are no resolved types and offspring is equal to base (or the last class before `Object` if `base` is `Object`),
+			//process the base
+			if(base != Object.class && currentOffspring == base || base == Object.class && classStack.peek() == base){
+				processBase(currentOffspring, currentTypes, types);
+
+				//stop the search once reached the `base` class
+				break;
+			}
 		}
 
 		return types;
@@ -147,7 +153,7 @@ public final class GenericHelper{
 			else if(ancestorType instanceof final Class<?> c && base.isAssignableFrom(c)){
 				//ancestor is non-parameterized: process only if it matches the base class
 				classStack.add(c);
-				typesStack.add(null);
+				typesStack.add(EMPTY_TYPE_ARRAY);
 			}
 		}
 	}
@@ -169,10 +175,13 @@ public final class GenericHelper{
 		return typeVariables.getOrDefault(key, actualTypeArgument);
 	}
 
-	private static void processBase(final Type[] actualArgs, final List<Type> types){
+	private static void processBase(final Class<?> currentOffspring, final Type[] actualArgs, final List<Type> types){
 		//there is a result if the base class is reached
 		for(int i = 0, length = actualArgs.length; i < length; i ++)
 			types.add(actualArgs[i]);
+
+		if(types.isEmpty())
+			types.add(currentOffspring);
 	}
 
 

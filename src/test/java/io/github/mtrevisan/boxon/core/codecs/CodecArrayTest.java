@@ -147,7 +147,7 @@ class CodecArrayTest{
 		};
 
 		BitWriter writer = BitWriter.create();
-		FieldAccessor.injectValue(codec, Evaluator.class, Evaluator.create());
+		FieldAccessor.injectValue(codec, Evaluator.create());
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
@@ -244,8 +244,8 @@ class CodecArrayTest{
 		Evaluator evaluator = Evaluator.create();
 		TemplateParserInterface templateParser = TemplateParser.create(loaderCodec, evaluator);
 		loaderCodec.loadDefaultCodecs();
-		FieldAccessor.injectValue(codec, TemplateParserInterface.class, templateParser);
-		FieldAccessor.injectValue(codec, Evaluator.class, Evaluator.create());
+		FieldAccessor.injectValue(codec, templateParser);
+		FieldAccessor.injectValue(codec, Evaluator.create());
 		BitWriter writer = BitWriter.create();
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();

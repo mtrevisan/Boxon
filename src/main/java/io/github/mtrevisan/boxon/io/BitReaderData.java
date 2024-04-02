@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.io;
 
 import io.github.mtrevisan.boxon.helpers.BitSetHelper;
+import io.github.mtrevisan.boxon.helpers.Memoizer;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 
 import java.io.ByteArrayOutputStream;
@@ -32,6 +33,7 @@ import java.io.IOException;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.util.BitSet;
+import java.util.function.Function;
 
 
 /**
@@ -74,6 +76,10 @@ abstract class BitReaderData{
 	BitReaderData(final ByteBuffer buffer){
 		this.buffer = buffer;
 	}
+
+	//5.5 s
+	/** NOTE: use a memoizer to speed up execution and not create a new {@link BitSet} with each call of {@link #getBitSet(int)} method. */
+	private final Function<Integer, BitSet> bitSetStore = Memoizer.memoize(BitSetHelper::createBitSet);
 
 
 	/**
@@ -128,7 +134,9 @@ abstract class BitReaderData{
 	 * @return	A {@link BitSet} value at the {@link BitReader}'s current position.
 	 */
 	public final BitSet getBitSet(final int length){
-		final BitSet bits = BitSetHelper.createBitSet(length);
+		final BitSet bits = bitSetStore.apply(length);
+		bits.clear();
+
 		int offset = 0;
 		while(offset < length){
 			//transfer the cache values
