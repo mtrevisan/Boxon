@@ -56,13 +56,13 @@ final class CodecList implements CodecInterface<BindList>{
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject) throws FieldException{
 		final BindList binding = extractBinding(annotation);
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator, rootObject);
+		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator);
 
 		final Class<?> bindingType = binding.type();
 		final List<Object> list = createList(bindingType);
 		decodeWithAlternatives(reader, list, bindingData, rootObject);
 
-		return CodecHelper.convertValue(bindingData, list);
+		return CodecHelper.convertValue(bindingData, rootObject, list);
 	}
 
 	private static <T> List<T> createList(final Class<? extends T> type) throws AnnotationException{
@@ -75,7 +75,7 @@ final class CodecList implements CodecInterface<BindList>{
 	private void decodeWithAlternatives(final BitReaderInterface reader, final Collection<Object> list, final BindingData bindingData,
 			final Object rootObject) throws FieldException{
 		Class<?> chosenAlternativeType;
-		while((chosenAlternativeType = bindingData.chooseAlternativeSeparatedType(reader)) != null){
+		while((chosenAlternativeType = bindingData.chooseAlternativeSeparatedType(reader, rootObject)) != null){
 			//read object
 			final Template<?> subTemplate = templateParser.createTemplate(chosenAlternativeType);
 			final Object element = templateParser.decode(subTemplate, reader, rootObject);
@@ -88,10 +88,10 @@ final class CodecList implements CodecInterface<BindList>{
 			throws FieldException{
 		final BindList binding = extractBinding(annotation);
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator, rootObject);
+		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator);
 		bindingData.validate(value);
 
-		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();
+		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter(rootObject);
 		final List<Object> list = CodecHelper.converterEncode(chosenConverter, value);
 
 		encodeWithAlternatives(writer, list);

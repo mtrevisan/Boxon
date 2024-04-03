@@ -49,14 +49,14 @@ final class CodecString implements CodecInterface<BindString>{
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject) throws AnnotationException{
 		final BindString binding = extractBinding(annotation);
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator, rootObject);
+		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator);
 
-		final int size = bindingData.evaluateSize();
+		final int size = bindingData.evaluateSize(rootObject);
 		CodecHelper.assertSizePositive(size);
 		final Charset charset = CharsetHelper.lookup(binding.charset());
 		final String text = reader.getText(size, charset);
 
-		return CodecHelper.convertValue(bindingData, text);
+		return CodecHelper.convertValue(bindingData, rootObject, text);
 	}
 
 	@Override
@@ -64,13 +64,13 @@ final class CodecString implements CodecInterface<BindString>{
 			throws AnnotationException{
 		final BindString binding = extractBinding(annotation);
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator, rootObject);
+		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator);
 		bindingData.validate(value);
 
-		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();
+		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter(rootObject);
 		final String text = CodecHelper.converterEncode(chosenConverter, value);
 
-		final int size = bindingData.evaluateSize();
+		final int size = bindingData.evaluateSize(rootObject);
 		CodecHelper.assertSizePositive(size);
 		final Charset charset = CharsetHelper.lookup(binding.charset());
 		writer.putText(text.substring(0, Math.min(text.length(), size)), charset);

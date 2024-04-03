@@ -55,8 +55,8 @@ final class CodecArray implements CodecInterface<BindArray>{
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject) throws FieldException{
 		final BindArray binding = extractBinding(annotation);
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator, rootObject);
-		final int size = bindingData.evaluateSize();
+		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator);
+		final int size = bindingData.evaluateSize(rootObject);
 		CodecHelper.assertSizeNonNegative(size);
 
 		final Class<?> bindingType = binding.type();
@@ -66,7 +66,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 		else
 			decodeWithoutAlternatives(reader, array, bindingType);
 
-		return CodecHelper.convertValue(bindingData, array);
+		return CodecHelper.convertValue(bindingData, rootObject, array);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -80,7 +80,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 	private void decodeWithAlternatives(final BitReaderInterface reader, final Object[] array, final BindingData bindingData,
 			final Object rootObject) throws FieldException{
 		for(int i = 0, length = array.length; i < length; i ++){
-			final Class<?> chosenAlternativeType = bindingData.chooseAlternativeType(reader);
+			final Class<?> chosenAlternativeType = bindingData.chooseAlternativeType(reader, rootObject);
 
 			//read object
 			final Template<?> subTemplate = templateParser.createTemplate(chosenAlternativeType);
@@ -101,13 +101,13 @@ final class CodecArray implements CodecInterface<BindArray>{
 			throws FieldException{
 		final BindArray binding = extractBinding(annotation);
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator, rootObject);
+		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator);
 		bindingData.validate(value);
 
-		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();
+		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter(rootObject);
 		final Object[] array = CodecHelper.converterEncode(chosenConverter, value);
 
-		final int size = bindingData.evaluateSize();
+		final int size = bindingData.evaluateSize(rootObject);
 		CodecHelper.assertSizeNonNegative(size);
 		CodecHelper.assertSizeEquals(size, Array.getLength(array));
 

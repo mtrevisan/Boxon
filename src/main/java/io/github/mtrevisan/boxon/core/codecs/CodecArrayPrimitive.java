@@ -49,9 +49,9 @@ final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject) throws AnnotationException{
 		final BindArrayPrimitive binding = extractBinding(annotation);
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator, rootObject);
+		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator);
 
-		final int size = bindingData.evaluateSize();
+		final int size = bindingData.evaluateSize(rootObject);
 		CodecHelper.assertSizeNonNegative(size);
 
 		final Class<?> type = binding.type();
@@ -62,7 +62,7 @@ final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 			Array.set(array, i, value);
 		}
 
-		return CodecHelper.convertValue(bindingData, array);
+		return CodecHelper.convertValue(bindingData, rootObject, array);
 	}
 
 	@Override
@@ -70,13 +70,13 @@ final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 			throws AnnotationException{
 		final BindArrayPrimitive binding = extractBinding(annotation);
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator, rootObject);
+		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator);
 		bindingData.validate(value);
 
-		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();
+		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter(rootObject);
 		final Object array = CodecHelper.converterEncode(chosenConverter, value);
 
-		final int size = bindingData.evaluateSize();
+		final int size = bindingData.evaluateSize(rootObject);
 		CodecHelper.assertSizeNonNegative(size);
 		CodecHelper.assertSizeEquals(size, Array.getLength(array));
 

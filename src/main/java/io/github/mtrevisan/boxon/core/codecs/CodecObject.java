@@ -52,15 +52,15 @@ final class CodecObject implements CodecInterface<BindObject>{
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject) throws FieldException{
 		final BindObject binding = extractBinding(annotation);
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator, rootObject);
+		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator);
 
-		final Class<?> type = bindingData.chooseAlternativeType(reader);
+		final Class<?> type = bindingData.chooseAlternativeType(reader, rootObject);
 
 		final Template<?> template = templateParser.createTemplate(type);
 		final Object instance = templateParser.decode(template, reader, rootObject);
 		bindingData.addToContext(instance);
 
-		return CodecHelper.convertValue(bindingData, instance);
+		return CodecHelper.convertValue(bindingData, rootObject, instance);
 	}
 
 	@Override
@@ -68,7 +68,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 			throws FieldException{
 		final BindObject binding = extractBinding(annotation);
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator, rootObject);
+		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator);
 		bindingData.validate(value);
 
 		Class<?> type = binding.type();
@@ -85,7 +85,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 
 		final Template<?> template = templateParser.createTemplate(type);
 
-		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();
+		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter(rootObject);
 		final Object obj = CodecHelper.converterEncode(chosenConverter, value);
 
 		templateParser.encode(template, writer, rootObject, obj);

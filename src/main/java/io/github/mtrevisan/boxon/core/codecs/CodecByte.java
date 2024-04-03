@@ -48,18 +48,18 @@ final class CodecByte implements CodecInterface<BindByte>{
 
 		final byte value = reader.getByte();
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator, rootObject);
-		return CodecHelper.convertValue(bindingData, value);
+		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator);
+		return CodecHelper.convertValue(bindingData, rootObject, value);
 	}
 
 	@Override
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object rootObject, final Object value){
 		final BindByte binding = extractBinding(annotation);
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator, rootObject);
+		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator);
 		bindingData.validate(value);
 
-		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();
+		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter(rootObject);
 		final byte v = CodecHelper.converterEncode(chosenConverter, value);
 
 		writer.putByte(v);

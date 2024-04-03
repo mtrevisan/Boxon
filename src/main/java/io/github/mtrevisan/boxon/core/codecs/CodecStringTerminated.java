@@ -58,20 +58,20 @@ final class CodecStringTerminated implements CodecInterface<BindStringTerminated
 			reader.skip(length);
 		}
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator, rootObject);
-		return CodecHelper.convertValue(bindingData, text);
+		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator);
+		return CodecHelper.convertValue(bindingData, rootObject, text);
 	}
 
 	@Override
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object rootObject, final Object value){
 		final BindStringTerminated binding = extractBinding(annotation);
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator, rootObject);
+		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator);
 		bindingData.validate(value);
 
 		final Charset charset = CharsetHelper.lookup(binding.charset());
 
-		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();
+		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter(rootObject);
 		final String text = CodecHelper.converterEncode(chosenConverter, value);
 
 		writer.putText(text, charset);
