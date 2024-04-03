@@ -93,8 +93,8 @@ final class CodecHelper{
 		}
 	}
 
-	static <IN, OUT> OUT convertValue(final BindingData bindingData, final IN value){
-		final Class<? extends Converter<?, ?>> converterType = bindingData.getChosenConverter();
+	static <IN, OUT> OUT convertValue(final BindingData bindingData, final Object rootObject, final IN value){
+		final Class<? extends Converter<?, ?>> converterType = bindingData.getChosenConverter(rootObject);
 		final OUT convertedValue = converterDecode(converterType, value);
 		bindingData.validate(convertedValue);
 		return convertedValue;

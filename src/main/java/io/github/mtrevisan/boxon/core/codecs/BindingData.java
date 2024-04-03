@@ -62,17 +62,15 @@ final class BindingData{
 	private final Class<? extends Validator<?>> validator;
 	private final Class<? extends Converter<?, ?>> defaultConverter;
 
-	private final Object rootObject;
 	private final Evaluator evaluator;
 
 
 	BindingData(final ConverterChoices selectConverterFrom, final Class<? extends Validator<?>> validator,
-			final Class<? extends Converter<?, ?>> defaultConverter, final Evaluator evaluator, final Object rootObject){
+			final Class<? extends Converter<?, ?>> defaultConverter, final Evaluator evaluator){
 		this.selectConverterFrom = selectConverterFrom;
 		this.validator = validator;
 		this.defaultConverter = defaultConverter;
 
-		this.rootObject = rootObject;
 		this.evaluator = evaluator;
 	}
 
@@ -128,7 +126,7 @@ final class BindingData{
 	 * @return	The size, or a negative number if the expression is not a valid positive integer.
 	 * @throws EvaluationException	If an error occurs during the evaluation of an expression.
 	 */
-	int evaluateSize(){
+	int evaluateSize(final Object rootObject){
 		return evaluator.evaluateSize(size, rootObject);
 	}
 
@@ -139,14 +137,14 @@ final class BindingData{
 	 * @return	The class type of the chosen alternative.
 	 * @throws CodecException	If a codec cannot be found for the chosen alternative.
 	 */
-	Class<?> chooseAlternativeType(final BitReaderInterface reader) throws CodecException{
+	Class<?> chooseAlternativeType(final BitReaderInterface reader, final Object rootObject) throws CodecException{
 		if(!hasSelectAlternatives())
 			return type;
 
 		addPrefixToContext(reader);
 
 		final ObjectChoices.ObjectChoice[] alternatives = selectObjectFrom.alternatives();
-		final ObjectChoices.ObjectChoice chosenAlternative = chooseAlternative(alternatives);
+		final ObjectChoices.ObjectChoice chosenAlternative = chooseAlternative(alternatives, rootObject);
 		final Class<?> chosenAlternativeType = (!isEmptyChoice(chosenAlternative)
 			? chosenAlternative.type()
 			: selectDefault);
@@ -174,11 +172,12 @@ final class BindingData{
 		}
 	}
 
-	private ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives){
+	private ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Object rootObject){
 		for(int i = 0, length = alternatives.length; i < length; i ++){
 			final ObjectChoices.ObjectChoice alternative = alternatives[i];
 
-			if(evaluator.evaluateBoolean(alternative.condition(), rootObject))
+			final String condition = alternative.condition();
+			if(evaluator.evaluateBoolean(condition, rootObject))
 				return alternative;
 		}
 		return EMPTY_CHOICE;
@@ -199,7 +198,7 @@ final class BindingData{
 	 * @param reader	The reader from which to read the data from.
 	 * @return	The class type of the chosen alternative.
 	 */
-	Class<?> chooseAlternativeSeparatedType(final BitReaderInterface reader){
+	Class<?> chooseAlternativeSeparatedType(final BitReaderInterface reader, final Object rootObject){
 		if(!hasSelectSeparatedAlternatives())
 			return type;
 
@@ -208,7 +207,7 @@ final class BindingData{
 			return null;
 
 		final ObjectChoicesList.ObjectChoiceList[] alternatives = selectObjectListFrom.alternatives();
-		final ObjectChoicesList.ObjectChoiceList chosenAlternative = chooseAlternative(alternatives);
+		final ObjectChoicesList.ObjectChoiceList chosenAlternative = chooseAlternative(alternatives, rootObject);
 		final Class<?> chosenAlternativeType = (!isEmptyChoice(chosenAlternative)
 			? chosenAlternative.type()
 			: selectDefault);
@@ -239,11 +238,13 @@ final class BindingData{
 		return (selectObjectListFrom.alternatives().length > 0);
 	}
 
-	private ObjectChoicesList.ObjectChoiceList chooseAlternative(final ObjectChoicesList.ObjectChoiceList[] alternatives){
+	private ObjectChoicesList.ObjectChoiceList chooseAlternative(final ObjectChoicesList.ObjectChoiceList[] alternatives,
+			final Object rootObject){
 		for(int i = 0, length = alternatives.length; i < length; i ++){
 			final ObjectChoicesList.ObjectChoiceList alternative = alternatives[i];
 
-			if(evaluator.evaluateBoolean(alternative.condition(), rootObject))
+			final String condition = alternative.condition();
+			if(evaluator.evaluateBoolean(condition, rootObject))
 				return alternative;
 		}
 		return EMPTY_CHOICE_SEPARATED;
@@ -258,7 +259,7 @@ final class BindingData{
 	 *
 	 * @return	The converter class.
 	 */
-	Class<? extends Converter<?, ?>> getChosenConverter(){
+	Class<? extends Converter<?, ?>> getChosenConverter(final Object rootObject){
 		final ConverterChoices.ConverterChoice[] alternatives = selectConverterFrom.alternatives();
 		for(int i = 0, length = alternatives.length; i < length; i ++){
 			final ConverterChoices.ConverterChoice alternative = alternatives[i];

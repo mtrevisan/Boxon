@@ -48,18 +48,18 @@ final class CodecShort implements CodecInterface<BindShort>{
 
 		final short value = reader.getShort(binding.byteOrder());
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator, rootObject);
-		return CodecHelper.convertValue(bindingData, value);
+		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator);
+		return CodecHelper.convertValue(bindingData, rootObject, value);
 	}
 
 	@Override
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object rootObject, final Object value){
 		final BindShort binding = extractBinding(annotation);
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator, rootObject);
+		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator);
 		bindingData.validate(value);
 
-		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();
+		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter(rootObject);
 		final short v = CodecHelper.converterEncode(chosenConverter, value);
 
 		writer.putShort(v, binding.byteOrder());

@@ -48,13 +48,13 @@ final class CodecBitSet implements CodecInterface<BindBitSet>{
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject) throws AnnotationException{
 		final BindBitSet binding = extractBinding(annotation);
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator, rootObject);
-		final int size = bindingData.evaluateSize();
+		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator);
+		final int size = bindingData.evaluateSize(rootObject);
 		CodecHelper.assertSizePositive(size);
 
 		final BitSet bitmap = reader.getBitSet(size);
 
-		return CodecHelper.convertValue(bindingData, bitmap);
+		return CodecHelper.convertValue(bindingData, rootObject, bitmap);
 	}
 
 	@Override
@@ -62,12 +62,12 @@ final class CodecBitSet implements CodecInterface<BindBitSet>{
 			throws AnnotationException{
 		final BindBitSet binding = extractBinding(annotation);
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator, rootObject);
-		final int size = bindingData.evaluateSize();
+		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator);
+		final int size = bindingData.evaluateSize(rootObject);
 		bindingData.validate(value);
 		CodecHelper.assertSizePositive(size);
 
-		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();
+		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter(rootObject);
 		final BitSet bitmap = CodecHelper.converterEncode(chosenConverter, value);
 
 		writer.putBitSet(bitmap, size);

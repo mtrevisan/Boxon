@@ -51,14 +51,14 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject) throws AnnotationException{
 		final BindInteger binding = extractBinding(annotation);
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator, rootObject);
+		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator);
 
-		final int size = bindingData.evaluateSize();
+		final int size = bindingData.evaluateSize(rootObject);
 		CodecHelper.assertSizePositive(size);
 
 		final BigInteger value = reader.getBigInteger(size, binding.byteOrder());
 
-		return CodecHelper.convertValue(bindingData, value);
+		return CodecHelper.convertValue(bindingData, rootObject, value);
 	}
 
 	@Override
@@ -66,13 +66,13 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 			throws AnnotationException{
 		final BindInteger binding = extractBinding(annotation);
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator, rootObject);
+		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator);
 		bindingData.validate(value);
 
-		final int size = bindingData.evaluateSize();
+		final int size = bindingData.evaluateSize(rootObject);
 		CodecHelper.assertSizePositive(size);
 
-		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();
+		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter(rootObject);
 		final BigInteger v = CodecHelper.converterEncode(chosenConverter, value);
 
 		final ByteOrder byteOrder = binding.byteOrder();
