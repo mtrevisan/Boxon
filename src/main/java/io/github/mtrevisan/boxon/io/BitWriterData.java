@@ -109,7 +109,7 @@ class BitWriterData{
 		while(offset < bitsToWrite){
 			//fill the cache one chunk of bits at a time
 			final int length = Math.min(bitsToWrite - offset, Byte.SIZE - remaining);
-			final byte nextCache = readNextByte(value, offset, length);
+			final byte nextCache = getNextByte(value, offset, length);
 			cache = (byte)((cache << length) | nextCache);
 
 			remaining += length;
@@ -132,7 +132,7 @@ class BitWriterData{
 	 * @param size	The amount of bits to use when writing {@code value} (MUST BE less than or equals to {@link Integer#MAX_VALUE}).
 	 * @return	A long starting at a given offset and of a given length.
 	 */
-	private static byte readNextByte(final long value, final int offset, final int size){
+	private static byte getNextByte(final long value, final int offset, final int size){
 		byte valueRead = 0;
 		int index = offset - 1;
 		while((index = nextSetBit(value, index + 1)) >= 0 && index <= offset + size)
@@ -156,7 +156,7 @@ class BitWriterData{
 		while(offset < bitsToWrite){
 			//fill the cache one chunk of bits at a time
 			final int length = Math.min(bitsToWrite - offset, Byte.SIZE - remaining);
-			final byte nextCache = readNextByte(bitmap, offset, length);
+			final byte nextCache = getNextByte(bitmap, offset, length);
 			cache = (byte)((cache << length) | nextCache);
 
 			remaining += length;
@@ -179,7 +179,7 @@ class BitWriterData{
 	 * @param size	The amount of bits to use when writing {@code value} (MUST BE less than or equals to {@link Integer#MAX_VALUE}).
 	 * @return	A long starting at a given offset and of a given length.
 	 */
-	private static byte readNextByte(final BitSet bitmap, final int offset, final int size){
+	private static byte getNextByte(final BitSet bitmap, final int offset, final int size){
 		byte valueRead = 0;
 		int index = offset - 1;
 		while((index = bitmap.nextSetBit(index + 1)) >= 0 && index <= offset + size)
