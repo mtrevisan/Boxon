@@ -176,7 +176,8 @@ final class BindingData{
 		for(int i = 0, length = alternatives.length; i < length; i ++){
 			final ObjectChoices.ObjectChoice alternative = alternatives[i];
 
-			if(evaluator.evaluateBoolean(alternative.condition(), rootObject))
+			final String condition = alternative.condition();
+			if(evaluator.evaluateBoolean(condition, rootObject))
 				return alternative;
 		}
 		return EMPTY_CHOICE;
@@ -242,7 +243,8 @@ final class BindingData{
 		for(int i = 0, length = alternatives.length; i < length; i ++){
 			final ObjectChoicesList.ObjectChoiceList alternative = alternatives[i];
 
-			if(evaluator.evaluateBoolean(alternative.condition(), rootObject))
+			final String condition = alternative.condition();
+			if(evaluator.evaluateBoolean(condition, rootObject))
 				return alternative;
 		}
 		return EMPTY_CHOICE_SEPARATED;
