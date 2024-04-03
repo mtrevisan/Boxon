@@ -129,22 +129,18 @@ abstract class BitReaderData{
 	public final synchronized BitSet getBitSet(final int length){
 		final BitSet bitmap = BitSetHelper.createBitSet(length);
 
-		int offset = 0;
-		while(offset < length){
+		int bitsRead = 0;
+		while(bitsRead < length){
 			//transfer the cache values
-			final int size = Math.min(length, remaining);
-			if(size > 0){
-				readFromCache(bitmap, offset, size);
+			final int bitsToRead = Math.min(length - bitsRead, remaining);
+			readFromCache(bitmap, bitsRead, bitsToRead);
+			bitsRead += bitsToRead;
 
-				offset += size;
-			}
+			consumeCache(bitsToRead);
 
 			//if cache is empty and there are more bits to be read, fill it
-			if(offset < length){
-				cache = buffer.get();
-
-				remaining = Byte.SIZE;
-			}
+			if(bitsRead < length)
+				fillCache();
 		}
 		return bitmap;
 	}
@@ -163,8 +159,6 @@ abstract class BitReaderData{
 			bitmap.set(skip + offset);
 			cache ^= (byte)(1 << skip);
 		}
-
-		consumeCache(size);
 	}
 
 	/**
