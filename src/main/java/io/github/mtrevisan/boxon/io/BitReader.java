@@ -133,8 +133,7 @@ public final class BitReader extends BitReaderData implements BitReaderInterface
 
 	@Override
 	public byte getByte(){
-		final BitSet bitmap = getBitSet(Byte.SIZE);
-		return (byte)BitSetHelper.toPrimitiveType(bitmap, Byte.SIZE, ByteOrder.LITTLE_ENDIAN);
+		return (byte)getNumber(Byte.SIZE);
 	}
 
 	@Override
@@ -147,20 +146,26 @@ public final class BitReader extends BitReaderData implements BitReaderInterface
 
 	@Override
 	public short getShort(final ByteOrder byteOrder){
-		final BitSet bitmap = getBitSet(Short.SIZE);
-		return (short)BitSetHelper.toPrimitiveType(bitmap, Short.SIZE, byteOrder);
+		final long bitmap = getNumber(Short.SIZE);
+		return (short)(byteOrder == ByteOrder.BIG_ENDIAN
+			? Short.reverseBytes((short)bitmap)
+			: bitmap);
 	}
 
 	@Override
 	public int getInt(final ByteOrder byteOrder){
-		final BitSet bitmap = getBitSet(Integer.SIZE);
-		return (int)BitSetHelper.toPrimitiveType(bitmap, Integer.SIZE, byteOrder);
+		final long bitmap = getNumber(Integer.SIZE);
+		return (int)(byteOrder == ByteOrder.BIG_ENDIAN
+			? Integer.reverseBytes((int)bitmap)
+			: bitmap);
 	}
 
 	@Override
 	public long getLong(final ByteOrder byteOrder){
-		final BitSet bitmap = getBitSet(Long.SIZE);
-		return BitSetHelper.toPrimitiveType(bitmap, Long.SIZE, byteOrder);
+		final long bitmap = getNumber(Long.SIZE);
+		return (byteOrder == ByteOrder.BIG_ENDIAN
+			? Long.reverseBytes(bitmap)
+			: bitmap);
 	}
 
 	@Override

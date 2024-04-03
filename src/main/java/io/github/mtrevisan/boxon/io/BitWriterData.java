@@ -111,7 +111,7 @@ class BitWriterData{
 	 * @param size	The amount of bits to use when writing {@code value} (MUST BE less than or equals to {@link Long#SIZE}).
 	 */
 	public final synchronized void putValue(final long value, final int size){
-		final BitSet bitmap = BitSetHelper.createBitSet(value, size);
+		final BitSet bitmap = BitSetHelper.createBitSet(size, value);
 		putBitSet(bitmap, size);
 	}
 

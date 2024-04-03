@@ -76,7 +76,7 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 		final BigInteger v = CodecHelper.converterEncode(chosenConverter, value);
 
 		final ByteOrder byteOrder = binding.byteOrder();
-		final BitSet bitmap = BitSetHelper.createBitSet(v, size, byteOrder);
+		final BitSet bitmap = BitSetHelper.createBitSet(size, v, byteOrder);
 
 		writer.putBitSet(bitmap, size);
 	}

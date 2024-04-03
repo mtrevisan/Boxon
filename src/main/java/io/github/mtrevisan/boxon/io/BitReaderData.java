@@ -121,7 +121,49 @@ abstract class BitReaderData{
 
 
 	/**
-	 * Reads the next {@code length} bits and composes a {@link BitSet} in big-endian notation.
+	 * Reads the next {@code length} bits and composes a long in little-endian notation.
+	 *
+	 * @param length	The amount of bits to read.
+	 * @return	A long value at the {@link BitReader}'s current position.
+	 */
+	public final synchronized long getNumber(final int length){
+		long bitmap = 0l;
+
+		int bitsRead = 0;
+		while(bitsRead < length){
+			//transfer the cache values
+			final int bitsToRead = Math.min(length - bitsRead, remaining);
+			bitmap = readFromCache(bitmap, bitsRead, bitsToRead);
+			bitsRead += bitsToRead;
+
+			consumeCache(bitsToRead);
+
+			//if cache is empty and there are more bits to be read, fill it
+			if(bitsRead < length)
+				fillCache();
+		}
+		return bitmap;
+	}
+
+	/**
+	 * Add {@code size} bits from the cache starting from <a href="https://en.wikipedia.org/wiki/Bit_numbering#Bit_significance_and_indexing">LSB</a>
+	 * with a given offset.
+	 *
+	 * @param bitmap	The bit set into which to transfer {@code size} bits from the cache.
+	 * @param offset	The offset for the indexes.
+	 * @param size	The amount of bits to read from the <a href="https://en.wikipedia.org/wiki/Bit_numbering#Bit_significance_and_indexing">LSB</a> of the cache.
+	 */
+	private long readFromCache(long bitmap, final int offset, final int size){
+		int skip;
+		while(cache != 0 && (skip = Integer.numberOfTrailingZeros(cache & 0xFF)) < size){
+			bitmap |= 1l << (skip + offset);
+			cache ^= (byte)(1 << skip);
+		}
+		return bitmap;
+	}
+
+	/**
+	 * Reads the next {@code length} bits and composes a {@link BitSet} in little-endian notation.
 	 *
 	 * @param length	The amount of bits to read.
 	 * @return	A {@link BitSet} value at the {@link BitReader}'s current position.

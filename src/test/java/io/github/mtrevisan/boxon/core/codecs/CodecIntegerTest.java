@@ -492,7 +492,7 @@ class CodecIntegerTest{
 		codec.encode(writer, annotation, null, encodedValue);
 		writer.flush();
 
-		BitSet bitmap = BitSetHelper.createBitSet(encodedValue, 128, ByteOrder.LITTLE_ENDIAN);
+		BitSet bitmap = BitSetHelper.createBitSet(128, encodedValue, ByteOrder.LITTLE_ENDIAN);
 		Assertions.assertEquals(rightPad(StringHelper.toHexString(bitmap.toByteArray()), 32, '0'), writer.toString());
 
 		BitReaderInterface reader = BitReader.wrap(writer);

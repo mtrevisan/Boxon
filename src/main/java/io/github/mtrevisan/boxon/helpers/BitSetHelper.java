@@ -50,22 +50,22 @@ public final class BitSetHelper{
 	/**
 	 * Creates a new {@link BitSet} with the specified size.
 	 *
-	 * @param size	The size of the resulting {@link BitSet}.
+	 * @param bitmapSize	The size of the resulting {@link BitSet}.
 	 * @return	The created {@link BitSet}.
 	 */
-	public static BitSet createBitSet(final int size){
-		return new BitSet(size);
+	public static BitSet createBitSet(final int bitmapSize){
+		return new BitSet(bitmapSize);
 	}
 
 	/**
 	 * Creates a {@link BitSet} from a long value.
 	 *
-	 * @param value	The value to convert to {@link BitSet}.
-	 * @param size	The size in bits of the resulting {@link BitSet}.
-	 * @return	The created {@link BitSet}.
+	 * @param bitmapSize  The size in bits of the resulting {@link BitSet}.
+	 * @param value The value to convert to {@link BitSet}.
+	 * @return The created {@link BitSet}.
 	 */
-	public static BitSet createBitSet(long value, final int size){
-		final BitSet bitmap = createBitSet(size);
+	public static BitSet createBitSet(final int bitmapSize, long value){
+		final BitSet bitmap = createBitSet(bitmapSize);
 
 		while(value != 0){
 			final int nextSetBitIndex = Long.numberOfTrailingZeros(value);
@@ -81,14 +81,14 @@ public final class BitSetHelper{
 	/**
 	 * Converts a {@link BigInteger} into a {@link BitSet} ignoring the sign of the {@link BigInteger}, according to SRP specification.
 	 *
-	 * @param value	The value, must not be {@code null}.
-	 * @param size	The size in bits of the value.
-	 * @param byteOrder	The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
-	 * @return	The {@link BitSet} representing the given value.
+	 * @param bitmapSize      The size in bits of the value.
+	 * @param value     The value, must not be {@code null}.
+	 * @param byteOrder The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
+	 * @return The {@link BitSet} representing the given value.
 	 */
-	public static BitSet createBitSet(final BigInteger value, final int size, final ByteOrder byteOrder){
+	public static BitSet createBitSet(final int bitmapSize, final BigInteger value, final ByteOrder byteOrder){
 		return getConverter(byteOrder)
-			.createBitSet(value, size);
+			.createBitSet(bitmapSize, value);
 	}
 
 
