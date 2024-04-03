@@ -131,16 +131,16 @@ abstract class BitReaderData{
 
 		int bitsRead = 0;
 		while(bitsRead < length){
+			//if cache is empty and there are more bits to be read, fill it
+			if(remaining == 0)
+				fillCache();
+
 			final int bitsToRead = Math.min(length - bitsRead, remaining);
 			//transfer the cache values
 			bitmap = readFromCache(bitmap, bitsRead, bitsToRead);
 			bitsRead += bitsToRead;
 
 			consumeCache(bitsToRead);
-
-			//if cache is empty and there are more bits to be read, fill it
-			if(bitsRead < length)
-				fillCache();
 		}
 		return bitmap;
 	}
@@ -173,16 +173,16 @@ abstract class BitReaderData{
 
 		int bitsRead = 0;
 		while(bitsRead < length){
+			//if cache is empty and there are more bits to be read, fill it
+			if(remaining == 0)
+				fillCache();
+
 			//transfer the cache values
 			final int bitsToRead = Math.min(length - bitsRead, remaining);
 			readFromCache(bitmap, bitsRead, bitsToRead);
 			bitsRead += bitsToRead;
 
 			consumeCache(bitsToRead);
-
-			//if cache is empty and there are more bits to be read, fill it
-			if(bitsRead < length)
-				fillCache();
 		}
 		return bitmap;
 	}
@@ -211,14 +211,14 @@ abstract class BitReaderData{
 	public final synchronized void skipBits(final int length){
 		int bitsSkipped = 0;
 		while(bitsSkipped < length){
+			//if cache is empty and there are more bits to be read, fill it
+			if(remaining == 0)
+				fillCache();
+
 			final int bitsToSkip = Math.min(length - bitsSkipped, remaining);
 			bitsSkipped += bitsToSkip;
 
 			consumeCache(bitsToSkip);
-
-			//if cache is empty and there are more bits to be skipped, fill it
-			if(bitsSkipped < length)
-				fillCache();
 		}
 	}
 
