@@ -231,7 +231,7 @@ enum TemplateAnnotationValidator{
 
 	private static void validateObjectChoice(final Field field, final Class<? extends Converter<?, ?>> converter,
 			final ObjectChoices selectFrom, final Class<?> selectDefault, final Class<?> type) throws AnnotationException{
-		final int prefixLength = selectFrom.prefixLength();
+		final byte prefixLength = selectFrom.prefixLength();
 		validatePrefixLength(prefixLength);
 
 
@@ -244,11 +244,11 @@ enum TemplateAnnotationValidator{
 		validateConverter(field, type, converter);
 	}
 
-	private static void validatePrefixLength(final int prefixSize) throws AnnotationException{
-		if(prefixSize < 0)
-			throw AnnotationException.create("Prefix size must be a non-negative number");
-		if(prefixSize > Integer.SIZE)
-			throw AnnotationException.create("Prefix size cannot be greater than {} bits", Integer.SIZE);
+	private static void validatePrefixLength(final byte prefixSize) throws AnnotationException{
+		if(prefixSize <= 0)
+			throw AnnotationException.create("Prefix size must be a positive number");
+		if(prefixSize > Long.SIZE)
+			throw AnnotationException.create("Prefix size cannot be greater than {} (bits)", Long.SIZE);
 	}
 
 	private static void validateObjectAlternatives(final Field field, final Class<? extends Converter<?, ?>> converter,

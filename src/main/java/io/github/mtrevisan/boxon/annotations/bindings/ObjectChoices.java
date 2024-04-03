@@ -43,11 +43,11 @@ public @interface ObjectChoices{
 
 	/**
 	 * The number of bits to be read for determining the header.
-	 * <p>It MUST BE in the range {@code [0, }{@link Integer#SIZE}{@code ]}.</p>
+	 * <p>It MUST BE in the range {@code [0, }{@link Long#SIZE}{@code ]}.</p>
 	 *
 	 * @return	The number of bits to be read for determining the header (defaults to {@code 0}).
 	 */
-	int prefixLength() default 0;
+	byte prefixLength() default 0;
 
 	/**
 	 * The type of endianness of the prefix: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
@@ -84,7 +84,7 @@ public @interface ObjectChoices{
 		 *
 		 * @return	The inverse of {@link #condition() condition}, if it contains a `#prefix` reference (defaults to {@code 0}).
 		 */
-		int prefix() default 0;
+		long prefix() default 0l;
 
 		/**
 		 * The type to decode in case the {@link #condition()} holds.

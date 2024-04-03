@@ -29,8 +29,45 @@ package io.github.mtrevisan.boxon.io;
 public enum ByteOrder{
 
 	/** Little-endian byte order. */
-	LITTLE_ENDIAN,
+	LITTLE_ENDIAN{
+		@Override
+		short correctEndianness(final short value){
+			return value;
+		}
+
+		@Override
+		int correctEndianness(final int value){
+			return value;
+		}
+
+		@Override
+		long correctEndianness(final long value){
+			return value;
+		}
+	},
 	/** Big-endian byte order. */
-	BIG_ENDIAN
+	BIG_ENDIAN{
+		@Override
+		short correctEndianness(final short value){
+			return Short.reverseBytes(value);
+		}
+
+		@Override
+		int correctEndianness(final int value){
+			return Integer.reverseBytes(value);
+		}
+
+		@Override
+		long correctEndianness(final long value){
+			return Long.reverseBytes(value);
+		}
+	};
+
+
+	abstract short correctEndianness(short value);
+
+	abstract int correctEndianness(int value);
+
+	abstract long correctEndianness(long value);
 
 }

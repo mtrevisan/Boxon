@@ -79,11 +79,15 @@ final class CodecHelper{
 			final ObjectChoices selectFrom){
 		//if chosenAlternative.condition() contains '#prefix', then write @ObjectChoice.prefix()
 		if(ContextHelper.containsHeaderReference(chosenAlternative.condition())){
-			final int prefixSize = selectFrom.prefixLength();
+			final byte prefixSize = selectFrom.prefixLength();
 
-			final BitSet bitmap = BitSetHelper.createBitSet(prefixSize, chosenAlternative.prefix());
+			if(prefixSize == Byte.SIZE)
+				writer.putByte((byte)chosenAlternative.prefix());
+			else{
+				final BitSet bitmap = BitSetHelper.createBitSet(prefixSize, chosenAlternative.prefix());
 
-			writer.putBitSet(bitmap, prefixSize);
+				writer.putBitSet(bitmap, prefixSize);
+			}
 		}
 	}
 

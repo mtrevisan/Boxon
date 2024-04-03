@@ -80,6 +80,12 @@ class BitWriterData{
 		putNumber(value, Long.SIZE);
 	}
 
+	/**
+	 * Writes {@code value} to this {@link BitWriter} in big-endian format.
+	 *
+	 * @param value	The value to write.
+	 * @param bitsToWrite   The amount of bits to use when writing the {@code value}.
+	 */
 	private void putNumber(final long value, final int bitsToWrite){
 		int bitsWritten = 0;
 		while(bitsWritten < bitsToWrite){
@@ -105,7 +111,7 @@ class BitWriterData{
 	 *
 	 * @param value	The value.
 	 * @param offset	The bit offset to start the extraction.
-	 * @param size	The amount of bits to use when writing {@code value} (MUST BE less than or equals to {@link Integer#MAX_VALUE}).
+	 * @param size	The amount of bits to use when writing the {@code value} (MUST BE less than or equals to {@link Integer#MAX_VALUE}).
 	 * @return	A long starting at a given offset and of a given length.
 	 */
 	private static byte getNextByte(final long value, final int offset, final int size){
@@ -125,7 +131,7 @@ class BitWriterData{
 	 * Writes {@code value} to this {@link BitWriter} using {@code length} bits in big-endian notation.
 	 *
 	 * @param bitmap	The value to write.
-	 * @param bitsToWrite	The amount of bits to use when writing {@code value}.
+	 * @param bitsToWrite	The amount of bits to use when writing the {@code bitmap}.
 	 */
 	public final synchronized void putBitSet(final BitSet bitmap, final int bitsToWrite){
 		int bitsWritten = 0;
@@ -152,7 +158,7 @@ class BitWriterData{
 	 *
 	 * @param bitmap	The bit set.
 	 * @param offset	The bit offset to start the extraction.
-	 * @param size	The amount of bits to use when writing {@code value} (MUST BE less than or equals to {@link Integer#MAX_VALUE}).
+	 * @param size	The amount of bits to use when writing the {@code bitmap} (MUST BE less than or equals to {@link Integer#MAX_VALUE}).
 	 * @return	A long starting at a given offset and of a given length.
 	 */
 	private static byte getNextByte(final BitSet bitmap, final int offset, final int size){

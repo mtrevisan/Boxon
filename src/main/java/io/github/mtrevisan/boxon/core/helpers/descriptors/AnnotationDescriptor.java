@@ -556,7 +556,7 @@ public enum AnnotationDescriptor{
 		}
 	}
 
-	private static <T> void describeObjectChoicesAlternatives(final String condition, final T prefix, final Class<?> type,
+	private static void describeObjectChoicesAlternatives(final String condition, final Object prefix, final Class<?> type,
 			final Collection<Map<String, Object>> alternativesDescription){
 		final Map<String, Object> alternativeDescription = new HashMap<>(3);
 		putIfNotEmpty(DescriberKey.BIND_CONDITION, condition, alternativeDescription);

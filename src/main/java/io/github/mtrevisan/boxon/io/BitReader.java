@@ -146,26 +146,20 @@ public final class BitReader extends BitReaderData implements BitReaderInterface
 
 	@Override
 	public short getShort(final ByteOrder byteOrder){
-		final long bitmap = getNumber(Short.SIZE);
-		return (short)(byteOrder == ByteOrder.BIG_ENDIAN
-			? Short.reverseBytes((short)bitmap)
-			: bitmap);
+		final short value = (short)getNumber(Short.SIZE);
+		return byteOrder.correctEndianness(value);
 	}
 
 	@Override
 	public int getInt(final ByteOrder byteOrder){
-		final long bitmap = getNumber(Integer.SIZE);
-		return (int)(byteOrder == ByteOrder.BIG_ENDIAN
-			? Integer.reverseBytes((int)bitmap)
-			: bitmap);
+		final int value = (int)getNumber(Integer.SIZE);
+		return byteOrder.correctEndianness(value);
 	}
 
 	@Override
 	public long getLong(final ByteOrder byteOrder){
-		final long bitmap = getNumber(Long.SIZE);
-		return (byteOrder == ByteOrder.BIG_ENDIAN
-			? Long.reverseBytes(bitmap)
-			: bitmap);
+		final long value = getNumber(Long.SIZE);
+		return byteOrder.correctEndianness(value);
 	}
 
 	@Override

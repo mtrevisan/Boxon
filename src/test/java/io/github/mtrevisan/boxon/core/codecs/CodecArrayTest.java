@@ -193,7 +193,7 @@ class CodecArrayTest{
 					}
 
 					@Override
-					public int prefixLength(){
+					public byte prefixLength(){
 						return 0;
 					}
 

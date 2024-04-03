@@ -164,7 +164,7 @@ final class BindingData{
 	 * @param reader	The reader from which to read the prefix.
 	 */
 	private void addPrefixToContext(final BitReaderInterface reader){
-		final int prefixSize = selectObjectFrom.prefixLength();
+		final byte prefixSize = selectObjectFrom.prefixLength();
 		if(prefixSize > 0){
 			final BitSet bitmap = reader.getBitSet(prefixSize);
 			final ByteOrder byteOrder = selectObjectFrom.byteOrder();

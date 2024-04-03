@@ -44,7 +44,10 @@ public final class BitSetToBooleanConverter implements Converter<BitSet, Boolean
 
 	@Override
 	public BitSet encode(final Boolean value){
-		return BitSetHelper.createBitSet(1, (value? 1: 0));
+		final BitSet bitmap = BitSetHelper.createBitSet(1);
+		if(value)
+			bitmap.set(0);
+		return bitmap;
 	}
 
 }

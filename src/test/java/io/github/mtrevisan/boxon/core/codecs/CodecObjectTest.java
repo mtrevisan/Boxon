@@ -94,7 +94,7 @@ class CodecObjectTest{
 					}
 
 					@Override
-					public int prefixLength(){
+					public byte prefixLength(){
 						return 0;
 					}
 
