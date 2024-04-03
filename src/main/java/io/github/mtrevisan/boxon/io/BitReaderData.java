@@ -123,24 +123,24 @@ abstract class BitReaderData{
 	/**
 	 * Reads the next {@code length} bits and composes a long in little-endian notation.
 	 *
-	 * @param length	The amount of bits to read.
+	 * @param bitsToRead	The amount of bits to read.
 	 * @return	A long value at the {@link BitReader}'s current position.
 	 */
-	public final synchronized long getNumber(final int length){
+	public final synchronized long getNumber(final int bitsToRead){
 		long bitmap = 0l;
 
 		int bitsRead = 0;
-		while(bitsRead < length){
+		while(bitsRead < bitsToRead){
 			//if cache is empty and there are more bits to be read, fill it
 			if(remaining == 0)
 				fillCache();
 
-			final int bitsToRead = Math.min(length - bitsRead, remaining);
+			final int length = Math.min(bitsToRead - bitsRead, remaining);
 			//transfer the cache values
-			bitmap = readFromCache(bitmap, bitsRead, bitsToRead);
-			bitsRead += bitsToRead;
+			bitmap = readFromCache(bitmap, bitsRead, length);
+			bitsRead += length;
 
-			consumeCache(bitsToRead);
+			consumeCache(length);
 		}
 		return bitmap;
 	}
@@ -165,24 +165,24 @@ abstract class BitReaderData{
 	/**
 	 * Reads the next {@code length} bits and composes a {@link BitSet} in little-endian notation.
 	 *
-	 * @param length	The amount of bits to read.
+	 * @param bitsToRead	The amount of bits to read.
 	 * @return	A {@link BitSet} value at the {@link BitReader}'s current position.
 	 */
-	public final synchronized BitSet getBitSet(final int length){
-		final BitSet bitmap = BitSetHelper.createBitSet(length);
+	public final synchronized BitSet getBitSet(final int bitsToRead){
+		final BitSet bitmap = BitSetHelper.createBitSet(bitsToRead);
 
 		int bitsRead = 0;
-		while(bitsRead < length){
+		while(bitsRead < bitsToRead){
 			//if cache is empty and there are more bits to be read, fill it
 			if(remaining == 0)
 				fillCache();
 
 			//transfer the cache values
-			final int bitsToRead = Math.min(length - bitsRead, remaining);
-			readFromCache(bitmap, bitsRead, bitsToRead);
-			bitsRead += bitsToRead;
+			final int length = Math.min(bitsToRead - bitsRead, remaining);
+			readFromCache(bitmap, bitsRead, length);
+			bitsRead += length;
 
-			consumeCache(bitsToRead);
+			consumeCache(length);
 		}
 		return bitmap;
 	}
@@ -206,19 +206,19 @@ abstract class BitReaderData{
 	/**
 	 * Skips the next {@code length} bits.
 	 *
-	 * @param length	The amount of bits to skip.
+	 * @param bitsToSkip	The amount of bits to skip.
 	 */
-	public final synchronized void skipBits(final int length){
+	public final synchronized void skipBits(final int bitsToSkip){
 		int bitsSkipped = 0;
-		while(bitsSkipped < length){
+		while(bitsSkipped < bitsToSkip){
 			//if cache is empty and there are more bits to be read, fill it
 			if(remaining == 0)
 				fillCache();
 
-			final int bitsToSkip = Math.min(length - bitsSkipped, remaining);
-			bitsSkipped += bitsToSkip;
+			final int length = Math.min(bitsToSkip - bitsSkipped, remaining);
+			bitsSkipped += length;
 
-			consumeCache(bitsToSkip);
+			consumeCache(length);
 		}
 	}
 

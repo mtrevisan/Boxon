@@ -45,30 +45,6 @@ class BitWriterData{
 
 
 	/**
-	 * Skip {@code length} bits.
-	 *
-	 * @param bitsToWrite	The amount of bits to skip.
-	 */
-	public final synchronized void skipBits(final int bitsToWrite){
-		int offset = 0;
-		while(offset < bitsToWrite){
-			//fill the cache one chunk of bits at a time
-			final int length = Math.min(bitsToWrite - offset, Byte.SIZE - remaining);
-			cache = (byte)(cache << length);
-
-			remaining += length;
-			offset += length;
-
-			//if cache is full, write it
-			if(remaining == Byte.SIZE){
-				os.write(cache);
-
-				resetCache();
-			}
-		}
-	}
-
-	/**
 	 * Writes {@code value} to this {@link BitWriter} in big-endian format.
 	 *
 	 * @param value	The value to write.
@@ -105,15 +81,15 @@ class BitWriterData{
 	}
 
 	private void putNumber(final long value, final int bitsToWrite){
-		int offset = 0;
-		while(offset < bitsToWrite){
+		int bitsWritten = 0;
+		while(bitsWritten < bitsToWrite){
 			//fill the cache one chunk of bits at a time
-			final int length = Math.min(bitsToWrite - offset, Byte.SIZE - remaining);
-			final byte nextCache = getNextByte(value, offset, length);
+			final int length = Math.min(bitsToWrite - bitsWritten, Byte.SIZE - remaining);
+			final byte nextCache = getNextByte(value, bitsWritten, length);
 			cache = (byte)((cache << length) | nextCache);
 
 			remaining += length;
-			offset += length;
+			bitsWritten += length;
 
 			//if cache is full, write it
 			if(remaining == Byte.SIZE){
@@ -152,15 +128,15 @@ class BitWriterData{
 	 * @param bitsToWrite	The amount of bits to use when writing {@code value}.
 	 */
 	public final synchronized void putBitSet(final BitSet bitmap, final int bitsToWrite){
-		int offset = 0;
-		while(offset < bitsToWrite){
+		int bitsWritten = 0;
+		while(bitsWritten < bitsToWrite){
 			//fill the cache one chunk of bits at a time
-			final int length = Math.min(bitsToWrite - offset, Byte.SIZE - remaining);
-			final byte nextCache = getNextByte(bitmap, offset, length);
+			final int length = Math.min(bitsToWrite - bitsWritten, Byte.SIZE - remaining);
+			final byte nextCache = getNextByte(bitmap, bitsWritten, length);
 			cache = (byte)((cache << length) | nextCache);
 
 			remaining += length;
-			offset += length;
+			bitsWritten += length;
 
 			//if cache is full, write it
 			if(remaining == Byte.SIZE){
@@ -185,6 +161,30 @@ class BitWriterData{
 		while((index = bitmap.nextSetBit(index + 1)) >= 0 && index <= offset + size)
 			valueRead |= (byte)(1 << (index - offset));
 		return valueRead;
+	}
+
+	/**
+	 * Skip {@code length} bits.
+	 *
+	 * @param bitsToWrite	The amount of bits to skip.
+	 */
+	public final synchronized void skipBits(final int bitsToWrite){
+		int bitsWritten = 0;
+		while(bitsWritten < bitsToWrite){
+			//fill the cache one chunk of bits at a time
+			final int length = Math.min(bitsToWrite - bitsWritten, Byte.SIZE - remaining);
+			cache = (byte)(cache << length);
+
+			remaining += length;
+			bitsWritten += length;
+
+			//if cache is full, write it
+			if(remaining == Byte.SIZE){
+				os.write(cache);
+
+				resetCache();
+			}
+		}
 	}
 
 
