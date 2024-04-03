@@ -245,8 +245,8 @@ enum TemplateAnnotationValidator{
 	}
 
 	private static void validatePrefixLength(final byte prefixSize) throws AnnotationException{
-		if(prefixSize <= 0)
-			throw AnnotationException.create("Prefix size must be a positive number");
+		if(prefixSize < 0)
+			throw AnnotationException.create("Prefix size must be a non-negative number");
 		if(prefixSize > Long.SIZE)
 			throw AnnotationException.create("Prefix size cannot be greater than {} (bits)", Long.SIZE);
 	}

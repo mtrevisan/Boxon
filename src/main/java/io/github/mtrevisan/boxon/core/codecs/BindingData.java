@@ -67,7 +67,7 @@ final class BindingData{
 
 
 	BindingData(final ConverterChoices selectConverterFrom, final Class<? extends Validator<?>> validator,
-			final Class<? extends Converter<?, ?>> defaultConverter, final Object rootObject, final Evaluator evaluator){
+			final Class<? extends Converter<?, ?>> defaultConverter, final Evaluator evaluator, final Object rootObject){
 		this.selectConverterFrom = selectConverterFrom;
 		this.validator = validator;
 		this.defaultConverter = defaultConverter;

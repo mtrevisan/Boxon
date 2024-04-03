@@ -44,8 +44,8 @@ final class NullObjectChoice implements ObjectChoices.ObjectChoice{
 	}
 
 	@Override
-	public long prefix(){
-		return 0l;
+	public String prefix(){
+		return JavaHelper.EMPTY_STRING;
 	}
 
 	@Override

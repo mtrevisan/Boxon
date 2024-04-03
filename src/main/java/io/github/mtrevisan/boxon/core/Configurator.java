@@ -229,7 +229,7 @@ public final class Configurator{
 		try{
 			final ConfigurationMessage<?> configuration = configurationParser.getConfiguration(shortDescription);
 			final Object configurationData = ConfigurationParser.getConfigurationWithDefaults(configuration, data, protocol);
-			configurationParser.encode(configuration, writer, configurationData, evaluator, protocol);
+			configurationParser.encode(configuration, writer, evaluator, configurationData, protocol);
 
 			return null;
 		}

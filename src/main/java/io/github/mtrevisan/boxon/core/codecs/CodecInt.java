@@ -48,7 +48,7 @@ final class CodecInt implements CodecInterface<BindInt>{
 
 		final int value = reader.getInt(binding.byteOrder());
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, rootObject, evaluator);
+		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator, rootObject);
 		return CodecHelper.convertValue(bindingData, value);
 	}
 
@@ -56,7 +56,7 @@ final class CodecInt implements CodecInterface<BindInt>{
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object rootObject, final Object value){
 		final BindInt binding = extractBinding(annotation);
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, rootObject, evaluator);
+		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator, rootObject);
 		bindingData.validate(value);
 
 		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();

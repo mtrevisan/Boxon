@@ -48,7 +48,7 @@ final class CodecBitSet implements CodecInterface<BindBitSet>{
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject) throws AnnotationException{
 		final BindBitSet binding = extractBinding(annotation);
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, rootObject, evaluator);
+		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator, rootObject);
 		final int size = bindingData.evaluateSize();
 		CodecHelper.assertSizePositive(size);
 
@@ -62,7 +62,7 @@ final class CodecBitSet implements CodecInterface<BindBitSet>{
 			throws AnnotationException{
 		final BindBitSet binding = extractBinding(annotation);
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, rootObject, evaluator);
+		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator, rootObject);
 		final int size = bindingData.evaluateSize();
 		bindingData.validate(value);
 		CodecHelper.assertSizePositive(size);

@@ -339,8 +339,8 @@ class TemplateParserTest{
 		byte type;
 		@BindObject(type = TestSubCompositionBase.class, selectFrom = @ObjectChoices(
 			alternatives = {
-				@ObjectChoices.ObjectChoice(condition = "type == 1", type = TestSubComposition1.class),
-				@ObjectChoices.ObjectChoice(condition = "type == 2", type = TestSubComposition2.class)
+				@ObjectChoices.ObjectChoice(condition = "type == 1", prefix = "", type = TestSubComposition1.class),
+				@ObjectChoices.ObjectChoice(condition = "type == 2", prefix = "", type = TestSubComposition2.class)
 			}
 		))
 		private TestSubCompositionBase sub;

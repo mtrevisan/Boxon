@@ -48,7 +48,7 @@ final class CodecFloat implements CodecInterface<BindFloat>{
 
 		final float value = reader.getFloat(binding.byteOrder());
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, rootObject, evaluator);
+		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator, rootObject);
 		return CodecHelper.convertValue(bindingData, value);
 	}
 
@@ -56,7 +56,7 @@ final class CodecFloat implements CodecInterface<BindFloat>{
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object rootObject, final Object value){
 		final BindFloat binding = extractBinding(annotation);
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, rootObject, evaluator);
+		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator, rootObject);
 		bindingData.validate(value);
 
 		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();

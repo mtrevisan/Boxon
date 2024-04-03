@@ -154,16 +154,16 @@ public final class ConfigurationParser{
 	/**
 	 * Encode the configuration using the given writer with the given object that contains the values.
 	 *
-	 * @param configuration	The configuration to encode.
-	 * @param writer	The writer that holds the encoded template.
-	 * @param currentObject	The current object that holds the values.
-	 * @param evaluator	An evaluator.
-	 * @param protocol	The protocol version (should follow <a href="https://semver.org/">Semantic Versioning</a>).
-	 * @param <T>	The class type of the current object.
-	 * @throws FieldException	If a codec is not found.
+	 * @param <T>           The class type of the current object.
+	 * @param configuration The configuration to encode.
+	 * @param writer        The writer that holds the encoded template.
+	 * @param evaluator     An evaluator.
+	 * @param currentObject The current object that holds the values.
+	 * @param protocol      The protocol version (should follow <a href="https://semver.org/">Semantic Versioning</a>).
+	 * @throws FieldException If a codec is not found.
 	 */
-	public <T> void encode(final ConfigurationMessage<?> configuration, final BitWriterInterface writer, final T currentObject,
-			final Evaluator evaluator, final Version protocol) throws FieldException{
+	public <T> void encode(final ConfigurationMessage<?> configuration, final BitWriterInterface writer, final Evaluator evaluator,
+			final T currentObject, final Version protocol) throws FieldException{
 		//FIXME is there a way to reduce the number of ParserContext objects?
 		final ParserContext<T> parserContext = new ParserContext<>(evaluator, currentObject);
 		parserContext.setClassName(configuration.getType().getName());

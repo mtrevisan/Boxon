@@ -81,10 +81,11 @@ public @interface ObjectChoices{
 		/**
 		 * The header to be written when serializing the object.
 		 * <p>NOTE: this is the inverse of {@link #condition() condition}, if it contains a `#prefix` reference.</p>
+		 * <p>Can be a SpEL expression.</p>
 		 *
-		 * @return	The inverse of {@link #condition() condition}, if it contains a `#prefix` reference (defaults to {@code 0}).
+		 * @return	The inverse of {@link #condition() condition}, if it contains a `#prefix` reference.
 		 */
-		long prefix() default 0l;
+		String prefix();
 
 		/**
 		 * The type to decode in case the {@link #condition()} holds.

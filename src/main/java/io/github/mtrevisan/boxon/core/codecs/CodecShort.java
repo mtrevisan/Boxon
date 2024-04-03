@@ -48,7 +48,7 @@ final class CodecShort implements CodecInterface<BindShort>{
 
 		final short value = reader.getShort(binding.byteOrder());
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, rootObject, evaluator);
+		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator, rootObject);
 		return CodecHelper.convertValue(bindingData, value);
 	}
 
@@ -56,7 +56,7 @@ final class CodecShort implements CodecInterface<BindShort>{
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object rootObject, final Object value){
 		final BindShort binding = extractBinding(annotation);
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, rootObject, evaluator);
+		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator, rootObject);
 		bindingData.validate(value);
 
 		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();

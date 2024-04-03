@@ -33,6 +33,7 @@ import io.github.mtrevisan.boxon.exceptions.DataException;
 import io.github.mtrevisan.boxon.helpers.BitSetHelper;
 import io.github.mtrevisan.boxon.helpers.ConstructorHelper;
 import io.github.mtrevisan.boxon.helpers.ContextHelper;
+import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.io.ParserDataType;
 
@@ -76,15 +77,16 @@ final class CodecHelper{
 	}
 
 	static void writeHeader(final BitWriterInterface writer, final ObjectChoices.ObjectChoice chosenAlternative,
-			final ObjectChoices selectFrom){
+			final ObjectChoices selectFrom, final Evaluator evaluator, final Object rootObject){
 		//if chosenAlternative.condition() contains '#prefix', then write @ObjectChoice.prefix()
 		if(ContextHelper.containsHeaderReference(chosenAlternative.condition())){
 			final byte prefixSize = selectFrom.prefixLength();
 
+			final int prefix = evaluator.evaluateSize(chosenAlternative.prefix(), rootObject);
 			if(prefixSize == Byte.SIZE)
-				writer.putByte((byte)chosenAlternative.prefix());
+				writer.putByte((byte)prefix);
 			else{
-				final BitSet bitmap = BitSetHelper.createBitSet(prefixSize, chosenAlternative.prefix());
+				final BitSet bitmap = BitSetHelper.createBitSet(prefixSize, prefix);
 
 				writer.putBitSet(bitmap, prefixSize);
 			}

@@ -55,7 +55,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject) throws FieldException{
 		final BindArray binding = extractBinding(annotation);
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, rootObject, evaluator);
+		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator, rootObject);
 		final int size = bindingData.evaluateSize();
 		CodecHelper.assertSizeNonNegative(size);
 
@@ -101,7 +101,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 			throws FieldException{
 		final BindArray binding = extractBinding(annotation);
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, rootObject, evaluator);
+		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator, rootObject);
 		bindingData.validate(value);
 
 		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();
@@ -112,13 +112,13 @@ final class CodecArray implements CodecInterface<BindArray>{
 		CodecHelper.assertSizeEquals(size, Array.getLength(array));
 
 		if(bindingData.hasSelectAlternatives())
-			encodeWithAlternatives(writer, array, binding.selectFrom());
+			encodeWithAlternatives(writer, array, binding.selectFrom(), rootObject);
 		else
 			encodeWithoutAlternatives(writer, array, binding.type());
 	}
 
-	private void encodeWithAlternatives(final BitWriterInterface writer, final Object[] array, final ObjectChoices selectFrom)
-			throws FieldException{
+	private void encodeWithAlternatives(final BitWriterInterface writer, final Object[] array, final ObjectChoices selectFrom,
+			final Object rootObject) throws FieldException{
 		final ObjectChoices.ObjectChoice[] alternatives = selectFrom.alternatives();
 		for(int i = 0, length = array.length; i < length; i ++){
 			final Object elem = array[i];
@@ -126,7 +126,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 			final Class<?> type = elem.getClass();
 			final ObjectChoices.ObjectChoice chosenAlternative = CodecHelper.chooseAlternative(alternatives, type);
 
-			CodecHelper.writeHeader(writer, chosenAlternative, selectFrom);
+			CodecHelper.writeHeader(writer, chosenAlternative, selectFrom, evaluator, rootObject);
 
 			final Template<?> template = templateParser.createTemplate(type);
 

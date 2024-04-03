@@ -79,7 +79,7 @@ public @interface ObjectChoicesList{
 		 * The prefix to be written when serializing the object.
 		 * <p>NOTE: this is the inverse of {@link #condition() condition}, if it contains a `#prefix` reference.</p>
 		 *
-		 * @return	The inverse of {@link #condition() condition}, if it contains a `#prefix` reference (defaults to {@code 0}).
+		 * @return	The inverse of {@link #condition() condition}, if it contains a `#prefix` reference.
 		 */
 		String prefix();
 

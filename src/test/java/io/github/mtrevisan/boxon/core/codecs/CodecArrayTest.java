@@ -69,8 +69,8 @@ class CodecArrayTest{
 		String header;
 		@BindArray(size = "3", type = CodecObjectTest.TestType0.class, selectFrom = @ObjectChoices(prefixLength = 8,
 			alternatives = {
-				@ObjectChoices.ObjectChoice(condition = "#prefix == 1", prefix = 1, type = CodecObjectTest.TestType1.class),
-				@ObjectChoices.ObjectChoice(condition = "#prefix == 2", prefix = 2, type = CodecObjectTest.TestType2.class)
+				@ObjectChoices.ObjectChoice(condition = "#prefix == 1", prefix = "1", type = CodecObjectTest.TestType1.class),
+				@ObjectChoices.ObjectChoice(condition = "#prefix == 2", prefix = "2", type = CodecObjectTest.TestType2.class)
 			}))
 		CodecObjectTest.TestType0[] value;
 	}
@@ -83,8 +83,8 @@ class CodecArrayTest{
 		byte type;
 		@BindArray(size = "1", type = CodecObjectTest.TestType0.class, selectFrom = @ObjectChoices(
 			alternatives = {
-				@ObjectChoices.ObjectChoice(condition = "type == 1", type = CodecObjectTest.TestType1.class),
-				@ObjectChoices.ObjectChoice(condition = "type == 2", type = CodecObjectTest.TestType2.class)
+				@ObjectChoices.ObjectChoice(condition = "type == 1", prefix = "", type = CodecObjectTest.TestType1.class),
+				@ObjectChoices.ObjectChoice(condition = "type == 2", prefix = "", type = CodecObjectTest.TestType2.class)
 			}))
 		CodecObjectTest.TestType0[] value;
 	}

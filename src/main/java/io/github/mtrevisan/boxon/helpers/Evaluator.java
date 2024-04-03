@@ -209,7 +209,7 @@ public final class Evaluator{
 	/**
 	 * Convenience method to fast evaluate a positive integer.
 	 *
-	 * @param expression	The SpEL expression to evaluate.
+	 * @param expression	The SpEL expression to evaluate (empty string returns {@code -1}).
 	 * @param rootObject	The context with which to evaluate the given expression.
 	 * @return	The size, or a negative number if the expression is not a valid positive integer.
 	 * @throws EvaluationException	If an error occurs during the evaluation of an expression.

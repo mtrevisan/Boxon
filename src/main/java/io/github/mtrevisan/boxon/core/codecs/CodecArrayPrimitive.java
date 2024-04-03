@@ -49,7 +49,7 @@ final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject) throws AnnotationException{
 		final BindArrayPrimitive binding = extractBinding(annotation);
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, rootObject, evaluator);
+		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator, rootObject);
 
 		final int size = bindingData.evaluateSize();
 		CodecHelper.assertSizeNonNegative(size);
@@ -70,7 +70,7 @@ final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 			throws AnnotationException{
 		final BindArrayPrimitive binding = extractBinding(annotation);
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, rootObject, evaluator);
+		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator, rootObject);
 		bindingData.validate(value);
 
 		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();

@@ -56,7 +56,7 @@ final class CodecList implements CodecInterface<BindList>{
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject) throws FieldException{
 		final BindList binding = extractBinding(annotation);
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, rootObject, evaluator);
+		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator, rootObject);
 
 		final Class<?> bindingType = binding.type();
 		final List<Object> list = createList(bindingType);
@@ -88,7 +88,7 @@ final class CodecList implements CodecInterface<BindList>{
 			throws FieldException{
 		final BindList binding = extractBinding(annotation);
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, rootObject, evaluator);
+		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator, rootObject);
 		bindingData.validate(value);
 
 		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter();

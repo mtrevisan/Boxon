@@ -52,7 +52,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject) throws FieldException{
 		final BindObject binding = extractBinding(annotation);
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, rootObject, evaluator);
+		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator, rootObject);
 
 		final Class<?> type = bindingData.chooseAlternativeType(reader);
 
@@ -68,7 +68,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 			throws FieldException{
 		final BindObject binding = extractBinding(annotation);
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, rootObject, evaluator);
+		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator, rootObject);
 		bindingData.validate(value);
 
 		Class<?> type = binding.type();
@@ -78,7 +78,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 
 			final ObjectChoices.ObjectChoice chosenAlternative = CodecHelper.chooseAlternative(selectFrom.alternatives(), type);
 
-			CodecHelper.writeHeader(writer, chosenAlternative, selectFrom);
+			CodecHelper.writeHeader(writer, chosenAlternative, selectFrom, evaluator, rootObject);
 		}
 
 		bindingData.addToContext(value);

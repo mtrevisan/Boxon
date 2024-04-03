@@ -180,8 +180,8 @@ class CodecObjectTest{
 		String header;
 		@BindObject(type = TestType0.class, selectFrom = @ObjectChoices(prefixLength = 8,
 			alternatives = {
-				@ObjectChoices.ObjectChoice(condition = "#prefix == 1", prefix = 1, type = TestType1.class),
-				@ObjectChoices.ObjectChoice(condition = "#prefix == 2", prefix = 2, type = TestType2.class)
+				@ObjectChoices.ObjectChoice(condition = "#prefix == 1", prefix = "1", type = TestType1.class),
+				@ObjectChoices.ObjectChoice(condition = "#prefix == 2", prefix = "2", type = TestType2.class)
 			}))
 		TestType0 value;
 	}
@@ -194,8 +194,8 @@ class CodecObjectTest{
 		byte[] index;
 		@BindObject(type = TestType0.class, selectFrom = @ObjectChoices(prefixLength = 8,
 			alternatives = {
-				@ObjectChoices.ObjectChoice(condition = "index[#prefix] == 5", prefix = 0, type = TestType1.class),
-				@ObjectChoices.ObjectChoice(condition = "index[#prefix] == 6", prefix = 1, type = TestType2.class)
+				@ObjectChoices.ObjectChoice(condition = "index[#prefix] == 5", prefix = "0", type = TestType1.class),
+				@ObjectChoices.ObjectChoice(condition = "index[#prefix] == 6", prefix = "1", type = TestType2.class)
 			}))
 		TestType0 value;
 	}
@@ -207,8 +207,8 @@ class CodecObjectTest{
 		@BindString(size = "2")
 		String key;
 		@BindObject(type = TestType0.class, selectFrom = @ObjectChoices(alternatives = {
-			@ObjectChoices.ObjectChoice(condition = "key == 'aa'", type = TestType1.class),
-			@ObjectChoices.ObjectChoice(condition = "key == 'bb'", type = TestType2.class)
+			@ObjectChoices.ObjectChoice(condition = "key == 'aa'", prefix = "", type = TestType1.class),
+			@ObjectChoices.ObjectChoice(condition = "key == 'bb'", prefix = "", type = TestType2.class)
 		}))
 		TestType0 value;
 	}
