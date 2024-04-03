@@ -209,4 +209,13 @@ class BitWriterTest{
 		writer.putByte((byte)'w');
 	}
 
+	@Test
+	void skip(){
+		writer.putByte((byte)'w');
+		writer.skipBits(3);
+		BitReaderInterface reader = BitReader.wrap(writer);
+
+		Assertions.assertEquals("7700", reader.toString());
+	}
+
 }

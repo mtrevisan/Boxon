@@ -62,7 +62,7 @@ public final class BitWriter extends BitWriterData implements BitWriterInterface
 
 	@Override
 	public void putByte(final byte value){
-		putValue(value, Byte.SIZE);
+		putNumber(value);
 	}
 
 	@Override
@@ -73,17 +73,17 @@ public final class BitWriter extends BitWriterData implements BitWriterInterface
 
 	@Override
 	public void putShort(final short value, final ByteOrder byteOrder){
-		putValue((byteOrder == ByteOrder.BIG_ENDIAN? Short.reverseBytes(value): value), Short.SIZE);
+		putNumber((byteOrder == ByteOrder.BIG_ENDIAN? Short.reverseBytes(value): value));
 	}
 
 	@Override
 	public void putInt(final int value, final ByteOrder byteOrder){
-		putValue((byteOrder == ByteOrder.BIG_ENDIAN? Integer.reverseBytes(value): value), Integer.SIZE);
+		putNumber((byteOrder == ByteOrder.BIG_ENDIAN? Integer.reverseBytes(value): value));
 	}
 
 	@Override
 	public void putLong(final long value, final ByteOrder byteOrder){
-		putValue((byteOrder == ByteOrder.BIG_ENDIAN? Long.reverseBytes(value): value), Long.SIZE);
+		putNumber((byteOrder == ByteOrder.BIG_ENDIAN? Long.reverseBytes(value): value));
 	}
 
 	@Override

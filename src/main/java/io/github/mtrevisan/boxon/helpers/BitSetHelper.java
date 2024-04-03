@@ -93,20 +93,6 @@ public final class BitSetHelper{
 
 
 	/**
-	 * Convert this {@link BitSet} to a short.
-	 * <p>This method assumes the higher bit set in the bit set is at most at index `bitmapSize - 1`.</p>
-	 *
-	 * @param bitmap	The {@link BitSet}.
-	 * @param bitmapSize	The number of bits.
-	 * @param byteOrder	The byte order.
-	 * @return	The converted short.
-	 */
-	public static long toPrimitiveType(final BitSet bitmap, final int bitmapSize, final ByteOrder byteOrder){
-		return getConverter(byteOrder)
-			.toPrimitiveType(bitmap, bitmapSize);
-	}
-
-	/**
 	 * Convert this {@link BitSet} to {@link BigInteger}.
 	 *
 	 * @param bitmap	The {@link BitSet}.

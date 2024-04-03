@@ -45,15 +45,6 @@ class BigEndianConverter implements BitSetConverter{
 	}
 
 	@Override
-	public long toPrimitiveType(final BitSet bitmap, final int bitmapSize){
-		long result = 0l;
-		int i = -1;
-		while((i = bitmap.nextSetBit(i + 1)) >= 0)
-			result |= (1l << calculateTrueIndex(i, bitmapSize));
-		return result;
-	}
-
-	@Override
 	public BigInteger toObjectiveType(final BitSet bitmap, final int bitmapSize){
 		final boolean negative = bitmap.get(7);
 		final BigInteger result = toBigInteger(bitmap, bitmapSize);

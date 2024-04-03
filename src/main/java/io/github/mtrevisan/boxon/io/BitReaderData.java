@@ -40,7 +40,7 @@ import java.util.BitSet;
 abstract class BitReaderData{
 
 	//FIXME try to reduce the number of instances of this class
-	private static final class State{
+	private static final class Snapshot{
 		/** The position in the byte buffer of the cached value. */
 		private int position;
 		/** The cache used when reading bits. */
@@ -48,7 +48,7 @@ abstract class BitReaderData{
 		/** The number of bits available (to read) within the cache. */
 		private int remaining;
 
-		State(final int position, final byte cache, final int remaining){
+		Snapshot(final int position, final byte cache, final int remaining){
 			set(position, cache, remaining);
 		}
 
@@ -68,7 +68,7 @@ abstract class BitReaderData{
 	/** The number of bits available (to read) within the cache. */
 	private int remaining;
 
-	private State fallbackPoint;
+	private Snapshot fallbackPoint;
 
 
 	BitReaderData(final ByteBuffer buffer){
@@ -85,7 +85,7 @@ abstract class BitReaderData{
 			fallbackPoint.set(buffer.position(), cache, remaining);
 		else
 			//create new mark
-			fallbackPoint = createState();
+			fallbackPoint = createSnapshot();
 	}
 
 	/**
@@ -94,7 +94,7 @@ abstract class BitReaderData{
 	public final synchronized void restoreFallbackPoint(){
 		if(fallbackPoint != null){
 			//a fallback point has been marked before
-			restoreState(fallbackPoint);
+			restoreSnapshot(fallbackPoint);
 
 			clearFallbackPoint();
 		}
@@ -108,15 +108,15 @@ abstract class BitReaderData{
 		fallbackPoint = null;
 	}
 
-	private State createState(){
-		return new State(buffer.position(), cache, remaining);
+	private Snapshot createSnapshot(){
+		return new Snapshot(buffer.position(), cache, remaining);
 	}
 
 	@SuppressWarnings("AccessingNonPublicFieldOfAnotherObject")
-	private void restoreState(final State state){
-		buffer.position(state.position);
-		remaining = state.remaining;
-		cache = state.cache;
+	private void restoreSnapshot(final Snapshot snapshot){
+		buffer.position(snapshot.position);
+		remaining = snapshot.remaining;
+		cache = snapshot.cache;
 	}
 
 
@@ -131,8 +131,8 @@ abstract class BitReaderData{
 
 		int bitsRead = 0;
 		while(bitsRead < length){
-			//transfer the cache values
 			final int bitsToRead = Math.min(length - bitsRead, remaining);
+			//transfer the cache values
 			bitmap = readFromCache(bitmap, bitsRead, bitsToRead);
 			bitsRead += bitsToRead;
 
@@ -256,7 +256,7 @@ abstract class BitReaderData{
 
 	private Byte peekByte(){
 		//make a copy of internal variables
-		final State originalState = createState();
+		final Snapshot originalSnapshot = createSnapshot();
 
 		Byte b = null;
 		try{
@@ -267,7 +267,7 @@ abstract class BitReaderData{
 		}
 		finally{
 			//restore original variables
-			restoreState(originalState);
+			restoreSnapshot(originalSnapshot);
 		}
 		return b;
 	}
@@ -281,7 +281,7 @@ abstract class BitReaderData{
 	 */
 	protected final synchronized void getTextUntilTerminatorWithoutConsuming(final ByteArrayOutputStream baos, final byte terminator) throws IOException{
 		//make a copy of internal variables
-		final State originalState = createState();
+		final Snapshot originalSnapshot = createSnapshot();
 
 		try{
 			getTextUntilTerminator(baos, terminator);
@@ -291,7 +291,7 @@ abstract class BitReaderData{
 		}
 		finally{
 			//restore original variables
-			restoreState(originalState);
+			restoreSnapshot(originalSnapshot);
 		}
 	}
 

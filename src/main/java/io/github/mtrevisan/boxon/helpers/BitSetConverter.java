@@ -43,15 +43,6 @@ interface BitSetConverter{
 	BitSet createBitSet(int bitmapSize, BigInteger value);
 
 	/**
-	 * Converts a {@link BitSet} to a primitive value of type long.
-	 *
-	 * @param bitmap	The {@link BitSet} to convert.
-	 * @param bitmapSize	The number of bits in the {@link BitSet}.
-	 * @return	The converted primitive value.
-	 */
-	long toPrimitiveType(BitSet bitmap, int bitmapSize);
-
-	/**
 	 * Converts a {@link BitSet} to a {@link BigInteger}.
 	 *
 	 * @param bitmap	The {@link BitSet} to convert.
