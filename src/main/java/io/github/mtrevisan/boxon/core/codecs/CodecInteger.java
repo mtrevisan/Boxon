@@ -68,7 +68,10 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 
 		final int size = CodecHelper.evaluateSize(binding.size(), evaluator, rootObject);
 
-		final Class<? extends Converter<?, ?>> chosenConverter = getChosenConverter(binding, rootObject);
+		final ConverterChoices converterChoices = binding.selectConverterFrom();
+		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
+		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.getChosenConverter(converterChoices, defaultConverter, evaluator,
+			rootObject);
 		final BigInteger v = CodecHelper.converterEncode(chosenConverter, value);
 
 		final ByteOrder byteOrder = binding.byteOrder();
@@ -79,26 +82,13 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 
 
 	private <IN, OUT> OUT convertValue(final BindInteger binding, final Object rootObject, final IN value){
-		final Class<? extends Converter<?, ?>> converterType = getChosenConverter(binding, rootObject);
+		final ConverterChoices converterChoices = binding.selectConverterFrom();
+		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
+		final Class<? extends Converter<?, ?>> converterType = CodecHelper.getChosenConverter(converterChoices, defaultConverter, evaluator,
+			rootObject);
 		final OUT convertedValue = CodecHelper.converterDecode(converterType, value);
 		CodecHelper.validate(convertedValue, binding.validator());
 		return convertedValue;
-	}
-
-	/**
-	 * Get the first converter that matches the condition.
-	 *
-	 * @return	The converter class.
-	 */
-	private Class<? extends Converter<?, ?>> getChosenConverter(final BindInteger binding, final Object rootObject){
-		final ConverterChoices.ConverterChoice[] alternatives = binding.selectConverterFrom().alternatives();
-		for(int i = 0, length = alternatives.length; i < length; i ++){
-			final ConverterChoices.ConverterChoice alternative = alternatives[i];
-
-			if(evaluator.evaluateBoolean(alternative.condition(), rootObject))
-				return alternative.converter();
-		}
-		return binding.converter();
 	}
 
 }

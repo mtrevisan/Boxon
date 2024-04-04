@@ -24,6 +24,7 @@
  */
 package io.github.mtrevisan.boxon.core.codecs;
 
+import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
@@ -87,6 +88,24 @@ final class CodecHelper{
 	static void assertSizeEquals(final int expectedSize, final int size){
 		if(expectedSize != size)
 			throw DataException.create("Size mismatch, expected {}, got {}", expectedSize, size);
+	}
+
+
+	/**
+	 * Get the first converter that matches the condition.
+	 *
+	 * @return	The converter class.
+	 */
+	static Class<? extends Converter<?, ?>> getChosenConverter(final ConverterChoices converterChoices,
+			final Class<? extends Converter<?, ?>> defaultConverter, final Evaluator evaluator, final Object rootObject){
+		final ConverterChoices.ConverterChoice[] alternatives = converterChoices.alternatives();
+		for(int i = 0, length = alternatives.length; i < length; i ++){
+			final ConverterChoices.ConverterChoice alternative = alternatives[i];
+
+			if(evaluator.evaluateBoolean(alternative.condition(), rootObject))
+				return alternative.converter();
+		}
+		return defaultConverter;
 	}
 
 
