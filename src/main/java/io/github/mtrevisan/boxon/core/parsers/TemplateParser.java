@@ -67,7 +67,6 @@ public class TemplateParser implements TemplateParserInterface{
 	private final Evaluator evaluator;
 
 	private final LoaderTemplate loaderTemplate;
-	private final ParserWriterHelper parserWriterHelper;
 
 	private EventListener eventListener;
 
@@ -88,7 +87,6 @@ public class TemplateParser implements TemplateParserInterface{
 		this.evaluator = evaluator;
 
 		loaderTemplate = LoaderTemplate.create(loaderCodec);
-		parserWriterHelper = ParserWriterHelper.create();
 
 		withEventListener(EventListener.getNoOpInstance());
 	}
@@ -105,7 +103,6 @@ public class TemplateParser implements TemplateParserInterface{
 			this.eventListener = eventListener;
 
 			loaderTemplate.withEventListener(eventListener);
-			parserWriterHelper.withEventListener(eventListener);
 		}
 
 		return this;
@@ -398,7 +395,7 @@ public class TemplateParser implements TemplateParserInterface{
 				parserContext.setField(field);
 				parserContext.setBinding(field.getBinding());
 
-				parserWriterHelper.encodeField(parserContext, writer, loaderCodec);
+				ParserWriterHelper.encodeField(parserContext, writer, loaderCodec, eventListener);
 			}
 		}
 

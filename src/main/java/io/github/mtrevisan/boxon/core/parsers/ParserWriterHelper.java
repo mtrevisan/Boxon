@@ -39,31 +39,8 @@ import java.nio.charset.UnsupportedCharsetException;
 
 final class ParserWriterHelper{
 
-	private EventListener eventListener;
+	private ParserWriterHelper(){}
 
-
-	static ParserWriterHelper create(){
-		return new ParserWriterHelper();
-	}
-
-
-	private ParserWriterHelper(){
-		eventListener = EventListener.getNoOpInstance();
-	}
-
-
-	/**
-	 * Assign an event listener.
-	 *
-	 * @param eventListener	The event listener.
-	 * @return	This instance, used for chaining.
-	 */
-	ParserWriterHelper withEventListener(final EventListener eventListener){
-		if(eventListener != null)
-			this.eventListener = eventListener;
-
-		return this;
-	}
 
 	/**
 	 * Writes the given affix to the writer using the specified charset.
@@ -86,10 +63,11 @@ final class ParserWriterHelper{
 	 * @param parserContext	The parser context containing information about the field to encode.
 	 * @param writer	The bit writer to write the encoded field to.
 	 * @param loaderCodec	The loader codec used for encoding the field.
+	 * @param eventListener	The event listener.
 	 * @throws FieldException	If an error occurs during field encoding.
 	 */
-	void encodeField(final ParserContext<?> parserContext, final BitWriterInterface writer, final LoaderCodecInterface loaderCodec)
-			throws FieldException{
+	static void encodeField(final ParserContext<?> parserContext, final BitWriterInterface writer, final LoaderCodecInterface loaderCodec,
+			final EventListener eventListener) throws FieldException{
 		final String className = parserContext.getClassName();
 		final String fieldName = parserContext.getFieldName();
 		final Annotation binding = parserContext.getBinding();

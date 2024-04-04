@@ -52,9 +52,10 @@ import java.util.Map;
 public final class ConfigurationParser{
 
 	private final LoaderCodecInterface loaderCodec;
+
 	private final LoaderConfiguration loaderConfiguration;
 
-	private final ParserWriterHelper parserWriterHelper;
+	private EventListener eventListener;
 
 
 	/**
@@ -70,9 +71,10 @@ public final class ConfigurationParser{
 
 	private ConfigurationParser(final LoaderCodecInterface loaderCodec){
 		this.loaderCodec = loaderCodec;
+
 		loaderConfiguration = LoaderConfiguration.create();
 
-		parserWriterHelper = ParserWriterHelper.create();
+		withEventListener(EventListener.getNoOpInstance());
 	}
 
 
@@ -83,9 +85,11 @@ public final class ConfigurationParser{
 	 * @return	This instance, used for chaining.
 	 */
 	public ConfigurationParser withEventListener(final EventListener eventListener){
-		loaderConfiguration.withEventListener(eventListener);
+		if(eventListener != null){
+			this.eventListener = eventListener;
 
-		parserWriterHelper.withEventListener(eventListener);
+			loaderConfiguration.withEventListener(eventListener);
+		}
 
 		return this;
 	}
@@ -190,10 +194,10 @@ public final class ConfigurationParser{
 			//process value
 			parserContext.setField(field);
 			parserContext.setBinding(annotation);
-			parserWriterHelper.encodeField(parserContext, writer, loaderCodec);
+			ParserWriterHelper.encodeField(parserContext, writer, loaderCodec, eventListener);
 			if(annotation != binding){
 				parserContext.setBinding(binding);
-				parserWriterHelper.encodeField(parserContext, writer, loaderCodec);
+				ParserWriterHelper.encodeField(parserContext, writer, loaderCodec, eventListener);
 			}
 		}
 
