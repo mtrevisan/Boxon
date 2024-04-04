@@ -52,7 +52,6 @@ final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator);
 
 		final int size = bindingData.evaluateSize(rootObject);
-		CodecHelper.assertSizeNonNegative(size);
 
 		final Class<?> type = binding.type();
 		final ByteOrder byteOrder = binding.byteOrder();
@@ -77,8 +76,7 @@ final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 		final Object array = CodecHelper.converterEncode(chosenConverter, value);
 
 		final int size = bindingData.evaluateSize(rootObject);
-		CodecHelper.assertSizeNonNegative(size);
-		CodecHelper.assertSizeEquals(size, Array.getLength(array));
+		BindingData.assertSizeEquals(size, Array.getLength(array));
 
 		final ByteOrder byteOrder = binding.byteOrder();
 		for(int i = 0; i < size; i ++){

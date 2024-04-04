@@ -52,7 +52,6 @@ final class CodecString implements CodecInterface<BindString>{
 		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator);
 
 		final int size = bindingData.evaluateSize(rootObject);
-		CodecHelper.assertSizePositive(size);
 		final Charset charset = CharsetHelper.lookup(binding.charset());
 		final String text = reader.getText(size, charset);
 
@@ -71,7 +70,6 @@ final class CodecString implements CodecInterface<BindString>{
 		final String text = CodecHelper.converterEncode(chosenConverter, value);
 
 		final int size = bindingData.evaluateSize(rootObject);
-		CodecHelper.assertSizePositive(size);
 		final Charset charset = CharsetHelper.lookup(binding.charset());
 		writer.putText(text.substring(0, Math.min(text.length(), size)), charset);
 	}

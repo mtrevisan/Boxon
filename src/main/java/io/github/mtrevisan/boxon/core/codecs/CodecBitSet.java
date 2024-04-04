@@ -50,7 +50,6 @@ final class CodecBitSet implements CodecInterface<BindBitSet>{
 
 		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator);
 		final int size = bindingData.evaluateSize(rootObject);
-		CodecHelper.assertSizePositive(size);
 
 		final BitSet bitmap = reader.getBitSet(size);
 
@@ -65,7 +64,6 @@ final class CodecBitSet implements CodecInterface<BindBitSet>{
 		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator);
 		final int size = bindingData.evaluateSize(rootObject);
 		bindingData.validate(value);
-		CodecHelper.assertSizePositive(size);
 
 		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter(rootObject);
 		final BitSet bitmap = CodecHelper.converterEncode(chosenConverter, value);

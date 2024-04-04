@@ -29,6 +29,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoicesList;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.annotations.validators.Validator;
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.DataException;
 import io.github.mtrevisan.boxon.helpers.BitSetHelper;
@@ -126,8 +127,17 @@ final class BindingData{
 	 * @return	The size, or a negative number if the expression is not a valid positive integer.
 	 * @throws EvaluationException	If an error occurs during the evaluation of an expression.
 	 */
-	int evaluateSize(final Object rootObject){
-		return evaluator.evaluateSize(size, rootObject);
+	int evaluateSize(final Object rootObject) throws AnnotationException{
+		final int evaluatedSize = evaluator.evaluateSize(size, rootObject);
+		if(evaluatedSize <= 0)
+			throw AnnotationException.create("Size must be a positive integer, was {}", size);
+
+		return evaluatedSize;
+	}
+
+	static void assertSizeEquals(final int expectedSize, final int size){
+		if(expectedSize != size)
+			throw DataException.create("Size mismatch, expected {}, got {}", expectedSize, size);
 	}
 
 	/**
