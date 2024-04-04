@@ -50,7 +50,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 
 	@Override
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject) throws FieldException{
-		final BindObject binding = extractBinding(annotation);
+		final BindObject binding = interpretBinding(annotation);
 
 		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator);
 
@@ -66,7 +66,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 	@Override
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object rootObject, final Object value)
 			throws FieldException{
-		final BindObject binding = extractBinding(annotation);
+		final BindObject binding = interpretBinding(annotation);
 
 		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator);
 		bindingData.validate(value);

@@ -49,7 +49,7 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 
 	@Override
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject) throws AnnotationException{
-		final BindInteger binding = extractBinding(annotation);
+		final BindInteger binding = interpretBinding(annotation);
 
 		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator);
 
@@ -63,7 +63,7 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 	@Override
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object rootObject, final Object value)
 			throws AnnotationException{
-		final BindInteger binding = extractBinding(annotation);
+		final BindInteger binding = interpretBinding(annotation);
 
 		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator);
 		bindingData.validate(value);

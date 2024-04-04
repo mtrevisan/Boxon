@@ -41,7 +41,7 @@ final class CodecAlternativeConfigurationFields implements CodecInterface<Altern
 
 	@Override
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object fieldType, final Object value){
-		final AlternativeConfigurationField binding = extractBinding(annotation);
+		final AlternativeConfigurationField binding = interpretBinding(annotation);
 
 		final String terminator = binding.terminator();
 		if(!terminator.isEmpty())

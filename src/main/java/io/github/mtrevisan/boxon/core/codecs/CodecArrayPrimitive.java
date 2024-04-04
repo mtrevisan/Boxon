@@ -47,7 +47,7 @@ final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 
 	@Override
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject) throws AnnotationException{
-		final BindArrayPrimitive binding = extractBinding(annotation);
+		final BindArrayPrimitive binding = interpretBinding(annotation);
 
 		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator);
 
@@ -67,7 +67,7 @@ final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 	@Override
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object rootObject, final Object value)
 			throws AnnotationException{
-		final BindArrayPrimitive binding = extractBinding(annotation);
+		final BindArrayPrimitive binding = interpretBinding(annotation);
 
 		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator);
 		bindingData.validate(value);

@@ -44,7 +44,7 @@ final class CodecShort implements CodecInterface<BindShort>{
 
 	@Override
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject){
-		final BindShort binding = extractBinding(annotation);
+		final BindShort binding = interpretBinding(annotation);
 
 		final short value = reader.getShort(binding.byteOrder());
 
@@ -54,7 +54,7 @@ final class CodecShort implements CodecInterface<BindShort>{
 
 	@Override
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object rootObject, final Object value){
-		final BindShort binding = extractBinding(annotation);
+		final BindShort binding = interpretBinding(annotation);
 
 		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator);
 		bindingData.validate(value);

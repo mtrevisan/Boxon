@@ -44,7 +44,7 @@ final class CodecFloat implements CodecInterface<BindFloat>{
 
 	@Override
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject){
-		final BindFloat binding = extractBinding(annotation);
+		final BindFloat binding = interpretBinding(annotation);
 
 		final float value = reader.getFloat(binding.byteOrder());
 
@@ -54,7 +54,7 @@ final class CodecFloat implements CodecInterface<BindFloat>{
 
 	@Override
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object rootObject, final Object value){
-		final BindFloat binding = extractBinding(annotation);
+		final BindFloat binding = interpretBinding(annotation);
 
 		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator);
 		bindingData.validate(value);

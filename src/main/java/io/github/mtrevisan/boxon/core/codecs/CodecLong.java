@@ -44,7 +44,7 @@ final class CodecLong implements CodecInterface<BindLong>{
 
 	@Override
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject){
-		final BindLong binding = extractBinding(annotation);
+		final BindLong binding = interpretBinding(annotation);
 
 		final long value = reader.getLong(binding.byteOrder());
 
@@ -54,7 +54,7 @@ final class CodecLong implements CodecInterface<BindLong>{
 
 	@Override
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object rootObject, final Object value){
-		final BindLong binding = extractBinding(annotation);
+		final BindLong binding = interpretBinding(annotation);
 
 		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator);
 		bindingData.validate(value);

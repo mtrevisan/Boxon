@@ -53,7 +53,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 
 	@Override
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject) throws FieldException{
-		final BindArray binding = extractBinding(annotation);
+		final BindArray binding = interpretBinding(annotation);
 
 		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator);
 		final int size = bindingData.evaluateSize(rootObject);
@@ -98,7 +98,7 @@ final class CodecArray implements CodecInterface<BindArray>{
 	@Override
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object rootObject, final Object value)
 			throws FieldException{
-		final BindArray binding = extractBinding(annotation);
+		final BindArray binding = interpretBinding(annotation);
 
 		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator);
 		bindingData.validate(value);
