@@ -43,6 +43,7 @@ import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.helpers.CharsetHelper;
 import io.github.mtrevisan.boxon.helpers.ConstructorHelper;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
@@ -99,7 +100,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	 * @return	This instance, used for chaining.
 	 */
 	public TemplateParser withEventListener(final EventListener eventListener){
-		this.eventListener = eventListener;
+		this.eventListener = JavaHelper.nonNullOrDefault(eventListener, EventListener.getNoOpInstance());
 
 		core.withEventListener(eventListener);
 		parserWriterHelper.withEventListener(eventListener);

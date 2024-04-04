@@ -29,7 +29,6 @@ import io.github.mtrevisan.boxon.core.codecs.LoaderCodecInterface;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
-import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.logs.EventListener;
 
@@ -39,8 +38,6 @@ final class TemplateParserCore{
 
 	private final LoaderCodecInterface loaderCodec;
 	private final LoaderTemplate loaderTemplate;
-
-	private EventListener eventListener;
 
 
 	/**
@@ -57,8 +54,6 @@ final class TemplateParserCore{
 	private TemplateParserCore(final LoaderCodecInterface loaderCodec){
 		this.loaderCodec = loaderCodec;
 		loaderTemplate = LoaderTemplate.create(loaderCodec);
-
-		eventListener = EventListener.getNoOpInstance();
 	}
 
 
@@ -69,8 +64,6 @@ final class TemplateParserCore{
 	 * @return	This instance, used for chaining.
 	 */
 	TemplateParserCore withEventListener(final EventListener eventListener){
-		this.eventListener = JavaHelper.nonNullOrDefault(eventListener, EventListener.getNoOpInstance());
-
 		loaderTemplate.withEventListener(eventListener);
 
 		return this;
@@ -140,10 +133,6 @@ final class TemplateParserCore{
 		return loaderTemplate.findNextMessageIndex(reader);
 	}
 
-
-	EventListener getEventListener(){
-		return eventListener;
-	}
 
 	LoaderCodecInterface getLoaderCodec(){
 		return loaderCodec;
