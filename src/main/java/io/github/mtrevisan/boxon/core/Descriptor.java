@@ -41,7 +41,6 @@ import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.core.keys.DescriberKey;
 import io.github.mtrevisan.boxon.core.parsers.ConfigurationParser;
 import io.github.mtrevisan.boxon.core.parsers.LoaderConfiguration;
-import io.github.mtrevisan.boxon.core.parsers.LoaderTemplate;
 import io.github.mtrevisan.boxon.core.parsers.TemplateParser;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
@@ -79,7 +78,7 @@ public final class Descriptor{
 
 	private final Core core;
 
-	private final LoaderTemplate loaderTemplate;
+	private final TemplateParser templateParser;
 	private final LoaderConfiguration loaderConfiguration;
 
 
@@ -97,8 +96,7 @@ public final class Descriptor{
 	private Descriptor(final Core core){
 		this.core = core;
 
-		final TemplateParser templateParser = core.getTemplateParser();
-		loaderTemplate = templateParser.getLoaderTemplate();
+		templateParser = core.getTemplateParser();
 		final ConfigurationParser configurationParser = core.getConfigurationParser();
 		loaderConfiguration = configurationParser.getLoaderConfiguration();
 	}
@@ -111,7 +109,7 @@ public final class Descriptor{
 	 * @throws TemplateException	If a template is not well formatted.
 	 */
 	public List<Map<String, Object>> describeParsing() throws FieldException{
-		final Collection<Template<?>> templates = new HashSet<>(loaderTemplate.getTemplates());
+		final Collection<Template<?>> templates = new HashSet<>(templateParser.getTemplates());
 		return describeEntities(templates, template -> describeMessage(template, MESSAGE_EXTRACTOR_FULL_TEMPLATE, FIELD_EXTRACTOR_TEMPLATE));
 	}
 
@@ -124,7 +122,7 @@ public final class Descriptor{
 	 * @throws TemplateException	If a template is not well formatted.
 	 */
 	public Map<String, Object> describeParsing(final Class<?> templateClass) throws FieldException{
-		return describeEntity(TemplateHeader.class, templateClass, loaderTemplate::extractTemplate,
+		return describeEntity(TemplateHeader.class, templateClass, templateParser::extractTemplate,
 			template -> describeMessage(template, MESSAGE_EXTRACTOR_FULL_TEMPLATE, FIELD_EXTRACTOR_TEMPLATE));
 	}
 
@@ -137,7 +135,7 @@ public final class Descriptor{
 	 * @throws TemplateException	If a template is not well formatted.
 	 */
 	public List<Map<String, Object>> describeParsing(final Class<?>... templateClasses) throws FieldException{
-		return describeEntities(TemplateHeader.class, templateClasses, loaderTemplate::extractTemplate,
+		return describeEntities(TemplateHeader.class, templateClasses, templateParser::extractTemplate,
 			template -> describeMessage(template, MESSAGE_EXTRACTOR_FULL_TEMPLATE, FIELD_EXTRACTOR_TEMPLATE));
 	}
 
@@ -149,7 +147,7 @@ public final class Descriptor{
 	 * @throws TemplateException	If a template is not well formatted.
 	 */
 	public List<Map<String, Object>> describeTemplate() throws FieldException{
-		final Collection<Template<?>> configurations = new HashSet<>(loaderTemplate.getTemplates());
+		final Collection<Template<?>> configurations = new HashSet<>(templateParser.getTemplates());
 		return describeEntities(configurations, template -> describeMessage(template, MESSAGE_EXTRACTOR_BASIC_TEMPLATE, FIELD_EXTRACTOR_TEMPLATE));
 	}
 
@@ -162,7 +160,7 @@ public final class Descriptor{
 	 * @throws TemplateException	If a template is not well formatted.
 	 */
 	public Map<String, Object> describeTemplate(final Class<?> templateClass) throws FieldException{
-		return describeEntity(TemplateHeader.class, templateClass, loaderTemplate::extractTemplate,
+		return describeEntity(TemplateHeader.class, templateClass, templateParser::extractTemplate,
 			template -> describeMessage(template, MESSAGE_EXTRACTOR_BASIC_TEMPLATE, FIELD_EXTRACTOR_TEMPLATE));
 	}
 
@@ -175,7 +173,7 @@ public final class Descriptor{
 	 * @throws TemplateException	If a template is not well formatted.
 	 */
 	public List<Map<String, Object>> describeTemplate(final Class<?>... templateClasses) throws FieldException{
-		return describeEntities(TemplateHeader.class, templateClasses, loaderTemplate::extractTemplate,
+		return describeEntities(TemplateHeader.class, templateClasses, templateParser::extractTemplate,
 			template -> describeMessage(template, MESSAGE_EXTRACTOR_BASIC_TEMPLATE, FIELD_EXTRACTOR_TEMPLATE));
 	}
 

@@ -54,7 +54,7 @@ import java.util.function.Function;
 /**
  * Loader for the templates.
  */
-public final class LoaderTemplate{
+final class LoaderTemplate{
 
 	private static final PatternMatcher PATTERN_MATCHER = KMPPatternMatcher.getInstance();
 	private static final Function<byte[], int[]> PRE_PROCESSED_PATTERNS = Memoizer.memoize(PATTERN_MATCHER::preProcessPattern);
@@ -132,7 +132,7 @@ public final class LoaderTemplate{
 	 * @throws AnnotationException	If an annotation has validation problems.
 	 * @throws TemplateException	If a template is not well formatted.
 	 */
-	public void loadTemplate(final Class<?> templateClass) throws AnnotationException, TemplateException{
+	void loadTemplate(final Class<?> templateClass) throws AnnotationException, TemplateException{
 		eventListener.loadingTemplate(templateClass);
 
 		if(templateClass.isAnnotationPresent(TemplateHeader.class)){
@@ -177,7 +177,7 @@ public final class LoaderTemplate{
 	 * @throws AnnotationException	If an annotation has validation problems.
 	 * @throws TemplateException	If a template is not well formatted.
 	 */
-	public Template<?> extractTemplate(final Class<?> type) throws AnnotationException, TemplateException{
+	Template<?> extractTemplate(final Class<?> type) throws AnnotationException, TemplateException{
 		final Template<?> from = createTemplate(type);
 		if(!from.canBeCoded())
 			throw TemplateException.create("Cannot create a raw message from data: cannot scan template for {}",
@@ -304,7 +304,7 @@ public final class LoaderTemplate{
 	 *
 	 * @return	Collection of templates.
 	 */
-	public Collection<Template<?>> getTemplates(){
+	Collection<Template<?>> getTemplates(){
 		return Collections.unmodifiableCollection(templates.values());
 	}
 

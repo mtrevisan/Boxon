@@ -53,6 +53,7 @@ import io.github.mtrevisan.boxon.logs.EventListener;
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
@@ -65,7 +66,7 @@ public class TemplateParser implements TemplateParserInterface{
 	private final LoaderCodecInterface loaderCodec;
 	private final Evaluator evaluator;
 
-	protected final LoaderTemplate loaderTemplate;
+	private final LoaderTemplate loaderTemplate;
 	private final ParserWriterHelper parserWriterHelper;
 
 	private EventListener eventListener;
@@ -467,12 +468,24 @@ public class TemplateParser implements TemplateParserInterface{
 
 
 	/**
-	 * The loader for the templates.
+	 * Extract a template for the given class.
 	 *
-	 * @return	The loader for the templates.
+	 * @param type	The class type.
+	 * @return	A template.
+	 * @throws AnnotationException	If an annotation has validation problems.
+	 * @throws TemplateException	If a template is not well formatted.
 	 */
-	public LoaderTemplate getLoaderTemplate(){
-		return loaderTemplate;
+	public Template<?> extractTemplate(final Class<?> type) throws AnnotationException, TemplateException{
+		return loaderTemplate.extractTemplate(type);
+	}
+
+	/**
+	 * Unmodifiable collection of templates.
+	 *
+	 * @return	Collection of templates.
+	 */
+	public Collection<Template<?>> getTemplates(){
+		return loaderTemplate.getTemplates();
 	}
 
 }
