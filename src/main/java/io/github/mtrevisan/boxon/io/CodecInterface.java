@@ -66,7 +66,7 @@ public interface CodecInterface<B extends Annotation>{
 	 * @return	The cast annotation.
 	 */
 	@SuppressWarnings("unchecked")
-	default B extractBinding(final Annotation annotation){
+	default B interpretBinding(final Annotation annotation){
 		return (B)annotation;
 	}
 

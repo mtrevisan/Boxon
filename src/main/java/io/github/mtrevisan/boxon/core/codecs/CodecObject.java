@@ -25,9 +25,12 @@
 package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.annotations.bindings.BindObject;
+import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
+import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
+import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.Injected;
@@ -50,45 +53,78 @@ final class CodecObject implements CodecInterface<BindObject>{
 
 	@Override
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject) throws FieldException{
-		final BindObject binding = extractBinding(annotation);
+		final BindObject binding = interpretBinding(annotation);
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator);
-
-		final Class<?> type = bindingData.chooseAlternativeType(reader, rootObject);
+		final Class<?> type = chooseAlternativeType(reader, binding, rootObject);
 
 		final Template<?> template = templateParser.createTemplate(type);
 		final Object instance = templateParser.decode(template, reader, rootObject);
 		evaluator.addCurrentObjectToEvaluatorContext(instance);
 
-		return CodecHelper.convertValue(bindingData, rootObject, instance);
+		final ConverterChoices converterChoices = binding.selectConverterFrom();
+		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
+		final Class<? extends Validator<?>> validator = binding.validator();
+		return CodecHelper.decodeValue(converterChoices, defaultConverter, validator, instance, evaluator, rootObject);
 	}
 
 	@Override
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object rootObject, final Object value)
 			throws FieldException{
-		final BindObject binding = extractBinding(annotation);
+		final BindObject binding = interpretBinding(annotation);
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator);
-		bindingData.validate(value);
+		CodecHelper.validate(value, binding.validator());
 
+		final ObjectChoices objectChoices = binding.selectFrom();
+		final ObjectChoices.ObjectChoice[] alternatives = objectChoices.alternatives();
 		Class<?> type = binding.type();
-		if(bindingData.hasSelectAlternatives()){
-			final ObjectChoices selectFrom = binding.selectFrom();
+		if(CodecHelper.hasSelectAlternatives(alternatives)){
 			type = value.getClass();
 
-			final ObjectChoices.ObjectChoice chosenAlternative = CodecHelper.chooseAlternative(selectFrom.alternatives(), type);
+			final ObjectChoices.ObjectChoice chosenAlternative = CodecHelper.chooseAlternative(objectChoices.alternatives(), type);
 
-			CodecHelper.writeHeader(writer, chosenAlternative, selectFrom, evaluator, rootObject);
+			CodecHelper.writeHeader(writer, chosenAlternative, objectChoices, evaluator, rootObject);
 		}
 
 		evaluator.addCurrentObjectToEvaluatorContext(value);
 
 		final Template<?> template = templateParser.createTemplate(type);
 
-		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter(rootObject);
+		final ConverterChoices converterChoices = binding.selectConverterFrom();
+		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
+		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.getChosenConverter(converterChoices, defaultConverter, evaluator,
+			rootObject);
 		final Object obj = CodecHelper.converterEncode(chosenConverter, value);
 
 		templateParser.encode(template, writer, rootObject, obj);
+	}
+
+
+	/**
+	 * Gets the alternative class type that parses the next data.
+	 *
+	 * @param reader	The reader from which to read the data from.
+	 * @return	The class type of the chosen alternative.
+	 * @throws CodecException   If a codec cannot be found for the chosen alternative.
+	 */
+	private Class<?> chooseAlternativeType(final BitReaderInterface reader, final BindObject binding, final Object rootObject)
+			throws CodecException{
+		final ObjectChoices objectChoices = binding.selectFrom();
+		final ObjectChoices.ObjectChoice[] alternatives = objectChoices.alternatives();
+		if(!CodecHelper.hasSelectAlternatives(alternatives))
+			return binding.type();
+
+		CodecHelper.addPrefixToContext(reader, objectChoices, evaluator);
+
+		final ObjectChoices.ObjectChoice chosenAlternative = CodecHelper.chooseAlternative(alternatives, evaluator, rootObject);
+		final Class<?> chosenAlternativeType = (!CodecHelper.isEmptyChoice(chosenAlternative)
+			? chosenAlternative.type()
+			: binding.selectDefault());
+
+		if(chosenAlternativeType == void.class)
+			throw CodecException.create("Cannot find a valid codec from given alternatives for {}",
+				rootObject.getClass().getSimpleName());
+
+		return chosenAlternativeType;
 	}
 
 }

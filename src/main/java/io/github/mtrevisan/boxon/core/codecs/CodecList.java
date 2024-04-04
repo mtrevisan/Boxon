@@ -25,10 +25,15 @@
 package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.annotations.bindings.BindList;
+import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
+import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoicesList;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
+import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
+import io.github.mtrevisan.boxon.helpers.CharsetHelper;
+import io.github.mtrevisan.boxon.helpers.ContextHelper;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.Injected;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
@@ -37,12 +42,16 @@ import io.github.mtrevisan.boxon.io.CodecInterface;
 import io.github.mtrevisan.boxon.io.ParserDataType;
 
 import java.lang.annotation.Annotation;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 
 final class CodecList implements CodecInterface<BindList>{
+
+	private static final ObjectChoicesList.ObjectChoiceList EMPTY_CHOICE_LIST = new NullObjectChoiceList();
+
 
 	@SuppressWarnings("unused")
 	@Injected
@@ -54,15 +63,16 @@ final class CodecList implements CodecInterface<BindList>{
 
 	@Override
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject) throws FieldException{
-		final BindList binding = extractBinding(annotation);
-
-		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator);
+		final BindList binding = interpretBinding(annotation);
 
 		final Class<?> bindingType = binding.type();
 		final List<Object> list = createList(bindingType);
-		decodeWithAlternatives(reader, list, bindingData, rootObject);
+		decodeWithAlternatives(reader, list, binding, rootObject);
 
-		return CodecHelper.convertValue(bindingData, rootObject, list);
+		final ConverterChoices converterChoices = binding.selectConverterFrom();
+		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
+		final Class<? extends Validator<?>> validator = binding.validator();
+		return CodecHelper.decodeValue(converterChoices, defaultConverter, validator, list, evaluator, rootObject);
 	}
 
 	private static <T> List<T> createList(final Class<? extends T> type) throws AnnotationException{
@@ -72,10 +82,10 @@ final class CodecList implements CodecInterface<BindList>{
 		return new ArrayList<>(0);
 	}
 
-	private void decodeWithAlternatives(final BitReaderInterface reader, final Collection<Object> list, final BindingData bindingData,
+	private void decodeWithAlternatives(final BitReaderInterface reader, final Collection<Object> list, final BindList binding,
 			final Object rootObject) throws FieldException{
 		Class<?> chosenAlternativeType;
-		while((chosenAlternativeType = bindingData.chooseAlternativeSeparatedType(reader, rootObject)) != null){
+		while((chosenAlternativeType = chooseAlternativeSeparatedType(reader, binding, rootObject)) != null){
 			//read object
 			final Template<?> subTemplate = templateParser.createTemplate(chosenAlternativeType);
 			final Object element = templateParser.decode(subTemplate, reader, rootObject);
@@ -86,12 +96,14 @@ final class CodecList implements CodecInterface<BindList>{
 	@Override
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object rootObject, final Object value)
 			throws FieldException{
-		final BindList binding = extractBinding(annotation);
+		final BindList binding = interpretBinding(annotation);
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator);
-		bindingData.validate(value);
+		CodecHelper.validate(value, binding.validator());
 
-		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter(rootObject);
+		final ConverterChoices converterChoices = binding.selectConverterFrom();
+		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
+		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.getChosenConverter(converterChoices, defaultConverter, evaluator,
+			rootObject);
 		final List<Object> list = CodecHelper.converterEncode(chosenConverter, value);
 
 		encodeWithAlternatives(writer, list);
@@ -107,6 +119,57 @@ final class CodecList implements CodecInterface<BindList>{
 
 			templateParser.encode(template, writer, null, elem);
 		}
+	}
+
+
+	/**
+	 * Gets the alternative class type that parses the next data.
+	 *
+	 * @param reader	The reader from which to read the data from.
+	 * @return	The class type of the chosen alternative.
+	 */
+	Class<?> chooseAlternativeSeparatedType(final BitReaderInterface reader, final BindList binding, final Object rootObject){
+		final ObjectChoicesList objectChoicesList = binding.selectFrom();
+		final ObjectChoicesList.ObjectChoiceList[] alternatives = objectChoicesList.alternatives();
+		if(!CodecHelper.hasSelectAlternatives((alternatives)))
+			return binding.type();
+
+		final boolean hasHeader = addListHeaderToContext(reader, objectChoicesList);
+		if(!hasHeader)
+			return null;
+
+		final ObjectChoicesList.ObjectChoiceList chosenAlternative = chooseAlternative(alternatives, rootObject);
+		final Class<?> chosenAlternativeType = (!CodecHelper.isEmptyChoice(chosenAlternative)
+			? chosenAlternative.type()
+			: void.class);
+
+		return (chosenAlternativeType != void.class? chosenAlternativeType: null);
+	}
+
+	/**
+	 * Add the prefix to the evaluator context if needed.
+	 *
+	 * @param reader	The reader from which to read the header.
+	 * @return	Whether a prefix was retrieved.
+	 */
+	private boolean addListHeaderToContext(final BitReaderInterface reader, final ObjectChoicesList objectChoicesList){
+		final byte terminator = objectChoicesList.terminator();
+		final Charset charset = CharsetHelper.lookup(objectChoicesList.charset());
+		final String prefix = reader.getTextUntilTerminatorWithoutConsuming(terminator, charset);
+		evaluator.putToContext(ContextHelper.CONTEXT_CHOICE_PREFIX, prefix);
+		return !prefix.isEmpty();
+	}
+
+	private ObjectChoicesList.ObjectChoiceList chooseAlternative(final ObjectChoicesList.ObjectChoiceList[] alternatives,
+			final Object rootObject){
+		for(int i = 0, length = alternatives.length; i < length; i ++){
+			final ObjectChoicesList.ObjectChoiceList alternative = alternatives[i];
+
+			final String condition = alternative.condition();
+			if(evaluator.evaluateBoolean(condition, rootObject))
+				return alternative;
+		}
+		return EMPTY_CHOICE_LIST;
 	}
 
 }

@@ -24,19 +24,27 @@
  */
 package io.github.mtrevisan.boxon.core.codecs;
 
+import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
 import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationEnum;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
+import io.github.mtrevisan.boxon.annotations.validators.Validator;
+import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.DataException;
 import io.github.mtrevisan.boxon.helpers.BitSetHelper;
 import io.github.mtrevisan.boxon.helpers.ConstructorHelper;
 import io.github.mtrevisan.boxon.helpers.ContextHelper;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
+import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
+import io.github.mtrevisan.boxon.io.ByteOrder;
 import io.github.mtrevisan.boxon.io.ParserDataType;
+import org.springframework.expression.EvaluationException;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
+import java.math.BigInteger;
 import java.util.BitSet;
 
 
@@ -45,8 +53,89 @@ import java.util.BitSet;
  */
 final class CodecHelper{
 
+	private static final ObjectChoices.ObjectChoice EMPTY_CHOICE = new NullObjectChoice();
+
+
 	private CodecHelper(){}
 
+
+	/**
+	 * Validate the value passed using the configured validator.
+	 *
+	 * @param value	The value.
+	 * @param <T>	The class type of the value.
+	 * @throws DataException	If the value does not pass validation.
+	 */
+	static <T> void validate(final T value, final Class<? extends Validator<?>> validator){
+		final Validator<T> validatorCreator = (Validator<T>)ConstructorHelper.getEmptyCreator(validator)
+			.get();
+		if(!validatorCreator.isValid(value))
+			throw DataException.create("Validation of {} didn't passed (value is {})", validator.getSimpleName(), value);
+	}
+
+
+	/**
+	 * Convenience method to fast evaluate a positive integer.
+	 *
+	 * @return	The size, or a negative number if the expression is not a valid positive integer.
+	 * @throws EvaluationException   If an error occurs during the evaluation of an expression.
+	 */
+	static int evaluateSize(final String size, final Evaluator evaluator, final Object rootObject) throws AnnotationException{
+		final int evaluatedSize = evaluator.evaluateSize(size, rootObject);
+		if(evaluatedSize <= 0)
+			throw AnnotationException.create("Size must be a positive integer, was {}", size);
+
+		return evaluatedSize;
+	}
+
+	static void assertSizeEquals(final int expectedSize, final int size){
+		if(expectedSize != size)
+			throw DataException.create("Size mismatch, expected {}, got {}", expectedSize, size);
+	}
+
+
+	/**
+	 * Get the first converter that matches the condition.
+	 *
+	 * @return	The converter class.
+	 */
+	static Class<? extends Converter<?, ?>> getChosenConverter(final ConverterChoices converterChoices,
+			final Class<? extends Converter<?, ?>> defaultConverter, final Evaluator evaluator, final Object rootObject){
+		final ConverterChoices.ConverterChoice[] alternatives = converterChoices.alternatives();
+		for(int i = 0, length = alternatives.length; i < length; i ++){
+			final ConverterChoices.ConverterChoice alternative = alternatives[i];
+
+			if(evaluator.evaluateBoolean(alternative.condition(), rootObject))
+				return alternative.converter();
+		}
+		return defaultConverter;
+	}
+
+
+	static boolean isEmptyChoice(final Annotation choice){
+		return (choice.annotationType() == Annotation.class);
+	}
+
+	/**
+	 * Whether the select-object-from binding has any alternatives.
+	 *
+	 * @return	Whether the select-object-from binding has any alternatives.
+	 */
+	static <T> boolean hasSelectAlternatives(final T[] alternatives){
+		return (Array.getLength(alternatives) > 0);
+	}
+
+	static ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Evaluator evaluator,
+			final Object rootObject){
+		for(int i = 0, length = alternatives.length; i < length; i ++){
+			final ObjectChoices.ObjectChoice alternative = alternatives[i];
+
+			final String condition = alternative.condition();
+			if(evaluator.evaluateBoolean(condition, rootObject))
+				return alternative;
+		}
+		return EMPTY_CHOICE;
+	}
 
 	static ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Class<?> type)
 			throws CodecException{
@@ -59,6 +148,7 @@ final class CodecHelper{
 
 		throw CodecException.create("Cannot find a valid codec for type {}", type.getSimpleName());
 	}
+
 
 	static void writeHeader(final BitWriterInterface writer, final ObjectChoices.ObjectChoice chosenAlternative,
 			final ObjectChoices selectFrom, final Evaluator evaluator, final Object rootObject){
@@ -77,15 +167,36 @@ final class CodecHelper{
 		}
 	}
 
-	static <IN, OUT> OUT convertValue(final BindingData bindingData, final Object rootObject, final IN value){
-		final Class<? extends Converter<?, ?>> converterType = bindingData.getChosenConverter(rootObject);
-		final OUT convertedValue = converterDecode(converterType, value);
-		bindingData.validate(convertedValue);
+	/**
+	 * Add the prefix to the evaluator context if needed.
+	 *
+	 * @param reader	The reader from which to read the prefix.
+	 */
+	static void addPrefixToContext(final BitReaderInterface reader, final ObjectChoices objectChoices, final Evaluator evaluator){
+		final byte prefixSize = objectChoices.prefixLength();
+		if(prefixSize > 0){
+			final BitSet bitmap = reader.getBitSet(prefixSize);
+			final ByteOrder byteOrder = objectChoices.byteOrder();
+			final BigInteger prefix = BitSetHelper.toObjectiveType(bitmap, prefixSize, byteOrder);
+
+			evaluator.putToContext(ContextHelper.CONTEXT_CHOICE_PREFIX, prefix);
+		}
+	}
+
+
+	static Object decodeValue(final ConverterChoices converterChoices, final Class<? extends Converter<?, ?>> defaultConverter,
+			final Class<? extends Validator<?>> validator, final Object value, final Evaluator evaluator, final Object rootObject){
+		final Class<? extends Converter<?, ?>> converterType = getChosenConverter(converterChoices, defaultConverter, evaluator,
+			rootObject);
+		final Object convertedValue = converterDecode(converterType, value);
+
+		validate(convertedValue, validator);
+
 		return convertedValue;
 	}
 
 	@SuppressWarnings("unchecked")
-	private static <IN, OUT> OUT converterDecode(final Class<? extends Converter<?, ?>> converterType, final IN data){
+	static <IN, OUT> OUT converterDecode(final Class<? extends Converter<?, ?>> converterType, final IN data){
 		try{
 			final Converter<IN, OUT> converter = (Converter<IN, OUT>)ConstructorHelper.getEmptyCreator(converterType)
 				.get();
