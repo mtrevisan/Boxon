@@ -112,16 +112,6 @@ final class BindingData{
 	}
 
 	/**
-	 * Adds the given instance as `self` to the context of the evaluator.
-	 * <p>Passing {@code null} the `self` key will be deleted.</p>
-	 *
-	 * @param instance	The object (pass {@code null} to remove the `self` key from the context).
-	 */
-	void addToContext(final Object instance){
-		evaluator.putToContext(ContextHelper.CONTEXT_SELF, instance);
-	}
-
-	/**
 	 * Convenience method to fast evaluate a positive integer.
 	 *
 	 * @return	The size, or a negative number if the expression is not a valid positive integer.

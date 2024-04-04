@@ -83,7 +83,7 @@ public final class TemplateParser implements TemplateParserInterface{
 
 
 	private TemplateParser(final LoaderCodecInterface loaderCodec, final Evaluator evaluator){
-		core = TemplateParserCore.create(loaderCodec, evaluator);
+		core = TemplateParserCore.create(loaderCodec);
 		this.evaluator = evaluator;
 
 		parserWriterHelper = ParserWriterHelper.create();

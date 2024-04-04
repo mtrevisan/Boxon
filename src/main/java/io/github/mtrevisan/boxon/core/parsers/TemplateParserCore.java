@@ -29,7 +29,6 @@ import io.github.mtrevisan.boxon.core.codecs.LoaderCodecInterface;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
-import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.logs.EventListener;
@@ -41,8 +40,6 @@ final class TemplateParserCore{
 	private final LoaderCodecInterface loaderCodec;
 	private final LoaderTemplate loaderTemplate;
 
-	private final Evaluator evaluator;
-
 	private EventListener eventListener;
 
 
@@ -50,18 +47,16 @@ final class TemplateParserCore{
 	 * Create a template parser core.
 	 *
 	 * @param loaderCodec	A codec loader.
-	 * @param evaluator	An evaluator.
 	 * @return	A template parser core.
 	 */
-	static TemplateParserCore create(final LoaderCodecInterface loaderCodec, final Evaluator evaluator){
-		return new TemplateParserCore(loaderCodec, evaluator);
+	static TemplateParserCore create(final LoaderCodecInterface loaderCodec){
+		return new TemplateParserCore(loaderCodec);
 	}
 
 
-	private TemplateParserCore(final LoaderCodecInterface loaderCodec, final Evaluator evaluator){
+	private TemplateParserCore(final LoaderCodecInterface loaderCodec){
 		this.loaderCodec = loaderCodec;
 		loaderTemplate = LoaderTemplate.create(loaderCodec);
-		this.evaluator = evaluator;
 
 		eventListener = EventListener.getNoOpInstance();
 	}
@@ -156,10 +151,6 @@ final class TemplateParserCore{
 
 	LoaderTemplate getLoaderTemplate(){
 		return loaderTemplate;
-	}
-
-	Evaluator getEvaluator(){
-		return evaluator;
 	}
 
 }

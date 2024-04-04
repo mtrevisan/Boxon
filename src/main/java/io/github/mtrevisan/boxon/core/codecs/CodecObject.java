@@ -58,7 +58,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 
 		final Template<?> template = templateParser.createTemplate(type);
 		final Object instance = templateParser.decode(template, reader, rootObject);
-		bindingData.addToContext(instance);
+		evaluator.addCurrentObjectToEvaluatorContext(instance);
 
 		return CodecHelper.convertValue(bindingData, rootObject, instance);
 	}
@@ -81,7 +81,7 @@ final class CodecObject implements CodecInterface<BindObject>{
 			CodecHelper.writeHeader(writer, chosenAlternative, selectFrom, evaluator, rootObject);
 		}
 
-		bindingData.addToContext(value);
+		evaluator.addCurrentObjectToEvaluatorContext(value);
 
 		final Template<?> template = templateParser.createTemplate(type);
 

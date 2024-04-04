@@ -51,6 +51,7 @@ final class ParserContext<T>{
 
 	ParserContext(final T currentObject, final Object parentObject){
 		this.currentObject = currentObject;
+
 		setRootObject(parentObject);
 	}
 
