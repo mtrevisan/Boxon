@@ -27,6 +27,7 @@ package io.github.mtrevisan.boxon.core.codecs;
 import io.github.mtrevisan.boxon.annotations.bindings.BindArrayPrimitive;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
+import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.Injected;
@@ -60,7 +61,10 @@ final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 			Array.set(array, i, value);
 		}
 
-		return convertValue(binding, rootObject, array);
+		final ConverterChoices converterChoices = binding.selectConverterFrom();
+		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
+		final Class<? extends Validator<?>> validator = binding.validator();
+		return CodecHelper.decodeValue(converterChoices, defaultConverter, validator, array, evaluator, rootObject);
 	}
 
 	@Override
@@ -84,17 +88,6 @@ final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 			final Object val = Array.get(array, i);
 			writer.put(val, byteOrder);
 		}
-	}
-
-
-	private <IN, OUT> OUT convertValue(final BindArrayPrimitive binding, final Object rootObject, final IN value){
-		final ConverterChoices converterChoices = binding.selectConverterFrom();
-		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
-		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.getChosenConverter(converterChoices, defaultConverter, evaluator,
-			rootObject);
-		final OUT convertedValue = CodecHelper.converterDecode(chosenConverter, value);
-		CodecHelper.validate(convertedValue, binding.validator());
-		return convertedValue;
 	}
 
 }

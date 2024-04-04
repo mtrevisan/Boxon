@@ -27,6 +27,7 @@ package io.github.mtrevisan.boxon.core.codecs;
 import io.github.mtrevisan.boxon.annotations.bindings.BindInteger;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
+import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.helpers.BitSetHelper;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
@@ -56,7 +57,10 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 
 		final BigInteger value = reader.getBigInteger(size, binding.byteOrder());
 
-		return convertValue(binding, rootObject, value);
+		final ConverterChoices converterChoices = binding.selectConverterFrom();
+		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
+		final Class<? extends Validator<?>> validator = binding.validator();
+		return CodecHelper.decodeValue(converterChoices, defaultConverter, validator, value, evaluator, rootObject);
 	}
 
 	@Override
@@ -78,17 +82,6 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 		final BitSet bitmap = BitSetHelper.createBitSet(size, v, byteOrder);
 
 		writer.putBitSet(bitmap, size);
-	}
-
-
-	private <IN, OUT> OUT convertValue(final BindInteger binding, final Object rootObject, final IN value){
-		final ConverterChoices converterChoices = binding.selectConverterFrom();
-		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
-		final Class<? extends Converter<?, ?>> converterType = CodecHelper.getChosenConverter(converterChoices, defaultConverter, evaluator,
-			rootObject);
-		final OUT convertedValue = CodecHelper.converterDecode(converterType, value);
-		CodecHelper.validate(convertedValue, binding.validator());
-		return convertedValue;
 	}
 
 }

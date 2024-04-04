@@ -27,6 +27,7 @@ package io.github.mtrevisan.boxon.core.codecs;
 import io.github.mtrevisan.boxon.annotations.bindings.BindByte;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
+import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.Injected;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
@@ -49,7 +50,10 @@ final class CodecByte implements CodecInterface<BindByte>{
 
 		final byte value = reader.getByte();
 
-		return convertValue(binding, rootObject, value);
+		final ConverterChoices converterChoices = binding.selectConverterFrom();
+		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
+		final Class<? extends Validator<?>> validator = binding.validator();
+		return CodecHelper.decodeValue(converterChoices, defaultConverter, validator, value, evaluator, rootObject);
 	}
 
 	@Override
@@ -65,17 +69,6 @@ final class CodecByte implements CodecInterface<BindByte>{
 		final byte v = CodecHelper.converterEncode(chosenConverter, value);
 
 		writer.putByte(v);
-	}
-
-
-	private <IN, OUT> OUT convertValue(final BindByte binding, final Object rootObject, final IN value){
-		final ConverterChoices converterChoices = binding.selectConverterFrom();
-		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
-		final Class<? extends Converter<?, ?>> converterType = CodecHelper.getChosenConverter(converterChoices, defaultConverter, evaluator,
-			rootObject);
-		final OUT convertedValue = CodecHelper.converterDecode(converterType, value);
-		CodecHelper.validate(convertedValue, binding.validator());
-		return convertedValue;
 	}
 
 }

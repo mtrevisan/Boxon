@@ -27,6 +27,7 @@ package io.github.mtrevisan.boxon.core.codecs;
 import io.github.mtrevisan.boxon.annotations.bindings.BindDouble;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
+import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.Injected;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
@@ -49,7 +50,10 @@ final class CodecDouble implements CodecInterface<BindDouble>{
 
 		final double value = reader.getDouble(binding.byteOrder());
 
-		return convertValue(binding, rootObject, value);
+		final ConverterChoices converterChoices = binding.selectConverterFrom();
+		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
+		final Class<? extends Validator<?>> validator = binding.validator();
+		return CodecHelper.decodeValue(converterChoices, defaultConverter, validator, value, evaluator, rootObject);
 	}
 
 	@Override
@@ -65,17 +69,6 @@ final class CodecDouble implements CodecInterface<BindDouble>{
 		final double v = CodecHelper.converterEncode(chosenConverter, value);
 
 		writer.putDouble(v, binding.byteOrder());
-	}
-
-
-	private <IN, OUT> OUT convertValue(final BindDouble binding, final Object rootObject, final IN value){
-		final ConverterChoices converterChoices = binding.selectConverterFrom();
-		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
-		final Class<? extends Converter<?, ?>> converterType = CodecHelper.getChosenConverter(converterChoices, defaultConverter, evaluator,
-			rootObject);
-		final OUT convertedValue = CodecHelper.converterDecode(converterType, value);
-		CodecHelper.validate(convertedValue, binding.validator());
-		return convertedValue;
 	}
 
 }

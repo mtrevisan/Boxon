@@ -28,6 +28,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindList;
 import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoicesList;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
+import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
@@ -68,7 +69,10 @@ final class CodecList implements CodecInterface<BindList>{
 		final List<Object> list = createList(bindingType);
 		decodeWithAlternatives(reader, list, binding, rootObject);
 
-		return convertValue(binding, rootObject, list);
+		final ConverterChoices converterChoices = binding.selectConverterFrom();
+		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
+		final Class<? extends Validator<?>> validator = binding.validator();
+		return CodecHelper.decodeValue(converterChoices, defaultConverter, validator, list, evaluator, rootObject);
 	}
 
 	private static <T> List<T> createList(final Class<? extends T> type) throws AnnotationException{
@@ -174,16 +178,6 @@ final class CodecList implements CodecInterface<BindList>{
 				return alternative;
 		}
 		return EMPTY_CHOICE_LIST;
-	}
-
-	private <IN, OUT> OUT convertValue(final BindList binding, final Object rootObject, final IN value){
-		final ConverterChoices converterChoices = binding.selectConverterFrom();
-		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();
-		final Class<? extends Converter<?, ?>> converterType = CodecHelper.getChosenConverter(converterChoices, defaultConverter, evaluator,
-			rootObject);
-		final OUT convertedValue = CodecHelper.converterDecode(converterType, value);
-		CodecHelper.validate(convertedValue, binding.validator());
-		return convertedValue;
 	}
 
 }

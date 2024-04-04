@@ -154,6 +154,18 @@ final class CodecHelper{
 		}
 	}
 
+
+	static Object decodeValue(final ConverterChoices converterChoices, final Class<? extends Converter<?, ?>> defaultConverter,
+			final Class<? extends Validator<?>> validator, final Object value, final Evaluator evaluator, final Object rootObject){
+		final Class<? extends Converter<?, ?>> converterType = getChosenConverter(converterChoices, defaultConverter, evaluator,
+			rootObject);
+		final Object convertedValue = converterDecode(converterType, value);
+
+		validate(convertedValue, validator);
+
+		return convertedValue;
+	}
+
 	@SuppressWarnings("unchecked")
 	static <IN, OUT> OUT converterDecode(final Class<? extends Converter<?, ?>> converterType, final IN data){
 		try{
