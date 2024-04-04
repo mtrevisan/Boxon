@@ -159,8 +159,8 @@ enum TemplateAnnotationValidator{
 		void validate(final Field field, final Annotation annotation) throws AnnotationException{
 			final Class<?> type = ((Checksum)annotation).type();
 			final ParserDataType dataType = ParserDataType.fromType(type);
-			if(dataType != ParserDataType.BYTE && dataType != ParserDataType.SHORT)
-				throw AnnotationException.create("Unrecognized type, must be `byte` or `short`: {}", type.getSimpleName(),
+			if(dataType == null || dataType == ParserDataType.FLOAT || dataType == ParserDataType.DOUBLE)
+				throw AnnotationException.create("Unrecognized type, must be numeric: {}", type.getSimpleName(),
 					type.getComponentType().getSimpleName());
 
 			validateConverter(field, type, NullConverter.class);

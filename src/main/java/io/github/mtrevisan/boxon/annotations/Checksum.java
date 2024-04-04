@@ -43,6 +43,13 @@ import java.lang.annotation.Target;
 public @interface Checksum{
 
 	/**
+	 * The SpEL expression that determines if an evaluation has to be made.
+	 *
+	 * @return	The condition that determines if an evaluation has to be made (defaults to empty, that means &quot;accept&quot;).
+	 */
+	String condition() default "";
+
+	/**
 	 * The type of object to be inserted into the checksum field.
 	 *
 	 * @return	The type of object to be inserted in the array.

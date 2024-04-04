@@ -28,6 +28,7 @@ import io.github.mtrevisan.boxon.annotations.Checksum;
 import io.github.mtrevisan.boxon.annotations.checksummers.CRC16CCITT;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.BitReader;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
@@ -51,6 +52,11 @@ class CodecChecksumTest{
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return Checksum.class;
+			}
+
+			@Override
+			public String condition(){
+				return JavaHelper.EMPTY_STRING;
 			}
 
 			@Override

@@ -206,7 +206,7 @@ Note that [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_inject
 |------------------|:---------:|:-------:|:-------:|:-------:|:-------:|:----------:|:-----------------:|:-------:|:---------:|:---------:|:-------:|:---------:|:----------:|:-------:|:-----------:|:-----------:|---------------:|
 | TemplateHeader   |           | &#9745; | &#9745; | &#9745; |         |            |                   |         |           |           |         |           |            |         |             |             | TemplateHeader |
 | Skip             |  &#9745;  |         |         |         | &#9745; |  &#9745;   |      &#9745;      |         |           |           |         |           |            |         |             |             |           Skip |
-| Checksum         |           |         |         |         |         |            |                   | &#9745; |  &#9745;  |  &#9745;  | &#9745; |  &#9745;  |  &#9745;   |         |             |             |       Checksum |
+| Checksum         |  &#9745;  |         |         |         |         |            |                   | &#9745; |  &#9745;  |  &#9745;  | &#9745; |  &#9745;  |  &#9745;   |         |             |             |       Checksum |
 | Evaluate         |  &#9745;  |         |         |         |         |            |                   |         |           |           |         |           |            | &#9745; |             |             |       Evaluate |
 | PostProcessField |  &#9745;  |         |         |         |         |            |                   |         |           |           |         |           |            |         |   &#9745;   |   &#9745;   |   ProcessField |
 
@@ -740,6 +740,7 @@ public Void lastUnreadPlaceholder;
 
 #### parameters
 
+ - `condition`: The SpEL expression that determines if this field has to be read.
  - `type`: the Class of variable to be read.
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN` (used for primitives other than `byte`).
  - `skipStart`: how many bytes are to be skipped from the start of the message for the calculation of the checksum (defaults to 0).
@@ -1019,7 +1020,7 @@ public String text;
 - `minValue`: minimum value this field can assume, optional (alternative to `pattern` and `enumeration`).
 - `maxValue`: maximum value this field can assume, optional (alternative to `pattern` and `enumeration`).
 - `pattern`: regex pattern this field must obey, optional (alternative to `minValue`/`maxValue` and `enumeration`).
-- `enumeration`: enumeration for this field, optional (alternative to `pattern` and `minValue`/`maxValue`). If the field is a single enum, then each value of this enum is mutually exclusive.
+- `enumeration`: enumeration for this field, optional (alternative to `pattern` and `minValue`/`maxValue`). If the field is not an array, then each value of this enum is mutually exclusive.
 - `defaultValue`: default value, optional. If the variable is an array, then this field may represent an `or` between values (e.g. `ONE|TWO|THREE`), otherwise can be a single value (e.g. `TWO`). If not present, then the field is mandatory.
 - `charset`: charset of the field (if string value), optional.
 - `radix`: radix of the number field when written to the message, optional.
@@ -1137,7 +1138,7 @@ public String downloadURL;
 - `unitOfMeasure`: the unit of measure, optional (the format should follow [UCUM](https://ucum.org/ucum.html)/[ISO 80000](https://en.wikipedia.org/wiki/Unified_Code_for_Units_of_Measure) standard).
 - `minProtocol`: minimum protocol for which this configuration message is valid, optional (should follow [Semantic Versioning](https://semver.org/)).
 - `maxProtocol`: maximum protocol for which this configuration message is valid, optional (should follow [Semantic Versioning](https://semver.org/)).
-- `enumeration`: enumeration for this field, optional. If the field is a single enum, then each value of this enum is mutually exclusive.
+- `enumeration`: enumeration for this field, optional. If the field is not an array, then each value of this enum is mutually exclusive.
 - `terminator`: the string that terminates the skip (defaults to empty string), optional.
 
 #### description

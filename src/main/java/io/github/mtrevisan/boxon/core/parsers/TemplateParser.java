@@ -210,7 +210,7 @@ public class TemplateParser implements TemplateParserInterface{
 		readMessageTerminator(template, reader);
 
 		currentObject = parserContext.getCurrentObject();
-		verifyChecksum(template, currentObject, startPosition, reader);
+		verifyChecksum(template, currentObject, startPosition, reader, evaluator);
 
 		return currentObject;
 	}
@@ -307,21 +307,22 @@ public class TemplateParser implements TemplateParserInterface{
 	}
 
 	private static <T> void verifyChecksum(final Template<T> template, final T data, final int startPosition,
-			final BitReaderInterface reader){
+			final BitReaderInterface reader, final Evaluator evaluator){
 		if(template.isChecksumPresent()){
 			final TemplateField checksumData = template.getChecksum();
 			final Checksum checksum = (Checksum)checksumData.getBinding();
-
-			final short calculatedChecksum = calculateChecksum(startPosition, reader, checksum);
-			final Number givenChecksum = (Number)checksumData.getFieldValue(data);
-			if(givenChecksum == null)
-				throw DataException.create("Something bad happened, cannot read message checksum");
-			if(calculatedChecksum != givenChecksum.shortValue()){
-				final int mask = ParserDataType.fromType(givenChecksum.getClass())
-					.getMask();
-				throw DataException.create("Calculated checksum (0x{}) does NOT match given checksum (0x{})",
-					StringHelper.toHexString(calculatedChecksum & mask),
-					StringHelper.toHexString(givenChecksum.shortValue() & mask));
+			if(evaluator.evaluateBoolean(checksum.condition(), data)){
+				final short calculatedChecksum = calculateChecksum(startPosition, reader, checksum);
+				final Number givenChecksum = (Number)checksumData.getFieldValue(data);
+				if(givenChecksum == null)
+					throw DataException.create("Something bad happened, cannot read message checksum");
+				if(calculatedChecksum != givenChecksum.shortValue()){
+					final int mask = ParserDataType.fromType(givenChecksum.getClass())
+						.getMask();
+					throw DataException.create("Calculated checksum (0x{}) does NOT match given checksum (0x{})",
+						StringHelper.toHexString(calculatedChecksum & mask),
+						StringHelper.toHexString(givenChecksum.shortValue() & mask));
+				}
 			}
 		}
 	}

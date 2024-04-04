@@ -47,6 +47,7 @@ import io.github.mtrevisan.boxon.core.helpers.templates.EvaluatedField;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.core.helpers.templates.TemplateField;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.io.ByteOrder;
 import io.github.mtrevisan.boxon.utils.TestHelper;
 import org.junit.jupiter.api.Assertions;
@@ -194,6 +195,11 @@ class TemplateTest{
 			@Override
 			public Class<? extends Annotation> annotationType(){
 				return Checksum.class;
+			}
+
+			@Override
+			public String condition(){
+				return JavaHelper.EMPTY_STRING;
 			}
 
 			@Override
