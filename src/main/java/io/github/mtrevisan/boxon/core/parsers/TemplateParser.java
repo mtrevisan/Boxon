@@ -63,6 +63,7 @@ import java.util.function.Function;
 public final class TemplateParser implements TemplateParserInterface{
 
 	private final TemplateParserCore core;
+	private final Evaluator evaluator;
 
 	private final ParserWriterHelper parserWriterHelper;
 
@@ -83,6 +84,7 @@ public final class TemplateParser implements TemplateParserInterface{
 
 	private TemplateParser(final LoaderCodecInterface loaderCodec, final Evaluator evaluator){
 		core = TemplateParserCore.create(loaderCodec, evaluator);
+		this.evaluator = evaluator;
 
 		parserWriterHelper = ParserWriterHelper.create();
 
@@ -202,9 +204,8 @@ public final class TemplateParser implements TemplateParserInterface{
 			.get();
 
 		//FIXME is there a way to reduce the number of ParserContext objects?
-		final ParserContext<T> parserContext = new ParserContext<>(core.getEvaluator(), currentObject, parentObject);
-		//add current object in the context
-		parserContext.addCurrentObjectToEvaluatorContext();
+		final ParserContext<T> parserContext = new ParserContext<>(currentObject, parentObject);
+		evaluator.addCurrentObjectToEvaluatorContext(currentObject);
 
 		//decode message fields:
 		final List<TemplateField> fields = template.getTemplateFields();
@@ -273,7 +274,6 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 	private void readSkip(final Skip skip, final BitReaderInterface reader, final Object rootObject){
-		final Evaluator evaluator = core.getEvaluator();
 		final boolean process = evaluator.evaluateBoolean(skip.condition(), rootObject);
 		if(!process)
 			return;
@@ -341,7 +341,6 @@ public final class TemplateParser implements TemplateParserInterface{
 		for(int i = 0, length = evaluatedFields.size(); i < length; i ++){
 			final EvaluatedField<Evaluate> field = evaluatedFields.get(i);
 
-			final Evaluator evaluator = core.getEvaluator();
 			final boolean process = evaluator.evaluateBoolean(field.getBinding().condition(), parserContext.getRootObject());
 			if(!process)
 				continue;
@@ -369,8 +368,8 @@ public final class TemplateParser implements TemplateParserInterface{
 	public <T> void encode(final Template<?> template, final BitWriterInterface writer, final Object parentObject, final T currentObject)
 			throws FieldException{
 		//FIXME is there a way to reduce the number of ParserContext objects?
-		final ParserContext<T> parserContext = new ParserContext<>(core.getEvaluator(), currentObject, parentObject);
-		parserContext.addCurrentObjectToEvaluatorContext();
+		final ParserContext<T> parserContext = new ParserContext<>(currentObject, parentObject);
+		evaluator.addCurrentObjectToEvaluatorContext(currentObject);
 		parserContext.setClassName(template.getType().getName());
 
 		preProcessFields(template, parserContext);
@@ -426,7 +425,6 @@ public final class TemplateParser implements TemplateParserInterface{
 
 	private void processField(final String condition, final String expression, final ParserContext<?> parserContext,
 			final EvaluatedField<PostProcessField> field, final String templateName){
-		final Evaluator evaluator = core.getEvaluator();
 		final Object rootObject = parserContext.getRootObject();
 		final boolean process = evaluator.evaluateBoolean(condition, rootObject);
 		if(!process)
@@ -442,7 +440,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 	private boolean shouldProcessField(final String condition, final Object rootObject){
-		return (condition != null && (condition.isEmpty() || core.getEvaluator().evaluateBoolean(condition, rootObject)));
+		return (condition != null && (condition.isEmpty() || evaluator.evaluateBoolean(condition, rootObject)));
 	}
 
 	private <T> void writeSkips(final Skip[] skips, final BitWriterInterface writer, final ParserContext<T> parserContext){
@@ -452,7 +450,6 @@ public final class TemplateParser implements TemplateParserInterface{
 	}
 
 	private void writeSkip(final Skip skip, final BitWriterInterface writer, final Object rootObject){
-		final Evaluator evaluator = core.getEvaluator();
 		final boolean process = evaluator.evaluateBoolean(skip.condition(), rootObject);
 		if(!process)
 			return;

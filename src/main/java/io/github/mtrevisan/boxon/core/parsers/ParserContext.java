@@ -27,8 +27,6 @@ package io.github.mtrevisan.boxon.core.parsers;
 import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationField;
 import io.github.mtrevisan.boxon.core.helpers.templates.TemplateField;
 import io.github.mtrevisan.boxon.exceptions.DataException;
-import io.github.mtrevisan.boxon.helpers.ContextHelper;
-import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.FieldAccessor;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
 
@@ -37,8 +35,6 @@ import java.lang.reflect.Field;
 
 
 final class ParserContext<T>{
-
-	private final Evaluator evaluator;
 
 	private Object rootObject;
 	private T currentObject;
@@ -49,13 +45,11 @@ final class ParserContext<T>{
 	private Annotation binding;
 
 
-	ParserContext(final Evaluator evaluator, final T currentObject){
-		this(evaluator, currentObject, null);
+	ParserContext(final T currentObject){
+		this(currentObject, null);
 	}
 
-	ParserContext(final Evaluator evaluator, final T currentObject, final Object parentObject){
-		this.evaluator = evaluator;
-
+	ParserContext(final T currentObject, final Object parentObject){
 		this.currentObject = currentObject;
 		setRootObject(parentObject);
 	}
@@ -83,15 +77,6 @@ final class ParserContext<T>{
 	public void setFieldValue(final Field field, final Object value){
 		//NOTE: record classes must be created anew, therefore `currentObject` must be updated
 		currentObject = (T)FieldAccessor.setFieldValue(currentObject, field, value);
-	}
-
-	/**
-	 * Adds the current object to the evaluator context.
-	 * <p>The current object is added with the key "self" in the context.</p>
-	 * <p>It allows referencing the current object using SpEL expressions.</p>
-	 */
-	void addCurrentObjectToEvaluatorContext(){
-		evaluator.putToContext(ContextHelper.CONTEXT_SELF, currentObject);
 	}
 
 	String getClassName(){

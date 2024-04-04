@@ -38,7 +38,6 @@ import io.github.mtrevisan.boxon.exceptions.DataException;
 import io.github.mtrevisan.boxon.exceptions.EncodeException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.exceptions.ProtocolException;
-import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.FieldMapper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.BitWriter;
@@ -62,7 +61,6 @@ import static io.github.mtrevisan.boxon.core.helpers.configurations.Configuratio
 public final class Configurator{
 
 	private final ConfigurationParser configurationParser;
-	private final Evaluator evaluator;
 
 
 	/**
@@ -78,7 +76,6 @@ public final class Configurator{
 
 	private Configurator(final Core core){
 		configurationParser = core.getConfigurationParser();
-		evaluator = core.getEvaluator();
 	}
 
 
@@ -229,7 +226,7 @@ public final class Configurator{
 		try{
 			final ConfigurationMessage<?> configuration = configurationParser.getConfiguration(shortDescription);
 			final Object configurationData = ConfigurationParser.getConfigurationWithDefaults(configuration, data, protocol);
-			configurationParser.encode(configuration, writer, evaluator, configurationData, protocol);
+			configurationParser.encode(configuration, writer, configurationData, protocol);
 
 			return null;
 		}

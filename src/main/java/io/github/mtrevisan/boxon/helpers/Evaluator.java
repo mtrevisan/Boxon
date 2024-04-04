@@ -179,6 +179,18 @@ public final class Evaluator{
 		return context.getContext();
 	}
 
+
+	/**
+	 * Adds the current object to the evaluator context.
+	 * <p>The current object is added with the key "self" in the context.</p>
+	 * <p>It allows referencing the current object using SpEL expressions.</p>
+	 *
+	 * @param currentObject	The current object.
+	 */
+	public void addCurrentObjectToEvaluatorContext(final Object currentObject){
+		putToContext(ContextHelper.CONTEXT_SELF, currentObject);
+	}
+
 	/**
 	 * Evaluates an expression.
 	 *
