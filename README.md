@@ -147,7 +147,7 @@ You can get pre-built JARs (usable on JRE 11 or newer) from [Sonatype](https://o
     2. [Message composer](#example-composer)
 11. [Contributing](#contributing)
 12. [Changelog](#changelog)
-    1. [version 3.4.1](#changelog-3.4.1)
+    1. [version 3.5.0](#changelog-3.5.0)
     2. [version 3.4.0](#changelog-3.4.0)
     3. [version 3.3.0](#changelog-3.3.0)
     4. [version 3.2.0](#changelog-3.2.0)
@@ -1580,9 +1580,10 @@ Pull requests are welcomed.
 <a name="changelog"></a>
 ## Changelog
 
-<a name="changelog-3.4.1"></a>
-### version 3.4.1 - 202403??
+<a name="changelog-3.5.0"></a>
+### version 3.5.0 - 2024034?
 
+- Added condition on `Checksum` annotation.
 - Fixed a problem while converting a numeric string to number.
 - Make record classes work with annotations.
 - Slightly reduced memory footprint.
