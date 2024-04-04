@@ -136,19 +136,24 @@ public final class LoaderConfiguration{
 		for(int i = 0; i < size; i ++){
 			final Class<?> type = annotatedClasses.get(i);
 
-			//for each extracted class, try to parse it, extracting all the information needed for the configuration of a message
-			final ConfigurationMessage<?> from = createConfiguration(type);
-			if(from.canBeCoded()){
-				//if the configuration is valid, add it to the list of configurations...
-				final ConfigurationHeader header = from.getHeader();
-				configurations.put(header.shortDescription(), from);
-			}
-			else
-				//... otherwise throw exception
-				throw ConfigurationException.create("Cannot create a configuration message from data: cannot scan configuration for {}",
-					type.getSimpleName());
+			extractConfigurationFromType(type, configurations);
 		}
 		return configurations;
+	}
+
+	private void extractConfigurationFromType(final Class<?> type, final Map<String, ConfigurationMessage<?>> configurations)
+			throws AnnotationException, ConfigurationException{
+		//for each extracted class, try to parse it, extracting all the information needed for the configuration of a message
+		final ConfigurationMessage<?> from = createConfiguration(type);
+		if(from.canBeCoded()){
+			//if the configuration is valid, add it to the list of configurations...
+			final ConfigurationHeader header = from.getHeader();
+			configurations.put(header.shortDescription(), from);
+		}
+		else
+			//... otherwise throw exception
+			throw ConfigurationException.create("Cannot create a configuration message from data: cannot scan configuration for {}",
+				type.getSimpleName());
 	}
 
 	/**
