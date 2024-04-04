@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.annotations.bindings.BindBitSet;
+import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
@@ -48,12 +49,11 @@ final class CodecBitSet implements CodecInterface<BindBitSet>{
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject) throws AnnotationException{
 		final BindBitSet binding = interpretBinding(annotation);
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator);
-		final int size = bindingData.evaluateSize(rootObject);
+		final int size = CodecHelper.evaluateSize(binding.size(), evaluator, rootObject);
 
 		final BitSet bitmap = reader.getBitSet(size);
 
-		return CodecHelper.convertValue(bindingData, rootObject, bitmap);
+		return convertValue(binding, rootObject, bitmap);
 	}
 
 	@Override
@@ -61,14 +61,37 @@ final class CodecBitSet implements CodecInterface<BindBitSet>{
 			throws AnnotationException{
 		final BindBitSet binding = interpretBinding(annotation);
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator);
-		final int size = bindingData.evaluateSize(rootObject);
-		bindingData.validate(value);
+		final int size = CodecHelper.evaluateSize(binding.size(), evaluator, rootObject);
+		CodecHelper.validate(value, binding.validator());
 
-		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter(rootObject);
+		final Class<? extends Converter<?, ?>> chosenConverter = getChosenConverter(binding, rootObject);
 		final BitSet bitmap = CodecHelper.converterEncode(chosenConverter, value);
 
 		writer.putBitSet(bitmap, size);
+	}
+
+
+	private <IN, OUT> OUT convertValue(final BindBitSet binding, final Object rootObject, final IN value){
+		final Class<? extends Converter<?, ?>> converterType = getChosenConverter(binding, rootObject);
+		final OUT convertedValue = CodecHelper.converterDecode(converterType, value);
+		CodecHelper.validate(convertedValue, binding.validator());
+		return convertedValue;
+	}
+
+	/**
+	 * Get the first converter that matches the condition.
+	 *
+	 * @return	The converter class.
+	 */
+	private Class<? extends Converter<?, ?>> getChosenConverter(final BindBitSet binding, final Object rootObject){
+		final ConverterChoices.ConverterChoice[] alternatives = binding.selectConverterFrom().alternatives();
+		for(int i = 0, length = alternatives.length; i < length; i ++){
+			final ConverterChoices.ConverterChoice alternative = alternatives[i];
+
+			if(evaluator.evaluateBoolean(alternative.condition(), rootObject))
+				return alternative.converter();
+		}
+		return binding.converter();
 	}
 
 }

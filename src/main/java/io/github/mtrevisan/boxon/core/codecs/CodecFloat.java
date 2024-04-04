@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.annotations.bindings.BindFloat;
+import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.Injected;
@@ -48,21 +49,43 @@ final class CodecFloat implements CodecInterface<BindFloat>{
 
 		final float value = reader.getFloat(binding.byteOrder());
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator);
-		return CodecHelper.convertValue(bindingData, rootObject, value);
+		return convertValue(binding, rootObject, value);
 	}
 
 	@Override
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object rootObject, final Object value){
 		final BindFloat binding = interpretBinding(annotation);
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator);
-		bindingData.validate(value);
+		CodecHelper.validate(value, binding.validator());
 
-		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter(rootObject);
+		final Class<? extends Converter<?, ?>> chosenConverter = getChosenConverter(binding, rootObject);
 		final float v = CodecHelper.converterEncode(chosenConverter, value);
 
 		writer.putFloat(v, binding.byteOrder());
+	}
+
+
+	private <IN, OUT> OUT convertValue(final BindFloat binding, final Object rootObject, final IN value){
+		final Class<? extends Converter<?, ?>> converterType = getChosenConverter(binding, rootObject);
+		final OUT convertedValue = CodecHelper.converterDecode(converterType, value);
+		CodecHelper.validate(convertedValue, binding.validator());
+		return convertedValue;
+	}
+
+	/**
+	 * Get the first converter that matches the condition.
+	 *
+	 * @return	The converter class.
+	 */
+	private Class<? extends Converter<?, ?>> getChosenConverter(final BindFloat binding, final Object rootObject){
+		final ConverterChoices.ConverterChoice[] alternatives = binding.selectConverterFrom().alternatives();
+		for(int i = 0, length = alternatives.length; i < length; i ++){
+			final ConverterChoices.ConverterChoice alternative = alternatives[i];
+
+			if(evaluator.evaluateBoolean(alternative.condition(), rootObject))
+				return alternative.converter();
+		}
+		return binding.converter();
 	}
 
 }

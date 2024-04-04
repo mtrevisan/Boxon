@@ -25,6 +25,7 @@
 package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
+import io.github.mtrevisan.boxon.annotations.bindings.ConverterChoices;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.helpers.CharsetHelper;
@@ -49,13 +50,11 @@ final class CodecString implements CodecInterface<BindString>{
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject) throws AnnotationException{
 		final BindString binding = interpretBinding(annotation);
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator);
-
-		final int size = bindingData.evaluateSize(rootObject);
+		final int size = CodecHelper.evaluateSize(binding.size(), evaluator, rootObject);
 		final Charset charset = CharsetHelper.lookup(binding.charset());
 		final String text = reader.getText(size, charset);
 
-		return CodecHelper.convertValue(bindingData, rootObject, text);
+		return convertValue(binding, rootObject, text);
 	}
 
 	@Override
@@ -63,15 +62,38 @@ final class CodecString implements CodecInterface<BindString>{
 			throws AnnotationException{
 		final BindString binding = interpretBinding(annotation);
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator);
-		bindingData.validate(value);
+		CodecHelper.validate(value, binding.validator());
 
-		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter(rootObject);
+		final Class<? extends Converter<?, ?>> chosenConverter = getChosenConverter(binding, rootObject);
 		final String text = CodecHelper.converterEncode(chosenConverter, value);
 
-		final int size = bindingData.evaluateSize(rootObject);
+		final int size = CodecHelper.evaluateSize(binding.size(), evaluator, rootObject);
 		final Charset charset = CharsetHelper.lookup(binding.charset());
 		writer.putText(text.substring(0, Math.min(text.length(), size)), charset);
+	}
+
+
+	private <IN, OUT> OUT convertValue(final BindString binding, final Object rootObject, final IN value){
+		final Class<? extends Converter<?, ?>> converterType = getChosenConverter(binding, rootObject);
+		final OUT convertedValue = CodecHelper.converterDecode(converterType, value);
+		CodecHelper.validate(convertedValue, binding.validator());
+		return convertedValue;
+	}
+
+	/**
+	 * Get the first converter that matches the condition.
+	 *
+	 * @return	The converter class.
+	 */
+	private Class<? extends Converter<?, ?>> getChosenConverter(final BindString binding, final Object rootObject){
+		final ConverterChoices.ConverterChoice[] alternatives = binding.selectConverterFrom().alternatives();
+		for(int i = 0, length = alternatives.length; i < length; i ++){
+			final ConverterChoices.ConverterChoice alternative = alternatives[i];
+
+			if(evaluator.evaluateBoolean(alternative.condition(), rootObject))
+				return alternative.converter();
+		}
+		return binding.converter();
 	}
 
 }
