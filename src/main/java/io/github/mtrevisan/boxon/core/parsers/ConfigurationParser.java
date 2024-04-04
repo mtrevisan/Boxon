@@ -174,7 +174,8 @@ public final class ConfigurationParser{
 		for(int i = 0, length = fields.size(); i < length; i ++){
 			final ConfigurationField field = fields.get(i);
 
-			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(field.getBinding());
+			final Annotation binding = field.getBinding();
+			final ConfigurationManagerInterface manager = ConfigurationManagerFactory.buildManager(binding);
 			final Annotation annotation = manager.annotationToBeProcessed(protocol);
 			if(annotation.annotationType() == Annotation.class)
 				continue;
@@ -190,8 +191,8 @@ public final class ConfigurationParser{
 			parserContext.setField(field);
 			parserContext.setBinding(annotation);
 			parserWriterHelper.encodeField(parserContext, writer, loaderCodec);
-			if(annotation != field.getBinding()){
-				parserContext.setBinding(field.getBinding());
+			if(annotation != binding){
+				parserContext.setBinding(binding);
 				parserWriterHelper.encodeField(parserContext, writer, loaderCodec);
 			}
 		}

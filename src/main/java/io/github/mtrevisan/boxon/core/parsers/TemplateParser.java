@@ -227,24 +227,25 @@ public class TemplateParser implements TemplateParserInterface{
 
 	private <T> void decodeMessageFields(final Template<T> template, final BitReaderInterface reader, final ParserContext<T> parserContext)
 			throws FieldException{
+		final Object rootObject = parserContext.getRootObject();
+
 		final List<TemplateField> fields = template.getTemplateFields();
 		for(int i = 0, length = fields.size(); i < length; i ++){
 			final TemplateField field = fields.get(i);
 
 			//process skip annotations:
 			final Skip[] skips = field.getSkips();
-			readSkips(skips, reader, parserContext);
+			readSkips(skips, reader, rootObject);
 
 			//check if field has to be processed...
-			final boolean shouldProcessField = shouldProcessField(field.getCondition(), parserContext.getRootObject());
+			final boolean shouldProcessField = shouldProcessField(field.getCondition(), rootObject);
 			if(shouldProcessField)
 				//... and if so, process it
 				decodeField(template, reader, parserContext, field);
 		}
 	}
 
-	private <T> void readSkips(final Skip[] skips, final BitReaderInterface reader, final ParserContext<T> parserContext){
-		final Object rootObject = parserContext.getRootObject();
+	private void readSkips(final Skip[] skips, final BitReaderInterface reader, final Object rootObject){
 		for(int i = 0, length = skips.length; i < length; i ++)
 			readSkip(skips[i], reader, rootObject);
 	}
@@ -279,8 +280,6 @@ public class TemplateParser implements TemplateParserInterface{
 		eventListener.readingField(template.toString(), field.getFieldName(), annotationType.getSimpleName());
 
 		try{
-			//FIXME inject evaluator here?
-
 			//decode value from raw message
 			final Object value = codec.decode(reader, binding, parserContext.getRootObject());
 			//store value in the current object
@@ -344,17 +343,19 @@ public class TemplateParser implements TemplateParserInterface{
 	}
 
 	private void processEvaluatedFields(final Template<?> template, final ParserContext<?> parserContext){
+		final Object rootObject = parserContext.getRootObject();
 		final List<EvaluatedField<Evaluate>> evaluatedFields = template.getEvaluatedFields();
 		for(int i = 0, length = evaluatedFields.size(); i < length; i ++){
 			final EvaluatedField<Evaluate> field = evaluatedFields.get(i);
 
-			final boolean process = evaluator.evaluateBoolean(field.getBinding().condition(), parserContext.getRootObject());
+			final Evaluate binding = field.getBinding();
+			final boolean process = evaluator.evaluateBoolean(binding.condition(), rootObject);
 			if(!process)
 				continue;
 
 			eventListener.evaluatingField(template.getType().getName(), field.getFieldName());
 
-			final Object value = evaluator.evaluate(field.getBinding().value(), parserContext.getRootObject(), field.getFieldType());
+			final Object value = evaluator.evaluate(binding.value(), rootObject, field.getFieldType());
 			parserContext.setFieldValue(field.getField(), value);
 
 			eventListener.evaluatedField(template.getType().getName(), field.getFieldName(), value);
@@ -379,6 +380,8 @@ public class TemplateParser implements TemplateParserInterface{
 
 		preProcessFields(template, parserContext);
 
+		final Object rootObject = parserContext.getRootObject();
+
 		//encode message fields:
 		final List<TemplateField> fields = template.getTemplateFields();
 		for(int i = 0, length = fields.size(); i < length; i ++){
@@ -386,10 +389,10 @@ public class TemplateParser implements TemplateParserInterface{
 
 			//process skip annotations:
 			final Skip[] skips = field.getSkips();
-			writeSkips(skips, writer, parserContext);
+			writeSkips(skips, writer, rootObject);
 
 			//check if field has to be processed...
-			final boolean shouldProcessField = shouldProcessField(field.getCondition(), parserContext.getRootObject());
+			final boolean shouldProcessField = shouldProcessField(field.getCondition(), rootObject);
 			if(shouldProcessField){
 				//... and if so, process it
 				parserContext.setField(field);
@@ -447,8 +450,7 @@ public class TemplateParser implements TemplateParserInterface{
 		return (condition != null && (condition.isEmpty() || evaluator.evaluateBoolean(condition, rootObject)));
 	}
 
-	private <T> void writeSkips(final Skip[] skips, final BitWriterInterface writer, final ParserContext<T> parserContext){
-		final Object rootObject = parserContext.getRootObject();
+	private <T> void writeSkips(final Skip[] skips, final BitWriterInterface writer, final Object rootObject){
 		for(int i = 0, length = skips.length; i < length; i ++)
 			writeSkip(skips[i], writer, rootObject);
 	}
