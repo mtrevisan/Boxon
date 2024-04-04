@@ -36,12 +36,15 @@ import io.github.mtrevisan.boxon.helpers.BitSetHelper;
 import io.github.mtrevisan.boxon.helpers.ConstructorHelper;
 import io.github.mtrevisan.boxon.helpers.ContextHelper;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
+import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
+import io.github.mtrevisan.boxon.io.ByteOrder;
 import io.github.mtrevisan.boxon.io.ParserDataType;
 import org.springframework.expression.EvaluationException;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
+import java.math.BigInteger;
 import java.util.BitSet;
 
 
@@ -113,6 +116,15 @@ final class CodecHelper{
 		return (choice.annotationType() == Annotation.class);
 	}
 
+	/**
+	 * Whether the select-object-from binding has any alternatives.
+	 *
+	 * @return	Whether the select-object-from binding has any alternatives.
+	 */
+	static <T> boolean hasSelectAlternatives(final T[] alternatives){
+		return (Array.getLength(alternatives) > 0);
+	}
+
 	static ObjectChoices.ObjectChoice chooseAlternative(final ObjectChoices.ObjectChoice[] alternatives, final Evaluator evaluator,
 			final Object rootObject){
 		for(int i = 0, length = alternatives.length; i < length; i ++){
@@ -137,6 +149,7 @@ final class CodecHelper{
 		throw CodecException.create("Cannot find a valid codec for type {}", type.getSimpleName());
 	}
 
+
 	static void writeHeader(final BitWriterInterface writer, final ObjectChoices.ObjectChoice chosenAlternative,
 			final ObjectChoices selectFrom, final Evaluator evaluator, final Object rootObject){
 		//if chosenAlternative.condition() contains '#prefix', then write @ObjectChoice.prefix()
@@ -151,6 +164,22 @@ final class CodecHelper{
 
 				writer.putBitSet(bitmap, prefixSize);
 			}
+		}
+	}
+
+	/**
+	 * Add the prefix to the evaluator context if needed.
+	 *
+	 * @param reader	The reader from which to read the prefix.
+	 */
+	static void addPrefixToContext(final BitReaderInterface reader, final ObjectChoices objectChoices, final Evaluator evaluator){
+		final byte prefixSize = objectChoices.prefixLength();
+		if(prefixSize > 0){
+			final BitSet bitmap = reader.getBitSet(prefixSize);
+			final ByteOrder byteOrder = objectChoices.byteOrder();
+			final BigInteger prefix = BitSetHelper.toObjectiveType(bitmap, prefixSize, byteOrder);
+
+			evaluator.putToContext(ContextHelper.CONTEXT_CHOICE_PREFIX, prefix);
 		}
 	}
 

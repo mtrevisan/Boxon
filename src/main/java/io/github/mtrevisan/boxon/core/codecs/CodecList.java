@@ -129,14 +129,15 @@ final class CodecList implements CodecInterface<BindList>{
 	 * @return	The class type of the chosen alternative.
 	 */
 	Class<?> chooseAlternativeSeparatedType(final BitReaderInterface reader, final BindList binding, final Object rootObject){
-		if(!hasSelectSeparatedAlternatives(binding))
+		final ObjectChoicesList objectChoicesList = binding.selectFrom();
+		final ObjectChoicesList.ObjectChoiceList[] alternatives = objectChoicesList.alternatives();
+		if(!CodecHelper.hasSelectAlternatives((alternatives)))
 			return binding.type();
 
-		final boolean hasHeader = addListHeaderToContext(reader, binding);
+		final boolean hasHeader = addListHeaderToContext(reader, objectChoicesList);
 		if(!hasHeader)
 			return null;
 
-		final ObjectChoicesList.ObjectChoiceList[] alternatives = binding.selectFrom().alternatives();
 		final ObjectChoicesList.ObjectChoiceList chosenAlternative = chooseAlternative(alternatives, rootObject);
 		final Class<?> chosenAlternativeType = (!CodecHelper.isEmptyChoice(chosenAlternative)
 			? chosenAlternative.type()
@@ -146,30 +147,21 @@ final class CodecList implements CodecInterface<BindList>{
 	}
 
 	/**
-	 * Whether the select-object-separated-from binding has any alternatives.
-	 *
-	 * @return	Whether the select-object-separated-from binding has any alternatives.
-	 */
-	private boolean hasSelectSeparatedAlternatives(final BindList binding){
-		return (binding.selectFrom().alternatives().length > 0);
-	}
-
-	/**
 	 * Add the prefix to the evaluator context if needed.
 	 *
 	 * @param reader	The reader from which to read the header.
 	 * @return	Whether a prefix was retrieved.
 	 */
-	private boolean addListHeaderToContext(final BitReaderInterface reader, final BindList binding){
-		final byte terminator = binding.selectFrom().terminator();
-		final Charset charset = CharsetHelper.lookup(binding.selectFrom().charset());
+	private boolean addListHeaderToContext(final BitReaderInterface reader, final ObjectChoicesList objectChoicesList){
+		final byte terminator = objectChoicesList.terminator();
+		final Charset charset = CharsetHelper.lookup(objectChoicesList.charset());
 		final String prefix = reader.getTextUntilTerminatorWithoutConsuming(terminator, charset);
 		evaluator.putToContext(ContextHelper.CONTEXT_CHOICE_PREFIX, prefix);
 		return !prefix.isEmpty();
 	}
 
 	private ObjectChoicesList.ObjectChoiceList chooseAlternative(final ObjectChoicesList.ObjectChoiceList[] alternatives,
-		final Object rootObject){
+			final Object rootObject){
 		for(int i = 0, length = alternatives.length; i < length; i ++){
 			final ObjectChoicesList.ObjectChoiceList alternative = alternatives[i];
 

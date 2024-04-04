@@ -32,18 +32,13 @@ import io.github.mtrevisan.boxon.annotations.validators.Validator;
 import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
-import io.github.mtrevisan.boxon.helpers.BitSetHelper;
-import io.github.mtrevisan.boxon.helpers.ContextHelper;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.Injected;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
-import io.github.mtrevisan.boxon.io.ByteOrder;
 import io.github.mtrevisan.boxon.io.CodecInterface;
 
 import java.lang.annotation.Annotation;
-import java.math.BigInteger;
-import java.util.BitSet;
 
 
 final class CodecObject implements CodecInterface<BindObject>{
@@ -79,14 +74,15 @@ final class CodecObject implements CodecInterface<BindObject>{
 
 		CodecHelper.validate(value, binding.validator());
 
+		final ObjectChoices objectChoices = binding.selectFrom();
+		final ObjectChoices.ObjectChoice[] alternatives = objectChoices.alternatives();
 		Class<?> type = binding.type();
-		if(hasSelectAlternatives(binding)){
-			final ObjectChoices selectFrom = binding.selectFrom();
+		if(CodecHelper.hasSelectAlternatives(alternatives)){
 			type = value.getClass();
 
-			final ObjectChoices.ObjectChoice chosenAlternative = CodecHelper.chooseAlternative(selectFrom.alternatives(), type);
+			final ObjectChoices.ObjectChoice chosenAlternative = CodecHelper.chooseAlternative(objectChoices.alternatives(), type);
 
-			CodecHelper.writeHeader(writer, chosenAlternative, selectFrom, evaluator, rootObject);
+			CodecHelper.writeHeader(writer, chosenAlternative, objectChoices, evaluator, rootObject);
 		}
 
 		evaluator.addCurrentObjectToEvaluatorContext(value);
@@ -111,13 +107,14 @@ final class CodecObject implements CodecInterface<BindObject>{
 	 * @throws CodecException   If a codec cannot be found for the chosen alternative.
 	 */
 	private Class<?> chooseAlternativeType(final BitReaderInterface reader, final BindObject binding, final Object rootObject)
-		throws CodecException{
-		if(!hasSelectAlternatives(binding))
+			throws CodecException{
+		final ObjectChoices objectChoices = binding.selectFrom();
+		final ObjectChoices.ObjectChoice[] alternatives = objectChoices.alternatives();
+		if(!CodecHelper.hasSelectAlternatives(alternatives))
 			return binding.type();
 
-		addPrefixToContext(reader, binding);
+		CodecHelper.addPrefixToContext(reader, objectChoices, evaluator);
 
-		final ObjectChoices.ObjectChoice[] alternatives = binding.selectFrom().alternatives();
 		final ObjectChoices.ObjectChoice chosenAlternative = CodecHelper.chooseAlternative(alternatives, evaluator, rootObject);
 		final Class<?> chosenAlternativeType = (!CodecHelper.isEmptyChoice(chosenAlternative)
 			? chosenAlternative.type()
@@ -128,31 +125,6 @@ final class CodecObject implements CodecInterface<BindObject>{
 				rootObject.getClass().getSimpleName());
 
 		return chosenAlternativeType;
-	}
-
-	/**
-	 * Whether the select-object-from binding has any alternatives.
-	 *
-	 * @return	Whether the select-object-from binding has any alternatives.
-	 */
-	private static boolean hasSelectAlternatives(final BindObject binding){
-		return (binding.selectFrom().alternatives().length > 0);
-	}
-
-	/**
-	 * Add the prefix to the evaluator context if needed.
-	 *
-	 * @param reader	The reader from which to read the prefix.
-	 */
-	private void addPrefixToContext(final BitReaderInterface reader, final BindObject binding){
-		final byte prefixSize = binding.selectFrom().prefixLength();
-		if(prefixSize > 0){
-			final BitSet bitmap = reader.getBitSet(prefixSize);
-			final ByteOrder byteOrder = binding.selectFrom().byteOrder();
-			final BigInteger prefix = BitSetHelper.toObjectiveType(bitmap, prefixSize, byteOrder);
-
-			evaluator.putToContext(ContextHelper.CONTEXT_CHOICE_PREFIX, prefix);
-		}
 	}
 
 }

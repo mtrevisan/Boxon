@@ -33,20 +33,15 @@ import io.github.mtrevisan.boxon.core.helpers.templates.Template;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
-import io.github.mtrevisan.boxon.helpers.BitSetHelper;
-import io.github.mtrevisan.boxon.helpers.ContextHelper;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
 import io.github.mtrevisan.boxon.helpers.Injected;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
-import io.github.mtrevisan.boxon.io.ByteOrder;
 import io.github.mtrevisan.boxon.io.CodecInterface;
 import io.github.mtrevisan.boxon.io.ParserDataType;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
-import java.math.BigInteger;
-import java.util.BitSet;
 
 
 final class CodecArray implements CodecInterface<BindArray>{
@@ -67,7 +62,8 @@ final class CodecArray implements CodecInterface<BindArray>{
 
 		final Class<?> bindingType = binding.type();
 		final Object[] array = createArray(bindingType, size);
-		if(hasSelectAlternatives(binding))
+		final ObjectChoices objectChoices = binding.selectFrom();
+		if(CodecHelper.hasSelectAlternatives(objectChoices.alternatives()))
 			decodeWithAlternatives(reader, array, binding, rootObject);
 		else
 			decodeWithoutAlternatives(reader, array, bindingType);
@@ -121,8 +117,9 @@ final class CodecArray implements CodecInterface<BindArray>{
 		final int size = CodecHelper.evaluateSize(binding.size(), evaluator, rootObject);
 		CodecHelper.assertSizeEquals(size, Array.getLength(array));
 
-		if(hasSelectAlternatives(binding))
-			encodeWithAlternatives(writer, array, binding.selectFrom(), rootObject);
+		final ObjectChoices objectChoices = binding.selectFrom();
+		if(CodecHelper.hasSelectAlternatives(objectChoices.alternatives()))
+			encodeWithAlternatives(writer, array, objectChoices, rootObject);
 		else
 			encodeWithoutAlternatives(writer, array, binding.type());
 	}
@@ -161,12 +158,13 @@ final class CodecArray implements CodecInterface<BindArray>{
 	 */
 	private Class<?> chooseAlternativeType(final BitReaderInterface reader, final BindArray binding, final Object rootObject)
 			throws CodecException{
-		if(!hasSelectAlternatives(binding))
+		final ObjectChoices objectChoices = binding.selectFrom();
+		final ObjectChoices.ObjectChoice[] alternatives = objectChoices.alternatives();
+		if(!CodecHelper.hasSelectAlternatives(alternatives))
 			return binding.type();
 
-		addPrefixToContext(reader, binding);
+		CodecHelper.addPrefixToContext(reader, objectChoices, evaluator);
 
-		final ObjectChoices.ObjectChoice[] alternatives = binding.selectFrom().alternatives();
 		final ObjectChoices.ObjectChoice chosenAlternative = CodecHelper.chooseAlternative(alternatives, evaluator, rootObject);
 		final Class<?> chosenAlternativeType = (!CodecHelper.isEmptyChoice(chosenAlternative)
 			? chosenAlternative.type()
@@ -177,31 +175,6 @@ final class CodecArray implements CodecInterface<BindArray>{
 				rootObject.getClass().getSimpleName());
 
 		return chosenAlternativeType;
-	}
-
-	/**
-	 * Whether the select-object-from binding has any alternatives.
-	 *
-	 * @return	Whether the select-object-from binding has any alternatives.
-	 */
-	private static boolean hasSelectAlternatives(final BindArray binding){
-		return (binding.selectFrom().alternatives().length > 0);
-	}
-
-	/**
-	 * Add the prefix to the evaluator context if needed.
-	 *
-	 * @param reader	The reader from which to read the prefix.
-	 */
-	private void addPrefixToContext(final BitReaderInterface reader, final BindArray binding){
-		final byte prefixSize = binding.selectFrom().prefixLength();
-		if(prefixSize > 0){
-			final BitSet bitmap = reader.getBitSet(prefixSize);
-			final ByteOrder byteOrder = binding.selectFrom().byteOrder();
-			final BigInteger prefix = BitSetHelper.toObjectiveType(bitmap, prefixSize, byteOrder);
-
-			evaluator.putToContext(ContextHelper.CONTEXT_CHOICE_PREFIX, prefix);
-		}
 	}
 
 }
