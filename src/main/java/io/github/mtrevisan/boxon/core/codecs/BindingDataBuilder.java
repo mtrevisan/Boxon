@@ -126,14 +126,13 @@ final class BindingDataBuilder{
 	 * Create a binding data structure for the {@link BindByte} annotation.
 	 *
 	 * @param annotation The annotation.
-	 * @param evaluator  The evaluator.
 	 * @return The instance.
 	 */
-	static BindingData create(final BindByte annotation, final Evaluator evaluator){
+	static BindingData create(final BindByte annotation){
 		final ConverterChoices selectConverterFrom = annotation.selectConverterFrom();
 		final Class<? extends Validator<?>> validator = annotation.validator();
 		final Class<? extends Converter<?, ?>> converter = annotation.converter();
-		return new BindingData(selectConverterFrom, validator, converter, evaluator);
+		return new BindingData(selectConverterFrom, validator, converter, null);
 	}
 
 	/**

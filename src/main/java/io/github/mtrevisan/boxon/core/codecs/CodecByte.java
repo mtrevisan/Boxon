@@ -26,8 +26,6 @@ package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.annotations.bindings.BindByte;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
-import io.github.mtrevisan.boxon.helpers.Evaluator;
-import io.github.mtrevisan.boxon.helpers.Injected;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.io.CodecInterface;
@@ -37,18 +35,13 @@ import java.lang.annotation.Annotation;
 
 final class CodecByte implements CodecInterface<BindByte>{
 
-	@SuppressWarnings("unused")
-	@Injected
-	private Evaluator evaluator;
-
-
 	@Override
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject){
 		final BindByte binding = extractBinding(annotation);
 
 		final byte value = reader.getByte();
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator);
+		final BindingData bindingData = BindingDataBuilder.create(binding);
 		return CodecHelper.convertValue(bindingData, rootObject, value);
 	}
 
@@ -56,7 +49,7 @@ final class CodecByte implements CodecInterface<BindByte>{
 	public void encode(final BitWriterInterface writer, final Annotation annotation, final Object rootObject, final Object value){
 		final BindByte binding = extractBinding(annotation);
 
-		final BindingData bindingData = BindingDataBuilder.create(binding, evaluator);
+		final BindingData bindingData = BindingDataBuilder.create(binding);
 		bindingData.validate(value);
 
 		final Class<? extends Converter<?, ?>> chosenConverter = bindingData.getChosenConverter(rootObject);
