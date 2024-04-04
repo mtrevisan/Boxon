@@ -32,7 +32,6 @@ import io.github.mtrevisan.boxon.core.parsers.matchers.PatternMatcher;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.helpers.CharsetHelper;
-import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.Memoizer;
 import io.github.mtrevisan.boxon.helpers.ReflectiveClassLoader;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
@@ -97,7 +96,8 @@ public final class LoaderTemplate{
 	 * @return	This instance, used for chaining.
 	 */
 	LoaderTemplate withEventListener(final EventListener eventListener){
-		this.eventListener = JavaHelper.nonNullOrDefault(eventListener, EventListener.getNoOpInstance());
+		if(eventListener != null)
+			this.eventListener = eventListener;
 
 		return this;
 	}
@@ -152,13 +152,14 @@ public final class LoaderTemplate{
 		for(int i = 0; i < size; i ++){
 			final Class<?> type = annotatedClasses.get(i);
 
-			createAndAddTemplate(type, templates);
+			final Template<?> from = createTemplate(type);
+			addCodedTemplate(from, type, templates);
 		}
 		return templates;
 	}
 
-	private void createAndAddTemplate(final Class<?> type, final List<Template<?>> templates) throws AnnotationException, TemplateException{
-		final Template<?> from = createTemplate(type);
+	private void addCodedTemplate(final Template<?> from, final Class<?> type, final List<Template<?>> templates)
+			throws TemplateException{
 		if(from.canBeCoded())
 			//if the template is valid, add it to the list of templates...
 			templates.add(from);

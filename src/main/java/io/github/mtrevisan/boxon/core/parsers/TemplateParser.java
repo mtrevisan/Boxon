@@ -43,7 +43,6 @@ import io.github.mtrevisan.boxon.exceptions.TemplateException;
 import io.github.mtrevisan.boxon.helpers.CharsetHelper;
 import io.github.mtrevisan.boxon.helpers.ConstructorHelper;
 import io.github.mtrevisan.boxon.helpers.Evaluator;
-import io.github.mtrevisan.boxon.helpers.JavaHelper;
 import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
@@ -61,11 +60,12 @@ import java.util.function.Function;
 /**
  * Declarative data binding parser for message templates.
  */
-public final class TemplateParser implements TemplateParserInterface{
+public class TemplateParser implements TemplateParserInterface{
 
-	private final TemplateParserCore core;
+	private final LoaderCodecInterface loaderCodec;
 	private final Evaluator evaluator;
 
+	protected final LoaderTemplate loaderTemplate;
 	private final ParserWriterHelper parserWriterHelper;
 
 	private EventListener eventListener;
@@ -82,14 +82,14 @@ public final class TemplateParser implements TemplateParserInterface{
 		return new TemplateParser(loaderCodec, evaluator);
 	}
 
-
 	private TemplateParser(final LoaderCodecInterface loaderCodec, final Evaluator evaluator){
-		core = TemplateParserCore.create(loaderCodec);
+		this.loaderCodec = loaderCodec;
 		this.evaluator = evaluator;
 
+		loaderTemplate = LoaderTemplate.create(loaderCodec);
 		parserWriterHelper = ParserWriterHelper.create();
 
-		eventListener = EventListener.getNoOpInstance();
+		withEventListener(EventListener.getNoOpInstance());
 	}
 
 
@@ -100,14 +100,15 @@ public final class TemplateParser implements TemplateParserInterface{
 	 * @return	This instance, used for chaining.
 	 */
 	public TemplateParser withEventListener(final EventListener eventListener){
-		this.eventListener = JavaHelper.nonNullOrDefault(eventListener, EventListener.getNoOpInstance());
+		if(eventListener != null){
+			this.eventListener = eventListener;
 
-		core.withEventListener(eventListener);
-		parserWriterHelper.withEventListener(eventListener);
+			loaderTemplate.withEventListener(eventListener);
+			parserWriterHelper.withEventListener(eventListener);
+		}
 
 		return this;
 	}
-
 
 	/**
 	 * Loads all the protocol classes annotated with {@link TemplateHeader}.
@@ -118,7 +119,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	 * @throws TemplateException	If a template is not well formatted.
 	 */
 	public TemplateParser withTemplatesFrom(final Class<?>... basePackageClasses) throws AnnotationException, TemplateException{
-		core.loadTemplatesFrom(basePackageClasses);
+		loaderTemplate.loadTemplatesFrom(basePackageClasses);
 
 		return this;
 	}
@@ -132,7 +133,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	 * @throws TemplateException	If the template is not well formatted.
 	 */
 	public TemplateParser withTemplate(final Class<?> templateClass) throws AnnotationException, TemplateException{
-		core.loadTemplate(templateClass);
+		loaderTemplate.loadTemplate(templateClass);
 
 		return this;
 	}
@@ -148,7 +149,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	 */
 	@Override
 	public <T> Template<T> createTemplate(final Class<T> type) throws AnnotationException{
-		return core.createTemplate(type);
+		return loaderTemplate.createTemplate(type);
 	}
 
 	/**
@@ -156,11 +157,9 @@ public final class TemplateParser implements TemplateParserInterface{
 	 *
 	 * @param reader	The reader from which to read the header from.
 	 * @return	The template that is able to decode/encode the next message in the given reader.
-	 * @throws TemplateException	Whether the template is not valid.
 	 */
 	public Template<?> getTemplate(final BitReaderInterface reader) throws TemplateException{
-		return core.getLoaderTemplate()
-			.getTemplate(reader);
+		return loaderTemplate.getTemplate(reader);
 	}
 
 	/**
@@ -168,11 +167,9 @@ public final class TemplateParser implements TemplateParserInterface{
 	 *
 	 * @param type	The class to retrieve the template.
 	 * @return	The template that is able to decode/encode the given class.
-	 * @throws TemplateException	Whether the template is not valid.
 	 */
 	public Template<?> getTemplate(final Class<?> type) throws TemplateException{
-		return core.getLoaderTemplate()
-			.getTemplate(type);
+		return loaderTemplate.getTemplate(type);
 	}
 
 	/**
@@ -182,8 +179,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	 * @return	The index of the next message.
 	 */
 	public int findNextMessageIndex(final BitReaderInterface reader){
-		return core.getLoaderTemplate()
-			.findNextMessageIndex(reader);
+		return loaderTemplate.findNextMessageIndex(reader);
 	}
 
 
@@ -204,25 +200,10 @@ public final class TemplateParser implements TemplateParserInterface{
 		T currentObject = ConstructorHelper.getEmptyCreator(template.getType())
 			.get();
 
-		//FIXME is there a way to reduce the number of ParserContext objects?
-		final ParserContext<T> parserContext = new ParserContext<>(currentObject, parentObject);
-		evaluator.addCurrentObjectToEvaluatorContext(currentObject);
+		final ParserContext<T> parserContext = prepareParserContext(parentObject, currentObject);
 
 		//decode message fields:
-		final List<TemplateField> fields = template.getTemplateFields();
-		for(int i = 0, length = fields.size(); i < length; i ++){
-			final TemplateField field = fields.get(i);
-
-			//process skip annotations:
-			final Skip[] skips = field.getSkips();
-			readSkips(skips, reader, parserContext);
-
-			//check if field has to be processed...
-			final boolean shouldProcessField = shouldProcessField(field.getCondition(), parserContext.getRootObject());
-			if(shouldProcessField)
-				//... and if so, process it
-				decodeField(template, reader, parserContext, field);
-		}
+		decodeMessageFields(template, reader, parserContext);
 
 		processEvaluatedFields(template, parserContext);
 
@@ -236,35 +217,28 @@ public final class TemplateParser implements TemplateParserInterface{
 		return currentObject;
 	}
 
-	private <T> void decodeField(final Template<T> template, final BitReaderInterface reader, final ParserContext<T> parserContext,
-			final TemplateField field) throws FieldException{
-		final Annotation binding = field.getBinding();
-		final Class<? extends Annotation> annotationType = binding.annotationType();
-		final LoaderCodecInterface loaderCodec = core.getLoaderCodec();
-		final CodecInterface<?> codec = loaderCodec.getCodec(annotationType);
-		if(codec == null)
-			throw CodecException.create("Cannot find codec for binding {}", annotationType.getSimpleName())
-				.withClassNameAndFieldName(template.getType().getName(), field.getFieldName());
+	private <T> ParserContext<T> prepareParserContext(final Object parentObject, final T currentObject){
+		//FIXME is there a way to reduce the number of ParserContext objects?
+		final ParserContext<T> parserContext = new ParserContext<>(currentObject, parentObject);
+		evaluator.addCurrentObjectToEvaluatorContext(currentObject);
+		return parserContext;
+	}
 
-		eventListener.readingField(template.toString(), field.getFieldName(), annotationType.getSimpleName());
+	private <T> void decodeMessageFields(final Template<T> template, final BitReaderInterface reader, final ParserContext<T> parserContext)
+			throws FieldException{
+		final List<TemplateField> fields = template.getTemplateFields();
+		for(int i = 0, length = fields.size(); i < length; i ++){
+			final TemplateField field = fields.get(i);
 
-		try{
-			//FIXME inject evaluator here?
+			//process skip annotations:
+			final Skip[] skips = field.getSkips();
+			readSkips(skips, reader, parserContext);
 
-			//decode value from raw message
-			final Object value = codec.decode(reader, binding, parserContext.getRootObject());
-			//store value in the current object
-			parserContext.setFieldValue(field.getField(), value);
-
-			eventListener.readField(template.toString(), field.getFieldName(), value);
-		}
-		catch(final FieldException fe){
-			fe.withClassNameAndFieldName(template.getType().getName(), field.getFieldName());
-			throw fe;
-		}
-		catch(final Exception e){
-			throw FieldException.create(e)
-				.withClassNameAndFieldName(template.getType().getName(), field.getFieldName());
+			//check if field has to be processed...
+			final boolean shouldProcessField = shouldProcessField(field.getCondition(), parserContext.getRootObject());
+			if(shouldProcessField)
+				//... and if so, process it
+				decodeField(template, reader, parserContext, field);
 		}
 	}
 
@@ -289,6 +263,37 @@ public final class TemplateParser implements TemplateParserInterface{
 				final int length = ParserDataType.getSize(terminator);
 				reader.skip(length);
 			}
+		}
+	}
+
+	private <T> void decodeField(final Template<T> template, final BitReaderInterface reader, final ParserContext<T> parserContext,
+			final TemplateField field) throws FieldException{
+		final Annotation binding = field.getBinding();
+		final Class<? extends Annotation> annotationType = binding.annotationType();
+		final CodecInterface<?> codec = loaderCodec.getCodec(annotationType);
+		if(codec == null)
+			throw CodecException.create("Cannot find codec for binding {}", annotationType.getSimpleName())
+				.withClassNameAndFieldName(template.getType().getName(), field.getFieldName());
+
+		eventListener.readingField(template.toString(), field.getFieldName(), annotationType.getSimpleName());
+
+		try{
+			//FIXME inject evaluator here?
+
+			//decode value from raw message
+			final Object value = codec.decode(reader, binding, parserContext.getRootObject());
+			//store value in the current object
+			parserContext.setFieldValue(field.getField(), value);
+
+			eventListener.readField(template.toString(), field.getFieldName(), value);
+		}
+		catch(final FieldException fe){
+			fe.withClassNameAndFieldName(template.getType().getName(), field.getFieldName());
+			throw fe;
+		}
+		catch(final Exception e){
+			throw FieldException.create(e)
+				.withClassNameAndFieldName(template.getType().getName(), field.getFieldName());
 		}
 	}
 
@@ -368,15 +373,12 @@ public final class TemplateParser implements TemplateParserInterface{
 	@Override
 	public <T> void encode(final Template<?> template, final BitWriterInterface writer, final Object parentObject, final T currentObject)
 			throws FieldException{
-		//FIXME is there a way to reduce the number of ParserContext objects?
-		final ParserContext<T> parserContext = new ParserContext<>(currentObject, parentObject);
-		evaluator.addCurrentObjectToEvaluatorContext(currentObject);
+		final ParserContext<T> parserContext = prepareParserContext(parentObject, currentObject);
 		parserContext.setClassName(template.getType().getName());
 
 		preProcessFields(template, parserContext);
 
 		//encode message fields:
-		final LoaderCodecInterface loaderCodec = core.getLoaderCodec();
 		final List<TemplateField> fields = template.getTemplateFields();
 		for(int i = 0, length = fields.size(); i < length; i ++){
 			final TemplateField field = fields.get(i);
@@ -470,7 +472,7 @@ public final class TemplateParser implements TemplateParserInterface{
 	 * @return	The loader for the templates.
 	 */
 	public LoaderTemplate getLoaderTemplate(){
-		return core.getLoaderTemplate();
+		return loaderTemplate;
 	}
 
 }
