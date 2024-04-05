@@ -39,8 +39,8 @@ public final class CRC16CCITT implements Checksummer{
 	/** Starting value 0xFFFF. */
 	public static final short START_VALUE_0xFFFF = (short)0xFFFF;
 
-	/** CCITT polynomial: x^16 + x^12 + x^5 + 1 -> 1000000100001 = 0x1021. */
-	private static final int POLYNOMIAL_CCITT = 0x1021;
+	/** CCITT polynomial: x^16 + x^12 + x^5 + 1 -> 1_0000_0010_0001 = 0x1021. */
+	private static final int POLYNOMIAL = 0x0000_1021;
 
 
 	CRC16CCITT(){}
@@ -57,7 +57,7 @@ public final class CRC16CCITT implements Checksummer{
 				final boolean c15 = ((value & 0x8000) != 0);
 				value <<= 1;
 				if(c15 ^ bit)
-					value ^= POLYNOMIAL_CCITT;
+					value ^= POLYNOMIAL;
 			}
 		}
 		return value;

@@ -30,7 +30,7 @@ package io.github.mtrevisan.boxon.annotations.checksummers;
  *
  * @see <a href="https://en.wikipedia.org/wiki/BSD_checksum">BSD checksum</a>
  */
-public final class BSD16 extends BSD{
+public final class BSD16 implements Checksummer{
 
 	/** Starting value 0x0000. */
 	public static final int START_VALUE_0x0000 = 0x0000;
@@ -39,17 +39,13 @@ public final class BSD16 extends BSD{
 	private static final int MASK = (1 << Short.SIZE) - 1;
 
 
-	BSD16(){}
-
-
 	@Override
-	protected int getMask(){
-		return MASK;
-	}
-
-	@Override
-	protected int getLeftShift(){
-		return LEFT_SHIFT;
+	public short calculateChecksum(final byte[] data, final int start, final int end, final int startValue){
+		int checksum = startValue;
+		for(int i = Math.max(start, 0), length = Math.min(end, data.length); i < length; i ++)
+			//apply circular right shift and add new value
+			checksum = MASK & ((checksum >> 1) + ((checksum & 1) << LEFT_SHIFT) + (data[i] & 0xFF));
+		return (short)checksum;
 	}
 
 }

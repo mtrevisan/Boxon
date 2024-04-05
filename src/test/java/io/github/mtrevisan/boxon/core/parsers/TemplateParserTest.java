@@ -86,7 +86,7 @@ class TemplateParserTest{
 
 	@Test
 	void parseSingleMessageHexByteChecksum() throws NoSuchMethodException, FieldException{
-		byte[] payload = StringHelper.hexToByteArray("2d41434b066f2446010a0311235e40035110420600ffff07e304050836390012680d0a");
+		byte[] payload = StringHelper.hexToByteArray("2d41434b066f2446010a0311235e40035110420600ffff07e304050836390012ee7c0d0a");
 		BitReaderInterface reader = BitReader.wrap(payload);
 
 		LoaderCodec loaderCodec = LoaderCodec.create();

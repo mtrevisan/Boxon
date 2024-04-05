@@ -741,7 +741,7 @@ public Void lastUnreadPlaceholder;
 #### parameters
 
  - `condition`: The SpEL expression that determines if this field has to be read.
- - `type`: the Class of variable to be read.
+ - `type`: the class of variable to be read (that is, the amount of bytes to be read -- must match the output size of the checksum algorithm).
  - `byteOrder`: the byte order, `ByteOrder.BIG_ENDIAN` or `ByteOrder.LITTLE_ENDIAN` (used for primitives other than `byte`).
  - `skipStart`: how many bytes are to be skipped from the start of the message for the calculation of the checksum (defaults to 0).
  - `skipEnd`: how many bytes are to be skipped from the end of the message for the calculation of the checksum (default to 0).
