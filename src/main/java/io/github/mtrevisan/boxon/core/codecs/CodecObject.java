@@ -43,10 +43,8 @@ import java.lang.annotation.Annotation;
 
 final class CodecObject implements CodecInterface<BindObject>{
 
-	@SuppressWarnings("unused")
 	@Injected
 	private Evaluator evaluator;
-	@SuppressWarnings("unused")
 	@Injected
 	private TemplateParserInterface templateParser;
 

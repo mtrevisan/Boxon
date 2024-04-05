@@ -39,7 +39,6 @@ import java.lang.annotation.Annotation;
 
 final class CodecByte implements CodecInterface<BindByte>{
 
-	@SuppressWarnings("unused")
 	@Injected
 	private Evaluator evaluator;
 

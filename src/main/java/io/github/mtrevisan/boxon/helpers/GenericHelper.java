@@ -79,6 +79,7 @@ public final class GenericHelper{
 	 *
 	 * @see <a href="https://stackoverflow.com/questions/17297308/how-do-i-resolve-the-actual-type-for-a-generic-return-type-using-reflection">How do I resolve the actual type for a generic return type using reflection?</a>
 	 */
+	@SuppressWarnings("DataFlowIssue")
 	public static <T> List<Type> resolveGenericTypes(final Class<? extends T> offspring, final Class<T> base, final Type... actualArgs){
 		//initialize list to store resolved types
 		final List<Type> types = new ArrayList<>(0);

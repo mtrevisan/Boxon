@@ -42,7 +42,6 @@ import java.nio.charset.Charset;
 
 final class CodecStringTerminated implements CodecInterface<BindStringTerminated>{
 
-	@SuppressWarnings("unused")
 	@Injected
 	private Evaluator evaluator;
 

@@ -41,7 +41,6 @@ import java.util.BitSet;
 
 final class CodecBitSet implements CodecInterface<BindBitSet>{
 
-	@SuppressWarnings("unused")
 	@Injected
 	private Evaluator evaluator;
 
@@ -51,7 +50,6 @@ final class CodecBitSet implements CodecInterface<BindBitSet>{
 		final BindBitSet binding = interpretBinding(annotation);
 
 		final int size = CodecHelper.evaluateSize(binding.size(), evaluator, rootObject);
-
 		final BitSet bitmap = reader.getBitSet(size);
 
 		final ConverterChoices converterChoices = binding.selectConverterFrom();
@@ -65,9 +63,9 @@ final class CodecBitSet implements CodecInterface<BindBitSet>{
 			throws AnnotationException{
 		final BindBitSet binding = interpretBinding(annotation);
 
-		CodecHelper.validate(value, binding.validator());
-
 		final int size = CodecHelper.evaluateSize(binding.size(), evaluator, rootObject);
+
+		CodecHelper.validate(value, binding.validator());
 
 		final ConverterChoices converterChoices = binding.selectConverterFrom();
 		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();

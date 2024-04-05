@@ -65,7 +65,6 @@ import static io.github.mtrevisan.boxon.core.helpers.descriptors.AnnotationDescr
 /**
  * Declarative descriptor for binary encoded data.
  */
-@SuppressWarnings({"WeakerAccess", "unused"})
 public final class Descriptor{
 
 	private static final MessageExtractorBasicTemplate MESSAGE_EXTRACTOR_BASIC_TEMPLATE = new MessageExtractorBasicTemplate();

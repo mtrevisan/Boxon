@@ -46,10 +46,8 @@ import java.lang.reflect.Array;
 
 final class CodecArray implements CodecInterface<BindArray>{
 
-	@SuppressWarnings("unused")
 	@Injected
 	private Evaluator evaluator;
-	@SuppressWarnings("unused")
 	@Injected
 	private TemplateParserInterface templateParser;
 
@@ -106,6 +104,8 @@ final class CodecArray implements CodecInterface<BindArray>{
 			throws FieldException{
 		final BindArray binding = interpretBinding(annotation);
 
+		final int size = CodecHelper.evaluateSize(binding.size(), evaluator, rootObject);
+
 		CodecHelper.validate(value, binding.validator());
 
 		final ConverterChoices converterChoices = binding.selectConverterFrom();
@@ -114,7 +114,6 @@ final class CodecArray implements CodecInterface<BindArray>{
 			rootObject);
 		final Object[] array = CodecHelper.converterEncode(chosenConverter, value);
 
-		final int size = CodecHelper.evaluateSize(binding.size(), evaluator, rootObject);
 		CodecHelper.assertSizeEquals(size, Array.getLength(array));
 
 		final ObjectChoices objectChoices = binding.selectFrom();

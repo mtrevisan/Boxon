@@ -67,6 +67,7 @@ final class CodecHelper{
 	 * @throws DataException	If the value does not pass validation.
 	 */
 	static <T> void validate(final T value, final Class<? extends Validator<?>> validator){
+		@SuppressWarnings("unchecked")
 		final Validator<T> validatorCreator = (Validator<T>)ConstructorHelper.getEmptyCreator(validator)
 			.get();
 		if(!validatorCreator.isValid(value))

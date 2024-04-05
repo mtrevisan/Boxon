@@ -42,7 +42,6 @@ import java.nio.charset.Charset;
 
 final class CodecString implements CodecInterface<BindString>{
 
-	@SuppressWarnings("unused")
 	@Injected
 	private Evaluator evaluator;
 
@@ -66,6 +65,8 @@ final class CodecString implements CodecInterface<BindString>{
 			throws AnnotationException{
 		final BindString binding = interpretBinding(annotation);
 
+		final int size = CodecHelper.evaluateSize(binding.size(), evaluator, rootObject);
+
 		CodecHelper.validate(value, binding.validator());
 
 		final ConverterChoices converterChoices = binding.selectConverterFrom();
@@ -74,7 +75,6 @@ final class CodecString implements CodecInterface<BindString>{
 			rootObject);
 		final String text = CodecHelper.converterEncode(chosenConverter, value);
 
-		final int size = CodecHelper.evaluateSize(binding.size(), evaluator, rootObject);
 		final Charset charset = CharsetHelper.lookup(binding.charset());
 		writer.putText(text.substring(0, Math.min(text.length(), size)), charset);
 	}

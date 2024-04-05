@@ -161,7 +161,6 @@ class TemplateTest{
 	}
 
 	@Test
-	@SuppressWarnings("SimplifiableAssertion")
 	void creation() throws AnnotationException{
 		LoaderCodec loaderCodec = LoaderCodec.create();
 		loaderCodec.loadDefaultCodecs();

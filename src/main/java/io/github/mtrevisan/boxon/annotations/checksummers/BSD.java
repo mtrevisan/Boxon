@@ -26,7 +26,7 @@ package io.github.mtrevisan.boxon.annotations.checksummers;
 
 
 /**
- * Abstract class that calculates a 8- or 16-bit BSD checksum from a sequence of bytes.
+ * Abstract class that calculates an 8- or 16-bit BSD checksum from a sequence of bytes.
  */
 public abstract class BSD implements Checksummer{
 

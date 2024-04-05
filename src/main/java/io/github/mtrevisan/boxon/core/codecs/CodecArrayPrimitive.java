@@ -42,7 +42,6 @@ import java.lang.reflect.Array;
 
 final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 
-	@SuppressWarnings("unused")
 	@Injected
 	private Evaluator evaluator;
 
@@ -72,6 +71,8 @@ final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 			throws AnnotationException{
 		final BindArrayPrimitive binding = interpretBinding(annotation);
 
+		final int size = CodecHelper.evaluateSize(binding.size(), evaluator, rootObject);
+
 		CodecHelper.validate(value, binding.validator());
 
 		final ConverterChoices converterChoices = binding.selectConverterFrom();
@@ -79,8 +80,6 @@ final class CodecArrayPrimitive implements CodecInterface<BindArrayPrimitive>{
 		final Class<? extends Converter<?, ?>> chosenConverter = CodecHelper.getChosenConverter(converterChoices, defaultConverter, evaluator,
 			rootObject);
 		final Object array = CodecHelper.converterEncode(chosenConverter, value);
-
-		final int size = CodecHelper.evaluateSize(binding.size(), evaluator, rootObject);
 		CodecHelper.assertSizeEquals(size, Array.getLength(array));
 
 		final ByteOrder byteOrder = binding.byteOrder();

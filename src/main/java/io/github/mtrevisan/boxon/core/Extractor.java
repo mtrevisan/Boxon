@@ -33,7 +33,6 @@ import java.util.Objects;
 /**
  * A class that allows extracting values from a <a href="https://en.wikipedia.org/wiki/Data_transfer_object">DTO</a>.
  */
-@SuppressWarnings({"WeakerAccess", "unused"})
 public final class Extractor{
 
 	private final Object data;

@@ -42,7 +42,6 @@ import java.util.List;
 /**
  * Declarative data binding parser for binary encoded data.
  */
-@SuppressWarnings({"WeakerAccess", "unused"})
 public final class Parser{
 
 	private final TemplateParser templateParser;

@@ -39,7 +39,6 @@ import java.lang.annotation.Annotation;
 
 final class CodecLong implements CodecInterface<BindLong>{
 
-	@SuppressWarnings("unused")
 	@Injected
 	private Evaluator evaluator;
 

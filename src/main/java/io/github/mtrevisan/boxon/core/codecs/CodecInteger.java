@@ -44,7 +44,6 @@ import java.util.BitSet;
 
 final class CodecInteger implements CodecInterface<BindInteger>{
 
-	@SuppressWarnings("unused")
 	@Injected
 	private Evaluator evaluator;
 
@@ -54,7 +53,6 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 		final BindInteger binding = interpretBinding(annotation);
 
 		final int size = CodecHelper.evaluateSize(binding.size(), evaluator, rootObject);
-
 		final BigInteger value = reader.getBigInteger(size, binding.byteOrder());
 
 		final ConverterChoices converterChoices = binding.selectConverterFrom();
@@ -68,9 +66,9 @@ final class CodecInteger implements CodecInterface<BindInteger>{
 			throws AnnotationException{
 		final BindInteger binding = interpretBinding(annotation);
 
-		CodecHelper.validate(value, binding.validator());
-
 		final int size = CodecHelper.evaluateSize(binding.size(), evaluator, rootObject);
+
+		CodecHelper.validate(value, binding.validator());
 
 		final ConverterChoices converterChoices = binding.selectConverterFrom();
 		final Class<? extends Converter<?, ?>> defaultConverter = binding.converter();

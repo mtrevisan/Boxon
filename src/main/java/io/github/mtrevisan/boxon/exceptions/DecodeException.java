@@ -32,7 +32,6 @@ import java.io.Serial;
 /**
  * Thrown if a parsing (decoding) went bad.
  */
-@SuppressWarnings("unused")
 public final class DecodeException extends Exception{
 
 	@Serial

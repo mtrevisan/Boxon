@@ -39,7 +39,6 @@ import java.lang.annotation.Annotation;
 
 final class CodecInt implements CodecInterface<BindInt>{
 
-	@SuppressWarnings("unused")
 	@Injected
 	private Evaluator evaluator;
 

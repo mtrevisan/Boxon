@@ -53,10 +53,8 @@ final class CodecList implements CodecInterface<BindList>{
 	private static final ObjectChoicesList.ObjectChoiceList EMPTY_CHOICE_LIST = new NullObjectChoiceList();
 
 
-	@SuppressWarnings("unused")
 	@Injected
 	private Evaluator evaluator;
-	@SuppressWarnings("unused")
 	@Injected
 	private TemplateParserInterface templateParser;
 
