@@ -72,7 +72,7 @@ public class ACKMessageHexByteChecksum{
 	@BindShort(condition = "mask.hasMessageId()")
 	private short messageId;
 
-	@Checksum(skipStart = 4, skipEnd = 4, algorithm = BSD16.class, startValue = BSD16.START_VALUE_0x0000)
+	@Checksum(skipStart = 4, skipEnd = 4, algorithm = BSD16.class)
 	private short checksum;
 
 	@Evaluate("#deviceTypes.getDeviceTypeName(deviceTypeCode)")

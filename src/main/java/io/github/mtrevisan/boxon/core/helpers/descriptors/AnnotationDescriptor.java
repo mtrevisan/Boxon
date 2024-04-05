@@ -341,7 +341,6 @@ public enum AnnotationDescriptor{
 			putIfNotEmpty(DescriberKey.BIND_SKIP_START, binding.skipStart(), rootDescription);
 			putIfNotEmpty(DescriberKey.BIND_SKIP_END, binding.skipEnd(), rootDescription);
 			putIfNotEmpty(DescriberKey.BIND_ALGORITHM, binding.algorithm().getName(), rootDescription);
-			putIfNotEmpty(DescriberKey.BIND_START_VALUE, binding.startValue(), rootDescription);
 		}
 	},
 

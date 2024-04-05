@@ -25,17 +25,32 @@
 package io.github.mtrevisan.boxon.annotations.checksummers;
 
 
-/** The checksum algorithm to be applied. */
-public interface Checksummer{
+/**
+ * Calculates a 16 bit Cyclic Redundancy Check of a sequence of bytes using the CRC-CCITT XMODEM algorithm.
+ *
+ * @see <a href="https://en.wikipedia.org/wiki/Cyclic_redundancy_check">Cyclic Redundancy Check</a>
+ */
+public final class CRC16CCITT_XMODEM implements Checksummer{
 
-	/**
-	 * Method used to calculate the checksum.
-	 *
-	 * @param data	The byte array from which to calculate the checksum.
-	 * @param start	The starting byte on the given array.
-	 * @param end	The ending byte on the given array.
-	 * @return	The checksum.
-	 */
-	short calculateChecksum(byte[] data, int start, int end);
+	/** CCITT polynomial: x^16 + x^12 + x^5 + 1 -> 1_0000_0010_0001 = 0x1021 (reversed is 0x8408). */
+	private static final int POLYNOMIAL = 0x0000_1021;
+
+
+	@Override
+	public short calculateChecksum(final byte[] data, final int start, final int end){
+		int value = 0x0000;
+		for(int i = Math.max(start, 0), length = Math.min(end, data.length); i < length; i ++){
+			final byte datum = data[i];
+
+			for(int j = Byte.SIZE - 1; j >= 0; j --){
+				final boolean bit = (((datum >> j) & 1) != 0);
+				final boolean c15 = ((value & 0x8000) != 0);
+				value <<= 1;
+				if(c15 ^ bit)
+					value ^= POLYNOMIAL;
+			}
+		}
+		return (short)(0xFFFF & value);
+	}
 
 }

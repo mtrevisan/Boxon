@@ -77,11 +77,4 @@ public @interface Checksum{
 	 */
 	Class<? extends Checksummer> algorithm();
 
-	/**
-	 * The starting value of the CRC algorithm.
-	 *
-	 * @return	The starting value of the CRC algorithm.
-	 */
-	short startValue();
-
 }

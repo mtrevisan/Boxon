@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2024 Mauro Trevisan
+ * Copyright (c) 2024 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -24,18 +24,28 @@
  */
 package io.github.mtrevisan.boxon.annotations.checksummers;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-/** The checksum algorithm to be applied. */
-public interface Checksummer{
+import java.nio.charset.StandardCharsets;
 
-	/**
-	 * Method used to calculate the checksum.
-	 *
-	 * @param data	The byte array from which to calculate the checksum.
-	 * @param start	The starting byte on the given array.
-	 * @param end	The ending byte on the given array.
-	 * @return	The checksum.
-	 */
-	short calculateChecksum(byte[] data, int start, int end);
+
+class CRC16IBMTest{
+
+	@Test
+	void oneToFour(){
+		CRC16IBM crc = new CRC16IBM();
+		short crc16 = crc.calculateChecksum(new byte[]{0x01, 0x02, 0x03, 0x04}, 0, 4);
+
+		Assertions.assertEquals((short)0x0FA1, crc16);
+	}
+
+	@Test
+	void test(){
+		CRC16IBM crc = new CRC16IBM();
+		short crc16 = crc.calculateChecksum("9142656".getBytes(StandardCharsets.US_ASCII), 0, 7);
+
+		Assertions.assertEquals((short)0x1665, crc16);
+	}
 
 }

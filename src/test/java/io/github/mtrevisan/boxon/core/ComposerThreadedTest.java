@@ -63,7 +63,11 @@ class ComposerThreadedTest{
 		//compose:
 		int threadCount = 10;
 		MultithreadingHelper.testMultithreading(
-			() -> composer.compose(parseResult.getFirst().getMessage()),
+			() -> {
+				final Object message = parseResult.getFirst()
+					.getMessage();
+				return composer.compose(message);
+			},
 			composeResult -> Assertions.assertArrayEquals(PAYLOAD, composeResult.getMessage()),
 			threadCount
 		);
@@ -90,7 +94,9 @@ class ComposerThreadedTest{
 		MultithreadingHelper.testMultithreading(
 			() -> {
 				Composer composer = Composer.create(core);
-				return composer.compose(parseResult.getFirst().getMessage());
+				final Object message = parseResult.getFirst()
+					.getMessage();
+				return composer.compose(message);
 			},
 			composeResult -> Assertions.assertArrayEquals(PAYLOAD, composeResult.getMessage()),
 			threadCount
@@ -118,7 +124,9 @@ class ComposerThreadedTest{
 				List<Response<byte[], Object>> parseResult = parser.parse(PAYLOAD);
 
 				Composer composer = Composer.create(core);
-				return composer.compose(parseResult.getFirst().getMessage());
+				final Object message = parseResult.getFirst()
+					.getMessage();
+				return composer.compose(message);
 			},
 			composeResult -> Assertions.assertArrayEquals(PAYLOAD, composeResult.getMessage()),
 			threadCount

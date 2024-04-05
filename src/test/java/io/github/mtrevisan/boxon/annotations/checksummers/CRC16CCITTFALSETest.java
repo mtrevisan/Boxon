@@ -24,18 +24,28 @@
  */
 package io.github.mtrevisan.boxon.annotations.checksummers;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-/** The checksum algorithm to be applied. */
-public interface Checksummer{
+import java.nio.charset.StandardCharsets;
 
-	/**
-	 * Method used to calculate the checksum.
-	 *
-	 * @param data	The byte array from which to calculate the checksum.
-	 * @param start	The starting byte on the given array.
-	 * @param end	The ending byte on the given array.
-	 * @return	The checksum.
-	 */
-	short calculateChecksum(byte[] data, int start, int end);
+
+class CRC16CCITTFALSETest{
+
+	@Test
+	void oneToFour(){
+		CRC16CCITT_FALSE crc = new CRC16CCITT_FALSE();
+		short crc16 = crc.calculateChecksum(new byte[]{0x01, 0x02, 0x03, 0x04}, 0, 4);
+
+		Assertions.assertEquals((short)0x89C3, crc16);
+	}
+
+	@Test
+	void test(){
+		CRC16CCITT_FALSE crc = new CRC16CCITT_FALSE();
+		short crc16 = crc.calculateChecksum("9142656".getBytes(StandardCharsets.US_ASCII), 0, 7);
+
+		Assertions.assertEquals((short)0x763A, crc16);
+	}
 
 }

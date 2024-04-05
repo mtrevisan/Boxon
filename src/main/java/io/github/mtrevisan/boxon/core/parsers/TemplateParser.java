@@ -331,13 +331,12 @@ public class TemplateParser implements TemplateParserInterface{
 		final int skipStart = checksum.skipStart();
 		final int skipEnd = checksum.skipEnd();
 		final Class<? extends Checksummer> algorithm = checksum.algorithm();
-		final short startValue = checksum.startValue();
 
 		final int endPosition = reader.position();
 
 		final Checksummer checksummer = ConstructorHelper.getEmptyCreator(algorithm)
 			.get();
-		return checksummer.calculateChecksum(reader.array(), startPosition + skipStart, endPosition - skipEnd, startValue);
+		return checksummer.calculateChecksum(reader.array(), startPosition + skipStart, endPosition - skipEnd);
 	}
 
 	private void processEvaluatedFields(final Template<?> template, final ParserContext<?> parserContext){

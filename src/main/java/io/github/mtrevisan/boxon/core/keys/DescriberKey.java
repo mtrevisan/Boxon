@@ -61,7 +61,6 @@ public enum DescriberKey{
 	BIND_SKIP_START("skipStart"),
 	BIND_SKIP_END("skipEnd"),
 	BIND_ALGORITHM("algorithm"),
-	BIND_START_VALUE("startValue"),
 	BIND_VALUE("value"),
 	BIND_VALUE_DECODE("valueDecode"),
 	BIND_VALUE_ENCODE("valueEncode"),

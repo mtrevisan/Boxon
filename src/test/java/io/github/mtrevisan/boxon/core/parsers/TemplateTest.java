@@ -39,7 +39,7 @@ import io.github.mtrevisan.boxon.annotations.bindings.BindLong;
 import io.github.mtrevisan.boxon.annotations.bindings.BindShort;
 import io.github.mtrevisan.boxon.annotations.bindings.BindString;
 import io.github.mtrevisan.boxon.annotations.bindings.BindStringTerminated;
-import io.github.mtrevisan.boxon.annotations.checksummers.CRC16CCITT;
+import io.github.mtrevisan.boxon.annotations.checksummers.CRC16CCITT_FALSE;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
 import io.github.mtrevisan.boxon.annotations.converters.Converter;
 import io.github.mtrevisan.boxon.core.codecs.LoaderCodec;
@@ -146,7 +146,7 @@ class TemplateTest{
 		@BindStringTerminated(terminator = ',')
 		private String textWithTerminator;
 
-		@Checksum(skipStart = 4, skipEnd = 4, algorithm = CRC16CCITT.class, startValue = CRC16CCITT.START_VALUE_0xFFFF)
+		@Checksum(skipStart = 4, skipEnd = 4, algorithm = CRC16CCITT_FALSE.class)
 		private short checksum;
 
 		@Evaluate("T(java.time.ZonedDateTime).now()")
@@ -213,12 +213,7 @@ class TemplateTest{
 
 			@Override
 			public Class<? extends Checksummer> algorithm(){
-				return CRC16CCITT.class;
-			}
-
-			@Override
-			public short startValue(){
-				return CRC16CCITT.START_VALUE_0xFFFF;
+				return CRC16CCITT_FALSE.class;
 			}
 
 			@Override

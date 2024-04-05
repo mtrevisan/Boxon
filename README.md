@@ -202,13 +202,13 @@ Note that [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_inject
 | BindString           |  &#9745;  |         | &#9745; |            |                   | &#9745; |           |            |               |  &#9745;  |  &#9745;  |       &#9745;       |           BindString |
 | BindStringTerminated |  &#9745;  |         | &#9745; |  &#9745;   |      &#9745;      |         |           |            |               |  &#9745;  |  &#9745;  |       &#9745;       | BindStringTerminated |
 
-|                  | condition |  start  |   end   | charset |  size   | terminator | consumeTerminator | byteOrder | skipStart | skipEnd | algorithm | startValue |  value  | valueDecode | valueEncode |                |
-|------------------|:---------:|:-------:|:-------:|:-------:|:-------:|:----------:|:-----------------:|:---------:|:---------:|:-------:|:---------:|:----------:|:-------:|:-----------:|:-----------:|---------------:|
-| TemplateHeader   |           | &#9745; | &#9745; | &#9745; |         |            |                   |           |           |         |           |            |         |             |             | TemplateHeader |
-| Skip             |  &#9745;  |         |         |         | &#9745; |  &#9745;   |      &#9745;      |           |           |         |           |            |         |             |             |           Skip |
-| Checksum         |  &#9745;  |         |         |         |         |            |                   |  &#9745;  |  &#9745;  | &#9745; |  &#9745;  |  &#9745;   |         |             |             |       Checksum |
-| Evaluate         |  &#9745;  |         |         |         |         |            |                   |           |           |         |           |            | &#9745; |             |             |       Evaluate |
-| PostProcessField |  &#9745;  |         |         |         |         |            |                   |           |           |         |           |            |         |   &#9745;   |   &#9745;   |   ProcessField |
+|                  | condition |  start  |   end   | charset |  size   | terminator | consumeTerminator | byteOrder | skipStart | skipEnd | algorithm |  value  | valueDecode | valueEncode |                |
+|------------------|:---------:|:-------:|:-------:|:-------:|:-------:|:----------:|:-----------------:|:---------:|:---------:|:-------:|:---------:|:-------:|:-----------:|:-----------:|---------------:|
+| TemplateHeader   |           | &#9745; | &#9745; | &#9745; |         |            |                   |           |           |         |           |         |             |             | TemplateHeader |
+| Skip             |  &#9745;  |         |         |         | &#9745; |  &#9745;   |      &#9745;      |           |           |         |           |         |             |             |           Skip |
+| Checksum         |  &#9745;  |         |         |         |         |            |                   |  &#9745;  |  &#9745;  | &#9745; |  &#9745;  |         |             |             |       Checksum |
+| Evaluate         |  &#9745;  |         |         |         |         |            |                   |           |           |         |           | &#9745; |             |             |       Evaluate |
+| PostProcessField |  &#9745;  |         |         |         |         |            |                   |           |           |         |           |         |   &#9745;   |   &#9745;   |   ProcessField |
 
 |                               | shortDescription | longDescription | minProtocol | maxProtocol |  start  |   end   | charset | terminator | unitOfMeasure | minValue  | maxValue | pattern | enumeration | defaultValue |  radix  | composition |                               |
 |-------------------------------|:----------------:|:---------------:|:-----------:|:-----------:|:-------:|:-------:|:-------:|:----------:|:-------------:|:---------:|:--------:|:-------:|:-----------:|:------------:|:-------:|:-----------:|------------------------------:|
@@ -745,7 +745,6 @@ public Void lastUnreadPlaceholder;
  - `skipStart`: how many bytes are to be skipped from the start of the message for the calculation of the checksum (defaults to 0).
  - `skipEnd`: how many bytes are to be skipped from the end of the message for the calculation of the checksum (default to 0).
  - `algorithm`: the algorithm to be applied to calculate the checksum.
- - `startValue`: the starting value for the algorithm.
 
 #### description
 
@@ -761,7 +760,7 @@ This annotation is bounded to a variable.
 #### example
 
 ```java
-@Checksum(type = short.class, skipStart = 4, skipEnd = 4, algorithm = CRC16.class, startValue = CRC16.START_VALUE_0xFFFF)
+@Checksum(skipStart = 4, skipEnd = 4, algorithm = CRC16CCITT_FALSE.class)
 private short checksum;
 ```
 
@@ -1584,7 +1583,7 @@ Pull requests are welcomed.
 ### version 3.5.0 - 2024034?
 
 - Added condition on `Checksum` annotation.
-- Removed `type` from `Checksum`: the same information can be retrieved from the algorithm used.
+- Removed `type` and `startValue` from `Checksum`: the same information can be retrieved from the algorithm used.
 - Fixed a problem while converting a numeric string to number.
 - Make record classes work with annotations.
 - Slightly reduced memory footprint.

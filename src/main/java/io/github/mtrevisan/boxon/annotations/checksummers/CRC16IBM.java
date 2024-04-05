@@ -26,41 +26,32 @@ package io.github.mtrevisan.boxon.annotations.checksummers;
 
 
 /**
- * Calculates a 16 bit Cyclic Redundancy Check of a sequence of bytes using the CRC-CCITT Normal algorithm.
+ * Calculates a 16 bit Cyclic Redundancy Check of a sequence of bytes using the CRC-IBM algorithm.
+ * <p>Also known as CRC-16 and CRC-16-ANSI</p>
  *
  * @see <a href="https://en.wikipedia.org/wiki/Cyclic_redundancy_check">Cyclic Redundancy Check</a>
  */
-public final class CRC16CCITT implements Checksummer{
+public final class CRC16IBM implements Checksummer{
 
-	/** Starting value 0x0000. */
-	public static final short START_VALUE_0x0000 = 0x0000;
-	/** Starting value 0x1D0F. */
-	public static final short START_VALUE_0x1D0F = 0x1D0F;
-	/** Starting value 0xFFFF. */
-	public static final short START_VALUE_0xFFFF = (short)0xFFFF;
-
-	/** CCITT polynomial: x^16 + x^12 + x^5 + 1 -> 1_0000_0010_0001 = 0x1021. */
-	private static final int POLYNOMIAL = 0x0000_1021;
-
-
-	CRC16CCITT(){}
+	/** CCITT polynomial: x^16 + x^15 + x^2 + 1 -> 1000_0000_0000_0101 = 0x8005 (reversed is 0xA001). */
+	private static final int POLYNOMIAL_REVERSED = 0x0000_A001;
 
 
 	@Override
-	public short calculateChecksum(final byte[] data, final int start, final int end, final short startValue){
-		short value = startValue;
+	public short calculateChecksum(final byte[] data, final int start, final int end){
+		int value = 0;
 		for(int i = Math.max(start, 0), length = Math.min(end, data.length); i < length; i ++){
 			final byte datum = data[i];
 
-			for(int j = Byte.SIZE - 1; j >= 0; j --){
-				final boolean bit = (((datum >> j) & 1) != 0);
-				final boolean c15 = ((value & 0x8000) != 0);
-				value <<= 1;
-				if(c15 ^ bit)
-					value ^= POLYNOMIAL;
+			value ^= datum;
+			for(int j = 0; j < Byte.SIZE; j ++){
+				final boolean carry = ((value & 0x01) != 0);
+				value >>>= 1;
+				if(carry)
+					value ^= POLYNOMIAL_REVERSED;
 			}
 		}
-		return value;
+		return (short)value;
 	}
 
 }

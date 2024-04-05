@@ -25,7 +25,7 @@
 package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.annotations.Checksum;
-import io.github.mtrevisan.boxon.annotations.checksummers.CRC16CCITT;
+import io.github.mtrevisan.boxon.annotations.checksummers.CRC16CCITT_FALSE;
 import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
 import io.github.mtrevisan.boxon.exceptions.FieldException;
 import io.github.mtrevisan.boxon.helpers.JavaHelper;
@@ -76,12 +76,7 @@ class CodecChecksumTest{
 
 			@Override
 			public Class<? extends Checksummer> algorithm(){
-				return CRC16CCITT.class;
-			}
-
-			@Override
-			public short startValue(){
-				return CRC16CCITT.START_VALUE_0xFFFF;
+				return CRC16CCITT_FALSE.class;
 			}
 		};
 
