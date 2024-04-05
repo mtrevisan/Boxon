@@ -47,8 +47,8 @@ public final class CRC16CCITT implements Checksummer{
 
 
 	@Override
-	public short calculateChecksum(final byte[] data, final int start, final int end, final int startValue){
-		short value = (short)startValue;
+	public short calculateChecksum(final byte[] data, final int start, final int end, final short startValue){
+		short value = startValue;
 		for(int i = Math.max(start, 0), length = Math.min(end, data.length); i < length; i ++){
 			final byte datum = data[i];
 

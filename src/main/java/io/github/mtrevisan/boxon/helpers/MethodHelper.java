@@ -97,7 +97,7 @@ public final class MethodHelper{
 	 * @param methodName	The method name.
 	 * @param returnType	The method return type (if {@code null} then no check on the return type is performed).
 	 * @param parameterTypes	The method parameters' types.
-	 * @return	The method, or null if not found.
+	 * @return	The method, or {@code null} if not found.
 	 */
 	public static Method getMethod(final Class<?> cls, final String methodName, final Class<?> returnType, final Class<?>... parameterTypes){
 		Method method = null;
@@ -115,6 +115,21 @@ public final class MethodHelper{
 
 	private static boolean isReturnTypeCompatible(final Method method, final Class<?> returnType){
 		return (returnType == null || method.getReturnType().equals(returnType));
+	}
+
+	/**
+	 * Get all the declared methods defined in the given class.
+	 *
+	 * @param cls	The class from which to extract the methods.
+	 * @return	The method list, or an empty list if no methods are found.
+	 */
+	public static Method[] getMethods(final Class<?> cls){
+		Method[] methods = null;
+		try{
+			methods = cls.getDeclaredMethods();
+		}
+		catch(final SecurityException | InaccessibleObjectException ignored){}
+		return methods;
 	}
 
 }

@@ -146,7 +146,7 @@ class TemplateTest{
 		@BindStringTerminated(terminator = ',')
 		private String textWithTerminator;
 
-		@Checksum(type = short.class, skipStart = 4, skipEnd = 4, algorithm = CRC16CCITT.class, startValue = CRC16CCITT.START_VALUE_0xFFFF)
+		@Checksum(skipStart = 4, skipEnd = 4, algorithm = CRC16CCITT.class, startValue = CRC16CCITT.START_VALUE_0xFFFF)
 		private short checksum;
 
 		@Evaluate("T(java.time.ZonedDateTime).now()")
@@ -199,11 +199,6 @@ class TemplateTest{
 			@Override
 			public String condition(){
 				return JavaHelper.EMPTY_STRING;
-			}
-
-			@Override
-			public Class<?> type(){
-				return short.class;
 			}
 
 			@Override

@@ -60,11 +60,6 @@ class CodecChecksumTest{
 			}
 
 			@Override
-			public Class<?> type(){
-				return short.class;
-			}
-
-			@Override
 			public ByteOrder byteOrder(){
 				return ByteOrder.BIG_ENDIAN;
 			}

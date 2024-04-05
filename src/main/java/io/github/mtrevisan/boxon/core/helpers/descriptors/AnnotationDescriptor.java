@@ -337,7 +337,6 @@ public enum AnnotationDescriptor{
 		public void describe(final Annotation annotation, final Map<String, Object> rootDescription){
 			final Checksum binding = (Checksum)annotation;
 			putIfNotEmpty(DescriberKey.BIND_CONDITION, binding.condition(), rootDescription);
-			putIfNotEmpty(DescriberKey.BIND_TYPE, binding.type(), rootDescription);
 			putIfNotEmpty(DescriberKey.BIND_BYTE_ORDER, binding.byteOrder(), rootDescription);
 			putIfNotEmpty(DescriberKey.BIND_SKIP_START, binding.skipStart(), rootDescription);
 			putIfNotEmpty(DescriberKey.BIND_SKIP_END, binding.skipEnd(), rootDescription);

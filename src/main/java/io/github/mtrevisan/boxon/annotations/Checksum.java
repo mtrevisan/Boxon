@@ -50,13 +50,6 @@ public @interface Checksum{
 	String condition() default "";
 
 	/**
-	 * The type of object to be inserted into the checksum field.
-	 *
-	 * @return	The type of object to be inserted in the array.
-	 */
-	Class<?> type();
-
-	/**
 	 * The type of endianness: either {@link ByteOrder#LITTLE_ENDIAN} or {@link ByteOrder#BIG_ENDIAN}.
 	 *
 	 * @return	The type of endianness (defaults to {@link ByteOrder#BIG_ENDIAN}).

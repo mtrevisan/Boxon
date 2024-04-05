@@ -25,12 +25,15 @@
 package io.github.mtrevisan.boxon.core.codecs;
 
 import io.github.mtrevisan.boxon.annotations.Checksum;
+import io.github.mtrevisan.boxon.annotations.checksummers.Checksummer;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
+import io.github.mtrevisan.boxon.helpers.MethodHelper;
 import io.github.mtrevisan.boxon.io.BitReaderInterface;
 import io.github.mtrevisan.boxon.io.BitWriterInterface;
 import io.github.mtrevisan.boxon.io.CodecInterface;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 
 
 final class CodecChecksum implements CodecInterface<Checksum>{
@@ -39,7 +42,9 @@ final class CodecChecksum implements CodecInterface<Checksum>{
 	public Object decode(final BitReaderInterface reader, final Annotation annotation, final Object rootObject) throws AnnotationException{
 		final Checksum binding = interpretBinding(annotation);
 
-		return reader.get(binding.type(), binding.byteOrder());
+		final Method interfaceMethod = MethodHelper.getMethods(Checksummer.class)[0];
+		final Class<?> interfaceReturnType = interfaceMethod.getReturnType();
+		return reader.get(interfaceReturnType, binding.byteOrder());
 	}
 
 	@Override
