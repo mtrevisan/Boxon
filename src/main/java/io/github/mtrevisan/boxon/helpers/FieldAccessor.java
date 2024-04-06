@@ -29,6 +29,7 @@ import io.github.mtrevisan.boxon.exceptions.DataException;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.RecordComponent;
@@ -92,7 +93,8 @@ public final class FieldAccessor{
 		return recordValues;
 	}
 
-	static void updateFieldValue(final String fieldName, final Object value, final RecordComponent[] recordComponents, final Object[] recordValues){
+	static void updateFieldValue(final String fieldName, final Object value, final RecordComponent[] recordComponents,
+			final Object[] recordValues){
 		for(int i = 0, length = recordComponents.length; i < length; i ++)
 			if(fieldName.equals(recordComponents[i].getName())){
 				recordValues[i] = value;
@@ -253,7 +255,7 @@ public final class FieldAccessor{
 		}
 	}
 
-	static boolean isStatic(final Field field){
+	static boolean isStatic(final Member field){
 		return Modifier.isStatic(field.getModifiers());
 	}
 

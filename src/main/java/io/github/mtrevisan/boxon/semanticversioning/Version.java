@@ -305,7 +305,6 @@ public final class Version implements Comparable<Version>{
 	}
 
 	@Override
-	@SuppressWarnings("OverlyComplexBooleanExpression")
 	public boolean equals(final Object obj){
 		if(this == obj)
 			return true;

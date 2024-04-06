@@ -28,7 +28,7 @@ import java.math.BigInteger;
 import java.util.BitSet;
 
 
-class LittleEndianConverter implements BitSetConverter{
+final class LittleEndianConverter implements BitSetConverter{
 
 	@Override
 	public BitSet createBitSet(final int bitmapSize, final BigInteger value){

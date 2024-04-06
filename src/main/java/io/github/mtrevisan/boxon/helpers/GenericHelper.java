@@ -33,6 +33,7 @@ import java.lang.reflect.TypeVariable;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -138,7 +139,7 @@ public final class GenericHelper{
 	}
 
 	private static <T> void processAncestors(final List<Type> ancestors, final Map<String, Type> typeVariables, final Class<T> base,
-			final Queue<Class<?>> classStack, final Queue<Type[]> typesStack){
+			final Collection<Class<?>> classStack, final Collection<Type[]> typesStack){
 		for(int i = 0, length = ancestors.size(); i < length; i ++){
 			final Type ancestorType = ancestors.get(i);
 
@@ -176,7 +177,7 @@ public final class GenericHelper{
 		return typeVariables.getOrDefault(key, actualTypeArgument);
 	}
 
-	private static void processBase(final Class<?> currentOffspring, final Type[] actualArgs, final List<Type> types){
+	private static void processBase(final Type currentOffspring, final Type[] actualArgs, final Collection<Type> types){
 		//there is a result if the base class is reached
 		for(int i = 0, length = actualArgs.length; i < length; i ++)
 			types.add(actualArgs[i]);

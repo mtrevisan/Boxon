@@ -83,16 +83,16 @@ final class ProtocolValidator{
 				configData.getAnnotationName(), configData.getMinProtocol(), configData.getMaxProtocol());
 	}
 
-	private static void validateMinLessThanMinProtocol(final Version minimum, final Version minProtocolVersion, final ConfigFieldData configData)
-			throws AnnotationException{
+	private static void validateMinLessThanMinProtocol(final Version minimum, final Version minProtocolVersion,
+			final ConfigFieldData configData) throws AnnotationException{
 		//NOTE: `minimum.isLessThan(minProtocolVersion)` return false if `minProtocolVersion` is empty
 		if(minimum != null && minimum.isLessThan(minProtocolVersion))
 			throw AnnotationException.create("Minimum protocol version is less than whole message minimum protocol version in {}; expected {} >= {}",
 				configData.getAnnotationName(), minimum, minProtocolVersion);
 	}
 
-	private static void validateMaxProtocolLessThanMax(final Version maximum, final Version maxProtocolVersion, final ConfigFieldData configData)
-			throws AnnotationException{
+	private static void validateMaxProtocolLessThanMax(final Version maximum, final Version maxProtocolVersion,
+			final ConfigFieldData configData) throws AnnotationException{
 		if(maximum != null && !maxProtocolVersion.isEmpty() && maxProtocolVersion.isLessThan(maximum))
 			throw AnnotationException.create("Maximum protocol version is greater than whole message maximum protocol version in {}; expected {} <= {}",
 				configData.getAnnotationName(), maximum, maxProtocolVersion);

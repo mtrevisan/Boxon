@@ -50,8 +50,8 @@ public enum ConfigurationAnnotationValidator{
 
 	HEADER(ConfigurationHeader.class){
 		@Override
-		public void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
-				throws AnnotationException{
+		public void validate(final Field field, final Annotation annotation, final Version minProtocolVersion,
+				final Version maxProtocolVersion) throws AnnotationException{
 			final ConfigurationHeader binding = (ConfigurationHeader)annotation;
 
 			ensureShortDescriptionIsPresent(binding.shortDescription());
@@ -71,8 +71,8 @@ public enum ConfigurationAnnotationValidator{
 
 	FIELD(ConfigurationField.class){
 		@Override
-		public void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
-				throws CodecException, AnnotationException{
+		public void validate(final Field field, final Annotation annotation, final Version minProtocolVersion,
+				final Version maxProtocolVersion) throws CodecException, AnnotationException{
 			final ConfigFieldData configData = ConfigFieldDataBuilder.create(field, (ConfigurationField)annotation);
 
 			final ConfigurationField binding = (ConfigurationField)annotation;
@@ -119,8 +119,8 @@ public enum ConfigurationAnnotationValidator{
 
 	COMPOSITE_FIELD(CompositeConfigurationField.class){
 		@Override
-		public void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
-				throws AnnotationException, CodecException{
+		public void validate(final Field field, final Annotation annotation, final Version minProtocolVersion,
+				final Version maxProtocolVersion) throws AnnotationException, CodecException{
 			final ConfigFieldData configData = ConfigFieldDataBuilder.create(field, (CompositeConfigurationField)annotation);
 
 			final CompositeConfigurationField binding = (CompositeConfigurationField)annotation;
@@ -147,8 +147,8 @@ public enum ConfigurationAnnotationValidator{
 
 	SUB_FIELD(CompositeSubField.class){
 		@Override
-		public void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
-				throws AnnotationException, CodecException{
+		public void validate(final Field field, final Annotation annotation, final Version minProtocolVersion,
+				final Version maxProtocolVersion) throws AnnotationException, CodecException{
 			final ConfigFieldData configData = ConfigFieldDataBuilder.create(field, (CompositeSubField)annotation);
 
 			final CompositeSubField binding = (CompositeSubField)annotation;
@@ -163,8 +163,8 @@ public enum ConfigurationAnnotationValidator{
 
 	ALTERNATIVE_FIELDS(AlternativeConfigurationField.class){
 		@Override
-		public void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
-				throws AnnotationException{
+		public void validate(final Field field, final Annotation annotation, final Version minProtocolVersion,
+				final Version maxProtocolVersion) throws AnnotationException{
 			final ConfigFieldData configData = ConfigFieldDataBuilder.create(field, (AlternativeConfigurationField)annotation);
 
 			final AlternativeConfigurationField binding = (AlternativeConfigurationField)annotation;
@@ -195,8 +195,8 @@ public enum ConfigurationAnnotationValidator{
 
 	ALTERNATIVE_FIELD(AlternativeSubField.class){
 		@Override
-		public void validate(final Field field, final Annotation annotation, final Version minProtocolVersion, final Version maxProtocolVersion)
-				throws AnnotationException{
+		public void validate(final Field field, final Annotation annotation, final Version minProtocolVersion,
+				final Version maxProtocolVersion) throws AnnotationException{
 			final ConfigFieldData configData = ConfigFieldDataBuilder.create(field, (AlternativeSubField)annotation);
 
 			final AlternativeSubField binding = (AlternativeSubField)annotation;

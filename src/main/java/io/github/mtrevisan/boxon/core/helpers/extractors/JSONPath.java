@@ -118,14 +118,14 @@ public final class JSONPath{
 	/**
 	 *	Percent-decode a text.
 	 *
-	 * @param stringBuilder	The text to be URL decoded.
+	 * @param input	The text to be URL decoded.
 	 * @return	The URL-decoded text.
 	 *
 	 * @see <a href="https://datatracker.ietf.org/doc/html/rfc3986">RFC3986 - Uniform Resource Identifier (URI): Generic Syntax</a>
 	 */
-	private static String urlDecode(final StringBuilder stringBuilder){
+	private static String urlDecode(final CharSequence input){
 		//convert (hexadecimal) %x?? to (decimal) %??:
-		final String text = PATTERN_HEX_URL_ENCODE.matcher(stringBuilder)
+		final String text = PATTERN_HEX_URL_ENCODE.matcher(input)
 			.replaceAll(match -> Character.toString((char)Integer.parseInt(match.group(1), 16)));
 		return URLDecoder.decode(text, StandardCharsets.UTF_8);
 	}

@@ -30,7 +30,7 @@ import io.github.mtrevisan.boxon.core.helpers.templates.TemplateField;
 import java.lang.annotation.Annotation;
 
 
-public class FieldExtractorTemplate implements FieldExtractor<TemplateField, Skip>{
+public final class FieldExtractorTemplate implements FieldExtractor<TemplateField, Skip>{
 
 	@Override
 	public Skip[] getSkips(final TemplateField field){

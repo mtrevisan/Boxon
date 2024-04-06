@@ -246,10 +246,6 @@ public final class Core{
 	}
 
 
-	Evaluator getEvaluator(){
-		return evaluator;
-	}
-
 	TemplateParser getTemplateParser(){
 		return templateParser;
 	}

@@ -33,7 +33,7 @@ import java.util.Map;
 /**
  * Utilities for mapping object fields to a {@link Map}.
  */
-public class FieldMapper{
+public final class FieldMapper{
 
 	private FieldMapper(){}
 

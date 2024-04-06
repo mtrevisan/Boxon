@@ -49,7 +49,7 @@ class BitWriterData{
 	 *
 	 * @param value	The value to write.
 	 */
-	public final synchronized void putNumber(final byte value){
+	final synchronized void putNumber(final byte value){
 		putNumber(value, Byte.SIZE);
 	}
 
@@ -58,7 +58,7 @@ class BitWriterData{
 	 *
 	 * @param value	The value to write.
 	 */
-	public final synchronized void putNumber(final short value){
+	final synchronized void putNumber(final short value){
 		putNumber(value, Short.SIZE);
 	}
 
@@ -67,7 +67,7 @@ class BitWriterData{
 	 *
 	 * @param value	The value to write.
 	 */
-	public final synchronized void putNumber(final int value){
+	final synchronized void putNumber(final int value){
 		putNumber(value, Integer.SIZE);
 	}
 
@@ -76,7 +76,7 @@ class BitWriterData{
 	 *
 	 * @param value	The value to write.
 	 */
-	public final synchronized void putNumber(final long value){
+	final synchronized void putNumber(final long value){
 		putNumber(value, Long.SIZE);
 	}
 
@@ -179,7 +179,7 @@ class BitWriterData{
 		while(bitsWritten < bitsToWrite){
 			//fill the cache one chunk of bits at a time
 			final int length = Math.min(bitsToWrite - bitsWritten, Byte.SIZE - remaining);
-			cache = (byte)(cache << length);
+			cache <<= length;
 
 			remaining += length;
 			bitsWritten += length;

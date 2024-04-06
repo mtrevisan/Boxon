@@ -158,7 +158,7 @@ final class LoaderTemplate{
 		return templates;
 	}
 
-	private void addCodedTemplate(final Template<?> from, final Class<?> type, final List<Template<?>> templates)
+	private static void addCodedTemplate(final Template<?> from, final Class<?> type, final Collection<Template<?>> templates)
 			throws TemplateException{
 		if(from.canBeCoded())
 			//if the template is valid, add it to the list of templates...

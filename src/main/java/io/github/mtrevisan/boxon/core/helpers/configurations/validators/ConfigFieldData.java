@@ -173,7 +173,7 @@ final class ConfigFieldData{
 	 * @return	Whether the configuration field is an enumeration.
 	 */
 	boolean hasEnumeration(){
-		return hasEnumeration(enumeration);
+		return (enumeration != null && enumeration != NullEnum.class);
 	}
 
 	/**
@@ -228,16 +228,6 @@ final class ConfigFieldData{
 	 */
 	void setRadix(final int radix){
 		this.radix = radix;
-	}
-
-	/**
-	 * Whether the given class is a true enumeration.
-	 *
-	 * @param enumeration	The class to check.
-	 * @return	Whether the given class is a true enumeration.
-	 */
-	static boolean hasEnumeration(final Class<? extends ConfigurationEnum> enumeration){
-		return (enumeration != null && enumeration != NullEnum.class);
 	}
 
 }

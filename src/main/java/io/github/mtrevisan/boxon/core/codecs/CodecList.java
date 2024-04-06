@@ -126,7 +126,7 @@ final class CodecList implements CodecInterface<BindList>{
 	 * @param reader	The reader from which to read the data from.
 	 * @return	The class type of the chosen alternative.
 	 */
-	Class<?> chooseAlternativeSeparatedType(final BitReaderInterface reader, final BindList binding, final Object rootObject){
+	private Class<?> chooseAlternativeSeparatedType(final BitReaderInterface reader, final BindList binding, final Object rootObject){
 		final ObjectChoicesList objectChoicesList = binding.selectFrom();
 		final ObjectChoicesList.ObjectChoiceList[] alternatives = objectChoicesList.alternatives();
 		if(!CodecHelper.hasSelectAlternatives((alternatives)))
