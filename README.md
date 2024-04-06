@@ -97,7 +97,7 @@ Replace `x.y.z` below int the version tag with the latest [release number](https
 
 ### Pre-built JARs
 
-You can get pre-built JARs (usable on JRE 11 or newer) from [Sonatype](https://oss.sonatype.org/#nexus-search;quick~io.github.mtrevisan).
+You can get pre-built JARs (usable on JRE 21 or newer) from [Sonatype](https://oss.sonatype.org/#nexus-search;quick~io.github.mtrevisan).
 
 <br/>
 <br/>
@@ -1580,13 +1580,13 @@ Pull requests are welcomed.
 ## Changelog
 
 <a name="changelog-3.5.0"></a>
-### version 3.5.0 - 2024034?
+### version 3.5.0 - 202403406
 
 - Added condition on `Checksum` annotation.
-- Removed `type` and `startValue` from `Checksum`: the same information can be retrieved from the algorithm used.
+- Removed `type` and `startValue` from `Checksum`: the same information can be retrieved from the algorithm used, plus, the start value can be embedded in the implemented class.
 - Fixed a problem while converting a numeric string to number.
 - Make record classes work with annotations.
-- Slightly reduced memory footprint.
+- Slightly reduced memory footprint and improved execution time.
 
 <a name="changelog-3.4.0"></a>
 ### version 3.4.0 - 20240318
