@@ -44,6 +44,7 @@ import java.util.Objects;
 /**
  * Common data used by {@link Parser}, {@link Descriptor}, {@link Composer}, and {@link Configurator}.
  */
+@SuppressWarnings({"unused", "WeakerAccess"})
 public final class Core{
 
 	private final LoaderCodec loaderCodec;
