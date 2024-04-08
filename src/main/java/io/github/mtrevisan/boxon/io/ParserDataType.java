@@ -374,7 +374,7 @@ public enum ParserDataType{
 
 
 	private static Object toObjectValue(final String value, final Class<?> objectiveType) throws CodecException{
-		Object result;
+		final Object result;
 		if(BigDecimal.class.isAssignableFrom(objectiveType))
 			result = new BigDecimal(value);
 		else if(BigInteger.class.isAssignableFrom(objectiveType))

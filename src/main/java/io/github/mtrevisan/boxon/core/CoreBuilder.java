@@ -45,6 +45,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * Builder for the {@link Core common data} used by the {@link Parser}, {@link Descriptor}, {@link Composer}, and {@link Configurator}.
  */
+@SuppressWarnings({"unused", "WeakerAccess"})
 public final class CoreBuilder{
 
 	private enum ConfigurationStep{

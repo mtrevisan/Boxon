@@ -71,7 +71,8 @@ public final class TemplateField{
 
 		if(binding != null){
 			//pre-fetch condition method
-			final Method conditionMethod = MethodHelper.getAccessibleMethodFromClassHierarchy(binding.annotationType(), CONDITION, String.class);
+			final Method conditionMethod = MethodHelper.getAccessibleMethodFromClassHierarchy(binding.annotationType(), CONDITION,
+				String.class);
 			condition = MethodHelper.invokeMethod(binding, conditionMethod, JavaHelper.EMPTY_STRING);
 		}
 	}

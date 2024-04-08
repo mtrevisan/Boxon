@@ -75,7 +75,7 @@ final class ParserContext<T>{
 	 * @param value	The value.
 	 */
 	@SuppressWarnings("unchecked")
-	public void setFieldValue(final Field field, final Object value){
+	void setFieldValue(final Field field, final Object value){
 		//NOTE: record classes must be created anew, therefore `currentObject` must be updated
 		currentObject = (T)FieldAccessor.setFieldValue(currentObject, field, value);
 	}

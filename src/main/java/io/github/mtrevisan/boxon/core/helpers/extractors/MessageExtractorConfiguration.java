@@ -34,7 +34,8 @@ import io.github.mtrevisan.boxon.core.helpers.templates.EvaluatedField;
 import java.util.List;
 
 
-public class MessageExtractorConfiguration implements MessageExtractor<ConfigurationMessage<?>, ConfigurationHeader, ConfigurationField>{
+public final class MessageExtractorConfiguration implements MessageExtractor<ConfigurationMessage<?>, ConfigurationHeader,
+		ConfigurationField>{
 
 	@Override
 	public String getTypeName(final ConfigurationMessage<?> message){

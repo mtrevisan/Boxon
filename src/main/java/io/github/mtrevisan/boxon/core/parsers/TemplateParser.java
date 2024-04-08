@@ -61,7 +61,7 @@ import java.util.function.Function;
 /**
  * Declarative data binding parser for message templates.
  */
-public class TemplateParser implements TemplateParserInterface{
+public final class TemplateParser implements TemplateParserInterface{
 
 	private final LoaderCodecInterface loaderCodec;
 	private final Evaluator evaluator;

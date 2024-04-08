@@ -55,18 +55,19 @@ final class NumberWriterManager implements WriterManagerInterface{
 
 	@Override
 	public void put(final Object value){
-		if(value instanceof final BigDecimal v)
-			writer.putText(v.toPlainString());
-		else if(value instanceof final BigInteger v)
-			writer.putText(v.toString(radix));
-		else if(value instanceof Number){
-			final String text = value.toString();
-			if(radix == 10)
-				writer.putText(text);
-			else{
-				final BigInteger bi = new BigInteger(text);
-				writer.putText(bi.toString(radix));
+		switch(value){
+			case final BigDecimal v -> writer.putText(v.toPlainString());
+			case final BigInteger v -> writer.putText(v.toString(radix));
+			case final Number v -> {
+				final String text = v.toString();
+				if(radix == 10)
+					writer.putText(text);
+				else{
+					final BigInteger bi = new BigInteger(text);
+					writer.putText(bi.toString(radix));
+				}
 			}
+			case null, default -> {}
 		}
 	}
 

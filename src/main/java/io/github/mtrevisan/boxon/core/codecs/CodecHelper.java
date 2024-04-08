@@ -197,7 +197,7 @@ final class CodecHelper{
 	}
 
 	@SuppressWarnings("unchecked")
-	static <IN, OUT> OUT converterDecode(final Class<? extends Converter<?, ?>> converterType, final IN data){
+	private static <IN, OUT> OUT converterDecode(final Class<? extends Converter<?, ?>> converterType, final IN data){
 		try{
 			final Converter<IN, OUT> converter = (Converter<IN, OUT>)ConstructorHelper.getEmptyCreator(converterType)
 				.get();
@@ -226,7 +226,7 @@ final class CodecHelper{
 	static Object interpretValue(final Class<?> fieldType, Object value) throws CodecException{
 		value = ParserDataType.getValueOrSelf(fieldType, value);
 		if(value != null){
-			if(value instanceof ConfigurationEnum v)
+			if(value instanceof final ConfigurationEnum v)
 				value = v.getCode();
 			else if(value.getClass().isArray())
 				value = calculateCompositeValue(value);

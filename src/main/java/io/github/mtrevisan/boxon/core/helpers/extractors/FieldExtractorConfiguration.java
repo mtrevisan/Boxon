@@ -29,7 +29,7 @@ import io.github.mtrevisan.boxon.core.helpers.configurations.ConfigurationField;
 import java.lang.annotation.Annotation;
 
 
-public class FieldExtractorConfiguration implements FieldExtractor<ConfigurationField, Annotation>{
+public final class FieldExtractorConfiguration implements FieldExtractor<ConfigurationField, Annotation>{
 
 	@Override
 	public Annotation[] getSkips(final ConfigurationField field){

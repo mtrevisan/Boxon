@@ -65,6 +65,7 @@ import static io.github.mtrevisan.boxon.core.helpers.descriptors.AnnotationDescr
 /**
  * Declarative descriptor for binary encoded data.
  */
+@SuppressWarnings({"unused", "WeakerAccess"})
 public final class Descriptor{
 
 	private static final MessageExtractorBasicTemplate MESSAGE_EXTRACTOR_BASIC_TEMPLATE = new MessageExtractorBasicTemplate();
@@ -147,7 +148,8 @@ public final class Descriptor{
 	 */
 	public List<Map<String, Object>> describeTemplate() throws FieldException{
 		final Collection<Template<?>> configurations = new HashSet<>(templateParser.getTemplates());
-		return describeEntities(configurations, template -> describeMessage(template, MESSAGE_EXTRACTOR_BASIC_TEMPLATE, FIELD_EXTRACTOR_TEMPLATE));
+		return describeEntities(configurations, template -> describeMessage(template, MESSAGE_EXTRACTOR_BASIC_TEMPLATE,
+			FIELD_EXTRACTOR_TEMPLATE));
 	}
 
 	/**
@@ -246,7 +248,7 @@ public final class Descriptor{
 		return Collections.unmodifiableMap(headerDescription);
 	}
 
-	private <T> List<Map<String, Object>> describeEntities(final Collection<T> entities,
+	private static <T> List<Map<String, Object>> describeEntities(final Collection<T> entities,
 			final ThrowingFunction<T, Map<String, Object>, FieldException> mapper) throws FieldException{
 		final List<Map<String, Object>> descriptions = new ArrayList<>(entities.size());
 		for(final T entity : entities)
@@ -254,7 +256,7 @@ public final class Descriptor{
 		return Collections.unmodifiableList(descriptions);
 	}
 
-	private <T, E extends Exception> List<Map<String, Object>> describeEntities(final Class<? extends Annotation> annotationClass,
+	private static <T, E extends Exception> List<Map<String, Object>> describeEntities(final Class<? extends Annotation> annotationClass,
 			final Class<?>[] entitiesClass, final ThrowingFunction<Class<?>, T, E> extractor,
 			final ThrowingFunction<T, Map<String, Object>, FieldException> mapper) throws FieldException, E{
 		final int length = entitiesClass.length;
@@ -270,7 +272,7 @@ public final class Descriptor{
 		return Collections.unmodifiableList(description);
 	}
 
-	private <T, E extends Exception> Map<String, Object> describeEntity(final Class<? extends Annotation> annotationClass,
+	private static <T, E extends Exception> Map<String, Object> describeEntity(final Class<? extends Annotation> annotationClass,
 			final Class<?> entityClass, final ThrowingFunction<Class<?>, T, E> extractor,
 			final ThrowingFunction<T, Map<String, Object>, FieldException> mapper) throws FieldException, E{
 		if(!entityClass.isAnnotationPresent(annotationClass))

@@ -104,7 +104,7 @@ abstract class BitReaderData{
 	 * Clear fallback point data.
 	 * <p>After calling this method, no restoring is possible (see {@link #restoreFallbackPoint()}).</p>
 	 */
-	public final synchronized void clearFallbackPoint(){
+	private synchronized void clearFallbackPoint(){
 		fallbackPoint = null;
 	}
 
@@ -126,7 +126,7 @@ abstract class BitReaderData{
 	 * @param bitsToRead	The amount of bits to read.
 	 * @return	A long value at the {@link BitReader}'s current position.
 	 */
-	public final synchronized long getNumber(final int bitsToRead){
+	final synchronized long getNumber(final int bitsToRead){
 		long bitmap = 0l;
 
 		int bitsRead = 0;
@@ -208,7 +208,7 @@ abstract class BitReaderData{
 	 *
 	 * @param bitsToSkip	The amount of bits to skip.
 	 */
-	public final synchronized void skipBits(final int bitsToSkip){
+	final synchronized void skipBits(final int bitsToSkip){
 		int bitsSkipped = 0;
 		while(bitsSkipped < bitsToSkip){
 			//if cache is empty and there are more bits to be read, fill it
@@ -247,7 +247,7 @@ abstract class BitReaderData{
 	 * @param terminator	The terminator.
 	 * @throws IOException	If an I/O error occurs.
 	 */
-	protected final synchronized void getTextUntilTerminator(final ByteArrayOutputStream baos, final byte terminator) throws IOException{
+	final synchronized void getTextUntilTerminator(final ByteArrayOutputStream baos, final byte terminator) throws IOException{
 		Byte byteRead;
 		while((byteRead = peekByte()) != null && byteRead != terminator)
 			baos.write(getByte());
@@ -279,7 +279,8 @@ abstract class BitReaderData{
 	 * @param terminator	The terminator.
 	 * @throws IOException	If an I/O error occurs.
 	 */
-	protected final synchronized void getTextUntilTerminatorWithoutConsuming(final ByteArrayOutputStream baos, final byte terminator) throws IOException{
+	final synchronized void getTextUntilTerminatorWithoutConsuming(final ByteArrayOutputStream baos, final byte terminator)
+			throws IOException{
 		//make a copy of internal variables
 		final Snapshot originalSnapshot = createSnapshot();
 

@@ -57,6 +57,7 @@ import static io.github.mtrevisan.boxon.core.helpers.configurations.Configuratio
 /**
  * Declarative configurator for binary encoded configuration data.
  */
+@SuppressWarnings({"unused", "WeakerAccess"})
 public final class Configurator{
 
 	private final ConfigurationParser configurationParser;

@@ -41,7 +41,7 @@ import java.util.function.Supplier;
 /**
  * Provides static methods to extract creator functions for classes.
  */
-public class ConstructorHelper{
+public final class ConstructorHelper{
 
 	private static final Function<Class<?>, Supplier<?>> EMPTY_CREATORS = Memoizer.memoize(ConstructorHelper::getEmptyCreatorInner);
 	private static final Function<Map.Entry<Class<?>, Class<?>[]>, Function<Object[], ?>> NON_EMPTY_CREATORS
@@ -140,10 +140,11 @@ public class ConstructorHelper{
 		//find the index of the field to update
 		FieldAccessor.updateFieldValue(fieldName, value, recordComponents, recordValues);
 
-		return ConstructorHelper.createRecordInstance(recordComponents, objClass, recordValues);
+		return createRecordInstance(recordComponents, objClass, recordValues);
 	}
 
-	static <T> T createRecordInstance(final RecordComponent[] recordComponents, final Class<T> objClass, final Object[] recordValues){
+	private static <T> T createRecordInstance(final RecordComponent[] recordComponents, final Class<T> objClass,
+			final Object[] recordValues){
 		//extract the field types from the record class
 		final Class<?>[] constructorClasses = extractFieldTypes(recordComponents);
 

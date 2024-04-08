@@ -109,24 +109,21 @@ public final class Parser{
 	public List<Response<byte[], Object>> parse(final BitReader reader){
 		final List<Response<byte[], Object>> response = new ArrayList<>(1);
 
-		int start = 0;
 		while(reader.hasRemaining()){
-			start = reader.position();
-
 			//save state of the reader (restored upon a decoding error)
 			reader.createFallbackPoint();
 
-			if(parse(reader, start, response))
+			if(parse(reader, response))
 				break;
 		}
 
 		//check if there are unread bytes
-		assertNoLeftBytes(reader, start, response);
+		assertNoLeftBytes(reader, response);
 
 		return response;
 	}
 
-	private boolean parse(final BitReader reader, final int start, final Collection<Response<byte[], Object>> response){
+	private boolean parse(final BitReader reader, final Collection<Response<byte[], Object>> response){
 		try{
 			final Template<?> template = templateParser.getTemplate(reader);
 
@@ -153,7 +150,7 @@ public final class Parser{
 		return false;
 	}
 
-	private static void assertNoLeftBytes(final BitReader reader, final int start, final Collection<Response<byte[], Object>> response){
+	private static void assertNoLeftBytes(final BitReader reader, final Collection<Response<byte[], Object>> response){
 		if(reader.hasRemaining()){
 			final int position = reader.position();
 			final Exception error = DataException.create("There are remaining unread bytes");

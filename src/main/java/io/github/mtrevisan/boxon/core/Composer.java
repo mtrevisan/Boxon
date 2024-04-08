@@ -35,6 +35,7 @@ import io.github.mtrevisan.boxon.io.BitWriterInterface;
 /**
  * Handles the composition of a message.
  */
+@SuppressWarnings("WeakerAccess")
 public final class Composer{
 
 	private final TemplateParser templateParser;

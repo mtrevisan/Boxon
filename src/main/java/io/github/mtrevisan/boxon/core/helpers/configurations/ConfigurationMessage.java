@@ -99,8 +99,8 @@ public final class ConfigurationMessage<T>{
 	}
 
 
-	private List<ConfigurationField> loadAnnotatedFields(final Class<T> type, final Version minProtocolVersion, final Version maxProtocolVersion)
-			throws AnnotationException, CodecException{
+	private List<ConfigurationField> loadAnnotatedFields(final Class<T> type, final Version minProtocolVersion,
+			final Version maxProtocolVersion) throws AnnotationException, CodecException{
 		final List<Field> fields = FieldAccessor.getAccessibleFields(type);
 		final int size = fields.size();
 		final Collection<String> uniqueShortDescription = new HashSet<>(size);
