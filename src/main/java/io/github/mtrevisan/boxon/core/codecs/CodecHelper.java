@@ -83,8 +83,8 @@ final class CodecHelper{
 	 */
 	static int evaluateSize(final String size, final Evaluator evaluator, final Object rootObject) throws AnnotationException{
 		final int evaluatedSize = evaluator.evaluateSize(size, rootObject);
-		if(evaluatedSize <= 0)
-			throw AnnotationException.create("Size must be a positive integer, was {}", size);
+		if(evaluatedSize < 0)
+			throw AnnotationException.create("Size must be a non-negative integer, was {}", size);
 
 		return evaluatedSize;
 	}
