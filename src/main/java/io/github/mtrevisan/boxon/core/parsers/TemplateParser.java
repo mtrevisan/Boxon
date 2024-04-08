@@ -393,6 +393,7 @@ public final class TemplateParser implements TemplateParserInterface{
 			if(shouldProcessField){
 				//... and if so, process it
 				parserContext.setField(field);
+				parserContext.setFieldName(field.getFieldName());
 				parserContext.setBinding(field.getBinding());
 
 				ParserWriterHelper.encodeField(parserContext, writer, loaderCodec, eventListener);
@@ -447,7 +448,7 @@ public final class TemplateParser implements TemplateParserInterface{
 		return (condition != null && (condition.isEmpty() || evaluator.evaluateBoolean(condition, rootObject)));
 	}
 
-	private <T> void writeSkips(final Skip[] skips, final BitWriterInterface writer, final Object rootObject){
+	private void writeSkips(final Skip[] skips, final BitWriterInterface writer, final Object rootObject){
 		for(int i = 0, length = skips.length; i < length; i ++)
 			writeSkip(skips[i], writer, rootObject);
 	}

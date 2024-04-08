@@ -189,10 +189,10 @@ public final class ConfigurationParser{
 			writeSkips(skips, writer, protocol);
 
 			parserContext.setRootObject(field.getFieldType());
-			parserContext.setFieldName(field.getFieldName());
 
 			//process value
 			parserContext.setField(field);
+			parserContext.setFieldName(field.getFieldName());
 			parserContext.setBinding(annotation);
 			ParserWriterHelper.encodeField(parserContext, writer, loaderCodec, eventListener);
 			if(annotation != binding){

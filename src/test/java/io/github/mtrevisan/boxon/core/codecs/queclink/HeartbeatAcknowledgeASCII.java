@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Mauro Trevisan
+ * Copyright (c) 2024 Mauro Trevisan
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -22,35 +22,22 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package io.github.mtrevisan.boxon.core.codecs;
+package io.github.mtrevisan.boxon.core.codecs.queclink;
 
-import io.github.mtrevisan.boxon.annotations.bindings.ObjectChoices;
-import io.github.mtrevisan.boxon.helpers.JavaHelper;
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationField;
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationHeader;
+import io.github.mtrevisan.boxon.annotations.configurations.ConfigurationSkip;
 
-import java.lang.annotation.Annotation;
 
+@ConfigurationHeader(shortDescription = "Heartbeat acknowledge", start = "+SACK:GTHBD", end = "$")
+public class HeartbeatAcknowledgeASCII{
 
-@SuppressWarnings("ClassExplicitlyAnnotation")
-final class NullObjectChoice implements ObjectChoices.ObjectChoice{
-
-	@Override
-	public Class<? extends Annotation> annotationType(){
-		return NullObjectChoice.class;
-	}
-
-	@Override
-	public String condition(){
-		return JavaHelper.EMPTY_STRING;
-	}
-
-	@Override
-	public String prefix(){
-		return JavaHelper.EMPTY_STRING;
-	}
-
-	@Override
-	public Class<?> type(){
-		return Void.TYPE;
-	}
+	@ConfigurationSkip(terminator = ",")
+	@ConfigurationField(shortDescription = "Device type code", radix = 16, defaultValue = "0x87")
+	private byte deviceTypeCode;
+	@ConfigurationField(shortDescription = "Protocol version", pattern = "[0-9A-Fa-f]{4}", terminator = ",")
+	private String protocolVersion;
+	@ConfigurationField(shortDescription = "Message counter", pattern = "[0-9A-F]{4}")
+	private String messageCounter;
 
 }

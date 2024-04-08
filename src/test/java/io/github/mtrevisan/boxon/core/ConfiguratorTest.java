@@ -24,17 +24,21 @@
  */
 package io.github.mtrevisan.boxon.core;
 
+import io.github.mtrevisan.boxon.core.codecs.queclink.DeviceTypes;
+import io.github.mtrevisan.boxon.core.codecs.queclink.HeartbeatAcknowledgeASCII;
 import io.github.mtrevisan.boxon.core.codecs.queclink.REGConfigurationASCII;
 import io.github.mtrevisan.boxon.core.keys.ConfigurationKey;
 import io.github.mtrevisan.boxon.exceptions.AnnotationException;
 import io.github.mtrevisan.boxon.exceptions.CodecException;
 import io.github.mtrevisan.boxon.exceptions.ConfigurationException;
 import io.github.mtrevisan.boxon.exceptions.TemplateException;
+import io.github.mtrevisan.boxon.helpers.StringHelper;
 import io.github.mtrevisan.boxon.utils.PrettyPrintMap;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,7 +90,7 @@ class ConfiguratorTest{
 	void getConfigurationsByProtocol() throws AnnotationException, ConfigurationException, CodecException, TemplateException{
 		Core core = CoreBuilder.builder()
 			.withDefaultCodecs()
-			.withConfigurationsFrom(REGConfigurationASCII.class)
+			.withConfiguration(REGConfigurationASCII.class)
 			.create();
 		Configurator configurator = Configurator.create(core);
 
@@ -138,6 +142,32 @@ class ConfiguratorTest{
 			Assertions.fail(composeResult.getError());
 		Assertions.assertEquals("AT+GTREG=pass,1,27,1,0,2,25,0,http://url.com@username@password,3600,3600,6,,007B$",
 			new String(composeResult.getMessage(), StandardCharsets.US_ASCII));
+	}
+
+	@Test
+	void composeSACK() throws TemplateException, ConfigurationException, AnnotationException{
+		DeviceTypes deviceTypes = DeviceTypes.create()
+			.with((byte)0xCF, "QUECLINK_GV350M");
+		Map<String, Object> context = Collections.singletonMap("deviceTypes", deviceTypes);
+		Core core = CoreBuilder.builder()
+			.withContext(context)
+			.withDefaultCodecs()
+			.withConfiguration(HeartbeatAcknowledgeASCII.class)
+			.create();
+		Configurator configurator = Configurator.create(core);
+
+		Map<String, Object> data = Map.of(
+			"Device type code", (byte)0x87,
+			"Protocol version", "0100",
+			"Message counter", "007B"
+		);
+		Response<String, byte[]> composed = configurator.composeConfiguration("1.0", "Heartbeat acknowledge",
+			data);
+
+		if(composed.hasError()){
+			Assertions.fail(composed.getError());
+		}
+		Assertions.assertEquals("+SACK:GTHBD,870100,007B$", StringHelper.toASCIIString(composed.getMessage()));
 	}
 
 }
